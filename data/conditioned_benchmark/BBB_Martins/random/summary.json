@@ -1,0 +1,133 @@
+{
+  "task": "BBB_Martins",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "source_scaffold_root": "data/conditioned_benchmark/BBB_Martins/scaffold",
+  "root": "data/conditioned_benchmark/BBB_Martins/random",
+  "source_union_sha256": "2014888b430e1a16a0c260f32b337096f75d1bb012e75f34dbeb99c6b9be0f00",
+  "random_union_sha256": "2014888b430e1a16a0c260f32b337096f75d1bb012e75f34dbeb99c6b9be0f00",
+  "same_molecule_condition_rows_and_labels": true,
+  "optimizer": {
+    "method": "deterministic_lexicographic_parent_group_milp",
+    "seed": 20260830,
+    "target_fraction": {
+      "train": 0.8,
+      "valid": 0.1,
+      "test": 0.1
+    },
+    "target_rows": {
+      "train": 3075,
+      "valid": 384,
+      "test": 384
+    },
+    "n_parent_groups": 3732,
+    "n_conditions": 9,
+    "record_support_objective_enabled": true,
+    "record_support_field": "source_record_count",
+    "multi_vote_definition": "source_record_count >= 2",
+    "objective_order": [
+      "minimum heldout singleton-vote rows",
+      "minimum valid/test singleton imbalance",
+      "minimum valid/test positive-label deviation",
+      "minimum valid/test condition-row deviation",
+      "seeded stable tie-break"
+    ],
+    "minimum_singletons_in_heldout": 3,
+    "minimum_singleton_imbalance": 1,
+    "selected_valid_singletons": 1,
+    "selected_test_singletons": 2,
+    "minimum_positive_label_l1_deviation": 0,
+    "minimum_condition_row_l1_deviation": 12,
+    "desired_positive_count_per_eval_split": 284,
+    "condition_coverage_constraint": "every condition has at least one parent in every split"
+  },
+  "splits": {
+    "train": {
+      "n": 3075,
+      "sha256": "396eb1397775c329a297eb5d56b38b5161c84635ff674ac681b27a36fcbf6210",
+      "n_parents": 2992,
+      "label_counts": {
+        "0": 800,
+        "1": 2275
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 14,
+        "co_treatment=cyclosporine": 14,
+        "disease=bacterial_meningitis": 10,
+        "disease=brain_tumor_or_glioma": 34,
+        "disease=cerebral_ischemia": 8,
+        "disease=meningitis_unspecified": 41,
+        "disease=pneumococcal_meningitis": 8,
+        "disease=tuberculous_meningitis": 7,
+        "no_reported_external_condition": 2939
+      }
+    },
+    "valid": {
+      "n": 384,
+      "sha256": "ea0edc096e97d978832df20459bf5e96411d2b05c06b981221c0d88e1c2305a7",
+      "n_parents": 370,
+      "label_counts": {
+        "0": 100,
+        "1": 284
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 2,
+        "co_treatment=cyclosporine": 1,
+        "disease=bacterial_meningitis": 1,
+        "disease=brain_tumor_or_glioma": 2,
+        "disease=cerebral_ischemia": 1,
+        "disease=meningitis_unspecified": 7,
+        "disease=pneumococcal_meningitis": 1,
+        "disease=tuberculous_meningitis": 1,
+        "no_reported_external_condition": 368
+      }
+    },
+    "test": {
+      "n": 384,
+      "sha256": "6c974a0a10757484e10ba06609c88255c14130b8cade47d6a31b1fc341005323",
+      "n_parents": 370,
+      "label_counts": {
+        "0": 100,
+        "1": 284
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 1,
+        "co_treatment=cyclosporine": 1,
+        "disease=bacterial_meningitis": 2,
+        "disease=brain_tumor_or_glioma": 1,
+        "disease=cerebral_ischemia": 1,
+        "disease=meningitis_unspecified": 8,
+        "disease=pneumococcal_meningitis": 1,
+        "disease=tuberculous_meningitis": 1,
+        "no_reported_external_condition": 368
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 108,
+    "train__test": 122,
+    "valid__test": 39
+  },
+  "conditions_present_in_all_splits": [
+    "barrier_state=disrupted",
+    "co_treatment=cyclosporine",
+    "disease=bacterial_meningitis",
+    "disease=brain_tumor_or_glioma",
+    "disease=cerebral_ischemia",
+    "disease=meningitis_unspecified",
+    "disease=pneumococcal_meningitis",
+    "disease=tuberculous_meningitis",
+    "no_reported_external_condition"
+  ],
+  "missing_conditions_by_split": {
+    "train": [],
+    "valid": [],
+    "test": []
+  }
+}

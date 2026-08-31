@@ -177,6 +177,8 @@ def _write_json(path: Path, payload: Any) -> None:
 
 def main() -> None:
     args = parse_args()
+    if args.train_batch_size < 2:
+        raise ValueError("--train-batch-size must be at least 2 for BatchNorm training")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     train_path = args.data_dir / "train.jsonl"
     cache_path = args.embedding_cache_dir / "train.pt"
@@ -216,11 +218,23 @@ def main() -> None:
         inner_valid_embeddings = embeddings[valid_indices]
         inner_train_labels = labels_array[train_indices].tolist()
         inner_valid_labels = labels_array[valid_indices].tolist()
+        if len(inner_train_labels) < 2:
+            raise ValueError(
+                f"fold {fold_index} has fewer than two training rows for BatchNorm"
+            )
+        # The frozen MiniMol head contains BatchNorm layers.  A shuffled final
+        # batch of exactly one row is not a valid training input, so drop only
+        # that otherwise-unavoidable singleton.  All other fold shapes retain
+        # the historical complete-row loader contract.
+        drop_singleton_batch = (
+            len(inner_train_labels) % args.train_batch_size == 1
+        )
         train_loader = DataLoader(
             EmbeddingDataset(inner_train_embeddings, inner_train_labels),
             batch_size=args.train_batch_size,
             shuffle=True,
             generator=generator,
+            drop_last=drop_singleton_batch,
         )
         train_eval_loader = DataLoader(
             EmbeddingDataset(inner_train_embeddings, inner_train_labels),
@@ -246,6 +260,7 @@ def main() -> None:
                 "n_train_scaffolds": len(set(groups_array[train_indices])),
                 "n_valid_scaffolds": len(set(groups_array[valid_indices])),
                 "scaffold_overlap": 0,
+                "drop_singleton_train_batch": drop_singleton_batch,
             }
         )
         for epoch_index in range(args.epochs):

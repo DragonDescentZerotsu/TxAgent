@@ -61,7 +61,11 @@ from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
     structured_response_is_valid,
 )
-from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
+from tools.chembl_tool.common.starling.conditioned_benchmark import (
+    SPLIT_SCHEMES,
+    split_path,
+    task_root,
+)
 from tools.chembl_tool.tasks.bbb_martins import experiment_config as bbb_config
 from tools.chembl_tool.tasks.bioavailability_ma import experiment_config as bio_config
 from tools.chembl_tool.tasks.skin_reaction import experiment_config as skin_config
@@ -80,7 +84,10 @@ ARCHIVED_SINGLE_CACHE_ROOT = Path(
 )
 TASK_NAMES = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 REFERENCE_POOL = "direct_only_heldout_filtered"
-IDENTITY_POLICY = "scaffold_disjoint"
+IDENTITY_POLICY_BY_SPLIT = {
+    "scaffold": "scaffold_disjoint",
+    "random": "parent_disjoint",
+}
 
 _MODEL_IDENTITY_ALIASES = {
     "deepseek-ai/deepseek-v4-flash-0731": "deepseek-v4-flash-0731",
@@ -95,8 +102,16 @@ def _model_identity(model: str) -> str:
     return _MODEL_IDENTITY_ALIASES.get(normalized, normalized)
 
 
+def _neighbor_identity_policy(split_scheme: str) -> str:
+    try:
+        return IDENTITY_POLICY_BY_SPLIT[split_scheme]
+    except KeyError as exc:
+        raise ValueError(f"unsupported split scheme: {split_scheme}") from exc
+
+
 _RESUME_INVARIANT_FIELDS = (
     "experiment",
+    "split_scheme",
     "tasks",
     "visibility_mode",
     "reference_pool",
@@ -111,6 +126,7 @@ _RESUME_INVARIANT_FIELDS = (
     "tool_prefetch_complete",
     "evaluation_indices_by_task",
     "inputs",
+    "progressive_reuse_source_root",
 )
 
 
@@ -179,6 +195,7 @@ TASK_CONFIGS = {
 SOURCE_PURITY_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1"
 )
+RANDOM_INDEX_ROOT = SOURCE_PURITY_ROOT / "indices_random_valid_test"
 
 
 @dataclass(frozen=True)
@@ -188,35 +205,43 @@ class ProgressiveTaskSpec:
     family_manifest: Path
 
 
-PROGRESSIVE_TASKS = {
-    "bbb_martins": ProgressiveTaskSpec(
-        split_path("bbb_martins", "valid"),
-        SOURCE_PURITY_ROOT
-        / "indices/bbb_martins/"
-        "mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
-        SOURCE_PURITY_ROOT
-        / "family_catalogs_mechanism_tagged_v1/"
-        "bbb_martins_source_purity_v5/manifest.json",
-    ),
-    "bioavailability_ma": ProgressiveTaskSpec(
-        split_path("bioavailability_ma", "valid"),
-        SOURCE_PURITY_ROOT
-        / "indices/bioavailability_ma/"
-        "mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_neighbor_index.pkl",
-        SOURCE_PURITY_ROOT
-        / "family_catalogs/"
-        "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/manifest.json",
-    ),
-    "skin_reaction": ProgressiveTaskSpec(
-        split_path("skin_reaction", "valid"),
-        SOURCE_PURITY_ROOT
-        / "indices/skin_reaction/"
-        "mechanism_tagged_v4_source_purity_v1/assay_neighbor_index.pkl",
-        SOURCE_PURITY_ROOT
-        / "family_catalogs_mechanism_tagged_v1/"
-        "skin_reaction_source_purity_v1/manifest.json",
-    ),
-}
+def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]:
+    index_root = (
+        SOURCE_PURITY_ROOT / "indices"
+        if split_scheme == "scaffold"
+        else RANDOM_INDEX_ROOT
+    )
+    return {
+        "bbb_martins": ProgressiveTaskSpec(
+            split_path("bbb_martins", "valid", split_scheme),
+            index_root
+            / "bbb_martins/mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
+            SOURCE_PURITY_ROOT
+            / "family_catalogs_mechanism_tagged_v1/"
+            "bbb_martins_source_purity_v5/manifest.json",
+        ),
+        "bioavailability_ma": ProgressiveTaskSpec(
+            split_path("bioavailability_ma", "valid", split_scheme),
+            index_root
+            / "bioavailability_ma/"
+            "mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/"
+            "assay_neighbor_index.pkl",
+            SOURCE_PURITY_ROOT
+            / "family_catalogs/"
+            "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/manifest.json",
+        ),
+        "skin_reaction": ProgressiveTaskSpec(
+            split_path("skin_reaction", "valid", split_scheme),
+            index_root
+            / "skin_reaction/mechanism_tagged_v4_source_purity_v1/assay_neighbor_index.pkl",
+            SOURCE_PURITY_ROOT
+            / "family_catalogs_mechanism_tagged_v1/"
+            "skin_reaction_source_purity_v1/manifest.json",
+        ),
+    }
+
+
+PROGRESSIVE_TASKS = _progressive_task_specs("scaffold")
 
 
 @dataclass(frozen=True)
@@ -399,6 +424,7 @@ def _prepare_query(
     tool_service_url: str,
     timeout_s: int,
     prefetch_tools: bool,
+    neighbor_identity_policy: str,
 ) -> PreparedQuery:
     query_dir = _query_dir(output_root, task, query_index)
     complete_path = query_dir / "prepared_manifest.json"
@@ -408,6 +434,8 @@ def _prepare_query(
             manifest.get("status") == "ok"
             and manifest.get("protocol") == PROGRESSIVE_PROTOCOL_VERSION
             and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
+            and manifest.get("neighbor_identity_policy")
+            == neighbor_identity_policy
         ):
             return PreparedQuery(task, query_index, query_dir)
 
@@ -422,7 +450,7 @@ def _prepare_query(
         index,
         levels=level_ids,
         min_similarity=0.3,
-        neighbor_identity_policy=IDENTITY_POLICY,
+        neighbor_identity_policy=neighbor_identity_policy,
     )
     cumulative_by_level: dict[int, dict[str, dict[str, Any]]] = {}
     retrieval_audits: dict[int, dict[str, Any]] = {}
@@ -504,6 +532,7 @@ def _prepare_query(
             "n_active_cards": len(current_ids),
             "should_call_model": bool(new_ids),
             "tool_prefetch_complete": prefetch_tools,
+            "neighbor_identity_policy": neighbor_identity_policy,
             "tool_prefetch_failures": [
                 row
                 for row in tool_failures
@@ -524,6 +553,7 @@ def _prepare_query(
             "n_levels": len(levels),
             "tool_prefetch_complete": prefetch_tools,
             "n_tool_prefetch_failures": len(tool_failures),
+            "neighbor_identity_policy": neighbor_identity_policy,
             "prepared_at": _now(),
         },
     )
@@ -938,18 +968,187 @@ def _selected_indices(args: argparse.Namespace, n_records: int) -> list[int]:
     return indices
 
 
-def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]]:
+_PREPARED_MODEL_INPUT_FIELDS = (
+    "protocol",
+    "task",
+    "query_smiles",
+    "condition_sentence",
+    "query_prior",
+    "query_tool_summary",
+    "reused_none_final",
+    "level",
+    "level_definition",
+    "active_evidence",
+    "new_card_ids",
+    "should_call_model",
+    "tool_prefetch_complete",
+)
+
+
+def _prepared_model_input(prepared: Mapping[str, Any]) -> dict[str, Any]:
+    """Return exactly the prepared fields that can affect a level decision.
+
+    Retrieval and selection audits are deliberately excluded: they are retained
+    for provenance but never rendered into the model prompt.  Prior state is
+    supplied by the preceding output, so reuse is restricted to an unchanged
+    prefix and stops permanently at the first changed level.
+    """
+
+    return {field: prepared.get(field) for field in _PREPARED_MODEL_INPUT_FIELDS}
+
+
+def _validate_progressive_reuse_source(
+    *,
+    source_root: Path,
+    current_manifest: Mapping[str, Any],
+) -> dict[str, Any]:
+    source_manifest_path = source_root / "experiment_manifest.json"
+    if not source_manifest_path.is_file():
+        raise FileNotFoundError(source_manifest_path)
+    source_manifest = _read_json(source_manifest_path)
+    invariant_fields = (
+        "experiment",
+        "split_scheme",
+        "visibility_mode",
+        "reference_pool",
+        "neighbor_identity_policy",
+        "min_similarity",
+        "candidate_generation",
+        "selection",
+        "prompt_profile",
+        "condition_policy",
+        "max_tokens",
+        "temperature",
+        "thinking",
+        "reasoning_effort",
+        "tool_prefetch_complete",
+    )
+    for field in invariant_fields:
+        if source_manifest.get(field) != current_manifest.get(field):
+            raise ValueError(
+                f"progressive reuse source uses different {field}: "
+                f"{source_manifest.get(field)!r}"
+            )
+    if _model_identity(str(source_manifest.get("model") or "")) != _model_identity(
+        str(current_manifest.get("model") or "")
+    ):
+        raise ValueError("progressive reuse source uses a different model identity")
+    source_inputs = source_manifest.get("inputs") or {}
+    for task in current_manifest.get("tasks") or []:
+        source_task = source_inputs.get(task) or {}
+        current_task = (current_manifest.get("inputs") or {}).get(task) or {}
+        for field in (
+            "input_sha256",
+            "family_manifest_sha256",
+            "single_source_manifest_sha256",
+        ):
+            if source_task.get(field) != current_task.get(field):
+                raise ValueError(
+                    f"progressive reuse source has different {task} {field}"
+                )
+    return source_manifest
+
+
+def _reuse_unchanged_progressive_prefixes(
+    *,
+    prepared_queries: list[PreparedQuery],
+    output_root: Path,
+    source_root: Path,
+) -> dict[str, Any]:
+    if source_root.resolve() == output_root.resolve():
+        raise ValueError("progressive reuse source must differ from output root")
+    by_task_level: dict[str, dict[str, int]] = {}
+    n_reused_levels = 0
+    n_reused_model_calls = 0
+    n_queries_with_reuse = 0
+    for prepared_query in prepared_queries:
+        reused_for_query = 0
+        for level_row in _levels(prepared_query.task):
+            level = int(level_row["level"])
+            relative = (
+                Path(prepared_query.task)
+                / "queries"
+                / f"query_idx{prepared_query.index:05d}"
+                / "levels"
+                / f"level_{level}"
+            )
+            source_level = source_root / relative
+            target_level = output_root / relative
+            source_prepared_path = source_level / "prepared.json"
+            source_output_path = source_level / "output.json"
+            target_prepared_path = target_level / "prepared.json"
+            if not (
+                source_prepared_path.is_file()
+                and source_output_path.is_file()
+                and target_prepared_path.is_file()
+            ):
+                break
+            source_prepared = _read_json(source_prepared_path)
+            target_prepared = _read_json(target_prepared_path)
+            if _prepared_model_input(source_prepared) != _prepared_model_input(
+                target_prepared
+            ):
+                break
+            source_output = _read_json(source_output_path)
+            if source_output.get("status") not in {
+                "ok",
+                "carried_forward",
+                "reused_none",
+            } or not isinstance(source_output.get("state"), Mapping):
+                break
+            reused_output = dict(source_output)
+            reused_output["checkpoint_reuse"] = {
+                "source": str(source_output_path),
+                "reason": "exact model-visible input match in unchanged prefix",
+                "reused_at": _now(),
+            }
+            write_json_atomic(target_level / "output.json", reused_output)
+            source_request_path = source_level / "request.json"
+            if source_request_path.is_file():
+                write_json_atomic(
+                    target_level / "request.json", _read_json(source_request_path)
+                )
+            level_counts = by_task_level.setdefault(prepared_query.task, {})
+            key = f"level_{level}"
+            level_counts[key] = level_counts.get(key, 0) + 1
+            n_reused_levels += 1
+            n_reused_model_calls += int(source_output.get("model_called") is True)
+            reused_for_query += 1
+        n_queries_with_reuse += int(reused_for_query > 0)
+    receipt = {
+        "status": "ok",
+        "source_root": str(source_root),
+        "reuse_contract": "exact model-visible input match; unchanged prefix only",
+        "n_queries_with_reuse": n_queries_with_reuse,
+        "n_reused_levels": n_reused_levels,
+        "n_reused_model_calls": n_reused_model_calls,
+        "by_task_level": by_task_level,
+        "created_at": _now(),
+    }
+    write_json_atomic(output_root / "progressive_reuse_receipt.json", receipt)
+    return receipt
+
+
+def _validate_inputs(
+    args: argparse.Namespace,
+    task_specs: Mapping[str, ProgressiveTaskSpec],
+) -> dict[str, list[dict[str, Any]]]:
     records_by_task = {}
+    run_identity_policy = _neighbor_identity_policy(args.split_scheme)
     for task in args.tasks:
-        spec = PROGRESSIVE_TASKS[task]
+        spec = task_specs[task]
         for path in (spec.input_jsonl, spec.index, spec.family_manifest):
             if not path.is_file():
                 raise FileNotFoundError(path)
         manifest = _read_json(spec.index.with_name("manifest.json"))
+        heldout_path = (
+            task_root(task, args.split_scheme)
+            / "heldout_molecule_condition_labels.jsonl"
+        )
         expected = {
             "reference_pool": REFERENCE_POOL,
-            "neighbor_identity_policy_default": IDENTITY_POLICY,
             "n_direct_heldout_records_after_filter": 0,
+            "heldout_molecules_jsonl_sha256": sha256_file(heldout_path),
         }
         if task in {"bioavailability_ma", "skin_reaction"}:
             expected.update(
@@ -966,6 +1165,17 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
         for field, value in expected.items():
             if manifest.get(field) != value:
                 raise ValueError(f"{task} index has wrong {field}: {manifest.get(field)!r}")
+        index_default_policy = manifest.get("neighbor_identity_policy_default")
+        if index_default_policy not in set(IDENTITY_POLICY_BY_SPLIT.values()):
+            raise ValueError(
+                f"{task} index has unsupported default identity policy: "
+                f"{index_default_policy!r}"
+            )
+        if args.split_scheme == "scaffold" and index_default_policy != run_identity_policy:
+            raise ValueError(
+                f"{task} scaffold index has wrong default identity policy: "
+                f"{index_default_policy!r}"
+            )
         source_run = _source_run_dir(task, 0, Path(args.single_source_root))
         if not source_run.parent.is_dir():
             raise FileNotFoundError(source_run.parent)
@@ -1004,10 +1214,12 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
 
 
 def run(args: argparse.Namespace) -> int:
+    task_specs = _progressive_task_specs(args.split_scheme)
     provider_config = _resolve_provider_pool_config(args)
     if sum(spec.max_inflight for spec in provider_config.providers) > 512:
         raise ValueError("provider pool capacity exceeds the global budget 512")
-    records_by_task = _validate_inputs(args)
+    records_by_task = _validate_inputs(args, task_specs)
+    run_identity_policy = _neighbor_identity_policy(args.split_scheme)
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     indices_by_task = {
@@ -1016,28 +1228,32 @@ def run(args: argparse.Namespace) -> int:
     }
     inputs = {
         task: {
-            "input_jsonl": str(PROGRESSIVE_TASKS[task].input_jsonl),
-            "input_sha256": sha256_file(PROGRESSIVE_TASKS[task].input_jsonl),
-            "index": str(PROGRESSIVE_TASKS[task].index),
-            "index_sha256": sha256_file(PROGRESSIVE_TASKS[task].index),
-            "family_manifest": str(PROGRESSIVE_TASKS[task].family_manifest),
+            "input_jsonl": str(task_specs[task].input_jsonl),
+            "input_sha256": sha256_file(task_specs[task].input_jsonl),
+            "index": str(task_specs[task].index),
+            "index_sha256": sha256_file(task_specs[task].index),
+            "family_manifest": str(task_specs[task].family_manifest),
             "family_manifest_sha256": sha256_file(
-                PROGRESSIVE_TASKS[task].family_manifest
+                task_specs[task].family_manifest
             ),
             "single_source_manifest_sha256": sha256_file(
                 Path(args.single_source_root) / task / "none" / "manifest.json"
             ),
+            "index_neighbor_identity_policy_default": _read_json(
+                task_specs[task].index.with_name("manifest.json")
+            ).get("neighbor_identity_policy_default"),
             "levels": _levels(task),
         }
         for task in args.tasks
     }
     manifest = {
         "experiment": PROGRESSIVE_PROTOCOL_VERSION,
+        "split_scheme": args.split_scheme,
         "evaluation_subset": "valid",
         "tasks": args.tasks,
         "visibility_mode": "deployment_visible_prefetched",
         "reference_pool": REFERENCE_POOL,
-        "neighbor_identity_policy": IDENTITY_POLICY,
+        "neighbor_identity_policy": run_identity_policy,
         "min_similarity": 0.3,
         "candidate_generation": {
             "unit": "molecule",
@@ -1057,6 +1273,9 @@ def run(args: argparse.Namespace) -> int:
         "prompt_profile": "progressive_compact_tools_short_aliases.v2",
         "condition_policy": "natural-language sentence for non-null group; omit null group",
         "single_reuse_root": str(Path(args.single_source_root)),
+        "progressive_reuse_source_root": str(
+            Path(args.progressive_reuse_source_root)
+        ) if args.progressive_reuse_source_root else "",
         "model": args.model,
         "model_identity": _model_identity(args.model),
         "base_url": args.base_url,
@@ -1087,7 +1306,7 @@ def run(args: argparse.Namespace) -> int:
 
     prepared_queries: list[PreparedQuery] = []
     for task in args.tasks:
-        spec = PROGRESSIVE_TASKS[task]
+        spec = task_specs[task]
         with spec.index.open("rb") as handle:
             index = pickle.load(handle)
         index = build_family_molecule_prefix_view(
@@ -1109,6 +1328,7 @@ def run(args: argparse.Namespace) -> int:
                     tool_service_url=args.tool_service_url,
                     timeout_s=args.timeout_s,
                     prefetch_tools=not args.skip_tool_prefetch,
+                    neighbor_identity_policy=run_identity_policy,
                 ): query_index
                 for query_index in indices
             }
@@ -1116,6 +1336,26 @@ def run(args: argparse.Namespace) -> int:
                 prepared_queries.append(future.result())
                 if completed % 10 == 0 or completed == len(futures):
                     print(f"[{task}] prepared {completed}/{len(futures)}", flush=True)
+
+    if args.progressive_reuse_source_root:
+        source_root = Path(args.progressive_reuse_source_root)
+        _validate_progressive_reuse_source(
+            source_root=source_root,
+            current_manifest=manifest,
+        )
+        receipt = _reuse_unchanged_progressive_prefixes(
+            prepared_queries=prepared_queries,
+            output_root=output_root,
+            source_root=source_root,
+        )
+        manifest["progressive_reuse"] = receipt
+        print(
+            "[reuse] "
+            f"queries={receipt['n_queries_with_reuse']} "
+            f"levels={receipt['n_reused_levels']} "
+            f"model_calls_avoided={receipt['n_reused_model_calls']}",
+            flush=True,
+        )
 
     manifest["prepared_at"] = _now()
     write_json_atomic(manifest_path, manifest)
@@ -1162,8 +1402,25 @@ def main(argv: list[str] | None = None) -> int:
             "other tasks should use an explicit task and output root."
         ),
     )
+    parser.add_argument(
+        "--split-scheme",
+        choices=SPLIT_SCHEMES,
+        default="scaffold",
+        help=(
+            "Conditioned benchmark split scheme; random uses its own "
+            "valid+test heldout-filtered indices."
+        ),
+    )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
+    parser.add_argument(
+        "--progressive-reuse-source-root",
+        default="",
+        help=(
+            "Optional completed progressive run. Reuse only the exact model-visible "
+            "unchanged prefix for each query; rerun from the first changed level."
+        ),
+    )
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--base-url", default=BASE_URL)
     parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
@@ -1210,6 +1467,11 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--preparation-workers must be positive")
     if args.transport_max_retries < 0:
         parser.error("--transport-max-retries must be non-negative")
+    if (
+        args.split_scheme == "random"
+        and Path(args.output_root) == DEFAULT_OUTPUT_ROOT
+    ):
+        parser.error("random evaluation requires an explicit non-scaffold --output-root")
     if args.skip_tool_prefetch and not args.prepare_only:
         parser.error("--skip-tool-prefetch is allowed only with --prepare-only")
     return run(args)

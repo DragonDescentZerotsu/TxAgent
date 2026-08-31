@@ -1,0 +1,99 @@
+{
+  "task": "ClinTox",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "source_scaffold_root": "data/conditioned_benchmark/ClinTox/scaffold",
+  "root": "data/conditioned_benchmark/ClinTox/random",
+  "source_union_sha256": "c1e594ab9ba505db7c531a03aeac49cb94ae3fb43c60e40f5018d6df127bced7",
+  "random_union_sha256": "c1e594ab9ba505db7c531a03aeac49cb94ae3fb43c60e40f5018d6df127bced7",
+  "same_molecule_condition_rows_and_labels": true,
+  "optimizer": {
+    "method": "deterministic_lexicographic_parent_group_milp",
+    "seed": 20260830,
+    "target_fraction": {
+      "train": 0.8,
+      "valid": 0.1,
+      "test": 0.1
+    },
+    "target_rows": {
+      "train": 1142,
+      "valid": 143,
+      "test": 143
+    },
+    "n_parent_groups": 1428,
+    "n_conditions": 1,
+    "record_support_objective_enabled": false,
+    "record_support_field": null,
+    "multi_vote_definition": null,
+    "objective_order": [
+      "minimum valid/test positive-label deviation",
+      "minimum valid/test condition-row deviation",
+      "seeded stable tie-break"
+    ],
+    "minimum_singletons_in_heldout": null,
+    "minimum_singleton_imbalance": null,
+    "selected_valid_singletons": null,
+    "selected_test_singletons": null,
+    "minimum_positive_label_l1_deviation": 0,
+    "minimum_condition_row_l1_deviation": 0,
+    "desired_positive_count_per_eval_split": 10,
+    "condition_coverage_constraint": "every condition has at least one parent in every split"
+  },
+  "splits": {
+    "train": {
+      "n": 1142,
+      "sha256": "10b1f711a310862b844b58f070568aa63783676f8cab80e51b6568647bfbaf75",
+      "n_parents": 1142,
+      "label_counts": {
+        "0": 1058,
+        "1": 84
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 1142
+      }
+    },
+    "valid": {
+      "n": 143,
+      "sha256": "6138f9d80f8661d33e421d0818792d3c41f43e30a07dffd5b46cc3acd491c4fd",
+      "n_parents": 143,
+      "label_counts": {
+        "0": 133,
+        "1": 10
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 143
+      }
+    },
+    "test": {
+      "n": 143,
+      "sha256": "576b59bd4850e2c6ddbf2ab3fd49c5ac6b4867b981d073c884f19750abc92786",
+      "n_parents": 143,
+      "label_counts": {
+        "0": 133,
+        "1": 10
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 143
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 45,
+    "train__test": 37,
+    "valid__test": 9
+  },
+  "conditions_present_in_all_splits": [
+    "no_reported_external_condition"
+  ],
+  "missing_conditions_by_split": {
+    "train": [],
+    "valid": [],
+    "test": []
+  }
+}

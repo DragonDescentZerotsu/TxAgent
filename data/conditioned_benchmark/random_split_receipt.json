@@ -1,0 +1,475 @@
+{
+  "benchmark": "conditioned_benchmark",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "seed": 20260830,
+  "source_scheme": "scaffold union",
+  "policy": "same molecule-condition rows and labels; parent-grouped 80/10/10 quality-stratified random assignment with three-way condition coverage; voter-based tasks minimize held-out singleton labels",
+  "tasks": {
+    "bbb_martins": {
+      "task": "BBB_Martins",
+      "benchmark": "conditioned_benchmark",
+      "contract": "conditioned_benchmark.v1",
+      "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+      "source_scaffold_root": "data/conditioned_benchmark/BBB_Martins/scaffold",
+      "root": "data/conditioned_benchmark/BBB_Martins/random",
+      "source_union_sha256": "2014888b430e1a16a0c260f32b337096f75d1bb012e75f34dbeb99c6b9be0f00",
+      "random_union_sha256": "2014888b430e1a16a0c260f32b337096f75d1bb012e75f34dbeb99c6b9be0f00",
+      "same_molecule_condition_rows_and_labels": true,
+      "optimizer": {
+        "method": "deterministic_lexicographic_parent_group_milp",
+        "seed": 20260830,
+        "target_fraction": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "target_rows": {
+          "train": 3075,
+          "valid": 384,
+          "test": 384
+        },
+        "n_parent_groups": 3732,
+        "n_conditions": 9,
+        "record_support_objective_enabled": true,
+        "record_support_field": "source_record_count",
+        "multi_vote_definition": "source_record_count >= 2",
+        "objective_order": [
+          "minimum heldout singleton-vote rows",
+          "minimum valid/test singleton imbalance",
+          "minimum valid/test positive-label deviation",
+          "minimum valid/test condition-row deviation",
+          "seeded stable tie-break"
+        ],
+        "minimum_singletons_in_heldout": 3,
+        "minimum_singleton_imbalance": 1,
+        "selected_valid_singletons": 1,
+        "selected_test_singletons": 2,
+        "minimum_positive_label_l1_deviation": 0,
+        "minimum_condition_row_l1_deviation": 12,
+        "desired_positive_count_per_eval_split": 284,
+        "condition_coverage_constraint": "every condition has at least one parent in every split"
+      },
+      "splits": {
+        "train": {
+          "n": 3075,
+          "sha256": "396eb1397775c329a297eb5d56b38b5161c84635ff674ac681b27a36fcbf6210",
+          "n_parents": 2992,
+          "label_counts": {
+            "0": 800,
+            "1": 2275
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 14,
+            "co_treatment=cyclosporine": 14,
+            "disease=bacterial_meningitis": 10,
+            "disease=brain_tumor_or_glioma": 34,
+            "disease=cerebral_ischemia": 8,
+            "disease=meningitis_unspecified": 41,
+            "disease=pneumococcal_meningitis": 8,
+            "disease=tuberculous_meningitis": 7,
+            "no_reported_external_condition": 2939
+          }
+        },
+        "valid": {
+          "n": 384,
+          "sha256": "ea0edc096e97d978832df20459bf5e96411d2b05c06b981221c0d88e1c2305a7",
+          "n_parents": 370,
+          "label_counts": {
+            "0": 100,
+            "1": 284
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 2,
+            "co_treatment=cyclosporine": 1,
+            "disease=bacterial_meningitis": 1,
+            "disease=brain_tumor_or_glioma": 2,
+            "disease=cerebral_ischemia": 1,
+            "disease=meningitis_unspecified": 7,
+            "disease=pneumococcal_meningitis": 1,
+            "disease=tuberculous_meningitis": 1,
+            "no_reported_external_condition": 368
+          }
+        },
+        "test": {
+          "n": 384,
+          "sha256": "6c974a0a10757484e10ba06609c88255c14130b8cade47d6a31b1fc341005323",
+          "n_parents": 370,
+          "label_counts": {
+            "0": 100,
+            "1": 284
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 1,
+            "co_treatment=cyclosporine": 1,
+            "disease=bacterial_meningitis": 2,
+            "disease=brain_tumor_or_glioma": 1,
+            "disease=cerebral_ischemia": 1,
+            "disease=meningitis_unspecified": 8,
+            "disease=pneumococcal_meningitis": 1,
+            "disease=tuberculous_meningitis": 1,
+            "no_reported_external_condition": 368
+          }
+        }
+      },
+      "pairwise_identity_overlap": {
+        "train__valid": 0,
+        "train__test": 0,
+        "valid__test": 0
+      },
+      "pairwise_scaffold_overlap": {
+        "train__valid": 108,
+        "train__test": 122,
+        "valid__test": 39
+      },
+      "conditions_present_in_all_splits": [
+        "barrier_state=disrupted",
+        "co_treatment=cyclosporine",
+        "disease=bacterial_meningitis",
+        "disease=brain_tumor_or_glioma",
+        "disease=cerebral_ischemia",
+        "disease=meningitis_unspecified",
+        "disease=pneumococcal_meningitis",
+        "disease=tuberculous_meningitis",
+        "no_reported_external_condition"
+      ],
+      "missing_conditions_by_split": {
+        "train": [],
+        "valid": [],
+        "test": []
+      }
+    },
+    "bioavailability_ma": {
+      "task": "Bioavailability_Ma",
+      "benchmark": "conditioned_benchmark",
+      "contract": "conditioned_benchmark.v1",
+      "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+      "source_scaffold_root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+      "root": "data/conditioned_benchmark/Bioavailability_Ma/random",
+      "source_union_sha256": "b74d3c3e430c40a234f4987f5aee72e94cb5b0999136a6d00d680e83aac2c54b",
+      "random_union_sha256": "b74d3c3e430c40a234f4987f5aee72e94cb5b0999136a6d00d680e83aac2c54b",
+      "same_molecule_condition_rows_and_labels": true,
+      "optimizer": {
+        "method": "deterministic_lexicographic_parent_group_milp",
+        "seed": 20260830,
+        "target_fraction": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "target_rows": {
+          "train": 1991,
+          "valid": 249,
+          "test": 249
+        },
+        "n_parent_groups": 2134,
+        "n_conditions": 8,
+        "record_support_objective_enabled": true,
+        "record_support_field": "source_record_count",
+        "multi_vote_definition": "source_record_count >= 2",
+        "objective_order": [
+          "minimum heldout singleton-vote rows",
+          "minimum valid/test singleton imbalance",
+          "minimum valid/test positive-label deviation",
+          "minimum valid/test condition-row deviation",
+          "seeded stable tie-break"
+        ],
+        "minimum_singletons_in_heldout": 0,
+        "minimum_singleton_imbalance": 0,
+        "selected_valid_singletons": 0,
+        "selected_test_singletons": 0,
+        "minimum_positive_label_l1_deviation": 0,
+        "minimum_condition_row_l1_deviation": 0,
+        "desired_positive_count_per_eval_split": 182,
+        "condition_coverage_constraint": "every condition has at least one parent in every split"
+      },
+      "splits": {
+        "train": {
+          "n": 1991,
+          "sha256": "2a6d52d2cb0df59245fa446c3560b82222fe59df4c28313b8dffad523802b589",
+          "n_parents": 1712,
+          "label_counts": {
+            "0": 535,
+            "1": 1456
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 11,
+            "disease=cirrhosis": 30,
+            "disease=cystic_fibrosis": 12,
+            "no_reported_external_condition": 1674,
+            "prandial_state=fasted": 172,
+            "prandial_state=fed_high_fat": 7,
+            "prandial_state=fed_unspecified": 62,
+            "release_profile=modified_release": 23
+          }
+        },
+        "valid": {
+          "n": 249,
+          "sha256": "57b393df547948775b6e207ef3905d0eab8bb9d2800202c76541e0c6d9e90619",
+          "n_parents": 211,
+          "label_counts": {
+            "0": 67,
+            "1": 182
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 2,
+            "disease=cirrhosis": 4,
+            "disease=cystic_fibrosis": 1,
+            "no_reported_external_condition": 209,
+            "prandial_state=fasted": 21,
+            "prandial_state=fed_high_fat": 1,
+            "prandial_state=fed_unspecified": 8,
+            "release_profile=modified_release": 3
+          }
+        },
+        "test": {
+          "n": 249,
+          "sha256": "73d2417fdb6549aa66573124b3d142fe6daaa41ab2757b9718decc070886aee8",
+          "n_parents": 211,
+          "label_counts": {
+            "0": 67,
+            "1": 182
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 2,
+            "disease=cirrhosis": 4,
+            "disease=cystic_fibrosis": 1,
+            "no_reported_external_condition": 209,
+            "prandial_state=fasted": 21,
+            "prandial_state=fed_high_fat": 1,
+            "prandial_state=fed_unspecified": 8,
+            "release_profile=modified_release": 3
+          }
+        }
+      },
+      "pairwise_identity_overlap": {
+        "train__valid": 0,
+        "train__test": 0,
+        "valid__test": 0
+      },
+      "pairwise_scaffold_overlap": {
+        "train__valid": 63,
+        "train__test": 61,
+        "valid__test": 17
+      },
+      "conditions_present_in_all_splits": [
+        "co_treatment=rifampin",
+        "disease=cirrhosis",
+        "disease=cystic_fibrosis",
+        "no_reported_external_condition",
+        "prandial_state=fasted",
+        "prandial_state=fed_high_fat",
+        "prandial_state=fed_unspecified",
+        "release_profile=modified_release"
+      ],
+      "missing_conditions_by_split": {
+        "train": [],
+        "valid": [],
+        "test": []
+      }
+    },
+    "clintox": {
+      "task": "ClinTox",
+      "benchmark": "conditioned_benchmark",
+      "contract": "conditioned_benchmark.v1",
+      "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+      "source_scaffold_root": "data/conditioned_benchmark/ClinTox/scaffold",
+      "root": "data/conditioned_benchmark/ClinTox/random",
+      "source_union_sha256": "c1e594ab9ba505db7c531a03aeac49cb94ae3fb43c60e40f5018d6df127bced7",
+      "random_union_sha256": "c1e594ab9ba505db7c531a03aeac49cb94ae3fb43c60e40f5018d6df127bced7",
+      "same_molecule_condition_rows_and_labels": true,
+      "optimizer": {
+        "method": "deterministic_lexicographic_parent_group_milp",
+        "seed": 20260830,
+        "target_fraction": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "target_rows": {
+          "train": 1142,
+          "valid": 143,
+          "test": 143
+        },
+        "n_parent_groups": 1428,
+        "n_conditions": 1,
+        "record_support_objective_enabled": false,
+        "record_support_field": null,
+        "multi_vote_definition": null,
+        "objective_order": [
+          "minimum valid/test positive-label deviation",
+          "minimum valid/test condition-row deviation",
+          "seeded stable tie-break"
+        ],
+        "minimum_singletons_in_heldout": null,
+        "minimum_singleton_imbalance": null,
+        "selected_valid_singletons": null,
+        "selected_test_singletons": null,
+        "minimum_positive_label_l1_deviation": 0,
+        "minimum_condition_row_l1_deviation": 0,
+        "desired_positive_count_per_eval_split": 10,
+        "condition_coverage_constraint": "every condition has at least one parent in every split"
+      },
+      "splits": {
+        "train": {
+          "n": 1142,
+          "sha256": "10b1f711a310862b844b58f070568aa63783676f8cab80e51b6568647bfbaf75",
+          "n_parents": 1142,
+          "label_counts": {
+            "0": 1058,
+            "1": 84
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 1142
+          }
+        },
+        "valid": {
+          "n": 143,
+          "sha256": "6138f9d80f8661d33e421d0818792d3c41f43e30a07dffd5b46cc3acd491c4fd",
+          "n_parents": 143,
+          "label_counts": {
+            "0": 133,
+            "1": 10
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 143
+          }
+        },
+        "test": {
+          "n": 143,
+          "sha256": "576b59bd4850e2c6ddbf2ab3fd49c5ac6b4867b981d073c884f19750abc92786",
+          "n_parents": 143,
+          "label_counts": {
+            "0": 133,
+            "1": 10
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 143
+          }
+        }
+      },
+      "pairwise_identity_overlap": {
+        "train__valid": 0,
+        "train__test": 0,
+        "valid__test": 0
+      },
+      "pairwise_scaffold_overlap": {
+        "train__valid": 45,
+        "train__test": 37,
+        "valid__test": 9
+      },
+      "conditions_present_in_all_splits": [
+        "no_reported_external_condition"
+      ],
+      "missing_conditions_by_split": {
+        "train": [],
+        "valid": [],
+        "test": []
+      }
+    },
+    "skin_reaction": {
+      "task": "Skin_Reaction",
+      "benchmark": "conditioned_benchmark",
+      "contract": "conditioned_benchmark.v1",
+      "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+      "source_scaffold_root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+      "root": "data/conditioned_benchmark/Skin_Reaction/random",
+      "source_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
+      "random_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
+      "same_molecule_condition_rows_and_labels": true,
+      "optimizer": {
+        "method": "deterministic_lexicographic_parent_group_milp",
+        "seed": 20260830,
+        "target_fraction": {
+          "train": 0.8,
+          "valid": 0.1,
+          "test": 0.1
+        },
+        "target_rows": {
+          "train": 1993,
+          "valid": 249,
+          "test": 249
+        },
+        "n_parent_groups": 2458,
+        "n_conditions": 2,
+        "record_support_objective_enabled": true,
+        "record_support_field": "source_record_count",
+        "multi_vote_definition": "source_record_count >= 2",
+        "objective_order": [
+          "minimum heldout singleton-vote rows",
+          "minimum valid/test singleton imbalance",
+          "minimum valid/test positive-label deviation",
+          "minimum valid/test condition-row deviation",
+          "seeded stable tie-break"
+        ],
+        "minimum_singletons_in_heldout": 0,
+        "minimum_singleton_imbalance": 0,
+        "selected_valid_singletons": 0,
+        "selected_test_singletons": 0,
+        "minimum_positive_label_l1_deviation": 0,
+        "minimum_condition_row_l1_deviation": 2,
+        "desired_positive_count_per_eval_split": 174,
+        "condition_coverage_constraint": "every condition has at least one parent in every split"
+      },
+      "splits": {
+        "train": {
+          "n": 1993,
+          "sha256": "172c37546de2558716fd33ddc094663c9940fce4f6588b13222d3c9daac6bbb1",
+          "n_parents": 1968,
+          "label_counts": {
+            "0": 603,
+            "1": 1390
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 27,
+            "no_reported_external_condition": 1966
+          }
+        },
+        "valid": {
+          "n": 249,
+          "sha256": "269d1934fe70e27529192855284b23b56bb0d5ea2f5a44637b9bad0249271a5d",
+          "n_parents": 245,
+          "label_counts": {
+            "0": 75,
+            "1": 174
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 4,
+            "no_reported_external_condition": 245
+          }
+        },
+        "test": {
+          "n": 249,
+          "sha256": "53042fe159fc1cbc5c40fa133291cc8ee500b63cd6bc0ab8be854bc9f9851104",
+          "n_parents": 245,
+          "label_counts": {
+            "0": 75,
+            "1": 174
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 4,
+            "no_reported_external_condition": 245
+          }
+        }
+      },
+      "pairwise_identity_overlap": {
+        "train__valid": 0,
+        "train__test": 0,
+        "valid__test": 0
+      },
+      "pairwise_scaffold_overlap": {
+        "train__valid": 58,
+        "train__test": 52,
+        "valid__test": 22
+      },
+      "conditions_present_in_all_splits": [
+        "disease=atopic_dermatitis",
+        "no_reported_external_condition"
+      ],
+      "missing_conditions_by_split": {
+        "train": [],
+        "valid": [],
+        "test": []
+      }
+    }
+  }
+}

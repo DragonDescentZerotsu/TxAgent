@@ -1,8 +1,11 @@
 # 冻结的全量实验结果
 
-主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-28。
+主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-31。
 
-当前四任务 gold 只有一个入口：`data/conditioned_benchmark/<Task>/scaffold/`。任务级 gold-vN、
+当前四任务 benchmark 根为 `data/conditioned_benchmark/<Task>/{scaffold,random}/`。本页已有正式数值仍对应
+`scaffold`；random split 已于 2026-08-31 按 held-out vote-support 优先策略重建，旧 random agent/baseline
+结果因 cohort hash 改变而作废，尚未写入本页。旧 random heldout-filtered indices 的 heldout hash 也已失配；
+重跑前必须基于当前 random valid+test union 重建，runner 会拒绝旧 index。任务级 gold-vN、
 `record_supported_vN`、`selected_vN` 和 ClinTox source-build 名称只作为 migration provenance，不再是并列
 评估数据。精确旧路径、split hashes 和复用判据见 `data/conditioned_benchmark/migration_receipt.json`；当前
 schema 和 cohort sizes 见 `../common/starling/CONDITIONED_BENCHMARK.md`。

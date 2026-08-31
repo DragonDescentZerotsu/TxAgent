@@ -20,12 +20,12 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Conditioned Benchmark（2026-08-28）
+## 当前 Conditioned Benchmark（2026-08-31）
 
-四个任务只有一个活跃评估入口：
+四个任务只有一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
 
 ```text
-data/conditioned_benchmark/<Task>/scaffold/
+data/conditioned_benchmark/<Task>/{scaffold,random}/
 ```
 
 不要在 runner、baseline 或结果图中直接引用历史的 molecule-only、`selected_vN`、BBB gold-vN 或
@@ -38,16 +38,22 @@ tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
 tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 ```
 
-| task | train / valid / test | 当前 target |
-|---|---:|---|
-| BBB_Martins | 3,053 / 397 / 393 | experimentally meaningful systemic CNS access |
-| Bioavailability_Ma | 1,958 / 262 / 269 | oral bioavailability under the reported condition |
-| ClinTox | 1,144 / 142 / 142 | clinical-trial toxicity failure versus approved comparator |
-| Skin_Reaction | 1,997 / 246 / 248 | skin sensitization/contact allergy |
+| task | scaffold train / valid / test | random train / valid / test | 当前 target |
+|---|---:|---:|---|
+| BBB_Martins | 3,053 / 397 / 393 | 3,075 / 384 / 384 | experimentally meaningful systemic CNS access |
+| Bioavailability_Ma | 1,958 / 262 / 269 | 1,991 / 249 / 249 | oral bioavailability under the reported condition |
+| ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 | clinical-trial toxicity failure versus approved comparator |
+| Skin_Reaction | 1,997 / 246 / 248 | 1,993 / 249 / 249 | skin sensitization/contact allergy |
 
-所有 split 行使用统一的 molecule-condition schema。没有外部 condition 的行使用
+random split 使用相同 molecule-condition rows/labels，按 parent 整组做确定性、quality-stratified 80/10/10
+分配；同一 parent 不会跨 split，每个 condition 在三路都出现，但 scaffold 允许跨 split。BBB、
+Bioavailability 和 Skin 先最小化 valid+test 的 singleton-vote rows，再平衡 valid/test singleton，最后才平衡
+label 和 condition；ClinTox 的 source count 不是 assay vote，不应用该质量目标。生成和审计入口为
+`tools/chembl_tool/common/starling/build_conditioned_random_split.py`。所有 split 行使用统一的
+molecule-condition schema。没有外部 condition 的行使用
 `no_reported_external_condition`，prompt renderer 对它不输出 condition 句子；ClinTox 因没有合格的外部
-condition，全部采用该值。四任务 train/valid/test 的 parent identity 和 Bemis-Murcko scaffold overlap 均为 0。
+condition，全部采用该值。两种 split 的 parent identity overlap 均为 0；只有 scaffold split 另外保证
+Bemis-Murcko scaffold overlap 为 0。
 
 BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；ClinTox
 只补 condition schema，ordered `(drug, Y)` 和 split 不变。已有 prediction 只能在 manifest input hash 与
@@ -361,7 +367,7 @@ OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `
 
 ### 当前 Conditioned Benchmark 正式运行默认
 
-四任务统一读取 `data/conditioned_benchmark/<Task>/scaffold/`，并冻结为：
+当前正式 scaffold matrix 读取 `data/conditioned_benchmark/<Task>/scaffold/`，并冻结为：
 
 ```text
 endpoint: http://127.0.0.1:50000/v1
@@ -822,7 +828,7 @@ train.jsonl / valid.jsonl / test.jsonl
 ```
 
 下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 baseline 统一读取
-`data/conditioned_benchmark/<Task>/scaffold/`，并按 condition-aware cohort 运行 MiniMol head、Morgan KNN
+`data/conditioned_benchmark/<Task>/scaffold/`，并按当前 scaffold condition-aware cohort 运行 MiniMol head、Morgan KNN
 和 MiniMol embedding KNN。历史 molecule-only baseline 不得与当前 cohort 混表。该诊断不读取或调参于
 test；正式 test 前仍须冻结所有设置。
 

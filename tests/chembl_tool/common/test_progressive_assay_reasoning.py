@@ -105,6 +105,84 @@ def test_deepseek_provider_aliases_share_reuse_identity():
     )
 
 
+def test_identity_policy_is_split_specific():
+    assert runner._neighbor_identity_policy("scaffold") == "scaffold_disjoint"
+    assert runner._neighbor_identity_policy("random") == "parent_disjoint"
+    with pytest.raises(ValueError, match="unsupported split scheme"):
+        runner._neighbor_identity_policy("unknown")
+
+
+def test_progressive_reuse_signature_ignores_nonvisible_audits():
+    prepared = {
+        field: {"field": field}
+        for field in runner._PREPARED_MODEL_INPUT_FIELDS
+    }
+    prepared["retrieval_audit"] = {"n_candidates": 20}
+    prepared["selection_audit"] = {"n_selected": 3}
+    changed_audits = {
+        **prepared,
+        "retrieval_audit": {"n_candidates": 100},
+        "selection_audit": {"n_selected": 4},
+    }
+    assert runner._prepared_model_input(prepared) == runner._prepared_model_input(
+        changed_audits
+    )
+    changed_prompt = {**prepared, "new_card_ids": ["different-card"]}
+    assert runner._prepared_model_input(prepared) != runner._prepared_model_input(
+        changed_prompt
+    )
+
+
+def test_progressive_reuse_rejects_changed_generation_contract(tmp_path):
+    shared = {
+        field: {"field": field}
+        for field in (
+            "experiment",
+            "split_scheme",
+            "visibility_mode",
+            "reference_pool",
+            "neighbor_identity_policy",
+            "min_similarity",
+            "candidate_generation",
+            "selection",
+            "prompt_profile",
+            "condition_policy",
+            "temperature",
+            "thinking",
+            "reasoning_effort",
+            "tool_prefetch_complete",
+        )
+    }
+    task_inputs = {
+        "input_sha256": "input",
+        "family_manifest_sha256": "family",
+        "single_source_manifest_sha256": "single",
+    }
+    source = {
+        **shared,
+        "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+        "max_tokens": 20_480,
+        "tasks": ["bioavailability_ma"],
+        "inputs": {"bioavailability_ma": task_inputs},
+    }
+    (tmp_path / "experiment_manifest.json").write_text(json.dumps(source))
+    current = {
+        **source,
+        "model": "deepseek/deepseek-v4-flash",
+        "max_tokens": 4096,
+    }
+    with pytest.raises(ValueError, match="different max_tokens"):
+        runner._validate_progressive_reuse_source(
+            source_root=tmp_path,
+            current_manifest=current,
+        )
+
+
+def test_random_split_requires_explicit_output_root():
+    with pytest.raises(SystemExit):
+        runner.main(["--split-scheme", "random", "--prepare-only"])
+
+
 def test_resume_allows_equivalent_model_provider_fallback():
     shared = {field: field for field in runner._RESUME_INVARIANT_FIELDS}
     previous = {

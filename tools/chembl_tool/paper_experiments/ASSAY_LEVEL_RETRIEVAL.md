@@ -1,6 +1,6 @@
 # Starling assay-level retrieval
 
-更新时间：2026-08-28。
+更新时间：2026-08-31。
 
 本文档只维护当前合同、最终 valid 结果、可复现入口和历史边界。逐次 smoke、失败重试、endpoint
 切换和被替代的 trace 不在这里重复记录；它们已集中归档，避免主输出目录继续膨胀。
@@ -12,6 +12,9 @@
 ```text
 data/conditioned_benchmark/<Task>/scaffold/
 ```
+
+并列 random split 位于 `data/conditioned_benchmark/<Task>/random/`，但本页现有结果仍全部是 scaffold-valid。
+random agent run 必须先按 random valid+test parents 重建 heldout-filtered index，不能复用本页的 scaffold-heldout index。
 
 历史的 molecule-only、BBB gold-vN 和 selected-vN 名称只出现在 migration receipt 中，不再作为 runner
 输入或结果标签。ClinTox 没有合格 external-condition taxonomy，因此全部使用 null condition；它仍是统一
@@ -74,8 +77,9 @@ endpoint、measurement、species、conditions、support text 和 provenance 保�
 
 Progressive runner 可用一个共享的应用层 provider pool 混合本机、PARCC tunnel 与 OpenRouter。这里不用
 HAProxy 直接代理异构后端，因为三端具有不同 model alias、鉴权和 reasoning 参数。公共调度器位于
-`tools/chembl_tool/common/openai_provider_pool.py`，当前无密钥配置位于
-`provider_pools/deepseek_v4_flash_mixture.json`。
+`tools/chembl_tool/common/openai_provider_pool.py`。包含本机 endpoint 的完整配置位于
+`provider_pools/deepseek_v4_flash_mixture.json`；本机不可用时使用只包含 PARCC 与 OpenRouter 的
+`provider_pools/deepseek_v4_flash_parcc_openrouter.json`。两份配置都只记录密钥环境变量名。
 
 调度是 work-conserving least-normalized-load：每端有独立 `max_inflight`，空闲 slot 按近期 latency EWMA
 动态接收下一条请求。连续 transport/429/5xx failure 会暂时熔断该端；一次调用最多 fail over 到一个尚未尝试
@@ -228,6 +232,7 @@ progressive runner:
 multi-provider scheduler/config:
   tools/chembl_tool/common/openai_provider_pool.py
   tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json
+  tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_parcc_openrouter.json
 
 shared retrieval/state:
   tools/chembl_tool/common/assay_retrieval.py
@@ -285,6 +290,10 @@ Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避�
     tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json \
   --parallelism 256 --transport-max-retries 0
 ```
+
+Random split 必须使用新 output root、`--split-scheme random` 和按当前 random valid+test union
+重建的 heldout-filtered index。若本机 endpoint 不可用，可把上例配置替换为
+`deepseek_v4_flash_parcc_openrouter.json`；旧 random cohort 的 checkpoint 不能通过 hash gate。
 
 重画当前完整图：
 

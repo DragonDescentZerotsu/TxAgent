@@ -361,10 +361,17 @@ def _append_conditioned_baselines(
     for method, plot_label, relative_path in CONDITIONED_BASELINES:
         metrics_path = baseline_root / baseline_task / relative_path
         if method == "minimol_head" and not metrics_path.is_file():
-            metrics_path = (
-                baseline_root
-                / baseline_task
-                / "minimol_head/final/metrics.json"
+            candidates = (
+                Path("minimol_train/final/metrics.json"),
+                Path("minimol_head/final/metrics.json"),
+            )
+            metrics_path = next(
+                (
+                    baseline_root / baseline_task / candidate
+                    for candidate in candidates
+                    if (baseline_root / baseline_task / candidate).is_file()
+                ),
+                metrics_path,
             )
         metrics = _load_json(metrics_path)
         actual_n = _metric_n(metrics)
@@ -431,10 +438,12 @@ def collect_conditioned_progressive_resource_data(
 
     rows: list[dict[str, Any]] = []
     task_contracts: dict[str, Any] = {}
+    split_schemes: set[str] = set()
     manifests: list[dict[str, Any]] = []
     for task, task_root in roots_by_task.items():
         manifest = _load_json(task_root / "experiment_manifest.json")
         manifests.append(manifest)
+        split_schemes.add(str(manifest.get("split_scheme") or "scaffold"))
         if manifest.get("experiment") not in {
             "conditioned_assay_progressive_visible.v6",
             "conditioned_assay_progressive_visible.v7",
@@ -551,8 +560,11 @@ def collect_conditioned_progressive_resource_data(
             "selection": manifest["selection"],
             "agent_model": manifest["model"],
             "n": expected_n,
+            "split_scheme": str(manifest.get("split_scheme") or "scaffold"),
         }
 
+    if len(split_schemes) != 1:
+        raise ValueError(f"Mixed progressive split schemes: {sorted(split_schemes)}")
     first_manifest = manifests[0]
 
     return rows, {
@@ -564,6 +576,7 @@ def collect_conditioned_progressive_resource_data(
             "neighbor_identity_policy": first_manifest["neighbor_identity_policy"],
             "selection": first_manifest["selection"],
             "agent_model": first_manifest["model"],
+            "split_scheme": next(iter(split_schemes)),
             "reasoning_mode": {
                 "reasoning_effort": first_manifest["reasoning_effort"],
                 "thinking": first_manifest["thinking"],
@@ -599,8 +612,10 @@ def collect_conditioned_progressive_agent_baseline_data(
     contracts: dict[str, Any] = {}
     baseline_omissions: list[dict[str, Any]] = []
     effective_baseline_roots: dict[str, str] = {}
+    split_schemes: set[str] = set()
     for task, progressive_root in progressive_roots_by_task.items():
         manifest = _load_json(progressive_root / "experiment_manifest.json")
+        split_schemes.add(str(manifest.get("split_scheme") or "scaffold"))
         if manifest.get("experiment") not in {
             "conditioned_assay_progressive_visible.v6",
             "conditioned_assay_progressive_visible.v7",
@@ -700,11 +715,15 @@ def collect_conditioned_progressive_agent_baseline_data(
             "neighbor_identity_policy": manifest["neighbor_identity_policy"],
             "selection": manifest["selection"],
             "n": expected_n,
+            "split_scheme": str(manifest.get("split_scheme") or "scaffold"),
         }
 
+    if len(split_schemes) != 1:
+        raise ValueError(f"Mixed progressive split schemes: {sorted(split_schemes)}")
     return rows, {
         "comparison_contract": {
             "tasks": list(tasks),
+            "split_scheme": next(iter(split_schemes)),
             "task_contracts": contracts,
             "none_lineage": str(none_root),
             "baseline_lineage": str(baseline_root),
@@ -801,6 +820,7 @@ def plot_conditioned_progressive_overview(
     output_svg: Path,
     output_png: Path,
     tasks: tuple[str, ...] = ("bbb_martins", "bioavailability_ma", "skin_reaction"),
+    split_scheme: str = "scaffold",
 ) -> None:
     """Plot performance, baselines, retrieval volume, and token use together."""
     plt.rcParams.update(
@@ -1047,7 +1067,7 @@ def plot_conditioned_progressive_overview(
     fig.text(
         0.055,
         0.958,
-        "Scaffold validation · visible append-only DeepSeek-V4-Flash updates · task-specific source-purity contracts · latest complete three-task runs",
+        f"{split_scheme.title()} validation · visible append-only DeepSeek-V4-Flash updates · task-specific source-purity contracts · latest complete three-task runs",
         fontsize=10,
         color="#555555",
     )
@@ -1104,6 +1124,7 @@ def plot_conditioned_progressive_resources(
     rows: list[dict[str, Any]],
     output_svg: Path,
     output_png: Path,
+    split_scheme: str = "scaffold",
 ) -> None:
     """Plot progressive performance and cumulative context-resource use."""
     plt.rcParams.update(
@@ -1227,7 +1248,7 @@ def plot_conditioned_progressive_resources(
     fig.text(
         0.06,
         0.925,
-        "Scaffold validation · visible append-only updates · L1 direct evidence followed by task-specific indirect families",
+        f"{split_scheme.title()} validation · visible append-only updates · L1 direct evidence followed by task-specific indirect families",
         fontsize=9.5,
         color="#555555",
     )
@@ -1837,6 +1858,9 @@ def main(argv: list[str] | None = None) -> int:
             output_svg=figure_dir / f"{output_stem}.svg",
             output_png=figure_dir / f"{output_stem}.png",
             tasks=tuple(progressive_roots),
+            split_scheme=str(
+                summary["comparison_contract"]["performance"]["split_scheme"]
+            ),
         )
         print(
             json.dumps(
@@ -1873,6 +1897,7 @@ def main(argv: list[str] | None = None) -> int:
             rows=rows,
             output_svg=figure_dir / f"{output_stem}.svg",
             output_png=figure_dir / f"{output_stem}.png",
+            split_scheme=str(summary["comparison_contract"]["split_scheme"]),
         )
         print(
             json.dumps(

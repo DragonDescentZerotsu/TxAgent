@@ -9,6 +9,22 @@
         "train": 3053,
         "valid": 397,
         "test": 393
+      },
+      "roots": {
+        "scaffold": "data/conditioned_benchmark/BBB_Martins/scaffold",
+        "random": "data/conditioned_benchmark/BBB_Martins/random"
+      },
+      "split_counts_by_scheme": {
+        "scaffold": {
+          "train": 3053,
+          "valid": 397,
+          "test": 393
+        },
+        "random": {
+          "train": 3075,
+          "valid": 384,
+          "test": 384
+        }
       }
     },
     "bioavailability_ma": {
@@ -18,6 +34,22 @@
         "train": 1958,
         "valid": 262,
         "test": 269
+      },
+      "roots": {
+        "scaffold": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+        "random": "data/conditioned_benchmark/Bioavailability_Ma/random"
+      },
+      "split_counts_by_scheme": {
+        "scaffold": {
+          "train": 1958,
+          "valid": 262,
+          "test": 269
+        },
+        "random": {
+          "train": 1991,
+          "valid": 249,
+          "test": 249
+        }
       }
     },
     "clintox": {
@@ -27,6 +59,22 @@
         "train": 1144,
         "valid": 142,
         "test": 142
+      },
+      "roots": {
+        "scaffold": "data/conditioned_benchmark/ClinTox/scaffold",
+        "random": "data/conditioned_benchmark/ClinTox/random"
+      },
+      "split_counts_by_scheme": {
+        "scaffold": {
+          "train": 1144,
+          "valid": 142,
+          "test": 142
+        },
+        "random": {
+          "train": 1142,
+          "valid": 143,
+          "test": 143
+        }
       }
     },
     "skin_reaction": {
@@ -36,7 +84,40 @@
         "train": 1997,
         "valid": 246,
         "test": 248
+      },
+      "roots": {
+        "scaffold": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+        "random": "data/conditioned_benchmark/Skin_Reaction/random"
+      },
+      "split_counts_by_scheme": {
+        "scaffold": {
+          "train": 1997,
+          "valid": 246,
+          "test": 248
+        },
+        "random": {
+          "train": 1993,
+          "valid": 249,
+          "test": 249
+        }
       }
+    }
+  },
+  "split_schemes": {
+    "scaffold": {
+      "default": true,
+      "contract": "conditioned_benchmark.v1",
+      "parent_disjoint": true,
+      "scaffold_disjoint": true
+    },
+    "random": {
+      "default": false,
+      "contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+      "seed": 20260830,
+      "parent_disjoint": true,
+      "scaffold_disjoint": false,
+      "condition_coverage": "all conditions in train, valid, and test",
+      "record_support_priority": "lexicographically minimize singleton-vote rows in valid+test for BBB, Bioavailability, and Skin; not applicable to ClinTox"
     }
   }
 }

@@ -52,9 +52,10 @@ TRACE_RETENTION.md
 `analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
 `VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
 
-## 当前 scaffold benchmark 合同（2026-08-28）
+## 当前 benchmark 合同（2026-08-31）
 
-所有 current experiments 只读取 `data/conditioned_benchmark/<Task>/scaffold/`。BBB/Bioavailability/
+当前已完成并发布的 experiments 读取 `data/conditioned_benchmark/<Task>/scaffold/`。并列的
+`data/conditioned_benchmark/<Task>/random/` 已冻结但尚未运行完整 matrix；BBB/Bioavailability/
 ClinTox/Skin train/valid/test 分别为 3,053/397/393、1,958/262/269、1,144/142/142、1,997/246/248。
 四任务 parent identity 和 scaffold pairwise overlap 都是 0。旧 molecule-only、gold-vN、selected-vN 和
 ClinTox source-build paths 只作 migration provenance，不能作为新的 runner default。公共路径必须从

@@ -949,6 +949,15 @@ def _parse_args(config: BatchConfig, argv: list[str] | None) -> argparse.Namespa
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tool-rounds", type=int, default=10)
     parser.add_argument(
+        "--request-extra-body-json",
+        default="",
+        help=(
+            "Optional JSON object merged into the provider request body. "
+            "Use this only for provider-specific transport settings such as "
+            "OpenRouter reasoning enablement."
+        ),
+    )
+    parser.add_argument(
         "--reasoning-effort",
         default="high",
         help="OpenAI-compatible reasoning_effort value. Use an empty string to omit this parameter.",

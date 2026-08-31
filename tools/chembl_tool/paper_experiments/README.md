@@ -37,11 +37,15 @@
   versioned output；`train_ratio_prior_analysis.py` 独立完成 paired statistics、trigger audit 和 copied-artifact parity。
 ## 当前 Conditioned Benchmark
 
-BBB、Bioavailability、Skin 和 ClinTox 只有一个活跃评估根：
+BBB、Bioavailability、Skin 和 ClinTox 只有一个活跃 benchmark 根，包含两种冻结 split：
 
 ```text
-data/conditioned_benchmark/<Task>/scaffold/
+data/conditioned_benchmark/<Task>/{scaffold,random}/
 ```
+
+当前已发布 agent/baseline 数值仍对应 `scaffold`；`random` 使用相同 rows/labels、parent-grouped
+quality-stratified 80/10/10 和三路 condition coverage。2026-08-31 之前基于旧 random cohort 的结果不得复用；
+必须匹配当前 split hash 后才能进入结果表。
 
 任务级 molecule-only、gold-vN、selected-vN 和 ClinTox source-build 名称只作为 migration provenance，不是
 并列 paper datasets。四任务统一 schema、split sizes、scientific target 和旧路径 hash audit 见

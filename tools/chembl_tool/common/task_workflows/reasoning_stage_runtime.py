@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass, field
 import importlib
 import json
@@ -252,6 +253,13 @@ def collect_stage_result(state: StageState) -> dict[str, Any]:
     return result
 
 
+def _request_extra_body(args: argparse.Namespace) -> dict[str, Any]:
+    value = json.loads(args.request_extra_body_json) if args.request_extra_body_json else {}
+    if not isinstance(value, dict):
+        raise ValueError("--request-extra-body-json must decode to a JSON object")
+    return value
+
+
 def _initialize_run_manifest(
     prepared: PreparedBatch,
     item: BatchItem,
@@ -304,6 +312,7 @@ def _initialize_run_manifest(
         "base_url": args.base_url,
         "tool_service_url": args.tool_service_url,
         "reasoning_effort": args.reasoning_effort,
+        "request_extra_body": _request_extra_body(args),
         "temperature": args.temperature,
         "thinking": {"type": "enabled"} if args.enable_thinking else {"type": "disabled"},
         "group_tools_enabled": not args.disable_group_tools,
@@ -648,6 +657,7 @@ def _make_client(state: StageState) -> OpenAICompatibleClient:
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
+        request_extra_body=_request_extra_body(args),
     )
 
 

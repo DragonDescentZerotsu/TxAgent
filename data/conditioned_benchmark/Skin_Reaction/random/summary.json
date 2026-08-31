@@ -1,0 +1,105 @@
+{
+  "task": "Skin_Reaction",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "source_scaffold_root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+  "root": "data/conditioned_benchmark/Skin_Reaction/random",
+  "source_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
+  "random_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
+  "same_molecule_condition_rows_and_labels": true,
+  "optimizer": {
+    "method": "deterministic_lexicographic_parent_group_milp",
+    "seed": 20260830,
+    "target_fraction": {
+      "train": 0.8,
+      "valid": 0.1,
+      "test": 0.1
+    },
+    "target_rows": {
+      "train": 1993,
+      "valid": 249,
+      "test": 249
+    },
+    "n_parent_groups": 2458,
+    "n_conditions": 2,
+    "record_support_objective_enabled": true,
+    "record_support_field": "source_record_count",
+    "multi_vote_definition": "source_record_count >= 2",
+    "objective_order": [
+      "minimum heldout singleton-vote rows",
+      "minimum valid/test singleton imbalance",
+      "minimum valid/test positive-label deviation",
+      "minimum valid/test condition-row deviation",
+      "seeded stable tie-break"
+    ],
+    "minimum_singletons_in_heldout": 0,
+    "minimum_singleton_imbalance": 0,
+    "selected_valid_singletons": 0,
+    "selected_test_singletons": 0,
+    "minimum_positive_label_l1_deviation": 0,
+    "minimum_condition_row_l1_deviation": 2,
+    "desired_positive_count_per_eval_split": 174,
+    "condition_coverage_constraint": "every condition has at least one parent in every split"
+  },
+  "splits": {
+    "train": {
+      "n": 1993,
+      "sha256": "172c37546de2558716fd33ddc094663c9940fce4f6588b13222d3c9daac6bbb1",
+      "n_parents": 1968,
+      "label_counts": {
+        "0": 603,
+        "1": 1390
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 27,
+        "no_reported_external_condition": 1966
+      }
+    },
+    "valid": {
+      "n": 249,
+      "sha256": "269d1934fe70e27529192855284b23b56bb0d5ea2f5a44637b9bad0249271a5d",
+      "n_parents": 245,
+      "label_counts": {
+        "0": 75,
+        "1": 174
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 4,
+        "no_reported_external_condition": 245
+      }
+    },
+    "test": {
+      "n": 249,
+      "sha256": "53042fe159fc1cbc5c40fa133291cc8ee500b63cd6bc0ab8be854bc9f9851104",
+      "n_parents": 245,
+      "label_counts": {
+        "0": 75,
+        "1": 174
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 4,
+        "no_reported_external_condition": 245
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 58,
+    "train__test": 52,
+    "valid__test": 22
+  },
+  "conditions_present_in_all_splits": [
+    "disease=atopic_dermatitis",
+    "no_reported_external_condition"
+  ],
+  "missing_conditions_by_split": {
+    "train": [],
+    "valid": [],
+    "test": []
+  }
+}

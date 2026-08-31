@@ -1,0 +1,129 @@
+{
+  "task": "Bioavailability_Ma",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "source_scaffold_root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+  "root": "data/conditioned_benchmark/Bioavailability_Ma/random",
+  "source_union_sha256": "b74d3c3e430c40a234f4987f5aee72e94cb5b0999136a6d00d680e83aac2c54b",
+  "random_union_sha256": "b74d3c3e430c40a234f4987f5aee72e94cb5b0999136a6d00d680e83aac2c54b",
+  "same_molecule_condition_rows_and_labels": true,
+  "optimizer": {
+    "method": "deterministic_lexicographic_parent_group_milp",
+    "seed": 20260830,
+    "target_fraction": {
+      "train": 0.8,
+      "valid": 0.1,
+      "test": 0.1
+    },
+    "target_rows": {
+      "train": 1991,
+      "valid": 249,
+      "test": 249
+    },
+    "n_parent_groups": 2134,
+    "n_conditions": 8,
+    "record_support_objective_enabled": true,
+    "record_support_field": "source_record_count",
+    "multi_vote_definition": "source_record_count >= 2",
+    "objective_order": [
+      "minimum heldout singleton-vote rows",
+      "minimum valid/test singleton imbalance",
+      "minimum valid/test positive-label deviation",
+      "minimum valid/test condition-row deviation",
+      "seeded stable tie-break"
+    ],
+    "minimum_singletons_in_heldout": 0,
+    "minimum_singleton_imbalance": 0,
+    "selected_valid_singletons": 0,
+    "selected_test_singletons": 0,
+    "minimum_positive_label_l1_deviation": 0,
+    "minimum_condition_row_l1_deviation": 0,
+    "desired_positive_count_per_eval_split": 182,
+    "condition_coverage_constraint": "every condition has at least one parent in every split"
+  },
+  "splits": {
+    "train": {
+      "n": 1991,
+      "sha256": "2a6d52d2cb0df59245fa446c3560b82222fe59df4c28313b8dffad523802b589",
+      "n_parents": 1712,
+      "label_counts": {
+        "0": 535,
+        "1": 1456
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 11,
+        "disease=cirrhosis": 30,
+        "disease=cystic_fibrosis": 12,
+        "no_reported_external_condition": 1674,
+        "prandial_state=fasted": 172,
+        "prandial_state=fed_high_fat": 7,
+        "prandial_state=fed_unspecified": 62,
+        "release_profile=modified_release": 23
+      }
+    },
+    "valid": {
+      "n": 249,
+      "sha256": "57b393df547948775b6e207ef3905d0eab8bb9d2800202c76541e0c6d9e90619",
+      "n_parents": 211,
+      "label_counts": {
+        "0": 67,
+        "1": 182
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 2,
+        "disease=cirrhosis": 4,
+        "disease=cystic_fibrosis": 1,
+        "no_reported_external_condition": 209,
+        "prandial_state=fasted": 21,
+        "prandial_state=fed_high_fat": 1,
+        "prandial_state=fed_unspecified": 8,
+        "release_profile=modified_release": 3
+      }
+    },
+    "test": {
+      "n": 249,
+      "sha256": "73d2417fdb6549aa66573124b3d142fe6daaa41ab2757b9718decc070886aee8",
+      "n_parents": 211,
+      "label_counts": {
+        "0": 67,
+        "1": 182
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 2,
+        "disease=cirrhosis": 4,
+        "disease=cystic_fibrosis": 1,
+        "no_reported_external_condition": 209,
+        "prandial_state=fasted": 21,
+        "prandial_state=fed_high_fat": 1,
+        "prandial_state=fed_unspecified": 8,
+        "release_profile=modified_release": 3
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 63,
+    "train__test": 61,
+    "valid__test": 17
+  },
+  "conditions_present_in_all_splits": [
+    "co_treatment=rifampin",
+    "disease=cirrhosis",
+    "disease=cystic_fibrosis",
+    "no_reported_external_condition",
+    "prandial_state=fasted",
+    "prandial_state=fed_high_fat",
+    "prandial_state=fed_unspecified",
+    "release_profile=modified_release"
+  ],
+  "missing_conditions_by_split": {
+    "train": [],
+    "valid": [],
+    "test": []
+  }
+}
