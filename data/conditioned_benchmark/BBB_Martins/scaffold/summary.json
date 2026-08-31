@@ -1,0 +1,90 @@
+{
+  "task": "BBB_Martins",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "target_definition": "experimental meaningful systemic CNS access",
+  "condition_contract": {
+    "null_group": "no_reported_external_condition",
+    "null_group_prompt_behavior": "omit condition sentence",
+    "unit": "molecule-condition"
+  },
+  "splits": {
+    "train": {
+      "n": 3053,
+      "source_sha256": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+      "canonical_sha256": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 794,
+        "1": 2259
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 11,
+        "co_treatment=cyclosporine": 9,
+        "disease=bacterial_meningitis": 7,
+        "disease=brain_tumor_or_glioma": 23,
+        "disease=cerebral_ischemia": 8,
+        "disease=meningitis_unspecified": 36,
+        "disease=pneumococcal_meningitis": 7,
+        "disease=tuberculous_meningitis": 7,
+        "no_reported_external_condition": 2945
+      }
+    },
+    "valid": {
+      "n": 397,
+      "source_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+      "canonical_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 104,
+        "1": 293
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 3,
+        "co_treatment=cyclosporine": 4,
+        "disease=bacterial_meningitis": 3,
+        "disease=brain_tumor_or_glioma": 6,
+        "disease=cerebral_ischemia": 1,
+        "disease=meningitis_unspecified": 13,
+        "disease=pneumococcal_meningitis": 1,
+        "disease=tuberculous_meningitis": 1,
+        "no_reported_external_condition": 365
+      }
+    },
+    "test": {
+      "n": 393,
+      "source_sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+      "canonical_sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 102,
+        "1": 291
+      },
+      "condition_counts": {
+        "barrier_state=disrupted": 3,
+        "co_treatment=cyclosporine": 3,
+        "disease=bacterial_meningitis": 3,
+        "disease=brain_tumor_or_glioma": 8,
+        "disease=cerebral_ischemia": 1,
+        "disease=meningitis_unspecified": 7,
+        "disease=pneumococcal_meningitis": 2,
+        "disease=tuberculous_meningitis": 1,
+        "no_reported_external_condition": 365
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json"
+}

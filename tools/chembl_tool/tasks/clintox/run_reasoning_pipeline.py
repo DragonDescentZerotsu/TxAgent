@@ -64,6 +64,7 @@ from tools.chembl_tool.common.reasoning_validation import (
 )
 from tools.chembl_tool.common.retrieval_replay import load_retrieval_replay
 from tools.chembl_tool.common.retrieval_ablation import load_reusable_group_outputs
+from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
 from tools.chembl_tool.tasks.clintox.chembl_exact_context import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
@@ -81,9 +82,7 @@ from tools.chembl_tool.tasks.clintox.prompt_profiles import (
 from tools.chembl_tool.tasks.clintox.retrieve_neighbors import load_index
 
 
-DEFAULT_INPUT = (
-    "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/test.jsonl"
-)
+DEFAULT_INPUT = str(split_path("clintox", "test"))
 DEFAULT_INDEX = (
     "outputs/paper/molecular_evidence_agent_starling_scaffold_"
     "clinical_trial_failure_v1/evidence/clintox_starling_full/"

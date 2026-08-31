@@ -1,0 +1,87 @@
+{
+  "task": "Bioavailability_Ma",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "target_definition": "oral bioavailability under the reported condition",
+  "condition_contract": {
+    "null_group": "no_reported_external_condition",
+    "null_group_prompt_behavior": "omit condition sentence",
+    "unit": "molecule-condition"
+  },
+  "splits": {
+    "train": {
+      "n": 1958,
+      "source_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+      "canonical_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 524,
+        "1": 1434
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 8,
+        "disease=cirrhosis": 30,
+        "disease=cystic_fibrosis": 9,
+        "no_reported_external_condition": 1674,
+        "prandial_state=fasted": 156,
+        "prandial_state=fed_high_fat": 6,
+        "prandial_state=fed_unspecified": 49,
+        "release_profile=modified_release": 26
+      }
+    },
+    "valid": {
+      "n": 262,
+      "source_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+      "canonical_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 68,
+        "1": 194
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 3,
+        "disease=cirrhosis": 4,
+        "disease=cystic_fibrosis": 1,
+        "no_reported_external_condition": 209,
+        "prandial_state=fasted": 28,
+        "prandial_state=fed_high_fat": 1,
+        "prandial_state=fed_unspecified": 14,
+        "release_profile=modified_release": 2
+      }
+    },
+    "test": {
+      "n": 269,
+      "source_sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+      "canonical_sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 77,
+        "1": 192
+      },
+      "condition_counts": {
+        "co_treatment=rifampin": 4,
+        "disease=cirrhosis": 4,
+        "disease=cystic_fibrosis": 4,
+        "no_reported_external_condition": 209,
+        "prandial_state=fasted": 30,
+        "prandial_state=fed_high_fat": 2,
+        "prandial_state=fed_unspecified": 15,
+        "release_profile=modified_release": 1
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json"
+}

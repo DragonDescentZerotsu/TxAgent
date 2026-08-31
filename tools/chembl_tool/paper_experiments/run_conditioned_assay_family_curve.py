@@ -16,6 +16,7 @@ from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
 from tools.chembl_tool.common.reasoning_payload import (
     EXTERNAL_CONDITION_RENDERER_VERSION,
 )
+from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
 from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
     BatchCommand,
     SCHEDULER_VERSION,
@@ -58,40 +59,28 @@ class TaskSpec:
 TASKS = {
     "bbb_martins": TaskSpec(
         "tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch",
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/"
-            "BBB_Martins/scaffold/valid.jsonl"
-        ),
+        split_path("bbb_martins", "valid"),
         ROOT / "indices/bbb_martins/raw_v3/assay_neighbor_index.pkl",
         ROOT / "family_catalogs/bbb_martins/manifest.json",
         True,
     ),
     "bioavailability_ma": TaskSpec(
         "tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch",
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/"
-            "Bioavailability_Ma/scaffold/valid.jsonl"
-        ),
+        split_path("bioavailability_ma", "valid"),
         ROOT / "indices/bioavailability_ma/raw_v3/assay_neighbor_index.pkl",
         ROOT / "family_catalogs/bioavailability_ma/manifest.json",
         True,
     ),
     "skin_reaction": TaskSpec(
         "tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch",
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/"
-            "Skin_Reaction/scaffold/valid.jsonl"
-        ),
+        split_path("skin_reaction", "valid"),
         ROOT / "indices/skin_reaction/raw_v3/assay_neighbor_index.pkl",
         ROOT / "family_catalogs/skin_reaction/manifest.json",
         True,
     ),
     "clintox": TaskSpec(
         "tools.chembl_tool.tasks.clintox.run_reasoning_batch",
-        Path(
-            "data/processed_clintox_clinical_trial_failure_v1/"
-            "ClinTox/scaffold/valid.jsonl"
-        ),
+        split_path("clintox", "valid"),
         ROOT / "indices/clintox/raw_v3/assay_neighbor_index.pkl",
         ROOT / "family_catalogs/clintox/manifest.json",
         False,
@@ -100,10 +89,7 @@ TASKS = {
 
 BIOAVAILABILITY_NONDIRECT_CONTEXT_SPEC = TaskSpec(
     "tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch",
-    Path(
-        "data/processed_starling_context_conditioned_selected_v1/"
-        "Bioavailability_Ma/scaffold/valid.jsonl"
-    ),
+    split_path("bioavailability_ma", "valid"),
     ROOT
     / "indices/bioavailability_ma/raw_v3_nondirect_context_v1/assay_neighbor_index.pkl",
     ROOT

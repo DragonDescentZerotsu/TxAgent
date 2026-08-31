@@ -13,7 +13,7 @@ direct brain exposure、passive permeability、efflux transport 和 influx trans
 
 目标不是训练 BBB classifier，而是构建可审计的 BBB evidence library：给定 query molecule，先预取相似分子的 BBB / permeability / transporter evidence，再交给 reasoning LLM 判断 analog evidence 是否能 transfer 到 query molecule。
 
-当前评估约定（`experimental_meaningful_cns_access_v3`）：
+当前评估约定（Conditioned Benchmark）：
 
 ```text
 Y=1 -> bbb_prediction=pass
@@ -21,7 +21,7 @@ Y=0 -> bbb_prediction=fail
 final summary 必须在 pass/fail 中二选一；不再允许 uncertain prediction
 ```
 
-当前 Starling-held-out benchmark 由 `experimental_meaningful_cns_access_benchmark_v3.py` 和公共 builder 构建。Gold 是
+当前 gold 是
 系统给药后实验支持的 meaningful/adequate CNS access vs restricted/poor access，不是 passive permeability，
 也不是任意 CNS trace detection：brain tissue、unbound brain、
 brain/systemic ratio、CSF、PET/autoradiography 和明确体内 BBB outcome 可进入；PAMPA/细胞模型、计算预测、
@@ -29,41 +29,25 @@ mechanism-only proxy、非系统给药、altered barrier、间接疗效推断和
 可以为 negative，CSF 保留为 proxy family。parent-level 冲突
 继续按 accepted source records 计算 70% agreement，同 PMID 的多条 record 分别计票，精确 tie 拒绝。
 
-当前 paper-facing frozen build 位于：
+唯一活跃 split 位于：
 
 ```text
-data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/scaffold/
+data/conditioned_benchmark/BBB_Martins/scaffold/
 ```
 
-共有 3,666 个 binary parents；train/valid/test 为 2,934/366/366，valid/test 分别为 345 multi-record + 21
-singleton 和 344 + 22，两者 Y=0/Y=1 均为 97/269，identity/scaffold overlap 均为 0。v3 相对上面保留作
-historical comparison 的 v2 排除 5 条 source-native computational votes；重新聚合后只移除旧 train 的 Digoxin，
-3,666 个 surviving parents 的 label/split 均未改变。旧
-`data/processed_starling_experimental_direct_cns_v1/` 与 `data/processed_starling_record_supported_v2/BBB_Martins`
-及 `data/processed_starling/BBB_Martins/{random,scaffold}` 均为 historical comparison。构建命令、source
-revision、冲突/拒绝 reason、endpoint distribution 和分层 sample audit 统一见
-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`，不得在本 task 内另写 split 脚本。
+train/valid/test 为 3,053/397/393 个 molecule-condition rows，identity/scaffold overlap 均为 0。旧
+molecule-only、gold-vN 和 selected-vN 路径只是当前 cohort 的 source provenance，不是并列 benchmark；
+精确迁移关系见 `data/conditioned_benchmark/migration_receipt.json`。
 
-另有隔离的 gold candidate `experimental_meaningful_cns_access_v4`：它对 v3 中仅缺 binary direction 的
-7,226 条 rows 做完整 ledger，81 条 qualitative-rule candidates 经 source-index 级复核后批准 65 条、拒绝
-16 条，不对 heterogeneous numeric endpoints 使用共享 threshold。重投票得到 3,675 parents 和
-2,945/365/365 split；shared-parent label/split changes 均为 0，identity/scaffold overlap 为 0。该 candidate
-尚未替换上述 paper-facing v3，也不得与下面同名版本号的 `bbb_source_family_purity.v4` retrieval overlay 混淆。
-审查、构建和 migration receipt 只维护在公共 `STARLING_BENCHMARK_PROTOCOL.md`。
-
-Visible progressive v8 的完整 experimental valid 使用 `bbb_source_family_purity.v5` 的 record-level family
-overlay，并读取 `data/processed_starling_context_conditioned_selected_v3/BBB_Martins/scaffold/`。v5 将上面的
-gold-v4 accepted voters 纳入 L1 contract，但不把 gold-v4 自动提升为 paper-facing benchmark；paper-facing
-默认仍是 v3。Matched 397-row valid 已完成全部五层和五个 baselines、零失败；完整结果只维护在
+完整 progressive valid 使用 audited BBB record-level family overlay。Matched 397-row valid 已完成全部五层和
+五个 baselines、零失败；完整结果只维护在
 `paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。五层固定为
 direct measured CNS access、central functional/prediction/generic proxy、passive permeability、efflux、influx；
 明确 efflux signal 优先于 uptake/influx，泛化 `ratio` 或 `transporter_mediated` 不构成 family assignment。
 全量 `581,708` rows 的 ledger 和 0-violation gate 位于 source overlay 的 `purity_audit/`。完整构建、index、
 stable-identity retrieval diff/reuse 和运行入口只维护在 `paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
-source-purity v4 相对 v3 只修正一条人工全文审阅的 external comparative BBB outcome：该 row 同时陈述 query 不能穿 BBB、
-4-amino analog 能进入脑，但没有 influx assay 或可复核 experimental measurement，因此从 influx 移到
-near-direct。v5 保留这一修复：涉及 5-FU/5-FC 的 comparative row 只在 L2 可见，从未参与 gold vote，新的
-L5 payload 不复用该条旧 card。source-purity v4/v3 valid 结果保持冻结。
+涉及 5-FU/5-FC 的 external comparative row 因没有 influx assay 或可复核 experimental measurement，只在
+near-direct 层可见，从未参与 gold vote；influx payload 不得复用该 card。
 
 BBB reasoning contract 通过 `prompt_profiles.py` 独立版本化。旧 artifact 缺少 profile 字段时必须解释为
 `meaningful_cns_access_v1`；跨 profile 的 single/group branch reuse 必须拒绝。2026-08-09 的两个 valid-only

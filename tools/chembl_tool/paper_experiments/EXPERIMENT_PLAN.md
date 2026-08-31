@@ -1,8 +1,9 @@
 # 实验计划
 
 > 状态说明（2026-08-27）：本文冻结的是第一轮 group-level 矩阵，不再充当最新 benchmark/assay-level
-> 运行入口。当前 paper-facing lineage 与结果见 `STARLING_BENCHMARK_RESULTS.md`；conditioned progressive
-> 协议、source-family purity、最终 valid 曲线和重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。
+> 运行入口。当前 benchmark 合同见 `../common/starling/CONDITIONED_BENCHMARK.md`；机器可读结果见
+> `current_conditioned_results.json`；conditioned progressive 协议、source-family purity、最终 valid 曲线和
+> 重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。`STARLING_BENCHMARK_RESULTS.md` 只保留历史总账。
 
 本文档记录当前第一轮冻结矩阵的研究问题和运行协议。面向 ICLR 2027 的后续数据补齐、same-parent
 retrieval 消融、第二模型、重复运行、source-quality annotation、baseline 和投稿时间表见

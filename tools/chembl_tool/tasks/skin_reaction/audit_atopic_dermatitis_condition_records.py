@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.tasks.skin_reaction.manual_condition_audit import (
     ManualConditionAuditConfig,
     audit_condition,
@@ -14,9 +15,7 @@ from tools.chembl_tool.tasks.skin_reaction.manual_condition_audit import (
 
 REVIEW_ROOT = Path("data/starling_data/skin_reaction/context_conditioned_review_v1")
 FROZEN_ROOT = Path("data/processed_starling_record_supported_v2/Skin_Reaction/scaffold")
-CONDITIONED_ROOT = Path(
-    "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold"
-)
+CONDITIONED_ROOT = task_root("skin_reaction")
 
 
 def audit(

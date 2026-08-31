@@ -1,494 +1,240 @@
-# Molecular Evidence Task Extension Conventions
+# 分子证据任务扩展约定
 
-This file applies to all current and future tasks under `tools/chembl_tool/tasks/`. A task directory may add its own data paths, endpoint semantics, and run commands, but it must not violate the shared layering defined here.
+该文件适用于 `tools/chembl_tool/tasks/` 下的所有现有和未来任务。任务目录可以补充自己的数据路径、endpoint 语义和运行命令，但不得破坏这里定义的通用分层。
 
-## Two-layer evidence classification
+## 两层证据分类
 
-Every task must explicitly distinguish the following two layers. They must not both be implemented as LLM reasoning branches.
+每个任务必须明确区分以下两层，不能把二者都实现成 LLM reasoning branch。
 
 ### Mechanism family
 
-A mechanism family is a task-level, source-independent semantic category and the basic unit of retrieval and parallel reasoning. For example, Bioavailability_Ma uses Observed direct F, Observed oral exposure, Fa, Fg, and Fh; BBB uses direct exposure, passive permeability, efflux, and influx.
+Mechanism family 是任务级、数据源无关的语义类别，也是 retrieval 和 parallel reasoning 的基本单位。例如 Bioavailability_Ma 使用 Observed direct F、Observed oral exposure、Fa、Fg、Fh；BBB 使用 direct exposure、passive permeability、efflux、influx。
 
-Requirements:
+要求：
 
-- Define a small, stable set of mechanism families from the task mechanism before integrating ChEMBL, Starling, or another data source.
-- In `full_mechanism`, each mechanism family may correspond to at most one parallel group-reasoning branch.
-- `direct` normally enables only the direct-outcome family. `full_flat` uses the same evidence union as `full_mechanism`, but combines it into one reasoning branch.
-- There is no fixed family count shared across tasks, but the count must remain restrained. It should normally be a small set of interpretable categories rather than dozens of endpoint branches.
-- Family definitions must not depend on whichever assays happen to exist in a current data source, and must not contain benchmark label policy, voting rules, or deterministic overrides.
+- 在接入 ChEMBL、Starling 或其它数据源之前，先根据任务机制定义少量稳定的 mechanism family。
+- `full_mechanism` 每个 mechanism family 最多对应一个并行 group reasoning branch。
+- `direct` 通常只启用直接结果 family；`full_flat` 使用与 `full_mechanism` 相同的 evidence union，但合并成一个 reasoning branch。
+- 不设跨任务统一的固定 family 数量，但必须保持克制；通常应是少量可解释类别，而不是数十个 endpoint 分支。
+- family 的定义不能依赖某个数据源当前恰好有哪些 assay，也不能包含 benchmark label policy、投票规则或 deterministic override。
 
 ### Source-local endpoint group
 
-Source-local endpoint groups are fine-grained normalization and audit labels stored in evidence and
-provenance. Paper-facing retrieval should map them into task-level mechanism families before ranking and
-reasoning. The current ChEMBL behavior and its limitations are documented below.
+Source-local endpoint group 是数据接入、语义归一化、筛选和审计标签。例如 ChEMBL 中需要区分 AUC、Cmax、Papp、efflux ratio、hERG、Ames 等不可直接混用的 endpoint。
 
-## Configuration locations for a new task
+要求：
 
-Use the following division of responsibilities when adding a task:
+- 细粒度 group 可以保留在 evidence row、index 和 provenance 中，用于发现错误归类、检查覆盖率和解释来源差异。
+- 多个细粒度 group 必须先映射到一个 mechanism family；query-time 在 family 内合并候选分子后再进行 top-k retrieval。
+- 同一分子在一个 family 的多个细粒度 group 中出现时，只占一个 neighbor 位置，并携带该 family 下的相关记录。
+- 细粒度 group 不得各自启动 parallel LLM reasoning。否则会造成 evidence fragmentation、重复 neighbor、token 成本膨胀和 final synthesis 过载。
+- 无法可靠分类的 `context_dependent` 或等价 bucket 默认不进入论文 retrieval view。只有语义明确、事先声明的 background/context family 可以进入 reasoning。
+
+因此，旧的细粒度 ontology 可以继续存在，但它属于 source adapter 和 audit layer，不是论文方法中的专家推理 policy。论文和用户文档应将其描述为 `source-local endpoint normalization`，将 mechanism family 描述为 agent 的 reasoning organization。
+
+## 新任务的配置位置
+
+新增任务时遵循以下职责划分：
 
 ```text
 tools/chembl_tool/tasks/<task>/experiment_config.py
-  Declares source-independent mechanism families and mappings from each source group to a family.
+  声明数据源无关的 mechanism family，以及各 source group 到 family 的映射。
 
 tools/chembl_tool/tasks/<task>/endpoint_groups.py
-  Handles only fine-grained endpoint normalization and audit labels for heterogeneous raw data such as ChEMBL.
+  只负责 ChEMBL 等异构原始数据的细粒度 endpoint 归一化和审计标签。
 
 tools/chembl_tool/common/evidence_contract.py
-  Converts different sources to minimal_evidence.v1; does not predict labels.
+  将不同来源转换为 minimal_evidence.v1；不做 label prediction。
 
 tools/chembl_tool/common/experiment_retrieval.py
-  Combines candidates by mechanism family, retrieves neighbors, and constructs direct, full_flat, and full_mechanism views.
+  按 mechanism family 合并候选、检索 neighbor，并构造 direct、full_flat、full_mechanism 视图。
 
 tools/chembl_tool/common/molecule_identity.py
-  Uses versioned RDKit FragmentParent normalization for whole records, fragment/molecular parents, and mixture components.
+  使用版本化 RDKit FragmentParent 标准化 whole record、fragment/molecular parent 和 mixture components。
 
 tools/chembl_tool/common/retrieval_policy.py
-  Defines operational and parent_disjoint candidate-exclusion policies centrally; tasks and source adapters must not duplicate this logic.
+  统一定义 operational 与 parent_disjoint 候选排除策略；task 和 source adapter 不得复制该逻辑。
 
 tools/chembl_tool/common/neighbor_selection.py
-  Performs pluggable top-k set selection over candidates that have already passed the similarity threshold,
-  identity policy, and evidence-availability checks. `similarity` preserves the historical pointwise Tanimoto
-  ranking. Without lowering the existing `min_similarity`, `query_feature_coverage` greedily maximizes marginal
-  union coverage of query Morgan bits and uses Tanimoto only to break ties. A selector must not modify evidence
-  rows, mechanism-family mappings, or the downstream retrieval JSON payload schema.
+  对已经通过 similarity threshold、identity policy 和 evidence-availability 检查的候选执行可插拔
+  top-k set selection。`similarity` 保留历史逐点 Tanimoto 排序；
+  `query_feature_coverage` 在不降低既有 `min_similarity` 的前提下，贪心最大化 query Morgan bits 的
+  marginal union coverage，并仅用 Tanimoto 做并列候选的 tie-break。selector 不得修改 evidence row、
+  mechanism-family mapping 或下游 retrieval JSON payload schema。
 
 tools/chembl_tool/common/retrieval_ablation.py
-  Computes stable hashes of LLM-visible sample/family inputs, materializes reuse of a complete run or independent branch, and records provenance.
+  对 LLM-visible sample/family input 做稳定 hash，物化整条 run 或独立 branch 复用并写 provenance。
 
 tools/chembl_tool/common/retrieval_replay.py
-  Reads frozen retrieval artifacts and validates query identity for strict matched-prefetch replay; it must not retrieve again from the current index.
+  读取冻结 retrieval artifact 并校验 query identity，供 matched-prefetch 严格 replay；不得按当前 index 重检索。
 
 tools/chembl_tool/common/identity_blind.py
-  Implements identity redaction, harness prefetch, and visible prefetched-tool replay centrally; task runners must not fork this logic.
-
-tools/chembl_tool/common/units.py
-  Owns context-free unit cleaning, structural parsing, and dimensional folding. Parsing and arithmetic
-  live here and are never scoped per task; task context enters only through the two policy files below.
-
-tools/chembl_tool/common/qualifier_vocabulary_policy.json
-  Declares, per task, which unresolved tokens count as dimensionless qualifiers. A token in one task's
-  vocabulary must never change another task's parsing; tokens shared by every task go in the `shared` entry.
-
-tools/chembl_tool/common/contextual_unit_policy.json
-  Declares reviewed, exact-match assay-context rules that pick a canonical metric prefix within one
-  assay stratum. Fail-closed: every field a rule declares must be present and exactly equal.
+  统一实现 identity redaction、harness prefetch 与 visible prefetched-tool replay；task runner 不得自行分叉该逻辑。
 
 tools/chembl_tool/common/PROMPT_PROFILE_CONTRACT.md
-  Freezes the shared reasoning payload, structured-output validation, task prompt profile,
-  final-decision profile, manifest provenance, and branch-reuse gate. A task-local profile owns only
-  that task's semantics, schema, and cross-field rules.
+  统一冻结 shared reasoning payload、structured-output validation、task prompt profile、final-decision profile、
+  manifest provenance 和 branch-reuse gate；task-local profile 只维护本 task 的语义、schema 和 cross-field rule。
 
 tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py
-  Exposes `build_group_prompt_payload()` to external workflows that reuse a task-specific full-flat
-  prompt. RL/data materializers must not call the private `_group_prompt_payload()` implementation;
-  the historical private alias exists only for compatibility.
+  对需要复用 task-specific full-flat prompt 的外部 workflow，公开
+  `build_group_prompt_payload()`；不得让 RL/data materializer 调用 task 内部的
+  `_group_prompt_payload()` 私有实现。历史私有别名只用于兼容旧调用。
 ```
 
-Task code must not duplicate shared retrieval, source aggregation, LLM client, validation, or batch orchestration.
-
-## Starling cleaning, canonicalization, and pair buckets
-
-New task builds use `starling_normalized_v7`. Frozen v6 artifacts remain readable and must not be
-rewritten or relabeled as v7.
-
-Every source field first receives only basic, meaning-preserving cleaning. Only four universal roles may
-be renamed at this boundary: the source endpoint, measurement/value, unit, and structure fields become
-`endpoint_name`, `measurement_text`, `unit_text`, and `smiles`. All other fields keep their real source
-names. Do not create cleaned aliases such as `species_context` when the source actually supplied only an
-`assay_system` string.
-
-Reviewed integration happens in Stage 02 and produces one final `canonical_*` field per semantic
-dimension. A canonical field may use several cleaned inputs, and one cleaned input may support several
-canonical outputs. For example, `assay_system` may independently support `canonical_assay_context` and
-`canonical_species_context`; both outputs must record `assay_system` as their input. Missing canonical
-values do not fall back to a differently named source field.
-
-BBB, Bioavailability, and Skin use one exact measurement path. Stage 01 first routes controlled
-categorical outcomes. A finite positive decimal with a nonempty source unit bypasses the LLM unchanged;
-all other numeric candidates use the task's frozen extraction. Stage 02 explodes every successful
-multi-quantity extraction into child records, without endpoint-compatibility filtering, while preserving
-the parent ID and original `measurement_text`/`unit_text`. Each extracted or bypassed tuple is then looked
-up by exact `(task, canonical_endpoint, input_unit)` in the task-owned
-`data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json`. The shared Stage-02 loader owns
-the artifact schema and application, while each task owns its scientific entries and cache fingerprint.
-V2 stores identical decisions once with an explicit endpoint list; the loader expands them back to the
-same exact keys before application. A rule either
-supplies a canonical unit, fixed-point scale, and numeric domain, or explicitly excludes the tuple. Missing
-and duplicate keys are build errors; runtime unit regexes, source-specific substitutions, and per-record
-corrections do not participate.
-`relative`, `unsure`, `unavailable`, excluded, and domain-invalid quantities remain evidence with a null
-scalar. Variation is intentionally null. The downstream reviewed raw/log10 bucket transform remains in
-place. The older scalar/unit parsers and contextual normalization modules are retained only for historical
-replay and tasks that have not migrated to this exact contract.
-
-Scalar reference semantics are also a Stage-02 canonical dimension. Each task freezes its own bounded
-`gpt-5.4-mini` request shape while the shared offline classifier assigns each record at most once; invalid
-responses and failed requests become `unknown` without retry. Its frozen row mapping is joined as
-`canonical_reference_scope` and, where required, `canonical_reference_basis`. Context fields used only as
-classification evidence may remain residual-heterogeneity candidates because the classifier does not
-normalize or consume their values. Stage 02 publishes `reference_semantics_manifest.json` with mapping
-hash and coverage; task prompts and mappings are cache-fingerprinted.
-The validator may normalize exact provenance formatting, but it must never relabel GPT scope or basis.
-Contradictory semantic assignments fail closed to `unknown`; revisit the prompt or taxonomy only when one
-failure class exceeds 10% of classified rows.
-
-Every field used in pair-bucket identity must be canonicalized, whether by a deterministic rule, a
-reviewed frozen mapping, or a controlled encoder. A cleaned field touched by ordinary canonicalization must
-not also be a variance candidate. The narrow exception is an input used exclusively by a conditional
-controlled encoder: because real scalars and encoded outcomes are mutually exclusive, that field may remain
-a residual-heterogeneity candidate for the continuous rows. The selected categorical scale's inputs are
-excluded from its categorical residual audit. Other untouched cleaned source fields may be evaluated for
-residual heterogeneity, and they do not silently create child buckets.
-
-Before Stage 06, canonical measurement fields are exclusively the numerical assay-transfer contract and must
-not replace the cleaned measurement/unit in an LLM-visible source projection. Stage 06 creates a new aggregate
-that has no single source measurement: its LLM-visible value is therefore the canonical median, mode, or semantic
-synthesis, explicitly labeled with its aggregation method, support count, and uncertainty. The forward collapsed
-record retains only pair-defining or reviewed direct-condition context. Complete source context-value pairings
-remain in the retained Stage-05 inputs, and semantic groups also retain their submitted input in the Stage-06 audit cache.
-
-Measurement and unit canonicalization is an atomic, task-reviewed decision: never change a numeric value
-without changing its unit provenance in the same rule. The final tuple is composed in one fixed order:
-the shared scalar/unit parser, endpoint standardization, source/context-specific reconciliation, controlled
-measurement encoding, canonical v7 projection, then the frozen assay-transfer scale/transform policy.
-Only that last composed result is persisted as `canonical_measurement_text`, `canonical_unit_text`,
-`finite_scalar_value`, and `variation_value`; no helper independently rewrites the persisted tuple later.
-The tuple also persists `assay_transfer_measurement_contract_version`, the applied transform ID, and the
-task measurement-policy version so downstream consumers can reject stale artifacts without reading the
-task's correction policy.
-A parser is not applied blindly to every source value. Each controlled measurement has a frozen
-source ID, real input fields, parser ID, measurement kind, and definition. Binary and ordinal declarations
-also freeze category IDs, ranks, and encoded values.
-
-Stage 04 is the only layer that annotates assay-transfer eligibility and pair-bucket membership. It retains
-one sidecar row for every Stage-03 record and persists `assay_transfer_eligible` plus an explicit
-`assay_transfer_ineligibility_reason`; it does not delete unit-defect records. Its key uses canonical fields
-only and its sidecar persists `measurement_kind`, `canonical_measurement_scale_id`,
-`canonical_category_id`, and `canonical_category_rank`. Current supported kinds are `continuous`, `binary`, and `ordinal`; nominal
-unordered outcomes remain evidence-only. A source with a controlled scale must include
-`canonical_measurement_scale_id` in its bucket identity, so incompatible scales cannot mix.
-Task schemas also declare eligible reference scopes. Unknown and comparator-relative measurements remain
-valid evidence records. They receive explicit semantic units such as `free-text`, `relative-scalar`, or
-`unresolved-scalar`, and therefore a pair-bucket key, but remain assay-transfer-ineligible. Accepted reference
-scope, and basis for tasks that use it, are part of transferable bucket keys so different denominators cannot
-mix.
-
-Stage 05 is the only row-deduplication boundary. It removes exact within-source semantic
-duplicates and conservatively supported cross-source duplicates while retaining complete
-retained/discarded lineage. Direct votes and direct residual rows remain separate, conflicting
-direct labels never merge, and `direct_record_mapping.parquet` retains every normalized row and
-physical vote-unit ID. Every mapped direct-source row extends its source-specific Stage-04 pair
-bucket with the reviewed condition group. Unresolved or rejected condition proposals remain
-auditable singleton contexts and are not assay-transfer candidates.
-
-Stage 06 is the canonical molecule-by-context record boundary. Indirect evidence collapses by
-`(pair_bucket_key, canonical_smiles)`. Physical direct-label sources are first mapped to `direct_vote` or
-`direct_residual`. Direct votes collapse by the task's reviewed condition key and are never assay-transfer
-eligible. Absolute continuous and controlled categorical direct residuals collapse by their conditioned
-`(pair_bucket_key, canonical_smiles)` and follow the same assay-transfer rules as indirect assays. The Stage-05 direct mapping audit retains whether each normalized row counted in
-the vote, why it was ignored, and its condition-key status, but this bookkeeping is not exposed to the reasoning LLM.
-The collapse uses the median for axis-compatible absolute continuous values and mode with full counts and null on ties for
-axis-compatible controlled categorical values. Incompatible deterministic axes occupy different pair buckets and never use
-LLM synthesis.
-A singleton semantic group uses its exact support text as the canonical collapsed value; multi-record relative, free-text,
-and other genuinely semantic groups use resumable LLM synthesis. A
-separate batched classifier assigns direct-label informativeness after collapse: semantic evidence has one
-collapsed view, while deterministic evidence compares independent representative and collapsed views. It
-consumes the retained Stage-05 rows and performs no row deduplication. No
-`canonical_claim_id` is persisted or used as a collapse key.
-Configured `group_id` values remain unchanged; `retrieval_source_id` alone distinguishes direct vote,
-direct residual, and indirect partitions. A collapsed record is constructed from an explicit output contract,
-never by copying one representative source row and replacing only its measurement.
-
-Unconditioned direct votes require 70% agreement and reviewed external-condition votes require 60%; ties or
-lower agreement become `direct_residual` conflict evidence rather than disappearing. One physical source row
-counts once even when Stage 02 expanded it into multiple normalized measurement children.
-
-Stage 07 validates and calibrates every transferable bucket observed after Stage 06 regardless of retrieval-source
-provenance; it never creates
-child buckets or changes membership. Every bucket needs at least 20 unique collapsed molecule records. Binary
-buckets must observe both declared levels;
-ordinal buckets must observe at least three declared levels; every observed categorical level needs at least
-three records. Continuous residual heterogeneity uses the existing omega-squared audit. Binary and ordinal
-residual heterogeneity uses bias-corrected Cramér's V-squared, requires candidate levels with at least three
-records and at least 50% coverage, and flags values at or above 0.20. These statistics are audit-only: they
-must not invalidate or remove an entire bucket. Valid buckets store a first-class
-record-weighted sample SD with its ddof and source field. Valid continuous buckets additionally store the
-exact empirical value CDF as sorted support values, counts, and midranks. Valid ordinal buckets store a
-category-rank CDF over the complete declared domain; binary buckets retain explicit same/different semantics
-and do not publish a CDF. V7 Stage 07 does not store a raw-
-distance CDF, pair samples, transfer cutoff, Boolean label, or soft probability. Downstream code may use SD
-for standardized raw-distance calculations or use same-bucket empirical-CDF separation for
-location-sensitive geometry.
-
-Stage 07 explicitly persists `assay_transfer_bucket_eligible` and
-`assay_transfer_bucket_ineligibility_reason`. This is global V7 bucket eligibility after Stage-04 row
-filtering and is separate from both row eligibility and any downstream release's train-only bucket gate.
-
-The shared structure is:
-
-```text
-tools/chembl_tool/common/starling/build_normalized_evidence_library.py
-  Shared, resumable clean -> canonicalize -> organize driver for Stages 01-03.
-
-tools/chembl_tool/common/starling/canonicalization_v7.py
-  Strict source schemas, canonical-dimension lineage, pair-bucket declarations, and v6 compatibility
-  aliases that exist only in memory.
-
-tools/chembl_tool/common/starling/split_downstream.py
-  Builds split-independent Stage 04 pair buckets, Stage 05 deduplicated records, Stage 06 collapsed
-  records, and Stage 07 distance calibration under the task
-  canonical root. Its historical complete Stage 04-09 transaction remains available only through
-  `--legacy-task-local-downstream` for frozen-lineage reproduction.
-
-tools/chembl_tool/common/starling/v7_benchmark_view.py
-  Consumes canonical Stage 06 and builds lineage-owned Stage 06 filtered records, Stage 07 molecule evidence, Stage 08 neighbor
-  indices, and Stage 09 audits under a paper experiment root.
-
-tools/chembl_tool/common/starling/record_collapse.py
-  Bounded-memory molecule-by-context aggregation and Stage-06 audit artifacts.
-
-tools/chembl_tool/common/starling/record_deduplication.py
-  Shared bounded-memory Stage-05 within-source and supported cross-source row deduplication,
-  direct-row mapping, and retained/discarded lineage. Task-specific direct-label adapters live in
-  each task's `direct_record_mapping.py`.
-
-tools/chembl_tool/common/starling/semantic_record_aggregation.py
-  Resumable DeepSeek Flash execution and validation for the shared Jinja aggregation prompt.
-
-tools/chembl_tool/common/starling/build_pair_bucket_distance_calibration.py
-  V7 bucket validation, continuous/categorical residual-heterogeneity audits, first-class sample SD, exact
-  continuous value-CDF geometry, and exact ordinal category-rank CDF geometry. The historical module/artifact name is retained for compatibility;
-  v3 emits no raw-distance CDF, pair labels, transfer thresholds, or probabilities; unlike v2,
-  residual heterogeneity is audit-only and cannot invalidate a bucket.
-
-tools/chembl_tool/common/starling/normalization/task_policy.py
-  StarlingTaskPolicy: the sole entry point for all task-specific inputs, including source profiles,
-  canonical record contract, scientific hooks, column contracts, and manifest versions.
-
-tools/chembl_tool/common/starling/{compact_artifacts,auxiliary_metadata,policy_distance}.py
-  Compact artifacts/indexes, globally reconciled auxiliary attachment, and endpoint-policy distance mathematics.
-  The task supplies profiles, version numbers, and labels to all three; task-specific strings must not be inlined.
-
-tools/chembl_tool/tasks/<task>/starling_policy.py
-  The task plug-in, which must export POLICY. Builders and directory-index loaders resolve it through
-  importlib under this convention and do not maintain an additional registry.
-
-tools/chembl_tool/tasks/<task>/build_normalized_starling_evidence_library.py
-  Thin policy/downstream binding that preserves the task command line.
-
-tools/chembl_tool/tasks/<task>/starling_schema.py
-  The task's complete source-visible fields, canonical dimensions and their real inputs, pair identity,
-  and cleaned variance candidates.
-```
-
-The persisted canonical v7 stages are `01_cleaned`, `02_canonicalized`, `03_records`, `04_pair_buckets`,
-`05_deduplicated_records`, `06_collapsed_records`, and `07_distance_calibration`. Lineage-specific paper roots separately own
-`06_records`, `07_molecule_evidence`, `08_neighbor_index`, and `09_audits`. When integrating a new task,
-write only the task policy and a small set of declarative/scientific modules. Do not copy staged
-construction, invalidation, resume validation, or manifest assembly logic.
-
-Each paper view builds one full neighbor index. Retrieval-source membership (`direct_vote`,
-`direct_residual`, or `indirect`) is persisted on evidence families and index membership; do not build a
-second source-specific index from the same collapsed records. Historical direct-numeric indices remain
-frozen artifacts and are not regenerated from the collapsed binary direct-outcome partition.
-
-`compact_persisted_records` removes `assay_tier`, `endpoint_group`, `evidence_role`, and `target_pref_name` because they are derivable. The evidence catalog must therefore accept a `family_resolver` and rederive these fields. Otherwise, a resumed `--from-stage index` build produces a different catalog from a complete build.
-
-`07_distance_calibration` is fit on the complete unfiltered collapsed molecule set in every task, held-out gold
-included. This aggregate, label-free SD/empirical-CDF fit is the sole permitted use of benchmark-held-out source
-measurements before evaluation. Bucket geometry describes the assay landscape rather than any particular
-molecule set, so excluding gold molecules would bias the statistics without preventing prediction-time
-exposure. Paper-view `06_records` is the mandatory boundary: it drops both direct retrieval partitions for
-held-out parents before molecule evidence and neighbor indices are built, which prevents those records from reaching a
-prediction. Every task must follow this ordering and must not declare `heldout_sources` or a held-out key
-loader on its Stage-06 calibration.
-
-## Normalization regression corpus
-
-When a new class of normalization or parsing defect is found, the fix must add the real
-records that exposed it, together with their hand-validated expected output, to
-`tests/chembl_tool/common/fixtures/normalization_regressions.jsonl`. Take the record
-verbatim from a built `01_cleaned` stage; never invent a string that merely resembles the
-data. Each entry must record the reasoning that establishes its expected output as correct,
-so a later reader can re-derive the decision instead of trusting it.
-
-This corpus is hand-maintained and must never be machine-regenerated. It is deliberately
-unlike `units_golden.json`, which is generated from the top real forms and then reviewed.
-A failing case is either a regression or a decision that must be re-validated by hand and
-its reasoning updated. Do not edit an expected value to make a test pass.
-
-Place a fix at the most general layer that is correct, and descend only when the correct
-behavior genuinely differs at that scope:
-
-1. `common/units.py` -- context-free parsing and arithmetic. A wrong dimension is wrong in
-   every assay, so fix it here and never per task.
-2. `common/qualifier_vocabulary_policy.json` -- which tokens a task treats as dimensionless
-   qualifiers. Always task-scoped, never global: a declared qualifier resolves, and so
-   promotes records out of the unrecognized-unit quarantine in every task that shares the
-   declaration.
-3. `common/contextual_unit_policy.json` -- reviewed exact-match assay-context rules.
-4. The `source_measurement_resolver` hook, per source and endpoint. Skin's
-   `measurement_semantics.json` is the model: a declarative reviewed registry, not ad hoc
-   code.
-5. The frozen assay-transfer measurement policy: explicit source-supported scale repairs,
-   base-unit normalization, reviewed tail transforms, and evidence-backed row-level
-   assay-transfer ineligibility. Row-level entries must carry provenance and never change
-   retrieval eligibility.
-
-Descending is allowed -- some data is genuinely too messy to generalize -- but the narrower
-layers all carry a `review` block, so say there why a general rule was not possible.
-
-**Do not chase every residual form.** A unit that cannot be parsed correctly should stay
-unrecognized, which already makes the record non-scalar and therefore ineligible for pair
-buckets and assay transfer. That is the intended outcome, not a gap to close: marking a
-handful of unparseable records costs far less than a bespoke rule that encodes one dataset's
-mess, or an approximation that yields a confidently wrong number. Prefer failing closed.
-
-The same precision rule applies to contextual numeric text. A leading mean or point is not
-an atomic scalar when directional or comparative wording remains in the measurement after
-measurement/unit separation (for example, ``62 ± 3% decrease`` or ``2-fold higher than``).
-Keep the source-facing display text, set ``finite_scalar_value`` to null, and exclude the row
-from pair bucketing. A direction remains scalar-eligible only when the source supplies it as
-an explicit controlled unit, such as ``% increase``; in that case the direction is retained
-in ``canonical_unit_text`` and therefore in the pair-bucket identity.
-
-Any change to the shared normalizer must be measured per task against real records before
-a library is rebuilt on it. A change motivated by one task is not evidence about another.
+任务代码不得复制公共 retrieval、source aggregation、LLM client、validation 或 batch orchestration。
 
 ## Starling direct gold benchmark
 
-Starling evidence ingestion and Starling gold-label construction are separate modules and must not share one interpretation:
+Starling evidence ingestion 与 Starling gold-label 构建是两个独立模块，不能共用一套含义：
 
 ```text
 tools/chembl_tool/common/starling/evidence_library.py
-  Builds inference-time molecule evidence/indexes and does not produce benchmark labels.
+  构建 inference-time molecule evidence/index，不产生 benchmark label。
 
 tools/chembl_tool/common/starling/benchmark_dataset.py
-  Centrally handles parent identity, binary/ambiguous decisions, 70% record-weighted majority,
-  historical random/scaffold splits, and audit output.
+  统一完成 parent identity、binary/ambiguous 决策聚合、70% record-weighted majority、
+  historical random/scaffold split 和审计输出。
 
 tools/chembl_tool/common/starling/build_benchmark_datasets.py
-  Historical `record_agreement70_split811_v1` random/scaffold build CLI.
+  第一版 `record_agreement70_split811_v1` random/scaffold historical build CLI。
 
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-  Current scaffold-only `record_supported_v2` quality-split builder for Bioavailability and Skin.
+  Bioavailability/Skin molecule-only source-lineage builder；不是活跃评估入口。
 
 tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
-  Current `experimental_meaningful_cns_access_v2` BBB build/audit orchestration.
+  BBB source voting/build audit orchestration；不是活跃评估入口。
+
+tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+  将四任务 source builds 发布为唯一 Conditioned Benchmark，并固定 migration/hash audit。
 
 tools/chembl_tool/tasks/<task>/starling_benchmark.py
-  Declares only the task's sources, endpoint/scope/population rules, units/thresholds,
-  and conservative free-text-to-label mapping.
+  只声明该 task 的 source、endpoint/scope/population、单位/threshold 和 free-text 到 label 的保守映射。
 ```
 
-A task adapter must first map every source record to `0`, `1`, or a rejected/ambiguous decision with a
-reason. It must not treat a supporting passage as an unconditional keyword vote or duplicate parent
-aggregation or split algorithms. The shared layer aggregates by `rdkit_fragment_parent.v1`; it accepts a
-parent when the majority label reaches 70% and is not an exact tie, otherwise recording it in the reject
-audit. Multiple accepted records from the same PMID still vote separately.
+Task adapter 必须先把每条 source record 映射为 `0`、`1` 或带 reason 的拒绝/ambiguous 决策；不得把
+supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制 parent aggregation 或 split 算法。
+公共层按 `rdkit_fragment_parent.v1` 聚合 accepted records；多数 label 占比达到 70% 且不是精确 tie
+时接受，否则写入 reject audit。同 PMID 的多条 accepted records 仍分别计票。
 
-The current paper-facing roots are:
+当前唯一 paper-facing roots 为：
 
 ```text
-data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/
-data/processed_starling_record_supported_v2/{Bioavailability_Ma,Skin_Reaction}/scaffold/
+data/conditioned_benchmark/{BBB_Martins,Bioavailability_Ma,ClinTox,Skin_Reaction}/scaffold/
 ```
 
-The current builder first keeps Bemis-Murcko scaffolds disjoint, then constructs train/valid/test using the
-frozen lexicographic quality objective. `heldout_molecule_labels.jsonl` is the valid+test exclusion contract
-for each task's direct gold source. Mechanism sources remain in the split-specific retrieval view and use
-query-time `parent_disjoint`. Formal evaluation must wait for zero direct-source parent overlap, retained-
-mechanism, runtime identity-policy, and scaffold-overlap audits.
-`data/processed_starling/<Task>/{random,scaffold}` is the first historical lineage and must not be mixed with
-current results. See `tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md` for the full rules,
-frozen counts, and commands.
+当前 builder 先保证 Bemis–Murcko scaffold 不跨 split，再按冻结的 lexicographic quality 目标
+构建 train/valid/test。`heldout_molecule_labels.jsonl` 是 valid+test union 的 train-only retrieval-index
+exclusion contract；在 parent overlap 和 scaffold overlap 审计均为零前，不得启动正式评估。
+旧 molecule-only、selected-vN 和 `data/processed_starling/<Task>/{random,scaffold}` 只作 source provenance，
+不得作为 runner 输入或与当前结果混表。
+完整规则、当前 frozen counts 和运行命令见
+`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
 
-## Molecule identity and parent-disjoint retrieval
+## Molecule identity 与 parent-disjoint
 
-Molecule identity is retrieval ranking/filtering metadata and is not part of the evidence semantics in `minimal_evidence.v1`. ChEMBL, Starling, and future sources must all call the shared normalizer. They must not infer same-parent status from source IDs, names, or task labels.
+Molecule identity 是 retrieval ranking/filtering metadata，不属于 `minimal_evidence.v1` 的 evidence
+语义。ChEMBL、Starling 和未来数据源都必须调用公共 normalizer，不得根据 source ID、名称或 task label
+自行判断 same-parent。
 
 ```text
 operational:
-  Exclude exact whole-record matches and whole-record connectivity variants.
-  Retain same-molecular-parent evidence such as salts, solvates, and protonation forms.
+  排除完整记录 exact match 和 whole-record connectivity variant；
+  保留盐型、溶剂化物、质子化形式等 same molecular parent evidence。
 
 parent_disjoint:
-  In addition to operational exclusions, exclude the same molecular parent.
-  Continue taking candidates from lower ranks, but backfill only above the original min_similarity.
-  Fewer than top-k candidates are allowed; the threshold must never be lowered to fill the quota.
+  在 operational 基础上额外排除 same molecular parent；
+  继续向排名后方取候选，但只在原 min_similarity 以上回填；
+  候选不足时允许少于 top-k，绝不能降低阈值补满。
 ```
 
-`same_parent` is allowed only when the primary parents are identical or one primary parent explicitly appears among the other record's mixture components. Arbitrary component-key intersection must not be used, because two unrelated salts could otherwise be classified as the same parent merely because both contain a counterion such as chloride or sodium. Here, parent is an RDKit structure-standardization concept rather than a pharmacological active moiety. Covalent prodrugs, metabolites, and active-moiety relationships are not inferred from the parent key. They must remain structural analogs or be expressed through an independent PK scope annotation.
+`same_parent` 只允许主 parent 相同，或一方主 parent 明确出现在另一方 mixture components 中。不能用
+任意 component key 相交，否则两个无关盐会因为共享 chloride、sodium 等 counterion 被误归为同一 parent。
+这里的 parent 是 RDKit 结构标准化概念，不是药理学 active moiety。共价 prodrug、代谢物和
+active-moiety relation 不由 parent key 推断，必须保留为 structural analog 或由独立
+PK scope annotation 表达。
 
-Historical operational/parent-disjoint sensitivity reruns use stable hashes of the LLM-visible retrieval
-contract. A complete run may be reused for an identical sample input; if only some `full_mechanism` families
-change, other independent group outputs may be reused before rerunning changed branches and final synthesis.
-Every reuse records `reused_from`, `reuse_reason`, and the input hash, and metrics still cover the complete
-evaluation subset.
+历史 operational/parent-disjoint sensitivity 消融的选择性重跑以 LLM-visible retrieval contract
+的稳定 hash 为准。sample 输入完全相同时可复用整个 run；`full_mechanism` 中只有部分
+family 变化时，可复用其它独立 group outputs，再重跑变化 branch 和 final。所有复用必须记录
+`reused_from`、`reuse_reason` 和输入 hash；最终指标仍在完整 evaluation subset 上计算。
 
-The current paper-facing structural-analog policy is `parent_disjoint`, fresh from a held-out-filtered index.
-`operational` is an explicit historical/deployment-sensitivity reference, not a staging dependency for new v4
-conditions. Multiple launchers must not be used to bypass the global concurrency budget.
+Paper-facing structural-analog retrieval 的当前主 policy 是 `parent_disjoint`，并且直接从
+held-out-filtered index fresh-run。`operational` 只是显式 opt-in 的 historical/deployment-sensitivity
+reference；不再是新 v4 condition 的 staging 依赖，也不得通过多个 launcher 绕过全局并发预算。
 
-Same-parent exposure audits must distinguish the query-condition, group, neighbor slot, and record deduplicated within a query-condition. A slot represents one LLM-visible appearance of a neighbor in one group. When the same record appears in multiple mechanism groups, count each appearance separately, while also reporting the query-condition-level unique count and rank-1 slot count. This prevents repeated branch exposure from being described as independent molecules.
+Same-parent 暴露审计必须区分 query-condition、group、neighbor slot 和 query-condition 内去重 record。
+一个 slot 表示某 neighbor 在某 group 中的一次 LLM-visible 出现；同一 record 出现在多个 mechanism groups
+时分别计数，同时另报 query-condition 内的 unique count 和 rank-1 slot 数，避免把 branch 重复曝光误写成
+独立分子数。
 
-## Starling system background
+## Starling 系统背景
 
-In this repository, Starling specifically means the system described in the paper *Self-Driving Datasets: From 20 Million Papers to Nuanced Biomedical Knowledge at Scale*, not other software with the same name. The official description presents Starling as a multi-agent deep-research system for large-scale biomedical literature. Given a natural-language extraction task, it designs corpus-retrieval probes that balance precision and recall, derives a unified extraction schema from sample papers, and then generates structured records with supporting passages and experimental conditions from the retrieved subcorpus.
+这里的 Starling 特指论文 *Self-Driving Datasets: From 20 Million Papers to Nuanced Biomedical Knowledge at Scale* 中的 Starling，不是其它同名软件。官方描述中，Starling 是一个面向大规模生物医学文献的 multi-agent deep research system：给定自然语言 extraction task，它会设计兼顾 precision/recall 的 corpus retrieval probes、从样本文献归纳统一 extraction schema，然后在检索子语料上生成带 supporting passage 和实验条件的结构化记录。
 
-Official resources:
+官方资料：
 
-- Paper: https://arxiv.org/abs/2605.07022
-- Code: https://github.com/starling-labs/starling
-- Oral Bioavailability example data: https://huggingface.co/datasets/starling-labs/Oral_Bioavailability
+- 论文：https://arxiv.org/abs/2605.07022
+- 代码：https://github.com/starling-labs/starling
+- Oral Bioavailability 示例数据：https://huggingface.co/datasets/starling-labs/Oral_Bioavailability
 
-The paper reports an underlying corpus of approximately 22.5 million PubMed papers and emphasizes that experimental conditions and supporting passages provide important information beyond traditional tabular databases. Even if the paper reports a low per-extraction cost, complete corpus retrieval, schema induction, extraction, and validation are repeated as the number of tasks grows. Starling acquisition must therefore be treated as an expensive operation in this project.
+论文报告其底层语料包含约 22.5M 篇 PubMed 论文，并强调实验条件和 supporting passages 是相对传统表格数据库的重要增量。即使论文报告了较低的单条 extraction 成本，完整的 corpus retrieval、schema induction、extraction 和 validation 仍会随任务数量重复执行；在本项目中，Starling acquisition 应视为昂贵操作。
 
-## Starling acquisition granularity
+## Starling acquisition 粒度
 
-By default, a Starling acquisition task, prompt, and schema operate at mechanism-family granularity rather than fine-grained endpoint-group granularity.
+Starling 默认以 mechanism family 为 acquisition task/prompt/schema 的粒度，不以细粒度 endpoint group 为粒度。
 
-Specific requirements:
+具体要求：
 
-1. Freeze the mechanism families for each task before submitting a Starling acquisition.
-2. In principle, run only one Starling task per mechanism family. Do not start a separate Starling task for every endpoint subtype, unit, assay system, species, or formulation within a family.
-3. Express within-family differences through extraction-schema fields such as `endpoint_type`, `value`, `unit`, `species`, `assay_system`, `dose`, `formulation`, `comparator`, `support_text`, and `confidence`.
-4. After integrating Starling output into TxAgent, fine-grained audit groups may be derived from these structured fields. Those groups do not create new acquisition prompts or independent LLM reasoning branches.
-5. A family may be divided into multiple Starling tasks only when it cannot be represented with consistent retrieval semantics and a unified schema, and a sample audit demonstrates material precision/recall degradation. Record the reason for the split and the additional cost in the task-local `AGENTS.md`.
-6. Do not create one Starling prompt for every legacy `Tier.endpoint_group` in ChEMBL. The ChEMBL ontology organizes existing heterogeneous assays; the Starling schema should directly acquire condition-rich literature evidence around a mechanism family.
+1. 每个 task 先冻结 mechanism family，再提交 Starling acquisition。
+2. 每个 mechanism family 原则上只运行一个 Starling task。不要为 family 下的每个 endpoint subtype、单位、assay system、species 或 formulation 单独启动 Starling。
+3. 同一 family 内的差异通过 extraction schema 字段表达，例如 `endpoint_type`、`value`、`unit`、`species`、`assay_system`、`dose`、`formulation`、`comparator`、`support_text` 和 `confidence`。
+4. Starling 输出接入 TxAgent 后，可以根据这些结构化字段派生细粒度 audit group，但这些 group 不产生新的 acquisition prompt，也不产生独立 LLM reasoning branch。
+5. 只有当一个 family 无法用一致的检索语义和统一 schema 表达，并且抽样审计证明 precision/recall 明显受损时，才允许拆成多个 Starling tasks；拆分理由和额外成本必须记录在 task-local `AGENTS.md`。
+6. 不得因为 ChEMBL 中存在很多旧 Tier.endpoint_group，就一一复制成 Starling prompts。ChEMBL ontology 用于整理已有异构 assay；Starling schema 应直接围绕 mechanism family 获取带条件的文献证据。
 
-Therefore, Starling data does not need the large number of small acquisition groups used for ChEMBL. It must still retain endpoint subtypes and experimental conditions for auditing, scope decisions, and provenance, but these are within-family fields rather than additional agent branches.
+因此，Starling 数据不需要像 ChEMBL 那样维护大量细碎 group 作为采集单元。它仍然必须保留 endpoint subtype 和实验条件供 audit、scope 判断和 provenance 使用，但这些信息是 family 内字段，不是额外的 agent 分支。
 
-## New-task checklist
+## 新任务检查清单
 
-Before adding a task or data source, confirm all of the following:
+新增任务或新数据源前必须确认：
 
-1. The number of mechanism families is small and each family has clear task semantics.
-2. The boundary between direct evidence and mechanistic/surrogate evidence is explicit.
-3. Every source-local group maps to at most one default mechanism family. Any reuse requires an explanation.
-4. `full_flat` and `full_mechanism` use exactly the same evidence union.
-5. The number of parallel group-reasoning branches equals the number of enabled mechanism families, not the number of underlying endpoint groups.
-6. By default, the number of Starling tasks equals the number of mechanism families that require acquisition and does not grow with the number of endpoint subtypes.
-7. The schema preserves values, units, experimental conditions, scope, supporting passages, quality/uncertainty, and provenance.
-8. Missing SMILES, structure-standardization failures, duplicate source molecules, and unclassifiable records all have auditable statistics.
+1. mechanism family 数量少且有明确任务语义。
+2. direct evidence 与 mechanistic/surrogate evidence 的边界明确。
+3. 每个 source-local group 都映射到至多一个默认 mechanism family；需要复用时必须解释原因。
+4. `full_flat` 与 `full_mechanism` 使用完全相同的 evidence union。
+5. parallel group reasoning 数等于启用的 mechanism family 数，而不是底层 endpoint group 数。
+6. Starling task 数默认等于需要采集的 mechanism family 数，不随 endpoint subtype 数量增长。
+7. schema 保留数值、单位、实验条件、scope、supporting passage、quality/uncertainty 和 provenance。
+8. 缺失 SMILES、结构标准化失败、重复 source molecule 和无法分类记录都有可审计统计。
+9. mechanistic/surrogate evidence 通过 same-molecule causal continuity gate：从 assay molecule 沿推理路径追踪
+   causal subject，不能把“该 molecule 改变系统状态”自动写成“该系统随后运输/代谢/伤害的另一个 molecule
+   就是它自己”。
+10. 若结论还需要 query molecule 具备 transporter substrate、enzyme substrate、metabolic precursor、target
+    engagement、sensitizer 等额外角色，该角色必须由同一 molecule 的 retrieval evidence 明确支持；不能让 LLM
+    根据 pathway 常识猜测。未满足时标为 `requires_query_role`，只影响其它 molecule/system 时标为
+    `context_only`，二者均不得进入主 H1/H2 retrieval。
 
-The experimental distance-expansion workflow has an additional same-molecule relevance publication gate.
-Its scope, statuses, and integration contract are documented in
-`tools/chembl_tool/common/DISTANCE_EXPANSION_SELF_RELEVANCE.md`.
+## Same-molecule causal continuity
 
-## Current ChEMBL-specific implementation
+该检查与 graph hop、`scope_match` 和 `quality_status` 正交。一个 edge 可以有正确方向、可靠文献和高质量 assay，
+但仍然不适合预测 assay molecule 自己的 task label。例如：
 
-ChEMBL keeps fine-grained `Tier.endpoint_group` labels in its evidence index. In `full_mechanism` and
-`full_flat` retrieval, task configuration maps those labels into a smaller number of mechanism families
-before candidate molecules are combined, ranked, and limited to top-k. In `native` mode, this mapping is
-bypassed and retrieval remains one group per `Tier.endpoint_group`; treat that mode as legacy/debug behavior.
+```text
+molecule A activates NRF2/AhR
+  -> barrier P-gp abundance increases
+  -> known probe substrate B has lower brain accumulation
+```
 
-`exclude_source_groups` is an exact-name retrieval filter. It does not delete records from the evidence
-library. It is currently used only to remove `Tier 1.context_dependent` from the BBB and Skin Reaction
-ChEMBL `direct` views. It is not a global default and does not currently exclude context-dependent groups
-from their `full_mechanism` views. Bioavailability uses explicit source-group allow-lists, while ClinTox has
-no context-dependent exclusion. Any new paper-facing ChEMBL configuration must explicitly exclude such a
-group or map it to a predeclared background/context family.
+若 evidence 没有证明 `A is a P-gp substrate`，最后一步不能用于预测 A 自己的 BBB disposition。类似地，
+`HIF-1 -> GLUT1 abundance -> glucose uptake` 不能用于任意 HIF perturbagen 的自身 BBB influx，除非同一 molecule
+另有 GLUT1 substrate evidence。
+
+所有 future distance-expansion task 必须为每个 measurement family 生成机器可读
+`FamilySelfRelevanceAudit`，并在发布 graph 前调用：
+
+```python
+validate_self_relevance_audit(config, audits, require_publishable=True)
+```
+
+`requires_query_role`、`context_only` 和 `unresolved` 可保留在 candidate/audit artifact 中，但不能通过发布 gate。
+prompt disclaimer 不能替代缺失的 molecule-role evidence。

@@ -22,6 +22,7 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
 )
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
+from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.tasks.clintox.build_flat_assay_catalog import SOURCE_SPECS
 
 
@@ -359,10 +360,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument(
         "--heldout-molecules",
-        default=(
-            "data/processed_clintox_clinical_trial_failure_v1/ClinTox/"
-            "scaffold/heldout_molecule_labels.jsonl"
-        ),
+        default=str(task_root("clintox") / "heldout_molecule_condition_labels.jsonl"),
     )
     parser.add_argument(
         "--output-dir",

@@ -11,6 +11,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
     PuritySpec,
     build_overlay,
@@ -32,10 +33,7 @@ DEFAULT_INPUT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
     "bioavailability_nondirect_assay_context_v1/records.parquet"
 )
-DEFAULT_CONDITION_REVIEW = Path(
-    "data/processed_starling_context_conditioned_selected_v1/"
-    "Bioavailability_Ma/scaffold/source_condition_review.jsonl"
-)
+DEFAULT_CONDITION_REVIEW = task_root("bioavailability_ma") / "source_condition_review.jsonl"
 DEFAULT_OUTPUT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
     "bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1"

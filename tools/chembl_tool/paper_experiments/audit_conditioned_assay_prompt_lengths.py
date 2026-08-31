@@ -23,6 +23,7 @@ from tools.chembl_tool.common.json_utils import (
 )
 from tools.chembl_tool.common.reasoning_calls import bound_group_prompt_payload
 from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
+from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
 
 
 @dataclass(frozen=True)
@@ -36,34 +37,26 @@ class TaskSpec:
 ROOT = Path("outputs/paper/starling_conditioned_assay_family_curve_v1")
 SPECS = {
     "bbb_martins": TaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/BBB_Martins/scaffold/valid.jsonl"
-        ),
+        split_path("bbb_martins", "valid"),
         ROOT / "indices/bbb_martins/compact_v2/assay_neighbor_index.pkl",
         ROOT / "indices/bbb_martins/raw_v3/assay_neighbor_index.pkl",
         "tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline",
     ),
     "bioavailability_ma": TaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold/valid.jsonl"
-        ),
+        split_path("bioavailability_ma", "valid"),
         ROOT / "indices/bioavailability_ma/compact_v2/assay_neighbor_index.pkl",
         ROOT
         / "indices/bioavailability_ma/raw_v3_nondirect_context_v1/assay_neighbor_index.pkl",
         "tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline",
     ),
     "skin_reaction": TaskSpec(
-        Path(
-            "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold/valid.jsonl"
-        ),
+        split_path("skin_reaction", "valid"),
         ROOT / "indices/skin_reaction/compact_v2/assay_neighbor_index.pkl",
         ROOT / "indices/skin_reaction/raw_v3/assay_neighbor_index.pkl",
         "tools.chembl_tool.tasks.skin_reaction.run_reasoning_pipeline",
     ),
     "clintox": TaskSpec(
-        Path(
-            "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/valid.jsonl"
-        ),
+        split_path("clintox", "valid"),
         ROOT / "indices/clintox/compact_v2/assay_neighbor_index.pkl",
         ROOT / "indices/clintox/raw_v3/assay_neighbor_index.pkl",
         "tools.chembl_tool.tasks.clintox.run_reasoning_pipeline",

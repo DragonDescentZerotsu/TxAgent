@@ -6,8 +6,8 @@ root `AGENTS.md` and `tools/chembl_tool/tasks/AGENTS.md`.
 
 ## Target and lineage
 
-The current benchmark is `clinical_trial_failure_v1`. It predicts the frozen
-source-defined ClinTox `CT_TOX` class at molecular-parent grain:
+The active evaluation dataset is the Conditioned Benchmark. Its ClinTox target
+retains the frozen source-defined `CT_TOX` scientific contract at molecular-parent grain:
 
 ```text
 Y=1: at least one frozen AACT toxicity-failure source record maps to the parent
@@ -18,12 +18,12 @@ This is a historical source-class prediction, not a fresh clinical causality
 adjudication and not a general-toxicity label. FDA approval and an AACT positive
 may coexist; the 65 overlapping parents remain positive.
 
-Canonical source and benchmark roots:
+Canonical source provenance and active benchmark root:
 
 ```text
 data/starling_data/clintox/tdc_clintox_v1/
 data/starling_data/clintox/canonical_clinical_trial_failure_v1/
-data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold/
+data/conditioned_benchmark/ClinTox/scaffold/
 ```
 
 Frozen counts:
@@ -36,11 +36,12 @@ parent identity overlap: 0
 Bemis-Murcko scaffold overlap: 0
 ```
 
-The old `data/processed/ClinTox/` split and older ChEMBL-native results are
-historical only. Never mix them with this lineage.
+ClinTox has no accepted external-condition group, so every row uses the shared
+null condition and the prompt omits a condition sentence. Old source-build,
+`data/processed/ClinTox/`, and ChEMBL-native results are provenance only.
 
 Full provenance, source hashes, limitations, and results are in
-`CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md`.
+`CLINTOX_BENCHMARK.md`.
 
 ## Label and evidence separation
 
@@ -179,8 +180,8 @@ Build the full literature library and heldout-filtered scaffold index:
   python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
     --splits scaffold --indices clintox_starling_full \
     --output-root outputs/paper \
-    --benchmark-data-root data/processed_clintox_clinical_trial_failure_v1 \
-    --benchmark-lineage clinical_trial_failure_v1
+    --benchmark-data-root data/conditioned_benchmark \
+    --benchmark-lineage conditioned_benchmark
 ```
 
 Reasoning entry points:

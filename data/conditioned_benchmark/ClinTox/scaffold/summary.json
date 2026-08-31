@@ -1,0 +1,66 @@
+{
+  "task": "ClinTox",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "target_definition": "clinical-trial toxicity failure versus approved comparator",
+  "condition_contract": {
+    "null_group": "no_reported_external_condition",
+    "null_group_prompt_behavior": "omit condition sentence",
+    "unit": "molecule-condition"
+  },
+  "splits": {
+    "train": {
+      "n": 1144,
+      "source_sha256": "37a73b85c6691092992a5a58adaa45db815f145ac363ee6e5085e80e4afd19e2",
+      "canonical_sha256": "438ce524d92e620d17561558b057f75624e5113976d7b09034824fe992976793",
+      "byte_identical": false,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 1060,
+        "1": 84
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 1144
+      }
+    },
+    "valid": {
+      "n": 142,
+      "source_sha256": "9d8057fa07a8c662e20c6a0664fb5e258449c19f40ce4988ab842dd8feaa807a",
+      "canonical_sha256": "5a0c7ef00f004112e622f17294f11e6e5bb668f7f5099307d6b4e6a86c3ade4a",
+      "byte_identical": false,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 132,
+        "1": 10
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 142
+      }
+    },
+    "test": {
+      "n": 142,
+      "source_sha256": "d5f1a9459de1d9bc49208ccc5769ab32229c81c469e56e48782454542612adf3",
+      "canonical_sha256": "6c2d59bdbe3bd0db09ffcab86dafd7778d3266e367d405f2c296d2bfc0f10cd8",
+      "byte_identical": false,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 132,
+        "1": 10
+      },
+      "condition_counts": {
+        "no_reported_external_condition": 142
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json"
+}

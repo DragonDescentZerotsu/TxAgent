@@ -1,0 +1,69 @@
+{
+  "task": "Skin_Reaction",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "target_definition": "skin sensitization/contact allergy",
+  "condition_contract": {
+    "null_group": "no_reported_external_condition",
+    "null_group_prompt_behavior": "omit condition sentence",
+    "unit": "molecule-condition"
+  },
+  "splits": {
+    "train": {
+      "n": 1997,
+      "source_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
+      "canonical_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 606,
+        "1": 1391
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 31,
+        "no_reported_external_condition": 1966
+      }
+    },
+    "valid": {
+      "n": 246,
+      "source_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+      "canonical_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 73,
+        "1": 173
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 1,
+        "no_reported_external_condition": 245
+      }
+    },
+    "test": {
+      "n": 248,
+      "source_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
+      "canonical_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
+      "byte_identical": true,
+      "same_ordered_drug_labels": true,
+      "label_counts": {
+        "0": 74,
+        "1": 174
+      },
+      "condition_counts": {
+        "disease=atopic_dermatitis": 3,
+        "no_reported_external_condition": 245
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "migration_receipt": "data/conditioned_benchmark/migration_receipt.json"
+}

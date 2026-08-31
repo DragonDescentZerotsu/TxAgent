@@ -1,0 +1,282 @@
+{
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "published_at": "2026-08-28T16:38:18.304786+00:00",
+  "active_root": "data/conditioned_benchmark",
+  "policy": "one active condition-aware benchmark per task; legacy names are provenance only and are not evaluation entrypoints",
+  "tasks": {
+    "bbb_martins": {
+      "task": "bbb_martins",
+      "task_directory": "BBB_Martins",
+      "target_definition": "experimental meaningful systemic CNS access",
+      "legacy_source_root": "data/processed_starling_context_conditioned_selected_v3/BBB_Martins/scaffold",
+      "canonical_root": "data/conditioned_benchmark/BBB_Martins/scaffold",
+      "input_rows_byte_identical_expected": true,
+      "splits": {
+        "train": {
+          "n": 3053,
+          "source_sha256": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+          "canonical_sha256": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 794,
+            "1": 2259
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 11,
+            "co_treatment=cyclosporine": 9,
+            "disease=bacterial_meningitis": 7,
+            "disease=brain_tumor_or_glioma": 23,
+            "disease=cerebral_ischemia": 8,
+            "disease=meningitis_unspecified": 36,
+            "disease=pneumococcal_meningitis": 7,
+            "disease=tuberculous_meningitis": 7,
+            "no_reported_external_condition": 2945
+          }
+        },
+        "valid": {
+          "n": 397,
+          "source_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+          "canonical_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 104,
+            "1": 293
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 3,
+            "co_treatment=cyclosporine": 4,
+            "disease=bacterial_meningitis": 3,
+            "disease=brain_tumor_or_glioma": 6,
+            "disease=cerebral_ischemia": 1,
+            "disease=meningitis_unspecified": 13,
+            "disease=pneumococcal_meningitis": 1,
+            "disease=tuberculous_meningitis": 1,
+            "no_reported_external_condition": 365
+          }
+        },
+        "test": {
+          "n": 393,
+          "source_sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+          "canonical_sha256": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 102,
+            "1": 291
+          },
+          "condition_counts": {
+            "barrier_state=disrupted": 3,
+            "co_treatment=cyclosporine": 3,
+            "disease=bacterial_meningitis": 3,
+            "disease=brain_tumor_or_glioma": 8,
+            "disease=cerebral_ischemia": 1,
+            "disease=meningitis_unspecified": 7,
+            "disease=pneumococcal_meningitis": 2,
+            "disease=tuberculous_meningitis": 1,
+            "no_reported_external_condition": 365
+          }
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "task": "bioavailability_ma",
+      "task_directory": "Bioavailability_Ma",
+      "target_definition": "oral bioavailability under the reported condition",
+      "legacy_source_root": "data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold",
+      "canonical_root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+      "input_rows_byte_identical_expected": true,
+      "splits": {
+        "train": {
+          "n": 1958,
+          "source_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+          "canonical_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 524,
+            "1": 1434
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 8,
+            "disease=cirrhosis": 30,
+            "disease=cystic_fibrosis": 9,
+            "no_reported_external_condition": 1674,
+            "prandial_state=fasted": 156,
+            "prandial_state=fed_high_fat": 6,
+            "prandial_state=fed_unspecified": 49,
+            "release_profile=modified_release": 26
+          }
+        },
+        "valid": {
+          "n": 262,
+          "source_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+          "canonical_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 68,
+            "1": 194
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 3,
+            "disease=cirrhosis": 4,
+            "disease=cystic_fibrosis": 1,
+            "no_reported_external_condition": 209,
+            "prandial_state=fasted": 28,
+            "prandial_state=fed_high_fat": 1,
+            "prandial_state=fed_unspecified": 14,
+            "release_profile=modified_release": 2
+          }
+        },
+        "test": {
+          "n": 269,
+          "source_sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+          "canonical_sha256": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 77,
+            "1": 192
+          },
+          "condition_counts": {
+            "co_treatment=rifampin": 4,
+            "disease=cirrhosis": 4,
+            "disease=cystic_fibrosis": 4,
+            "no_reported_external_condition": 209,
+            "prandial_state=fasted": 30,
+            "prandial_state=fed_high_fat": 2,
+            "prandial_state=fed_unspecified": 15,
+            "release_profile=modified_release": 1
+          }
+        }
+      }
+    },
+    "skin_reaction": {
+      "task": "skin_reaction",
+      "task_directory": "Skin_Reaction",
+      "target_definition": "skin sensitization/contact allergy",
+      "legacy_source_root": "data/processed_starling_context_conditioned_selected_v1/Skin_Reaction/scaffold",
+      "canonical_root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+      "input_rows_byte_identical_expected": true,
+      "splits": {
+        "train": {
+          "n": 1997,
+          "source_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
+          "canonical_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 606,
+            "1": 1391
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 31,
+            "no_reported_external_condition": 1966
+          }
+        },
+        "valid": {
+          "n": 246,
+          "source_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+          "canonical_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 73,
+            "1": 173
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 1,
+            "no_reported_external_condition": 245
+          }
+        },
+        "test": {
+          "n": 248,
+          "source_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
+          "canonical_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 74,
+            "1": 174
+          },
+          "condition_counts": {
+            "disease=atopic_dermatitis": 3,
+            "no_reported_external_condition": 245
+          }
+        }
+      }
+    },
+    "clintox": {
+      "task": "clintox",
+      "task_directory": "ClinTox",
+      "target_definition": "clinical-trial toxicity failure versus approved comparator",
+      "legacy_source_root": "data/processed_clintox_clinical_trial_failure_v1/ClinTox/scaffold",
+      "canonical_root": "data/conditioned_benchmark/ClinTox/scaffold",
+      "input_rows_byte_identical_expected": false,
+      "splits": {
+        "train": {
+          "n": 1144,
+          "source_sha256": "37a73b85c6691092992a5a58adaa45db815f145ac363ee6e5085e80e4afd19e2",
+          "canonical_sha256": "438ce524d92e620d17561558b057f75624e5113976d7b09034824fe992976793",
+          "byte_identical": false,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 1060,
+            "1": 84
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 1144
+          }
+        },
+        "valid": {
+          "n": 142,
+          "source_sha256": "9d8057fa07a8c662e20c6a0664fb5e258449c19f40ce4988ab842dd8feaa807a",
+          "canonical_sha256": "5a0c7ef00f004112e622f17294f11e6e5bb668f7f5099307d6b4e6a86c3ade4a",
+          "byte_identical": false,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 132,
+            "1": 10
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 142
+          }
+        },
+        "test": {
+          "n": 142,
+          "source_sha256": "d5f1a9459de1d9bc49208ccc5769ab32229c81c469e56e48782454542612adf3",
+          "canonical_sha256": "6c2d59bdbe3bd0db09ffcab86dafd7778d3266e367d405f2c296d2bfc0f10cd8",
+          "byte_identical": false,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 132,
+            "1": 10
+          },
+          "condition_counts": {
+            "no_reported_external_condition": 142
+          }
+        }
+      },
+      "semantic_equivalence": {
+        "train": {
+          "same_ordered_drug_labels": true,
+          "n_source": 1144,
+          "n_canonical": 1144
+        },
+        "valid": {
+          "same_ordered_drug_labels": true,
+          "n_source": 142,
+          "n_canonical": 142
+        },
+        "test": {
+          "same_ordered_drug_labels": true,
+          "n_source": 142,
+          "n_canonical": 142
+        }
+      }
+    }
+  }
+}

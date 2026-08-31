@@ -1,0 +1,67 @@
+{
+  "benchmark": "conditioned_benchmark",
+  "split": "scaffold_valid",
+  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+  "visibility": "deployment_visible_prefetched",
+  "tasks": {
+    "bbb_martins": {
+      "n": 397,
+      "input_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+      "agent_macro_f1": {
+        "none": 0.6207006369426751,
+        "L1": 0.7314411764705883,
+        "L2": 0.747457454077105,
+        "L3": 0.747457454077105,
+        "L4": 0.7563262864290765,
+        "L5": 0.7563262864290765
+      },
+      "baselines": {
+        "minimol_head": 0.6673970483985306,
+        "minimol_knn_same_then_null": 0.6071075123706703,
+        "minimol_knn_all_train": 0.5707689431198328,
+        "morgan_knn_same_then_null": 0.595779790745032,
+        "morgan_knn_all_train": 0.6173842827746086
+      },
+      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731"
+    },
+    "bioavailability_ma": {
+      "n": 262,
+      "input_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+      "agent_macro_f1": {
+        "none": 0.6314369393261536,
+        "L1": 0.6899932386747802,
+        "L2": 0.7312184343434344,
+        "L3": 0.7377686193700324,
+        "L4": 0.7544709098008591,
+        "L5": 0.7544709098008591,
+        "L6": 0.7608142493638678
+      },
+      "baselines": {
+        "minimol_head": 0.5871884282577813,
+        "minimol_knn_same_then_null": 0.5983535983535984,
+        "minimol_knn_all_train": 0.6228534355168988,
+        "morgan_knn_same_then_null": 0.5890896692806,
+        "morgan_knn_all_train": 0.5887697579308058
+      },
+      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731"
+    },
+    "skin_reaction": {
+      "n": 246,
+      "input_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+      "agent_macro_f1": {
+        "none": 0.611851,
+        "L1": 0.6003898635477583,
+        "L2": 0.5939104915627293
+      },
+      "baselines": {
+        "minimol_head": 0.6030123722431414,
+        "minimol_knn_same_then_null": 0.5755050505050505,
+        "minimol_knn_all_train": 0.5755050505050505,
+        "morgan_knn_same_then_null": 0.520849477454081,
+        "morgan_knn_all_train": 0.5179688151421662
+      },
+      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731"
+    }
+  },
+  "reuse_contract": "Reuse predictions only when n and input_sha256 match data/conditioned_benchmark/migration_receipt.json. Artifact directory names are historical storage identifiers, not benchmark names."
+}

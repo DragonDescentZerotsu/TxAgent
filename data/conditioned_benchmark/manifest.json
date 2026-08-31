@@ -1,0 +1,42 @@
+{
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "tasks": {
+    "bbb_martins": {
+      "root": "data/conditioned_benchmark/BBB_Martins/scaffold",
+      "target_definition": "experimental meaningful systemic CNS access",
+      "split_counts": {
+        "train": 3053,
+        "valid": 397,
+        "test": 393
+      }
+    },
+    "bioavailability_ma": {
+      "root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
+      "target_definition": "oral bioavailability under the reported condition",
+      "split_counts": {
+        "train": 1958,
+        "valid": 262,
+        "test": 269
+      }
+    },
+    "clintox": {
+      "root": "data/conditioned_benchmark/ClinTox/scaffold",
+      "target_definition": "clinical-trial toxicity failure versus approved comparator",
+      "split_counts": {
+        "train": 1144,
+        "valid": 142,
+        "test": 142
+      }
+    },
+    "skin_reaction": {
+      "root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+      "target_definition": "skin sensitization/contact allergy",
+      "split_counts": {
+        "train": 1997,
+        "valid": 246,
+        "test": 248
+      }
+    }
+  }
+}

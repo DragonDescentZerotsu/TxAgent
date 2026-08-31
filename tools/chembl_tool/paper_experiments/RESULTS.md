@@ -1,6 +1,13 @@
 # 冻结的全量实验结果
 
-主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-27。
+主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-28。
+
+当前四任务 gold 只有一个入口：`data/conditioned_benchmark/<Task>/scaffold/`。任务级 gold-vN、
+`record_supported_vN`、`selected_vN` 和 ClinTox source-build 名称只作为 migration provenance，不再是并列
+评估数据。精确旧路径、split hashes 和复用判据见 `data/conditioned_benchmark/migration_receipt.json`；当前
+schema 和 cohort sizes 见 `../common/starling/CONDITIONED_BENCHMARK.md`。
+当前三任务 progressive curves、baselines、input hashes 和历史 artifact storage pointers 的唯一机器可读索引为
+`current_conditioned_results.json`。
 
 本文件主体记录旧 TDC test/valid matrix。当前 Starling-held-out random/scaffold 的 frozen data 决策、
 formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind 进度、Skin trace audit
@@ -41,13 +48,12 @@ Historical v2 改用 `direct_only_heldout_filtered + parent_disjoint`：只从 b
 两个被否决的 pre-LLM source-contract probes 均未启动 reasoning，其临时代码和大型 artifacts 已清理。
 完整数值、source-filter audit、调用复用合同和 artifact 状态见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
-2026-08-27 当前 conditioned 结果已经切换为 visible append-only progressive curve，不再引用 2026-08-22
-未完成的 cumulative-family checkpoint。BBB 使用隔离的 gold-v4/conditioned-v3 397-row candidate、progressive
-v8 和 `bbb_source_family_purity.v5`；Bioavailability/Skin 使用各自 conditioned current lineage、progressive v7
-和 `source_family_purity.v1`。三个 task 全部 level 完整、零失败，best macro-F1 分别为 BBB `0.7563`、
-Bioavailability `0.7856`、Skin `0.6119`。ClinTox 没有合格 condition taxonomy，不进入这条新曲线；旧
-cumulative-family ClinTox 只作 historical control。完整逐 level 数值、evidence/resource 统计、source ledger、
-artifact roots 和唯一重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。
+当前 conditioned 结果使用 visible append-only progressive curve，不再引用未完成的 cumulative-family
+checkpoint。三项曲线的评估输入统一来自 Conditioned Benchmark；task-specific source-purity 名称只描述
+retrieval records 的分层，不描述 gold。三个 task 全部 level 完整、零失败，best macro-F1 分别为 BBB
+`0.7563`、Bioavailability `0.7608`、Skin `0.6119`。ClinTox 没有合格 external-condition taxonomy，不进入
+这条三任务 progressive 曲线；既有 ClinTox controls 只作 historical control。完整逐 level 数值、
+evidence/resource 统计、source ledger、artifact roots 和唯一重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。
 
 同一 conditioned valid split 的最新 train-label baselines 如下。BBB/Bio/Skin 的 paper-facing MiniMol head
 使用 train-derived condition one-hot；ClinTox 无合格 condition，保持 molecule-only。所有 threshold/epoch 都由
@@ -55,13 +61,13 @@ train-only scaffold CV/OOF 冻结，KNN 固定 `k=3`：
 
 | task | MiniMol head | MiniMol KNN same→null | MiniMol KNN all train | Morgan KNN same→null | Morgan KNN all train |
 |---|---:|---:|---:|---:|---:|
-| BBB gold-v4 candidate | **0.6674** | 0.6071 | 0.5708 | 0.5958 | 0.6174 |
+| BBB | **0.6674** | 0.6071 | 0.5708 | 0.5958 | 0.6174 |
 | Bioavailability | 0.5872 | 0.5984 | **0.6229** | 0.5891 | 0.5888 |
 | Skin | **0.6030** | 0.5755 | 0.5755 | 0.5208 | 0.5180 |
 | ClinTox | **0.6520** | 0.5744 | 0.5744 | **0.6520** | **0.6520** |
 
-BBB 表中使用与 progressive 397-row cohort 完全匹配的新 baselines；旧 398-row selected-v1 baseline 保留为
-historical。完整 protocol、OOF thresholds、subgroup diagnosis 和 artifact roots 见 `baselines/minimol/README.md`。
+BBB 表中使用与 progressive 397-row cohort 完全匹配的 baselines。完整 protocol、OOF thresholds、subgroup
+diagnosis 和 artifact roots 见 `baselines/minimol/README.md`。
 
 ## E23 collapsed-assay Morgan neighbor validation (2026-08-27)
 
@@ -308,7 +314,7 @@ SWEETLEAD/FDA-approved comparators 构造 1,428 个 parent labels，并使用 sc
 `9/11`、`11/14` 发生在 zero direct-neighbor 样本，不能归因为 direct evidence；broad retrieval 还会让一般
 hazard override 窄 source label。当前结论是保留 v3 source contract，但不 promotion retrieval，并停止在同一
 valid/test 上继续调 prompt/selector。完整 source、confusion matrix、trace audit 与 artifact roots 见
-`tools/chembl_tool/tasks/clintox/CLINTOX_CLINICAL_TRIAL_FAILURE_V1.md`。
+`tools/chembl_tool/tasks/clintox/CLINTOX_BENCHMARK.md`。
 
 ## Historical group-level canonical Starling valid 快照（2026-08-10）
 

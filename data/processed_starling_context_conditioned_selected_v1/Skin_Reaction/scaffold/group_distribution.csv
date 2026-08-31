@@ -1,3 +1,0 @@
-condition_group,condition_scope,n_molecule_condition_rows,n_unique_parents,n_distinct_scaffolds,n_train,n_valid,n_test,n_y0,n_y1
-no_reported_external_condition,none_reported,2456,2456,754,1966,245,245,750,1706
-disease=atopic_dermatitis,external,35,35,18,31,1,3,3,32
