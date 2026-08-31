@@ -61,8 +61,8 @@ python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
 
 ### Gold-only L1 inference on normalized-v7 Stage 06
 
-Two held-out valid runs now exercise the progressive harness directly on the
-inserted conditioned gold-training rows. Both use the same frozen V9 top-75
+Four held-out valid runs now exercise the progressive harness directly on the
+inserted conditioned gold-training rows. All use the same frozen V9 top-75
 candidate cache, current Stage-06 rows, at most 10 unique parent molecules, and
 at most 4 condition cards per parent. They do not expose normalized-v7
 `direct_residual` rows:
@@ -73,37 +73,44 @@ at most 4 condition cards per parent. They do not expose normalized-v7
 | Bioavailability | 1,958 | 146,344 | 272,543 | 14,393 |
 | Skin | 1,997 | 15,930 | 488,160 | 33,701 |
 
-- `morgan + standalone` reranks the cache by Morgan parent/context order, omits
-  both the main-scaffold query prior and V9 transfer scores.
-- `v9 + fresh prior` reranks by frozen V9 transfer likelihood, displays that
-  likelihood as context transferability rather than a label probability, and
-  reuses a fresh same-checkpoint `none` branch from the main inference scaffold.
+- Ranking is either Morgan parent/context order or frozen V9 transfer
+  likelihood. V9 scores are displayed as context transferability, never as a
+  label probability.
+- Prior visibility is independently either standalone or a fresh
+  same-checkpoint `none` branch from the main inference scaffold.
 
 All runs used `nvidia/DeepSeek-V4-Flash-NVFP4` and the 2,048-request endpoint
-ceiling. The query-prior branch and both L1 branches completed all 905 queries
-without a failed reasoning call.
+ceiling. The query-prior branch and all four L1 cells completed all 905 queries
+without a failed reasoning call or visible tool failure.
 
-| task | n | fresh prior macro-F1 | Morgan standalone macro-F1 | V9 + prior macro-F1 |
-|---|---:|---:|---:|---:|
-| BBB | 397 | 0.5440 | 0.6954 | 0.6489 |
-| Bioavailability | 262 | 0.5743 | 0.6872 | 0.6707 |
-| Skin | 246 | 0.6240 | 0.6006 | 0.6445 |
+Macro-F1:
 
-These are two different visibility interventions, not a controlled V9-versus-
-Morgan ranking ablation. BBB cache reconciliation dropped 4 obsolete training
-record IDs (71 ranking rows affecting 69 current queries) and ignored 1 obsolete
-query; Bioavailability and Skin required no stale-row filtering. Three V9
-queries had an unavailable `properties_compare` result from MolGpKa graph-index
-errors; the prompts marked those comparisons unavailable and all three reasoning
-calls completed successfully.
+| task | n | Morgan standalone | Morgan + prior | V9 standalone | V9 + prior |
+|---|---:|---:|---:|---:|---:|
+| BBB | 397 | 0.6954 | 0.6766 | **0.6980** | 0.6568 |
+| Bioavailability | 262 | **0.6872** | 0.6334 | 0.6514 | 0.6749 |
+| Skin | 246 | 0.6006 | 0.6136 | 0.5834 | **0.6270** |
+
+No cell wins all tasks, and the effect of query-prior visibility depends on both
+task and ranking. Treat these as descriptive valid results until paired
+uncertainty is computed; do not infer a universal ranking or prior main effect
+from three tasks. BBB cache reconciliation dropped 4 obsolete training record
+IDs (71 ranking rows affecting 69 current queries) and ignored 1 obsolete query;
+Bioavailability and Skin required no stale-row filtering. The first V9 + prior
+lineage had three transient MolGpKa graph-index failures and is superseded by the
+matched-tool `lineage_v2` rerun reported above.
 
 ```text
 fresh main-scaffold prior:
   outputs/paper/starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/
 Morgan standalone:
   outputs/paper/starling_conditioned_gold_l1_morgan_standalone_deepseek_v4_flash_nvfp4_lineage_v1/
-V9 plus fresh prior:
-  outputs/paper/starling_conditioned_gold_l1_v9_with_prior_deepseek_v4_flash_nvfp4_lineage_v1/
+Morgan plus fresh prior:
+  outputs/paper/starling_conditioned_gold_l1_morgan_with_prior_deepseek_v4_flash_nvfp4_lineage_v1/
+V9 standalone:
+  outputs/paper/starling_conditioned_gold_l1_v9_standalone_deepseek_v4_flash_nvfp4_lineage_v1/
+V9 plus fresh prior (matched-tool rerun):
+  outputs/paper/starling_conditioned_gold_l1_v9_with_prior_deepseek_v4_flash_nvfp4_lineage_v2/
 ```
 
 ## Retrieval and leakage contract
