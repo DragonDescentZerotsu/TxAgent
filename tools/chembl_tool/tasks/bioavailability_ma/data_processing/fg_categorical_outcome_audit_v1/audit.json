@@ -1,0 +1,63 @@
+{
+  "version": "bioavailability_fg_categorical_outcome_audit.v1",
+  "question": "Does substrate_status express a primary or co-primary measurement of this source row, without judging whether the scientific assertion is true?",
+  "source_artifact": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "source_artifact_sha256": "17198bfc19eece5e349bea9e0e0f7c734d129e3720e549c91908f61c23592314",
+  "eligible_population": {
+    "source_id": "fg",
+    "measurement_resolution_route": "categorical",
+    "records": 7396,
+    "substrate": 6827,
+    "not_substrate": 569
+  },
+  "sampling": {
+    "method": "For each status, order by sha256('fg-categorical-primary-outcome-audit.v1|' + cleaned_record_id) and take the first 50 rows.",
+    "sample_records": 100,
+    "substrate": 50,
+    "not_substrate": 50,
+    "ordered_status_and_id_sha256": "762bf50468fdc853305b6abbdab7a95bee660f934d469b9fe5df74f6c873d327"
+  },
+  "review_labels": [
+    "primary_or_coprimary",
+    "secondary_context",
+    "not_supported_as_row_outcome"
+  ],
+  "result": {
+    "primary_or_coprimary": 96,
+    "secondary_context": 0,
+    "not_supported_as_row_outcome": 4,
+    "balanced_sample_primary_or_coprimary_rate": 0.96,
+    "status_strata": {
+      "substrate": {
+        "primary_or_coprimary": 50,
+        "not_supported_as_row_outcome": 0,
+        "rate": 1.0
+      },
+      "not_substrate": {
+        "primary_or_coprimary": 46,
+        "not_supported_as_row_outcome": 4,
+        "rate": 0.92
+      }
+    },
+    "population_weighted_primary_or_coprimary_rate": 0.9938453217955651
+  },
+  "not_supported_as_row_outcome": [
+    {
+      "cleaned_record_id": "a97c0fb6a6e0980b32bddc71af33e67223209bf734d698229443d29f0df6d8c2",
+      "reason": "The row reports sodium lauryl sulfate inhibiting P-gp; it does not measure whether sodium lauryl sulfate is a substrate."
+    },
+    {
+      "cleaned_record_id": "aa4ce5205880dcad4846b8f5f446142bb31d71a9c5a96e6bd4c949b43b34c839",
+      "reason": "The row reports that verapamil did not inhibit CDCF efflux; it does not measure verapamil substrate status."
+    },
+    {
+      "cleaned_record_id": "1c734cc4204edce67654112543def826f6c9f73f9a2bfdd769391c8255df5f81",
+      "reason": "The support text concerns alpha-asarone, while the row molecule is Artemether, so it does not support the row's substrate status."
+    },
+    {
+      "cleaned_record_id": "b295ec64ce5b63a4b9e5acfb8f1bbaae25b3b3367af3d976fab57c0b351b5751",
+      "reason": "The row reports EGCG inhibition of intestinal UGT activity; it does not measure whether EGCG is a UGT substrate."
+    }
+  ],
+  "interpretation": "The structured status is usually the row's intended measurement, so categorical fallback remains appropriate when numeric resolution yields no usable scalar. The four audit failures are source-row extraction errors and are not evidence that the categorical encoder inferred the wrong column."
+}

@@ -1,22 +1,9 @@
-"""Skin_Reaction categorical response encoders.
+"""Controlled Skin_Reaction response encoders.
 
-The two qualitative sources carry no measurement, so they are excluded from
-every pair bucket.  These frozen, reviewed encoders give the informative
-subset of those records a continuous value; everything downstream is unchanged.
-
-Four encoders on three latent scales.  The scales are separate ``canonical_unit``
-values, and each encoder additionally contributes its ``categorical_encoder_id``
-to the pair-bucket key, so no two of them are ever compared to each other:
-
-``count_logit`` (``logit_response``)
-    ``direct_skin_reaction`` rows with ``positive_count`` / ``total_tested`` and
-    ``n >= 2``.  Genuine incidence data.  ``η = logit((k + ½)/(n + 1))``.
-
-``single_subject_logit`` (``logit_response``)
-    The same computation for ``n == 1``.  Held apart deliberately: 42.7% of the
-    count rows are a single subject, and "this one person reacted" is a much
-    weaker claim than "45 of 50 reacted".  Pooling them would let a 1/1 set the
-    scale for a 45/50.
+Incidence is retained on its source-faithful fraction scale. Explicit structured
+counts are source-exact; percentages and fractions embedded in text reach these
+encoders only after measurement resolution or as a non-scalar fallback. A
+single-subject result remains a separate scale from group incidence.
 
 ``ordinal_severity_grade`` (``ordinal_severity_grade``)
     The Draize-style ``+`` / ``++`` / ``+++`` / ``++++`` ladder in
@@ -51,29 +38,21 @@ import pandas as pd
 
 from tools.chembl_tool.common.starling.categorical_response import (
     CanonicalCategory,
-    LOGIT_RESPONSE_UNIT,
     ORDINAL_SEVERITY_UNIT,
     SIGNED_DIRECTION_UNIT,
     CategoricalEncoding,
     CategoricalResponsePolicy,
     ControlledMeasurementSpec,
-    count_logit,
-    logit,
     render_measurement,
-    shrunk_rate,
 )
 
 
-CATEGORICAL_RESPONSE_VERSION = "skin_reaction_categorical_response.v1"
+CATEGORICAL_RESPONSE_VERSION = "skin_reaction_categorical_response.v2"
 
 DIRECT_SOURCE = "direct_skin_reaction"
 PHOTOTOXICITY_SOURCE = "phototoxicity_irritation_local_damage"
 
-# A bare percentage carries a rate but no denominator.  It is used directly as
-# the probability; this nominal size only resolves the reported 0% and 100%
-# boundaries, where the logit would otherwise be infinite.  It is a reviewed
-# constant, not an estimate of the study's real sample size.
-NOMINAL_PERCENT_SAMPLE_SIZE = 20.0
+INCIDENCE_FRACTION_UNIT = "fraction"
 
 # Signed hazard direction.  Equal spacing asserts that protective and positive
 # are equally far from no effect; SD standardisation makes the absolute scale
@@ -94,11 +73,10 @@ _NUMERIC_GRADE_TEXT = re.compile(r"^([1-4])\s*\+(?![\w+])")
 _NEGATIVE_GRADE_TEXT = frozenset(
     {"-", "--", "—", "–", "0", "negative", "no reaction", "none", "nil", "no response"}
 )
-_PERCENT_TEXT = re.compile(
-    r"^(\d+(?:\.\d+)?)\s*%\s*(?:positive|of\s+\w+|reacted|response|responders)?\.?$",
+_INCIDENCE_PERCENT_TEXT = re.compile(
+    r"^\d+(?:\.\d+)?\s*%\s*(?:positive|of\s+\w+|reacted|response|responders)?\.?$",
     re.IGNORECASE,
 )
-_FRACTION_TEXT = re.compile(r"^(\d+)\s*/\s*(\d+)\b")
 
 
 def _text(value: Any) -> str:
@@ -127,11 +105,7 @@ def _counts(record: Mapping[str, Any]) -> tuple[float, float] | None:
     raw_k = _text(record.get("positive_count"))
     raw_n = _text(record.get("total_tested"))
     if not raw_k or not raw_n:
-        # A ``k/n`` fraction written into effect_metric is real count data too.
-        match = _FRACTION_TEXT.match(_effect_text(record))
-        if match is None:
-            return None
-        raw_k, raw_n = match.group(1), match.group(2)
+        return None
     try:
         k, n = float(raw_k), float(raw_n)
     except ValueError:
@@ -153,13 +127,13 @@ def encode_counts(record: Mapping[str, Any]) -> CategoricalEncoding | None:
     k, n = parsed
     if n < 2:
         return None
-    value = count_logit(k, n)
+    value = k / n
     return CategoricalEncoding(
-        encoder_id="count_logit",
+        encoder_id="incidence_fraction.v1",
         value=value,
-        unit=LOGIT_RESPONSE_UNIT,
+        unit=INCIDENCE_FRACTION_UNIT,
         measurement_text=render_measurement(value),
-        inputs={"positive_count": k, "total_tested": n, "shrunk_rate": shrunk_rate(k, n)},
+        inputs={"positive_count": k, "total_tested": n},
         sample_size=int(n),
     )
 
@@ -174,11 +148,11 @@ def encode_single_subject(record: Mapping[str, Any]) -> CategoricalEncoding | No
     k, n = parsed
     if n != 1:
         return None
-    value = count_logit(k, n)
+    value = k / n
     return CategoricalEncoding(
-        encoder_id="single_subject_logit",
+        encoder_id="single_subject_fraction.v1",
         value=value,
-        unit=LOGIT_RESPONSE_UNIT,
+        unit=INCIDENCE_FRACTION_UNIT,
         measurement_text=render_measurement(value),
         inputs={"positive_count": k, "total_tested": n},
         sample_size=1,
@@ -231,35 +205,31 @@ def encode_severity_grade(record: Mapping[str, Any]) -> CategoricalEncoding | No
     )
 
 
-def encode_percent_positive(record: Mapping[str, Any]) -> CategoricalEncoding | None:
-    """A reported percentage with no denominator, used directly as the rate."""
+def encode_incidence_fraction(
+    record: Mapping[str, Any],
+) -> CategoricalEncoding | None:
+    """Use structured counts or the frozen resolver's incidence quantity."""
+    counted = encode_counts(record)
+    if counted is not None:
+        return counted
     if str(record.get("source_id") or "") != DIRECT_SOURCE:
         return None
-    match = _PERCENT_TEXT.match(_effect_text(record))
-    if match is None:
+    if record.get("resolved_scalar_value") is None:
         return None
-    percent = float(match.group(1))
-    if not math.isfinite(percent) or not 0.0 <= percent <= 100.0:
+    value = float(record["resolved_scalar_value"])
+    resolved_unit = str(record.get("resolved_unit_text") or "")
+    if resolved_unit == "%" and _INCIDENCE_PERCENT_TEXT.match(_effect_text(record)):
+        value /= 100.0
+    elif resolved_unit != INCIDENCE_FRACTION_UNIT:
         return None
-    rate = percent / 100.0
-    if 0.0 < rate < 1.0:
-        value = logit(rate)
-        shrunk = rate
-    else:
-        # Resolve only the reported boundaries, using the declared nominal size.
-        shrunk = shrunk_rate(rate * NOMINAL_PERCENT_SAMPLE_SIZE, NOMINAL_PERCENT_SAMPLE_SIZE)
-        value = logit(shrunk)
+    if not math.isfinite(value) or not 0.0 <= value <= 1.0:
+        return None
     return CategoricalEncoding(
-        encoder_id="percent_positive_logit",
+        encoder_id="incidence_fraction.v1",
         value=value,
-        unit=LOGIT_RESPONSE_UNIT,
+        unit=INCIDENCE_FRACTION_UNIT,
         measurement_text=render_measurement(value),
-        inputs={
-            "effect_metric": _effect_text(record),
-            "reported_percent": percent,
-            "rate": shrunk,
-            "nominal_sample_size_used": not 0.0 < rate < 1.0,
-        },
+        inputs={"measurement_resolution_origin": record.get("measurement_resolution_origin")},
     )
 
 
@@ -282,35 +252,26 @@ def encode_signed_direction(record: Mapping[str, Any]) -> CategoricalEncoding | 
 
 CONTROLLED_MEASUREMENTS = (
     ControlledMeasurementSpec(
-        scale_id="count_logit",
+        scale_id="incidence_fraction.v1",
         source_id=DIRECT_SOURCE,
         input_fields=("positive_count", "total_tested", "measurement_text"),
-        encoder=encode_counts,
+        encoder=encode_incidence_fraction,
         kind="continuous",
-        parser_id="skin.count_logit.v1",
-        definition="Jeffreys-shrunk logit of k/n for n >= 2",
+        parser_id="skin.incidence_fraction.v1",
+        definition="source-exact or resolved positive fraction for n >= 2",
     ),
     ControlledMeasurementSpec(
-        scale_id="single_subject_logit",
+        scale_id="single_subject_fraction.v1",
         source_id=DIRECT_SOURCE,
         input_fields=("positive_count", "total_tested", "measurement_text"),
         encoder=encode_single_subject,
         kind="binary",
-        parser_id="skin.single_subject_logit.v1",
-        definition="Jeffreys-shrunk response class for n == 1",
+        parser_id="skin.single_subject_fraction.v1",
+        definition="source-exact response fraction for n == 1",
         categories=(
-            CanonicalCategory("no_response", 0, count_logit(0, 1)),
-            CanonicalCategory("response", 1, count_logit(1, 1)),
+            CanonicalCategory("no_response", 0, 0.0),
+            CanonicalCategory("response", 1, 1.0),
         ),
-    ),
-    ControlledMeasurementSpec(
-        scale_id="percent_positive_logit",
-        source_id=DIRECT_SOURCE,
-        input_fields=("measurement_text",),
-        encoder=encode_percent_positive,
-        kind="continuous",
-        parser_id="skin.percent_positive_logit.v1",
-        definition="logit of an explicitly reported percentage",
     ),
     ControlledMeasurementSpec(
         scale_id="ordinal_severity_grade",
@@ -358,11 +319,11 @@ def encoding_policy_manifest() -> dict[str, Any]:
         "version": CATEGORICAL_RESPONSE_VERSION,
         "encoders": [
             {
-                "encoder_id": "count_logit",
+                "encoder_id": "incidence_fraction.v1",
                 "source_id": DIRECT_SOURCE,
-                "unit": LOGIT_RESPONSE_UNIT,
-                "definition": "logit((k + 0.5) / (n + 1)) for n >= 2",
-                "scale": "log-odds of incidence",
+                "unit": INCIDENCE_FRACTION_UNIT,
+                "definition": "positive_count / total_tested or resolved percent",
+                "scale": "raw incidence fraction",
             },
             {
                 "encoder_id": "ordinal_severity_grade",
@@ -376,19 +337,11 @@ def encoding_policy_manifest() -> dict[str, Any]:
                 ),
             },
             {
-                "encoder_id": "percent_positive_logit",
+                "encoder_id": "single_subject_fraction.v1",
                 "source_id": DIRECT_SOURCE,
-                "unit": LOGIT_RESPONSE_UNIT,
-                "definition": "logit(reported percent), boundaries shrunk",
-                "nominal_sample_size": NOMINAL_PERCENT_SAMPLE_SIZE,
-                "scale": "log-odds of incidence, no denominator reported",
-            },
-            {
-                "encoder_id": "single_subject_logit",
-                "source_id": DIRECT_SOURCE,
-                "unit": LOGIT_RESPONSE_UNIT,
-                "definition": "logit((k + 0.5) / (n + 1)) for n == 1",
-                "scale": "log-odds of incidence, single subject",
+                "unit": INCIDENCE_FRACTION_UNIT,
+                "definition": "positive_count / total_tested for n == 1",
+                "scale": "raw incidence fraction, single subject",
             },
             {
                 "encoder_id": "signed_direction",
@@ -400,7 +353,7 @@ def encoding_policy_manifest() -> dict[str, Any]:
             },
         ],
         "uninformative_labels_receive_no_value": sorted(UNINFORMATIVE_LABELS),
-        "encoders_never_overwrite_a_real_measurement": True,
+        "numeric_incidence_is_normalized_after_measurement_resolution": True,
         "encoder_id_is_part_of_the_pair_bucket_key": True,
     }
 
@@ -409,13 +362,13 @@ __all__ = [
     "CATEGORICAL_RESPONSE_VERSION",
     "CONTROLLED_MEASUREMENTS",
     "MEASUREMENT_SCALES",
-    "NOMINAL_PERCENT_SAMPLE_SIZE",
+    "INCIDENCE_FRACTION_UNIT",
     "ORDINAL_SEVERITY_UNIT",
     "POLICY",
     "SIGNED_DIRECTION_ANCHORS",
     "UNINFORMATIVE_LABELS",
     "encode_counts",
-    "encode_percent_positive",
+    "encode_incidence_fraction",
     "encode_severity_grade",
     "encode_signed_direction",
     "encode_single_subject",

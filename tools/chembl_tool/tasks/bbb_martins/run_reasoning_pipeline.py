@@ -129,8 +129,9 @@ from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index, r
 DEFAULT_INPUT = "data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl"
 DEFAULT_INDEX = "outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_neighbor_index.pkl"
 V11_DEFAULT_INDEX = (
-    "outputs/chembl_tool/tasks/bbb_martins/evidence_library/"
-    "starling_normalized_v7/08_neighbor_index/scaffold"
+    "outputs/paper/molecular_evidence_agent_starling_scaffold_"
+    "experimental_meaningful_cns_access_v3/evidence/"
+    "bbb_starling_v7/08_neighbor_index"
 )
 DEFAULT_TIER1_REPLACEMENT_GROUPS = ["Tier 1.starling_direct_bbb_evidence"]
 DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs"

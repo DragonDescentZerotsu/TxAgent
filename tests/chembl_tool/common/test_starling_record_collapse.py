@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from tools.chembl_tool.common.starling.record_collapse import (
+    _apply_semantic_transfer_decision,
     _aggregate_group,
     _aggregation_method,
     _collapse_group_key,
@@ -39,6 +40,50 @@ from tools.chembl_tool.common.starling.semantic_record_aggregation import (
 )
 
 
+def test_reviewed_semantic_bucket_promotion_is_exact_key_only():
+    collapsed = {
+        "pair_bucket_key": '["fg","bidirectional_permeability","log10(ratio)"]',
+        "assay_transfer_eligible": False,
+        "assay_transfer_ineligibility_reason": (
+            "reference_scope_endpoint_defined_ratio"
+        ),
+    }
+    assert (
+        _apply_semantic_transfer_decision(
+            collapsed,
+            policy_entries={
+                collapsed["pair_bucket_key"]: {
+                    "decision": "eligible",
+                    "reason_code": "single_axis",
+                }
+            },
+        )
+        == "promoted"
+    )
+    assert collapsed["assay_transfer_eligible"] is True
+    assert collapsed["assay_transfer_ineligibility_reason"] is None
+
+    rejected = {
+        "pair_bucket_key": '["fg","other","log10(ratio)"]',
+        "assay_transfer_eligible": False,
+        "assay_transfer_ineligibility_reason": "reference_scope_unknown",
+    }
+    assert (
+        _apply_semantic_transfer_decision(
+            rejected,
+            policy_entries={
+                rejected["pair_bucket_key"]: {
+                    "decision": "ineligible",
+                    "reason_code": "mixed_axis",
+                }
+            },
+        )
+        == "unchanged"
+    )
+    assert rejected["assay_transfer_eligible"] is False
+    assert rejected["assay_transfer_ineligibility_reason"] == (
+        "semantic_policy_mixed_axis"
+    )
 def test_record_collapse_uses_deterministic_aggregates_and_cross_source_dedup(
     tmp_path,
 ):
@@ -64,6 +109,8 @@ def test_record_collapse_uses_deterministic_aggregates_and_cross_source_dedup(
             "canonical_pair_fields_json": "{}",
             "assay_transfer_eligible": row["source_id"] != "direct",
             "assay_transfer_ineligibility_reason": None,
+            "bucket_eligible": row["source_id"] != "direct",
+            "bucket_exclusion_reason": None,
         }
         for row in records
     ]
@@ -80,6 +127,16 @@ def test_record_collapse_uses_deterministic_aggregates_and_cross_source_dedup(
         pair_bucket_records_path=sidecar_path,
         out_dir=tmp_path / "deduplicated",
         direct_mapping_builder=_direct_mapping,
+    )
+    deduplicated_sidecar = pd.read_parquet(
+        tmp_path / "deduplicated/pair_bucket_records.parquet"
+    )
+    direct_sidecar = deduplicated_sidecar[
+        ~deduplicated_sidecar["assay_transfer_eligible"]
+    ].iloc[0]
+    assert not direct_sidecar["bucket_eligible"]
+    assert direct_sidecar["bucket_exclusion_reason"] == (
+        "direct_binary_vote_not_assay_transferable"
     )
     manifest = build_collapsed_record_stage(
         task_id="test_task",
@@ -692,6 +749,40 @@ def test_direct_residual_group_key_separates_deterministic_measurement_axes():
     ) == "continuous_median"
 
 
+def test_collapse_names_alias_group_from_pair_bucket_endpoint():
+    key = json.dumps(["oral_exposure", "auc_0_infinity", "log10(h·ng/mL)"])
+    group = [
+        {
+            **_record(f"r{number}", "source_a", "CCO", "continuous", value=value),
+            "retrieval_source_id": "indirect",
+            "group_id": "Observed.oral_exposure",
+            "canonical_endpoint_name": endpoint,
+            "canonical_endpoint_concept": "auc_0_infinity",
+            "canonical_unit_text": "log10(h·ng/mL)",
+            "pair_bucket_key": key,
+            "canonical_pair_fields_json": "{}",
+            "assay_transfer_eligible": True,
+        }
+        for number, (endpoint, value) in enumerate(
+            (("auc0_inf", 1.0), ("aucinf", 2.0)), start=1
+        )
+    ]
+
+    collapsed = _aggregate_group(
+        "bioavailability_ma",
+        "alias-group",
+        group,
+        method="continuous_median",
+        semantic=None,
+        dedup_lineage={},
+        preserved_columns=("canonical_endpoint_concept",),
+    )
+
+    assert collapsed["canonical_endpoint_name"] == "auc_0_infinity"
+    assert collapsed["canonical_endpoint_concept"] == "auc_0_infinity"
+    assert collapsed["finite_scalar_value"] == 1.5
+
+
 def test_direct_residual_absolute_axes_collapse_without_llm(tmp_path, monkeypatch):
     records = []
     for record_id, source_id, endpoint, unit, value in (
@@ -1078,7 +1169,7 @@ def test_deferred_semantic_shell_is_hidden_and_can_be_attached_from_cache(
     assert attached["display_measurement_text"] == "A result was reported."
 
 
-def test_collapsed_pair_bucket_projection_does_not_reclassify_multi_source_rows():
+def test_active_pair_bucket_materializer_rejects_collapsed_multi_source_rows():
     pending = {
         "canonical_record_id": "collapsed-1",
         "collapsed_record_id": "collapsed-1",
@@ -1117,22 +1208,12 @@ def test_collapsed_pair_bucket_projection_does_not_reclassify_multi_source_rows(
         "measurement_kind": "continuous",
     }
 
-    sidecar, metadata = materialize_pair_buckets(
-        [pending, direct, eligible],
-        source_required_fields={"source_a": ("canonical_context",)},
-        reference_eligibility_by_source={},
-        semantic_pair_bucket_sources=("source_a",),
-        canonical_record_contract=True,
-    )
-
-    assert sidecar[0]["pair_bucket_key"] == pending["pair_bucket_key"]
-    assert sidecar[0]["canonical_pair_fields_json"] == pending[
-        "canonical_pair_fields_json"
-    ]
-    assert sidecar[0]["assay_transfer_eligible"] is False
-    assert sidecar[1]["pair_bucket_key"] is None
-    assert sidecar[2]["assay_transfer_eligible"] is True
-    assert all(metadata["validations"].values())
+    with pytest.raises(ValueError, match="source_id='multi_source'"):
+        materialize_pair_buckets(
+            [pending, direct, eligible],
+            source_required_fields={"source_a": ("canonical_context",)},
+            canonical_record_contract=True,
+        )
 
 
 def test_semantic_responses_are_cached_as_each_request_finishes(tmp_path, monkeypatch):

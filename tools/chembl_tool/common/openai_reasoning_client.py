@@ -33,6 +33,7 @@ class OpenAICompatibleClient:
         enable_thinking: bool,
         transport_max_retries: int = TRANSPORT_MAX_RETRIES,
         request_extra_body: Mapping[str, Any] | None = None,
+        response_format: Mapping[str, Any] | None = None,
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
@@ -51,6 +52,7 @@ class OpenAICompatibleClient:
         self.reasoning_effort = reasoning_effort
         self.enable_thinking = enable_thinking
         self.request_extra_body = dict(request_extra_body or {})
+        self.response_format = dict(response_format or {"type": "json_object"})
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
@@ -174,10 +176,15 @@ class OpenAICompatibleClient:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
-            "response_format": {"type": "json_object"},
+            "response_format": getattr(
+                self, "response_format", {"type": "json_object"}
+            ),
         }
+        provider_model = self.model.rsplit("/", 1)[-1]
         token_parameter = (
-            "max_completion_tokens" if self.model.startswith("gpt-5") else "max_tokens"
+            "max_completion_tokens"
+            if provider_model.startswith("gpt-5")
+            else "max_tokens"
         )
         kwargs[token_parameter] = self.max_tokens
         if self.temperature is not None:

@@ -1,9 +1,8 @@
 """Build v7 pair-bucket SD and empirical-CDF geometry without transfer targets.
 
-Stage 04 defines source-specific bucket membership and measurement kind. Stage
-05 may refine direct-residual membership with its reviewed condition key. This
-module only validates whether the resulting bucket can support a distance
-scale, audits residual heterogeneity in untouched source fields, and stores a
+Stage 3 defines source-specific bucket membership and measurement kind, then
+deduplicates records and refines direct-residual membership. This module only
+validates whether the resulting bucket can support a distance scale and stores a
 first-class sample SD, an exact value CDF for valid continuous buckets, and an
 exact category-rank CDF for valid ordinal buckets. It never emits a pair label,
 transfer threshold, soft target, or raw-distance CDF.
@@ -38,17 +37,14 @@ from tools.chembl_tool.common.starling.categorical_response import (
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
-    MINIMUM_COVERAGE,
     MINIMUM_LEVEL_RECORDS,
-    MINIMUM_OMEGA_SQUARED,
     STANDARD_DEVIATION_DDOF,
-    normalize_candidate_value,
-    select_variance_candidate,
 )
 
 
 CALIBRATION_FILENAME = "pair_bucket_distance_calibration.json.gz"
-CALIBRATION_VERSION = "pair_bucket_distance_calibration.v5"
+CALIBRATION_VERSION = "pair_bucket_distance_calibration.v6"
+V5_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v5"
 PREVIOUS_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v4"
 V3_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v3"
 V2_CALIBRATION_VERSION = "pair_bucket_distance_calibration.v2"
@@ -57,8 +53,8 @@ VALUE_CDF_VERSION = "empirical_value_cdf.v1"
 CATEGORY_CDF_VERSION = "empirical_category_rank_cdf.v1"
 LEGACY_DISTANCE_PERCENTILE_KNOTS = 101
 MINIMUM_BUCKET_RECORDS = 20
+MINIMUM_BUCKET_MOLECULES = 16
 LEGACY_MINIMUM_BUCKET_RECORDS = 25
-MINIMUM_CATEGORICAL_CRAMERS_V_SQUARED = 0.20
 
 
 def build_pair_bucket_distance_calibration(
@@ -73,7 +69,7 @@ def build_pair_bucket_distance_calibration(
     minimum_samples: int | None = None,
     workers: int = 1,
 ) -> dict[str, Any]:
-    """Materialize first-class SD and empirical CDF metadata per Stage-04 bucket."""
+    """Materialize SD and empirical CDF metadata per deduplicated Stage-3 bucket."""
     records_path = Path(records_path)
     bucket_path = Path(pair_bucket_records_path)
     metadata_path = Path(pair_bucket_metadata_path)
@@ -86,45 +82,33 @@ def build_pair_bucket_distance_calibration(
     _validate_global_context_contract(spec, bucket_metadata, auxiliary_metadata)
 
     schema = set(pq.read_schema(records_path).names)
-    collapsed = "collapsed_record_id" in schema
-    candidate_columns = (
-        []
-        if collapsed
-        else sorted(
-            {
-                field
-                for bucket in record_contract.pair_buckets.values()
-                for field in bucket.variance_candidates
-            }
-        )
-    )
     required = {
         "canonical_record_id",
+        "canonical_smiles",
         "finite_scalar_value",
         "measurement_kind",
         "canonical_measurement_scale_id",
         "canonical_category_id",
         "canonical_category_rank",
-        *candidate_columns,
     }
     if spec.profile.heldout_sources:
         required.add(spec.heldout_identity_column)
-    expected_minimum = (
-        MINIMUM_BUCKET_RECORDS if collapsed else LEGACY_MINIMUM_BUCKET_RECORDS
-    )
+    expected_minimum = MINIMUM_BUCKET_RECORDS
     if minimum_samples is None:
         minimum_samples = expected_minimum
     if minimum_samples != expected_minimum:
-        unit = "molecule" if collapsed else "source"
         raise ValueError(
             f"the v7 calibration contract requires exactly {expected_minimum} "
-            f"{unit} records"
+            "deduplicated records"
         )
-    if collapsed:
+    finalized = {
+        "source_id",
+        "pair_bucket_key",
+        "assay_transfer_eligible",
+    }.issubset(schema)
+    if finalized:
         required.update(
             {
-                "collapsed_record_id",
-                "canonical_smiles",
                 "retrieval_source_id",
                 "pair_bucket_key",
                 "assay_transfer_eligible",
@@ -137,13 +121,11 @@ def build_pair_bucket_distance_calibration(
     records = pd.read_parquet(records_path, columns=sorted(required))
     if not records["canonical_record_id"].is_unique:
         raise ValueError("finalized canonical_record_id values must be unique")
-    if collapsed:
+    if finalized:
         rows = records[
             records["assay_transfer_eligible"].astype(bool)
             & records["pair_bucket_key"].notna()
         ].copy()
-        if rows.duplicated(["pair_bucket_key", "canonical_smiles"]).any():
-            raise ValueError("post-collapse calibration repeats a molecule within a pair bucket")
     else:
         buckets = pd.read_parquet(bucket_path)
         if not buckets["canonical_record_id"].is_unique:
@@ -185,11 +167,6 @@ def build_pair_bucket_distance_calibration(
     category_cdf_entries = [
         entry for entry in entries.values() if entry["category_cdf_valid"]
     ]
-    flagged_entries = [
-        entry
-        for entry in entries.values()
-        if entry["residual_heterogeneity_gate"]["variance_gate_flagged"]
-    ]
     reasons = Counter(str(entry["calibration_reason"]) for entry in entries.values())
     value_cdf_reasons = Counter(
         str(entry["value_cdf_reason"]) for entry in entries.values()
@@ -203,9 +180,7 @@ def build_pair_bucket_distance_calibration(
         "pair_bucket_version": spec.pair_bucket_version,
         "semantics": {
             "pair_bucket_membership_authority": (
-                "stage04_source_bucket_with_stage05_direct_condition_refinement"
-                if collapsed
-                else "04_pair_buckets"
+                "stage3_source_bucket_with_direct_condition_refinement"
             ),
             "calibration_changes_membership": False,
             "pair_labels_emitted": False,
@@ -217,25 +192,11 @@ def build_pair_bucket_distance_calibration(
             "binary_and_ordinal_standard_deviation_value_field": (
                 "canonical_category_rank"
             ),
-            "canonical_measurement_scope": (
-                "canonical_post_collapse_aggregate_is_retrieval_visible"
-                if collapsed
-                else "legacy_assay_transfer_only"
-            ),
+            "canonical_measurement_scope": "deduplicated_source_records",
             "assay_transfer_bucket_eligibility_scope": (
-                "global_stage06_after_molecule_context_collapse_before_paper_views"
+                "global_stage3_before_paper_views"
             ),
-            "calibration_record_unit": (
-                "one_collapsed_molecule_pair_bucket_record"
-                if collapsed
-                else "legacy_source_record"
-            ),
-            "residual_heterogeneity_changes_validity": False,
-            "residual_heterogeneity_scope": (
-                "not_applicable_after_context_collapse"
-                if collapsed
-                else "legacy_precollapse_variance_candidates"
-            ),
+            "calibration_record_unit": "deduplicated_record",
             "raw_distance_cdf_emitted": False,
             "continuous_value_cdf": (
                 "exact empirical midrank CDF over finite_scalar_value"
@@ -260,24 +221,13 @@ def build_pair_bucket_distance_calibration(
         },
         "validation_contract": {
             "minimum_bucket_records": minimum_samples,
-            "minimum_bucket_records_unit": (
-                "unique_collapsed_molecules" if collapsed else "legacy_source_records"
-            ),
+            "minimum_bucket_records_unit": "deduplicated_records",
+            "minimum_distinct_molecules": MINIMUM_BUCKET_MOLECULES,
             "binary": "all declared levels observed; every observed level has >=3 records",
             "ordinal": (
                 "at least three declared levels observed; every observed level "
                 "has >=3 records"
             ),
-            "categorical_residual_heterogeneity": {
-                "statistic": "bias_corrected_cramers_v_squared",
-                "minimum_records_per_candidate_level": MINIMUM_LEVEL_RECORDS,
-                "minimum_coverage": MINIMUM_COVERAGE,
-                "flag_at_or_above": MINIMUM_CATEGORICAL_CRAMERS_V_SQUARED,
-            },
-            "continuous_residual_heterogeneity": {
-                "statistic": "omega_squared",
-                "flag_at_or_above": MINIMUM_OMEGA_SQUARED,
-            },
         },
         "inputs": {
             "records": {"path": str(records_path), "sha256": file_sha256(records_path)},
@@ -297,7 +247,6 @@ def build_pair_bucket_distance_calibration(
             "minimum_support_buckets": sum(
                 item["minimum_support_met"] for item in entries.values()
             ),
-            "residual_heterogeneity_flagged_buckets": len(flagged_entries),
             "calibration_valid_buckets": len(valid_entries),
             "calibration_valid_records": sum(item["record_count"] for item in valid_entries),
             "calibration_reason_counts": dict(sorted(reasons.items())),
@@ -416,7 +365,10 @@ def _build_calibration_entry(
         raise ValueError(f"pair bucket {key!r} spans measurement scales")
     scale_id = scale_values[0] if scale_values else None
     record_count = len(group)
-    support_met = record_count >= minimum_samples
+    molecule_count = int(group["canonical_smiles"].dropna().astype(str).nunique())
+    record_support_met = record_count >= minimum_samples
+    molecule_support_met = molecule_count >= MINIMUM_BUCKET_MOLECULES
+    support_met = record_support_met and molecule_support_met
     category_gate = _category_gate(
         group,
         record_contract=record_contract,
@@ -435,26 +387,11 @@ def _build_calibration_entry(
     positive_sd = bool(
         sample_sd is not None and math.isfinite(sample_sd) and sample_sd > 0
     )
-    if support_met and "collapsed_record_id" not in group.columns:
-        variance_gate = (
-            _select_categorical_variance_candidate(
-                group,
-                record_contract=record_contract,
-                source_id=source_id,
-                scale_id=scale_id,
-            )
-            if kind in {"binary", "ordinal"}
-            else select_variance_candidate(
-                group,
-                profile=spec.profile,
-                source_id=source_id,
-            )
-        )
-    else:
-        variance_gate = _empty_variance_gate(evaluated=False)
     reason = "valid"
-    if not support_met:
+    if not record_support_met:
         reason = f"fewer_than_{minimum_samples}_records"
+    elif not molecule_support_met:
+        reason = f"fewer_than_{MINIMUM_BUCKET_MOLECULES}_distinct_molecules"
     elif kind not in {"continuous", "binary", "ordinal"}:
         reason = "unsupported_measurement_kind"
     elif not category_gate["valid"]:
@@ -488,10 +425,13 @@ def _build_calibration_entry(
         "measurement_kind": kind,
         "canonical_measurement_scale_id": scale_id,
         "record_count": record_count,
+        "distinct_molecule_count": molecule_count,
         "minimum_record_count": minimum_samples,
+        "minimum_distinct_molecule_count": MINIMUM_BUCKET_MOLECULES,
+        "minimum_record_support_met": record_support_met,
+        "minimum_molecule_support_met": molecule_support_met,
         "minimum_support_met": support_met,
         "category_domain_gate": category_gate,
-        "residual_heterogeneity_gate": variance_gate,
         "observed_sample_standard_deviation": (
             sample_sd if calibration_valid else None
         ),
@@ -504,6 +444,8 @@ def _build_calibration_entry(
         "standard_deviation_valid": calibration_valid,
         "standard_deviation_reason": reason,
         "assay_transfer_bucket_eligible": calibration_valid,
+        "automatic_transfer_eligible": calibration_valid,
+        "pruning_status": "unreviewed",
         "assay_transfer_bucket_ineligibility_reason": (
             None if calibration_valid else reason
         ),
@@ -579,115 +521,6 @@ def _geometry_values(group: pd.DataFrame, *, kind: str) -> pd.Series:
         if kind in {"binary", "ordinal"}
         else group["finite_scalar_value"]
     )
-
-
-def _select_categorical_variance_candidate(
-    group: pd.DataFrame,
-    *,
-    record_contract: StarlingRecordContract,
-    source_id: str,
-    scale_id: str | None = None,
-) -> dict[str, Any]:
-    scale = record_contract.measurement_scales.get(str(scale_id or ""))
-    controlled_inputs = set(scale.input_fields) if scale is not None else set()
-    fields = tuple(
-        field
-        for field in record_contract.pair_buckets[source_id].variance_candidates
-        if field not in controlled_inputs
-    )
-    scores = [
-        score
-        for field in fields
-        if (score := _score_categorical_candidate(group, field)) is not None
-    ]
-    scores.sort(
-        key=lambda item: (
-            -item["candidate_score"],
-            -item["cramers_v_squared"],
-            -item["coverage"],
-            item["candidate_column"],
-        )
-    )
-    result = (
-        {"evaluated": True, **scores[0]}
-        if scores
-        else _empty_variance_gate()
-    )
-    result["excluded_controlled_input_fields"] = sorted(controlled_inputs)
-    return result
-
-
-def _score_categorical_candidate(
-    group: pd.DataFrame, candidate_field: str
-) -> dict[str, Any] | None:
-    outcomes = group["canonical_category_id"].astype("string")
-    candidate = group[candidate_field].map(
-        lambda value: normalize_candidate_value(candidate_field, value)
-    )
-    counts = candidate.dropna().value_counts(sort=False)
-    supported_levels = {
-        str(level) for level, count in counts.items() if int(count) >= MINIMUM_LEVEL_RECORDS
-    }
-    if len(supported_levels) < 2:
-        return None
-    supported = candidate.astype("string").isin(supported_levels) & outcomes.notna()
-    supported_count = int(supported.sum())
-    coverage = supported_count / len(group)
-    if coverage < MINIMUM_COVERAGE:
-        return None
-    table = pd.crosstab(outcomes[supported], candidate[supported])
-    if min(table.shape) < 2:
-        return None
-    v2 = _bias_corrected_cramers_v_squared(table.to_numpy(dtype=float))
-    if v2 is None:
-        return None
-    return {
-        "candidate_column": candidate_field,
-        "candidate_score": float(v2 * coverage),
-        "cramers_v_squared": float(v2),
-        "coverage": float(coverage),
-        "supported_level_count": len(supported_levels),
-        "supported_record_count": supported_count,
-        "variance_gate_flagged": v2 >= MINIMUM_CATEGORICAL_CRAMERS_V_SQUARED,
-        "candidate_level_examples": [
-            {"value": str(level), "record_count": int(counts[level])}
-            for level in sorted(supported_levels)
-        ][:8],
-    }
-
-
-def _bias_corrected_cramers_v_squared(table: np.ndarray) -> float | None:
-    n = float(table.sum())
-    rows, columns = table.shape
-    if n <= 1 or rows < 2 or columns < 2:
-        return None
-    expected = np.outer(table.sum(axis=1), table.sum(axis=0)) / n
-    if np.any(expected <= 0):
-        return None
-    chi_squared = float(np.sum(np.square(table - expected) / expected))
-    phi_squared = chi_squared / n
-    corrected_phi = max(
-        0.0, phi_squared - ((columns - 1) * (rows - 1)) / (n - 1)
-    )
-    corrected_rows = rows - ((rows - 1) ** 2) / (n - 1)
-    corrected_columns = columns - ((columns - 1) ** 2) / (n - 1)
-    denominator = min(corrected_rows - 1, corrected_columns - 1)
-    return corrected_phi / denominator if denominator > 0 else None
-
-
-def _empty_variance_gate(*, evaluated: bool = True) -> dict[str, Any]:
-    return {
-        "evaluated": evaluated,
-        "candidate_column": "__none__",
-        "candidate_score": None,
-        "cramers_v_squared": None,
-        "omega_squared": None,
-        "coverage": None,
-        "supported_level_count": 0,
-        "supported_record_count": 0,
-        "variance_gate_flagged": False,
-        "candidate_level_examples": [],
-    }
 
 
 def _value_cdf(measurements: Sequence[Any]) -> dict[str, Any]:
@@ -943,6 +776,7 @@ def validate_pair_bucket_distance_calibration(
         V2_CALIBRATION_VERSION,
         V3_CALIBRATION_VERSION,
         PREVIOUS_CALIBRATION_VERSION,
+        V5_CALIBRATION_VERSION,
         CALIBRATION_VERSION,
     }:
         raise ValueError("distance calibration version mismatch")
@@ -988,6 +822,7 @@ def validate_pair_bucket_distance_calibration(
                 in {
                     V3_CALIBRATION_VERSION,
                     PREVIOUS_CALIBRATION_VERSION,
+                    V5_CALIBRATION_VERSION,
                     CALIBRATION_VERSION,
                 },
             )
@@ -1233,6 +1068,7 @@ __all__ = [
     "LEGACY_CALIBRATION_VERSION",
     "LEGACY_DISTANCE_PERCENTILE_KNOTS",
     "LEGACY_MINIMUM_BUCKET_RECORDS",
+    "MINIMUM_BUCKET_MOLECULES",
     "MINIMUM_BUCKET_RECORDS",
     "VALUE_CDF_VERSION",
     "build_pair_bucket_distance_calibration",

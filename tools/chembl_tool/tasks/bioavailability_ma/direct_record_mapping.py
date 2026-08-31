@@ -18,12 +18,20 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     DIRECT_CLAIMS_PATH,
     DIRECT_SOURCE_ROWS_PATH,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.reviewed_context_conditioned_benchmark import (
-    CORE_EXTERNAL_CONDITION_GROUPS,
-)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
     is_human_context,
     label_bioavailability_value,
+)
+
+
+CORE_EXTERNAL_CONDITION_GROUPS = (
+    "prandial_state=fasted",
+    "prandial_state=fed_unspecified",
+    "prandial_state=fed_high_fat",
+    "co_treatment=rifampin",
+    "disease=cirrhosis",
+    "disease=cystic_fibrosis",
+    "release_profile=modified_release",
 )
 
 

@@ -145,6 +145,29 @@ def test_source_exact_route_ignores_a_stale_llm_resolution(tmp_path) -> None:
     assert records[0]["resolved_measurement_text"].startswith("0.0013888")
 
 
+def test_a_declared_canonical_source_exact_unit_bypasses_the_unit_map(tmp_path) -> None:
+    record = _row("rec-1", "4/10 positive", None)
+    record.update(
+        {
+            "measurement_resolution_route": "accept",
+            "measurement_resolution_exact_measurement": "0.4",
+            "measurement_resolution_exact_unit": "fraction",
+            "measurement_resolution_exact_unit_is_canonical": True,
+        }
+    )
+    records = [record]
+    apply_measurement_resolution(
+        records,
+        mapping_path=_mapping(tmp_path, []),
+        task="test_task",
+        unit_mapping_path=_units(tmp_path, []),
+    )
+    assert records[0]["measurement_resolution_origin"] == "source_exact"
+    assert records[0]["measurement_unit_mapping_status"] == "mapped"
+    assert records[0]["resolved_scalar_value"] == pytest.approx(0.4)
+    assert records[0]["resolved_unit_text"] == "fraction"
+
+
 @pytest.mark.parametrize("route", ["categorical", "reject"])
 def test_nonextract_routes_ignore_a_stale_llm_resolution(tmp_path, route) -> None:
     record = _row("rec-1", "substrate", "")
@@ -297,6 +320,20 @@ def test_mapping_contract_rejects_duplicates_unknown_status_and_orphans(tmp_path
             task="test_task",
             unit_mapping_path=units,
         )
+    audit = apply_measurement_resolution(
+        [_row("rec-1", "1%")],
+        mapping_path=_mapping(
+            tmp_path,
+            [
+                duplicate,
+                _resolution("rejected", "ok", [{"measurement": "2", "unit": "%"}]),
+            ],
+        ),
+        task="test_task",
+        unit_mapping_path=units,
+        ignored_record_ids={"rejected"},
+    )
+    assert audit["ignored_structure_rejection_rows"] == 1
 
 
 def test_mapping_contract_rejects_routing_drift_and_float_overflow(tmp_path) -> None:
@@ -362,8 +399,9 @@ def test_exact_scale_uses_plain_decimal_and_domain_fails_closed(tmp_path) -> Non
     )
     assert records[0]["resolved_measurement_text"].startswith("0.0000015555")
     assert records[0]["resolved_unit_text"] == "cm/s"
-    assert records[1]["measurement_unit_mapping_status"] == "domain_excluded"
-    assert records[1]["resolved_scalar_value"] is None
+    assert records[1]["measurement_unit_mapping_status"] == "mapped"
+    assert records[1]["measurement_numeric_domain_status"] == "outside_declared_domain"
+    assert records[1]["resolved_scalar_value"] < 0
 
 
 def test_missing_exact_unit_rule_is_a_hard_error(tmp_path) -> None:
@@ -377,4 +415,29 @@ def test_missing_exact_unit_rule_is_a_hard_error(tmp_path) -> None:
             ),
             task="test_task",
             unit_mapping_path=_units(tmp_path, []),
+        )
+
+
+def test_legacy_unit_exclusion_cannot_discard_a_resolved_scalar(tmp_path) -> None:
+    excluded = {
+        "task": "test_task",
+        "canonical_endpoint": "permeability",
+        "input_unit": "ratio",
+        "action": "exclude",
+    }
+    with pytest.raises(ValueError, match="still excludes a resolved scalar"):
+        apply_measurement_resolution(
+            [_row("rec-1", "0.4")],
+            mapping_path=_mapping(
+                tmp_path,
+                [
+                    _resolution(
+                        "rec-1",
+                        "ok",
+                        [{"measurement": "0.4", "unit": "ratio"}],
+                    )
+                ],
+            ),
+            task="test_task",
+            unit_mapping_path=_units(tmp_path, [excluded]),
         )

@@ -12,8 +12,13 @@ untouched.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import cache
+from pathlib import Path
 from typing import Any, Iterable
 
+from tools.chembl_tool.common.starling.endpoint_concepts import (
+    load_endpoint_concept_maps,
+)
 from tools.chembl_tool.common.starling.normalization.cleaning import (
     clean_text,
     endpoint_inventory_hash,
@@ -29,6 +34,7 @@ from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
 
 
 SPACING_AND_SPELLING_VERSION = "skin_reaction_spacing_and_spelling.v1"
+ENDPOINT_CONCEPT_VERSION = "skin_reaction_endpoint_concepts.v1"
 
 EXPECTED_ENDPOINT_INVENTORIES = {
     "direct_skin_reaction": {
@@ -48,6 +54,12 @@ EXPECTED_ENDPOINT_INVENTORIES = {
         "sha256": "107769ca1582a04c261a6596b9434837b438648a566a547922ccecabac05675d",
     },
 }
+ENDPOINT_CONCEPT_PATHS = tuple(
+    Path(__file__).resolve().parent
+    / "data_processing/canonicalization_v7/endpoint_concepts"
+    / f"{source_id}.json"
+    for source_id in sorted(EXPECTED_ENDPOINT_INVENTORIES)
+)
 
 
 # direct_skin_reaction / reaction_type: the extractor's controlled vocabulary with
@@ -139,6 +151,27 @@ def spacing_and_spelling_endpoint(source_id: str, endpoint_name: str) -> str:
     ).spacing_and_spelling_endpoint
 
 
+@cache
+def _endpoint_concept_maps() -> dict[str, dict[tuple[str, str], str]]:
+    return load_endpoint_concept_maps(
+        ENDPOINT_CONCEPT_PATHS,
+        version=ENDPOINT_CONCEPT_VERSION,
+        expected_inventories=EXPECTED_ENDPOINT_INVENTORIES,
+    )
+
+
+def endpoint_concept(
+    source_id: str, endpoint_name: str, canonical_endpoint_name: str
+) -> str:
+    key = (clean_text(endpoint_name) or "", str(canonical_endpoint_name or ""))
+    try:
+        return _endpoint_concept_maps()[source_id][key]
+    except KeyError as error:
+        raise ValueError(
+            f"unreviewed endpoint concept: {source_id}/{key[0]}/{key[1]}"
+        ) from error
+
+
 def family_assignment(
     source_id: str,
     endpoint_name: str,
@@ -228,9 +261,12 @@ def validate_endpoint_inventory(source_id: str, endpoint_names: Iterable[str]) -
 
 
 __all__ = [
+    "ENDPOINT_CONCEPT_PATHS",
+    "ENDPOINT_CONCEPT_VERSION",
     "EXPECTED_ENDPOINT_INVENTORIES",
     "SPACING_AND_SPELLING_VERSION",
     "SpacingAndSpellingDecision",
+    "endpoint_concept",
     "family_assignment",
     "spacing_and_spelling_decision",
     "spacing_and_spelling_endpoint",

@@ -23,9 +23,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 
 TASK_ROOT = Path(__file__).resolve().parent
 PROMPT_VERSION = "bioavailability_reference_semantics_prompt.v2"
-MAPPING_VERSION = "bioavailability_reference_semantics.v2"
+MAPPING_VERSION = "bioavailability_reference_semantics.v3"
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/reference_semantics_v2/reference_semantics.parquet"
+    TASK_ROOT / "data_processing/reference_semantics_v3/reference_semantics.parquet"
 )
 DEFAULT_RECORDS_PATH = Path(
     "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"

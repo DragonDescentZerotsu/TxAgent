@@ -478,15 +478,15 @@ Second, two sources have explicit unit columns and two embed any unit in the val
 
 | source | rows | endpoint column | measurement / unit | scalar |
 |---|---:|---|---|---|
-| `direct_skin_reaction` | 66,597 | `reaction_type` | `effect_metric`, embedded | categorical first, otherwise extract |
+| `direct_skin_reaction` | 66,597 | `reaction_type` | `effect_metric`, embedded | source-exact counts, otherwise numeric extraction, then categorical fallback |
 | `sensitization_aop` | 45,985 | `endpoint_or_target` | `result_value` / `result_unit` | yes |
-| `phototoxicity_irritation_local_damage` | 382,726 | `evidence_endpoint` | `observed_effect`, embedded/free prose | categorical first, otherwise extract |
+| `phototoxicity_irritation_local_damage` | 382,726 | `evidence_endpoint` | `observed_effect`, embedded/free prose | numeric extraction, then categorical fallback |
 | `skin_exposure` | 311,834 | `evidence_type` | `result_value` / `result_unit` | yes |
 
-`direct_skin_reaction` and `phototoxicity_irritation_local_damage` are predominantly categorical: their
-outcome lives in `outcome_label` / `result_label`, and the controlled encoder is checked first for routing.
-Rows not claimed by an encoder still go through the frozen endpoint-aware extraction because some carry a
-real embedded scalar. Stage 02 explodes every successful extraction, then applies the singular shared exact
+`direct_skin_reaction` and `phototoxicity_irritation_local_damage` are predominantly categorical, but a
+categorical column no longer preempts a numeric measurement. Explicit direct-source count columns are
+source-exact. Other digit-bearing measurement text goes through the frozen endpoint-aware extraction; the
+controlled encoder is only the fallback when no usable scalar remains. Stage 02 explodes every successful extraction, then applies the singular shared exact
 `(skin_reaction, canonical_endpoint, input_unit)` JSON map. Unmapped, excluded, relative, unsure, and
 unavailable quantities remain evidence with null scalars. Runtime unit regexes and the historical Skin
 measurement-semantics parser do not run on this exact path; variation is null.
@@ -497,22 +497,22 @@ measurement-semantics parser do not run on this exact path; variation is null.
 source-and-input registry. Stage 02 persists the declared measurement kind and canonical category identity;
 Stage 04 assigns bucket membership; Stage 05 uses category rank only for distance geometry.
 
-Five encoders on three scales. Each is confined to one source, and precedence is strict — the first that
-matches wins, so a record backed by real counts is never downgraded to an anchor:
+Four encoders are confined to their declared source and inputs. Precedence is strict, and each row contributes
+one observation: a usable numeric scalar wins; otherwise the first matching controlled encoder is used.
 
 | encoder | rows | `canonical_unit` | definition |
 |---|---:|---|---|
-| `count_logit` | 19,025 | `logit_response` | `η = logit((k + ½)/(n + 1))`, Jeffreys, for `n >= 2` |
+| `incidence_fraction.v1` | variable | `fraction` | `positive_count / total_tested` for `n >= 2`, or a resolver-produced incidence fraction |
 | `ordinal_severity_grade` | 3,789 | `ordinal_severity_grade` | the `+`/`++`/`+++`/`++++` ladder, 0-4 |
-| `percent_positive_logit` | 2,106 | `logit_response` | `logit` of a reported percentage with no denominator |
-| `single_subject_logit` | 12,662 | `logit_response` | the count computation for `n == 1` |
+| `single_subject_fraction.v1` | variable | `fraction` | source-exact `positive_count / total_tested` for `n == 1` |
 | `signed_direction` | 356,976 | `signed_effect_direction` | `protective −1`, `negative 0`, `positive +1` |
 
 Four decisions here are load-bearing and were made against the data, not by analogy:
 
-**Shrinkage is mandatory, not cosmetic.** 9,308 count rows report `p = 0` and 12,057 report `p = 1`;
-an unshrunk logit is infinite for both. The Jeffreys posterior mean also makes the sample size matter
-rather than only the ratio: `0/1 → −1.10`, `0/10 → −3.04`, `0/100 → −5.30`.
+**Incidence uses the reported raw fraction.** `4/10 positive` and `40% positive` both normalize to `0.4
+fraction`. Explicit structured counts are source-exact; text-only counts, fractions, and percentages must be
+selected by the frozen LLM extraction before normalization. The categorical policy does not independently
+parse their numeric value.
 
 **The `+` ladder is severity, not incidence.** Of the graded rows that also carry counts, 94.7% have
 `n == 1` — the grade says how strongly one subject reacted, not what fraction of a group did. Encoding
@@ -520,9 +520,9 @@ rather than only the ratio: `0/1 → −1.10`, `0/10 → −3.04`, `0/100 → �
 policy standardises by within-bucket SD, the absolute spacing of the ladder is irrelevant; only the
 ratios between grades matter.
 
-**A single subject is not an incidence study.** 42.7% of count rows are `n == 1`. `single_subject_logit`
-is held apart from `count_logit` so a 1/1 report can never set the comparison scale for a 45/50 one.
-It takes only two values (`±1.10`), which the distinct-level gate then handles.
+**A single subject is not an incidence study.** `single_subject_fraction.v1` is held apart from group
+`incidence_fraction.v1` so a 1/1 report can never set the comparison scale for a 45/50 one. It takes only the
+two values 0 and 1, which the scale-specific distinct-level gate handles.
 
 **`protective` is a direction, not a weaker positive.** It is 95,392 phototoxicity rows, and an ordinal
 ladder would place it on the wrong side of `negative`. `not_classified` (22,896) and
@@ -532,14 +532,11 @@ such as `positivetext>`) are dropped, not repaired.
 
 Three guards keep the encoded records honest:
 
-- `categorical_encoder_id` is part of the pair-bucket key for both categorical sources. `canonical_unit`
-  alone is not enough, because three encoders share `logit_response`.
-- An encoder only ever fills a record with no scalar of its own, and
-  `validate_measurement_pairs` fails the build if an encoding ever overwrote a source measurement the
-  parser could have scored.
-- Encoded units are validated by `encoded_unit_validity_status`, not by the physical domains — a
-  log-odds is legitimately negative, and the physical check would otherwise reject roughly half of them
-  as `nonpositive_positive_scalar`.
+- `categorical_encoder_id` is part of the pair-bucket key. `canonical_unit` alone is not enough because group
+  incidence and single-subject outcomes both use `fraction`.
+- An encoder fills a record only after source-exact or frozen LLM resolution finds no usable scalar. Numeric
+  incidence is normalized to the controlled fraction scale without emitting a sibling categorical record.
+- Encoded units are validated by `encoded_unit_validity_status`, not inferred from free text.
 
 ### Auxiliary context reconciliation
 
@@ -713,8 +710,8 @@ normalised as `continuous_target / not_transfer_min` (`ml/starling_ml/data.py`),
 
 What that repo can now consume from here:
 
-- The eligible record set contains categorical records carrying `finite_scalar_value`,
-  `canonical_unit ∈ {logit_response, ordinal_severity_grade, signed_effect_direction}`,
+- The eligible record set contains controlled records carrying `finite_scalar_value`,
+  `canonical_unit ∈ {fraction, ordinal_severity_grade, signed_effect_direction}`,
   `categorical_encoder_id`, and `categorical_sample_size` where a denominator was reported. The sample
   size is the natural per-record weight — a 1/1 report and a 45/50 report are both single records but
   are not equally informative.

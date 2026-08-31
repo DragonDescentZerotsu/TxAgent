@@ -1,8 +1,7 @@
-"""Shared transactional canonical and paper-view Starling stages.
+"""Shared builders for the three-stage core and frozen paper views.
 
-Canonical v7 publishes pair buckets, row deduplication, record collapse, and
-distance calibration as Stages 04-07. Frozen task-local builds retain their
-historical stage names.
+The active core ends at deduplicated pair buckets. Historical collapse,
+pruning, and paper-view builders remain available only for lineage replay.
 """
 
 from __future__ import annotations
@@ -35,17 +34,6 @@ from tools.chembl_tool.common.starling.build_pair_bucket_transfer_policy import 
 from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
     CALIBRATION_FILENAME,
 )
-from tools.chembl_tool.common.starling.final_endpoint_pruning import (
-    ARTIFACT_DIR as FINAL_ENDPOINT_PRUNING_DIR,
-    DECISIONS_FILENAME as FINAL_ENDPOINT_PRUNING_DECISIONS_FILENAME,
-    MANIFEST_FILENAME as FINAL_ENDPOINT_PRUNING_MANIFEST_FILENAME,
-    REVIEWS_FILENAME as FINAL_ENDPOINT_PRUNING_REVIEWS_FILENAME,
-    VERSION as FINAL_ENDPOINT_PRUNING_VERSION,
-)
-from tools.chembl_tool.common.starling.collapsed_informativeness import (
-    TEMPLATE_PATH as COLLAPSED_INFORMATIVENESS_TEMPLATE_PATH,
-    VERSION as COLLAPSED_INFORMATIVENESS_VERSION,
-)
 from tools.chembl_tool.common.starling.compact_artifacts import (
     CompactArtifactProfile,
     build_relational_evidence_catalog,
@@ -58,9 +46,7 @@ from tools.chembl_tool.common.starling.build_runtime import (
     build_cache_metadata,
     cache_metadata_matches,
     parent_identity_map,
-)
-from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
-    TokenLedger,
+    starling_build_session,
 )
 from tools.chembl_tool.common.starling.heldout_index import load_heldout_identity_keys
 from tools.chembl_tool.common.starling.normalization.audit import (
@@ -70,12 +56,6 @@ from tools.chembl_tool.common.starling.normalization.audit import (
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.common.starling.normalization.task_policy import StarlingTaskPolicy
-from tools.chembl_tool.common.starling.record_collapse import (
-    MANIFEST_FILENAME as COLLAPSE_MANIFEST_FILENAME,
-    RECORDS_FILENAME as COLLAPSED_RECORDS_FILENAME,
-    SEMANTIC_FILENAME as COLLAPSE_SEMANTIC_FILENAME,
-    build_collapsed_record_stage,
-)
 from tools.chembl_tool.common.starling.record_deduplication import (
     DIRECT_MAPPING_FILENAME as DEDUP_DIRECT_MAPPING_FILENAME,
     DUPLICATES_FILENAME as DEDUP_DUPLICATES_FILENAME,
@@ -84,18 +64,33 @@ from tools.chembl_tool.common.starling.record_deduplication import (
     RECORDS_FILENAME as DEDUP_RECORDS_FILENAME,
     build_deduplicated_record_stage,
 )
-from tools.chembl_tool.common.starling.semantic_record_aggregation import (
-    DEFAULT_BASE_URL as DEFAULT_SEMANTIC_AGGREGATION_BASE_URL,
-    DEFAULT_MODEL as DEFAULT_SEMANTIC_AGGREGATION_MODEL,
-    SemanticAggregationConfig,
-    TEMPLATE_PATH as SEMANTIC_AGGREGATION_TEMPLATE_PATH,
-)
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     standardize_index_molecules,
 )
 
 
+# Frozen collapse/pruning names remain readable without importing their runtime.
+FINAL_ENDPOINT_PRUNING_DIR = "final_endpoint_pruning_v6"
+FINAL_ENDPOINT_PRUNING_DECISIONS_FILENAME = "decisions.parquet"
+FINAL_ENDPOINT_PRUNING_MANIFEST_FILENAME = "manifest.json"
+FINAL_ENDPOINT_PRUNING_REVIEWS_FILENAME = "reviews.jsonl"
+FINAL_ENDPOINT_PRUNING_VERSION = "final_endpoint_pruning.v6"
+COLLAPSED_INFORMATIVENESS_VERSION = "collapsed_informativeness.v2"
+COLLAPSED_INFORMATIVENESS_TEMPLATE_PATH = (
+    Path(__file__).parent / "prompt_templates/collapsed_informativeness_v2.jinja"
+)
+COLLAPSED_RECORDS_FILENAME = "records.parquet"
+COLLAPSE_SEMANTIC_FILENAME = "semantic_aggregation.jsonl"
+COLLAPSE_MANIFEST_FILENAME = "manifest.json"
+DEFAULT_SEMANTIC_AGGREGATION_BASE_URL = "http://127.0.0.1:50001/v1"
+DEFAULT_SEMANTIC_AGGREGATION_MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
+SEMANTIC_AGGREGATION_TEMPLATE_PATH = (
+    Path(__file__).parent / "prompt_templates/semantic_record_aggregation_v4.jinja"
+)
+
+
 PAIR_BUCKET_STAGE = "04_pair_buckets"
+CORE_PAIR_BUCKET_STAGE = "03_pair_buckets"
 DEDUPLICATED_RECORD_STAGE = "05_deduplicated_records"
 COLLAPSED_RECORD_STAGE = "06_collapsed_records"
 TRANSFER_POLICY_STAGE = "05_assay_transfer_policy"
@@ -177,6 +172,7 @@ class SplitDownstreamSpec:
     collapse_input_paths: tuple[str | Path, ...] = ()
     final_endpoint_pruning: bool = False
     direct_label_definition: str = ""
+    assay_transfer_bucket_policy_path: str | Path | None = None
 
     @property
     def compact_profile(self) -> CompactArtifactProfile:
@@ -191,7 +187,7 @@ class SplitDownstreamSpec:
         return PAIR_BUCKET_METADATA_FILENAME
 
 
-def build_canonical_artifacts(
+def _build_historical_canonical_artifacts(
     spec: SplitDownstreamSpec,
     *,
     normalized_root: str | Path,
@@ -217,6 +213,13 @@ def build_canonical_artifacts(
     collapsed_informativeness_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Build split-independent pair, collapse, and calibration artifacts."""
+    from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
+        TokenLedger,
+    )
+    from tools.chembl_tool.common.starling.semantic_record_aggregation import (
+        SemanticAggregationConfig,
+    )
+
     started = time.monotonic()
     root = Path(normalized_root)
     root.mkdir(parents=True, exist_ok=True)
@@ -259,6 +262,11 @@ def build_canonical_artifacts(
     collapse_inputs = (
         (
             *spec.collapse_input_paths,
+            *(
+                (spec.assay_transfer_bucket_policy_path,)
+                if spec.assay_transfer_bucket_policy_path
+                else ()
+            ),
             SEMANTIC_AGGREGATION_TEMPLATE_PATH,
             *((semantic_cache_input,) if semantic_cache_input else ()),
             *informativeness_inputs,
@@ -445,6 +453,253 @@ def build_canonical_artifacts(
     return manifest
 
 
+def build_canonical_artifacts(
+    spec: SplitDownstreamSpec,
+    *,
+    normalized_root: str | Path,
+    workers: int = 1,
+    rebuild_request: Mapping[str, Any] | None = None,
+    validation_level: str = "strict",
+    cache_mode: str = "auto",
+    apply_outlier_review: bool = True,
+    **ignored: Any,
+) -> dict[str, Any]:
+    with starling_build_session(normalized_root):
+        return _build_canonical_artifacts(
+            spec,
+            normalized_root=normalized_root,
+            workers=workers,
+            rebuild_request=rebuild_request,
+            validation_level=validation_level,
+            cache_mode=cache_mode,
+            apply_outlier_review=apply_outlier_review,
+            **ignored,
+        )
+
+
+def _build_canonical_artifacts(
+    spec: SplitDownstreamSpec,
+    *,
+    normalized_root: str | Path,
+    workers: int = 1,
+    rebuild_request: Mapping[str, Any] | None = None,
+    validation_level: str = "strict",
+    cache_mode: str = "auto",
+    apply_outlier_review: bool = True,
+    **_: Any,
+) -> dict[str, Any]:
+    """Build the active three-stage core through deduplicated pair buckets.
+
+    Historical collapse and paper-view arguments are accepted and ignored so
+    old task wrappers do not need a second orchestration layer.
+    """
+    del validation_level
+    started = time.monotonic()
+    root = Path(normalized_root)
+    root.mkdir(parents=True, exist_ok=True)
+    records_path = root / "02_canonicalized/records.parquet"
+    auxiliary_manifest = root / "02_canonicalized/auxiliary_mapping_manifest.json"
+    if not records_path.is_file() or not auxiliary_manifest.is_file():
+        raise FileNotFoundError(
+            "Stage 3 requires complete 02_canonicalized records and auxiliary manifest"
+        )
+    if "canonical_record_id" not in pq.read_schema(records_path).names:
+        raise ValueError("Stage 3 requires canonical-v7 records")
+    input_hashes = {
+        "canonical_records": file_sha256(records_path),
+        "auxiliary_mapping_manifest": file_sha256(auxiliary_manifest),
+    }
+    reviewed_ineligibility: dict[str, str] = {}
+    review_input: dict[str, Any] | None = None
+    from tools.chembl_tool.common.starling.final_endpoint_pruning import (
+        ARTIFACT_DIR as OUTLIER_REVIEW_DIR,
+        MANIFEST_FILENAME as OUTLIER_REVIEW_MANIFEST,
+        load_reviewed_record_ineligibility,
+    )
+
+    review_manifest = root / OUTLIER_REVIEW_DIR / OUTLIER_REVIEW_MANIFEST
+    if apply_outlier_review and review_manifest.is_file():
+        reviewed_ineligibility, review_input = load_reviewed_record_ineligibility(
+            review_manifest,
+            task_id=spec.task_id,
+            canonical_records_path=records_path,
+        )
+        input_hashes["assay_transfer_outlier_review"] = review_input[
+            "manifest_sha256"
+        ]
+    published = root / CORE_PAIR_BUCKET_STAGE
+    published_manifest = published / MANIFEST_FILENAME
+    if cache_mode == "auto" and published_manifest.is_file():
+        cached = json.loads(published_manifest.read_text(encoding="utf-8"))
+        if cached.get("input_hashes") == input_hashes and _core_outputs_match(
+            published, cached.get("outputs") or {}
+        ):
+            return _read_json_if_present(root / MANIFEST_FILENAME)
+
+    with tempfile.TemporaryDirectory(dir=root, prefix=".stage3-build-") as name:
+        candidate = Path(name)
+        raw_pair_dir = candidate / ".raw_pair_buckets"
+        stage_dir = candidate / CORE_PAIR_BUCKET_STAGE
+        pair_metadata = spec.build_sidecar(
+            records_path=records_path,
+            out_dir=raw_pair_dir,
+            assay_transfer_record_ineligibility=reviewed_ineligibility,
+        )
+        pair_metadata_path = stage_dir / PAIR_BUCKET_METADATA_FILENAME
+        stage_dir.mkdir(parents=True, exist_ok=True)
+        dedup = build_deduplicated_record_stage(
+            task_id=spec.task_id,
+            records_path=records_path,
+            pair_bucket_records_path=(
+                raw_pair_dir / spec.pair_bucket_records_filename
+            ),
+            out_dir=stage_dir,
+            direct_mapping_builder=spec.direct_mapping_builder,
+        )
+        pair_metadata["output"] = {
+            "path": str(
+                root / CORE_PAIR_BUCKET_STAGE / DEDUP_PAIR_BUCKET_RECORDS_FILENAME
+            ),
+            "sha256": file_sha256(
+                stage_dir / DEDUP_PAIR_BUCKET_RECORDS_FILENAME
+            ),
+        }
+        pair_metadata["deduplicated_records"] = dedup["summary"]
+        _write_json(pair_metadata_path, pair_metadata)
+        transfer_kwargs = {
+            "records_path": stage_dir / DEDUP_RECORDS_FILENAME,
+            "pair_bucket_records_path": (
+                stage_dir / DEDUP_PAIR_BUCKET_RECORDS_FILENAME
+            ),
+            "pair_bucket_metadata_path": pair_metadata_path,
+            "auxiliary_manifest_path": auxiliary_manifest,
+            "out_dir": stage_dir,
+        }
+        if "workers" in inspect.signature(spec.build_transfer_policy).parameters:
+            transfer_kwargs["workers"] = workers
+        calibration = spec.build_transfer_policy(**transfer_kwargs)
+        calibration = _project_paths(calibration, candidate, root)
+        write_deterministic_gzip(stage_dir / CALIBRATION_FILENAME, calibration)
+        outputs = {
+            filename: file_sha256(stage_dir / filename)
+            for filename in (
+                DEDUP_RECORDS_FILENAME,
+                DEDUP_PAIR_BUCKET_RECORDS_FILENAME,
+                DEDUP_DIRECT_MAPPING_FILENAME,
+                DEDUP_DUPLICATES_FILENAME,
+                PAIR_BUCKET_METADATA_FILENAME,
+                CALIBRATION_FILENAME,
+            )
+        }
+        stage_manifest = {
+            "version": "starling_core_stage3.v1",
+            "task_id": spec.task_id,
+            "input_hashes": input_hashes,
+            "contract": {
+                "pair_bucket_version": spec.pair_bucket_version,
+                "source_scoped_identity": True,
+                "reference_scope_in_identity": False,
+                "record_collapse": False,
+                "residual_heterogeneity_gate": False,
+                "minimum_records": 20,
+                "minimum_distinct_molecules": 16,
+                "reviewed_outlier_rows_remain_in_records": True,
+            },
+            "summary": {
+                "input_records": pair_metadata["stats"]["input_records"],
+                **dedup["summary"],
+                **calibration["summary"],
+                "outlier_review": review_input,
+            },
+            "outputs": outputs,
+            "validations": {
+                **dedup["validations"],
+                "one_stage3_directory": True,
+                "record_collapse_absent": True,
+                "residual_heterogeneity_gate_absent": True,
+            },
+        }
+        _write_json(stage_dir / MANIFEST_FILENAME, stage_manifest)
+        root_manifest = _read_json_if_present(root / MANIFEST_FILENAME)
+        for legacy_key in (
+            "compact_artifact_version",
+            "index_version",
+            "record_collapse_version",
+            "semantic_aggregation_version",
+            "final_endpoint_pruning_version",
+        ):
+            root_manifest.pop(legacy_key, None)
+        root_manifest.update(
+            {
+                **spec.policy.manifest_versions(),
+                "pipeline_layout_version": "starling_normalized_three_stage.v1",
+                "artifact_scope": "canonical_split_independent",
+                "completed_artifact_stages": [
+                    "01_cleaned",
+                    "02_canonicalized",
+                    CORE_PAIR_BUCKET_STAGE,
+                ],
+                "canonical_scope": {
+                    "cleaned_stage": "01_cleaned",
+                    "canonicalized_stage": "02_canonicalized",
+                    "pair_bucket_stage": CORE_PAIR_BUCKET_STAGE,
+                    "paper_view_stage": None,
+                },
+                "canonical_stats": stage_manifest["summary"],
+                "canonical_artifact_hashes": outputs,
+                "rebuild_request": dict(
+                    rebuild_request
+                    or {"from_stage": "03_pair_buckets", "through_stage": "03_pair_buckets"}
+                ),
+                "elapsed_stage3_s": round(time.monotonic() - started, 3),
+            }
+        )
+        _write_json(candidate / MANIFEST_FILENAME, root_manifest)
+        _validate_core_stage3(stage_dir)
+        backup = Path(tempfile.mkdtemp(dir=root, prefix=".stage3-backup-"))
+        active_manifest = root / MANIFEST_FILENAME
+        had_stage = published.exists()
+        had_manifest = active_manifest.exists()
+        try:
+            if had_stage:
+                os.replace(published, backup / CORE_PAIR_BUCKET_STAGE)
+            if had_manifest:
+                os.replace(active_manifest, backup / MANIFEST_FILENAME)
+            os.replace(stage_dir, published)
+            os.replace(candidate / MANIFEST_FILENAME, active_manifest)
+        except BaseException:
+            if published.exists():
+                os.replace(published, stage_dir)
+            if had_stage:
+                os.replace(backup / CORE_PAIR_BUCKET_STAGE, published)
+            if had_manifest:
+                os.replace(backup / MANIFEST_FILENAME, active_manifest)
+            raise
+        finally:
+            shutil.rmtree(backup, ignore_errors=True)
+    return root_manifest
+
+
+def _core_outputs_match(root: Path, outputs: Mapping[str, Any]) -> bool:
+    return bool(outputs) and all(
+        (root / filename).is_file()
+        and file_sha256(root / filename) == str(expected)
+        for filename, expected in outputs.items()
+    )
+
+
+def _validate_core_stage3(stage_dir: Path) -> None:
+    manifest = json.loads((stage_dir / MANIFEST_FILENAME).read_text(encoding="utf-8"))
+    if not all((manifest.get("validations") or {}).values()):
+        raise ValueError("Stage-3 validation failed")
+    records = pq.ParquetFile(stage_dir / DEDUP_RECORDS_FILENAME).metadata.num_rows
+    sidecar = pq.ParquetFile(
+        stage_dir / DEDUP_PAIR_BUCKET_RECORDS_FILENAME
+    ).metadata.num_rows
+    if records != sidecar:
+        raise ValueError("Stage-3 record and pair-bucket cardinality differ")
+
+
 def build_canonical_deduplicated_records(
     spec: SplitDownstreamSpec,
     *,
@@ -624,6 +879,10 @@ def _build_canonical_collapsed_stages(
     defer_semantic_aggregation: bool,
     collapsed_informativeness_dir: Path | None,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    from tools.chembl_tool.common.starling.record_collapse import (
+        build_collapsed_record_stage,
+    )
+
     pair_dir = candidate / PAIR_BUCKET_STAGE
     dedup_dir = candidate / DEDUPLICATED_RECORD_STAGE
     collapse_dir = candidate / COLLAPSED_RECORD_STAGE
@@ -704,6 +963,7 @@ def _build_canonical_collapsed_stages(
         ),
         defer_semantic_aggregation=defer_semantic_aggregation,
         collapsed_informativeness_dir=collapsed_informativeness_dir,
+        assay_transfer_bucket_policy_path=spec.assay_transfer_bucket_policy_path,
         final_endpoint_pruning_manifest_path=(
             published_root
             / FINAL_ENDPOINT_PRUNING_DIR
@@ -1209,6 +1469,7 @@ def evidence_catalog_projection_columns(
     useful_columns = {
         record_id_field,
         "retrieval_eligible",
+        "retrieval_exclusion_reason",
         "canonical_smiles",
         "group_id",
         "finite_scalar_value",
@@ -2132,6 +2393,7 @@ __all__ = [
     "AUDIT_STAGE",
     "CANONICAL_V7_STAGES",
     "COLLAPSED_RECORD_STAGE",
+    "CORE_PAIR_BUCKET_STAGE",
     "DEDUPLICATED_RECORD_STAGE",
     "DOWNSTREAM_STAGES",
     "EVIDENCE_BRIDGE_FILENAME",

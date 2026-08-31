@@ -1,0 +1,295 @@
+{
+  "version": "skin_reaction_endpoint_concepts.v1",
+  "source_id": "skin_exposure",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 34,
+    "sha256": "107769ca1582a04c261a6596b9434837b438648a566a547922ccecabac05675d"
+  },
+  "observed_pairs": {
+    "count": 46,
+    "sha256": "e49070068865d5567679ffac7d3ee9c883a7c163b6dac7aa0a0415d42d6df8ca"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "No endpoint was supplied; retain the missing state rather than infer a measurement from heterogeneous support text."
+    },
+    {
+      "endpoint_name": "...",
+      "canonical_endpoint_name": "...",
+      "canonical_endpoint_concept": "ellipsis_placeholder",
+      "review_reason": "The sole row contains only ellipses in its endpoint, measurement, unit, skin source, and support; keep it as an explicit extraction placeholder."
+    },
+    {
+      "endpoint_name": "calculated_or_estimated",
+      "canonical_endpoint_name": "calculated_or_estimated",
+      "canonical_endpoint_concept": "calculated_or_estimated",
+      "review_reason": "The row is an estimated daily dermal intake rather than an experimental absorption or permeation measurement, so it remains a separate estimate concept."
+    },
+    {
+      "endpoint_name": "cumulative_permeated_amount",
+      "canonical_endpoint_name": "cumulative_permeated_amount",
+      "canonical_endpoint_concept": "cumulative_permeated_amount",
+      "review_reason": "This is an integrated amount collected or penetrated through a specified time and must remain distinct from instantaneous or steady-state flux."
+    },
+    {
+      "endpoint_name": "cutaneous_penetration",
+      "canonical_endpoint_name": "cutaneous_penetration",
+      "canonical_endpoint_concept": "cutaneous_penetration",
+      "review_reason": "The single row reports formulation-dependent material remaining on the skin surface; its ambiguous source label is preserved instead of merging it with absorbed or permeated amount."
+    },
+    {
+      "endpoint_name": "dermal_absorption",
+      "canonical_endpoint_name": "dermal_absorption",
+      "canonical_endpoint_concept": "dermal_absorption",
+      "review_reason": "Direct dermal or percutaneous absorption endpoint; measurement unit, reference basis, study design, and species retain amount-versus-fraction and local-versus-systemic distinctions."
+    },
+    {
+      "endpoint_name": "dermal_exposure_measurement",
+      "canonical_endpoint_name": "dermal_exposure_measurement",
+      "canonical_endpoint_concept": "dermal_exposure_measurement",
+      "review_reason": "These rows are dermal open-flow microperfusion AUC and Cmax measurements; keep their local dermal pharmacokinetic scope distinct from the broader skin-exposure inventory."
+    },
+    {
+      "endpoint_name": "dermally applied dose",
+      "canonical_endpoint_name": "dermally_applied_dose",
+      "canonical_endpoint_concept": "dermally_applied_dose",
+      "review_reason": "Space-separated spelling of the same administered dermal dose endpoint."
+    },
+    {
+      "endpoint_name": "dermally_applied_dose",
+      "canonical_endpoint_name": "dermally_applied_dose",
+      "canonical_endpoint_concept": "dermally_applied_dose",
+      "review_reason": "Applied dose is an exposure input and remains separate from the amount absorbed, retained, or permeated."
+    },
+    {
+      "endpoint_name": "diffusion_coefficient",
+      "canonical_endpoint_name": "diffusion_coefficient",
+      "canonical_endpoint_concept": "diffusion_coefficient",
+      "review_reason": "Physical diffusivity D in area per time; preserve it separately from permeability coefficients and partition parameters."
+    },
+    {
+      "endpoint_name": "diffusivity_not_in_schema",
+      "canonical_endpoint_name": "diffusivity_not_in_schema",
+      "canonical_endpoint_concept": "diffusion_coefficient",
+      "review_reason": "The support explicitly calls the values diffusivity and reports area-per-time units; this is an extraction-schema alias of diffusion coefficient."
+    },
+    {
+      "endpoint_name": "distribution_coefficient",
+      "canonical_endpoint_name": "distribution_coefficient",
+      "canonical_endpoint_concept": "distribution_coefficient",
+      "review_reason": "The source explicitly names a fitted distribution coefficient; retain it separately because the support does not establish equivalence to diffusivity or a dimensionless partition coefficient."
+    },
+    {
+      "endpoint_name": "flux",
+      "canonical_endpoint_name": "flux",
+      "canonical_endpoint_concept": "flux",
+      "review_reason": "Mass or mole transport rate per area and time; distinct from cumulative amount, permeability coefficient, and maximum-flux-only endpoints."
+    },
+    {
+      "endpoint_name": "flx",
+      "canonical_endpoint_name": "flux",
+      "canonical_endpoint_concept": "flux",
+      "review_reason": "Reviewed truncation of flux; the supporting row explicitly describes patch flux."
+    },
+    {
+      "endpoint_name": "lag_time",
+      "canonical_endpoint_name": "lag_time",
+      "canonical_endpoint_concept": "lag_time",
+      "review_reason": "Absolute time before measurable or steady permeation; keep separate from time-to-peak and comparator-relative lag time."
+    },
+    {
+      "endpoint_name": "lag_time",
+      "canonical_endpoint_name": "relative_lag_time",
+      "canonical_endpoint_concept": "relative_lag_time",
+      "review_reason": "These three rows report lag time as percent of an unprotected control, so they cannot share the absolute lag-time concept."
+    },
+    {
+      "endpoint_name": "maximum_flux",
+      "canonical_endpoint_name": "maximum_flux",
+      "canonical_endpoint_concept": "maximum_flux",
+      "review_reason": "Explicit maximum flux Jmax is retained separately from generic or steady-state flux."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "dermatokinetic_permeation_rate_constant",
+      "canonical_endpoint_concept": "dermatokinetic_permeation_rate_constant",
+      "review_reason": "Support identifies Kp as a compartmental dermatokinetic rate constant with inverse-time units, not a length-per-time permeability coefficient."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "diffusion_coefficient",
+      "canonical_endpoint_concept": "diffusion_coefficient",
+      "review_reason": "Support and area-per-time units explicitly identify these values as diffusion constants or effective diffusion coefficients despite the raw endpoint label."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "diffusion_parameter_d_over_l2",
+      "canonical_endpoint_concept": "diffusion_parameter_d_over_l2",
+      "review_reason": "The fitted D/L2 absorption parameter has inverse-time units and is not interchangeable with D or Kp."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "log_permeability_coefficient",
+      "canonical_endpoint_concept": "log_permeability_coefficient",
+      "review_reason": "The source reports log Kp; preserve the transformed quantity rather than mix it with linear permeability coefficients."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_concept": "permeability_coefficient",
+      "review_reason": "Linear or explicitly transformed skin permeability coefficient; canonical units and transforms retain its measurement axis."
+    },
+    {
+      "endpoint_name": "permeability_coefficient",
+      "canonical_endpoint_name": "water_vapor_permeability_rate",
+      "canonical_endpoint_concept": "water_vapor_permeability_rate",
+      "review_reason": "Water-vapor transmission or TEWL-model rate in mass per area per time is physically distinct from solute permeability coefficient."
+    },
+    {
+      "endpoint_name": "permeation_flux",
+      "canonical_endpoint_name": "permeation_flux",
+      "canonical_endpoint_concept": "flux",
+      "review_reason": "Permeation flux is an exact lexical specialization of flux and the rows use the same mass-per-area-per-time measurement."
+    },
+    {
+      "endpoint_name": "qualitative_absorption",
+      "canonical_endpoint_name": "qualitative_absorption",
+      "canonical_endpoint_concept": "qualitative_absorption",
+      "review_reason": "Narrative presence or absence of absorption without a transferable scalar remains distinct from quantitative dermal absorption."
+    },
+    {
+      "endpoint_name": "qualitative_penetration",
+      "canonical_endpoint_name": "qualitative_penetration",
+      "canonical_endpoint_concept": "qualitative_penetration",
+      "review_reason": "Predominantly narrative penetration evidence; any extracted depth or time remains separated by canonical unit and reference semantics."
+    },
+    {
+      "endpoint_name": "quantitative_penetration",
+      "canonical_endpoint_name": "quantitative_penetration",
+      "canonical_endpoint_concept": "quantitative_penetration",
+      "review_reason": "The source asserts a quantitative-penetration endpoint but its sole value is compartment-localized prose; preserve the label without merging or fabricating a scalar."
+    },
+    {
+      "endpoint_name": "radiation_level",
+      "canonical_endpoint_name": "radiation_level",
+      "canonical_endpoint_concept": "radiation_level",
+      "review_reason": "The sole row is a missing enhancement-ratio reference mislabeled as radiation level; retain it as a distinct auditable source artifact."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "flux_difference",
+      "canonical_endpoint_concept": "flux_difference",
+      "review_reason": "Absolute difference or increase in transport rate versus a comparator; preserve it separately from absolute flux and unitless relative penetration."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "lag_time_difference",
+      "canonical_endpoint_concept": "lag_time_difference",
+      "review_reason": "Signed comparator difference in lag time; distinct from absolute lag time and relative ratios."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "partition_length_parameter",
+      "canonical_endpoint_concept": "partition_length_parameter",
+      "review_reason": "Fitted K-prime partition-length parameter in centimeters; preserve this model parameter independently of flux and permeability."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "penetration_depth",
+      "canonical_endpoint_concept": "penetration_depth",
+      "review_reason": "Physical penetration depth in skin or a skin model, not an absorbed amount, transport rate, or relative ratio."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "penetration_time_to_peak_difference",
+      "canonical_endpoint_concept": "penetration_time_to_peak_difference",
+      "review_reason": "Comparator difference in time to peak penetration or flux; keep separate from lag time and penetration depth."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "permeability_coefficient_difference",
+      "canonical_endpoint_concept": "permeability_coefficient_difference",
+      "review_reason": "Signed difference in Ktrans between conditions, not an absolute permeability coefficient."
+    },
+    {
+      "endpoint_name": "relative_penetration",
+      "canonical_endpoint_name": "relative_penetration",
+      "canonical_endpoint_concept": "relative_penetration",
+      "review_reason": "Unitless, fold, percent-change, or narrative comparison of penetration; reference scope and basis retain the comparator semantics."
+    },
+    {
+      "endpoint_name": "skin_absorption",
+      "canonical_endpoint_name": "skin_absorption",
+      "canonical_endpoint_concept": "dermal_absorption",
+      "review_reason": "Skin absorption is a direct lexical synonym of dermal absorption; canonical unit, reference basis, design, and species continue to separate measurement strata."
+    },
+    {
+      "endpoint_name": "skin_exposure_measurement",
+      "canonical_endpoint_name": "skin_exposure_measurement",
+      "canonical_endpoint_concept": "skin_exposure_measurement",
+      "review_reason": "Broad measured or estimated local skin exposure inventory; retain it apart from the specific dermal microperfusion PK endpoint."
+    },
+    {
+      "endpoint_name": "skin_exposure_urement",
+      "canonical_endpoint_name": "skin_exposure_measurement",
+      "canonical_endpoint_concept": "skin_exposure_measurement",
+      "review_reason": "Reviewed truncation of skin_exposure_measurement in otherwise ordinary dermal-exposure rows."
+    },
+    {
+      "endpoint_name": "skin_penetration",
+      "canonical_endpoint_name": "skin_penetration",
+      "canonical_endpoint_concept": "skin_penetration",
+      "review_reason": "Amount or fraction entering skin in a named penetration experiment; kept distinct from systemic absorption, through-skin cumulative permeation, and qualitative penetration."
+    },
+    {
+      "endpoint_name": "skin_retention",
+      "canonical_endpoint_name": "skin_retention",
+      "canonical_endpoint_concept": "skin_retention",
+      "review_reason": "Amount retained or deposited within a skin compartment; distinct from through-skin permeation and tape-strip-specific stratum-corneum recovery."
+    },
+    {
+      "endpoint_name": "skins_retention",
+      "canonical_endpoint_name": "skin_retention",
+      "canonical_endpoint_concept": "skin_retention",
+      "review_reason": "Reviewed pluralization typo of skin_retention."
+    },
+    {
+      "endpoint_name": "skipping further identical pattern for brevity; full extraction would include all conditions and compartments",
+      "canonical_endpoint_name": "skipping_further_identical_pattern_for_brevity;_full_extraction_would_include_all_conditions_and_compartments",
+      "canonical_endpoint_concept": "truncated_extraction_artifact",
+      "review_reason": "This is an extraction-process message rather than a biological endpoint; retain it as an explicit artifact rather than infer skin distribution."
+    },
+    {
+      "endpoint_name": "statistical_method",
+      "canonical_endpoint_name": "statistical_method",
+      "canonical_endpoint_concept": "statistical_method",
+      "review_reason": "The single row contains narrative skin deposition but no statistical measurement; preserve the source label as a non-endpoint audit artifact."
+    },
+    {
+      "endpoint_name": "tape_strip_result",
+      "canonical_endpoint_name": "tape_strip_result",
+      "canonical_endpoint_concept": "tape_strip_result",
+      "review_reason": "Tape-strip recovery is specific to sequential stratum-corneum sampling and remains distinct from whole-skin retention or penetration."
+    },
+    {
+      "endpoint_name": "tissue_to_plasma_ratio",
+      "canonical_endpoint_name": "tissue_to_plasma_ratio",
+      "canonical_endpoint_concept": "tissue_to_plasma_ratio",
+      "review_reason": "Steady-state dermal tissue-to-plasma distribution ratio; preserve its denominator and PK meaning separately from local concentration or retention."
+    },
+    {
+      "endpoint_name": "transdermal_flux",
+      "canonical_endpoint_name": "transdermal_flux",
+      "canonical_endpoint_concept": "flux",
+      "review_reason": "Transdermal flux is the same transport-rate concept as flux; calculated-estimate study design keeps these seven in-silico Jm values from experimental strata."
+    }
+  ]
+}

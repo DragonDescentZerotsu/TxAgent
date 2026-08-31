@@ -13,15 +13,10 @@ from tools.chembl_tool.common.starling.pair_buckets import (
     materialize_pair_buckets,
     read_pair_bucket_input,
 )
-from tools.chembl_tool.common.starling.assay_transfer_measurements import (
-    load_measurement_policy,
-)
-from tools.chembl_tool.common.starling.reference_semantics import (
-    ReferenceEligibilitySpec,
-)
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
     BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
+    ENDPOINT_FIELD_BY_SOURCE,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
@@ -29,12 +24,17 @@ from tools.chembl_tool.tasks.bbb_martins.starling_policy import DEFAULT_OUT_DIR,
 
 
 DEFAULT_NORMALIZED_DIR = Path(DEFAULT_OUT_DIR)
-DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
+DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "03_pair_buckets"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 PAIR_BUCKET_METADATA_FILENAME = "pair_bucket_metadata.json"
 
 
-def build_sidecar(*, records_path: str | Path, out_dir: str | Path) -> dict[str, Any]:
+def build_sidecar(
+    *,
+    records_path: str | Path,
+    out_dir: str | Path,
+    assay_transfer_record_ineligibility: dict[str, str] | None = None,
+) -> dict[str, Any]:
     records_path = Path(records_path)
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
@@ -45,6 +45,7 @@ def build_sidecar(*, records_path: str | Path, out_dir: str | Path) -> dict[str,
             for source, spec in RECORD_CONTRACT.pair_buckets.items()
         },
         legacy_source_fields=SOURCE_PAIR_FIELDS,
+        v7_endpoint_field_by_source=ENDPOINT_FIELD_BY_SOURCE,
     )
     rows, metadata = materialize_pair_buckets(
         records,
@@ -54,25 +55,8 @@ def build_sidecar(*, records_path: str | Path, out_dir: str | Path) -> dict[str,
             if v7
             else BBB_MARTINS_PAIR_BUCKET_VERSION
         ),
-        reference_eligibility_by_source=(
-            {
-                source: ReferenceEligibilitySpec(
-                    spec.eligible_reference_scopes,
-                    spec.reference_basis_required,
-                )
-                for source, spec in RECORD_CONTRACT.pair_buckets.items()
-            }
-            if v7
-            else None
-        ),
-        semantic_pair_bucket_sources=(
-            (*POLICY.endpoint_identity_required_sources, "direct_bbb")
-            if v7
-            else ()
-        ),
-        assay_transfer_record_ineligibility=load_measurement_policy(
-            POLICY.assay_transfer_measurement_policy
-        ).get("record_ineligibility", {}),
+        endpoint_field_by_source=ENDPOINT_FIELD_BY_SOURCE if v7 else None,
+        assay_transfer_record_ineligibility=assay_transfer_record_ineligibility,
         canonical_record_contract=v7,
     )
     if not all(metadata["validations"].values()):
@@ -110,7 +94,7 @@ def _write_json(path: Path, value: Any) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--records", default=str(DEFAULT_NORMALIZED_DIR / "03_records/records.parquet")
+        "--records", default=str(DEFAULT_NORMALIZED_DIR / "02_canonicalized/records.parquet")
     )
     parser.add_argument("--out-dir", default=str(DEFAULT_PAIR_BUCKET_DIR))
     args = parser.parse_args(argv)

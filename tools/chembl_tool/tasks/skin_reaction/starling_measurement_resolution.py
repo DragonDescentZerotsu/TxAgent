@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import hashlib
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Mapping
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from tools.chembl_tool.common.starling.measurement_routing import SourceRoutingRules
+from tools.chembl_tool.common.starling.measurement_routing import (
+    RouteDecision,
+    SourceRoutingRules,
+)
 
 
 TASK_ROOT = Path(__file__).resolve().parent
@@ -18,7 +22,7 @@ BBB_TEMPLATE = (
 )
 
 PROMPT_VERSION = "skin_reaction_measurement_resolution_prompt.v7"
-MAPPING_VERSION = "skin_reaction_measurement_resolution.v1"
+MAPPING_VERSION = "skin_reaction_measurement_resolution.v3"
 BATCH_SIZE = 10
 _ROUTED_SOURCE_IDS = (
     "direct_skin_reaction",
@@ -35,8 +39,12 @@ DEFAULT_CLEANED_RECORDS = Path(
     "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
     "starling_normalized_v7/01_cleaned/records.parquet"
 )
+DEFAULT_CANONICAL_RECORDS = DEFAULT_CLEANED_RECORDS
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/measurement_resolution_v1/measurement_resolution.parquet"
+    TASK_ROOT / "data_processing/measurement_resolution_v3/measurement_resolution.parquet"
+)
+DEFAULT_BASE_MAPPING_PATH = (
+    TASK_ROOT / "data_processing/measurement_resolution_v2/measurement_resolution.parquet"
 )
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 
@@ -44,7 +52,7 @@ SKIN_INSTRUCTIONS = """## Skin-specific endpoint semantics
 
 These are indirect numeric Skin assays. A named readout defines its reference and is `ok`: LLNA/LLN stimulation index, EC3/pEC3, RFI/cMFI, Imax, peptide/GSH depletion, sensitization incidence or subject count, biomarker expression fold/log2-fold change, a named expression ratio, and a skin-exposure fraction defined against applied dose or recovered material. Do not call such a readout `relative` merely because its assay uses a control; a selected endpoint value also remains `ok` when support gives a comparator.
 
-`measurement_text` is the primary value selector. Return every clearly resolved quantity it selects; Stage 02 will explode multiple returned quantities into separate rows. Do not suppress a resolved quantity merely because its unit may be incompatible with the canonical endpoint; the exact unit map decides mapping or exclusion. Use support only to identify each selected value's unit, readout, or reference semantics; never add a support-only number or an alternate representation. If support explicitly defines a selected value as a ratio, fold-change, enhancement factor, or percent against an experiment-specific control, it is `relative` unless the canonical endpoint or named readout defines that reference. A separate comparator in support does not make a selected absolute point relative. With `missing_endpoint`, an experimental comparator is never endpoint-defined. ALN cell proliferation reported as fold induction compared with vehicle is `relative`; `cell proliferation` does not define that vehicle reference. A percent of an exchangeable ion pool is definitional for flux; "control period" describes the study period, not the denominator.
+`measurement_text` is the primary value selector. Return every clearly resolved quantity it selects; Stage 02 will explode multiple returned quantities into separate rows. Do not suppress a resolved quantity merely because its unit may be incompatible with the canonical endpoint; the exact unit map decides conversion or exact-unit preservation. Use support only to identify each selected value's unit, readout, or reference semantics; never add a support-only number or an alternate representation. If support explicitly defines a selected value as a ratio, fold-change, enhancement factor, or percent against an experiment-specific control, it is `relative` unless the canonical endpoint or named readout defines that reference. A separate comparator in support does not make a selected absolute point relative. With `missing_endpoint`, an experimental comparator is never endpoint-defined. ALN cell proliferation reported as fold induction compared with vehicle is `relative`; `cell proliferation` does not define that vehicle reference. A percent of an exchangeable ion pool is definitional for flux; "control period" describes the study period, not the denominator.
 
 Named readout units remain absolute-or-definitional: KeratinoSens Imax uses `fold`, LLNA pEC3 may use `log M`, and an endpoint explicitly labelled cMFI or RFI supplies that dimensionless readout unit.
 
@@ -62,6 +70,35 @@ def source_routing_rules() -> dict[str, SourceRoutingRules]:
         )
         for source_id in _ROUTED_SOURCE_IDS
     }
+
+
+def source_exact_route(record: Mapping[str, Any]) -> RouteDecision | None:
+    """Return an exact incidence fraction from explicit source count columns."""
+    if str(record.get("source_id") or "") != "direct_skin_reaction":
+        return None
+    try:
+        positive = Decimal(str(record.get("positive_count")).strip())
+        total = Decimal(str(record.get("total_tested")).strip())
+    except (InvalidOperation, ValueError):
+        return None
+    if (
+        not positive.is_finite()
+        or not total.is_finite()
+        or positive != positive.to_integral_value()
+        or total != total.to_integral_value()
+        or total <= 0
+        or positive < 0
+        or positive > total
+    ):
+        return None
+    fraction = format((positive / total).normalize(), "f")
+    return RouteDecision(
+        "accept",
+        "structured_positive_count_fraction.v1",
+        fraction,
+        "fraction",
+        True,
+    )
 
 
 def prompt_row_fields(source_id: str) -> tuple[str, ...]:
@@ -137,6 +174,7 @@ def prompt_manifest(*, batch_size: int = BATCH_SIZE) -> dict[str, object]:
 
 __all__ = [
     "BATCH_SIZE",
+    "DEFAULT_CANONICAL_RECORDS",
     "DEFAULT_CLEANED_RECORDS",
     "DEFAULT_MAPPING_PATH",
     "DEFAULT_PROFILE_PATH",
@@ -148,5 +186,6 @@ __all__ = [
     "prompt_manifest",
     "prompt_row_fields",
     "render_prompt",
+    "source_exact_route",
     "source_routing_rules",
 ]

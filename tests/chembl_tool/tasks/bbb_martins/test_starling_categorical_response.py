@@ -14,6 +14,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
     _enrich_record,
     _kinetic_symbol,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    source_exact_route,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
 
 
@@ -119,23 +122,27 @@ def test_parseable_numeric_with_unresolved_unit_is_not_overwritten_by_binary_anc
     assert enriched["canonical_unit_resolution_source"] == "unresolved"
 
 
-def test_exact_exclusion_and_unresolved_extraction_keep_distinct_provenance():
-    excluded = _enrich_record(
+def test_mapped_numeric_resolution_precedes_the_controlled_category():
+    mapped = _enrich_record(
         _direct_normalized_record(
+            finite_scalar_value=0.4,
+            canonical_measurement="0.4",
+            canonical_unit="ratio",
             measurement_resolution_status="ok",
             measurement_resolution_active=True,
             measurement_resolution_route="accept",
             measurement_resolution_origin="source_exact",
-            measurement_unit_mapping_status="excluded",
+            measurement_unit_mapping_status="mapped",
         ),
         _NoAuxiliary(),
         _NoReference(),
     )
-    assert excluded["canonical_measurement_source"] == "source_exact"
-    assert excluded["canonical_unit_resolution_source"] == (
-        "exact_measurement_unit_map"
-    )
-    assert excluded["canonical_quantity_kind"] == "excluded_measurement"
+    assert "categorical_encoder_id" not in mapped
+    assert mapped["canonical_measurement_source"] == "source_exact"
+    assert mapped["canonical_unit_resolution_source"] == "exact_measurement_unit_map"
+
+
+def test_unresolved_extraction_falls_back_to_the_controlled_category():
 
     unresolved = _enrich_record(
         _direct_normalized_record(
@@ -146,11 +153,36 @@ def test_exact_exclusion_and_unresolved_extraction_keep_distinct_provenance():
         _NoAuxiliary(),
         _NoReference(),
     )
-    assert unresolved["canonical_measurement_source"] == (
-        "frozen_measurement_resolution"
+    assert unresolved["canonical_measurement_source"] == "categorical_encoder"
+    assert unresolved["canonical_unit_resolution_source"] == "categorical_encoder"
+    assert unresolved["canonical_quantity_kind"] == "controlled_categorical"
+
+
+def test_bare_numeric_logbb_is_source_exact_and_dimensionless():
+    decision = source_exact_route(
+        {
+            "source_id": "direct_bbb",
+            "endpoint_name": "logBB",
+            "measurement_text": "-0.809",
+            "unit_text": None,
+        }
     )
-    assert unresolved["canonical_unit_resolution_source"] == "none"
-    assert unresolved["canonical_quantity_kind"] == "unresolved_measurement"
+    assert decision is not None
+    assert decision.bucket == "accept"
+    assert decision.measurement_text == "-0.809"
+    assert decision.unit_text == "dimensionless"
+    assert decision.unit_is_canonical is True
+
+
+def test_logbb_inequality_is_not_forced_to_a_point_scalar():
+    assert source_exact_route(
+        {
+            "source_id": "direct_bbb",
+            "endpoint_name": "logBB",
+            "measurement_text": "> -1",
+            "unit_text": None,
+        }
+    ) is None
 
 
 def test_direct_categorical_measurement_supplies_reviewed_endpoint():

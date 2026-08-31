@@ -1,5 +1,7 @@
 """The Skin_Reaction policy must satisfy the shared builder's plug-in contract."""
 
+import json
+
 import pytest
 
 from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
@@ -16,11 +18,35 @@ from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
 from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SOURCE_PAIR_FIELDS,
+    V7_ENDPOINT_FIELD_BY_SOURCE,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
+from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    endpoint_concept,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import (
     EXPECTED_SOURCE_ROWS,
 )
+
+
+def test_endpoint_concept_maps_cover_every_frozen_source_pair():
+    for path in ENDPOINT_CONCEPT_PATHS:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for row in payload["mappings"]:
+            assert endpoint_concept(
+                payload["source_id"],
+                row["endpoint_name"],
+                row["canonical_endpoint_name"],
+            ) == row["canonical_endpoint_concept"]
+
+    assert endpoint_concept(
+        "direct_skin_reaction",
+        "allergic_contact_dermatitis_contact_ally",
+        "allergic_contact_dermatitis_contact_allergy",
+    ) == "allergic_contact_dermatitis_contact_allergy"
+    with pytest.raises(ValueError, match="unreviewed endpoint concept"):
+        endpoint_concept("skin_exposure", "new endpoint", "new_endpoint")
 
 
 def test_policy_is_discoverable_by_the_shared_builder():
@@ -62,6 +88,9 @@ def test_each_source_is_stratified_by_what_actually_makes_it_comparable():
     )
     assert ENDPOINT_FIELD_BY_SOURCE == {
         "sensitization_aop": "global_endpoint_context"
+    }
+    assert V7_ENDPOINT_FIELD_BY_SOURCE == {
+        source: "canonical_endpoint_concept" for source in SOURCE_PAIR_FIELDS
     }
     # Every source declares something; none is left without a stratum.
     assert all(fields for fields in SOURCE_PAIR_FIELDS.values())

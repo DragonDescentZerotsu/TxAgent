@@ -56,7 +56,6 @@ from tools.chembl_tool.tasks.bbb_martins.starling_normalization_policy import (
 )
 from tools.chembl_tool.common.starling.normalization.measurements import (
     canonicalize_endpoint,
-    parse_point_measurement,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_normalization_sources import (
     EXPECTED_SOURCE_ROWS,
@@ -94,7 +93,10 @@ from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
     SOURCE_RULE_PAIR_PRODUCER_IDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    ENDPOINT_CONCEPT_VERSION,
     SPACING_AND_SPELLING_VERSION,
+    endpoint_concept,
     family_assignment,
     spacing_and_spelling_decision,
     validate_endpoint_inventory,
@@ -110,6 +112,22 @@ DEFAULT_OUT_DIR = (
 DEFAULT_SOURCE_VALUE_REPAIRS = (
     Path(__file__).parent
     / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
+)
+DEFAULT_REVIEWED_SOURCE_DROPS = (
+    Path(__file__).parent
+    / "data_processing/source_value_cleaning_v1/reviewed_drops.jsonl"
+)
+DEFAULT_SMILES_IDENTITY_AUDIT = (
+    Path(__file__).parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_audit.jsonl"
+)
+DEFAULT_SMILES_SAMPLE_AUDIT = (
+    Path(__file__).parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_sample_audit_20260829.json"
+)
+DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS = Path(
+    "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/"
+    "review/v2/proposal/reviewed_conflict_candidates.v2.parquet"
 )
 _KINETIC_ASSIGNMENT = re.compile(
     r"(?<![A-Za-z0-9])(?P<symbol>K_?IN|kout|k1k2|k13|k10|k01|"
@@ -130,6 +148,12 @@ def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace
         records,
         task_id=TASK_ID,
         reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        reviewed_drops_path=DEFAULT_REVIEWED_SOURCE_DROPS,
+        smiles_identity_audit_path=DEFAULT_SMILES_IDENTITY_AUDIT,
+        reviewed_smiles_conflicts_path=DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        require_all_reviewed_smiles_overrides=not int(
+            getattr(args, "max_rows_per_source", 0) or 0
+        ),
         require_scientific_scale_review=True,
     )
     endpoint_mapping = Path(args.direct_endpoint_mapping)
@@ -164,10 +188,7 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--allow-missing-auxiliary-mapping",
         action="store_true",
-        help="Allow an explicitly incomplete clean/normalize/organize smoke build.",
-    )
-    parser.add_argument(
-        "--benchmark-split-root", default=DEFAULT_BENCHMARK_SPLIT_ROOT
+        help="Allow an explicitly incomplete cleaning/canonicalization smoke build.",
     )
     parser.add_argument(
         "--direct-endpoint-mapping",
@@ -370,6 +391,9 @@ def stage_documents(
                 if row.get("normalization_validity_status") == "valid"
             ),
             "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+            "reference_semantics_assignment_complete": bool(
                 reference_coverage["validations"]["all_applicable_records_assigned"]
             ),
         },
@@ -425,6 +449,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
     versions: dict[str, Any] = {
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
+        "endpoint_concept_version": ENDPOINT_CONCEPT_VERSION,
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "source_measurement_resolver_version": SOURCE_MEASUREMENT_RESOLVER_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
@@ -472,23 +497,7 @@ def _enrich_record(
         bool(record.get("measurement_resolution_active")) and bool(resolution_route)
     )
     mapped = exact and record.get("measurement_unit_mapping_status") == "mapped"
-    # A parseable numeric value with an unresolved unit remains numeric evidence
-    # and must not be overwritten by a categorical anchor.
-    legacy_numeric = (
-        not routed
-        and parse_point_measurement(record.get("canonical_measurement")).value
-        is not None
-    )
-    encoded = (
-        CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary})
-        if resolution_route == "categorical"
-        or (
-            not routed
-            and record.get("finite_scalar_value") is None
-            and not legacy_numeric
-        )
-        else {}
-    )
+    encoded = CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary})
     source_id = str(record.get("source_id") or "")
     producer_id = str(encoded.get("categorical_encoder_id") or "")
     endpoint_fallback = alternate_endpoint_fields({**record, **encoded})
@@ -512,13 +521,25 @@ def _enrich_record(
         **endpoint_context_fields({**record, **encoded}),
         **endpoint_fallback,
     }
+    reviewed_endpoint_concept = endpoint_concept(
+        source_id,
+        str(record.get("endpoint_name") or ""),
+        str(
+            endpoint_fields.get("canonical_endpoint")
+            or record.get("canonical_endpoint")
+            or ""
+        ),
+    )
     mapping_status = str(record.get("measurement_unit_mapping_status") or "")
-    unit_decided = exact and mapping_status in {
-        "mapped",
-        "excluded",
-        "domain_excluded",
-    }
-    if exact:
+    unit_decided = exact and mapping_status == "mapped"
+    if encoded:
+        unit_fields = {
+            "canonical_measurement_source": "categorical_encoder",
+            "canonical_unit_resolution_source": "categorical_encoder",
+            "canonical_unit_rule_id": str(encoded["categorical_encoder_id"]),
+            "canonical_unit_policy_version": CATEGORICAL_RESPONSE_VERSION,
+        }
+    elif exact:
         unit_fields = {
             "canonical_measurement_source": (
                 "source_exact"
@@ -557,10 +578,26 @@ def _enrich_record(
         **auxiliary,
         **encoded,
         **endpoint_fields,
+        "canonical_endpoint_concept": reviewed_endpoint_concept,
         **unit_fields,
         **producer_fields,
     }
-    if exact:
+    if encoded:
+        structurally_valid = (
+            str(record.get("structure_status") or "") == "resolved"
+            and bool(record.get("canonical_smiles"))
+        )
+        validity = {
+            "normalization_validity_status": (
+                "valid" if structurally_valid else "unresolved_structure"
+            ),
+            "canonical_semantics_status": "approved",
+            "canonical_quantity_kind": "controlled_categorical",
+            "canonical_numeric_domain": "controlled",
+            "canonical_semantics_rule_id": str(encoded["categorical_encoder_id"]),
+            "canonical_semantics_policy_version": CATEGORICAL_RESPONSE_VERSION,
+        }
+    elif exact:
         validity = {
             "normalization_validity_status": (
                 "unresolved_structure"
@@ -649,6 +686,7 @@ def _enrich_record(
         ),
         **auxiliary,
         **endpoint_fields,
+        "canonical_endpoint_concept": reviewed_endpoint_concept,
         **unit_fields,
         **producer_fields,
         **validity,
@@ -678,7 +716,13 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
     scientific_assets=(
+        DEFAULT_SOURCE_VALUE_REPAIRS,
+        DEFAULT_REVIEWED_SOURCE_DROPS,
+        DEFAULT_SMILES_IDENTITY_AUDIT,
+        DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        DEFAULT_SMILES_SAMPLE_AUDIT,
         DEFAULT_SEMANTICS_PATH,
+        *ENDPOINT_CONCEPT_PATHS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         Path(__file__).parent
         / "data_processing/assay_transfer_measurements_v2/policy.json",

@@ -7,7 +7,7 @@ from typing import Any
 
 
 SOURCE_STAGE_VERSION = "starling_source_snapshot.v1"
-CLEANING_STAGE_VERSION = "starling_record_cleaning.v9"
+CLEANING_STAGE_VERSION = "starling_record_cleaning.v11"
 NORMALIZATION_STAGE_VERSION = "starling_measurement_normalization.v16"
 ORGANIZATION_STAGE_VERSION = "starling_record_organization.v10"
 

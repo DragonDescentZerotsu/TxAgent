@@ -111,7 +111,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts
     source_fields_from_record,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    ENDPOINT_CONCEPT_VERSION,
     SPACING_AND_SPELLING_VERSION,
+    endpoint_concept,
     family_assignment,
     spacing_and_spelling_decision,
     validate_endpoint_inventory,
@@ -140,6 +143,22 @@ DEFAULT_SOURCE_VALUE_REPAIRS = (
     Path(__file__).resolve().parent
     / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
 )
+DEFAULT_REVIEWED_SOURCE_DROPS = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/reviewed_drops.jsonl"
+)
+DEFAULT_SMILES_IDENTITY_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_audit.jsonl"
+)
+DEFAULT_SMILES_SAMPLE_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_sample_audit_20260829.json"
+)
+DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS = Path(
+    "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/"
+    "review/v2/proposal/reviewed_conflict_candidates.v2.parquet"
+)
 
 
 def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
@@ -152,7 +171,12 @@ def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace
         records,
         task_id=TASK_ID,
         reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        reviewed_drops_path=DEFAULT_REVIEWED_SOURCE_DROPS,
+        smiles_identity_audit_path=DEFAULT_SMILES_IDENTITY_AUDIT,
+        reviewed_smiles_conflicts_path=DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
         require_all_reviewed_repairs=require_all,
+        require_all_reviewed_drops=require_all,
+        require_all_reviewed_smiles_overrides=require_all,
     )
     return replace(
         result,
@@ -198,14 +222,6 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
         default=False,
     )
     parser.add_argument("--v65-eligible-records", default=DEFAULT_V65_ELIGIBLE_RECORDS)
-    parser.add_argument(
-        "--benchmark-split-root",
-        default=DEFAULT_BENCHMARK_SPLIT_ROOT,
-        help=(
-            "Directory containing random/scaffold train and heldout molecule "
-            "label mappings used by the post-record filtering stage."
-        ),
-    )
     parser.add_argument(
         "--reference-semantics-mapping",
         default=str(DEFAULT_REFERENCE_SEMANTICS_MAPPING),
@@ -493,6 +509,9 @@ def stage_documents(
             "source_column_contract_complete": True,
             "llm_source_projection_fail_closed": True,
             "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+            "reference_semantics_assignment_complete": bool(
                 reference_coverage["validations"]["all_applicable_records_assigned"]
             ),
         },
@@ -508,6 +527,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "fg_scalar_rule_version": FG_SCALAR_RULE_VERSION,
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
+        "endpoint_concept_version": ENDPOINT_CONCEPT_VERSION,
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
@@ -614,20 +634,11 @@ def _enrich_record(
     with_auxiliary = {**enriched, **auxiliary}
     contextual_fields = {} if routed else contextual_canonical_record_fields(with_auxiliary)
     canonical = {**with_auxiliary, **contextual_fields}
-    # Preserve a parseable source number even when its unit is unresolved.  A
-    # categorical anchor may fill only a genuinely nonnumeric outcome.
-    parsed_source_value = (
-        None
-        if routed
-        else parse_point_measurement(canonical.get("canonical_measurement")).value
-    )
-    encoded = (
-        CATEGORICAL_RESPONSE_POLICY.apply(canonical)
-        if resolution_route == "categorical"
-        or (not routed and parsed_source_value is None)
-        else {}
-    )
+    encoded = CATEGORICAL_RESPONSE_POLICY.apply(canonical)
     source_id = str(record.get("source_id") or "")
+    reviewed_endpoint_concept = endpoint_concept(
+        source_id, str(record.get("endpoint_name") or "")
+    )
     primary_endpoint = str(canonical.get("canonical_endpoint") or "").casefold()
     endpoint_missing = primary_endpoint in {
         "",
@@ -638,7 +649,7 @@ def _enrich_record(
     }
     structured_fg_endpoint = (
         encode_fg_substrate_status(canonical)
-        if (resolution_route == "categorical" or not routed)
+        if (encoded or not routed)
         and source_id == "fg"
         and endpoint_missing
         else None
@@ -696,7 +707,9 @@ def _enrich_record(
                 "unresolved_structure"
                 if str(record.get("structure_status") or "") != "resolved"
                 or not record.get("canonical_smiles")
-                else "valid" if mapped else "exact_measurement_excluded"
+                else "valid"
+                if mapped or encoded
+                else "exact_measurement_excluded"
             ),
             "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
             "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
@@ -753,6 +766,7 @@ def _enrich_record(
         **auxiliary,
         **contextual_fields,
         **encoded,
+        "canonical_endpoint_concept": reviewed_endpoint_concept,
         **(
             {"canonical_endpoint": "fg_substrate_outcome"}
             if structured_fg_endpoint is not None and measurement_target_id
@@ -789,6 +803,11 @@ POLICY = StarlingTaskPolicy(
     smiles_mapping=smiles_mapping,
     scientific_assets=(
         DEFAULT_SOURCE_VALUE_REPAIRS,
+        DEFAULT_REVIEWED_SOURCE_DROPS,
+        DEFAULT_SMILES_IDENTITY_AUDIT,
+        DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        DEFAULT_SMILES_SAMPLE_AUDIT,
+        *ENDPOINT_CONCEPT_PATHS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         Path(__file__).parent
         / "data_processing/assay_transfer_measurements_v2/policy.json",

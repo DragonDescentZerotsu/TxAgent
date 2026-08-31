@@ -18,9 +18,44 @@ from tools.chembl_tool.tasks.bbb_martins.starling_normalization_policy import (
     source_measurement_resolver,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    endpoint_concept,
     family_assignment,
     spacing_and_spelling_decision,
 )
+
+
+def test_endpoint_concept_maps_cover_every_frozen_source_pair():
+    for path in ENDPOINT_CONCEPT_PATHS:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for row in payload["mappings"]:
+            assert endpoint_concept(
+                payload["source_id"],
+                row["endpoint_name"],
+                row["canonical_endpoint_name"],
+            ) == row["canonical_endpoint_concept"]
+
+    assert endpoint_concept(
+        "direct_bbb", "LogPS(Blood Brain Barrier Permeability)", "logps"
+    ) == "log_ps"
+    assert endpoint_concept(
+        "passive_permeability", "Papp AP", "apparent_permeability"
+    ) == "papp_a_to_b"
+    assert endpoint_concept(
+        "passive_permeability", "Papp BL", "apparent_permeability"
+    ) == "papp_b_to_a"
+    assert endpoint_concept("direct_bbb", "log PS predicted", "log_ps") == (
+        "log_ps_predicted"
+    )
+
+
+def test_endpoint_concept_lookup_fails_closed():
+    try:
+        endpoint_concept("direct_bbb", "new endpoint", "new_endpoint")
+    except ValueError as error:
+        assert "unreviewed endpoint concept" in str(error)
+    else:
+        raise AssertionError("unreviewed endpoint concept was accepted")
 
 
 def test_four_source_families_are_stable_and_exact():

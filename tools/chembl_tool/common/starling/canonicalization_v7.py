@@ -99,6 +99,9 @@ _STAGE1_DERIVED_FIELDS = frozenset(
         "canonical_endpoint_name",
         "measurement_resolution_route",
         "measurement_resolution_rule_id",
+        "measurement_resolution_exact_measurement",
+        "measurement_resolution_exact_unit",
+        "measurement_resolution_exact_unit_is_canonical",
         "measurement_routing_version",
     }
 )
@@ -678,7 +681,6 @@ class StarlingRecordContract:
             not in {
                 "source_payload_json",
                 "evidence_context_json",
-                "source_smiles",
                 *profile.raw_role_fields,
                 *_LEGACY_CANONICAL_FIELDS,
                 *_ROW_ONLY_INTERMEDIATES,
@@ -687,8 +689,9 @@ class StarlingRecordContract:
             and (
                 not key.startswith("canonical_")
                 or key in _STAGE1_DERIVED_FIELDS
+                or key == "canonical_smiles"
             )
-            and key not in {"molecule_id", "structure_status"}
+            and key != "molecule_id"
         }
         # Stage 01 already cleaned these values under the source profile,
         # including its declared literal-text fields.  Re-cleaning during a
@@ -858,10 +861,11 @@ class StarlingRecordContract:
         output["source_payload_json"] = json.dumps(
             payload, ensure_ascii=False, sort_keys=True, default=str
         )
-        output["source_smiles"] = (
+        output.setdefault(
+            "source_smiles",
             record.get("canonical_smiles")
             if profile.structure_mode == "mapped"
-            else record.get("smiles")
+            else record.get("smiles"),
         )
         output.setdefault("evidence_context_json", "{}")
         return output

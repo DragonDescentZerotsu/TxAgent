@@ -7,14 +7,22 @@ It preserves case and must not merge scientifically related endpoint concepts.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import cache
+from pathlib import Path
 from typing import Any, Iterable
 
+from tools.chembl_tool.common.starling.endpoint_concepts import (
+    load_endpoint_concept_maps,
+)
 from tools.chembl_tool.common.starling.normalization.cleaning import (
     clean_text,
     endpoint_inventory_hash,
 )
 from tools.chembl_tool.common.starling.normalization.contracts import FamilyAssignment
-from tools.chembl_tool.common.starling.normalization.measurements import EndpointOrthography
+from tools.chembl_tool.common.starling.normalization.measurements import (
+    EndpointOrthography,
+    canonicalize_endpoint,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
     DIRECT_EVIDENCE_SCOPE,
     bioavailability_evidence_scope,
@@ -22,6 +30,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization
 
 
 SPACING_AND_SPELLING_VERSION = "bioavailability_spacing_and_spelling.v1"
+ENDPOINT_CONCEPT_VERSION = "bioavailability_endpoint_concepts.v1"
 
 EXPECTED_ENDPOINT_INVENTORIES = {
     "oral_exposure": {
@@ -45,6 +54,12 @@ EXPECTED_ENDPOINT_INVENTORIES = {
         "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a",
     },
 }
+ENDPOINT_CONCEPT_PATHS = tuple(
+    Path(__file__).resolve().parent
+    / "data_processing/canonicalization_v7/endpoint_concepts"
+    / f"{source_id}.json"
+    for source_id in sorted(EXPECTED_ENDPOINT_INVENTORIES)
+)
 
 
 _REVIEWED_CORRECTIONS = {
@@ -106,6 +121,35 @@ def spacing_and_spelling_endpoint(source_id: str, endpoint_name: str) -> str:
     return spacing_and_spelling_decision(
         source_id, endpoint_name
     ).spacing_and_spelling_endpoint
+
+
+@cache
+def _endpoint_concept_maps() -> dict[str, dict[tuple[str, str], str]]:
+    return load_endpoint_concept_maps(
+        ENDPOINT_CONCEPT_PATHS,
+        version=ENDPOINT_CONCEPT_VERSION,
+        expected_inventories=EXPECTED_ENDPOINT_INVENTORIES,
+        canonical_resolver=lambda source_id, endpoint: canonicalize_endpoint(
+            spacing_and_spelling_endpoint(source_id, endpoint)
+        ),
+    )
+
+
+def endpoint_concept(
+    source_id: str,
+    endpoint_name: str,
+    canonical_endpoint_name: str | None = None,
+) -> str:
+    endpoint = clean_text(endpoint_name) or ""
+    canonical = canonical_endpoint_name or canonicalize_endpoint(
+        spacing_and_spelling_endpoint(source_id, endpoint)
+    )
+    try:
+        return _endpoint_concept_maps()[source_id][(endpoint, canonical)]
+    except KeyError as error:
+        raise ValueError(
+            f"unreviewed endpoint concept: {source_id}/{endpoint}/{canonical}"
+        ) from error
 
 
 def family_assignment(
@@ -218,9 +262,12 @@ def validate_endpoint_inventory(source_id: str, endpoint_names: Iterable[str]) -
 
 
 __all__ = [
+    "ENDPOINT_CONCEPT_PATHS",
+    "ENDPOINT_CONCEPT_VERSION",
     "EXPECTED_ENDPOINT_INVENTORIES",
     "SPACING_AND_SPELLING_VERSION",
     "SpacingAndSpellingDecision",
+    "endpoint_concept",
     "family_assignment",
     "spacing_and_spelling_decision",
     "spacing_and_spelling_endpoint",

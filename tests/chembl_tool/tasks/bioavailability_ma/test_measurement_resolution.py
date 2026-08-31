@@ -23,7 +23,8 @@ def test_bioavailability_config_and_gold_contract() -> None:
 
     lines = [
         json.loads(line)
-        for line in config.DEFAULT_MAPPING_PATH.parent.joinpath(
+        for line in config.DEFAULT_BASE_MAPPING_PATH.parent.parent.joinpath(
+            "measurement_resolution_v1",
             "measurement_resolution_gold.jsonl"
         ).read_text().splitlines()
     ]

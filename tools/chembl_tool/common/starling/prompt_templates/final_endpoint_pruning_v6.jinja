@@ -1,0 +1,58 @@
+You are performing conservative scientific data quality review.
+
+The numerical tail or gap only triggered review. A rare or extreme value is not evidence
+of error. Drop a row only when the displayed semantics show that it measures a different
+quantity or endpoint, has a wrong unit or scale, or is a corrupt or misparsed extraction.
+When the evidence is ambiguous, keep the row. Do not convert, repair, or reassign rows.
+
+The canonical value and unit may contain a correct deterministic conversion. Different
+source and canonical units are not a mismatch when their values are equivalent. Use the
+source measurement, source unit, earlier LLM extraction when shown, canonical value and
+unit, and support text together. Never infer an error from unit spelling or extremeness
+alone.
+
+Return one decision for every row ID under "Rows requiring a decision" and no decisions
+for comparison rows. Return exactly one JSON object in this form:
+{
+  "schema_version": "{{ schema_version }}",
+  "rows": [
+    {
+      "row_id": "r0001",
+      "decision": "keep|drop",
+      "reason_code": "fits_bucket|valid_extreme|insufficient_evidence|wrong_quantity_or_endpoint|wrong_unit_or_scale|corrupt_extraction",
+      "reason": "concise semantic justification"
+    }
+  ]
+}
+
+Bucket
+- Task: {{ task_id }}
+- Endpoint: {{ bucket_endpoint or "not reported" }}
+- Canonical unit: {{ bucket_unit or "not reported" }}
+Rows requiring a decision
+{% for row in target_rows %}
+{{ row.row_id }}
+- Source measurement: {{ row.source_measurement or "not reported" }}
+- Source unit: {{ row.source_unit or "not reported" }}
+- Canonical value: {{ row.canonical_measurement or "not reported" }}
+- Canonical unit: {{ row.canonical_unit or bucket_unit or "not reported" }}
+{% if row.llm_refined_extraction %}- Earlier LLM extraction: {{ row.llm_refined_extraction }}
+{% endif %}{% if row.trigger %}- Numerical trigger: {{ row.trigger }}
+{% endif %}{% for field in row.semantic_fields %}- {{ field.label }}: {{ field.value }}
+{% endfor %}- Support text: {{ row.support_text or "not reported" }}
+{% endfor %}
+{% if context_rows %}Other rows from the same bucket (comparison only; do not return decisions)
+{% for row in context_rows %}
+Example {{ loop.index }}
+- Source measurement: {{ row.source_measurement or "not reported" }}
+- Source unit: {{ row.source_unit or "not reported" }}
+- Canonical value: {{ row.canonical_measurement or "not reported" }}
+- Canonical unit: {{ row.canonical_unit or bucket_unit or "not reported" }}
+{% if row.llm_refined_extraction %}- Earlier LLM extraction: {{ row.llm_refined_extraction }}
+{% endif %}{% for field in row.semantic_fields %}- {{ field.label }}: {{ field.value }}
+{% endfor %}- Support text: {{ row.support_text or "not reported" }}
+{% endfor %}
+{% elif complete_bucket_context %}The complete supported-gap bucket is shown above, so every target row has the other
+bucket rows available for comparison.
+{% else %}No distinct non-target comparison rows are available in this bucket.
+{% endif %}

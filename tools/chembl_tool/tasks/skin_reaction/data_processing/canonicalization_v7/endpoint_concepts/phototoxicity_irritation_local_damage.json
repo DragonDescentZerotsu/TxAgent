@@ -1,0 +1,709 @@
+{
+  "version": "skin_reaction_endpoint_concepts.v1",
+  "source_id": "phototoxicity_irritation_local_damage",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 115,
+    "sha256": "612830311fc38d17947c74682619f61bfb5187549e6fa58f5c9533f41bbff650"
+  },
+  "observed_pairs": {
+    "count": 115,
+    "sha256": "e3d1dd536f8a5b605bd180e7a09294f99c984f1628603bb892365d78971ea037"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "Ambiguous, unavailable, or unclassified source endpoint retained fail-closed as its own concept."
+    },
+    {
+      "endpoint_name": "...",
+      "canonical_endpoint_name": "...",
+      "canonical_endpoint_concept": "ambiguous_ellipsis",
+      "review_reason": "Ambiguous, unavailable, or unclassified source endpoint retained fail-closed as its own concept."
+    },
+    {
+      "endpoint_name": "Albendazole treatment for anisakiasis",
+      "canonical_endpoint_name": "albendazole_treatment_for_anisakiasis",
+      "canonical_endpoint_concept": "albendazole_treatment_for_anisakiasis",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "CFTR D1152H mutation phenotype",
+      "canonical_endpoint_name": "cftr_d1152h_mutation_phenotype",
+      "canonical_endpoint_concept": "cftr_d1152h_mutation_phenotype",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "CFTR genetic testing",
+      "canonical_endpoint_name": "cftr_genetic_testing",
+      "canonical_endpoint_concept": "cftr_genetic_testing",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Cystic fibrosis diagnosis",
+      "canonical_endpoint_name": "cystic_fibrosis_diagnosis",
+      "canonical_endpoint_concept": "cystic_fibrosis_diagnosis",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "Diaphragmatic paralysis due to phrenic neuropathy",
+      "canonical_endpoint_name": "diaphragmatic_paralysis_due_to_phrenic_neuropathy",
+      "canonical_endpoint_concept": "diaphragmatic_paralysis_due_to_phrenic_neuropathy",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Gastric anisakiasis confirmed by endoscopy",
+      "canonical_endpoint_name": "gastric_anisakiasis_confirmed_by_endoscopy",
+      "canonical_endpoint_concept": "gastric_anisakiasis_confirmed_by_endoscopy",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Glutathione (GSH) content in cardiac mitochondria",
+      "canonical_endpoint_name": "glutathione_(gsh)_content_in_cardiac_mitochondria",
+      "canonical_endpoint_concept": "glutathione_gsh_content_in_cardiac_mitochondria",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "Hand dermatitis (minor)",
+      "canonical_endpoint_name": "hand_dermatitis_(minor)",
+      "canonical_endpoint_concept": "hand_dermatitis_minor",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "Incubation period of anisakiasis",
+      "canonical_endpoint_name": "incubation_period_of_anisakiasis",
+      "canonical_endpoint_concept": "incubation_period_of_anisakiasis",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Lipid peroxidation (LPO) in cardiac mitochondria",
+      "canonical_endpoint_name": "lipid_peroxidation_(lpo)_in_cardiac_mitochondria",
+      "canonical_endpoint_concept": "lipid_peroxidation_lpo_in_cardiac_mitochondria",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "Pancreatic phenotype in CF",
+      "canonical_endpoint_name": "pancreatic_phenotype_in_cf",
+      "canonical_endpoint_concept": "pancreatic_phenotype_in_cf",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Phototoxicity",
+      "canonical_endpoint_name": "phototoxicity",
+      "canonical_endpoint_concept": "phototoxicity",
+      "review_reason": "Case-only variant of phototoxicity; assay method and light conditions remain separate pair context."
+    },
+    {
+      "endpoint_name": "Pulmonary phenotype in CF",
+      "canonical_endpoint_name": "pulmonary_phenotype_in_cf",
+      "canonical_endpoint_concept": "pulmonary_phenotype_in_cf",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Pyruvate dehydrogenase (PDH) activity in cardiac mitochondria",
+      "canonical_endpoint_name": "pyruvate_dehydrogenase_(pdh)_activity_in_cardiac_mitochondria",
+      "canonical_endpoint_concept": "pyruvate_dehydrogenase_pdh_activity_in_cardiac_mitochondria",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "ROS levels",
+      "canonical_endpoint_name": "ros_levels",
+      "canonical_endpoint_concept": "ros_levels",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "ROS production",
+      "canonical_endpoint_name": "ros_production",
+      "canonical_endpoint_concept": "ros_production",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "Serum glutamic oxaloacetic transaminase (SGOT) activity",
+      "canonical_endpoint_name": "serum_glutamic_oxaloacetic_transaminase_(sgot)_activity",
+      "canonical_endpoint_concept": "serum_glutamic_oxaloacetic_transaminase_sgot_activity",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "Skin irritation/complaints",
+      "canonical_endpoint_name": "skin_irritation/complaints",
+      "canonical_endpoint_concept": "skin_irritation_complaints",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "Sweat chloride test",
+      "canonical_endpoint_name": "sweat_chloride_test",
+      "canonical_endpoint_concept": "sweat_chloride_test",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "UV_dependent_skin_response",
+      "canonical_endpoint_name": "uv_dependent_skin_response",
+      "canonical_endpoint_concept": "uv_dependent_skin_response",
+      "review_reason": "Case-only variant of uv_dependent_skin_response; UV response remains distinct from generic light-dependent response and UV damage."
+    },
+    {
+      "endpoint_name": "alopecia",
+      "canonical_endpoint_name": "alopecia",
+      "canonical_endpoint_concept": "alopecia",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "apoptosis",
+      "canonical_endpoint_name": "apoptosis",
+      "canonical_endpoint_concept": "apoptosis",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "assay",
+      "canonical_endpoint_name": "assay",
+      "canonical_endpoint_concept": "assay",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "cardiolipin oxidation",
+      "canonical_endpoint_name": "cardiolipin_oxidation",
+      "canonical_endpoint_concept": "cardiolipin_oxidation",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "cell cycle arrest",
+      "canonical_endpoint_name": "cell_cycle_arrest",
+      "canonical_endpoint_concept": "cell_cycle_arrest",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "cellular toxicity",
+      "canonical_endpoint_name": "cellular_toxicity",
+      "canonical_endpoint_concept": "generic_cellular_cytotoxicity",
+      "review_reason": "Exact wording alias of generic cytotoxicity; kept distinct from keratinocyte damage and light-dependent cytotoxicity."
+    },
+    {
+      "endpoint_name": "clinical efficacy (symptom scores and uroflowmetry)",
+      "canonical_endpoint_name": "clinical_efficacy_(symptom_scores_and_uroflowmetry)",
+      "canonical_endpoint_concept": "clinical_efficacy_symptom_scores_and_uroflowmetry",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "cutaneous_inflammation",
+      "canonical_endpoint_name": "cutaneous_inflammation",
+      "canonical_endpoint_concept": "cutaneous_inflammation",
+      "review_reason": "Exact cutaneous synonym of skin inflammation response; kept distinct from generic or merely local inflammation."
+    },
+    {
+      "endpoint_name": "cytochrome c release",
+      "canonical_endpoint_name": "cytochrome_c_release",
+      "canonical_endpoint_concept": "cytochrome_c_release",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "cytotoxicity",
+      "canonical_endpoint_name": "cytotoxicity",
+      "canonical_endpoint_concept": "generic_cellular_cytotoxicity",
+      "review_reason": "Exact wording alias of generic cellular toxicity; kept distinct from keratinocyte damage and light-dependent cytotoxicity."
+    },
+    {
+      "endpoint_name": "dermatitis",
+      "canonical_endpoint_name": "dermatitis",
+      "canonical_endpoint_concept": "dermatitis",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "efficiency of Greenlight HPS laser PVP",
+      "canonical_endpoint_name": "efficiency_of_greenlight_hps_laser_pvp",
+      "canonical_endpoint_concept": "efficiency_of_greenlight_hps_laser_pvp",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "eosinophilic pneumonitis / acute lung injury",
+      "canonical_endpoint_name": "eosinophilic_pneumonitis_/_acute_lung_injury",
+      "canonical_endpoint_concept": "eosinophilic_pneumonitis_acute_lung_injury",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "erythema",
+      "canonical_endpoint_name": "erythema",
+      "canonical_endpoint_concept": "erythema",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "genotoxicity",
+      "canonical_endpoint_name": "genotoxicity",
+      "canonical_endpoint_concept": "genotoxicity",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "gingival hyperplasia",
+      "canonical_endpoint_name": "gingival_hyperplasia",
+      "canonical_endpoint_concept": "gingival_hyperplasia",
+      "review_reason": "Spacing variant of gingival_hyperplasia; retained as a distinct non-skin local outcome."
+    },
+    {
+      "endpoint_name": "gingival_hyperplasia",
+      "canonical_endpoint_name": "gingival_hyperplasia",
+      "canonical_endpoint_concept": "gingival_hyperplasia",
+      "review_reason": "Spacing variant of gingival hyperplasia; retained as a distinct non-skin local outcome."
+    },
+    {
+      "endpoint_name": "hemorrhagic_cystitis",
+      "canonical_endpoint_name": "hemorrhagic_cystitis",
+      "canonical_endpoint_concept": "hemorrhagic_cystitis",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "inflammatory reaction reduction",
+      "canonical_endpoint_name": "inflammatory_reaction_reduction",
+      "canonical_endpoint_concept": "inflammatory_reaction_reduction",
+      "review_reason": "Protective or reduction endpoint retained separately from the corresponding adverse response."
+    },
+    {
+      "endpoint_name": "inflammatory response",
+      "canonical_endpoint_name": "inflammatory_response",
+      "canonical_endpoint_concept": "inflammatory_response",
+      "review_reason": "Spacing variant of inflammatory_response; kept distinct from skin-specific, local, light-dependent, and protective inflammation endpoints."
+    },
+    {
+      "endpoint_name": "inflammatory_response",
+      "canonical_endpoint_name": "inflammatory_response",
+      "canonical_endpoint_concept": "inflammatory_response",
+      "review_reason": "Spacing variant of inflammatory response; kept distinct from skin-specific, local, light-dependent, and protective inflammation endpoints."
+    },
+    {
+      "endpoint_name": "inflammatory_response, local_tissue_injury",
+      "canonical_endpoint_name": "inflammatory_response,_local_tissue_injury",
+      "canonical_endpoint_concept": "local_tissue_injury_and_inflammatory_response",
+      "review_reason": "Order/punctuation variant of the local-injury-plus-inflammatory-response composite; neither component is discarded."
+    },
+    {
+      "endpoint_name": "injection_site_reaction",
+      "canonical_endpoint_name": "injection_site_reaction",
+      "canonical_endpoint_concept": "injection_site_reaction",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "keratinocyte damage",
+      "canonical_endpoint_name": "keratinocyte_damage",
+      "canonical_endpoint_concept": "keratinocyte_damage",
+      "review_reason": "Spacing variant of keratinocyte_damage; kept distinct from generic cytotoxicity and light-dependent cytotoxicity."
+    },
+    {
+      "endpoint_name": "keratinocyte_damage",
+      "canonical_endpoint_name": "keratinocyte_damage",
+      "canonical_endpoint_concept": "keratinocyte_damage",
+      "review_reason": "Spacing variant of keratinocyte damage; kept distinct from generic cytotoxicity and light-dependent cytotoxicity."
+    },
+    {
+      "endpoint_name": "kidney function (serum creatinine and urea nitrogen)",
+      "canonical_endpoint_name": "kidney_function_(serum_creatinine_and_urea_nitrogen)",
+      "canonical_endpoint_concept": "kidney_function_serum_creatinine_and_urea_nitrogen",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "kidney pathology (histological)",
+      "canonical_endpoint_name": "kidney_pathology_(histological)",
+      "canonical_endpoint_concept": "kidney_pathology_histological",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "light-dependent cytotoxicity",
+      "canonical_endpoint_name": "light_dependent_cytotoxicity",
+      "canonical_endpoint_concept": "light_dependent_cytotoxicity",
+      "review_reason": "Hyphen/spacing variant of light_dependent_cytotoxicity; light dependence and cytotoxic assay modality are preserved."
+    },
+    {
+      "endpoint_name": "light-dependent_cytotoxicity",
+      "canonical_endpoint_name": "light_dependent_cytotoxicity",
+      "canonical_endpoint_concept": "light_dependent_cytotoxicity",
+      "review_reason": "Hyphen/spacing variant of light_dependent_cytotoxicity; light dependence and cytotoxic assay modality are preserved."
+    },
+    {
+      "endpoint_name": "light_dependent_ROS",
+      "canonical_endpoint_name": "light_dependent_ros",
+      "canonical_endpoint_concept": "light_dependent_ros",
+      "review_reason": "Case-only ROS variant; kept distinct from light-dependent cytotoxicity, DNA damage, and inflammatory response."
+    },
+    {
+      "endpoint_name": "light_dependent_cytotoxicity",
+      "canonical_endpoint_name": "light_dependent_cytotoxicity",
+      "canonical_endpoint_concept": "light_dependent_cytotoxicity",
+      "review_reason": "Canonical spelling of the light-dependent cytotoxicity endpoint; kept distinct from ROS, DNA damage, inflammation, and broad phototoxicity."
+    },
+    {
+      "endpoint_name": "light_dependent_cyttotoxicity",
+      "canonical_endpoint_name": "light_dependent_cytotoxicity",
+      "canonical_endpoint_concept": "light_dependent_cytotoxicity",
+      "review_reason": "Typographic variant of light_dependent_cytotoxicity; light dependence and cytotoxic assay modality are preserved."
+    },
+    {
+      "endpoint_name": "light_dependent_dna_damage",
+      "canonical_endpoint_name": "light_dependent_dna_damage",
+      "canonical_endpoint_concept": "light_dependent_dna_damage",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "light_dependent_inflammatory_response",
+      "canonical_endpoint_name": "light_dependent_inflammatory_response",
+      "canonical_endpoint_concept": "light_dependent_inflammatory_response",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "light_dependent_ros",
+      "canonical_endpoint_name": "light_dependent_ros",
+      "canonical_endpoint_concept": "light_dependent_ros",
+      "review_reason": "Case-only ROS variant; kept distinct from light-dependent cytotoxicity, DNA damage, and inflammatory response."
+    },
+    {
+      "endpoint_name": "light_dependent_skin_response",
+      "canonical_endpoint_name": "light_dependent_skin_response",
+      "canonical_endpoint_concept": "light_dependent_skin_response",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "liver foci and cystic degeneration",
+      "canonical_endpoint_name": "liver_foci_and_cystic_degeneration",
+      "canonical_endpoint_concept": "liver_foci_and_cystic_degeneration",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "liver weight increase",
+      "canonical_endpoint_name": "liver_weight_increase",
+      "canonical_endpoint_concept": "liver_weight_increase",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "local inflammatory response",
+      "canonical_endpoint_name": "local_inflammatory_response",
+      "canonical_endpoint_concept": "local_inflammatory_response",
+      "review_reason": "Spacing variant of local_inflammatory_response; local inflammation remains distinct from generic and cutaneous inflammation."
+    },
+    {
+      "endpoint_name": "local inflammatory responses",
+      "canonical_endpoint_name": "local_inflammatory_responses",
+      "canonical_endpoint_concept": "local_inflammatory_response",
+      "review_reason": "Plural spelling variant of local_inflammatory_response; the patch-test context remains in pair context."
+    },
+    {
+      "endpoint_name": "local tissue injury",
+      "canonical_endpoint_name": "local_tissue_injury",
+      "canonical_endpoint_concept": "local_tissue_injury",
+      "review_reason": "Spacing variant of local_tissue_injury; assay context and protective versus adverse outcome remain separate fields."
+    },
+    {
+      "endpoint_name": "local tissue injury (bullous lupus erythematosus lesion reoccurrence)",
+      "canonical_endpoint_name": "local_tissue_injury_(bullous_lupus_erythematosus_lesion_reoccurrence)",
+      "canonical_endpoint_concept": "local_tissue_injury_bullous_lupus_erythematosus_lesion_reoccurrence",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "local tissue injury (infusion-site asymptomatic thrombosis)",
+      "canonical_endpoint_name": "local_tissue_injury_(infusion_site_asymptomatic_thrombosis)",
+      "canonical_endpoint_concept": "local_tissue_injury_infusion_site_asymptomatic_thrombosis",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "local tissue injury (muscle damage)",
+      "canonical_endpoint_name": "local_tissue_injury_(muscle_damage)",
+      "canonical_endpoint_concept": "local_tissue_injury_muscle_damage",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "local tissue injury (osteonecrosis of the jaw)",
+      "canonical_endpoint_name": "local_tissue_injury_(osteonecrosis_of_the_jaw)",
+      "canonical_endpoint_concept": "local_tissue_injury_osteonecrosis_of_the_jaw",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "local tissue injury / testicular damage",
+      "canonical_endpoint_name": "local_tissue_injury_/_testicular_damage",
+      "canonical_endpoint_concept": "local_tissue_injury_testicular_damage",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "local tissue injury / testicular degeneration",
+      "canonical_endpoint_name": "local_tissue_injury_/_testicular_degeneration",
+      "canonical_endpoint_concept": "testicular_degeneration_and_local_tissue_injury",
+      "review_reason": "Order variant of testicular degeneration with local tissue injury; kept distinct from nonspecific testicular damage."
+    },
+    {
+      "endpoint_name": "local_inflammatory_response",
+      "canonical_endpoint_name": "local_inflammatory_response",
+      "canonical_endpoint_concept": "local_inflammatory_response",
+      "review_reason": "Canonical spelling of local inflammatory response; kept distinct from local tissue injury and generic inflammation."
+    },
+    {
+      "endpoint_name": "local_tissue injury",
+      "canonical_endpoint_name": "local_tissue_injury",
+      "canonical_endpoint_concept": "local_tissue_injury",
+      "review_reason": "Spacing variant of local_tissue_injury; assay context and protective versus adverse outcome remain separate fields."
+    },
+    {
+      "endpoint_name": "local_tissue_injury",
+      "canonical_endpoint_name": "local_tissue_injury",
+      "canonical_endpoint_concept": "local_tissue_injury",
+      "review_reason": "Canonical spelling of local tissue injury; assay context and protective versus adverse outcome remain separate fields."
+    },
+    {
+      "endpoint_name": "local_tissue_injury (oral lichenoid lesion)",
+      "canonical_endpoint_name": "local_tissue_injury_(oral_lichenoid_lesion)",
+      "canonical_endpoint_concept": "local_tissue_injury_oral_lichenoid_lesion",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "local_tissue_injury_and_inflammatory_response",
+      "canonical_endpoint_name": "local_tissue_injury_and_inflammatory_response",
+      "canonical_endpoint_concept": "local_tissue_injury_and_inflammatory_response",
+      "review_reason": "Connector variant of the local-injury-plus-inflammatory-response composite; neither component is discarded."
+    },
+    {
+      "endpoint_name": "mitochondrial ROS production",
+      "canonical_endpoint_name": "mitochondrial_ros_production",
+      "canonical_endpoint_concept": "mitochondrial_ros_production",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "mitochondrial electron transport chain involvement in ROS",
+      "canonical_endpoint_name": "mitochondrial_electron_transport_chain_involvement_in_ros",
+      "canonical_endpoint_concept": "mitochondrial_electron_transport_chain_involvement_in_ros",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "mitochondrial membrane depolarization",
+      "canonical_endpoint_name": "mitochondrial_membrane_depolarization",
+      "canonical_endpoint_concept": "mitochondrial_membrane_depolarization",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "mitochondrial membrane potential",
+      "canonical_endpoint_name": "mitochondrial_membrane_potential",
+      "canonical_endpoint_concept": "mitochondrial_membrane_potential",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "mixed_or_inconclusive",
+      "canonical_endpoint_name": "mixed_or_inconclusive",
+      "canonical_endpoint_concept": "mixed_or_inconclusive",
+      "review_reason": "Ambiguous, unavailable, or unclassified source endpoint retained fail-closed as its own concept."
+    },
+    {
+      "endpoint_name": "nephrotoxicity",
+      "canonical_endpoint_name": "nephrotoxicity",
+      "canonical_endpoint_concept": "nephrotoxicity",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "not_applicable",
+      "canonical_endpoint_name": "not_applicable",
+      "canonical_endpoint_concept": "not_applicable",
+      "review_reason": "Ambiguous, unavailable, or unclassified source endpoint retained fail-closed as its own concept."
+    },
+    {
+      "endpoint_name": "not_classified",
+      "canonical_endpoint_name": "not_classified",
+      "canonical_endpoint_concept": "not_classified",
+      "review_reason": "Ambiguous, unavailable, or unclassified source endpoint retained fail-closed as its own concept."
+    },
+    {
+      "endpoint_name": "olfactory epithelium degeneration",
+      "canonical_endpoint_name": "olfactory_epithelium_degeneration",
+      "canonical_endpoint_concept": "olfactory_epithelium_degeneration",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "photo cytotoxicityn",
+      "canonical_endpoint_name": "photo_cytotoxicityn",
+      "canonical_endpoint_concept": "photodynamic_cytotoxicity",
+      "review_reason": "The record is photodynamic red-light cell damage; the typo is corrected while photodynamic modality remains distinct from broad phototoxicity."
+    },
+    {
+      "endpoint_name": "photooxicity_or_photosensitivity",
+      "canonical_endpoint_name": "phototoxicity_or_photosensitivity",
+      "canonical_endpoint_concept": "phototoxicity_or_photosensitivity",
+      "review_reason": "Typographic variant of phototoxicity_or_photosensitivity; ambiguity between the two hazards is deliberately retained."
+    },
+    {
+      "endpoint_name": "photosensitivity",
+      "canonical_endpoint_name": "photosensitivity",
+      "canonical_endpoint_concept": "photosensitivity",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "photosensitivity_or_photosensitivity",
+      "canonical_endpoint_name": "phototoxicity_or_photosensitivity",
+      "canonical_endpoint_concept": "photosensitivity",
+      "review_reason": "Duplicated wording denotes photosensitivity in the photopatch record; merged with photosensitivity, not the broader ambiguous photo-hazard endpoint."
+    },
+    {
+      "endpoint_name": "phototoxicity",
+      "canonical_endpoint_name": "phototoxicity",
+      "canonical_endpoint_concept": "phototoxicity",
+      "review_reason": "Same source endpoint as the case-only Phototoxicity variant; retained apart from photosensitivity and photoallergy."
+    },
+    {
+      "endpoint_name": "phototoxicity_or_photosensitivity",
+      "canonical_endpoint_name": "phototoxicity_or_photosensitivity",
+      "canonical_endpoint_concept": "phototoxicity_or_photosensitivity",
+      "review_reason": "Canonical ambiguous photo-hazard endpoint; not merged into either phototoxicity or photosensitivity."
+    },
+    {
+      "endpoint_name": "phototoxicity_or_photosensitivity (delayed erythema)",
+      "canonical_endpoint_name": "phototoxicity_or_photosensitivity_(delayed_erythema)",
+      "canonical_endpoint_concept": "phototoxicity_or_photosensitivity_delayed_erythema",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "phototoxicity_or_photosensitivity (immediate urticarial response)",
+      "canonical_endpoint_name": "phototoxicity_or_photosensitivity_(immediate_urticarial_response)",
+      "canonical_endpoint_concept": "phototoxicity_or_photosensitivity_immediate_urticarial_response",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "potassium repletion requirement in proximal RTA",
+      "canonical_endpoint_name": "potassium_repletion_requirement_in_proximal_rta",
+      "canonical_endpoint_concept": "potassium_repletion_requirement_in_proximal_rta",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "protection against epidermal blistering (local tissue injury)",
+      "canonical_endpoint_name": "protection_against_epidermal_blistering_(local_tissue_injury)",
+      "canonical_endpoint_concept": "protection_against_epidermal_blistering_local_tissue_injury",
+      "review_reason": "Protective or reduction endpoint retained separately from the corresponding adverse response."
+    },
+    {
+      "endpoint_name": "pruritus",
+      "canonical_endpoint_name": "pruritus",
+      "canonical_endpoint_concept": "pruritus",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "radiation dermatitis (grade 4)",
+      "canonical_endpoint_name": "radiation_dermatitis_(grade_4)",
+      "canonical_endpoint_concept": "radiation_dermatitis_grade_4",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "relative liver weight increase",
+      "canonical_endpoint_name": "relative_liver_weight_increase",
+      "canonical_endpoint_concept": "relative_liver_weight_increase",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "renal tissue changes (appearance)",
+      "canonical_endpoint_name": "renal_tissue_changes_(appearance)",
+      "canonical_endpoint_concept": "renal_tissue_changes_appearance",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "serum alkaline phosphatase increase",
+      "canonical_endpoint_name": "serum_alkaline_phosphatase_increase",
+      "canonical_endpoint_concept": "serum_alkaline_phosphatase_increase",
+      "review_reason": "Distinct source endpoint retained; no exact alias with another reviewed endpoint was justified."
+    },
+    {
+      "endpoint_name": "skin inflammation response",
+      "canonical_endpoint_name": "skin_inflammation_response",
+      "canonical_endpoint_concept": "cutaneous_inflammation",
+      "review_reason": "Exact skin-specific synonym of cutaneous inflammation; kept distinct from generic or merely local inflammation."
+    },
+    {
+      "endpoint_name": "skin irritation",
+      "canonical_endpoint_name": "skin_irritation",
+      "canonical_endpoint_concept": "skin_irritation",
+      "review_reason": "Spacing variant of skin_irritation; kept distinct from corrosion, necrosis, inflammation, and composite injury endpoints."
+    },
+    {
+      "endpoint_name": "skin irritation and inflammation",
+      "canonical_endpoint_name": "skin_irritation_and_inflammation",
+      "canonical_endpoint_concept": "skin_irritation_and_inflammation",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "skin irritation and local tissue injury",
+      "canonical_endpoint_name": "skin_irritation_and_local_tissue_injury",
+      "canonical_endpoint_concept": "skin_irritation_and_local_tissue_injury",
+      "review_reason": "Connector variant of the same irritation-plus-local-injury composite; both components are retained."
+    },
+    {
+      "endpoint_name": "skin necrosis",
+      "canonical_endpoint_name": "skin_necrosis",
+      "canonical_endpoint_concept": "skin_necrosis",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "skin staining",
+      "canonical_endpoint_name": "skin_staining",
+      "canonical_endpoint_concept": "skin_staining",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "skin toxicity (acneiform eruption)",
+      "canonical_endpoint_name": "skin_toxicity_(acneiform_eruption)",
+      "canonical_endpoint_concept": "skin_toxicity_acneiform_eruption",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "skin_corrosion",
+      "canonical_endpoint_name": "skin_corrosion",
+      "canonical_endpoint_concept": "skin_corrosion",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "skin_irritation",
+      "canonical_endpoint_name": "skin_irritation",
+      "canonical_endpoint_concept": "skin_irritation",
+      "review_reason": "Canonical spelling of skin irritation; kept distinct from corrosion, necrosis, inflammation, and composite injury endpoints."
+    },
+    {
+      "endpoint_name": "skin_irritation, local_tissue_injury",
+      "canonical_endpoint_name": "skin_irritation,_local_tissue_injury",
+      "canonical_endpoint_concept": "skin_irritation_and_local_tissue_injury",
+      "review_reason": "Punctuation variant of the same irritation-plus-local-injury composite; both components are retained."
+    },
+    {
+      "endpoint_name": "skin_irritation_or_pigmentation_related",
+      "canonical_endpoint_name": "skin_irritation_or_pigmentation_related",
+      "canonical_endpoint_concept": "skin_irritation_or_pigmentation_related",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "superoxide dismutase activity",
+      "canonical_endpoint_name": "superoxide_dismutase_activity",
+      "canonical_endpoint_concept": "superoxide_dismutase_activity",
+      "review_reason": "Distinct inflammatory or oxidative readout retained; no exact endpoint alias was justified."
+    },
+    {
+      "endpoint_name": "testicular degeneration / local tissue injury",
+      "canonical_endpoint_name": "testicular_degeneration_/_local_tissue_injury",
+      "canonical_endpoint_concept": "testicular_degeneration_and_local_tissue_injury",
+      "review_reason": "Order variant of testicular degeneration with local tissue injury; kept distinct from nonspecific testicular damage."
+    },
+    {
+      "endpoint_name": "ultraviolet-induced erythema",
+      "canonical_endpoint_name": "ultraviolet_induced_erythema",
+      "canonical_endpoint_concept": "ultraviolet_induced_erythema",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "urticaria",
+      "canonical_endpoint_name": "urticaria",
+      "canonical_endpoint_concept": "urticaria",
+      "review_reason": "Distinct local or cutaneous endpoint retained; injury type and clinical context are not broadened."
+    },
+    {
+      "endpoint_name": "uv_dependent_cutaneous_damage",
+      "canonical_endpoint_name": "uv_dependent_cutaneous_damage",
+      "canonical_endpoint_concept": "uv_dependent_cutaneous_damage",
+      "review_reason": "Distinct light-dependent endpoint retained; hazard type, readout, and light dependence are not broadened."
+    },
+    {
+      "endpoint_name": "uv_dependent_skin_response",
+      "canonical_endpoint_name": "uv_dependent_skin_response",
+      "canonical_endpoint_concept": "uv_dependent_skin_response",
+      "review_reason": "Same source endpoint as the case-only UV_dependent_skin_response variant; protective and adverse directions remain in the categorical outcome."
+    }
+  ]
+}

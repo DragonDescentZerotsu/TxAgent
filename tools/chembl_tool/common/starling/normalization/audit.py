@@ -184,6 +184,10 @@ def validate_measurement_pairs(
             if resolution_status != "ok" and mapping_status:
                 errors.append(f"{record_id}: unresolved quantity has an exact unit decision")
                 continue
+            if record.get("categorical_encoder_id") or record.get(
+                "canonical_measurement_scale_id"
+            ):
+                continue
             actual_measurement = record.get("canonical_measurement")
             if actual_measurement is None:
                 actual_measurement = record.get("canonical_measurement_text")
@@ -228,9 +232,10 @@ def validate_measurement_pairs(
                 )
                 if record.get("measurement_unit_status") != expected_status:
                     errors.append(f"{record_id}: unresolved unit status drifted")
-                elif any(
-                    value is not None
-                    for value in (actual_measurement, actual_unit, actual_scalar)
+                elif (
+                    actual_measurement is not None
+                    or actual_scalar is not None
+                    or actual_unit not in {None, "free-text", "relative-scalar"}
                 ):
                     errors.append(f"{record_id}: excluded extraction retained a scalar")
             continue
@@ -241,23 +246,25 @@ def validate_measurement_pairs(
                 or record.get("canonical_record_id")
                 or "<missing>"
             )
-            if resolution_route == "categorical":
-                if not (
-                    record.get("categorical_encoder_id")
-                    or record.get("canonical_measurement_scale_id")
+            encoded = bool(
+                record.get("categorical_encoder_id")
+                or record.get("canonical_measurement_scale_id")
+            )
+            if resolution_route == "categorical" and not encoded:
+                errors.append(f"{record_id}: categorical route lacks an encoder")
+            elif not encoded:
+                measurement = record.get("canonical_measurement")
+                if measurement is None:
+                    measurement = record.get("canonical_measurement_text")
+                unit = record.get("canonical_unit")
+                if unit is None:
+                    unit = record.get("canonical_unit_text")
+                if (
+                    measurement is not None
+                    or record.get("finite_scalar_value") is not None
+                    or unit not in {None, "free-text", "relative-scalar"}
                 ):
-                    errors.append(f"{record_id}: categorical route lacks an encoder")
-            elif any(
-                record.get(field) is not None
-                for field in (
-                    "canonical_measurement",
-                    "canonical_measurement_text",
-                    "canonical_unit",
-                    "canonical_unit_text",
-                    "finite_scalar_value",
-                )
-            ):
-                errors.append(f"{record_id}: unresolved route retained a scalar")
+                    errors.append(f"{record_id}: unresolved route retained a scalar")
             continue
         recompute_record = record
         if record.get("assay_transfer_transform_id"):

@@ -65,8 +65,9 @@ CONFIG = BatchConfig(
     v11_assay_transfer_model_default=model_profile("bbb_martins")["model"],
     v11_assay_transfer_model_revision_default=model_profile("bbb_martins")["revision"],
     v11_index_default=(
-        "outputs/chembl_tool/tasks/bbb_martins/evidence_library/"
-        "starling_normalized_v7/08_neighbor_index/scaffold"
+        "outputs/paper/molecular_evidence_agent_starling_scaffold_"
+        "experimental_meaningful_cns_access_v3/evidence/"
+        "bbb_starling_v7/08_neighbor_index"
     ),
     supports_final_decision_profiles=True,
     final_decision_profile_choices=GENERAL_FINAL_DECISION_PROFILES,

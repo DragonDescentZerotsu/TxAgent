@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 from dataclasses import replace
+from types import SimpleNamespace
+
+import pandas as pd
 
 from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
     MAX_EPOCH_TOKENS,
@@ -84,6 +87,8 @@ def test_pair_materialization_excludes_relative_rows_before_calibration() -> Non
         "canonical_endpoint_name": "auc",
         "canonical_unit_text": "ng*h/mL",
         "canonical_smiles": "CCO",
+        "finite_scalar_value": 1.0,
+        "measurement_kind": "continuous",
     }
     rows, audit = materialize_pair_buckets(
         [
@@ -256,6 +261,70 @@ def test_bio_labels_only_response_maps_local_id_to_full_record() -> None:
     )
     assert assignments[0]["evidence_field"] is None
     assert assignments[0]["evidence_quote"] is None
+
+
+def test_openrouter_request_and_assignment_record_provider_provenance() -> None:
+    calls = []
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            calls.append(kwargs)
+            return SimpleNamespace(
+                choices=[
+                    SimpleNamespace(
+                        message=SimpleNamespace(
+                            content=json.dumps(
+                                {
+                                    "rows": [
+                                        {
+                                            "id": "0",
+                                            "reference_scope": "absolute",
+                                        }
+                                    ]
+                                }
+                            )
+                        )
+                    )
+                ],
+                usage=SimpleNamespace(prompt_tokens=9, completion_tokens=4),
+            )
+
+    client = SimpleNamespace(
+        chat=SimpleNamespace(completions=FakeCompletions())
+    )
+    batch = RequestBatch(
+        "request-openrouter",
+        "oral_exposure",
+        ({"id": "full-bio-id", "source_id": "oral_exposure"},),
+        "classify",
+        8192,
+        payload_rows=(
+            {
+                "id": "0",
+                "measurement_text": "20%",
+                "support_text": "Absolute oral bioavailability was 20%.",
+            },
+        ),
+    )
+
+    assignments, usage, status = _query_batch(
+        batch,
+        config=REFERENCE_SEMANTICS_CONFIG,
+        client=client,
+        model="openai/gpt-5.6-luna",
+        base_url="https://openrouter.ai/api/v1",
+        credential_env="OPEN_ROUTER_KEY",
+    )
+
+    assert status == "valid"
+    assert usage == {"input_tokens": 9, "output_tokens": 4}
+    assert calls[0]["extra_body"] == {"provider": {"require_parameters": True}}
+    assert assignments[0]["assignment_method"] == (
+        "openai_gpt_5_6_luna_single_pass:labels_only"
+    )
+    assert assignments[0]["inference_model"] == "openai/gpt-5.6-luna"
+    assert assignments[0]["inference_base_url"] == "https://openrouter.ai/api/v1"
+    assert assignments[0]["inference_credential_env"] == "OPEN_ROUTER_KEY"
 
 
 def test_model_evidence_text_is_normalized_back_to_unique_field_name() -> None:
@@ -513,8 +582,8 @@ def test_skin_labels_only_response_requires_and_preserves_basis() -> None:
                     "rows": [
                         {
                             "id": "0",
-                            "reference_scope": "endpoint_defined_ratio",
-                            "reference_basis": "applied_dose",
+                            "reference_scope": "comparator_relative",
+                            "reference_basis": "untreated_control",
                         }
                     ]
                 }
@@ -541,8 +610,8 @@ def test_skin_labels_only_response_requires_and_preserves_basis() -> None:
     )
     assert status == "valid"
     assert assignments[0]["cleaned_record_id"] == "full-skin-id"
-    assert assignments[0]["reference_scope"] == "endpoint_defined_ratio"
-    assert assignments[0]["reference_basis"] == "applied_dose"
+    assert assignments[0]["reference_scope"] == "comparator_relative"
+    assert assignments[0]["reference_basis"] == "untreated_control"
     assert assignments[0]["assignment_method"] == (
         "gpt_5_4_mini_single_pass:labels_only"
     )
@@ -662,6 +731,42 @@ def test_newly_valid_unmapped_record_gets_explicit_unknown_assignment() -> None:
     assert coverage["validations"]["all_applicable_records_assigned"] is True
 
 
+def test_child_reference_mapping_precedes_parent_fallback(tmp_path) -> None:
+    mapping_path = tmp_path / "reference_semantics.parquet"
+    pd.DataFrame(
+        [
+            {
+                "cleaned_record_id": "parent",
+                "reference_scope": "unknown",
+                "reference_basis": "unknown",
+                "assignment_method": "parent_assignment",
+            },
+            {
+                "cleaned_record_id": "mapped-child",
+                "reference_scope": "absolute",
+                "reference_basis": "none",
+                "assignment_method": "child_assignment",
+            },
+        ]
+    ).to_parquet(mapping_path, index=False)
+    attacher = ReferenceSemanticsAttacher(
+        replace(BBB_REFERENCE_SEMANTICS_CONFIG, mapping_path=mapping_path),
+        fail_closed_unmapped=True,
+    )
+    base = {
+        "finite_scalar_value": 1.0,
+        "normalization_validity_status": "valid",
+        "measurement_resolution_parent_cleaned_record_id": "parent",
+    }
+
+    child = attacher.attach({**base, "cleaned_record_id": "mapped-child"})
+    fallback = attacher.attach({**base, "cleaned_record_id": "other-child"})
+
+    assert child["reference_semantics_assignment_method"] == "child_assignment"
+    assert child["canonical_reference_scope"] == "absolute"
+    assert fallback["reference_semantics_assignment_method"] == "parent_assignment"
+
+
 def test_prior_safe_gate_conflict_is_preserved_but_excluded() -> None:
     candidate = {
         "id": "row-1",
@@ -690,6 +795,33 @@ def test_prior_safe_gate_conflict_is_preserved_but_excluded() -> None:
     assert json.loads(reconciled["prior_assignment_json"])["reference_basis"] == "brain"
 
 
+def test_cached_comparator_basis_rejection_is_recovered_without_a_new_vote() -> None:
+    candidate = {"id": "row-1", "source_id": "skin_exposure"}
+    cached = {
+        "cleaned_record_id": "row-1",
+        "source_id": "skin_exposure",
+        "reference_scope": "unknown",
+        "reference_basis": "unknown",
+        "assignment_method": "invalid_row_response:comparator_basis_mismatch",
+        "rejected_response_json": json.dumps(
+            {
+                "id": "7",
+                "reference_scope": "comparator_relative",
+                "reference_basis": "untreated_control",
+            }
+        ),
+        "inference_model": "openai/gpt-5.6-luna",
+    }
+
+    recovered = _reconcile_cached_assignment(
+        candidate, cached, config=SKIN_REFERENCE_SEMANTICS_CONFIG
+    )
+
+    assert recovered["reference_scope"] == "comparator_relative"
+    assert recovered["reference_basis"] == "untreated_control"
+    assert recovered["inference_model"] == "openai/gpt-5.6-luna"
+
+
 def test_token_ledger_stops_before_nine_million(tmp_path) -> None:
     ledger_path = tmp_path / "ledger.json"
     ledger = TokenLedger(ledger_path, epoch="key-1", start_new_epoch=True)
@@ -714,3 +846,23 @@ def test_token_ledger_supports_a_distinct_custom_epoch_limit(tmp_path) -> None:
     assert not ledger.reserve("second", 2)
     payload = json.loads(ledger_path.read_text(encoding="utf-8"))
     assert payload["epochs"]["refreshed-key"]["max_tokens"] == 9_500_000
+
+
+def test_token_ledger_releases_a_request_rejected_before_generation(tmp_path) -> None:
+    ledger_path = tmp_path / "rejected-ledger.json"
+    ledger = TokenLedger(
+        ledger_path,
+        epoch="key-1",
+        start_new_epoch=True,
+        max_tokens=100,
+    )
+    assert ledger.reserve("too-large", 80)
+
+    ledger.release("too-large", reason="context_length_exceeded")
+
+    assert ledger.spent() == 0
+    assert ledger.reserve("replacement", 100)
+    payload = json.loads(ledger_path.read_text(encoding="utf-8"))
+    assert payload["epochs"]["key-1"]["released_reservations"] == {
+        "context_length_exceeded": {"requests": 1, "tokens": 80}
+    }

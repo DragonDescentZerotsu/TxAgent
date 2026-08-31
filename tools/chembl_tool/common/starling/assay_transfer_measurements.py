@@ -95,6 +95,43 @@ def load_measurement_policy(path: str | Path) -> dict[str, Any]:
             invalid_axis_keys.append(key)
     if invalid_axis_keys:
         raise ValueError(f"invalid assay-transfer axis keys: {invalid_axis_keys}")
+    normality_gate = payload.get("raw_normality_gate")
+    if normality_gate is not None:
+        if (
+            not isinstance(normality_gate, Mapping)
+            or normality_gate.get("gate_id") != "raw_normality_preservation.v2"
+            or normality_gate.get("advisory_only") is not True
+        ):
+            raise ValueError("invalid raw normality gate")
+        alpha = float(normality_gate.get("alpha", 0.05))
+        gated = {
+            key: value
+            for key, value in axis_decisions.items()
+            if value.get("statistical_gate_id") == normality_gate["gate_id"]
+        }
+        invalid_gated = []
+        for key, value in gated.items():
+            raw_p = _finite(value.get("raw_normality_p_value"))
+            raw_statistic = _finite(value.get("raw_normality_statistic"))
+            log_statistic = _finite(value.get("log10_normality_statistic"))
+            expected_flag = (
+                "raw"
+                if raw_p is not None
+                and raw_p >= alpha
+                and raw_statistic is not None
+                and log_statistic is not None
+                and raw_statistic < log_statistic
+                else "log10"
+            )
+            # Normality is diagnostic; the semantic transform remains authoritative.
+            if value.get("normality_gate_flag") != expected_flag:
+                invalid_gated.append(key)
+        if invalid_gated or len(gated) != int(
+            normality_gate.get("evaluated_axes", -1)
+        ):
+            raise ValueError(
+                f"invalid raw normality gate flags: {invalid_gated}"
+            )
     required_sources = payload.get("axis_decision_required_sources", [])
     if not isinstance(required_sources, list) or any(
         not isinstance(source, str) or not source for source in required_sources
@@ -108,6 +145,15 @@ def load_measurement_policy(path: str | Path) -> dict[str, Any]:
         raise ValueError("v2 assay-transfer measurement policy has wrong axis_key_fields")
     if not isinstance(payload.get("record_corrections", {}), Mapping):
         raise ValueError("record_corrections must be a mapping")
+    fallback_controls = {
+        "unreviewed_axis_action",
+        "nonpositive_log_action",
+    } & payload.keys()
+    if fallback_controls:
+        raise ValueError(
+            "assay-transfer measurement policy forbids fallback controls: "
+            f"{sorted(fallback_controls)}"
+        )
     ineligibility = payload.get("record_ineligibility", {})
     if not isinstance(ineligibility, Mapping):
         raise ValueError("record_ineligibility must be a mapping")
@@ -158,7 +204,9 @@ def finalize_assay_transfer_measurement(
             and str(updated_projected.get("source_id") or "")
             in policy.get("axis_decision_required_sources", ())
         ):
-            raise ValueError(f"continuous axis lacks an exact policy decision: {axis_key}")
+            raise ValueError(
+                f"continuous axis lacks an exact policy decision: {axis_key}"
+            )
         decision = decision or {"transform": "raw"}
     else:
         decision = {"transform": "raw"}
@@ -178,19 +226,45 @@ def finalize_assay_transfer_measurement(
                 raise ValueError(f"log10 policy targets an invalid record in {decision_key}")
     if transform == "log10":
         unit = str(updated_projected.get("canonical_unit_text") or "")
-        if unit.startswith(("log10(", "-log10(")):
+        declared_unit = unit.strip().casefold()
+        if (
+            declared_unit.startswith(
+                (
+                    "log10",
+                    "-log10",
+                    "pec",
+                    "pic",
+                    "pki",
+                    "pka",
+                    "ln(",
+                    "-ln(",
+                    "log(",
+                    "-log(",
+                    "log ",
+                    "-log ",
+                    "log2",
+                    "logit",
+                )
+            )
+            or declared_unit in {"ph", "logbb", "logps", "logs"}
+            or "log scale" in declared_unit
+            or "/log(" in declared_unit
+        ):
             raise ValueError(f"log10 policy would double-transform {decision_key}")
         scalar = math.log10(scalar)
         _set_log_value(updated_working, updated_projected, scalar, unit)
-    elif (
-        kind == "continuous"
-        and scalar is not None
-        and str(working.get("measurement_resolution_status") or "")
-        not in {"ok", "relative", "unsure", "unavailable"}
-    ):
-        text = _measurement_text(scalar, _finite(updated_projected.get("variation_value")))
-        updated_working["canonical_measurement"] = text
-        updated_projected["canonical_measurement_text"] = text
+    elif transform == "raw":
+        if kind == "continuous" and scalar is not None:
+            text = _measurement_text(
+                scalar, _finite(updated_projected.get("variation_value"))
+            )
+            updated_projected["canonical_measurement_text"] = text
+        updated_working["canonical_measurement"] = updated_projected.get(
+            "canonical_measurement_text"
+        )
+        updated_working["canonical_unit"] = updated_projected.get(
+            "canonical_unit_text"
+        )
     provenance = {
         "measurement_kind": kind,
         "assay_transfer_measurement_contract_version": (

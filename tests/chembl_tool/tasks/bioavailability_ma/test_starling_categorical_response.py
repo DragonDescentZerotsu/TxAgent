@@ -208,9 +208,18 @@ def _normalized_record(source_id: str, **updates):
         "source_id": source_id,
         "source_row_number": 1,
         "source_record_id": "record-1",
+        "endpoint_name": (
+            "oral_bioavailability"
+            if source_id == "hf_bioavailability"
+            else "efflux_or_secretory_transport"
+        ),
         "measurement_text": None,
         "unit_text": None,
-        "canonical_endpoint": "oral_bioavailability" if source_id == "hf_bioavailability" else "intestinal_efflux",
+        "canonical_endpoint": (
+            "oral_bioavailability"
+            if source_id == "hf_bioavailability"
+            else "efflux_or_secretory_transport"
+        ),
         "canonical_measurement": None,
         "canonical_unit": None,
         "finite_scalar_value": None,
@@ -255,7 +264,9 @@ def test_enrichment_preserves_fg_endpoint_and_assigns_separate_target():
     )
     enriched = _enrich_record(source, _NoAuxiliary(), _NoReference())
     assert "canonical_endpoint" not in enriched
-    assert {**source, **enriched}["canonical_endpoint"] == "intestinal_efflux"
+    assert {**source, **enriched}["canonical_endpoint"] == (
+        "efflux_or_secretory_transport"
+    )
     assert enriched["canonical_measurement_target_id"] == "ABCB1"
     assert enriched["canonical_pair_producer_id"] == "fg_substrate_status_binary.v1"
     assert enriched["normalization_validity_status"] == "valid"

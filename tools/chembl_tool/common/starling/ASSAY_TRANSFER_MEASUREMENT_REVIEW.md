@@ -62,15 +62,20 @@ canonical_reference_scope)`. Each JSON decision records the complete affected-ro
 and nonpositive count. Runtime lookup is exact: it uses no regex, dimensional inference, or unreviewed fallback.
 
 Positive physical amounts, concentrations, doses, exposures, times, permeabilities, fluxes, rates, clearances,
-AUC-like quantities, ratios, and folds use `log10`. Bounded percentages, fractions, probabilities, scores,
-ranks, indices, counts, pH, temperature, signed net quantities, and absolute changes remain raw. Explicit
-`log10`, `-log10`, natural-log, logit, and base-ambiguous log units remain distinct raw planes and are never
-logged again. A nonpositive value on an otherwise multiplicative axis remains in retrieval evidence but is
-explicitly assay-transfer-ineligible; the policy does not invent a finite replacement.
+AUC-like quantities, ratios, and folds use `log10` because their scientifically meaningful differences are
+multiplicative. A D'Agostino-Pearson comparison is retained for candidates with at least 20 positive values
+and three distinct values, but it is an audit flag only and cannot override the scientific mapping.
+Bounded percentages, fractions, probabilities, scores, ranks, indices, counts, pH, temperature, signed net
+quantities, and absolute changes remain raw. Explicit `log10`, `-log10`, natural-log, logit, and base-ambiguous
+log units remain distinct raw planes and are never logged again. A nonpositive value on an otherwise
+multiplicative axis remains in retrieval evidence but is explicitly assay-transfer-ineligible; the policy does
+not invent a finite replacement.
 
-Exact full pair-bucket decisions from V1 remain higher-priority overrides for previously reviewed scientific
-exceptions. Otherwise every finite continuous row from a task's declared sources must match a V2 axis decision,
-or the build fails closed.
+Historical V1 full pair-bucket decisions remain frozen with their lineage but are not active in the current
+policy. Every finite continuous row from a task's declared sources must match a current exact-axis decision,
+or the build fails closed. Policies cannot declare a raw/ineligible fallback for an unreviewed axis or a new
+out-of-domain log value. Stage 3 also rejects canonical records carrying either legacy fallback status, so a
+stale Stage-02 artifact cannot bypass the exact-axis review by entering at a later build stage.
 
 ## Historical tail-candidate review protocol
 
@@ -91,11 +96,20 @@ corpus-wide exact-axis mapping in `data_processing/assay_transfer_measurements_v
 | Bioavailability_Ma | 224 | 222 | 2 bounded fraction buckets | 75 |
 | Skin_Reaction | 120 | 113 | 7 bounded applied-dose fraction buckets | 216 |
 
-| Task | V2 finite continuous rows reviewed | exact axes | `log10` axes | raw axes |
-|---|---:|---:|---:|---:|
-| BBB Martins | 61,406 | 8,627 | 7,133 | 1,494 |
-| Bioavailability_Ma | 259,513 | 3,019 | 2,657 | 362 |
-| Skin_Reaction | 184,898 | 4,644 | 3,526 | 1,118 |
+| Task | finite continuous rows reviewed | exact axes | `log10` axes | raw axes | raw-like audit flags / rows |
+|---|---:|---:|---:|---:|---:|
+| BBB Martins | 61,574 | 8,628 | 7,133 | 1,495 | 11 / 455 |
+| Bioavailability_Ma | 259,513 | 3,019 | 2,657 | 362 | 16 / 437 |
+| Skin_Reaction | 184,906 | 4,647 | 3,525 | 1,122 | 22 / 554 |
+
+The numerical screen evaluated 75 semantic log10 axes. It flags 49 axes covering 1,446 rows as more raw-like
+and 26 axes covering 696 rows as more log10-like, but all 75 retain the scientific log10 mapping. Every
+decision records both statistics and p-values, sample count, and the `raw_normality_preservation.v2` gate ID;
+the top-level gate metadata marks the result `advisory_only`. Each task policy version is suffixed
+`scientific_review_v3`. These changes affect only the assay-transfer canonical tuple on the next rebuild;
+retrieval-visible source evidence is unchanged.
+The same audit corrected two one-row Skin axes whose units already declared a log scale (`log min^-1` and
+`log enhancement ratio`); both now remain raw and cannot be logged a second time.
 
 BBB's ordinary `10^-6` forms were already correct: 2,500 reviewed Stage-03 rows had a persisted `1e-6`
 notation factor. The BBB repairs instead address percent-to-ratio base normalization and 18 evidence-backed

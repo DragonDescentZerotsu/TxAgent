@@ -27,6 +27,36 @@ def is_absolute_continuous(record: Mapping[str, Any]) -> bool:
     )
 
 
+def is_retrieval_eligible(
+    record: Mapping[str, Any],
+    *,
+    endpoint_identity_required_sources: Sequence[str] = (),
+) -> bool:
+    """Apply the canonical record-level retrieval gate."""
+    endpoint = str(
+        record.get("canonical_endpoint")
+        or record.get("canonical_endpoint_name")
+        or ""
+    ).strip().casefold()
+    return bool(
+        record.get("canonical_smiles")
+        and record.get("group_id")
+        and (
+            str(record.get("source_id") or "")
+            not in endpoint_identity_required_sources
+            or endpoint
+            not in {
+                "",
+                "missing_endpoint",
+                "unknown",
+                "__unknown__",
+                "__unknown_endpoint__",
+            }
+        )
+        and not str(record.get("retrieval_exclusion_reason") or "")
+    )
+
+
 def deduplicate_within_source(
     records: Sequence[Mapping[str, Any]],
     *,
@@ -100,25 +130,10 @@ def deduplicate_within_source(
     endpoint_required = set(endpoint_identity_required_sources)
     for key, record in kept_by_key.items():
         ids = duplicate_ids[key]
-        endpoint = str(
-            record.get("canonical_endpoint")
-            or record.get("canonical_endpoint_name")
-            or ""
-        ).strip().casefold()
-        endpoint_resolved = endpoint not in {
-            "",
-            "missing_endpoint",
-            "unknown",
-            "__unknown__",
-            "__unknown_endpoint__",
-        }
-        source_id = str(record.get("source_id") or "")
         explicit_exclusion = str(record.get("retrieval_exclusion_reason") or "")
-        retrieval_eligible = bool(
-            record.get("canonical_smiles")
-            and record.get("group_id")
-            and (source_id not in endpoint_required or endpoint_resolved)
-            and not explicit_exclusion
+        retrieval_eligible = is_retrieval_eligible(
+            record,
+            endpoint_identity_required_sources=endpoint_required,
         )
         record.update(
             {
@@ -161,25 +176,10 @@ def organize_normalized_records(
             if reuse_mutable_records and isinstance(source, dict)
             else dict(source)
         )
-        endpoint = str(
-            record.get("canonical_endpoint")
-            or record.get("canonical_endpoint_name")
-            or ""
-        ).strip().casefold()
-        endpoint_resolved = endpoint not in {
-            "",
-            "missing_endpoint",
-            "unknown",
-            "__unknown__",
-            "__unknown_endpoint__",
-        }
-        source_id = str(record.get("source_id") or "")
         explicit_exclusion = str(record.get("retrieval_exclusion_reason") or "")
-        retrieval_eligible = bool(
-            record.get("canonical_smiles")
-            and record.get("group_id")
-            and (source_id not in endpoint_required or endpoint_resolved)
-            and not explicit_exclusion
+        retrieval_eligible = is_retrieval_eligible(
+            record,
+            endpoint_identity_required_sources=endpoint_required,
         )
         record.update(
             {
@@ -506,6 +506,7 @@ __all__ = [
     "deduplicate_within_source",
     "examples_text",
     "is_absolute_continuous",
+    "is_retrieval_eligible",
     "organize_normalized_records",
     "representative_examples",
 ]

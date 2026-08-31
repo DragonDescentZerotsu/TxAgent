@@ -1,4 +1,4 @@
-"""Retrieve BBB analogs from one heldout-filtered normalized-v6 index."""
+"""Retrieve BBB analogs from the current heldout-filtered BBB v3 index."""
 
 from __future__ import annotations
 
@@ -6,20 +6,20 @@ import argparse
 from pathlib import Path
 
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import main as run_retrieval
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import DEFAULT_OUT_DIR
-
-
-DEFAULT_INDEX_ROOT = Path(DEFAULT_OUT_DIR) / "08_neighbor_index"
+DEFAULT_INDEX = Path(
+    "outputs/paper/molecular_evidence_agent_starling_scaffold_"
+    "experimental_meaningful_cns_access_v3/evidence/"
+    "bbb_starling_v7/08_neighbor_index"
+)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
-        "--benchmark-split", choices=("random", "scaffold"), required=True
+        "--benchmark-split", choices=("scaffold",), required=True
     )
-    split_args, remaining = parser.parse_known_args(argv)
-    default_index = str(DEFAULT_INDEX_ROOT / split_args.benchmark_split)
-    return run_retrieval(default_index, __doc__ or "", remaining)
+    _, remaining = parser.parse_known_args(argv)
+    return run_retrieval(str(DEFAULT_INDEX), __doc__ or "", remaining)
 
 
 if __name__ == "__main__":

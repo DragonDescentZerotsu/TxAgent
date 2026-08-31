@@ -105,7 +105,10 @@ AUXILIARY_PROMPT_REGISTRY_PATH = (
     Path(__file__).resolve().parent / "data_processing/auxiliary_value_prompts.json"
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    ENDPOINT_CONCEPT_VERSION,
     SPACING_AND_SPELLING_VERSION,
+    endpoint_concept,
     family_assignment,
     spacing_and_spelling_decision,
     spacing_and_spelling_endpoint,
@@ -119,10 +122,41 @@ DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
 DEFAULT_OUT_DIR = (
     "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7"
 )
+DEFAULT_SOURCE_VALUE_REPAIRS = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/reviewed_repairs.jsonl"
+)
+DEFAULT_REVIEWED_SOURCE_DROPS = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/reviewed_drops.jsonl"
+)
+DEFAULT_SMILES_IDENTITY_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_audit.jsonl"
+)
+DEFAULT_SMILES_SAMPLE_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_sample_audit_20260829.json"
+)
+DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS = Path(
+    "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/"
+    "review/v2/proposal/reviewed_conflict_candidates.v2.parquet"
+)
 
 
 def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
-    result = clean_source_values(records, task_id=TASK_ID)
+    require_all = not int(getattr(args, "max_rows_per_source", 0) or 0)
+    result = clean_source_values(
+        records,
+        task_id=TASK_ID,
+        reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        reviewed_drops_path=DEFAULT_REVIEWED_SOURCE_DROPS,
+        smiles_identity_audit_path=DEFAULT_SMILES_IDENTITY_AUDIT,
+        reviewed_smiles_conflicts_path=DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        require_all_reviewed_repairs=require_all,
+        require_all_reviewed_drops=require_all,
+        require_all_reviewed_smiles_overrides=require_all,
+    )
     auxiliary_mapping = Path(args.auxiliary_mapping)
     attacher = (
         PendingAuxiliaryAttacher(auxiliary_mapping)
@@ -189,14 +223,6 @@ def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
             "Build stages 01-05 before the reconciliation pass has run. "
             "Records get auxiliary_mapping_status=not_available and the build "
             "fails its auxiliary-coverage validation on purpose."
-        ),
-    )
-    parser.add_argument(
-        "--benchmark-split-root",
-        default=DEFAULT_BENCHMARK_SPLIT_ROOT,
-        help=(
-            "Directory containing random/scaffold train and heldout molecule "
-            "label mappings used by the post-record filtering stage."
         ),
     )
     parser.add_argument(
@@ -398,6 +424,9 @@ def stage_documents(
                 ]
             ),
             "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+            "reference_semantics_assignment_complete": bool(
                 reference_coverage["validations"]["all_applicable_records_assigned"]
             ),
         },
@@ -412,6 +441,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
     versions: dict[str, Any] = {
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
+        "endpoint_concept_version": ENDPOINT_CONCEPT_VERSION,
         "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
@@ -459,6 +489,7 @@ def _enrich_record(
         bool(record.get("measurement_resolution_active")) and bool(resolution_route)
     )
     mapped = exact and record.get("measurement_unit_mapping_status") == "mapped"
+    encoded = CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary})
     semantic = semantic_results.get(str(record.get("cleaned_record_id") or ""))
     if semantic is None and not routed:
         raise ValueError("measurement semantics were not resolved atomically")
@@ -470,6 +501,13 @@ def _enrich_record(
             "measurement_numeric_domain": record.get("measurement_numeric_domain"),
         }
         if mapped
+        else {
+            "measurement_semantics_status": "categorical_or_non_scalar_route",
+            "measurement_semantics_rule_id": str(encoded["categorical_encoder_id"]),
+            "measurement_semantics_policy_version": CATEGORICAL_RESPONSE_VERSION,
+            "measurement_numeric_domain": "controlled",
+        }
+        if encoded
         else {
             "measurement_semantics_status": "frozen_measurement_resolution",
             "measurement_semantics_rule_id": RESOLUTION_APPLY_VERSION,
@@ -484,16 +522,12 @@ def _enrich_record(
             "measurement_numeric_domain": None,
         }
     )
-    # Categorical sources report an outcome, not a measurement, so they carry no
-    # scalar and never reach a pair bucket.  The encoder places the informative
-    # subset on a named latent scale; it only ever fills a record that has no
-    # scalar of its own, so a real measurement is never overwritten.
-    encoded = (
-        CATEGORICAL_RESPONSE_POLICY.apply({**record, **auxiliary, **semantic})
-        if resolution_route == "categorical" or not routed
-        else {}
-    )
     source_id = str(record.get("source_id") or "")
+    reviewed_endpoint_concept = endpoint_concept(
+        source_id,
+        str(record.get("endpoint_name") or ""),
+        str(record.get("canonical_endpoint") or ""),
+    )
     pair_producer_id = str(encoded.get("categorical_encoder_id") or "") or (
         SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id]
         if routed and resolution_route == "extract"
@@ -501,7 +535,17 @@ def _enrich_record(
         if routed and resolution_route == "accept"
         else SOURCE_PAIR_PRODUCER_IDS[source_id]
     )
-    if exact:
+    if encoded:
+        validity = {
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid"
+            ),
+            "normalization_domain_rules_version": CATEGORICAL_RESPONSE_VERSION,
+        }
+    elif exact:
         validity = {
             "normalization_validity_status": (
                 "unresolved_structure"
@@ -550,6 +594,7 @@ def _enrich_record(
     return {
         "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
         "canonical_pair_producer_id": pair_producer_id,
+        "canonical_endpoint_concept": reviewed_endpoint_concept,
         **encoded,
         "llm_source_contract_json": json.dumps(
             {
@@ -594,7 +639,13 @@ POLICY = StarlingTaskPolicy(
     census_extras=census_extras,
     verify_source_digest=lambda source_id, path: validate_source_digest(source_id, path),
     scientific_assets=(
+        DEFAULT_SOURCE_VALUE_REPAIRS,
+        DEFAULT_REVIEWED_SOURCE_DROPS,
+        DEFAULT_SMILES_IDENTITY_AUDIT,
+        DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        DEFAULT_SMILES_SAMPLE_AUDIT,
         DEFAULT_REGISTRY_PATH,
+        *ENDPOINT_CONCEPT_PATHS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
         DEFAULT_MAPPING_PATH,
         PARTITION_AUDIT_PATH,

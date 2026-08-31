@@ -5,9 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.util
 import json
-import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -16,6 +14,8 @@ from typing import Any
 import pandas as pd
 from openai import OpenAI
 
+from tools.chembl_tool.common.llm_client import openai_client
+
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 DEFAULT_INPUT = (
@@ -23,7 +23,6 @@ DEFAULT_INPUT = (
     / "data/starling_data/bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet"
 )
 DEFAULT_OUTPUT = Path(__file__).with_name("oral_study_context_extractions.json")
-DISTILLATION_KEYS_PATH = Path("/data1/joseph/therapeutic-tuning/distillation/keys.py")
 DEFAULT_MODEL = "gpt-5.4"
 PROMPT_VERSION = "oral_study_context_extraction.v1"
 NULL_LIKE = {
@@ -100,27 +99,6 @@ def _distinct_contexts(series: pd.Series) -> list[str]:
         if str(value).strip().casefold() not in NULL_LIKE
     }
     return sorted(values, key=lambda value: (value.casefold(), value))
-
-
-def _load_api_key(variable: str) -> str:
-    value = os.environ.get(variable)
-    if value:
-        return value
-    if not DISTILLATION_KEYS_PATH.exists():
-        raise RuntimeError(
-            f"{variable} is unset and private distillation keys.py was not found"
-        )
-    spec = importlib.util.spec_from_file_location(
-        "_txagent_private_distillation_keys", DISTILLATION_KEYS_PATH
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load private distillation keys.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    value = getattr(module, variable, None)
-    if not value:
-        raise RuntimeError(f"{variable} is absent from private distillation keys.py")
-    return str(value)
 
 
 def _validate_response(
@@ -327,8 +305,9 @@ def run(args: argparse.Namespace) -> None:
         raise FileExistsError(f"output exists: {output_path}; pass --overwrite")
     frame = pd.read_parquet(input_path, columns=["study_context"])
     contexts = _distinct_contexts(frame["study_context"])
-    client = OpenAI(
-        api_key=_load_api_key(args.api_key_env), base_url=args.base_url or None
+    client = openai_client(
+        api_key_env=args.api_key_env,
+        base_url=args.base_url or None,
     )
     checkpoint_path = output_path.with_suffix(output_path.suffix + ".partial.jsonl")
     mapping = _extract(

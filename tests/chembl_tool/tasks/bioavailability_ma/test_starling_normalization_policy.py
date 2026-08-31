@@ -38,7 +38,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_contextual_unit_reconci
     contextual_canonical_record_fields,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
     SPACING_AND_SPELLING_VERSION,
+    endpoint_concept,
     spacing_and_spelling_decision,
     validate_endpoint_inventory,
 )
@@ -256,6 +258,23 @@ def test_reviewed_variants_converge(source, left, right):
     )
 
 
+def test_endpoint_concept_maps_cover_every_frozen_source_endpoint():
+    for path in ENDPOINT_CONCEPT_PATHS:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for row in payload["mappings"]:
+            assert endpoint_concept(payload["source_id"], row["endpoint_name"]) == row[
+                "canonical_endpoint_concept"
+            ]
+
+    assert endpoint_concept("oral_exposure", "AUCINF") == "auc_0_infinity"
+    assert endpoint_concept("oral_exposure", "AUC0_∞") == "auc_0_infinity"
+    assert endpoint_concept("fa", "dissolution_efficiency") == (
+        "dissolution_efficiency"
+    )
+    with pytest.raises(ValueError, match="unreviewed endpoint concept"):
+        endpoint_concept("oral_exposure", "new_unreviewed_auc")
+
+
 def test_scientifically_related_endpoints_remain_distinct():
     profile = NormalizedSourceProfile(
         source_id="oral_exposure",
@@ -470,7 +489,11 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
     monkeypatch.setattr(
         downstream_builder,
         "_spec",
-        lambda: replace(original_spec(), final_endpoint_pruning=False),
+        lambda: replace(
+            original_spec(),
+            final_endpoint_pruning=False,
+            assay_transfer_bucket_policy_path=None,
+        ),
     )
 
     def fake_semantic_aggregation(groups, **_kwargs):
@@ -708,8 +731,8 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         == "bioavailability_fg_single_outcome_scalar_rules.v3"
     )
     assert manifest["source_column_contract_version"] == "source_column_contract.v2"
-    assert manifest["index_version"].endswith(".v7")
-    assert manifest["compact_artifact_version"].endswith(".v7")
+    assert "index_version" not in manifest
+    assert "compact_artifact_version" not in manifest
     assert manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
     assert manifest["contextual_unit_policy"]["policy_version"] == (
         "contextual_canonical_unit_policy.v1"
@@ -748,32 +771,27 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
 
     preserved_paths = [
         out_dir / normalized_builder.RECORDS_FILENAME,
-        out_dir / "04_pair_buckets/pair_bucket_records.parquet",
-        out_dir / "04_pair_buckets/pair_bucket_metadata.json",
-        out_dir / "05_deduplicated_records/records.parquet",
-        out_dir / "05_deduplicated_records/pair_bucket_records.parquet",
-        out_dir / "05_deduplicated_records/direct_record_mapping.parquet",
-        out_dir / "05_deduplicated_records/duplicates.parquet",
-        out_dir / "05_deduplicated_records/manifest.json",
-        out_dir / "06_collapsed_records/records.parquet",
-        out_dir / "06_collapsed_records/semantic_aggregation.jsonl",
-        out_dir / "06_collapsed_records/manifest.json",
-        out_dir / "07_distance_calibration/pair_bucket_distance_calibration.json.gz",
+        out_dir / "03_pair_buckets/pair_bucket_records.parquet",
+        out_dir / "03_pair_buckets/pair_bucket_metadata.json",
+        out_dir / "03_pair_buckets/direct_record_mapping.parquet",
+        out_dir / "03_pair_buckets/duplicates.parquet",
+        out_dir / "03_pair_buckets/manifest.json",
+        out_dir / "03_pair_buckets/pair_bucket_distance_calibration.json.gz",
         out_dir / normalized_builder.MANIFEST_FILENAME,
         out_dir / normalized_builder.VALIDITY_POLICY_FILENAME,
         out_dir / normalized_builder.AUXILIARY_MAPPING_MANIFEST_FILENAME,
     ]
     preserved_bytes = {path: path.read_bytes() for path in preserved_paths}
     with gzip.open(
-        out_dir
-        / "07_distance_calibration/pair_bucket_distance_calibration.json.gz",
+        out_dir / "03_pair_buckets/pair_bucket_distance_calibration.json.gz",
         "rt",
         encoding="utf-8",
     ) as handle:
         calibration = json.load(handle)
-    assert calibration["semantics"]["pair_bucket_membership_authority"] == (
-        "04_pair_buckets"
-    )
+        assert calibration["semantics"]["pair_bucket_membership_authority"] == (
+            "stage3_source_bucket_with_direct_condition_refinement"
+        )
+        assert "residual_heterogeneity" not in json.dumps(calibration)
     forbidden_calibration_fields = {
         "assay_transfer_eligible",
         "assay_transfer_label",
@@ -786,8 +804,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         for field in forbidden_calibration_fields
     )
 
-    # Paper-view records, evidence, and indices are lineage-owned and must not
-    # be published under the split-independent canonical root.
+    # Collapse, pruning, paper views, and indices are not core artifacts.
+    assert not (out_dir / "06_collapsed_records").exists()
+    assert not (out_dir / "final_endpoint_pruning_v6").exists()
     assert not (out_dir / "08_neighbor_index").exists()
 
     changed_mapping = tmp_path / "changed-mapping.parquet"
@@ -810,55 +829,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
         normalized_builder.main(failed_args)
     assert all(path.read_bytes() == preserved_bytes[path] for path in preserved_paths)
 
-    for directory in normalized_builder.ARTIFACT_STAGES[4:]:
-        target = out_dir / directory
-        target.mkdir(exist_ok=True)
-        (target / "stale.txt").write_text("stale", encoding="utf-8")
-    for filename in normalized_builder.RECORD_DEPENDENT_FILES:
-        (out_dir / filename).write_text("stale", encoding="utf-8")
-
-    assert normalized_builder.main(
-        [
-            *common_args,
-            "--from-stage",
-            "normalize",
-            "--through-stage",
-            "organize",
-            "--progress-every",
-            "0",
-        ]
-    ) == 0
-    restarted = json.loads(
-        (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
-    )
-    resumed_records = pd.read_parquet(out_dir / normalized_builder.RECORDS_FILENAME)
-    pd.testing.assert_frame_equal(
-        records.astype(object).where(records.notna(), None),
-        resumed_records.astype(object).where(resumed_records.notna(), None),
-        check_like=True,
-        check_dtype=False,
-    )
-    assert restarted["completed_stages"] == [
-        "source",
-        "clean",
-        "normalize",
-        "organize",
-    ]
-    assert restarted["rebuild_request"] == {
-        "from_stage": "normalize",
-        "through_stage": "organize",
-    }
-    assert {
-        "04_pair_buckets",
-        "05_deduplicated_records",
-        "06_collapsed_records",
-        "07_distance_calibration",
-    } <= set(restarted["invalidated_artifacts"])
-    assert all(
-        not (out_dir / directory).exists()
-        for directory in normalized_builder.ARTIFACT_STAGES[4:]
-    )
-    assert not any("-stage-" in path.name for path in out_dir.iterdir())
+    # A content-identical rerun is a no-op and preserves every core artifact.
+    assert normalized_builder.main(common_args) == 0
+    assert all(path.read_bytes() == preserved_bytes[path] for path in preserved_paths)
 
     frozen_v1 = out_dir / "07_endpoint_policies" / "v1"
     frozen_v1.mkdir(parents=True)

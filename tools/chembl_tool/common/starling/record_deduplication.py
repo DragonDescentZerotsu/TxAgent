@@ -34,6 +34,8 @@ _PAIR_BUCKET_FIELD_TYPES = {
     "canonical_pair_fields_json": pa.string(),
     "assay_transfer_eligible": pa.bool_(),
     "assay_transfer_ineligibility_reason": pa.string(),
+    "bucket_eligible": pa.bool_(),
+    "bucket_exclusion_reason": pa.string(),
 }
 SUPPORT_JACCARD_MINIMUM = 0.80
 _TOKEN = re.compile(r"[a-z0-9]+")
@@ -146,7 +148,9 @@ def build_deduplicated_record_stage(
         "retained_plus_duplicates_equals_input": (
             output_records + written_duplicates == input_records
         ),
-        "stage03_stage04_alignment_preserved": sidecar_records == output_records,
+        "deduplicated_records_align_with_pair_sidecar": (
+            sidecar_records == output_records
+        ),
         "all_physical_direct_vote_units_preserved_in_mapping": (
             written_mappings == mapping_records
         ),
@@ -437,6 +441,8 @@ def _write_retained_records(
                                 "canonical_pair_fields_json",
                                 "assay_transfer_eligible",
                                 "assay_transfer_ineligibility_reason",
+                                "bucket_eligible",
+                                "bucket_exclusion_reason",
                             )
                         },
                     }
@@ -585,6 +591,10 @@ def _decorate(
             output["assay_transfer_ineligibility_reason"] = (
                 "ineligible_source_pair_bucket"
             )
+    output["bucket_eligible"] = bool(output.get("assay_transfer_eligible"))
+    output["bucket_exclusion_reason"] = output.get(
+        "assay_transfer_ineligibility_reason"
+    )
     return output
 
 

@@ -9,8 +9,11 @@ selection that decides what gets paid for.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 
 from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
@@ -19,6 +22,7 @@ from tools.chembl_tool.common.starling.build_measurement_resolution_mapping impo
     STATUSES,
     TaskConfig,
     _stratified_slice,
+    materialize,
     openai_compatible_llm,
     plan_batches,
     query_batch,
@@ -503,6 +507,66 @@ def test_extraction_call_is_frozen_to_gpt_5_4_mini_low_reasoning() -> None:
     assert call["reasoning_effort"] == REASONING_EFFORT
 
 
+def test_materialize_reuses_a_base_mapping_and_labels_delta_rows(tmp_path: Path) -> None:
+    def assignment(record_id: str) -> dict:
+        return {
+            "cleaned_record_id": record_id,
+            "source_id": "direct_bbb",
+            "status": "ok",
+            "measurements_json": '[{"measurement":"1","unit":"cm/s"}]',
+            "quantity_count": 1,
+            "assignment_method": "model_single_pass",
+            "rejected_response_json": None,
+            "raw_response_json": "{}",
+        }
+
+    base_path = tmp_path / "measurement_resolution.parquet"
+    pq.write_table(pa.Table.from_pylist([assignment("base")]), base_path)
+    base_path.with_suffix(".manifest.json").write_text(
+        json.dumps({"model": "deepseek-ai/DeepSeek-V4-Flash-0731"}) + "\n",
+        encoding="utf-8",
+    )
+    records_path = tmp_path / "records.parquet"
+    profile_path = tmp_path / "profile.json"
+    records_path.write_text("records", encoding="utf-8")
+    profile_path.write_text("profile", encoding="utf-8")
+    output_path = tmp_path / "v2/measurement_resolution.parquet"
+    config = SimpleNamespace(
+        task_id="bbb_martins",
+        MAPPING_VERSION="bbb_martins_measurement_resolution.v2",
+        BATCH_SIZE=10,
+        prompt_manifest=lambda **_: {"prompt_version": "test"},
+    )
+    cache = SimpleNamespace(
+        assignments={"delta": assignment("delta")}, attempted={"delta"}
+    )
+    candidates = [{"id": "base"}, {"id": "delta"}]
+
+    manifest = materialize(
+        candidates,
+        cache,
+        config,
+        mapping_path=output_path,
+        records_path=records_path,
+        profile_path=profile_path,
+        model=MODEL,
+        api_base_url="https://api.openai.com/v1",
+        max_completion_tokens=1024,
+        reasoning_mode="low",
+        base_assignments={"base": assignment("base")},
+        base_mapping_path=base_path,
+    )
+
+    rows = {row["cleaned_record_id"]: row for row in pq.read_table(output_path).to_pylist()}
+    assert rows["base"]["inference_source"] == "base_mapping"
+    assert rows["base"]["inference_model"].startswith("deepseek-ai/")
+    assert rows["delta"]["inference_source"] == "delta_inference"
+    assert rows["delta"]["inference_model"] == MODEL
+    assert manifest["model"] == "mixed"
+    assert manifest["base_mapping"]["reused_rows"] == 1
+    assert manifest["delta_inference"]["rows"] == 1
+
+
 @pytest.mark.parametrize(
     "first_content",
     [
@@ -601,6 +665,11 @@ def test_query_does_not_retry_an_api_exception() -> None:
     assert status == "api_failure"
     assert usage is None
     assert rows[0]["assignment_method"] == "api_failure"
+    assert json.loads(rows[0]["rejected_response_json"]) == {
+        "reason": "api_failure",
+        "error_type": "RuntimeError",
+        "error": "service unavailable",
+    }
 
 
 def test_openai_compatible_adapter_uses_chat_json_mode() -> None:
@@ -627,6 +696,56 @@ def test_openai_compatible_adapter_uses_chat_json_mode() -> None:
     assert call["max_tokens"] == 8192
     assert result["content"] == '{"rows": []}'
     assert result["reasoning"] == "reasoning"
+
+
+def test_openai_compatible_adapter_uses_gpt5_request_parameters() -> None:
+    call = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            call.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"rows": []}'))],
+                usage=None,
+            )
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    openai_compatible_llm(client)(
+        {"system": "system", "user": "user"},
+        model=MODEL,
+        max_tokens=8192,
+        temperature=1.0,
+        reasoning_effort="low",
+    )
+    assert "JSON" in call["messages"][0]["content"]
+    assert call["max_completion_tokens"] == 8192
+    assert call["reasoning_effort"] == "low"
+    assert "max_tokens" not in call
+    assert "temperature" not in call
+
+
+def test_openai_compatible_adapter_sends_deepseek_reasoning_effort() -> None:
+    call = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            call.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"rows": []}'))],
+                usage=None,
+            )
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    openai_compatible_llm(client)(
+        {"system": "system", "user": "user"},
+        model="nvidia/DeepSeek-V4-Flash-NVFP4",
+        max_tokens=8192,
+        temperature=1.0,
+        reasoning_effort="low",
+    )
+    assert call["max_tokens"] == 8192
+    assert call["temperature"] == 1.0
+    assert call["reasoning_effort"] == "low"
 
 
 def test_resume_refuses_a_partially_attempted_request() -> None:

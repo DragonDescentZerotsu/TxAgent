@@ -11,9 +11,6 @@ from tools.chembl_tool.common.starling.direct_record_mapping import (
     direct_mapping_row,
     read_jsonl,
 )
-from tools.chembl_tool.tasks.skin_reaction.context_conditioned_benchmark import (
-    SELECTED_EXTERNAL_CONDITION_GROUPS,
-)
 from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     DIRECT_PARTITION,
     load_partition_audit,
@@ -21,6 +18,9 @@ from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     partition_record_id,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import label_record
+
+
+SELECTED_EXTERNAL_CONDITION_GROUPS = ("disease=atopic_dermatitis",)
 
 
 SELECTED_REVIEW = Path(

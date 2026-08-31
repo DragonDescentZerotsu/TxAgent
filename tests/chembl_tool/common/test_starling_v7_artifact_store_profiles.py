@@ -25,11 +25,7 @@ EXPECTED_STAGES = (
     "00_source",
     "01_cleaned",
     "02_canonicalized",
-    "03_records",
-    "04_pair_buckets",
-    "05_deduplicated_records",
-    "06_collapsed_records",
-    "07_distance_calibration",
+    "03_pair_buckets",
 )
 
 EXPECTED_LEGACY_STAGES = (
@@ -57,10 +53,10 @@ def test_all_v7_artifact_profiles_cover_the_complete_stage_layout():
         assert profile.stages == EXPECTED_STAGES
         assert profile.local_root.name == "starling_normalized_v7"
         assert profile.tracked_root.name == "starling_normalized_v7"
-        assert profile.store_version.endswith(".normalized_v7_store.v3")
+        assert profile.store_version.endswith(".normalized_v7_store.v4")
 
 
-def test_current_build_boundary_stops_at_split_independent_stage_06():
+def test_current_build_boundary_is_the_three_stage_core():
     assert BBB_CANONICAL_STAGES == EXPECTED_STAGES
     assert BIO_CANONICAL_STAGES == EXPECTED_STAGES
     assert SKIN_CANONICAL_STAGES == EXPECTED_STAGES

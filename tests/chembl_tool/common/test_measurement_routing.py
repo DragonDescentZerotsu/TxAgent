@@ -91,6 +91,10 @@ def test_scientific_notation_is_not_rewritten_by_the_router() -> None:
     )
 
 
+def test_float_overflow_reaches_extraction() -> None:
+    assert _route("1e309", "cm/s").bucket == "extract"
+
+
 @pytest.mark.parametrize("unit", ["%", "fold", "10^-6 cm/s", "SUV"])
 def test_the_exact_map_not_the_router_decides_unit_semantics(unit) -> None:
     assert _route("12", unit) == RouteDecision(
@@ -293,7 +297,7 @@ def test_every_row_lands_in_exactly_one_bucket() -> None:
     assert [_route(m, u).bucket for m, u, _ in cases] == [e for _, _, e in cases]
 
 
-def test_stage1_routes_explicit_categories_without_classifying_the_endpoint() -> None:
+def test_stage1_routes_numeric_measurements_before_categorical_fallback() -> None:
     rows = [
         {
             "source_id": "efflux_transport",
@@ -312,21 +316,30 @@ def test_stage1_routes_explicit_categories_without_classifying_the_endpoint() ->
             "measurement_text": "2.4",
             "unit_text": "cm/s",
         },
+        {
+            "source_id": "efflux_transport",
+            "endpoint_name": "Efflux transport",
+            "measurement_text": None,
+            "interaction_conclusion": "substrate",
+        },
     ]
 
     routed = attach_stage1_routes(rows, task=TASK)
 
     assert [row["measurement_resolution_route"] for row in routed] == [
-        "categorical",
+        "extract",
         "extract",
         "accept",
+        "categorical",
     ]
-    assert routed[0]["measurement_resolution_rule_id"] == (
+    assert routed[3]["measurement_resolution_rule_id"] == (
         "efflux_substrate_binary.v1"
     )
     assert routed[0]["canonical_endpoint_name"] == "efflux_ratio"
     assert routed[1]["canonical_endpoint_name"] == "influx_transport"
     assert routed[2]["canonical_endpoint_name"] == "apparent_permeability"
+    assert routed[2]["measurement_resolution_exact_measurement"] == "2.4"
+    assert routed[2]["measurement_resolution_exact_unit"] == "cm/s"
 
 
 def test_stage1_can_use_the_launchers_endpoint_mapping() -> None:
@@ -343,6 +356,30 @@ def test_stage1_can_use_the_launchers_endpoint_mapping() -> None:
         endpoint_resolver=lambda record: f"mapped_{record['endpoint_name']}",
     )
     assert routed["canonical_endpoint_name"] == "mapped_Papp"
+
+
+def test_skin_structured_counts_are_a_source_exact_fraction() -> None:
+    [routed] = attach_stage1_routes(
+        [
+            {
+                "source_id": "direct_skin_reaction",
+                "endpoint_name": "sensitization",
+                "canonical_endpoint_name": "sensitization",
+                "measurement_text": None,
+                "positive_count": 4,
+                "total_tested": 10,
+            }
+        ],
+        task="skin_reaction",
+    )
+
+    assert routed["measurement_resolution_route"] == "accept"
+    assert routed["measurement_resolution_rule_id"] == (
+        "structured_positive_count_fraction.v1"
+    )
+    assert routed["measurement_resolution_exact_measurement"] == "0.4"
+    assert routed["measurement_resolution_exact_unit"] == "fraction"
+    assert routed["measurement_resolution_exact_unit_is_canonical"] is True
 
 
 def test_routing_is_deterministic_across_repeated_calls() -> None:

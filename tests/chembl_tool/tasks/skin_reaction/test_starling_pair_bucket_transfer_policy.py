@@ -123,7 +123,7 @@ def _build(tmp_path, buckets_spec, *, out_name="policy"):
 def test_a_bucket_with_too_few_distinct_levels_is_rejected(tmp_path):
     """Enough records and real variance, but only two distinct values.
 
-    This is exactly the shape `single_subject_logit` produces, and the SD it
+    This is exactly the shape `single_subject_fraction.v1` produces, and the SD it
     yields does not describe a spread worth standardising against.
     """
     values = [0.0] * 15 + [1.0] * 15

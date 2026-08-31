@@ -19,14 +19,10 @@ ARTIFACT_STAGES = (
     "00_source",
     "01_cleaned",
     "02_canonicalized",
-    "03_records",
-    "04_pair_buckets",
-    "05_deduplicated_records",
-    "06_collapsed_records",
-    "07_distance_calibration",
+    "03_pair_buckets",
 )
 PROFILE = StageArtifactStoreProfile(
-    store_version="skin_reaction.normalized_v7_store.v3",
+    store_version="skin_reaction.normalized_v7_store.v4",
     task_id="skin_reaction",
     stages=ARTIFACT_STAGES,
     local_root=Path(

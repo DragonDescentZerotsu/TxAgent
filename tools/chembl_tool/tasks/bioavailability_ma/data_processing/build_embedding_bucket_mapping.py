@@ -5,10 +5,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.util
 import json
 import math
-import os
 import random
 import re
 import threading
@@ -21,16 +19,16 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
-from openai import OpenAI
 from sklearn.cluster import KMeans
 from transformers import AutoModel, AutoTokenizer
+
+from tools.chembl_tool.common.llm_client import openai_client
 
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 DATA_ROOT = REPO_ROOT / "data/starling_data/bioavailability_ma"
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent
 DEFAULT_OUTPUT = DEFAULT_OUTPUT_DIR / "globally_reconciled_auxiliary_value_mapping.json"
-DISTILLATION_KEYS_PATH = Path("/data1/joseph/therapeutic-tuning/distillation/keys.py")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 DEFAULT_MODEL = "gpt-5.4"
 DEFAULT_REASONING_EFFORT = "medium"
@@ -162,25 +160,6 @@ class ClusterQueryFailure(RuntimeError):
     def __init__(self, message: str, *, audit: dict[str, Any]):
         super().__init__(message)
         self.audit = audit
-
-
-def _load_openai_api_key() -> str:
-    value = os.environ.get("OPENAI_API_KEY")
-    if value:
-        return value
-    if not DISTILLATION_KEYS_PATH.exists():
-        raise RuntimeError("OPENAI_API_KEY is unset and private keys.py was not found")
-    spec = importlib.util.spec_from_file_location(
-        "_txagent_private_distillation_keys", DISTILLATION_KEYS_PATH
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load private distillation keys.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    value = getattr(module, "OPENAI_API_KEY", None)
-    if not value:
-        raise RuntimeError("OPENAI_API_KEY is absent from private keys.py")
-    return str(value)
 
 
 def _distinct_values(series: pd.Series) -> list[str]:
@@ -817,7 +796,7 @@ def _build_source_mapping(
     device = args.device
     if device == "auto":
         device = "cuda" if torch.cuda.is_available() else "cpu"
-    client = OpenAI(api_key=_load_openai_api_key())
+    client = openai_client()
     cache_path = destination.with_suffix(
         destination.suffix + f".{source}.partial.jsonl"
     )

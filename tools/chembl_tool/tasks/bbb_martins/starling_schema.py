@@ -48,6 +48,9 @@ from tools.chembl_tool.tasks.bbb_martins.starling_reference_semantics import (
     MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
     REFERENCE_SEMANTICS_CONFIG,
 )
+from tools.chembl_tool.tasks.bbb_martins.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_VERSION,
+)
 
 
 TASK_ID = "bbb_martins"
@@ -152,6 +155,14 @@ def _base_dimensions(
             producer_id_field=ENDPOINT_PRODUCER_FIELD,
             producer_variants=endpoint_producer_variants,
             legacy_value_field="canonical_endpoint",
+        ),
+        CanonicalDimensionSpec(
+            "canonical_endpoint_concept",
+            "endpoint_concept",
+            ("endpoint_name",),
+            "frozen_mapping",
+            ENDPOINT_CONCEPT_VERSION,
+            depends_on=("canonical_endpoint_name",),
         ),
         CanonicalDimensionSpec(
             "canonical_measurement_text",
@@ -410,12 +421,7 @@ PAIR_BUCKETS = {
             "canonical_measurement_scale_id",
             "canonical_assay_context",
             "canonical_species_context",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        ("bbb_transport_label", "qualifying_conditions"),
-        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        True,
     ),
     "passive_permeability": PairBucketSpec(
         "passive_permeability",
@@ -426,12 +432,7 @@ PAIR_BUCKETS = {
             "canonical_assay_type",
             "canonical_assay_context",
             "canonical_species_context",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        ("metric_uncertainty", "qualifying_conditions", "needs_more_context"),
-        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        True,
     ),
     "efflux_transport": PairBucketSpec(
         "efflux_transport",
@@ -443,12 +444,7 @@ PAIR_BUCKETS = {
             "canonical_evidence_type",
             "canonical_assay_context",
             "canonical_species_context",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        ("perturbation", "qualifying_conditions", "needs_more_context"),
-        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        True,
     ),
     "influx_transport": PairBucketSpec(
         "influx_transport",
@@ -457,12 +453,7 @@ PAIR_BUCKETS = {
             "canonical_unit_text",
             "canonical_transport_mechanism",
             "canonical_kinetic_symbol",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        (),
-        REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        True,
     ),
 }
 

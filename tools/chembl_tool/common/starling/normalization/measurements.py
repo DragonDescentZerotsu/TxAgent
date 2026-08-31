@@ -700,7 +700,7 @@ def normalize_cleaned_records(
         )
         if record_enricher is not None:
             record.update(dict(record_enricher(record)))
-        if exact_authoritative:
+        if exact_authoritative and not record.get("categorical_encoder_id"):
             record.update(
                 {
                     "canonical_endpoint": canonical_endpoint,

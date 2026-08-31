@@ -11,6 +11,14 @@ the frozen auxiliary mapping.
 - Direct-HF supplies working constants for endpoint and unit; those constants are not marked source-visible.
 - Measurement and unit rules remain atomic. The existing Fg scalar rule module remains the focused scientific
   helper rather than being copied into the schema.
+- `endpoint_concepts/*.json` exhaustively maps every frozen source `endpoint_name` to a hand-reviewed,
+  source-specific `canonical_endpoint_concept`. The source endpoint and existing fine-grained
+  `canonical_endpoint_name` remain unchanged; Stage 3 uses the concept only in the endpoint slot of the
+  pair-bucket key. The mapping loader verifies the
+  frozen endpoint inventory count and SHA-256 and fails closed on any new or missing endpoint.
+- `pair_bucket_semantic_eligibility_v1/` preserves the retired review of
+  non-absolute buckets. The active core accepts only absolute and
+  endpoint-defined-ratio numeric calibration candidates.
 
 The v6 artifacts and their hashes remain historical lineage. A v7 build must write to
 `starling_normalized_v7` and pass source-field, measurement/unit, and pair-bucket fixture tests before use.

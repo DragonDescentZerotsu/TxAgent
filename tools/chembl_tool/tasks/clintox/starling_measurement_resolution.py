@@ -14,7 +14,7 @@ from tools.chembl_tool.common.starling.measurement_routing import SourceRoutingR
 TASK_ROOT = Path(__file__).resolve().parent
 TEMPLATE = TASK_ROOT / "measurement_resolution_templates/measurement_resolution_v1.jinja"
 PROMPT_VERSION = "clintox_measurement_resolution_prompt.v9"
-MAPPING_VERSION = "clintox_measurement_resolution.v1"
+MAPPING_VERSION = "clintox_measurement_resolution.v2"
 BATCH_SIZE = 10
 SOURCE_IDS = (
     "human_clinical_toxicity",
@@ -38,7 +38,7 @@ DEFAULT_CLEANED_RECORDS = Path(
     "starling_normalized_v7/01_cleaned/records.parquet"
 )
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/measurement_resolution_v1/measurement_resolution.parquet"
+    TASK_ROOT / "data_processing/measurement_resolution_v2/measurement_resolution.parquet"
 )
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 

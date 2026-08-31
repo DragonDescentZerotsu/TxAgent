@@ -24,6 +24,7 @@ from typing import Any
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from tools.chembl_tool.common.llm_client import openai_client
 from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
     BUDGET_EXHAUSTED_EXIT_CODE,
     DISTILLATION_ROOT,
@@ -45,7 +46,7 @@ from tools.chembl_tool.common.starling.measurement_routing import (
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 
 
-GENERATION_VERSION = "measurement_resolution_generation.v5"
+GENERATION_VERSION = "measurement_resolution_generation.v7"
 MODEL = "gpt-5.4-mini"
 REASONING_EFFORT = "low"
 
@@ -541,18 +542,27 @@ def openai_compatible_llm(client: Any) -> Any:
         model: str,
         max_tokens: int,
         temperature: float,
+        reasoning_effort: str = "",
         **_: Any,
     ) -> dict[str, Any]:
-        response = client.chat.completions.create(
+        request: dict[str, Any] = dict(
             model=model,
             messages=[
-                {"role": "system", "content": prompt["system"]},
+                {
+                    "role": "system",
+                    "content": prompt["system"] + "\nReturn the requested output as JSON.",
+                },
                 {"role": "user", "content": prompt["user"]},
             ],
-            temperature=temperature,
-            max_tokens=max_tokens,
             response_format={"type": "json_object"},
         )
+        if reasoning_effort:
+            request["reasoning_effort"] = reasoning_effort
+        if model.startswith("gpt-5"):
+            request["max_completion_tokens"] = max_tokens
+        else:
+            request.update(max_tokens=max_tokens, temperature=temperature)
+        response = client.chat.completions.create(**request)
         message = response.choices[0].message
         usage = response.usage.model_dump() if response.usage is not None else None
         return {
@@ -583,9 +593,16 @@ def query_batch(
                 reasoning_effort=REASONING_EFFORT,
                 max_retries=1,
             )
-        except Exception:
+        except Exception as error:
             method = "api_failure_after_structural_retry" if attempt else "api_failure"
-            return [_blank(row, method=method) for row in batch.rows], None, method
+            rows = [_blank(row, method=method) for row in batch.rows]
+            failure = json.dumps(
+                {"reason": method, "error_type": type(error).__name__, "error": str(error)},
+                ensure_ascii=False,
+            )
+            for row in rows:
+                row["rejected_response_json"] = failure
+            return rows, None, method
         reported = result.get("usage") if isinstance(result, dict) else None
         if isinstance(reported, dict):
             usage["input_tokens"] += int(
@@ -674,19 +691,34 @@ def materialize(
     api_base_url: str,
     max_completion_tokens: int,
     reasoning_mode: str,
+    base_assignments: Mapping[str, Mapping[str, Any]] | None = None,
+    base_mapping_path: Path | None = None,
 ) -> dict[str, Any]:
     """Write one mapping row per candidate, refusing to publish an unasked row."""
+    base_assignments = base_assignments or {}
+    base_model = _base_mapping_model(base_mapping_path) if base_assignments else ""
     rows: list[dict[str, Any]] = []
     for candidate in candidates:
         record_id = str(candidate["id"])
-        assignment = cache.assignments.get(record_id)
+        assignment = base_assignments.get(record_id) or cache.assignments.get(record_id)
         if assignment is None:
             if record_id in cache.attempted:
                 assignment = _blank(candidate, method="ambiguous_process_termination")
             else:
                 raise ValueError(f"unattempted row cannot be published: {record_id}")
-        rows.append(assignment)
+        rows.append(
+            {
+                **assignment,
+                "inference_source": (
+                    "base_mapping" if record_id in base_assignments else "delta_inference"
+                ),
+                "inference_model": (
+                    base_model if record_id in base_assignments else model
+                ),
+            }
+        )
     rows.sort(key=lambda row: str(row["cleaned_record_id"]))
+    inference_models = sorted({str(row["inference_model"]) for row in rows})
 
     table = pa.Table.from_pylist(rows)
     mapping_path.parent.mkdir(parents=True, exist_ok=True)
@@ -702,7 +734,8 @@ def materialize(
         "routing_version": MEASUREMENT_ROUTING_VERSION,
         "task_id": config.task_id,
         "mapping_version": config.MAPPING_VERSION,
-        "model": model,
+        "model": inference_models[0] if len(inference_models) == 1 else "mixed",
+        "models": inference_models,
         "api_base_url": api_base_url,
         "inference": {
             "max_completion_tokens": max_completion_tokens,
@@ -720,6 +753,20 @@ def materialize(
         "mapping_path": str(mapping_path),
         "mapping_sha256": file_sha256(mapping_path),
         "mapping_rows": len(rows),
+        "base_mapping": (
+            {
+                "path": str(base_mapping_path),
+                "sha256": file_sha256(base_mapping_path),
+                "model": base_model,
+                "reused_rows": len(base_assignments),
+            }
+            if base_mapping_path is not None
+            else None
+        ),
+        "delta_inference": {
+            "model": model,
+            "rows": len(rows) - len(base_assignments),
+        },
         "status_counts": counts,
         "rejected_rows": sum(1 for row in rows if row["rejected_response_json"]),
         "assignment_method_counts": _counter(row["assignment_method"] for row in rows),
@@ -737,6 +784,28 @@ def materialize(
         encoding="utf-8",
     )
     return manifest
+
+
+def load_base_mapping(path: Path) -> dict[str, dict[str, Any]]:
+    rows = pq.read_table(path).to_pylist()
+    mapping: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        record_id = str(row.get("cleaned_record_id") or "")
+        if not record_id or record_id in mapping:
+            raise ValueError(f"base mapping has an empty or duplicate ID: {record_id!r}")
+        mapping[record_id] = dict(row)
+    return mapping
+
+
+def _base_mapping_model(path: Path | None) -> str:
+    if path is None:
+        return ""
+    manifest_path = path.with_suffix(".manifest.json")
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    model = str(payload.get("model") or "")
+    if not model:
+        raise ValueError(f"base mapping manifest lacks a model: {manifest_path}")
+    return model
 
 
 def _gold_sources(path: Path, ids: set[str]) -> dict[str, int]:
@@ -802,10 +871,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--cleaned-records", type=Path, default=None)
     parser.add_argument("--endpoint-profile", type=Path, default=None)
     parser.add_argument("--mapping-path", type=Path, default=None)
+    parser.add_argument("--base-mapping", type=Path, default=None)
     parser.add_argument("--cache-dir", type=Path, default=None)
     parser.add_argument("--token-ledger", type=Path, default=None)
     parser.add_argument("--budget-epoch", default=None)
-    parser.add_argument("--budget-max-tokens", type=int, default=4_000_000)
+    parser.add_argument("--budget-max-tokens", type=int, default=10_000_000)
     parser.add_argument("--start-new-budget-epoch", action="store_true")
     parser.add_argument(
         "--no-token-ledger",
@@ -850,6 +920,11 @@ def main(argv: list[str] | None = None) -> int:
     if not records_path.is_file():
         raise SystemExit(f"cleaned records not found: {records_path}")
     mapping_path = args.mapping_path or config.DEFAULT_MAPPING_PATH
+    base_mapping_path = args.base_mapping or getattr(
+        config, "DEFAULT_BASE_MAPPING_PATH", None
+    )
+    if base_mapping_path is not None and not base_mapping_path.is_file():
+        raise SystemExit(f"base measurement mapping not found: {base_mapping_path}")
     profile_path = args.endpoint_profile or config.DEFAULT_PROFILE_PATH
     if not profile_path.is_file():
         raise SystemExit(
@@ -894,8 +969,21 @@ def main(argv: list[str] | None = None) -> int:
             records_path, config, source_id=args.source, only_ids=only_ids
         )
     per_source = _counter(row["source_id"] for row in candidates)
+    candidate_ids = {str(row["id"]) for row in candidates}
+    base_assignments = (
+        {
+            record_id: row
+            for record_id, row in load_base_mapping(base_mapping_path).items()
+            if record_id in candidate_ids
+        }
+        if base_mapping_path is not None
+        else {}
+    )
+    delta_candidates = [
+        row for row in candidates if str(row["id"]) not in base_assignments
+    ]
     planned_batches = plan_batches(
-        candidates,
+        delta_candidates,
         config,
         attempted=set(),
         endpoint_profile=endpoint_profile,
@@ -906,6 +994,10 @@ def main(argv: list[str] | None = None) -> int:
     requests_by_source = _counter(batch.source_id for batch in planned_batches)
     print(f"task {config.task_id} | routing {MEASUREMENT_ROUTING_VERSION}")
     print(f"extraction candidates: {len(candidates):,}")
+    print(
+        f"base rows reused: {len(base_assignments):,} | "
+        f"new rows requiring inference: {len(delta_candidates):,}"
+    )
     for source_id, count in per_source.items():
         requests = requests_by_source.get(source_id, 0)
         print(f"   {source_id:24}{count:>9,} rows  {requests:>7,} requests")
@@ -948,7 +1040,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     batches = (
         plan_batches(
-            candidates,
+            delta_candidates,
             config,
             attempted=cache.attempted,
             endpoint_profile=endpoint_profile,
@@ -962,21 +1054,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"unattempted requests this run: {len(batches):,}")
 
     if args.base_url:
-        from httpx import Limits
-        from openai import DefaultHttpxClient, OpenAI
-
-        api_key = os.environ.get(args.api_key_env, "") if args.api_key_env else "EMPTY"
-        if args.api_key_env and not api_key:
+        if args.api_key_env and not os.environ.get(args.api_key_env):
             raise SystemExit(f"missing API key environment variable {args.api_key_env}")
-        http_client = DefaultHttpxClient(
-            timeout=args.request_timeout_s,
-            limits=Limits(
-                max_connections=args.workers,
-                max_keepalive_connections=args.workers,
-            )
-        )
         llm = openai_compatible_llm(
-            OpenAI(base_url=args.base_url, api_key=api_key, http_client=http_client)
+            openai_client(
+                base_url=args.base_url,
+                api_key_env=args.api_key_env or "OPENAI_API_KEY",
+                unauthenticated=not args.api_key_env,
+                max_connections=args.workers,
+                timeout_s=args.request_timeout_s,
+            )
         )
         model = args.model
         api_base_url = args.base_url
@@ -1052,7 +1139,9 @@ def main(argv: list[str] | None = None) -> int:
         model=model,
         api_base_url=api_base_url,
         max_completion_tokens=args.max_completion_tokens,
-        reasoning_mode=("server_default" if args.base_url else REASONING_EFFORT),
+        reasoning_mode=REASONING_EFFORT,
+        base_assignments=base_assignments,
+        base_mapping_path=base_mapping_path,
     )
     print(json.dumps(manifest["status_counts"], indent=2))
     print(f"rejected rows: {manifest['rejected_rows']:,}")

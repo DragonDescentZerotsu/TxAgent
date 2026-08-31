@@ -247,10 +247,16 @@ class CategoricalResponsePolicy:
     def apply(self, record: dict[str, Any]) -> dict[str, Any]:
         """Return the fields to merge, or an empty mapping to leave untouched.
 
-        Only records that have no scalar of their own are considered, so a real
-        measurement is never overwritten by an encoding.
+        Only records with neither a scalar nor a bare numeric candidate are
+        considered, so unresolved numeric evidence is never overwritten.
         """
         if record.get("finite_scalar_value") is not None:
+            return {}
+        try:
+            numeric_candidate = float(str(record.get("canonical_measurement")).strip())
+        except (TypeError, ValueError):
+            numeric_candidate = None
+        if numeric_candidate is not None and math.isfinite(numeric_candidate):
             return {}
         encoding = self.encode(record)
         if encoding is None:

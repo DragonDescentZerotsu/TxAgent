@@ -9,7 +9,7 @@ import math
 import sqlite3
 import statistics
 import tempfile
-from collections import Counter
+from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -112,6 +112,7 @@ def build_collapsed_record_stage(
     defer_semantic_aggregation: bool = False,
     final_endpoint_pruning_manifest_path: str | Path | None = None,
     collapsed_informativeness_dir: str | Path | None = None,
+    assay_transfer_bucket_policy_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Collapse retrieval-eligible rows by direct condition or indirect bucket."""
     source_path = Path(records_path)
@@ -119,6 +120,12 @@ def build_collapsed_record_stage(
     metadata_path = Path(pair_bucket_metadata_path)
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
+    bucket_policy, bucket_policy_input = _load_assay_transfer_bucket_policy(
+        assay_transfer_bucket_policy_path,
+        task_id=task_id,
+        records_path=source_path,
+        pair_bucket_metadata_path=metadata_path,
+    )
     available = set(pq.read_schema(source_path).names)
     source_columns = semantic_source_columns or {}
     columns = _projection_columns(
@@ -199,6 +206,7 @@ def build_collapsed_record_stage(
         semantic_source_columns=source_columns,
         direct_label_definition=direct_label_definition,
         collapsed_informativeness=informativeness,
+        assay_transfer_bucket_policy=bucket_policy,
     )
     connection.close()
     work_dir.cleanup()
@@ -265,6 +273,7 @@ def build_collapsed_record_stage(
                 if collapsed_informativeness_dir is not None
                 else None
             ),
+            "assay_transfer_bucket_policy": bucket_policy_input,
         },
         "summary": {
             "input_records": stream_stats["input_records"],
@@ -298,6 +307,21 @@ def build_collapsed_record_stage(
             "collapsed_informativeness_flag_pairs": output_stats[
                 "collapsed_informativeness_flag_pairs"
             ],
+            "semantic_policy_candidate_buckets": output_stats[
+                "semantic_policy_candidate_buckets"
+            ],
+            "semantic_policy_eligible_buckets": output_stats[
+                "semantic_policy_eligible_buckets"
+            ],
+            "semantic_policy_ineligible_buckets": output_stats[
+                "semantic_policy_ineligible_buckets"
+            ],
+            "semantic_policy_promoted_records": output_stats[
+                "semantic_policy_promoted_records"
+            ],
+            "semantic_policy_revoked_records": output_stats[
+                "semantic_policy_revoked_records"
+            ],
         },
         "outputs": {
             RECORDS_FILENAME: file_sha256(records_file),
@@ -328,6 +352,9 @@ def build_collapsed_record_stage(
                 or output_stats["collapsed_informativeness_attached_views"]
                 == output_stats["collapsed_informativeness_target_views"]
             ),
+            "semantic_policy_candidate_coverage_complete": output_stats[
+                "semantic_policy_candidate_coverage_complete"
+            ],
         },
     }
     (target / MANIFEST_FILENAME).write_text(
@@ -572,6 +599,7 @@ def _write_collapsed_outputs(
     semantic_source_columns: Mapping[str, Sequence[str]],
     direct_label_definition: str,
     collapsed_informativeness: Mapping[str, Mapping[str, Any]] | None,
+    assay_transfer_bucket_policy: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
     records_jsonl = records_file.with_suffix(".jsonl")
     method_counts: Counter[str] = Counter()
@@ -587,6 +615,16 @@ def _write_collapsed_outputs(
     informativeness_attached = 0
     informativeness_models: Counter[str] = Counter()
     informativeness_pairs: Counter[str] = Counter()
+    semantic_candidate_counts: Counter[str] = Counter()
+    semantic_promoted_records = 0
+    semantic_revoked_records = 0
+    policy_entries = {
+        str(entry["pair_bucket_key"]): entry
+        for entry in (assay_transfer_bucket_policy or {}).get("entries", [])
+    }
+    approved_keys = {
+        key for key, entry in policy_entries.items() if entry["decision"] == "eligible"
+    }
     with records_jsonl.open("w", encoding="utf-8") as handle:
         for group_key, group in _iter_retained_groups(connection):
             method = _aggregation_method(group)
@@ -610,6 +648,16 @@ def _write_collapsed_outputs(
                 preserved_columns=preserved_columns,
                 allow_pending_semantic=defer_semantic_aggregation,
             )
+            if _is_semantic_transfer_candidate(collapsed, group, method=method):
+                key = str(collapsed["pair_bucket_key"])
+                semantic_candidate_counts[key] += 1
+                policy_change = _apply_semantic_transfer_decision(
+                    collapsed, policy_entries=policy_entries
+                )
+                if policy_change == "promoted":
+                    semantic_promoted_records += 1
+                elif policy_change == "revoked":
+                    semantic_revoked_records += 1
             if is_informativeness_target(collapsed):
                 views = build_informativeness_views(
                     collapsed,
@@ -722,6 +770,22 @@ def _write_collapsed_outputs(
         and informativeness_attached != len(collapsed_informativeness)
     ):
         raise ValueError("collapsed informativeness cache contains unused views")
+    minimum = int(
+        (assay_transfer_bucket_policy or {}).get("minimum_unique_molecules", 20)
+    )
+    candidate_keys = {
+        key for key, count in semantic_candidate_counts.items() if count >= minimum
+    }
+    coverage_complete = not assay_transfer_bucket_policy or candidate_keys == set(
+        policy_entries
+    )
+    if not coverage_complete:
+        missing = sorted(candidate_keys - set(policy_entries))
+        extra = sorted(set(policy_entries) - candidate_keys)
+        raise ValueError(
+            "assay-transfer semantic policy coverage mismatch; "
+            f"missing={missing[:5]}, extra={extra[:5]}"
+        )
     return {
         "collapsed_records": len(collapsed_ids),
         "aggregation_method_counts": dict(sorted(method_counts.items())),
@@ -746,7 +810,121 @@ def _write_collapsed_outputs(
         "collapsed_informativeness_flag_pairs": dict(
             sorted(informativeness_pairs.items())
         ),
+        "semantic_policy_candidate_buckets": len(candidate_keys),
+        "semantic_policy_eligible_buckets": len(candidate_keys & approved_keys),
+        "semantic_policy_ineligible_buckets": len(candidate_keys - approved_keys),
+        "semantic_policy_promoted_records": semantic_promoted_records,
+        "semantic_policy_revoked_records": semantic_revoked_records,
+        "semantic_policy_candidate_coverage_complete": coverage_complete,
     }
+
+
+def _load_assay_transfer_bucket_policy(
+    path: str | Path | None,
+    *,
+    task_id: str,
+    records_path: Path,
+    pair_bucket_metadata_path: Path,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    if path is None:
+        return None, None
+    policy_path = Path(path)
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    if policy.get("task_id") != task_id:
+        raise ValueError("assay-transfer semantic policy task mismatch")
+    if policy.get("stage05_records_sha256") != file_sha256(records_path):
+        raise ValueError("assay-transfer semantic policy Stage-05 hash mismatch")
+    pair_metadata = json.loads(pair_bucket_metadata_path.read_text(encoding="utf-8"))
+    if policy.get("pair_bucket_version") != pair_metadata.get("contract_version"):
+        raise ValueError("assay-transfer semantic policy pair-bucket version mismatch")
+    entries = policy.get("entries")
+    if not isinstance(entries, list):
+        raise ValueError("assay-transfer semantic policy entries must be a list")
+    if not isinstance(policy.get("minimum_unique_molecules"), int):
+        raise ValueError("assay-transfer semantic policy support threshold is invalid")
+    ids_by_key: dict[str, list[str]] = defaultdict(list)
+    table = pq.read_table(
+        records_path, columns=["canonical_record_id", "pair_bucket_key"]
+    ).to_pydict()
+    for record_id, key in zip(
+        table["canonical_record_id"], table["pair_bucket_key"], strict=True
+    ):
+        if key is not None:
+            ids_by_key[str(key)].append(str(record_id))
+    seen: set[str] = set()
+    for entry in entries:
+        key = str(entry.get("pair_bucket_key") or "")
+        if not key or key in seen:
+            raise ValueError("assay-transfer semantic policy keys must be unique")
+        seen.add(key)
+        if entry.get("decision") not in {"eligible", "ineligible"}:
+            raise ValueError(f"assay-transfer semantic policy decision is invalid: {key}")
+        reviewers = {
+            str(review.get("reviewer") or "")
+            for review in (entry.get("reviews") or [])
+            if review.get("review_role") != "adjudicator"
+        }
+        reviewers.discard("")
+        if len(reviewers) < 2:
+            raise ValueError(f"assay-transfer semantic policy lacks two reviewers: {key}")
+        digest = hashlib.sha256(
+            "\n".join(sorted(ids_by_key.get(key, []))).encode()
+        ).hexdigest()
+        if entry.get("evidence_sha256") != digest:
+            raise ValueError(f"assay-transfer semantic evidence hash mismatch: {key}")
+    return policy, {
+        "path": str(policy_path),
+        "sha256": file_sha256(policy_path),
+        "version": policy.get("version"),
+        "pair_bucket_version": policy.get("pair_bucket_version"),
+        "entries": len(entries),
+    }
+
+
+def _is_semantic_transfer_candidate(
+    collapsed: Mapping[str, Any],
+    group: Sequence[Mapping[str, Any]],
+    *,
+    method: str,
+) -> bool:
+    scope = _text(collapsed.get("canonical_reference_scope"))
+    if (
+        method != "continuous_median"
+        or collapsed.get("aggregation_status") != "valid"
+        or not _text(collapsed.get("pair_bucket_key"))
+        or scope in {"absolute", "not_applicable", ""}
+        or not _finite(collapsed.get("finite_scalar_value"))
+    ):
+        return False
+    return all(
+        bool(row.get("assay_transfer_eligible"))
+        or _text(row.get("assay_transfer_ineligibility_reason")).startswith(
+            "reference_scope_"
+        )
+        for row in group
+    )
+
+
+def _apply_semantic_transfer_decision(
+    collapsed: dict[str, Any], *, policy_entries: Mapping[str, Mapping[str, Any]]
+) -> str:
+    key = str(collapsed.get("pair_bucket_key") or "")
+    entry = policy_entries.get(key)
+    if entry is None:
+        return "unreviewed"
+    was_eligible = bool(collapsed.get("assay_transfer_eligible"))
+    is_eligible = entry.get("decision") == "eligible"
+    collapsed["assay_transfer_eligible"] = is_eligible
+    collapsed["assay_transfer_ineligibility_reason"] = (
+        None
+        if is_eligible
+        else f"semantic_policy_{entry.get('reason_code') or 'ineligible'}"
+    )
+    if is_eligible and not was_eligible:
+        return "promoted"
+    if was_eligible and not is_eligible:
+        return "revoked"
+    return "unchanged"
 
 
 def _iter_retained_groups(
@@ -1019,16 +1197,18 @@ def _aggregate_group(
         if retrieval_source != "direct_vote" and _text(group[0].get("pair_bucket_key"))
         else {}
     )
+    bucket_endpoint = _pair_bucket_endpoint(group[0])
     if retrieval_source == "direct_vote":
         collapsed_endpoint = group_id
     elif retrieval_source == "direct_residual":
         collapsed_endpoint = (
-            _common_value(group, "direct_residual_endpoint_name")
+            bucket_endpoint
+            or _common_value(group, "direct_residual_endpoint_name")
             or _common_value(group, "canonical_endpoint_name")
             or group_id
         )
     else:
-        collapsed_endpoint = _one_value(
+        collapsed_endpoint = bucket_endpoint or _one_value(
             group, "canonical_endpoint_name", group_key
         )
     output = {
@@ -1359,6 +1539,19 @@ def _pair_context(record: Mapping[str, Any]) -> Any:
         return json.loads(str(raw or "{}"))
     except json.JSONDecodeError:
         return {"pair_bucket_key": record.get("pair_bucket_key")}
+
+
+def _pair_bucket_endpoint(record: Mapping[str, Any]) -> str:
+    raw = _text(record.get("pair_bucket_key"))
+    if not raw or not raw.startswith("["):
+        return ""
+    try:
+        identity = json.loads(raw)
+    except json.JSONDecodeError as error:
+        raise ValueError("pair_bucket_key must be valid JSON") from error
+    if not isinstance(identity, list) or len(identity) < 3:
+        raise ValueError("pair_bucket_key must contain source, endpoint, and unit")
+    return _text(identity[1])
 
 
 def _common_value(group: Sequence[Mapping[str, Any]], field: str) -> Any:

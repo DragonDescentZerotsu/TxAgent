@@ -57,6 +57,7 @@ import pyarrow.parquet as pq
 from tools.chembl_tool.common.starling.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     ROUTE_BUCKETS,
+    RouteDecision,
     SourceRoutingRules,
     route,
 )
@@ -161,7 +162,18 @@ def contribution(
     elif persisted_route != "accept":
         return None
 
-    decision = route(record, rules, task=task)
+    if persisted_route == "accept" and record.get(
+        "measurement_resolution_exact_measurement"
+    ) is not None:
+        decision = RouteDecision(
+            "accept",
+            str(record.get("measurement_resolution_rule_id") or "source_exact"),
+            str(record["measurement_resolution_exact_measurement"]),
+            str(record.get("measurement_resolution_exact_unit") or ""),
+            bool(record.get("measurement_resolution_exact_unit_is_canonical")),
+        )
+    else:
+        decision = route(record, rules, task=task)
     if persisted_route == "accept" and decision.bucket != "accept":
         raise ValueError("persisted accept disagrees with legacy acceptance rule")
     if decision.bucket != "accept":
@@ -221,6 +233,10 @@ def build_profile(
         "unit_text",
         "support_text",
         "measurement_resolution_route",
+        "measurement_resolution_rule_id",
+        "measurement_resolution_exact_measurement",
+        "measurement_resolution_exact_unit",
+        "measurement_resolution_exact_unit_is_canonical",
     }
     for rules in rules_by_source.values():
         wanted.add(rules.measurement_field)

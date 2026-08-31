@@ -1,8 +1,8 @@
-"""Paper retrieval views derived from canonical v7 records.
+"""Paper retrieval views derived from active canonical v7 pair-bucket records.
 
 Held-out filtering can remove exact parents, both direct retrieval partitions,
 or every record sharing a validation/test scaffold. All current v7 paper views
-consume the canonical collapsed-record stage; no lineage owns a private dedup.
+consume the active deduplicated Stage-3 records; no lineage owns a private dedup.
 """
 
 from __future__ import annotations
@@ -26,6 +26,11 @@ from tools.chembl_tool.common.starling.compact_artifacts import (
     validate_compact_neighbor_index,
     write_compact_neighbor_index,
 )
+from tools.chembl_tool.common.starling.build_runtime import (
+    INCOMPLETE_BUILD_FILENAME,
+    complete_build_session_active,
+    starling_build_session,
+)
 from tools.chembl_tool.common.starling.heldout_index import (
     load_heldout_identity_keys,
 )
@@ -34,17 +39,20 @@ from tools.chembl_tool.common.starling.normalization.audit import (
     write_parquet,
 )
 from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from tools.chembl_tool.common.starling.normalization.organization import (
+    is_retrieval_eligible,
+)
 from tools.chembl_tool.common.starling.normalization.task_policy import (
     StarlingTaskPolicy,
 )
 from tools.chembl_tool.common.starling.split_downstream import (
-    COLLAPSED_RECORD_STAGE,
+    CORE_PAIR_BUCKET_STAGE,
     SplitDownstreamSpec,
     evidence_catalog_projection_columns,
 )
 
 
-VIEW_VERSION = "starling_v7_benchmark_view.v3"
+VIEW_VERSION = "starling_v7_benchmark_view.v4"
 RECORDS_MANIFEST_VERSION = "starling_v7_benchmark_records.v1"
 EVIDENCE_MANIFEST_VERSION = "starling_v7_benchmark_evidence.v1"
 AUDIT_VERSION = "starling_v7_benchmark_audit.v1"
@@ -73,13 +81,59 @@ def build_v7_benchmark_view(
     progress_every: int = 10_000,
     max_record_examples: int = 6,
 ) -> dict[str, Any]:
+    source_root = Path(normalized_root)
+    with starling_build_session(source_root, mark_incomplete=False):
+        if (
+            (source_root / INCOMPLETE_BUILD_FILENAME).exists()
+            and not complete_build_session_active(source_root)
+        ):
+            raise RuntimeError(
+                f"normalized source has an incomplete build: {source_root}"
+            )
+        return _build_v7_benchmark_view(
+            policy=policy,
+            normalized_root=source_root,
+            heldout_labels_jsonl=heldout_labels_jsonl,
+            out_dir=out_dir,
+            benchmark_split=benchmark_split,
+            view=view,
+            heldout_filter_mode=heldout_filter_mode,
+            downstream_spec=downstream_spec,
+            workers=workers,
+            progress_every=progress_every,
+            max_record_examples=max_record_examples,
+        )
+
+
+def _build_v7_benchmark_view(
+    *,
+    policy: StarlingTaskPolicy,
+    normalized_root: str | Path,
+    heldout_labels_jsonl: str | Path,
+    out_dir: str | Path,
+    benchmark_split: str,
+    view: str = FULL_VIEW,
+    heldout_filter_mode: str = ALL_PARENT_FILTER,
+    downstream_spec: SplitDownstreamSpec | None = None,
+    workers: int = 1,
+    progress_every: int = 10_000,
+    max_record_examples: int = 6,
+) -> dict[str, Any]:
     """Build one self-contained compact index from canonical v7 records."""
     source_root = Path(normalized_root)
-    records_path = source_root / COLLAPSED_RECORD_STAGE / "records.parquet"
+    records_path = source_root / CORE_PAIR_BUCKET_STAGE / "records.parquet"
+    source_manifest_path = source_root / CORE_PAIR_BUCKET_STAGE / "manifest.json"
     if not records_path.is_file():
         raise FileNotFoundError(
-            f"canonical collapsed records are required before paper-view build: {records_path}"
+            f"active Stage-3 records are required before paper-view build: {records_path}"
         )
+    source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
+    expected_records_hash = (source_manifest.get("outputs") or {}).get(
+        "records.parquet"
+    )
+    actual_records_hash = file_sha256(records_path)
+    if expected_records_hash != actual_records_hash:
+        raise ValueError("active Stage-3 records differ from their manifest")
     heldout_path = Path(heldout_labels_jsonl)
     target = Path(out_dir)
     if view != FULL_VIEW:
@@ -111,6 +165,13 @@ def build_v7_benchmark_view(
         if field in schema
     )
     records = read_parquet_records(records_path, columns=sorted(columns))
+    for record in records:
+        record["retrieval_eligible"] = is_retrieval_eligible(
+            record,
+            endpoint_identity_required_sources=(
+                policy.endpoint_identity_required_sources
+            ),
+        )
     heldout_keys = load_heldout_identity_keys(heldout_path)
     heldout_scaffolds = _load_heldout_scaffolds(heldout_path)
     filtered, filter_stats = _filter_records(
@@ -156,7 +217,9 @@ def build_v7_benchmark_view(
         },
         "source_v7_records": {
             "path": str(records_path),
-            "sha256": file_sha256(records_path),
+            "sha256": actual_records_hash,
+            "stage": CORE_PAIR_BUCKET_STAGE,
+            "manifest_sha256": file_sha256(source_manifest_path),
         },
         "heldout_labels": {
             "path": str(heldout_path),
@@ -205,10 +268,7 @@ def build_v7_benchmark_view(
             "benchmark_split": benchmark_split,
             "heldout_filter_mode": heldout_filter_mode,
             "heldout_filter": filter_stats,
-            "source_v7_records": {
-                "path": str(records_path),
-                "sha256": file_sha256(records_path),
-            },
+            "source_v7_records": records_manifest["source_v7_records"],
             "heldout_labels": {
                 "path": str(heldout_path),
                 "sha256": file_sha256(heldout_path),

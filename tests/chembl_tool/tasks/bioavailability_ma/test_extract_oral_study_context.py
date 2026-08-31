@@ -8,6 +8,7 @@ import pytest
 from tools.chembl_tool.tasks.bioavailability_ma.data_processing import (
     extract_oral_study_context as extractor,
 )
+from tools.chembl_tool.common.llm_client import load_distillation_secret
 
 
 def test_distinct_contexts_deduplicate_and_drop_null_like_values():
@@ -19,9 +20,10 @@ def test_api_key_falls_back_to_distillation_repo(tmp_path, monkeypatch):
     keys_path = tmp_path / "keys.py"
     keys_path.write_text('OPENAI_API_KEY = "distillation-key"\n', encoding="utf-8")
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    monkeypatch.setattr(extractor, "DISTILLATION_KEYS_PATH", keys_path)
-
-    assert extractor._load_api_key("OPENAI_API_KEY") == "distillation-key"
+    assert (
+        load_distillation_secret("OPENAI_API_KEY", keys_path=keys_path)
+        == "distillation-key"
+    )
 
 
 def test_response_accepts_both_extractions_and_json_null():

@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
-import os
 from pathlib import Path
 
+from tools.chembl_tool.common.llm_client import load_distillation_secret
 from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import (
     AuxiliaryExtractionSpec,
     DEFAULT_EMBEDDING_MODEL,
@@ -23,7 +22,6 @@ from tools.chembl_tool.tasks.bbb_martins.starling_auxiliary_metadata import (
 REPO_ROOT = Path(__file__).resolve().parents[5]
 DATA_ROOT = REPO_ROOT / "data/starling_data/bbb_martins"
 PROMPT_REGISTRY_PATH = Path(__file__).with_name("auxiliary_value_prompts.json")
-DISTILLATION_KEYS_PATH = Path("/data1/joseph/therapeutic-tuning/distillation/keys.py")
 DEFAULT_MODEL = "gpt-5.4-mini"
 DEFAULT_REASONING_EFFORT = "medium"
 PROMPT_VERSION = "bbb_martins_embedding_bucket_mapping.v1"
@@ -73,25 +71,6 @@ def extraction_specs() -> tuple[AuxiliaryExtractionSpec, ...]:
     return tuple(output)
 
 
-def _load_openai_api_key() -> str:
-    value = os.environ.get("OPENAI_API_KEY")
-    if value:
-        return value
-    if not DISTILLATION_KEYS_PATH.exists():
-        raise RuntimeError("OPENAI_API_KEY is unset and private distillation keys.py is absent")
-    spec = importlib.util.spec_from_file_location(
-        "_txagent_private_distillation_keys", DISTILLATION_KEYS_PATH
-    )
-    if spec is None or spec.loader is None:
-        raise RuntimeError("could not load private distillation keys.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    value = getattr(module, "OPENAI_API_KEY", None)
-    if not value:
-        raise RuntimeError("OPENAI_API_KEY is absent from private distillation keys.py")
-    return str(value)
-
-
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", default=str(DEFAULT_MAPPING_PATH))
@@ -137,7 +116,7 @@ def main(argv: list[str] | None = None) -> int:
         output_path=args.output,
         mapping_version=MAPPING_VERSION,
         prompt_version=PROMPT_VERSION,
-        api_key_loader=_load_openai_api_key,
+        api_key_loader=lambda: load_distillation_secret("OPENAI_API_KEY"),
         model=args.model,
         reasoning_effort=args.reasoning_effort,
         embedding_model=args.embedding_model,
@@ -155,4 +134,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

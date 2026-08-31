@@ -25,7 +25,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling im
 TASK_ROOT = Path(__file__).resolve().parent
 
 PROMPT_VERSION = "bioavailability_measurement_resolution_prompt.v3"
-MAPPING_VERSION = "bioavailability_ma_measurement_resolution.v1"
+MAPPING_VERSION = "bioavailability_ma_measurement_resolution.v3"
 BATCH_SIZE = 10
 
 DEFAULT_CLEANED_RECORDS = Path(
@@ -37,7 +37,10 @@ DEFAULT_CANONICAL_RECORDS = Path(
     "starling_normalized_v7/01_cleaned/records.parquet"
 )
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/measurement_resolution_v1/measurement_resolution.parquet"
+    TASK_ROOT / "data_processing/measurement_resolution_v3/measurement_resolution.parquet"
+)
+DEFAULT_BASE_MAPPING_PATH = (
+    TASK_ROOT / "data_processing/measurement_resolution_v2/measurement_resolution.parquet"
 )
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 TEMPLATE_DIR = TASK_ROOT / "measurement_resolution_templates"

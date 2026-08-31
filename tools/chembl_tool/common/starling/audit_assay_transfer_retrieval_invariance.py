@@ -20,7 +20,7 @@ from tools.chembl_tool.common.starling.retrieval_boundary import (
 )
 
 
-AUDIT_VERSION = "assay_transfer_retrieval_invariance.v4"
+AUDIT_VERSION = "assay_transfer_retrieval_invariance.v5"
 
 
 def retrieval_boundary_digest(
@@ -39,17 +39,20 @@ def retrieval_boundary_digest(
             for field in profile.source_visible_fields
         }
     )
-    columns = [
+    required_columns = [
         "cleaned_record_id",
         "group_id",
         "source_id",
-        *FROZEN_RETRIEVAL_FIELDS,
         *source_fields,
     ]
     schema = set(pq.read_schema(path).names)
-    missing = sorted(set(columns) - schema)
+    missing = sorted(set(required_columns) - schema)
     if missing:
         raise ValueError(f"retrieval audit input lacks columns: {missing}")
+    available_retrieval_fields = [
+        field for field in FROZEN_RETRIEVAL_FIELDS if field in schema
+    ]
+    columns = [*required_columns, *available_retrieval_fields]
     row_digests: list[bytes] = []
     count = eligible = 0
     for batch in pq.ParquetFile(path).iter_batches(8192, columns=columns):
@@ -59,7 +62,8 @@ def retrieval_boundary_digest(
                 hashlib.sha256(_canonical_json(payload).encode("utf-8")).digest()
             )
             count += 1
-            eligible += int(payload["retrieval_eligible"])
+            if "retrieval_eligible" in schema:
+                eligible += int(payload["retrieval_eligible"])
     digest = hashlib.sha256()
     for row_digest in sorted(row_digests):
         digest.update(row_digest)
@@ -68,8 +72,11 @@ def retrieval_boundary_digest(
         "task_id": task_id,
         "record_contract_version": contract.version,
         "record_count": count,
-        "retrieval_eligible_count": eligible,
+        "retrieval_eligible_count": (
+            eligible if "retrieval_eligible" in schema else None
+        ),
         "retrieval_boundary_sha256": digest.hexdigest(),
+        "available_retrieval_fields": available_retrieval_fields,
         "source_projection_fields": source_fields,
         "records_path": str(path),
         "records_file_sha256": file_sha256(path),
@@ -105,6 +112,7 @@ def compare_snapshot(snapshot: Mapping[str, Any], current: Mapping[str, Any]) ->
         "record_count",
         "retrieval_eligible_count",
         "retrieval_boundary_sha256",
+        "available_retrieval_fields",
         "source_projection_fields",
     )
     changed = [field for field in fields if snapshot.get(field) != current.get(field)]

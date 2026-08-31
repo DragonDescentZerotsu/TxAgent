@@ -168,7 +168,7 @@ def test_legacy_oral_exposure_dose_is_not_a_v6_bucket_boundary():
 def test_v7_oral_exposure_requires_the_canonical_exact_dose_key():
     spec = RECORD_CONTRACT.pair_buckets["oral_exposure"]
     assert "canonical_oral_dose_key" in spec.canonical_dimensions
-    assert spec.required_known_dimensions == ("canonical_oral_dose_key",)
+    assert spec.required_known_dimensions == ()
     assert "oral_dose" not in spec.variance_candidates
 
 
@@ -178,6 +178,7 @@ def test_v7_hf_semantic_rows_keep_a_nontransferable_pair_bucket(tmp_path):
             "canonical_record_id": f"record-{number}",
             "source_id": "hf_bioavailability",
             "canonical_endpoint_name": "oral_bioavailability",
+            "canonical_endpoint_concept": "oral_bioavailability",
             "canonical_unit_text": "free-text",
             "canonicalization_status": status,
             "retrieval_eligible": True,
@@ -196,16 +197,79 @@ def test_v7_hf_semantic_rows_keep_a_nontransferable_pair_bucket(tmp_path):
     sidecar = pd.read_parquet(tmp_path / "pairs/pair_bucket_records.parquet")
 
     assert metadata["contract_version"] == BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION
-    assert metadata["semantic_pair_bucket_sources"] == [
-        "fa",
-        "fg",
-        "fh",
-        "hf_bioavailability",
-        "oral_exposure",
-    ]
+    assert metadata["reference_scope_in_identity"] is False
     assert sidecar["pair_bucket_key"].nunique() == 1
     assert sidecar["pair_bucket_key"].notna().all()
     assert not sidecar["assay_transfer_eligible"].any()
+
+
+def test_v7_pair_bucket_uses_reviewed_endpoint_concept(tmp_path):
+    records = [
+        {
+            "canonical_record_id": f"record-{number}",
+            "source_id": "oral_exposure",
+            "canonical_endpoint_name": endpoint,
+            "canonical_endpoint_concept": "auc_0_infinity",
+            "canonical_unit_text": "log10(h·ng/mL)",
+            "canonicalization_status": "valid",
+            "retrieval_eligible": True,
+            "canonical_smiles": smiles,
+            "canonical_species_context": "human",
+            "canonical_biological_matrix": "plasma",
+            "canonical_reference_scope": "absolute",
+            "canonical_oral_dose_key": "mass:absolute:10:mg",
+            "measurement_kind": "continuous",
+            "finite_scalar_value": float(number),
+        }
+        for number, (endpoint, smiles) in enumerate(
+            (("auc0_inf", "CCO"), ("aucinf", "CCN")), start=1
+        )
+    ]
+    records_path = tmp_path / "records.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+
+    metadata = build_sidecar(records_path=records_path, out_dir=tmp_path / "pairs")
+    sidecar = pd.read_parquet(tmp_path / "pairs/pair_bucket_records.parquet")
+
+    assert metadata["bucket_endpoint_field_by_source"]["oral_exposure"] == (
+        "canonical_endpoint_concept"
+    )
+    assert sidecar["pair_bucket_key"].nunique() == 1
+    assert json.loads(sidecar.iloc[0]["pair_bucket_key"])[1] == "auc_0_infinity"
+
+
+def test_reference_scope_is_metadata_but_numeric_candidate_scope_is_gated(tmp_path):
+    records = []
+    for number, scope in enumerate(
+        ("absolute", "endpoint_defined_ratio", "comparator_relative"), start=1
+    ):
+        records.append(
+            {
+                "canonical_record_id": f"record-{number}",
+                "source_id": "fa",
+                "canonical_endpoint_name": "fraction_absorbed",
+                "canonical_endpoint_concept": "fraction_absorbed",
+                "canonical_unit_text": "fraction",
+                "canonical_smiles": f"C{'C' * number}",
+                "canonical_assay_context": "human intestinal absorption",
+                "canonical_species_context": "human",
+                "canonical_reference_scope": scope,
+                "measurement_kind": "continuous",
+                "finite_scalar_value": float(number) / 10,
+                "measurement_numeric_domain_status": "outside_declared_domain",
+            }
+        )
+    records_path = tmp_path / "records.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+
+    build_sidecar(records_path=records_path, out_dir=tmp_path / "pairs")
+    sidecar = pd.read_parquet(tmp_path / "pairs/pair_bucket_records.parquet")
+
+    assert sidecar["pair_bucket_key"].nunique() == 1
+    assert sidecar["assay_transfer_eligible"].tolist() == [True, True, False]
+    assert sidecar.iloc[2]["assay_transfer_ineligibility_reason"] == (
+        "reference_scope_comparator_relative"
+    )
 
 
 @pytest.mark.parametrize(
@@ -222,9 +286,9 @@ def test_normalization_validity_excludes_without_sidecar_recomputation(status):
         [_record(1, status=status, global_context="caco_2")]
     )
     assert rows[0]["bucket_eligible"] is False
-    assert rows[0]["pair_bucket_key"] is None
+    assert rows[0]["pair_bucket_key"] is not None
     assert rows[0]["bucket_exclusion_reason"] == status
-    assert metadata["validations"]["ineligible_records_have_no_bucket"] is True
+    assert metadata["validations"]["every_record_has_exactly_one_bucket"] is True
 
 
 def test_materializer_rejects_unmapped_sources():
@@ -262,8 +326,7 @@ def test_standalone_builder_writes_exactly_two_files_without_rewriting_v5(tmp_pa
         "sidecar_records": 2,
         "eligible_records": 2,
         "ineligible_records": 0,
-        "semantic_bucket_records": 2,
-        "excluded_records": 0,
+        "bucket_records": 2,
         "buckets": 1,
         "pairable_buckets": 1,
         "singleton_bucket_rate": 0.0,

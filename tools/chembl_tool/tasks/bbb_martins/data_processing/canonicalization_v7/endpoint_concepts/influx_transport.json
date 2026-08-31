@@ -1,0 +1,127 @@
+{
+  "version": "bbb_martins_endpoint_concepts.v1",
+  "source_id": "influx_transport",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 18,
+    "sha256": "8db7a82f95e3c1da2dc1d1841994879f114f637742a2d40d67c740c61875cfeb"
+  },
+  "observed_pairs": {
+    "count": 18,
+    "sha256": "db6863ec1ee60eda61186dcfbb219c6af29fef9d6efb8af32a7c80ee15c71680"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "No source endpoint or controlled substitute was available; retained as missing rather than inferred from support text."
+    },
+    {
+      "endpoint_name": "BBB substrate relationship",
+      "canonical_endpoint_name": "bbb_substrate_relationship",
+      "canonical_endpoint_concept": "bbb_substrate_relationship",
+      "review_reason": "Qualitative or quantitative evidence that a molecule is a BBB influx-transporter substrate; kept distinct from a transport rate or extent."
+    },
+    {
+      "endpoint_name": "BBB transport",
+      "canonical_endpoint_name": "bbb_transport",
+      "canonical_endpoint_concept": "unqualified_bbb_transport",
+      "review_reason": "Generic BBB transport wording does not specify tissue destination, assay direction, rate, or extent and is synonymous with the source's unqualified BBB-transport label."
+    },
+    {
+      "endpoint_name": "blood-CSF barrier transport",
+      "canonical_endpoint_name": "blood_csf_barrier_transport",
+      "canonical_endpoint_concept": "blood_to_csf_transport",
+      "review_reason": "Within this influx source, blood-CSF barrier transport and blood-to-CSF transport denote the same blood-to-CSF crossing process."
+    },
+    {
+      "endpoint_name": "blood-to-CNS transport",
+      "canonical_endpoint_name": "blood_to_cns_transport",
+      "canonical_endpoint_concept": "blood_to_cns_transport",
+      "review_reason": "CNS-wide delivery is broader than transport specifically to brain, CSF, or spinal cord and remains separate."
+    },
+    {
+      "endpoint_name": "blood-to-CSF transport",
+      "canonical_endpoint_name": "blood_to_csf_transport",
+      "canonical_endpoint_concept": "blood_to_csf_transport",
+      "review_reason": "Transport from blood into CSF is the same directional process represented by the blood-CSF barrier wording."
+    },
+    {
+      "endpoint_name": "blood-to-brain transport",
+      "canonical_endpoint_name": "blood_to_brain_transport",
+      "canonical_endpoint_concept": "blood_to_brain_transport",
+      "review_reason": "Explicit blood-to-brain transport outcome; kept distinct from endothelial uptake, substrate identity, and broader CNS delivery."
+    },
+    {
+      "endpoint_name": "blood-to-brain transport (implied)",
+      "canonical_endpoint_name": "blood_to_brain_transport_implied",
+      "canonical_endpoint_concept": "blood_to_brain_transport_implied",
+      "review_reason": "The source marks transport as inferred from perturbation rather than directly reported, so the evidentiary qualification is preserved."
+    },
+    {
+      "endpoint_name": "blood-to-spinal cord transport",
+      "canonical_endpoint_name": "blood_to_spinal_cord_transport",
+      "canonical_endpoint_concept": "blood_to_spinal_cord_transport",
+      "review_reason": "Spinal-cord entry is a specific anatomical destination and is not collapsed with brain or CNS-wide transport."
+    },
+    {
+      "endpoint_name": "blood‐to‐brain transport",
+      "canonical_endpoint_name": "blood_to_brain_transport",
+      "canonical_endpoint_concept": "blood_to_brain_transport",
+      "review_reason": "Unicode-hyphen typography is an exact spelling variant of blood-to-brain transport."
+    },
+    {
+      "endpoint_name": "brain delivery",
+      "canonical_endpoint_name": "brain_delivery",
+      "canonical_endpoint_concept": "brain_delivery",
+      "review_reason": "Brain delivery is a destination-level outcome and does not specify endothelial uptake, trans-barrier direction, rate, or extent."
+    },
+    {
+      "endpoint_name": "brain endothelial cell uptake",
+      "canonical_endpoint_name": "brain_endothelial_cell_uptake",
+      "canonical_endpoint_concept": "brain_endothelial_cell_uptake",
+      "review_reason": "Uptake into brain endothelial cells may represent cellular retention without luminal-to-abluminal crossing and remains a separate mechanism readout."
+    },
+    {
+      "endpoint_name": "brain endothelial cell uptake and luminal-to-abluminal transport",
+      "canonical_endpoint_name": "brain_endothelial_uptake_and_luminal_to_abluminal_transport",
+      "canonical_endpoint_concept": "brain_endothelial_uptake_and_luminal_to_abluminal_transport",
+      "review_reason": "This combined endpoint explicitly reports both endothelial uptake and directional crossing and is not interchangeable with either component alone."
+    },
+    {
+      "endpoint_name": "brain uptake",
+      "canonical_endpoint_name": "brain_uptake",
+      "canonical_endpoint_concept": "brain_uptake",
+      "review_reason": "Brain uptake is an extent or accumulation outcome whose route is not necessarily an explicitly measured blood-to-brain transport flux."
+    },
+    {
+      "endpoint_name": "luminal-to-abluminal transport",
+      "canonical_endpoint_name": "luminal_to_abluminal_transport",
+      "canonical_endpoint_concept": "luminal_to_abluminal_transport",
+      "review_reason": "The assay reports a specific endothelial direction and remains separate from unqualified transport and cellular uptake."
+    },
+    {
+      "endpoint_name": "unclear (increased striatal glucose levels, possibly due to increased BBB transport)",
+      "canonical_endpoint_name": "context_dependent_bbb_transport",
+      "canonical_endpoint_concept": "context_dependent_bbb_transport",
+      "review_reason": "The source explicitly treats BBB transport as an uncertain explanation of a contextual glucose observation; ambiguity is preserved."
+    },
+    {
+      "endpoint_name": "unqualified BBB transport",
+      "canonical_endpoint_name": "unqualified_bbb_transport",
+      "canonical_endpoint_concept": "unqualified_bbb_transport",
+      "review_reason": "Generic BBB transport without a stated destination, assay direction, rate, or extent; synonymous with the source's plain BBB-transport wording."
+    },
+    {
+      "endpoint_name": "unspecified BBB influx",
+      "canonical_endpoint_name": "unspecified_bbb_influx",
+      "canonical_endpoint_concept": "unspecified_bbb_influx",
+      "review_reason": "Influx direction is asserted while its detailed assay endpoint is unspecified; retained separately from direction-neutral unqualified BBB transport."
+    }
+  ]
+}

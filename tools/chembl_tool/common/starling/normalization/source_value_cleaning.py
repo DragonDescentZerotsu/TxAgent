@@ -1,8 +1,8 @@
 """Audited source-visible measurement/unit cleaning for Starling v7 records.
 
 The immutable source files remain untouched.  This module changes only the
-Stage-01 source view, records every changed field in a sidecar, and requires an
-exact reviewed repair for changes that cannot be derived from syntax alone.
+Stage-01 source view, records every changed or dropped row in a sidecar, and
+requires an exact reviewed ledger entry for nondeterministic changes.
 Support text is immutable after the common ingestion-only Unicode/whitespace
 cleanup; it may inform a repair but is never itself a repair target.
 """
@@ -18,15 +18,22 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
-from .cleaning import clean_measurement_text, clean_text, file_sha256
+from tools.chembl_tool.common.starling.evidence_library import starling_molecule_id
+
+from .cleaning import (
+    clean_measurement_text,
+    clean_text,
+    file_sha256,
+    resolve_structure_value,
+)
 
 
-SOURCE_VALUE_CLEANING_VERSION = "starling_source_value_cleaning.v2"
+SOURCE_VALUE_CLEANING_VERSION = "starling_source_value_cleaning.v6"
 SUPPORT_TEXT_POLICY_VERSION = "support_text_immutable_after_ingestion.v1"
-DECIMAL_COMMA_RULE = "atomic_decimal_comma.v1"
 ENCODED_SPACE_RULE = "percent_0020_space.v1"
 
-_ALLOWED_REPAIR_FIELDS = frozenset({"measurement_text", "unit_text"})
+_ALLOWED_REPAIR_FIELDS = frozenset({"measurement_text", "unit_text", "smiles"})
+_SMILES_REPAIR_CLASSIFICATIONS = frozenset({"confirmed_mismatch", "missing_smiles"})
 _REPAIR_KEYS = frozenset(
     {
         "repair_id",
@@ -40,8 +47,17 @@ _REPAIR_KEYS = frozenset(
         "evidence",
     }
 )
-_DECIMAL_COMMA = re.compile(
-    r"(?<![\w,])(?P<integer>[+-]?\d+),(?P<fraction>\d+)(?![\w,])"
+_DROP_KEYS = frozenset(
+    {
+        "drop_id",
+        "task_id",
+        "source_id",
+        "source_sha256",
+        "source_row_number",
+        "source_record_id",
+        "reason_code",
+        "evidence",
+    }
 )
 _POWER_OF_TEN_UNIT = re.compile(
     r"10\s*(?:\^|\*\*)?\s*[+\-−–]?\s*\d+", flags=re.IGNORECASE
@@ -51,35 +67,6 @@ _SCIENTIFIC_VALUE = re.compile(
     r"(?:[x×*·]\s*)?10\s*(?:\^|\*\*)?\s*"
     r"(?P<exponent>[+\-−–]\s*\d+)",
     flags=re.IGNORECASE,
-)
-_MIXED_TRAILING_DECIMAL_RANGE = re.compile(
-    r"^\s*[+-]?\d+\s*(?:-|‐|–|—|−|to)\s*"
-    r"(?P<integer>[1-9]\d*),(?P<fraction>\d{2})\s*%?\s*$",
-    flags=re.IGNORECASE,
-)
-_MEASUREMENT_PREFIX_WORDS = frozenset(
-    {
-        "about",
-        "approx",
-        "approximately",
-        "ca",
-        "ci",
-        "confidence",
-        "estimated",
-        "en",
-        "geometric",
-        "gmean",
-        "interval",
-        "mean",
-        "median",
-        "moyenne",
-        "of",
-        "range",
-        "sd",
-        "se",
-        "sem",
-        "to",
-    }
 )
 
 
@@ -140,6 +127,15 @@ def load_reviewed_repairs(
             raise ValueError(f"{target}:{line_number} repairs a forbidden field")
         if all(before[field] == after[field] for field in before):
             raise ValueError(f"{target}:{line_number} repair changes nothing")
+        if "smiles" in after:
+            from rdkit import Chem
+
+            if not isinstance(after["smiles"], str) or Chem.MolFromSmiles(
+                after["smiles"]
+            ) is None:
+                raise ValueError(
+                    f"{target}:{line_number} has an invalid replacement SMILES"
+                )
         evidence = payload["evidence"]
         if not isinstance(evidence, Mapping) or len(str(evidence.get("note") or "")) < 40:
             raise ValueError(
@@ -174,18 +170,208 @@ def load_reviewed_repairs(
     return repairs
 
 
+def load_reviewed_smiles_conflicts(
+    path: str | Path | None, *, task_id: str
+) -> tuple[dict[tuple[str, int, str], dict[str, Any]], Counter[str]]:
+    """Load the frozen name/SMILES decisions for one task."""
+    if path is None:
+        return {}, Counter()
+    import pyarrow.parquet as pq
+
+    target = Path(path)
+    required = {
+        "candidate_id",
+        "task_id",
+        "source_id",
+        "source_sha256",
+        "source_row_number",
+        "source_record_id",
+        "canonical_smiles",
+        "decision",
+        "override_smiles",
+        "confidence",
+        "rationale",
+    }
+    schema = set(pq.read_schema(target).names)
+    if missing := required - schema:
+        raise ValueError(f"{target} lacks reviewed SMILES fields: {sorted(missing)}")
+    decisions: Counter[str] = Counter()
+    overrides: dict[tuple[str, int, str], dict[str, Any]] = {}
+    candidate_ids: set[str] = set()
+    row_keys: set[tuple[str, int, str]] = set()
+    for row in pq.read_table(target, columns=sorted(required)).to_pylist():
+        if str(row.get("task_id") or "") != task_id:
+            continue
+        candidate_id = str(row.get("candidate_id") or "")
+        decision = str(row.get("decision") or "")
+        if not candidate_id or candidate_id in candidate_ids:
+            raise ValueError(f"{target} has a missing or duplicate candidate ID")
+        if decision not in {"override", "reject"}:
+            raise ValueError(f"{target} has invalid decision for {candidate_id}")
+        confidence = str(row.get("confidence") or "")
+        if confidence not in {"high", "medium", "low"}:
+            raise ValueError(f"{target} has invalid confidence for {candidate_id}")
+        key = (
+            str(row.get("source_id") or ""),
+            int(row.get("source_row_number") or 0),
+            str(row.get("source_record_id") or ""),
+        )
+        if key in row_keys:
+            raise ValueError(f"{target} reviews one source row more than once")
+        candidate_ids.add(candidate_id)
+        row_keys.add(key)
+        decisions[decision] += 1
+        if decision == "reject":
+            if row.get("override_smiles") is not None:
+                raise ValueError(f"rejected candidate {candidate_id} has an override")
+            continue
+        replacement = str(row.get("override_smiles") or "")
+        if not replacement:
+            raise ValueError(f"candidate {candidate_id} has no override SMILES")
+        _, status = resolve_structure_value(replacement, structure_mode="direct")
+        if status != "resolved":
+            raise ValueError(
+                f"candidate {candidate_id} has invalid override SMILES"
+            )
+        if confidence != "high":
+            decisions["override"] -= 1
+            decisions["quarantined_override"] += 1
+            continue
+        overrides[key] = {
+            **row,
+            "override_smiles": replacement,
+            "override_structure_status": status,
+        }
+    return overrides, decisions
+
+
+def load_smiles_identity_audit(
+    path: str | Path | None, *, task_id: str
+) -> dict[str, Mapping[str, Any]]:
+    if path is None:
+        return {}
+    target = Path(path)
+    entries: dict[str, Mapping[str, Any]] = {}
+    required = {
+        "audit_id",
+        "task_id",
+        "source_id",
+        "source_sha256",
+        "source_row_number",
+        "source_record_id",
+        "stored_smiles",
+        "classification",
+    }
+    for line_number, line in enumerate(
+        target.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line.strip():
+            continue
+        payload = json.loads(line)
+        missing = required - set(payload)
+        if missing:
+            raise ValueError(
+                f"{target}:{line_number} lacks audit fields: {sorted(missing)}"
+            )
+        if payload["task_id"] != task_id:
+            raise ValueError(
+                f"{target}:{line_number} belongs to task {payload['task_id']!r}, "
+                f"not {task_id!r}"
+            )
+        audit_id = str(payload["audit_id"])
+        if audit_id in entries:
+            raise ValueError(f"{target} contains duplicate audit ID {audit_id!r}")
+        entries[audit_id] = payload
+    return entries
+
+
+def load_reviewed_drops(
+    path: str | Path | None, *, task_id: str
+) -> list[dict[str, Any]]:
+    if path is None:
+        return []
+    target = Path(path)
+    drops: list[dict[str, Any]] = []
+    for line_number, line in enumerate(
+        target.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        if not line.strip():
+            continue
+        payload = json.loads(line)
+        if set(payload) != _DROP_KEYS:
+            raise ValueError(
+                f"{target}:{line_number} has invalid drop fields: "
+                f"{sorted(set(payload) ^ _DROP_KEYS)}"
+            )
+        if payload["task_id"] != task_id:
+            raise ValueError(
+                f"{target}:{line_number} belongs to task {payload['task_id']!r}, "
+                f"not {task_id!r}"
+            )
+        if not re.fullmatch(r"[0-9a-f]{64}", str(payload["source_sha256"])):
+            raise ValueError(f"{target}:{line_number} has an invalid source SHA-256")
+        if not re.fullmatch(r"[a-z0-9_]+", str(payload["reason_code"])):
+            raise ValueError(f"{target}:{line_number} has an invalid reason code")
+        evidence = payload["evidence"]
+        if not isinstance(evidence, Mapping) or len(str(evidence.get("note") or "")) < 40:
+            raise ValueError(
+                f"{target}:{line_number} requires a substantive evidence note"
+            )
+        drops.append(dict(payload))
+
+    drop_ids = [str(drop["drop_id"]) for drop in drops]
+    row_keys = [
+        (
+            str(drop["source_id"]),
+            int(drop["source_row_number"]),
+            str(drop["source_record_id"]),
+        )
+        for drop in drops
+    ]
+    if len(drop_ids) != len(set(drop_ids)):
+        raise ValueError(f"{target} contains duplicate drop IDs")
+    if len(row_keys) != len(set(row_keys)):
+        raise ValueError(f"{target} drops one source row more than once")
+    return drops
+
+
 def clean_source_values(
     records: Sequence[Mapping[str, Any]],
     *,
     task_id: str,
     reviewed_repairs_path: str | Path | None = None,
+    reviewed_drops_path: str | Path | None = None,
+    smiles_identity_audit_path: str | Path | None = None,
+    reviewed_smiles_conflicts_path: str | Path | None = None,
     require_all_reviewed_repairs: bool = True,
+    require_all_reviewed_drops: bool = True,
+    require_all_reviewed_smiles_overrides: bool = True,
     require_scientific_scale_review: bool = False,
 ) -> SourceValueCleaningResult:
     """Return cleaned records and a complete field-level change audit."""
     repairs = load_reviewed_repairs(reviewed_repairs_path, task_id=task_id)
+    smiles_audit = load_smiles_identity_audit(
+        smiles_identity_audit_path, task_id=task_id
+    )
+    smiles_overrides, smiles_decisions = load_reviewed_smiles_conflicts(
+        reviewed_smiles_conflicts_path, task_id=task_id
+    )
+    drops = load_reviewed_drops(reviewed_drops_path, task_id=task_id)
     repairs_by_row = {repair.row_key: repair for repair in repairs}
+    drops_by_row = {
+        (
+            str(drop["source_id"]),
+            int(drop["source_row_number"]),
+            str(drop["source_record_id"]),
+        ): drop
+        for drop in drops
+    }
+    overlap = sorted(set(repairs_by_row) & set(drops_by_row))
+    if overlap:
+        raise ValueError(f"source rows cannot be both repaired and dropped: {overlap[0]}")
     applied_repairs: set[str] = set()
+    applied_drops: set[str] = set()
+    applied_smiles_overrides: set[str] = set()
     output: list[dict[str, Any]] = []
     audit: list[dict[str, Any]] = []
     scale_candidates = 0
@@ -200,13 +386,48 @@ def clean_source_values(
             if isinstance(source_record, dict)
             else dict(source_record)
         )
+        row_key = (
+            str(record.get("source_id") or ""),
+            int(record.get("source_row_number") or 0),
+            str(record.get("source_record_id") or ""),
+        )
+        drop = drops_by_row.get(row_key)
+        if drop is not None:
+            audit_id = str(drop["evidence"].get("audit_id") or "")
+            if audit_id:
+                entry = smiles_audit.get(audit_id)
+                audit_key = (
+                    str(entry.get("source_id")) if entry else "",
+                    int(entry.get("source_row_number")) if entry else 0,
+                    str(entry.get("source_record_id")) if entry else "",
+                )
+                if entry is None or audit_key != row_key:
+                    raise ValueError(
+                        f"reviewed drop {drop['drop_id']!r} disagrees with its "
+                        "SMILES identity audit entry"
+                    )
+            actual_sha = str(record.get("source_sha256") or "")
+            if actual_sha != drop["source_sha256"]:
+                raise ValueError(
+                    f"reviewed drop {drop['drop_id']!r} source drift: "
+                    f"expected {drop['source_sha256']}, found {actual_sha or '<missing>'}"
+                )
+            audit.append(
+                _audit_row(
+                    record,
+                    "record",
+                    "retained",
+                    "dropped",
+                    f"reviewed_drop:{drop['drop_id']}",
+                    review_status="reviewed",
+                    evidence=drop["evidence"],
+                )
+            )
+            applied_drops.add(str(drop["drop_id"]))
+            continue
         original_support_text = record.get("support_text")
         original_measurement = _optional_text(record.get("measurement_text"))
-        measurement, measurement_steps = _clean_measurement(
-            original_measurement,
-            record.get("unit_text"),
-            record.get("support_text"),
-        )
+        measurement, measurement_steps = _clean_measurement(original_measurement)
         record["measurement_text"] = measurement
         for rule_id, before, after in measurement_steps:
             audit.append(
@@ -215,13 +436,34 @@ def clean_source_values(
         scale_candidate = _has_scientific_scale_conflict(record)
         scale_candidates += scale_candidate
 
-        row_key = (
-            str(record.get("source_id") or ""),
-            int(record.get("source_row_number") or 0),
-            str(record.get("source_record_id") or ""),
-        )
         repair = repairs_by_row.get(row_key)
         if repair is not None:
+            if "smiles" in repair.after:
+                audit_id = str(repair.evidence.get("audit_id") or "")
+                entry = smiles_audit.get(audit_id)
+                if entry is None:
+                    raise ValueError(
+                        f"reviewed SMILES repair {repair.repair_id!r} lacks a matching "
+                        "audit entry"
+                    )
+                audit_key = (
+                    str(entry["source_id"]),
+                    int(entry["source_row_number"]),
+                    str(entry["source_record_id"]),
+                )
+                if (
+                    audit_key != repair.row_key
+                    or entry["stored_smiles"] != repair.before["smiles"]
+                ):
+                    raise ValueError(
+                        f"reviewed SMILES repair {repair.repair_id!r} disagrees with "
+                        "its audit entry"
+                    )
+                if entry["classification"] not in _SMILES_REPAIR_CLASSIFICATIONS:
+                    raise ValueError(
+                        f"reviewed SMILES repair {repair.repair_id!r} has non-repair "
+                        f"audit classification {entry['classification']!r}"
+                    )
             actual_sha = str(record.get("source_sha256") or "")
             if actual_sha != repair.source_sha256:
                 raise ValueError(
@@ -229,15 +471,23 @@ def clean_source_values(
                     f"expected {repair.source_sha256}, found {actual_sha or '<missing>'}"
                 )
             for field, expected_before in repair.before.items():
-                actual_before = record.get(field)
+                actual_before = (
+                    record.get("source_smiles", record.get("smiles"))
+                    if field == "smiles"
+                    else record.get(field)
+                )
                 if actual_before != expected_before:
                     raise ValueError(
                         f"reviewed repair {repair.repair_id!r} precondition drift for "
                         f"{field}: expected {expected_before!r}, found {actual_before!r}"
                     )
             for field, after in repair.after.items():
-                before = record.get(field)
-                record[field] = after
+                if field == "smiles":
+                    before = record.get("source_smiles", record.get("smiles"))
+                    _apply_smiles_repair(record, str(after))
+                else:
+                    before = record.get(field)
+                    record[field] = after
                 audit.append(
                     _audit_row(
                         record,
@@ -250,6 +500,46 @@ def clean_source_values(
                     )
                 )
             applied_repairs.add(repair.repair_id)
+        smiles_override = smiles_overrides.get(row_key)
+        if smiles_override is not None:
+            candidate_id = str(smiles_override["candidate_id"])
+            actual_sha = str(record.get("source_sha256") or "")
+            if actual_sha != str(smiles_override["source_sha256"]):
+                raise ValueError(
+                    f"reviewed SMILES override {candidate_id!r} source drift"
+                )
+            before = record.get("canonical_smiles")
+            expected_before = smiles_override.get("canonical_smiles")
+            expected_canonical, expected_status = resolve_structure_value(
+                expected_before, structure_mode="direct"
+            )
+            actual_canonical, actual_status = resolve_structure_value(
+                before, structure_mode="direct"
+            )
+            if (
+                expected_status != "resolved"
+                or actual_status != "resolved"
+                or expected_canonical != actual_canonical
+            ):
+                raise ValueError(
+                    f"reviewed SMILES override {candidate_id!r} precondition drift: "
+                    f"expected {expected_before!r}, "
+                    f"found {before!r}"
+                )
+            replacement = str(smiles_override["override_smiles"])
+            _apply_smiles_repair(record, replacement)
+            audit.append(
+                _audit_row(
+                    record,
+                    "smiles",
+                    before,
+                    replacement,
+                    f"reviewed_name_smiles_override:{candidate_id}",
+                    review_status="reviewed",
+                    evidence={"note": smiles_override.get("rationale")},
+                )
+            )
+            applied_smiles_overrides.add(candidate_id)
         if scale_candidate and _has_scientific_scale_conflict(record):
             unresolved_scale_candidates.append(
                 str(record.get("cleaned_record_id") or record.get("source_record_id") or "")
@@ -266,6 +556,25 @@ def clean_source_values(
         raise ValueError(
             "reviewed source-value repairs were not applied: " + ", ".join(unapplied)
         )
+    unapplied_drops = sorted(
+        {str(drop["drop_id"]) for drop in drops} - applied_drops
+    )
+    if require_all_reviewed_drops and unapplied_drops:
+        raise ValueError(
+            "reviewed source-row drops were not applied: " + ", ".join(unapplied_drops)
+        )
+    unapplied_smiles_overrides = sorted(
+        {
+            str(decision["candidate_id"])
+            for decision in smiles_overrides.values()
+        }
+        - applied_smiles_overrides
+    )
+    if require_all_reviewed_smiles_overrides and unapplied_smiles_overrides:
+        raise ValueError(
+            "reviewed SMILES overrides were not applied: "
+            + ", ".join(unapplied_smiles_overrides[:10])
+        )
     if require_scientific_scale_review and unresolved_scale_candidates:
         raise ValueError(
             f"{len(unresolved_scale_candidates)} source value(s) already include the "
@@ -277,11 +586,21 @@ def clean_source_values(
     rule_counts = Counter(str(row["rule_id"]) for row in audit)
     field_counts = Counter(str(row["field"]) for row in audit)
     registry_path = Path(reviewed_repairs_path) if reviewed_repairs_path else None
+    drop_registry_path = Path(reviewed_drops_path) if reviewed_drops_path else None
+    smiles_audit_path = (
+        Path(smiles_identity_audit_path) if smiles_identity_audit_path else None
+    )
+    smiles_conflicts_path = (
+        Path(reviewed_smiles_conflicts_path)
+        if reviewed_smiles_conflicts_path
+        else None
+    )
     manifest = {
         "version": SOURCE_VALUE_CLEANING_VERSION,
         "task_id": task_id,
         "n_input_records": len(records),
         "n_output_records": len(output),
+        "n_dropped_records": len(applied_drops),
         "n_changed_records": len(changed_records),
         "n_field_changes": len(audit),
         "rule_counts": dict(sorted(rule_counts.items())),
@@ -306,30 +625,60 @@ def clean_source_values(
             "unapplied_repair_ids": unapplied,
             "all_required_repairs_applied": not unapplied,
         },
+        "reviewed_drops": {
+            "path": str(drop_registry_path) if drop_registry_path else None,
+            "sha256": file_sha256(drop_registry_path) if drop_registry_path else None,
+            "n_declared": len(drops),
+            "n_applied": len(applied_drops),
+            "unapplied_drop_ids": unapplied_drops,
+            "all_required_drops_applied": not unapplied_drops,
+        },
+        "smiles_identity_audit": {
+            "path": str(smiles_audit_path) if smiles_audit_path else None,
+            "sha256": file_sha256(smiles_audit_path) if smiles_audit_path else None,
+            "n_entries": len(smiles_audit),
+        },
+        "reviewed_name_smiles_conflicts": {
+            "path": str(smiles_conflicts_path) if smiles_conflicts_path else None,
+            "sha256": (
+                file_sha256(smiles_conflicts_path) if smiles_conflicts_path else None
+            ),
+            "decision_counts": dict(sorted(smiles_decisions.items())),
+            "n_declared_overrides": (
+                smiles_decisions.get("override", 0)
+                + smiles_decisions.get("quarantined_override", 0)
+            ),
+            "n_eligible_overrides": len(smiles_overrides),
+            "n_quarantined_overrides": smiles_decisions.get(
+                "quarantined_override", 0
+            ),
+            "n_applied_overrides": len(applied_smiles_overrides),
+            "n_rdkit_invalid_override_strings": 0,
+            "unapplied_override_ids": unapplied_smiles_overrides,
+            "all_required_overrides_applied": not unapplied_smiles_overrides,
+        },
     }
     return SourceValueCleaningResult(
         records=output,
         audit_rows=audit,
         manifest=manifest,
-        input_paths=(registry_path,) if registry_path else (),
+        input_paths=tuple(
+            path
+            for path in (
+                registry_path,
+                drop_registry_path,
+                smiles_audit_path,
+                smiles_conflicts_path,
+            )
+            if path is not None
+        ),
     )
 
 
 def _clean_measurement(
     value: str | None,
-    unit_text: Any,
-    support_text: Any,
 ) -> tuple[str | None, list[tuple[str, str, str]]]:
-    cleaned, steps = _replace_encoded_spaces(value)
-    if cleaned is None:
-        return None, steps
-    candidate, changed = _decimal_comma_candidate(cleaned)
-    if not changed or not _is_atomic_measurement(candidate, unit_text):
-        return cleaned, steps
-    if _is_uncorroborated_mixed_range(cleaned, support_text):
-        return cleaned, steps
-    steps.append((DECIMAL_COMMA_RULE, cleaned, candidate))
-    return candidate, steps
+    return _replace_encoded_spaces(value)
 
 
 def _has_scientific_scale_conflict(record: Mapping[str, Any]) -> bool:
@@ -353,24 +702,6 @@ def _has_scientific_scale_conflict(record: Mapping[str, Any]) -> bool:
     return False
 
 
-def _is_uncorroborated_mixed_range(value: str, support_text: Any) -> bool:
-    """Fail closed for forms such as ``40-70,50``.
-
-    That spelling can mean a decimal endpoint, but it can also be a damaged
-    list or table extraction.  A dotted occurrence in the support sentence is
-    sufficient independent evidence; otherwise Stage 01 preserves the source
-    form for reviewed repair instead of inventing a precise range endpoint.
-    """
-    match = _MIXED_TRAILING_DECIMAL_RANGE.fullmatch(value)
-    if match is None:
-        return False
-    dotted_endpoint = f"{match.group('integer')}.{match.group('fraction')}"
-    support = _optional_text(support_text) or ""
-    return re.search(
-        rf"(?<![\w.]){re.escape(dotted_endpoint)}(?![\w.])", support
-    ) is None
-
-
 def _replace_encoded_spaces(
     value: str | None,
 ) -> tuple[str | None, list[tuple[str, str, str]]]:
@@ -380,50 +711,6 @@ def _replace_encoded_spaces(
     if replaced == value:
         return value, []
     return replaced, [(ENCODED_SPACE_RULE, value, str(replaced))]
-
-
-def _decimal_comma_candidate(value: str) -> tuple[str, bool]:
-    changed = False
-
-    def replace(match: re.Match[str]) -> str:
-        nonlocal changed
-        prefix_words = {
-            word.casefold()
-            for word in re.findall(r"[A-Za-zµμ]+", value[: match.start()])
-        }
-        if not prefix_words <= _MEASUREMENT_PREFIX_WORDS:
-            return match.group(0)
-        integer = match.group("integer")
-        fraction = match.group("fraction")
-        digits = integer.lstrip("+-")
-        # A leading zero cannot be a thousands group.  One- and two-digit
-        # suffixes are conventional decimal-comma forms.  A single nonzero
-        # three-digit group stays untouched because it may be a real thousands
-        # separator (for example 2,180).
-        if int(digits) != 0 and len(fraction) > 2:
-            return match.group(0)
-        changed = True
-        return f"{integer}.{fraction}"
-
-    return _DECIMAL_COMMA.sub(replace, value), changed
-
-
-def _is_atomic_measurement(value: str, unit_text: Any) -> bool:
-    # Import lazily to keep the Stage-01 module independent from parser import
-    # order while still using the exact grammar that Stage 02 will apply.
-    from .measurements import parse_point_measurement, separate_measurement_unit
-
-    display = separate_measurement_unit(value, unit_text)
-    parsed = parse_point_measurement(display)
-    return parsed.kind in {
-        "point",
-        "approximate_point",
-        "mean_with_variation",
-        "mean_with_context",
-        "point_with_interval",
-        "bound",
-        "range",
-    }
 
 
 def _audit_row(
@@ -454,16 +741,29 @@ def _audit_row(
     }
 
 
+def _apply_smiles_repair(record: dict[str, Any], smiles: str) -> None:
+    canonical, status = resolve_structure_value(smiles, structure_mode="direct")
+    record.update(
+        {
+            "canonical_smiles": canonical,
+            "structure_status": status,
+            "molecule_id": starling_molecule_id(canonical) if canonical else None,
+        }
+    )
+
+
 def _optional_text(value: Any) -> str | None:
     return clean_text(value)
 
 
 __all__ = [
-    "DECIMAL_COMMA_RULE",
     "ENCODED_SPACE_RULE",
     "SOURCE_VALUE_CLEANING_VERSION",
     "SUPPORT_TEXT_POLICY_VERSION",
     "SourceValueCleaningResult",
     "clean_source_values",
+    "load_reviewed_drops",
     "load_reviewed_repairs",
+    "load_reviewed_smiles_conflicts",
+    "load_smiles_identity_audit",
 ]

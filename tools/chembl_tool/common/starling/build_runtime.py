@@ -7,18 +7,28 @@ Scientific normalization and task policy remain in their existing modules.
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import json
 import multiprocessing as mp
+import os
 import resource
+import socket
+import sys
+import threading
 import time
 from collections.abc import Iterable, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 
 BUILD_RUNTIME_VERSION = "starling_build_runtime.v2"
+BUILD_LOCK_FILENAME = ".build.lock"
+INCOMPLETE_BUILD_FILENAME = ".build-incomplete.json"
+_ACTIVE_BUILD_ROOTS: dict[Path, tuple[int, int, bool]] = {}
 _NON_SEMANTIC_ARGUMENTS = frozenset(
     {
         "cache_mode",
@@ -31,6 +41,69 @@ _NON_SEMANTIC_ARGUMENTS = frozenset(
         "workers",
     }
 )
+
+
+@contextmanager
+def starling_build_session(
+    normalized_root: str | Path,
+    *,
+    complete: bool = False,
+    mark_incomplete: bool = True,
+):
+    """Hold one non-blocking writer lock for a normalized task root."""
+    root = Path(normalized_root).resolve()
+    owner = (os.getpid(), threading.get_ident())
+    active = _ACTIVE_BUILD_ROOTS.get(root)
+    if active is not None and active[:2] == owner:
+        yield
+        return
+
+    root.mkdir(parents=True, exist_ok=True)
+    lock_path = root / BUILD_LOCK_FILENAME
+    marker_path = root / INCOMPLETE_BUILD_FILENAME
+    with lock_path.open("a+", encoding="utf-8") as handle:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            handle.seek(0)
+            owner = handle.read().strip() or "unknown owner"
+            raise RuntimeError(
+                f"Starling build already running for {root}: {owner}"
+            ) from error
+
+        receipt = {
+            "command": sys.argv[0],
+            "hostname": socket.gethostname(),
+            "pid": os.getpid(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
+        }
+        handle.seek(0)
+        handle.truncate()
+        json.dump(receipt, handle, sort_keys=True)
+        handle.write("\n")
+        handle.flush()
+        if mark_incomplete:
+            marker_path.write_text(
+                json.dumps(receipt, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+        _ACTIVE_BUILD_ROOTS[root] = (*owner, complete)
+        succeeded = False
+        try:
+            yield
+            succeeded = True
+        finally:
+            if complete and succeeded:
+                marker_path.unlink(missing_ok=True)
+            _ACTIVE_BUILD_ROOTS.pop(root, None)
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def complete_build_session_active(normalized_root: str | Path) -> bool:
+    active = _ACTIVE_BUILD_ROOTS.get(Path(normalized_root).resolve())
+    owner = (os.getpid(), threading.get_ident())
+    return bool(active and active[:2] == owner and active[2])
 
 
 @dataclass

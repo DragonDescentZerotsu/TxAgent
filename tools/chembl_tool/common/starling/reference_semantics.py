@@ -188,14 +188,14 @@ class ReferenceSemanticsAttacher:
         deterministic = self.config.deterministic_assignment(record)
         if deterministic is not None:
             return deterministic
-        record_id = str(
-            record.get("measurement_resolution_parent_cleaned_record_id")
-            or record.get("cleaned_record_id")
-            or ""
+        record_ids = (
+            str(record.get("cleaned_record_id") or ""),
+            str(record.get("measurement_resolution_parent_cleaned_record_id") or ""),
         )
-        mapped = self._mapping.get(record_id)
-        if mapped is not None:
-            return mapped
+        for record_id in record_ids:
+            mapped = self._mapping.get(record_id)
+            if mapped is not None:
+                return mapped
         if self.allow_missing:
             return ReferenceAssignment(
                 REFERENCE_SCOPE_UNKNOWN,
@@ -208,7 +208,8 @@ class ReferenceSemanticsAttacher:
                 REFERENCE_BASIS_UNKNOWN if self.config.output_basis else None,
                 "assay_transfer_mapping_not_available_fail_closed",
             )
-        raise ValueError(f"missing reference-semantics assignment for {record_id!r}")
+        missing_id = record_ids[0] or record_ids[1]
+        raise ValueError(f"missing reference-semantics assignment for {missing_id!r}")
 
     def attach(self, record: Mapping[str, Any]) -> dict[str, Any]:
         assignment = self.assignment(record)
@@ -246,19 +247,29 @@ class ReferenceSemanticsAttacher:
             if deterministic is not None:
                 counts[deterministic.method] += 1
                 continue
-            record_id = str(
-                record.get("measurement_resolution_parent_cleaned_record_id")
-                or record.get("cleaned_record_id")
-                or ""
+            record_ids = (
+                str(record.get("cleaned_record_id") or ""),
+                str(
+                    record.get("measurement_resolution_parent_cleaned_record_id")
+                    or ""
+                ),
             )
-            if record_id in self._mapping:
-                counts[self._mapping[record_id].method] += 1
+            mapped = next(
+                (
+                    self._mapping[record_id]
+                    for record_id in record_ids
+                    if record_id in self._mapping
+                ),
+                None,
+            )
+            if mapped is not None:
+                counts[mapped.method] += 1
             elif self.fail_closed_unmapped:
                 method = "assay_transfer_mapping_not_available_fail_closed"
                 counts[method] += 1
-                fail_closed.append(record_id)
+                fail_closed.append(record_ids[0] or record_ids[1])
             else:
-                missing.append(record_id)
+                missing.append(record_ids[0] or record_ids[1])
         return {
             "records": len(records),
             "assignment_method_counts": dict(sorted(counts.items())),

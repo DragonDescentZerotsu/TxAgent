@@ -1,7 +1,17 @@
 """Source-aware comparison fields for BBB Martins pair buckets."""
 
 BBB_MARTINS_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v3"
-BBB_MARTINS_V7_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v13"
+BBB_MARTINS_V7_PAIR_BUCKET_VERSION = "bbb_martins_pair_buckets.v15"
+
+ENDPOINT_FIELD_BY_SOURCE = {
+    source_id: "canonical_endpoint_concept"
+    for source_id in (
+        "direct_bbb",
+        "passive_permeability",
+        "efflux_transport",
+        "influx_transport",
+    )
+}
 
 SOURCE_PAIR_FIELDS = {
     "direct_bbb": (
@@ -28,5 +38,6 @@ SOURCE_PAIR_FIELDS = {
 __all__ = [
     "BBB_MARTINS_PAIR_BUCKET_VERSION",
     "BBB_MARTINS_V7_PAIR_BUCKET_VERSION",
+    "ENDPOINT_FIELD_BY_SOURCE",
     "SOURCE_PAIR_FIELDS",
 ]

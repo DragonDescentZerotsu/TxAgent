@@ -1,0 +1,126 @@
+{
+  "version": "bioavailability_endpoint_concepts.v1",
+  "source_id": "fh",
+  "input_field": "endpoint_name",
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 19,
+    "sha256": "40917d39b6a569927834157be69c4c91f5806784c9cc699b5f310efa9e31793d"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "biliary_clearance",
+      "canonical_endpoint_name": "biliary_clearance",
+      "canonical_endpoint_concept": "biliary_clearance",
+      "review_reason": "Biliary excretory clearance is distinct from hepatic metabolic and intrinsic clearance."
+    },
+    {
+      "endpoint_name": "cyp_metabolism",
+      "canonical_endpoint_name": "cyp_metabolism",
+      "canonical_endpoint_concept": "cyp_metabolism",
+      "review_reason": "CYP-mediated metabolism is a distinct enzyme-family process; enzyme and assay context preserve its subtype."
+    },
+    {
+      "endpoint_name": "elimination_rate",
+      "canonical_endpoint_name": "elimination_rate",
+      "canonical_endpoint_concept": "elimination_rate",
+      "review_reason": "The only row reports an elimination rate in clearance units, but does not establish equivalence to hepatic or metabolic clearance."
+    },
+    {
+      "endpoint_name": "extraction_ratio",
+      "canonical_endpoint_name": "extraction_ratio",
+      "canonical_endpoint_concept": "hepatic_extraction_ratio",
+      "review_reason": "The Fh source rows explicitly describe hepatic extraction ratio; fraction or percent units preserve scale."
+    },
+    {
+      "endpoint_name": "fmo_metabolism",
+      "canonical_endpoint_name": "fmo_metabolism",
+      "canonical_endpoint_concept": "fmo_metabolism",
+      "review_reason": "FMO-mediated metabolism is distinct from CYP- and UGT-mediated pathways."
+    },
+    {
+      "endpoint_name": "hepatic_clearance",
+      "canonical_endpoint_name": "hepatic_clearance",
+      "canonical_endpoint_concept": "hepatic_clearance",
+      "review_reason": "Organ-level hepatic clearance remains distinct from intrinsic clearance, extraction ratio, and route-dependent oral clearance."
+    },
+    {
+      "endpoint_name": "hepatic_extraction",
+      "canonical_endpoint_name": "hepatic_extraction",
+      "canonical_endpoint_concept": "hepatic_extraction_ratio",
+      "review_reason": "Both rows report the fraction or percentage extracted by the liver, synonymous with hepatic extraction ratio."
+    },
+    {
+      "endpoint_name": "hepatic_first_pass_m etabolism",
+      "canonical_endpoint_name": "hepatic_first_pass_metabolism",
+      "canonical_endpoint_concept": "hepatic_first_pass_metabolism",
+      "review_reason": "Reviewed embedded-space corruption of hepatic first-pass metabolism."
+    },
+    {
+      "endpoint_name": "hepatic_first_pass_metabolism",
+      "canonical_endpoint_name": "hepatic_first_pass_metabolism",
+      "canonical_endpoint_concept": "hepatic_first_pass_metabolism",
+      "review_reason": "Hepatic first-pass metabolism and availability remain separate from extraction ratio because reported values may use opposite Fh and extraction conventions."
+    },
+    {
+      "endpoint_name": "hepatocyte_stability",
+      "canonical_endpoint_name": "hepatocyte_stability",
+      "canonical_endpoint_concept": "hepatocyte_stability",
+      "review_reason": "Whole-cell hepatocyte stability is distinct from microsomal and S9 stability, especially when assay context is missing."
+    },
+    {
+      "endpoint_name": "intrinsic_clearance",
+      "canonical_endpoint_name": "intrinsic_clearance",
+      "canonical_endpoint_concept": "intrinsic_clearance",
+      "review_reason": "Intrinsic clearance excludes flow and binding effects and must remain separate from observed hepatic or metabolic clearance."
+    },
+    {
+      "endpoint_name": "metabolic_clearance",
+      "canonical_endpoint_name": "metabolic_clearance",
+      "canonical_endpoint_concept": "metabolic_clearance",
+      "review_reason": "Metabolic clearance can be non-hepatic or apparent CL/F and is not safely interchangeable with hepatic clearance."
+    },
+    {
+      "endpoint_name": "metabolic_half_life",
+      "canonical_endpoint_name": "metabolic_half_life",
+      "canonical_endpoint_concept": "metabolic_half_life",
+      "review_reason": "Rows include systemic terminal half-life as well as in-vitro half-life, so this broad source endpoint remains separate from assay-specific stability."
+    },
+    {
+      "endpoint_name": "microsomal_stability",
+      "canonical_endpoint_name": "microsomal_stability",
+      "canonical_endpoint_concept": "microsomal_stability",
+      "review_reason": "Microsomal stability is a defined subcellular assay and remains separate from hepatocyte and S9 stability."
+    },
+    {
+      "endpoint_name": "oral_clearance",
+      "canonical_endpoint_name": "oral_clearance",
+      "canonical_endpoint_concept": "oral_clearance",
+      "review_reason": "Oral apparent clearance is route- and bioavailability-dependent and must not merge with hepatic or intrinsic clearance."
+    },
+    {
+      "endpoint_name": "parent_drug_metabolic_stability",
+      "canonical_endpoint_name": "parent_drug_metabolic_stability",
+      "canonical_endpoint_concept": "parent_drug_metabolic_stability",
+      "review_reason": "Broad parent-drug stability rows span several biological preparations, including records with missing assay context, so they remain fail-closed."
+    },
+    {
+      "endpoint_name": "s9_stability",
+      "canonical_endpoint_name": "s9_stability",
+      "canonical_endpoint_concept": "s9_stability",
+      "review_reason": "S9 stability includes cytosolic and microsomal activity and remains distinct from either component alone."
+    },
+    {
+      "endpoint_name": "substrate_depletion",
+      "canonical_endpoint_name": "substrate_depletion",
+      "canonical_endpoint_concept": "substrate_depletion",
+      "review_reason": "Substrate depletion may report disappearance, rate, or change versus control and cannot safely merge with percent-remaining stability."
+    },
+    {
+      "endpoint_name": "ugt_metabolism",
+      "canonical_endpoint_name": "ugt_metabolism",
+      "canonical_endpoint_concept": "ugt_metabolism",
+      "review_reason": "UGT-mediated glucuronidation is a distinct enzyme-family process from CYP and FMO metabolism."
+    }
+  ]
+}

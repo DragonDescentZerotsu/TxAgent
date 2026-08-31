@@ -38,12 +38,17 @@ resolution.
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Mapping
 from functools import lru_cache
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from tools.chembl_tool.common.starling.measurement_routing import SourceRoutingRules
+from tools.chembl_tool.common.starling.measurement_routing import (
+    RouteDecision,
+    SourceRoutingRules,
+    is_pure_number,
+)
 from tools.chembl_tool.common.starling.normalization.measurements import (
     canonicalize_endpoint,
 )
@@ -56,11 +61,15 @@ from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import 
 TASK_ROOT = Path(__file__).resolve().parent
 
 PROMPT_VERSION = "bbb_measurement_resolution_prompt.v11"
-MAPPING_VERSION = "bbb_martins_measurement_resolution.v1"
+MAPPING_VERSION = "bbb_martins_measurement_resolution.v3"
 
 DEFAULT_MAPPING_PATH = (
     TASK_ROOT
-    / "data_processing/measurement_resolution_v1/measurement_resolution.parquet"
+    / "data_processing/measurement_resolution_v3/measurement_resolution.parquet"
+)
+DEFAULT_BASE_MAPPING_PATH = (
+    TASK_ROOT
+    / "data_processing/measurement_resolution_v2/measurement_resolution.parquet"
 )
 TEMPLATE_DIR = TASK_ROOT / "measurement_resolution_templates"
 TEMPLATE_NAME = "measurement_resolution_v5.jinja"
@@ -121,6 +130,26 @@ def _endpoint_normalizer() -> EndpointNormalizer:
 def canonical_endpoint_name(source_id: str, endpoint_name: object) -> str:
     decision = _endpoint_normalizer().decision(source_id, str(endpoint_name or ""))
     return canonicalize_endpoint(decision.spacing_and_spelling_endpoint)
+
+
+def source_exact_route(record: Mapping[str, object]) -> RouteDecision | None:
+    """Treat a bare numeric logBB value as its endpoint-defined log ratio."""
+    source_id = str(record.get("source_id") or "")
+    measurement = record.get("measurement_text")
+    if (
+        source_id != "direct_bbb"
+        or str(record.get("unit_text") or "").strip()
+        or canonical_endpoint_name(source_id, record.get("endpoint_name")) != "logbb"
+        or not is_pure_number(measurement)
+    ):
+        return None
+    return RouteDecision(
+        "accept",
+        "direct_logbb_dimensionless.v1",
+        str(measurement).strip(),
+        "dimensionless",
+        True,
+    )
 
 
 def _environment() -> Environment:
@@ -191,5 +220,6 @@ __all__ = [
     "prompt_manifest",
     "prompt_row_fields",
     "render_prompt",
+    "source_exact_route",
     "source_routing_rules",
 ]

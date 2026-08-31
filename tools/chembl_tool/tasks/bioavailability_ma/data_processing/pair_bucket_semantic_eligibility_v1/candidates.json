@@ -1,0 +1,872 @@
+[
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "d8889aa81da909a831e944394bbd310807f0e17aca0947ad731f4414426648c2",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"%\",\"caco_2\",\"__unknown__\",\"comparator_relative\"]",
+    "source_id": "fa",
+    "stage05_record_count": 66,
+    "stage06_unique_molecule_count": 25
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "4664ccea9980a2e716fef7435bbf607f916389737aee199e78745fe64e170443",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(cm/s)\",\"caco_2\",\"__unknown__\",\"comparator_relative\"]",
+    "source_id": "fa",
+    "stage05_record_count": 49,
+    "stage06_unique_molecule_count": 40
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "c91067337036d2bdb00f8980fad693c2565bdda684e59f444ad153cef55dee44",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(cm/s)\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 412,
+    "stage06_unique_molecule_count": 106
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "b783ecc847d79f13ffeeb2d1ddae9fd99f9aef4e7a0eed6f5e1e3b1b75998338",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(cm/s)\",\"caco_2\",\"human\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 149,
+    "stage06_unique_molecule_count": 67
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "3f0f09a1fdbfab12b4e2d9ddf3d7fdfeb51702982e4345bb872978d1884033d7",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(cm/s)\",\"mdck\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 69,
+    "stage06_unique_molecule_count": 20
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "562da983bf452b84b19e19da6a107ce30dd8a1da14fb79fb8ad7155463b35b74",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(ratio)\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 348,
+    "stage06_unique_molecule_count": 208
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "06ef0b6732df0388e1cabdcec67baaa2267f2d67af17d172046a0e8231760bbd",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(ratio)\",\"caco_2\",\"human\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 57,
+    "stage06_unique_molecule_count": 45
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "caco2_mdck_pampa_permeability",
+    "evidence_sha256": "6ec66573044f7d5cc0a503b801536bc06684063e42b177616d11ba3babed21f5",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_pampa_permeability\",\"log10(ratio)\",\"mdck\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 83,
+    "stage06_unique_molecule_count": 57
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "caco2_mdck_permeability",
+    "evidence_sha256": "335e0c12ab9e049dbdac34af4deb9a5950330284913559764385e3f32626f35b",
+    "pair_bucket_key": "[\"fa\",\"caco2_mdck_permeability\",\"log10(ratio)\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 46,
+    "stage06_unique_molecule_count": 21
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "%",
+    "endpoint": "dissolution",
+    "evidence_sha256": "1e4807f78d539694f0631a1c18c82913f7d62277abcdf3e1b923f645c1190aa5",
+    "pair_bucket_key": "[\"fa\",\"dissolution\",\"%\",\"dissolution\",\"__unknown__\",\"endpoint_defined_ratio\"]",
+    "source_id": "fa",
+    "stage05_record_count": 75,
+    "stage06_unique_molecule_count": 56
+  },
+  {
+    "canonical_reference_scope": "standardized_control_ratio",
+    "canonical_unit_text": "%",
+    "endpoint": "dissolution",
+    "evidence_sha256": "4c20a574605fcc49abff4111f15f6b2e4255c3ce9ccfd38198f2c51ed4fde08e",
+    "pair_bucket_key": "[\"fa\",\"dissolution\",\"%\",\"dissolution\",\"__unknown__\",\"standardized_control_ratio\"]",
+    "source_id": "fa",
+    "stage05_record_count": 91,
+    "stage06_unique_molecule_count": 22
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "dissolution",
+    "evidence_sha256": "d92d766542288cb8394526f0795a16b1127dc9c9a592d577ce19897335fed9c9",
+    "pair_bucket_key": "[\"fa\",\"dissolution\",\"%\",\"dissolution\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 224,
+    "stage06_unique_molecule_count": 106
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "fraction_absorbed",
+    "evidence_sha256": "e9c76c4e350202edf6ac7bb7ddcc9b7aeed5c7aff2db892bf6aeacd6185de27d",
+    "pair_bucket_key": "[\"fa\",\"fraction_absorbed\",\"%\",\"oral absorption\",\"human\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 106,
+    "stage06_unique_molecule_count": 59
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "fraction_absorbed",
+    "evidence_sha256": "301925463d8e503f605cf3ec4fe7bba169580666e92c5008ab981e2f900b9b42",
+    "pair_bucket_key": "[\"fa\",\"fraction_absorbed\",\"%\",\"oral dosing\",\"human\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 72,
+    "stage06_unique_molecule_count": 37
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "fraction_absorbed",
+    "evidence_sha256": "3ef3381e0c6834ba4d3937b2d26d8b48029ddc00e72dd970f4733fdfa507bf81",
+    "pair_bucket_key": "[\"fa\",\"fraction_absorbed\",\"%\",\"oral dosing\",\"rat\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 74,
+    "stage06_unique_molecule_count": 26
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "intestinal_effective_permeability",
+    "evidence_sha256": "b3031dc0f688d586d5f77cc1aefd5f515ccf169a1dde9de97f6844f0cb7c45ab",
+    "pair_bucket_key": "[\"fa\",\"intestinal_effective_permeability\",\"log10(cm/s)\",\"intestinal perfusion\",\"rat\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 126,
+    "stage06_unique_molecule_count": 38
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "solubility",
+    "evidence_sha256": "ae69d766b355ad9ba14cbfd742668f1b255192e0a4958fb1286dc6409c5beb6e",
+    "pair_bucket_key": "[\"fa\",\"solubility\",\"log10(fold)\",\"solubility\",\"__unknown__\",\"comparator_relative\"]",
+    "source_id": "fa",
+    "stage05_record_count": 56,
+    "stage06_unique_molecule_count": 23
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(mg/mL)",
+    "endpoint": "solubility",
+    "evidence_sha256": "ba17e06a12dabc0f707ad99679f4299752465bb6fd9ab6d741fb98119810f35c",
+    "pair_bucket_key": "[\"fa\",\"solubility\",\"log10(mg/mL)\",\"solubility\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fa",
+    "stage05_record_count": 52,
+    "stage06_unique_molecule_count": 30
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "6cf544ed91c91c3d7e44cdce70a3c9dd48c5bc7f16bd81236ffea38c5d29eee4",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 1890,
+    "stage06_unique_molecule_count": 829
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "8d7a40bd52cce9f1705f666aa420646cd0a1cc41a2424e729a922ccfc3b4a1dd",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"human\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 34,
+    "stage06_unique_molecule_count": 20
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "c03a63c619c96a8cd61191fd5e7317fe043b10628ba0575c529848e258852ffc",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"intestinal perfusion\",\"rat\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 59,
+    "stage06_unique_molecule_count": 25
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "1747c8c7ad5ef7b49f8ee1b0423efc21a55c2e7735dad36110cacd55b47a1da2",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"mdck\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 60,
+    "stage06_unique_molecule_count": 30
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "1ed1fc7b7f188418b452b7fa3580e55e8f4013afd711e788c75e056487048140",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(ratio)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"endpoint_defined_ratio\"]",
+    "source_id": "fg",
+    "stage05_record_count": 42,
+    "stage06_unique_molecule_count": 34
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "ee8305fecf5093326bede144354743b82e035674ab25fdb523a99e0405a8a2da",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(ratio)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 834,
+    "stage06_unique_molecule_count": 646
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "bidirectional_permeability",
+    "evidence_sha256": "9685aabd5cf4c01891797c48cb6b57f4ac00dd4efcad64c566ecdf3981dd11d9",
+    "pair_bucket_key": "[\"fg\",\"bidirectional_permeability\",\"log10(ratio)\",\"__unknown__\",\"__unknown__\",\"mdck\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 29,
+    "stage06_unique_molecule_count": 25
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "efflux_or_secretory_transport",
+    "evidence_sha256": "d10191d86fed93d79170457e4e8486157e5662a2d5ffe885c390f33af2329573",
+    "pair_bucket_key": "[\"fg\",\"efflux_or_secretory_transport\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 84,
+    "stage06_unique_molecule_count": 58
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "efflux_or_secretory_transport",
+    "evidence_sha256": "8dca738adf9389aa4ac759b393be7fa43f66cec6d9e227d3ac4647fc3d09d2cb",
+    "pair_bucket_key": "[\"fg\",\"efflux_or_secretory_transport\",\"log10(ratio)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"endpoint_defined_ratio\"]",
+    "source_id": "fg",
+    "stage05_record_count": 150,
+    "stage06_unique_molecule_count": 125
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(ratio)",
+    "endpoint": "efflux_or_secretory_transport",
+    "evidence_sha256": "ba733054e243cd4b78336999dcdda70ce92804a8a475c18ee167a19b01200205",
+    "pair_bucket_key": "[\"fg\",\"efflux_or_secretory_transport\",\"log10(ratio)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 241,
+    "stage06_unique_molecule_count": 171
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "uptake_or_absorptive_transport",
+    "evidence_sha256": "f6bbac6701a365cab174291d91c4ae77ff09266696b9a1dd1b6e45abb674d2e2",
+    "pair_bucket_key": "[\"fg\",\"uptake_or_absorptive_transport\",\"%\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 45,
+    "stage06_unique_molecule_count": 34
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "uptake_or_absorptive_transport",
+    "evidence_sha256": "7977d7a05780521fe6b97ef1edd18c9783cb10aa041d11faeba49c3935e66e01",
+    "pair_bucket_key": "[\"fg\",\"uptake_or_absorptive_transport\",\"%\",\"__unknown__\",\"__unknown__\",\"intestinal perfusion\",\"rat\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 64,
+    "stage06_unique_molecule_count": 31
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "uptake_or_absorptive_transport",
+    "evidence_sha256": "ef440dd07d20dd93b9e86e061d362d26261fefd5ccd5b4d66bcc97d3f6043271",
+    "pair_bucket_key": "[\"fg\",\"uptake_or_absorptive_transport\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"caco_2\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 163,
+    "stage06_unique_molecule_count": 88
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(cm/s)",
+    "endpoint": "uptake_or_absorptive_transport",
+    "evidence_sha256": "bc9d1852bee82e1ffa628910350c326af9a3312dca1c84aa64d1dd5aefc16f3a",
+    "pair_bucket_key": "[\"fg\",\"uptake_or_absorptive_transport\",\"log10(cm/s)\",\"__unknown__\",\"__unknown__\",\"intestinal perfusion\",\"rat\",\"unknown\"]",
+    "source_id": "fg",
+    "stage05_record_count": 108,
+    "stage06_unique_molecule_count": 35
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "c40cfbb2e66db9c6dbb3253958bd7df637bd053fc2404ce48c9f7eaaa3aa831d",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"__unknown__\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 42,
+    "stage06_unique_molecule_count": 30
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "e609270b19208cc2b267079a57ddbde511607bc0634452b22428cdcb53a207d8",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"__unknown__\",\"human\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 49,
+    "stage06_unique_molecule_count": 34
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "70d90bcddd64cd93c5ecf68a0bcff61ee151da1cd32064aeab267bed27463f79",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"__unknown__\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 45,
+    "stage06_unique_molecule_count": 29
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "782d8b509ff2b6082d45471aae784bcdb63cc9bb702a9ea3261bf3d4d80c4473",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"liver microsomes\",\"human\",\"comparator_relative\"]",
+    "source_id": "fh",
+    "stage05_record_count": 169,
+    "stage06_unique_molecule_count": 84
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "9d5487ae631b08e1572f9328bb20ef0ab1095d5c97358e355bdd96bf916f0fb4",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"liver microsomes\",\"human\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 254,
+    "stage06_unique_molecule_count": 86
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "3968bbe8612cfd130678e74aa972a1232d73afcf8d49c5dc0cc302d5ec0ea1bb",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 139,
+    "stage06_unique_molecule_count": 70
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "4733f80c82456fce4bfa8737a2b3549d0042ffe25d85453f8f8b11af75c5f0c2",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"recombinant enzyme\",\"human gene\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 92,
+    "stage06_unique_molecule_count": 45
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "df102b16e61b4f24442eea9a596cd18d64d6e2b9f80127c4ee60430a74c92588",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"fraction\",\"recombinant enzyme\",\"human gene\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 56,
+    "stage06_unique_molecule_count": 28
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(µM)",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "aaea439e088415b4801e7ceceac3cef89885d1f41be34d6b91f442327211d660",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"log10(µM)\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 43,
+    "stage06_unique_molecule_count": 26
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(µM)",
+    "endpoint": "cyp_metabolism",
+    "evidence_sha256": "0b5ce67db57e236700784acfb1260bf87726d824f600d5ba03a893d2e36088bb",
+    "pair_bucket_key": "[\"fh\",\"cyp_metabolism\",\"log10(µM)\",\"recombinant enzyme\",\"human gene\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 105,
+    "stage06_unique_molecule_count": 45
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "5721de7b523a4715625aa96ab5da25ef07585dd13ff25a6fb847327324361fef",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"__unknown__\",\"__unknown__\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 51,
+    "stage06_unique_molecule_count": 42
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "168d0d1309011513f1a970c33115bd3c56527fdc8026f7a00fd8b0386232b14d",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"__unknown__\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 34,
+    "stage06_unique_molecule_count": 21
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "49331429c9bae74dad861feb261014a6d76c2eba027f4d1469b3b4274deff27c",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"clinical study\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 84,
+    "stage06_unique_molecule_count": 32
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "83ceffbc314e2d333dd8abfd1e59ff28bcf11140632a0b128b6e2c8d815b7e31",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"hepatocytes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 26,
+    "stage06_unique_molecule_count": 24
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "22aeee80679fea85fc716e6ff374b1b6e946e6ecf7c2a06245ebee8529d7c623",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"in vivo study\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 47,
+    "stage06_unique_molecule_count": 24
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "4cd7e2f17d5f6dd0b53e65987a38287452f9a8befd7de6aa26c240cc059ca562",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"in vivo study\",\"rat\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 21,
+    "stage06_unique_molecule_count": 21
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "c85de7aa2062e35932e829cf4984c51dab9c63515b91dd506af415beff34e433",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"in vivo study\",\"rat\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 65,
+    "stage06_unique_molecule_count": 37
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "919c7b72a22f0ab1d47bd9279b5c8d6eab6a6ec1763afc5b3cae6028516c923e",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 33,
+    "stage06_unique_molecule_count": 31
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "7afd4e9a0797c32829aa52ebb4c209b45506a5465ce8cfa8c92767ef574de950",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"perfused liver\",\"rat\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 28,
+    "stage06_unique_molecule_count": 20
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "fraction",
+    "endpoint": "hepatic_extraction_ratio",
+    "evidence_sha256": "c6f856ab2237c05d44e3f73e712705136feb5cd5c7664d125f3cd686dc10a530",
+    "pair_bucket_key": "[\"fh\",\"hepatic_extraction_ratio\",\"fraction\",\"perfused liver\",\"rat\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 230,
+    "stage06_unique_molecule_count": 61
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(µL/min/mg microsomal protein)",
+    "endpoint": "intrinsic_clearance",
+    "evidence_sha256": "fca7882c1985cf5f2f0327ee7018f7f1182edac3c0357f1ab411cf56d344cd4b",
+    "pair_bucket_key": "[\"fh\",\"intrinsic_clearance\",\"log10(µL/min/mg microsomal protein)\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 51,
+    "stage06_unique_molecule_count": 24
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "%",
+    "endpoint": "microsomal_stability",
+    "evidence_sha256": "8b5497b04a3369f043f298ce257edc451d091d3f714125b632703056f218d552",
+    "pair_bucket_key": "[\"fh\",\"microsomal_stability\",\"%\",\"liver microsomes\",\"human\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 61,
+    "stage06_unique_molecule_count": 55
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "microsomal_stability",
+    "evidence_sha256": "593dc24c1c08e0ce8015a6580ef22d3cd4b17bb7b2f656da69e8ac343341b90e",
+    "pair_bucket_key": "[\"fh\",\"microsomal_stability\",\"%\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 65,
+    "stage06_unique_molecule_count": 42
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "%",
+    "endpoint": "microsomal_stability",
+    "evidence_sha256": "147d4e85ccf879ccc50b6fabfbce32285748f4a7f0aaed5d5f608b9ae7c37f21",
+    "pair_bucket_key": "[\"fh\",\"microsomal_stability\",\"%\",\"liver microsomes\",\"mouse\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 26,
+    "stage06_unique_molecule_count": 22
+  },
+  {
+    "canonical_reference_scope": "endpoint_defined_ratio",
+    "canonical_unit_text": "%",
+    "endpoint": "microsomal_stability",
+    "evidence_sha256": "171a6a76e7445888ca43cdfb18ca77bc676118414bc47c8313816ef98799b417",
+    "pair_bucket_key": "[\"fh\",\"microsomal_stability\",\"%\",\"liver microsomes\",\"rat\",\"endpoint_defined_ratio\"]",
+    "source_id": "fh",
+    "stage05_record_count": 47,
+    "stage06_unique_molecule_count": 39
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "log10(µM)",
+    "endpoint": "ugt_metabolism",
+    "evidence_sha256": "54e435a1d7ce1c7cf81e11d98b2ee29b959ecd9917ebca25f78c730240807ba9",
+    "pair_bucket_key": "[\"fh\",\"ugt_metabolism\",\"log10(µM)\",\"liver microsomes\",\"human\",\"unknown\"]",
+    "source_id": "fh",
+    "stage05_record_count": 28,
+    "stage06_unique_molecule_count": 22
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "oral_bioavailability",
+    "evidence_sha256": "7b76b7adf993dfad280541edf803f2edb01ac51be80d5f9494798a4f7f0461b1",
+    "pair_bucket_key": "[\"hf_bioavailability\",\"oral_bioavailability\",\"%\",\"__unknown__\",\"apparent\",\"nondirect\",\"comparator_relative\",\"no_reported_external_condition\"]",
+    "source_id": "hf_bioavailability",
+    "stage05_record_count": 359,
+    "stage06_unique_molecule_count": 178
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "oral_bioavailability",
+    "evidence_sha256": "a22f1e71ef619ef7502d58441ece7855477e62718bc7f1730467084a2e3723f3",
+    "pair_bucket_key": "[\"hf_bioavailability\",\"oral_bioavailability\",\"%\",\"__unknown__\",\"relative_comparison\",\"nondirect\",\"comparator_relative\",\"no_reported_external_condition\"]",
+    "source_id": "hf_bioavailability",
+    "stage05_record_count": 357,
+    "stage06_unique_molecule_count": 223
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "oral_bioavailability",
+    "evidence_sha256": "f96dd9dc6bd2244457c53bbe74af14352ea26c8301a625f82218cb5fddd02db8",
+    "pair_bucket_key": "[\"hf_bioavailability\",\"oral_bioavailability\",\"%\",\"__unknown__\",\"unspecified\",\"direct\",\"unknown\",\"no_reported_external_condition\"]",
+    "source_id": "hf_bioavailability",
+    "stage05_record_count": 20298,
+    "stage06_unique_molecule_count": 5030
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_0_infinity",
+    "evidence_sha256": "200872f6a8e91c908da75190f6d88bf43db8c69e55e47551ef62c78e8438d711",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_0_infinity\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 35,
+    "stage06_unique_molecule_count": 30
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_0_infinity",
+    "evidence_sha256": "0f57ff6f95c9bc340d0fa8cf3ffa57c7c08d2c8519be4d9b49e881b55d7f97fc",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_0_infinity\",\"%\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 49,
+    "stage06_unique_molecule_count": 29
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "auc_0_infinity",
+    "evidence_sha256": "8a61e67df46b06ab04f037271db10acd68a7f4de5d280a34732175aefc8a1b94",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_0_infinity\",\"log10(fold)\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 37,
+    "stage06_unique_molecule_count": 25
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_0_last_measurable",
+    "evidence_sha256": "cb0585bb63aaad335f9ab2ad49ee6c437092faa1e47495861ed44b430ad8755d",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_0_last_measurable\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 31,
+    "stage06_unique_molecule_count": 26
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "auc_0_last_measurable",
+    "evidence_sha256": "553c5136f229aa0e5ca44d7605d5075bf634366bb578e6407f5f2d28fc9859dc",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_0_last_measurable\",\"log10(fold)\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 24,
+    "stage06_unique_molecule_count": 20
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_unspecified",
+    "evidence_sha256": "feb64a636693eb4f79a01e375aac4af56af47cead3cc0878ce96ae11d3e766a4",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_unspecified\",\"%\",\"__unknown__\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 27,
+    "stage06_unique_molecule_count": 21
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_unspecified",
+    "evidence_sha256": "5674b9df2f1ad52463c478d226cf8a9d09b1a2d77aa3b0966e458a219639e49d",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_unspecified\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 119,
+    "stage06_unique_molecule_count": 68
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "auc_unspecified",
+    "evidence_sha256": "eb75fde994a17c7fa01ee003948b7674d377aa8cafd141f218302f5720c46a83",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_unspecified\",\"%\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 78,
+    "stage06_unique_molecule_count": 43
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "auc_unspecified",
+    "evidence_sha256": "a7cb001495105d35347f6fa97015b8477401da18e850ebcb1de16918dcfbd970",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_unspecified\",\"log10(fold)\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 45,
+    "stage06_unique_molecule_count": 30
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "auc_unspecified",
+    "evidence_sha256": "7535089f66261ccb9a52c416a124d4400d841837a2b59996bd4a635ad42f7323",
+    "pair_bucket_key": "[\"oral_exposure\",\"auc_unspecified\",\"log10(fold)\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 47,
+    "stage06_unique_molecule_count": 28
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "e530b60833d7874514fb89f1a1a3758f1c98027a1f15b9a4f896605bb42fdee1",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"__unknown__\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 43,
+    "stage06_unique_molecule_count": 25
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "120de061ab76b7ec800292e5b2fe6b68bca57677e046c2cf60d0017cf6816b7a",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"__unknown__\",\"__unknown__\",\"unknown\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 36,
+    "stage06_unique_molecule_count": 21
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "12209fffd329adf401517d7d605f086082ebd43fc67e17a41d913c774fe7aacb",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 77,
+    "stage06_unique_molecule_count": 52
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "c4c9e41925ccc821f2c99edb71bc543ca771785811109eac546b80bf46263de7",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"human\",\"__unknown__\",\"unknown\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 86,
+    "stage06_unique_molecule_count": 37
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "92ae5bc02d7dfab2c23ff127d9ed56b7bcf2eaf787f9a78df782f9c9662e9540",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 65,
+    "stage06_unique_molecule_count": 40
+  },
+  {
+    "canonical_reference_scope": "unknown",
+    "canonical_unit_text": "%",
+    "endpoint": "bioavailability_unspecified_reference",
+    "evidence_sha256": "4a8934f2a2acce431fd5c55279801ed8635ff42439c2a5e5b8c41ab1d35f9993",
+    "pair_bucket_key": "[\"oral_exposure\",\"bioavailability_unspecified_reference\",\"%\",\"human\",\"plasma\",\"unknown\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 84,
+    "stage06_unique_molecule_count": 39
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "26b9ccca7dfe9dfee507697d598a1f4332888df2da50e543f3b4b00994d2058b",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"%\",\"__unknown__\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 67,
+    "stage06_unique_molecule_count": 44
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "1c98a998c7c40c30784cd0b2874255dddf29dda8562099ed1807656c9045a167",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 173,
+    "stage06_unique_molecule_count": 104
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "8db3ab29a92d58488d178f1eeb25366864fadab55510fc282887b42548047eec",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"%\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 122,
+    "stage06_unique_molecule_count": 69
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "4d2701e8b8a96ee40b87016a6e668a6edec1d6270bc9acf6b297d250b00bcbff",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"log10(fold)\",\"__unknown__\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 29,
+    "stage06_unique_molecule_count": 23
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "aa1ad55e95fb39b8b5ef774a60353e07b95c620160ad10d747ee3d053be89c9e",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"log10(fold)\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 74,
+    "stage06_unique_molecule_count": 51
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "e0f5adef38aae99b981367d97a2bc6ac08e06506a5db9ce1efe0f9afd6f9536a",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"log10(fold)\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 51,
+    "stage06_unique_molecule_count": 40
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(ng/mL)",
+    "endpoint": "maximum_concentration",
+    "evidence_sha256": "3149a04b53b4409dd4909093f9ad11814c40331940795d5318bbf44a4b9eee62",
+    "pair_bucket_key": "[\"oral_exposure\",\"maximum_concentration\",\"log10(ng/mL)\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 42,
+    "stage06_unique_molecule_count": 37
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "other_oral_exposure_unspecified",
+    "evidence_sha256": "ac170a07782a36c2f3ca6545d801f5c5b6c4e04066fd503e57db38fc29bd8547",
+    "pair_bucket_key": "[\"oral_exposure\",\"other_oral_exposure_unspecified\",\"%\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 71,
+    "stage06_unique_molecule_count": 38
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "%",
+    "endpoint": "other_oral_exposure_unspecified",
+    "evidence_sha256": "a17d9178054d7ff2c6758d7636d946547fa6b59666fb125f42565642e43d2b0e",
+    "pair_bucket_key": "[\"oral_exposure\",\"other_oral_exposure_unspecified\",\"%\",\"human\",\"plasma\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 67,
+    "stage06_unique_molecule_count": 36
+  },
+  {
+    "canonical_reference_scope": "comparator_relative",
+    "canonical_unit_text": "log10(fold)",
+    "endpoint": "other_oral_exposure_unspecified",
+    "evidence_sha256": "7276d8da2c9ec42e36c45937dbebba9f6001fa5027b7c176a3d1295f64b45ded",
+    "pair_bucket_key": "[\"oral_exposure\",\"other_oral_exposure_unspecified\",\"log10(fold)\",\"human\",\"__unknown__\",\"comparator_relative\",\"__unknown__\"]",
+    "source_id": "oral_exposure",
+    "stage05_record_count": 40,
+    "stage06_unique_molecule_count": 29
+  }
+]

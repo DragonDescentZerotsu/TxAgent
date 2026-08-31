@@ -27,11 +27,13 @@ DEFAULT_ROOT = Path(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--records", type=Path, default=DEFAULT_ROOT / "03_records/records.parquet")
+    parser.add_argument(
+        "--records", type=Path, default=DEFAULT_ROOT / "03_pair_buckets/records.parquet"
+    )
     parser.add_argument(
         "--pair-buckets",
         type=Path,
-        default=DEFAULT_ROOT / "04_pair_buckets/pair_bucket_records.parquet",
+        default=DEFAULT_ROOT / "03_pair_buckets/pair_bucket_records.parquet",
     )
     parser.add_argument(
         "--output-dir",
@@ -77,7 +79,7 @@ def main(argv: list[str] | None = None) -> int:
     histograms: list[np.ndarray] = []
     for key, group in numeric.groupby("pair_bucket_key", sort=True):
         values = group["finite_scalar_value"].to_numpy(dtype=float)
-        transformed = np.log10(values) if np.all(values > 0) else values.copy()
+        transformed = values.copy()
         order = np.argsort(transformed)
         transformed = transformed[order]
         span = float(transformed[-1] - transformed[0]) if len(values) > 1 else 0.0
@@ -132,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
                 "canonical_unit": first["canonical_unit_text"],
                 "record_count": len(values),
                 "distinct_value_count": len(np.unique(values)),
-                "normalization": "log10_then_minmax" if np.all(values > 0) else "raw_then_minmax",
+                "normalization": "persisted_assay_transfer_geometry_then_minmax",
                 "minimum_value": float(np.min(values)),
                 "maximum_value": float(np.max(values)),
                 "largest_supported_gap_fraction": gap_fraction,
@@ -172,8 +174,12 @@ def main(argv: list[str] | None = None) -> int:
     summary_path = args.output_dir / "summary.json"
     table.to_csv(csv_path, index=False)
 
-    gap_panel = table["largest_supported_gap_fraction"].fillna(0).to_numpy()[:, None]
-    unit_span_panel = table["input_unit_median_span_decades"].fillna(0).to_numpy()[:, None]
+    gap_panel = table["largest_supported_gap_fraction"].fillna(0).to_numpy(
+        dtype=float
+    )[:, None]
+    unit_span_panel = table["input_unit_median_span_decades"].fillna(0).to_numpy(
+        dtype=float
+    )[:, None]
     unit_panel = np.log10(1 + table["input_unit_count"].to_numpy())[:, None]
     size_panel = np.log10(table["record_count"].to_numpy())[:, None]
     figure, axes = plt.subplots(
@@ -190,8 +196,7 @@ def main(argv: list[str] | None = None) -> int:
         extent=extent,
     )
     axes[0].set_xlabel(
-        "Within-bucket position: log10(value) when all values > 0, "
-        "raw otherwise; then min-max to [0, 1]"
+        "Within-bucket position: persisted assay-transfer geometry, then min-max to [0, 1]"
     )
     axes[0].set_ylabel("Bucket row (sorted by largest supported gap; see CSV)")
     for axis, panel, title, cmap in (
@@ -200,6 +205,7 @@ def main(argv: list[str] | None = None) -> int:
         (axes[3], unit_panel, "log10(1 +\ninput units)", "viridis"),
         (axes[4], size_panel, "log10(n)", "viridis"),
     ):
+        panel = np.asarray(panel, dtype=float)
         axis.imshow(
             panel,
             aspect="auto",
@@ -212,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
         axis.set_yticks([])
     kind_counts = keyed.groupby("measurement_kind")["pair_bucket_key"].nunique().to_dict()
     figure.suptitle(
-        "BBB v2 numeric pair-bucket distributions\n"
+        "BBB active numeric pair-bucket distributions\n"
         f"All {len(table):,} continuous buckets with finite values are shown; "
         "singletons/constants appear at x=0.5",
         fontsize=18,

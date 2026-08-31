@@ -11,6 +11,11 @@ or frozen auxiliary reconciliation.
 - Efflux keeps `assay_system` as the cleaned source field and derives both contexts independently; transporter
   and evidence type also receive explicit canonical fields before pair bucketing.
 - Influx has no invented measurement or unit source value. Its transport mechanism is canonicalized directly.
+- `endpoint_concepts/*.json` exhaustively maps every frozen raw/canonical endpoint pair to a hand-reviewed,
+  source-specific concept. Raw endpoints and the approved fine-grained canonical endpoints remain unchanged;
+  Stage 3 uses the reviewed concept only in the endpoint slot of the pair-bucket key. This both joins exact
+  aliases and separates under-specified legacy labels when the raw endpoint retains direction, protocol, or
+  observed-versus-predicted meaning.
 - Binary categorical scales are complete with both declared levels. Ordinal scales require at least three.
 - `measurement_semantics.v1.json` is the only BBB-specific registry that can
   approve an endpoint's quantity kind, numeric domain, compatible unit family,

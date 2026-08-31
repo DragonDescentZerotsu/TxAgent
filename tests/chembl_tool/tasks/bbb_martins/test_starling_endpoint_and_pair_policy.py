@@ -1,6 +1,11 @@
 import json
 
+import pandas as pd
+
 from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
+from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_sidecar import (
+    build_sidecar,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
     context_fields,
 )
@@ -9,11 +14,49 @@ from tools.chembl_tool.tasks.bbb_martins.starling_normalization_sources import (
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
+    BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_source_column_contracts import (
     normalized_column_contract,
 )
+
+
+def test_v7_pair_bucket_uses_reviewed_endpoint_concept(tmp_path):
+    records = [
+        {
+            "canonical_record_id": f"record-{number}",
+            "source_id": "direct_bbb",
+            "canonical_endpoint_name": endpoint,
+            "canonical_endpoint_concept": "log_ps",
+            "canonical_unit_text": "log10(cm/s)",
+            "canonicalization_status": "valid",
+            "retrieval_eligible": True,
+            "canonical_smiles": smiles,
+            "canonical_measurement_scale_id": None,
+            "canonical_assay_context": "passive permeability",
+            "canonical_species_context": "rat",
+            "canonical_reference_scope": "absolute",
+            "canonical_reference_basis": "not_applicable",
+            "measurement_kind": "continuous",
+            "finite_scalar_value": float(number),
+        }
+        for number, (endpoint, smiles) in enumerate(
+            (("log_ps", "CCO"), ("logps", "CCN")), start=1
+        )
+    ]
+    records_path = tmp_path / "records.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+
+    metadata = build_sidecar(records_path=records_path, out_dir=tmp_path / "pairs")
+    sidecar = pd.read_parquet(tmp_path / "pairs/pair_bucket_records.parquet")
+
+    assert metadata["contract_version"] == BBB_MARTINS_V7_PAIR_BUCKET_VERSION
+    assert metadata["bucket_endpoint_field_by_source"]["direct_bbb"] == (
+        "canonical_endpoint_concept"
+    )
+    assert sidecar["pair_bucket_key"].nunique() == 1
+    assert json.loads(sidecar.iloc[0]["pair_bucket_key"])[1] == "log_ps"
 
 
 def test_source_profiles_promote_measurement_endpoints_and_retain_policy_context(tmp_path):
@@ -92,7 +135,7 @@ def test_unresolved_unit_is_retained_in_sidecar_but_not_bucketed():
     rows, _ = materialize_pair_buckets(records, source_required_fields=SOURCE_PAIR_FIELDS)
     assert len(rows) == 1
     assert rows[0]["bucket_eligible"] is False
-    assert rows[0]["pair_bucket_key"] is None
+    assert rows[0]["pair_bucket_key"] is not None
     assert rows[0]["bucket_exclusion_reason"] == "missing_canonical_unit"
 
 
@@ -115,8 +158,8 @@ def test_unresolved_endpoint_sentinel_is_not_bucketed():
     )
 
     assert rows[0]["bucket_eligible"] is False
-    assert rows[0]["pair_bucket_key"] is None
-    assert rows[0]["bucket_exclusion_reason"] == "missing_canonical_endpoint"
+    assert rows[0]["pair_bucket_key"] is not None
+    assert rows[0]["bucket_exclusion_reason"] == "unresolved_endpoint"
 
 
 def test_source_alias_provenance_is_fail_closed_per_source():

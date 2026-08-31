@@ -15,7 +15,7 @@ from .cleaning import file_sha256, stable_id
 from ..measurement_routing import MEASUREMENT_ROUTING_VERSION
 
 
-RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v2"
+RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v3"
 EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v2"
 _LEGACY_EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"
 DEFAULT_EXACT_UNIT_MAPPING = (
@@ -131,11 +131,21 @@ def _apply_unit_rule(
     measurement: Any,
     unit: Any,
     unit_mapping: dict[tuple[str, str, str], dict[str, Any]],
+    unit_is_canonical: bool = False,
 ) -> None:
     endpoint = str(record.get("canonical_endpoint_name") or "")
     input_unit = str(unit or "").strip()
     key = (task, endpoint, input_unit)
-    rule = unit_mapping.get(key)
+    rule = (
+        {
+            "action": "map",
+            "canonical_unit": input_unit,
+            "scale": "1",
+            "domain": "any",
+        }
+        if unit_is_canonical
+        else unit_mapping.get(key)
+    )
     if rule is None:
         raise ValueError(f"exact unit mapping has no rule for {key}")
     record.update(
@@ -151,21 +161,24 @@ def _apply_unit_rule(
         }
     )
     if rule["action"] == "exclude":
-        record["measurement_unit_mapping_status"] = "excluded"
-        return
+        raise ValueError(
+            f"exact unit rule still excludes a resolved scalar for {key}; "
+            "replace it with a reviewed map or preserve-exact rule"
+        )
     scalar = _decimal(measurement) * Decimal(str(rule["scale"]))
     domain = rule.get("domain", "any")
-    if (domain == "positive" and scalar <= 0) or (
+    outside_domain = (domain == "positive" and scalar <= 0) or (
         domain == "nonnegative" and scalar < 0
-    ):
-        record["measurement_unit_mapping_status"] = "domain_excluded"
-        return
+    )
     scalar_float = float(scalar)
     if not math.isfinite(scalar_float):
         raise ValueError(f"resolved measurement overflows float for {key}")
     record.update(
         {
             "measurement_unit_mapping_status": "mapped",
+            "measurement_numeric_domain_status": (
+                "outside_declared_domain" if outside_domain else "within_declared_domain"
+            ),
             "resolved_measurement_text": _decimal_text(scalar),
             "resolved_unit_text": str(rule["canonical_unit"]),
             "resolved_scalar_value": scalar_float,
@@ -180,6 +193,7 @@ def apply_measurement_resolution(
     task: str = "",
     unit_mapping_path: str | Path = DEFAULT_EXACT_UNIT_MAPPING,
     allow_partial: bool = False,
+    ignored_record_ids: set[str] | None = None,
 ) -> dict[str, Any]:
     """Join resolved quantities, explode them, and exact-map their units."""
     mapping = load_measurement_resolution(mapping_path) if mapping_path else {}
@@ -204,8 +218,14 @@ def apply_measurement_resolution(
             status = "ok"
             entries = [
                 {
-                    "measurement": source_record.get("measurement_text"),
-                    "unit": source_record.get("unit_text"),
+                    "measurement": source_record.get(
+                        "measurement_resolution_exact_measurement",
+                        source_record.get("measurement_text"),
+                    ),
+                    "unit": source_record.get(
+                        "measurement_resolution_exact_unit",
+                        source_record.get("unit_text"),
+                    ),
                 }
             ]
         elif route == "extract":
@@ -229,7 +249,19 @@ def apply_measurement_resolution(
                 str(source_record.get("canonical_endpoint_name") or ""),
                 str(entry.get("unit") or "").strip(),
             )
-            rule = unit_mapping.get(key)
+            rule = (
+                {
+                    "action": "map",
+                    "canonical_unit": key[2],
+                    "scale": "1",
+                    "domain": "any",
+                }
+                if route == "accept"
+                and source_record.get(
+                    "measurement_resolution_exact_unit_is_canonical"
+                )
+                else unit_mapping.get(key)
+            )
             if rule is None:
                 raise ValueError(f"exact unit mapping has no rule for {key}")
             if rule["action"] == "map":
@@ -253,8 +285,14 @@ def apply_measurement_resolution(
             origin = "source_exact"
             entries = [
                 {
-                    "measurement": source_record.get("measurement_text"),
-                    "unit": source_record.get("unit_text"),
+                    "measurement": source_record.get(
+                        "measurement_resolution_exact_measurement",
+                        source_record.get("measurement_text"),
+                    ),
+                    "unit": source_record.get(
+                        "measurement_resolution_exact_unit",
+                        source_record.get("unit_text"),
+                    ),
                 }
             ]
             resolution_json = None
@@ -310,12 +348,26 @@ def apply_measurement_resolution(
                     measurement=entry["measurement"],
                     unit=entry["unit"],
                     unit_mapping=unit_mapping,
+                    unit_is_canonical=(
+                        route == "accept"
+                        and bool(
+                            source_record.get(
+                                "measurement_resolution_exact_unit_is_canonical"
+                            )
+                        )
+                    ),
                 )
                 unit_counts[str(record["measurement_unit_mapping_status"])] += 1
             records.append(record)
         counts[status] += 1
         if status == "ok":
             origin_counts[origin] += 1
+    ignored_mapping_rows = sorted(set(mapping) & set(ignored_record_ids or ()))
+    for record_id in ignored_mapping_rows:
+        mapping.pop(record_id)
+    ignored_out_of_scope_mapping_rows = len(mapping) if allow_partial else 0
+    if allow_partial:
+        mapping.clear()
     if mapping:
         first = next(iter(mapping))
         raise ValueError(
@@ -331,6 +383,8 @@ def apply_measurement_resolution(
             file_sha256(Path(unit_mapping_path)) if mapping_path else None
         ),
         "mapping_rows": mapping_rows,
+        "ignored_structure_rejection_rows": len(ignored_mapping_rows),
+        "ignored_out_of_scope_mapping_rows": ignored_out_of_scope_mapping_rows,
         "input_rows": sum(counts.values()),
         "output_rows": len(records),
         "status_counts": dict(sorted(counts.items())),

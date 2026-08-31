@@ -57,7 +57,7 @@ from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
 )
 
 
-PAIR_BUCKET_TRANSFER_POLICY_VERSION = "skin_reaction_pair_bucket_transfer_policy.v2"
+PAIR_BUCKET_TRANSFER_POLICY_VERSION = "skin_reaction_pair_bucket_transfer_policy.v3"
 
 # Every column below is a persisted column of ``03_records/records.parquet`` and
 # a declared source column of its source in ``starling_source_column_contracts``.
@@ -99,7 +99,7 @@ TRANSFER_POLICY_PROFILE = TransferPolicyProfile(
     version=PAIR_BUCKET_TRANSFER_POLICY_VERSION,
     source_candidate_fields=SOURCE_CANDIDATE_FIELDS,
     minimum_distinct_levels=MINIMUM_DISTINCT_MEASUREMENT_LEVELS,
-    minimum_distinct_levels_by_scale={"single_subject_logit": 2},
+    minimum_distinct_levels_by_scale={"single_subject_fraction.v1": 2},
 )
 
 

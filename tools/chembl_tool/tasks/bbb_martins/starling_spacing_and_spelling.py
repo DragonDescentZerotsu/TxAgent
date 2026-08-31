@@ -3,9 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import cache
+from pathlib import Path
 from typing import Any, Iterable
 
-from tools.chembl_tool.common.starling.normalization.cleaning import endpoint_inventory_hash
+from tools.chembl_tool.common.starling.endpoint_concepts import (
+    load_endpoint_concept_maps,
+)
+from tools.chembl_tool.common.starling.normalization.cleaning import (
+    clean_text,
+    endpoint_inventory_hash,
+)
 from tools.chembl_tool.common.starling.normalization.contracts import FamilyAssignment
 from tools.chembl_tool.common.starling.normalization.measurements import EndpointOrthography
 from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
@@ -15,6 +23,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import 
 
 
 SPACING_AND_SPELLING_VERSION = ENDPOINT_NORMALIZATION_VERSION
+ENDPOINT_CONCEPT_VERSION = "bbb_martins_endpoint_concepts.v1"
 
 EXPECTED_ENDPOINT_INVENTORIES = {
     "direct_bbb": {
@@ -34,6 +43,12 @@ EXPECTED_ENDPOINT_INVENTORIES = {
         "sha256": "8db7a82f95e3c1da2dc1d1841994879f114f637742a2d40d67c740c61875cfeb",
     },
 }
+ENDPOINT_CONCEPT_PATHS = tuple(
+    Path(__file__).resolve().parent
+    / "data_processing/canonicalization_v7/endpoint_concepts"
+    / f"{source_id}.json"
+    for source_id in sorted(EXPECTED_ENDPOINT_INVENTORIES)
+)
 
 _DEFAULT_ENDPOINT_NORMALIZER = EndpointNormalizer()
 
@@ -42,6 +57,27 @@ def spacing_and_spelling_decision(
     source_id: str, endpoint_name: str
 ) -> EndpointOrthography:
     return _DEFAULT_ENDPOINT_NORMALIZER.decision(source_id, endpoint_name)
+
+
+@cache
+def _endpoint_concept_maps() -> dict[str, dict[tuple[str, str], str]]:
+    return load_endpoint_concept_maps(
+        ENDPOINT_CONCEPT_PATHS,
+        version=ENDPOINT_CONCEPT_VERSION,
+        expected_inventories=EXPECTED_ENDPOINT_INVENTORIES,
+    )
+
+
+def endpoint_concept(
+    source_id: str, endpoint_name: str, canonical_endpoint_name: str
+) -> str:
+    key = (clean_text(endpoint_name) or "", str(canonical_endpoint_name or ""))
+    try:
+        return _endpoint_concept_maps()[source_id][key]
+    except KeyError as error:
+        raise ValueError(
+            f"unreviewed endpoint concept: {source_id}/{key[0]}/{key[1]}"
+        ) from error
 
 
 def family_assignment(
@@ -107,8 +143,11 @@ def validate_endpoint_inventory(source_id: str, endpoint_names: Iterable[str]) -
 
 
 __all__ = [
+    "ENDPOINT_CONCEPT_PATHS",
+    "ENDPOINT_CONCEPT_VERSION",
     "EXPECTED_ENDPOINT_INVENTORIES",
     "SPACING_AND_SPELLING_VERSION",
+    "endpoint_concept",
     "family_assignment",
     "spacing_and_spelling_decision",
     "validate_endpoint_inventory",

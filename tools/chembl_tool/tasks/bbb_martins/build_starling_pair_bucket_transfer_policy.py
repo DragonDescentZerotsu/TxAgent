@@ -31,6 +31,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_pair_bucket_transfer_policy im
 from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
     BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
+    ENDPOINT_FIELD_BY_SOURCE,
     SOURCE_PAIR_FIELDS,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
@@ -73,10 +74,7 @@ def build_pair_bucket_transfer_policy(
                 source: item.additional_dimensions
                 for source, item in RECORD_CONTRACT.pair_buckets.items()
             },
-            endpoint_field_by_source={
-                source: "canonical_endpoint_name"
-                for source in RECORD_CONTRACT.pair_buckets
-            },
+            endpoint_field_by_source=ENDPOINT_FIELD_BY_SOURCE,
         )
         return _build_distance_calibration(
             spec=spec,
@@ -102,22 +100,22 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--records",
-        default=str(DEFAULT_NORMALIZED_DIR / "06_collapsed_records/records.parquet"),
+        default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets/records.parquet"),
     )
     parser.add_argument(
         "--pair-bucket-records",
-        default=str(DEFAULT_NORMALIZED_DIR / "04_pair_buckets" / PAIR_BUCKET_RECORDS_FILENAME),
+        default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets" / PAIR_BUCKET_RECORDS_FILENAME),
     )
     parser.add_argument(
         "--pair-bucket-metadata",
-        default=str(DEFAULT_NORMALIZED_DIR / "04_pair_buckets" / PAIR_BUCKET_METADATA_FILENAME),
+        default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets" / PAIR_BUCKET_METADATA_FILENAME),
     )
     parser.add_argument(
         "--auxiliary-manifest",
         default=str(DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"),
     )
     parser.add_argument(
-        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "07_distance_calibration")
+        "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets")
     )
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args(argv)

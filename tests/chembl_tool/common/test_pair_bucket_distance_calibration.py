@@ -11,10 +11,7 @@ from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration im
     CATEGORY_CDF_VERSION,
     LEGACY_CALIBRATION_VERSION,
     _build_calibration_entries,
-    _bias_corrected_cramers_v_squared,
     _category_gate,
-    _score_categorical_candidate,
-    _select_categorical_variance_candidate,
     _value_cdf,
     build_pair_bucket_distance_calibration,
     calibration_standard_deviation,
@@ -29,9 +26,6 @@ from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_transfer_pol
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
     RECORD_CONTRACT as BBB_RECORD_CONTRACT,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
-    RECORD_CONTRACT as BIO_RECORD_CONTRACT,
 )
 from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     BUILD_SPEC as SKIN_BUILD_SPEC,
@@ -59,48 +53,17 @@ def test_binary_gate_requires_both_declared_levels() -> None:
         record_contract=RECORD_CONTRACT,
         source_id="direct_skin_reaction",
         kind="binary",
-        scale_id="single_subject_logit",
+        scale_id="single_subject_fraction.v1",
     )
     incomplete = _category_gate(
         _binary_group(include_response=False),
         record_contract=RECORD_CONTRACT,
         source_id="direct_skin_reaction",
         kind="binary",
-        scale_id="single_subject_logit",
+        scale_id="single_subject_fraction.v1",
     )
     assert complete["valid"]
     assert incomplete == {"valid": False, "reason": "incomplete_binary_domain"}
-
-
-def test_categorical_residual_gate_uses_bias_corrected_cramers_v_squared() -> None:
-    group = _binary_group()
-    group["assay_batch"] = ["batch_0"] * 12 + ["batch_1"] * 13
-    score = _score_categorical_candidate(group, "assay_batch")
-    assert score is not None
-    assert score["cramers_v_squared"] >= 0.20
-    assert score["variance_gate_flagged"]
-
-    independent = pd.DataFrame([[10.0, 10.0], [10.0, 10.0]])
-    assert _bias_corrected_cramers_v_squared(independent.to_numpy()) == 0.0
-
-
-def test_categorical_residual_gate_excludes_the_selected_scale_inputs() -> None:
-    group = _binary_group()
-    group["substrate_status"] = ["not_substrate"] * 12 + ["substrate"] * 13
-    group["transporter_or_enzyme"] = ["ABCB1"] * 25
-    group["intestinal_site"] = None
-    group["qualifying_conditions"] = None
-    result = _select_categorical_variance_candidate(
-        group,
-        record_contract=BIO_RECORD_CONTRACT,
-        source_id="fg",
-        scale_id="fg_substrate_status_binary.v1",
-    )
-    assert result["excluded_controlled_input_fields"] == [
-        "substrate_status",
-        "transporter_or_enzyme",
-    ]
-    assert result["candidate_column"] == "__none__"
 
 
 def test_distance_calibration_worker_count_preserves_exact_entries() -> None:
@@ -120,6 +83,7 @@ def test_distance_calibration_worker_count_preserves_exact_entries() -> None:
                     "canonical_record_id": (
                         f"record-{bucket_index:03d}-{record_index:03d}"
                     ),
+                    "canonical_smiles": f"C{bucket_index}N{record_index}",
                     "bbb_transport_label": None,
                     "qualifying_conditions": None,
                 }
@@ -142,7 +106,7 @@ def test_distance_calibration_worker_count_preserves_exact_entries() -> None:
     assert parallel == serial
 
 
-def test_postcollapse_calibration_uses_twenty_molecules_and_no_variance_probe() -> None:
+def test_calibration_uses_twenty_records_and_sixteen_molecules() -> None:
     frame = pd.DataFrame(
         {
             "pair_bucket_key": "collapsed-bucket",
@@ -153,7 +117,7 @@ def test_postcollapse_calibration_uses_twenty_molecules_and_no_variance_probe() 
             "canonical_category_rank": None,
             "finite_scalar_value": [float(index + 1) for index in range(20)],
             "canonical_record_id": [f"record-{index:03d}" for index in range(20)],
-            "collapsed_record_id": [f"collapsed-{index:03d}" for index in range(20)],
+            "canonical_smiles": [f"C{index}" for index in range(20)],
         }
     )
 
@@ -167,8 +131,8 @@ def test_postcollapse_calibration_uses_twenty_molecules_and_no_variance_probe() 
 
     assert entry["minimum_support_met"] is True
     assert entry["calibration_valid"] is True
-    assert entry["residual_heterogeneity_gate"]["evaluated"] is False
-    assert entry["residual_heterogeneity_gate"]["candidate_column"] == "__none__"
+    assert entry["distinct_molecule_count"] == 20
+    assert "residual_heterogeneity_gate" not in entry
 
 
 def test_postcollapse_calibration_includes_eligible_direct_residuals(tmp_path) -> None:
@@ -256,6 +220,7 @@ def _continuous_entry(values: list[float], *, key: str = "continuous") -> dict:
             "canonical_category_rank": None,
             "finite_scalar_value": values,
             "canonical_record_id": [f"record-{index:03d}" for index in range(len(values))],
+            "canonical_smiles": [f"C{index}" for index in range(len(values))],
             "bbb_transport_label": None,
             "qualifying_conditions": None,
         }
@@ -292,6 +257,7 @@ def test_multi_source_lineage_uses_pair_bucket_scientific_source():
             "canonical_category_rank": None,
             "finite_scalar_value": [float(index + 1) for index in range(25)],
             "canonical_record_id": [f"record-{index:03d}" for index in range(25)],
+            "canonical_smiles": [f"C{index}" for index in range(25)],
             "bbb_transport_label": None,
             "qualifying_conditions": None,
         }
@@ -324,6 +290,7 @@ def _ordinal_entry(*, key: str = "ordinal") -> dict:
             "canonical_record_id": [
                 f"ordinal-{index:03d}" for index in range(len(ranks))
             ],
+            "canonical_smiles": [f"C{index}" for index in range(len(ranks))],
             "dose_or_concentration": None,
             "extra_details": None,
         }
@@ -370,7 +337,7 @@ def test_v2_persists_first_class_sd_and_exact_value_cdf_only() -> None:
     )
 
 
-def test_residual_heterogeneity_is_audit_only_not_bucket_rejection() -> None:
+def test_context_heterogeneity_is_not_computed_or_used() -> None:
     values = [1.0] * 13 + [100.0] * 12
     frame = pd.DataFrame(
         {
@@ -382,6 +349,7 @@ def test_residual_heterogeneity_is_audit_only_not_bucket_rejection() -> None:
             "canonical_category_rank": None,
             "finite_scalar_value": values,
             "canonical_record_id": [f"record-{index:03d}" for index in range(25)],
+            "canonical_smiles": [f"C{index}" for index in range(25)],
             "bbb_transport_label": None,
             "qualifying_conditions": ["low"] * 13 + ["high"] * 12,
         }
@@ -394,7 +362,7 @@ def test_residual_heterogeneity_is_audit_only_not_bucket_rejection() -> None:
         workers=1,
     )["heterogeneous"]
 
-    assert entry["residual_heterogeneity_gate"]["variance_gate_flagged"] is True
+    assert "residual_heterogeneity_gate" not in entry
     assert entry["calibration_valid"] is True
     assert entry["calibration_reason"] == "valid"
     assert entry["assay_transfer_bucket_eligible"] is True
@@ -565,10 +533,13 @@ def test_invalid_or_categorical_buckets_do_not_publish_a_value_cdf() -> None:
     categorical["pair_bucket_key"] = "binary"
     categorical["source_id"] = "direct_skin_reaction"
     categorical["measurement_kind"] = "binary"
-    categorical["canonical_measurement_scale_id"] = "single_subject_logit"
+    categorical["canonical_measurement_scale_id"] = "single_subject_fraction.v1"
     categorical["finite_scalar_value"] = None
     categorical["canonical_record_id"] = [
         f"binary-{index:03d}" for index in range(len(categorical))
+    ]
+    categorical["canonical_smiles"] = [
+        f"C{index}" for index in range(len(categorical))
     ]
     categorical["dose_or_concentration"] = None
     categorical["extra_details"] = None

@@ -235,6 +235,19 @@ def test_v2_axis_policy_applies_across_pair_bucket_contexts():
     )
 
 
+@pytest.mark.parametrize("unit", ["log min^-1", "log enhancement ratio", "pKi"])
+def test_log10_policy_never_transforms_an_already_logged_unit(unit: str) -> None:
+    working, projected = _rows(value=1.5, unit=unit)
+
+    with pytest.raises(ValueError, match="would double-transform"):
+        finalize_assay_transfer_measurement(
+            working,
+            projected,
+            record_contract=_contract(),
+            policy=_axis_policy(projected, "log10"),
+        )
+
+
 def test_v2_axis_policy_fails_closed_when_axis_is_unreviewed():
     working, projected = _rows(value=1.0, unit="ng/mL")
     policy = _axis_policy(projected, "log10")
@@ -247,6 +260,26 @@ def test_v2_axis_policy_fails_closed_when_axis_is_unreviewed():
             record_contract=_contract(),
             policy=policy,
         )
+
+
+def test_raw_exact_measurement_text_is_rendered_from_the_final_scalar():
+    working, projected = _rows(value=1 / 77, unit="fraction")
+    working["measurement_resolution_status"] = "ok"
+    projected["measurement_resolution_status"] = "ok"
+    projected["canonical_measurement_text"] = "0.012987"
+    key = json.dumps(
+        ["source", "endpoint", "fraction", "context"], separators=(",", ":")
+    )
+
+    _, persisted = finalize_assay_transfer_measurement(
+        working,
+        projected,
+        record_contract=_contract(),
+        policy=_policy(key),
+    )
+
+    assert persisted["canonical_measurement_text"] == "0.012987012987"
+    assert validate_final_assay_transfer_measurements([persisted]) == []
 
 
 def test_v2_policy_loader_requires_exact_axis_decisions(tmp_path: Path):
@@ -268,6 +301,86 @@ def test_v2_policy_loader_requires_exact_axis_decisions(tmp_path: Path):
         load_measurement_policy(path)
 
 
+@pytest.mark.parametrize(
+    "fallback_control",
+    ["unreviewed_axis_action", "nonpositive_log_action"],
+)
+def test_v2_policy_loader_rejects_fallback_controls(
+    tmp_path: Path, fallback_control: str
+) -> None:
+    projected = _rows(value=1.0, unit="ng/mL")[1]
+    payload = _axis_policy(projected, "log10")
+    payload.update(
+        {
+            "contract_version": "assay_transfer_canonical_measurement.v2",
+            "axis_key_fields": [
+                "source_id",
+                "canonical_endpoint_name",
+                "assay_transfer_pretransform_unit_text",
+                "canonical_reference_scope",
+            ],
+            fallback_control: "raw_ineligible",
+        }
+    )
+    path = tmp_path / "policy.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="forbids fallback controls"):
+        load_measurement_policy(path)
+
+
+def test_policy_loader_keeps_normality_gate_as_an_advisory_flag(
+    tmp_path: Path,
+) -> None:
+    key = json.dumps(
+        ["source", "endpoint", "ng/mL", "absolute"], separators=(",", ":")
+    )
+    path = tmp_path / "policy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "contract_version": "assay_transfer_canonical_measurement.v2",
+                "policy_version": "test.v2",
+                "bucket_decisions": {},
+                "axis_decisions": {
+                    key: {
+                        "transform": "log10",
+                        "statistical_gate_id": "raw_normality_preservation.v2",
+                        "normality_gate_flag": "raw",
+                        "raw_normality_p_value": 0.2,
+                        "raw_normality_statistic": 2.0,
+                        "log10_normality_statistic": 4.0,
+                    }
+                },
+                "axis_key_fields": [
+                    "source_id",
+                    "canonical_endpoint_name",
+                    "assay_transfer_pretransform_unit_text",
+                    "canonical_reference_scope",
+                ],
+                "axis_decision_required_sources": ["source"],
+                "raw_normality_gate": {
+                    "gate_id": "raw_normality_preservation.v2",
+                    "alpha": 0.05,
+                    "evaluated_axes": 1,
+                    "advisory_only": True,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    policy = load_measurement_policy(path)
+    assert policy["axis_decisions"][key]["transform"] == "log10"
+    assert policy["axis_decisions"][key]["normality_gate_flag"] == "raw"
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    payload["axis_decisions"][key]["normality_gate_flag"] = "log10"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="invalid raw normality gate flags"):
+        load_measurement_policy(path)
+
+
 def test_nonpositive_log_axis_is_retained_but_marked_for_stage04_exclusion():
     working, projected = _rows(value=0.0, unit="ng/mL")
     policy = _axis_policy(projected, "log10")
@@ -285,6 +398,19 @@ def test_nonpositive_log_axis_is_retained_but_marked_for_stage04_exclusion():
     assert persisted["finite_scalar_value"] == 0.0
     assert persisted["canonical_unit_text"] == "ng/mL"
     assert persisted["assay_transfer_transform_id"] == "raw.v1"
+
+
+def test_new_nonpositive_log_row_fails_without_a_row_id_review():
+    working, projected = _rows(value=0.0, unit="ng/mL")
+    policy = _axis_policy(projected, "log10")
+
+    with pytest.raises(ValueError, match="log10 policy targets an invalid record"):
+        finalize_assay_transfer_measurement(
+            working,
+            projected,
+            record_contract=_contract(),
+            policy=policy,
+        )
 
 
 def test_reviewed_log_transform_does_not_touch_invalid_rows():
@@ -323,7 +449,7 @@ def test_raw_non_scalar_numeric_text_does_not_become_a_scalar():
         "measurement_kind": "non_scalar",
         "context": "context",
     }
-    _, persisted = finalize_assay_transfer_measurement(
+    updated, persisted = finalize_assay_transfer_measurement(
         working,
         projected,
         record_contract=_contract(),
@@ -331,6 +457,8 @@ def test_raw_non_scalar_numeric_text_does_not_become_a_scalar():
     )
 
     assert persisted["finite_scalar_value"] is None
+    assert updated["canonical_measurement"] == "1.5 times higher"
+    assert updated["canonical_unit"] == "ratio"
     assert validate_final_assay_transfer_measurements([persisted]) == []
 
 
@@ -374,8 +502,34 @@ def test_stage04_retains_unit_defect_as_assay_transfer_ineligible():
     assert len(rows) == 1
     assert rows[0]["assay_transfer_eligible"] is False
     assert rows[0]["assay_transfer_ineligibility_reason"] == "probable_unit_scale_defect"
-    assert rows[0]["pair_bucket_key"] is None
+    assert rows[0]["pair_bucket_key"] is not None
     assert audit["stats"]["ineligible_records"] == 1
+
+
+@pytest.mark.parametrize(
+    "reason",
+    ["unreviewed_assay_transfer_axis", "outside_reviewed_log10_domain"],
+)
+def test_stage04_rejects_forbidden_fallback_status(reason: str):
+    records = [
+        {
+            "canonical_record_id": "record-1",
+            "source_id": "source",
+            "canonical_endpoint_name": "endpoint",
+            "canonical_unit_text": "cm/s",
+            "canonicalization_status": "valid",
+            "molecule_id": "molecule-1",
+            "context": "context",
+            "measurement_kind": "continuous",
+            "assay_transfer_ineligibility_reason": reason,
+        }
+    ]
+
+    with pytest.raises(ValueError, match="forbidden fallback status"):
+        materialize_pair_buckets(
+            records,
+            source_required_fields={"source": ("context",)},
+        )
 
 
 def test_retrieval_dedup_uses_the_frozen_prebase_pair():

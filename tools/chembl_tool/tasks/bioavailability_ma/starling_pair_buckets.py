@@ -4,7 +4,12 @@ from __future__ import annotations
 
 
 BIOAVAILABILITY_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v12"
-BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v17"
+BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION = "bioavailability_ma_pair_buckets.v19"
+
+ENDPOINT_FIELD_BY_SOURCE = {
+    source_id: "canonical_endpoint_concept"
+    for source_id in ("hf_bioavailability", "oral_exposure", "fa", "fg", "fh")
+}
 
 SOURCE_PAIR_FIELDS = {
     "hf_bioavailability": (
@@ -25,5 +30,6 @@ SOURCE_PAIR_FIELDS = {
 __all__ = [
     "BIOAVAILABILITY_PAIR_BUCKET_VERSION",
     "BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION",
+    "ENDPOINT_FIELD_BY_SOURCE",
     "SOURCE_PAIR_FIELDS",
 ]

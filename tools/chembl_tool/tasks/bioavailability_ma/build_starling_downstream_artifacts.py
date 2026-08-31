@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any
 
@@ -10,8 +9,8 @@ from tools.chembl_tool.common.starling import split_downstream as _shared
 from tools.chembl_tool.common.starling.split_downstream import (
     AUDIT_STAGE,
     COLLAPSED_RECORD_STAGE,
+    CORE_PAIR_BUCKET_STAGE,
     DEDUPLICATED_RECORD_STAGE,
-    POST_COLLAPSE_DISTANCE_CALIBRATION_STAGE as DISTANCE_CALIBRATION_STAGE,
     DOWNSTREAM_STAGES,
     FILTERED_RECORDS_FILENAME,
     HELDOUT_STAGE,
@@ -39,7 +38,8 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
 from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
 
 
-PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_v7_layout.v3"
+DISTANCE_CALIBRATION_STAGE = CORE_PAIR_BUCKET_STAGE
+PIPELINE_LAYOUT_VERSION = "bioavailability_ma.normalized_three_stage.v1"
 HELDOUT_OVERLAP_VERSION = "bioavailability_ma.remove_heldout_overlap.v2"
 BENCHMARK_SPLITS = ("random", "scaffold")
 DEFAULT_SPLIT_ROOT = "data/processed_starling/Bioavailability_Ma"
@@ -62,8 +62,8 @@ def _spec() -> SplitDownstreamSpec:
         build_transfer_policy=build_pair_bucket_transfer_policy,
         exclusions_filename=EXCLUSIONS_FILENAME,
         legacy_downstream_stages=LEGACY_DOWNSTREAM_STAGES,
-        collapse_records=True,
-        final_endpoint_pruning=True,
+        collapse_records=False,
+        final_endpoint_pruning=False,
         direct_mapping_builder=build_direct_record_mapping,
         collapse_input_paths=tuple(DIRECT_MAPPING_INPUTS),
         direct_label_definition=(

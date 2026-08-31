@@ -4,22 +4,23 @@ The scalar router settles a cleaned row into exactly one of three routes:
 
 ``reject``
     The source's measurement column carries no digit, so there is no quantity to
-    extract. Stage 01 checks the controlled categorical encoder before calling this
-    router, so a persisted rejection has neither an explicit controlled category
-    nor a scalar extraction candidate. The source row is still retained.
+    extract. Stage 01 then checks the controlled categorical encoder, so a persisted
+    rejection has neither an explicit controlled category nor a scalar extraction
+    candidate. The source row is still retained.
 
 ``accept``
-    The measurement column is a finite positive decimal and has a nonempty unit.
-    Value and unit are taken exactly as written, with no model call.  Stage 02's
-    exact JSON map is the sole authority for accepting, converting, or excluding
-    the pair.
+    The measurement column is a finite positive numeric literal accepted by
+    Python ``float(...)`` and has a nonempty unit. Value and unit are taken
+    exactly as written, with no model call. Stage 02's exact JSON map is the sole
+    authority for converting or preserving the pair.
 
 ``extract``
     Everything else, resolved by a frozen offline extraction.
 
-Stage 01 first applies the task's explicit categorical encoder for routing only.
-When it matches, the persisted route is ``categorical``; otherwise one of the
-three scalar routes above is persisted. The source row itself is not modified.
+Stage 01 first preserves any task-declared structured source-exact quantity,
+then routes the source measurement column. A controlled categorical encoder is
+only the fallback when neither path finds a numeric candidate. The source row
+itself is not modified.
 
 This module is imported by both the offline generator and the runtime resolver.
 Identical routing in both places is what makes the frozen artifact's candidate set
@@ -30,16 +31,16 @@ rules -- no I/O, no clock, no task-specific special cases.
 from __future__ import annotations
 
 import importlib
+import math
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation
 from typing import Any, Callable, Literal
 
 from tools.chembl_tool.common.units import canonicalize_unit
 
 
-MEASUREMENT_ROUTING_VERSION = "starling_measurement_routing.v3"
+MEASUREMENT_ROUTING_VERSION = "starling_measurement_routing.v5"
 
 _DIGIT_RE = re.compile(r"\d")
 
@@ -155,6 +156,7 @@ class RouteDecision:
     rule_id: str | None = None
     measurement_text: str | None = None
     unit_text: str | None = None
+    unit_is_canonical: bool = False
 
     def __post_init__(self) -> None:
         if self.bucket not in ROUTE_BUCKETS:
@@ -172,8 +174,11 @@ class RouteDecision:
             self.rule_id is not None
             or self.measurement_text is not None
             or self.unit_text is not None
+            or self.unit_is_canonical
         ):
             raise ValueError("extract rows are unresolved and carry no rule output")
+        if self.bucket != "accept" and self.unit_is_canonical:
+            raise ValueError("only an accept route can declare a canonical unit")
 
 
 def _measurement_source_text(value: Any) -> str | None:
@@ -209,10 +214,10 @@ def is_pure_number(value: Any) -> bool:
     if not text:
         return False
     try:
-        number = Decimal(text)
-    except InvalidOperation:
+        number = float(text)
+    except (TypeError, ValueError, OverflowError):
         return False
-    return number.is_finite()
+    return math.isfinite(number)
 
 
 def is_obvious_unit(unit_text: Any, *, task: str | None = None) -> bool:
@@ -268,7 +273,7 @@ def route(
             return RouteDecision("reject", rule.rule_id)
     if rules.unit_field and is_pure_number(measurement):
         text = _measurement_source_text(measurement)
-        positive = text is not None and Decimal(text) > 0
+        positive = text is not None and float(text) > 0
         if positive or not rules.require_positive_value:
             unit = record.get(rules.unit_field)
             unit_text = str(unit or "").strip()
@@ -301,6 +306,7 @@ def attach_stage1_routes(
         categorical = None
     else:
         categorical = getattr(module, "POLICY", None)
+    source_exact_route = getattr(config, "source_exact_route", None)
     record_resolver = getattr(config, "canonical_endpoint_record", None)
     output: list[dict[str, Any]] = []
     for record in records:
@@ -316,8 +322,17 @@ def attach_stage1_routes(
             endpoint = config.canonical_endpoint_name(
                 source_id, record.get("endpoint_name")
             )
-        encoded = categorical.encode(record) if categorical is not None else None
-        decision = None if encoded is not None else route(record, rules, task=task)
+        decision = (
+            source_exact_route(record) if source_exact_route is not None else None
+        )
+        if decision is not None and decision.bucket != "accept":
+            raise ValueError("source_exact_route must return an accept decision")
+        decision = decision or route(record, rules, task=task)
+        encoded = (
+            categorical.encode(record)
+            if decision.bucket == "reject" and categorical is not None
+            else None
+        )
         # Stage-01 builder rows are mutable dictionaries. Reuse them so routing a
         # full corpus does not briefly duplicate the complete object graph.
         enriched = record if isinstance(record, dict) else dict(record)
@@ -329,6 +344,21 @@ def attach_stage1_routes(
                 ),
                 "measurement_resolution_rule_id": (
                     encoded.encoder_id if encoded is not None else decision.rule_id
+                ),
+                "measurement_resolution_exact_measurement": (
+                    decision.measurement_text
+                    if encoded is None and decision.bucket == "accept"
+                    else None
+                ),
+                "measurement_resolution_exact_unit": (
+                    decision.unit_text
+                    if encoded is None and decision.bucket == "accept"
+                    else None
+                ),
+                "measurement_resolution_exact_unit_is_canonical": (
+                    decision.unit_is_canonical
+                    if encoded is None and decision.bucket == "accept"
+                    else False
                 ),
                 "measurement_routing_version": MEASUREMENT_ROUTING_VERSION,
             }

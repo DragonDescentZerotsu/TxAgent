@@ -5,7 +5,6 @@ import math
 import pytest
 
 from tools.chembl_tool.common.starling.categorical_response import (
-    ENCODED_UNITS,
     LOGIT_RESPONSE_UNIT,
     ORDINAL_SEVERITY_UNIT,
     SIGNED_DIRECTION_UNIT,
@@ -99,7 +98,8 @@ def test_real_incidence_beats_a_severity_grade():
     encoding = POLICY.encode(
         _direct(positive_count=3, total_tested=40, effect_metric="++")
     )
-    assert encoding.encoder_id == "count_logit"
+    assert encoding.encoder_id == "incidence_fraction.v1"
+    assert encoding.value == pytest.approx(3 / 40)
     assert encoding.sample_size == 40
 
 
@@ -107,8 +107,8 @@ def test_single_subject_counts_are_quarantined_from_real_incidence():
     """A 1/1 report must not share a bucket with a 45/50 one."""
     single = POLICY.encode(_direct(positive_count=1, total_tested=1))
     many = POLICY.encode(_direct(positive_count=45, total_tested=50))
-    assert single.encoder_id == "single_subject_logit"
-    assert many.encoder_id == "count_logit"
+    assert single.encoder_id == "single_subject_fraction.v1"
+    assert many.encoder_id == "incidence_fraction.v1"
     assert single.encoder_id != many.encoder_id
 
 
@@ -155,22 +155,47 @@ def test_severity_ladder_refuses_free_text(text):
 
 
 def test_a_reported_percentage_encodes_as_a_rate():
-    encoding = POLICY.encode(_direct(effect_metric="8% positive"))
-    assert encoding.encoder_id == "percent_positive_logit"
-    assert encoding.value == pytest.approx(logit(0.08))
+    encoding = POLICY.encode(
+        _direct(
+            effect_metric="8% positive",
+            resolved_scalar_value=8.0,
+            resolved_unit_text="%",
+            measurement_resolution_origin="llm",
+        )
+    )
+    assert encoding.encoder_id == "incidence_fraction.v1"
+    assert encoding.value == pytest.approx(0.08)
 
 
-def test_a_reported_zero_percent_is_finite():
-    encoding = POLICY.encode(_direct(effect_metric="0% positive"))
-    assert math.isfinite(encoding.value)
-    assert encoding.value < 0
-    assert encoding.inputs["nominal_sample_size_used"] is True
+def test_a_reported_zero_percent_remains_the_raw_boundary():
+    encoding = POLICY.encode(
+        _direct(
+            effect_metric="0% positive",
+            resolved_scalar_value=0.0,
+            resolved_unit_text="%",
+            measurement_resolution_origin="llm",
+        )
+    )
+    assert encoding.value == 0.0
 
 
-def test_an_embedded_fraction_is_treated_as_real_counts():
-    encoding = POLICY.encode(_direct(effect_metric="19/85 positive"))
-    assert encoding.encoder_id == "count_logit"
-    assert encoding.sample_size == 85
+def test_an_embedded_fraction_uses_the_frozen_llm_resolution():
+    encoding = POLICY.encode(
+        _direct(
+            effect_metric="19/85 positive",
+            resolved_scalar_value=19 / 85,
+            resolved_unit_text="fraction",
+            measurement_resolution_origin="llm",
+        )
+    )
+    assert encoding.encoder_id == "incidence_fraction.v1"
+    assert encoding.value == pytest.approx(19 / 85)
+    assert encoding.sample_size is None
+
+
+def test_unstructured_percent_or_fraction_never_bypasses_llm_resolution():
+    assert POLICY.encode(_direct(effect_metric="8% positive")) is None
+    assert POLICY.encode(_direct(effect_metric="19/85 positive")) is None
 
 
 def test_total_tested_stored_as_a_string_still_parses():
@@ -221,16 +246,15 @@ def test_applied_fields_make_the_record_bucket_eligible():
     record = _direct(positive_count=3, total_tested=40)
     record.update(POLICY.apply(record))
     assert record["normalization_validity_status"] == "valid"
-    assert record["canonical_unit"] in ENCODED_UNITS
+    assert record["canonical_unit"] == "fraction"
     assert record["is_absolute_and_continuous"] is True
-    assert record["categorical_encoder_id"] == "count_logit"
+    assert record["categorical_encoder_id"] == "incidence_fraction.v1"
 
 
-def test_a_negative_log_odds_is_valid_not_a_domain_violation():
-    """Half of all encoded values are negative; the physical domains must not apply."""
+def test_an_incidence_fraction_stays_in_the_unit_interval():
     record = _direct(positive_count=1, total_tested=40)
     record.update(POLICY.apply(record))
-    assert record["finite_scalar_value"] < 0
+    assert record["finite_scalar_value"] == pytest.approx(1 / 40)
     assert normalization_validity_status(record) == "valid"
 
 
@@ -257,10 +281,9 @@ def test_manifest_declares_every_encoder_and_its_scale():
     manifest = encoding_policy_manifest()
     ids = {entry["encoder_id"] for entry in manifest["encoders"]}
     assert ids == {
-        "count_logit",
-        "single_subject_logit",
+        "incidence_fraction.v1",
+        "single_subject_fraction.v1",
         "ordinal_severity_grade",
-        "percent_positive_logit",
         "signed_direction",
     }
     assert set(manifest["uninformative_labels_receive_no_value"]) >= {

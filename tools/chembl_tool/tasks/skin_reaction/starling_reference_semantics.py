@@ -20,9 +20,9 @@ from tools.chembl_tool.common.starling.reference_semantics import (
 
 TASK_ROOT = Path(__file__).resolve().parent
 PROMPT_VERSION = "skin_reaction_reference_semantics_prompt.v2"
-MAPPING_VERSION = "skin_reaction_reference_semantics.v2"
+MAPPING_VERSION = "skin_reaction_reference_semantics.v3"
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/reference_semantics_v2/reference_semantics.parquet"
+    TASK_ROOT / "data_processing/reference_semantics_v3/reference_semantics.parquet"
 )
 DEFAULT_RECORDS_PATH = Path(
     "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"

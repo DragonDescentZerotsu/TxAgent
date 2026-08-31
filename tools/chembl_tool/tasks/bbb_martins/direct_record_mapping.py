@@ -12,11 +12,20 @@ from tools.chembl_tool.common.starling.direct_record_mapping import (
     direct_mapping_row,
     read_jsonl,
 )
-from tools.chembl_tool.tasks.bbb_martins.context_conditioned_benchmark import (
-    SELECTED_EXTERNAL_CONDITION_GROUPS,
-)
 from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
     label_record,
+)
+
+
+SELECTED_EXTERNAL_CONDITION_GROUPS = (
+    "barrier_state=disrupted",
+    "co_treatment=cyclosporine",
+    "disease=meningitis_unspecified",
+    "disease=bacterial_meningitis",
+    "disease=pneumococcal_meningitis",
+    "disease=tuberculous_meningitis",
+    "disease=brain_tumor_or_glioma",
+    "disease=cerebral_ischemia",
 )
 
 

@@ -76,9 +76,15 @@ def test_mapped_structure_keeps_raw_source_smiles_in_cleaned_view() -> None:
     }
     cleaned = BIO_CONTRACT.clean_projection(row)
     assert cleaned["smiles"] == "RAW-SOURCE"
-    assert "source_smiles" not in cleaned
+    assert cleaned["source_smiles"] == "MAPPED"
+    assert cleaned["canonical_smiles"] == "CCO"
     assert "molecule_name" not in cleaned
     assert "endpoint_category" not in cleaned
+
+    resumed = BIO_CONTRACT.inflate_cleaned(cleaned)
+    assert resumed["smiles"] == "RAW-SOURCE"
+    assert resumed["source_smiles"] == "MAPPED"
+    assert resumed["canonical_smiles"] == "CCO"
 
 
 def test_dataset_constants_are_not_claimed_as_source_visible() -> None:
@@ -461,8 +467,8 @@ def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() ->
 
 
 def test_controlled_categorical_scale_persists_kind_and_category_identity() -> None:
-    scale = SKIN_CONTRACT.measurement_scales["single_subject_logit"]
-    category = scale.category_for_value(1.0986122886681098)
+    scale = SKIN_CONTRACT.measurement_scales["single_subject_fraction.v1"]
+    category = scale.category_for_value(1.0)
     assert scale.kind == "binary"
     assert category is not None
     assert category.category_id == "response"

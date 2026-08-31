@@ -44,13 +44,14 @@ from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
     SKIN_REACTION_PAIR_BUCKET_VERSION,
     SKIN_REACTION_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
+    V7_ENDPOINT_FIELD_BY_SOURCE,
 )
 from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 
 
-DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "04_pair_buckets"
+DEFAULT_PAIR_BUCKET_DIR = DEFAULT_NORMALIZED_DIR / "03_pair_buckets"
 DEFAULT_LEGACY_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "05_assay_transfer_policy"
-DEFAULT_V7_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "07_distance_calibration"
+DEFAULT_V7_OUTPUT_DIR = DEFAULT_NORMALIZED_DIR / "03_pair_buckets"
 DEFAULT_OUTPUT_DIR = DEFAULT_LEGACY_OUTPUT_DIR
 DEFAULT_AUXILIARY_MANIFEST = (
     DEFAULT_NORMALIZED_DIR / "02_canonicalized/auxiliary_mapping_manifest.json"
@@ -100,10 +101,7 @@ def build_pair_bucket_transfer_policy(
                 source: item.additional_dimensions
                 for source, item in RECORD_CONTRACT.pair_buckets.items()
             },
-            endpoint_field_by_source={
-                source: "canonical_endpoint_name"
-                for source in RECORD_CONTRACT.pair_buckets
-            },
+            endpoint_field_by_source=V7_ENDPOINT_FIELD_BY_SOURCE,
         )
         return _build_distance_calibration(
             spec=spec,
@@ -135,7 +133,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--records",
-        default=str(DEFAULT_NORMALIZED_DIR / "06_collapsed_records/records.parquet"),
+        default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets/records.parquet"),
     )
     parser.add_argument(
         "--pair-bucket-records",
@@ -177,7 +175,6 @@ def main(argv: list[str] | None = None) -> int:
             "[build_starling_pair_bucket_distance_calibration] "
             f"buckets={summary['pair_buckets']:,} "
             f"supported={summary['minimum_support_buckets']:,} "
-            f"residual_flagged={summary['residual_heterogeneity_flagged_buckets']:,} "
             f"calibrated={summary['calibration_valid_buckets']:,} "
             f"out={args.out_dir}",
             flush=True,
@@ -204,12 +201,9 @@ def resolve_output_dir(
         return Path(explicit)
     metadata_path = Path(pair_bucket_metadata_path)
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    stage = (
-        "07_distance_calibration"
-        if metadata.get("contract_version") == RECORD_CONTRACT.version
-        else "05_assay_transfer_policy"
-    )
-    return metadata_path.parent.parent / stage
+    if metadata.get("contract_version") == SKIN_REACTION_V7_PAIR_BUCKET_VERSION:
+        return metadata_path.parent
+    return metadata_path.parent.parent / "05_assay_transfer_policy"
 
 
 if __name__ == "__main__":

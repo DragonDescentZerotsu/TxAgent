@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 import pandas as pd
+import pytest
 
 from tools.chembl_tool.common.starling.v7_benchmark_view import (
     ALL_SCAFFOLD_FILTER,
@@ -15,6 +16,7 @@ from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     load_index,
     retrieve_neighbors,
 )
+from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
 from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifacts import (
     get_spec as get_bioavailability_downstream_spec,
 )
@@ -81,16 +83,25 @@ def _record(record_id: str, smiles: str, group_id: str, value):
     return row
 
 
+def _write_stage3(normalized_root, records):
+    records_dir = normalized_root / "03_pair_buckets"
+    records_dir.mkdir(parents=True)
+    records_path = records_dir / "records.parquet"
+    pd.DataFrame(records).to_parquet(records_path, index=False)
+    (records_dir / "manifest.json").write_text(
+        json.dumps({"outputs": {"records.parquet": file_sha256(records_path)}}),
+        encoding="utf-8",
+    )
+
+
 def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "06_collapsed_records"
-    records_dir.mkdir(parents=True)
     records = [
         _record("record-1", "CCO", "Observed.nondirect_oral_bioavailability", None),
         _record("record-2", "CCN", "Observed.direct_oral_bioavailability", 42.0),
         _record("record-3", "CCC", "Observed.nondirect_oral_bioavailability", None),
     ]
-    pd.DataFrame(records).to_parquet(records_dir / "records.parquet", index=False)
+    _write_stage3(normalized_root, records)
     heldout = tmp_path / "heldout.jsonl"
     heldout.write_text(json.dumps({"drug": "CCO", "Y": 1}) + "\n", encoding="utf-8")
 
@@ -158,14 +169,12 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
 
 def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "06_collapsed_records"
-    records_dir.mkdir(parents=True)
     records = [
         _record("record-1", "CCO", "Observed.direct_oral_bioavailability", 40.0),
         _record("record-2", "CCO", "Observed.nondirect_oral_bioavailability", None),
         _record("record-3", "CCN", "Observed.direct_oral_bioavailability", 42.0),
     ]
-    pd.DataFrame(records).to_parquet(records_dir / "records.parquet", index=False)
+    _write_stage3(normalized_root, records)
     heldout = tmp_path / "heldout.jsonl"
     heldout.write_text(json.dumps({"drug": "CCO", "Y": 1}) + "\n", encoding="utf-8")
 
@@ -215,17 +224,13 @@ def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
 
 def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     normalized_root = tmp_path / "v7"
-    records_dir = normalized_root / "06_collapsed_records"
-    records_dir.mkdir(parents=True)
     hf = _record("record-1", "Nc1ccccc1", "Observed.direct_oral_bioavailability", 40.0)
     oral = _record("record-2", "Cc1ccccc1", "Observed.oral_auc_cmax_exposure", None)
     oral.update(source_id="oral_exposure", source_name="oral", endpoint_name="AUC")
     fa = _record("record-3", "CCc1ccccc1", "Fa.absorption_solubility_permeability", None)
     fa.update(source_id="fa", source_name="fa", endpoint_name="solubility")
     kept = _record("record-4", "C1CCCCC1", "Observed.direct_oral_bioavailability", 42.0)
-    pd.DataFrame([hf, oral, fa, kept]).to_parquet(
-        records_dir / "records.parquet", index=False
-    )
+    _write_stage3(normalized_root, [hf, oral, fa, kept])
     heldout = tmp_path / "heldout.jsonl"
     heldout.write_text(
         json.dumps({"drug": "Oc1ccccc1", "Y": 1}) + "\n",
@@ -250,6 +255,29 @@ def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     assert heldout_filter["source_counts"]["hf_bioavailability"]["excluded_heldout"] == 1
     assert heldout_filter["source_counts"]["oral_exposure"]["excluded_heldout"] == 1
     assert heldout_filter["source_counts"]["fa"]["excluded_heldout"] == 1
+
+
+def test_v7_view_rejects_stage3_records_that_differ_from_manifest(tmp_path):
+    normalized_root = tmp_path / "v7"
+    _write_stage3(
+        normalized_root,
+        [_record("record-1", "CCO", "Observed.direct_oral_bioavailability", 40.0)],
+    )
+    records_path = normalized_root / "03_pair_buckets/records.parquet"
+    pd.DataFrame(
+        [_record("record-2", "CCN", "Observed.direct_oral_bioavailability", 42.0)]
+    ).to_parquet(records_path, index=False)
+    heldout = tmp_path / "heldout.jsonl"
+    heldout.write_text(json.dumps({"drug": "CCC", "Y": 1}) + "\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="differ from their manifest"):
+        build_v7_benchmark_view(
+            policy=POLICY,
+            normalized_root=normalized_root,
+            heldout_labels_jsonl=heldout,
+            out_dir=tmp_path / "output",
+            benchmark_split="scaffold",
+        )
 
 
 def test_skin_direct_filter_uses_partition_after_cross_source_collapse():

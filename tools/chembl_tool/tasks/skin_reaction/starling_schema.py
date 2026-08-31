@@ -34,6 +34,9 @@ from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
     MAPPING_VERSION as REFERENCE_SEMANTICS_VERSION,
     REFERENCE_SEMANTICS_CONFIG,
 )
+from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_VERSION,
+)
 
 
 TASK_ID = "skin_reaction"
@@ -103,6 +106,14 @@ def _base_dimensions(
             endpoint_method,
             MAPPING_VERSION if endpoint_method == "frozen_mapping" else endpoint_version,
             legacy_value_field=endpoint_legacy,
+        ),
+        CanonicalDimensionSpec(
+            "canonical_endpoint_concept",
+            "endpoint_concept",
+            ("endpoint_name",),
+            "frozen_mapping",
+            ENDPOINT_CONCEPT_VERSION,
+            depends_on=("canonical_endpoint_name",),
         ),
         CanonicalDimensionSpec(
             "canonical_measurement_text",
@@ -344,15 +355,7 @@ PAIR_BUCKETS = {
             "canonical_assay_or_test",
             "canonical_species_or_population",
             "canonical_measurement_scale_id",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        variance_candidates=(
-            "dose_or_concentration",
-            "extra_details",
-        ),
-        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        reference_basis_required=True,
     ),
     "sensitization_aop": PairBucketSpec(
         source_id="sensitization_aop",
@@ -362,15 +365,7 @@ PAIR_BUCKETS = {
             "canonical_aop_event",
             "canonical_assay_type",
             "canonical_species_context",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        # experimental_conditions now participates in the species decision;
-        # only the still-unconsumed qualifier remains a residual candidate.
-        variance_candidates=("qualifying_conditions",),
-        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        reference_basis_required=True,
-        required_known_dimensions=("canonical_species_context",),
     ),
     "phototoxicity_irritation_local_damage": PairBucketSpec(
         source_id="phototoxicity_irritation_local_damage",
@@ -380,15 +375,7 @@ PAIR_BUCKETS = {
             "canonical_assay_method",
             "canonical_evidence_system",
             "canonical_measurement_scale_id",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        variance_candidates=(
-            "light_conditions",
-            "qualifying_conditions",
-        ),
-        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        reference_basis_required=True,
     ),
     "skin_exposure": PairBucketSpec(
         source_id="skin_exposure",
@@ -397,16 +384,7 @@ PAIR_BUCKETS = {
             "canonical_unit_text",
             "canonical_study_design",
             "canonical_species_context",
-            "canonical_reference_scope",
-            "canonical_reference_basis",
         ),
-        variance_candidates=(
-            "formulation_vehicle",
-            "exposure_time",
-            "qualifying_conditions",
-        ),
-        eligible_reference_scopes=REFERENCE_SEMANTICS_CONFIG.eligible_scopes,
-        reference_basis_required=True,
     ),
 }
 
