@@ -145,13 +145,13 @@ def test_all_pair_identity_fields_are_canonical() -> None:
             assert not canonical_inputs & set(spec.variance_candidates)
 
 
-def test_controlled_only_input_can_remain_a_continuous_variance_candidate() -> None:
+def test_controlled_only_inputs_do_not_become_continuous_variance_candidates() -> None:
     scale = BIO_CONTRACT.measurement_scales["fg_substrate_status_binary.v1"]
     candidates = set(BIO_CONTRACT.pair_buckets["fg"].variance_candidates)
     assert {"substrate_status", "transporter_or_enzyme"} <= set(
         scale.input_fields
     )
-    assert {"substrate_status", "transporter_or_enzyme"} <= candidates
+    assert not candidates
 
 
 def test_bbb_scalar_and_categorical_producers_are_both_declared() -> None:
@@ -354,12 +354,15 @@ def test_v7_pair_bucket_uses_v7_names_and_canonical_dimensions() -> None:
     assert audit["validations"]["one_sidecar_row_per_input_record"]
 
 
-def test_required_known_dimension_excludes_unknown_without_dropping_record() -> None:
+def test_required_known_compatibility_argument_does_not_remove_descriptive_bucket() -> None:
     record = {
         "canonical_record_id": "r1",
         "source_id": "sensitization_aop",
         "canonical_endpoint_name": "stimulation_index",
         "canonical_unit_text": "fold",
+        "measurement_kind": "continuous",
+        "finite_scalar_value": 1.0,
+        "canonical_reference_scope": "absolute",
         "canonical_species_context": None,
         "canonicalization_status": "valid",
         "canonical_smiles": "CCO",
@@ -374,14 +377,10 @@ def test_required_known_dimension_excludes_unknown_without_dropping_record() -> 
         },
     )
     assert len(rows) == 1
-    assert rows[0]["bucket_eligible"] is False
-    assert rows[0]["pair_bucket_key"] is None
-    assert rows[0]["bucket_exclusion_reason"] == (
-        "unknown_canonical_species_context"
-    )
-    assert audit["exclusion_reason_counts"] == {
-        "unknown_canonical_species_context": 1
-    }
+    assert rows[0]["bucket_eligible"] is True
+    assert rows[0]["pair_bucket_key"]
+    assert rows[0]["bucket_exclusion_reason"] is None
+    assert audit["unknown_field_rates"]["canonical_species_context"] == 1.0
 
 
 def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() -> None:
@@ -460,9 +459,7 @@ def test_semantic_pair_bucket_uses_canonical_unit_without_enabling_transfer() ->
     ]
     assert all(row["pair_bucket_key"] for row in rows[:3])
     assert all(not row["assay_transfer_eligible"] for row in rows)
-    assert rows[3]["pair_bucket_key"] is None
-    assert rows[4]["pair_bucket_key"] is None
-    assert rows[5]["pair_bucket_key"] is None
+    assert all(row["pair_bucket_key"] for row in rows)
     assert all(audit["validations"].values())
 
 
