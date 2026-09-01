@@ -95,7 +95,11 @@ read-only evaluation, while every new training launch requires audit v2.
   by hosted/local backends despite its historical `rl_lora_gpt_oss_120b` path.
 - The hosted 120B training task was intentionally stopped and must not be
   resumed automatically.
-- The local 20B NeMo Bio run remains the active training process.
+- The local 20B NeMo Bio run was also intentionally stopped after metrics were
+  recorded through step 174; its last complete checkpoint is step 160. It must
+  not be resumed automatically.
+- No local checkpoint-valid promotion or test evaluation was performed. The
+  partial-run scalar receipt is recorded in `LOCAL_NEMO_RUNBOOK.md`.
 - Reward version remains `one_pass_hierarchical_reward.v2`; this cleanup does
   not change any reward number.
 

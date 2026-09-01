@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from tools.chembl_tool.common.json_utils import read_jsonl, sha256_file
 from tools.chembl_tool.common.starling.conditioned_benchmark import (
     BENCHMARK_ROOT,
@@ -13,26 +15,43 @@ from tools.chembl_tool.common.starling.conditioned_benchmark import (
 from tools.chembl_tool.common.starling.build_conditioned_random_split import (
     RANDOM_SPLIT_CONTRACT,
     allocate_parent_groups,
+    preserve_parent_assignment,
 )
 
 
 EXPECTED_COUNTS = {
     "bbb_martins": (3053, 397, 393),
-    "bioavailability_ma": (1958, 262, 269),
+    "bioavailability_ma": (1956, 262, 269),
     "clintox": (1144, 142, 142),
     "skin_reaction": (1997, 246, 248),
+}
+
+EXPECTED_RANDOM_COUNTS = {
+    "bbb_martins": (3075, 384, 384),
+    "bioavailability_ma": (1989, 249, 249),
+    "clintox": (1142, 143, 143),
+    "skin_reaction": (1993, 249, 249),
 }
 
 
 def test_manifest_has_one_canonical_root_per_task() -> None:
     manifest = json.loads((BENCHMARK_ROOT / "manifest.json").read_text())
     assert manifest["contract"] == CONTRACT
+    assert manifest["construction_contract"]["publisher_revoting_allowed"] is False
     assert set(manifest["tasks"]) == set(TASK_DIRECTORIES)
     for task, counts in EXPECTED_COUNTS.items():
+        task_manifest = manifest["tasks"][task]
         assert tuple(
-            manifest["tasks"][task]["split_counts"][split]
+            task_manifest["split_counts"][split]
             for split in ("train", "valid", "test")
         ) == counts
+        assert task_manifest["roots"] == {
+            scheme: str(task_root(task, scheme)) for scheme in SPLIT_SCHEMES
+        }
+        assert tuple(
+            task_manifest["split_counts_by_scheme"]["random"][split]
+            for split in ("train", "valid", "test")
+        ) == EXPECTED_RANDOM_COUNTS[task]
 
 
 def test_split_rows_have_uniform_condition_schema_and_no_overlap() -> None:
@@ -86,7 +105,7 @@ def _row_content(row: dict) -> dict:
     return {
         key: value
         for key, value in row.items()
-        if key not in {"split", "split_policy"}
+        if key not in {"split", "split_policy", "split_assignments"}
     }
 
 
@@ -163,3 +182,54 @@ def test_random_allocator_prioritizes_multi_vote_rows_for_heldout() -> None:
     assert audit["multi_vote_definition"] == "source_record_count >= 2"
     assert repeated_assignment == assignment
     assert repeated_audit == audit
+
+
+def test_random_assignment_can_be_preserved_after_train_only_deletion() -> None:
+    rows = [
+        {
+            "benchmark_row_id": f"row-{index:02d}",
+            "Y": index % 2,
+            "condition_group": "no_reported_external_condition",
+            "molecule_identity_key": f"parent-{index:02d}",
+            "source_record_count": 2,
+        }
+        for index in range(22)
+    ]
+    reference_assignment, _ = allocate_parent_groups(rows, seed=17)
+    reference_rows = [
+        {**row, "split": reference_assignment[row["molecule_identity_key"]]}
+        for row in rows
+    ]
+    train_row = next(row for row in rows if reference_assignment[row["molecule_identity_key"]] == "train")
+    rebuilt_rows = [row for row in rows if row is not train_row]
+
+    preserved, audit = preserve_parent_assignment(rebuilt_rows, reference_rows)
+    assert preserved == {
+        row["molecule_identity_key"]: reference_assignment[row["molecule_identity_key"]]
+        for row in rebuilt_rows
+    }
+    assert audit["n_removed_rows"] == 1
+    assert audit["n_added_rows"] == 0
+
+
+def test_preserved_random_assignment_rejects_new_or_changed_rows() -> None:
+    reference_rows = [
+        {
+            "benchmark_row_id": "row-01",
+            "Y": 1,
+            "condition_group": "no_reported_external_condition",
+            "molecule_identity_key": "parent-01",
+            "source_record_count": 2,
+            "split": "train",
+        }
+    ]
+    added = [
+        reference_rows[0],
+        {**reference_rows[0], "benchmark_row_id": "row-02"},
+    ]
+    changed = [{**reference_rows[0], "Y": 0}]
+
+    with pytest.raises(ValueError, match="new benchmark_row_id"):
+        preserve_parent_assignment(added, reference_rows)
+    with pytest.raises(ValueError, match="changed content"):
+        preserve_parent_assignment(changed, reference_rows)

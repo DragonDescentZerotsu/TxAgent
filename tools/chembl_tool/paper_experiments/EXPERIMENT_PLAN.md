@@ -5,9 +5,8 @@
 > `current_conditioned_results.json`；conditioned progressive 协议、source-family purity、最终 valid 曲线和
 > 重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。`STARLING_BENCHMARK_RESULTS.md` 只保留历史总账。
 
-本文档记录当前第一轮冻结矩阵的研究问题和运行协议。面向 ICLR 2027 的后续数据补齐、same-parent
-retrieval 消融、第二模型、重复运行、source-quality annotation、baseline 和投稿时间表见
-[ICLR_2027_EXECUTION_PLAN.md](ICLR_2027_EXECUTION_PLAN.md)。Visibility 升降原因的集中分析见
+本文档记录第一轮冻结矩阵的研究问题和运行协议。当前论文范围、入口和 artifact 状态以
+`README.md`、`RESULTS.md` 和 `current_conditioned_results.json` 为准。Visibility 升降原因的集中分析见
 [VISIBILITY_ANALYSIS.md](VISIBILITY_ANALYSIS.md)。
 
 ## 2026-08-01 v4 协议覆盖

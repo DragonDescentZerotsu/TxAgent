@@ -18,10 +18,13 @@ from tools.chembl_tool.common.neighbor_selection import (
     selector_metadata,
 )
 from tools.chembl_tool.common.retrieval_features import (
+    candidate_matches_monatomic_query,
     load_retrieval_index,
+    monatomic_query_element,
     retrieval_feature_metadata,
     similarity_bucket_for_index,
     similarity_vector,
+    structural_eligibility_metadata,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 
@@ -76,6 +79,7 @@ def retrieve_neighbors(
         }
 
     query_identity = normalize_molecule_identity(query_smiles)
+    query_atomic_number = monatomic_query_element(canonical_smiles)
     similarities = similarity_vector(
         query_fp,
         canonical_smiles,
@@ -97,6 +101,7 @@ def retrieve_neighbors(
             top_k=top_k_per_group,
             min_similarity=min_similarity,
             query_identity=query_identity,
+            query_atomic_number=query_atomic_number,
             neighbor_identity_policy=neighbor_identity_policy,
             query_fingerprint=query_fp,
             neighbor_selector=neighbor_selector,
@@ -114,6 +119,7 @@ def retrieve_neighbors(
         )
 
     retrieval_policy = policy_metadata(neighbor_identity_policy)
+    retrieval_policy["structural_eligibility"] = structural_eligibility_metadata()
     if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
         retrieval_policy["neighbor_selector"] = selector_metadata(neighbor_selector)
 
@@ -159,6 +165,7 @@ def _top_neighbors_for_group(
     top_k: int,
     min_similarity: float,
     query_identity: Any,
+    query_atomic_number: int | None,
     neighbor_identity_policy: str,
     query_fingerprint: Any,
     neighbor_selector: str,
@@ -173,6 +180,11 @@ def _top_neighbors_for_group(
         if similarity < min_similarity:
             continue
         molecule = index["molecules"][molecule_index]
+        if not candidate_matches_monatomic_query(
+            query_atomic_number,
+            str(molecule.get("canonical_smiles") or ""),
+        ):
+            continue
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
             continue

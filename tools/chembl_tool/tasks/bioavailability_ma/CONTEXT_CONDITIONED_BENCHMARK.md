@@ -6,9 +6,9 @@ The active Bioavailability benchmark is:
 data/conditioned_benchmark/Bioavailability_Ma/scaffold/
 ```
 
-It contains 2,489 molecule-condition rows split 1,958/262/269 across
-train/valid/test. Of these, 2,092 are `no_reported_external_condition` rows and
-397 carry one of seven reviewed external conditions:
+It contains 2,487 molecule-condition rows split 1,956/262/269 across
+train/valid/test. Of these, 2,091 are `no_reported_external_condition` rows and
+396 carry one of seven reviewed external conditions:
 
 ```text
 prandial_state=fasted

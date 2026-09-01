@@ -43,8 +43,9 @@ The currently audited materialized Bio rows still live below the original
 `rl_lora_gpt_oss_120b` artifact namespace. That path name is historical; the
 rows contain no model weights and are deliberately reused byte-for-byte by
 20B through their adjacent SHA-256 audit. Do not duplicate them into a second
-model directory during an active run. A future artifact migration should use
-one model-neutral data namespace and preserve the existing hash receipt.
+model directory ad hoc. Both formal runs are now stopped, so there is no
+active-run blocker; a future artifact migration should use one model-neutral
+data namespace and preserve the existing hash receipt.
 
 ## Backend/model-specific settings
 

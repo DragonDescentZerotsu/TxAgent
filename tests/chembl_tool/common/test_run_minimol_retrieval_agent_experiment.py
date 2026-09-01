@@ -26,7 +26,8 @@ def test_matrix_orchestration_covers_all_feature_conditions(monkeypatch, tmp_pat
         for _, command in captured
         for value in command[command.index("--experiments") + 1 : command.index("--parallelism")]
     ]
-    assert len(selected) == 38
+    assert len(selected) == 50
+    assert sum(name.startswith("clintox__") for name in selected) == 12
     assert all("__none" not in name for name in selected)
     assert all("--retrieval-feature" in command for _, command in captured)
     assert all(command[command.index("--neighbor-identity-policy") + 1] == "operational"

@@ -1,7 +1,7 @@
 {
   "benchmark": "conditioned_benchmark",
   "contract": "conditioned_benchmark.v1",
-  "published_at": "2026-08-28T16:38:18.304786+00:00",
+  "published_at": "2026-09-01T03:45:34.251274+00:00",
   "active_root": "data/conditioned_benchmark",
   "policy": "one active condition-aware benchmark per task; legacy names are provenance only and are not evaluation entrypoints",
   "tasks": {
@@ -85,25 +85,25 @@
       "task": "bioavailability_ma",
       "task_directory": "Bioavailability_Ma",
       "target_definition": "oral bioavailability under the reported condition",
-      "legacy_source_root": "data/processed_starling_context_conditioned_selected_v1/Bioavailability_Ma/scaffold",
+      "source_build_root": "data/.build/conditioned_benchmark_sources/Bioavailability_Ma/scaffold",
       "canonical_root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
       "input_rows_byte_identical_expected": true,
       "splits": {
         "train": {
-          "n": 1958,
-          "source_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
-          "canonical_sha256": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+          "n": 1956,
+          "source_sha256": "f78ec5d7d8db97cf9e24ccd620790e327b777d4878be39678a6bb0fb41af6829",
+          "canonical_sha256": "f78ec5d7d8db97cf9e24ccd620790e327b777d4878be39678a6bb0fb41af6829",
           "byte_identical": true,
           "same_ordered_drug_labels": true,
           "label_counts": {
             "0": 524,
-            "1": 1434
+            "1": 1432
           },
           "condition_counts": {
             "co_treatment=rifampin": 8,
-            "disease=cirrhosis": 30,
+            "disease=cirrhosis": 29,
             "disease=cystic_fibrosis": 9,
-            "no_reported_external_condition": 1674,
+            "no_reported_external_condition": 1673,
             "prandial_state=fasted": 156,
             "prandial_state=fed_high_fat": 6,
             "prandial_state=fed_unspecified": 49,

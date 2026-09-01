@@ -20,12 +20,8 @@ from tools.chembl_tool.common.coverage_reasoning import (
 )
 from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.common.final_evidence_surface import (
-    SUMMARY_ONLY,
-    add_final_evidence_surface_argument,
-    build_final_evidence_fields,
+from tools.chembl_tool.common.final_reasoning import (
     compact_group_reasoning_outputs,
-    final_evidence_instructions,
     prepare_resumed_final_inputs,
 )
 from tools.chembl_tool.common.identity_blind import (
@@ -310,7 +306,6 @@ def main(argv: list[str] | None = None) -> int:
         reasoning_retrieval,
         single_output,
         group_outputs,
-        final_evidence_surface=args.final_evidence_surface,
         prompt_profile=args.skin_prompt_profile,
     )
     final_path = out_dir / "final_reasoning_output.json"
@@ -339,7 +334,6 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
-        "final_evidence_surface": args.final_evidence_surface,
         "task_prompt_profile": args.skin_prompt_profile,
         "label_scope": get_skin_prompt_profile(args.skin_prompt_profile).label_scope,
         "retrieval_replay_source_run_dir": args.retrieval_replay_run_dir,
@@ -555,15 +549,9 @@ def _run_final_reasoning(
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
     *,
-    final_evidence_surface: str = SUMMARY_ONLY,
     prompt_profile: str = DEFAULT_SKIN_PROMPT_PROFILE,
 ) -> dict[str, Any]:
     profile = get_skin_prompt_profile(prompt_profile)
-    evidence_fields, surface_audit = build_final_evidence_fields(
-        retrieval,
-        compact_group_reasoning_outputs(group_outputs),
-        surface=final_evidence_surface,
-    )
     messages = [
         {
             "role": "system",
@@ -583,9 +571,10 @@ def _run_final_reasoning(
                         "status": single_output.get("status"),
                         "content": validated_branch_content(single_output),
                     },
-                    **evidence_fields,
-                    "instructions": list(profile.final_instructions)
-                    + final_evidence_instructions(final_evidence_surface),
+                    "group_reasoning_outputs": compact_group_reasoning_outputs(
+                        group_outputs
+                    ),
+                    "instructions": list(profile.final_instructions),
                     "required_json_schema": profile.final_schema,
                 },
                 ensure_ascii=False,
@@ -598,10 +587,10 @@ def _run_final_reasoning(
         required_fields=profile.final_required_fields,
         allowed_values=profile.final_allowed_values,
     )
-    output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
-    if surface_audit is not None:
-        output["final_evidence_surface"] = surface_audit
-    return output
+    return {
+        "status": "ok" if structured_response_is_valid(response) else "error",
+        "llm": response,
+    }
 
 
 def build_group_prompt_payload(
@@ -694,19 +683,17 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
     prompt_profile = _manifest_prompt_profile(manifest)
-    retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
+    retrieval, group_outputs = prepare_resumed_final_inputs(
         retrieval,
         single_output,
         group_outputs,
         manifest,
-        tool_service=client.tool_service,
     )
     final_output = _run_final_reasoning(
         client,
         retrieval,
         single_output,
         group_outputs,
-        final_evidence_surface=final_surface,
         prompt_profile=prompt_profile,
     )
     final_path = run_dir / "final_reasoning_output.json"
@@ -814,7 +801,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
-    add_final_evidence_surface_argument(parser)
     parser.add_argument(
         "--skin-prompt-profile",
         choices=SKIN_PROMPT_PROFILES,

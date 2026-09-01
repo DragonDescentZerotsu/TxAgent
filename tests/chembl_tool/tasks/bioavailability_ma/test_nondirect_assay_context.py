@@ -10,6 +10,15 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_nondirect_assay_context im
 )
 
 
+def _identity_fields(source_record_id: str) -> dict:
+    return {
+        "canonical_smiles": "CCO",
+        "molecule_name": "ethanol",
+        "pmid": "1",
+        "source_record_id": source_record_id,
+    }
+
+
 def test_context_taxonomy_is_bounded_and_animal_first():
     assert population_context("male Sprague-Dawley rats") == "rat"
     assert population_context("healthy male volunteers") == "healthy human"
@@ -31,6 +40,7 @@ def test_overlay_changes_only_missing_target_contexts(tmp_path):
     pd.DataFrame(
         [
             {
+                **_identity_fields("1"),
                 "canonical_assay_context": None,
                 "canonical_bioavailability_report_type": "relative_comparison",
                 "group_id": SOURCE_GROUP,
@@ -41,6 +51,7 @@ def test_overlay_changes_only_missing_target_contexts(tmp_path):
                 "payload": "target",
             },
             {
+                **_identity_fields("2"),
                 "canonical_assay_context": "existing context",
                 "canonical_bioavailability_report_type": "__unknown__",
                 "group_id": SOURCE_GROUP,
@@ -51,6 +62,7 @@ def test_overlay_changes_only_missing_target_contexts(tmp_path):
                 "payload": "existing",
             },
             {
+                **_identity_fields("3"),
                 "canonical_assay_context": None,
                 "canonical_bioavailability_report_type": "__unknown__",
                 "group_id": "Fa.absorption_solubility_permeability",

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
 import hashlib
 import json
 import math
@@ -29,12 +29,16 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_DIRECT,
     MANIFEST_PATH,
     RAW_LOCAL_SOURCE_PATH,
+    REVIEWED_SOURCE_EXCLUSIONS_PATH,
     RESIDUAL_MANIFEST_PATH,
     RESIDUAL_RECORDS_PATH,
     RESIDUAL_SOURCE_DIR,
     classify_local_record,
     local_classification_signals,
     local_value_percent,
+)
+from tools.chembl_tool.tasks.bioavailability_ma.source_identity_review import (
+    reviewed_hf_identity_exclusion_reason,
 )
 
 
@@ -73,6 +77,9 @@ def main(argv: list[str] | None = None) -> int:
         "direct_source_rows": canonical_dir / DIRECT_SOURCE_ROWS_PATH.name,
         "direct_claims": canonical_dir / DIRECT_CLAIMS_PATH.name,
         "direct_rejected_rows": canonical_dir / DIRECT_REJECTED_ROWS_PATH.name,
+        "reviewed_source_exclusions": (
+            canonical_dir / REVIEWED_SOURCE_EXCLUSIONS_PATH.name
+        ),
         "dedup_audit": canonical_dir / DEDUP_AUDIT_PATH.name,
         "local_partition_audit": canonical_dir / LOCAL_PARTITION_AUDIT_PATH.name,
         "residual_records": residual_dir / RESIDUAL_RECORDS_PATH.name,
@@ -81,6 +88,9 @@ def main(argv: list[str] | None = None) -> int:
     outputs["direct_source_rows"].to_parquet(paths["direct_source_rows"], index=False)
     outputs["direct_claims"].to_parquet(paths["direct_claims"], index=False)
     outputs["direct_rejected_rows"].to_parquet(paths["direct_rejected_rows"], index=False)
+    outputs["reviewed_source_exclusions"].to_parquet(
+        paths["reviewed_source_exclusions"], index=False
+    )
     outputs["dedup_audit"].to_parquet(paths["dedup_audit"], index=False)
     outputs["local_partition_audit"].to_parquet(paths["local_partition_audit"], index=False)
     outputs["residual_records"].to_parquet(paths["residual_records"], index=False)
@@ -103,6 +113,7 @@ def main(argv: list[str] | None = None) -> int:
             "direct_local_partition": LOCAL_PARTITION_DIRECT,
             "rule": "explicit absolute-bioavailability wording or oral/IV anchor, with relative signals taking precedence",
             "ambiguous_bioavailability_is_residual": True,
+            "reviewed_identity_mismatches_are_excluded": True,
         },
         "deduplication_policy": {
             "grain": "cross-source one-to-one claim match within parent identity and PMID",
@@ -148,7 +159,9 @@ def build_canonical_frames(
     """Return inspectable derived frames without writing or mutating inputs."""
     import pandas as pd
 
-    hf_rows, hf_rejections = _normalize_hf_rows(hf_frame, hf_dataset, hf_revision)
+    hf_rows, hf_rejections, reviewed_hf_exclusions = _normalize_hf_rows(
+        hf_frame, hf_dataset, hf_revision
+    )
     local_rows: list[dict[str, Any]] = []
     local_identity_cache: dict[str, tuple[str, str] | None] = {}
     local_source = Path(local_source_path)
@@ -226,6 +239,9 @@ def build_canonical_frames(
         "n_hf_snapshot_rows": len(hf_frame),
         "n_hf_direct_source_rows": len(hf_rows),
         "n_hf_direct_rejected_invalid_structure": hf_rejections,
+        "n_hf_direct_rejected_reviewed_identity_mismatch": len(
+            reviewed_hf_exclusions
+        ),
         "n_local_input_rows": n_local,
         "n_local_absolute_rows_removed_from_residual": n_direct_partition,
         "n_local_absolute_rows_with_valid_structure": n_direct_local,
@@ -251,6 +267,7 @@ def build_canonical_frames(
         "direct_source_rows": direct_frame,
         "direct_claims": claims_frame,
         "direct_rejected_rows": direct_rejected_frame,
+        "reviewed_source_exclusions": pd.DataFrame(reviewed_hf_exclusions),
         "dedup_audit": dedup_frame,
         "local_partition_audit": partition_frame,
         "residual_records": residual_frame,
@@ -258,15 +275,29 @@ def build_canonical_frames(
     }
 
 
-def _normalize_hf_rows(frame: Any, dataset: str, revision: str) -> tuple[list[dict[str, Any]], int]:
+def _normalize_hf_rows(
+    frame: Any, dataset: str, revision: str
+) -> tuple[list[dict[str, Any]], int, list[dict[str, Any]]]:
     rows: list[dict[str, Any]] = []
     invalid = 0
+    reviewed_exclusions: list[dict[str, Any]] = []
     identity_cache: dict[str, tuple[str, str] | None] = {}
     for fallback_index, row in enumerate(frame.to_dict(orient="records")):
         report_type = _text(row.get("bioavailability_report_type")).lower()
         if report_type not in DIRECT_REPORT_TYPES:
             continue
         source_index = int(row.get("source_index", fallback_index))
+        exclusion_reason = reviewed_hf_identity_exclusion_reason(row)
+        if exclusion_reason:
+            reviewed_exclusions.append(
+                {
+                    **dict(row),
+                    "reviewed_exclusion_reason": exclusion_reason,
+                    "source_dataset": dataset,
+                    "source_revision": revision,
+                }
+            )
+            continue
         smiles = _text(row.get("smiles"))
         identity = _parent_identity(smiles, identity_cache)
         if identity is None:
@@ -303,7 +334,7 @@ def _normalize_hf_rows(frame: Any, dataset: str, revision: str) -> tuple[list[di
                 "classification_reason": "hf_direct_report_type",
             }
         )
-    return rows, invalid
+    return rows, invalid, reviewed_exclusions
 
 
 def _normalize_local_row(

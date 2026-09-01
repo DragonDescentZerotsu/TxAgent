@@ -1,0 +1,37 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "openrouter_mark_1",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-v4-flash",
+      "api_key_env": "OPENROUTER_API_KEY_Mark_1",
+      "max_inflight": 128,
+      "initial_latency_s": 120,
+      "timeout_s": 600,
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "name": "openrouter_mark_4_fallback",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "deepseek/deepseek-v4-flash",
+      "api_key_env": "OPENROUTER_API_KEY_Mark_4",
+      "max_inflight": 128,
+      "initial_latency_s": 120,
+      "timeout_s": 600,
+      "request_extra_body": {
+        "reasoning": {
+          "enabled": true
+        }
+      }
+    }
+  ],
+  "failure_threshold": 3,
+  "cooldown_seconds": 60,
+  "max_failovers": 1,
+  "latency_ewma_alpha": 0.2
+}

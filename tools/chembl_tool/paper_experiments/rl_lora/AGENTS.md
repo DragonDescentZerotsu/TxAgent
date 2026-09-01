@@ -59,8 +59,9 @@ prompt profile、router OOF 或正式 valid/test artifact。
 可见，但 retrieval、`molecule_properties`、`mmp_structure_compare`、`properties_compare` 仍由 harness 在
 generation 前固定执行；LLM 没有 live tool surface，gold 仍只在 reward metadata。Skin 必须使用 current
 sensitization/contact-allergy scoped v2 index。三任务完整 base-valid、128K token audit、训练曲线、W&B 和
-bounded RL smoke 全部通过。Hosted 120B 正式任务后来由用户明确停止，不得自动恢复；当前只继续本地
-NeMo GPT-OSS-20B Bio run。
+bounded RL smoke 全部通过。Hosted 120B 正式任务后来由用户明确停止，不得自动恢复；本地 NeMo
+GPT-OSS-20B Bio run 也在 step-174 metrics 后由用户明确停止，最后完整 checkpoint 为 step 160。两个
+backend 均不得自动恢复；新训练必须由用户另行明确批准。
 
 ## E18 one-pass primary contract
 
@@ -77,7 +78,7 @@ NeMo GPT-OSS-20B Bio run。
 - shared Bio training profile: rank-32 all-module LoRA (MLP + attention +
   unembedding), `group_size=8`, `groups_per_batch=4`, and `max_tokens=6144`;
   hosted 120B uses `openai/gpt-oss-120b:peft:131072` when explicitly run, while
-  the active local comparison is GPT-OSS-20B on NeMo. The shorter 4,096-token
+  the frozen local comparison candidate is GPT-OSS-20B on NeMo. The shorter 4,096-token
   BBB smoke cap is not valid for Bio.
 - every one-pass training file requires an adjacent passing audit whose data
   hash matches exactly; both `run_tinker.py` and `run_grpo.py` require a fresh

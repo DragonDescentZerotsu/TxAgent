@@ -15,7 +15,7 @@ import pickle
 from typing import Any, Mapping
 
 import numpy as np
-from rdkit import DataStructs
+from rdkit import Chem, DataStructs
 
 from tools.chembl_tool.common.neighbor_selection import QUERY_FEATURE_COVERAGE_SELECTOR
 from tools.chembl_tool.common.json_utils import write_json_atomic
@@ -26,6 +26,50 @@ MORGAN_FEATURE = "morgan_fingerprint"
 MINIMOL_FEATURE = "minimol_embedding"
 MINIMOL_SIMILARITY = "cosine"
 _RUNTIME_KEY = "_retrieval_feature_runtime"
+STRUCTURAL_ELIGIBILITY_VERSION = "monatomic_query_element_match.v1"
+
+
+@lru_cache(maxsize=4096)
+def monatomic_query_element(canonical_smiles: str) -> int | None:
+    """Return the atomic number for a one-heavy-atom query, otherwise ``None``.
+
+    Folded Morgan bit vectors are especially fragile for monatomic species:
+    unrelated elements can each set one bit and collide after folding (for
+    example, ``[Pb]`` and ``[U]`` both set bit 1143 in the current 2048-bit
+    contract).  Callers use this signal only as a narrow candidate-eligibility
+    gate; ordinary multi-atom molecular retrieval is unchanged.
+    """
+    molecule = Chem.MolFromSmiles(canonical_smiles)
+    if molecule is None:
+        return None
+    heavy_atoms = [atom for atom in molecule.GetAtoms() if atom.GetAtomicNum() > 1]
+    if len(heavy_atoms) != 1:
+        return None
+    return int(heavy_atoms[0].GetAtomicNum())
+
+
+@lru_cache(maxsize=131072)
+def candidate_matches_monatomic_query(
+    query_atomic_number: int | None,
+    candidate_canonical_smiles: str,
+) -> bool:
+    """Require a monatomic query's element to occur in the candidate."""
+    if query_atomic_number is None:
+        return True
+    molecule = Chem.MolFromSmiles(candidate_canonical_smiles)
+    if molecule is None:
+        return False
+    return any(
+        int(atom.GetAtomicNum()) == query_atomic_number for atom in molecule.GetAtoms()
+    )
+
+
+def structural_eligibility_metadata() -> dict[str, Any]:
+    return {
+        "version": STRUCTURAL_ELIGIBILITY_VERSION,
+        "rule": "monatomic_query_requires_candidate_with_same_element",
+        "ordinary_multi_atom_queries_unchanged": True,
+    }
 
 
 def load_retrieval_index(path: Path) -> dict[str, Any]:

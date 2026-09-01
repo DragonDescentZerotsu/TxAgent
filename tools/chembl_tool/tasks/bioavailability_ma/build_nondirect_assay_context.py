@@ -20,6 +20,9 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+from tools.chembl_tool.tasks.bioavailability_ma.source_identity_review import (
+    reviewed_hf_identity_exclusion_reason,
+)
 
 
 CONTEXT_VERSION = "bioavailability_nondirect_assay_context.v1"
@@ -121,16 +124,33 @@ def build_overlay(input_path: Path, output_dir: Path) -> dict[str, Any]:
     required = {
         "canonical_assay_context",
         "canonical_bioavailability_report_type",
+        "canonical_smiles",
         "group_id",
+        "molecule_name",
         "oral_exposure_mode",
+        "pmid",
         "retrieval_eligible",
         "source_id",
+        "source_record_id",
         "species_or_population",
     }
     missing = sorted(required - set(table.schema.names))
     if missing:
         raise ValueError(f"Bioavailability records lack required columns: {missing}")
 
+    fields = table.select(sorted(required)).to_pandas()
+    exclusion_reasons = [
+        (
+            reviewed_hf_identity_exclusion_reason(record)
+            if str(record.get("source_id") or "") == "hf_bioavailability"
+            else ""
+        )
+        for record in fields.to_dict(orient="records")
+    ]
+    exclude = pa.array([bool(reason) for reason in exclusion_reasons])
+    excluded = table.filter(exclude)
+    keep = pa.compute.invert(exclude)
+    table = table.filter(keep)
     fields = table.select(sorted(required)).to_pandas()
     target = fields["group_id"].eq(SOURCE_GROUP)
     if not target.any():
@@ -166,9 +186,16 @@ def build_overlay(input_path: Path, output_dir: Path) -> dict[str, Any]:
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "records.parquet"
+    exclusions_path = output_dir / "reviewed_source_exclusions.parquet"
     temporary_path = output_dir / ".records.parquet.tmp"
     pq.write_table(enriched, temporary_path, compression="zstd")
     os.replace(temporary_path, output_path)
+    if excluded.num_rows:
+        excluded = excluded.append_column(
+            "reviewed_exclusion_reason",
+            pa.array([reason for reason in exclusion_reasons if reason]),
+        )
+    pq.write_table(excluded, exclusions_path, compression="zstd")
 
     distribution = Counter(contexts)
     manifest = {
@@ -178,7 +205,11 @@ def build_overlay(input_path: Path, output_dir: Path) -> dict[str, Any]:
         "input_records_sha256": sha256_file(input_path),
         "output_records": str(output_path.resolve()),
         "output_records_sha256": sha256_file(output_path),
+        "n_input_rows": table.num_rows + excluded.num_rows,
         "n_rows": table.num_rows,
+        "n_reviewed_identity_exclusions": excluded.num_rows,
+        "reviewed_source_exclusions": str(exclusions_path.resolve()),
+        "reviewed_source_exclusions_sha256": sha256_file(exclusions_path),
         "n_target_rows": int(target.sum()),
         "n_target_retrieval_eligible_rows": int(
             (target & fields["retrieval_eligible"].eq(True)).sum()  # noqa: E712

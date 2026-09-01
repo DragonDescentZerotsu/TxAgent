@@ -57,21 +57,6 @@ BBB reasoning contract 通过 `prompt_profiles.py` 独立版本化。旧 artifac
 未超过 v1 的 0.6452（paired CI 跨 0）。因此当前默认继续是 v1，v2/v3 只用于明确 opt-in 的历史复现；formal
 test 未运行。详细 paired 结果见 `tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
 
-E16 no-LLM valid audit 已证明 matched train pool 的 Morgan top-20 中普遍存在更匹配 query ionization/BBB
-properties 的 candidates：冻结 0.02 rank-3 similarity-cost budget 后，描述性 KNN vote macro-F1 从 0.5896
-提高到 0.6335，但 paired CI 仍轻微跨 0。唯一 selector-only matched-v3 valid candidate 随后仅把 agent
-macro-F1 从 0.6696 改为 0.6708（paired CI `[-0.0410,+0.0450]`），accuracy 不变；58 flips 为 29/29。
-因此 E16 已终止，不得把 availability audit 当作 agent improvement、继续搜索更宽 budget/selector/prompt，
-或运行 formal test。入口为 `paper_experiments/matched_train_label_agent/bbb_property_compatibility_audit.py` 和
-`paper_experiments/matched_train_label_agent/bbb_property_compatible_experiment.py`。
-
-E16 paired trace diagnosis 进一步把 same-membership 拆成 42 个 exact ordered group inputs 和 107 个 reorder。
-Exact controls 中 20 个 group core、23 个 final state 改变；candidate 的 166 个 unanimous-positive analog sets 中
-38 个被 intrinsic barriers 判 fail，造成 25 false negatives。曾讨论的 compact structured analog ledger 会增加
-BBB 专项状态和 compiler 复杂度，现已否决归档，不是下一步。当前 BBB 默认仍为
-`meaningful_cns_access_v1`；不得继续从同一 valid trace 添加 final 条款、selector 或 transport 候选。历史诊断入口为
-`paper_experiments/matched_train_label_agent/bbb_property_compatible_trace_diagnosis.py`。
-
 Legacy native runner 边界：
 
 ```text

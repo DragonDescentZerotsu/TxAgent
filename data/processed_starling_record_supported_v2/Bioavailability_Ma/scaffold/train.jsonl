@@ -180,7 +180,6 @@
 {"drug": "COc1ccc2cc(C(C)C(=O)O)ccc2c1", "Y": 1}
 {"drug": "COc1ccc2cc([C@H](C)C(=O)O)ccc2c1", "Y": 1}
 {"drug": "COC[C@@H](c1ccc(C(F)(F)F)cc1)N1CCN(C2(C)CCN(C(=O)c3c(C)ncnc3C)CC2)C[C@@H]1C", "Y": 1}
-{"drug": "CCC1(C(=O)O)C(C)NC(C)C(C)(C(=O)O)C1c1cccc([N+](=O)[O-])c1", "Y": 1}
 {"drug": "CS(=O)(=O)OCCCCOS(C)(=O)=O", "Y": 1}
 {"drug": "Br", "Y": 1}
 {"drug": "COC(=O)Nc1nc2cc(C(=O)c3ccc(F)cc3)ccc2[nH]1", "Y": 0}

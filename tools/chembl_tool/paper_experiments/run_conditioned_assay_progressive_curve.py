@@ -61,6 +61,11 @@ from tools.chembl_tool.common.reasoning_validation import (
     call_with_json_validation,
     structured_response_is_valid,
 )
+from tools.chembl_tool.common.retrieval_features import (
+    STRUCTURAL_ELIGIBILITY_VERSION,
+    monatomic_query_element,
+    structural_eligibility_metadata,
+)
 from tools.chembl_tool.common.starling.conditioned_benchmark import (
     SPLIT_SCHEMES,
     split_path,
@@ -428,6 +433,8 @@ def _prepare_query(
 ) -> PreparedQuery:
     query_dir = _query_dir(output_root, task, query_index)
     complete_path = query_dir / "prepared_manifest.json"
+    query_smiles = str(record.get("drug") or "")
+    query_is_monatomic = monatomic_query_element(query_smiles) is not None
     if complete_path.is_file():
         manifest = _read_json(complete_path)
         if (
@@ -436,10 +443,14 @@ def _prepare_query(
             and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
             and manifest.get("neighbor_identity_policy")
             == neighbor_identity_policy
+            and (
+                not query_is_monatomic
+                or manifest.get("structural_eligibility_version")
+                == STRUCTURAL_ELIGIBILITY_VERSION
+            )
         ):
             return PreparedQuery(task, query_index, query_dir)
 
-    query_smiles = str(record.get("drug") or "")
     levels = _levels(task)
     query_prior, query_tool_summary, none_final, single_source_index = _load_reused_query_prior(
         task, record, single_root
@@ -533,6 +544,7 @@ def _prepare_query(
             "should_call_model": bool(new_ids),
             "tool_prefetch_complete": prefetch_tools,
             "neighbor_identity_policy": neighbor_identity_policy,
+            "structural_eligibility": structural_eligibility_metadata(),
             "tool_prefetch_failures": [
                 row
                 for row in tool_failures
@@ -554,6 +566,7 @@ def _prepare_query(
             "tool_prefetch_complete": prefetch_tools,
             "n_tool_prefetch_failures": len(tool_failures),
             "neighbor_identity_policy": neighbor_identity_policy,
+            "structural_eligibility_version": STRUCTURAL_ELIGIBILITY_VERSION,
             "prepared_at": _now(),
         },
     )

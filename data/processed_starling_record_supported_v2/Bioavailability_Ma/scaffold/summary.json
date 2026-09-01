@@ -1,5 +1,5 @@
 {
-  "method": "quality_lexicographic_milp_scaffold_groups",
+  "method": "preserved_scaffold_assignment_after_gold_revote",
   "lineage": "record_supported_v2",
   "target_valid_size": 209,
   "target_test_size": 209,
@@ -8,21 +8,23 @@
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
   "optimization": {
-    "minimum_singletons_in_heldout": 0,
-    "minimum_singleton_imbalance": 0,
-    "minimum_label_deviation": 0,
-    "desired_positive_count_per_eval_split": 151,
-    "maximum_prior_valid_reuse": 110,
-    "n_scaffold_groups": 1243,
-    "n_candidate_scaffold_groups": 1243
+    "split_assignment_policy": "preserve_reference_for_surviving_parents",
+    "reference_split_root": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold",
+    "n_reference_parents": 2092,
+    "n_surviving_reference_parents": 2091,
+    "n_output_parents": 2091,
+    "n_removed_parents": 1,
+    "n_added_parents": 0,
+    "added_parent_assignment_counts": {},
+    "new_parent_default_split": "train"
   },
-  "n_train": 1674,
+  "n_train": 1673,
   "train_label_counts": {
     "0": 461,
-    "1": 1213
+    "1": 1212
   },
   "train_record_tier_counts": {
-    "multi_record": 868,
+    "multi_record": 867,
     "singleton": 806
   },
   "n_train_scaffolds": 929,

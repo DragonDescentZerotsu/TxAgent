@@ -1,12 +1,66 @@
 {
-  "benchmark": "conditioned_benchmark",
-  "split": "scaffold_valid",
-  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
-  "visibility": "deployment_visible_prefetched",
-  "tasks": {
+  "schema_version": "paper_artifact_registry.v2",
+  "updated_at": "2026-09-01",
+  "benchmark": {
+    "root": "data/conditioned_benchmark",
+    "contract": "conditioned_benchmark.v1",
+    "manifest": "data/conditioned_benchmark/manifest.json",
+    "migration_receipt": "data/conditioned_benchmark/migration_receipt.json",
+    "random_split_receipt": "data/conditioned_benchmark/random_split_receipt.json",
+    "split_schemes": ["scaffold", "random"],
+    "construction_contract": "tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md"
+  },
+  "paper_axes": {
+    "retrieval_sources": ["chembl", "starling"],
+    "reasoning_organizations": [
+      "full_flat",
+      "progressive_append_only",
+      "full_mechanism"
+    ],
+    "visibility_modes": [
+      "identity_blind",
+      "deployment_visible_prefetched"
+    ],
+    "split_schemes": ["scaffold", "random"]
+  },
+  "result_families": {
+    "source_and_reasoning_matrix": {
+      "role": "ChEMBL versus Starling and full-flat versus full-mechanism",
+      "runner": "tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py",
+      "blind_last_complete_root": "outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_glm_5_2_nvfp4",
+      "visible_last_complete_root": "outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_glm_5_2_nvfp4_visible_parent_disjoint",
+      "status": "last_complete_reference_pending_current_conditioned_rerun",
+      "matched_visibility_status": "no complete current-conditioned matched blind-visible matrix",
+      "note": "Both visibility implementations and their last complete artifacts are retained, but these roots use different historical benchmark lineages and must not be compared as a matched visibility result. The previously indexed record-supported-v2 visible directory is only a partial reuse checkpoint and has no batch predictions or metrics."
+    },
+    "one_shot_full_flat_levels": {
+      "role": "All cumulative evidence at each level is reasoned over from scratch",
+      "runner": "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py",
+      "last_complete_root": "outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731",
+      "bioavailability_last_complete_overlay_root": "outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731_bio_nondirect_context_v1",
+      "status": "last_complete_reference_pending_current_source_purity_rerun"
+    },
+    "progressive_append_only": {
+      "role": "Each level sees prior evidence and reasoning plus newly appended evidence",
+      "runner": "tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py",
+      "visibility_mode": "deployment_visible_prefetched",
+      "scaffold": {
+        "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731",
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
+        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731"
+      },
+      "random": {
+        "combined_root": "outputs/paper/starling_conditioned_assay_progressive_random_quality_v2_parent_disjoint/random_valid_deepseek_v4_flash_0731"
+      }
+    }
+  },
+  "progressive_tasks": {
     "bbb_martins": {
       "n": 397,
       "input_sha256": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+      "recorded_index_sha256": "e7c07da9c12559083116b7710ff32d90c39100c901490f3e86fe52f8780c70a4",
+      "current_index_sha256": "e7c07da9c12559083116b7710ff32d90c39100c901490f3e86fe52f8780c70a4",
+      "status": "current",
       "agent_macro_f1": {
         "none": 0.6207006369426751,
         "L1": 0.7314411764705883,
@@ -21,12 +75,16 @@
         "minimol_knn_all_train": 0.5707689431198328,
         "morgan_knn_same_then_null": 0.595779790745032,
         "morgan_knn_all_train": 0.6173842827746086
-      },
-      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731"
+      }
     },
     "bioavailability_ma": {
       "n": 262,
       "input_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+      "recorded_index_sha256": "220fb396125d010819e862553340984232b1ca1a1c4624219d4957f52fc23889",
+      "current_index_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+      "status": "stale_retrieval_index_requires_targeted_replay",
+      "metrics_role": "last_completed_before_2026-09-01_nitrendipine_source_identity_fix",
+      "baselines_role": "last_completed_before_2026-09-01_train_source_identity_fix; retrain required because two train rows were removed",
       "agent_macro_f1": {
         "none": 0.6314369393261536,
         "L1": 0.6899932386747802,
@@ -42,12 +100,14 @@
         "minimol_knn_all_train": 0.6228534355168988,
         "morgan_knn_same_then_null": 0.5890896692806,
         "morgan_knn_all_train": 0.5887697579308058
-      },
-      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731"
+      }
     },
     "skin_reaction": {
       "n": 246,
       "input_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+      "recorded_index_sha256": "6c1cd72285fc929a0ff0a4ec112b6ec894ee9914fbf1e7be6cfb9807734dd85d",
+      "current_index_sha256": "6c1cd72285fc929a0ff0a4ec112b6ec894ee9914fbf1e7be6cfb9807734dd85d",
+      "status": "current",
       "agent_macro_f1": {
         "none": 0.611851,
         "L1": 0.6003898635477583,
@@ -59,9 +119,45 @@
         "minimol_knn_all_train": 0.5755050505050505,
         "morgan_knn_same_then_null": 0.520849477454081,
         "morgan_knn_all_train": 0.5179688151421662
-      },
-      "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731"
+      }
     }
   },
-  "reuse_contract": "Reuse predictions only when n and input_sha256 match data/conditioned_benchmark/migration_receipt.json. Artifact directory names are historical storage identifiers, not benchmark names."
+  "random_progressive": {
+    "bbb_martins": {
+      "n": 384,
+      "status": "current",
+      "agent_macro_f1": {
+        "none": 0.5164945857466634,
+        "L1": 0.6411654768834829,
+        "L2": 0.6623755806237559,
+        "L3": 0.6578556578556578,
+        "L4": 0.679171457642261,
+        "L5": 0.677938808373591
+      }
+    },
+    "bioavailability_ma": {
+      "n": 249,
+      "status": "stale_retrieval_index_requires_targeted_replay",
+      "metrics_role": "last_completed_before_2026-09-01_nitrendipine_source_identity_fix",
+      "agent_macro_f1": {
+        "none": 0.5947883407148007,
+        "L1": 0.769467152565744,
+        "L2": 0.7572310692232694,
+        "L3": 0.7611876339149066,
+        "L4": 0.7633702003760843,
+        "L5": 0.7615323224261772,
+        "L6": 0.7675070028011204
+      }
+    },
+    "skin_reaction": {
+      "n": 249,
+      "status": "current",
+      "agent_macro_f1": {
+        "none": 0.6848101265822786,
+        "L1": 0.7204176105584557,
+        "L2": 0.7211969111969112
+      }
+    }
+  },
+  "reuse_contract": "A result is current only when benchmark input, retrieval index, family manifest, model, visibility, split, and prompt contract hashes all match. Directory names alone never authorize reuse."
 }

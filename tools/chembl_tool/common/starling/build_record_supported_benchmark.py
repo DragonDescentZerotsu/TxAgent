@@ -706,11 +706,36 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source-root", type=Path, default=DEFAULT_SOURCE_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--tasks", nargs="*", choices=TASKS, default=list(TASKS))
+    parser.add_argument(
+        "--preserve-existing-split",
+        action="store_true",
+        help=(
+            "Preserve the current output split for surviving parents; use for "
+            "reviewed source removals that must not reshuffle the benchmark."
+        ),
+    )
     args = parser.parse_args(argv)
-    summaries = {
-        task: build_task(task, source_root=args.source_root, output_root=args.output_root)
-        for task in args.tasks
-    }
+    summaries = {}
+    for task in args.tasks:
+        if args.preserve_existing_split:
+            summaries[task] = build_task_preserving_split(
+                task,
+                source_root=args.source_root,
+                output_root=args.output_root,
+                reference_split_root=args.output_root / task / "scaffold",
+                lineage=LINEAGE,
+                protocol_version=PROTOCOL_VERSION,
+            )
+        else:
+            summaries[task] = build_task(
+                task, source_root=args.source_root, output_root=args.output_root
+            )
+    summary_path = args.output_root / "summary.json"
+    existing_tasks = {}
+    if summary_path.exists():
+        existing_tasks = json.loads(summary_path.read_text(encoding="utf-8")).get(
+            "tasks", {}
+        )
     root_summary = {
         "schema_version": PROTOCOL_VERSION,
         "lineage": LINEAGE,
@@ -718,11 +743,15 @@ def main(argv: list[str] | None = None) -> int:
         "source_root": str(args.source_root),
         "output_root": str(args.output_root),
         "tasks": {
-            task: summary["splits"]["scaffold"] for task, summary in summaries.items()
+            **existing_tasks,
+            **{
+                task: summary["splits"]["scaffold"]
+                for task, summary in summaries.items()
+            },
         },
     }
-    write_json_atomic(args.output_root / "summary.json", root_summary)
-    print(json.dumps({"summary": str(args.output_root / "summary.json")}, indent=2))
+    write_json_atomic(summary_path, root_summary)
+    print(json.dumps({"summary": str(summary_path)}, indent=2))
     return 0
 
 

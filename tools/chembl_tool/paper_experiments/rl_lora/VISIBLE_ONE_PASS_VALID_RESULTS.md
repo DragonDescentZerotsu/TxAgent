@@ -7,7 +7,10 @@ configuration. The user subsequently selected rank-32 all-module LoRA, and its
 matched three-step hosted smoke, 96-rollout length audit, W&B sync, checkpoint
 export, and valid-3 reload also passed. After this receipt, the hosted 120B
 all-train run was started and intentionally stopped; it must not be resumed.
-The local NeMo 20B Bio run is active, and every test split remains untouched.
+The local NeMo 20B Bio run was subsequently started and intentionally stopped
+after step-174 metrics, with step 160 as its last complete checkpoint. Neither
+backend may be resumed automatically. No formal local checkpoint-valid or test
+evaluation was run, and every test split remains untouched.
 
 ## Contract
 

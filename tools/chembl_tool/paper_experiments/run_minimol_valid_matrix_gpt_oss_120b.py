@@ -73,8 +73,8 @@ PHASES = (
         ),
         single_analysis_root=Path(
             "outputs/paper/"
-            "matched_train_label_direct_agent_f20_calibrated_v2_scaffold_valid_"
-            "gpt_oss_120b/runs_identity_blind_parent_disjoint"
+            "molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_"
+            "gpt_oss_120b_bugfix_v2/runs_identity_blind_parent_disjoint"
         ),
         experiments=(
             "bioavailability_ma__chembl_direct",

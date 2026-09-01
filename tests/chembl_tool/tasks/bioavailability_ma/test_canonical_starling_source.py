@@ -12,6 +12,9 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_RELATIVE,
     classify_local_record,
 )
+from tools.chembl_tool.tasks.bioavailability_ma.source_identity_review import (
+    NITRENDIPINE_IDENTITY_MISMATCH_SMILES,
+)
 
 
 def test_local_partition_requires_an_absolute_anchor():
@@ -151,6 +154,38 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
     claim = result["direct_claims"].iloc[0]
     assert list(claim["source_origins"]) == ["hf", "local"]
     assert claim["n_source_records"] == 2
+
+
+def test_reviewed_nitrendipine_structure_name_mismatch_is_excluded():
+    hf = pd.DataFrame(
+        [
+            {
+                "source_index": 79290,
+                "pmid": "2468876",
+                "molecule_name": "Nitrendipine",
+                "smiles": NITRENDIPINE_IDENTITY_MISMATCH_SMILES,
+                "bioavailability_report_type": "absolute",
+                "oral_bioavailability_value": "22.6%",
+                "species_or_population": "healthy volunteers",
+            }
+        ]
+    )
+    local = pd.DataFrame(
+        columns=["source_index", "exposure_measure", "smiles"]
+    )
+
+    result = build_canonical_frames(
+        hf,
+        local,
+        hf_revision="test-revision",
+        local_source_path=Path("local.parquet"),
+    )
+
+    assert result["direct_claims"].empty
+    assert len(result["reviewed_source_exclusions"]) == 1
+    assert (
+        result["stats"]["n_hf_direct_rejected_reviewed_identity_mismatch"] == 1
+    )
 
 
 def test_cross_source_dedup_does_not_collapse_threshold_crossing_interval():

@@ -22,18 +22,18 @@ Snapshot date: 2026-08-11.
 - Shared reasoning payload/trace helpers, structured-output validation,
   versioned task prompt profiles, final-decision profiles, manifest provenance,
   and branch-reuse gates are isolated behind one documented contract.
-- Hosted 120B is documented as intentionally stopped; local NeMo 20B is the
-  active run.
+- Hosted 120B and local NeMo 20B are both documented as intentionally stopped;
+  neither run may be resumed automatically.
 
 ## Still unresolved inside the RL subsystem
 
 1. Shared materialized data still lives under the historical
-   `rl_lora_gpt_oss_120b` output namespace. Moving it during active 20B training
-   would break provenance/path assumptions; a later model-neutral artifact
-   migration must preserve hashes and leave redirects/receipts.
+   `rl_lora_gpt_oss_120b` output namespace. There is no longer an active-run
+   blocker, but a model-neutral artifact migration must preserve hashes and
+   leave redirects/receipts; it is not required for analysis of the frozen run.
 2. `audit_one_pass_tokens.py` currently records the Tinker renderer/context
    surface. A separate NeMo/Hugging Face rendered-token receipt should be
-   generated before a fresh/restarted local campaign; current 20B prompts were
+   generated before a fresh/restarted local campaign; the stopped 20B prompts were
    bounded indirectly by the same GPT-OSS tokenizer and existing lengths.
 3. Provider optimizer behavior remains intentionally different: Tinker uses
    Adam beta2 0.95 and drops constant-reward groups; NeMo inherits beta2 0.999
@@ -45,35 +45,16 @@ Snapshot date: 2026-08-11.
 5. Reward v2 checks structure and binary judgments but does not semantically
    grade the analysis text. Branch correctness still means agreement with the
    final task gold because independent branch labels do not exist.
-6. Current 20B training-result analysis and sample-output review are not yet
-   frozen into a repository receipt; this was deliberately deferred until code
-   organization completed.
+6. The stopped 20B run's step/checkpoint and scalar-trend receipt is now frozen
+   in `LOCAL_NEMO_RUNBOOK.md`. Curated sample-output review and checkpoint-valid
+   evaluation are still incomplete; no checkpoint has passed a promotion gate.
 
-## Dirty worktree outside the RL subsystem
+## Repository publication status
 
-The repository is not ready for a single catch-all commit. Before the dedicated
-RL publication, `git status --porcelain -uall` showed 53 modified tracked files
-plus 141 untracked files. After the isolated RL publication and the subsequent
-shared-reasoning/profile contract publication, 33 modified tracked files and 76
-untracked paths remain in the groups below:
-
-| Group | Modified | Untracked | Main concern |
-|---|---:|---:|---|
-| shared Starling code | 4 | 2 | benchmark builders, evidence filtering, lineage protocol |
-| paper experiments outside RL | 15 | 26 | matrix, summaries, figures, diagnostics, result ledgers |
-| task data/docs | 4 | 2 | BBB lineage docs/builders and Skin direct-evidence scope |
-| tests outside RL | 9 | 9 | mixed coverage for several independent experiment lines |
-| data artifacts | 0 | 37 | two BBB processed lineages and audit outputs |
-| root files | 1 | 0 | repository-wide instructions |
-
-These changes represent several scientific lineages and should not be hidden in
-one “cleanup” commit. After publishing the isolated RL and shared-reasoning
-scopes, the safe order for the remaining work is:
-
-1. BBB/Skin Starling dataset/index lineage and processed data artifacts.
-2. Paper matrix, analyses, summaries, figures, and result-ledger updates.
-3. Remaining diagnostics/router/train-ratio experiments and their tests.
-
-Each group needs its own targeted test list and artifact/protocol review before
-staging. Existing unrelated user changes must be preserved; do not stage the
-entire worktree with `git add -A` until those scopes are reviewed.
+The isolated RL subsystem, shared reasoning/profile contract, BBB/Skin Starling
+lineages, paper diagnostics, tests, and processed audit artifacts were reviewed
+and published to `main` through commits `4ea18e4`, `fa8eec5`, and `d359170`.
+After that publication, local `main` and `origin/main` matched and the worktree
+was clean. Future changes must still be scoped and reviewed normally; the old
+33-modified/76-untracked inventory is historical and no longer an open cleanup
+queue.

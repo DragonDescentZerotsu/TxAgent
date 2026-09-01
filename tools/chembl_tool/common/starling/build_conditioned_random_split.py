@@ -516,11 +516,119 @@ def allocate_parent_groups(
     }
 
 
+def preserve_parent_assignment(
+    rows: list[dict[str, Any]],
+    reference_rows: list[dict[str, Any]],
+) -> tuple[dict[str, str], dict[str, Any]]:
+    """Reuse an established parent split after a deletion-only source repair.
+
+    This deliberately fails when the rebuilt cohort introduces a new parent or
+    when the surviving assignment no longer has the required exact row counts.
+    Those cases require a fresh optimized random split instead of silently
+    extending an old assignment.
+    """
+
+    reference_by_parent: dict[str, str] = {}
+    reference_by_id: dict[str, dict[str, Any]] = {}
+    reference_ids: set[str] = set()
+    for row in reference_rows:
+        row_id = str(row["benchmark_row_id"])
+        if row_id in reference_ids:
+            raise ValueError(f"duplicate reference benchmark_row_id: {row_id}")
+        reference_ids.add(row_id)
+        reference_by_id[row_id] = row
+        parent = str(row["molecule_identity_key"])
+        split = str(row["split"])
+        if split not in SPLITS:
+            raise ValueError(f"invalid reference split {split!r} for {row_id}")
+        previous = reference_by_parent.setdefault(parent, split)
+        if previous != split:
+            raise ValueError(f"reference parent {parent!r} spans multiple splits")
+
+    assignment: dict[str, str] = {}
+    current_ids: set[str] = set()
+    for row in rows:
+        row_id = str(row["benchmark_row_id"])
+        if row_id in current_ids:
+            raise ValueError(f"duplicate current benchmark_row_id: {row_id}")
+        current_ids.add(row_id)
+        if row_id not in reference_by_id:
+            raise ValueError(
+                "cannot preserve split after a non-deletion repair; new "
+                f"benchmark_row_id {row_id!r} was introduced"
+            )
+        if _content_row(row) != _content_row(reference_by_id[row_id]):
+            raise ValueError(
+                "cannot preserve split because surviving benchmark row "
+                f"{row_id!r} changed content"
+            )
+        parent = str(row["molecule_identity_key"])
+        if parent not in reference_by_parent:
+            raise ValueError(
+                f"cannot preserve split because parent {parent!r} is new"
+            )
+        assignment[parent] = reference_by_parent[parent]
+
+    counts = Counter(
+        assignment[str(row["molecule_identity_key"])] for row in rows
+    )
+    target_eval = _rounded_fraction(len(rows), EVAL_FRACTION)
+    expected = {
+        "train": len(rows) - 2 * target_eval,
+        "valid": target_eval,
+        "test": target_eval,
+    }
+    if dict(counts) != expected:
+        raise ValueError(
+            "surviving assignment no longer satisfies exact 80/10/10 row "
+            f"counts: observed={dict(counts)}, expected={expected}"
+        )
+
+    conditions_by_split: dict[str, set[str]] = {split: set() for split in SPLITS}
+    for row in rows:
+        split = assignment[str(row["molecule_identity_key"])]
+        conditions_by_split[split].add(str(row["condition_group"]))
+    all_conditions = set.union(*conditions_by_split.values())
+    missing = {
+        split: sorted(all_conditions - conditions)
+        for split, conditions in conditions_by_split.items()
+        if conditions != all_conditions
+    }
+    if missing:
+        raise ValueError(
+            f"surviving assignment no longer covers every condition: {missing}"
+        )
+
+    singleton_counts = Counter(
+        assignment[str(row["molecule_identity_key"])]
+        for row in rows
+        if int(row[VOTE_COUNT_FIELD]) == 1
+    )
+    return assignment, {
+        "method": "preserved_existing_parent_assignment_after_deletion_only_repair",
+        "target_fraction": {
+            "train": 1.0 - 2 * EVAL_FRACTION,
+            "valid": EVAL_FRACTION,
+            "test": EVAL_FRACTION,
+        },
+        "target_rows": expected,
+        "n_parent_groups": len(_parent_groups(rows)),
+        "n_conditions": len(all_conditions),
+        "n_reference_rows": len(reference_rows),
+        "n_current_rows": len(rows),
+        "n_removed_rows": len(reference_ids - current_ids),
+        "n_added_rows": len(current_ids - reference_ids),
+        "selected_valid_singletons": singleton_counts["valid"],
+        "selected_test_singletons": singleton_counts["test"],
+        "condition_coverage_constraint": "every condition has at least one parent in every split",
+    }
+
+
 def _content_row(row: Mapping[str, Any]) -> dict[str, Any]:
     return {
         key: value
         for key, value in row.items()
-        if key not in {"split", "split_policy"}
+        if key not in {"split", "split_policy", "split_assignments"}
     }
 
 
@@ -559,7 +667,13 @@ def _write_group_distribution(root: Path, rows_by_split: Mapping[str, list[dict[
         temporary.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def build_task(task: str, *, seed: int = DEFAULT_SEED) -> dict[str, Any]:
+def build_task(
+    task: str,
+    *,
+    seed: int = DEFAULT_SEED,
+    preserve_existing_split: bool = False,
+    reference_root: Path = BENCHMARK_ROOT,
+) -> dict[str, Any]:
     source_root = task_root(task, "scaffold")
     destination = task_root(task, "random")
     source_rows = [
@@ -570,21 +684,37 @@ def build_task(task: str, *, seed: int = DEFAULT_SEED) -> dict[str, Any]:
     row_ids = [str(row["benchmark_row_id"]) for row in source_rows]
     if len(row_ids) != len(set(row_ids)):
         raise ValueError(f"{task} benchmark_row_id values are not unique")
-    assignment, optimizer = allocate_parent_groups(
-        source_rows,
-        seed=seed,
-        # ClinTox labels come from source-role construction, not assay-vote
-        # aggregation; its source_record_count is therefore not a comparable
-        # held-out label-quality measure.
-        optimize_record_support=task != "clintox",
-    )
+    if preserve_existing_split:
+        reference_task_root = reference_root / TASK_DIRECTORIES[task] / "random"
+        reference_rows = [
+            row
+            for split in SPLITS
+            for row in read_jsonl(
+                reference_task_root / f"{split}_molecule_condition_labels.jsonl"
+            )
+        ]
+        assignment, optimizer = preserve_parent_assignment(
+            source_rows, reference_rows
+        )
+    else:
+        assignment, optimizer = allocate_parent_groups(
+            source_rows,
+            seed=seed,
+            # ClinTox labels come from source-role construction, not assay-vote
+            # aggregation; its source_record_count is therefore not a comparable
+            # held-out label-quality measure.
+            optimize_record_support=task != "clintox",
+        )
 
     rows_by_split: dict[str, list[dict[str, Any]]] = {split: [] for split in SPLITS}
     for row in source_rows:
         split = assignment[str(row["molecule_identity_key"])]
         output = dict(row)
+        split_assignments = dict(output.get("split_assignments") or {})
+        split_assignments["random"] = split
         output["split"] = split
         output["split_policy"] = RANDOM_SPLIT_CONTRACT
+        output["split_assignments"] = split_assignments
         rows_by_split[split].append(output)
 
     destination.mkdir(parents=True, exist_ok=True)
@@ -706,12 +836,36 @@ def _update_manifest(
     write_json_atomic(manifest_path, manifest)
 
 
-def build_all(*, seed: int = DEFAULT_SEED) -> dict[str, Any]:
+def build_all(
+    *,
+    seed: int = DEFAULT_SEED,
+    tasks: tuple[str, ...] | None = None,
+    preserve_existing_split: bool = False,
+    reference_root: Path = BENCHMARK_ROOT,
+) -> dict[str, Any]:
+    requested = tuple(TASK_DIRECTORIES) if tasks is None else tasks
     summaries: dict[str, dict[str, Any]] = {}
-    for task in TASK_DIRECTORIES:
+    receipt_path = BENCHMARK_ROOT / "random_split_receipt.json"
+    if tasks is not None and receipt_path.exists():
+        summaries.update(
+            json.loads(receipt_path.read_text(encoding="utf-8")).get("tasks", {})
+        )
+    rebuilt: dict[str, dict[str, Any]] = {}
+    for task in requested:
         print(f"[conditioned-random] solving {task}", flush=True)
-        summaries[task] = build_task(task, seed=seed)
+        rebuilt[task] = build_task(
+            task,
+            seed=seed,
+            preserve_existing_split=preserve_existing_split,
+            reference_root=reference_root,
+        )
+        summaries[task] = rebuilt[task]
         print(f"[conditioned-random] completed {task}", flush=True)
+    missing = sorted(set(TASK_DIRECTORIES) - set(summaries))
+    if missing:
+        raise FileNotFoundError(
+            f"Partial random build lacks existing summaries for {missing}"
+        )
     receipt = {
         "benchmark": "conditioned_benchmark",
         "split_contract": RANDOM_SPLIT_CONTRACT,
@@ -724,7 +878,11 @@ def build_all(*, seed: int = DEFAULT_SEED) -> dict[str, Any]:
         ),
         "tasks": summaries,
     }
-    write_json_atomic(BENCHMARK_ROOT / "random_split_receipt.json", receipt)
+    write_json_atomic(receipt_path, receipt)
+    # A partial rebuild still owns the suite-level manifest.  Refresh it from
+    # the complete receipt (rebuilt tasks plus preserved task summaries), not
+    # only from this invocation's subset, so every task retains both roots and
+    # both split-count tables.
     _update_manifest(summaries, seed=seed)
     return receipt
 
@@ -732,8 +890,33 @@ def build_all(*, seed: int = DEFAULT_SEED) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        choices=sorted(TASK_DIRECTORIES),
+        help="Rebuild only selected tasks and preserve current summaries for others.",
+    )
+    parser.add_argument(
+        "--preserve-existing-split",
+        action="store_true",
+        help=(
+            "Reuse an existing parent assignment for a deletion-only repair; "
+            "fail if exact counts or condition coverage no longer hold."
+        ),
+    )
+    parser.add_argument(
+        "--reference-root",
+        type=Path,
+        default=BENCHMARK_ROOT,
+        help="Benchmark root containing the reference <Task>/random split.",
+    )
     args = parser.parse_args(argv)
-    result = build_all(seed=args.seed)
+    result = build_all(
+        seed=args.seed,
+        tasks=tuple(args.tasks) if args.tasks else None,
+        preserve_existing_split=args.preserve_existing_split,
+        reference_root=args.reference_root,
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

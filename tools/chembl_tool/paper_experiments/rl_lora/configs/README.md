@@ -1,7 +1,8 @@
 # NeMo RL config map
 
-The active config root is `grpo_gpt_oss_20b_one_pass_bio.yaml`. It contains the
-complete local 20B Bio recipe. The shorter gates inherit it:
+The frozen formal config root is `grpo_gpt_oss_20b_one_pass_bio.yaml`. It
+contains the complete local 20B Bio recipe used by the stopped partial run. The
+shorter gates inherit it:
 
 - `grpo_gpt_oss_20b_one_pass_bio_smoke.yaml`: 12-row, one-step mechanical gate.
 - `grpo_gpt_oss_20b_one_pass_bio_2step.yaml`: same smoke data, two steps.
@@ -14,5 +15,5 @@ checked by `validate_backend_contract.py` before launch.
 `grpo_gpt_oss_120b_lora_smoke.yaml` and
 `grpo_gpt_oss_120b_lora_feasibility.yaml` are historical local NeMo E17
 feasibility configs. They are not the current 120B path; current hosted 120B RL
-uses Tinker. Keep them for receipts, but do not derive new one-pass runs from
-them.
+used Tinker before it was intentionally stopped. Keep them for receipts, but do
+not derive or resume one-pass runs without a new explicit user decision.

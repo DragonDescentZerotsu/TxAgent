@@ -28,6 +28,9 @@ HF_SNAPSHOT_PATH = CANONICAL_SOURCE_DIR / "hf_oral_bioavailability_snapshot.parq
 DIRECT_SOURCE_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_source_rows.parquet"
 DIRECT_CLAIMS_PATH = CANONICAL_SOURCE_DIR / "direct_claims.parquet"
 DIRECT_REJECTED_ROWS_PATH = CANONICAL_SOURCE_DIR / "direct_rejected_rows.parquet"
+REVIEWED_SOURCE_EXCLUSIONS_PATH = (
+    CANONICAL_SOURCE_DIR / "reviewed_source_exclusions.parquet"
+)
 DEDUP_AUDIT_PATH = CANONICAL_SOURCE_DIR / "cross_source_dedup_audit.parquet"
 LOCAL_PARTITION_AUDIT_PATH = CANONICAL_SOURCE_DIR / "local_partition_audit.parquet"
 MANIFEST_PATH = CANONICAL_SOURCE_DIR / "merge_manifest.json"

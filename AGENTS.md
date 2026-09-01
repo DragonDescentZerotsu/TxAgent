@@ -41,7 +41,7 @@ tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 | task | scaffold train / valid / test | random train / valid / test | 当前 target |
 |---|---:|---:|---|
 | BBB_Martins | 3,053 / 397 / 393 | 3,075 / 384 / 384 | experimentally meaningful systemic CNS access |
-| Bioavailability_Ma | 1,958 / 262 / 269 | 1,991 / 249 / 249 | oral bioavailability under the reported condition |
+| Bioavailability_Ma | 1,956 / 262 / 269 | 1,989 / 249 / 249 | oral bioavailability under the reported condition |
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 | clinical-trial toxicity failure versus approved comparator |
 | Skin_Reaction | 1,997 / 246 / 248 | 1,993 / 249 / 249 | skin sensitization/contact allergy |
 
@@ -55,7 +55,10 @@ molecule-condition schema。没有外部 condition 的行使用
 condition，全部采用该值。两种 split 的 parent identity overlap 均为 0；只有 scaffold split 另外保证
 Bemis-Murcko scaffold overlap 为 0。
 
-BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；ClinTox
+BBB 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；Bioavailability 已排除
+冻结 HF source 中 6 条经人工及 PubChem/PMID 2468876 核验的 nitrendipine 结构—名称错配记录，移除由错误
+`CNYREWGHOWSYCJ` identity 产生的 2 个 benchmark rows，并原位重建 scaffold/random split 与 retrieval index；
+旧 Bioavailability predictions 只有在新 manifest input hash 匹配时才可复用。ClinTox
 只补 condition schema，ordered `(drug, Y)` 和 split 不变。已有 prediction 只能在 manifest input hash 与
 migration receipt 匹配时复用，不能仅凭旧目录名复用。
 
@@ -64,98 +67,54 @@ meaningful CNS access；Bioavailability 的 L1 只包含实际 voter rows；Skin
 allergy final outcome；ClinTox 只由冻结 AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators
 构造 label，broad Starling toxicity rows 不投票。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
 
-当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
-MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
-Tier 1+2 final-only 诊断和代码入口统一记录在：
+论文实验只保留以下六条结果主线：ChEMBL retrieval、Starling retrieval、one-shot cumulative full-flat levels、
+append-only progressive levels、full-mechanism organization，以及 scaffold/random split。Identity-blind 与
+deployment-visible-prefetched 两种可见性合同都必须保留。当前协议、结果状态、artifact roots 和 trace allowlist
+分别以以下文件为准：
 
 ```text
-tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
+tools/chembl_tool/paper_experiments/README.md
+tools/chembl_tool/paper_experiments/RESULTS.md
+tools/chembl_tool/paper_experiments/current_conditioned_results.json
+tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md
+tools/chembl_tool/paper_experiments/TRACE_RETENTION.md
 ```
 
-当前 paper-facing valid 默认 prompt profile 分别为 BBB `meaningful_cns_access_v1`、Bioavailability
-`f20_evidence_calibrated_v2` 和 Skin `sensitization_aligned_v2`。BBB v2/v3、BBB property-compatible selector、
-Skin negative-transfer v3、train-ratio prior 和 matched train-label agent 均为可复现但未 promotion 的 valid-only
-历史实验，不得作为默认 pipeline 或据此运行 formal test。当前版本、最佳 valid 条件和 artifact 索引以
-`tools/chembl_tool/paper_experiments/RESULTS.md` 顶部的 canonical snapshot 为准。
-
-当前 Starling benchmark 的主要运行与汇总入口：
+当前主要构建、运行、汇总和画图入口：
 
 ```text
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+tools/chembl_tool/common/starling/build_conditioned_random_split.py
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
-tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
-tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
-tools/chembl_tool/paper_experiments/build_minimol_retrieval_features.py
-tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
-tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
-tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
-tools/chembl_tool/paper_experiments/analyze_starling_best_agent_baselines.py
-tools/chembl_tool/paper_experiments/router_oof/cli.py
-tools/chembl_tool/paper_experiments/summarize_minimol_retrieval_agent.py
-tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
-tools/chembl_tool/paper_experiments/plot_starling_benchmark_overview.py
-tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
-tools/chembl_tool/paper_experiments/watch_glm_tunnel_and_matrix.py
-tools/chembl_tool/paper_experiments/plot_starling_with_minimol_agent.py
-tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
-tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
+tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py
+tools/chembl_tool/paper_experiments/build_bbb_source_family_purity.py
+tools/chembl_tool/paper_experiments/build_bioavailability_vote_pure_source.py
+tools/chembl_tool/paper_experiments/molecular_evidence_agent.py
+tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
-tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
+tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
+tools/chembl_tool/paper_experiments/analyze_starling_direct_significance.py
+tools/chembl_tool/paper_experiments/analyze_starling_best_agent_baselines.py
+tools/chembl_tool/paper_experiments/analyze_progressive_trace_adoption.py
+tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
-tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
-tools/chembl_tool/paper_experiments/analyze_coverage_selector_retrieval_changes.py
-tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
-tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
-tools/chembl_tool/paper_experiments/run_train_ratio_prior_experiment.py
-tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
-baselines/minimol/run_bioavailability_ma.py --train-all
 baselines/minimol/run_train_cv.py
 baselines/minimol/run_embedding_knn.py
 baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
 
-Conditioned cumulative-family 的 Bioavailability nondirect context overlay 与 ClinTox source-native support
-bridge 分别由 `tasks/bioavailability_ma/build_nondirect_assay_context.py` 和
-`tasks/clintox/build_flat_assay_support_evidence.py` 构建；两者只生成版本化 source artifacts，不复制 reasoning
-runner。完整合同、当前 valid 进度和复现命令统一见 `ASSAY_LEVEL_RETRIEVAL.md`。
+`plot_starling_model_comparison.py` 是 source/model/visibility 总图唯一入口；
+`plot_assay_retrieval_curve.py` 是 level curve 与资源统计唯一入口。不得为单个实验新建一次性正式画图模块。
+Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作默认入口继续启动。其它已经删除的
+no-go 方法开发只从 Git history 或冻结 receipt 读取。
 
-`plot_starling_model_comparison.py` 是 GPT-OSS-20B、GPT-OSS-120B、train-label baselines 和后续
-ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary 通过可重复的
-`--comparison-metrics` 追加；matched method experiment 继续通过可重复的 `--experiment-metrics` 追加。
-不得为单个新实验新增独立 overview/bar-chart 模块或正式小图。完整 comparison summary 必须与 reference
-使用相同 task/split/subset/sample count 和 baseline；experiment metrics 则必须按 task/split 提供一个与既有
-candidate condition 对齐的 anchor row，绘图器会校验 `n` 和 macro-F1 后隐藏重复 anchor，只绘制新增实验行。
-
-`router_oof/` 是与正式 valid/test matrix 隔离的 train-only KNN-vs-direct-agent 实验。它固定 scaffold-or-parent
-5-fold OOF、fold-specific heldout-parent filtered index、Morgan `k=3`、gpt-oss-120b
-`identity_blind + parent_disjoint` direct agent，并按 BBB/Bioavailability/Skin 分别训练 Logistic/HistGBDT；
-v1–v3.1 可部署 router 不得共享 task 参数，也不得把 train fold 加入 `starling_benchmark_matrix.py` 的 evaluation
-subset。唯一 shared 参数实验是已冻结、不可部署的 train-only transfer termination diagnosis。
-当前 v2 router 不把 fold-dependent absolute reference size 或确定性重复的 k=3 margin/entropy 作为输入；它在
-`knn_compact`、`query_knn`、`query_knn_evidence` 三个通用 profile 内做 nested train-only 选择，并分别校准
-`P(agent-only-correct)` 与 `P(KNN-only-correct)`，用二者之差作为 routing score。只有 nested OOF paired-bootstrap
-promotion gate 同时通过 macro-F1 improvement 和 accuracy guardrail 才部署，否则明确回退 KNN。v1 `router/`
-artifact 保留为 historical diagnosis；v2 写入 `router_v2/` 和 `router_features_v2.*`，不得覆盖或混表。
-v3 是独立 output-aware post-selector：只训练 KNN/agent disagreement rows，target 为 agent-only-correct 对
-KNN-only-correct；保留原始 query/KNN/evidence features，并以 nested OOF 比较 18-feature base、49-feature
-evidence 和 70-feature evidence+structured-trace profiles。两个 disagreement directions 使用独立 threshold，
-promotion gate 失败时严格 KNN fallback。v3 写入 `post_selector_features_v3.jsonl` 与 `post_selector_v3/`，
-不得覆盖 v1/v2；permutation/dropout stability 需要额外 calls，不能从既有 trace 伪造。
-v3.1 复用同一 frozen feature rows，但为两个 disagreement direction 分别选择 family/profile/threshold，并使用
-fold-heldout sigmoid-calibrated ensemble。每个 direction 必须至少 route 20 个 train rows 且 agent-win precision
-的 one-sided 95% Wilson lower bound > 0.5；overall train promotion 以 accuracy paired-bootstrap lower CI > 0
-为主 gate。它写入 `post_selector_v31/` 和 `post_selector_valid_result_v31.json`，不得覆盖 v3。Valid receipt 必须
-分别标明 train-only promotion 与 held-out valid evidence gate；valid 不改变已冻结 policy。
-v3.1 后续只允许两个已冻结的 train-only termination diagnostics：`post_selector_v31_learning_curve/` 固定
-direction specs 做 matched-size curve；`post_selector_v31_transfer/` 固定 task-balanced Logistic shared
-representation，并保留 task-specific calibration/threshold。当前 transfer gate 已失败，router 主方法线停止；
-不得继续根据 valid 搜索新的 shared family/profile，formal test 仍未运行。
-协议、命令与 gate 统一记录在 `tools/chembl_tool/paper_experiments/ROUTER_OOF_IMPLEMENTATION_PLAN.md`。
+当前 BBB/Skin progressive scaffold/random artifact 与输入/index hash 匹配；Bioavailability 在 2026-09-01
+删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化，需要 targeted
+replay，相关 baseline 也因 train 删除两行需要重训。旧 score 只能标为 pre-fix reference。
 
 `watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
 launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
@@ -446,7 +405,7 @@ tools/chembl_tool/common/openai_reasoning_client.py
 tools/chembl_tool/common/reasoning_calls.py
 tools/chembl_tool/common/reasoning_payload.py
 tools/chembl_tool/common/reasoning_validation.py
-tools/chembl_tool/common/final_decision_prior.py
+tools/chembl_tool/common/final_reasoning.py
 tools/chembl_tool/common/prompt_profile.py
 tools/chembl_tool/common/molecule_identity.py
 tools/chembl_tool/common/retrieval_policy.py
@@ -588,12 +547,9 @@ reasoning_validation.py
   4 次总尝试。
   不能在 response 有效时改写 prediction，也不能通过 retry 删除 evidence 或改变 inference setting。
 
-final_decision_prior.py
-  提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
-  `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
-  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。已失败的 BBB
-  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 只保留冻结 artifacts 和 no-go 结论；专用实现已删除，
-  不得启动 formal test。任何 profile 都不得变成 batch quota。
+final_reasoning.py
+  提供唯一 final prompt 的 group-summary projection，以及 resume 时 identity-blind/prefetched 输入恢复。
+  当前不再维护额外 final decision prior 或 raw-card evidence surface。
 
 prompt_profile.py
   只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task
@@ -738,72 +694,29 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 
 ## Paper experiment split 与可视化入口
 
-冻结论文矩阵的详细操作规范位于 `tools/chembl_tool/paper_experiments/AGENTS.md`。默认不加
-`--split` 时使用 test 并写入 `outputs/paper/molecular_evidence_agent/`；validation 诊断重跑统一加
-`--split valid`，产物隔离写入 `outputs/paper/molecular_evidence_agent_valid/`。可复用入口包括：
+冻结论文矩阵的详细操作规范位于 `tools/chembl_tool/paper_experiments/AGENTS.md`。当前只维护 ChEMBL、
+Starling、one-shot full-flat level、append-only progressive、full-mechanism、scaffold/random 六条结果主线，
+同时保留 identity-blind 与 deployment-visible-prefetched。
 
-这里的既有 `test` / `valid` 和 2026-07-23 frozen results 来自旧 TDC lineage，应作为历史结果保留；
-`--split test|valid` 目前不能解释为 Starling 的 `random|scaffold`。新 Starling 正式实验必须显式选择
-`data/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
-retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
-test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
+必须通过 `starling_benchmark_matrix.py` 显式指定 benchmark split、evaluation subset、visibility 和 identity
+policy；不得继续用旧 `--split test|valid` TDC 语义代替 Conditioned Benchmark 的 scaffold/random。当前
+cumulative-family/progressive scaffold 使用 `scaffold_disjoint`，random 使用 `parent_disjoint`；其它历史矩阵
+必须保留自己的显式 manifest policy。
 
-Bioavailability `record_supported_v2`、Skin `record_supported_v2` 与 BBB
-`experimental_meaningful_cns_access_v3` 后续 paper-facing
-structural-analog 主结果默认使用
-`identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
-旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity
-artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in ablation 使用独立 root，不能成为主矩阵依赖。
+当前 result root、hash 和 freshness 只读：
 
-新数据集的 Starling 主入口仍是
-`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`，正式默认必须解析为
-`--visibility-mode identity_blind --neighbor-identity-policy parent_disjoint`，输出到各 lineage root 的
-`runs_identity_blind_parent_disjoint/`。每个 split 必须覆盖完整 condition/sample 集并通过 failure、
-query-SMILES leak、visibility-contract、parent identity 和 held-out overlap audit。旧 `identity_blind + operational`
-结果仍是 historical supplemental control，不得冒充当前主结果。
-
-2026-08-04 第一版 `record_agreement70_split811_v1` scaffold-valid 已完成 GLM、GPT-OSS-20B/120B 三套
-22-condition blind matrix；GLM 为
-6887/6887 严格成功，两个 GPT 各有一个不可修复 context-limit sample 并按预定 policy 计错。GPT 两套
-deployment-visible+parent-disjoint 补充矩阵也已完成；GLM visible 同合同矩阵同样达到 6887/6887 严格成功，
-并已加入 canonical blind+visible 总图。
-Random-valid GLM 仍有两个 Bioavailability ChEMBL full sample-condition 未通过严格 gate。完整路径、指标、
-failure policy 和 coverage context/MMP-ledger 结果见
-`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
-
-```bash
-python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
-python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
-python -m tools.chembl_tool.paper_experiments.audit_prefetch_contract --split valid
-python -m tools.chembl_tool.paper_experiments.parent_disjoint_ablation --split valid --materialize
-python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
-  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
-  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview.svg \
-  --png-output outputs/paper/molecular_evidence_agent_valid/analysis/figures/retrieval_claims_overview_highres.png \
-  --data-split valid
-
-python -m tools.chembl_tool.paper_experiments.analyze_coverage_performance \
-  --split valid \
-  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis
-
-python -m tools.chembl_tool.paper_experiments.plot_coverage_performance \
-  --analysis-dir outputs/paper/molecular_evidence_agent_valid/analysis \
-  --output outputs/paper/molecular_evidence_agent_valid/analysis/figures/coverage_performance_relationship.svg \
-  --data-split valid
+```text
+tools/chembl_tool/paper_experiments/current_conditioned_results.json
+tools/chembl_tool/paper_experiments/RESULTS.md
 ```
 
-`summarize_parent_disjoint_results.py` 目前通过显式 `--operational-root`、`--parent-disjoint-root` 和
-`--output-dir` 切换 split，详细 valid 命令见 paper-experiments 目录文档。
+Bioavailability 在 2026-09-01 source-identity 修复后需要 targeted agent replay 和 baseline 重训；不得把 pre-fix
+score 标为 current。Blind 与 visible 的最后完整历史 roots 使用不同 benchmark lineage，也不得作为 matched
+visibility comparison。
 
-2026-07-23 的 valid 矩阵已扩展完成：三套 visibility/tool-execution 制度各 26 个条件、2,713 个
-sample-condition 且 0 失败；prefetch audit 为 2,713/2,713；parent-disjoint 为 22 个条件、
-2,275 个 sample-condition 且 0 失败。Test 的 identity-blind 和 deployment-visible 各 26 个条件，
-matched-prefetch 仍为原 21 个条件。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
-
-旧 TDC performance overview 仍以 `plot_retrieval_claims_overview.py` 为唯一模板；当前 v4 的 model、visibility、
-baseline 和 matched ablation 总图统一由 `plot_starling_model_comparison.py` 生成。Coverage 与性能增幅的旧
-诊断图使用 `plot_coverage_performance.py`。所有入口复用 `paper_figure_style.py`，每个正式 figures 目录只
-保留 canonical SVG 和一份高分辨率 PNG，不保留 preview、QA 或一次性 overview。
+正式 source/model/visibility 总图只扩展 `plot_starling_model_comparison.py`；level performance、平均 molecules、
+cards、prompt/reasoning 长度只扩展 `plot_assay_retrieval_curve.py`。不要恢复旧 TDC overview、coverage-only
+一次性图或新增单实验 plotter。
 
 ## MiniMol baseline（历史结果与当前 v4 scaffold-valid 边界）
 
@@ -836,9 +749,10 @@ test；正式 test 前仍须冻结所有设置。
 不读取 `valid.jsonl`，每个
 ensemble member 在全部 `train.jsonl` 上训练固定 epoch，并用冻结的 `threshold=0.5` 评估 test。
 这种模式不得进行 test-selected early stopping 或 threshold tuning；输出中的 validation metrics 为 null。
-这些历史 random/scaffold 结果和 output roots 见
-`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`；下文单列的 sweep 数值仍全部是
-旧 TDC lineage。
+这些历史 random/scaffold 结果只从原 artifact manifest 或 Git history 读取；当前 baseline 状态和 output
+roots 见 `tools/chembl_tool/paper_experiments/RESULTS.md` 与
+`tools/chembl_tool/paper_experiments/current_conditioned_results.json`。下文单列的 sweep 数值仍全部是旧 TDC
+lineage，不得混入当前表。
 
 MiniMol embedding retrieval-only 对照复用上述正式 baseline 已保存、且与 split 逐行一致的
 `embeddings/{train,test}.pt`，L2 normalize 后按 cosine similarity 取同 split train 中的 top-3 molecules。

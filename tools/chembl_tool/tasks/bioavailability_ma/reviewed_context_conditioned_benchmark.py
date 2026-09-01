@@ -274,6 +274,16 @@ def build() -> dict[str, Any]:
         queue_path=REVIEW_ROOT / "review_queue.jsonl",
         verdict_path=REVIEW_ROOT / "review_verdicts.jsonl",
     )
+    current_claim_ids = set(
+        pd.read_parquet(DIRECT_CLAIMS_PATH, columns=["canonical_claim_id"])[
+            "canonical_claim_id"
+        ].astype(str)
+    )
+    reviewed = [
+        row
+        for row in reviewed
+        if str(row.get("source_record_id") or "") in current_claim_ids
+    ]
     return build_reviewed_conditioned_benchmark(
         config=ConditionedBenchmarkConfig(
             task_name="Bioavailability_Ma",

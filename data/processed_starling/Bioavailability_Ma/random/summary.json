@@ -6,12 +6,12 @@
   "actual_test_size": 209,
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 1674,
+  "n_train": 1673,
   "n_valid": 209,
   "n_test": 209,
   "train_label_counts": {
     "0": 461,
-    "1": 1213
+    "1": 1212
   },
   "valid_label_counts": {
     "0": 58,

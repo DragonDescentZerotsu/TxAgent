@@ -1,10 +1,11 @@
 # Local NeMo RL runbook
 
 This runbook records the pinned local NeMo RL environment. It was originally
-proven with the historical GPT-OSS-120B feasibility gate; the active Bio-only
-GPT-OSS-20B one-pass LoRA-GRPO job now uses the same environment on `node002`.
-The initial gate was completed on 2026-08-10. It is an operational receipt,
-not a claim that the one-step smoke improved model quality.
+proven with the historical GPT-OSS-120B feasibility gate; the stopped Bio-only
+GPT-OSS-20B one-pass LoRA-GRPO run used the same environment on `node002`.
+The initial gate was completed on 2026-08-10 and the formal partial run was
+stopped on 2026-08-11. This is an operational receipt, not a claim that RL
+improved model quality.
 
 ## Proven host and pinned software
 
@@ -136,7 +137,7 @@ receipt requires all of the following, not merely a driver process:
 - driver exits successfully and Ray actors disappear;
 - checkpoint metadata, train trace, config, and full log are retained.
 
-## 2026-08-11 GPT-OSS-20B Bio receipt and formal launch
+## 2026-08-11 GPT-OSS-20B Bio receipt and stopped formal run
 
 The exact Bio configuration completed a full one-step gate, an independent
 consecutive two-step gate, and a final two-step gate drawn from the complete
@@ -157,15 +158,46 @@ gate peaked at only 1.9%.
 /local/tianang/txagent_rl_lora/logs/smoke_driver_gpt_oss_20b_one_pass_bio_full_2step.log
 ```
 
-The formal Bio-only run uses the same 1,674-row visible-prefetched data as the
-hosted 120B run. It has 419 steps: 418 batches of four prompt groups and one
-ragged final batch of two prompt groups. The durable session and log are:
+The formal Bio-only run was configured to use the same 1,674-row
+visible-prefetched data as the hosted 120B run. Its planned epoch had 419
+steps: 418 batches of four prompt groups and one ragged final batch of two
+prompt groups. The stopped session and preserved log are:
 
 ```text
 tmux: txagent_gpt20b_bio_nemo_rl
 /local/tianang/txagent_rl_lora/logs/smoke_driver_gpt_oss_20b_one_pass_bio_formal.log
 W&B: https://wandb.ai/reasonv/txagent-one-pass-rl/runs/eajazu8s
 ```
+
+The user explicitly stopped this run after the reward curve showed no upward
+tendency. TensorBoard contains 174 completed scalar rows and rollout artifacts
+through `train_data_step174.jsonl`; the latest fully saved checkpoint receipt is
+step 160. The run was terminated as one exact process group with `SIGTERM`, and
+the NeMo/Ray/vLLM/Megatron children exited without a forced kill. At the stop
+audit there were no remaining GPU compute processes.
+
+The first 20 steps averaged `train/reward=0.5735`, while the last 20 averaged
+`-0.2804`; the final value was `-0.0850`. Different steps use different molecule
+batches, so this is not a paired learning estimate, but it provides no evidence
+of reward improvement. More importantly, `train/policy_kl_error` rose from a
+first-20 mean of `0.00671` to a last-20 mean of `3.81674`, ended at `58.8500`,
+and reached a maximum of `3570.6824`. The partial trajectory is therefore an
+instability/problem receipt, not a checkpoint-selection result.
+
+```text
+last rollout artifact:
+  /local/tianang/txagent_rl_lora/logs/gpt_oss_20b/one_pass_visible_bio/exp_004/train_data_step174.jsonl
+last complete checkpoint:
+  /local/tianang/txagent_rl_lora/checkpoints/gpt_oss_20b/one_pass_visible_bio/step_160
+checkpoint receipt:
+  /local/tianang/txagent_rl_lora/checkpoints/gpt_oss_20b/one_pass_visible_bio/latest_checkpoint_status.json
+TensorBoard source:
+  /local/tianang/txagent_rl_lora/logs/gpt_oss_20b/one_pass_visible_bio/exp_004/tensorboard/
+```
+
+No stopped-run checkpoint was evaluated on scaffold-valid, no checkpoint was
+promoted, and test remained untouched. Preserve the artifacts for diagnosis;
+do not resume this run automatically.
 
 ## 2026-08-10 receipt
 

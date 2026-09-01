@@ -59,8 +59,7 @@ skin exposure 和 inconclusive 不转成 gold label。
 `sensitization_aligned_v2`，并将其设为新运行默认：single/group/final 都明确限定为 sensitization/contact
 allergy；phototoxicity、irritation/corrosion、generic local damage 和 exposure 只能作为 out-of-scope/context。
 Manifest 记录 `task_prompt_profile` 和 `label_scope`；复用 single/group/final branch 时必须 profile 一致。
-旧 manifest 缺少 profile 字段时固定解释为 legacy v1，历史结果和 final-evidence-surface replay 继续显式使用
-legacy v1。2026-08-09 已完成 aligned-v2 GPT-OSS-120B scaffold-valid 四条件：none/direct/full-flat/
+旧 manifest 缺少 profile 字段时固定解释为 legacy v1。2026-08-09 已完成 aligned-v2 GPT-OSS-120B scaffold-valid 四条件：none/direct/full-flat/
 full-mechanism macro-F1 为 `0.5225/0.5725/0.5698/0.5423`，均 245/245 成功。scope-contaminated error 从
 legacy 的 23 降为 0，证明合同修复生效；但 full-mechanism 性能没有提升，fresh-run paired delta 也跨 0，
 不得把 scope 修复表述为性能方法。

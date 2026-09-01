@@ -20,19 +20,21 @@ random agent run 必须先按 random valid+test parents 重建 heldout-filtered 
 输入或结果标签。ClinTox 没有合格 external-condition taxonomy，因此全部使用 null condition；它仍是统一
 四任务 benchmark 的一部分，但当前 progressive 曲线只包含 BBB、Bioavailability 和 Skin。
 
-当前三任务 valid artifact：
+当前三任务 valid artifact 状态：
 
 机器可读 current index：`current_conditioned_results.json`。其中旧版本串只作为已经完成的 artifact storage
 pointer；benchmark identity 始终是 `conditioned_benchmark`。
 
-| task | benchmark input | progressive protocol | source contract | n |
-|---|---|---|---|---:|
-| BBB | `conditioned_benchmark/BBB_Martins` | append-only progressive | audited BBB family purity | 397 |
-| Bioavailability | `conditioned_benchmark/Bioavailability_Ma` | append-only progressive | direct voter-pure L1 | 262 |
-| Skin | `conditioned_benchmark/Skin_Reaction` | append-only progressive | sensitization direct/AOP | 246 |
+| task | benchmark input | source contract | n | artifact status |
+|---|---|---|---:|---|
+| BBB | `conditioned_benchmark/BBB_Martins` | audited BBB family purity | 397 | current |
+| Bioavailability | `conditioned_benchmark/Bioavailability_Ma` | direct voter-pure L1 | 262 | targeted replay required after 2026-09-01 source-identity repair |
+| Skin | `conditioned_benchmark/Skin_Reaction` | sensitization direct/AOP | 246 | current |
 
-三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。当前完整曲线均为
-零失败。旧 broad-L1、被拒绝的 empirical Bioavailability 和早期 progressive curves 不是当前结果。
+三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。BBB 与 Skin 的完整
+曲线当前且零失败。Bioavailability 的最后一条完整曲线也为零失败，但其 retrieval-index hash 已因六条错误
+nitrendipine identity records 的删除而失配；相关 score 只能作为 pre-fix reference，完成受影响 query 的
+targeted replay 后才能重新标为 current。旧 broad-L1 和早期 progressive curves 不是当前结果。
 
 ## Retrieval and leakage contract
 
@@ -40,15 +42,19 @@ pointer；benchmark identity 始终是 `conditioned_benchmark`。
 
 1. source preparation 只删除 valid/test parents 的 benchmark-defining direct rows；同一 heldout parent 的
    non-direct mechanism rows仍可作为 analog evidence。
-2. query-time 对每个候选执行 `scaffold_disjoint`；相同 scaffold 不能进入 retrieval。
+2. query-time identity policy 与 split 对齐：scaffold split 使用 `scaffold_disjoint`，random split 使用
+   `parent_disjoint`；两者都不允许 query parent 自身进入 retrieval。
 3. Morgan Tanimoto 最低阈值为 `0.3`。
-4. candidate generation 以 cumulative record-family pool 中的 molecule 为单位，按全局 Morgan similarity
+4. 对只有一个重原子的 query，candidate 必须含同一种元素
+   (`monatomic_query_element_match.v1`)。这是 folded 2048-bit Morgan 的退化保护，避免 `[Pb]`/`[U]`
+   这类不同元素因单 bit collision 被误报为 Tanimoto 1.0；普通多原子 query 不受影响。
+5. candidate generation 以 cumulative record-family pool 中的 molecule 为单位，按全局 Morgan similarity
    排序；没有 per-assay neighbor cap。
-5. assay identity 只作为 card provenance 和 card-selection diversity tie-break，不决定 family 可见性，
+6. assay identity 只作为 card provenance 和 card-selection diversity tie-break，不决定 family 可见性，
    也不再把一个 assay 强制映射到唯一 family。
-6. family assignment 是 record-level；同一 physical assay 的不同 records 可以在不同 levels 出现，但一张
+7. family assignment 是 record-level；同一 physical assay 的不同 records 可以在不同 levels 出现，但一张
    record card 只能按自己的 family 解锁。
-7. query SMILES 与 analog identity 对模型可见；prompt 保留
+8. query SMILES 与 analog identity 对模型可见；prompt 保留
    `Do not identify the query by name even if its structure is recognizable.`，不禁止模型使用一般化学知识。
 
 `direct_only_heldout_filtered + scaffold_disjoint` 同时保留了 mechanism analog 的覆盖能力和 scaffold-split
@@ -79,7 +85,8 @@ Progressive runner 可用一个共享的应用层 provider pool 混合本机、P
 HAProxy 直接代理异构后端，因为三端具有不同 model alias、鉴权和 reasoning 参数。公共调度器位于
 `tools/chembl_tool/common/openai_provider_pool.py`。包含本机 endpoint 的完整配置位于
 `provider_pools/deepseek_v4_flash_mixture.json`；本机不可用时使用只包含 PARCC 与 OpenRouter 的
-`provider_pools/deepseek_v4_flash_parcc_openrouter.json`。两份配置都只记录密钥环境变量名。
+`provider_pools/deepseek_v4_flash_parcc_openrouter.json`；只使用 OpenRouter 双 key failover 时使用
+`provider_pools/deepseek_v4_flash_openrouter.json`。三份配置都只记录密钥环境变量名。
 
 调度是 work-conserving least-normalized-load：每端有独立 `max_inflight`，空闲 slot 按近期 latency EWMA
 动态接收下一条请求。连续 transport/429/5xx failure 会暂时熔断该端；一次调用最多 fail over 到一个尚未尝试
@@ -118,9 +125,9 @@ Gold-v4 本身来自 source-index 级 qualitative-direction review：批准 65 �
 train/valid/test 为 2,945/365/365；shared-parent label/split changes 均为 0，identity/scaffold overlap 为 0。
 Conditioned-v3 将其展开为 3,053/397/396 个 parent-condition rows，并保持 parent/scaffold disjoint。
 
-### Bioavailability legacy-gold vote-pure v1 and Skin
+### Bioavailability current vote-pure source and Skin
 
-Bioavailability 当前六层累计 assays 为 `35 / 478 / 595 / 1,467 / 1,890 / 2,140`：actual legacy-gold-voter oral F、non-direct
+Bioavailability 当前六层累计 assays 为 `35 / 478 / 595 / 1,467 / 1,890 / 2,140`：actual benchmark-voter oral F、non-direct
 bioavailability、oral AUC/Cmax exposure、absorption/solubility/permeability、gut-wall/efflux/metabolism、
 hepatic clearance/metabolic stability。L2 仍记为 indirect information，不能与 L1 合并描述成 direct。
 L1 membership 重放当前 benchmark provenance 中 null-condition 与 reviewed external-condition 的实际
@@ -132,23 +139,26 @@ L1 nonvoter=0、可映射 voter outside L1=0。相对旧 broad-L1 v1，106,963 �
 Skin 两层累计 assays 为 `530 / 1,219`：gold-compatible sensitization outcome 与 sensitization AOP evidence。
 LLNA final outcome 只能在 direct；MIE/KE evidence 只进入 AOP。
 
-## Completed valid results
+## Last completed valid results and freshness
 
 Macro-F1：
 
 | task | None | L1 | L2 | L3 | L4 | L5 | L6 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | BBB | 0.6207 | 0.7314 | 0.7475 | 0.7475 | 0.7563 | **0.7563** | — |
-| Bioavailability legacy vote-pure v1 | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | **0.7608** |
+| Bioavailability pre-fix reference | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | **0.7608** |
 | Skin | **0.6119** | 0.6004 | 0.5939 | — | — | — | — |
 
-最新 matched baselines：
+最近一次 matched baselines：
 
 | task | MiniMol head | MiniMol KNN condition | MiniMol KNN all | Morgan KNN condition | Morgan KNN all |
 |---|---:|---:|---:|---:|---:|
 | BBB gold-v4 | **0.6674** | 0.6071 | 0.5708 | 0.5958 | 0.6174 |
 | Bioavailability | 0.5872 | 0.5984 | **0.6229** | 0.5891 | 0.5888 |
 | Skin | **0.6030** | 0.5755 | 0.5755 | 0.5208 | 0.5180 |
+
+BBB 与 Skin baseline 行仍匹配当前 cohort。Bioavailability baseline 使用了修复前多两条 train rows 的训练集，
+因此也必须重训；上表 Bio 行仅保留为 pre-fix reference，不能与修复后的 agent replay 混表。
 
 最终 level 的平均 active evidence 与模型调用长度：
 
@@ -170,7 +180,7 @@ outputs/paper/
   starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/
   scaffold_valid_deepseek_v4_flash_0731/
 
-Bioavailability current legacy-gold vote-pure rerun:
+Bioavailability last complete pre-fix vote-pure run (stale index; retain until targeted replay completes):
 
 outputs/paper/
   starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/
@@ -198,7 +208,7 @@ outputs/paper/starling_conditioned_assay_family_curve_v1/
     skin_reaction/mechanism_tagged_v4_source_purity_v1/
 ```
 
-当前英文总图与数据表：
+最后一版英文总图与数据表（其中 Bioavailability 明确为 pre-fix reference）：
 
 ```text
 outputs/paper/
@@ -233,6 +243,7 @@ multi-provider scheduler/config:
   tools/chembl_tool/common/openai_provider_pool.py
   tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json
   tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_parcc_openrouter.json
+  tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_openrouter.json
 
 shared retrieval/state:
   tools/chembl_tool/common/assay_retrieval.py
@@ -271,7 +282,7 @@ artifact root 分离，不能互相覆盖。
   python -m tools.chembl_tool.paper_experiments.build_bioavailability_vote_pure_source
 ```
 
-Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避免把 BBB/Skin 写入 Bio 目录）：
+Targeted replay 当前 Bioavailability（必须使用新的 output root 或严格的 reuse manifest；不得覆盖旧 trace）：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -291,11 +302,12 @@ Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避�
   --parallelism 256 --transport-max-retries 0
 ```
 
-Random split 必须使用新 output root、`--split-scheme random` 和按当前 random valid+test union
-重建的 heldout-filtered index。若本机 endpoint 不可用，可把上例配置替换为
-`deepseek_v4_flash_parcc_openrouter.json`；旧 random cohort 的 checkpoint 不能通过 hash gate。
+Random split 必须使用 `--split-scheme random` 和按当前 random valid+test union 重建的 heldout-filtered
+index。BBB/Skin random artifacts 当前；Bioavailability random index 同样在 source-identity repair 后失配，
+必须 targeted replay。若本机 endpoint 不可用，可把上例配置替换为
+`deepseek_v4_flash_parcc_openrouter.json`；任何旧 checkpoint 都必须通过完整 hash gate。
 
-重画当前完整图：
+重画最后一版完整图（Bioavailability 会按上文标为 pre-fix reference；修复后应换成 replay root）：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \

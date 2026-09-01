@@ -1,8 +1,8 @@
 condition_group,split,n_rows
 co_treatment=rifampin,train,8
-disease=cirrhosis,train,30
+disease=cirrhosis,train,29
 disease=cystic_fibrosis,train,9
-no_reported_external_condition,train,1674
+no_reported_external_condition,train,1673
 prandial_state=fasted,train,156
 prandial_state=fed_high_fat,train,6
 prandial_state=fed_unspecified,train,49

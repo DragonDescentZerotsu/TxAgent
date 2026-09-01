@@ -1,5 +1,8 @@
 # KNN–Agent Router：train-only OOF 实施计划
 
+> Archived/stopped research：本计划只用于复现已完成的 train-only diagnosis，不属于当前论文矩阵，
+> 不得由正式 benchmark、baseline、summary 或 plotting 入口启动，也未运行 formal test。
+
 ## 目标与边界
 
 本实验验证一个固定 KNN 与一个固定 direct-evidence agent 之间是否存在可学习的逐样本选择规律。

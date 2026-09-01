@@ -18,10 +18,9 @@ reasoning_validation.py / reasoning_calls.py
 prompt_profile.py
   Manifest lookup and branch-reuse guards for task prompt profiles.
 
-final_decision_prior.py
-  An orthogonal final-only decision profile. `standard` is a strict no-op;
-  non-standard profiles must be explicit, versioned, and auditable. Task CLIs
-  expose only `standard` and `train_ratio_tiebreak_v1`.
+final_reasoning.py
+  Canonical projection of group outputs into the final prompt and restoration
+  of identity-blind or prefetched final inputs during resume.
 
 tasks/<task>/prompt_profiles.py
   Task-local system roles, instructions, required schemas, allowed values,
@@ -31,20 +30,16 @@ tasks/<task>/prompt_profiles.py
 Task pipelines assemble retrieval and call the shared helpers. They must not
 copy the common payload, validation, trace, or artifact-reuse implementations.
 
-## Two independent profile axes
+## Task prompt profiles
 
 `task_prompt_profile` selects the task semantics for all single/group/final
 branches. A branch artifact may be reused only when its recorded task profile
 matches the target profile. Historical manifests without a profile field map
 to the task's explicit historical profile; they never inherit a new default.
 
-`final_decision_profile` changes only final-stage adjudication. The default
-`standard` profile adds no fields, instructions, or validation. A non-standard
-profile requires a final-only source batch and cannot be mixed into an existing
-batch lineage.
-
-Neither axis may change retrieval, evidence rows, gold labels, deterministic
-postprocessing, or the prediction after a valid model response.
+Task prompt profiles may not change retrieval, evidence rows, gold labels,
+deterministic postprocessing, or the prediction after a valid model response.
+There is one canonical final-stage evidence surface: validated group summaries.
 
 ## Retrieval-declared evidence views
 
@@ -92,7 +87,6 @@ Batch and run manifests record:
 ```text
 task_prompt_profile
 label_scope
-final_decision_profile
 ```
 
 Resume, final-only replay, frozen single/group reuse, and global-pool execution

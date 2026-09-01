@@ -363,7 +363,7 @@ def test_family_molecule_prefix_view_removes_per_assay_neighbor_cap():
     view = build_family_molecule_prefix_view(index, levels=[1])
 
     result = retrieve_family_molecule_prefixes(
-        "N",
+        "CCN",
         view,
         levels=[1],
         min_similarity=0.0,

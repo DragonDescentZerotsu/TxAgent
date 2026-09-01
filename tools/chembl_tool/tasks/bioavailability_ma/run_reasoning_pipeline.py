@@ -20,21 +20,9 @@ from tools.chembl_tool.common.coverage_reasoning import (
 )
 from tools.chembl_tool.common.experiment_retrieval import EXPERIMENT_MODES, retrieve_experiment_view
 from tools.chembl_tool.common.export import ensure_dir
-from tools.chembl_tool.common.final_evidence_surface import (
-    SUMMARY_ONLY,
-    add_final_evidence_surface_argument,
-    build_final_evidence_fields,
+from tools.chembl_tool.common.final_reasoning import (
     compact_group_reasoning_outputs,
-    final_evidence_instructions,
     prepare_resumed_final_inputs,
-)
-from tools.chembl_tool.common.final_decision_prior import (
-    EVIDENCE_STATES,
-    STANDARD_FINAL_DECISION,
-    TrainRatioPrior,
-    add_final_decision_profile_argument,
-    build_final_decision_prompt,
-    final_decision_validation_errors,
 )
 from tools.chembl_tool.common.identity_blind import (
     prepare_reasoning_retrieval,
@@ -101,14 +89,6 @@ DEFAULT_TOOL_SERVICE_URL = "http://127.0.0.1:8765"
 _write_trace_jsonl = partial(
     write_trace_jsonl,
     prediction_field="bioavailability_prediction",
-)
-TRAIN_RATIO_PRIOR = TrainRatioPrior(
-    dataset_lineage="record_supported_v2.bioavailability_canonical_direct.v2",
-    split="scaffold/train",
-    positive_count=1213,
-    negative_count=461,
-    positive_label="high",
-    negative_label="low",
 )
 
 
@@ -327,8 +307,6 @@ def main(argv: list[str] | None = None) -> int:
         reasoning_retrieval,
         single_output,
         group_outputs,
-        final_evidence_surface=args.final_evidence_surface,
-        final_decision_profile=args.final_decision_profile,
         prompt_profile=args.bioavailability_prompt_profile,
     )
     final_path = out_dir / "final_reasoning_output.json"
@@ -357,8 +335,6 @@ def main(argv: list[str] | None = None) -> int:
         "neighbor_identity_policy": args.neighbor_identity_policy,
         "neighbor_selector": args.neighbor_selector,
         "neighbor_context_profile": args.neighbor_context_profile,
-        "final_evidence_surface": args.final_evidence_surface,
-        "final_decision_profile": args.final_decision_profile,
         "task_prompt_profile": args.bioavailability_prompt_profile,
         "label_scope": get_bioavailability_prompt_profile(
             args.bioavailability_prompt_profile
@@ -576,20 +552,9 @@ def _run_final_reasoning(
     single_output: dict[str, Any],
     group_outputs: list[dict[str, Any]],
     *,
-    final_evidence_surface: str = SUMMARY_ONLY,
-    final_decision_profile: str = STANDARD_FINAL_DECISION,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
 ) -> dict[str, Any]:
     profile = get_bioavailability_prompt_profile(prompt_profile)
-    evidence_fields, surface_audit = build_final_evidence_fields(
-        retrieval,
-        compact_group_reasoning_outputs(group_outputs),
-        surface=final_evidence_surface,
-    )
-    decision_prompt = build_final_decision_prompt(
-        final_decision_profile,
-        TRAIN_RATIO_PRIOR,
-    )
     messages = [
         {
             "role": "system",
@@ -608,20 +573,16 @@ def _run_final_reasoning(
                         "status": single_output.get("status"),
                         "content": validated_branch_content(single_output),
                     },
-                    **evidence_fields,
-                    **decision_prompt.fields,
+                    "group_reasoning_outputs": compact_group_reasoning_outputs(
+                        group_outputs
+                    ),
                     "instructions": [
                         "Return compact complete JSON.",
                         f"Use bioavailability_prediction='high' for oral bioavailability F >= {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (Bioavailability_Ma label 1), and bioavailability_prediction='low' for F < {BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT:g}% (label 0).",
                         *profile.final_instructions,
                         "Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.",
-                    ]
-                    + list(decision_prompt.instructions)
-                    + final_evidence_instructions(final_evidence_surface),
-                    "required_json_schema": {
-                        **FINAL_SCHEMA,
-                        **decision_prompt.schema,
-                    },
+                    ],
+                    "required_json_schema": FINAL_SCHEMA,
                 },
                 ensure_ascii=False,
             ),
@@ -630,34 +591,14 @@ def _run_final_reasoning(
     response = call_with_json_validation(
         client.chat_json,
         messages,
-        required_fields=(
-            "bioavailability_prediction",
-            *decision_prompt.required_fields,
-        ),
-        allowed_values={
-            "bioavailability_prediction": {"high", "low"},
-            **(
-                {"evidence_state": set(EVIDENCE_STATES)}
-                if final_decision_profile != STANDARD_FINAL_DECISION
-                else {}
-            ),
-        },
-        content_validator=(
-            lambda content: final_decision_validation_errors(
-                content,
-                profile=final_decision_profile,
-                prior=TRAIN_RATIO_PRIOR,
-                prediction_field="bioavailability_prediction",
-            )
-        )
-        if final_decision_profile != STANDARD_FINAL_DECISION
-        else None,
+        required_fields=("bioavailability_prediction",),
+        allowed_values={"bioavailability_prediction": {"high", "low"}},
         branch_name="final",
     )
-    output = {"status": "ok" if structured_response_is_valid(response) else "error", "llm": response}
-    if surface_audit is not None:
-        output["final_evidence_surface"] = surface_audit
-    return output
+    return {
+        "status": "ok" if structured_response_is_valid(response) else "error",
+        "llm": response,
+    }
 
 
 def build_group_prompt_payload(
@@ -791,22 +732,17 @@ def _resume_final_from_run_dir(run_dir: Path, client: OpenAICompatibleClient) ->
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
     prompt_profile = _manifest_prompt_profile(manifest)
-    retrieval, group_outputs, final_surface = prepare_resumed_final_inputs(
+    retrieval, group_outputs = prepare_resumed_final_inputs(
         retrieval,
         single_output,
         group_outputs,
         manifest,
-        tool_service=client.tool_service,
     )
     final_output = _run_final_reasoning(
         client,
         retrieval,
         single_output,
         group_outputs,
-        final_evidence_surface=final_surface,
-        final_decision_profile=str(
-            manifest.get("final_decision_profile") or STANDARD_FINAL_DECISION
-        ),
         prompt_profile=prompt_profile,
     )
     final_path = run_dir / "final_reasoning_output.json"
@@ -913,8 +849,6 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         choices=NEIGHBOR_CONTEXT_PROFILES,
         default=STANDARD_NEIGHBOR_CONTEXT,
     )
-    add_final_evidence_surface_argument(parser)
-    add_final_decision_profile_argument(parser)
     parser.add_argument(
         "--bioavailability-prompt-profile",
         choices=BIOAVAILABILITY_PROMPT_PROFILES,

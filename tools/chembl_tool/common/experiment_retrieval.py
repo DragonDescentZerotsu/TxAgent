@@ -25,9 +25,12 @@ from tools.chembl_tool.common.retrieval_policy import (
     policy_metadata,
 )
 from tools.chembl_tool.common.retrieval_features import (
+    candidate_matches_monatomic_query,
+    monatomic_query_element,
     retrieval_feature_metadata,
     similarity_bucket_for_index,
     similarity_vector,
+    structural_eligibility_metadata,
 )
 from tools.chembl_tool.common.task_workflows.evidence_library import standardize_smiles_and_fp
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
@@ -188,6 +191,7 @@ def _retrieve_specs(
         return _invalid_query(query_smiles)
 
     query_identity = normalize_molecule_identity(query_smiles)
+    query_atomic_number = monatomic_query_element(canonical_smiles)
     similarities = similarity_vector(
         query_fp,
         canonical_smiles,
@@ -217,6 +221,7 @@ def _retrieve_specs(
             top_k=top_k_per_group,
             min_similarity=min_similarity,
             query_identity=query_identity,
+            query_atomic_number=query_atomic_number,
             neighbor_identity_policy=neighbor_identity_policy,
             query_fingerprint=query_fp,
             neighbor_selector=neighbor_selector,
@@ -237,6 +242,7 @@ def _retrieve_specs(
         "source": source_name,
         "resolved_group_mapping": resolved_mapping,
         "retrieval_feature": retrieval_feature_metadata(index),
+        "structural_eligibility": structural_eligibility_metadata(),
         **policy_metadata(neighbor_identity_policy),
     }
     if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
@@ -277,6 +283,7 @@ def _rank_group_candidates(
     top_k: int,
     min_similarity: float,
     query_identity: Any,
+    query_atomic_number: int | None,
     neighbor_identity_policy: str,
     query_fingerprint: Any,
     neighbor_selector: str,
@@ -303,6 +310,11 @@ def _rank_group_candidates(
                 break
             continue
         molecule = index["molecules"][molecule_index]
+        if not candidate_matches_monatomic_query(
+            query_atomic_number,
+            str(molecule.get("canonical_smiles") or ""),
+        ):
+            continue
         decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
             continue

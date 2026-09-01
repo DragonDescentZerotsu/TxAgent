@@ -337,21 +337,35 @@ def _verify_existing() -> dict[str, Any]:
     }
 
 
-def publish() -> dict[str, Any]:
+def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
+    requested = tuple(TASK_DIRECTORIES) if tasks is None else tasks
     available_sources = {
         task: SOURCE_ROOTS[task].exists() for task in TASK_DIRECTORIES
     }
-    if not any(available_sources.values()):
+    if tasks is None and not any(available_sources.values()):
         return _verify_existing()
-    if not all(available_sources.values()):
-        missing = sorted(task for task, available in available_sources.items() if not available)
+    missing = sorted(task for task in requested if not available_sources[task])
+    if missing:
         raise FileNotFoundError(f"Incomplete conditioned source build; missing {missing}")
-    receipts = {
-        task: _publish_existing_conditioned_task(task)
-        for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
-    }
-    receipts["clintox"] = _publish_clintox()
-    for task in TASK_DIRECTORIES:
+
+    receipt_path = BENCHMARK_ROOT / "migration_receipt.json"
+    receipts: dict[str, Any] = {}
+    if tasks is not None and receipt_path.exists():
+        receipts.update(
+            json.loads(receipt_path.read_text(encoding="utf-8")).get("tasks", {})
+        )
+    for task in requested:
+        receipts[task] = (
+            _publish_clintox()
+            if task == "clintox"
+            else _publish_existing_conditioned_task(task)
+        )
+    absent_receipts = sorted(set(TASK_DIRECTORIES) - set(receipts))
+    if absent_receipts:
+        raise FileNotFoundError(
+            f"Partial publication lacks existing receipts for {absent_receipts}"
+        )
+    for task in requested:
         _copy_provenance(task)
         _write_group_distribution(task)
         _write_task_summary(receipts[task])
@@ -372,6 +386,26 @@ def publish() -> dict[str, Any]:
         {
             "benchmark": "conditioned_benchmark",
             "contract": CONTRACT,
+            "construction_contract": {
+                "document": (
+                    "tools/chembl_tool/common/starling/"
+                    "CONDITIONED_BENCHMARK.md"
+                ),
+                "publisher": (
+                    "tools/chembl_tool/common/starling/"
+                    "publish_conditioned_benchmark.py"
+                ),
+                "scaffold_allocator": (
+                    "tools/chembl_tool/common/starling/"
+                    "build_record_supported_benchmark.py"
+                ),
+                "random_allocator": (
+                    "tools/chembl_tool/common/starling/"
+                    "build_conditioned_random_split.py"
+                ),
+                "task_specific_voting": True,
+                "publisher_revoting_allowed": False,
+            },
             "tasks": {
                 task: {
                     "root": str(
@@ -395,10 +429,16 @@ def main() -> int:
     parser.add_argument(
         "--output-root", type=Path, default=BENCHMARK_ROOT, help=argparse.SUPPRESS
     )
+    parser.add_argument(
+        "--tasks",
+        nargs="+",
+        choices=sorted(TASK_DIRECTORIES),
+        help="Publish only rebuilt tasks while preserving verified current receipts.",
+    )
     args = parser.parse_args()
     if args.output_root != BENCHMARK_ROOT:
         raise ValueError("The canonical publisher has one fixed output root")
-    result = publish()
+    result = publish(tuple(args.tasks) if args.tasks else None)
     print(json.dumps(result, indent=2))
     return 0
 

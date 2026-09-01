@@ -8,13 +8,16 @@ the formal candidate to rank-32 all-module LoRA. The matched three-step hosted
 smoke, output-length audit, W&B sync, checkpoint export, and valid-3 sampler
 reload now pass. A formal hosted 120B run was subsequently launched and then
 intentionally stopped by the user. Preserve its partial receipts, but do not
-resume it automatically; the active training path is the local NeMo 20B run.
+resume it automatically. The local NeMo 20B comparison was also subsequently
+started and intentionally stopped; there is currently no active RL training
+path.
 
-Tinker is a backend comparison for the same E17 experiment, not a second
-scientific contract.  It must consume the same materialized final-synthesis
-rows, private labels, deterministic reward implementation, task sampling,
-generation count, token limits, and checkpoint-selection gates as local NeMo
-RL.  Provider-specific code belongs in one thin adapter and one config file.
+Tinker is a backend comparison, not a second scientific contract. Historical
+final-only sections follow E17; one-pass sections follow E18. Each must consume
+the same materialized rows, private labels, deterministic reward implementation,
+task sampling, generation count, token limits, and checkpoint-selection gates
+as local NeMo RL. Provider-specific code belongs in one thin adapter and one
+config file.
 
 The comparison receipt must record:
 
@@ -281,8 +284,8 @@ a mandatory user cost gate before starting the full hosted run.
 
 ### Bio-only 6,144-token preflight and formal launch
 
-The active Bio-only run supersedes the earlier BBB-derived 4,096-token output
-assumption. In the frozen-base Bio valid outputs, 41/209 completions exceeded
+The formal Bio-only contract supersedes the earlier BBB-derived 4,096-token
+output assumption. In the frozen-base Bio valid outputs, 41/209 completions exceeded
 4,096 tokens and the maximum was 6,143. The Bio contract therefore uses a
 6,144-token generation cap for training and checkpoint evaluation. Exact
 Tinker rendering of the sanitized all-train rows has prompt

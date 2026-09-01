@@ -18,30 +18,30 @@
     "target_valid_size": 209,
     "target_test_size": 209
   },
-  "n_source_rows_considered": 113080,
-  "n_source_rows_labeled_before_structure_normalization": 18984,
+  "n_source_rows_considered": 113074,
+  "n_source_rows_labeled_before_structure_normalization": 18966,
   "source_rejection_counts": {
-    "interpretation_altering_qualifying_conditions": 12913,
+    "interpretation_altering_qualifying_conditions": 12911,
     "missing_bioavailability_value": 14,
     "nonhuman_or_unresolved_population": 77589,
-    "numeric_interval_crosses_20_percent_threshold": 739,
+    "numeric_interval_crosses_20_percent_threshold": 738,
     "numeric_value_out_of_percent_range": 635,
-    "qualitative_value_not_threshold_anchored": 905,
-    "relative_not_absolute_bioavailability": 52,
-    "unmapped_or_ambiguous_qualitative_value": 1249
+    "qualitative_value_not_threshold_anchored": 903,
+    "relative_not_absolute_bioavailability": 191,
+    "unmapped_or_ambiguous_qualitative_value": 1127
   },
-  "n_parent_groups_with_any_label": 2198,
-  "n_parent_groups_with_label_conflict": 370,
-  "n_parent_groups_recovered_by_majority": 264,
+  "n_parent_groups_with_any_label": 2197,
+  "n_parent_groups_with_label_conflict": 368,
+  "n_parent_groups_recovered_by_majority": 262,
   "n_rejected_parent_groups": 106,
   "parent_rejection_counts": {
-    "parent_record_agreement_below_threshold": 67,
-    "parent_record_label_tie": 39
+    "parent_record_agreement_below_threshold": 66,
+    "parent_record_label_tie": 40
   },
-  "n_binary_molecules": 2092,
+  "n_binary_molecules": 2091,
   "all_label_counts": {
     "0": 577,
-    "1": 1515
+    "1": 1514
   },
   "n_unique_bemis_murcko_scaffolds": 1243,
   "n_acyclic_molecules": 169,
@@ -54,12 +54,12 @@
       "actual_test_size": 209,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 1674,
+      "n_train": 1673,
       "n_valid": 209,
       "n_test": 209,
       "train_label_counts": {
         "0": 461,
-        "1": 1213
+        "1": 1212
       },
       "valid_label_counts": {
         "0": 58,
@@ -106,12 +106,12 @@
       "actual_test_size": 209,
       "valid_size_shortfall": 0,
       "test_size_shortfall": 0,
-      "n_train": 1674,
+      "n_train": 1673,
       "n_valid": 209,
       "n_test": 209,
       "train_label_counts": {
         "0": 451,
-        "1": 1223
+        "1": 1222
       },
       "valid_label_counts": {
         "0": 61,
@@ -159,9 +159,9 @@
     "canonical_source": {
       "contract_version": "bioavailability_canonical_direct.v2",
       "path": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
-      "sha256": "045261cbda785092143eeadd636f78399f7b02f951b23480b16fb8dde22661c5",
+      "sha256": "fe06b5ec00ebb3da3bcfdcbf8a664487634a82eceaf3cfec7f6774092939e567",
       "manifest_path": "data/starling_data/bioavailability_ma/canonical_direct_v2/merge_manifest.json",
-      "manifest_sha256": "b986a214491f3b04c6f3ae6fc71cbd4eacad08d390b9b62de53f953966b0a257",
+      "manifest_sha256": "672cdb4ce5c47e9dbf25c1e63f15e3707eb037738243fa0121b0bcd7ab09c7ce",
       "upstream_hf": {
         "dataset": "starling-labs/Oral_Bioavailability",
         "requested_revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",

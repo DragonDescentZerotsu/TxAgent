@@ -1,10 +1,16 @@
 # Starling one-pass LoRA RL
 
+> Archived/stopped research. This package is isolated from the active paper
+> runners, baselines, result registry, summaries, and figures. It remains only
+> for reproduction and must not be resumed automatically.
+
 This directory owns the train-only Starling RL experiments and keeps the
-scientific contract separate from provider runtime code. The active comparison
-is Bioavailability one-pass RL: hosted GPT-OSS-120B uses Tinker and local
-GPT-OSS-20B uses NeMo RL. Historical E17 final-only and local 120B NeMo
-feasibility artifacts remain reproducible but are not active launch defaults.
+scientific contract separate from provider runtime code. The frozen comparison
+contract is Bioavailability one-pass RL: hosted GPT-OSS-120B uses Tinker and
+local GPT-OSS-20B uses NeMo RL. Both formal training runs were intentionally
+stopped on 2026-08-11 and must not be resumed automatically. Historical E17
+final-only and local 120B NeMo feasibility artifacts remain reproducible but
+are not launch defaults.
 
 Gold labels are environment-private reward metadata. They never enter a
 model-visible prompt. Training and tuning use scaffold-train only; checkpoint
@@ -57,8 +63,8 @@ materializer and the historical trace-replay builder.
 
 | Status | Model/backend | Entry point | Contract |
 |---|---|---|---|
-| active | GPT-OSS-20B / local NeMo | `run_grpo.py` + `configs/grpo_gpt_oss_20b_one_pass_bio.yaml` | visible-prefetched Bio one-pass |
-| active comparison | GPT-OSS-120B / hosted Tinker | `run_tinker.py` | same one-pass reward/profile |
+| stopped partial run | GPT-OSS-20B / local NeMo | `run_grpo.py` + `configs/grpo_gpt_oss_20b_one_pass_bio.yaml` | stopped after step-174 metrics; last complete checkpoint step 160 |
+| stopped partial run | GPT-OSS-120B / hosted Tinker | `run_tinker.py` | preserved partial run; do not auto-resume |
 | historical | GPT-OSS-120B / local NeMo | `configs/grpo_gpt_oss_120b_lora_*.yaml` | E17 feasibility only |
 | historical | final-only E17 | `materialize.py`, `reward.py` | frozen final-synthesis contract |
 

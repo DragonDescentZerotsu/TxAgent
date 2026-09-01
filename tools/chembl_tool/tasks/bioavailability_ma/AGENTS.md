@@ -39,8 +39,8 @@ parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMI
 data/conditioned_benchmark/Bioavailability_Ma/scaffold/
 ```
 
-共有 2,489 个 molecule-condition rows；train/valid/test 为 1,958/262/269，其中 2,092 个 null-condition
-rows、397 个 reviewed external-condition rows。旧 molecule-only 和 selected-vN 名称只保留在 migration
+共有 2,487 个 molecule-condition rows；train/valid/test 为 1,956/262/269，其中 2,091 个 null-condition
+rows、396 个 reviewed external-condition rows。旧 molecule-only 和 selected-vN 名称只保留在 migration
 receipt，不是第二套 gold。公共合同见 `tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。正式运行
 前必须按 scaffold valid+test union 的 heldout detailed labels 重建 retrieval index。
 
@@ -72,7 +72,7 @@ python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
   <其它冻结参数>
 ```
 
-`f20_evidence_calibrated_v2` 只改变 LLM task contract，不添加 deterministic override、batch quota、train-ratio
+`f20_evidence_calibrated_v2` 只改变 LLM task contract，不添加 deterministic override、batch quota、dataset
 prior、router 或 postprocess。2026-08-09 GPT-OSS-120B scaffold-valid 中，full-flat/full-mechanism macro-F1
 从 `0.6117/0.5869` 提高到 `0.7004/0.6844`，paired 95% CI 均高于 0；所有 condition 均 209/209、0 failed，
 对应 retrieval SHA mismatch=0。`none` macro-F1 降至 `0.4129` 且几乎全预测 high，因此该 profile 的结论是

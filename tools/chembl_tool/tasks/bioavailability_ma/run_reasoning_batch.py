@@ -25,7 +25,6 @@ CONFIG = BatchConfig(
     canonical_negative="low",
     positive_predictions=frozenset({"high", "pass", "positive", "bioavailability_positive", "1"}),
     negative_predictions=frozenset({"low", "fail", "negative", "bioavailability_negative", "0"}),
-    supports_final_decision_profiles=True,
     prompt_profile_option="--bioavailability-prompt-profile",
     prompt_profile_choices=BIOAVAILABILITY_PROMPT_PROFILES,
     default_prompt_profile=DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,

@@ -32,6 +32,27 @@ def test_similarity_bucket_ranges():
     assert similarity_bucket(0.19) == "very_distant_analog"
 
 
+def test_monatomic_query_rejects_folded_morgan_cross_element_collision():
+    evidence_rows = [
+        _row("URANIUM", "[U]", "Tier 1.direct_absolute_bioavailability", "Bioavailability"),
+        _row(
+            "LEAD_OXIDE",
+            "[Pb+2].[O-2]",
+            "Tier 1.direct_absolute_bioavailability",
+            "Bioavailability",
+        ),
+    ]
+    index = build_neighbor_index(evidence_rows)
+
+    result = retrieve_neighbors("[Pb]", index, top_k_per_group=3, min_similarity=0.0)
+
+    neighbors = result["groups"][0]["neighbors"]
+    assert [row["molecule_chembl_id"] for row in neighbors] == ["LEAD_OXIDE"]
+    assert result["retrieval_policy"]["structural_eligibility"]["version"] == (
+        "monatomic_query_element_match.v1"
+    )
+
+
 def test_pipeline_accepts_group_filter():
     groups = [
         "Tier 1.direct_absolute_bioavailability",

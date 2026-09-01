@@ -1,6 +1,14 @@
 {
   "benchmark": "conditioned_benchmark",
   "contract": "conditioned_benchmark.v1",
+  "construction_contract": {
+    "document": "tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md",
+    "publisher": "tools/chembl_tool/common/starling/publish_conditioned_benchmark.py",
+    "scaffold_allocator": "tools/chembl_tool/common/starling/build_record_supported_benchmark.py",
+    "random_allocator": "tools/chembl_tool/common/starling/build_conditioned_random_split.py",
+    "task_specific_voting": true,
+    "publisher_revoting_allowed": false
+  },
   "tasks": {
     "bbb_martins": {
       "root": "data/conditioned_benchmark/BBB_Martins/scaffold",
@@ -31,7 +39,7 @@
       "root": "data/conditioned_benchmark/Bioavailability_Ma/scaffold",
       "target_definition": "oral bioavailability under the reported condition",
       "split_counts": {
-        "train": 1958,
+        "train": 1956,
         "valid": 262,
         "test": 269
       },
@@ -41,12 +49,12 @@
       },
       "split_counts_by_scheme": {
         "scaffold": {
-          "train": 1958,
+          "train": 1956,
           "valid": 262,
           "test": 269
         },
         "random": {
-          "train": 1991,
+          "train": 1989,
           "valid": 249,
           "test": 249
         }

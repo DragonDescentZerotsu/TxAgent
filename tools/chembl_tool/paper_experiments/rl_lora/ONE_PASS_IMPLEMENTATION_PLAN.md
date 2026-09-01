@@ -2,8 +2,10 @@
 
 Status update (2026-08-11): prompt/data/base-valid and bounded mechanical gates
 are complete. The hosted 120B training run was intentionally stopped and must
-not be resumed automatically. The active training path is Bio-only GPT-OSS-20B
-on local NeMo RL with the same one-pass reward and shared training profile.
+not be resumed automatically. The Bio-only GPT-OSS-20B local NeMo run was also
+started and intentionally stopped after showing no reward improvement and an
+unstable policy-KL trajectory. Any new run requires an explicit new decision;
+neither backend is an active training path.
 Current code ownership and launch gates are documented in
 `ONE_PASS_REASONING.md`; this file remains the scientific design contract.
 
