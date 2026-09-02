@@ -1,0 +1,24 @@
+{
+  "schema_version": "assay_transfer_prompt_projection.v19.1.direct_bbb_extension",
+  "base_projection_sha256": "a81e30e10a3fcef8d216867bb873a16bfaf69386e3f08f21071188c313ea0166",
+  "labels": {
+    "bbb_permeability_label": "BBB permeability label",
+    "bbb_transport_label": "BBB transport label"
+  },
+  "binding": {
+    "query": [
+      "endpoint_name",
+      "unit_text",
+      "assay_model",
+      "species",
+      "qualifying_conditions"
+    ],
+    "known_only": [
+      "measurement_text",
+      "bbb_permeability_label",
+      "bbb_transport_label",
+      "support_text",
+      "extra_details"
+    ]
+  }
+}

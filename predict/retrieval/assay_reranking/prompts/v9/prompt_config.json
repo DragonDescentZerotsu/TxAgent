@@ -1,0 +1,29 @@
+{
+  "_provenance": {
+    "source_repository": "/vast/projects/myatskar/design-documents/joseph/starling_assay_transfer",
+    "source_revision_at_copy": "7ae235a1573a01dc281266ff781bda01e80d8ae0",
+    "source_was_untracked": true,
+    "source_files": {
+      "assay_transfer/context_conditioned/templates/prompt_v3_1.jinja": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1",
+      "assay_transfer/shared/tasks.py": "70f920db036385ec2f408b783db154938c4a2e7ec0a357a5a52504e754b0b7c2"
+    },
+    "prompt_sha256": "33e48f919237a6aeaff28f4c77c6dd9635e54bf859c990af4ad0323952ab05f1"
+  },
+  "tasks": {
+    "bbb_martins": {
+      "description": "You are comparing two molecules for blood-brain barrier (BBB) crossing. This property asks whether a systemically administered molecule crosses the intact blood-brain barrier and reaches brain tissue at meaningful exposure; predicted or in-vitro permeability alone does not establish the outcome.",
+      "known_label": "Known estimated likelihood of blood-brain barrier crossing",
+      "property_name": "blood-brain barrier crossing"
+    },
+    "bioavailability_ma": {
+      "description": "You are comparing two molecules for human absolute oral bioavailability. Oral bioavailability is the fraction of an orally administered dose that reaches systemic circulation unchanged and reflects intestinal absorption together with first-pass gut and hepatic metabolism.",
+      "known_label": "Known estimated likelihood of meaningful human oral bioavailability",
+      "property_name": "human absolute oral bioavailability"
+    },
+    "skin_reaction": {
+      "description": "You are comparing two molecules for skin sensitization. Skin sensitization is the ability to induce immune-mediated contact allergy after dermal exposure; it is distinct from acute irritation, phototoxicity, and nonspecific local skin injury.",
+      "known_label": "Known estimated likelihood of skin sensitization",
+      "property_name": "skin sensitization"
+    }
+  }
+}
