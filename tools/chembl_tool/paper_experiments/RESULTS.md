@@ -1,12 +1,11 @@
 # Current paper results and artifact status
 
-Updated: 2026-09-01.
+Updated: 2026-09-02.
 
 This file is the human-readable companion to
 `current_conditioned_results.json`. It records only the retained paper result
-families and their freshness. Historical experiment narratives no longer live
-here; a historical score is shown only when it is still the last complete
-reference for a retained paper comparison.
+families and their freshness. Historical material is limited to the compact
+receipts needed to explain a retained reference or an excluded comparison.
 
 ## Evaluation data
 
@@ -47,9 +46,9 @@ Matching a directory name, molecule count, or valid-input hash is not enough.
 |---|---|
 | ChEMBL versus Starling retrieval | Last complete identity-blind reference exists on historical record-supported-v2; a complete current-conditioned matrix is still required |
 | One-shot full-flat cumulative levels | Last complete reference exists; current source-purity rerun is required |
-| Append-only progressive levels | BBB scaffold-valid strict-voter-L1 v6 is current; BBB random and Skin scaffold/random require replay after voter-only L1 rebuilds; Bioavailability scaffold is current via a zero-change receipt and random requires replay |
+| Append-only progressive levels | BBB scaffold-valid strict-voter-L1 v6 and Skin scaffold-valid strict-voter-L1 v2 are current; their random results require replay; Bioavailability scaffold is current via receipt/fresh runs and random requires replay |
 | Full-flat versus full-mechanism | Preserved in the source/reasoning matrix; current-conditioned rerun is required |
-| Scaffold versus random | BBB scaffold is current and random is a pre-v6 reference; Skin v1 results are pre-v2 references; Bioavailability scaffold is current via receipt and random remains unaudited |
+| Scaffold versus random | BBB and Skin scaffold are current while random remains a pre-voter-only reference; Bioavailability scaffold is current and random remains unaudited |
 | Identity-blind versus visible | Both implementations and complete historical artifacts are retained, but there is no complete current-conditioned matched pair yet |
 
 The last complete visible and blind source matrices use different historical
@@ -65,7 +64,7 @@ Macro-F1 on valid:
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | BBB | 0.6207 | 0.6956 | 0.7240 | 0.7300 | 0.7291 | 0.7338 | — | current strict-voter-L1 v6 (4/2) |
 | Bioavailability | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | 0.7608 | current via zero-change retrieval receipt |
-| Skin | 0.6119 | 0.6004 | 0.5939 | — | — | — | — | pre-v2 broad-L1 reference; replay required |
+| Skin | 0.6151 | 0.6334 | 0.6328 | 0.6294 | — | — | — | current strict-voter-L1 v2 (4/2) |
 
 The Bioavailability benchmark valid input is unchanged: 262 molecule-condition
 rows, 212 unique parents, and the same ordered input hash. Removing six
@@ -125,9 +124,12 @@ Bioavailability has separate historical numeric and full direct conditions,
 hence the direct range. These values must remain labeled as a historical
 reference until the matched current-conditioned matrix is complete.
 
-## Progressive record-card budget ablation
+## Historical 4/2 versus 8/4 record-card snapshot
 
-The scaffold-valid 8/4 record-card budget completed for BBB (397/397),
+This 2026-09-01 snapshot is retained to document the original 4/2-versus-8/4
+analysis, but it is not the current cross-task figure: its Skin rows predate the
+strict-voter-L1 v2 replay. The current combined result is recorded in the next
+section. In the historical snapshot, scaffold-valid 8/4 completed for BBB (397/397),
 Bioavailability (262/262), and Skin (246/246), with zero failed queries. The
 comparison keeps the v8 molecule quotas fixed at L1 Top-10 and later Top-3 new
 plus Top-3 active molecules; only the per-molecule card limits change from 4/2
@@ -168,6 +170,120 @@ figure and machine-readable summary are under:
 outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4/
 ```
 
+### Rejected Bioavailability L1 record-summary diagnostic
+
+On 2026-09-02, an analysis-only scaffold-valid L1 diagnostic compared raw
+record cards with one DeepSeek-generated summary per source molecule and
+evidence level. The summary representation was rejected: at 4/2, Macro-F1 fell
+from 0.6831 to 0.6547 while mean prompt characters decreased only 2.8%; at 8/4,
+Macro-F1 fell from 0.7148 to 0.6433 while prompt characters decreased only 6.4%.
+For the paired 8/4 decisions, the Macro-F1 difference was -7.14 pp (bootstrap
+95% interval -12.54 to -1.89 pp; exact McNemar p=0.029), with 19
+raw-correct-to-summary-wrong and 7 raw-wrong-to-summary-correct flips. This did
+not justify the extra model stage or maintenance surface. The implementation,
+cache, and run artifacts were removed; this result receipt is retained only to
+prevent the discarded representation from being reintroduced as a current
+method.
+
+The fresh L1-only raw 8/4 score of 0.7148 is **not** an exact repeat of the
+historical full-curve raw 8/4 score of 0.6375. A post-run payload audit found deterministic retrieval:
+all 262/262 L1 `active_evidence` payloads, selected card IDs, query priors, tool
+summaries, conditions, and selection audits were identical. All 183/183
+model-called system messages were also identical. However, every user payload
+differed in exactly two places: the historical request exposed the complete
+L1-L6 `full_level_plan`, whereas the L1-only diagnostic exposed only L1, and
+the diagnostic added `protocol.evidence_representation=raw_records`. Removing
+those two fields made all 183/183 user payloads identical. The diagnostic user
+messages were therefore 856 characters shorter per model call.
+
+The 21 historical-to-fresh flips were directionally balanced (11 low-to-high,
+10 high-to-low), so they do not indicate a simple label-threshold shift.
+Provider-key routing was also balanced (historical Mark 1/Mark 4: 92/91; fresh:
+94/89), and both traces report the same mutable OpenRouter model alias. At the
+same time, mean completion tokens rose from 2,636 to 7,220, mean reasoning
+tokens from 2,119 to 6,617, and calls requiring structured-output retry from
+11/183 to 23/183; 19 fresh calls initially returned an empty or non-object
+response. This indicates a materially different generation regime, but the
+stored trace does not expose an immutable upstream model/backend revision.
+Consequently the 0.6375-to-0.7148 difference must not be labeled pure run
+variance, a retrieval change, or a record-budget effect. The exact full-curve
+replay below supersedes that invalid comparison.
+
+## Current exact Bioavailability 8/4 replay and 2/1 budget ablation
+
+On 2026-09-02, Bioavailability 8/4 was replayed over all 262 scaffold-valid
+queries using the complete L1-L6 plan and the same model, provider-pool,
+prompt, generation, visibility, identity, retrieval, and prefetched-tool
+contract as the historical run. It finished with zero failed queries. L1 was
+0.6311 versus the historical 0.6375 (difference -0.65 pp; 16 prediction flips;
+exact McNemar p=0.804; paired-bootstrap 95% interval -4.65 to +3.40 pp). L6 was
+0.6861 versus 0.6852 (difference +0.09 pp; 24 flips; p=0.839; interval -4.48
+to +4.52 pp). No level differed significantly. This restores the historical
+performance scale and confirms that the rejected 0.7148 L1-only run was not a
+valid same-contract replay.
+
+The 2/1 ablation then completed for BBB (397/397), Bioavailability (262/262),
+and Skin (246/246), all with zero failed queries. It keeps the same molecule
+selection quotas and changes only the L1/later per-molecule card limits from
+the comparison budget to 2/1. Across every query and level, query priors,
+prefetched query-tool summaries, conditions, retrieval audits, and selected
+molecule sets match their comparison run; every 2/1 card set is a subset of
+the higher-budget card set.
+
+| Task | 2/1 Macro-F1, L1 → last | Comparison | Reference L1 → last | Last-level 2/1 Δ |
+|---|---:|---|---:|---:|
+| BBB | 0.6913 → 0.7127 | current 4/2 | 0.6956 → 0.7338 | -2.11 pp |
+| Bioavailability | 0.6474 → 0.6962 | exact-replay 8/4 | 0.6311 → 0.6861 | +1.01 pp |
+| Skin | 0.6376 → 0.6515 | current 4/2 | 0.6334 → 0.6294 | +2.21 pp |
+
+None of the last-level differences is statistically significant. BBB has 51
+last-level flips (22 favor 2/1, 29 favor 4/2; McNemar p=0.401; bootstrap 95%
+interval -6.32 to +1.96 pp). Bioavailability has 32 flips (17 favor 2/1, 15
+favor 8/4; p=0.860; interval -4.09 to +6.14 pp). Skin has 16 flips (9 favor
+2/1, 7 favor 4/2; p=0.804; interval -2.16 to +6.68 pp).
+
+The lower budget materially reduces context. At the last level, mean visible
+cards and mean prompt characters change from 23.39 to 15.73 and by -11.2% for
+BBB, from 55.39 to 20.63 and by -31.7% for Bioavailability, and from 19.61 to
+12.56 and by -12.1% for Skin. The task pattern is therefore not a universal
+accuracy gain from fewer records: BBB trends lower at 2/1, Skin trends higher,
+and Bioavailability is lower at L2-L4 but catches up by L5-L6. All of these
+accuracy differences remain within paired uncertainty, while the context and
+cost reduction is deterministic.
+
+The retained run roots are:
+
+```text
+Bioavailability exact 8/4 replay:
+outputs/paper/starling_conditioned_assay_progressive_visible_bio_card_budget_8_4_exact_replay_v1/scaffold_valid_deepseek_v4_flash_0731
+
+BBB/Bioavailability/Skin 2/1:
+outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731
+
+Skin current 4/2 control:
+outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin
+```
+
+The combined current-lineage figure and machine-readable summary are under:
+
+```text
+outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/
+```
+
+It places all available 2/1, 4/2, and 8/4 curves in one figure together with
+the matched no-retrieval and baseline references. The two exact-contract
+Bioavailability 8/4 full-curve runs are summarized by their arithmetic mean;
+whiskers show their observed minimum and maximum at each level. All other
+curves currently have one run and therefore no nonzero run-range whisker.
+There is no current strict-voter-L1 Skin 8/4 run, so that cell is marked
+unavailable rather than populated from the historical broad-L1 artifact.
+
+An exploratory 2026-09-02 run that hid future level-plan entries produced no
+significant task/level benefit and trended lower throughout Bioavailability.
+The alternative prompt branch, tests, registry entry, and run/analysis
+artifacts were removed; the progressive contract exposes the complete level
+plan at every level.
+
 ## Canonical artifact roots
 
 ```text
@@ -177,8 +293,8 @@ outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v
 Bioavailability progressive scaffold, current agent curve via zero-change receipt:
 outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731
 
-Skin progressive scaffold, last complete pre-v2 reference (replay required):
-outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731
+Skin progressive scaffold, current strict-voter-L1 v2 4/2 curve:
+outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin
 
 Progressive random combined root:
 outputs/paper/starling_conditioned_assay_progressive_random_quality_v2_parent_disjoint/random_valid_deepseek_v4_flash_0731
@@ -193,10 +309,12 @@ duplicate every manifest field.
 
 ## Publication boundary
 
-- Do not publish Bioavailability post-fix scores until targeted progressive
-  replay and baseline retraining are complete.
-- Do not publish retained Skin v1 progressive or card-budget scores as current;
-  strict-voter-L1 v2 scaffold/random indices are built and require replay.
+- Bioavailability scaffold progressive scores are current, but its pre-fix
+  baselines still require retraining and its random split still requires a
+  separate change audit or replay.
+- Skin scaffold progressive 2/1 and 4/2 scores are current. Do not publish the
+  retained broad-L1 v1 curves as current or treat them as a replacement for the
+  missing strict-voter-L1 v2 scaffold 8/4 and random replays.
 - Do not present the historical blind and visible roots as a matched comparison.
 - Do not tune a method on formal test results.
 - Do not mix ClinTox source-role labels with assay-vote counts.

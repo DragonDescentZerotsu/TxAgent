@@ -720,13 +720,17 @@ def test_parse_configuration_task_path_overrides():
         [
             "4/2:bbb_martins=/tmp/bbb_4_2",
             "8/4:bbb_martins=/tmp/bbb_8_4",
+            "8/4:bbb_martins=/tmp/bbb_8_4_replay",
             "8/4:skin_reaction=/tmp/skin_8_4",
         ]
     ) == {
-        "4/2": {"bbb_martins": Path("/tmp/bbb_4_2")},
+        "4/2": {"bbb_martins": [Path("/tmp/bbb_4_2")]},
         "8/4": {
-            "bbb_martins": Path("/tmp/bbb_8_4"),
-            "skin_reaction": Path("/tmp/skin_8_4"),
+            "bbb_martins": [
+                Path("/tmp/bbb_8_4"),
+                Path("/tmp/bbb_8_4_replay"),
+            ],
+            "skin_reaction": [Path("/tmp/skin_8_4")],
         },
     }
     with pytest.raises(ValueError, match="CONFIG:TASK=PATH"):
@@ -737,7 +741,7 @@ def test_parse_configuration_task_path_overrides():
         plotter._parse_configuration_task_path_overrides(
             [
                 "4/2:bbb_martins=/tmp/one",
-                "4/2:bbb_martins=/tmp/two",
+                "4/2:bbb_martins=/tmp/one",
             ]
         )
 
@@ -759,6 +763,42 @@ def test_selection_comparison_normalizes_legacy_text_and_ignores_only_card_limit
     assert plotter._selection_without_card_limits(legacy) == (
         plotter._selection_without_card_limits(structured)
     )
+
+
+def test_progressive_replicate_rows_report_mean_and_observed_range():
+    base = {
+        "task": "bbb_martins",
+        "task_label": "BBB",
+        "level": 1,
+        "family": "direct_brain_exposure",
+        "cumulative_assays": 5,
+        "n_queries": 2,
+        "macro_f1": 0.6,
+        "accuracy": 0.5,
+        "metrics_path": "/tmp/run_one.json",
+    }
+    replay = {
+        **base,
+        "macro_f1": 0.8,
+        "accuracy": 0.75,
+        "metrics_path": "/tmp/run_two.json",
+    }
+
+    rows = plotter._aggregate_progressive_replicate_rows([[base], [replay]])
+
+    assert rows[0]["macro_f1"] == pytest.approx(0.7)
+    assert rows[0]["macro_f1_min"] == 0.6
+    assert rows[0]["macro_f1_max"] == 0.8
+    assert rows[0]["n_replicates"] == 2
+    assert rows[0]["metrics_paths"] == [
+        "/tmp/run_one.json",
+        "/tmp/run_two.json",
+    ]
+
+    single = plotter._aggregate_progressive_replicate_rows([[base]])[0]
+    assert single["macro_f1"] == 0.6
+    assert single["n_replicates"] == 1
+    assert "macro_f1_min" not in single
 
 
 def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
@@ -844,7 +884,12 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
     monkeypatch.setattr(plotter, "sha256_file", lambda path: "receipt-hash")
     configuration_roots = {
         "4/2": {"bbb_martins": Path("/tmp/bbb_4_2")},
-        "8/4": {"bbb_martins": Path("/tmp/bbb_8_4")},
+        "8/4": {
+            "bbb_martins": [
+                Path("/tmp/bbb_8_4"),
+                Path("/tmp/bbb_8_4_replay"),
+            ]
+        },
     }
     with pytest.raises(ValueError, match="zero-change receipt"):
         plotter.collect_conditioned_progressive_configuration_data(
@@ -855,6 +900,7 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
         lineage_receipts_by_task={"bbb_martins": Path("/tmp/receipt.json")},
     )
     assert [row["configuration"] for row in rows] == ["4/2", "8/4"]
+    assert rows[1]["n_replicates"] == 2
     contract = summary["comparison_contract"]
     assert contract["configurations"] == ["4/2", "8/4"]
     assert contract["task_audits"]["bbb_martins"]["index_sha256_equal"] is False
@@ -863,6 +909,9 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
     ] == "/tmp/receipt.json"
     assert "prompt_profile" in contract["strict_invariants"]
     assert "evaluation_indices_sha256" in contract["strict_invariants"]
+    assert contract["configurations_contract"]["8/4"]["task_contracts"][
+        "bbb_martins"
+    ]["n_replicates"] == 2
 
 
 def test_progressive_configuration_references_require_shared_none_and_baselines(
@@ -944,6 +993,8 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
                 "level": 1,
                 "n_queries": 2,
                 "macro_f1": macro_f1,
+                "macro_f1_min": macro_f1 - (0.02 if configuration == "8/4" else 0),
+                "macro_f1_max": macro_f1 + (0.02 if configuration == "8/4" else 0),
                 "mean_active_molecules": 4.0,
                 "mean_cards_per_active_molecule": cards,
                 "mean_prompt_tokens_per_call": 1000.0 * cards,
@@ -957,7 +1008,7 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
         output_svg=output_svg,
         output_png=output_png,
         tasks=("bbb_martins",),
-        configurations=("4/2", "8/4"),
+        configurations=("2/1", "4/2", "8/4"),
         reference_rows=[
             {
                 "task": "bbb_martins",
@@ -978,3 +1029,5 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
     svg = output_svg.read_text(encoding="utf-8")
     assert "None" in svg
     assert "MiniMol head" in svg
+    assert "Unavailable on current lineage: 2/1" in svg
+    assert "whiskers show observed min–max" in svg

@@ -114,17 +114,23 @@ baselines/structure_knn/run.py
 
 `plot_starling_model_comparison.py` 是 source/model/visibility 总图唯一入口；
 `plot_assay_retrieval_curve.py` 是 level curve 与资源统计唯一入口。不得为单个实验新建一次性正式画图模块。
+同一 `CONFIG:TASK=PATH` 可用不同 path 重复注册经过完整合同校验的 reruns，绘制逐 level 均值和 observed
+min-max；当前 lineage 缺失的 task/configuration cell 必须明确留空，不能用历史结果补齐。
 Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作默认入口继续启动。其它已经删除的
 no-go 方法开发只从 Git history 或冻结 receipt 读取。
 
 当前 BBB scaffold progressive v6 与输入/index hash 匹配；BBB random v6 index 已构建但 predictions 仍为
-v5 历史参考、需要 replay。Skin strict-voter-L1 v2 scaffold/random index 已构建，但现有 predictions 仍来自
-旧 broad-L1 v1，scaffold/random 均需 replay；Bioavailability 在 2026-09-01
+v5 历史参考、需要 replay。Skin strict-voter-L1 v2 scaffold 2/1 与 4/2 已完成，8/4 尚无 current run；random
+predictions 仍来自旧 broad-L1 v1、需要 replay。Bioavailability 在 2026-09-01
 删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化。scaffold-valid
 已逐 query、逐 level 审计 262 条 rows，模型可见 selected retrieval surface 变化为 0，并由
 `tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json`
-授权复用，无需 LLM replay；random 仍需独立 change audit 或 targeted replay。相关 baseline 因 train 删除两行
-仍需重训，不能由 agent zero-change receipt 授权复用。
+授权复用 4/2；另有 fresh 2/1 和两次完整同合同 8/4 runs。L1-only 0.7148 diagnostic 改变了
+`full_level_plan`，不是正式 replicate。random 仍需独立 change audit 或 targeted replay。相关 baseline 因
+train 删除两行仍需重训，不能由 agent zero-change receipt 授权复用。
+
+2026-09-02 尝试的 prefix-only level-plan prompt 没有显著收益且已完整移除；progressive prompt 在每层固定
+展示完整 level plan，不保留 alternate CLI、registry root 或实验 artifact。
 
 `watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
 launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
@@ -172,8 +178,8 @@ ClinTox 当前严格 split 位于 `data/conditioned_benchmark/ClinTox/scaffold/`
    molecules; all prior cards remain visible. The formal default card budget is
    L1 at most 4 cards per molecule and later levels at most 2 newly unlocked
    cards per selected molecule. The scaffold-valid budget ablation changes only
-   those limits to 8/4 through the existing progressive runner; it does not
-   define a second retrieval protocol or code path. Assay identity remains card
+   those limits to 2/1 or 8/4 through the existing progressive runner; it does
+   not define a second retrieval protocol or code path. Assay identity remains card
    provenance and a
    diversity tie-break only. Family assignment is record-level: a physical
    assay may contribute cards to several levels, and its earliest level is only
@@ -725,9 +731,9 @@ tools/chembl_tool/paper_experiments/current_conditioned_results.json
 tools/chembl_tool/paper_experiments/RESULTS.md
 ```
 
-Bioavailability 在 2026-09-01 source-identity 修复后需要 targeted agent replay 和 baseline 重训；不得把 pre-fix
-score 标为 current。Blind 与 visible 的最后完整历史 roots 使用不同 benchmark lineage，也不得作为 matched
-visibility comparison。
+Bioavailability scaffold 4/2 在 2026-09-01 source-identity 修复后由逐 selected-surface zero-change receipt
+保持 current；2/1 与 exact 8/4 已 fresh-run。其 baseline 仍需重训，random 仍需 targeted audit/replay。
+Blind 与 visible 的最后完整历史 roots 使用不同 benchmark lineage，也不得作为 matched visibility comparison。
 
 正式 source/model/visibility 总图只扩展 `plot_starling_model_comparison.py`；level performance、平均 molecules、
 cards、prompt/reasoning 长度只扩展 `plot_assay_retrieval_curve.py`。不要恢复旧 TDC overview、coverage-only

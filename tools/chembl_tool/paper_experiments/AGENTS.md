@@ -91,6 +91,10 @@ scratch. The progressive runner appends evidence and previous state. Their
 manifests and output roots must remain separate even when they share retrieval
 components.
 
+The progressive prompt always exposes the complete level plan. The rejected
+prefix-only alternative has no CLI, manifest axis, registry root, or retained
+artifact and must not be reintroduced as a separate launcher.
+
 ## Experiment axes and reuse
 
 Treat these as independent manifest fields:
@@ -145,6 +149,10 @@ not only the retrieval JSON.
 `plot_starling_model_comparison.py` is the only source/model/visibility overview
 plotter. `plot_assay_retrieval_curve.py` is the only level-curve and resource
 plotter. Extend these interfaces instead of adding a one-off figure module.
+Its configuration comparison accepts repeated `CONFIG:TASK=PATH` entries only
+for exact-contract replicates, plots their mean and observed min-max, and keeps
+unavailable current-lineage cells explicit rather than borrowing historical
+results.
 
 After a completed run:
 

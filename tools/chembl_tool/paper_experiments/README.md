@@ -134,15 +134,22 @@ same-condition-then-null and unrestricted-train variants.
   and tool outputs fixed.
 - LLM outputs pass shared JSON validation. Validation retries and provider
   failover are recorded in the trace; they do not alter label policy.
-- The scaffold-valid progressive record-card budget ablation uses the paired
-  roots and receipts registered in `current_conditioned_results.json`. BBB 4/2
-  and 8/4 are fresh transport-matched OpenRouter reruns; the historical BBB
-  roots with loopback-prefetch/provider mixing are excluded from that figure.
+- The scaffold-valid progressive record-card budget ablation uses only the
+  2/1, 4/2, and 8/4 roots and receipts registered in
+  `current_conditioned_results.json`. BBB has current strict-voter-L1 results
+  for all three budgets. Bioavailability 8/4 has two exact-contract full-curve
+  runs, so the combined figure reports their mean and observed min-max range.
+  Current strict-voter-L1 Skin has 2/1 and 4/2 only; 8/4 remains visibly absent
+  instead of being filled from the historical broad-L1 result.
 - The ablation remains on the shared progressive runner: card limits are CLI
   parameters (`--initial-card-limit`, `--delta-card-limit`), while molecule
   quotas, selection order, prompt profile, and append-only semantics are fixed.
-  Multi-configuration figures remain in the shared assay-curve plotter and
-  require a selected-surface receipt whenever retrieval lineage hashes differ.
+  Multi-configuration figures remain in the shared assay-curve plotter. Repeat
+  the same `CONFIG:TASK=PATH` argument with a distinct path only for a verified
+  exact-contract replicate; omitted cells are recorded explicitly. A
+  selected-surface receipt is required whenever retrieval lineage hashes differ.
+  The current combined PNG/SVG, TSVs, and summary are under
+  `outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/`.
 
 Detailed group-level data flow is in [PIPELINE.md](PIPELINE.md). The cumulative
 level and progressive protocols are in
@@ -167,16 +174,17 @@ It distinguishes:
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
-At the 2026-09-01 snapshot, BBB scaffold-valid has fresh 4/2 and 8/4 reruns over
-the strict-voter-L1 v6 index, and its random v6 heldout index is built but still
-requires LLM replay. Skin strict-voter-L1 v2 scaffold/random indices are built;
-its retained v1 progressive predictions are historical and require replay.
-Bioavailability scaffold-valid has a zero-change
-receipt: all 262 query-level selected retrieval surfaces remained identical
-after the reviewed nitrendipine source-identity correction, so its agent scores
-are current without new LLM calls. Bioavailability random remains unaudited and
-requires a separate change audit or replay. Its scaffold baselines remain
-pre-fix references because two train rows were removed and must be retrained.
+At the 2026-09-02 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
+runs over the strict-voter-L1 v6 index; its random v6 index is built but still
+requires LLM replay. Skin scaffold-valid has fresh strict-voter-L1 v2 2/1 and
+4/2 runs, while current 8/4 is missing; Skin random remains a stale broad-L1
+reference. Bioavailability scaffold-valid has fresh 2/1 and exact 8/4 replay
+results. Its retained 4/2 curve is current through the nitrendipine
+selected-surface zero-change receipt. The rejected L1-only 0.7148 run used a
+different prompt contract and is neither a replicate nor a variance estimate.
+Bioavailability random remains unaudited and requires a separate change audit
+or replay. Its scaffold baselines remain pre-fix references because two train
+rows were removed and must be retrained.
 
 ## Documentation map
 

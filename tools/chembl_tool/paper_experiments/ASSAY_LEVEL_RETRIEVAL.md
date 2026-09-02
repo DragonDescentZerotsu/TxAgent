@@ -80,7 +80,8 @@ L1 从 direct pool 中选择最多 10 个不同 molecules；每个 molecule 最�
 
 Prompt profile 为 `progressive_compact_tools_short_aliases.v2`。Card 使用短 alias，省略重复 ID 列表；原始
 endpoint、measurement、species、conditions、support text 和 provenance 保留，不调用 GPT-OSS summary，
-不做字段级截断。`reasoning_effort` 参数省略、provider thinking 保持默认，completion cap 为 20,480 tokens。
+不做字段级截断。每个 level 都展示完整 level plan；已否决的 prefix-only prompt 分支不作为配置保留。
+`reasoning_effort` 参数省略、provider thinking 保持默认，completion cap 为 20,480 tokens。
 
 ### Multi-provider execution
 
@@ -191,8 +192,8 @@ outputs/paper/
 
 Skin:
 outputs/paper/
-  starling_conditioned_assay_progressive_visible_v7_source_purity_v1/
-  scaffold_valid_deepseek_v4_flash_0731/
+  starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/
+  scaffold_valid_deepseek_v4_flash_0731/skin/
 ```
 
 当前可复现 inputs：
@@ -330,8 +331,9 @@ fresh replication 时，才使用新的 output root 运行：
 ```
 
 Random split 必须使用 `--split-scheme random` 和按当前 random valid+test union 重建的 heldout-filtered
-index。BBB/Skin random artifacts 当前；Bioavailability random index 同样在 source-identity repair 后失配，
-尚未执行 zero-change 审计，必须单独审计或 targeted replay。若本机 endpoint 不可用，可把上例配置替换为
+index。BBB/Skin random indices 当前，但 predictions 仍是 voter-only rebuild 前的历史参考；Bioavailability
+random index 在 source-identity repair 后失配，尚未执行 zero-change 审计。三者都需要各自的 replay 或明确
+change audit。若本机 endpoint 不可用，可把上例配置替换为
 `deepseek_v4_flash_parcc_openrouter.json`；任何旧 checkpoint 都必须通过完整 hash gate。
 
 重画最后一版完整图（当前 root 继续用于 Bioavailability agent curve；baseline 重训后替换其 baseline root）：
@@ -345,7 +347,7 @@ index。BBB/Skin random artifacts 当前；Bioavailability random index 同样�
   --conditioned-progressive-task-root \
     bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731 \
   --conditioned-progressive-task-root \
-    skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731 \
+    skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin \
   --conditioned-progressive-baseline-root \
     bbb_martins=outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1 \
   --conditioned-progressive-baseline-root \
@@ -361,37 +363,41 @@ index。BBB/Skin random artifacts 当前；Bioavailability random index 同样�
 只有显式 `--omit-mismatched-progressive-baselines` 才允许诊断性省略，并在 summary 中记录原因。
 
 同一张图比较多个 progressive 配置时，使用通用的
-`CONFIG:TASK=PATH` 注册方式。绘图器校验相同 task、level family、evaluation input、sample count、visibility、
-identity policy、evaluation indices、非 card-budget selection 语义、prompt/generation/tool contract 和 model
-identity；解析 level metrics 与 query checkpoints，固定输出 Macro-F1、active molecules、cards/molecule、
-prompt tokens 和 reasoning tokens 五排对比。若 index 或 family-manifest hash 不同，必须用
-`--conditioned-progressive-config-lineage-receipt TASK=PATH` 显式注册 selected-surface zero-change receipt，
-否则拒绝画图。当前保留的 4/2 与 8/4 完整对比图入口如下；其中 BBB 是 strict-voter-L1 v6 current，
-Skin panel 是 pre-v2 historical，Bioavailability 的 lineage 边界见下文 receipt：
+`CONFIG:TASK=PATH` 注册方式。同一 `CONFIG:TASK` 可以用不同 path 重复注册 exact-contract reruns；绘图器先
+校验 replicate 的完整 execution/retrieval/prompt contract，再画逐 level 均值和 observed min-max。当前 lineage
+没有的 task/configuration cell 可以省略，summary 和图中会明确标记 unavailable。绘图器同时校验 task、level
+family、evaluation input、sample count、visibility、identity policy、evaluation indices、非 card-budget selection
+语义、prompt/generation/tool contract 和 model identity；若 index 或 family-manifest hash 不同，仍必须用
+`--conditioned-progressive-config-lineage-receipt TASK=PATH` 注册 selected-surface zero-change receipt。
+
+当前 2/1、4/2、8/4 合并图的唯一入口如下。Bioavailability 8/4 的两个 path 是已验证的 full-curve
+exact-contract replicates；Skin strict-voter-L1 v2 没有 8/4，因此不注册该 cell：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
   --conditioned-progressive-config-comparison \
+  --analysis-dir outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4 \
+  --output-stem progressive_record_card_budget_2_1_4_2_8_4 \
+  --conditioned-progressive-config-task-root '2/1:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bbb' \
+  --conditioned-progressive-config-task-root '2/1:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bio' \
+  --conditioned-progressive-config-task-root '2/1:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
   --conditioned-progressive-config-task-root '4/2:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731' \
   --conditioned-progressive-config-task-root '4/2:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731' \
-  --conditioned-progressive-config-task-root '4/2:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
+  --conditioned-progressive-config-task-root '4/2:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
   --conditioned-progressive-config-task-root '8/4:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731' \
   --conditioned-progressive-config-task-root '8/4:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bio' \
-  --conditioned-progressive-config-task-root '8/4:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
+  --conditioned-progressive-config-task-root '8/4:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_bio_card_budget_8_4_exact_replay_v1/scaffold_valid_deepseek_v4_flash_0731' \
   --conditioned-progressive-config-lineage-receipt 'bioavailability_ma=tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json' \
   --conditioned-progressive-baseline-root 'bbb_martins=outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1' \
-  --analysis-dir outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4 \
-  --output-stem progressive_record_card_budget_4_2_vs_8_4
+  --conditioned-baseline-root outputs/baselines/starling_conditioned_valid_v1 \
+  --conditioned-none-agent-root outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731
 ```
 
-配置比较图的 performance 行先画两种配置完全一致的 matched `None`，再画
-4/2 与 8/4 progressive levels，最后画 task-specific MiniMol head、MiniMol
-KNN condition/all 和 Morgan KNN condition/all references。`None` 必须逐 task
-跨配置严格相等；baseline 必须覆盖相同 evaluation sample count。下面四行只
-描述 progressive levels 的 evidence/token resources，不给 `None` 或 baseline
-伪造资源值。Bioavailability baseline 仍是删除两条 train rows 之前的 pre-fix
-reference，需在重训前保持该标注。
+配置比较图的 performance 行先画跨 available configuration replicates 完全一致的 matched `None`，再画
+2/1、4/2、8/4 progressive levels，最后画 task-specific MiniMol/Morgan references。下面四行只描述
+progressive evidence/token resources，不给 `None` 或 baseline 伪造资源值。Bioavailability baseline 仍是删除
+两条 train rows 之前的 pre-fix reference，需在重训前保持该标注。
 
 BBB 必须使用上面成对的 strict-voter-L1 v6 4/2 与 8/4 roots。两组各 397/397、
 0 failed queries，使用相同 input、family manifest、heldout-filtered index、query prior、
@@ -399,20 +405,17 @@ model identity 和 1,493 个 model-called checkpoints；两组均为 fresh run�
 复用 level prediction，也不需要跨 lineage receipt。旧 v5 `tool_prefetch_fixed_v1`
 roots 只保留历史 provenance，不能进入当前结果图。
 
-Bioavailability 8/4 必须使用上面的 `tool_prefetch_fixed_v1` lineage。该次
-preparation 在 262 个 query、1,572 个 query-level 上没有出现任何
-`127.0.0.1:8765` 连接或权限失败，并与 4/2 的 5,694 个共享 analog×tool
-surface 完全一致。两种预算共同存在的 72 个确定性 MMP runtime error 不构成
-配置间差异。旧 `...card_budget_8_4_v1.../bio` 受 sandbox loopback 失败污染，
-不得进入结果图；完整 receipt 见
-`receipts/bioavailability_scaffold_valid_8_4_tool_prefetch_fixed.json`。
+Bioavailability 8/4 保留 `tool_prefetch_fixed_v1` 与 `exact_replay_v1` 两次完整同合同运行；图中使用逐 level
+算术均值和 observed min-max。L1-only 0.7148 diagnostic 改变了 `full_level_plan`，不是 replicate，也不得进入
+波动范围。旧 `...card_budget_8_4_v1.../bio` 受 sandbox loopback 失败污染，同样不得进入结果图。Skin 当前只
+保留 strict-voter-L1 v2 2/1 与 4/2；历史 broad-L1 8/4 不得补入缺失 cell。
 
 预算实验不使用独立 runner。正式通用入口仍是
-`run_conditioned_assay_progressive_curve.py`：默认 `--initial-card-limit 4 --delta-card-limit 2`，8/4 仅改为
-`--initial-card-limit 8 --delta-card-limit 4`。`--query-prior-source-root` 只从完成的 progressive artifact 复用
+`run_conditioned_assay_progressive_curve.py`：默认 `--initial-card-limit 4 --delta-card-limit 2`；2/1 与 8/4
+分别只改为 `2 1` 与 `8 4`。`--query-prior-source-root` 只从完成的 progressive artifact 复用
 identity-checked none/single prior 与 query tool summary，不复用 level prediction；
 `--progressive-reuse-source-root` 只允许 selection contract 和其它冻结设置完全相同的 run，并只复用逐 query
-从 L1 开始完全相同的 model-visible prefix，在首个变化 level 永久停止复用。4/2 与 8/4 不跨预算复用 level
+从 L1 开始完全相同的 model-visible prefix，在首个变化 level 永久停止复用。不同预算不跨配置复用 level
 prediction；实验准备或审计使用 `--prepare-only`。仓库内没有为本轮保留一次性 audit Python 入口。
 
 ## Historical boundaries

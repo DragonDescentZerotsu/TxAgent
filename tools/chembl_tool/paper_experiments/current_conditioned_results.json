@@ -1,6 +1,6 @@
 {
   "schema_version": "paper_artifact_registry.v2",
-  "updated_at": "2026-09-01",
+  "updated_at": "2026-09-02",
   "benchmark": {
     "root": "data/conditioned_benchmark",
     "contract": "conditioned_benchmark.v1",
@@ -47,12 +47,12 @@
       "scaffold": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
         "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731"
+        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
       },
       "scaffold_status_by_task": {
         "bbb_martins": "current",
         "bioavailability_ma": "current_via_zero_change_retrieval_receipt",
-        "skin_reaction": "stale_predictions_after_strict_voter_l1_v2_index_rebuild"
+        "skin_reaction": "current"
       },
       "scaffold_reuse_receipts": {
         "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json"
@@ -67,23 +67,36 @@
       }
     },
     "record_card_budget_ablation": {
-      "role": "Compare the default L1/later per-molecule record-card limits 4/2 with 8/4 while retaining the v8 molecule quotas",
+      "role": "Compare L1/later per-molecule record-card limits 2/1, 4/2, and 8/4 while retaining the v8 molecule quotas",
       "runner": "tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py",
       "plotter": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py",
       "split": "scaffold-valid",
       "model_identity": "deepseek-v4-flash-0731",
-      "status": "complete_with_skin_historical_after_strict_voter_l1_v2_rebuild",
+      "status": "combined_2_1_4_2_8_4_figure_complete_with_exact_replicate_ranges",
       "selection_contract": "same global Morgan candidate ranking, Top-10 L1 molecules, Top-3 later new molecules, Top-3 later active-molecule augmentations, assay-diversity card tie-break, and append-only semantics; only per-molecule card limits differ",
       "comparison_gate": "exact evaluation indices, input, experiment, visibility, identity policy, candidate generation, non-card selection semantics, prompt/generation/tool contract, model identity, and split; changed retrieval lineages require a selected-surface zero-change receipt",
       "four_two_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
         "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
+        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
       },
       "eight_four_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_bio_card_budget_8_4_exact_replay_v1/scaffold_valid_deepseek_v4_flash_0731"
+      },
+      "eight_four_replicate_roots": {
+        "bioavailability_ma": [
+          "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
+          "outputs/paper/starling_conditioned_assay_progressive_visible_bio_card_budget_8_4_exact_replay_v1/scaffold_valid_deepseek_v4_flash_0731"
+        ]
+      },
+      "unavailable_current_configurations": {
+        "skin_reaction": ["8/4"]
+      },
+      "two_one_roots": {
+        "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bbb",
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
+        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
       },
       "excluded_invalid_root": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
       "bbb_excluded_invalid_roots": [
@@ -100,14 +113,20 @@
       "retrieval_lineage_receipts": {
         "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json"
       },
-      "analysis_root": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4",
-      "figure": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4/figures/progressive_record_card_budget_4_2_vs_8_4.png",
+      "analysis_root": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4",
+      "figure": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/figures/progressive_record_card_budget_2_1_4_2_8_4.png",
+      "svg": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/figures/progressive_record_card_budget_2_1_4_2_8_4.svg",
+      "summary": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/summary.json",
+      "metrics_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_metrics.tsv",
+      "references_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_references.tsv",
+      "previous_four_two_vs_eight_four_analysis_root": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4",
+      "analysis_scope": "One current-lineage figure covers every available 2/1, 4/2, and 8/4 curve plus matched None and baseline references. Exact-contract reruns are plotted as their arithmetic mean with observed min-max whiskers; Bioavailability 8/4 is the only replicated curve. Current strict-L1 Skin has no 8/4 run and is explicitly shown as unavailable rather than filled from historical broad-L1 output.",
       "performance_references": {
         "none": {
           "bbb_martins": 0.6207006369426751,
           "bioavailability_ma": 0.6314369393261536,
           "skin_reaction": 0.6151493216895884,
-          "contract": "matched exactly across 4/2 and 8/4 for each task"
+          "contract": "matched exactly across every available configuration replicate"
         },
         "baseline_methods": ["minimol_head", "minimol_knn_condition", "minimol_knn_all", "morgan_knn_condition", "morgan_knn_all"],
         "bbb_root": "outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1",
@@ -121,14 +140,62 @@
         },
         "bioavailability_ma": {
           "four_two": [0.6899932386747802, 0.7312184343434344, 0.7377686193700324, 0.7544709098008591, 0.7544709098008591, 0.7608142493638678],
-          "eight_four": [0.6375338345864662, 0.6590330788804072, 0.6725188931407804, 0.6856898029134533, 0.6691159586681974, 0.6852143876248404]
+          "eight_four_historical": [0.6375338345864662, 0.6590330788804072, 0.6725188931407804, 0.6856898029134533, 0.6691159586681974, 0.6852143876248404],
+          "eight_four": [0.6310517860330432, 0.6895674300254453, 0.7038021380828655, 0.696634285153567, 0.6926715766398092, 0.6860698824984539],
+          "eight_four_plot_mean": [0.6342928103097547, 0.6743002544529262, 0.6881605156118229, 0.6911620440335101, 0.6808937676540032, 0.6856421350616472],
+          "eight_four_plot_min": [0.6310517860330432, 0.6590330788804072, 0.6725188931407804, 0.6856898029134533, 0.6691159586681974, 0.6852143876248404],
+          "eight_four_plot_max": [0.6375338345864662, 0.6895674300254453, 0.7038021380828655, 0.696634285153567, 0.6926715766398092, 0.6860698824984539],
+          "eight_four_plot_n_replicates": 2
         },
         "skin_reaction": {
-          "four_two": [0.6272727272727273, 0.6341969128950511],
-          "eight_four": [0.6409684065934066, 0.6375168172208341]
+          "four_two": [0.6334151472650771, 0.6328439999108952, 0.6294195835179441],
+          "four_two_historical_broad_l1": [0.6272727272727273, 0.6341969128950511],
+          "eight_four_historical_broad_l1": [0.6409684065934066, 0.6375168172208341]
         }
       },
-      "comparison_note": "BBB uses fresh paired OpenRouter 4/2 and 8/4 reruns over the exact same strict-voter-L1 v6 index and family manifest, with the same 1,493 model-called checkpoints and zero failed queries; no BBB cross-lineage reuse receipt is needed. Historical v5 BBB roots are retained only as provenance. Skin is a completed v1 OpenRouter transport-matched 4/2 versus 8/4 control, but became historical after the strict-voter-L1 v2 source/index rebuild and requires replay before promotion. Bioavailability uses its completed v8 4/2 reference with matched model identity and evaluation inputs, but the historical per-query provider path is not strictly matched; it additionally relies on the scaffold-valid nitrendipine zero-change receipt. Its fixed 8/4 preparation has zero loopback connection failures and exactly matches all 5,694 shared analog-tool surfaces in 4/2; both retain the same 72 deterministic MMP runtime errors. The earlier connectivity-confounded Bioavailability 8/4 root is explicitly excluded."
+      "two_one_macro_f1": {
+        "bbb_martins": [0.6913344642352275, 0.7146963708228531, 0.71105175091729, 0.710379131203714, 0.7126757650951199],
+        "bioavailability_ma": [0.6474186444825055, 0.658546365914787, 0.6619354838709677, 0.6726278797344787, 0.6863507015994504, 0.6961966604823748],
+        "skin_reaction": [0.6376262626262627, 0.6515281593406593, 0.6515281593406593]
+      },
+      "two_one_last_level_paired_comparison": {
+        "bbb_martins_vs_four_two": {
+          "delta_macro_f1": -0.021107072677990946,
+          "prediction_flips": 51,
+          "two_one_correct_reference_wrong": 22,
+          "two_one_wrong_reference_correct": 29,
+          "exact_mcnemar_p": 0.4010619910279374,
+          "paired_bootstrap_95": [-0.06319890081744911, 0.019630204863194868]
+        },
+        "bioavailability_ma_vs_exact_replay_eight_four": {
+          "delta_macro_f1": 0.01012677798392092,
+          "prediction_flips": 32,
+          "two_one_correct_reference_wrong": 17,
+          "two_one_wrong_reference_correct": 15,
+          "exact_mcnemar_p": 0.860050065908581,
+          "paired_bootstrap_95": [-0.0408631369616603, 0.06138289698555863]
+        },
+        "skin_reaction_vs_current_four_two": {
+          "delta_macro_f1": 0.022108575822715193,
+          "prediction_flips": 16,
+          "two_one_correct_reference_wrong": 9,
+          "two_one_wrong_reference_correct": 7,
+          "exact_mcnemar_p": 0.803619384765625,
+          "paired_bootstrap_95": [-0.021563814866760178, 0.06681012958133378]
+        }
+      },
+      "exact_bio_eight_four_replay": {
+        "historical_l1_macro_f1": 0.6375338345864662,
+        "replay_l1_macro_f1": 0.6310517860330432,
+        "l1_prediction_flips": 16,
+        "l1_exact_mcnemar_p": 0.803619384765625,
+        "historical_last_macro_f1": 0.6852143876248404,
+        "replay_last_macro_f1": 0.6860698824984539,
+        "last_prediction_flips": 24,
+        "last_exact_mcnemar_p": 0.8388197422027588,
+        "n_failed_queries": 0
+      },
+      "comparison_note": "All retained 2/1 runs and the exact Bioavailability 8/4 replay have zero failed queries and complete prefetched tool payloads. BBB 2/1 is paired to current strict-voter-L1 v6 4/2; Skin 2/1 is paired to the new current strict-voter-L1 v2 4/2 control; Bioavailability 2/1 is paired to the exact full-curve 8/4 replay because the attempted additional current 4/2 control did not reach the zero-failure gate and was removed. Across each retained pair, query priors, query-tool summaries, conditions, retrieval audits, and selected molecule sets match at every query and level, and each lower-budget card set is a subset of the reference. The combined figure averages the two exact-contract Bioavailability 8/4 full curves and shows their observed min-max range; all other current curves are single runs. The rejected 0.7148 L1-only run used a different prompt contract and is not a variance estimate. Current strict-L1 Skin has no 8/4 run. Historical broad-L1 Skin and connectivity-confounded Bioavailability roots remain excluded from current comparisons."
     }
   },
   "progressive_tasks": {
@@ -189,12 +256,13 @@
       "current_index_sha256": "624860f613f82147f6c8dc458f29a563d31c0e0161917f8201e34e0e6e06e9d2",
       "recorded_family_manifest_sha256": "98b3846ddae6f35b38ad472d1f50562560a11bd757cbc77320fb0799bfc0142b",
       "current_family_manifest_sha256": "853a5a45ddd0f8549404ddf68b165763765c6a256223f00187e14981c7a908ad",
-      "status": "stale_predictions_after_strict_voter_l1_v2_index_rebuild",
-      "metrics_role": "last completed broad-L1 v1 scaffold-valid reference; strict-voter-L1 v2 adds a nonvoter-outcome L2 and moves AOP to L3",
+      "status": "current",
+      "metrics_role": "fresh scaffold-valid 4/2 curve over strict-voter-L1 v2; nonvoter near-direct evidence is L2 and AOP evidence is L3",
       "agent_macro_f1": {
-        "none": 0.611851,
-        "L1": 0.6003898635477583,
-        "L2": 0.5939104915627293
+        "none": 0.6151493216895884,
+        "L1": 0.6334151472650771,
+        "L2": 0.6328439999108952,
+        "L3": 0.6294195835179441
       },
       "baselines": {
         "minimol_head": 0.6030123722431414,

@@ -143,9 +143,9 @@ def _parse_task_path_overrides(values: list[str]) -> dict[str, Path]:
 
 def _parse_configuration_task_path_overrides(
     values: list[str],
-) -> dict[str, dict[str, Path]]:
-    """Parse repeatable CONFIG:TASK=PATH progressive comparison roots."""
-    configurations: dict[str, dict[str, Path]] = {}
+) -> dict[str, dict[str, list[Path]]]:
+    """Parse CONFIG:TASK=PATH roots, retaining exact-contract replicates."""
+    configurations: dict[str, dict[str, list[Path]]] = {}
     for value in values:
         configuration, separator, task_path = value.partition(":")
         task, task_separator, raw_path = task_path.partition("=")
@@ -161,12 +161,20 @@ def _parse_configuration_task_path_overrides(
                 f"CONFIG:TASK=PATH; received {value!r}"
             )
         roots = configurations.setdefault(configuration, {})
-        if task in roots:
+        task_roots = roots.setdefault(task, [])
+        path = Path(raw_path)
+        if path in task_roots:
             raise ValueError(
-                f"Duplicate progressive configuration root: {configuration}:{task}"
+                f"Duplicate progressive configuration root path: "
+                f"{configuration}:{task}={path}"
             )
-        roots[task] = Path(raw_path)
+        task_roots.append(path)
     return configurations
+
+
+def _configuration_root_replicates(value: Path | list[Path]) -> list[Path]:
+    """Normalize one historical root or a list of replicate roots."""
+    return value if isinstance(value, list) else [value]
 
 
 def _reasoning_tokens_from_usage(usage: dict[str, Any]) -> int | None:
@@ -699,44 +707,81 @@ def collect_conditioned_progressive_resource_data(
     }
 
 
+_PROGRESSIVE_REPLICATE_VALUE_FIELDS = (
+    "macro_f1",
+    "accuracy",
+    "mean_active_molecules",
+    "mean_active_record_cards",
+    "mean_cards_per_active_molecule",
+    "n_model_called",
+    "model_call_fraction",
+    "n_carried_forward",
+    "n_reused_none",
+    "mean_reasoning_tokens_per_call",
+    "mean_reasoning_tokens_per_query",
+    "mean_reasoning_chars_per_call",
+    "mean_prompt_tokens_per_call",
+    "mean_completion_tokens_per_call",
+)
+
+
+def _aggregate_progressive_replicate_rows(
+    rows_by_replicate: list[list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """Average exact-contract repeats and retain their observed min-max range."""
+    if not rows_by_replicate:
+        raise ValueError("At least one progressive replicate is required")
+    keys = [
+        [(str(row["task"]), int(row["level"])) for row in rows]
+        for rows in rows_by_replicate
+    ]
+    if any(item != keys[0] for item in keys[1:]):
+        raise ValueError(f"Progressive replicate level mismatch: {keys}")
+
+    aggregated: list[dict[str, Any]] = []
+    for row_index in range(len(rows_by_replicate[0])):
+        repeats = [rows[row_index] for rows in rows_by_replicate]
+        item = dict(repeats[0])
+        value_fields = tuple(
+            field
+            for field in _PROGRESSIVE_REPLICATE_VALUE_FIELDS
+            if field in repeats[0]
+        )
+        for field in value_fields:
+            values = [float(row[field]) for row in repeats]
+            if len(repeats) > 1:
+                item[field] = mean(values)
+                item[f"{field}_min"] = min(values)
+                item[f"{field}_max"] = max(values)
+        stable_fields = (
+            set(repeats[0])
+            - set(value_fields)
+            - {"metrics_path"}
+        )
+        for field in stable_fields:
+            if any(row[field] != repeats[0][field] for row in repeats[1:]):
+                raise ValueError(
+                    f"Progressive replicate row mismatch for {field}: "
+                    f"{[row[field] for row in repeats]}"
+                )
+        item["n_replicates"] = len(repeats)
+        item["metrics_paths"] = [
+            str(row["metrics_path"]) for row in repeats if "metrics_path" in row
+        ]
+        item.pop("metrics_path", None)
+        aggregated.append(item)
+    return aggregated
+
+
 def collect_conditioned_progressive_configuration_data(
     *,
-    configuration_roots: dict[str, dict[str, Path]],
+    configuration_roots: dict[str, dict[str, Path | list[Path]]],
     lineage_receipts_by_task: dict[str, Path] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Collect and validate multiple progressive configurations for one figure."""
+    """Collect configurations, averaging only exact-contract replicate roots."""
     if len(configuration_roots) < 2:
         raise ValueError("At least two progressive configurations are required")
 
-    expected_tasks: tuple[str, ...] | None = None
-    all_rows: list[dict[str, Any]] = []
-    contracts_by_configuration: dict[str, Any] = {}
-    for configuration, roots_by_task in configuration_roots.items():
-        tasks = tuple(roots_by_task)
-        if expected_tasks is None:
-            expected_tasks = tasks
-        elif set(tasks) != set(expected_tasks):
-            raise ValueError(
-                "Every progressive configuration must provide the same tasks: "
-                f"{configuration} has {sorted(tasks)}, expected {sorted(expected_tasks)}"
-            )
-        resource_rows, resource_summary = collect_conditioned_progressive_resource_data(
-            progressive_roots_by_task=roots_by_task
-        )
-        all_rows.extend(
-            {"configuration": configuration, **row} for row in resource_rows
-        )
-        resource_contract = resource_summary["comparison_contract"]
-        contracts_by_configuration[configuration] = {
-            "split_scheme": resource_contract["split_scheme"],
-            "task_contracts": resource_contract["task_contracts"],
-        }
-
-    assert expected_tasks is not None
-    configurations = list(configuration_roots)
-    reference_name = configurations[0]
-    reference = contracts_by_configuration[reference_name]
-    audits: dict[str, Any] = {}
     invariant_fields = (
         "experiment",
         "evaluation_subset",
@@ -759,8 +804,90 @@ def collect_conditioned_progressive_configuration_data(
         "n",
         "split_scheme",
     )
+    replicate_invariant_fields = invariant_fields + (
+        "selection",
+        "agent_model",
+        "index_sha256",
+        "family_manifest_sha256",
+        "execution_base_urls",
+    )
+    configurations = list(configuration_roots)
+    expected_tasks = tuple(
+        dict.fromkeys(
+            task
+            for roots_by_task in configuration_roots.values()
+            for task in roots_by_task
+        )
+    )
+    if not expected_tasks:
+        raise ValueError("Progressive configurations must provide at least one task")
+
+    all_rows: list[dict[str, Any]] = []
+    contracts_by_configuration: dict[str, Any] = {}
+    for configuration, roots_by_task in configuration_roots.items():
+        task_contracts: dict[str, Any] = {}
+        split_schemes: set[str] = set()
+        for task, root_value in roots_by_task.items():
+            replicate_roots = _configuration_root_replicates(root_value)
+            replicate_rows: list[list[dict[str, Any]]] = []
+            replicate_contracts: list[dict[str, Any]] = []
+            for root in replicate_roots:
+                resource_rows, resource_summary = (
+                    collect_conditioned_progressive_resource_data(
+                        progressive_roots_by_task={task: root}
+                    )
+                )
+                replicate_rows.append(resource_rows)
+                resource_contract = resource_summary["comparison_contract"]
+                split_schemes.add(str(resource_contract["split_scheme"]))
+                replicate_contracts.append(resource_contract["task_contracts"][task])
+
+            reference_contract = replicate_contracts[0]
+            for replicate_index, contract in enumerate(replicate_contracts[1:], start=2):
+                mismatches = {
+                    field: {
+                        "reference": reference_contract[field],
+                        "replicate": contract[field],
+                    }
+                    for field in replicate_invariant_fields
+                    if contract[field] != reference_contract[field]
+                }
+                if mismatches:
+                    raise ValueError(
+                        f"Incompatible progressive replicate {replicate_index} for "
+                        f"{configuration}/{task}: {mismatches}"
+                    )
+            aggregate_rows = _aggregate_progressive_replicate_rows(replicate_rows)
+            all_rows.extend(
+                {"configuration": configuration, **row} for row in aggregate_rows
+            )
+            task_contracts[task] = {
+                **reference_contract,
+                "progressive_roots": [str(path) for path in replicate_roots],
+                "n_replicates": len(replicate_roots),
+            }
+        if len(split_schemes) > 1:
+            raise ValueError(
+                f"Mixed split schemes within {configuration}: {sorted(split_schemes)}"
+            )
+        contracts_by_configuration[configuration] = {
+            "split_scheme": next(iter(split_schemes)) if split_schemes else "",
+            "task_contracts": task_contracts,
+        }
+
+    audits: dict[str, Any] = {}
     for task in expected_tasks:
-        reference_contract = reference["task_contracts"][task]
+        present_configurations = [
+            configuration
+            for configuration in configurations
+            if task in contracts_by_configuration[configuration]["task_contracts"]
+        ]
+        if not present_configurations:
+            continue
+        reference_name = present_configurations[0]
+        reference_contract = contracts_by_configuration[reference_name][
+            "task_contracts"
+        ][task]
         reference_levels = [
             (int(row["level"]), str(row["family"]))
             for row in all_rows
@@ -772,8 +899,14 @@ def collect_conditioned_progressive_configuration_data(
             "index_sha256_equal": True,
             "family_manifest_sha256_equal": True,
             "execution_base_urls_equal": True,
+            "present_configurations": present_configurations,
+            "missing_configurations": [
+                configuration
+                for configuration in configurations
+                if configuration not in present_configurations
+            ],
         }
-        for configuration in configurations[1:]:
+        for configuration in present_configurations[1:]:
             contract = contracts_by_configuration[configuration]["task_contracts"][task]
             mismatches = {
                 field: {
@@ -824,7 +957,7 @@ def collect_conditioned_progressive_configuration_data(
             receipt_artifacts = receipt.get("artifacts") or {}
             compared_contracts = [
                 contracts_by_configuration[configuration]["task_contracts"][task]
-                for configuration in configurations
+                for configuration in present_configurations
             ]
             compared_index_hashes = {
                 contract["index_sha256"] for contract in compared_contracts
@@ -873,15 +1006,19 @@ def collect_conditioned_progressive_configuration_data(
     split_schemes = {
         str(contract["split_scheme"])
         for contract in contracts_by_configuration.values()
+        if contract["split_scheme"]
     }
+    if len(split_schemes) != 1:
+        raise ValueError(f"Mixed progressive split schemes: {sorted(split_schemes)}")
     return all_rows, {
         "comparison_contract": {
-            "figure": "conditioned_progressive_configuration_comparison.v1",
+            "figure": "conditioned_progressive_configuration_comparison.v2",
             "configurations": configurations,
             "tasks": list(expected_tasks),
             "split_scheme": next(iter(split_schemes)),
             "strict_invariants": list(invariant_fields),
             "resource_metrics_included": True,
+            "replicate_statistic": "mean with observed min-max range",
             "task_audits": audits,
             "configurations_contract": contracts_by_configuration,
         },
@@ -891,7 +1028,7 @@ def collect_conditioned_progressive_configuration_data(
 
 def collect_conditioned_progressive_configuration_reference_data(
     *,
-    configuration_roots: dict[str, dict[str, Path]],
+    configuration_roots: dict[str, dict[str, Path | list[Path]]],
     none_root: Path,
     baseline_root: Path,
     baseline_roots_by_task: dict[str, Path] | None = None,
@@ -901,13 +1038,28 @@ def collect_conditioned_progressive_configuration_reference_data(
     if len(configuration_roots) < 2:
         raise ValueError("At least two progressive configurations are required")
     configurations = list(configuration_roots)
-    reference_name = configurations[0]
-    reference_roots = configuration_roots[reference_name]
+    tasks = tuple(
+        dict.fromkeys(
+            task
+            for roots_by_task in configuration_roots.values()
+            for task in roots_by_task
+        )
+    )
     rows: list[dict[str, Any]] = []
     none_audits: dict[str, Any] = {}
+    reference_configuration_by_task: dict[str, str] = {}
     baseline_omissions: list[dict[str, Any]] = []
     effective_baseline_roots: dict[str, str] = {}
-    for task, reference_root in reference_roots.items():
+    for task in tasks:
+        reference_name = next(
+            configuration
+            for configuration in configurations
+            if task in configuration_roots[configuration]
+        )
+        reference_configuration_by_task[task] = reference_name
+        reference_root = _configuration_root_replicates(
+            configuration_roots[reference_name][task]
+        )[0]
         reference_manifest = _load_json(reference_root / "experiment_manifest.json")
         expected_n = len(reference_manifest["evaluation_indices_by_task"][task])
         task_label, baseline_task = CONDITIONED_TASK_SPECS[task]
@@ -922,35 +1074,43 @@ def collect_conditioned_progressive_configuration_reference_data(
             "macro_f1": _metric_value(reference_none, "macro_f1"),
             "accuracy": _metric_value(reference_none, "accuracy"),
         }
-        configuration_paths: dict[str, str] = {}
+        configuration_paths: dict[str, list[str]] = {}
         for configuration, roots_by_task in configuration_roots.items():
-            task_root = roots_by_task[task]
-            manifest = _load_json(task_root / "experiment_manifest.json")
-            configuration_n = len(manifest["evaluation_indices_by_task"][task])
-            if configuration_n != expected_n:
-                raise ValueError(
-                    f"No-retrieval cohort mismatch for {configuration}/{task}: "
-                    f"{configuration_n} != {expected_n}"
-                )
-            none_path = task_root / task / "none" / "metrics.json"
-            if not none_path.is_file():
-                none_path = none_root / task / "none" / "metrics.json"
-            metrics = _load_json(none_path)
-            issue = _complete_agent_metric_issue(metrics, expected_n)
-            if issue:
-                raise ValueError(
-                    f"Incomplete no-retrieval metric for {configuration}/{task}: {issue}"
-                )
-            actual = {
-                "macro_f1": _metric_value(metrics, "macro_f1"),
-                "accuracy": _metric_value(metrics, "accuracy"),
-            }
-            if any(abs(actual[key] - none_values[key]) > 1e-12 for key in none_values):
-                raise ValueError(
-                    f"No-retrieval metric mismatch across configurations for {task}: "
-                    f"{reference_name}={none_values}, {configuration}={actual}"
-                )
-            configuration_paths[configuration] = str(none_path)
+            if task not in roots_by_task:
+                continue
+            configuration_paths[configuration] = []
+            for task_root in _configuration_root_replicates(roots_by_task[task]):
+                manifest = _load_json(task_root / "experiment_manifest.json")
+                configuration_n = len(manifest["evaluation_indices_by_task"][task])
+                if configuration_n != expected_n:
+                    raise ValueError(
+                        f"No-retrieval cohort mismatch for {configuration}/{task}: "
+                        f"{configuration_n} != {expected_n}"
+                    )
+                none_path = task_root / task / "none" / "metrics.json"
+                if not none_path.is_file():
+                    none_path = none_root / task / "none" / "metrics.json"
+                metrics = _load_json(none_path)
+                issue = _complete_agent_metric_issue(metrics, expected_n)
+                if issue:
+                    raise ValueError(
+                        f"Incomplete no-retrieval metric for {configuration}/{task}: "
+                        f"{issue}"
+                    )
+                actual = {
+                    "macro_f1": _metric_value(metrics, "macro_f1"),
+                    "accuracy": _metric_value(metrics, "accuracy"),
+                }
+                if any(
+                    abs(actual[key] - none_values[key]) > 1e-12
+                    for key in none_values
+                ):
+                    raise ValueError(
+                        f"No-retrieval metric mismatch across configurations for "
+                        f"{task}: {reference_name}={none_values}, "
+                        f"{configuration}={actual}"
+                    )
+                configuration_paths[configuration].append(str(none_path))
         rows.append(
             {
                 "task": task,
@@ -964,9 +1124,20 @@ def collect_conditioned_progressive_configuration_reference_data(
                 "metrics_path": str(reference_none_path),
             }
         )
+        missing_configurations = [
+            configuration
+            for configuration in configurations
+            if task not in configuration_roots[configuration]
+        ]
         none_audits[task] = {
-            "status": "matched_across_configurations",
+            "status": (
+                "matched_across_configurations"
+                if not missing_configurations
+                and all(len(paths) == 1 for paths in configuration_paths.values())
+                else "matched_across_available_configuration_replicates"
+            ),
             "metrics_by_configuration": configuration_paths,
+            "missing_configurations": missing_configurations,
         }
         task_baseline_root = (baseline_roots_by_task or {}).get(task, baseline_root)
         effective_baseline_roots[task] = str(task_baseline_root)
@@ -982,7 +1153,7 @@ def collect_conditioned_progressive_configuration_reference_data(
             )
         )
     return rows, {
-        "reference_configuration": reference_name,
+        "reference_configuration_by_task": reference_configuration_by_task,
         "none_lineage_fallback": str(none_root),
         "none_audits": none_audits,
         "baseline_lineage": str(baseline_root),
@@ -1754,7 +1925,7 @@ def plot_conditioned_progressive_configuration_comparison(
                 key=lambda row: int(row["level"]),
             )
             if not config_rows:
-                raise ValueError(f"No rows for {configuration}/{task}")
+                continue
             levels = [int(row["level"]) for row in config_rows]
             linestyle, fill, alpha = styles[config_index]
             for row_index, (field, _, divisor) in enumerate(panel_specs):
@@ -1775,19 +1946,62 @@ def plot_conditioned_progressive_configuration_comparison(
                     alpha=alpha,
                     zorder=3,
                 )
+                lower = [
+                    float(row.get(f"{field}_min", row[field])) / divisor
+                    for row in config_rows
+                ]
+                upper = [
+                    float(row.get(f"{field}_max", row[field])) / divisor
+                    for row in config_rows
+                ]
+                if any(
+                    lo < value or hi > value
+                    for lo, value, hi in zip(lower, values, upper, strict=True)
+                ):
+                    axes[row_index, column].errorbar(
+                        levels,
+                        values,
+                        yerr=(
+                            [value - lo for value, lo in zip(values, lower, strict=True)],
+                            [hi - value for value, hi in zip(values, upper, strict=True)],
+                        ),
+                        fmt="none",
+                        ecolor=TASK_SPECS[task].color,
+                        elinewidth=1.15,
+                        capsize=3.2,
+                        capthick=1.15,
+                        alpha=0.78,
+                        zorder=2,
+                    )
                 if row_index == 0:
-                    offset = 7 if config_index % 2 == 0 else -13
-                    for level, value in zip(levels, values, strict=True):
-                        axes[0, column].annotate(
-                            f"{value:.3f}",
-                            (level, value),
-                            xytext=(0, offset),
-                            textcoords="offset points",
-                            ha="center",
-                            va="bottom" if offset > 0 else "top",
-                            fontsize=7.1,
-                            color=TASK_SPECS[task].color,
-                        )
+                    offset = (7, -13, 20)[config_index % 3]
+                    axes[0, column].annotate(
+                        f"{values[-1]:.3f}",
+                        (levels[-1], values[-1]),
+                        xytext=(0, offset),
+                        textcoords="offset points",
+                        ha="center",
+                        va="bottom" if offset > 0 else "top",
+                        fontsize=7.1,
+                        color=TASK_SPECS[task].color,
+                    )
+        missing_configurations = [
+            configuration
+            for configuration in configurations
+            if not any(
+                row["configuration"] == configuration for row in task_rows
+            )
+        ]
+        if missing_configurations:
+            axes[0, column].text(
+                0.02,
+                0.04,
+                "Unavailable on current lineage: " + ", ".join(missing_configurations),
+                transform=axes[0, column].transAxes,
+                ha="left",
+                fontsize=7.0,
+                color="#777777",
+            )
         levels = sorted({int(row["level"]) for row in task_rows})
         task_reference_rows = [row for row in reference_rows if row["task"] == task]
         none_rows = [row for row in task_reference_rows if row["result_type"] == "none"]
@@ -1848,8 +2062,11 @@ def plot_conditioned_progressive_configuration_comparison(
                 )
             ]
             for configuration in configurations
+            if any(row["configuration"] == configuration for row in task_rows)
         ]
-        if all(series == molecule_series[0] for series in molecule_series[1:]):
+        if len(molecule_series) > 1 and all(
+            series == molecule_series[0] for series in molecule_series[1:]
+        ):
             axes[1, column].text(
                 0.98,
                 0.05,
@@ -1874,6 +2091,12 @@ def plot_conditioned_progressive_configuration_comparison(
         axes[n_rows - 1, column].set_xlabel("Progressive assay-family level")
 
     macro_values = [float(row["macro_f1"]) for row in rows + reference_rows]
+    macro_values.extend(
+        float(row[key])
+        for row in rows
+        for key in ("macro_f1_min", "macro_f1_max")
+        if key in row
+    )
     macro_limits = (
         max(0.0, math.floor((min(macro_values) - 0.015) * 50) / 50),
         min(1.0, math.ceil((max(macro_values) + 0.015) * 50) / 50),
@@ -1887,13 +2110,15 @@ def plot_conditioned_progressive_configuration_comparison(
     axes[0, 0].set_ylabel(panel_specs[0][1])
 
     for row_index, (field, ylabel, divisor) in enumerate(panel_specs[1:], start=1):
-        maximum = max(float(row[field]) / divisor for row in rows)
+        maximum = max(
+            float(row.get(f"{field}_max", row[field])) / divisor for row in rows
+        )
         for column in range(len(tasks)):
             axes[row_index, column].set_ylim(0, maximum * 1.16 if maximum else 1.0)
         axes[row_index, 0].set_ylabel(ylabel)
 
     fig.suptitle(
-        "Progressive record-card budget comparison with baselines",
+        "Progressive record-card budget comparison",
         fontsize=16,
         fontweight="bold",
         x=0.055,
@@ -1902,8 +2127,8 @@ def plot_conditioned_progressive_configuration_comparison(
     fig.text(
         0.055,
         0.965,
-        f"{split_scheme.title()} validation · same evaluation cohort, model, and "
-        "prompt contract · append-only evidence by level",
+        f"{split_scheme.title()} validation · means across exact-contract reruns · "
+        "whiskers show observed min–max",
         fontsize=9.5,
         color="#555555",
     )
@@ -1949,7 +2174,8 @@ def plot_conditioned_progressive_configuration_comparison(
     )
     resource_note = (
         "Molecules and cards/molecule are means over all queries; prompt and "
-        "reasoning tokens are means over actual model calls. "
+        "reasoning tokens are means over actual model calls. Whiskers are the "
+        "observed min–max across exact-contract reruns and are absent for a single run. "
     )
     lineage_note = (
         "Retrieval index and family-manifest hashes are matched across configurations."
@@ -2493,8 +2719,10 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         metavar="CONFIG:TASK=PATH",
         help=(
-            "Register one task artifact root under a named progressive "
-            "configuration; repeat for every configuration and task."
+            "Register a task artifact root under a named progressive "
+            "configuration. Repeat the same CONFIG:TASK with distinct paths "
+            "to average exact-contract reruns; unavailable task/configuration "
+            "cells may be omitted."
         ),
     )
     parser.add_argument(
