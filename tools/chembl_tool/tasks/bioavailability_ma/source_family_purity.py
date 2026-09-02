@@ -1,8 +1,9 @@
 """Record-level family rules for the current oral-bioavailability retrieval source.
 
-Only source records behind accepted ``record_supported_v2`` or selected-v1
-condition votes belong to L1. Other direct-like oral-F rows remain available as
-near-direct L2 evidence; mechanism rows keep their original families.
+Only source records that emitted a base vote or passed condition review belong
+to L1. Parent-level tie/agreement rejection does not erase record-level voting.
+Other direct-like oral-F rows remain available as near-direct L2 evidence;
+mechanism rows keep their original families.
 """
 
 from __future__ import annotations

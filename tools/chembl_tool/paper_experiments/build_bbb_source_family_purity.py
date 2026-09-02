@@ -13,6 +13,9 @@ import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+from tools.chembl_tool.common.source_family_purity import (
+    audit_exact_voter_membership,
+)
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
     PuritySpec,
     build_overlay,
@@ -33,6 +36,7 @@ from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
     is_pampa_record,
     load_gold_vote_source_indices,
     load_near_direct_reviews,
+    source_index,
 )
 from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
     NEGATIVE_LABELS,
@@ -42,7 +46,7 @@ from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
 
 DEFAULT_OUTPUT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-    "source_overlays/bbb_source_family_purity_v5"
+    "source_overlays/bbb_source_family_purity_v6"
 )
 DEFAULT_GOLD_MIGRATION = (
     DEFAULT_GOLD_ROOT / "migration_from_v3.json"
@@ -202,7 +206,7 @@ def finalize_manifest(
     gold_migration_path: Path = DEFAULT_GOLD_MIGRATION,
     gold_contract_name: str = "v4",
 ) -> dict:
-    decision_fn, gold_lineage = _gold_contract(gold_contract_name)
+    _, gold_lineage = _gold_contract(gold_contract_name)
     gold_indices = load_gold_vote_source_indices(
         gold_root=gold_root,
         conditioned_root=conditioned_root or Path("/__no_conditioned_votes__"),
@@ -318,10 +322,7 @@ def finalize_manifest(
     n_missing_endpoint = int(endpoint.isin(("", "missing_endpoint")).sum())
     n_generic_endpoint = int(endpoint.eq("bbb_permeability_outcome").sum())
 
-    residual_noncontract_l1 = 0
     residual_prediction_l1 = 0
-    n_contract_eligible_l1 = 0
-    n_frozen_vote_l1 = 0
     for batch in pq.ParquetFile(output_path).iter_batches(
         batch_size=5_000,
         columns=list(CLASSIFIER_COLUMNS),
@@ -331,27 +332,32 @@ def finalize_manifest(
                 continue
             if is_explicit_prediction_record(row):
                 residual_prediction_l1 += 1
-                continue
-            index = row.get("source_index")
-            try:
-                normalized_index = int(index) if index is not None else None
-            except (TypeError, ValueError):
-                normalized_index = None
-            if normalized_index in gold_indices:
-                n_frozen_vote_l1 += 1
-                continue
-            label, _ = decision_fn(row)
-            if label is None:
-                residual_noncontract_l1 += 1
-            else:
-                n_contract_eligible_l1 += 1
-    if residual_noncontract_l1:
-        raise RuntimeError(
-            "L1 contains non-gold-compatible non-voter rows: "
-            f"{residual_noncontract_l1}"
-        )
     if residual_prediction_l1:
         raise RuntimeError(f"L1 contains explicit prediction rows: {residual_prediction_l1}")
+
+    membership_rows = (
+        row
+        for batch in pq.ParquetFile(output_path).iter_batches(
+            batch_size=10_000,
+            columns=[
+                "group_id",
+                "source_index",
+                "source_record_id",
+                "canonical_record_id",
+                "extraction_id",
+                "retrieval_eligible",
+            ],
+        )
+        for row in batch.to_pylist()
+    )
+    membership_gate = audit_exact_voter_membership(
+        membership_rows,
+        gold_indices,
+        direct_group=DIRECT_GROUP,
+        record_id=source_index,
+    )
+    membership_gate["n_explicit_prediction_rows_in_l1"] = residual_prediction_l1
+    membership_gate["strict_experimental_l1"] = residual_prediction_l1 == 0
 
     manifest.update(
         {
@@ -368,12 +374,12 @@ def finalize_manifest(
             "n_residual_l1_mdck_rows": residual_mdck,
             "output_group_counts": dict(sorted(group_counts.items())),
             "l1_contract": (
-                "frozen/current gold-vote source OR conditioned-compatible replay of "
-                f"{gold_lineage}"
+                "exact source-record membership in the current voter ledger; "
+                "retrieval L1 additionally intersects retrieval eligibility and "
+                "excludes held-out parents"
             ),
-            "n_frozen_or_conditioned_vote_rows_in_l1": n_frozen_vote_l1,
-            "n_additional_gold_contract_eligible_rows_in_l1": n_contract_eligible_l1,
-            "n_residual_non_gold_contract_rows_in_l1": residual_noncontract_l1,
+            "voter_ledger_lineage": gold_lineage,
+            "hard_gates": membership_gate,
             "n_residual_prediction_rows_in_l1": residual_prediction_l1,
             "prediction_rows_retained_outside_l1": True,
             "missing_or_generic_rows_retained_outside_l1": True,

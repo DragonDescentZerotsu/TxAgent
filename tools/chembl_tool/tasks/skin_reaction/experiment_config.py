@@ -55,6 +55,12 @@ STARLING = SourceExperimentConfig(
         EvidenceGroupSpec(
             "Mechanism.tier_2",
             "Tier 2",
+            "nonvoter_sensitization_outcome",
+            source_groups=("Observed.nonvoter_skin_outcome",),
+        ),
+        EvidenceGroupSpec(
+            "Mechanism.tier_3",
+            "Tier 3",
             "sensitisation_aop",
             source_groups=("Mechanism.sensitization_aop",),
         ),
@@ -64,8 +70,9 @@ STARLING = SourceExperimentConfig(
 SOURCES = {"chembl": CHEMBL, "starling": STARLING}
 
 PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS = {
-    1: "Direct validated skin-sensitization or contact-allergy outcomes; closest to the benchmark label.",
-    2: "Sensitization AOP key-event evidence; indirect mechanism support and not itself a final sensitizer label.",
+    1: "Actual source records that participated in frozen skin-label voting.",
+    2: "Observed or direct-like skin outcomes that did not participate in voting.",
+    3: "Sensitization AOP key-event evidence; indirect mechanism support and not itself a final sensitizer label.",
 }
 
 

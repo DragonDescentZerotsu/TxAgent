@@ -42,6 +42,9 @@ from tools.chembl_tool.common.openai_provider_pool import (
     load_provider_pool_config,
 )
 from tools.chembl_tool.common.progressive_assay_reasoning import (
+    AUGMENTED_MOLECULE_LIMIT,
+    INITIAL_MOLECULE_LIMIT,
+    NEW_MOLECULE_LIMIT,
     PROGRESSIVE_PROTOCOL_VERSION,
     ProgressiveTaskContract,
     append_evidence,
@@ -131,6 +134,7 @@ _RESUME_INVARIANT_FIELDS = (
     "tool_prefetch_complete",
     "evaluation_indices_by_task",
     "inputs",
+    "query_prior_source_root",
     "progressive_reuse_source_root",
 )
 
@@ -220,10 +224,10 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
         "bbb_martins": ProgressiveTaskSpec(
             split_path("bbb_martins", "valid", split_scheme),
             index_root
-            / "bbb_martins/mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
+            / "bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
             / "family_catalogs_mechanism_tagged_v1/"
-            "bbb_martins_source_purity_v5/manifest.json",
+            "bbb_martins_source_purity_v6/manifest.json",
         ),
         "bioavailability_ma": ProgressiveTaskSpec(
             split_path("bioavailability_ma", "valid", split_scheme),
@@ -238,10 +242,10 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
         "skin_reaction": ProgressiveTaskSpec(
             split_path("skin_reaction", "valid", split_scheme),
             index_root
-            / "skin_reaction/mechanism_tagged_v4_source_purity_v1/assay_neighbor_index.pkl",
+            / "skin_reaction/mechanism_tagged_v4_source_purity_v2/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
             / "family_catalogs_mechanism_tagged_v1/"
-            "skin_reaction_source_purity_v1/manifest.json",
+            "skin_reaction_source_purity_v2/manifest.json",
         ),
     }
 
@@ -279,6 +283,73 @@ def _levels(task: str) -> list[dict[str, Any]]:
     if [int(row["level"]) for row in levels] != list(range(1, len(levels) + 1)):
         raise ValueError(f"{task} has a non-contiguous family-level catalog")
     return levels
+
+
+def _heldout_filter_validation(
+    *,
+    task: str,
+    split_scheme: str,
+    index_manifest: Mapping[str, Any],
+    heldout_path: Path,
+) -> dict[str, Any]:
+    current_hash = sha256_file(heldout_path)
+    recorded_hash = str(index_manifest.get("heldout_molecules_jsonl_sha256") or "")
+    if current_hash == recorded_hash:
+        return {
+            "status": "ok",
+            "method": "exact_heldout_file_sha256",
+            "current_sha256": current_hash,
+            "recorded_sha256": recorded_hash,
+        }
+
+    receipt_path = Path("data/conditioned_benchmark/migration_receipt.json")
+    receipt = _read_json(receipt_path)
+    task_receipt = (receipt.get("tasks") or {}).get(task) or {}
+    source_root = Path(str(task_receipt.get("legacy_source_root") or "")).resolve()
+    canonical_root = Path(str(task_receipt.get("canonical_root") or "")).resolve()
+    recorded_heldout = Path(
+        str(index_manifest.get("heldout_molecules") or "")
+    ).resolve()
+    if split_scheme != "scaffold":
+        raise ValueError(f"{task} heldout hash mismatch without a scaffold migration receipt")
+    if not task_receipt.get("input_rows_byte_identical_expected"):
+        raise ValueError(f"{task} heldout hash mismatch without byte-identical migration")
+    if (
+        recorded_heldout.parent != source_root
+        or heldout_path.resolve().parent != canonical_root
+    ):
+        raise ValueError(f"{task} heldout hash mismatch has incompatible migration roots")
+    split_hashes: dict[str, str] = {}
+    for subset in ("valid", "test"):
+        subset_receipt = (task_receipt.get("splits") or {}).get(subset) or {}
+        subset_path = split_path(task, subset, split_scheme)
+        subset_hash = sha256_file(subset_path)
+        if (
+            subset_receipt.get("byte_identical") is not True
+            or subset_receipt.get("canonical_sha256") != subset_hash
+            or subset_receipt.get("source_sha256") != subset_hash
+        ):
+            raise ValueError(
+                f"{task} heldout hash mismatch is not covered by the migration receipt"
+            )
+        split_hashes[subset] = subset_hash
+    rows = read_jsonl(heldout_path)
+    n_parents = len({_stable_query_key(row)[0] for row in rows})
+    if len(rows) != int(index_manifest.get("n_heldout_rows") or -1):
+        raise ValueError(f"{task} migrated heldout row count mismatch")
+    if n_parents != int(index_manifest.get("n_heldout_parent_identities") or -1):
+        raise ValueError(f"{task} migrated heldout parent count mismatch")
+    return {
+        "status": "ok",
+        "method": "migration_receipt_byte_identical_valid_test",
+        "current_sha256": current_hash,
+        "recorded_sha256": recorded_hash,
+        "migration_receipt": str(receipt_path),
+        "valid_sha256": split_hashes["valid"],
+        "test_sha256": split_hashes["test"],
+        "n_heldout_rows": len(rows),
+        "n_heldout_parent_identities": n_parents,
+    }
 
 
 def _task_contract(task: str) -> ProgressiveTaskContract:
@@ -349,6 +420,42 @@ def _load_reused_query_prior(
         dict(query_tool_summary),
         none_final,
         source_index,
+    )
+
+
+def _load_progressive_query_prior(
+    task: str,
+    query_index: int,
+    record: Mapping[str, Any],
+    source_root: Path,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], int]:
+    """Load the frozen none/single prior copied into a completed progressive run."""
+    prepared_path = (
+        _query_dir(source_root, task, query_index)
+        / "levels"
+        / "level_1"
+        / "prepared.json"
+    )
+    prepared = _read_json(prepared_path)
+    if prepared.get("molecule_identity_key"):
+        identity_matches = _stable_query_key(prepared) == _stable_query_key(record)
+    else:
+        identity_matches = (
+            int(prepared.get("query_index") or 0) == query_index
+            and str(prepared.get("query_smiles") or "") == str(record.get("drug") or "")
+        )
+    if not identity_matches:
+        raise ValueError(
+            f"query-prior source identity mismatch for {task} index {query_index}: "
+            f"{prepared_path}"
+        )
+    if not prepared.get("tool_prefetch_complete"):
+        raise ValueError(f"query-prior source lacks visible tool prefetch: {prepared_path}")
+    return (
+        dict(prepared.get("query_prior") or {}),
+        dict(prepared.get("query_tool_summary") or {}),
+        dict(prepared.get("reused_none_final") or {}),
+        int(prepared.get("reused_single_source_index", query_index)),
     )
 
 
@@ -426,15 +533,22 @@ def _prepare_query(
     index: Mapping[str, Any],
     output_root: Path,
     single_root: Path,
+    query_prior_source_root: Path | None,
     tool_service_url: str,
     timeout_s: int,
     prefetch_tools: bool,
     neighbor_identity_policy: str,
+    initial_card_limit: int,
+    delta_card_limit: int,
 ) -> PreparedQuery:
     query_dir = _query_dir(output_root, task, query_index)
     complete_path = query_dir / "prepared_manifest.json"
     query_smiles = str(record.get("drug") or "")
     query_is_monatomic = monatomic_query_element(query_smiles) is not None
+    selection_budget = {
+        "initial_card_limit_per_molecule": initial_card_limit,
+        "delta_card_limit_per_molecule": delta_card_limit,
+    }
     if complete_path.is_file():
         manifest = _read_json(complete_path)
         if (
@@ -443,6 +557,7 @@ def _prepare_query(
             and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
             and manifest.get("neighbor_identity_policy")
             == neighbor_identity_policy
+            and manifest.get("selection_budget") == selection_budget
             and (
                 not query_is_monatomic
                 or manifest.get("structural_eligibility_version")
@@ -452,9 +567,19 @@ def _prepare_query(
             return PreparedQuery(task, query_index, query_dir)
 
     levels = _levels(task)
-    query_prior, query_tool_summary, none_final, single_source_index = _load_reused_query_prior(
-        task, record, single_root
-    )
+    if query_prior_source_root is not None:
+        query_prior, query_tool_summary, none_final, single_source_index = (
+            _load_progressive_query_prior(
+                task,
+                query_index,
+                record,
+                query_prior_source_root,
+            )
+        )
+    else:
+        query_prior, query_tool_summary, none_final, single_source_index = (
+            _load_reused_query_prior(task, record, single_root)
+        )
     level_ids = [int(row["level"]) for row in levels]
     retrievals = retrieve_family_molecule_prefixes(
         query_smiles,
@@ -488,13 +613,18 @@ def _prepare_query(
         level = int(level_row["level"])
         cumulative = cumulative_by_level[level]
         if level == 1:
-            active, selection_audit = select_initial_evidence(cumulative, level=level)
+            active, selection_audit = select_initial_evidence(
+                cumulative,
+                level=level,
+                card_limit=initial_card_limit,
+            )
         else:
             new, augmentations, selection_audit = select_progressive_delta(
                 previous_cumulative,
                 cumulative,
                 active,
                 level=level,
+                card_limit=delta_card_limit,
             )
             active = append_evidence(active, new, augmentations)
         snapshots[level] = json.loads(json.dumps(active, ensure_ascii=False))
@@ -537,6 +667,7 @@ def _prepare_query(
             "level_definition": level_row,
             "retrieval_audit": retrieval_audits[level],
             "selection_audit": selection_audits[level],
+            "selection_budget": selection_budget,
             "active_evidence": snapshot,
             "new_card_ids": sorted(new_ids),
             "n_active_molecules": len(snapshot),
@@ -566,6 +697,7 @@ def _prepare_query(
             "tool_prefetch_complete": prefetch_tools,
             "n_tool_prefetch_failures": len(tool_failures),
             "neighbor_identity_policy": neighbor_identity_policy,
+            "selection_budget": selection_budget,
             "structural_eligibility_version": STRUCTURAL_ELIGIBILITY_VERSION,
             "prepared_at": _now(),
         },
@@ -1161,7 +1293,6 @@ def _validate_inputs(
         expected = {
             "reference_pool": REFERENCE_POOL,
             "n_direct_heldout_records_after_filter": 0,
-            "heldout_molecules_jsonl_sha256": sha256_file(heldout_path),
         }
         if task in {"bioavailability_ma", "skin_reaction"}:
             expected.update(
@@ -1178,6 +1309,12 @@ def _validate_inputs(
         for field, value in expected.items():
             if manifest.get(field) != value:
                 raise ValueError(f"{task} index has wrong {field}: {manifest.get(field)!r}")
+        _heldout_filter_validation(
+            task=task,
+            split_scheme=args.split_scheme,
+            index_manifest=manifest,
+            heldout_path=heldout_path,
+        )
         index_default_policy = manifest.get("neighbor_identity_policy_default")
         if index_default_policy not in set(IDENTITY_POLICY_BY_SPLIT.values()):
             raise ValueError(
@@ -1210,6 +1347,48 @@ def _validate_inputs(
                     f"{task} reusable single batch has wrong {field}: "
                     f"{single_manifest.get(field)!r}"
                 )
+        query_prior_source_text = str(args.query_prior_source_root or "").strip()
+        if query_prior_source_text:
+            query_prior_source = Path(query_prior_source_text)
+            prior_manifest_path = query_prior_source / "experiment_manifest.json"
+            prior_manifest = _read_json(prior_manifest_path)
+            if task not in set(prior_manifest.get("tasks") or []):
+                raise ValueError(
+                    f"{task} is absent from query-prior source: {prior_manifest_path}"
+                )
+            if int(prior_manifest.get("n_failed_queries") or 0) != 0:
+                raise ValueError(
+                    f"{task} query-prior source is not complete: {prior_manifest_path}"
+                )
+            if _model_identity(str(prior_manifest.get("model") or "")) != _model_identity(
+                args.model
+            ):
+                raise ValueError(
+                    f"{task} query-prior source has a different model: {prior_manifest_path}"
+                )
+            if prior_manifest.get("visibility_mode") != "deployment_visible_prefetched":
+                raise ValueError(
+                    f"{task} query-prior source has the wrong visibility contract: "
+                    f"{prior_manifest_path}"
+                )
+            if prior_manifest.get("tool_prefetch_complete") is not True:
+                raise ValueError(
+                    f"{task} query-prior source lacks tool prefetch: {prior_manifest_path}"
+                )
+            prior_input = (prior_manifest.get("inputs") or {}).get(task) or {}
+            if prior_input.get("input_sha256") != sha256_file(spec.input_jsonl):
+                raise ValueError(
+                    f"{task} query-prior source input hash mismatch: {prior_manifest_path}"
+                )
+            if prior_input.get("single_source_manifest_sha256") != sha256_file(
+                single_manifest_path
+            ):
+                raise ValueError(
+                    f"{task} query-prior source single-cache hash mismatch: "
+                    f"{prior_manifest_path}"
+                )
+            records_by_task[task] = read_jsonl(spec.input_jsonl)
+            continue
         source_input = Path(str(single_manifest.get("input_jsonl") or ""))
         if not source_input.is_file():
             raise FileNotFoundError(source_input)
@@ -1252,9 +1431,25 @@ def run(args: argparse.Namespace) -> int:
             "single_source_manifest_sha256": sha256_file(
                 Path(args.single_source_root) / task / "none" / "manifest.json"
             ),
+            "query_prior_source_manifest_sha256": (
+                sha256_file(Path(args.query_prior_source_root) / "experiment_manifest.json")
+                if args.query_prior_source_root
+                else ""
+            ),
             "index_neighbor_identity_policy_default": _read_json(
                 task_specs[task].index.with_name("manifest.json")
             ).get("neighbor_identity_policy_default"),
+            "heldout_filter_validation": _heldout_filter_validation(
+                task=task,
+                split_scheme=args.split_scheme,
+                index_manifest=_read_json(
+                    task_specs[task].index.with_name("manifest.json")
+                ),
+                heldout_path=(
+                    task_root(task, args.split_scheme)
+                    / "heldout_molecule_condition_labels.jsonl"
+                ),
+            ),
             "levels": _levels(task),
         }
         for task in args.tasks
@@ -1276,9 +1471,18 @@ def run(args: argparse.Namespace) -> int:
             "assay_role": "card provenance and diversity only",
         },
         "selection": {
-            "level_1": "top 10 molecules by Morgan similarity; at most 4 cards per molecule",
-            "later_new_pool": "top 3 previously unseen molecules; at most 2 newly unlocked cards each",
-            "later_augmentation_pool": "top 3 already-active molecules; at most 2 newly unlocked cards each",
+            "level_1": {
+                "molecule_limit": INITIAL_MOLECULE_LIMIT,
+                "card_limit_per_molecule": args.initial_card_limit,
+            },
+            "later_new_pool": {
+                "molecule_limit": NEW_MOLECULE_LIMIT,
+                "delta_card_limit_per_molecule": args.delta_card_limit,
+            },
+            "later_augmentation_pool": {
+                "molecule_limit": AUGMENTED_MOLECULE_LIMIT,
+                "delta_card_limit_per_molecule": args.delta_card_limit,
+            },
             "slot_borrowing": False,
             "append_only": True,
             "cumulative_per_molecule_card_cap": None,
@@ -1286,6 +1490,11 @@ def run(args: argparse.Namespace) -> int:
         "prompt_profile": "progressive_compact_tools_short_aliases.v2",
         "condition_policy": "natural-language sentence for non-null group; omit null group",
         "single_reuse_root": str(Path(args.single_source_root)),
+        "query_prior_source_root": (
+            str(Path(args.query_prior_source_root))
+            if args.query_prior_source_root
+            else ""
+        ),
         "progressive_reuse_source_root": str(
             Path(args.progressive_reuse_source_root)
         ) if args.progressive_reuse_source_root else "",
@@ -1328,7 +1537,9 @@ def run(args: argparse.Namespace) -> int:
         )
         records = records_by_task[task]
         indices = indices_by_task[task]
-        with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.preparation_workers, len(indices))) as pool:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=min(args.preparation_workers, len(indices))
+        ) as pool:
             futures = {
                 pool.submit(
                     _prepare_query,
@@ -1338,14 +1549,23 @@ def run(args: argparse.Namespace) -> int:
                     index=index,
                     output_root=output_root,
                     single_root=Path(args.single_source_root),
+                    query_prior_source_root=(
+                        Path(args.query_prior_source_root)
+                        if args.query_prior_source_root
+                        else None
+                    ),
                     tool_service_url=args.tool_service_url,
                     timeout_s=args.timeout_s,
                     prefetch_tools=not args.skip_tool_prefetch,
                     neighbor_identity_policy=run_identity_policy,
+                    initial_card_limit=args.initial_card_limit,
+                    delta_card_limit=args.delta_card_limit,
                 ): query_index
                 for query_index in indices
             }
-            for completed, future in enumerate(concurrent.futures.as_completed(futures), start=1):
+            for completed, future in enumerate(
+                concurrent.futures.as_completed(futures), start=1
+            ):
                 prepared_queries.append(future.result())
                 if completed % 10 == 0 or completed == len(futures):
                     print(f"[{task}] prepared {completed}/{len(futures)}", flush=True)
@@ -1377,16 +1597,24 @@ def run(args: argparse.Namespace) -> int:
 
     client = _make_client(args, provider_config)
     failed = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.parallelism, len(prepared_queries))) as pool:
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=min(args.parallelism, len(prepared_queries))
+    ) as pool:
         futures = [
             pool.submit(_run_query_safe, args, prepared, client)
             for prepared in prepared_queries
         ]
-        for completed, future in enumerate(concurrent.futures.as_completed(futures), start=1):
+        for completed, future in enumerate(
+            concurrent.futures.as_completed(futures), start=1
+        ):
             result = future.result()
             failed += int(result.get("status") != "ok")
             if completed % 10 == 0 or completed == len(futures):
-                print(f"[inference] completed {completed}/{len(futures)} failed={failed}", flush=True)
+                print(
+                    f"[inference] completed {completed}/{len(futures)} "
+                    f"failed={failed}",
+                    flush=True,
+                )
 
     for task in args.tasks:
         records = records_by_task[task]
@@ -1427,6 +1655,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
     parser.add_argument(
+        "--query-prior-source-root",
+        default="",
+        help=(
+            "Optional completed progressive root whose hash-matched prepared rows "
+            "supply the frozen none/single prior when the archived single input is unavailable."
+        ),
+    )
+    parser.add_argument(
         "--progressive-reuse-source-root",
         default="",
         help=(
@@ -1453,6 +1689,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--parallelism", type=int, default=128)
     parser.add_argument("--preparation-workers", type=int, default=32)
+    parser.add_argument("--initial-card-limit", type=int, default=4)
+    parser.add_argument("--delta-card-limit", type=int, default=2)
     parser.add_argument("--max-tokens", type=int, default=20_480)
     parser.add_argument("--timeout-s", type=int, default=900)
     parser.add_argument(
@@ -1478,6 +1716,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--parallelism must be between 1 and the global endpoint budget 512")
     if args.preparation_workers < 1:
         parser.error("--preparation-workers must be positive")
+    if args.initial_card_limit < 1:
+        parser.error("--initial-card-limit must be positive")
+    if args.delta_card_limit < 1:
+        parser.error("--delta-card-limit must be positive")
     if args.transport_max_retries < 0:
         parser.error("--transport-max-retries must be non-negative")
     if (

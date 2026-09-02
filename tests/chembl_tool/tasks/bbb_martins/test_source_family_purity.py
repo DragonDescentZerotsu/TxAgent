@@ -165,7 +165,7 @@ def test_reviewed_experimental_transporter_model_is_not_prediction_keyword_hit()
     assert BBBSourceFamilyClassifier({}, {112971})(row) == ""
 
 
-def test_gold_contract_eligible_experimental_outcome_stays_direct():
+def test_gold_contract_eligible_nonvoter_stays_outside_l1():
     row = _row(
         bbb_permeability_label="high_permeability",
         assay_model="in vivo pharmacokinetic study after intravenous dosing",
@@ -176,7 +176,12 @@ def test_gold_contract_eligible_experimental_outcome_stays_direct():
         support_text="Brain exposure was measured after intravenous dosing.",
     )
     assert gold_contract_decision(row)[0] == 1
-    assert BBBSourceFamilyClassifier({}, set())(row) == ""
+    decision = BBBSourceFamilyClassifier({}, set())(row)
+    assert decision.new_group == NEAR_DIRECT_GROUP
+    assert (
+        decision.reason
+        == "nonvoter_gold_contract_eligible_experimental_cns_outcome"
+    )
 
 
 def test_v4_classifier_keeps_reviewed_missing_direction_voter_in_l1():
@@ -192,7 +197,7 @@ def test_v4_classifier_keeps_reviewed_missing_direction_voter_in_l1():
     assert gold_contract_decision(row)[0] is None
     assert gold_contract_decision_v4(row)[0] == 0
     classifier = BBBSourceFamilyClassifier(
-        {}, set(), gold_decision=gold_contract_decision_v4
+        {}, {5820}, gold_decision=gold_contract_decision_v4
     )
     assert classifier(row) == ""
 

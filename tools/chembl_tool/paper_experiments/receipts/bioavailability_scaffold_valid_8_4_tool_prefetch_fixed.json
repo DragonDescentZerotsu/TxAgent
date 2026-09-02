@@ -1,0 +1,50 @@
+{
+  "receipt": "bioavailability_scaffold_valid_8_4_tool_prefetch_fixed.v1",
+  "created_at": "2026-09-01T17:46:25Z",
+  "task": "bioavailability_ma",
+  "split_scheme": "scaffold",
+  "evaluation_subset": "valid",
+  "n_queries": 262,
+  "n_levels": 6,
+  "comparison": {
+    "four_two_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
+    "four_two_manifest_sha256": "55a382f0408fe3e23471d989bd92a5ca418cd3db0c2d353d72467f4bc73aa63f",
+    "fixed_eight_four_root": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
+    "fixed_eight_four_manifest_sha256": "9f7e0948c5f06ff35eadfe7fa8d8fc78d475e40f888de02f5a3126955c5683ec",
+    "invalid_eight_four_root": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/bio"
+  },
+  "preparation_audit": {
+    "query_level_rows_compared": 1572,
+    "molecule_set_mismatch_rows": 0,
+    "shared_unique_analog_tool_surfaces": 5694,
+    "shared_analog_tool_surface_mismatches": 0,
+    "shared_analog_tool_surface_sha256": "ac7b37e3fa09360a2783296cae64c9ee4b2d0bc9cf65a7c4ad54e547f32741b5",
+    "fixed_eight_four_connection_or_permission_failures": 0,
+    "invalid_eight_four_connection_or_permission_failures": 5694,
+    "four_two_deterministic_tool_runtime_failures": 72,
+    "fixed_eight_four_deterministic_tool_runtime_failures": 72,
+    "deterministic_failure_note": "The matched residual failures are mmp_structure_compare runtime errors on the same analogs in both configurations; repeated visibility produces 332 query-level occurrences. They are not 127.0.0.1 connectivity failures and do not differ between 4/2 and fixed 8/4.",
+    "gate": "passed_zero_connection_failures_and_exact_shared_tool_surface_match"
+  },
+  "inference_audit": {
+    "status": "complete",
+    "n_successful_queries": 262,
+    "n_failed_queries": 0,
+    "n_successful_level_outputs": 1572,
+    "macro_f1_by_level": [
+      0.6375338345864662,
+      0.6590330788804072,
+      0.6725188931407804,
+      0.6856898029134533,
+      0.6691159586681974,
+      0.6852143876248404
+    ]
+  },
+  "comparison_figure": {
+    "summary": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4/summary.json",
+    "summary_sha256": "c4de8975a34cdd4ae0bf0de1d15ac12c1b238c82c858d2305aa404ae34cf4ac3",
+    "png": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4/figures/progressive_record_card_budget_4_2_vs_8_4.png",
+    "png_sha256": "7caa32093eb795fe78772cb576bd0cb0a361870d0b1528b01717c8929255fccc"
+  },
+  "decision": "Use the fixed 8/4 Bioavailability root and exclude the invalid connectivity-confounded root from figures and reported metrics."
+}

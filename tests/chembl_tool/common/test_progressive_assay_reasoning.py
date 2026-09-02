@@ -90,6 +90,51 @@ def test_single_reuse_is_resolved_by_parent_condition_not_query_index(tmp_path):
     assert mapping[("PARENT-B", "null")] == 0
 
 
+def test_progressive_query_prior_is_identity_checked(tmp_path):
+    prepared_path = (
+        tmp_path
+        / "bbb_martins"
+        / "queries"
+        / "query_idx00003"
+        / "levels"
+        / "level_1"
+        / "prepared.json"
+    )
+    prepared_path.parent.mkdir(parents=True)
+    prepared_path.write_text(
+        json.dumps(
+            {
+                "molecule_identity_key": "PARENT-A",
+                "condition_group": "disease=x",
+                "tool_prefetch_complete": True,
+                "query_prior": {"prior": "kept"},
+                "query_tool_summary": {"tool": "kept"},
+                "reused_none_final": {"status": "ok"},
+                "reused_single_source_index": 17,
+            }
+        )
+    )
+    loaded = runner._load_progressive_query_prior(
+        "bbb_martins",
+        3,
+        {"molecule_identity_key": "PARENT-A", "condition_group": "disease=x"},
+        tmp_path,
+    )
+    assert loaded == (
+        {"prior": "kept"},
+        {"tool": "kept"},
+        {"status": "ok"},
+        17,
+    )
+    with pytest.raises(ValueError, match="identity mismatch"):
+        runner._load_progressive_query_prior(
+            "bbb_martins",
+            3,
+            {"molecule_identity_key": "PARENT-B", "condition_group": "disease=x"},
+            tmp_path,
+        )
+
+
 def test_deepseek_provider_aliases_share_reuse_identity():
     assert runner._model_identity(
         "deepseek-ai/DeepSeek-V4-Flash-0731"
@@ -291,6 +336,60 @@ def test_later_level_has_independent_new_and_augmentation_quotas():
     updated = append_evidence(active, new, augmentations)
     assert len(updated) == len(active) + 3
     assert card_ids(active) < card_ids(updated)
+
+
+def test_doubled_card_budget_selects_eight_initial_and_four_delta_cards():
+    previous = extract_cumulative_evidence(
+        _retrieval(
+            [
+                _neighbor(
+                    "ACTIVE",
+                    0.6,
+                    [
+                        _row(f"direct-{index}", "direct", 1, f"direct {index}")
+                        for index in range(10)
+                    ],
+                )
+            ]
+        )
+    )
+    active, initial_audit = select_initial_evidence(
+        previous,
+        molecule_limit=1,
+        card_limit=8,
+    )
+    assert len(next(iter(active.values()))["cards"]) == 8
+    assert initial_audit["n_selected_cards"] == 8
+
+    current = extract_cumulative_evidence(
+        _retrieval(
+            [
+                _neighbor(
+                    "ACTIVE",
+                    0.6,
+                    [
+                        *[
+                            _row(f"direct-{index}", "direct", 1, f"direct {index}")
+                            for index in range(10)
+                        ],
+                        *[
+                            _row(f"later-{index}", "mechanism", 2, f"later {index}")
+                            for index in range(6)
+                        ],
+                    ],
+                )
+            ]
+        )
+    )
+    _, augmentations, delta_audit = select_progressive_delta(
+        previous,
+        current,
+        active,
+        level=2,
+        card_limit=4,
+    )
+    assert len(next(iter(augmentations.values()))["cards"]) == 4
+    assert delta_audit["n_selected_cards"] == 4
 
 
 def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
@@ -611,9 +710,9 @@ def test_progressive_runner_isolates_purity_indices_from_historical_top20_runner
     for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
         spec = runner.PROGRESSIVE_TASKS[task]
         version = {
-            "bbb_martins": "source_purity_v5",
+            "bbb_martins": "source_purity_v6",
             "bioavailability_ma": "legacy_record_supported_v2_vote_pure_v1",
-            "skin_reaction": "source_purity_v1",
+            "skin_reaction": "source_purity_v2",
         }[task]
         assert version in str(spec.index)
         assert version in str(spec.family_manifest)

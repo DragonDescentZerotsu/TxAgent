@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from dataclasses import dataclass
+from functools import partial
+import json
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
@@ -22,18 +24,24 @@ from tools.chembl_tool.common.json_utils import (
     sha256_file,
     write_json_atomic,
 )
-from tools.chembl_tool.common.source_family_purity import FamilyMove
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
-    direct_outcome_reason,
+from tools.chembl_tool.common.source_family_purity import (
+    FamilyMove,
+    audit_exact_voter_membership,
+)
+from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
+    DEFAULT_CONDITION_REVIEW as SKIN_CONDITION_REVIEW,
+    DIRECT_GROUP as SKIN_DIRECT_GROUP,
+    PURITY_VERSION as SKIN_PURITY_VERSION,
+    load_voter_source_indices as load_skin_voter_source_indices,
+    upstream_source_index as skin_upstream_source_index,
+    vote_pure_family_move as skin_vote_pure_family_move,
 )
 
 
 PURITY_VERSION = "conditioned_source_family_purity.v1"
-SKIN_AOP_GROUP = "Mechanism.sensitization_aop"
-SKIN_DIRECT_GROUP = "Direct.skin_reaction"
 DEFAULT_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
-    "source_family_purity_v1"
+    "source_family_purity_v2"
 )
 
 
@@ -48,23 +56,25 @@ class PuritySpec:
     classifier_columns: tuple[str, ...] = ()
 
 
-def _skin_reason(record: Mapping[str, Any]) -> str:
-    if _text(record.get("group_id")) != SKIN_AOP_GROUP:
-        return ""
-    return direct_outcome_reason(record)
-
-
-SPECS = {
-    "skin_reaction": PuritySpec(
+def _skin_spec(condition_review: Path = SKIN_CONDITION_REVIEW) -> tuple[PuritySpec, set[int]]:
+    voters = load_skin_voter_source_indices(condition_review=condition_review)
+    return PuritySpec(
         task="skin_reaction",
         input_records=Path(
             "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/"
             "evidence_library/starling_normalized_v7/03_records/records.parquet"
         ),
         direct_group=SKIN_DIRECT_GROUP,
-        classify=_skin_reason,
-    ),
-}
+        classify=partial(
+            skin_vote_pure_family_move,
+            voter_source_indices=voters,
+        ),
+        purity_version=SKIN_PURITY_VERSION,
+        allow_move_from_direct=True,
+    ), voters
+
+
+SPECS = {"skin_reaction": _skin_spec}
 
 _PROVENANCE_FIELDS = (
     "source_family_purity_version",
@@ -250,6 +260,53 @@ def build_overlay(
     return manifest
 
 
+def finalize_skin_manifest(
+    output_dir: Path,
+    voter_source_indices: set[int],
+    condition_review: Path,
+) -> dict[str, Any]:
+    """Add the exact voter-membership publication gate for Skin."""
+
+    output_path = output_dir / "records.parquet"
+    rows = (
+        row
+        for batch in pq.ParquetFile(output_path).iter_batches(
+            columns=[
+                "group_id",
+                "source_id",
+                "source_row_number",
+                "retrieval_eligible",
+            ]
+        )
+        for row in batch.to_pylist()
+    )
+    membership = audit_exact_voter_membership(
+        rows,
+        voter_source_indices,
+        direct_group=SKIN_DIRECT_GROUP,
+        record_id=skin_upstream_source_index,
+    )
+    manifest_path = output_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest.update(
+        {
+            "l1_contract": (
+                "exact source-record membership in the current voter ledger; "
+                "retrieval L1 additionally intersects retrieval eligibility and "
+                "excludes held-out parents"
+            ),
+            "voter_counts": {
+                "n_voter_source_indices": len(voter_source_indices),
+                "condition_review": str(condition_review.resolve()),
+                "condition_review_sha256": sha256_file(condition_review),
+            },
+            "hard_gates": membership,
+        }
+    )
+    write_json_atomic(manifest_path, manifest)
+    return manifest
+
+
 def _first_text(record: Mapping[str, Any], *fields: str) -> str:
     for field in fields:
         value = _text(record.get(field))
@@ -283,14 +340,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--task", choices=["all", *SPECS], default="all")
     parser.add_argument("--output-root", default=str(DEFAULT_ROOT))
     parser.add_argument("--batch-size", type=int, default=10_000)
+    parser.add_argument(
+        "--skin-condition-review", type=Path, default=SKIN_CONDITION_REVIEW
+    )
     args = parser.parse_args(argv)
     tasks = list(SPECS) if args.task == "all" else [args.task]
     for task in tasks:
-        spec = SPECS[task]
+        spec, voters = SPECS[task](args.skin_condition_review)
+        output_dir = Path(args.output_root) / task
         manifest = build_overlay(
             spec,
-            Path(args.output_root) / task,
+            output_dir,
             batch_size=args.batch_size,
+        )
+        manifest = finalize_skin_manifest(
+            output_dir, voters, args.skin_condition_review
         )
         print(
             f"{task}: moved {manifest['n_moved_rows']:,} rows "

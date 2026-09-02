@@ -11,14 +11,18 @@ from __future__ import annotations
 import argparse
 import csv
 from dataclasses import dataclass
+import hashlib
 import json
 import math
 from pathlib import Path
+import re
 from statistics import mean
 from typing import Any
 
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+
+from tools.chembl_tool.common.json_utils import canonical_json_bytes, sha256_file
 
 
 @dataclass(frozen=True)
@@ -73,6 +77,50 @@ CONDITIONED_BASELINES = (
     ),
 )
 
+CONDITIONED_BASELINE_STYLES = {
+    "minimol_head": ("D", "#D89C21", "#D89C21"),
+    "minimol_knn_condition": ("s", "#666666", "#666666"),
+    "minimol_knn_all": ("s", "white", "#666666"),
+    "morgan_knn_condition": ("^", "#666666", "#666666"),
+    "morgan_knn_all": ("^", "white", "#666666"),
+}
+
+CONDITIONED_BASELINE_TICKS = {
+    "minimol_head": "MM\nhead",
+    "minimol_knn_condition": "MM KNN\ncond.",
+    "minimol_knn_all": "MM KNN\nall",
+    "morgan_knn_condition": "Morgan\ncond.",
+    "morgan_knn_all": "Morgan\nall",
+}
+
+
+def _sha256_json(value: Any) -> str:
+    return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+
+
+def _selection_without_card_limits(selection: Any) -> Any:
+    """Remove only per-molecule card limits from a selection contract."""
+    if isinstance(selection, dict):
+        normalized = {}
+        for key, value in selection.items():
+            if "card_limit" in key:
+                continue
+            if (
+                key in {"level_1", "later_new_pool", "later_augmentation_pool"}
+                and isinstance(value, str)
+            ):
+                match = re.search(r"\btop\s+(\d+)\b", value, flags=re.IGNORECASE)
+                if match is None:
+                    raise ValueError(f"Cannot normalize legacy selection text: {value!r}")
+                normalized[key] = {"molecule_limit": int(match.group(1))}
+            else:
+                normalized[key] = _selection_without_card_limits(value)
+        return normalized
+    if isinstance(selection, list):
+        return [_selection_without_card_limits(value) for value in selection]
+    return selection
+
+
 def _load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -91,6 +139,34 @@ def _parse_task_path_overrides(values: list[str]) -> dict[str, Path]:
             raise ValueError(f"Duplicate task path override: {task}")
         overrides[task] = Path(raw_path)
     return overrides
+
+
+def _parse_configuration_task_path_overrides(
+    values: list[str],
+) -> dict[str, dict[str, Path]]:
+    """Parse repeatable CONFIG:TASK=PATH progressive comparison roots."""
+    configurations: dict[str, dict[str, Path]] = {}
+    for value in values:
+        configuration, separator, task_path = value.partition(":")
+        task, task_separator, raw_path = task_path.partition("=")
+        if (
+            not separator
+            or not configuration
+            or not task_separator
+            or task not in CONDITIONED_TASK_SPECS
+            or not raw_path
+        ):
+            raise ValueError(
+                "Progressive configuration roots must use "
+                f"CONFIG:TASK=PATH; received {value!r}"
+            )
+        roots = configurations.setdefault(configuration, {})
+        if task in roots:
+            raise ValueError(
+                f"Duplicate progressive configuration root: {configuration}:{task}"
+            )
+        roots[task] = Path(raw_path)
+    return configurations
 
 
 def _reasoning_tokens_from_usage(usage: dict[str, Any]) -> int | None:
@@ -414,10 +490,6 @@ def _append_conditioned_baselines(
     return omissions
 
 
-
-
-
-
 def collect_conditioned_progressive_resource_data(
     *,
     progressive_root: Path | None = None,
@@ -480,6 +552,7 @@ def collect_conditioned_progressive_resource_data(
             prompt_tokens: list[int] = []
             completion_tokens: list[int] = []
             missing_reasoning_usage = 0
+            missing_prompt_usage = 0
             statuses: dict[str, int] = {}
             for query_index in expected_indices:
                 level_dir = (
@@ -511,7 +584,11 @@ def collect_conditioned_progressive_resource_data(
                     reasoning_token_count = 0
                 reasoning_tokens.append(reasoning_token_count)
                 reasoning_chars.append(len(reasoning_text))
-                prompt_tokens.append(int(usage.get("prompt_tokens") or 0))
+                prompt_token_count = usage.get("prompt_tokens")
+                if not isinstance(prompt_token_count, int) or prompt_token_count <= 0:
+                    missing_prompt_usage += 1
+                    prompt_token_count = 0
+                prompt_tokens.append(prompt_token_count)
                 completion_tokens.append(int(usage.get("completion_tokens") or 0))
 
             n_model_called = len(reasoning_tokens)
@@ -522,6 +599,8 @@ def collect_conditioned_progressive_resource_data(
                 )
             if missing_reasoning_usage:
                 raise ValueError(f"Missing reasoning tokens for {task}/L{level}")
+            if missing_prompt_usage:
+                raise ValueError(f"Missing prompt tokens for {task}/L{level}")
 
             rows.append(
                 {
@@ -558,7 +637,32 @@ def collect_conditioned_progressive_resource_data(
             "reference_pool": manifest["reference_pool"],
             "neighbor_identity_policy": manifest["neighbor_identity_policy"],
             "selection": manifest["selection"],
+            "selection_without_card_limits": _selection_without_card_limits(
+                manifest["selection"]
+            ),
+            "candidate_generation": manifest.get("candidate_generation"),
+            "min_similarity": manifest.get("min_similarity"),
+            "prompt_profile": manifest.get("prompt_profile"),
+            "condition_policy": manifest.get("condition_policy"),
+            "max_tokens": manifest.get("max_tokens"),
+            "temperature": manifest.get("temperature"),
+            "thinking": manifest.get("thinking"),
+            "reasoning_effort": manifest.get("reasoning_effort"),
+            "tool_prefetch_complete": manifest.get("tool_prefetch_complete"),
             "agent_model": manifest["model"],
+            "model_identity": manifest.get("model_identity", manifest["model"]),
+            "input_sha256": manifest["inputs"][task].get("input_sha256", ""),
+            "evaluation_indices_sha256": _sha256_json(expected_indices),
+            "index_sha256": manifest["inputs"][task].get("index_sha256", ""),
+            "family_manifest_sha256": manifest["inputs"][task].get(
+                "family_manifest_sha256", ""
+            ),
+            "execution_base_urls": sorted(
+                {
+                    str(provider.get("base_url") or "")
+                    for provider in manifest.get("execution_providers") or []
+                }
+            ),
             "n": expected_n,
             "split_scheme": str(manifest.get("split_scheme") or "scaffold"),
         }
@@ -592,6 +696,299 @@ def collect_conditioned_progressive_resource_data(
             "task_contracts": task_contracts,
         },
         "rows": rows,
+    }
+
+
+def collect_conditioned_progressive_configuration_data(
+    *,
+    configuration_roots: dict[str, dict[str, Path]],
+    lineage_receipts_by_task: dict[str, Path] | None = None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Collect and validate multiple progressive configurations for one figure."""
+    if len(configuration_roots) < 2:
+        raise ValueError("At least two progressive configurations are required")
+
+    expected_tasks: tuple[str, ...] | None = None
+    all_rows: list[dict[str, Any]] = []
+    contracts_by_configuration: dict[str, Any] = {}
+    for configuration, roots_by_task in configuration_roots.items():
+        tasks = tuple(roots_by_task)
+        if expected_tasks is None:
+            expected_tasks = tasks
+        elif set(tasks) != set(expected_tasks):
+            raise ValueError(
+                "Every progressive configuration must provide the same tasks: "
+                f"{configuration} has {sorted(tasks)}, expected {sorted(expected_tasks)}"
+            )
+        resource_rows, resource_summary = collect_conditioned_progressive_resource_data(
+            progressive_roots_by_task=roots_by_task
+        )
+        all_rows.extend(
+            {"configuration": configuration, **row} for row in resource_rows
+        )
+        resource_contract = resource_summary["comparison_contract"]
+        contracts_by_configuration[configuration] = {
+            "split_scheme": resource_contract["split_scheme"],
+            "task_contracts": resource_contract["task_contracts"],
+        }
+
+    assert expected_tasks is not None
+    configurations = list(configuration_roots)
+    reference_name = configurations[0]
+    reference = contracts_by_configuration[reference_name]
+    audits: dict[str, Any] = {}
+    invariant_fields = (
+        "experiment",
+        "evaluation_subset",
+        "visibility_mode",
+        "reference_pool",
+        "neighbor_identity_policy",
+        "candidate_generation",
+        "min_similarity",
+        "selection_without_card_limits",
+        "prompt_profile",
+        "condition_policy",
+        "max_tokens",
+        "temperature",
+        "thinking",
+        "reasoning_effort",
+        "tool_prefetch_complete",
+        "model_identity",
+        "input_sha256",
+        "evaluation_indices_sha256",
+        "n",
+        "split_scheme",
+    )
+    for task in expected_tasks:
+        reference_contract = reference["task_contracts"][task]
+        reference_levels = [
+            (int(row["level"]), str(row["family"]))
+            for row in all_rows
+            if row["configuration"] == reference_name and row["task"] == task
+        ]
+        task_audit = {
+            "reference_configuration": reference_name,
+            "invariants": {},
+            "index_sha256_equal": True,
+            "family_manifest_sha256_equal": True,
+            "execution_base_urls_equal": True,
+        }
+        for configuration in configurations[1:]:
+            contract = contracts_by_configuration[configuration]["task_contracts"][task]
+            mismatches = {
+                field: {
+                    "reference": reference_contract[field],
+                    "comparison": contract[field],
+                }
+                for field in invariant_fields
+                if contract[field] != reference_contract[field]
+            }
+            if mismatches:
+                raise ValueError(
+                    f"Incompatible progressive configurations for {task}: {mismatches}"
+                )
+            levels = [
+                (int(row["level"]), str(row["family"]))
+                for row in all_rows
+                if row["configuration"] == configuration and row["task"] == task
+            ]
+            if levels != reference_levels:
+                raise ValueError(
+                    f"Progressive level mismatch for {task}: "
+                    f"{configuration} has {levels}, expected {reference_levels}"
+                )
+            task_audit["invariants"][configuration] = "matched"
+            task_audit["index_sha256_equal"] &= (
+                contract["index_sha256"] == reference_contract["index_sha256"]
+            )
+            task_audit["family_manifest_sha256_equal"] &= (
+                contract["family_manifest_sha256"]
+                == reference_contract["family_manifest_sha256"]
+            )
+            task_audit["execution_base_urls_equal"] &= (
+                contract["execution_base_urls"]
+                == reference_contract["execution_base_urls"]
+            )
+        retrieval_lineage_equal = (
+            task_audit["index_sha256_equal"]
+            and task_audit["family_manifest_sha256_equal"]
+        )
+        if not retrieval_lineage_equal:
+            receipt_path = (lineage_receipts_by_task or {}).get(task)
+            if receipt_path is None:
+                raise ValueError(
+                    f"Retrieval lineage differs for {task}; provide a verified "
+                    "TASK=PATH zero-change receipt"
+                )
+            receipt = _load_json(receipt_path)
+            receipt_artifacts = receipt.get("artifacts") or {}
+            compared_contracts = [
+                contracts_by_configuration[configuration]["task_contracts"][task]
+                for configuration in configurations
+            ]
+            compared_index_hashes = {
+                contract["index_sha256"] for contract in compared_contracts
+            }
+            receipt_index_hashes = {
+                receipt_artifacts.get("retrieval_index_sha256_before"),
+                receipt_artifacts.get("retrieval_index_sha256_after"),
+            }
+            compared_family_hashes = {
+                contract["family_manifest_sha256"] for contract in compared_contracts
+            }
+            receipt_family_hashes = {
+                receipt_artifacts.get("family_manifest_sha256_before"),
+                receipt_artifacts.get("family_manifest_sha256_after"),
+            }
+            if (
+                receipt.get("task") != task
+                or receipt.get("split_scheme") != reference_contract["split_scheme"]
+                or receipt.get("evaluation_subset")
+                != reference_contract["evaluation_subset"]
+                or (receipt.get("results") or {}).get(
+                    "selected_retrieval_surfaces_equal"
+                )
+                is not True
+                or (
+                    not task_audit["index_sha256_equal"]
+                    and compared_index_hashes != receipt_index_hashes
+                )
+                or (
+                    not task_audit["family_manifest_sha256_equal"]
+                    and compared_family_hashes != receipt_family_hashes
+                )
+            ):
+                raise ValueError(
+                    f"Invalid selected-retrieval zero-change receipt for {task}: "
+                    f"{receipt_path}"
+                )
+            task_audit["retrieval_lineage_receipt"] = str(receipt_path)
+            task_audit["retrieval_lineage_receipt_sha256"] = sha256_file(
+                receipt_path
+            )
+        else:
+            task_audit["retrieval_lineage_receipt"] = "not_required"
+        audits[task] = task_audit
+
+    split_schemes = {
+        str(contract["split_scheme"])
+        for contract in contracts_by_configuration.values()
+    }
+    return all_rows, {
+        "comparison_contract": {
+            "figure": "conditioned_progressive_configuration_comparison.v1",
+            "configurations": configurations,
+            "tasks": list(expected_tasks),
+            "split_scheme": next(iter(split_schemes)),
+            "strict_invariants": list(invariant_fields),
+            "resource_metrics_included": True,
+            "task_audits": audits,
+            "configurations_contract": contracts_by_configuration,
+        },
+        "rows": all_rows,
+    }
+
+
+def collect_conditioned_progressive_configuration_reference_data(
+    *,
+    configuration_roots: dict[str, dict[str, Path]],
+    none_root: Path,
+    baseline_root: Path,
+    baseline_roots_by_task: dict[str, Path] | None = None,
+    omit_mismatched_baselines: bool = False,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Collect one shared None point and task-matched baseline references."""
+    if len(configuration_roots) < 2:
+        raise ValueError("At least two progressive configurations are required")
+    configurations = list(configuration_roots)
+    reference_name = configurations[0]
+    reference_roots = configuration_roots[reference_name]
+    rows: list[dict[str, Any]] = []
+    none_audits: dict[str, Any] = {}
+    baseline_omissions: list[dict[str, Any]] = []
+    effective_baseline_roots: dict[str, str] = {}
+    for task, reference_root in reference_roots.items():
+        reference_manifest = _load_json(reference_root / "experiment_manifest.json")
+        expected_n = len(reference_manifest["evaluation_indices_by_task"][task])
+        task_label, baseline_task = CONDITIONED_TASK_SPECS[task]
+        reference_none_path = reference_root / task / "none" / "metrics.json"
+        if not reference_none_path.is_file():
+            reference_none_path = none_root / task / "none" / "metrics.json"
+        reference_none = _load_json(reference_none_path)
+        issue = _complete_agent_metric_issue(reference_none, expected_n)
+        if issue:
+            raise ValueError(f"Incomplete no-retrieval metric for {task}: {issue}")
+        none_values = {
+            "macro_f1": _metric_value(reference_none, "macro_f1"),
+            "accuracy": _metric_value(reference_none, "accuracy"),
+        }
+        configuration_paths: dict[str, str] = {}
+        for configuration, roots_by_task in configuration_roots.items():
+            task_root = roots_by_task[task]
+            manifest = _load_json(task_root / "experiment_manifest.json")
+            configuration_n = len(manifest["evaluation_indices_by_task"][task])
+            if configuration_n != expected_n:
+                raise ValueError(
+                    f"No-retrieval cohort mismatch for {configuration}/{task}: "
+                    f"{configuration_n} != {expected_n}"
+                )
+            none_path = task_root / task / "none" / "metrics.json"
+            if not none_path.is_file():
+                none_path = none_root / task / "none" / "metrics.json"
+            metrics = _load_json(none_path)
+            issue = _complete_agent_metric_issue(metrics, expected_n)
+            if issue:
+                raise ValueError(
+                    f"Incomplete no-retrieval metric for {configuration}/{task}: {issue}"
+                )
+            actual = {
+                "macro_f1": _metric_value(metrics, "macro_f1"),
+                "accuracy": _metric_value(metrics, "accuracy"),
+            }
+            if any(abs(actual[key] - none_values[key]) > 1e-12 for key in none_values):
+                raise ValueError(
+                    f"No-retrieval metric mismatch across configurations for {task}: "
+                    f"{reference_name}={none_values}, {configuration}={actual}"
+                )
+            configuration_paths[configuration] = str(none_path)
+        rows.append(
+            {
+                "task": task,
+                "task_label": task_label,
+                "result_type": "none",
+                "method": "none",
+                "plot_label": "None",
+                "macro_f1": none_values["macro_f1"],
+                "accuracy": none_values["accuracy"],
+                "n": expected_n,
+                "metrics_path": str(reference_none_path),
+            }
+        )
+        none_audits[task] = {
+            "status": "matched_across_configurations",
+            "metrics_by_configuration": configuration_paths,
+        }
+        task_baseline_root = (baseline_roots_by_task or {}).get(task, baseline_root)
+        effective_baseline_roots[task] = str(task_baseline_root)
+        baseline_omissions.extend(
+            _append_conditioned_baselines(
+                rows,
+                task=task,
+                task_label=task_label,
+                baseline_task=baseline_task,
+                baseline_root=task_baseline_root,
+                expected_n=expected_n,
+                omit_sample_count_mismatch=omit_mismatched_baselines,
+            )
+        )
+    return rows, {
+        "reference_configuration": reference_name,
+        "none_lineage_fallback": str(none_root),
+        "none_audits": none_audits,
+        "baseline_lineage": str(baseline_root),
+        "baseline_lineage_by_task": effective_baseline_roots,
+        "baseline_methods": [method for method, _, _ in CONDITIONED_BASELINES],
+        "baseline_omissions": baseline_omissions,
     }
 
 
@@ -804,16 +1201,6 @@ def collect_conditioned_progressive_overview_data(
     }
 
 
-
-
-
-
-
-
-
-
-
-
 def plot_conditioned_progressive_overview(
     *,
     rows: list[dict[str, Any]],
@@ -833,20 +1220,6 @@ def plot_conditioned_progressive_overview(
         }
     )
     fig, axes = plt.subplots(5, len(tasks), figsize=(18.5, 21.5), squeeze=False)
-    baseline_styles = {
-        "minimol_head": ("D", "#D89C21", "#D89C21"),
-        "minimol_knn_condition": ("s", "#666666", "#666666"),
-        "minimol_knn_all": ("s", "white", "#666666"),
-        "morgan_knn_condition": ("^", "#666666", "#666666"),
-        "morgan_knn_all": ("^", "white", "#666666"),
-    }
-    baseline_ticks = {
-        "minimol_head": "MM\nhead",
-        "minimol_knn_condition": "MM KNN\ncond.",
-        "minimol_knn_all": "MM KNN\nall",
-        "morgan_knn_condition": "Morgan\ncond.",
-        "morgan_knn_all": "Morgan\nall",
-    }
     resource_specs = (
         (
             "mean_active_molecules",
@@ -929,7 +1302,7 @@ def plot_conditioned_progressive_overview(
         for index, (x_value, row) in enumerate(
             zip(baseline_x, baseline_rows, strict=True)
         ):
-            marker, face, edge = baseline_styles[str(row["method"])]
+            marker, face, edge = CONDITIONED_BASELINE_STYLES[str(row["method"])]
             value = float(row["macro_f1"])
             ax.scatter(
                 [x_value],
@@ -987,7 +1360,7 @@ def plot_conditioned_progressive_overview(
                 )
             )
             for row in agent_rows
-        ] + [baseline_ticks[str(row["method"])] for row in baseline_rows]
+        ] + [CONDITIONED_BASELINE_TICKS[str(row["method"])] for row in baseline_rows]
         ax.set_xticks(agent_x + baseline_x, labels=labels)
         ax.tick_params(axis="x", labelrotation=0, labelsize=6.8)
         ax.set_title(
@@ -1067,15 +1440,24 @@ def plot_conditioned_progressive_overview(
     fig.text(
         0.055,
         0.958,
-        f"{split_scheme.title()} validation · visible append-only DeepSeek-V4-Flash updates · task-specific source-purity contracts · latest complete three-task runs",
+        f"{split_scheme.title()} validation · visible append-only DeepSeek-V4-Flash "
+        "updates · task-specific source-purity contracts · latest complete "
+        "three-task runs",
         fontsize=10,
         color="#555555",
     )
     legend_handles = [
-        Line2D([0], [0], color="#444444", marker="o", linewidth=2.2, label="Progressive agent / None")
+        Line2D(
+            [0],
+            [0],
+            color="#444444",
+            marker="o",
+            linewidth=2.2,
+            label="Progressive agent / None",
+        )
     ]
     for method, label, _ in CONDITIONED_BASELINES:
-        marker, face, edge = baseline_styles[method]
+        marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
         legend_handles.append(
             Line2D(
                 [0],
@@ -1098,9 +1480,13 @@ def plot_conditioned_progressive_overview(
     fig.text(
         0.055,
         0.066,
-        "None is the matched no-retrieval DeepSeek result; shown baseline points use the latest sample-count-matched condition-aware MiniMol head and k=3 MiniMol/Morgan KNN receipts. "
+        "None is the matched no-retrieval DeepSeek result; shown baseline points "
+        "use the latest sample-count-matched condition-aware MiniMol head and k=3 "
+        "MiniMol/Morgan KNN receipts. "
         "\n"
-        "Molecules and cards/molecule are cumulative active evidence averaged over all queries. Prompt and reasoning lengths are means among actual model calls only; carry-forward and reused-none checkpoints are excluded.",
+        "Molecules and cards/molecule are cumulative active evidence averaged over "
+        "all queries. Prompt and reasoning lengths are means among actual model "
+        "calls only; carry-forward and reused-none checkpoints are excluded.",
         fontsize=8.2,
         color="#555555",
         linespacing=1.4,
@@ -1248,7 +1634,8 @@ def plot_conditioned_progressive_resources(
     fig.text(
         0.06,
         0.925,
-        f"{split_scheme.title()} validation · visible append-only updates · L1 direct evidence followed by task-specific indirect families",
+        f"{split_scheme.title()} validation · visible append-only updates · L1 "
+        "direct evidence followed by task-specific indirect families",
         fontsize=9.5,
         color="#555555",
     )
@@ -1272,9 +1659,11 @@ def plot_conditioned_progressive_resources(
     fig.text(
         0.06,
         0.062,
-        "Molecules and record cards are cumulative active evidence averaged over every query at that level. "
-        "Reasoning length is averaged only over actual DeepSeek calls; carry-forward and reused-none checkpoints are excluded. "
-        "Exact call counts, call fractions, prompt tokens, and amortized reasoning tokens are in the companion TSV.",
+        "Molecules and record cards are cumulative active evidence averaged over "
+        "every query at that level. Reasoning length is averaged only over actual "
+        "DeepSeek calls; carry-forward and reused-none checkpoints are excluded. "
+        "Exact call counts, call fractions, prompt tokens, and amortized reasoning "
+        "tokens are in the companion TSV.",
         fontsize=8.1,
         color="#555555",
     )
@@ -1292,6 +1681,305 @@ def plot_conditioned_progressive_resources(
     plt.close(fig)
 
 
+def plot_conditioned_progressive_configuration_comparison(
+    *,
+    rows: list[dict[str, Any]],
+    output_svg: Path,
+    output_png: Path,
+    tasks: tuple[str, ...],
+    configurations: tuple[str, ...],
+    reference_rows: list[dict[str, Any]] | None = None,
+    split_scheme: str = "scaffold",
+    transport_matched: bool = True,
+    retrieval_lineage_matched: bool = True,
+) -> None:
+    """Plot multiple progressive configurations with full resource panels."""
+    if len(configurations) < 2:
+        raise ValueError("At least two configurations are required for comparison")
+    styles = (("--", "white", 0.72), ("-", "color", 1.0), (":", "white", 1.0))
+    if len(configurations) > len(styles):
+        raise ValueError(f"At most {len(styles)} configurations can be plotted")
+    resource_fields = (
+        "mean_active_molecules",
+        "mean_cards_per_active_molecule",
+        "mean_prompt_tokens_per_call",
+        "mean_reasoning_tokens_per_call",
+    )
+    missing_resource_fields = sorted(
+        field
+        for field in resource_fields
+        if any(field not in row for row in rows)
+    )
+    if missing_resource_fields:
+        raise ValueError(
+            "Configuration comparison requires full resource metrics: "
+            f"{missing_resource_fields}"
+        )
+    panel_specs = [
+        ("macro_f1", "A  Macro-F1", 1.0),
+        ("mean_active_molecules", "B  Active molecules/query", 1.0),
+        ("mean_cards_per_active_molecule", "C  Record cards/molecule", 1.0),
+        ("mean_prompt_tokens_per_call", "D  Prompt tokens/call (k)", 1000.0),
+        ("mean_reasoning_tokens_per_call", "E  Reasoning tokens/call (k)", 1000.0),
+    ]
+    plt.rcParams.update(
+        {
+            "font.family": "DejaVu Sans",
+            "font.size": 9.2,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "svg.fonttype": "none",
+        }
+    )
+    n_rows = len(panel_specs)
+    fig, axes = plt.subplots(
+        n_rows,
+        len(tasks),
+        figsize=(5.7 * len(tasks), 4.15 * n_rows + 1.1),
+        squeeze=False,
+        sharex=False,
+    )
+    reference_rows = reference_rows or []
+    baseline_order = {
+        method: index for index, (method, _, _) in enumerate(CONDITIONED_BASELINES)
+    }
+    for column, task in enumerate(tasks):
+        task_rows = [row for row in rows if row["task"] == task]
+        n_values = {int(row["n_queries"]) for row in task_rows}
+        if len(n_values) != 1:
+            raise ValueError(f"Mixed evaluation sizes for {task}: {sorted(n_values)}")
+        for config_index, configuration in enumerate(configurations):
+            config_rows = sorted(
+                (row for row in task_rows if row["configuration"] == configuration),
+                key=lambda row: int(row["level"]),
+            )
+            if not config_rows:
+                raise ValueError(f"No rows for {configuration}/{task}")
+            levels = [int(row["level"]) for row in config_rows]
+            linestyle, fill, alpha = styles[config_index]
+            for row_index, (field, _, divisor) in enumerate(panel_specs):
+                values = [float(row[field]) / divisor for row in config_rows]
+                axes[row_index, column].plot(
+                    levels,
+                    values,
+                    color=TASK_SPECS[task].color,
+                    linestyle=linestyle,
+                    marker=TASK_SPECS[task].marker,
+                    markerfacecolor=(
+                        TASK_SPECS[task].color if fill == "color" else "white"
+                    ),
+                    markeredgecolor=TASK_SPECS[task].color,
+                    markeredgewidth=1.1,
+                    markersize=6.2,
+                    linewidth=2.2,
+                    alpha=alpha,
+                    zorder=3,
+                )
+                if row_index == 0:
+                    offset = 7 if config_index % 2 == 0 else -13
+                    for level, value in zip(levels, values, strict=True):
+                        axes[0, column].annotate(
+                            f"{value:.3f}",
+                            (level, value),
+                            xytext=(0, offset),
+                            textcoords="offset points",
+                            ha="center",
+                            va="bottom" if offset > 0 else "top",
+                            fontsize=7.1,
+                            color=TASK_SPECS[task].color,
+                        )
+        levels = sorted({int(row["level"]) for row in task_rows})
+        task_reference_rows = [row for row in reference_rows if row["task"] == task]
+        none_rows = [row for row in task_reference_rows if row["result_type"] == "none"]
+        if len(none_rows) > 1:
+            raise ValueError(f"Multiple no-retrieval references for {task}")
+        baseline_rows = sorted(
+            (row for row in task_reference_rows if row["result_type"] == "baseline"),
+            key=lambda row: baseline_order[str(row["method"])],
+        )
+        performance_ticks = list(levels)
+        performance_labels = [f"L{level}" for level in levels]
+        if none_rows:
+            none_value = float(none_rows[0]["macro_f1"])
+            axes[0, column].scatter(
+                [0], [none_value], marker="o", s=46, facecolor="#444444",
+                edgecolor="white", linewidth=0.7, zorder=5,
+            )
+            axes[0, column].annotate(
+                f"{none_value:.3f}", (0, none_value), xytext=(0, 7),
+                textcoords="offset points", ha="center", fontsize=7.1,
+                color="#444444",
+            )
+            performance_ticks.insert(0, 0)
+            performance_labels.insert(0, "None")
+        baseline_start = max(levels) + 1.8
+        baseline_x = [baseline_start + 0.82 * index for index in range(len(baseline_rows))]
+        for x_value, row in zip(baseline_x, baseline_rows, strict=True):
+            method = str(row["method"])
+            marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
+            value = float(row["macro_f1"])
+            axes[0, column].scatter(
+                [x_value], [value], marker=marker, s=47,
+                facecolor=face, edgecolor=edge, linewidth=1.1, zorder=5,
+            )
+            axes[0, column].annotate(
+                f"{value:.3f}", (x_value, value), xytext=(0, 7),
+                textcoords="offset points", ha="center", fontsize=6.8,
+                color="#555555",
+            )
+        performance_ticks.extend(baseline_x)
+        performance_labels.extend(
+            CONDITIONED_BASELINE_TICKS[str(row["method"])] for row in baseline_rows
+        )
+        axes[0, column].set_xticks(performance_ticks, performance_labels)
+        axes[0, column].tick_params(axis="x", labelsize=6.4)
+        right_edge = baseline_x[-1] + 0.5 if baseline_x else max(levels) + 0.45
+        axes[0, column].set_xlim(-0.45 if none_rows else 0.55, right_edge)
+        molecule_series = [
+            [
+                float(row["mean_active_molecules"])
+                for row in sorted(
+                    (
+                        row
+                        for row in task_rows
+                        if row["configuration"] == configuration
+                    ),
+                    key=lambda row: int(row["level"]),
+                )
+            ]
+            for configuration in configurations
+        ]
+        if all(series == molecule_series[0] for series in molecule_series[1:]):
+            axes[1, column].text(
+                0.98,
+                0.05,
+                "All configurations overlap",
+                transform=axes[1, column].transAxes,
+                ha="right",
+                fontsize=7.1,
+                color="#777777",
+            )
+        axes[0, column].set_title(
+            f"{CONDITIONED_TASK_SPECS[task][0]}  (n={next(iter(n_values))})",
+            fontsize=12.5,
+            fontweight="bold",
+        )
+        for row_index in range(len(panel_specs)):
+            axes[row_index, column].grid(axis="y", color="#E1E1E1", linewidth=0.8)
+        for row_index in range(1, n_rows):
+            axes[row_index, column].set_xlim(min(levels) - 0.2, max(levels) + 0.2)
+            axes[row_index, column].set_xticks(
+                levels, [f"L{level}" for level in levels]
+            )
+        axes[n_rows - 1, column].set_xlabel("Progressive assay-family level")
+
+    macro_values = [float(row["macro_f1"]) for row in rows + reference_rows]
+    macro_limits = (
+        max(0.0, math.floor((min(macro_values) - 0.015) * 50) / 50),
+        min(1.0, math.ceil((max(macro_values) + 0.015) * 50) / 50),
+    )
+    for column in range(len(tasks)):
+        axes[0, column].set_ylim(*macro_limits)
+        axes[0, column].text(
+            0.99, 0.03, "Shared focused y-axis", transform=axes[0, column].transAxes,
+            ha="right", fontsize=7.0, color="#777777"
+        )
+    axes[0, 0].set_ylabel(panel_specs[0][1])
+
+    for row_index, (field, ylabel, divisor) in enumerate(panel_specs[1:], start=1):
+        maximum = max(float(row[field]) / divisor for row in rows)
+        for column in range(len(tasks)):
+            axes[row_index, column].set_ylim(0, maximum * 1.16 if maximum else 1.0)
+        axes[row_index, 0].set_ylabel(ylabel)
+
+    fig.suptitle(
+        "Progressive record-card budget comparison with baselines",
+        fontsize=16,
+        fontweight="bold",
+        x=0.055,
+        ha="left",
+    )
+    fig.text(
+        0.055,
+        0.965,
+        f"{split_scheme.title()} validation · same evaluation cohort, model, and "
+        "prompt contract · append-only evidence by level",
+        fontsize=9.5,
+        color="#555555",
+    )
+    handles = []
+    for index, configuration in enumerate(configurations):
+        linestyle, fill, alpha = styles[index]
+        handles.append(
+            Line2D(
+                [0], [0], color="#333333", linestyle=linestyle, marker="o",
+                markerfacecolor="#333333" if fill == "color" else "white",
+                markeredgecolor="#333333", linewidth=2.2, alpha=alpha,
+                label=configuration,
+            )
+        )
+    if reference_rows:
+        handles.append(
+            Line2D(
+                [0], [0], marker="o", linestyle="none", markerfacecolor="#444444",
+                markeredgecolor="white", label="None",
+            )
+        )
+        for method, label, _ in CONDITIONED_BASELINES:
+            if not any(row.get("method") == method for row in reference_rows):
+                continue
+            marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
+            handles.append(
+                Line2D(
+                    [0], [0], marker=marker, linestyle="none",
+                    markerfacecolor=face, markeredgecolor=edge, label=label,
+                )
+            )
+    fig.legend(
+        handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.025),
+        ncol=4, frameon=False, fontsize=8.0,
+    )
+    transport_note = (
+        "Provider transport is matched across configurations; token panels are "
+        "directly comparable."
+        if transport_matched
+        else "Provider transport differs for at least one historical comparison; "
+        "token panels show observed usage and are not transport-controlled. Model "
+        "identity and evaluation inputs are matched."
+    )
+    resource_note = (
+        "Molecules and cards/molecule are means over all queries; prompt and "
+        "reasoning tokens are means over actual model calls. "
+    )
+    lineage_note = (
+        "Retrieval index and family-manifest hashes are matched across configurations."
+        if retrieval_lineage_matched
+        else "A changed retrieval lineage is admitted only by a registered "
+        "selected-surface zero-change receipt."
+    )
+    reference_note = (
+        "None is shared across configurations; baseline markers are task-specific "
+        "MiniMol/Morgan references and do not extend into resource panels.\n"
+        if reference_rows else ""
+    )
+    fig.text(
+        0.055,
+        0.072,
+        reference_note + resource_note + "\n" + lineage_note + " " + transport_note,
+        fontsize=8.0, color="#555555", linespacing=1.35,
+    )
+    fig.subplots_adjust(
+        left=0.075,
+        right=0.985,
+        top=0.94,
+        bottom=0.145,
+        hspace=0.42,
+        wspace=0.19,
+    )
+    output_svg.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_svg, bbox_inches="tight")
+    fig.savefig(output_png, dpi=220, bbox_inches="tight")
+    plt.close(fig)
 
 
 def collect_relevance_decay_data(
@@ -1736,6 +2424,14 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--conditioned-progressive-config-comparison",
+        action="store_true",
+        help=(
+            "Plot multiple progressive configurations together, with Macro-F1 "
+            "and active record-card volume by task and level."
+        ),
+    )
+    parser.add_argument(
         "--conditioned-progressive-overview",
         action="store_true",
         help=(
@@ -1769,8 +2465,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--conditioned-progressive-bbb-root",
         default=(
             "outputs/paper/"
-            "starling_conditioned_assay_progressive_visible_v8_global_molecule_"
-            "source_purity_v5/scaffold_valid_deepseek_v4_flash_0731"
+            "starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_"
+            "card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731"
         ),
     )
     parser.add_argument(
@@ -1789,6 +2485,27 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "Override the progressive artifact root for one task in the unified "
             "overview; repeat when current task lineages live in different roots."
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-config-task-root",
+        action="append",
+        default=[],
+        metavar="CONFIG:TASK=PATH",
+        help=(
+            "Register one task artifact root under a named progressive "
+            "configuration; repeat for every configuration and task."
+        ),
+    )
+    parser.add_argument(
+        "--conditioned-progressive-config-lineage-receipt",
+        action="append",
+        default=[],
+        metavar="TASK=PATH",
+        help=(
+            "Required for each task whose compared retrieval index or family "
+            "manifest hash differs; the receipt must prove identical selected "
+            "model-visible retrieval surfaces."
         ),
     )
     parser.add_argument(
@@ -1815,6 +2532,86 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     output_root = Path(args.output_root)
     analysis_dir = Path(args.analysis_dir) if args.analysis_dir else output_root / "analysis"
+    if args.conditioned_progressive_config_comparison:
+        configuration_roots = _parse_configuration_task_path_overrides(
+            args.conditioned_progressive_config_task_root
+        )
+        lineage_receipts_by_task = _parse_task_path_overrides(
+            args.conditioned_progressive_config_lineage_receipt
+        )
+        rows, summary = collect_conditioned_progressive_configuration_data(
+            configuration_roots=configuration_roots,
+            lineage_receipts_by_task=lineage_receipts_by_task,
+        )
+        baseline_roots_by_task = _parse_task_path_overrides(
+            args.conditioned_progressive_baseline_root
+        )
+        reference_rows, reference_summary = (
+            collect_conditioned_progressive_configuration_reference_data(
+                configuration_roots=configuration_roots,
+                none_root=Path(args.conditioned_none_agent_root),
+                baseline_root=Path(args.conditioned_baseline_root),
+                baseline_roots_by_task=baseline_roots_by_task,
+                omit_mismatched_baselines=(
+                    args.omit_mismatched_progressive_baselines
+                ),
+            )
+        )
+        summary["comparison_contract"]["performance_references"] = reference_summary
+        summary["reference_rows"] = reference_rows
+        if not args.analysis_dir:
+            analysis_dir = Path(
+                "outputs/paper/analysis/progressive_configuration_comparison"
+            )
+        analysis_dir.mkdir(parents=True, exist_ok=True)
+        _write_tsv(analysis_dir / "progressive_configuration_metrics.tsv", rows)
+        _write_tsv(
+            analysis_dir / "progressive_configuration_references.tsv",
+            reference_rows,
+        )
+        (analysis_dir / "summary.json").write_text(
+            json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        figure_dir = analysis_dir / "figures"
+        output_stem = (
+            args.output_stem
+            if args.output_stem != "assay_retrieval_scaling"
+            else "progressive_configuration_comparison"
+        )
+        comparison_contract = summary["comparison_contract"]
+        task_audits = comparison_contract["task_audits"]
+        plot_conditioned_progressive_configuration_comparison(
+            rows=rows,
+            output_svg=figure_dir / f"{output_stem}.svg",
+            output_png=figure_dir / f"{output_stem}.png",
+            tasks=tuple(comparison_contract["tasks"]),
+            configurations=tuple(comparison_contract["configurations"]),
+            reference_rows=reference_rows,
+            split_scheme=str(comparison_contract["split_scheme"]),
+            transport_matched=all(
+                bool(audit["execution_base_urls_equal"])
+                for audit in task_audits.values()
+            ),
+            retrieval_lineage_matched=all(
+                bool(audit["index_sha256_equal"])
+                and bool(audit["family_manifest_sha256_equal"])
+                for audit in task_audits.values()
+            ),
+        )
+        print(
+            json.dumps(
+                {
+                    "analysis_dir": str(analysis_dir),
+                    "n_metric_rows": len(rows),
+                    "configurations": comparison_contract["configurations"],
+                    "tasks": comparison_contract["tasks"],
+                    "figure": str(figure_dir / f"{output_stem}.png"),
+                },
+                indent=2,
+            )
+        )
+        return 0
     if args.conditioned_progressive_overview:
         source_purity_root = Path(args.conditioned_progressive_source_purity_root)
         baseline_roots_by_task = _parse_task_path_overrides(

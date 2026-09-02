@@ -1,12 +1,11 @@
 """Audited BBB source-family reassignment for the progressive assay experiment.
 
-This module assigns each retrieval source record to one biological family.  It
-does not mutate a gold artifact in place: the corrected v3 benchmark is rebuilt
-and revoted independently before this overlay is published.  L1 follows that
-current experimental gold contract; explicit predictions remain retrievable
-but are not presented as experimental direct evidence.  Assay identity is
-retained only as provenance; it does not force all records from an assay into
-one family.
+This module assigns each retrieval source record to one biological family. It
+does not mutate a gold artifact in place. L1 membership is exact source-record
+membership in the current vote ledger; replaying the label contract may route a
+nonvoter to near-direct evidence, but can never grant L1 membership. Explicit
+predictions remain retrievable outside L1. Assay identity is retained only as
+provenance; it does not force all records from an assay into one family.
 """
 
 from __future__ import annotations
@@ -33,7 +32,7 @@ NEAR_DIRECT_GROUP = "Proxy.central_functional_access"
 PASSIVE_GROUP = "Mechanism.passive_permeability"
 EFFLUX_GROUP = "Mechanism.efflux_transport"
 INFLUX_GROUP = "Mechanism.influx_transport"
-PURITY_VERSION = "bbb_source_family_purity.v5"
+PURITY_VERSION = "bbb_source_family_purity.v6"
 REVIEW_VERSION = "bbb_near_direct_record_review.v2"
 
 DEFAULT_RECORDS = Path(
@@ -536,8 +535,8 @@ class BBBSourceFamilyClassifier:
             label, reason = self.gold_decision(record)
             if label is not None:
                 decision = FamilyMove(
-                    DIRECT_GROUP,
-                    "gold_contract_eligible_experimental_cns_outcome",
+                    NEAR_DIRECT_GROUP,
+                    "nonvoter_gold_contract_eligible_experimental_cns_outcome",
                 )
             else:
                 decision = nondirect_target(record, reason)

@@ -1,0 +1,80 @@
+{
+  "schema_version": "progressive_retrieval_change_receipt.v1",
+  "created_at": "2026-09-01T02:36:51-04:00",
+  "task": "bioavailability_ma",
+  "split_scheme": "scaffold",
+  "evaluation_subset": "valid",
+  "repair": "remove six nitrendipine-text records bound to the non-nitrendipine CNYREWGHOWSYCJ identity",
+  "scope": {
+    "n_validation_rows": 262,
+    "n_unique_validation_parent_identities": 212,
+    "levels": [1, 2, 3, 4, 5, 6],
+    "visibility_mode": "deployment_visible_prefetched",
+    "neighbor_identity_policy": "scaffold_disjoint",
+    "progressive_protocol": "conditioned_assay_progressive_visible.v8"
+  },
+  "artifacts": {
+    "retained_run_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
+    "validation_input": "data/conditioned_benchmark/Bioavailability_Ma/scaffold/valid.jsonl",
+    "validation_input_sha256_before": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+    "validation_input_sha256_after": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+    "retrieval_index_sha256_before": "220fb396125d010819e862553340984232b1ca1a1c4624219d4957f52fc23889",
+    "retrieval_index_sha256_after": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+    "family_manifest_sha256_before": "7062bd9e0d1a76a89b31ce0fb1536a71671874e1eeaf754c879312deff4a8949",
+    "family_manifest_sha256_after": "195d88403b595181449df2ba0a8da0004b4f8981be4da2a2a92b0ba500077991",
+    "current_source_records_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8"
+  },
+  "comparison_contract": {
+    "current_reconstruction": "Run the frozen scaffold-disjoint cumulative-family retrieval and append-only selection over the repaired index for every validation row and level.",
+    "saved_reference": "Read each retained pre-fix level prepared.json.",
+    "compared_fields": [
+      "active_evidence excluding query_analog_tool_summaries",
+      "new_card_ids",
+      "n_active_molecules",
+      "n_active_cards",
+      "should_call_model"
+    ],
+    "tool_summary_policy": "The repair did not change any selected query or analog structure. Retain the saved query and query-analog tool summaries; their call inputs are unchanged.",
+    "audit_only_difference": "retrieval_audit.n_visible_representative_records is global source-pool metadata, is excluded from the model prompt, and decreased after record removal."
+  },
+  "results": {
+    "selected_retrieval_surface_sha256_before": "9446a5e4f4eb039f49b4b3b9f66558b7c66c881040980ae3b42c5844bc1b3750",
+    "selected_retrieval_surface_sha256_after": "9446a5e4f4eb039f49b4b3b9f66558b7c66c881040980ae3b42c5844bc1b3750",
+    "selected_retrieval_surfaces_equal": true,
+    "n_validation_rows_with_selected_retrieval_change": 0,
+    "n_unique_validation_parents_with_selected_retrieval_change": 0,
+    "changed_rows_by_level": {
+      "L1": 0,
+      "L2": 0,
+      "L3": 0,
+      "L4": 0,
+      "L5": 0,
+      "L6": 0
+    },
+    "global_visible_representative_record_counts_before": {
+      "L1": 5219,
+      "L2": 82455,
+      "L3": 114647,
+      "L4": 144760,
+      "L5": 156169,
+      "L6": 186245
+    },
+    "global_visible_representative_record_counts_after": {
+      "L1": 5217,
+      "L2": 82452,
+      "L3": 114644,
+      "L4": 144757,
+      "L5": 156166,
+      "L6": 186242
+    }
+  },
+  "reuse_decision": {
+    "scaffold_valid_agent_predictions_reusable": true,
+    "llm_replay_required": false,
+    "reason": "Every model-visible selected retrieval surface is byte-equivalent under canonical JSON after the source repair; only excluded audit metadata and lineage hashes changed.",
+    "random_valid_audited": false,
+    "random_valid_status": "requires_separate_change_audit_or_replay",
+    "baselines_reusable": false,
+    "baseline_reason": "The repair removed two scaffold-train rows, so trained and KNN baselines must be regenerated."
+  }
+}

@@ -603,11 +603,13 @@ def test_starling_mechanism_views_match_each_binary_endpoint():
 
     expected_skin = [
         "direct_skin_reaction",
+        "nonvoter_sensitization_outcome",
         "sensitisation_aop",
     ]
     assert [group.endpoint_group for group in SKIN_STARLING.mechanism_groups] == expected_skin
     assert [group.source_groups for group in SKIN_STARLING.mechanism_groups] == [
         ("Direct.skin_reaction",),
+        ("Observed.nonvoter_skin_outcome",),
         ("Mechanism.sensitization_aop",),
     ]
 

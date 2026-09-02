@@ -58,14 +58,18 @@ Bemis-Murcko scaffold overlap 为 0。
 BBB 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；Bioavailability 已排除
 冻结 HF source 中 6 条经人工及 PubChem/PMID 2468876 核验的 nitrendipine 结构—名称错配记录，移除由错误
 `CNYREWGHOWSYCJ` identity 产生的 2 个 benchmark rows，并原位重建 scaffold/random split 与 retrieval index；
-旧 Bioavailability predictions 只有在新 manifest input hash 匹配时才可复用。ClinTox
+旧 Bioavailability predictions 只有在新 manifest input hash 匹配，且 retrieval hash 匹配或 split-scoped
+zero-change receipt 证明全部模型可见 selected retrieval surfaces 相同时才可复用。ClinTox
 只补 condition schema，ordered `(drug, Y)` 和 split 不变。已有 prediction 只能在 manifest input hash 与
-migration receipt 匹配时复用，不能仅凭旧目录名复用。
+migration receipt 匹配时复用；retrieval hash 变化还必须有对应 split 的 receipt，不能仅凭旧目录名复用。
 
-Task-specific source voting 和 review 仍保留在各 task 模块中。BBB 的 direct gold 只接受系统给药后的实验性
-meaningful CNS access；Bioavailability 的 L1 只包含实际 voter rows；Skin direct 只接受 sensitization/contact-
-allergy final outcome；ClinTox 只由冻结 AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators
-构造 label，broad Starling toxicity rows 不投票。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
+Task-specific source voting 和 review 仍保留在各 task 模块中。BBB、Bioavailability 和 Skin 的 progressive
+L1 都只包含当前 benchmark lineage 中实际输出 base vote 或 condition review accepted 的 source records；
+parent 后续因 tie/agreement gate 被拒绝不撤销 record voter 身份，语义 direct 或 gold-rule replay 不能授予 L1
+membership。BBB 的 direct gold 只接受系统给药后的实验性 meaningful CNS access；Skin direct gold 只接受
+sensitization/contact-allergy final outcome。ClinTox 当前没有 progressive L1；其 label 只由冻结 AACT
+toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造，broad Starling toxicity rows 不投票。
+版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
 
 论文实验只保留以下六条结果主线：ChEMBL retrieval、Starling retrieval、one-shot cumulative full-flat levels、
 append-only progressive levels、full-mechanism organization，以及 scaffold/random split。Identity-blind 与
@@ -91,6 +95,7 @@ tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
 tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py
 tools/chembl_tool/paper_experiments/build_bbb_source_family_purity.py
 tools/chembl_tool/paper_experiments/build_bioavailability_vote_pure_source.py
+tools/chembl_tool/common/assay_retrieval.py
 tools/chembl_tool/paper_experiments/molecular_evidence_agent.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
@@ -112,9 +117,14 @@ baselines/structure_knn/run.py
 Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作默认入口继续启动。其它已经删除的
 no-go 方法开发只从 Git history 或冻结 receipt 读取。
 
-当前 BBB/Skin progressive scaffold/random artifact 与输入/index hash 匹配；Bioavailability 在 2026-09-01
-删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化，需要 targeted
-replay，相关 baseline 也因 train 删除两行需要重训。旧 score 只能标为 pre-fix reference。
+当前 BBB scaffold progressive v6 与输入/index hash 匹配；BBB random v6 index 已构建但 predictions 仍为
+v5 历史参考、需要 replay。Skin strict-voter-L1 v2 scaffold/random index 已构建，但现有 predictions 仍来自
+旧 broad-L1 v1，scaffold/random 均需 replay；Bioavailability 在 2026-09-01
+删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化。scaffold-valid
+已逐 query、逐 level 审计 262 条 rows，模型可见 selected retrieval surface 变化为 0，并由
+`tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json`
+授权复用，无需 LLM replay；random 仍需独立 change audit 或 targeted replay。相关 baseline 因 train 删除两行
+仍需重训，不能由 agent zero-change receipt 授权复用。
 
 `watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
 launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
@@ -158,14 +168,19 @@ ClinTox 当前严格 split 位于 `data/conditioned_benchmark/ClinTox/scaffold/`
    `conditioned_assay_progressive_visible.v8`: candidate generation is global
    molecule-similarity retrieval within each cumulative record-family pool,
    without a per-assay neighbor cap. L1 selects at most 10 molecules; later
-   families append bounded new-molecule and active-molecule card deltas; all
-   prior cards remain visible. Assay identity remains card provenance and a
+   families append at most 3 new molecules and augment at most 3 active
+   molecules; all prior cards remain visible. The formal default card budget is
+   L1 at most 4 cards per molecule and later levels at most 2 newly unlocked
+   cards per selected molecule. The scaffold-valid budget ablation changes only
+   those limits to 8/4 through the existing progressive runner; it does not
+   define a second retrieval protocol or code path. Assay identity remains card
+   provenance and a
    diversity tie-break only. Family assignment is record-level: a physical
    assay may contribute cards to several levels, and its earliest level is only
    catalog ordering/coverage metadata, never a visibility or retrieval gate.
-   BBB source-purity v5 restricts L1 to current accepted non-prediction voters
-   plus records that replay the experimental CNS-access gold contract; predicted
-   BBB outcomes and missing/generic proxies move to near-direct, while predicted
+   BBB source-purity v6 restricts L1 to exact current voter-record membership;
+   gold-contract replay can route a nonvoter to near-direct but cannot grant L1.
+   Predicted BBB outcomes and missing/generic proxies move to near-direct, while predicted
    passive-permeability or efflux readouts remain in their mechanism family.
    The v5 row ledger audits all 581,708 source records and rejects cross-family
    efflux/influx precedence violations before an index can be published.

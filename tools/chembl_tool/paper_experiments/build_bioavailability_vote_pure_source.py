@@ -11,6 +11,9 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+from tools.chembl_tool.common.source_family_purity import (
+    audit_exact_voter_membership,
+)
 from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
     PuritySpec,
@@ -85,42 +88,40 @@ def _audit_membership(
     output_path: Path,
     voter_source_record_ids: set[str],
 ) -> dict[str, Any]:
-    l1 = l2 = l1_nonvoters = voter_outside_l1 = 0
-    present_voters: set[str] = set()
+    l2 = 0
     columns = [
         "group_id",
         "source_id",
         "source_record_id",
         "source_row_number",
         "extraction_id",
+        "retrieval_eligible",
     ]
-    for batch in pq.ParquetFile(output_path).iter_batches(columns=columns):
-        for row in batch.to_pylist():
-            group = str(row.get("group_id") or "")
-            upstream_id = upstream_record_key(row)
-            is_voter = upstream_id in voter_source_record_ids
-            if is_voter:
-                present_voters.add(upstream_id)
-            if group == DIRECT_GROUP:
-                l1 += 1
-                l1_nonvoters += int(not is_voter)
-            elif group == NEAR_DIRECT_GROUP:
-                l2 += 1
-            if is_voter and group != DIRECT_GROUP:
-                voter_outside_l1 += 1
-    absent = sorted(voter_source_record_ids - present_voters)
-    audit = {
-        "l1_exact_vote_membership": l1_nonvoters == 0 and voter_outside_l1 == 0,
-        "n_l1_records": l1,
-        "n_l2_records": l2,
-        "n_l1_nonvoter_records": l1_nonvoters,
-        "n_voter_records_outside_l1": voter_outside_l1,
-        "n_voter_upstream_ids_not_present_in_retrieval_source": len(absent),
-        "voter_upstream_ids_not_present_examples": absent[:20],
-        "row_count_preserved": True,
-    }
-    if not audit["l1_exact_vote_membership"]:
-        raise RuntimeError(f"vote-purity membership gate failed: {audit}")
+    for batch in pq.ParquetFile(output_path).iter_batches(columns=["group_id"]):
+        l2 += sum(value == NEAR_DIRECT_GROUP for value in batch["group_id"].to_pylist())
+    rows = (
+        row
+        for batch in pq.ParquetFile(output_path).iter_batches(columns=columns)
+        for row in batch.to_pylist()
+    )
+    audit = audit_exact_voter_membership(
+        rows,
+        voter_source_record_ids,
+        direct_group=DIRECT_GROUP,
+        record_id=upstream_record_key,
+    )
+    audit.update(
+        {
+            "n_l2_records": l2,
+            "n_voter_upstream_ids_not_present_in_retrieval_source": audit[
+                "n_voter_ids_not_present_in_source"
+            ],
+            "voter_upstream_ids_not_present_examples": audit[
+                "voter_ids_not_present_examples"
+            ],
+            "row_count_preserved": True,
+        }
+    )
     return audit
 
 

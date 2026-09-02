@@ -28,13 +28,16 @@ pointer；benchmark identity 始终是 `conditioned_benchmark`。
 | task | benchmark input | source contract | n | artifact status |
 |---|---|---|---:|---|
 | BBB | `conditioned_benchmark/BBB_Martins` | audited BBB family purity | 397 | current |
-| Bioavailability | `conditioned_benchmark/Bioavailability_Ma` | direct voter-pure L1 | 262 | targeted replay required after 2026-09-01 source-identity repair |
-| Skin | `conditioned_benchmark/Skin_Reaction` | sensitization direct/AOP | 246 | current |
+| Bioavailability | `conditioned_benchmark/Bioavailability_Ma` | direct voter-pure L1 | 262 | current via scaffold-valid zero-change retrieval receipt |
+| Skin | `conditioned_benchmark/Skin_Reaction` | voter-only direct / nonvoter outcome / AOP | 246 | v2 index current; v1 predictions stale |
 
-三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。BBB 与 Skin 的完整
-曲线当前且零失败。Bioavailability 的最后一条完整曲线也为零失败，但其 retrieval-index hash 已因六条错误
-nitrendipine identity records 的删除而失配；相关 score 只能作为 pre-fix reference，完成受影响 query 的
-targeted replay 后才能重新标为 current。旧 broad-L1 和早期 progressive curves 不是当前结果。
+三个任务均为 scaffold-valid、`deployment_visible_prefetched`、DeepSeek-V4-Flash-0731。BBB 的完整曲线当前且
+零失败。Skin strict-voter-L1 v2 已完成 source overlay、catalog 和 scaffold/random index，但现有完整曲线来自
+旧 broad-L1 v1，必须 replay。Bioavailability 删除六条错误 nitrendipine identity records 后 index hash 虽然变化，
+但按冻结 protocol 对 262 条 valid rows、L1-L6 逐 query 重建后，selected active molecules/cards 的 canonical
+surface hash 与修复前完全相同，变化 query 为 0。因此 retained agent score 通过 split-scoped zero-change
+receipt 继续有效，不需要新 LLM 调用；random split 尚未执行同类审计。旧 broad-L1 和早期 progressive curves
+不是当前结果。
 
 ## Retrieval and leakage contract
 
@@ -146,7 +149,7 @@ Macro-F1：
 | task | None | L1 | L2 | L3 | L4 | L5 | L6 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | BBB | 0.6207 | 0.7314 | 0.7475 | 0.7475 | 0.7563 | **0.7563** | — |
-| Bioavailability pre-fix reference | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | **0.7608** |
+| Bioavailability current via zero-change receipt | 0.6314 | 0.6900 | 0.7312 | 0.7378 | 0.7545 | 0.7545 | **0.7608** |
 | Skin | **0.6119** | 0.6004 | 0.5939 | — | — | — | — |
 
 最近一次 matched baselines：
@@ -158,13 +161,13 @@ Macro-F1：
 | Skin | **0.6030** | 0.5755 | 0.5755 | 0.5208 | 0.5180 |
 
 BBB 与 Skin baseline 行仍匹配当前 cohort。Bioavailability baseline 使用了修复前多两条 train rows 的训练集，
-因此也必须重训；上表 Bio 行仅保留为 pre-fix reference，不能与修复后的 agent replay 混表。
+因此必须重训；上表 baseline 的 Bio 行仅保留为 pre-fix reference，不能与当前 agent 行当作 matched comparison。
 
 最终 level 的平均 active evidence 与模型调用长度：
 
 | task | molecules | cards | cards/molecule | prompt tokens/call | reasoning tokens/call |
 |---|---:|---:|---:|---:|---:|
-| BBB L5 | 10.61 | 25.43 | 2.32 | 16,257 | 4,898 |
+| BBB L5 | 9.98 | 23.39 | 2.26 | 15,360 | 2,680 |
 | Bioavailability L6 | 10.87 | 35.05 | 3.10 | 15,985 | 2,534 |
 | Skin L2 | 6.02 | 15.91 | 2.13 | 10,168 | 8,832 |
 
@@ -177,10 +180,10 @@ Prompt/reasoning 均只对实际模型调用求平均；carry-forward 和 reused
 ```text
 BBB:
 outputs/paper/
-  starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/
+  starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/
   scaffold_valid_deepseek_v4_flash_0731/
 
-Bioavailability last complete pre-fix vote-pure run (stale index; retain until targeted replay completes):
+Bioavailability retained vote-pure run (current agent predictions via zero-change receipt):
 
 outputs/paper/
   starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/
@@ -196,19 +199,42 @@ outputs/paper/
 
 ```text
 outputs/paper/starling_conditioned_assay_family_curve_v1/
-  source_overlays/bbb_source_family_purity_v5/
+  source_overlays/bbb_source_family_purity_v6/
   source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/
-  source_overlays/source_family_purity_v1/skin_reaction/
+  source_overlays/source_family_purity_v2/skin_reaction/
   family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/
   family_catalogs_mechanism_tagged_v1/
-    {bbb_martins_source_purity_v5,skin_reaction_source_purity_v1}/
+    {bbb_martins_source_purity_v6,skin_reaction_source_purity_v2}/
   indices/
-    bbb_martins/mechanism_tagged_v4_source_purity_v5/
+    bbb_martins/mechanism_tagged_v4_source_purity_v6/
     bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/
-    skin_reaction/mechanism_tagged_v4_source_purity_v1/
+    skin_reaction/mechanism_tagged_v4_source_purity_v2/
 ```
 
-最后一版英文总图与数据表（其中 Bioavailability 明确为 pre-fix reference）：
+Source-purity 的正式构建链只有四个共享入口，不为单个版本新增 launcher：
+
+1. `build_bbb_source_family_purity.py`、`build_bioavailability_vote_pure_source.py` 或
+   `build_conditioned_source_family_purity.py` 生成 task-specific voter-pure overlay；
+2. `build_assay_family_catalog.py` 生成 record-family catalog；
+3. `python -m tools.chembl_tool.common.assay_retrieval build-index` 按 scaffold/random 的 valid+test heldout
+   parent union 构建对应 index；
+4. `run_conditioned_assay_progressive_curve.py` 是唯一 progressive runner。
+
+各 entrypoint 的参数与当前 artifact 路径由 `--help`、runner defaults 和
+`current_conditioned_results.json` 共同约束；历史 `selected_vN` 或 source-purity v1 路径不能作为新 run 默认输入。
+
+Bioavailability scaffold-valid source repair 的复用边界固定在：
+
+```text
+tools/chembl_tool/paper_experiments/receipts/
+  bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json
+```
+
+该 receipt 只授权 scaffold-valid agent predictions；不授权 random artifacts 或依赖修复前 train rows 的
+MiniMol/Morgan baselines。
+
+最后一版英文总图与数据表（Bioavailability agent curve 已由 zero-change receipt 复用；图中 Bio baseline
+仍为 pre-fix reference，重训后需重画）：
 
 ```text
 outputs/paper/
@@ -282,7 +308,8 @@ artifact root 分离，不能互相覆盖。
   python -m tools.chembl_tool.paper_experiments.build_bioavailability_vote_pure_source
 ```
 
-Targeted replay 当前 Bioavailability（必须使用新的 output root 或严格的 reuse manifest；不得覆盖旧 trace）：
+Bioavailability scaffold-valid 已由 zero-change receipt 授权复用，不执行下列 LLM replay。只有未来需要独立
+fresh replication 时，才使用新的 output root 运行：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -291,7 +318,7 @@ Targeted replay 当前 Bioavailability（必须使用新的 output root 或严�
   --parallelism 128
 ```
 
-三端 mixture resume 使用同一 output root 和 checkpoint：
+可选 fresh replication 的三端 mixture 使用同一新 output root 和 checkpoint：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -304,17 +331,17 @@ Targeted replay 当前 Bioavailability（必须使用新的 output root 或严�
 
 Random split 必须使用 `--split-scheme random` 和按当前 random valid+test union 重建的 heldout-filtered
 index。BBB/Skin random artifacts 当前；Bioavailability random index 同样在 source-identity repair 后失配，
-必须 targeted replay。若本机 endpoint 不可用，可把上例配置替换为
+尚未执行 zero-change 审计，必须单独审计或 targeted replay。若本机 endpoint 不可用，可把上例配置替换为
 `deepseek_v4_flash_parcc_openrouter.json`；任何旧 checkpoint 都必须通过完整 hash gate。
 
-重画最后一版完整图（Bioavailability 会按上文标为 pre-fix reference；修复后应换成 replay root）：
+重画最后一版完整图（当前 root 继续用于 Bioavailability agent curve；baseline 重训后替换其 baseline root）：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
   --conditioned-progressive-overview \
   --conditioned-progressive-task-root \
-    bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731 \
+    bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731 \
   --conditioned-progressive-task-root \
     bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731 \
   --conditioned-progressive-task-root \
@@ -332,6 +359,61 @@ index。BBB/Skin random artifacts 当前；Bioavailability random index 同样�
 
 绘图器会校验 task/sample count、完整 agent metrics 和 `n_failed_runs=0`；baseline cohort 不匹配时默认报错，
 只有显式 `--omit-mismatched-progressive-baselines` 才允许诊断性省略，并在 summary 中记录原因。
+
+同一张图比较多个 progressive 配置时，使用通用的
+`CONFIG:TASK=PATH` 注册方式。绘图器校验相同 task、level family、evaluation input、sample count、visibility、
+identity policy、evaluation indices、非 card-budget selection 语义、prompt/generation/tool contract 和 model
+identity；解析 level metrics 与 query checkpoints，固定输出 Macro-F1、active molecules、cards/molecule、
+prompt tokens 和 reasoning tokens 五排对比。若 index 或 family-manifest hash 不同，必须用
+`--conditioned-progressive-config-lineage-receipt TASK=PATH` 显式注册 selected-surface zero-change receipt，
+否则拒绝画图。当前保留的 4/2 与 8/4 完整对比图入口如下；其中 BBB 是 strict-voter-L1 v6 current，
+Skin panel 是 pre-v2 historical，Bioavailability 的 lineage 边界见下文 receipt：
+
+```bash
+/data1/tianang/anaconda3/condabin/conda run -n vllm \
+  python -m tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve \
+  --conditioned-progressive-config-comparison \
+  --conditioned-progressive-config-task-root '4/2:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731' \
+  --conditioned-progressive-config-task-root '4/2:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731' \
+  --conditioned-progressive-config-task-root '4/2:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
+  --conditioned-progressive-config-task-root '8/4:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731' \
+  --conditioned-progressive-config-task-root '8/4:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bio' \
+  --conditioned-progressive-config-task-root '8/4:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/skin' \
+  --conditioned-progressive-config-lineage-receipt 'bioavailability_ma=tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json' \
+  --conditioned-progressive-baseline-root 'bbb_martins=outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1' \
+  --analysis-dir outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4 \
+  --output-stem progressive_record_card_budget_4_2_vs_8_4
+```
+
+配置比较图的 performance 行先画两种配置完全一致的 matched `None`，再画
+4/2 与 8/4 progressive levels，最后画 task-specific MiniMol head、MiniMol
+KNN condition/all 和 Morgan KNN condition/all references。`None` 必须逐 task
+跨配置严格相等；baseline 必须覆盖相同 evaluation sample count。下面四行只
+描述 progressive levels 的 evidence/token resources，不给 `None` 或 baseline
+伪造资源值。Bioavailability baseline 仍是删除两条 train rows 之前的 pre-fix
+reference，需在重训前保持该标注。
+
+BBB 必须使用上面成对的 strict-voter-L1 v6 4/2 与 8/4 roots。两组各 397/397、
+0 failed queries，使用相同 input、family manifest、heldout-filtered index、query prior、
+model identity 和 1,493 个 model-called checkpoints；两组均为 fresh run，没有跨预算
+复用 level prediction，也不需要跨 lineage receipt。旧 v5 `tool_prefetch_fixed_v1`
+roots 只保留历史 provenance，不能进入当前结果图。
+
+Bioavailability 8/4 必须使用上面的 `tool_prefetch_fixed_v1` lineage。该次
+preparation 在 262 个 query、1,572 个 query-level 上没有出现任何
+`127.0.0.1:8765` 连接或权限失败，并与 4/2 的 5,694 个共享 analog×tool
+surface 完全一致。两种预算共同存在的 72 个确定性 MMP runtime error 不构成
+配置间差异。旧 `...card_budget_8_4_v1.../bio` 受 sandbox loopback 失败污染，
+不得进入结果图；完整 receipt 见
+`receipts/bioavailability_scaffold_valid_8_4_tool_prefetch_fixed.json`。
+
+预算实验不使用独立 runner。正式通用入口仍是
+`run_conditioned_assay_progressive_curve.py`：默认 `--initial-card-limit 4 --delta-card-limit 2`，8/4 仅改为
+`--initial-card-limit 8 --delta-card-limit 4`。`--query-prior-source-root` 只从完成的 progressive artifact 复用
+identity-checked none/single prior 与 query tool summary，不复用 level prediction；
+`--progressive-reuse-source-root` 只允许 selection contract 和其它冻结设置完全相同的 run，并只复用逐 query
+从 L1 开始完全相同的 model-visible prefix，在首个变化 level 永久停止复用。4/2 与 8/4 不跨预算复用 level
+prediction；实验准备或审计使用 `--prepare-only`。仓库内没有为本轮保留一次性 audit Python 入口。
 
 ## Historical boundaries
 

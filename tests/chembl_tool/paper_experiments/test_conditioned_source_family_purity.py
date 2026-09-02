@@ -2,8 +2,10 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+import pytest
 
 from tools.chembl_tool.common.starling.benchmark_dataset import LabeledSourceRecord
+from tools.chembl_tool.common.source_family_purity import audit_exact_voter_membership
 from tools.chembl_tool.paper_experiments.audit_source_family_purity_gold_impact import (
     _skin_binary_label,
     _vote,
@@ -16,6 +18,13 @@ from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity 
 from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
     DIRECT_GROUP as BIO_DIRECT_GROUP,
     direct_like_bioavailability_reason,
+)
+from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
+    AOP_GROUP as SKIN_AOP_GROUP,
+    DIRECT_GROUP as SKIN_DIRECT_GROUP,
+    NEAR_DIRECT_GROUP as SKIN_NEAR_DIRECT_GROUP,
+    upstream_source_index,
+    vote_pure_family_move as skin_vote_pure_family_move,
 )
 
 
@@ -83,3 +92,45 @@ def test_gold_sensitivity_vote_uses_frozen_record_agreement_contract():
     assert _skin_binary_label("positive") == 1
     assert _skin_binary_label("negative") == 0
     assert _skin_binary_label("inconclusive") is None
+
+
+def test_skin_l1_uses_exact_source_voter_membership():
+    voter = {
+        "group_id": SKIN_DIRECT_GROUP,
+        "source_id": "direct_skin_reaction",
+        "source_row_number": 3,
+    }
+    assert upstream_source_index(voter) == 2
+    assert skin_vote_pure_family_move(voter, {2}).reason == ""
+
+    nonvoter = {**voter, "source_row_number": 4}
+    moved = skin_vote_pure_family_move(nonvoter, {2})
+    assert moved.new_group == SKIN_NEAR_DIRECT_GROUP
+    assert moved.reason == "nonvoter_removed_from_l1"
+
+
+def test_skin_direct_like_aop_nonvoter_goes_to_l2_not_l1():
+    row = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": "sensitization_aop",
+        "source_row_number": 1,
+        "canonical_assay_type": "local lymph node assay (LLNA)",
+        "result_label": "positive",
+    }
+    moved = skin_vote_pure_family_move(row, set())
+    assert moved.new_group == SKIN_NEAR_DIRECT_GROUP
+    assert moved.reason.startswith("direct_like_nonvoter_to_l2:")
+
+
+def test_exact_voter_gate_rejects_nonvoters_and_misrouted_voters():
+    rows = [
+        {"record_id": "voter", "group_id": "L2", "retrieval_eligible": True},
+        {"record_id": "nonvoter", "group_id": "L1", "retrieval_eligible": True},
+    ]
+    with pytest.raises(RuntimeError, match="exact voter-membership gate failed"):
+        audit_exact_voter_membership(
+            rows,
+            {"voter"},
+            direct_group="L1",
+            record_id=lambda row: row["record_id"],
+        )

@@ -134,6 +134,15 @@ same-condition-then-null and unrestricted-train variants.
   and tool outputs fixed.
 - LLM outputs pass shared JSON validation. Validation retries and provider
   failover are recorded in the trace; they do not alter label policy.
+- The scaffold-valid progressive record-card budget ablation uses the paired
+  roots and receipts registered in `current_conditioned_results.json`. BBB 4/2
+  and 8/4 are fresh transport-matched OpenRouter reruns; the historical BBB
+  roots with loopback-prefetch/provider mixing are excluded from that figure.
+- The ablation remains on the shared progressive runner: card limits are CLI
+  parameters (`--initial-card-limit`, `--delta-card-limit`), while molecule
+  quotas, selection order, prompt profile, and append-only semantics are fixed.
+  Multi-configuration figures remain in the shared assay-curve plotter and
+  require a selected-surface receipt whenever retrieval lineage hashes differ.
 
 Detailed group-level data flow is in [PIPELINE.md](PIPELINE.md). The cumulative
 level and progressive protocols are in
@@ -150,15 +159,24 @@ tools/chembl_tool/paper_experiments/current_conditioned_results.json
 It distinguishes:
 
 - `current`: benchmark and retrieval hashes match;
+- `current_via_zero_change_retrieval_receipt`: a split-scoped audit proves that
+  every model-visible selected retrieval surface is unchanged across a
+  lineage-only source/index repair;
 - `last_complete_reference_pending_*`: a complete historical reference is
   retained because the corresponding current-condition matrix is incomplete;
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
-At the 2026-09-01 snapshot, BBB and Skin progressive scaffold/random artifacts
-match their current indices. Bioavailability requires targeted progressive
-replay after the reviewed nitrendipine source-identity correction. Its stored
-scores remain a clearly marked pre-fix reference, not a current result.
+At the 2026-09-01 snapshot, BBB scaffold-valid has fresh 4/2 and 8/4 reruns over
+the strict-voter-L1 v6 index, and its random v6 heldout index is built but still
+requires LLM replay. Skin strict-voter-L1 v2 scaffold/random indices are built;
+its retained v1 progressive predictions are historical and require replay.
+Bioavailability scaffold-valid has a zero-change
+receipt: all 262 query-level selected retrieval surfaces remained identical
+after the reviewed nitrendipine source-identity correction, so its agent scores
+are current without new LLM calls. Bioavailability random remains unaudited and
+requires a separate change audit or replay. Its scaffold baselines remain
+pre-fix references because two train rows were removed and must be retrained.
 
 ## Documentation map
 

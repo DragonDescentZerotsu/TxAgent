@@ -386,10 +386,6 @@ def test_conditioned_agent_inclusion_gate_requires_full_zero_failure_metrics():
     )
 
 
-
-
-
-
 def test_progressive_resource_collector_separates_calls_from_carry_forward(tmp_path):
     root = tmp_path / "progressive"
     root.mkdir()
@@ -477,6 +473,17 @@ def test_progressive_resource_collector_separates_calls_from_carry_forward(tmp_p
     assert summary["comparison_contract"]["reasoning_mode"][
         "length_statistic"
     ] == "mean reasoning tokens among actual model calls"
+
+    called_output_path = (
+        root / "bbb_martins/queries/query_idx00000/levels/level_1/output.json"
+    )
+    called_output = json.loads(called_output_path.read_text(encoding="utf-8"))
+    called_output["llm"]["usage"].pop("prompt_tokens")
+    called_output_path.write_text(json.dumps(called_output), encoding="utf-8")
+    with pytest.raises(ValueError, match="Missing prompt tokens"):
+        plotter.collect_conditioned_progressive_resource_data(progressive_root=root)
+    called_output["llm"]["usage"]["prompt_tokens"] = 200
+    called_output_path.write_text(json.dumps(called_output), encoding="utf-8")
 
     none_root = tmp_path / "none"
     none_dir = none_root / "bbb_martins/none"
@@ -706,3 +713,268 @@ def test_parse_task_path_overrides():
         plotter._parse_task_path_overrides(
             ["bbb_martins=/tmp/one", "bbb_martins=/tmp/two"]
         )
+
+
+def test_parse_configuration_task_path_overrides():
+    assert plotter._parse_configuration_task_path_overrides(
+        [
+            "4/2:bbb_martins=/tmp/bbb_4_2",
+            "8/4:bbb_martins=/tmp/bbb_8_4",
+            "8/4:skin_reaction=/tmp/skin_8_4",
+        ]
+    ) == {
+        "4/2": {"bbb_martins": Path("/tmp/bbb_4_2")},
+        "8/4": {
+            "bbb_martins": Path("/tmp/bbb_8_4"),
+            "skin_reaction": Path("/tmp/skin_8_4"),
+        },
+    }
+    with pytest.raises(ValueError, match="CONFIG:TASK=PATH"):
+        plotter._parse_configuration_task_path_overrides(
+            ["bbb_martins=/tmp/value"]
+        )
+    with pytest.raises(ValueError, match="Duplicate"):
+        plotter._parse_configuration_task_path_overrides(
+            [
+                "4/2:bbb_martins=/tmp/one",
+                "4/2:bbb_martins=/tmp/two",
+            ]
+        )
+
+
+def test_selection_comparison_normalizes_legacy_text_and_ignores_only_card_limits():
+    legacy = {
+        "level_1": "top 10 molecules by Morgan similarity; at most 4 cards per molecule",
+        "later_new_pool": "top 3 previously unseen molecules; at most 2 newly unlocked cards each",
+        "append_only": True,
+    }
+    structured = {
+        "level_1": {"molecule_limit": 10, "card_limit_per_molecule": 8},
+        "later_new_pool": {
+            "molecule_limit": 3,
+            "delta_card_limit_per_molecule": 4,
+        },
+        "append_only": True,
+    }
+    assert plotter._selection_without_card_limits(legacy) == (
+        plotter._selection_without_card_limits(structured)
+    )
+
+
+def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
+    def fake_load(path):
+        return {
+            "task": "bbb_martins",
+            "split_scheme": "scaffold",
+            "evaluation_subset": "valid",
+            "artifacts": {
+                "retrieval_index_sha256_before": "index-4/2",
+                "retrieval_index_sha256_after": "index-8/4",
+            },
+            "results": {"selected_retrieval_surfaces_equal": True},
+        }
+
+    def fake_collect(*, progressive_roots_by_task=None, **_):
+        root = str(next(iter(progressive_roots_by_task.values())))
+        configuration = "4/2" if "4_2" in root else "8/4"
+        selection = {
+            "level_1": {
+                "molecule_limit": 10,
+                "card_limit_per_molecule": 4 if configuration == "4/2" else 8,
+            },
+            "later_new_pool": {
+                "molecule_limit": 3,
+                "delta_card_limit_per_molecule": (
+                    2 if configuration == "4/2" else 4
+                ),
+            },
+            "append_only": True,
+        }
+        contract = {
+            "progressive_root": root,
+            "experiment": "conditioned_assay_progressive_visible.v8",
+            "evaluation_subset": "valid",
+            "visibility_mode": "identity_blind",
+            "reference_pool": "full_flat",
+            "neighbor_identity_policy": "scaffold_disjoint",
+            "selection": selection,
+            "selection_without_card_limits": (
+                plotter._selection_without_card_limits(selection)
+            ),
+            "candidate_generation": None,
+            "min_similarity": 0.3,
+            "prompt_profile": "prompt-v1",
+            "condition_policy": "condition-v1",
+            "max_tokens": 100,
+            "temperature": 0,
+            "thinking": "default",
+            "reasoning_effort": "omitted",
+            "tool_prefetch_complete": True,
+            "agent_model": "model-alias",
+            "model_identity": "model-identity",
+            "input_sha256": "input",
+            "evaluation_indices_sha256": "indices",
+            "index_sha256": f"index-{configuration}",
+            "family_manifest_sha256": "family",
+            "execution_base_urls": ["https://provider.test/v1"],
+            "n": 2,
+            "split_scheme": "scaffold",
+        }
+        rows = [{
+            "task": "bbb_martins",
+            "task_label": "BBB",
+            "level": 1,
+            "family": "direct_brain_exposure",
+            "cumulative_assays": 5,
+            "n_queries": 2,
+            "macro_f1": 0.7 if configuration == "4/2" else 0.68,
+            "accuracy": 0.7,
+        }]
+        return rows, {
+            "comparison_contract": {
+                "split_scheme": "scaffold",
+                "task_contracts": {"bbb_martins": contract},
+            }
+        }
+
+    monkeypatch.setattr(plotter, "_load_json", fake_load)
+    monkeypatch.setattr(
+        plotter, "collect_conditioned_progressive_resource_data", fake_collect
+    )
+    monkeypatch.setattr(plotter, "sha256_file", lambda path: "receipt-hash")
+    configuration_roots = {
+        "4/2": {"bbb_martins": Path("/tmp/bbb_4_2")},
+        "8/4": {"bbb_martins": Path("/tmp/bbb_8_4")},
+    }
+    with pytest.raises(ValueError, match="zero-change receipt"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=configuration_roots,
+        )
+    rows, summary = plotter.collect_conditioned_progressive_configuration_data(
+        configuration_roots=configuration_roots,
+        lineage_receipts_by_task={"bbb_martins": Path("/tmp/receipt.json")},
+    )
+    assert [row["configuration"] for row in rows] == ["4/2", "8/4"]
+    contract = summary["comparison_contract"]
+    assert contract["configurations"] == ["4/2", "8/4"]
+    assert contract["task_audits"]["bbb_martins"]["index_sha256_equal"] is False
+    assert contract["task_audits"]["bbb_martins"][
+        "retrieval_lineage_receipt"
+    ] == "/tmp/receipt.json"
+    assert "prompt_profile" in contract["strict_invariants"]
+    assert "evaluation_indices_sha256" in contract["strict_invariants"]
+
+
+def test_progressive_configuration_references_require_shared_none_and_baselines(
+    tmp_path,
+):
+    configuration_roots = {}
+    complete = {
+        "n_total": 2,
+        "n_successful": 2,
+        "n_evaluable": 2,
+        "n_failed_runs": 0,
+        "macro_f1": 0.55,
+        "accuracy": 0.5,
+    }
+    for configuration in ("4_2", "8_4"):
+        root = tmp_path / configuration
+        root.mkdir()
+        (root / "experiment_manifest.json").write_text(
+            json.dumps(
+                {
+                    "evaluation_indices_by_task": {"bbb_martins": [0, 1]},
+                }
+            ),
+            encoding="utf-8",
+        )
+        none_path = root / "bbb_martins/none/metrics.json"
+        none_path.parent.mkdir(parents=True)
+        none_path.write_text(json.dumps(complete), encoding="utf-8")
+        configuration_roots[configuration] = {"bbb_martins": root}
+    baseline_root = tmp_path / "baselines"
+    for _, _, relative_path in plotter.CONDITIONED_BASELINES:
+        path = baseline_root / "BBB_Martins" / relative_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps({**complete, "macro_f1": 0.6}), encoding="utf-8"
+        )
+
+    rows, summary = (
+        plotter.collect_conditioned_progressive_configuration_reference_data(
+            configuration_roots=configuration_roots,
+            none_root=tmp_path / "fallback_none",
+            baseline_root=baseline_root,
+        )
+    )
+
+    assert len(rows) == 1 + len(plotter.CONDITIONED_BASELINES)
+    assert rows[0]["result_type"] == "none"
+    assert rows[0]["macro_f1"] == 0.55
+    assert {row["macro_f1"] for row in rows[1:]} == {0.6}
+    assert summary["none_audits"]["bbb_martins"]["status"] == (
+        "matched_across_configurations"
+    )
+
+    mismatched_none = (
+        configuration_roots["8_4"]["bbb_martins"]
+        / "bbb_martins/none/metrics.json"
+    )
+    mismatched_none.write_text(
+        json.dumps({**complete, "macro_f1": 0.54}), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="No-retrieval metric mismatch"):
+        plotter.collect_conditioned_progressive_configuration_reference_data(
+            configuration_roots=configuration_roots,
+            none_root=tmp_path / "fallback_none",
+            baseline_root=baseline_root,
+        )
+
+
+def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
+    rows = []
+    for configuration, macro_f1, cards in (
+        ("4/2", 0.72, 2.0),
+        ("8/4", 0.70, 3.0),
+    ):
+        rows.append(
+            {
+                "configuration": configuration,
+                "task": "bbb_martins",
+                "level": 1,
+                "n_queries": 2,
+                "macro_f1": macro_f1,
+                "mean_active_molecules": 4.0,
+                "mean_cards_per_active_molecule": cards,
+                "mean_prompt_tokens_per_call": 1000.0 * cards,
+                "mean_reasoning_tokens_per_call": 500.0 * cards,
+            }
+        )
+    output_svg = tmp_path / "comparison.svg"
+    output_png = tmp_path / "comparison.png"
+    plotter.plot_conditioned_progressive_configuration_comparison(
+        rows=rows,
+        output_svg=output_svg,
+        output_png=output_png,
+        tasks=("bbb_martins",),
+        configurations=("4/2", "8/4"),
+        reference_rows=[
+            {
+                "task": "bbb_martins",
+                "result_type": "none",
+                "method": "none",
+                "macro_f1": 0.55,
+            },
+            {
+                "task": "bbb_martins",
+                "result_type": "baseline",
+                "method": "minimol_head",
+                "macro_f1": 0.6,
+            },
+        ],
+    )
+    assert output_svg.is_file()
+    assert output_png.is_file()
+    svg = output_svg.read_text(encoding="utf-8")
+    assert "None" in svg
+    assert "MiniMol head" in svg

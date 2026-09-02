@@ -4,9 +4,10 @@
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、batch/resume、viewer 和输出目录规范仍以仓库根
 `AGENTS.md` 为准。
 
-当前 paper-facing Starling 路径只保留两个与 binary endpoint 对齐的 mechanism families：direct skin
-sensitization outcome 与 sensitisation AOP key events。Phototoxicity/irritation/local damage 和 skin exposure
-的 immutable raw acquisition 仍保留作历史审计，但不进入 current Starling reasoning view。ChEMBL 历史
+当前 paper-facing progressive Starling 路径保留三个与 binary endpoint 对齐的 record families：实际参与
+gold voting 的 direct skin-sensitization outcomes、未参与 voting 的 observed/direct-like outcomes，以及
+sensitisation AOP key events；后两类分别是 L2/L3，不能取得 L1 membership。Phototoxicity/irritation/local
+damage 和 skin exposure 的 immutable raw acquisition 仍保留作历史审计，但不进入 current Starling reasoning view。ChEMBL 历史
 ontology 和 native runner 仍保留旧 Tier 说明用于复现，不得据此为每个细粒度 group 启动并行 reasoning。
 
 2026-07-23 strict-hop availability census 见
@@ -40,6 +41,10 @@ selected-vN 路径只是 migration provenance。冲突 parent 按 accepted sourc
 同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前必须按 scaffold valid+test union 的 heldout
 detailed labels 重建 train-only retrieval index。统一合同见
 `tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。
+
+Progressive source-purity v2 将 L1 严格冻结为实际 base voters 加 condition-review accepted records；parent
+后续因 tie 或 agreement gate 被拒绝不撤销 record 的 voter 身份。v2 scaffold/random indices 已构建，旧 v1
+progressive predictions 因使用 broad L1 只保留为历史参考，必须 replay 后才能重新标为 current。
 
 当前二分类约定：
 
