@@ -1,0 +1,76 @@
+{
+  "sources": [
+    {
+      "authoritative_path": "bioavailability_ma/Direct_HF/records.parquet",
+      "authoritative_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "parts": [
+        {
+          "bytes": 16811355,
+          "name": "Direct_HF.parquet",
+          "sha256": "3d38a6ddc3cb2f6ffe2dd48c9bb2a0e4ad522e36d55cff2a8c711ebb3a66c117"
+        }
+      ],
+      "rows": 163815,
+      "source_id": "hf_bioavailability",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "authoritative_path": "bioavailability_ma/Fa/extractions.parquet",
+      "authoritative_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "parts": [
+        {
+          "bytes": 7439823,
+          "name": "Fa.parquet",
+          "sha256": "1011dccdbaa808ff07be949496a03b0100c2fb84069466d952711fffae235e09"
+        }
+      ],
+      "rows": 85061,
+      "source_id": "fa",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "authoritative_path": "bioavailability_ma/Fg/extractions.parquet",
+      "authoritative_sha256": "d93a713eb1b9789cd909852b1cec0f69dfade62f730d2ee73d2d03fae1d1e0a3",
+      "parts": [
+        {
+          "bytes": 3547378,
+          "name": "Fg.parquet",
+          "sha256": "8bf637c4f8e25e248636e46373a0a7ff4ac8f9c68bd439517f8780b7bc3ed148"
+        }
+      ],
+      "rows": 27713,
+      "source_id": "fg",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "authoritative_path": "bioavailability_ma/Fh/extractions.parquet",
+      "authoritative_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "parts": [
+        {
+          "bytes": 5730913,
+          "name": "Fh.parquet",
+          "sha256": "c4014bc8fcc33c1f350266e2df81611c3ea2295a40224a06fc625b416a6a5b78"
+        }
+      ],
+      "rows": 67943,
+      "source_id": "fh",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "authoritative_path": "bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+      "authoritative_sha256": "92cbbc2fc49c00617052a7cf6ce9b3f408e0ed1ed7ff9248b31c7c1987897796",
+      "parts": [
+        {
+          "bytes": 8281543,
+          "name": "Oral_AUC-Cmax_Exposure.parquet",
+          "sha256": "30e7c788b66ee6ead2c5b4458144e509ff28b095d22da4a28857717d65159d05"
+        }
+      ],
+      "rows": 119192,
+      "source_id": "oral_exposure",
+      "task_id": "bioavailability_ma"
+    }
+  ],
+  "task_id": "bioavailability_ma",
+  "version": "starling_compressed_mirrors.v1"
+}

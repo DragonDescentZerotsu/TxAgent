@@ -1,0 +1,95 @@
+{
+  "filters": [
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier",
+          "Blood-Brain Barrier Permeability Characterization"
+        ],
+        [
+          "parallel artificial membrane permeability assay"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "The passive blood-brain barrier permeability of named compounds was experimentally measured using PAMPA-BBB or a brain-lipid artificial membrane, with Pe, log Pe, permeability class, membrane retention, or an experimentally supported passive diffusion conclusion reported.",
+      "estimated_count": 2418,
+      "precision_estimate": 0.9667
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier",
+          "Blood-Brain Barrier Permeability Characterization"
+        ],
+        [
+          "MDCK",
+          "MDCK-MDR1",
+          "MDCK-II"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "In original experiments, named compounds were tested in MDCK, MDCK-II, MDR1-MDCK, or related monolayers as a blood-brain barrier surrogate; quantitative A-to-B Papp, bidirectional Papp, efflux ratio together with permeability, or a passive transcellular diffusion conclusion was reported.",
+      "estimated_count": 2346,
+      "precision_estimate": 0.7571
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier",
+          "Blood-Brain Barrier Permeability Characterization"
+        ],
+        [
+          "brain microvascular endothelial cell"
+        ],
+        [
+          "apparent permeability coefficient (Papp)"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Original experiments measured permeability of named small molecules across primary or immortalized brain microvascular endothelial cell monolayers, reporting quantitative Papp, Pe, PS, flux, or bidirectional permeability and assessing passive or transcellular diffusion.",
+      "estimated_count": 47,
+      "precision_estimate": 0.6216
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "blood-brain barrier",
+          "Blood-Brain Barrier Permeability Characterization"
+        ],
+        [
+          "partition coefficient"
+        ],
+        [
+          "phospholipid",
+          "Lipid Bilayers"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Original experiments measured phospholipid, liposome, BBB-mimetic model-membrane, surface-partition, or immobilized-artificial-membrane partition or retention coefficients for named compounds and explicitly related those measurements to passive blood-brain barrier permeation.",
+      "estimated_count": 22,
+      "precision_estimate": 0.2381
+    }
+  ],
+  "window_entity_groups": [
+    [
+      "SmallMolecule",
+      "SmallMoleculeClass"
+    ]
+  ]
+}

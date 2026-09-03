@@ -1,0 +1,82 @@
+{
+  "task": "Find all small molecules mentioned in PubMed for which in vivo systemic exposure after oral administration has been experimentally reported. Include oral AUC, AUC0-t, AUC0-last, AUC0-inf, AUClast, AUCinf, Cmax, Tmax, plasma exposure, concentration-time profiles after oral dosing, dose-normalized oral exposure, and oral/IV exposure comparisons.",
+  "task_instantiation": "Extract experimentally reported in vivo systemic exposure after oral administration for small molecules or small-molecule classes. Create one record for each primary molecule (identified by the top-level global_identifier) × oral dosing condition × reported exposure measurement. In scope: oral/PO/gavage/in-feed/orogastric/colonic oral dosing that reports systemic plasma/serum/blood exposure, including AUC (any interval such as AUC0-t, AUC0-last, AUC0-inf, AUCtau/AUCss), Cmax, Tmax, plasma concentration-time profile data, dose-normalized oral exposure, absolute/relative oral bioavailability, and direct oral-vs-IV exposure comparisons. For prodrugs, extract the analyte whose systemic exposure is measured; note if it was administered as a prodrug in `extra_details`.\n\nEvidence threshold: extract only when the passage explicitly reports an exposure value, a therapeutic target/range for oral exposure, or an explicit oral bioavailability/exposure ratio derived from experimental data. Values may come from text, tables, or figure captions. Do not create records from dose-only statements, study design descriptions, half-life/clearance/volume-only data, or vague qualitative claims such as \"good exposure\" unless an eligible exposure metric or profile value is also stated. Do not extract IV/subcutaneous/intramuscular/inhaled/etc. exposure values as standalone records; include non-oral values only in `comparator_exposure` when the same passage directly compares them with oral exposure for the same molecule.\n\nRecord granularity: if a passage reports several eligible metrics for the same molecule and same oral condition (e.g., Cmax, Tmax, AUC0-t, AUC0-inf), emit separate records for each metric, reusing the same dose and context. If it reports multiple formulations, food states, dose levels, days, species, or treatment arms, emit separate records for each distinct condition and metric. If test and reference formulations both have values, treat each formulation as a distinct oral condition. For ranges, store a numeric central/primary value in `parameter_value` only if stated; otherwise put the range in `extra_details` and leave `parameter_value` null.\n\nDefault context: assume ordinary in vivo pharmacokinetic conditions for the stated species/population and oral route. Capture routine parameters such as species/population, dose, formulation, fed/fasted state, regimen, sampling matrix, and study arm in `study_context`. Put genuinely non-standard conditions that materially affect oral absorption/exposure in `qualifying_conditions` (e.g., co-administered absorption enhancer or inhibitor, disease model, transporter knockout, surgical/colonic delivery, unusual barrier disruption); otherwise set `qualifying_conditions` to null.",
+  "schema_spec": [
+    {
+      "name": "exposure_measure",
+      "description": "Type of oral systemic exposure measurement reported. Use the closest label; `concentration_time_profile` is for explicit plasma/blood/serum concentration-time data or profile values not summarized as AUC/Cmax/Tmax.",
+      "value_type": "string",
+      "allowed_values": [
+        "AUC",
+        "AUC0_t",
+        "AUC0_last",
+        "AUC0_inf",
+        "AUC_tau",
+        "AUC_ss",
+        "Cmax",
+        "Tmax",
+        "bioavailability",
+        "concentration_time_profile",
+        "dose_normalized_exposure",
+        "oral_iv_comparison",
+        "other_oral_exposure"
+      ]
+    },
+    {
+      "name": "parameter_value",
+      "description": "Numeric value of the oral exposure measure when a single primary value is explicitly stated. Leave null for profile-only reports, text-only comparisons, or ranges without a stated central value.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "parameter_units",
+      "description": "Units exactly as reported for `parameter_value` (e.g., ng/mL, µg·h/mL, h, %, ng·h/mL/mg). Null if unitless or not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "statistic_type",
+      "description": "Statistic represented by `parameter_value`, based on wording in the passage.",
+      "value_type": "string",
+      "allowed_values": [
+        "arithmetic_mean",
+        "geometric_mean",
+        "median",
+        "individual",
+        "estimated",
+        "therapeutic_range",
+        "unspecified"
+      ]
+    },
+    {
+      "name": "oral_dose",
+      "description": "Oral dose and regimen as stated, including units and frequency when available (e.g., 25 mg, 10 mg/kg in-feed, 100 mg BID, 4×10 mg tablets). Null if not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "study_context",
+      "description": "Routine experimental context: species/population, plasma/serum/blood matrix, formulation, fed/fasted state, treatment arm, study day, sample size, single vs repeated dose.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "comparator_exposure",
+      "description": "For direct oral-vs-IV or test-vs-reference comparisons, summarize comparator route/condition, comparator metric/value/units, and ratio/bioavailability if stated. Null if no comparator is reported.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Non-standard conditions that materially modify interpretation of oral exposure (e.g., absorption enhancer, inhibitor coadministration, disease/knockout model, colonic/surgical delivery, administered as prodrug). Null for standard or unspecified conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

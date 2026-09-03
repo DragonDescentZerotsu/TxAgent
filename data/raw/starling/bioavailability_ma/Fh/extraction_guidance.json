@@ -1,0 +1,73 @@
+{
+  "task": "Find all small molecules mentioned in PubMed for which hepatic escape factors affecting oral bioavailability have been experimentally reported, including intrinsic clearance, hepatic clearance, extraction ratio, liver microsomal stability, hepatocyte stability, S9 stability, metabolic half-life, substrate depletion, CYP/UGT metabolism, hepatic first-pass metabolism, or parent-drug metabolic stability.",
+  "task_instantiation": "Extract experimental reports about hepatic metabolic disposition/clearance of small molecules that can affect hepatic escape and oral bioavailability. Create one record for each small molecule (or explicitly named isomer/metabolite form) × distinct hepatic escape metric × distinct experimental condition/value. In scope: experimentally measured, calculated from experimental kinetic data, or experimentally scaled/projected values for intrinsic clearance (CLint, CLint,u), hepatic/metabolic clearance, extraction ratio, liver microsomal/hepatocyte/S9 stability, metabolic half-life, parent-drug depletion/substrate-depletion clearance, CYP- or UGT-mediated metabolism/clearance/enzyme attribution, and hepatic first-pass metabolism. Include quantitative values from text, tables, and figure captions; also include qualitative enzyme/pathway attribution only when it directly states the small molecule is metabolized by, cleared by, or is a substrate of CYP/UGT/hepatic metabolism. Out of scope: general pharmacokinetic parameters not specifically hepatic/metabolic (AUC, Cmax, renal clearance, total plasma clearance unless explicitly hepatic), oral bioavailability values without a hepatic clearance/first-pass/metabolism factor, intestinal absorption/permeability/efflux alone, metabolite concentration or formation Km/Vmax without clearance/stability or enzyme-attribution relevance, plasma protein binding or microsomal fraction unbound alone, toxicity/efficacy, and non-hepatic tissues unless directly compared to hepatic metabolism. Use the top-level global_identifier for the small molecule; do not create records for proteins/genes/diseases as primary entities. If a passage reports a class-level claim for a small-molecule class, extract it using the class entity if available. For ranges or paired comparisons, make separate records when individual molecule-specific values are given or inferable from 'respectively'; otherwise make one record for the molecule/class with the range in `reported_value`. Comparatives without an absolute value are in scope only if they state a hepatic clearance/stability direction relevant to the molecule; put the comparison in `extra_details`. Assume standard experimental/physiological conditions by default; put genuinely non-standard or interpretation-changing conditions (e.g., disease/knockout animals, coadministered inhibitors, unusual formulation, hypoxia/induced enzymes) in `qualifying_conditions`. Routine parameters such as species, assay system, route used to derive clearance, donor pool, incubation method, dose, time, cell density, and scaling model should be captured in the structured fields or `extra_details`, not `qualifying_conditions`, unless they are exceptional.",
+  "schema_spec": [
+    {
+      "name": "metric_type",
+      "description": "Type of hepatic escape factor reported for the molecule. Choose the closest category; use cyp_metabolism/ugt_metabolism for enzyme/pathway attribution or enzyme-specific clearance.",
+      "value_type": "string",
+      "allowed_values": [
+        "intrinsic_clearance",
+        "hepatic_clearance",
+        "extraction_ratio",
+        "microsomal_stability",
+        "hepatocyte_stability",
+        "s9_stability",
+        "metabolic_half_life",
+        "substrate_depletion",
+        "cyp_metabolism",
+        "ugt_metabolism",
+        "hepatic_first_pass_metabolism",
+        "parent_drug_metabolic_stability"
+      ]
+    },
+    {
+      "name": "assay_system",
+      "description": "Experimental or scaled system used, e.g. human liver microsomes, rat hepatocytes, liver S9, recombinant CYP, in vivo hepatic clearance, PBPK-scaled in vitro data. Null if not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "species",
+      "description": "Species/source of liver material or in vivo study, e.g. human, rat, mouse, dog; include strain if stated. Null if not stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "molecular_form",
+      "description": "Specific form of the primary molecule if stated, such as isomer/enantiomer, salt, parent drug, or named metabolite; null for the unqualified molecule.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "reported_value",
+      "description": "Exact reported numeric, range, inequality, relative, or qualitative result for the metric, preserving mean±SD/SEM and symbols where present. Null for purely qualitative enzyme/pathway attribution without a value.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "reported_units",
+      "description": "Units for `reported_value`, exactly as stated or normalized, e.g. mL/min/kg, µL/min/mg protein, µL/min/10^6 cells, %, min. Null if unitless or qualitative.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "enzyme_or_pathway",
+      "description": "CYP/UGT enzyme isoform(s) or metabolic pathway/reaction named as mediating the hepatic metabolism or clearance, e.g. CYP3A4, CYP2C19, UGT, glucuronidation, sulfation. Null if none stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Non-standard conditions that materially qualify generalization of the claim, such as disease/knockout model, enzyme induction/inhibition, coadministered inhibitor, hypoxia, special formulation, or other exceptional manipulation. Null for standard or unspecified conditions.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

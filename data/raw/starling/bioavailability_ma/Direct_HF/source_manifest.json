@@ -1,0 +1,37 @@
+{
+  "artifact_version": "bioavailability_ma.direct_hf_complete_source.v1",
+  "dataset": "starling-labs/Oral_Bioavailability",
+  "revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
+  "split": "train",
+  "records": 163815,
+  "source_index_contract": "unique contiguous integers 0..163814",
+  "records_parquet": {
+    "path": "records.parquet",
+    "sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+    "bytes": 12693204,
+    "compression": "Parquet Zstandard level 9"
+  },
+  "schema": [
+    "source_index",
+    "pmid",
+    "molecule_name",
+    "smiles",
+    "support_text",
+    "oral_bioavailability_value",
+    "bioavailability_report_type",
+    "species_or_population",
+    "dose",
+    "oral_exposure_mode",
+    "qualifying_conditions",
+    "comparator",
+    "extra_details"
+  ],
+  "semantics": {
+    "complete_source": true,
+    "historical_kept_dropped_partition": false,
+    "historical_preparation_reason_included": false,
+    "row_filtering": false,
+    "text_normalization": false,
+    "factual_columns_removed": false
+  }
+}

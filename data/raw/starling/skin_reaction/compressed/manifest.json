@@ -1,0 +1,62 @@
+{
+  "sources": [
+    {
+      "authoritative_path": "skin_reaction/direct_skin_reaction/extractions.parquet",
+      "authoritative_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+      "parts": [
+        {
+          "bytes": 5661114,
+          "name": "direct_skin_reaction.parquet",
+          "sha256": "993af485e885cf43c0cd249b81301b5caae6afa63e330d0c06c0b95f8a63fb91"
+        }
+      ],
+      "rows": 66597,
+      "source_id": "direct_skin_reaction",
+      "task_id": "skin_reaction"
+    },
+    {
+      "authoritative_path": "skin_reaction/phototoxicity_irritation_local_damage/extractions.parquet",
+      "authoritative_sha256": "fe6d272c5b0a3a7e244f123e1c810ef56c21c919f40d3ed44a6563c7da53875a",
+      "parts": [
+        {
+          "bytes": 71328249,
+          "name": "phototoxicity_irritation_local_damage.parquet",
+          "sha256": "bdcef1d38e2a984ab77cc072cfd72ff948acf7a92f39ef90cb93b0af921b3bcd"
+        }
+      ],
+      "rows": 382726,
+      "source_id": "phototoxicity_irritation_local_damage",
+      "task_id": "skin_reaction"
+    },
+    {
+      "authoritative_path": "skin_reaction/sensitization_aop/extractions.parquet",
+      "authoritative_sha256": "821b35a0a56ddbac849af97ebf622e38d2331a81a99f69306a7ddd4c39bd9a12",
+      "parts": [
+        {
+          "bytes": 4373978,
+          "name": "sensitization_aop.parquet",
+          "sha256": "b5111875bc357fc6c87c7f9b92551e6f9cc943c4cfad65e4109b05736ed536a4"
+        }
+      ],
+      "rows": 45985,
+      "source_id": "sensitization_aop",
+      "task_id": "skin_reaction"
+    },
+    {
+      "authoritative_path": "skin_reaction/skin_exposure/extractions.parquet",
+      "authoritative_sha256": "e2ba14d68a2235e984b3ee84b05e7aeb03920a46a4cd34122280385267399e15",
+      "parts": [
+        {
+          "bytes": 25684993,
+          "name": "skin_exposure.parquet",
+          "sha256": "63d3d1f114dc18467bcaf7e1f25bc16298a9d33a5005b221b51fff1bc16af52e"
+        }
+      ],
+      "rows": 311834,
+      "source_id": "skin_exposure",
+      "task_id": "skin_reaction"
+    }
+  ],
+  "task_id": "skin_reaction",
+  "version": "starling_compressed_mirrors.v1"
+}

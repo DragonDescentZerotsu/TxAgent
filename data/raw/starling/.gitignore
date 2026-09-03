@@ -1,0 +1,8 @@
+# Reconstruct these >100,000,000-byte sources from the tracked compressed parts.
+/ames/ames_v2/extractions.parquet
+/ames/ames_v3/extractions.parquet
+/carcinogens/carcinogens_v1/extractions.parquet
+/carcinogens/carcinogens_v2/extractions.parquet
+/carcinogens/carcinogens_v3/extractions.parquet
+/carcinogens/carcinogens_v5/extractions.parquet
+/dili/dili_v5/extractions.parquet

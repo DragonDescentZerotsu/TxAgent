@@ -1,0 +1,118 @@
+{
+  "filters": [
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "phototoxicity"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "A named compound was evaluated experimentally for phototoxicity or photocytotoxicity after UVA or UVB exposure, with light and dark controls, neutral red uptake viability, reactive oxygen species, erythema, or photopatch responses reported.",
+      "estimated_count": 53269,
+      "precision_estimate": 0.9333
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "3T3"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "The Balb/c 3T3 neutral red uptake phototoxicity assay compared chemical concentration-response curves with and without UVA irradiation and reported IC50, photo-irritation factor, or mean photo effect.",
+      "estimated_count": 466128,
+      "precision_estimate": 0.8333
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "skin irritation",
+          "skin corrosion"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "The test substance was applied to reconstructed human epidermis, cultured skin, animal skin, or a controlled human patch site, and irritation or corrosion was quantified by viability, erythema, edema, cytokine release, histology, or tissue damage.",
+      "estimated_count": 32281,
+      "precision_estimate": 0.8
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "keratinocyte"
+        ],
+        [
+          "cytotoxicity",
+          "reactive oxygen species",
+          "inflammatory response"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Exposure of keratinocytes to the named chemical caused concentration-dependent loss of viability, membrane damage, oxidative stress, reactive oxygen species, apoptosis, or inflammatory cytokine release such as IL-1 alpha.",
+      "estimated_count": 96375,
+      "precision_estimate": 0.8667
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "skin",
+          "epidermis"
+        ],
+        [
+          "tissue injury",
+          "necrosis",
+          "erythema"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "Local application or exposure to the named chemical produced dose-dependent injury at skin, epidermal, mucosal, injection, or implantation sites, measured as erythema, edema, necrosis, ulceration, histopathology, biomarkers, or tissue viability.",
+      "estimated_count": 3919560,
+      "precision_estimate": 0.9333
+    },
+    {
+      "entity_groups": [
+        [
+          "SmallMolecule",
+          "SmallMoleculeClass"
+        ],
+        [
+          "epidermis",
+          "keratinocyte"
+        ],
+        [
+          "MTT assay",
+          "interleukin-1 alpha",
+          "EpiSkin"
+        ]
+      ],
+      "expand_entities": true,
+      "semantic_query": "In a reconstructed human epidermis model such as EpiSkin, EpiDerm, SkinEthic, or LabCyte, the test chemical was classified for irritation or corrosion using MTT tissue viability, IL-1 alpha release, histology, and exposure-time thresholds.",
+      "estimated_count": 14797,
+      "precision_estimate": 0.6333
+    }
+  ],
+  "window_entity_groups": [
+    [
+      "SmallMolecule",
+      "SmallMoleculeClass"
+    ]
+  ]
+}

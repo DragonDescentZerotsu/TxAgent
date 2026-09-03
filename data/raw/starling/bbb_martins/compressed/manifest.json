@@ -1,0 +1,62 @@
+{
+  "sources": [
+    {
+      "authoritative_path": "bbb_martins/Direct_BBB/records.parquet",
+      "authoritative_sha256": "7fcb0628df2ea67c3e050e2151248ebc059cfa678f8174af196ac24835ce7db4",
+      "parts": [
+        {
+          "bytes": 27576685,
+          "name": "Direct_BBB.parquet",
+          "sha256": "b49c499ab56d7168776f58eabf21a34046bcba4fd82f7b9489ca31a5e8a3b28b"
+        }
+      ],
+      "rows": 304845,
+      "source_id": "direct_bbb",
+      "task_id": "bbb_martins"
+    },
+    {
+      "authoritative_path": "bbb_martins/efflux_transport/extractions.parquet",
+      "authoritative_sha256": "9adcfa03a13aee25ddca3be610fa006620962a3237fb00b8848c828e54aa25dd",
+      "parts": [
+        {
+          "bytes": 19022377,
+          "name": "efflux_transport.parquet",
+          "sha256": "bc023d28552932858d7cc33b92bbe566c7f6320a7d0147fc46b81d8c04c6b2e9"
+        }
+      ],
+      "rows": 191262,
+      "source_id": "efflux_transport",
+      "task_id": "bbb_martins"
+    },
+    {
+      "authoritative_path": "bbb_martins/influx_transport/extractions.parquet",
+      "authoritative_sha256": "b57c1ccdf99c1f86ccf0c154f68a139442354962590bf56f70395c71c7572199",
+      "parts": [
+        {
+          "bytes": 10591299,
+          "name": "influx_transport.parquet",
+          "sha256": "fb7a681c346b256f2c25ad72b625a31f83fadce2493ecdf814ae971997d85df4"
+        }
+      ],
+      "rows": 75720,
+      "source_id": "influx_transport",
+      "task_id": "bbb_martins"
+    },
+    {
+      "authoritative_path": "bbb_martins/passive_permeability/extractions.parquet",
+      "authoritative_sha256": "7efb1118dd6a8e573fa451ee501d9fb5e7b702c7ee8670cab035ee4ec09aacb3",
+      "parts": [
+        {
+          "bytes": 772381,
+          "name": "passive_permeability.parquet",
+          "sha256": "7efb1118dd6a8e573fa451ee501d9fb5e7b702c7ee8670cab035ee4ec09aacb3"
+        }
+      ],
+      "rows": 10119,
+      "source_id": "passive_permeability",
+      "task_id": "bbb_martins"
+    }
+  ],
+  "task_id": "bbb_martins",
+  "version": "starling_compressed_mirrors.v1"
+}
