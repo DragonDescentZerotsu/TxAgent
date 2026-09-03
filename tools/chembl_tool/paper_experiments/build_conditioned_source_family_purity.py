@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import partial
 import json
 from pathlib import Path
@@ -28,6 +28,9 @@ from tools.chembl_tool.common.source_family_purity import (
     FamilyMove,
     audit_exact_voter_membership,
 )
+from tools.chembl_tool.common.starling.current_retrieval_artifacts import (
+    current_records_path,
+)
 from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
     DEFAULT_CONDITION_REVIEW as SKIN_CONDITION_REVIEW,
     DIRECT_GROUP as SKIN_DIRECT_GROUP,
@@ -39,10 +42,19 @@ from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
 
 
 PURITY_VERSION = "conditioned_source_family_purity.v1"
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
     "source_family_purity_v2"
 )
+
+
+def _project_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return str(resolved)
 
 
 @dataclass(frozen=True)
@@ -60,10 +72,7 @@ def _skin_spec(condition_review: Path = SKIN_CONDITION_REVIEW) -> tuple[PuritySp
     voters = load_skin_voter_source_indices(condition_review=condition_review)
     return PuritySpec(
         task="skin_reaction",
-        input_records=Path(
-            "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/"
-            "evidence_library/starling_normalized_v7/03_records/records.parquet"
-        ),
+        input_records=current_records_path("skin_reaction"),
         direct_group=SKIN_DIRECT_GROUP,
         classify=partial(
             skin_vote_pure_family_move,
@@ -235,7 +244,7 @@ def build_overlay(
         "purity_version": spec.purity_version,
         "task": spec.task,
         "direct_group": spec.direct_group,
-        "input_records": str(source),
+        "input_records": _project_path(source),
         "input_records_sha256": sha256_file(source),
         "output_records": str(output_path.resolve()),
         "output_records_sha256": sha256_file(output_path),
@@ -339,14 +348,28 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--task", choices=["all", *SPECS], default="all")
     parser.add_argument("--output-root", default=str(DEFAULT_ROOT))
-    parser.add_argument("--batch-size", type=int, default=10_000)
+    parser.add_argument(
+        "--input-records",
+        type=Path,
+        help="Override the canonical records path when exactly one task is selected.",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=20_000,
+        help="Parquet batch size; 20,000 reproduces the current Skin overlay bytes.",
+    )
     parser.add_argument(
         "--skin-condition-review", type=Path, default=SKIN_CONDITION_REVIEW
     )
     args = parser.parse_args(argv)
+    if args.input_records and args.task == "all":
+        parser.error("--input-records requires one explicit --task")
     tasks = list(SPECS) if args.task == "all" else [args.task]
     for task in tasks:
         spec, voters = SPECS[task](args.skin_condition_review)
+        if args.input_records:
+            spec = replace(spec, input_records=args.input_records)
         output_dir = Path(args.output_root) / task
         manifest = build_overlay(
             spec,

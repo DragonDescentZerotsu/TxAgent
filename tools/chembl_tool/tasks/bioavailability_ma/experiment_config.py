@@ -1,6 +1,9 @@
 """Paper-facing Bioavailability_Ma retrieval views."""
 
-from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.experiment_retrieval import (
+    SourceExperimentConfig,
+    evidence_family,
+)
 from tools.chembl_tool.common.progressive_assay_reasoning import ProgressiveTaskContract
 from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
     DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
@@ -11,36 +14,35 @@ from tools.chembl_tool.tasks.bioavailability_ma.prompt_profiles import (
 CHEMBL = SourceExperimentConfig(
     source_name="chembl",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Observed.direct_oral_bioavailability",
-            "Observed",
+        evidence_family(
             "direct_oral_bioavailability",
-            source_groups=("Tier 1.direct_absolute_bioavailability",),
+            family_label="Observed",
+            source_group_ids=("Tier 1.direct_absolute_bioavailability",),
+            legacy_output_group_id="Observed.direct_oral_bioavailability",
         ),
     ),
     mechanism_groups=(
-        EvidenceGroupSpec(
-            "Observed.direct_oral_bioavailability",
-            "Observed",
+        evidence_family(
             "direct_oral_bioavailability",
-            source_groups=("Tier 1.direct_absolute_bioavailability",),
+            family_label="Observed",
+            source_group_ids=("Tier 1.direct_absolute_bioavailability",),
+            legacy_output_group_id="Observed.direct_oral_bioavailability",
         ),
-        EvidenceGroupSpec(
-            "Observed.oral_auc_cmax_exposure",
-            "Observed",
+        evidence_family(
             "oral_auc_cmax_exposure",
-            source_groups=(
+            family_label="Observed",
+            source_group_ids=(
                 "Tier 2.oral_auc_exposure",
                 "Tier 2.oral_cmax_exposure",
                 "Tier 6.food_effect_or_fed_fasted",
                 "Tier 6.relative_bioavailability_or_formulation",
             ),
+            legacy_output_group_id="Observed.oral_auc_cmax_exposure",
         ),
-        EvidenceGroupSpec(
-            "Fa.absorption_solubility_permeability",
-            "Fa",
+        evidence_family(
             "absorption_solubility_permeability",
-            source_groups=(
+            family_label="Fa",
+            source_group_ids=(
                 "Tier 2.absorption_fraction_or_hia",
                 "Tier 2.in_vivo_intestinal_permeability",
                 "Tier 3.cell_permeability_papp",
@@ -49,27 +51,28 @@ CHEMBL = SourceExperimentConfig(
                 "Tier 4.gi_or_chemical_stability",
                 "Tier 4.solubility",
             ),
+            legacy_output_group_id="Fa.absorption_solubility_permeability",
         ),
-        EvidenceGroupSpec(
-            "Fg.gut_wall_efflux_intestinal_metabolism",
-            "Fg",
+        evidence_family(
             "gut_wall_efflux_intestinal_metabolism",
-            source_groups=(
+            family_label="Fg",
+            source_group_ids=(
                 "Tier 3.cell_bidirectional_efflux_ratio",
                 "Tier 3.cell_secretory_permeability",
                 "Tier 3.transporter_inhibition_or_binding",
                 "Tier 3.transporter_substrate_or_efflux",
             ),
+            legacy_output_group_id="Fg.gut_wall_efflux_intestinal_metabolism",
         ),
-        EvidenceGroupSpec(
-            "Fh.hepatic_clearance_metabolic_stability",
-            "Fh",
+        evidence_family(
             "hepatic_clearance_metabolic_stability",
-            source_groups=(
+            family_label="Fh",
+            source_group_ids=(
                 "Tier 5.first_pass_or_extraction",
                 "Tier 5.intrinsic_or_hepatic_clearance",
                 "Tier 5.metabolic_stability",
             ),
+            legacy_output_group_id="Fh.hepatic_clearance_metabolic_stability",
         ),
     ),
 )
@@ -77,27 +80,49 @@ CHEMBL = SourceExperimentConfig(
 STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Observed.direct_oral_bioavailability",
-            "Observed",
+        evidence_family(
             "direct_oral_bioavailability",
-            source_groups=("Observed.direct_oral_bioavailability",),
+            family_label="Observed",
+            source_group_ids=("Observed.direct_oral_bioavailability",),
         ),
     ),
     mechanism_groups=tuple(
-        EvidenceGroupSpec(
-            group_id,
-            group_id.split(".", 1)[0],
-            group_id.split(".", 1)[1],
-            source_groups=(group_id,),
+        evidence_family(
+            family_key,
+            family_label=family_label,
+            source_group_ids=(source_group_id,),
         )
-        for group_id in (
-            "Observed.direct_oral_bioavailability",
-            "Observed.nondirect_oral_bioavailability",
-            "Observed.oral_auc_cmax_exposure",
-            "Fa.absorption_solubility_permeability",
-            "Fg.gut_wall_efflux_intestinal_metabolism",
-            "Fh.hepatic_clearance_metabolic_stability",
+        for source_group_id, family_key, family_label in (
+            (
+                "Observed.direct_oral_bioavailability",
+                "direct_oral_bioavailability",
+                "Observed",
+            ),
+            (
+                "Observed.nondirect_oral_bioavailability",
+                "nondirect_oral_bioavailability",
+                "Observed",
+            ),
+            (
+                "Observed.oral_auc_cmax_exposure",
+                "oral_auc_cmax_exposure",
+                "Observed",
+            ),
+            (
+                "Fa.absorption_solubility_permeability",
+                "absorption_solubility_permeability",
+                "Fa",
+            ),
+            (
+                "Fg.gut_wall_efflux_intestinal_metabolism",
+                "gut_wall_efflux_intestinal_metabolism",
+                "Fg",
+            ),
+            (
+                "Fh.hepatic_clearance_metabolic_stability",
+                "hepatic_clearance_metabolic_stability",
+                "Fh",
+            ),
         )
     ),
 )

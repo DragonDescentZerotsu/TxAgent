@@ -1,6 +1,6 @@
 {
   "schema_version": "paper_artifact_registry.v2",
-  "updated_at": "2026-09-02",
+  "updated_at": "2026-09-03",
   "benchmark": {
     "root": "data/conditioned_benchmark",
     "contract": "conditioned_benchmark.v1",
@@ -9,6 +9,16 @@
     "random_split_receipt": "data/conditioned_benchmark/random_split_receipt.json",
     "split_schemes": ["scaffold", "random"],
     "construction_contract": "tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md"
+  },
+  "retrieval_build": {
+    "status": "current_latest_only_hash_verified",
+    "external_checkout_required": false,
+    "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+    "build_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
+    "documentation": "tools/chembl_tool/paper_experiments/CURRENT_STARLING_RETRIEVAL.md",
+    "rebuilder": "tools/chembl_tool/paper_experiments/rebuild_current_starling_retrieval.py",
+    "share_exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
+    "share_dataset": "artifacts/chembl_tool/starling/current_level_records"
   },
   "paper_axes": {
     "retrieval_sources": ["chembl", "starling"],
@@ -98,15 +108,6 @@
         "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
         "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
       },
-      "excluded_invalid_root": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
-      "bbb_excluded_invalid_roots": [
-        "outputs/paper/starling_conditioned_assay_progressive_visible_v8_global_molecule_source_purity_v5/scaffold_valid_deepseek_v4_flash_0731",
-        "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731/bbb"
-      ],
-      "bbb_historical_v5_roots": [
-        "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bbb",
-        "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/scaffold_valid_deepseek_v4_flash_0731/bbb"
-      ],
       "tool_prefetch_receipts": {
         "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_8_4_tool_prefetch_fixed.json"
       },
@@ -119,7 +120,6 @@
       "summary": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/summary.json",
       "metrics_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_metrics.tsv",
       "references_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_references.tsv",
-      "previous_four_two_vs_eight_four_analysis_root": "outputs/paper/analysis/progressive_record_card_budget_4_2_vs_8_4",
       "analysis_scope": "One current-lineage figure covers every available 2/1, 4/2, and 8/4 curve plus matched None and baseline references. Exact-contract reruns are plotted as their arithmetic mean with observed min-max whiskers; Bioavailability 8/4 is the only replicated curve. Current strict-L1 Skin has no 8/4 run and is explicitly shown as unavailable rather than filled from historical broad-L1 output.",
       "performance_references": {
         "none": {

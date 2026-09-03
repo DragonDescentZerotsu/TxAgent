@@ -1,22 +1,23 @@
 """Paper-facing ClinTox retrieval views."""
 
-from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.experiment_retrieval import (
+    SourceExperimentConfig,
+    evidence_family,
+)
 
 
 CHEMBL = SourceExperimentConfig(
     source_name="chembl",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.clinical_toxicity",
-            "Tier 1",
+        evidence_family(
             "direct_clinical_toxicity",
+            family_label="Tier 1",
             source_group_prefixes=("Tier 1.",),
+            legacy_output_group_id="Direct.clinical_toxicity",
         ),
     ),
     mechanism_groups=tuple(
-        EvidenceGroupSpec(
-            f"Mechanism.tier_{tier}",
-            f"Tier {tier}",
+        evidence_family(
             {
                 1: "clinical_human_safety",
                 2: "in_vivo_toxicology",
@@ -26,7 +27,9 @@ CHEMBL = SourceExperimentConfig(
                 6: "general_cytotoxicity",
                 7: "off_target_ddi_exposure",
             }[tier],
+            family_label=f"Tier {tier}",
             source_group_prefixes=(f"Tier {tier}.",),
+            legacy_output_group_id=f"Mechanism.tier_{tier}",
         )
         for tier in range(1, 8)
     ),
@@ -35,32 +38,29 @@ CHEMBL = SourceExperimentConfig(
 STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.clinical_trial_failure",
-            "Direct",
+        evidence_family(
             "clinical_trial_failure",
-            source_groups=("Direct.clinical_trial_failure",),
+            family_label="Direct",
+            source_group_ids=("Direct.clinical_trial_failure",),
         ),
     ),
     mechanism_groups=(
-        EvidenceGroupSpec(
-            "Direct.clinical_trial_failure",
-            "Direct",
+        evidence_family(
             "clinical_trial_failure",
-            source_groups=("Direct.clinical_trial_failure",),
+            family_label="Direct",
+            source_group_ids=("Direct.clinical_trial_failure",),
         ),
-        EvidenceGroupSpec(
-            "Clinical.clinical_human_safety",
-            "Clinical",
+        evidence_family(
             "clinical_human_safety",
-            source_groups=("Mechanism.clinical_human_safety",),
+            family_label="Clinical",
+            source_group_ids=("Mechanism.clinical_human_safety",),
+            legacy_output_group_id="Clinical.clinical_human_safety",
         ),
         *(
-            EvidenceGroupSpec(
-                f"Mechanism.{family}",
-                "Mechanism",
+            evidence_family(
                 family,
-                source_groups=(f"Mechanism.{family}",),
+                family_label="Mechanism",
+                source_group_ids=(f"Mechanism.{family}",),
             )
             for family in (
                 "in_vivo_toxicology",

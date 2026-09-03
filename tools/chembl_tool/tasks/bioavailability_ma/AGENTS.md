@@ -231,8 +231,9 @@ Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 
 Conditioned assay-family curve 不得丢弃 nondirect HF group。该 source 没有原生 assay-system 字段，使用
 `build_nondirect_assay_context.py` 根据 report type、粗粒度 population 和 oral exposure mode 构建版本化、
 bounded、可解释的 assay-context overlay；不得按 PMID、molecule 或单条 record 建 assay。修复后的 family
-catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage，完整路径和运行合同见
-`tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage。current build/path/share 合同见
+`tools/chembl_tool/paper_experiments/CURRENT_STARLING_RETRIEVAL.md`，protocol 见
+`tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`，结果状态见 registry 和 `RESULTS.md`。
 
 ## Source ingestion rules
 

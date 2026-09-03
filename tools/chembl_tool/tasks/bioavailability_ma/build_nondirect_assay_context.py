@@ -20,6 +20,9 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
+from tools.chembl_tool.common.starling.current_retrieval_artifacts import (
+    current_records_path,
+)
 from tools.chembl_tool.tasks.bioavailability_ma.source_identity_review import (
     reviewed_hf_identity_exclusion_reason,
 )
@@ -27,14 +30,20 @@ from tools.chembl_tool.tasks.bioavailability_ma.source_identity_review import (
 
 CONTEXT_VERSION = "bioavailability_nondirect_assay_context.v1"
 SOURCE_GROUP = "Observed.nondirect_oral_bioavailability"
-DEFAULT_INPUT = Path(
-    "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/bioavailability_ma/"
-    "evidence_library/starling_normalized_v7/03_records/records.parquet"
-)
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_INPUT = current_records_path("bioavailability_ma")
 DEFAULT_OUTPUT_DIR = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
     "bioavailability_nondirect_assay_context_v1"
 )
+
+
+def _project_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return str(resolved)
 
 _MISSING = {"", "<na>", "n/a", "na", "nan", "none", "null", "unknown", "__unknown__"}
 
@@ -201,7 +210,7 @@ def build_overlay(input_path: Path, output_dir: Path) -> dict[str, Any]:
     manifest = {
         "context_version": CONTEXT_VERSION,
         "source_group": SOURCE_GROUP,
-        "input_records": str(input_path.resolve()),
+        "input_records": _project_path(input_path),
         "input_records_sha256": sha256_file(input_path),
         "output_records": str(output_path.resolve()),
         "output_records_sha256": sha256_file(output_path),

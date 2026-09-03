@@ -1,0 +1,101 @@
+{
+  "schema_version": "current_starling_records.v1",
+  "updated_at": "2026-09-03",
+  "role": "sole frozen canonical-record inputs for current BBB, Bioavailability, and Skin progressive retrieval",
+  "local_restore_root": "outputs/chembl_tool/starling/current_records",
+  "history": {
+    "canonical_schema": "starling_canonical_record.v7",
+    "source_branch": "origin/joseph",
+    "source_commit": "70750c42035d6bde5ce9504211c4e22ac57e27f8",
+    "source_stage": "starling_normalized_v7/03_records",
+    "source_contract_sha256": {
+      "bbb_martins": "650810d338b1992a15ac8dcd565a97aaefdbe51b6ddb517f601cea392fe3f889",
+      "bioavailability_ma": "ac1145ae4da626d75c1aab29374b4cf951fe540a571a56d2df65c6ac1c80a7bb",
+      "skin_reaction": "40ac8cec4b49479372a668c598b6b7ed612f942881a23590d75d7986e3719c9e"
+    },
+    "selection_reason": "latest normalized and organized source snapshot used to build the current purity overlays",
+    "earlier_record_versions_retained": false
+  },
+  "tasks": {
+    "bbb_martins": {
+      "archive_sha256": "a955bae1ff2e1b68814bf6ebad76c0af5666ecc23bcbc9347b5129bce1aea0ac",
+      "archive_size": 142500785,
+      "records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "records_size": 140655571,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "63117af3983d57bcb49e8a038795cadf6b0da51ca855eb789a323368bd5acc6a",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "d52a80286aded00c3971671e88d37acec679225a5eb48c01d1ac8542220f1078",
+          "size": 52500785
+        }
+      ],
+      "files": [
+        {"path": "duplicates.parquet", "sha256": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084", "size": 27178},
+        {"path": "exclusions.parquet", "sha256": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7", "size": 6262685},
+        {"path": "manifest.json", "sha256": "1c1c794733a23eb0110435cbcaa8b178e99f768c664e549e8653cf7ca12c00ad", "size": 929},
+        {"path": "records.parquet", "sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1", "size": 140655571},
+        {"path": "scalar_distribution.parquet", "sha256": "f4b4da28434c3b93feff97ef769ff8f0d47da47204f29cca4d511a3a571676b4", "size": 419325}
+      ]
+    },
+    "bioavailability_ma": {
+      "archive_sha256": "bc036b79c260b885130d78efc80b91ba5d894e3bf37ca1035b7249d063dc71b4",
+      "archive_size": 104751613,
+      "records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "records_size": 104905183,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "d8f4e34a27f15e90d1bf6cc800ca600a889030fe3ee3d42f133345b9faab629b",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "588fdb9f036ea0a170ac8d477b592a803d277ed81b478b6c2be8be0141c71270",
+          "size": 14751613
+        }
+      ],
+      "files": [
+        {"path": "duplicates.parquet", "sha256": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1", "size": 21501},
+        {"path": "exclusions.parquet", "sha256": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958", "size": 2176106},
+        {"path": "manifest.json", "sha256": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15", "size": 943},
+        {"path": "records.parquet", "sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60", "size": 104905183},
+        {"path": "scalar_distribution.parquet", "sha256": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1", "size": 129611}
+      ]
+    },
+    "skin_reaction": {
+      "archive_sha256": "b8e56c120263e9e107b24375f4e603dc0c5e2640613a551770da17218b2d04ce",
+      "archive_size": 231882324,
+      "records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "records_size": 214931670,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "587f7d221a3b59a19ad6fb1acf4bb3f93b6e5472a48f9c3844e33dd7747b743c",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "20d84b264143255fc23f0868ddcfc27bdfc51f761d81a39a88980b0a66151e62",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0003",
+          "sha256": "7e6b981e28b5afeb95060a3c13f681f11002b00fc556cd43f22c3b5525b1c5a7",
+          "size": 51882324
+        }
+      ],
+      "files": [
+        {"path": "duplicates.parquet", "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386", "size": 51996},
+        {"path": "exclusions.parquet", "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e", "size": 18895455},
+        {"path": "manifest.json", "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b", "size": 934},
+        {"path": "records.parquet", "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697", "size": 214931670},
+        {"path": "scalar_distribution.parquet", "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a", "size": 47760}
+      ]
+    }
+  }
+}

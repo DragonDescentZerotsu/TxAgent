@@ -61,6 +61,8 @@ are provenance only. Runners and plots must use the canonical roots above.
 ### Benchmark and evidence construction
 
 ```text
+tools/chembl_tool/paper_experiments/rebuild_current_starling_retrieval.py
+tools/chembl_tool/paper_experiments/export_current_starling_level_records.py
 tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
 tools/chembl_tool/common/starling/build_conditioned_random_split.py
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
@@ -70,6 +72,19 @@ tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py
 tools/chembl_tool/paper_experiments/build_bbb_source_family_purity.py
 tools/chembl_tool/paper_experiments/build_bioavailability_vote_pure_source.py
 ```
+
+`CURRENT_STARLING_RETRIEVAL.md` 是当前 Starling records、purity overlays、family catalogs 和
+scaffold/random indices 的唯一操作说明。当前 retrieval 只冻结并读取实验实际使用的最新 Stage-03
+canonical snapshot；统一入口负责
+恢复、重建和逐哈希验证，不依赖个人 checkout。该文档也区分静态 record membership、split-specific
+indexed representative cards 和 per-query model-visible cards，并说明 GitHub 协作数据。旧版本号只作为
+run/receipt provenance 保留。
+
+当前 family naming contract 是 `source_group_id -> family_key -> level`。新配置只通过
+`common.experiment_retrieval.evidence_family()` 声明 canonical `family_key` 与 source-native groups；冻结
+artifact 中的 `family_id`/`endpoint_group` 仅由兼容边界保留，跨 ChEMBL/Starling 对齐必须使用
+`family_key`，不能使用 level number 或 `Mechanism.tier_N`。跨 source 对照应直接以 `family_key` join，
+同时保留各 source 自己的 level。
 
 Task-specific voter and source-review entrypoints are indexed in
 `CONDITIONED_BENCHMARK.md`; they are intentionally not duplicated here.
@@ -174,7 +189,7 @@ It distinguishes:
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
-At the 2026-09-02 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
+At the 2026-09-03 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
 runs over the strict-voter-L1 v6 index; its random v6 index is built but still
 requires LLM replay. Skin scaffold-valid has fresh strict-voter-L1 v2 2/1 and
 4/2 runs, while current 8/4 is missing; Skin random remains a stale broad-L1
@@ -189,6 +204,7 @@ rows were removed and must be retrained.
 ## Documentation map
 
 - [Conditioned benchmark contract](../common/starling/CONDITIONED_BENCHMARK.md)
+- [Current Starling data, rebuild, and sharing](CURRENT_STARLING_RETRIEVAL.md)
 - [Pipeline and visibility](PIPELINE.md)
 - [Assay/family-level and progressive retrieval](ASSAY_LEVEL_RETRIEVAL.md)
 - [Current result status](RESULTS.md)

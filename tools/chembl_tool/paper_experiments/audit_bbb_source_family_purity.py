@@ -38,7 +38,7 @@ from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
 
 DEFAULT_RECORDS = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/"
-    "source_overlays/bbb_source_family_purity_v4/records.parquet"
+    "source_overlays/bbb_source_family_purity_v6/records.parquet"
 )
 DEFAULT_OUTPUT_DIR = DEFAULT_RECORDS.parent / "purity_audit"
 AUDIT_VERSION = "bbb_source_family_row_audit.v1"

@@ -1,2 +1,4 @@
 data/starling_data/clintox/**/*.parquet -diff
 data/starling_data/clintox/**/*.tar.gz -diff
+artifacts/chembl_tool/tasks/**/starling_normalized_v7/**/*.zst.part-* -diff
+artifacts/chembl_tool/starling/current_level_records/**/*.parquet -diff

@@ -91,6 +91,8 @@ tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
 tools/chembl_tool/common/starling/build_conditioned_random_split.py
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
+tools/chembl_tool/paper_experiments/rebuild_current_starling_retrieval.py
+tools/chembl_tool/paper_experiments/export_current_starling_level_records.py
 tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
 tools/chembl_tool/paper_experiments/build_conditioned_source_family_purity.py
 tools/chembl_tool/paper_experiments/build_bbb_source_family_purity.py
@@ -111,6 +113,16 @@ baselines/minimol/run_embedding_knn.py
 baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
+
+当前 progressive Starling source 不依赖任何个人 checkout。仓库只冻结 BBB、Bioavailability、Skin 实际使用
+的唯一 Stage-03 records，清单位于 `artifacts/chembl_tool/starling/current_records/manifest.json`；
+`rebuild_current_starling_retrieval.py` 是恢复 records、重建 overlays/catalogs/scaffold+random indices 和 hash
+验证的统一入口。旧 source-purity 版本号只作为已有实验 provenance，不能作为新 run 的替代输入。
+
+Family naming 只保留两层概念身份：overlay `group_id` 是 source-native `source_group_id`，
+`EvidenceGroupSpec.family_key` 是跨 source semantic family；progressive `level` 只是当前配置中的顺序。
+新配置用 `tools.chembl_tool.common.experiment_retrieval.evidence_family()` 声明映射。冻结 artifacts 中的
+`family_id`、`endpoint_group` 和 `Mechanism.tier_N` 是兼容字段，不得作为新的跨 ChEMBL/Starling join key。
 
 `plot_starling_model_comparison.py` 是 source/model/visibility 总图唯一入口；
 `plot_assay_retrieval_curve.py` 是 level curve 与资源统计唯一入口。不得为单个实验新建一次性正式画图模块。

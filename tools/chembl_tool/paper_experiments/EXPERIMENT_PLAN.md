@@ -2,8 +2,9 @@
 
 > 状态说明（2026-08-27）：本文冻结的是第一轮 group-level 矩阵，不再充当最新 benchmark/assay-level
 > 运行入口。当前 benchmark 合同见 `../common/starling/CONDITIONED_BENCHMARK.md`；机器可读结果见
-> `current_conditioned_results.json`；conditioned progressive 协议、source-family purity、最终 valid 曲线和
-> 重画命令见 `ASSAY_LEVEL_RETRIEVAL.md`。`STARLING_BENCHMARK_RESULTS.md` 只保留历史总账。
+> `current_conditioned_results.json`；conditioned progressive 协议和 source-family purity 规则见
+> `ASSAY_LEVEL_RETRIEVAL.md`，current 数据/重建/分享见 `CURRENT_STARLING_RETRIEVAL.md`，最终结果见
+> `RESULTS.md`。`STARLING_BENCHMARK_RESULTS.md` 只保留历史总账。
 
 本文档记录第一轮冻结矩阵的研究问题和运行协议。当前论文范围、入口和 artifact 状态以
 `README.md`、`RESULTS.md` 和 `current_conditioned_results.json` 为准。Visibility 升降原因的集中分析见

@@ -43,8 +43,9 @@ detailed labels 重建 train-only retrieval index。统一合同见
 `tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。
 
 Progressive source-purity v2 将 L1 严格冻结为实际 base voters 加 condition-review accepted records；parent
-后续因 tie 或 agreement gate 被拒绝不撤销 record 的 voter 身份。v2 scaffold/random indices 已构建，旧 v1
-progressive predictions 因使用 broad L1 只保留为历史参考，必须 replay 后才能重新标为 current。
+后续因 tie 或 agreement gate 被拒绝不撤销 record 的 voter 身份。v2 scaffold/random indices 已构建；
+scaffold-valid 2/1 与 4/2 已完成并为 current，8/4 尚未运行。random predictions 仍来自旧 broad-L1 v1，必须
+replay 后才能标为 current。
 
 当前二分类约定：
 

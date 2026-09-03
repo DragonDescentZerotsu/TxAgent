@@ -10,6 +10,7 @@ from tools.chembl_tool.common.evidence_distance import DistanceExpansionConfig
 from tools.chembl_tool.common.experiment_retrieval import (
     EvidenceGroupSpec,
     SourceExperimentConfig,
+    evidence_family,
     flatten_retrieval_groups,
     retrieval_coverage,
     retrieve_group_specs_view,
@@ -34,11 +35,11 @@ def build_prefix_source_config(
         if tree_node.declared_level == "H2" and prefix != "D+C+H1+H2":
             continue
         extension_specs.append(
-            EvidenceGroupSpec(
-                group_id=tree_node.tree_node_id,
-                tier=f"Distance {tree_node.declared_level}",
-                endpoint_group=tree_node.tree_node_id,
-                source_groups=(tree_node.source_group_id,),
+            evidence_family(
+                tree_node.tree_node_id,
+                family_label=f"Distance {tree_node.declared_level}",
+                source_group_ids=(tree_node.source_group_id,),
+                legacy_output_group_id=tree_node.tree_node_id,
             )
         )
     return SourceExperimentConfig(

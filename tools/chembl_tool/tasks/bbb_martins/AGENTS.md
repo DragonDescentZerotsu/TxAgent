@@ -40,12 +40,13 @@ molecule-only、gold-vN 和 selected-vN 路径只是当前 cohort 的 source pro
 精确迁移关系见 `data/conditioned_benchmark/migration_receipt.json`。
 
 完整 progressive valid 使用 audited BBB record-level family overlay。Matched 397-row valid 已完成全部五层和
-五个 baselines、零失败；完整结果只维护在
-`paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。五层固定为
+五个 baselines、零失败；当前结果和 freshness 只维护在 `paper_experiments/RESULTS.md` 与
+`paper_experiments/current_conditioned_results.json`。五层固定为
 direct measured CNS access、central functional/prediction/generic proxy、passive permeability、efflux、influx；
 明确 efflux signal 优先于 uptake/influx，泛化 `ratio` 或 `transporter_mediated` 不构成 family assignment。
 全量 `581,708` rows 的 ledger 和 0-violation gate 位于 source overlay 的 `purity_audit/`。完整构建、index、
-stable-identity retrieval diff/reuse 和运行入口只维护在 `paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+逐层数据与分享入口见 `paper_experiments/CURRENT_STARLING_RETRIEVAL.md`；protocol 和 stable-identity
+retrieval/reuse 规则见 `paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
 涉及 5-FU/5-FC 的 external comparative row 因没有 influx assay 或可复核 experimental measurement，只在
 near-direct 层可见，从未参与 gold vote；influx payload 不得复用该 card。
 

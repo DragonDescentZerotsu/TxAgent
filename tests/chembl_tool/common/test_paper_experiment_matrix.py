@@ -44,7 +44,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
     _llm_query_payload,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLING as BIO_STARLING
-from tools.chembl_tool.tasks.bbb_martins.experiment_config import STARLING as BBB_STARLING
+from tools.chembl_tool.tasks.bbb_martins.experiment_config import (
+    CHEMBL as BBB_CHEMBL,
+    STARLING as BBB_STARLING,
+    STARLING_SOURCE_PURITY as BBB_STARLING_SOURCE_PURITY,
+)
 from tools.chembl_tool.tasks.skin_reaction.experiment_config import (
     CHEMBL as SKIN_CHEMBL,
     STARLING as SKIN_STARLING,
@@ -624,6 +628,27 @@ def test_skin_paper_view_excludes_standalone_weak_context_branch():
         "skin_exposure",
     ]
     assert "context_background" not in endpoint_groups
+
+
+def test_cross_source_alignment_uses_family_key_not_level_number():
+    from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
+        CHEMBL as BIO_CHEMBL,
+    )
+
+    def levels(config):
+        return {
+            family.family_key: level
+            for level, family in enumerate(config.mechanism_groups, start=1)
+        }
+
+    assert levels(BBB_CHEMBL)["passive_permeability"] == 2
+    assert levels(BBB_STARLING_SOURCE_PURITY)["passive_permeability"] == 3
+    assert levels(BIO_CHEMBL)["oral_auc_cmax_exposure"] == 2
+    assert levels(BIO_STARLING)["oral_auc_cmax_exposure"] == 3
+    assert levels(SKIN_CHEMBL)["sensitisation_aop"] == 2
+    assert levels(SKIN_STARLING)["sensitisation_aop"] == 3
+    assert "nonvoter_sensitization_outcome" not in levels(SKIN_CHEMBL)
+    assert "nonvoter_sensitization_outcome" in levels(SKIN_STARLING)
 
 
 def test_bioavailability_starling_mechanism_groups_are_reiterable():

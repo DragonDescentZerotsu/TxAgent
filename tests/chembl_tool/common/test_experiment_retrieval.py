@@ -7,6 +7,7 @@ import pytest
 from tools.chembl_tool.common.experiment_retrieval import (
     EvidenceGroupSpec,
     SourceExperimentConfig,
+    evidence_family,
     retrieve_experiment_view,
 )
 from tools.chembl_tool.common.retrieval_features import (
@@ -58,6 +59,34 @@ CONFIG = SourceExperimentConfig(
         ),
     ),
 )
+
+
+def test_canonical_family_api_preserves_legacy_serialized_names():
+    family = evidence_family(
+        "passive_permeability",
+        family_label="Passive permeability",
+        source_group_ids=("Mechanism.passive_permeability",),
+        legacy_output_group_id="Mechanism.tier_2",
+    )
+
+    assert family.family_key == "passive_permeability"
+    assert family.family_label == "Passive permeability"
+    assert family.source_group_ids == ("Mechanism.passive_permeability",)
+    assert family.output_group_id == "Mechanism.tier_2"
+    assert family.endpoint_group == "passive_permeability"
+    assert family.group_id == "Mechanism.tier_2"
+
+
+def test_source_config_rejects_duplicate_canonical_family_keys():
+    with pytest.raises(ValueError, match="duplicate canonical family_key"):
+        SourceExperimentConfig(
+            source_name="ambiguous",
+            direct_groups=(),
+            mechanism_groups=(
+                evidence_family("same", source_group_ids=("source.one",)),
+                evidence_family("same", source_group_ids=("source.two",)),
+            ),
+        )
 
 
 def test_none_mode_does_not_need_an_index():

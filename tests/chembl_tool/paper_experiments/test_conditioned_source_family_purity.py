@@ -4,12 +4,10 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from tools.chembl_tool.common.starling.benchmark_dataset import LabeledSourceRecord
-from tools.chembl_tool.common.source_family_purity import audit_exact_voter_membership
-from tools.chembl_tool.paper_experiments.audit_source_family_purity_gold_impact import (
-    _skin_binary_label,
-    _vote,
+from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
+    aggregate_reviewed_votes,
 )
+from tools.chembl_tool.common.source_family_purity import audit_exact_voter_membership
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
     PURITY_VERSION,
     PuritySpec,
@@ -25,6 +23,9 @@ from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
     NEAR_DIRECT_GROUP as SKIN_NEAR_DIRECT_GROUP,
     upstream_source_index,
     vote_pure_family_move as skin_vote_pure_family_move,
+)
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    normalized_direct_label,
 )
 
 
@@ -83,15 +84,31 @@ def test_overlay_changes_only_family_and_appends_audit(tmp_path: Path):
 
 
 def test_gold_sensitivity_vote_uses_frozen_record_agreement_contract():
-    rows = [
-        LabeledSourceRecord("CCO", label, "source")
-        for label in [1, 1, 1, 0]
-    ]
-    assert _vote(rows)["label"] == 1
-    assert _vote([*rows, LabeledSourceRecord("CCO", 0, "candidate")])["label"] is None
-    assert _skin_binary_label("positive") == 1
-    assert _skin_binary_label("negative") == 0
-    assert _skin_binary_label("inconclusive") is None
+    def row(label: int, index: int) -> dict:
+        return {
+            "drug": "CCO",
+            "Y": label,
+            "bemis_murcko_scaffold": "",
+            "condition_atoms": ["fed"],
+            "source_record_id": f"r{index}",
+            "label_method": "test",
+            "reviewer": "test",
+        }
+
+    rows = [row(label, index) for index, label in enumerate([1, 1, 1, 0])]
+    accepted, rejected = aggregate_reviewed_votes(
+        {("parent", "fed"): rows}, agreement_threshold=0.70
+    )
+    assert accepted[0]["Y"] == 1
+    assert rejected == []
+    accepted, rejected = aggregate_reviewed_votes(
+        {("parent", "fed"): [*rows, row(0, 4)]}, agreement_threshold=0.70
+    )
+    assert accepted == []
+    assert rejected[0]["drop_reason"] == "parent_condition_agreement_below_threshold"
+    assert normalized_direct_label("positive") == "positive"
+    assert normalized_direct_label("negative") == "negative"
+    assert normalized_direct_label("inconclusive") == "inconclusive"
 
 
 def test_skin_l1_uses_exact_source_voter_membership():

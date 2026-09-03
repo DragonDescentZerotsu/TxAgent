@@ -1,32 +1,31 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-02.
+Updated: 2026-09-03.
 
-The repository retains traces needed to reproduce the paper result families,
-not every smoke, retry, or abandoned method-development branch. The canonical
-allowlist is generated from
-`tools/chembl_tool/paper_experiments/current_conditioned_results.json`.
+Retain evidence needed to reproduce the paper result families, not every smoke,
+retry, or abandoned method branch. The canonical allowlist of result roots is
+`current_conditioned_results.json`; do not duplicate that path list here.
+Current retrieval inputs are independently locked by
+`artifacts/chembl_tool/starling/current_records/manifest.json` and
+`current_starling_retrieval.json`.
 
-## What must be retained
+## Retain
 
 ### Benchmark and source provenance
 
-Retain the full active benchmark, not only minimal train/valid/test rows:
-
-```text
-data/conditioned_benchmark/
-data/starling_data/<task>/<current canonical source>/
-```
-
-Required benchmark artifacts are enumerated in
-`tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`: manifests,
+Retain the complete `data/conditioned_benchmark/` contract, including manifests,
 migration/random receipts, detailed molecule-condition labels, split summaries,
 condition distributions, and task-specific accepted/rejected/conflict/review
-ledgers.
+ledgers. Also retain the packaged current Stage-03 parts and the current
+overlays/catalogs/indices enumerated by the retrieval manifests.
 
-### Paper-facing result families
+Superseded record and family versions are not active alternatives. Their useful
+history belongs in compact receipts and Git history.
 
-Retain the latest hash-compatible complete artifact for each applicable cell of:
+### Paper result cells
+
+For every applicable paper cell, retain the latest hash-compatible complete
+artifact for:
 
 - ChEMBL and Starling retrieval;
 - one-shot cumulative full-flat reasoning;
@@ -35,123 +34,81 @@ Retain the latest hash-compatible complete artifact for each applicable cell of:
 - scaffold and random split;
 - identity-blind and deployment-visible-prefetched visibility.
 
-If a current cell is incomplete, retain exactly one last-complete reference and
-mark its historical lineage in the registry. Do not retain multiple equivalent
-retries merely because they have different directory names; intentional
-exact-contract replicates used for registered variation ranges are exempt.
+If a current cell is incomplete, retain one last-complete historical reference
+and mark it as such in the registry. Different directory names do not justify
+duplicate retries. Registered exact-contract replicates used to report observed
+run ranges are the exception.
 
-### Registered progressive roots
+The current progressive status is:
 
-The registry currently points to:
+- BBB scaffold strict-voter-L1 v6 is current; random needs replay.
+- Bioavailability scaffold is current via the split-scoped nitrendipine
+  zero-change receipt; random remains unaudited. The receipt does not authorize
+  baseline reuse.
+- Skin scaffold strict-voter-L1 v2 2/1 and 4/2 are current; 8/4 is missing and
+  random needs replay.
+- Historical broad-L1, connectivity-confounded, L1-only diagnostic, and
+  superseded BBB roots are not current result cells.
 
-```text
-outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/
-outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/
-outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/
-outputs/paper/starling_conditioned_assay_progressive_random_quality_v2_parent_disjoint/
-```
+For the record-card ablation, retain only roots registered under
+`record_card_budget_ablation`: the current 2/1 and 4/2 tasks, BBB 8/4, and both
+Bioavailability exact-contract 8/4 full-curve replicates. Do not fill the missing
+Skin 8/4 cell with an older lineage.
 
-BBB scaffold-valid is current. BBB random is retained as a pre-v6 prediction
-reference after the v6 random index rebuild and requires LLM replay. Skin
-strict-voter-L1 v2 scaffold-valid 4/2 is current; its random predictions remain
-a historical broad-L1 reference and require replay. Bioavailability scaffold-valid is current via
-`receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json`:
-all 262 query-level selected retrieval surfaces were unchanged across L1-L6, so
-the retained traces and agent predictions remain canonical without new model
-calls. Bioavailability random remains unaudited and must be retained as a
-pre-fix reference until a separate change audit or replay is complete.
-
-### Current record-card budget ablation roots
-
-The current scaffold-valid comparison retains only the 2/1, 4/2, and 8/4 task
-roots registered under `record_card_budget_ablation` in
-`current_conditioned_results.json`. Retain the shared three-task 2/1 root, the
-BBB strict-voter-L1 v6 4/2 and 8/4 roots, the Skin strict-voter-L1 v2 4/2 root,
-and both registered full-curve Bioavailability 8/4 exact-contract replicates.
-Bioavailability 4/2 reuses the current scaffold root above. Skin has no current
-8/4 cell; its historical broad-L1 8/4 trace does not fill that gap.
-
-```text
-outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/
-outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/
-outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_8_4_tool_prefetch_fixed_v1/
-outputs/paper/starling_conditioned_assay_progressive_visible_bio_card_budget_8_4_exact_replay_v1/
-```
-
-The rejected Bioavailability L1-only 0.7148 diagnostic changed the prompt
-contract and is not a retained replicate. The connectivity-confounded
-Bioavailability 8/4 task root and superseded BBB roots listed under
-`excluded_invalid_root`, `bbb_excluded_invalid_roots`, and
-`bbb_historical_v5_roots` are not retained result cells. After their receipts
-and aggregate diagnostics are preserved, those task-level traces are cleanup
-candidates rather than additional canonical lineages.
-
-### Last-complete retained references
-
-Until current-conditioned replacements exist, retain:
-
-```text
-outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_glm_5_2_nvfp4/
-outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_glm_5_2_nvfp4_visible_parent_disjoint/
-outputs/paper/starling_conditioned_assay_family_curve_v1/scaffold_valid_epyc_deepseek_v4_flash_0731/
-```
-
-The blind and visible matrix roots above use different historical benchmark
-lineages. Retention does not authorize a matched comparison.
+Until current-conditioned replacements exist, retain the single historical
+blind and visible source/reasoning matrices and the last complete one-shot
+family curve named in the registry. Their different lineages do not authorize
+a matched visibility comparison.
 
 ## Minimum complete trace bundle
 
-For every retained batch or progressive level, keep:
+For each retained batch or progressive level, keep:
 
 - experiment and batch manifests;
-- input/retrieval/family/index hashes and visibility contract;
+- input, retrieval, family, and index hashes plus visibility contract;
 - per-query retrieval payload or prepared state;
-- exact LLM request messages and raw response/reasoning;
-- parsed structured output and validation/provider-attempt history;
+- exact LLM request and raw response/reasoning;
+- parsed output and validation/provider-attempt history;
 - predictions and metrics;
 - reuse/carry-forward receipt when no fresh call was made;
-- analysis TSV/JSON and final paper figure generated from the batch.
+- registered analysis TSV/JSON and final figure.
 
-Logs are retained only when they are needed to explain an incomplete or failed
-canonical run. Once a replacement is complete and audited, routine stdout/stderr
-logs are disposable.
+Keep logs only when they explain an incomplete or failed canonical run. Routine
+stdout/stderr is disposable after a replacement is complete and audited.
 
-## What should be removed after verification
+## Remove after verification
 
 - smoke, prompt-debug, aborted, timeout-only, and one-query directories;
-- superseded retries whose successful outputs are already represented in the
-  retained batch;
-- duplicate figures generated by one-off plotting scripts;
-- old source/index copies with no unique provenance receipt;
-- intermediate prompt audits after their aggregate ledger and representative
-  examples are preserved;
-- isolated router/RL research only after a separate deliberate removal decision;
-- other no-go method-development branches outside the retained paper scope;
-- stale Bioavailability random pre-fix traces after its separate change audit or
-  replay is complete; retain the scaffold trace referenced by the zero-change
-  receipt.
+- superseded retries already represented by a retained batch;
+- duplicate figures from one-off plotters;
+- old source/index copies without unique provenance;
+- intermediate prompt audits after retaining their aggregate ledger and small
+  representative examples;
+- no-go method code and artifacts once a compact receipt/Git history preserves
+  the conclusion;
+- a stale random trace after its current replay or change audit is complete.
 
-Never delete current benchmark gold/source ledgers, migration receipts, or the
-only complete trace for a retained paper cell.
+Never delete current benchmark/source ledgers, migration receipts, packaged
+current records, or the only complete trace for a retained paper cell. Router
+and RL remain separately archived/stopped work and require their own deliberate
+cleanup decision.
 
-## Safe cleanup procedure
+## Safe cleanup
 
-1. Resolve the exact paths from `current_conditioned_results.json`.
-2. Verify each retained root has its expected predictions, metrics, zero-failure
-   completeness gate, and matching semantic hashes.
-3. Generate an explicit candidate-deletion list. Do not use a broad wildcard on
+1. Resolve exact retained paths from `current_conditioned_results.json`.
+2. Verify predictions, metrics, zero-failure gates, and semantic hashes.
+3. Produce an explicit deletion list; never use a broad wildcard on
    `outputs/paper`, `data`, or the repository root.
-4. Obtain approval for permanent deletion of tracked code or material artifacts.
-5. Remove only approved paths.
-6. Scan code/docs for dangling imports and references.
-7. Run the focused test suite and revalidate the artifact registry.
+4. Obtain approval before permanent deletion of material artifacts not already
+   explicitly rejected.
+5. Remove only approved paths, scan for dangling references, run focused tests,
+   and revalidate the registry.
 
 ## Viewer contract
 
-The trace viewer reads the retained manifests and predictions; it must not infer
-lineage from directory names. It displays whether a query/level was freshly
-called, reused, or carried forward, plus the exact visibility and retrieval
-policies.
+The trace viewer reads retained manifests and predictions; it must not infer
+lineage from directory names. It shows whether a query/level was called, reused,
+or carried forward, together with its visibility and retrieval policies.
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776

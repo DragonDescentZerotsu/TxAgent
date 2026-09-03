@@ -1,6 +1,9 @@
 """Paper-facing BBB retrieval views."""
 
-from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.experiment_retrieval import (
+    SourceExperimentConfig,
+    evidence_family,
+)
 from tools.chembl_tool.common.progressive_assay_reasoning import ProgressiveTaskContract
 from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
     DEFAULT_BBB_PROMPT_PROFILE,
@@ -11,25 +14,25 @@ from tools.chembl_tool.tasks.bbb_martins.prompt_profiles import (
 CHEMBL = SourceExperimentConfig(
     source_name="chembl",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.bbb",
-            "Tier 1",
+        evidence_family(
             "direct_bbb",
+            family_label="Tier 1",
             source_group_prefixes=("Tier 1.",),
-            exclude_source_groups=("Tier 1.context_dependent",),
+            exclude_source_group_ids=("Tier 1.context_dependent",),
+            legacy_output_group_id="Direct.bbb",
         ),
     ),
     mechanism_groups=tuple(
-        EvidenceGroupSpec(
-            f"Mechanism.tier_{tier}",
-            f"Tier {tier}",
+        evidence_family(
             {
                 1: "direct_brain_exposure",
                 2: "passive_permeability",
                 3: "efflux_transport",
                 4: "influx_transport",
             }[tier],
+            family_label=f"Tier {tier}",
             source_group_prefixes=(f"Tier {tier}.",),
+            legacy_output_group_id=f"Mechanism.tier_{tier}",
         )
         for tier in range(1, 5)
     ),
@@ -38,37 +41,37 @@ CHEMBL = SourceExperimentConfig(
 STARLING = SourceExperimentConfig(
     source_name="starling",
     direct_groups=(
-        EvidenceGroupSpec(
-            "Direct.bbb",
-            "Tier 1",
+        evidence_family(
             "direct_bbb",
-            source_groups=("Tier 1.starling_direct_bbb_evidence",),
+            family_label="Tier 1",
+            source_group_ids=("Tier 1.starling_direct_bbb_evidence",),
+            legacy_output_group_id="Direct.bbb",
         ),
     ),
     mechanism_groups=(
-        EvidenceGroupSpec(
-            "Mechanism.tier_1",
-            "Tier 1",
+        evidence_family(
             "direct_brain_exposure",
-            source_groups=("Tier 1.starling_direct_bbb_evidence",),
+            family_label="Tier 1",
+            source_group_ids=("Tier 1.starling_direct_bbb_evidence",),
+            legacy_output_group_id="Mechanism.tier_1",
         ),
-        EvidenceGroupSpec(
-            "Mechanism.tier_2",
-            "Tier 2",
+        evidence_family(
             "passive_permeability",
-            source_groups=("Mechanism.passive_permeability",),
+            family_label="Tier 2",
+            source_group_ids=("Mechanism.passive_permeability",),
+            legacy_output_group_id="Mechanism.tier_2",
         ),
-        EvidenceGroupSpec(
-            "Mechanism.tier_3",
-            "Tier 3",
+        evidence_family(
             "efflux_transport",
-            source_groups=("Mechanism.efflux_transport",),
+            family_label="Tier 3",
+            source_group_ids=("Mechanism.efflux_transport",),
+            legacy_output_group_id="Mechanism.tier_3",
         ),
-        EvidenceGroupSpec(
-            "Mechanism.tier_4",
-            "Tier 4",
+        evidence_family(
             "influx_transport",
-            source_groups=("Mechanism.influx_transport",),
+            family_label="Tier 4",
+            source_group_ids=("Mechanism.influx_transport",),
+            legacy_output_group_id="Mechanism.tier_4",
         ),
     ),
 )
@@ -79,35 +82,31 @@ STARLING_SOURCE_PURITY = SourceExperimentConfig(
     source_name="starling_source_purity",
     direct_groups=STARLING.direct_groups,
     mechanism_groups=(
-        EvidenceGroupSpec(
-            "Direct.measured_cns_access",
-            "Direct measured CNS access",
+        evidence_family(
             "direct_brain_exposure",
-            source_groups=("Tier 1.starling_direct_bbb_evidence",),
+            family_label="Direct measured CNS access",
+            source_group_ids=("Tier 1.starling_direct_bbb_evidence",),
+            legacy_output_group_id="Direct.measured_cns_access",
         ),
-        EvidenceGroupSpec(
-            "Proxy.central_functional_access",
-            "Near-direct functional CNS proxy",
+        evidence_family(
             "central_functional_access_proxy",
-            source_groups=("Proxy.central_functional_access",),
+            family_label="Near-direct functional CNS proxy",
+            source_group_ids=("Proxy.central_functional_access",),
         ),
-        EvidenceGroupSpec(
-            "Mechanism.passive_permeability",
-            "Passive permeability",
+        evidence_family(
             "passive_permeability",
-            source_groups=("Mechanism.passive_permeability",),
+            family_label="Passive permeability",
+            source_group_ids=("Mechanism.passive_permeability",),
         ),
-        EvidenceGroupSpec(
-            "Mechanism.efflux_transport",
-            "Efflux transport",
+        evidence_family(
             "efflux_transport",
-            source_groups=("Mechanism.efflux_transport",),
+            family_label="Efflux transport",
+            source_group_ids=("Mechanism.efflux_transport",),
         ),
-        EvidenceGroupSpec(
-            "Mechanism.influx_transport",
-            "Influx transport",
+        evidence_family(
             "influx_transport",
-            source_groups=("Mechanism.influx_transport",),
+            family_label="Influx transport",
+            source_group_ids=("Mechanism.influx_transport",),
         ),
     ),
 )
@@ -120,9 +119,13 @@ SOURCES = {
 
 PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS = {
     1: "Direct measured brain or CNS exposure outcomes; closest to the benchmark label.",
-    2: "Passive permeability evidence; indirect and conditional on structural and assay transferability.",
-    3: "Efflux-transporter evidence; indirect and directional, with substrate and inhibition claims kept distinct.",
-    4: "Influx or uptake-transporter evidence; indirect and dependent on transporter context.",
+    2: (
+        "Near-direct systemic CNS functional, pharmacodynamic, biomarker, adverse-effect, "
+        "or efficacy observations that imply access without directly measuring CNS exposure."
+    ),
+    3: "Passive permeability evidence; indirect and conditional on structural and assay transferability.",
+    4: "Efflux-transporter evidence; indirect and directional, with substrate and inhibition claims kept distinct.",
+    5: "Influx or uptake-transporter evidence; indirect and dependent on transporter context.",
 }
 
 PROGRESSIVE_ASSAY_ENDPOINT_DESCRIPTIONS = {

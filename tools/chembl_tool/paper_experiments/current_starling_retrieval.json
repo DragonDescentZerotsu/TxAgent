@@ -1,0 +1,93 @@
+{
+  "schema_version": "current_starling_retrieval.v1",
+  "updated_at": "2026-09-03",
+  "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "artifact_root": "outputs/paper/starling_conditioned_assay_family_curve_v1",
+  "verification": {
+    "clean_room_rebuild_date": "2026-09-03",
+    "result": "all canonical-record, overlay, catalog, scaffold-index, and random-index hashes matched",
+    "scratch_artifacts_retained": false
+  },
+  "contract": {
+    "record_selection": "stage03_retrieval_eligible",
+    "reference_pool": "direct_only_heldout_filtered",
+    "minimum_similarity": 0.3,
+    "max_record_examples": 3,
+    "max_support_text_chars": 0,
+    "overlay_parquet_batch_sizes": {
+      "bbb_martins": 500,
+      "bioavailability_ma": 10000,
+      "skin_reaction": 20000
+    },
+    "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+    "scaffold_identity_policy": "scaffold_disjoint",
+    "random_identity_policy": "parent_disjoint"
+  },
+  "tasks": {
+    "bbb_martins": {
+      "canonical_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "overlay": "source_overlays/bbb_source_family_purity_v6",
+      "overlay_records_sha256": "20a53f067fa6ebe3dbf1a151f20d7b3891834935227e4913524d351b8a792812",
+      "catalog": "family_catalogs_mechanism_tagged_v1/bbb_martins_source_purity_v6",
+      "catalog_config": "STARLING_SOURCE_PURITY",
+      "catalog_sha256": "fffbe6b4eaf3c967b0f72741956ba3214f2fe0ae379e1426a1e26899bcbc1c0e",
+      "direct_group": "Tier 1.starling_direct_bbb_evidence",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "d5417551e89261744b531367e3883d22c513f83cf2e7742540c91ed13cbabea3",
+          "evidence_sha256": "7fd8898e95458a002d6cd6c38601e6d57a52ba46d826008d53c2846cc5cacaa5"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "5d42d21a62a51eec5d7873f4e85003923e8c53b4461b8406f6382a7bf744393c",
+          "evidence_sha256": "e30161826ef7d9861d4f0397171e3c28678a725fbe88ba22e1ff28490ae3207a"
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "canonical_records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "intermediate_overlay": "source_overlays/bioavailability_nondirect_assay_context_v1",
+      "intermediate_overlay_records_sha256": "98138649ec4b458f56db4cb2ffc63cdde4a08546be924e8ba636e04baf34ddef",
+      "overlay": "source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1",
+      "overlay_records_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8",
+      "catalog": "family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "f261b7e698e5fbb0c4cb879d51cf85a969c553346ed3fe2a7eecf912bae5050e",
+      "direct_group": "Observed.direct_oral_bioavailability",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+          "evidence_sha256": "1df978c53c3290ea82855ff739059a8f9a968ba21df0b7facda2294dcff39d82"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "e68dac90d01bc659f122103e4f774240c97e6617aed9800c1d33be43722701d8",
+          "evidence_sha256": "051535f1269d9b356fad305009ac1ff4d18ed0f86b82bb8c40be749136eda343"
+        }
+      }
+    },
+    "skin_reaction": {
+      "canonical_records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "overlay": "source_overlays/source_family_purity_v2/skin_reaction",
+      "overlay_records_sha256": "bb3c6f08310c239b94307c6101664ea3999f7cea788e50021adbc67ce2a58069",
+      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v2",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "8e70dc44465f6391bb33021ebae6033ae960f9243f5004c5de4f6af47422c73b",
+      "direct_group": "Direct.skin_reaction",
+      "indices": {
+        "scaffold": {
+          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v2",
+          "index_sha256": "624860f613f82147f6c8dc458f29a563d31c0e0161917f8201e34e0e6e06e9d2",
+          "evidence_sha256": "fd1821b42876d0010b66161648b2f3fdaff8dad9c186691170892c0daf980060"
+        },
+        "random": {
+          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v2",
+          "index_sha256": "c1d8bdd1ff22a93877a77071e73145d5060499432edf99004109d3466399c552",
+          "evidence_sha256": "6775d459e45474e664169a327797c35a5136b314a952ee64674ea197f2888ff4"
+        }
+      }
+    }
+  }
+}

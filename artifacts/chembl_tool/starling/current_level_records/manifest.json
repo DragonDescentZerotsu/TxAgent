@@ -1,0 +1,177 @@
+{
+  "schema_version": "current_starling_level_record_share.v1",
+  "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
+  "exporter_sha256": "c9319a9996bb9eff5d73c6b788f4f9f1a3da76f8fc8a42490c07793676c0111c",
+  "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
+  "current_retrieval_contract_sha256": "02cfb7b8c811971ac8eaa3d167a6d5b7a45549c7c70220ad7f2e4e1c674b3298",
+  "verified_current_inputs": true,
+  "interpretation": {
+    "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
+    "indexed_representative_cards": "compact references to exact representative cards materialized in each split index; join to source membership for the card fields",
+    "per_query_selected_cards": "not included; read active_evidence/new_card_ids in each run's prepared.json"
+  },
+  "tasks": {
+    "bbb_martins": {
+      "level_description_source": "tools/chembl_tool/tasks/bbb_martins/experiment_config.py",
+      "level_description_source_sha256": "71c1ce9ae10b174de952f640824604f08ab2ebbe4244baf57277f5e86f09b19b",
+      "source_membership": {
+        "path": "bbb_martins/source_record_level_membership.parquet",
+        "sha256": "7dfdc18788470234d6b3b1f0f3dfb5704c452920d645615ad3ae6a067100ce59",
+        "size_bytes": 66119231,
+        "n_records": 498556,
+        "records_by_level": {
+          "1": 8592,
+          "2": 268379,
+          "3": 14189,
+          "4": 163672,
+          "5": 43724
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "bbb_martins/scaffold/indexed_representative_cards.parquet",
+          "sha256": "8818ebdb51923b9261e6ce20a4e05c1e54bae132226e05389cbd7e3a1d6f83a5",
+          "size_bytes": 11996901,
+          "n_assay_molecule_rows": 172867,
+          "n_representative_cards": 246167,
+          "cards_by_level": {
+            "1": 5040,
+            "2": 112790,
+            "3": 10833,
+            "4": 110412,
+            "5": 7092
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "bbb_martins/random/indexed_representative_cards.parquet",
+          "sha256": "9456a03315e8218366ebf37ef6d588abcbdb1d5cc2c6a6151c6b2968f8620d57",
+          "size_bytes": 11998371,
+          "n_assay_molecule_rows": 172843,
+          "n_representative_cards": 246133,
+          "cards_by_level": {
+            "1": 4934,
+            "2": 112867,
+            "3": 10833,
+            "4": 110403,
+            "5": 7096
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 493245,
+        "n_indexed_cards_checked": 492300,
+        "n_missing_source_card_keys": 0
+      }
+    },
+    "bioavailability_ma": {
+      "level_description_source": "tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py",
+      "level_description_source_sha256": "2d01907de67d76a4be83ca395918aa17846bf71e231e0097ee518f046912c2fc",
+      "source_membership": {
+        "path": "bioavailability_ma/source_record_level_membership.parquet",
+        "sha256": "1927cc726a58ec1a16677b5975a24216670b48d23bc8cb6c9d558dfdee5b6c28",
+        "size_bytes": 54630747,
+        "n_records": 435472,
+        "records_by_level": {
+          "1": 20538,
+          "2": 152350,
+          "3": 104174,
+          "4": 73913,
+          "5": 23511,
+          "6": 60986
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "bioavailability_ma/scaffold/indexed_representative_cards.parquet",
+          "sha256": "9912774a7833058020e26d2e92e92af7bf2c6b0fcdaa55aa8199886c6dc0e282",
+          "size_bytes": 8570371,
+          "n_assay_molecule_rows": 103352,
+          "n_representative_cards": 186242,
+          "cards_by_level": {
+            "1": 5217,
+            "2": 77235,
+            "3": 32192,
+            "4": 30113,
+            "5": 11409,
+            "6": 30076
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "bioavailability_ma/random/indexed_representative_cards.parquet",
+          "sha256": "211a23da65aa961fc8ccef98e5e11998a31b7648ad081fbbb84e512eb5a3ae1c",
+          "size_bytes": 8595406,
+          "n_assay_molecule_rows": 103361,
+          "n_representative_cards": 186284,
+          "cards_by_level": {
+            "1": 5299,
+            "2": 77195,
+            "3": 32192,
+            "4": 30113,
+            "5": 11409,
+            "6": 30076
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 434258,
+        "n_indexed_cards_checked": 372526,
+        "n_missing_source_card_keys": 0
+      }
+    },
+    "skin_reaction": {
+      "level_description_source": "tools/chembl_tool/tasks/skin_reaction/experiment_config.py",
+      "level_description_source_sha256": "f6ad8e3f3fcc8fa14965d88f6e9e9785a1c47dbbf3cbdcfc07f16a7ede5bef1b",
+      "source_membership": {
+        "path": "skin_reaction/source_record_level_membership.parquet",
+        "sha256": "b6edfb65857bf1c8564af62c3fb3be6786860162fa857e660d5e8964dc400ce3",
+        "size_bytes": 9188678,
+        "n_records": 76543,
+        "records_by_level": {
+          "1": 44611,
+          "2": 16748,
+          "3": 15184
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "skin_reaction/scaffold/indexed_representative_cards.parquet",
+          "sha256": "bdfca6f565a14303c86a9e998c3bb6e037c5669c8103cd73b7c6d27e0dae47d7",
+          "size_bytes": 1332160,
+          "n_assay_molecule_rows": 18676,
+          "n_representative_cards": 30591,
+          "cards_by_level": {
+            "1": 11334,
+            "2": 8498,
+            "3": 10759
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "skin_reaction/random/indexed_representative_cards.parquet",
+          "sha256": "484f043eecf59e751db9f541458b7d6aee29d4a27e9a0f35b2bd79b773f55da4",
+          "size_bytes": 1312201,
+          "n_assay_molecule_rows": 18234,
+          "n_representative_cards": 29769,
+          "cards_by_level": {
+            "1": 10406,
+            "2": 8592,
+            "3": 10771
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 74738,
+        "n_indexed_cards_checked": 60360,
+        "n_missing_source_card_keys": 0
+      }
+    }
+  }
+}

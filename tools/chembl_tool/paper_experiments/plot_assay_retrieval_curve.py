@@ -2681,27 +2681,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--conditioned-progressive-root",
-        default=(
-            "outputs/paper/"
-            "starling_conditioned_assay_progressive_visible_v7_source_purity_v1/"
-            "scaffold_valid_deepseek_v4_flash_0731"
-        ),
+        default="",
+        help="Explicit progressive artifact root for the single-lineage resource view.",
     )
     parser.add_argument(
         "--conditioned-progressive-bbb-root",
-        default=(
-            "outputs/paper/"
-            "starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_"
-            "card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731"
-        ),
+        default="",
+        help="Deprecated compatibility argument; prefer --conditioned-progressive-task-root.",
     )
     parser.add_argument(
         "--conditioned-progressive-source-purity-root",
-        default=(
-            "outputs/paper/"
-            "starling_conditioned_assay_progressive_visible_v7_source_purity_v1/"
-            "scaffold_valid_deepseek_v4_flash_0731"
-        ),
+        default="",
+        help="Deprecated compatibility argument; prefer --conditioned-progressive-task-root.",
     )
     parser.add_argument(
         "--conditioned-progressive-task-root",
@@ -2841,18 +2832,21 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     if args.conditioned_progressive_overview:
-        source_purity_root = Path(args.conditioned_progressive_source_purity_root)
         baseline_roots_by_task = _parse_task_path_overrides(
             args.conditioned_progressive_baseline_root
         )
-        progressive_roots = {
-            "bbb_martins": Path(args.conditioned_progressive_bbb_root),
-            "bioavailability_ma": source_purity_root,
-            "skin_reaction": source_purity_root,
-        }
-        progressive_roots.update(
-            _parse_task_path_overrides(args.conditioned_progressive_task_root)
+        progressive_roots = _parse_task_path_overrides(
+            args.conditioned_progressive_task_root
         )
+        expected_tasks = {"bbb_martins", "bioavailability_ma", "skin_reaction"}
+        if set(progressive_roots) != expected_tasks:
+            missing = sorted(expected_tasks - set(progressive_roots))
+            unexpected = sorted(set(progressive_roots) - expected_tasks)
+            raise ValueError(
+                "--conditioned-progressive-overview requires one current "
+                f"--conditioned-progressive-task-root per task; missing={missing}, "
+                f"unexpected={unexpected}"
+            )
         if not args.analysis_dir:
             analysis_dir = (
                 progressive_roots["bbb_martins"].parent
@@ -2900,6 +2894,11 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     if args.conditioned_progressive_performance_resources:
+        if not args.conditioned_progressive_root:
+            raise ValueError(
+                "--conditioned-progressive-performance-resources requires an "
+                "explicit --conditioned-progressive-root"
+            )
         progressive_root = Path(args.conditioned_progressive_root)
         if not args.analysis_dir:
             analysis_dir = progressive_root / "analysis" / "performance_resources"

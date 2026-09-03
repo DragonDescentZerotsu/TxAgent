@@ -43,7 +43,13 @@ EXPERIMENT_MODES = {"none", "direct", "full_flat", "full_mechanism", "native"}
 
 @dataclass(frozen=True)
 class EvidenceGroupSpec:
-    """Map one paper-facing evidence family to source-index groups."""
+    """Legacy-compatible storage for one canonical evidence family.
+
+    New code should construct this through :func:`evidence_family` and use
+    ``family_key``, ``family_label``, and ``source_group_ids``.  The original
+    attribute names remain read-only compatibility aliases because they are
+    serialized in frozen indexes, traces, and historical experiment outputs.
+    """
 
     group_id: str
     tier: str
@@ -51,6 +57,26 @@ class EvidenceGroupSpec:
     source_groups: tuple[str, ...] = ()
     source_group_prefixes: tuple[str, ...] = ()
     exclude_source_groups: tuple[str, ...] = ()
+
+    @property
+    def family_key(self) -> str:
+        """Canonical task-level semantic identity shared across sources."""
+        return self.endpoint_group
+
+    @property
+    def family_label(self) -> str:
+        """Human-readable family label; never an identity or ordering key."""
+        return self.tier
+
+    @property
+    def source_group_ids(self) -> tuple[str, ...]:
+        """Source-native record groups mapped into this family."""
+        return self.source_groups
+
+    @property
+    def output_group_id(self) -> str:
+        """Frozen branch/catalog identifier retained for compatibility only."""
+        return self.group_id
 
     def resolve(self, available_groups: set[str]) -> tuple[str, ...]:
         selected = {group for group in self.source_groups if group in available_groups}
@@ -63,6 +89,40 @@ class EvidenceGroupSpec:
         return tuple(sorted(selected))
 
 
+def evidence_family(
+    family_key: str,
+    *,
+    source_group_ids: tuple[str, ...] = (),
+    family_label: str = "",
+    source_group_prefixes: tuple[str, ...] = (),
+    exclude_source_group_ids: tuple[str, ...] = (),
+    legacy_output_group_id: str = "",
+) -> EvidenceGroupSpec:
+    """Declare a family with one semantic key and source-native memberships.
+
+    ``legacy_output_group_id`` exists only to preserve identifiers already
+    frozen in result directories.  When omitted, a single exact source group
+    remains its own output id; otherwise the canonical family key is used.
+    """
+    key = str(family_key).strip()
+    if not key:
+        raise ValueError("family_key must be non-empty")
+    source_ids = tuple(str(value).strip() for value in source_group_ids)
+    if any(not value for value in source_ids):
+        raise ValueError("source_group_ids cannot contain blank values")
+    output_group_id = str(legacy_output_group_id).strip()
+    if not output_group_id:
+        output_group_id = source_ids[0] if len(source_ids) == 1 else key
+    return EvidenceGroupSpec(
+        group_id=output_group_id,
+        tier=str(family_label).strip() or key,
+        endpoint_group=key,
+        source_groups=source_ids,
+        source_group_prefixes=tuple(source_group_prefixes),
+        exclude_source_groups=tuple(exclude_source_group_ids),
+    )
+
+
 @dataclass(frozen=True)
 class SourceExperimentConfig:
     """Direct and mechanism views for one task/source pair."""
@@ -70,6 +130,22 @@ class SourceExperimentConfig:
     source_name: str
     direct_groups: tuple[EvidenceGroupSpec, ...]
     mechanism_groups: tuple[EvidenceGroupSpec, ...]
+
+    def __post_init__(self) -> None:
+        for name, specs in (
+            ("direct_groups", self.direct_groups),
+            ("mechanism_groups", self.mechanism_groups),
+        ):
+            family_keys = [spec.family_key for spec in specs]
+            output_ids = [spec.output_group_id for spec in specs]
+            if len(set(family_keys)) != len(family_keys):
+                raise ValueError(
+                    f"{self.source_name} {name} contains duplicate canonical family_key values"
+                )
+            if len(set(output_ids)) != len(output_ids):
+                raise ValueError(
+                    f"{self.source_name} {name} contains duplicate legacy output group ids"
+                )
 
 
 def retrieve_group_specs_view(
@@ -203,7 +279,7 @@ def _retrieve_specs(
     resolved_mapping: dict[str, list[str]] = {}
     for spec in specs:
         source_groups = spec.resolve(available_groups)
-        resolved_mapping[spec.group_id] = list(source_groups)
+        resolved_mapping[spec.output_group_id] = list(source_groups)
         candidate_indices = sorted(
             {
                 molecule_index
@@ -228,9 +304,9 @@ def _retrieve_specs(
         )
         output_groups.append(
             {
-                "group_id": spec.group_id,
-                "tier": spec.tier,
-                "endpoint_group": spec.endpoint_group,
+                "group_id": spec.output_group_id,
+                "tier": spec.family_label,
+                "endpoint_group": spec.family_key,
                 "source_group_ids": list(source_groups),
                 "n_candidate_molecules": len(candidate_indices),
                 "neighbors": neighbors,

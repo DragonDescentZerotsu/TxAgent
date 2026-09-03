@@ -14,7 +14,10 @@ import json
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
-from tools.chembl_tool.common.experiment_retrieval import EvidenceGroupSpec, SourceExperimentConfig
+from tools.chembl_tool.common.experiment_retrieval import (
+    SourceExperimentConfig,
+    evidence_family,
+)
 from tools.chembl_tool.tasks.skin_reaction.experiment_config import STARLING
 
 
@@ -40,11 +43,11 @@ def causal_panel_retrieval_config() -> SourceExperimentConfig:
         direct_groups=STARLING.direct_groups,
         mechanism_groups=(
             STARLING.mechanism_groups[0],
-            EvidenceGroupSpec(
-                "Mechanism.causal_panel",
-                "Tier 2",
+            evidence_family(
                 ENDPOINT_GROUP,
-                source_groups=(SOURCE_GROUP_ID,),
+                family_label="Tier 2",
+                source_group_ids=(SOURCE_GROUP_ID,),
+                legacy_output_group_id="Mechanism.causal_panel",
             ),
         ),
     )

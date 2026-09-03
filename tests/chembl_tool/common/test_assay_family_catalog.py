@@ -1,7 +1,13 @@
 import json
 
 import pandas as pd
+import pytest
 
+from tools.chembl_tool.common.experiment_retrieval import (
+    SourceExperimentConfig,
+    evidence_family,
+)
+from tools.chembl_tool.paper_experiments import build_assay_family_catalog as catalog
 from tools.chembl_tool.paper_experiments.build_assay_family_catalog import build_catalog
 
 
@@ -178,3 +184,51 @@ def test_clintox_catalog_adds_one_explicit_clinical_context_unit(tmp_path):
     assert catalog[1]["assay_id"] == "STARLING_CLINTOX_CLINICAL_CONTEXT"
     assert manifest["n_physical_assays"] == 3
     assert manifest["n_multi_family_assays"] == 0
+
+
+def test_catalog_rejects_one_source_group_in_multiple_families(tmp_path, monkeypatch):
+    path = tmp_path / "records.parquet"
+    pd.DataFrame(
+        [
+            {
+                "group_id": "source.shared",
+                "canonical_assay_context": "shared assay",
+                "canonical_endpoint_name": "outcome",
+                "retrieval_eligible": True,
+            }
+        ]
+    ).to_parquet(path, index=False)
+    ambiguous = SourceExperimentConfig(
+        source_name="ambiguous",
+        direct_groups=(),
+        mechanism_groups=(
+            evidence_family(
+                "family_one",
+                source_group_ids=("source.shared",),
+                legacy_output_group_id="Family.one",
+            ),
+            evidence_family(
+                "family_two",
+                source_group_ids=("source.shared",),
+                legacy_output_group_id="Family.two",
+            ),
+        ),
+    )
+    original = catalog.importlib.import_module
+
+    class Module:
+        STARLING = ambiguous
+
+    monkeypatch.setattr(
+        catalog.importlib,
+        "import_module",
+        lambda name: Module if name == "test.ambiguous" else original(name),
+    )
+    monkeypatch.setitem(
+        catalog.TASKS,
+        "ambiguous",
+        {"config_module": "test.ambiguous"},
+    )
+
+    with pytest.raises(ValueError, match="source groups map to multiple"):
+        build_catalog("ambiguous", path)

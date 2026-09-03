@@ -159,7 +159,8 @@ After a completed run:
 1. verify expected sample/level counts and zero failures;
 2. verify benchmark, retrieval, visibility, and model hashes;
 3. update `current_conditioned_results.json` first;
-4. update `RESULTS.md` and `ASSAY_LEVEL_RETRIEVAL.md` from that registry;
+4. update `RESULTS.md`; update `ASSAY_LEVEL_RETRIEVAL.md` only when the protocol changed and
+   `CURRENT_STARLING_RETRIEVAL.md` only when the data/rebuild/share contract changed;
 5. update `TRACE_RETENTION.md` if the canonical allowlist changes.
 
 Never call a stale or partial artifact complete. Historical roots may be kept as

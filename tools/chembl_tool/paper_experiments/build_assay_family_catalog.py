@@ -27,23 +27,40 @@ from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
 
 
 VERSION = "starling_physical_assay_family_catalog.v1"
+DEFAULT_OUTPUT_ROOT = Path(
+    "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs"
+)
+MECHANISM_OUTPUT_ROOT = Path(
+    "outputs/paper/starling_conditioned_assay_family_curve_v1/"
+    "family_catalogs_mechanism_tagged_v1"
+)
 TASKS = {
     "bbb_martins": {
-        "records": "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_records/records.parquet",
+        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bbb_source_family_purity_v6/records.parquet",
         "config_module": "tools.chembl_tool.tasks.bbb_martins.experiment_config",
+        "config_name": "STARLING_SOURCE_PURITY",
+        "output_root": str(MECHANISM_OUTPUT_ROOT),
+        "output_name": "bbb_martins_source_purity_v6",
     },
     "bioavailability_ma": {
         "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/records.parquet",
         "config_module": "tools.chembl_tool.tasks.bioavailability_ma.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(DEFAULT_OUTPUT_ROOT),
         "output_name": "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
     },
     "skin_reaction": {
-        "records": "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet",
+        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v2/skin_reaction/records.parquet",
         "config_module": "tools.chembl_tool.tasks.skin_reaction.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(MECHANISM_OUTPUT_ROOT),
+        "output_name": "skin_reaction_source_purity_v2",
     },
     "clintox": {
         "records": "outputs/paper/starling_assay_relevance_all_v1/clintox/assay_catalog.jsonl",
         "config_module": "tools.chembl_tool.tasks.clintox.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(DEFAULT_OUTPUT_ROOT),
     },
 }
 
@@ -78,20 +95,20 @@ def _build_clintox_catalog(
                 "assay_context": str(source["assay_context"]),
                 "selection_rank": 0,
                 "first_level": level,
-                "first_family_id": family.group_id,
-                "first_endpoint_group": family.endpoint_group,
+                "first_family_id": family.output_group_id,
+                "first_endpoint_group": family.family_key,
                 "family_levels": [level],
-                "family_ids": [family.group_id],
-                "family_endpoint_groups": [family.endpoint_group],
-                "source_groups": list(family.source_groups),
+                "family_ids": [family.output_group_id],
+                "family_endpoint_groups": [family.family_key],
+                "source_groups": list(family.source_group_ids),
                 "source_families": [
                     {
                         "source_group_id": source_group,
                         "level": level,
-                        "family_id": family.group_id,
-                        "endpoint_group": family.endpoint_group,
+                        "family_id": family.output_group_id,
+                        "endpoint_group": family.family_key,
                     }
-                    for source_group in family.source_groups
+                    for source_group in family.source_group_ids
                 ],
                 "record_count": int(source.get("record_count") or 0),
             }
@@ -105,20 +122,20 @@ def _build_clintox_catalog(
             "assay_context": "clinical human safety context",
             "selection_rank": 0,
             "first_level": 2,
-            "first_family_id": clinical_family.group_id,
-            "first_endpoint_group": clinical_family.endpoint_group,
+            "first_family_id": clinical_family.output_group_id,
+            "first_endpoint_group": clinical_family.family_key,
             "family_levels": [2],
-            "family_ids": [clinical_family.group_id],
-            "family_endpoint_groups": [clinical_family.endpoint_group],
-            "source_groups": list(clinical_family.source_groups),
+            "family_ids": [clinical_family.output_group_id],
+            "family_endpoint_groups": [clinical_family.family_key],
+            "source_groups": list(clinical_family.source_group_ids),
             "source_families": [
                 {
                     "source_group_id": source_group,
                     "level": 2,
-                    "family_id": clinical_family.group_id,
-                    "endpoint_group": clinical_family.endpoint_group,
+                    "family_id": clinical_family.output_group_id,
+                    "endpoint_group": clinical_family.family_key,
                 }
-                for source_group in clinical_family.source_groups
+                for source_group in clinical_family.source_group_ids
             ],
             "record_count": 0,
         }
@@ -134,9 +151,9 @@ def _build_clintox_catalog(
         levels.append(
             {
                 "level": level,
-                "family_id": family.group_id,
-                "endpoint_group": family.endpoint_group,
-                "source_groups": list(family.source_groups),
+                "family_id": family.output_group_id,
+                "endpoint_group": family.family_key,
+                "source_groups": list(family.source_group_ids),
                 "new_physical_assays": level_counts[level],
                 "cumulative_physical_assays": cumulative,
             }
@@ -187,18 +204,29 @@ def build_catalog(
         source_groups = spec.resolve(available_groups)
         if not source_groups:
             raise ValueError(
-                f"{task} family {spec.group_id} resolves to no source groups"
+                f"{task} family {spec.family_key} resolves to no source groups"
             )
         levels.append(
             {
                 "level": level,
-                "family_id": spec.group_id,
-                "endpoint_group": spec.endpoint_group,
+                "family_id": spec.output_group_id,
+                "endpoint_group": spec.family_key,
                 "source_groups": list(source_groups),
             }
         )
         for source_group in source_groups:
             source_group_to_levels[source_group].append(level)
+
+    ambiguous_source_groups = {
+        source_group: family_levels
+        for source_group, family_levels in source_group_to_levels.items()
+        if len(family_levels) != 1
+    }
+    if ambiguous_source_groups:
+        raise ValueError(
+            f"{task} source groups map to multiple progressive families: "
+            f"{ambiguous_source_groups}"
+        )
 
     allowed_groups = set(source_group_to_levels)
     frame = frame.loc[frame["group_id"].isin(allowed_groups)].copy()
@@ -309,7 +337,11 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument(
         "--output-root",
-        default="outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs",
+        default="",
+        help=(
+            "Override the task-specific current output root. Without this flag, "
+            "each task writes to the exact catalog root used by the current runner."
+        ),
     )
     parser.add_argument(
         "--records",
@@ -321,20 +353,23 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument(
         "--config-name",
-        default="STARLING",
-        help="SourceExperimentConfig attribute in the task experiment_config module.",
+        default="",
+        help=(
+            "Override the task-specific current SourceExperimentConfig attribute. "
+            "Without this flag, each task uses its current catalog config."
+        ),
     )
     args = parser.parse_args(argv)
     if (args.records or args.output_name) and len(args.tasks) != 1:
         parser.error("--records/--output-name require exactly one --tasks value")
-    output_root = Path(args.output_root)
     for task in args.tasks:
         records_path = Path(args.records or TASKS[task]["records"])
         rows, manifest = build_catalog(
             task,
             records_path,
-            config_name=args.config_name,
+            config_name=args.config_name or str(TASKS[task]["config_name"]),
         )
+        output_root = Path(args.output_root or TASKS[task]["output_root"])
         output_dir = output_root / str(
             args.output_name or TASKS[task].get("output_name") or task
         )
