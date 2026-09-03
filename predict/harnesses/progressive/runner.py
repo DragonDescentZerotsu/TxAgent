@@ -1,9 +1,9 @@
 """Run either progressive evidence profile through one resumable LLM loop.
 
 ``standard`` progressively reveals mechanism-family molecule cards and their
-analog-comparison tools. ``context_records`` instead selects contexts with the
-frozen V9 ranking and can continue with frozen V19.1 later-level record
-bundles; it never exposes structure similarity or per-analog tools. Both profiles keep
+analog-comparison tools. ``context_records`` selects contexts and later records
+with either frozen assay-transfer ranks or Morgan similarity; it never invokes
+per-analog tools. Both profiles keep
 earlier evidence visible, carry forward a structured reasoning state, and
 checkpoint every query level.
 
@@ -376,7 +376,9 @@ def _run_protocol(args: argparse.Namespace) -> str:
 
 def _context_prompt_version(args: argparse.Namespace, task: str) -> str:
     return context_records.resolve_prompt_version(
-        task, args.assay_transfer_prompt_version
+        task,
+        args.assay_transfer_prompt_version,
+        ranking=args.context_ranking,
     )
 
 
@@ -1186,6 +1188,8 @@ def _prepare_context_record_query(
     indirect_records: Mapping[str, Mapping[str, Any]] | None = None,
     l2_reuse_root: Path | None = None,
     prompt_version: str = "v1",
+    context_ranking: str = "assay_transfer",
+    ranking_tie_seed: int = 0,
 ) -> PreparedQuery:
     """Write context snapshots and optional cache-backed later-level bundles."""
     query_dir = _query_dir(output_root, task, query_index)
@@ -1203,6 +1207,8 @@ def _prepare_context_record_query(
             and manifest.get("query_prior_mode") == query_prior_mode
             and manifest.get("profile") == "context_records"
             and manifest.get("prompt_version") == prompt_version
+            and manifest.get("context_ranking") == context_ranking
+            and manifest.get("ranking_tie_seed") == ranking_tie_seed
             and manifest.get("record_limit_per_context_level") == record_limit
             and manifest.get("l2_record_limit_per_context") == l2_record_limit
             and manifest.get("indirect_record_limit_per_level")
@@ -1242,6 +1248,7 @@ def _prepare_context_record_query(
         task=task,
         indirect_records=indirect_records,
         indirect_record_limit=indirect_record_limit,
+        prompt_version=prompt_version,
     )
     previous_ids: set[str] = set()
     for level_row in levels:
@@ -1256,7 +1263,7 @@ def _prepare_context_record_query(
                 "profile": "context_records",
                 "query_prior_mode": query_prior_mode,
                 "l1_source": "current_conditioned_gold_raw_records",
-                "l1_ranking": "v9",
+                "l1_ranking": context_ranking,
                 "task": task,
                 "query_index": query_index,
                 "benchmark_row_id": record.get("benchmark_row_id"),
@@ -1272,8 +1279,12 @@ def _prepare_context_record_query(
                 "level_definition": level_row,
                 "retrieval_audit": {
                     "candidate_source": (
-                        f"v19_1_stage3_top{indirect_record_limit}_records"
+                        f"v19_1_stage3_morgan_top{indirect_record_limit}_records"
+                        if level >= 3 and context_ranking == "morgan"
+                        else f"v19_1_stage3_top{indirect_record_limit}_records"
                         if level >= 3
+                        else "v9_candidate_universe_morgan_top10_contexts"
+                        if context_ranking == "morgan"
                         else "v9_top10_current_conditioned_gold_contexts"
                     ),
                     "n_contexts": sum(
@@ -1296,6 +1307,10 @@ def _prepare_context_record_query(
                         else None
                     ),
                     "deterministic_sampling": True,
+                    "ranking": context_ranking,
+                    "ranking_tie_seed": (
+                        ranking_tie_seed if context_ranking == "morgan" else None
+                    ),
                 },
                 "active_evidence": snapshot,
                 "new_card_ids": sorted(new_ids),
@@ -1329,6 +1344,8 @@ def _prepare_context_record_query(
             "protocol": protocol,
             "profile": "context_records",
             "prompt_version": prompt_version,
+            "context_ranking": context_ranking,
+            "ranking_tie_seed": ranking_tie_seed,
             "query_prior_mode": query_prior_mode,
             "record_limit_per_context_level": record_limit,
             "l2_record_limit_per_context": l2_record_limit,
@@ -1495,6 +1512,8 @@ def _run_query(
                 prompt_version=_context_prompt_version(args, task),
                 record_limit=args.record_limit_per_context_level,
                 l2_record_limit=args.l2_record_limit_per_context,
+                ranking=args.context_ranking,
+                tie_seed=args.ranking_tie_seed,
                 indirect_record_limit=args.indirect_record_limit_per_level,
                 include_indirect=args.context_record_l3_l5,
             )
@@ -1927,6 +1946,8 @@ def run(args: argparse.Namespace) -> int:
                     levels=context_records.indirect_level_names(task),
                     limit=args.indirect_record_limit_per_level,
                     workers=args.preparation_workers,
+                    ranking=args.context_ranking,
+                    tie_seed=args.ranking_tie_seed,
                 )
                 indirect_candidates_by_task[task] = indirect
                 indirect_ranking_audits[task] = indirect_audit
@@ -2016,17 +2037,23 @@ def run(args: argparse.Namespace) -> int:
                 ).hexdigest(),
             }
         if args.context_record_l3_l5:
-            bundle_contract = context_records.level_record_bundle_contract()
-            card_contract_manifest["level_record_bundle"] = {
-                "path": str(context_records.LEVEL_RECORD_BUNDLE_PATH),
-                "schema_version": bundle_contract["schema_version"],
-                "semantic_sha256": hashlib.sha256(
-                    json.dumps(
-                        bundle_contract,
-                        sort_keys=True,
-                        separators=(",", ":"),
-                    ).encode("utf-8")
-                ).hexdigest(),
+            card_contract_manifest["level_record_bundle_by_task"] = {
+                task: {
+                    "path": str(context_records.LEVEL_RECORD_BUNDLE_PATH),
+                    "schema_version": context_records.level_record_bundle_contract(
+                        _context_prompt_version(args, task)
+                    )["schema_version"],
+                    "semantic_sha256": hashlib.sha256(
+                        json.dumps(
+                            context_records.level_record_bundle_contract(
+                                _context_prompt_version(args, task)
+                            ),
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode("utf-8")
+                    ).hexdigest(),
+                }
+                for task in args.tasks
             }
     else:
         standard_card_contract = molecule_card_contract()
@@ -2140,7 +2167,11 @@ def run(args: argparse.Namespace) -> int:
                 "sha256": only_prompt["sha256"],
             }
         context_selection = {
-            "contexts": "exact V9 top 10",
+            "contexts": (
+                "top 10 by Morgan similarity from the exact V9 top-100 candidate universe"
+                if args.context_ranking == "morgan"
+                else "exact V9 top 10"
+            ),
             "record_limit_per_context_level": args.record_limit_per_context_level,
             "level_1": (
                 f"up to {args.record_limit_per_context_level} deterministic "
@@ -2168,8 +2199,12 @@ def run(args: argparse.Namespace) -> int:
             context_selection["later_levels_by_task"] = {
                 task: {
                     level: (
-                        f"append one bundle containing the top {args.indirect_record_limit_per_level} independently "
-                        "ranked Stage 3 records"
+                        f"append one bundle containing the top {args.indirect_record_limit_per_level} "
+                        + (
+                            "Morgan-ranked Stage 3 records"
+                            if args.context_ranking == "morgan"
+                            else "independently ranked Stage 3 records"
+                        )
                     )
                     for level in context_records.indirect_level_names(task)
                 }
@@ -2188,23 +2223,42 @@ def run(args: argparse.Namespace) -> int:
                         else "parent_condition_context"
                     ),
                     "scope": (
-                        "V9 ranks 0-9 for L1/L2; task-configured independent Stage 3 "
+                        "exact V9 Morgan-top-100 assignments for L1/L2; task-configured "
+                        "Stage 3 Morgan-top-75 scaffold-disjoint assignments for later levels"
+                        if args.context_ranking == "morgan"
+                        else "V9 ranks 0-9 for L1/L2; task-configured independent Stage 3 "
                         "Morgan-top-75 V19.1 rankings for later levels"
                         if args.context_record_l3_l5
+                        else "exact V9 Morgan-top-100 assignments for L1/L2"
+                        if args.context_ranking == "morgan"
                         else "V9 ranks 0-9 from the full Morgan top-100 candidate pool"
                     ),
                     "ranking": (
-                        {"L1_L2": "v9", "later_levels": "v19.1"}
+                        {
+                            "L1_L2": args.context_ranking,
+                            "later_levels": args.context_ranking,
+                        }
                         if args.context_record_l3_l5
-                        else "v9"
+                        else args.context_ranking
                     ),
-                    "structure_score_visible": False,
+                    "structure_score_visible": args.context_ranking == "morgan",
+                    "assay_transfer_scores_used": args.context_ranking == "assay_transfer",
+                    "ranking_tie_seed": (
+                        args.ranking_tie_seed
+                        if args.context_ranking == "morgan"
+                        else None
+                    ),
+                    "morgan_fingerprint": (
+                        {"radius": 2, "bits": 2048, "similarity": "Tanimoto"}
+                        if args.context_ranking == "morgan"
+                        else None
+                    ),
                 },
                 "selection": context_selection,
                 "prompt_profile": prompt_profile_manifest,
                 "prompt_template": prompt_template_manifest,
                 "l1_source": "current_conditioned_gold_raw_records",
-                "l1_ranking": "v9",
+                "l1_ranking": args.context_ranking,
                 "max_level": args.max_level,
                 "analog_tool_policy": "disabled_by_context_records_profile",
             }
@@ -2268,6 +2322,8 @@ def run(args: argparse.Namespace) -> int:
                             else None
                         ),
                         prompt_version=_context_prompt_version(args, task),
+                        context_ranking=args.context_ranking,
+                        ranking_tie_seed=args.ranking_tie_seed,
                     ): query_index
                     for query_index in indices
                 }
@@ -2356,6 +2412,18 @@ def main(argv: list[str] | None = None) -> int:
             "Prompt/card contract for --profile context_records. V1 reproduces the "
             "first run; task_best selects BBB V4, Bioavailability V3, and Skin V6."
         ),
+    )
+    parser.add_argument(
+        "--context-ranking",
+        choices=("assay_transfer", "morgan"),
+        default="assay_transfer",
+        help="Rank context-record candidates with the frozen assay-transfer scores or Morgan similarity.",
+    )
+    parser.add_argument(
+        "--ranking-tie-seed",
+        type=int,
+        default=0,
+        help="Seed for reproducible random ordering within equal Morgan similarities.",
     )
     parser.add_argument(
         "--context-record-l3-l5",
@@ -2521,6 +2589,17 @@ def main(argv: list[str] | None = None) -> int:
     if not 0 <= args.gold_l1_min_similarity <= 1:
         parser.error("--gold-l1-min-similarity must be between 0 and 1")
     if args.profile == "context_records":
+        if args.assay_transfer_prompt_version != "task_best":
+            prompt_ranking = str(
+                context_records.prompt_profile(
+                    args.assay_transfer_prompt_version
+                ).get("ranking")
+                or "assay_transfer"
+            )
+            if prompt_ranking != args.context_ranking:
+                parser.error(
+                    "--assay-transfer-prompt-version does not match --context-ranking"
+                )
         if args.reuse_context_l2 and not args.context_record_l3_l5:
             parser.error("--reuse-context-l2 requires --context-record-l3-l5")
         if args.reuse_context_l2 and (
@@ -2571,6 +2650,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.skip_tool_prefetch:
             parser.error("context_records disables analog tools internally; do not use --skip-tool-prefetch")
     else:
+        if args.context_ranking != "assay_transfer" or args.ranking_tie_seed != 0:
+            parser.error("--context-ranking and --ranking-tie-seed require --profile context_records")
         if args.reuse_context_l2:
             parser.error("--reuse-context-l2 requires --profile context_records")
         if args.context_record_l3_l5:
