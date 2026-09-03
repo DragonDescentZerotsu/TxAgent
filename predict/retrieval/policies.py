@@ -6,6 +6,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from enum import Enum
 from functools import lru_cache
+import hashlib
 from typing import Any
 
 from rdkit import Chem, DataStructs, RDLogger, rdBase
@@ -27,6 +28,12 @@ SELECTOR_VERSIONS = {
 
 RDLogger.DisableLog("rdApp.warning")
 RDLogger.DisableLog("rdApp.error")
+
+
+def seeded_rank_tie_key(seed: int, *parts: object) -> str:
+    """Return a reproducible pseudo-random key for equal-score candidates."""
+    payload = "\0".join((str(seed), *(str(part) for part in parts)))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 class MoleculeRelation(str, Enum):

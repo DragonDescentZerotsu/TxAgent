@@ -16,6 +16,7 @@ the fields declared in the selected ``card_v*.yaml`` and
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from copy import deepcopy
 from functools import lru_cache
 import hashlib
 import json
@@ -37,7 +38,7 @@ from predict.retrieval.assay_reranking.v9 import (
     model_profile,
     verify_vendored_assets,
 )
-from predict.retrieval.policies import normalize_molecule_identity
+from predict.retrieval.policies import normalize_molecule_identity, seeded_rank_tie_key
 from predict.utils.json import read_jsonl, sha256_file
 
 
@@ -120,11 +121,37 @@ PROMPT_PROFILES = {
         "card_schema_version": "v2",
         "template": Path(__file__).with_name("prompt_v8.jinja"),
     },
+    "morgan_v3": {
+        "name": "progressive.morgan_ranked.v3",
+        "card": Path(__file__).with_name("card_v2.yaml"),
+        "card_schema_version": "v2",
+        "template": Path(__file__).with_name("prompt_morgan_v3.jinja"),
+        "ranking": "morgan",
+    },
+    "morgan_v4": {
+        "name": "progressive.morgan_ranked.v4",
+        "card": Path(__file__).with_name("card_v4.yaml"),
+        "card_schema_version": "v4",
+        "template": Path(__file__).with_name("prompt_morgan_v4.jinja"),
+        "ranking": "morgan",
+    },
+    "morgan_v6": {
+        "name": "progressive.morgan_ranked.v6",
+        "card": Path(__file__).with_name("card_v4.yaml"),
+        "card_schema_version": "v4",
+        "template": Path(__file__).with_name("prompt_morgan_v5.jinja"),
+        "ranking": "morgan",
+    },
 }
 TASK_BEST_PROMPT_VERSIONS = {
     "bbb_martins": "v4",
     "bioavailability_ma": "v3",
     "skin_reaction": "v6",
+}
+TASK_MORGAN_PROMPT_VERSIONS = {
+    "bbb_martins": "morgan_v4",
+    "bioavailability_ma": "morgan_v3",
+    "skin_reaction": "morgan_v6",
 }
 V7_ROOT = Path("data/evidence_libraries")
 BIOAVAILABILITY_CLAIMS = Path(
@@ -297,12 +324,19 @@ def levels(
     return [row for row in rows if not max_level or int(row["level"]) <= max_level]
 
 
-def resolve_prompt_version(task: str, prompt_version: str) -> str:
+def resolve_prompt_version(
+    task: str, prompt_version: str, *, ranking: str = "assay_transfer"
+) -> str:
     if prompt_version != "task_best":
         prompt_profile(prompt_version)
         return prompt_version
     try:
-        return TASK_BEST_PROMPT_VERSIONS[task]
+        versions = (
+            TASK_MORGAN_PROMPT_VERSIONS
+            if ranking == "morgan"
+            else TASK_BEST_PROMPT_VERSIONS
+        )
+        return versions[task]
     except KeyError as exc:
         raise ValueError(f"no frozen task-best context-record prompt for {task}") from exc
 
@@ -314,11 +348,33 @@ def prompt_profile(prompt_version: str) -> Mapping[str, Any]:
         raise ValueError(f"unknown assay-transfer prompt version: {prompt_version}") from exc
 
 
-@lru_cache(maxsize=3)
+def _score_field(prompt_version: str) -> str:
+    return (
+        "morgan_similarity"
+        if prompt_profile(prompt_version).get("ranking") == "morgan"
+        else "transfer_likelihood"
+    )
+
+
+def _replace_score_field(contract: dict[str, Any], prompt_version: str) -> dict[str, Any]:
+    if _score_field(prompt_version) == "transfer_likelihood":
+        return contract
+    transformed = deepcopy(contract)
+    for section in ("context", "record"):
+        for field in (transformed.get(section) or {}).get("fields") or []:
+            if field.get("name") == "transfer_likelihood":
+                field["name"] = "morgan_similarity"
+                field["source"] = "morgan_similarity"
+    return transformed
+
+
+@lru_cache(maxsize=None)
 def card_contract(prompt_version: str = "v1") -> dict[str, Any]:
     profile = prompt_profile(prompt_version)
     path = profile["card"]
-    contract = yaml.safe_load(path.read_text(encoding="utf-8"))
+    contract = _replace_score_field(
+        yaml.safe_load(path.read_text(encoding="utf-8")), prompt_version
+    )
     card_schema_version = str(profile.get("card_schema_version") or prompt_version)
     expected_schema = f"progressive_context_record_card.{card_schema_version}"
     if not isinstance(contract, dict) or contract.get("schema_version") != expected_schema:
@@ -327,7 +383,7 @@ def card_contract(prompt_version: str = "v1") -> dict[str, Any]:
     if card_schema_version == "v1":
         required_record_fields.add("result")
     required = {
-        "context": {"context_card_id", "canonical_smiles", "condition_group", "transfer_likelihood", "available_record_counts"},
+        "context": {"context_card_id", "canonical_smiles", "condition_group", _score_field(prompt_version), "available_record_counts"},
         "record": required_record_fields,
     }
     for section, required_names in required.items():
@@ -347,9 +403,12 @@ def card_contract(prompt_version: str = "v1") -> dict[str, Any]:
     return contract
 
 
-@lru_cache(maxsize=1)
-def level_record_bundle_contract() -> dict[str, Any]:
-    contract = yaml.safe_load(LEVEL_RECORD_BUNDLE_PATH.read_text(encoding="utf-8"))
+@lru_cache(maxsize=None)
+def level_record_bundle_contract(prompt_version: str = "v1") -> dict[str, Any]:
+    contract = _replace_score_field(
+        yaml.safe_load(LEVEL_RECORD_BUNDLE_PATH.read_text(encoding="utf-8")),
+        prompt_version,
+    )
     if (
         not isinstance(contract, dict)
         or contract.get("schema_version") != "progressive_level_record_bundle.v1"
@@ -368,7 +427,7 @@ def level_record_bundle_contract() -> dict[str, Any]:
         "record": {
             "card_id",
             "reference_molecule_id",
-            "transfer_likelihood",
+            _score_field(prompt_version),
             "source_schema_id",
             "source_values",
         },
@@ -563,6 +622,8 @@ def load_candidates(
     v7_root: Path = V7_ROOT,
     record_limit: int = RECORD_LIMIT,
     l2_record_limit: int | None = None,
+    ranking: str = "assay_transfer",
+    tie_seed: int = 0,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
     """Load ten V9 contexts per query and attach sampled V7 L1/L2 rows."""
     if l2_record_limit is None:
@@ -571,6 +632,8 @@ def load_candidates(
         raise ValueError("record_limit must be positive")
     if l2_record_limit < 1:
         raise ValueError("l2_record_limit must be positive")
+    if ranking not in {"assay_transfer", "morgan"}:
+        raise ValueError(f"unsupported context ranking: {ranking}")
     task_dir = {
         "bbb_martins": "BBB_Martins",
         "bioavailability_ma": "Bioavailability_Ma",
@@ -604,26 +667,57 @@ def load_candidates(
     ranking_rows = pq.read_table(rankings_path).to_pylist()
     if {str(row["query_record_id"]) for row in ranking_rows} != set(valid_by_id):
         raise ValueError(f"{task} V9 cache queries differ from active valid gold")
-    selected_by_query: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    rows_by_query: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in ranking_rows:
-        rank = int(row["model_rank"])
-        if rank >= CONTEXT_LIMIT:
-            continue
         query_id = str(row["query_record_id"])
-        retrieval_id = str(row["retrieval_record_id"])
-        gold = gold_by_id.get(retrieval_id)
-        if gold is None:
-            raise ValueError(f"{task} V9 cache contains stale gold context {retrieval_id}")
-        if (
-            str(row["retrieval_molecule_identity_key"]) != str(gold["molecule_identity_key"])
-            or str(row["retrieval_condition_group"]) != str(gold["condition_group"])
-        ):
-            raise ValueError(f"{task} V9 context identity disagrees with active gold: {retrieval_id}")
-        selected_by_query[query_id].append(dict(row))
+        rows_by_query[query_id].append(dict(row))
+    selected_by_query: dict[str, list[dict[str, Any]]] = {}
+    for query_id, rows in rows_by_query.items():
+        if ranking == "assay_transfer":
+            selected = [row for row in rows if int(row["model_rank"]) < CONTEXT_LIMIT]
+            selected.sort(key=lambda row: int(row["model_rank"]))
+        else:
+            selected = sorted(
+                rows,
+                key=lambda row: (
+                    -float(row["morgan_tanimoto_similarity"]),
+                    seeded_rank_tie_key(
+                        tie_seed,
+                        task,
+                        query_id,
+                        row["retrieval_molecule_identity_key"],
+                        row["retrieval_record_id"],
+                    ),
+                ),
+            )[:CONTEXT_LIMIT]
+        for selection_rank, row in enumerate(selected):
+            row["_selection_rank"] = selection_rank
+        selected_by_query[query_id] = selected
     for query_id, rows in selected_by_query.items():
-        ranks = sorted(int(row["model_rank"]) for row in rows)
-        if ranks != list(range(CONTEXT_LIMIT)):
-            raise ValueError(f"{task} query {query_id} lacks exact V9 ranks 0-{CONTEXT_LIMIT - 1}")
+        if len(rows) != CONTEXT_LIMIT:
+            raise ValueError(f"{task} query {query_id} lacks {CONTEXT_LIMIT} contexts")
+        if ranking == "assay_transfer":
+            ranks = sorted(int(row["model_rank"]) for row in rows)
+            if ranks != list(range(CONTEXT_LIMIT)):
+                raise ValueError(
+                    f"{task} query {query_id} lacks exact V9 ranks 0-{CONTEXT_LIMIT - 1}"
+                )
+        for row in rows:
+            retrieval_id = str(row["retrieval_record_id"])
+            gold = gold_by_id.get(retrieval_id)
+            if gold is None:
+                raise ValueError(
+                    f"{task} V9 cache contains stale gold context {retrieval_id}"
+                )
+            if (
+                str(row["retrieval_molecule_identity_key"])
+                != str(gold["molecule_identity_key"])
+                or str(row["retrieval_condition_group"])
+                != str(gold["condition_group"])
+            ):
+                raise ValueError(
+                    f"{task} V9 context identity disagrees with active gold: {retrieval_id}"
+                )
 
     selected_gold_ids = {
         str(row["retrieval_record_id"])
@@ -812,15 +906,20 @@ def load_candidates(
         )
 
     candidates: dict[str, list[dict[str, Any]]] = {}
-    for query_id, ranking in selected_by_query.items():
+    for query_id, selected_rows in selected_by_query.items():
         contexts = []
-        for row in sorted(ranking, key=lambda value: int(value["model_rank"])):
+        for row in sorted(selected_rows, key=lambda value: int(value["_selection_rank"])):
             record_id = str(row["retrieval_record_id"])
+            score = (
+                {"morgan_similarity": round(float(row["morgan_tanimoto_similarity"]), 4)}
+                if ranking == "morgan"
+                else {"transfer_likelihood": round(float(row["prob_transfer"]), 4)}
+            )
             contexts.append(
                 {
                     **context_records[record_id],
-                    "transfer_likelihood": round(float(row["prob_transfer"]), 4),
-                    "_selection_rank": int(row["model_rank"]),
+                    **score,
+                    "_selection_rank": int(row["_selection_rank"]),
                     "_gold_record_id": record_id,
                 }
             )
@@ -833,6 +932,15 @@ def load_candidates(
         "n_valid_queries": len(candidates),
         "n_unique_contexts": len(context_records),
         "contexts_per_query": CONTEXT_LIMIT,
+        "ranking": ranking,
+        "ranking_tie_seed": tie_seed if ranking == "morgan" else None,
+        "assay_transfer_scores_used": ranking == "assay_transfer",
+        "candidate_universe": "exact_v9_morgan_top100",
+        "morgan_fingerprint": (
+            {"radius": 2, "bits": 2048, "similarity": "Tanimoto"}
+            if ranking == "morgan"
+            else None
+        ),
         "record_sample_limit_per_context_level": record_limit,
         "record_counts": dict(classification_counts),
         "l1_membership": (
@@ -880,11 +988,13 @@ def build_level_record_bundles(
     ranked_records: Mapping[str, Mapping[str, Any]],
     *,
     record_limit: int = INDIRECT_RECORD_LIMIT,
+    prompt_version: str = "v1",
 ) -> dict[int, dict[str, Any]]:
     """Convert frozen cache rows into one model-visible bundle per level."""
     if record_limit < 1:
         raise ValueError("record_limit must be positive")
-    contract = level_record_bundle_contract()
+    contract = level_record_bundle_contract(prompt_version)
+    score_field = _score_field(prompt_version)
     try:
         task_levels = contract["task_levels"][task]
     except KeyError as exc:
@@ -917,9 +1027,7 @@ def build_level_record_bundles(
                 "first_seen_level": level,
                 "level": level_name,
                 "reference_smiles": str(payload.get("canonical_smiles") or ""),
-                "transfer_likelihood": round(
-                    float(row["transfer_likelihood"]), 2
-                ),
+                score_field: round(float(row[score_field]), 2),
                 "source_id": str(payload.get("source_id") or ""),
                 "measurement_kind": str(payload.get("measurement_kind") or ""),
                 "source_values": _visible_source_values(
@@ -939,8 +1047,12 @@ def build_level_record_bundles(
             "evidence_family": str(definition["evidence_family"]),
             "description": str(definition["description"]),
             "selection": (
-                f"top {record_limit} Stage 3 records by frozen V19.1 "
-                "record-transfer likelihood"
+                f"top {record_limit} Stage 3 records by "
+                + (
+                    "Morgan fingerprint similarity"
+                    if score_field == "morgan_similarity"
+                    else "frozen V19.1 record-transfer likelihood"
+                )
             ),
             "available_record_count": int(selection["available_record_count"]),
             "selected_record_count": len(cards),
@@ -957,9 +1069,11 @@ def snapshots(
     task: str | None = None,
     indirect_records: Mapping[str, Mapping[str, Any]] | None = None,
     indirect_record_limit: int = INDIRECT_RECORD_LIMIT,
+    prompt_version: str = "v1",
 ) -> dict[int, dict[str, dict[str, Any]]]:
     """Return append-only context cards, optionally followed by later-level bundles."""
     output: dict[int, dict[str, dict[str, Any]]] = {}
+    score_field = _score_field(prompt_version)
     for level in (1, 2):
         active: dict[str, dict[str, Any]] = {}
         for source in contexts:
@@ -974,7 +1088,7 @@ def snapshots(
                 "context_card_id": context_id,
                 "canonical_smiles": source["canonical_smiles"],
                 "condition_group": source["condition_group"],
-                "transfer_likelihood": source["transfer_likelihood"],
+                score_field: source[score_field],
                 "available_record_counts": counts,
                 "first_seen_level": 1,
                 "_selection_rank": source["_selection_rank"],
@@ -990,6 +1104,7 @@ def snapshots(
             task,
             indirect_records,
             record_limit=indirect_record_limit,
+            prompt_version=prompt_version,
         ).items():
             active = dict(active)
             active[str(bundle["level_card_id"])] = bundle
@@ -1005,7 +1120,8 @@ def render_active_evidence(
     compact: bool = False,
 ) -> list[dict[str, Any]]:
     contract = card_contract(prompt_version)
-    bundle_contract = level_record_bundle_contract()
+    bundle_contract = level_record_bundle_contract(prompt_version)
+    score_field = _score_field(prompt_version)
     rendered = []
     for context in sorted(active.values(), key=lambda row: int(row["_selection_rank"])):
         if context.get("_card_kind") == "level_record_bundle":
@@ -1052,7 +1168,7 @@ def render_active_evidence(
                 item = {
                     "card_id": card_id_to_alias[str(card["card_id"])],
                     "reference_molecule_id": molecule_ids[str(card["reference_smiles"])],
-                    "transfer_likelihood": card["transfer_likelihood"],
+                    score_field: card[score_field],
                     "source_schema_id": source_ids[source],
                     "measurement_kind": card.get("measurement_kind"),
                     "source_values": [values.get(name) for name in source_columns[source]],
@@ -1125,6 +1241,7 @@ def build_messages(
     if indirect_record_limit < 1:
         raise ValueError("indirect_record_limit must be positive")
     indirect_visible = include_indirect and current_level >= 3
+    score_field = _score_field(prompt_version)
     if (
         l2_record_limit == record_limit
         and indirect_record_limit == INDIRECT_RECORD_LIMIT
@@ -1204,15 +1321,24 @@ def build_messages(
                 )
             ),
             "transfer_rule": (
-                "transfer_likelihood estimates whether a training context applies to this query. "
-                f"On {indirect_label} record cards it instead estimates whether that individual source record applies. "
-                "It is never a task-label probability or an experimental result."
-                if indirect_visible
-                else "transfer_likelihood estimates whether a training context applies to this query. "
-                "It is not a task-label probability and is not an experimental result."
+                "morgan_similarity is radius-2, 2048-bit Morgan-fingerprint Tanimoto similarity. "
+                "It is structural proximity used for ranking, not a task-label probability, "
+                "endpoint result, or guarantee of biological transferability."
+                if score_field == "morgan_similarity"
+                else (
+                    "transfer_likelihood estimates whether a training context applies to this query. "
+                    f"On {indirect_label} record cards it instead estimates whether that individual source record applies. "
+                    "It is never a task-label probability or an experimental result."
+                    if indirect_visible
+                    else "transfer_likelihood estimates whether a training context applies to this query. "
+                    "It is not a task-label probability and is not an experimental result."
+                )
             ),
             "structure_rule": (
-                "No numeric structure-comparison score is supplied. Interpret structures qualitatively "
+                "The numeric Morgan similarity is supplied explicitly. Use it only as structural context; "
+                "do not infer an endpoint outcome from it or invent hidden selection metadata."
+                if score_field == "morgan_similarity"
+                else "No numeric structure-comparison score is supplied. Interpret structures qualitatively "
                 "and do not invent a numeric score or hidden selection metadata."
             ),
             "prior_rule": (
@@ -1270,7 +1396,7 @@ def build_messages(
         )
     system_role = contract.system_role
     if indirect_visible:
-        definition = level_record_bundle_contract()["task_levels"][contract.task].get(
+        definition = level_record_bundle_contract(prompt_version)["task_levels"][contract.task].get(
             f"L{current_level}"
         )
         if definition:

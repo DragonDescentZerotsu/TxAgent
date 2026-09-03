@@ -38,6 +38,7 @@ from predict.retrieval.assay_reranking.v19_1 import (
 from predict.retrieval.policies import (
     decide_candidate,
     normalize_molecule_identity,
+    seeded_rank_tie_key,
     standardize_smiles_and_fp,
 )
 
@@ -143,6 +144,8 @@ def load_top_ranked_records(
     levels: Sequence[str] = ("L3", "L4", "L5"),
     limit: int = 50,
     workers: int = 8,
+    ranking: str = "assay_transfer",
+    tie_seed: int = 0,
 ) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, Any]]:
     """Read the highest-scored Stage 3 records from one finalized cache.
 
@@ -152,6 +155,8 @@ def load_top_ranked_records(
     """
     if task_id not in TASK_CONFIGS:
         raise ValueError(f"unsupported progressive cache task: {task_id}")
+    if ranking not in {"assay_transfer", "morgan"}:
+        raise ValueError(f"unsupported progressive record ranking: {ranking}")
     if limit < 1 or workers < 1:
         raise ValueError("limit and workers must be positive")
     if not queries:
@@ -205,7 +210,7 @@ def load_top_ranked_records(
             raise ValueError(f"query {query_id} has no frozen parent SMILES")
         normalized_queries[str(query_id)] = parent_smiles
 
-    sql = """
+    assay_transfer_sql = """
         SELECT r.external_record_id, m.molecule_chembl_id,
                s.transfer_probability, r.payload, COUNT(*) OVER ()
         FROM assignments AS a
@@ -219,6 +224,16 @@ def load_top_ranked_records(
         LIMIT ?
     """
 
+    morgan_sql = """
+        SELECT r.external_record_id, m.molecule_chembl_id, r.payload
+        FROM assignments AS a
+        JOIN queries AS q USING(query_id)
+        JOIN groups_dim AS g USING(group_key)
+        JOIN records AS r USING(record_key)
+        JOIN molecules AS m USING(molecule_key)
+        WHERE q.query_smiles = ? AND g.group_id = ?
+    """
+
     def load_one(item: tuple[str, str]) -> tuple[str, dict[str, dict[str, Any]]]:
         query_id, parent_smiles = item
         connection = sqlite3.connect(
@@ -227,15 +242,61 @@ def load_top_ranked_records(
         try:
             result: dict[str, dict[str, Any]] = {}
             for level in requested_levels:
-                rows = connection.execute(sql, (parent_smiles, level, limit)).fetchall()
+                if ranking == "assay_transfer":
+                    rows = connection.execute(
+                        assay_transfer_sql, (parent_smiles, level, limit)
+                    ).fetchall()
+                    available_count = int(rows[0][4]) if rows else 0
+                else:
+                    query_fp = standardize_smiles_and_fp(parent_smiles)[2]
+                    if query_fp is None:
+                        raise ValueError(f"cannot fingerprint query {query_id}")
+                    candidates = []
+                    for record_id, molecule_id, payload_json in connection.execute(
+                        morgan_sql, (parent_smiles, level)
+                    ).fetchall():
+                        payload = json.loads(payload_json)
+                        reference_smiles = str(payload.get("canonical_smiles") or "")
+                        reference_fp = standardize_smiles_and_fp(reference_smiles)[2]
+                        if reference_fp is None:
+                            raise ValueError(
+                                f"cannot fingerprint {task_id} cache record {record_id}"
+                            )
+                        similarity = float(DataStructs.TanimotoSimilarity(query_fp, reference_fp))
+                        candidates.append(
+                            (
+                                -similarity,
+                                seeded_rank_tie_key(
+                                    tie_seed,
+                                    task_id,
+                                    query_id,
+                                    level,
+                                    molecule_id,
+                                    record_id,
+                                ),
+                                str(record_id),
+                                str(molecule_id),
+                                similarity,
+                                payload,
+                            )
+                        )
+                    candidates.sort(key=lambda row: row[:3])
+                    available_count = len(candidates)
+                    rows = candidates[:limit]
                 if len(rows) != limit:
                     raise ValueError(
                         f"{task_id} query {query_id} has {len(rows)} {level} records; "
                         f"exactly {limit} are required"
                     )
                 records = []
-                for record_id, molecule_id, score_value, payload_json, available in rows:
-                    payload = json.loads(payload_json)
+                for row in rows:
+                    if ranking == "assay_transfer":
+                        record_id, molecule_id, score_value, payload_json, _ = row
+                        payload = json.loads(payload_json)
+                        score_field = {"transfer_likelihood": float(score_value)}
+                    else:
+                        _, _, record_id, molecule_id, score_value, payload = row
+                        score_field = {"morgan_similarity": float(score_value)}
                     if (
                         str(payload.get("record_id") or "") != str(record_id)
                         or str(payload.get("progressive_level") or "") != level
@@ -247,12 +308,12 @@ def load_top_ranked_records(
                         {
                             "record_id": str(record_id),
                             "reference_molecule_id": str(molecule_id),
-                            "transfer_likelihood": float(score_value),
+                            **score_field,
                             "payload": payload,
                         }
                     )
                 result[level] = {
-                    "available_record_count": int(rows[0][4]),
+                    "available_record_count": available_count,
                     "records": records,
                 }
             return query_id, result
@@ -260,16 +321,19 @@ def load_top_ranked_records(
             connection.close()
 
     unique_queries = dict.fromkeys(normalized_queries.values())
-    by_parent: dict[str, dict[str, dict[str, Any]]] = {}
+    work_items = (
+        list(normalized_queries.items())
+        if ranking == "morgan"
+        else [(smiles, smiles) for smiles in unique_queries]
+    )
+    loaded: dict[str, dict[str, dict[str, Any]]] = {}
     with concurrent.futures.ThreadPoolExecutor(
-        max_workers=min(workers, len(unique_queries))
+        max_workers=min(workers, len(work_items))
     ) as pool:
-        for parent_smiles, result in pool.map(
-            load_one, ((smiles, smiles) for smiles in unique_queries)
-        ):
-            by_parent[parent_smiles] = result
-    selected = {
-        query_id: by_parent[parent_smiles]
+        for key, result in pool.map(load_one, work_items):
+            loaded[key] = result
+    selected = loaded if ranking == "morgan" else {
+        query_id: loaded[parent_smiles]
         for query_id, parent_smiles in normalized_queries.items()
     }
     return selected, {
@@ -287,6 +351,14 @@ def load_top_ranked_records(
         "candidate_contract": version["candidate_contract"],
         "record_scope": version["record_scope"],
         "neighbor_identity_policy": version["neighbor_identity_policy"],
+        "ranking": ranking,
+        "ranking_tie_seed": tie_seed if ranking == "morgan" else None,
+        "assay_transfer_scores_used": ranking == "assay_transfer",
+        "morgan_fingerprint": (
+            {"radius": 2, "bits": 2048, "similarity": "Tanimoto"}
+            if ranking == "morgan"
+            else None
+        ),
         "inputs": dict(version.get("inputs") or {}),
     }
 
