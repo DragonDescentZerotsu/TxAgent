@@ -1,0 +1,89 @@
+{
+  "adjudicated_rows": 119,
+  "adjudicator_decision_counts": {
+    "override": 7,
+    "retain_original": 63,
+    "unresolved": 49
+  },
+  "adjudicator_review_sha256": {
+    "adjudicator_000.jsonl": "eb9ef9fdedf670c75ed062750c24417467d5c83f506b0c4129066ba2343c1206",
+    "adjudicator_001.jsonl": "182f9f96a36cc8b04774e7e3bec9c4d8f2b81eb65a61497c3a17a643eabd0f5e"
+  },
+  "affected_source_outcomes": {
+    "bbb_martins/direct_bbb/override": 296,
+    "bbb_martins/direct_bbb/reject": 56,
+    "bioavailability_ma/fa/override": 124,
+    "bioavailability_ma/fa/reject": 11,
+    "bioavailability_ma/fh/override": 117,
+    "bioavailability_ma/fh/reject": 7,
+    "bioavailability_ma/oral_exposure/override": 107,
+    "bioavailability_ma/oral_exposure/reject": 14,
+    "skin_reaction/direct_skin_reaction/override": 466,
+    "skin_reaction/direct_skin_reaction/reject": 28
+  },
+  "changed_rows": 1226,
+  "changed_target_rows": 1222,
+  "checker_decision_counts": {
+    "override": 1110,
+    "retain_original": 63,
+    "unresolved": 49
+  },
+  "checker_review_sha256": {
+    "checker_000.jsonl": "760d419874c1629cd1fcdded0392445a4a6f326e8f58038e6f305c7f0c042f21",
+    "checker_001.jsonl": "dde1f4b3206eb1710b441ad75b0c6925cfeffdda866fe6f66cdf68b0685e23dd",
+    "checker_002.jsonl": "3ff428a01d0eb6dadd957200dbda4bc3c456781b07bcb4f7458b5390b3119fba",
+    "checker_003.jsonl": "2862fbee0586c064377689264c3e173c5e963b3503500c5807193ee53b78a311",
+    "checker_004.jsonl": "a4fe20094037202b688eb1ca6346f2c8cedf07f3791df5eaf51f5abf6a5be7a8",
+    "checker_005.jsonl": "50809e95cc9412a03123f9ddbd8440108feb20f7246e59f5a1eea893833ef85e",
+    "checker_006.jsonl": "87de11963dfd085fbc70e1e625c4a8cdb69914d5068973cde7abee2ae80a32fe",
+    "checker_007.jsonl": "f25d8444a3e870e5dbf8a5eede73ebb09688b1473eb570d82a76bdd770877119",
+    "checker_008.jsonl": "a67a02e475ea64e4c19908e30f763cd9622384dc099dac4b4e5c41a0792fba4d",
+    "checker_009.jsonl": "1f19eb1ecaf45a1dcbb06bb5e11a7ffdfcde3630b36a4c648db6a122a1f589b0",
+    "checker_010.jsonl": "99b1dc8dd9864f3ec96253ff53b9f14d23c8ed88b5e5fc48cd9c0809f7fae1c4",
+    "checker_011.jsonl": "f19353f2f7c41a2332f9d7524c9136a029374964a8a9e057d17bc166ef1b9f3a",
+    "checker_012.jsonl": "314bf25c994519e5df0d7b10a0b7b4a30a5c775c7be202c73bfb21224e26128f"
+  },
+  "checker_rows": 1222,
+  "exact_context_conflicts": 0,
+  "exact_context_propagated_rows": 4,
+  "final_decision_counts": {
+    "override": 8551,
+    "reject": 2630
+  },
+  "final_override_counts": {
+    "bbb_martins/direct_bbb": 3715,
+    "bioavailability_ma/fa": 1151,
+    "bioavailability_ma/fh": 1188,
+    "bioavailability_ma/oral_exposure": 997,
+    "skin_reaction/direct_skin_reaction": 1500
+  },
+  "invalid_applied_overrides": 0,
+  "net_override_delta": -116,
+  "proposal": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/review/v2/proposal/reviewed_conflict_candidates.v2.parquet",
+  "proposal_sha256": "2c141da3e4b0152cd04c7741be0df95167143f615298ee3c6c99413150ecb708",
+  "publication_status": "proposal_only",
+  "publishes_task_policies": false,
+  "rebuilds_stage1": false,
+  "review_target_rows": 1222,
+  "review_version": "name_smiles_conflict_review.v2",
+  "runtime": {
+    "pandas": "3.0.2",
+    "python": "3.12.3",
+    "rdkit": "2026.03.1"
+  },
+  "selected_final_counts": {
+    "bbb_martins/high/override": 2,
+    "bbb_martins/high/reject": 7,
+    "bbb_martins/medium/override": 294,
+    "bbb_martins/medium/reject": 49,
+    "bioavailability_ma/high/reject": 7,
+    "bioavailability_ma/medium/override": 348,
+    "bioavailability_ma/medium/reject": 25,
+    "skin_reaction/high/reject": 1,
+    "skin_reaction/medium/override": 466,
+    "skin_reaction/medium/reject": 23
+  },
+  "source": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/review/v1/reviewed_conflict_candidates.v1.parquet",
+  "source_rows": 11181,
+  "source_sha256": "52295101f5dcf1aac876d368e09b96830be945363d54c8f194c156fe3708213c"
+}

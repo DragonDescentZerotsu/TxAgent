@@ -10,18 +10,18 @@ from typing import Any
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.condition_review import (
+from data.processing.gold_labels.condition_review import (
     attach_parent_identity,
     merge_terminal_verdicts,
     write_review_queue,
 )
-from tools.chembl_tool.common.starling.external_condition import payload_sha256
-from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
+from data.processing.gold_labels.external_condition import payload_sha256
+from data.processing.gold_labels.reviewed_conditioned_benchmark import (
     ConditionedBenchmarkConfig,
     build_reviewed_conditioned_benchmark,
 )
-from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT, CONTRACT
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.gold_labels.conditioned_benchmark import BUILD_ROOT, CONTRACT
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     DIRECT_CLAIMS_PATH,
     DIRECT_REPORT_TYPES,
 )
@@ -29,7 +29,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.condition_ontology import (
     ONTOLOGY_VERSION,
     classify_external_condition,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     is_human_context,
     label_bioavailability_value,
 )
@@ -38,10 +38,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
 PROPOSAL_VERSION = "bioavailability_external_condition_proposal.v6"
 LINEAGE = CONTRACT
 FROZEN_ROOT = Path(
-    "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
 )
 REVIEW_ROOT = Path(
-    "data/starling_data/bioavailability_ma/context_conditioned_review_v2"
+    "data/artifacts/starling/bioavailability_ma/source_reviews/context_conditioned_review_v2"
 )
 OUTPUT_ROOT = BUILD_ROOT / "Bioavailability_Ma/scaffold"
 

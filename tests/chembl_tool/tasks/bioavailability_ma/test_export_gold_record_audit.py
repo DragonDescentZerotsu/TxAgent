@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.benchmark_dataset import (
+from data.processing.gold_labels.benchmark_dataset import (
     LabeledSourceRecord,
     accepted,
 )

@@ -12,8 +12,8 @@ from tools.chembl_tool.tasks.skin_reaction.manual_condition_audit import (
 )
 
 
-REVIEW_ROOT = Path("data/starling_data/skin_reaction/context_conditioned_review_v1")
-FROZEN_ROOT = Path("data/processed_starling_record_supported_v2/Skin_Reaction/scaffold")
+REVIEW_ROOT = Path("data/artifacts/starling/skin_reaction/source_reviews/context_conditioned_review_v1")
+FROZEN_ROOT = Path("data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold")
 
 
 def audit(

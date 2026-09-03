@@ -11,7 +11,7 @@ from typing import Any
 import pandas as pd
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
 
 
 TASK_ROOTS = {

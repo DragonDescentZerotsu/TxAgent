@@ -297,7 +297,7 @@ def test_rerank_contract_truncates_raw_pool_before_exclusion_and_does_not_backfi
     assert [row["structural_rank"] for row in neighbors] == [3, 2]
 
 
-def test_compact_v11_contract_backfills_to_fifty_after_identity_exclusion():
+def test_compact_reranker_contract_backfills_after_identity_exclusion():
     molecules = [
         {"molecule_chembl_id": "exact", "canonical_smiles": "CCO"},
         {"molecule_chembl_id": "a", "canonical_smiles": "CCN"},

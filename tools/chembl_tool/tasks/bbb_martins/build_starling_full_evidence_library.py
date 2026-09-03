@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.starling import (
+from data.processing.evidence_library.evidence_library import (
     StarlingSourceProfile,
     build_and_write_starling_index,
     build_starling_parquet_evidence_rows,
@@ -15,7 +15,7 @@ from tools.chembl_tool.common.starling import (
 )
 
 
-DEFAULT_STARLING_DATA_DIR = "data/starling_data/bbb_martins"
+DEFAULT_STARLING_DATA_DIR = "data/raw/starling/bbb_martins"
 DEFAULT_DIRECT_EVIDENCE_JSONL = (
     "outputs/paper/molecular_evidence_agent/evidence/bbb_starling/all/starling_bbb_evidence.jsonl"
 )

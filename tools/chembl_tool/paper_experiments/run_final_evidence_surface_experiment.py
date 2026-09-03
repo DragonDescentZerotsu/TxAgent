@@ -45,7 +45,7 @@ CONTROL_CONDITION_SUFFIX = "__starling_full_flat"
 TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 SURFACES = (SUMMARY_PLUS_CARDS, CARDS_ONLY)
 
-DEFAULT_DATA_ROOT = Path("data/processed_starling_record_supported_v2")
+DEFAULT_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling_record_supported_v2")
 DEFAULT_CANONICAL_PAPER_ROOT = Path(
     "outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2"
 )

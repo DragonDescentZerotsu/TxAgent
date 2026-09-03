@@ -1,0 +1,134 @@
+# Executable model-visible record contract for progressive.assay_transfer.v2.
+# Edit this ordered list to change the JSON shown to the LLM. `source` names a
+# field produced by profile.py. Blank optional fields are omitted automatically.
+schema_version: progressive_context_record_card.v2
+
+context:
+  fields:
+    - name: context_card_id
+      source: context_card_id
+      required: true
+    - name: canonical_smiles
+      source: canonical_smiles
+      required: true
+    - name: condition_group
+      source: condition_group
+      required: true
+    # Dedicated V9 applicability estimate for transferring this whole
+    # parent-condition context to the query; not a positive-class probability.
+    - name: transfer_likelihood
+      source: transfer_likelihood
+      required: true
+    - name: available_record_counts
+      source: available_record_counts
+      required: true
+  records_field: record_cards
+
+record:
+  fields:
+    - name: card_id
+      source: card_id
+      required: true
+    - name: level
+      source: level
+      required: true
+    # Every value below comes directly from the named source-native Stage 3
+    # column. There is no fallback to a canonical_* or resolved_* field.
+    - name: endpoint_name
+      source: source__endpoint_name
+    - name: measurement_text
+      source: source__measurement_text
+    - name: unit_text
+      source: source__unit_text
+    - name: support_text
+      source: source__support_text
+    - name: confidence
+      source: source__confidence
+    - name: extra_details
+      source: source__extra_details
+    - name: assay_model
+      source: source__assay_model
+    - name: assay_system
+      source: source__assay_system
+    - name: assay_type
+      source: source__assay_type
+    - name: assay_or_test
+      source: source__assay_or_test
+    - name: assay_method
+      source: source__assay_method
+    - name: biological_system
+      source: source__biological_system
+    - name: biological_context
+      source: source__biological_context
+    - name: evidence_system
+      source: source__evidence_system
+    - name: species
+      source: source__species
+    - name: species_or_population
+      source: source__species_or_population
+    - name: qualifying_conditions
+      source: source__qualifying_conditions
+    - name: experimental_conditions
+      source: source__experimental_conditions
+    - name: study_context
+      source: source__study_context
+    - name: perturbation
+      source: source__perturbation
+    - name: transport_mechanism
+      source: source__transport_mechanism
+    - name: transporter_identifier
+      source: source__transporter_identifier
+    - name: evidence_type
+      source: source__evidence_type
+    - name: evidence_basis
+      source: source__evidence_basis
+    - name: interaction_conclusion
+      source: source__interaction_conclusion
+    - name: metric_uncertainty
+      source: source__metric_uncertainty
+    - name: statistic_type
+      source: source__statistic_type
+    - name: oral_dose
+      source: source__oral_dose
+    - name: dose
+      source: source__dose
+    - name: comparator
+      source: source__comparator
+    - name: comparator_exposure
+      source: source__comparator_exposure
+    - name: bioavailability_report_type
+      source: source__bioavailability_report_type
+    - name: oral_exposure_mode
+      source: source__oral_exposure_mode
+    - name: condition_medium
+      source: source__condition_medium
+    - name: formulation_or_solid_form
+      source: source__formulation_or_solid_form
+    - name: formulation_vehicle
+      source: source__formulation_vehicle
+    - name: intestinal_site
+      source: source__intestinal_site
+    - name: molecular_form
+      source: source__molecular_form
+    - name: substrate_status
+      source: source__substrate_status
+    - name: transporter_or_enzyme
+      source: source__transporter_or_enzyme
+    - name: enzyme_or_pathway
+      source: source__enzyme_or_pathway
+    - name: dose_or_concentration
+      source: source__dose_or_concentration
+    - name: positive_count
+      source: source__positive_count
+    - name: total_tested
+      source: source__total_tested
+    - name: aop_event
+      source: source__aop_event
+    - name: light_conditions
+      source: source__light_conditions
+    - name: exposure_time
+      source: source__exposure_time
+    - name: skin_source
+      source: source__skin_source
+    - name: study_design
+      source: source__study_design

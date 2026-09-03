@@ -24,7 +24,7 @@ from tools.chembl_tool.tasks.skin_reaction.experiment_config import STARLING
 
 
 DEFAULT_INPUT = Path(
-    "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl"
 )
 DEFAULT_SEED_DESCRIPTOR = DEFAULT_OUTPUT_ROOT / (
     "retrieval_features/scaffold/descriptors/"

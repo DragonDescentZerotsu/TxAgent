@@ -1,0 +1,28 @@
+{
+  "schema_version": "assay_transfer_prompt_projection.v19.1.direct_bioavailability_extension",
+  "base_projection_sha256": "a81e30e10a3fcef8d216867bb873a16bfaf69386e3f08f21071188c313ea0166",
+  "labels": {
+    "bioavailability_report_type": "Bioavailability report type",
+    "comparator": "Comparator",
+    "dose": "Dose",
+    "oral_exposure_mode": "Oral exposure mode",
+    "species_or_population": "Species or population"
+  },
+  "binding": {
+    "query": [
+      "endpoint_name",
+      "unit_text",
+      "bioavailability_report_type",
+      "comparator",
+      "dose",
+      "oral_exposure_mode",
+      "qualifying_conditions",
+      "species_or_population"
+    ],
+    "known_only": [
+      "measurement_text",
+      "support_text",
+      "extra_details"
+    ]
+  }
+}

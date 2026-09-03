@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.common.starling import starling_molecule_id
+from data.processing.evidence_library.evidence_library import starling_molecule_id
 from tools.chembl_tool.common.json_utils import sha256_file
 from tools.chembl_tool.tasks.bbb_martins.build_starling_full_evidence_library import bbb_profiles
 from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library import (
@@ -18,13 +18,13 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library impor
     _validate_canonical_source,
     skin_reaction_profiles,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     CANONICAL_VERSION,
 )
 
 
 def test_bbb_starling_profiles_cover_the_three_missing_mechanisms():
-    profiles = bbb_profiles(Path("data/starling_data/bbb_martins"))
+    profiles = bbb_profiles(Path("data/raw/starling/bbb_martins"))
 
     assert [profile.group_id for profile in profiles] == [
         "Mechanism.passive_permeability",
@@ -35,7 +35,7 @@ def test_bbb_starling_profiles_cover_the_three_missing_mechanisms():
 
 
 def test_skin_starling_profiles_use_canonical_direct_and_aop_only():
-    profiles = skin_reaction_profiles(Path("data/starling_data/skin_reaction"))
+    profiles = skin_reaction_profiles(Path("data/raw/starling/skin_reaction"))
 
     assert [profile.group_id for profile in profiles] == [
         "Direct.skin_reaction",
@@ -51,12 +51,12 @@ def test_skin_starling_profiles_use_canonical_direct_and_aop_only():
     assert profiles[1].path.endswith("canonical_sensitization_v3/aop_records.parquet")
 
     historical = skin_reaction_profiles(
-        Path("data/starling_data/skin_reaction"),
+        Path("data/raw/starling/skin_reaction"),
         source_profile=SOURCE_PROFILE_BROAD_V1,
     )
     assert historical[0].record_filter is None
     aligned_v2 = skin_reaction_profiles(
-        Path("data/starling_data/skin_reaction"),
+        Path("data/raw/starling/skin_reaction"),
         source_profile=SOURCE_PROFILE_SENSITIZATION_V2,
     )
     assert aligned_v2[0].record_filter is not None

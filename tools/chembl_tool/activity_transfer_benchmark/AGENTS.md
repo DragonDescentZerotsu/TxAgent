@@ -1,5 +1,12 @@
 # ChEMBL Activity Transfer Benchmark
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 ## 目标
 
 这个 benchmark 研究：在同一个 ChEMBL assay endpoint 内，已知 reference molecule 的
@@ -62,7 +69,7 @@ run_benchmark.py
   assay-specific enrichment, binary-comment auxiliary analysis, and TSV/GZ, SVG, and English report outputs.
 
 run_task_assay_benchmark.py
-  从 data/processed 四个任务 pipeline 的 assay evidence 出发，构建 task-scoped transfer benchmark。
+  从 data/gold_labels/legacy/processed 四个任务 pipeline 的 assay evidence 出发，构建 task-scoped transfer benchmark。
   支持 raw_robust_z、log_raw_robust_z、pchembl_delta 三套标签；raw/log raw 标签会做单位归一化和 assay 内 robust sigma。
 
 benchmark_mcs_runtime.py
@@ -406,7 +413,7 @@ MCS>=0.70      macro-F1 0.4941, balanced accuracy 0.4963
 
 ### task_assay_raw_robust_z_llm_3k
 
-当前推荐的 task-scoped LLM 小评估集，用于比较四个 data/processed task 的 pipeline 表现和
+当前推荐的 task-scoped LLM 小评估集，用于比较四个 data/gold_labels/legacy/processed task 的 pipeline 表现和
 同 task assay 上的 transfer performance。
 
 ```text

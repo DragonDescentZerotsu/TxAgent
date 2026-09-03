@@ -1,0 +1,25 @@
+Score how informative each experimental pair bucket is for this direct task label:
+{{ direct_label_definition }}
+
+The score answers: if one trustworthy measurement from this bucket were available for a molecule, how much would it constrain the direct label?
+
+- 0.00: irrelevant or unusably ambiguous
+- 0.25: weak indirect clue
+- 0.50: meaningful proxy with substantial limitations
+- 0.75: strong, closely related evidence
+- 1.00: direct or nearly determinative evidence
+
+Use the full 0.01 resolution when distinctions are justified. This is semantic
+informativeness, not confidence and not the probability of a positive label.
+Positive and negative measurements can be equally informative. Record and molecule
+counts describe the bucket but must not increase its score. Missing information is
+uncertainty, not negative evidence.
+
+Judge every item independently. Return exactly one JSON object with an `items`
+array, every item ID exactly once, and no additional fields:
+{"items":[{"id":"0","informativeness_score":0.00,"rationale":"One sentence of at most 40 words."}]}
+
+{% for item in items %}Item {{ item.id }}:
+{{ item.payload }}
+
+{% endfor %}

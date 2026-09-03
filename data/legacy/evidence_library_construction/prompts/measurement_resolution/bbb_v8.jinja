@@ -1,0 +1,18 @@
+Extract at most one continuous BBB measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return {"rows": [...]} with exactly one result per id, in order:
+
+  {"id":"...", "status":"ok"|"unsure"|"relative"|"unavailable",
+   "measurements":[{"measurement":"<plain decimal>","unit":"<unit as read>"}]}
+
+Only `ok` carries a measurement, and it carries exactly one. All other statuses carry `[]`. Resolve rows independently.
+
+The schema declares `{{ declared_measurement_field }}` as the sole measurement column; `{{ measurement_field }}` is its exact cleaned projection. The numeric coefficient must occur there. `support_text` may clarify meaning or the explicit unit, but may never supply a coefficient or second outcome. If the declared field has multiple candidate outcomes—even with different units—return `unsure`. Never emit multiple measurements.
+
+Exclude dose, administered concentration, exposure, timepoint, cohort/table/gene/isotope numbers, comparator/control/baseline values, assay conditions, and kinetic inputs. If only these remain, return `unavailable`; if output versus input is ambiguous, return `unsure`. For transport, rate/flux can be the output, while dose/concentration is an input. Km/Kt concentration under broad transport is not a transport rate unless the endpoint explicitly names Km/Kt.
+
+Statuses: `ok` = one clear absolute or endpoint-defined output; `relative` = only a numeric result relative to an external control/comparator; `unsure` = multiple outcomes, bound/range/fraction, ambiguous unit, or ambiguity; `unavailable` = no endpoint number. Prefer fail-closed over guessing. Endpoint-defined ratios such as brain/plasma Kp or efflux ratio are not relative.
+
+Use one finite plain decimal point estimate; remove spread (`8 +/- 1.5` -> `8`) but never convert a bound/range/fraction. Do not convert, rescale, round, compute, or logarithmically transform. Keep a printed power-of-ten scale in the unit: `3.16 x 10^-6 cm/s` -> `3.16`, `10^-6 cm/s`.
+
+{% if unit_field %}`{{ unit_field }}` is the exact projection of declared unit column `{{ declared_unit_field }}`.{% else %}Read the explicit unit attached to the selected value, using support only if necessary.{% endif %} Never invent a unit; a definitional ratio may use `dimensionless`.

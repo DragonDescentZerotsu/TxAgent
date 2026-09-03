@@ -2,11 +2,11 @@ import json
 
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
     AuxiliaryMetadataAttacher,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import PAIR_BUCKETS
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import PAIR_BUCKETS
 
 
 def _write_mapping(path, *, fa_context="caco_2"):

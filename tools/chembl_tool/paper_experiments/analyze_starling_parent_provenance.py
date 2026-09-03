@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
-from tools.chembl_tool.common.starling.benchmark_dataset import LabelDecision
+from data.processing.gold_labels.benchmark_dataset import LabelDecision
 from tools.chembl_tool.paper_experiments.paper_figure_style import (
     BG,
     BLIND,
@@ -35,22 +35,22 @@ from tools.chembl_tool.paper_experiments.paper_figure_style import (
     MUTED,
     VISIBLE,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_benchmark import (
     SOURCE_REVISION as BBB_SOURCE_REVISION,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_benchmark import (
     load_label_decisions as load_bbb_decisions,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     load_label_decisions as load_bioavailability_decisions,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_benchmark import (
     load_label_decisions as load_skin_decisions,
 )
 
 
 DEFAULT_OUTPUT_DIR = Path("outputs/paper/starling_parent_provenance")
-BENCHMARK_ROOT = Path("data/processed_starling")
+BENCHMARK_ROOT = Path("data/gold_labels/legacy/processed_starling")
 
 
 @dataclass(frozen=True)

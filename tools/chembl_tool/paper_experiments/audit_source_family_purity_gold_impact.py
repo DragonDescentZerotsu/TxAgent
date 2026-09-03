@@ -22,20 +22,21 @@ from tools.chembl_tool.common.json_utils import (
     write_jsonl_atomic,
 )
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
-from tools.chembl_tool.common.starling.benchmark_dataset import LabeledSourceRecord
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.gold_labels.benchmark_dataset import LabeledSourceRecord
+from data.processing.gold_labels.conditioned_benchmark import task_root
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     DIRECT_REPORT_TYPES,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     has_reported_text,
     is_human_context,
     label_bioavailability_value,
     load_label_decisions as load_bio_decisions,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     normalized_direct_label,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_benchmark import (
     load_label_decisions as load_skin_decisions,
 )
 
@@ -148,7 +149,7 @@ def _bio_candidates(path: Path) -> tuple[list[LabeledSourceRecord], Counter[str]
 
 
 def _skin_existing_keys() -> set[tuple[str, str, str, int]]:
-    source = Path("data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet")
+    source = Path("data/raw/starling/skin_reaction/direct_skin_reaction/extractions.parquet")
     columns = ["SMILES", "pmid", "support_text", "outcome_label"]
     keys: set[tuple[str, str, str, int]] = set()
     for row in pq.read_table(source, columns=columns).to_pylist():
@@ -365,11 +366,7 @@ def _frozen_split_membership(task: str) -> dict[str, dict[str, Any]]:
 
 
 def _conditioned_valid_membership(task: str) -> dict[str, list[int]]:
-    task_dir = {
-        "bioavailability_ma": "Bioavailability_Ma",
-        "skin_reaction": "Skin_Reaction",
-    }[task]
-    path = Path("data/conditioned_benchmark") / task_dir / "scaffold/valid.jsonl"
+    path = task_root(task) / "valid.jsonl"
     membership: dict[str, list[int]] = defaultdict(list)
     for index, row in enumerate(read_jsonl(path)):
         key = _parent_key(_text(row.get("drug")))

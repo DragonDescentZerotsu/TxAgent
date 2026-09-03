@@ -1,8 +1,9 @@
 from pathlib import Path
 
 
-VIEWER = Path("tools/trace_viewer/viewer.html")
-STARTER = Path("tools/trace_viewer/start_viewer.sh")
+VIEWER = Path("predict/traces/viewer/viewer.html")
+STARTER = Path("predict/traces/viewer/start_viewer.sh")
+COMPAT_STARTER = Path("tools/trace_viewer/start_viewer.sh")
 
 
 def test_trace_viewer_targets_only_final_paper_runs():
@@ -20,6 +21,7 @@ def test_trace_viewer_targets_only_final_paper_runs():
     assert "molecular_evidence_agent" in starter
     assert ".trace_viewer_sources.tsv" in starter
     assert ".trace_viewer_catalog.tsv" in starter
+    assert "predict/traces/viewer/start_viewer.sh" in COMPAT_STARTER.read_text(encoding="utf-8")
 
 
 def test_trace_viewer_supports_configured_benchmark_datasets_and_generic_metrics():

@@ -1,0 +1,49 @@
+{% set guidance %}
+This is progressive assay-transfer reasoning for absolute oral bioavailability
+at the F=20% threshold. The target is measured absolute oral bioavailability,
+not generic permeability, exposure, or drug-likeness.
+
+Record cards combine a normalized measurement core with selected source-native
+experimental context. Missing fields are omitted. First determine what each
+measurement says about its reference molecule. Interpret absolute or relative
+bioavailability and matched oral-versus-reference exposure using dose, route,
+formulation, species, AUC, Cmax, sampling, and reference context together.
+Permeability, solubility, exposure, metabolism, or transporter mechanisms alone
+are indirect and cannot define the F >= 20% label.
+
+L1 records define the accepted training context. L2 records did not define that
+gold outcome: use them to clarify consistency, limitations, or transfer, never
+as extra gold votes. Repeated records within one context are not independent.
+
+Treat transfer_likelihood as one relevance signal for whether a reference
+parent-condition context applies to the query. It is not a positive-class
+probability or an experimental result. Infer direction from the records first,
+then judge transfer from the visible endpoint, assay, species, formulation,
+exposure, condition, and structure. A concrete mismatch can outweigh the score.
+Do not invent a numeric similarity judgment or universal transfer cutoff.
+
+{% if prompt_version in ("v8.1", "v8.2") %}
+Make the final comparison at the parent-condition context level. Assign each
+context one overall direction and applicability assessment, then compare the
+most direct and transferable contexts rather than counting record cards. Use
+the query physicochemical prior only when the transferable experimental
+contexts are genuinely balanced or sparse; it must not override a coherent
+set of directly measured outcomes.
+{% endif %}
+
+Missing or ambiguous evidence is neutral. A measured F < 20% outcome in an
+applicable context is affirmative evidence for low bioavailability, while a
+measured F >= 20% outcome is affirmative evidence for high bioavailability.
+Ground every compound-specific empirical claim in cited record cards. Return
+exactly one valid JSON object and do not reveal hidden chain-of-thought.
+{% endset %}
+[
+  {
+    "role": "system",
+    "content": {{ (system_role ~ "\n\n" ~ (guidance | trim)) | tojson }}
+  },
+  {
+    "role": "user",
+    "content": {{ user_content | tojson }}
+  }
+]

@@ -2,30 +2,29 @@ from __future__ import annotations
 
 import json
 
-from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+from data.processing.evidence_library.shared.v1.normalization.measurement_resolution import (
     load_exact_unit_mapping,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_policy import (
     POLICY as BBB_POLICY,
     endpoint_inventory as bbb_endpoint_inventory,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_starling_pair_bucket_transfer_policy import (
     resolve_output_dir as resolve_bioavailability_output_dir,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIOAVAILABILITY_RECORD_CONTRACT,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import (
     POLICY as BIOAVAILABILITY_POLICY,
 )
-from tools.chembl_tool.tasks.clintox.starling_policy import POLICY as CLINTOX_POLICY
-from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     resolve_output_dir as resolve_skin_output_dir,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_schema import (
     RECORD_CONTRACT as SKIN_RECORD_CONTRACT,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY as SKIN_POLICY
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_policy import POLICY as SKIN_POLICY
 
 
 def test_standalone_calibration_defaults_follow_contract_version(tmp_path) -> None:
@@ -60,15 +59,15 @@ def test_bbb_endpoint_inventory_points_to_v7_registry() -> None:
 def test_task_policies_declare_additional_scientific_assets() -> None:
     assert [path.name for path in BBB_POLICY.scientific_assets] == [
         "measurement_semantics.v1.json",
-        "reference_semantics_prompts.json",
+        "bbb.json",
         "policy.json",
     ]
     assert [path.name for path in SKIN_POLICY.scientific_assets] == [
         "measurement_semantics.json",
-        "reference_semantics_prompts.json",
+        "skin_reaction.json",
         "globally_reconciled_auxiliary_value_mapping.json",
         "partition_audit.parquet",
-        "auxiliary_value_prompts.json",
+        "skin_reaction.json",
         "policy.json",
     ]
 
@@ -78,7 +77,6 @@ def test_exact_unit_mappings_are_task_owned() -> None:
         BBB_POLICY,
         BIOAVAILABILITY_POLICY,
         SKIN_POLICY,
-        CLINTOX_POLICY,
     )
     paths = set()
     for policy in policies:

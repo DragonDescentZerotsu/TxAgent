@@ -1,43 +1,40 @@
 import gzip
-import hashlib
 import json
 from types import SimpleNamespace
 
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.normalized_evidence import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
+    parse_point_measurement,
+)
+from tests.chembl_tool.common.normalization_helpers import (
     NormalizedSourceProfile,
     normalize_measurement_and_unit,
     normalize_source_rows,
 )
-from tools.chembl_tool.common.starling.normalization.measurements import (
-    parse_point_measurement,
-)
-from tools.chembl_tool.common.starling import (
+from data.processing.evidence_library.versions.v7 import (
     build_normalized_evidence_library as staged_builder,
-    record_collapse,
 )
-from tools.chembl_tool.common.starling.semantic_record_aggregation import render_prompt
-from tools.chembl_tool.tasks.bioavailability_ma import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma import (
     build_normalized_starling_evidence_library as normalized_builder,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
-    HF_BIOAVAILABILITY_SOURCE_COLUMNS,
-    load_hf_bioavailability_rows,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
-    load_extra_source,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy import (
-    endpoint_specific_standardization_of_unit,
-    family_assignment,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
     CONTEXTUAL_STANDARDIZATION_STATUS,
     contextual_canonical_record_fields,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_policy import (
+    endpoint_specific_standardization_of_unit,
+    family_assignment,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
+    HF_BIOAVAILABILITY_SOURCE_COLUMNS,
+    load_hf_bioavailability_rows,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import (
+    load_extra_source,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_spacing_and_spelling import (
     ENDPOINT_CONCEPT_PATHS,
     SPACING_AND_SPELLING_VERSION,
     endpoint_concept,
@@ -196,9 +193,7 @@ def test_contextual_policy_converts_only_human_liver_microsome_cyp():
     human = contextual_canonical_record_fields(
         {**base, "global_species_context": "human"}
     )
-    rat = contextual_canonical_record_fields(
-        {**base, "global_species_context": "rat"}
-    )
+    rat = contextual_canonical_record_fields({**base, "global_species_context": "rat"})
     assert human["canonical_measurement"] == "2500"
     assert human["canonical_unit"] == "pmol/mg·min"
     assert rat["canonical_measurement"] == "2.5"
@@ -262,9 +257,10 @@ def test_endpoint_concept_maps_cover_every_frozen_source_endpoint():
     for path in ENDPOINT_CONCEPT_PATHS:
         payload = json.loads(path.read_text(encoding="utf-8"))
         for row in payload["mappings"]:
-            assert endpoint_concept(payload["source_id"], row["endpoint_name"]) == row[
-                "canonical_endpoint_concept"
-            ]
+            assert (
+                endpoint_concept(payload["source_id"], row["endpoint_name"])
+                == row["canonical_endpoint_concept"]
+            )
 
     assert endpoint_concept("oral_exposure", "AUCINF") == "auc_0_infinity"
     assert endpoint_concept("oral_exposure", "AUC0_∞") == "auc_0_infinity"
@@ -389,14 +385,15 @@ def test_family_mapping_remains_separate_and_stable():
         "hf_bioavailability",
         "oral_bioavailability",
         {"bioavailability_report_type": "absolute"},
-    ).group_id == (
-        "Observed.direct_oral_bioavailability"
+    ).group_id == ("Observed.direct_oral_bioavailability")
+    assert (
+        family_assignment(
+            "hf_bioavailability",
+            "oral_bioavailability",
+            {"bioavailability_report_type": "relative_comparison"},
+        ).group_id
+        == "Observed.nondirect_oral_bioavailability"
     )
-    assert family_assignment(
-        "hf_bioavailability",
-        "oral_bioavailability",
-        {"bioavailability_report_type": "relative_comparison"},
-    ).group_id == "Observed.nondirect_oral_bioavailability"
     assert family_assignment("oral_exposure", "AUC").group_id == (
         "Observed.oral_auc_cmax_exposure"
     )
@@ -426,8 +423,18 @@ def test_hf_loader_reads_one_complete_unpartitioned_source(tmp_path):
     columns = HF_BIOAVAILABILITY_SOURCE_COLUMNS
     pd.DataFrame(
         [
-            {**{column: None for column in columns}, "source_index": 0, "smiles": "CCO", "oral_bioavailability_value": "57%"},
-            {**{column: None for column in columns}, "source_index": 1, "smiles": "CCN", "oral_bioavailability_value": "low"},
+            {
+                **{column: None for column in columns},
+                "source_index": 0,
+                "smiles": "CCO",
+                "oral_bioavailability_value": "57%",
+            },
+            {
+                **{column: None for column in columns},
+                "source_index": 1,
+                "smiles": "CCN",
+                "oral_bioavailability_value": "low",
+            },
         ],
         columns=columns,
     ).to_parquet(source, index=False)
@@ -479,49 +486,6 @@ def test_original_hf_source_is_one_batch_with_row_scopes(tmp_path):
 
 
 def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
-    from dataclasses import replace
-
-    from tools.chembl_tool.tasks.bioavailability_ma import (
-        build_starling_downstream_artifacts as downstream_builder,
-    )
-
-    original_spec = downstream_builder._spec
-    monkeypatch.setattr(
-        downstream_builder,
-        "_spec",
-        lambda: replace(
-            original_spec(),
-            final_endpoint_pruning=False,
-            assay_transfer_bucket_policy_path=None,
-        ),
-    )
-
-    def fake_semantic_aggregation(groups, **_kwargs):
-        return [
-            {
-                "group_id": group_id,
-                "prompt_sha256": hashlib.sha256(
-                    render_prompt(payload).encode()
-                ).hexdigest(),
-                "requested_model": "test-double",
-                "response": {
-                    "schema_version": "semantic_record_aggregation.v2",
-                    "evidence_pattern": "insufficient",
-                    "summary": None,
-                    "findings": [],
-                    "conflicts": [],
-                    "limitations": ["Synthetic restart-test response."],
-                },
-                "usage": {},
-                "input": dict(payload),
-            }
-            for group_id, payload in sorted(groups.items())
-        ]
-
-    # This test covers staged build/restart integrity, not model semantics.
-    monkeypatch.setattr(
-        record_collapse, "aggregate_semantic_groups", fake_semantic_aggregation
-    )
     data_dir = tmp_path / "sources"
     source_rows = {
         "Oral_AUC-Cmax_Exposure": {
@@ -706,9 +670,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
             encoding="utf-8"
         )
     )
-    assert (
-        out_dir / "01_cleaned/source_value_cleaning_audit.parquet"
-    ).is_file()
+    assert (out_dir / "01_cleaned/source_value_cleaning_audit.parquet").is_file()
     assert "source_value_cleaning_audit" in clean_manifest["sidecars"]
     assert sum(source_inventory["source_row_counts"].values()) == 6
     assert source_value_cleaning["n_input_records"] == 6
@@ -733,7 +695,9 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
     assert manifest["source_column_contract_version"] == "source_column_contract.v2"
     assert "index_version" not in manifest
     assert "compact_artifact_version" not in manifest
-    assert manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
+    assert (
+        manifest["auxiliary_attachment_version"] == "starling_auxiliary_attachment.v1"
+    )
     assert manifest["contextual_unit_policy"]["policy_version"] == (
         "contextual_canonical_unit_policy.v1"
     )
@@ -800,8 +764,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
     }
     calibration_text = json.dumps(calibration, sort_keys=True)
     assert all(
-        f'"{field}"' not in calibration_text
-        for field in forbidden_calibration_fields
+        f'"{field}"' not in calibration_text for field in forbidden_calibration_fields
     )
 
     # Collapse, pruning, paper views, and indices are not core artifacts.
@@ -815,9 +778,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
     changed.to_parquet(changed_mapping, index=False)
     drift_args = list(common_args)
     drift_args[drift_args.index("--smiles-mapping") + 1] = str(changed_mapping)
-    drift_args.extend(
-        ["--from-stage", "normalize", "--through-stage", "normalize"]
-    )
+    drift_args.extend(["--from-stage", "normalize", "--through-stage", "normalize"])
     with pytest.raises(ValueError, match="changed since Stage 01"):
         normalized_builder.main(drift_args)
     failed_args = list(common_args)
@@ -835,9 +796,7 @@ def test_versioned_builder_schema_manifest_and_restart(tmp_path, monkeypatch):
 
     frozen_v1 = out_dir / "07_endpoint_policies" / "v1"
     frozen_v1.mkdir(parents=True)
-    (frozen_v1 / "endpoint_policy_registry.json").write_text(
-        "stale", encoding="utf-8"
-    )
+    (frozen_v1 / "endpoint_policy_registry.json").write_text("stale", encoding="utf-8")
     assert normalized_builder.main([*common_args, "--through-stage", "clean"]) == 0
     clean_only = json.loads(
         (out_dir / normalized_builder.MANIFEST_FILENAME).read_text(encoding="utf-8")
@@ -883,9 +842,7 @@ def test_stage_invalidation_follows_dependency_order(
         for filename in normalized_builder.STAGE_OUTPUT_FILENAMES[candidate]:
             if filename == normalized_builder.MANIFEST_FILENAME:
                 continue
-            expected = (
-                normalized_builder.STAGES.index(candidate) <= stage_index
-            )
+            expected = normalized_builder.STAGES.index(candidate) <= stage_index
             assert (out_dir / filename).exists() is expected
     assert all(
         (out_dir / directory).exists() is (not removes_record_dependents)
@@ -939,6 +896,7 @@ def test_builder_rejects_reconciliation_until_comparison_contract_exists():
 
 def test_builder_cli_has_no_expansion_stage():
     with pytest.raises(SystemExit):
-        staged_builder.parse_args(normalized_builder.POLICY,
-            ["--from-stage", "expand", "--through-stage", "expand"]
+        staged_builder.parse_args(
+            normalized_builder.POLICY,
+            ["--from-stage", "expand", "--through-stage", "expand"],
         )

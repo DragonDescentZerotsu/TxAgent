@@ -1,0 +1,99 @@
+{
+  "gold_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tests/chembl_tool/common/measurement_resolution_quality/gold/bbb_martins.v8.jsonl",
+  "gold_corpus_version": "measurement_resolution_gold.v8.1",
+  "gold_cases": 500,
+  "mapping_path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/measurement_resolution_v15_gpt54mini/quality/measurement_resolution.parquet",
+  "evaluated_cases": 159,
+  "gold_coverage": 0.318,
+  "model_target_cases": 159,
+  "model_target_coverage": 1.0,
+  "status": {
+    "correct": 156,
+    "total": 159,
+    "accuracy": 0.9811320754716981
+  },
+  "gold_ok_recovery": {
+    "correct": 111,
+    "total": 112,
+    "accuracy": 0.9910714285714286
+  },
+  "measurement": {
+    "correct": 111,
+    "total": 112,
+    "accuracy": 0.9910714285714286
+  },
+  "unit": {
+    "correct": 110,
+    "total": 112,
+    "accuracy": 0.9821428571428571
+  },
+  "measurement_and_unit": {
+    "correct": 110,
+    "total": 112,
+    "accuracy": 0.9821428571428571
+  },
+  "raw_measurement": {
+    "correct": 111,
+    "total": 112,
+    "accuracy": 0.9910714285714286
+  },
+  "raw_unit": {
+    "correct": 97,
+    "total": 112,
+    "accuracy": 0.8660714285714286
+  },
+  "raw_measurement_and_unit": {
+    "correct": 97,
+    "total": 112,
+    "accuracy": 0.8660714285714286
+  },
+  "measurement_given_ok_prediction": {
+    "correct": 111,
+    "total": 111,
+    "accuracy": 1.0
+  },
+  "unit_given_ok_prediction": {
+    "correct": 110,
+    "total": 111,
+    "accuracy": 0.990990990990991
+  },
+  "whole_record": {
+    "correct": 155,
+    "total": 159,
+    "accuracy": 0.9748427672955975
+  },
+  "by_source": {
+    "direct_bbb": {
+      "cases": 49,
+      "whole_record": {
+        "correct": 45,
+        "total": 49,
+        "accuracy": 0.9183673469387755
+      }
+    },
+    "efflux_transport": {
+      "cases": 67,
+      "whole_record": {
+        "correct": 67,
+        "total": 67,
+        "accuracy": 1.0
+      }
+    },
+    "influx_transport": {
+      "cases": 30,
+      "whole_record": {
+        "correct": 30,
+        "total": 30,
+        "accuracy": 1.0
+      }
+    },
+    "passive_permeability": {
+      "cases": 13,
+      "whole_record": {
+        "correct": 13,
+        "total": 13,
+        "accuracy": 1.0
+      }
+    }
+  }
+}

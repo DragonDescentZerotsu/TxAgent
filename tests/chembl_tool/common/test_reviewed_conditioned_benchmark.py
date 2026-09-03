@@ -3,11 +3,11 @@ from pathlib import Path
 
 import pytest
 
-from tools.chembl_tool.common.starling.external_condition import (
+from data.processing.gold_labels.external_condition import (
     AtomRule,
     propose_pattern_condition,
 )
-from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
+from data.processing.gold_labels.reviewed_conditioned_benchmark import (
     ConditionedBenchmarkConfig,
     aggregate_reviewed_votes,
     build_reviewed_conditioned_benchmark,

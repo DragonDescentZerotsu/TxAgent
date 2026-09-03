@@ -1,14 +1,15 @@
 import json
+from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.build_endpoint_unit_profile import build_profile
-from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+from data.processing.evidence_library.versions.v7.build_endpoint_unit_profile import build_profile
+from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
     TaskConfig,
     candidate_rows,
 )
-from tools.chembl_tool.common.starling.measurement_routing import SourceRoutingRules
+from data.processing.evidence_library.versions.v7.measurement_routing import SourceRoutingRules
 
 
 def test_bioavailability_config_and_gold_contract() -> None:
@@ -21,13 +22,11 @@ def test_bioavailability_config_and_gold_contract() -> None:
     assert "Solve concisely." in prompt
     assert "fed/fasted, formulation, treatment" in prompt
 
-    lines = [
-        json.loads(line)
-        for line in config.DEFAULT_BASE_MAPPING_PATH.parent.parent.joinpath(
-            "measurement_resolution_v1",
-            "measurement_resolution_gold.jsonl"
-        ).read_text().splitlines()
-    ]
+    gold_path = (
+        Path(__file__).resolve().parents[2]
+        / "common/measurement_resolution_quality/gold/bioavailability_ma.v4.jsonl"
+    )
+    lines = [json.loads(line) for line in gold_path.read_text().splitlines()]
     manifest, cases = lines[0], lines[1:]
     assert manifest["corpus_version"] == "bioavailability_measurement_resolution_gold.v4"
     assert manifest["cases"] == len(cases) == 300

@@ -6,7 +6,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import STARLIN
 
 CONFIG = ScalarKnnConfig(
     description=__doc__ or "",
-    default_input="data/processed/Bioavailability_Ma/test.jsonl",
+    default_input="data/gold_labels/legacy/processed/Bioavailability_Ma/test.jsonl",
     default_index=(
         "outputs/paper/molecular_evidence_agent/evidence/"
         "bioavailability_starling_direct_numeric/starling_factor_neighbor_index.pkl"

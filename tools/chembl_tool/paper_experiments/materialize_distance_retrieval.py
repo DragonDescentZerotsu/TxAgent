@@ -26,7 +26,7 @@ CONDITIONS = {
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input-jsonl", default="data/processed/BBB_Martins/test.jsonl")
+    parser.add_argument("--input-jsonl", default="data/gold_labels/legacy/processed/BBB_Martins/test.jsonl")
     parser.add_argument(
         "--index",
         default=(

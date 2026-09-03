@@ -23,7 +23,7 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
 )
 from tools.chembl_tool.common.source_family_purity import FamilyMove
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     direct_outcome_reason,
 )
 

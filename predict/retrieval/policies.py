@@ -300,11 +300,11 @@ def _excluded_relation_values(policy: NeighborIdentityPolicy) -> list[str]:
 def _same_nonempty_scaffold(
     query: MoleculeIdentity, candidate: MoleculeIdentity
 ) -> bool:
-    return bool(
-        query.parent_smiles
-        and candidate.parent_smiles
-        and bemis_murcko_scaffold(query.parent_smiles)
-        == bemis_murcko_scaffold(candidate.parent_smiles)
+    if not query.parent_smiles or not candidate.parent_smiles:
+        return False
+    return _same_nonempty(
+        bemis_murcko_scaffold(query.parent_smiles),
+        bemis_murcko_scaffold(candidate.parent_smiles),
     )
 
 

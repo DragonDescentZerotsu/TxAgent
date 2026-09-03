@@ -76,7 +76,7 @@ TASK_DATA_NAMES = {
     "clintox": "ClinTox",
     "skin_reaction": "Skin_Reaction",
 }
-DEFAULT_BENCHMARK_DATA_ROOT = Path("data/processed_starling")
+DEFAULT_BENCHMARK_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling")
 EVALUATION_SUBSETS = ("valid", "test")
 REFERENCE_POOLS = ("train", "train_valid")
 DEFAULT_ENDPOINT_CONCURRENCY_BUDGET = 512

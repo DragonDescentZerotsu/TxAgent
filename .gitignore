@@ -5,9 +5,41 @@ __pycache__/
 outputs/
 .scratch/
 
+# Track only the compatibility links created by the canonical data layout.
+!outputs/
+outputs/*
+!outputs/chembl_tool/
+outputs/chembl_tool/*
+!outputs/chembl_tool/tasks/
+!outputs/chembl_tool/smiles_identity_audit_v2
+outputs/chembl_tool/tasks/*
+!outputs/chembl_tool/tasks/bbb_martins/
+!outputs/chembl_tool/tasks/bioavailability_ma/
+!outputs/chembl_tool/tasks/skin_reaction/
+!outputs/chembl_tool/tasks/clintox
+outputs/chembl_tool/tasks/bbb_martins/*
+outputs/chembl_tool/tasks/bioavailability_ma/*
+outputs/chembl_tool/tasks/skin_reaction/*
+!outputs/chembl_tool/tasks/bbb_martins/analysis
+!outputs/chembl_tool/tasks/bbb_martins/evidence_library/
+!outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
+!outputs/chembl_tool/tasks/skin_reaction/evidence_library/
+!outputs/chembl_tool/tasks/bbb_martins/evidence_library/*
+!outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/*
+!outputs/chembl_tool/tasks/skin_reaction/evidence_library/*
+
+# Live evidence-library payloads are local restores/builds. Track CURRENT
+# pointers and portable release parts under data/artifacts instead.
+data/evidence_libraries/*/v*/
+data/legacy/evidence_libraries/
+data/legacy/clintox/evidence_libraries/
+data/legacy/clintox/outputs/
+data/artifacts/build_failures/ames/v7/partial_payload_to_delete/
+
 # ClinTox send_v2 is tracked as its exact supplied archive split into verified
 # sub-100 MB parts. These byte-identical extracted Parquets are local restores.
 data/starling_data/clintox/send_v2/*/extractions.parquet
+data/legacy/clintox/raw/starling_data/send_v2/*/extractions.parquet
 
 # Starling acquisition queues are reproducible local intermediates and may
 # exceed GitHub's per-file size limit. Keep the extracted evidence and compact
@@ -18,3 +50,12 @@ temp.tsv
 keys.py
 .runtime/
 .claude/*.lock
+predict/traces/runs/*
+!predict/traces/runs/README.md
+predict/retrieval/cache/
+
+# Local source/review artifacts above the repository's 100 MB file limit.
+/ames.tar.gz
+/carcinogen_dili.tar.gz
+/data/artifacts/_shared/smiles/smiles_identity_audit_v2/name_extraction/full/row_extractions.parquet
+/data/artifacts/evidence_library_assets/skin_reaction/construction_assets/auxiliary_reconciliation_v2/provenance/provisional_cluster_mapping.json

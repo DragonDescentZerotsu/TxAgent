@@ -11,7 +11,7 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
-from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
+from data.processing.gold_labels.conditioned_benchmark import task_root
 from tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity import (
     PuritySpec,
     build_overlay,
@@ -23,7 +23,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
     upstream_record_key,
     vote_pure_family_move,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     DIRECT_CLAIMS_PATH,
     load_label_decisions,
 )

@@ -1,10 +1,11 @@
 import json
+from pathlib import Path
+
+import pytest
 
 from tools.chembl_tool.common.json_utils import read_jsonl, sha256_file
-from tools.chembl_tool.common.starling.conditioned_benchmark import (
-    BENCHMARK_ROOT,
+from data.processing.gold_labels.conditioned_benchmark import (
     CONTRACT,
-    NO_REPORTED_CONDITION,
     TASK_DIRECTORIES,
     split_path,
 )
@@ -13,15 +14,16 @@ from tools.chembl_tool.common.starling.conditioned_benchmark import (
 EXPECTED_COUNTS = {
     "bbb_martins": (3053, 397, 393),
     "bioavailability_ma": (1958, 262, 269),
-    "clintox": (1144, 142, 142),
     "skin_reaction": (1997, 246, 248),
 }
 
+METADATA_ROOT = Path("data/artifacts/gold_labels/conditioned_benchmark")
+
 
 def test_manifest_has_one_canonical_root_per_task() -> None:
-    manifest = json.loads((BENCHMARK_ROOT / "manifest.json").read_text())
+    manifest = json.loads((METADATA_ROOT / "manifest.json").read_text())
     assert manifest["contract"] == CONTRACT
-    assert set(manifest["tasks"]) == set(TASK_DIRECTORIES)
+    assert set(TASK_DIRECTORIES) <= set(manifest["tasks"])
     for task, counts in EXPECTED_COUNTS.items():
         assert tuple(
             manifest["tasks"][task]["split_counts"][split]
@@ -57,9 +59,10 @@ def test_split_rows_have_uniform_condition_schema_and_no_overlap() -> None:
 
 
 def test_migration_receipt_matches_published_split_hashes() -> None:
-    receipt = json.loads((BENCHMARK_ROOT / "migration_receipt.json").read_text())
+    receipt = json.loads((METADATA_ROOT / "migration_receipt.json").read_text())
     assert receipt["contract"] == CONTRACT
-    for task, task_receipt in receipt["tasks"].items():
+    for task in TASK_DIRECTORIES:
+        task_receipt = receipt["tasks"][task]
         for split, expected in task_receipt["splits"].items():
             path = split_path(task, split)
             assert sha256_file(path) == expected["canonical_sha256"]
@@ -67,10 +70,7 @@ def test_migration_receipt_matches_published_split_hashes() -> None:
             assert expected["same_ordered_drug_labels"] is True
 
 
-def test_clintox_uses_only_the_shared_null_condition() -> None:
-    groups = {
-        row["condition_group"]
-        for split in ("train", "valid", "test")
-        for row in read_jsonl(split_path("clintox", split))
-    }
-    assert groups == {NO_REPORTED_CONDITION}
+def test_clintox_is_archived_not_an_active_gold_default() -> None:
+    assert Path("data/legacy/clintox/gold_labels/conditioned_benchmark").is_dir()
+    with pytest.raises(ValueError, match="Unknown conditioned benchmark task"):
+        split_path("clintox", "test")

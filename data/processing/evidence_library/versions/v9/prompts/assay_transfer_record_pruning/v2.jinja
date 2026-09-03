@@ -1,0 +1,65 @@
+You are performing scientific data-quality review for assay-transfer calibration.
+
+The numerical tail only triggered review; do not prune mechanically from a cutoff. Decide
+whether each value is a scientifically credible, quantitatively comparable measurement of
+this bucket's endpoint. A value repeated faithfully in support text can still be unsuitable
+because the source may contain a decimal or unit error, assay failure, saturation, unstable
+calculation, or a result outside the meaningful range of the method.
+
+Prune when the evidence more likely than not indicates a different quantity or endpoint,
+wrong unit or scale, corrupt extraction, or a scientifically implausible or methodologically
+out-of-domain value. You do not need proof of the intended correction. Keep a rare extreme
+when it remains scientifically plausible for this endpoint and method. If the evidence is
+genuinely balanced, keep with insufficient_evidence. Do not convert, repair, or reassign.
+
+Pruning only excludes a record from assay-transfer calibration. It never rejects a bucket
+and never deletes a row from the canonical or retrieval library.
+
+Return one decision for every row ID under "Rows requiring a decision" and no decisions
+for comparison rows. Return exactly one JSON object in this form:
+{
+  "schema_version": "{{ schema_version }}",
+  "rows": [
+    {
+      "row_id": "r0001",
+      "decision": "keep|prune_record",
+      "reason_code": "fits_bucket|valid_extreme|insufficient_evidence|wrong_quantity_or_endpoint|wrong_unit_or_scale|corrupt_extraction|scientifically_implausible_or_out_of_domain",
+      "reason": "concise scientific justification"
+    }
+  ]
+}
+
+Bucket
+- Task: {{ task_id }}
+- Endpoint: {{ bucket_endpoint or "not reported" }}
+- Canonical unit: {{ bucket_unit or "not reported" }}
+- Finite records: {{ bucket_distribution.finite_record_count }}
+- Native-scale distribution: minimum={{ bucket_distribution.observed_minimum }}, Q1={{ bucket_distribution.observed_q1 }}, median={{ bucket_distribution.observed_median }}, Q3={{ bucket_distribution.observed_q3 }}, P99={{ bucket_distribution.observed_p99 }}, maximum={{ bucket_distribution.observed_maximum }}
+{% if permeability_warning %}- Scientific warning: {{ permeability_warning }}
+{% endif %}
+Rows requiring a decision
+{% for row in target_rows %}
+{{ row.row_id }}
+- Source measurement: {{ row.source_measurement or "not reported" }}
+- Source unit: {{ row.source_unit or "not reported" }}
+- Canonical value: {{ row.canonical_measurement or "not reported" }}
+- Canonical unit: {{ row.canonical_unit or bucket_unit or "not reported" }}
+{% if row.llm_refined_extraction %}- Earlier LLM extraction: {{ row.llm_refined_extraction }}
+{% endif %}{% if row.trigger %}- Numerical trigger: {{ row.trigger }}
+{% endif %}{% for field in row.semantic_fields %}- {{ field.label }}: {{ field.value }}
+{% endfor %}- Support text: {{ row.support_text or "not reported" }}
+{% endfor %}
+{% if context_rows %}Other rows from the same bucket (comparison only; do not return decisions)
+{% for row in context_rows %}
+Example {{ loop.index }}
+- Source measurement: {{ row.source_measurement or "not reported" }}
+- Source unit: {{ row.source_unit or "not reported" }}
+- Canonical value: {{ row.canonical_measurement or "not reported" }}
+- Canonical unit: {{ row.canonical_unit or bucket_unit or "not reported" }}
+{% if row.llm_refined_extraction %}- Earlier LLM extraction: {{ row.llm_refined_extraction }}
+{% endif %}{% for field in row.semantic_fields %}- {{ field.label }}: {{ field.value }}
+{% endfor %}- Support text: {{ row.support_text or "not reported" }}
+{% endfor %}
+{% elif complete_bucket_context %}Every target row has the other bucket rows available for comparison.
+{% else %}No distinct non-target comparison rows are available in this bucket.
+{% endif %}

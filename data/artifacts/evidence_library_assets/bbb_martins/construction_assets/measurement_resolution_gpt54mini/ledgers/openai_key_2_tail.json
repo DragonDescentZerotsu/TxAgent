@@ -1,0 +1,15 @@
+{
+  "active_epoch": "bbb-v8-measurement-gpt54mini-key2-tail",
+  "epochs": {
+    "bbb-v8-measurement-gpt54mini-key2-tail": {
+      "conservative_unreported_tokens": 0,
+      "input_tokens": 994017,
+      "max_tokens": 1408083,
+      "output_tokens": 365093,
+      "requests_completed": 219,
+      "reservations": {},
+      "status": "budget_exhausted"
+    }
+  },
+  "ledger_version": "reference_semantics_openai_token_ledger.v1"
+}

@@ -218,11 +218,11 @@
       {
         "id": "gold_summary",
         "label": "BBB experimental meaningful-CNS-access v3 gold summary",
-        "path": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json",
+        "path": "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json",
         "query": {
           "engine": "filesystem",
           "language": "json",
-          "sql": "SELECT * FROM read_json_auto('data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json');",
+          "sql": "SELECT * FROM read_json_auto('data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json');",
           "description": "Frozen source-row decisions, parent vote policy, endpoint distribution, split receipt, and source revision.",
           "tables_used": ["summary.json", "molecule_labels.jsonl", "source_rejection_examples.jsonl"],
           "filters": ["Pinned starling-labs/BBB revision", "experimental_meaningful_cns_access_gold.v3"],
@@ -309,7 +309,7 @@
     {
       "id": "gold_summary",
       "label": "BBB experimental meaningful-CNS-access v3 gold summary",
-      "path": "data/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json"
+      "path": "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v3/BBB_Martins/summary.json"
     },
     {
       "id": "purity_v4",

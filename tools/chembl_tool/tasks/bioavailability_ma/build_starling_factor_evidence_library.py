@@ -17,7 +17,7 @@ from tools.chembl_tool.common.evidence_contract import (
     attach_minimal_evidence,
     numeric_only_evidence_row,
 )
-from tools.chembl_tool.common.starling import (
+from data.processing.evidence_library.evidence_library import (
     StarlingSourceProfile,
     build_starling_parquet_evidence_rows,
     starling_molecule_id,
@@ -28,23 +28,23 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library 
     DEFAULT_SOURCE_PARQUET as DEFAULT_DIRECT_SOURCE_PARQUET,
     build_starling_evidence_rows as build_direct_f_rows,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     DIRECT_REPORT_TYPES,
     nondirect_measurement_fields,
 )
 from tools.chembl_tool.tasks.bioavailability_ma.experiment_config import (
     NONDIRECT_ORAL_BIOAVAILABILITY_GROUP,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
     load_direct_hf_rows,
 )
-from tools.chembl_tool.common.starling.oral_bioavailability import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.oral_bioavailability import (
     ORAL_BIOAVAILABILITY_DATASET,
     ORAL_BIOAVAILABILITY_REVISION,
 )
 
 
-DEFAULT_STARLING_DATA_DIR = "data/starling_data/bioavailability_ma"
+DEFAULT_STARLING_DATA_DIR = "data/raw/starling/bioavailability_ma"
 DEFAULT_OUT_DIR = "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_factor"
 EVIDENCE_FILENAME = "starling_factor_evidence.jsonl"
 INDEX_FILENAME = "starling_factor_neighbor_index.pkl"

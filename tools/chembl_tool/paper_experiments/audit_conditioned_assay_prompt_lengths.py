@@ -23,7 +23,7 @@ from tools.chembl_tool.common.json_utils import (
 )
 from tools.chembl_tool.common.reasoning_calls import bound_group_prompt_payload
 from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
-from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path
 
 
 @dataclass(frozen=True)
@@ -55,12 +55,6 @@ SPECS = {
         ROOT / "indices/skin_reaction/raw_v3/assay_neighbor_index.pkl",
         "tools.chembl_tool.tasks.skin_reaction.run_reasoning_pipeline",
     ),
-    "clintox": TaskSpec(
-        split_path("clintox", "valid"),
-        ROOT / "indices/clintox/compact_v2/assay_neighbor_index.pkl",
-        ROOT / "indices/clintox/raw_v3/assay_neighbor_index.pkl",
-        "tools.chembl_tool.tasks.clintox.run_reasoning_pipeline",
-    ),
 }
 
 
@@ -70,16 +64,6 @@ def _system_message(task: str, module: Any) -> str:
             "You are a medicinal chemistry BBB analog evidence analyst. Reason about whether "
             "analog evidence in one endpoint group is transferable to the query molecule. "
             "Use the harness-prefetched comparison results; do not call tools. Return only valid JSON."
-        )
-    if task == "clintox":
-        profile = module.get_clintox_prompt_profile(
-            module.DEFAULT_CLINTOX_PROMPT_PROFILE
-        )
-        return (
-            "You are a medicinal chemistry ClinTox analog evidence analyst. Reason about whether "
-            "one evidence family's analog findings transfer to the query molecule and whether "
-            f"they bear on {profile.prediction_target}. Use the harness-prefetched comparison "
-            "results; do not call tools. Return only valid JSON."
         )
     if task == "bioavailability_ma":
         profile = module.get_bioavailability_prompt_profile(

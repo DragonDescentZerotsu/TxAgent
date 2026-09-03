@@ -2,22 +2,22 @@ import json
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
-from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_sidecar import (
+from data.processing.evidence_library.shared.v1.pair_buckets import materialize_pair_buckets
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.build_starling_pair_bucket_sidecar import (
     build_sidecar,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_endpoint_normalization import (
     context_fields,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_normalization_sources import (
     source_profiles,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_pair_buckets import (
     BBB_MARTINS_PAIR_BUCKET_VERSION,
     BBB_MARTINS_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_source_column_contracts import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_source_column_contracts import (
     normalized_column_contract,
 )
 

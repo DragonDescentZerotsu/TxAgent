@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_measurement_and_unit,
     parse_point_measurement,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_auxiliary_metadata import (
     AuxiliaryMetadataAttacher,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_measurement_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_measurement_semantics import (
     MEASUREMENT_SEMANTICS_VERSION,
     default_policy,
 )

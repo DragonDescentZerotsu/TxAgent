@@ -178,7 +178,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--batch", action="append", required=True, help="LABEL=BATCH_DIR")
     parser.add_argument("--index", required=True)
-    parser.add_argument("--input-jsonl", default="data/processed/Bioavailability_Ma/valid.jsonl")
+    parser.add_argument("--input-jsonl", default="data/gold_labels/legacy/processed/Bioavailability_Ma/valid.jsonl")
     parser.add_argument("--pinned-batch", required=True)
     parser.add_argument("--out-dir", required=True)
     return parser.parse_args(argv)

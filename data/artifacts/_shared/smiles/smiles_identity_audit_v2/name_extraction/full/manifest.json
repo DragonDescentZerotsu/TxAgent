@@ -1,0 +1,73 @@
+{
+  "all_candidate_rows": 599640,
+  "automatic_gate_status": "pass",
+  "automatic_gates": {
+    "explicit_names_verbatim": true,
+    "hidden_control_minimum_accuracy": 0.95,
+    "hidden_control_normalized_exact_accuracy": null,
+    "names_null_unless_explicit": true,
+    "response_cardinality_complete": true
+  },
+  "base_url": [
+    "http://dgx001:8000/v1",
+    "http://dgx019:8000/v1"
+  ],
+  "checkpoint_requests_reused": 0,
+  "control_rows": 0,
+  "invalid_explicit_downgrades": 199,
+  "legacy_multi_context_support_texts_rerun": 647,
+  "legacy_singleton_contexts_reused": 217325,
+  "manual_gate": {
+    "correct_rows": 98,
+    "expected_rows": 100,
+    "review_path": "outputs/chembl_tool/smiles_identity_audit_v2/deepseek_v4_flash_xhigh_context_gate/name_extraction/pilot/manual_review.json",
+    "reviewed_rows": 100,
+    "status": "pass",
+    "valid_decisions": true,
+    "wrong_subject_rows": 0
+  },
+  "model": "nvidia/DeepSeek-V4-Flash-NVFP4",
+  "model_counts": {
+    "gpt-5.6-luna": 217325,
+    "nvidia/DeepSeek-V4-Flash-NVFP4": 360773
+  },
+  "name_extraction_version": "missing_molecule_name_extraction.v5",
+  "new_requests_submitted": 4032,
+  "prompt_fields": [
+    "id",
+    "support_text",
+    "endpoint_name",
+    "measurement_text"
+  ],
+  "prompt_version_counts": {
+    "missing_molecule_name_extraction.v2": 217325,
+    "missing_molecule_name_extraction.v5": 360773
+  },
+  "provider_counts": {
+    "gpt-5.6-luna @ https://api.openai.com/v1": 217325,
+    "nvidia/DeepSeek-V4-Flash-NVFP4 @ http://dgx001:8000/v1": 100800,
+    "nvidia/DeepSeek-V4-Flash-NVFP4 @ http://dgx019:8000/v1": 259973
+  },
+  "quality_gate_dir": "outputs/chembl_tool/smiles_identity_audit_v2/deepseek_v4_flash_xhigh_context_gate/name_extraction/pilot",
+  "reasoning_effort": "xhigh",
+  "reasoning_effort_counts": {
+    "none": 217325,
+    "xhigh": 360773
+  },
+  "request_timeout_s": 14400,
+  "requests_covering_scope": 4032,
+  "reused_prompt_contexts": 376525,
+  "scope": "full",
+  "selected_rows": 599640,
+  "store": false,
+  "target_rows": 599640,
+  "unique_prompt_contexts": 578098,
+  "unique_support_texts": 570181,
+  "usage": {
+    "input_tokens": 16668810,
+    "output_tokens": 50124626,
+    "total_tokens": 66793436
+  },
+  "verbatim_typography_repairs": 4468,
+  "writes_stage1_or_reviewed_ledgers": false
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": {{ (system_role ~ " You are operating inside a progressive molecular-evidence experiment. Use general medicinal-chemistry knowledge to interpret the query and retrieved structures, but ground compound-specific empirical claims in the supplied query prior or cited record cards. Return exactly one valid JSON object. Do not reveal hidden chain-of-thought.") | tojson }}
+  },
+  {
+    "role": "user",
+    "content": {{ user_content | tojson }}
+  }
+]

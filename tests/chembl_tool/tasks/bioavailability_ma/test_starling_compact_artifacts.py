@@ -6,14 +6,14 @@ import pandas as pd
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import retrieve_neighbors
-from tools.chembl_tool.tasks.bioavailability_ma.starling_compact_artifacts import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_compact_artifacts import (
     BANNED_PERSISTED_FIELDS,
     build_relational_evidence_catalog,
     compact_persisted_records,
     load_compact_neighbor_index,
     write_compact_neighbor_index,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_source_column_contracts import (
     SOURCE_COLUMNS,
 )
 

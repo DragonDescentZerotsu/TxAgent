@@ -1,0 +1,47 @@
+You are evaluating experimental evidence records about one molecule from one paper.
+
+Dataset target:
+{{ target_definition }}
+
+Group identity:
+- dataset: {{ dataset }}
+- source: {{ source_id }}
+- PMID: {{ pmid }}
+- canonical SMILES: {{ canonical_smiles }}
+
+Score every row independently on three continuous scales from 0.00 to 1.00:
+
+1. `relevance_score`: How directly the experiment or observation bears on the
+   dataset target. This is independent of effect direction: positive and negative
+   findings can be equally relevant.
+2. `completeness_score`: How much usable experimental information this row contains
+   as extracted. Judge completeness relative to the experiment type. Do not
+   penalize a complete qualitative result merely because it has no number or unit.
+3. `informativeness_score`: Your independent overall judgment of how informative
+   this row is for reasoning about the dataset target. Consider relevance and
+   completeness, but do not calculate this score from a fixed formula.
+
+Also assign one `context_requirement` relative only to the other rows shown below:
+
+- `required`: the row cannot be interpreted correctly without one or more sibling
+  rows in this group.
+- `helpful`: the row is understandable alone, but sibling rows materially clarify
+  or refine its interpretation.
+- `none`: the row is sufficiently interpretable on its own.
+
+Sibling rows may reveal dependencies, but they must not lend their experimental
+detail to a row's completeness score. Missing information is uncertainty, not
+negative evidence. Do not judge extraction confidence, predict the target label,
+or reward repeated claims.
+
+Return exactly one JSON object with an `items` array. Include every row ID exactly
+once and no additional fields. Do not provide explanations or rationales.
+
+Example output shape:
+{"items":[{"id":"0","relevance_score":0.00,"completeness_score":0.00,"informativeness_score":0.00,"context_requirement":"none"}]}
+
+Rows:
+{% for row in rows %}Row {{ row.id }}:
+{{ row.payload_json }}
+
+{% endfor %}

@@ -44,7 +44,7 @@ from tools.chembl_tool.tasks.dili.constants import (
 from tools.chembl_tool.tasks.dili.retrieve_neighbors import load_index, retrieve_neighbors
 
 
-DEFAULT_INPUT = "data/processed/DILI/test.jsonl"
+DEFAULT_INPUT = "data/gold_labels/legacy/processed/DILI/test.jsonl"
 DEFAULT_INDEX = "outputs/chembl_tool/tasks/dili/evidence_library/dili_neighbor_index.pkl"
 DEFAULT_OUT_ROOT = "outputs/chembl_tool/tasks/dili/reasoning/single_runs"
 DEFAULT_MODEL = "deepseek-v4-pro"

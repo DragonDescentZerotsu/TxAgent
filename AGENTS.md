@@ -1,5 +1,12 @@
 # TxAgent: resident molecular tools and evidence-retrieval reasoning
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 ## Language convention
 
 Use English for user-facing communication and newly generated documentation,
@@ -11,10 +18,35 @@ commands, paths, model names, experiment IDs, and machine-readable fields unchan
 Simplify code whenever possible. Before modifying or reviewing code, read and
 follow `.agents/skills/simplicity-first/SKILL.md`.
 
+In the evidence-library pipeline, **pruning always means record-level exclusion
+from assay-transfer calibration**. Pruning never rejects or deletes a pair bucket,
+and pruned records remain in the canonical and retrieval libraries. Call whole-
+bucket pass/fail decisions `assay-transfer bucket eligibility`, never pruning. The
+whole-bucket field is `assay_transfer_bucket_eligible`; the historical sidecar
+field `bucket_eligible` is only a row-level compatibility alias.
+
 Explain work concisely from the high-level result down to implementation details.
 For new implementations, describe the files being added or changed, how they
 connect, and the scope of the change. Prefer a small, coherent module over a
 sprawling pipeline, reuse existing libraries, and keep tests proportional.
+
+### Artifact hygiene
+
+Keep repository artifacts only when they are active build inputs or outputs,
+immutable scientific records, expensive reusable caches, or compact evidence needed
+to audit a published decision. Retain network and paid-model caches when they avoid
+repeating external work, and document their scope and version.
+
+Do not commit or publish agent scratch plans, navigation dumps, request batches,
+review packets, raw progress logs, deterministic joins, duplicate exports, or
+superseded pilots. Put disposable scripts, checkpoints, and working files in `/tmp`.
+If durable navigation context is genuinely useful, write one small scoped Markdown
+index rather than preserving the working directory that produced it.
+
+After consolidating a review or processing stage, keep the canonical result, its
+compact manifest or summary, and non-reconstructable decisions. Remove redundant
+packets and intermediates once the consolidated result contains the needed source
+identity, decision, rationale, reviewer provenance, and input hashes.
 
 ## Environment
 
@@ -29,10 +61,17 @@ When actually running from `/data1/joseph/TxAgent` on `node002`, use
 the environment available to the active checkout and report it exactly; do not
 claim node002 validation.
 
+Data-processing code must use `data/processing/llm_api.py` for OpenAI-compatible
+credentials and clients. Do not add task-local dotenv parsers or silently reuse an
+OpenAI credential for OpenRouter. The shared loader reads the sibling
+`therapeutic-tuning/distillation/.env`, resolves provider aliases, and fails closed
+on missing or mismatched credentials.
+
 ## 当前目标
 
 本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务；
-当前同一套 workflow 已扩展到 Bioavailability_Ma、ClinTox 和 Skin_Reaction。整体流程是：给定一个 query molecule，
+当前同一套 workflow 已扩展到 Bioavailability_Ma 和 Skin_Reaction。ClinTox 已完整迁移到
+`data/legacy/clintox/`，不再是 active task。整体流程是：给定一个 query molecule，
 先通过常驻 FastAPI 工具服务计算分子属性、结构差异和属性差异，再从 task-specific ChEMBL evidence
 library 中检索相似分子的实验读数，最后把工具输出和 assay evidence 交给 reasoning LLM，综合判断该
 task 的目标 label。
@@ -42,47 +81,43 @@ task 的目标 label。
 ```text
 tools/chembl_tool/tasks/bbb_martins/
 tools/chembl_tool/tasks/bioavailability_ma/
-tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
 ## 当前 Conditioned Benchmark（2026-08-28）
 
-四个任务只有一个活跃评估入口：
+三个任务只有一个活跃评估入口：
 
 ```text
-data/conditioned_benchmark/<Task>/scaffold/
+data/gold_labels/<Task>/v1/scaffold/
 ```
 
 不要在 runner、baseline 或结果图中直接引用历史的 molecule-only、`selected_vN`、BBB gold-vN 或
 ClinTox source-build 路径。它们只用于 source provenance；原路径与当前数据的逐 split hash/行级等价关系统一
-记录在 `data/conditioned_benchmark/migration_receipt.json`。公共路径常量、发布入口和完整合同为：
+记录在 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。公共路径常量、发布入口和完整合同为：
 
 ```text
-tools/chembl_tool/common/starling/conditioned_benchmark.py
-tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
-tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
+data/processing/gold_labels/conditioned_benchmark.py
+data/processing/gold_labels/publish_conditioned_benchmark.py
+data/processing/gold_labels/README.md
 ```
 
 | task | train / valid / test | 当前 target |
 |---|---:|---|
 | BBB_Martins | 3,053 / 397 / 393 | experimentally meaningful systemic CNS access |
 | Bioavailability_Ma | 1,958 / 262 / 269 | oral bioavailability under the reported condition |
-| ClinTox | 1,144 / 142 / 142 | clinical-trial toxicity failure versus approved comparator |
 | Skin_Reaction | 1,997 / 246 / 248 | skin sensitization/contact allergy |
 
 所有 split 行使用统一的 molecule-condition schema。没有外部 condition 的行使用
-`no_reported_external_condition`，prompt renderer 对它不输出 condition 句子；ClinTox 因没有合格的外部
-condition，全部采用该值。四任务 train/valid/test 的 parent identity 和 Bemis-Murcko scaffold overlap 均为 0。
+`no_reported_external_condition`，prompt renderer 对它不输出 condition 句子。三个 active task 的
+train/valid/test parent identity 和 Bemis-Murcko scaffold overlap 均为 0。
 
-BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；ClinTox
-只补 condition schema，ordered `(drug, Y)` 和 split 不变。已有 prediction 只能在 manifest input hash 与
+BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同。已有 prediction 只能在 manifest input hash 与
 migration receipt 匹配时复用，不能仅凭旧目录名复用。
 
 Task-specific source voting 和 review 仍保留在各 task 模块中。BBB 的 direct gold 只接受系统给药后的实验性
 meaningful CNS access；Bioavailability 的 L1 只包含实际 voter rows；Skin direct 只接受 sensitization/contact-
-allergy final outcome；ClinTox 只由冻结 AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators
-构造 label，broad Starling toxicity rows 不投票。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
+allergy final outcome。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
 
 当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
 MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
@@ -101,8 +136,8 @@ Skin negative-transfer v3、train-ratio prior 和 matched train-label agent 均�
 当前 Starling benchmark 的主要运行与汇总入口：
 
 ```text
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data/processing/gold_labels/build_conditioned_benchmark.py
+data/processing/gold_labels/build_record_supported_benchmark.py
 tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
 tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
 tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
@@ -123,7 +158,7 @@ tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py
 tools/chembl_tool/paper_experiments/run_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/build_assay_family_catalog.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
-tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
+predict/harnesses/progressive.py
 tools/chembl_tool/paper_experiments/audit_conditioned_assay_prompt_lengths.py
 tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py
 tools/chembl_tool/paper_experiments/summarize_coverage_selector_llm_matrix.py
@@ -132,11 +167,11 @@ tools/chembl_tool/paper_experiments/plot_coverage_selector_llm_matrix.py
 tools/chembl_tool/paper_experiments/run_minimol_retrieval_agent_experiment.py
 tools/chembl_tool/paper_experiments/run_train_ratio_prior_experiment.py
 tools/chembl_tool/paper_experiments/train_ratio_prior_analysis.py
-baselines/minimol/run_bioavailability_ma.py --train-all
-baselines/minimol/run_train_cv.py
-baselines/minimol/run_embedding_knn.py
-baselines/conditioned_knn.py
-baselines/structure_knn/run.py
+predict/baselines/minimol/run_bioavailability_ma.py --train-all
+predict/baselines/minimol/run_train_cv.py
+predict/baselines/minimol/run_embedding_knn.py
+predict/baselines/conditioned_knn.py
+predict/baselines/structure_knn/run.py
 ```
 
 Conditioned cumulative-family 的 Bioavailability nondirect context overlay 与 ClinTox source-native support
@@ -186,17 +221,17 @@ Duo approval 仍由用户完成。
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m tools.chembl_tool.common.starling.build_benchmark_datasets
+  python -m data.processing.gold_labels.build_conditioned_benchmark
 ```
 
 当前 split 使用统一 condition-aware schema。label provenance、source review、parent identity 和冲突记录
 保存在同目录 audit artifacts。正式评估前必须针对 valid+test union 的 heldout detailed labels 重建
 train-only retrieval index；现有从 full Starling source 构建的 evidence index 不能直接用于当前 benchmark。
 
-旧 `data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
-`data/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
+旧 `data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
+`data/gold_labels/legacy/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
 三个已迁移 task 的当前 benchmark；旧 ClinTox split 也不代表新的 parent-normalized reconstruction。
-ClinTox 当前严格 split 位于 `data/conditioned_benchmark/ClinTox/scaffold/`。历史结果和复现命令可以保留，
+ClinTox 当前严格 split 位于 `data/legacy/clintox/gold_labels/conditioned_benchmark/scaffold/`。历史结果和复现命令可以保留，
 但必须明确标注 historical lineage。
 
 ## 设计原则
@@ -387,7 +422,7 @@ OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `
 
 ### 当前 Conditioned Benchmark 正式运行默认
 
-四任务统一读取 `data/conditioned_benchmark/<Task>/scaffold/`，并冻结为：
+四任务统一读取 `data/gold_labels/<Task>/v1/scaffold/`，并冻结为：
 
 ```text
 endpoint: http://127.0.0.1:50000/v1
@@ -434,6 +469,79 @@ GLM 对 tool choice 和长 structured output 的遵循可能不稳定。所有 t
 该 validation 层不能修改有效 prediction，也不能实现 task-specific label policy。需要更长 final 输出时，
 显式提高 `--max-tokens`；不要用 postprocess 修补 benchmark label。
 
+## Evidence-library release versioning
+
+Evidence-library construction code is version-first and release-local. The
+canonical layout is:
+
+```text
+data/processing/evidence_library/
+  shared/v1/
+  views.py
+  evidence_library.py
+  heldout_index.py
+  compact_artifacts.py
+  assay_catalog.py
+  stage_artifact_store.py
+  bucket_informativeness.py
+  versions/
+    v7/
+      build_*.py
+      pair_bucket_build.py
+      prompts/
+      tasks/<task>/
+    v8/
+      build_*.py
+      pair_bucket_build.py
+      prompts/
+      tasks/<task>/
+
+data/processing/gold_labels/
+  benchmark_dataset.py
+  conditioned_benchmark.py
+  build_conditioned_benchmark.py
+  publish_conditioned_benchmark.py
+```
+
+`shared/v1/` is immutable construction code pinned by both V7 and V8. It contains
+only dependency-closed mechanics shared across releases; it does not own task
+policies, active prompts, mappings, pruning rules, or release-specific module
+resolution. Never change existing pinned behavior after a release uses it. An
+incompatible common change creates `shared/v2/`.
+
+Each `versions/vN/` root owns the small set of construction modules shared across
+tasks in that release. Do not add a second `versions/vN/shared/` layer. Heldout
+filtering, gold-label substitution, evidence catalogs, neighbor indices, and
+bucket-informativeness analysis are consumers of a completed library and stay at
+the unversioned `evidence_library/` root. Stable mechanics belong in the pinned
+cross-release package. Active policy, prompt selection, mappings, and pruning
+behavior remain release-local and may diverge independently.
+
+Start a new release by copying the complete preceding release directory, then
+modify the copy. Never make a new release inherit implementation or assets from
+another release at runtime. Before publication, remove superseded prompts,
+one-off review drivers, and inactive code from the copied release; preserve only
+the selected construction path and non-reconstructable scientific decisions.
+
+Prompt, mapping, and rule versions are component versions, not aliases for the
+library release number. Keep only the selected component generation in an active
+release. Compact lineage needed for a retired generation belongs under
+`data/legacy/evidence_library_construction/`; agent scratch and review-process
+intermediates remain outside the repository.
+
+Published version directories are frozen. Do not retrofit a behavior change into
+an older version; create the next version instead. `data/evidence_libraries/<task>/<version>/`
+contains the corresponding built data, and each published task's `CURRENT` file
+selects the active release. Raw data and gold labels remain external inputs;
+scientific construction mappings and reviewed inputs belong to the release that
+consumes them.
+
+Construction code must import canonical `shared/vN` or `versions/vN` packages
+directly. Do not create compatibility symlinks, forwarding modules, dynamic
+fallbacks, or construction modules under `tools/chembl_tool/`. The real
+task-specific reasoning and retrieval workflows under `tools/chembl_tool/tasks/`
+remain independent of construction-code ownership.
+
 ## ChEMBL task workflow 目录
 
 具体任务放在：
@@ -479,11 +587,11 @@ tools/chembl_tool/common/evidence_distance.py
 tools/chembl_tool/common/distance_index.py
 tools/chembl_tool/common/distance_retrieval.py
 tools/chembl_tool/common/scalar_knn.py
-tools/chembl_tool/common/starling/evidence_library.py
-tools/chembl_tool/common/starling/assay_catalog.py
-tools/chembl_tool/common/starling/benchmark_dataset.py
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
-tools/chembl_tool/common/starling/heldout_index.py
+data/processing/evidence_library/evidence_library.py
+data/processing/evidence_library/assay_catalog.py
+data/processing/gold_labels/benchmark_dataset.py
+data/processing/gold_labels/build_conditioned_benchmark.py
+data/processing/evidence_library/heldout_index.py
 tools/chembl_tool/common/assay_retrieval.py
 ```
 
@@ -632,7 +740,7 @@ common/starling/benchmark_dataset.py
 
 common/starling/build_benchmark_datasets.py
   Historical TDC-compatible 三 task CLI；读取冻结 source revision/local parquet，生成
-  `data/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。BBB 新主线不使用该入口。
+  `data/gold_labels/legacy/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。BBB 新主线不使用该入口。
 
 common/starling/build_record_supported_benchmark.py
   从冻结 binary parents 构造 scaffold-only quality split；默认 `record_supported_v2`，同时向 BBB 新 builder
@@ -764,7 +872,7 @@ single-molecule、mechanism-family/flat/direct 和 final stages，并递归展�
 
 这里的既有 `test` / `valid` 和 2026-07-23 frozen results 来自旧 TDC lineage，应作为历史结果保留；
 `--split test|valid` 目前不能解释为 Starling 的 `random|scaffold`。新 Starling 正式实验必须显式选择
-`data/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
+`data/gold_labels/legacy/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
 retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
 test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
 
@@ -848,7 +956,7 @@ train.jsonl / valid.jsonl / test.jsonl
 ```
 
 下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 baseline 统一读取
-`data/conditioned_benchmark/<Task>/scaffold/`，并按 condition-aware cohort 运行 MiniMol head、Morgan KNN
+`data/gold_labels/<Task>/v1/scaffold/`，并按 condition-aware cohort 运行 MiniMol head、Morgan KNN
 和 MiniMol embedding KNN。历史 molecule-only baseline 不得与当前 cohort 混表。该诊断不读取或调参于
 test；正式 test 前仍须冻结所有设置。
 
@@ -919,7 +1027,7 @@ valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
-  --data-dir data/processed/<TaskName> \
+  --data-dir data/gold_labels/legacy/processed/<TaskName> \
   --output-dir outputs/baselines/minimol/<task_name>
 ```
 
@@ -927,7 +1035,7 @@ BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
-  --data-dir data/processed/BBB_Martins \
+  --data-dir data/gold_labels/legacy/processed/BBB_Martins \
   --output-dir outputs/baselines/minimol/bbb_martins \
   --hidden-dim 2048 \
   --depth 3 \
@@ -939,7 +1047,7 @@ BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
-  --data-dir data/processed/ClinTox \
+  --data-dir data/gold_labels/legacy/processed/ClinTox \
   --output-dir outputs/baselines/minimol/clintox
 ```
 
@@ -967,14 +1075,14 @@ GPU sweep 的可靠入口是直接 shell 脚本；它会复用已有 embedding c
 ```bash
 baselines/minimol/run_direct_gpu_sweep.sh \
   clintox \
-  data/processed/ClinTox \
+  data/gold_labels/legacy/processed/ClinTox \
   outputs/baselines/minimol/clintox/embeddings \
   outputs/baselines/minimol_sweeps_gpu \
   4,5,6,7
 
 baselines/minimol/run_direct_gpu_sweep.sh \
   skin_reaction \
-  data/processed/Skin_Reaction \
+  data/gold_labels/legacy/processed/Skin_Reaction \
   outputs/baselines/minimol/skin_reaction/embeddings \
   outputs/baselines/minimol_sweeps_gpu \
   4,5,6,7
@@ -1437,41 +1545,17 @@ tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
 ```
 
-## ClinTox 代码入口
+## ClinTox legacy archive
 
-当前 canonical lineage、source contract、split、retrieval hierarchy、prompt、实验结果和 no-promotion
-结论统一记录在：
-
-```text
-tools/chembl_tool/tasks/clintox/AGENTS.md
-tools/chembl_tool/tasks/clintox/CLINTOX_BENCHMARK.md
-```
-
-当前 gold 的 scientific source contract 是 source-reconstructed clinical-trial failure，活跃评估路径为
-`data/conditioned_benchmark/ClinTox/scaffold/`；旧 `data/processed/ClinTox`、source-build 路径和早期
-ChEMBL-native 结果只作 historical provenance。唯一 prompt profile 为
-`tdc_source_aligned_v3`，旧 profile 已删除且旧/unversioned branch 不得复用。核心入口：
+ClinTox is retired from active task registries. Its frozen lineage, code, tests,
+sources, gold labels, evidence library, and no-promotion result are preserved in:
 
 ```text
-tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
-  从冻结 AACT positive 与 SWEETLEAD/FDA comparator 构造 parent labels 和 scaffold split。
-
-tools/chembl_tool/tasks/clintox/starling_retrieval.py
-  构造独立 direct/clinical/mechanistic retrieval library；Starling rows 不参与 gold label。
-
-tools/chembl_tool/tasks/clintox/run_reasoning_pipeline.py
-tools/chembl_tool/tasks/clintox/run_reasoning_batch.py
-  复用公共 retrieval/reasoning workflow；默认 current split、heldout-filtered index、v3 prompt 和
-  PARCC DeepSeek-V4-Flash tunnel。
-
-tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
-  审计 direct provenance、coverage、label leak、structured retries 和 paired flips。
+data/legacy/clintox/
 ```
 
-2026-08-16 scaffold-valid 的 best 是 `none` macro-F1 `0.6198`；direct/full-flat/full-mechanism 均未
-通过 promotion gate。test 已经被查看，只保留 `post-test diagnostic`，不得作为新的 formal test，也不得继续在
-同一 valid/test 调 prompt 或 selector。broad toxicity evidence 适合 risk explanation，但不能冒充
-source-defined AACT association。
+Historical data paths remain read aliases, but no active builder, publisher, or
+reasoning runner may select ClinTox.
 
 ## Skin_Reaction 代码入口
 
@@ -2075,7 +2159,7 @@ Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test
 
 # 历史 TDC batch 复现；新 Starling benchmark 不得沿用这个 input path 或 full-source index
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
-  --input-jsonl data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
+  --input-jsonl data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
   --parallelism 1 \
   --top-k-per-group 3 \
   --min-similarity 0.3 \

@@ -1,0 +1,770 @@
+{
+  "proposal_version": "skin_reaction.sensitization_measurement_semantics.proposal.v1",
+  "status": "proposal_only_not_runtime",
+  "source": {
+    "source_id": "sensitization_aop",
+    "path": "data/starling_data/skin_reaction/sensitization_aop/extractions.parquet",
+    "sha256": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
+    "record_count": 45985,
+    "raw_endpoint_column": "endpoint_or_target",
+    "cleaned_endpoint_field": "endpoint_name",
+    "measurement_field": "measurement_text",
+    "unit_field": "unit_text"
+  },
+  "frozen_endpoint_mapping": {
+    "path": "tools/chembl_tool/tasks/skin_reaction/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+    "mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v2",
+    "sha256": "34db0efcd64769699e4b86f7cdcb16e9dc12e466e5f04eb2352eca43440ebd45",
+    "section": "sensitization_aop/global_endpoint_context",
+    "mutation_permitted": false
+  },
+  "review_basis": {
+    "kind": "full_inventory_structural_rule_plus_representative_source_review",
+    "matched_record_count_semantics": "Count of full source records matched by the stated selector against the pinned source and mapping, not a claim that every matched row was manually adjudicated.",
+    "human_reviewed_record_count_claimed": false,
+    "network_or_api_calls": false
+  },
+  "evaluation_contract": {
+    "rule_order": "descending_priority_first_match_wins",
+    "selector_logic": "Fields within a selector are ANDed. any_of, all_of, and not recursively compose selectors.",
+    "evidence_text_fields": [
+      "endpoint_name",
+      "support_text",
+      "experimental_conditions",
+      "qualifying_conditions",
+      "extra_details"
+    ],
+    "frozen_endpoint_input": "The attached global_endpoint_context value is immutable input provenance. A matched rule may propose a more precise final canonical_endpoint_name without changing the frozen mapping.",
+    "default_action": "evidence_only_unresolved",
+    "scalar_fail_closed": true
+  },
+  "semantic_unit_bases": {
+    "formulation_fraction": {
+      "canonical_units": ["%", "% w/v", "% w/w", "% v/v"],
+      "policy": "Preserve an explicit formulation basis. Do not treat an unspecified percent as w/v, w/w, or v/v."
+    },
+    "molar_concentration": {
+      "canonical_unit": "M",
+      "policy": "Convert M, mM, and µM by exact powers of ten."
+    },
+    "mass_concentration": {
+      "policy": "Normalize metric prefixes only. Do not convert to molarity without a separately reviewed molecular-mass rule."
+    },
+    "areic_mass": {
+      "canonical_unit": "µg/cm²",
+      "policy": "Normalize metric prefixes and typography only. Element-specific mass remains separate from compound mass."
+    },
+    "areic_amount": {
+      "canonical_unit": "mol/m²",
+      "policy": "Normalize molar amount per area only. Do not convert to areic mass without a separately reviewed molecular-mass rule."
+    },
+    "areic_mass_rate": {
+      "canonical_unit": "µg/cm²/day",
+      "policy": "Keep separate from a single areic dose."
+    },
+    "responder_percent": {
+      "canonical_unit": "%",
+      "domain": {"minimum": 0.0, "maximum": 100.0}
+    },
+    "responder_fraction": {
+      "canonical_unit": "fraction",
+      "domain": {"minimum": 0.0, "maximum": 1.0}
+    },
+    "ratio_to_control": {
+      "canonical_unit": "fold",
+      "domain": {"minimum_exclusive": 0.0}
+    },
+    "depleted_percent": {
+      "canonical_unit": "%",
+      "domain": {"minimum": 0.0, "maximum": 100.0}
+    },
+    "remaining_percent": {
+      "canonical_unit": "%",
+      "domain": {"minimum": 0.0, "maximum": 100.0},
+      "policy": "Do not silently replace a remaining percentage with 100 minus the value."
+    },
+    "second_order_rate": {
+      "canonical_unit": "M^-1 s^-1",
+      "domain": {"minimum_exclusive": 0.0},
+      "policy": "Convert only linear second-order rates. Keep explicitly logarithmic values in a declared log10 basis."
+    },
+    "pseudo_first_order_rate": {
+      "canonical_unit": "s^-1",
+      "domain": {"minimum_exclusive": 0.0}
+    },
+    "duration": {
+      "canonical_unit": "s",
+      "domain": {"minimum": 0.0}
+    }
+  },
+  "rules": [
+    {
+      "rule_id": "sensitization.ec3.classification.evidence_only.v1",
+      "priority": 1000,
+      "match": {"frozen_endpoint_exact": "ec3 classification"},
+      "action": {
+        "refined_endpoint_name": "ec3_classification",
+        "quantity_kind": "categorical",
+        "semantic_unit_basis": "controlled_category",
+        "scalar_policy": "evidence_only_not_numeric_ec3"
+      },
+      "matched_record_count": 85
+    },
+    {
+      "rule_id": "sensitization.ec3.percent_threshold.v1",
+      "priority": 990,
+      "match": {
+        "frozen_endpoint_in": ["ec3", "log(1/ec3)", "lymph node cell proliferation ec3", "ec3 elicitation", "stimulation index and ec3"],
+        "any_of": [
+          {"unit_text_regex": "%"},
+          {"unit_text_exact": "g/100 ml"}
+        ],
+        "not": {"unit_text_regex": "(?i)(pec3|log)"}
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "formulation_fraction",
+        "canonical_unit_policy": "preserve_explicit_percent_basis",
+        "domain": {"minimum_exclusive": 0.0, "maximum": 100.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1915
+    },
+    {
+      "rule_id": "sensitization.ec3.areic_threshold.v1",
+      "priority": 989,
+      "match": {
+        "frozen_endpoint_in": ["ec3", "log(1/ec3)", "lymph node cell proliferation ec3", "ec3 elicitation", "stimulation index and ec3"],
+        "unit_text_regex": "(?i)(cm²|cm2|cm\\^2|cmb)"
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_areic_dose",
+        "semantic_unit_basis": "preserve_areic_mass_or_amount_dimension",
+        "canonical_unit_policy": "metric_prefix_and_typography_only",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 169
+    },
+    {
+      "rule_id": "sensitization.ec3.concentration_threshold.v1",
+      "priority": 988,
+      "match": {
+        "frozen_endpoint_in": ["ec3", "log(1/ec3)", "lymph node cell proliferation ec3", "ec3 elicitation", "stimulation index and ec3"],
+        "unit_text_in": ["M", "mM", "µM", "μM", "mol/L", "mmol L⁻¹", "µg/mL", "μg/mL", "ppm"]
+      },
+      "action": {
+        "refined_endpoint_name": "llna_ec3",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "preserve_molar_mass_or_ppm_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 152
+    },
+    {
+      "rule_id": "sensitization.ec3.transformed_potency.v1",
+      "priority": 987,
+      "match": {
+        "frozen_endpoint_in": ["ec3", "log(1/ec3)", "lymph node cell proliferation ec3", "ec3 elicitation", "stimulation index and ec3"],
+        "unit_text_regex": "(?i)(pec3|log)"
+      },
+      "action": {
+        "refined_endpoint_name": "llna_pec3",
+        "quantity_kind": "transformed_threshold_potency",
+        "semantic_unit_basis": "declared_log_potency",
+        "canonical_unit_policy": "preserve_declared_log_definition",
+        "domain": {"finite": true},
+        "scalar_policy": "eligible_only_if_log_base_and_reference_are_explicit"
+      },
+      "matched_record_count": 129
+    },
+    {
+      "rule_id": "sensitization.ec3.unresolved.evidence_only.v1",
+      "priority": 980,
+      "match": {
+        "frozen_endpoint_in": ["ec3", "log(1/ec3)", "lymph node cell proliferation ec3", "ec3 elicitation", "stimulation index and ec3"],
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 180
+    },
+    {
+      "rule_id": "sensitization.clinical.incidence_percent_strong.v1",
+      "priority": 900,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "%",
+        "any_of": [
+          {"endpoint_name_regex": "(?i)(percentage|proportion|incidence|prevalence|frequency|rate|%)"},
+          {"endpoint_name_regex": "(?i)(positive (patch test |skin )?reaction|patch test positivity|sensitized animals|subjects sensitized|animals sensitized)"},
+          {"evidence_text_regex": "(?i)(\\b\\d+\\s+(out of|of)\\s+\\d+\\b|\\b\\d+\\s*/\\s*\\d+\\b|((patients|subjects|animals|volunteers|workers).*(positive|reacted|sensiti[sz]ed))|((positive|reacted|sensiti[sz]ed).*(patients|subjects|animals|volunteers|workers)))"}
+        ]
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "responder_percent",
+        "canonical_unit_policy": "percent",
+        "domain": {"minimum": 0.0, "maximum": 100.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 952
+    },
+    {
+      "rule_id": "sensitization.clinical.incidence_fraction.v1",
+      "priority": 899,
+      "match": {"frozen_endpoint_exact": "clinical sensitization", "unit_text_exact": "fraction"},
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "responder_fraction",
+        "canonical_unit_policy": "fraction",
+        "domain": {"minimum": 0.0, "maximum": 1.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 13
+    },
+    {
+      "rule_id": "sensitization.clinical.reaction_diameter.v1",
+      "priority": 898,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "mm",
+        "endpoint_name_regex": "(?i)(diameter|induration|papule)"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_reaction_diameter",
+        "quantity_kind": "reaction_size",
+        "semantic_unit_basis": "length",
+        "canonical_unit_policy": "mm",
+        "domain": {"minimum": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 24
+    },
+    {
+      "rule_id": "sensitization.clinical.reaction_duration.v1",
+      "priority": 897,
+      "match": {
+        "frozen_endpoint_exact": "clinical sensitization",
+        "unit_text_exact": "days",
+        "endpoint_name_regex": "(?i)(reaction time|allergy time|recovery time|CAT)"
+      },
+      "action": {
+        "refined_endpoint_name": "clinical_reaction_duration",
+        "quantity_kind": "duration",
+        "semantic_unit_basis": "duration",
+        "canonical_unit_policy": "convert_to_seconds",
+        "domain": {"minimum": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 19
+    },
+    {
+      "rule_id": "sensitization.clinical.elicitation_concentration.v1",
+      "priority": 896,
+      "match": {"frozen_endpoint_exact": "clinical sensitization", "unit_text_exact": "ppm"},
+      "action": {
+        "refined_endpoint_name": "clinical_elicitation_concentration",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "ppm",
+        "canonical_unit_policy": "ppm",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 10
+    },
+    {
+      "rule_id": "sensitization.clinical.percent_ambiguous.evidence_only.v1",
+      "priority": 890,
+      "match": {"frozen_endpoint_exact": "clinical sensitization", "unit_text_exact": "%"},
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization",
+        "quantity_kind": "ambiguous_percent",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_pending_manual_review"
+      },
+      "matched_record_count": 322,
+      "known_failure_mode": "Patch dilution or challenge concentration extracted as the clinical response value."
+    },
+    {
+      "rule_id": "sensitization.clinical.catch_all.evidence_only.v1",
+      "priority": 880,
+      "match": {"frozen_endpoint_exact": "clinical sensitization"},
+      "action": {
+        "refined_endpoint_name": "clinical_sensitization",
+        "quantity_kind": "unresolved_or_qualitative",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 7803
+    },
+    {
+      "rule_id": "sensitization.depletion.remaining_percent.v1",
+      "priority": 800,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_in": ["%", "% depletion", "% peptide depletion"],
+        "endpoint_name_regex": "(?i)(remaining|level)"
+      },
+      "action": {
+        "refined_endpoint_name_template": "{residue}_remaining",
+        "quantity_kind": "remaining_fraction",
+        "semantic_unit_basis": "remaining_percent",
+        "canonical_unit_policy": "percent_no_inversion",
+        "domain": {"minimum": 0.0, "maximum": 100.0},
+        "scalar_policy": "evidence_only_until_endpoint_template_is_reviewed"
+      },
+      "matched_record_count": 15
+    },
+    {
+      "rule_id": "sensitization.depletion.remaining_control_percent.v1",
+      "priority": 799,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_in": ["% of control", "% of mock control"]
+      },
+      "action": {
+        "refined_endpoint_name_template": "{residue}_remaining_relative_to_control",
+        "quantity_kind": "remaining_fraction",
+        "semantic_unit_basis": "remaining_percent",
+        "canonical_unit_policy": "percent_no_inversion",
+        "domain": {"minimum": 0.0, "maximum": 100.0},
+        "scalar_policy": "evidence_only_until_endpoint_template_is_reviewed"
+      },
+      "matched_record_count": 7
+    },
+    {
+      "rule_id": "sensitization.depletion.percent.v1",
+      "priority": 798,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_in": ["%", "% depletion", "% peptide depletion"]
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "depletion_magnitude",
+        "semantic_unit_basis": "depleted_percent",
+        "canonical_unit_policy": "percent",
+        "domain": {"minimum": 0.0, "maximum": 100.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1213
+    },
+    {
+      "rule_id": "sensitization.depletion.threshold_concentration.v1",
+      "priority": 797,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_in": ["M", "mM", "µM", "μM"],
+        "evidence_text_regex": "(?i)(RC\\s*50|EC\\s*(15|20|25|50)|IC\\s*50|GSH\\s*60|50% reaction concentration)"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "use_explicit_threshold_token_with_residue",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "molar_concentration",
+        "canonical_unit_policy": "convert_to_M",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 220
+    },
+    {
+      "rule_id": "sensitization.gsh.pec50.v1",
+      "priority": 796,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "endpoint_name_exact": "cysteine thiol depletion (GSH)",
+        "unit_text_exact": "log M",
+        "evidence_text_regex": "(?i)pEC50"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_pec50",
+        "quantity_kind": "transformed_threshold_potency",
+        "semantic_unit_basis": "declared_log_potency",
+        "canonical_unit_policy": "preserve_declared_log_definition",
+        "domain": {"finite": true},
+        "scalar_policy": "eligible_only_if_log_definition_is_explicit"
+      },
+      "matched_record_count": 22
+    },
+    {
+      "rule_id": "sensitization.gsh.residual_level.v1",
+      "priority": 795,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "endpoint_name_exact": "GSH depletion",
+        "unit_text_exact": "µmol/L",
+        "evidence_text_regex": "(?i)GSH level"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_concentration",
+        "quantity_kind": "residual_concentration",
+        "semantic_unit_basis": "molar_concentration",
+        "canonical_unit_policy": "convert_to_M",
+        "domain": {"minimum": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.gsh.half_life.v1",
+      "priority": 794,
+      "match": {
+        "frozen_endpoint_exact": "gsh depletion",
+        "unit_text_in": ["min", "hours"],
+        "endpoint_name_regex": "(?i)half-life|t1/2"
+      },
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_half_life",
+        "quantity_kind": "duration",
+        "semantic_unit_basis": "duration",
+        "canonical_unit_policy": "convert_to_seconds",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 28
+    },
+    {
+      "rule_id": "sensitization.depletion.second_order_rate.v1",
+      "priority": 793,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_in": ["log(s⁻¹ M⁻¹)", "log (s^-1 M^-1)", "M⁻¹ min⁻¹", "10³× k [s⁻¹M⁻¹]", "L mol^-1 min^-1", "min⁻¹mM⁻¹"]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "use_residue_reactivity_rate_constant",
+        "quantity_kind": "second_order_rate_constant",
+        "semantic_unit_basis": "second_order_rate",
+        "canonical_unit_policy": "linear_rates_to_M^-1_s^-1_log_rates_remain_explicit_log10",
+        "transforms": {
+          "10³× k [s⁻¹M⁻¹]": {"multiply_value_by": 0.001, "canonical_unit": "M^-1 s^-1"},
+          "M⁻¹ min⁻¹": {"multiply_value_by": 0.016666666666666666, "canonical_unit": "M^-1 s^-1"},
+          "L mol^-1 min^-1": {"multiply_value_by": 0.016666666666666666, "canonical_unit": "M^-1 s^-1"},
+          "min⁻¹mM⁻¹": {"multiply_value_by": 16.666666666666668, "canonical_unit": "M^-1 s^-1"}
+        },
+        "domain": {"linear_minimum_exclusive": 0.0, "log_finite": true},
+        "scalar_policy": "eligible_after_exact_unit_transform"
+      },
+      "matched_record_count": 72
+    },
+    {
+      "rule_id": "sensitization.gsh.pseudo_first_order_rate.v1",
+      "priority": 792,
+      "match": {"frozen_endpoint_exact": "gsh depletion", "unit_text_exact": "×10^-2 min^-1"},
+      "action": {
+        "refined_endpoint_name": "gsh_depletion_pseudo_first_order_rate",
+        "quantity_kind": "pseudo_first_order_rate_constant",
+        "semantic_unit_basis": "pseudo_first_order_rate",
+        "canonical_unit_policy": "convert_to_s^-1",
+        "transform": {"multiply_value_by": 0.00016666666666666666, "canonical_unit": "s^-1"},
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_exact_unit_transform"
+      },
+      "matched_record_count": 24
+    },
+    {
+      "rule_id": "sensitization.depletion.blank.evidence_only.v1",
+      "priority": 790,
+      "match": {
+        "frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"],
+        "unit_text_is_null": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 609
+    },
+    {
+      "rule_id": "sensitization.depletion.unsupported_unit.evidence_only.v1",
+      "priority": 789,
+      "match": {"frozen_endpoint_in": ["cysteine depletion", "lysine depletion", "gsh depletion"]},
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unresolved_amount_or_level",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_pending_quantity_typing"
+      },
+      "matched_record_count": 11,
+      "observed_units": ["µmol", "nmol/10^6 cells", "µmol/g tissue", "cysteine residues per subunit", "µmole/g", "mg/dl", "mol thiol per mol HSA"]
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.magnitude.v1",
+      "priority": 700,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": ["fold", "SI", "dimensionless", "ratio", "index (fold increase over vehicle control)", "PSI (unitless)", "mitogenic index (fold)", "fold (SI)", "mitogenic index", "fold SI", "stimulation index"]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_marker_specific_stimulation_index",
+        "quantity_kind": "ratio_to_control",
+        "semantic_unit_basis": "ratio_to_control",
+        "canonical_unit_policy": "fold",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 991
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.threshold_concentration.v1",
+      "priority": 699,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": ["%", "% w/v", "% (v/v)", "µM", "ppm"],
+        "evidence_text_regex": "(?i)(EC\\s*3|SI-2|cut-?off concentration|concentration.*stimulation index|SI\\s*(of|=|≥|>)\\s*(1\\.4|2|3))"
+      },
+      "action": {
+        "refined_endpoint_name_policy": "llna_ec3_or_marker_specific_si_cutoff_concentration",
+        "quantity_kind": "threshold_concentration",
+        "semantic_unit_basis": "preserve_concentration_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 47
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.responder_incidence.v1",
+      "priority": 698,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "unit_text_in": ["out of 5 clones", "patients positive out of 16"]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "marker_specific_responder_incidence",
+        "quantity_kind": "responder_incidence",
+        "semantic_unit_basis": "explicit_numerator_denominator",
+        "canonical_unit_policy": "derive_fraction_from_declared_denominator",
+        "domain": {"numerator_minimum": 0, "numerator_maximum": "$declared_denominator"},
+        "scalar_policy": "eligible_after_exact_numerator_denominator_parse"
+      },
+      "matched_record_count": 12
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.blank.evidence_only.v1",
+      "priority": 690,
+      "match": {"frozen_endpoint_regex": "(?i)stimulation index", "unit_text_is_null": true},
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 600
+    },
+    {
+      "rule_id": "sensitization.stimulation_index.compound.evidence_only.v1",
+      "priority": 689,
+      "match": {
+        "frozen_endpoint_regex": "(?i)stimulation index",
+        "endpoint_name_exact": "IL-18 SI-2",
+        "unit_text_exact": "mg/ml"
+      },
+      "action": {
+        "refined_endpoint_name": "il18_si2_effective_concentration",
+        "quantity_kind": "compound_measurement",
+        "semantic_unit_basis": "mass_concentration",
+        "scalar_policy": "evidence_only_multiple_values_in_support"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.cd_marker.effective_concentration.v1",
+      "priority": 600,
+      "match": {
+        "frozen_endpoint_in": ["cd86", "cd54"],
+        "measurement_text_is_nonempty": true,
+        "any_of": [
+          {"unit_text_in": ["µg/mL", "µg/ml", "μg/mL", "μg/ml", "µM", "μM", "mM", "µmol/L", "µmol/l"]},
+          {
+            "all_of": [
+              {"unit_text_exact": "%"},
+              {"endpoint_name_exact": "CD86 expression"},
+              {"measurement_text_exact": "0.024"},
+              {"evidence_text_regex": "(?i)EC150 values"}
+            ]
+          }
+        ]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "cd86_ec150_or_cd54_ec200_when_explicit_else_marker_effective_concentration",
+        "quantity_kind": "effective_concentration",
+        "semantic_unit_basis": "preserve_concentration_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_after_atomic_parse"
+      },
+      "matched_record_count": 91
+    },
+    {
+      "rule_id": "sensitization.cd_marker.expression_response.v1",
+      "priority": 599,
+      "match": {
+        "frozen_endpoint_in": ["cd86", "cd54"],
+        "measurement_text_is_nonempty": true,
+        "unit_text_in": ["%", "fold", "RFI", "FI", "rMFI", "MFI", "cMFI", "% positive cells", "log2 fold change", "fold suppression", "stimulation index", "% RFI", "% of negative control", "% of control", "% of untreated control", "RFI (%)", "fold change", "SI", ">% increase relative to vehicle control"]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "marker_expression_with_response_subbasis",
+        "quantity_kind": "expression_response",
+        "semantic_unit_basis_policy": "separate_rfi_percent_fold_to_control_instrument_fluorescence_and_positive_cell_fraction",
+        "canonical_unit_policy": "never_pool_absolute_MFI_or_FI_with_RFI_or_fold",
+        "domain": {"nonnegative_percent_or_instrument": true, "positive_fold": true},
+        "scalar_policy": "eligible_only_within_same_response_subbasis_and_assay_context"
+      },
+      "matched_record_count": 338
+    },
+    {
+      "rule_id": "sensitization.cd_marker.cell_density.v1",
+      "priority": 598,
+      "match": {"frozen_endpoint_in": ["cd86", "cd54"], "unit_text_exact": "cells/0.0625 mm²"},
+      "action": {
+        "refined_endpoint_name_policy": "marker_positive_cell_density",
+        "quantity_kind": "cell_density",
+        "semantic_unit_basis": "cells_per_area",
+        "canonical_unit_policy": "cells/mm²",
+        "domain": {"minimum": 0.0},
+        "scalar_policy": "eligible_after_exact_area_conversion"
+      },
+      "matched_record_count": 2
+    },
+    {
+      "rule_id": "sensitization.cd_marker.typed_unit_blank_value.evidence_only.v1",
+      "priority": 590,
+      "match": {
+        "frozen_endpoint_in": ["cd86", "cd54"],
+        "measurement_text_is_null": true,
+        "unit_text_is_nonempty": true
+      },
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "missing_measurement",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 27
+    },
+    {
+      "rule_id": "sensitization.cd_marker.blank.evidence_only.v1",
+      "priority": 589,
+      "match": {"frozen_endpoint_in": ["cd86", "cd54"], "unit_text_is_null": true},
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "qualitative_or_unresolved",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only"
+      },
+      "matched_record_count": 1625
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.compound_areic_mass.v1",
+      "priority": 500,
+      "match": {
+        "frozen_endpoint_regex": "(?i)(noel|nesil)",
+        "unit_text_in": ["µg/cm²", "μg/cm²", "µg/cm2", "μg/cm2", "µg/cm^2", "μg/cm^2", "µg/cmb"]
+      },
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_induction_elicitation_phase",
+        "quantity_kind": "threshold_areic_dose",
+        "semantic_unit_basis": "areic_mass",
+        "canonical_unit_policy": "convert_to_µg/cm²",
+        "exact_unit_repairs": {"µg/cmb": "µg/cm²"},
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 334
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.element_areic_mass.v1",
+      "priority": 499,
+      "match": {"frozen_endpoint_regex": "(?i)(noel|nesil)", "unit_text_exact": "µg Ni/cm²"},
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_element_mass",
+        "semantic_unit_basis": "areic_element_mass_nickel",
+        "canonical_unit_policy": "preserve_µg_Ni/cm²",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 4
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.areic_amount.v1",
+      "priority": 498,
+      "match": {"frozen_endpoint_regex": "(?i)(noel|nesil)", "unit_text_in": ["µmol/cm²", "nmol/cm²", "mol/m²"]},
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_amount",
+        "semantic_unit_basis": "areic_amount",
+        "canonical_unit_policy": "convert_to_mol/m²",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 14
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.areic_mass_rate.v1",
+      "priority": 497,
+      "match": {"frozen_endpoint_regex": "(?i)(noel|nesil)", "unit_text_in": ["µg/cm²/day", "μg/cm2/day"]},
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_areic_dose_rate",
+        "semantic_unit_basis": "areic_mass_rate",
+        "canonical_unit_policy": "convert_to_µg/cm²/day",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 1
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.other_threshold_basis.v1",
+      "priority": 496,
+      "match": {"frozen_endpoint_regex": "(?i)(noel|nesil)", "unit_text_in": ["%", "ppm", "mg", "mg/kg", "mM"]},
+      "action": {
+        "refined_endpoint_name_policy": "preserve_noel_nesil_and_phase",
+        "quantity_kind": "threshold_concentration_or_dose",
+        "semantic_unit_basis": "preserve_percent_ppm_mass_mass_per_mass_or_molar_dimension",
+        "canonical_unit_policy": "exact_within_dimension_only",
+        "domain": {"minimum_exclusive": 0.0},
+        "scalar_policy": "eligible_for_finite_points_preserve_bounds"
+      },
+      "matched_record_count": 14
+    },
+    {
+      "rule_id": "sensitization.noel_nesil.blank.evidence_only.v1",
+      "priority": 490,
+      "match": {"frozen_endpoint_regex": "(?i)(noel|nesil)", "unit_text_is_null": true},
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "bound_or_not_determined_without_atomic_value",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_preserve_source_bound_or_ND"
+      },
+      "matched_record_count": 6
+    },
+    {
+      "rule_id": "sensitization.default.evidence_only.v1",
+      "priority": 0,
+      "match": {"source_id_exact": "sensitization_aop"},
+      "action": {
+        "refined_endpoint_name": "$frozen_endpoint",
+        "quantity_kind": "unreviewed",
+        "semantic_unit_basis": null,
+        "scalar_policy": "evidence_only_unresolved"
+      },
+      "matched_record_count": null
+    }
+  ]
+}

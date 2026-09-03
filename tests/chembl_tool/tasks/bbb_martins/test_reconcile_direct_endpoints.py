@@ -4,10 +4,10 @@ import hashlib
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.bbb_martins.data_processing.build_direct_endpoint_mapping import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_direct_endpoint_mapping import (
     MAPPING_VERSION as LOCAL_MAPPING_VERSION,
 )
-from tools.chembl_tool.tasks.bbb_martins.data_processing.reconcile_direct_endpoints import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.reconcile_direct_endpoints import (
     _cleaned_final_mapping,
     _near_duplicate_pairs,
     _validate_change_reviews,
@@ -16,7 +16,7 @@ from tools.chembl_tool.tasks.bbb_martins.data_processing.reconcile_direct_endpoi
     build_review_packets,
     consolidate,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_endpoint_normalization import (
     EXPECTED_DIRECT_INVENTORY_COUNT,
     EXPECTED_DIRECT_INVENTORY_SHA256,
     EXPECTED_DIRECT_SOURCE_SHA256,

@@ -1,3 +1,12 @@
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as BBB_CANONICAL_STAGES,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as BIO_CANONICAL_STAGES,
+)
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_normalized_starling_evidence_library import (
+    ARTIFACT_STAGES as SKIN_CANONICAL_STAGES,
+)
 from tools.chembl_tool.tasks.bbb_martins.starling_v7_artifact_store import (
     PROFILE as BBB_PROFILE,
 )
@@ -7,38 +16,12 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_v7_artifact_store impor
 from tools.chembl_tool.tasks.skin_reaction.starling_v7_artifact_store import (
     PROFILE as SKIN_PROFILE,
 )
-from tools.chembl_tool.tasks.bbb_martins.build_normalized_starling_evidence_library import (
-    ARTIFACT_STAGES as BBB_CANONICAL_STAGES,
-    LEGACY_ARTIFACT_STAGES as BBB_LEGACY_STAGES,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
-    ARTIFACT_STAGES as BIO_CANONICAL_STAGES,
-    LEGACY_ARTIFACT_STAGES as BIO_LEGACY_STAGES,
-)
-from tools.chembl_tool.tasks.skin_reaction.build_normalized_starling_evidence_library import (
-    ARTIFACT_STAGES as SKIN_CANONICAL_STAGES,
-    LEGACY_ARTIFACT_STAGES as SKIN_LEGACY_STAGES,
-)
-
 
 EXPECTED_STAGES = (
     "00_source",
     "01_cleaned",
     "02_canonicalized",
     "03_pair_buckets",
-)
-
-EXPECTED_LEGACY_STAGES = (
-    "00_source",
-    "01_cleaned",
-    "02_canonicalized",
-    "03_records",
-    "04_pair_buckets",
-    "05_distance_calibration",
-    "06_remove_heldout_overlap",
-    "07_molecule_evidence",
-    "08_neighbor_index",
-    "09_audits",
 )
 
 
@@ -60,6 +43,3 @@ def test_current_build_boundary_is_the_three_stage_core():
     assert BBB_CANONICAL_STAGES == EXPECTED_STAGES
     assert BIO_CANONICAL_STAGES == EXPECTED_STAGES
     assert SKIN_CANONICAL_STAGES == EXPECTED_STAGES
-    assert BBB_LEGACY_STAGES == EXPECTED_LEGACY_STAGES
-    assert BIO_LEGACY_STAGES == EXPECTED_LEGACY_STAGES
-    assert SKIN_LEGACY_STAGES == EXPECTED_LEGACY_STAGES

@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": {{ (system_role ~ " You are operating inside a progressive molecular-evidence experiment. Use general medicinal-chemistry knowledge to interpret the query and retrieved structures, but ground compound-specific empirical claims in the supplied query prior or cited record cards. Treat transfer_likelihood as one relevance signal for whether a reference parent-condition context may apply to the query. It is not a positive-class probability, an experimental result, or a substitute for reasoning about the visible structure, endpoint, assay, species, formulation, exposure, and condition. Infer direction from the record cards first, then judge transfer from all visible context. Do not invent a numeric similarity judgment or assume that a higher transfer_likelihood must outweigh a concrete experimental mismatch. Return exactly one valid JSON object. Do not reveal hidden chain-of-thought.") | tojson }}
+  },
+  {
+    "role": "user",
+    "content": {{ user_content | tojson }}
+  }
+]

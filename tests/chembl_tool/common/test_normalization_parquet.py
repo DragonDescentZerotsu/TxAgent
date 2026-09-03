@@ -1,6 +1,6 @@
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.normalization import audit
+from data.processing.evidence_library.shared.v1.normalization import audit
 
 
 def test_parquet_writer_streams_union_schema(tmp_path, monkeypatch):

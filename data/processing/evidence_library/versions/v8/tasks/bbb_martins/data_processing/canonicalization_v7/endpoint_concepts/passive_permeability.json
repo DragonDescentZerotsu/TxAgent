@@ -1,0 +1,1543 @@
+{
+  "version": "bbb_martins_endpoint_concepts.v2",
+  "source_id": "passive_permeability",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 252,
+    "sha256": "0c22aa6427535299918752c4fd5d3357db671fd2fc6eab2b9ee5c87c94b4cc6b"
+  },
+  "observed_pairs": {
+    "count": 254,
+    "sha256": "7da45219bf48fcaeb843323c9ce7156a86c2f88c330800674fa2ba9dce9dc12b"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "No endpoint or controlled interpretation was available; retained as missing."
+    },
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "passive_bbb_permeability_outcome",
+      "canonical_endpoint_concept": "passive_bbb_permeability_outcome",
+      "review_reason": "No endpoint was reported; a controlled passive-BBB interpretation was encoded separately."
+    },
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Reviewed passive-assay metadata identifies the permeability axis despite the missing endpoint field."
+    },
+    {
+      "endpoint_name": "% A to B",
+      "canonical_endpoint_name": "percent_transport_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same percent transport a to b quantity."
+    },
+    {
+      "endpoint_name": "% dose permeated in 60 min",
+      "canonical_endpoint_name": "percent_dose_permeated",
+      "canonical_endpoint_concept": "percent_dose_permeated_60min",
+      "review_reason": "Spelling variants denote percent dose permeated at 60 minutes."
+    },
+    {
+      "endpoint_name": "% transport",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "(KIAM/MW4)x10^10",
+      "canonical_endpoint_name": "membrane_partitioning",
+      "canonical_endpoint_concept": "iam_retention_mw4_index",
+      "review_reason": "Typography variants denote the same molecular-weight-normalized IAM retention index."
+    },
+    {
+      "endpoint_name": "(K_IAM/MW^4) x10^10",
+      "canonical_endpoint_name": "membrane_partitioning",
+      "canonical_endpoint_concept": "iam_retention_mw4_index",
+      "review_reason": "Typography variants denote the same molecular-weight-normalized IAM retention index."
+    },
+    {
+      "endpoint_name": "(K_IAM/MW^4)x10^10",
+      "canonical_endpoint_name": "membrane_partitioning",
+      "canonical_endpoint_concept": "iam_retention_mw4_index",
+      "review_reason": "Typography variants denote the same molecular-weight-normalized IAM retention index."
+    },
+    {
+      "endpoint_name": "-Log Pe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-LogPe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-log P_e",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-log Pe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-log Pe (cm s−1)",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-logP",
+      "canonical_endpoint_name": "negative_log_partition_coefficient",
+      "canonical_endpoint_concept": "negative_log_p_unspecified",
+      "review_reason": "The source writes -logP but does not disambiguate P0, Pe, or a partition coefficient; retained fail-closed."
+    },
+    {
+      "endpoint_name": "-logP_e",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "-logPe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "A to B (%)",
+      "canonical_endpoint_name": "percent_transport_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same percent transport a to b quantity."
+    },
+    {
+      "endpoint_name": "A to B transport (%)",
+      "canonical_endpoint_name": "percent_transport_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same percent transport a to b quantity."
+    },
+    {
+      "endpoint_name": "A-B Papp",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "A-B permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "permeability_a_to_b",
+      "review_reason": "The endpoint explicitly gives the A-to-B direction even without Papp notation."
+    },
+    {
+      "endpoint_name": "A-B transport",
+      "canonical_endpoint_name": "transport_rate_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "The source record reports A-to-B transport as a percentage, not a transport-rate coefficient."
+    },
+    {
+      "endpoint_name": "A-B/B-A ratio",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "a_to_b_over_b_to_a_ratio",
+      "review_reason": "The written A-to-B over B-to-A ratio is the inverse orientation of the conventional efflux ratio."
+    },
+    {
+      "endpoint_name": "A-to-B Papp",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "A2B meanPapp",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "A>B Papp",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "AQ",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "apparent_permeability_quotient",
+      "review_reason": "AQ is explicitly defined in source support as an apparent-permeability quotient."
+    },
+    {
+      "endpoint_name": "Acceptor concentration",
+      "canonical_endpoint_name": "concentration",
+      "canonical_endpoint_concept": "acceptor_concentration",
+      "review_reason": "Acceptor-compartment concentration is retained apart from unspecified or nominal concentration."
+    },
+    {
+      "endpoint_name": "B-A Papp",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "B:A ratio",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "basolateral_to_apical_ratio",
+      "review_reason": "The source explicitly reports a basolateral-to-apical ratio rather than a permeability coefficient."
+    },
+    {
+      "endpoint_name": "BA/AB",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "efflux_ratio",
+      "review_reason": "BA/AB and named variants denote the B-to-A over A-to-B efflux ratio; the inverse orientation remains separate."
+    },
+    {
+      "endpoint_name": "BBB permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "BBB permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "BBB-Pe",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Blood-brain barrier Permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Caco-2 cell permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Caco-2 permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Cl",
+      "canonical_endpoint_name": "clearance",
+      "canonical_endpoint_concept": "clearance",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same clearance quantity."
+    },
+    {
+      "endpoint_name": "Intrinsic Caco2 pH 7.4/7.4 Papp A to B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Kintr",
+      "canonical_endpoint_name": "intrinsic_partition_coefficient",
+      "canonical_endpoint_concept": "intrinsic_membrane_partition_coefficient",
+      "review_reason": "Kintr is the intrinsic membrane partition coefficient derived from uptake kinetics."
+    },
+    {
+      "endpoint_name": "Kp",
+      "canonical_endpoint_name": "partition_coefficient",
+      "canonical_endpoint_concept": "membrane_surface_partition_coefficient",
+      "review_reason": "Kp is a bilayer surface partition coefficient measured with BBB-mimicking vesicles."
+    },
+    {
+      "endpoint_name": "Log Pe",
+      "canonical_endpoint_name": "log_effective_permeability",
+      "canonical_endpoint_concept": "log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "LogP_app",
+      "canonical_endpoint_name": "log_apparent_permeability",
+      "canonical_endpoint_concept": "log_apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "LogPe",
+      "canonical_endpoint_name": "log_effective_permeability",
+      "canonical_endpoint_concept": "log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "MDCK A/B",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "MDCK B/A",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "MDCK cell permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "MDCK-MDR1 AB",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "MDCK_AB_C",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "MDR1-MDCK flux apical-basolateral (A-B)",
+      "canonical_endpoint_name": "transport_rate_a_to_b",
+      "canonical_endpoint_concept": "transport_rate_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate a to b quantity."
+    },
+    {
+      "endpoint_name": "MDR1-MDCK flux basolateral-apical (B-A)",
+      "canonical_endpoint_name": "transport_rate_b_to_a",
+      "canonical_endpoint_concept": "transport_rate_b_to_a",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate b to a quantity."
+    },
+    {
+      "endpoint_name": "Mean Papp B→A (nm/s) + GF120918",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a_with_pgp_inhibitor",
+      "review_reason": "B-to-A Papp measured with GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Mean Pe",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "P",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "P app,A-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PAMPA",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "PAMPA BBB Pm 7.4",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "pampa_membrane_permeability_ph7_4",
+      "review_reason": "Pm at pH 7.4 is the same PAMPA membrane-permeability quantity across spelling variants."
+    },
+    {
+      "endpoint_name": "PAMPA BBB log P0",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "P0/Po notation is identified in source support as intrinsic PAMPA permeability."
+    },
+    {
+      "endpoint_name": "PAMPA permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "PAMPA score",
+      "canonical_endpoint_name": "permeability_class",
+      "canonical_endpoint_concept": "permeability_class",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same permeability class quantity."
+    },
+    {
+      "endpoint_name": "PAP-BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PCall",
+      "canonical_endpoint_name": "pcall",
+      "canonical_endpoint_concept": "pcall",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same pcall quantity."
+    },
+    {
+      "endpoint_name": "PE_cell",
+      "canonical_endpoint_name": "pe_cell",
+      "canonical_endpoint_concept": "pe_cell",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same pe cell quantity."
+    },
+    {
+      "endpoint_name": "P_E",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "P_app",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "P_app (A→B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "P_app (B→A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "P_app A→B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "P_appA-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "P_appPD",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability_pd",
+      "review_reason": "The source-specific PD suffix has unresolved semantics and is retained fail-closed."
+    },
+    {
+      "endpoint_name": "P_app^cum",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "cumulative_apparent_permeability",
+      "review_reason": "The cumulative Papp construction is retained apart from ordinary apparent permeability."
+    },
+    {
+      "endpoint_name": "P_dif",
+      "canonical_endpoint_name": "p_dif",
+      "canonical_endpoint_concept": "p_dif",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same p dif quantity."
+    },
+    {
+      "endpoint_name": "P_e",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "P_eff",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "P_{aap} (A-B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "P_{app}",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "P_{e(exp)}",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Paap",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Pap",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "pap_unspecified_permeability",
+      "review_reason": "Pap is not reliably identified as Papp in source text; retained separately."
+    },
+    {
+      "endpoint_name": "Papp",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Papp (A to B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (A-B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (AB)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (AP)",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (A–B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (A→B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (B → A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (B-A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (BA)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (BL)",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (B–A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (B→A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (apical-to-basal)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (apical-to-basolateral)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (basolateral to apical)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp (cm/s × 10^-6)",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Papp (log value)",
+      "canonical_endpoint_name": "log_apparent_permeability",
+      "canonical_endpoint_concept": "log_apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Papp A to B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A2B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A>B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp AB",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp AP",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp AP-BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp AP→BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A–B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A→ B+GF918",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b_with_pgp_inhibitor",
+      "review_reason": "A-to-B Papp measured with GF918/GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Papp A→B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp A→B + GF120918",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b_with_pgp_inhibitor",
+      "review_reason": "A-to-B Papp measured with GF918/GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Papp A→B+GF918",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b_with_pgp_inhibitor",
+      "review_reason": "A-to-B Papp measured with GF918/GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Papp B-A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp B2A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp BL",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp BL-AP",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp BL→AP",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp B–A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp B→A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp B→A + GF120918",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a_with_pgp_inhibitor",
+      "review_reason": "B-to-A Papp measured with GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Papp PAMPA",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Papp [A-B]",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp cassette incubation",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability_cassette_incubation",
+      "review_reason": "Cassette-incubation Papp is retained apart from the matched single-incubation protocol."
+    },
+    {
+      "endpoint_name": "Papp of analyte",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "Papp single incubation",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability_single_incubation",
+      "review_reason": "Single-incubation Papp is retained apart from the matched cassette-incubation protocol."
+    },
+    {
+      "endpoint_name": "Papp(A - B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(A → B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(A-B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(AB)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(A–B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(A→B)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(B - A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(B-A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp(B→A)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp+918",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability_with_pgp_inhibitor",
+      "review_reason": "The endpoint explicitly includes P-gp inhibitor 918; direction is not encoded in the endpoint."
+    },
+    {
+      "endpoint_name": "Papp, A to B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, A to B (10‐6 cm∙s−1)",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, A-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, AP-BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, A–B direction",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, A–B direction+GF918",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b_with_pgp_inhibitor",
+      "review_reason": "A-to-B Papp measured with GF918/GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "Papp, B to A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, B to A (10‐6 cm∙s−1)",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp, BL-AP",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp,A-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp,A-B/λ",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "intrinsic_papp_a_to_b_unionized_unbound",
+      "review_reason": "The lambda-normalized intrinsic Papp for unbound unionized drug is retained from ordinary A-to-B Papp."
+    },
+    {
+      "endpoint_name": "Papp,AP-BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp,A→B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp,B-A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Papp,BL-AP",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "PappA-B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappAB",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappAP",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappAP-BL",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappAtoB",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappA→B",
+      "canonical_endpoint_name": "papp_a_to_b",
+      "canonical_endpoint_concept": "papp_a_to_b",
+      "review_reason": "Endpoint spelling and support text identify apical-to-basolateral apparent permeability."
+    },
+    {
+      "endpoint_name": "PappA→B+918",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_a_to_b_with_pgp_inhibitor",
+      "review_reason": "A-to-B Papp measured with GF918/GF120918 is retained as an inhibited condition."
+    },
+    {
+      "endpoint_name": "PappB-A",
+      "canonical_endpoint_name": "papp_b_to_a",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "PappBL",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "papp_b_to_a",
+      "review_reason": "Endpoint spelling and support text identify basolateral-to-apical apparent permeability."
+    },
+    {
+      "endpoint_name": "Pappcum (corrected)",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "corrected_cumulative_apparent_permeability",
+      "review_reason": "The endpoint is both cumulative and corrected; those transformations are retained."
+    },
+    {
+      "endpoint_name": "Passive permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Pe",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Pe (A→B)",
+      "canonical_endpoint_name": "effective_permeability_a_to_b",
+      "canonical_endpoint_concept": "effective_permeability_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability a to b quantity."
+    },
+    {
+      "endpoint_name": "Pe (classification based on range)",
+      "canonical_endpoint_name": "permeability_class",
+      "canonical_endpoint_concept": "permeability_class",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same permeability class quantity."
+    },
+    {
+      "endpoint_name": "Pe (exp)",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Pe(exp)",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Pe*",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Peff",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "Percent transported",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "Permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Permeability (A-B)",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "permeability_a_to_b",
+      "review_reason": "The endpoint explicitly gives the A-to-B direction even without Papp notation."
+    },
+    {
+      "endpoint_name": "Permeability Log[10-6 cm/s]",
+      "canonical_endpoint_name": "log_passive_permeability",
+      "canonical_endpoint_concept": "log_passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Permeation",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Permeation coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Pexact",
+      "canonical_endpoint_name": "pexact",
+      "canonical_endpoint_concept": "pexact",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same pexact quantity."
+    },
+    {
+      "endpoint_name": "Pincre(corrected)app",
+      "canonical_endpoint_name": "pincre_corrected_app",
+      "canonical_endpoint_concept": "pincre_corrected_app",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same pincre corrected app quantity."
+    },
+    {
+      "endpoint_name": "Pincreapp",
+      "canonical_endpoint_name": "pincre_app",
+      "canonical_endpoint_concept": "pincre_app",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same pincre app quantity."
+    },
+    {
+      "endpoint_name": "Pm",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "iam_derived_permeability",
+      "review_reason": "IAM-derived Pm is retained apart from PAMPA membrane permeability."
+    },
+    {
+      "endpoint_name": "Pm7.4",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "pampa_membrane_permeability_ph7_4",
+      "review_reason": "Pm at pH 7.4 is the same PAMPA membrane-permeability quantity across spelling variants."
+    },
+    {
+      "endpoint_name": "Ppass",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "RRCK",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "Ratio",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "efflux_ratio",
+      "review_reason": "BA/AB and named variants denote the B-to-A over A-to-B efflux ratio; the inverse orientation remains separate."
+    },
+    {
+      "endpoint_name": "T",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "Transport (%)",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "acceptor concentration",
+      "canonical_endpoint_name": "concentration",
+      "canonical_endpoint_concept": "acceptor_concentration",
+      "review_reason": "Case variant of acceptor-compartment concentration."
+    },
+    {
+      "endpoint_name": "apical-basolateral (A-B) [nm/s]",
+      "canonical_endpoint_name": "transport_rate_a_to_b",
+      "canonical_endpoint_concept": "transport_rate_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate a to b quantity."
+    },
+    {
+      "endpoint_name": "apical-to-basolateral transport rate",
+      "canonical_endpoint_name": "transport_rate_a_to_b",
+      "canonical_endpoint_concept": "transport_rate_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate a to b quantity."
+    },
+    {
+      "endpoint_name": "apparent permeability",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "apparent permeability coefficient",
+      "canonical_endpoint_name": "apparent_permeability",
+      "canonical_endpoint_concept": "apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "basolateral-apical (B-A) [nm/s]",
+      "canonical_endpoint_name": "transport_rate_b_to_a",
+      "canonical_endpoint_concept": "transport_rate_b_to_a",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate b to a quantity."
+    },
+    {
+      "endpoint_name": "clearance",
+      "canonical_endpoint_name": "clearance",
+      "canonical_endpoint_concept": "clearance",
+      "review_reason": "Hand-reviewed endpoint retained as the distinct clearance quantity."
+    },
+    {
+      "endpoint_name": "concentration",
+      "canonical_endpoint_name": "concentration",
+      "canonical_endpoint_concept": "concentration",
+      "review_reason": "Hand-reviewed endpoint retained as the distinct concentration quantity."
+    },
+    {
+      "endpoint_name": "effective permeability",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "effective permeability (Pe)",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "effective permeability value",
+      "canonical_endpoint_name": "effective_permeability",
+      "canonical_endpoint_concept": "effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same effective permeability quantity."
+    },
+    {
+      "endpoint_name": "efflux ratio",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "efflux_ratio",
+      "review_reason": "BA/AB and named variants denote the B-to-A over A-to-B efflux ratio; the inverse orientation remains separate."
+    },
+    {
+      "endpoint_name": "efflux ratio (ER)",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "efflux_ratio",
+      "review_reason": "BA/AB and named variants denote the B-to-A over A-to-B efflux ratio; the inverse orientation remains separate."
+    },
+    {
+      "endpoint_name": "endothelial permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "final nominal concentration",
+      "canonical_endpoint_name": "concentration",
+      "canonical_endpoint_concept": "final_nominal_concentration",
+      "review_reason": "Final nominal assay concentration is not interchangeable with measured acceptor concentration."
+    },
+    {
+      "endpoint_name": "flux",
+      "canonical_endpoint_name": "transport_rate",
+      "canonical_endpoint_concept": "transport_rate",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate quantity."
+    },
+    {
+      "endpoint_name": "fold change in permeability",
+      "canonical_endpoint_name": "permeability_fold_change",
+      "canonical_endpoint_concept": "permeability_fold_change",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same permeability fold change quantity."
+    },
+    {
+      "endpoint_name": "fold increase in Cu concentration relative to vehicle control",
+      "canonical_endpoint_name": "concentration_fold_change",
+      "canonical_endpoint_concept": "concentration_fold_change",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same concentration fold change quantity."
+    },
+    {
+      "endpoint_name": "fold increase in permeability",
+      "canonical_endpoint_name": "permeability_fold_change",
+      "canonical_endpoint_concept": "permeability_fold_change",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same permeability fold change quantity."
+    },
+    {
+      "endpoint_name": "in vitro BBB permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "percent_transport_30min",
+      "review_reason": "The endpoint reports in-vitro BBB transport over 30 minutes."
+    },
+    {
+      "endpoint_name": "in vitro Caco-2 cell permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "in vitro MDCK cell permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "injected_dose_percentage_60min",
+      "canonical_endpoint_name": "percent_dose_permeated",
+      "canonical_endpoint_concept": "percent_dose_permeated_60min",
+      "review_reason": "Spelling variants denote percent dose permeated at 60 minutes."
+    },
+    {
+      "endpoint_name": "k'IAM",
+      "canonical_endpoint_name": "membrane_partitioning",
+      "canonical_endpoint_concept": "iam_retention_factor",
+      "review_reason": "Prime and spacing variants denote the IAM chromatographic retention factor."
+    },
+    {
+      "endpoint_name": "kIAM",
+      "canonical_endpoint_name": "membrane_partitioning",
+      "canonical_endpoint_concept": "iam_retention_factor",
+      "review_reason": "Prime and spacing variants denote the IAM chromatographic retention factor."
+    },
+    {
+      "endpoint_name": "k_p",
+      "canonical_endpoint_name": "partition_coefficient",
+      "canonical_endpoint_concept": "passive_uptake_rate_constant",
+      "review_reason": "k_p is a first-order uptake rate constant in min^-1, not a partition coefficient."
+    },
+    {
+      "endpoint_name": "lipid:water partition coefficient",
+      "canonical_endpoint_name": "partition_coefficient",
+      "canonical_endpoint_concept": "lipid_water_partition_coefficient",
+      "review_reason": "The endpoint explicitly measures the lipid-to-water partition coefficient."
+    },
+    {
+      "endpoint_name": "log K_memb",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_membrane_partition_coefficient",
+      "review_reason": "K_memb is a membrane partition coefficient, not a permeability coefficient."
+    },
+    {
+      "endpoint_name": "log P",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_octanol_water_partition_coefficient",
+      "review_reason": "The source support identifies an octanol-water log P measurement."
+    },
+    {
+      "endpoint_name": "log Papp",
+      "canonical_endpoint_name": "log_apparent_permeability",
+      "canonical_endpoint_concept": "log_apparent_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log apparent permeability quantity."
+    },
+    {
+      "endpoint_name": "log Pe",
+      "canonical_endpoint_name": "log_effective_permeability",
+      "canonical_endpoint_concept": "log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "log Po",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "P0/Po notation is identified in source support as intrinsic PAMPA permeability."
+    },
+    {
+      "endpoint_name": "log Po48 in PAMPA",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "The attached 48 is a literature-reference marker in source context, not a 48-hour assay window."
+    },
+    {
+      "endpoint_name": "log PoPAMPA-BBB",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "P0/Po notation is identified in source support as intrinsic PAMPA permeability."
+    },
+    {
+      "endpoint_name": "log k",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_transport_coefficient",
+      "review_reason": "Source support reports log k in cm/hour for monolayer transport."
+    },
+    {
+      "endpoint_name": "logD7.4",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_distribution_coefficient_ph7_4",
+      "review_reason": "The pH 7.4 distribution coefficient is retained apart from log P and permeability coefficients."
+    },
+    {
+      "endpoint_name": "logP0",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "P0/Po notation is identified in source support as intrinsic PAMPA permeability."
+    },
+    {
+      "endpoint_name": "logP0PAMPA-BBB",
+      "canonical_endpoint_name": "log_partition_coefficient",
+      "canonical_endpoint_concept": "log_intrinsic_pampa_permeability",
+      "review_reason": "P0/Po notation is identified in source support as intrinsic PAMPA permeability."
+    },
+    {
+      "endpoint_name": "logPe",
+      "canonical_endpoint_name": "log_effective_permeability",
+      "canonical_endpoint_concept": "log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "mean permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "mean ratio to diazepam",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "relative_permeability_to_diazepam",
+      "review_reason": "The measurement is explicitly normalized to diazepam and remains distinct from generic ratios."
+    },
+    {
+      "endpoint_name": "membrane permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "pPe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "pPe BBB",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    },
+    {
+      "endpoint_name": "passive permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "passive permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "pc",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "percent dose at 30 min",
+      "canonical_endpoint_name": "percent_dose_permeated",
+      "canonical_endpoint_concept": "percent_dose_permeated_30min",
+      "review_reason": "Percent dose permeated at 30 minutes retains its time window."
+    },
+    {
+      "endpoint_name": "percentage accumulated",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_accumulated",
+      "review_reason": "Percent accumulated is retained from generic percent transported."
+    },
+    {
+      "endpoint_name": "percentage from apical to basal side",
+      "canonical_endpoint_name": "percent_transport_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same percent transport a to b quantity."
+    },
+    {
+      "endpoint_name": "percentage of BBB penetration",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "percentage of brain side",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_brain_side",
+      "review_reason": "The percentage reaching the brain-side compartment is retained explicitly."
+    },
+    {
+      "endpoint_name": "percentage of potential BBB penetration",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "percentage of transport after 4 h",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport_4h",
+      "review_reason": "Spelling variants denote percent transport after four hours."
+    },
+    {
+      "endpoint_name": "percentage transported apical to basal",
+      "canonical_endpoint_name": "percent_transport_a_to_b",
+      "canonical_endpoint_concept": "percent_transport_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same percent transport a to b quantity."
+    },
+    {
+      "endpoint_name": "permeability",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "permeability (% total radioactivity transported)",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "permeability (percentage of initial amount transported)",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "permeability class ratio",
+      "canonical_endpoint_name": "relative_permeability_ratio",
+      "canonical_endpoint_concept": "permeability_surface_ratio",
+      "review_reason": "The source defines a cell-layer versus filter permeability-surface ratio."
+    },
+    {
+      "endpoint_name": "permeability coefficient",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "permeability rate",
+      "canonical_endpoint_name": "transport_rate",
+      "canonical_endpoint_concept": "transport_rate",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate quantity."
+    },
+    {
+      "endpoint_name": "permeability value",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "permeation",
+      "canonical_endpoint_name": "passive_permeability",
+      "canonical_endpoint_concept": "passive_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same passive permeability quantity."
+    },
+    {
+      "endpoint_name": "permeation rate",
+      "canonical_endpoint_name": "transport_rate",
+      "canonical_endpoint_concept": "transport_rate",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate quantity."
+    },
+    {
+      "endpoint_name": "rate (apical to basolateral)",
+      "canonical_endpoint_name": "transport_rate_a_to_b",
+      "canonical_endpoint_concept": "transport_rate_a_to_b",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate a to b quantity."
+    },
+    {
+      "endpoint_name": "rate (basolateral to apical)",
+      "canonical_endpoint_name": "transport_rate_b_to_a",
+      "canonical_endpoint_concept": "transport_rate_b_to_a",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate b to a quantity."
+    },
+    {
+      "endpoint_name": "transport percentage",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "transport percentage over 4 h",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport_4h",
+      "review_reason": "Spelling variants denote percent transport after four hours."
+    },
+    {
+      "endpoint_name": "transport rate",
+      "canonical_endpoint_name": "transport_rate",
+      "canonical_endpoint_concept": "transport_rate",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same transport rate quantity."
+    },
+    {
+      "endpoint_name": "transport_percentage",
+      "canonical_endpoint_name": "percent_transport",
+      "canonical_endpoint_concept": "percent_transport",
+      "review_reason": "Named and spelling variants denote the same percent-transport quantity; explicit time windows remain separate."
+    },
+    {
+      "endpoint_name": "− log Pe",
+      "canonical_endpoint_name": "negative_log_effective_permeability",
+      "canonical_endpoint_concept": "negative_log_effective_permeability",
+      "review_reason": "Hand-reviewed spelling or symbol variant of the same negative log effective permeability quantity."
+    }
+  ]
+}

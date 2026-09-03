@@ -13,7 +13,7 @@ import torch
 import torch.nn.functional as F
 from rdkit import Chem
 
-from baselines.minimol.embedding_runtime import (
+from predict.baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     checkpoint_provenance,
     create_featurizer,
@@ -24,7 +24,7 @@ from tools.chembl_tool.common.retrieval_features import (
     candidate_order_sha256,
     write_finite_array_receipt,
 )
-from tools.chembl_tool.common.starling.heldout_index import (
+from data.processing.evidence_library.heldout_index import (
     identity_key,
     load_heldout_identity_keys,
 )
@@ -844,7 +844,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--benchmark-data-root",
         type=Path,
-        default=Path("data/processed_starling"),
+        default=Path("data/gold_labels/legacy/processed_starling"),
     )
     parser.add_argument("--benchmark-lineage", default="record_agreement70_split811_v1")
     parser.add_argument(

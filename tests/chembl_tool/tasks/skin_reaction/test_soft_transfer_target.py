@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from tools.chembl_tool.common.starling.pair_bucket_transfer_policy import (
+from data.processing.evidence_library.shared.v1.pair_bucket_transfer_policy import (
     SOFT_TRANSFER_MIDPOINT_SD,
     SOFT_TRANSFER_TEMPERATURE,
     TRANSFER_MAX_STANDARD_DEVIATIONS,

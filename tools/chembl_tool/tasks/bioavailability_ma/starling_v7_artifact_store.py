@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from tools.chembl_tool.common.starling.stage_artifact_store import (
+from data.processing.evidence_library.stage_artifact_store import (
     DEFAULT_PART_SIZE,
     StageArtifactStoreProfile,
     package_stages,

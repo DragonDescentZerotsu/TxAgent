@@ -1,15 +1,16 @@
-"""Build the BBB historical progressive L2-L5 transfer-score cache."""
+"""Build current Stage 3 progressive record-transfer score caches."""
 
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import hashlib
 import json
 import os
 import sqlite3
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 import pyarrow.parquet as pq
@@ -31,6 +32,7 @@ from predict.retrieval.assay_reranking.runtime import (
 from predict.retrieval.assay_reranking.v19_1 import (
     ASSET_ROOT,
     PROJECTION_SHA256,
+    TRAINING_PROMPT_SHA256,
     V191PromptRenderer,
 )
 from predict.retrieval.policies import (
@@ -40,71 +42,252 @@ from predict.retrieval.policies import (
 )
 
 
-PROFILE_NAME = "v19_1_bbb_historical_progressive_top75"
-TASK_ID = "bbb_martins"
-LEVELS = ("L2", "L3", "L4", "L5")
-LEVEL_BY_HISTORICAL_GROUP = {
-    "Tier 1.starling_direct_bbb_evidence": "L2",
-    "Proxy.central_functional_access": "L2",
-    "Mechanism.passive_permeability": "L3",
-    "Mechanism.efflux_transport": "L4",
-    "Mechanism.influx_transport": "L5",
+TASK_CONFIGS = {
+    "bbb_martins": {
+        "cache_profile": "v19_1_bbb_stage3_progressive_top75_scaffold_disjoint",
+        "gold_task": "BBB_Martins",
+        "levels": ("L2", "L3", "L4", "L5"),
+        "extension_file": "direct_bbb_extension.json",
+        "extension_source": "direct_bbb",
+        "level_contract": {
+            "L1": "current vote-ledger source records; globally excluded here",
+            "L2": "current near-direct plus current non-voting former L1",
+            "L3": "current passive permeability",
+            "L4": "current efflux transport",
+            "L5": "current influx transport",
+        },
+    },
+    "bioavailability_ma": {
+        "cache_profile": "v19_1_bioavailability_ma_stage3_progressive_top75_scaffold_disjoint",
+        "gold_task": "Bioavailability_Ma",
+        "levels": ("L2", "L3", "L4", "L5", "L6"),
+        "extension_file": "direct_bioavailability_extension.json",
+        "extension_source": "hf_bioavailability",
+        "level_contract": {
+            "L1": "current direct oral-bioavailability voters; globally excluded here",
+            "L2": "current nondirect oral bioavailability plus non-voting former L1",
+            "L3": "current oral AUC/Cmax exposure",
+            "L4": "current intestinal absorption and permeability",
+            "L5": "current gut-wall efflux and intestinal metabolism",
+            "L6": "current hepatic clearance and metabolic stability",
+        },
+    },
+    "skin_reaction": {
+        "cache_profile": "v19_1_skin_reaction_stage3_progressive_top75_scaffold_disjoint",
+        "gold_task": "Skin_Reaction",
+        "levels": ("L3", "L4"),
+        "extension_file": "direct_skin_reaction_extension.json",
+        "extension_source": "direct_skin_reaction",
+        "level_contract": {
+            "L1": "current sensitization/contact-allergy voters; existing V9 cache",
+            "L2": "current non-voting skin outcomes; excluded here",
+            "L3": "current sensitization AOP evidence",
+            "L4": "current phototoxicity, irritation, corrosion, and local skin damage",
+        },
+    },
 }
-EXTENSION_PATH = ASSET_ROOT / "direct_bbb_extension.json"
-EVIDENCE_ROOT = Path(
-    "outputs/paper/molecular_evidence_agent_starling_scaffold_conditioned_benchmark/"
-    "evidence/bbb_starling_v7"
-)
-OVERLAY_ROOT = Path(
-    "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
-    "bbb_source_family_purity_v5"
-)
-QUERY_PATH = Path(
-    "data/gold_labels/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
-)
-OUTPUT_ROOT = CACHE_ROOT / PROFILE_NAME / TASK_ID / "scaffold/valid"
 POPCOUNT = np.asarray([value.bit_count() for value in range(256)], dtype=np.uint8)
 
 
-def revised_level(retrieval_source_id: str, historical_group: str | None) -> str:
-    """Keep gold votes in L1; move historical non-voting L1 into L2."""
-    if retrieval_source_id == "direct_vote":
-        return "L1"
-    try:
-        return LEVEL_BY_HISTORICAL_GROUP[str(historical_group)]
-    except KeyError as exc:
-        raise ValueError(f"Unmapped historical BBB group: {historical_group!r}") from exc
-
-
 class ProgressiveV191PromptRenderer(V191PromptRenderer):
-    """Use the frozen V19.1 template with the historical direct-source fields."""
+    """Use V19.1 with the task's explicit out-of-domain direct-source binding."""
 
-    def __init__(self) -> None:
-        super().__init__(TASK_ID)
-        extension = json.loads(EXTENSION_PATH.read_text(encoding="utf-8"))
+    def __init__(self, task_id: str = "bbb_martins") -> None:
+        config = TASK_CONFIGS[task_id]
+        super().__init__(task_id)
+        extension_path = ASSET_ROOT / str(config["extension_file"])
+        extension = json.loads(extension_path.read_text(encoding="utf-8"))
         if extension.get("base_projection_sha256") != PROJECTION_SHA256:
-            raise ValueError("Direct-BBB extension targets another V19.1 projection")
+            raise ValueError("Direct-source extension targets another V19.1 projection")
         self.projection["labels"].update(extension["labels"])
-        self.projection["tasks"][TASK_ID]["direct_bbb"] = extension["binding"]
+        self.projection["tasks"][task_id][str(config["extension_source"])] = extension[
+            "binding"
+        ]
         merged = json.dumps(
             self.projection, ensure_ascii=False, sort_keys=True, separators=(",", ":")
         ).encode()
         self.projection_hash = hashlib.sha256(merged).hexdigest()
 
 
-def _paths() -> dict[str, Path]:
+def _paths(task_id: str) -> dict[str, Path]:
+    config = TASK_CONFIGS[task_id]
+    profile = str(config["cache_profile"])
+    output_root = CACHE_ROOT / profile / task_id / "scaffold/valid"
     return {
-        "records": EVIDENCE_ROOT / "06_records/records.parquet",
-        "bridge": EVIDENCE_ROOT / "07_molecule_evidence/molecule_family_records.parquet",
-        "molecules": EVIDENCE_ROOT / "08_neighbor_index/molecules.parquet",
-        "memberships": EVIDENCE_ROOT / "08_neighbor_index/group_membership.parquet",
-        "fingerprints": EVIDENCE_ROOT / "08_neighbor_index/fingerprints.npz",
-        "overlay": OVERLAY_ROOT / "records.parquet",
-        "overlay_manifest": OVERLAY_ROOT / "manifest.json",
-        "queries": QUERY_PATH,
-        "cache": OUTPUT_ROOT / "scores.sqlite3",
-        "version": OUTPUT_ROOT / "VERSION.json",
-        "journals": OUTPUT_ROOT / ".scores",
+        "records": Path(
+            f"data/evidence_libraries/{task_id}/v7/03_pair_buckets/records.parquet"
+        ),
+        "mapping": Path(
+            f"data/artifacts/evidence_library_assets/{task_id}/construction_assets/"
+            "progressive_level_mapping_v1/record_levels.parquet"
+        ),
+        "mapping_manifest": Path(
+            f"data/artifacts/evidence_library_assets/{task_id}/construction_assets/"
+            "progressive_level_mapping_v1/manifest.json"
+        ),
+        "queries": Path(
+            f"data/gold_labels/{config['gold_task']}/v1/scaffold/"
+            "valid_molecule_condition_labels.jsonl"
+        ),
+        "extension": ASSET_ROOT / str(config["extension_file"]),
+        "cache": output_root / "scores.sqlite3",
+        "version": output_root / "VERSION.json",
+        "journals": output_root / ".scores",
+    }
+
+
+def load_top_ranked_records(
+    task_id: str,
+    queries: Mapping[str, str],
+    *,
+    levels: Sequence[str] = ("L3", "L4", "L5"),
+    limit: int = 50,
+    workers: int = 8,
+) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, Any]]:
+    """Read the highest-scored Stage 3 records from one finalized cache.
+
+    ``queries`` maps frozen benchmark row IDs to their current split SMILES. The
+    cache's pinned query ledger supplies the exact parent-SMILES spelling used as
+    the SQLite key. Every cache and source hash is checked before records are read.
+    """
+    if task_id not in TASK_CONFIGS:
+        raise ValueError(f"unsupported progressive cache task: {task_id}")
+    if limit < 1 or workers < 1:
+        raise ValueError("limit and workers must be positive")
+    if not queries:
+        raise ValueError("at least one query is required")
+    requested_levels = tuple(dict.fromkeys(str(level) for level in levels))
+    if not requested_levels:
+        raise ValueError("at least one progressive level is required")
+
+    paths = _paths(task_id)
+    version = json.loads(paths["version"].read_text(encoding="utf-8"))
+    expected = {
+        "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
+        "status": "complete",
+        "profile": TASK_CONFIGS[task_id]["cache_profile"],
+        "task_id": task_id,
+        "model": model_profile(task_id, "indirect")["model"],
+        "model_revision": model_profile(task_id, "indirect")["revision"],
+        "candidate_contract": "current_stage3_level_then_morgan_top75_scaffold_disjoint.v1",
+        "record_scope": "normalized_v7_stage3_with_current_vote_pure_level_mapping.v1",
+        "neighbor_identity_policy": "scaffold_disjoint",
+        "cache_quick_check": "ok",
+    }
+    for field, value in expected.items():
+        if version.get(field) != value:
+            raise ValueError(
+                f"{task_id} progressive cache has wrong {field}: {version.get(field)!r}"
+            )
+    if not set(requested_levels) <= set(version.get("levels_in_cache") or []):
+        raise ValueError(f"{task_id} progressive cache lacks {requested_levels}")
+    if version.get("cache_sha256") != file_sha256(paths["cache"]):
+        raise ValueError(f"{task_id} progressive cache hash disagrees with VERSION.json")
+    for source, expected_hash in (version.get("inputs") or {}).items():
+        source_path = Path(source)
+        if not source_path.is_file() or file_sha256(source_path) != expected_hash:
+            raise ValueError(f"{task_id} progressive cache input changed: {source_path}")
+
+    frozen_queries = {
+        str(row["benchmark_row_id"]): row for row in _read_jsonl(paths["queries"])
+    }
+    normalized_queries: dict[str, str] = {}
+    for query_id, smiles in queries.items():
+        frozen = frozen_queries.get(str(query_id))
+        if frozen is None:
+            raise ValueError(f"query {query_id} is absent from the frozen cache ledger")
+        if str(frozen.get("drug") or "") != str(smiles):
+            raise ValueError(f"query {query_id} SMILES differs from the frozen cache ledger")
+        parent_smiles = str(
+            (frozen.get("molecule_identity") or {}).get("parent_smiles") or ""
+        )
+        if not parent_smiles:
+            raise ValueError(f"query {query_id} has no frozen parent SMILES")
+        normalized_queries[str(query_id)] = parent_smiles
+
+    sql = """
+        SELECT r.external_record_id, m.molecule_chembl_id,
+               s.transfer_probability, r.payload, COUNT(*) OVER ()
+        FROM assignments AS a
+        JOIN queries AS q USING(query_id)
+        JOIN groups_dim AS g USING(group_key)
+        JOIN records AS r USING(record_key)
+        JOIN molecules AS m USING(molecule_key)
+        JOIN scores AS s USING(score_key)
+        WHERE q.query_smiles = ? AND g.group_id = ?
+        ORDER BY s.transfer_probability DESC, r.external_record_id
+        LIMIT ?
+    """
+
+    def load_one(item: tuple[str, str]) -> tuple[str, dict[str, dict[str, Any]]]:
+        query_id, parent_smiles = item
+        connection = sqlite3.connect(
+            f"file:{paths['cache'].resolve()}?mode=ro", uri=True
+        )
+        try:
+            result: dict[str, dict[str, Any]] = {}
+            for level in requested_levels:
+                rows = connection.execute(sql, (parent_smiles, level, limit)).fetchall()
+                if len(rows) != limit:
+                    raise ValueError(
+                        f"{task_id} query {query_id} has {len(rows)} {level} records; "
+                        f"exactly {limit} are required"
+                    )
+                records = []
+                for record_id, molecule_id, score_value, payload_json, available in rows:
+                    payload = json.loads(payload_json)
+                    if (
+                        str(payload.get("record_id") or "") != str(record_id)
+                        or str(payload.get("progressive_level") or "") != level
+                    ):
+                        raise ValueError(
+                            f"{task_id} cache payload disagrees with {record_id} at {level}"
+                        )
+                    records.append(
+                        {
+                            "record_id": str(record_id),
+                            "reference_molecule_id": str(molecule_id),
+                            "transfer_likelihood": float(score_value),
+                            "payload": payload,
+                        }
+                    )
+                result[level] = {
+                    "available_record_count": int(rows[0][4]),
+                    "records": records,
+                }
+            return query_id, result
+        finally:
+            connection.close()
+
+    unique_queries = dict.fromkeys(normalized_queries.values())
+    by_parent: dict[str, dict[str, dict[str, Any]]] = {}
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=min(workers, len(unique_queries))
+    ) as pool:
+        for parent_smiles, result in pool.map(
+            load_one, ((smiles, smiles) for smiles in unique_queries)
+        ):
+            by_parent[parent_smiles] = result
+    selected = {
+        query_id: by_parent[parent_smiles]
+        for query_id, parent_smiles in normalized_queries.items()
+    }
+    return selected, {
+        "version": str(paths["version"]),
+        "version_sha256": file_sha256(paths["version"]),
+        "cache": str(paths["cache"]),
+        "cache_sha256": version["cache_sha256"],
+        "profile": version["profile"],
+        "model": version["model"],
+        "model_revision": version["model_revision"],
+        "levels": list(requested_levels),
+        "records_per_level": limit,
+        "n_query_rows": len(queries),
+        "n_unique_query_parents": len(unique_queries),
+        "candidate_contract": version["candidate_contract"],
+        "record_scope": version["record_scope"],
+        "neighbor_identity_policy": version["neighbor_identity_policy"],
+        "inputs": dict(version.get("inputs") or {}),
     }
 
 
@@ -118,86 +301,34 @@ def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
     temporary.replace(path)
 
 
-def _level_by_record(records_path: Path, overlay_path: Path) -> tuple[dict[str, str], Counter]:
-    overlay = pq.read_table(
-        overlay_path, columns=["canonical_record_id", "group_id"]
-    ).to_pydict()
-    historical_group = dict(
-        zip(map(str, overlay["canonical_record_id"]), overlay["group_id"])
-    )
-    records = pq.read_table(
-        records_path,
+def _level_by_record(
+    mapping_path: Path, levels_in_cache: Sequence[str]
+) -> tuple[dict[str, str], Counter]:
+    mapping = pq.read_table(
+        mapping_path,
         columns=[
             "canonical_record_id",
-            "retrieval_source_id",
+            "progressive_level",
             "source_id",
-            "finite_scalar_value",
+            "finite_scalar_value_present",
+            "score_cache_candidate_eligible",
+            "scoring_domain_flags",
         ],
-    ).to_pydict()
+    ).to_pylist()
     levels: dict[str, str] = {}
     counts: Counter = Counter()
-    for record_id, retrieval_source, source_id, scalar in zip(
-        records["canonical_record_id"],
-        records["retrieval_source_id"],
-        records["source_id"],
-        records["finite_scalar_value"],
-    ):
-        record_id = str(record_id)
-        level = revised_level(str(retrieval_source), historical_group.get(record_id))
+    for row in mapping:
+        level = str(row.get("progressive_level") or "")
+        if level not in {"L1", *levels_in_cache}:
+            continue
+        record_id = str(row["canonical_record_id"])
+        if record_id in levels:
+            raise ValueError(f"duplicate mapping record: {record_id}")
         levels[record_id] = level
-        counts[(level, str(source_id), scalar is not None)] += 1
+        counts[
+            (level, str(row["source_id"]), bool(row["finite_scalar_value_present"]))
+        ] += 1
     return levels, counts
-
-
-def _records_by_level_molecule(
-    paths: Mapping[str, Path], level_by_record: Mapping[str, str]
-) -> dict[str, dict[int, list[str]]]:
-    bridge = pq.read_table(
-        paths["bridge"], columns=["evidence_id", "canonical_record_id"]
-    ).to_pydict()
-    evidence_records: dict[str, list[str]] = defaultdict(list)
-    for evidence_id, record_id in zip(
-        bridge["evidence_id"], bridge["canonical_record_id"]
-    ):
-        evidence_records[str(evidence_id)].append(str(record_id))
-
-    memberships = pq.read_table(
-        paths["memberships"], columns=["molecule_index", "evidence_id"]
-    ).to_pydict()
-    output: dict[str, dict[int, list[str]]] = {
-        level: defaultdict(list) for level in LEVELS
-    }
-    seen: set[str] = set()
-    for molecule_index, evidence_id in zip(
-        memberships["molecule_index"], memberships["evidence_id"]
-    ):
-        for record_id in evidence_records[str(evidence_id)]:
-            level = level_by_record[record_id]
-            if level == "L1":
-                continue
-            output[level][int(molecule_index)].append(record_id)
-            seen.add(record_id)
-    expected = {record_id for record_id, level in level_by_record.items() if level != "L1"}
-    if seen != expected:
-        missing = next(iter(expected - seen), None)
-        raise ValueError(
-            f"Stage 07/08 does not cover the revised levels: "
-            f"expected={len(expected)}, found={len(seen)}, first_missing={missing}"
-        )
-    return output
-
-
-def _runtime_molecule(row: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        "canonical_smiles": str(row.get("canonical_smiles") or ""),
-        "molecule_identity": {
-            "parent_smiles": row.get("parent_smiles"),
-            "parent_inchi_key": row.get("parent_inchi_key"),
-            "parent_connectivity_key": row.get("parent_connectivity_key"),
-            "component_parent_inchi_keys": row.get("component_parent_inchi_keys") or [],
-            "status": row.get("identity_status"),
-        },
-    }
 
 
 def _tanimoto_vector(query_fp: Any, packed: np.ndarray, bit_counts: np.ndarray) -> np.ndarray:
@@ -275,19 +406,28 @@ def _prepare_candidates(
     connection: sqlite3.Connection,
     paths: Mapping[str, Path],
     records_by_level: Mapping[str, Mapping[int, list[str]]],
+    molecules: Sequence[Mapping[str, Any]],
+    packed: np.ndarray,
     pool_size: int,
+    levels_in_cache: Sequence[str],
 ) -> tuple[int, Counter]:
-    molecule_rows = pq.read_table(paths["molecules"]).to_pylist()
-    molecules = [_runtime_molecule(row) for row in molecule_rows]
-    molecule_ids = [str(row["molecule_id"]) for row in molecule_rows]
-    with np.load(paths["fingerprints"], allow_pickle=False) as payload:
-        packed = np.asarray(payload["packed_fingerprints"], dtype=np.uint8)
+    molecule_ids = [str(row["molecule_id"]) for row in molecules]
     bit_counts = POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
     level_sets = {level: set(rows) for level, rows in records_by_level.items()}
     queries = _read_jsonl(paths["queries"])
     counts: Counter = Counter()
     for query_index, query in enumerate(queries):
-        query_smiles = str(query["drug"])
+        stored_identity = query.get("molecule_identity") or {}
+        query_smiles = str(stored_identity.get("parent_smiles") or "")
+        if not query_smiles:
+            raise ValueError(f"Query {query_index} lacks its frozen parent SMILES")
+        current_identity = normalize_molecule_identity(str(query["drug"]))
+        frozen_parent = str(stored_identity.get("parent_inchi_key") or query_smiles)
+        current_parent = (
+            current_identity.parent_inchi_key or current_identity.parent_smiles
+        )
+        if current_parent != frozen_parent:
+            raise ValueError(f"Query {query_index} parent identity drifted from its gold row")
         _, _, query_fp = standardize_smiles_and_fp(query_smiles)
         if query_fp is None:
             raise ValueError(f"Invalid query SMILES at row {query_index}")
@@ -297,19 +437,19 @@ def _prepare_candidates(
             range(len(molecules)),
             key=lambda index: (-float(similarities[index]), molecule_ids[index]),
         )
-        selected = {level: 0 for level in LEVELS}
+        selected = {level: 0 for level in levels_in_cache}
         for molecule_index in ranked:
             relevant = [
                 level
-                for level in LEVELS
+                for level in levels_in_cache
                 if selected[level] < pool_size and molecule_index in level_sets[level]
             ]
             if not relevant:
-                if all(selected[level] == pool_size for level in LEVELS):
+                if all(selected[level] == pool_size for level in levels_in_cache):
                     break
                 continue
             if decide_candidate(
-                query_identity, molecules[molecule_index], "parent_disjoint"
+                query_identity, molecules[molecule_index], "scaffold_disjoint"
             ).excluded:
                 for level in relevant:
                     counts[(level, "identity_excluded")] += 1
@@ -326,7 +466,7 @@ def _prepare_candidates(
                 selected[level] += 1
                 counts[(level, "candidate_molecules")] += 1
                 counts[(level, "record_assignments")] += len(record_ids)
-        if any(selected[level] != pool_size for level in LEVELS):
+        if any(selected[level] != pool_size for level in levels_in_cache):
             raise ValueError(f"Query {query_index} lacks {pool_size} candidates: {selected}")
         if (query_index + 1) % 25 == 0:
             connection.commit()
@@ -339,16 +479,19 @@ def _record_payload(
     renderer: ProgressiveV191PromptRenderer,
     row: Mapping[str, Any],
     level: str,
+    parent_smiles: str,
+    task_id: str,
 ) -> dict[str, Any]:
     source_id = str(row.get("source_id") or "")
     fields = renderer.prompt_fields(source_id)
     source_fields = {field: row.get(field) for field in fields}
     return {
         "record_id": str(row["canonical_record_id"]),
-        "task_id": TASK_ID,
+        "task_id": task_id,
         "source_id": source_id,
-        "historical_progressive_level": level,
-        "canonical_smiles": str(row.get("canonical_smiles") or ""),
+        "progressive_level": level,
+        "canonical_smiles": parent_smiles,
+        "source_canonical_smiles": str(row.get("canonical_smiles") or ""),
         "measurement_kind": "numeric" if row.get("finite_scalar_value") is not None else "nonnumeric",
         "training_measurement_kind_supported": row.get("finite_scalar_value") is not None,
         "source_contract": {
@@ -365,6 +508,8 @@ def _hydrate_and_render(
     paths: Mapping[str, Path],
     renderer: ProgressiveV191PromptRenderer,
     level_by_record: Mapping[str, str],
+    record_parent_smiles: Mapping[str, str],
+    task_id: str,
 ) -> tuple[int, int, int]:
     wanted = {
         str(row[0]) for row in connection.execute("SELECT DISTINCT record_id FROM refs")
@@ -377,7 +522,13 @@ def _hydrate_and_render(
             record_id = str(raw["canonical_record_id"])
             if record_id not in wanted:
                 continue
-            payload = _record_payload(renderer, raw, level_by_record[record_id])
+            payload = _record_payload(
+                renderer,
+                raw,
+                level_by_record[record_id],
+                record_parent_smiles[record_id],
+                task_id,
+            )
             rows.append(
                 (record_id, json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str))
             )
@@ -391,7 +542,7 @@ def _hydrate_and_render(
     if found != len(wanted):
         raise ValueError(f"Record hydration mismatch: expected={len(wanted)}, found={found}")
 
-    profile = model_profile(TASK_ID, "indirect")
+    profile = model_profile(task_id, "indirect")
     assignments = duplicates = 0
     query = """
         SELECT refs.query_smiles, refs.group_id, refs.molecule_id,
@@ -446,32 +597,103 @@ def _hydrate_and_render(
     return found, assignments, duplicates
 
 
-def prepare(pool_size: int = 75) -> dict[str, Any]:
-    paths = _paths()
+def prepare(task_id: str = "bbb_martins", pool_size: int = 75) -> dict[str, Any]:
+    config = TASK_CONFIGS[task_id]
+    levels_in_cache = tuple(config["levels"])
+    paths = _paths(task_id)
     required = [
         paths[key]
         for key in (
-            "records", "bridge", "molecules", "memberships", "fingerprints",
-            "overlay", "overlay_manifest", "queries",
+            "records", "mapping", "mapping_manifest", "queries",
         )
-    ] + [ASSET_ROOT / "prompt.jinja", ASSET_ROOT / "prompt_projection.json", EXTENSION_PATH]
+    ] + [
+        ASSET_ROOT / "prompt.jinja",
+        ASSET_ROOT / "prompt_projection.json",
+        paths["extension"],
+    ]
     missing = [str(path) for path in required if not path.is_file()]
     if missing:
         raise FileNotFoundError("Missing progressive cache input(s): " + ", ".join(missing))
-    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+    output_root = paths["cache"].parent
+    output_root.mkdir(parents=True, exist_ok=True)
     if paths["cache"].exists() or paths["version"].exists():
-        raise FileExistsError(f"Progressive cache already exists: {OUTPUT_ROOT}")
+        raise FileExistsError(f"Progressive cache already exists: {output_root}")
 
-    renderer = ProgressiveV191PromptRenderer()
-    level_by_record, level_counts = _level_by_record(paths["records"], paths["overlay"])
-    records_by_level = _records_by_level_molecule(paths, level_by_record)
+    renderer = ProgressiveV191PromptRenderer(task_id)
+    level_by_record, level_counts = _level_by_record(
+        paths["mapping"], levels_in_cache
+    )
+    mapping = pq.read_table(
+        paths["mapping"],
+        columns=["canonical_record_id", "score_cache_candidate_eligible"],
+    ).to_pylist()
+    eligible = {
+        str(row["canonical_record_id"])
+        for row in mapping
+        if bool(row["score_cache_candidate_eligible"])
+    }
+    stage3 = pq.read_table(
+        paths["records"], columns=["canonical_record_id", "canonical_smiles"]
+    ).to_pylist()
+    molecule_index: dict[str, int] = {}
+    molecules: list[dict[str, Any]] = []
+    fingerprints: list[np.ndarray] = []
+    record_parent_smiles: dict[str, str] = {}
+    records_by_level: dict[str, dict[int, list[str]]] = {
+        level: defaultdict(list) for level in levels_in_cache
+    }
+    for row in stage3:
+        record_id = str(row["canonical_record_id"])
+        if record_id not in eligible:
+            continue
+        level = level_by_record[record_id]
+        identity = normalize_molecule_identity(str(row.get("canonical_smiles") or ""))
+        if identity.status != "ok" or not identity.parent_smiles:
+            raise ValueError(f"cannot normalize Stage 3 parent for record {record_id}")
+        molecule_id = identity.parent_inchi_key or identity.parent_smiles
+        if molecule_id not in molecule_index:
+            index = len(molecules)
+            _, _, fingerprint = standardize_smiles_and_fp(identity.parent_smiles)
+            if fingerprint is None:
+                raise ValueError(f"cannot fingerprint Stage 3 parent for record {record_id}")
+            molecule_index[molecule_id] = index
+            molecules.append(
+                {
+                    "molecule_id": molecule_id,
+                    "canonical_smiles": identity.parent_smiles,
+                    "molecule_identity": identity.to_dict(),
+                }
+            )
+            fingerprints.append(
+                np.frombuffer(
+                    DataStructs.BitVectToBinaryText(fingerprint), dtype=np.uint8
+                )
+            )
+        index = molecule_index[molecule_id]
+        records_by_level[level][index].append(record_id)
+        record_parent_smiles[record_id] = identity.parent_smiles
+    if set(record_parent_smiles) != eligible:
+        missing = next(iter(eligible - set(record_parent_smiles)), None)
+        raise ValueError(f"Stage 3 mapping coverage mismatch; first missing={missing}")
+    packed = np.stack(fingerprints)
     connection = _open_build_db(paths["cache"])
     try:
         n_queries, candidate_counts = _prepare_candidates(
-            connection, paths, records_by_level, pool_size
+            connection,
+            paths,
+            records_by_level,
+            molecules,
+            packed,
+            pool_size,
+            levels_in_cache,
         )
         n_records, n_assignments, n_duplicates = _hydrate_and_render(
-            connection, paths, renderer, level_by_record
+            connection,
+            paths,
+            renderer,
+            level_by_record,
+            record_parent_smiles,
+            task_id,
         )
         n_prompts = int(
             connection.execute("SELECT COUNT(*) FROM prompt_tasks").fetchone()[0]
@@ -479,34 +701,39 @@ def prepare(pool_size: int = 75) -> dict[str, Any]:
         version = {
             "schema_version": COMPACT_CACHE_SCHEMA_VERSION,
             "status": "prepared",
-            "profile": PROFILE_NAME,
-            "task_id": TASK_ID,
-            "model": model_profile(TASK_ID, "indirect")["model"],
-            "model_revision": model_profile(TASK_ID, "indirect")["revision"],
+            "profile": config["cache_profile"],
+            "task_id": task_id,
+            "model": model_profile(task_id, "indirect")["model"],
+            "model_revision": model_profile(task_id, "indirect")["revision"],
             "scoring_contract_version": SCORING_CONTRACT_VERSION,
             "backbone_dtype": BACKBONE_DTYPE,
             "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
             "template_hash": renderer.template_hash,
+            "training_artifact_template_hash": TRAINING_PROMPT_SHA256,
+            "training_template_difference": (
+                "one terminal newline; rendered prompts are identical after strip"
+            ),
             "projection_hash": renderer.projection_hash,
             "template_profile": "v19_1_retrieval_context_copy",
-            "candidate_contract": "revised_historical_level_then_morgan_top75_parent_disjoint.v1",
-            "record_scope": "normalized_v7_stage06_with_historical_v5_row_family_overlay",
-            "revised_level_contract": {
-                "L1": "conditioned benchmark direct_vote rows; existing V9 cache",
-                "L2": "historical L2 plus non-voting historical L1",
-                "L3": "historical passive permeability",
-                "L4": "historical efflux transport",
-                "L5": "historical influx transport",
-            },
-            "levels_in_cache": list(LEVELS),
+            "candidate_contract": "current_stage3_level_then_morgan_top75_scaffold_disjoint.v1",
+            "record_scope": "normalized_v7_stage3_with_current_vote_pure_level_mapping.v1",
+            "revised_level_contract": config["level_contract"],
+            "levels_in_cache": list(levels_in_cache),
             "l1_cache": str(
                 CACHE_ROOT
-                / "v9_direct_gold_morgan100/bbb_martins/scaffold/valid/rankings.parquet"
+                / f"v9_direct_gold_morgan100/{task_id}/scaffold/valid/rankings.parquet"
             ),
             "l1_morgan_width": pool_size,
             "assay_transfer_initial_morgan_filter": pool_size,
             "min_similarity": 0.0,
-            "neighbor_identity_policy": "parent_disjoint",
+            "neighbor_identity_policy": "scaffold_disjoint",
+            "global_source_exclusion_policy": "L1 records only",
+            "unresolved_endpoint_policy": "exclude unresolved-endpoint records",
+            "unresolved_parent_identity_policy": (
+                "exclude records that cannot be Morgan-ranked or scaffold-filtered"
+            ),
+            "other_out_of_domain_policy": "retain and flag in the level mapping",
+            "fresh_stage3_parent_molecules": len(molecules),
             "n_queries": n_queries,
             "n_unique_query_smiles": int(
                 connection.execute("SELECT COUNT(*) FROM queries").fetchone()[0]
@@ -526,14 +753,18 @@ def prepare(pool_size: int = 75) -> dict[str, Any]:
                         if current == level and numeric
                     ),
                 }
-                for level in ("L1", *LEVELS)
+                for level in ("L1", *levels_in_cache)
             },
             "level_candidate_counts": {
                 level: {
                     name: int(candidate_counts[(level, name)])
-                    for name in ("candidate_molecules", "record_assignments", "identity_excluded")
+                    for name in (
+                        "candidate_molecules",
+                        "record_assignments",
+                        "identity_excluded",
+                    )
                 }
-                for level in LEVELS
+                for level in levels_in_cache
             },
             "inputs": {str(path): file_sha256(path) for path in required},
             "cache": str(paths["cache"]),
@@ -568,9 +799,14 @@ def _shard_rows(
 
 
 def score(
-    *, shard_index: int, num_shards: int, device: int, batch_size: int = 128
+    *,
+    task_id: str = "bbb_martins",
+    shard_index: int,
+    num_shards: int,
+    device: int,
+    batch_size: int = 128,
 ) -> dict[str, Any]:
-    paths = _paths()
+    paths = _paths(task_id)
     version = json.loads(paths["version"].read_text())
     if version.get("status") != "prepared":
         raise ValueError("Progressive cache is not prepared")
@@ -582,8 +818,8 @@ def score(
     completed = _read_jsonl(journal) if journal.exists() else []
     if [row["cache_key"] for row in completed] != [row[1] for row in rows[: len(completed)]]:
         raise ValueError(f"Score journal is not an exact shard prefix: {journal}")
-    profile = model_profile(TASK_ID, "indirect")
-    renderer = ProgressiveV191PromptRenderer()
+    profile = model_profile(task_id, "indirect")
+    renderer = ProgressiveV191PromptRenderer(task_id)
     snapshot = resolve_model_snapshot(
         str(profile["model"]), str(profile["revision"]), local_files_only=True
     )
@@ -596,7 +832,7 @@ def score(
                     cache_key=cache_key,
                     prompt_hash=hashlib.sha256(prompt.encode()).hexdigest(),
                     prompt=prompt,
-                    task_id=TASK_ID,
+                    task_id=task_id,
                     query_smiles="",
                     group_id="",
                     molecule_id="",
@@ -630,8 +866,8 @@ def score(
     return {"status": "complete", "journal": str(journal), "n_scores": len(rows)}
 
 
-def finalize(num_shards: int) -> dict[str, Any]:
-    paths = _paths()
+def finalize(num_shards: int, task_id: str = "bbb_martins") -> dict[str, Any]:
+    paths = _paths(task_id)
     version = json.loads(paths["version"].read_text())
     connection = sqlite3.connect(paths["cache"])
     connection.execute("PRAGMA journal_mode=WAL")
@@ -712,26 +948,30 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
     prepare_parser = subparsers.add_parser("prepare")
+    prepare_parser.add_argument("--task", choices=sorted(TASK_CONFIGS), default="bbb_martins")
     prepare_parser.add_argument("--pool-size", type=int, default=75)
     score_parser = subparsers.add_parser("score")
+    score_parser.add_argument("--task", choices=sorted(TASK_CONFIGS), default="bbb_martins")
     score_parser.add_argument("--shard-index", type=int, required=True)
     score_parser.add_argument("--num-shards", type=int, required=True)
     score_parser.add_argument("--device", type=int, required=True)
     score_parser.add_argument("--batch-size", type=int, default=128)
     finalize_parser = subparsers.add_parser("finalize")
+    finalize_parser.add_argument("--task", choices=sorted(TASK_CONFIGS), default="bbb_martins")
     finalize_parser.add_argument("--num-shards", type=int, required=True)
     args = parser.parse_args(argv)
     if args.command == "prepare":
-        result = prepare(pool_size=args.pool_size)
+        result = prepare(task_id=args.task, pool_size=args.pool_size)
     elif args.command == "score":
         result = score(
+            task_id=args.task,
             shard_index=args.shard_index,
             num_shards=args.num_shards,
             device=args.device,
             batch_size=args.batch_size,
         )
     else:
-        result = finalize(args.num_shards)
+        result = finalize(args.num_shards, task_id=args.task)
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

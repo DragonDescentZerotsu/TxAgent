@@ -2,10 +2,11 @@ import json
 
 import pytest
 
-import tools.chembl_tool.common.openai_reasoning_client as client_module
-import tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve as runner
-from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
-from tools.chembl_tool.common.progressive_assay_reasoning import (
+import predict.llm_engine.client as client_module
+import predict.harnesses.progressive.runner as runner
+import predict.harnesses.progressive.state as progressive_state
+from predict.llm_engine.client import OpenAICompatibleClient
+from predict.harnesses.progressive.state import (
     ProgressiveTaskContract,
     append_evidence,
     build_progressive_messages,
@@ -249,6 +250,15 @@ def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
     )
     prompt = json.loads(messages[1]["content"])
     serialized = messages[1]["content"]
+    assert list(prompt) == [
+        "protocol",
+        "task_definition",
+        "level_context",
+        "query",
+        "query_prior",
+        "active_evidence",
+        "required_json_schema",
+    ]
     assert prompt["query"]["canonical_smiles"] == "QUERY"
     assert "external_condition" in prompt["query"]
     assert prompt["active_evidence"][0]["canonical_smiles"] == "CCO"
@@ -261,6 +271,56 @@ def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
     assert "Use general medicinal-chemistry knowledge" in messages[0]["content"]
     assert "Ground every compound-specific empirical claim" in messages[0]["content"]
     assert "identity_and_selection" not in prompt["protocol"]
+
+
+def test_molecule_card_contract_controls_prompt_json(monkeypatch):
+    contract = {
+        "molecule": {
+            "fields": [
+                {"name": "analog_id", "source": "analog_id", "required": True},
+                {"name": "canonical_smiles", "source": "canonical_smiles", "required": True},
+                {"name": "score", "source": "similarity"},
+                {"name": "first_seen_level", "source": "first_seen_level", "required": True},
+            ],
+            "tool_summaries_field": "tools",
+            "evidence_cards_field": "records",
+        },
+        "evidence_card": {
+            "fields": [
+                {"name": "card_id", "source": "card_id", "required": True},
+                {"name": "measurement", "source": "reported_value"},
+                {"name": "first_seen_level", "source": "first_seen_level", "required": True},
+                {"name": "new_this_level", "source": "new_this_level", "required": True},
+            ]
+        },
+    }
+    monkeypatch.setattr(progressive_state, "molecule_card_contract", lambda: contract)
+    cumulative = extract_cumulative_evidence(
+        _retrieval([_neighbor("CCO", 0.7, [_row("assay", "direct", 1, "support", value="42")])])
+    )
+    active, _ = select_initial_evidence(cumulative, molecule_limit=1, card_limit=1)
+    rendered = progressive_state.render_active_evidence(
+        active,
+        current_level=1,
+        prior_state=None,
+        card_id_to_alias=card_alias_maps(active)[0],
+    )
+    assert rendered == [
+        {
+            "analog_id": next(iter(active)),
+            "canonical_smiles": "CCO",
+            "score": 0.7,
+            "first_seen_level": 1,
+            "records": [
+                {
+                    "card_id": "C01",
+                    "measurement": "42",
+                    "first_seen_level": 1,
+                    "new_this_level": True,
+                }
+            ],
+        }
+    ]
 
 
 def test_gold_l1_rank_controls_selection_and_standalone_prompt_omits_prior():
@@ -299,6 +359,101 @@ def test_gold_l1_rank_controls_selection_and_standalone_prompt_omits_prior():
     assert "query_prior" not in prompt
     assert prompt["active_evidence"][0]["evidence_cards"][0]["transfer_likelihood"] == 0.87
     assert "neither the query label probability" in prompt["protocol"]["transfer_likelihood_rule"]
+
+
+def test_gold_l1_appends_residual_before_mechanism_cards(monkeypatch, tmp_path):
+    normalized_level_2 = {
+        "status": "ok",
+        **_retrieval([
+            _neighbor(
+                "LATER",
+                0.7,
+                [_row("residual", "direct_residual", 2, "residual")],
+            )
+        ]),
+    }
+    normalized_level_3 = {
+        "status": "ok",
+        **_retrieval([
+            _neighbor(
+                "LATER",
+                0.7,
+                [
+                    _row("residual", "direct_residual", 2, "residual"),
+                    _row("passive", "passive_permeability", 3, "permeability"),
+                ],
+            )
+        ]),
+    }
+    monkeypatch.setattr(
+        runner,
+        "retrieve_family_molecule_prefixes",
+        lambda *args, **kwargs: {
+            1: {"status": "ok", **_retrieval([])},
+            2: normalized_level_2,
+            3: normalized_level_3,
+        },
+    )
+    gold = {
+        "gold": {
+            "analog_id": "gold",
+            "canonical_smiles": "GOLD",
+            "similarity": 0.8,
+            "_selection_rank": 0,
+            "cards": {
+                "gold_card": {
+                    "card_id": "gold_card",
+                    "evidence_family": "direct_brain_exposure",
+                    "reported_value": "positive",
+                    "_selection_rank": 0,
+                }
+            },
+        }
+    }
+    prepared = runner._prepare_query(
+        task="bbb_martins",
+        query_index=0,
+        record={"drug": "QUERY", "benchmark_row_id": "Q"},
+        index={},
+        levels=[
+            {"level": 1, "endpoint_group": "direct_brain_exposure"},
+            {"level": 2, "endpoint_group": "direct_residual"},
+            {"level": 3, "endpoint_group": "passive_permeability"},
+        ],
+        gold_l1_candidates=gold,
+        output_root=tmp_path,
+        single_root=tmp_path,
+        query_prior_mode="none",
+        l1_source="gold_train",
+        l1_ranking="morgan",
+        tool_service_url="",
+        timeout_s=1,
+        prefetch_tools=False,
+    )
+    level_dir = prepared.query_dir / "levels"
+    level_1 = json.loads((level_dir / "level_1" / "prepared.json").read_text())
+    level_2 = json.loads((level_dir / "level_2" / "prepared.json").read_text())
+    level_3 = json.loads((level_dir / "level_3" / "prepared.json").read_text())
+    level_1_ids = set(level_1["new_card_ids"])
+    level_2_cards = {
+        card_id: card
+        for analog in level_2["active_evidence"].values()
+        for card_id, card in analog["cards"].items()
+    }
+    assert level_1_ids <= set(level_2_cards)
+    assert {
+        level_2_cards[card_id]["evidence_family"]
+        for card_id in level_2["new_card_ids"]
+    } == {"direct_residual"}
+    level_3_cards = {
+        card_id: card
+        for analog in level_3["active_evidence"].values()
+        for card_id, card in analog["cards"].items()
+    }
+    assert {
+        level_3_cards[card_id]["evidence_family"]
+        for card_id in level_3["new_card_ids"]
+    } == {"passive_permeability"}
 
 
 def test_prompt_uses_stable_short_aliases_and_compact_prior_state():

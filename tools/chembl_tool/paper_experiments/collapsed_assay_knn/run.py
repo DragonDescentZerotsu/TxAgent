@@ -44,7 +44,7 @@ TASKS = {
     "BBB_Martins": {
         "lineage": "experimental_meaningful_cns_access_v2",
         "data_dir": REPO_ROOT
-        / "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold",
+        / "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold",
         "records": REPO_ROOT
         / "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/06_collapsed_records/records.parquet",
         "records_manifest": REPO_ROOT
@@ -53,7 +53,7 @@ TASKS = {
     "Bioavailability_Ma": {
         "lineage": "record_supported_v2",
         "data_dir": REPO_ROOT
-        / "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold",
+        / "data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold",
         "records": REPO_ROOT
         / "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/06_collapsed_records/records.parquet",
         "records_manifest": REPO_ROOT
@@ -62,7 +62,7 @@ TASKS = {
     "Skin_Reaction": {
         "lineage": "record_supported_v2",
         "data_dir": REPO_ROOT
-        / "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold",
+        / "data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold",
         "records": REPO_ROOT
         / "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/06_collapsed_records/records.parquet",
         "records_manifest": REPO_ROOT

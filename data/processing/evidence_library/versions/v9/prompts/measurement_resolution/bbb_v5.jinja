@@ -1,0 +1,103 @@
+You extract measurement values from the BBB dataset. Each row is one claim from one paper.
+Solve concisely.
+
+You receive {"rows": [...]} with at most {{ batch_size }} rows. Each row has an "id", "canonical_endpoint_name", and these fields: {{ row_fields | join(", ") }}. Rows sharing a canonical endpoint are contiguous. Return {"rows": [...]} with exactly one result per id, in the same order. Resolve each row from its own fields only — never carry a value from one row to another.
+
+## Canonical endpoint context
+
+The blocks below summarize rows that deterministic code already parsed for the canonical endpoints in this request. Use them only as context for how the endpoint is normally reported. They can clarify a unit convention or show that a ratio, percentage, change, or assay-normalized readout is definitional for this endpoint, but they never override conflicting text in the row being resolved. An experimental reference is "relative" only when that reference is not part of the canonical endpoint or named readout.
+
+{% if endpoint_profiles %}
+{% for profile in endpoint_profiles %}
+{{ profile }}
+
+{% endfor %}
+{% else %}
+No reliable deterministic endpoint summary is available for this request.
+{% endif %}
+
+## Result
+
+  {"id": "<row id>",
+   "status": "ok" | "unsure" | "relative" | "unavailable",
+   "measurements": [{"measurement": "<plain decimal coefficient>", "unit": "<unit as read>"}]}
+
+Only "ok" carries measurements; the others return [].
+
+Hard field boundary: `measurement` contains only the plain decimal coefficient. If the row explicitly reports its value with a power-of-ten scale (`×10^-6`, `* 10^3`, `e-7`, or similar notation), put that source-stated scale entirely in `unit`, never in `measurement` and never in both fields. Never add a power-of-ten scale merely because the endpoint profile or a typical magnitude suggests one.
+
+  ok           at least one absolute-or-definitional quantity
+  relative     a real NUMBER referenced to a control, baseline, vehicle, comparator or another compound that the canonical endpoint/readout does not define (330% of control under a concentration endpoint, or AUC reduced 66% by rifampicin). Extract nothing — that it is relative is the answer. "relative" requires a number: a comparison with no number at all is "unavailable", not "relative".
+  unsure       no single point can be resolved: the quantity or unit is unclear, or only a bound, range, or fraction is given
+  unavailable  no numeric measurement of the canonical endpoint — only a qualitative claim, mechanism, unnumbered comparison, different outcome, or digits naming genes, isotopes, doses or tables. A Ki/IC50 under a categorical `BBB substrate relationship` measures affinity/inhibition, not the relationship, and is unavailable. So are degradation under uptake and analgesic `%MPE` under transport.
+
+"unsure" and "relative" are fine answers. Prefer them over guessing.
+
+**Absolute-or-definitional** means the denominator is absent, or the canonical endpoint/readout tells you what the number measures. This includes `Papp = 12 x 10^-6 cm/s`, `Km = 25 uM`, `45 ng/g tissue`, `efflux ratio`, `brain/plasma Kp`, `% of injected dose`, percent change under an endpoint named `*_increase`, and percent inhibition or `% of Max Inhibition` under `inhibition_potency`.
+
+A ratio is not automatically relative, and neither is a percent. What matters is *what the denominator is*:
+
+  definitional   the denominator/reference is named by the canonical endpoint or readout —
+                 "CSF/plasma level 75%", "9% of the serum concentration", "% of injected
+                 dose", "brain/plasma Kp", "efflux ratio" (the opposite direction),
+                 or "16% increase" when the endpoint is `csf_concentration_increase`
+  relative       the reference is not defined by the canonical endpoint/readout —
+                 "330% of control", "61% of control", "reduced 66% by rifampicin",
+                 or `k1_MeG/k1_FDG = 0.9` under the broad `blood_to_brain_transport`
+
+Examples: `concentration_to_plasma_ratio` with 15% of plasma, `csf_concentration_increase` with a 16% increase, and `inhibition_potency` with 11.27% of Max Inhibition or 102.9% inhibition are `ok`. A named inhibition or uptake readout may also define `% of control`. But `blood_to_brain_transport` with `k1_MeG/k1_FDG = 0.9`, or a fold increase after pretreatment under a plain concentration endpoint, is `relative`.
+
+If a row states a relative claim *and* an absolute value, report the absolute value and ignore the comparison: "reduced to 61% of control (0.391 +/- 0.013 umol/g per min)" is "ok" with 0.391 umol/g per min, and "6 times higher (61.6 +/- 9.2)" is "ok" with 61.6 in the row's stated unit.
+
+## Value and unit
+
+"measurement" is one plain decimal coefficient: optional sign, digits, optional decimal point. Remove approximation around an explicit point (`around 1` -> `1`, `nearly 50` -> `50`) and spread (`8 +/- 1.5` -> `8`). Never turn a bound, range, or fraction into a point: `<0.1`, `>30%`, `up to 7%`, `less than 10%`, and `about 1/10` are `unsure`; do not drop the operator or compute the fraction.
+
+Do not return words, inequalities, arithmetic, fractions, `e` notation, or a power of ten in `measurement`. Move a source-stated power of ten into the unit: `3.16 * 10^-6 cm/s` -> measurement `3.16`, unit `10^-6 cm/s`; `4.2e-7 cm/s` -> measurement `4.2`, unit `10^-7 cm/s`. Keep an already expanded decimal unchanged. Never infer a scale, convert, rescale, round, or compute.
+
+"unit" is the shortest complete unit explicitly stated. If the unit column is already complete, especially `%`, keep it rather than expanding it from support or endpoint context. Do not append tissue, location, route, time, or endpoint descriptions; those belong to the canonical endpoint. For a source without a unit column, read the nearest complete unit phrase but still exclude context: `0.3% of injected dose in brain parenchyma` has unit `% of injected dose`. If the value says `1 %` and the unit column only says `of the administered dose`, combine them as `% of administered dose`.
+{% if has_unit_column %}
+A unit label may carry a power of ten. A negative exponent is reported unchanged (`10^-6 cm/s` -> `10^-6 cm/s`). A POSITIVE exponent is almost always a table convention meaning the printed number was already multiplied, so the true value is smaller — report the corrected negative exponent:
+
+  "11.5" + "x 10^6 cm/s", support "...permeability (Pe) of 11.5 x 10^6 cm/sd"
+    -> unit "10^-6 cm/s"   (11.5e+07 cm/s is not a permeability; 11.5e-06 is)
+
+Judge the plausible magnitude from the endpoint and support text. If you cannot tell which reading is meant, return "unsure".
+{% else %}
+This source has no unit column: the unit sits in the measurement text or the support text. Read it from wherever it appears. If no unit is stated anywhere and the endpoint does not imply one, return "unsure" rather than a bare number.
+
+A positive power of ten on a permeability is almost always a table convention meaning the printed number was already multiplied — report the corrected negative exponent.
+{% endif %}
+Never put the exponent in both the value and the unit; it would be applied twice.
+
+A named logarithmic permeability endpoint supplies its scale when no unit is printed: `-logPe` -> `-log10(cm/s)` and `logPapp` -> `log10(cm/s)`. Return that implied unit rather than null. This does not repair a conflicting explicit unit; an explicit linear unit on a logarithmic value remains `unsure`.
+
+### When the unit is undetermined
+
+Return "unsure" rather than supplying a unit the row does not support. Three cases:
+
+- **The row states no unit and none can be read.** A bare number whose endpoint does not imply a unit is unsure. Do not invent one, and do not fall back on the endpoint's own name — "BUI = 18.66", "SUV at peak 1.6" and "efflux_ratio 100" are only "ok" if the row states the unit or the endpoint fixes it beyond doubt (an efflux ratio is dimensionless; a BUI is not necessarily a percentage).
+- **You cannot tell which reading of the unit is meant.** This is the common case for a power of ten: if the endpoint and support text do not make one reading clearly impossible, do not guess — return "unsure". Correct a positive exponent only when the literal reading is physically impossible for the quantity named and the corrected reading is a normal value for it.
+- **The unit is internally inconsistent.** If the unit carries a dimension the value already carries *plus another one* — "~ 0.2%" against a unit of "%/g of brain" — the row is unsure, because applying both changes the dimension. Likewise, `LogP_app = -4.7` paired with `[10^-6 cm/s]` is unsure: do not replace the conflicting linear unit with a logarithmic unit from the endpoint profile. A value and unit that redundantly say the same thing are fine: "75%" in a column headed "%" is simply 75 percent.
+
+## Rows with several quantities
+
+`measurement_text` selects the target. Use support to recover its unit and context; same-unit comparator values in support do not make that selected target unsure. Add another support-text outcome only when it clearly measures the same canonical endpoint in a different stated unit, such as an IC50 plus percent inhibition or labelled Km values in mM and µM. A dose or concentration given as an assay condition is not an outcome. Do not exclude an outcome merely because it is reported at a timepoint or location.
+
+If the quantities share a unit, the row is too vague to resolve — return "unsure", even when each value is individually clear, even when they are separated by a semicolon, and even when they are labelled by timepoint, tissue, genotype or arm. Returning several same-unit entries is wrong: nothing in the row says which one it is about.
+
+  "0.03 and 0.1 x 10^-6" (both cm/s)                                    -> unsure
+  "< 0.01 at 30 min and about 1.0 at 12 hr"                             -> unsure
+  "uptake was 4.97 +/- 0.36 ul/g; washed-out fraction was 18.0 +/- 0.61 ul/g"  -> unsure
+  "154 +/- 5.5 pg/mL in wild-type vs 115 +/- 11 pg/mL in knockout"      -> unsure
+  "hippocampus 0.29; caudate 0.33; parietal cortex 0.38 ml/100g"        -> unsure
+
+If the quantities have DIFFERENT units they are distinguishable, so return one entry each, in the order they appear, every entry carrying its own complete unit:
+
+  "Papp 15.1 x 10^-6 cm/s; efflux ratio 5.4"
+    -> [{"measurement": "15.1", "unit": "10^-6 cm/s"},
+        {"measurement": "5.4",  "unit": "ratio"}]
+
+An unresolved quantity does not invalidate other clearly labelled quantities: omit unitless `BUI = 20.12` but retain `Km = 0.33 mM` and `Vmax = 30.2 nmol g^-1 min^-1`. If one quantity is restated in equivalent units, keep it once using the simplest explicitly printed form: from `~55 µl g^-1 per 5 min (11 µl g^-1 min^-1)` keep `11 µl g^-1 min^-1`. A dose or concentration introduced by `at` is an assay condition, not another outcome.
+
+Conflicting units remain `unsure`: `Cmax = 156 µg/mL; AUClast = 258 µg/mL` is `unsure` when another field says the AUC unit is `µg·hr/mL`, because the row does not establish which text is correct.

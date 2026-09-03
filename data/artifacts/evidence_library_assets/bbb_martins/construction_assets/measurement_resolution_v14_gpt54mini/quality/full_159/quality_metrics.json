@@ -1,0 +1,99 @@
+{
+  "gold_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tests/chembl_tool/common/measurement_resolution_quality/gold/bbb_martins.v8.jsonl",
+  "gold_corpus_version": "measurement_resolution_gold.v8.1",
+  "gold_cases": 500,
+  "mapping_path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/measurement_resolution_v14_gpt54mini/quality/measurement_resolution.parquet",
+  "evaluated_cases": 159,
+  "gold_coverage": 0.318,
+  "model_target_cases": 159,
+  "model_target_coverage": 1.0,
+  "status": {
+    "correct": 144,
+    "total": 159,
+    "accuracy": 0.9056603773584906
+  },
+  "gold_ok_recovery": {
+    "correct": 104,
+    "total": 107,
+    "accuracy": 0.9719626168224299
+  },
+  "measurement": {
+    "correct": 103,
+    "total": 107,
+    "accuracy": 0.9626168224299065
+  },
+  "unit": {
+    "correct": 102,
+    "total": 107,
+    "accuracy": 0.9532710280373832
+  },
+  "measurement_and_unit": {
+    "correct": 101,
+    "total": 107,
+    "accuracy": 0.9439252336448598
+  },
+  "raw_measurement": {
+    "correct": 104,
+    "total": 107,
+    "accuracy": 0.9719626168224299
+  },
+  "raw_unit": {
+    "correct": 96,
+    "total": 107,
+    "accuracy": 0.897196261682243
+  },
+  "raw_measurement_and_unit": {
+    "correct": 96,
+    "total": 107,
+    "accuracy": 0.897196261682243
+  },
+  "measurement_given_ok_prediction": {
+    "correct": 103,
+    "total": 104,
+    "accuracy": 0.9903846153846154
+  },
+  "unit_given_ok_prediction": {
+    "correct": 102,
+    "total": 104,
+    "accuracy": 0.9807692307692307
+  },
+  "whole_record": {
+    "correct": 141,
+    "total": 159,
+    "accuracy": 0.8867924528301887
+  },
+  "by_source": {
+    "direct_bbb": {
+      "cases": 49,
+      "whole_record": {
+        "correct": 40,
+        "total": 49,
+        "accuracy": 0.8163265306122449
+      }
+    },
+    "efflux_transport": {
+      "cases": 67,
+      "whole_record": {
+        "correct": 62,
+        "total": 67,
+        "accuracy": 0.9253731343283582
+      }
+    },
+    "influx_transport": {
+      "cases": 30,
+      "whole_record": {
+        "correct": 28,
+        "total": 30,
+        "accuracy": 0.9333333333333333
+      }
+    },
+    "passive_permeability": {
+      "cases": 13,
+      "whole_record": {
+        "correct": 11,
+        "total": 13,
+        "accuracy": 0.8461538461538461
+      }
+    }
+  }
+}

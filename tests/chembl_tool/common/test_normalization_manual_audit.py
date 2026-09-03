@@ -14,29 +14,29 @@ from pathlib import Path
 
 import pytest
 
-from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
+from data.processing.evidence_library.versions.v7.build_normalized_evidence_library import (
     parse_args,
 )
-from tools.chembl_tool.common.starling.build_runtime import (
+from data.processing.evidence_library.shared.v1.build_runtime import (
     normalize_and_project_records_ordered,
 )
-from tools.chembl_tool.common.starling.pair_buckets import (
+from data.processing.evidence_library.shared.v1.pair_buckets import (
     materialize_pair_buckets,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_policy import (
     POLICY as BBB_POLICY,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import (
     POLICY as BIO_POLICY,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_policy import (
     POLICY as SKIN_POLICY,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_auxiliary_metadata import (
     DEFAULT_MAPPING_PATH as SKIN_SPECIES_MAPPING_PATH,
     DEFAULT_PUBLICATION_RECORD as SKIN_SPECIES_PUBLICATION_RECORD,
 )
-from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION as SKIN_SPECIES_MAPPING_VERSION,
 )
 

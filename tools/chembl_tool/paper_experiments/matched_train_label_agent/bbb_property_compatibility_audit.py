@@ -42,7 +42,7 @@ from tools.chembl_tool.paper_experiments.paired_binary_predictions import (
 
 SCHEMA_VERSION = "bbb_property_compatibility_availability.v1"
 DEFAULT_DATA_DIR = Path(
-    "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold"
+    "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold"
 )
 DEFAULT_KNN_PREDICTIONS = Path(
     "outputs/baselines/structure_knn_experimental_meaningful_cns_access_v2/"

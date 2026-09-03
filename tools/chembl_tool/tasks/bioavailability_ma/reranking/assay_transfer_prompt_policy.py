@@ -1,3 +1,11 @@
-"""Backward-compatible import path for the shared score-visibility policy."""
+"""Compatibility import for the shared score-visibility policy."""
 
-from tools.chembl_tool.common.assay_transfer_prompt_policy import *  # noqa: F401,F403
+from predict.harnesses.branches.assay_transfer_prompt import *  # noqa: F401,F403
+from predict.harnesses.branches.assay_transfer_prompt import __dict__ as _implementation
+
+
+def __getattr__(name: str):
+    try:
+        return _implementation[name]
+    except KeyError as exc:
+        raise AttributeError(name) from exc

@@ -122,12 +122,12 @@ def build_artifact(analysis_dir: Path) -> dict:
     source = {
         "id": "canonical_claims_source",
         "label": "Bioavailability canonical direct claims v2",
-        "path": "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
+        "path": "data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_claims.parquet",
         "query": {
             "language": "DuckDB SQL + Python taxonomy",
             "sql": (
                 "SELECT canonical_claim_id, qualifying_conditions "
-                "FROM read_parquet('data/starling_data/bioavailability_ma/"
+                "FROM read_parquet('data/raw/starling/bioavailability_ma/"
                 "canonical_direct_v2/direct_claims.parquet')"
             ),
             "description": (
@@ -136,8 +136,8 @@ def build_artifact(analysis_dir: Path) -> dict:
             ),
             "executed_at": summary["generated_at"],
             "tables_used": [
-                "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_claims.parquet",
-                "data/starling_data/bioavailability_ma/canonical_direct_v2/direct_source_rows.parquet",
+                "data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_claims.parquet",
+                "data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_source_rows.parquet",
             ],
             "filters": [
                 "主分析粒度：跨来源去重后的 canonical claim，一行算一条 record",

@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import main as run_retrieval
-from tools.chembl_tool.tasks.skin_reaction.build_normalized_starling_evidence_library import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_normalized_starling_evidence_library import (
     DEFAULT_OUT_DIR,
 )
 

@@ -21,7 +21,7 @@ from tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors import load_index
 
 
 DEFAULT_LINEAGE = "experimental_meaningful_cns_access_v2"
-DEFAULT_DATA_ROOT = Path("data/processed_starling_experimental_meaningful_cns_access_v2")
+DEFAULT_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2")
 DEFAULT_INDEX_ROOT = Path(
     "outputs/paper/"
     "molecular_evidence_agent_starling_scaffold_"

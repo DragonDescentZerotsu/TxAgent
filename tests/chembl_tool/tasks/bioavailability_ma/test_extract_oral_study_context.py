@@ -5,7 +5,7 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.data_processing import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.data_processing import (
     extract_oral_study_context as extractor,
 )
 from tools.chembl_tool.common.llm_client import load_distillation_secret

@@ -12,22 +12,22 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.categorical_response import ENCODED_UNITS
-from tools.chembl_tool.tasks.skin_reaction.starling_categorical_response import (
+from data.processing.evidence_library.shared.v1.categorical_response import ENCODED_UNITS
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_categorical_response import (
     UNINFORMATIVE_LABELS,
 )
 
-from tools.chembl_tool.tasks.skin_reaction import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction import (
     build_normalized_starling_evidence_library as builder,
 )
-from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_sidecar import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_starling_pair_bucket_sidecar import (
     build_sidecar,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_normalization_sources import (
     source_profiles,
 )
 
-DATA_DIR = Path("data/starling_data/skin_reaction")
+DATA_DIR = Path("data/raw/starling/skin_reaction")
 QUALITATIVE_SOURCES = {
     "direct_skin_reaction",
     "phototoxicity_irritation_local_damage",

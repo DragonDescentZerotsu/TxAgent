@@ -12,7 +12,7 @@ from tools.chembl_tool.common.task_workflows.reasoning_batch import (
 
 CONFIG = BatchConfig(
     description=__doc__ or "",
-    default_input="data/processed/DILI/test.jsonl",
+    default_input="data/gold_labels/legacy/processed/DILI/test.jsonl",
     default_batch_root="outputs/chembl_tool/tasks/dili/reasoning/batches",
     default_index="outputs/chembl_tool/tasks/dili/evidence_library/dili_neighbor_index.pkl",
     default_model="deepseek-v4-pro",

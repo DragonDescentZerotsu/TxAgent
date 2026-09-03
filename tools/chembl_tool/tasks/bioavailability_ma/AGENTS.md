@@ -1,5 +1,12 @@
 # Bioavailability_Ma paper-path notes
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 本目录只保留可进入论文主方法的简洁 pipeline：通用 evidence contract、molecule-level retrieval、
 single/group/final LLM reasoning 和 task ontology。历史 Fa/Fg/Fh full expert policy、deterministic
 force/block/rescue、fallback calibration、postprocess 和 test-error-driven evolution 已从 `main` 删除。
@@ -36,12 +43,12 @@ parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMI
 唯一活跃 condition-aware build 位于：
 
 ```text
-data/conditioned_benchmark/Bioavailability_Ma/scaffold/
+data/gold_labels/Bioavailability_Ma/v1/scaffold/
 ```
 
 共有 2,489 个 molecule-condition rows；train/valid/test 为 1,958/262/269，其中 2,092 个 null-condition
 rows、397 个 reviewed external-condition rows。旧 molecule-only 和 selected-vN 名称只保留在 migration
-receipt，不是第二套 gold。公共合同见 `tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。正式运行
+receipt，不是第二套 gold。公共合同见 `data/processing/gold_labels/README.md`。正式运行
 前必须按 scaffold valid+test union 的 heldout detailed labels 重建 retrieval index。
 
 Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
@@ -165,7 +172,7 @@ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
 Starling task data：
 
 ```text
-data/starling_data/bioavailability_ma/
+data/raw/starling/bioavailability_ma/
   Oral_AUC-Cmax_Exposure/extractions.parquet        # immutable upstream
   canonical_direct_v2/
     hf_oral_bioavailability_snapshot.parquet
@@ -211,7 +218,7 @@ tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
 Starling factor builder 使用 shared profile ingestion：
 
 ```text
-tools/chembl_tool/common/starling/evidence_library.py
+data/processing/evidence_library/evidence_library.py
 ```
 
 Task wrapper 只声明 column mapping 和 group/role：

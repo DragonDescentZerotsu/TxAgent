@@ -1,5 +1,12 @@
 # Starling train-only LoRA-RL
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 本目录隔离维护 Starling train-only LoRA-RL 实验。当前 one-pass Bio 对照包括 hosted Tinker
 GPT-OSS-120B 与本地 NeMo RL GPT-OSS-20B；两者只允许 backend/runtime 层不同，必须共享数据合同、
 reward 实现和冻结的公共训练设置。它不是新的 benchmark lineage，也不得修改现有 task pipeline、

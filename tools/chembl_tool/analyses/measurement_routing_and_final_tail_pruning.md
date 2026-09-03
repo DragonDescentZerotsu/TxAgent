@@ -139,14 +139,16 @@ current downstream builder.
   creates bounded review chunks, and treats one validated review as the final
   keep/drop decision. It cannot rewrite a value, unit, endpoint, SMILES, or
   assay field.
-- `common/starling/prompt_templates/final_endpoint_pruning_v6.jinja` renders
+- `common/starling/llm_prompts/endpoint_pruning/v6.jinja` renders
   source measurement, source unit, canonical value/unit, earlier LLM extraction
   when present, support text, and semantic assay context as readable cards.
-- `common/starling/record_collapse.py` consumes the completed pruning manifest
-  and excludes only final `review_decision == "drop"` rows before Stage 06
-  collapse.
-- `common/starling/split_downstream.py` hashes the pruning manifest, decisions,
-  and reviews as scientific inputs to Stages 06-07.
+- `data/processing/evidence_library/versions/v7/pair_bucket_build.py` consumes
+  the completed pruning manifest and marks reviewed rows assay-transfer
+  ineligible while retaining them in the canonical Stage-3 records.
+
+The former record-collapse and split-specific downstream stages were retired;
+heldout-safe catalogs and indices are now built from completed libraries by
+`data/processing/evidence_library/views.py`.
 
 “Regeneration” here means deterministic rebuilding of downstream Parquet and
 calibration artifacts after selected rows change. It is not LLM rewriting. The

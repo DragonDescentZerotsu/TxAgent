@@ -17,30 +17,30 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     POLICY_FILENAME,
     build_pair_bucket_transfer_policy,
 )
-from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
     OUTPUT_FIELDS,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_pair_bucket_transfer_policy import (
     MINIMUM_DISTINCT_MEASUREMENT_LEVELS,
     PAIR_BUCKET_TRANSFER_POLICY_VERSION,
     SOURCE_CANDIDATE_FIELDS,
     load_pair_bucket_transfer_policy,
     validate_pair_bucket_transfer_policy,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SKIN_REACTION_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_source_column_contracts import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_source_column_contracts import (
     SOURCE_COLUMNS,
 )
 

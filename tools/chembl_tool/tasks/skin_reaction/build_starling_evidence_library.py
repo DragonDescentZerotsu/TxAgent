@@ -8,21 +8,22 @@ import json
 from pathlib import Path
 
 from tools.chembl_tool.common.json_utils import sha256_file
-from tools.chembl_tool.common.starling import (
+from data.processing.evidence_library.evidence_library import (
     StarlingSourceProfile,
     build_and_write_starling_index,
     build_starling_parquet_evidence_rows,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
+    CANONICAL_SOURCE_DIR,
     CANONICAL_VERSION,
     MANIFEST_PATH,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_benchmark import (
     is_tdc_skin_sensitization_scope,
 )
 
 
-DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
+DEFAULT_STARLING_DATA_DIR = "data/raw/starling/skin_reaction"
 HISTORICAL_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
 ALIGNED_V2_OUT_DIR = (
     "outputs/paper/molecular_evidence_agent/evidence/"
@@ -65,7 +66,7 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = _resolve_out_dir(args)
     data_dir = Path(args.starling_data_dir)
     if args.source_profile == SOURCE_PROFILE_CANONICAL_V3:
-        _validate_canonical_source(data_dir)
+        _validate_canonical_source()
     profiles = skin_reaction_profiles(
         data_dir,
         max_rows=args.max_rows_per_source,
@@ -330,7 +331,8 @@ def _canonical_v3_profiles(
     *,
     max_rows: int,
 ) -> list[StarlingSourceProfile]:
-    canonical_dir = data_dir / "canonical_sensitization_v3"
+    del data_dir
+    canonical_dir = CANONICAL_SOURCE_DIR
     return [
         StarlingSourceProfile(
             source_id="skin_direct_sensitization_canonical_v3",
@@ -414,8 +416,12 @@ def _is_skin_sensitization_record(record: Mapping[str, object]) -> bool:
     return is_tdc_skin_sensitization_scope(record.get("reaction_type"))
 
 
-def _validate_canonical_source(data_dir: Path) -> None:
-    canonical_dir = data_dir / "canonical_sensitization_v3"
+def _validate_canonical_source(data_dir: Path | None = None) -> None:
+    canonical_dir = (
+        data_dir / "canonical_sensitization_v3"
+        if data_dir is not None
+        else CANONICAL_SOURCE_DIR
+    )
     manifest_path = canonical_dir / MANIFEST_PATH.name
     if not manifest_path.is_file():
         raise FileNotFoundError(

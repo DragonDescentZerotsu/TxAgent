@@ -1,0 +1,30 @@
+Extract at most one continuous BBB measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return {"rows": [...]} with exactly one result per id, in order:
+
+  {"id":"...", "status":"ok"|"relative"|"unsure"|"unavailable",
+   "measurements":[{"measurement":"<plain decimal>","unit":"<unit as read>"}]}
+
+Only `ok` carries a measurement, and it carries exactly one. All other statuses carry `[]`. Resolve rows independently.
+
+The schema declares `{{ declared_measurement_field }}` as the primary measurement column; `{{ measurement_field }}` is its exact cleaned projection. Extract the main intended experimental outcome corresponding to the row's endpoint or named metric. `support_text` may validate or disambiguate the coefficient, identify or validate its unit, and establish what reference the value uses. It may resolve the selected outcome when the primary field is incomplete, but do not substitute an incidental number merely because it appears in support.
+
+Do not select a dose, administered concentration, exposure duration, timepoint, sample size, identifier, p-value, comparator value, control value, baseline value, or other assay condition unless the named endpoint itself measures that quantity. A fitted outcome explicitly reported as Km, Kt, Ki, Vmax, CLint, or Tmax is a measurement, not an input condition. Under the categorical `bbb_substrate_relationship` endpoint, extract such a kinetic value only when the measurement text says it quantifies transport of the row's molecule; a potency for a different inhibitor or substrate is `unavailable`. If support conflicts with the selected value or unit and the conflict cannot be resolved, return `unsure`. If the row contains no numeric measurement of the named outcome, return `unavailable`. Never emit multiple measurements.
+
+`ok` means exactly one clear absolute or endpoint-defined output. Endpoint-defined ratios include brain/plasma Kp, efflux ratio, Papp(B→A)/Papp(A→B), and a canonical endpoint or named readout that itself specifies the denominator or comparison, such as `brain_exposure_fold_change`, `brain_to_other_tissues_ratio`, `relative_permeability_ratio`, percent of administered/injected dose, or the fraction of total uptake. These remain `ok` even though their definition names a genotype, tissue, direction, dose total, or reference compound. Use `relative` only when the main numeric outcome is referenced to a control, baseline, treatment, genotype, formulation, dose arm, or different compound and that reference is not defined by the endpoint or named readout. A qualitative comparison with no numeric outcome is `unavailable`, not `relative`.
+
+Use one finite plain decimal point estimate; remove spread (`8 +/- 1.5` -> `8`) but never convert a bound or range. A bound such as `<5` is `unsure`, not a point. Do not convert, round, compute, or logarithmically transform. Keep a printed power-of-ten scale in the unit, including a scale printed beside the value: `3.16 x 10^-6` with unit `cm/s` -> `3.16`, `10^-6 cm/s`.
+
+{% if unit_field %}`{{ unit_field }}` is the exact projection of declared unit column `{{ declared_unit_field }}`. Use support to validate or complete it when needed. If the value supplies `%` and the unit column supplies only a denominator phrase, combine them: `1 %` plus `of the administered dose` -> `% of administered dose`. A positive exponent on a BBB permeability, PS, PA, or Kb unit is commonly a table-heading convention for values scaled up for display; when the literal positive reading is physically impossible, return the corrected negative exponent (`ml/g/min x 10^4` -> `10^-4 ml/g/min`). Otherwise return `unsure`; do not silently guess. Unresolved conflicts are `unsure`.{% else %}Read the selected outcome's unit from measurement or support. If neither states it and the endpoint does not define it, return `unsure`.{% endif %}
+
+Named logarithmic BBB endpoints fix these units when no unit is printed:
+- `logbb` and a log partition coefficient such as `logP0` -> `log10_ratio`;
+- `logPe`, `logPapp`, or `log PS` -> `log10(cm/s)`;
+- `-logPe` -> `-log10(cm/s)`.
+Do not invent a unit for an unlogged linear Papp merely because cm/s is common.
+
+Use these exact canonical ratio units:
+- `log10_ratio` for logBB or another explicitly base-10 logarithm of a ratio;
+- `ratio` for an unlogged endpoint-defined ratio;
+- `%` when the ratio is explicitly printed as a percentage.
+Never use `dimensionless`, `logBB`, `log cm/s`, an endpoint name, or a prose description as the unit. If a logarithmic base is not explicit or fixed by the named endpoint, return `unsure` rather than guessing.

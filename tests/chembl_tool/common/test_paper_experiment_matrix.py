@@ -89,10 +89,11 @@ def test_skin_defaults_use_canonical_direct_aop_source():
             "normalized_root": (
                 "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
                 "starling_normalized_v7"
-            ),
-            "view": "full",
-        }
-    ]
+                ),
+                "view": "full",
+                "filter_source_id": "direct_skin_reaction",
+            }
+        ]
 
 
 def test_starling_benchmark_matrix_reuses_conditions_but_replaces_inputs_and_indices():

@@ -18,7 +18,7 @@ from typing import Any, Mapping
 import pandas as pd
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     DIRECT_CLAIMS_PATH,
     DIRECT_REPORT_TYPES,
     DIRECT_SOURCE_ROWS_PATH,
@@ -27,14 +27,14 @@ from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
     RAW_LOCAL_SOURCE_PATH,
     classify_local_record,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     load_label_decisions,
 )
 
 
 AUDIT_VERSION = "bioavailability_gold_record_audit.v1"
 DEFAULT_BENCHMARK_DIR = Path(
-    "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold"
 )
 DEFAULT_OUTPUT_DIR = Path(
     "outputs/chembl_tool/tasks/bioavailability_ma/gold_record_audit_v1"

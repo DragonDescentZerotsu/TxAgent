@@ -1,5 +1,12 @@
 # 分子证据任务扩展约定
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 该文件适用于 `tools/chembl_tool/tasks/` 下的所有现有和未来任务。任务目录可以补充自己的数据路径、endpoint 语义和运行命令，但不得破坏这里定义的通用分层。
 
 ## 两层证据分类
@@ -88,23 +95,23 @@ tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py
 Starling evidence ingestion 与 Starling gold-label 构建是两个独立模块，不能共用一套含义：
 
 ```text
-tools/chembl_tool/common/starling/evidence_library.py
+data/processing/evidence_library/evidence_library.py
   构建 inference-time molecule evidence/index，不产生 benchmark label。
 
-tools/chembl_tool/common/starling/benchmark_dataset.py
+data/processing/gold_labels/benchmark_dataset.py
   统一完成 parent identity、binary/ambiguous 决策聚合、70% record-weighted majority、
   historical random/scaffold split 和审计输出。
 
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
+data/processing/gold_labels/build_conditioned_benchmark.py
   第一版 `record_agreement70_split811_v1` random/scaffold historical build CLI。
 
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data/processing/gold_labels/build_record_supported_benchmark.py
   Bioavailability/Skin molecule-only source-lineage builder；不是活跃评估入口。
 
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
+data/processing/evidence_library/versions/v7/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
   BBB source voting/build audit orchestration；不是活跃评估入口。
 
-tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+data/processing/gold_labels/publish_conditioned_benchmark.py
   将四任务 source builds 发布为唯一 Conditioned Benchmark，并固定 migration/hash audit。
 
 tools/chembl_tool/tasks/<task>/starling_benchmark.py
@@ -119,16 +126,17 @@ supporting passage 当作无条件 keyword vote，也不得在 adapter 内复制
 当前唯一 paper-facing roots 为：
 
 ```text
-data/conditioned_benchmark/{BBB_Martins,Bioavailability_Ma,ClinTox,Skin_Reaction}/scaffold/
+data/gold_labels/{BBB_Martins,Bioavailability_Ma,Skin_Reaction}/v1/scaffold/
+data/legacy/clintox/gold_labels/conditioned_benchmark/scaffold/
 ```
 
 当前 builder 先保证 Bemis–Murcko scaffold 不跨 split，再按冻结的 lexicographic quality 目标
 构建 train/valid/test。`heldout_molecule_labels.jsonl` 是 valid+test union 的 train-only retrieval-index
 exclusion contract；在 parent overlap 和 scaffold overlap 审计均为零前，不得启动正式评估。
-旧 molecule-only、selected-vN 和 `data/processed_starling/<Task>/{random,scaffold}` 只作 source provenance，
+旧 molecule-only、selected-vN 和 `data/gold_labels/legacy/processed_starling/<Task>/{random,scaffold}` 只作 source provenance，
 不得作为 runner 输入或与当前结果混表。
 完整规则、当前 frozen counts 和运行命令见
-`tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md`。
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
 
 ## Molecule identity 与 parent-disjoint
 

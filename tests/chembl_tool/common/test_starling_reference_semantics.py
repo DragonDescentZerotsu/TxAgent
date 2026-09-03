@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.build_reference_semantics_mapping import (
+from data.processing.evidence_library.versions.v7.build_reference_semantics_mapping import (
     MAX_EPOCH_TOKENS,
     RequestBatch,
     SubmissionCache,
@@ -15,8 +15,8 @@ from tools.chembl_tool.common.starling.build_reference_semantics_mapping import 
     _query_batch,
     _reconcile_cached_assignment,
 )
-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
-from tools.chembl_tool.common.starling.reference_semantics import (
+from data.processing.evidence_library.shared.v1.pair_buckets import materialize_pair_buckets
+from data.processing.evidence_library.shared.v1.reference_semantics import (
     REFERENCE_SCOPE_ABSOLUTE,
     REFERENCE_SCOPE_COMPARATOR,
     ReferenceEligibilitySpec,
@@ -24,15 +24,15 @@ from tools.chembl_tool.common.starling.reference_semantics import (
     deterministic_default_assignment,
     reference_exclusion_reason,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_reference_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_reference_semantics import (
     REFERENCE_SEMANTICS_CONFIG,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_reference_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_reference_semantics import (
     REFERENCE_SEMANTICS_CONFIG as BBB_REFERENCE_SEMANTICS_CONFIG,
     deterministic_assignment as bbb_deterministic_assignment,
     generation_no_call_assignment,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_reference_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_reference_semantics import (
     REFERENCE_SEMANTICS_CONFIG as SKIN_REFERENCE_SEMANTICS_CONFIG,
 )
 

@@ -13,7 +13,7 @@ from .contract import DEFAULT_OUTPUT_ROOT, TASK_SPECS, agent_batch
 
 SCHEMA_VERSION = "bio_unanimous_positive_trace_diagnosis.v1"
 DEFAULT_GOLD_AUDIT = Path(
-    "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/"
     "valid_molecule_labels.jsonl"
 )
 

@@ -1,0 +1,12 @@
+{
+  "records": [
+    {
+      "canonical_record_id": "0ef92116d837aae45fa7e422471c1b2e60da8161cad943caa9d85866c23a0bac",
+      "rationale": "The published TP-427 PAMPA-BBB value is source-valid but lies outside the comparable linear assay-transfer range; this single value raises its bucket SD-inflation ratio from 1.451 to 3.152.",
+      "reason_code": "valid_source_out_of_assay_transfer_domain",
+      "source_row_uid": "sr_ce718701336f47d698712c3ecc9b06b2"
+    }
+  ],
+  "task_id": "bbb_martins",
+  "version": "bbb_assay_transfer_manual_ineligibility.v1"
+}

@@ -339,7 +339,7 @@ def _explicit_prediction_path(
 def _expected_size(split: str, evaluation_subset: str, data_name: str) -> int:
     path = (
         ROOT
-        / "data/processed_starling"
+        / "data/gold_labels/legacy/processed_starling"
         / data_name
         / split
         / f"{evaluation_subset}.jsonl"

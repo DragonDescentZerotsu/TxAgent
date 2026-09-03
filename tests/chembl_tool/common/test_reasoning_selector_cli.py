@@ -6,9 +6,6 @@ from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
 from tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline import (
     _parse_args as parse_bbb_args,
 )
-from tools.chembl_tool.tasks.clintox.run_reasoning_pipeline import (
-    _parse_args as parse_clintox_args,
-)
 from tools.chembl_tool.tasks.dili.run_reasoning_pipeline import (
     _parse_args as parse_dili_args,
 )
@@ -22,7 +19,6 @@ from tools.chembl_tool.tasks.skin_reaction.run_reasoning_pipeline import (
     [
         parse_bbb_args,
         parse_skin_args,
-        parse_clintox_args,
         parse_dili_args,
     ],
 )
@@ -39,7 +35,6 @@ def test_task_pipeline_accepts_strict_morgan_neighbor_selector(parse_args):
     [
         parse_bbb_args,
         parse_skin_args,
-        parse_clintox_args,
         parse_dili_args,
     ],
 )

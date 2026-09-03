@@ -1,0 +1,48 @@
+{
+  "counts_by_level_and_group": {
+    "L1:Direct.skin_reaction": 29880,
+    "L2:Observed.nonvoter_skin_outcome": 25268,
+    "L3:Mechanism.sensitization_aop": 11701,
+    "L4:Mechanism.phototoxicity_irritation_local_damage": 250732,
+    "outside:Mechanism.skin_exposure": 225997,
+    "outside:missing": 9759
+  },
+  "current_direct_mapping_votes": 29880,
+  "direct_mapping_votes_outside_l1": 0,
+  "family_policy_version": "skin_source_family_purity.vote_pure.v1",
+  "inputs": {
+    "data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/partition_audit.parquet": "b986688fde5d09966a2c2abae174e6e1331267d902d64658d24881f9af9ae4f4",
+    "data/artifacts/starling/skin_reaction/source_reviews/context_conditioned_review_v1/proposal_audit.jsonl": "269ef36a3f56a04e5b039809e6158e230bc7eb8930e2cc43d4f1c5d48b4527ac",
+    "data/evidence_libraries/skin_reaction/v7/03_pair_buckets/records.parquet": "a9805e6aa4fccbb5d97978567e8f520b76ddb79dd2f58fd8cdee0091a949bd65",
+    "data/gold_labels/Skin_Reaction/v1/scaffold/source_condition_review.jsonl": "f784c13bed258f3d1b85f90425c484132f399c1a507705072e3100de12b2d34e"
+  },
+  "levels": {
+    "L1": 29880,
+    "L2": 25268,
+    "L3": 11701,
+    "L4": 250732
+  },
+  "mapping_version": "normalized_v7_stage3_progressive_levels.v1",
+  "output": {
+    "path": "data/artifacts/evidence_library_assets/skin_reaction/construction_assets/progressive_level_mapping_v1/record_levels.parquet",
+    "sha256": "726c7085bf4be15a435adf225ede0a761a44ddfda45a9e57a883de46643ab89b"
+  },
+  "outside_progressive_scope": 235756,
+  "rows": 553337,
+  "skin_reaction_score_cache_contract": {
+    "global_exclusion": "L1 records, 314 unresolved-endpoint records, and 16 records without a resolvable parent identity",
+    "minimum_similarity": 0.0,
+    "morgan_pool_per_level": 75,
+    "other_out_of_domain_rows_retained_and_flagged": true,
+    "per_query_exclusion": "scaffold_disjoint",
+    "unresolved_endpoint_rows": 314,
+    "unresolved_parent_identity_rows": 16
+  },
+  "stage": "normalized_v7_stage3_pair_buckets",
+  "task_id": "skin_reaction",
+  "validations": {
+    "canonical_record_ids_unique": true,
+    "one_sidecar_row_per_stage3_record": true,
+    "skin_outside_scope_not_assigned_a_level": true
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "all_candidate_rows": 599640,
+  "automatic_gate_status": "pass",
+  "automatic_gates": {
+    "explicit_names_verbatim": true,
+    "hidden_control_minimum_accuracy": 0.95,
+    "hidden_control_normalized_exact_accuracy": 1.0,
+    "names_null_unless_explicit": true,
+    "response_cardinality_complete": true
+  },
+  "base_url": "http://dgx019:8000/v1",
+  "checkpoint_requests_reused": 20,
+  "control_rows": 200,
+  "invalid_explicit_downgrades": 0,
+  "manual_gate": {
+    "correct_rows": 98,
+    "expected_rows": 100,
+    "review_path": "outputs/chembl_tool/smiles_identity_audit_v2/deepseek_v4_flash_xhigh_context_gate/name_extraction/pilot/manual_review.json",
+    "reviewed_rows": 100,
+    "status": "pass",
+    "valid_decisions": true,
+    "wrong_subject_rows": 0
+  },
+  "model": "nvidia/DeepSeek-V4-Flash-NVFP4",
+  "model_counts": {
+    "nvidia/DeepSeek-V4-Flash-NVFP4": 1000
+  },
+  "name_extraction_version": "missing_molecule_name_extraction.v5",
+  "new_requests_submitted": 0,
+  "prompt_fields": [
+    "id",
+    "support_text",
+    "endpoint_name",
+    "measurement_text"
+  ],
+  "prompt_version_counts": {
+    "missing_molecule_name_extraction.v5": 1000
+  },
+  "provider_counts": {
+    "nvidia/DeepSeek-V4-Flash-NVFP4 @ http://dgx019:8000/v1": 1000
+  },
+  "quality_gate_dir": "outputs/chembl_tool/smiles_identity_audit_v2/deepseek_v4_flash_xhigh_context_gate/name_extraction/pilot",
+  "reasoning_effort": "xhigh",
+  "requests_covering_scope": 20,
+  "reused_prompt_contexts": 0,
+  "scope": "pilot",
+  "selected_rows": 1000,
+  "store": false,
+  "target_rows": 800,
+  "unique_prompt_contexts": 1000,
+  "unique_support_texts": 1000,
+  "usage": {
+    "input_tokens": 76356,
+    "output_tokens": 211004,
+    "total_tokens": 287360
+  },
+  "verbatim_typography_repairs": 14,
+  "writes_stage1_or_reviewed_ledgers": false
+}

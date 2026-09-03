@@ -1,7 +1,7 @@
 """Corpus-level correctness invariants for the unit normalizer.
 
 Self-contained and hermetic: the corpus is a curated set of real Starling unit forms
-(distilled from the audit over data/starling_data/**) plus hand-written equivalence and
+(distilled from the audit over data/raw/starling/**) plus hand-written equivalence and
 ambiguity sets. These assert the properties that guarantee we never *incorrectly* normalize
 -- idempotency, structural cleanliness, no cross-dimension collisions, correct must-merge
 equivalences, and preserved must-NOT-merge distinctions.

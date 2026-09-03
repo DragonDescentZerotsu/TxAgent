@@ -14,10 +14,10 @@ from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     group_prompt_provenance,
     instruction_file_provenance,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.reranking.assay_transfer_rerank import (
+from predict.harnesses.branches.tasks.bioavailability_ma.group_prompt import (
     full_record_example,
 )
-from tools.chembl_tool.common.starling.normalized_evidence import (
+from tests.chembl_tool.common.normalization_helpers import (
     EndpointOrthography,
     FamilyAssignment,
     NormalizedSourceProfile,

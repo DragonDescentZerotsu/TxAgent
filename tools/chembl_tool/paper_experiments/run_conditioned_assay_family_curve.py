@@ -16,7 +16,7 @@ from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
 from tools.chembl_tool.common.reasoning_payload import (
     EXTERNAL_CONDITION_RENDERER_VERSION,
 )
-from tools.chembl_tool.common.starling.conditioned_benchmark import split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path
 from tools.chembl_tool.common.task_workflows.global_prompt_pool import (
     BatchCommand,
     SCHEDULER_VERSION,
@@ -78,13 +78,6 @@ TASKS = {
         ROOT / "family_catalogs/skin_reaction/manifest.json",
         True,
     ),
-    "clintox": TaskSpec(
-        "tools.chembl_tool.tasks.clintox.run_reasoning_batch",
-        split_path("clintox", "valid"),
-        ROOT / "indices/clintox/raw_v3/assay_neighbor_index.pkl",
-        ROOT / "family_catalogs/clintox/manifest.json",
-        False,
-    ),
 }
 
 BIOAVAILABILITY_NONDIRECT_CONTEXT_SPEC = TaskSpec(
@@ -122,9 +115,7 @@ def _validate_inputs(tasks: list[str]) -> None:
                 raise FileNotFoundError(path)
         family = _read_json(spec.family_manifest)
         expected_overlap_policy = (
-            "source-native assay ids are disjoint; assign each to one family level"
-            if task == "clintox"
-            else "assign each physical assay to its earliest cumulative family level"
+            "assign each physical assay to its earliest cumulative family level"
         )
         if family.get("overlap_policy") != expected_overlap_policy:
             raise ValueError(f"{task} family overlap policy is not frozen")

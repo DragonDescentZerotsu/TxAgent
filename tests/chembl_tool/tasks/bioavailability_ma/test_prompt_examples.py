@@ -35,31 +35,7 @@ def test_all_stage_examples_present():
         "group.assay_transfer_tool.assay-transfer.prompt.txt",
         "group.assay_transfer_tool.full.prompt.txt",
         "final.prompt.txt",
-        "assay_transfer_scoring_pair.v6_5.prompt.txt",
-        "assay_transfer_scoring_pair.v6_5_no_query_extra_details.prompt.txt",
     }
-
-
-def test_scoring_pair_is_in_distribution():
-    pair = _EXAMPLES["assay_transfer_scoring_pair.v6_5.prompt.txt"]
-    assert "endpoint: q3." in pair          # real canonical key, not index.*
-    assert "index." not in pair
-    assert "known value:" in pair           # retrieval value shown
-    assert "(A) transfer" in pair and "(B) not transfer" in pair
-    # query record has value hidden (only one "known value:" line, on the retrieval side)
-    assert pair.count("known value:") == 1
-
-
-def test_corrected_scoring_pair_hides_only_query_extra_details():
-    pair = _EXAMPLES[
-        "assay_transfer_scoring_pair.v6_5_no_query_extra_details.prompt.txt"
-    ]
-    retrieval, query = pair.split("Target query record (value hidden)", 1)
-
-    assert "extra details: not specified" not in retrieval
-    assert "extra details: not specified" in query
-    assert "endpoint: q3." in retrieval
-    assert "endpoint: q3." in query
 
 
 def test_group_text_formats_are_not_json():

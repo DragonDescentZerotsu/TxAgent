@@ -12,7 +12,7 @@ from typing import Any
 
 import pandas as pd
 
-from tools.chembl_tool.tasks.bioavailability_ma.starling_fg_scalar_rules import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_fg_scalar_rules import (
     FG_SCALAR_RULE_VERSION,
     propose_fg_scalar,
 )

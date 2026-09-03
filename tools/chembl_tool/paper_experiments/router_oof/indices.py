@@ -12,7 +12,7 @@ from typing import Any
 from tools.chembl_tool.common.evidence_contract import minimal_evidence_from_row
 from tools.chembl_tool.common.json_utils import write_json_atomic
 from tools.chembl_tool.common.molecule_identity import IDENTITY_NORMALIZER_VERSION
-from tools.chembl_tool.common.starling.heldout_index import (
+from data.processing.evidence_library.heldout_index import (
     identity_key,
     load_heldout_identity_keys,
 )

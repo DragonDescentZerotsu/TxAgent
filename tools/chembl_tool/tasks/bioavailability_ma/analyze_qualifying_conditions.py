@@ -13,8 +13,8 @@ from typing import Any
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.benchmark_dataset import has_reported_text
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.gold_labels.benchmark_dataset import has_reported_text
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     DIRECT_CLAIMS_PATH,
     DIRECT_SOURCE_ROWS_PATH,
 )

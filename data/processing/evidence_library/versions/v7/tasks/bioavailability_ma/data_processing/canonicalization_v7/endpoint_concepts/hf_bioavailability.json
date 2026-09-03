@@ -1,0 +1,18 @@
+{
+  "version": "bioavailability_endpoint_concepts.v1",
+  "source_id": "hf_bioavailability",
+  "input_field": "endpoint_name",
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 1,
+    "sha256": "95f78038b5cde8c7484c93f22f15a0c21d6ae2ba7451fdd2754df3be0d184c1a"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "oral_bioavailability",
+      "canonical_endpoint_name": "oral_bioavailability",
+      "canonical_endpoint_concept": "oral_bioavailability",
+      "review_reason": "The source has one endpoint covering oral bioavailability; report type and reference semantics retain absolute, relative, apparent, systemic-availability, and extent distinctions."
+    }
+  ]
+}

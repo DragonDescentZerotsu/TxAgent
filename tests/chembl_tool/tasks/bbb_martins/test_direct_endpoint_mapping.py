@@ -1,7 +1,7 @@
 import numpy as np
 
-from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import cluster_values
-from tools.chembl_tool.tasks.bbb_martins.data_processing.build_direct_endpoint_mapping import (
+from data.processing.evidence_library.shared.v1.clustered_auxiliary_mapping import cluster_values
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_direct_endpoint_mapping import (
     CLUSTER_TARGET_SIZE,
     DEFAULT_MODEL,
     DEFAULT_REASONING_EFFORT,

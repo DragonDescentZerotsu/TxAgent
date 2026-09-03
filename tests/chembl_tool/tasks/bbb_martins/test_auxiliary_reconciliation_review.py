@@ -3,7 +3,7 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.bbb_martins.data_processing.auxiliary_reconciliation_review import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.auxiliary_reconciliation_review import (
     apply_accepted_decisions,
     build_label_catalog,
     build_review_packets,

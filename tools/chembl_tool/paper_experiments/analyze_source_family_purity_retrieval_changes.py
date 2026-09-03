@@ -16,7 +16,7 @@ from tools.chembl_tool.common.json_utils import (
 from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
     direct_like_bioavailability_reason,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     direct_outcome_reason,
 )
 

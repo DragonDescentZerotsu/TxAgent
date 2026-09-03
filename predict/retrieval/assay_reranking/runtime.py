@@ -39,12 +39,22 @@ MODEL_PROFILES = {
             "revision": "6f3aefabc9a07b357066aaf7ca0f69ab63785240",
             "prompt_profile": "v9",
         },
+        "indirect": {
+            "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
+            "revision": "612cd794583e2129a664defaf9229b26d94b9a69",
+            "prompt_profile": "v19_1",
+        },
     },
     "skin_reaction": {
         "direct": {
             "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
             "revision": "e4e894af28151760d2041275c5ecf136971c3925",
             "prompt_profile": "v9",
+        },
+        "indirect": {
+            "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
+            "revision": "f29d100ca2112490d22913736d4efa5bc5308cb6",
+            "prompt_profile": "v19_1",
         },
     },
 }

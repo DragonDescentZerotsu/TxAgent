@@ -1,0 +1,199 @@
+{
+  "version": "skin_reaction_endpoint_concepts.v1",
+  "source_id": "direct_skin_reaction",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 30,
+    "sha256": "aba62d623303471553c59ff0df509c40570120b91a56bb3937a87c34f95704ee"
+  },
+  "observed_pairs": {
+    "count": 30,
+    "sha256": "da372cfb9e8e580179ef9890125c952a11dfb44f18eee2cb6ddb5115b0d3b1f6"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "No reaction type or controlled substitute was present; retained as missing rather than inferred from support text."
+    },
+    {
+      "endpoint_name": "alergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Character-level corruption of allergic; source rows are patch-test allergic contact dermatitis or contact-allergy outcomes."
+    },
+    {
+      "endpoint_name": "allergenic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Allergenic is a corrupted substitution for allergic in otherwise identical patch-test contact-allergy records."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatatis_contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Spelling corruption of dermatitis in a clinical contact-dermatitis case report."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatatitis_contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Spelling corruption of dermatitis; the observed rows are patch-test allergic contact outcomes."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis/contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Slash-separated spelling of the same allergic contact dermatitis or contact-allergy endpoint."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_addergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Character-level corruption of allergy in positive patch-test contact-allergy records."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_alergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Single-letter spelling corruption of allergy in clinical patch-test records."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_all allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Inserted-space corruption of allergy; source rows retain the same patch-test contact-allergy scope."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_alleged",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Language-model token corruption of allergy in a positive patch-test record."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Canonical clinical allergic contact dermatitis and contact-allergy outcome; kept distinct from generic sensitization assays."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_allity",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Character-level corruption of allergy in a positive patch-test record."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_alloy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Character-level corruption of allergy in a positive patch-test record."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_allxiety",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Language-model token corruption of allergy in a strong positive patch-test record."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_ally",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Truncated allergy token in otherwise explicit allergic contact dermatitis records."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_allyergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Duplicated-letter corruption of allergy in a positive patch-test record."
+    },
+    {
+      "endpoint_name": "allergic_contact_dermatitis_contact_anergy",
+      "canonical_endpoint_name": "allergic_contact_dermatitis_contact_allergy",
+      "canonical_endpoint_concept": "allergic_contact_dermatitis_contact_allergy",
+      "review_reason": "Character substitution in allergy; the row is an ordinary negative patch-test contact-allergy result, not immunological anergy."
+    },
+    {
+      "endpoint_name": "anaphylaxis",
+      "canonical_endpoint_name": "anaphylaxis",
+      "canonical_endpoint_concept": "anaphylaxis",
+      "review_reason": "Immediate systemic hypersensitivity is clinically distinct from delayed contact sensitization and remains separate."
+    },
+    {
+      "endpoint_name": "contact_urticaria",
+      "canonical_endpoint_name": "contact_urticaria",
+      "canonical_endpoint_concept": "contact_urticaria",
+      "review_reason": "Immediate contact urticaria is distinct from delayed allergic contact dermatitis and from a generic wheal observation."
+    },
+    {
+      "endpoint_name": "cross‐reaction",
+      "canonical_endpoint_name": "cross_reaction",
+      "canonical_endpoint_concept": "cross_reaction",
+      "review_reason": "Typography-normalized cross-reaction endpoint; transfer across related sensitizers is distinct from primary sensitization."
+    },
+    {
+      "endpoint_name": "irritant",
+      "canonical_endpoint_name": "irritant",
+      "canonical_endpoint_concept": "irritant",
+      "review_reason": "Explicit irritant contact dermatitis classification remains distinct from allergic sensitization and from graded irritation."
+    },
+    {
+      "endpoint_name": "irritation",
+      "canonical_endpoint_name": "irritation",
+      "canonical_endpoint_concept": "irritation",
+      "review_reason": "Local irritation outcome remains separate from sensitization, contact allergy, and the explicit irritant classification."
+    },
+    {
+      "endpoint_name": "other_skin_reaction",
+      "canonical_endpoint_name": "other_skin_reaction",
+      "canonical_endpoint_concept": "other_skin_reaction",
+      "review_reason": "Heterogeneous residual clinical skin reactions cannot be safely merged with a specific sensitization or allergy endpoint."
+    },
+    {
+      "endpoint_name": "photocontact",
+      "canonical_endpoint_name": "photocontact",
+      "canonical_endpoint_concept": "photocontact",
+      "review_reason": "Photocontact testing is light-dependent and remains distinct from ordinary contact allergy and explicit photoallergy."
+    },
+    {
+      "endpoint_name": "photocontact_photoallergy",
+      "canonical_endpoint_name": "photocontact_photoallergy",
+      "canonical_endpoint_concept": "photocontact_photoallergy",
+      "review_reason": "Explicit photoallergy or photocontact-allergy outcome remains separate because irradiation is a defining assay condition."
+    },
+    {
+      "endpoint_name": "sensitization",
+      "canonical_endpoint_name": "sensitization",
+      "canonical_endpoint_concept": "sensitization",
+      "review_reason": "Generic sensitization spans LLNA, GPMT, HRIPT, and related assays; preserve that scope instead of merging it with clinical allergic contact dermatitis."
+    },
+    {
+      "endpoint_name": "systemic_contact_dermatitis",
+      "canonical_endpoint_name": "systemic_contact_dermatitis",
+      "canonical_endpoint_concept": "systemic_contact_dermatitis",
+      "review_reason": "Systemically elicited contact dermatitis has a distinct exposure and clinical scope from local patch-test contact allergy."
+    },
+    {
+      "endpoint_name": "urticaria_wheal",
+      "canonical_endpoint_name": "urticarial_wheal",
+      "canonical_endpoint_concept": "urticarial_wheal",
+      "review_reason": "Reviewed noun-form variant of urticarial wheal; source rows report the same immediate wheal response."
+    },
+    {
+      "endpoint_name": "urticarial_wheal",
+      "canonical_endpoint_name": "urticarial_wheal",
+      "canonical_endpoint_concept": "urticarial_wheal",
+      "review_reason": "Generic wheal or flare response remains distinct from explicit contact urticaria and delayed contact allergy."
+    },
+    {
+      "endpoint_name": "urticariial_wheal",
+      "canonical_endpoint_name": "urticarial_wheal",
+      "canonical_endpoint_concept": "urticarial_wheal",
+      "review_reason": "Duplicated-vowel spelling corruption of urticarial wheal in contact-urticariagenicity records."
+    }
+  ]
+}

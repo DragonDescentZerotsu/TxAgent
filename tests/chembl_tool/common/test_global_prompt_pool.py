@@ -3,8 +3,8 @@ import json
 from types import SimpleNamespace
 
 from tools.chembl_tool.common.task_workflows import global_prompt_pool as pool
-from tools.chembl_tool.common.task_workflows import reasoning_stage_runtime as stages
-from tools.chembl_tool.common.task_workflows.reasoning_batch import (
+from predict.harnesses.branches import runtime as stages
+from predict.harnesses.branches.batch import (
     BatchConfig,
     BatchItem,
     PreparedBatch,

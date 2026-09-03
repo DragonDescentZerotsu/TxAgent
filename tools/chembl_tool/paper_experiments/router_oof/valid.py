@@ -31,7 +31,7 @@ from .train import (
 )
 
 
-DEFAULT_VALID_DATA_ROOT = Path("data/processed_starling")
+DEFAULT_VALID_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling")
 DEFAULT_VALID_KNN_ROOT = Path("outputs/baselines/structure_knn_starling_valid")
 DEFAULT_VALID_AGENT_ROOT = Path(
     "outputs/paper/"

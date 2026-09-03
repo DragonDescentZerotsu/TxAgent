@@ -10,7 +10,7 @@ Updated: 2026-08-31.
 当前 gold 统一属于 Conditioned Benchmark：
 
 ```text
-data/conditioned_benchmark/<Task>/scaffold/
+data/gold_labels/<Task>/v1/scaffold/
 ```
 
 历史的 molecule-only、BBB gold-vN 和 selected-vN 名称只出现在 migration receipt 中，不再作为 runner
@@ -45,7 +45,7 @@ Stage 06 replaces only reconstructed `direct_vote` rows with the canonical
 training molecule-condition labels. It preserves `direct_residual` and
 `indirect` records, and the inserted gold rows have no pair bucket and are not
 assay-transfer eligible. Stage 07 groups records by molecule and biological
-group; Stage 08 is loaded directly by `run_conditioned_assay_progressive_curve.py`
+group; Stage 08 is loaded directly by `predict/harnesses/progressive.py`
 when `--evidence-root` points to the directory above. The runner exposes BBB as
 four cumulative levels and Bioavailability as six cumulative levels.
 
@@ -53,7 +53,7 @@ four cumulative levels and Bioavailability as six cumulative levels.
 python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
   --splits scaffold \
   --indices bbb_starling_v7 bioavailability_starling_v7 \
-  --benchmark-data-root data/conditioned_benchmark \
+  --benchmark-data-root data/gold_labels \
   --benchmark-lineage conditioned_benchmark \
   --heldout-filter-mode direct_source_only \
   --gold-swap-direct-votes
@@ -111,6 +111,18 @@ V9 standalone:
   outputs/paper/starling_conditioned_gold_l1_v9_standalone_deepseek_v4_flash_nvfp4_lineage_v1/
 V9 plus fresh prior (matched-tool rerun):
   outputs/paper/starling_conditioned_gold_l1_v9_with_prior_deepseek_v4_flash_nvfp4_lineage_v2/
+```
+
+The matched gold-cache matrix above has no similarity floor. A BBB-only
+with-prior ablation applies the original progressive `0.30` Morgan floor to
+both rankings. It leaves 298 model-called queries and 99 prior-only
+carry-forwards: Morgan macro-F1 is `0.6486` and V9 macro-F1 is `0.6778`, with
+397/397 successful outputs and no visible tool failures. After the same floor,
+gold-cache Morgan and the compact vote-only L1 match 1,288/1,306 selected
+parent identities (98.6%); 378/397 query-level selected identity sets are exact.
+
+```text
+outputs/paper/starling_conditioned_gold_l1_bbb_similarity_floor_030_with_prior.tsv
 ```
 
 ## Retrieval and leakage contract
@@ -305,7 +317,7 @@ Gold/source datasets、migration receipts、current metrics/predictions 和最�
 
 ```text
 progressive runner:
-  tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
+  predict/harnesses/progressive.py
 
 multi-provider scheduler/config:
   tools/chembl_tool/common/openai_provider_pool.py
@@ -352,7 +364,7 @@ Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避�
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve \
+  python -m predict.harnesses.progressive \
   --tasks bioavailability_ma \
   --parallelism 128
 ```
@@ -361,7 +373,7 @@ Resume 当前 Bioavailability v10（默认 task 与 output root 已配对，避�
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
-  python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve \
+  python -m predict.harnesses.progressive \
   --tasks bioavailability_ma \
   --provider-pool-config \
     tools/chembl_tool/paper_experiments/provider_pools/deepseek_v4_flash_mixture.json \

@@ -3,7 +3,7 @@ from pathlib import Path
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.benchmark_dataset import LabeledSourceRecord
+from data.processing.gold_labels.benchmark_dataset import LabeledSourceRecord
 from tools.chembl_tool.paper_experiments.audit_source_family_purity_gold_impact import (
     _skin_binary_label,
     _vote,

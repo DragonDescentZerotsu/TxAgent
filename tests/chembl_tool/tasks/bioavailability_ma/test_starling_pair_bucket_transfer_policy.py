@@ -8,17 +8,17 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_starling_pair_bucket_transfer_policy import (
     POLICY_FILENAME,
     build_pair_bucket_transfer_policy,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.data_processing.auxiliary_mapping_helpers.reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.data_processing.auxiliary_mapping_helpers.reconciliation import (
     MAPPING_VERSION,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_auxiliary_metadata import (
     AUXILIARY_ATTACHMENT_VERSION,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_pair_bucket_transfer_policy import (
     MIN_ASSAY_TRANSFER_SAMPLES,
     SOURCE_CANDIDATE_FIELDS,
     PAIR_BUCKET_TRANSFER_POLICY_VERSION,
@@ -26,7 +26,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_bucket_transfer_po
     evaluate_pair_bucket_transfer,
     load_pair_bucket_transfer_policy,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )

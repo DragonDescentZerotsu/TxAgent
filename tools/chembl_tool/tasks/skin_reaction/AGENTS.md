@@ -1,5 +1,12 @@
 # Skin_Reaction task notes
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 本文件记录 Skin_Reaction 的 task-specific 语义、ChEMBL evidence ontology、assay screening 规则方向、
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、batch/resume、viewer 和输出目录规范仍以仓库根
 `AGENTS.md` 为准。
@@ -28,7 +35,7 @@ reader 将四类数据构建成一个 molecule-level index，供 Starling direct
 当前唯一 condition-aware Starling gold benchmark：
 
 ```text
-data/conditioned_benchmark/Skin_Reaction/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
+data/gold_labels/Skin_Reaction/v1/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
 
 fields:
   drug: query SMILES
@@ -39,7 +46,7 @@ fields:
 selected-vN 路径只是 migration provenance。冲突 parent 按 accepted source records 计算 70% agreement，
 同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前必须按 scaffold valid+test union 的 heldout
 detailed labels 重建 train-only retrieval index。统一合同见
-`tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md`。
+`data/processing/gold_labels/README.md`。
 
 当前二分类约定：
 
@@ -119,7 +126,7 @@ python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library 
 python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
   --splits scaffold --indices skin_reaction_starling_full \
   --source-evidence skin_reaction_starling_full=outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_v2/starling_skin_reaction_evidence.jsonl \
-  --benchmark-data-root data/processed_starling_record_supported_v2 \
+  --benchmark-data-root data/gold_labels/legacy/processed_starling_record_supported_v2 \
   --benchmark-lineage record_supported_v2_skin_direct_scope_v2 --workers 32
 
 python -m tools.chembl_tool.paper_experiments.audit_skin_direct_scope_retrieval
@@ -133,7 +140,7 @@ Current inference evidence 不再直接读取两个 acquisition parquet 后分�
 ```text
 tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py
 tools/chembl_tool/tasks/skin_reaction/build_canonical_starling_source.py
-data/starling_data/skin_reaction/canonical_sensitization_v3/
+data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/
 ```
 
 合同为：validated LLNA/GPMT/Buehler/human patch/contact-allergy 等 final outcome 只进入 direct；MIE、KE2、
@@ -369,7 +376,7 @@ batch:
   outputs/chembl_tool/tasks/skin_reaction/reasoning/batches/skin_reaction_calib_50_v1
 
 run settings:
-  input=data/processed/Skin_Reaction/test.jsonl
+  input=data/gold_labels/legacy/processed/Skin_Reaction/test.jsonl
   indices=0-81
   parallelism=3
   group-workers=20

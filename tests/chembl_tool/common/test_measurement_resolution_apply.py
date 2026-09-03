@@ -8,11 +8,11 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+from data.processing.evidence_library.shared.v1.normalization.measurement_resolution import (
     apply_measurement_resolution,
     load_exact_unit_mapping,
 )
-from tools.chembl_tool.common.starling.measurement_routing import (
+from data.processing.evidence_library.versions.v7.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
 )
 
@@ -80,6 +80,33 @@ def test_grouped_v2_rules_expand_to_exact_keys(tmp_path) -> None:
         ("test_task", "permeability", "10^-6 cm/s"),
     }
     assert all(rule["canonical_unit"] == "cm/s" for rule in mapping.values())
+
+
+def test_wildcard_unit_rule_maps_any_endpoint(tmp_path) -> None:
+    records = [_row("rec-1", "1")]
+    apply_measurement_resolution(
+        records,
+        mapping_path=_mapping(
+            tmp_path,
+            [_resolution("rec-1", "ok", [{"measurement": "1", "unit": "ratio"}])],
+        ),
+        task="test_task",
+        unit_mapping_path=_units(
+            tmp_path,
+            [
+                {
+                    "task": "test_task",
+                    "canonical_endpoints": ["*"],
+                    "input_unit": "ratio",
+                    "action": "map",
+                    "canonical_unit": "ratio",
+                    "scale": "1",
+                }
+            ],
+            version="starling_exact_measurement_units.v2",
+        ),
+    )
+    assert records[0]["resolved_unit_text"] == "ratio"
 
 
 def _row(record_id, measurement, unit="raw unit"):
@@ -418,26 +445,22 @@ def test_missing_exact_unit_rule_is_a_hard_error(tmp_path) -> None:
         )
 
 
-def test_legacy_unit_exclusion_cannot_discard_a_resolved_scalar(tmp_path) -> None:
+def test_reviewed_unit_exclusion_preserves_the_record_without_a_scalar(tmp_path) -> None:
     excluded = {
         "task": "test_task",
         "canonical_endpoint": "permeability",
         "input_unit": "ratio",
         "action": "exclude",
     }
-    with pytest.raises(ValueError, match="still excludes a resolved scalar"):
-        apply_measurement_resolution(
-            [_row("rec-1", "0.4")],
-            mapping_path=_mapping(
-                tmp_path,
-                [
-                    _resolution(
-                        "rec-1",
-                        "ok",
-                        [{"measurement": "0.4", "unit": "ratio"}],
-                    )
-                ],
-            ),
-            task="test_task",
-            unit_mapping_path=_units(tmp_path, [excluded]),
-        )
+    records = [_row("rec-1", "0.4")]
+    apply_measurement_resolution(
+        records,
+        mapping_path=_mapping(
+            tmp_path,
+            [_resolution("rec-1", "ok", [{"measurement": "0.4", "unit": "ratio"}])],
+        ),
+        task="test_task",
+        unit_mapping_path=_units(tmp_path, [excluded]),
+    )
+    assert records[0]["measurement_unit_mapping_status"] == "excluded"
+    assert records[0]["resolved_scalar_value"] is None

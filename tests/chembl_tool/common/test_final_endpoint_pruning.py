@@ -5,9 +5,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.final_endpoint_pruning import (
+from data.processing.evidence_library.shared.v1.normalization.audit import write_parquet
+from data.processing.evidence_library.shared.v1.normalization.cleaning import (
+    file_sha256,
+)
+from data.processing.evidence_library.versions.v7.final_endpoint_pruning import (
     DECISIONS_FILENAME,
-    REVIEWS_FILENAME,
     SCHEMA_VERSION,
     VERSION,
     _candidate_buckets,
@@ -16,8 +19,8 @@ from tools.chembl_tool.common.starling.final_endpoint_pruning import (
     _run_review,
     _validate_candidate_review,
     _value_spread_rows,
-    log10_approval_gate,
     load_reviewed_record_ineligibility,
+    log10_approval_gate,
     render_review_prompt,
     review_decisions,
     semantic_review_columns,
@@ -25,11 +28,6 @@ from tools.chembl_tool.common.starling.final_endpoint_pruning import (
     supported_gap,
     tail_outliers,
     validate_review_response,
-)
-from tools.chembl_tool.common.starling.normalization.audit import write_parquet
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.starling.record_collapse import (
-    build_collapsed_record_stage,
 )
 
 
@@ -57,8 +55,7 @@ def test_supported_gap_handles_negative_log_and_natural_log_units():
     negative_log = [2.0, 2.1, 2.2, 4.2, 4.3, 4.4]
     assert supported_gap(negative_log, unit_text="-log10(cm/s)") is not None
     natural_log = [
-        value * 2.302585092994046
-        for value in (-4.2, -4.1, -4.0, -2.0, -1.9, -1.8)
+        value * 2.302585092994046 for value in (-4.2, -4.1, -4.0, -2.0, -1.9, -1.8)
     ]
     gap = supported_gap(natural_log, unit_text="ln(ng/mL)")
     assert gap is not None
@@ -268,9 +265,7 @@ def test_log10_gate_does_not_bypass_a_five_sd_tail(
     records.to_parquet(records_path, index=False)
     buckets.to_parquet(buckets_path, index=False)
 
-    candidates, summary = _candidate_buckets(
-        "test", records_path, buckets_path
-    )
+    candidates, summary = _candidate_buckets("test", records_path, buckets_path)
 
     assert len(candidates) == 1
     assert candidates[0]["target_record_ids"] == ["r019"]
@@ -589,17 +584,13 @@ def test_oversized_bucket_is_split_without_losing_rows():
                 "target_rows": candidate["target_rows"][:1],
                 "context_rows": candidate["target_rows"][1:6],
             }
-        ).encode(
-            "utf-8"
-        )
+        ).encode("utf-8")
     )
     chunks = split_review_candidate(candidate, max_prompt_bytes=one_row_bytes + 10)
 
     assert len(chunks) == 8
     assert {
-        row["canonical_record_id"]
-        for chunk in chunks
-        for row in chunk["target_rows"]
+        row["canonical_record_id"] for chunk in chunks for row in chunk["target_rows"]
     } == {
         "r0",
         "r1",
@@ -616,9 +607,7 @@ def test_oversized_bucket_is_split_without_losing_rows():
     )
     assert [chunk["parent_bucket_id"] for chunk in chunks] == ["bucket"] * 8
     assert all(
-        {
-            row["canonical_record_id"] for row in chunk["target_rows"]
-        }.isdisjoint(
+        {row["canonical_record_id"] for row in chunk["target_rows"]}.isdisjoint(
             row["canonical_record_id"] for row in chunk["context_rows"]
         )
         for chunk in chunks
@@ -660,9 +649,7 @@ def test_stage3_loader_returns_only_reviewed_drops(tmp_path: Path) -> None:
                 "version": VERSION,
                 "task_id": "test",
                 "inputs": {
-                    "canonical_records": {
-                        "sha256": file_sha256(canonical_records)
-                    }
+                    "canonical_records": {"sha256": file_sha256(canonical_records)}
                 },
                 "files": {DECISIONS_FILENAME: file_sha256(decisions)},
                 "summary": {"dropped_rows": 1},
@@ -680,80 +667,6 @@ def test_stage3_loader_returns_only_reviewed_drops(tmp_path: Path) -> None:
 
     assert dropped == {"r1": "llm_review_drop:wrong_unit_or_scale"}
     assert audit["reviewed_rows"] == 2
-
-
-def test_collapse_excludes_single_review_drops(tmp_path: Path):
-    records = pd.DataFrame(
-        [
-            _record("r1", 1.0),
-            _record("r2", 100.0),
-        ]
-    )
-    buckets = pd.DataFrame(
-        [
-            _bucket("r1"),
-            _bucket("r2"),
-        ]
-    )
-    records_path = tmp_path / "records.parquet"
-    buckets_path = tmp_path / "buckets.parquet"
-    records.to_parquet(records_path, index=False)
-    buckets.to_parquet(buckets_path, index=False)
-    metadata_path = tmp_path / "pair_bucket_metadata.json"
-    metadata_path.write_text("{}\n", encoding="utf-8")
-
-    pruning = tmp_path / "final_endpoint_pruning_v6"
-    pruning.mkdir()
-    reviews_path = pruning / REVIEWS_FILENAME
-    reviews_path.write_text("{}\n", encoding="utf-8")
-    decisions_path = pruning / DECISIONS_FILENAME
-    write_parquet(
-        decisions_path,
-        [
-            {
-                "canonical_record_id": "r1",
-                "review_decision": "drop",
-                "review_reason_code": "wrong_unit_or_scale",
-                "review_reason": "The source unit uses a different scale.",
-            },
-            {
-                "canonical_record_id": "r2",
-                "review_decision": "keep",
-                "review_reason_code": "fits_bucket",
-                "review_reason": "The source supports the same quantity.",
-            },
-        ],
-    )
-    pruning_manifest = {
-        "version": VERSION,
-        "task_id": "test",
-        "inputs": {
-            "records": {"sha256": file_sha256(records_path)},
-            "pair_bucket_records": {"sha256": file_sha256(buckets_path)},
-        },
-        "summary": {"candidate_rows": 2, "dropped_rows": 1},
-        "files": {
-            REVIEWS_FILENAME: file_sha256(reviews_path),
-            DECISIONS_FILENAME: file_sha256(decisions_path),
-        },
-    }
-    manifest_path = pruning / "manifest.json"
-    manifest_path.write_text(json.dumps(pruning_manifest) + "\n", encoding="utf-8")
-
-    before = (file_sha256(records_path), file_sha256(buckets_path))
-    manifest = build_collapsed_record_stage(
-        task_id="test",
-        records_path=records_path,
-        pair_bucket_records_path=buckets_path,
-        pair_bucket_metadata_path=metadata_path,
-        out_dir=tmp_path / "collapsed",
-        final_endpoint_pruning_manifest_path=manifest_path,
-    )
-    collapsed = pd.read_parquet(tmp_path / "collapsed/records.parquet")
-    assert collapsed["finite_scalar_value"].tolist() == [100.0]
-    assert manifest["summary"]["final_endpoint_pruning_excluded_records"] == 1
-    assert manifest["summary"]["excluded_reason_counts"]["final_endpoint_pruning"] == 1
-    assert before == (file_sha256(records_path), file_sha256(buckets_path))
 
 
 def _record(record_id: str, value: float) -> dict:

@@ -1,0 +1,64 @@
+{
+  "artifacts": {
+    "review_decisions_jsonl": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/review/v1/review_decisions.v1.jsonl",
+    "reviewed_conflict_candidates_parquet": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/review/v1/reviewed_conflict_candidates.v1.parquet"
+  },
+  "batch_files": 45,
+  "decision_counts": {
+    "override": 8667,
+    "reject": 2514
+  },
+  "drops_rows": false,
+  "duplicate_candidate_ids": 0,
+  "extra_candidate_ids": 0,
+  "generated_at_utc": "2026-08-31T02:01:21.838928+00:00",
+  "missing_candidate_ids": 0,
+  "quality_audit": {
+    "agree": 57,
+    "audited_rows": 60,
+    "corrected_candidate_ids": [
+      "1a6b68545a765ec8c95012cac7e1ca94d6a109b99e7d15cfe6a863b589a2c3c1",
+      "ac54cd7637e670233039f074a73bef3cf25e2a2f3b0ba88d5c6546a10ddf3a1e",
+      "db1b2b67ba665174858eb7f7bcc7a8f510fbf142696ae5e2928369c9f8d4a7d1"
+    ],
+    "corrections_applied": 3,
+    "disagree": 3,
+    "path": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/review/v1/quality_audit_60.jsonl"
+  },
+  "reject_reason_counts": {
+    "ambiguous_context": 319,
+    "extracted_name_wrong_or_non_analyte": 674,
+    "insufficient_evidence": 59,
+    "pubchem_reference_unreliable": 804,
+    "stored_smiles_consistent": 658
+  },
+  "review_version": "name_smiles_conflict_review.v1",
+  "reviewed_rows": 11181,
+  "sha256": {
+    "quality_audit_60": "cc9fd533fbcbbdb392a66479bd73feabca12a47b8fcf9b6ce69fe67eef158a10",
+    "review_decisions_jsonl": "54ef66726d880bb63fd0163f7558c2dc9af570ff86f0a41f768b9cb326b49b20",
+    "reviewed_conflict_candidates_parquet": "52295101f5dcf1aac876d368e09b96830be945363d54c8f194c156fe3708213c",
+    "source_conflict_candidates": "49aab368bbc99697a753ea0000f516f97c74a318ead4c4636800232b5137e9bc"
+  },
+  "source_candidate_rows": 11181,
+  "source_conflict_candidates": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/conflict_candidates.parquet",
+  "task_counts": {
+    "bbb_martins": {
+      "override": 3771,
+      "reject": 964,
+      "reviewed": 4735
+    },
+    "bioavailability_ma": {
+      "override": 3368,
+      "reject": 1342,
+      "reviewed": 4710
+    },
+    "skin_reaction": {
+      "override": 1528,
+      "reject": 208,
+      "reviewed": 1736
+    }
+  },
+  "unique_candidate_ids": 11181,
+  "writes_stage1": false
+}

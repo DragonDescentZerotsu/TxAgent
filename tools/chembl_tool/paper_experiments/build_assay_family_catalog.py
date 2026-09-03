@@ -23,7 +23,7 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
     write_jsonl_atomic,
 )
-from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
+from data.processing.evidence_library.assay_catalog import assay_id, assay_unit
 
 
 VERSION = "starling_physical_assay_family_catalog.v1"
@@ -41,124 +41,7 @@ TASKS = {
         "records": "/data1/joseph/TxAgent/outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/03_records/records.parquet",
         "config_module": "tools.chembl_tool.tasks.skin_reaction.experiment_config",
     },
-    "clintox": {
-        "records": "outputs/paper/starling_assay_relevance_all_v1/clintox/assay_catalog.jsonl",
-        "config_module": "tools.chembl_tool.tasks.clintox.experiment_config",
-    },
 }
-
-_CLINTOX_SOURCE_LEVELS = {
-    "clinical_trial_failure": 1,
-    "nonclinical_in_vivo_toxicity": 3,
-    "organ_specific_toxicity": 4,
-    "genotoxicity_carcinogenicity": 5,
-    "cellular_stress": 6,
-    "general_cytotoxicity": 7,
-    "off_target_ddi_exposure": 8,
-}
-
-
-def _build_clintox_catalog(
-    catalog_path: Path,
-    config_name: str = "STARLING",
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    config = getattr(
-        importlib.import_module(TASKS["clintox"]["config_module"]), config_name
-    )
-    source_rows = [json.loads(line) for line in catalog_path.open() if line.strip()]
-    rows = []
-    for source in source_rows:
-        level = _CLINTOX_SOURCE_LEVELS[str(source["source_id"])]
-        family = config.mechanism_groups[level - 1]
-        rows.append(
-            {
-                "catalog_version": VERSION,
-                "task": "clintox",
-                "assay_id": str(source["assay_id"]),
-                "assay_context": str(source["assay_context"]),
-                "selection_rank": 0,
-                "first_level": level,
-                "first_family_id": family.group_id,
-                "first_endpoint_group": family.endpoint_group,
-                "family_levels": [level],
-                "family_ids": [family.group_id],
-                "family_endpoint_groups": [family.endpoint_group],
-                "source_groups": list(family.source_groups),
-                "source_families": [
-                    {
-                        "source_group_id": source_group,
-                        "level": level,
-                        "family_id": family.group_id,
-                        "endpoint_group": family.endpoint_group,
-                    }
-                    for source_group in family.source_groups
-                ],
-                "record_count": int(source.get("record_count") or 0),
-            }
-        )
-    clinical_family = config.mechanism_groups[1]
-    rows.append(
-        {
-            "catalog_version": VERSION,
-            "task": "clintox",
-            "assay_id": "STARLING_CLINTOX_CLINICAL_CONTEXT",
-            "assay_context": "clinical human safety context",
-            "selection_rank": 0,
-            "first_level": 2,
-            "first_family_id": clinical_family.group_id,
-            "first_endpoint_group": clinical_family.endpoint_group,
-            "family_levels": [2],
-            "family_ids": [clinical_family.group_id],
-            "family_endpoint_groups": [clinical_family.endpoint_group],
-            "source_groups": list(clinical_family.source_groups),
-            "source_families": [
-                {
-                    "source_group_id": source_group,
-                    "level": 2,
-                    "family_id": clinical_family.group_id,
-                    "endpoint_group": clinical_family.endpoint_group,
-                }
-                for source_group in clinical_family.source_groups
-            ],
-            "record_count": 0,
-        }
-    )
-    rows.sort(key=lambda row: (row["first_level"], row["assay_id"]))
-    for selection_rank, row in enumerate(rows, start=1):
-        row["selection_rank"] = selection_rank
-    level_counts = Counter(int(row["first_level"]) for row in rows)
-    cumulative = 0
-    levels = []
-    for level, family in enumerate(config.mechanism_groups, start=1):
-        cumulative += level_counts[level]
-        levels.append(
-            {
-                "level": level,
-                "family_id": family.group_id,
-                "endpoint_group": family.endpoint_group,
-                "source_groups": list(family.source_groups),
-                "new_physical_assays": level_counts[level],
-                "cumulative_physical_assays": cumulative,
-            }
-        )
-    return rows, {
-        "catalog_version": VERSION,
-        "task": "clintox",
-        "records": str(catalog_path.resolve()),
-        "records_sha256": sha256_file(catalog_path),
-        "assay_definition": "source-native assay field; one explicit clinical-context unit",
-        "overlap_policy": "source-native assay ids are disjoint; assign each to one family level",
-        "n_allowed_source_records": sum(
-            int(row.get("record_count") or 0) for row in rows
-        ),
-        "n_physical_assays": len(rows),
-        "n_multi_family_assays": 0,
-        "levels": levels,
-        "overlap_patterns": {
-            str(level): level_counts[level] for level in sorted(level_counts)
-        },
-        "llm_visible": False,
-    }
 
 
 def build_catalog(
@@ -167,8 +50,6 @@ def build_catalog(
     *,
     config_name: str = "STARLING",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    if task == "clintox":
-        return _build_clintox_catalog(records_path, config_name)
     config = getattr(importlib.import_module(TASKS[task]["config_module"]), config_name)
     frame = pq.read_table(
         records_path,

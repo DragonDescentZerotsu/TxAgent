@@ -1,6 +1,6 @@
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.starling_record_canonicalization import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_record_canonicalization import (
     canonical_oral_dose,
     enrich_bioavailability_validity,
     normalization_validity_status,

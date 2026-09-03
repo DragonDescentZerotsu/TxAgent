@@ -18,7 +18,6 @@ from sklearn.metrics import accuracy_score, f1_score
 
 from predict.retrieval.assay_reranking.runtime import CACHE_ROOT, file_sha256
 from predict.retrieval.assay_reranking.v9 import (
-    RANKING_PROFILE_NAME,
     RANKING_SCHEMA_VERSION,
     model_profile,
     verify_vendored_assets,
@@ -27,7 +26,8 @@ from predict.utils.json import atomic_output_path, write_json_atomic, write_json
 
 
 TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
-DEFAULT_WIDTHS = (25, 50, 75, 100)
+DEFAULT_WIDTHS = (25, 50, 75, 100, 200, 500)
+DEFAULT_CACHE_ROOT = CACHE_ROOT / "v9_direct_gold_morgan500"
 
 
 def select_neighbors(
@@ -152,7 +152,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--cache-root",
         type=Path,
-        default=CACHE_ROOT / RANKING_PROFILE_NAME,
+        default=DEFAULT_CACHE_ROOT,
     )
     args = parser.parse_args(argv)
     widths = sorted(set(args.morgan_widths))
@@ -186,11 +186,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             "metrics": metrics,
         },
     )
-    with atomic_output_path(args.output_dir / "macro_f1.tsv") as temporary:
-        with temporary.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=list(metrics[0]), delimiter="\t")
-            writer.writeheader()
-            writer.writerows(metrics)
+    metric_lookup = {
+        (row["task"], row["morgan_width"]): row for row in metrics
+    }
+    for metric_name in ("macro_f1", "accuracy"):
+        with atomic_output_path(args.output_dir / f"{metric_name}.tsv") as temporary:
+            with temporary.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.writer(handle, delimiter="\t")
+                writer.writerow(["task", *widths])
+                for task in args.tasks:
+                    writer.writerow([
+                        task,
+                        *[
+                            metric_lookup[(task, width)][metric_name]
+                            for width in widths
+                        ],
+                    ])
     print(json.dumps(metrics, indent=2))
     return 0
 

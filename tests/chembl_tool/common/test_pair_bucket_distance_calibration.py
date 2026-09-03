@@ -6,7 +6,7 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration import (
+from data.processing.evidence_library.versions.v7.build_pair_bucket_distance_calibration import (
     CALIBRATION_VERSION,
     CATEGORY_CDF_VERSION,
     LEGACY_CALIBRATION_VERSION,
@@ -21,16 +21,16 @@ from tools.chembl_tool.common.starling.build_pair_bucket_distance_calibration im
     value_cdf_percentile,
     value_cdf_separation,
 )
-from tools.chembl_tool.tasks.bbb_martins.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.build_starling_pair_bucket_transfer_policy import (
     BUILD_SPEC,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_schema import (
     RECORD_CONTRACT as BBB_RECORD_CONTRACT,
 )
-from tools.chembl_tool.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.build_starling_pair_bucket_transfer_policy import (
     BUILD_SPEC as SKIN_BUILD_SPEC,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_schema import RECORD_CONTRACT
 
 
 def _binary_group(*, include_response: bool = True) -> pd.DataFrame:

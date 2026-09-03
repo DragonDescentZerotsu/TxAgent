@@ -7,8 +7,8 @@ import pytest
 from predict.retrieval.assay_reranking.runtime import CACHE_ROOT, model_profile
 from predict.retrieval.assay_reranking.progressive_levels import (
     ProgressiveV191PromptRenderer,
-    revised_level,
 )
+from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
 from predict.baselines.assay_transfer_knn import select_neighbors
 from predict.retrieval.assay_reranking.v19_1 import (
     default_cache_paths as v19_cache_paths,
@@ -45,15 +45,29 @@ def test_direct_role_is_exactly_v9(task_id):
     assert profile["prompt_profile"] == "v9"
 
 
-def test_only_bbb_has_an_indirect_model():
-    profile = model_profile("bbb_martins", "indirect")
-    assert profile["model"] == (
-        "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best"
-    )
-    assert profile["revision"] == "b93ebfb909de5689fe3b50978d65172a6096b974"
-    for task_id in ("bioavailability_ma", "skin_reaction"):
-        with pytest.raises(ValueError, match="No indirect reranker"):
-            model_profile(task_id, "indirect")
+@pytest.mark.parametrize(
+    ("task_id", "model", "revision"),
+    (
+        (
+            "bbb_martins",
+            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
+            "b93ebfb909de5689fe3b50978d65172a6096b974",
+        ),
+        (
+            "bioavailability_ma",
+            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",
+            "612cd794583e2129a664defaf9229b26d94b9a69",
+        ),
+        (
+            "skin_reaction",
+            "jiosephlee/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
+            "f29d100ca2112490d22913736d4efa5bc5308cb6",
+        ),
+    ),
+)
+def test_indirect_model_is_pinned(task_id, model, revision):
+    profile = model_profile(task_id, "indirect")
+    assert (profile["model"], profile["revision"]) == (model, revision)
 
 
 def test_vendored_prompt_assets_match_their_manifests():
@@ -94,15 +108,10 @@ def test_transfer_knn_restricts_morgan_pool_before_reranking():
     assert selected[0]["retrieval_parent_rank"] == 1
 
 
-def test_revised_bbb_progressive_levels_move_nonvoting_l1_into_l2():
-    assert revised_level("direct_vote", None) == "L1"
-    assert revised_level(
-        "direct_residual", "Tier 1.starling_direct_bbb_evidence"
-    ) == "L2"
-    assert revised_level("direct_residual", "Proxy.central_functional_access") == "L2"
-    assert revised_level("indirect", "Mechanism.passive_permeability") == "L3"
-    assert revised_level("indirect", "Mechanism.efflux_transport") == "L4"
-    assert revised_level("indirect", "Mechanism.influx_transport") == "L5"
+def test_scaffold_disjoint_does_not_equate_empty_acyclic_scaffolds():
+    query = normalize_molecule_identity("CCO")
+    candidate = {"canonical_smiles": "CCN"}
+    assert not decide_candidate(query, candidate, "scaffold_disjoint").excluded
 
 
 def test_progressive_v19_renderer_supports_direct_bbb_records():
@@ -122,3 +131,38 @@ def test_progressive_v19_renderer_supports_direct_bbb_records():
     assert "Known reported measurement: 0.5" in prompt
     assert prompt.count("0.5") == 1
     assert prompt.count("brain-to-plasma ratio") == 2
+
+
+def test_progressive_v19_renderer_supports_direct_bioavailability_records():
+    prompt = ProgressiveV191PromptRenderer("bioavailability_ma").render(
+        {
+            "task_id": "bioavailability_ma",
+            "source_id": "hf_bioavailability",
+            "canonical_smiles": "CCO",
+            "endpoint_name": "oral bioavailability",
+            "measurement_text": "42%",
+            "dose": "10 mg/kg oral",
+            "species_or_population": "rat",
+        },
+        "CCN",
+    )
+    assert "Known reported measurement: 42%" in prompt
+    assert prompt.count("42%") == 1
+    assert prompt.count("10 mg/kg oral") == 2
+
+
+def test_progressive_v19_renderer_supports_direct_skin_records():
+    prompt = ProgressiveV191PromptRenderer("skin_reaction").render(
+        {
+            "task_id": "skin_reaction",
+            "source_id": "direct_skin_reaction",
+            "canonical_smiles": "CCO",
+            "endpoint_name": "sensitization",
+            "measurement_text": "positive",
+            "assay_or_test": "DPRA",
+            "outcome_label": "positive",
+        },
+        "CCN",
+    )
+    assert prompt.count("Known reported measurement: positive") == 1
+    assert prompt.count("Assay or test: DPRA") == 2

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from tools.chembl_tool.common.starling.benchmark_dataset import (
+from data.processing.gold_labels.benchmark_dataset import (
     LabeledSourceRecord,
     accepted,
     bemis_murcko_scaffold,
@@ -17,17 +17,17 @@ from tools.chembl_tool.common.starling.benchmark_dataset import (
     stratified_hash_split,
     stratified_hash_three_way_split,
 )
-from tools.chembl_tool.common.starling.heldout_index import (
+from data.processing.evidence_library.heldout_index import (
     filter_heldout_evidence_rows,
     identity_key,
     load_heldout_identity_keys,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import label_record as label_bbb
-from tools.chembl_tool.tasks.bioavailability_ma.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_benchmark import label_record as label_bbb
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_benchmark import (
     is_human_context,
     label_bioavailability_value,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_benchmark import (
     label_record as label_skin,
 )
 

@@ -50,7 +50,7 @@ from .valid import (
 )
 
 
-DEFAULT_DATA_ROOT = Path("data/processed_starling")
+DEFAULT_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling")
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     specs = selected_task_specs(args.tasks)

@@ -12,14 +12,14 @@ from typing import Any
 import pandas as pd
 from datasets import Dataset, load_dataset
 
-from tools.chembl_tool.common.starling.condition_review import attach_parent_identity, write_review_queue
-from tools.chembl_tool.common.starling.external_condition import (
+from data.processing.gold_labels.condition_review import attach_parent_identity, write_review_queue
+from data.processing.gold_labels.external_condition import (
     AtomRule,
     ConditionAtom,
     payload_sha256,
     propose_pattern_condition,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
     SOURCE_DATASET,
     SOURCE_REVISION,
     label_record,
@@ -27,7 +27,7 @@ from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benc
 
 
 PROPOSAL_VERSION = "bbb_external_condition_proposal.v2"
-REVIEW_ROOT = Path("data/starling_data/bbb_martins/context_conditioned_review_v1")
+REVIEW_ROOT = Path("data/artifacts/starling/bbb_martins/source_reviews/context_conditioned_review_v1")
 FROZEN_CANDIDATE_SOURCE = REVIEW_ROOT / "frozen_candidate_source.parquet"
 
 SELECTED_EXTERNAL_CONDITION_GROUPS = (

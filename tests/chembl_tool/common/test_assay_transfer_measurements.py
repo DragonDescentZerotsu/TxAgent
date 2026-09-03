@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.common.starling.assay_transfer_measurements import (
+from data.processing.evidence_library.shared.v1.assay_transfer_measurements import (
     CANONICAL_TUPLE_CONTRACT_VERSION,
     assay_transfer_axis_key,
     canonicalize_assay_transfer_base,
@@ -16,13 +16,13 @@ from tools.chembl_tool.common.starling.assay_transfer_measurements import (
     load_measurement_policy,
     validate_final_assay_transfer_measurements,
 )
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_measurement_and_unit,
 )
-from tools.chembl_tool.common.starling.normalization.organization import (
+from data.processing.evidence_library.shared.v1.normalization.organization import (
     deduplicate_within_source,
 )
-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
+from data.processing.evidence_library.shared.v1.pair_buckets import materialize_pair_buckets
 
 
 def _contract() -> SimpleNamespace:
@@ -478,7 +478,7 @@ def test_raw_continuous_text_is_derived_from_the_final_scalar():
     assert validate_final_assay_transfer_measurements([persisted]) == []
 
 
-def test_stage04_retains_unit_defect_as_assay_transfer_ineligible():
+def test_record_pruning_retains_the_record_and_does_not_reject_its_bucket():
     records = [
         {
             "canonical_record_id": "record-1",
@@ -486,10 +486,26 @@ def test_stage04_retains_unit_defect_as_assay_transfer_ineligible():
             "canonical_endpoint_name": "endpoint",
             "canonical_unit_text": "cm/s",
             "canonicalization_status": "valid",
+            "canonical_smiles": "CC",
             "molecule_id": "molecule-1",
             "context": "context",
             "measurement_kind": "continuous",
-        }
+            "finite_scalar_value": 1.0,
+            "canonical_reference_scope": "absolute",
+        },
+        {
+            "canonical_record_id": "record-2",
+            "source_id": "source",
+            "canonical_endpoint_name": "endpoint",
+            "canonical_unit_text": "cm/s",
+            "canonicalization_status": "valid",
+            "canonical_smiles": "CCC",
+            "molecule_id": "molecule-2",
+            "context": "context",
+            "measurement_kind": "continuous",
+            "finite_scalar_value": 2.0,
+            "canonical_reference_scope": "absolute",
+        },
     ]
     rows, audit = materialize_pair_buckets(
         records,
@@ -499,10 +515,12 @@ def test_stage04_retains_unit_defect_as_assay_transfer_ineligible():
         },
     )
 
-    assert len(rows) == 1
+    assert len(rows) == 2
     assert rows[0]["assay_transfer_eligible"] is False
     assert rows[0]["assay_transfer_ineligibility_reason"] == "probable_unit_scale_defect"
     assert rows[0]["pair_bucket_key"] is not None
+    assert rows[1]["assay_transfer_eligible"] is True
+    assert rows[1]["pair_bucket_key"] == rows[0]["pair_bucket_key"]
     assert audit["stats"]["ineligible_records"] == 1
 
 

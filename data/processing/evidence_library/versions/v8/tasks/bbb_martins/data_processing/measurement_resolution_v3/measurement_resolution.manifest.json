@@ -1,0 +1,70 @@
+{
+  "api_base_url": "http://dgx019:8000/v1",
+  "assignment_method_counts": {
+    "invalid_response_after_structural_retry": 5,
+    "invalid_row_response:entry_without_a_unit:structural_retry": 2268,
+    "invalid_row_response:id_mismatch:structural_retry": 26,
+    "invalid_row_response:measurement_is_not_a_plain_decimal": 2,
+    "manual_review_override:bbb_biotin_micromolar_0001": 1,
+    "model_single_pass": 157741,
+    "model_structural_retry": 8180
+  },
+  "base_mapping": {
+    "model": "mixed",
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+    "reused_rows": 109166,
+    "sha256": "7ee69b221714325700c8736a96f24c77c9d9e2f4b4e73bb7508df385872c8377"
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "06f3b931f75cdb257cab0047da07cddecc6a9f54de977968f3d999dfe311a5df",
+  "delta_inference": {
+    "model": "nvidia/DeepSeek-V4-Flash-NVFP4",
+    "rows": 59057
+  },
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "14807e913c8105f5c06fcff35caa734e7091fca9a50d58394d475daea81d9803",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v7",
+  "inference": {
+    "max_completion_tokens": 32768,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
+  "mapping_rows": 168223,
+  "mapping_sha256": "82526f4716067b8b3428477f59068ec86f3246c35a092ba1ff39900c8ea354e3",
+  "mapping_version": "bbb_martins_measurement_resolution.v3",
+  "model": "mixed",
+  "models": [
+    "mixed",
+    "nvidia/DeepSeek-V4-Flash-NVFP4"
+  ],
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "bbb_measurement_resolution_prompt.v11",
+    "rendered_sha256": {
+      "direct_bbb": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98",
+      "efflux_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "influx_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "passive_permeability": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98"
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
+  },
+  "rejected_rows": 2296,
+  "routing_version": "starling_measurement_routing.v5",
+  "status_counts": {
+    "ok": 93341,
+    "relative": 16551,
+    "unavailable": 27567,
+    "unsure": 30764
+  },
+  "task_id": "bbb_martins",
+  "validations": {
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

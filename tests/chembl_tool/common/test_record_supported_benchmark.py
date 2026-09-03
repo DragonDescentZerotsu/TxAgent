@@ -1,6 +1,6 @@
 import json
 
-from tools.chembl_tool.common.starling.build_record_supported_benchmark import (
+from data.processing.gold_labels.build_record_supported_benchmark import (
     allocate_scaffold_groups,
     build_task_preserving_split,
     target_eval_size,

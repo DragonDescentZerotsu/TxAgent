@@ -6,10 +6,10 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from tools.chembl_tool.tasks.skin_reaction.data_processing import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing import (
     build_embedding_bucket_mapping as builder,
 )
-from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.auxiliary_mapping_helpers import (
     reconciliation,
 )
 

@@ -5,7 +5,7 @@ import json
 
 import pandas as pd
 
-from tools.chembl_tool.tasks.bbb_martins.data_processing.build_direct_endpoint_errata import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_direct_endpoint_errata import (
     build_errata_proposal,
 )
 

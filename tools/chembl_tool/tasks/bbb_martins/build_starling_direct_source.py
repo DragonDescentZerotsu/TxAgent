@@ -12,13 +12,14 @@ from typing import Any
 
 import pandas as pd
 
-from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
+from data.processing.paths import raw_starling_task_root
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_benchmark import (
     SOURCE_DATASET,
     SOURCE_REVISION,
 )
 
 
-DEFAULT_OUTPUT = Path("data/starling_data/bbb_martins/Direct_BBB/records.parquet")
+DEFAULT_OUTPUT = raw_starling_task_root("bbb_martins") / "Direct_BBB/records.parquet"
 DEFAULT_MANIFEST = DEFAULT_OUTPUT.with_name("source_manifest.json")
 EXPECTED_ROWS = 304_845
 
@@ -118,4 +119,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

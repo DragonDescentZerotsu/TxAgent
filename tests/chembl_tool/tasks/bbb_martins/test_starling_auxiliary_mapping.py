@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import (
+from data.processing.evidence_library.shared.v1.clustered_auxiliary_mapping import (
     AuxiliaryExtractionSpec,
     Cluster,
     _terminal_api_error,
@@ -11,7 +11,7 @@ from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import (
     distinct_values,
     validate_response,
 )
-from tools.chembl_tool.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping import (
     DEFAULT_MODEL,
     extraction_specs,
 )

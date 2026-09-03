@@ -40,30 +40,28 @@
 BBB、Bioavailability、Skin 和 ClinTox 只有一个活跃评估根：
 
 ```text
-data/conditioned_benchmark/<Task>/scaffold/
+data/gold_labels/<Task>/v1/scaffold/
 ```
 
 任务级 molecule-only、gold-vN、selected-vN 和 ClinTox source-build 名称只作为 migration provenance，不是
-并列 paper datasets。四任务统一 schema、split sizes、scientific target 和旧路径 hash audit 见
-`../common/starling/CONDITIONED_BENCHMARK.md` 与 `data/conditioned_benchmark/migration_receipt.json`。
+并列 paper datasets。三个 active task 的统一 schema、split sizes、scientific target 和旧路径 hash audit 见
+`../common/starling/CONDITIONED_BENCHMARK.md` 与 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。
 
 三任务最终 progressive 结果、资源统计和入口只维护在 `ASSAY_LEVEL_RETRIEVAL.md`；不要再引用未完成的
 cumulative-family checkpoint 作为 current curve。ClinTox 保留冻结 AACT toxicity-failure positives 与
 SWEETLEAD/FDA-approved comparators 的 source contract，Starling clinical/mechanistic rows 只用于 retrieval。
-当前构建、运行和审计入口为：
+ClinTox code and data are retained only under `data/legacy/clintox/`; it has no
+active construction or evaluation entrypoint.
 
 ```text
-tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
-tools/chembl_tool/tasks/clintox/starling_retrieval.py
-tools/chembl_tool/tasks/clintox/audit_clinical_trial_failure_agent.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
-tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+data/processing/gold_labels/publish_conditioned_benchmark.py
 ```
 
 ```text
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v3.py
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access_v4.py
+data/processing/gold_labels/build_record_supported_benchmark.py
+data/processing/evidence_library/versions/v7/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v3.py
+data/processing/evidence_library/versions/v7/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark_v4.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
@@ -167,11 +165,11 @@ tools/chembl_tool/paper_experiments/analyze_starling_parent_provenance.py
 tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
   比较 50/60/70/80/90% record agreement 下的 keep/reject、label、record 和 publication 分布。
 
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
+data/processing/gold_labels/build_conditioned_benchmark.py
   历史 molecule-only builder：70% record-majority、精确 tie 拒绝、random/scaffold 8:1:1 split，并生成
   valid+test union 的 heldout audit artifact。
 
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+data/processing/gold_labels/build_record_supported_benchmark.py
   构造 Bioavailability/Skin molecule-only source lineage；当前 Conditioned Benchmark publication 将其作为
   provenance 输入而不是 evaluation root。
 
@@ -744,17 +742,17 @@ blind+visible 总图；不得追加未完成运行的中间指标。
 
 ```bash
 python -m baselines.minimol.run_bioavailability_ma \
-  --data-dir data/processed_starling/<Task>/scaffold \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/scaffold \
   --output-dir outputs/baselines/minimol_starling_valid/<Task>/scaffold \
   --train-all --evaluation-split valid
 
 python -m baselines.structure_knn.run \
-  --data-dir data/processed_starling/<Task>/scaffold \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/scaffold \
   --output-dir outputs/baselines/structure_knn_starling_valid/<Task>/scaffold \
   --k 3 --evaluation-split valid
 
 python -m baselines.minimol.run_embedding_knn \
-  --data-dir data/processed_starling/<Task>/scaffold \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/scaffold \
   --embedding-cache-dir outputs/baselines/minimol_starling_valid/<Task>/scaffold/embeddings \
   --output-dir outputs/baselines/minimol_embedding_knn_starling_valid/<Task>/scaffold \
   --k 3 --evaluation-split valid

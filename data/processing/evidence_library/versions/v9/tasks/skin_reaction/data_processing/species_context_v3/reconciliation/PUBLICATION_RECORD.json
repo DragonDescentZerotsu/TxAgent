@@ -1,0 +1,53 @@
+{
+  "publication_version": "skin_species_context_reconciliation_publication.v1",
+  "publication_date": "2026-08-13",
+  "publication_status": "human_approved",
+  "approval_basis": "Explicit user approval in the TxAgent workspace conversation to publish Skin species reconciliation proposal SHA-256 76ebdecfad4eee87e7f338bcf446f62e6d54151cc60a222b4daf7c1481a455dc and rebuild Skin v7 Stages 02-09.",
+  "candidate_mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v3",
+  "proposal_mapping_version": "starling_auxiliary.skin_reaction.globally_reconciled.v4",
+  "proposal_path": "proposal/proposed_globally_reconciled_mapping.json",
+  "proposal_sha256": "76ebdecfad4eee87e7f338bcf446f62e6d54151cc60a222b4daf7c1481a455dc",
+  "review_manifest_path": "proposal/manifest.json",
+  "review_manifest_sha256": "d469ec43d7ffa2f2c1347ed1b6c389f52ddf842b689c4c94ad3a71c6cb8dcd3d",
+  "final_integrity_audit_path": "proposal/FINAL_INTEGRITY_AUDIT.json",
+  "final_integrity_audit_sha256": "7d8bc6feb683c075ff7c590ae7d8afd6ff6e950f10435461491aa2515e311896",
+  "runtime_mapping_path": "../../globally_reconciled_auxiliary_value_mapping.json",
+  "runtime_mapping_sha256": "152bb6e26658a6d57c6c6f38aa32da34a862b9f9b74db5a740f660bb7a81bf07",
+  "published_scope": "sensitization_aop/global_species_context",
+  "review_result": {
+    "eligible_assignments": 24219,
+    "retained": 24034,
+    "demoted_to_null": 185,
+    "corrected": 0,
+    "null_promotions": 0,
+    "routed_to_adjudication": 191
+  },
+  "published_build": {
+    "root": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7",
+    "rebuilt_stages": "02-09",
+    "build_manifest_sha256": "d0b81e1c303ab8458b41c4c58eb2729564369b693395da8dd806150fa9f1a4ff",
+    "tracked_store_manifest_sha256": "5fc9860937d607e76e645534b483d16ed359a9fa0a4a78ca4095c1292ecaa110",
+    "pair_bucket_metadata_sha256": "5366503f052663af02542b86ce15637c9f388e9ff96a4ce34ca6d27dbac1ae0a",
+    "distance_calibration_sha256": "f0b17f9a1150d5f9bb4d942a807e4d4efb8e2799f93265b36d5d0131e5006334",
+    "pair_buckets": 23968,
+    "pairable_buckets": 11916,
+    "records_in_pair_buckets": 342740,
+    "calibration_valid_buckets": 889,
+    "calibration_valid_records": 204307,
+    "category_cdf_valid_buckets": 643,
+    "category_cdf_valid_records": 123923,
+    "value_cdf_valid_buckets": 232,
+    "value_cdf_valid_records": 69769
+  },
+  "validations": {
+    "runtime_semantically_equals_reviewed_proposal": true,
+    "stage_02_records_approved_mapping_sha256": true,
+    "one_affected_stage_04_record_removed": true,
+    "one_singleton_bucket_removed": true,
+    "calibration_valid_bucket_count_unchanged": true,
+    "category_cdf_valid_bucket_count_unchanged": true,
+    "value_cdf_valid_bucket_count_unchanged": true,
+    "local_artifact_store_verified": true,
+    "tracked_artifact_store_verified": true
+  }
+}

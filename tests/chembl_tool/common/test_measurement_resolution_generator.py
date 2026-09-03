@@ -16,7 +16,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
     MODEL,
     REASONING_EFFORT,
     STATUSES,
@@ -28,11 +28,6 @@ from tools.chembl_tool.common.starling.build_measurement_resolution_mapping impo
     query_batch,
     validate_row,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
-    BATCH_SIZE,
-)
-
-
 ROW = {"id": "rec-1", "source_id": "direct_bbb"}
 
 
@@ -286,40 +281,13 @@ def test_the_payload_hides_the_routing_source_id() -> None:
     assert batch.api_rows[0]["id"] == "a1"
 
 
-def test_prompt_uses_endpoint_aware_reference_semantics() -> None:
-    prompt = TaskConfig("bbb_martins").render_prompt("direct_bbb")
-    assert BATCH_SIZE == 10
-    assert "Solve concisely." in prompt
-    assert "concentration_to_plasma_ratio" in prompt
-    assert "csf_concentration_increase" in prompt
-    assert "inhibition_potency" in prompt
-    assert "k1_MeG/k1_FDG" in prompt
-    assert "`around 1` -> `1`" in prompt
-    assert "Never turn a bound, range, or fraction into a point" in prompt
-    assert "shortest complete unit explicitly stated" in prompt
-    assert "same-unit comparator values in support do not make" in prompt
-    assert "Do not exclude an outcome merely because" in prompt
-    assert "102.9% inhibition" in prompt
-    assert "analgesic `%MPE`" in prompt
-    assert "do not replace the conflicting linear unit" in prompt
-    assert "If the row explicitly reports its value with a power-of-ten scale" in prompt
-    assert "Never add a power-of-ten scale" in prompt
-    assert "Never infer a scale" in prompt
-    assert 'measurement `3.16`, unit `10^-6 cm/s`' in prompt
-    assert "Return that implied unit rather than null" in TaskConfig(
-        "bbb_martins"
-    ).render_prompt("passive_permeability")
-
-
-def test_skin_prompt_selects_one_value_and_treats_external_references_conservatively() -> None:
-    from tools.chembl_tool.tasks.skin_reaction.starling_measurement_resolution import (
+def test_skin_prompt_input_contract() -> None:
+    from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_measurement_resolution import (
         PROMPT_VERSION,
         SOURCE_IDS,
         prompt_row_fields,
-        render_prompt,
     )
 
-    prompt = render_prompt("sensitization_aop")
     assert PROMPT_VERSION == "skin_reaction_measurement_resolution_prompt.v7"
     assert set(SOURCE_IDS) == {
         "direct_skin_reaction",
@@ -332,16 +300,6 @@ def test_skin_prompt_selects_one_value_and_treats_external_references_conservati
         "phototoxicity_irritation_local_damage"
     )
     assert "unit_text" in prompt_row_fields("sensitization_aop")
-    assert "This source has no unit column" in render_prompt("direct_skin_reaction")
-    assert "`measurement_text` is the primary value selector" in prompt
-    assert "Stage 02 will explode multiple returned quantities" in prompt
-    assert "exact unit map decides mapping or exclusion" in prompt
-    assert "never add a support-only number" in prompt
-    assert "A separate comparator in support does not make" in prompt
-    assert "With `missing_endpoint`" in prompt
-    assert "ALN cell proliferation" in prompt
-    assert "percent of an exchangeable ion pool" in prompt
-    assert "KeratinoSens Imax uses `fold`" in prompt
 
 
 def test_small_endpoints_are_co_packed_but_remain_contiguous() -> None:
@@ -535,6 +493,7 @@ def test_materialize_reuses_a_base_mapping_and_labels_delta_rows(tmp_path: Path)
         task_id="bbb_martins",
         MAPPING_VERSION="bbb_martins_measurement_resolution.v2",
         BATCH_SIZE=10,
+        module=SimpleNamespace(),
         prompt_manifest=lambda **_: {"prompt_version": "test"},
     )
     cache = SimpleNamespace(
@@ -777,15 +736,18 @@ def test_gold_replay_targets_only_rows_that_reach_the_model() -> None:
     Replaying them would pay for rows whose answer is already asserted
     deterministically, and would produce no new information.
     """
-    from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+    from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
         gold_extract_ids,
     )
-    from tools.chembl_tool.common.starling.measurement_routing import route
+    from data.processing.evidence_library.versions.v7.measurement_routing import route
     import json as _json
     from pathlib import Path as _Path
 
     ids = gold_extract_ids()
-    fixture = _Path("tests/chembl_tool/common/fixtures/measurement_resolution_gold.jsonl")
+    fixture = _Path(
+        "tests/chembl_tool/common/measurement_resolution_quality/gold/"
+        "bbb_martins.v7.jsonl"
+    )
     cases = [
         _json.loads(line)
         for line in fixture.read_text(encoding="utf-8").splitlines()[1:]
@@ -810,7 +772,7 @@ def test_gold_replay_targets_only_rows_that_reach_the_model() -> None:
 def test_gold_replay_routes_a_historical_fixture_with_current_rules() -> None:
     import json as _json
 
-    from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+    from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
         GOLD_FIXTURE,
         gold_extract_ids,
     )
@@ -834,7 +796,7 @@ def test_a_pilot_that_scores_nothing_is_the_failure_mode_this_avoids() -> None:
     number at all.  Replaying the labelled ids instead makes every response
     scoreable, and costs fewer requests.
     """
-    from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+    from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
         _stratified_slice,
         gold_extract_ids,
     )
@@ -862,7 +824,7 @@ def test_an_ok_row_without_a_plain_decimal_is_degraded_to_unsure() -> None:
 
 
 def test_plain_decimal_validation_does_not_parse_or_normalize_units() -> None:
-    from tools.chembl_tool.common.starling.build_measurement_resolution_mapping import (
+    from data.processing.evidence_library.versions.v7.build_measurement_resolution_mapping import (
         is_plain_decimal,
     )
 

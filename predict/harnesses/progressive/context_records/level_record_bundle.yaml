@@ -1,0 +1,168 @@
+# Executable model-visible contract for cache-backed later-level additions.
+#
+# One bundle is appended at each configured level. `records_field` contains the
+# 50 individual Stage 3 records selected by the frozen V19.1 transfer cache.
+# Editing the ordered field lists changes the JSON shown to the reasoning LLM.
+# Internal cache keys, Morgan similarities, level-mapping policy fields, and
+# eligibility labels are intentionally unavailable to this contract.
+schema_version: progressive_level_record_bundle.v1
+
+# These descriptions define the scientific meaning of the added levels and are
+# also injected into the system prompt when that level first appears.
+task_levels:
+  bbb_martins:
+    L3:
+      evidence_family: passive_permeability
+      description: Experimental passive-permeability evidence relevant to CNS access.
+      guidance: >-
+        L3 adds passive-permeability experiments. Use them as mechanistic evidence
+        that may help explain CNS access, not as direct proof of meaningful brain
+        exposure. Interpret assay system, conditions, and measurement direction.
+    L4:
+      evidence_family: efflux_transport
+      description: Experimental efflux-transporter evidence relevant to CNS access.
+      guidance: >-
+        L4 adds efflux-transporter experiments. Interpret whether the record shows
+        substrate status, directional transport, or inhibition, and preserve the
+        transporter and assay context. Efflux mechanism is not itself an in vivo
+        meaningful-CNS-access outcome.
+    L5:
+      evidence_family: influx_transport
+      description: Experimental influx or uptake-transporter evidence relevant to CNS access.
+      guidance: >-
+        L5 adds influx and uptake-transporter experiments. Treat their relevance as
+        transporter- and context-dependent; they do not by themselves establish a
+        meaningful in vivo CNS exposure outcome.
+  bioavailability_ma:
+    L3:
+      evidence_family: oral_auc_cmax_exposure
+      description: Experimental oral AUC, Cmax, and related exposure evidence.
+      guidance: >-
+        L3 adds oral exposure experiments such as AUC, Cmax, and related PK
+        measurements. Interpret dose, route, formulation, species, sampling, and
+        comparator together; these records inform but do not create extra gold votes.
+    L4:
+      evidence_family: intestinal_absorption_permeability
+      description: Experimental intestinal absorption, solubility, and permeability evidence.
+      guidance: >-
+        L4 adds intestinal absorption, solubility, and permeability experiments.
+        Use them to assess the absorption component of oral bioavailability while
+        preserving assay and formulation context; they are not direct systemic-F
+        measurements or extra gold votes.
+    L5:
+      evidence_family: gut_wall_efflux_intestinal_metabolism
+      description: Experimental gut-wall efflux and intestinal-metabolism evidence.
+      guidance: >-
+        L5 adds gut-wall efflux and intestinal-metabolism experiments. Use them as
+        mechanistic evidence for presystemic loss, with direction and experimental
+        context preserved; mechanism alone is not a direct oral-bioavailability result.
+    L6:
+      evidence_family: hepatic_clearance_metabolic_stability
+      description: Experimental hepatic clearance and metabolic-stability evidence.
+      guidance: >-
+        L6 adds hepatic-clearance and metabolic-stability experiments. Use them as
+        mechanistic evidence for systemic presystemic loss while preserving species,
+        assay system, and measurement direction; they are not direct oral-
+        bioavailability results or extra gold votes.
+  skin_reaction:
+    L3:
+      evidence_family: sensitization_aop
+      description: Experimental sensitization adverse-outcome-pathway evidence.
+      guidance: >-
+        L3 adds sensitization adverse-outcome-pathway experiments. Use them as
+        mechanistic support for skin sensitization only when the measured event,
+        assay system, and transfer context apply; they are not additional final
+        sensitizer-label votes.
+    L4:
+      evidence_family: phototoxicity_irritation_local_damage
+      description: Experimental phototoxicity, irritation, corrosion, and local skin-damage evidence.
+      guidance: >-
+        L4 adds distinct local skin-hazard experiments. Phototoxicity, irritation,
+        corrosion, and local damage are not skin sensitization or contact allergy;
+        use them only as contextual evidence and do not convert them into positive
+        sensitization outcomes.
+
+bundle:
+  fields:
+    - name: level_card_id
+      source: level_card_id
+      required: true
+    - name: level
+      source: level
+      required: true
+    - name: evidence_family
+      source: evidence_family
+      required: true
+    - name: description
+      source: description
+      required: true
+    - name: selection
+      source: selection
+      required: true
+    - name: available_record_count
+      source: available_record_count
+      required: true
+    - name: selected_record_count
+      source: selected_record_count
+      required: true
+  # The compact transport avoids repeating long SMILES and source column names
+  # on every record while preserving every original value and support sentence.
+  molecules_field: reference_molecules
+  source_schemas_field: source_schemas
+  records_field: record_rows
+
+# L1/L2 cards remain governed by card_v*.yaml. At L3+, their already-projected
+# records use this lossless column/row representation so cumulative prompts fit
+# the model context. A null means that optional field was absent on that card.
+cumulative_context_records:
+  columns_field: record_columns
+  rows_field: record_rows
+
+molecule:
+  fields:
+    - name: molecule_id
+      source: molecule_id
+      required: true
+    - name: smiles
+      source: smiles
+      required: true
+
+source_schema:
+  fields:
+    - name: schema_id
+      source: schema_id
+      required: true
+    - name: source_id
+      source: source_id
+      required: true
+    # These are original Stage 3 source column names. Each record's final
+    # source_values cell follows this exact order.
+    - name: source_columns
+      source: source_columns
+      required: true
+
+record:
+  # Each model-visible record is one positional row in this exact order.
+  # Keeping field names once here avoids repeating them 50 times per level.
+  fields:
+    - name: card_id
+      source: card_id
+      required: true
+    - name: reference_molecule_id
+      source: reference_molecule_id
+      required: true
+    # V19.1 estimate that this individual source record transfers to the query.
+    # It is an applicability score, not a positive-class probability or result.
+    - name: transfer_likelihood
+      source: transfer_likelihood
+      required: true
+    - name: source_schema_id
+      source: source_schema_id
+      required: true
+    - name: measurement_kind
+      source: measurement_kind
+    # Original Stage 3 source column names and values. Blank fields are removed;
+    # no canonical or resolved value is substituted for a missing source value.
+    - name: source_values
+      source: source_values
+      required: true

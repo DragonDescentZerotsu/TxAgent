@@ -28,7 +28,9 @@ import matplotlib.pyplot as plt
 from datasets import load_dataset
 from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import rdFingerprintGenerator
-from tools.chembl_tool.common.starling import oral_bioavailability as oral_cleaning
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma import (
+    oral_bioavailability as oral_cleaning,
+)
 
 
 DEFAULT_DATASET = oral_cleaning.ORAL_BIOAVAILABILITY_DATASET

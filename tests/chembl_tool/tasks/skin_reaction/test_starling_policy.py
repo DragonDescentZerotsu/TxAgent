@@ -4,28 +4,28 @@ import json
 
 import pytest
 
-from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
+from data.processing.evidence_library.versions.v7.build_normalized_evidence_library import (
     load_task_policy,
     parse_args,
 )
-from tools.chembl_tool.common.starling.normalization.task_policy import (
+from data.processing.evidence_library.shared.v1.normalization.task_policy import (
     StarlingTaskPolicy,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_auxiliary_metadata import (
     APPLICABLE_SOURCES,
     PendingAuxiliaryAttacher,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_pair_buckets import (
     ENDPOINT_FIELD_BY_SOURCE,
     SOURCE_PAIR_FIELDS,
     V7_ENDPOINT_FIELD_BY_SOURCE,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
-from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_policy import POLICY
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_spacing_and_spelling import (
     ENDPOINT_CONCEPT_PATHS,
     endpoint_concept,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_normalization_sources import (
     EXPECTED_SOURCE_ROWS,
 )
 

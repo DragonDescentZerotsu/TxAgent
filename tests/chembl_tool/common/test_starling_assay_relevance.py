@@ -4,7 +4,7 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.assay_catalog import (
+from data.processing.evidence_library.assay_catalog import (
     assay_unit,
     build_catalog,
 )

@@ -2,19 +2,20 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from tools.chembl_tool.common.starling.build_runtime import (
+from data.processing.evidence_library.shared.v1.build_runtime import (
     FileDigestCache,
     build_cache_metadata,
     cache_metadata_matches,
 )
-from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
+from data.processing.evidence_library.versions.v7.build_normalized_evidence_library import (
     MANIFEST_FILENAME,
     SOURCE_INVENTORY_FILENAME,
     STAGES,
     _record_build_cache,
+    _scientific_assets,
     _stage_output_filenames,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import POLICY
 
 
 def test_source_snapshot_precedes_one_row_per_source_cleaning() -> None:
@@ -166,5 +167,5 @@ def test_full_index_cache_hashes_staged_outputs_under_published_paths(tmp_path) 
         completed_stage="index",
         args=args,
         digests=FileDigestCache(),
-        scientific_assets=POLICY.scientific_assets,
+        scientific_assets=_scientific_assets(POLICY, args),
     )

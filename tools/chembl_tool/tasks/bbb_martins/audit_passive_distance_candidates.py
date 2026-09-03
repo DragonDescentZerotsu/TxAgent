@@ -23,7 +23,7 @@ DEFAULT_CHEMBL_SQLITE = Path("tools/chembl_tool/chembl_data/chembl_36_sqlite/che
 DEFAULT_BASE_ASSAYS = Path(
     "outputs/chembl_tool/tasks/bbb_martins/assay_screening/v3/bbb_assay_candidates.csv"
 )
-DEFAULT_INPUT = Path("data/processed/BBB_Martins/test.jsonl")
+DEFAULT_INPUT = Path("data/gold_labels/legacy/processed/BBB_Martins/test.jsonl")
 DEFAULT_OUT_DIR = Path(
     "outputs/chembl_tool/tasks/bbb_martins/distance_expansion/analysis/v3/passive_candidate_audit"
 )

@@ -2,8 +2,11 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from tools.chembl_tool.common.starling import evidence_library as starling_evidence_library
-from tools.chembl_tool.common.starling import StarlingSourceProfile, build_starling_parquet_evidence_rows
+from data.processing.evidence_library import evidence_library as starling_evidence_library
+from data.processing.evidence_library.evidence_library import (
+    StarlingSourceProfile,
+    build_starling_parquet_evidence_rows,
+)
 
 
 def test_profile_maps_different_parquet_columns_and_aggregates_by_molecule(monkeypatch):

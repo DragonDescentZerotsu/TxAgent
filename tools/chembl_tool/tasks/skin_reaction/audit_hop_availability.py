@@ -100,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
                 "outputs/chembl_tool/tasks/skin_reaction/evidence_library/"
                 "skin_reaction_neighbor_index.pkl"
             ),
-            input_jsonl=Path("data/processed/Skin_Reaction/test.jsonl"),
+            input_jsonl=Path("data/gold_labels/legacy/processed/Skin_Reaction/test.jsonl"),
             output_dir=args.out_dir,
             source_config=CHEMBL,
             candidates=CANDIDATES,

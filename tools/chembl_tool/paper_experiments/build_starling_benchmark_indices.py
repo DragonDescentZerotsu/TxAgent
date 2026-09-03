@@ -8,14 +8,15 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tools.chembl_tool.common.starling import build_heldout_starling_index
-from tools.chembl_tool.common.starling.v7_benchmark_view import (
+from data.processing.evidence_library.heldout_index import (
+    build_heldout_starling_index,
+)
+from data.processing.evidence_library.views import (
     ALL_PARENT_FILTER,
     ALL_SCAFFOLD_FILTER,
-    DIRECT_SOURCE_ONLY_FILTER,
     FULL_VIEW,
     HELDOUT_FILTER_MODES,
-    build_v7_benchmark_view,
+    build_library_view,
 )
 
 DEFAULT_OUTPUT_ROOT = Path("outputs/paper")
@@ -33,6 +34,7 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
             "starling_normalized_v7"
         ),
         "view": FULL_VIEW,
+        "filter_source_id": "direct_bbb",
     },
     {
         "name": "bioavailability_starling_v7",
@@ -43,6 +45,9 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
             "starling_normalized_v7"
         ),
         "view": FULL_VIEW,
+        "filter_source_id": "hf_bioavailability",
+        "filter_scope_field": "canonical_bioavailability_evidence_scope",
+        "filter_scope_value": "direct",
     },
     {
         "name": "skin_reaction_starling_v7",
@@ -53,6 +58,7 @@ INDEX_SPECS: tuple[dict[str, Any], ...] = (
             "starling_normalized_v7"
         ),
         "view": FULL_VIEW,
+        "filter_source_id": "direct_skin_reaction",
     },
     {
         "name": "clintox_starling_full",
@@ -125,19 +131,15 @@ def main(argv: list[str] | None = None) -> int:
                 heldout_subsets,
             )
             out_dir = paper_root / "evidence" / spec["name"]
-            print(f"[starling_benchmark_index] split={split} index={spec['name']}", flush=True)
+            print(
+                f"[starling_benchmark_index] split={split} index={spec['name']}",
+                flush=True,
+            )
             if "normalized_root" in spec:
                 policy_module = importlib.import_module(
                     f"tools.chembl_tool.tasks.{spec['task_id']}.starling_policy"
                 )
-                downstream_spec = None
-                if args.heldout_filter_mode == DIRECT_SOURCE_ONLY_FILTER:
-                    downstream_module = importlib.import_module(
-                        f"tools.chembl_tool.tasks.{spec['task_id']}."
-                        "build_starling_downstream_artifacts"
-                    )
-                    downstream_spec = downstream_module.get_spec()
-                meta = build_v7_benchmark_view(
+                meta = build_library_view(
                     policy=policy_module.POLICY,
                     normalized_root=spec["normalized_root"],
                     heldout_labels_jsonl=heldout_path,
@@ -153,7 +155,9 @@ def main(argv: list[str] | None = None) -> int:
                     benchmark_split=split,
                     view=spec["view"],
                     heldout_filter_mode=args.heldout_filter_mode,
-                    downstream_spec=downstream_spec,
+                    filter_source_id=spec.get("filter_source_id", ""),
+                    filter_scope_field=spec.get("filter_scope_field", ""),
+                    filter_scope_value=spec.get("filter_scope_value", ""),
                     workers=args.workers,
                     progress_every=args.progress_every,
                 )
@@ -176,7 +180,9 @@ def main(argv: list[str] | None = None) -> int:
         results[split] = split_results
 
     summary_path.parent.mkdir(parents=True, exist_ok=True)
-    summary_path.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    summary_path.write_text(
+        json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"summary": str(summary_path)}, indent=2), flush=True)
     return 0
 
@@ -280,10 +286,18 @@ def heldout_labels_path(
     split_dir = Path(benchmark_data_root) / task / split
     if set(subsets) == set(HELDOUT_SUBSETS):
         detailed = split_dir / "heldout_molecule_condition_labels.jsonl"
-        return detailed if detailed.is_file() else split_dir / "heldout_molecule_labels.jsonl"
+        return (
+            detailed
+            if detailed.is_file()
+            else split_dir / "heldout_molecule_labels.jsonl"
+        )
     if len(subsets) == 1:
         detailed = split_dir / f"{subsets[0]}_molecule_condition_labels.jsonl"
-        return detailed if detailed.is_file() else split_dir / f"{subsets[0]}_molecule_labels.jsonl"
+        return (
+            detailed
+            if detailed.is_file()
+            else split_dir / f"{subsets[0]}_molecule_labels.jsonl"
+        )
     raise ValueError(f"Unsupported held-out subset combination: {subsets}")
 
 
@@ -324,7 +338,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument(
         "--benchmark-data-root",
-        default="data/processed_starling",
+        default="data/gold_labels/legacy/processed_starling",
         help="Root containing <Task>/<split>/heldout_molecule_labels.jsonl.",
     )
     parser.add_argument("--benchmark-lineage", default=BENCHMARK_LINEAGE)

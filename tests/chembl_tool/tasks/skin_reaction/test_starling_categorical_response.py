@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from tools.chembl_tool.common.starling.categorical_response import (
+from data.processing.evidence_library.shared.v1.categorical_response import (
     LOGIT_RESPONSE_UNIT,
     ORDINAL_SEVERITY_UNIT,
     SIGNED_DIRECTION_UNIT,
@@ -14,13 +14,13 @@ from tools.chembl_tool.common.starling.categorical_response import (
     shrunk_rate,
     sigmoid,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_categorical_response import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_categorical_response import (
     POLICY,
     SIGNED_DIRECTION_ANCHORS,
     encoding_policy_manifest,
     parse_severity_grade,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_record_canonicalization import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_record_canonicalization import (
     normalization_validity_status,
 )
 

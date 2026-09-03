@@ -8,25 +8,25 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.common.starling import build_current_release as release
-from tools.chembl_tool.common.starling.build_runtime import (
+from data.processing.evidence_library.shared.v1.build_runtime import (
     INCOMPLETE_BUILD_FILENAME,
+    assert_unpublished_build_root,
     starling_build_session,
+)
+from data.processing.evidence_library.versions.v8 import (
+    build_current_release as release,
 )
 
 
 def test_task_locks_are_independent_and_same_root_fails_fast(tmp_path) -> None:
     roots = [tmp_path / task for task in release.TASKS]
     with starling_build_session(roots[0]):
-        with starling_build_session(roots[1]):
-            with starling_build_session(roots[2]):
-                assert all(
-                    (root / INCOMPLETE_BUILD_FILENAME).is_file() for root in roots
-                )
+        with starling_build_session(roots[1]), starling_build_session(roots[2]):
+            assert all((root / INCOMPLETE_BUILD_FILENAME).is_file() for root in roots)
 
         code = """
 import sys
-from tools.chembl_tool.common.starling.build_runtime import starling_build_session
+from data.processing.evidence_library.shared.v1.build_runtime import starling_build_session
 try:
     with starling_build_session(sys.argv[1]):
         pass
@@ -52,32 +52,30 @@ def test_complete_session_clears_marker_only_after_success(tmp_path) -> None:
     assert not (root / INCOMPLETE_BUILD_FILENAME).exists()
 
     failed = tmp_path / "failed"
-    with pytest.raises(RuntimeError, match="stop"):
-        with starling_build_session(failed, complete=True):
-            raise RuntimeError("stop")
+    with (
+        pytest.raises(RuntimeError, match="stop"),
+        starling_build_session(failed, complete=True),
+    ):
+        raise RuntimeError("stop")
     assert (failed / INCOMPLETE_BUILD_FILENAME).is_file()
 
 
-def test_view_build_rejects_an_incomplete_source(tmp_path) -> None:
-    root = tmp_path / "incomplete"
-    root.mkdir()
+def test_published_release_requires_a_staging_root(tmp_path) -> None:
+    root = tmp_path / "bbb_martins" / "v8"
+    root.mkdir(parents=True)
+    (root / "manifest.json").write_text("{}\n", encoding="utf-8")
+    (root.parent / "CURRENT").write_text("v8\n", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="explicit staging root"):
+        assert_unpublished_build_root(root)
     (root / INCOMPLETE_BUILD_FILENAME).write_text("{}\n", encoding="utf-8")
-    with pytest.raises(RuntimeError, match="normalized source has an incomplete build"):
-        release.build_v7_benchmark_view(
-            policy=SimpleNamespace(),
-            normalized_root=root,
-            heldout_labels_jsonl=tmp_path / "heldout.jsonl",
-            out_dir=tmp_path / "view",
-            benchmark_split="scaffold",
-        )
+    assert_unpublished_build_root(root)
+    assert_unpublished_build_root(root.parent / "v8-staging")
 
 
 def test_current_release_orders_all_stages_and_then_clears_marker(
     tmp_path, monkeypatch
 ) -> None:
     root = tmp_path / "bbb"
-    heldout = tmp_path / "heldout.jsonl"
-    view_out = tmp_path / "view"
     events: list[object] = []
     policy = SimpleNamespace(default_out_dir=str(root))
 
@@ -92,19 +90,14 @@ def test_current_release_orders_all_stages_and_then_clears_marker(
     )
     downstream = SimpleNamespace(
         build_canonical_artifacts=lambda **kwargs: events.append(
-            ("stage3", kwargs["apply_outlier_review"])
+            ("stage3", kwargs["apply_record_pruning"])
         )
     )
-    monkeypatch.setattr(release.importlib, "import_module", lambda name: downstream)
+    monkeypatch.setattr(release, "import_task_module", lambda *args: downstream)
     monkeypatch.setattr(
         release,
-        "generate_final_endpoint_pruning",
-        lambda **kwargs: events.append("pruning"),
-    )
-    monkeypatch.setattr(
-        release,
-        "build_v7_benchmark_view",
-        lambda **kwargs: events.append("view") or {"view": "manifest"},
+        "generate_assay_transfer_record_pruning",
+        lambda **kwargs: events.append(("pruning", kwargs)),
     )
     monkeypatch.setattr(
         release,
@@ -115,17 +108,31 @@ def test_current_release_orders_all_stages_and_then_clears_marker(
     result = release.build_current_release(
         task_id="bbb_martins",
         normalized_root=root,
-        heldout_labels=heldout,
-        view_out=view_out,
+        review_budget_epoch="v8-build",
+        start_new_review_budget_epoch=True,
+        review_budget_max_tokens=1234,
     )
 
     assert result == {"task_id": "bbb_martins"}
     assert events == [
         "stage2",
         ("stage3", False),
-        "pruning",
+        (
+            "pruning",
+            {
+                "task_id": "bbb_martins",
+                "normalized_root": root,
+                "api_key_env": "OPENAI_API_KEY",
+                "base_url": release.DEFAULT_BASE_URL,
+                "model": release.DEFAULT_MODEL,
+                "workers": 1,
+                "budget_epoch": "v8-build",
+                "start_new_budget_epoch": True,
+                "budget_max_tokens": 1234,
+                "reuse_valid_cache_across_models": False,
+            },
+        ),
         ("stage3", True),
-        "view",
         "validate",
     ]
     assert not (root / INCOMPLETE_BUILD_FILENAME).exists()
@@ -142,12 +149,12 @@ def test_current_release_failure_keeps_incomplete_marker(tmp_path, monkeypatch) 
     )
     monkeypatch.setattr(release, "run_with_args", lambda *args: 0)
     downstream = SimpleNamespace(build_canonical_artifacts=lambda **kwargs: None)
-    monkeypatch.setattr(release.importlib, "import_module", lambda name: downstream)
+    monkeypatch.setattr(release, "import_task_module", lambda *args: downstream)
 
     def fail_pruning(**kwargs):
         raise RuntimeError("review failed")
 
-    monkeypatch.setattr(release, "generate_final_endpoint_pruning", fail_pruning)
+    monkeypatch.setattr(release, "generate_assay_transfer_record_pruning", fail_pruning)
     with pytest.raises(RuntimeError, match="review failed"):
         release.build_current_release(task_id="skin_reaction", normalized_root=root)
     assert (root / INCOMPLETE_BUILD_FILENAME).is_file()
@@ -170,7 +177,7 @@ def test_release_validation_rejects_stale_review_bytes(tmp_path) -> None:
     decisions.write_bytes(b"review")
     stage3.write_bytes(b"stage3")
     canonical_sha = release.file_sha256(canonical)
-    review_manifest = review_dir / release.REVIEW_MANIFEST_FILENAME
+    review_manifest = review_dir / release.PRUNING_MANIFEST_FILENAME
     review_manifest.write_text(
         json.dumps(
             {
@@ -191,7 +198,7 @@ def test_release_validation_rejects_stale_review_bytes(tmp_path) -> None:
                 "input_hashes": {
                     "canonical_records": canonical_sha,
                     "auxiliary_mapping_manifest": release.file_sha256(auxiliary),
-                    "assay_transfer_outlier_review": release.file_sha256(
+                    "assay_transfer_record_pruning": release.file_sha256(
                         review_manifest
                     ),
                 },
@@ -201,7 +208,9 @@ def test_release_validation_rejects_stale_review_bytes(tmp_path) -> None:
         encoding="utf-8",
     )
 
-    release._validate_release("bbb_martins", root, None)
+    release._validate_release("bbb_martins", root)
     decisions.write_bytes(b"stale")
-    with pytest.raises(ValueError, match="pruning review output hash mismatch"):
-        release._validate_release("bbb_martins", root, None)
+    with pytest.raises(
+        ValueError, match="assay-transfer record-pruning output hash mismatch"
+    ):
+        release._validate_release("bbb_martins", root)

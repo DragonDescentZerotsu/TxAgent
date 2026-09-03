@@ -1,0 +1,48 @@
+{
+  "bbb_score_cache_contract": {
+    "global_exclusion": "L1 records, 260 unresolved-endpoint records, and 5 records without a resolvable parent identity",
+    "minimum_similarity": 0.0,
+    "morgan_pool_per_level": 75,
+    "other_out_of_domain_rows_retained_and_flagged": true,
+    "per_query_exclusion": "scaffold_disjoint",
+    "unresolved_endpoint_rows": 260,
+    "unresolved_parent_identity_rows": 5
+  },
+  "counts_by_level_and_group": {
+    "L1:Tier 1.starling_direct_bbb_evidence": 8536,
+    "L2:Proxy.central_functional_access": 268623,
+    "L3:Mechanism.passive_permeability": 14597,
+    "L4:Mechanism.efflux_transport": 163638,
+    "L5:Mechanism.influx_transport": 45283
+  },
+  "current_direct_mapping_votes": 8541,
+  "direct_mapping_votes_outside_l1": 5,
+  "family_policy_version": "bbb_source_family_purity.v6",
+  "inputs": {
+    "data/artifacts/starling/bbb_martins/source_reviews/context_conditioned_review_v1/proposal_audit.jsonl": "2e8814187f96f78e86a0c8122c00ffd886d5fea8861a0460abf7bbc712afea92",
+    "data/artifacts/starling/bbb_martins/source_reviews/source_family_purity_v2/near_direct_record_review.jsonl": "2eea7be68bc455f73e3fc810d5d868bfc0e363771909b0a60975867150156ffc",
+    "data/evidence_libraries/bbb_martins/v7/03_pair_buckets/records.parquet": "f50c2be5265f1ea5afa782445b52c87380dac877dcf88a5318e9ade93c1b5b06",
+    "data/gold_labels/BBB_Martins/v1/scaffold/source_condition_review.jsonl": "f56eb2ee0dc477005d9d17c03c10a6a48734f394bcf3ca8ddf8193729b5b9935"
+  },
+  "levels": {
+    "L1": 8536,
+    "L2": 268623,
+    "L3": 14597,
+    "L4": 163638,
+    "L5": 45283
+  },
+  "mapping_version": "normalized_v7_stage3_progressive_levels.v1",
+  "output": {
+    "path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/progressive_level_mapping_v1/record_levels.parquet",
+    "sha256": "def30a5628f5c5a6f0dfd40734b106f45812e2bf1139d0ec25b1831fd8e7ffe3"
+  },
+  "outside_progressive_scope": 0,
+  "rows": 500677,
+  "stage": "normalized_v7_stage3_pair_buckets",
+  "task_id": "bbb_martins",
+  "validations": {
+    "canonical_record_ids_unique": true,
+    "one_sidecar_row_per_stage3_record": true,
+    "skin_outside_scope_not_assigned_a_level": true
+  }
+}

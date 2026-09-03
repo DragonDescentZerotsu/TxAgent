@@ -213,39 +213,20 @@ def test_removed_top5_flag_is_rejected():
         _parse_batch_args(CONFIG, ["--enable-assay-transfer-scored-top5"])
 
 
-def test_v6_5_template_profile_propagates_from_batch_to_molecule_runner():
+def test_v9_template_profile_propagates_from_batch_to_molecule_runner():
     args = _parse_batch_args(
         CONFIG,
         [
             "--retrieval-strategy", "assay_transfer_tool",
-            "--assay-transfer-template-profile", "v6_5_query_context_copy",
+            "--assay-transfer-template-profile", "v9_context_conditioned",
         ],
     )
     command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
 
-    assert args.assay_transfer_template_profile == "v6_5_query_context_copy"
+    assert args.assay_transfer_template_profile == "v9_context_conditioned"
     assert command[command.index("--assay-transfer-template-profile") + 1] == (
-        "v6_5_query_context_copy"
+        "v9_context_conditioned"
     )
-
-
-def test_corrected_profile_and_tool_free_policy_propagate_to_molecule_runner():
-    args = _parse_batch_args(
-        CONFIG,
-        [
-            "--retrieval-strategy",
-            "assay_transfer_tool",
-            "--assay-transfer-template-profile",
-            "v6_5_query_context_copy_no_extra_details",
-            "--disable-group-tools",
-        ],
-    )
-    command = _single_run_command(CONFIG, args, 0, "run", Path("runs"))
-
-    assert command[command.index("--assay-transfer-template-profile") + 1] == (
-        "v6_5_query_context_copy_no_extra_details"
-    )
-    assert "--disable-group-tools" in command
 
 
 def test_starling_threshold_and_prompt_format_propagate_to_pipeline():
@@ -355,7 +336,7 @@ def test_matched_preflight_source_requires_identical_retrieval_configuration():
             "--assay-transfer-min-score",
             "0.5",
             "--assay-transfer-template-profile",
-            "v6_5_query_context_copy_no_extra_details",
+            "v9_context_conditioned",
             "--group-prompt-format",
             "assay_transfer_tool",
             "--neighbor-identity-policy",

@@ -20,11 +20,11 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
     fingerprint_metadata,
 )
-from tools.chembl_tool.common.starling.oral_bioavailability import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.oral_bioavailability import (
     ALLOWED_REPORT_TYPES,
     clean_oral_bioavailability_rows,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
     DEFAULT_DIRECT_HF_PARQUET,
     load_direct_hf_rows,
 )

@@ -22,6 +22,7 @@ from predict.retrieval.assay_reranking.runtime import (
 ASSET_ROOT = Path(__file__).with_name("prompts") / "v19_1"
 PROJECTION_PATH = ASSET_ROOT / "prompt_projection.json"
 PROMPT_SHA256 = "e6a712824bf53e2e149138cd57511554bcee5b996f74215adc71a439e046f8b9"
+TRAINING_PROMPT_SHA256 = "5ccb702023c6caa212f1b3c5aa319da97e3f7ce2455c38d858c2f21e791b96c5"
 PROJECTION_SHA256 = "a81e30e10a3fcef8d216867bb873a16bfaf69386e3f08f21071188c313ea0166"
 PROFILE_NAME = "v19_1_numeric_all_indirect_top75"
 TEMPLATE_PROFILE = "v19_1_retrieval_context_copy"

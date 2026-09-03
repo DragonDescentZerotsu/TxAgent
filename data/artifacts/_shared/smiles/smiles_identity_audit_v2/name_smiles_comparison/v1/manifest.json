@@ -1,0 +1,41 @@
+{
+  "artifacts": {
+    "comparisons": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/comparisons.parquet",
+    "conflict_candidates": "outputs/chembl_tool/smiles_identity_audit_v2/name_smiles_comparison/v1/conflict_candidates.parquet"
+  },
+  "comparison_counts": {
+    "different_parent": 11181,
+    "exact_identity": 297136,
+    "generic_or_mixture_keep": 706,
+    "same_formula_isomer_keep": 6340,
+    "same_parent_or_form": 38130,
+    "unresolved_keep": 151679
+  },
+  "comparison_version": "name_smiles_comparison.v1",
+  "conflict_candidate_rows": 11181,
+  "conflict_classes": [
+    "different_parent",
+    "stored_structure_invalid"
+  ],
+  "explicit_name_rows": 505172,
+  "input_rows": 599640,
+  "llm_requests": 0,
+  "lookup_status_counts": {
+    "ambiguous": 4984,
+    "ambiguous_name": 106504,
+    "not_found": 37524,
+    "resolved": 353493,
+    "treatment_readout_ambiguous": 2667
+  },
+  "name_extraction_path": "outputs/chembl_tool/smiles_identity_audit_v2/name_extraction/full/row_extractions.parquet",
+  "pubchem_cache": "outputs/chembl_tool/smiles_identity_audit_v2/pubchem_cache.sqlite",
+  "pubchem_max_requests_per_second": 5,
+  "pubchem_workers": 4,
+  "sha256": {
+    "comparisons": "86fe35feacca611e594d8476b85e9ab51f556411a7a622f301406a25e9be4775",
+    "conflict_candidates": "49aab368bbc99697a753ea0000f516f97c74a318ead4c4636800232b5137e9bc",
+    "name_extractions": "1613b8c1a0f649136daad762970ff6c3f0af9a6e6cccd316a8512f13b0cafa0c"
+  },
+  "unique_pubchem_queries": 33458,
+  "writes_stage1_or_reviewed_ledgers": false
+}

@@ -39,7 +39,7 @@ DEFAULT_H_INDEX = Path(
 DEFAULT_C_EVIDENCE = Path(
     "outputs/chembl_tool/tasks/bbb_martins/evidence_library/bbb_molecule_evidence.jsonl"
 )
-DEFAULT_INPUT = Path("data/processed/BBB_Martins/test.jsonl")
+DEFAULT_INPUT = Path("data/gold_labels/legacy/processed/BBB_Martins/test.jsonl")
 DEFAULT_OUT_DIR = Path(
     "outputs/chembl_tool/tasks/bbb_martins/distance_expansion/analysis/v3/role_gated_overlap"
 )

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
     DEFAULT_HF_BIOAVAILABILITY_PARQUET,
     EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS,
     HF_BIOAVAILABILITY_SOURCE_COLUMNS,

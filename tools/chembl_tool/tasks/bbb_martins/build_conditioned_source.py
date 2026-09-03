@@ -9,18 +9,18 @@ from typing import Any
 import pandas as pd
 
 from tools.chembl_tool.common.json_utils import write_json_atomic
-from tools.chembl_tool.common.starling.condition_review import merge_terminal_verdicts
-from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
+from data.processing.gold_labels.condition_review import merge_terminal_verdicts
+from data.processing.gold_labels.reviewed_conditioned_benchmark import (
     ConditionedBenchmarkConfig,
     build_reviewed_conditioned_benchmark,
 )
-from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT, CONTRACT, task_root
+from data.processing.gold_labels.conditioned_benchmark import BUILD_ROOT, CONTRACT, task_root
 from tools.chembl_tool.tasks.bbb_martins.prepare_condition_review import (
     FROZEN_CANDIDATE_SOURCE,
     REVIEW_ROOT,
     SELECTED_EXTERNAL_CONDITION_GROUPS,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
     label_record,
 )
 
@@ -29,7 +29,7 @@ LINEAGE = CONTRACT
 PROTOCOL_VERSION = CONTRACT
 FROZEN_LINEAGE = "experimental_meaningful_cns_access_v4"
 FROZEN_ROOT = Path(
-    "data/processed_starling_experimental_meaningful_cns_access_v4/"
+    "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v4/"
     "BBB_Martins/scaffold"
 )
 OUTPUT_ROOT = BUILD_ROOT / "BBB_Martins/scaffold"

@@ -1,0 +1,65 @@
+{
+  "counts_by_current_source_and_historical_level": {
+    "direct_residual": {
+      "1": 5478,
+      "2": 254134,
+      "3": 11014,
+      "4": 20109,
+      "5": 3552
+    },
+    "direct_vote": {
+      "1": 8536,
+      "2": 5,
+      "3": 0,
+      "4": 0,
+      "5": 0
+    }
+  },
+  "historical_levels": {
+    "1": {
+      "family": "direct_brain_exposure",
+      "group_id": "Tier 1.starling_direct_bbb_evidence"
+    },
+    "2": {
+      "family": "near_direct_proxy",
+      "group_id": "Proxy.central_functional_access"
+    },
+    "3": {
+      "family": "passive_permeability",
+      "group_id": "Mechanism.passive_permeability"
+    },
+    "4": {
+      "family": "efflux_transport",
+      "group_id": "Mechanism.efflux_transport"
+    },
+    "5": {
+      "family": "influx_transport",
+      "group_id": "Mechanism.influx_transport"
+    }
+  },
+  "inputs": {
+    "historical_source_purity_v5_records": {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bbb_source_family_purity_v5/records.parquet",
+      "sha256": "c1b0d8a2ef7e529ef10a1848fb150301edffaa995da435e3e674a360a80d98eb"
+    },
+    "v7_records": {
+      "path": "data/evidence_libraries/bbb_martins/v7/03_pair_buckets/records.parquet",
+      "sha256": "f50c2be5265f1ea5afa782445b52c87380dac877dcf88a5318e9ade93c1b5b06"
+    }
+  },
+  "output": {
+    "path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/historical_progressive_v5/record_levels.parquet",
+    "rows": 302828,
+    "sha256": "d2c00212c3dbdfc56a81b1e72534498d3fa9f399ffd235f1e8b71fc36b71993c"
+  },
+  "scope": "canonical_v7_direct_vote_and_direct_residual_records",
+  "task_id": "bbb_martins",
+  "validations": {
+    "all_mapped_historical_rows_retrieval_eligible": true,
+    "all_v7_direct_records_mapped": true,
+    "canonical_record_ids_unique": true,
+    "source_record_ids_match": true,
+    "zero_ambiguous_historical_source_indices": true
+  },
+  "version": "bbb_historical_progressive_v5_mapping.v1"
+}

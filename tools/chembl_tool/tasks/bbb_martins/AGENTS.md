@@ -1,5 +1,12 @@
 # BBB_Martins task notes
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 本文件只记录 BBB_Martins 的 task-specific 语义：label、当前数据版本、BBB evidence tier、过滤规则和 reasoning 边界。通用 ChEMBL workflow、wrapper 结构、batch/resume、viewer、cost 和目录规范统一记录在仓库根 `AGENTS.md`。
 
 当前论文路径由 `experiment_config.py` 将细粒度 ChEMBL endpoint groups 合并为 4 个 mechanism families：
@@ -32,12 +39,39 @@ mechanism-only proxy、非系统给药、altered barrier、间接疗效推断和
 唯一活跃 split 位于：
 
 ```text
-data/conditioned_benchmark/BBB_Martins/scaffold/
+data/gold_labels/BBB_Martins/v1/scaffold/
 ```
 
 train/valid/test 为 3,053/397/393 个 molecule-condition rows，identity/scaffold overlap 均为 0。旧
 molecule-only、gold-vN 和 selected-vN 路径只是当前 cohort 的 source provenance，不是并列 benchmark；
-精确迁移关系见 `data/conditioned_benchmark/migration_receipt.json`。
+精确迁移关系见 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。
+
+### Normalized-v7 artifact map
+
+The current normalized source through Stage 03 lives at
+`outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/`.
+The complete conditioned-benchmark stages 06–09 and Morgan index live at
+`outputs/paper/molecular_evidence_agent_starling_scaffold_conditioned_benchmark/evidence/bbb_starling_v7/`.
+That paper view pins Stage-03 manifest SHA-256
+`c7b219c7b13074b1d7e916ae427122a71f284541e8adc09ec1493faaa8da0c26`;
+it is the model-matched complete artifact. The similarly named tracked
+`artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v7/` archive is an older
+normalization lineage and must not be selected merely because it contains later stages.
+The detailed contract remains `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`.
+
+Conditioned Stage 06 distinguishes `direct_vote` (inserted gold-training labels),
+`direct_residual` (preserved `direct_bbb` records), and `indirect` (passive, efflux,
+and influx records) with `retrieval_source_id`. Stage 08 places the first two in the
+same direct group, so consumers must use record provenance when they need separate
+strata. The V19.1 BBB numeric checkpoint and prompt projection cover only the three
+indirect sources; direct residual scoring remains a separate model/cache contract.
+
+The historical five-level cache view deliberately refines that boundary. Conditioned
+benchmark `direct_vote` rows remain L1. Revised L2 combines historical
+`Proxy.central_functional_access` with preserved non-voting rows that historical v5
+placed in L1. Historical passive, efflux, and influx row assignments remain L3, L4,
+and L5. Build this view from current normalized-v7 Stage 06 eligibility and use the v5
+overlay only for row-family assignment; do not substitute the old archived index.
 
 完整 progressive valid 使用 audited BBB record-level family overlay。Matched 397-row valid 已完成全部五层和
 五个 baselines、零失败；完整结果只维护在
@@ -122,7 +156,7 @@ build_starling_evidence_library.py
 
 build_starling_full_evidence_library.py
   从既有 direct BBB evidence 加载 direct family，并通过公共 profile reader 接入
-  `data/starling_data/bbb_martins/{passive_permeability,efflux_transport,influx_transport}`，构建论文
+  `data/raw/starling/bbb_martins/{passive_permeability,efflux_transport,influx_transport}`，构建论文
   `starling_full_flat` / `starling_full_mechanism` 共用的四-family index。
 ```
 
@@ -409,7 +443,7 @@ outputs/chembl_tool/tasks/bbb_martins/distance_expansion/retrieval_replay/v3/
 历史 TDC/E12 frozen query set（不是当前 Starling gold split）：
 
 ```text
-data/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl
+data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl
 
 fields:
   drug: query SMILES
@@ -716,18 +750,15 @@ defaults remain unchanged.
 Architecture:
 
 ```text
-tools/chembl_tool/common/starling/
-  build_normalized_evidence_library.py   shared stages 01-03
-  split_downstream.py                    canonical Stage 04-05 plus historical Stage 04-09 compatibility
-  clustered_auxiliary_mapping.py         shared embedding-cluster reconciliation
-  stage_artifact_store.py                shared deterministic packaging
+data/processing/evidence_library/
+  shared/v1/clustered_auxiliary_mapping.py  shared reconciliation mechanics
+  stage_artifact_store.py                   deterministic stage packaging
+  versions/v7/build_normalized_evidence_library.py
+  versions/v7/pair_bucket_build.py
 
-tools/chembl_tool/tasks/bbb_martins/
+data/processing/evidence_library/versions/v7/tasks/bbb_martins/
   starling_*.py                           BBB source and normalization policies
   build_normalized_starling_evidence_library.py
-  build_starling_downstream_artifacts.py
-  retrieve_normalized_starling_neighbors.py
-  starling_artifact_store.py
 ```
 
 The complete layout is:
@@ -852,10 +883,10 @@ Build and retrieve:
   python -m tools.chembl_tool.tasks.bbb_martins.build_starling_direct_source
 
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping
+  python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping
 
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \
-  python -m tools.chembl_tool.tasks.bbb_martins.build_normalized_starling_evidence_library \
+  python -m data.processing.evidence_library.versions.v7.tasks.bbb_martins.build_normalized_starling_evidence_library \
   --workers 128
 
 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm \

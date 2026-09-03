@@ -12,8 +12,8 @@ import matplotlib
 import numpy as np
 import pandas as pd
 
-from tools.chembl_tool.common.starling.final_endpoint_pruning import supported_gap
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
+from data.processing.evidence_library.versions.v7.final_endpoint_pruning import supported_gap
+from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
 
 
 matplotlib.use("Agg")

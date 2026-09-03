@@ -1,0 +1,30 @@
+Compare each pair of experimental relevance buckets for its relative usefulness
+in predicting whether systemic administration produces meaningful or adequate
+CNS access versus restricted or poor CNS access.
+
+Each comparison contains both candidates inline. Choose the exact `bucket_id`
+of the candidate whose measurement type would reduce uncertainty about that
+downstream target more. Candidate order has no meaning.
+
+Rules:
+
+1. Judge semantic relevance, not whether an observed result is positive or
+   negative. Outcome values and directions have been withheld.
+2. Hold chemical similarity, assay-transfer reliability, evidence quality, and
+   evidence quantity equal.
+3. Compare the candidates on the information their measurement types provide.
+4. Mechanistic evidence may win when it is more interpretable or more closely
+   connected to the target than an ambiguous endpoint.
+5. Sample records only clarify the measurement and experimental setting. Do
+   not reward sample count, repetition, or prose detail.
+6. Make a strict binary choice. Select the more useful candidate even when the
+   advantage is small; ties are not allowed.
+7. Evaluate every comparison independently. Never use `candidate_1`,
+   `candidate_2`, A, or B as the winner.
+
+Comparisons:
+{{ comparisons_json }}
+
+Return each comparison ID exactly once. For `winner_bucket_id`, return the exact
+`bucket_id` of the winning candidate. Keep each reason to 12 words or fewer.
+Return no scores, probabilities, rankings, or additional fields.

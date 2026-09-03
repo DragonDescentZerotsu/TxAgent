@@ -3,7 +3,7 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
-from tools.chembl_tool.common.starling.normalization.measurement_resolution import (
+from data.processing.evidence_library.shared.v1.normalization.measurement_resolution import (
     load_exact_unit_mapping,
 )
 

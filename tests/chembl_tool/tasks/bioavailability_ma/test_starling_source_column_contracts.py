@@ -3,11 +3,11 @@ import json
 import pytest
 
 from tools.chembl_tool.common.evidence_contract import evidence_for_llm
-from tools.chembl_tool.common.starling.normalization.organization import _llm_example
+from data.processing.evidence_library.shared.v1.normalization.organization import _llm_example
 from tools.chembl_tool.tasks.bioavailability_ma.group_prompt_render import (
     _assay_transfer_evidence_record,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_source_column_contracts import (
     SOURCE_COLUMN_CONTRACT_VERSION,
     SOURCE_COLUMNS,
     llm_source_projection,

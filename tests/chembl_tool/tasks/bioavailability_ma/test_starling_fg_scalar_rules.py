@@ -1,29 +1,29 @@
 import pytest
 
-from tools.chembl_tool.common.starling.normalization.audit import (
+from data.processing.evidence_library.shared.v1.normalization.audit import (
     validate_measurement_pairs,
 )
-from tools.chembl_tool.common.starling.normalization.contracts import MeasurementPair
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.contracts import MeasurementPair
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     SOURCE_SPECIFIC_ATOMIC_SCALAR_STATUS,
     normalize_cleaned_records,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_auxiliary_metadata import (
     AuxiliaryMetadataAttacher,
 )
-from tools.chembl_tool.tasks.bioavailability_ma import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma import (
     starling_policy,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_fg_scalar_rules import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_fg_scalar_rules import (
     FG_SCALAR_RULE_VERSION,
     fg_scalar_rule_provenance,
     propose_fg_scalar,
     resolve_fg_measurement_pair,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_policy import (
     endpoint_specific_standardization_of_unit,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_spacing_and_spelling import (
     family_assignment,
     spacing_and_spelling_decision,
 )

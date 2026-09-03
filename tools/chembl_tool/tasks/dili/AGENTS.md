@@ -1,5 +1,12 @@
 # DILI task notes
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 本文件记录 DILI 的 task-specific 语义、机制驱动的 evidence ontology、assay screening 方向、
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、tool service、batch/resume、
 trace viewer、输出目录和成本规范仍以仓库根 `AGENTS.md` 为准。
@@ -19,9 +26,9 @@ DILI 当前不在四任务、21-condition 的 paper matrix 中，也还没有 `e
 当前计划适配 TDC DILI 二分类数据：
 
 ```text
-data/processed/DILI/train.jsonl
-data/processed/DILI/valid.jsonl
-data/processed/DILI/test.jsonl
+data/gold_labels/legacy/processed/DILI/train.jsonl
+data/gold_labels/legacy/processed/DILI/valid.jsonl
+data/gold_labels/legacy/processed/DILI/test.jsonl
 
 fields:
   drug: query SMILES

@@ -1,0 +1,114 @@
+{
+  "version": "bioavailability_endpoint_concepts.v1",
+  "source_id": "fg",
+  "input_field": "endpoint_name",
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 17,
+    "sha256": "24c9afdc81db8b4c261163a1b9cb04b5a12b4c510377ac08608c69c5588087b2"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "bidirectional_permeability",
+      "canonical_endpoint_name": "bidirectional_permeability",
+      "canonical_endpoint_concept": "bidirectional_permeability",
+      "review_reason": "Directional permeability and efflux-ratio assay readout; kept distinct from transporter substrate or secretory-transport claims."
+    },
+    {
+      "endpoint_name": "efflux_or_secretary_transport",
+      "canonical_endpoint_name": "efflux_or_secretory_transport",
+      "canonical_endpoint_concept": "efflux_or_secretory_transport",
+      "review_reason": "Reviewed spelling error: secretary means secretory in the source context."
+    },
+    {
+      "endpoint_name": "efflux_or_secretory_transport",
+      "canonical_endpoint_name": "efflux_or_secretory_transport",
+      "canonical_endpoint_concept": "efflux_or_secretory_transport",
+      "review_reason": "Canonical transporter-mediated efflux or secretion concept."
+    },
+    {
+      "endpoint_name": "gut_wall_extraction_or_first_pass",
+      "canonical_endpoint_name": "gut_wall_extraction_or_first_pass",
+      "canonical_endpoint_concept": "gut_wall_extraction_or_first_pass",
+      "review_reason": "Gut wall and intestinal first-pass wording denote the same anatomical extraction process; measurement units and assay context remain separate bucket dimensions."
+    },
+    {
+      "endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_concept": "intestinal_absorption",
+      "review_reason": "Macroscopic intestinal absorption outcome; kept distinct from carrier-specific uptake and transcellular transport."
+    },
+    {
+      "endpoint_name": "intestinal_elimination",
+      "canonical_endpoint_name": "intestinal_elimination",
+      "canonical_endpoint_concept": "intestinal_excretion_or_elimination",
+      "review_reason": "Intestinal elimination clearance into the lumen is synonymous with intestinal excretion at this source's endpoint granularity."
+    },
+    {
+      "endpoint_name": "intestinal_excretion",
+      "canonical_endpoint_name": "intestinal_excretion",
+      "canonical_endpoint_concept": "intestinal_excretion_or_elimination",
+      "review_reason": "Luminal intestinal excretion is the same process represented by the source's intestinal-elimination endpoint."
+    },
+    {
+      "endpoint_name": "intestinal_extraction_or_first_pass",
+      "canonical_endpoint_name": "intestinal_extraction_or_first_pass",
+      "canonical_endpoint_concept": "gut_wall_extraction_or_first_pass",
+      "review_reason": "Intestinal and gut-wall extraction or first-pass wording are true anatomical synonyms."
+    },
+    {
+      "endpoint_name": "intestinal_first_pass",
+      "canonical_endpoint_name": "intestinal_first_pass",
+      "canonical_endpoint_concept": "gut_wall_extraction_or_first_pass",
+      "review_reason": "Named intestinal first-pass effect is the same gut-wall extraction process; scale and reference semantics remain separate."
+    },
+    {
+      "endpoint_name": "intestinal_metabolism",
+      "canonical_endpoint_name": "intestinal_metabolism",
+      "canonical_endpoint_concept": "intestinal_metabolism",
+      "review_reason": "Chemical or enzymatic gut-wall metabolism; kept distinct from extraction, transport, and systemic exposure consequences."
+    },
+    {
+      "endpoint_name": "intestinal_permeability",
+      "canonical_endpoint_name": "intestinal_permeability",
+      "canonical_endpoint_concept": "intestinal_permeability",
+      "review_reason": "Effective intestinal permeability readout; kept distinct from explicitly bidirectional monolayer permeability."
+    },
+    {
+      "endpoint_name": "intestinal_transport",
+      "canonical_endpoint_name": "intestinal_transport",
+      "canonical_endpoint_concept": "intestinal_transport",
+      "review_reason": "Generic intestinal transport concept; target and assay context retain the specific mechanism."
+    },
+    {
+      "endpoint_name": "oral_exposure_change_due_to_gut_wall",
+      "canonical_endpoint_name": "oral_exposure_change_due_to_gut_wall",
+      "canonical_endpoint_concept": "oral_exposure_change_due_to_gut_wall",
+      "review_reason": "Downstream oral AUC, Cmax, or availability consequence attributed to gut-wall processes; not a direct transport or metabolism readout."
+    },
+    {
+      "endpoint_name": "other_intestinal_transport",
+      "canonical_endpoint_name": "other_intestinal_transport",
+      "canonical_endpoint_concept": "intestinal_transport",
+      "review_reason": "Other is a residual source label rather than a distinct biological transport process; target and assay context preserve subtype."
+    },
+    {
+      "endpoint_name": "transcellular_transport",
+      "canonical_endpoint_name": "transcellular_transport",
+      "canonical_endpoint_concept": "transcellular_transport",
+      "review_reason": "Transport through cells is a specific route and is not synonymous with generic uptake, permeability, or paracellular transport."
+    },
+    {
+      "endpoint_name": "uptake_or absorptive_transport",
+      "canonical_endpoint_name": "uptake_or_absorptive_transport",
+      "canonical_endpoint_concept": "uptake_or_absorptive_transport",
+      "review_reason": "Reviewed missing-underscore spacing error; the source record reports the same absorptive-transport concept."
+    },
+    {
+      "endpoint_name": "uptake_or_absorptive_transport",
+      "canonical_endpoint_name": "uptake_or_absorptive_transport",
+      "canonical_endpoint_concept": "uptake_or_absorptive_transport",
+      "review_reason": "Canonical absorptive uptake or transport concept."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+Extract at most one continuous BBB measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return {"rows": [...]} with exactly one result per id, in order:
+
+  {"id":"...", "status":"ok"|"relative"|"unsure"|"unavailable",
+   "measurements":[{"measurement":"<plain decimal>","unit":"<unit as read>"}]}
+
+Only `ok` carries a measurement, and it carries exactly one. All other statuses carry `[]`. Resolve rows independently.
+
+The schema declares `{{ declared_measurement_field }}` as the primary measurement column; `{{ measurement_field }}` is its exact cleaned projection. Extract the main intended experimental outcome corresponding to the row's endpoint or named metric. `support_text` may validate or disambiguate the coefficient, identify or validate its unit, and establish what reference the value uses. It may resolve the selected outcome when the primary field is incomplete, but do not substitute an incidental number merely because it appears in support.
+
+Do not select a dose, administered concentration, exposure duration, timepoint, sample size, identifier, comparator value, control value, baseline value, or other assay condition unless the named endpoint itself is measuring that quantity. For instance, a fitted outcome explicitly reported as Km, Kt, Ki, Vmax, or Tmax is a measurement, not an input condition. If support conflicts with the selected value or unit and the conflict cannot be resolved, return `unsure`. If the row contains no numeric measurement of the named outcome, return `unavailable`. Never emit multiple measurements.
+
+`ok` means exactly one clear absolute or endpoint-defined output. Brain/plasma Kp, efflux ratio, and Papp(B→A)/Papp(A→B) are endpoint-defined ratios, not comparator-relative statements. Use `relative` when the main numeric outcome is referenced to a control, baseline, treatment, genotype, formulation, dose arm, or different compound and that reference is not defined by the endpoint. Return no measurement for `relative`.
+
+Use one finite plain decimal point estimate; remove spread (`8 +/- 1.5` -> `8`) but never convert a bound/range. Do not convert, rescale, round, compute, or logarithmically transform. Keep a printed power-of-ten scale in the unit: `3.16 x 10^-6 cm/s` -> `3.16`, `10^-6 cm/s`.
+
+{% if unit_field %}`{{ unit_field }}` is the exact projection of declared unit column `{{ declared_unit_field }}`. Use support to validate or complete it when needed; unresolved conflicts are `unsure`.{% else %}Read the selected outcome's unit from measurement or support. If neither states it and the endpoint does not define it, return `unsure`.{% endif %}
+
+Use these exact canonical ratio units:
+- `log10_ratio` for logBB or another explicitly base-10 logarithm of a ratio;
+- `ratio` for an unlogged endpoint-defined ratio such as brain/plasma Kp, efflux ratio, or Papp(B→A)/Papp(A→B);
+- `%` when the ratio is explicitly printed as a percentage.
+Never use `dimensionless`, `logBB`, an endpoint name, or a prose description as the unit. If a logarithmic base is not explicit or fixed by the named endpoint, return `unsure` rather than guessing.

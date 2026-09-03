@@ -9,11 +9,11 @@ and a resumed build disagrees with a full one.
 
 import pytest
 
-from tools.chembl_tool.common.starling.compact_artifacts import (
+from data.processing.evidence_library.compact_artifacts import (
     build_relational_evidence_catalog,
     compact_persisted_records,
 )
-from tools.chembl_tool.tasks.skin_reaction.starling_policy import POLICY
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_policy import POLICY
 
 FAMILY_FIELDS = ("assay_tier", "endpoint_group", "evidence_role", "target_pref_name")
 

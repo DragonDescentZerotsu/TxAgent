@@ -33,7 +33,7 @@ DEFAULT_NEW_INDEX = Path(
     "starling_skin_reaction_neighbor_index.pkl"
 )
 DEFAULT_VALID = Path(
-    "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl"
 )
 DEFAULT_OUT_DIR = Path(
     "outputs/paper/skin_direct_scope_retrieval_audit_record_supported_v2_valid"

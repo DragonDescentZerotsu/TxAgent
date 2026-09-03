@@ -1,0 +1,20 @@
+{
+  "buckets_with_input_unit_medians_at_least_one_decade_apart": 10,
+  "buckets_with_multiple_input_units": 860,
+  "buckets_with_supported_gap": 0,
+  "keyed_bucket_counts_by_measurement_kind": {
+    "binary": 78848,
+    "continuous": 59462,
+    "non_scalar": 34760
+  },
+  "pair_buckets_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_pair_buckets/pair_bucket_records.parquet",
+  "pair_buckets_sha256": "0e98e51ebf2228424a1dba4c92465f2300a39de9ab48c9446b80e817dc8b5945",
+  "plot": "outputs/chembl_tool/tasks/bbb_martins/analysis/pair_bucket_distributions_v2_current/bbb_pair_bucket_distributions.png",
+  "plot_sha256": "f2251d78f1cfe5794cc7d5d628d344dd237739dad87cc9657c4a0e103fd02d73",
+  "plotted_continuous_buckets": 59462,
+  "plotted_records": 99075,
+  "records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/03_pair_buckets/records.parquet",
+  "records_sha256": "f50c2be5265f1ea5afa782445b52c87380dac877dcf88a5318e9ade93c1b5b06",
+  "row_table": "outputs/chembl_tool/tasks/bbb_martins/analysis/pair_bucket_distributions_v2_current/bbb_pair_bucket_distribution_rows.csv",
+  "row_table_sha256": "94fc273fb51079499a9cd832fcc2eb23013a8fd37f587849f3f39ca68b3b62b3"
+}

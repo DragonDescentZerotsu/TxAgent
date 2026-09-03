@@ -1,0 +1,91 @@
+{
+  "api_base_url": "https://api.openai.com/v1",
+  "assignment_method_counts": {
+    "invalid_row_response:entry_without_a_unit:structural_retry": 474,
+    "invalid_row_response:id_mismatch:structural_retry": 46,
+    "invalid_row_response:measurement_is_not_a_plain_decimal": 45,
+    "invalid_row_response:measurement_is_not_a_plain_decimal:structural_retry": 2,
+    "invalid_row_response:non_ok_carries_measurements:structural_retry": 2,
+    "model_single_pass": 65674,
+    "model_structural_retry": 3199
+  },
+  "base_mapping": null,
+  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bbb_martins/v8/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "0e807b7db73108ec621eb545475937605648990e2023d0b8b83e223b0b2e5512",
+  "delta_inference": {
+    "model": "gpt-5.4-mini",
+    "rows": 69442
+  },
+  "endpoint_profile": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bbb_martins/v8/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "b7da2f055c977e845ed1cea67ee90c94f5ccbf606a172b1483100892d7986d69",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v7",
+  "inference": {
+    "max_completion_tokens": 65536,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "mapping_path": "data/artifacts/evidence_library_assets/bbb_martins/construction_assets/measurement_resolution_v15_gpt54mini/full/measurement_resolution.parquet",
+  "mapping_rows": 69442,
+  "mapping_sha256": "c27b1316fc0a0c1312b5db7852e95d65338aa3041bf1d8ff266b9d301352a87c",
+  "mapping_version": "bbb_martins_measurement_resolution.v15",
+  "model": "gpt-5.4-mini",
+  "models": [
+    "gpt-5.4-mini"
+  ],
+  "prompt": {
+    "batch_size": 20,
+    "maximum_measurements_per_row": 1,
+    "prompt_version": "bbb_measurement_resolution_prompt.v21",
+    "rendered_sha256": {
+      "direct_bbb": "8c2bc66c2ecb141a28dedfad124987605ca20a7cab3e6858f44761764dc2a835",
+      "efflux_transport": "ac2dd1c75822f18a40d2d3940fd49983cef99333a468eb084fc63e4b2919d8a2",
+      "influx_transport": "70bca04b99f8275e2c505673e33bd9da6a937c6fb6b5e3839381e8d0cc83bc79",
+      "passive_permeability": "54c6ff0e08b9abd56abe6822bb84480aa2329588194a8f8f41b6e5ac93ccea52"
+    },
+    "routing_rule_policy_version": "bbb_measurement_resolution_rules.v1",
+    "source_measurement_fields": {
+      "direct_bbb": {
+        "measurement_field": "quant_value",
+        "unit_field": "quant_units"
+      },
+      "efflux_transport": {
+        "measurement_field": "quantitative_value",
+        "unit_field": null
+      },
+      "influx_transport": {
+        "measurement_field": "reported_result",
+        "unit_field": null
+      },
+      "passive_permeability": {
+        "measurement_field": "metric_value",
+        "unit_field": "metric_units"
+      }
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/prompts/measurement_resolution/bbb_v21.jinja",
+    "template_sha256": "8a98b9c7a9058e4cf2a9c48b0e4bf30618a7dd9c6a99bccc83796897337a15fd",
+    "unit_vocabulary": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v8/unit_vocabulary.v1.json",
+      "sha256": "01c874f4d20b595e00e919b0ee33080544876fe3de2a6534710beabe3431f14e",
+      "units": 12721,
+      "version": "observed_source_units.v1"
+    }
+  },
+  "rejected_rows": 569,
+  "routing_version": "starling_measurement_routing.v7",
+  "status_counts": {
+    "ok": 50015,
+    "relative": 9964,
+    "unavailable": 5063,
+    "unsure": 4400
+  },
+  "task_id": "bbb_martins",
+  "validations": {
+    "maximum_measurements_per_row": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

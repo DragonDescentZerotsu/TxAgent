@@ -1,0 +1,30 @@
+Extract two fields from every supplied oral-exposure study_context.
+
+Use only information explicitly stated in study_context. Do not infer species or matrix
+from the drug, disease, route, study design, or outside knowledge.
+
+canonical_species_context must be one of:
+- human, rat, mouse, dog, monkey, rabbit, pig, horse
+- other_animal: an explicit animal not covered above
+- multiple_species: more than one explicit study species
+- null: no study species is explicit
+
+Normalize common aliases, including volunteers/subjects/patients -> human,
+murine -> mouse, canine -> dog, porcine -> pig, and nonhuman primate or macaque
+-> monkey. Ignore sex, strain, age, health status, and population qualifiers.
+
+canonical_biological_matrix must be one of:
+- plasma, serum, whole_blood, urine
+- tissue_or_other: an explicit biological sampling matrix outside the four above
+- multiple_matrices: more than one explicit sampling matrix
+- null: no biological sampling matrix is explicit
+
+Treat arterial/venous plasma and blood plasma as plasma. Do not map an unqualified
+mention of blood sampling to whole_blood unless whole blood is explicit. A formulation,
+food matrix, or assay medium is not a biological sampling matrix.
+
+Return exactly one object for every supplied ID and no additional IDs. Use JSON null,
+not a string such as "unknown" or "none".
+
+Output format:
+{"mapping":{"<input_id>":{"canonical_species_context":"human","canonical_biological_matrix":"plasma"}}}

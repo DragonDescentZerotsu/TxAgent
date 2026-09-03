@@ -30,17 +30,17 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 
-from baselines.minimol.condition_features import (
+from predict.baselines.minimol.condition_features import (
     condition_one_hot as encode_condition_one_hot,
     condition_vocabulary as build_condition_vocabulary,
 )
-from baselines.minimol.embedding_runtime import (
+from predict.baselines.minimol.embedding_runtime import (
     DEFAULT_MINIMOL_SOURCE,
     checkpoint_provenance,
     create_featurizer,
     embed_smiles,
 )
-from baselines.minimol.head_runtime import (
+from predict.baselines.minimol.head_runtime import (
     EmbeddingDataset,
     TaskHead,
     predict_scores,
@@ -49,7 +49,7 @@ from baselines.minimol.head_runtime import (
 from tools.chembl_tool.tasks.bioavailability_ma.condition_ontology import (
     NO_REPORTED_CONDITION,
 )
-from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
+from data.processing.gold_labels.conditioned_benchmark import task_root
 
 
 DEFAULT_DATA_DIR = task_root("bioavailability_ma")

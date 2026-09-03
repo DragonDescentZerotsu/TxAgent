@@ -1,0 +1,35 @@
+{
+  "source_revision": "f50c638621fcc2dedfc9e00f7074f867640efc1b",
+  "source_arrow_sha256": "faa63a4e2ecc234691c86bc63c2cd3a69db82387cfe0687cc930d9a5e458709c",
+  "review_version": "bbb_experimental_metric_direction_review.v1",
+  "reviewed_proposed_source_indices": [
+    4819, 5820, 5823, 15489, 15600, 17538, 17540, 25420, 25955,
+    31666, 35118, 36914, 38215, 42015, 43542, 50881, 52909, 57524,
+    57526, 59256, 60584, 80511, 81524, 83496, 86463, 89445, 99554,
+    99688, 101067, 102086, 102172, 103953, 104031, 109236, 113395,
+    120050, 120051, 120052, 120053, 129761, 133439, 133440, 137888,
+    140898, 143415, 144167, 144466, 145289, 145290, 152288, 163572,
+    167044, 168101, 169252, 178326, 178967, 184162, 190448, 197641,
+    198941, 199433, 200121, 200893, 204051, 212150, 216413, 229176,
+    233038, 236855, 247901, 248428, 255352, 256764, 256765, 256766,
+    256767, 259891, 261311, 267118, 292235, 292236
+  ],
+  "excluded": {
+    "15600": "ex_vivo_model_not_systemic_cns_access",
+    "17538": "radioactive_metabolite_confounds_kpuu_direction",
+    "17540": "radioactive_metabolite_confounds_kpuu_direction",
+    "25420": "prodrug_analyte_attribution_and_active_exclusion_conflict",
+    "36914": "brain_and_serum_both_undetected_no_systemic_exposure_challenge",
+    "38215": "mechanism_qualified_no_simple_diffusion_not_overall_access_direction",
+    "50881": "mixed_patient_pairs_not_uniformly_undetected",
+    "60584": "post_infection_context_not_encoded_in_condition_field",
+    "80511": "pharmacodynamic_eye_movement_proxy_not_measured_cns_exposure",
+    "104031": "progressive_cns_disease_context_confounds_molecule_only_outcome",
+    "109236": "late_timepoint_non_detection_after_rapid_elimination",
+    "137888": "pet_target_density_confounds_low_uptake_with_bbb_access",
+    "144466": "mci_or_alzheimer_disease_context_not_molecule_only",
+    "168101": "query_analyte_is_component_of_injected_mixture",
+    "216413": "minimal_is_measurement_descriptor_not_reliable_direction",
+    "255352": "radiotracer_metabolic_degradation_confounds_parent_brain_uptake"
+  }
+}

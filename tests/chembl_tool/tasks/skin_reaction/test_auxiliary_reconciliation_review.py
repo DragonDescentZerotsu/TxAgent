@@ -4,11 +4,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.auxiliary_reconciliation import (
     FROZEN_NAMESPACES,
     REVIEW_NAMESPACES,
 )
-from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_reconciliation_review import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.auxiliary_reconciliation_review import (
     apply_accepted_decisions,
     build_label_catalog,
     build_review_packets,
@@ -16,7 +16,7 @@ from tools.chembl_tool.tasks.skin_reaction.data_processing.auxiliary_reconciliat
     load_policy,
     validate_primary_decisions,
 )
-from tools.chembl_tool.tasks.skin_reaction.data_processing.reconcile_auxiliary_mapping import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing.reconcile_auxiliary_mapping import (
     _build_parser,
 )
 

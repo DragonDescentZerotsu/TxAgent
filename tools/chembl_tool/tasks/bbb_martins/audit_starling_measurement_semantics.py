@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.tasks.bbb_martins.starling_measurement_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_semantics import (
     measurement_semantics_audit,
 )
 

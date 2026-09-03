@@ -3,20 +3,20 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.starling.pair_buckets import (
+from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
+from data.processing.evidence_library.shared.v1.pair_buckets import (
     UNKNOWN_TOKEN,
     materialize_pair_buckets,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar import (
     build_sidecar,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_PAIR_BUCKET_VERSION,
     BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
     SOURCE_PAIR_FIELDS,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import RECORD_CONTRACT
 
 
 def _record(

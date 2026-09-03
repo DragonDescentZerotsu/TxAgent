@@ -1,0 +1,51 @@
+{
+  "bioavailability_ma_score_cache_contract": {
+    "global_exclusion": "L1 records, 0 unresolved-endpoint records, and 1 records without a resolvable parent identity",
+    "minimum_similarity": 0.0,
+    "morgan_pool_per_level": 75,
+    "other_out_of_domain_rows_retained_and_flagged": true,
+    "per_query_exclusion": "scaffold_disjoint",
+    "unresolved_endpoint_rows": 0,
+    "unresolved_parent_identity_rows": 1
+  },
+  "counts_by_level_and_group": {
+    "L1:Observed.direct_oral_bioavailability": 20540,
+    "L2:Observed.nondirect_oral_bioavailability": 152332,
+    "L3:Observed.oral_auc_cmax_exposure": 104174,
+    "L4:Fa.absorption_solubility_permeability": 73945,
+    "L5:Fg.gut_wall_efflux_intestinal_metabolism": 26861,
+    "L6:Fh.hepatic_clearance_metabolic_stability": 61576
+  },
+  "current_direct_mapping_votes": 20540,
+  "direct_mapping_votes_outside_l1": 0,
+  "family_policy_version": "bioavailability_source_family_purity.legacy_record_supported_v2_vote_pure.v1",
+  "inputs": {
+    "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_claims.parquet": "d6c2dc9e5e91a6e1e9c159fcda20c2ebda73595f26b27533b500c209f1631140",
+    "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/artifacts/starling/bioavailability_ma/canonical_sources/canonical_direct_v2/direct_source_rows.parquet": "43422caea9a7ef2916aafc30ec6bb5ef99de24c526ed32c2a053fd9dce5a6b03",
+    "data/artifacts/starling/bioavailability_ma/source_reviews/context_conditioned_review_v2/proposal_audit.jsonl": "c099cfbcc5ce98ee159a459263296dda2c2013acfc8f25ec2c3b5575ff309348",
+    "data/evidence_libraries/bioavailability_ma/v7/03_pair_buckets/records.parquet": "38670ad186f68997a9e8b8d0a4ecce7efd0ba406d128e6a87b689656274418f6",
+    "data/gold_labels/Bioavailability_Ma/v1/scaffold/source_condition_review.jsonl": "29e1206015e07b146043a00198ed294975732241fe32f7365c9f6ebeecf62242"
+  },
+  "levels": {
+    "L1": 20540,
+    "L2": 152332,
+    "L3": 104174,
+    "L4": 73945,
+    "L5": 26861,
+    "L6": 61576
+  },
+  "mapping_version": "normalized_v7_stage3_progressive_levels.v1",
+  "output": {
+    "path": "data/artifacts/evidence_library_assets/bioavailability_ma/construction_assets/progressive_level_mapping_v1/record_levels.parquet",
+    "sha256": "74a228d9f9df6116693e0495dee8951587194cdf9cf6f8607f13b6e47482333e"
+  },
+  "outside_progressive_scope": 0,
+  "rows": 439428,
+  "stage": "normalized_v7_stage3_pair_buckets",
+  "task_id": "bioavailability_ma",
+  "validations": {
+    "canonical_record_ids_unique": true,
+    "one_sidecar_row_per_stage3_record": true,
+    "skin_outside_scope_not_assigned_a_level": true
+  }
+}

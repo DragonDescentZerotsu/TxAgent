@@ -3,7 +3,7 @@
 更新时间：2026-08-28。
 
 本文件保留历史 Starling 数据迁移和实验，不再定义 current gold。当前四任务唯一评估入口是
-`data/conditioned_benchmark/<Task>/scaffold/`；统一合同见
+`data/gold_labels/<Task>/v1/scaffold/`；统一合同见
 `common/starling/CONDITIONED_BENCHMARK.md`，机器可读 current metrics 见
 `current_conditioned_results.json`。历史 molecule-only、gold-vN、selected-vN、TDC test/valid 和下文旧矩阵
 不得作为新的 runner defaults。
@@ -184,9 +184,8 @@ family×label 分层 sample 全部通过，但不能替代 paper freeze 前的�
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
-tools/chembl_tool/common/starling/build_bbb_experimental_meaningful_cns_access.py
-tools/chembl_tool/common/starling/audit_bbb_experimental_meaningful_cns_access.py
-data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/
+data/processing/evidence_library/versions/v7/tasks/bbb_martins/experimental_meaningful_cns_access_benchmark.py
+data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/
 ```
 
 所有旧 BBB baseline/agent metrics 均针对旧 gold，不是新任务性能。新 lineage 已用 valid+test union 重建
@@ -263,8 +262,8 @@ label imbalance，最后才最大化第一版 valid molecule 复用。BBB valid/
 全局最小值，并均衡分配为 valid/test 各 5 个。当前入口与 canonical roots：
 
 ```text
-tools/chembl_tool/common/starling/build_record_supported_benchmark.py
-data/processed_starling_record_supported_v2/
+data/processing/gold_labels/build_record_supported_benchmark.py
+data/gold_labels/legacy/processed_starling_record_supported_v2/
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
 tools/chembl_tool/paper_experiments/seed_starling_matrix_reuse.py
@@ -1177,9 +1176,9 @@ outputs/baselines/minimol_embedding_knn_starling_valid/<Task>/scaffold/
 公共协议和唯一数据构建入口：
 
 ```text
-tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
-tools/chembl_tool/common/starling/benchmark_dataset.py
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
+tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
+data/processing/gold_labels/benchmark_dataset.py
+data/processing/gold_labels/build_conditioned_benchmark.py
 ```
 
 当前冻结 v4 规则：
@@ -1252,7 +1251,7 @@ record/PMID provenance distributions:
   tools/chembl_tool/paper_experiments/analyze_starling_majority_thresholds.py
 
 70% gold split build:
-  tools/chembl_tool/common/starling/build_benchmark_datasets.py
+  data/processing/gold_labels/build_conditioned_benchmark.py
 
 valid+test-heldout index build:
   tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
@@ -1279,7 +1278,7 @@ Gold split 与 retrieval evidence library 是两个步骤。正式 retrieval con
 入口：
 
 ```text
-tools/chembl_tool/common/starling/heldout_index.py
+data/processing/evidence_library/heldout_index.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 ```
 
@@ -1823,7 +1822,7 @@ accuracy delta `-0.0245`，macro-F1 delta `-0.0287`，paired-bootstrap 95% CI `[
 仍未超过 direct，不能 promotion。正式 artifacts：
 
 ```text
-data/starling_data/skin_reaction/canonical_sensitization_v3/manifest.json
+data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/manifest.json
 outputs/paper/minimol_retrieval_features_skin_canonical_v3_record_supported_v2_valid_verified/summary.json
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_deepseek_v4_pro_skin_canonical_v3_minimol_top3_audited/
 ```
@@ -1898,7 +1897,7 @@ outputs/paper/skin_causal_panel_seed_v1_scaffold_valid_deepseek_v4_pro/{source_b
 
 ```text
 data builder:
-  python -m tools.chembl_tool.common.starling.build_benchmark_datasets
+  python -m data.processing.gold_labels.build_conditioned_benchmark
 
 held-out index:
   python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices
@@ -1917,19 +1916,19 @@ formal figure:
 
 MiniMol:
   python -m baselines.minimol.run_bioavailability_ma \
-    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
     --output-dir <model-and-split-specific-output> \
     --train-all --evaluation-split valid
 
 Morgan KNN:
   python -m baselines.structure_knn.run \
-    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
     --output-dir <model-and-split-specific-output> \
     --k 3 --evaluation-split valid
 
 MiniMol embedding KNN:
   python -m baselines.minimol.run_embedding_knn \
-    --data-dir data/processed_starling/<Task>/<random|scaffold> \
+    --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
     --embedding-cache-dir <MiniMol-output>/embeddings \
     --output-dir <model-and-split-specific-output> \
     --k 3 --evaluation-split valid

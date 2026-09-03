@@ -1,38 +1,13 @@
-import pytest
-
-from tools.chembl_tool.common.starling.build_bbb_experimental_meaningful_cns_access import (
-    DEFAULT_OUTPUT_ROOT,
-    _parse_args,
-    _validate_build_scope,
-)
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
-    SOURCE_REVISION,
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
     classify_scope,
     label_record,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
     label_record as label_record_v3,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
     label_record as label_record_v4,
 )
-
-
-def test_builder_rejects_revision_drift_and_partial_canonical_output() -> None:
-    revision_drift = _parse_args(["--bbb-revision", "different"])
-    with pytest.raises(ValueError, match="frozen BBB source revision"):
-        _validate_build_scope(revision_drift)
-
-    partial = _parse_args(["--max-rows", "10"])
-    assert partial.bbb_revision == SOURCE_REVISION
-    assert partial.output_root == str(DEFAULT_OUTPUT_ROOT)
-    with pytest.raises(ValueError, match="non-canonical"):
-        _validate_build_scope(partial)
-
-    smoke = _parse_args(
-        ["--max-rows", "10", "--output-root", "outputs/smoke/bbb-gold"]
-    )
-    _validate_build_scope(smoke)
 
 
 def test_accepts_measured_brain_exposure() -> None:

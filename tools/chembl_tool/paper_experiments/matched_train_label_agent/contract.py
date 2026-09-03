@@ -74,7 +74,7 @@ TASK_SPECS: dict[str, TaskSpec] = {
         batch_module="tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch",
         condition="bbb_martins__matched_train_label_direct",
         input_jsonl=Path(
-            "data/processed_starling_experimental_meaningful_cns_access_v2/"
+            "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/"
             "BBB_Martins/scaffold/valid.jsonl"
         ),
         knn_predictions=Path(
@@ -103,7 +103,7 @@ TASK_SPECS: dict[str, TaskSpec] = {
         batch_module="tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch",
         condition="bioavailability_ma__matched_train_label_direct",
         input_jsonl=Path(
-            "data/processed_starling_record_supported_v2/"
+            "data/gold_labels/legacy/processed_starling_record_supported_v2/"
             "Bioavailability_Ma/scaffold/valid.jsonl"
         ),
         knn_predictions=Path(
@@ -134,7 +134,7 @@ TASK_SPECS: dict[str, TaskSpec] = {
         batch_module="tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch",
         condition="skin_reaction__matched_train_label_direct",
         input_jsonl=Path(
-            "data/processed_starling_record_supported_v2/"
+            "data/gold_labels/legacy/processed_starling_record_supported_v2/"
             "Skin_Reaction/scaffold/valid.jsonl"
         ),
         knn_predictions=Path(

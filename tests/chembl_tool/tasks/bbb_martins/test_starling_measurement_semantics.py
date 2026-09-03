@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_measurement_and_unit,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_measurement_semantics import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_semantics import (
     numeric_domain_status,
     resolve_measurement_semantics,
     resolve_qualified_unit_alias,
     unit_is_compatible,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_record_canonicalization import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_record_canonicalization import (
     normalization_validity_status,
 )
 

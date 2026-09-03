@@ -5,24 +5,22 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling.v7_benchmark_view import (
+from data.processing.evidence_library.shared.v1.normalization.cleaning import (
+    file_sha256,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import (
+    POLICY,
+)
+from data.processing.evidence_library.views import (
     ALL_SCAFFOLD_FILTER,
     DIRECT_SOURCE_ONLY_FILTER,
     FULL_VIEW,
     _filter_records,
-    build_v7_benchmark_view,
+    build_library_view,
 )
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     load_index,
     retrieve_neighbors,
-)
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_downstream_artifacts import (
-    get_spec as get_bioavailability_downstream_spec,
-)
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import POLICY
-from tools.chembl_tool.tasks.skin_reaction.build_starling_downstream_artifacts import (
-    get_spec as get_skin_downstream_spec,
 )
 
 
@@ -106,7 +104,7 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
     heldout.write_text(json.dumps({"drug": "CCO", "Y": 1}) + "\n", encoding="utf-8")
 
     full_dir = tmp_path / "full"
-    full = build_v7_benchmark_view(
+    full = build_library_view(
         policy=POLICY,
         normalized_root=normalized_root,
         heldout_labels_jsonl=heldout,
@@ -117,7 +115,9 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
 
     assert full["heldout_filter"]["zero_parent_overlap"] is True
     assert full["heldout_filter"]["n_excluded_heldout_records"] == 1
-    assert set(pd.read_parquet(full_dir / "06_records/records.parquet")["canonical_smiles"]) == {
+    assert set(
+        pd.read_parquet(full_dir / "06_records/records.parquet")["canonical_smiles"]
+    ) == {
         "CCN",
         "CCC",
     }
@@ -141,9 +141,10 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
     source_projection = direct_evidence["minimal_evidence"]["examples"][0][
         "source_fields"
     ]
-    assert "resolved_measurement_display" not in direct_evidence[
-        "minimal_evidence"
-    ]["examples"][0]
+    assert (
+        "resolved_measurement_display"
+        not in direct_evidence["minimal_evidence"]["examples"][0]
+    )
     assert source_projection["canonical_context"] == {
         "condition_atoms": [],
         "condition_group": "",
@@ -167,6 +168,7 @@ def test_v7_paper_view_filters_heldout_parents_across_every_group(tmp_path):
         "../07_molecule_evidence/manifest.json"
     )
 
+
 def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
     normalized_root = tmp_path / "v7"
     records = [
@@ -179,7 +181,7 @@ def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
     heldout.write_text(json.dumps({"drug": "CCO", "Y": 1}) + "\n", encoding="utf-8")
 
     output = tmp_path / "direct-source-only"
-    manifest = build_v7_benchmark_view(
+    manifest = build_library_view(
         policy=POLICY,
         normalized_root=normalized_root,
         heldout_labels_jsonl=heldout,
@@ -187,7 +189,9 @@ def test_v7_direct_source_view_retains_heldout_mechanism_records(tmp_path):
         benchmark_split="scaffold",
         view=FULL_VIEW,
         heldout_filter_mode=DIRECT_SOURCE_ONLY_FILTER,
-        downstream_spec=get_bioavailability_downstream_spec(),
+        filter_source_id="hf_bioavailability",
+        filter_scope_field="canonical_bioavailability_evidence_scope",
+        filter_scope_value="direct",
     )
 
     rows = pd.read_parquet(output / "06_records/records.parquet")
@@ -227,7 +231,9 @@ def test_v7_gold_swap_preserves_residuals_and_replaces_only_votes(tmp_path):
     vote = _record("record-1", "CCN", "Observed.direct_oral_bioavailability", 42.0)
     residual = _record("record-2", "CCO", "Observed.direct_oral_bioavailability", 18.0)
     residual["retrieval_source_id"] = "direct_residual"
-    indirect = _record("record-3", "CCC", "Observed.nondirect_oral_bioavailability", None)
+    indirect = _record(
+        "record-3", "CCC", "Observed.nondirect_oral_bioavailability", None
+    )
     _write_stage3(normalized_root, [vote, residual, indirect])
     heldout = tmp_path / "heldout.jsonl"
     heldout.write_text(json.dumps({"drug": "CCO", "Y": 0}) + "\n", encoding="utf-8")
@@ -248,7 +254,7 @@ def test_v7_gold_swap_preserves_residuals_and_replaces_only_votes(tmp_path):
     )
 
     output = tmp_path / "gold-swap"
-    manifest = build_v7_benchmark_view(
+    manifest = build_library_view(
         policy=POLICY,
         normalized_root=normalized_root,
         heldout_labels_jsonl=heldout,
@@ -256,7 +262,9 @@ def test_v7_gold_swap_preserves_residuals_and_replaces_only_votes(tmp_path):
         out_dir=output,
         benchmark_split="scaffold",
         heldout_filter_mode=DIRECT_SOURCE_ONLY_FILTER,
-        downstream_spec=get_bioavailability_downstream_spec(),
+        filter_source_id="hf_bioavailability",
+        filter_scope_field="canonical_bioavailability_evidence_scope",
+        filter_scope_value="direct",
     )
 
     rows = pd.read_parquet(output / "06_records/records.parquet")
@@ -282,7 +290,9 @@ def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     hf = _record("record-1", "Nc1ccccc1", "Observed.direct_oral_bioavailability", 40.0)
     oral = _record("record-2", "Cc1ccccc1", "Observed.oral_auc_cmax_exposure", None)
     oral.update(source_id="oral_exposure", source_name="oral", endpoint_name="AUC")
-    fa = _record("record-3", "CCc1ccccc1", "Fa.absorption_solubility_permeability", None)
+    fa = _record(
+        "record-3", "CCc1ccccc1", "Fa.absorption_solubility_permeability", None
+    )
     fa.update(source_id="fa", source_name="fa", endpoint_name="solubility")
     kept = _record("record-4", "C1CCCCC1", "Observed.direct_oral_bioavailability", 42.0)
     _write_stage3(normalized_root, [hf, oral, fa, kept])
@@ -293,7 +303,7 @@ def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     )
 
     output = tmp_path / "all-scaffolds"
-    manifest = build_v7_benchmark_view(
+    manifest = build_library_view(
         policy=POLICY,
         normalized_root=normalized_root,
         heldout_labels_jsonl=heldout,
@@ -307,7 +317,9 @@ def test_v7_all_scaffold_filter_applies_to_every_source(tmp_path):
     heldout_filter = manifest["heldout_filter"]
     assert heldout_filter["n_excluded_scaffold_records"] == 3
     assert heldout_filter["zero_heldout_scaffold_overlap"] is True
-    assert heldout_filter["source_counts"]["hf_bioavailability"]["excluded_heldout"] == 1
+    assert (
+        heldout_filter["source_counts"]["hf_bioavailability"]["excluded_heldout"] == 1
+    )
     assert heldout_filter["source_counts"]["oral_exposure"]["excluded_heldout"] == 1
     assert heldout_filter["source_counts"]["fa"]["excluded_heldout"] == 1
 
@@ -326,7 +338,7 @@ def test_v7_view_rejects_stage3_records_that_differ_from_manifest(tmp_path):
     heldout.write_text(json.dumps({"drug": "CCC", "Y": 1}) + "\n", encoding="utf-8")
 
     with pytest.raises(ValueError, match="differ from their manifest"):
-        build_v7_benchmark_view(
+        build_library_view(
             policy=POLICY,
             normalized_root=normalized_root,
             heldout_labels_jsonl=heldout,
@@ -353,7 +365,7 @@ def test_skin_direct_filter_uses_partition_after_cross_source_collapse():
         heldout_scaffolds=set(),
         view_predicate=lambda _record: True,
         heldout_filter_mode=DIRECT_SOURCE_ONLY_FILTER,
-        downstream_spec=get_skin_downstream_spec(),
+        filter_source_id="direct_skin_reaction",
     )
 
     assert [row["canonical_record_id"] for row in kept] == ["record-2"]

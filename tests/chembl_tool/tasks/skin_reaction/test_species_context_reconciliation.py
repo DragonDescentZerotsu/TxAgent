@@ -6,7 +6,7 @@ import json
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.skin_reaction.data_processing import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.data_processing import (
     species_context_reconciliation as review,
 )
 

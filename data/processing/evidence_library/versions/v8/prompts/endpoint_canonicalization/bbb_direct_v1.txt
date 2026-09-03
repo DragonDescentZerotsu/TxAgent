@@ -1,0 +1,20 @@
+Task: Normalize every raw Direct BBB quantitative endpoint in this embedding neighborhood to a concise canonical scientific measurement concept.
+
+Rules:
+- Consider all supplied values together. Wording, spelling, symbol, and abbreviation variants of the same measurement must use exactly the same label.
+- Preserve distinctions that determine comparability: brain/CSF/plasma matrix, concentration versus ratio, total versus unbound exposure, Kp versus Kp,uu, AUC versus point concentration, permeability versus transport rate, uptake versus efflux, and directional A-to-B versus B-to-A measurements.
+- Remove species, dose, time point, formulation, instrument, statistical wording, unit text, and protocol details unless they change the biological measurement itself.
+- Do not convert units and do not infer an endpoint unsupported by the raw text.
+- For a vague endpoint, use the shortest literal scientific concept supported by the text.
+- Use concise lowercase snake_case labels. Never return unknown, unmapped, unspecified, null, or an explanation.
+- Return every supplied ID exactly once and no additional IDs.
+
+Examples:
+log BB -> logbb
+brain-to-plasma concentration ratio -> brain_to_plasma_ratio
+unbound brain-to-plasma partition coefficient -> kp_uu_brain
+CSF concentration -> csf_concentration
+apical-to-basolateral apparent permeability -> papp_a_to_b
+
+Output format:
+{"mapping":{"<input_id>":"<canonical_endpoint>"}}

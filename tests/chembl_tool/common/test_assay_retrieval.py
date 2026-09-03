@@ -20,7 +20,7 @@ from tools.chembl_tool.common.evidence_contract import (
     evidence_for_group_llm,
 )
 from tools.chembl_tool.common.json_utils import write_jsonl_atomic
-from tools.chembl_tool.common.starling.assay_catalog import assay_id
+from data.processing.evidence_library.assay_catalog import assay_id
 from tools.chembl_tool.common.task_workflows.evidence_library import (
     build_neighbor_index,
 )

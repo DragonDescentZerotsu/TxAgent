@@ -4,31 +4,28 @@ import json
 
 import pytest
 
-from tools.chembl_tool.common.starling.canonicalization_v7 import (
+from data.processing.evidence_library.shared.v1.canonicalization_v7 import (
     CanonicalDimensionSpec,
     CanonicalProducerSpec,
     PairBucketSpec,
     SourceProfile,
     StarlingRecordContract,
 )
-from tools.chembl_tool.common.starling.pair_buckets import materialize_pair_buckets
-from tools.chembl_tool.common.starling.normalization.cleaning import (
+from data.processing.evidence_library.shared.v1.pair_buckets import materialize_pair_buckets
+from data.processing.evidence_library.shared.v1.normalization.cleaning import (
     resolve_structure_value,
     stable_id,
 )
-from tools.chembl_tool.common.starling.normalization.organization import (
+from data.processing.evidence_library.shared.v1.normalization.organization import (
     deduplicate_within_source,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_schema import (
     RECORD_CONTRACT as BBB_CONTRACT,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIO_CONTRACT,
 )
-from tools.chembl_tool.tasks.clintox.starling_schema import (
-    RECORD_CONTRACT as CLINTOX_CONTRACT,
-)
-from tools.chembl_tool.tasks.skin_reaction.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_schema import (
     RECORD_CONTRACT as SKIN_CONTRACT,
 )
 
@@ -95,26 +92,6 @@ def test_dataset_constants_are_not_claimed_as_source_visible() -> None:
     # The unified source uses embedded units because nondirect rows may carry
     # percent/fold/ratio text; unit_text is no longer a dataset constant.
     assert "unit_text" in profile.source_visible_fields
-
-
-def test_inflate_cleaned_restores_sparse_source_shape_after_parquet_resume() -> None:
-    resumed = {
-        "source_id": "human_clinical_toxicity",
-        "endpoint_name": "human_clinical_toxicity",
-        "measurement_text": "toxicity_absent",
-        "unit_text": None,
-        "smiles": "CCO",
-        "clinical_context": "trial",
-        "assay_context": None,
-        "result_metric": None,
-    }
-    inflated = CLINTOX_CONTRACT.inflate_cleaned(resumed)
-    assert "assay_context" not in inflated
-    assert "result_metric" not in inflated
-    assert inflated["clinical_context"] == "trial"
-
-    with pytest.raises(ValueError, match="populated foreign source fields"):
-        CLINTOX_CONTRACT.inflate_cleaned({**resumed, "assay_context": "in vitro"})
 
 
 def test_all_pair_identity_fields_are_canonical() -> None:
@@ -610,7 +587,7 @@ def test_influx_reports_its_quantity_through_the_measurement_role() -> None:
     has to remove it from the cleaned schema, or the projection would carry the
     same value twice under two names.
     """
-    from tools.chembl_tool.tasks.bbb_martins.starling_schema import SOURCES
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_schema import SOURCES
 
     profile = SOURCES["influx_transport"]
     assert profile.measurement_field == "reported_result"

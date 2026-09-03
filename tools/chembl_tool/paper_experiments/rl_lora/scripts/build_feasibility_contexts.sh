@@ -47,7 +47,7 @@ if [[ "$requested_task" == all || "$requested_task" == bbb_martins ]]; then
   run_batch \
     bbb_martins \
     tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
-    data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/train.jsonl \
+    data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/train.jsonl \
     outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/evidence/bbb_starling_full/starling_bbb_neighbor_index.pkl \
     "0 1 2 6" \
     bbb_full_flat_mixed \
@@ -58,7 +58,7 @@ if [[ "$requested_task" == all || "$requested_task" == bioavailability_ma ]]; th
   run_batch \
     bioavailability_ma \
     tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
-    data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train.jsonl \
+    data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/train.jsonl \
     outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/evidence/bioavailability_starling_full/starling_factor_neighbor_index.pkl \
     "0 1 3 4" \
     bio_full_flat_mixed \
@@ -70,7 +70,7 @@ if [[ "$requested_task" == all || "$requested_task" == skin_reaction ]]; then
   run_batch \
     skin_reaction \
     tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch \
-    data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/train.jsonl \
+    data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold/train.jsonl \
     outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/evidence/skin_reaction_starling_full/starling_skin_reaction_neighbor_index.pkl \
     "0 1 5 12" \
     skin_full_flat_mixed \

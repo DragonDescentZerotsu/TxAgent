@@ -3,21 +3,23 @@ import hashlib
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_measurement_and_unit,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_endpoint_normalization import (
     DIRECT_ENDPOINT_MAPPING_VERSION,
     EndpointNormalizer,
     canonical_efflux_endpoint,
     canonical_influx_endpoint,
     canonical_passive_endpoint,
 )
-from tools.chembl_tool.tasks.bbb_martins import starling_endpoint_normalization
-from tools.chembl_tool.tasks.bbb_martins.starling_normalization_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins import (
+    starling_endpoint_normalization,
+)
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_normalization_policy import (
     source_measurement_resolver,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_spacing_and_spelling import (
     ENDPOINT_CONCEPT_PATHS,
     endpoint_concept,
     family_assignment,

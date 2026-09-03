@@ -5,10 +5,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.tasks.bbb_martins.data_processing import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing import (
     auxiliary_reconciliation,
 )
-from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import (
+from data.processing.evidence_library.shared.v1.clustered_auxiliary_mapping import (
     DEFAULT_CLUSTER_RANDOM_SEED,
     DEFAULT_CLUSTER_TARGET_SIZE,
     DEFAULT_EMBEDDING_MODEL,
@@ -16,17 +16,17 @@ from tools.chembl_tool.common.starling.clustered_auxiliary_mapping import (
     _cache_identity,
     _cluster_cache_identity,
 )
-from tools.chembl_tool.tasks.bbb_martins.data_processing.auxiliary_reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.auxiliary_reconciliation import (
     reconstruct_provisional,
     write_provisional_artifacts,
 )
-from tools.chembl_tool.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.data_processing.build_embedding_bucket_mapping import (
     DEFAULT_MODEL,
     DEFAULT_REASONING_EFFORT,
     PROMPT_VERSION,
     extraction_specs,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_auxiliary_metadata import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_auxiliary_metadata import (
     MAPPING_VERSION,
 )
 

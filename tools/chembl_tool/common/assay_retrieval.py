@@ -45,7 +45,7 @@ from tools.chembl_tool.common.task_workflows.evidence_library import (
 from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     retrieve_neighbors,
 )
-from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
+from data.processing.evidence_library.assay_catalog import assay_id, assay_unit
 
 INDEX_VERSION = "starling_assay_ranked_morgan.v1"
 RAW_CARD_INDEX_VERSION = "starling_assay_ranked_morgan.raw_v3"

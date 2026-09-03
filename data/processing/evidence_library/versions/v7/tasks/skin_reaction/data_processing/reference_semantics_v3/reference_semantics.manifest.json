@@ -1,0 +1,54 @@
+{
+  "assignment_method_counts": {
+    "api_failure": 10987,
+    "gpt_5_4_mini_single_pass:labels_only": 108136,
+    "invalid_response": 50,
+    "invalid_row_response:absolute_basis_mismatch": 38,
+    "invalid_row_response:comparator_basis_mismatch": 811,
+    "invalid_row_response:endpoint_ratio_basis_mismatch": 4051,
+    "invalid_row_response:standard_control_basis_mismatch": 4,
+    "invalid_row_response:unknown_basis_mismatch": 21,
+    "invalid_row_response:unsupported_basis": 269,
+    "invalid_row_response:unsupported_scope": 2,
+    "openai_gpt_5_6_luna_single_pass:labels_only": 111333
+  },
+  "base_mapping_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "base_mapping_rows": 87054,
+  "base_mapping_sha256": "f6fdbcc5cec599aed06b1777cba15a91a1fbaa320d468e8df582e4bc1cef09e2",
+  "credential_envs": [
+    "OPENAI_API_KEY",
+    "OPENAI_API_KEY_TWO",
+    "OPEN_ROUTER_KEY"
+  ],
+  "generation_version": "reference_semantics_generation.v3",
+  "inference_endpoint_counts": {
+    "https://api.openai.com/v1": 35287,
+    "https://openrouter.ai/api/v1": 113361
+  },
+  "inference_model_counts": {
+    "gpt-5.4-mini": 35287,
+    "openai/gpt-5.6-luna": 113361
+  },
+  "input_path": "outputs/chembl_tool/tasks/skin_reaction/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
+  "input_sha256": "81457b720df0d367b5370f7ee29f0557dff6438a20c4ef87edb4d3b6aaaeb2f2",
+  "mapping_path": "tools/chembl_tool/tasks/skin_reaction/data_processing/reference_semantics_v3/reference_semantics.parquet",
+  "mapping_rows": 235702,
+  "mapping_sha256": "ef75c8b57391aa22dfbdffad17a0fa430943b86bfa70a2d01641269b5f693171",
+  "prompt_sha256": "76a90a480811ab82c4f4e65925a60cffb8556830c44dfe385e60fb4632b270f0",
+  "prompt_version": "skin_reaction_reference_semantics_prompt.v2",
+  "safe_gate_conflicts": 0,
+  "scope_counts": {
+    "absolute": 132665,
+    "comparator_relative": 23275,
+    "endpoint_defined_ratio": 38671,
+    "standardized_control_ratio": 1085,
+    "unknown": 40006
+  },
+  "supplement_mapping_rows": 148648,
+  "task_id": "skin_reaction",
+  "validations": {
+    "each_row_submitted_at_most_once": true,
+    "one_mapping_per_candidate": true,
+    "unique_cleaned_record_ids": true
+  }
+}

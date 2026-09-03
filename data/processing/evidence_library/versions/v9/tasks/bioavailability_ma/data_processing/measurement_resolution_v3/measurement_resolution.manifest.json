@@ -1,0 +1,69 @@
+{
+  "api_base_url": "http://dgx019:8000/v1",
+  "assignment_method_counts": {
+    "invalid_row_response:entry_without_a_unit:structural_retry": 62,
+    "invalid_row_response:id_mismatch:structural_retry": 2,
+    "model_single_pass": 193192,
+    "model_structural_retry": 6541,
+    "schema_revalidated_frozen_response": 1387
+  },
+  "base_mapping": {
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+    "reused_rows": 192728,
+    "sha256": "a0ecd8a3d51cb82b33e6a0ea602769c6f1463a6a53acb8b4644ed3b08dc64afe"
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "17198bfc19eece5e349bea9e0e0f7c734d129e3720e549c91908f61c23592314",
+  "delta_inference": {
+    "model": "nvidia/DeepSeek-V4-Flash-NVFP4",
+    "rows": 8456
+  },
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "89383497759d9533533db88e6ff35ae933f1540fcff059ff0bc4739bf0b14323",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v7",
+  "inference": {
+    "max_completion_tokens": 32768,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/data_processing/measurement_resolution_v3/measurement_resolution.parquet",
+  "mapping_rows": 201184,
+  "mapping_sha256": "8b3a07e4fc70232da2e666caa8dd089cf18254b24ac6b84e706134cfb5343f1d",
+  "mapping_version": "bioavailability_ma_measurement_resolution.v3",
+  "model": "mixed",
+  "models": [
+    "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "nvidia/DeepSeek-V4-Flash-NVFP4"
+  ],
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "bioavailability_measurement_resolution_prompt.v3",
+    "rendered_sha256": {
+      "fa": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+      "fg": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+      "fh": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81",
+      "hf_bioavailability": "f3c576da4fc30da91775a44aacf00b91af3d447f77db74283f42c8e9542b2133",
+      "oral_exposure": "4d53644ae94b7d9ef9e39e8b229aeae302df0940f42e631296393ceb6e498e81"
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bioavailability_ma/measurement_resolution_templates/measurement_resolution_v1.jinja",
+    "template_sha256": "e3ce4e97bb3db8ea4da6e22816ebec6991cccdc6c80d5cbfd70bf6946bb6b908"
+  },
+  "rejected_rows": 64,
+  "routing_version": "starling_measurement_routing.v5",
+  "status_counts": {
+    "ok": 122370,
+    "relative": 38122,
+    "unavailable": 9394,
+    "unsure": 31298
+  },
+  "task_id": "bioavailability_ma",
+  "validations": {
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

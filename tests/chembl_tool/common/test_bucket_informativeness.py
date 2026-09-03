@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+from unittest.mock import Mock
+
 import pytest
 
-from tools.chembl_tool.common.starling.bucket_informativeness import (
+from data.processing.evidence_library.bucket_informativeness import (
+    _query_batch,
     render_batch,
     select_records,
     validate_response,
     visible_record,
 )
-
 
 TEST_SOURCE_COLUMNS = {"source": ("support_text", "assay_model", "molecule_name")}
 
@@ -91,3 +93,48 @@ def test_response_is_strict_and_rounded_to_hundredths() -> None:
             },
             1,
         )
+
+
+def test_query_waits_for_temporary_reservation_pressure(monkeypatch) -> None:
+    ledger = Mock(max_tokens=100_000)
+    ledger.reserve.side_effect = [False, True]
+    ledger.spent.return_value = 0
+    client = Mock()
+    client.chat_json.return_value = {
+        "content": {
+            "items": [
+                {
+                    "id": "0",
+                    "informativeness_score": 0.5,
+                    "rationale": "This is a useful but incomplete proxy.",
+                }
+            ]
+        },
+        "model": "openai/gpt-5.6-luna",
+        "usage": {"input_tokens": 10, "output_tokens": 10},
+    }
+    monkeypatch.setattr(
+        "data.processing.evidence_library.bucket_informativeness.time.sleep",
+        lambda _: None,
+    )
+    event = _query_batch(
+        [
+            {
+                "task_id": "bbb_martins",
+                "pair_bucket_key": "bucket",
+                "payload_sha256": "hash",
+                "payload": {"sampled_records": []},
+            }
+        ],
+        definition="meaningful CNS access",
+        client=client,
+        model="openai/gpt-5.6-luna",
+        base_url="https://openrouter.ai/api/v1",
+        credential_env="OPEN_ROUTER_KEY",
+        reasoning_effort="low",
+        ledger=ledger,
+        epoch="test",
+        max_attempts=1,
+    )
+    assert ledger.reserve.call_count == 2
+    assert event["status"] == "success"

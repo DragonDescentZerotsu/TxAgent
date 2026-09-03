@@ -78,7 +78,7 @@ TASK_SPECS = {
             "bbb_martins__starling_full_flat"
         ),
         train_jsonl=Path(
-            "data/processed_starling_experimental_meaningful_cns_access_v2/"
+            "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/"
             "BBB_Martins/scaffold/train.jsonl"
         ),
         expected_valid_rows=366,
@@ -97,7 +97,7 @@ TASK_SPECS = {
             "bioavailability_ma__starling_full_flat"
         ),
         train_jsonl=Path(
-            "data/processed_starling_record_supported_v2/"
+            "data/gold_labels/legacy/processed_starling_record_supported_v2/"
             "Bioavailability_Ma/scaffold/train.jsonl"
         ),
         expected_valid_rows=209,

@@ -9,7 +9,7 @@ from typing import Any
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.normalization.audit import write_parquet
+from data.processing.evidence_library.shared.v1.normalization.audit import write_parquet
 
 
 RECONCILIATION_VERSION = "bioavailability_v65_reconciliation.deferred_v3"

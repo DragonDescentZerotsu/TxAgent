@@ -3,12 +3,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools.chembl_tool.common.task_workflows.reasoning_batch import (
+from predict.harnesses.branches.batch import (
     BatchConfig,
     BatchItem,
     PreparedBatch,
 )
-from tools.chembl_tool.common.task_workflows.reasoning_stage_runtime import (
+from predict.harnesses.branches.runtime import (
     FINAL_STAGE,
     GROUP_STAGE,
     SINGLE_STAGE,
@@ -406,11 +406,11 @@ def test_final_is_not_published_when_trace_serialization_fails(
         _write_trace_jsonl=fail_trace,
     )
     monkeypatch.setattr(
-        "tools.chembl_tool.common.task_workflows.reasoning_stage_runtime._stage_context",
+        "predict.harnesses.branches.runtime._stage_context",
         lambda _state: {"module": module, "reasoning_retrieval": retrieval},
     )
     monkeypatch.setattr(
-        "tools.chembl_tool.common.task_workflows.reasoning_stage_runtime._make_client",
+        "predict.harnesses.branches.runtime._make_client",
         lambda _state: object(),
     )
 

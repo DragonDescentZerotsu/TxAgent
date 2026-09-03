@@ -7,3 +7,8 @@ artifacts/chembl_tool/tasks/clintox/starling_raw_v1/**/stage.tar.zst.part-* -dif
 artifacts/chembl_tool/tasks/clintox/clintox_base_v1/**/stage.tar.zst.part-* -diff
 artifacts/chembl_tool/tasks/clintox/clintox_send_v2_source/*.part-* -diff
 tools/chembl_tool/tasks/clintox/data_processing/source_delta_v2/manual_audit.tsv -whitespace
+data/raw/**/*.parquet -diff
+data/artifacts/evidence_library/**/*.parquet -diff
+data/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
+data/legacy/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
+data/legacy/clintox/artifacts/**/*.part-* -diff

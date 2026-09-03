@@ -1,32 +1,11 @@
-"""Source-independent interfaces for optional molecule-level retrieval reranking."""
+"""Compatibility import for predict.harnesses.branches.reranker."""
 
-from __future__ import annotations
+from predict.harnesses.branches.reranker import *  # noqa: F401,F403
+from predict.harnesses.branches.reranker import __dict__ as _implementation
 
-from typing import Any, Protocol
 
-
-class RetrievalReranker(Protocol):
-    """Rerank an identity-filtered structural candidate pool for one evidence family."""
-
-    name: str
-
-    def rerank(
-        self,
-        *,
-        query_smiles: str,
-        group_id: str,
-        candidates: list[dict[str, Any]],
-    ) -> list[dict[str, Any]]:
-        """Return every candidate with deterministic audit-only reranking metadata."""
-
-    def rerank_records(
-        self,
-        *,
-        query_smiles: str,
-        group_id: str,
-        candidates: list[dict[str, Any]],
-    ) -> list[dict[str, Any]]:
-        """Return one item per scored record (record-level top-K), sorted by score."""
-
-    def provenance(self) -> dict[str, Any]:
-        """Return immutable configuration needed to validate retrieval replay."""
+def __getattr__(name: str):
+    try:
+        return _implementation[name]
+    except KeyError as exc:
+        raise AttributeError(name) from exc

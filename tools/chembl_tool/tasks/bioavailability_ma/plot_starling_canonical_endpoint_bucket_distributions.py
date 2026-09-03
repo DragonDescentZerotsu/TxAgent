@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from tools.chembl_tool.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_normalized_starling_evidence_library import (
     DEFAULT_OUT_DIR,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.build_starling_pair_bucket_sidecar import (
     PAIR_BUCKET_RECORDS_FILENAME,
 )
 

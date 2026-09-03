@@ -1,0 +1,175 @@
+{
+  "version": "bbb_martins_endpoint_concepts.v1",
+  "source_id": "efflux_transport",
+  "input_fields": [
+    "endpoint_name",
+    "canonical_endpoint_name"
+  ],
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 23,
+    "sha256": "90cd41e13cfb96e32e27822a2b65ecc65147929c1e1c4883d52a522328c657d0"
+  },
+  "observed_pairs": {
+    "count": 26,
+    "sha256": "d24113f7c1d613388f2e81335f4691b43f3a76bbc46dc4f6499477f9a811a7c6"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "efflux_inhibition_outcome",
+      "canonical_endpoint_concept": "efflux_inhibition_outcome",
+      "review_reason": "The raw endpoint is missing, but the controlled interaction conclusion explicitly identifies inhibitor versus non-inhibitor outcome; keep it separate from substrate status."
+    },
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "efflux_substrate_outcome",
+      "canonical_endpoint_concept": "efflux_substrate_outcome",
+      "review_reason": "The raw endpoint is missing, but the controlled interaction conclusion explicitly identifies substrate versus non-substrate outcome; keep it separate from inhibition."
+    },
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "missing_endpoint",
+      "canonical_endpoint_concept": "missing_endpoint",
+      "review_reason": "Neither the raw endpoint nor a controlled interaction conclusion establishes a narrower endpoint, so preserve a fail-closed missing concept."
+    },
+    {
+      "endpoint_name": "",
+      "canonical_endpoint_name": "transporter_limited_brain_exposure_outcome",
+      "canonical_endpoint_concept": "transporter_limited_brain_exposure_outcome",
+      "review_reason": "The controlled conclusion concerns transporter-limited brain exposure, not direct substrate or inhibitor status."
+    },
+    {
+      "endpoint_name": "AUC10-30",
+      "canonical_endpoint_name": "brain_exposure_auc",
+      "canonical_endpoint_concept": "brain_exposure_auc_10_30",
+      "review_reason": "Brain PET exposure area measured over the explicit 10-30 interval; preserve the interval rather than merging with unspecified exposure AUC."
+    },
+    {
+      "endpoint_name": "EC50",
+      "canonical_endpoint_name": "ec50",
+      "canonical_endpoint_concept": "ec50",
+      "review_reason": "Half-maximal effective concentration is distinct from inhibitory potency, IC50, and transporter kinetic Km."
+    },
+    {
+      "endpoint_name": "IC50",
+      "canonical_endpoint_name": "ic50",
+      "canonical_endpoint_concept": "ic50",
+      "review_reason": "Half-maximal inhibitory concentration is distinct from EC50, generic inhibition potency, and percent inhibition at one concentration."
+    },
+    {
+      "endpoint_name": "Km",
+      "canonical_endpoint_name": "michaelis_menten_km",
+      "canonical_endpoint_concept": "michaelis_menten_km",
+      "review_reason": "Case variant of the Michaelis-Menten substrate-affinity constant; merge only with lowercase km."
+    },
+    {
+      "endpoint_name": "Kp_brain",
+      "canonical_endpoint_name": "kp_brain",
+      "canonical_endpoint_concept": "kp_brain",
+      "review_reason": "Brain partition coefficient under transporter perturbation; keep distinct from explicit brain-to-plasma and brain-to-blood ratios."
+    },
+    {
+      "endpoint_name": "LD50",
+      "canonical_endpoint_name": "ld50",
+      "canonical_endpoint_concept": "ld50",
+      "review_reason": "Median lethal dose in transporter-deficient animals is a toxicity endpoint and must not merge with brain exposure measurements."
+    },
+    {
+      "endpoint_name": "brain_exposure_fold_change",
+      "canonical_endpoint_name": "brain_exposure_fold_change",
+      "canonical_endpoint_concept": "brain_exposure_fold_change",
+      "review_reason": "Explicit fold change in brain exposure or transport under transporter perturbation; keep distinct from generic cellular fold changes and efflux ratios."
+    },
+    {
+      "endpoint_name": "brain_to_blood_ratio",
+      "canonical_endpoint_name": "brain_to_blood_ratio",
+      "canonical_endpoint_concept": "brain_to_blood_ratio",
+      "review_reason": "The denominator is whole blood, which is not interchangeable with plasma."
+    },
+    {
+      "endpoint_name": "brain_to_plasma_ratio",
+      "canonical_endpoint_name": "brain_to_plasma_ratio",
+      "canonical_endpoint_concept": "brain_to_plasma_ratio",
+      "review_reason": "The denominator is plasma; preserve it separately from brain-to-blood ratio and generic Kp_brain."
+    },
+    {
+      "endpoint_name": "clearance",
+      "canonical_endpoint_name": "clearance",
+      "canonical_endpoint_concept": "clearance",
+      "review_reason": "The only row reports renal clearance under P-gp inhibition; generic clearance is not equivalent to transporter efflux rate or brain clearance."
+    },
+    {
+      "endpoint_name": "efflux",
+      "canonical_endpoint_name": "efflux",
+      "canonical_endpoint_concept": "efflux",
+      "review_reason": "Generic efflux extent with no rate or ratio definition; retain separately from efflux rate and efflux ratio."
+    },
+    {
+      "endpoint_name": "efflux_rate",
+      "canonical_endpoint_name": "efflux_rate",
+      "canonical_endpoint_concept": "efflux_rate",
+      "review_reason": "Time-normalized brain efflux rate is distinct from a directional efflux ratio or generic efflux extent."
+    },
+    {
+      "endpoint_name": "efflux_ratio",
+      "canonical_endpoint_name": "efflux_ratio",
+      "canonical_endpoint_concept": "efflux_ratio",
+      "review_reason": "Directional or comparator efflux ratio; reference basis remains a separate bucket field and this must not merge with single-direction permeability."
+    },
+    {
+      "endpoint_name": "fold change",
+      "canonical_endpoint_name": "fold_change",
+      "canonical_endpoint_concept": "fold_change",
+      "review_reason": "Spacing alias of generic fold change; merge with fold_change while keeping explicit brain-exposure fold change separate."
+    },
+    {
+      "endpoint_name": "fold_change",
+      "canonical_endpoint_name": "fold_change",
+      "canonical_endpoint_concept": "fold_change",
+      "review_reason": "Canonical spelling of generic fold change; assay and controlled interaction fields retain ATPase, uptake, or resistance context."
+    },
+    {
+      "endpoint_name": "inhibition_potency",
+      "canonical_endpoint_name": "inhibition_potency",
+      "canonical_endpoint_concept": "inhibition_potency",
+      "review_reason": "Generic inhibition potency may refer to several potency summaries and is not safely interchangeable with an explicitly named IC50 or EC50."
+    },
+    {
+      "endpoint_name": "km",
+      "canonical_endpoint_name": "michaelis_menten_km",
+      "canonical_endpoint_concept": "michaelis_menten_km",
+      "review_reason": "Lowercase case variant of the Michaelis-Menten substrate-affinity constant; merge only with Km."
+    },
+    {
+      "endpoint_name": "other",
+      "canonical_endpoint_name": "other_quantitative_endpoint",
+      "canonical_endpoint_concept": "other_quantitative_endpoint",
+      "review_reason": "The rows mix unrelated quantities and qualitative conclusions, so retain an ambiguous fail-closed concept rather than assigning a specific measurement."
+    },
+    {
+      "endpoint_name": "percent_inhibition",
+      "canonical_endpoint_name": "percent_inhibition",
+      "canonical_endpoint_concept": "percent_inhibition",
+      "review_reason": "Percent inhibition at a stated test concentration is distinct from IC50 and other fitted potency endpoints."
+    },
+    {
+      "endpoint_name": "permeability",
+      "canonical_endpoint_name": "permeability",
+      "canonical_endpoint_concept": "permeability",
+      "review_reason": "Single-direction or unspecified permeability is distinct from the derived efflux ratio; unit and reference basis preserve its reported direction when available."
+    },
+    {
+      "endpoint_name": "probability",
+      "canonical_endpoint_name": "probability",
+      "canonical_endpoint_concept": "probability",
+      "review_reason": "Computational substrate or inhibitor prediction probability is distinct from experimental transporter endpoints; controlled outcome scale retains the predicted role."
+    },
+    {
+      "endpoint_name": "{}",
+      "canonical_endpoint_name": "efflux_inhibition_outcome",
+      "canonical_endpoint_concept": "efflux_inhibition_outcome",
+      "review_reason": "Malformed empty-object endpoint; the controlled interaction conclusion explicitly identifies an inhibition outcome, so merge with the missing-raw inhibition outcome only."
+    }
+  ]
+}

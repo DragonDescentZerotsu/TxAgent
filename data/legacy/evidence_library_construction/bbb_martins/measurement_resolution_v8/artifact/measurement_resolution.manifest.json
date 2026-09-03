@@ -1,0 +1,109 @@
+{
+  "api_base_url": "https://openrouter.ai/api/v1",
+  "assignment_method_counts": {
+    "ambiguous_process_termination": 1762,
+    "invalid_response_after_structural_retry": 2148,
+    "invalid_row_response:entry_without_a_unit:structural_retry": 1354,
+    "invalid_row_response:id_mismatch:structural_retry": 272,
+    "invalid_row_response:measurement_is_not_a_plain_decimal": 10,
+    "model_recovered_by_minimal_unit_review": 5615,
+    "model_single_pass": 72186,
+    "model_structural_retry": 11473
+  },
+  "base_mapping": null,
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v8/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "9ff98d0f569b49095b9e97e6f1eaa137bbdb592f47dc48259819a45549b92d17",
+  "delta_inference": {
+    "model": "openai/gpt-5.6-luna",
+    "rows": 94820
+  },
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v8/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "d4d992e5dee71a6d0fc3bcc920fc353198931bf3857dbb1f2ced34862c46e9da",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v7",
+  "inference": {
+    "max_completion_tokens": 4096,
+    "reasoning_mode": "minimal",
+    "temperature": 1.0
+  },
+  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v8/measurement_resolution.parquet",
+  "mapping_rows": 94820,
+  "mapping_sha256": "71507c3939ab24f50dc217338591d3fd737bddd83d3abd913304658556be1ddf",
+  "mapping_version": "bbb_martins_measurement_resolution.v8",
+  "model": "openai/gpt-5.6-luna",
+  "models": [
+    "openai/gpt-5.6-luna"
+  ],
+  "prompt": {
+    "batch_size": 20,
+    "maximum_measurements_per_row": 1,
+    "prompt_version": "bbb_measurement_resolution_prompt.v14",
+    "rendered_sha256": {
+      "direct_bbb": "1039bc59cac8c7b0dc55db886baf52fa60c78f2104894078c0cad4a5f50879c0",
+      "efflux_transport": "afa5880146f7fc5741c9d4647445b3d4ee7059507a28614755aa3ba28ac14a6a",
+      "influx_transport": "da7fefa46d246f6cb103aeaa4872baad42a2aeef32c68a2b6624521f9b547725",
+      "passive_permeability": "8594620a93b5c345436c1c095f9ebc2e8bb7cdae669fcfdd5d7d84dede98b1fd"
+    },
+    "source_measurement_fields": {
+      "direct_bbb": {
+        "measurement_field": "quant_value",
+        "unit_field": "quant_units"
+      },
+      "efflux_transport": {
+        "measurement_field": "quantitative_value",
+        "unit_field": null
+      },
+      "influx_transport": {
+        "measurement_field": "reported_result",
+        "unit_field": null
+      },
+      "passive_permeability": {
+        "measurement_field": "metric_value",
+        "unit_field": "metric_units"
+      }
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v8.jinja",
+    "template_sha256": "35c188509c93c0a7ca117f69465e34cd3ea93cd8683c51fc0e66da420695b084"
+  },
+  "rejected_rows": 1636,
+  "routing_version": "starling_measurement_routing.v5",
+  "status_counts": {
+    "ok": 64374,
+    "relative": 11086,
+    "unavailable": 4876,
+    "unsure": 14484
+  },
+  "task_id": "bbb_martins",
+  "unit_preflight": {
+    "exact_unit_mapping_sha256": "4ffc4e96cbe6279ce22df256cd28f31e005cc69232ef9014014bb25da8f07c5b",
+    "missing_rows_before_review": 30543,
+    "review_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/canonicalization_v8/minimal_unit_review_200.jsonl",
+    "review_sha256": "519a9061d84ad04e556fcfae4452c57b0f2f1036e4d213405f3986d7db2e3bab",
+    "rows_preserved_as_exact_unit_identity": 10500,
+    "rows_unified_by_sampled_keys": 20043,
+    "rule_id": "v8_minimal_unit_review_200.v1",
+    "sample_seed": 20260831,
+    "sample_size": 200,
+    "sampled_approved_keys": 43,
+    "status_counts_after": {
+      "ok": 64374,
+      "relative": 11086,
+      "unavailable": 4876,
+      "unsure": 14484
+    },
+    "status_counts_before": {
+      "ok": 64374,
+      "relative": 11086,
+      "unavailable": 4876,
+      "unsure": 14484
+    }
+  },
+  "validations": {
+    "maximum_measurements_per_row": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

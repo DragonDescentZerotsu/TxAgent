@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
-from tools.chembl_tool.common.starling.normalization.organization import (
+from data.processing.evidence_library.shared.v1.normalization.organization import (
     organize_normalized_records,
 )
 from tools.chembl_tool.tasks.skin_reaction.build_canonical_starling_source import (
     build_canonical_frames,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     AOP_PARTITION,
     DIRECT_PARTITION,
     PartitionDecision,
@@ -17,8 +17,10 @@ from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     classify_direct_source_record,
     direct_outcome_reason,
 )
-from tools.chembl_tool.tasks.skin_reaction import direct_record_mapping
-from tools.chembl_tool.tasks.skin_reaction.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction import (
+    direct_record_mapping,
+)
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_spacing_and_spelling import (
     family_assignment,
 )
 

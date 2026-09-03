@@ -63,5 +63,5 @@
       "artifact_root": "outputs/paper/starling_conditioned_assay_progressive_visible_v7_source_purity_v1/scaffold_valid_deepseek_v4_flash_0731"
     }
   },
-  "reuse_contract": "Reuse predictions only when n and input_sha256 match data/conditioned_benchmark/migration_receipt.json. Artifact directory names are historical storage identifiers, not benchmark names."
+  "reuse_contract": "Reuse predictions only when n and input_sha256 match data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json. Artifact directory names are historical storage identifiers, not benchmark names."
 }

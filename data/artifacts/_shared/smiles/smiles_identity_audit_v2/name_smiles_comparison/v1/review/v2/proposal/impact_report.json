@@ -1,0 +1,60 @@
+{
+  "adjudicated_rows": 119,
+  "adjudicator_decision_counts": {
+    "override": 7,
+    "retain_original": 63,
+    "unresolved": 49
+  },
+  "affected_source_outcomes": {
+    "bbb_martins/direct_bbb/override": 296,
+    "bbb_martins/direct_bbb/reject": 56,
+    "bioavailability_ma/fa/override": 124,
+    "bioavailability_ma/fa/reject": 11,
+    "bioavailability_ma/fh/override": 117,
+    "bioavailability_ma/fh/reject": 7,
+    "bioavailability_ma/oral_exposure/override": 107,
+    "bioavailability_ma/oral_exposure/reject": 14,
+    "skin_reaction/direct_skin_reaction/override": 466,
+    "skin_reaction/direct_skin_reaction/reject": 28
+  },
+  "changed_rows": 1226,
+  "changed_target_rows": 1222,
+  "checker_decision_counts": {
+    "override": 1110,
+    "retain_original": 63,
+    "unresolved": 49
+  },
+  "checker_rows": 1222,
+  "exact_context_conflicts": 0,
+  "exact_context_propagated_rows": 4,
+  "final_decision_counts": {
+    "override": 8551,
+    "reject": 2630
+  },
+  "final_override_counts": {
+    "bbb_martins/direct_bbb": 3715,
+    "bioavailability_ma/fa": 1151,
+    "bioavailability_ma/fh": 1188,
+    "bioavailability_ma/oral_exposure": 997,
+    "skin_reaction/direct_skin_reaction": 1500
+  },
+  "invalid_applied_overrides": 0,
+  "net_override_delta": -116,
+  "publishes_task_policies": false,
+  "rebuilds_stage1": false,
+  "review_target_rows": 1222,
+  "review_version": "name_smiles_conflict_review.v2",
+  "selected_final_counts": {
+    "bbb_martins/high/override": 2,
+    "bbb_martins/high/reject": 7,
+    "bbb_martins/medium/override": 294,
+    "bbb_martins/medium/reject": 49,
+    "bioavailability_ma/high/reject": 7,
+    "bioavailability_ma/medium/override": 348,
+    "bioavailability_ma/medium/reject": 25,
+    "skin_reaction/high/reject": 1,
+    "skin_reaction/medium/override": 466,
+    "skin_reaction/medium/reject": 23
+  },
+  "source_rows": 11181
+}

@@ -13,20 +13,20 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_measurement_and_unit,
 )
-from tools.chembl_tool.common.starling.normalization.source_value_cleaning import (
+from data.processing.evidence_library.shared.v1.normalization.source_value_cleaning import (
     clean_source_values,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import (
     DEFAULT_SOURCE_VALUE_REPAIRS,
     _resolve_source_measurement_pair,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_schema import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIO_CONTRACT,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_policy import (
     DEFAULT_SOURCE_VALUE_REPAIRS as BBB_SOURCE_VALUE_REPAIRS,
 )
 

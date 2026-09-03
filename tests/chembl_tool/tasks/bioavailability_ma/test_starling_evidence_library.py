@@ -17,7 +17,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_starling_evidence_library 
 from tools.chembl_tool.tasks.bioavailability_ma.build_evidence_library import build_neighbor_index
 from tools.chembl_tool.tasks.bioavailability_ma.retrieve_neighbors import retrieve_neighbors
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import _clean_evidence_row
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
     DIRECT_HF_SOURCE_COLUMNS,
 )
 

@@ -1,12 +1,11 @@
 """Audited BBB source-family reassignment for the progressive assay experiment.
 
-This module assigns each retrieval source record to one biological family.  It
-does not mutate a gold artifact in place: the corrected v3 benchmark is rebuilt
-and revoted independently before this overlay is published.  L1 follows that
-current experimental gold contract; explicit predictions remain retrievable
-but are not presented as experimental direct evidence.  Assay identity is
-retained only as provenance; it does not force all records from an assay into
-one family.
+This module assigns each retrieval source record to one biological family. It
+does not mutate a gold artifact in place. L1 membership is exact source-record
+membership in the current vote ledger; replaying the label contract may route a
+nonvoter to near-direct evidence, but can never grant L1 membership. Explicit
+predictions remain retrievable outside L1. Assay identity is retained only as
+provenance; it does not force all records from an assay into one family.
 """
 
 from __future__ import annotations
@@ -19,11 +18,11 @@ import re
 from typing import Any, Callable, Iterable, Mapping
 
 from tools.chembl_tool.common.source_family_purity import FamilyMove
-from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
+from data.processing.gold_labels.conditioned_benchmark import task_root
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v3 import (
     label_record,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark_v4 import (
     label_record as label_record_v4,
 )
 
@@ -33,7 +32,7 @@ NEAR_DIRECT_GROUP = "Proxy.central_functional_access"
 PASSIVE_GROUP = "Mechanism.passive_permeability"
 EFFLUX_GROUP = "Mechanism.efflux_transport"
 INFLUX_GROUP = "Mechanism.influx_transport"
-PURITY_VERSION = "bbb_source_family_purity.v5"
+PURITY_VERSION = "bbb_source_family_purity.v6"
 REVIEW_VERSION = "bbb_near_direct_record_review.v2"
 
 DEFAULT_RECORDS = Path(
@@ -41,7 +40,7 @@ DEFAULT_RECORDS = Path(
     "evidence_library/starling_normalized_v7/03_records/records.parquet"
 )
 DEFAULT_REVIEW_LEDGER = Path(
-    "data/starling_data/bbb_martins/source_family_purity_v2/"
+    "data/artifacts/starling/bbb_martins/source_reviews/source_family_purity_v2/"
     "near_direct_record_review.jsonl"
 )
 DEFAULT_GOLD_ROOT = task_root("bbb_martins").parent / "provenance"
@@ -536,8 +535,8 @@ class BBBSourceFamilyClassifier:
             label, reason = self.gold_decision(record)
             if label is not None:
                 decision = FamilyMove(
-                    DIRECT_GROUP,
-                    "gold_contract_eligible_experimental_cns_outcome",
+                    NEAR_DIRECT_GROUP,
+                    "nonvoter_gold_contract_eligible_experimental_cns_outcome",
                 )
             else:
                 decision = nondirect_target(record, reason)

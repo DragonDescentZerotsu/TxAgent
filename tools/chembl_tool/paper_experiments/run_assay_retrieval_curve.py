@@ -40,7 +40,7 @@ DIRECT_ONLY_SCAFFOLD_DISJOINT = (
 TASKS: dict[str, dict[str, str]] = {
     "bbb_martins": {
         "module": "tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch",
-        "input": "data/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/valid.jsonl",
+        "input": "data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2/BBB_Martins/scaffold/valid.jsonl",
         "ranked_assays": "outputs/paper/starling_assay_relevance_all_v1/bbb_martins/scores_codex_gpt_5_6_sol_v6/ranked_assays.jsonl",
         "index": "outputs/paper/starling_assay_retrieval_v1/bbb_martins/scaffold_valid_train_only_all/assay_neighbor_index.pkl",
         "replay_root": "outputs/paper/starling_assay_retrieval_v1/bbb_martins/scaffold_valid_train_only_all/replay_batches",
@@ -50,7 +50,7 @@ TASKS: dict[str, dict[str, str]] = {
     },
     "bioavailability_ma": {
         "module": "tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch",
-        "input": "data/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid.jsonl",
+        "input": "data/gold_labels/legacy/processed_starling_record_supported_v2/Bioavailability_Ma/scaffold/valid.jsonl",
         "ranked_assays": "outputs/paper/starling_assay_relevance_all_v1/bioavailability_ma/scores_codex_gpt_5_6_sol_v6/ranked_assays.jsonl",
         "index": "outputs/paper/starling_assay_retrieval_v1/bioavailability_ma/scaffold_valid_train_only_all/assay_neighbor_index.pkl",
         "replay_root": "outputs/paper/starling_assay_retrieval_v1/bioavailability_ma/scaffold_valid_train_only_all/replay_batches",
@@ -60,7 +60,7 @@ TASKS: dict[str, dict[str, str]] = {
     },
     "skin_reaction": {
         "module": "tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch",
-        "input": "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl",
+        "input": "data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold/valid.jsonl",
         "ranked_assays": "outputs/paper/starling_assay_relevance_all_v1/skin_reaction/scores_codex_gpt_5_6_sol_v6/ranked_assays.jsonl",
         "index": "outputs/paper/starling_assay_retrieval_v1/skin_reaction/scaffold_valid_train_only_all/assay_neighbor_index.pkl",
         "replay_root": "outputs/paper/starling_assay_retrieval_v1/skin_reaction/scaffold_valid_train_only_all/replay_batches",

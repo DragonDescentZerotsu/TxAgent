@@ -1,0 +1,36 @@
+{
+  "registry_version": "bbb_martins_auxiliary_prompts.v1",
+  "prompts": {
+    "direct_bbb": {
+      "global_context": {
+        "input_column": "assay_model",
+        "prompt": "Task: Map every raw BBB assay_model value below to a concise canonical assay or study context.\n\nRules:\n- Consider all supplied values together and reuse exactly the same label for the same core experimental context.\n- Prefer the concrete model or study type: in vivo brain exposure, clinical imaging, PET, microdialysis, brain perfusion, endothelial monolayer, MDCK, PAMPA-BBB, transporter assay, genetic perturbation, pharmacological inhibition, or in silico prediction.\n- Preserve genuinely different BBB models; do not merge PAMPA-BBB, MDCK, endothelial monolayers, and in vivo exposure.\n- De-prioritize species, compound, transporter name, dose, direction, protocol detail, and condition unless essential to the model identity.\n- Do not infer a model not stated by the input. For vague values, use the shortest literal category supported by the text.\n- Use concise lowercase scientific labels, normally one to four words.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_context>\"}}"
+      },
+      "global_species_context": {
+        "input_column": "species",
+        "prompt": "Task: Map every raw BBB species value below to its explicitly supported canonical experimental species.\n\nRules:\n- Reuse exactly the same species label for aliases.\n- Remove sex, strain, age, disease, treatment, tissue, and model qualifiers.\n- Use a concise lowercase common species name; normalize canine to dog and porcine to pig.\n- For multiple explicit species, deduplicate, alphabetize, and join with ' + '.\n- Do not infer species from a cell line, assay abbreviation, or outside knowledge.\n- Return 'no species' when no species is explicitly stated.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_species_or_no_species>\"}}"
+      }
+    },
+    "passive_permeability": {
+      "global_context": {
+        "input_column": "biological_system",
+        "prompt": "Task: Map every raw passive BBB permeability biological_system value below to a concise canonical assay context.\n\nRules:\n- Consider all supplied values together and reuse exactly the same label for the same core model.\n- Keep PAMPA-BBB, other PAMPA, brain endothelial monolayer, MDCK, other cell monolayer, membrane partitioning, and in vivo exposure distinct.\n- Prefer the named assay, cell system, membrane system, or study type.\n- De-prioritize species, cell clone, transporter, compound, direction, medium, temperature, and protocol detail unless essential to model identity.\n- Do not infer a model not stated by the input. Use the shortest literal category for vague values.\n- Use concise lowercase scientific labels, normally one to four words.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_context>\"}}"
+      },
+      "global_species_context": {
+        "input_column": "biological_system",
+        "prompt": "Task: Map every raw passive BBB permeability biological_system value below to its explicitly stated experimental species.\n\nRules:\n- Extract only the species explicitly stated for the subject, tissue, primary cells, or cell source.\n- Do not infer species from PAMPA, MDCK, Caco-2, hCMEC/D3, bEnd.3, or another model name.\n- Remove sex, strain, age, anatomical site, disease, treatment, and protocol qualifiers.\n- Normalize aliases and use concise lowercase common species names.\n- For multiple explicit species, deduplicate, alphabetize, and join with ' + '.\n- Return 'no species' when no species is explicitly stated.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_species_or_no_species>\"}}"
+      }
+    },
+    "efflux_transport": {
+      "global_context": {
+        "input_column": "assay_system",
+        "prompt": "Task: Map every raw BBB efflux assay_system value below to a concise canonical assay or study context.\n\nRules:\n- Consider all supplied values together and reuse exactly the same label for the same core experimental context.\n- Preserve bidirectional transport, transwell/monolayer transport, vesicle transport, ATPase, uptake/accumulation, genetic perturbation, pharmacological inhibition, in vivo brain exposure, and qualitative literature claims as distinct contexts when stated.\n- Prefer the concrete cell system, membrane preparation, assay, or study type.\n- De-prioritize species, transporter name, compound, direction, dose, substrate, and protocol detail unless essential to context identity.\n- Do not infer an assay or study type not stated by the input. Use the shortest literal category for vague values.\n- Use concise lowercase scientific labels, normally one to four words.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_context>\"}}"
+      },
+      "global_species_context": {
+        "input_column": "assay_system",
+        "prompt": "Task: Map every raw BBB efflux assay_system value below to its explicitly supported experimental species.\n\nRules:\n- Extract only species explicitly stated for the subject, tissue, primary cells, membrane preparation, or cell source.\n- Do not infer species from MDCK, LLC-PK1, Caco-2, transporter names, gene symbols, or assay abbreviations.\n- Remove sex, strain, age, anatomical site, disease, treatment, and protocol qualifiers.\n- Normalize aliases and use concise lowercase common species names.\n- For multiple explicit species, deduplicate, alphabetize, and join with ' + '.\n- Return 'no species' when no species is explicitly stated.\n- Never return unknown, unmapped, unspecified, null, or an explanation.\n- Return one mapping for every input ID and no additional IDs.\n\nOutput format:\n{\"mapping\":{\"<input_id>\":\"<canonical_species_or_no_species>\"}}"
+      }
+    }
+  }
+}
+

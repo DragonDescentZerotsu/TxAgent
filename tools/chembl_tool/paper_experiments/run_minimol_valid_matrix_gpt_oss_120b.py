@@ -44,7 +44,7 @@ class TaskPhase:
 PHASES = (
     TaskPhase(
         task="bbb_martins",
-        data_root=Path("data/processed_starling_experimental_meaningful_cns_access_v2"),
+        data_root=Path("data/gold_labels/legacy/processed_starling_experimental_meaningful_cns_access_v2"),
         lineage="experimental_meaningful_cns_access_v2",
         feature_root=Path(
             "outputs/paper/minimol_retrieval_features_scaffold_current_latest_valid_bbb_v2"
@@ -66,7 +66,7 @@ PHASES = (
     ),
     TaskPhase(
         task="bioavailability_ma",
-        data_root=Path("data/processed_starling_record_supported_v2"),
+        data_root=Path("data/gold_labels/legacy/processed_starling_record_supported_v2"),
         lineage="record_supported_v2",
         feature_root=Path(
             "outputs/paper/minimol_retrieval_features_scaffold_current_latest_valid_bio_skin_v2"
@@ -88,7 +88,7 @@ PHASES = (
     ),
     TaskPhase(
         task="skin_reaction",
-        data_root=Path("data/processed_starling_record_supported_v2"),
+        data_root=Path("data/gold_labels/legacy/processed_starling_record_supported_v2"),
         lineage="record_supported_v2",
         feature_root=Path(
             "outputs/paper/minimol_retrieval_features_scaffold_current_latest_valid_bio_skin_v2"

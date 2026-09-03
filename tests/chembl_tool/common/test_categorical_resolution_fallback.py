@@ -1,11 +1,11 @@
-from tools.chembl_tool.common.starling.categorical_response import (
+from data.processing.evidence_library.shared.v1.categorical_response import (
     BINARY_OUTCOME_UNIT,
     CategoricalEncoding,
 )
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_cleaned_records,
 )
-from tools.chembl_tool.common.starling.normalization.audit import (
+from data.processing.evidence_library.shared.v1.normalization.audit import (
     validate_measurement_pairs,
 )
 

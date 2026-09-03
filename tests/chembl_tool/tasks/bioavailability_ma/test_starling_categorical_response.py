@@ -2,18 +2,18 @@ from __future__ import annotations
 
 import pytest
 
-from tools.chembl_tool.common.starling.categorical_response import (
+from data.processing.evidence_library.shared.v1.categorical_response import (
     BINARY_OUTCOME_UNIT,
     ORDINAL_OUTCOME_UNIT,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_categorical_response import (
     POLICY,
     canonical_fg_target_id,
     classify_direct_qualitative_text,
     encoding_policy_manifest,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_policy import _enrich_record
-from tools.chembl_tool.tasks.bioavailability_ma.starling_source_column_contracts import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_policy import _enrich_record
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_source_column_contracts import (
     SOURCE_COLUMNS,
 )
 

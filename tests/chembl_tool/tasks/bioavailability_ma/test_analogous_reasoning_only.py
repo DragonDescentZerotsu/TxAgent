@@ -36,11 +36,11 @@ from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_pipeline import (
             "--group-prompt-format",
             "assay_transfer_tool",
             "--assay-transfer-profile",
-            "v11_with_categorical",
+            "v9_direct_gold",
         ],
     ),
 )
-def test_mode_accepts_morgan_legacy_transfer_and_v11_profiles(extra_args):
+def test_mode_accepts_morgan_and_v9_transfer_profiles(extra_args):
     args = parse_pipeline_args(
         [
             "--experiment-mode",

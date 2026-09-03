@@ -31,7 +31,7 @@ DEFAULT_RUN_ROOT = Path(
     "molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_gpt_oss_120b/"
     "runs_identity_blind_parent_disjoint"
 )
-DEFAULT_DATA_ROOT = Path("data/processed_starling_record_supported_v2")
+DEFAULT_DATA_ROOT = Path("data/gold_labels/legacy/processed_starling_record_supported_v2")
 DEFAULT_OUTPUT_DIR = Path(
     "outputs/paper/"
     "starling_trace_failure_cause_audit_record_supported_v2_valid_gpt_oss_120b"

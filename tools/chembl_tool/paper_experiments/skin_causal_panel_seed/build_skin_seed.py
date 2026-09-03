@@ -25,7 +25,7 @@ from tools.chembl_tool.paper_experiments.skin_causal_panel_seed.skin_contract im
 )
 
 
-DEFAULT_CANONICAL_ROOT = Path("data/starling_data/skin_reaction/canonical_sensitization_v3")
+DEFAULT_CANONICAL_ROOT = Path("data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3")
 DEFAULT_CANONICAL_EVIDENCE = Path(
     "outputs/paper/molecular_evidence_agent/evidence/"
     "skin_reaction_starling_sensitization_canonical_v3/starling_skin_reaction_evidence.jsonl"

@@ -1,5 +1,12 @@
 # 论文实验操作约定
 
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
 该目录负责维护冻结的、面向论文的分子证据 agent 实验矩阵。orchestration 必须保持通用。任务特定的 endpoint 映射只能放在 `tools/chembl_tool/tasks/<task>/experiment_config.py` 中。
 
 ## 文档职责
@@ -54,23 +61,22 @@ TRACE_RETENTION.md
 
 ## 当前 scaffold benchmark 合同（2026-08-28）
 
-所有 current experiments 只读取 `data/conditioned_benchmark/<Task>/scaffold/`。BBB/Bioavailability/
-ClinTox/Skin train/valid/test 分别为 3,053/397/393、1,958/262/269、1,144/142/142、1,997/246/248。
-四任务 parent identity 和 scaffold pairwise overlap 都是 0。旧 molecule-only、gold-vN、selected-vN 和
+所有 current experiments 只读取 `data/gold_labels/<Task>/v1/scaffold/`。BBB/Bioavailability/
+Skin train/valid/test 分别为 3,053/397/393、1,958/262/269、1,997/246/248。
+三个 active task 的 parent identity 和 scaffold pairwise overlap 都是 0。旧 molecule-only、gold-vN、selected-vN 和
 ClinTox source-build paths 只作 migration provenance，不能作为新的 runner default。公共路径必须从
 `common/starling/conditioned_benchmark.py` 导入；完整合同和 hash audit 见
-`common/starling/CONDITIONED_BENCHMARK.md` 与 `data/conditioned_benchmark/migration_receipt.json`。
+`common/starling/CONDITIONED_BENCHMARK.md` 与 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。
 
 ```text
 builder:
   tools/chembl_tool/tasks/bbb_martins/build_conditioned_source.py
   tools/chembl_tool/tasks/bioavailability_ma/reviewed_context_conditioned_benchmark.py
   tools/chembl_tool/tasks/skin_reaction/context_conditioned_benchmark.py
-  tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
 publisher:
-  tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
+  data/processing/gold_labels/publish_conditioned_benchmark.py
 data:
-  data/conditioned_benchmark/{BBB_Martins,Bioavailability_Ma,ClinTox,Skin_Reaction}/scaffold/
+  data/gold_labels/{BBB_Martins,Bioavailability_Ma,Skin_Reaction}/v1/scaffold/
 historical v2 held-out indices:
   outputs/paper/molecular_evidence_agent_starling_scaffold_experimental_meaningful_cns_access_v2/
   outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2/
@@ -185,9 +191,9 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
 新的 Starling direct gold benchmark 由以下公共入口构建：
 
 ```text
-tools/chembl_tool/common/starling/STARLING_BENCHMARK_PROTOCOL.md
-tools/chembl_tool/common/starling/build_benchmark_datasets.py
-tools/chembl_tool/common/starling/heldout_index.py
+tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
+data/processing/gold_labels/build_conditioned_benchmark.py
+data/processing/evidence_library/heldout_index.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/summarize_starling_benchmark.py
@@ -196,8 +202,8 @@ tools/chembl_tool/paper_experiments/plot_starling_model_comparison.py
 tools/chembl_tool/common/task_workflows/global_prompt_pool.py
 tools/chembl_tool/common/task_workflows/reasoning_stage_runtime.py
 
-data/processed_starling/<Task>/random/{train,valid,test}.jsonl
-data/processed_starling/<Task>/scaffold/{train,valid,test}.jsonl
+data/gold_labels/legacy/processed_starling/<Task>/random/{train,valid,test}.jsonl
+data/gold_labels/legacy/processed_starling/<Task>/scaffold/{train,valid,test}.jsonl
 ```
 
 `plot_starling_model_comparison.py` 是当前 Starling model/baseline/ablation 的唯一正式总图。后续完整
@@ -320,12 +326,12 @@ embedding cosine KNN。两种 KNN 都只从同 split 的 `train.jsonl` 检索，
 
 ```bash
 python -m baselines.structure_knn.run \
-  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
   --output-dir outputs/baselines/structure_knn_starling/<Task>/<random|scaffold> \
   --k 3
 
 python -m baselines.minimol.run_embedding_knn \
-  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
   --embedding-cache-dir outputs/baselines/minimol_starling/<Task>/<random|scaffold>/embeddings \
   --output-dir outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold> \
   --k 3
@@ -345,7 +351,7 @@ neighbors 回填，也不得用 class prior 猜测。结果必须同时报告 `n
 
 ```bash
 python -m baselines.structure_knn.run \
-  --data-dir data/processed_starling/<Task>/<random|scaffold> \
+  --data-dir data/gold_labels/legacy/processed_starling/<Task>/<random|scaffold> \
   --output-dir outputs/baselines/structure_knn_coverage_starling/<Task>/<random|scaffold>/minsim0p3_supported_k3/<selector> \
   --k 3 \
   --min-similarity 0.3 \

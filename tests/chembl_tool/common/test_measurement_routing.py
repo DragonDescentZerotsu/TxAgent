@@ -8,7 +8,7 @@ ones that motivated the design.
 
 import pytest
 
-from tools.chembl_tool.common.starling.measurement_routing import (
+from data.processing.evidence_library.versions.v7.measurement_routing import (
     attach_stage1_routes,
     DeclarativeNonScalarRule,
     NO_DIGIT_RULE_ID,
@@ -225,7 +225,7 @@ def test_bbb_declares_no_declarative_rule_outs() -> None:
     rows, 794 of which carry a real IC50 or Km -- a paper can report IC50 = 0.51 uM
     and still conclude only "this is an inhibitor".
     """
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         source_routing_rules,
     )
 
@@ -423,7 +423,7 @@ def test_the_prompt_omits_the_unit_column_for_sources_that_have_none() -> None:
     Those sources get the branch that reads the unit out of the measurement or
     support text instead.
     """
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         prompt_row_fields,
         render_prompt,
     )
@@ -441,7 +441,7 @@ def test_the_prompt_omits_the_unit_column_for_sources_that_have_none() -> None:
 
 def test_the_prompt_states_the_actual_batch_size() -> None:
     """A row count in prose that drifts from the real batch is a silent lie."""
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         BATCH_SIZE,
         render_prompt,
     )
@@ -450,7 +450,7 @@ def test_the_prompt_states_the_actual_batch_size() -> None:
 
 
 def test_the_prompt_covers_every_status_and_the_multi_quantity_rule() -> None:
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         SOURCE_IDS,
         render_prompt,
     )
@@ -465,7 +465,7 @@ def test_the_prompt_covers_every_status_and_the_multi_quantity_rule() -> None:
 
 
 def test_an_unknown_source_cannot_render_a_prompt() -> None:
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         render_prompt,
     )
 
@@ -475,7 +475,7 @@ def test_an_unknown_source_cannot_render_a_prompt() -> None:
 
 def test_the_prompt_manifest_records_template_and_render_digests() -> None:
     """The template digest moves when the file is edited; renders are what was sent."""
-    from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+    from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
         SOURCE_IDS,
         prompt_manifest,
     )

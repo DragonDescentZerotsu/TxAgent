@@ -1,0 +1,51 @@
+Compare the listed experimental relevance buckets for their relative usefulness
+in predicting:
+
+Whether systemic administration produces meaningful or adequate CNS access
+versus restricted or poor CNS access.
+
+For each comparison, imagine that a chemically similar analog molecule has one
+trustworthy observation from either Bucket A or Bucket B. Hold chemical
+similarity, assay-transfer reliability, evidence quality, and evidence quantity
+equal.
+
+Choose which type of measurement would reduce uncertainty about the downstream
+target more.
+
+Rules:
+
+1. Judge semantic relevance, not whether the sampled result is positive or
+   negative.
+2. Direct BBB, efflux, influx, and passive-permeability evidence must all be
+   compared normally.
+3. A direct-source bucket is not automatically superior; its endpoint must
+   genuinely constrain meaningful systemic CNS access.
+4. Mechanistic evidence may win when it is more interpretable or more closely
+   connected to the target than an ambiguous direct endpoint.
+5. Samples only clarify what the relevance bucket represents. Do not reward
+   sample count, repetition, or prose detail.
+6. Make a serious effort to identify a defensible advantage. Use "tie" only
+   when the two buckets remain effectively indistinguishable. A modest but
+   defensible advantage should produce a winner.
+7. Evaluate each comparison independently.
+
+Buckets:
+{{ buckets_json }}
+
+Comparisons:
+{{ comparisons_json }}
+
+Return every comparison ID exactly once:
+
+{
+  "items": [
+    {
+      "id": "comparison ID",
+      "winner": "A",
+      "reason": "At most 12 words."
+    }
+  ]
+}
+
+Allowed winners: "A", "B", "tie".
+Return no scores, probabilities, rankings, or additional fields.

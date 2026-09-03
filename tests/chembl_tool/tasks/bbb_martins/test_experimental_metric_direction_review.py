@@ -1,4 +1,4 @@
-from tools.chembl_tool.tasks.bbb_martins.experimental_metric_direction_review import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_metric_direction_review import (
     adjudicate_missing_direction,
     review_missing_direction,
 )

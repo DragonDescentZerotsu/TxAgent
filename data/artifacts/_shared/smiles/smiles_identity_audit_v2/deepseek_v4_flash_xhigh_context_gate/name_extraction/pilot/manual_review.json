@@ -1,0 +1,18 @@
+{
+  "reviewed_rows": 100,
+  "sample_sha256": "6f709d6e9802e1f71ec3e5f890cc53291941a41b6aacb362f5e4154b687b5b5c",
+  "default_decision": "correct",
+  "exceptions": [
+    {
+      "id": "bioavailability_ma:target:7633772e3b5a81e0065f620638bab9036c6688893ef3e54c8f46b451f89f0dc6",
+      "decision": "incorrect_status",
+      "note": "Compound 36 is explicitly tied to the measured hepatocyte turnover and plasma clearance outcomes."
+    },
+    {
+      "id": "bbb_martins:target:d7882b100960954a2558ecbd25b22eb694bdc05bcd6fc07e0c64c92d54184b4b",
+      "decision": "incorrect_status",
+      "note": "Gadolinium is explicitly the contrast agent passing into brain parenchyma and producing the imaging outcome."
+    }
+  ],
+  "summary": "Independent review found 98 correct outputs, two false-absent status errors, and zero wrong-subject selections."
+}

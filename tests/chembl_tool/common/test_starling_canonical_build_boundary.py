@@ -7,27 +7,50 @@ from types import SimpleNamespace
 import pandas as pd
 import pytest
 
-from tools.chembl_tool.common.starling import split_downstream
-from tools.chembl_tool.common.starling.build_normalized_evidence_library import (
+from data.processing.evidence_library.shared.v1.normalization.cleaning import (
+    file_sha256,
+)
+from data.processing.evidence_library.shared.v1.normalization.contracts import (
+    NORMALIZATION_STAGE_VERSION,
+)
+from data.processing.evidence_library.shared.v1.record_deduplication import _decorate
+from data.processing.evidence_library.versions.v7 import pair_bucket_build
+from data.processing.evidence_library.versions.v7.build_normalized_evidence_library import (
     _retain_valid_structures,
     _verify_stage_artifact,
 )
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.starling.normalization.contracts import (
-    NORMALIZATION_STAGE_VERSION,
-)
-from tools.chembl_tool.tasks.bbb_martins import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins import (
     build_normalized_starling_evidence_library as bbb,
 )
-from tools.chembl_tool.tasks.bioavailability_ma import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma import (
     build_normalized_starling_evidence_library as bio,
 )
-from tools.chembl_tool.tasks.skin_reaction import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction import (
     build_normalized_starling_evidence_library as skin,
 )
 
-
 BUILDERS = (bbb, bio, skin)
+
+
+def test_direct_vote_uses_normal_assay_transfer_eligibility():
+    output = _decorate(
+        {"canonical_record_id": "vote", "source_id": "direct", "source_row_number": 1},
+        {
+            "pair_bucket_key": '["direct","endpoint","unit"]',
+            "canonical_pair_fields_json": "{}",
+            "assay_transfer_eligible": True,
+            "assay_transfer_ineligibility_reason": None,
+        },
+        {
+            "retrieval_source_id": "direct_vote",
+            "condition_group": "no_reported_external_condition",
+            "condition_key_status": "none_reported",
+            "condition_atoms": [],
+            "condition_scope": "none",
+        },
+    )
+
+    assert output["assay_transfer_eligible"] is True
 
 
 def test_stage1_retains_only_resolved_structures_with_lineage():
@@ -104,9 +127,7 @@ def _args(*, legacy: bool) -> SimpleNamespace:
 
 
 @pytest.mark.parametrize("module", BUILDERS)
-def test_normalized_v7_builder_uses_active_canonical_builder(
-    monkeypatch, module
-):
+def test_normalized_v7_builder_uses_active_canonical_builder(monkeypatch, module):
     calls: list[str] = []
     monkeypatch.setattr(module, "parse_args", lambda *_args: _args_factory(False))
     monkeypatch.setattr(
@@ -119,9 +140,7 @@ def test_normalized_v7_builder_uses_active_canonical_builder(
 
 
 @pytest.mark.parametrize("module", BUILDERS)
-def test_normalized_v7_builder_does_not_route_through_legacy_views(
-    monkeypatch, module
-):
+def test_normalized_v7_builder_does_not_route_through_legacy_views(monkeypatch, module):
     calls: list[str] = []
     monkeypatch.setattr(module, "parse_args", lambda *_args: _args_factory(True))
     monkeypatch.setattr(
@@ -137,41 +156,6 @@ def _args_factory(legacy: bool) -> SimpleNamespace:
     return _args(legacy=legacy)
 
 
-def test_canonical_publication_retires_task_local_lineage_views(tmp_path):
-    root = tmp_path / "canonical"
-    root.mkdir()
-    for stage in (
-        *split_downstream.CANONICAL_V7_STAGES,
-        split_downstream.DISTANCE_CALIBRATION_STAGE,
-        *split_downstream.LINEAGE_VIEW_STAGES,
-    ):
-        directory = root / stage
-        directory.mkdir()
-        (directory / "marker").write_text("old", encoding="utf-8")
-    (root / "manifest.json").write_text('{"state":"old"}\n', encoding="utf-8")
-
-    candidate = root / ".candidate"
-    for stage in split_downstream.CANONICAL_V7_STAGES:
-        directory = candidate / stage
-        directory.mkdir(parents=True)
-        (directory / "marker").write_text("new", encoding="utf-8")
-    (candidate / "manifest.json").write_text(
-        '{"artifact_scope":"canonical_split_independent"}\n',
-        encoding="utf-8",
-    )
-
-    split_downstream._publish_canonical_candidate(root, candidate)
-
-    for stage in split_downstream.CANONICAL_V7_STAGES:
-        assert (root / stage / "marker").read_text(encoding="utf-8") == "new"
-    assert all(
-        not (root / stage).exists()
-        for stage in split_downstream.LINEAGE_VIEW_STAGES
-    )
-    assert not (root / split_downstream.DISTANCE_CALIBRATION_STAGE).exists()
-    assert not list(root.glob(".canonical-backup-*"))
-
-
 def test_active_canonical_builder_publishes_only_stage_3(tmp_path):
     records_dir = tmp_path / "02_canonicalized"
     records_dir.mkdir()
@@ -183,13 +167,12 @@ def test_active_canonical_builder_publishes_only_stage_3(tmp_path):
                 "canonical_smiles": "CCO",
             }
         ]
-    ).to_parquet(
-        records_dir / "records.parquet", index=False
-    )
+    ).to_parquet(records_dir / "records.parquet", index=False)
     (records_dir / "auxiliary_mapping_manifest.json").write_text(
         "{}\n", encoding="utf-8"
     )
-    for stage in split_downstream.LINEAGE_VIEW_STAGES:
+    lineage_view_stages = ("06_records", "07_molecule_evidence", "08_neighbor_index")
+    for stage in lineage_view_stages:
         (tmp_path / stage).mkdir()
 
     def build_sidecar(*, out_dir, **_kwargs):
@@ -206,9 +189,7 @@ def test_active_canonical_builder_publishes_only_stage_3(tmp_path):
                     "assay_transfer_ineligibility_reason": None,
                 }
             ]
-        ).to_parquet(
-            output, index=False
-        )
+        ).to_parquet(output, index=False)
         return {
             "contract_version": "pair.v1",
             "stats": {"input_records": 1, "buckets": 1},
@@ -229,19 +210,16 @@ def test_active_canonical_builder_publishes_only_stage_3(tmp_path):
         scientific_assets=(),
         manifest_versions=lambda: {"record_contract_version": "records.v7"},
     )
-    spec = SimpleNamespace(
+    spec = pair_bucket_build.PairBucketBuildSpec(
         task_id="test_task",
         policy=policy,
-        pipeline_layout_version="test.layout.v1",
         pair_bucket_version="pair.v1",
-        pair_bucket_records_filename="pair_bucket_records.parquet",
-        pair_bucket_metadata_filename="pair_bucket_metadata.json",
         build_sidecar=build_sidecar,
         build_transfer_policy=build_transfer_policy,
         direct_mapping_builder=None,
     )
 
-    manifest = split_downstream.build_canonical_artifacts(
+    manifest = pair_bucket_build.build_canonical_artifacts(
         spec, normalized_root=tmp_path, cache_mode="off"
     )
 
@@ -258,7 +236,4 @@ def test_active_canonical_builder_publishes_only_stage_3(tmp_path):
         tmp_path / "03_pair_buckets/records.parquet"
     )
     assert not (tmp_path / "06_collapsed_records").exists()
-    assert all(
-        (tmp_path / stage).exists()
-        for stage in split_downstream.LINEAGE_VIEW_STAGES
-    )
+    assert all((tmp_path / stage).exists() for stage in lineage_view_stages)

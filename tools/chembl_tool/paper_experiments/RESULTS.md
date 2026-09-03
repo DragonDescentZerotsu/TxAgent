@@ -2,9 +2,9 @@
 
 主体运行日期：2026-07-10 至 2026-07-27；current benchmark 补充更新至 2026-08-28。
 
-当前四任务 gold 只有一个入口：`data/conditioned_benchmark/<Task>/scaffold/`。任务级 gold-vN、
+当前四任务 gold 只有一个入口：`data/gold_labels/<Task>/v1/scaffold/`。任务级 gold-vN、
 `record_supported_vN`、`selected_vN` 和 ClinTox source-build 名称只作为 migration provenance，不再是并列
-评估数据。精确旧路径、split hashes 和复用判据见 `data/conditioned_benchmark/migration_receipt.json`；当前
+评估数据。精确旧路径、split hashes 和复用判据见 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`；当前
 schema 和 cohort sizes 见 `../common/starling/CONDITIONED_BENCHMARK.md`。
 当前三任务 progressive curves、baselines、input hashes 和历史 artifact storage pointers 的唯一机器可读索引为
 `current_conditioned_results.json`。

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from tools.chembl_tool.common.starling.normalized_evidence import (
+from tests.chembl_tool.common.normalization_helpers import (
     EndpointOrthography,
     FamilyAssignment,
     MeasurementPair,
@@ -14,21 +14,21 @@ from tools.chembl_tool.common.starling.normalized_evidence import (
     validate_cleaned_normalized_identity,
     validate_measurement_pairs,
 )
-from tools.chembl_tool.common.starling.normalization.cleaning import (
+from data.processing.evidence_library.shared.v1.normalization.cleaning import (
     clean_source_rows,
     clean_measurement_text,
     clean_text,
 )
-from tools.chembl_tool.common.starling.normalization.organization import (
+from data.processing.evidence_library.shared.v1.normalization.organization import (
     is_absolute_continuous,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_normalization_sources import (
     hf_bioavailability_profile,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_canonicalization import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_schema import (
     RECORD_CONTRACT as BIOAVAILABILITY_RECORD_CONTRACT,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_spacing_and_spelling import (
     family_assignment as bioavailability_family_assignment,
 )
 

@@ -1,9 +1,9 @@
-from tools.chembl_tool.common.starling.external_condition import propose_pattern_condition
+from data.processing.gold_labels.external_condition import propose_pattern_condition
 from tools.chembl_tool.tasks.bbb_martins.prepare_condition_review import (
     RULES as BBB_RULES,
     _remove_non_conditions as _remove_bbb_non_conditions,
 )
-from tools.chembl_tool.common.starling.external_condition import ConditionAtom
+from data.processing.gold_labels.external_condition import ConditionAtom
 from tools.chembl_tool.tasks.skin_reaction.context_conditioned_benchmark import (
     RULES as SKIN_RULES,
     _remove_query_material_conditions,

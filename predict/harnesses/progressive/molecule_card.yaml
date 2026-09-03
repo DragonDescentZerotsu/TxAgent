@@ -1,0 +1,78 @@
+# This file is the model-visible molecule-card contract. The backend reads it
+# when it creates active_evidence; field order and output names are preserved.
+# `source` names the corresponding key in progressive state. Required fields
+# fail closed, while blank optional fields are omitted from the prompt.
+schema_version: progressive_molecule_card.v1
+
+molecule:
+  fields:
+    # Required. Stable identity-blind molecule ID used across progressive levels.
+    - name: analog_id
+      source: analog_id
+      required: true
+    # Required. Structure of the retrieved analog molecule.
+    - name: canonical_smiles
+      source: canonical_smiles
+      required: true
+    # Optional but normally present. Morgan Tanimoto similarity for both Morgan- and V9-ranked retrieval.
+    - name: similarity
+      source: similarity
+    # Optional. Normalized-V7 similarity label; absent from gold-cache L1 cards.
+    - name: similarity_bucket
+      source: similarity_bucket
+    # Optional. Usually "structural_analog"; describes how the molecule relates to the query.
+    - name: molecule_relation
+      source: molecule_relation
+    # Required. First progressive level at which this molecule became visible.
+    - name: first_seen_level
+      source: first_seen_level
+      required: true
+  # Conditional. Included only when query-to-analog tool prefetch is enabled and returns results.
+  tool_summaries_field: query_analog_tool_summaries
+  # Required container holding the evidence records selected for this molecule.
+  evidence_cards_field: evidence_cards
+
+evidence_card:
+  fields:
+    # Required. Short prompt alias such as C01; mapped back to the stable artifact card ID after inference.
+    - name: card_id
+      source: card_id
+      required: true
+    # Optional. Progressive evidence family, such as direct_residual or passive_permeability.
+    - name: evidence_family
+      source: evidence_family
+    # Optional. Human-readable assay or conditioned-training context.
+    - name: assay_context
+      source: assay_context
+    # Optional. Measured endpoint or benchmark endpoint name.
+    - name: endpoint
+      source: endpoint
+    # Optional. Raw measurement text or frozen conditioned-training outcome.
+    - name: reported_value
+      source: reported_value
+    # Optional. Unit accompanying reported_value when the source supplies one.
+    - name: reported_unit
+      source: reported_unit
+    # Optional. Experimental species; omitted when the source does not report it.
+    - name: species
+      source: species
+    # Optional. External condition, formulation, route, or other qualifying context.
+    - name: qualifying_conditions
+      source: qualifying_conditions
+    # Optional. Source-grounding text shown to the reasoning model.
+    - name: support_text
+      source: support_text
+    # V9-only. Context-transfer probability from the frozen V9 ranking cache; absent for Morgan ranking.
+    - name: transfer_likelihood
+      source: transfer_likelihood
+    # Required. First progressive level at which this evidence card became visible.
+    - name: first_seen_level
+      source: first_seen_level
+      required: true
+    # Required runtime annotation. True only for cards introduced at the current level.
+    - name: new_this_level
+      source: new_this_level
+      required: true
+    # Conditional runtime annotation. Prior supportive/contradictory/basis roles; absent at L1 or when unused.
+    - name: prior_use
+      source: prior_use

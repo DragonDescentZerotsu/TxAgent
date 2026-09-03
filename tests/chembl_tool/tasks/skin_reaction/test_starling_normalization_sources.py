@@ -6,7 +6,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pytest
 
-from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.starling_normalization_sources import (
     EXPECTED_SOURCE_ROWS,
     EXPECTED_SOURCE_SHA256,
     source_profiles,
@@ -14,7 +14,7 @@ from tools.chembl_tool.tasks.skin_reaction.starling_normalization_sources import
 )
 
 
-DATA_DIR = Path("data/starling_data/skin_reaction")
+DATA_DIR = Path("data/raw/starling/skin_reaction")
 MANIFEST = DATA_DIR / "SOURCE_MANIFEST.json"
 
 

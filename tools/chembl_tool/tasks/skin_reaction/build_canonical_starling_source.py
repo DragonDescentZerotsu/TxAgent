@@ -14,7 +14,7 @@ from tools.chembl_tool.common.molecule_identity import (
     IDENTITY_NORMALIZER_VERSION,
     normalize_molecule_identity,
 )
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+from data.processing.evidence_library.versions.v7.tasks.skin_reaction.canonical_starling_source import (
     AOP_PARTITION,
     AOP_RECORDS_PATH,
     CANONICAL_SOURCE_DIR,

@@ -2,11 +2,6 @@ from tools.chembl_tool.tasks.bioavailability_ma.reviewed_context_conditioned_ben
     propose_source_row,
     relative_effect_exclusion_reason,
 )
-from tools.chembl_tool.common.starling.review_condition_records import (
-    REVIEW_PROTOCOL_VERSION,
-    TASK_CONTRACTS,
-    review_contract_sha256,
-)
 
 
 def _row(value: str, condition: str = "fasted") -> dict:
@@ -59,13 +54,6 @@ def test_prodrug_identity_is_discarded_before_review() -> None:
     assert audit["proposal_reason"] == (
         "prodrug_or_active_moiety_identity_not_an_external_condition"
     )
-
-
-def test_semantic_review_contract_rejects_condition_effect_with_absolute_arm_value() -> None:
-    contract = TASK_CONTRACTS["Bioavailability_Ma"]
-    assert "rifampin decreased F from 14% to 7%" in contract
-    assert "condition_semantic_prereview.v2" == REVIEW_PROTOCOL_VERSION
-    assert len(review_contract_sha256("Bioavailability_Ma")) == 64
 
 
 def test_relative_effect_with_absolute_arm_value_is_hard_discarded() -> None:

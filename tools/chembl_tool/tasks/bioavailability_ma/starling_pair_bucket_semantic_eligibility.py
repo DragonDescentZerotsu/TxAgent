@@ -12,11 +12,11 @@ from typing import Any, Mapping, Sequence
 import pandas as pd
 import pyarrow.parquet as pq
 
-from tools.chembl_tool.common.starling.normalization.cleaning import file_sha256
-from tools.chembl_tool.common.starling.final_endpoint_pruning import (
+from data.processing.evidence_library.shared.v1.normalization.cleaning import file_sha256
+from data.processing.evidence_library.versions.v7.final_endpoint_pruning import (
     semantic_review_columns,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_pair_buckets import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_pair_buckets import (
     BIOAVAILABILITY_V7_PAIR_BUCKET_VERSION,
 )
 

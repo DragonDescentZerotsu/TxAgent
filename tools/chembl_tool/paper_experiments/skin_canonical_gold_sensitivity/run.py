@@ -27,14 +27,14 @@ from tools.chembl_tool.common.json_utils import (
 CONTRACT_VERSION = "skin_canonical_gold_sensitivity.valid.v1"
 AGREEMENT_THRESHOLD = 0.70
 DEFAULT_VALID_LABELS = Path(
-    "data/processed_starling_record_supported_v2/Skin_Reaction/scaffold/"
+    "data/gold_labels/legacy/processed_starling_record_supported_v2/Skin_Reaction/scaffold/"
     "valid_molecule_labels.jsonl"
 )
 DEFAULT_CANONICAL_DIRECT = Path(
-    "data/starling_data/skin_reaction/canonical_sensitization_v3/direct_records.parquet"
+    "data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/direct_records.parquet"
 )
 DEFAULT_CANONICAL_MANIFEST = Path(
-    "data/starling_data/skin_reaction/canonical_sensitization_v3/manifest.json"
+    "data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/manifest.json"
 )
 DEFAULT_OUTPUT_ROOT = Path(
     "outputs/paper/skin_canonical_gold_sensitivity_record_supported_v2_valid"

@@ -1,0 +1,15 @@
+{
+  "active_epoch": "bbb-v8-measurement-gpt54mini-key2-passive",
+  "epochs": {
+    "bbb-v8-measurement-gpt54mini-key2-passive": {
+      "conservative_unreported_tokens": 0,
+      "input_tokens": 67152,
+      "max_tokens": 307962,
+      "output_tokens": 26662,
+      "requests_completed": 19,
+      "reservations": {},
+      "status": "active"
+    }
+  },
+  "ledger_version": "reference_semantics_openai_token_ledger.v1"
+}

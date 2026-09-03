@@ -13,8 +13,8 @@ import re
 from typing import Any
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
-from tools.chembl_tool.common.starling.benchmark_dataset import parse_numeric_interval
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.gold_labels.benchmark_dataset import parse_numeric_interval
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     CANONICAL_SOURCE_DIR,
     CANONICAL_VERSION,
     DEDUP_AUDIT_PATH,

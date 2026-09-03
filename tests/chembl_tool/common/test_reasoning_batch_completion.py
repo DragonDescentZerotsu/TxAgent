@@ -17,9 +17,6 @@ from tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch import (
 from tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch import (
     CONFIG as BIOAVAILABILITY_CONFIG,
 )
-from tools.chembl_tool.tasks.clintox.run_reasoning_batch import (
-    CONFIG as CLINTOX_CONFIG,
-)
 from tools.chembl_tool.tasks.dili.run_reasoning_batch import CONFIG as DILI_CONFIG
 from tools.chembl_tool.tasks.skin_reaction.run_reasoning_batch import (
     CONFIG as SKIN_CONFIG,
@@ -157,7 +154,7 @@ def test_batch_forwards_neighbor_context_profile_to_single_run():
 
 @pytest.mark.parametrize(
     "config",
-    (BBB_CONFIG, BIOAVAILABILITY_CONFIG, CLINTOX_CONFIG, DILI_CONFIG, SKIN_CONFIG),
+    (BBB_CONFIG, BIOAVAILABILITY_CONFIG, DILI_CONFIG, SKIN_CONFIG),
 )
 def test_prepare_command_is_accepted_by_every_task_pipeline(config):
     args = _parse_args(config, [])

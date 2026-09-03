@@ -1,13 +1,20 @@
 from __future__ import annotations
 
 from tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline import (
-    V11_DEFAULT_INDEX,
+    V9_DEFAULT_INDEX,
+    V19_1_DEFAULT_INDEX,
+    V19_1_DEFAULT_PATHS,
     _group_prompt_payload,
     _parse_args,
 )
+from predict.retrieval.assay_reranking.v19_1 import (
+    GROUP_IDS,
+    PROFILE_NAME,
+    TEMPLATE_PROFILE,
+)
 
 
-def test_bbb_v11_cli_selects_scaffold_index_and_record_bundle():
+def test_bbb_v9_cli_selects_scaffold_index_and_record_bundle():
     args = _parse_args(
         [
             "--retrieval-strategy",
@@ -21,10 +28,26 @@ def test_bbb_v11_cli_selects_scaffold_index_and_record_bundle():
         ]
     )
 
-    assert args.index == V11_DEFAULT_INDEX
+    assert args.index == V9_DEFAULT_INDEX
     assert args.assay_transfer_selection_unit == "unique_molecule"
     assert args.assay_transfer_records_per_molecule == 5
     assert args.assay_transfer_initial_morgan_filter == 50
+
+
+def test_bbb_v19_1_cli_selects_indirect_top75_cache():
+    args = _parse_args(
+        [
+            "--retrieval-strategy", "assay_transfer_tool",
+            "--group-prompt-format", "assay_transfer_tool",
+            "--assay-transfer-profile", PROFILE_NAME,
+        ]
+    )
+
+    assert args.index == V19_1_DEFAULT_INDEX
+    assert args.rerank_cache == V19_1_DEFAULT_PATHS["cache"]
+    assert args.assay_transfer_template_profile == TEMPLATE_PROFILE
+    assert args.assay_transfer_initial_morgan_filter == 75
+    assert tuple(args.groups) == GROUP_IDS
 
 
 def test_bbb_group_prompt_exposes_endpoint_distinct_record_bundle():

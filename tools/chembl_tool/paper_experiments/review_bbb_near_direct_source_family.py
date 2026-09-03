@@ -21,7 +21,7 @@ from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
     write_jsonl_atomic,
 )
-from tools.chembl_tool.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.experimental_meaningful_cns_access_benchmark import (
     _INDIRECT_INFERENCE_PATTERN,
     classify_scope,
 )

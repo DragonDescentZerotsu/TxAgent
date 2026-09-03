@@ -1,23 +1,23 @@
-from tools.chembl_tool.common.starling.categorical_response import BINARY_OUTCOME_UNIT
-from tools.chembl_tool.tasks.bbb_martins.starling_categorical_response import (
+from data.processing.evidence_library.shared.v1.categorical_response import BINARY_OUTCOME_UNIT
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_categorical_response import (
     POLICY,
     encoding_policy_manifest,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_endpoint_normalization import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_endpoint_normalization import (
     DIRECT_PERMEABILITY_ENDPOINT_PRODUCER_ID,
     EFFLUX_CONCLUSION_ENDPOINT_PRODUCER_ID,
     PASSIVE_INTERPRETATION_ENDPOINT_PRODUCER_ID,
     alternate_endpoint_fields,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_policy import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_policy import (
     _endpoint_registry,
     _enrich_record,
     _kinetic_symbol,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_measurement_resolution import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_measurement_resolution import (
     source_exact_route,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_schema import RECORD_CONTRACT
 
 
 class _NoAuxiliary:

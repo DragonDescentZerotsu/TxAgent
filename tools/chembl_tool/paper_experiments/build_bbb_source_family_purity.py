@@ -34,7 +34,7 @@ from tools.chembl_tool.tasks.bbb_martins.source_family_purity import (
     load_gold_vote_source_indices,
     load_near_direct_reviews,
 )
-from tools.chembl_tool.tasks.bbb_martins.starling_benchmark import (
+from data.processing.evidence_library.versions.v7.tasks.bbb_martins.starling_benchmark import (
     NEGATIVE_LABELS,
     POSITIVE_LABELS,
 )

@@ -1,3 +1,17 @@
+# Trace Viewer compatibility path
+
+## Testing discipline
+
+Do not add circular tests that merely assert newly written prompt prose or copy
+implementation literals into the test. Prompt wording is validated with reviewed
+input/output fixtures or a real pilot/evaluation. Automated tests should cover
+executable behavior, failure modes, schemas, rendering validity, and provenance.
+
+The canonical viewer now lives in `predict/traces/viewer/` and reads both the
+standard and progressive `predict_trace.v1` records under
+`predict/traces/runs/`. The command below remains supported through a thin
+wrapper. New viewer code belongs under `predict/traces/viewer/`.
+
 # Trace Viewer 运行与临时公网分享
 
 本目录维护最终 paper trace viewer。Viewer 不是单文件离线页面；`viewer.html` 会从同一 HTTP

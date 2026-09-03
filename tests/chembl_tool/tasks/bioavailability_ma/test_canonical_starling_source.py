@@ -8,7 +8,7 @@ from tools.chembl_tool.tasks.bioavailability_ma.build_canonical_starling_source 
     build_canonical_frames,
     deduplicate_paper_direct_claims,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     LOCAL_PARTITION_AMBIGUOUS,
     LOCAL_PARTITION_DIRECT,
     LOCAL_PARTITION_NON_BIOAVAILABILITY,

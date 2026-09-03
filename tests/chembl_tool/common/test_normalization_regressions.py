@@ -20,23 +20,23 @@ from pathlib import Path
 
 import pytest
 
-from tools.chembl_tool.common.starling.normalization import measurements
-from tools.chembl_tool.common.starling.normalization.measurements import (
+from data.processing.evidence_library.shared.v1.normalization import measurements
+from data.processing.evidence_library.shared.v1.normalization.measurements import (
     normalize_cleaned_records,
     normalize_measurement_and_unit,
 )
 from tools.chembl_tool.common.units import canonicalize_unit
-from tools.chembl_tool.tasks.bioavailability_ma.canonical_source import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
     direct_measurement_fields,
     nondirect_measurement_fields,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_categorical_response import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_categorical_response import (
     classify_direct_qualitative_text,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
     contextual_canonical_record_fields,
 )
-from tools.chembl_tool.tasks.bioavailability_ma.starling_fg_scalar_rules import (
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.starling_fg_scalar_rules import (
     propose_fg_scalar,
 )
 
@@ -248,6 +248,32 @@ def test_exact_resolution_bypasses_the_legacy_measurement_parser(monkeypatch):
     assert normalized[1]["canonical_unit"] is None
     assert normalized[1]["finite_scalar_value"] is None
     assert normalized[1]["measurement_unit_status"] == "exact_unit_excluded"
+
+
+def test_exact_resolution_preserves_enriched_endpoint_fallback():
+    normalized = normalize_cleaned_records(
+        [
+            {
+                "source_id": "source",
+                "endpoint_name": "",
+                "canonical_endpoint_name": "missing_endpoint",
+                "cleaned_record_id": "row",
+                "measurement_resolution_status": "ok",
+                "measurement_unit_mapping_status": "mapped",
+                "resolved_measurement_text": "1.5",
+                "resolved_unit_text": "dimensionless",
+                "resolved_scalar_value": 1.5,
+            }
+        ],
+        endpoint_normalizer=lambda _source_id, endpoint: endpoint,
+        family_resolver=lambda _source_id, _endpoint, _record: None,
+        record_enricher=lambda _record: {
+            "canonical_endpoint": "efflux_substrate_outcome"
+        },
+        task="test_task",
+    )[0]
+    assert normalized["canonical_endpoint"] == "efflux_substrate_outcome"
+    assert normalized["finite_scalar_value"] == 1.5
 
 
 def test_bioavailability_contextual_reconciliation_preserves_directional_gate():

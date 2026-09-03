@@ -1,10 +1,10 @@
 import json
 import hashlib
-from pathlib import Path
 
 import pytest
 
-from tools.chembl_tool.tasks.bioavailability_ma.data_processing.auxiliary_mapping_helpers import (
+from data.processing.evidence_library.versions.v7.prompts import PROMPT_ROOT
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.data_processing.auxiliary_mapping_helpers import (
     reconciliation as mapping,
 )
 
@@ -22,10 +22,7 @@ def test_global_mapping_is_the_only_persisted_mapping():
 
 
 def test_prompt_registry_contains_only_the_original_six_prompts():
-    path = Path(__file__).parents[4] / (
-        "tools/chembl_tool/tasks/bioavailability_ma/data_processing/"
-        "auxiliary_value_prompts.json"
-    )
+    path = PROMPT_ROOT / "auxiliary_canonicalization/bioavailability.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     actual = {
         (source_id, output_name)
