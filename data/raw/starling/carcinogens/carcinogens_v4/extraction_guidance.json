@@ -1,0 +1,96 @@
+{
+  "task": "Find all assays of molecules concerning persistent epigenetic alteration and loss of intercellular growth restraint. Epigenetic alteration is a stable change in DNA methylation or chromatin state without sequence mutation, while loss of growth restraint includes reduced gap-junction communication, contact-inhibition escape, or disrupted tissue architecture. Make sure to include assays such as global DNA methylation, bisulfite-based methylation, chromatin accessibility or compaction, persistence-after-washout assays, scrape-loading dye transfer, microinjection dye transfer, FRAP, parachute assays, contact-inhibition assays, and 3-D acinar or organoid-architecture assays. Specify the endpoint and measurement unit, molecule concentration or dose, exposure and washout duration, number of passages or cell divisions, assay type, cell density, cell or tissue type, species, dye or detection method, baseline communication, cytotoxicity, and persistence or reversibility of the effect. Include all key experimental details.",
+  "task_instantiation": "Extract every original experimental or eligible exposure-linked observational result in which the entity identified by the supplied global_identifier—a named molecule, molecular perturbation, defined mixture, nutrient, drug, biologic, nanoparticle, diet component, radiation or environmental molecular exposure—is linked to a DIRECT measurement of either (1) persistent-epigenetic-state biology or (2) intercellular growth restraint.\n\nIn-scope epigenetic endpoints are direct measurements of DNA methylation or hydroxymethylation and direct chromatin-state measurements: global or repetitive-element 5mC/5hmC; locus-, promoter-, CpG-, DMR-, allele-, or genome-wide methylation by bisulfite sequencing, pyrosequencing, MSP/qMSP, methylation-sensitive restriction, arrays, RRBS/WGBS, affinity capture, immunochemical, chromatography, or mass-spectrometry methods; directly measured histone/chromatin marks or occupancy; and chromatin accessibility, nucleosome occupancy, compaction, heterochromatin organization, or nuclear/chromatin texture. An on-treatment direct epigenetic result is eligible even when durability was not tested; persistence requires a separate post-exposure observation and must never be inferred from the word epigenetic, long exposure, stable clones, or a late on-treatment measurement.\n\nIn-scope growth-restraint endpoints are direct functional gap-junction/intercellular communication assays, including scrape-loading dye transfer, microinjection dye transfer, intercellular FRAP, parachute/donor-recipient transfer, electrical coupling, or an equivalent functional transfer assay; direct contact-inhibition assays, including saturation density, growth or DNA synthesis after confluence, overgrowth, multilayering, or focus formation explicitly used to test contact restraint; and defined 3-D acinar, cyst, spheroid, organoid, epithelial, or tissue-architecture assays measuring organization, polarity, lumen formation, branching, or structural disruption/restoration. Include positive, negative, null, weak, mixed, persistent, and reversible findings. Eligible human observational records require an explicitly measured or assigned named exposure and a direct in-scope endpoint.\n\nExclude DNA sequence mutation, genotoxicity, DNA damage/adducts, purified-enzyme inhibition, synthetic-DNA assay development, and cell-free reporter constructs without a biological epigenetic-state result. Exclude DNMT/TET/HDAC/HAT or connexin expression, abundance, localization, phosphorylation, or activity alone; gene/miRNA expression or reporter reactivation alone; ordinary chromosome-conformation mapping without an exposure-induced chromatin-state conclusion; generic proliferation, viability, apoptosis, cell cycle, clonogenicity, soft agar or anchorage-independent growth, migration, invasion, EMT markers, tumor growth, differentiation, ordinary 2-D morphology, spheroid size, or developmental yield unless the same experiment directly measures a qualifying endpoint. Connexin abundance is not communication, proliferation is not contact inhibition, and generic 3-D growth is not architecture. Cytotoxicity-only experiments are out of scope. Exclude disease-only or untreated baseline surveys without a named exposure, purely computational work, reviews or cited background results not generated in the paper, methods-only passages without an actual result, and protocols or assay validation without a biological perturbation result.\n\nOne record is one primary indexed entity or defined combination × biological test system × exposure regimen × direct assay method × endpoint/target × measurement timepoint. Split separately reported species, tissues/cell lines, doses, exposure durations, washout intervals, passages/divisions/generations, assay domains or methods, loci/histone marks/architecture features, timepoints, or effect directions. Keep a dose series or time course together only when the paper reports solely an aggregate trend, range, or inseparable mapping; preserve that mapping in endpoint_result. For genome-wide or multiplex assays, create one aggregate record when only a summary is reported, and create target-specific records only for named targets with separate values or directions. Do not split technical replicates or equivalent confirming detection channels. Treat a fixed combination as one condition associated with the supplied global_identifier; list partners and sequencing in extra_details, and do not attribute a combination-only effect to an individual component.\n\nRequire an explicitly reported direct result or explicit null result from text, table, figure legend, or a clearly linked figure value. Use only paper evidence. You may normalize obvious species and assay names, expand unambiguous abbreviations, and recognize an explicitly named standard method, but do not infer species, model, dose, duration, density, assay platform, result, comparator, significance, cytotoxicity, washout, persistence, or reversibility from general knowledge. Do not calculate or convert values. Preserve ranges, inequalities, precision, uncertainty, categorical readouts, and treated/control pairs in endpoint_result. Leave unavailable fields null; never write missingness placeholders.\n\nPopulate persistence_outcome for every eligible record: use not_assessed when no qualifying post-exposure, recovery, propagation, later-life, or descendant measurement occurred; leave it null when a qualifying follow-up supports no durability conclusion, including a follow-up that found no induced endpoint change to persist (effect_direction=no_change already carries that result); otherwise classify the explicitly observed trajectory. Persistent means the same direct endpoint remains altered after the causal exposure ended, through documented drug-free culture, passages/divisions, a delayed post-exposure life stage, or an unexposed descendant generation. Reversed means return to the relevant baseline, no longer distinguishable from the comparator, after withdrawal or a stated reversal intervention. Record the evidence interval and propagation history in post_exposure_followup.\n\nAssume only as narrative defaults an ordinary matched untreated/vehicle comparison, standard assay-appropriate culture conditions, and endpoint collection at the end of exposure with no deliberate washout; do not fabricate these values in fields. In biological_test_system, capture the explicitly stated species, cell/tissue/model, in vitro/ex vivo/in vivo/human setting, and assay-relevant density or confluence. Put in extra_details: comparator and baseline values not already in endpoint_result; baseline intercellular communication; dye, secondary detection or confirming method; co-treatments and their doses; route/frequency and unusual exposure schedule; cytotoxicity/viability and whether it could confound the result; disease, genotype, sex, developmental stage, matrix, medium, oxygen, donor-recipient configuration, or other generalizability-limiting context; statistics, sample/replicate counts, exact genomic coordinates, reagent and instrument details, normalization, and useful secondary mechanistic findings. Cytotoxicity, expression, or secondary phenotypes may appear only as context for an otherwise qualifying record.",
+  "schema_spec": [
+    {
+      "name": "assay_domain",
+      "description": "Single broad biological domain directly measured in this record; this is the primary filter axis for the task. Choose the assayed endpoint family, not a proposed mechanism or a downstream interpretation. dna_methylation covers 5mC and 5hmC at global, repetitive, locus-specific, or genome-wide scope; chromatin_state covers histone/chromatin marks, occupancy, accessibility, nucleosome state, and compaction. This field carries the family only: the physical method belongs in assay_type and the measured target and readout belong in endpoint. Split records when independently reported endpoints fall in different domains. Missing domain is null; no placeholder value is allowed.",
+      "value_type": "string",
+      "allowed_values": [
+        "dna_methylation",
+        "chromatin_state",
+        "gap_junction_communication",
+        "contact_inhibition",
+        "three_dimensional_architecture"
+      ]
+    },
+    {
+      "name": "assay_type",
+      "description": "Most specific direct physical assay or platform explicitly used, such as WGBS, RRBS, bisulfite pyrosequencing, MSP, ChIP-qPCR, ATAC-seq, chromatin-compaction imaging, scrape-loading dye transfer, microinjection transfer, intercellular FRAP, parachute assay, saturation-density assay, post-confluence growth assay, or 3-D acinar/organoid assay. Include the primary dye, tracer, or detection format here when integral to the assay name. This field carries the method only: the broad biological family belongs in assay_domain and the measured target and readout belong in endpoint. Do not record species or model here, do not use persistence/washout as the assay type, and do not infer an unstated subtype. Null when the direct result is clear but the method is not supplied.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_test_system",
+      "description": "Explicit biological system in which the endpoint was measured, combining species; cell line, primary cell, tissue, organ, organism, or human cohort; in vitro, ex vivo, in vivo, intervention, or observational setting; and assay-relevant cell density, confluence, donor:recipient ratio, or 3-D culture format when stated. Preserve paper wording where normalization is uncertain. Omit any component the paper does not state rather than writing a not-stated placeholder; null only when the paper identifies no test system at all.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint",
+      "description": "Precisely identify both the assayed molecular/structural target and the operational readout so the result and unit are interpretable, for example 'percent methylation at RARB promoter CpGs', 'H3K27me3 ChIP enrichment at the HBG promoter', 'ATAC accessibility at named enhancers', 'dye-coupled recipient cells', 'FRAP recovery fraction', 'saturation density after confluence', or 'percentage of polarized lumen-containing acini'. For global or genome-wide summaries, state that scope. This field carries the target and readout only: the broad biological family belongs in assay_domain and the physical method in assay_type. Do not substitute downstream expression, viability, or mechanistic interpretation. Null only when the paper reports a qualifying result but does not identify the endpoint.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_result",
+      "description": "Exact reported quantitative or qualitative result, preserving numeric values, treated and comparator values, ranges, inequalities, mean and uncertainty, dose/time mappings, or categorical findings sufficiently to reconstruct the claim. Do not calculate, convert, or select a central number not privileged by the paper. If only a direction is stated, leave this null and use effect_direction. This field is paired with measurement_unit: whenever the paper supplies a unit or scale, populate measurement_unit as well, even when that unit also appears inline in this string. Missing results are null, never a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "measurement_unit",
+      "description": "Unit, normalization, denominator, or explicit qualitative scale for endpoint_result exactly as reported, without conversion, for example %, beta value, fold of control, IP/input, fluorescence units, coupled cells per donor, percent recovery, cells/cm2, foci per dish, percent normal acini, or qualitative score. This field is paired with endpoint_result: populate it whenever the paper supplies a unit or scale, including when the unit also appears inline in endpoint_result, and including when a unit or scale is named but no value is reported (endpoint_result then stays null). Leave null when the paper supplies no unit or scale. Do not use unspecified or not_reported values.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_direction",
+      "description": "Direction of the directly measured endpoint relative to its stated comparator. Apply direction to the named readout itself, not to inferred benefit or harm: reduced dye transfer is decreased, and an increased count of disorganized acini is increased. Use no_change for an explicit negative/null direct result, including a washout or propagation design in which no endpoint change was induced at any timepoint. Use mixed_direction only for an inseparable aggregate containing opposing site-, dose-, time-, or subfeature-specific directions. Use non_directional_change only for an explicitly reported redistribution or structural alteration that has no valid ordered axis; a merely qualitative or unquantified result that still states a direction uses increased or decreased. If direction cannot be established, use null; placeholder values were deliberately removed.",
+      "value_type": "string",
+      "allowed_values": [
+        "increased",
+        "decreased",
+        "no_change",
+        "mixed_direction",
+        "non_directional_change"
+      ]
+    },
+    {
+      "name": "concentration_or_dose",
+      "description": "Exact concentration, administered dose, exposure level, dietary amount, perturbation level, range, inequality, or compact dose series for the primary indexed entity, including its reported unit and denominator. Do not convert units or include assay-reagent amounts. Separately reported doses require separate records. Purely categorical or unquantified exposure levels, such as 'low versus high folate' or 'chronic environmental exposure', are null here and are preserved in extra_details; absent doses are null, not a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_duration",
+      "description": "Duration or explicit developmental window of active exposure before withdrawal or endpoint collection, including a concise repeated-treatment schedule when inseparable. Do not include drug-free recovery here. Preserve ranges and inequalities without conversion. Null when not stated or when no meaningful duration applies; no missingness label is permitted.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "post_exposure_followup",
+      "description": "Labeled account of post-exposure evidence: drug-free washout/recovery duration, later-life interval, measurement time relative to exposure cessation, and numbers of passages, population doublings, cell divisions, organismal generations, or unexposed descendant generations. Distinguish components explicitly, for example '7 d drug-free; 4 passages; measured at P8' or 'F3 unexposed descendants'. Null when no such follow-up occurred or was reported; persistence_outcome=not_assessed is what distinguishes a design with no follow-up from a follow-up whose timing detail is missing.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "persistence_outcome",
+      "description": "Conclusion about the temporal durability of the same direct endpoint; populate this for every eligible record except the single null case below. Use not_assessed when there was no qualifying post-exposure, recovery, propagation, later-life, or descendant test; this is an experimental-design status, not a missing-data placeholder. persistent means the induced alteration remained essentially undiminished at the assessed follow-up; partially_persistent means it remained but weakened or recovered incompletely; reversed means it returned to the relevant baseline and is no longer distinguishable from the comparator after withdrawal or an explicitly stated reversal intervention; mixed_persistence means inseparable targets, doses, times, or subgroups had different durability outcomes. The only null case is a qualifying follow-up that supports no durability conclusion, including a design in which no endpoint change was induced at all — effect_direction=no_change already records that result — in which case describe the design in post_exposure_followup. Do not infer durability from an acute epigenetic measurement.",
+      "value_type": "string",
+      "allowed_values": [
+        "not_assessed",
+        "persistent",
+        "partially_persistent",
+        "reversed",
+        "mixed_persistence"
+      ]
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form additional evidence and context not represented above: comparator identity and values, baseline intercellular communication or baseline architecture, secondary or confirming detection method, combination partners and sequence, route/frequency, categorical or unquantified exposure level, cytotoxicity or viability and whether it could confound the endpoint, unusual density or matrix details, disease/genotype/sex/developmental context, statistics and sample size, exact loci/CpGs, normalization, the readable name of the tested entity when the global_identifier is absent or ambiguous, protocol details, and relevant secondary findings. Do not use missingness placeholders. This must remain the trailing field.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

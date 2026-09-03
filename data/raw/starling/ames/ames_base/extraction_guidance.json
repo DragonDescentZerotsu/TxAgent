@@ -1,0 +1,110 @@
+{
+  "task": "Find all molecules known to be mutagenic within PubMed. When designing the schema, use enumerated values to facilitate downstream processing whenever possible.",
+  "task_instantiation": "Build a table that answers: (1) which discrete named chemical substances have positive, strong, weak, equivocal, conflicting, or assay-specific negative mutagenicity evidence; (2) which mutation-assay family supports each finding; (3) whether support comes from a current experiment, a cited experiment, positive-control/reference use, a bare mutagen designation, or a review/regulatory synthesis; (4) in which biological system and in vitro, ex vivo, in vivo, host-mediated, or human-observational context the finding applies; (5) how exogenous metabolic activation relates to the finding; and (6) which nonstandard conditions limit generalization.\n\nExtract evidence for discrete, named chemical substances, including defined salts, stereoisomers, metabolites, reaction products, and specified elemental or ionic species. A paper code such as “compound 8f” is in scope only when the text clearly treats it as one discrete test substance; mark it `unresolved_compound_code` in `chemical_entity_type`. Exclude broad chemical classes, structural fragments, unnamed derivatives, physical agents, biological exposures, undefined mixtures, extracts, foods, smoke or environmental samples, formulations, and process streams. Do not attribute a mixture’s activity to a listed constituent, a metabolite’s activity to its parent, or a class claim to individual members unless the text explicitly does so.\n\nMutagenicity is induction of gene mutation, stable mutation-associated recombination or gene conversion, heritable/germ-cell mutation, structural chromosome mutation or clastogenicity, numerical chromosome mutation or aneugenicity, or micronucleus formation used as a chromosome-mutation endpoint. Include an explicit statement that a substance is a mutagen, promutagen, clastogen, or aneugen; designation or use as a mutagenic positive control/reference agent; and positive results from recognized mutation, chromosome-aberration, micronucleus, or aneuploidy assays. An observed increase in an in-scope endpoint is sufficient when the paper interprets it as positive or its table clearly marks it positive. Preserve weak, equivocal, conflicting, and negative findings when the same paper also establishes the substance as mutagenic or reports an in-scope positive finding; do not collect arbitrary purely negative substances. A general known-mutagen statement yields one positive record with `assay_family=unspecified_mutagenicity`.\n\nDo not infer mutagenicity from carcinogenicity, tumorigenicity, cytotoxicity, teratogenicity, oxidative stress, DNA binding or reactivity, DNA adducts or cross-links, strand breaks, comet assays, γH2AX, unscheduled DNA synthesis, DNA-repair sensitivity or reporter responses, SOS/umu/rec assays, sister-chromatid exchange, cell transformation, epigenetic change, generic “genotoxic” or “DNA-damaging” language, chemical-class membership, structural alerts, mechanistic plausibility, or QSAR/in-silico predictions. Such evidence qualifies only when the same text also reports an in-scope mutation/chromosome endpoint or explicitly classifies the substance as mutagenic, clastogenic, or aneugenic. Exclude mere statements that a substance was tested, may be mutagenic, warrants testing, or occurs in a mutagenic sample.\n\nOne record represents one substance × assay family or evidence statement × biological test system × experimental context × materially distinct activation condition × qualitative result. Split separately named substances. Split records when assay family, system/species/tissue, context, activation condition, or result differs—for example, positive with S9 and negative without S9. Merge replicate experiments, doses, time points, loci, or strains only when they have the same categorical result and materially equivalent conditions; summarize merged details in `extra_details`. For an inseparable review-level synthesis spanning assays or contexts, use `multiple_mutation_assays` and `conflicting` only if the source itself gives an unresolved mixed conclusion. Never resolve disagreements by creating an overall judgment.\n\nRequire explicit textual or tabular support. Follow the paper’s interpretation rather than reclassifying raw numbers or imposing a new statistical threshold. Use `strong_positive` only for explicitly strong, potent, or highly mutagenic activity; `weak_positive` for explicitly weak, slight, marginal-but-accepted, or low-potency positive activity; `equivocal` for explicitly borderline, doubtful, uncertain, or inconclusive evidence; and `negative` for an explicit negative in an otherwise eligible substance. Do not guess expansions of ambiguous abbreviations, chemical identities, assay types, organisms, or activation requirements.\n\nAssume a conventional validated implementation of the named assay, normal repair-proficient test systems, standard vehicle and controls, ordinary culture or animal conditions, testing of the nominal substance alone, and nonexceptional exposure levels as defaults. Record ordinary S9/exogenous activation only in `metabolic_activation`. Put genuine departures or restrictions in `qualifying_conditions`: positivity only at overtly cytotoxic or extreme exposure, required light/irradiation/heating or co-agent, repair-deficient or engineered cells, unusual activation preparation, unusual pH/matrix/protocol, uncertain identity or purity, disputed study validity, or restriction to an unusual route, tissue, life stage, sex, strain, or exposure setting.\n\nSpill rules: put exact dose/concentration, exposure duration and routine route, sampling time, quantitative revertant/mutant/micronucleus frequencies, fold changes, p-values, dose response, thresholds, potency rankings, detailed mutation spectra or affected loci, individual same-result strains, S9 source or percentage, assay guideline number, aliases, expanded abbreviations, CAS and other identifiers, chemical class, parent–metabolite relationship, source/vendor/solvent, mechanism, DNA lesions, carcinogenicity, cytotoxicity, antimutagenicity, and other adjacent biological effects in `extra_details`. Put only nonstandard context that changes generalizability in `qualifying_conditions`.",
+  "schema_spec": [
+    {
+      "name": "molecule_name",
+      "description": "Human-readable paper-supported name, abbreviation, formula, or designation of the single discrete chemical substance. Preserve the specific salt, stereoisomer, metabolite, reaction product, element, or ion to which the claim applies. Retain an unresolved paper label such as “compound 8f” without guessing its identity. Null only when the supplied `global_identifier` unambiguously identifies the substance but no readable name or designation appears in the text.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "chemical_entity_type",
+      "description": "Identity resolution of `molecule_name`. Use `defined_chemical` for a specifically identified molecule, salt, stereoisomer, metabolite, ion, element, or other defined chemical species; use `unresolved_compound_code` for a discrete test substance identified only by a paper code or table designation. Broad classes, mixtures, extracts, formulations, and undefined materials are out of scope.",
+      "value_type": "string",
+      "allowed_values": [
+        "defined_chemical",
+        "unresolved_compound_code"
+      ]
+    },
+    {
+      "name": "mutagenicity_result",
+      "description": "Paper-supported qualitative result for this exact evidence unit. Use `strong_positive` only when strong or potent activity is explicit; `positive` for an ordinary positive result or explicit mutagen/control designation; `weak_positive` for explicitly weak, slight, marginal-but-accepted, or low-potency positive activity; `equivocal` for explicitly borderline, doubtful, uncertain, or inconclusive evidence; `negative` for an explicit negative result on a substance otherwise eligible under the scope rules; and `conflicting` only for an inseparable unresolved synthesis containing both positive and negative evidence. Do not infer mutagenicity from adjacent genotoxicity endpoints.",
+      "value_type": "string",
+      "allowed_values": [
+        "strong_positive",
+        "positive",
+        "weak_positive",
+        "equivocal",
+        "negative",
+        "conflicting"
+      ]
+    },
+    {
+      "name": "evidence_basis",
+      "description": "How this paper supplies the result. Use `current_study_experiment` for a test-substance result generated in the paper; `cited_experiment` for a specific prior experimental result; `positive_control_or_reference_use` when support is designation or use as a mutagenic control, comparator, or challenge agent; `explicit_mutagen_statement` for a narrative mutagen/promutagen/clastogen/aneugen designation without a specific assay result; and `review_or_regulatory_synthesis` for a review, database, table, panel, or regulatory weight-of-evidence classification. Choose the most direct supporting basis.",
+      "value_type": "string",
+      "allowed_values": [
+        "current_study_experiment",
+        "cited_experiment",
+        "positive_control_or_reference_use",
+        "explicit_mutagen_statement",
+        "review_or_regulatory_synthesis"
+      ]
+    },
+    {
+      "name": "assay_family",
+      "description": "Broad mutation assay or endpoint family supporting the record. Choose the most specific applicable value and split distinct families when results can be mapped separately. `other_microorganism_mutation` covers non-Ames bacterial and fungal/yeast mutation tests; `non_mammalian_eukaryote_mutation` covers Drosophila, plant, and other non-mammalian mutation assays not better classified; `germ_cell_or_heritable_mutation` includes specific-locus, dominant/recessive lethal, and transmitted mutation assays. Use `multiple_mutation_assays` only for an inseparable synthesis and `unspecified_mutagenicity` for a bare mutagen designation. DNA-damage-only assays are out of scope.",
+      "value_type": "string",
+      "allowed_values": [
+        "bacterial_reverse_mutation",
+        "other_microorganism_mutation",
+        "mammalian_cell_gene_mutation",
+        "in_vivo_somatic_gene_mutation",
+        "non_mammalian_eukaryote_mutation",
+        "germ_cell_or_heritable_mutation",
+        "chromosome_aberration_or_clastogenicity",
+        "micronucleus",
+        "aneuploidy_or_malsegregation",
+        "recombination_or_gene_conversion",
+        "other_mutation_assay",
+        "multiple_mutation_assays",
+        "unspecified_mutagenicity"
+      ]
+    },
+    {
+      "name": "experimental_context",
+      "description": "Physical/biological context of the evidence. Use `in_vitro` for microorganisms or cultured cells; `ex_vivo` for removed tissues or cells tested outside the organism; `in_vivo_nonhuman` for exposure and endpoint measurement in an intact nonhuman organism; `host_mediated` for cells or microorganisms exposed within a host; `human_observational` for mutation endpoints measured in exposed people; `multiple_contexts` only for an inseparable synthesis; and `not_reported` for a general classification or when context is unstated.",
+      "value_type": "string",
+      "allowed_values": [
+        "in_vitro",
+        "ex_vivo",
+        "in_vivo_nonhuman",
+        "host_mediated",
+        "human_observational",
+        "multiple_contexts",
+        "not_reported"
+      ]
+    },
+    {
+      "name": "test_system",
+      "description": "Concise biological system as reported, combining organism/species, strain, cell line or primary cell type, tissue, and locus when useful, for example “Salmonella Typhimurium TA98,” “L5178Y TK+/− cells,” or “mouse bone marrow erythrocytes.” Combine systems only when all other record-level fields and the result are the same. Do not invent taxonomy or expand ambiguous labels. Null when no system is reported.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "metabolic_activation",
+      "description": "Exogenous metabolic-activation condition for this record. Use `present` when S9, microsomes, or another added activation system was used; `absent` when testing without added activation is explicit; `both` only when the same qualitative result applies with and without activation and the conditions are merged; `not_applicable` for intact-organism, human-observational, general-classification, or other evidence where added activation is not meaningful; and `not_reported` when an in-vitro or ex-vivo passage does not state activation. If outcomes differ with and without activation, make separate records rather than use `both`.",
+      "value_type": "string",
+      "allowed_values": [
+        "present",
+        "absent",
+        "both",
+        "not_applicable",
+        "not_reported"
+      ]
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Nonstandard or restrictive context that materially limits generalization: positivity only at overtly cytotoxic or extreme exposure, required irradiation/light/heating or co-agent, repair-deficient or engineered systems, unusual activation preparation, unusual pH/matrix/protocol, uncertain identity or purity, disputed validity, or restriction to an unusual route, tissue, life stage, sex, strain, or exposure setting. Do not repeat ordinary assay details or routine S9 status. Null when no genuine qualification is reported.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional useful details not represented above: exact dose/concentration, duration and route, quantitative frequencies/effect sizes/statistics, dose response and thresholds, potency rankings, mutation spectra/loci, same-result strain details, S9 source/percentage, guideline number, aliases and identifiers, chemical class and relationships, source/vendor/solvent, mechanism, DNA lesions, carcinogenicity, cytotoxicity, antimutagenicity, or other adjacent findings. Do not use this field to rescue evidence that is out of scope.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

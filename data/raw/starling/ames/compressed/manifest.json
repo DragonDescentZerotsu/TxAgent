@@ -1,0 +1,72 @@
+{
+  "sources": [
+    {
+      "authoritative_path": "ames/ames_base/extractions.parquet",
+      "authoritative_sha256": "6d0d2c33ea9289b9a7fd9e483b9c48c2d1420a7b96e5b4cfe3e6eef11701f097",
+      "parts": [
+        {
+          "bytes": 65308628,
+          "name": "ames_base.parquet",
+          "sha256": "58b13a181d9f99712d686de57f389033f2c85c76e1bec1ede6d242b640bc1bda"
+        }
+      ],
+      "rows": 334211,
+      "source_id": "mutagenicity_outcomes",
+      "task_id": "ames"
+    },
+    {
+      "authoritative_path": "ames/ames_v1/extractions.parquet",
+      "authoritative_sha256": "d186598f169c486beab6836ad9f96f6f400542deac7259486c45ca0d7cc7cb91",
+      "parts": [
+        {
+          "bytes": 17949338,
+          "name": "ames_v1.parquet",
+          "sha256": "6f79d0e624feb50a6a2ba043e75b5096e29dcf591f697785837b01f9d9052304"
+        }
+      ],
+      "rows": 91533,
+      "source_id": "fixed_mutation",
+      "task_id": "ames"
+    },
+    {
+      "authoritative_path": "ames/ames_v2/extractions.parquet",
+      "authoritative_sha256": "b013ad9b276e337f0d4a207be769b92fe190bb921a23a964b4cfc80397eafa81",
+      "parts": [
+        {
+          "bytes": 58800972,
+          "name": "ames_v2.part-0001.parquet",
+          "sha256": "81691de2483205d91562240f467ecf218f8f8ce9ff28affa3c8d9843dce4a667"
+        },
+        {
+          "bytes": 64487552,
+          "name": "ames_v2.part-0002.parquet",
+          "sha256": "f3596fe98e5a2816b6de80558f55353389281f8f0d9d05039c9883b4a916e15d"
+        }
+      ],
+      "rows": 504321,
+      "source_id": "premutagenic_damage",
+      "task_id": "ames"
+    },
+    {
+      "authoritative_path": "ames/ames_v3/extractions.parquet",
+      "authoritative_sha256": "f1ff2c08107c62e266e0b46cb8b88c77949b7cbcdff8cfa07c81fbdd2bbfa006",
+      "parts": [
+        {
+          "bytes": 65445536,
+          "name": "ames_v3.part-0001.parquet",
+          "sha256": "db60928a6600d787f329f75bfdb5e4105b22517137733689ea2daa15cec6d638"
+        },
+        {
+          "bytes": 66865893,
+          "name": "ames_v3.part-0002.parquet",
+          "sha256": "989736626448e9440231df6d0b50453f9339249c420c180f8980dfc51e09f131"
+        }
+      ],
+      "rows": 580382,
+      "source_id": "mutagenicity_mechanism",
+      "task_id": "ames"
+    }
+  ],
+  "task_id": "ames",
+  "version": "starling_compressed_mirrors.v1"
+}

@@ -1,0 +1,126 @@
+{
+  "task": "Find all assays of molecules concerning fixed gene and chromosome mutations. Fixed mutations are stable changes in DNA sequence, chromosome structure, or chromosome number. Make sure to include assays such as HPRT/XPRT and TK mouse-lymphoma assays, Pig-a, transgenic-rodent mutation assays, microbial forward-mutation and yeast mutation assays, micronucleus, chromosome-aberration, aneuploidy, recombination, and FISH assays. Exclude the Ames/Salmonella bacterial reverse-mutation test. \n\nSpecify concentration or dose and units, assay type, species or strain, cell line, tissue, genetic locus, metabolic activation and its source, exposure and expression or sampling times, administration route, cytotoxicity or cell-proliferation limits, and the mutation or chromosome-damage measurement unit. Include all key experimental details.",
+  "task_instantiation": "Extract every completed experimental or observational assay in which the molecule, material, defined mixture, metabolite, or measured chemical exposure represented by `global_identifier` is explicitly linked to an eligible fixed-mutation or chromosome endpoint. Include stable gene-sequence mutation; chromosome structural change; chromosome-number or ploidy change; micronucleus; sister-chromatid exchange; recombination or gene conversion; and explicitly reported heritable mutation/lethal proxy assays. Eligible families include HPRT/HGPRT/XPRT and other mammalian forward-mutation assays, L5178Y TK mouse-lymphoma, Pig-a, transgenic-rodent reporters, microbial forward mutation, genuinely non-Ames/non-Salmonella mutation assays, yeast/fungal mutation, specific-locus and visible-marker tests, Drosophila mutation tests, dominant-lethal and heritable-translocation tests, micronucleus, chromosome aberration, SCE, recombination/gene conversion, aneuploidy, polyploidy or measured chromosome doubling, FISH/molecular cytogenetics, and sequencing or PCR when used to measure exposure-induced fixed mutations. Include negative, weak-positive, equivocal, mixed, and inconclusive outcomes and exposure-linked human or environmental biomonitoring.\n\nExclude every Ames/Salmonella bacterial reverse-mutation result and E. coli WP2-style reversion result. Also exclude comet/alkaline-elution and other strand-break assays, UDS, SOS/umu or repair responses, DNA adducts, oxidative lesions, gamma-H2AX or repair foci, apoptosis, cell-cycle or spindle effects alone, cytotoxicity/proliferation alone, cell transformation, tumour incidence alone, purely computational predictions, and generic claims such as “genotoxic” unless the same experiment separately reports an eligible fixed-mutation/chromosome endpoint. Exclude diagnostic or descriptive sequencing, PCR, FISH, karyotyping, or copy-number analysis of untreated clinical/tumour specimens with no linked molecule exposure; assay-development or kit-validation descriptions; proposed or methods-only assays without a result; and preparative chromosome-doubling or micronucleation protocols without a measured endpoint. Do not treat selectors, stains, probes, solvents, vehicles, S9 reagents, cytokinesis blockers, or metaphase-arrest agents as the tested molecule unless they are independently evaluated for mutation effects. Do not attribute a tested mixture's result to its ingredients.\n\nOne record is one global-identifier entity × assay family × study context/biological system × locus/endpoint class × metabolic-activation condition × route/exposure regimen × exposure or expression/sampling time × dose level or reported dose series with one interpretable qualitative result and at most one aligned quantitative response. Split records when assay family, endpoint class, locus, species/strain/model, cell line, tissue/cell population, activation condition, route, exposure duration/frequency, expression/recovery time, sampling/harvest time, qualitative result, or quantitative response differs. Split micronucleus, chromosome-aberration, SCE, gene-mutation, recombination, and aneuploidy components. Split +S9 and −S9 arms when separable; use `both_conditions_pooled` only when the paper supplies one inseparable result for both. Split tissues or sexes when their results differ. Split individual doses when they have distinct calls or quantitative responses. If a dose list/range has only one overall conclusion and no dose-specific response, retain one record and preserve the ordered series/range. Merge replicate cultures or repeated trials only when conditions and the reported conclusion are the same; otherwise use `mixed` only when the discordance cannot be split.\n\nRequire an explicit performed-assay statement plus a qualitative conclusion or quantitative eligible endpoint tied to the entity. Review and summary-table evidence is acceptable when the molecule, eligible assay/endpoint, and result are explicitly linked; do not reconstruct absent details from cited sources. Use only the paper text, governing table headings/footnotes, and unambiguous standard normalization. Species may be normalized or inferred only from an unmistakable canonical line/model such as CHO/V79, L5178Y, or TK6. Infer a canonical locus only when the assay designation or stated selection system uniquely establishes it; otherwise leave it null. Never infer strain, tissue, route, dose, unit, timing, activation condition/source, or outcome from customary protocols. Preserve reported values and precision without conversion.\n\nUse `biological_test_system` in the order `organism; strain/model; cell line; tissue/cell type`, including only stated components. `dose_or_concentration` contains the reported test-article value/list/range and `dose_unit` its separate unit. `response_value` is one numeric mutation/chromosome response and `response_unit` is its denominator or measurement unit; split dose-specific measurements rather than storing an ambiguous array. A qualitative-only record has null response fields but a populated `result_call`.\n\nTreat ordinary guideline-compatible culture or husbandry, routine controls, and standard scoring as defaults only for deciding what need not be repeated; never fill missing fields from those defaults. In `extra_details`, preserve the specific assay designation and detection/scoring method; administration route; exposure duration/frequency; expression/recovery and sampling/harvest times; metabolic-activation source and preparation; observed mutation/aberration subtype or spectrum; sex when relevant; cytotoxicity, survival, cloning efficiency, mitotic/replication index, PCE/NCE or RET changes, precipitation/solubility and MTD limits; target-tissue exposure concerns; co-treatments and unusual conditions; formulation/purity/vehicle; controls; numbers scored; statistics; guideline/GLP information; and material validity, attribution, or generalizability limitations. Do not restate populated fields, insert placeholders for missing information, or preserve excluded companion endpoints except for a brief note when essential to interpreting an included result.",
+  "schema_spec": [
+    {
+      "name": "assay_family",
+      "description": "Normalized assay family actually performed. Choose exactly one most-specific family. Fallback values apply only when no named family fits. Use `fish_or_molecular_cytogenetics` when in-situ hybridization or molecular cytogenetics is the principal assay; if FISH only classifies micronuclei or supports another family, select that other family and put FISH in `extra_details`. Null if the paper does not identify an assay family; no placeholder value is permitted.",
+      "value_type": "string",
+      "allowed_values": [
+        "hprt_hgprt_xprt_forward_mutation",
+        "tk_mouse_lymphoma",
+        "pig_a_mutation",
+        "transgenic_rodent_mutation",
+        "other_mammalian_forward_mutation",
+        "microbial_forward_mutation",
+        "non_salmonella_reverse_mutation",
+        "yeast_or_fungal_mutation",
+        "specific_locus_or_visible_marker",
+        "drosophila_mutation",
+        "dominant_lethal_test",
+        "heritable_translocation_test",
+        "micronucleus_assay",
+        "chromosome_aberration_assay",
+        "sister_chromatid_exchange_assay",
+        "recombination_or_gene_conversion_assay",
+        "aneuploidy_or_chromosome_malsegregation",
+        "polyploidy_or_chromosome_doubling",
+        "fish_or_molecular_cytogenetics",
+        "sequencing_based_induced_mutation",
+        "other_fixed_mutation_assay"
+      ]
+    },
+    {
+      "name": "endpoint_class",
+      "description": "One high-level biological endpoint class, independent of assay technology. These values are deliberately at one abstraction level: do not put base substitution, frameshift, deletion subtype, translocation subtype, or mutation spectrum here; preserve those details in `extra_details`. Micronucleus and SCE have dedicated classes and must not also be labeled structural or numerical damage. Use `mixed_fixed_damage_endpoint` only for a truly inseparable combined endpoint. Null rather than a placeholder when the class cannot be established.",
+      "value_type": "string",
+      "allowed_values": [
+        "sequence_level_gene_change",
+        "structural_chromosome_change",
+        "numerical_chromosome_change",
+        "micronuclear_endpoint",
+        "chromatid_exchange_endpoint",
+        "recombination_or_conversion_endpoint",
+        "heritable_lethal_or_mutation_proxy",
+        "mixed_fixed_damage_endpoint"
+      ]
+    },
+    {
+      "name": "study_context",
+      "description": "Physical setting in which exposure and endpoint measurement occurred. `ex_vivo` means removed cells/tissues assayed outside the organism; `human_biomonitoring` and `environmental_biomonitoring` require an explicitly linked exposure. Choose one context and split separable contexts. Null if not stated; no `not_reported` or `not_applicable` value is allowed.",
+      "value_type": "string",
+      "allowed_values": [
+        "in_vitro",
+        "ex_vivo",
+        "in_vivo_experimental",
+        "human_biomonitoring",
+        "environmental_biomonitoring"
+      ]
+    },
+    {
+      "name": "biological_test_system",
+      "description": "Compact ordered description of the system in which the endpoint was measured: `organism; strain/model; cell line; tissue/cell type`. Include only components explicitly stated or conservatively normalized, label components when needed to avoid ambiguity, and include both tissue and scored cell population when given. Do not include the S9 donor species. Null if no biological-system detail is supplied; do not write a missing-information placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "genetic_locus_or_chromosome_target",
+      "description": "Gene, selectable locus, reporter/transgene, chromosome, chromosome region, probe target, marker, or defined abnormality interrogated, preserving the paper's notation. Do not invent a locus for untargeted micronucleus, SCE, or chromosome-aberration assays. Leave null when no target is stated or uniquely established; do not use `unspecified`, `genome_wide`, or another missing-information placeholder unless that wording is an actual reported target.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_or_concentration",
+      "description": "Reported test-article dose, concentration, measured exposure level, ordered series, range, inequality, or qualitative dose level for this record, excluding the shared unit where practical. Preserve exact precision and do not convert. Split doses when they have distinct calls or quantitative responses. Null when absent; never enter `not reported` or a similar phrase.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_unit",
+      "description": "Unit and basis applying to `dose_or_concentration`, as reported with typography normalized but without conversion, for example `µM`, `µg/mL`, `mg/kg bw/day`, `ppm in diet`, or `Gy`. If incompatible units occur in one inseparable report, put the primary unit here and preserve aligned alternatives in `extra_details`. Null when the dose is qualitative or its unit is not supplied; placeholder unit values are forbidden.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "metabolic_activation_status",
+      "description": "Presence of an added exogenous metabolic-activation system in this assay arm. `both_conditions_pooled` is allowed only when +activation and −activation were both tested but the text reports one inseparable outcome. This field does not encode whether activation was required for positivity. Engineered metabolism, S9 source, donor species, tissue, and inducer belong in `extra_details`. For in-vivo or biomonitoring contexts leave null because endogenous metabolism is not an exogenous assay condition; for in-vitro/ex-vivo records null means status was not reported. Explicit absence is `without_exogenous_activation`, not null.",
+      "value_type": "string",
+      "allowed_values": [
+        "with_exogenous_activation",
+        "without_exogenous_activation",
+        "both_conditions_pooled"
+      ]
+    },
+    {
+      "name": "result_call",
+      "description": "Author-reported or directly interpretable qualitative conclusion for this exact record. `weak_positive` requires explicit weak/marginal positivity; `equivocal` covers borderline or ambiguous evidence; `mixed` is reserved for inseparable discordant component or replicate calls; `inconclusive` means the authors judged the assay uninterpretable or unable to support a conclusion. These values are mutually exclusive. This field should be populated for every extracted result record; null is only for an exceptional quantitative result with no defensible qualitative direction, never a `not_reported` placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "positive",
+        "weak_positive",
+        "equivocal",
+        "negative",
+        "mixed",
+        "inconclusive"
+      ]
+    },
+    {
+      "name": "response_value",
+      "description": "Single numeric mutation or chromosome-damage response aligned to this record, such as mutant frequency, micronucleus frequency, aberrant-cell percentage, SCEs per cell, or chromosome-loss rate. Preserve reported precision and do not calculate or convert. Split dose-specific values into separate records. Put ranges, uncertainty, comparator/control values, and complex series in `extra_details` if they cannot be represented as one number. Null means no single quantitative response was supplied; interpret the outcome through `result_call`.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "response_unit",
+      "description": "Reported unit, denominator, or scoring basis for `response_value`, for example `mutants per 10^6 cells`, `% micronucleated cells`, `micronuclei per 1000 PCE`, `aberrations per metaphase`, or `SCE per cell`. Keep separate from the number and do not infer it from the assay name. Null when `response_value` is null or the paper supplies no unit; never use a missing-information placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional key experimental details not represented above: specific assay designation and detection/scoring method; route; exposure schedule/duration; expression/recovery and harvest/sampling times; metabolic-activation source; specific mutation/aberration subtype; sex; cytotoxicity/proliferation, precipitation, solubility, MTD, and target-tissue-exposure limits; co-treatments and unusual conditions; formulation, vehicle, controls, sample size, statistics, guideline/GLP status, and validity or attribution limitations. Preserve exact complex dose-response alignments or response ranges here. Do not restate populated fields, use missing-information placeholders, or store excluded assay results except when a brief note is essential to interpret the included endpoint.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

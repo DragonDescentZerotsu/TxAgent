@@ -1,0 +1,94 @@
+{
+  "task": "Find all assays of molecules concerning cellular transformation, immortalization, and escape from growth control. Cellular transformation is the acquisition of persistent pre-neoplastic properties, while growth-control escape includes sustained proliferation, senescence bypass, altered cell cycle, clonogenic survival, or reduced cell death. Make sure to include assays such as SHE, Bhas 42, BALB/c 3T3, C3H10T1/2, focus formation, anchorage-independent growth, serial-passage immortalization, clonogenic survival, EdU/BrdU proliferation, cell-cycle analysis, and Annexin-V/PI assays. Specify the endpoint and measurement unit, molecule concentration or in-vivo dose, exposure and recovery duration, acute versus repeated exposure, assay type, cell or tissue type, species, passage number, metabolic activation, cytotoxicity level, and transformation-scoring criteria. Include all key experimental details.",
+  "task_instantiation": "Extract every explicit molecule-linked experimental result concerning persistent cellular transformation, immortalization, or escape from growth control. The primary entity is supplied through `global_identifier`; do not create records for stains, labels, vehicles, media components, antibodies, or assay-kit reagents merely because they appear in a protocol, unless the paper explicitly tests that reagent's biological effect.\n\nIn scope are direct functional assays of morphological or neoplastic cellular transformation; transformed-focus formation or loss of contact inhibition; anchorage-independent growth in soft agar or another semisolid matrix; growth-factor independence; immortalization, crisis escape, extended replicative lifespan, or senescence bypass; sustained proliferation, growth inhibition, direct cell number, DNA synthesis or S-phase entry; cell-cycle distribution, arrest, checkpoint escape, mitosis, or ploidy; senescence; clonogenic or colony-forming survival; direct viability or survival; apoptosis, necrosis, or another directly measured cell-death phenotype; preneoplastic lesions; tumor initiation or promotion; and tumorigenicity of treated, transformed, immortalized, or genetically altered cells. Explicitly include SHE, Bhas 42, BALB/c 3T3, C3H10T1/2, NIH-3T3 or comparable transformation systems, focus formation, anchorage-independent growth, serial-passage immortalization, clonogenic survival, EdU/BrdU/[3H]-thymidine proliferation, direct cell counts or growth curves, cell-cycle analysis, senescence assays, and Annexin-V/PI assays. Metabolic MTT/MTS/XTT/WST/resazurin or related assays qualify only when the authors use them as a direct proliferation, growth, viability, survival, or cytotoxicity endpoint. In-vivo preneoplastic-focus, initiation/promotion, and tumorigenicity assays qualify; established-tumor burden or growth qualifies only when explicitly used as a direct sustained-growth or transformed-phenotype endpoint, not as generic drug-efficacy evidence.\n\nExclude mutation, micronucleus, chromosome-aberration, DNA-adduct, DNA-damage/repair, ROS, mitochondrial-potential, receptor binding, metabolism, enzyme activity, omics, gene/protein abundance, phosphorylation, signaling, differentiation, autophagy, migration, invasion, angiogenesis, metastasis, organ weight, and nonspecific histopathology when reported without a direct in-scope functional endpoint. Caspase activity, TUNEL, DNA fragmentation, membrane integrity, or apoptotic morphology qualify only when explicitly used to determine cell death. Exclude epidemiology, computational predictions, clinical associations, generic carcinogenicity claims, cell-line descriptions, speculative mechanisms, and planned or methods-only assays without a molecule-linked result. Do not infer transformation from cancer-cell origin, morphology, biomarker expression, or reduced viability.\n\nCreate one record per primary molecule/global identifier × biological model × assay family/method × exposure regimen × endpoint × independently interpretable result condition. Split records when cell line, primary cell, tissue, organoid, species, host, baseline transformation state, assay, endpoint, explicitly tested metabolic-activation condition, dose, exposure duration, recovery duration, passage, time point, or outcome has a separately reported result. Split transformation and parallel cytotoxicity endpoints. Split cell-cycle phases, early/late apoptosis, necrosis, viability, colony count/size, or tumor incidence/multiplicity only when separately quantified or interpreted. A dose or time series may remain one record only when the paper provides an aggregate trend, potency estimate, shared qualitative conclusion, or one aligned inseparable series; preserve the complete mapping in the exposure and result fields. Merge technical replicates and duplicate descriptions. For combinations, index only the supplied primary entity and place initiators, promoters, pretreatments, challenges, rescue agents, radiation, or other co-treatments in `assay_interpretation_conditions`; do not attribute a combination effect to one component unless the paper does so.\n\nRequire an explicit result or explicit positive, negative, weak, null, inhibitory, stimulatory, biphasic, or equivocal finding. Concrete results summarized from a cited study or review are eligible only when the molecule, identifiable assay or endpoint, biological model when available, and outcome are stated; mark the secondary evidence in `extra_details` and do not invent missing methods. Use only the supplied paper text plus safe normalization of obvious assay names, units, and unambiguous standard cell-line species. Do not infer dose, route, duration, recovery, passage, activation, cytotoxicity, scoring threshold, significance, or numerical values from convention or general knowledge. Preserve inequalities, ranges, ratios, means and errors, and aligned series without conversion.\n\nInterpret `effect_direction` relative to the stated comparator and to the named endpoint itself: more apoptosis is increased apoptosis, fewer foci is decreased focus formation, and an explicit negative assay is no_effect unless the authors call it equivocal. Keep formal transformation/immortalization calls distinct from direction and preserve them verbatim in `result_value` or `assay_interpretation_conditions`. Keep concurrent cytotoxicity distinct from transformation; do not call nonspecific lethality a positive transformation result.\n\nTreat a single uninterrupted incubation, even over several days or harvest times, as single/continuous, not repeated. Use repeated/intermittent only for multiple administrations or renewals; use serial-passage chronic for treatment maintained across passages; identify pretreatment/challenge or washout sequences explicitly. Record exposure duration separately within `exposure_regimen` from any drug-free recovery or post-exposure observation interval.\n\nOrdinary monolayer culture, routine medium and atmosphere, vehicle/untreated comparison, standard processing, no recovery interval, and no added metabolic activation are background assumptions only; never populate an unstated field from these defaults. Metabolic activation has no dedicated field: record it in `assay_interpretation_conditions` only when the paper explicitly states that an exogenous activation system (S9, Aroclor-induced homogenate, feeder or hepatocyte-mediated activation, added enzyme) was used, was explicitly omitted, or was compared present versus absent, and name the system. Silence about activation is not an absence claim and must not be written anywhere.\n\nIn `assay_interpretation_conditions`, preserve interpretation-critical cytotoxicity or plating-efficiency evidence; transformation/focus/colony/immortalization/senescence/cell-cycle/death-gating/lesion/tumor scoring definitions; co-treatments and sequence; nonstandard serum or growth-factor conditions; synchronization, confluence, hypoxia, 3-D matrix, feeder or co-culture; genotype or transformed/resistant state; unusual host, sex, strain, age, route, or challenge conditions; and persistence after washout. Put seeding density, plate format, routine medium, stain concentrations, instruments/software, replicate counts, statistical tests, comparator values, secondary mechanisms, ancillary excluded endpoints, conflicts, and other useful residual details in `extra_details` unless they are essential to interpretation or scoring. Leave any field null when the paper does not supply it; never write a missing-information placeholder.",
+  "schema_spec": [
+    {
+      "name": "assay_family",
+      "description": "Broad, mutually exclusive functional assay family producing the record. Apply these precedence rules: use morphological_cell_transformation for an integrated named or comparable CTA even when it scores transformed foci; use focus_formation_or_contact_inhibition for standalone oncogene-focus, overgrowth, or contact-inhibition assays; use anchorage_independent_growth for any growth or colony formation scored in soft agar, methylcellulose, or another semisolid matrix, even when the authors call it colony survival, and reserve clonogenic_survival for attached, plastic-adherent reproductive colony-forming survival. Use proliferation_or_dna_synthesis when the readout is cell number, growth curve, confluence, or nucleotide incorporation (EdU, BrdU, [3H]-thymidine, labeling index), and cell_cycle_or_mitosis when the readout is DNA-content or phase distribution, arrest, checkpoint escape, mitotic index, or ploidy; a BrdU or EdU pulse read as a labeling index is proliferation_or_dna_synthesis, while the same stain read as a phase-distribution histogram is cell_cycle_or_mitosis. Use senescence when the readout is a senescence phenotype (SA-beta-gal, senescence-associated arrest or its bypass) and immortalization_or_replicative_lifespan when the readout is lifespan itself (population doublings, crisis, emergence of a continuously growing line). Use cell_viability_or_survival only for undifferentiated short-term viability/survival, and apoptosis or necrosis_or_other_cell_death when death mode is resolved. Use other_direct_growth_control_assay only for a direct qualifying phenotype outside the listed families. Null if the family cannot be determined; do not use a missing-information placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "morphological_cell_transformation",
+        "focus_formation_or_contact_inhibition",
+        "anchorage_independent_growth",
+        "growth_factor_independence",
+        "immortalization_or_replicative_lifespan",
+        "senescence",
+        "clonogenic_survival",
+        "proliferation_or_dna_synthesis",
+        "cell_cycle_or_mitosis",
+        "cell_viability_or_survival",
+        "apoptosis",
+        "necrosis_or_other_cell_death",
+        "preneoplastic_lesion",
+        "tumorigenicity_or_tumor_growth",
+        "other_direct_growth_control_assay"
+      ]
+    },
+    {
+      "name": "assay_method",
+      "description": "Exact named assay system, method, platform, and decisive readout as reported, such as SHE, Bhas 42, BALB/c 3T3 type-III focus scoring, C3H10T1/2 transformation, soft-agar colony formation, serial passage, EdU microscopy, PI DNA-content flow cytometry, SA-beta-gal staining, or Annexin-V/PI flow cytometry. This is the method/system subtype of assay_family; name the assay as the paper names it and leave the identity, species, and state of the cells themselves to biological_test_system. Do not invent unstated reagents or platforms. Null when only the broad family is given.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_test_system",
+      "description": "Complete biological model for the result: in-vitro, ex-vivo, in-vivo native, or transplant context; cell line, clone, primary cell, organoid, tissue, lesion, or graft; species; relevant tissue origin; normal/transformed/resistant or other baseline state; host when applicable; and passage, population doubling, or daughter generation when reported. Split distinct models when they have separate results. Null only when the paper supplies none of these details; do not fill routine culture defaults.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_measure",
+      "description": "Exact biological quantity or categorical outcome measured, including the relevant population, phase, denominator, or normalization but not its result—for example type-III foci per dish, transformation frequency, colonies of at least 50 cells, population doublings before crisis, BrdU labeling index, percent S-phase cells, total Annexin-V-positive cells, surviving fraction, lesion incidence, or tumors per implantation site. Use one separately reported endpoint per record. Null if an eligible result lacks a nameable measure.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_direction",
+      "description": "Direction of the primary molecule's effect on endpoint_measure relative to the stated comparator. increased and decreased refer to the endpoint itself. mixed_nonmonotonic means opposing directions across inseparable doses, times, models, or components; equivocal means the authors regard the evidence as weak, borderline, inconsistent, or indeterminate rather than directionally mixed. Use no_effect for an explicit null or negative directional result. Formal positive/negative transformation calls are a separate abstraction and must be preserved in result_value or assay_interpretation_conditions, not recoded here. Null when no direction is reported; missing or unassessed is never an enum value.",
+      "value_type": "string",
+      "allowed_values": [
+        "increased",
+        "decreased",
+        "no_effect",
+        "mixed_nonmonotonic",
+        "equivocal"
+      ]
+    },
+    {
+      "name": "result_value",
+      "description": "Verbatim-faithful endpoint result, preserving numeric values, inequalities, ranges, ratios, mean/error notation, fold changes, aligned dose/time or phase series, and concise qualitative or formal assay calls such as 'positive transformation call' or 'no transformed foci'. Write the magnitude here and its unit in measurement_unit; do not repeat the unit here and do not omit a value merely because its unit is unstated. Do not calculate or graph-read an unstated value. Null when the paper gives only a direction and no additional expressible result; null, rather than a placeholder, also represents absent result text.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "measurement_unit",
+      "description": "Unit, denominator, scale, or normalization applying to result_value exactly as reported, such as %, % of control, foci/dish, colonies/1,000 seeded cells, population doublings, surviving fraction, fold control, tumors/animal, mm3, days, absorbance, or micromolar when the endpoint itself is an IC50. This field pairs with result_value: populate it whenever the paper names the unit, including when result_value is null because only a unit-bearing measure was named, and leave it null when result_value is qualitative or the unit is unstated. Keep treatment concentration units out of this field. Null for a purely qualitative result or when the unit is not supplied.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "molecule_concentration_or_dose",
+      "description": "Exact concentration, concentration series, in-vivo dose, dietary level, expression amount, multiplicity of infection, or potency-relative treatment level of the primary entity, including its reported unit, basis, and inseparable frequency—for example '0.1-1 µM', '10 mg/kg/day', '500 ppm diet', or '2×IC50'. Do not include assay-reagent or co-treatment amounts and do not confuse an endpoint IC50 with an administered concentration. Null when unstated or when no amount applies to a genetic comparison.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_regimen",
+      "description": "Exact administration/delivery route and temporal regimen for the primary entity: route or culture/genetic delivery; single/continuous, repeated/intermittent, serial-passage chronic, or sequential pretreatment/challenge pattern; exposure duration; renewal/frequency; and separate drug-free recovery, colony-maturation, or post-exposure observation interval. Preserve the paper's wording and distinguish exposure from recovery. A continuous incubation with several harvests is not repeated exposure. Null when the regimen is not reported; do not assert defaults.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "assay_interpretation_conditions",
+      "description": "Interpretation-critical context not represented elsewhere. Include: concurrent cytotoxicity, viability, relative plating efficiency, or lethality with its reported values and whether it may confound the endpoint; exact positivity/scoring criteria for foci, colonies, immortalization, senescence, cell-cycle gates, apoptosis/necrosis gates, lesions, or tumors; explicitly stated presence, explicit omission, or present-versus-absent comparison of an exogenous metabolic-activation system, the system's identity, and any explicitly demonstrated activation dependence; co-treatments, initiators, promoters, challenges, rescue agents, and treatment order; unusual serum, growth-factor, matrix, 3-D, feeder, synchronization, hypoxia, genotype, host, or transformed/resistant conditions; comparator when essential; and persistence or reversibility after recovery. Label the components clearly in the string. State only what the paper states; silence about activation or cytotoxicity is never an absence claim. Null when no such condition is stated; do not use missing-information placeholders.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional useful details that do not fit the preceding fields, including secondary-source evidence status, aliases needed to interpret the global identifier, seeding density, plate format, routine medium, stains, instruments/software, replicates, explicit statistics, comparator values, mechanistic findings, ancillary excluded endpoints, caveats, and text/table conflicts. Do not duplicate structured values. Null when there are no additional details.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

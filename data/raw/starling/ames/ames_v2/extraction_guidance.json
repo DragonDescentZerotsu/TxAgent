@@ -1,0 +1,137 @@
+{
+  "task": "Find all assays of molecules concerning premutagenic DNA damage and DNA-damage responses. Premutagenic damage includes DNA adducts, oxidized bases, cross-links, strand breaks, repair intermediates, repair synthesis, and damage-response signalling that may precede a fixed mutation. Make sure to include assays such as DNA adductomics, 32P-postlabelling, 8-oxo-dG, DNA cross-link, alkaline and enzyme-modified comet, alkaline elution, unscheduled DNA synthesis, host-cell reactivation, SOS/umu, GADD45α, γH2AX, p53, MultiFlow, and ToxTracker. Exclude the Ames test. \n\nSpecify concentration or dose and units, assay version, species, cell line or tissue, metabolic activation, exposure and post-exposure repair times, sampling time, cytotoxicity, positive and negative controls, and readout units such as adducts per nucleotide, percent tail DNA, repair synthesis, foci per cell, or reporter fold-change. Include all key experimental details.",
+  "task_instantiation": "Extract every experimentally applied assay or clearly attributed assay result concerning premutagenic DNA damage, processing or repair of that damage, repair synthesis/capacity, or a defined DNA-damage-response (DDR) signal for the focal entity represented by `global_identifier`.\n\nIN SCOPE: DNA adducts and adductomics; 32P-postlabelling; targeted adduct measurements; 8-oxo-dG/8-OHdG and other oxidized or chemically modified DNA bases/nucleosides; AP/abasic sites and repair intermediates; DNA–DNA and DNA–protein cross-links; single- and double-strand breaks, alkali-labile sites, enzyme-sensitive sites, and clustered lesions; alkaline, neutral, enzyme-modified, cross-link-modified, photo-, challenge-repair, and high-throughput comet formats; alkaline elution/unwinding and other physical break assays; lesion recognition, incision/excision, removal and repair kinetics; unscheduled DNA synthesis and other repair-synthesis assays; host-cell reactivation and damaged-template processing when the outcome measures damage processing or repair rather than mutation; SOS/umu and related bacterial DDR reporters; GADD45α, γH2AX/53BP1, p53/checkpoint and comparable intentional DDR endpoints; MultiFlow, ToxTracker, TGx-DDI, and other validated DDR reporters or panels. Include cell-free or isolated-DNA work only when an actual lesion or lesion-processing product is measured. Include human biomonitoring and urinary, plasma, serum, medium, or other extracellular lesion products only when the paper explicitly treats them as DNA-damage or DNA-repair biomarkers. Include negative, positive, protective, enhancing, mixed, and equivocal findings.\n\nEXCLUDE the Ames test in every circumstance. Also exclude fixed-mutation endpoints and mutation spectra; HPRT/TK, transgenic, specific-locus, and site-directed mutagenesis assays; micronucleus, chromosome-aberration, sister-chromatid-exchange, aneuploidy, and other cytogenetic endpoints; generic ROS, oxidative-stress, antioxidant, glutathione, lipid-peroxidation, apoptosis, cell-cycle, viability, cytotoxicity, carcinogenicity, or disease outcomes when no independently eligible DNA endpoint is measured; protein or RNA adducts/oxidation products; generic repair/stress gene or protein expression not intentionally used as a defined DDR endpoint; inferred lesions based only on mutation patterns or mechanism; and broad claims that an agent is genotoxic or DNA damaging without a named assay or measured lesion/response. Cytotoxicity and excluded companion endpoints are never standalone records and may be retained only when necessary to interpret an eligible assay. For multiplex assays, extract eligible marker-specific channels or an overall panel call, but do not create a standalone record for an otherwise excluded channel.\n\nEVIDENCE THRESHOLD: require explicit supplied-text evidence that an in-scope assay was actually applied, that a measurement was made, or that a concrete assay result was reported. An applied methods or validation record is eligible only when an in-scope lesion, marker, control DNA, or biological sample was actually measured. A prior-study or review result is eligible only when clearly attributed and when the supplied text identifies at least the assay or measured endpoint, the test system, and a concrete outcome; record secondary-source provenance in `extra_details`. Exclude generic method descriptions, proposals, advertisements, sample-preparation fragments, and unperformed mentions. Do not import facts from cited papers or figures unavailable in the supplied text.\n\nRECORD GRANULARITY: create one record per focal entity × assay family/version × measured endpoint/readout × biological system × metabolic-activation arm × exposure condition × exposure/repair/sampling time × separately reported result. Split records when species or biological system, assay version, lesion-revealing enzyme, endpoint/analyte, activation condition, dose, exposure duration, post-exposure repair/recovery duration, sampling time, response unit, or assay conclusion differs. Split individual adducts and multiplex markers when they have separate values or calls. Merge technical replicates and repeated descriptions of the same condition. Keep a dose range, dose series, or time course in one record only when the paper reports one aggregate trend or a compact inseparable series; otherwise split condition-specific results. Controls are attached to the assay record, not separate records, unless the control substance is itself the focal entity represented by `global_identifier`. In protection, challenge, inhibition, or co-exposure studies, keep the focal entity fixed and record other agents and their roles in `extra_details`.\n\nEXTRACTION RULES: use only information explicitly stated in the supplied paper text, except that obvious assay/chemical synonyms and unambiguous standard abbreviations may be normalized. Do not infer dose, unit, route, assay version, species, cell line, metabolic activation, exposure time, repair time, sampling time, controls, cytotoxicity, positivity, or significance from convention. Do not infer absent activation from silence, a negative result from lack of statistical significance, or an immediate sample from omitted timing. Preserve reported values, ranges, inequalities, series, denominators, and units; do not calculate conversions or transcribe unstated figure values. Every field is nullable: use null for absent text and never emit a missing-information placeholder.\n\nDEFAULTS AND DETAIL PLACEMENT: there is no fillable default for metabolic activation, route, timing, controls, or cytotoxicity. Ordinary assay conditions may be treated as unremarkable only for deciding what belongs in `extra_details`; they never justify populating a missing field. In `extra_details`, use concise labeled clauses for any reported information not represented elsewhere, especially: focal-entity role; challenge/co-treatment and dose; route; exposure duration and schedule; post-exposure repair/recovery time; sampling time; activation mechanism/source and dependence; strain, sex, age, genotype, disease or population; positive and negative controls; cytotoxicity assay/value/unit and interpretive impact; evidence provenance; uncertainty/statistics; and material protocol or assay-performance details. Preserve all key experimental details, but do not retain excluded assay results except where strictly needed to explain interpretation of the eligible endpoint.",
+  "schema_spec": [
+    {
+      "name": "molecule_role",
+      "description": "Experimental role of the focal entity identified by global_identifier. Choose exactly one role for this record. test_or_damage_agent is an exposure evaluated for causing damage/response; protective_or_modifying_agent changes challenge-induced damage, repair, or signalling; measured_dna_lesion_or_product is the quantified lesion or damage-derived product; measured_ddr_marker is the focal response molecule/reporter; repair_factor_or_substrate is a repair protein, enzyme, extract, or lesion-bearing substrate being assayed; control_agent applies only when the focal entity itself is evaluated as a control; endogenous_or_disease_condition covers basal physiological, genotype, or disease comparisons; analytical_analyte applies only to method-performance work centered on a standard/analyte rather than a biological exposure. Null if the paper does not establish the role; do not use a missingness label.",
+      "value_type": "string",
+      "allowed_values": [
+        "test_or_damage_agent",
+        "protective_or_modifying_agent",
+        "measured_dna_lesion_or_product",
+        "measured_ddr_marker",
+        "repair_factor_or_substrate",
+        "control_agent",
+        "endogenous_or_disease_condition",
+        "analytical_analyte"
+      ]
+    },
+    {
+      "name": "assay_family",
+      "description": "Single normalized methodological family that directly generated the in-scope endpoint. Apply precedence to ensure one value only: use `32p_postlabelling` rather than generic targeted adduct measurement when that method is used; use `dna_adductomics` only for untargeted or broad profiling; classify every comet implementation, including cross-link and enzyme-modified forms, as `comet_assay` and put the variant in `assay_version`; use named reporter families before `other_ddr_reporter_or_panel`. Missing assay identity is null; no missing-information placeholder is allowed.",
+      "value_type": "string",
+      "allowed_values": [
+        "dna_adductomics",
+        "32p_postlabelling",
+        "targeted_dna_adduct_measurement",
+        "oxidized_base_measurement",
+        "ap_site_or_repair_intermediate_assay",
+        "dna_crosslink_assay",
+        "comet_assay",
+        "strand_break_physical_assay",
+        "repair_synthesis_assay",
+        "host_cell_reactivation",
+        "repair_activity_or_kinetics",
+        "bacterial_ddr_reporter",
+        "gadd45a_reporter",
+        "gamma_h2ax_assay",
+        "p53_pathway_assay",
+        "multiflow",
+        "toxtracker",
+        "other_ddr_reporter_or_panel",
+        "other_direct_damage_assay"
+      ]
+    },
+    {
+      "name": "assay_version",
+      "description": "Most specific reported assay name and implementation needed to distinguish the assay arm: alkaline/neutral conditions, lesion-revealing enzyme, cross-link challenge, enrichment method, analytical platform, kit, antibody/readout format, reporter construct/strain, panel/channel, guideline, or branded version. Preserve the paper's wording compactly. Null when no detail beyond `assay_family` is supplied; do not use a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_class",
+      "description": "One broad biological class for the directly measured endpoint; `endpoint_subtype` supplies the finer lesion or marker. Precedence makes values exclusive: extracellular or excreted products use `extracellular_damage_or_repair_product` regardless of chemistry; cross-links use `dna_crosslink`, not `dna_adduct`; abasic sites and incision products use `abasic_site_or_repair_intermediate`; canonical reporters/signals use `dna_damage_response_signal`, not an inferred strand-break class. Null only when the text does not support classification; never use a missing-information value.",
+      "value_type": "string",
+      "allowed_values": [
+        "dna_adduct",
+        "oxidized_dna_base",
+        "abasic_site_or_repair_intermediate",
+        "dna_crosslink",
+        "strand_break_or_alkali_labile_site",
+        "repair_synthesis",
+        "repair_activity_capacity_or_lesion_removal",
+        "dna_damage_response_signal",
+        "extracellular_damage_or_repair_product",
+        "other_direct_premutagenic_damage"
+      ]
+    },
+    {
+      "name": "endpoint_subtype",
+      "description": "Exact lesion, adduct, cross-link type, enzyme-sensitive site, repair event/product, protein, phosphorylation state, reporter, classifier, or panel channel measured, such as BPDE-N2-dG, 8-oxo-dG, Fpg-sensitive sites, DNA–protein cross-links, UDS, γH2AX foci, phospho-p53, GADD45α-GFP, or a named ToxTracker reporter. This is the subtype beneath `endpoint_class`, not a second class enum. Null when no more specific target is supplied; do not write a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_system",
+      "description": "Combined test-system description in fixed order: `experimental context | species | cell line, tissue, matrix, strain, or DNA substrate`, including only explicitly supported components. Example: `in vitro cells | Homo sapiens | HepG2`; `human biomonitoring | Homo sapiens | urine`; `cell-free DNA | Bos taurus | calf-thymus DNA`. Omit missing components rather than inserting `none`, `not applicable`, or `not reported`. Do not infer species from an unfamiliar cell-line name.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_or_concentration",
+      "description": "Exact reported focal-entity exposure level without its unit. Preserve a scalar, inequality, range, threshold, or compact series as text. Split dose-specific results into separate records; retain a range/series only for an aggregate or inseparable result. Null for observational/background conditions or when no level is supplied; do not use a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_unit",
+      "description": "Unit corresponding to `dose_or_concentration`, preserved as reported and without conversion. If several values map unambiguously to several units, preserve the ordered unit expression; otherwise put the complex full regimen in `extra_details`. Null when the dose or its unit is absent, never a placeholder value.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "metabolic_activation_presence",
+      "description": "Whether metabolic activation was explicitly present in the tested assay arm. `present` includes explicitly stated exogenous or endogenous metabolic activation; `absent` requires an explicit no-activation condition; `both_present_and_absent` is allowed only for one unsplit aggregate result covering both arms. Record S9, microsomes, enzymes, donor source, cofactors, and any claimed dependence in `extra_details`. Analytical lesion-recognition enzymes are not metabolic activation. Silence is null, not `absent`.",
+      "value_type": "string",
+      "allowed_values": [
+        "present",
+        "absent",
+        "both_present_and_absent"
+      ]
+    },
+    {
+      "name": "result_status",
+      "description": "Always-populated single overall state for the eligible record, based on the authors' call or directly reported result. Choose increased or decreased according to the measured endpoint, so a protective reduction is `damage_or_response_decreased`; use `no_damage_or_response_change` for an explicit negative/no-change finding; `quantitative_result_without_directional_call` when a value is given without an interpretable direction; `assay_application_only` for an actually applied assay with no outcome extractable from supplied text; and `analytical_validation` for performance work measuring an in-scope analyte. These are substantive record states, not missing-data placeholders.",
+      "value_type": "string",
+      "allowed_values": [
+        "damage_or_response_increased",
+        "damage_or_response_decreased",
+        "no_damage_or_response_change",
+        "equivocal",
+        "mixed_or_context_dependent",
+        "quantitative_result_without_directional_call",
+        "assay_application_only",
+        "analytical_validation"
+      ]
+    },
+    {
+      "name": "response_value",
+      "description": "Principal quantitative assay response without its unit, preserving the reported scalar, mean, inequality, range, or compact matched series as text. Keep uncertainty, significance, normalization, and secondary metrics in `extra_details`. Null for purely qualitative conclusions or when no numeric response is supplied; consult always-populated `result_status` rather than interpreting null as a negative result.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "response_unit",
+      "description": "Reported unit or denominator for `response_value`, such as adducts per nucleotide, percent tail DNA, Olive tail moment, foci per cell, repair incorporation, reporter fold-change, or relative fluorescence. Preserve wording without conversion. Null when `response_value` is null or the paper supplies no unit; never use a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Concise labeled free text for all important reported details not represented above. Include when available: `challenge_or_cotreatment` and dose; `route`; `exposure_duration_or_schedule`; `repair_or_recovery_time`; `sampling_time`; `activation_details_or_dependence`; `model_or_population` (strain, sex, age, genotype, disease, donors); `positive_control`; `negative_control`; `cytotoxicity` (assay, value/unit, threshold, and whether interpretation is compromised); `evidence_source`; uncertainty/statistics; and material protocol, analytical-performance, or limitation details. Null when there are no additional details. Never insert missing-information placeholders or preserve excluded adjacent assay results except where needed to explain the eligible result.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

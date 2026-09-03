@@ -1,0 +1,140 @@
+{
+  "task": "Find all assays of molecules concerning mechanisms that enable or prevent mutagenicity. These mechanisms include reactive-metabolite formation, detoxification, oxidative stress, impaired DNA replication or repair, topoisomerase poisoning, and spindle or kinetochore disruption. Make sure to include assays such as S9 and microsomal activation, hepatocyte and CYP-engineered systems, reactive-metabolite trapping, electrophile-reactivity, ROS and oxidative-stress assays, topoisomerase-cleavage assays, DNA-polymerase and DNA-fibre assays, repair-deficient cell panels, and tubulin, spindle, or kinetochore assays. Exclude the Ames test. \n\nSpecify parent and metabolite concentrations and units, species and source of S9, microsomes or hepatocytes, enzyme induction and cofactors, cell system, exposure duration, route when in vivo, target or mechanism measured, cytotoxicity, and quantitative readout units. Include all key experimental details.",
+  "task_instantiation": "Build one record for every molecule-specific experimental assay that provides positive, negative, no-effect, mixed, or explicitly equivocal evidence about a mechanism that enables or prevents mutagenicity. In scope are reactive-metabolite formation or bioactivation; detoxification or conjugation; intrinsic electrophile/nucleophile reactivity and covalent binding; ROS/redox disruption, antioxidant defense, lipid/protein oxidation, or oxidative DNA lesions; DNA-polymerase inhibition or fidelity, DNA synthesis, replication-fork or DNA-fibre behavior, and lesion bypass; defined DNA-repair activity, repair kinetics, reporters, or repair-deficient/proficient comparisons; topoisomerase cleavage-complex stabilization, cleavage/religation, catalytic inhibition, or poisoning; and tubulin, microtubule, centrosome, spindle, kinetochore, chromosome-congression, or chromosome-segregation disruption. Include S9 and microsomal systems, cytosol, hepatocytes, liver slices or organoids, metabolically competent or CYP/enzyme-engineered cells, recombinant or reconstituted enzymes, reactive-metabolite trapping, electrophile-reactivity and covalent DNA/protein-binding assays, ROS/oxidative-stress assays, DNA-polymerase and DNA-fibre assays, repair-deficient panels, topoisomerase assays, and direct tubulin/spindle/kinetochore assays. Include protective, potentiating, inhibitor, inducer, depletion, knockout, scavenger, and cofactor comparisons when they directly test one of these mechanisms.\n\nAlways exclude the Ames/Salmonella bacterial reverse-mutation test, including modified strains and every revertant-count result using S9, microsomes, hepatocytes, recombinant enzymes, cofactors, traps, or modifiers. If the same experiment independently measures a non-Ames metabolite, adduct, enzyme, or other scoped mechanistic endpoint, extract only that independent endpoint. Exclude purely computational predictions or docking; proposed pathways or general mechanistic assertions without an assay result; methods-only passages; routine pharmacokinetics, stable-metabolite profiling, clearance, expression surveys, or basal enzyme activity not used to test activation/detoxification; and generic cytotoxicity, apoptosis, organ injury, omics, mutation-frequency, comet, chromosome-aberration, SCE, micronucleus, DNA-fragmentation, DNA-adduct, UDS, SOS/umu, or DNA-damage-response results unless the experimental design directly resolves a scoped mechanism through metabolic-system comparison, a defined reactive product or lesion, oxidative-lesion specificity, replication/repair manipulation, topoisomerase action, or direct tubulin/spindle/centromere/kinetochore discrimination. Do not infer spindle disruption from micronuclei alone or repair/replication impairment from generic DNA damage.\n\nRequire an explicitly performed assay and an interpretable molecule-specific result. A clearly summarized prior-study experiment is eligible only when the supplied text states a concrete assay system and outcome; mark it as secondary-citation evidence in extra_details and do not import missing details. Use only explicit statements in the supplied text. Normalize controlled vocabulary and obvious unit typography, but do not infer species, source, enzyme, metabolite identity, concentration, duration, route, cofactors, induction, cytotoxicity, values, or units; do not convert units, calculate values, or read unreported numbers from figures.\n\nOne record represents one primary entity/global_identifier × one assay family and specific method × one endpoint-bearing biological/activation system × one mechanistic condition × one exposure condition × one endpoint/result. Split records when the primary molecule or its role, directly tested parent versus metabolite, species/source, cell or tissue system, activation system, enzyme isoform or genotype, induction/modifier/cofactor/trap presence, dose, duration, route, endpoint, result direction, cytotoxicity interpretation, or separately reported quantitative value changes. For point-specific dose or time results, create one record per matched condition/readout. A dose or time series may remain one record only when the paper reports one overall trend, range-level conclusion, or fitted parameter; preserve the series without calculation. Split different metabolites, isoforms, or endpoints when they have separate results or units; merge replicates and repeated descriptions of the identical condition.\n\nThe top-level global_identifier identifies the primary entity; do not add a redundant name field. Use molecule_role to characterize it. In exposure_and_mechanistic_conditions, label and preserve exactly as reported: parent and directly tested metabolite concentrations/doses and units; principal related parent, metabolite, adduct, challenge, comparator, or modulator and its role/amount; exposure and pretreatment duration; regimen and in-vivo route; enzyme induction or inhibition; cofactors and regenerating systems; traps, scavengers, and depletion treatments; and mechanistically informative present/absent comparisons. In biological_system, give the physical context, endpoint-bearing system, species, cells/tissue/organism or purified preparation, genotype, and the species/tissue/donor/preparation source of S9, microsomes, cytosol, hepatocytes, or recombinant systems. Record the measured method, molecular target, product, lesion, or cellular endpoint in assay_method_and_endpoint.\n\nAssume only routine vehicle/untreated controls, ordinary aerobic temperature-controlled in-vitro conditions, wild-type material, and conventional assay execution when the paper is silent; do not write these defaults as facts. Do not assume any S9 source, metabolic competence, induction, cofactor, concentration, duration, route, or detection method. Put genuine departures and interpretation limits—such as hypoxia, unusual pH/temperature/light, special medium, nonstandard solvent, genotype or repair defect not already captured, unusual dosing sequence, severe cytotoxicity, precipitation, detection-limit context, or secondary-citation provenance—in extra_details. Also place uncertainty, replicate/statistical details, ranges or series not representable by one numeric value, analytical settings, named controls, and secondary products there. Set any unstated field to null; never use a missingness placeholder. A qualitative result is valid: populate result_direction and leave quantitative_readout_value and quantitative_readout_unit null.",
+  "schema_spec": [
+    {
+      "name": "molecule_role",
+      "description": "Experimental role of the primary entity identified by the record's global_identifier. Choose one role based on what is directly assayed. `parent_test_agent` includes both progenotoxins and direct-acting parent compounds; `metabolite_or_reactive_product` is an isolated, synthesized, or generated metabolite/reactive product that is itself the record focus; `modifier_or_protectant` is an inhibitor, inducer, antioxidant, scavenger, depletor, sensitizer, or protective agent whose modifying effect is tested; `probe_substrate` is used chiefly to measure relevant enzyme capacity; `mixture_or_class` is a defined non-single entity. If the role is not stated, use null rather than a placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "parent_test_agent",
+        "metabolite_or_reactive_product",
+        "modifier_or_protectant",
+        "probe_substrate",
+        "mixture_or_class"
+      ]
+    },
+    {
+      "name": "mechanism_category",
+      "description": "Single principal mutagenicity-enabling or -preventing mechanism directly tested. Values are peer mechanism classes, not specific endpoints. Choose by the directly measured endpoint and split separately reported mechanisms. For a direct tubulin/microtubule endpoint use `tubulin_or_microtubule_disruption`; use `spindle_or_kinetochore_or_segregation_disruption` for centrosome, spindle architecture/function, kinetochore, congression, or segregation endpoints. Null if the text does not support a scoped mechanism; do not use a missingness value.",
+      "value_type": "string",
+      "allowed_values": [
+        "reactive_metabolite_formation",
+        "detoxification_or_conjugation",
+        "electrophile_reactivity_or_covalent_binding",
+        "oxidative_stress_or_antioxidant_defense",
+        "oxidative_dna_damage",
+        "dna_replication_impairment",
+        "dna_repair_impairment_or_protection",
+        "topoisomerase_poisoning_or_inhibition",
+        "tubulin_or_microtubule_disruption",
+        "spindle_or_kinetochore_or_segregation_disruption"
+      ]
+    },
+    {
+      "name": "assay_family",
+      "description": "Endpoint/design-based assay family, separate from the metabolic or biological test system. Choose the single family that generated the record's principal endpoint. `reactive_metabolite_trapping` requires capture by an added trap; `covalent_binding_or_adduct` covers binding to the assayed DNA, protein, or endogenous target rather than an added trapping reagent. `mechanistically_informative_genotoxicity` is only for a generic genotoxic endpoint whose activation, oxidative, repair, topoisomerase, or spindle mechanism is directly varied. Use `other_mechanistic_assay` only for an eligible assay not represented below. Null replaces any not-stated placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "metabolite_formation_or_reaction_phenotyping",
+        "reactive_metabolite_trapping",
+        "covalent_binding_or_adduct",
+        "electrophile_nucleophile_reactivity",
+        "detoxification_or_conjugation_assay",
+        "metabolic_enzyme_activity_or_inactivation",
+        "ros_or_redox_assay",
+        "antioxidant_or_thiol_assay",
+        "oxidative_damage_assay",
+        "dna_polymerase_or_synthesis_assay",
+        "dna_fibre_or_replication_fork_assay",
+        "dna_repair_activity_assay",
+        "repair_deficient_or_proficient_comparison",
+        "topoisomerase_cleavage_complex_assay",
+        "topoisomerase_catalytic_assay",
+        "tubulin_or_microtubule_assay",
+        "spindle_or_centrosome_assay",
+        "kinetochore_or_chromosome_segregation_assay",
+        "mechanistically_informative_genotoxicity",
+        "other_mechanistic_assay"
+      ]
+    },
+    {
+      "name": "assay_method_and_endpoint",
+      "description": "Specific reported assay/method plus the directly measured target, product, lesion, molecular event, or cellular endpoint, including the analytical platform when it defines the measurement; for example `GSH-adduct trapping by LC-MS/MS`, `CYP2E1 activity`, `DCFDA ROS fluorescence`, `Fpg-sensitive lesions`, `DNA-fibre fork speed`, `TOP2 cleavage complexes by ICE`, or `tubulin polymerization`. Do not replace this with the broad mechanism label. Null if not stated; do not write a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_system",
+      "description": "Physical assay context and endpoint-bearing system, including cell-free, purified/reconstituted, subcellular, cellular, ex-vivo, or in-vivo setting; species; cell line or primary cell, tissue, organ, organism, purified target, genotype/engineered status; and source provenance for S9, microsomes, cytosol, hepatocytes, or recombinant enzymes (species, tissue, donor/pool, induction state, expression host, or preparation) when reported. Distinguish the endpoint-system species from the activation-source species in the text. Null when no biological source is stated; do not infer it.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "metabolic_activation_system",
+      "description": "Metabolic activation or detoxification system actually present in this record. This encodes system presence/type, not whether the result depends on it. Choose the most specific dominant value: engineered cells override generic competent cells, hepatocytes override generic competent cells, and a combined microsome/cytosol preparation uses its combined value. Use `none` only when absence of relevant added or intrinsic metabolic activation is explicit; use null when metabolism is not discussed or its status is unreported. Put source, induction, enzymes, and present/absent comparison details in biological_system or exposure_and_mechanistic_conditions.",
+      "value_type": "string",
+      "allowed_values": [
+        "none",
+        "s9",
+        "microsomes",
+        "cytosol",
+        "microsomes_plus_cytosol",
+        "intact_hepatocytes",
+        "liver_slice_or_organoid",
+        "metabolically_competent_cells",
+        "enzyme_engineered_cells",
+        "recombinant_or_reconstituted_enzyme",
+        "whole_animal_metabolism",
+        "other_metabolic_system"
+      ]
+    },
+    {
+      "name": "exposure_and_mechanistic_conditions",
+      "description": "Condition string that explicitly labels all reported parent/test-agent, directly tested metabolite, challenge, comparator, or modulator concentrations/doses and their units; principal related molecule and relationship; exposure, pretreatment, and sampling duration; regimen and in-vivo route; enzyme induction/inhibition or genotype comparison; cofactors and regenerating systems; traps, scavengers, depletion treatments; and mechanistically informative presence/absence contrasts. Preserve values, ranges, inequalities, and units exactly; do not convert or calculate. Routine buffer recipes and secondary chemicals may go in extra_details. Null if no such conditions are stated, never a missingness phrase.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_direction",
+      "description": "Direction or qualitative conclusion for the principal mechanistic endpoint. Use `detected` or `not_detected` only for binary presence/formation findings without a directional comparator; use `increased` or `decreased` for explicit comparator-relative changes; `no_effect` for an explicit tested lack of change; `mixed_or_condition_dependent` for genuine opposing results across stated conditions that cannot be split; and `equivocal` only when the paper explicitly reports an indeterminate scientific result. Equivocal is an outcome, not a missing-data placeholder. Null if no direction is stated.",
+      "value_type": "string",
+      "allowed_values": [
+        "detected",
+        "not_detected",
+        "increased",
+        "decreased",
+        "no_effect",
+        "mixed_or_condition_dependent",
+        "equivocal"
+      ]
+    },
+    {
+      "name": "quantitative_readout_value",
+      "description": "Single reported numeric value for the principal mechanistic response at this record's condition, excluding administered dose or concentration. Record the reported central or operative value without conversion or calculation. For a qualitative result, an unrepresentable range/inequality, or a series with only an overall conclusion, use null and preserve the exact expression in extra_details. The matching unit belongs only in quantitative_readout_unit.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "quantitative_readout_unit",
+      "description": "Unit applying to quantitative_readout_value, exactly as reported with only typographic normalization. Include normalization basis when part of the unit, such as `pmol/mg protein/min`, `% of control`, `adducts/10^8 nucleotides`, or `micrometres/min`. Null when the value is null or no unit is supplied; never use unitless, other, not_reported, or another placeholder as an allowed value.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "cytotoxicity_status",
+      "description": "Whether concurrent cytotoxicity was explicitly observed at the same condition as the mechanistic result. Use `present` only for reported concurrent cytotoxicity and `absent` only when it was assessed and reported absent/non-cytotoxic. Use null when cytotoxicity was not assessed or not stated; thus null never means cytotoxicity was absent. Put the viability method, value, threshold, or confounding detail in extra_details.",
+      "value_type": "string",
+      "allowed_values": [
+        "present",
+        "absent"
+      ]
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields, including nonstandard or generalizability-limiting conditions, secondary-citation provenance, ambiguity in a paper code or mixture label, additional metabolites/adducts, uncertainty, ranges/inequalities or full dose/time series not representable by one numeric value, controls, detection limits, analytical settings, replicate/statistical details, and cytotoxicity values. Do not repeat structured fields, invent missing information, or use this field to rescue an excluded assay. Null when there are no additional details; never write a missingness placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}
