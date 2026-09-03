@@ -1,0 +1,131 @@
+{
+  "task": "Find all assays of molecules concerning integrated sublethal hepatocyte phenotyping and chronic cellular reserve. This includes early cellular stress and the ability of liver cells to remain viable and functional during prolonged or repeated molecule exposure. Make sure to include assays such as multiparametric high-content imaging, ATP, albumin, urea, cell morphology, membrane integrity, apoptosis, and repeated-dose 2D or 3D hepatocyte assays. Specify molecule concentration and units, total or unbound Cmax multiple, exposure duration, repeated-dose and recovery schedule, assay type and readout, cell or tissue model, 2D versus 3D format, species, human donor information, metabolic competence, vehicle concentration, controls, and EC50, IC50, AC50, MEC, or fold change. Include all key experimental details.",
+  "task_instantiation": "Build one extraction table answering which focal molecules perturb, preserve, or restore hepatocyte viability, early stress phenotypes, morphology, membrane integrity, regulated death, mitochondrial/energetic state, and liver-specific function; at what concentration, clinical-exposure multiple, duration, dosing and recovery regimen; in which model, species (recorded in its own closed-vocabulary species field), donor, and 2D/3D configuration; by which assay/readout; with what qualitative conclusion, quantitative effect, potency, threshold, or recovery; and under which explicit vehicle, control, challenge, cotreatment, and metabolic-competence conditions.\n\nExtract experiments performed and reported in the paper in which a named molecule, biologic, extract, defined mixture/formulation, or chemical stressor is applied to intact hepatocytes or a hepatocyte-containing in-vitro or ex-vivo system and an endpoint directly measures integrated sublethal hepatocyte phenotype or cellular reserve. Eligible models include primary hepatocytes, hepatocyte-like or hepatic cell lines, stem-cell-derived hepatocytes, hepatocyte-containing cocultures, sandwich or micropatterned cultures, spheroids, organoids, microtissues, engineered or bioprinted liver tissue, liver chips or other microphysiological systems, perfused bioreactors, precision-cut liver slices, and ex-vivo perfused liver preparations. Include acute assays when they measure an eligible early-stress, viability, membrane, death, morphology, functional, protection, or recovery endpoint; prolonged, repeated-dose, intermittent, pulse/washout, and recovery studies are especially in scope. Include explicit positive, negative, no-effect, protective, rescue, and sensitizing findings.\n\nEligible endpoints include multiparametric high-content phenotyping; viable-cell number and metabolic viability; ATP and energetic reserve; membrane leakage or integrity; apoptosis, necrosis, and explicitly identified regulated cell death; mitochondrial potential, respiration, and reserve; oxidative/redox, ER, calcium, and related cellular stress; morphology, polarity, canalicular structure, lipid accumulation, steatosis, phospholipidosis, lysosomal/autophagic phenotypes, and proliferation/regenerative reserve; albumin, urea/ammonia handling, protein synthesis or secretion, glucose output, bile/canalicular transport, and xenobiotic-metabolizing or transporter function when used as maintenance or perturbation of hepatocyte function. Molecular-expression, inflammatory, lipid, metabolism, or signaling measurements qualify only when explicitly used as a hepatocyte stress, death, viability, metabolic-competence, differentiated-function, or reserve endpoint.\n\nExclude whole-animal or clinical-only dosing, serum biomarkers, in-vivo histology, and whole-liver measurements without a directly exposed ex-vivo hepatocyte-level assay; isolated mitochondria, microsomes, proteins, organelles, or other cell-free systems; non-hepatocyte-only cultures; nonhepatic cells merely engineered with a liver enzyme; transplantation/homing studies; computational predictions; pure pharmacokinetics, uptake, clearance, substrate depletion, binding, genotoxicity, metabolite formation, or transporter/CYP assays without a concurrent health, retained-function, or reserve phenotype; generic omics or mechanistic markers without an eligible phenotype; baseline model characterization with no named exposure; platform-validation summaries without a molecule-level result; and method-only passages lacking a named test exposure and an exposure-linked result. Do not treat assay dyes, probes, antibodies, substrates, vehicle, culture supplements, or routine positive controls as the focal molecule unless their own hepatocyte effect is explicitly the experimental subject. Exclude results merely cited from prior work or reviews; the qualifying experiment must be performed and reported in the paper.\n\nCreate one record per global-identifier-linked focal molecule or defined mixture × biological model/donor group × culture format × exposure regimen × biological endpoint/readout × result timepoint × reported result metric. Split records when molecule, role, coexposure condition, model, species, separately reported donor or genotype, 2D/3D format, concentration with a distinct outcome, exposure or recovery time, dosing schedule, endpoint, effect direction, potency metric, response unit, or result differs. For multiparametric assays, create one record per separately interpretable biological endpoint while repeating the shared method. Use integrated_multiparametric_phenotype only for a genuinely inseparable composite score. Merge technical replicates and duplicate descriptions. Keep a concentration series or time course in one record only when the paper gives one undifferentiated series-wide trend, no-effect conclusion, or fitted potency; otherwise split dose- and time-specific outcomes. For a fitted EC50, IC50, AC50, TC50, LC50, ED50, MEC, MNTC, NOAEL, LOAEL, or similar metric, create one metric record rather than one record per underlying dose. For combinations, retain the entity identified by global_identifier as the focal molecule, classify exposure_regimen by that molecule's own administration pattern, and place partners, challenges, protectants, or modifiers with their doses, timing, and order in extra_details; use a reported mixture name only when the mixture itself is the defined tested entity. Do not create standalone records for vehicle or routine controls unless their own molecule-specific outcome is reported.\n\nRequire an explicit statement, table, figure legend, or unambiguous methods-to-results linkage tying the focal molecule, model, assay, and outcome together. Methods and results from different parts of the same paper may be joined only when linkage is unambiguous. Do not estimate values from plots or import information from general knowledge or cited publications. Expand only abbreviations defined in the paper and normalize obvious unit typography without changing magnitude. Do not infer donor attributes, culture format, schedule, controls, vehicle concentration, metabolic competence, Cmax basis, or result. Species may be assigned from a uniquely identified cell line only when unambiguous. Do not call an exposure repeated-dose merely because it is long; explicit re-administration or molecule-containing medium renewal is required. Do not infer metabolic competence from primary-cell or model identity; require explicit activity, induction, metabolite, transporter, preservation, reduction, or deficiency evidence. Record qualitative evidence such as dose-dependent, significant increase, no effect through a stated dose, delayed injury, or recovery even when no number is available.\n\nPreserve primary-molecule concentration values, series, ranges, and inequalities as reported; do not include probe or cotreatment concentrations in those fields. Strip the unit into concentration_unit and normalize it to that field's vocabulary without changing the magnitude and without converting mass to molar concentration, preserving in extra_details any unit that falls outside the vocabulary. Record a Cmax multiple only when explicitly reported or when the assay concentration and the paper's explicit matching total or unbound Cmax are in compatible units and the arithmetic is trivial; disclose any calculation in extra_details. Never convert total and unbound exposure bases. Preserve result values, inequalities, potency labels, normalization bases, and units. One result metric per record is required so every numeric result has one unambiguous result_unit; leave the unit null for a qualitative conclusion or when the paper gives no unit.\n\nAssume only for deciding what context is exceptional: ordinary intact-hepatocyte culture at conventional temperature, atmosphere, and medium; nominal extracellular exposure; a single uninterrupted treatment; no recovery; no disease, genetic, nutrient, oxygen, inflammatory, preservation, or injury challenge; and comparison with untreated or vehicle-matched cells. Never populate missing fields from these defaults. Record genuine departures in extra_details, including disease or steatosis, donor stratification, genotype or engineered cells, hypoxia/reoxygenation, unusual oxygen/temperature/pH/serum/glucose or nutrient conditions, GSH depletion, inflammatory sensitization, metabolic induction/inhibition, cold storage/rewarming, perfusion or flow, measured/unbound/intracellular exposure, precipitation, formulation, and challenge/protection context.\n\nIn extra_details also retain the focal molecule's exact paper label when global_identifier is insufficient; molecule role; coexposure names, concentrations, timing, and order; vehicle identity and final concentration; explicit controls and comparators; model architecture and metabolic-competence evidence not fitting biological_model_context; uncertainty, sample size, replicates, statistics, and normalization; medium, scaffold, flow, plate, seeding, probe, instrument, kit, and imaging details when important; and ancillary mechanistic observations. Do not place excluded findings in extra_details. For every field, null means the paper did not supply the information; never emit placeholders such as unspecified, not stated, not reported, not applicable, unclear, or not assessed.",
+  "schema_spec": [
+    {
+      "name": "endpoint_category",
+      "description": "The single biological endpoint family represented by this record. Choose the measured phenotype, not a proposed mechanism, and split separately interpretable endpoints. ATP belongs to cellular_energy_or_atp; organelle-specific membrane potential, respiration, or reserve belongs to mitochondrial_function_or_respiration. Leakage or lytic death belongs to membrane_integrity_or_necrosis; apoptosis_or_regulated_cell_death requires explicit attribution or a specific assay. Canalicular structure belongs to morphology, while bile transport belongs to xenobiotic_metabolic_or_transport_function. Use integrated_multiparametric_phenotype only for an inseparable composite. Use other_hepatocyte_function_or_reserve only for an eligible phenotype outside this vocabulary, and name that phenotype in extra_details. The exact assay subtype always belongs in assay_and_readout, never here. Use null, not a placeholder, if the endpoint cannot be identified.",
+      "value_type": "string",
+      "allowed_values": [
+        "integrated_multiparametric_phenotype",
+        "viability_or_cell_number",
+        "cellular_energy_or_atp",
+        "membrane_integrity_or_necrosis",
+        "apoptosis_or_regulated_cell_death",
+        "mitochondrial_function_or_respiration",
+        "cellular_stress_homeostasis",
+        "morphology_polarity_or_canalicular_structure",
+        "lipid_steatosis_or_phospholipidosis",
+        "lysosomal_or_autophagic_function",
+        "hepatic_synthetic_or_secretory_function",
+        "xenobiotic_metabolic_or_transport_function",
+        "proliferation_or_regenerative_reserve",
+        "other_hepatocyte_function_or_reserve"
+      ]
+    },
+    {
+      "name": "assay_and_readout",
+      "description": "Exact performed assay/platform and the focal measured variable, including a named reagent or analyte when it identifies the assay and the normalization basis when stated; for example 'CellTiter-Glo luminescence—intracellular ATP as percent vehicle', 'albumin ELISA—secretion per 10^6 cells/day', 'LDH release—percent leakage', or 'high-content imaging—lipid-droplet area per cell'. Combine confirmatory methods only when they measure the same endpoint. Do not enter a platform alone when the readout is known. Null means the paper did not state the method/readout; do not use a missingness placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_model_context",
+      "description": "Exact hepatocyte-containing model plus explicitly reported biological context: primary versus cell line or stem-cell-derived status, cell-line/model name, coculture partners and their species, spheroid/organoid/chip/slice/bioreactor architecture as the paper names it, perfusion or flow conditions, and for primary human material donor identifiers, count, pooling, sex, age, genotype, or disease state. Also include explicit evidence that metabolic or transporter competence was retained, induced, reduced, or absent, naming CYP/UGT/transporter activity or metabolite evidence when concise. Never infer competence from model identity. This field holds the exact named system; the hepatocyte species goes in species and the normalized physical format goes in culture_format, so neither of those alone is sufficient content here. Null means model context was not supplied, not that competence was absent or donor information was inapplicable.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "species",
+      "description": "Species of the assayed hepatocytes or liver tissue, never the species of a reagent, feeder layer, or serum. human covers human primary cells, human cell lines, and human stem-cell-derived hepatocytes. Use other for a stated species outside this vocabulary and name it in extra_details; for a mixed-species system split records by hepatocyte species when the results are separable, and otherwise use other and name both species in extra_details. A uniquely identified cell line may establish species; an ambiguous cell name may not. Null when the paper does not state or unambiguously establish the species.",
+      "value_type": "string",
+      "allowed_values": [
+        "human",
+        "rat",
+        "mouse",
+        "dog",
+        "pig",
+        "monkey",
+        "rabbit",
+        "hamster",
+        "bovine",
+        "fish",
+        "other"
+      ]
+    },
+    {
+      "name": "culture_format",
+      "description": "Normalized physical format of the assayed hepatocyte model, one value per record. suspension is free isolated cells held in suspension and takes precedence over 2d_planar even when the paper calls it a 2D suspension. 2d_planar is any attached planar culture, including monolayer, collagen sandwich, micropatterned coculture, and a planar microfluidic or perfused device. 3d_construct is spheroid, organoid, microtissue, gel-entrapped cells, hydrogel or scaffold, bioprinted tissue, and a genuinely three-dimensional chip or bioreactor. ex_vivo_tissue is an intact precision-cut slice, explant, or perfused liver preparation. Perfusion and flow are described in biological_model_context, not encoded here. Split a record that pools two formats; leave null when the wording is insufficient or a pooled result cannot be split. No not-reported value is allowed.",
+      "value_type": "string",
+      "allowed_values": [
+        "2d_planar",
+        "3d_construct",
+        "suspension",
+        "ex_vivo_tissue"
+      ]
+    },
+    {
+      "name": "concentration_values",
+      "description": "Exact primary-molecule concentration value, series, range, inequality, or relative-dose label with the unit stripped off, for example `5`, `0.1; 1; 10`, `5-25`, or `>100`. The stripped unit goes in concentration_unit; if the paper reports a concentration with no unit, still record the number here and leave concentration_unit null. Split concentrations when distinct outcomes are reported; retain a series only for a series-wide result. Do not include assay-probe, challenge, or cotreatment concentrations. Null if the paper gives no primary-molecule concentration; never write a missingness placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "concentration_unit",
+      "description": "Normalized unit for the number in concentration_values, chosen without changing the magnitude and without converting between mass and molar units, so uM, micromolar, and umol/L all become umol_per_l. Use other_concentration_unit for any stated unit outside this vocabulary, including a bare percent whose v/v or w/v basis is not stated, and preserve the paper's exact unit in extra_details; percent_vv and percent_wv require an explicit basis. Null when concentration_values is empty, carries no dimensional number, or the paper stated no unit; a null here never means the concentration itself is missing.",
+      "value_type": "string",
+      "allowed_values": [
+        "pmol_per_l",
+        "nmol_per_l",
+        "umol_per_l",
+        "mmol_per_l",
+        "mol_per_l",
+        "pg_per_ml",
+        "ng_per_ml",
+        "ug_per_ml",
+        "mg_per_ml",
+        "mg_per_l",
+        "g_per_l",
+        "percent_vv",
+        "percent_wv",
+        "units_per_ml",
+        "other_concentration_unit"
+      ]
+    },
+    {
+      "name": "exposure_duration_and_schedule",
+      "description": "Exact timing of the focal-molecule exposure behind this result, as reported and with units. Always record the exposure duration and the endpoint timepoint when either is given, for example `24 h` or `48 h exposure, read at 72 h`. For repeated, intermittent, pulse, sequential, or recovery designs also record the number and frequency of doses, molecule-containing medium changes, pretreatment and challenge order, pulse length, washout, drug-free recovery interval, total study duration, and sampling times. This field carries the exact numbers; exposure_regimen carries only the normalized design category for the same design. Exclude assay-probe loading time and preculture age. Null if no timing is stated; do not use not-reported or unclear.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_regimen",
+      "description": "Normalized temporal design of the focal molecule's own administration, on one axis only: how many administrations, and whether a drug-free phase precedes the endpoint. single_continuous is one administration left on the cells until the endpoint. single_pulse_then_washout is one administration explicitly removed or washed out, with the endpoint read after the drug-free interval. repeated_dose requires explicit re-administration or molecule-containing medium renewal, including intermittent on/off dosing, with no designated drug-free recovery phase before the endpoint. repeated_dose_with_recovery is repeated dosing followed by a designated drug-free recovery phase before the endpoint, and supersedes repeated_dose. The number of administrations decides first and the drug-free phase second, so the four values cannot overlap. Classify a pretreatment/challenge or cotreatment design by the focal molecule's own pattern and record the partner, its dose, and the sequence in extra_details; never encode coexposure here. Long duration alone is not repeated dosing. Leave null if the design is not stated clearly.",
+      "value_type": "string",
+      "allowed_values": [
+        "single_continuous",
+        "single_pulse_then_washout",
+        "repeated_dose",
+        "repeated_dose_with_recovery"
+      ]
+    },
+    {
+      "name": "result_value",
+      "description": "One reported assay conclusion or result metric for this record, preserving its label, direction, value, range, inequality, or normalization basis; examples include 'no effect through 100', 'IC50: 12.4', 'albumin: 65', 'fold change: 1.8', or 'Cmax multiple: 5'. Any unit is stripped off into result_unit; if the paper reports a number with no unit, still record the number here and leave result_unit null. Split records when independently reported metrics have different units, including a potency and a Cmax comparison. Qualitative conclusions such as no_effect, increased, decreased, protected, or recovered are substantive results and are recorded here without a unit, so a null in this field never means no effect. Populate this field in every record and do not estimate from plots. Null only if the paper supplies no outcome for the exposure, never 'not reported'.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_unit",
+      "description": "Unit and basis for the numeric metric in result_value, copied or normalized without conversion; examples include percent_of_vehicle, ng_per_million_cells_per_day, uM, fold_vs_control, fold_total_cmax, or fold_unbound_cmax. Use one unit per record. For Cmax comparisons, identify total or unbound only when explicit; if the basis is unstated, leave this field null and preserve the paper's wording in result_value or extra_details. Null for qualitative results or an unstated unit; no unspecified/basis-not-stated token is allowed.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional nonredundant details needed to interpret the record: exact paper molecule label when global_identifier is insufficient; molecule role; challenge, protectant, inhibitor, or combination partners with dose/timing/order; vehicle concentration; controls/comparators; concentration basis; qualifying disease, donor, genetic, nutrient, oxygen, induction, preservation, perfusion, formulation, or sensitization context; detailed competence evidence; calculation disclosure; uncertainty/statistics; and important protocol or mechanistic details. Do not place excluded findings here. Missing information is null, never a placeholder such as unspecified, not stated, not reported, not applicable, unclear, or not assessed.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

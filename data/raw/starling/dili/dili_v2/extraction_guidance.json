@@ -1,0 +1,120 @@
+{
+  "task": "Find all assays of molecules concerning metabolic bioactivation and mitochondrial energy-system stress. This includes formation of reactive metabolites or covalent adducts and disruption of respiration, oxidative phosphorylation, membrane potential, permeability transition, fatty-acid oxidation, mitochondrial DNA, or mitochondrial translation. Make sure to include assays such as GSH, cysteine, or cyanide trapping, covalent-binding and CYP time-dependent-inhibition assays, glucose–galactose ATP assays, Seahorse OCR/ECAR, mitochondrial membrane-potential assays, isolated-mitochondria respiration, OXPHOS-complex inhibition, and β-oxidation assays. Specify molecule and metabolite concentrations, concentration units, incubation time, daily dose in mg/day and Cmax normalization when available, metabolic system and species, cofactors and trapping agents, parent-versus-metabolite testing, assay type, cellular or mitochondrial source, and outputs such as adduct abundance, pmol equivalents/mg protein, IC50, EC50, ATP, OCR, ECAR, or safety margin. Include all key experimental details.",
+  "task_instantiation": "Extract every explicit experimental result for the focal entity, named in molecule_name and, when the entity list supports the mapping, identified by global_identifier, when the entity is deliberately tested for metabolic bioactivation or mitochondrial energy-system stress. Always populate molecule_name from the paper's own designation, including for class-level articles, mixtures, extracts, and entities with no global_identifier. The table must support comparison of parent compounds, directly tested metabolites/reactive intermediates, adducts, mixtures, and fixed combinations; assay family and exact endpoint; biological/metabolic system and species; concentration and exposure time; enzymes, OXPHOS complexes, reactive products, cofactors, trapping agents, substrates, and mechanistic modifiers; quantitative or qualitative outcomes including negative findings; and, when reported, administered dose, daily mg/day, Cmax normalization, and safety margin.\n\nIn scope for bioactivation are direct formation of a stated reactive/electrophilic metabolite; GSH, cysteine, NAC, cyanide, methoxylamine, semicarbazide, lysine, or other nucleophile trapping; drug-derived covalent binding or adducts to protein, peptide, DNA, RNA, thiol, or heme; metabolic-intermediate-complex formation; and CYP time-dependent or mechanism-based inhibition/inactivation, including IC50-shift and KI/kinact designs. GSH or protein-thiol depletion is in scope only when the same experiment uses it as evidence of electrophile formation, conjugation, or metabolic bioactivation.\n\nIn scope for mitochondrial energy stress are glucose-versus-galactose ATP or viability-shift designs used to reveal oxidative-phosphorylation dependence; cellular ATP or energy charge explicitly used as a mitochondrial bioenergetic endpoint; Seahorse or equivalent OCR/ECAR; intact-cell, permeabilized-cell, tissue, or isolated-mitochondria respiration; respiratory states, capacity, RCR/RCI, P/O or ADP/O, coupling, proton leak, or uncoupling; direct OXPHOS/ETC complex or ATP-synthase activity; mitochondrial membrane potential; permeability transition, pore opening, swelling, or calcium-retention capacity; direct mitochondrial fatty-acid transport, CPT/FAO-enzyme activity, beta-oxidation, or ketogenesis used as an FAO flux readout; mtDNA amount, replication, depletion, or damage; and mitochondrial transcription or translation/protein synthesis. Mitochondrial ROS/redox is eligible only when directly localized to mitochondria and experimentally tied to an in-scope mitochondrial functional mechanism. Cytochrome-c release is eligible only when used as a permeability-transition readout.\n\nExclude generic cytotoxicity or viability, MTT/WST/resazurin, LDH, apoptosis/caspases, histopathology, ALT/AST, steatosis/lipid accumulation, generic ROS or lipid peroxidation, total-cell GSH/redox, mitochondrial morphology/mass/localization/mitophagy, gene or protein expression, omics, ordinary pharmacokinetics, routine metabolic stability or stable-metabolite profiling, reversible CYP inhibition without time/metabolism dependence, generic glycolysis/TCA assays, nonmitochondrial or peroxisomal-only fatty-acid oxidation, nonmitochondrial DNA damage, computational predictions, proposed mechanisms without an observed result, and protocols or methods with no result for a named tested entity. Do not treat dyes, probes, trapping agents, cofactors, respiratory substrates, routine inhibitors, calibration standards, rescue agents, or positive controls as the focal entity unless their own in-scope effect is deliberately evaluated.\n\nCreate one record per focal entity/global_identifier × tested molecular role × assay category and exact endpoint/metric × biological system/species × materially distinct condition × result. Split records when parent and metabolite are separately applied; species or source differs; CYP isoform, OXPHOS complex, reactive product/adduct, trapping agent, respiratory substrate-linked pathway, concentration, exposure time, or modifier condition has a separately reported outcome; or independently queryable metrics differ, including OCR versus ECAR, ATP versus membrane potential, KI versus kinact, distinct complexes, or distinct respiration states with separate values. Keep a concentration or time series together when it supports only one fitted potency or one aggregate trend, and preserve the series in test_concentration or exposure_time. Keep paired +/−NADPH, +/−trap, glucose/galactose, control/treatment, or rescue conditions together only when the comparison itself is the single reported endpoint; otherwise split materially distinct results. Merge technical replicates and repeated descriptions.\n\nRequire an explicit numerical or qualitative result linked to the focal entity, including no-effect, not-detected, weak, equivocal, or protective findings. Record that outcome in reported_result with any unit kept alongside its number; there is no separate result-unit field, and units are transcribed, never converted or supplied. Exclude methods-only records. A concrete result attributed to prior work is eligible only when the paper supplies a definite assay endpoint and enough context to identify the molecule and system; mark it as cited prior work in extra_details. Do not infer species, source, concentration, time, enzyme, metabolite identity, mitochondrial localization, mechanism, result, Cmax, or safety margin from general knowledge. Do not convert units or use external values. Calculate daily mg/day only from an explicit absolute-mg regimen and frequency, never from mg/kg without body weight. Calculate a Cmax multiple only when numerator and Cmax are explicit, refer to comparable total/unbound quantities, and already use directly compatible units; otherwise report only the paper's stated normalization.\n\nAssume routine vehicle/untreated controls, standard aerobic physiological-pH aqueous or culture conditions, ordinary assay temperature, and the paper's standard protocol when unstated; do not restate these defaults. In extra_details record departures that affect interpretation, including glucose/galactose or substrate-free medium, hypoxia, unusual pH or temperature, disease/genotype/sex/diet/fasting state, enzyme induction or inhibition, GSH depletion, calcium challenge, permeabilization, pretreatment, chronic exposure, co-treatment, rescue design, suprapharmacologic exposure, or ex-vivo sampling after in-vivo dosing. Also place evidence provenance; administered dose, route, schedule, daily mg/day, Cmax and safety-margin context; buffers, protein/cell loading, probe details, analytical platform, isotope or transitions; uncertainty, replicates, statistics, comparator values; and structural or mechanistic nuance in extra_details. Use null—not unspecified, unknown, not reported, not applicable, or similar placeholders—whenever a field is not supplied.",
+  "schema_spec": [
+    {
+      "name": "molecule_name",
+      "description": "Human-readable name of the focal tested entity exactly as the paper designates it: generic or trade drug name, chemical name, internal code number, extract or preparation name, chemical-class label, or the paper's own compound designation. Populate this for every record. `global_identifier` is null for a large share of records (class-level articles, mixtures, extracts, and paper-only labels) and is an opaque CURIE even when present, so this is the only field that makes a row readable on its own. Copy the paper's wording; do not invent a name, substitute a preferred synonym, or resolve an identifier to a name from outside knowledge. For a fixed combination, name the combination here and list its components in mechanistic_entities_and_components. Aliases given in the paper go in extra_details.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "tested_entity_role",
+      "description": "Mutually exclusive role of the material actually applied as the focal test entity. Use parent for the starting drug/xenobiotic; stable_metabolite for a preformed nonreactive metabolite; reactive_intermediate for a directly applied or directly generated-and-tested electrophilic intermediate; conjugate_or_adduct for a preformed conjugate/adduct tested as the entity; mixture_or_extract for an inseparable material or class-level preparation; and combination for an intentionally fixed multi-agent treatment treated as one entity. A metabolite merely formed from an applied parent does not change the parent's role; name that product in mechanistic_entities_and_components. Null when the role is not stated; no placeholder value is permitted.",
+      "value_type": "string",
+      "allowed_values": [
+        "parent",
+        "stable_metabolite",
+        "reactive_intermediate",
+        "conjugate_or_adduct",
+        "mixture_or_extract",
+        "combination"
+      ]
+    },
+    {
+      "name": "assay_category",
+      "description": "Single mutually exclusive high-level family of the measured endpoint. Choose the primary measured family, not a proposed downstream consequence, and put the exact method and metric in assay_detail. Boundary rules: use reactive_metabolite_formation only when a stated reactive product is measured without a trapping endpoint; nucleophile_trapping for small-molecule traps such as GSH, cysteine, NAC, cyanide, methoxylamine, semicarbazide, or lysine; covalent_binding_or_adduct for total drug-derived binding or macromolecular/target adducts; cyp_time_dependent_inhibition for every time-dependent, metabolism-dependent, mechanism-based, or metabolite-intermediate-complex endpoint, including IC50-shift and KI/kinact designs. glucose_galactose_energy_stress takes precedence over atp_or_energy_charge and over any viability-based category whenever the record is a glucose-versus-galactose comparative design, whatever the readout; atp_or_energy_charge is only for ATP, ATP synthesis, or energy charge measured without that comparison. Use extracellular_flux for plate-based OCR/ECAR profiling and mitochondrial_respiration for other oxygen-consumption or respirometry metrics; oxidative_phosphorylation_coupling for primary coupling, P/O, ADP/O, RCR, or proton-leak outputs; oxphos_complex_activity for direct complex or ATP-synthase activity. Use other_mitochondrial_energy only for an in-scope mitochondrial energy endpoint that matches none of the above, and state that endpoint explicitly in assay_detail. This field is never null for an extracted record, and no not-stated placeholder is permitted.",
+      "value_type": "string",
+      "allowed_values": [
+        "reactive_metabolite_formation",
+        "nucleophile_trapping",
+        "covalent_binding_or_adduct",
+        "cyp_time_dependent_inhibition",
+        "glucose_galactose_energy_stress",
+        "atp_or_energy_charge",
+        "extracellular_flux",
+        "mitochondrial_respiration",
+        "oxidative_phosphorylation_coupling",
+        "oxphos_complex_activity",
+        "mitochondrial_membrane_potential",
+        "mitochondrial_permeability_transition_or_swelling",
+        "mitochondrial_fatty_acid_oxidation",
+        "mitochondrial_dna",
+        "mitochondrial_transcription_or_translation",
+        "mitochondrial_ros_or_redox",
+        "other_mitochondrial_energy"
+      ]
+    },
+    {
+      "name": "assay_detail",
+      "description": "Concise exact assay implementation plus the single endpoint/result metric for this record, as reported - for example GSH trapping by LC-MS/MS; radiolabeled covalent binding, pmol equivalents/mg protein; CYP3A4 IC50 shift; Seahorse basal OCR; Clark-electrode state-3 respiration; P/O ratio; complex I activity; JC-1 red/green ratio; palmitate-to-14CO2 oxidation; mtDNA:nDNA ratio; or mitochondrial protein-synthesis labeling. This field owns the platform and the metric wording only. The named enzymes, CYP isoforms, OXPHOS complexes, reactive products, adducts, targets, cofactors, traps, substrates, and modifiers are owned by mechanistic_entities_and_components, and naming one inside a metric phrase here does not replace listing it there. Do not combine independently reported metrics; split them into records. Null is allowed only when the category and result are explicit but the method/metric wording is absent.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_system",
+      "description": "Most specific reported biological or metabolic preparation in which exposure or bioactivation occurred, combining broad context and exact source: for example NADPH-fortified pooled human liver microsomes, recombinant CYP3A4, rat liver S9, HepG2 cells, primary hepatocytes, permeabilized cells, isolated heart mitochondria, tissue slice, perfused organ, in-vivo liver, or a cell-free chemical system. Include tissue, cell line, organelle, enzyme preparation, and engineered/induced metabolic competence when stated. Null rather than a placeholder when absent.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "species",
+      "description": "Species supplying the enzyme, cells, tissue, mitochondria, organ, or in-vivo subject. Split species-specific outcomes; list multiple species only for an explicitly pooled, inseparable result. Null for a purely chemical system or when unstated, and do not encode not_applicable or not_reported as values.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "mechanistic_entities_and_components",
+      "description": "Relationship-labeled list of the assay-defining entities themselves; this field, not assay_detail, owns them. Include the related parent or precursor; formed reactive metabolite, trapped conjugate, or adduct; covalent target; CYP isoform, OXPHOS complex, enzyme, transporter, mtDNA or mitoribosomal target; cofactors such as NADPH; trapping agents; respiratory or FAO substrates; and mechanism-changing inhibitors, inducers, rescue agents, or co-treatments. Include component concentrations when reported. Label each relationship explicitly, for example 'formed product: NAPQI-GSH', 'direct target: complex I', or 'parent of tested M1: lapatinib'. Distinguish presence/absence conditions explicitly, such as '+NADPH versus -NADPH'; state experimentally established dependence in reported_result rather than encoding it as component presence. Null when none is reported; never use a not-stated placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "test_concentration",
+      "description": "Concentration of the focal tested entity, excluding traps, cofactors, probes, substrates, and modifiers. Preserve the reported numeric form without the unit, including exact values, inequalities, ranges, or ordered series such as '10', '>=50', '0.1-10', or '0.3, 1, 3, 10'. Keep a series together only when it supports one aggregate trend or fitted result. Null for dose-only studies or when absent; do not infer or convert.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "test_concentration_unit",
+      "description": "Normalized unit applying to test_concentration. Use other only for a reported unit outside the vocabulary and preserve the exact unit in extra_details. Null when concentration is absent or its unit is not stated; no placeholder value is allowed.",
+      "value_type": "string",
+      "allowed_values": [
+        "pM",
+        "nM",
+        "uM",
+        "mM",
+        "M",
+        "ng_per_mL",
+        "ug_per_mL",
+        "mg_per_mL",
+        "mg_per_L",
+        "ug_per_L",
+        "g_per_L",
+        "nmol_per_mg_protein",
+        "umol_per_mg_protein",
+        "percent_v_v",
+        "percent_w_v",
+        "other"
+      ]
+    },
+    {
+      "name": "exposure_time",
+      "description": "Exposure, incubation, or relevant preincubation duration for the focal entity, including the reported unit and any range, series, or staged design, such as '30 min preincubation', '1-4 h', or '24 h exposure plus 24 h recovery'. Distinguish focal exposure from dye loading and routine technical timing. Null when unstated; do not infer or convert.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "reported_result",
+      "description": "Always record the explicit outcome for an eligible record, using the paper's value or concise wording, and keep any unit attached to its number exactly as reported - for example 'IC50 12.5 uM', 'state-3 respiration reduced 42%', 'covalent binding 210 pmol equivalents/mg protein', or 'no detectable GSH adduct'. Preserve one endpoint's central value, inequality, range, fitted potency, trend, or qualitative conclusion, including no effect, not detected, weak, equivocal, or protective results. Do not convert units and never supply a unit the paper did not state; a value reported without a unit is transcribed without one. Put uncertainty, statistics, aligned series, and comparator detail in extra_details. This field must never be null for an extracted record, so an explicit negative result is never confused with an unreported one.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form additional details not captured above. Include paper-given aliases or secondary labels for the focal entity; evidence provenance; nondefault biological or assay conditions; administered dose, route, schedule, daily mg/day, reported Cmax and Cmax-normalized exposure or safety margin; exact concentration series behind a fitted result; buffers, probes, analytical setup, isotope or adduct-identification details; uncertainty, controls, replicates, and statistics; and mechanistic or interpretive caveats. Do not use this field instead of a dedicated field.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

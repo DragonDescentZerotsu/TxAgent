@@ -1,0 +1,280 @@
+{
+  "active_rows": 8278455,
+  "completed_at": "2026-09-02T20:56:22.509658+00:00",
+  "partition_rows": {
+    "part-0.parquet": 517516,
+    "part-1.parquet": 516163,
+    "part-2.parquet": 517427,
+    "part-3.parquet": 515195,
+    "part-4.parquet": 518186,
+    "part-5.parquet": 518020,
+    "part-6.parquet": 517721,
+    "part-7.parquet": 516837,
+    "part-8.parquet": 517738,
+    "part-9.parquet": 518200,
+    "part-a.parquet": 517809,
+    "part-b.parquet": 518177,
+    "part-c.parquet": 517156,
+    "part-d.parquet": 517651,
+    "part-e.parquet": 517577,
+    "part-f.parquet": 517082
+  },
+  "partition_sha256": {
+    "part-0.parquet": "38ad1bca8b99a6311ad16755a52a20be425679e72a0b5fa26ce774be19d7b3f1",
+    "part-1.parquet": "7802d906f7f37473f70dd4128bc2a9651379c84dad2347edcb90a5ba698d40d4",
+    "part-2.parquet": "e68df03e4f1d7659d347806943f19ccce41c95b9e26ef0c8f36ab697c397b1f6",
+    "part-3.parquet": "8d428811254eb329f4dae8dd8c049748c615723204e3dae68599d50dc88f05ed",
+    "part-4.parquet": "a10291abc971715042409ccec69f246478cd2c5f4a607f70db312dd0fda8f111",
+    "part-5.parquet": "e6e8bd04a395129ded697d6bb12dbd179bb2139a3223ba3ce0dc0f0c3b2b22e1",
+    "part-6.parquet": "8997ff33599739ef2410961730a0adc5c8956456d7c94928f90c137e179e6c68",
+    "part-7.parquet": "cb040c5c332e6b0b7f2a49b414216879f73436669df6612ee7c4c9524cd22950",
+    "part-8.parquet": "6aa05ca223b50ede65710c0600fd3c42008cc1a3deeee970a37d1532973f3841",
+    "part-9.parquet": "9a9e316b9b943846e5fb60324165f4a3854a98f536cbe5396b1973476499944e",
+    "part-a.parquet": "5391fc05a2217eee2b19ee3998faecbb9becd6acfe635bcdc0f60a798d04aacc",
+    "part-b.parquet": "7092bc201d3a50b8cc340733fab549a28c980a3894abb93bbc9b3e9929669a30",
+    "part-c.parquet": "330954b4ce3f1bd0fbfaf8345fe0a1bc9210ceabd9f5058097d8a282fd057f4b",
+    "part-d.parquet": "6b78a88408b783821e44bc0f67f80a2c6843e3b0eb65c4aa1e115a4763a57c2f",
+    "part-e.parquet": "a8159bad7adbd6b9339d2c5948fc244d5d8f1934c4b61bc48937daecdb33ae6e",
+    "part-f.parquet": "f92fac0b7b652d6c5731007e95d9edfeab2a1c812378a270427ff09276258aaf"
+  },
+  "pid": 1597499,
+  "raw_rows": 8278455,
+  "retired_rows": 0,
+  "sources": [
+    {
+      "input_sha256": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
+      "output_sha256": "6d0d2c33ea9289b9a7fd9e483b9c48c2d1420a7b96e5b4cfe3e6eef11701f097",
+      "path": "ames/ames_base/extractions.parquet",
+      "rows": 334211,
+      "source_id": "mutagenicity_outcomes",
+      "task_id": "ames"
+    },
+    {
+      "input_sha256": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
+      "output_sha256": "d186598f169c486beab6836ad9f96f6f400542deac7259486c45ca0d7cc7cb91",
+      "path": "ames/ames_v1/extractions.parquet",
+      "rows": 91533,
+      "source_id": "fixed_mutation",
+      "task_id": "ames"
+    },
+    {
+      "input_sha256": "545a090e2c707575040dd230cdbfa2184aee9c8309419fe0ba834b3262a462b7",
+      "output_sha256": "b013ad9b276e337f0d4a207be769b92fe190bb921a23a964b4cfc80397eafa81",
+      "path": "ames/ames_v2/extractions.parquet",
+      "rows": 504321,
+      "source_id": "premutagenic_damage",
+      "task_id": "ames"
+    },
+    {
+      "input_sha256": "69b1da5fa3a36586f2fa64304007671de47620d42fcbdbed2ce0d4f4a48b3d89",
+      "output_sha256": "f1ff2c08107c62e266e0b46cb8b88c77949b7cbcdff8cfa07c81fbdd2bbfa006",
+      "path": "ames/ames_v3/extractions.parquet",
+      "rows": 580382,
+      "source_id": "mutagenicity_mechanism",
+      "task_id": "ames"
+    },
+    {
+      "input_sha256": "14c01314377b6c31f18e6ec9c1ee72a8605a06800d74385fc8a7273f2334df57",
+      "output_sha256": "7fcb0628df2ea67c3e050e2151248ebc059cfa678f8174af196ac24835ce7db4",
+      "path": "bbb_martins/Direct_BBB/records.parquet",
+      "rows": 304845,
+      "source_id": "direct_bbb",
+      "task_id": "bbb_martins"
+    },
+    {
+      "input_sha256": "cc24fe33857a2032143c7b6f54d18e7796204b33fa459c2ec94e9af46a0f3db0",
+      "output_sha256": "9adcfa03a13aee25ddca3be610fa006620962a3237fb00b8848c828e54aa25dd",
+      "path": "bbb_martins/efflux_transport/extractions.parquet",
+      "rows": 191262,
+      "source_id": "efflux_transport",
+      "task_id": "bbb_martins"
+    },
+    {
+      "input_sha256": "846acb38e8c9adad2b18835aa1ff7516ca043adfd8f402413b2170ebd1387ab4",
+      "output_sha256": "b57c1ccdf99c1f86ccf0c154f68a139442354962590bf56f70395c71c7572199",
+      "path": "bbb_martins/influx_transport/extractions.parquet",
+      "rows": 75720,
+      "source_id": "influx_transport",
+      "task_id": "bbb_martins"
+    },
+    {
+      "input_sha256": "1c1b602fe640666c4fb2e006c9712673ecba7ae097bbd7f3e027094762e7c5a2",
+      "output_sha256": "7efb1118dd6a8e573fa451ee501d9fb5e7b702c7ee8670cab035ee4ec09aacb3",
+      "path": "bbb_martins/passive_permeability/extractions.parquet",
+      "rows": 10119,
+      "source_id": "passive_permeability",
+      "task_id": "bbb_martins"
+    },
+    {
+      "input_sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+      "output_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "path": "bioavailability_ma/Direct_HF/records.parquet",
+      "rows": 163815,
+      "source_id": "hf_bioavailability",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "input_sha256": "38d92bb9cd252e772319072ebc6816864bebf247e4376bd86aae1cb104339f84",
+      "output_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "path": "bioavailability_ma/Fa/extractions.parquet",
+      "rows": 85061,
+      "source_id": "fa",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "input_sha256": "352a599f8f81299f52113b897ab1115822451dca4c7f76904645668820e921b0",
+      "output_sha256": "d93a713eb1b9789cd909852b1cec0f69dfade62f730d2ee73d2d03fae1d1e0a3",
+      "path": "bioavailability_ma/Fg/extractions.parquet",
+      "rows": 27713,
+      "source_id": "fg",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "input_sha256": "c97626a4cadc0736b01adf3184d1dd0be42ebcbf7ca71997b27465f138efd540",
+      "output_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "path": "bioavailability_ma/Fh/extractions.parquet",
+      "rows": 67943,
+      "source_id": "fh",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "input_sha256": "9aee05386e4bc64d9e2007466262f10251bf5c24260ce53e2f5c1707c49da010",
+      "output_sha256": "92cbbc2fc49c00617052a7cf6ce9b3f408e0ed1ed7ff9248b31c7c1987897796",
+      "path": "bioavailability_ma/Oral_AUC-Cmax_Exposure/extractions.parquet",
+      "rows": 119192,
+      "source_id": "oral_exposure",
+      "task_id": "bioavailability_ma"
+    },
+    {
+      "input_sha256": "0ae5bb2a7bbefbfd6c9d96cf79e5715a3fdeca0d764c3b3e9d57b51bf7ac1f37",
+      "output_sha256": "a27a9a1b1a91b04443313099639646c4aa4a9c21ee1cc6817c8cd298971e0ac9",
+      "path": "carcinogens/carcinogens_base/extractions.parquet",
+      "rows": 354386,
+      "source_id": "carcinogens_base",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "1d0b7a1eefb226523aab5878063ff4d17b48257db3efe58cd42c631f2c54d0ab",
+      "output_sha256": "0f9541956d6ffb98e27cf7c30a52a8157b87247cca4dfbb212b00d430664ddcd",
+      "path": "carcinogens/carcinogens_v1/extractions.parquet",
+      "rows": 911078,
+      "source_id": "carcinogens_v1",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "a364447f83f2dc8973740e7275a9212b003f898598731c46e838441d87d57807",
+      "output_sha256": "926b8cdbb4ace8367259a12db87239d5596ad4209e4ea9926601ff6c9382c7f7",
+      "path": "carcinogens/carcinogens_v2/extractions.parquet",
+      "rows": 677230,
+      "source_id": "carcinogens_v2",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "fbdc12cd77142460866766d9e1270e821160337407fc7e189a1c328a6592b800",
+      "output_sha256": "524aebc8d28e116bf15ff2b27ad12257a3ec8706f4bdf75db969385e7c00c40c",
+      "path": "carcinogens/carcinogens_v3/extractions.parquet",
+      "rows": 791726,
+      "source_id": "carcinogens_v3",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "e67e9edb53a8d52b6b62ee7e8cd2a57a6a69510d14b8cd3c24759d3bb27fccf8",
+      "output_sha256": "071f36d99f4042697b6f821bc336e09c71e3dae231d619a7c1a8d96cd8c29b80",
+      "path": "carcinogens/carcinogens_v4/extractions.parquet",
+      "rows": 211843,
+      "source_id": "carcinogens_v4",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "8859233bd7f0d9ab6852ec5c5ed142d433bfe8410f81abca77133628fe1886e9",
+      "output_sha256": "157f8efe01a537eb586d1247c04941e779905bb7af31e5a28d1d96a191d61026",
+      "path": "carcinogens/carcinogens_v5/extractions.parquet",
+      "rows": 323824,
+      "source_id": "carcinogens_v5",
+      "task_id": "carcinogens"
+    },
+    {
+      "input_sha256": "7d8a2903041d3dd7458f39f33543ea79ab07ce886b07e391d6787fdd73507741",
+      "output_sha256": "0258817d39a87bf8c95430d959141c89b86aeb512bc4b4c03686c65cd187423c",
+      "path": "dili/dili_base/extractions.parquet",
+      "rows": 189172,
+      "source_id": "dili_base",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "5708e6d9307ab646db7786b6e2bfcc461ef90364ccc5622118a2b7f6c9711e8e",
+      "output_sha256": "b0138a14eb80b42a38a9219a13a6223d2f28bd8675643d82d7d9ea755226c008",
+      "path": "dili/dili_v1/extractions.parquet",
+      "rows": 277550,
+      "source_id": "dili_v1",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "161b416d1ec3bb390c574c67b357bd88d79c5613dbe5eb5128fb900386affb14",
+      "output_sha256": "7cdc22603dbd49c0f11654bc432d2a448a725e1b35bfc012409032611c6adb28",
+      "path": "dili/dili_v2/extractions.parquet",
+      "rows": 297544,
+      "source_id": "dili_v2",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "69d7e052af6f69bf700ef792f3da55d93e92c853c27d088ad9c3920f10045f13",
+      "output_sha256": "316320145796bb761496ba5a24515325c6e99ee42c94f4c934d1277dcdea8082",
+      "path": "dili/dili_v3/extractions.parquet",
+      "rows": 77201,
+      "source_id": "dili_v3",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "af23884272f91e8b1c212fba9df9bc19a3a6d47ef6c6351a52f52dd2eba4f4f0",
+      "output_sha256": "094893cd25bf10c0714d962127cf6e5470d959004eb123bb2b988ffe54f1761f",
+      "path": "dili/dili_v4/extractions.parquet",
+      "rows": 278638,
+      "source_id": "dili_v4",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "1681f56782fa6d793374bf06a96dd6b2c5f7e1f78c5976b217b77487018fc60e",
+      "output_sha256": "6ece09f29cfd9992edc9760bee11ec7b24f3877435bc49b95ae56f51dc9ce366",
+      "path": "dili/dili_v5/extractions.parquet",
+      "rows": 525004,
+      "source_id": "dili_v5",
+      "task_id": "dili"
+    },
+    {
+      "input_sha256": "e7c4819c98af47eae4dc0563f40dc39f8b09eb8e03c9626daee603147125f9c1",
+      "output_sha256": "ce8aca4ebb4bbbd9cdf1f138a6f1b65d527f591b8acac81d69bdfc9f49bbb27a",
+      "path": "skin_reaction/direct_skin_reaction/extractions.parquet",
+      "rows": 66597,
+      "source_id": "direct_skin_reaction",
+      "task_id": "skin_reaction"
+    },
+    {
+      "input_sha256": "c942e956be13c80d3f6075922dcc3731ffaea298dd824b2cf8f09598238501db",
+      "output_sha256": "fe6d272c5b0a3a7e244f123e1c810ef56c21c919f40d3ed44a6563c7da53875a",
+      "path": "skin_reaction/phototoxicity_irritation_local_damage/extractions.parquet",
+      "rows": 382726,
+      "source_id": "phototoxicity_irritation_local_damage",
+      "task_id": "skin_reaction"
+    },
+    {
+      "input_sha256": "3eca3f70d1243795bc37f06e31795566295ce8ea3bf03e810efd3807152cf2c8",
+      "output_sha256": "821b35a0a56ddbac849af97ebf622e38d2331a81a99f69306a7ddd4c39bd9a12",
+      "path": "skin_reaction/sensitization_aop/extractions.parquet",
+      "rows": 45985,
+      "source_id": "sensitization_aop",
+      "task_id": "skin_reaction"
+    },
+    {
+      "input_sha256": "14f9ba586b6744e7412867110080ad9bf7b51b2ae39be0d12572f9ce66fd7713",
+      "output_sha256": "e2ba14d68a2235e984b3ee84b05e7aeb03920a46a4cd34122280385267399e15",
+      "path": "skin_reaction/skin_exposure/extractions.parquet",
+      "rows": 311834,
+      "source_id": "skin_exposure",
+      "task_id": "skin_reaction"
+    }
+  ],
+  "started_at": "2026-09-02T20:45:42.071238+00:00",
+  "uid_format": "sr_<uuid4 lowercase hex>",
+  "version": "starling_source_row_uid_ledger.v1"
+}
