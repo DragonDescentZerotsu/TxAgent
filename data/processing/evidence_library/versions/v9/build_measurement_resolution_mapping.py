@@ -16,6 +16,7 @@ import hashlib
 import importlib
 import json
 import random
+import time
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -44,10 +45,13 @@ from data.processing.evidence_library.versions.v9.measurement_routing import (
     route,
 )
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
+from data.processing.evidence_library.shared.v2.normalization.measurement_resolution import (
+    load_exact_unit_mapping,
+)
 from data.processing.evidence_library.versions.v9.task_registry import import_task_module
 
 
-GENERATION_VERSION = "measurement_resolution_generation.v7"
+GENERATION_VERSION = "measurement_resolution_generation.v8"
 MODEL = "gpt-5.4-mini"
 REASONING_EFFORT = "low"
 
@@ -61,6 +65,7 @@ DISTILLATION_CANDIDATES = (DISTILLATION_ROOT,)
 SAMPLE_SEED = 20260820
 STATUSES = ("ok", "unsure", "relative", "unavailable")
 MAX_COMPLETION_TOKENS = 65_536
+OPENROUTER_RETRY_DELAYS_S = (1, 2, 4, 8, 16) + (30,) * 20
 
 #: Row-local columns shown to the model. Endpoint context is supplied separately
 #: from deterministically parsed rows and never changes this row payload.
@@ -397,7 +402,39 @@ def plan_batches(
                     payload_rows=payload,
                 )
             )
-    return batches
+    if not getattr(config.module, "STRATIFY_BATCHES", False):
+        return batches
+
+    # Give a token-limited prefix approximately the same fraction of every
+    # source, while cycling through that source's endpoint groups.
+    by_source: dict[str, list[RequestBatch]] = {}
+    for batch in batches:
+        by_source.setdefault(batch.source_id, []).append(batch)
+    ranked: list[tuple[float, str, int, RequestBatch]] = []
+    for source_id, source_batches in sorted(by_source.items()):
+        by_endpoint: dict[tuple[str, ...], list[RequestBatch]] = {}
+        for batch in source_batches:
+            endpoint_key = tuple(
+                dict.fromkeys(
+                    str(row["canonical_endpoint_name"]) for row in batch.rows
+                )
+            )
+            by_endpoint.setdefault(endpoint_key, []).append(batch)
+        queues = [by_endpoint[key] for key in sorted(by_endpoint)]
+        interleaved: list[RequestBatch] = []
+        while queues:
+            remaining = []
+            for queue in queues:
+                interleaved.append(queue.pop(0))
+                if queue:
+                    remaining.append(queue)
+            queues = remaining
+        total = len(interleaved)
+        ranked.extend(
+            (index / total, source_id, index, batch)
+            for index, batch in enumerate(interleaved)
+        )
+    return [item[-1] for item in sorted(ranked, key=lambda item: item[:3])]
 
 
 def _blank(row: Any, *, method: str, reason: str | None = None) -> dict[str, Any]:
@@ -579,11 +616,29 @@ def openai_compatible_llm(client: Any) -> Any:
         )
         if reasoning_effort:
             request["reasoning_effort"] = reasoning_effort
-        if model.startswith("gpt-5"):
+        if model.rsplit("/", 1)[-1].startswith("gpt-5"):
             request["max_completion_tokens"] = max_tokens
         else:
             request.update(max_tokens=max_tokens, temperature=temperature)
-        response = client.chat.completions.create(**request)
+        if "openrouter.ai" in str(getattr(client, "base_url", "")):
+            request["extra_body"] = {"provider": {"require_parameters": True}}
+        is_openrouter = "openrouter.ai" in str(getattr(client, "base_url", ""))
+        for attempt in range(len(OPENROUTER_RETRY_DELAYS_S) + 1):
+            response = client.chat.completions.create(**request)
+            if getattr(response, "choices", None):
+                break
+            error = getattr(response, "error", None) or {}
+            code = error.get("code") if isinstance(error, dict) else None
+            message = error.get("message") if isinstance(error, dict) else None
+            if is_openrouter and code == 429 and attempt < len(
+                OPENROUTER_RETRY_DELAYS_S
+            ):
+                time.sleep(OPENROUTER_RETRY_DELAYS_S[attempt])
+                continue
+            raise RuntimeError(
+                f"OpenAI-compatible response has no choices: code={code}, "
+                f"message={message or 'not reported'}"
+            )
         message = response.choices[0].message
         usage = response.usage.model_dump() if response.usage is not None else None
         return {
@@ -731,6 +786,14 @@ def materialize(
     """Write one mapping row per candidate, refusing to publish an unasked row."""
     base_assignments = base_assignments or {}
     base_model = _base_mapping_model(base_mapping_path) if base_assignments else ""
+    exact_unit_mapping_path = getattr(
+        config.module, "EXACT_UNIT_MAPPING_PATH", None
+    )
+    exact_unit_mapping = (
+        load_exact_unit_mapping(exact_unit_mapping_path)
+        if exact_unit_mapping_path is not None
+        else None
+    )
     rows: list[dict[str, Any]] = []
     for candidate in candidates:
         record_id = str(candidate["id"])
@@ -740,19 +803,72 @@ def materialize(
                 assignment = _blank(candidate, method="ambiguous_process_termination")
             else:
                 raise ValueError(f"unattempted row cannot be published: {record_id}")
+        if exact_unit_mapping is not None and assignment["status"] == "ok":
+            endpoint = str(candidate.get("canonical_endpoint_name") or "")
+            entries = json.loads(assignment["measurements_json"])
+            unsupported = next(
+                (
+                    str(entry.get("unit") or "").strip()
+                    for entry in entries
+                    if (
+                        config.task_id,
+                        endpoint,
+                        str(entry.get("unit") or "").strip(),
+                    )
+                    not in exact_unit_mapping
+                    and (
+                        config.task_id,
+                        "*",
+                        str(entry.get("unit") or "").strip(),
+                    )
+                    not in exact_unit_mapping
+                ),
+                None,
+            )
+            if unsupported is not None:
+                refused = _blank(candidate, method="unsupported_exact_unit")
+                refused["raw_response_json"] = assignment.get("raw_response_json")
+                refused["rejected_response_json"] = json.dumps(
+                    {
+                        "reason": "unsupported_exact_unit",
+                        "canonical_endpoint_name": endpoint,
+                        "unit": unsupported,
+                        "model_assignment": entries,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+                assignment = refused
+        from_base = record_id in base_assignments
+        provenance = getattr(cache, "provenance", {}).get(record_id, {})
         rows.append(
             {
                 **assignment,
-                "inference_source": (
-                    "base_mapping" if record_id in base_assignments else "delta_inference"
-                ),
+                "inference_source": "base_mapping" if from_base else "delta_inference",
                 "inference_model": (
-                    base_model if record_id in base_assignments else model
+                    base_model
+                    if from_base
+                    else str(provenance.get("inference_model") or model)
+                ),
+                "inference_base_url": (
+                    ""
+                    if from_base
+                    else str(provenance.get("inference_base_url") or api_base_url)
+                ),
+                "inference_credential_env": (
+                    ""
+                    if from_base
+                    else str(provenance.get("inference_credential_env") or "")
                 ),
             }
         )
     rows.sort(key=lambda row: str(row["cleaned_record_id"]))
     inference_models = sorted({str(row["inference_model"]) for row in rows})
+    inference_base_urls = sorted(
+        {str(row["inference_base_url"]) for row in rows if row["inference_base_url"]}
+    )
+    delta_rows = [row for row in rows if row["inference_source"] == "delta_inference"]
+    delta_models = sorted({str(row["inference_model"]) for row in delta_rows})
 
     table = pa.Table.from_pylist(rows)
     mapping_path.parent.mkdir(parents=True, exist_ok=True)
@@ -770,7 +886,14 @@ def materialize(
         "mapping_version": config.MAPPING_VERSION,
         "model": inference_models[0] if len(inference_models) == 1 else "mixed",
         "models": inference_models,
-        "api_base_url": api_base_url,
+        "api_base_url": (
+            inference_base_urls[0] if len(inference_base_urls) == 1 else "mixed"
+        ),
+        "api_base_urls": inference_base_urls,
+        "inference_model_counts": _counter(row["inference_model"] for row in rows),
+        "inference_base_url_counts": _counter(
+            row["inference_base_url"] for row in rows if row["inference_base_url"]
+        ),
         "inference": {
             "max_completion_tokens": max_completion_tokens,
             "reasoning_mode": reasoning_mode,
@@ -798,12 +921,25 @@ def materialize(
             else None
         ),
         "delta_inference": {
-            "model": model,
-            "rows": len(rows) - len(base_assignments),
+            "model": delta_models[0] if len(delta_models) == 1 else "mixed",
+            "models": delta_models,
+            "rows": len(delta_rows),
         },
         "status_counts": counts,
         "rejected_rows": sum(1 for row in rows if row["rejected_response_json"]),
         "assignment_method_counts": _counter(row["assignment_method"] for row in rows),
+        "exact_unit_coverage": (
+            {
+                "path": str(exact_unit_mapping_path),
+                "sha256": file_sha256(exact_unit_mapping_path),
+                "unsupported_ok_rows_demoted": sum(
+                    row["assignment_method"] == "unsupported_exact_unit"
+                    for row in rows
+                ),
+            }
+            if exact_unit_mapping_path is not None
+            else None
+        ),
         "validations": {
             "one_row_per_candidate": len(rows) == len(candidates),
             "unique_cleaned_record_ids": len({row["cleaned_record_id"] for row in rows})
@@ -846,6 +982,42 @@ def _base_mapping_model(path: Path | None) -> str:
     if not model:
         raise ValueError(f"base mapping manifest lacks a model: {manifest_path}")
     return model
+
+
+def retryable_assignment_ids(
+    cache: SubmissionCache,
+    *,
+    retry_model: str | None = None,
+    max_attempts: int | None = None,
+) -> set[str]:
+    """Rows that reached no publishable model answer and are safe to retry."""
+    prefixes = (
+        "ambiguous_process_termination",
+        "api_failure",
+        "invalid_response_after_structural_retry",
+        "invalid_row_response:",
+        "worker_failure",
+    )
+    failed = {
+        record_id
+        for record_id, assignment in cache.assignments.items()
+        if str(assignment.get("assignment_method") or "").startswith(prefixes)
+    }
+    candidates = failed | (cache.attempted - cache.assignments.keys())
+    if retry_model is None or max_attempts is None:
+        return candidates
+    attempts: dict[str, int] = {}
+    for event in cache.events:
+        if event.get("status") != "submitted" or event.get("model") != retry_model:
+            continue
+        for record_id in event.get("row_ids") or ():
+            key = str(record_id)
+            attempts[key] = attempts.get(key, 0) + 1
+    return {
+        record_id
+        for record_id in candidates
+        if attempts.get(record_id, 0) < max_attempts
+    }
 
 
 def _gold_sources(path: Path, ids: set[str]) -> dict[str, int]:
@@ -1074,6 +1246,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     cache_path = cache_dir / config.task_id / "requests.jsonl"
     cache = SubmissionCache(cache_path)
+    if args.no_token_ledger and getattr(
+        config.module, "RETRY_TERMINAL_FAILURES_ON_UNMETERED", False
+    ):
+        retry_ids = retryable_assignment_ids(
+            cache,
+            retry_model=args.model,
+            max_attempts=getattr(
+                config.module, "MAX_UNMETERED_ATTEMPTS_PER_ROW", None
+            ),
+        )
+        cache.allow_retry(retry_ids)
+        print(f"terminal failed rows released for fallback retry: {len(retry_ids):,}")
     ledger = (
         None
         if args.no_token_ledger

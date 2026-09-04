@@ -174,6 +174,7 @@ def finalize_assay_transfer_measurement(
     *,
     record_contract: Any,
     policy: Mapping[str, Any],
+    prune_unreviewed_record: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Finalize the reviewed raw/log10 canonical tuple after v7 projection."""
     updated_working = dict(working)
@@ -204,9 +205,13 @@ def finalize_assay_transfer_measurement(
             and str(updated_projected.get("source_id") or "")
             in policy.get("axis_decision_required_sources", ())
         ):
-            raise ValueError(
-                f"continuous axis lacks an exact policy decision: {axis_key}"
-            )
+            if not prune_unreviewed_record:
+                raise ValueError(
+                    f"continuous axis lacks an exact policy decision: {axis_key}"
+                )
+            reason = "measurement_axis_absent_from_frozen_transfer_policy"
+            updated_working["assay_transfer_ineligibility_reason"] = reason
+            updated_projected["assay_transfer_ineligibility_reason"] = reason
         decision = decision or {"transform": "raw"}
     else:
         decision = {"transform": "raw"}
@@ -221,6 +226,11 @@ def finalize_assay_transfer_measurement(
             if scalar is not None and scalar <= 0 and record_id in policy.get(
                 "record_ineligibility", {}
             ):
+                transform = "raw"
+            elif scalar is not None and scalar <= 0 and prune_unreviewed_record:
+                reason = "nonpositive_measurement_on_frozen_log10_axis"
+                updated_working["assay_transfer_ineligibility_reason"] = reason
+                updated_projected["assay_transfer_ineligibility_reason"] = reason
                 transform = "raw"
             else:
                 raise ValueError(f"log10 policy targets an invalid record in {decision_key}")

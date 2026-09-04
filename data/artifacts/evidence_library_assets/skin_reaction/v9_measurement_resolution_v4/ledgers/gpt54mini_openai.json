@@ -1,0 +1,15 @@
+{
+  "active_epoch": "skin-v9-measurement-v4-gpt54mini-openai-20260904",
+  "epochs": {
+    "skin-v9-measurement-v4-gpt54mini-openai-20260904": {
+      "conservative_unreported_tokens": 6245036,
+      "input_tokens": 9735481,
+      "max_tokens": 20000000,
+      "output_tokens": 3993102,
+      "requests_completed": 2652,
+      "reservations": {},
+      "status": "budget_exhausted"
+    }
+  },
+  "ledger_version": "reference_semantics_openai_token_ledger.v1"
+}

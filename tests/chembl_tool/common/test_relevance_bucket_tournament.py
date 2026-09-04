@@ -1,11 +1,14 @@
 import json
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 from data.processing.evidence_library import relevance_bucket_diagnostic as diagnostic
 from data.processing.evidence_library import relevance_bucket_pilot as ranking_pilot
 from data.processing.evidence_library import relevance_bucket_rounds as ranking_rounds
+from data.processing.evidence_library import relevance_bucket_luna as luna
 from data.processing.evidence_library import relevance_bucket_tournament as tournament
+from data.processing.evidence_library import skin_reaction_relevance_bucket_tournament as skin
 from data.processing.evidence_library.relevance_bucket_tournament import (
     COMPARISONS_PER_REQUEST,
     RELEVANCE_BUCKET_COLUMNS,
@@ -255,6 +258,37 @@ def test_v4_rounds_are_source_local_balanced_connected_and_edge_disjoint():
         assert max(positions.values()) <= 1
 
 
+def test_luna_graph_has_degree_twenty_and_batches_at_most_five():
+    keys = [
+        json.dumps({"source_id": source, "bucket": index}, sort_keys=True)
+        for source, count in (("large", 24), ("small", 7))
+        for index in range(count)
+    ]
+    edges_by_source = luna.comparison_edges(keys)
+    for source, edges in edges_by_source.items():
+        source_keys = [key for key in keys if json.loads(key)["source_id"] == source]
+        degree = Counter(key for edge in edges for key in edge)
+        expected_degree = min(luna.DEGREE, len(source_keys) - 1)
+        assert set(degree) == set(source_keys)
+        assert set(degree.values()) == {expected_degree}
+        assert tournament._connected([(a, b, "A") for a, b in edges])
+        assert max(
+            abs(sum(a == key for a, _ in edges) - sum(b == key for _, b in edges))
+            for key in source_keys
+        ) <= 1
+    with tempfile.TemporaryDirectory() as directory:
+        connection = tournament._connect(Path(directory) / "requests.sqlite3")
+        luna._insert_comparisons(connection, edges_by_source)
+        batch_sizes = [
+            row[0]
+            for row in connection.execute(
+                "SELECT count(*) FROM comparisons GROUP BY batch_id"
+            )
+        ]
+        assert batch_sizes and max(batch_sizes) <= 5
+        connection.close()
+
+
 def test_v4_strict_contract_rejects_ties_and_bt_recovers_order():
     with tempfile.TemporaryDirectory() as directory:
         connection = tournament._connect(Path(directory) / "requests.sqlite3")
@@ -281,3 +315,62 @@ def test_v4_strict_contract_rejects_ties_and_bt_recovers_order():
     )
     scores = ranking_rounds.fit_bradley_terry(outcomes)
     assert scores["high"] > scores["middle"] > scores["low"]
+
+
+def test_skin_bucket_cards_and_rounds_are_outcome_blind_and_source_local():
+    record = {
+        "source_id": "direct_skin_reaction",
+        "canonical_endpoint_concept": "sensitization",
+        "measurement_kind": "non_scalar",
+        "canonical_assay_or_test": "llna",
+        "canonical_species_or_population": "mouse",
+        "canonical_unit_text": "positive_or_negative",
+        "outcome_label": "positive",
+        "positive_count": 8,
+        "total_tested": 10,
+        "canonical_smiles": "CCO",
+        "pmid": "123",
+        "canonical_reference_scope": "vehicle",
+    }
+    key, identity = skin.relevance_bucket(record)
+    assert list(identity) == [
+        "source_id",
+        *skin.RELEVANCE_BUCKET_COLUMNS["direct_skin_reaction"],
+    ]
+    card = skin.visible_card(record)
+    assert set(card) == {
+        "canonical_endpoint_concept",
+        "measurement_kind",
+        "canonical_unit_text",
+        "canonical_assay_or_test",
+        "canonical_species_or_population",
+    }
+    assert not ({"outcome_label", "positive_count", "total_tested", "pmid"} & set(card))
+    assert json.loads(key)["source_id"] == "direct_skin_reaction"
+
+    keys = []
+    for source, columns in skin.RELEVANCE_BUCKET_COLUMNS.items():
+        for index in range(128):
+            item = {"source_id": source, **{column: f"{column}-{index}" for column in columns}}
+            keys.append(skin.relevance_bucket(item)[0])
+    rounds = skin._rounds(keys)
+    for source in skin.RELEVANCE_BUCKET_COLUMNS:
+        phases = [rounds[phase][source] for phase in skin.ROUND_CYCLES]
+        assert len(phases[0]) == 384
+        assert {len(phase) for phase in phases[1:]} == {256}
+        edge_sets = [
+            {tuple(sorted(edge)) for edge in phase}
+            for phase in phases
+        ]
+        assert all(
+            not edge_sets[left] & edge_sets[right]
+            for left in range(len(phases))
+            for right in range(left + 1, len(phases))
+        )
+        cumulative = [edge for phase in phases for edge in phase]
+        assert all(
+            json.loads(a)["source_id"] == json.loads(b)["source_id"] == source
+            for a, b in cumulative
+        )
+        degree = Counter(key for edge in cumulative for key in edge)
+        assert set(degree.values()) == {22}

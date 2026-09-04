@@ -1,0 +1,70 @@
+{
+  "audit_version": "skin_reaction_measurement_resolution_v4_pilot_audit.v1",
+  "task_id": "skin_reaction",
+  "review_scope": {
+    "rows": 200,
+    "rows_per_source": 50,
+    "selection_seed": 20260820,
+    "selection_policy": "Generator stratified slice over the live Stage-01 extraction candidates.",
+    "cleaned_records_sha256": "2a200b355d6e4fd3c14b7f034bcb9fdc264548a0c6918905ac16c61c765cac68"
+  },
+  "inference": {
+    "model": "gpt-5.4-mini",
+    "base_url": "https://api.openai.com/v1",
+    "prompt_version": "skin_reaction_measurement_resolution_prompt.v8",
+    "template_sha256": "fbbd22f7cc50b914fe66d369e69283a5d1c822876c13d945b359d674d2753081",
+    "input_tokens": 39474,
+    "output_tokens": 16986,
+    "status_counts": {
+      "ok": 119,
+      "relative": 12,
+      "unavailable": 54,
+      "unsure": 15
+    },
+    "structurally_rejected_rows": 0
+  },
+  "manual_review": {
+    "reviewed_rows": 200,
+    "clear_policy_agreements": 196,
+    "clear_policy_disagreements": 4,
+    "clear_false_positive_ok_rows": 3,
+    "clear_false_negative_ok_rows": 1,
+    "clear_pair_precision_given_ok_prediction": 0.9747899159663865,
+    "model_outputs_used_to_define_policy": false,
+    "note": "Review applied the already-frozen prompt policy to every pilot input and response; ambiguous judgment calls were not counted as disagreements."
+  },
+  "clear_disagreements": [
+    {
+      "cleaned_record_id": "da5bcc577b3aa485259a029f9ddd5641fecb29820f5c8466196d63a94964838c",
+      "source_id": "direct_skin_reaction",
+      "canonical_endpoint_name": "sensitization",
+      "prediction_status": "ok",
+      "review_status": "unavailable",
+      "reason": "A stimulation index is a different readout under the broad sensitization endpoint."
+    },
+    {
+      "cleaned_record_id": "6000b15512fa615bb1a5053fdf40740ee56e38a7c5c1fec19119ef79d9473f1a",
+      "source_id": "sensitization_aop",
+      "canonical_endpoint_name": "dendritic cell migration",
+      "prediction_status": "ok",
+      "review_status": "relative",
+      "reason": "The selected numeric reduction is defined against the experiment-specific steady-state density."
+    },
+    {
+      "cleaned_record_id": "06f4a76a1a4b5053ed7b79477c367c0b498ecd80c5b9ba2aac07dae882ae97bc",
+      "source_id": "skin_exposure",
+      "canonical_endpoint_name": "dermal_absorption",
+      "prediction_status": "ok",
+      "review_status": "unavailable",
+      "reason": "The selected percentage is liver distribution, which is not dermal absorption."
+    },
+    {
+      "cleaned_record_id": "cb3ac9603dba53544ba6a00892198cb8219185bfe16a49acf0879439af521c56",
+      "source_id": "direct_skin_reaction",
+      "canonical_endpoint_name": "sensitization",
+      "prediction_status": "unsure",
+      "review_status": "ok",
+      "reason": "The text explicitly reports four cases of allergic contact dermatitis, so the value and count unit are resolved."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "version": "non_direct_relevance_bucket_luna.v1",
+  "status": "initialized",
+  "task": "bbb_martins",
+  "input": "data/evidence_libraries/bbb_martins/v9/03_pair_buckets/records.parquet",
+  "input_sha256": "6ace18258a2891efa6b936f352db0ceeed9bf898ba26c473bca7c2e94393c8df",
+  "prompt": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/prompts/relevance_bucket_rounds_v4.jinja",
+  "prompt_sha256": "5bc7ed8e678806a49060c6a27a721558708de90500ab673dcd350b47fdd48a2a",
+  "model": "openai/gpt-5.6-luna",
+  "base_url": "https://openrouter.ai/api/v1",
+  "reasoning_effort": "medium",
+  "max_completion_tokens": 4096,
+  "batch_size_maximum": 5,
+  "target_degree": 20,
+  "sources": [
+    "efflux_transport",
+    "influx_transport",
+    "passive_permeability"
+  ],
+  "direct_sources_excluded": true,
+  "winner_contract": "exact_bucket_id_strict_binary",
+  "provider_routing": {
+    "only": [
+      "openai"
+    ],
+    "ignore": [
+      "openai/fast"
+    ],
+    "allow_fallbacks": true,
+    "require_parameters": true
+  },
+  "pricing_usd_per_million_tokens": {
+    "input": 0.2,
+    "output": 1.2
+  },
+  "relevance_bucket_columns": {
+    "efflux_transport": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_transporter_identifier",
+      "canonical_evidence_type"
+    ],
+    "influx_transport": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_transport_mechanism",
+      "canonical_kinetic_symbol"
+    ],
+    "passive_permeability": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_assay_type"
+    ]
+  },
+  "source_counts": {
+    "efflux_transport": {
+      "pair_buckets": 42389,
+      "relevance_buckets": 1967
+    },
+    "influx_transport": {
+      "pair_buckets": 177,
+      "relevance_buckets": 12
+    },
+    "passive_permeability": {
+      "pair_buckets": 474,
+      "relevance_buckets": 97
+    }
+  },
+  "relevance_bucket_count": 2076,
+  "pair_buckets_with_multiple_relevance_identities": 8,
+  "graph": {
+    "efflux_transport": {
+      "bucket_count": 1967,
+      "edge_count": 19670,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    },
+    "influx_transport": {
+      "bucket_count": 12,
+      "edge_count": 66,
+      "minimum_degree": 11,
+      "maximum_degree": 11,
+      "maximum_candidate_position_imbalance": 1,
+      "connected": true
+    },
+    "passive_permeability": {
+      "bucket_count": 97,
+      "edge_count": 970,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    }
+  },
+  "artifacts": {
+    "pair_bucket_relevance_map": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v1/bbb_martins/pair_bucket_relevance_map.parquet",
+    "request_cache": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v1/bbb_martins/requests.sqlite3"
+  },
+  "accepted_reason_word_limit": 24
+}

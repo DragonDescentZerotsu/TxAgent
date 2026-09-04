@@ -1,0 +1,477 @@
+{
+  "version": "skin_reaction_relevance_bucket_tournament.v1",
+  "status": "round5_complete_pending_review",
+  "input": "data/evidence_libraries/skin_reaction/v9/03_pair_buckets/records.parquet",
+  "input_sha256": "54bf585a93bb8d98f1c5137c11e9933762090cdf6b38a8a903722a837710c6c6",
+  "prompt": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/prompts/skin_reaction_relevance_bucket_v1.jinja",
+  "prompt_version": "skin_reaction_relevance_bucket_prompt.v1",
+  "prompt_sha256": "fba5366bd374f955d81673e451baca202a5765c31a038cafc7e1fe3977464bef",
+  "first_review_batch_id": "round1-direct-skin-reaction-batch-0000",
+  "model": "gpt-5.4-mini",
+  "reasoning_effort": "high",
+  "max_completion_tokens": 8192,
+  "batch_size_maximum": 5,
+  "bradley_terry_l2_penalty": 0.3,
+  "assay_transfer_filter": {
+    "field": "assay_transfer_eligible",
+    "value": true
+  },
+  "relevance_bucket_columns": {
+    "direct_skin_reaction": [
+      "canonical_endpoint_concept",
+      "measurement_kind",
+      "canonical_assay_or_test",
+      "canonical_species_or_population"
+    ],
+    "sensitization_aop": [
+      "canonical_endpoint_concept",
+      "canonical_aop_event",
+      "canonical_assay_type",
+      "canonical_species_context"
+    ],
+    "phototoxicity_irritation_local_damage": [
+      "canonical_endpoint_concept",
+      "measurement_kind",
+      "canonical_evidence_system"
+    ],
+    "skin_exposure": [
+      "canonical_endpoint_concept",
+      "canonical_study_design",
+      "canonical_species_context"
+    ]
+  },
+  "source_counts": {
+    "direct_skin_reaction": {
+      "pair_buckets": 310,
+      "relevance_buckets": 278
+    },
+    "sensitization_aop": {
+      "pair_buckets": 931,
+      "relevance_buckets": 760
+    },
+    "phototoxicity_irritation_local_damage": {
+      "pair_buckets": 25908,
+      "relevance_buckets": 138
+    },
+    "skin_exposure": {
+      "pair_buckets": 6456,
+      "relevance_buckets": 902
+    }
+  },
+  "relevance_bucket_count": 2078,
+  "pair_buckets_with_inconsistent_relevance_fields": 0,
+  "pilot_bucket_count": 512,
+  "pilot_source_bucket_counts": {
+    "direct_skin_reaction": 128,
+    "sensitization_aop": 128,
+    "phototoxicity_irritation_local_damage": 128,
+    "skin_exposure": 128
+  },
+  "sample_card_limit": 5,
+  "sample_card_columns": {
+    "common": [
+      "canonical_endpoint_concept",
+      "measurement_kind",
+      "canonical_unit_text"
+    ],
+    "direct_skin_reaction": [
+      "canonical_assay_or_test",
+      "canonical_species_or_population"
+    ],
+    "sensitization_aop": [
+      "canonical_aop_event",
+      "canonical_assay_type",
+      "canonical_species_context"
+    ],
+    "phototoxicity_irritation_local_damage": [
+      "canonical_assay_method",
+      "canonical_evidence_system"
+    ],
+    "skin_exposure": [
+      "canonical_study_design",
+      "canonical_species_context"
+    ]
+  },
+  "sample_fields_explicitly_excluded": [
+    "support_text",
+    "extra_details",
+    "pmid",
+    "canonical_smiles",
+    "source_smiles",
+    "outcomes_labels_values_and_directions",
+    "all_reference_semantics_fields"
+  ],
+  "comparison_policy": "source_local_edge_disjoint_hamiltonian_cycles",
+  "round_cycles": {
+    "round1": 3,
+    "round2": 2,
+    "round3": 2,
+    "round4": 2,
+    "round5": 2
+  },
+  "graph": {
+    "round1": {
+      "direct_skin_reaction": {
+        "new_edges": 384,
+        "cumulative_edges": 384,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 6,
+        "maximum_cumulative_degree": 6,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "phototoxicity_irritation_local_damage": {
+        "new_edges": 384,
+        "cumulative_edges": 384,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 6,
+        "maximum_cumulative_degree": 6,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "sensitization_aop": {
+        "new_edges": 384,
+        "cumulative_edges": 384,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 6,
+        "maximum_cumulative_degree": 6,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "skin_exposure": {
+        "new_edges": 384,
+        "cumulative_edges": 384,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 6,
+        "maximum_cumulative_degree": 6,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      }
+    },
+    "round2": {
+      "direct_skin_reaction": {
+        "new_edges": 256,
+        "cumulative_edges": 640,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 10,
+        "maximum_cumulative_degree": 10,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "phototoxicity_irritation_local_damage": {
+        "new_edges": 256,
+        "cumulative_edges": 640,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 10,
+        "maximum_cumulative_degree": 10,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "sensitization_aop": {
+        "new_edges": 256,
+        "cumulative_edges": 640,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 10,
+        "maximum_cumulative_degree": 10,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "skin_exposure": {
+        "new_edges": 256,
+        "cumulative_edges": 640,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 10,
+        "maximum_cumulative_degree": 10,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      }
+    },
+    "round3": {
+      "direct_skin_reaction": {
+        "new_edges": 256,
+        "cumulative_edges": 896,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 14,
+        "maximum_cumulative_degree": 14,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "phototoxicity_irritation_local_damage": {
+        "new_edges": 256,
+        "cumulative_edges": 896,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 14,
+        "maximum_cumulative_degree": 14,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "sensitization_aop": {
+        "new_edges": 256,
+        "cumulative_edges": 896,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 14,
+        "maximum_cumulative_degree": 14,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "skin_exposure": {
+        "new_edges": 256,
+        "cumulative_edges": 896,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 14,
+        "maximum_cumulative_degree": 14,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      }
+    },
+    "round4": {
+      "direct_skin_reaction": {
+        "new_edges": 256,
+        "cumulative_edges": 1152,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 18,
+        "maximum_cumulative_degree": 18,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "phototoxicity_irritation_local_damage": {
+        "new_edges": 256,
+        "cumulative_edges": 1152,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 18,
+        "maximum_cumulative_degree": 18,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "sensitization_aop": {
+        "new_edges": 256,
+        "cumulative_edges": 1152,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 18,
+        "maximum_cumulative_degree": 18,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "skin_exposure": {
+        "new_edges": 256,
+        "cumulative_edges": 1152,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 18,
+        "maximum_cumulative_degree": 18,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      }
+    },
+    "round5": {
+      "direct_skin_reaction": {
+        "new_edges": 256,
+        "cumulative_edges": 1408,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 22,
+        "maximum_cumulative_degree": 22,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "phototoxicity_irritation_local_damage": {
+        "new_edges": 256,
+        "cumulative_edges": 1408,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 22,
+        "maximum_cumulative_degree": 22,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "sensitization_aop": {
+        "new_edges": 256,
+        "cumulative_edges": 1408,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 22,
+        "maximum_cumulative_degree": 22,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      },
+      "skin_exposure": {
+        "new_edges": 256,
+        "cumulative_edges": 1408,
+        "bucket_count": 128,
+        "minimum_cumulative_degree": 22,
+        "maximum_cumulative_degree": 22,
+        "maximum_candidate_position_imbalance": 0,
+        "cumulative_graph_connected": true
+      }
+    }
+  },
+  "full_run_started": false,
+  "artifacts": {
+    "pair_bucket_relevance_map": "data/evidence_libraries/skin_reaction/v9/relevance_bucket_tournament_v1/pair_bucket_relevance_map.parquet",
+    "request_cache": "data/evidence_libraries/skin_reaction/v9/relevance_bucket_tournament_v1/requests.sqlite3"
+  },
+  "approved_prompt_sha256": "fba5366bd374f955d81673e451baca202a5765c31a038cafc7e1fe3977464bef",
+  "credential_env_by_round": {
+    "round1": "OPENAI_API_KEY_TWO",
+    "round2": "OPENAI_API_KEY_TWO",
+    "round3": "OPENAI_API_KEY_TWO",
+    "round4": "OPENAI_API_KEY_TWO",
+    "round5": "OPENAI_API_KEY_TWO"
+  },
+  "convergence": {
+    "by_source": {
+      "direct_skin_reaction": {
+        "bucket_count": 128,
+        "rank_spearman": 0.938398416041018,
+        "within_one_decile": 0.8515625,
+        "top_decile_overlap": 0.6923076923076923,
+        "independent_round_rank_spearman": 0.6890049899285845,
+        "independent_round_within_one_decile": 0.5859375
+      },
+      "phototoxicity_irritation_local_damage": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9367560886284564,
+        "within_one_decile": 0.8515625,
+        "top_decile_overlap": 0.5384615384615384,
+        "independent_round_rank_spearman": 0.6725588262223036,
+        "independent_round_within_one_decile": 0.5703125
+      },
+      "sensitization_aop": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9548846365134591,
+        "within_one_decile": 0.890625,
+        "top_decile_overlap": 0.7692307692307693,
+        "independent_round_rank_spearman": 0.7358542391503388,
+        "independent_round_within_one_decile": 0.578125
+      },
+      "skin_exposure": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9359721204907526,
+        "within_one_decile": 0.8515625,
+        "top_decile_overlap": 0.5384615384615384,
+        "independent_round_rank_spearman": 0.6251316150888115,
+        "independent_round_within_one_decile": 0.4140625
+      }
+    }
+  },
+  "token_ledger": {
+    "cumulative_token_budget": 20000000,
+    "prior_actual_tokens": 11131541,
+    "prior_actual_token_upper_bound": 11443472,
+    "skin_input_tokens": 3518196,
+    "skin_output_tokens": 3146719,
+    "cumulative_actual_tokens": 17796456,
+    "remaining_actual_tokens": 2203544,
+    "unobserved_retry_call_count": 30,
+    "unobserved_retry_token_upper_bound": 636555,
+    "cumulative_actual_token_upper_bound": 18744942,
+    "remaining_actual_tokens_conservative": 1255058
+  },
+  "served_models": {
+    "gpt-5.4-mini-2026-03-17": 1140
+  },
+  "round3_convergence": {
+    "by_source": {
+      "direct_skin_reaction": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9722807178172496,
+        "within_one_decile": 0.953125,
+        "top_decile_overlap": 0.9230769230769231,
+        "independent_round_rank_spearman": 0.6769879600805713,
+        "independent_round_within_one_decile": 0.4921875
+      },
+      "phototoxicity_irritation_local_damage": {
+        "bucket_count": 128,
+        "rank_spearman": 0.973316471342245,
+        "within_one_decile": 0.953125,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7548869254715255,
+        "independent_round_within_one_decile": 0.609375
+      },
+      "sensitization_aop": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9813049349935908,
+        "within_one_decile": 0.96875,
+        "top_decile_overlap": 0.7692307692307693,
+        "independent_round_rank_spearman": 0.7835275132759567,
+        "independent_round_within_one_decile": 0.6875
+      },
+      "skin_exposure": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9722063266800952,
+        "within_one_decile": 0.9453125,
+        "top_decile_overlap": 0.7692307692307693,
+        "independent_round_rank_spearman": 0.7158945248123054,
+        "independent_round_within_one_decile": 0.5234375
+      }
+    }
+  },
+  "round4_convergence": {
+    "by_source": {
+      "direct_skin_reaction": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9840574070683025,
+        "within_one_decile": 0.984375,
+        "top_decile_overlap": 0.9230769230769231,
+        "independent_round_rank_spearman": 0.7693989196117927,
+        "independent_round_within_one_decile": 0.65625
+      },
+      "phototoxicity_irritation_local_damage": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9895451840322286,
+        "within_one_decile": 1.0,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7786978117560885,
+        "independent_round_within_one_decile": 0.59375
+      },
+      "sensitization_aop": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9890416132576451,
+        "within_one_decile": 0.9921875,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7592874473539645,
+        "independent_round_within_one_decile": 0.59375
+      },
+      "skin_exposure": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9841146310199597,
+        "within_one_decile": 0.96875,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7512360373557956,
+        "independent_round_within_one_decile": 0.546875
+      }
+    }
+  },
+  "round5_convergence": {
+    "by_source": {
+      "direct_skin_reaction": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9909071140816699,
+        "within_one_decile": 1.0,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7996360556674601,
+        "independent_round_within_one_decile": 0.6015625
+      },
+      "phototoxicity_irritation_local_damage": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9914907983885735,
+        "within_one_decile": 1.0,
+        "top_decile_overlap": 0.9230769230769231,
+        "independent_round_rank_spearman": 0.7674761948361105,
+        "independent_round_within_one_decile": 0.6015625
+      },
+      "sensitization_aop": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9938999267533419,
+        "within_one_decile": 1.0,
+        "top_decile_overlap": 1.0,
+        "independent_round_rank_spearman": 0.7992469327961912,
+        "independent_round_within_one_decile": 0.578125
+      },
+      "skin_exposure": {
+        "bucket_count": 128,
+        "rank_spearman": 0.9908785021058413,
+        "within_one_decile": 0.9921875,
+        "top_decile_overlap": 0.8461538461538461,
+        "independent_round_rank_spearman": 0.7590585515473356,
+        "independent_round_within_one_decile": 0.609375
+      }
+    }
+  }
+}

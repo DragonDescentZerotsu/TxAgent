@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -33,7 +34,17 @@ from data.processing.evidence_library.shared.v2.normalization.source_value_clean
 from data.processing.evidence_library.versions.v9.measurement_routing import (
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v9.tasks.skin_reaction.starling_measurement_resolution import (
+    EXACT_UNIT_MAPPING_PATH,
+    MAX_MEASUREMENTS_PER_ROW,
+    RULE_POLICY_VERSION,
+    validate_mapping_provenance,
+)
 from data.processing.evidence_library.versions.v9.prompts import PROMPT_ROOT
+from data.processing.evidence_library.versions.v9.unit_vocabulary import (
+    DEFAULT_VOCABULARY_PATH,
+    VOCABULARY_VERSION,
+)
 from data.processing.evidence_library.shared.v2.normalization.contracts import MeasurementPair
 from data.processing.evidence_library.shared.v2.normalization.measurements import (
     canonicalize_endpoint,
@@ -140,7 +151,7 @@ DEFAULT_SMILES_SAMPLE_AUDIT = (
 )
 DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS = (
     Path(__file__).resolve().parent
-    / "data_processing/source_value_cleaning_v1/reviewed_name_smiles_conflicts.v2.parquet"
+    / "data_processing/source_value_cleaning_v1/reviewed_name_smiles_conflicts.v3.parquet"
 )
 
 
@@ -260,6 +271,11 @@ def validate_arguments(
             f"reference-semantics mapping not found: {reference_mapping}; build it "
             "with common.starling.build_reference_semantics_mapping"
         )
+    if needs_normalization:
+        try:
+            validate_mapping_provenance(args.measurement_resolution_mapping)
+        except ValueError as error:
+            parser.error(str(error))
 
 
 def endpoint_inventory(
@@ -395,6 +411,11 @@ def stage_documents(
     coverage = attacher.coverage_audit(normalized)
     reference_coverage = reference_attacher.coverage_audit(normalized)
     semantics_audit = measurement_semantics_policy().audit(normalized)
+    pruning_reasons = Counter(
+        str(row.get("assay_transfer_ineligibility_reason") or "")
+        for row in normalized
+        if row.get("assay_transfer_ineligibility_reason")
+    )
     return StageDocuments(
         validity_policy={
             **validity_policy_manifest(),
@@ -429,6 +450,13 @@ def stage_documents(
             "reference_semantics_assignment_complete": bool(
                 reference_coverage["validations"]["all_applicable_records_assigned"]
             ),
+            "assay_transfer_record_pruning": {
+                "scope": "record_level_exclusion_from_assay_transfer_calibration",
+                "records": sum(pruning_reasons.values()),
+                "reason_counts": dict(sorted(pruning_reasons.items())),
+                "canonical_records_retained": True,
+                "pair_buckets_removed": 0,
+            },
         },
         reference_semantics_manifest={
             **reference_attacher.manifest(),
@@ -439,6 +467,10 @@ def stage_documents(
 
 def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
     versions: dict[str, Any] = {
+        "evidence_library_version": "skin_reaction_normalized_v9",
+        "measurement_routing_rule_policy_version": RULE_POLICY_VERSION,
+        "observed_unit_vocabulary_version": VOCABULARY_VERSION,
+        "maximum_extracted_measurements_per_source_row": MAX_MEASUREMENTS_PER_ROW,
         "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
         "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
         "endpoint_concept_version": ENDPOINT_CONCEPT_VERSION,
@@ -644,6 +676,8 @@ POLICY = StarlingTaskPolicy(
         DEFAULT_SMILES_IDENTITY_AUDIT,
         DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
         DEFAULT_SMILES_SAMPLE_AUDIT,
+        DEFAULT_VOCABULARY_PATH,
+        EXACT_UNIT_MAPPING_PATH,
         DEFAULT_REGISTRY_PATH,
         *ENDPOINT_CONCEPT_PATHS,
         REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
@@ -657,13 +691,12 @@ POLICY = StarlingTaskPolicy(
         Path(__file__).parent
         / "data_processing/assay_transfer_measurements_v2/policy.json"
     ),
+    prune_unreviewed_assay_transfer_records=True,
     family_resolver_input_fields=("canonical_sensitization_partition",),
     reference_semantics_enabled=True,
     measurement_resolution_enabled=True,
-    exact_unit_mapping_path=(
-        Path(__file__).parent
-        / "data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json"
-    ),
+    exact_unit_mapping_path=EXACT_UNIT_MAPPING_PATH,
+    allow_unmapped_source_exact_units=True,
     endpoint_identity_required_sources=(
         "direct_skin_reaction",
         "sensitization_aop",

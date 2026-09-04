@@ -1,6 +1,6 @@
 """Build and render the raw context-record progressive profile.
 
-The V9 cache chooses ten exact conditioned-gold training contexts per query.
+The V9 cache chooses a bounded set of conditioned-gold training contexts per query.
 This module then joins those contexts to normalized V7 source rows. L1 shows a
 deterministic sample of current-gold constituent records; L2 appends a separate
 sample of other records in the task's gold source domain with the same parent
@@ -22,7 +22,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Sequence
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import pyarrow.parquet as pq
@@ -290,15 +290,26 @@ _V7_COLUMNS = tuple(
 )
 
 
-def indirect_level_names(task: str) -> tuple[str, ...]:
+def record_level_names(task: str, *, first_level: int = 3) -> tuple[str, ...]:
     task_levels = level_record_bundle_contract()["task_levels"].get(task)
     if not isinstance(task_levels, Mapping):
-        raise ValueError(f"cache-backed later levels are unsupported for {task}")
-    names = tuple(sorted(task_levels, key=lambda name: int(name[1:])))
-    expected = tuple(f"L{level}" for level in range(3, 3 + len(names)))
+        raise ValueError(f"cache-backed record levels are unsupported for {task}")
+    names = tuple(
+        sorted(
+            (name for name in task_levels if int(name[1:]) >= first_level),
+            key=lambda name: int(name[1:]),
+        )
+    )
+    expected = tuple(f"L{level}" for level in range(first_level, first_level + len(names)))
     if names != expected:
-        raise ValueError(f"{task} cache-backed levels must be contiguous from L3")
+        raise ValueError(
+            f"{task} cache-backed levels must be contiguous from L{first_level}"
+        )
     return names
+
+
+def indirect_level_names(task: str) -> tuple[str, ...]:
+    return record_level_names(task)
 
 
 def levels(
@@ -474,8 +485,12 @@ def _first(row: Mapping[str, Any], *fields: str) -> str:
     return ""
 
 
-def _task_instructions(contract: ProgressiveTaskContract) -> list[str]:
+def _task_instructions(
+    contract: ProgressiveTaskContract, *, structure_score_visible: bool = False
+) -> list[str]:
     """Drop instructions that refer to similarity fields hidden by this profile."""
+    if structure_score_visible:
+        return list(contract.task_instructions)
     hidden_terms = ("tanimoto", "distant_analog", "very_distant_analog")
     return [
         instruction
@@ -550,6 +565,52 @@ def _stable_sample(
     return sorted(rows, key=key)[:record_limit]
 
 
+def v21_molecule_contexts(
+    query_id: str, ranked_molecules: Sequence[Mapping[str, Any]]
+) -> list[dict[str, Any]]:
+    """Project V21-ranked raw records into append-only molecule cards."""
+    contexts = []
+    for molecule in ranked_molecules:
+        molecule_id = str(molecule["reference_molecule_id"])
+        context_id = "context_" + hashlib.sha256(
+            f"{INDIRECT_PROTOCOL_VERSION}\0{query_id}\0{molecule_id}".encode("utf-8")
+        ).hexdigest()[:16]
+
+        def cards(level: int) -> list[dict[str, Any]]:
+            output = []
+            for ranked_record in molecule[f"l{level}_records"]:
+                payload = {
+                    **dict(ranked_record["payload"]),
+                    "canonical_record_id": ranked_record["record_id"],
+                }
+                card = _record_surface(payload, level=level, context_id=context_id)
+                card["_v21_transfer_likelihood"] = float(
+                    ranked_record["transfer_likelihood"]
+                )
+                output.append(card)
+            return output
+
+        contexts.append(
+            {
+                "context_card_id": context_id,
+                "canonical_smiles": str(molecule["canonical_smiles"]),
+                "condition_group": "source_native_assay_contexts",
+                "transfer_likelihood": round(
+                    float(molecule["transfer_likelihood"]), 4
+                ),
+                "available_l1": int(molecule["available_l1"]),
+                "available_l2": int(molecule["available_l2"]),
+                "l1_cards": cards(1),
+                "l2_cards": cards(2),
+                "_selection_rank": int(molecule["selection_rank"]),
+                "_gold_record_id": None,
+                "_context_origin": "v21_record_ranked_molecule",
+                "_reference_molecule_id": molecule_id,
+            }
+        )
+    return contexts
+
+
 def _bbb_gold_source_indices(gold: Mapping[str, Any]) -> set[int]:
     indices = set()
     for value in gold.get("source_record_ids") or []:
@@ -622,16 +683,19 @@ def load_candidates(
     v7_root: Path = V7_ROOT,
     record_limit: int = RECORD_LIMIT,
     l2_record_limit: int | None = None,
+    context_limit: int = CONTEXT_LIMIT,
     ranking: str = "assay_transfer",
     tie_seed: int = 0,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
-    """Load ten V9 contexts per query and attach sampled V7 L1/L2 rows."""
+    """Load V9 contexts per query and attach sampled V7 L1/L2 rows."""
     if l2_record_limit is None:
         l2_record_limit = record_limit
     if record_limit < 1:
         raise ValueError("record_limit must be positive")
     if l2_record_limit < 1:
         raise ValueError("l2_record_limit must be positive")
+    if not 1 <= context_limit <= 100:
+        raise ValueError("context_limit must be between 1 and 100")
     if ranking not in {"assay_transfer", "morgan"}:
         raise ValueError(f"unsupported context ranking: {ranking}")
     task_dir = {
@@ -674,7 +738,7 @@ def load_candidates(
     selected_by_query: dict[str, list[dict[str, Any]]] = {}
     for query_id, rows in rows_by_query.items():
         if ranking == "assay_transfer":
-            selected = [row for row in rows if int(row["model_rank"]) < CONTEXT_LIMIT]
+            selected = [row for row in rows if int(row["model_rank"]) < context_limit]
             selected.sort(key=lambda row: int(row["model_rank"]))
         else:
             selected = sorted(
@@ -689,18 +753,18 @@ def load_candidates(
                         row["retrieval_record_id"],
                     ),
                 ),
-            )[:CONTEXT_LIMIT]
+            )[:context_limit]
         for selection_rank, row in enumerate(selected):
             row["_selection_rank"] = selection_rank
         selected_by_query[query_id] = selected
     for query_id, rows in selected_by_query.items():
-        if len(rows) != CONTEXT_LIMIT:
-            raise ValueError(f"{task} query {query_id} lacks {CONTEXT_LIMIT} contexts")
+        if len(rows) != context_limit:
+            raise ValueError(f"{task} query {query_id} lacks {context_limit} contexts")
         if ranking == "assay_transfer":
             ranks = sorted(int(row["model_rank"]) for row in rows)
-            if ranks != list(range(CONTEXT_LIMIT)):
+            if ranks != list(range(context_limit)):
                 raise ValueError(
-                    f"{task} query {query_id} lacks exact V9 ranks 0-{CONTEXT_LIMIT - 1}"
+                    f"{task} query {query_id} lacks exact V9 ranks 0-{context_limit - 1}"
                 )
         for row in rows:
             retrieval_id = str(row["retrieval_record_id"])
@@ -931,7 +995,7 @@ def load_candidates(
         "gold_release": release,
         "n_valid_queries": len(candidates),
         "n_unique_contexts": len(context_records),
-        "contexts_per_query": CONTEXT_LIMIT,
+        "contexts_per_query": context_limit,
         "ranking": ranking,
         "ranking_tie_seed": tie_seed if ranking == "morgan" else None,
         "assay_transfer_scores_used": ranking == "assay_transfer",
@@ -987,12 +1051,12 @@ def build_level_record_bundles(
     task: str,
     ranked_records: Mapping[str, Mapping[str, Any]],
     *,
-    record_limit: int = INDIRECT_RECORD_LIMIT,
+    record_limit: int | Mapping[str, int] = INDIRECT_RECORD_LIMIT,
     prompt_version: str = "v1",
+    level_names: Sequence[str] | None = None,
+    transfer_model: str = "V19.1",
 ) -> dict[int, dict[str, Any]]:
     """Convert frozen cache rows into one model-visible bundle per level."""
-    if record_limit < 1:
-        raise ValueError("record_limit must be positive")
     contract = level_record_bundle_contract(prompt_version)
     score_field = _score_field(prompt_version)
     try:
@@ -1000,15 +1064,25 @@ def build_level_record_bundles(
     except KeyError as exc:
         raise ValueError(f"cache-backed later levels are unsupported for {task}") from exc
     bundles: dict[int, dict[str, Any]] = {}
-    for level_name in indirect_level_names(task):
+    selected_levels = tuple(level_names or indirect_level_names(task))
+    if not set(selected_levels) <= set(task_levels):
+        raise ValueError(f"{task} lacks cache-backed levels {selected_levels}")
+    for level_name in selected_levels:
         level = int(level_name[1:])
+        level_record_limit = int(
+            record_limit.get(level_name, 0)
+            if isinstance(record_limit, Mapping)
+            else record_limit
+        )
+        if level_record_limit < 1:
+            raise ValueError(f"record limit for {level_name} must be positive")
         selection = ranked_records.get(level_name)
         if not isinstance(selection, Mapping):
             raise ValueError(f"{task} query lacks cache-backed {level_name} records")
         rows = list(selection.get("records") or [])
-        if len(rows) != record_limit:
+        if len(rows) != level_record_limit:
             raise ValueError(
-                f"{task} {level_name} requires exactly {record_limit} records"
+                f"{task} {level_name} requires exactly {level_record_limit} records"
             )
         definition = task_levels[level_name]
         cards: dict[str, dict[str, Any]] = {}
@@ -1047,11 +1121,11 @@ def build_level_record_bundles(
             "evidence_family": str(definition["evidence_family"]),
             "description": str(definition["description"]),
             "selection": (
-                f"top {record_limit} Stage 3 records by "
+                f"top {level_record_limit} Stage 3 records by "
                 + (
                     "Morgan fingerprint similarity"
                     if score_field == "morgan_similarity"
-                    else "frozen V19.1 record-transfer likelihood"
+                    else f"frozen {transfer_model} record-transfer likelihood"
                 )
             ),
             "available_record_count": int(selection["available_record_count"]),
@@ -1068,13 +1142,19 @@ def snapshots(
     *,
     task: str | None = None,
     indirect_records: Mapping[str, Mapping[str, Any]] | None = None,
-    indirect_record_limit: int = INDIRECT_RECORD_LIMIT,
+    indirect_record_limit: int | Mapping[str, int] = INDIRECT_RECORD_LIMIT,
     prompt_version: str = "v1",
+    record_levels: Sequence[str] | None = None,
+    transfer_model: str = "V19.1",
 ) -> dict[int, dict[str, dict[str, Any]]]:
     """Return append-only context cards, optionally followed by later-level bundles."""
     output: dict[int, dict[str, dict[str, Any]]] = {}
     score_field = _score_field(prompt_version)
-    for level in (1, 2):
+    record_only = (
+        bool(record_levels)
+        and min(int(name[1:]) for name in record_levels) == 1
+    )
+    for level in (() if record_only else (1, 2)):
         active: dict[str, dict[str, Any]] = {}
         for source in contexts:
             cards = list(source["l1_cards"])
@@ -1093,18 +1173,22 @@ def snapshots(
                 "first_seen_level": 1,
                 "_selection_rank": source["_selection_rank"],
                 "_gold_record_id": source["_gold_record_id"],
+                "_context_origin": source.get("_context_origin"),
+                "_reference_molecule_id": source.get("_reference_molecule_id"),
                 "cards": {str(card["card_id"]): dict(card) for card in cards},
             }
         output[level] = active
     if indirect_records is not None:
         if task is None:
             raise ValueError("task is required with cache-backed later-level records")
-        active = dict(output[2])
+        active = dict(output[max(output)]) if output else {}
         for level, bundle in build_level_record_bundles(
             task,
             indirect_records,
             record_limit=indirect_record_limit,
             prompt_version=prompt_version,
+            level_names=record_levels,
+            transfer_model=transfer_model,
         ).items():
             active = dict(active)
             active[str(bundle["level_card_id"])] = bundle
@@ -1229,7 +1313,7 @@ def build_messages(
     prompt_version: str = "v1",
     record_limit: int = RECORD_LIMIT,
     l2_record_limit: int | None = None,
-    indirect_record_limit: int = INDIRECT_RECORD_LIMIT,
+    indirect_record_limit: int | Mapping[str, int] = INDIRECT_RECORD_LIMIT,
     include_indirect: bool = False,
 ) -> list[dict[str, Any]]:
     if l2_record_limit is None:
@@ -1238,9 +1322,19 @@ def build_messages(
         raise ValueError("record_limit must be positive")
     if l2_record_limit < 1:
         raise ValueError("l2_record_limit must be positive")
-    if indirect_record_limit < 1:
+    if isinstance(indirect_record_limit, Mapping):
+        if not indirect_record_limit or any(
+            int(value) < 1 for value in indirect_record_limit.values()
+        ):
+            raise ValueError("indirect_record_limit values must be positive")
+    elif indirect_record_limit < 1:
         raise ValueError("indirect_record_limit must be positive")
-    indirect_visible = include_indirect and current_level >= 3
+    bundle_levels = tuple(
+        str(context["level"])
+        for context in active.values()
+        if context.get("_card_kind") == "level_record_bundle"
+    )
+    indirect_visible = include_indirect and bool(bundle_levels)
     score_field = _score_field(prompt_version)
     if (
         l2_record_limit == record_limit
@@ -1253,11 +1347,21 @@ def build_messages(
             "and records from one context are not independent votes."
         )
     else:
-        later_sampling = (
-            f"Each later level appends at most {indirect_record_limit} ranked records. "
-            if indirect_visible
-            else ""
-        )
+        if indirect_visible and isinstance(indirect_record_limit, Mapping):
+            limit_summary = ", ".join(
+                f"{level}={int(limit)}"
+                for level, limit in indirect_record_limit.items()
+            )
+            later_sampling = (
+                f"The later-level record caps are {limit_summary}; each level "
+                "appends independently ranked records. "
+            )
+        else:
+            later_sampling = (
+                f"Each later level appends at most {indirect_record_limit} ranked records. "
+                if indirect_visible
+                else ""
+            )
         record_sampling = (
             f"Each context shows at most {record_limit} raw records at L1 and appends at most "
             f"{l2_record_limit} new raw records at L2. "
@@ -1265,6 +1369,47 @@ def build_messages(
             "Repeated records and records from one context are not independent votes."
         )
     card_id_to_alias, _ = card_alias_maps(active)
+    context_count = sum(
+        context.get("_card_kind") != "level_record_bundle"
+        for context in active.values()
+    )
+    record_only = indirect_visible and context_count == 0
+    v21_molecule_cards = context_count > 0 and all(
+        context.get("_context_origin") == "v21_record_ranked_molecule"
+        for context in active.values()
+        if context.get("_card_kind") != "level_record_bundle"
+    )
+    if v21_molecule_cards:
+        later_sampling = (
+            f" Later-level record caps are {', '.join(f'{level}={int(limit)}' for level, limit in indirect_record_limit.items())}."
+            if indirect_visible and isinstance(indirect_record_limit, Mapping)
+            else (
+                f" Each later level appends at most {indirect_record_limit} ranked records."
+                if indirect_visible
+                else ""
+            )
+        )
+        record_sampling = (
+            f"Each reference molecule shows up to {record_limit} V21-ranked L1 records "
+            f"and appends up to {l2_record_limit} V21-ranked L2 records."
+            f"{later_sampling} Repeated records and records from one molecule are not "
+            "independent votes."
+        )
+    if record_only:
+        limits = (
+            {str(level): int(limit) for level, limit in indirect_record_limit.items()}
+            if isinstance(indirect_record_limit, Mapping)
+            else {level: indirect_record_limit for level in bundle_levels}
+        )
+        limit_summary = ", ".join(
+            f"{level}={limits[level]}" for level in bundle_levels
+        )
+        record_sampling = (
+            f"The per-level record caps are {limit_summary}; each level appends "
+            "independently ranked raw records. "
+            "available_record_count reports the full pool before selection. Repeated records "
+            "and records from one molecule are not independent votes."
+        )
     new_ids = sorted(
         card_id_to_alias[str(card["card_id"])]
         for context in active.values()
@@ -1273,7 +1418,13 @@ def build_messages(
     )
     is_initial = prior_state is None
     indirect_label = (
-        "/".join(indirect_level_names(contract.task)) if indirect_visible else ""
+        "/".join(
+            record_level_names(contract.task, first_level=1)
+            if record_only
+            else indirect_level_names(contract.task)
+        )
+        if indirect_visible
+        else ""
     )
     protocol_version = INDIRECT_PROTOCOL_VERSION if indirect_visible else PROTOCOL_VERSION
     schema = {
@@ -1301,23 +1452,47 @@ def build_messages(
             "version": protocol_version,
             "mode": "initial decision" if is_initial else "progressive update",
             "architecture": (
-                "The same ten exact training parent-condition contexts remain visible. "
-                "L1 contains current-gold constituent measurements. L2 appends other raw "
-                "gold-source-domain records from those same contexts; all L1 cards remain visible."
-                + (
-                    f" {indirect_label} append one ranked Stage 3 record bundle each; all earlier cards remain visible."
-                    if indirect_visible
-                    else ""
+                f"{indirect_label} append one independently ranked Stage 3 record bundle each; "
+                "all earlier record bundles remain visible."
+                if record_only
+                else (
+                    f"The same {context_count} V21-ranked scaffold-disjoint reference "
+                    "molecules remain visible. L1 contains direct BBB records; L2 appends "
+                    "near-direct records from those molecules; all L1 cards remain visible."
+                    + (
+                        f" {indirect_label} append one V21-ranked Stage 3 record bundle "
+                        "each; all earlier cards remain visible."
+                        if indirect_visible
+                        else ""
+                    )
+                    if v21_molecule_cards
+                    else
+                    f"The same {context_count} exact training parent-condition "
+                    "contexts remain visible. "
+                    "L1 contains current-gold constituent measurements. L2 appends other raw "
+                    "gold-source-domain records from those same contexts; all L1 cards remain visible."
+                    + (
+                        f" {indirect_label} append one ranked Stage 3 record bundle "
+                        "each; all earlier cards remain visible."
+                        if indirect_visible
+                        else ""
+                    )
                 )
             ),
             "record_sampling": record_sampling,
             "level_interpretation": (
-                "L2 records did not contribute a current gold vote. That does not make them negative, "
-                "invalid, or independent votes; use them only as additional experimental context."
-                + (
-                    f" {indirect_label} are separately retrieved mechanistic families, not additional gold votes."
-                    if indirect_visible
-                    else ""
+                "Each record belongs to its displayed evidence family. L1 contains direct BBB "
+                "experiments; later levels are supporting or mechanistic context, "
+                "not additional gold votes."
+                if record_only
+                else (
+                    "L2 records did not contribute a current gold vote. That does not make them negative, "
+                    "invalid, or independent votes; use them only as additional experimental context."
+                    + (
+                        f" {indirect_label} are separately retrieved mechanistic families, not additional gold votes."
+                        if indirect_visible
+                        else ""
+                    )
                 )
             ),
             "transfer_rule": (
@@ -1326,7 +1501,13 @@ def build_messages(
                 "endpoint result, or guarantee of biological transferability."
                 if score_field == "morgan_similarity"
                 else (
-                    "transfer_likelihood estimates whether a training context applies to this query. "
+                    "For each molecule card, transfer_likelihood is its highest V21 L1 "
+                    "record-transfer score and is used to rank molecules; V21 scores also "
+                    "rank the records selected inside each card. On later-level record cards, "
+                    "transfer_likelihood estimates whether that individual source record applies. "
+                    "It is never a task-label probability or an experimental result."
+                    if v21_molecule_cards
+                    else "transfer_likelihood estimates whether a training context applies to this query. "
                     f"On {indirect_label} record cards it instead estimates whether that individual source record applies. "
                     "It is never a task-label probability or an experimental result."
                     if indirect_visible
@@ -1360,7 +1541,9 @@ def build_messages(
                 contract.positive_prediction: "positive class (label 1)",
                 contract.negative_prediction: "negative class (label 0)",
             },
-            "instructions": _task_instructions(contract),
+            "instructions": _task_instructions(
+                contract, structure_score_visible=score_field == "morgan_similarity"
+            ),
         },
         "level_context": {
             "current_level": current_level,

@@ -680,6 +680,9 @@ def _run(policy: StarlingTaskPolicy, args: argparse.Namespace) -> int:
                 allow_partial=args.allow_partial_measurement_resolution,
                 ignored_record_ids=structure_rejection_ids,
                 expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+                allow_unmapped_source_exact_units=(
+                    policy.allow_unmapped_source_exact_units
+                ),
             )
             if policy.measurement_resolution_enabled
             else None

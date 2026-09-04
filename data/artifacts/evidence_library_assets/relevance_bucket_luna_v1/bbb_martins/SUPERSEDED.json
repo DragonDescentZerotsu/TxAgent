@@ -1,0 +1,12 @@
+{
+  "status": "superseded_partial",
+  "reason": "The current BBB V9 relevance identities do not exactly match the V7 Stage 3 records consumed by the progressive scaffold. This partial cache must not be combined with the active V7-progressive Bradley-Terry fit.",
+  "completed_requests": 245,
+  "total_requests": 4142,
+  "input_tokens": 1648180,
+  "output_tokens": 143240,
+  "actual_tokens": 1791420,
+  "conservative_cost_usd": 0.501524,
+  "ranking_published": false,
+  "active_replacement": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/bbb_martins"
+}

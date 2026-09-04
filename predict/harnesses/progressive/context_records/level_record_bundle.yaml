@@ -1,7 +1,7 @@
 # Executable model-visible contract for cache-backed later-level additions.
 #
 # One bundle is appended at each configured level. `records_field` contains the
-# 50 individual Stage 3 records selected by the frozen V19.1 transfer cache.
+# individual Stage 3 records selected by the configured frozen transfer cache.
 # Editing the ordered field lists changes the JSON shown to the reasoning LLM.
 # Internal cache keys, Morgan similarities, level-mapping policy fields, and
 # eligibility labels are intentionally unavailable to this contract.
@@ -11,6 +11,20 @@ schema_version: progressive_level_record_bundle.v1
 # also injected into the system prompt when that level first appears.
 task_levels:
   bbb_martins:
+    L1:
+      evidence_family: direct_bbb
+      description: Direct experimental evidence of meaningful systemic CNS access.
+      guidance: >-
+        L1 adds direct BBB outcome experiments. Preserve the reported route,
+        species, assay model, and endpoint when interpreting whether the evidence
+        applies to the query; repeated records are not independent votes.
+    L2:
+      evidence_family: near_direct_bbb
+      description: Near-direct BBB evidence and current non-voting direct records.
+      guidance: >-
+        L2 adds near-direct BBB evidence and direct-source records that do not
+        contribute a current gold vote. Treat them as experimental context rather
+        than extra gold labels, preserving their reported conditions.
     L3:
       evidence_family: passive_permeability
       description: Experimental passive-permeability evidence relevant to CNS access.

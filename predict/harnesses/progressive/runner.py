@@ -37,7 +37,10 @@ from predict.harnesses.progressive.context_records import profile as context_rec
 from predict.retrieval.retrieve import load_index
 from predict.retrieval.assay_reranking.runtime import CACHE_ROOT
 from predict.retrieval.assay_reranking.progressive_levels import (
+    LUNA_RELEVANCE_CACHE_PROFILE,
+    V21_CACHE_PROFILE,
     load_top_ranked_records,
+    load_v21_molecule_card_records,
 )
 from predict.retrieval.assay_reranking.v9 import (
     RANKING_PROFILE_NAME,
@@ -105,15 +108,15 @@ DEFAULT_SINGLE_CACHE_ROOT = Path(
 DEFAULT_V9_RANKING_ROOT = CACHE_ROOT / RANKING_PROFILE_NAME
 CONTEXT_L2_REUSE_ROOTS = {
     "bbb_martins": Path(
-        "outputs/paper/starling_context_record_progressive_v4/"
+        "outputs/paper/assay_transfer_harness/starling_context_record_progressive_v4/"
         "scaffold_valid_deepseek_v4_flash_0731_epyc36_with_prior_cap10"
     ),
     "bioavailability_ma": Path(
-        "outputs/paper/starling_context_record_progressive_v3/"
+        "outputs/paper/assay_transfer_harness/starling_context_record_progressive_v3/"
         "scaffold_valid_deepseek_v4_flash_0731_epyc36_with_prior_cap10"
     ),
     "skin_reaction": Path(
-        "outputs/paper/starling_context_record_progressive_v6/"
+        "outputs/paper/assay_transfer_harness/starling_context_record_progressive_v6/"
         "scaffold_valid_deepseek_v4_flash_0731_epyc36_with_prior_cap10"
     ),
 }
@@ -357,16 +360,53 @@ def _run_levels(args: argparse.Namespace, task: str) -> list[dict[str, Any]]:
         return context_records.levels(
             args.max_level,
             task=task,
-            include_indirect=args.context_record_l3_l5,
+            include_indirect=_record_cache_enabled(args),
         )
     return _levels(task, args.max_level)
+
+
+def _record_cache_enabled(args: argparse.Namespace) -> bool:
+    return (
+        args.context_record_l3_l5
+        or args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+    )
+
+
+def _record_level_names(args: argparse.Namespace, task: str) -> tuple[str, ...]:
+    if (
+        args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+        and args.v21_selection_mode == "record_only"
+    ):
+        return context_records.record_level_names(task, first_level=1)
+    return context_records.indirect_level_names(task)
+
+
+def _indirect_record_limits(
+    args: argparse.Namespace, task: str
+) -> dict[str, int]:
+    levels = _record_level_names(args, task)
+    limits = {level: args.indirect_record_limit_per_level for level in levels}
+    if (
+        args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+        and args.v21_selection_mode == "record_only"
+    ):
+        limits["L1"] = args.record_limit_per_context_level
+        limits["L2"] = args.l2_record_limit_per_context
+    if args.indirect_final_level_record_limit:
+        limits[levels[-1]] = args.indirect_final_level_record_limit
+    elif (
+        args.assay_transfer_cache_profile == LUNA_RELEVANCE_CACHE_PROFILE
+        and task == "bbb_martins"
+    ):
+        limits[levels[-1]] = 25
+    return limits
 
 
 def _run_protocol(args: argparse.Namespace) -> str:
     return (
         (
             context_records.INDIRECT_PROTOCOL_VERSION
-            if args.context_record_l3_l5
+            if _record_cache_enabled(args)
             else context_records.PROTOCOL_VERSION
         )
         if args.profile == "context_records"
@@ -1185,11 +1225,16 @@ def _prepare_context_record_query(
     record_limit: int,
     l2_record_limit: int,
     indirect_record_limit: int,
+    context_limit: int = context_records.CONTEXT_LIMIT,
+    indirect_record_limits: Mapping[str, int] | None = None,
     indirect_records: Mapping[str, Mapping[str, Any]] | None = None,
     l2_reuse_root: Path | None = None,
     prompt_version: str = "v1",
     context_ranking: str = "assay_transfer",
     ranking_tie_seed: int = 0,
+    cache_profile: str = "v19_1",
+    record_levels: tuple[str, ...] | None = None,
+    v21_selection_mode: str = "record_only",
 ) -> PreparedQuery:
     """Write context snapshots and optional cache-backed later-level bundles."""
     query_dir = _query_dir(output_root, task, query_index)
@@ -1208,13 +1253,26 @@ def _prepare_context_record_query(
             and manifest.get("profile") == "context_records"
             and manifest.get("prompt_version") == prompt_version
             and manifest.get("context_ranking") == context_ranking
+            and manifest.get("assay_transfer_cache_profile", "v19_1")
+            == cache_profile
+            and manifest.get("v21_selection_mode", "record_only")
+            == v21_selection_mode
             and manifest.get("ranking_tie_seed") == ranking_tie_seed
+            and manifest.get("context_limit", context_records.CONTEXT_LIMIT)
+            == context_limit
             and manifest.get("record_limit_per_context_level") == record_limit
             and manifest.get("l2_record_limit_per_context") == l2_record_limit
             and manifest.get("indirect_record_limit_per_level")
             == (
                 indirect_record_limit
                 if indirect_records is not None
+                else None
+            )
+            and manifest.get("indirect_record_limits_by_level")
+            == (
+                dict(indirect_record_limits)
+                if indirect_record_limits is not None
+                and len(set(indirect_record_limits.values())) > 1
                 else None
             )
             and manifest.get("l2_reuse_root")
@@ -1247,12 +1305,19 @@ def _prepare_context_record_query(
         contexts,
         task=task,
         indirect_records=indirect_records,
-        indirect_record_limit=indirect_record_limit,
+        indirect_record_limit=indirect_record_limits or indirect_record_limit,
         prompt_version=prompt_version,
+        record_levels=record_levels,
+        transfer_model="V21" if cache_profile == V21_CACHE_PROFILE else "V19.1",
     )
     previous_ids: set[str] = set()
     for level_row in levels:
         level = int(level_row["level"])
+        level_record_limit = (
+            indirect_record_limits.get(f"L{level}")
+            if indirect_record_limits is not None
+            else indirect_record_limit
+        )
         snapshot = snapshots[level]
         current_ids = card_ids(snapshot)
         new_ids = current_ids - previous_ids
@@ -1262,7 +1327,14 @@ def _prepare_context_record_query(
                 "protocol": protocol,
                 "profile": "context_records",
                 "query_prior_mode": query_prior_mode,
-                "l1_source": "current_conditioned_gold_raw_records",
+                "l1_source": (
+                    "v21_ranked_stage3_record_molecules"
+                    if cache_profile == V21_CACHE_PROFILE
+                    and v21_selection_mode == "molecule_cards"
+                    else "v21_independently_ranked_stage3_records"
+                    if cache_profile == V21_CACHE_PROFILE
+                    else "current_conditioned_gold_raw_records"
+                ),
                 "l1_ranking": context_ranking,
                 "task": task,
                 "query_index": query_index,
@@ -1279,13 +1351,25 @@ def _prepare_context_record_query(
                 "level_definition": level_row,
                 "retrieval_audit": {
                     "candidate_source": (
-                        f"v19_1_stage3_morgan_top{indirect_record_limit}_records"
-                        if level >= 3 and context_ranking == "morgan"
-                        else f"v19_1_stage3_top{indirect_record_limit}_records"
+                        f"{cache_profile}_stage3_top{context_limit}_molecules_with_v21_ranked_records"
+                        if cache_profile == V21_CACHE_PROFILE
+                        and v21_selection_mode == "molecule_cards"
+                        and level <= 2
+                        else f"{cache_profile}_stage3_top{level_record_limit}_records"
+                        if cache_profile == V21_CACHE_PROFILE
+                        else
+                        "luna_relevance_top_quartile_then_stage3_"
+                        f"top{level_record_limit}_records"
                         if level >= 3
-                        else "v9_candidate_universe_morgan_top10_contexts"
+                        and cache_profile == LUNA_RELEVANCE_CACHE_PROFILE
+                        else
+                        f"v19_1_stage3_morgan_top{level_record_limit}_records"
+                        if level >= 3 and context_ranking == "morgan"
+                        else f"v19_1_stage3_top{level_record_limit}_records"
+                        if level >= 3
+                        else f"v9_candidate_universe_morgan_top{context_limit}_contexts"
                         if context_ranking == "morgan"
-                        else "v9_top10_current_conditioned_gold_contexts"
+                        else f"v9_top{context_limit}_current_conditioned_gold_contexts"
                     ),
                     "n_contexts": sum(
                         row.get("_card_kind") != "level_record_bundle"
@@ -1298,13 +1382,16 @@ def _prepare_context_record_query(
                     "n_visible_records": len(current_ids),
                 },
                 "selection_audit": {
-                    "context_limit": context_records.CONTEXT_LIMIT,
+                    "context_limit": context_limit,
                     "record_limit_per_context_level": record_limit,
                     "l2_record_limit_per_context": l2_record_limit,
                     "indirect_record_limit_per_level": (
                         indirect_record_limit
                         if indirect_records is not None
                         else None
+                    ),
+                    "indirect_record_limit_for_current_level": (
+                        level_record_limit if indirect_records is not None else None
                     ),
                     "deterministic_sampling": True,
                     "ranking": context_ranking,
@@ -1345,13 +1432,26 @@ def _prepare_context_record_query(
             "profile": "context_records",
             "prompt_version": prompt_version,
             "context_ranking": context_ranking,
+            "assay_transfer_cache_profile": cache_profile,
+            "v21_selection_mode": (
+                v21_selection_mode
+                if cache_profile == V21_CACHE_PROFILE
+                else None
+            ),
             "ranking_tie_seed": ranking_tie_seed,
             "query_prior_mode": query_prior_mode,
+            "context_limit": context_limit,
             "record_limit_per_context_level": record_limit,
             "l2_record_limit_per_context": l2_record_limit,
             "indirect_record_limit_per_level": (
                 indirect_record_limit
                 if indirect_records is not None
+                else None
+            ),
+            "indirect_record_limits_by_level": (
+                dict(indirect_record_limits)
+                if indirect_record_limits is not None
+                and len(set(indirect_record_limits.values())) > 1
                 else None
             ),
             "l2_reuse_root": (
@@ -1500,6 +1600,12 @@ def _run_query(
         active = prepared["active_evidence"]
         card_id_to_alias, alias_to_card_id = card_alias_maps(active)
         if args.profile == "context_records":
+            record_limits = _indirect_record_limits(args, task)
+            prompt_record_limits: int | Mapping[str, int] = (
+                next(iter(record_limits.values()))
+                if len(set(record_limits.values())) == 1
+                else record_limits
+            )
             messages = context_records.build_messages(
                 contract=contract,
                 current_level=level,
@@ -1512,10 +1618,8 @@ def _run_query(
                 prompt_version=_context_prompt_version(args, task),
                 record_limit=args.record_limit_per_context_level,
                 l2_record_limit=args.l2_record_limit_per_context,
-                ranking=args.context_ranking,
-                tie_seed=args.ranking_tie_seed,
-                indirect_record_limit=args.indirect_record_limit_per_level,
-                include_indirect=args.context_record_l3_l5,
+                indirect_record_limit=prompt_record_limits,
+                include_indirect=_record_cache_enabled(args),
             )
         else:
             messages = build_progressive_messages(
@@ -1922,35 +2026,67 @@ def run(args: argparse.Namespace) -> int:
     indirect_ranking_audits: dict[str, dict[str, Any]] = {}
     if args.profile == "context_records":
         for task in args.tasks:
-            candidates, audit = context_records.load_candidates(
-                task=task,
-                valid_records=records_by_task[task],
-                ranking_root=Path(args.v9_ranking_root),
-                benchmark_root=Path(args.benchmark_data_root),
-                v7_root=Path(args.v7_root),
-                record_limit=args.record_limit_per_context_level,
-                l2_record_limit=args.l2_record_limit_per_context,
-            )
-            context_candidates_by_task[task] = candidates
-            ranking_audits[task] = audit
-            if args.context_record_l3_l5:
-                selected_queries = {
-                    str(records_by_task[task][index]["benchmark_row_id"]): str(
-                        records_by_task[task][index]["drug"]
-                    )
-                    for index in indices_by_task[task]
+            selected_queries = {
+                str(records_by_task[task][index]["benchmark_row_id"]): str(
+                    records_by_task[task][index]["drug"]
+                )
+                for index in indices_by_task[task]
+            }
+            if (
+                args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                and args.v21_selection_mode == "record_only"
+            ):
+                context_candidates_by_task[task] = {
+                    str(row["benchmark_row_id"]): [] for row in records_by_task[task]
                 }
+            elif args.assay_transfer_cache_profile == V21_CACHE_PROFILE:
+                ranked_molecules, audit = load_v21_molecule_card_records(
+                    selected_queries,
+                    molecule_limit=args.context_limit,
+                    l1_record_limit=args.record_limit_per_context_level,
+                    l2_record_limit=args.l2_record_limit_per_context,
+                    workers=args.preparation_workers,
+                )
+                context_candidates_by_task[task] = {
+                    query_id: context_records.v21_molecule_contexts(
+                        query_id, rows
+                    )
+                    for query_id, rows in ranked_molecules.items()
+                }
+                ranking_audits[task] = audit
+            else:
+                candidates, audit = context_records.load_candidates(
+                    task=task,
+                    valid_records=records_by_task[task],
+                    ranking_root=Path(args.v9_ranking_root),
+                    benchmark_root=Path(args.benchmark_data_root),
+                    v7_root=Path(args.v7_root),
+                    record_limit=args.record_limit_per_context_level,
+                    l2_record_limit=args.l2_record_limit_per_context,
+                    context_limit=args.context_limit,
+                    ranking=args.context_ranking,
+                    tie_seed=args.ranking_tie_seed,
+                )
+                context_candidates_by_task[task] = candidates
+                ranking_audits[task] = audit
+            if _record_cache_enabled(args):
                 indirect, indirect_audit = load_top_ranked_records(
                     task,
                     selected_queries,
-                    levels=context_records.indirect_level_names(task),
-                    limit=args.indirect_record_limit_per_level,
+                    cache_profile=args.assay_transfer_cache_profile,
+                    levels=_record_level_names(args, task),
+                    limit=_indirect_record_limits(args, task),
                     workers=args.preparation_workers,
                     ranking=args.context_ranking,
                     tie_seed=args.ranking_tie_seed,
                 )
                 indirect_candidates_by_task[task] = indirect
                 indirect_ranking_audits[task] = indirect_audit
+                if (
+                    args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    and args.v21_selection_mode == "record_only"
+                ):
+                    ranking_audits[task] = indirect_audit
     elif args.l1_source == "gold_train":
         for task in args.tasks:
             candidates, audit = _gold_l1_candidates(
@@ -1980,7 +2116,7 @@ def run(args: argparse.Namespace) -> int:
             "levels": _run_levels(args, task),
             "l1_ranking_cache": ranking_audits.get(task),
         }
-        if args.context_record_l3_l5:
+        if _record_cache_enabled(args):
             task_inputs.update(
                 {
                     "indirect_ranking_cache": indirect_ranking_audits[task],
@@ -2036,7 +2172,7 @@ def run(args: argparse.Namespace) -> int:
                     ).encode("utf-8")
                 ).hexdigest(),
             }
-        if args.context_record_l3_l5:
+        if _record_cache_enabled(args):
             card_contract_manifest["level_record_bundle_by_task"] = {
                 task: {
                     "path": str(context_records.LEVEL_RECORD_BUNDLE_PATH),
@@ -2168,10 +2304,11 @@ def run(args: argparse.Namespace) -> int:
             }
         context_selection = {
             "contexts": (
-                "top 10 by Morgan similarity from the exact V9 top-100 candidate universe"
+                f"top {args.context_limit} by Morgan similarity from the exact V9 top-100 candidate universe"
                 if args.context_ranking == "morgan"
-                else "exact V9 top 10"
+                else f"exact V9 top {args.context_limit}"
             ),
+            "context_limit": args.context_limit,
             "record_limit_per_context_level": args.record_limit_per_context_level,
             "level_1": (
                 f"up to {args.record_limit_per_context_level} deterministic "
@@ -2183,50 +2320,117 @@ def run(args: argparse.Namespace) -> int:
             ),
             "append_only": True,
         }
+        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE:
+            if args.v21_selection_mode == "record_only":
+                context_selection = {
+                    "contexts": "none; independently ranked raw Stage 3 records",
+                    "record_limits_by_level": _indirect_record_limits(
+                        args, "bbb_martins"
+                    ),
+                    "levels": list(_record_level_names(args, "bbb_martins")),
+                    "append_only": True,
+                }
+            else:
+                context_selection = {
+                    "contexts": (
+                        f"top {args.context_limit} V21-ranked scaffold-disjoint "
+                        "reference molecules"
+                    ),
+                    "context_limit": args.context_limit,
+                    "record_limit_per_context_level": (
+                        args.record_limit_per_context_level
+                    ),
+                    "l2_record_limit_per_context": (
+                        args.l2_record_limit_per_context
+                    ),
+                    "within_context_record_ranking": "V21 transfer likelihood",
+                    "later_record_limits_by_level": _indirect_record_limits(
+                        args, "bbb_martins"
+                    ),
+                    "append_only": True,
+                }
         if args.l2_record_limit_per_context != args.record_limit_per_context_level:
             context_selection["l2_record_limit_per_context"] = (
                 args.l2_record_limit_per_context
             )
         if (
-            args.context_record_l3_l5
+            _record_cache_enabled(args)
             and args.indirect_record_limit_per_level
             != context_records.INDIRECT_RECORD_LIMIT
         ):
             context_selection["indirect_record_limit_per_level"] = (
                 args.indirect_record_limit_per_level
             )
-        if args.context_record_l3_l5:
+        if _record_cache_enabled(args):
             context_selection["later_levels_by_task"] = {
                 task: {
                     level: (
-                        f"append one bundle containing the top {args.indirect_record_limit_per_level} "
+                        "append one bundle containing the top "
+                        f"{_indirect_record_limits(args, task)[level]} "
                         + (
-                            "Morgan-ranked Stage 3 records"
+                            "Morgan-ranked records from Luna's top-quartile "
+                            "relevance buckets"
+                            if args.context_ranking == "morgan"
+                            and args.assay_transfer_cache_profile
+                            == LUNA_RELEVANCE_CACHE_PROFILE
+                            else "assay-transfer-ranked records from Luna's "
+                            "top-quartile relevance buckets"
+                            if args.assay_transfer_cache_profile
+                            == LUNA_RELEVANCE_CACHE_PROFILE
+                            else "Morgan-ranked Stage 3 records"
                             if args.context_ranking == "morgan"
                             else "independently ranked Stage 3 records"
                         )
                     )
-                    for level in context_records.indirect_level_names(task)
+                    for level in _record_level_names(args, task)
                 }
                 for task in args.tasks
             }
         manifest.update(
             {
                 "visibility_mode": "identity_blind_context_records",
-                "reference_pool": "current_conditioned_gold_contexts_plus_v7_gold_source_domain_rows",
-                "neighbor_identity_policy": "gold_split_parent_disjoint",
+                "reference_pool": (
+                    "normalized_v7_stage3_l1_l5_records"
+                    if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    else "current_conditioned_gold_contexts_plus_luna_"
+                    "top_quartile_non_direct_v7_records"
+                    if args.assay_transfer_cache_profile
+                    == LUNA_RELEVANCE_CACHE_PROFILE
+                    else "current_conditioned_gold_contexts_plus_v7_gold_source_domain_rows"
+                ),
+                "neighbor_identity_policy": (
+                    "scaffold_disjoint"
+                    if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    else "gold_split_parent_disjoint"
+                ),
                 "min_similarity": None,
                 "candidate_generation": {
                     "unit": (
-                        "parent_condition_context_then_individual_stage3_record"
+                        "individual_stage3_record"
+                        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                        and args.v21_selection_mode == "record_only"
+                        else "v21_ranked_molecule_then_individual_stage3_record"
+                        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                        else "parent_condition_context_then_individual_stage3_record"
                         if args.context_record_l3_l5
                         else "parent_condition_context"
                     ),
                     "scope": (
+                        "V21-ranked Stage 3 Morgan-top-75 molecules with V21-ranked records within L1/L2 cards, then independent L3-L5 records"
+                        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                        and args.v21_selection_mode == "molecule_cards"
+                        else "independent Stage 3 Morgan-top-75 V21 rankings for L1-L5"
+                        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                        else "exact V9 L1/L2 contexts plus source-local Luna "
+                        "top-quartile relevance filtering before Stage 3 "
+                        "Morgan-top-75 candidate generation"
+                        if args.assay_transfer_cache_profile
+                        == LUNA_RELEVANCE_CACHE_PROFILE
+                        else
                         "exact V9 Morgan-top-100 assignments for L1/L2; task-configured "
                         "Stage 3 Morgan-top-75 scaffold-disjoint assignments for later levels"
                         if args.context_ranking == "morgan"
-                        else "V9 ranks 0-9 for L1/L2; task-configured independent Stage 3 "
+                        else f"V9 ranks 0-{args.context_limit - 1} for L1/L2; task-configured independent Stage 3 "
                         "Morgan-top-75 V19.1 rankings for later levels"
                         if args.context_record_l3_l5
                         else "exact V9 Morgan-top-100 assignments for L1/L2"
@@ -2238,7 +2442,7 @@ def run(args: argparse.Namespace) -> int:
                             "L1_L2": args.context_ranking,
                             "later_levels": args.context_ranking,
                         }
-                        if args.context_record_l3_l5
+                        if _record_cache_enabled(args)
                         else args.context_ranking
                     ),
                     "structure_score_visible": args.context_ranking == "morgan",
@@ -2255,9 +2459,22 @@ def run(args: argparse.Namespace) -> int:
                     ),
                 },
                 "selection": context_selection,
+                "assay_transfer_cache_profile": args.assay_transfer_cache_profile,
+                "v21_selection_mode": (
+                    args.v21_selection_mode
+                    if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    else None
+                ),
                 "prompt_profile": prompt_profile_manifest,
                 "prompt_template": prompt_template_manifest,
-                "l1_source": "current_conditioned_gold_raw_records",
+                "l1_source": (
+                    "v21_ranked_stage3_direct_record_molecules"
+                    if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    and args.v21_selection_mode == "molecule_cards"
+                    else "v21_independently_ranked_stage3_direct_records"
+                    if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    else "current_conditioned_gold_raw_records"
+                ),
                 "l1_ranking": args.context_ranking,
                 "max_level": args.max_level,
                 "analog_tool_policy": "disabled_by_context_records_profile",
@@ -2309,11 +2526,13 @@ def run(args: argparse.Namespace) -> int:
                         record_limit=args.record_limit_per_context_level,
                         l2_record_limit=args.l2_record_limit_per_context,
                         indirect_record_limit=args.indirect_record_limit_per_level,
+                        context_limit=args.context_limit,
+                        indirect_record_limits=_indirect_record_limits(args, task),
                         indirect_records=(
                             indirect_candidates_by_task[task][
                                 str(records[query_index]["benchmark_row_id"])
                             ]
-                            if args.context_record_l3_l5
+                            if _record_cache_enabled(args)
                             else None
                         ),
                         l2_reuse_root=(
@@ -2324,6 +2543,13 @@ def run(args: argparse.Namespace) -> int:
                         prompt_version=_context_prompt_version(args, task),
                         context_ranking=args.context_ranking,
                         ranking_tie_seed=args.ranking_tie_seed,
+                        cache_profile=args.assay_transfer_cache_profile,
+                        record_levels=(
+                            _record_level_names(args, task)
+                            if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                            else None
+                        ),
+                        v21_selection_mode=args.v21_selection_mode,
                     ): query_index
                     for query_index in indices
                 }
@@ -2387,7 +2613,7 @@ def run(args: argparse.Namespace) -> int:
             max_level=args.max_level,
             query_prior_mode=args.query_prior,
             profile=args.profile,
-            context_record_l3_l5=args.context_record_l3_l5,
+            context_record_l3_l5=_record_cache_enabled(args),
         )
     manifest["finished_at"] = _now()
     manifest["n_failed_queries"] = failed
@@ -2418,6 +2644,25 @@ def main(argv: list[str] | None = None) -> int:
         choices=("assay_transfer", "morgan"),
         default="assay_transfer",
         help="Rank context-record candidates with the frozen assay-transfer scores or Morgan similarity.",
+    )
+    parser.add_argument(
+        "--assay-transfer-cache-profile",
+        choices=("v19_1", V21_CACHE_PROFILE, LUNA_RELEVANCE_CACHE_PROFILE),
+        default="v19_1",
+        help=(
+            "Use the established V19.1 cache, the opt-in V21 BBB raw-record "
+            "cache, or the Luna relevance-top-quartile V19.1 cache."
+        ),
+    )
+    parser.add_argument(
+        "--v21-selection-mode",
+        choices=("record_only", "molecule_cards"),
+        default="record_only",
+        help=(
+            "For the BBB V21 cache, rank independent records at every level or "
+            "group V21-ranked L1/L2 records into molecule cards before appending "
+            "record-level L3-L5 evidence."
+        ),
     )
     parser.add_argument(
         "--ranking-tie-seed",
@@ -2491,6 +2736,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Minimum Morgan similarity for matched gold-training L1 candidates.",
     )
     parser.add_argument(
+        "--context-limit",
+        type=int,
+        default=context_records.CONTEXT_LIMIT,
+        help="Number of V9 parent-condition contexts retained at L1 and L2.",
+    )
+    parser.add_argument(
         "--record-limit-per-context-level",
         type=int,
         default=context_records.RECORD_LIMIT,
@@ -2507,6 +2758,12 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=context_records.INDIRECT_RECORD_LIMIT,
         help="Maximum independently ranked Stage 3 records appended at each level from L3 onward.",
+    )
+    parser.add_argument(
+        "--indirect-final-level-record-limit",
+        type=int,
+        default=0,
+        help="Optional record cap for only the task's final indirect level; 0 uses the common cap.",
     )
     parser.add_argument(
         "--query-prior",
@@ -2578,6 +2835,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--transport-max-retries must be non-negative")
     if args.max_level < 0:
         parser.error("--max-level must be non-negative")
+    if not 1 <= args.context_limit <= 100:
+        parser.error("--context-limit must be between 1 and 100")
     if args.record_limit_per_context_level < 1:
         parser.error("--record-limit-per-context-level must be positive")
     if args.l2_record_limit_per_context < 0:
@@ -2586,9 +2845,36 @@ def main(argv: list[str] | None = None) -> int:
         args.l2_record_limit_per_context = args.record_limit_per_context_level
     if args.indirect_record_limit_per_level < 1:
         parser.error("--indirect-record-limit-per-level must be positive")
+    if args.indirect_final_level_record_limit < 0:
+        parser.error("--indirect-final-level-record-limit must be non-negative")
     if not 0 <= args.gold_l1_min_similarity <= 1:
         parser.error("--gold-l1-min-similarity must be between 0 and 1")
     if args.profile == "context_records":
+        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE:
+            if args.tasks != ["bbb_martins"]:
+                parser.error("the V21 L1-L5 cache profile only supports --tasks bbb_martins")
+            if args.context_ranking != "assay_transfer":
+                parser.error(
+                    "the V21 L1-L5 cache profile requires "
+                    "--context-ranking assay_transfer"
+                )
+            if args.context_record_l3_l5:
+                parser.error(
+                    "the V21 cache profile supplies its configured record levels "
+                    "without --context-record-l3-l5"
+                )
+            if args.reuse_context_l2:
+                parser.error("the V21 L1-L5 cache profile cannot reuse V9 L1/L2 outputs")
+        if args.assay_transfer_cache_profile == LUNA_RELEVANCE_CACHE_PROFILE:
+            unsupported = set(args.tasks) - {"bbb_martins", "skin_reaction"}
+            if unsupported:
+                parser.error(
+                    "the Luna relevance cache only supports BBB and Skin"
+                )
+            if not args.context_record_l3_l5:
+                parser.error(
+                    "the Luna relevance cache requires --context-record-l3-l5"
+                )
         if args.assay_transfer_prompt_version != "task_best":
             prompt_ranking = str(
                 context_records.prompt_profile(
@@ -2603,11 +2889,17 @@ def main(argv: list[str] | None = None) -> int:
         if args.reuse_context_l2 and not args.context_record_l3_l5:
             parser.error("--reuse-context-l2 requires --context-record-l3-l5")
         if args.reuse_context_l2 and (
+            args.context_limit != context_records.CONTEXT_LIMIT
+            or
             args.record_limit_per_context_level != 10
             or args.l2_record_limit_per_context != 10
         ):
             parser.error("--reuse-context-l2 requires the frozen L1/L2 record caps of 10")
-        if args.context_record_l3_l5:
+        if args.indirect_final_level_record_limit and not _record_cache_enabled(args):
+            parser.error(
+                "--indirect-final-level-record-limit requires --context-record-l3-l5"
+            )
+        if _record_cache_enabled(args):
             supported = set(
                 context_records.level_record_bundle_contract()["task_levels"]
             )
@@ -2618,10 +2910,10 @@ def main(argv: list[str] | None = None) -> int:
                     + ", ".join(sorted(unsupported))
                 )
             too_high = {
-                task: context_records.indirect_level_names(task)[-1]
+                task: _record_level_names(args, task)[-1]
                 for task in args.tasks
                 if args.max_level
-                > int(context_records.indirect_level_names(task)[-1][1:])
+                > int(_record_level_names(args, task)[-1][1:])
             }
             if too_high:
                 parser.error(
@@ -2650,6 +2942,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.skip_tool_prefetch:
             parser.error("context_records disables analog tools internally; do not use --skip-tool-prefetch")
     else:
+        if args.assay_transfer_cache_profile != "v19_1":
+            parser.error("--assay-transfer-cache-profile requires --profile context_records")
         if args.context_ranking != "assay_transfer" or args.ranking_tie_seed != 0:
             parser.error("--context-ranking and --ranking-tie-seed require --profile context_records")
         if args.reuse_context_l2:

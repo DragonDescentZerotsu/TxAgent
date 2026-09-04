@@ -10,10 +10,10 @@ executable behavior, failure modes, schemas, rendering validity, and provenance.
 This package prepares reusable assay-transfer scores before a reasoning harness runs.
 Harnesses consume finalized caches and must not call these checkpoints online.
 
-Only two model lineages are supported: task-specific V9 for direct gold-label transfer
-and task-specific BBB/Bioavailability/Skin V19.1 for record-level transfer. Add no
-compatibility fallback, alternate
-checkpoint, or copied historical prompt here.
+Three model lineages are supported: task-specific V9 for direct gold-label transfer,
+task-specific BBB/Bioavailability/Skin V19.1 for record-level transfer, and the
+opt-in BBB V21 all-record cache. Add no compatibility fallback, alternate checkpoint,
+or copied historical prompt here.
 
 `runtime.py` owns the pinned task-to-role mapping and cache contract; `v9.py` owns its
 prompt and Morgan train-neighbor prefilter; `v19_1.py` owns its record-level prompt.
@@ -50,6 +50,12 @@ the V19.1 raw/source-field prompt projection. Copy the retrieved record's assay 
 to the hidden-value query side and use the normalized-v7 parent SMILES for the known
 molecule. The direct-BBB projection extension is explicit OOD because L2 direct-source
 records were outside numeric-indirect checkpoint training.
+
+The opt-in V21 BBB profile is separate from that default hybrid. It independently
+ranks raw Stage 3 records at L1-L5, including current direct voters at L1, with the
+same per-query top-75 scaffold-disjoint parent pools. Its query side copies each
+record's source-native assay context while hiding result-bearing fields exactly as in
+the V21 training prompt.
 
 Build Bioavailability L2-L6 under the same Stage 3, top-75, no-floor, and per-query
 `scaffold_disjoint` policy. Globally exclude L1 and the one pinned row without a

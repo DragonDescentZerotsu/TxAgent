@@ -1,0 +1,15 @@
+{
+  "baseline_release": "v7",
+  "changed_parquet_files": 8,
+  "ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "lineage": {
+    "path": "lineage/source_row_lineage.parquet",
+    "rows": 1913906,
+    "sha256": "84772aecfccad5ef7ee2741338d6566d44cf4669625fe626c8332a275bf407e0"
+  },
+  "release": "v9",
+  "source_rows": 807142,
+  "task_id": "skin_reaction",
+  "uid_field": "source_row_uid",
+  "version": "evidence_library_source_row_uid_migration.v1"
+}

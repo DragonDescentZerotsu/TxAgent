@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 
 from predict.harnesses.progressive.context_records import profile
+from predict.harnesses.progressive.runner import _indirect_record_limits
 from predict.harnesses.progressive.state import ProgressiveTaskContract, card_ids
+from predict.retrieval.assay_reranking.progressive_levels import (
+    LUNA_RELEVANCE_CACHE_PROFILE,
+)
+from predict.retrieval.policies import seeded_rank_tie_key
 
 
 def _contexts() -> list[dict]:
@@ -59,6 +65,31 @@ def _contexts() -> list[dict]:
             ],
         }
     ]
+
+
+def test_luna_bbb_uses_safe_default_final_record_limit():
+    args = SimpleNamespace(
+        assay_transfer_cache_profile=LUNA_RELEVANCE_CACHE_PROFILE,
+        v21_selection_mode="record_only",
+        indirect_record_limit_per_level=50,
+        indirect_final_level_record_limit=0,
+        record_limit_per_context_level=10,
+        l2_record_limit_per_context=10,
+    )
+    assert _indirect_record_limits(args, "bbb_martins") == {
+        "L3": 50,
+        "L4": 50,
+        "L5": 25,
+    }
+    args.indirect_final_level_record_limit = 17
+    assert _indirect_record_limits(args, "bbb_martins")["L5"] == 17
+
+
+def _morgan_contexts() -> list[dict]:
+    contexts = _contexts()
+    contexts[0]["morgan_similarity"] = 0.73
+    del contexts[0]["transfer_likelihood"]
+    return contexts
 
 
 def _contract(task: str = "example") -> ProgressiveTaskContract:
@@ -169,6 +200,184 @@ def test_bioavailability_l3_through_l6_append_one_top50_record_bundle_each() -> 
     assert bundle["record_rows"][0][-1] == ["1.234", 1.23]
 
 
+def test_bbb_v21_raw_record_bundles_are_append_only_from_l1() -> None:
+    level_names = ("L1", "L2", "L3", "L4", "L5")
+    snapshots = profile.snapshots(
+        [],
+        task="bbb_martins",
+        indirect_records=_indirect_records(level_names, record_count=2),
+        indirect_record_limit=2,
+        record_levels=level_names,
+        transfer_model="V21",
+    )
+
+    assert list(snapshots) == [1, 2, 3, 4, 5]
+    assert [len(card_ids(snapshots[level])) for level in range(1, 6)] == [
+        2,
+        4,
+        6,
+        8,
+        10,
+    ]
+    assert snapshots[1]["bbb_martins_l1_record_bundle"]["selection"].endswith(
+        "frozen V21 record-transfer likelihood"
+    )
+    messages = profile.build_messages(
+        contract=_contract("bbb_martins"),
+        current_level=1,
+        query_smiles="CCN",
+        condition_sentence="",
+        query_prior={"prediction": "positive"},
+        query_tool_summary=None,
+        active=snapshots[1],
+        prior_state=None,
+        prompt_version="v4",
+        indirect_record_limit=2,
+        include_indirect=True,
+    )
+    payload = json.loads(messages[1]["content"])
+    assert payload["active_evidence"][0]["level"] == "L1"
+    architecture = payload["protocol"]["architecture"]
+    assert "independently ranked Stage 3 record bundle" in architecture
+    assert "exact training parent-condition contexts" not in architecture
+
+
+def test_bbb_v21_raw_record_bundles_accept_per_level_caps() -> None:
+    limits = {"L1": 1, "L2": 2, "L3": 3, "L4": 4, "L5": 5}
+    indirect = _indirect_records(tuple(limits), record_count=5)
+    for level, limit in limits.items():
+        indirect[level]["records"] = indirect[level]["records"][:limit]
+    snapshots = profile.snapshots(
+        [],
+        task="bbb_martins",
+        indirect_records=indirect,
+        indirect_record_limit=limits,
+        record_levels=tuple(limits),
+        transfer_model="V21",
+    )
+
+    assert [
+        len(card_ids(snapshots[level]))
+        - len(card_ids(snapshots[level - 1]))
+        if level > 1
+        else len(card_ids(snapshots[level]))
+        for level in range(1, 6)
+    ] == list(limits.values())
+    messages = profile.build_messages(
+        contract=_contract("bbb_martins"),
+        current_level=5,
+        query_smiles="CCN",
+        condition_sentence="",
+        query_prior={"prediction": "positive"},
+        query_tool_summary=None,
+        active=snapshots[5],
+        prior_state=None,
+        prompt_version="v4",
+        indirect_record_limit=limits,
+        include_indirect=True,
+    )
+    sampling = json.loads(messages[1]["content"])["protocol"]["record_sampling"]
+    assert "L1=1, L2=2, L3=3, L4=4, L5=5" in sampling
+
+
+def test_bbb_v21_molecule_cards_keep_ranked_records_append_only() -> None:
+    def ranked_record(record_id: str, level: str, score: float) -> dict:
+        return {
+            "record_id": record_id,
+            "transfer_likelihood": score,
+            "payload": {
+                "record_id": record_id,
+                "progressive_level": level,
+                "canonical_record_id": record_id,
+                "canonical_endpoint_name": "brain_penetration",
+                "canonical_measurement_text": "measured",
+                "canonical_smiles": "CCO",
+                "source_id": "direct_bbb",
+                "support_text": "experimental record",
+            },
+        }
+
+    contexts = profile.v21_molecule_contexts(
+        "query_1",
+        [
+            {
+                "reference_molecule_id": "M1",
+                "canonical_smiles": "CCO",
+                "transfer_likelihood": 0.9,
+                "selection_rank": 0,
+                "available_l1": 3,
+                "available_l2": 2,
+                "l1_records": [ranked_record("r1", "L1", 0.9)],
+                "l2_records": [ranked_record("r2", "L2", 0.8)],
+            }
+        ],
+    )
+    snapshots = profile.snapshots(
+        contexts,
+        task="bbb_martins",
+        indirect_records=_indirect_records(("L3", "L4", "L5"), record_count=1),
+        indirect_record_limit=1,
+        record_levels=("L3", "L4", "L5"),
+        transfer_model="V21",
+    )
+
+    assert len(card_ids(snapshots[1])) == 1
+    assert len(card_ids(snapshots[2]) - card_ids(snapshots[1])) == 1
+    messages = profile.build_messages(
+        contract=_contract("bbb_martins"),
+        current_level=3,
+        query_smiles="CCN",
+        condition_sentence="",
+        query_prior={"prediction": "positive"},
+        query_tool_summary=None,
+        active=snapshots[3],
+        prior_state=None,
+        prompt_version="v4",
+        record_limit=4,
+        l2_record_limit=2,
+        indirect_record_limit=1,
+        include_indirect=True,
+    )
+    payload = json.loads(messages[1]["content"])
+    assert "V21-ranked scaffold-disjoint reference molecules" in payload["protocol"]["architecture"]
+    assert payload["active_evidence"][0]["record_rows"][0][2] == "brain_penetration"
+    assert "_v21_transfer_likelihood" not in json.dumps(payload)
+
+
+def test_bioavailability_supports_a_smaller_final_level_record_cap() -> None:
+    indirect = _indirect_records(record_count=2)
+    indirect["L6"]["records"] = indirect["L6"]["records"][:1]
+    limits = {"L3": 2, "L4": 2, "L5": 2, "L6": 1}
+    snapshots = profile.snapshots(
+        _contexts(),
+        task="bioavailability_ma",
+        indirect_records=indirect,
+        indirect_record_limit=limits,
+    )
+
+    assert len(card_ids(snapshots[3]) - card_ids(snapshots[2])) == 2
+    assert len(card_ids(snapshots[4]) - card_ids(snapshots[3])) == 2
+    assert len(card_ids(snapshots[5]) - card_ids(snapshots[4])) == 2
+    assert len(card_ids(snapshots[6]) - card_ids(snapshots[5])) == 1
+    messages = profile.build_messages(
+        contract=_contract("bioavailability_ma"),
+        current_level=6,
+        query_smiles="CCN",
+        condition_sentence="",
+        query_prior={"prediction": "positive"},
+        query_tool_summary=None,
+        active=snapshots[6],
+        prior_state=None,
+        prompt_version="v3",
+        record_limit=10,
+        l2_record_limit=10,
+        indirect_record_limit=limits,
+        include_indirect=True,
+    )
+    sampling = json.loads(messages[1]["content"])["protocol"]["record_sampling"]
+    assert "L3=2, L4=2, L5=2, L6=1" in sampling
+
+
 def test_skin_l3_l4_append_without_l5() -> None:
     snapshots = profile.snapshots(
         _contexts(),
@@ -231,6 +440,57 @@ def test_task_best_prompts_include_skin_v6() -> None:
     assert profile.resolve_prompt_version("bbb_martins", "task_best") == "v4"
     assert profile.resolve_prompt_version("bioavailability_ma", "task_best") == "v3"
     assert profile.resolve_prompt_version("skin_reaction", "task_best") == "v6"
+    assert profile.resolve_prompt_version(
+        "bbb_martins", "task_best", ranking="morgan"
+    ) == "morgan_v4"
+    assert profile.resolve_prompt_version(
+        "bioavailability_ma", "task_best", ranking="morgan"
+    ) == "morgan_v3"
+    assert profile.resolve_prompt_version(
+        "skin_reaction", "task_best", ranking="morgan"
+    ) == "morgan_v6"
+
+
+def test_seeded_rank_tie_key_is_reproducible() -> None:
+    first = seeded_rank_tie_key(0, "task", "query", "molecule", "record")
+    assert first == seeded_rank_tie_key(0, "task", "query", "molecule", "record")
+    assert first != seeded_rank_tie_key(1, "task", "query", "molecule", "record")
+
+
+def test_morgan_prompt_exposes_similarity_and_hides_transfer_scores() -> None:
+    indirect = _indirect_records(("L3", "L4", "L5"), record_count=12)
+    for level in indirect.values():
+        for row in level["records"]:
+            row["morgan_similarity"] = row.pop("transfer_likelihood")
+    active = profile.snapshots(
+        _morgan_contexts(),
+        task="bbb_martins",
+        indirect_records=indirect,
+        indirect_record_limit=12,
+        prompt_version="morgan_v4",
+    )[3]
+    messages = profile.build_messages(
+        contract=_contract("bbb_martins"),
+        current_level=3,
+        query_smiles="CCN",
+        condition_sentence="",
+        query_prior={"prediction": "positive"},
+        query_tool_summary=None,
+        active=active,
+        prior_state=None,
+        prompt_version="morgan_v4",
+        record_limit=4,
+        l2_record_limit=2,
+        indirect_record_limit=12,
+        include_indirect=True,
+    )
+
+    payload = json.loads(messages[1]["content"])
+    serialized = json.dumps(messages)
+    assert payload["active_evidence"][0]["morgan_similarity"] == 0.73
+    assert payload["active_evidence"][-1]["record_columns"][2] == "morgan_similarity"
+    assert "morgan_similarity" in serialized
+    assert "transfer_likelihood" not in serialized
 
 
 def test_enabling_l3_l5_does_not_change_l1_prompt() -> None:

@@ -54,6 +54,8 @@ def build_pair_bucket_transfer_policy(
     pair_bucket_metadata_path: str | Path,
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
+    minimum_samples: int | None = None,
+    minimum_distinct_molecules: int = 16,
     workers: int = 1,
 ) -> dict[str, Any]:
     metadata = json.loads(Path(pair_bucket_metadata_path).read_text(encoding="utf-8"))
@@ -84,6 +86,8 @@ def build_pair_bucket_transfer_policy(
             pair_bucket_metadata_path=pair_bucket_metadata_path,
             auxiliary_manifest_path=auxiliary_manifest_path,
             out_dir=out_dir,
+            minimum_samples=minimum_samples,
+            minimum_distinct_molecules=minimum_distinct_molecules,
             workers=workers,
         )
     return _build(
@@ -117,6 +121,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--out-dir", default=str(DEFAULT_NORMALIZED_DIR / "03_pair_buckets")
     )
+    parser.add_argument("--minimum-samples", type=int)
+    parser.add_argument("--minimum-distinct-molecules", type=int, default=16)
     parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args(argv)
     payload = build_pair_bucket_transfer_policy(
@@ -125,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
         pair_bucket_metadata_path=args.pair_bucket_metadata,
         auxiliary_manifest_path=args.auxiliary_manifest,
         out_dir=args.out_dir,
+        minimum_samples=args.minimum_samples,
+        minimum_distinct_molecules=args.minimum_distinct_molecules,
         workers=args.workers,
     )
     print(payload["summary"], flush=True)

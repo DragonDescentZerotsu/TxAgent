@@ -1,0 +1,15 @@
+You are comparing two experiments selected from similar assays.
+The experimental details may differ.
+
+Experiment A (known measurement)
+<SMILES>{{ known_smiles }}</SMILES>
+{% for label, value in known_fields %}- {{ label }}: {{ value }}
+{% endfor %}
+Experiment B (query measurement hidden)
+<SMILES>{{ query_smiles }}</SMILES>
+{% for label, value in query_fields %}- {{ label }}: {{ value }}
+{% endfor %}
+Would Molecule B's measured value be similar to Molecule A's known measured value even after accounting for molecular and experimental differences?
+(A) Yes
+(B) No
+Answer:

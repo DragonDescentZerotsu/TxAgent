@@ -431,6 +431,9 @@ def _normalize_and_project_range(
             base,
             record_contract=_NORMALIZE_POLICY.record_contract,
             policy=measurement_policy,
+            prune_unreviewed_record=(
+                _NORMALIZE_POLICY.prune_unreviewed_assay_transfer_records
+            ),
         )
         transformed.append(working)
         projected.append(persisted)

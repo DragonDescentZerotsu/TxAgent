@@ -67,6 +67,7 @@ def build_pair_bucket_distance_calibration(
     auxiliary_manifest_path: str | Path,
     out_dir: str | Path,
     minimum_samples: int | None = None,
+    minimum_distinct_molecules: int = MINIMUM_BUCKET_MOLECULES,
     workers: int = 1,
 ) -> dict[str, Any]:
     """Materialize SD and empirical CDF metadata per deduplicated Stage-3 bucket."""
@@ -93,14 +94,12 @@ def build_pair_bucket_distance_calibration(
     }
     if spec.profile.heldout_sources:
         required.add(spec.heldout_identity_column)
-    expected_minimum = MINIMUM_BUCKET_RECORDS
     if minimum_samples is None:
-        minimum_samples = expected_minimum
-    if minimum_samples != expected_minimum:
-        raise ValueError(
-            f"the v7 calibration contract requires exactly {expected_minimum} "
-            "deduplicated records"
-        )
+        minimum_samples = MINIMUM_BUCKET_RECORDS
+    if minimum_samples < 2:
+        raise ValueError("calibration requires at least two records")
+    if minimum_distinct_molecules < 0:
+        raise ValueError("minimum distinct molecules cannot be negative")
     finalized = {
         "source_id",
         "pair_bucket_key",
@@ -159,6 +158,7 @@ def build_pair_bucket_distance_calibration(
         spec=spec,
         record_contract=record_contract,
         minimum_samples=minimum_samples,
+        minimum_distinct_molecules=minimum_distinct_molecules,
         workers=workers,
     )
 
@@ -222,7 +222,7 @@ def build_pair_bucket_distance_calibration(
         "validation_contract": {
             "minimum_bucket_records": minimum_samples,
             "minimum_bucket_records_unit": "deduplicated_records",
-            "minimum_distinct_molecules": MINIMUM_BUCKET_MOLECULES,
+            "minimum_distinct_molecules": minimum_distinct_molecules,
             "binary": "all declared levels observed; every observed level has >=3 records",
             "ordinal": (
                 "at least three declared levels observed; every observed level "
@@ -282,6 +282,7 @@ _CALIBRATION_CONTEXT: tuple[
     TransferPolicyBuildSpec,
     StarlingRecordContract,
     int,
+    int,
 ] | None = None
 
 
@@ -291,6 +292,7 @@ def _build_calibration_entries(
     spec: TransferPolicyBuildSpec,
     record_contract: StarlingRecordContract,
     minimum_samples: int,
+    minimum_distinct_molecules: int = MINIMUM_BUCKET_MOLECULES,
     workers: int,
 ) -> dict[str, dict[str, Any]]:
     """Build independent bucket entries in fork workers, preserving key order."""
@@ -307,6 +309,7 @@ def _build_calibration_entries(
         spec,
         record_contract,
         minimum_samples,
+        minimum_distinct_molecules,
     )
     try:
         if workers == 1 or len(keys) < 100 or "fork" not in mp.get_all_start_methods():
@@ -330,7 +333,7 @@ def _build_calibration_partition(
 ) -> list[tuple[str, dict[str, Any]]]:
     if _CALIBRATION_CONTEXT is None:
         raise RuntimeError("distance-calibration worker has no build context")
-    rows, grouped_indices, spec, record_contract, minimum_samples = (
+    rows, grouped_indices, spec, record_contract, minimum_samples, minimum_distinct_molecules = (
         _CALIBRATION_CONTEXT
     )
     return [
@@ -342,6 +345,7 @@ def _build_calibration_partition(
                 spec=spec,
                 record_contract=record_contract,
                 minimum_samples=minimum_samples,
+                minimum_distinct_molecules=minimum_distinct_molecules,
             ),
         )
         for key in keys
@@ -355,6 +359,7 @@ def _build_calibration_entry(
     spec: TransferPolicyBuildSpec,
     record_contract: StarlingRecordContract,
     minimum_samples: int,
+    minimum_distinct_molecules: int = MINIMUM_BUCKET_MOLECULES,
 ) -> dict[str, Any]:
     source_id = _calibration_source_id(
         group["source_id"], key=key, record_contract=record_contract
@@ -367,7 +372,7 @@ def _build_calibration_entry(
     record_count = len(group)
     molecule_count = int(group["canonical_smiles"].dropna().astype(str).nunique())
     record_support_met = record_count >= minimum_samples
-    molecule_support_met = molecule_count >= MINIMUM_BUCKET_MOLECULES
+    molecule_support_met = molecule_count >= minimum_distinct_molecules
     support_met = record_support_met and molecule_support_met
     category_gate = _category_gate(
         group,
@@ -391,7 +396,7 @@ def _build_calibration_entry(
     if not record_support_met:
         reason = f"fewer_than_{minimum_samples}_records"
     elif not molecule_support_met:
-        reason = f"fewer_than_{MINIMUM_BUCKET_MOLECULES}_distinct_molecules"
+        reason = f"fewer_than_{minimum_distinct_molecules}_distinct_molecules"
     elif kind not in {"continuous", "binary", "ordinal"}:
         reason = "unsupported_measurement_kind"
     elif not category_gate["valid"]:
@@ -427,7 +432,7 @@ def _build_calibration_entry(
         "record_count": record_count,
         "distinct_molecule_count": molecule_count,
         "minimum_record_count": minimum_samples,
-        "minimum_distinct_molecule_count": MINIMUM_BUCKET_MOLECULES,
+        "minimum_distinct_molecule_count": minimum_distinct_molecules,
         "minimum_record_support_met": record_support_met,
         "minimum_molecule_support_met": molecule_support_met,
         "minimum_support_met": support_met,

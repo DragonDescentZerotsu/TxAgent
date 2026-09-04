@@ -1,4 +1,4 @@
-"""Pinned models, prompt scoring, and read-only caches shared by V9 and V19.1."""
+"""Pinned models, prompt scoring, and read-only assay-transfer caches."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ SCORING_CONTRACT_VERSION = (
 COMPACT_CACHE_SCHEMA_VERSION = "txagent_assay_transfer_compact_cache.v1"
 REQUIRED_TRANSFORMERS_VERSION = "4.57.6"
 CACHE_ROOT = Path(__file__).resolve().parents[1] / "cache" / "assay_reranking"
-MODEL_ROLES = ("direct", "indirect")
+MODEL_ROLES = ("direct", "indirect", "all_records")
 MODEL_PROFILES = {
     "bbb_martins": {
         "direct": {
@@ -31,6 +31,11 @@ MODEL_PROFILES = {
             "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
             "revision": "b93ebfb909de5689fe3b50978d65172a6096b974",
             "prompt_profile": "v19_1",
+        },
+        "all_records": {
+            "model": "jiosephlee/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
+            "revision": "2521166a95cd36bc78fb9b90669cc097ead758ca",
+            "prompt_profile": "v21_bbb",
         },
     },
     "bioavailability_ma": {

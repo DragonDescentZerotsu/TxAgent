@@ -1,0 +1,115 @@
+{
+  "version": "non_direct_progressive_v7_relevance_bucket_luna.v1",
+  "status": "complete",
+  "task": "bbb_martins",
+  "ranking_universe": "progressive_v7_stage3_assay_transfer_eligible_non_direct",
+  "input": "data/evidence_libraries/bbb_martins/v7/03_pair_buckets/records.parquet",
+  "input_sha256": "f50c2be5265f1ea5afa782445b52c87380dac877dcf88a5318e9ade93c1b5b06",
+  "prompt": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/prompts/relevance_bucket_rounds_v4.jinja",
+  "prompt_sha256": "5bc7ed8e678806a49060c6a27a721558708de90500ab673dcd350b47fdd48a2a",
+  "model": "openai/gpt-5.6-luna",
+  "base_url": "https://openrouter.ai/api/v1",
+  "reasoning_effort": "medium",
+  "max_completion_tokens": 4096,
+  "batch_size_maximum": 5,
+  "target_degree": 20,
+  "sources": [
+    "efflux_transport",
+    "influx_transport",
+    "passive_permeability"
+  ],
+  "direct_sources_excluded": true,
+  "winner_contract": "exact_bucket_id_strict_binary",
+  "provider_routing": {
+    "only": [
+      "openai"
+    ],
+    "ignore": [
+      "openai/fast"
+    ],
+    "allow_fallbacks": true,
+    "require_parameters": true
+  },
+  "pricing_usd_per_million_tokens": {
+    "input": 0.2,
+    "output": 1.2
+  },
+  "relevance_bucket_columns": {
+    "efflux_transport": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_transporter_identifier",
+      "canonical_evidence_type"
+    ],
+    "influx_transport": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_transport_mechanism",
+      "canonical_kinetic_symbol"
+    ],
+    "passive_permeability": [
+      "canonical_endpoint_name",
+      "measurement_kind",
+      "canonical_assay_type"
+    ]
+  },
+  "source_counts": {
+    "efflux_transport": {
+      "pair_buckets": 42641,
+      "relevance_buckets": 1990
+    },
+    "influx_transport": {
+      "pair_buckets": 548,
+      "relevance_buckets": 28
+    },
+    "passive_permeability": {
+      "pair_buckets": 384,
+      "relevance_buckets": 95
+    }
+  },
+  "relevance_bucket_count": 2113,
+  "pair_buckets_with_multiple_relevance_identities": 5,
+  "graph": {
+    "efflux_transport": {
+      "bucket_count": 1990,
+      "edge_count": 19900,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    },
+    "influx_transport": {
+      "bucket_count": 28,
+      "edge_count": 280,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    },
+    "passive_permeability": {
+      "bucket_count": 95,
+      "edge_count": 950,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    }
+  },
+  "artifacts": {
+    "pair_bucket_relevance_map": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/bbb_martins/pair_bucket_relevance_map.parquet",
+    "request_cache": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/bbb_martins/requests.sqlite3"
+  },
+  "accepted_reason_word_limit": 24,
+  "usage": {
+    "input_tokens": 26229353,
+    "output_tokens": 2280171,
+    "actual_tokens": 28509524,
+    "completed_requests": 4226,
+    "reported_cost_usd": 7.982076
+  },
+  "served_models": {
+    "openai/gpt-5.6-luna": 4226
+  },
+  "ranking": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/bbb_martins/relevance_bucket_rankings.parquet",
+  "ranking_sha256": "b4a65cbb8fa588b28bee6dc572621c2c234c16a7e0143f19773af649c6cce407"
+}

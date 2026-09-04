@@ -242,6 +242,11 @@ class SubmissionCache:
             for record_id in event.get("row_ids") or ():
                 record_id = str(record_id)
                 self.attempted.add(record_id)
+                if event.get("status") == "submitted":
+                    # A newer submission supersedes an earlier terminal failure.
+                    # If the process stops here, publishing must fail closed instead
+                    # of silently restoring the older failed assignment.
+                    self.assignments.pop(record_id, None)
                 if event.get("model"):
                     self.provenance[record_id] = {
                         "inference_model": str(event["model"]),
@@ -253,6 +258,16 @@ class SubmissionCache:
             if event.get("status") == "terminal":
                 for row in event.get("assignments") or ():
                     self.assignments[str(row["cleaned_record_id"])] = dict(row)
+
+    def allow_retry(self, record_ids: set[str]) -> None:
+        """Permit an explicit retry of failed or abandoned submitted rows."""
+        missing = record_ids - self.attempted
+        if missing:
+            raise ValueError(
+                "only attempted rows may be retried: "
+                f"missing={sorted(missing)[:1]}"
+            )
+        self.attempted.difference_update(record_ids)
 
     def _load(self) -> list[dict[str, Any]]:
         if not self.path.exists():
@@ -291,6 +306,7 @@ class SubmissionCache:
         self._append(event)
         for record_id in batch.row_ids:
             self.attempted.add(record_id)
+            self.assignments.pop(record_id, None)
             if model:
                 self.provenance[record_id] = {
                     "inference_model": model,

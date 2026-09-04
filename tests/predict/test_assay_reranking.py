@@ -1,12 +1,17 @@
 """Pinned model and prompt contracts for the supported assay rerankers."""
 
+import json
 from pathlib import Path
+import sqlite3
 
 import pytest
 
 from predict.retrieval.assay_reranking.runtime import CACHE_ROOT, model_profile
 from predict.retrieval.assay_reranking.progressive_levels import (
+    ProgressiveV21PromptRenderer,
     ProgressiveV191PromptRenderer,
+    _shard_rows,
+    _select_luna_relevance_records,
 )
 from predict.retrieval.policies import decide_candidate, normalize_molecule_identity
 from predict.baselines.assay_transfer_knn import select_neighbors
@@ -68,6 +73,35 @@ def test_direct_role_is_exactly_v9(task_id):
 def test_indirect_model_is_pinned(task_id, model, revision):
     profile = model_profile(task_id, "indirect")
     assert (profile["model"], profile["revision"]) == (model, revision)
+
+
+def test_bbb_all_record_model_is_pinned():
+    profile = model_profile("bbb_martins", "all_records")
+    assert profile == {
+        "model": "jiosephlee/intern-s1-mini-assay-transfer-v21-bbb-martins-mixed-best",
+        "revision": "2521166a95cd36bc78fb9b90669cc097ead758ca",
+        "prompt_profile": "v21_bbb",
+    }
+
+
+def test_score_shards_batch_prompts_by_length():
+    connection = sqlite3.connect(":memory:")
+    connection.execute(
+        "CREATE TABLE prompt_tasks(prompt_key INTEGER, cache_key TEXT, prompt TEXT)"
+    )
+    connection.executemany(
+        "INSERT INTO prompt_tasks VALUES (?, ?, ?)",
+        (
+            (1, "long", "xxxx"),
+            (2, "other-shard", "x"),
+            (3, "short", "xx"),
+            (5, "mid", "xxx"),
+        ),
+    )
+
+    rows = _shard_rows(connection, shard_index=0, num_shards=2)
+
+    assert [cache_key for _, cache_key, _ in rows] == ["short", "mid", "long"]
 
 
 def test_vendored_prompt_assets_match_their_manifests():
@@ -166,3 +200,79 @@ def test_progressive_v19_renderer_supports_direct_skin_records():
     )
     assert prompt.count("Known reported measurement: positive") == 1
     assert prompt.count("Assay or test: DPRA") == 2
+
+
+def test_progressive_v21_renderer_copies_context_without_query_results():
+    prompt = ProgressiveV21PromptRenderer().render(
+        {
+            "task_id": "bbb_martins",
+            "source_id": "direct_bbb",
+            "source_smiles": "CCO",
+            "endpoint_name": "BBB outcome",
+            "measurement_text": "positive",
+            "assay_model": "in vivo",
+            "species": "rat",
+            "support_text": "reported source result",
+        },
+        "CCN",
+    )
+
+    known, query = prompt.split("Experiment B (query measurement hidden)")
+    assert "<SMILES>CCO</SMILES>" in known
+    assert "<SMILES>CCN</SMILES>" in query
+    assert "BBB outcome" in known and "BBB outcome" in query
+    assert "in vivo" in known and "in vivo" in query
+    assert "positive" in known and "positive" not in query
+    assert "reported source result" in known and "reported source result" not in query
+
+
+def test_luna_relevance_filter_keeps_top_quarter_buckets_and_all_their_records():
+    stage3 = []
+    mapping = []
+    ranking_rows = []
+    for index in range(8):
+        bucket = json.dumps(
+            {"source_id": "efflux_transport", "endpoint": f"endpoint-{index}"}
+        )
+        ranking_rows.append(
+            {
+                "source_id": "efflux_transport",
+                "relevance_bucket": bucket,
+                "bradley_terry_score": float(8 - index),
+            }
+        )
+        for replicate in range(2 if index == 0 else 1):
+            record_id = f"record-{index}-{replicate}"
+            stage3.append(
+                {
+                    "canonical_record_id": record_id,
+                    "source_id": "efflux_transport",
+                    "assay_transfer_eligible": True,
+                    "endpoint": f"endpoint-{index}",
+                }
+            )
+            mapping.append(
+                {
+                    "canonical_record_id": record_id,
+                    "progressive_level": "L4",
+                    "score_cache_candidate_eligible": True,
+                }
+            )
+    selected, audit = _select_luna_relevance_records(
+        stage3,
+        mapping,
+        ranking_rows,
+        {
+            "status": "complete",
+            "relevance_bucket_columns": {"efflux_transport": ["endpoint"]},
+        },
+        ("L4",),
+    )
+    assert selected == {"record-0-0", "record-0-1", "record-1-0"}
+    assert audit["stage3_ranking_relevance_identity_sets_equal"] is True
+    assert audit["pools"]["L4:efflux_transport"] == {
+        "input_relevance_buckets": 8,
+        "selected_relevance_buckets": 2,
+        "input_records": 9,
+        "selected_records": 3,
+    }

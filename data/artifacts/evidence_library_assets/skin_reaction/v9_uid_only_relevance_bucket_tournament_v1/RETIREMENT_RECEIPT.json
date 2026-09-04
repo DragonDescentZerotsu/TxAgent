@@ -1,0 +1,58 @@
+{
+  "archived_at": "2026-09-03T23:39:42.744931+00:00",
+  "preserved_cache_files": [
+    {
+      "bytes": 16107,
+      "path": "manifest.json",
+      "sha256": "7f46e23b8c91b40bb43d35f90386fd727ffa3383bf1533e1e091872cf2f80d15"
+    },
+    {
+      "bytes": 867768,
+      "path": "pair_bucket_relevance_map.parquet",
+      "sha256": "a67198860e7ec200ef352415f77174739fd937cfd478a26b624b50ab89d2e711"
+    },
+    {
+      "bytes": 24544,
+      "path": "relevance_bucket_rankings_round1.parquet",
+      "sha256": "a940eac4643c767ffd2a03ae333d06572ea8d697a1f7bd6d60756b2ee4894fec"
+    },
+    {
+      "bytes": 24552,
+      "path": "relevance_bucket_rankings_round2.parquet",
+      "sha256": "d01114a5c436d13006c94df7cbf168d62794cfd2570b1daa13e479678744d9a0"
+    },
+    {
+      "bytes": 24449,
+      "path": "relevance_bucket_rankings_round3.parquet",
+      "sha256": "cd93a5805fce0e3a972ded62fc0123ea9fc7494a28ae9e65750a94c5802fd92a"
+    },
+    {
+      "bytes": 24408,
+      "path": "relevance_bucket_rankings_round4.parquet",
+      "sha256": "e9e260624999c5a64c7ad3fb8780c71caf1a4a303be5d6fc4fb1db96d869c215"
+    },
+    {
+      "bytes": 24370,
+      "path": "relevance_bucket_rankings_round5.parquet",
+      "sha256": "c759f99b3bc19719a5ce33caf91cca05af3db515d87acc4538cdfb8e5ccf61b5"
+    },
+    {
+      "bytes": 25870336,
+      "path": "requests.sqlite3",
+      "sha256": "d178ff2134e66e20853dc560448b9c6f301386dee5253097a207412e02294be2"
+    }
+  ],
+  "reason": "Skin Reaction v9 was replaced by the Stage-01-native release; preserve paid UID-only relevance review without carrying the superseded v7-derived library.",
+  "source_library_completed_stages": [
+    "source",
+    "clean",
+    "normalize"
+  ],
+  "source_library_manifest_sha256": "5c40949d64e07d99a4ad3f2007b87ca6a49bdc2c67aa7a82977f3172625e4146",
+  "source_library_root": "data/evidence_libraries/skin_reaction/v9",
+  "source_row_uid_migration_sha256": "4c2efaeb81d018dfa638809d551d54076527483815dacf6e36f0ab05c4b83916",
+  "source_stage3_records_sha256": "54bf585a93bb8d98f1c5137c11e9933762090cdf6b38a8a903722a837710c6c6",
+  "tournament_input_sha256": "54bf585a93bb8d98f1c5137c11e9933762090cdf6b38a8a903722a837710c6c6",
+  "tournament_model": "gpt-5.4-mini",
+  "tournament_status": "round5_complete_pending_review"
+}

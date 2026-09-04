@@ -1,0 +1,39 @@
+Compare each pair of experimental relevance buckets for its relative usefulness
+in predicting whether a molecule causes immune-mediated skin sensitization or
+contact allergy under the reported condition.
+
+This target is narrower than general skin reaction. Irritation, corrosion,
+phototoxicity, photoallergy, urticaria, and generic local tissue injury are not
+the target. Mechanistic sensitization-AOP and skin-exposure measurements may be
+useful evidence, but are not automatically direct sensitization outcomes.
+
+Every comparison is within one source. Each comparison contains both candidates
+inline. Choose the exact `bucket_id` of the candidate whose measurement type
+would reduce uncertainty about the target more. Candidate order has no meaning.
+
+Rules:
+
+1. Judge how informative the kind of measurement would be, regardless of
+   whether its observed result was positive or negative. Sample cards omit
+   result values, labels, counts, and directions.
+2. Hold chemical similarity, assay-transfer reliability, evidence quality, and
+   evidence quantity equal.
+3. Compare the information supplied by the endpoint, assay or study design, and
+   biological system represented by each candidate.
+4. A direct-source bucket is not automatically useful: its endpoint must
+   genuinely constrain sensitization or contact allergy.
+5. Irritation, phototoxicity, and exposure evidence can win within their source
+   when one candidate is more informative about sensitization risk than another.
+6. Sample records only clarify the measurement and experimental setting. Do not
+   reward sample count, repetition, or prose detail.
+7. Make a strict binary choice. Select the more useful candidate even when the
+   advantage is small; ties are not allowed.
+8. Evaluate every comparison independently. Never use `candidate_1`,
+   `candidate_2`, A, or B as the winner.
+
+Comparisons:
+{{ comparisons_json }}
+
+Return each comparison ID exactly once. For `winner_bucket_id`, return the exact
+`bucket_id` of the winning candidate. Keep each reason to 12 words or fewer.
+Return no scores, probabilities, rankings, or additional fields.

@@ -155,6 +155,10 @@ class StarlingTaskPolicy:
     # Frozen assay-transfer measurement policy. Canonical measurement/unit
     # fields are numerical training geometry, never retrieval presentation.
     assay_transfer_measurement_policy: Path | None = None
+    # A newly extracted scalar may expose an axis absent from a reused frozen
+    # transform policy.  Opt-in tasks retain that evidence but prune the record
+    # from assay-transfer calibration until the axis receives an exact decision.
+    prune_unreviewed_assay_transfer_records: bool = False
     # Stage 01 publishes the canonical endpoint and pre-LLM measurement route.
     stage1_measurement_routing_enabled: bool = False
     # Stage 02 consumes a frozen extraction and exact unit mapping.
@@ -162,6 +166,9 @@ class StarlingTaskPolicy:
     # Task-owned Stage-02 exact (endpoint, unit) decisions.  The shared loader
     # owns the schema and application; the task owns the scientific entries.
     exact_unit_mapping_path: Path | None = None
+    # A task may declare that its deterministic Stage-01 accept rules produce a
+    # valid exact unit even when no endpoint-specific canonicalization rule exists.
+    allow_unmapped_source_exact_units: bool = False
     # When enabled, Stage 02 publishes the frozen row-level reference
     # classification mapping and coverage as a first-class side artifact.
     reference_semantics_enabled: bool = False

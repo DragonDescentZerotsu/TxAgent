@@ -1,0 +1,114 @@
+{
+  "version": "non_direct_progressive_v7_relevance_bucket_luna.v1",
+  "status": "complete",
+  "task": "skin_reaction",
+  "ranking_universe": "progressive_v7_stage3_assay_transfer_eligible_non_direct",
+  "input": "data/evidence_libraries/skin_reaction/v7/03_pair_buckets/records.parquet",
+  "input_sha256": "a9805e6aa4fccbb5d97978567e8f520b76ddb79dd2f58fd8cdee0091a949bd65",
+  "prompt": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/prompts/skin_reaction_relevance_bucket_v1.jinja",
+  "prompt_sha256": "fba5366bd374f955d81673e451baca202a5765c31a038cafc7e1fe3977464bef",
+  "model": "openai/gpt-5.6-luna",
+  "base_url": "https://openrouter.ai/api/v1",
+  "reasoning_effort": "medium",
+  "max_completion_tokens": 8192,
+  "batch_size_maximum": 5,
+  "target_degree": 20,
+  "sources": [
+    "sensitization_aop",
+    "phototoxicity_irritation_local_damage",
+    "skin_exposure"
+  ],
+  "direct_sources_excluded": true,
+  "winner_contract": "exact_bucket_id_strict_binary",
+  "provider_routing": {
+    "only": [
+      "openai"
+    ],
+    "ignore": [
+      "openai/fast"
+    ],
+    "allow_fallbacks": true,
+    "require_parameters": true
+  },
+  "pricing_usd_per_million_tokens": {
+    "input": 0.2,
+    "output": 1.2
+  },
+  "relevance_bucket_columns": {
+    "sensitization_aop": [
+      "canonical_endpoint_concept",
+      "canonical_aop_event",
+      "canonical_assay_type",
+      "canonical_species_context"
+    ],
+    "phototoxicity_irritation_local_damage": [
+      "canonical_endpoint_concept",
+      "measurement_kind",
+      "canonical_evidence_system"
+    ],
+    "skin_exposure": [
+      "canonical_endpoint_concept",
+      "canonical_study_design",
+      "canonical_species_context"
+    ]
+  },
+  "source_counts": {
+    "sensitization_aop": {
+      "pair_buckets": 931,
+      "relevance_buckets": 760
+    },
+    "phototoxicity_irritation_local_damage": {
+      "pair_buckets": 25908,
+      "relevance_buckets": 138
+    },
+    "skin_exposure": {
+      "pair_buckets": 6456,
+      "relevance_buckets": 902
+    }
+  },
+  "relevance_bucket_count": 1800,
+  "pair_buckets_with_multiple_relevance_identities": 0,
+  "graph": {
+    "phototoxicity_irritation_local_damage": {
+      "bucket_count": 138,
+      "edge_count": 1380,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    },
+    "sensitization_aop": {
+      "bucket_count": 760,
+      "edge_count": 7600,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    },
+    "skin_exposure": {
+      "bucket_count": 902,
+      "edge_count": 9020,
+      "minimum_degree": 20,
+      "maximum_degree": 20,
+      "maximum_candidate_position_imbalance": 0,
+      "connected": true
+    }
+  },
+  "artifacts": {
+    "pair_bucket_relevance_map": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/skin_reaction/pair_bucket_relevance_map.parquet",
+    "request_cache": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/skin_reaction/requests.sqlite3"
+  },
+  "accepted_reason_word_limit": 24,
+  "usage": {
+    "input_tokens": 10617415,
+    "output_tokens": 1809905,
+    "actual_tokens": 12427320,
+    "completed_requests": 3600,
+    "reported_cost_usd": 4.295369
+  },
+  "served_models": {
+    "openai/gpt-5.6-luna": 3600
+  },
+  "ranking": "data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/skin_reaction/relevance_bucket_rankings.parquet",
+  "ranking_sha256": "860e750a7230d8b6678a7afc813b6756ee133424f2d2922de5e6425b96ee4d6f"
+}

@@ -309,6 +309,7 @@ def validate_response(
     comparisons: Sequence[sqlite3.Row],
     *,
     allow_ties: bool = True,
+    max_reason_words: int = 12,
 ) -> list[dict[str, str]]:
     if not isinstance(payload, Mapping) or set(payload) != {"items"}:
         raise ValueError("response must contain only items")
@@ -332,8 +333,10 @@ def validate_response(
             allowed.add("tie")
         if winner not in allowed:
             raise ValueError("winner is not a candidate in this comparison")
-        if not reason or len(reason.split()) > 12:
-            raise ValueError("reason must contain 1-12 words")
+        if not reason or len(reason.split()) > max_reason_words:
+            raise ValueError(
+                f"reason must contain 1-{max_reason_words} words"
+            )
         winner_key = winner
         if winner == bucket_id(row["bucket_a"]):
             winner_key = row["bucket_a"]
@@ -355,6 +358,7 @@ def _prepare_requests(
     condition: str,
     *,
     template_path: Path = TEMPLATE,
+    model: str = base.MODEL,
 ) -> list[str]:
     batch_ids = [
         row[0]
@@ -369,7 +373,7 @@ def _prepare_requests(
             "INSERT OR IGNORE INTO requests "
             "(batch_id, phase, prompt_sha256, prompt, status, requested_model) "
             "VALUES (?, ?, ?, ?, 'pending', ?)",
-            (batch_id, condition, base._hash(prompt), prompt, base.MODEL),
+            (batch_id, condition, base._hash(prompt), prompt, model),
         )
         cached = connection.execute(
             "SELECT prompt_sha256 FROM requests WHERE batch_id=?", (batch_id,)
@@ -390,9 +394,22 @@ def run_condition(
     template_path: Path = TEMPLATE,
     allow_ties: bool = True,
     credential_env: str | None = None,
+    model: str = base.MODEL,
+    reasoning_effort: str = base.REASONING_EFFORT,
+    max_completion_tokens: int = base.MAX_COMPLETION_TOKENS,
+    max_tokens_parameter: str = "max_completion_tokens",
+    base_url: str = base.BASE_URL,
+    provider: str = "openai",
+    request_extra_body: Mapping[str, Any] | None = None,
+    max_cost_usd: float | None = None,
+    input_cost_per_million: float = 0.0,
+    output_cost_per_million: float = 0.0,
+    max_reason_words: int = 12,
 ) -> None:
+    if max_tokens_parameter not in {"max_completion_tokens", "max_tokens"}:
+        raise ValueError(f"unsupported max-token parameter: {max_tokens_parameter}")
     batch_ids = _prepare_requests(
-        connection, condition, template_path=template_path
+        connection, condition, template_path=template_path, model=model
     )
     pending = [
         batch_id
@@ -410,8 +427,8 @@ def run_condition(
     if spent >= token_budget:
         raise RuntimeError("actual-token budget is exhausted")
     client, credential = openai_compatible_client(
-        base_url=base.BASE_URL,
-        provider="openai",
+        base_url=base_url,
+        provider=provider,
         env_file=env_file,
         credential_env=credential_env,
         max_connections=parallelism,
@@ -428,16 +445,24 @@ def run_condition(
         last_error = None
         total_input_tokens = 0
         total_output_tokens = 0
-        for attempt in range(1, 4):
+        attempts = 0
+        validation_failures = 0
+        while attempts < 8:
+            attempts += 1
             try:
-                completion = client.chat.completions.create(
-                    model=base.MODEL,
-                    messages=[{"role": "user", "content": prompt}],
-                    reasoning_effort=base.REASONING_EFFORT,
-                    max_completion_tokens=base.MAX_COMPLETION_TOKENS,
-                    response_format=response_format(
+                request: dict[str, Any] = {
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "reasoning_effort": reasoning_effort,
+                    "response_format": response_format(
                         comparisons, allow_ties=allow_ties
                     ),
+                }
+                request[max_tokens_parameter] = max_completion_tokens
+                if request_extra_body:
+                    request["extra_body"] = dict(request_extra_body)
+                completion = client.chat.completions.create(
+                    **request,
                 )
                 usage = completion.usage
                 total_input_tokens += int(
@@ -450,6 +475,7 @@ def run_condition(
                     json.loads(completion.choices[0].message.content),
                     comparisons,
                     allow_ties=allow_ties,
+                    max_reason_words=max_reason_words,
                 )
                 return (
                     batch_id,
@@ -457,71 +483,103 @@ def run_condition(
                     str(completion.model),
                     total_input_tokens,
                     total_output_tokens,
-                    attempt,
+                    attempts,
                     None,
                 )
+            except ValueError as error:
+                last_error = f"{type(error).__name__}: {error}"
+                validation_failures += 1
+                if validation_failures >= 3:
+                    break
+                time.sleep(2 ** (validation_failures - 1))
             except Exception as error:
                 last_error = f"{type(error).__name__}: {error}"
-                if attempt < 3:
-                    time.sleep(2 ** (attempt - 1))
+                if attempts < 8:
+                    time.sleep(min(30, 2 ** attempts))
         return (
             batch_id,
             None,
             None,
             total_input_tokens,
             total_output_tokens,
-            3,
+            attempts,
             last_error,
         )
 
+    def cost(input_tokens: int, output_tokens: int) -> float:
+        return (
+            input_tokens * input_cost_per_million
+            + output_tokens * output_cost_per_million
+        ) / 1_000_000
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=parallelism) as pool:
-        futures = {
-            pool.submit(call, batch_id, *jobs[batch_id]): batch_id
-            for batch_id in pending
-        }
-        for future in concurrent.futures.as_completed(futures):
-            batch_id, items, model, input_tokens, output_tokens, attempts, error = (
-                future.result()
-            )
-            if error:
+        for offset in range(0, len(pending), parallelism):
+            wave = pending[offset : offset + parallelism]
+            if max_cost_usd is not None:
+                reported = connection.execute(
+                    "SELECT coalesce(sum(input_tokens),0), "
+                    "coalesce(sum(output_tokens),0) FROM requests"
+                ).fetchone()
+                reservation = sum(
+                    cost(
+                        3 * len(jobs[batch_id][0].encode("utf-8")),
+                        3 * max_completion_tokens,
+                    )
+                    for batch_id in wave
+                )
+                if cost(int(reported[0]), int(reported[1])) + reservation > max_cost_usd:
+                    raise RuntimeError("conservative dollar budget is exhausted")
+            futures = {
+                pool.submit(call, batch_id, *jobs[batch_id]): batch_id
+                for batch_id in wave
+            }
+            wave_successes = 0
+            for future in concurrent.futures.as_completed(futures):
+                batch_id, items, model, input_tokens, output_tokens, attempts, error = (
+                    future.result()
+                )
+                if error:
+                    connection.execute(
+                        "UPDATE requests SET status='failed', attempts=attempts+?, "
+                        "input_tokens=input_tokens+?, output_tokens=output_tokens+?, error=? "
+                        "WHERE batch_id=?",
+                        (attempts, input_tokens, output_tokens, error, batch_id),
+                    )
+                    connection.commit()
+                    continue
+                wave_successes += 1
+                current = connection.execute(
+                    "SELECT coalesce(sum(input_tokens + output_tokens), 0) FROM requests "
+                ).fetchone()[0]
+                if current + input_tokens + output_tokens > token_budget:
+                    raise RuntimeError("actual-token budget exceeded")
+                comparisons = {
+                    _display_id(row["comparison_id"]): row
+                    for row in _comparisons(connection, batch_id)
+                }
+                for item in items:
+                    comparison_id = comparisons[item["id"]]["comparison_id"]
+                    connection.execute(
+                        "UPDATE comparisons SET winner=?, reason=? WHERE comparison_id=?",
+                        (item["winner_key"], item["reason"], comparison_id),
+                    )
                 connection.execute(
-                    "UPDATE requests SET status='failed', attempts=attempts+?, "
-                    "input_tokens=input_tokens+?, output_tokens=output_tokens+?, error=? "
-                    "WHERE batch_id=?",
-                    (attempts, input_tokens, output_tokens, error, batch_id),
+                    "UPDATE requests SET status='complete', attempts=attempts+?, served_model=?, "
+                    "input_tokens=input_tokens+?, output_tokens=output_tokens+?, response_json=?, error=NULL, "
+                    "completed_at=? WHERE batch_id=?",
+                    (
+                        attempts,
+                        model,
+                        input_tokens,
+                        output_tokens,
+                        base._canonical_json(items),
+                        time.time(),
+                        batch_id,
+                    ),
                 )
                 connection.commit()
-                continue
-            current = connection.execute(
-                "SELECT coalesce(sum(input_tokens + output_tokens), 0) FROM requests "
-            ).fetchone()[0]
-            if current + input_tokens + output_tokens > token_budget:
-                raise RuntimeError("actual-token budget exceeded")
-            comparisons = {
-                _display_id(row["comparison_id"]): row
-                for row in _comparisons(connection, batch_id)
-            }
-            for item in items:
-                comparison_id = comparisons[item["id"]]["comparison_id"]
-                connection.execute(
-                    "UPDATE comparisons SET winner=?, reason=? WHERE comparison_id=?",
-                    (item["winner_key"], item["reason"], comparison_id),
-                )
-            connection.execute(
-                "UPDATE requests SET status='complete', attempts=attempts+?, served_model=?, "
-                "input_tokens=input_tokens+?, output_tokens=output_tokens+?, response_json=?, error=NULL, "
-                "completed_at=? WHERE batch_id=?",
-                (
-                    attempts,
-                    model,
-                    input_tokens,
-                    output_tokens,
-                    base._canonical_json(items),
-                    time.time(),
-                    batch_id,
-                ),
-            )
-            connection.commit()
+            if not wave_successes:
+                raise RuntimeError("every request in the current wave failed")
     failed = connection.execute(
         "SELECT count(*) FROM requests WHERE phase=? AND status!='complete'",
         (condition,),

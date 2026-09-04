@@ -63,11 +63,11 @@ def _answers(expected: dict[str, Any]) -> list[dict[str, Any]]:
     return [expected, *expected.get("alternatives", [])]
 
 
-def _canonical_pair(pair: dict[str, Any]) -> tuple[float, str] | None:
+def _canonical_pair(pair: dict[str, Any], *, task: str) -> tuple[float, str] | None:
     """Fold harmless spelling/scale variants through the production normalizer."""
     try:
         normalized = normalize_measurement_and_unit(
-            pair["measurement"], pair["unit"], task="bbb_martins"
+            pair["measurement"], pair["unit"], task=task
         )
         value = parse_point_measurement(normalized.canonical_measurement).value
     except (KeyError, TypeError, ValueError):
@@ -77,10 +77,12 @@ def _canonical_pair(pair: dict[str, Any]) -> tuple[float, str] | None:
     return float(value), normalized.canonical_unit
 
 
-def _pair_matches(predicted: dict[str, Any], gold: dict[str, Any]) -> tuple[bool, bool, bool]:
+def _pair_matches(
+    predicted: dict[str, Any], gold: dict[str, Any], *, task: str
+) -> tuple[bool, bool, bool]:
     raw_measurement = _same_number(predicted.get("measurement"), gold.get("measurement"))
     raw_unit = _clean_unit(predicted.get("unit")) == _clean_unit(gold.get("unit"))
-    predicted_canonical = _canonical_pair(predicted)
+    predicted_canonical = _canonical_pair(predicted, task=task)
     gold_scalar = gold.get("expected_scalar")
     gold_unit = gold.get("expected_canonical_unit")
     scalar_match = raw_measurement
@@ -93,7 +95,9 @@ def _pair_matches(predicted: dict[str, Any], gold: dict[str, Any]) -> tuple[bool
     return scalar_match, unit_match, scalar_match and unit_match
 
 
-def _score_case(case: dict[str, Any], prediction: dict[str, Any]) -> dict[str, Any]:
+def _score_case(
+    case: dict[str, Any], prediction: dict[str, Any], *, task: str
+) -> dict[str, Any]:
     expected = case["expected"]
     gold_pairs = expected["measurements"]
     predicted_pairs = _pairs(prediction)
@@ -121,7 +125,7 @@ def _score_case(case: dict[str, Any], prediction: dict[str, Any]) -> dict[str, A
             if answer["status"] != "ok" or len(predicted_pairs) != len(answer_pairs):
                 continue
             comparisons = [
-                _pair_matches(predicted, gold)
+                _pair_matches(predicted, gold, task=task)
                 for predicted, gold in zip(predicted_pairs, answer_pairs)
             ]
             answer_matches.append(
@@ -155,6 +159,11 @@ def _score_case(case: dict[str, Any], prediction: dict[str, Any]) -> dict[str, A
         "record_match": status_match and (
             pair_match if expected["status"] == "ok" else not predicted_pairs
         ),
+        "ok_pair_correct": bool(
+            prediction.get("status") == "ok"
+            and expected["status"] == "ok"
+            and pair_match
+        ),
         "assignment_method": prediction.get("assignment_method"),
     }
 
@@ -185,7 +194,11 @@ def evaluate(
             f"mapping contains {len(unknown)} row(s) absent from gold; first={unknown[0]}"
         )
     scored = [
-        _score_case(gold[str(row["cleaned_record_id"])], row)
+        _score_case(
+            gold[str(row["cleaned_record_id"])],
+            row,
+            task=str(gold_manifest["task_id"]),
+        )
         for row in predictions
     ]
     gold_ok = [row for row in scored if row["gold_status"] == "ok"]
@@ -218,6 +231,10 @@ def evaluate(
             recovered_ok, "measurement_match"
         ),
         "unit_given_ok_prediction": _accuracy(recovered_ok, "unit_match"),
+        "pair_given_ok_prediction": _accuracy(
+            [row for row in scored if row["predicted_status"] == "ok"],
+            "ok_pair_correct",
+        ),
         "whole_record": _accuracy(scored, "record_match"),
         "by_source": {
             source: {

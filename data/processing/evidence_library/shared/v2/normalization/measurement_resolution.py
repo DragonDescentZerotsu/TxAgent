@@ -15,7 +15,7 @@ from data.processing.evidence_library.shared.v2.normalization.cleaning import (
     file_sha256,
     stable_id,
 )
-RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v4"
+RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v5"
 EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v2"
 _LEGACY_EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"
 DEFAULT_EXPECTED_ROUTING_VERSION = "starling_measurement_routing.v5"
@@ -133,6 +133,7 @@ def _apply_unit_rule(
     unit: Any,
     unit_mapping: dict[tuple[str, str, str], dict[str, Any]],
     unit_is_canonical: bool = False,
+    allow_identity_fallback: bool = False,
 ) -> None:
     endpoint = str(record.get("canonical_endpoint_name") or "")
     input_unit = str(unit or "").strip()
@@ -147,6 +148,17 @@ def _apply_unit_rule(
         if unit_is_canonical
         else unit_mapping.get(key) or unit_mapping.get((task, "*", input_unit))
     )
+    rule_source = (
+        "source_declared_canonical" if unit_is_canonical else "frozen_exact_map"
+    )
+    if rule is None and allow_identity_fallback:
+        rule = {
+            "action": "map",
+            "canonical_unit": input_unit,
+            "scale": "1",
+            "domain": "any",
+        }
+        rule_source = "source_exact_identity"
     if rule is None:
         raise ValueError(f"exact unit mapping has no rule for {key}")
     record.update(
@@ -155,6 +167,7 @@ def _apply_unit_rule(
             "measurement_resolution_input_unit": input_unit,
             "measurement_unit_mapping_action": rule["action"],
             "measurement_unit_mapping_scale": rule.get("scale"),
+            "measurement_unit_mapping_rule_source": rule_source,
             "measurement_numeric_domain": rule.get("domain", "any"),
             "resolved_measurement_text": None,
             "resolved_unit_text": None,
@@ -199,6 +212,7 @@ def apply_measurement_resolution(
     allow_partial: bool = False,
     ignored_record_ids: set[str] | None = None,
     expected_routing_version: str = DEFAULT_EXPECTED_ROUTING_VERSION,
+    allow_unmapped_source_exact_units: bool = False,
 ) -> dict[str, Any]:
     """Join resolved quantities, explode them, and exact-map their units."""
     mapping = load_measurement_resolution(mapping_path) if mapping_path else {}
@@ -268,6 +282,17 @@ def apply_measurement_resolution(
                 else unit_mapping.get(key)
                 or unit_mapping.get((task, "*", key[2]))
             )
+            if (
+                rule is None
+                and route == "accept"
+                and allow_unmapped_source_exact_units
+            ):
+                rule = {
+                    "action": "map",
+                    "canonical_unit": key[2],
+                    "scale": "1",
+                    "domain": "any",
+                }
             if rule is None:
                 raise ValueError(f"exact unit mapping has no rule for {key}")
             if rule["action"] == "map":
@@ -362,6 +387,9 @@ def apply_measurement_resolution(
                             )
                         )
                     ),
+                    allow_identity_fallback=(
+                        route == "accept" and allow_unmapped_source_exact_units
+                    ),
                 )
                 unit_counts[str(record["measurement_unit_mapping_status"])] += 1
             records.append(record)
@@ -396,6 +424,11 @@ def apply_measurement_resolution(
         "status_counts": dict(sorted(counts.items())),
         "ok_origin_counts": dict(sorted(origin_counts.items())),
         "unit_mapping_status_counts": dict(sorted(unit_counts.items())),
+        "source_exact_identity_unit_rows": sum(
+            row.get("measurement_unit_mapping_rule_source")
+            == "source_exact_identity"
+            for row in records
+        ),
         "substituted_rows": unit_counts["mapped"],
         "exploded_child_rows": len(records) - sum(counts.values()),
         "extract_rows_without_a_resolution": len(uncovered),
