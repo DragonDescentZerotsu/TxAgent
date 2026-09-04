@@ -109,9 +109,18 @@ cleanup decision.
 
 ## Viewer contract
 
-The trace viewer reads retained manifests and predictions; it must not infer
-lineage from directory names. It shows whether a query/level was called, reused,
-or carried forward, together with its visibility and retrieval policies.
+The trace viewer supports only the current append-only progressive pipeline.
+The launcher resolves scaffold task roots and current/stale status from
+`current_conditioned_results.json`; it must not infer lineage from directory
+names. The viewer aligns Prior and L1...LN predictions by query index, shows
+correctness transitions and prediction flips, and loads each level's
+`prepared.json`, `request.json`, and `output.json` on demand. It also shows
+whether a level was called, reused, or carried forward. The right-side level
+view is intentionally limited to vertically stacked, collapsible Prompt,
+Reasoning, and Output sections; Prior is labeled separately because it is not
+a model call. Structured fields use a title-above-value layout. Serialized JSON
+in the user message is parsed into semantic prompt sections, analogs, and
+evidence cards; raw message JSON remains available only as a nested audit view.
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776

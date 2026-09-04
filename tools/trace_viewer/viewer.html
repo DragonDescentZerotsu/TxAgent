@@ -4,177 +4,158 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-store">
-<title>Paper Reasoning Trace Viewer</title>
+<title>Progressive Agent Trace Viewer</title>
 <style>
   * { box-sizing: border-box; }
   :root {
-    --bg: #f4f6f8;
-    --panel: #ffffff;
-    --line: #dce2e8;
-    --muted: #64748b;
-    --text: #17202a;
-    --nav: #17212b;
-    --blue: #1d5fa7;
-    --green: #087a55;
-    --red: #b42318;
-    --amber: #a15c00;
+    --bg: #eef2f5; --panel: #fff; --line: #d8e0e7; --muted: #667786;
+    --text: #16232d; --nav: #132a35; --nav-panel: #1c3a47; --blue: #1769aa;
+    --green: #087a55; --green-bg: #e7f6ef; --red: #b42318; --red-bg: #fff0ee;
+    --amber: #9a5b00; --amber-bg: #fff6df;
   }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
-  header { position: sticky; top: 0; z-index: 10; padding: 12px 18px; color: #fff; background: var(--nav); box-shadow: 0 2px 8px rgba(0,0,0,.18); }
-  h1 { margin: 0 0 10px; font-size: 18px; letter-spacing: 0; }
-  .build { margin-left: 8px; color: #9bc5ed; font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .toolbar { display: grid; grid-template-columns: 190px 190px 170px minmax(260px, 1fr) auto; gap: 8px; align-items: end; }
+  body { margin: 0; color: var(--text); background: var(--bg); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+  header { position: sticky; top: 0; z-index: 10; padding: 12px 18px; color: #fff; background: var(--nav); box-shadow: 0 2px 9px rgba(0,0,0,.2); }
+  h1 { margin: 0 0 9px; font-size: 1.15rem; }
+  .build { margin-left: 7px; color: #91c9e6; font: .75rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .toolbar { display: grid; grid-template-columns: minmax(220px, 320px) minmax(260px, 1fr) auto; gap: 9px; align-items: end; }
   .control { display: grid; gap: 4px; }
-  label { color: #cbd5e1; font-size: 11px; font-weight: 700; }
-  select, input, button { min-height: 34px; border-radius: 5px; font: 13px inherit; }
-  select, input { width: 100%; border: 1px solid #526171; padding: 6px 8px; color: #fff; background: #263442; }
-  button { border: 0; padding: 7px 12px; color: #fff; background: var(--blue); cursor: pointer; font-weight: 700; }
+  label { color: #c9d6dd; font-size: .78rem; font-weight: 750; }
+  select, input, button { min-height: 36px; border-radius: 6px; font: .88rem inherit; }
+  select, input { width: 100%; border: 1px solid #5c7180; padding: 6px 9px; color: #fff; background: var(--nav-panel); }
+  button { border: 0; padding: 7px 13px; color: #fff; background: var(--blue); cursor: pointer; font-weight: 750; }
   button:disabled { opacity: .55; cursor: wait; }
-  main { max-width: 1600px; margin: 0 auto; padding: 14px; }
-  .layout { display: grid; grid-template-columns: 350px minmax(0, 1fr); gap: 14px; }
-  aside, .section { border: 1px solid var(--line); background: var(--panel); }
-  aside { position: sticky; top: 116px; align-self: start; max-height: calc(100vh - 130px); overflow: hidden; }
-  .aside-head, .section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 11px; border-bottom: 1px solid var(--line); background: #edf1f4; font-size: 13px; font-weight: 750; }
-  .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 9px; border-bottom: 1px solid var(--line); }
-  .filters input { grid-column: 1 / -1; color: var(--text); background: #fff; border-color: #b9c3ce; }
-  .filters select { color: var(--text); background: #fff; border-color: #b9c3ce; }
-  .sample-list { max-height: calc(100vh - 286px); overflow: auto; padding: 8px; }
-  .sample { width: 100%; margin-bottom: 6px; padding: 8px 9px; text-align: left; color: var(--text); background: #fff; border: 1px solid var(--line); border-radius: 5px; }
+  main { max-width: 1720px; margin: 0 auto; padding: 14px; }
+  .layout { display: grid; grid-template-columns: 410px minmax(0, 1fr); gap: 14px; align-items: start; }
+  aside, .section { border: 1px solid var(--line); border-radius: 7px; background: var(--panel); overflow: hidden; }
+  aside { position: sticky; top: 111px; max-height: calc(100vh - 125px); }
+  .aside-head, .section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 11px; border-bottom: 1px solid var(--line); background: #e9eef2; font-size: .86rem; font-weight: 780; }
+  details.section > summary.section-head { cursor: pointer; }
+  .filters { display: grid; grid-template-columns: 1fr 145px; gap: 7px; padding: 9px; border-bottom: 1px solid var(--line); }
+  .filters input, .filters select { color: var(--text); background: #fff; border-color: #aebbc5; }
+  .sample-list { max-height: calc(100vh - 250px); overflow: auto; padding: 8px; }
+  .sample { width: 100%; margin-bottom: 7px; padding: 9px; text-align: left; color: var(--text); background: #fff; border: 1px solid var(--line); border-radius: 6px; }
+  .sample:hover { border-color: #8eaec3; }
   .sample.active { border-color: var(--blue); box-shadow: inset 3px 0 0 var(--blue); }
-  .sample-main { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
-  .sample-sub { margin-top: 4px; color: var(--muted); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sample-main { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; }
+  .sample-sub { margin-top: 5px; color: var(--muted); font: .75rem ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .detail { min-width: 0; display: grid; gap: 12px; }
-  .overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+  .overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 1px; background: var(--line); }
   .metric { min-width: 0; padding: 9px 11px; background: #fff; }
-  .metric-key { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
-  .metric-value { margin-top: 4px; font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; white-space: pre-wrap; }
-  .stage-nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 11px; }
-  .pill { display: inline-flex; gap: 5px; align-items: center; padding: 3px 8px; border: 1px solid #ced7e0; border-radius: 999px; background: #f7f9fb; color: #344256; font-size: 11px; font-weight: 750; }
-  .ok { color: var(--green); }
-  .bad { color: var(--red); }
-  .warn { color: var(--amber); }
-  .tag { color: var(--muted); font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .section-body { padding: 10px 11px; }
+  .metric-key { color: var(--muted); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+  .metric-value { margin-top: 4px; font: .82rem ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; white-space: pre-wrap; }
+  .status-banner { padding: 9px 11px; border-top: 1px solid var(--line); font-size: .82rem; }
+  .status-banner.current { color: var(--green); background: var(--green-bg); }
+  .status-banner.stale { color: var(--amber); background: var(--amber-bg); }
+  .trajectory { display: flex; align-items: center; gap: 3px; min-width: 0; margin-top: 7px; }
+  .trajectory.large { gap: 7px; padding: 13px; overflow-x: auto; }
+  .trajectory-arrow { flex: 0 0 8px; height: 2px; background: #aab6bf; }
+  .trajectory.large .trajectory-arrow { flex-basis: 18px; }
+  .trajectory-node { display: inline-grid; place-items: center; flex: 0 0 23px; height: 23px; border: 2px solid #8b99a4; border-radius: 50%; color: #52606a; background: #fff; font: 700 .66rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .trajectory.large .trajectory-node { flex-basis: 38px; height: 38px; font-size: .78rem; }
+  .trajectory-node.correct { color: #fff; border-color: var(--green); background: var(--green); }
+  .trajectory-node.wrong { color: #fff; border-color: var(--red); background: var(--red); }
+  .trajectory-node.failed { color: var(--amber); border-color: var(--amber); background: var(--amber-bg); }
+  .trajectory-node.carried { border-style: dashed; box-shadow: inset 0 0 0 2px rgba(255,255,255,.72); }
+  .trajectory-labels { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 13px 13px; }
+  .pill { display: inline-flex; gap: 5px; align-items: center; padding: 3px 8px; border: 1px solid #cbd6de; border-radius: 999px; color: #334653; background: #f7f9fa; font-size: .73rem; font-weight: 750; }
+  .ok { color: var(--green); } .bad { color: var(--red); } .warn { color: var(--amber); }
+  .tag { color: var(--muted); font: .72rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .summary-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+  .summary-table th, .summary-table td { padding: 8px 9px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  .summary-table th:first-child, .summary-table td:first-child { text-align: left; }
+  .summary-table th { color: #455867; background: #f5f7f9; font-size: .72rem; text-transform: uppercase; }
   .stage { border-top: 1px solid var(--line); }
   .stage:first-child { border-top: 0; }
-  .stage > summary { display: flex; justify-content: space-between; gap: 10px; padding: 10px 11px; cursor: pointer; background: #f8fafb; font-size: 13px; font-weight: 750; }
-  .stage-content { min-width: 0; padding: 11px; display: grid; gap: 10px; }
+  .stage > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 9px; padding: 10px 11px; cursor: pointer; background: #f7f9fa; font-size: .86rem; font-weight: 760; }
+  .stage-content { min-width: 0; padding: 11px; display: grid; gap: 11px; }
   .stage-meta { display: flex; flex-wrap: wrap; gap: 6px; }
-  .json, .json-object, .json-array, .array-item { min-width: 0; }
-  .json { display: grid; gap: 7px; }
-  .json-row { min-width: 0; display: grid; gap: 9px; padding: 5px 0; border-bottom: 1px solid #edf1f4; }
-  .json-object.json-depth-0 > .json-row { grid-template-columns: minmax(110px, 180px) minmax(0, 1fr); }
-  .json-object:not(.json-depth-0) > .json-row { grid-template-columns: minmax(0, 1fr); gap: 3px; padding: 6px 0; }
-  .json-key { color: #596879; font-size: 12px; font-weight: 750; overflow-wrap: anywhere; }
-  .json-value { min-width: 0; font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .json-object { margin: 3px 0 5px; }
-  .json-object.json-depth-0 { padding-left: 0; border-left: 0; }
-  .json-object:not(.json-depth-0) {
-    margin: 5px 0;
-    padding: 6px 8px;
-    border: 1px solid #cfdfed;
-    border-left: 4px solid #6798c6;
-    border-radius: 5px;
-    background: #f6faff;
-  }
-  .json-object.json-depth-2 { border-color: #cce3d6; border-left-color: #62a17e; background: #f5fbf7; }
-  .json-object.json-depth-3 { border-color: #eadcbf; border-left-color: #b58b3f; background: #fdfaf3; }
-  .json-object.json-depth-4 { border-color: #ded4eb; border-left-color: #8c6bb1; background: #faf7fd; }
-  .json-object.json-depth-5 { border-color: #ecd2d8; border-left-color: #b96f7f; background: #fdf7f8; }
-  .json-object.json-depth-6 { border-color: #d5dce3; border-left-color: #758493; background: #f8fafb; }
-  .json-object:not(.json-depth-0) > .json-row > .json-key {
-    width: fit-content;
-    max-width: 100%;
-    padding: 1px 6px;
-    border-radius: 3px;
-    color: #315d89;
-    background: #edf5fc;
-    font-size: 11px;
-  }
-  .json-object.json-depth-2 > .json-row > .json-key { color: #356b51; background: #edf7f1; }
-  .json-object.json-depth-3 > .json-row > .json-key { color: #765b2a; background: #faf5e9; }
-  .json-object.json-depth-4 > .json-row > .json-key { color: #62477e; background: #f2ecf8; }
-  .json-object.json-depth-5 > .json-row > .json-key { color: #854b58; background: #f9ecef; }
-  .json-object.json-depth-6 > .json-row > .json-key { color: #52606d; background: #eef1f4; }
+  .trace-part { min-width: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #fff; }
+  .trace-part > summary { display: block; padding: 10px 11px; cursor: pointer; color: #263d4a; background: #edf2f5; font-size: .86rem; font-weight: 800; }
+  .trace-part > summary span { display: block; margin-top: 2px; color: var(--muted); font-size: .75rem; font-weight: 500; }
+  .trace-part-body { padding: 11px; }
+  .prior-note { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 11px; border-top: 1px solid var(--line); background: #f8fafb; }
+  .json-object, .json-array, .array-item { min-width: 0; }
+  .json-row { min-width: 0; display: block; padding: 7px 0; border-bottom: 1px solid #edf1f4; }
+  .json-key { color: #596b78; font-size: .76rem; font-weight: 760; overflow-wrap: anywhere; }
+  .json-value { display: block; min-width: 0; margin-top: 4px; font-size: .84rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .json-object:not(.json-depth-0) { margin: 5px 0; padding: 6px 8px; border: 1px solid #ccdeeb; border-left: 4px solid #6191b7; border-radius: 5px; background: #f5f9fc; }
+  .json-object:not(.json-depth-0) > .json-row > .json-key { width: fit-content; padding: 1px 6px; color: #315d7d; background: #e9f2f8; border-radius: 3px; font-size: .72rem; }
   .json-array { display: grid; gap: 7px; }
-  .json-array:not(.json-depth-0) { padding-left: 8px; }
-  .array-item { min-width: 0; padding: 7px 8px; border-left: 3px solid #7ea7cf; background: #f8fafb; }
-  .json-array.json-depth-2 > .array-item { border-left-color: #77aa91; }
-  .json-array.json-depth-3 > .array-item { border-left-color: #b49a68; }
-  .json-array.json-depth-4 > .array-item { border-left-color: #8c6bb1; background: #faf7fd; }
-  .json-array.json-depth-5 > .array-item { border-left-color: #b96f7f; background: #fdf7f8; }
-  .json-array.json-depth-6 > .array-item { border-left-color: #758493; }
-  .messages { display: grid; gap: 8px; }
-  .message { min-width: 0; border-top: 1px solid var(--line); padding-top: 8px; }
+  .array-item { padding: 7px 8px; border-left: 3px solid #7ea7c4; background: #f8fafb; }
+  .card-id-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 3px 0; }
+  .card-id-chip { padding: 2px 7px; border: 1px solid #bfd1de; border-radius: 999px; color: #315d7d; background: #edf5fa; font: .72rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .messages { display: grid; gap: 9px; }
+  .message { min-width: 0; border-top: 1px solid var(--line); padding-top: 9px; }
   .message:first-child { border-top: 0; }
   .message-head { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 7px; }
-  .role { padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-  .role-system { color: #344256; background: #e7ecf1; }
-  .role-user { color: #174b85; background: #dcecff; }
-  .role-assistant { color: #056044; background: #d9f5e9; }
-  .role-tool { color: #8c4d00; background: #fff0d5; }
-  .content-block { min-width: 0; margin-top: 7px; padding: 8px 9px; border-left: 3px solid #b8c4d0; background: #fafbfc; }
+  .role { padding: 2px 7px; border-radius: 999px; font-size: .69rem; font-weight: 800; text-transform: uppercase; }
+  .role-system { color: #344256; background: #e7ecf1; } .role-user { color: #174b85; background: #dcecff; }
+  .role-assistant { color: #056044; background: #d9f5e9; } .role-tool { color: #8c4d00; background: #fff0d5; }
+  .prompt-payload { display: grid; gap: 8px; }
+  .prompt-section, .prompt-analog { border: 1px solid var(--line); border-radius: 5px; overflow: hidden; background: #fff; }
+  .prompt-section > summary, .prompt-analog > summary { padding: 8px 10px; cursor: pointer; color: #27485d; background: #f2f6f8; font-size: .8rem; font-weight: 800; }
+  .prompt-section-body { display: grid; gap: 9px; padding: 9px 10px; }
+  .prompt-analog-list, .evidence-card-list { display: grid; gap: 7px; }
+  .analog-summary-tags { display: inline-flex; flex-wrap: wrap; gap: 5px; margin-left: 7px; vertical-align: middle; }
+  .analog-summary-tags .pill { padding: 1px 6px; font-size: .67rem; }
+  .analog-structure { padding: 6px 8px; border: 1px solid #dbe4ea; border-radius: 4px; background: #fff; }
+  .analog-structure .evidence-field-value { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .evidence-card { padding: 8px 9px; border-left: 3px solid #4f8db7; background: #f7fafc; }
+  .evidence-card-head { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 5px; }
+  .evidence-card-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 5px; }
+  .evidence-field { min-width: 0; padding: 5px 7px; border: 1px solid #e0e7ec; border-radius: 4px; background: #fff; }
+  .evidence-field-key { color: var(--muted); font-size: .66rem; font-weight: 800; text-transform: uppercase; }
+  .evidence-field-value { margin-top: 2px; font-size: .77rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .evidence-support { margin-top: 6px; padding: 7px 8px; border-left: 3px solid #9db6c8; background: #fff; }
+  .evidence-support .evidence-field-value { font-size: .8rem; line-height: 1.45; }
+  .content-block { min-width: 0; margin-top: 7px; padding: 8px 9px; border-left: 3px solid #aab9c4; background: #fafbfc; }
   .content-block.reasoning { border-left-color: #d97706; background: #fff8ed; }
-  .content-block.tool { border-left-color: #7257b5; background: #f7f4ff; }
-  .block-title { margin-bottom: 5px; color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
-  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
-  details.raw > summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: .78rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  details.raw > summary { cursor: pointer; color: var(--muted); font-size: .78rem; }
   .empty, .loading { padding: 34px 20px; text-align: center; color: var(--muted); }
-  .error { padding: 12px; color: var(--red); background: #fff1f0; border: 1px solid #f1b8b3; }
-  @media (max-width: 900px) {
-    .toolbar { grid-template-columns: 1fr 1fr; }
-    .layout { grid-template-columns: 1fr; }
-    aside { position: static; max-height: none; }
-    .sample-list { max-height: 340px; }
+  .error { padding: 12px; color: var(--red); background: var(--red-bg); border: 1px solid #f1b8b3; }
+  @media (max-width: 980px) {
+    .toolbar { grid-template-columns: 1fr auto; } .toolbar .control:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+    .layout { grid-template-columns: 1fr; } aside { position: static; max-height: none; } .sample-list { max-height: 410px; }
   }
-  @media (min-width: 901px) and (max-width: 1200px) {
-    .json-object.json-depth-0 > .json-row { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  @media (max-width: 620px) {
+    main { padding: 8px; } .toolbar, .filters { grid-template-columns: 1fr; }
+    .toolbar .control:nth-child(2) { grid-column: auto; grid-row: auto; }
+    .summary-table { font-size: .72rem; } .summary-table th, .summary-table td { padding: 7px 5px; }
   }
 </style>
 </head>
 <body>
 <header>
-  <h1>Paper Reasoning Trace Viewer <span class="build">paper-v2</span></h1>
+  <h1>Progressive Agent Trace Viewer <span class="build">paper-v3</span></h1>
   <div class="toolbar">
-    <div class="control"><label for="dataset">Benchmark dataset</label><select id="dataset"></select></div>
-    <div class="control"><label for="regime">Visibility</label><select id="regime"></select></div>
-    <div class="control"><label for="task">Task</label><select id="task"></select></div>
-    <div class="control"><label for="condition">Experiment condition</label><select id="condition"></select></div>
+    <div class="control"><label for="task">Current scaffold-valid task</label><select id="task"></select></div>
+    <div class="control"><label for="search">Find sample</label><input id="search" type="text" placeholder="Index, label, prediction, confidence or trajectory"></div>
     <button id="refresh">Refresh</button>
   </div>
 </header>
 <main>
   <div class="layout">
     <aside>
-      <div class="aside-head"><span>Test samples</span><span id="count" class="tag">0</span></div>
+      <div class="aside-head"><span>Samples</span><span id="count" class="tag">0</span></div>
       <div class="filters">
-        <input id="search" type="text" placeholder="Search index, prediction, SMILES, summary">
-        <select id="correctness">
-          <option value="">All outcomes</option>
-          <option value="correct">Correct</option>
-          <option value="wrong">Wrong</option>
+        <select id="trajectoryFilter" aria-label="Filter by trajectory">
+          <option value="">All trajectories</option><option value="always_correct">Always correct</option><option value="always_wrong">Always wrong</option>
+          <option value="rescued">Rescued</option><option value="harmed">Harmed</option><option value="oscillating">Oscillating</option><option value="incomplete">Incomplete</option>
         </select>
-        <select id="status">
-          <option value="">All statuses</option>
-          <option value="ok">OK</option>
-          <option value="failed">Failed</option>
+        <select id="finalFilter" aria-label="Filter by final result">
+          <option value="">Any final result</option><option value="correct">Final correct</option><option value="wrong">Final wrong</option><option value="failed">Failed</option>
         </select>
       </div>
-      <div id="samples" class="sample-list"><div class="loading">Scanning paper runs...</div></div>
+      <div id="samples" class="sample-list"><div class="loading">Loading current progressive runs...</div></div>
     </aside>
-    <section id="detail" class="detail"><div class="section"><div class="empty">Select a paper experiment.</div></div></section>
+    <section id="detail" class="detail"><div class="section"><div class="empty">Select a task.</div></div></section>
   </div>
 </main>
 <script>
-const ROOTS = [
-  { id: "runs_deployment_visible_parent_disjoint", label: "Deployment-visible (parent-disjoint)" },
-  { id: "runs_deployment_visible", label: "Deployment-visible (agentic tools)" },
-  { id: "runs", label: "Identity-blind" },
-  { id: "runs_deployment_visible_prefetched", label: "Deployment-visible (matched prefetch)" },
-];
-const state = { datasets: [], catalog: [], condition: null, manifest: null, predictions: [], filtered: [], selected: null, trace: [], retrieval: null, runManifest: null, reuse: null, loading: false };
+const state = { catalog: [], task: null, manifest: null, stages: [], samples: [], filtered: [], selected: null, details: null };
 const $ = id => document.getElementById(id);
-const els = { dataset: $("dataset"), regime: $("regime"), task: $("task"), condition: $("condition"), refresh: $("refresh"), search: $("search"), correctness: $("correctness"), status: $("status"), samples: $("samples"), count: $("count"), detail: $("detail") };
+const els = { task: $("task"), search: $("search"), trajectoryFilter: $("trajectoryFilter"), finalFilter: $("finalFilter"), refresh: $("refresh"), samples: $("samples"), count: $("count"), detail: $("detail") };
 
 function esc(value) {
   return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -184,21 +165,7 @@ function text(value) {
   if (typeof value === "string") return value;
   try { return JSON.stringify(value, null, 2); } catch { return String(value); }
 }
-function joinPath(...parts) { return parts.filter(Boolean).map(x => String(x).replace(/^\/+|\/+$/g, "")).join("/"); }
-function dirname(path) { return String(path).replace(/\/[^/]*$/, ""); }
-function resolveArtifactPath(path) {
-  const raw = String(path || "").replaceAll("\\", "/");
-  const condition = state.condition;
-  if (!condition) return raw.replace(/^\/+/, "");
-  if (raw === condition.datasetPath || raw.startsWith(`${condition.datasetPath}/`)) return raw;
-  const marker = `/${condition.regime}/`;
-  const index = raw.lastIndexOf(marker);
-  if (index >= 0) return joinPath(condition.datasetPath, raw.slice(index + 1));
-  if (raw === condition.regime || raw.startsWith(`${condition.regime}/`)) {
-    return joinPath(condition.datasetPath, raw);
-  }
-  return raw.replace(/^\/+/, "");
-}
+function joinPath(...parts) { return parts.filter(Boolean).map(part => String(part).replace(/^\/+|\/+$/g, "")).join("/"); }
 async function fetchText(path) {
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error(`HTTP ${response.status}: ${path}`);
@@ -206,197 +173,205 @@ async function fetchText(path) {
 }
 async function fetchJson(path) { return JSON.parse(await fetchText(path)); }
 async function fetchJsonOptional(path) { try { return await fetchJson(path); } catch { return null; } }
-async function fetchTextOptional(path) { try { return await fetchText(path); } catch { return null; } }
-async function exists(path) { try { const r = await fetch(path, { method: "HEAD", cache: "no-store" }); return r.ok; } catch { return false; } }
 function parseJsonl(source) { return source.split(/\r?\n/).filter(line => line.trim()).map(line => JSON.parse(line)); }
 async function listDirectories(path) {
-  const html = await fetchText(`${path.replace(/\/$/, "")}/`);
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const values = [];
-  for (const anchor of doc.querySelectorAll("a[href]")) {
-    const href = anchor.getAttribute("href") || "";
-    if (!href.endsWith("/") || href === "../" || href.startsWith("?")) continue;
-    const name = decodeURIComponent(href.replace(/\/$/, "").split("/").filter(Boolean).pop() || "");
-    if (!name || name.startsWith("." ) || name.startsWith("_")) continue;
-    values.push({ name, path: joinPath(path, name) });
-  }
-  return values;
+  const doc = new DOMParser().parseFromString(await fetchText(`${path.replace(/\/$/, "")}/`), "text/html");
+  return [...doc.querySelectorAll("a[href]")].map(anchor => anchor.getAttribute("href") || "")
+    .filter(href => href.endsWith("/") && href !== "../" && !href.startsWith("?"))
+    .map(href => decodeURIComponent(href.replace(/\/$/, "").split("/").filter(Boolean).pop() || ""))
+    .filter(name => name && !name.startsWith("."));
+}
+function stageNumber(name) { return name === "prior" ? 0 : Number(String(name).replace("level_", "")); }
+function stageLabel(stage) { return stage.id === "prior" ? "Prior" : `L${stageNumber(stage.id)}`; }
+function statusClass(value) { return String(value || "").toLowerCase() === "ok" ? "ok" : "bad"; }
+function isCurrentStatus(value) { return String(value || "").startsWith("current"); }
+function rowFailed(row) { return !row || String(row.status || "").toLowerCase() !== "ok"; }
+function metric(key, value) { return `<div class="metric"><div class="metric-key">${esc(key)}</div><div class="metric-value">${esc(text(value))}</div></div>`; }
+function formatScore(value) { return value == null ? "—" : Number(value).toFixed(4); }
+function formatSigned(value) { return value == null ? "—" : `${value >= 0 ? "+" : ""}${Number(value).toFixed(4)}`; }
+function padIndex(value) { return String(value).padStart(5, "0"); }
+
+async function loadCatalog() {
+  const lines = (await fetchText(".trace_viewer_catalog.tsv")).split(/\r?\n/).filter(line => line.trim());
+  state.catalog = lines.map(line => {
+    const [id, label, status, taskPath, manifestPath, receipt] = line.split("\t");
+    return { id, label, status, taskPath, manifestPath, receipt };
+  }).filter(item => item.id && item.taskPath);
+  if (!state.catalog.length) throw new Error("No current progressive task roots were registered.");
+  els.task.innerHTML = state.catalog.map(item => `<option value="${esc(item.id)}">${esc(item.label)}</option>`).join("");
+  await loadSelectedTask();
 }
 
-async function loadDatasets() {
-  const source = await fetchTextOptional(".trace_viewer_sources.tsv");
-  if (!source) {
-    state.datasets = [{ id: "default", label: "Paper results", path: "." }];
-    return;
-  }
-  state.datasets = source.split(/\r?\n/).filter(line => line.trim()).map(line => {
-    const [id, label, path] = line.split("\t");
-    return { id, label, path };
-  }).filter(dataset => dataset.id && dataset.label && dataset.path);
-  if (!state.datasets.length) throw new Error("Trace viewer dataset config is empty.");
-}
-
-async function loadConfiguredCatalog() {
-  const source = await fetchTextOptional(".trace_viewer_catalog.tsv");
-  if (!source) return null;
-  const datasetsById = new Map(state.datasets.map(dataset => [dataset.id, dataset]));
-  const rootsById = new Map(ROOTS.map(root => [root.id, root]));
-  return source.split(/\r?\n/).filter(line => line.trim()).map(line => {
-    const [datasetId, regime, task, name] = line.split("\t");
-    const dataset = datasetsById.get(datasetId);
-    const root = rootsById.get(regime);
-    if (!dataset || !root || !task || !name) return null;
-    return {
-      datasetId,
-      datasetLabel: dataset.label,
-      datasetPath: dataset.path,
-      regime,
-      regimeLabel: root.label,
-      task,
-      name,
-      path: joinPath(dataset.path, regime, task, name),
-    };
-  }).filter(Boolean);
-}
-
-async function scanRemoteCatalog() {
-  const catalog = [];
-  for (const dataset of state.datasets) {
-    for (const root of ROOTS) {
-      const rootPath = joinPath(dataset.path, root.id);
-      if (!(await exists(`${rootPath}/`))) continue;
-      for (const task of await listDirectories(rootPath)) {
-        for (const condition of await listDirectories(task.path)) {
-          if (await exists(`${condition.path}/predictions.jsonl`)) {
-            catalog.push({
-              datasetId: dataset.id,
-              datasetLabel: dataset.label,
-              datasetPath: dataset.path,
-              regime: root.id,
-              regimeLabel: root.label,
-              task: task.name,
-              name: condition.name,
-              path: condition.path,
-            });
-          }
-        }
-      }
-    }
-  }
-  return catalog;
-}
-
-async function scanCatalog() {
-  setLoading(true, "Scanning final paper conditions...");
-  await loadDatasets();
-  const configuredCatalog = await loadConfiguredCatalog();
-  const catalog = configuredCatalog || await scanRemoteCatalog();
-  state.catalog = catalog.sort((a, b) => `${a.datasetId}/${a.regime}/${a.task}/${a.name}`.localeCompare(`${b.datasetId}/${b.regime}/${b.task}/${b.name}`));
-  populateDatasets();
-  setLoading(false);
-  if (state.catalog.length) await loadSelectedCondition();
-  else showError("No final paper conditions with predictions.jsonl were found.");
-}
-function populateDatasets() {
-  const datasets = state.datasets.filter(dataset => state.catalog.some(item => item.datasetId === dataset.id));
-  els.dataset.innerHTML = datasets.map(dataset => `<option value="${esc(dataset.id)}">${esc(dataset.label)}</option>`).join("");
-  populateRegimes();
-}
-function populateRegimes() {
-  const regimes = ROOTS.filter(root => state.catalog.some(item => item.datasetId === els.dataset.value && item.regime === root.id));
-  els.regime.innerHTML = regimes.map(root => `<option value="${esc(root.id)}">${esc(root.label)}</option>`).join("");
-  populateTasks();
-}
-function populateTasks() {
-  const tasks = [...new Set(state.catalog.filter(x => x.datasetId === els.dataset.value && x.regime === els.regime.value).map(x => x.task))].sort();
-  els.task.innerHTML = tasks.map(task => `<option value="${esc(task)}">${esc(task)}</option>`).join("");
-  populateConditions();
-}
-function populateConditions() {
-  const conditions = state.catalog.filter(x => x.datasetId === els.dataset.value && x.regime === els.regime.value && x.task === els.task.value);
-  els.condition.innerHTML = conditions.map(item => `<option value="${esc(item.path)}">${esc(item.name)}</option>`).join("");
-}
-async function loadSelectedCondition() {
-  const condition = state.catalog.find(x => x.path === els.condition.value);
-  if (!condition) return;
-  setLoading(true, `Loading ${condition.name}...`);
+async function loadSelectedTask() {
+  const task = state.catalog.find(item => item.id === els.task.value) || state.catalog[0];
+  if (!task) return;
+  setLoading(true, `Loading ${task.label}...`);
   try {
-    const [predictions, manifest] = await Promise.all([
-      fetchText(`${condition.path}/predictions.jsonl`).then(parseJsonl),
-      fetchJsonOptional(`${condition.path}/manifest.json`),
+    const levelNames = (await listDirectories(joinPath(task.taskPath, "levels")))
+      .filter(name => /^level_\d+$/.test(name)).sort((a, b) => stageNumber(a) - stageNumber(b));
+    const stages = [{ id: "prior", predictionsPath: joinPath(task.taskPath, "none/predictions.jsonl"), metricsPath: joinPath(task.taskPath, "none/metrics.json") }]
+      .concat(levelNames.map(id => ({ id, predictionsPath: joinPath(task.taskPath, `levels/${id}/predictions.jsonl`), metricsPath: joinPath(task.taskPath, `levels/${id}/metrics.json`) })));
+    const [manifest, ...payloads] = await Promise.all([
+      fetchJsonOptional(task.manifestPath),
+      ...stages.flatMap(stage => [fetchText(stage.predictionsPath).then(parseJsonl), fetchJsonOptional(stage.metricsPath)]),
     ]);
-    state.condition = condition;
+    stages.forEach((stage, index) => {
+      stage.rows = payloads[index * 2];
+      stage.reportedMetrics = payloads[(index * 2) + 1];
+      stage.byIndex = new Map(stage.rows.map(row => [String(row.index ?? row.query_index), row]));
+      stage.metrics = computeMetrics(stage.rows);
+    });
+    state.task = task;
     state.manifest = manifest;
-    state.predictions = predictions;
+    state.stages = stages;
+    state.samples = buildSamples(stages);
     state.selected = null;
-    state.runManifest = null;
-    state.reuse = null;
+    state.details = null;
     applyFilters();
     if (state.filtered.length) await selectSample(state.filtered[0]);
-    else renderEmpty("This condition has no prediction rows.");
+    else renderEmpty("No prediction rows were found.");
   } catch (error) {
     showError(error.message);
   } finally {
     setLoading(false);
   }
 }
-function rowSearchText(row) {
-  return [row.query_index, row.smiles, row.label, row.pred_label, row.confidence, row.final_summary, row.status, row.final_status].map(text).join(" ").toLowerCase();
+
+function buildSamples(stages) {
+  const indices = [...new Set(stages.flatMap(stage => stage.rows.map(row => String(row.index ?? row.query_index))))]
+    .sort((a, b) => Number(a) - Number(b));
+  return indices.map(index => {
+    const rows = stages.map(stage => stage.byIndex.get(index) || null);
+    const present = rows.filter(Boolean);
+    const final = rows[rows.length - 1] || present[present.length - 1] || {};
+    const sample = { index: Number(index), rows, label: present.find(row => row.label != null)?.label, final };
+    sample.trajectory = classifyTrajectory(rows);
+    return sample;
+  });
 }
+
+function classifyTrajectory(rows) {
+  if (rows.some(row => !row || rowFailed(row) || typeof row.correct !== "boolean")) return "incomplete";
+  const values = rows.map(row => row.correct);
+  if (values.every(Boolean)) return "always_correct";
+  if (values.every(value => !value)) return "always_wrong";
+  let rescued = false;
+  let harmed = false;
+  for (let index = 1; index < values.length; index += 1) {
+    if (!values[index - 1] && values[index]) rescued = true;
+    if (values[index - 1] && !values[index]) harmed = true;
+  }
+  if (rescued && harmed) return "oscillating";
+  if (rescued) return "rescued";
+  if (harmed) return "harmed";
+  return "incomplete";
+}
+
+function computeMetrics(rows) {
+  const evaluated = rows.filter(row => !rowFailed(row) && row.label != null && row.pred_label != null);
+  const classes = [...new Set(evaluated.flatMap(row => [String(row.label), String(row.pred_label)]))];
+  const correct = evaluated.filter(row => String(row.label) === String(row.pred_label)).length;
+  const f1 = classes.map(value => {
+    const tp = evaluated.filter(row => String(row.label) === value && String(row.pred_label) === value).length;
+    const fp = evaluated.filter(row => String(row.label) !== value && String(row.pred_label) === value).length;
+    const fn = evaluated.filter(row => String(row.label) === value && String(row.pred_label) !== value).length;
+    const denominator = (2 * tp) + fp + fn;
+    return denominator ? (2 * tp) / denominator : 0;
+  });
+  return {
+    total: rows.length,
+    failed: rows.filter(rowFailed).length,
+    accuracy: evaluated.length ? correct / evaluated.length : null,
+    macroF1: f1.length ? f1.reduce((sum, value) => sum + value, 0) / f1.length : null,
+    called: rows.filter(row => row?.model_called === true).length,
+    carried: rows.filter(row => row && row.model_called === false).length,
+  };
+}
+
+function stageTransitions(previous, current) {
+  if (!previous) return { keptCorrect: 0, keptWrong: 0, rescued: 0, harmed: 0, flips: 0 };
+  const counts = { keptCorrect: 0, keptWrong: 0, rescued: 0, harmed: 0, flips: 0 };
+  for (const [index, row] of current.byIndex) {
+    const prior = previous.byIndex.get(index);
+    if (!prior || rowFailed(row) || rowFailed(prior) || typeof row.correct !== "boolean" || typeof prior.correct !== "boolean") continue;
+    if (prior.correct && row.correct) counts.keptCorrect += 1;
+    else if (!prior.correct && !row.correct) counts.keptWrong += 1;
+    else if (!prior.correct && row.correct) counts.rescued += 1;
+    else counts.harmed += 1;
+    if (String(prior.pred_label) !== String(row.pred_label)) counts.flips += 1;
+  }
+  return counts;
+}
+
 function applyFilters() {
   const query = els.search.value.trim().toLowerCase();
-  const correctness = els.correctness.value;
-  const status = els.status.value;
-  state.filtered = state.predictions.filter(row => {
-    const okStatus = String(row.status || row.final_status || "").toLowerCase() === "ok";
-    if (query && !rowSearchText(row).includes(query)) return false;
-    if (correctness === "correct" && row.correct !== true) return false;
-    if (correctness === "wrong" && row.correct !== false) return false;
-    if (status === "ok" && !okStatus) return false;
-    if (status === "failed" && okStatus) return false;
+  const trajectory = els.trajectoryFilter.value;
+  const finalFilter = els.finalFilter.value;
+  state.filtered = state.samples.filter(sample => {
+    const final = sample.final || {};
+    const haystack = [sample.index, sample.label, final.pred_label, final.confidence, sample.trajectory].map(text).join(" ").toLowerCase();
+    if (query && !haystack.includes(query)) return false;
+    if (trajectory && sample.trajectory !== trajectory) return false;
+    if (finalFilter === "correct" && final.correct !== true) return false;
+    if (finalFilter === "wrong" && final.correct !== false) return false;
+    if (finalFilter === "failed" && !rowFailed(final)) return false;
     return true;
   });
   renderSampleList();
 }
+
+function renderTrajectory(sample, large = false) {
+  return `<div class="trajectory${large ? " large" : ""}" aria-label="Prediction correctness trajectory">${state.stages.map((stage, index) => {
+    const row = sample.rows[index];
+    const kind = !row || rowFailed(row) ? "failed" : row.correct === true ? "correct" : row.correct === false ? "wrong" : "unknown";
+    const carried = row?.model_called === false ? " carried" : "";
+    const title = `${stageLabel(stage)} · ${kind} · prediction ${row?.pred_label ?? "n/a"} · confidence ${row?.confidence || "n/a"} · ${row?.model_called === false ? "carried/reused" : "model called"}`;
+    const node = `<span class="trajectory-node ${kind}${carried}" title="${esc(title)}">${esc(stageLabel(stage).replace("Prior", "P"))}</span>`;
+    return `${index ? '<span class="trajectory-arrow"></span>' : ""}${node}`;
+  }).join("")}</div>`;
+}
+
 function renderSampleList() {
-  els.count.textContent = `${state.filtered.length} / ${state.predictions.length}`;
+  els.count.textContent = `${state.filtered.length} / ${state.samples.length}`;
   if (!state.filtered.length) { els.samples.innerHTML = '<div class="empty">No matching samples.</div>'; return; }
-  els.samples.innerHTML = state.filtered.map(row => {
-    const active = state.selected && row.query_index === state.selected.query_index ? " active" : "";
-    const outcome = row.correct === true ? '<span class="ok">correct</span>' : row.correct === false ? '<span class="bad">wrong</span>' : '<span class="warn">unknown</span>';
-    const prediction = row.pred_label ?? "";
-    return `<button class="sample${active}" data-index="${esc(row.query_index)}">
-      <div class="sample-main"><strong>#${esc(row.query_index)}</strong>${outcome}</div>
-      <div class="sample-sub">label=${esc(row.label)} prediction=${esc(prediction)} confidence=${esc(row.confidence || "")}</div>
-      <div class="sample-sub">${esc(row.smiles || "")}</div>
+  els.samples.innerHTML = state.filtered.map(sample => {
+    const active = state.selected?.index === sample.index ? " active" : "";
+    const final = sample.final || {};
+    const outcome = final.correct === true ? '<span class="ok">final correct</span>' : final.correct === false ? '<span class="bad">final wrong</span>' : '<span class="warn">incomplete</span>';
+    return `<button class="sample${active}" data-index="${sample.index}">
+      <div class="sample-main"><strong>#${sample.index}</strong>${outcome}</div>
+      ${renderTrajectory(sample)}
+      <div class="sample-sub">${esc(sample.trajectory)} · label=${esc(sample.label)} · final=${esc(final.pred_label)} · ${esc(final.confidence || "")}</div>
     </button>`;
   }).join("");
   els.samples.querySelectorAll(".sample").forEach(button => {
     button.onclick = () => {
-      const row = state.predictions.find(item => String(item.query_index) === button.dataset.index);
-      if (row) selectSample(row);
+      const sample = state.samples.find(item => item.index === Number(button.dataset.index));
+      if (sample) selectSample(sample);
     };
   });
 }
-async function selectSample(row) {
-  state.selected = row;
+
+async function selectSample(sample) {
+  state.selected = sample;
   renderSampleList();
-  renderLoadingDetail(`Loading sample #${row.query_index}...`);
+  renderLoadingDetail(`Loading query #${sample.index}...`);
   try {
-    let tracePath = resolveArtifactPath(row.trace_messages);
-    if (!tracePath && row.run_dir) tracePath = `${resolveArtifactPath(row.run_dir)}/trace_messages.jsonl`;
-    if (!tracePath) throw new Error("Prediction row does not contain a trace path.");
-    const runRoot = dirname(tracePath);
-    const [trace, retrieval, runManifest, reuse] = await Promise.all([
-      fetchText(tracePath).then(parseJsonl),
-      fetchJsonOptional(`${runRoot}/retrieval.json`),
-      fetchJsonOptional(`${runRoot}/manifest.json`),
-      fetchJsonOptional(`${runRoot}/reuse.json`),
-    ]);
-    state.trace = trace;
-    state.retrieval = retrieval;
-    state.runManifest = runManifest;
-    state.reuse = reuse;
+    const queryRoot = joinPath(state.task.taskPath, `queries/query_idx${padIndex(sample.index)}`);
+    const levelPayloads = await Promise.all(
+      state.stages.slice(1).flatMap(stage => {
+        const root = `${queryRoot}/levels/${stage.id}`;
+        return [fetchJsonOptional(`${root}/prepared.json`), fetchJsonOptional(`${root}/request.json`), fetchJsonOptional(`${root}/output.json`)];
+      })
+    );
+    const levels = state.stages.slice(1).map((stage, index) => ({
+      stage,
+      row: sample.rows[index + 1],
+      prepared: levelPayloads[index * 3],
+      request: levelPayloads[(index * 3) + 1],
+      output: levelPayloads[(index * 3) + 2],
+    }));
+    state.details = { levels };
     renderDetail();
   } catch (error) {
     showError(error.message);
@@ -404,218 +379,181 @@ async function selectSample(row) {
 }
 
 function setLoading(value, message = "") {
-  state.loading = value;
   els.refresh.disabled = value;
   if (value && message) els.samples.innerHTML = `<div class="loading">${esc(message)}</div>`;
 }
 function renderLoadingDetail(message) { els.detail.innerHTML = `<div class="section"><div class="loading">${esc(message)}</div></div>`; }
 function renderEmpty(message) { els.detail.innerHTML = `<div class="section"><div class="empty">${esc(message)}</div></div>`; }
 function showError(message) { els.detail.innerHTML = `<div class="error">${esc(message)}</div>`; }
-function statusClass(value) { return String(value).toLowerCase() === "ok" ? "ok" : "bad"; }
-function metric(key, value) { return `<div class="metric"><div class="metric-key">${esc(key)}</div><div class="metric-value">${esc(text(value))}</div></div>`; }
-function usageText(usage) {
-  if (!usage) return "";
-  return `${Number(usage.prompt_tokens || 0).toLocaleString()} in / ${Number(usage.completion_tokens || 0).toLocaleString()} out / ${Number(usage.total_tokens || 0).toLocaleString()} total`;
-}
-function rowFailed(row) {
-  const statuses = [row.status, row.final_status]
-    .filter(value => value !== null && value !== undefined && String(value) !== "")
-    .map(value => String(value).toLowerCase());
-  return statuses.some(status => status !== "ok");
-}
-function computeConditionMetrics(rows) {
-  const evaluated = rows.filter(row => !rowFailed(row) && row.label !== null && row.label !== undefined && row.pred_label !== null && row.pred_label !== undefined);
-  const classes = [...new Set(evaluated.flatMap(row => [String(row.label), String(row.pred_label)]))].sort();
-  const correct = evaluated.filter(row => String(row.label) === String(row.pred_label)).length;
-  const f1Values = classes.map(value => {
-    const tp = evaluated.filter(row => String(row.label) === value && String(row.pred_label) === value).length;
-    const fp = evaluated.filter(row => String(row.label) !== value && String(row.pred_label) === value).length;
-    const fn = evaluated.filter(row => String(row.label) === value && String(row.pred_label) !== value).length;
-    const denominator = (2 * tp) + fp + fn;
-    return denominator ? (2 * tp) / denominator : 0;
-  });
-  const confusion = classes.length === 2 && classes.includes("0") && classes.includes("1") ? {
-    tn: evaluated.filter(row => String(row.label) === "0" && String(row.pred_label) === "0").length,
-    fp: evaluated.filter(row => String(row.label) === "0" && String(row.pred_label) === "1").length,
-    fn: evaluated.filter(row => String(row.label) === "1" && String(row.pred_label) === "0").length,
-    tp: evaluated.filter(row => String(row.label) === "1" && String(row.pred_label) === "1").length,
-  } : null;
-  return {
-    total: rows.length,
-    evaluated: evaluated.length,
-    failed: rows.filter(rowFailed).length,
-    accuracy: evaluated.length ? correct / evaluated.length : null,
-    macroF1: f1Values.length ? f1Values.reduce((sum, value) => sum + value, 0) / f1Values.length : null,
-    confusion,
-  };
-}
-function formatScore(value) { return value === null ? "" : value.toFixed(4); }
-function renderConditionSummary() {
-  const summary = computeConditionMetrics(state.predictions);
+
+function renderTaskSummary() {
+  const manifest = state.manifest || {};
   const values = [
-    metric("Benchmark dataset", state.condition?.datasetLabel),
-    metric("Task", state.condition?.task),
-    metric("Condition", state.condition?.name),
-    metric("Samples", summary.total),
-    metric("Evaluated", summary.evaluated),
-    metric("Accuracy", formatScore(summary.accuracy)),
-    metric("Macro-F1", formatScore(summary.macroF1)),
-    metric("Failures", summary.failed),
-  ];
-  if (summary.confusion) {
-    values.push(metric("Confusion matrix", `TN ${summary.confusion.tn} / FP ${summary.confusion.fp} / FN ${summary.confusion.fn} / TP ${summary.confusion.tp}`));
+    metric("Task", state.task.label), metric("Registry status", state.task.status),
+    metric("Experiment", manifest.experiment || ""), metric("Model", manifest.model || ""),
+    metric("Split / subset", `${manifest.split_scheme || ""} / ${manifest.evaluation_subset || ""}`),
+    metric("Visibility", manifest.visibility_mode || ""), metric("Identity policy", manifest.neighbor_identity_policy || ""),
+    metric("Samples", state.samples.length),
+  ].join("");
+  const status = isCurrentStatus(state.task.status) ? "current" : "stale";
+  const receipt = state.task.receipt ? ` · receipt: ${state.task.receipt}` : "";
+  return `<details class="section"><summary class="section-head"><span>Run metadata</span><span class="tag">registry-pinned</span></summary><div class="overview">${values}</div><div class="status-banner ${status}">${esc(state.task.status)}${esc(receipt)}</div></details>`;
+}
+
+function renderLevelSummary() {
+  const rows = state.stages.map((stage, index) => {
+    const transitions = stageTransitions(state.stages[index - 1], stage);
+    const delta = index ? stage.metrics.accuracy - state.stages[index - 1].metrics.accuracy : null;
+    return `<tr><td>${esc(stageLabel(stage))}</td><td>${formatScore(stage.metrics.accuracy)}</td><td>${formatSigned(delta)}</td>
+      <td>${formatScore(stage.metrics.macroF1)}</td><td class="ok">${transitions.rescued}</td><td class="bad">${transitions.harmed}</td>
+      <td>${transitions.flips}</td><td>${stage.metrics.called} / ${stage.metrics.carried}</td><td>${stage.metrics.failed}</td></tr>`;
+  }).join("");
+  return `<details class="section"><summary class="section-head"><span>Level metrics</span><span class="tag">computed from per-level predictions</span></summary><div style="overflow-x:auto"><table class="summary-table"><thead><tr><th>Stage</th><th>Accuracy</th><th>Δ accuracy</th><th>Macro-F1</th><th>Rescued</th><th>Harmed</th><th>Pred flips</th><th>Called / carried</th><th>Failed</th></tr></thead><tbody>${rows}</tbody></table></div></details>`;
+}
+
+function renderValue(value, depth = 0, fieldName = "") {
+  if (value == null) return '<span class="json-value"></span>';
+  const depthClass = depth === 0 ? "json-depth-0" : `json-depth-${((depth - 1) % 6) + 1}`;
+  if (Array.isArray(value)) {
+    if (!value.length) return '<span class="json-value">[]</span>';
+    if (fieldName.endsWith("card_ids") && value.every(item => typeof item === "string")) {
+      return `<div class="card-id-list">${value.map(item => `<span class="card-id-chip">${esc(item)}</span>`).join("")}</div>`;
+    }
+    return `<div class="json-array ${depthClass}">${value.map((item, index) => `<div class="array-item"><div class="tag">#${index + 1}</div>${renderValue(item, depth + 1, fieldName)}</div>`).join("")}</div>`;
   }
-  return `<div class="section"><div class="section-head"><span>Condition results</span><span class="tag">computed from predictions.jsonl</span></div><div class="overview">${values.join("")}</div></div>`;
+  if (typeof value === "object") {
+    return `<div class="json-object ${depthClass}">${Object.entries(value).map(([key, item]) => `<div class="json-row"><div class="json-key">${esc(key)}</div><div class="json-value">${renderValue(item, depth + 1, key)}</div></div>`).join("")}</div>`;
+  }
+  return `<span class="json-value">${esc(String(value))}</span>`;
 }
-const GROUP_DISPLAY_LABELS = Object.freeze({
-  "Observed.direct_oral_bioavailability": "Direct oral bioavailability (F%)",
-  "Observed.oral_auc_cmax_exposure": "Oral exposure proxies (AUC/Cmax)",
-  "Fa.absorption_solubility_permeability": "Fa — Absorption, solubility & permeability",
-  "Fg.gut_wall_efflux_intestinal_metabolism": "Fg — Gut-wall transport & intestinal metabolism",
-  "Fh.hepatic_clearance_metabolic_stability": "Fh — Hepatic clearance & metabolic stability",
-});
-function groupDisplayLabel(groupId) {
-  const value = String(groupId || "");
-  return GROUP_DISPLAY_LABELS[value] || value || "group";
-}
-function stageLabel(task) {
-  if (task === "single_molecule") return "Single-molecule prior";
-  if (task === "final_summary") return "Final synthesis";
-  if (task === "Flat.all_evidence") return "Flat evidence reasoning";
-  return groupDisplayLabel(task);
-}
-function parseMaybeJson(value) {
-  if (value && typeof value === "object") return value;
+
+function parseJsonText(value) {
   if (typeof value !== "string") return null;
   const trimmed = value.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
   if (!trimmed || !["{", "["].includes(trimmed[0])) return null;
   try { return JSON.parse(trimmed); } catch { return null; }
 }
-function renderValue(value, depth = 0) {
-  if (value == null) return '<span class="json-value"></span>';
-  const depthClass = depth === 0 ? "json-depth-0" : `json-depth-${((depth - 1) % 6) + 1}`;
-  if (Array.isArray(value)) {
-    if (!value.length) return '<span class="json-value">[]</span>';
-    return `<div class="json-array ${depthClass}">${value.map((item, index) => `<div class="array-item"><div class="tag">#${index + 1}</div>${renderValue(item, depth + 1)}</div>`).join("")}</div>`;
-  }
-  if (typeof value === "object") {
-    return `<div class="json-object ${depthClass}">${Object.entries(value).map(([key, item]) => `<div class="json-row"><div class="json-key">${esc(key)}</div><div class="json-value">${renderValue(item, depth + 1)}</div></div>`).join("")}</div>`;
-  }
-  return `<span class="json-value">${esc(String(value))}</span>`;
-}
-function renderResponse(record) {
-  const parsed = parseMaybeJson(record.response_text);
-  if (parsed) return renderValue(parsed);
-  return `<pre>${esc(record.response_text || "")}</pre>`;
-}
-function renderMessage(message, index) {
-  const role = message.role || "item";
-  const blocks = [];
-  if (message.reasoning) blocks.push(`<div class="content-block reasoning"><div class="block-title">Reasoning</div><pre>${esc(message.reasoning)}</pre></div>`);
-  if (message.content && role !== "tool") {
-    const parsed = parseMaybeJson(message.content);
-    blocks.push(`<div class="content-block"><div class="block-title">Content</div>${parsed ? renderValue(parsed) : `<pre>${esc(message.content)}</pre>`}</div>`);
-  }
-  if (Array.isArray(message.tool_calls)) {
-    for (const call of message.tool_calls) blocks.push(`<div class="content-block tool"><div class="block-title">Tool call: ${esc(call.function?.name || call.name || call.id || "tool")}</div>${renderValue(call)}</div>`);
-  }
-  if (role === "tool") blocks.push(`<div class="content-block tool"><div class="block-title">Tool result</div><pre>${esc(message.content || text(message))}</pre></div>`);
-  return `<div class="message"><div class="message-head"><span class="role role-${esc(role)}">${esc(role)}</span><span class="tag">#${index + 1}</span>${message.name ? `<span class="tag">${esc(message.name)}</span>` : ""}</div>${blocks.join("")}<details class="raw"><summary>Raw message JSON</summary><pre>${esc(JSON.stringify(message, null, 2))}</pre></details></div>`;
-}
-function renderStage(record, index, total) {
-  const open = record.task === "final_summary" || total <= 3 ? " open" : "";
-  return `<details class="stage"${open}><summary><span>${esc(stageLabel(record.task))}</span><span class="${statusClass(record.status)}">${esc(record.status || "unknown")}</span></summary><div class="stage-content">
-    <div class="stage-meta"><span class="pill">tools ${esc(record.tool_count || 0)}</span><span class="pill">${esc(usageText(record.usage))}</span></div>
-    <div>${renderResponse(record)}</div>
-    <details class="raw"><summary>Complete prompt, reasoning, tool calls and responses</summary><div class="messages">${(record.messages || []).map(renderMessage).join("") || '<div class="empty">No messages.</div>'}</div></details>
-    <details class="raw"><summary>Raw trace record</summary><pre>${esc(JSON.stringify(record, null, 2))}</pre></details>
-  </div></details>`;
-}
-function renderRetrieval(retrieval) {
-  if (!retrieval) return "";
-  const groups = Array.isArray(retrieval.groups) ? retrieval.groups : [];
-  const header = [
-    metric("Status", retrieval.status),
-    metric("Source", retrieval.experiment?.source || retrieval.evidence_source?.type || ""),
-    metric("Mode", retrieval.experiment?.mode || ""),
-    metric("Groups", groups.length),
-    metric("Coverage", retrieval.coverage || ""),
-  ].join("");
-  const body = groups.map(renderRetrievalGroup).join("");
-  return `<div class="section"><div class="section-head"><span>Retrieved evidence</span><span class="tag">minimal_evidence.v1 compatible</span></div><div class="overview">${header}</div>${body}<details class="stage"><summary><span>Raw retrieval JSON</span><span class="tag">provenance</span></summary><div class="stage-content"><pre>${esc(JSON.stringify(retrieval, null, 2))}</pre></div></details></div>`;
-}
-function renderRetrievalGroup(group) {
-  const neighbors = Array.isArray(group.neighbors) ? group.neighbors : [];
-  const meta = Object.fromEntries(Object.entries(group).filter(([key]) => key !== "neighbors"));
-  const groupId = group.group_id || group.endpoint_group || "group";
-  const displayLabel = groupDisplayLabel(groupId);
-  const rawIdTag = displayLabel !== groupId ? `<span class="tag">${esc(groupId)}</span>` : "";
-  return `<details class="stage"><summary><span>${esc(displayLabel)}</span>${rawIdTag}<span class="tag">${neighbors.length} neighbors</span></summary><div class="stage-content">${renderValue(meta)}${neighbors.map(renderNeighbor).join("")}</div></details>`;
-}
-function renderNeighbor(neighbor) {
-  const evidence = Array.isArray(neighbor.evidence_rows) ? neighbor.evidence_rows : [];
-  const id = neighbor.molecule_chembl_id || neighbor.source_molecule_id || neighbor.molecule_id || "neighbor";
-  const meta = Object.fromEntries(Object.entries(neighbor).filter(([key]) => key !== "evidence_rows"));
-  return `<details class="raw"><summary>rank ${esc(neighbor.rank || "")} · ${esc(id)} · similarity ${esc(neighbor.similarity ?? "")} · ${evidence.length} evidence rows</summary><div class="json">${renderValue(meta)}${evidence.map(renderEvidenceRow).join("")}</div></details>`;
-}
-function renderEvidenceRow(row, index) {
-  const measurement = [row.standard_type || row.endpoint?.name || "evidence", row.standard_relation, row.standard_value, row.standard_units].filter(value => value !== null && value !== undefined && value !== "").join(" ");
-  return `<details class="raw"><summary>#${index + 1} ${esc(measurement)}</summary><pre>${esc(JSON.stringify(row, null, 2))}</pre></details>`;
-}
-function renderReuseProvenance(reuse) {
-  if (!reuse) return "";
-  const values = [
-    metric("Reuse reason", reuse.reuse_reason || ""),
-    metric("Baseline input hash", reuse.baseline_prompt_hash || ""),
-    metric("Target input hash", reuse.target_prompt_hash || ""),
-    metric("Reused from", reuse.reused_from || ""),
-  ].join("");
-  return `<div class="section"><div class="section-head"><span>Parent-disjoint artifact reuse</span><span class="tag">identical LLM-visible input</span></div><div class="overview">${values}</div><details class="stage"><summary><span>Raw reuse provenance</span><span class="tag">reuse.json</span></summary><div class="stage-content"><pre>${esc(JSON.stringify(reuse, null, 2))}</pre></div></details></div>`;
-}
-function renderDetail() {
-  const row = state.selected;
-  if (!row) return renderEmpty("Select a test sample.");
-  const final = state.trace.find(record => record.task === "final_summary") || state.trace.find(record => record.prediction);
-  const neighborPolicy = state.runManifest?.neighbor_identity_policy || state.manifest?.neighbor_identity_policy || state.retrieval?.experiment?.neighbor_identity_policy || "not recorded";
-  const parentDisjointExecution = state.condition?.regime === "runs_deployment_visible_parent_disjoint"
-    ? (state.reuse ? "reused (retrieval input unchanged)" : "rerun (retrieval changed)")
-    : "not applicable";
-  const totalUsage = state.trace.reduce((sum, record) => {
-    sum.prompt += Number(record.usage?.prompt_tokens || 0);
-    sum.completion += Number(record.usage?.completion_tokens || 0);
-    sum.total += Number(record.usage?.total_tokens || 0);
-    return sum;
-  }, { prompt: 0, completion: 0, total: 0 });
-  const overview = [
-    metric("Benchmark dataset", state.condition?.datasetLabel),
-    metric("Task", state.condition?.task),
-    metric("Condition", state.condition?.name),
-    metric("Visibility", state.condition?.regimeLabel),
-    metric("Neighbor policy", neighborPolicy),
-    metric("Parent-disjoint execution", parentDisjointExecution),
-    metric("Index", row.query_index),
-    metric("Label", row.label),
-    metric("Prediction", final?.prediction ?? row.pred_label),
-    metric("Correct", row.correct),
-    metric("Confidence", row.confidence || parseMaybeJson(final?.response_text)?.confidence || ""),
-    metric("Stages", state.trace.length),
-    metric("Tokens", `${totalUsage.prompt.toLocaleString()} in / ${totalUsage.completion.toLocaleString()} out / ${totalUsage.total.toLocaleString()} total`),
-    metric("SMILES", row.smiles || ""),
-  ].join("");
-  const stages = state.trace.map((record, index) => renderStage(record, index, state.trace.length)).join("");
-  const pills = state.trace.map(record => `<span class="pill ${statusClass(record.status)}">${esc(stageLabel(record.task))}</span>`).join("");
-  els.detail.innerHTML = `${renderConditionSummary()}<div class="section"><div class="section-head"><span>Sample overview</span><span class="tag">${esc(row.run_id || "")}</span></div><div class="overview">${overview}</div><div class="stage-nav">${pills}</div></div>${renderReuseProvenance(state.reuse)}${renderRetrieval(state.retrieval)}<div class="section"><div class="section-head"><span>Reasoning stages</span><span class="tag">single -> group(s) -> final</span></div>${stages}</div>`;
+
+function promptSectionLabel(key, value) {
+  const labels = {
+    protocol: "Protocol", task_definition: "Task definition", level_context: "Level context",
+    query: "Query", query_prior: "Query prior", active_evidence: "Active evidence",
+    required_json_schema: "Required output schema", prior_state: "Prior state",
+  };
+  let suffix = "";
+  if (key === "level_context") suffix = ` · L${value?.current_level ?? "?"} · ${value?.current_family?.family || ""}`;
+  if (key === "active_evidence") suffix = ` · ${Array.isArray(value) ? value.length : 0} analogs`;
+  return `${labels[key] || key.replaceAll("_", " ")}${suffix}`;
 }
 
-els.dataset.onchange = () => { populateRegimes(); loadSelectedCondition(); };
-els.regime.onchange = () => { populateTasks(); loadSelectedCondition(); };
-els.task.onchange = () => { populateConditions(); loadSelectedCondition(); };
-els.condition.onchange = loadSelectedCondition;
-els.refresh.onclick = scanCatalog;
+function renderEvidenceCard(card) {
+  const excluded = new Set(["card_id", "evidence_family", "new_this_level", "prior_use", "first_seen_level", "support_text"]);
+  const fields = Object.entries(card || {}).filter(([key, value]) => !excluded.has(key) && value != null && value !== "");
+  const meta = fields.map(([key, value]) => `<div class="evidence-field"><div class="evidence-field-key">${esc(key.replaceAll("_", " "))}</div><div class="evidence-field-value">${Array.isArray(value) || typeof value === "object" ? renderValue(value, 1, key) : esc(value)}</div></div>`).join("");
+  const priorUse = card?.prior_use?.length ? `<span class="pill">prior: ${esc(card.prior_use.join(" + "))}</span>` : '<span class="pill">prior: not used</span>';
+  const support = card?.support_text ? `<div class="evidence-support"><div class="evidence-field-key">Support text</div><div class="evidence-field-value">${esc(card.support_text)}</div></div>` : "";
+  return `<div class="evidence-card"><div class="evidence-card-head"><span class="pill">${esc(card?.card_id || "card")}</span><span class="pill">${esc(card?.evidence_family || "")}</span><span class="pill">L${esc(card?.first_seen_level ?? "?")}</span>${card?.new_this_level ? '<span class="pill ok">new this level</span>' : priorUse}</div><div class="evidence-card-meta">${meta}</div>${support}</div>`;
+}
+
+function renderAnalogEvidence(analogs) {
+  if (!Array.isArray(analogs) || !analogs.length) return '<div class="empty">No active evidence.</div>';
+  return `<div class="prompt-analog-list">${analogs.map((analog, index) => {
+    const cards = analog?.evidence_cards || [];
+    const tools = analog?.query_analog_tool_summaries || [];
+    const excluded = new Set(["analog_id", "canonical_smiles", "similarity", "similarity_bucket", "molecule_relation", "first_seen_level", "evidence_cards", "query_analog_tool_summaries"]);
+    const extraFields = Object.entries(analog || {}).filter(([key, value]) => !excluded.has(key) && value != null && value !== "");
+    const extraMeta = extraFields.map(([key, value]) => `<div class="evidence-field"><div class="evidence-field-key">${esc(key.replaceAll("_", " "))}</div><div class="evidence-field-value">${Array.isArray(value) || typeof value === "object" ? renderValue(value, 1, key) : esc(value)}</div></div>`).join("");
+    const summaryTags = [
+      `<span class="pill">sim ${esc(analog?.similarity ?? "n/a")}</span>`,
+      analog?.similarity_bucket ? `<span class="pill">${esc(analog.similarity_bucket)}</span>` : "",
+      analog?.molecule_relation ? `<span class="pill">${esc(analog.molecule_relation)}</span>` : "",
+      `<span class="pill">first L${esc(analog?.first_seen_level ?? "?")}</span>`,
+      `<span class="pill">${cards.length} cards</span>`,
+    ].join("");
+    const structure = analog?.canonical_smiles ? `<div class="analog-structure"><div class="evidence-field-key">Canonical SMILES</div><div class="evidence-field-value">${esc(analog.canonical_smiles)}</div></div>` : "";
+    const toolBlocks = tools.map(tool => `<div class="content-block"><strong>${esc(tool.tool_name || "tool")}</strong><pre>${esc(tool.content || "")}</pre></div>`).join("");
+    return `<details class="prompt-analog"><summary>Analog ${index + 1} · ${esc(analog?.analog_id || "unknown")}<span class="analog-summary-tags">${summaryTags}</span></summary><div class="prompt-section-body">${structure}${extraMeta ? `<div class="evidence-card-meta">${extraMeta}</div>` : ""}${toolBlocks ? `<details class="raw"><summary>Query–analog tool summaries</summary><div class="prompt-section-body">${toolBlocks}</div></details>` : ""}<div class="evidence-card-list">${cards.map(renderEvidenceCard).join("")}</div></div></details>`;
+  }).join("")}</div>`;
+}
+
+function renderUserPrompt(payload) {
+  const initiallyOpen = new Set(["level_context", "query", "query_prior"]);
+  return `<div class="prompt-payload">${Object.entries(payload).map(([key, value]) => {
+    const body = key === "active_evidence" ? renderAnalogEvidence(value) : renderValue(value);
+    return `<details class="prompt-section"${initiallyOpen.has(key) ? " open" : ""}><summary>${esc(promptSectionLabel(key, value))}</summary><div class="prompt-section-body">${body}</div></details>`;
+  }).join("")}</div>`;
+}
+
+function renderMessage(message, index) {
+  const role = message.role || "item";
+  const parsed = role === "user" ? parseJsonText(message.content) : null;
+  const content = parsed ? renderUserPrompt(parsed) : typeof message.content === "string" ? `<pre>${esc(message.content)}</pre>` : renderValue(message.content);
+  return `<div class="message"><div class="message-head"><span class="role role-${esc(role)}">${esc(role)}</span><span class="tag">#${index + 1}</span>${message.name ? `<span class="tag">${esc(message.name)}</span>` : ""}</div><div class="content-block">${content}</div><details class="raw"><summary>Raw message JSON</summary><pre>${esc(JSON.stringify(message, null, 2))}</pre></details></div>`;
+}
+function tracePart(title, description, body) {
+  return `<details class="trace-part"><summary>${esc(title)}<span>${esc(description)}</span></summary><div class="trace-part-body">${body}</div></details>`;
+}
+
+function renderLevel(level, index, total) {
+  const { stage, row, prepared, request, output } = level;
+  const definition = prepared?.level_definition || {};
+  const llm = output?.llm || {};
+  const usage = llm.usage || {};
+  const kind = !row || rowFailed(row) ? "failed" : row.correct === true ? "correct" : row.correct === false ? "wrong" : "unknown";
+  const open = index === total - 1 ? " open" : "";
+  const title = definition.description || definition.family_id || definition.endpoint_group || "No level definition";
+  const meta = [
+    `<span class="pill ${kind === "correct" ? "ok" : kind === "wrong" ? "bad" : "warn"}">${kind}</span>`,
+    `<span class="pill">prediction ${esc(row?.pred_label ?? "n/a")}</span>`,
+    `<span class="pill">confidence ${esc(row?.confidence || "n/a")}</span>`,
+    `<span class="pill">${row?.model_called === false ? "carried/reused" : "model called"}</span>`,
+    `<span class="pill">${esc(row?.revision_action || llm.content?.revision_action || "")}</span>`,
+    `<span class="pill">${esc(prepared?.n_active_molecules ?? 0)} molecules / ${esc(prepared?.n_active_cards ?? 0)} cards</span>`,
+    `<span class="pill">${esc(prepared?.new_card_ids?.length ?? 0)} new cards</span>`,
+    `<span class="pill">${Number(usage.total_tokens || 0).toLocaleString()} tokens</span>`,
+  ].join("");
+  const messages = request?.messages || llm.messages || [];
+  const prompt = `<div class="messages">${messages.map(renderMessage).join("") || '<div class="empty">No request messages recorded.</div>'}</div>`;
+  const reasoning = `<div class="content-block reasoning"><pre>${esc(llm.reasoning_content || "No reasoning content recorded.")}</pre></div>`;
+  const outputBody = `${llm.content == null ? '<div class="empty">No structured model output recorded.</div>' : renderValue(llm.content)}
+    <details class="raw"><summary>Raw model output and validation metadata</summary><div class="stage-content">${renderValue({ raw_content: llm.raw_content, structured_output_validation: llm.structured_output_validation, execution_provider_attempts: llm.execution_provider_attempts, usage })}</div></details>`;
+  return `<details class="stage"${open}><summary><span>${esc(stageLabel(stage))} · ${esc(title)}</span><span class="${statusClass(row?.status)}">${esc(row?.status || "missing")}</span></summary><div class="stage-content">
+    <div class="stage-meta">${meta}</div>
+    ${tracePart("Prompt", "complete request messages", prompt)}
+    ${tracePart("Reasoning", "complete model reasoning", reasoning)}
+    ${tracePart("Output", "structured model response", outputBody)}
+  </div></details>`;
+}
+
+function renderDetail() {
+  const sample = state.selected;
+  if (!sample || !state.details) return renderEmpty("Select a sample.");
+  const final = sample.final || {};
+  const firstPrepared = state.details.levels.find(level => level.prepared)?.prepared || {};
+  const overview = [
+    metric("Query index", sample.index), metric("Gold label", sample.label), metric("Final prediction", final.pred_label),
+    metric("Final correctness", final.correct), metric("Final confidence", final.confidence || ""), metric("Trajectory", sample.trajectory),
+    metric("Benchmark row", firstPrepared.benchmark_row_id || ""), metric("Condition", firstPrepared.condition_sentence || firstPrepared.condition_group || "none"),
+    metric("SMILES", firstPrepared.query_smiles || ""),
+  ].join("");
+  const labels = state.stages.map((stage, index) => {
+    const row = sample.rows[index];
+    const change = index && sample.rows[index - 1] && row && String(sample.rows[index - 1].pred_label) !== String(row.pred_label) ? "flip" : index ? "keep" : "anchor";
+    return `<span class="pill">${esc(stageLabel(stage))}: ${esc(row?.pred_label ?? "n/a")} · ${esc(row?.correct === true ? "correct" : row?.correct === false ? "wrong" : "missing")} · ${change}</span>`;
+  }).join("");
+  const prior = sample.rows[0];
+  const priorKind = !prior || rowFailed(prior) ? "missing" : prior.correct === true ? "correct" : "wrong";
+  const priorSection = `<div class="prior-note"><strong>Prior</strong><span class="pill">no model call at this stage</span><span class="pill">prediction ${esc(prior?.pred_label ?? "n/a")}</span><span class="pill ${priorKind === "correct" ? "ok" : priorKind === "wrong" ? "bad" : "warn"}">${esc(priorKind)}</span></div>`;
+  const levels = state.details.levels.map((level, index) => renderLevel(level, index, state.details.levels.length)).join("");
+  els.detail.innerHTML = `<div class="section"><div class="section-head"><span>Query #${sample.index}</span><span class="tag">${esc(sample.trajectory)}</span></div><div class="overview">${overview}</div>${renderTrajectory(sample, true)}<div class="trajectory-labels">${labels}</div></div><div class="section"><div class="section-head"><span>Progressive reasoning trace</span><span class="tag">Prompt · Reasoning · Output</span></div>${priorSection}${levels}</div>${renderTaskSummary()}${renderLevelSummary()}`;
+}
+
+els.task.onchange = loadSelectedTask;
 els.search.oninput = applyFilters;
-els.correctness.onchange = applyFilters;
-els.status.onchange = applyFilters;
-scanCatalog().catch(error => showError(error.message));
+els.trajectoryFilter.onchange = applyFilters;
+els.finalFilter.onchange = applyFilters;
+els.refresh.onclick = loadCatalog;
+loadCatalog().catch(error => showError(error.message));
 </script>
 </body>
 </html>

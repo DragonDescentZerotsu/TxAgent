@@ -34,6 +34,8 @@ Minimal Evidence Contract 只描述证据，不进行预测。它保留：
 
 ## Query-time 检索
 
+### Source/reasoning matrix
+
 ```text
 query SMILES（始终供 harness 检索使用；是否发送给 LLM 由可见性制度决定）
     -> 标准化结构并计算 Morgan fingerprint
@@ -43,10 +45,10 @@ query SMILES（始终供 harness 检索使用；是否发送给 LLM 由可见性
     -> 保留 similarity >= 0.30 的前 3 个 neighbor
 ```
 
-新 v4 主 pipeline 固定 parent-disjoint：对 query 和 source molecule 使用同一 parent normalizer，排除
+Source/reasoning matrix 固定 parent-disjoint：对 query 和 source molecule 使用同一 parent normalizer，排除
 相同 parent 后继续向后取候选，直至补足 top-k 或耗尽候选。不能通过删除受影响 query 来代替重检索。
 Operational policy 允许 same-parent formulation evidence，仅保留为历史或显式 deployment-sensitivity
-ablation；它不再是 v4 staging，也不产生主矩阵 reuse plan。
+ablation；它不再是 current staging，也不产生主矩阵 reuse plan。
 
 实验视图包括：
 
@@ -57,15 +59,29 @@ ablation；它不再是 v4 staging，也不产生主矩阵 reuse plan。
 
 flat 视图由已经选定的 mechanism 视图生成，因此 flat 与 mechanism 接收完全相同的 evidence row。这样可以将“证据组织/机制拆分”的影响与“证据可用性”的影响分离开来。
 
+### Conditioned cumulative/progressive
+
+当前 one-shot cumulative 与 append-only progressive 先在每个累计 record-family pool 内按全局分子相似度
+生成候选，不设置 per-assay neighbor cap。Progressive L1 最多选择 10 个分子；后续 level 最多新增 3 个
+分子并为最多 3 个 active 分子补充新 family cards，所有此前可见 cards 都继续保留。正式默认 card budget
+为 L1 每个分子最多 4 张、后续 level 每个 selected molecule 最多解锁 2 张；2/1 与 8/4 仅是同一 runner
+上的 scaffold-valid budget ablation。
+
+Family assignment 是 record-level；同一 physical assay 可以在不同 level 提供不同 cards。assay 的 earliest
+level 只用于 catalog 排序与 coverage metadata，不是 visibility gate。Scaffold split 使用 scaffold-disjoint，
+random split 使用 parent-disjoint。完整合同见 [ASSAY_LEVEL_RETRIEVAL.md](ASSAY_LEVEL_RETRIEVAL.md)。
+
 ## 可见性与工具执行制度
 
-新 v4 主结果表使用 identity-blind + parent-disjoint。Deployment-visible agentic 和 matched-prefetch 作为
-显式补充控制。三者复用同一套 retrieval、task config、reasoning、validation 和 batch 代码，但 agentic 与
-prefetched 的工具执行路径和计算量不同，不能把二者差异解释为纯 visibility 因果效应。
+Source/reasoning matrix 的 identity-blind cells 使用 parent-disjoint；deployment-visible agentic 和
+matched-prefetch 是显式补充控制。One-shot cumulative 保留 identity-blind 合同，当前 append-only
+progressive 使用 deployment-visible-prefetched。不同可见性制度复用共享 retrieval、task config、reasoning、
+validation 和 batch 代码，但 agentic 与 prefetched 的工具执行路径和计算量不同，不能把二者差异解释为
+纯 visibility 因果效应。
 
 ### 身份盲化主制度
 
-在报告所用实验中，LLM 从不接收 query 或 neighbor 的结构和标识符。
+在 identity-blind matrix cells 中，LLM 不接收 query 或 neighbor 的结构和标识符。
 
 ```text
 query 与检索得到的 neighbor 结构
@@ -76,7 +92,7 @@ query 与检索得到的 neighbor 结构
     -> LLM 只接收别名、similarity、数据源证据和预取的工具文本
 ```
 
-原始 `retrieval.json` 会保留用于 provenance 和调试，但构造 LLM message 时只使用脱敏副本。报告会审计实际保存的请求历史，检查 query/neighbor 结构、分子标识符和已知源分子名称是否出现在 system、user 或 tool 输入中。该上游泄漏测试不检查模型生成的 assistant 文本。
+Source/reasoning matrix 的原始 `retrieval.json` 会保留用于 provenance 和调试，但构造 LLM message 时只使用脱敏副本。报告会审计实际保存的请求历史，检查 query/neighbor 结构、分子标识符和已知源分子名称是否出现在 system、user 或 tool 输入中。该上游泄漏测试不检查模型生成的 assistant 文本。
 
 ### 部署可见：matched-prefetch 补充控制
 
@@ -104,9 +120,11 @@ source ID 和数据源已有名称。因此该补充配对唯一改变的是 LLM
 
 `deployment_visible` 保留 query structure、neighbor structure/source ID/source name；query properties 由
 single branch 请求，group comparison 工具由模型自主选择。该制度回答真实部署中的端到端 agent 性能，
-只作为显式补充实验；不得与 `identity_blind` 构成严格 visibility 对照，也不阻塞 v4 主矩阵。
+只作为显式补充实验；不得与 `identity_blind` 构成严格 visibility 对照，也不阻塞正式矩阵。
 
 ## 推理与汇总
+
+### One-shot/source matrix
 
 ```text
 预取的 query properties
@@ -131,11 +149,34 @@ single branch 请求，group comparison 工具由模型自主选择。该制度�
 
 在身份盲化制度中，身份控制会在两个 LLM 边界上执行。preflight gate 会拒绝 group prompt 中残留的任何已知结构、标识符或源分子同义词。原始 group response 会单独保存，因为即使 prompt 已脱敏，模型仍可能根据独特证据推断出 analog 名称；传递给 final synthesis 的版本会再次依据整个 retrieval 范围内的同义词集合进行清理。部署可见制度不运行该脱敏步骤，而是审计其正向 contract 是否满足。
 
-## 任务配置
+### Append-only progressive
+
+Progressive 在每个 level 发起一次完整 model call。Prompt 包含完整 level plan、query/prior、当前累计 active
+evidence、此前决策状态和该 level 的输出 schema；先前 cards 通过稳定的 `C01`、`C02` 等 prompt aliases
+继续可见，并标明 new/prior-use role。每层分别保存 query-level `prepared.json`、`request.json`、`output.json`
+以及聚合的 predictions、metrics 和 manifests。当前 viewer 只消费这套 progressive artifacts，并按层展示
+Prompt、Reasoning、Output；它不读取 source matrix 的 `trace_messages.jsonl`。
+
+## Progressive family 合同
+
+当前 viewer 和 progressive runner 从冻结 catalog/level definition 读取 family 名称，不在展示代码中复制
+映射。BBB 使用 direct outcome、central functional proxy、passive permeability、efflux、influx 五层；Skin
+使用 strict target-scope gate 后的 direct voter outcome、near-direct overall classification、AOP mechanism
+三层。Bioavailability 使用 registry-pinned 的六层 current plan。ClinTox 当前没有 progressive L1；其 label
+来自冻结 AACT toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators，broad Starling toxicity
+rows 不投票。
+
+Skin 的三层都先排除 photo/light-dependent、irritation-only、SJS/TEN/DRESS/AGEP/Sweet syndrome 等
+越界 records。L1 只含 actual voter records；L2 包含 nonvoter measured outcomes 及 predicted/defined-approach
+overall classifications；L3 包含 experimental/predicted AOP mechanisms。
+
+## Source/reasoning matrix task 配置
+
+以下 group 列表只描述 source/reasoning matrix 的 one-shot experiment views，不是 progressive level plan。
 
 ### Bioavailability_Ma
 
-| 论文与 viewer 展示名称 | 内部 `group_id` | 证据语义 |
+| 论文展示名称 | 内部 `group_id` | 证据语义 |
 |---|---|---|
 | Direct oral bioavailability (F%) | `Observed.direct_oral_bioavailability` | 绝对口服生物利用度 F；直接结果证据 |
 | Oral exposure proxies (AUC/Cmax) | `Observed.oral_auc_cmax_exposure` | 口服 AUC/Cmax、剂量和制剂等系统暴露 proxy |
@@ -143,7 +184,7 @@ single branch 请求，group comparison 工具由模型自主选择。该制度�
 | Fg — Gut-wall transport & intestinal metabolism | `Fg.gut_wall_efflux_intestinal_metabolism` | 肠壁转运、外排和肠道代谢 |
 | Fh — Hepatic clearance & metabolic stability | `Fh.hepatic_clearance_metabolic_stability` | 首过提取、肝清除/内在清除和代谢稳定性 |
 
-展示层使用左列名称；retrieval、trace、input hash 和 branch reuse 继续使用中间列的稳定内部 ID。
+论文图表使用左列名称；retrieval、trace、input hash 和 branch reuse 继续使用中间列的稳定内部 ID。
 
 Starling 包含全部五类证据。ChEMBL endpoint group 会投影到同一组类别中。
 
@@ -180,7 +221,9 @@ generic cytotoxicity、dermatology efficacy、target binding 等 weak background
 
 ## 评估输出
 
-每个 batch 会写入每个 query 的 retrieval、single/group/final 输出、trace message、prediction、metric 和 manifest。论文汇总程序还会生成：
+Source/reasoning matrix batch 会写入每个 query 的 retrieval、single/group/final 输出、legacy trace message、
+prediction、metric 和 manifest。Progressive batch 写入逐 level prepared/request/output 与聚合
+predictions/metrics/manifests。论文汇总程序还会生成：
 
 - accuracy、macro-F1、confusion matrix 和 95% bootstrap 区间
 - 整体及各 group 的 retrieval coverage

@@ -192,6 +192,8 @@ It distinguishes:
   lineage-only source/index repair;
 - `last_complete_reference_pending_*`: a complete historical reference is
   retained because the corresponding current-condition matrix is incomplete;
+- `stale_after_*_requires_*_replay`: a retained run is complete, but a later
+  source/index repair changed model-visible retrieval for a bounded query set;
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
@@ -219,6 +221,7 @@ rows were removed and must be retrained.
 - [Assay/family-level and progressive retrieval](ASSAY_LEVEL_RETRIEVAL.md)
 - [Current result status](RESULTS.md)
 - [Trace retention](TRACE_RETENTION.md)
+- [Current progressive trace viewer](../../trace_viewer/AGENTS.md)
 - [MiniMol and KNN baselines](../../../baselines/minimol/README.md)
 - [ClinTox source contract](../tasks/clintox/CLINTOX_BENCHMARK.md)
 

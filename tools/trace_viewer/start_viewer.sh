@@ -2,23 +2,23 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REGISTRY="$REPO_ROOT/tools/chembl_tool/paper_experiments/current_conditioned_results.json"
 PORT="${1:-8776}"
 
 if [[ ! "$PORT" =~ ^[0-9]+$ ]]; then
-  echo "Usage: $0 [port] [trace-root ...]" >&2
+  echo "Usage: $0 [port] [task=progressive-run-root ...]" >&2
   exit 2
 fi
-
 shift $(( $# > 0 ? 1 : 0 ))
 
-if (( $# > 0 )); then
-  TRACE_ROOTS=("$@")
-else
-  TRACE_ROOTS=(
-    "outputs/paper/molecular_evidence_agent_starling_random"
-    "outputs/paper/molecular_evidence_agent_starling_scaffold"
-    "outputs/paper/molecular_evidence_agent"
-  )
+if [[ ! -f "$REGISTRY" ]]; then
+  echo "Missing current-results registry: $REGISTRY" >&2
+  exit 1
+fi
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq is required to resolve current progressive roots." >&2
+  exit 1
 fi
 
 SERVE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/txagent-trace-viewer.XXXXXX")"
@@ -35,71 +35,73 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-mkdir -p "$SERVE_ROOT/datasets"
+mkdir -p "$SERVE_ROOT/runs"
 ln -s "$SCRIPT_DIR/viewer.html" "$SERVE_ROOT/.trace_viewer.html"
-: > "$SERVE_ROOT/.trace_viewer_sources.tsv"
+ln -s "$REGISTRY" "$SERVE_ROOT/.current_conditioned_results.json"
 : > "$SERVE_ROOT/.trace_viewer_catalog.tsv"
 
-source_index=0
-for trace_root in "${TRACE_ROOTS[@]}"; do
-  if [[ "$trace_root" != /* ]]; then
-    trace_root="$PWD/$trace_root"
-  fi
-  if [[ ! -d "$trace_root" ]]; then
-    echo "Skipping missing trace root: $trace_root" >&2
-    continue
-  fi
-
-  source_name="$(basename "$trace_root")"
-  case "$source_name" in
-    molecular_evidence_agent_starling_random)
-      source_label="Starling random test"
-      ;;
-    molecular_evidence_agent_starling_scaffold)
-      source_label="Starling scaffold test"
-      ;;
-    molecular_evidence_agent)
-      source_label="Historical TDC test"
-      ;;
-    *)
-      source_label="$source_name"
-      ;;
+task_label() {
+  case "$1" in
+    bbb_martins) echo "BBB Martins" ;;
+    bioavailability_ma) echo "Bioavailability Ma" ;;
+    skin_reaction) echo "Skin Reaction" ;;
+    *) echo "$1" ;;
   esac
+}
 
-  source_id="source_${source_index}"
-  ln -s "$trace_root" "$SERVE_ROOT/datasets/$source_id"
-  printf '%s\t%s\t%s\n' "$source_id" "$source_label" "datasets/$source_id" \
-    >> "$SERVE_ROOT/.trace_viewer_sources.tsv"
-  while IFS= read -r predictions_path; do
-    relative_path="${predictions_path#"$trace_root"/}"
-    regime="${relative_path%%/*}"
-    remainder="${relative_path#*/}"
-    task="${remainder%%/*}"
-    remainder="${remainder#*/}"
-    condition="${remainder%%/*}"
-    case "$regime" in
-      runs|runs_deployment_visible_prefetched|runs_deployment_visible|runs_deployment_visible_parent_disjoint)
-        printf '%s\t%s\t%s\t%s\n' "$source_id" "$regime" "$task" "$condition" \
-          >> "$SERVE_ROOT/.trace_viewer_catalog.tsv"
-        ;;
-    esac
+register_task() {
+  local task="$1"
+  local run_root="$2"
+  local status="$3"
+  local receipt="$4"
+  local absolute_root="$run_root"
+
+  if [[ "$absolute_root" != /* ]]; then
+    absolute_root="$REPO_ROOT/$absolute_root"
+  fi
+  if [[ ! -f "$absolute_root/experiment_manifest.json" ]]; then
+    echo "Skipping $task: missing experiment_manifest.json under $absolute_root" >&2
+    return
+  fi
+  if [[ ! -d "$absolute_root/$task/levels" || ! -f "$absolute_root/$task/none/predictions.jsonl" ]]; then
+    echo "Skipping $task: not a progressive task root: $absolute_root/$task" >&2
+    return
+  fi
+
+  ln -s "$absolute_root" "$SERVE_ROOT/runs/$task"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$task" "$(task_label "$task")" "$status" "runs/$task/$task" \
+    "runs/$task/experiment_manifest.json" "$receipt" >> "$SERVE_ROOT/.trace_viewer_catalog.tsv"
+  echo "Registered $task [$status] -> $absolute_root"
+}
+
+if (( $# > 0 )); then
+  for specification in "$@"; do
+    if [[ "$specification" != *=* ]]; then
+      echo "Invalid override '$specification'; expected task=progressive-run-root" >&2
+      exit 2
+    fi
+    register_task "${specification%%=*}" "${specification#*=}" "manual_override" ""
+  done
+else
+  while IFS=$'\t' read -r task run_root; do
+    status="$(jq -r --arg task "$task" '.progressive_tasks[$task].status // "unregistered"' "$REGISTRY")"
+    receipt="$(jq -r --arg task "$task" '.progressive_tasks[$task].retrieval_change_receipt // ""' "$REGISTRY")"
+    register_task "$task" "$run_root" "$status" "$receipt"
   done < <(
-    find "$trace_root" -mindepth 4 -maxdepth 4 -type f -name predictions.jsonl -print \
-      | sort
+    jq -r '.result_families.progressive_append_only.scaffold | to_entries[] | [.key, .value] | @tsv' "$REGISTRY"
   )
-  echo "Registered dataset: $source_label -> $trace_root"
-  source_index=$((source_index + 1))
-done
-
-if (( source_index == 0 )); then
-  echo "No trace roots are available." >&2
-  exit 1
 fi
 
 catalog_count="$(wc -l < "$SERVE_ROOT/.trace_viewer_catalog.tsv")"
-echo "Registered conditions: $catalog_count"
-echo "Serving curated trace datasets from: $SERVE_ROOT"
-echo "Open: http://127.0.0.1:$PORT/.trace_viewer.html?v=paper-v2"
+if (( catalog_count == 0 )); then
+  echo "No progressive task roots are available." >&2
+  exit 1
+fi
+
+echo "Registered progressive tasks: $catalog_count"
+echo "Serving curated trace roots from: $SERVE_ROOT"
+echo "Open: http://127.0.0.1:$PORT/.trace_viewer.html?v=paper-v3"
 
 cd "$SERVE_ROOT"
 python3 -m http.server "$PORT" --bind 127.0.0.1 &

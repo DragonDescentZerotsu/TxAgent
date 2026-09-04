@@ -400,7 +400,7 @@ single/group/final branch 共池，final 只在其依赖成功后入队；跨 co
 same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identity policy 标记为不适用。新数据集先跑 valid
 做 pipeline/completeness 检查，冻结设置后再跑 test；不得根据 test 调并发以外的模型、prompt、threshold 或
 label policy。既有 operational、deployment-visible、matched-prefetch 和 reuse artifacts 都保留为 historical
-lineage，不删除，也不混入新 v4 主结果。
+lineage，不删除，也不混入当前正式矩阵。
 
 当前代码已经完成以下实现 gate；GPT-OSS-120B v2 valid 已完成。2026-08-10 已首次完成 Bioavailability
 full-flat/full-mechanism 及对应 Morgan KNN、MiniMol embedding KNN、MiniMol trained head 的 frozen
@@ -728,18 +728,19 @@ outputs/chembl_tool/tasks/<task_name>/
     batches/
 ```
 
-查看最终 paper trace：
+查看当前 progressive paper trace：
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-Viewer 默认注册 Starling random、Starling scaffold 和历史 TDC test。新 v4 dataset 默认扫描
-`runs_identity_blind_parent_disjoint/`；历史 dataset 继续扫描 identity-blind、matched-prefetch、
-deployment-visible 和 deployment-visible parent-disjoint 四个 legacy paper roots。页面按样本展示
-single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示
-通用 JSON、工具调用、retrieval evidence 和 provenance。旧 task-specific reasoning output 不再支持；
-需要其它 dataset 时可在端口后显式追加 trace root。
+Viewer 从 `current_conditioned_results.json` 注册 BBB、Bioavailability 和 Skin 的 registry-pinned scaffold-valid
+append-only progressive roots。页面按样本展示 Prior→L1...LN 的正误 trajectory、相邻层 rescue/harm/flip、
+每层完整 Prompt、Reasoning 和 Output，以及 validation、usage 和按需展开的 metadata。序列化的 user JSON
+会按 protocol、task、query、prior state、active evidence 和 required output schema 结构化展示；analog/card
+元数据采用紧凑布局，LLM-facing card reference 保持 `C01` 等 prompt alias。旧 single/group/final、
+identity-blind、matched-prefetch 与历史 TDC trace 不再支持；查看显式 rerun 时在端口后传
+`task=progressive-run-root`。
 
 ## Paper experiment split 与可视化入口
 
@@ -1038,7 +1039,8 @@ host 的 gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint；�
 dynamic_v1_llm_3k/eval_pairs.jsonl。prompt 隐藏 query pChEMBL，只暴露 reference molecule 的
 pChEMBL、assay context、Tanimoto、bucket 和 MCS coverage。可选调用当前 tool server 中的
 mmp_structure_compare / properties_compare；输出 per-sample run JSON、predictions.jsonl、
-metrics.json、中文 report、model-vs-baseline SVG 图和 trace_viewer 可读的 trace_messages.jsonl。
+metrics.json、中文 report、model-vs-baseline SVG 图和供离线审计的 legacy `trace_messages.jsonl`
+（当前 progressive viewer 不读取）。
 当前也支持 HF prompt/completion/metadata 格式：completion A/B 映射为 similar/different，
 原始 metadata 保留在 input_record.hf_metadata，并按 similarity_bucket、assay_type 输出分组指标。
 默认 max-tool-rounds=3，断点续跑使用 --skip-existing。
@@ -1368,13 +1370,12 @@ tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
   可选 trace 保存/合并、prediction report、accuracy 和 macro-F1 评估。
 
 tools/trace_viewer/viewer.html
-  最终 paper trace 可视化页面。扫描 identity-blind/deployment-visible condition，查看单个样本的
-  single/group/final messages、reasoning、tool calls、retrieval evidence 和通用 JSON response。
-  不包含旧 task-specific structured field 适配。
+  当前 progressive paper trace 可视化页面。按 query 对齐 Prior→L1...LN，显示正误演进缩略图、
+  rescue/harm/flip 汇总，并将每层 artifact 组织为纵向折叠的 Prompt、Reasoning、Output。
 
 tools/trace_viewer/start_viewer.sh
-  在临时、受限的 serving root 中注册 Starling random/scaffold 与历史 TDC paper trace；第一个参数是端口，
-  后续可选参数是要注册的 trace roots。
+  从 current results registry 在临时、受限的 serving root 中注册 retained scaffold progressive roots 及其 freshness；
+  第一个参数是端口，后续可选参数是 `task=progressive-run-root` overrides。
 
 tools/chembl_tool/tasks/bbb_martins/
   其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
@@ -1927,72 +1928,13 @@ final_summary
 当前评估约定：`Y=1` 对应 `bbb_prediction=pass`，`Y=0` 对应 `bbb_prediction=fail`。
 `uncertain` 在 overall accuracy 和 macro-F1 中按未命中计入；报告中也会给出 decided-only accuracy。
 
-### Trace 保存和可视化
+### 历史 native trace
 
-每次 reasoning run 输出到：
-
-```text
-outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>/
-```
-
-当前文件：
-
-```text
-retrieval.json
-single_molecule_reasoning_output.json
-group_reasoning_outputs.jsonl
-final_reasoning_output.json
-trace_messages.jsonl
-manifest.json
-```
-
-`trace_messages.jsonl` 中每条记录对应一个 trace item：
-
-```text
-single_molecule
-Tier <n>.<endpoint_group>
-final_summary
-```
-
-每条 trace record 包含：
-
-```text
-index
-sample_id
-molecule_key
-smiles
-label
-status
-prediction
-response_text
-messages
-tool_count
-usage
-raw_output
-```
-
-`label` 只用于本地评估和 trace 审计，不进入 LLM prompt。`sample_id` 当前等于
-`query_index`，`molecule_key` 当前形如 `index:9`。viewer 会按 molecule package 分组，
-方便在一个 run 或上传的 JSONL 中选择不同分子的 trace 包，再查看该分子内部的所有阶段。
-
-旧 task reasoning trace 已不再由 viewer 支持。最终论文 trace 统一启动：
-
-```bash
-bash tools/trace_viewer/start_viewer.sh 8776
-```
-
-然后打开：
-
-```text
-http://localhost:8776/.trace_viewer.html?v=paper-v2
-```
-
-Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test；每个 dataset 只扫描 `runs`、
-`runs_deployment_visible_prefetched`、`runs_deployment_visible` 和
-`runs_deployment_visible_parent_disjoint` 中由正式 `predictions.jsonl` 引用的样本级 trace，不跨 dataset
-合并指标。对于 parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 identity policy，
-并区分 retrieval 变化后的重跑与 LLM-visible input 未变化时的 artifact reuse。旧 task reasoning 目录的
-保留和清理规则见 `tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
+历史 BBB native runner 的 `single_runs/` 和 `batches/` 仍可保存 `retrieval.json`、single/group/final
+输出、`trace_messages.jsonl` 与 manifest，作为离线 provenance。当前 progressive viewer 不解析这些文件，
+也不兼容旧 single/group/final 或 `Tier.endpoint_group` trace schema；不要为历史格式扩展当前 viewer。
+唯一的 viewer 启动、artifact 合同和保留边界分别见 `tools/trace_viewer/AGENTS.md` 与
+`tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
 
 常用 pipeline 命令：
 
@@ -2061,16 +2003,11 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_i
 ...
 ```
 
-旧 task batch 可以生成合并 trace 供离线审计，但最终 paper runner 必须使用
-`--no-combine-traces`，只保留每个 molecule 自己的 trace。最终 viewer 固定启动为：
-
-```bash
-bash tools/trace_viewer/start_viewer.sh 8776
-```
-
-Viewer 从 condition 的 `predictions.jsonl` 构建样本列表，再按需加载 per-run trace 和 retrieval。
-新增 task 时必须沿用通用 stage/message/tool/JSON contract；不要向 viewer 添加 task prediction、
-Tier、expert-policy 或 `key_evidence` effect 字段的专用适配。
+旧 task batch 的合并 trace 只供历史离线审计，不再由当前 viewer 支持。当前 viewer 只读取 progressive
+runner 的通用 `label`、`pred_label`、`correct`、`status`、`model_called` 和 `revision_action` 字段，以及
+per-level prepared/request/output artifacts；不要向 viewer 添加 task prediction、Tier、expert-policy 或
+`key_evidence` effect 字段的专用适配。右侧每个 level 的主阅读面只保留纵向可折叠的完整 Prompt、Reasoning、
+Output；Prior 单独标注为非 model call，结构化字段采用标题在上、值在下的布局。
 
 ### LLM usage 与成本估算
 

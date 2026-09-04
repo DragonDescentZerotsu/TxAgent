@@ -59,14 +59,6 @@
         "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
         "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731"
       },
-      "scaffold_status_by_task": {
-        "bbb_martins": "current",
-        "bioavailability_ma": "current_via_zero_change_retrieval_receipt",
-        "skin_reaction": "current"
-      },
-      "scaffold_reuse_receipts": {
-        "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json"
-      },
       "random": {
         "combined_root": "outputs/paper/starling_conditioned_assay_progressive_random_quality_v2_parent_disjoint/random_valid_deepseek_v4_flash_0731",
         "status_by_task": {
