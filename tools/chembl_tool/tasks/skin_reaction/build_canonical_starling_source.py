@@ -65,8 +65,9 @@ def main(argv: list[str] | None = None) -> int:
             "direct": "validated final sensitization/contact-allergy outcomes only",
             "aop": "experimental MIE, KE2, KE3, or KE4 evidence only",
             "excluded": [
-                "phototoxicity/photoallergy/photoirritation",
-                "irritation/corrosion",
+                "photo/light-dependent evidence including photochemistry and photoallergy",
+                "irritation/corrosion without an explicit sensitization outcome",
+                "non-contact severe cutaneous adverse reactions such as SJS/TEN/DRESS/Sweet syndrome",
                 "prediction-only or in-silico evidence",
                 "integrated or unresolved endpoints",
             ],
@@ -109,7 +110,9 @@ def build_canonical_frames(direct_frame: Any, aop_frame: Any) -> dict[str, Any]:
             if decision.partition != REJECT_PARTITION and (
                 identity.status != "ok" or not identity.parent_inchi_key
             ):
-                decision = PartitionDecision(REJECT_PARTITION, "invalid_or_missing_smiles")
+                decision = PartitionDecision(
+                    REJECT_PARTITION, "invalid_or_missing_smiles"
+                )
                 invalid_smiles += 1
             audit_row = {
                 "source_partition": source_name,
@@ -130,7 +133,9 @@ def build_canonical_frames(direct_frame: Any, aop_frame: Any) -> dict[str, Any]:
             if decision.partition == REJECT_PARTITION:
                 continue
             normalized = (
-                _to_direct_record(row, source_name, source_index, identity.parent_inchi_key)
+                _to_direct_record(
+                    row, source_name, source_index, identity.parent_inchi_key
+                )
                 if decision.partition == DIRECT_PARTITION
                 else _to_aop_record(
                     row,
@@ -142,7 +147,9 @@ def build_canonical_frames(direct_frame: Any, aop_frame: Any) -> dict[str, Any]:
             )
             accepted[decision.partition].append(normalized)
 
-    direct_rows, direct_dedup = _deduplicate(accepted[DIRECT_PARTITION], DIRECT_PARTITION)
+    direct_rows, direct_dedup = _deduplicate(
+        accepted[DIRECT_PARTITION], DIRECT_PARTITION
+    )
     aop_rows, aop_dedup = _deduplicate(accepted[AOP_PARTITION], AOP_PARTITION)
     duplicate_map = {
         row["duplicate_source_record_id"]: row["retained_source_record_id"]
@@ -155,8 +162,19 @@ def build_canonical_frames(direct_frame: Any, aop_frame: Any) -> dict[str, Any]:
             row["deduplicated_into"] = retained
 
     if len(audit) != len(direct_frame) + len(aop_frame):
-        raise AssertionError("canonical partition audit does not reconcile to raw inputs")
-    if any(row["aop_event"] not in {"MIE_protein_binding", "KE2_keratinocyte_activation", "KE3_dendritic_cell_activation", "KE4_T_cell_activation"} for row in aop_rows):
+        raise AssertionError(
+            "canonical partition audit does not reconcile to raw inputs"
+        )
+    if any(
+        row["aop_event"]
+        not in {
+            "MIE_protein_binding",
+            "KE2_keratinocyte_activation",
+            "KE3_dendritic_cell_activation",
+            "KE4_T_cell_activation",
+        }
+        for row in aop_rows
+    ):
         raise AssertionError("non-key-event evidence leaked into canonical AOP")
     direct_ids = {row["source_record_id"] for row in direct_rows}
     aop_ids = {row["source_record_id"] for row in aop_rows}
@@ -286,9 +304,8 @@ def _to_aop_record(
             "assay_type": _text(row.get("assay_or_test")),
             "aop_event": aop_event,
             "endpoint_or_target": "",
-            "result_label": normalized_direct_label(row.get("outcome_label")) or _text(
-                row.get("outcome_label")
-            ).lower(),
+            "result_label": normalized_direct_label(row.get("outcome_label"))
+            or _text(row.get("outcome_label")).lower(),
             "result_value": _text(row.get("effect_metric")),
             "result_unit": "",
             "experimental_conditions": _join_nonempty(
@@ -326,8 +343,16 @@ def _deduplicate(
     duplicates: list[dict[str, Any]] = []
     by_key: dict[tuple[str, ...], dict[str, Any]] = {}
     for row in rows:
-        endpoint = row.get("outcome_label") if partition == DIRECT_PARTITION else row.get("aop_event")
-        result = row.get("outcome_label") if partition == DIRECT_PARTITION else row.get("result_label")
+        endpoint = (
+            row.get("outcome_label")
+            if partition == DIRECT_PARTITION
+            else row.get("aop_event")
+        )
+        result = (
+            row.get("outcome_label")
+            if partition == DIRECT_PARTITION
+            else row.get("result_label")
+        )
         key = (
             _text(row.get("parent_inchi_key")),
             _normalized_text(row.get("pmid")),

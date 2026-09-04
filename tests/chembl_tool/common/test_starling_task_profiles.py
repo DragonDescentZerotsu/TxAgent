@@ -11,7 +11,7 @@ from tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library impor
     ALIGNED_V2_OUT_DIR,
     DEFAULT_OUT_DIR,
     SOURCE_PROFILE_BROAD_V1,
-    SOURCE_PROFILE_CANONICAL_V3,
+    SOURCE_PROFILE_CANONICAL_V4,
     SOURCE_PROFILE_SENSITIZATION_V2,
     HISTORICAL_OUT_DIR,
     _resolve_out_dir,
@@ -47,8 +47,8 @@ def test_skin_starling_profiles_use_canonical_direct_and_aop_only():
         "mechanistic_factor",
     ]
     assert profiles[0].record_filter is None
-    assert profiles[0].path.endswith("canonical_sensitization_v3/direct_records.parquet")
-    assert profiles[1].path.endswith("canonical_sensitization_v3/aop_records.parquet")
+    assert profiles[0].path.endswith("canonical_sensitization_v4/direct_records.parquet")
+    assert profiles[1].path.endswith("canonical_sensitization_v4/aop_records.parquet")
 
     historical = skin_reaction_profiles(
         Path("data/starling_data/skin_reaction"),
@@ -70,7 +70,7 @@ def test_starling_molecule_id_is_cross_profile_and_stable():
 
 def test_skin_scope_profiles_resolve_to_separate_default_output_roots():
     aligned = SimpleNamespace(
-        source_profile=SOURCE_PROFILE_CANONICAL_V3,
+        source_profile=SOURCE_PROFILE_CANONICAL_V4,
         max_rows_per_source=0,
         out_dir="",
     )
@@ -93,7 +93,7 @@ def test_skin_scope_profiles_resolve_to_separate_default_output_roots():
 
 def test_partial_skin_index_build_requires_isolated_output_root():
     args = SimpleNamespace(
-        source_profile=SOURCE_PROFILE_CANONICAL_V3,
+        source_profile=SOURCE_PROFILE_CANONICAL_V4,
         max_rows_per_source=10,
         out_dir="",
     )
@@ -103,7 +103,7 @@ def test_partial_skin_index_build_requires_isolated_output_root():
 
 
 def test_canonical_skin_source_preflight_checks_contract_and_hashes(tmp_path):
-    canonical = tmp_path / "canonical_sensitization_v3"
+    canonical = tmp_path / "canonical_sensitization_v4"
     canonical.mkdir()
     direct = canonical / "direct_records.parquet"
     aop = canonical / "aop_records.parquet"

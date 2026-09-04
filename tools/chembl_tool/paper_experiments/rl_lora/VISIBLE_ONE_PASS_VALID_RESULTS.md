@@ -1,6 +1,11 @@
 # Visible-prefetched one-pass valid and RL smoke receipt
 
-Status: complete on 2026-08-10. The current scaffold-valid sets completed
+> **Historical receipt.** In this file, `current` means the frozen 2026-08-10
+> E18 snapshot (including the Skin scoped-v2 index), not the active 2026-09-04
+> Conditioned Benchmark or Skin source-purity-v5 retrieval lineage. This receipt
+> is not a current result registry or runnable experiment entrypoint.
+
+Status: complete on 2026-08-10. The then-current scaffold-valid sets completed
 `820/820` with zero failed outputs. A bounded three-step Bio RL smoke and
 checkpoint reload passed under the historical rank-16 attention-only smoke
 configuration. The user subsequently selected rank-32 all-module LoRA, and its
@@ -49,7 +54,7 @@ effect.
 |---|---:|---:|---|
 | BBB | full-flat 0.6814 | 0.6825 | descriptive only: previous BBB used historical record-supported gold and n=500 |
 | Bioavailability | full-flat 0.6787 | 0.6778 | nearly identical point estimate, but previous prompt/tool-execution contract was legacy agentic visible |
-| Skin Reaction | full-flat 0.5981; best mechanism 0.6151 | 0.6276 | current one-pass is higher, but also uses current aligned prompt and scoped-v2 evidence index |
+| Skin Reaction | full-flat 0.5981; best mechanism 0.6151 | 0.6276 | the then-current one-pass was higher, but also used its aligned prompt and scoped-v2 evidence index |
 
 The historical comparison is not a paired architecture test. The old visible
 runner allowed model-selected comparison tool calls; the new upper-bound

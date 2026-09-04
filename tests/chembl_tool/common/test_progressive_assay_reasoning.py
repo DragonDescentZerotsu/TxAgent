@@ -176,6 +176,35 @@ def test_progressive_reuse_signature_ignores_nonvisible_audits():
     assert runner._prepared_model_input(prepared) != runner._prepared_model_input(
         changed_prompt
     )
+    catalog_count_change = {
+        **prepared,
+        "level_definition": {
+            "level": 2,
+            "endpoint_group": "near_direct",
+            "description": "Near-direct evidence.",
+            "new_physical_assays": 147,
+        },
+    }
+    other_catalog_count = {
+        **catalog_count_change,
+        "level_definition": {
+            **catalog_count_change["level_definition"],
+            "new_physical_assays": 145,
+        },
+    }
+    assert runner._prepared_model_input(
+        catalog_count_change
+    ) == runner._prepared_model_input(other_catalog_count)
+    changed_level_description = {
+        **catalog_count_change,
+        "level_definition": {
+            **catalog_count_change["level_definition"],
+            "description": "Different prompt text.",
+        },
+    }
+    assert runner._prepared_model_input(
+        catalog_count_change
+    ) != runner._prepared_model_input(changed_level_description)
 
 
 def test_progressive_reuse_rejects_changed_generation_contract(tmp_path):
@@ -221,6 +250,58 @@ def test_progressive_reuse_rejects_changed_generation_contract(tmp_path):
             source_root=tmp_path,
             current_manifest=current,
         )
+
+
+def test_progressive_reuse_allows_changed_family_lineage(tmp_path):
+    shared = {
+        field: {"field": field}
+        for field in (
+            "experiment",
+            "split_scheme",
+            "visibility_mode",
+            "reference_pool",
+            "neighbor_identity_policy",
+            "min_similarity",
+            "candidate_generation",
+            "selection",
+            "prompt_profile",
+            "condition_policy",
+            "temperature",
+            "thinking",
+            "reasoning_effort",
+            "tool_prefetch_complete",
+        )
+    }
+    source = {
+        **shared,
+        "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+        "max_tokens": 20_480,
+        "tasks": ["skin_reaction"],
+        "inputs": {
+            "skin_reaction": {
+                "input_sha256": "same-benchmark",
+                "family_manifest_sha256": "old-family",
+                "single_source_manifest_sha256": "same-single",
+            }
+        },
+    }
+    (tmp_path / "experiment_manifest.json").write_text(json.dumps(source))
+    current = {
+        **source,
+        "inputs": {
+            "skin_reaction": {
+                **source["inputs"]["skin_reaction"],
+                "family_manifest_sha256": "new-family",
+            }
+        },
+    }
+    assert (
+        runner._validate_progressive_reuse_source(
+            source_root=tmp_path,
+            current_manifest=current,
+        )
+        == source
+    )
 
 
 def test_random_split_requires_explicit_output_root():
@@ -712,7 +793,7 @@ def test_progressive_runner_isolates_purity_indices_from_historical_top20_runner
         version = {
             "bbb_martins": "source_purity_v6",
             "bioavailability_ma": "legacy_record_supported_v2_vote_pure_v1",
-            "skin_reaction": "source_purity_v2",
+            "skin_reaction": "source_purity_v5",
         }[task]
         assert version in str(spec.index)
         assert version in str(spec.family_manifest)

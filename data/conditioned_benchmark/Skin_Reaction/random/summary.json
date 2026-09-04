@@ -5,8 +5,8 @@
   "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
   "source_scaffold_root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
   "root": "data/conditioned_benchmark/Skin_Reaction/random",
-  "source_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
-  "random_union_sha256": "8047c76eff3b2aebe767a641ffd37e0d5526d3f2ebea8a18847f425963586473",
+  "source_union_sha256": "5081bbbbe7c9ae3b12e28ef937d97152d6f456672268e2a0485eac8c2e01522e",
+  "random_union_sha256": "5081bbbbe7c9ae3b12e28ef937d97152d6f456672268e2a0485eac8c2e01522e",
   "same_molecule_condition_rows_and_labels": true,
   "optimizer": {
     "method": "deterministic_lexicographic_parent_group_milp",
@@ -17,11 +17,11 @@
       "test": 0.1
     },
     "target_rows": {
-      "train": 1993,
-      "valid": 249,
-      "test": 249
+      "train": 1937,
+      "valid": 242,
+      "test": 242
     },
-    "n_parent_groups": 2458,
+    "n_parent_groups": 2388,
     "n_conditions": 2,
     "record_support_objective_enabled": true,
     "record_support_field": "source_record_count",
@@ -39,47 +39,47 @@
     "selected_test_singletons": 0,
     "minimum_positive_label_l1_deviation": 0,
     "minimum_condition_row_l1_deviation": 2,
-    "desired_positive_count_per_eval_split": 174,
+    "desired_positive_count_per_eval_split": 169,
     "condition_coverage_constraint": "every condition has at least one parent in every split"
   },
   "splits": {
     "train": {
-      "n": 1993,
-      "sha256": "172c37546de2558716fd33ddc094663c9940fce4f6588b13222d3c9daac6bbb1",
-      "n_parents": 1968,
+      "n": 1937,
+      "sha256": "08889ebfd75e64f1c8a34deb48bf9390161e110ce07115528b2f7c69c3edd80d",
+      "n_parents": 1910,
       "label_counts": {
-        "0": 603,
-        "1": 1390
+        "0": 581,
+        "1": 1356
       },
       "condition_counts": {
-        "disease=atopic_dermatitis": 27,
-        "no_reported_external_condition": 1966
+        "disease=atopic_dermatitis": 29,
+        "no_reported_external_condition": 1908
       }
     },
     "valid": {
-      "n": 249,
-      "sha256": "269d1934fe70e27529192855284b23b56bb0d5ea2f5a44637b9bad0249271a5d",
-      "n_parents": 245,
+      "n": 242,
+      "sha256": "03ea43a3a9e134d1fa69390ffe09313e35b0a6aab55e5c70f9a272b3846d8389",
+      "n_parents": 239,
       "label_counts": {
-        "0": 75,
-        "1": 174
+        "0": 73,
+        "1": 169
       },
       "condition_counts": {
-        "disease=atopic_dermatitis": 4,
-        "no_reported_external_condition": 245
+        "disease=atopic_dermatitis": 3,
+        "no_reported_external_condition": 239
       }
     },
     "test": {
-      "n": 249,
-      "sha256": "53042fe159fc1cbc5c40fa133291cc8ee500b63cd6bc0ab8be854bc9f9851104",
-      "n_parents": 245,
+      "n": 242,
+      "sha256": "1c11a03652dfd2fd12535340bc02529a9c1a9e3eaf143a0ce351ec05e8e10dd8",
+      "n_parents": 239,
       "label_counts": {
-        "0": 75,
-        "1": 174
+        "0": 73,
+        "1": 169
       },
       "condition_counts": {
-        "disease=atopic_dermatitis": 4,
-        "no_reported_external_condition": 245
+        "disease=atopic_dermatitis": 3,
+        "no_reported_external_condition": 239
       }
     }
   },
@@ -90,8 +90,8 @@
   },
   "pairwise_scaffold_overlap": {
     "train__valid": 58,
-    "train__test": 52,
-    "valid__test": 22
+    "train__test": 47,
+    "valid__test": 24
   },
   "conditions_present_in_all_splits": [
     "disease=atopic_dermatitis",

@@ -1,6 +1,6 @@
 # Starling assay-level retrieval protocol
 
-更新时间：2026-09-03。
+更新时间：2026-09-04。
 
 本文只冻结当前 retrieval、leakage、progressive reasoning 和 source-purity 合同。当前数据的恢复、逐层 records
 和协作者分享见 `CURRENT_STARLING_RETRIEVAL.md`；当前 metrics、artifact roots 和 freshness 见
@@ -143,9 +143,13 @@ prediction 的复用仅由 `receipts/bioavailability_scaffold_valid_nitrendipine
 
 ### Skin
 
-当前三层累计 assays 为 `423 / 530 / 1,219`：direct voter outcomes、observed nonvoter outcomes、sensitization
-AOP。LLNA final outcome 只有实际参与 current gold vote 的 record 才能进入 L1；其他 outcome 进入 L2，MIE/KE
-进入 L3。当前 scaffold 2/1 与 4/2 已完成；8/4 未运行。random prediction 仍属于旧 broad-L1 lineage。
+当前 source-purity v5 三层累计 physical assays 为 `384 / 531 / 1,031`（各层新增 `384 / 147 / 500`）：direct voter outcomes、near-direct
+outcomes/classifications、sensitization mechanisms。LLNA final outcome 只有实际参与 current gold vote 的 record
+才能进入 L1；其他 measured outcome 以及 predicted/defined-approach overall classification 进入 L2；experimental
+或 predicted MIE/KE 及有实质内容的 unspecified mechanisms 进入 L3。photo/light-dependent、irritation-only 和
+non-contact severe cutaneous reaction records 不进入任何 level。最终 MDAM reproducibility rebuild 保持 gold/split
+不变，但改变了 1/2/3 个 scaffold-valid queries 在 2/1、4/2、8/4 下的 selected surface；这些 bounded prefixes
+需要 targeted replay，精确清单见 `receipts/skin_scaffold_valid_mdam_family_rebuild.json`。random cells 仍需完整 replay。
 
 ## Maintained entrypoints
 

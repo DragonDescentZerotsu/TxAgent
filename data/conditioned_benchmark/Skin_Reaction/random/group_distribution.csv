@@ -1,7 +1,7 @@
 condition_group,split,n_rows
-disease=atopic_dermatitis,train,27
-no_reported_external_condition,train,1966
-disease=atopic_dermatitis,valid,4
-no_reported_external_condition,valid,245
-disease=atopic_dermatitis,test,4
-no_reported_external_condition,test,245
+disease=atopic_dermatitis,train,29
+no_reported_external_condition,train,1908
+disease=atopic_dermatitis,valid,3
+no_reported_external_condition,valid,239
+disease=atopic_dermatitis,test,3
+no_reported_external_condition,test,239

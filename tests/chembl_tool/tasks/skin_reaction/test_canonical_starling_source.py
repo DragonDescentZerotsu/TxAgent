@@ -12,6 +12,7 @@ from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     classify_aop_source_record,
     classify_direct_source_record,
     direct_outcome_reason,
+    strict_scope_exclusion_reason,
 )
 
 
@@ -41,7 +42,10 @@ def test_direct_source_routes_final_outcome_aop_and_photo_records():
     assert classify_direct_source_record(aop).partition == AOP_PARTITION
     assert classify_direct_source_record(aop).aop_event == "MIE_protein_binding"
     assert classify_direct_source_record(unicode_aop).partition == AOP_PARTITION
-    assert classify_direct_source_record(unicode_aop).aop_event == "KE3_dendritic_cell_activation"
+    assert (
+        classify_direct_source_record(unicode_aop).aop_event
+        == "KE3_dendritic_cell_activation"
+    )
     assert classify_direct_source_record(photo).partition == REJECT_PARTITION
 
 
@@ -61,6 +65,156 @@ def test_direct_source_checks_population_context_for_photo_and_in_silico_rows():
 
     assert classify_direct_source_record(photo).reason == "out_of_scope_photo_hazard"
     assert classify_direct_source_record(prediction).reason == "prediction_only"
+
+
+def test_real_photo_llna_and_irritation_only_leaks_are_rejected():
+    photo_llna = {
+        "reaction_type": "sensitization",
+        "assay_or_test": "PS LLNA",
+        "outcome_label": "positive",
+        "support_text": "Table shows a positive result under the PS LLNA column.",
+    }
+    unicode_photopatch = {
+        "reaction_type": "allergic_contact_dermatitis_contact_allergy",
+        "assay_or_test": "patch test and photo‐patch test",
+        "outcome_label": "positive",
+        "support_text": "Positive reactions occurred at irradiated and covered sites.",
+    }
+    irritation_only = {
+        "reaction_type": "sensitization",
+        "assay_or_test": "Epidermal test + sodium lauryl sulphate irritation",
+        "outcome_label": "positive",
+        "support_text": "Irritation produced erythema and increased skin thickness.",
+    }
+    combined_study_with_real_outcome = {
+        "reaction_type": "sensitization",
+        "assay_or_test": "skin irritation and sensitization study",
+        "outcome_label": "negative",
+        "support_text": "No visible evidence of skin sensitization was observed.",
+    }
+
+    for row in (photo_llna, unicode_photopatch):
+        decision = classify_direct_source_record(row)
+        assert decision.partition == REJECT_PARTITION
+        assert decision.reason == "out_of_scope_photo_hazard"
+    decision = classify_direct_source_record(irritation_only)
+    assert decision.partition == REJECT_PARTITION
+    assert decision.reason == "out_of_scope_irritation"
+    assert (
+        classify_direct_source_record(combined_study_with_real_outcome).partition
+        == DIRECT_PARTITION
+    )
+
+
+def test_noncontact_severe_cutaneous_reactions_are_not_sensitization_outcomes():
+    for endpoint in (
+        "Stevens-Johnson syndrome",
+        "toxic epidermal necrolysis",
+        "DRESS",
+        "Sweet syndrome",
+    ):
+        row = {
+            "aop_event": "adverse_outcome_skin_sensitization",
+            "assay_type": "clinical case report",
+            "endpoint_or_target": endpoint,
+            "result_label": "positive",
+            "support_text": f"A case of {endpoint} was reported.",
+        }
+        decision = classify_aop_source_record(row)
+        assert decision.partition == REJECT_PARTITION
+        assert decision.reason == "out_of_scope_noncontact_cutaneous_reaction"
+
+
+def test_stage03_strict_scope_guard_catches_normalized_photo_context():
+    assert (
+        strict_scope_exclusion_reason(
+            {
+                "canonical_assay_context": "photo-LLNA",
+                "canonical_endpoint_name": "sensitization",
+            }
+        )
+        == "out_of_scope_photo_hazard"
+    )
+    assert (
+        strict_scope_exclusion_reason(
+            {
+                "canonical_assay_context": "adduct analysis",
+                "canonical_endpoint_name": "histidine adduct formation",
+                "qualifying_conditions": "light-induced photooxidation",
+            }
+        )
+        == "out_of_scope_photo_hazard"
+    )
+
+
+def test_photo_scope_guard_handles_unicode_and_parenthesized_separators():
+    for support_text in (
+        "Patients displayed photo‐aggravated dermatitis after exposure.",
+        "The tested compounds were contact (photo)allergens.",
+        "Photo-exposed skin produced photo-generated ROS under a solar simulator.",
+        "A skin-protein photoconjugate was tested after irradiation.",
+        "The series contained cases of photocon‐tract allergy.",
+    ):
+        decision = classify_direct_source_record(
+            {
+                "reaction_type": "sensitization",
+                "assay_or_test": "patch test",
+                "outcome_label": "positive",
+                "support_text": support_text,
+            }
+        )
+        assert decision.partition == REJECT_PARTITION
+        assert decision.reason == "out_of_scope_photo_hazard"
+
+
+def test_strict_scope_rejects_unicode_uv_band_experiment():
+    record = {
+        "assay_or_test": "DNFB painting assay with UV‐B pretreatment",
+        "support_text": "UV‐B pretreatment followed by DNFB challenge.",
+    }
+    assert strict_scope_exclusion_reason(record) == "out_of_scope_photo_hazard"
+
+
+def test_strict_scope_rejects_unirradiated_photo_study_control():
+    record = {
+        "assay_or_test": "patch test on unirradiated control skin",
+        "support_text": "The unirradiated group developed contact hypersensitivity.",
+    }
+    assert strict_scope_exclusion_reason(record) == "out_of_scope_photo_hazard"
+
+
+def test_strict_scope_keeps_ordinary_allergy_to_uva_filter():
+    record = {
+        "assay_or_test": "human patch test",
+        "extra_details": "The ingredient is marketed as a UV‐A-blocking filter.",
+        "support_text": "A positive patch test confirmed allergic contact dermatitis.",
+    }
+    assert strict_scope_exclusion_reason(record) == ""
+
+
+def test_stage03_guard_excludes_pure_irritant_mechanism_but_keeps_comparator_context():
+    assert (
+        strict_scope_exclusion_reason(
+            {
+                "canonical_assay_context": "ELISA",
+                "canonical_endpoint_name": "IL-8",
+                "support_text": "The skin irritant SLS upregulated IL-8.",
+            }
+        )
+        == "out_of_scope_irritation"
+    )
+    assert (
+        strict_scope_exclusion_reason(
+            {
+                "canonical_assay_context": "dendritic cell activation assay",
+                "canonical_endpoint_name": "CD86",
+                "support_text": (
+                    "The sensitizer DNCB increased CD86, whereas irritant controls did not."
+                ),
+            }
+        )
+        == ""
+    )
 
 
 def test_direct_source_rejects_defined_approach_but_not_subject_count_wording():
@@ -115,7 +269,9 @@ def test_aop_source_moves_adverse_outcome_and_keeps_only_key_events():
     assert classify_aop_source_record(outcome).partition == DIRECT_PARTITION
     assert classify_aop_source_record(key_event).partition == AOP_PARTITION
     assert classify_aop_source_record(prediction).partition == REJECT_PARTITION
-    assert classify_aop_source_record(condition_prediction).partition == REJECT_PARTITION
+    assert (
+        classify_aop_source_record(condition_prediction).partition == REJECT_PARTITION
+    )
     assert classify_aop_source_record(integrated).partition == REJECT_PARTITION
 
 

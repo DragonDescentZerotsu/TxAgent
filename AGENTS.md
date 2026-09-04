@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Conditioned Benchmark（2026-08-31）
+## 当前 Conditioned Benchmark（2026-09-04）
 
 四个任务只有一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
 
@@ -43,7 +43,7 @@ tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 | BBB_Martins | 3,053 / 397 / 393 | 3,075 / 384 / 384 | experimentally meaningful systemic CNS access |
 | Bioavailability_Ma | 1,956 / 262 / 269 | 1,989 / 249 / 249 | oral bioavailability under the reported condition |
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 | clinical-trial toxicity failure versus approved comparator |
-| Skin_Reaction | 1,997 / 246 / 248 | 1,993 / 249 / 249 | skin sensitization/contact allergy |
+| Skin_Reaction | 1,941 / 239 / 241 | 1,937 / 242 / 242 | skin sensitization/contact allergy |
 
 random split 使用相同 molecule-condition rows/labels，按 parent 整组做确定性、quality-stratified 80/10/10
 分配；同一 parent 不会跨 split，每个 condition 在三路都出现，但 scaffold 允许跨 split。BBB、
@@ -55,7 +55,15 @@ molecule-condition schema。没有外部 condition 的行使用
 condition，全部采用该值。两种 split 的 parent identity overlap 均为 0；只有 scaffold split 另外保证
 Bemis-Murcko scaffold overlap 为 0。
 
-BBB 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；Bioavailability 已排除
+BBB 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；Skin gold vote 仍排除 prediction-only、
+photo/light-dependent、irritation-only、non-contact severe cutaneous reaction、integrated/defined-approach 和
+mechanistic records；retrieval source-purity v5 对 L1/L2/L3 共用同一个 strict ordinary-sensitization scope gate，
+因此 photo/light、纯 irritation、SJS/TEN/DRESS/AGEP/Sweet syndrome 等 record 不可被任何 level 检索；L1 之外仍
+保留 target-aligned prediction/defined-approach/unspecified-mechanism evidence。2026-09-04 最终可复现性检查又将
+37 条 MDAM final-outcome nonvoters 补入 L2；gold/split 不变，但 scaffold/random indices 均改变。matched baselines
+仍为 current；先前完成的 scaffold-valid 2/1、4/2、8/4 仅分别有 1/2/3 个 queries 需要 targeted replay，random
+仍需完整 replay。精确清单见 `tools/chembl_tool/paper_experiments/receipts/skin_scaffold_valid_mdam_family_rebuild.json`。
+Bioavailability 已排除
 冻结 HF source 中 6 条经人工及 PubChem/PMID 2468876 核验的 nitrendipine 结构—名称错配记录，移除由错误
 `CNYREWGHOWSYCJ` identity 产生的 2 个 benchmark rows，并原位重建 scaffold/random split 与 retrieval index；
 旧 Bioavailability predictions 只有在新 manifest input hash 匹配，且 retrieval hash 匹配或 split-scoped
@@ -67,7 +75,8 @@ Task-specific source voting 和 review 仍保留在各 task 模块中。BBB、Bi
 L1 都只包含当前 benchmark lineage 中实际输出 base vote 或 condition review accepted 的 source records；
 parent 后续因 tie/agreement gate 被拒绝不撤销 record voter 身份，语义 direct 或 gold-rule replay 不能授予 L1
 membership。BBB 的 direct gold 只接受系统给药后的实验性 meaningful CNS access；Skin direct gold 只接受
-sensitization/contact-allergy final outcome。ClinTox 当前没有 progressive L1；其 label 只由冻结 AACT
+measured sensitization/contact-allergy final outcome，model prediction、photo、irritation 和 AOP mechanism
+records 不投票。ClinTox 当前没有 progressive L1；其 label 只由冻结 AACT
 toxicity-failure positives 与 SWEETLEAD/FDA-approved comparators 构造，broad Starling toxicity rows 不投票。
 版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
 
@@ -90,6 +99,8 @@ tools/chembl_tool/paper_experiments/TRACE_RETENTION.md
 tools/chembl_tool/common/starling/publish_conditioned_benchmark.py
 tools/chembl_tool/common/starling/build_conditioned_random_split.py
 tools/chembl_tool/common/starling/build_record_supported_benchmark.py
+tools/chembl_tool/tasks/skin_reaction/build_canonical_starling_source.py
+tools/chembl_tool/tasks/skin_reaction/context_conditioned_benchmark.py
 tools/chembl_tool/paper_experiments/build_starling_benchmark_indices.py
 tools/chembl_tool/paper_experiments/rebuild_current_starling_retrieval.py
 tools/chembl_tool/paper_experiments/export_current_starling_level_records.py
@@ -132,8 +143,13 @@ Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作�
 no-go 方法开发只从 Git history 或冻结 receipt 读取。
 
 当前 BBB scaffold progressive v6 与输入/index hash 匹配；BBB random v6 index 已构建但 predictions 仍为
-v5 历史参考、需要 replay。Skin strict-voter-L1 v2 scaffold 2/1 与 4/2 已完成，8/4 尚无 current run；random
-predictions 仍来自旧 broad-L1 v1、需要 replay。Bioavailability 在 2026-09-01
+v5 历史参考、需要 replay。Skin source-purity v5 已重建：L1 是 actual voters；L2 是 nonvoter measured outcomes
+及 predicted/defined-approach overall classifications；L3 是 experimental/predicted AOP mechanisms，包括有实质
+内容但无法唯一归入某个 KE 的 records；三层都先通过 strict target-scope gate。最新 L1/L2/L3 可检索 records
+为 42,435/12,522/12,010。matched MiniMol/Morgan baselines 已重跑且 split 未再变化；scaffold-valid 2/1、4/2、
+8/4 的上一轮完整结果在 MDAM repair 后需要小范围 targeted replay，当前不能作为最终 current score；random
+predictions 仍需完整 replay。
+Bioavailability 在 2026-09-01
 删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化。scaffold-valid
 已逐 query、逐 level 审计 262 条 rows，模型可见 selected retrieval surface 变化为 0，并由
 `tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json`

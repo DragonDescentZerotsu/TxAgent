@@ -1,0 +1,76 @@
+{
+  "schema_version": "skin_semantic_gold_migration.v2",
+  "effective_date": "2026-09-03",
+  "from_gold_eligibility_contract": "skin_gold_record_eligibility.v2",
+  "to_gold_eligibility_contract": "skin_gold_record_eligibility.v3",
+  "change": "Apply one strict ordinary-skin-sensitization scope gate to gold and all retrieval levels. Exclude photo/light-dependent evidence, irritation-only evidence without a sensitization outcome anchor, and non-contact severe cutaneous adverse reactions. Correct the prior case-insensitive TEN acronym false-positive while preserving true SJS/TEN/DRESS/AGEP exclusions.",
+  "gold_source_record_counts": {
+    "old_labeled_before_structure_normalization": 60046,
+    "new_labeled_before_structure_normalization": 58638,
+    "new_rejected_photo_or_light_dependent": 786,
+    "new_rejected_irritation_only": 793,
+    "new_rejected_noncontact_cutaneous_reaction": 481,
+    "new_rejected_prediction_only": 21,
+    "new_rejected_integrated_or_defined_approach": 6,
+    "new_rejected_mechanistic_aop": 654
+  },
+  "parent_label_comparison": {
+    "old_binary_parents": 2422,
+    "new_binary_parents": 2386,
+    "surviving_parents": 2360,
+    "removed_parents": 62,
+    "newly_recovered_parents_after_false_positive_correction": 26,
+    "label_flips_among_surviving_parents": 0,
+    "parents_with_changed_vote_count": 222,
+    "old_accepted_vote_count": 35875,
+    "new_accepted_vote_count": 34947,
+    "new_label_counts": {
+      "0": 724,
+      "1": 1662
+    }
+  },
+  "conditioned_benchmark": {
+    "n_rows": 2421,
+    "scaffold_split_counts": {
+      "train": 1941,
+      "valid": 239,
+      "test": 241
+    },
+    "random_split_counts": {
+      "train": 1937,
+      "valid": 242,
+      "test": 242
+    },
+    "random_valid_singleton_vote_rows": 0,
+    "random_test_singleton_vote_rows": 0,
+    "scaffold_parent_overlap": 0,
+    "scaffold_scaffold_overlap": 0,
+    "random_parent_overlap": 0
+  },
+  "retrieval_scope_gate": {
+    "overlay": "source_family_purity_v5",
+    "l1_actual_voter_records_present_in_stage03": 42435,
+    "l1_nonvoter_records": 0,
+    "l2_family_records_before_retrieval_eligibility_filter": 12849,
+    "l3_family_records_before_retrieval_eligibility_filter": 12262,
+    "strict_scope_violations_in_l1_l2_l3": 0,
+    "strict_stage03_exclusions": {
+      "photo_or_light_dependent": 4824,
+      "irritation_only": 1398,
+      "noncontact_cutaneous_reaction": 725
+    }
+  },
+  "molecule_labels_sha256": {
+    "old": "cbede4e6dee7caeafb28d4c84ff417722d925999697b94c457edf451b8234aed",
+    "new": "ff8a04abaaff104ae2d61943bcd5ab8d19abba2920b150639a6e18bef96d8263"
+  },
+  "post_migration_reproducibility_repair": {
+    "effective_date": "2026-09-04",
+    "change": "Recognize modified Draize/MDAM final outcomes consistently in the canonical v4 partition; all newly recovered records are nonvoters routed to L2.",
+    "gold_or_split_changed": false,
+    "l2_family_records_before_retrieval_eligibility_filter": 12885,
+    "l2_retrieval_eligible_records": 12522,
+    "selected_surface_audit": "tools/chembl_tool/paper_experiments/receipts/skin_scaffold_valid_mdam_family_rebuild.json"
+  },
+  "reuse_decision": "All earlier Skin predictions and trained baselines are stale because benchmark membership, split assignments, retrieval levels, and selected surfaces changed. Fresh replay is required."
+}

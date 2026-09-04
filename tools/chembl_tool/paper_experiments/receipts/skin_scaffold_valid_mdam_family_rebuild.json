@@ -1,0 +1,80 @@
+{
+  "schema_version": "progressive_retrieval_change_receipt.v1",
+  "created_at": "2026-09-04T11:06:55-04:00",
+  "task": "skin_reaction",
+  "split_scheme": "scaffold",
+  "evaluation_subset": "valid",
+  "repair": "recognize modified Draize/MDAM final sensitization outcomes consistently in the canonical v4 partition and rebuild Skin source-purity v5",
+  "scope": {
+    "n_validation_rows": 239,
+    "levels": [1, 2, 3],
+    "visibility_mode": "deployment_visible_prefetched",
+    "neighbor_identity_policy": "scaffold_disjoint",
+    "progressive_protocol": "conditioned_assay_progressive_visible.v8",
+    "card_budgets": ["2/1", "4/2", "8/4"]
+  },
+  "artifacts": {
+    "validation_input": "data/conditioned_benchmark/Skin_Reaction/scaffold/valid.jsonl",
+    "validation_input_sha256_before": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+    "validation_input_sha256_after": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+    "retrieval_index_sha256_before": "b36aaf7f3a93085fd086d63bd0c1b3d53f59b472ecacfd6fbdb3f561eba924d9",
+    "retrieval_index_sha256_after": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
+    "family_manifest_sha256_before": "7869eee925ec270f07dc53f6ce1886381d5e019b40c1cf19c651ad3bfb35759c",
+    "family_manifest_sha256_after": "30ef7618b421208f5bb52c4a59e114fa83f3f0a6e9651ea8e87fba9379f5db84",
+    "overlay_records_sha256_after": "d7132856b8226b455dd8e1c6393cd94ef986feb1d4eb40bd60e7acde8433e779",
+    "canonical_partition_audit_sha256_after": "4afb717cb6dd43983667670f6c580cfc983b3b090b687e502d1dedafc8b59b4e"
+  },
+  "source_change": {
+    "canonical_direct_records_before": 53024,
+    "canonical_direct_records_after": 53067,
+    "retrieval_eligible_l2_records_before": 12485,
+    "retrieval_eligible_l2_records_after": 12522,
+    "retrieval_eligible_l1_records_after": 42435,
+    "retrieval_eligible_l3_records_after": 12010,
+    "new_l2_records": 37,
+    "gold_or_split_changed": false
+  },
+  "comparison_contract": {
+    "current_reconstruction": "Rebuild prepared retrieval for every scaffold-validation row and level from the new index.",
+    "saved_reference": "Compare with each completed pre-repair prepared.json.",
+    "compared_fields": [
+      "active_evidence excluding query_analog_tool_summaries",
+      "new_card_ids",
+      "n_active_molecules",
+      "n_active_cards",
+      "should_call_model"
+    ],
+    "reuse_rule": "Only an exact model-visible unchanged prefix may be reused; all levels from the first changed prompt onward require replay."
+  },
+  "results": {
+    "selected_retrieval_surfaces_equal": false,
+    "changed_by_card_budget": {
+      "2/1": {
+        "n_changed_queries": 1,
+        "changed_query_indices": [193],
+        "first_changed_level_by_query": {"193": 1},
+        "n_levels_requiring_replay": 3
+      },
+      "4/2": {
+        "n_changed_queries": 2,
+        "changed_query_indices": [193, 206],
+        "first_changed_level_by_query": {"193": 1, "206": 2},
+        "n_levels_requiring_replay": 5
+      },
+      "8/4": {
+        "n_changed_queries": 3,
+        "changed_query_indices": [72, 193, 206],
+        "first_changed_level_by_query": {"72": 2, "193": 1, "206": 2},
+        "n_levels_requiring_replay": 7
+      }
+    }
+  },
+  "reuse_decision": {
+    "scaffold_valid_agent_predictions_reusable_without_replay": false,
+    "targeted_replay_required": true,
+    "targeted_replay_status": "blocked_by_expired_parcc_gssapi_authentication",
+    "completed_run_metrics_status": "last_complete_reference_not_current",
+    "baselines_reusable": true,
+    "baseline_reason": "The benchmark rows, labels, train split, and validation split are byte-identical; only the retrieval source and index changed."
+  }
+}

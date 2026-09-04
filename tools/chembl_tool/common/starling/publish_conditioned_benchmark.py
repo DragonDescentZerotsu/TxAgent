@@ -27,6 +27,7 @@ from tools.chembl_tool.common.starling.conditioned_benchmark import (
     BUILD_ROOT,
     CONTRACT,
     NO_REPORTED_CONDITION,
+    SPLIT_SCHEMES,
     TASK_DIRECTORIES,
 )
 
@@ -39,7 +40,9 @@ SOURCE_ROOTS = {
 
 PROVENANCE_FILES = {
     "bbb_martins": {
-        Path("data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins"): (
+        Path(
+            "data/processed_starling_experimental_meaningful_cns_access_v4/BBB_Martins"
+        ): (
             "changed_gold_parents.jsonl",
             "conflicting_molecules.jsonl",
             "migration_from_v3.json",
@@ -55,6 +58,12 @@ PROVENANCE_FILES = {
         BUILD_ROOT / "ClinTox": (
             "molecule_labels.jsonl",
             "report_zh.md",
+        )
+    },
+    "skin_reaction": {
+        Path("data/processed_starling/Skin_Reaction"): (
+            "semantic_gold_v2_migration.json",
+            "semantic_gold_v3_migration.json",
         )
     },
 }
@@ -174,9 +183,7 @@ def _publish_clintox() -> dict[str, Any]:
         destination / "heldout_molecule_condition_labels.jsonl",
         detailed_by_split["valid"] + detailed_by_split["test"],
     )
-    receipt = _task_receipt(
-        task, source, destination, input_rows_byte_identical=False
-    )
+    receipt = _task_receipt(task, source, destination, input_rows_byte_identical=False)
     receipt["semantic_equivalence"] = {
         split: _semantic_equivalence(
             read_jsonl(source / f"{split}.jsonl"),
@@ -212,9 +219,9 @@ def _task_receipt(
         destination_path = destination / f"{split}.jsonl"
         source_rows = read_jsonl(source_path)
         destination_rows = read_jsonl(destination_path)
-        same_pairs = [
-            (row["drug"], int(row["Y"])) for row in source_rows
-        ] == [(row["drug"], int(row["Y"])) for row in destination_rows]
+        same_pairs = [(row["drug"], int(row["Y"])) for row in source_rows] == [
+            (row["drug"], int(row["Y"])) for row in destination_rows
+        ]
         splits[split] = {
             "n": len(destination_rows),
             "source_sha256": sha256_file(source_path),
@@ -314,7 +321,9 @@ def _verify_existing() -> dict[str, Any]:
     for task, task_receipt in receipt["tasks"].items():
         task_checks: dict[str, Any] = {}
         for split, expected in task_receipt["splits"].items():
-            path = BENCHMARK_ROOT / TASK_DIRECTORIES[task] / "scaffold" / f"{split}.jsonl"
+            path = (
+                BENCHMARK_ROOT / TASK_DIRECTORIES[task] / "scaffold" / f"{split}.jsonl"
+            )
             actual_hash = sha256_file(path)
             actual_n = len(read_jsonl(path))
             ok = (
@@ -339,14 +348,14 @@ def _verify_existing() -> dict[str, Any]:
 
 def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
     requested = tuple(TASK_DIRECTORIES) if tasks is None else tasks
-    available_sources = {
-        task: SOURCE_ROOTS[task].exists() for task in TASK_DIRECTORIES
-    }
+    available_sources = {task: SOURCE_ROOTS[task].exists() for task in TASK_DIRECTORIES}
     if tasks is None and not any(available_sources.values()):
         return _verify_existing()
     missing = sorted(task for task in requested if not available_sources[task])
     if missing:
-        raise FileNotFoundError(f"Incomplete conditioned source build; missing {missing}")
+        raise FileNotFoundError(
+            f"Incomplete conditioned source build; missing {missing}"
+        )
 
     receipt_path = BENCHMARK_ROOT / "migration_receipt.json"
     receipts: dict[str, Any] = {}
@@ -388,12 +397,10 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
             "contract": CONTRACT,
             "construction_contract": {
                 "document": (
-                    "tools/chembl_tool/common/starling/"
-                    "CONDITIONED_BENCHMARK.md"
+                    "tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md"
                 ),
                 "publisher": (
-                    "tools/chembl_tool/common/starling/"
-                    "publish_conditioned_benchmark.py"
+                    "tools/chembl_tool/common/starling/publish_conditioned_benchmark.py"
                 ),
                 "scaffold_allocator": (
                     "tools/chembl_tool/common/starling/"
@@ -408,13 +415,28 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
             },
             "tasks": {
                 task: {
-                    "root": str(
-                        BENCHMARK_ROOT / TASK_DIRECTORIES[task] / "scaffold"
-                    ),
+                    "root": str(BENCHMARK_ROOT / TASK_DIRECTORIES[task] / "scaffold"),
+                    "roots": {
+                        scheme: str(BENCHMARK_ROOT / TASK_DIRECTORIES[task] / scheme)
+                        for scheme in SPLIT_SCHEMES
+                    },
                     "target_definition": TASK_CONTRACTS[task],
                     "split_counts": {
-                        split: receipts[task]["splits"][split]["n"]
-                        for split in SPLITS
+                        split: receipts[task]["splits"][split]["n"] for split in SPLITS
+                    },
+                    "split_counts_by_scheme": {
+                        scheme: {
+                            split: len(
+                                read_jsonl(
+                                    BENCHMARK_ROOT
+                                    / TASK_DIRECTORIES[task]
+                                    / scheme
+                                    / f"{split}.jsonl"
+                                )
+                            )
+                            for split in SPLITS
+                        }
+                        for scheme in SPLIT_SCHEMES
                     },
                 }
                 for task in TASK_DIRECTORIES

@@ -18,7 +18,7 @@ part of active paths, runner flags, or result labels.
 | BBB_Martins | 3,053 | 397 | 393 | experimentally meaningful systemic CNS access |
 | Bioavailability_Ma | 1,956 | 262 | 269 | oral bioavailability under the reported condition |
 | ClinTox | 1,144 | 142 | 142 | clinical-trial toxicity failure versus approved comparator |
-| Skin_Reaction | 1,997 | 246 | 248 | skin sensitization/contact allergy |
+| Skin_Reaction | 1,941 | 239 | 241 | skin sensitization/contact allergy |
 
 Every split row has the same condition-aware schema:
 
@@ -58,7 +58,7 @@ The active scientific voting contracts are:
 |---|---|---|
 | BBB_Martins | Experimental, systemically administered, meaningful CNS-access outcomes; explicit source-native direction or a frozen manually reviewed qualitative direction | Aggregate accepted records at molecular-parent grain; preserve record-level reasons and rejected/conflicting-parent audits |
 | Bioavailability_Ma | Canonical direct absolute oral bioavailability claim for the reported condition; human conditioned rows additionally require reviewed external context and exclude relative effects, non-IV comparisons, indirect analytes, predictions/simulations, and unresolved populations | `canonical_claim_id` is the claim unit; aggregate accepted claims within parent-condition only |
-| Skin_Reaction | Final experimental skin-sensitization/contact-allergy outcome under the reviewed condition contract | Aggregate accepted final-outcome votes within parent-condition; mechanistic/predictive rows remain retrieval evidence and do not vote |
+| Skin_Reaction | Measured final skin-sensitization/contact-allergy outcome under the reviewed condition contract | Aggregate accepted final-outcome votes within parent-condition; model predictions, photo/irritation endpoints, integrated approaches, and mechanistic AOP rows do not vote |
 | ClinTox | Frozen source roles, not assay voting: AACT toxicity-failure evidence gives `Y=1`; an FDA-approved comparator with no positive source gives `Y=0` | A parent present in both roles is positive; there is no record-majority threshold |
 
 Task-specific code remains authoritative for the scientific criteria. The
@@ -158,11 +158,17 @@ from silently selecting a more favorable validation/test cohort.
 
 `data/conditioned_benchmark/migration_receipt.json` records the former source
 artifact, hashes, row counts, label counts, and ordered `(drug, Y)` checks.
-BBB and Skin split files remain byte-identical to their previously evaluated
+BBB split files remain byte-identical to their previously evaluated
 selected conditioned cohorts. Bioavailability excludes six frozen HF records
 whose nitrendipine text was bound to the non-nitrendipine structure identity
 `CNYREWGHOWSYCJ`; the two resulting benchmark rows and all six retrievable
 records were removed in place. ClinTox adds only null-condition metadata.
+Skin excludes prediction-only, photo/light-dependent, irritation-only,
+non-contact severe cutaneous reactions, integrated/defined-approach, and mechanistic AOP rows from gold voting. Source-purity v5 applies the
+same strict target-scope gate to every retrieval level while retaining target-aligned nonvoter outcomes/classifications in L2 and mechanisms in L3.
+This changes the cohort, both split lineages, and both retrieval indices, so all pre-v5 Skin results are stale. Exact migrations are frozen in
+`data/conditioned_benchmark/Skin_Reaction/provenance/semantic_gold_v2_migration.json` and
+`data/conditioned_benchmark/Skin_Reaction/provenance/semantic_gold_v3_migration.json`.
 Existing predictions are reusable only when their manifest input hash matches
 the current receipt. Retrieval-dependent predictions additionally require the
 same held-out index hash, source-family catalog hash, visibility contract,
@@ -177,10 +183,18 @@ those historical paths.
 ## Entrypoints
 
 ```bash
+python -m tools.chembl_tool.tasks.skin_reaction.build_canonical_starling_source
+python -m tools.chembl_tool.tasks.skin_reaction.context_conditioned_benchmark build-selected
 python -m tools.chembl_tool.common.starling.publish_conditioned_benchmark
 python -m tools.chembl_tool.common.starling.build_conditioned_random_split
 python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve
 ```
+
+The first command is the Skin-specific canonical direct/AOP source build; the
+second regenerates the reviewed Skin scaffold publication input. Task builders
+stage reproducible inputs under the Git-ignored `data/.build/` tree. The
+publisher copies the active, reviewable dataset and required audit ledgers into
+`data/conditioned_benchmark/`; runners never read the staging tree.
 
 The random builder is deterministic (`seed=20260830`), uses contract
 `conditioned_random_parent_grouped_quality_stratified.v2`, and writes the full

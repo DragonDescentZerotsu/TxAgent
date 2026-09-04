@@ -26,7 +26,9 @@ from tools.chembl_tool.common.starling.reviewed_conditioned_benchmark import (
     build_reviewed_conditioned_benchmark,
 )
 from tools.chembl_tool.common.starling.conditioned_benchmark import BUILD_ROOT, CONTRACT
-from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import DIRECT_RECORDS_PATH
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    DIRECT_RECORDS_PATH,
+)
 from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import label_record
 
 
@@ -35,17 +37,31 @@ LINEAGE = "skin_sensitization_context_conditioned_v1"
 SELECTED_LINEAGE = CONTRACT
 FROZEN_ROOT = Path("data/processed_starling_record_supported_v2/Skin_Reaction/scaffold")
 REVIEW_ROOT = Path("data/starling_data/skin_reaction/context_conditioned_review_v1")
-OUTPUT_ROOT = Path("data/processed_starling_context_conditioned_reviewed_v1/Skin_Reaction/scaffold")
+OUTPUT_ROOT = Path(
+    "data/processed_starling_context_conditioned_reviewed_v1/Skin_Reaction/scaffold"
+)
 SELECTED_OUTPUT_ROOT = BUILD_ROOT / "Skin_Reaction/scaffold"
 SELECTED_EXTERNAL_CONDITION_GROUPS = ("disease=atopic_dermatitis",)
 
 
 RULES = (
     AtomRule.make("application", "semi_occluded", r"semi[- ]?occlu"),
-    AtomRule.make("application", "open_or_unoccluded", r"without occlusion|avoid occlusion|no occlusion|non[- ]?occlu|unocclu|open application|repeated open application|open epicutaneous"),
+    AtomRule.make(
+        "application",
+        "open_or_unoccluded",
+        r"without occlusion|avoid occlusion|no occlusion|non[- ]?occlu|unocclu|open application|repeated open application|open epicutaneous",
+    ),
     AtomRule.make("application", "occluded", r"\bocclu(?:ded|sion|sive)\b"),
-    AtomRule.make("barrier", "abraded_or_stripped", r"damaged skin|abraded skin|skin abrasion|tape[- ]?strip|stripped skin|compromised skin barrier|barrier[- ]?disrupt"),
-    AtomRule.make("coexposure", "sls_barrier_enhancement", r"sodium lauryl sul(?:fate|phate)|sodium dodecyl sul(?:fate|phate)|\bsls\b|\bsds\b"),
+    AtomRule.make(
+        "barrier",
+        "abraded_or_stripped",
+        r"damaged skin|abraded skin|skin abrasion|tape[- ]?strip|stripped skin|compromised skin barrier|barrier[- ]?disrupt",
+    ),
+    AtomRule.make(
+        "coexposure",
+        "sls_barrier_enhancement",
+        r"sodium lauryl sul(?:fate|phate)|sodium dodecyl sul(?:fate|phate)|\bsls\b|\bsds\b",
+    ),
     AtomRule.make("disease", "atopic_dermatitis", r"atopic dermatitis|atopic eczema"),
     AtomRule.make("disease", "psoriasis", r"psoriasis|psoriatic"),
     AtomRule.make(
@@ -78,9 +94,7 @@ RULES = (
 _SELF_CONDITION_SMILES = {
     ConditionAtom("vehicle", "ethanol"): {"CCO"},
     ConditionAtom("vehicle", "dmso"): {"CS(C)=O", "C[S+](C)[O-]"},
-    ConditionAtom("coexposure", "sls_barrier_enhancement"): {
-        "CCCCCCCCCCCCOS(=O)(=O)O"
-    },
+    ConditionAtom("coexposure", "sls_barrier_enhancement"): {"CCCCCCCCCCCCOS(=O)(=O)O"},
 }
 
 
@@ -152,7 +166,11 @@ def prepare_review_queue() -> dict[str, Any]:
             context,
             rules=RULES,
             incompatible_families={
-                "application", "vehicle", "disease", "age_group", "population_state"
+                "application",
+                "vehicle",
+                "disease",
+                "age_group",
+                "population_state",
             },
             suppress=_suppress,
         )
@@ -195,7 +213,15 @@ def prepare_review_queue() -> dict[str, Any]:
             **{
                 "source_record_id": record_id,
                 "source_payload_sha256": payload_sha256(
-                    (PROPOSAL_VERSION, signature, int(label), record_id, row.get("SMILES"), row.get("outcome_label"), *context_fields)
+                    (
+                        PROPOSAL_VERSION,
+                        signature,
+                        int(label),
+                        record_id,
+                        row.get("SMILES"),
+                        row.get("outcome_label"),
+                        *context_fields,
+                    )
                 ),
                 "source_index": int(index),
                 "pmid": str(row.get("pmid") or ""),
@@ -212,11 +238,19 @@ def prepare_review_queue() -> dict[str, Any]:
         if candidate["molecule_identity_key"]:
             candidates.append(candidate)
             proposal_audit.append(
-                {**audit, "queue_status": "queued", "proposed_condition_group": signature}
+                {
+                    **audit,
+                    "queue_status": "queued",
+                    "proposed_condition_group": signature,
+                }
             )
         else:
             proposal_audit.append(
-                {**audit, "queue_status": "not_queued", "proposal_reason": "invalid_parent_identity"}
+                {
+                    **audit,
+                    "queue_status": "not_queued",
+                    "proposal_reason": "invalid_parent_identity",
+                }
             )
     return write_review_queue(
         rows=candidates,
@@ -281,7 +315,12 @@ def build(*, selected: bool = False) -> dict[str, Any]:
             audit as audit_atopic_dermatitis,
         )
 
-        audit_atopic_dermatitis()
+        # The current published conditioned cohort may carry an older split
+        # while this builder is deliberately regenerating from a newer frozen
+        # gold lineage. Validate the reviewed records against the new frozen
+        # split here; publication and benchmark contract tests validate the
+        # resulting current cohort separately.
+        audit_atopic_dermatitis(conditioned_root=None)
     reviewed = merge_terminal_verdicts(
         queue_path=REVIEW_ROOT / "review_queue.jsonl",
         verdict_path=REVIEW_ROOT / "review_verdicts.jsonl",
@@ -312,7 +351,8 @@ def build(*, selected: bool = False) -> dict[str, Any]:
                     (
                         REVIEW_ROOT / "atopic_dermatitis_manual_review_v1.json",
                         REVIEW_ROOT / "atopic_dermatitis_record_decisions_v1.jsonl",
-                        REVIEW_ROOT / "atopic_dermatitis_record_decisions_v1_summary.json",
+                        REVIEW_ROOT
+                        / "atopic_dermatitis_record_decisions_v1_summary.json",
                     )
                     if selected
                     else ()
@@ -338,9 +378,7 @@ def build(*, selected: bool = False) -> dict[str, Any]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "action", choices=("prepare-review", "build", "build-selected")
-    )
+    parser.add_argument("action", choices=("prepare-review", "build", "build-selected"))
     args = parser.parse_args(argv)
     result = (
         prepare_review_queue()

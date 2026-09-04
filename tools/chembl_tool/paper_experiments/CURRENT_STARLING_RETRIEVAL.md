@@ -1,6 +1,6 @@
 # Current Starling retrieval and collaborator data
 
-更新时间：2026-09-03。
+更新时间：2026-09-04。
 
 本页是 BBB、Bioavailability 和 Skin progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
 验证和分享每个 level 的 records。日常复现不需要另一个 TxAgent checkout，也不需要在旧的 `v1`、`v2`、
@@ -91,10 +91,16 @@ structure-name mismatch，并从已有结构化字段补充 nondirect assay cont
 |---|---|---|
 | BBB | L1 direct voter; L2 near-direct; L3 passive; L4 efflux; L5 influx | L1 是 exact current voter-record membership；关键最终修正将 5,305 条 direct-like nonvoters 移到 L2。|
 | Bioavailability | L1 direct voter; L2 nondirect bioavailability; L3 oral AUC/Cmax; L4 Fa; L5 Fg; L6 Fh | 50,279 条 nonvoters 从 L1 移到 L2，10,092 条 accepted vote records 提升到 L1。|
-| Skin | L1 direct voter; L2 observed nonvoter outcome; L3 sensitization AOP | 5,221 条 direct-like nonvoters 和 22,098 条原放在 AOP 的 direct-like outcomes 移到 L2；L1 是 exact voter membership。|
+| Skin | L1 direct voter; L2 near-direct outcome/classification; L3 sensitization mechanism | L1 使用稳定 acquisition-row key 做 exact voter membership；L2 保留 nonvoter measured outcomes 及 predicted/defined-approach overall classifications；L3 保留 experimental/predicted AOP 和有实质内容的 unspecified mechanisms。photo/light-dependent、irritation-only、non-contact severe cutaneous reaction、空/无关 records 从三层全部排除。|
 
 逐 record 原因保存在 overlay audit columns；聚合统计和 hard gates 保存在各 overlay 的 `manifest.json`。这些
 overlays 不改 gold labels。
+
+Skin v5 的 semantic partition audit 冻结在
+`data/starling_data/skin_reaction/canonical_sensitization_v4/`。它由
+`tools/chembl_tool/tasks/skin_reaction/build_canonical_starling_source.py` 从两个 immutable raw acquisition
+parquet 重建；paper-facing overlay 读取该 audit，但不直接把 canonical direct/AOP parquet 当成 progressive
+index。日常重建仍只调用本页上方的统一 `rebuild_current_starling_retrieval.py` 入口。
 
 ## What “records available at a level” means
 
@@ -111,7 +117,7 @@ record 的 level。同一个 physical assay 可含多个不同 family 的 record
 |---|---:|---:|---:|---:|---:|---:|
 | BBB | 8,592 | 268,379 | 14,189 | 163,672 | 43,724 | - |
 | Bioavailability | 20,538 | 152,350 | 104,174 | 73,913 | 23,511 | 60,986 |
-| Skin | 44,611 | 16,748 | 15,184 | - | - | - |
+| Skin | 42,435 | 12,522 | 12,010 | - | - | - |
 
 这些不是某个 query 最终看到的卡片数。
 
@@ -175,9 +181,13 @@ Stage-03 之前的 raw ingestion 与 normalized-v7 历史实现来自
 若以后从新 raw run 重新生成 Stage-03，必须作为 source-ingestion migration 审查。
 
 早期流程从 source-specific 列名逐步发展到 canonical records；随后从 assay-level earliest-level assignment 改为
-record-level family assignment，并通过 BBB v6、Skin v2 和当前 Bioavailability repair/purity 收紧 L1。2026-09-03
+record-level family assignment，并通过 BBB v6、Skin v5 和当前 Bioavailability repair/purity 收紧 L1。2026-09-03
 进一步将运行时配置收敛为 `source_group_id -> family_key -> level`，并 clean-room 重建所有 downstream artifacts；
 全部 contract hashes 一致，因此这轮命名/API 整理没有改变 source membership 或 retrieval rule。
+2026-09-04 的 Skin strict-scope migration 确实改变了 gold、family membership 和两个 split-specific indices；随后
+最终可复现性检查又识别出 37 条 MDAM nonvoter final outcomes，gold/split 不变但 L2 和两个 indices 再次变化。
+matched baselines 仍为 current；scaffold-valid 2/1、4/2、8/4 分别有 1/2/3 个 queries 等待 targeted replay。
+精确 selected-surface audit 见 `receipts/skin_scaffold_valid_mdam_family_rebuild.json`。
 
 旧版本号仍可能出现在已完成 run、receipt 和结果路径中，因为它们是 provenance，不是当前输入选项。当前选择
 只由上述两个机器可读清单决定；当前实验结果与 freshness 状态只由

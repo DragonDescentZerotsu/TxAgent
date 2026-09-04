@@ -1,29 +1,29 @@
 {
   "method": "bemis_murcko_scaffold_group_subset_sum",
-  "target_valid_size": 245,
-  "target_test_size": 245,
-  "actual_valid_size": 245,
-  "actual_test_size": 245,
+  "target_valid_size": 238,
+  "target_test_size": 238,
+  "actual_valid_size": 238,
+  "actual_test_size": 238,
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
-  "n_train": 1966,
-  "n_valid": 245,
-  "n_test": 245,
+  "n_train": 1910,
+  "n_valid": 238,
+  "n_test": 238,
   "train_label_counts": {
-    "0": 605,
-    "1": 1361
+    "0": 577,
+    "1": 1333
   },
   "valid_label_counts": {
-    "0": 74,
-    "1": 171
+    "0": 73,
+    "1": 165
   },
   "test_label_counts": {
-    "0": 71,
-    "1": 174
+    "0": 74,
+    "1": 164
   },
-  "n_train_scaffolds": 494,
-  "n_valid_scaffolds": 133,
-  "n_test_scaffolds": 127,
+  "n_train_scaffolds": 480,
+  "n_valid_scaffolds": 127,
+  "n_test_scaffolds": 121,
   "pairwise_scaffold_overlap": {
     "train_valid": 0,
     "train_test": 0,

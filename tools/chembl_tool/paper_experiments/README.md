@@ -154,8 +154,13 @@ same-condition-then-null and unrestricted-train variants.
   `current_conditioned_results.json`. BBB has current strict-voter-L1 results
   for all three budgets. Bioavailability 8/4 has two exact-contract full-curve
   runs, so the combined figure reports their mean and observed min-max range.
-  Current strict-voter-L1 Skin has 2/1 and 4/2 only; 8/4 remains visibly absent
-  instead of being filled from the historical broad-L1 result.
+  Skin source-purity v5 applies the strict target-scope gate to gold and
+  L1/L2/L3. A final reproducibility rebuild added 37 MDAM nonvoter outcomes to
+  L2 without changing the benchmark split; this changed the index-selected
+  surface for 1, 2, and 3 validation queries under 2/1, 4/2, and 8/4,
+  respectively. The completed agent roots are retained as last-complete
+  references pending targeted replay. The matched MiniMol/Morgan baselines
+  remain current because their train/validation rows did not change.
 - The ablation remains on the shared progressive runner: card limits are CLI
   parameters (`--initial-card-limit`, `--delta-card-limit`), while molecule
   quotas, selection order, prompt profile, and append-only semantics are fixed.
@@ -163,7 +168,8 @@ same-condition-then-null and unrestricted-train variants.
   the same `CONFIG:TASK=PATH` argument with a distinct path only for a verified
   exact-contract replicate; omitted cells are recorded explicitly. A
   selected-surface receipt is required whenever retrieval lineage hashes differ.
-  The current combined PNG/SVG, TSVs, and summary are under
+  The saved combined PNG/SVG, TSVs, and summary are under the following root;
+  its Skin cells are stale until the targeted replay completes:
   `outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/`.
 
 Detailed group-level data flow is in [PIPELINE.md](PIPELINE.md). The cumulative
@@ -189,11 +195,15 @@ It distinguishes:
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
-At the 2026-09-03 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
+At the 2026-09-04 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
 runs over the strict-voter-L1 v6 index; its random v6 index is built but still
-requires LLM replay. Skin scaffold-valid has fresh strict-voter-L1 v2 2/1 and
-4/2 runs, while current 8/4 is missing; Skin random remains a stale broad-L1
-reference. Bioavailability scaffold-valid has fresh 2/1 and exact 8/4 replay
+requires LLM replay. Skin source-purity v5 has current matched trained/KNN
+baselines, but the final MDAM L2 rebuild leaves 1/2/3 scaffold-validation
+queries pending targeted replay for 2/1, 4/2, and 8/4. Its random agent cell
+still requires full replay. The exact affected prefixes are frozen in
+`receipts/skin_scaffold_valid_mdam_family_rebuild.json`.
+
+Bioavailability scaffold-valid has fresh 2/1 and exact 8/4 replay
 results. Its retained 4/2 curve is current through the nitrendipine
 selected-surface zero-change receipt. The rejected L1-only 0.7148 run used a
 different prompt contract and is neither a replicate nor a variance estimate.

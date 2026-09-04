@@ -1,5 +1,11 @@
 # Starling train-only LoRA-RL
 
+> **Archived/stopped research area.** Unless a dated contract says otherwise,
+> `current` below refers to that contract's frozen historical snapshot, not the
+> active Conditioned Benchmark or current Skin source-purity-v5 retrieval.
+> Current paper-facing lineage and result status live in the repository-root
+> `AGENTS.md` and `../current_conditioned_results.json`.
+
 本目录隔离维护 Starling train-only LoRA-RL 实验。当前 one-pass Bio 对照包括 hosted Tinker
 GPT-OSS-120B 与本地 NeMo RL GPT-OSS-20B；两者只允许 backend/runtime 层不同，必须共享数据合同、
 reward 实现和冻结的公共训练设置。它不是新的 benchmark lineage，也不得修改现有 task pipeline、

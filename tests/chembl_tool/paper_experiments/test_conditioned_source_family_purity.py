@@ -20,11 +20,15 @@ from tools.chembl_tool.tasks.bioavailability_ma.source_family_purity import (
 from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
     AOP_GROUP as SKIN_AOP_GROUP,
     DIRECT_GROUP as SKIN_DIRECT_GROUP,
+    EXCLUDED_GROUP as SKIN_EXCLUDED_GROUP,
     NEAR_DIRECT_GROUP as SKIN_NEAR_DIRECT_GROUP,
-    upstream_source_index,
+    load_voter_source_keys,
+    source_record_key_from_id,
+    upstream_source_key,
     vote_pure_family_move as skin_vote_pure_family_move,
 )
 from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    PartitionDecision,
     normalized_direct_label,
 )
 
@@ -117,13 +121,55 @@ def test_skin_l1_uses_exact_source_voter_membership():
         "source_id": "direct_skin_reaction",
         "source_row_number": 3,
     }
-    assert upstream_source_index(voter) == 2
-    assert skin_vote_pure_family_move(voter, {2}).reason == ""
+    direct = PartitionDecision("direct", "scoped_direct_outcome")
+    partitions = {
+        ("direct_skin_reaction", 2): direct,
+        ("direct_skin_reaction", 3): direct,
+    }
+    assert upstream_source_key(voter) == ("direct_skin_reaction", 2)
+    assert (
+        skin_vote_pure_family_move(
+            voter, {("direct_skin_reaction", 2)}, partitions
+        ).reason
+        == ""
+    )
 
     nonvoter = {**voter, "source_row_number": 4}
-    moved = skin_vote_pure_family_move(nonvoter, {2})
+    moved = skin_vote_pure_family_move(
+        nonvoter, {("direct_skin_reaction", 2)}, partitions
+    )
     assert moved.new_group == SKIN_NEAR_DIRECT_GROUP
-    assert moved.reason == "nonvoter_removed_from_l1"
+    assert moved.reason.startswith("canonical_direct_nonvoter_to_l2:")
+
+
+def test_skin_voter_ledger_requires_a_resolved_parent_identity(tmp_path: Path):
+    source = tmp_path / "direct.parquet"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "reaction_type": "sensitization",
+                    "outcome_label": "positive",
+                    "assay_or_test": "LLNA",
+                    "support_text": "experimental positive LLNA",
+                    "SMILES": "CCO",
+                },
+                {
+                    "reaction_type": "sensitization",
+                    "outcome_label": "positive",
+                    "assay_or_test": "LLNA",
+                    "support_text": "experimental positive LLNA",
+                    "SMILES": "not-a-smiles",
+                },
+            ]
+        ),
+        source,
+    )
+    voters = load_voter_source_keys(
+        source_path=source,
+        condition_review=tmp_path / "absent-review.jsonl",
+    )
+    assert voters == {("direct_skin_reaction", 0)}
 
 
 def test_skin_direct_like_aop_nonvoter_goes_to_l2_not_l1():
@@ -134,9 +180,220 @@ def test_skin_direct_like_aop_nonvoter_goes_to_l2_not_l1():
         "canonical_assay_type": "local lymph node assay (LLNA)",
         "result_label": "positive",
     }
-    moved = skin_vote_pure_family_move(row, set())
+    partitions = {
+        ("sensitization_aop", 0): PartitionDecision(
+            "direct", "aop_adverse_outcome_moved_to_direct"
+        )
+    }
+    moved = skin_vote_pure_family_move(row, set(), partitions)
     assert moved.new_group == SKIN_NEAR_DIRECT_GROUP
-    assert moved.reason.startswith("direct_like_nonvoter_to_l2:")
+    assert moved.reason.startswith("canonical_direct_nonvoter_to_l2:")
+
+
+def test_skin_condition_voter_uses_stable_partition_key_and_is_promoted_to_l1():
+    key = source_record_key_from_id("sensitization_aop:22321")
+    assert key == ("sensitization_aop", 22321)
+    row = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": "sensitization_aop",
+        "source_row_number": 22322,
+    }
+    partitions = {
+        key: PartitionDecision("direct", "aop_adverse_outcome_moved_to_direct")
+    }
+    moved = skin_vote_pure_family_move(row, {key}, partitions)
+    assert moved.new_group == SKIN_DIRECT_GROUP
+    assert "stable_source_key" in moved.reason
+
+
+def test_skin_prediction_and_defined_approach_route_by_evidence_object():
+    cases = (
+        (
+            "prediction_only",
+            {
+                "assay_type": "pkCSM in silico prediction",
+                "endpoint_or_target": "skin sensitization prediction",
+            },
+            SKIN_NEAR_DIRECT_GROUP,
+        ),
+        (
+            "prediction_only",
+            {
+                "assay_type": "OASIS protein binding alert",
+                "aop_event": "MIE_protein_binding",
+                "endpoint_or_target": "protein reactivity",
+            },
+            SKIN_AOP_GROUP,
+        ),
+        (
+            "integrated_prediction_or_defined_approach",
+            {
+                "assay_type": "2 out of 3 defined approach",
+                "endpoint_or_target": "skin sensitization hazard classification",
+            },
+            SKIN_NEAR_DIRECT_GROUP,
+        ),
+        (
+            "integrated_prediction_or_defined_approach",
+            {
+                "assay_type": "U-SENS",
+                "aop_event": "KE3_dendritic_cell_activation",
+                "endpoint_or_target": "CD86 expression",
+            },
+            SKIN_AOP_GROUP,
+        ),
+        (
+            "integrated_or_unresolved_endpoint",
+            {
+                "assay_type": "Kao integrated testing strategy",
+                "endpoint_or_target": "total score",
+                "support_text": "The total score classified the chemical as a strong sensitizer.",
+            },
+            SKIN_NEAR_DIRECT_GROUP,
+        ),
+        (
+            "integrated_or_unresolved_endpoint",
+            {
+                "assay_type": "MDAM",
+                "endpoint_or_target": "stimulation index",
+                "support_text": "The modified Draize assay produced a positive response.",
+            },
+            SKIN_NEAR_DIRECT_GROUP,
+        ),
+    )
+    for index, (reason, fields, expected) in enumerate(cases):
+        key = ("sensitization_aop", index)
+        row = {
+            "group_id": SKIN_AOP_GROUP,
+            "source_id": key[0],
+            "source_row_number": index + 1,
+            **fields,
+        }
+        moved = skin_vote_pure_family_move(
+            row, set(), {key: PartitionDecision("reject", reason)}
+        )
+        assert moved.new_group == expected
+
+
+def test_skin_anchored_unresolved_mechanism_enters_l3_but_empty_record_is_excluded():
+    co_culture_key = ("sensitization_aop", 0)
+    co_culture = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": co_culture_key[0],
+        "source_row_number": 1,
+        "assay_type": "co-culture (HaCaT + THP-1) cytokine secretion assay",
+        "endpoint_or_target": "IL-8 secretion",
+        "support_text": "Exposure triggered IL-8 secretion.",
+    }
+    moved = skin_vote_pure_family_move(
+        co_culture,
+        set(),
+        {
+            co_culture_key: PartitionDecision(
+                "reject", "integrated_or_unresolved_endpoint"
+            )
+        },
+    )
+    assert moved.new_group == SKIN_AOP_GROUP
+    assert "anchored_unspecified_mechanism" in moved.reason
+
+    generic_key = ("sensitization_aop", 2)
+    generic = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": generic_key[0],
+        "source_row_number": 3,
+        "assay_type": "real-time RT-PCR",
+        "endpoint_or_target": "IL-6",
+        "support_text": "Treatment changed IL-6 expression.",
+    }
+    moved = skin_vote_pure_family_move(
+        generic,
+        set(),
+        {generic_key: PartitionDecision("reject", "integrated_or_unresolved_endpoint")},
+    )
+    assert moved.new_group == SKIN_AOP_GROUP
+    assert "substantive_unspecified_mechanism" in moved.reason
+
+    empty_key = ("sensitization_aop", 1)
+    empty = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": empty_key[0],
+        "source_row_number": 2,
+        "support_text": "The paper does not contain extractable skin sensitization evidence.",
+    }
+    moved = skin_vote_pure_family_move(
+        empty,
+        set(),
+        {empty_key: PartitionDecision("reject", "integrated_or_unresolved_endpoint")},
+    )
+    assert moved.new_group == SKIN_EXCLUDED_GROUP
+
+    truly_empty_key = ("sensitization_aop", 3)
+    truly_empty = {
+        "group_id": SKIN_AOP_GROUP,
+        "source_id": truly_empty_key[0],
+        "source_row_number": 4,
+    }
+    moved = skin_vote_pure_family_move(
+        truly_empty,
+        set(),
+        {
+            truly_empty_key: PartitionDecision(
+                "reject", "integrated_or_unresolved_endpoint"
+            )
+        },
+    )
+    assert moved.new_group == SKIN_EXCLUDED_GROUP
+
+
+def test_skin_photo_and_irritation_records_remain_excluded_from_levels():
+    for index, reason in enumerate(
+        ("out_of_scope_photo_hazard", "out_of_scope_irritation")
+    ):
+        key = ("sensitization_aop", index)
+        row = {
+            "group_id": SKIN_AOP_GROUP,
+            "source_id": key[0],
+            "source_row_number": index + 1,
+        }
+        moved = skin_vote_pure_family_move(
+            row, set(), {key: PartitionDecision("reject", reason)}
+        )
+        assert moved.new_group == SKIN_EXCLUDED_GROUP
+        assert moved.reason.endswith(reason)
+
+
+def test_skin_strict_scope_guard_overrides_stale_direct_or_aop_partition():
+    cases = (
+        {
+            "canonical_assay_context": "photo-LLNA",
+            "canonical_endpoint_name": "sensitization",
+        },
+        {
+            "canonical_assay_context": "skin irritation test",
+            "canonical_endpoint_name": "sensitization",
+            "support_text": "Sodium lauryl sulphate produced erythema.",
+        },
+        {
+            "canonical_assay_context": "case report",
+            "canonical_endpoint_name": "Stevens-Johnson syndrome",
+        },
+    )
+    for index, fields in enumerate(cases):
+        key = ("direct_skin_reaction", index)
+        row = {
+            "group_id": SKIN_DIRECT_GROUP,
+            "source_id": key[0],
+            "source_row_number": index + 1,
+            **fields,
+        }
+        moved = skin_vote_pure_family_move(
+            row,
+            {key},
+            {key: PartitionDecision("direct", "stale_upstream_classification")},
+        )
+        assert moved.new_group == SKIN_EXCLUDED_GROUP
+        assert moved.reason.startswith("strict_target_scope_exclusion:")
 
 
 def test_exact_voter_gate_rejects_nonvoters_and_misrouted_voters():

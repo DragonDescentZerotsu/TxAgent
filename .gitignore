@@ -4,6 +4,10 @@ __pycache__/
 *.py[cod]
 outputs/
 
+# Conditioned-benchmark builders stage reproducible publication inputs here.
+# Current, reviewable outputs live under data/conditioned_benchmark/ instead.
+data/.build/
+
 # Starling acquisition queues are reproducible local intermediates and may
 # exceed GitHub's per-file size limit. Keep the extracted evidence and compact
 # provenance files, but not the PMID work queue.

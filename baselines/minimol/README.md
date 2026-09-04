@@ -34,16 +34,20 @@ outer-train split, valid/test values must already exist in that vocabulary, and
 outer valid/test labels are never used for epoch or threshold selection. After
 selecting the epoch by train-only scaffold CV AUROC, the same CV's pooled OOF
 scores determine a macro-F1 decision threshold. ClinTox has no accepted
-condition groups and therefore uses the same runner without this option. Fresh
-valid artifacts and the exact feature/threshold contract are under
-`outputs/baselines/starling_conditioned_valid_v1/<Task>/minimol_train_retest/`.
+condition groups and therefore uses the same runner without this option. The
+earlier fresh valid artifacts are under
+`outputs/baselines/starling_conditioned_valid_v1/<Task>/minimol_train_retest/`;
+the current Skin replacement root is recorded below.
 
 The paper-facing MiniMol baseline is condition-aware whenever the task has an
 accepted condition taxonomy. Fresh valid macro-F1 is 0.6912 for BBB, 0.5872 for
-Bioavailability, 0.6030 for Skin, and 0.6520 for unconditioned ClinTox. The
-train-only OOF thresholds are respectively 0.6474, 0.6056, 0.6306, and 0.2508.
-For the three conditioned tasks, AUROCs are 0.7845, 0.7367, and 0.6776.
-Bioavailability's earlier apparent 0.4748 regression was caused by evaluating
+Bioavailability, 0.6020 for current source-purity-v5 Skin, and 0.6520 for
+unconditioned ClinTox. The fresh Skin artifact uses epoch 5, train-only OOF
+threshold 0.57725, and has AUROC 0.6485; it is under
+`outputs/baselines/starling_conditioned_skin_source_purity_v5_valid_v1/`.
+The other train-only OOF thresholds remain 0.6474 for BBB, 0.6056 for
+Bioavailability, and 0.2508 for ClinTox. Bioavailability's earlier apparent
+0.4748 regression was caused by evaluating
 the same scores at an uncalibrated threshold of 0.5, not by the condition feature
 or generic runner.
 

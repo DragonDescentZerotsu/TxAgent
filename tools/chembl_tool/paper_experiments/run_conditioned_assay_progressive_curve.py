@@ -242,10 +242,10 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
         "skin_reaction": ProgressiveTaskSpec(
             split_path("skin_reaction", "valid", split_scheme),
             index_root
-            / "skin_reaction/mechanism_tagged_v4_source_purity_v2/assay_neighbor_index.pkl",
+            / "skin_reaction/mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
             / "family_catalogs_mechanism_tagged_v1/"
-            "skin_reaction_source_purity_v2/manifest.json",
+            "skin_reaction_source_purity_v5/manifest.json",
         ),
     }
 
@@ -1139,7 +1139,23 @@ def _prepared_model_input(prepared: Mapping[str, Any]) -> dict[str, Any]:
     prefix and stops permanently at the first changed level.
     """
 
-    return {field: prepared.get(field) for field in _PREPARED_MODEL_INPUT_FIELDS}
+    signature = {
+        field: prepared.get(field) for field in _PREPARED_MODEL_INPUT_FIELDS
+    }
+    signature["level_definition"] = _level_prompt_definition(
+        prepared.get("level_definition") or {}
+    )
+    return signature
+
+
+def _level_prompt_definition(level: Mapping[str, Any]) -> dict[str, Any]:
+    """Project a catalog level to the fields rendered in the LLM level plan."""
+
+    return {
+        "level": level.get("level"),
+        "family": level.get("endpoint_group") or level.get("family_id"),
+        "description": level.get("description") or level.get("label") or "",
+    }
 
 
 def _validate_progressive_reuse_source(
@@ -1182,15 +1198,25 @@ def _validate_progressive_reuse_source(
     for task in current_manifest.get("tasks") or []:
         source_task = source_inputs.get(task) or {}
         current_task = (current_manifest.get("inputs") or {}).get(task) or {}
-        for field in (
-            "input_sha256",
-            "family_manifest_sha256",
-            "single_source_manifest_sha256",
-        ):
+        # A changed family/index lineage is precisely when prefix reuse is useful:
+        # every prepared model input is compared below and reuse stops at the
+        # first changed level.  The benchmark and frozen single prior must still
+        # match exactly.
+        for field in ("input_sha256", "single_source_manifest_sha256"):
             if source_task.get(field) != current_task.get(field):
                 raise ValueError(
                     f"progressive reuse source has different {task} {field}"
                 )
+        source_level_plan = [
+            _level_prompt_definition(row) for row in source_task.get("levels") or []
+        ]
+        current_level_plan = [
+            _level_prompt_definition(row) for row in current_task.get("levels") or []
+        ]
+        if source_level_plan != current_level_plan:
+            raise ValueError(
+                f"progressive reuse source has different {task} model-visible level plan"
+            )
     return source_manifest
 
 
@@ -1572,7 +1598,7 @@ def run(args: argparse.Namespace) -> int:
 
     if args.progressive_reuse_source_root:
         source_root = Path(args.progressive_reuse_source_root)
-        _validate_progressive_reuse_source(
+        source_manifest = _validate_progressive_reuse_source(
             source_root=source_root,
             current_manifest=manifest,
         )
@@ -1581,6 +1607,18 @@ def run(args: argparse.Namespace) -> int:
             output_root=output_root,
             source_root=source_root,
         )
+        receipt["family_manifest_lineage"] = {
+            task: {
+                "source_sha256": (
+                    (source_manifest.get("inputs") or {}).get(task) or {}
+                ).get("family_manifest_sha256"),
+                "current_sha256": ((manifest.get("inputs") or {}).get(task) or {}).get(
+                    "family_manifest_sha256"
+                ),
+            }
+            for task in manifest.get("tasks") or []
+        }
+        write_json_atomic(output_root / "progressive_reuse_receipt.json", receipt)
         manifest["progressive_reuse"] = receipt
         print(
             "[reuse] "

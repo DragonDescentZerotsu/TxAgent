@@ -73,8 +73,14 @@ SOURCES = {"chembl": CHEMBL, "starling": STARLING}
 
 PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS = {
     1: "Actual source records that participated in frozen skin-label voting.",
-    2: "Observed or direct-like skin outcomes that did not participate in voting.",
-    3: "Sensitization AOP key-event evidence; indirect mechanism support and not itself a final sensitizer label.",
+    2: (
+        "Measured nonvoter outcomes and predicted or defined-approach overall "
+        "sensitization classifications; near-direct evidence that did not vote."
+    ),
+    3: (
+        "Experimental or predicted sensitization mechanisms, including explicit AOP "
+        "key events and substantive unspecified mechanisms; indirect evidence only."
+    ),
 }
 
 

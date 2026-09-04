@@ -16,47 +16,47 @@ from tools.chembl_tool.common.starling import (
 from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
     CANONICAL_VERSION,
     MANIFEST_PATH,
-)
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
     is_tdc_skin_sensitization_scope,
 )
 
 
 DEFAULT_STARLING_DATA_DIR = "data/starling_data/skin_reaction"
-HISTORICAL_OUT_DIR = "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+HISTORICAL_OUT_DIR = (
+    "outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_full"
+)
 ALIGNED_V2_OUT_DIR = (
     "outputs/paper/molecular_evidence_agent/evidence/"
     "skin_reaction_starling_sensitization_v2"
 )
 DEFAULT_OUT_DIR = (
     "outputs/paper/molecular_evidence_agent/evidence/"
-    "skin_reaction_starling_sensitization_canonical_v3"
+    "skin_reaction_starling_sensitization_canonical_v4"
 )
 EVIDENCE_FILENAME = "starling_skin_reaction_evidence.jsonl"
 INDEX_FILENAME = "starling_skin_reaction_neighbor_index.pkl"
 META_FILENAME = "starling_skin_reaction_neighbor_index.meta.json"
-CANONICAL_HELDOUT_INDEX_NAME = "skin_reaction_starling_sensitization_canonical_v3"
+CANONICAL_HELDOUT_INDEX_NAME = "skin_reaction_starling_sensitization_canonical_v4"
 DEFAULT_EVIDENCE_PATH = Path(DEFAULT_OUT_DIR) / EVIDENCE_FILENAME
 DEFAULT_INDEX_PATH = Path(DEFAULT_OUT_DIR) / INDEX_FILENAME
 
 SOURCE_PROFILE_BROAD_V1 = "broad_skin_reaction_v1"
 SOURCE_PROFILE_SENSITIZATION_V2 = "sensitization_contact_allergy_v2"
-SOURCE_PROFILE_CANONICAL_V3 = "sensitization_direct_aop_canonical_v3"
-DEFAULT_SOURCE_PROFILE = SOURCE_PROFILE_CANONICAL_V3
+SOURCE_PROFILE_CANONICAL_V4 = "sensitization_direct_aop_canonical_v4"
+DEFAULT_SOURCE_PROFILE = SOURCE_PROFILE_CANONICAL_V4
 SOURCE_PROFILES = (
     SOURCE_PROFILE_BROAD_V1,
     SOURCE_PROFILE_SENSITIZATION_V2,
-    SOURCE_PROFILE_CANONICAL_V3,
+    SOURCE_PROFILE_CANONICAL_V4,
 )
 OUT_DIRS = {
     SOURCE_PROFILE_BROAD_V1: HISTORICAL_OUT_DIR,
     SOURCE_PROFILE_SENSITIZATION_V2: ALIGNED_V2_OUT_DIR,
-    SOURCE_PROFILE_CANONICAL_V3: DEFAULT_OUT_DIR,
+    SOURCE_PROFILE_CANONICAL_V4: DEFAULT_OUT_DIR,
 }
 INDEX_VERSIONS = {
     SOURCE_PROFILE_BROAD_V1: "skin_reaction_starling_full_neighbor_index.v1",
     SOURCE_PROFILE_SENSITIZATION_V2: "skin_reaction_starling_sensitization_neighbor_index.v2",
-    SOURCE_PROFILE_CANONICAL_V3: "skin_reaction_starling_sensitization_direct_aop_index.v3",
+    SOURCE_PROFILE_CANONICAL_V4: "skin_reaction_starling_sensitization_direct_aop_index.v4",
 }
 
 
@@ -64,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     out_dir = _resolve_out_dir(args)
     data_dir = Path(args.starling_data_dir)
-    if args.source_profile == SOURCE_PROFILE_CANONICAL_V3:
+    if args.source_profile == SOURCE_PROFILE_CANONICAL_V4:
         _validate_canonical_source(data_dir)
     profiles = skin_reaction_profiles(
         data_dir,
@@ -107,8 +107,8 @@ def skin_reaction_profiles(
 ) -> list[StarlingSourceProfile]:
     if source_profile not in SOURCE_PROFILES:
         raise ValueError(f"Unknown Skin source profile: {source_profile}")
-    if source_profile == SOURCE_PROFILE_CANONICAL_V3:
-        return _canonical_v3_profiles(data_dir, max_rows=max_rows)
+    if source_profile == SOURCE_PROFILE_CANONICAL_V4:
+        return _canonical_v4_profiles(data_dir, max_rows=max_rows)
     aligned_scope = source_profile == SOURCE_PROFILE_SENSITIZATION_V2
     return [
         StarlingSourceProfile(
@@ -134,7 +134,11 @@ def skin_reaction_profiles(
                 "effect_metric",
                 "extra_details",
             ),
-            scope_fields=("assay_or_test", "species_or_population", "dose_or_concentration"),
+            scope_fields=(
+                "assay_or_test",
+                "species_or_population",
+                "dose_or_concentration",
+            ),
             name_fields=(),
             target_pref_name=(
                 "direct skin sensitization/contact-allergy outcome"
@@ -148,13 +152,16 @@ def skin_reaction_profiles(
                 else "direct skin reaction"
             ),
             include_endpoint_values=("positive", "negative", "inconclusive"),
-            record_filter=(
-                _is_skin_sensitization_record if aligned_scope else None
-            ),
+            record_filter=(_is_skin_sensitization_record if aligned_scope else None),
             record_filter_name=(
                 "is_tdc_skin_sensitization_scope.v1" if aligned_scope else ""
             ),
-            extra_example_fields=("positive_count", "total_tested", "effect_metric", "pmid"),
+            extra_example_fields=(
+                "positive_count",
+                "total_tested",
+                "effect_metric",
+                "pmid",
+            ),
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
@@ -176,7 +183,11 @@ def skin_reaction_profiles(
                 "qualifying_conditions",
                 "extra_details",
             ),
-            scope_fields=("assay_type", "experimental_conditions", "qualifying_conditions"),
+            scope_fields=(
+                "assay_type",
+                "experimental_conditions",
+                "qualifying_conditions",
+            ),
             target_pref_name="skin sensitization adverse-outcome pathway",
             evidence_role="mechanistic_factor",
             standard_type_prefix="skin sensitization AOP",
@@ -188,12 +199,21 @@ def skin_reaction_profiles(
                 "adverse_outcome_skin_sensitization",
                 "integrated_or_unspecified",
             ),
-            extra_example_fields=("assay_type", "result_label", "endpoint_or_target", "pmid"),
+            extra_example_fields=(
+                "assay_type",
+                "result_label",
+                "endpoint_or_target",
+                "pmid",
+            ),
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
             source_id="skin_phototoxicity_irritation_local_damage",
-            path=str(data_dir / "phototoxicity_irritation_local_damage" / "extractions.parquet"),
+            path=str(
+                data_dir
+                / "phototoxicity_irritation_local_damage"
+                / "extractions.parquet"
+            ),
             group_id="Mechanism.phototoxicity_irritation_local_damage",
             assay_tier="Tier 3",
             endpoint_group="phototoxicity_irritation_local_damage",
@@ -280,7 +300,12 @@ def skin_reaction_profiles(
                     ),
                 ),
             ),
-            extra_example_fields=("result_label", "observed_effect", "light_conditions", "pmid"),
+            extra_example_fields=(
+                "result_label",
+                "observed_effect",
+                "light_conditions",
+                "pmid",
+            ),
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
@@ -302,7 +327,12 @@ def skin_reaction_profiles(
                 "qualifying_conditions",
                 "extra_details",
             ),
-            scope_fields=("study_design", "skin_source", "formulation_vehicle", "qualifying_conditions"),
+            scope_fields=(
+                "study_design",
+                "skin_source",
+                "formulation_vehicle",
+                "qualifying_conditions",
+            ),
             target_pref_name="dermal exposure and skin penetration",
             evidence_role="context_modifier",
             standard_type_prefix="skin exposure",
@@ -325,20 +355,20 @@ def skin_reaction_profiles(
     ]
 
 
-def _canonical_v3_profiles(
+def _canonical_v4_profiles(
     data_dir: Path,
     *,
     max_rows: int,
 ) -> list[StarlingSourceProfile]:
-    canonical_dir = data_dir / "canonical_sensitization_v3"
+    canonical_dir = data_dir / "canonical_sensitization_v4"
     return [
         StarlingSourceProfile(
-            source_id="skin_direct_sensitization_canonical_v3",
+            source_id="skin_direct_sensitization_canonical_v4",
             path=str(canonical_dir / "direct_records.parquet"),
             group_id="Direct.skin_reaction",
             assay_tier="Tier 1",
             endpoint_group="direct_skin_reaction",
-            evidence_source="Starling/Skin_Reaction/direct_sensitization_canonical_v3",
+            evidence_source="Starling/Skin_Reaction/direct_sensitization_canonical_v4",
             endpoint_field="outcome_label",
             smiles_field="SMILES",
             context_fields=(
@@ -351,7 +381,11 @@ def _canonical_v3_profiles(
                 "effect_metric",
                 "extra_details",
             ),
-            scope_fields=("assay_or_test", "species_or_population", "dose_or_concentration"),
+            scope_fields=(
+                "assay_or_test",
+                "species_or_population",
+                "dose_or_concentration",
+            ),
             name_fields=(),
             target_pref_name="direct skin sensitization/contact-allergy outcome",
             evidence_role="direct_outcome",
@@ -368,12 +402,12 @@ def _canonical_v3_profiles(
             max_rows=max_rows,
         ),
         StarlingSourceProfile(
-            source_id="skin_sensitization_aop_canonical_v3",
+            source_id="skin_sensitization_aop_canonical_v4",
             path=str(canonical_dir / "aop_records.parquet"),
             group_id="Mechanism.sensitization_aop",
             assay_tier="Tier 2",
             endpoint_group="sensitization_aop",
-            evidence_source="Starling/Skin_Reaction/sensitization_aop_canonical_v3",
+            evidence_source="Starling/Skin_Reaction/sensitization_aop_canonical_v4",
             endpoint_field="aop_event",
             smiles_field="SMILES",
             value_field="result_value",
@@ -386,7 +420,11 @@ def _canonical_v3_profiles(
                 "qualifying_conditions",
                 "extra_details",
             ),
-            scope_fields=("assay_type", "experimental_conditions", "qualifying_conditions"),
+            scope_fields=(
+                "assay_type",
+                "experimental_conditions",
+                "qualifying_conditions",
+            ),
             target_pref_name="skin sensitization AOP key events",
             evidence_role="mechanistic_factor",
             standard_type_prefix="skin sensitization AOP key event",
@@ -415,7 +453,7 @@ def _is_skin_sensitization_record(record: Mapping[str, object]) -> bool:
 
 
 def _validate_canonical_source(data_dir: Path) -> None:
-    canonical_dir = data_dir / "canonical_sensitization_v3"
+    canonical_dir = data_dir / "canonical_sensitization_v4"
     manifest_path = canonical_dir / MANIFEST_PATH.name
     if not manifest_path.is_file():
         raise FileNotFoundError(

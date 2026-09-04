@@ -10,48 +10,48 @@
   },
   "splits": {
     "train": {
-      "n": 1997,
-      "source_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
-      "canonical_sha256": "27e3a6af9fcb435a24c37ee4f35346094b25040793a04052acc7d5045c9e8fcc",
+      "n": 1941,
+      "source_sha256": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0",
+      "canonical_sha256": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0",
       "byte_identical": true,
       "same_ordered_drug_labels": true,
       "label_counts": {
-        "0": 606,
-        "1": 1391
+        "0": 587,
+        "1": 1354
       },
       "condition_counts": {
         "disease=atopic_dermatitis": 31,
-        "no_reported_external_condition": 1966
+        "no_reported_external_condition": 1910
       }
     },
     "valid": {
-      "n": 246,
-      "source_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
-      "canonical_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
+      "n": 239,
+      "source_sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+      "canonical_sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
       "byte_identical": true,
       "same_ordered_drug_labels": true,
       "label_counts": {
-        "0": 73,
-        "1": 173
+        "0": 72,
+        "1": 167
       },
       "condition_counts": {
         "disease=atopic_dermatitis": 1,
-        "no_reported_external_condition": 245
+        "no_reported_external_condition": 238
       }
     },
     "test": {
-      "n": 248,
-      "source_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
-      "canonical_sha256": "45aaf03e11561f43277660aa1174d9f4b2e6f698e2eaf3092b70ebb4339759f9",
+      "n": 241,
+      "source_sha256": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11",
+      "canonical_sha256": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11",
       "byte_identical": true,
       "same_ordered_drug_labels": true,
       "label_counts": {
-        "0": 74,
-        "1": 174
+        "0": 68,
+        "1": 173
       },
       "condition_counts": {
         "disease=atopic_dermatitis": 3,
-        "no_reported_external_condition": 245
+        "no_reported_external_condition": 238
       }
     }
   },

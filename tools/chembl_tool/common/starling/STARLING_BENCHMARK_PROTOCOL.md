@@ -154,10 +154,11 @@ fraction，而不是把所有 contextual records 无条件压成一个 gold labe
 
 这套规则优先保证 label precision 和可审计性，而不是最大化保留率。
 
-## Bioavailability/Skin 当前与 BBB historical record-supported v2 split policy
+## Historical record-supported v2 split policy
 
-Bioavailability/Skin 当前 paper-facing lineage 是 scaffold-only `record_supported_v2`；BBB 同 lineage 自
-2026-08-09 起只作 historical comparison。它复用第一版冻结的全部 binary parent
+本节只记录旧 scaffold-only `record_supported_v2` lineage；四个 task 的 current split 均已迁移到
+`data/conditioned_benchmark/<Task>/{scaffold,random}/`，以 `CONDITIONED_BENCHMARK.md` 为准。旧 lineage
+复用第一版冻结的全部 binary parent
 labels，只重新分配 scaffold groups；因此 label 变化和 split 变化不会混在一起。分配使用 lexicographic
 MILP，并严格按以下优先级冻结前一层最优值后再优化下一层：
 
@@ -185,8 +186,10 @@ full direct source 建立的，其中包含新 valid/test molecules 的 source r
 - 不允许只依赖 query-time exact-SMILES exclusion；identity-equivalent source rows 也必须排除；
 - train-only index 对 valid+test union 完成覆盖率和 zero-overlap audit 之前，不能启动正式 paper rerun。
 - inference-time direct evidence 还必须通过与 gold adapter 相同的 task scope gate；held-out parent exclusion
-  不能修复 endpoint-scope mismatch。Skin current index 因此复用
-  `is_tdc_skin_sensitization_scope()`，历史 broad-skin index 只作 v1 reproduction。
+  不能修复 endpoint-scope mismatch。该 historical scoped-Skin index 复用
+  `is_tdc_skin_sensitization_scope()`；更早的 broad-skin index 只作 v1 reproduction。Current Skin 的三层
+  strict scope 和唯一 artifact 路径见 `CONDITIONED_BENCHMARK.md` 与
+  `paper_experiments/CURRENT_STARLING_RETRIEVAL.md`。
 
 ## 当前 task policy
 
@@ -404,7 +407,7 @@ PMIDs、raw value examples、identity metadata 和冲突信息放在 audit artif
 根目录 `molecule_labels.jsonl` 带有 `split_assignments.random/scaffold`；每个 split-specific audit
 文件用于后续按对应 parent identity 构建 train-only retrieval library。
 
-Bioavailability/Skin current、BBB historical v2 构建命令与输出：
+Historical v2 构建命令与输出（不得作为 current runner 输入）：
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \

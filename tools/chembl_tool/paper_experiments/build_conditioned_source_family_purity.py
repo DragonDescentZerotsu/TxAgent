@@ -32,12 +32,20 @@ from tools.chembl_tool.common.starling.current_retrieval_artifacts import (
     current_records_path,
 )
 from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
+    AOP_GROUP as SKIN_AOP_GROUP,
     DEFAULT_CONDITION_REVIEW as SKIN_CONDITION_REVIEW,
     DIRECT_GROUP as SKIN_DIRECT_GROUP,
+    NEAR_DIRECT_GROUP as SKIN_NEAR_DIRECT_GROUP,
     PURITY_VERSION as SKIN_PURITY_VERSION,
-    load_voter_source_indices as load_skin_voter_source_indices,
-    upstream_source_index as skin_upstream_source_index,
+    SourceRecordKey,
+    canonical_partition as skin_canonical_partition,
+    load_canonical_partition_decisions as load_skin_canonical_partition_decisions,
+    load_voter_source_keys as load_skin_voter_source_keys,
+    upstream_source_key as skin_upstream_source_key,
     vote_pure_family_move as skin_vote_pure_family_move,
+)
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    strict_scope_exclusion_reason as skin_strict_scope_exclusion_reason,
 )
 
 
@@ -45,7 +53,7 @@ PURITY_VERSION = "conditioned_source_family_purity.v1"
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
-    "source_family_purity_v2"
+    "source_family_purity_v5"
 )
 
 
@@ -68,19 +76,27 @@ class PuritySpec:
     classifier_columns: tuple[str, ...] = ()
 
 
-def _skin_spec(condition_review: Path = SKIN_CONDITION_REVIEW) -> tuple[PuritySpec, set[int]]:
-    voters = load_skin_voter_source_indices(condition_review=condition_review)
-    return PuritySpec(
-        task="skin_reaction",
-        input_records=current_records_path("skin_reaction"),
-        direct_group=SKIN_DIRECT_GROUP,
-        classify=partial(
-            skin_vote_pure_family_move,
-            voter_source_indices=voters,
+def _skin_spec(
+    condition_review: Path = SKIN_CONDITION_REVIEW,
+) -> tuple[PuritySpec, set[SourceRecordKey], Mapping[SourceRecordKey, Any]]:
+    voters = load_skin_voter_source_keys(condition_review=condition_review)
+    canonical_partitions = load_skin_canonical_partition_decisions()
+    return (
+        PuritySpec(
+            task="skin_reaction",
+            input_records=current_records_path("skin_reaction"),
+            direct_group=SKIN_DIRECT_GROUP,
+            classify=partial(
+                skin_vote_pure_family_move,
+                voter_source_keys=voters,
+                canonical_partitions=canonical_partitions,
+            ),
+            purity_version=SKIN_PURITY_VERSION,
+            allow_move_from_direct=True,
         ),
-        purity_version=SKIN_PURITY_VERSION,
-        allow_move_from_direct=True,
-    ), voters
+        voters,
+        canonical_partitions,
+    )
 
 
 SPECS = {"skin_reaction": _skin_spec}
@@ -110,11 +126,15 @@ _AUDIT_SCHEMA = pa.schema(
 )
 
 
-def classify_family_move(spec: PuritySpec, record: Mapping[str, Any]) -> tuple[str, str]:
+def classify_family_move(
+    spec: PuritySpec, record: Mapping[str, Any]
+) -> tuple[str, str]:
     """Return ``(new_group, reason)``; an empty reason means no mutation."""
 
     original = _text(record.get("group_id"))
-    if not original or (original == spec.direct_group and not spec.allow_move_from_direct):
+    if not original or (
+        original == spec.direct_group and not spec.allow_move_from_direct
+    ):
         return original, ""
     decision = spec.classify(record)
     if isinstance(decision, FamilyMove):
@@ -138,15 +158,18 @@ def build_overlay(
         raise ValueError(f"{source} lacks required group_id")
     collisions = sorted(set(parquet.schema.names) & set(_PROVENANCE_FIELDS))
     if collisions:
-        raise ValueError(f"Input already contains purity provenance fields: {collisions}")
+        raise ValueError(
+            f"Input already contains purity provenance fields: {collisions}"
+        )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "records.parquet"
     audit_path = output_dir / "moved_records.parquet"
-    output_schema = pa.schema(parquet.schema_arrow).append(
-        pa.field(_PROVENANCE_FIELDS[0], pa.string())
-    ).append(pa.field(_PROVENANCE_FIELDS[1], pa.string())).append(
-        pa.field(_PROVENANCE_FIELDS[2], pa.string())
+    output_schema = (
+        pa.schema(parquet.schema_arrow)
+        .append(pa.field(_PROVENANCE_FIELDS[0], pa.string()))
+        .append(pa.field(_PROVENANCE_FIELDS[1], pa.string()))
+        .append(pa.field(_PROVENANCE_FIELDS[2], pa.string()))
     )
 
     reason_counts: Counter[str] = Counter()
@@ -154,17 +177,23 @@ def build_overlay(
     original_group_counts: Counter[str] = Counter()
     moved = moved_eligible = row_offset = 0
 
-    with atomic_output_path(output_path) as output_tmp, atomic_output_path(
-        audit_path
-    ) as audit_tmp:
-        with pq.ParquetWriter(output_tmp, output_schema, compression="zstd") as writer, pq.ParquetWriter(
-            audit_tmp, _AUDIT_SCHEMA, compression="zstd"
-        ) as audit_writer:
+    with (
+        atomic_output_path(output_path) as output_tmp,
+        atomic_output_path(audit_path) as audit_tmp,
+    ):
+        with (
+            pq.ParquetWriter(output_tmp, output_schema, compression="zstd") as writer,
+            pq.ParquetWriter(
+                audit_tmp, _AUDIT_SCHEMA, compression="zstd"
+            ) as audit_writer,
+        ):
             for batch in parquet.iter_batches(batch_size=batch_size):
                 if spec.classifier_columns:
                     missing = set(spec.classifier_columns) - set(batch.schema.names)
                     if missing:
-                        raise ValueError(f"classifier columns missing from source: {sorted(missing)}")
+                        raise ValueError(
+                            f"classifier columns missing from source: {sorted(missing)}"
+                        )
                     rows = batch.select(spec.classifier_columns).to_pylist()
                 else:
                     rows = batch.to_pylist()
@@ -209,7 +238,10 @@ def build_overlay(
                             "retrieval_eligible": eligible,
                             "parent_smiles": _text(record.get("parent_smiles")),
                             "canonical_smiles": _first_text(
-                                record, "canonical_smiles", "representative_smiles", "smiles"
+                                record,
+                                "canonical_smiles",
+                                "representative_smiles",
+                                "smiles",
                             ),
                             "canonical_endpoint_name": _text(
                                 record.get("canonical_endpoint_name")
@@ -228,16 +260,22 @@ def build_overlay(
                     group_field,
                     pa.array(new_groups, type=group_field.type, from_pandas=True),
                 )
-                rewritten = rewritten.append_column(
-                    _PROVENANCE_FIELDS[0], pa.array(versions, type=pa.string())
-                ).append_column(
-                    _PROVENANCE_FIELDS[1], pa.array(originals, type=pa.string())
-                ).append_column(
-                    _PROVENANCE_FIELDS[2], pa.array(reasons, type=pa.string())
+                rewritten = (
+                    rewritten.append_column(
+                        _PROVENANCE_FIELDS[0], pa.array(versions, type=pa.string())
+                    )
+                    .append_column(
+                        _PROVENANCE_FIELDS[1], pa.array(originals, type=pa.string())
+                    )
+                    .append_column(
+                        _PROVENANCE_FIELDS[2], pa.array(reasons, type=pa.string())
+                    )
                 )
                 writer.write_batch(rewritten)
                 if audit_rows:
-                    audit_writer.write_table(pa.Table.from_pylist(audit_rows, schema=_AUDIT_SCHEMA))
+                    audit_writer.write_table(
+                        pa.Table.from_pylist(audit_rows, schema=_AUDIT_SCHEMA)
+                    )
                 row_offset += len(rows)
 
     manifest = {
@@ -271,30 +309,104 @@ def build_overlay(
 
 def finalize_skin_manifest(
     output_dir: Path,
-    voter_source_indices: set[int],
+    voter_source_keys: set[SourceRecordKey],
+    canonical_partitions: Mapping[SourceRecordKey, Any],
     condition_review: Path,
 ) -> dict[str, Any]:
-    """Add the exact voter-membership publication gate for Skin."""
+    """Add exact voter and semantic-family publication gates for Skin."""
 
     output_path = output_dir / "records.parquet"
-    rows = (
+    parquet = pq.ParquetFile(output_path)
+    rows_for_membership = (
         row
-        for batch in pq.ParquetFile(output_path).iter_batches(
-            columns=[
-                "group_id",
-                "source_id",
-                "source_row_number",
-                "retrieval_eligible",
-            ]
+        for batch in parquet.iter_batches(
+            columns=["group_id", "source_id", "source_row_number", "retrieval_eligible"]
         )
         for row in batch.to_pylist()
     )
     membership = audit_exact_voter_membership(
-        rows,
-        voter_source_indices,
+        rows_for_membership,
+        voter_source_keys,
         direct_group=SKIN_DIRECT_GROUP,
-        record_id=skin_upstream_source_index,
+        record_id=skin_upstream_source_key,
     )
+
+    family_counts: Counter[str] = Counter()
+    partition_counts: Counter[str] = Counter()
+    mismatch_count = source_rows_audited = 0
+    strict_scope_violations: Counter[str] = Counter()
+    strict_scope_examples: list[dict[str, Any]] = []
+    mismatch_examples: list[dict[str, Any]] = []
+    semantic_rows = (
+        row for batch in parquet.iter_batches() for row in batch.to_pylist()
+    )
+    for row in semantic_rows:
+        key = skin_upstream_source_key(row)
+        if key is None:
+            continue
+        source_rows_audited += 1
+        decision = skin_canonical_partition(row, canonical_partitions)
+        if decision is None:
+            raise RuntimeError(
+                f"Skin semantic audit lacks canonical decision for {key!r}"
+            )
+        actual = _text(row.get("group_id"))
+        strict_reason = skin_strict_scope_exclusion_reason(row)
+        if strict_reason and actual in {
+            SKIN_DIRECT_GROUP,
+            SKIN_NEAR_DIRECT_GROUP,
+            SKIN_AOP_GROUP,
+        }:
+            strict_scope_violations[strict_reason] += 1
+            if len(strict_scope_examples) < 20:
+                strict_scope_examples.append(
+                    {
+                        "source_record_key": f"{key[0]}:{key[1]}",
+                        "group_id": actual,
+                        "strict_scope_exclusion_reason": strict_reason,
+                        "canonical_assay_context": _text(
+                            row.get("canonical_assay_context")
+                        ),
+                        "canonical_endpoint_name": _text(
+                            row.get("canonical_endpoint_name")
+                        ),
+                    }
+                )
+        replay = skin_vote_pure_family_move(
+            row, voter_source_keys, canonical_partitions
+        )
+        expected = replay.new_group or actual
+        family_counts[actual] += 1
+        partition_counts[decision.partition] += 1
+        if actual != expected:
+            mismatch_count += 1
+            if len(mismatch_examples) < 20:
+                mismatch_examples.append(
+                    {
+                        "source_record_key": f"{key[0]}:{key[1]}",
+                        "partition": decision.partition,
+                        "partition_reason": decision.reason,
+                        "expected_group": expected,
+                        "actual_group": actual,
+                    }
+                )
+    semantic_gate = {
+        "skin_level_semantic_purity": (
+            mismatch_count == 0 and not strict_scope_violations
+        ),
+        "n_source_rows_audited": source_rows_audited,
+        "family_counts": dict(sorted(family_counts.items())),
+        "canonical_partition_counts": dict(sorted(partition_counts.items())),
+        "n_semantic_family_mismatches": mismatch_count,
+        "semantic_family_mismatch_examples": mismatch_examples,
+        "n_strict_target_scope_violations": sum(strict_scope_violations.values()),
+        "strict_target_scope_violation_counts": dict(
+            sorted(strict_scope_violations.items())
+        ),
+        "strict_target_scope_violation_examples": strict_scope_examples,
+    }
+    if mismatch_count or strict_scope_violations:
+        raise RuntimeError(f"Skin semantic-family gate failed: {semantic_gate}")
     manifest_path = output_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest.update(
@@ -304,12 +416,28 @@ def finalize_skin_manifest(
                 "retrieval L1 additionally intersects retrieval eligibility and "
                 "excludes held-out parents"
             ),
+            "level_contract": {
+                "L1": "actual base or accepted condition-review voter records only",
+                "L2": (
+                    "canonical observed final sensitization outcomes that did not vote, "
+                    "plus predicted or defined-approach overall sensitization classifications"
+                ),
+                "L3": (
+                    "experimental or predicted sensitization mechanisms, including explicit "
+                    "AOP key events and sensitization-anchored unspecified mechanisms"
+                ),
+                "excluded": (
+                    "photo/light-dependent evidence, irritation-only outcomes, non-contact "
+                    "cutaneous adverse reactions, empty/no-evidence, unrelated, and truly "
+                    "unresolved records are absent from all three levels"
+                ),
+            },
             "voter_counts": {
-                "n_voter_source_indices": len(voter_source_indices),
+                "n_voter_source_keys": len(voter_source_keys),
                 "condition_review": str(condition_review.resolve()),
                 "condition_review_sha256": sha256_file(condition_review),
             },
-            "hard_gates": membership,
+            "hard_gates": {**membership, **semantic_gate},
         }
     )
     write_json_atomic(manifest_path, manifest)
@@ -367,7 +495,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--input-records requires one explicit --task")
     tasks = list(SPECS) if args.task == "all" else [args.task]
     for task in tasks:
-        spec, voters = SPECS[task](args.skin_condition_review)
+        spec, voters, canonical_partitions = SPECS[task](args.skin_condition_review)
         if args.input_records:
             spec = replace(spec, input_records=args.input_records)
         output_dir = Path(args.output_root) / task
@@ -377,7 +505,7 @@ def main(argv: list[str] | None = None) -> int:
             batch_size=args.batch_size,
         )
         manifest = finalize_skin_manifest(
-            output_dir, voters, args.skin_condition_review
+            output_dir, voters, canonical_partitions, args.skin_condition_review
         )
         print(
             f"{task}: moved {manifest['n_moved_rows']:,} rows "

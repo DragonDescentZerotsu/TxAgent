@@ -1,5 +1,10 @@
 # E17: GPT-OSS-120B train-only LoRA-GRPO implementation plan
 
+> **Archived/stopped (historical contract).** 本文件中的 `current`、split 数量和 source lineage 均指
+> E17 冻结时的实验输入，不是 2026-09-04 的 active Conditioned Benchmark。E17 不能作为当前训练或
+> retrieval 入口；当前 split、source 和结果状态见仓库根 `AGENTS.md` 与
+> `tools/chembl_tool/paper_experiments/RESULTS.md`。
+
 ## Research question
 
 在不改变 current Starling data、retrieval、tools、single/group branch 和 final JSON schema 的条件下，

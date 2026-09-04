@@ -1,6 +1,6 @@
 {
   "schema_version": "paper_artifact_registry.v2",
-  "updated_at": "2026-09-03",
+  "updated_at": "2026-09-04",
   "benchmark": {
     "root": "data/conditioned_benchmark",
     "contract": "conditioned_benchmark.v1",
@@ -57,7 +57,7 @@
       "scaffold": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
         "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
+        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731"
       },
       "scaffold_status_by_task": {
         "bbb_martins": "current",
@@ -72,7 +72,7 @@
         "status_by_task": {
           "bbb_martins": "stale_predictions_after_strict_voter_l1_v6_index_rebuild",
           "bioavailability_ma": "stale_retrieval_index_requires_targeted_replay",
-          "skin_reaction": "stale_predictions_after_strict_voter_l1_v2_index_rebuild"
+          "skin_reaction": "stale_after_final_mdam_l2_rebuild_requires_full_replay"
         }
       }
     },
@@ -82,13 +82,12 @@
       "plotter": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py",
       "split": "scaffold-valid",
       "model_identity": "deepseek-v4-flash-0731",
-      "status": "combined_2_1_4_2_8_4_figure_complete_with_exact_replicate_ranges",
+      "status": "current_except_skin_pending_targeted_replay",
       "selection_contract": "same global Morgan candidate ranking, Top-10 L1 molecules, Top-3 later new molecules, Top-3 later active-molecule augmentations, assay-diversity card tie-break, and append-only semantics; only per-molecule card limits differ",
       "comparison_gate": "exact evaluation indices, input, experiment, visibility, identity policy, candidate generation, non-card selection semantics, prompt/generation/tool contract, model identity, and split; changed retrieval lineages require a selected-surface zero-change receipt",
       "four_two_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_4_2_current_control_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731"
       },
       "eight_four_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731",
@@ -101,18 +100,32 @@
         ]
       },
       "unavailable_current_configurations": {
-        "skin_reaction": ["8/4"]
+        "skin_reaction": {
+          "2/1": "one query requires targeted replay",
+          "4/2": "two queries require targeted replay",
+          "8/4": "three queries require targeted replay"
+        }
+      },
+      "skin_last_complete_roots_before_mdam_rebuild": {
+        "2/1": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731",
+        "4/2": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
+        "8/4": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731"
+      },
+      "skin_run_manifest_sha256": {
+        "2/1": "3ebc5552e51cc95c0a976b425fcb5f046368f4c1535971c5e170837b1727caa8",
+        "4/2": "964742e2b64c702b3c188471ffd7f31cac4f91b8f218b3b43a799b76e18f95fc",
+        "8/4": "62c8f37091e191b11811e4e7a48be7e30ac48e4ba5499a86a1cfd2c218414362"
       },
       "two_one_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bbb",
-        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bio",
-        "skin_reaction": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/skin"
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_card_budget_2_1_v1/scaffold_valid_deepseek_v4_flash_0731/bio"
       },
       "tool_prefetch_receipts": {
         "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_8_4_tool_prefetch_fixed.json"
       },
       "retrieval_lineage_receipts": {
-        "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json"
+        "bioavailability_ma": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json",
+        "skin_reaction": "tools/chembl_tool/paper_experiments/receipts/skin_scaffold_valid_mdam_family_rebuild.json"
       },
       "analysis_root": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4",
       "figure": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/figures/progressive_record_card_budget_2_1_4_2_8_4.png",
@@ -120,17 +133,22 @@
       "summary": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/summary.json",
       "metrics_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_metrics.tsv",
       "references_tsv": "outputs/paper/analysis/progressive_record_card_budget_2_1_4_2_8_4/progressive_configuration_references.tsv",
-      "analysis_scope": "One current-lineage figure covers every available 2/1, 4/2, and 8/4 curve plus matched None and baseline references. Exact-contract reruns are plotted as their arithmetic mean with observed min-max whiskers; Bioavailability 8/4 is the only replicated curve. Current strict-L1 Skin has no 8/4 run and is explicitly shown as unavailable rather than filled from historical broad-L1 output.",
+      "figure_sha256": "933862950fa7a1c4611d276cb2e84b3a48efaf362c2b247add5e8be2b152531d",
+      "svg_sha256": "5f389e528217853ac031af96fe93ae8722c25f9d833fac614e28bcc27d8a38a5",
+      "summary_sha256": "f1aa5baa4cac7572d239c3920652e9611d326688eed6d8994230995771af7844",
+      "analysis_status": "stale_for_skin_after_mdam_l2_rebuild",
+      "analysis_scope": "The saved figure remains current for BBB and Bioavailability. Its Skin curves are last-complete references from before the final MDAM L2 rebuild and must be omitted from a current figure until targeted replay completes. Skin baselines remain current because the benchmark split is byte-identical.",
       "performance_references": {
         "none": {
           "bbb_martins": 0.6207006369426751,
           "bioavailability_ma": 0.6314369393261536,
-          "skin_reaction": 0.6151493216895884,
+          "skin_reaction": 0.6278596239070547,
           "contract": "matched exactly across every available configuration replicate"
         },
         "baseline_methods": ["minimol_head", "minimol_knn_condition", "minimol_knn_all", "morgan_knn_condition", "morgan_knn_all"],
         "bbb_root": "outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1",
-        "bioavailability_and_skin_root": "outputs/baselines/starling_conditioned_valid_v1",
+        "bioavailability_root": "outputs/baselines/starling_conditioned_valid_v1",
+        "skin_reaction_root": "outputs/baselines/starling_conditioned_skin_source_purity_v5_valid_v1",
         "bioavailability_note": "pre-fix reference pending retraining after two erroneous train rows were removed"
       },
       "macro_f1": {
@@ -147,8 +165,9 @@
           "eight_four_plot_max": [0.6375338345864662, 0.6895674300254453, 0.7038021380828655, 0.696634285153567, 0.6926715766398092, 0.6860698824984539],
           "eight_four_plot_n_replicates": 2
         },
-        "skin_reaction": {
-          "four_two": [0.6334151472650771, 0.6328439999108952, 0.6294195835179441],
+        "skin_reaction_last_complete_before_mdam_rebuild": {
+          "four_two": [0.6375276596802666, 0.6349375681900836, 0.6429053402737612],
+          "eight_four": [0.6151932084309133, 0.6164091507965025, 0.6208774297416957],
           "four_two_historical_broad_l1": [0.6272727272727273, 0.6341969128950511],
           "eight_four_historical_broad_l1": [0.6409684065934066, 0.6375168172208341]
         }
@@ -156,7 +175,7 @@
       "two_one_macro_f1": {
         "bbb_martins": [0.6913344642352275, 0.7146963708228531, 0.71105175091729, 0.710379131203714, 0.7126757650951199],
         "bioavailability_ma": [0.6474186444825055, 0.658546365914787, 0.6619354838709677, 0.6726278797344787, 0.6863507015994504, 0.6961966604823748],
-        "skin_reaction": [0.6376262626262627, 0.6515281593406593, 0.6515281593406593]
+        "skin_reaction_last_complete_before_mdam_rebuild": [0.6117590010910414, 0.6286723163841809, 0.6286723163841809]
       },
       "two_one_last_level_paired_comparison": {
         "bbb_martins_vs_four_two": {
@@ -175,14 +194,22 @@
           "exact_mcnemar_p": 0.860050065908581,
           "paired_bootstrap_95": [-0.0408631369616603, 0.06138289698555863]
         },
-        "skin_reaction_vs_current_four_two": {
-          "delta_macro_f1": 0.022108575822715193,
-          "prediction_flips": 16,
-          "two_one_correct_reference_wrong": 9,
-          "two_one_wrong_reference_correct": 7,
-          "exact_mcnemar_p": 0.803619384765625,
-          "paired_bootstrap_95": [-0.021563814866760178, 0.06681012958133378]
+        "skin_reaction_two_one_vs_four_two_before_mdam_rebuild": {
+          "delta_macro_f1": -0.014233023889580587,
+          "prediction_flips": 8,
+          "two_one_correct_reference_wrong": 2,
+          "two_one_wrong_reference_correct": 6,
+          "exact_mcnemar_p": 0.2890625,
+          "paired_bootstrap_95": [-0.04796425505166467, 0.02021532989787682]
         }
+      },
+      "skin_last_level_eight_four_vs_four_two_before_mdam_rebuild": {
+        "delta_macro_f1": -0.022027910532065653,
+        "prediction_flips": 9,
+        "eight_four_correct_four_two_wrong": 2,
+        "eight_four_wrong_four_two_correct": 7,
+        "exact_mcnemar_p": 0.1796875,
+        "paired_bootstrap_95": [-0.06013963614919515, 0.013708081171146557]
       },
       "exact_bio_eight_four_replay": {
         "historical_l1_macro_f1": 0.6375338345864662,
@@ -195,7 +222,7 @@
         "last_exact_mcnemar_p": 0.8388197422027588,
         "n_failed_queries": 0
       },
-      "comparison_note": "All retained 2/1 runs and the exact Bioavailability 8/4 replay have zero failed queries and complete prefetched tool payloads. BBB 2/1 is paired to current strict-voter-L1 v6 4/2; Skin 2/1 is paired to the new current strict-voter-L1 v2 4/2 control; Bioavailability 2/1 is paired to the exact full-curve 8/4 replay because the attempted additional current 4/2 control did not reach the zero-failure gate and was removed. Across each retained pair, query priors, query-tool summaries, conditions, retrieval audits, and selected molecule sets match at every query and level, and each lower-budget card set is a subset of the reference. The combined figure averages the two exact-contract Bioavailability 8/4 full curves and shows their observed min-max range; all other current curves are single runs. The rejected 0.7148 L1-only run used a different prompt contract and is not a variance estimate. Current strict-L1 Skin has no 8/4 run. Historical broad-L1 Skin and connectivity-confounded Bioavailability roots remain excluded from current comparisons."
+      "comparison_note": "BBB and Bioavailability retain their verified current comparisons. Skin values are last-complete references from before the final MDAM L2 rebuild; 1/2/3 affected queries require targeted replay for 2/1, 4/2, and 8/4. The rejected 0.7148 Bioavailability L1-only run used a different prompt contract and is not a variance estimate."
     }
   },
   "progressive_tasks": {
@@ -250,26 +277,47 @@
       }
     },
     "skin_reaction": {
-      "n": 246,
-      "input_sha256": "b96affdaffa575539490d55d58931fed6b16679fc1f838e5e3c7afa01659ade4",
-      "recorded_index_sha256": "6c1cd72285fc929a0ff0a4ec112b6ec894ee9914fbf1e7be6cfb9807734dd85d",
-      "current_index_sha256": "624860f613f82147f6c8dc458f29a563d31c0e0161917f8201e34e0e6e06e9d2",
-      "recorded_family_manifest_sha256": "98b3846ddae6f35b38ad472d1f50562560a11bd757cbc77320fb0799bfc0142b",
-      "current_family_manifest_sha256": "853a5a45ddd0f8549404ddf68b165763765c6a256223f00187e14981c7a908ad",
-      "status": "current",
-      "metrics_role": "fresh scaffold-valid 4/2 curve over strict-voter-L1 v2; nonvoter near-direct evidence is L2 and AOP evidence is L3",
+      "n": 239,
+      "input_sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+      "recorded_index_sha256": "b36aaf7f3a93085fd086d63bd0c1b3d53f59b472ecacfd6fbdb3f561eba924d9",
+      "current_index_sha256": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
+      "recorded_family_manifest_sha256": "7869eee925ec270f07dc53f6ce1886381d5e019b40c1cf19c651ad3bfb35759c",
+      "current_family_manifest_sha256": "30ef7618b421208f5bb52c4a59e114fa83f3f0a6e9651ea8e87fba9379f5db84",
+      "status": "last_complete_reference_pending_targeted_replay",
+      "metrics_role": "last complete scaffold-valid 4/2 curve before the final MDAM L2 rebuild; two queries require targeted replay before these metrics are current",
+      "retrieval_change_receipt": "tools/chembl_tool/paper_experiments/receipts/skin_scaffold_valid_mdam_family_rebuild.json",
+      "n_selected_retrieval_changed": 2,
+      "run_root": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
+      "run_manifest_sha256": "964742e2b64c702b3c188471ffd7f31cac4f91b8f218b3b43a799b76e18f95fc",
+      "query_prior_root": "outputs/paper/starling_conditioned_skin_query_prior_v1/scaffold_valid_deepseek_v4_flash_0731",
+      "query_prior_manifest_sha256": "3b57dd7e4f7a516a4b7d2271a8e83846b05bd973843388b1f2a0fe7152b8d0ce",
       "agent_macro_f1": {
-        "none": 0.6151493216895884,
-        "L1": 0.6334151472650771,
-        "L2": 0.6328439999108952,
-        "L3": 0.6294195835179441
+        "none": 0.6278596239070547,
+        "L1": 0.6375276596802666,
+        "L2": 0.6349375681900836,
+        "L3": 0.6429053402737612
       },
+      "agent_accuracy": {
+        "none": 0.7280334728033473,
+        "L1": 0.7447698744769874,
+        "L2": 0.7364016736401674,
+        "L3": 0.7405857740585774
+      },
+      "model_called_by_level": {
+        "L1": 181,
+        "L2": 171,
+        "L3": 134
+      },
+      "baselines_role": "fresh scaffold-valid baselines on the current Skin source-purity v5 split",
+      "baselines_root": "outputs/baselines/starling_conditioned_skin_source_purity_v5_valid_v1",
+      "minimol_train_cv_summary_sha256": "36ff57943708200fd2c9ee7d6c906aa507ec8d732b1d9e090a0b9ab0327c9f73",
+      "minimol_final_metrics_sha256": "32511753b1583716aa25b349a4d745af74f008e7b8e287aaa0fbf41bc66424ba",
       "baselines": {
-        "minimol_head": 0.6030123722431414,
-        "minimol_knn_same_then_null": 0.5755050505050505,
-        "minimol_knn_all_train": 0.5755050505050505,
-        "morgan_knn_same_then_null": 0.520849477454081,
-        "morgan_knn_all_train": 0.5179688151421662
+        "minimol_head": 0.601955444089582,
+        "minimol_knn_same_then_null": 0.5858410819949282,
+        "minimol_knn_all_train": 0.5858410819949282,
+        "morgan_knn_same_then_null": 0.5005169720835074,
+        "morgan_knn_all_train": 0.4976353126642144
       }
     }
   },
@@ -302,11 +350,11 @@
       }
     },
     "skin_reaction": {
-      "n": 249,
-      "status": "stale_predictions_after_strict_voter_l1_v2_index_rebuild",
+      "n": 242,
+      "status": "stale_after_final_mdam_l2_rebuild_requires_full_replay",
       "recorded_index_sha256": "2e15558c5541ee242a18094b4498bf7c09734bb8693165058a24541e13dbb794",
-      "current_index_sha256": "c1d8bdd1ff22a93877a77071e73145d5060499432edf99004109d3466399c552",
-      "metrics_role": "last completed broad-L1 v1 random reference; strict-voter-L1 v2 replay required",
+      "current_index_sha256": "96b4403709f4fa0e144026394a530f7313c885d603d6e95ae06341874bea8ba4",
+      "metrics_role": "last completed broad-L1 v1 random reference; Skin v5 replay required",
       "agent_macro_f1": {
         "none": 0.6848101265822786,
         "L1": 0.7204176105584557,

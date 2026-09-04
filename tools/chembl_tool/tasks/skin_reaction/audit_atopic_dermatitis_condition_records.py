@@ -22,7 +22,7 @@ def audit(
     *,
     review_root: Path = REVIEW_ROOT,
     frozen_root: Path = FROZEN_ROOT,
-    conditioned_root: Path = CONDITIONED_ROOT,
+    conditioned_root: Path | None = CONDITIONED_ROOT,
     manual_review_path: Path = REVIEW_ROOT / "atopic_dermatitis_manual_review_v1.json",
     audit_path: Path = REVIEW_ROOT / "atopic_dermatitis_record_decisions_v1.jsonl",
     summary_path: Path = REVIEW_ROOT / "atopic_dermatitis_record_decisions_v1_summary.json",

@@ -28,10 +28,10 @@
     "vote_rejected": 0
   },
   "split_parent_counts": {
-    "train": 31,
-    "valid": 1,
+    "train": 30,
+    "valid": 0,
     "test": 3,
-    "unassigned": 0
+    "unassigned": 2
   },
   "distinct_scaffold_count": 18,
   "parent_labels": [
@@ -102,7 +102,7 @@
         "direct_skin_reaction:65862"
       ],
       "scaffold": "O=C1CNC(=O)N1",
-      "split": "train"
+      "split": "test"
     },
     {
       "parent_key": "DALKLAYLIPSCQL-YPYQNWSCSA-N",
@@ -230,7 +230,7 @@
         "direct_skin_reaction:47844"
       ],
       "scaffold": "O=C1C2=CC3C(=O)C=CCC3CC2Cc2ccccc21",
-      "split": "test"
+      "split": "train"
     },
     {
       "parent_key": "KYDXWCHDUCDNGR-UHFFFAOYSA-N",
@@ -287,7 +287,7 @@
         "direct_skin_reaction:56114"
       ],
       "scaffold": "c1ccc(OCCCCCCOc2ccccc2)cc1",
-      "split": "valid"
+      "split": null
     },
     {
       "parent_key": "PAYRUJLWNCNPSJ-UHFFFAOYSA-N",
@@ -395,7 +395,7 @@
         "direct_skin_reaction:60069"
       ],
       "scaffold": "c1ccccc1",
-      "split": "train"
+      "split": null
     },
     {
       "parent_key": "XEFQLINVKFYRCS-UHFFFAOYSA-N",
@@ -447,8 +447,8 @@
   "promotion_gates": {
     "at_least_3_parents": true,
     "at_least_3_distinct_scaffolds": true,
-    "train_valid_test_each_nonempty": true,
-    "all_parents_assigned": true
+    "train_valid_test_each_nonempty": false,
+    "all_parents_assigned": false
   },
-  "formal_benchmark_decision": "promote_group"
+  "formal_benchmark_decision": "reject_group_from_formal_benchmark"
 }

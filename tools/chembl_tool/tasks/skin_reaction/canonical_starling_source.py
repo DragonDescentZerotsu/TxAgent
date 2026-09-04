@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
-import re
 from typing import Any, Mapping
 
-from tools.chembl_tool.tasks.skin_reaction.starling_benchmark import (
-    is_tdc_skin_sensitization_scope,
-)
 
-
-CANONICAL_VERSION = "skin_sensitization_direct_aop.v3"
+CANONICAL_VERSION = "skin_sensitization_direct_aop.v4"
 RAW_DIRECT_PATH = Path(
     "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet"
 )
@@ -20,7 +16,7 @@ RAW_AOP_PATH = Path(
     "data/starling_data/skin_reaction/sensitization_aop/extractions.parquet"
 )
 CANONICAL_SOURCE_DIR = Path(
-    "data/starling_data/skin_reaction/canonical_sensitization_v3"
+    "data/starling_data/skin_reaction/canonical_sensitization_v4"
 )
 DIRECT_RECORDS_PATH = CANONICAL_SOURCE_DIR / "direct_records.parquet"
 AOP_RECORDS_PATH = CANONICAL_SOURCE_DIR / "aop_records.parquet"
@@ -49,16 +45,46 @@ class PartitionDecision:
     aop_event: str = ""
 
 
+def is_tdc_skin_sensitization_scope(reaction_type: Any) -> bool:
+    """Accept only sensitization/contact-allergy endpoint names."""
+
+    normalized = re.sub(
+        r"[^a-z0-9]+", "_", str(reaction_type or "").strip().lower()
+    ).strip("_")
+    return (
+        normalized == "sensitization"
+        or "allergic_contact_dermat" in normalized
+        or "contact_allerg" in normalized
+    )
+
+
 _PHOTO_RE = re.compile(
-    r"photo(?:toxic|irrit|allerg|contact|sensiti|safety)|photopatch|berloque|"
-    r"\buva\b|\buvb\b|ultraviolet|light[- ]dependent",
+    r"\bps[- ]?llna\b|photo[- ]?llna|"
+    r"photo[^a-z0-9]{0,3}(?:toxic|irrit|allerg|contact|con[^a-z0-9]{0,2}tract|sensiti|safety|aggravat|"
+    r"activat|chemical|degrad|oxid|adduct|lys|protect|maximi[sz]|acd|"
+    r"dermat|expos|generat|induc|mediat|conjugat|dynamic|sensor|biolog|"
+    r"reactiv|provocat|product|initiator|m?dpra)|"
+    r"photopatch|photo[- ]?patch|berloque|\buva\b|\buvb\b|"
+    r"ultraviolet|\buv[- ]irradiat|irradiat|solar (?:simulator|light)|"
+    r"light[- ](?:dependent|induced|exposure)|light as (?:a )?radical|"
+    r"forced light exposure",
     re.IGNORECASE,
 )
+_UV_BAND_EXPERIMENT_RE = re.compile(r"\buv[^a-z0-9]{0,2}[ab]\b", re.IGNORECASE)
 _IRRITATION_RE = re.compile(
     r"primary (?:skin |dermal )?irrit|irritant dermatitis|"
-    r"(?:skin|dermal) irritation|skin corrosion|corrosive assay",
+    r"(?:skin|dermal) irritation|\birrit(?:ation|ancy|ant)\b|"
+    r"skin corrosion|corrosive assay",
     re.IGNORECASE,
 )
+_NON_CONTACT_CUTANEOUS_RE = re.compile(
+    r"stevens[- ]johnson(?: syndrome)?|toxic epidermal necrolysis|"
+    r"\bdress syndrome\b|sweet(?:'s)? syndrome|"
+    r"acute generalized exanthematous pustulosis|"
+    r"fixed drug eruption|drug-induced hypersensitivity syndrome",
+    re.IGNORECASE,
+)
+_NON_CONTACT_CUTANEOUS_ABBREVIATION_RE = re.compile(r"\b(?:SJS|TEN|DRESS|AGEP)\b")
 _PREDICTION_RE = re.compile(
     r"\bin[ -]?silico\b|\bqsar\b|read[- ]?across|\btopkat\b|\bderek\b|"
     r"\btimes[- ]?(?:ss|m|p)\b|oecd toolbox|predicted value|"
@@ -79,6 +105,7 @@ _DIRECT_ASSAY_RE = re.compile(
     r"\bllna\b|local lymph node|\bgpmt\b|guinea pig maximi[sz]ation|"
     r"\bbuehler\b|\bhript\b|\bript\b|human maximi[sz]ation|"
     r"patch test|epicutaneous test|mouse ear swelling|\bmest\b|"
+    r"\bmdam\b|modified draize|"
     r"contact hypersensitivity|skin sensiti[sz]ation test|"
     r"guinea pig sensiti[sz]ation|clinical case|clinical observation",
     re.IGNORECASE,
@@ -87,6 +114,13 @@ _DIRECT_OUTCOME_RE = re.compile(
     r"skin sensiti[sz]|contact allerg|allergic contact dermatitis|"
     r"contact hypersensitiv|\bllna\b|local lymph node|\bgpmt\b|"
     r"\bbuehler\b|\bhript\b|human maximi[sz]ation",
+    re.IGNORECASE,
+)
+_SENSITIZATION_CONTEXT_RE = re.compile(
+    r"sensiti[sz]|contact allerg|allergic contact dermatitis|"
+    r"contact hypersensitiv|delayed[- ]type hypersensitiv|\bhapten|\ballergen|"
+    r"\bllna\b|local lymph node|\bgpmt\b|\bbuehler\b|\bhript\b|"
+    r"human maximi[sz]ation",
     re.IGNORECASE,
 )
 
@@ -136,55 +170,86 @@ def classify_direct_source_record(record: Mapping[str, Any]) -> PartitionDecisio
     if not is_tdc_skin_sensitization_scope(record.get("reaction_type")):
         return PartitionDecision(REJECT_PARTITION, "outside_sensitization_scope")
 
-    assay = _text(record.get("assay_or_test"))
-    context = _join_fields(
-        record,
-        "support_text",
-        "assay_or_test",
-        "species_or_population",
-        "extra_details",
-        "dose_or_concentration",
+    assay = _normalized_assay_text(record.get("assay_or_test"))
+    context = _normalized_text(
+        _join_fields(
+            record,
+            "support_text",
+            "assay_or_test",
+            "species_or_population",
+            "extra_details",
+            "dose_or_concentration",
+        )
     )
-    if _PHOTO_RE.search(context):
+    support = _normalized_text(record.get("support_text"))
+    if _PHOTO_RE.search(context) or _UV_BAND_EXPERIMENT_RE.search(
+        " | ".join((assay, support))
+    ):
         return PartitionDecision(REJECT_PARTITION, "out_of_scope_photo_hazard")
+    if _has_noncontact_cutaneous(context):
+        return PartitionDecision(
+            REJECT_PARTITION, "out_of_scope_noncontact_cutaneous_reaction"
+        )
     if _INTEGRATED_APPROACH_RE.search(assay) or _INTEGRATED_CONTEXT_RE.search(context):
-        return PartitionDecision(REJECT_PARTITION, "integrated_prediction_or_defined_approach")
+        return PartitionDecision(
+            REJECT_PARTITION, "integrated_prediction_or_defined_approach"
+        )
 
     aop_event = infer_aop_event(assay)
     if aop_event:
         if _prediction_only(record, experimental_assay=True):
             return PartitionDecision(REJECT_PARTITION, "prediction_only")
-        return PartitionDecision(AOP_PARTITION, "mechanistic_assay_in_direct_source", aop_event)
+        return PartitionDecision(
+            AOP_PARTITION, "mechanistic_assay_in_direct_source", aop_event
+        )
 
     direct_assay = bool(_DIRECT_ASSAY_RE.search(assay))
     if _prediction_only(record, experimental_assay=direct_assay):
         return PartitionDecision(REJECT_PARTITION, "prediction_only")
-    if _IRRITATION_RE.search(context) and not (
-        direct_assay or _DIRECT_OUTCOME_RE.search(_text(record.get("support_text")))
-    ):
+    if _IRRITATION_RE.search(context) and not _DIRECT_OUTCOME_RE.search(support):
         return PartitionDecision(REJECT_PARTITION, "out_of_scope_irritation")
     return PartitionDecision(DIRECT_PARTITION, "scoped_direct_outcome")
 
 
 def classify_aop_source_record(record: Mapping[str, Any]) -> PartitionDecision:
     """Route one raw AOP-acquisition row into direct, mechanistic AOP, or reject."""
-    assay = _text(record.get("assay_type"))
-    context = _join_fields(
-        record,
-        "support_text",
-        "assay_type",
-        "endpoint_or_target",
-        "species_or_population",
-        "experimental_conditions",
-        "qualifying_conditions",
-        "extra_details",
+    assay = _normalized_assay_text(record.get("assay_type"))
+    context = _normalized_text(
+        _join_fields(
+            record,
+            "support_text",
+            "assay_type",
+            "endpoint_or_target",
+            "species_or_population",
+            "experimental_conditions",
+            "qualifying_conditions",
+            "extra_details",
+        )
     )
-    if _PHOTO_RE.search(context):
+    photo_experiment_context = _normalized_text(
+        _join_fields(
+            record,
+            "support_text",
+            "assay_type",
+            "endpoint_or_target",
+            "experimental_conditions",
+            "qualifying_conditions",
+        )
+    )
+    if _PHOTO_RE.search(context) or _UV_BAND_EXPERIMENT_RE.search(
+        photo_experiment_context
+    ):
         return PartitionDecision(REJECT_PARTITION, "out_of_scope_photo_hazard")
+    if _has_noncontact_cutaneous(context):
+        return PartitionDecision(
+            REJECT_PARTITION, "out_of_scope_noncontact_cutaneous_reaction"
+        )
     if _IRRITATION_RE.search(context):
         return PartitionDecision(REJECT_PARTITION, "out_of_scope_irritation")
     if _INTEGRATED_APPROACH_RE.search(assay) or _INTEGRATED_CONTEXT_RE.search(context):
-        return PartitionDecision(REJECT_PARTITION, "integrated_prediction_or_defined_approach")
+        return PartitionDecision(
+            REJECT_PARTITION, "integrated_prediction_or_defined_approach"
+        )
 
     raw_event = _text(record.get("aop_event"))
     inferred_event = infer_aop_event(assay)
@@ -198,7 +263,9 @@ def classify_aop_source_record(record: Mapping[str, Any]) -> PartitionDecision:
 
     if raw_event == "adverse_outcome_skin_sensitization":
         if not _normalized_direct_label(record.get("result_label")):
-            return PartitionDecision(REJECT_PARTITION, "direct_outcome_without_usable_label")
+            return PartitionDecision(
+                REJECT_PARTITION, "direct_outcome_without_usable_label"
+            )
         if inferred_event and not direct_assay:
             return PartitionDecision(
                 AOP_PARTITION,
@@ -206,13 +273,21 @@ def classify_aop_source_record(record: Mapping[str, Any]) -> PartitionDecision:
                 inferred_event,
             )
         if direct_assay or _DIRECT_OUTCOME_RE.search(_text(record.get("support_text"))):
-            return PartitionDecision(DIRECT_PARTITION, "aop_adverse_outcome_moved_to_direct")
-        return PartitionDecision(REJECT_PARTITION, "adverse_outcome_without_direct_anchor")
+            return PartitionDecision(
+                DIRECT_PARTITION, "aop_adverse_outcome_moved_to_direct"
+            )
+        return PartitionDecision(
+            REJECT_PARTITION, "adverse_outcome_without_direct_anchor"
+        )
 
     if inferred_event:
-        return PartitionDecision(AOP_PARTITION, "unspecified_record_reclassified_by_assay", inferred_event)
+        return PartitionDecision(
+            AOP_PARTITION, "unspecified_record_reclassified_by_assay", inferred_event
+        )
     if direct_assay and _normalized_direct_label(record.get("result_label")):
-        return PartitionDecision(DIRECT_PARTITION, "unspecified_record_reclassified_as_direct")
+        return PartitionDecision(
+            DIRECT_PARTITION, "unspecified_record_reclassified_as_direct"
+        )
     return PartitionDecision(REJECT_PARTITION, "integrated_or_unresolved_endpoint")
 
 
@@ -223,6 +298,25 @@ def direct_outcome_reason(record: Mapping[str, Any]) -> str:
     Buehler, HRIPT/RIPT, and validated human patch outcomes remain direct even
     when an upstream extraction also labels lymphocyte activation as KE4.
     """
+
+    scope_context = _normalized_text(
+        _join_fields(
+            record,
+            "canonical_assay_type",
+            "canonical_assay_or_test",
+            "assay_type",
+            "assay_or_test",
+            "canonical_assay_context",
+            "canonical_endpoint_name",
+            "endpoint_name",
+            "endpoint_or_target",
+            "experimental_conditions",
+            "qualifying_conditions",
+            "support_text",
+        )
+    )
+    if _PHOTO_RE.search(scope_context) or _has_noncontact_cutaneous(scope_context):
+        return ""
 
     assay = _join_fields(
         record,
@@ -270,6 +364,80 @@ def direct_outcome_reason(record: Mapping[str, Any]) -> str:
     return "validated_direct_assay_outcome_overrides_aop_tag"
 
 
+def strict_scope_exclusion_reason(record: Mapping[str, Any]) -> str:
+    """Reject records whose actual evidence object is outside ordinary sensitization.
+
+    This post-normalization guard is intentionally evaluated on both source-native
+    and canonical fields.  It catches scope revealed only after Stage-03
+    normalization, such as ``PS LLNA`` becoming ``photo-llna``.
+    """
+
+    assay = _normalized_text(
+        _join_fields(
+            record,
+            "canonical_assay_type",
+            "canonical_assay_or_test",
+            "assay_type",
+            "assay_or_test",
+            "canonical_assay_context",
+        )
+    )
+    endpoint = _normalized_text(
+        _join_fields(
+            record,
+            "canonical_endpoint_name",
+            "endpoint_name",
+            "endpoint_or_target",
+        )
+    )
+    conditions = _normalized_text(
+        _join_fields(
+            record,
+            "experimental_conditions",
+            "qualifying_conditions",
+            "species_or_population",
+            "canonical_species_context",
+            "extra_details",
+        )
+    )
+    experimental_conditions = _normalized_text(
+        _join_fields(
+            record,
+            "experimental_conditions",
+            "qualifying_conditions",
+            "light_conditions",
+            "study_design",
+            "canonical_study_design",
+        )
+    )
+    support = _normalized_text(
+        _join_fields(
+            record,
+            "canonical_measurement_text",
+            "measurement_text",
+            "support_text",
+        )
+    )
+    combined = " | ".join((assay, endpoint, conditions, support))
+    photo_experiment_context = " | ".join(
+        (assay, endpoint, experimental_conditions, support)
+    )
+    # UV-A/UV-B is checked only on the experimental evidence surface. A
+    # compound being described as a UVA filter or as part of a UV-cured
+    # product does not make an ordinary patch-test result photo-dependent.
+    if _PHOTO_RE.search(combined) or _UV_BAND_EXPERIMENT_RE.search(
+        photo_experiment_context
+    ):
+        return "out_of_scope_photo_hazard"
+    if _has_noncontact_cutaneous(combined):
+        return "out_of_scope_noncontact_cutaneous_reaction"
+    if _IRRITATION_RE.search(combined) and not _SENSITIZATION_CONTEXT_RE.search(
+        support
+    ):
+        return "out_of_scope_irritation"
+    return ""
+
+
 def infer_aop_event(assay: Any) -> str:
     text = _normalized_assay_text(assay)
     for event, pattern in _AOP_ASSAY_PATTERNS:
@@ -309,10 +477,7 @@ def _prediction_only(record: Mapping[str, Any], *, experimental_assay: bool) -> 
         return True
     if _PREDICTION_RE.search(assay_context):
         return not experimental_assay
-    return bool(
-        _PREDICTION_RE.search(support_text)
-        and not experimental_assay
-    )
+    return bool(_PREDICTION_RE.search(support_text) and not experimental_assay)
 
 
 def _join_fields(record: Mapping[str, Any], *fields: str) -> str:
@@ -320,6 +485,17 @@ def _join_fields(record: Mapping[str, Any], *fields: str) -> str:
 
 
 def _normalized_assay_text(value: Any) -> str:
+    return _normalized_text(value)
+
+
+def _has_noncontact_cutaneous(value: str) -> bool:
+    return bool(
+        _NON_CONTACT_CUTANEOUS_RE.search(value)
+        or _NON_CONTACT_CUTANEOUS_ABBREVIATION_RE.search(value)
+    )
+
+
+def _normalized_text(value: Any) -> str:
     text = _text(value)
     return re.sub(r"[\u00ad\u2010-\u2015\u2212]", "-", text)
 

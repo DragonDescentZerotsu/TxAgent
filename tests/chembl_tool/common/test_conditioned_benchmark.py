@@ -23,14 +23,14 @@ EXPECTED_COUNTS = {
     "bbb_martins": (3053, 397, 393),
     "bioavailability_ma": (1956, 262, 269),
     "clintox": (1144, 142, 142),
-    "skin_reaction": (1997, 246, 248),
+    "skin_reaction": (1941, 239, 241),
 }
 
 EXPECTED_RANDOM_COUNTS = {
     "bbb_martins": (3075, 384, 384),
     "bioavailability_ma": (1989, 249, 249),
     "clintox": (1142, 143, 143),
-    "skin_reaction": (1993, 249, 249),
+    "skin_reaction": (1937, 242, 242),
 }
 
 

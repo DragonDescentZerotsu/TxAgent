@@ -1,51 +1,54 @@
 {
   "method": "quality_lexicographic_milp_scaffold_groups",
   "lineage": "record_supported_v2",
-  "target_valid_size": 245,
-  "target_test_size": 245,
-  "actual_valid_size": 245,
-  "actual_test_size": 245,
+  "target_valid_size": 238,
+  "target_test_size": 238,
+  "actual_valid_size": 238,
+  "actual_test_size": 238,
   "valid_size_shortfall": 0,
   "test_size_shortfall": 0,
   "optimization": {
+    "record_support_objective_enabled": true,
+    "empty_scaffold_heldout_eligible": true,
     "minimum_singletons_in_heldout": 10,
     "minimum_singleton_imbalance": 0,
     "minimum_label_deviation": 4,
-    "desired_positive_count_per_eval_split": 170,
-    "maximum_prior_valid_reuse": 72,
-    "n_scaffold_groups": 754,
-    "n_candidate_scaffold_groups": 752
+    "desired_positive_count_per_eval_split": 166,
+    "maximum_prior_valid_reuse": 71,
+    "n_scaffold_groups": 728,
+    "n_candidate_scaffold_groups": 726,
+    "n_empty_scaffold_parents": 621
   },
-  "n_train": 1966,
+  "n_train": 1910,
   "train_label_counts": {
-    "0": 604,
-    "1": 1362
+    "0": 584,
+    "1": 1326
   },
   "train_record_tier_counts": {
-    "multi_record": 991,
-    "singleton": 975
+    "multi_record": 951,
+    "singleton": 959
   },
-  "n_train_scaffolds": 383,
-  "n_valid": 245,
+  "n_train_scaffolds": 366,
+  "n_valid": 238,
   "valid_label_counts": {
-    "0": 73,
-    "1": 172
+    "0": 72,
+    "1": 166
   },
   "valid_record_tier_counts": {
-    "multi_record": 240,
+    "multi_record": 233,
     "singleton": 5
   },
   "n_valid_scaffolds": 187,
-  "n_test": 245,
+  "n_test": 238,
   "test_label_counts": {
-    "0": 73,
-    "1": 172
+    "0": 68,
+    "1": 170
   },
   "test_record_tier_counts": {
-    "multi_record": 240,
+    "multi_record": 233,
     "singleton": 5
   },
-  "n_test_scaffolds": 184,
+  "n_test_scaffolds": 175,
   "pairwise_scaffold_overlap": {
     "train_valid": 0,
     "train_test": 0,

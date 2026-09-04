@@ -1,6 +1,6 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-03.
+Updated: 2026-09-04.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
@@ -45,15 +45,18 @@ The current progressive status is:
 - Bioavailability scaffold is current via the split-scoped nitrendipine
   zero-change receipt; random remains unaudited. The receipt does not authorize
   baseline reuse.
-- Skin scaffold strict-voter-L1 v2 2/1 and 4/2 are current; 8/4 is missing and
-  random needs replay.
+- Skin scaffold source-purity v5 2/1, 4/2, and 8/4 are last-complete references
+  pending targeted replay of 1/2/3 queries after the final MDAM L2 rebuild;
+  random needs full replay. Current MiniMol/Morgan baseline artifacts use the
+  unchanged 239-row cohort.
 - Historical broad-L1, connectivity-confounded, L1-only diagnostic, and
   superseded BBB roots are not current result cells.
 
 For the record-card ablation, retain only roots registered under
-`record_card_budget_ablation`: the current 2/1 and 4/2 tasks, BBB 8/4, and both
-Bioavailability exact-contract 8/4 full-curve replicates. Do not fill the missing
-Skin 8/4 cell with an older lineage.
+`record_card_budget_ablation`: the registered current task cells, BBB 8/4, both
+Bioavailability exact-contract 8/4 full-curve replicates, and the three Skin
+last-complete roots needed as targeted-replay sources. Older broad-L1 Skin roots
+remain excluded.
 
 Until current-conditioned replacements exist, retain the single historical
 blind and visible source/reasoning matrices and the last complete one-shot

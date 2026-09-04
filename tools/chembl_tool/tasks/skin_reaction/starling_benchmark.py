@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from pathlib import Path
-import re
 from typing import Any
 
 from tools.chembl_tool.common.starling.benchmark_dataset import (
@@ -14,9 +13,14 @@ from tools.chembl_tool.common.starling.benchmark_dataset import (
     rejected,
     sha256_file,
 )
+from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import (
+    DIRECT_PARTITION,
+    classify_direct_source_record,
+)
 
-
-SOURCE_PATH = Path("data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet")
+SOURCE_PATH = Path(
+    "data/starling_data/skin_reaction/direct_skin_reaction/extractions.parquet"
+)
 
 
 def load_label_decisions(
@@ -40,25 +44,33 @@ def load_label_decisions(
             "negative_label": "non-sensitizer/negative direct skin-sensitization outcome",
             "numeric_policy": "outcome_label is authoritative; incidence fields are provenance, not a new threshold",
         },
+        "eligibility_contract": {
+            "version": "skin_gold_record_eligibility.v3",
+            "accepted": "measured final sensitization/contact-allergy outcomes with explicit binary labels",
+            "excluded": [
+                "prediction-only or in-silico records",
+                "phototoxicity/photoallergy/photoirritation",
+                "irritation or corrosion without a direct sensitization endpoint",
+                "photo/light-dependent sensitization and photochemistry records",
+                "non-contact severe cutaneous adverse reactions such as SJS/TEN/DRESS/Sweet syndrome",
+                "mechanistic AOP assays without a final sensitization outcome",
+                "integrated or defined-approach predictions",
+            ],
+        },
     }
     return (
-        (_label_record(index, row, source_path=path) for index, row in enumerate(records)),
+        (
+            _label_record(index, row, source_path=path)
+            for index, row in enumerate(records)
+        ),
         metadata,
     )
 
 
-def is_tdc_skin_sensitization_scope(reaction_type: Any) -> bool:
-    normalized = _normalize_reaction_type(reaction_type)
-    return (
-        normalized == "sensitization"
-        or "allergic_contact_dermat" in normalized
-        or "contact_allerg" in normalized
-    )
-
-
 def label_record(record: Mapping[str, Any]) -> tuple[int | None, str]:
-    if not is_tdc_skin_sensitization_scope(record.get("reaction_type")):
-        return None, "outside_tdc_skin_sensitization_scope"
+    semantic = classify_direct_source_record(record)
+    if semantic.partition != DIRECT_PARTITION:
+        return None, semantic.reason
     outcome = str(record.get("outcome_label") or "").strip().lower()
     if outcome == "positive":
         return 1, "explicit_positive_skin_sensitization_outcome"
@@ -109,8 +121,3 @@ def _label_record(
             ),
         )
     )
-
-
-def _normalize_reaction_type(value: Any) -> str:
-    text = str(value or "").strip().lower()
-    return re.sub(r"[^a-z0-9]+", "_", text).strip("_")
