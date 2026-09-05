@@ -1,0 +1,63 @@
+{
+  "upstream_commit": "00800a5b890440ac52e4e7689c4a157d0ff2a365",
+  "snapshot_manifest_sha256": "1db77916f0359e2a4897c19c1b13b5e0ffff3c98a05e46065c107cdb6b15462a",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "builder_sha256": "1d01f8af9e64e6140562781a42b6d8512194040e52eafbc00e84472248258dd7",
+  "join": "canonical_record_id + source_id + source_record_id -> cleaned_record_id -> legacy_cleaned_record_id -> source_row_uid",
+  "scope": "Imported retrieval-eligible source membership only; absent UIDs are unmapped, not inferred exclusions.",
+  "tasks": {
+    "bbb_martins": {
+      "path": "bbb_martins.parquet",
+      "sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+      "source_membership_sha256": "7dfdc18788470234d6b3b1f0f3dfb5704c452920d645615ad3ae6a067100ce59",
+      "canonical_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "source_rows": 498556,
+      "mapped_rows": 498556,
+      "unique_uids": 498556,
+      "unmatched_rows": 0,
+      "conflicting_uid_levels": 0,
+      "rows_by_level": {
+        "1": 8592,
+        "2": 268379,
+        "3": 14189,
+        "4": 163672,
+        "5": 43724
+      }
+    },
+    "bioavailability_ma": {
+      "path": "bioavailability_ma.parquet",
+      "sha256": "c1d8b8f137303f9c222e2e4a0509fbcd4e48390e91459c6c757b945707731fd6",
+      "source_membership_sha256": "1927cc726a58ec1a16677b5975a24216670b48d23bc8cb6c9d558dfdee5b6c28",
+      "canonical_records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "source_rows": 435472,
+      "mapped_rows": 435472,
+      "unique_uids": 435472,
+      "unmatched_rows": 0,
+      "conflicting_uid_levels": 0,
+      "rows_by_level": {
+        "1": 20538,
+        "2": 152350,
+        "3": 104174,
+        "4": 73913,
+        "5": 23511,
+        "6": 60986
+      }
+    },
+    "skin_reaction": {
+      "path": "skin_reaction.parquet",
+      "sha256": "a696ee20aae2169357149e942caa76108c98de95701c459ebdd988beb902bbb0",
+      "source_membership_sha256": "944aa0870506d5626ef9e69a256637013c430214d723a8d1d67a67eb69fce500",
+      "canonical_records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "source_rows": 66967,
+      "mapped_rows": 66967,
+      "unique_uids": 66967,
+      "unmatched_rows": 0,
+      "conflicting_uid_levels": 0,
+      "rows_by_level": {
+        "1": 42435,
+        "2": 12522,
+        "3": 12010
+      }
+    }
+  }
+}
