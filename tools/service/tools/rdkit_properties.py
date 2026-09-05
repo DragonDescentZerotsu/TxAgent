@@ -13,6 +13,7 @@ from rdkit.Chem.MolStandardize import rdMolStandardize
 from tools.service.config import ServiceSettings
 from tools.service.cache import ToolResultCache
 from tools.service.errors import InvalidInputError
+from tools.service.molgpka_predictor import MolGpKaInputError
 from tools.service.tools.base import BaseTool
 
 
@@ -202,10 +203,7 @@ class MoleculePropertiesTool(BaseTool):
         try:
             from tools.service.molgpka_predictor import ResidentMolGpKa
 
-            self._pka_predictor = ResidentMolGpKa(
-                uncharged=True,
-                max_concurrency=settings.batch_workers,
-            )
+            self._pka_predictor = ResidentMolGpKa(uncharged=True)
             if settings.prewarm_molgpka:
                 self._predict_pka("CC(=O)O")
         except Exception as exc:
@@ -263,8 +261,8 @@ class MoleculePropertiesTool(BaseTool):
         warnings: list[str] = []
         pka_features, pka_debug = self._compute_pka_features(canonical_smiles, logd_ph)
         raw_features.update(pka_features)
-        if self._pka_error:
-            warnings.append(self._pka_error)
+        if pka_debug.get("error"):
+            warnings.append(pka_debug["error"])
         functional_groups = self._functional_groups(canonical_smiles)
         if self._fg_error:
             warnings.append(self._fg_error)
@@ -324,7 +322,15 @@ class MoleculePropertiesTool(BaseTool):
         }
 
     def _compute_pka_features(self, smiles: str, logd_ph: float) -> tuple[dict[str, Any], dict[str, Any]]:
-        if self._pka_predictor is None:
+        pka_error = self._pka_error if self._pka_predictor is None else None
+        if self._pka_predictor is not None:
+            try:
+                pka = self._predict_pka(smiles)
+            except MolGpKaInputError as exc:
+                # A predictor-domain failure must not discard RDKit descriptors
+                # or disable the shared predictor for unrelated molecules.
+                pka_error = f"{type(exc).__name__}: {exc}"
+        if self._pka_predictor is None or pka_error:
             return (
                 {
                     "pka__fraction_neutral": None,
@@ -335,10 +341,9 @@ class MoleculePropertiesTool(BaseTool):
                     "pka__num_basic_sites": None,
                     "pka__num_ionizable_sites": None,
                 },
-                {"available": False, "error": self._pka_error},
+                {"available": False, "error": pka_error},
             )
 
-        pka = self._predict_pka(smiles)
         mol = _mol_from_smiles(smiles)
         logp = float(Crippen.MolLogP(mol))
         most_basic = pka["most_basic_pka"]
@@ -374,7 +379,7 @@ class MoleculePropertiesTool(BaseTool):
         descriptions = PKA_DESCRIPTIONS if source_family == "pka" else RDKIT_DESCRIPTIONS
         display_name, description = descriptions.get(raw_name, (raw_name.replace("_", " "), raw_name))
         missing_reason = None
-        if source_family == "pka" and self._pka_predictor is None and value is None:
+        if source_family == "pka" and raw_features.get("pka__num_ionizable_sites") is None and value is None:
             missing_reason = "pka_unavailable"
         elif feature_name == "pka__most_acidic_pka" and value is None:
             missing_reason = "no_acidic_site"

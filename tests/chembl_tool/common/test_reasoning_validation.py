@@ -7,6 +7,25 @@ from tools.chembl_tool.common.reasoning_validation import (
 )
 
 
+def test_retry_callback_runs_only_after_invalid_first_response():
+    calls = []
+
+    def first(messages):
+        calls.append("single")
+        return {"content": {}}
+
+    def race(messages):
+        calls.append("race")
+        assert "Validation errors:" in messages[-1]["content"]
+        return {"content": {"prediction": "positive"}}
+
+    response = call_with_json_validation(
+        first, [], required_fields=("prediction",), retry_call=race,
+    )
+    assert calls == ["single", "race"]
+    assert structured_response_is_valid(response)
+
+
 def test_allowed_values_are_extracted_from_prompt_schema_for_enums_and_literals():
     messages = [
         {

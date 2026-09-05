@@ -528,7 +528,10 @@ def build_progressive_messages(
     query_tool_summary: Mapping[str, Any] | None,
     active: Mapping[str, Mapping[str, Any]],
     prior_state: Mapping[str, Any] | None,
+    independent: bool = False,
 ) -> list[dict[str, Any]]:
+    if independent and prior_state is not None:
+        raise ValueError("independent full-flat reasoning cannot consume prior state")
     card_id_to_alias, _ = card_alias_maps(active)
     new_ids = sorted(
         card_id_to_alias[str(card["card_id"])]
@@ -639,15 +642,45 @@ def build_progressive_messages(
             prior_state,
             card_id_to_alias=card_id_to_alias,
         )
+    if independent:
+        payload["protocol"].update(
+            version="conditioned_assay_matched_full_flat.v1",
+            mode="independent cumulative full-flat decision",
+            architecture=(
+                "Judge all supplied cumulative evidence together from scratch. "
+                "No previous evidence-based decision is supplied or presumed."
+            ),
+            card_accounting=(
+                "Card aliases map to stable artifact IDs. Cite only materially relevant cards. "
+                "Repeated records are not independent votes. All supplied cards are available "
+                "to new_evidence_assessment; decision_effect refers only to the query-property prior."
+            ),
+        )
+        payload["protocol"]["evidence_rule"] = (
+            "Judge endpoint relevance, direction, species/condition, formulation/route, "
+            "and whether structural differences preserve the mechanism."
+        )
+        for key in ("update_rule", "flip_rule"):
+            del payload["protocol"][key]
+        del payload["level_context"]["new_card_ids"]
+        schema["new_evidence_assessment"][0]["card_ids"] = ["evidence card alias"]
+        for analog in payload["active_evidence"]:
+            analog.pop("first_seen_level", None)
+            for card in analog["evidence_cards"]:
+                card.pop("first_seen_level", None)
+                card.pop("new_this_level", None)
     return [
         {
             "role": "system",
             "content": (
                 contract.system_role
-                + " You are operating inside a progressive molecular-evidence experiment. "
-                "Use general medicinal-chemistry knowledge to interpret the supplied structures and evidence. "
-                "Ground every compound-specific empirical claim and the final prediction in the supplied prior state, "
-                "tool summaries, or cited evidence cards. "
+                + (" You are making an independent cumulative full-flat decision. " if independent
+                   else " You are operating inside a progressive molecular-evidence experiment. ")
+                + "Use general medicinal-chemistry knowledge to interpret the supplied structures and evidence. "
+                + ("Ground every compound-specific empirical claim and the final prediction in the supplied query prior, "
+                   if independent else
+                   "Ground every compound-specific empirical claim and the final prediction in the supplied prior state, ")
+                + "tool summaries, or cited evidence cards. "
                 "Return exactly one valid JSON object and do not reveal hidden chain-of-thought."
             ),
         },

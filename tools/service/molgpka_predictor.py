@@ -1,21 +1,27 @@
 from __future__ import annotations
 
 from importlib import resources
-from threading import BoundedSemaphore
+from threading import Lock
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
 
+class MolGpKaInputError(ValueError):
+    """The molecule cannot be represented after MolGpKa normalization."""
+
+
 class ResidentMolGpKa:
     """MolGpKa-compatible predictor that loads the two GNN weights once."""
 
-    def __init__(self, *, uncharged: bool = True, max_concurrency: int = 32) -> None:
+    def __init__(self, *, uncharged: bool = True) -> None:
         from molgpka.predict_pka import _resource_path, load_model
 
         self.uncharged = uncharged
-        self._slots = BoundedSemaphore(max(1, max_concurrency))
+        # Shared PyG networks are not safe for concurrent graph forwards.
+        # Parallelism is provided by independent service processes.
+        self._inference_lock = Lock()
         with resources.as_file(_resource_path("models", "weight_base.pth")) as path:
             self._base_model = load_model(path)
         with resources.as_file(_resource_path("models", "weight_acid.pth")) as path:
@@ -29,8 +35,10 @@ class ResidentMolGpKa:
         if self.uncharged:
             mol = rdMolStandardize.Uncharger().uncharge(mol)
             mol = Chem.MolFromSmiles(Chem.MolToSmiles(mol))
+            if mol is None:
+                raise MolGpKaInputError("Molecule is invalid after MolGpKa uncharging")
         mol = AllChem.AddHs(mol)
-        with self._slots:
+        with self._inference_lock:
             base = {
                 index + 1: model_pred(mol, index, self._base_model)
                 for index in get_ionization_aid(mol, acid_or_base="base")

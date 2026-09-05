@@ -309,6 +309,254 @@ def test_random_split_requires_explicit_output_root():
         runner.main(["--split-scheme", "random", "--prepare-only"])
 
 
+def test_test_subset_uses_separate_inputs_and_same_heldout_indices():
+    for scheme in ("scaffold", "random"):
+        valid = runner._progressive_task_specs(scheme)
+        test = runner._progressive_task_specs(scheme, "test")
+        for task in runner.TASK_NAMES:
+            assert test[task].input_jsonl == runner.split_path(task, "test", scheme)
+            assert test[task].input_jsonl != valid[task].input_jsonl
+            assert test[task].index == valid[task].index
+            assert test[task].family_manifest == valid[task].family_manifest
+    with pytest.raises(SystemExit):
+        runner.main(["--evaluation-subset", "test", "--prepare-only"])
+
+
+def test_resume_rejects_changed_evaluation_subset():
+    shared = {field: field for field in runner._RESUME_INVARIANT_FIELDS}
+    previous = {**shared, "model": runner.MODEL, "evaluation_subset": "valid"}
+    current = {**previous, "evaluation_subset": "test"}
+    with pytest.raises(ValueError, match="evaluation_subset"):
+        runner._merge_resume_manifest(previous, current)
+
+
+def test_explicit_endpoint_budget_required_for_three_256_tasks(monkeypatch, tmp_path):
+    monkeypatch.setattr(runner, "run", lambda args: args)
+    command = ["--parallelism", "768", "--parallelism-per-task", "256",
+               "--evaluation-subset", "test", "--output-root", str(tmp_path)]
+    with pytest.raises(SystemExit):
+        runner.main(command)
+    args = runner.main(command + ["--endpoint-concurrency-budget", "768"])
+    assert args.parallelism == 768
+    assert args.parallelism_per_task == 256
+    assert args.evaluation_subset == "test"
+
+
+def test_matched_full_flat_requires_explicit_768_budget(monkeypatch, tmp_path):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+
+    monkeypatch.setattr(family, "_run_matched_curve", lambda args: args)
+    command = ["--matched-progressive-root", str(tmp_path / "source"),
+               "--output-root", str(tmp_path / "result"),
+               "--parallelism", "768", "--parallelism-per-task", "256"]
+    with pytest.raises(SystemExit):
+        family.main(command)
+    args = family.main(command + ["--endpoint-concurrency-budget", "768"])
+    assert args.parallelism == 768 and args.parallelism_per_task == 256
+
+
+@pytest.mark.parametrize("index_offset", [0, 100])
+def test_shared_query_pool_enforces_caps_without_blocking_ready_tasks(
+    monkeypatch, tmp_path, index_offset
+):
+    import threading
+    from types import SimpleNamespace
+
+    tasks = list(runner.TASK_NAMES)
+    args = SimpleNamespace(tasks=tasks, parallelism=3, parallelism_per_task=1)
+    active = dict.fromkeys(tasks, 0)
+    peaks = dict.fromkeys(tasks, 0)
+    lock = threading.Lock()
+    ready = threading.Barrier(len(tasks))
+    total_peak = 0
+
+    def fake_run(args, prepared, client):
+        nonlocal total_peak
+        with lock:
+            active[prepared.task] += 1
+            peaks[prepared.task] = max(peaks[prepared.task], active[prepared.task])
+            total_peak = max(total_peak, sum(active.values()))
+        if prepared.index == tasks.index(prepared.task) * index_offset:
+            ready.wait(timeout=5)
+        with lock:
+            active[prepared.task] -= 1
+        return {"status": "ok", "task": prepared.task, "index": prepared.index}
+
+    monkeypatch.setattr(runner, "_run_query_safe", fake_run)
+    queries = [
+        runner.PreparedQuery(task, i + task_index * index_offset, tmp_path)
+        for task_index, task in enumerate(tasks) for i in range(5)
+    ]
+    results = list(runner._query_results(args, queries, None))
+    assert len({(row["task"], row["index"]) for row in results}) == 15
+    assert all(peak == 1 for peak in peaks.values())
+    assert total_peak == 3
+
+
+@pytest.mark.parametrize("permanent_failure", [False, True])
+def test_failed_queries_retry_with_backoff_and_bounded_status(monkeypatch, tmp_path, permanent_failure):
+    from types import SimpleNamespace
+
+    args = SimpleNamespace(prepare_only=False, max_stage_requeues=2, retry_delay_s=60)
+    queries = [runner.PreparedQuery("example", index, tmp_path / str(index)) for index in (0, 1)]
+    seen, waits = [], []
+
+    def results(args, pending, client):
+        seen.append([query.index for query in pending])
+        for query in pending:
+            failed = query.index == 1 and (permanent_failure or len(seen) < 3)
+            yield {"task": query.task, "index": query.index, "status": "error" if failed else "ok"}
+
+    def sleep(delay):
+        status = json.loads((tmp_path / "execution_status.json").read_text())
+        assert status["phase"] == "retry_wait" and status["next_retry_at"]
+        waits.append(delay)
+
+    monkeypatch.setattr(runner, "_query_results", results)
+    monkeypatch.setattr(runner.time, "sleep", sleep)
+    assert runner._run_query_rounds(args, queries, None, tmp_path) == int(permanent_failure)
+    assert seen == [[0, 1], [1], [1]]
+    assert waits == [60, 120]
+    status = json.loads((tmp_path / "execution_status.json").read_text())
+    assert status["phase"] == ("needs_attention" if permanent_failure else "complete")
+    assert status["n_succeeded_queries"] == 2 - int(permanent_failure)
+
+
+def test_matched_prepared_copy_is_atomic_and_rejects_altered_resume(tmp_path):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+
+    source, target = tmp_path / "source.json", tmp_path / "result/prepared.json"
+    source.write_text('{"frozen": true}\n')
+    digest = family.sha256_file(source)
+    family._copy_matched_prepared(source, target, digest)
+    family._copy_matched_prepared(source, target, digest)
+    assert target.read_bytes() == source.read_bytes()
+    target.write_text('{"frozen": false}\n')
+    with pytest.raises(ValueError, match="changed matched prepared"):
+        family._copy_matched_prepared(source, target, digest)
+    assert target.read_text() == '{"frozen": false}\n'
+    missing_target = tmp_path / "other/prepared.json"
+    source.write_text('{"changed": true}\n')
+    with pytest.raises(ValueError, match="changed while copying"):
+        family._copy_matched_prepared(source, missing_target, digest)
+    assert not missing_target.exists()
+    assert not list(missing_target.parent.iterdir())
+
+
+def test_matched_suite_runs_sequential_distinct_roots_and_keeps_failure_status(monkeypatch, tmp_path):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "experiment_manifest.json").write_text("{}")
+    seen = []
+
+    def run(args):
+        seen.append((args.output_root, args.matched_organizations[0], args.retry_race_width))
+        return int(len(seen) == 1)
+
+    monkeypatch.setattr(family, "_run_matched_curve", run)
+    code = family.main([
+        "--matched-progressive-root", str(source), "--output-root", str(tmp_path / "suite"),
+        "--tasks", "bbb_martins", "bioavailability_ma", "skin_reaction",
+        "--replicate-ids", "2", "3", "--matched-organizations", "progressive", "full_flat",
+        "--retry-race-width", "6", "--parallelism", "768",
+        "--parallelism-per-task", "256", "--endpoint-concurrency-budget", "768",
+    ])
+    assert code == 1
+    assert len({root for root, _, _ in seen}) == 4
+    assert [organization for _, organization, _ in seen] == ["progressive", "full_flat"] * 2
+    assert all(width == 6 for _, _, width in seen)
+    status = json.loads((tmp_path / "suite/suite_status.json").read_text())
+    assert status["phase"] == "needs_attention"
+    assert [job["status"] for job in status["jobs"]] == ["needs_attention", "complete", "complete", "complete"]
+
+
+def test_refresh_prior_preserves_tools_and_cards_and_rejects_tool_drift():
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+
+    frozen = {"query_tool_summary": {"text": "frozen properties"}, "cards": [{"value": 42}],
+              "query_prior": "old", "reused_none_final": "old", "reused_single_source_index": 0}
+    prior = ({"reasoning": "new model"}, frozen["query_tool_summary"], {"prediction": "pass"}, 3)
+    refreshed = family._replace_matched_prior(frozen, prior)
+    assert refreshed["cards"] == frozen["cards"]
+    assert refreshed["query_tool_summary"] == frozen["query_tool_summary"]
+    assert refreshed["query_prior"] == prior[0] and refreshed["reused_none_final"] == prior[2]
+    assert frozen["query_prior"] == "old"
+    with pytest.raises(ValueError, match="changed frozen query tools"):
+        family._replace_matched_prior(frozen, (prior[0], {"text": "changed"}, prior[2], 3))
+
+
+def test_prior_callback_uses_shared_pool_and_failure_receipts(tmp_path):
+    from types import SimpleNamespace
+
+    args = SimpleNamespace(tasks=["example"], parallelism=2, parallelism_per_task=1, prepare_only=False)
+    queries = [runner.PreparedQuery("example", i, tmp_path / str(i)) for i in range(2)]
+    def callback(args, query, client):
+        if query.index:
+            raise TimeoutError("prior timeout")
+        return {"task": query.task, "index": query.index, "status": "ok"}
+    rows = list(runner._query_results(args, queries, None, run_query=callback))
+    assert [row["status"] for row in rows] == ["ok", "error"]
+    assert (tmp_path / "1/run_error.json").exists()
+
+
+def test_failed_prior_refresh_stops_suite_before_levels(monkeypatch, tmp_path):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "experiment_manifest.json").write_text("{}")
+    def fail(*args):
+        raise ValueError("stale inputs")
+    monkeypatch.setattr(family, "_refresh_matched_priors", fail)
+    monkeypatch.setattr(family, "_run_matched_curve", lambda args: pytest.fail("must not run levels"))
+    assert family.main(["--matched-progressive-root", str(source), "--output-root", str(tmp_path / "suite"),
+                        "--replicate-ids", "1", "--refresh-query-priors"]) == 1
+    status = json.loads((tmp_path / "suite/suite_status.json").read_text())
+    assert status["phase"] == "needs_attention" and status["error"] == "stale inputs"
+
+
+@pytest.mark.parametrize("relative", ["", "nested"])
+def test_matched_suite_rejects_source_overlap_before_writing(tmp_path, relative):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    source = tmp_path / "source"
+    source.mkdir()
+    manifest = source / "experiment_manifest.json"
+    manifest.write_text("{}")
+    with pytest.raises(ValueError, match="outside its source"):
+        family.main(["--matched-progressive-root", str(source), "--output-root", str(source / relative),
+                     "--replicate-ids", "1", "--refresh-query-priors"])
+    assert list(source.iterdir()) == [manifest]
+
+
+def test_prior_refresh_rejects_incompatible_source_before_paid_calls(tmp_path):
+    from types import SimpleNamespace
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "experiment_manifest.json").write_text(json.dumps({"experiment": "wrong-protocol"}))
+    with pytest.raises(ValueError, match="source experiment"):
+        family._refresh_matched_priors(SimpleNamespace(max_tokens=20480), source, tmp_path / "output")
+    assert not (tmp_path / "output").exists()
+
+
+def test_transport_failure_history_survives_successful_resume(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    query = runner.PreparedQuery("example", 1, tmp_path)
+    args = SimpleNamespace(prepare_only=False)
+    def fail(*args):
+        raise TimeoutError("provider timed out")
+    monkeypatch.setattr(runner, "_run_query", fail)
+    assert runner._run_query_safe(args, query, None)["status"] == "error"
+    monkeypatch.setattr(runner, "_run_query", lambda *args: {"status": "ok"})
+    assert runner._run_query_safe(args, query, None)["status"] == "ok"
+    archived = list((tmp_path / "failed_attempts").glob("*.json"))
+    assert len(archived) == 1
+    assert json.loads(archived[0].read_text())["error_type"] == "TimeoutError"
+    assert json.loads((tmp_path / "run_error.json").read_text())["status"] == "resolved"
+
+
 def test_resume_allows_equivalent_model_provider_fallback():
     shared = {field: field for field in runner._RESUME_INVARIANT_FIELDS}
     previous = {
@@ -507,6 +755,78 @@ def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
     assert "Use general medicinal-chemistry knowledge" in messages[0]["content"]
     assert "Ground every compound-specific empirical claim" in messages[0]["content"]
     assert "identity_and_selection" not in prompt["protocol"]
+
+
+def test_progressive_preparation_does_not_freeze_false_none_carry_forward(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    monkeypatch.setattr(runner, "_levels", lambda task: [{"level": 1}])
+    monkeypatch.setattr(runner, "_task_contract", lambda task: _contract())
+    level = tmp_path / "levels/level_1"
+    level.mkdir(parents=True)
+    (level / "prepared.json").write_text(json.dumps({"tool_prefetch_complete": True,
+                                                    "should_call_model": False}))
+    runner._run_query(SimpleNamespace(prepare_only=True), runner.PreparedQuery("example", 0, tmp_path), None)
+    assert not (level / "output.json").exists()
+
+
+def test_independent_levels_ignore_completed_prior_and_reassess_unchanged_cards(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+
+    cumulative = extract_cumulative_evidence(
+        _retrieval([_neighbor("CCO", 0.7, [_row("assay", "direct", 1, "measured support")])])
+    )
+    active, _ = select_initial_evidence(cumulative, molecule_limit=1, card_limit=4)
+    levels = [{"level": 1, "endpoint_group": "direct"}, {"level": 2, "endpoint_group": "mechanism"}]
+    monkeypatch.setattr(runner, "_levels", lambda task: levels)
+    monkeypatch.setattr(runner, "_task_contract", lambda task: _contract())
+    first = tmp_path / "levels/level_1"
+    first.mkdir(parents=True)
+    (first / "output.json").write_text(json.dumps({
+        "status": "ok", "state": {"decision_summary": "MUST_NOT_LEAK"}, "model_called": True,
+    }))
+    second = tmp_path / "levels/level_2"
+    second.mkdir(parents=True)
+    prepared = {"active_evidence": active, "tool_prefetch_complete": True,
+                "should_call_model": False, "query_smiles": "CCN", "condition_sentence": "",
+                "query_prior": {"reasoning_summary": "property prior"}, "query_tool_summary": {}}
+    (second / "prepared.json").write_text(json.dumps(prepared))
+    args = SimpleNamespace(independent_levels=True, prepare_only=True)
+    runner._run_query(args, runner.PreparedQuery("example", 0, tmp_path), None)
+    request = json.loads((second / "request.json").read_text())
+    payload = json.loads(request["messages"][1]["content"])
+    assert "MUST_NOT_LEAK" not in json.dumps(request)
+    assert "prior_state" not in payload
+    assert "new_card_ids" not in payload["level_context"]
+    assert not {"flip_rule", "update_rule"} & payload["protocol"].keys()
+    assert payload["query_prior"] == prepared["query_prior"]
+    cards = [c for a in payload["active_evidence"] for c in a["evidence_cards"]]
+    assert len(cards) == 1 and cards[0]["support_text"] == "measured support"
+    assert not {"new_this_level", "first_seen_level", "prior_use"} & cards[0].keys()
+    assert not (second / "output.json").exists()
+    with pytest.raises(ValueError, match="cannot consume prior state"):
+        build_progressive_messages(contract=_contract(), levels=levels, current_level=2,
+                                   query_smiles="CCN", condition_sentence="", query_prior={},
+                                   query_tool_summary={}, active=active, prior_state={"x": 1}, independent=True)
+    args.prepare_only = False
+    (second / "output.json").write_text(json.dumps({"status": "error", "llm": {"content": "failed trace"}}))
+    client = SimpleNamespace(chat_json=lambda messages: {"content": {
+        "example_prediction": "positive", "confidence": "low", "revision_action": "initial",
+        "supportive_card_ids": ["C01"], "contradictory_card_ids": [],
+        "prediction_basis_card_ids": ["C01"], "claims": [], "evidence_gaps": [],
+        "decision_summary": "Independent decision using the available card.",
+        "new_evidence_assessment": [{"card_ids": ["C01"], "applicability": "low",
+                                     "direction": "supportive", "decision_effect": "no_change"}],
+    }})
+    result = runner._run_query(args, runner.PreparedQuery("example", 0, tmp_path), client)
+    assert result["status"] == "ok"
+    output = json.loads((second / "output.json").read_text())
+    assert output["llm"]["structured_output_validation"]["valid"] is True
+    assert output["state"]["revision_action"] == "initial"
+    archived = list((second / "failed_attempts").glob("*.json"))
+    assert len(archived) == 1 and json.loads(archived[0].read_text())["llm"]["content"] == "failed trace"
+    client.chat_json = lambda messages: pytest.fail("successful levels must not call the model again")
+    assert runner._run_query(args, runner.PreparedQuery("example", 0, tmp_path), client)["status"] == "ok"
 
 
 def test_prompt_uses_stable_short_aliases_and_compact_prior_state():

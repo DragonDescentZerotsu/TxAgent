@@ -16,6 +16,8 @@ import json
 import os
 from pathlib import Path
 import pickle
+import time
+from collections import deque
 from functools import lru_cache
 from typing import Any, Mapping
 
@@ -61,9 +63,11 @@ from tools.chembl_tool.common.progressive_assay_reasoning import (
 )
 from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
 from tools.chembl_tool.common.reasoning_validation import (
+    response_validation_errors,
     call_with_json_validation,
     structured_response_is_valid,
 )
+from tools.chembl_tool.common.reasoning_race import ParallelRetryClient
 from tools.chembl_tool.common.retrieval_features import (
     STRUCTURAL_ELIGIBILITY_VERSION,
     monatomic_query_element,
@@ -120,6 +124,7 @@ def _neighbor_identity_policy(split_scheme: str) -> str:
 _RESUME_INVARIANT_FIELDS = (
     "experiment",
     "split_scheme",
+    "evaluation_subset",
     "tasks",
     "visibility_mode",
     "reference_pool",
@@ -214,7 +219,9 @@ class ProgressiveTaskSpec:
     family_manifest: Path
 
 
-def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]:
+def _progressive_task_specs(
+    split_scheme: str, evaluation_subset: str = "valid"
+) -> dict[str, ProgressiveTaskSpec]:
     index_root = (
         SOURCE_PURITY_ROOT / "indices"
         if split_scheme == "scaffold"
@@ -222,7 +229,7 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
     )
     return {
         "bbb_martins": ProgressiveTaskSpec(
-            split_path("bbb_martins", "valid", split_scheme),
+            split_path("bbb_martins", evaluation_subset, split_scheme),
             index_root
             / "bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
@@ -230,7 +237,7 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
             "bbb_martins_source_purity_v6/manifest.json",
         ),
         "bioavailability_ma": ProgressiveTaskSpec(
-            split_path("bioavailability_ma", "valid", split_scheme),
+            split_path("bioavailability_ma", evaluation_subset, split_scheme),
             index_root
             / "bioavailability_ma/"
             "mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/"
@@ -240,7 +247,7 @@ def _progressive_task_specs(split_scheme: str) -> dict[str, ProgressiveTaskSpec]
             "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/manifest.json",
         ),
         "skin_reaction": ProgressiveTaskSpec(
-            split_path("skin_reaction", "valid", split_scheme),
+            split_path("skin_reaction", evaluation_subset, split_scheme),
             index_root
             / "skin_reaction/mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
@@ -780,7 +787,13 @@ def _make_client(
             request_extra_body=spec.request_extra_body,
         )
 
-    return OpenAIProviderPool(provider_config, client_factory=client_factory)
+    pool = OpenAIProviderPool(provider_config, client_factory=client_factory)
+    if getattr(args, "retry_race_width", 1) > 1:
+        return ParallelRetryClient(
+            pool, parallelism=args.parallelism,
+            task_limits={task: args.parallelism_per_task or args.parallelism for task in args.tasks},
+        )
+    return pool
 
 
 def _run_query(
@@ -793,7 +806,14 @@ def _run_query(
     levels = _levels(task)
     prior_state: dict[str, Any] | None = None
     n_calls = 0
+    retry_pending = bool(getattr(args, "retry_round", 0))
+    error_path = prepared_query.query_dir / "run_error.json"
+    if error_path.is_file() and _read_json(error_path).get("status") == "error":
+        retry_pending = True
     for level_row in levels:
+        independent = getattr(args, "independent_levels", False)
+        if independent:
+            prior_state = None
         level = int(level_row["level"])
         level_dir = prepared_query.query_dir / "levels" / f"level_{level}"
         output_path = level_dir / "output.json"
@@ -803,12 +823,17 @@ def _run_query(
                 prior_state = dict(existing["state"])
                 n_calls += int(existing.get("model_called") is True)
                 continue
+            retry_pending = True
+            if not getattr(args, "prepare_only", False):
+                write_json_atomic(level_dir / "failed_attempts" / f"{time.time_ns()}.json", existing)
         prepared = _read_json(level_dir / "prepared.json")
         if not prepared.get("tool_prefetch_complete"):
             raise ValueError(
                 f"formal inference requires visible tool prefetch: {level_dir}"
             )
-        if not prepared.get("should_call_model"):
+        if not (bool(prepared["active_evidence"]) if independent else prepared.get("should_call_model")):
+            if getattr(args, "prepare_only", False):
+                continue
             if prior_state is None:
                 state = _none_state(
                     contract=contract,
@@ -843,6 +868,7 @@ def _run_query(
             query_tool_summary=prepared.get("query_tool_summary") or {},
             active=active,
             prior_state=prior_state,
+            independent=independent,
         )
         write_json_atomic(
             level_dir / "request.json",
@@ -854,22 +880,17 @@ def _run_query(
             },
         )
         visible_aliases = set(alias_to_card_id)
+        if getattr(args, "prepare_only", False):
+            continue
         new_aliases = {
             card_id_to_alias[card_id]
             for card_id in map(str, prepared.get("new_card_ids") or [])
         }
+        if independent:
+            new_aliases = visible_aliases
         execution_provider_attempts: list[dict[str, Any]] = []
 
-        def routed_chat_json(call_messages: list[dict[str, Any]]) -> dict[str, Any]:
-            routed_response = client.chat_json(call_messages)
-            execution_provider_attempts.extend(
-                routed_response.get("execution_provider_attempts") or []
-            )
-            return routed_response
-
-        response = call_with_json_validation(
-            routed_chat_json,
-            messages,
+        validation_kwargs = dict(
             required_fields=(
                 contract.prediction_field,
                 "confidence",
@@ -898,7 +919,25 @@ def _run_query(
                 new_card_ids=new_aliases,
                 prior_state=prior_state,
             ),
-            branch_name=f"{task} progressive level {level}",
+        )
+
+        def routed_chat_json(call_messages: list[dict[str, Any]], *, retry=False) -> dict[str, Any]:
+            if isinstance(client, ParallelRetryClient):
+                routed_response = client.chat_validated(
+                    call_messages, task=task,
+                    width=args.retry_race_width if retry or retry_pending else 1,
+                    validate=lambda result: response_validation_errors(result, **validation_kwargs),
+                    receipt_path=level_dir / "retry_races" / f"{time.time_ns()}.json",
+                )
+            else:
+                routed_response = client.chat_json(call_messages)
+            execution_provider_attempts.extend(routed_response.get("execution_provider_attempts") or [])
+            return routed_response
+
+        response = call_with_json_validation(
+            routed_chat_json, messages, **validation_kwargs,
+            retry_call=lambda call_messages: routed_chat_json(call_messages, retry=True),
+            branch_name=f"{task} {'independent full-flat' if independent else 'progressive'} level {level}",
             max_attempts=4,
         )
         response["execution_provider_attempts"] = execution_provider_attempts
@@ -937,6 +976,7 @@ def _run_query(
             },
         )
         prior_state = state
+        retry_pending = False
     return {
         "task": task,
         "index": prepared_query.index,
@@ -949,11 +989,16 @@ def _run_query_safe(
     args: argparse.Namespace,
     prepared_query: PreparedQuery,
     client: OpenAIProviderPool,
+    *, run_query=None,
 ) -> dict[str, Any]:
     """Keep one transport/provider failure from terminating unrelated queries."""
+    error_path = prepared_query.query_dir / "run_error.json"
     try:
-        result = _run_query(args, prepared_query, client)
-        error_path = prepared_query.query_dir / "run_error.json"
+        if error_path.is_file() and not getattr(args, "prepare_only", False):
+            previous_error = _read_json(error_path)
+            if previous_error.get("status") == "error":
+                write_json_atomic(prepared_query.query_dir / "failed_attempts" / f"{time.time_ns()}.json", previous_error)
+        result = (run_query or _run_query)(args, prepared_query, client)
         if result.get("status") == "ok" and error_path.is_file():
             write_json_atomic(
                 error_path,
@@ -1431,11 +1476,82 @@ def _validate_inputs(
     return records_by_task
 
 
+def _query_results(args, prepared_queries, client, *, run_query=None):
+    """Submit ready queries without occupying workers while a task is capped."""
+    pending = deque(sorted(prepared_queries, key=lambda query: query.index))
+    if not pending:
+        return
+    active = dict.fromkeys(args.tasks, 0)
+    task_cap = args.parallelism_per_task or args.parallelism
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=min(args.parallelism, len(pending))
+    ) as pool:
+        futures = {}
+        while pending or futures:
+            for _ in range(len(pending)):
+                if len(futures) >= args.parallelism:
+                    break
+                query = pending.popleft()
+                if active[query.task] >= task_cap:
+                    pending.append(query)
+                    continue
+                kwargs = {"run_query": run_query} if run_query is not None else {}
+                futures[pool.submit(_run_query_safe, args, query, client, **kwargs)] = query.task
+                active[query.task] += 1
+            done, _ = concurrent.futures.wait(
+                futures, return_when=concurrent.futures.FIRST_COMPLETED
+            )
+            for future in done:
+                active[futures.pop(future)] -= 1
+                yield future.result()
+
+
+def _run_query_rounds(args, prepared_queries, client, output_root: Path, *, run_query=None) -> int:
+    """Retry failed queries after cooldown; successful level checkpoints are skipped."""
+    by_key = {(query.task, query.index): query for query in prepared_queries}
+    pending, succeeded, rounds = list(prepared_queries), set(), []
+    retries = 0 if args.prepare_only else args.max_stage_requeues
+    status = {"mode": "prepare_only" if args.prepare_only else "inference",
+              "n_total_queries": len(pending), "max_requeues": retries,
+              "retry_delay_s": args.retry_delay_s, "retry_backoff_cap_s": 900, "rounds": rounds,
+              "retry_race_width": getattr(args, "retry_race_width", 1)}
+
+    def publish(phase, **details):
+        status.update(phase=phase, updated_at=_now(), n_succeeded_queries=len(succeeded), **details)
+        write_json_atomic(output_root / "execution_status.json", status)
+
+    for attempt in range(retries + 1):
+        args.retry_round = attempt
+        failed = []
+        publish("running", round=attempt + 1, round_size=len(pending), round_completed=0,
+                failed_queries=[], next_retry_at=None)
+        kwargs = {"run_query": run_query} if run_query is not None else {}
+        for completed, result in enumerate(_query_results(args, pending, client, **kwargs), 1):
+            key = (result["task"], result["index"])
+            if result["status"] == "ok":
+                succeeded.add(key)
+            else:
+                failed.append(by_key[key])
+            publish("running", round_completed=completed,
+                    failed_queries=[{"task": query.task, "index": query.index} for query in failed])
+        rounds.append({"round": attempt + 1, "n_queries": len(pending),
+                       "n_failed": len(failed), "finished_at": _now()})
+        pending = failed
+        if not pending or attempt == retries:
+            break
+        delay = min(args.retry_delay_s * 2 ** min(attempt, 20), 900)
+        publish("retry_wait", next_retry_at=datetime.fromtimestamp(time.time() + delay, timezone.utc).isoformat())
+        print(f"[retry] {len(pending)} failed queries; retry in {delay}s", flush=True)
+        time.sleep(delay)
+    publish("needs_attention" if pending else ("prepared" if args.prepare_only else "complete"))
+    return len(pending)
+
+
 def run(args: argparse.Namespace) -> int:
-    task_specs = _progressive_task_specs(args.split_scheme)
+    task_specs = _progressive_task_specs(args.split_scheme, args.evaluation_subset)
     provider_config = _resolve_provider_pool_config(args)
-    if sum(spec.max_inflight for spec in provider_config.providers) > 512:
-        raise ValueError("provider pool capacity exceeds the global budget 512")
+    if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
+        raise ValueError("provider pool capacity exceeds the explicit endpoint budget")
     records_by_task = _validate_inputs(args, task_specs)
     run_identity_policy = _neighbor_identity_policy(args.split_scheme)
     output_root = Path(args.output_root)
@@ -1483,7 +1599,7 @@ def run(args: argparse.Namespace) -> int:
     manifest = {
         "experiment": PROGRESSIVE_PROTOCOL_VERSION,
         "split_scheme": args.split_scheme,
-        "evaluation_subset": "valid",
+        "evaluation_subset": args.evaluation_subset,
         "tasks": args.tasks,
         "visibility_mode": "deployment_visible_prefetched",
         "reference_pool": REFERENCE_POOL,
@@ -1528,11 +1644,14 @@ def run(args: argparse.Namespace) -> int:
         "model_identity": _model_identity(args.model),
         "base_url": args.base_url,
         "parallelism": args.parallelism,
+        "parallelism_per_task": args.parallelism_per_task,
+        "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
         "max_tokens": args.max_tokens,
         "temperature": 0.0,
         "thinking": "provider_default",
         "reasoning_effort": "omitted",
         "transport_max_retries": args.transport_max_retries,
+        "retry_race_width": args.retry_race_width,
         "tool_prefetch_complete": not args.skip_tool_prefetch,
         "evaluation_indices_by_task": indices_by_task,
         "inputs": inputs,
@@ -1634,25 +1753,11 @@ def run(args: argparse.Namespace) -> int:
         return 0
 
     client = _make_client(args, provider_config)
-    failed = 0
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=min(args.parallelism, len(prepared_queries))
-    ) as pool:
-        futures = [
-            pool.submit(_run_query_safe, args, prepared, client)
-            for prepared in prepared_queries
-        ]
-        for completed, future in enumerate(
-            concurrent.futures.as_completed(futures), start=1
-        ):
-            result = future.result()
-            failed += int(result.get("status") != "ok")
-            if completed % 10 == 0 or completed == len(futures):
-                print(
-                    f"[inference] completed {completed}/{len(futures)} "
-                    f"failed={failed}",
-                    flush=True,
-                )
+    try:
+        failed = _run_query_rounds(args, prepared_queries, client, output_root)
+    finally:
+        if isinstance(client, ParallelRetryClient):
+            client.close()
 
     for task in args.tasks:
         records = records_by_task[task]
@@ -1691,6 +1796,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
+    parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
     parser.add_argument(
         "--query-prior-source-root",
@@ -1726,11 +1832,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--parallelism", type=int, default=128)
+    parser.add_argument("--max-stage-requeues", type=int, default=3,
+                        help="Additional failed-query rounds; successful levels are skipped.")
+    parser.add_argument("--retry-delay-s", type=int, default=60,
+                        help="Initial failed-query cooldown; doubles up to 900 seconds.")
+    parser.add_argument("--parallelism-per-task", type=int, default=0,
+                        help="Per-task query cap within the shared pool; 0 uses the global cap.")
+    parser.add_argument("--endpoint-concurrency-budget", type=int, default=512,
+                        help="Explicit endpoint-wide cap; increase only for an authorized run.")
     parser.add_argument("--preparation-workers", type=int, default=32)
     parser.add_argument("--initial-card-limit", type=int, default=4)
     parser.add_argument("--delta-card-limit", type=int, default=2)
     parser.add_argument("--max-tokens", type=int, default=20_480)
     parser.add_argument("--timeout-s", type=int, default=900)
+    parser.add_argument("--retry-race-width", type=int, default=1,
+                        help="Concurrent first-valid attempts for each failed level or JSON repair.")
     parser.add_argument(
         "--transport-max-retries",
         type=int,
@@ -1750,8 +1866,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     load_env_file(args.env_file)
-    if args.parallelism < 1 or args.parallelism > 512:
-        parser.error("--parallelism must be between 1 and the global endpoint budget 512")
+    if args.endpoint_concurrency_budget < 1 or not 1 <= args.parallelism <= args.endpoint_concurrency_budget:
+        parser.error("--parallelism must be between 1 and --endpoint-concurrency-budget")
+    if not 0 <= args.parallelism_per_task <= args.parallelism:
+        parser.error("--parallelism-per-task must be between 0 and --parallelism")
     if args.preparation_workers < 1:
         parser.error("--preparation-workers must be positive")
     if args.initial_card_limit < 1:
@@ -1760,11 +1878,17 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--delta-card-limit must be positive")
     if args.transport_max_retries < 0:
         parser.error("--transport-max-retries must be non-negative")
+    if not 1 <= args.retry_race_width <= (args.parallelism_per_task or args.parallelism):
+        parser.error("retry race width must fit the task request budget")
+    if args.retry_race_width > 1 and args.transport_max_retries:
+        parser.error("parallel racing requires --transport-max-retries 0")
+    if args.max_stage_requeues < 0 or args.retry_delay_s < 0:
+        parser.error("retry count and delay must be non-negative")
     if (
-        args.split_scheme == "random"
+        (args.split_scheme == "random" or args.evaluation_subset == "test")
         and Path(args.output_root) == DEFAULT_OUTPUT_ROOT
     ):
-        parser.error("random evaluation requires an explicit non-scaffold --output-root")
+        parser.error("random/test evaluation requires an explicit --output-root")
     if args.skip_tool_prefetch and not args.prepare_only:
         parser.error("--skip-tool-prefetch is allowed only with --prepare-only")
     return run(args)

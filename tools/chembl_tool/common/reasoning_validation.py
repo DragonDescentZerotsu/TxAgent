@@ -26,6 +26,7 @@ def call_with_json_validation(
     content_validator: ContentValidator | None = None,
     branch_name: str = "reasoning",
     max_attempts: int = 4,
+    retry_call: JsonCall | None = None,
 ) -> dict[str, Any]:
     """Call until the JSON contract is valid or the bounded attempts are used."""
     if max_attempts < 1:
@@ -64,7 +65,7 @@ def call_with_json_validation(
                     ),
                 },
             ]
-        response = call(attempt_messages)
+        response = (retry_call if attempt_index and retry_call is not None else call)(attempt_messages)
         errors = response_validation_errors(
             response,
             required_fields=required_fields,

@@ -16,79 +16,35 @@ separate experiment lineages.
 - `baselines/conditioned_knn.py`: shared unique-molecule condition-first/null-
   fallback selection used by both Morgan and MiniMol embedding KNN runners.
 
-## Current TxAgent Starling benchmark
+## Current TxAgent conditioned benchmark
 
-- `run_bioavailability_ma.py`: trained MiniMol head for a supplied TxAgent
-  train/valid/test split.
-- `run_train_cv.py`: train-only scaffold CV and epoch/configuration selection.
+All current inputs use `data/conditioned_benchmark/<Task>/{scaffold,random}/`.
+The maintained entrypoints are:
+
+- `run_bioavailability_ma.py`: shared trained head for a supplied task split.
+- `run_train_cv.py`: train-only scaffold CV for epoch and OOF threshold selection.
 - `run_embedding_knn.py`: cosine KNN over frozen MiniMol embeddings.
-- `tools/chembl_tool/paper_experiments/run_minimol_valid_matrix_gpt_oss_120b.py`:
-  frozen serial launcher for the completed current-lineage `top_k=5`,
-  `min_similarity=0` GPT-OSS-120B agent sensitivity. It delegates every task
-  to the shared `starling_benchmark_matrix.py`; it is not a second matrix
-  implementation.
 
-The conditioned benchmark uses `--condition-field condition_group` for BBB,
-Bioavailability, and Skin. The category vocabulary is frozen from the full
-outer-train split, valid/test values must already exist in that vocabulary, and
-outer valid/test labels are never used for epoch or threshold selection. After
-selecting the epoch by train-only scaffold CV AUROC, the same CV's pooled OOF
-scores determine a macro-F1 decision threshold. ClinTox has no accepted
-condition groups and therefore uses the same runner without this option. The
-earlier fresh valid artifacts are under
-`outputs/baselines/starling_conditioned_valid_v1/<Task>/minimol_train_retest/`;
-the current Skin replacement root is recorded below.
+Use `--condition-field condition_group` for BBB, Bioavailability, and Skin.
+Freeze the condition vocabulary from outer train; valid/test categories must
+already exist in it. ClinTox has no accepted condition groups and omits this flag.
+Select the epoch by train-only scaffold-CV AUROC, freeze a macro-F1 threshold
+from pooled OOF scores, and fit the final head on all train rows. Outer valid/test
+labels are excluded from both selections. KNN uses unique train molecules only;
+the conditioned comparison retains same-condition-then-null and unrestricted
+train variants with frozen k=3.
 
-The paper-facing MiniMol baseline is condition-aware whenever the task has an
-accepted condition taxonomy. Fresh valid macro-F1 is 0.6912 for BBB, 0.5872 for
-Bioavailability, 0.6020 for current source-purity-v5 Skin, and 0.6520 for
-unconditioned ClinTox. The fresh Skin artifact uses epoch 5, train-only OOF
-threshold 0.57725, and has AUROC 0.6485; it is under
-`outputs/baselines/starling_conditioned_skin_source_purity_v5_valid_v1/`.
-The other train-only OOF thresholds remain 0.6474 for BBB, 0.6056 for
-Bioavailability, and 0.2508 for ClinTox. Bioavailability's earlier apparent
-0.4748 regression was caused by evaluating
-the same scores at an uncalibrated threshold of 0.5, not by the condition feature
-or generic runner.
+Current scores, artifact roots, input hashes, and checkpoint dependencies have
+one authoritative index: [current_conditioned_results.json](../../tools/chembl_tool/paper_experiments/current_conditioned_results.json),
+with tables in [RESULTS.md](../../tools/chembl_tool/paper_experiments/RESULTS.md).
+The completed three-task test comparison is under `matched_baselines.scaffold_test`.
+BBB/Skin reuse verified train-only-selected checkpoints; Bioavailability was
+retrained after the two-row train correction. Its older valid scores remain
+pre-fix references and must not be reported as current.
 
-### BBB gold-v4 candidate matched baselines
-
-The isolated `experimental_meaningful_cns_access_v4` /
-`context_conditioned_selected_v3` candidate uses 3,053 train rows and 397
-scaffold-valid rows. Its matched artifacts are under
-`outputs/baselines/starling_conditioned_bbb_gold_v4_valid_v1/BBB_Martins/`;
-the 398-row selected-v1 artifacts above remain historical and were not
-overwritten. All five candidate baselines evaluate all 397 rows:
-
-| method | Macro-F1 | accuracy | AUROC |
-|---|---:|---:|---:|
-| condition-aware MiniMol head | **0.6674** | 0.7053 | 0.7772 |
-| MiniMol KNN same-condition then null | 0.6071 | 0.6952 | 0.6717 |
-| MiniMol KNN all train | 0.5708 | 0.6650 | 0.6536 |
-| Morgan KNN same-condition then null | 0.5958 | 0.7078 | 0.6512 |
-| Morgan KNN all train | 0.6174 | 0.7204 | 0.6603 |
-
-The head reruns the same 5-fold train-only scaffold-CV contract, selects epoch
-3, and freezes the new pooled-OOF macro-F1 threshold at `0.62316`. Outer valid
-and test labels remain excluded from epoch and threshold selection.
-
-The training audit is in
-[`HEAD_TRAINING_DIAGNOSTICS.md`](HEAD_TRAINING_DIAGNOSTICS.md). Canonical
-paper-facing data lineages and metrics remain in
-[`STARLING_BENCHMARK_RESULTS.md`](../../tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md).
-
-The six-condition MiniMol-retrieval sensitivity completed with zero failures:
-
-| task | Starling direct | Starling full-flat |
-|---|---:|---:|
-| BBB | 0.652832 | **0.690073** |
-| Bioavailability | 0.594314 | **0.623542** |
-| Skin | 0.599776 | **0.612770** |
-
-Artifacts are under
-`outputs/paper/molecular_evidence_agent_scaffold_current_latest_valid_gpt_oss_120b_minimol_top5_nothreshold/`.
-This is a valid-only sensitivity and does not replace each task's frozen
-paper-facing retrieval setting.
+Training diagnostics are in [HEAD_TRAINING_DIAGNOSTICS.md](HEAD_TRAINING_DIAGNOSTICS.md).
+Historical gold-version and agent-retrieval sensitivities are not alternative
+current benchmark inputs or score tables.
 
 ## External Starling paper Table 2 reproduction
 

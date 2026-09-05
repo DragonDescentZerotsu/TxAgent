@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any, Mapping
 
-from openai import OpenAI
+from openai import AsyncOpenAI, OpenAI
 import requests
 
 from tools.chembl_tool.common.json_utils import parse_json_content
@@ -51,9 +51,29 @@ class OpenAICompatibleClient:
         self.reasoning_effort = reasoning_effort
         self.enable_thinking = enable_thinking
         self.request_extra_body = dict(request_extra_body or {})
+        self._async_client = None
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
+        return self._json_response(response, messages)
+
+    async def async_chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
+        """Cancellation closes the in-flight HTTP request; no worker thread is left behind."""
+        if self._async_client is None:
+            self._async_client = AsyncOpenAI(
+                api_key=self.client.api_key, base_url=self.client.base_url,
+                timeout=self.client.timeout, max_retries=self.client.max_retries,
+            )
+        response = await self._async_client.chat.completions.create(
+            **self._completion_kwargs(messages)
+        )
+        return self._json_response(response, messages)
+
+    async def aclose(self) -> None:
+        if self._async_client is not None:
+            await self._async_client.close()
+
+    def _json_response(self, response: Any, messages: list[dict[str, Any]]) -> dict[str, Any]:
         message = response.choices[0].message
         content = message.content or "{}"
         trace_messages = [_json_safe_message(item) for item in messages]
@@ -164,13 +184,13 @@ class OpenAICompatibleClient:
             "id": response.id or "",
         }
 
-    def _create_completion(
+    def _completion_kwargs(
         self,
         messages: list[Any],
         *,
         tools: list[dict[str, Any]] | None = None,
         tool_choice: Any = None,
-    ) -> Any:
+    ) -> dict[str, Any]:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
@@ -190,12 +210,22 @@ class OpenAICompatibleClient:
             kwargs["tools"] = tools
         if tool_choice is not None:
             kwargs["tool_choice"] = tool_choice
+        return kwargs
+
+    def _create_completion(
+        self, messages: list[Any], *, tools: list[dict[str, Any]] | None = None,
+        tool_choice: Any = None,
+    ) -> Any:
+        kwargs = self._completion_kwargs(messages, tools=tools, tool_choice=tool_choice)
         try:
             return self.client.chat.completions.create(**kwargs)
         except Exception as exc:
             if self.enable_thinking and tool_choice is not None and _is_tool_choice_thinking_error(exc):
                 fallback_kwargs = dict(kwargs)
-                fallback_kwargs.pop("extra_body", None)
+                fallback_body = dict(fallback_kwargs.pop("extra_body", {}))
+                fallback_body.pop("thinking", None)
+                if fallback_body:
+                    fallback_kwargs["extra_body"] = fallback_body
                 fallback_kwargs.pop("reasoning_effort", None)
                 return self.client.chat.completions.create(**fallback_kwargs)
             raise

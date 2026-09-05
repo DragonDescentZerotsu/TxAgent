@@ -20,7 +20,7 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Conditioned Benchmark（2026-09-04）
+## 当前 Conditioned Benchmark（2026-09-05）
 
 四个任务只有一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
 
@@ -138,7 +138,10 @@ Family naming 只保留两层概念身份：overlay `group_id` 是 source-native
 `plot_starling_model_comparison.py` 是 source/model/visibility 总图唯一入口；
 `plot_assay_retrieval_curve.py` 是 level curve 与资源统计唯一入口。不得为单个实验新建一次性正式画图模块。
 同一 `CONFIG:TASK=PATH` 可用不同 path 重复注册经过完整合同校验的 reruns，绘制逐 level 均值和 observed
-min-max；当前 lineage 缺失的 task/configuration cell 必须明确留空，不能用历史结果补齐。
+min-max（默认），或用 `--replicate-interval sd` 展示均值 ±1 样本 SD；当前 lineage 缺失的
+task/configuration cell 必须明确留空，不能用历史结果补齐。
+跨模型 level 图显式使用 `--allow-model-comparison`，严格匹配证据/工具并分开 None；同一模型的
+matched full-flat/progressive 仍须匹配完整 prepared inputs。混合重复数使用 `sd_if_repeated`，单次不估计 SD。
 Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作默认入口继续启动。其它已经删除的
 no-go 方法开发只从 Git history 或冻结 receipt 读取。
 
@@ -155,7 +158,8 @@ Bioavailability 在 2026-09-01
 `tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json`
 授权复用 4/2；另有 fresh 2/1 和两次完整同合同 8/4 runs。L1-only 0.7148 diagnostic 改变了
 `full_level_plan`，不是正式 replicate。random 仍需独立 change audit 或 targeted replay。相关 baseline 因
-train 删除两行仍需重训，不能由 agent zero-change receipt 授权复用。
+train 删除两行后已重训并完成 scaffold-test；旧 valid baseline 分数仍为 pre-fix reference，
+不能由 agent zero-change receipt 授权复用。
 
 2026-09-02 尝试的 prefix-only level-plan prompt 没有显著收益且已完整移除；progressive prompt 在每层固定
 展示完整 level plan，不保留 alternate CLI、registry root 或实验 artifact。
@@ -402,10 +406,15 @@ same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identit
 label policy。既有 operational、deployment-visible、matched-prefetch 和 reuse artifacts 都保留为 historical
 lineage，不删除，也不混入当前正式矩阵。
 
-当前代码已经完成以下实现 gate；GPT-OSS-120B v2 valid 已完成。2026-08-10 已首次完成 Bioavailability
-full-flat/full-mechanism 及对应 Morgan KNN、MiniMol embedding KNN、MiniMol trained head 的 frozen
-scaffold-test。2026-08-13 的 BBB DeepSeek residual-adjudication valid gate 已失败，BBB 方法开发停止且
-formal test 不再列为待办；Skin formal test 与 GLM v2 valid/test 仍须等待独立 promotion/artifact gate：
+以下 gate 属于 source/reasoning matrix；历史 residual-adjudication 分支保持停止，GLM v2 的
+promotion gate 不授权其它方法。当前独立的 DeepSeek progressive 与 matched full-flat 4/2 scaffold-test
+各完成三遍 BBB、Bioavailability、Skin 全部 903 rows，原有一遍计入三遍，五种 matched baselines 保持单次。
+逐层均值 ± 样本 SD 见 registry 的 `replicate_suites.scaffold_test_4_2`；实际结果、工具修复与 trace audit 以
+`current_conditioned_results.json` / `RESULTS.md` 为准。此次明确授权全局 768、每 task 上限 256，
+不改变 matrix 默认预算。旧 valid/random 工具结果尚未通过修复后 MolGpKa 的等价审计。
+V4 Pro 0813 同合同 scaffold-test 的两种 setting 各完成一次，903 rows / 8,604 level outputs、零失败；
+使用新 Pro single/None 和冻结 Flash 工具/证据。其单次结果与 Flash 三遍均值/SD 分开登记，比较总图见
+`replicate_suites.scaffold_test_pro_0813_4_2`。`--refresh-query-priors` 仍由现有 family suite 入口负责。
 
 1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
 2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
@@ -596,6 +605,11 @@ reasoning_validation.py
   4 次总尝试。
   不能在 response 有效时改写 prediction，也不能通过 retry 删除 evidence 或改变 inference setting。
 
+reasoning_race.py
+  公共内部 adapter：通过 provider pool 的异步 HTTP 请求做 first-valid 竞速，所有副本共享全局和 task
+  slots；成功后等待其余请求取消清理。无独立 CLI；progressive/family runner 通过 `--retry-race-width`
+  启用。复跑编排仍用 family runner 的 `--matched-progressive-root` / `--replicate-ids`，不另建入口。
+
 final_reasoning.py
   提供唯一 final prompt 的 group-summary projection，以及 resume 时 identity-blind/prefetched 输入恢复。
   当前不再维护额外 final decision prior 或 raw-card evidence surface。
@@ -761,7 +775,8 @@ tools/chembl_tool/paper_experiments/RESULTS.md
 ```
 
 Bioavailability scaffold 4/2 在 2026-09-01 source-identity 修复后由逐 selected-surface zero-change receipt
-保持 current；2/1 与 exact 8/4 已 fresh-run。其 baseline 仍需重训，random 仍需 targeted audit/replay。
+保持 current；2/1 与 exact 8/4 已 fresh-run。scaffold-test baselines 已重训完成，旧 valid baseline
+表仍为 pre-fix reference；random 仍需 targeted audit/replay。
 Blind 与 visible 的最后完整历史 roots 使用不同 benchmark lineage，也不得作为 matched visibility comparison。
 
 正式 source/model/visibility 总图只扩展 `plot_starling_model_comparison.py`；level performance、平均 molecules、

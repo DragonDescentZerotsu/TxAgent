@@ -1,6 +1,6 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-04.
+Updated: 2026-09-05.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
@@ -22,6 +22,14 @@ overlays/catalogs/indices enumerated by the retrieval manifests.
 Superseded record and family versions are not active alternatives. Their useful
 history belongs in compact receipts and Git history.
 
+### Matched baselines
+
+Retain the registered scaffold-test baseline predictions, metrics, embedding and
+input audits, execution receipt, and train-only CV summaries. BBB and Skin test
+results reuse the explicitly registered valid-run ensemble checkpoints; those
+checkpoint/CV dependencies remain retained. Bioavailability has a fresh train-CV
+and final ensemble after the train-row correction. Every KNN reference is train.
+
 ### Paper result cells
 
 For every applicable paper cell, retain the latest hash-compatible complete
@@ -36,16 +44,45 @@ artifact for:
 
 If a current cell is incomplete, retain one last-complete historical reference
 and mark it as such in the registry. Different directory names do not justify
-duplicate retries. Registered exact-contract replicates used to report observed
-run ranges are the exception.
+duplicate retries. Registered exact-contract replicates used to report run
+variability (SD or observed min-max) are the exception.
+
+Retain the completed matched full-flat test outputs, input-hash manifest,
+preflight/launch receipts and comparison figure together with the source progressive root.
+Retain all registered replicate 1/2/3 roots used for run-variability estimates,
+plus the repeat suite plan, status and launch receipt. Prepared request files
+alone do not count as completed outputs.
+The latest registered Flash/Pro comparison has a compact Git-tracked export:
+PNG/SVG, aggregate metric/reference TSVs, summary and figure receipt. Large raw
+run/trace directories remain local. Completed startup snapshots, duplicate command
+JSON files already covered by launch receipts, and routine successful launcher
+stdout can be removed after final verification; keep source/endpoint preflight receipts.
+For registered cross-model matched suites, also retain the refreshed single/None
+cache, its completion hashes, the price-routing configuration, endpoint/input
+preflights, and both source/result prepared hashes. Never pool different models
+as statistical replicates.
+The completed three-run aggregate is the primary test comparison. Its receipt
+retains per-run scores, the exact plotting command and completeness/lineage
+checks. Original single-run figures remain explicitly labeled replicate-1 views
+for the associated trace audit; they are not additional replicates.
 
 The current progressive status is:
 
-- BBB scaffold strict-voter-L1 v6 is current; random needs replay.
-- Bioavailability scaffold is current via the split-scoped nitrendipine
+- All three registered scaffold-test 4/2 runs per method are complete with zero failed outputs.
+  Retain its query/pair tool audits, dependency and inference recovery receipts,
+  and compressed pre-repair/first-pass failure traces. Prior valid/random runs have
+  not yet been checked for the repaired shared MolGpKa graph-state race;
+  source-lineage status below does not certify corrected tool equivalence.
+
+- Retain the registered scaffold-test L2→L3 audit, its nine case reports,
+  BBB valid comparison cases, paired statistics, integrity checks, and source
+  hash receipt alongside the referenced original traces.
+
+- BBB scaffold-valid strict-voter-L1 v6 is current; random needs replay.
+- Bioavailability scaffold-valid is current via the split-scoped nitrendipine
   zero-change receipt; random remains unaudited. The receipt does not authorize
   baseline reuse.
-- Skin scaffold source-purity v5 2/1, 4/2, and 8/4 are last-complete references
+- Skin scaffold-valid source-purity v5 2/1, 4/2, and 8/4 are last-complete references
   pending targeted replay of 1/2/3 queries after the final MDAM L2 rebuild;
   random needs full replay. Current MiniMol/Morgan baseline artifacts use the
   unchanged 239-row cohort.
@@ -62,6 +99,15 @@ Until current-conditioned replacements exist, retain the single historical
 blind and visible source/reasoning matrices and the last complete one-shot
 family curve named in the registry. Their different lineages do not authorize
 a matched visibility comparison.
+
+Retain `execution_status.json` and bounded `failed_attempts/` histories for
+unattended progressive/full-flat retries. A later valid output must not erase the
+failed provider/validation evidence; `needs_attention` is not a complete result.
+Retain per-level `retry_races/` receipts for six-way retries: completed candidate
+responses, validation errors, winner identity and cancelled-attempt statuses.
+Preserve the explicit distinction between client cancellation and verified
+server abort. The suite's one bounded endpoint race smoke receipt is retained
+as execution provenance, not counted as an experiment replicate.
 
 ## Minimum complete trace bundle
 

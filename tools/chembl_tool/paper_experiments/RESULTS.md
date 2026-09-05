@@ -1,12 +1,51 @@
 # Current paper results and artifact status
 
-Updated: 2026-09-04.
+Updated: 2026-09-05.
 
 This is the human-readable companion to `current_conditioned_results.json`,
 the machine-readable authority for result roots and freshness. Current
 records-to-index reconstruction is documented separately in
 `CURRENT_STARLING_RETRIEVAL.md`; the retrieval protocol is in
 `ASSAY_LEVEL_RETRIEVAL.md`.
+
+## V4 Pro 0813 scaffold-test run (2026-09-05)
+
+The registered `replicate_suites.scaffold_test_pro_0813_4_2` completed one fresh
+progressive and one matched full-flat pass over BBB 393 × 5 levels,
+Bioavailability 269 × 6, and Skin 241 × 3. It retains the Flash 4/2 cards, tools,
+visibility, prompts, temperature 0, 20,480-token output limit and provider-default
+reasoning. Fresh Pro single/None outputs are shared by both organizations;
+Flash predictions do not count as Pro replicates. All 8,604 level predictions and
+903 shared single/None query pairs are complete, with zero remaining failures.
+The first rounds had 3 progressive and 8 full-flat failed queries; all recovered
+in the first extra retry round. The suite finished at 2026-09-05 21:20:55 UTC.
+
+| Task (final level) | Pro progressive macro-F1 | Pro full-flat macro-F1 |
+|---|---:|---:|
+| BBB (L5) | 0.7046 | 0.7000 |
+| Bioavailability (L6) | 0.8065 | 0.7988 |
+| Skin (L3) | 0.6589 | 0.6678 |
+
+These are single-run scores; no repeat SD is available for Pro.
+
+The combined [Flash versus Pro figure](../../../outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.png)
+overlays both organizations at every level, retaining Flash's three-run mean ±1
+sample SD and all five original baselines per task. Pro is a single-run curve
+without an interval; None is model-specific. The 56 curve points are backed by
+112 run-level metrics, with identical prepared evidence/tools across models and
+unchanged Flash scores, SD and baseline values. The command and verification
+receipt are registered under `replicate_suites.scaffold_test_pro_0813_4_2`.
+
+One launcher runs the two organizations sequentially, with all three tasks sharing
+768 request slots and a 256-per-task cap. Level retries use six-way first-valid
+races. OpenRouter Mark1 routes `deepseek/deepseek-v4-pro-0813` by price with
+input/output caps of $0.66/$1.98 per million tokens. The successful endpoint
+preflight used StreamLake; request IDs, served model and returned usage remain in traces
+(the client does not retain OpenRouter's provider-name field).
+All 4,302 source prepared levels passed the tool-completeness preflight.
+Read the registered `suite_status` and active root's `execution_status.json` on
+demand; there is no continuous Codex monitor. The completed Flash three-run
+mean/SD comparison below remains separate from this one-run model comparison.
 
 ## Evaluation data and freshness
 
@@ -34,16 +73,116 @@ counts are insufficient.
 | Paper result family | Current state |
 |---|---|
 | ChEMBL versus Starling | Complete historical identity-blind reference retained; current-conditioned rerun required |
-| One-shot cumulative full-flat | Complete historical reference retained; current source-purity rerun required |
-| Append-only progressive | Scaffold BBB v6 and Bioavailability are current; Skin v5 needs a 2-query 4/2 targeted replay after the MDAM L2 repair; all random rows require replay or audit |
+| One-shot cumulative full-flat | Matched visible scaffold-test 4/2: three runs complete for all three tasks; historical identity-blind valid reference retained |
+| Append-only progressive | Scaffold-test 4/2: three runs complete for all three tasks; scaffold-valid Skin still needs 2-query 4/2 replay; random requires replay or audit |
 | Full-flat versus full-mechanism | Implementation and historical reference retained; current-conditioned rerun required |
-| Scaffold versus random | BBB/Bioavailability scaffold results are current; Skin scaffold has a bounded targeted-replay gap and random agent results are stale |
+| Scaffold versus random | Three-task scaffold-test complete; Skin scaffold-valid has a bounded targeted-replay gap and random agent results are stale |
 | Identity-blind versus visible | Both implementations retained; no complete current-conditioned matched pair exists |
 
 The last complete blind and visible source matrices use different historical
 benchmark lineages and cannot be reported as a matched visibility comparison.
 
+## Matched independent full-flat scaffold test: replicate 1
+
+The current three-task scaffold-test control is registered under
+`one_shot_full_flat_levels.matched_scaffold_test`: all 903 rows / 4,302 levels are
+complete with zero failures. The 3,812 nonempty-evidence level calls ran with a
+per-task cap of 256 and explicitly authorized global cap of 768. Two automatic
+retry rounds resolved the nine first-pass failures. Every level is independent, with no previous prediction/state,
+new-card priority, or cross-level prediction reuse. This visible matched control
+is separate from the historical identity-blind, per-assay full-flat reference.
+
+| Task | Level | Full-flat Macro-F1 | Progressive Macro-F1 |
+|---|---|---:|---:|
+| BBB | L5 | 0.7040 | 0.6923 |
+| Bioavailability | L6 | 0.7991 | 0.7779 |
+| Skin | L3 | 0.5760 | 0.5910 |
+
+These are final-level, single-run scores, not test-selected best levels.
+The per-level comparison with all five matched baselines is under
+`outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive/`.
+
 ## Current scaffold progressive results
+
+### Three-run scaffold-test repeat suite
+
+`replicate_suites.scaffold_test_4_2` registers the existing complete full-flat and
+progressive runs as replicate 1, plus two fresh runs of each method in
+`outputs/paper/starling_conditioned_test_replicates_4_2_v1/`. The new four jobs
+completed on 2026-09-05 at 13:32 UTC, covering
+3,612 query-runs / 17,208 level outputs with zero final failures. They ran sequentially, each with
+three concurrent tasks, a per-task request cap of 256 and shared cap of 768.
+Six-way first-valid races apply only to retries, with all copies inside those caps.
+The original run used sequential retries; that execution-policy difference is recorded.
+None/query priors, tools, evidence and model settings stay frozen. These repeats
+measure conditional level-reasoning variability, not end-to-end variability of
+new query priors. All six method-runs (including the originals) passed current
+input/index/family hash checks, exact prepared-input matching, and per-level
+metric recomputation from 25,812 predictions (84 task/level metrics).
+All 15 baseline points and three shared None points match the original figure.
+Read suite status on demand; no Codex monitor is scheduled.
+
+The complete per-level comparison is in
+`outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_3runs/`:
+`figures/full_flat_vs_progressive_mean_sd.{png,svg}`, metric/reference TSVs,
+`summary.json`, and `figure_receipt.json` (including the exact command and audit).
+Curves show the arithmetic mean of three run-level Macro-F1 scores ±1 sample SD
+(`ddof=1`); SD is descriptive run variability, not a confidence interval or
+test-sample uncertainty. None and baselines are fixed references without SD bars.
+
+| Task | Final level | Full-flat mean ± SD | Progressive mean ± SD |
+|---|---:|---:|---:|
+| BBB | L5 | 0.7178 ± 0.0129 | 0.6997 ± 0.0066 |
+| Bioavailability | L6 | 0.7895 ± 0.0119 | 0.7824 ± 0.0112 |
+| Skin | L3 | 0.5501 ± 0.0271 | 0.5870 ± 0.0035 |
+
+These are the predefined final levels, not test-selected best levels. Skin
+progressive declines slightly from L2 (0.5912 ± 0.0016) to L3; its full-flat L3
+varies much more across the three runs. BBB progressive's three-run mean rises
+from L2 (0.6880) to L3 (0.6941), so the original single-run decline is not a
+consistent mean pattern. No significance claim is made from SD-bar overlap.
+
+### Scaffold test, default 4/2: replicate 1 and trace provenance
+
+All 903 scaffold-test rows are complete, with zero failed outputs at every level.
+PARCC served `deepseek-ai/DeepSeek-V4-Flash-0731`; the requested per-task
+concurrency cap was 256, with an explicitly authorized shared cap of 768.
+
+| Task | Test rows | Valid final outputs | Final level | Macro-F1 | Accuracy |
+|---|---:|---:|---:|---:|---:|
+| BBB | 393 | 393 | L5 | 0.6923 | 0.7583 |
+| Bioavailability | 269 | 269 | L6 | 0.7779 | 0.8290 |
+| Skin | 241 | 241 | L3 | 0.5910 | 0.7137 |
+
+The full None/L1–LN curve and exact input/index/family hashes are in the
+registered `test_results.json` and `TEST_RESULTS.md`. Metrics were independently
+recomputed from predictions and frozen test labels. The shared MolGpKa
+graph-state race was repaired before inference resumed: all 8,867 unique
+property calls and 4,302 prepared level surfaces were checked, 3 changed query
+priors replayed, and 57 affected model outputs invalidated. One unsupported
+molecule retains explicit pKa/logD unavailable values in 3 pair calls.
+The first inference pass had 6 BBB validation failures; the registered recovery
+receipt preserves their attempt history and verifies unchanged successful outputs.
+
+The test performance/baseline and resource overview uses the same
+`plot_conditioned_progressive_overview` function as valid. PNG/SVG, the
+32-row source table, and a metric/input-hash verification receipt are registered
+under `progressive_append_only.scaffold_test.analysis`. The subtitle reads
+"Scaffold test" directly from the experiment manifest.
+
+The registered `scaffold_test.l2_l3_trace_audit` reviews every BBB/Skin test
+L2→L3 flip and all eight BBB valid flips. BBB test changes one prediction to
+correct and five to incorrect (Macro-F1 0.695472→0.684232); Skin changes two
+to correct and one to incorrect (0.592905→0.590993), with accuracy increasing.
+The report separates molecule-identity misattribution, indirect-evidence transfer,
+conflicting gold, and class-balanced metric effects. This is a post-hoc audit,
+not a test-selected protocol change.
+
+### Scaffold valid references
+
+Earlier valid/random tool texts have not been audited against the serialized
+MolGpKa correction. Their source-lineage status does not establish corrected
+tool-output equivalence.
 
 Macro-F1 on valid, default 4/2 card budget:
 
@@ -73,6 +212,31 @@ Random retrieval uses `parent_disjoint`. Applying scaffold exclusion would be
 a different experiment and requires a distinct manifest.
 
 ## Scaffold baselines
+
+### Test, frozen train-only selection
+
+All five methods cover all 903 test rows with zero failures. Macro-F1:
+
+| Method | BBB (393) | Bioavailability (269) | Skin (241) |
+|---|---:|---:|---:|
+| MiniMol head | 0.6437 | 0.7102 | 0.5451 |
+| MiniMol KNN same→null | 0.6010 | 0.6184 | 0.5410 |
+| MiniMol KNN all train | 0.5949 | 0.6153 | 0.5410 |
+| Morgan KNN same→null | 0.5479 | 0.6542 | 0.5138 |
+| Morgan KNN all train | 0.5495 | 0.6278 | 0.5108 |
+
+MiniMol preserves the valid-baseline selection protocol: train-only scaffold CV
+selects epoch by AUROC and an OOF macro-F1 threshold, followed by all-train fitting.
+BBB and Skin reuse input-hash-matched checkpoints and reproduce all saved valid
+predictions. Bioavailability repeats five-fold CV and training after the two-row
+train correction (epoch 5, threshold 0.61925513). The existing per-task fold
+counts remain BBB/Bioavailability/Skin = 5/5/3. All four KNN variants use k=3,
+unique molecules, majority voting, and train-only references. Each recorded
+neighbor and all metrics were independently audited. Full accuracy/AUROC, hashes,
+checkpoint dependencies, and the comparison with fixed-final-layer progressive
+4/2 are in the registered `matched_baselines.scaffold_test` report.
+
+### Valid references
 
 Macro-F1 on valid:
 
@@ -187,8 +351,9 @@ they were rejected.
 
 - Read exact roots and status from `current_conditioned_results.json`; this
   summary intentionally avoids duplicating them.
-- Bioavailability scaffold agent scores are current, but its baselines require
-  retraining and its random split requires a separate audit or replay.
+- Bioavailability scaffold-test baselines were freshly completed after the train
+  correction. Its older valid baseline table remains a pre-fix reference, and
+  its random split requires a separate audit or replay.
 - Skin matched MiniMol/Morgan baselines remain current because the split is
   byte-identical. The completed scaffold 2/1, 4/2, and 8/4 agent roots are
   last-complete references pending targeted replay after the MDAM L2 repair;

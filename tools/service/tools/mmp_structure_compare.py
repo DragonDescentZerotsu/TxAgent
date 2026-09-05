@@ -158,7 +158,7 @@ class MmpStructureCompareTool(BaseTool):
     def _fragmentations(self, mol: Chem.Mol, *, limit: int = 10000) -> list[dict[str, Any]]:
         if self._fragmentation_cache is None:
             return self._fragmentations_uncached(mol, limit=limit)
-        cache_key = f"mmp-fragments-v1:{_canonical_smiles(mol)}:{limit}"
+        cache_key = f"mmp-fragments-v2:{_canonical_smiles(mol)}:{limit}"
         result, _ = self._fragmentation_cache.get_or_compute(
             cache_key,
             lambda: {"records": self._fragmentations_uncached(mol, limit=limit)},
@@ -175,6 +175,10 @@ class MmpStructureCompareTool(BaseTool):
             return []
         errmsg, normalized_mol = self._fragment_filter.normalize(mol)
         if errmsg:
+            return []
+        # Match mmpdb's parse_record gate after salt normalization. Its lower
+        # level fragmentation algorithm assumes one connected component.
+        if len(Chem.GetMolFrags(normalized_mol)) != 1:
             return []
         filter_error = self._fragment_filter.apply_filters(normalized_mol)
         if filter_error:

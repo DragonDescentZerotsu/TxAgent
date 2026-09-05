@@ -62,6 +62,15 @@ An empty `TXAGENT_TOOL_CACHE_PATH` disables the persistent layer. Cache keys inc
 debug mode, MolGpKa availability, pH, and an implementation namespace. Bump the namespace in
 `tools/service/registry.py` whenever an output-semantic change does not already require a tool version bump.
 
+MolGpKa forwards are serialized per resident predictor because its graph
+convolution mutates shared state. Independent service processes remain parallel;
+`TXAGENT_TOOL_BATCH_WORKERS` controls tool requests, not concurrent model forwards.
+Unrepresentable molecules retain RDKit descriptors and explicit missing pKa/logD
+with warning/debug details; unexpected predictor errors still fail the call.
+MMP rejects remaining disconnected inputs after salt normalization, preserving
+Morgan/MCS results and marking the transformation not applicable.
+Properties-tool and fragmentation cache revisions exclude pre-fix outputs.
+
 The OpenAI-compatible client automatically falls back to individual calls when it reaches an older service
 without `/tools/batch`, permitting rolling upgrades. `identity_blind.prepare_harness_prefetched_retrieval`
 builds batches solely from the common retrieval payload (`query`, `groups`, `neighbors`); retriever-specific
@@ -76,17 +85,7 @@ branches must not duplicate this logic.
 curl -fsS http://127.0.0.1:8765/health
 ```
 
-Before replacing a live service, start the new implementation on a side port, compare all three tool outputs
-against the current service, run a cold/hot real-retrieval stress test, and switch only between matrix
-conditions. Existing benchmark output text must remain byte-for-byte equivalent.
-
-## node002 validation snapshot (2026-08-02)
-
-- Resident and package MolGpKa outputs matched exactly on acidic, basic, phenolic, and mixed-site molecules;
-  complete `molecule_properties` and `properties_compare` outputs also matched exactly.
-- Forty real BBB full-mechanism retrievals (286 neighbor pairs) took 201.66 seconds on a cold cache and
-  1.52 seconds on the immediate hot-cache replay (about 133x faster).
-- The 32-process service initialized all workers without errors and used about 28.7 GB aggregate RSS before
-  load, compared with about 50.8 GB and 5,318 threads in the former single long-lived process.
-- After the production switch, tool connections drained before reasoning and all eight GPT-OSS GPUs reached
-  99-100% utilization; the tool service was no longer the active feed bottleneck.
+Before replacing a live service, validate on a side port and compare all three
+tool outputs. A semantic correction requires cache invalidation and a dependent
+benchmark-output audit/replay; matching source/index hashes alone does not permit
+reuse of changed tool text. Drain in-flight work before switching endpoints.

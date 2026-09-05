@@ -125,3 +125,21 @@ def test_provider_specific_extra_body_is_forwarded_without_changing_messages():
     client._create_completion([{"role": "user", "content": "analyze"}])
 
     assert captured["extra_body"] == {"reasoning": {"enabled": True}}
+
+
+def test_thinking_tool_choice_fallback_preserves_provider_price_cap():
+    client = _client()
+    client.temperature = 0.0
+    client.enable_thinking = True
+    policy = {"provider": {"sort": "price", "max_price": {"prompt": 0.66, "completion": 1.98}}}
+    client.request_extra_body = policy
+    calls = []
+    def create(**kwargs):
+        calls.append(kwargs)
+        if len(calls) == 1:
+            raise ValueError("Thinking mode does not support this tool_choice")
+        return _response('{}')
+    client.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    client._create_completion([{"role": "user", "content": "analyze"}], tool_choice="required")
+    assert calls[1]["extra_body"] == policy
+    assert client.request_extra_body == policy

@@ -150,9 +150,16 @@ not only the retrieval JSON.
 plotter. `plot_assay_retrieval_curve.py` is the only level-curve and resource
 plotter. Extend these interfaces instead of adding a one-off figure module.
 Its configuration comparison accepts repeated `CONFIG:TASK=PATH` entries only
-for exact-contract replicates, plots their mean and observed min-max, and keeps
+for exact-contract replicates, plots their mean and observed min-max by default
+(or sample SD with `--replicate-interval sd`), and keeps
 unavailable current-lineage cells explicit rather than borrowing historical
-results.
+results. Every replicate must match actual prepared-input hashes as well as
+the inference and dataset contracts.
+Explicit `--allow-model-comparison` additionally requires identical evidence/tool
+surfaces after excluding only model-derived query priors and None outputs.
+Within each model, matched organizations still require identical complete prepared
+inputs. `--replicate-interval sd_if_repeated` supports a mixed repeat count without
+estimating SD for single-run curves. None references are model-specific.
 
 After a completed run:
 

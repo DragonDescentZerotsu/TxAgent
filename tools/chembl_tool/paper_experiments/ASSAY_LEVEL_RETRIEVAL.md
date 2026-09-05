@@ -1,6 +1,6 @@
 # Starling assay-level retrieval protocol
 
-更新时间：2026-09-04。
+更新时间：2026-09-05。
 
 本文只冻结当前 retrieval、leakage、progressive reasoning 和 source-purity 合同。当前数据的恢复、逐层 records
 和协作者分享见 `CURRENT_STARLING_RETRIEVAL.md`；当前 metrics、artifact roots 和 freshness 见
@@ -90,6 +90,58 @@ CLI。completion cap 为 20,480 tokens，API `reasoning_effort` 参数省略，p
 prediction。`--progressive-reuse-source-root` 只有在完整 selection 和 inference contract 相同时才可复用逐 query
 完全相同的 visible prefix，并在首个不同 level 永久停止。跨 retrieval lineage 的 prediction 复用必须有逐 split
 selected-surface zero-change receipt。
+
+## Matched independent full-flat control
+
+`conditioned_assay_matched_full_flat.v1` 使用当前 progressive 每个 level 的相同累计 cards、query prior、
+query/analog 工具文本、condition、模型和生成参数，每层独立判断。它不读取上一层 prediction/state，
+不显示 prior-use/new-card 标记，也不使用 flip/update 指令；非空累计证据即使没有新增卡仍重新调用模型。
+无任何 evidence 的层只使用同一冻结 query-only 结果。模型输出仍使用共享 card-citation schema，
+`new_evidence_assessment` 在此模式下可引用全部可见卡，`revision_action` 固定为 `initial`。
+
+入口为 `run_conditioned_assay_family_curve.py --matched-progressive-root PATH --output-root NEW_PATH`，
+可先加 `--prepare-only`。共享池用 `--parallelism`，每 task 可用 `--parallelism-per-task` 限流；
+超过默认全局 512 必须显式指定已授权的 `--endpoint-concurrency-budget`。
+split/subset、evaluation indices 和选卡预算从 source manifest 继承；input/index/
+family 与当前 canonical 文件的 hash 必须匹配，逐层 prepared 文件另存 SHA，resume 拒绝输入漂移。
+该入口复用共享 query executor、validator 和 summarizer，不复制 progressive 的 level outputs。
+
+这是与当前选卡严格匹配的 one-shot 对照，区别于历史 identity-blind、per-assay Top-3 full-flat；
+两者分别记录 protocol 和结果。完成状态和重复实验结果只维护在 `RESULTS.md` 与 registry；
+运行中进度读取注册的 `suite_status.json`。
+
+跨模型 matched suite 显式加 `--refresh-query-priors`：先用新模型在冻结 query 工具上生成 single/None，
+再让本模型的两种 organization 共享这些 priors。原有 tools/cards 不变，完整 prepared hash 和移除
+model-derived prior 后的 evidence/tool hash 分开校验。源协议、输出目录隔离在刷新 prior 前检查；
+自定义 `--env-file` 和工具服务配置透传到 single/None。该阶段沿用普通 branch validation，不做竞速。
+
+## Unattended retries and status
+
+Progressive 和 matched full-flat 共用失败 query 补跑逻辑：单次 JSON validation 最多 4 次；
+一轮结束后，只把失败 query 重新入队，已成功的 level checkpoints 不重新推理。默认
+`--max-stage-requeues 3`（额外三轮），`--retry-delay-s 60`，冷却时间指数增加、上限 900 秒。
+重试冻结模型、证据、阈值和生成设置；JSON repair 继续沿用共享 validator 的修复提示。
+无上限重试不作为默认行为。
+
+新增重复实验显式使用 `--retry-race-width 6`：首次 level 请求为单次；JSON repair 或失败 level
+补跑时，同一提示并发提交六个副本，以首个通过完整 schema/content 校验的响应为唯一结果，不查看 gold。
+其余异步 HTTP 请求取消并等待客户端连接清理；实际服务端 abort 传播取决于 endpoint。
+六个副本全部计入同一个全局和 per-task request budget。`retry_races/` 保存逐副本状态、校验错误、
+已返回的响应和取消记录；常规 token 指标只含保留结果，不能当作包括竞速浪费的总开销。
+旧第一遍保留原顺序重试协议，新第二/三遍记录六路竞速，因此三遍的恢复策略并非完全相同。
+
+`run_conditioned_assay_family_curve.py --matched-progressive-root SOURCE
+--matched-organizations progressive full_flat --replicate-ids 2 3` 复用冻结工具、None/query prior 和累计
+cards，独立重算各遍的 level 输出；progressive 只携带本遍的状态。各遍依次运行，单遍内部三个 task
+共享并发池。此设计估计的是固定预取输入后的推理变异，不包含 None/query-prior 的重复采样变异。
+
+`execution_status.json` 原子更新总 query 数、成功数、当前轮进度、失败 query、下次重试时间及
+`running / retry_wait / complete / needs_attention` 状态。失败输出和 transport errors 在下次尝试前
+保存到对应 `failed_attempts/`；达到上限则非零退出，保留可续跑 checkpoints。重新启动相同命令可继续
+缺失/失败层，并开始新的有限重试预算；进程退出或机器重启本身不由该循环自动恢复。
+
+程序运行时不需要 Codex 持续轮询；用户询问进度时读取状态和必要日志即可。准备模式不调用 LLM，
+也不进行延时补跑。此机制不能自动修复数据/代码错误或更新 Kerberos/Duo 凭据。
 
 ## Multi-provider execution
 

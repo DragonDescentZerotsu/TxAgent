@@ -789,6 +789,7 @@ def test_progressive_replicate_rows_report_mean_and_observed_range():
     assert rows[0]["macro_f1"] == pytest.approx(0.7)
     assert rows[0]["macro_f1_min"] == 0.6
     assert rows[0]["macro_f1_max"] == 0.8
+    assert rows[0]["macro_f1_sd"] == pytest.approx(0.2 / 2**0.5)
     assert rows[0]["n_replicates"] == 2
     assert rows[0]["metrics_paths"] == [
         "/tmp/run_one.json",
@@ -799,9 +800,23 @@ def test_progressive_replicate_rows_report_mean_and_observed_range():
     assert single["macro_f1"] == 0.6
     assert single["n_replicates"] == 1
     assert "macro_f1_min" not in single
+    assert "macro_f1_sd" not in single
+
+    third = {**base, "macro_f1": 0.7}
+    triple = plotter._aggregate_progressive_replicate_rows([[base], [replay], [third]])[0]
+    assert triple["macro_f1"] == pytest.approx(0.7)
+    assert triple["macro_f1_sd"] == pytest.approx(0.1)
+    assert plotter._replicate_bounds(triple, "macro_f1", "sd") == pytest.approx((0.6, 0.8))
+    assert plotter._replicate_bounds(rows[0], "macro_f1", "sd") == pytest.approx(
+        (0.7 - 0.2 / 2**0.5, 0.7 + 0.2 / 2**0.5)
+    )
+    assert plotter._replicate_bounds(rows[0], "macro_f1", "range") == (0.6, 0.8)
+    with pytest.raises(ValueError, match="at least two"):
+        plotter._replicate_bounds(single, "macro_f1", "sd")
 
 
 def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
+    changed_prepared = False
     def fake_load(path):
         return {
             "task": "bbb_martins",
@@ -853,6 +868,7 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
             "agent_model": "model-alias",
             "model_identity": "model-identity",
             "input_sha256": "input",
+            "prepared_inputs_sha256": "changed" if changed_prepared and "replay" in root else configuration,
             "evaluation_indices_sha256": "indices",
             "index_sha256": f"index-{configuration}",
             "family_manifest_sha256": "family",
@@ -912,6 +928,38 @@ def test_progressive_configuration_comparison_validates_lineage(monkeypatch):
     assert contract["configurations_contract"]["8/4"]["task_contracts"][
         "bbb_martins"
     ]["n_replicates"] == 2
+
+    changed_prepared = True
+    with pytest.raises(ValueError, match="prepared_inputs_sha256"):
+        plotter.collect_conditioned_progressive_configuration_data(
+            configuration_roots=configuration_roots,
+            lineage_receipts_by_task={"bbb_martins": Path("/tmp/receipt.json")},
+        )
+
+
+@pytest.mark.parametrize("mismatch", [None, "prepared_inputs_sha256", "selection", "index_sha256", "prompt_profile"])
+def test_matched_full_flat_comparison_requires_same_evidence_and_frozen_profiles(mismatch):
+    progressive = {
+        "experiment": "conditioned_assay_progressive_visible.v8",
+        "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+        "selection": {"level_1": {"card_limit_per_molecule": 4}},
+        "prepared_inputs_sha256": "same-cards-tools-and-query-priors",
+        "index_sha256": "same-index",
+        "family_manifest_sha256": "same-families",
+    }
+    flat = {
+        **progressive,
+        "experiment": "conditioned_assay_matched_full_flat.v1",
+        "prompt_profile": "independent_cumulative_tools_short_aliases.v1",
+    }
+    if mismatch:
+        flat[mismatch] = "changed"
+        with pytest.raises(ValueError):
+            plotter._matched_organization_comparison(progressive, flat)
+    else:
+        assert plotter._matched_organization_comparison(progressive, flat)
+        assert plotter._matched_organization_comparison(flat, progressive)
+        assert not plotter._matched_organization_comparison(progressive, progressive)
 
 
 def test_progressive_configuration_references_require_shared_none_and_baselines(
@@ -979,8 +1027,81 @@ def test_progressive_configuration_references_require_shared_none_and_baselines(
             baseline_root=baseline_root,
         )
 
+    for model, tasks in configuration_roots.items():
+        path = tasks["bbb_martins"] / "experiment_manifest.json"
+        manifest = json.loads(path.read_text())
+        path.write_text(json.dumps({**manifest, "model": model, "model_identity": model}))
+    rows, audit = plotter.collect_conditioned_progressive_configuration_reference_data(
+        configuration_roots=configuration_roots, none_root=tmp_path / "fallback_none",
+        baseline_root=baseline_root, allow_model_comparison=True,
+    )
+    assert sorted(row["macro_f1"] for row in rows if row["result_type"] == "none") == [0.54, 0.55]
+    assert sum(row["result_type"] == "baseline" for row in rows) == len(plotter.CONDITIONED_BASELINES)
+    assert audit["none_shared_within_model"] is True
+    mismatched_none.write_text(json.dumps(complete))
+    for alias, tasks in zip(("deepseek-ai/DeepSeek-V4-Flash-0731", "deepseek-v4-flash-0731"), configuration_roots.values()):
+        path = tasks["bbb_martins"] / "experiment_manifest.json"
+        manifest = json.loads(path.read_text())
+        path.write_text(json.dumps({**manifest, "model": alias, "model_identity": alias}))
+    rows, _ = plotter.collect_conditioned_progressive_configuration_reference_data(
+        configuration_roots=configuration_roots, none_root=tmp_path / "fallback_none",
+        baseline_root=baseline_root, allow_model_comparison=True,
+    )
+    assert sum(row["result_type"] == "none" for row in rows) == 1
 
-def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
+
+def test_mixed_repeats_never_estimate_sd_from_one_run():
+    single = {"macro_f1": 0.7, "n_replicates": 1}
+    assert plotter._replicate_bounds(single, "macro_f1", "sd_if_repeated") == (0.7, 0.7)
+    with pytest.raises(ValueError, match="at least two"):
+        plotter._replicate_bounds(single, "macro_f1", "sd")
+    assert plotter._replicate_bounds({**single, "n_replicates": 3, "macro_f1_sd": 0.1},
+                                    "macro_f1", "sd_if_repeated") == pytest.approx((0.6, 0.8))
+
+
+def test_cross_model_organization_requires_identical_tools_and_evidence():
+    a = {"experiment": "conditioned_assay_progressive_visible.v8",
+         "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+         "selection": {"cards": 4}, "prepared_inputs_sha256": "prior-A",
+         "prepared_evidence_sha256": "same-tools-cards", "index_sha256": "same-index",
+         "family_manifest_sha256": "same-families"}
+    b = {**a, "experiment": "conditioned_assay_matched_full_flat.v1",
+         "prompt_profile": "independent_cumulative_tools_short_aliases.v1",
+         "prepared_inputs_sha256": "prior-B"}
+    assert plotter._matched_organization_comparison(a, b, cross_model=True)
+    with pytest.raises(ValueError, match="prepared_inputs_sha256"):
+        plotter._matched_organization_comparison(a, b)
+    with pytest.raises(ValueError, match="prepared_evidence_sha256"):
+        plotter._matched_organization_comparison(a, {**b, "prepared_evidence_sha256": "changed"}, cross_model=True)
+
+
+def test_four_model_method_curves_keep_separate_none_and_mixed_run_counts(tmp_path):
+    rows, references = [], []
+    for model, count in [("flash", 3), ("pro", 1)]:
+        for organization in ["full_flat", "progressive"]:
+            values = {"macro_f1": 0.7, "mean_active_molecules": 4.0,
+                      "mean_cards_per_active_molecule": 2.0,
+                      "mean_prompt_tokens_per_call": 1000.0, "mean_reasoning_tokens_per_call": 500.0}
+            rows.append({"configuration": f"{model} {organization}", "model_identity": model,
+                         "organization": organization, "task": "bbb_martins", "level": 1,
+                         "n_queries": 2, "n_replicates": count, **values,
+                         **({f"{key}_sd": value * 0.01 for key, value in values.items()} if count > 1 else {})})
+        references.append({"task": "bbb_martins", "result_type": "none", "method": "none",
+                           "model_identity": model, "macro_f1": 0.5 if count > 1 else 0.6})
+    svg = tmp_path / "models.svg"
+    plotter.plot_conditioned_progressive_configuration_comparison(
+        rows=rows, output_svg=svg, output_png=tmp_path / "models.png",
+        tasks=("bbb_martins",), configurations=tuple(row["configuration"] for row in rows),
+        reference_rows=references, organization_comparison=True, performance_only=True,
+        replicate_interval="sd_if_repeated",
+    )
+    text = svg.read_text()
+    assert "1 run, no SD" in text and "3 runs, mean" in text
+    assert "0.500" in text and "0.600" in text
+
+
+@pytest.mark.parametrize("interval", ["range", "sd"])
+def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path, interval):
     rows = []
     for configuration, macro_f1, cards in (
         ("4/2", 0.72, 2.0),
@@ -1001,6 +1122,12 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
                 "mean_reasoning_tokens_per_call": 500.0 * cards,
             }
         )
+    if interval == "sd":
+        for row in rows:
+            row["n_replicates"] = 3
+            for field in ("macro_f1", "mean_active_molecules", "mean_cards_per_active_molecule",
+                          "mean_prompt_tokens_per_call", "mean_reasoning_tokens_per_call"):
+                row[f"{field}_sd"] = row[field] * 0.05
     output_svg = tmp_path / "comparison.svg"
     output_png = tmp_path / "comparison.png"
     plotter.plot_conditioned_progressive_configuration_comparison(
@@ -1009,6 +1136,7 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
         output_png=output_png,
         tasks=("bbb_martins",),
         configurations=("2/1", "4/2", "8/4"),
+        replicate_interval=interval,
         reference_rows=[
             {
                 "task": "bbb_martins",
@@ -1030,4 +1158,4 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path):
     assert "None" in svg
     assert "MiniMol head" in svg
     assert "Unavailable on current lineage: 2/1" in svg
-    assert "whiskers show observed min–max" in svg
+    assert ("whiskers show observed min–max" if interval == "range" else "sample SD (ddof=1); 3 runs per point") in svg

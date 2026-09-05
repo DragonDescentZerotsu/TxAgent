@@ -22,10 +22,19 @@ experiments. The paper-facing matched visibility comparison uses
 `deployment_visible_prefetched`, which restores identities/structures while
 replaying the blind retrieval and tool payload.
 
-The one-shot family curve is currently identity-blind. The current append-only
-progressive curve is deployment-visible-prefetched. Do not describe these two
-independent protocol families as a matched visibility ablation. Blind and
-visible settings are both retained and supported by the source/reasoning matrix.
+The historical one-shot family curve is identity-blind. The matched full-flat
+control and append-only progressive curve both use deployment-visible-prefetched
+inputs; they compare reasoning organization over identical cumulative cards and
+tools. Neither comparison is a matched visibility ablation. Blind and visible
+settings remain supported by the source/reasoning matrix.
+
+The existing `plot_assay_retrieval_curve.py --conditioned-progressive-config-comparison`
+accepts both matched full-flat and progressive roots through repeated
+`--conditioned-progressive-config-task-root CONFIG:TASK=PATH` arguments. The frozen
+prompt profiles may differ only after cumulative prepared-input, selection, and
+retrieval hashes match. Add `--performance-only` for one three-task Macro-F1 row
+with None and the five right-side baselines; omit it to retain resource panels.
+Use `--conditioned-baseline-root` to select baselines from the same evaluation subset.
 
 ## Canonical benchmark
 
@@ -197,7 +206,7 @@ It distinguishes:
 - `stale_retrieval_index_requires_targeted_replay`: labels may still match, but
   changed retrieval inputs prohibit publishing the old score as current.
 
-At the 2026-09-04 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
+At the 2026-09-05 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
 runs over the strict-voter-L1 v6 index; its random v6 index is built but still
 requires LLM replay. Skin source-purity v5 has current matched trained/KNN
 baselines, but the final MDAM L2 rebuild leaves 1/2/3 scaffold-validation
@@ -210,8 +219,114 @@ results. Its retained 4/2 curve is current through the nitrendipine
 selected-surface zero-change receipt. The rejected L1-only 0.7148 run used a
 different prompt contract and is neither a replicate nor a variance estimate.
 Bioavailability random remains unaudited and requires a separate change audit
-or replay. Its scaffold baselines remain pre-fix references because two train
-rows were removed and must be retrained.
+or replay. Its scaffold-test baselines have been retrained after the train-row
+correction; older valid baseline scores remain pre-fix references.
+
+The progressive runner accepts `--evaluation-subset test` with an explicit
+output root and a complete test-specific `--single-source-root`. It uses the
+same valid+test-heldout-filtered index as validation, records the selected
+subset, and rejects cross-subset resume. Freeze the validation protocol before
+running test. `--parallelism` is the shared pool size;
+`--parallelism-per-task` optionally caps each task within that pool. The default
+endpoint budget remains 512; an authorized override must be explicit in
+`--endpoint-concurrency-budget`. Task caps are enforced before submission so
+capped tasks do not occupy workers needed by other ready queries.
+
+Both methods' three-task scaffold-test 4/2 curves have three complete runs,
+including the original as replicate 1; all five matched baselines are complete.
+Results, figures, tool audits, and the BBB/Skin L2→L3 trace analysis are registered
+in `current_conditioned_results.json` and summarized in `RESULTS.md`. Earlier
+valid/random tool outputs have not been audited against the serialized MolGpKa
+correction; source-lineage compatibility alone does not establish tool equivalence.
+
+For a controlled one-shot comparison, the existing family runner accepts
+`--matched-progressive-root PATH --output-root NEW_PATH [--prepare-only]`.
+It inherits the source split/subset and exact cumulative cards/tools, validates
+current lineage, and judges every level independently without previous decisions.
+Frozen inputs are copied atomically; altered destination inputs abort resume
+instead of being overwritten alongside existing predictions.
+This visible matched control is distinct from the historical identity-blind,
+per-assay full-flat curve; see `ASSAY_LEVEL_RETRIEVAL.md` for the contract.
+
+Progressive and matched full-flat retry failed queries automatically after a
+cooldown, skipping successful level checkpoints. Defaults are three extra rounds
+(`--max-stage-requeues 3`) with 60-second initial backoff (`--retry-delay-s 60`),
+doubling up to 900 seconds. Read `execution_status.json` on demand; exhausted
+retries end as `needs_attention` with failure history retained. Restarting the
+same command resumes checkpoints; no Codex polling loop is required.
+
+For frozen-input repeats, use the same family runner with
+`--matched-organizations progressive full_flat --replicate-ids 2 3`.
+The suite runs the four jobs sequentially, with all selected tasks sharing each
+job's prompt budget. It creates `replicate_02/{progressive,full_flat}/` and
+`replicate_03/{progressive,full_flat}/`; source level predictions are never copied.
+The original completed run remains replicate 1. None/query priors and tools stay
+frozen, so these repeats measure level-reasoning variability conditional on those inputs.
+
+For a different model, add `--refresh-query-priors` to a matched suite. The same
+runner generates fresh single/None branches under `single_cache/` using the
+source's exact retrieval and prefetched tools, then replaces only the query prior,
+None result and source index in the frozen level inputs. Both organizations share
+the new model's priors. Source and resulting prepared hashes are recorded separately;
+completed priors are hash-checked on resume. The prior stage shares the global and
+per-task query caps, with sequential single/final calls and the legacy branch JSON
+validation policy; six-way racing applies to subsequent level retries.
+`--provider-pool-config PATH` forwards routing options without changing prompts and
+freezes the public provider configuration in the suite manifest. Credentials are
+read from `--env-file` (default `.env`) and are never written to receipts.
+The one-run V4 Pro 0813 test suite is registered as
+`replicate_suites.scaffold_test_pro_0813_4_2`; its `launch_receipt` contains the
+exact command and `provider_pool.json` contains the
+price-first routing policy and price caps. Resume with that command.
+
+To plot repeats, register each run with the existing plotter's repeated
+`--conditioned-progressive-config-task-root CONFIG:TASK=PATH` option and select
+`--replicate-interval sd` for arithmetic mean ±1 sample SD (`ddof=1`) of
+run-level scores. At least two runs per curve point are required. The default
+remains observed min-max (`range`). Neither interval is a confidence interval;
+fixed None and baseline references remain single points. The completed three-run
+scaffold-test comparison, including all levels and baselines, is registered under
+`replicate_suites.scaffold_test_4_2.comparison_analysis`.
+The plotter compares actual prepared-input hashes across every replicate, not
+only configuration/index hashes. The registered `comparison_receipt` stores the
+exact plotting command, individual run scores and verification results; the
+suite's `launch_receipt` stores the run command. Use these receipts for exact
+reproduction rather than creating another launcher or duplicating root lists.
+
+To overlay different models in the same level/baseline figure, use the existing
+configuration comparison with `--allow-model-comparison`. This additionally
+requires identical prepared evidence/tools, card selection and retrieval lineage;
+only model-derived priors/None may differ. Full-flat/progressive within each model
+must still share exact prepared inputs, including priors. None references are checked within
+each model and plotted separately, while matched baselines appear once.
+`--replicate-interval sd_if_repeated` shows sample SD for repeated configurations
+and no interval for single runs; `sd` still rejects single-run configurations.
+The completed Flash (three runs) versus Pro 0813 (one run) figure is registered in
+`replicate_suites.scaffold_test_pro_0813_4_2.comparison_analysis`, with its exact
+command, source checks and PNG/SVG hashes in the associated figure receipt.
+This compact comparison (PNG/SVG, metric/reference TSVs, summary and receipt)
+is tracked in Git for GitHub review. Raw run directories remain local artifacts.
+
+`--retry-race-width 6` makes JSON repair calls and failed-level requeues race six
+identical requests. The first fully validated response wins; remaining async HTTP
+requests are cancelled and cleaned up before the caller publishes a single output.
+Every request counts against both the global and per-task caps. SDK transport
+retries must be zero. Full race receipts live in each level's `retry_races/`,
+including invalid responses, failures, and cancellation outcomes; server-side
+abort propagation is endpoint-dependent. Retained-output token metrics exclude
+discarded/cancelled attempts; their available usage is in these receipts.
+
+`suite_manifest.json` freezes the repeat plan; `suite_status.json` identifies the
+active root, whose `execution_status.json` has query progress. An exclusive
+`launcher.lock` prevents duplicate suite launches. Exhausted failures remain
+`needs_attention`, while later suite jobs still run. No periodic Codex monitor is used.
+
+The family runner owns matched full-flat and repeat-suite CLI orchestration;
+the progressive runner owns their shared query queue, retry rounds and summary.
+`common/reasoning_race.py` is an internal adapter for cancellable first-valid
+races through `openai_provider_pool.py` and `openai_reasoning_client.py`.
+`reasoning_validation.py` remains the single validator. There is no separate
+retry or replicate executable.
 
 ## Documentation map
 

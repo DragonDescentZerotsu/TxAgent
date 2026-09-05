@@ -1,0 +1,723 @@
+{
+  "status": "complete",
+  "command": [
+    "/data1/tianang/anaconda3/envs/vllm/bin/python",
+    "-m",
+    "tools.chembl_tool.paper_experiments.plot_assay_retrieval_curve",
+    "--conditioned-progressive-config-comparison",
+    "--performance-only",
+    "--replicate-interval",
+    "sd_if_repeated",
+    "--conditioned-baseline-root",
+    "outputs/baselines/conditioned_scaffold_test_v1",
+    "--analysis-dir",
+    "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro",
+    "--output-stem",
+    "flash_vs_pro_full_flat_progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bbb_martins=outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bbb_martins=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bbb_martins=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bioavailability_ma=outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bioavailability_ma=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:bioavailability_ma=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:skin_reaction=outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:skin_reaction=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Full-flat:skin_reaction=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bbb_martins=outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bbb_martins=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bbb_martins=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bioavailability_ma=outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bioavailability_ma=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:bioavailability_ma=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:skin_reaction=outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:skin_reaction=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Flash · Progressive:skin_reaction=outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Full-flat:bbb_martins=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Full-flat:bioavailability_ma=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Full-flat:skin_reaction=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Progressive:bbb_martins=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Progressive:bioavailability_ma=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive",
+    "--conditioned-progressive-config-task-root",
+    "Pro · Progressive:skin_reaction=outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive",
+    "--allow-model-comparison"
+  ],
+  "source_flash_figure_receipt": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_3runs/figure_receipt.json",
+  "chart_contract": {
+    "question": "Compare V4 Pro once against Flash three-run mean and SD for both organizations at every evidence level on scaffold test",
+    "surface": "existing Matplotlib three-panel static PNG and SVG",
+    "grain": "task x model x organization x evidence level; Flash n=3, Pro n=1",
+    "metric": "macro-F1",
+    "expected_curve_points": 56,
+    "palette": "two roots: Flash blue, Pro orange; original baseline markers retained",
+    "non_color": "model circle/diamond; organization dashed-open/solid-filled",
+    "uncertainty": "Flash sample SD ddof=1; no interval for Pro; None separated by model",
+    "baselines": "same five train-only matched baseline references per task",
+    "qa": "compare all Flash mean/SD and baseline values against old summary; compare Pro to source metrics; inspect exported PNG"
+  },
+  "verified_at": "2026-09-05T22:15:42.350851+00:00",
+  "plotter": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py",
+  "plotter_sha256": "ee536bcc812234e8abe8edd9cd9a86ba6bdb8befa1dc517788261eaf3e0c0f41",
+  "validation": {
+    "n_aggregate_curve_points": 56,
+    "n_source_run_level_metrics": 112,
+    "n_none_points": 6,
+    "n_baseline_points": 15,
+    "all_flash_scores_resources_and_sd_unchanged": true,
+    "all_original_baseline_values_unchanged": true,
+    "all_means_and_sample_sd_recomputed": true,
+    "pro_single_run_has_no_sd": true,
+    "identical_prepared_evidence_tools_and_current_input_index_per_task": true,
+    "source_metrics": [
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "27a3bbe7f86af32a4cc9cddbc024d651e68e1e149ad9736ff025a2ab36e9c991",
+        "predictions_sha256": "62a114603573f4a76dc3365e969ab4dc41ec333f5b4bc4776f7e984e75a60245"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "1593b2d7b3e4547986d8ff737e1f447d29e8aca89a8076de66545fccd93b4bb8",
+        "predictions_sha256": "eac45d75d3b96a98a8a223ceabc589c7f281de1ca6c3f2ea3041134f6ecf9c43"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "817cbc4d9e981632fe49122ba3ce397f304cb6b4589a706eddaa478880dc1a8c",
+        "predictions_sha256": "ef8599866406c418b05e2c753b05de1b5fea5e7f5bc1f7ed78ae9bac80581357"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "0090174e6649ff8c05ecc6038deb65e85ea20075f70c8905b6c079820ddfcaec",
+        "predictions_sha256": "d670d2214f564894ecd58c793847b310aeec1d60ae5b408de96eda8506a7b991"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "b28768ce9cfdbf2e46a0b1ffad2dc8d345f207f333b8ec42d68baa0edec1d295",
+        "predictions_sha256": "de992bc51d7a24f972a57747f9c3d71b1d34bf8f91fd285ec8eb3abee40ecd1f"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "aff2e0d6fe9ab2fc35d274b59c0dff6a8c5059ee23c0af8ab011a0b7e242ccab",
+        "predictions_sha256": "f543aa6ff8aeb1199059f1cf74757d7eb5ca4bfe9c8d1395261b110cf4bf3826"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "4ba449d73c66828cef3b66f6309fc4ab8706a82241cace6d39c8fa6de5ebbfc1",
+        "predictions_sha256": "e0b8e8a567695f01ea66fd2f4d5d28b12a03dfe8738b3c08a8f5840a2f81fb7c"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "c50057cc74553502ccf39a78e715c767a9259de0be7db06749aed746f70ac082",
+        "predictions_sha256": "3719687704e5efbe9f98f43397112e0121d032a02a3655c18d808467e59ade8d"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "3a78843b1e892a3b147ca7a0fee6b59bff3c70f40c9fcdee56d7dfc4db54069a",
+        "predictions_sha256": "48459bdcf071648235080ab8206859b516c4eeb3777960a21806ae8cd0b026df"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "0d523eb72ac539859a142ca53c0ac95439db799d0f5eb3649ee20af2f7756ed1",
+        "predictions_sha256": "2e29f312389346d6d559299858b93df204efd4a07feeaf0acb6ce58c9b0f9a45"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "c5ae8a67dfed8dc73604d99396715c5c2bc2538cbb4420ab3f62296719a43749",
+        "predictions_sha256": "2c8e1de48f836f87f6229daf4ab9cad05515b162db9f91dbb4cc8a4eed0c8a84"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "6cc0e161cb19e6623a42089635e97efd4ab6a4b7ccdb71381328b6511d9dad21",
+        "predictions_sha256": "a70cbd3116a5bb0cc1a6f317a5176df12a0d0094710766dcad16ec3137c236cf"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "3503d5b7446159560a74d4035e82c3abbab072949e75a07a93dbe75901ab0f60",
+        "predictions_sha256": "89a2c0358fe46d17ce013c09cfc9c41cf924b6b217c65650676df6f097fc013c"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "a4bf64a27088d7e296e9ac96d9ee9e6295e6ca7326990ab5caa67918a96629fb",
+        "predictions_sha256": "f4cdab637b1f26692e5639eed1e4c9b776aa52c734b3f455ee89bc82264b10da"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "f0f517abb79120690b2ce5d5e285bad867c7c10229fed5c9f7f41eab90fe20d0",
+        "predictions_sha256": "246fa27cc583f9b1af72c6b11ff73c8bbd679d974e8bd4a8eb379431c6093fec"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "79e1fa79d93aae7016644602f489b3b1352dc7c00f64b75ef0df18ed3e6d3454",
+        "predictions_sha256": "01854d64377181b62a5ca541eebcd13f03f167952f4e9c69cbc75b912f87a1cd"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "947aa50f2349a4570595d7aa268e702f080e45a953c572d434b831f1990b5f17",
+        "predictions_sha256": "6b2eb33d43e8f92008995616fc9f5c0895a397536f55e45f3f691ea06dde84f2"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "06b8abe04fb65edbb5a995b8c7353d1682d85a70150bd9388a33d130f3a6765c",
+        "predictions_sha256": "3198d48a851c3bea1c0a5a024ac0e56180aa6450f9c2bad50b0eed336e000c28"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "91a4f3964c93048235aabde5fd3c3f860960c287f3993587be5bec6693cc06fa",
+        "predictions_sha256": "c8181c2b76f0b53bdfd59d81045b1ceea3890ab6cf7164ec71d8d3cc65b66069"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "8e9945a33077afc23ee7a2e2ab2b91da20680f3ee56cd84c7f1ff0350cca2169",
+        "predictions_sha256": "0c38617841f49ee6c61f6d7a62052fd1e70cc80066e933138395e8ddfb749126"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "7d9d01627a0b4c5cfd4dca6a8a695e2b944308bf97ec51859747eb6a50d92321",
+        "predictions_sha256": "e60bcd0c804c36a841977f1e3906ab592dd29de38c09bc7c5524d74f4c088256"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "e78a371f673b7587d6a4aa38e38eaf0be05c8d1ce719b1e52b998d2f61ad11f0",
+        "predictions_sha256": "722c4d0223fcb06cf05777ec3556114ef8d0e031e1c27867db2d4e7a835f2778"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "4b3b12e81b420d14911884e50e03462a9f586ecdfa50f6712e771745bce1a875",
+        "predictions_sha256": "cfd9677641628fd25bbbebe1ca51c9736177b2b5f2c6ca7adc421e21aa80db02"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "ae652719ae7eb643b515fe80c351f4d555e6bcfddc00f378d27cb627d82f876c",
+        "predictions_sha256": "d7ad3a085699beeb27f8344405831bc7e61bb95e9595187d18782ad62bb93481"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "1cc953449d9ca9ed41405fe4028e2744ab3c0e0a7a63faddd17e52471a692ef7",
+        "predictions_sha256": "a903b464e3c4a90db994206e5820d679f5174f22457926519bfc32d8ed494863"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "4e1f0922fa0adb2c3d5e9b90d373e713ba7543eeba31daf47d957e90ad8bf56c",
+        "predictions_sha256": "264df04a4c9ca321114aebe0ca0ac9ec119c20fd81eb7d8fda0a98890f66adc7"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "0bcc243a44e86479c5b4deafacf052300c326491e3500cbb37271a3e7eed604d",
+        "predictions_sha256": "7a583e4e4f8d352ced1967feb648a4d609f3b2c205083534b9348d32ef599827"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "0d36ccd58a23bd1b7231b75deac1bcb45b30c05e197c873ec4476a8ad2f49a55",
+        "predictions_sha256": "9fa39a27b69167d17b13e9fc79303b317151fb30a1cb02c1e14bbc61804e29d6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "0d8c4f290f88a35a4f63c975d2bf10841effec00929c947fa98d3707a297fda4",
+        "predictions_sha256": "51234890d48828333fe1d5c74c2e528349aca47941c39a604d93950244bab87e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "843c531e8f2083378b03e04ac9f87d8d3b77cf1335b2711f817bfe331e52f799",
+        "predictions_sha256": "f0df4fd86f193ab428eec6614f4daddd8e931b5e37e71285eac1e9cc257319cb"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "836cada507f9f72ba75f3d8aec6ecb72dd7ac2db18d60a084a17ad256835e639",
+        "predictions_sha256": "e91c37e34b83c2908a308671f436ee326dc5f3368d6677b2e85e245164cfce15"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "139126c8a2abf7beef43743b290d1e07a092e8bf2b904e20b1ff54c11ae071cf",
+        "predictions_sha256": "5eb7d6e4f85c0409711fea27997f4b2f2adb0543cf99566244c94a7531dafc0e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "a8270957627fec282c342c7841979f97ca246d16ec66df1c00fe7e8e3bbedde0",
+        "predictions_sha256": "503189256c6971de989187d5247bbfb4590a6270f9208cdd5f5f1356d1d535df"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "e910d1bb6b53b935ab89b7fb80dc096c49d4209cefc0c7351b6ec075a0f5c773",
+        "predictions_sha256": "9643013a97ce9c10d3ecba2d7ebebe9be3bdca2b697ad75816aa6a9c2eec06da"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "24d2bf6a70b49af75ec620c31a642d6f3835008dd9b29cbc99858cc673d3e3f6",
+        "predictions_sha256": "9dedd0a47f65f803a00abb4d4c810a40154d8cf7211268fd3b9683d8e4a010e7"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "9368befa5829208e694e5a32bcaa2511b4c9f258361ec75d023adaad0e2725e7",
+        "predictions_sha256": "0f2ff50119a341b964aa229ae68d7e0dac4fe51d474a52ee482845c7fb6971ad"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "8c0a8bab3dd32fcf16a4addb26f341f29385783b24c6326a3877bc519d1bdb1b",
+        "predictions_sha256": "d996f465b384ccbe89616348aa38989636e9f7d6dbdae79c0d53208ee4ae5f20"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "55bd01455582b8e67eec3c07d97b4ad54a72ede7b0c83119152b1640932c3abe",
+        "predictions_sha256": "1012ab60382ade2fd7d2b0329e90b2fe92a21fd5f0f25d6a57f101e4bda583bb"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "359add90f1edcb258075c103ae2bc735ef03e0d10bbce42974a9f9e6de7211f2",
+        "predictions_sha256": "4ce3b3f32955cf8a71273f5e93a822d6cf926a856f2efc1fe1a6dcbe9c962b96"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_matched_full_flat_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "5bb46f06cda3ca7a62df15664621ad52dadec3f5d526a6bf5b51719b4560537c",
+        "predictions_sha256": "7e8acdcb75f4eb349e129d876bc4fc56cf249692b9fcb299b74b2c3aa29bdda0"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/full_flat/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "d1fed1db110b317afc24a0c98f04369bf214e09e064beeab6fa471371ae74413",
+        "predictions_sha256": "8b4918133463e42928309b8ac620497f06630545a55487764cff7a9678a2196f"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/full_flat/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "5788fd7d9b38fa6744dadf4fedf4e2f7d6dd27eeb38db1be2c3e62e592fed23f",
+        "predictions_sha256": "a6ac3f7d7e45ab9828d16e7f32aa5779c42469325bd5944ebf0ef68637b69a6b"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "198dba9d5fa2e544745685083c102bbf449bcaab6e31227109be2858ab9b3f09",
+        "predictions_sha256": "865e55cef83709ab255ee7270c5a56b0ebc45197c51d0d8ceba31dd48070d847"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "b4a723c5b1f4ba6261ab7abf16fc54b83e521d339103f2d48898a37888f2c01e",
+        "predictions_sha256": "0607d8542f24f1794ed8652596cfdd4c0c27aaf705b97494833e32a0ea23b4a9"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "0ae511ab7a0fde388b8cced628724b621edd2e0f22216ab1123dc9e967ca6c7a",
+        "predictions_sha256": "9823044790f1a8c7e946cc5961f765103aec26073ac9f1c8ac571da698a3e0a9"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "a34e9884157de86e8487a8d392d3198b8d80fe9fe947e29803abdf382b41eb9f",
+        "predictions_sha256": "c222362c437c7fa7e7a94f9db48d087091ee73c5aaa4bd54a01e07a1c89cd74e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "e7bdd11fb4d13ad414798cf7b308ca5637a4a63eb7301901417301271002da35",
+        "predictions_sha256": "e2d43eeb706d9d5f6d2374ee9e0329e6e5b41b5ad7b64c87fadf5798757a4383"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "8674601688ed9ab5b49d5db506b0b471336599701bc274c960ef9e51cee39b94",
+        "predictions_sha256": "c881582d9b4b79935142f0745ed4a26c3e3661c875062ba72cdd639e93720331"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "3d1b50b0660a3cf78d29f29b0fdae63262835d38348b427a0207413cbfc093fa",
+        "predictions_sha256": "8ebdc18e3837e3e3fbc3aef9b039459b47058cb481f5af14770c25617a5ceb8e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "3700801eb24525a0d2c69b9056d67b27ad14c0b69615d87d837259ccfc16be00",
+        "predictions_sha256": "45d68371692669772d388adb3ed25983eb0901fe7930a98fba75622729a67ae1"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "3bd46a4532c191ebfb619f8d5ddeea8bca79caca5e43541abba90b729658f156",
+        "predictions_sha256": "7f0241d06bb50a026edf7637f1796ed707c1cdbf44a88868d377ea3dc7b56b2a"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "4899d3ce2baf3dceb26965f0ef80acff18f88980efd201264b1601aa2dde5b0b",
+        "predictions_sha256": "9925612394889f6d3478241c2d5468c266a5a804f0766b2a3a6a837efe00dbd1"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "8203ff26d8801385de16ad0c79f0d22b77a5af746d67479e78f6cefa47694531",
+        "predictions_sha256": "19d6807ffc65e0574e185fe732642850d1f52837d82011325410831bf0caacc6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "5ccc72e0137ae15397993d91c5d70d024e8365bf9c74b336eda8ec825df06f9c",
+        "predictions_sha256": "9e2e48127cea97fc03e5988342b729e0bd6043bff4b7fc799303e962e2e70355"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "df43374e3f87520e46afe459ee67e0e1d0111d1c799ffba51ec3a200f8c8e5fb",
+        "predictions_sha256": "dc1f232f02340dce9a299be3a0afa1cd0d7016c684d6b84aff069de091ba07d6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "335eac4f3e8b8a74a83f9e6d5381dbaa486dbd3494ddff534fef704e93805566",
+        "predictions_sha256": "658ecb84e55d6b8ba1cd4779b02688ddaffab4a2d9d7b51ccb336b53a26b7542"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "6223fd60175b494840f507418012f56ca82baae19f58fb51306b602df2f43a5b",
+        "predictions_sha256": "4848e29cda4c278462a8c198df9c3e9f86d59b9aa9a43f6160cff5545455cebe"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "9eeb8a3d9084b3d88f3060d1dfcab9c7376e71d447e7f62b83a4ca091c9237db",
+        "predictions_sha256": "a29f72392e0cdadade64a08db740ac211a574c5c06a0c0fe9a0a7e3157403e1d"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "98c4f3b5d21db315d45d8bdf1323af3beb86fbe62514a9105d177b0b04c8621b",
+        "predictions_sha256": "62064ddfeae19f81f39220612f3ce887b29b3bf04ab811c2ade11478888033bf"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "78f80816b5676991e82d016e54786fa89aa7adacbe45ad11751dcef9148670c8",
+        "predictions_sha256": "9ab03269284f6dd26038d34f36035237ffd858c8c4b5ae8845beec3db4e72fb7"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "31b701bbdcc2e514c49d912384a65e073334d4bc9f12eaf649734fafc67fa73d",
+        "predictions_sha256": "6a79f2974bfec975673e09f6950bde48cc16f5bb1015053748129605572da1b0"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "75ea3243afec7e0ea7894131651b3251355a64fcab1436f89221e8d72328ea7c",
+        "predictions_sha256": "2d5f1dbc2da8d24db389fe6b71a12dae029a6c6b4df0b32b7aa11cf9efcc212e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "1168198be1ee7b2de0709ed6a2c286942a0178d6c9e98e6910de154ce9404397",
+        "predictions_sha256": "4ae0e2b9584a90188ba2411292fabc501b941133f1cf514643f49c095748915c"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "b2c83c46c47dde4729804d1f1915302d90d1789ff53f9b85b137e9bc2c9d443f",
+        "predictions_sha256": "04d33221e4206d0fcb7c44a9e0d09bc23ed7ed461d520618cbe70bdcdc98d8d4"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "f1e7c54970952528459b8eabc1f6bf317e8a98d6a2d5198e038891dec53fc256",
+        "predictions_sha256": "bd254019061983725d71abb8e4bb1f23c20d0605b281569ac28b8f9956257c69"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "f77b4f290ffaf3ccf64ace0b14802cea1b35ffb4222fd5c78cc6d410f52027ac",
+        "predictions_sha256": "b22a4c123eaca000f521208ce572711bcce6bc5be513548a87723d56eb17d292"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "e92421bfcd575b9a5d3dae75104efd871ca706900828b3fdeec78a6f8689e2d0",
+        "predictions_sha256": "619964f09817ec07fce143365181c2849a31b3bc87f40c8936b13ee2f8aa7873"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "400afb1b17c7bd257001a1ccf4d9924b41a08ce933a9fbd2f8d6771f1b94b1a1",
+        "predictions_sha256": "c8699c4365453460ac0ad3984abf0c88eb181acfdb550bad1b4ecf959a786462"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "f98fa1de1cf56ccc5c61f9bdb7a62d03bffdcf994882b31f3c9c61c5007829ae",
+        "predictions_sha256": "cfe2390ca7d31090d877dbf89d7b3a48833c67e0acfd37f09489745e3e1b002a"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "68cb251c47a205131895d28886b5b7917cf9f1d596440dd61c466acf65936b19",
+        "predictions_sha256": "61e05b735216330531678f7f02f40282dc1e2abffdbec1b42d3280a826046457"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "6f9e2272b2858bb811bf452185e5ee64bfaab3b46b8d4e4f8fb49313b7f6ed4c",
+        "predictions_sha256": "dc2e497df1d0aab3b363cb2edddec3a46a0bf42d291c8eba0ce1077f40f32055"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "9239f0c0b6a6c7c5cfe369e0c6369e38f63d18c973bae06b149f64dd909d54d1",
+        "predictions_sha256": "61ce49e2a1b953ec67bb90903ffb9f66cec7b72a76ee671bc99f4b973af76e2e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "402beddd6f984a8779c15a5e06bff95910c3c13243e314fcf8617fe5391c0d28",
+        "predictions_sha256": "e63353dfad640027bd13e4945067ecf27e22254bed5505d1fdb39f760d3cccf6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "c30843b40de43f3f8d90eadb81e28ddad669e3a28a8f6f2bd3bb9818c382a1b7",
+        "predictions_sha256": "08559cc6ff4af9443177b5aefc5ea15846665c9bfb5ea62e7d4138d82059701a"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "c95519f1beda5c59b897f0e998769220488b6c2dd4772947aa321a36561bc59f",
+        "predictions_sha256": "e6699869a87b6b1cea9581a9eac8f4c7948150585b314f1b6b2916c7dfd9f43f"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "33d272328f334373db7c57e18fadb460c62a110e5461aa1e8d41ac496c683640",
+        "predictions_sha256": "53368b3e3b5bfac0242c998dd8a50bd3583ae04c2e85065ecf1d370567c70317"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "6aad574116865e29a808b78703aa0d7f8c9eb65e0572de13cb2d6be3db906351",
+        "predictions_sha256": "43396f6a634a85d3c83068ba1bd04e42ed187139681fe69a0caa1da4729abf6a"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "0d5d66cbe09fc109cab97d9735cb3fa332378fb0bc9e0b7462e208e461ae679a",
+        "predictions_sha256": "b6eebec7da946fb46ea3eb46ed9aa4257fdfea00b2d6b0f23c1d849a781d76da"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "5b532c2cce8a977334dbaa17cf30643592b2142c06f589582ce0456af1fbe3f8",
+        "predictions_sha256": "86709a7603c083b346b037808acec2526605dac968d72f3aecefe207ea926d45"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "2b87a1d390bc0f8ecd141b5b9550bcd6e5dc01d15b5e2f82b7a9c5b46662e42f",
+        "predictions_sha256": "c255b781dab6814f842fb75da493610ffe42e61cb44d5ed9b581126afbce12c9"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "91f7ac697c23fca6c62142e87480523a96ab8c6e435fc18c0bcfe05b3281cbd0",
+        "predictions_sha256": "f7fe1714b6bd95d3f57ee25c44d23ac68f04d03a01bb6d899289ae105defb634"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "1bbfed718ed563465d68a49865106cbe3d58061688c73cbb93caf6e8430cef0a",
+        "predictions_sha256": "a311c53142835e0cab1438b030c6bce7b8a0b7ef8ac1af2f083544ba1372f267"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "8c8fbb699761cf70ee8ed31aacabafb63c742456521611623b2490f2db9b2a64",
+        "predictions_sha256": "f10e387d2025596aca4953e8c92460ca24be5aeb964ad72db0b01f1ce7c618b8"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "7edd91aa1339847ed36fe44b394bc81baac90fd3d9065bb4d41669fceab86c25",
+        "predictions_sha256": "105fed24a432c2b1c357b4833432ecfd358407ba6f8536fcc439699d50eaea2b"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "ec78f622017c73556e87bb53713b02e4a83c8283770a066d8a2e72c24825f1e2",
+        "predictions_sha256": "1393bd7cf13b499f3593154c3634ea79311b0546d11e7db71f974b1bdde78a23"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "7bb7124658a534a39e933378632d3b07da3c819c02dd413d2cd67f16cf1ebe2c",
+        "predictions_sha256": "ec5bf02ecc007c504b93c0c05c04da74f9000f85e9b4ac771e342a53a0c2b9ec"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "6fbeef6a55bdc99063e493d4b75bbdb3ff43483826c1b805588dcaa84587599f",
+        "predictions_sha256": "b5381767757087c2786b475377d13ecd2b2983049482e35875f18ea235a93ef3"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "5ba8e2f8a48cfd0fe415d6781c552c2dc09476f159c5553c360e4c110ff4f7e6",
+        "predictions_sha256": "39a4a3f5c46907f8c647bc994e44d52b6dc252bea79d468937547f10d1228487"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "9260e2ec507aacde3398bfe376fb035a066eebe688491a84f9797ab7918c7e66",
+        "predictions_sha256": "7dabff8b5204ae2e76bd11d6b86f08cca74d84896cfe8409acc3c6bde6c0fb02"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "da7f3ab2b0f3d85406782045a8ced90d44c8b5352b0bde908834146c488d631d",
+        "predictions_sha256": "214b0f3afd604b52a6b09fb16f842161286574ec2b3d64e002df576267c11f1e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "11b02675e5e3b35df7cce97fb99fbec91970beaae2b5386486f8dbe4b97dbf16",
+        "predictions_sha256": "fe26f7449ba22c8ee83251b96f0456b4a65f290a68fd3a453a1ddb6f09dc570e"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "6ad002498bd2e250eaf771cf68724a2af1256ab8f313f3ec4e0143a25a0609e0",
+        "predictions_sha256": "aeb22fe2b829690771479143795d2271abc465f86542e79d934cda5bd0425103"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "8f9c8c192e173738db15cf61427d1e7140e0617e456fa8df13130f8b9bf2cf19",
+        "predictions_sha256": "ced1609beca726591b638ccbe5a88cf0d3b032cc782fbdb67653a4efb874e8a1"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "86155fb202aa85dfecd3a60fff11a4a20083fbdb3eb30dd9f3bf25a910e7401f",
+        "predictions_sha256": "c732e8d39a4f7cddb03a40fd38b13ea38b9a23ce7e163060b6edabdb24e83361"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "307aabaea470e67d97ea7d6bbc0cf11a7bb1cece2f4749ea4940a5ce1042008e",
+        "predictions_sha256": "8e26255e3067666a0acff5bed0cb35fbb723dd4e5b1c43133a81327f88b6c199"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "80297c7a90dafa3383284ec479792fc66444072a99497201476078e59684edba",
+        "predictions_sha256": "093b551ea4e4184f27178575adad6d40806011ec7b8264285381b6931b11f2d8"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "319927adc93e35ed73a10da255beabe37186d741084f7711775e73765d0e0302",
+        "predictions_sha256": "a39cb4f39236509873bb468d4ab0cc32fd0df09de837a90df19751a22ddefdf6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/full_flat/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "8e7cb8c264c53489b037d7a4672591cbd368f6ce932bdb58fa9f71dc778ef880",
+        "predictions_sha256": "7eb36d1ecc855f23383bc9d41a4c766df0f72a90d662249ba264b72542322776"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bbb_martins/levels/level_1/metrics.json",
+        "metrics_sha256": "4ff2f28a40a88f6d9ed5ea70cb2ad04a2beaa01ad43b210c3a08df56d967486f",
+        "predictions_sha256": "74bc20629e9b21f903961a7614b8f60188598768bcc53705616ca9ec1e37569d"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bbb_martins/levels/level_2/metrics.json",
+        "metrics_sha256": "ddfcf265a548dac1c7b88694bea99983f091a7ad32c9c4ec62373beaff17f128",
+        "predictions_sha256": "a5a3f8f3bb5fafc0ff346a9109a95af5a1916c485ac6f652da142fd990d69aa1"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bbb_martins/levels/level_3/metrics.json",
+        "metrics_sha256": "3403a023d984ea13e452913d81b0058eb8dc0bbbdc985804724a8f31aa4fa046",
+        "predictions_sha256": "50f2af0cc840d55d55ac96632115e29bd43df8ba9866255039e899fefe682031"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bbb_martins/levels/level_4/metrics.json",
+        "metrics_sha256": "a9bddeb13c02d4c1eff130761de207035f8e80c546e2523eb3d6438f9d82ae51",
+        "predictions_sha256": "42ac1660f2d343adcc7b499acddac4c211bb1ecfe79e225cabdd4d6d54e8b7ce"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bbb_martins/levels/level_5/metrics.json",
+        "metrics_sha256": "9af6a6e910b768c1d3bfb5b97b3f2f76ede46532bbce0b5ee7a513ec9fc8b8e0",
+        "predictions_sha256": "1f8312929919769f21315f08f5521c6c554696d125c3054526e868f85d5fd5b6"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_1/metrics.json",
+        "metrics_sha256": "2e1b8da4b876268500d6527cb2cfd531a840125c25f6b33381c1465376039498",
+        "predictions_sha256": "19ada8eea6bb0508a8685376e151d001c6adfc8e0bddaaa09050b7a7b0905c99"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_2/metrics.json",
+        "metrics_sha256": "aa70b7e921a283c8b7ba47b80b6ec0f1a8a3b7a3c1db221c6ace9f6e6ae15a0b",
+        "predictions_sha256": "aa05c865addf74709908d83ee38353265d84cb02799a1e04d631fc0b9ea2bbbf"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_3/metrics.json",
+        "metrics_sha256": "e4379ab14de17f530b2ca1696c3814aa1782712944b8512e7c8079eeb0f7f05f",
+        "predictions_sha256": "2c2f83011ccf79fb92db00b7eede22f5fb9cd278e78a4dc30aa3e15ae123c6f1"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_4/metrics.json",
+        "metrics_sha256": "85a45f9be4a5047d6c8ece2562438651172a0ca13f5436a55a5fd40d345ad725",
+        "predictions_sha256": "a52cdbbe7d0b20641f48fe65327c89c78b527c18943f62718c6af4f2c722548d"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_5/metrics.json",
+        "metrics_sha256": "48f77c4b62923dd3e7717dbd957d03b42f0ea1ff4b58ef6de5f0087e8514ab50",
+        "predictions_sha256": "3d7545e2795567bee325ca6f159fdb5719d65325feb08e1bd03cf651e0bca369"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/bioavailability_ma/levels/level_6/metrics.json",
+        "metrics_sha256": "81e6badc862e507bbfa3a200d4a065a4a2cb903199a029f703b21b9cdf614d2f",
+        "predictions_sha256": "751912a0071e1d1149ab5287e7e26be967d8ec81bd552bcced3171872a351e2b"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/skin_reaction/levels/level_1/metrics.json",
+        "metrics_sha256": "c38b3ec1c8238fd8f3ee3606462f8fbb9c27539a8219529191306c2d98f2e9cb",
+        "predictions_sha256": "67313bfd63f2dde2fef5a2bf1bbbe59f63b30969d9dd7d87028c1b8f924b9639"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/skin_reaction/levels/level_2/metrics.json",
+        "metrics_sha256": "a737f996008533336b8b32bcc33ce848ec0aa221a3330772beda89db1244da7f",
+        "predictions_sha256": "c8a4e4aa6d6fa553b25a561cd569a50d8e664b87867972341281ba8da9694ce2"
+      },
+      {
+        "metrics": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/replicate_01/progressive/skin_reaction/levels/level_3/metrics.json",
+        "metrics_sha256": "3c475bbbba08c645a4063c346577423cea4a2fe76f9d16fca448b7a6fb2c6fec",
+        "predictions_sha256": "860dd28c934ce2da1bddf09bfede2b393fede130d385f6dc1ea12224c2768250"
+      }
+    ],
+    "plotter_tests_passed": 37,
+    "visual_qa": "Final PNG inspected; distinct model/method encodings; six model-specific None points; no label collisions; shared focused y-axis; no Pro error bars",
+    "git_diff_check": "Passed for code/docs; generated SVG/TSV checked with blank-at-eol disabled to preserve standard serializer whitespace and empty TSV fields"
+  },
+  "artifacts": {
+    "figure": {
+      "path": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.png",
+      "sha256": "3271d1a8f53946b37ed36e0f50de8a891819a7ea3dc44f14b6f47a646843c878"
+    },
+    "svg": {
+      "path": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.svg",
+      "sha256": "eb0b09fd13a01756792c84ccf0d229efc80a689d21e9d4bfdf6323299bc27ed9"
+    },
+    "summary": {
+      "path": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/summary.json",
+      "sha256": "51129096fa57468967861bb2672e700b78199eb78101e4909b57082d8ac6a4b1"
+    },
+    "metrics_tsv": {
+      "path": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/progressive_configuration_metrics.tsv",
+      "sha256": "f9f1f1a8925c9ef2bc2212e820eeabad603fe1ce62210d0056c820da3d22abb4"
+    },
+    "references_tsv": {
+      "path": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/progressive_configuration_references.tsv",
+      "sha256": "b5102a12b5ea329bef436917b09979b8a51445ebe3a76dd03d2f37db3ee99858"
+    }
+  },
+  "maintenance_review": {
+    "status": "complete",
+    "removed_redundant_artifacts": [
+      {
+        "path": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/launch_args.json",
+        "bytes": 1065,
+        "sha256": "ca78beda8e88c8ef763429bafe0af071e3a7dbc038a8a68f495c3adb3ca4b424"
+      },
+      {
+        "path": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/startup_verification.json",
+        "bytes": 1334,
+        "sha256": "8bffecd43662b34d013eedb63baf37c540a4bb56a8c1c4d1c30fc995d74c5913"
+      },
+      {
+        "path": "outputs/paper/starling_conditioned_test_deepseek_v4_pro_0813_4_2_v1/run.log",
+        "bytes": 22216,
+        "sha256": "cabd3d40c180e1b60a30fa428b9d55f990f1ccd0c7a7bae01c16cba9967d42a2"
+      }
+    ],
+    "new_entrypoints": false,
+    "notes": [
+      "Existing family suite owns prior refresh and both organizations",
+      "Existing plotter owns cross-model comparisons and mixed run counts",
+      "Raw results and retry receipts retained; latest compact figure bundle is Git tracked"
+    ],
+    "verified_at": "2026-09-05T22:15:42.350851+00:00",
+    "base_commit": "4480ca2",
+    "regression_tests_passed": 132,
+    "full_source_plot_revalidation": "passed",
+    "png_byte_identical": true,
+    "all_scores_and_sample_sd_recomputed": true,
+    "original_flash_numeric_fields_unchanged": true,
+    "source_metric_and_prediction_hash_pairs_unchanged": 112,
+    "current_input_index_and_heldout_validation": "passed for all three tasks",
+    "local_document_links_and_registered_artifact_paths": "passed",
+    "fixes": [
+      "Validate disjoint source/output roots and source contract before prior refresh",
+      "Forward prior-refresh environment and tool service settings; record actual legacy prior retry width",
+      "Require identical prepared priors across organizations within each model",
+      "Preserve provider price limits during thinking/tool-choice compatibility fallback"
+    ]
+  }
+}

@@ -7,6 +7,7 @@ variable, concurrency budget, health state, and trace provenance.
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 import json
 import os
@@ -168,6 +169,7 @@ class _ProviderState:
     inflight: int = 0
     completed: int = 0
     failures: int = 0
+    cancelled: int = 0
     consecutive_failures: int = 0
     circuit_open_until: float = 0.0
     latency_ewma_s: float = 0.0
@@ -262,6 +264,7 @@ class OpenAIProviderPool:
                     "inflight": state.inflight,
                     "completed": state.completed,
                     "failures": state.failures,
+                    "cancelled": state.cancelled,
                     "consecutive_failures": state.consecutive_failures,
                     "circuit_open": state.circuit_open_until > now,
                     "circuit_open_remaining_seconds": max(
@@ -273,7 +276,47 @@ class OpenAIProviderPool:
             ]
         return {"version": POOL_CONFIG_VERSION, "providers": providers}
 
-    def _acquire(self, excluded: set[str]) -> _ProviderState:
+    async def async_chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
+        """Use the same provider slots and health state, with cancellable HTTP calls."""
+        attempts, excluded = [], set()
+        for _ in range(min(len(self._states), self.config.max_failovers + 1)):
+            while (state := self._acquire(excluded, wait=False)) is None:
+                await asyncio.sleep(0.05)
+            started = self._clock()
+            execution = {"provider": state.spec.name, "base_url": state.spec.base_url,
+                         "requested_model": state.spec.model}
+            try:
+                response = await state.client.async_chat_json(messages)
+            except asyncio.CancelledError:
+                with self._condition:
+                    state.inflight -= 1
+                    state.cancelled += 1
+                    self._condition.notify_all()
+                raise
+            except Exception as exc:
+                latency = max(0.0, self._clock() - started)
+                circuit_failure = _is_transport_or_provider_failure(exc)
+                self._release_failure(state, latency_s=latency, circuit_failure=circuit_failure)
+                attempts.append({**execution, "status": "error", "latency_seconds": latency,
+                                 "error_type": type(exc).__name__, "error": str(exc)[:500],
+                                 "circuit_failure": circuit_failure})
+                excluded.add(state.spec.name)
+                continue
+            latency = max(0.0, self._clock() - started)
+            self._release_success(state, latency_s=latency)
+            execution.update(status="ok", latency_seconds=latency,
+                             served_model=str(response.get("model") or ""),
+                             request_id=str(response.get("id") or ""))
+            attempts.append(execution)
+            response.update(execution_provider=execution, execution_provider_attempts=attempts)
+            return response
+        raise ProviderPoolExhausted("all attempted providers failed", attempts=attempts)
+
+    async def aclose(self) -> None:
+        for state in self._states:
+            await state.client.aclose()
+
+    def _acquire(self, excluded: set[str], *, wait: bool = True) -> _ProviderState | None:
         with self._condition:
             while True:
                 now = self._clock()
@@ -296,6 +339,8 @@ class OpenAIProviderPool:
                         "no untried provider remains",
                         attempts=[],
                     )
+                if not wait:
+                    return None
                 reopen_delays = [
                     state.circuit_open_until - now
                     for state in remaining

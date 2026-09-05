@@ -21,7 +21,7 @@ from tools.service.schemas import (
 from tools.service.tools.base import BaseTool
 
 
-TOOL_CACHE_NAMESPACE = "tool-service-2026-08-02-v1"
+TOOL_CACHE_NAMESPACE = "tool-service-2026-09-04-v3"
 
 
 class ToolRegistry:
@@ -159,5 +159,7 @@ class ToolRegistry:
             "input": request.input,
             "return_debug": request.options.return_debug,
         }
+        if request.tool_name in {"molecule_properties", "properties_compare"}:
+            payload["predictor_revision"] = "serialized-molgpka-v1"
         encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(encoded.encode("utf-8")).hexdigest()

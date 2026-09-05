@@ -16,7 +16,7 @@ import json
 import math
 from pathlib import Path
 import re
-from statistics import mean
+from statistics import mean, stdev
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -522,12 +522,23 @@ def collect_conditioned_progressive_resource_data(
     manifests: list[dict[str, Any]] = []
     for task, task_root in roots_by_task.items():
         manifest = _load_json(task_root / "experiment_manifest.json")
+        if manifest.get("experiment") == "conditioned_assay_matched_full_flat.v1":
+            source_path = Path(manifest["matched_progressive_root"]) / "experiment_manifest.json"
+            if sha256_file(source_path) != manifest["matched_source_manifest_sha256"]:
+                raise ValueError(f"Matched progressive source manifest changed: {source_path}")
+            source_manifest = _load_json(source_path)
+            # Early matched manifests inherit these fields through their pinned source.
+            for field in ("min_similarity", "condition_policy"):
+                manifest.setdefault(field, source_manifest.get(field))
+            if manifest["model"] == source_manifest["model"]:
+                manifest.setdefault("model_identity", source_manifest.get("model_identity", manifest["model"]))
         manifests.append(manifest)
         split_schemes.add(str(manifest.get("split_scheme") or "scaffold"))
         if manifest.get("experiment") not in {
             "conditioned_assay_progressive_visible.v6",
             "conditioned_assay_progressive_visible.v7",
             "conditioned_assay_progressive_visible.v8",
+            "conditioned_assay_matched_full_flat.v1",
         }:
             raise ValueError(f"Not a progressive experiment: {task_root}")
         if task not in manifest.get("tasks", []):
@@ -542,6 +553,8 @@ def collect_conditioned_progressive_resource_data(
         ]
         expected_n = len(expected_indices)
         task_label = CONDITIONED_TASK_SPECS[task][0]
+        prepared_digests = []
+        evidence_digests = []
         for level_row in manifest["inputs"][task]["levels"]:
             level = int(level_row["level"])
             metrics_path = (
@@ -573,6 +586,13 @@ def collect_conditioned_progressive_resource_data(
                 )
                 prepared = _load_json(level_dir / "prepared.json")
                 output = _load_json(level_dir / "output.json")
+                prepared_digests.append((query_index, level, _sha256_json(prepared)))
+                evidence_digests.append((query_index, level, _sha256_json({
+                    key: value for key, value in prepared.items()
+                    if key not in {"query_prior", "reused_none_final", "reused_single_source_index"}
+                })))
+                if output.get("status") not in {"ok", "carried_forward", "reused_none"}:
+                    raise ValueError(f"Unsuccessful level output: {level_dir}")
                 n_molecules = int(prepared["n_active_molecules"])
                 n_cards = int(prepared["n_active_cards"])
                 active_molecules.append(n_molecules)
@@ -639,6 +659,8 @@ def collect_conditioned_progressive_resource_data(
 
         task_contracts[task] = {
             "progressive_root": str(task_root),
+            "prepared_inputs_sha256": _sha256_json(prepared_digests),
+            "prepared_evidence_sha256": _sha256_json(evidence_digests),
             "experiment": manifest["experiment"],
             "evaluation_subset": manifest["evaluation_subset"],
             "visibility_mode": manifest["visibility_mode"],
@@ -670,7 +692,7 @@ def collect_conditioned_progressive_resource_data(
                     str(provider.get("base_url") or "")
                     for provider in manifest.get("execution_providers") or []
                 }
-            ),
+            ) or [str(manifest.get("base_url") or "")],
             "n": expected_n,
             "split_scheme": str(manifest.get("split_scheme") or "scaffold"),
         }
@@ -728,7 +750,7 @@ _PROGRESSIVE_REPLICATE_VALUE_FIELDS = (
 def _aggregate_progressive_replicate_rows(
     rows_by_replicate: list[list[dict[str, Any]]],
 ) -> list[dict[str, Any]]:
-    """Average exact-contract repeats and retain their observed min-max range."""
+    """Average exact-contract repeats, retaining sample SD and observed range."""
     if not rows_by_replicate:
         raise ValueError("At least one progressive replicate is required")
     keys = [
@@ -753,6 +775,7 @@ def _aggregate_progressive_replicate_rows(
                 item[field] = mean(values)
                 item[f"{field}_min"] = min(values)
                 item[f"{field}_max"] = max(values)
+                item[f"{field}_sd"] = stdev(values)
         stable_fields = (
             set(repeats[0])
             - set(value_fields)
@@ -773,10 +796,52 @@ def _aggregate_progressive_replicate_rows(
     return aggregated
 
 
+def _model_plot_label(model: str) -> str:
+    for name in ("flash", "pro"):
+        if name in model.lower().split("-"):
+            return name.title()
+    return model.rsplit("/", 1)[-1]
+
+
+def _replicate_bounds(row: dict[str, Any], field: str, interval: str) -> tuple[float, float]:
+    value = float(row[field])
+    if interval == "sd_if_repeated":
+        if int(row.get("n_replicates", 1)) == 1:
+            return value, value
+        interval = "sd"
+    if interval == "sd":
+        if int(row.get("n_replicates", 1)) < 2:
+            raise ValueError("Sample SD requires at least two runs per curve point")
+        sd = float(row[f"{field}_sd"])
+        return value - sd, value + sd
+    if interval == "range":
+        return float(row.get(f"{field}_min", value)), float(row.get(f"{field}_max", value))
+    raise ValueError(f"Unknown replicate interval: {interval}")
+
+
+def _matched_organization_comparison(reference: dict, comparison: dict, *, cross_model: bool = False) -> bool:
+    """Allow only the frozen full-flat/v8 prompt contrast over identical inputs."""
+    profiles = {
+        "conditioned_assay_progressive_visible.v8": "progressive_compact_tools_short_aliases.v2",
+        "conditioned_assay_matched_full_flat.v1": "independent_cumulative_tools_short_aliases.v1",
+    }
+    if {reference["experiment"], comparison["experiment"]} != set(profiles):
+        return False
+    for contract in (reference, comparison):
+        if contract["prompt_profile"] != profiles[contract["experiment"]]:
+            raise ValueError("Unsupported prompt profile for matched full-flat comparison")
+    prepared_field = "prepared_evidence_sha256" if cross_model else "prepared_inputs_sha256"
+    for field in ("selection", prepared_field, "index_sha256", "family_manifest_sha256"):
+        if reference.get(field) is None or reference[field] != comparison.get(field):
+            raise ValueError(f"Matched full-flat comparison differs in {field}")
+    return True
+
+
 def collect_conditioned_progressive_configuration_data(
     *,
     configuration_roots: dict[str, dict[str, Path | list[Path]]],
     lineage_receipts_by_task: dict[str, Path] | None = None,
+    allow_model_comparison: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Collect configurations, averaging only exact-contract replicate roots."""
     if len(configuration_roots) < 2:
@@ -805,6 +870,7 @@ def collect_conditioned_progressive_configuration_data(
         "split_scheme",
     )
     replicate_invariant_fields = invariant_fields + (
+        "prepared_inputs_sha256",
         "selection",
         "agent_model",
         "index_sha256",
@@ -859,7 +925,9 @@ def collect_conditioned_progressive_configuration_data(
                     )
             aggregate_rows = _aggregate_progressive_replicate_rows(replicate_rows)
             all_rows.extend(
-                {"configuration": configuration, **row} for row in aggregate_rows
+                {"configuration": configuration, "model_identity": reference_contract["model_identity"],
+                 "organization": "full_flat" if reference_contract["experiment"] == "conditioned_assay_matched_full_flat.v1" else "progressive",
+                 **row} for row in aggregate_rows
             )
             task_contracts[task] = {
                 **reference_contract,
@@ -906,14 +974,29 @@ def collect_conditioned_progressive_configuration_data(
                 if configuration not in present_configurations
             ],
         }
+        model_references = {reference_contract["model_identity"]: reference_contract}
         for configuration in present_configurations[1:]:
             contract = contracts_by_configuration[configuration]["task_contracts"][task]
+            same_model_reference = model_references.setdefault(contract["model_identity"], contract)
+            _matched_organization_comparison(same_model_reference, contract)
+            cross_model = allow_model_comparison and reference_contract["model_identity"] != contract["model_identity"]
+            if cross_model:
+                for field in ("prepared_evidence_sha256", "selection", "index_sha256", "family_manifest_sha256"):
+                    if not contract.get(field) or contract[field] != reference_contract.get(field):
+                        raise ValueError(f"Cross-model comparison differs in {field}: {task}")
+                task_audit.setdefault("model_comparisons", []).append(configuration)
+            organization_comparison = _matched_organization_comparison(reference_contract, contract, cross_model=cross_model)
+            compared_fields = tuple(
+                field for field in invariant_fields
+                if not (organization_comparison and field in {"experiment", "prompt_profile"})
+                and not (cross_model and field == "model_identity")
+            )
             mismatches = {
                 field: {
                     "reference": reference_contract[field],
                     "comparison": contract[field],
                 }
-                for field in invariant_fields
+                for field in compared_fields
                 if contract[field] != reference_contract[field]
             }
             if mismatches:
@@ -931,6 +1014,12 @@ def collect_conditioned_progressive_configuration_data(
                     f"{configuration} has {levels}, expected {reference_levels}"
                 )
             task_audit["invariants"][configuration] = "matched"
+            if organization_comparison:
+                task_audit["organization_comparison"] = {
+                    "varying_fields": ["experiment", "prompt_profile"],
+                    "prepared_inputs_sha256": contract["prepared_inputs_sha256"],
+                    "selection_and_retrieval_equal": True,
+                }
             task_audit["index_sha256_equal"] &= (
                 contract["index_sha256"] == reference_contract["index_sha256"]
             )
@@ -1017,7 +1106,18 @@ def collect_conditioned_progressive_configuration_data(
             "tasks": list(expected_tasks),
             "split_scheme": next(iter(split_schemes)),
             "strict_invariants": list(invariant_fields),
+            "organization_comparison_exception": (
+                "Only frozen v8 versus matched full-flat profiles may differ in "
+                "experiment/prompt_profile, with identical prepared inputs, selection and retrieval."
+            ),
             "resource_metrics_included": True,
+            "allow_model_comparison": allow_model_comparison,
+            "model_comparison_exception": (
+                "Explicit model comparisons retain identical prepared evidence/tools and selection; "
+                "only model identity, endpoint and model-derived query_prior/reused_none_final/"
+                "reused_single_source_index may differ. Replicate aggregation remains strict."
+                if allow_model_comparison else None
+            ),
             "replicate_statistic": "mean with observed min-max range",
             "task_audits": audits,
             "configurations_contract": contracts_by_configuration,
@@ -1033,10 +1133,36 @@ def collect_conditioned_progressive_configuration_reference_data(
     baseline_root: Path,
     baseline_roots_by_task: dict[str, Path] | None = None,
     omit_mismatched_baselines: bool = False,
+    allow_model_comparison: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Collect one shared None point and task-matched baseline references."""
-    if len(configuration_roots) < 2:
-        raise ValueError("At least two progressive configurations are required")
+    if allow_model_comparison:
+        from tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve import _model_identity
+        groups = {}
+        for name, tasks in configuration_roots.items():
+            for task, paths in tasks.items():
+                manifest = _load_json(_configuration_root_replicates(paths)[0] / "experiment_manifest.json")
+                model = _model_identity(manifest.get("model_identity", manifest["model"]))
+                groups.setdefault(model, {}).setdefault(name, {})[task] = paths
+        rows, audits, baselines = [], {}, {}
+        for model, configs in groups.items():
+            model_rows, audit = collect_conditioned_progressive_configuration_reference_data(
+                configuration_roots=configs, none_root=none_root, baseline_root=baseline_root,
+                baseline_roots_by_task=baseline_roots_by_task,
+                omit_mismatched_baselines=omit_mismatched_baselines,
+            )
+            audits[model] = audit
+            for row in model_rows:
+                if row["result_type"] == "none":
+                    rows.append({**row, "model_identity": model, "plot_label": "None · " + _model_plot_label(model)})
+                else:
+                    key = (row["task"], row["method"])
+                    if key in baselines and baselines[key] != row:
+                        raise ValueError(f"Baseline differs between models: {key}")
+                    baselines[key] = row
+        return rows + list(baselines.values()), {"none_shared_within_model": True, "model_audits": audits}
+    if not configuration_roots:
+        raise ValueError("At least one progressive configuration is required")
     configurations = list(configuration_roots)
     tasks = tuple(
         dict.fromkeys(
@@ -1379,6 +1505,7 @@ def plot_conditioned_progressive_overview(
     output_png: Path,
     tasks: tuple[str, ...] = ("bbb_martins", "bioavailability_ma", "skin_reaction"),
     split_scheme: str = "scaffold",
+    evaluation_subset: str = "valid",
 ) -> None:
     """Plot performance, baselines, retrieval volume, and token use together."""
     plt.rcParams.update(
@@ -1611,7 +1738,8 @@ def plot_conditioned_progressive_overview(
     fig.text(
         0.055,
         0.958,
-        f"{split_scheme.title()} validation · visible append-only DeepSeek-V4-Flash "
+        f"{split_scheme.title()} {'validation' if evaluation_subset == 'valid' else evaluation_subset} "
+        "· visible append-only DeepSeek-V4-Flash "
         "updates · task-specific source-purity contracts · latest complete "
         "three-task runs",
         fontsize=10,
@@ -1863,11 +1991,26 @@ def plot_conditioned_progressive_configuration_comparison(
     split_scheme: str = "scaffold",
     transport_matched: bool = True,
     retrieval_lineage_matched: bool = True,
+    evaluation_subset: str = "valid",
+    organization_comparison: bool = False,
+    performance_only: bool = False,
+    replicate_interval: str = "range",
 ) -> None:
     """Plot multiple progressive configurations with full resource panels."""
     if len(configurations) < 2:
         raise ValueError("At least two configurations are required for comparison")
-    styles = (("--", "white", 0.72), ("-", "color", 1.0), (":", "white", 1.0))
+    styles = (("--", "white", 0.72), ("-", "color", 1.0), (":", "white", 1.0), ("-.", "color", 1.0))
+    models = list(dict.fromkeys(str(row.get("model_identity", "")) for row in rows))
+    cross_model = len(models) > 1
+    model_colors = dict(zip(models, ("#2679B5", "#D47A1F"), strict=False))
+    if cross_model and len(models) > 2:
+        raise ValueError("Use a separate figure for more than two models")
+    def series_style(index, configuration):
+        if cross_model:
+            row = next(row for row in rows if row["configuration"] == configuration)
+            model = str(row["model_identity"])
+            return styles[0 if row["organization"] == "full_flat" else 1], model_colors[model], ("o" if models.index(model) == 0 else "D")
+        return styles[index], None, None
     if len(configurations) > len(styles):
         raise ValueError(f"At most {len(styles)} configurations can be plotted")
     resource_fields = (
@@ -1893,6 +2036,8 @@ def plot_conditioned_progressive_configuration_comparison(
         ("mean_prompt_tokens_per_call", "D  Prompt tokens/call (k)", 1000.0),
         ("mean_reasoning_tokens_per_call", "E  Reasoning tokens/call (k)", 1000.0),
     ]
+    if performance_only:
+        panel_specs = panel_specs[:1]
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
@@ -1906,7 +2051,7 @@ def plot_conditioned_progressive_configuration_comparison(
     fig, axes = plt.subplots(
         n_rows,
         len(tasks),
-        figsize=(5.7 * len(tasks), 4.15 * n_rows + 1.1),
+        figsize=(5.7 * len(tasks), 6.5 if performance_only else 4.15 * n_rows + 1.1),
         squeeze=False,
         sharex=False,
     )
@@ -1927,33 +2072,30 @@ def plot_conditioned_progressive_configuration_comparison(
             if not config_rows:
                 continue
             levels = [int(row["level"]) for row in config_rows]
-            linestyle, fill, alpha = styles[config_index]
+            (linestyle, fill, alpha), series_color, series_marker = series_style(config_index, configuration)
+            color = series_color or TASK_SPECS[task].color
+            marker = series_marker or TASK_SPECS[task].marker
             for row_index, (field, _, divisor) in enumerate(panel_specs):
                 values = [float(row[field]) / divisor for row in config_rows]
                 axes[row_index, column].plot(
                     levels,
                     values,
-                    color=TASK_SPECS[task].color,
+                    color=color,
                     linestyle=linestyle,
-                    marker=TASK_SPECS[task].marker,
+                    marker=marker,
                     markerfacecolor=(
-                        TASK_SPECS[task].color if fill == "color" else "white"
+                        color if fill == "color" else "white"
                     ),
-                    markeredgecolor=TASK_SPECS[task].color,
+                    markeredgecolor=color,
                     markeredgewidth=1.1,
                     markersize=6.2,
                     linewidth=2.2,
                     alpha=alpha,
                     zorder=3,
                 )
-                lower = [
-                    float(row.get(f"{field}_min", row[field])) / divisor
-                    for row in config_rows
-                ]
-                upper = [
-                    float(row.get(f"{field}_max", row[field])) / divisor
-                    for row in config_rows
-                ]
+                bounds = [_replicate_bounds(row, field, replicate_interval) for row in config_rows]
+                lower = [lo / divisor for lo, _ in bounds]
+                upper = [hi / divisor for _, hi in bounds]
                 if any(
                     lo < value or hi > value
                     for lo, value, hi in zip(lower, values, upper, strict=True)
@@ -1966,7 +2108,7 @@ def plot_conditioned_progressive_configuration_comparison(
                             [hi - value for value, hi in zip(values, upper, strict=True)],
                         ),
                         fmt="none",
-                        ecolor=TASK_SPECS[task].color,
+                        ecolor=color,
                         elinewidth=1.15,
                         capsize=3.2,
                         capthick=1.15,
@@ -1975,16 +2117,24 @@ def plot_conditioned_progressive_configuration_comparison(
                     )
                 if row_index == 0:
                     offset = (7, -13, 20)[config_index % 3]
-                    axes[0, column].annotate(
-                        f"{values[-1]:.3f}",
-                        (levels[-1], values[-1]),
-                        xytext=(0, offset),
-                        textcoords="offset points",
-                        ha="center",
-                        va="bottom" if offset > 0 else "top",
-                        fontsize=7.1,
-                        color=TASK_SPECS[task].color,
-                    )
+                    for x, y in (list(zip(levels, values)) if performance_only and not cross_model else [(levels[-1], values[-1])]):
+                        if performance_only:
+                            peers = [float(row[field]) / divisor for row in task_rows if int(row["level"]) == x]
+                            if config_index and all(abs(value - y) < 1e-12 for value in peers):
+                                continue
+                            offset = 8 if y >= max(peers) else -14
+                        label_y = y
+                        if performance_only:
+                            point_index = levels.index(x)
+                            label_y = upper[point_index] if offset > 0 else lower[point_index]
+                        if cross_model:
+                            continue  # Four endpoint labels collide; exact values remain in the TSV.
+                        axes[0, column].annotate(
+                            f"{y:.3f}", (x, label_y), xytext=(0, offset),
+                            textcoords="offset points", ha="center",
+                            va="bottom" if offset > 0 else "top",
+                            fontsize=7.1, color=TASK_SPECS[task].color,
+                        )
         missing_configurations = [
             configuration
             for configuration in configurations
@@ -2005,7 +2155,7 @@ def plot_conditioned_progressive_configuration_comparison(
         levels = sorted({int(row["level"]) for row in task_rows})
         task_reference_rows = [row for row in reference_rows if row["task"] == task]
         none_rows = [row for row in task_reference_rows if row["result_type"] == "none"]
-        if len(none_rows) > 1:
+        if len(none_rows) > 1 and not cross_model:
             raise ValueError(f"Multiple no-retrieval references for {task}")
         baseline_rows = sorted(
             (row for row in task_reference_rows if row["result_type"] == "baseline"),
@@ -2013,17 +2163,21 @@ def plot_conditioned_progressive_configuration_comparison(
         )
         performance_ticks = list(levels)
         performance_labels = [f"L{level}" for level in levels]
-        if none_rows:
-            none_value = float(none_rows[0]["macro_f1"])
+        for none_index, none_row in enumerate(none_rows):
+            none_value = float(none_row["macro_f1"])
+            none_x = 0.0 if len(none_rows) == 1 else -0.12 + 0.24 * none_index
+            none_color = model_colors.get(none_row.get("model_identity"), "#444444") if cross_model else "#444444"
             axes[0, column].scatter(
-                [0], [none_value], marker="o", s=46, facecolor="#444444",
+                [none_x], [none_value], marker="D" if cross_model and none_index else "o", s=46, facecolor=none_color,
                 edgecolor="white", linewidth=0.7, zorder=5,
             )
             axes[0, column].annotate(
-                f"{none_value:.3f}", (0, none_value), xytext=(0, 7),
+                f"{none_value:.3f}", (none_x, none_value),
+                xytext=(0, 7 if len(none_rows) == 1 or none_value == max(float(row["macro_f1"]) for row in none_rows) else -14),
                 textcoords="offset points", ha="center", fontsize=7.1,
-                color="#444444",
+                color=none_color,
             )
+        if none_rows:
             performance_ticks.insert(0, 0)
             performance_labels.insert(0, "None")
         baseline_start = max(levels) + 1.8
@@ -2043,7 +2197,8 @@ def plot_conditioned_progressive_configuration_comparison(
             )
         performance_ticks.extend(baseline_x)
         performance_labels.extend(
-            CONDITIONED_BASELINE_TICKS[str(row["method"])] for row in baseline_rows
+            CONDITIONED_BASELINE_TICKS[str(row["method"])].replace("MM KNN", "MM\nKNN")
+            for row in baseline_rows
         )
         axes[0, column].set_xticks(performance_ticks, performance_labels)
         axes[0, column].tick_params(axis="x", labelsize=6.4)
@@ -2064,7 +2219,7 @@ def plot_conditioned_progressive_configuration_comparison(
             for configuration in configurations
             if any(row["configuration"] == configuration for row in task_rows)
         ]
-        if len(molecule_series) > 1 and all(
+        if not performance_only and len(molecule_series) > 1 and all(
             series == molecule_series[0] for series in molecule_series[1:]
         ):
             axes[1, column].text(
@@ -2088,14 +2243,16 @@ def plot_conditioned_progressive_configuration_comparison(
             axes[row_index, column].set_xticks(
                 levels, [f"L{level}" for level in levels]
             )
-        axes[n_rows - 1, column].set_xlabel("Progressive assay-family level")
+        axes[n_rows - 1, column].set_xlabel(
+            "Cumulative evidence level / baselines" if performance_only
+            else "Cumulative assay-family level"
+        )
 
     macro_values = [float(row["macro_f1"]) for row in rows + reference_rows]
     macro_values.extend(
-        float(row[key])
+        bound
         for row in rows
-        for key in ("macro_f1_min", "macro_f1_max")
-        if key in row
+        for bound in _replicate_bounds(row, "macro_f1", replicate_interval)
     )
     macro_limits = (
         max(0.0, math.floor((min(macro_values) - 0.015) * 50) / 50),
@@ -2111,45 +2268,64 @@ def plot_conditioned_progressive_configuration_comparison(
 
     for row_index, (field, ylabel, divisor) in enumerate(panel_specs[1:], start=1):
         maximum = max(
-            float(row.get(f"{field}_max", row[field])) / divisor for row in rows
+            _replicate_bounds(row, field, replicate_interval)[1] / divisor for row in rows
         )
         for column in range(len(tasks)):
             axes[row_index, column].set_ylim(0, maximum * 1.16 if maximum else 1.0)
         axes[row_index, 0].set_ylabel(ylabel)
 
     fig.suptitle(
-        "Progressive record-card budget comparison",
+        " vs ".join(_model_plot_label(model) for model in models) + " · full-flat and progressive" if cross_model else
+        "Full-flat vs progressive · matched evidence" if organization_comparison
+        else "Progressive record-card budget comparison",
         fontsize=16,
         fontweight="bold",
         x=0.055,
+        y=0.995 if performance_only else 0.98,
         ha="left",
     )
+    repeat_counts = sorted({int(row.get("n_replicates", 1)) for row in rows})
+    interval_note = (
+        "mean ± 1 sample SD (ddof=1); "
+        + (f"{repeat_counts[0]} runs per point" if len(repeat_counts) == 1 else "run counts vary by point")
+        if replicate_interval in {"sd", "sd_if_repeated"} else
+        "means across reruns · whiskers show observed min–max (absent for a single run)"
+    )
+    if cross_model:
+        interval_note = " · ".join(
+            _model_plot_label(model) + ": " + (
+                f"{max(int(row.get('n_replicates', 1)) for row in rows if row.get('model_identity') == model)} runs, mean ± SD"
+                if any(int(row.get("n_replicates", 1)) > 1 for row in rows if row.get("model_identity") == model)
+                else "1 run, no SD") for model in models
+        ) + " · default 4/2 card budget"
     fig.text(
         0.055,
-        0.965,
-        f"{split_scheme.title()} validation · means across exact-contract reruns · "
-        "whiskers show observed min–max",
+        0.935 if performance_only else 0.965,
+        f"{split_scheme.title()} {'test' if evaluation_subset == 'test' else 'validation'} · "
+        + interval_note,
         fontsize=9.5,
         color="#555555",
     )
     handles = []
     for index, configuration in enumerate(configurations):
-        linestyle, fill, alpha = styles[index]
+        (linestyle, fill, alpha), color, marker = series_style(index, configuration)
+        color = color or "#333333"
         handles.append(
             Line2D(
-                [0], [0], color="#333333", linestyle=linestyle, marker="o",
-                markerfacecolor="#333333" if fill == "color" else "white",
-                markeredgecolor="#333333", linewidth=2.2, alpha=alpha,
+                [0], [0], color=color, linestyle=linestyle, marker=marker or "o",
+                markerfacecolor=color if fill == "color" else "white",
+                markeredgecolor=color, linewidth=2.2, alpha=alpha,
                 label=configuration,
             )
         )
     if reference_rows:
-        handles.append(
-            Line2D(
-                [0], [0], marker="o", linestyle="none", markerfacecolor="#444444",
-                markeredgecolor="white", label="None",
+        if not cross_model:
+            handles.append(
+                Line2D(
+                    [0], [0], marker="o", linestyle="none", markerfacecolor="#444444",
+                    markeredgecolor="white", label="None",
+                )
             )
-        )
         for method, label, _ in CONDITIONED_BASELINES:
             if not any(row.get("method") == method for row in reference_rows):
                 continue
@@ -2161,8 +2337,8 @@ def plot_conditioned_progressive_configuration_comparison(
                 )
             )
     fig.legend(
-        handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.025),
-        ncol=4, frameon=False, fontsize=8.0,
+        handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.015 if performance_only else 0.025),
+        ncol=5 if cross_model else 4, frameon=False, fontsize=8.0,
     )
     transport_note = (
         "Provider transport is matched across configurations; token panels are "
@@ -2174,8 +2350,7 @@ def plot_conditioned_progressive_configuration_comparison(
     )
     resource_note = (
         "Molecules and cards/molecule are means over all queries; prompt and "
-        "reasoning tokens are means over actual model calls. Whiskers are the "
-        "observed min–max across exact-contract reruns and are absent for a single run. "
+        "reasoning tokens are means over actual model calls. " + interval_note + ". "
     )
     lineage_note = (
         "Retrieval index and family-manifest hashes are matched across configurations."
@@ -2188,17 +2363,32 @@ def plot_conditioned_progressive_configuration_comparison(
         "MiniMol/Morgan references and do not extend into resource panels.\n"
         if reference_rows else ""
     )
+    if cross_model:
+        reference_note = "None is model-specific; matched baselines are shared.\n"
+        transport_note = "Models and providers differ; token panels show observed usage, not a controlled transport comparison."
     fig.text(
         0.055,
-        0.072,
-        reference_note + resource_note + "\n" + lineage_note + " " + transport_note,
+        0.175 if performance_only else 0.072,
+        ("All curves use the same test cohort, cumulative evidence and tools. None and query priors are model-specific.\n"
+         "Dashed/open: full-flat; solid/filled: progressive. Right-side baselines are unchanged; KNN references are train-only.\n"
+         "Whiskers show ±1 sample SD across repeated runs (not a confidence interval). Single-run curves have no estimated uncertainty interval."
+         if cross_model and performance_only else
+         "Each level uses identical cumulative evidence and tools; full-flat reasons independently, "
+         "progressive carries prior state.\nNone is shared. Right-side baselines use the same test cohort; "
+         "KNN references are train-only.\n"
+         + ("SD describes run-to-run variation with frozen inputs, not a confidence interval. None and baselines are single fixed references."
+            if replicate_interval == "sd" else
+            "Whiskers, when present, are rerun ranges, not confidence intervals.")
+         if performance_only and organization_comparison else
+         reference_note + resource_note + "\n" + lineage_note + " " + transport_note),
         fontsize=8.0, color="#555555", linespacing=1.35,
+        va="top" if performance_only else "baseline",
     )
     fig.subplots_adjust(
         left=0.075,
         right=0.985,
-        top=0.94,
-        bottom=0.145,
+        top=0.82 if performance_only else 0.94,
+        bottom=0.34 if performance_only else 0.145,
         hspace=0.42,
         wspace=0.19,
     )
@@ -2632,6 +2822,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--analysis-dir", default="")
     parser.add_argument("--output-stem", default="assay_retrieval_scaling")
     parser.add_argument(
+        "--performance-only", action="store_true",
+        help="For configuration comparisons, show only level Macro-F1 and baseline references.",
+    )
+    parser.add_argument(
+        "--replicate-interval", choices=("range", "sd", "sd_if_repeated"), default="range",
+        help="Configuration-curve whiskers: observed min-max (default) or ±1 sample SD across runs.",
+    )
+    parser.add_argument("--allow-model-comparison", action="store_true",
+                        help="Compare models only with identical prepared evidence/tools; keep model-specific None references.")
+    parser.add_argument(
         "--allow-incomplete",
         action="store_true",
         help="Allow a diagnostic partial figure; complete zero-failure curves are required by default.",
@@ -2761,6 +2961,7 @@ def main(argv: list[str] | None = None) -> int:
         rows, summary = collect_conditioned_progressive_configuration_data(
             configuration_roots=configuration_roots,
             lineage_receipts_by_task=lineage_receipts_by_task,
+            allow_model_comparison=args.allow_model_comparison,
         )
         baseline_roots_by_task = _parse_task_path_overrides(
             args.conditioned_progressive_baseline_root
@@ -2774,9 +2975,15 @@ def main(argv: list[str] | None = None) -> int:
                 omit_mismatched_baselines=(
                     args.omit_mismatched_progressive_baselines
                 ),
+                allow_model_comparison=args.allow_model_comparison,
             )
         )
         summary["comparison_contract"]["performance_references"] = reference_summary
+        summary["comparison_contract"]["replicate_interval"] = args.replicate_interval
+        if args.replicate_interval in {"sd", "sd_if_repeated"}:
+            for row in rows:
+                _replicate_bounds(row, "macro_f1", args.replicate_interval)
+            summary["comparison_contract"]["replicate_statistic"] = "arithmetic mean ±1 sample SD (ddof=1) for repeated runs; single-run curves have no interval"
         summary["reference_rows"] = reference_rows
         if not args.analysis_dir:
             analysis_dir = Path(
@@ -2800,6 +3007,14 @@ def main(argv: list[str] | None = None) -> int:
         )
         comparison_contract = summary["comparison_contract"]
         task_audits = comparison_contract["task_audits"]
+        contracts = comparison_contract["configurations_contract"]
+        evaluation_subsets = {
+            task_contract["evaluation_subset"]
+            for configuration in contracts.values()
+            for task_contract in configuration["task_contracts"].values()
+        }
+        if len(evaluation_subsets) != 1:
+            raise ValueError("Mixed evaluation subsets in configuration figure")
         plot_conditioned_progressive_configuration_comparison(
             rows=rows,
             output_svg=figure_dir / f"{output_stem}.svg",
@@ -2808,6 +3023,10 @@ def main(argv: list[str] | None = None) -> int:
             configurations=tuple(comparison_contract["configurations"]),
             reference_rows=reference_rows,
             split_scheme=str(comparison_contract["split_scheme"]),
+            evaluation_subset=next(iter(evaluation_subsets)),
+            organization_comparison=any("organization_comparison" in audit for audit in task_audits.values()),
+            performance_only=args.performance_only,
+            replicate_interval=args.replicate_interval,
             transport_matched=all(
                 bool(audit["execution_base_urls_equal"])
                 for audit in task_audits.values()
@@ -2879,6 +3098,9 @@ def main(argv: list[str] | None = None) -> int:
             tasks=tuple(progressive_roots),
             split_scheme=str(
                 summary["comparison_contract"]["performance"]["split_scheme"]
+            ),
+            evaluation_subset=str(
+                summary["comparison_contract"]["resources"]["evaluation_subset"]
             ),
         )
         print(
