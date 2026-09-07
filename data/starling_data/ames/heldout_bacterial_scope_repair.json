@@ -1,0 +1,1475 @@
+{
+  "schema_version": "ames_deletion_only_index_repair.v1",
+  "status": "passed",
+  "created_at": "2026-09-06T00:48:57.072567+00:00",
+  "model_evaluation_performed": false,
+  "full_semantic_smoke": "separate retrieval_validation.json; repair receipt does not assert semantic smoke",
+  "splits": {
+    "scaffold": {
+      "schema_version": "ames_deletion_only_index_repair.v1",
+      "status": "published_verified",
+      "scheme": "scaffold",
+      "created_at": "2026-09-06T00:46:26.015932+00:00",
+      "model_evaluation_performed": false,
+      "source_rows": 257157,
+      "unchanged_source_columns": [
+        "source_id",
+        "source_name",
+        "source_row_number",
+        "source_record_id",
+        "canonical_record_id",
+        "source_smiles",
+        "canonical_smiles",
+        "molecule_identity_key",
+        "molecule_id",
+        "molecule_name",
+        "canonical_endpoint_name",
+        "canonical_measurement_text",
+        "canonical_unit_text",
+        "canonical_assay_context",
+        "canonical_species_context",
+        "qualifying_conditions",
+        "support_text",
+        "confidence",
+        "pmid",
+        "extraction_id",
+        "paragraph_idx",
+        "group_id",
+        "retrieval_eligible",
+        "source_family_purity_reason",
+        "record_contract_version",
+        "identity_verification",
+        "record_fingerprint_sha256",
+        "canonical_claim_id"
+      ],
+      "source_row_order_unchanged": true,
+      "changed_source_field": "heldout_filter_scope",
+      "scope_changes": 533,
+      "deleted_records": 66,
+      "affected_groups": 65,
+      "reaggregated_groups": 1,
+      "deleted_groups": 64,
+      "unchanged_groups": 225714,
+      "unchanged_rows_sha256": "38c9e96723996588bcd6d6afb5cab8e654644763c540a97823cabe511d7d64bc",
+      "all_unaffected_rows_byte_identical": true,
+      "affected_cards_from_shared_aggregate_unchanged": true,
+      "complete_group_keys_and_source_counts_verified": true,
+      "all_retained_molecule_fingerprints_unchanged": true,
+      "assay_ranking_and_source_preserved": true,
+      "fresh_build_equivalence_method": "Identical source fields and row order; shared complete heldout filter and assay IDs; shared aggregate on every changed group with unchanged catalog metadata and budgets; all other evidence rows byte-identical; shared neighbor rebuild from original source SMILES; exact complete group counts and fingerprint checks.",
+      "before": {
+        "index_version": "starling_assay_ranked_morgan.mechanism_tagged_v4",
+        "task": "ames",
+        "records": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet",
+        "records_sha256": "254025462701ace301e6c8f32c7f2c47396986455b267f7cf3d26600be86c303",
+        "membership": "",
+        "membership_sha256": "",
+        "ranked_assays": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "ranked_assays_sha256": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "index": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+        "index_sha256": "2112f5e63572493c09fc1762111ba36bc5c416a3cef9561b3d95ffc912143824",
+        "evidence": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+        "evidence_sha256": "0ce885aac0a2c2c911f1af0d69c335ba7ba101b857ddd7dc412dec1a9718fa34",
+        "top_k_per_assay_default": 3,
+        "min_similarity_default": 0.3,
+        "neighbor_identity_policy_default": "scaffold_disjoint",
+        "relevance_scores_visible_to_llm": false,
+        "max_assays_materialized": 0,
+        "max_record_examples": 3,
+        "max_support_text_chars": 0,
+        "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+        "support_text_policy": "complete_representative_support",
+        "allowed_molecules_jsonl_sha256": "",
+        "allowed_molecules_jsonl": "",
+        "heldout_molecules_jsonl_sha256": "9905520115426aab885222b6b44af3b5a58741a2f3ee30344b650f612be6f45e",
+        "heldout_molecules_jsonl": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "n_source_records": 251493,
+        "n_ranked_assays_total": 180441,
+        "n_assays": 180441,
+        "n_assay_molecule_rows": 225779,
+        "n_molecules": 16396,
+        "record_selection": "stage03_retrieval_eligible",
+        "reference_pool": "direct_only_heldout_filtered",
+        "direct_only_heldout_filtered": true,
+        "heldout_molecules": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "heldout_smiles_field": "drug",
+        "n_heldout_rows": 546,
+        "n_heldout_parent_identities": 282,
+        "filter_source_id": "",
+        "filter_scope_field": "heldout_filter_scope",
+        "filter_scope_value": "bacterial_outcome",
+        "n_records_before_heldout_filter": 257157,
+        "n_direct_heldout_records_excluded": 5664,
+        "n_matched_heldout_parent_identities": 282,
+        "n_records_after_heldout_filter": 251493,
+        "n_heldout_nondirect_records_retained": 26254,
+        "n_direct_heldout_records_after_filter": 0,
+        "family_catalog": true,
+        "allowed_source_groups": [
+          "Direct.ames",
+          "Mechanism.bioactivation_dna_interaction",
+          "Mechanism.dna_damage_response",
+          "Mechanism.other_gene_mutation",
+          "Observed.nonvoter_ames"
+        ]
+      },
+      "after": {
+        "index_version": "starling_assay_ranked_morgan.mechanism_tagged_v4",
+        "task": "ames",
+        "records": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet",
+        "records_sha256": "5806f2efd641781b8ab7f03892ca5ceff616100b00db435c3dad3bbcd2ca087c",
+        "membership": "",
+        "membership_sha256": "",
+        "ranked_assays": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "ranked_assays_sha256": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "index": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+        "index_sha256": "6b6ee9a16d7c7dac2aa6a6bf11adfbc4d55705a96681534c7cedd949186ede71",
+        "evidence": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+        "evidence_sha256": "b4b2fde922e7f97e108d72dba93e2fadc6d544b7f96e2ecc1716d0c196a916b4",
+        "top_k_per_assay_default": 3,
+        "min_similarity_default": 0.3,
+        "neighbor_identity_policy_default": "scaffold_disjoint",
+        "relevance_scores_visible_to_llm": false,
+        "max_assays_materialized": 0,
+        "max_record_examples": 3,
+        "max_support_text_chars": 0,
+        "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+        "support_text_policy": "complete_representative_support",
+        "allowed_molecules_jsonl_sha256": "",
+        "allowed_molecules_jsonl": "",
+        "heldout_molecules_jsonl_sha256": "9905520115426aab885222b6b44af3b5a58741a2f3ee30344b650f612be6f45e",
+        "heldout_molecules_jsonl": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "n_source_records": 251427,
+        "n_ranked_assays_total": 180441,
+        "n_assays": 180441,
+        "n_assay_molecule_rows": 225715,
+        "n_molecules": 16393,
+        "record_selection": "stage03_retrieval_eligible",
+        "reference_pool": "direct_only_heldout_filtered",
+        "direct_only_heldout_filtered": true,
+        "heldout_molecules": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "heldout_smiles_field": "drug",
+        "n_heldout_rows": 546,
+        "n_heldout_parent_identities": 282,
+        "filter_source_id": "",
+        "filter_scope_field": "heldout_filter_scope",
+        "filter_scope_value": "bacterial_outcome",
+        "n_records_before_heldout_filter": 257157,
+        "n_direct_heldout_records_excluded": 5730,
+        "n_matched_heldout_parent_identities": 282,
+        "n_records_after_heldout_filter": 251427,
+        "n_heldout_nondirect_records_retained": 26188,
+        "n_direct_heldout_records_after_filter": 0,
+        "family_catalog": true,
+        "allowed_source_groups": [
+          "Direct.ames",
+          "Mechanism.bioactivation_dna_interaction",
+          "Mechanism.dna_damage_response",
+          "Mechanism.other_gene_mutation",
+          "Observed.nonvoter_ames"
+        ]
+      },
+      "immutable_artifacts_verified": [
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/study_vote_audit.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/pending_identity.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_base.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v1.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v2.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v3.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/manifest.json",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py"
+      ],
+      "input_hashes": {
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl": "2112f5e63572493c09fc1762111ba36bc5c416a3cef9561b3d95ffc912143824",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl": "0ce885aac0a2c2c911f1af0d69c335ba7ba101b857ddd7dc412dec1a9718fa34",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json": "837918a649d25cc8cdfa25757792419a034f8e3ad4f5cd9191f61d337906d9c1",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "/local/tmp/ames_wp2_repair/old_records.parquet": "254025462701ace301e6c8f32c7f2c47396986455b267f7cf3d26600be86c303",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet": "5806f2efd641781b8ab7f03892ca5ceff616100b00db435c3dad3bbcd2ca087c",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json": "1256172dac04db40c31e1bef588ab73bf08910e2c99a4582ff6c3135dc6629cd",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl": "9905520115426aab885222b6b44af3b5a58741a2f3ee30344b650f612be6f45e",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train.jsonl": "eff85835d0810ac77ef25086ed845cdbff3f0d582c73312e522f381b695eb0fd",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "ec8e1ac0b505f15df660fa8798bba6c4866665c188c29cbecd45b65cb925492f",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl": "6344fbe8d2f7169e61a6116bbf2d1ee06d25e7de8021f0aa8c6ead2972b8243d",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl": "1ed6f52efc59b106ee28885653915b66a096f4146fe957b4d1be6efc8423dc6d",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl": "8578e52656fec9fa89d1a85b29f3348b436fb1a3b227d4d3931c68b47baed51b",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl": "58eac78d0f640ca6fc774c5729a02c3ae90f150985831c255bf905e32866f981",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl": "28766d6e55263718c33619574d63b61867f5a287cfd916964c5a4017e0b4fbed",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl": "71b940dc9e9d88f85097a422a54f66ed56ac0ff5b5d3b4eacbbb0c9321ab2e30",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl": "6a64fe632e2f4eff2c475b8fd4fce06258ad1a65e5828fa2bdb1b65f0ecd8d3b",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl": "e9bbc8c004ecf614ee7e43465106ecb24e49a9221596379a2f21ec8021bd0e43",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl": "58eb9139fa66fad5de0ca1f89886c9f32a751e5d314e6de746c8cd4bef4c3300",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl": "f6d37151107b50f73c4d3129cbd42b31894927252d5769f9fd74d49b1d4bb191",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl": "a40c687f697f39917215a1fd9c0b1ffdc369dda9f730a219997499068281312a",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/study_vote_audit.jsonl": "a1a3c4b01c56201e5978e6a0d8f2cbd68926750935f6c85c84b3979a43701aa1",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/pending_identity.jsonl": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_base.parquet": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v1.parquet": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v2.parquet": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v3.parquet": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/manifest.json": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py": "1c16205fd1fdeb8b4fcb1bb8b808a08919a8fc4464e418b90344294f6208aca3",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/assay_retrieval.py": "0f727a231067d927bf48680277fbfc964698658fb534b2d0fc7db751ef0268a6",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/progressive_assay_reasoning.py": "40b96e7584e369561e3c74a0e0d3f07117bf1890ef2298302544223b6d587896",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/retrieval_policy.py": "1a4f0d48181dd86dbe56a1509866e75c1cff0c410a1dc1191b0f4c81500deac2",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/molecule_identity.py": "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/reasoning_payload.py": "102f5f92cc9b20e8bdfa5ba4edf8307bdaecb54db867b4d72d63823a2c202480",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/retrieve_neighbors.py": "96def078ec64c19cb931cc6d4f851899b5cac2935e0a4ebfeec18eab32b3c7f0",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/evidence_library.py": "6225ff82f008eee0053660ed09d9cf3ecd9079602564d98b056e8ded5ed73cc0",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py": "af8160e1d3b00ca1c5a248191c95f88c1a527028914fafc7caea7a2b94532623",
+        "/local/tmp/ames_wp2_repair/repair_indices.py": "3f07e3566570ef1e99fc78a9eeac48fabfb28acec19d5456fafe2b440c618119"
+      },
+      "deleted_canonical_record_ids": [
+        "08a48fe378d75a94c5c67d65a482a9304b09fcbf548665c7d8fa05d51dc2dedf",
+        "0e10209d621df06f0c02515705981f93c2a863f595af71a24befe643a7b5b26b",
+        "0e1a2ef25991c141b1759e2da5a31b3b0d6a2ba483f7cdab3bcbbacfa74771bc",
+        "18fa3221abdeedb3a80f1e0479c42a158d30cb19600909bce1b3bf4db81186cd",
+        "19bcedab6b1367598d52bd26217773f23a6b2f0b7cca80bc0b1d3914993f832a",
+        "1a10e407a950e186027ef8106387df5f99ca8536c1ac024f078ac97e85dc0150",
+        "1c8f3712236334f46e790a5073c626484b5c7e4a80f03e659e7bee73c779ee4a",
+        "2b81ac6d0374e4c47b748daecfbfd824bd120cf685ac497f2cc87db992829c8a",
+        "321c58ef423b67c84c817d27c289600afd6b97e73dda037447a9816d15cc0a96",
+        "32ac036c7192a331c453c1b2ccb4bbab82dca2d46894b0cf351c60e90dd09513",
+        "338d988bb88f88933f01cbd965963dfda399882dbb1111209d965aed40132860",
+        "354b89cdb26f4cf27d39dbd365a176e1e1f0e296fd14077a278f1aa2d9907c66",
+        "35d92f7070b95b1eb72b5d215d8212798b66ef6199034b167bae8baebecf86b3",
+        "3be6b22bb54d1882eac0ceb2f9f21c95074229183da8a07518cfb13525e88f7e",
+        "3cfc7a654dd30e007528a7e50b07037c9e488c65d9fc2ef5831133e98c4e1bd1",
+        "3ea0e64a4cc49eb8d09d22da17884dd191790a72e5d6786d4285e4324f253c04",
+        "42c1370ad906a8e35aeb8f91463cf5eb58d8143f10b76188a5dd4415b40234c3",
+        "48c276badacab592e5a102ea6d0307c618127c782197e2bc49c96b84f14938b5",
+        "4a1196344623db2af81b9f34d39e7b0e2b366e8ee4facb4171f39a67d6e95282",
+        "4a35eb3fc743a45c70067e19762b48e287b10f304fa69b29100becd8c6deb934",
+        "4ee2ca6f727bc642b97e45ac40a6ca7dc8e114dd3f30253be27dfa5d6126cbdc",
+        "5145eff8546ffbcbf24b9d0c972e01f171de58ae05344d955a73e264602f690e",
+        "52e415ad5fc1b6326ad320a9f6cf58dd252288163fb01c59b26c0a12b6e3c599",
+        "5337c1d373b935e343425a6a7c2af83b03c169e533875ee8476c10fa9f56ce1d",
+        "5c9c25b8eebe636e0020342fc054cb76641599e8d55a6296c2db9a6426fa6543",
+        "5cc811a788a4891c6ad70e30ea5a14efa5395332f5f1c96626f9a7817696c4ba",
+        "5f03732b71783401a2e183d694edcb9ec390fb83e1cd29a6e71d2424d804287a",
+        "612f7a3ac9d6206f4a0c1066c4dc0d81dde35aa795a74e0109a310fd33bae877",
+        "6743f048695920d9774457ea0ac443d3d6f2a534d8dc07c42e22257a5260222c",
+        "6820998faae8ef43c318cbfc40bc4dbe06aed8b62cf9151791c122dee5d6ec73",
+        "6bf54a8e814d4d1ec504f650f6c3bf667ddcfa9df44a1f95ecacd52fa10fc6e3",
+        "6c8852094c8d3f8db3c493cf3d2ef568174602e36738d4d0e0979ee26955c5e8",
+        "6d03c8a33209446b47ab5e4ad6140990b2f625642790e5ad03b4145ac4c26c61",
+        "6eedb5a4916f2a76ef832fc9ba0133ff9429c0f3891ee57fc407ff83c64e2a7b",
+        "6ef007f29a553838f9956bb334ba0ae92115f16fd62b24ddc7649065d572549f",
+        "6ffdc0db7f2adc1b4fa34532f74311a7875c7da8948a4485cea8569b7793d891",
+        "76faf96c62778f0e5b20d573b4e55918ab14a09978f7ae637bb3fc631b7ee9a7",
+        "7b0a4773cf61a4719574a95e47cc89da72b9598df2e6095345643d481ebd0501",
+        "81387129c9bef0ab478637b1897aa8deb17dc9ed04a4cf40be0c3196a3b6a64e",
+        "8a5ad610912ce14659180a1a6c36debcb1d40ff157c0b586debf17020a99fa8a",
+        "92ce2148e0bc6b06e0031c488bf65a4393918b66e3c653b21860283d865b3a9f",
+        "95b55da87b94d5d38e50a4a1667c8dc81ab105a60534877108b8dbb900f6fa84",
+        "98d443b2a858992f9db1b1f3eac1a9ecedfb164031163b1191c0a9f6e80b3ca7",
+        "9e6556f5689c6129c99121a7db26ef3be03a3eaacd950de9f65d68ed209c4b8b",
+        "a7ba6f5009782efc3c9bcd31f92999319482fcd658b3cdf0ad2ad2d117d221b3",
+        "a8f611cb7cb588b35699b3f800ce7b99c62998121c592aea33f65a8c4e802acc",
+        "ac2508ccabe1e4f1d3311882454ad49718b8d54cf94d6848a59aeb467a4d29e1",
+        "ae09e1802823cf174d079270a075af8cf925fbdd6aaf270b1ac1bca42f08f013",
+        "b25291e2074a0e19b4641491c3675de32aae3b52faf20afa0b63fada7bc05c5b",
+        "b254bc69f3cd068be80f308e837fed82f8267960fb01ad963bd5f7549331f26e",
+        "b85242eea81c93e355a4275101d47f6bb040e67c4352eb0886aeef0016a5957b",
+        "b8dcbf0551a83e12a6f902d8022571525b250f47883c67c204a7b36b629a2763",
+        "b8e542882ba06fd3d08f02e0caeca771c970f97c9c8ffceee020bc6fa006215c",
+        "bba601cf69af5c87f208d01883a81a52ae5977ffda55b55a78535ec00e6aa281",
+        "bd36721bdc471f990cf26b933c837c2011b08ead91124853fde574dd62350cdd",
+        "bf3e4f713f6345680bee8825799531878fae9608a1e1cb3cb787e189d8d5db63",
+        "c45f48fb9584b450fb7cc93897f0cba66278e8aaf91bd0fa3804eaf2773eb271",
+        "c7809be5b771153e8856d31a0950d29a32b3214516b4bf6a7eeb3ff44a1ba621",
+        "d3dd4849a16436897ac3ebdd2263c335be67057385ef7bb93bd60d1a55a577a7",
+        "dcdf7d63b31110eaae218a49752ce3b3bab1396e90f90c3f12928d7c626d4da1",
+        "e06ca4404e82cd714d306234545c728b4f628f4cb083b0df87ed13228c1e8e12",
+        "e4b501a99cbf0c817226434173f805620610552e448faa9f4339c17539dc6d90",
+        "e6e6f484acb9d2f39370f2ef5db4a87dd4ee3a7c5cb764c35010bffe405f4250",
+        "ee2406a80d0cbc82269f4b5aae4f9795535333d2b8580085bd2c99ce8c5f8d03",
+        "f49918717aba6ed3331f089dd7a8943335d825ae73e481c42f9588451b7e0382",
+        "f8670390862dd586b7ba190101a25ca5950e211103acc5a9765c13d74e37c69d"
+      ],
+      "affected_assay_molecule_groups": [
+        [
+          "0094bceac19efaf23eb697da69819427785c545a48b069c451e5b8d90f88586b",
+          "STARLING_374C5866E37D0E6B"
+        ],
+        [
+          "0186a755f08b31d94a18467b26fa31acbac398451f3eee3ac8f8f07e7cfda2c4",
+          "STARLING_35DC5607E0D8D4A9"
+        ],
+        [
+          "04303d145c2855e9bd6585d7a73e3278bc47ac91085a1029fa185ea20a36e561",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "05a86b5c28188f6a4a54c86a07871492dac99d45b8c9218d805477f4c603c73b",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "07d96e54f5884f7ae6bc7635a520a736446d8b715ae560cf37f05cafe374ddf6",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "0a5341f38b83b5def1c7c6633fe5e253e4ea21e33a78d45a6e000bfd07292a65",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "1b5fda62c8ec2624d2c50106343ef4bf7b733a50bd812f6a0877419501e6ce4c",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "1f3183e61582fcdba9260a1d7853764fdc3da7e4ee00dc472823575752212fe9",
+          "STARLING_53A70D12B6238D33"
+        ],
+        [
+          "1f3183e61582fcdba9260a1d7853764fdc3da7e4ee00dc472823575752212fe9",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "2aa1c380af752fa42f97c47c8587dc3486e17cde6485dda63612d8dd7fccfb31",
+          "STARLING_1AB8CD5277D15404"
+        ],
+        [
+          "35ec1948f9638dbdbf32ddb0eceb3c05ca7274bf7e4b76f10a31011c19494055",
+          "STARLING_2D135BA37CB21779"
+        ],
+        [
+          "37c2ba544ad0eeb460537f8976bc349800b6b213695a48c17622fa247067970d",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "3e7e1fc187ee0b49f073709944b2ed391323bda93dae32a0ecb47da660470b08",
+          "STARLING_2D135BA37CB21779"
+        ],
+        [
+          "4a0f90c4f20480833a4137fda0f2df8f34ca29b70afcf72b0b4ef25ffa6ff159",
+          "STARLING_2D135BA37CB21779"
+        ],
+        [
+          "4f55c1135dbfb882823155297ae86545d5ca1c34db04a0647cfddc5a24c448e8",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "505797cd878fb8cfde1cce0fbe66c19617bdf71447432da66ba999c4ce342ac6",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "5782a962346cb56cefdbca2e758ffebe09aa62ea32337e107bd7379b30f49af0",
+          "STARLING_2D135BA37CB21779"
+        ],
+        [
+          "620c7513488249afe2d8040b8d559e8ca66cdf07c28019284cb7565ea4e855f2",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_8FE39E5E9DBCD4AE"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_E30C469CF557E01F"
+        ],
+        [
+          "6b94672d176d6c7af59e6855e42f2c4b5d02c34a5a530d7cea7820db3099e819",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "6eb11b393c1be062fdc6e3c22cc356c5a8beb1bd3e34fdc93ad886ebddea0e39",
+          "STARLING_CDE299D925D41022"
+        ],
+        [
+          "6eb11b393c1be062fdc6e3c22cc356c5a8beb1bd3e34fdc93ad886ebddea0e39",
+          "STARLING_F185BD4D37267513"
+        ],
+        [
+          "6fbfd2ccee9de744465fb2d5ec3322446f469e13512cea1241a83f6b40fe0ec5",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "703ce76c8346b29f4809fd2e8e3533d5b5d387db65a5806ba247f23bb9105fa5",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "71e90d4ec8e6f47423b9974d0212961fd970968fe686ed5cfcb970247482787f",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "73a4c7f4e1cd39529117674251c6a9210f343f549e7d50fa9f6bd31345305166",
+          "STARLING_35DC5607E0D8D4A9"
+        ],
+        [
+          "7efe9bd9c24adcaabc34e1cb50485d76934fc037fabb2edc50787d68c9b0bf73",
+          "STARLING_B623208A61DF492A"
+        ],
+        [
+          "85879a45f1cb320a6c0f01c12969d8e40c7db9aeec6d0658148b6745246dd474",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "85879a45f1cb320a6c0f01c12969d8e40c7db9aeec6d0658148b6745246dd474",
+          "STARLING_A6691BDDEE870B0C"
+        ],
+        [
+          "85879a45f1cb320a6c0f01c12969d8e40c7db9aeec6d0658148b6745246dd474",
+          "STARLING_B5B248666DF21E64"
+        ],
+        [
+          "85879a45f1cb320a6c0f01c12969d8e40c7db9aeec6d0658148b6745246dd474",
+          "STARLING_C306F29113EEC42B"
+        ],
+        [
+          "8a195e12e99bc7fe8a16b5b01900a3ea64d572acfc915f9d42e914f0ebe8f81b",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "8f18c50d2871a76bc7e6784885589b061309aea5b8009ef1cfe138c52f0b67b5",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "9119127d30e97e499b66c88f2cb0cf4551a108cebd608af08d230cc62db976e5",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "9121a59a26a43554de60f895fff467c5858a9c9f2d4c2759f5c29edf4b301da0",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "984caab4de74efcb5e1be4d3ac1c9e6ffa3b0fa9cda7041aa2d86c5f38e8d850",
+          "STARLING_3A786EEB8C61796E"
+        ],
+        [
+          "9eee8506f8309b78e762bc31b3dc7cf8eb3600f72a0963c70ad6cb3a2f55a64a",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "9fad3595ec736ebfcb045093cdd68edc189bbb154b7ffde710bce71f2825eb52",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "a3ddc7d509a957b48aa9e56564ef9001f258b54b127c69493162d6302a69c6bb",
+          "STARLING_BD0D9DF127543BB2"
+        ],
+        [
+          "a5485e6ed1340b538133d272d2a7f129017eb0e4f94ac99c3c7a4b17f9f80afc",
+          "STARLING_C306F29113EEC42B"
+        ],
+        [
+          "a733b85176eaf604eee3ecf3bc2179076780ad0409a541c32c3bff50c3043ee5",
+          "STARLING_25AABE754904EF94"
+        ],
+        [
+          "aaa62c5fbbc00289d8617981def017f3f89ca95febccdf334d9817aa21488797",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "b006f349977ca95138ff7199388d1ff84c47072212860af31f122f80188f581f",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "b35945f5e8ac66d3c27f98ef758e7ccbe187b3e8d0ccd4c705089778da889673",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "b5e89213f9dad160ed259ec0bfb76ea05ed779296698a2c14dd2c612988b6f15",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "b5e89213f9dad160ed259ec0bfb76ea05ed779296698a2c14dd2c612988b6f15",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "b60adf15ff15abed07a527ab01d6d05b3170d85db840f4ef458c5c88256ce4a9",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "b60adf15ff15abed07a527ab01d6d05b3170d85db840f4ef458c5c88256ce4a9",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "c1f7721b586e8bb99c0c2803da70ceeb682af719ede6939954f9b25c03681cca",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "c1f7721b586e8bb99c0c2803da70ceeb682af719ede6939954f9b25c03681cca",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "c7428c137110a50133d4077b94f655952f50923862c8cebf9ca2c5e3f5a411f9",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "c9ff2601e08a33f3d9e51ad484939f21d7e1f958a8513c0fdc372e4a771bde87",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "cbcc62870367d882b1fa4b3748b3caf9e428b317cbd94d306efe4ea9f079860a",
+          "STARLING_2D135BA37CB21779"
+        ],
+        [
+          "cfcbbdef6326e219434f944e306035b2be9f823af7ef90368f71e20592d0ab46",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "d98d40cd4ad4163bd543b41e23253e5b0bc42d737bfcc891632339bc5d7a1238",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "e6ce23ff480521cbd38e249ee5c052451fc0cb4d341ac9ac5266ce553719823c",
+          "STARLING_8619109285226728"
+        ],
+        [
+          "e947f735f4a4db9394d53a0d1cdce0f3de31b7aa2172b7ece8a376e7368e3797",
+          "STARLING_B623208A61DF492A"
+        ],
+        [
+          "ee44e64b4305276bbf3c0c1e218f55fe3f5eab353792e1d9d67a3e66e5dd6dbe",
+          "STARLING_57CEC5E16690556F"
+        ],
+        [
+          "f0268930081f5c03100713ffd5e4728405a037e654059176121cdc90b3f6a873",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "f2020013e3e8887b4380df5cac3f0d3b602a33cb048a2643db754e9d82ac2953",
+          "STARLING_35DC5607E0D8D4A9"
+        ],
+        [
+          "f500931441a2527b578c77964894773e8fd47033264713b20bc08d61ec74d1c9",
+          "STARLING_4FE31CB5F4ECF644"
+        ],
+        [
+          "fa2a38eb3ca61d4baef0c6bf93b3210b37e93e9014434f1116c5718a39f9e5f5",
+          "STARLING_57CEC5E16690556F"
+        ]
+      ],
+      "published_index_manifest_sha256": "2d8883ba7bdf7405433d980da83aee4f8f6fa62eb9c93fa7628c226d43a44d3e"
+    },
+    "random": {
+      "schema_version": "ames_deletion_only_index_repair.v1",
+      "status": "published_verified",
+      "scheme": "random",
+      "created_at": "2026-09-06T00:46:25.114679+00:00",
+      "model_evaluation_performed": false,
+      "source_rows": 257157,
+      "unchanged_source_columns": [
+        "source_id",
+        "source_name",
+        "source_row_number",
+        "source_record_id",
+        "canonical_record_id",
+        "source_smiles",
+        "canonical_smiles",
+        "molecule_identity_key",
+        "molecule_id",
+        "molecule_name",
+        "canonical_endpoint_name",
+        "canonical_measurement_text",
+        "canonical_unit_text",
+        "canonical_assay_context",
+        "canonical_species_context",
+        "qualifying_conditions",
+        "support_text",
+        "confidence",
+        "pmid",
+        "extraction_id",
+        "paragraph_idx",
+        "group_id",
+        "retrieval_eligible",
+        "source_family_purity_reason",
+        "record_contract_version",
+        "identity_verification",
+        "record_fingerprint_sha256",
+        "canonical_claim_id"
+      ],
+      "source_row_order_unchanged": true,
+      "changed_source_field": "heldout_filter_scope",
+      "scope_changes": 533,
+      "deleted_records": 132,
+      "affected_groups": 132,
+      "reaggregated_groups": 1,
+      "deleted_groups": 131,
+      "unchanged_groups": 223484,
+      "unchanged_rows_sha256": "aef675bab25d2c18aa0502d9ce095e1d1fc73532762913f5fadb23f2fe0dfa8b",
+      "all_unaffected_rows_byte_identical": true,
+      "affected_cards_from_shared_aggregate_unchanged": true,
+      "complete_group_keys_and_source_counts_verified": true,
+      "all_retained_molecule_fingerprints_unchanged": true,
+      "assay_ranking_and_source_preserved": true,
+      "fresh_build_equivalence_method": "Identical source fields and row order; shared complete heldout filter and assay IDs; shared aggregate on every changed group with unchanged catalog metadata and budgets; all other evidence rows byte-identical; shared neighbor rebuild from original source SMILES; exact complete group counts and fingerprint checks.",
+      "before": {
+        "index_version": "starling_assay_ranked_morgan.mechanism_tagged_v4",
+        "task": "ames",
+        "records": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet",
+        "records_sha256": "254025462701ace301e6c8f32c7f2c47396986455b267f7cf3d26600be86c303",
+        "membership": "",
+        "membership_sha256": "",
+        "ranked_assays": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "ranked_assays_sha256": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "index": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+        "index_sha256": "418aabeff856cd8be369823ccfa8653abf7628ca8e9026a79aa41599140f7ed9",
+        "evidence": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+        "evidence_sha256": "dcf7a55e3811a8c2c9b303e8e543623dd1e20390b6133b58b7a4cdfec5449f70",
+        "top_k_per_assay_default": 3,
+        "min_similarity_default": 0.3,
+        "neighbor_identity_policy_default": "parent_disjoint",
+        "relevance_scores_visible_to_llm": false,
+        "max_assays_materialized": 0,
+        "max_record_examples": 3,
+        "max_support_text_chars": 0,
+        "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+        "support_text_policy": "complete_representative_support",
+        "allowed_molecules_jsonl_sha256": "",
+        "allowed_molecules_jsonl": "",
+        "heldout_molecules_jsonl_sha256": "28766d6e55263718c33619574d63b61867f5a287cfd916964c5a4017e0b4fbed",
+        "heldout_molecules_jsonl": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "n_source_records": 248235,
+        "n_ranked_assays_total": 180441,
+        "n_assays": 180441,
+        "n_assay_molecule_rows": 223616,
+        "n_molecules": 16497,
+        "record_selection": "stage03_retrieval_eligible",
+        "reference_pool": "direct_only_heldout_filtered",
+        "direct_only_heldout_filtered": true,
+        "heldout_molecules": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "heldout_smiles_field": "drug",
+        "n_heldout_rows": 496,
+        "n_heldout_parent_identities": 169,
+        "filter_source_id": "",
+        "filter_scope_field": "heldout_filter_scope",
+        "filter_scope_value": "bacterial_outcome",
+        "n_records_before_heldout_filter": 257157,
+        "n_direct_heldout_records_excluded": 8922,
+        "n_matched_heldout_parent_identities": 169,
+        "n_records_after_heldout_filter": 248235,
+        "n_heldout_nondirect_records_retained": 44274,
+        "n_direct_heldout_records_after_filter": 0,
+        "family_catalog": true,
+        "allowed_source_groups": [
+          "Direct.ames",
+          "Mechanism.bioactivation_dna_interaction",
+          "Mechanism.dna_damage_response",
+          "Mechanism.other_gene_mutation",
+          "Observed.nonvoter_ames"
+        ]
+      },
+      "after": {
+        "index_version": "starling_assay_ranked_morgan.mechanism_tagged_v4",
+        "task": "ames",
+        "records": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet",
+        "records_sha256": "5806f2efd641781b8ab7f03892ca5ceff616100b00db435c3dad3bbcd2ca087c",
+        "membership": "",
+        "membership_sha256": "",
+        "ranked_assays": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "ranked_assays_sha256": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "index": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+        "index_sha256": "6176e5641b80815d00d4eb5c381d421e7a53c59d3a06d685182fe730eaf51536",
+        "evidence": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+        "evidence_sha256": "5444a6aff22fa26ced453743b5425c804996b9de3a2e3b2c325dd425bd9e0066",
+        "top_k_per_assay_default": 3,
+        "min_similarity_default": 0.3,
+        "neighbor_identity_policy_default": "parent_disjoint",
+        "relevance_scores_visible_to_llm": false,
+        "max_assays_materialized": 0,
+        "max_record_examples": 3,
+        "max_support_text_chars": 0,
+        "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+        "support_text_policy": "complete_representative_support",
+        "allowed_molecules_jsonl_sha256": "",
+        "allowed_molecules_jsonl": "",
+        "heldout_molecules_jsonl_sha256": "28766d6e55263718c33619574d63b61867f5a287cfd916964c5a4017e0b4fbed",
+        "heldout_molecules_jsonl": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "n_source_records": 248103,
+        "n_ranked_assays_total": 180441,
+        "n_assays": 180441,
+        "n_assay_molecule_rows": 223485,
+        "n_molecules": 16496,
+        "record_selection": "stage03_retrieval_eligible",
+        "reference_pool": "direct_only_heldout_filtered",
+        "direct_only_heldout_filtered": true,
+        "heldout_molecules": "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "heldout_smiles_field": "drug",
+        "n_heldout_rows": 496,
+        "n_heldout_parent_identities": 169,
+        "filter_source_id": "",
+        "filter_scope_field": "heldout_filter_scope",
+        "filter_scope_value": "bacterial_outcome",
+        "n_records_before_heldout_filter": 257157,
+        "n_direct_heldout_records_excluded": 9054,
+        "n_matched_heldout_parent_identities": 169,
+        "n_records_after_heldout_filter": 248103,
+        "n_heldout_nondirect_records_retained": 44142,
+        "n_direct_heldout_records_after_filter": 0,
+        "family_catalog": true,
+        "allowed_source_groups": [
+          "Direct.ames",
+          "Mechanism.bioactivation_dna_interaction",
+          "Mechanism.dna_damage_response",
+          "Mechanism.other_gene_mutation",
+          "Observed.nonvoter_ames"
+        ]
+      },
+      "immutable_artifacts_verified": [
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/study_vote_audit.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/pending_identity.jsonl",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_base.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v1.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v2.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v3.parquet",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/manifest.json",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py"
+      ],
+      "input_hashes": {
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl": "418aabeff856cd8be369823ccfa8653abf7628ca8e9026a79aa41599140f7ed9",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl": "dcf7a55e3811a8c2c9b303e8e543623dd1e20390b6133b58b7a4cdfec5449f70",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json": "02bf5c37d52e78d798bbca2efd75f1d7ab0c67e97f466c7b6ca0875b0a78fbb6",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl": "1d04f2970d27970b484d8f719a4c2d77782fd9d83d3e37586c208280dd2e1cc5",
+        "/local/tmp/ames_wp2_repair/old_records.parquet": "254025462701ace301e6c8f32c7f2c47396986455b267f7cf3d26600be86c303",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet": "5806f2efd641781b8ab7f03892ca5ceff616100b00db435c3dad3bbcd2ca087c",
+        "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json": "1256172dac04db40c31e1bef588ab73bf08910e2c99a4582ff6c3135dc6629cd",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl": "9905520115426aab885222b6b44af3b5a58741a2f3ee30344b650f612be6f45e",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train.jsonl": "eff85835d0810ac77ef25086ed845cdbff3f0d582c73312e522f381b695eb0fd",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "ec8e1ac0b505f15df660fa8798bba6c4866665c188c29cbecd45b65cb925492f",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl": "6344fbe8d2f7169e61a6116bbf2d1ee06d25e7de8021f0aa8c6ead2972b8243d",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl": "1ed6f52efc59b106ee28885653915b66a096f4146fe957b4d1be6efc8423dc6d",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl": "8578e52656fec9fa89d1a85b29f3348b436fb1a3b227d4d3931c68b47baed51b",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl": "58eac78d0f640ca6fc774c5729a02c3ae90f150985831c255bf905e32866f981",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl": "28766d6e55263718c33619574d63b61867f5a287cfd916964c5a4017e0b4fbed",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl": "71b940dc9e9d88f85097a422a54f66ed56ac0ff5b5d3b4eacbbb0c9321ab2e30",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl": "6a64fe632e2f4eff2c475b8fd4fce06258ad1a65e5828fa2bdb1b65f0ecd8d3b",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl": "e9bbc8c004ecf614ee7e43465106ecb24e49a9221596379a2f21ec8021bd0e43",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl": "58eb9139fa66fad5de0ca1f89886c9f32a751e5d314e6de746c8cd4bef4c3300",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl": "f6d37151107b50f73c4d3129cbd42b31894927252d5769f9fd74d49b1d4bb191",
+        "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl": "a40c687f697f39917215a1fd9c0b1ffdc369dda9f730a219997499068281312a",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/study_vote_audit.jsonl": "a1a3c4b01c56201e5978e6a0d8f2cbd68926750935f6c85c84b3979a43701aa1",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/pending_identity.jsonl": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_base.parquet": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v1.parquet": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v2.parquet": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v3.parquet": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/manifest.json": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+        "/data1/tianang/Projects/TxAgent/data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py": "1c16205fd1fdeb8b4fcb1bb8b808a08919a8fc4464e418b90344294f6208aca3",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/assay_retrieval.py": "0f727a231067d927bf48680277fbfc964698658fb534b2d0fc7db751ef0268a6",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/progressive_assay_reasoning.py": "40b96e7584e369561e3c74a0e0d3f07117bf1890ef2298302544223b6d587896",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/retrieval_policy.py": "1a4f0d48181dd86dbe56a1509866e75c1cff0c410a1dc1191b0f4c81500deac2",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/molecule_identity.py": "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/reasoning_payload.py": "102f5f92cc9b20e8bdfa5ba4edf8307bdaecb54db867b4d72d63823a2c202480",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/retrieve_neighbors.py": "96def078ec64c19cb931cc6d4f851899b5cac2935e0a4ebfeec18eab32b3c7f0",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/evidence_library.py": "6225ff82f008eee0053660ed09d9cf3ecd9079602564d98b056e8ded5ed73cc0",
+        "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py": "af8160e1d3b00ca1c5a248191c95f88c1a527028914fafc7caea7a2b94532623",
+        "/local/tmp/ames_wp2_repair/repair_indices.py": "3f07e3566570ef1e99fc78a9eeac48fabfb28acec19d5456fafe2b440c618119"
+      },
+      "deleted_canonical_record_ids": [
+        "007db6649cb32d9e07cf83f0114649ce2e9553c5102fb400a9d20fe5f0efa849",
+        "02d21d7299df7c81b61196ac394b00f1c3f6d05d7e2709daca42cebd1cb6a52d",
+        "04dc191041d87711ee0eb0c78186dfba608a6c147a6fc93dd080ad6b2675f44c",
+        "080ff9e2352f7eaa88e4ad8b9ba1f11b9bdc68832800e8f84cb6ac46b812953e",
+        "0820e05f5b26d35bd70cd95df2e8a6bbc6c8c18c7ee5cf20b41203fcccc8608a",
+        "08e6e7c1c849c34bc6d1921fa6f20e44c2edfb31af0e53a9a31b7f0d34e31d63",
+        "0929eded0e3cfbde00dffaca7df3d2c5246a3ebbd0e801e8be7f56065ff6ee85",
+        "0a4f7254da405401cd7b7f87dd307899d9b688dbb38b07c54e8a5dfc6332446a",
+        "0e10209d621df06f0c02515705981f93c2a863f595af71a24befe643a7b5b26b",
+        "0e1a2ef25991c141b1759e2da5a31b3b0d6a2ba483f7cdab3bcbbacfa74771bc",
+        "1050db6b25d17b2ac4b17ad24f8936a0df89c4d5c8d75e620b91dea337316f28",
+        "11a6871d339c408b02948bac013c2056dedfae72235e8658380e79df1d94a5e7",
+        "15de61fefc499dadd7a78fa4ad16c148cab70b26c4b88d1ca202453904898018",
+        "18fa3221abdeedb3a80f1e0479c42a158d30cb19600909bce1b3bf4db81186cd",
+        "1a10e407a950e186027ef8106387df5f99ca8536c1ac024f078ac97e85dc0150",
+        "1b1a8d35bdd7644867f2f3d8853b99d82fe93acc1fbc0390e7eba135027066d3",
+        "1c2b9ed304b8b51c2aeac91ef406e033bcc94f50697b062ff5751d17619b84ba",
+        "1ebe0775463958b3dfad3d512c6c3b304ab174d9e3449513e2f25204c3924ce7",
+        "24c34d6bd4c8c6d1eb92f961935b2319cadfdaeea3d136a71cc64bcb838aabc7",
+        "2a31c284a321116b20a04b67502553eaf64164f7801f722afded1a4b2f7f779b",
+        "2b81ac6d0374e4c47b748daecfbfd824bd120cf685ac497f2cc87db992829c8a",
+        "2cda0efb4fe22584d88b4801ced4a63fca2eac1088652ffae7635d71c4fe4388",
+        "2d9a5ae2bb8ac0a2fc06f995e887baa60585253465cf2c21c1e09259175a943d",
+        "2f9aaa45d955eb789917230aa0c0dab964cd6965a62f8c2e9c59177101504caa",
+        "3011d74e71ecc29c6290f61172907e62edaee8e2fc1bb81b7bc4196a3b7afd3b",
+        "309a89d731c3f8e29eafcf17e6dc08e42fe92f20e5914f0d8032f9ba170b7d52",
+        "32ac036c7192a331c453c1b2ccb4bbab82dca2d46894b0cf351c60e90dd09513",
+        "354b89cdb26f4cf27d39dbd365a176e1e1f0e296fd14077a278f1aa2d9907c66",
+        "35d92f7070b95b1eb72b5d215d8212798b66ef6199034b167bae8baebecf86b3",
+        "369019a5c8ca0e1f6069e5a3de8243c8b495b952bd70e595ed52184251fe5a11",
+        "37a22b4fe12f1a5c53b6b3d184514a602ba9f0b4b86a081434684a989bf70002",
+        "3a6b38b99888c8e1cbedc388348dbd654a840d3b8e7674f7c9a3e6606a19e3c9",
+        "3c67310801e82922903cb4210aa2144e9f819e1075bda89263d892b6fbb34967",
+        "41cfcf3cb58212ce21a83305d02424737e6dc61ae05088f8e26a6ad24e6fac0c",
+        "4334dd2a6164b77e2c8fcdf521f616dbe330475424e747d108721edb286e39a1",
+        "47cd9d21358f46638db2b14506eae51e9d6950bcfd90e3e21f0ea57cd5542166",
+        "48c276badacab592e5a102ea6d0307c618127c782197e2bc49c96b84f14938b5",
+        "4a1196344623db2af81b9f34d39e7b0e2b366e8ee4facb4171f39a67d6e95282",
+        "4a35eb3fc743a45c70067e19762b48e287b10f304fa69b29100becd8c6deb934",
+        "4d2a3f011ad647b9b797128ae4824e2e4211e049626ca8b58346c2bcab9a8eb0",
+        "4d7a28f424af21da11e4df34292f5027327b86d8bd1dcb5465494af9f509b0d1",
+        "4dda9d02ee4f33ffaf256e0a9ab976eb6d646fadf7cc568160286f9e396ad3ad",
+        "4eb248b2521449a7af10401423691fef8736305adcbf3f2031d2bed51d3562b2",
+        "51ed2adf58dc0d08334101c4a0479194f3462290c8bc69b0d10398bdaf5fe903",
+        "534d871db8395798d0e33c8bcfba5393a4073b242c6aac7fc6d68e5098dc0dd3",
+        "56057226fdf60d92494dc8361310f2dcae72d84a93de0bc714dcdc3626e8bed0",
+        "565b8ed0d57c70e55d179d967785cf65bb5493a5bb917d2d2b156e584d5b389f",
+        "57d605eaffadc8faa689badbfcac0baf72cb1c94133d11c7ce20868226c60958",
+        "589c37c0f03d8f7e81680a935a231f6f2ab236238bb702b61f8119a18f68182e",
+        "5ea0be5461b5017f88701bfff6bae8aecc588c4effe1c2ff3a3bf49fa2fa7f7f",
+        "5f4c808bb83524a6c876cb06d16a45456396476f62d3d6f1474fe743e6de7918",
+        "6325c2fbe79b73982186d69174a61acfb4a993f903ed3f8e857c8fe09434c80d",
+        "6743f048695920d9774457ea0ac443d3d6f2a534d8dc07c42e22257a5260222c",
+        "6a7cb5cb7d848a1e0b5099877125a8b87f882991fb2a5629753f17b6a5cd782e",
+        "6c3a3cda5f07600285fd30b339a822aee8b387b3870f78d5fb2df463cc073ad3",
+        "6eedb5a4916f2a76ef832fc9ba0133ff9429c0f3891ee57fc407ff83c64e2a7b",
+        "6ef007f29a553838f9956bb334ba0ae92115f16fd62b24ddc7649065d572549f",
+        "72cc531aba4a0c01319e8c7d86233fb6d0b26ae84a6917bb5b1376dd5e157d7c",
+        "749ec9ca85974d3bbd32baaec97e2b8b74541097add13e6afa1e05bd0460d905",
+        "795cb2cf401ce34883de6e606b64bfdc4cec322833ac68cc5fe6620662f4a123",
+        "79a2a9e3981b96d0721ff23df781e50df63fa8055dc784f7a20208bdda0f3402",
+        "7ee6eb29cd82887c37de9f02002150b45a716194cb81b1ad239dd1aeba1ffd7e",
+        "7efdebd0fbc33b257c4b07098d6f2666adf7889edf0804794ec5177f7cb2f27d",
+        "802493b4dc5ca753a2a743ee2ec150cae5beeb31f9b60613976ddbfd35a13189",
+        "81387129c9bef0ab478637b1897aa8deb17dc9ed04a4cf40be0c3196a3b6a64e",
+        "8203262983b5828c56a6b56d33667cc81486fa23ea7a35b1671c42a38a55a691",
+        "8271ce726c9d5515339d87344111359bd02ffec114439caeaa704bb974f39f96",
+        "8415819a7dbb01bd5c21dcc84406bc6541636d49affe6e4c13a03e00dd20bc58",
+        "8613d717002c961df895f101602ef74c43bda53c434964555fcbc2fdde8633ac",
+        "86dd5b8e592485ce54a1a12288d5284d7c4236de23ca3ee432a60c47556a3a79",
+        "88776525b0a292e47445489a8a9fdd7220ef526f0dfa2295a6a7789124b56ab5",
+        "88bfb10de821521531385f5445fe66da4854a4e78e5dcba0c1fabbe2da3cc11c",
+        "89846069be4aca6295250058d4f327156c10ee5b25646f0d8b28fadafe05657d",
+        "8a5ad610912ce14659180a1a6c36debcb1d40ff157c0b586debf17020a99fa8a",
+        "8ff93119be0c96fdbaa4bf7683f2903f673982d079b2febdeae8708b83d1dfa2",
+        "95b55da87b94d5d38e50a4a1667c8dc81ab105a60534877108b8dbb900f6fa84",
+        "98d443b2a858992f9db1b1f3eac1a9ecedfb164031163b1191c0a9f6e80b3ca7",
+        "9c93394e559cb8a46469bf667b00bfe9e553239d765485cdaa12a3d202730e91",
+        "9e6556f5689c6129c99121a7db26ef3be03a3eaacd950de9f65d68ed209c4b8b",
+        "a0df698aec0e48dd3b1a90345846a44e8aa9b27d849ac862be289ee85f563fd8",
+        "a53730099bba7347b14beb79177ec992f84a872f103d108e31701adefd6711c2",
+        "a5ab53aa88132d588d48e8afb758803f2d3934d3fedcafe32dfe592181911b0e",
+        "a895ff8223247c8145e95fd351f96c38f264e4ec2579f03b342ec47b710cdf03",
+        "a8f611cb7cb588b35699b3f800ce7b99c62998121c592aea33f65a8c4e802acc",
+        "a9d943fde31943b4e51ed95f40ef8a629dbacf96431e6ecc6add5a86a777239f",
+        "ae09e1802823cf174d079270a075af8cf925fbdd6aaf270b1ac1bca42f08f013",
+        "aed48f496f3824f2524104765368573055447bdc180de0f8880f5f49f7393ceb",
+        "af6690e3a12f91e5b1b1165f8031877066adda164896e873ead47650805ca468",
+        "b255731841ebbcde553c87fb0461b076fd9f2f2dccce3d3151ce224ab98dec13",
+        "b31ad8a15d385815f084083b0abfebba1d2f21a9b6a0e916812bbdb31d47a197",
+        "b406dbd9ed007ed8a07d4bb46ece2d2ae88a8909bf2e246f0688b99314106c71",
+        "b487efc9e761e6004bf685768cbfcb4571b40e8e91b67a0d8d423d6949817922",
+        "b54cc56b5a280a8a5115f65808c6bb90ccf87cec7e6e08d9425299aecd791c18",
+        "b59e8f88cac862e8f9ea3864193e787249d06a1f49d6d5d46acf2246ba6fae1a",
+        "b8230210f75613f00e7f2f5ac0188c85b78fb5b4b09a1e96cfe73822cdcd02de",
+        "b85242eea81c93e355a4275101d47f6bb040e67c4352eb0886aeef0016a5957b",
+        "b8dcbf0551a83e12a6f902d8022571525b250f47883c67c204a7b36b629a2763",
+        "b93254fe0259bb33bae64fa3965be6f9f13fdef12fff14ef1ca552da26b36ed3",
+        "bb6a9a99faf0740ef41791c31ecb0eb5a3258d597968c7167b6a7d77056908fe",
+        "bba601cf69af5c87f208d01883a81a52ae5977ffda55b55a78535ec00e6aa281",
+        "bd36721bdc471f990cf26b933c837c2011b08ead91124853fde574dd62350cdd",
+        "bf5af61e27692ebe28a121b5afee62bb816e3487c391c2b4a5486d87d78dce35",
+        "bf6491a8c80a38f1fe5f521ce2f1fbc95fa78a7309eb374620921eb834b2421f",
+        "bfaf3c2dd86f0a8bb6366e3fdff1d179f39b236a6ee6a4771170eeed98c7bfb1",
+        "c0306d6ddf72a23d3de3b1106ee8e1632a45b909324ead5f242d2f041a1dc44e",
+        "c45f48fb9584b450fb7cc93897f0cba66278e8aaf91bd0fa3804eaf2773eb271",
+        "c6d3b43339dbb50ea7c576103a78f543bda54cba907db8ae017709087dd0dec6",
+        "ca20039075ccf505b59dba9e18ed13ffef1966bd25bc216fd2fadcc94a39c8af",
+        "cbd009e6bfe3e6819efaa70b3283a2a5ef68e68af271221cfd76692486bd12d5",
+        "cbedf392873628f6875d0129ba48db89d4948dc02cb2ace2d6ed0ce5a6a81d74",
+        "d1ab55fb852805a5572ad1b984ffda39995191bf6739b6b79013223ef5889411",
+        "d612643e735fdfbcb2d17e5a561ce6862f612b96cb48a0ff888235d812bf5d7a",
+        "d6eeb0bdc40d0ebf06c63e5d6916cc4be645c4a349e6dbe238510920f67d0ba7",
+        "d7e3f56ffa35ff44558ffa13d68deb493ac2c5586b019559d5bfa4a705cfda23",
+        "dc3128ce8b69ae8f1e3a1e0795be9cbd029f243e10f7143c9189901d03c74d49",
+        "e06ca4404e82cd714d306234545c728b4f628f4cb083b0df87ed13228c1e8e12",
+        "e0c525a0975da5c683ce699bdc2f9da1447a797f606a4f8d15ea9aae03b598bc",
+        "e202f3e057a7673cb568f3d57b31b0b9a50d70f5713e563ea1478ab5652cda80",
+        "e3b2b8a3804393c1efd54d21bdf51e2ec3554dece70f4d340cb1c6e6b6ea0440",
+        "e5243af8c153d7a85ca6c68c36ff414a1b0f342d0e4fc08d44f43e0ad2daade2",
+        "e72ff7ea44db88cf704426b435875192f97973fb00c79fd2db5788f9fb46ba59",
+        "eb56683752d524c009aa4d70e50730c87cd7512aa8d53bf773191fdef401abdc",
+        "ed56a7fffb4b848ca06ddd52054f08f3cf9d650a8d1b24fba81885ef27033c96",
+        "ee2406a80d0cbc82269f4b5aae4f9795535333d2b8580085bd2c99ce8c5f8d03",
+        "efc93657a1112c8b9dc0edcd34c390b189902fbb44304583b989c2c631dbe432",
+        "efe2582ecd581ff8e09c153c7fe01d1530b0cc8cab8fba6ceb86d34c145cf7d4",
+        "f0f021e700868c9592e3770449e7cb9e4440aae09a43408493afeeb3745c3529",
+        "f381d55aa7122eb90eb9a8beff834d997b546a3834deb320078c0e837c338980",
+        "f8670390862dd586b7ba190101a25ca5950e211103acc5a9765c13d74e37c69d",
+        "f9f850383a4e1d7891d9cddd7c69f5b144d027fa036b09b72f7ee6315852bb73",
+        "fae865d31d1bf694177de18e348e5a9505f8924f593414e1b01f53f5fc7a1808",
+        "fbf0088876e7df181c6ae9a8b9e6e714c4a71edca3356c0036a736fec11d170b"
+      ],
+      "affected_assay_molecule_groups": [
+        [
+          "006f97dfec0e8c66adc638ef3c72f65636314bb9b5b6f3bbc7f1e38cad622775",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "013519f5cf8e30a37ba34854f8bb14c5b2a6d9e04d8f3ca17fc7fcc3982064ab",
+          "STARLING_05E481A3EE0F845F"
+        ],
+        [
+          "04303d145c2855e9bd6585d7a73e3278bc47ac91085a1029fa185ea20a36e561",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "05a86b5c28188f6a4a54c86a07871492dac99d45b8c9218d805477f4c603c73b",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "07d96e54f5884f7ae6bc7635a520a736446d8b715ae560cf37f05cafe374ddf6",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "09e00194984f3ca9e3accc2e5e5589b3d62ab3a0a131e96c13fb88e9ff9591b1",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "0f5e8ce390b3b78ed07fa680f9ed9564f63e7b43699a112f583e26c70db8e1cd",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "14e7e51cf57e94df78e2c7e160b1815da0c63487b3512651776da290433ac3ce",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "16462c1644452fd380f163038ead2d6f122948ef58a6b8d7d739b7f35299e0b4",
+          "STARLING_51382349B6C49F9E"
+        ],
+        [
+          "18630dbc2308f12785cfdc3b3e27b4ce39998c6c8ead39748e77a3a6fb1c2468",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "1f3183e61582fcdba9260a1d7853764fdc3da7e4ee00dc472823575752212fe9",
+          "STARLING_53A70D12B6238D33"
+        ],
+        [
+          "1f3183e61582fcdba9260a1d7853764fdc3da7e4ee00dc472823575752212fe9",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "2033884ab8ceab1b6dcfdc23b57847c8a7bab9ebb790e3b7bddfa1a7dce63c8f",
+          "STARLING_C474B36F451C6116"
+        ],
+        [
+          "23cb4114d1f1e6bd6085d9be9cc562b0bf6f4099fda5524d949fa208106abe00",
+          "STARLING_7D3E12EAED0F467C"
+        ],
+        [
+          "27d1e03a624aeed49094ebc2ed5523ec1460853d4d235d8850e7022fd20814a9",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "28d37916c5116ab8c66deaa0ca7f1d433b39c9ce8efa767c95e8de37bdd09aa5",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "2aa1c380af752fa42f97c47c8587dc3486e17cde6485dda63612d8dd7fccfb31",
+          "STARLING_1AB8CD5277D15404"
+        ],
+        [
+          "2aa1c380af752fa42f97c47c8587dc3486e17cde6485dda63612d8dd7fccfb31",
+          "STARLING_8EDAC4982CBF12E1"
+        ],
+        [
+          "2aa1c380af752fa42f97c47c8587dc3486e17cde6485dda63612d8dd7fccfb31",
+          "STARLING_B364EB0905E8ADBB"
+        ],
+        [
+          "2befcabd2fec122fb5fd931e33d46ea96124e625d9addc544ed88dfccdb9d199",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "2e63ebfc0d2c2ced4d1288f9767a8cee386cdc59caa71bedec186657af3b7521",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "2ec76ab16706a9c10ac7b51274c928c729fb4f5334a14555418ae42cc47dc30d",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "2f1f7c918938b9844b44e6e45ce79038059bb75b9d6cc6a7bdc3cc6665f0e346",
+          "STARLING_23368092E205EF59"
+        ],
+        [
+          "30718cb4c9aeaa2a311f166e6f2c5b11d206083bdab8a52cb2de90a98574ea27",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "334c0e66ad905e3ae128a5c740ebe27c03a5ed1355a730236315e75bc8c73c57",
+          "STARLING_D0EB12604107D80C"
+        ],
+        [
+          "37158fd9e0250fe4cd8294c905571d37e2cdbae6b37d8b69f6adcb7064485058",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "3dd3ac501fd28a935e928079212bb158f7763f3e08b45c3161f7b569e3b81adb",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "3f8fae58ab4439aa166cbb10decce26f909c2b1e064e2501ebe477bc3c9ae721",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "41eb1c3c5cb61ccc16fd91bff7feca1b29d67c28e15fd4642f84b45879b1071d",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "420dd566b6979a43460ee28c07421cd5002707c5beb7e5ad7f25bef4a5b411b1",
+          "STARLING_8ADD11F882C1B70D"
+        ],
+        [
+          "4364896a23598b8f9fc5b46c6761b90ae5ff9f876f74167879583a3f3b461081",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "461b81dce3af81cfa4da00ebd99d3c39949fdd00e378877917277f75142e5815",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "474551803160d8040c791aa2735f974b06964d34a55fdf91ddbb68c597ab310d",
+          "STARLING_BA45DE7D445F8E5B"
+        ],
+        [
+          "47bf9c67e24e9468593565bed1c063080c04f707809ba88c4e068677ec3f6439",
+          "STARLING_D70CA28E0F258785"
+        ],
+        [
+          "48af10c4558dcddc1cf7c7dc4e0252ca248dcc830003f44f9dc4aab91a6eb34f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "48c8d2bea7b8e4201ed3ce9333b985f6777154d8c111e2985387908bc74c73f6",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "4a66d770bea952fd5e51741ed65d1426275c732e9c86a25c0f5114a10170ec5f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "4b4c36057db22737cafcb17896181fd860a93ce1d178467f46b08a830296fbee",
+          "STARLING_7D3E12EAED0F467C"
+        ],
+        [
+          "4b582e99f7deafc5ed6f597377233ee39552041acf7d810ab358e8876fd2c465",
+          "STARLING_B364EB0905E8ADBB"
+        ],
+        [
+          "4efc5f1a729e7141d0842d1deb38783818142d14a02d65543f765cf015c582e6",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "4f55c1135dbfb882823155297ae86545d5ca1c34db04a0647cfddc5a24c448e8",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "51db2ea3e17bd8602d3cadfd44c0c084d760aeae5fbb573bc3f106b68a397b14",
+          "STARLING_E2D993DD295FC8FA"
+        ],
+        [
+          "5291fc2593dbeddb88d05e9e93a34af4df402a374f96602eae95b6fb39afb294",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "557b6d546dd518e76dd1f68e892a9bd01fe94c81e91e1340265c32d364392831",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "57ae6aa5edd87e2ef9e2f354f733cb6a4c7f72eae2bf6e7e8c123b877cd0b061",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "593c74be3beda4e184888e0310c3cf33feab1346dfb6ecd034e7c611530f25f5",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "5d3f7ec9f5e51ec87b40051aa185fac313a3588d491b3171f592561f5e4772ab",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "5e54ed8ccedad0d1f2e8de6a75b0cae4c8c83724612d618d381927f1ae2145fe",
+          "STARLING_6D2BB4C8CCA3AE2E"
+        ],
+        [
+          "5e766eef81da107bd5c0ba78eb99f79782f57ea728f832f657a5bae219ecb283",
+          "STARLING_BDDC74DAE5089AF5"
+        ],
+        [
+          "620c7513488249afe2d8040b8d559e8ca66cdf07c28019284cb7565ea4e855f2",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "65064080d93743754f77f6a85433241533aa48a689c0c0bec3cb468a9e26de74",
+          "STARLING_51382349B6C49F9E"
+        ],
+        [
+          "6841caea7748c42560c41d5a015911e35e8c72e9dc10acf4414d36912b35e07a",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "6917bda9f136f1ec2ab391c8189385075bcedfc33f57d1cd6c92c1b704acc64e",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "699747db2a6ba1c6a00dadfc49c85888ccf9c3934c8139b2b1e2ef206a67987c",
+          "STARLING_99820DD72750E7F8"
+        ],
+        [
+          "69a3a49f57e170572ad9a506c4ef377cb658b2cdc9c783c38e1c5b8a9760edfc",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_5B5D22881F6C8875"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_8FE39E5E9DBCD4AE"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_BDDC74DAE5089AF5"
+        ],
+        [
+          "6ae6eb4988f9e8ff58ee910ff2ef618f3b2046c872698c9a162ab868c6b67ffc",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "6cd5f2919ce57e9ecc93effe96877762a2807d6ed43cde7453deaeafeb22df52",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "6dd652e8ef7d453201fcbfd8edd9740cd4f5f6e5ca20fbf5bedfdaee0f8b86fe",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "6ea2f119ce00612b8dca132dcf8fef5f17a4732be8f6e313ff8d6973d7fa6789",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "6fbfd2ccee9de744465fb2d5ec3322446f469e13512cea1241a83f6b40fe0ec5",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "703ce76c8346b29f4809fd2e8e3533d5b5d387db65a5806ba247f23bb9105fa5",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "71d38e3a71c4c644f0ce39b6f05919a47f600d4fae1e625c73bc234c532c493a",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "71e90d4ec8e6f47423b9974d0212961fd970968fe686ed5cfcb970247482787f",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "72a115f5eb7297d9a8faf8e437940c7c586413745e95bbf50315e2f152ac3c5f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "7bd2fba25554bc6d3696798a635e5d2b26e57b92e59330daa0fdade9739aad90",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "7efe9bd9c24adcaabc34e1cb50485d76934fc037fabb2edc50787d68c9b0bf73",
+          "STARLING_B623208A61DF492A"
+        ],
+        [
+          "82913e675e2130ae11be2d436fc54118ae4f4e6b84441c29ef9ba70e09168b4f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "8311f271948a4d8523bcfb9a2c4bc3a4104bde112eca3b6a583e3761778d26f1",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "85879a45f1cb320a6c0f01c12969d8e40c7db9aeec6d0658148b6745246dd474",
+          "STARLING_A6691BDDEE870B0C"
+        ],
+        [
+          "8a195e12e99bc7fe8a16b5b01900a3ea64d572acfc915f9d42e914f0ebe8f81b",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "8bedd53f7881c4beb95c444d09791530157d58bc30b88ca12744a39397b507c7",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "8ca6f455fe9c553f3be20a24c6a7033974cca34cf9943d4829e91075f54da738",
+          "STARLING_C270AEA67B2EF427"
+        ],
+        [
+          "8d175da71621ddcb481fef1773feb354e183fc8860f7d291bea6b7420e3ae61d",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "8d293363870f1ba6b084c36f7dc98ec8b1fc0cd7e9f813f97b23748f6c5c80cb",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "8f18c50d2871a76bc7e6784885589b061309aea5b8009ef1cfe138c52f0b67b5",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "9121a59a26a43554de60f895fff467c5858a9c9f2d4c2759f5c29edf4b301da0",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "97849eb6594db8978b890d9962938ceb250f3c36d488f43021aadc77be45603b",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "984ec0f7741acc9f27e3f3c46d33f155347357e617961f85463cf4c11ccfae54",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "99e943c56d5a401c47ad8cb01d27e059101e1dba05173b3f480ce96b5690152f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "9bc1dac9bcb989e1b24d7cb8894c9aa29ddbc8591697dc23b064450891c86f04",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "9eee8506f8309b78e762bc31b3dc7cf8eb3600f72a0963c70ad6cb3a2f55a64a",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "9ffd150f857e781344ca1540b948e7f0a95c71bfe6a22e82d5d6ce5f0e999b7a",
+          "STARLING_D779A2751067B3F1"
+        ],
+        [
+          "a0588ad4387860d4aeb619a3122bbd6f28048c3eaf68023b81d9652fbbcd9715",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "a20beb20d5a50dffae9def6d3f07ecff0e785192f4b639227272ded31ed7db56",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "a3ddc7d509a957b48aa9e56564ef9001f258b54b127c69493162d6302a69c6bb",
+          "STARLING_BD0D9DF127543BB2"
+        ],
+        [
+          "aaa62c5fbbc00289d8617981def017f3f89ca95febccdf334d9817aa21488797",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "aba247e1c3226a064ba6d362f8f4fa2df66d649ef2a55cf01a24cd5cd1b7d86d",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "b006f349977ca95138ff7199388d1ff84c47072212860af31f122f80188f581f",
+          "STARLING_4489F9E535A727B2"
+        ],
+        [
+          "b5e89213f9dad160ed259ec0bfb76ea05ed779296698a2c14dd2c612988b6f15",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "b5e89213f9dad160ed259ec0bfb76ea05ed779296698a2c14dd2c612988b6f15",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "b5ff521604ae84eae234ede33a6174020ff28e68b808a360798aaf5dc41223b8",
+          "STARLING_BDDC74DAE5089AF5"
+        ],
+        [
+          "b60adf15ff15abed07a527ab01d6d05b3170d85db840f4ef458c5c88256ce4a9",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "baf7f7708147340a0e3f455cc257aaa59c438bfdb6cdd6c7b0ae1d8c3de933d6",
+          "STARLING_68AEA1AF6C6C111A"
+        ],
+        [
+          "be3ec1cf72ff32c09c682dd4547fb381154b4dd4fb88a686a6c4f1d74c53e00f",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "c1ea37a32f797096ef0450576f8b3577545de3cbb1cbdf999e078aab60a647a2",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "c1f7721b586e8bb99c0c2803da70ceeb682af719ede6939954f9b25c03681cca",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "c1f7721b586e8bb99c0c2803da70ceeb682af719ede6939954f9b25c03681cca",
+          "STARLING_C270AEA67B2EF427"
+        ],
+        [
+          "c1f7721b586e8bb99c0c2803da70ceeb682af719ede6939954f9b25c03681cca",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "c2306c050005a208e987b601debbc34cb0a26ea76386f7b34895c95cee7fdd57",
+          "STARLING_7C834C9BA575DED8"
+        ],
+        [
+          "c6fd1c3c62f4e1b95c2dda720b69c6fcbb742e903b9eb73bbb74958a9a445669",
+          "STARLING_E2D993DD295FC8FA"
+        ],
+        [
+          "cc0aa4af8c70dd271a14f3f155f6e65534845968cf88af66546e490a2914673b",
+          "STARLING_23368092E205EF59"
+        ],
+        [
+          "cc0aa4af8c70dd271a14f3f155f6e65534845968cf88af66546e490a2914673b",
+          "STARLING_45E388CFEB2BF89C"
+        ],
+        [
+          "cc0aa4af8c70dd271a14f3f155f6e65534845968cf88af66546e490a2914673b",
+          "STARLING_92D562E24BC07EF6"
+        ],
+        [
+          "cc246ae8c93185783608eed24198f4f46bd4942c29a7c3e7cac07dfdc14fadde",
+          "STARLING_51382349B6C49F9E"
+        ],
+        [
+          "cc950fd6ed53c4e4a0ea6fba7e9d229d75f5aaa757cfd8748f8b0780c3b1c6ae",
+          "STARLING_D0EB12604107D80C"
+        ],
+        [
+          "ce5af05bfd3d9adc2bf1aa408befabe5cacf8fd1875129775146814350cab324",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "ce70f83ff45cbd219c33721b47ca749aeeb6722586909798ec9887a1a1d99001",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "cfcbbdef6326e219434f944e306035b2be9f823af7ef90368f71e20592d0ab46",
+          "STARLING_5200A017F2BC86D1"
+        ],
+        [
+          "d2c27a9330acfab2e18d64bec8895b41f7a460048fc114a7bf2faf7643437ab9",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "d2e1407e4532025397416d8731b2b373f59adb8d2464c04af1f738f01fd3f501",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "d3ce43bd531b7bd5676420066fd36157bcfb2181f4838242bbd793831581d54e",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "d73411f74430a3eaa410845ac80704e1f61e3433947c97d5fffc28635dfc7f1d",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "d98d40cd4ad4163bd543b41e23253e5b0bc42d737bfcc891632339bc5d7a1238",
+          "STARLING_D69C5DBA5F4890FD"
+        ],
+        [
+          "df8fa364f1bf5cc340eecde922a2ff1d437d0f4fc6374d333626420bef3fc9d0",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "e371f0b52b360dc061333a2b1aa083240ed070f00dcbfd5355e74e3d66b6effc",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "e50970c1e870fb379c59d6e616637a8b4da8af92b1cc30548815a43b2f1a632b",
+          "STARLING_A895F29FDF55299D"
+        ],
+        [
+          "e6ebebee1d46fc22b4ca45a82a715f188d1d8f0a85251e149154a1a28262b3db",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "e947f735f4a4db9394d53a0d1cdce0f3de31b7aa2172b7ece8a376e7368e3797",
+          "STARLING_B623208A61DF492A"
+        ],
+        [
+          "eb5aeade9808cda44791d4533051a3c8461c3d88de17f4bbdba5386db4a52422",
+          "STARLING_81324ADEBE42BEC1"
+        ],
+        [
+          "ec75f596b6bca2955ff7d28aae3d9a4c40fa4af034509d018b7132cb662fbafb",
+          "STARLING_C270AEA67B2EF427"
+        ],
+        [
+          "f0268930081f5c03100713ffd5e4728405a037e654059176121cdc90b3f6a873",
+          "STARLING_C4CBC0EB4828109F"
+        ],
+        [
+          "f495ab993ff8080395df478f086660c9b958e27fe4417261935077ea74f6ff7e",
+          "STARLING_14D2EF0513D07FEC"
+        ],
+        [
+          "fbe2b2ebfbf5a92ae2c5369ff917e049f2b6306ef521b824f779c60f8ad1583c",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "fbf935304a76ecfc0de11a559f91449a7dbee6e080bb1ae47c03444c6c414723",
+          "STARLING_BDDC74DAE5089AF5"
+        ],
+        [
+          "fbf935304a76ecfc0de11a559f91449a7dbee6e080bb1ae47c03444c6c414723",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "fd6ac41306ac52986abb24776e47b4aaa8365f76cbee150a02d228bee5e9a9f2",
+          "STARLING_CC94C19EC06768A4"
+        ],
+        [
+          "ff55c2296dacf2df2bfbf1373f3f3f1bd91100eddeffd4e21ae22367d01d3a77",
+          "STARLING_5699D4DC505F9226"
+        ],
+        [
+          "ffc81cb26c2c021a9b27420ef9bd458e4f5f2e9188e321e12ef1680908f6dbd2",
+          "STARLING_14D2EF0513D07FEC"
+        ]
+      ],
+      "published_index_manifest_sha256": "853efb57bb225ea04444f720c83b25eb12b280f3426041269aea9596e0cca0c7"
+    }
+  }
+}

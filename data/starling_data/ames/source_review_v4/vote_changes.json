@@ -1,0 +1,2072 @@
+{
+  "added_votes": [
+    {
+      "source_record_id": "ames_base:214898",
+      "source_record_fingerprint_sha256": "7ce4c22fa57d48519bc06ad83133ff532e2bb185ea2b0d459857b56d4dda636f",
+      "source_payload_sha256": "b1ba94a82bfc22803f6b9c38ad6524340fe71366e0cb207b2cc73c488c1af14b",
+      "drug": "O=NN1CN(N=O)CN(N=O)C1",
+      "molecule_identity_key": "HFWOSHMLDRSIDN-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=NN1CN(N=O)CN(N=O)C1",
+        "canonical_smiles": "O=NN1CN(N=O)CN(N=O)C1",
+        "standard_inchi_key": "HFWOSHMLDRSIDN-UHFFFAOYSA-N",
+        "parent_smiles": "O=NN1CN(N=O)CN(N=O)C1",
+        "parent_inchi_key": "HFWOSHMLDRSIDN-UHFFFAOYSA-N",
+        "parent_connectivity_key": "HFWOSHMLDRSIDN",
+        "component_parent_inchi_keys": [
+          "HFWOSHMLDRSIDN-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "C1NCNCN1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "17360228",
+      "molecule_name": "hexahydro-1,3,5-trinitroso-1,3,5-triazine",
+      "source_smiles": "O=NN1CN(N=O)CN(N=O)C1",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "weak_positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=present",
+      "canonical_claim_id": "1d9f5385d44df8cefcdc267f6cdb7a3473d42abb6868a287428cce96b06d9f25",
+      "supporting_source_record_ids": [
+        "ames_base:214898"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:215914",
+      "source_record_fingerprint_sha256": "bb001fecadba40cdc4b531100321a9b28a1aa97508229686b297da6b12a72b65",
+      "source_payload_sha256": "eb7ce53b6a50db2db875e853f3642121fcba4cd4d126ea0f3345afc7d861fbe1",
+      "drug": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+      "molecule_identity_key": "XTRDKALNCIHHNI-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+        "canonical_smiles": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+        "standard_inchi_key": "XTRDKALNCIHHNI-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+        "parent_inchi_key": "XTRDKALNCIHHNI-UHFFFAOYSA-N",
+        "parent_connectivity_key": "XTRDKALNCIHHNI",
+        "component_parent_inchi_keys": [
+          "XTRDKALNCIHHNI-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccccc1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA100,TA98,YG1021",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA100,TA98,YG1021"
+      ],
+      "condition_scope": "external",
+      "pmid": "9838031",
+      "molecule_name": "2,6-DNT",
+      "source_smiles": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98, YG1021, TA100 | metabolic_activation=absent",
+      "canonical_claim_id": "8c449c1d5ad16d154cfa6bf32ab5b16b009c1edfc0d6032cb44f43cac85f92dc",
+      "supporting_source_record_ids": [
+        "ames_base:215914"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:217918",
+      "source_record_fingerprint_sha256": "067cfffe1640596cf908bab262021e3922ce8cfa6f0ffbb2acc7434012112ad9",
+      "source_payload_sha256": "fefc71bd929d1b241740a42d939ca37f6c1018868ec9ef71c56f7f80286f1a7a",
+      "drug": "O=[N+]([O-])c1c(O)cc2ccc3cccc4ccc1c2c34",
+      "molecule_identity_key": "ATOIPTUNDVJRLM-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=[N+]([O-])c1c(O)cc2ccc3cccc4ccc1c2c34",
+        "canonical_smiles": "O=[N+]([O-])c1c(O)cc2ccc3cccc4ccc1c2c34",
+        "standard_inchi_key": "ATOIPTUNDVJRLM-UHFFFAOYSA-N",
+        "parent_smiles": "O=[N+]([O-])c1c(O)cc2ccc3cccc4ccc1c2c34",
+        "parent_inchi_key": "ATOIPTUNDVJRLM-UHFFFAOYSA-N",
+        "parent_connectivity_key": "ATOIPTUNDVJRLM",
+        "component_parent_inchi_keys": [
+          "ATOIPTUNDVJRLM-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1cc2ccc3cccc4ccc(c1)c2c34",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "6720027",
+      "molecule_name": "1-nitropyrene-2-ol",
+      "source_smiles": "O=[N+]([O-])c1c(O)cc2ccc3cccc4ccc1c2c34",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 and TA100 | metabolic_activation=present",
+      "canonical_claim_id": "6f45549f066218c8e3e601874e15002c17d0df8f4713c671094b0d8a98461d82",
+      "supporting_source_record_ids": [
+        "ames_base:217918"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:22360",
+      "source_record_fingerprint_sha256": "d0e5395fc2af74748513c0fc5fa008f4ac389506167c3b8037a162e0f0805f05",
+      "source_payload_sha256": "d15e4191376099b770cdfe401720a97c0f1312f0a2a0b763f62a5762035cd5f5",
+      "drug": "O=[N+]([O-])c1cc[n+]([O-])c2ccccc12",
+      "molecule_identity_key": "YHQDZJICGQWFHK-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=[N+]([O-])c1cc[n+]([O-])c2ccccc12",
+        "canonical_smiles": "O=[N+]([O-])c1cc[n+]([O-])c2ccccc12",
+        "standard_inchi_key": "YHQDZJICGQWFHK-UHFFFAOYSA-N",
+        "parent_smiles": "O=[N+]([O-])c1cc[n+]([O-])c2ccccc12",
+        "parent_inchi_key": "YHQDZJICGQWFHK-UHFFFAOYSA-N",
+        "parent_connectivity_key": "YHQDZJICGQWFHK",
+        "component_parent_inchi_keys": [
+          "YHQDZJICGQWFHK-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2[nH+]cccc2c1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "30268793",
+      "molecule_name": "4-nitroquinoline-1-oxide",
+      "source_smiles": "O=[N+]([O-])c1cc[n+]([O-])c2ccccc12",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=absent",
+      "canonical_claim_id": "4892b36bfc9989621f8d94d639b2a433c47c74a4a512dd5549604765f3894f57",
+      "supporting_source_record_ids": [
+        "ames_base:22360"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:247454",
+      "source_record_fingerprint_sha256": "35f0e9864634617efc1c761916eb3299fa13879e47891d3e936b2f10252291b3",
+      "source_payload_sha256": "02a273e18697fa40620174e905eb419554920fe4fd88a9728f527f7a5c294a58",
+      "drug": "Nc1ccc2cc3ccccc3cc2c1",
+      "molecule_identity_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "canonical_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "standard_inchi_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+        "parent_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "parent_inchi_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+        "parent_connectivity_key": "YCSBALJAGZKWFF",
+        "component_parent_inchi_keys": [
+          "YCSBALJAGZKWFF-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2cc3ccccc3cc2c1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA1535,TA1537,TA98,WP2UVRA",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA1535,TA1537,TA98,WP2UVRA"
+      ],
+      "condition_scope": "external",
+      "pmid": "29632622",
+      "molecule_name": "2-aminoanthracene",
+      "source_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "Bacterial reverse mutation; TA100, TA1535, TA1537, TA98, WP2uvrA; metabolic activation present; preincubation assay.",
+      "canonical_claim_id": "ebae4d7355fcf98afe4f03d89de5a87a4dcd9f0d39c142edca53034dd1456083",
+      "supporting_source_record_ids": [
+        "ames_base:247454"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:247704",
+      "source_record_fingerprint_sha256": "10138553383733d91a23c9176a65b40194ffa79ef24e8e12c255dfa540d7f06f",
+      "source_payload_sha256": "b9fda775297fc3b518f45b46812b8cfed27f98a5af399450219effef412f2ed6",
+      "drug": "Cc1ccc2cc3c(ccc4ccccc43)c3c2c1CC3",
+      "molecule_identity_key": "PPQNQXQZIWHJRB-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ccc2cc3c(ccc4ccccc43)c3c2c1CC3",
+        "canonical_smiles": "Cc1ccc2cc3c(ccc4ccccc43)c3c2c1CC3",
+        "standard_inchi_key": "PPQNQXQZIWHJRB-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ccc2cc3c(ccc4ccccc43)c3c2c1CC3",
+        "parent_inchi_key": "PPQNQXQZIWHJRB-UHFFFAOYSA-N",
+        "parent_connectivity_key": "PPQNQXQZIWHJRB",
+        "component_parent_inchi_keys": [
+          "PPQNQXQZIWHJRB-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1cc2c3c(c4ccc5ccccc5c4cc3c1)CC2",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA98,YG1021,YG1024",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA98,YG1021,YG1024"
+      ],
+      "condition_scope": "external",
+      "pmid": "9186578",
+      "molecule_name": "3-Methylcholanthrene",
+      "source_smiles": "Cc1ccc2cc3c(ccc4ccccc43)c3c2c1CC3",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98, YG1021, YG1024 | metabolic_activation=present",
+      "canonical_claim_id": "520156d78d40b96888821012666805b39012bd16879659ceb6fb2efbd6dd8a7f",
+      "supporting_source_record_ids": [
+        "ames_base:247704"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:256160",
+      "source_record_fingerprint_sha256": "f78a5e6fbc22af18a4eed9cf7840b62c5190a81cdae4649b4659dcf100a9ea02",
+      "source_payload_sha256": "d0ef953cdbe5f39f2029fc8b12204a09cd67a7361ce2eb6506d8c27808f077e0",
+      "drug": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "molecule_identity_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "canonical_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "standard_inchi_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+        "parent_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "parent_inchi_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+        "parent_connectivity_key": "FMMWHPNWAFZXNH",
+        "component_parent_inchi_keys": [
+          "FMMWHPNWAFZXNH-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "2257926",
+      "molecule_name": "Benzo[a]pyrene",
+      "source_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 | metabolic_activation=present",
+      "canonical_claim_id": "87738724e7e9507768598b35004f9e76b93e2e965c02c2e3ddbead53eadb2e0f",
+      "supporting_source_record_ids": [
+        "ames_base:256160"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:314721",
+      "source_record_fingerprint_sha256": "ef0c868d3872b8f376149d3c1da89cf6c873480b8e31eebbbf4327359f834455",
+      "source_payload_sha256": "f98917a8c0799bb39c713cd5b24639c34ea338eef5e3179c530ca28771480afa",
+      "drug": "COCCN(CCOC)c1cc(NC(C)=O)c(-n2nc3c(Br)cc(N)c(Cl)c3n2)cc1OC",
+      "molecule_identity_key": "SIVDBALHJJBGLN-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "COCCN(CCOC)c1cc(NC(C)=O)c(-n2nc3c(Br)cc(N)c(Cl)c3n2)cc1OC",
+        "canonical_smiles": "COCCN(CCOC)c1cc(NC(C)=O)c(-n2nc3c(Br)cc(N)c(Cl)c3n2)cc1OC",
+        "standard_inchi_key": "SIVDBALHJJBGLN-UHFFFAOYSA-N",
+        "parent_smiles": "COCCN(CCOC)c1cc(NC(C)=O)c(-n2nc3c(Br)cc(N)c(Cl)c3n2)cc1OC",
+        "parent_inchi_key": "SIVDBALHJJBGLN-UHFFFAOYSA-N",
+        "parent_connectivity_key": "SIVDBALHJJBGLN",
+        "component_parent_inchi_keys": [
+          "SIVDBALHJJBGLN-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc(-n2nc3ccccc3n2)cc1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA98,YG1024,YG1029",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA98,YG1024,YG1029"
+      ],
+      "condition_scope": "external",
+      "pmid": "9548809",
+      "molecule_name": "PBTA-1",
+      "source_smiles": "COCCN(CCOC)c1cc(NC(C)=O)c(-n2nc3c(Br)cc(N)c(Cl)c3n2)cc1OC",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98, TA100, YG1024, YG1029 | metabolic_activation=present",
+      "canonical_claim_id": "80112b75f2d0760dd3d794fddc8a41064dd8e6a93b5cd33228dca6540592a9f9",
+      "supporting_source_record_ids": [
+        "ames_base:314721"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:42536",
+      "source_record_fingerprint_sha256": "672a362074a8ba34c604b45839ff738e75112bddf56a2503952e9d7a05d16c1d",
+      "source_payload_sha256": "e9c43ed7a813a406a15e4d0123d58faeb8f6c5b0b9a56233c5b05b716c085de6",
+      "drug": "CN(N=O)C(N)=O",
+      "molecule_identity_key": "ZRKWMRDKSOPRRS-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CN(N=O)C(N)=O",
+        "canonical_smiles": "CN(N=O)C(N)=O",
+        "standard_inchi_key": "ZRKWMRDKSOPRRS-UHFFFAOYSA-N",
+        "parent_smiles": "CN(N=O)C(N)=O",
+        "parent_inchi_key": "ZRKWMRDKSOPRRS-UHFFFAOYSA-N",
+        "parent_connectivity_key": "ZRKWMRDKSOPRRS",
+        "component_parent_inchi_keys": [
+          "ZRKWMRDKSOPRRS-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 1,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA104",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA104"
+      ],
+      "condition_scope": "external",
+      "pmid": "8504462",
+      "molecule_name": "N-methyl-N-nitrosourea",
+      "source_smiles": "CN(N=O)C(N)=O",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella TA100 and TA104 | metabolic_activation=both",
+      "canonical_claim_id": "1b15a7ffcac07e84a4aab2cc616aac81efa733297e83f9b2a1afc59f6bc13640",
+      "supporting_source_record_ids": [
+        "ames_base:42536"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:68578",
+      "source_record_fingerprint_sha256": "f25292b06e7584fd75484dc07897cc5f9450afc21ff3029926782228a84c0517",
+      "source_payload_sha256": "f6d123926da4a538d84c8422d6dd8ce2ec5204adc3f3a99a38f1885e6f098f0e",
+      "drug": "O=c1[nH]c2cc([N+](=O)[O-])cc(CNCP(=O)(O)O)c2[nH]c1=O",
+      "molecule_identity_key": "ABFMMCZFKUIJGQ-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=c1[nH]c2cc([N+](=O)[O-])cc(CNCP(=O)(O)O)c2[nH]c1=O",
+        "canonical_smiles": "O=c1[nH]c2cc([N+](=O)[O-])cc(CNCP(=O)(O)O)c2[nH]c1=O",
+        "standard_inchi_key": "ABFMMCZFKUIJGQ-UHFFFAOYSA-N",
+        "parent_smiles": "O=c1[nH]c2cc([N+](=O)[O-])cc(CNCP(=O)(O)O)c2[nH]c1=O",
+        "parent_inchi_key": "ABFMMCZFKUIJGQ-UHFFFAOYSA-N",
+        "parent_connectivity_key": "ABFMMCZFKUIJGQ",
+        "component_parent_inchi_keys": [
+          "ABFMMCZFKUIJGQ-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=c1[nH]c2ccccc2[nH]c1=O",
+      "Y": 0,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA102,TA1535,TA97A,TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA102,TA1535,TA97A,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "12113769",
+      "molecule_name": "AMP397",
+      "source_smiles": "O=c1[nH]c2cc([N+](=O)[O-])cc(CNCP(=O)(O)O)c2[nH]c1=O",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA1535, TA97a, TA98, TA100, TA102 | metabolic_activation=present",
+      "canonical_claim_id": "6a2bcf56b2266c56f352c53836ae009856cdde69766f23ddc446ca0bc5196099",
+      "supporting_source_record_ids": [
+        "ames_base:68578"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:73116",
+      "source_record_fingerprint_sha256": "96fb5bd2bf7906a145ecf4042bad2ff3d41be23005c10460ebf645ac8448e41e",
+      "source_payload_sha256": "4696415c6a78785d57d944fd752f60b8bd2766e53c168a7af8dbace9072cfa46",
+      "drug": "Nc1cc([N+](=O)[O-])ccc1O",
+      "molecule_identity_key": "VLZVIIYRNMWPSN-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Nc1cc([N+](=O)[O-])ccc1O",
+        "canonical_smiles": "Nc1cc([N+](=O)[O-])ccc1O",
+        "standard_inchi_key": "VLZVIIYRNMWPSN-UHFFFAOYSA-N",
+        "parent_smiles": "Nc1cc([N+](=O)[O-])ccc1O",
+        "parent_inchi_key": "VLZVIIYRNMWPSN-UHFFFAOYSA-N",
+        "parent_connectivity_key": "VLZVIIYRNMWPSN",
+        "component_parent_inchi_keys": [
+          "VLZVIIYRNMWPSN-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccccc1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA1538",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA1538"
+      ],
+      "condition_scope": "external",
+      "pmid": "1094469",
+      "molecule_name": "2-amino-4-nitrophenol",
+      "source_smiles": "Nc1cc([N+](=O)[O-])ccc1O",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA1538 | metabolic_activation=both",
+      "canonical_claim_id": "4095f23a6051b9378896823baac46889254733af81c882a6a14839117b31e091",
+      "supporting_source_record_ids": [
+        "ames_base:73116"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    },
+    {
+      "source_record_id": "ames_base:89734",
+      "source_record_fingerprint_sha256": "2d166a8cfd70751a77b50e65f8c615d02907ce4d5c423430c8dd847c4b200f95",
+      "source_payload_sha256": "6d1967055f7c4e355262626f8a3b42a5dc2ff19b40d003778837e3268f69d7fe",
+      "drug": "Cc1c(N)nc(C)c2c1[nH]c1ccccc12",
+      "molecule_identity_key": "LVTKHGUGBGNBPL-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1c(N)nc(C)c2c1[nH]c1ccccc12",
+        "canonical_smiles": "Cc1c(N)nc(C)c2c1[nH]c1ccccc12",
+        "standard_inchi_key": "LVTKHGUGBGNBPL-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1c(N)nc(C)c2c1[nH]c1ccccc12",
+        "parent_inchi_key": "LVTKHGUGBGNBPL-UHFFFAOYSA-N",
+        "parent_connectivity_key": "LVTKHGUGBGNBPL",
+        "component_parent_inchi_keys": [
+          "LVTKHGUGBGNBPL-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2c(c1)[nH]c1ccncc12",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "2067537",
+      "molecule_name": "3-amino-1,4-dimethyl-5H-pyrido[4,3-b]indole",
+      "source_smiles": "Cc1c(N)nc(C)c2c1[nH]c1ccccc12",
+      "label_method": "reviewed_primary_bacterial_outcome",
+      "reviewer": "Codex agent:source_review_v4",
+      "review_method": "individual_source_semantic_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=present",
+      "canonical_claim_id": "3e07964ca2a9910e0a56be7586e2bc1fa10dcbb29e5faffd3b34d2d73d1032a1",
+      "supporting_source_record_ids": [
+        "ames_base:89734"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+    }
+  ],
+  "withdrawn_votes": [
+    {
+      "source_record_id": "ames_base:105657",
+      "source_record_fingerprint_sha256": "ff27fd965936779c8ab7e95b3d50f1eb827cdf7228578b9f8cd2ef634be0ca7b",
+      "source_payload_sha256": "9ed525b7d2f5cb67a675cc0c521a8dadf76b2732dcff1e1d81a58978821063af",
+      "drug": "O=C1C=CC(=O)c2ccccc21",
+      "molecule_identity_key": "FRASJONUBLZVQX-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=C1C=CC(=O)c2ccccc21",
+        "canonical_smiles": "O=C1C=CC(=O)c2ccccc21",
+        "standard_inchi_key": "FRASJONUBLZVQX-UHFFFAOYSA-N",
+        "parent_smiles": "O=C1C=CC(=O)c2ccccc21",
+        "parent_inchi_key": "FRASJONUBLZVQX-UHFFFAOYSA-N",
+        "parent_connectivity_key": "FRASJONUBLZVQX",
+        "component_parent_inchi_keys": [
+          "FRASJONUBLZVQX-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C1C=CC(=O)c2ccccc21",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA102,TA97,TA98",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA102,TA97,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "18178518",
+      "molecule_name": "1,4-Naphthoquinone",
+      "source_smiles": "O=C1C=CC(=O)c2ccccc21",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100, TA97, TA102, TA98 | metabolic_activation=both",
+      "canonical_claim_id": "c000526b83b9f854f972da235ad7b30d851454805c33cc7eb8ee55f939c1f950",
+      "supporting_source_record_ids": [
+        "ames_base:105657"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 105657,
+        "source_record_id": "ames_base:105657",
+        "canonical_record_id": "965d826f3020f8c3e1dd9488820ab3358bf753a6d0279a1c19fa2a5ff8ab8c0a",
+        "pmid": "18178518",
+        "extraction_id": "ext_13",
+        "parent_inchi_key": "FRASJONUBLZVQX-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:125041",
+      "source_record_fingerprint_sha256": "4dfcd931accb6eb8d266dbbd3f410fce14456b754bd2ac849ef6a9aa782780e1",
+      "source_payload_sha256": "035e565eadad450af27236ab3fd74cf858c0862b5540ba5054d9aac54642de53",
+      "drug": "ClC(Cl)Cl",
+      "molecule_identity_key": "HEDRZPFGACZZDS-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "ClC(Cl)Cl",
+        "canonical_smiles": "ClC(Cl)Cl",
+        "standard_inchi_key": "HEDRZPFGACZZDS-UHFFFAOYSA-N",
+        "parent_smiles": "ClC(Cl)Cl",
+        "parent_inchi_key": "HEDRZPFGACZZDS-UHFFFAOYSA-N",
+        "parent_connectivity_key": "HEDRZPFGACZZDS",
+        "component_parent_inchi_keys": [
+          "HEDRZPFGACZZDS-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "14991753",
+      "molecule_name": "chloroform",
+      "source_smiles": "ClC(Cl)Cl",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=both",
+      "canonical_claim_id": "c42dbf3d7b0624b31798feb4d65ece376a764cb81ee6f97fd3b562e4142d15c5",
+      "supporting_source_record_ids": [
+        "ames_base:125041"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 125041,
+        "source_record_id": "ames_base:125041",
+        "canonical_record_id": "7ac73195185026eb3f4b850baf31d68dc3e0bc242039ed153e23626d1e69fa0c",
+        "pmid": "14991753",
+        "extraction_id": "ext_9",
+        "parent_inchi_key": "HEDRZPFGACZZDS-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:135295",
+      "source_record_fingerprint_sha256": "854849015526ba18074983f8d9571e10a07838ce44ac8e5186716f761b72062e",
+      "source_payload_sha256": "5e1f2e934cf7de2edb8a2359c880047d1fdfe69ac368cc8c4a3ab3e2216d3d5d",
+      "drug": "O=CC(=O)O",
+      "molecule_identity_key": "HHLFWLYXYJOTON-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=CC(=O)O",
+        "canonical_smiles": "O=CC(=O)O",
+        "standard_inchi_key": "HHLFWLYXYJOTON-UHFFFAOYSA-N",
+        "parent_smiles": "O=CC(=O)O",
+        "parent_inchi_key": "HHLFWLYXYJOTON-UHFFFAOYSA-N",
+        "parent_connectivity_key": "HHLFWLYXYJOTON",
+        "component_parent_inchi_keys": [
+          "HHLFWLYXYJOTON-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA102",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA102"
+      ],
+      "condition_scope": "external",
+      "pmid": "2959862",
+      "molecule_name": "Glyoxylic acid",
+      "source_smiles": "O=CC(=O)O",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella strain TA102 | metabolic_activation=absent",
+      "canonical_claim_id": "e903397d1fa2bc2e601e87eefae71e3e6112744431602c0f308fd877d6155606",
+      "supporting_source_record_ids": [
+        "ames_base:135295"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 135295,
+        "source_record_id": "ames_base:135295",
+        "canonical_record_id": "7e373c08455d825c5663d67226eadd9e1082674dbac7063f5e42a50a0aee93e9",
+        "pmid": "2959862",
+        "extraction_id": "ext_10",
+        "parent_inchi_key": "HHLFWLYXYJOTON-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:152879",
+      "source_record_fingerprint_sha256": "4206ceedf26a9c2c3d80c3b446f1cfc31c6dcf07474927275a49b575f18378a1",
+      "source_payload_sha256": "65d4590d7a6c000d2d1a765751b9f13143adcdbc35248dd8f2773403f1f48742",
+      "drug": "NNc1ccn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+      "molecule_identity_key": "RSSRMDMJEZIUJX-XVFCMESISA-N",
+      "molecule_identity": {
+        "input_smiles": "NNc1ccn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+        "canonical_smiles": "NNc1ccn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+        "standard_inchi_key": "RSSRMDMJEZIUJX-XVFCMESISA-N",
+        "parent_smiles": "NNc1ccn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+        "parent_inchi_key": "RSSRMDMJEZIUJX-XVFCMESISA-N",
+        "parent_connectivity_key": "RSSRMDMJEZIUJX",
+        "component_parent_inchi_keys": [
+          "RSSRMDMJEZIUJX-XVFCMESISA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=c1ncccn1C1CCCO1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA1535",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "8463954",
+      "molecule_name": "N4-Aminocytidine",
+      "source_smiles": "NNc1ccn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | S. typhimurium TA1535 | metabolic_activation=absent",
+      "canonical_claim_id": "73cd96e3ff40db4426c9d5db7f272b4481399d91b6b98e23fa8f30d572db4634",
+      "supporting_source_record_ids": [
+        "ames_base:152879"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 152879,
+        "source_record_id": "ames_base:152879",
+        "canonical_record_id": "377150393ccd05a413b17f050236c2ef5fe584d806a426f58b39983587064c90",
+        "pmid": "8463954",
+        "extraction_id": "ext_10",
+        "parent_inchi_key": "RSSRMDMJEZIUJX-XVFCMESISA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:166236",
+      "source_record_fingerprint_sha256": "2f2fa23a0124caf45a3ccdb3fdea69058f376878b193d2cf835269a7bb4fd1a5",
+      "source_payload_sha256": "78e68ff7b949b491fc9d0b2f42fb6eae6b044c6d7c8c4d864db116edd775a22a",
+      "drug": "COS(C)(=O)=O",
+      "molecule_identity_key": "MBABOKRGFJTBAE-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "COS(C)(=O)=O",
+        "canonical_smiles": "COS(C)(=O)=O",
+        "standard_inchi_key": "MBABOKRGFJTBAE-UHFFFAOYSA-N",
+        "parent_smiles": "COS(C)(=O)=O",
+        "parent_inchi_key": "MBABOKRGFJTBAE-UHFFFAOYSA-N",
+        "parent_connectivity_key": "MBABOKRGFJTBAE",
+        "component_parent_inchi_keys": [
+          "MBABOKRGFJTBAE-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "39468665",
+      "molecule_name": "Methyl methanesulfonate",
+      "source_smiles": "COS(C)(=O)=O",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=absent",
+      "canonical_claim_id": "2ee8330bd87de285a3f8d96c26b388aceb260dcba1be678a8009942e23a4ee95",
+      "supporting_source_record_ids": [
+        "ames_base:166236"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 166236,
+        "source_record_id": "ames_base:166236",
+        "canonical_record_id": "7a0221058fa09387f0f818e42ae1a56ac28a405d53aa9613035eadd477a31b1c",
+        "pmid": "39468665",
+        "extraction_id": "ext_4",
+        "parent_inchi_key": "MBABOKRGFJTBAE-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:170344",
+      "source_record_fingerprint_sha256": "cee5bb9dbdb114d3036fa10032db8da957f79333820c9bf510f6ca7ae6f2390b",
+      "source_payload_sha256": "65e709e7db66a813aa81acb36e8c231c850211d7b3df909d2a8a802d34aff90d",
+      "drug": "Nc1ccc2cc3ccccc3cc2c1",
+      "molecule_identity_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "canonical_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "standard_inchi_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+        "parent_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+        "parent_inchi_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+        "parent_connectivity_key": "YCSBALJAGZKWFF",
+        "component_parent_inchi_keys": [
+          "YCSBALJAGZKWFF-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2cc3ccccc3cc2c1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "1370238",
+      "molecule_name": "2-aminoanthracene",
+      "source_smiles": "Nc1ccc2cc3ccccc3cc2c1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=present",
+      "canonical_claim_id": "f60729e2dfaf5e28f025e194b00b443f6d1318aeb35aa7ec47432aed79f74348",
+      "supporting_source_record_ids": [
+        "ames_base:170344"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 170344,
+        "source_record_id": "ames_base:170344",
+        "canonical_record_id": "523ec43f353cfc9da0e57dd1420fe492a1fad7337c633345d804df21223b5522",
+        "pmid": "1370238",
+        "extraction_id": "ext_5",
+        "parent_inchi_key": "YCSBALJAGZKWFF-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:192129",
+      "source_record_fingerprint_sha256": "829098c91882f76d5cffe78544c26e4311f1ad96a281e0e18c5c025493bed011",
+      "source_payload_sha256": "bbd1b49ee8b61027b07d8934b74f0e63925568eca1dacf525aaf7e56cbbdb778",
+      "drug": "O=CC=O",
+      "molecule_identity_key": "LEQAOMBKQFMDFZ-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=CC=O",
+        "canonical_smiles": "O=CC=O",
+        "standard_inchi_key": "LEQAOMBKQFMDFZ-UHFFFAOYSA-N",
+        "parent_smiles": "O=CC=O",
+        "parent_inchi_key": "LEQAOMBKQFMDFZ-UHFFFAOYSA-N",
+        "parent_connectivity_key": "LEQAOMBKQFMDFZ",
+        "component_parent_inchi_keys": [
+          "LEQAOMBKQFMDFZ-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "2715659",
+      "molecule_name": "Glyoxal",
+      "source_smiles": "O=CC=O",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA100 | metabolic_activation=absent",
+      "canonical_claim_id": "cdb5cd458042b1d564384934df9090c70ec5eede98f1c0249e64d380853993cc",
+      "supporting_source_record_ids": [
+        "ames_base:192129"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 192129,
+        "source_record_id": "ames_base:192129",
+        "canonical_record_id": "b40a18463fde89fa002db6278d2afd811bad0723937b86e4cbd1a924b209dd21",
+        "pmid": "2715659",
+        "extraction_id": "ext_12",
+        "parent_inchi_key": "LEQAOMBKQFMDFZ-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:217285",
+      "source_record_fingerprint_sha256": "257ed528422cf084dd207de77ded34524b1682b5f014f08e06388d021b6a53d7",
+      "source_payload_sha256": "1da1851dc31f33cec170c0dde8d66eacb9c3bab22d1171ede8161e5cbb5c6a27",
+      "drug": "CCI",
+      "molecule_identity_key": "HVTICUPFWKNHNG-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CCI",
+        "canonical_smiles": "CCI",
+        "standard_inchi_key": "HVTICUPFWKNHNG-UHFFFAOYSA-N",
+        "parent_smiles": "CCI",
+        "parent_inchi_key": "HVTICUPFWKNHNG-UHFFFAOYSA-N",
+        "parent_connectivity_key": "HVTICUPFWKNHNG",
+        "component_parent_inchi_keys": [
+          "HVTICUPFWKNHNG-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 1,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA1535",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "7029269",
+      "molecule_name": "iodoethane",
+      "source_smiles": "CCI",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA1535/TA100 | metabolic_activation=both",
+      "canonical_claim_id": "74c6447be9595976367c4d75f60abdff94ffb9706a7f6ce88b6a78662bc47440",
+      "supporting_source_record_ids": [
+        "ames_base:217285"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 217285,
+        "source_record_id": "ames_base:217285",
+        "canonical_record_id": "bec399938507ea8e0b466c0246f11d39d20a3ef32b20e5d62a06728ec0d694a4",
+        "pmid": "7029269",
+        "extraction_id": "ext_36",
+        "parent_inchi_key": "HVTICUPFWKNHNG-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:227906",
+      "source_record_fingerprint_sha256": "42ec1fc3bc17f31df1903932eca07695d88664bc23e4908076f5cc3b28cbe6f2",
+      "source_payload_sha256": "ef912bc7e99d1a395ca292114f43599a299be13d48e5cbb15559052ddf33ca80",
+      "drug": "CCN(CC)N=O",
+      "molecule_identity_key": "WBNQDOYYEUMPFS-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CCN(CC)N=O",
+        "canonical_smiles": "CCN(CC)N=O",
+        "standard_inchi_key": "WBNQDOYYEUMPFS-UHFFFAOYSA-N",
+        "parent_smiles": "CCN(CC)N=O",
+        "parent_inchi_key": "WBNQDOYYEUMPFS-UHFFFAOYSA-N",
+        "parent_connectivity_key": "WBNQDOYYEUMPFS",
+        "component_parent_inchi_keys": [
+          "WBNQDOYYEUMPFS-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 0,
+      "condition_group": "metabolic_activation=present+strain_panel=TA1535",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "6865998",
+      "molecule_name": "N-nitrosodiethylamine",
+      "source_smiles": "CCN(CC)N=O",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA1535 | metabolic_activation=present",
+      "canonical_claim_id": "f3e47ae1152639540676a47c0a063f4ad61e0934be73f8ad8a8f500d5e77b553",
+      "supporting_source_record_ids": [
+        "ames_base:227906",
+        "ames_base:227915"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 227906,
+        "source_record_id": "ames_base:227906",
+        "canonical_record_id": "625387bf8d5939e82c08889c7df7d350c23d2d72b5a575e721865cba0f83edfa",
+        "pmid": "6865998",
+        "extraction_id": "ext_9",
+        "parent_inchi_key": "WBNQDOYYEUMPFS-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:238494",
+      "source_record_fingerprint_sha256": "ce93c34f3a806857a3d5aad6e2ca492a0d7c4bc7bd043dc197b6af950e919fb8",
+      "source_payload_sha256": "a470490e1a37aa1eca5e9124f8a9a887cbb5c6eefc18704aad77269a27e033cc",
+      "drug": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)[C@@H]1C=CO[C@@H]1O2",
+      "molecule_identity_key": "OQIQSTLJSLGHID-WNWIJWBNSA-N",
+      "molecule_identity": {
+        "input_smiles": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)[C@@H]1C=CO[C@@H]1O2",
+        "canonical_smiles": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)[C@@H]1C=CO[C@@H]1O2",
+        "standard_inchi_key": "OQIQSTLJSLGHID-WNWIJWBNSA-N",
+        "parent_smiles": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)[C@@H]1C=CO[C@@H]1O2",
+        "parent_inchi_key": "OQIQSTLJSLGHID-WNWIJWBNSA-N",
+        "parent_connectivity_key": "OQIQSTLJSLGHID",
+        "component_parent_inchi_keys": [
+          "OQIQSTLJSLGHID-WNWIJWBNSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C1CCc2c1c(=O)oc1c3c(ccc21)OC1OC=CC31",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "2121329",
+      "molecule_name": "aflatoxin B1",
+      "source_smiles": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)[C@@H]1C=CO[C@@H]1O2",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=present",
+      "canonical_claim_id": "802fe2841675542d1558ab290fed8aecc468e38000b22cd6efd26be66526fb30",
+      "supporting_source_record_ids": [
+        "ames_base:238494"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 238494,
+        "source_record_id": "ames_base:238494",
+        "canonical_record_id": "4a966586b751cb081f86bae33433a5ee1ebe0ebfc793173c37988ff77b56105e",
+        "pmid": "2121329",
+        "extraction_id": "ext_5",
+        "parent_inchi_key": "OQIQSTLJSLGHID-WNWIJWBNSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:245796",
+      "source_record_fingerprint_sha256": "7d87c14d28b412580be7a7ab53547c01f43655ebe927769a1abaf16aa053edf4",
+      "source_payload_sha256": "2a98e826d292de28ab4d6993c0bd6eaa23b345f809ee490a7d20d954d57091bd",
+      "drug": "C[C@@H]1Cc2c(Cl)cc(C(=O)N[C@@H](Cc3ccccc3)C(=O)O)c(O)c2C(=O)O1",
+      "molecule_identity_key": "RWQKHEORZBHNRI-BMIGLBTASA-N",
+      "molecule_identity": {
+        "input_smiles": "C[C@@H]1Cc2c(Cl)cc(C(=O)N[C@@H](Cc3ccccc3)C(=O)O)c(O)c2C(=O)O1",
+        "canonical_smiles": "C[C@@H]1Cc2c(Cl)cc(C(=O)N[C@@H](Cc3ccccc3)C(=O)O)c(O)c2C(=O)O1",
+        "standard_inchi_key": "RWQKHEORZBHNRI-BMIGLBTASA-N",
+        "parent_smiles": "C[C@@H]1Cc2c(Cl)cc(C(=O)N[C@@H](Cc3ccccc3)C(=O)O)c(O)c2C(=O)O1",
+        "parent_inchi_key": "RWQKHEORZBHNRI-BMIGLBTASA-N",
+        "parent_connectivity_key": "RWQKHEORZBHNRI",
+        "component_parent_inchi_keys": [
+          "RWQKHEORZBHNRI-BMIGLBTASA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C(NCCc1ccccc1)c1ccc2c(c1)C(=O)OCC2",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA98",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "1658641",
+      "molecule_name": "ochratoxin A",
+      "source_smiles": "C[C@@H]1Cc2c(Cl)cc(C(=O)N[C@@H](Cc3ccccc3)C(=O)O)c(O)c2C(=O)O1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 and TA100 | metabolic_activation=both",
+      "canonical_claim_id": "ebd05066e7a5bf0129f8b39219959a90fcce54f68daccd420417f6b089a0ff64",
+      "supporting_source_record_ids": [
+        "ames_base:245796"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 245796,
+        "source_record_id": "ames_base:245796",
+        "canonical_record_id": "eef4af77defc5484f16cfc3d9f598e575cd4d6e533c67fd51cf86c0be892a6f3",
+        "pmid": "1658641",
+        "extraction_id": "ext_4",
+        "parent_inchi_key": "RWQKHEORZBHNRI-BMIGLBTASA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:246345",
+      "source_record_fingerprint_sha256": "ab6f531eeafec8dfab7d5f67059ba7624472b430acb6d19bcedf48887dc1821b",
+      "source_payload_sha256": "bed36ee0794285d8bcdd63a4da47fe04b5cfb1b0fa03d91ff256249bda96b2c4",
+      "drug": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "molecule_identity_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "canonical_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "standard_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_connectivity_key": "VAOCPAMSLUNLGC",
+        "component_parent_inchi_keys": [
+          "VAOCPAMSLUNLGC-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1c[nH]cn1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA100",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA100"
+      ],
+      "condition_scope": "external",
+      "pmid": "3009488",
+      "molecule_name": "NIDA",
+      "source_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 | metabolic_activation=absent",
+      "canonical_claim_id": "2eab225b02430c4c169ecca91be9fc56208be1a87c2204648a7925721e444db1",
+      "supporting_source_record_ids": [
+        "ames_base:246345",
+        "ames_base:246354"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 246345,
+        "source_record_id": "ames_base:246345",
+        "canonical_record_id": "ed7d30318befe1ea9762a5233f2e0a5854ed13d1f8b9026db4feedaceb7b666d",
+        "pmid": "3009488",
+        "extraction_id": "ext_11",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:246346",
+      "source_record_fingerprint_sha256": "444134f1db47d47307607d5921e639cdd7d7026a74bb921dc80ae44f2652a065",
+      "source_payload_sha256": "e21c1929767d4ee8fe0eb7160f2db9788ec12e4e5f02309b9bb375240d758d96",
+      "drug": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "molecule_identity_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "canonical_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "standard_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_connectivity_key": "VAOCPAMSLUNLGC",
+        "component_parent_inchi_keys": [
+          "VAOCPAMSLUNLGC-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1c[nH]cn1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA1535",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "3009488",
+      "molecule_name": "NIDA",
+      "source_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA1535 | metabolic_activation=absent",
+      "canonical_claim_id": "01b8d1bb9f8b64ce44febc31a54e9b4d75a85590ad800cba7b92161dbab55344",
+      "supporting_source_record_ids": [
+        "ames_base:246346"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 246346,
+        "source_record_id": "ames_base:246346",
+        "canonical_record_id": "09f78fb8d0e37b85ea66b100b1e0691561a77862dae58c9a98d1aa59832539b0",
+        "pmid": "3009488",
+        "extraction_id": "ext_15",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:246347",
+      "source_record_fingerprint_sha256": "df0315e12908ec5fb738934ddd5b705db78cfbfd34aefe9076853763163e9c86",
+      "source_payload_sha256": "b5783fa231baf03ccb2bb231e0aef884b79d8c980741077105763318e9c08d01",
+      "drug": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "molecule_identity_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "canonical_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "standard_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_connectivity_key": "VAOCPAMSLUNLGC",
+        "component_parent_inchi_keys": [
+          "VAOCPAMSLUNLGC-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1c[nH]cn1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "3009488",
+      "molecule_name": "NIDA",
+      "source_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=absent",
+      "canonical_claim_id": "424f5d84bd51a7f9b15a111f981e6c1dc0811c29d4a90b0b2aa3b2857b110fb2",
+      "supporting_source_record_ids": [
+        "ames_base:246347"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 246347,
+        "source_record_id": "ames_base:246347",
+        "canonical_record_id": "b096c6945846614f296dc1570eeb73e5e6cc5ca39039914742e8e6879b24465a",
+        "pmid": "3009488",
+        "extraction_id": "ext_16",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:246355",
+      "source_record_fingerprint_sha256": "f60a79168b2242f2241dcbd13b717440e9bd6073c835dda87ef200e0e07b4cea",
+      "source_payload_sha256": "5a4779a7950944b41186a18de7518174f58ad164b7279b11725ad5a818f8c46d",
+      "drug": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "molecule_identity_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "canonical_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "standard_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "parent_connectivity_key": "VAOCPAMSLUNLGC",
+        "component_parent_inchi_keys": [
+          "VAOCPAMSLUNLGC-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1c[nH]cn1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA1535,TA98",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA1535,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "3009488",
+      "molecule_name": "NIDA",
+      "source_smiles": "Cc1ncc([N+](=O)[O-])n1CCO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 and TA1535 | metabolic_activation=absent",
+      "canonical_claim_id": "be56dce36bd7d4d0a477919b8f8b6bcb2eade203cfc086f972f1019aa238834b",
+      "supporting_source_record_ids": [
+        "ames_base:246355"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 246355,
+        "source_record_id": "ames_base:246355",
+        "canonical_record_id": "abdee879d73eea0b0d45e2bf7d7ee481efb7b9819d061469d3ca506a6adcc81f",
+        "pmid": "3009488",
+        "extraction_id": "ext_29",
+        "parent_inchi_key": "VAOCPAMSLUNLGC-UHFFFAOYSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:248490",
+      "source_record_fingerprint_sha256": "6b326d45a0fd293b1a6d5ab483eea2db4d996159470cc695a929b988e2d575a7",
+      "source_payload_sha256": "f729781365e3677c79af47a8b41d05aa806947692ffa7aa7dd8d33cd30b987e0",
+      "drug": "C=CCc1ccc2c(c1)OCO2",
+      "molecule_identity_key": "ZMQAAUBTXCXRIC-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "C=CCc1ccc2c(c1)OCO2",
+        "canonical_smiles": "C=CCc1ccc2c(c1)OCO2",
+        "standard_inchi_key": "ZMQAAUBTXCXRIC-UHFFFAOYSA-N",
+        "parent_smiles": "C=CCc1ccc2c(c1)OCO2",
+        "parent_inchi_key": "ZMQAAUBTXCXRIC-UHFFFAOYSA-N",
+        "parent_connectivity_key": "ZMQAAUBTXCXRIC",
+        "component_parent_inchi_keys": [
+          "ZMQAAUBTXCXRIC-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2c(c1)OCO2",
+      "Y": 0,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA1535",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "379623",
+      "molecule_name": "safrole",
+      "source_smiles": "C=CCc1ccc2c(c1)OCO2",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA1535 and TA100 | metabolic_activation=present",
+      "canonical_claim_id": "520988d29cc1c3d1ec51b391f9c7fc8fda40ebaf7c87e3f9c5903be832e423bc",
+      "supporting_source_record_ids": [
+        "ames_base:248490"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 248490,
+        "source_record_id": "ames_base:248490",
+        "canonical_record_id": "6f0567ec2a455b45e0a5f8f79ee9f2c6930be124ea8ee1bd9757b10ad33d15ee",
+        "pmid": "379623",
+        "extraction_id": "ext_38",
+        "parent_inchi_key": "ZMQAAUBTXCXRIC-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:250784",
+      "source_record_fingerprint_sha256": "88cef40387087dcef271cd0e3e2475b1a58cd14de6a29513f9a801c680e3bcea",
+      "source_payload_sha256": "8f3ce92391689cb149bd4babad2a1696ab9a55252a53034adf8e95a73efc9149",
+      "drug": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "molecule_identity_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "canonical_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "standard_inchi_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+        "parent_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "parent_inchi_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+        "parent_connectivity_key": "FMMWHPNWAFZXNH",
+        "component_parent_inchi_keys": [
+          "FMMWHPNWAFZXNH-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "Y": 0,
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA100,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "3889636",
+      "molecule_name": "Benzo[a]pyrene",
+      "source_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 and TA100 | metabolic_activation=present",
+      "canonical_claim_id": "716322dc5735d8de64b60b1abcb0d2e5cd410ff62e5c7d2266c5ea70001a761f",
+      "supporting_source_record_ids": [
+        "ames_base:250784"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 250784,
+        "source_record_id": "ames_base:250784",
+        "canonical_record_id": "8d72fa60df37f3fdb1cd5b8c61680a859c5d0a88a7385cd533403c7c2580547f",
+        "pmid": "3889636",
+        "extraction_id": "ext_5",
+        "parent_inchi_key": "FMMWHPNWAFZXNH-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:284272",
+      "source_record_fingerprint_sha256": "6d8db2bf93eacee9c36660c291c5224b38705596f71a548ba7026e7cca30d889",
+      "source_payload_sha256": "5655be1f4553ee848be0a8eb041115a8b770714407507a5ffb2ec89e9143c2bb",
+      "drug": "CC1(O)C(=O)NC(=O)NC1OO",
+      "molecule_identity_key": "GQCPWBQRXKVGES-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CC1(O)C(=O)NC(=O)NC1OO",
+        "canonical_smiles": "CC1(O)C(=O)NC(=O)NC1OO",
+        "standard_inchi_key": "GQCPWBQRXKVGES-UHFFFAOYSA-N",
+        "parent_smiles": "CC1(O)C(=O)NC(=O)NC1OO",
+        "parent_inchi_key": "GQCPWBQRXKVGES-UHFFFAOYSA-N",
+        "parent_connectivity_key": "GQCPWBQRXKVGES",
+        "component_parent_inchi_keys": [
+          "GQCPWBQRXKVGES-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C1CCNC(=O)N1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA98",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "383077",
+      "molecule_name": "6-TOOH",
+      "source_smiles": "CC1(O)C(=O)NC(=O)NC1OO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 and TA98 | metabolic_activation=both",
+      "canonical_claim_id": "85ef9112cda73774d25cf2db6bec3ceba2298eac7dce5c28b2616477124123e2",
+      "supporting_source_record_ids": [
+        "ames_base:284272"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 284272,
+        "source_record_id": "ames_base:284272",
+        "canonical_record_id": "6bc68e9f982b7e06d373f01c517318321618650127eb70b785a04e60729ce2df",
+        "pmid": "383077",
+        "extraction_id": "ext_3",
+        "parent_inchi_key": "GQCPWBQRXKVGES-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:38488",
+      "source_record_fingerprint_sha256": "88558cc81829da7b1bd3222fe442b99111da87cfd8d7e5584108cada9b105dbc",
+      "source_payload_sha256": "f8cd07f188b6b31771ed5178c4e4560d845c8ae90016852ff9f809ba4547409b",
+      "drug": "O=[N+]([O-])c1ccc2ccc3c([N+](=O)[O-])cc([N+](=O)[O-])c4ccc1c2c34",
+      "molecule_identity_key": "BXOXVTWMJCUYLW-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=[N+]([O-])c1ccc2ccc3c([N+](=O)[O-])cc([N+](=O)[O-])c4ccc1c2c34",
+        "canonical_smiles": "O=[N+]([O-])c1ccc2ccc3c([N+](=O)[O-])cc([N+](=O)[O-])c4ccc1c2c34",
+        "standard_inchi_key": "BXOXVTWMJCUYLW-UHFFFAOYSA-N",
+        "parent_smiles": "O=[N+]([O-])c1ccc2ccc3c([N+](=O)[O-])cc([N+](=O)[O-])c4ccc1c2c34",
+        "parent_inchi_key": "BXOXVTWMJCUYLW-UHFFFAOYSA-N",
+        "parent_connectivity_key": "BXOXVTWMJCUYLW",
+        "component_parent_inchi_keys": [
+          "BXOXVTWMJCUYLW-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1cc2ccc3cccc4ccc(c1)c2c34",
+      "Y": 1,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "6751587",
+      "molecule_name": "1,3,6-Trinitropyrene",
+      "source_smiles": "O=[N+]([O-])c1ccc2ccc3c([N+](=O)[O-])cc([N+](=O)[O-])c4ccc1c2c34",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "strong_positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=absent",
+      "canonical_claim_id": "8560caff57a18fd411c55a6217d0d524ca7be4e7fb7366f44404f7ba5bbd0bb2",
+      "supporting_source_record_ids": [
+        "ames_base:38488"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 38488,
+        "source_record_id": "ames_base:38488",
+        "canonical_record_id": "70b98d0cb1bc269127292602c7f145602bc23f6fda94d9faf7e0e1760ee978b8",
+        "pmid": "6751587",
+        "extraction_id": "ext_25",
+        "parent_inchi_key": "BXOXVTWMJCUYLW-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:51157",
+      "source_record_fingerprint_sha256": "bf8394f42ed2e7283c17ed04eb191428fbac95383926a72e490acf01dc14bf52",
+      "source_payload_sha256": "c6de6b678d1a36bf8564e3d4abdfd997ffbe4c060a9762b99090af5b2daef6ac",
+      "drug": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+      "molecule_identity_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+      "molecule_identity": {
+        "input_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "canonical_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "standard_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "parent_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "parent_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "parent_connectivity_key": "OHCQJHSOBUTRHG",
+        "component_parent_inchi_keys": [
+          "OHCQJHSOBUTRHG-KGGHGJDLSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C1CCOC2CCC3CCCCC3C12",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA1537,TA98,WP2UVRA",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA1537,TA98,WP2UVRA"
+      ],
+      "condition_scope": "external",
+      "pmid": "32278234",
+      "molecule_name": "colforsin",
+      "source_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98, TA100, TA1537 and Escherichia coli WP2uvrA | metabolic_activation=both",
+      "canonical_claim_id": "166a21db83f6035025c3da2b4d70ca85e65693e1b5673a52c54b1efd5ad1865c",
+      "supporting_source_record_ids": [
+        "ames_base:51157"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 51157,
+        "source_record_id": "ames_base:51157",
+        "canonical_record_id": "054d344702bbd0e3a41722beb830f523bd44b224555a981012b7004616e30bd7",
+        "pmid": "32278234",
+        "extraction_id": "ext_9",
+        "parent_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:51159",
+      "source_record_fingerprint_sha256": "6b51ad270888767dae8d148f2bcf4900b771cde9e93b77602dc08622be2e8e85",
+      "source_payload_sha256": "26a443731907236b5be8fb31e5e8f4b120cf5ad6f5b31a901eb8fb61d158d8d0",
+      "drug": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+      "molecule_identity_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+      "molecule_identity": {
+        "input_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "canonical_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "standard_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "parent_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+        "parent_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "parent_connectivity_key": "OHCQJHSOBUTRHG",
+        "component_parent_inchi_keys": [
+          "OHCQJHSOBUTRHG-KGGHGJDLSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "O=C1CCOC2CCC3CCCCC3C12",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA1535",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "32278234",
+      "molecule_name": "colforsin",
+      "source_smiles": "C=C[C@@]1(C)CC(=O)[C@]2(O)[C@@]3(C)[C@@H](O)CCC(C)(C)[C@@H]3[C@H](O)[C@H](OC(C)=O)[C@@]2(C)O1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA100 and TA1535 | metabolic_activation=both",
+      "canonical_claim_id": "a3bdc9ddbf4f5725a7909110a9408e624040df629e804cd66a65308978bb838d",
+      "supporting_source_record_ids": [
+        "ames_base:51159"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 51159,
+        "source_record_id": "ames_base:51159",
+        "canonical_record_id": "dc174f81e12dc7cd0b88e445cae01c5d7ee9643eb2d9349d08971d16dd415d23",
+        "pmid": "32278234",
+        "extraction_id": "ext_11",
+        "parent_inchi_key": "OHCQJHSOBUTRHG-KGGHGJDLSA-N",
+        "group_id": "",
+        "reason": "reviewed_source_identity_mismatch",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:54188",
+      "source_record_fingerprint_sha256": "da050c51bba5f02c3b610ed25c3344d89046af54c14c3c099ee349d3687b1c53",
+      "source_payload_sha256": "ade5c9d1495b88c446939bbc2f005998046f8f0d260404c28491ab0fa9a29ffa",
+      "drug": "CCOP(=S)(OCC)Oc1nc(Cl)n(C(C)C)n1",
+      "molecule_identity_key": "XRHGWAGWAHHFLF-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CCOP(=S)(OCC)Oc1nc(Cl)n(C(C)C)n1",
+        "canonical_smiles": "CCOP(=S)(OCC)Oc1nc(Cl)n(C(C)C)n1",
+        "standard_inchi_key": "XRHGWAGWAHHFLF-UHFFFAOYSA-N",
+        "parent_smiles": "CCOP(=S)(OCC)Oc1nc(Cl)n(C(C)C)n1",
+        "parent_inchi_key": "XRHGWAGWAHHFLF-UHFFFAOYSA-N",
+        "parent_connectivity_key": "XRHGWAGWAHHFLF",
+        "component_parent_inchi_keys": [
+          "XRHGWAGWAHHFLF-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1nc[nH]n1",
+      "Y": 1,
+      "condition_group": "metabolic_activation=present+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=present",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "9711262",
+      "molecule_name": "Miral",
+      "source_smiles": "CCOP(=S)(OCC)Oc1nc(Cl)n(C(C)C)n1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 | metabolic_activation=present",
+      "canonical_claim_id": "90c9db73f234c0c3f76496beb0996bc17097d32d3e50949743a8e237c373368e",
+      "supporting_source_record_ids": [
+        "ames_base:54188"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 54188,
+        "source_record_id": "ames_base:54188",
+        "canonical_record_id": "bd02c7cc2f22777af658c78c9c996b450525d1d73ccc5fb547d8ac6bdaf7f76c",
+        "pmid": "9711262",
+        "extraction_id": "ext_6",
+        "parent_inchi_key": "XRHGWAGWAHHFLF-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:69664",
+      "source_record_fingerprint_sha256": "69570935d09910e2230adc70de7dff12513843ccce723eab7524f264d337ac41",
+      "source_payload_sha256": "194f3794ee65f4946e2f00cd3aef1a30494edb0a1eeb0deb075fa33524c07686",
+      "drug": "Cc1ccc(O)c(-n2nc3ccccc3n2)c1",
+      "molecule_identity_key": "MCPKSFINULVDNX-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "Cc1ccc(O)c(-n2nc3ccccc3n2)c1",
+        "canonical_smiles": "Cc1ccc(O)c(-n2nc3ccccc3n2)c1",
+        "standard_inchi_key": "MCPKSFINULVDNX-UHFFFAOYSA-N",
+        "parent_smiles": "Cc1ccc(O)c(-n2nc3ccccc3n2)c1",
+        "parent_inchi_key": "MCPKSFINULVDNX-UHFFFAOYSA-N",
+        "parent_connectivity_key": "MCPKSFINULVDNX",
+        "component_parent_inchi_keys": [
+          "MCPKSFINULVDNX-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "c1ccc(-n2nc3ccccc3n2)cc1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA1535,TA1537,TA98",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA100,TA1535,TA1537,TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "18569163",
+      "molecule_name": "Drometrizole",
+      "source_smiles": "Cc1ccc(O)c(-n2nc3ccccc3n2)c1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98, TA100, TA1535, TA1537 | metabolic_activation=both",
+      "canonical_claim_id": "fa23de62ef1e3f553f0c72891815542e1b050b304297ff28de2eb94fb775ec2a",
+      "supporting_source_record_ids": [
+        "ames_base:69664"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 69664,
+        "source_record_id": "ames_base:69664",
+        "canonical_record_id": "db53511b4eda7edc0fb541b3a71c8422ea45d01ff57907487243466a62afa6d4",
+        "pmid": "18569163",
+        "extraction_id": "ext_1",
+        "parent_inchi_key": "MCPKSFINULVDNX-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:93494",
+      "source_record_fingerprint_sha256": "410f8bf3f45ca84d3288aa6216988b35ad70f6af5e0471e32b03f0b636afa1ed",
+      "source_payload_sha256": "bf8a56c202ba0568e42e8a99170c0b03a6d50771d5a64da46fd0702f6715d2e1",
+      "drug": "CCCCCCCCCCCCCCCCCC(=O)OCC1CO1",
+      "molecule_identity_key": "OUQGOXCIUOCDNN-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "CCCCCCCCCCCCCCCCCC(=O)OCC1CO1",
+        "canonical_smiles": "CCCCCCCCCCCCCCCCCC(=O)OCC1CO1",
+        "standard_inchi_key": "OUQGOXCIUOCDNN-UHFFFAOYSA-N",
+        "parent_smiles": "CCCCCCCCCCCCCCCCCC(=O)OCC1CO1",
+        "parent_inchi_key": "OUQGOXCIUOCDNN-UHFFFAOYSA-N",
+        "parent_connectivity_key": "OUQGOXCIUOCDNN",
+        "component_parent_inchi_keys": [
+          "OUQGOXCIUOCDNN-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "C1CO1",
+      "Y": 0,
+      "condition_group": "metabolic_activation=absent+strain_panel=TA100,TA1535",
+      "condition_atoms": [
+        "metabolic_activation=absent",
+        "strain_panel=TA100,TA1535"
+      ],
+      "condition_scope": "external",
+      "pmid": "21351250",
+      "molecule_name": "glycidyl stearate",
+      "source_smiles": "CCCCCCCCCCCCCCCCCC(=O)OCC1CO1",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "negative",
+      "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA100 and TA1535 | metabolic_activation=absent",
+      "canonical_claim_id": "ee12ca7f6439fe02ee986aa2248fe3f7f51c85bb51d09e9f71936df8ad68eb35",
+      "supporting_source_record_ids": [
+        "ames_base:93494"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 93494,
+        "source_record_id": "ames_base:93494",
+        "canonical_record_id": "4b2f290011f3cc5ffd900d88dd2ab8af660f5ec7f3e40afeefbe5d0b2bb02ed3",
+        "pmid": "21351250",
+        "extraction_id": "ext_2",
+        "parent_inchi_key": "OUQGOXCIUOCDNN-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    },
+    {
+      "source_record_id": "ames_base:98513",
+      "source_record_fingerprint_sha256": "53873e1f7891656bcb74a1d5700e5dd72066e332f17f8a1b744749346501a3c3",
+      "source_payload_sha256": "495e175b0531d7db0c45081a609e1a8add550a1d864401e45f9d43ed32d39da8",
+      "drug": "O=NN(CCO)CCO",
+      "molecule_identity_key": "YFCDLVPYFMHRQZ-UHFFFAOYSA-N",
+      "molecule_identity": {
+        "input_smiles": "O=NN(CCO)CCO",
+        "canonical_smiles": "O=NN(CCO)CCO",
+        "standard_inchi_key": "YFCDLVPYFMHRQZ-UHFFFAOYSA-N",
+        "parent_smiles": "O=NN(CCO)CCO",
+        "parent_inchi_key": "YFCDLVPYFMHRQZ-UHFFFAOYSA-N",
+        "parent_connectivity_key": "YFCDLVPYFMHRQZ",
+        "component_parent_inchi_keys": [
+          "YFCDLVPYFMHRQZ-UHFFFAOYSA-N"
+        ],
+        "status": "ok",
+        "normalizer_version": "rdkit_fragment_parent.v1"
+      },
+      "bemis_murcko_scaffold": "",
+      "Y": 1,
+      "condition_group": "metabolic_activation=both_reported+strain_panel=TA98",
+      "condition_atoms": [
+        "metabolic_activation=both_reported",
+        "strain_panel=TA98"
+      ],
+      "condition_scope": "external",
+      "pmid": "3908927",
+      "molecule_name": "diethanolnitrosamine",
+      "source_smiles": "O=NN(CCO)CCO",
+      "label_method": "explicit_primary_bacterial_outcome",
+      "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+      "review_method": "structured_source_gate_not_manual_review",
+      "raw_value": "positive",
+      "condition_text": "bacterial_reverse_mutation | Salmonella Typhimurium TA98 | metabolic_activation=both",
+      "canonical_claim_id": "426bb0b73d94deed4eb8346153dae4050f3c81e261b19601a0237e25a7f42dda",
+      "supporting_source_record_ids": [
+        "ames_base:98513"
+      ],
+      "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+      "current_audit": {
+        "source_id": "ames_base",
+        "source_row_number": 98513,
+        "source_record_id": "ames_base:98513",
+        "canonical_record_id": "cb95931337ae00f4bff5a7abda19b6dbc56bf9e950534b028dc81cf985377e65",
+        "pmid": "3908927",
+        "extraction_id": "ext_16",
+        "parent_inchi_key": "YFCDLVPYFMHRQZ-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "reason": "reviewed_direct_claim_pending_resolution",
+        "identity_verification": "verified_parent_match",
+        "is_voter": false,
+        "duplicate_of": "",
+        "canonical_claim_id": ""
+      }
+    }
+  ],
+  "changed_existing_vote_provenance": [
+    {
+      "before": {
+        "source_record_id": "ames_base:105873",
+        "source_record_fingerprint_sha256": "7929dfae8641e4a60c33883c18b7d08ebfa62cf60017e0f206b2b10ffee17c07",
+        "source_payload_sha256": "7e3d67ad7dbd85e635cede6414f0f85a4580f498ac8b57895f242ab7c9d7e44d",
+        "drug": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+        "molecule_identity_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+        "molecule_identity": {
+          "input_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "canonical_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "standard_inchi_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+          "parent_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "parent_inchi_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+          "parent_connectivity_key": "UQVKZNNCIHJZLS",
+          "component_parent_inchi_keys": [
+            "UQVKZNNCIHJZLS-UHFFFAOYSA-N"
+          ],
+          "status": "ok",
+          "normalizer_version": "rdkit_fragment_parent.v1"
+        },
+        "bemis_murcko_scaffold": "c1ccc(-c2cnc3nc[nH]c3c2)cc1",
+        "Y": 1,
+        "condition_group": "metabolic_activation=present+strain_panel=TA98",
+        "condition_atoms": [
+          "metabolic_activation=present",
+          "strain_panel=TA98"
+        ],
+        "condition_scope": "external",
+        "pmid": "8544756",
+        "molecule_name": "2-Amino-1-methyl-6-Phenylimidazo[4,5-b]Pyridine (PhIP)",
+        "source_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+        "label_method": "explicit_primary_bacterial_outcome",
+        "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+        "review_method": "structured_source_gate_not_manual_review",
+        "raw_value": "positive",
+        "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=present",
+        "canonical_claim_id": "82b95b2704267ea963041452302e6612fd667c646288c4c7dacf95cdaa9c16ba",
+        "supporting_source_record_ids": [
+          "ames_base:105873"
+        ],
+        "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+      },
+      "after": {
+        "source_record_id": "ames_base:105873",
+        "source_record_fingerprint_sha256": "7929dfae8641e4a60c33883c18b7d08ebfa62cf60017e0f206b2b10ffee17c07",
+        "source_payload_sha256": "7e3d67ad7dbd85e635cede6414f0f85a4580f498ac8b57895f242ab7c9d7e44d",
+        "drug": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+        "molecule_identity_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+        "molecule_identity": {
+          "input_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "canonical_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "standard_inchi_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+          "parent_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+          "parent_inchi_key": "UQVKZNNCIHJZLS-UHFFFAOYSA-N",
+          "parent_connectivity_key": "UQVKZNNCIHJZLS",
+          "component_parent_inchi_keys": [
+            "UQVKZNNCIHJZLS-UHFFFAOYSA-N"
+          ],
+          "status": "ok",
+          "normalizer_version": "rdkit_fragment_parent.v1"
+        },
+        "bemis_murcko_scaffold": "c1ccc(-c2cnc3nc[nH]c3c2)cc1",
+        "Y": 1,
+        "condition_group": "metabolic_activation=present+strain_panel=TA98",
+        "condition_atoms": [
+          "metabolic_activation=present",
+          "strain_panel=TA98"
+        ],
+        "condition_scope": "external",
+        "pmid": "8544756",
+        "molecule_name": "2-Amino-1-methyl-6-Phenylimidazo[4,5-b]Pyridine (PhIP)",
+        "source_smiles": "Cn1c(N)nc2ncc(-c3ccccc3)cc21",
+        "label_method": "explicit_primary_bacterial_outcome",
+        "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+        "review_method": "structured_source_gate_not_manual_review",
+        "raw_value": "positive",
+        "condition_text": "bacterial_reverse_mutation | Salmonella typhimurium TA98 | metabolic_activation=present",
+        "canonical_claim_id": "82b95b2704267ea963041452302e6612fd667c646288c4c7dacf95cdaa9c16ba",
+        "supporting_source_record_ids": [
+          "ames_base:105873",
+          "ames_v2:61873"
+        ],
+        "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+      }
+    },
+    {
+      "before": {
+        "source_record_id": "ames_base:26685",
+        "source_record_fingerprint_sha256": "cf90e98a5429a623d2787ab2b745abf76bb6d05f697ed5bc639f9c02848c1487",
+        "source_payload_sha256": "6d37591c324cfc6a7c412c35c6c9040e8299db2c0432358dd28b34d6ca21342b",
+        "drug": "Cc1c[nH]c2ccccc12",
+        "molecule_identity_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+        "molecule_identity": {
+          "input_smiles": "Cc1c[nH]c2ccccc12",
+          "canonical_smiles": "Cc1c[nH]c2ccccc12",
+          "standard_inchi_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+          "parent_smiles": "Cc1c[nH]c2ccccc12",
+          "parent_inchi_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+          "parent_connectivity_key": "ZFRKQXVRDFCRJG",
+          "component_parent_inchi_keys": [
+            "ZFRKQXVRDFCRJG-UHFFFAOYSA-N"
+          ],
+          "status": "ok",
+          "normalizer_version": "rdkit_fragment_parent.v1"
+        },
+        "bemis_murcko_scaffold": "c1ccc2[nH]ccc2c1",
+        "Y": 0,
+        "condition_group": "metabolic_activation=present+strain_panel=TA100",
+        "condition_atoms": [
+          "metabolic_activation=present",
+          "strain_panel=TA100"
+        ],
+        "condition_scope": "external",
+        "pmid": "12211071",
+        "molecule_name": "3-methylindole",
+        "source_smiles": "Cc1c[nH]c2ccccc12",
+        "label_method": "explicit_primary_bacterial_outcome",
+        "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+        "review_method": "structured_source_gate_not_manual_review",
+        "raw_value": "negative",
+        "condition_text": "bacterial_reverse_mutation | Salmonella TA100 | metabolic_activation=present",
+        "canonical_claim_id": "4cf7b8d2a289adda39558c5b862295939f5fadd8ec3369a006e5ac6218b26d5f",
+        "supporting_source_record_ids": [
+          "ames_base:26685"
+        ],
+        "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+      },
+      "after": {
+        "source_record_id": "ames_base:26685",
+        "source_record_fingerprint_sha256": "cf90e98a5429a623d2787ab2b745abf76bb6d05f697ed5bc639f9c02848c1487",
+        "source_payload_sha256": "6d37591c324cfc6a7c412c35c6c9040e8299db2c0432358dd28b34d6ca21342b",
+        "drug": "Cc1c[nH]c2ccccc12",
+        "molecule_identity_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+        "molecule_identity": {
+          "input_smiles": "Cc1c[nH]c2ccccc12",
+          "canonical_smiles": "Cc1c[nH]c2ccccc12",
+          "standard_inchi_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+          "parent_smiles": "Cc1c[nH]c2ccccc12",
+          "parent_inchi_key": "ZFRKQXVRDFCRJG-UHFFFAOYSA-N",
+          "parent_connectivity_key": "ZFRKQXVRDFCRJG",
+          "component_parent_inchi_keys": [
+            "ZFRKQXVRDFCRJG-UHFFFAOYSA-N"
+          ],
+          "status": "ok",
+          "normalizer_version": "rdkit_fragment_parent.v1"
+        },
+        "bemis_murcko_scaffold": "c1ccc2[nH]ccc2c1",
+        "Y": 0,
+        "condition_group": "metabolic_activation=present+strain_panel=TA100",
+        "condition_atoms": [
+          "metabolic_activation=present",
+          "strain_panel=TA100"
+        ],
+        "condition_scope": "external",
+        "pmid": "12211071",
+        "molecule_name": "3-methylindole",
+        "source_smiles": "Cc1c[nH]c2ccccc12",
+        "label_method": "explicit_primary_bacterial_outcome",
+        "reviewer": "deterministic_source_policy:ames_bacterial_reverse_mutation.v1",
+        "review_method": "structured_source_gate_not_manual_review",
+        "raw_value": "negative",
+        "condition_text": "bacterial_reverse_mutation | Salmonella TA100 | metabolic_activation=present",
+        "canonical_claim_id": "4cf7b8d2a289adda39558c5b862295939f5fadd8ec3369a006e5ac6218b26d5f",
+        "supporting_source_record_ids": [
+          "ames_base:26685",
+          "ames_v3:2875"
+        ],
+        "vote_unit": "one_unambiguous_pmid_parent_exact_condition"
+      }
+    }
+  ]
+}

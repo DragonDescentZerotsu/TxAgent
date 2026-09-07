@@ -1,3 +1,4 @@
+import csv
 import json
 
 import pytest
@@ -14,6 +15,7 @@ from tools.chembl_tool.common.starling.conditioned_benchmark import (
 )
 from tools.chembl_tool.common.starling.build_conditioned_random_split import (
     RANDOM_SPLIT_CONTRACT,
+    _write_group_distribution,
     allocate_parent_groups,
     preserve_parent_assignment,
 )
@@ -24,6 +26,7 @@ EXPECTED_COUNTS = {
     "bioavailability_ma": (1956, 262, 269),
     "clintox": (1144, 142, 142),
     "skin_reaction": (1941, 239, 241),
+    "ames": (1926, 274, 274),
 }
 
 EXPECTED_RANDOM_COUNTS = {
@@ -31,7 +34,33 @@ EXPECTED_RANDOM_COUNTS = {
     "bioavailability_ma": (1989, 249, 249),
     "clintox": (1142, 143, 143),
     "skin_reaction": (1937, 242, 242),
+    "ames": (1980, 247, 247),
 }
+
+
+@pytest.mark.parametrize("condition", [
+    "metabolic_activation=present+strain_panel=TA98",
+    "metabolic_activation=present+strain_panel=TA100,TA98",
+])
+def test_random_group_distribution_preserves_csv_fields_and_simple_bytes(tmp_path, condition):
+    counts = {"train": 2, "valid": 1, "test": 3}
+    rows = {
+        split: [{"condition_group": condition}] * count
+        for split, count in counts.items()
+    }
+    _write_group_distribution(tmp_path, rows)
+    path = tmp_path / "group_distribution.csv"
+    with path.open(encoding="utf-8", newline="") as handle:
+        parsed = list(csv.DictReader(handle))
+    assert parsed == [
+        {"condition_group": condition, "split": split, "n_rows": str(count)}
+        for split, count in counts.items()
+    ]
+    quoted_condition = f'"{condition}"' if "," in condition else condition
+    expected = "condition_group,split,n_rows\n" + "".join(
+        f"{quoted_condition},{split},{count}\n" for split, count in counts.items()
+    )
+    assert path.read_bytes() == expected.encode("utf-8")
 
 
 def test_manifest_has_one_canonical_root_per_task() -> None:

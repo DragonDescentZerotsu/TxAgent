@@ -1,0 +1,29 @@
+{
+  "method": "PubChem skill rest_request.py; complete-name GET/POST; case-only retries recorded when used",
+  "n_names": 3321,
+  "counts": {
+    "ok": 2492,
+    "not_found": 670,
+    "pending_request": 159
+  },
+  "response_sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
+  "input_logs": [
+    {
+      "name": "data/starling_data/ames/raw_v1/pubchem_name_responses.jsonl",
+      "sha256": "0891484a75944b20da1bebb0345a4eae6a6530b4625c56a30e886b9e0f938bde"
+    },
+    {
+      "name": "/local/tmp/ames_pubchem/retry_responses.jsonl",
+      "sha256": "f55b8e019d4b96c7d4e86d366afd5b91e597ea277d719d928ca7906923070341"
+    },
+    {
+      "name": "/local/tmp/ames_pubchem/final_retry_responses.jsonl",
+      "sha256": "44343aec017dce9c2e47afb15789cee8620bcfafb9f58bef74c03250c2e22f06"
+    },
+    {
+      "name": "/local/tmp/ames_pubchem/casefold_responses.jsonl",
+      "sha256": "b3971f50c025609c32892ce29f9894975017bc7fe43e49082773959027e3b6c7"
+    }
+  ],
+  "pending_policy": "No unresolved response supplies identity, labels, or retrieval membership. Minimum four attempts for otherwise eligible gold candidates."
+}

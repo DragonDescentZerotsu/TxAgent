@@ -1,4 +1,4 @@
-"""Publish the one current four-task conditioned benchmark suite.
+"""Publish the current conditioned benchmark suite.
 
 This is a deliberately small publication layer. Task-specific builders retain
 the detailed source review and voting logic; this module gives every active
@@ -73,6 +73,7 @@ TASK_CONTRACTS = {
     "bioavailability_ma": "oral bioavailability under the reported condition",
     "skin_reaction": "skin sensitization/contact allergy",
     "clintox": "clinical-trial toxicity failure versus approved comparator",
+    "ames": "bacterial reverse mutation (Ames) under the reported condition",
 }
 
 
@@ -363,21 +364,51 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
         receipts.update(
             json.loads(receipt_path.read_text(encoding="utf-8")).get("tasks", {})
         )
+    absent_receipts = sorted(set(TASK_DIRECTORIES) - set(receipts) - set(requested))
+    if absent_receipts:
+        raise FileNotFoundError(
+            f"Partial publication lacks existing receipts for {absent_receipts}"
+        )
+    # Fresh tasks have no random files yet. Build those directly from the newly
+    # staged canonical scaffold, before manifest assembly reads random counts.
+    # build_all cannot bootstrap here: it requires an existing task manifest.
+    fresh_random = tuple(
+        task for task in requested
+        if not all(
+            (BENCHMARK_ROOT / TASK_DIRECTORIES[task] / "random" / f"{split}.jsonl").exists()
+            for split in SPLITS
+        )
+    )
     for task in requested:
         receipts[task] = (
             _publish_clintox()
             if task == "clintox"
             else _publish_existing_conditioned_task(task)
         )
-    absent_receipts = sorted(set(TASK_DIRECTORIES) - set(receipts))
-    if absent_receipts:
-        raise FileNotFoundError(
-            f"Partial publication lacks existing receipts for {absent_receipts}"
-        )
     for task in requested:
         _copy_provenance(task)
         _write_group_distribution(task)
         _write_task_summary(receipts[task])
+    random_receipt = None
+    if fresh_random:
+        from tools.chembl_tool.common.starling import build_conditioned_random_split as random_builder
+
+        random_receipt_path = BENCHMARK_ROOT / "random_split_receipt.json"
+        random_receipt = (
+            json.loads(random_receipt_path.read_text(encoding="utf-8"))
+            if random_receipt_path.exists()
+            else {
+                "benchmark": "conditioned_benchmark",
+                "split_contract": random_builder.RANDOM_SPLIT_CONTRACT,
+                "seed": random_builder.DEFAULT_SEED,
+                "source_scheme": "scaffold union",
+                "tasks": {},
+            }
+        )
+        for task in fresh_random:
+            random_receipt["tasks"][task] = random_builder.build_task(
+                task, seed=random_receipt["seed"]
+            )
     receipt = {
         "benchmark": "conditioned_benchmark",
         "contract": CONTRACT,
@@ -390,9 +421,15 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
         "tasks": receipts,
     }
     write_json_atomic(BENCHMARK_ROOT / "migration_receipt.json", receipt)
+    manifest_path = BENCHMARK_ROOT / "manifest.json"
+    existing_manifest = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.exists() else {}
+    )
     write_json_atomic(
         BENCHMARK_ROOT / "manifest.json",
         {
+            **existing_manifest,
             "benchmark": "conditioned_benchmark",
             "contract": CONTRACT,
             "construction_contract": {
@@ -443,6 +480,11 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
             },
         },
     )
+    if random_receipt is not None:
+        write_json_atomic(BENCHMARK_ROOT / "random_split_receipt.json", random_receipt)
+        random_builder._update_manifest(
+            random_receipt["tasks"], seed=random_receipt["seed"]
+        )
     return receipt
 
 

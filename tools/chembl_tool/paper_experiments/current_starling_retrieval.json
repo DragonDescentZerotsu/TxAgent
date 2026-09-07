@@ -1,16 +1,16 @@
 {
   "schema_version": "current_starling_retrieval.v1",
-  "updated_at": "2026-09-04",
+  "updated_at": "2026-09-07",
   "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
   "artifact_root": "outputs/paper/starling_conditioned_assay_family_curve_v1",
   "verification": {
-    "verified_date": "2026-09-04",
-    "result": "Skin strict target-aligned v5 overlay, catalog, scaffold index, and random index rebuilt; all current task hashes matched",
+    "verified_date": "2026-09-07",
+    "result": "Four task canonical snapshots, published sources, overlays, catalogs and eight split indices hash verified",
     "scratch_artifacts_retained": false
   },
   "contract": {
-    "record_selection": "stage03_retrieval_eligible",
-    "reference_pool": "direct_only_heldout_filtered",
+    "record_selection": "canonical_retrieval_eligible",
+    "reference_pool": "task_scoped_heldout_filtered",
     "minimum_similarity": 0.3,
     "max_record_examples": 3,
     "max_support_text_chars": 0,
@@ -88,6 +88,30 @@
           "evidence_sha256": "4ded66d791a9d398efe8876807e0087d91d97ba62c5a391d53563ec9711f4cde"
         }
       }
+    },
+    "ames": {
+      "canonical_records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
+      "catalog": "family_catalogs/ames",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "580bdf822b607b8684b2e57dccb659195a607de51a1da7cefd8392d239488b9f",
+      "direct_group": "Direct.ames",
+      "filter_scope_field": "heldout_filter_scope",
+      "filter_scope_value": "bacterial_outcome",
+      "indices": {
+        "scaffold": {
+          "path": "indices/ames/scaffold",
+          "index_sha256": "2e78c733dd0cfa89d151f31c62f89e0dd3e8039b4e38c552201d5b2bf3278043",
+          "evidence_sha256": "4591e3cb52e6a9c77990e19cc1f27ee57a77f649dc9360d0d40e44b78846d9d6"
+        },
+        "random": {
+          "path": "indices/ames/random",
+          "index_sha256": "a2ebde08b400eb4931b15439daf5a5fecbb74780ea898c38b3c82b1052bef405",
+          "evidence_sha256": "1fc87dd7974c765f0bea1494cad1fa754deb6b40a09512c343c53f67fcd14515"
+        }
+      },
+      "source_records": "data/starling_data/ames/canonical_v1/records.parquet"
     }
   }
 }

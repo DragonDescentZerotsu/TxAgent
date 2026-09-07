@@ -1,0 +1,157 @@
+{
+  "status": "placement_repair_applied_and_validated",
+  "review_method": "individual_reading_of_complete_supplied_record_semantics; no_external_source_verification",
+  "retrieval_contract": "ames_inclusive_retrieval.v3",
+  "additional_individually_reviewed_records": 194,
+  "combined_v5_v6_unique_reviewed_records": 394,
+  "additional_sample_selection": {
+    "unread_v5_pool": 140,
+    "draft_transition_validation": 54,
+    "population_error_rate_estimate": false
+  },
+  "additional_dispositions": {
+    "move": 46,
+    "retain": 144,
+    "boundary": 4
+  },
+  "payload_pinned_placement_decisions": 100,
+  "audited_relocations_applied": 95,
+  "record_transitions": [
+    {
+      "previous_group_id": "Direct.ames",
+      "group_id": "Direct.ames",
+      "n_records": 3333
+    },
+    {
+      "previous_group_id": "Mechanism.dna_damage_response",
+      "group_id": "Mechanism.dna_damage_response",
+      "n_records": 419782
+    },
+    {
+      "previous_group_id": "Mechanism.dna_damage_response",
+      "group_id": "Mechanism.genotoxicity_mechanisms",
+      "n_records": 6
+    },
+    {
+      "previous_group_id": "Mechanism.dna_damage_response",
+      "group_id": "Mechanism.other_genetic_damage",
+      "n_records": 3
+    },
+    {
+      "previous_group_id": "Mechanism.genotoxicity_mechanisms",
+      "group_id": "Mechanism.dna_damage_response",
+      "n_records": 77085
+    },
+    {
+      "previous_group_id": "Mechanism.genotoxicity_mechanisms",
+      "group_id": "Mechanism.genotoxicity_mechanisms",
+      "n_records": 424455
+    },
+    {
+      "previous_group_id": "Mechanism.genotoxicity_mechanisms",
+      "group_id": "Mechanism.other_genetic_damage",
+      "n_records": 8951
+    },
+    {
+      "previous_group_id": "Mechanism.other_genetic_damage",
+      "group_id": "Mechanism.other_genetic_damage",
+      "n_records": 227291
+    },
+    {
+      "previous_group_id": "Observed.nonvoter_ames",
+      "group_id": "Mechanism.dna_damage_response",
+      "n_records": 12
+    },
+    {
+      "previous_group_id": "Observed.nonvoter_ames",
+      "group_id": "Mechanism.genotoxicity_mechanisms",
+      "n_records": 5
+    },
+    {
+      "previous_group_id": "Observed.nonvoter_ames",
+      "group_id": "Mechanism.other_genetic_damage",
+      "n_records": 31
+    },
+    {
+      "previous_group_id": "Observed.nonvoter_ames",
+      "group_id": "Observed.nonvoter_ames",
+      "n_records": 138520
+    },
+    {
+      "previous_group_id": "not_retrieved",
+      "group_id": "Mechanism.dna_damage_response",
+      "n_records": 1
+    },
+    {
+      "previous_group_id": "not_retrieved",
+      "group_id": "Mechanism.genotoxicity_mechanisms",
+      "n_records": 25
+    },
+    {
+      "previous_group_id": "not_retrieved",
+      "group_id": "Mechanism.other_genetic_damage",
+      "n_records": 34
+    },
+    {
+      "previous_group_id": "not_retrieved",
+      "group_id": "Observed.nonvoter_ames",
+      "n_records": 51
+    }
+  ],
+  "family_counts_before": {
+    "Observed.nonvoter_ames": 138568,
+    "Mechanism.other_genetic_damage": 227291,
+    "Direct.ames": 3333,
+    "Mechanism.dna_damage_response": 419791,
+    "Mechanism.genotoxicity_mechanisms": 510491
+  },
+  "family_counts_after": {
+    "Observed.nonvoter_ames": 138571,
+    "Mechanism.other_genetic_damage": 236310,
+    "Direct.ames": 3333,
+    "Mechanism.genotoxicity_mechanisms": 424491,
+    "Mechanism.dna_damage_response": 496880
+  },
+  "n_retrievable_before": 1299474,
+  "n_retrievable_after": 1299585,
+  "added_records": 111,
+  "removed_records": 0,
+  "preservation": {
+    "source_votes_byte_identical": true,
+    "n_actual_l1_voters": 3333,
+    "benchmark_files_byte_identical": true,
+    "split_allocation_repeated": false,
+    "all_retained_evidence_fingerprints_and_parents_unchanged": true
+  },
+  "validation": {
+    "individually_reviewed_raw_payloads_verified": 394,
+    "individually_reviewed_actual_memberships_verified": 394,
+    "tests_passed": 902,
+    "retrieval_validation_sha256": "bd8183cb1d72b006350270863b09c807b0fab0e0e1dfb470af3952a8bc96abf9"
+  },
+  "limitations": [
+    "Risk-enriched individual review, not an exhaustive library review or population error-rate estimate.",
+    "Unreviewed broad bacterial hits remain conservative; only payload/card-pinned semantic decisions can bypass the independent guard.",
+    "Four v5 and four v6 indirect family boundaries remain explicitly unresolved at their previous placements.",
+    "Two v5 gold scope/condition boundaries and eight gold recall candidates are not resolved by placement-only revision.",
+    "No new source authenticity, PMID, full-paper or name-resolution audit; no model evaluation."
+  ],
+  "input_hashes": {
+    "previous_source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "previous_dataset_manifest_sha256": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81",
+    "source_manifest_sha256": "ded5ba04fffe9c0ce1362b34a2cd9438e50e51487e1cc6acee8270bedc953aa5",
+    "dataset_manifest_sha256": "c5154407f075ac9b455887991d71674031ee1d1921f7df5d360a0fe93f13382b",
+    "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+  },
+  "artifacts": {
+    "placement_decisions.jsonl": "b8046ea5afcf6bee8801e4d06eb3ae752df3d4b1f3ed011c1b2f7745a021ca26",
+    "previous_source_manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "previous_dataset_manifest.json": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81",
+    "sample.jsonl": "d6df9522effa52bae4a82678d663ecdcc127991f26fa0976d0bf1f613b5d909a",
+    "authored_judgments.tsv": "3e3b0b641f516446f7fce4e2f681f22e8ca7029d46046755082e598ec6297c23",
+    "audit_annotations.jsonl": "089d8349c3e322e9e47bf0989efb16c51686d0fd66302aa371c8463d8340bc6d",
+    "README.md": "97cce656876f0db22b58f67b052a842ce8cdf56f07aa1700ce8eb767147b4975",
+    "family_changes.parquet": "6be7e76f3636d6ea9f4f19116062a9d5d1d5b0bb1e05fb6e55e403c3a61fe1a6",
+    "retrieval_build_performance.json": "404a90fe0501615f6be01b9378201ee64495738e13ac2b64e1c90dbf6c3abc5b"
+  }
+}

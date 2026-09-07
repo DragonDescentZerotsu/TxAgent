@@ -6,11 +6,13 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 from typing import Any
 
 from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
+from tools.chembl_tool.common.json_utils import atomic_output_path
 from tools.chembl_tool.common.starling.current_retrieval_artifacts import (
     DEFAULT_LOCAL_ROOT,
     TASKS,
@@ -51,9 +53,15 @@ def _run(arguments: list[str]) -> None:
     subprocess.run(command, cwd=PROJECT_ROOT, check=True)
 
 
-def _overlay_paths(root: Path, contract: dict[str, Any]) -> dict[str, Path]:
+def _overlay_paths(
+    root: Path, contract: dict[str, Any], *, records_root: Path = DEFAULT_LOCAL_ROOT,
+) -> dict[str, Path]:
     return {
-        task: root / str(contract["tasks"][task]["overlay"])
+        task: (
+            current_records_path(task, local_root=records_root).parent
+            if contract["tasks"][task].get("overlay_is_canonical")
+            else root / str(contract["tasks"][task]["overlay"])
+        )
         for task in TASKS
     }
 
@@ -66,7 +74,9 @@ def build_overlays(
     contract = _contract()
     for task in TASKS:
         require_current_records(task, local_root=records_root)
-    overlays = _overlay_paths(root, contract)
+    overlays = _overlay_paths(root, contract, records_root=records_root)
+    # Ames freezes the reviewed, already classified source. It needs no second
+    # purity overlay; restore-records supplies the exact audited input.
     _run(
         [
             "tools.chembl_tool.paper_experiments.build_bbb_source_family_purity",
@@ -113,9 +123,9 @@ def build_overlays(
     )
 
 
-def build_catalogs(root: Path) -> None:
+def build_catalogs(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> None:
     contract = _contract()
-    overlays = _overlay_paths(root, contract)
+    overlays = _overlay_paths(root, contract, records_root=records_root)
     for task in TASKS:
         catalog = root / str(contract["tasks"][task]["catalog"])
         _run(
@@ -135,10 +145,12 @@ def build_catalogs(root: Path) -> None:
         )
 
 
-def build_indices(root: Path, *, workers: int) -> None:
+def build_indices(
+    root: Path, *, workers: int, records_root: Path = DEFAULT_LOCAL_ROOT,
+) -> None:
     contract = _contract()
     settings = contract["contract"]
-    overlays = _overlay_paths(root, contract)
+    overlays = _overlay_paths(root, contract, records_root=records_root)
     for split_scheme in ("scaffold", "random"):
         identity_policy = settings[f"{split_scheme}_identity_policy"]
         for task in TASKS:
@@ -171,9 +183,9 @@ def build_indices(root: Path, *, workers: int) -> None:
                     "--heldout-smiles-field",
                     "drug",
                     "--filter-scope-field",
-                    "group_id",
+                    str(task_contract.get("filter_scope_field", "group_id")),
                     "--filter-scope-value",
-                    str(task_contract["direct_group"]),
+                    str(task_contract.get("filter_scope_value", task_contract["direct_group"])),
                     "--evidence-prompt-profile",
                     str(settings["evidence_prompt_profile"]),
                 ]
@@ -182,6 +194,7 @@ def build_indices(root: Path, *, workers: int) -> None:
 
 def verify(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> dict[str, Any]:
     contract = _contract()
+    overlays = _overlay_paths(root, contract, records_root=records_root)
     report: dict[str, Any] = {"schema_version": contract["schema_version"], "tasks": {}}
     failures: list[str] = []
     for task in TASKS:
@@ -204,7 +217,7 @@ def verify(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> dict[str, 
         artifacts = {
             "canonical_records": (records, task_contract["canonical_records_sha256"]),
             "overlay_records": (
-                root / str(task_contract["overlay"]) / "records.parquet",
+                overlays[task] / "records.parquet",
                 task_contract["overlay_records_sha256"],
             ),
             "catalog": (
@@ -212,6 +225,11 @@ def verify(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> dict[str, 
                 task_contract["catalog_sha256"],
             ),
         }
+        if task_contract.get("source_records"):
+            artifacts["published_source_records"] = (
+                PROJECT_ROOT / task_contract["source_records"],
+                task_contract["canonical_records_sha256"],
+            )
         if task == "bioavailability_ma":
             artifacts["intermediate_overlay_records"] = (
                 root / str(task_contract["intermediate_overlay"]) / "records.parquet",
@@ -273,17 +291,24 @@ def main(argv: list[str] | None = None) -> int:
     if args.action == "restore-records":
         for task in TASKS:
             print(restore(task, local_root=args.records_root, force=args.force))
+            source_records = _contract()["tasks"][task].get("source_records")
+            # Restore missing source-adapter output, preserving existing reviews.
+            if source_records and args.records_root.resolve() == DEFAULT_LOCAL_ROOT.resolve():
+                published = PROJECT_ROOT / source_records
+                if not published.exists():
+                    with atomic_output_path(published) as temporary:
+                        shutil.copyfile(current_records_path(task), temporary)
     elif args.action == "build":
         build_overlays(args.output_root, records_root=args.records_root)
-        build_catalogs(args.output_root)
-        build_indices(args.output_root, workers=args.workers)
+        build_catalogs(args.output_root, records_root=args.records_root)
+        build_indices(args.output_root, workers=args.workers, records_root=args.records_root)
         print(json.dumps(verify(args.output_root, records_root=args.records_root), indent=2))
     elif args.action == "build-overlays":
         build_overlays(args.output_root, records_root=args.records_root)
     elif args.action == "build-catalogs":
-        build_catalogs(args.output_root)
+        build_catalogs(args.output_root, records_root=args.records_root)
     elif args.action == "build-indices":
-        build_indices(args.output_root, workers=args.workers)
+        build_indices(args.output_root, workers=args.workers, records_root=args.records_root)
     else:
         print(json.dumps(verify(args.output_root, records_root=args.records_root), indent=2))
     return 0

@@ -1,0 +1,479 @@
+{
+  "schema_version": "ames_agreement_revision.v1",
+  "change": "Align external-condition agreement >=0.60 and no-reported-condition agreement >=0.70 with the existing three tasks; ties remain excluded.",
+  "old_protocol": "fresh_conditioned_benchmark.v1",
+  "new_protocol": "fresh_conditioned_benchmark.v2",
+  "source_vote_and_identity_policy_changed": false,
+  "source_vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+  "prior_benchmark_files": [
+    {
+      "path": "data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json",
+      "sha256": "060085254a3e6b8e80f7b2c65f2f4ba2947f1b885be82dbff287b51d45266b29"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/summary.json",
+      "sha256": "1f8d7f1d8703fac59d7942f3c6a6a9497ad5337f070a08cced8e7bc85ecc6c67"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+      "sha256": "9905520115426aab885222b6b44af3b5a58741a2f3ee30344b650f612be6f45e"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+      "sha256": "eff85835d0810ac77ef25086ed845cdbff3f0d582c73312e522f381b695eb0fd"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+      "sha256": "ec8e1ac0b505f15df660fa8798bba6c4866665c188c29cbecd45b65cb925492f"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+      "sha256": "6344fbe8d2f7169e61a6116bbf2d1ee06d25e7de8021f0aa8c6ead2972b8243d"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "1ed6f52efc59b106ee28885653915b66a096f4146fe957b4d1be6efc8423dc6d"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl",
+      "sha256": "8578e52656fec9fa89d1a85b29f3348b436fb1a3b227d4d3931c68b47baed51b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl",
+      "sha256": "58eac78d0f640ca6fc774c5729a02c3ae90f150985831c255bf905e32866f981"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/summary.json",
+      "sha256": "8e8b5c2ad90954ee64ee56a128e55604bbd812dcd98c8a4b8df9c4e917b725ff"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+      "sha256": "28766d6e55263718c33619574d63b61867f5a287cfd916964c5a4017e0b4fbed"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train.jsonl",
+      "sha256": "71b940dc9e9d88f85097a422a54f66ed56ac0ff5b5d3b4eacbbb0c9321ab2e30"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid.jsonl",
+      "sha256": "6a64fe632e2f4eff2c475b8fd4fce06258ad1a65e5828fa2bdb1b65f0ecd8d3b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test.jsonl",
+      "sha256": "e9bbc8c004ecf614ee7e43465106ecb24e49a9221596379a2f21ec8021bd0e43"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl",
+      "sha256": "58eb9139fa66fad5de0ca1f89886c9f32a751e5d314e6de746c8cd4bef4c3300"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl",
+      "sha256": "f6d37151107b50f73c4d3129cbd42b31894927252d5769f9fd74d49b1d4bb191"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl",
+      "sha256": "a40c687f697f39917215a1fd9c0b1ffdc369dda9f730a219997499068281312a"
+    }
+  ],
+  "prior_retrieval": {
+    "catalog": [
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json",
+        "sha256": "5162c8ed4f2874199c0a7dbbb8a639a87dc7eddaa27f68fa7e2a0582ecf01ccf"
+      },
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "sha256": "d20bdfac49502cfd75e70509fec4c2873a5df11ef175f1734b8c0efa572cacb9"
+      },
+      {
+        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
+      }
+    ],
+    "indices": {
+      "scaffold": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json",
+          "sha256": "09ab29dd07b2e8cb90a1e96d8e4d9ce24bc11d1d636cbd1e9d2fc53e57dd229c"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+          "sha256": "048e2343741f9b7867314296c73dab7ccd86b074d2746983b4ec13ae6a70c6ec"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+          "sha256": "fa2c6b09659eceb82fbe095783bdb452d0656741c9952b12ad070b5683f10c38"
+        }
+      ],
+      "random": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json",
+          "sha256": "70cfbfc719f7e2cd39519716d70174b830a0c2d9a3b11157e9dfd3781775ae18"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+          "sha256": "ded13d0d85f394f8531529dcb0222fb6896f1e683931908e904ef059414c65f7"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+          "sha256": "19fc6ab02309bb6f211104cdd66c3f810698cf3edeaaa218397364b085d21407"
+        }
+      ]
+    }
+  },
+  "added_parent_condition_units": [
+    {
+      "benchmark_row_id": "AMES_79680293F21CA3308B1A",
+      "molecule_identity_key": "DXBHBZVCASKNBY-UHFFFAOYSA-N",
+      "condition_group": "metabolic_activation=present+strain_panel=TA100,TA98",
+      "Y": 1,
+      "label_counts": {
+        "0": 1,
+        "1": 2
+      },
+      "agreement_fraction": 0.6666666666666666,
+      "source_record_ids": [
+        "ames_base:250785",
+        "ames_base:252213",
+        "ames_base:44380"
+      ]
+    },
+    {
+      "benchmark_row_id": "AMES_2156571F95F6C1A3B706",
+      "molecule_identity_key": "WBNQDOYYEUMPFS-UHFFFAOYSA-N",
+      "condition_group": "metabolic_activation=present+strain_panel=TA1535",
+      "Y": 1,
+      "label_counts": {
+        "0": 1,
+        "1": 2
+      },
+      "agreement_fraction": 0.6666666666666666,
+      "source_record_ids": [
+        "ames_base:227906",
+        "ames_base:25812",
+        "ames_base:285196"
+      ]
+    },
+    {
+      "benchmark_row_id": "AMES_7565B12BD0E54855C03C",
+      "molecule_identity_key": "OQIQSTLJSLGHID-WNWIJWBNSA-N",
+      "condition_group": "metabolic_activation=absent+strain_panel=TA98",
+      "Y": 1,
+      "label_counts": {
+        "0": 1,
+        "1": 2
+      },
+      "agreement_fraction": 0.6666666666666666,
+      "source_record_ids": [
+        "ames_base:125274",
+        "ames_base:163143",
+        "ames_base:37128"
+      ]
+    },
+    {
+      "benchmark_row_id": "AMES_B191B952AAE3DBF7E944",
+      "molecule_identity_key": "YZVWKHVRBDQPMQ-UHFFFAOYSA-N",
+      "condition_group": "metabolic_activation=absent+strain_panel=TA98",
+      "Y": 1,
+      "label_counts": {
+        "0": 1,
+        "1": 2
+      },
+      "agreement_fraction": 0.6666666666666666,
+      "source_record_ids": [
+        "ames_base:184209",
+        "ames_base:255663",
+        "ames_base:96613"
+      ]
+    },
+    {
+      "benchmark_row_id": "AMES_E4B8E0ACE546C9422DB7",
+      "molecule_identity_key": "REFJWTPEDVJJIY-UHFFFAOYSA-N",
+      "condition_group": "metabolic_activation=absent+strain_panel=TA102",
+      "Y": 1,
+      "label_counts": {
+        "0": 1,
+        "1": 2
+      },
+      "agreement_fraction": 0.6666666666666666,
+      "source_record_ids": [
+        "ames_base:312517",
+        "ames_base:63902",
+        "ames_base:98034"
+      ]
+    }
+  ],
+  "changes_by_split_scheme": {
+    "scaffold": {
+      "split_rows": {
+        "train": 1939,
+        "valid": 274,
+        "test": 274
+      },
+      "split_parents": {
+        "train": 1109,
+        "valid": 138,
+        "test": 144
+      },
+      "removed_row_ids": [],
+      "changed_labels": [],
+      "reassigned_existing_rows": 5,
+      "singleton_rows": 2243
+    },
+    "random": {
+      "split_rows": {
+        "train": 1989,
+        "valid": 249,
+        "test": 249
+      },
+      "split_parents": {
+        "train": 1224,
+        "valid": 76,
+        "test": 91
+      },
+      "removed_row_ids": [],
+      "changed_labels": [],
+      "reassigned_existing_rows": 36,
+      "singleton_rows": 2243
+    }
+  },
+  "old_benchmark_rows": 2482,
+  "new_benchmark_rows": 2487,
+  "unique_parents": 1391,
+  "conditions": 73,
+  "model_evaluation_performed": false,
+  "replay_policy": "Both heldout unions and indices rebuilt; previous retrieval validation is superseded. No model predictions have been generated for Ames.",
+  "vote_funnel_path": "data/starling_data/ames/vote_funnel.json",
+  "execution": "Fresh catalog; per-split memoization of aggregates only where frozen source, catalog, aggregation code, filter scope, and parent-heldout membership are unchanged. All affected-parent aggregates, complete source filtering, neighbor indices and card validation are rebuilt. Public build_dataset hash/scope checks finalize the manifest.",
+  "aggregation_reuse_orchestrator_source": "\"\"\"Memoize unchanged assay aggregates; all filtering/index code stays shared.\"\"\"\nimport collections\nimport functools\nimport json\nfrom pathlib import Path\nimport sys\n\nsys.path.insert(0, str(Path.cwd()))\nimport pyarrow.parquet as pq\nfrom tools.chembl_tool.common import assay_retrieval as ar\nfrom tools.chembl_tool.common.json_utils import sha256_file\nfrom tools.chembl_tool.tasks.ames import build_dataset as build\n\nscheme = sys.argv[1]\nassert scheme in ('scaffold', 'random')\nbefore = json.loads(Path('/local/tmp/ames-agreement60/before.json').read_text())\nroot = build.INDEX_ROOT / scheme\nold_manifest = json.loads((root / 'manifest.json').read_text())\nold_validation = json.loads(build.MANIFEST.with_name('retrieval_validation.json').read_text())\ncode_path = Path(ar.__file__).resolve()\nassert sha256_file(code_path) == old_validation['input_hashes'][str(code_path)]\ncatalog = build.CATALOG_ROOT / 'family_assays.jsonl'\nassert sha256_file(build.RECORDS) == old_manifest['records_sha256']\nassert sha256_file(catalog) == old_manifest['ranked_assays_sha256']\nfor item in before['dataset_manifest']['retrieval']['indices'][scheme]:\n    assert sha256_file(Path(item['path'])) == item['sha256'], item['path']\nassert old_manifest['max_record_examples'] == 3\nassert old_manifest['max_support_text_chars'] == 0\nassert old_manifest['evidence_prompt_profile'] == 'assay_compact.mechanism_tagged_v4'\n\nar._parent_key = functools.lru_cache(maxsize=None)(ar._parent_key)\nold_parents = {\n    ar._parent_key(r['drug']) for split in ('valid', 'test')\n    for r in before['ames_rows'][scheme][split]\n}\nheldout = build.task_root('ames', scheme) / 'heldout_molecule_condition_labels.jsonl'\nnew_parents = {ar._parent_key(r['drug']) for r in ar.read_jsonl(heldout)}\nchanged = old_parents ^ new_parents\nassert len(changed) == 4\nstructures = pq.read_table(build.RECORDS, columns=['molecule_id', 'canonical_smiles']).to_pandas().drop_duplicates()\naffected = set(structures.loc[structures.canonical_smiles.map(ar._parent_key).isin(changed), 'molecule_id'])\ndel structures\nprint('Recomputing all assay groups for changed parents:', len(changed), 'source molecule ids:', len(affected), flush=True)\n\ncache = {}\nevidence = root / 'assay_molecule_evidence.jsonl'\nfor line in evidence.open():\n    row = json.loads(line)\n    if row['molecule_chembl_id'] in affected:\n        continue\n    # These fields are regenerated by the unchanged neighbor-index builder.\n    row.pop('minimal_evidence', None)\n    row.pop('standard_inchi_key', None)\n    key = row['assay_chembl_id'], row['molecule_chembl_id']\n    assert key not in cache\n    cache[key] = row\nprint('Verified cached groups loaded:', len(cache), flush=True)\naggregate = ar._aggregate_assay_molecule\ncounts = collections.Counter()\n\ndef memoized(task, context, assay, group, **kwargs):\n    molecule = str(group['molecule_id'].iloc[0])\n    if molecule in affected:\n        counts['recomputed_changed_parent_groups'] += 1\n        return aggregate(task, context, assay, group, **kwargs)\n    cached = cache.pop((assay, molecule))\n    # The old evidence export held index-standardized SMILES; restore the\n    # source SMILES before normal full-index standardization and fingerprinting.\n    cached['canonical_smiles'] = str(group['canonical_smiles'].iloc[0])\n    assert cached['source_record_count'] == len(group)\n    counts['reused_unchanged_groups'] += 1\n    if counts['reused_unchanged_groups'] % 10000 == 0:\n        fresh = aggregate(task, context, assay, group, **kwargs)\n        fresh.pop('minimal_evidence', None)  # Always rebuilt after standardization.\n        assert cached == fresh, [k for k in set(cached) | set(fresh) if cached.get(k) != fresh.get(k)]\n        counts['independent_aggregate_equality_checks'] += 1\n        print('Verified groups:', counts['reused_unchanged_groups'], flush=True)\n    return cached\n\nar._aggregate_assay_molecule = memoized\nwrite_json = ar.write_json_atomic\n\ndef write_with_receipt(path, value):\n    if Path(path) == root / 'manifest.json':\n        assert not cache, ('unused unaffected cached groups', len(cache))\n        value['aggregation_reuse'] = {\n            'method': 'Unchanged source/catalog/aggregation code plus unchanged parent-heldout membership prove identical group inputs; affected parents are fully recomputed. Complete source filtering and neighbor-index construction are rerun.',\n            'prior_evidence_sha256': old_manifest['evidence_sha256'],\n            'prior_heldout_sha256': old_manifest['heldout_molecules_jsonl_sha256'],\n            'aggregation_code_sha256': sha256_file(code_path),\n            'orchestrator_sha256': sha256_file(Path(__file__)),\n            'changed_parent_keys': sorted(changed),\n            'affected_source_molecule_ids': sorted(affected),\n            'counts': dict(counts),\n            'unused_unaffected_cached_groups': 0,\n        }\n    return write_json(path, value)\n\nar.write_json_atomic = write_with_receipt\nar.main([\n    'build-index', '--task', 'ames', '--records', str(build.RECORDS),\n    '--ranked-assays', str(catalog), '--output-dir', str(root),\n    '--heldout-molecules-jsonl', str(heldout), '--heldout-smiles-field', 'drug',\n    '--filter-scope-field', 'heldout_filter_scope', '--filter-scope-value', 'bacterial_outcome',\n    '--neighbor-identity-policy-default', build.IDENTITY_POLICIES[scheme],\n    '--evidence-prompt-profile', 'assay_compact.mechanism_tagged_v4',\n    '--max-record-examples', '3', '--max-support-text-chars', '0', '--workers', '16',\n])\nprint('PASSED cached aggregation rebuild:', scheme, dict(counts), flush=True)\n",
+  "aggregation_comparison": "All aggregate source fields must match; standard_inchi_key and minimal_evidence are regenerated by the unchanged full neighbor-index builder after source-SMILES restoration.",
+  "status": "passed",
+  "current_benchmark_files": [
+    {
+      "path": "data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json",
+      "sha256": "6a639d23eb19765f6adb2a97ae9916757143e28d2dae7a15229b42e5de0b39f4"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/summary.json",
+      "sha256": "6e05f5bf311a6a06a11e7cb843b6ea9a381f879dadb1d3a829ee4eb8764b1ecc"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+      "sha256": "bf5d2e8ee5499b56b5e6c783af2a985946610a6ff12088303b07970939c29c27"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+      "sha256": "772b48dffcbe007a22766b496814fb332d8ac08d0e14c48f5c6ffd96a336024b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+      "sha256": "ae32243550e54efd2b579708850e59216a7d905a6bf17571fcbfb78f5e770c16"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+      "sha256": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "52ab9bb72e16fc981300b5b98de46a90651fa324e1e2ea2b22520fda85a3c8f9"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl",
+      "sha256": "b7d52d4631c0bf412809b181b0ca4a0c04e899b7d052d59e4a033c0ab3cec5c8"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl",
+      "sha256": "cf736a076dfee696485917f2c7544ce39853524f96485b35a0b5db5547d73e0b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/summary.json",
+      "sha256": "cfe2a7ead3af30b6f53cf5aa978d3c6ae8ec231d4c06e7ed45268f2abbf04c7c"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+      "sha256": "36d64a63836debf9b3ec4ddf208d81395d930a4d102d7e1dbeb94cebec74fec7"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train.jsonl",
+      "sha256": "ec5b00b92eee8d5280e7ca633acff953dd5645dd476756e8aed213f5c8a3e414"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid.jsonl",
+      "sha256": "812029dde46e79380124be0f78a3bccf240e91c6c8522e3fbdb086f2b70171ce"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test.jsonl",
+      "sha256": "a57a80c6ff59adf477d6c5359d6cc46b3cd5ace5b103c26ceb1199027ed22e3b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl",
+      "sha256": "8faffa2ed881e987f039780d20bac1f44d4bae8c3bc3508b71258ea29e378a90"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl",
+      "sha256": "b0e7ecf7c33f6211dd85a9e908bf14509dccb4c9f6c013aa17a881e391303cb6"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl",
+      "sha256": "fb6a5392a0d7a088038f69044f24acb27969c308242a8b7cce6d977c6364388d"
+    }
+  ],
+  "current_retrieval": {
+    "catalog": [
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json",
+        "sha256": "5162c8ed4f2874199c0a7dbbb8a639a87dc7eddaa27f68fa7e2a0582ecf01ccf"
+      },
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "sha256": "d20bdfac49502cfd75e70509fec4c2873a5df11ef175f1734b8c0efa572cacb9"
+      },
+      {
+        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
+      }
+    ],
+    "indices": {
+      "scaffold": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json",
+          "sha256": "3d0308946c73af4449118501d6e0befa1f3da349969f9205f2a9918c56691763"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+          "sha256": "0c2a735f44f5e2073c635dc3be7448d820cb1e6875171cbbf5b8b067721a401b"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+          "sha256": "8176d6e2088da2763a33c90e15b2dcba90894c68c89ede422bc2ece943a4ec9d"
+        }
+      ],
+      "random": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json",
+          "sha256": "be56736d52f19005c44de044c25e91950675d2afb683f677549dcda2b7b8a305"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+          "sha256": "2dc1a66c506e7fc3fdbbc24dca58cfe9850dd05b0d1a1e672e783ba98251033b"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+          "sha256": "6da19d63cfd85e19c5c915858b2557fecb7e16d7eaa9fedc9db27bed7f506ffd"
+        }
+      ]
+    }
+  },
+  "dataset_manifest_sha256": "89aaac6e3e6e9eda3257937d693f0d4641330b4315386558cab797afa6093c0a",
+  "dataset_validation_sha256": "8f45d0de28d4ec234e654a50973bd99808d70bc94c31aee936092dc099804c7c",
+  "retrieval_validation_sha256": "0a5d539d6c1bc2e5b7a7b1588ad13212fdf05e7f17e48a9d4a3bae86d523ae7a",
+  "source_votes_sha256": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+  "source_records_sha256": "fc4051781a85478ede2e22a4930523a9cb0893d37bb036cf59109243366bb99a",
+  "source_artifacts_unchanged": true,
+  "other_task_files_unchanged": {
+    "data/conditioned_benchmark/BBB_Martins/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "1778de9f21967ac43f9e94d37e1a9e0bee45f274724d3b0018700107bc61170e",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/group_distribution.csv": "69f22e83bd5390f9b1fefaece0337cf6fe9fb1810186a4c346160e993dede9a7",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/heldout_molecule_condition_labels.jsonl": "5ef7a3043c002a420f8f772c86836bf6c1c26a9823d1c8d613fb3221ddf7a443",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/rejected_parent_conditions.jsonl": "03c82d08a855f02c65c4b05eb55b9d9af1fe3f744601755477f3314f9b51c527",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/source_condition_review.jsonl": "f56eb2ee0dc477005d9d17c03c10a6a48734f394bcf3ca8ddf8193729b5b9935",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/test.jsonl": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/test_molecule_condition_labels.jsonl": "d005e25667cabd1b35f02ff25094804bbad1b27a7f47505dfc32c9f98e94ce7f",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/train.jsonl": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/train_molecule_condition_labels.jsonl": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/valid.jsonl": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/valid_molecule_condition_labels.jsonl": "8477a2bf858d8e7a6cd4cd7ae9cd686e4c975a5df50f35a35c5a192de8a486d1",
+    "data/conditioned_benchmark/BBB_Martins/scaffold/summary.json": "16b723633dc71aa7125ee0ed59bec33b8540ca974c573c10dab02a3c85fd0b3b",
+    "data/conditioned_benchmark/BBB_Martins/provenance/changed_gold_parents.jsonl": "5ecbe453e4d44acac54d6884e22c96d12775427c40b28a4d2d5445a65afc8734",
+    "data/conditioned_benchmark/BBB_Martins/provenance/conflicting_molecules.jsonl": "3a783593f6b35c44002b78ba6623e65eea52d18a3b547ab9d3f689722cfcd541",
+    "data/conditioned_benchmark/BBB_Martins/provenance/migration_from_v3.json": "bf2e0c9686898c3f7eca331611acda2a882b0fddfd6fecd819ecf9ba439f2691",
+    "data/conditioned_benchmark/BBB_Martins/provenance/migration_from_v3_zh.md": "80ad21836672d22f6ee3b492a8e880458e349d8fa804436dbaed72848817b74e",
+    "data/conditioned_benchmark/BBB_Martins/provenance/molecule_labels.jsonl": "c570dbf3b1d8936fa67fcf8bd9422f585740216fa8059f3372f7caebb02d8b37",
+    "data/conditioned_benchmark/BBB_Martins/provenance/rejected_parent_molecules.jsonl": "ecd024eefa5d9bfc7b354d5752a51c752537c94dcaa253a8e0ab32a7e92cb10f",
+    "data/conditioned_benchmark/BBB_Martins/provenance/report_zh.md": "fce1b8bccb928a5a3769097ed29d5d7aeb5cd0502c57c4cda680704341e40cca",
+    "data/conditioned_benchmark/BBB_Martins/provenance/reviewed_vote_affected_parents.jsonl": "3237b8cdfc738eca58040a0b6fc216dc5b58ba75dbc6254c9477ecf31b812407",
+    "data/conditioned_benchmark/BBB_Martins/provenance/source_rejection_examples.jsonl": "ebbe016fef311ee3fb78afb257162ef07bf5d169ab5b8c645b77ee02bfd2f55f",
+    "data/conditioned_benchmark/BBB_Martins/random/train_molecule_condition_labels.jsonl": "455a4590c56173c3fdf2e8f16a60f213b8829b04fa308691f30c74c6a814dd72",
+    "data/conditioned_benchmark/BBB_Martins/random/train.jsonl": "396eb1397775c329a297eb5d56b38b5161c84635ff674ac681b27a36fcbf6210",
+    "data/conditioned_benchmark/BBB_Martins/random/valid_molecule_condition_labels.jsonl": "d0c13b7ec5d68636c2734128a36abee99b0bba60b1ca193060d74d2cf31112bc",
+    "data/conditioned_benchmark/BBB_Martins/random/valid.jsonl": "ea0edc096e97d978832df20459bf5e96411d2b05c06b981221c0d88e1c2305a7",
+    "data/conditioned_benchmark/BBB_Martins/random/test_molecule_condition_labels.jsonl": "d5efe0aecebf1214caca635215ff7f86862db1fd8506f32a0ea648ed55d0f3cd",
+    "data/conditioned_benchmark/BBB_Martins/random/test.jsonl": "6c974a0a10757484e10ba06609c88255c14130b8cade47d6a31b1fc341005323",
+    "data/conditioned_benchmark/BBB_Martins/random/heldout_molecule_condition_labels.jsonl": "9f3323bee22bc8a5b90d7177293f4157bab1099f6d324f134cc7594f7e8f8501",
+    "data/conditioned_benchmark/BBB_Martins/random/group_distribution.csv": "f28e5042aa2ce08e78940019e648fb9438df824f7bc206c8d83baf90a2c00d5c",
+    "data/conditioned_benchmark/BBB_Martins/random/summary.json": "fb071ec9b4b6ecf55a5f3df17566f999a8b12728d08299e792071524a605cbc5",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "237d93e4ca92702b8256dec85579712ac0db8f9f637c035281b901b51ebea85b",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/group_distribution.csv": "9fa947d608abbdde008c82dc274278976b325c3040d9d3f5741361893e8b82e5",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/heldout_molecule_condition_labels.jsonl": "ba7559b0541fd931aa16c8d2359abadddeca007ce40d73b23dbe49d2a8e240a8",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/rejected_parent_conditions.jsonl": "f72638c3052b0c6da264ed78af27b65b789f2344b86c73aeb14dbf4e1bab87d5",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/source_condition_review.jsonl": "de675b36be211b73fb9ea8ad6c7f18b258a562ddab4026179acacb542d4949dd",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/test.jsonl": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/test_molecule_condition_labels.jsonl": "25dcaf38e66c3fb0361c4aefbacbc6704e3b679f7bc12cc68ce46da6ba002a62",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/train.jsonl": "f78ec5d7d8db97cf9e24ccd620790e327b777d4878be39678a6bb0fb41af6829",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/train_molecule_condition_labels.jsonl": "eae8607382d96fa47b80736336d95a989b5e97b35af3beaa6b36ae3be1e06159",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/valid.jsonl": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/valid_molecule_condition_labels.jsonl": "46b01dc55c6b461f6eee1cbe8b0866e7a6f44137a54e0c623a7acb9550ef6ae8",
+    "data/conditioned_benchmark/Bioavailability_Ma/scaffold/summary.json": "90e7468b1ced5852fdea20923722602144cafa79b170d208e7d1c14600ac962f",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/train_molecule_condition_labels.jsonl": "85b03d00de95a9e54fb1eaa81c34645708943ccb63761c6dc3ec17e2c7c9d0ad",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/train.jsonl": "e01a20f29c72743efdce4c65a7f8134711159978b117adc035a51125788c29bc",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/valid_molecule_condition_labels.jsonl": "dbeda851e62080f6af01a0f60ed35a764e58c0f19358a598c824e8cead3035cd",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/valid.jsonl": "57b393df547948775b6e207ef3905d0eab8bb9d2800202c76541e0c6d9e90619",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/test_molecule_condition_labels.jsonl": "48079778750a6825fcfb01f2d5654efa8ada08e6d56601ae74e5488103905aa2",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/test.jsonl": "73d2417fdb6549aa66573124b3d142fe6daaa41ab2757b9718decc070886aee8",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/heldout_molecule_condition_labels.jsonl": "fb5f75a27a49ef1a3a527d3006a737ac979f8b0233e32b46dd646bc9e31b1041",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/group_distribution.csv": "dfb1d298db98a998af28eefe97dc9a9a627e272aaf8b414e684654e76466e1d4",
+    "data/conditioned_benchmark/Bioavailability_Ma/random/summary.json": "45452c08a19be0eabdff1b51d0bacc59f5fcf7c4daf7de155f488d3009e40d27",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "0ecb1fc19437c0b72c34140524bab45371984107112c6a6331399786fb382a9e",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/group_distribution.csv": "528f61883421c8e73b09ea212c75231ed4b7a9c0c2446b81ca6ae274e44a5a18",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/heldout_molecule_condition_labels.jsonl": "00292854e43995ece92238a6eb1d97689880e8c444d922ed72e7ffddb15b3749",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/source_condition_review.jsonl": "f784c13bed258f3d1b85f90425c484132f399c1a507705072e3100de12b2d34e",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/test.jsonl": "649c692e492a631bcfff89b154beeb81174e813128cebcc6190bc09b5dc33f11",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/test_molecule_condition_labels.jsonl": "e56f076fbfa762aae15fae36ba147c0c0c00e6867df2fe5a717567d4ab43cb47",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/train.jsonl": "402b1fd7dc05336bec1671a76a88519d48409518e64a97f0dece825aeeb6c5b0",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/train_molecule_condition_labels.jsonl": "fe3b355423c8b6fdf80f61554c95b4fc7b3ca0d858321025dc31c292c74fde2a",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/valid.jsonl": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/valid_molecule_condition_labels.jsonl": "3045830e4bc0ffdc06d98679d0575dba12081c1482bf836b0093a4ff5dbf2db7",
+    "data/conditioned_benchmark/Skin_Reaction/scaffold/summary.json": "66b5a6a15872973bb31200101b4d402d2b2014768809e112efb6622b1bd7c037",
+    "data/conditioned_benchmark/Skin_Reaction/random/train_molecule_condition_labels.jsonl": "16928c447c0fb6e5fd43696349bf2af87ba596aba8a83ebb74d3a988f55b2bdf",
+    "data/conditioned_benchmark/Skin_Reaction/random/train.jsonl": "08889ebfd75e64f1c8a34deb48bf9390161e110ce07115528b2f7c69c3edd80d",
+    "data/conditioned_benchmark/Skin_Reaction/random/valid_molecule_condition_labels.jsonl": "25a7564acae53850531c3ff1dedd5f80fc598f5b8e2074aab93894d13465e623",
+    "data/conditioned_benchmark/Skin_Reaction/random/valid.jsonl": "03ea43a3a9e134d1fa69390ffe09313e35b0a6aab55e5c70f9a272b3846d8389",
+    "data/conditioned_benchmark/Skin_Reaction/random/test_molecule_condition_labels.jsonl": "45062a08f7093fbf61c22ff2f2a357b03bbf88d3a525e411affaada6144e9e54",
+    "data/conditioned_benchmark/Skin_Reaction/random/test.jsonl": "1c11a03652dfd2fd12535340bc02529a9c1a9e3eaf143a0ce351ec05e8e10dd8",
+    "data/conditioned_benchmark/Skin_Reaction/random/heldout_molecule_condition_labels.jsonl": "f84479c9a8aa8f5a2ec93b8764a94ef0179200e6770dcc150a667e2a047b5946",
+    "data/conditioned_benchmark/Skin_Reaction/random/group_distribution.csv": "31680803729471f135edb40466ccf687dc46e848a60d68f23549a38c70ff73cf",
+    "data/conditioned_benchmark/Skin_Reaction/random/summary.json": "918872921074ce9e6f43ab189aa2a40a29242adeaca8a576fbd7c40c80763b2c",
+    "data/conditioned_benchmark/Skin_Reaction/provenance/semantic_gold_v2_migration.json": "0302453c462b6eff62dbff7f6a605e493ff8d4dbe242a9e799ed16dea0a14dcd",
+    "data/conditioned_benchmark/Skin_Reaction/provenance/semantic_gold_v3_migration.json": "6f19f6b3c5bd5a1eac9977d701c9961a0222bd267aa3125745b6154e9097b97e",
+    "data/conditioned_benchmark/ClinTox/scaffold/train_molecule_condition_labels.jsonl": "ce173b9c9055925d498cedbc7e3c4dc08c491a4a43dd921d9f5356a4e700a93a",
+    "data/conditioned_benchmark/ClinTox/scaffold/train.jsonl": "438ce524d92e620d17561558b057f75624e5113976d7b09034824fe992976793",
+    "data/conditioned_benchmark/ClinTox/scaffold/valid_molecule_condition_labels.jsonl": "67b8732a2bd44696c194acc40a45fbff4cb540336c22f2e297353969229557e0",
+    "data/conditioned_benchmark/ClinTox/scaffold/valid.jsonl": "5a0c7ef00f004112e622f17294f11e6e5bb668f7f5099307d6b4e6a86c3ade4a",
+    "data/conditioned_benchmark/ClinTox/scaffold/test_molecule_condition_labels.jsonl": "2c0792c8446a8bed9ca1e8c1416b2912f8df8fda57904677600a0d5f8d1d640a",
+    "data/conditioned_benchmark/ClinTox/scaffold/test.jsonl": "6c2d59bdbe3bd0db09ffcab86dafd7778d3266e367d405f2c296d2bfc0f10cd8",
+    "data/conditioned_benchmark/ClinTox/scaffold/heldout_molecule_condition_labels.jsonl": "6c0f56dabbe13b72695742d81bd35ad0c48b663907fee8483829954ef4e83371",
+    "data/conditioned_benchmark/ClinTox/scaffold/group_distribution.csv": "59d6bb307fe26b38d2133053a993b5d750723342b4e960974d0d284d760abd23",
+    "data/conditioned_benchmark/ClinTox/scaffold/summary.json": "00c1e2a6e23488652daa89458965ceceaf6fee2dd795778733d716d4979cc325",
+    "data/conditioned_benchmark/ClinTox/provenance/molecule_labels.jsonl": "e5a3193d89682a7322ba53698f27a0802ff4f822768acace44e0fa3904e5fffb",
+    "data/conditioned_benchmark/ClinTox/provenance/report_zh.md": "cf6835cc02caae240af0a311f7c1ae12dd1f1b0cee663f271540e1627d25c216",
+    "data/conditioned_benchmark/ClinTox/random/train_molecule_condition_labels.jsonl": "6dbaff14ce06824f5d60aa1d37e1d67c6c99650b42b52ab57c02037b8c5e2634",
+    "data/conditioned_benchmark/ClinTox/random/train.jsonl": "10b1f711a310862b844b58f070568aa63783676f8cab80e51b6568647bfbaf75",
+    "data/conditioned_benchmark/ClinTox/random/valid_molecule_condition_labels.jsonl": "5752f49acf4c6e79a2628c3b8dc993fe69315e093eba606d2e88f52e21bfd788",
+    "data/conditioned_benchmark/ClinTox/random/valid.jsonl": "6138f9d80f8661d33e421d0818792d3c41f43e30a07dffd5b46cc3acd491c4fd",
+    "data/conditioned_benchmark/ClinTox/random/test_molecule_condition_labels.jsonl": "a9eb47a4310dbdb7aa5679ed815fe0f3147f19b4631fb456ebf927f97d5525f5",
+    "data/conditioned_benchmark/ClinTox/random/test.jsonl": "576b59bd4850e2c6ddbf2ab3fd49c5ac6b4867b981d073c884f19750abc92786",
+    "data/conditioned_benchmark/ClinTox/random/heldout_molecule_condition_labels.jsonl": "5adec68324e8c4a3dc737c55471898bef8addf721fa3c84173029e7e8a77b9c4",
+    "data/conditioned_benchmark/ClinTox/random/group_distribution.csv": "7c2f364fe78aefbf15086b5b1f6a00a318887ac96ff27a9a3713b9f102a1691b",
+    "data/conditioned_benchmark/ClinTox/random/summary.json": "b834299e5c3c0be45813531709ba8f4417499599950cde3439d588b1cad5a740"
+  },
+  "focused_tests_passed": 293,
+  "vote_funnel_sha256": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
+  "code_hashes": {
+    "tools/chembl_tool/common/starling/fresh_conditioned_benchmark.py": "2119751689c554667a7ceb16ecf880f1a41d324d2773645f95d07f5f76c27504",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_dataset.py": "1da6a1522e96e49e6572dbe849514b7799e635dce99f763ae8da8601d81715a2",
+    "tools/chembl_tool/tasks/ames/validate_retrieval.py": "b8807ad74be7b41adbba18590c503533af0e0cd84e2c64492e6c8d43782a2578"
+  }
+}

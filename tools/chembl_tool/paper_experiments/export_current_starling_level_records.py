@@ -17,6 +17,7 @@ import hashlib
 import importlib
 import json
 from pathlib import Path
+import tempfile
 from typing import Any, Iterable
 
 import pyarrow as pa
@@ -32,6 +33,7 @@ from tools.chembl_tool.paper_experiments import rebuild_current_starling_retriev
 
 
 EXPORT_VERSION = "current_starling_level_record_share.v1"
+MAX_PARQUET_BYTES = 90_000_000
 DEFAULT_OUTPUT_DIR = Path(
     "artifacts/chembl_tool/starling/current_level_records"
 )
@@ -39,6 +41,7 @@ _TASK_CONFIG_MODULES = {
     "bbb_martins": "tools.chembl_tool.tasks.bbb_martins.experiment_config",
     "bioavailability_ma": "tools.chembl_tool.tasks.bioavailability_ma.experiment_config",
     "skin_reaction": "tools.chembl_tool.tasks.skin_reaction.experiment_config",
+    "ames": "tools.chembl_tool.tasks.ames.experiment_config",
 }
 
 _TEXT_COLUMNS = (
@@ -135,6 +138,37 @@ def _publish_parquet(writer: pq.ParquetWriter, temporary: Path, path: Path) -> N
     temporary.replace(path)
 
 
+def _source_file_inventory(path: Path) -> dict[str, Any]:
+    """Keep large ledgers readable by Arrow while respecting ordinary Git limits."""
+    if path.stat().st_size <= MAX_PARQUET_BYTES:
+        return {"path": str(path), "sha256": sha256_file(path), "size_bytes": path.stat().st_size}
+    dataset = path.with_suffix("")
+    parts = []
+    with tempfile.TemporaryDirectory(prefix="level-records-", dir=path.parent) as tmp:
+        stage = Path(tmp) / "dataset"
+        stage.mkdir()
+        parquet = pq.ParquetFile(path)
+        for index, batch in enumerate(parquet.iter_batches(batch_size=65_536)):
+            part = stage / f"part-{index:05d}.parquet"
+            pq.write_table(pa.Table.from_batches([batch]), part, compression="zstd")
+            size = part.stat().st_size
+            if size > MAX_PARQUET_BYTES:
+                raise ValueError(f"Source ledger shard exceeds Git file budget: {part}")
+            parts.append({"path": str(dataset / part.name), "sha256": sha256_file(part), "size_bytes": size})
+        parquet.close()
+        previous = Path(tmp) / "previous"
+        if dataset.exists():
+            dataset.rename(previous)
+        try:
+            stage.rename(dataset)
+        except BaseException:
+            if previous.exists():
+                previous.rename(dataset)
+            raise
+    path.unlink()
+    return {"path": str(dataset), "parts": parts, "size_bytes": sum(part["size_bytes"] for part in parts)}
+
+
 def _level_maps(catalog_manifest: Path) -> tuple[dict[str, dict[str, Any]], dict[int, dict[str, Any]]]:
     manifest = json.loads(catalog_manifest.read_text(encoding="utf-8"))
     by_source_group: dict[str, dict[str, Any]] = {}
@@ -180,6 +214,10 @@ def _level_descriptions(task: str, by_level: dict[int, dict[str, Any]]) -> dict[
 
 
 def _string_array(table: pa.Table, name: str) -> pa.Array | pa.ChunkedArray:
+    # Some sources assign families during canonicalization rather than moving
+    # pre-existing source groups. Preserve that absence instead of inventing one.
+    if name == "source_family_original_group_id" and name not in table.column_names:
+        return pa.nulls(table.num_rows, type=pa.string())
     return pc.cast(table[name], pa.string(), safe=False)
 
 
@@ -194,6 +232,11 @@ def export_source_membership(
     descriptions = _level_descriptions(task, by_level)
     parquet = pq.ParquetFile(records_path)
     columns = ["group_id", "retrieval_eligible", *_TEXT_COLUMNS]
+    required = set(columns) - {"source_family_original_group_id"}
+    missing = required - set(parquet.schema_arrow.names)
+    if missing:
+        raise ValueError(f"Missing canonical record columns: {sorted(missing)}")
+    columns = [name for name in columns if name in parquet.schema_arrow.names]
     writer, temporary = _atomic_parquet_writer(output_path, SOURCE_MEMBERSHIP_SCHEMA)
     counts: Counter[int] = Counter()
     n_rows = 0
@@ -273,9 +316,7 @@ def export_source_membership(
         raise
     _publish_parquet(writer, temporary, output_path)
     return {
-        "path": str(output_path),
-        "sha256": sha256_file(output_path),
-        "size_bytes": output_path.stat().st_size,
+        **_source_file_inventory(output_path),
         "n_records": n_rows,
         "records_by_level": {str(level): counts[level] for level in sorted(counts)},
         "scope": "retrieval-eligible source records before split-specific direct heldout filtering",
@@ -442,7 +483,8 @@ The current public naming model is `source_group_id -> family_key -> level`.
 `legacy_family_id` is included only to locate older catalogs and traces; it is
 not a second semantic classification.
 
-- `source_record_level_membership.parquet` contains every current
+- `source_record_level_membership.parquet` (or the same-named directory without
+  the suffix, containing ordinary Parquet parts when the ledger exceeds 90 MB) contains every current
   `retrieval_eligible=True` source record whose purity-overlay `group_id` maps
   to a current progressive level. This is the static, pre-split level ledger.
 - `<split>/indexed_representative_cards.parquet` contains compact references to
@@ -457,7 +499,9 @@ visible card payload; all matching source rows remain in the membership table.
 Export fails unless every indexed-card key resolves to at least one source row.
 
 Read `manifest.json` first. It records row counts and SHA-256 hashes for every
-table and for the frozen inputs. A physical assay can occur at several record
+file and for the frozen inputs. Pass each table's `path` to `pyarrow.parquet.read_table`;
+both a single file and a directory of parts have the same schema. Sharded tables
+list individual file hashes under `parts`. A physical assay can occur at several record
 levels; `assay_first_level` is catalog metadata, not a retrieval gate.
 
 Regenerate the complete directory from the repository root with:
@@ -488,8 +532,13 @@ def export_dataset(
 ) -> dict[str, Any]:
     selected_tasks = tuple(tasks)
     selected_splits = tuple(splits)
+    if output_dir.resolve() == DEFAULT_OUTPUT_DIR.resolve() and (
+        set(selected_tasks) != set(TASKS) or set(selected_splits) != {"scaffold", "random"}
+    ):
+        raise ValueError("Partial exports require a separate --output-dir; preserve the complete current dataset")
     verification = rebuild.verify(artifact_root, records_root=records_root)
     contract = rebuild._contract()
+    overlays = rebuild._overlay_paths(artifact_root, contract, records_root=records_root)
     output_dir.mkdir(parents=True, exist_ok=True)
     report: dict[str, Any] = {
         "schema_version": EXPORT_VERSION,
@@ -520,7 +569,7 @@ def export_dataset(
         task_dir = output_dir / task
         config_module = importlib.import_module(_TASK_CONFIG_MODULES[task])
         config_path = Path(str(config_module.__file__)).resolve()
-        overlay = artifact_root / str(task_contract["overlay"]) / "records.parquet"
+        overlay = overlays[task] / "records.parquet"
         catalog_dir = artifact_root / str(task_contract["catalog"])
         catalog_manifest = catalog_dir / "manifest.json"
         task_report: dict[str, Any] = {
@@ -554,7 +603,7 @@ def export_dataset(
             )
             indexed_card_paths.append(indexed_output)
         task_report["card_link_validation"] = validate_card_links(
-            task_dir / "source_record_level_membership.parquet",
+            Path(task_report["source_membership"]["path"]),
             indexed_card_paths,
         )
         report["tasks"][task] = task_report

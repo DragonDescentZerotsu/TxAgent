@@ -30,6 +30,21 @@ results reuse the explicitly registered valid-run ensemble checkpoints; those
 checkpoint/CV dependencies remain retained. Bioavailability has a fresh train-CV
 and final ensemble after the train-row correction. Every KNN reference is train.
 
+Retain the registered Ames scaffold-valid 4/2 progressive and matched full-flat
+roots, fresh single/None traces, shared prepared evidence/tools, launch receipt,
+and the current five-baseline bundle under `outputs/baselines/ames_scaffold_valid_v2`.
+Its two condition-first KNN reruns fill missing slots from unrestricted train;
+retain the fallback audit and all 274 predictions. Preserve the v1 dependency
+root `outputs/baselines/ames_scaffold_valid_v1`: v2 links its unchanged head and
+unrestricted-KNN methods, and its old condition-KNN exclusion ledger documents
+the historical 252-row cohort. The bounded startup smoke is diagnostic only.
+
+For the registered Ames test identity repair, retain both the replacement suite
+and its original six-run source as a retained provenance dependency after promotion.
+Preserve the source-exclusion receipt, all-query selected-surface comparison and
+per-run prefix-reuse receipts; copied results depend on the corresponding original
+repetition, not on a pooled or newly selected prediction.
+
 ### Paper result cells
 
 For every applicable paper cell, retain the latest hash-compatible complete

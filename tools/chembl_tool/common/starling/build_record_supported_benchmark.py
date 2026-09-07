@@ -14,7 +14,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Collection
 
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
@@ -68,7 +68,13 @@ def allocate_scaffold_groups(
     seed: int = SEED,
     optimize_record_support: bool = True,
     exclude_empty_scaffold_from_heldout: bool = False,
+    required_condition_groups: Collection[str] | None = None,
 ) -> tuple[dict[str, str], dict[str, Any]]:
+    """Allocate whole scaffolds; optional conditions must occur in every split.
+
+    Coverage counts the supplied rows within each existing scaffold grain.
+    Omitting required_condition_groups preserves the historical constraints.
+    """
     groups = _scaffold_groups(rows, seed=seed)
     candidates = [
         group
@@ -93,6 +99,12 @@ def allocate_scaffold_groups(
     binary_bounds = Bounds(np.zeros(2 * n_groups), np.ones(2 * n_groups))
     integrality = np.ones(2 * n_groups)
     base_rows, base_low, base_high = _base_constraints(size, target_size)
+    coverage_rows, coverage_low, coverage_high = _condition_coverage_constraints(
+        rows, candidates, required_condition_groups
+    )
+    base_rows.extend(coverage_rows)
+    base_low.extend(coverage_low)
+    base_high.extend(coverage_high)
 
     constraints = list(base_rows)
     low = list(base_low)
@@ -209,7 +221,77 @@ def allocate_scaffold_groups(
             group.size for group in groups if not group.scaffold
         ),
     }
+    if required_condition_groups is not None:
+        audit["required_condition_groups"] = sorted(set(required_condition_groups))
     return assignment, audit
+
+
+def resolve_conditioned_eval_size(
+    rows: list[dict[str, Any]],
+    *,
+    nominal_target_size: int,
+    required_condition_groups: Collection[str],
+    seed: int = SEED,
+) -> int:
+    """Find the smallest feasible equal held-out size for a fresh benchmark.
+
+    Every nonempty scaffold is eligible; empty scaffolds remain in train.
+    Minimize only integer T >= nominal_target_size, with exact T rows in each
+    held-out split and every required condition in all three splits. The caller
+    then freezes T and runs the existing record-quality allocator separately.
+    """
+    if nominal_target_size < 1:
+        raise ValueError("nominal_target_size must be positive")
+    candidates = [group for group in _scaffold_groups(rows, seed=seed) if group.scaffold]
+    if not candidates:
+        raise ValueError("No nonempty scaffold group can enter a held-out split")
+    sizes = np.asarray([group.size for group in candidates], dtype=float)
+    constraints, low, high = _base_constraints(sizes, 0)
+    coverage, coverage_low, coverage_high = _condition_coverage_constraints(
+        rows, candidates, required_condition_groups
+    )
+    constraints.extend(coverage)
+    low.extend(coverage_low)
+    high.extend(coverage_high)
+    # The first two base equalities become valid_size - T = test_size - T = 0.
+    constraints = [np.r_[row, -1.0 if i < 2 else 0.0] for i, row in enumerate(constraints)]
+    n_binary = 2 * len(candidates)
+    solution = _solve(
+        np.r_[np.zeros(n_binary), 1.0],
+        np.ones(n_binary + 1),
+        Bounds(
+            np.r_[np.zeros(n_binary), nominal_target_size],
+            np.r_[np.ones(n_binary), np.inf],
+        ),
+        constraints, low, high,
+    )
+    return int(round(solution[-1]))
+
+
+def _condition_coverage_constraints(
+    rows: list[dict[str, Any]],
+    candidates: list[ScaffoldGroup],
+    required_condition_groups: Collection[str] | None,
+) -> tuple[list[np.ndarray], list[float], list[float]]:
+    constraints, low, high = [], [], []
+    zeros = np.zeros(len(candidates))
+    for condition in sorted(set(required_condition_groups or ())):
+        counts = np.asarray([
+            sum(row.get("condition_group") == condition for row in group.rows)
+            for group in candidates
+        ], dtype=float)
+        total = sum(row.get("condition_group") == condition for row in rows)
+        # At least one row per held-out split and one left in train, including
+        # condition rows on scaffolds ineligible for held-out allocation.
+        for vector, lower, upper in (
+            (np.r_[counts, zeros], 1, np.inf),
+            (np.r_[zeros, counts], 1, np.inf),
+            (np.r_[counts, counts], -np.inf, total - 1),
+        ):
+            constraints.append(vector)
+            low.append(lower)
+            high.append(upper)
+    return constraints, low, high
 
 
 def _scaffold_groups(

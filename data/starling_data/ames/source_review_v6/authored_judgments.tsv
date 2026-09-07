@@ -1,0 +1,195 @@
+number	level	disposition	rationale
+1	3	move	Arabidopsis rolA 遗传回复株及碱基替换；revertants 指植物后代，不是细菌回复。
+2	3	move	人 HCC 测序的突变谱及热点；not a controlled assay or Ames test 为实验范围说明，保留观察性归因限定。
+3	2	retain	支持段落明确包含水解产物的 Ames 阳性；即使属于另一分子，完整混合记录仍限制于 L2。
+4	2	retain	正文明确 urethane 在 Salmonella 试验阴性；微核为主终点不解除直接结果限制。
+5	3	move	线虫测序中的转换和小片段缺失；multiple_mutation_assays 枚举不能盖过明确的非细菌系统。
+6	2	boundary	主要是蛾幼虫体细胞突变，末尾仅概述在噬菌体和细菌中的历史使用；该细菌概述的结果范围不够明确，保守留 L2。
+7	2	retain	直接概述细菌中的 mutagenic activity，缺具体 assay/条件仍属于细菌近直接信息。
+8	2	retain	基因突变试验阴性/高剂量阳性而未区分细菌或哺乳动物；不可把未知系统一概当 L3。
+9	3	move	S. cerevisiae D7 的有丝分裂转换、重组及回复；酵母内源 P450 不使它成为细菌试验。
+10	3	move	限定于高等植物的染色体断裂及纺锤体缺陷，按已有结构改变叙述归 L3。
+11	2	retain	gene-mutagen 阴性的系统未明确；Ames/bacterial vs mammalian 的未定说明不能排除细菌结果。
+12	3	move	三个读数均来自酵母 D6，包含非整倍体、分离及回复；明确非细菌固定遗传终点。
+13	2	retain	TA1538 的弱响应及意义存疑均需保留；活化缺失，不能授予 L1。
+14	3	move	人 CD34 细胞的 MLL 重排/插入证据，not a bacterial reverse mutation 为范围排除；保留 apparent translocation 的不确定性。
+15	3	move	Drosophila 生殖系 forward genetic screen，No Ames reported 不是 Ames 阴性结果。
+16	3	move	突变宿主是转基因大鼠，bacterial lacI 仅为靶基因来源，不能当细菌回复试验。
+17	2	retain	全文明确 caffeine 在细菌有 mutagenicity；主记录哺乳动物低活性不解除 L2 限制。
+18	2	retain	微核记录同时明确 Ames 阴性，保留在 L2。
+19	2	retain	泛称 mutagenic/clastogenic effects，未限定生物系统，仍为 unspecified 近直接。
+20	2	retain	正文的 effects 横跨 bacteria to man，非只有限定于 Drosophila 的读数。
+21	2	retain	E. coli strong mutagenicity 明确；non-Ames 但未明确 forward 或其他排除终点，仍近直接。
+22	3	move	细菌复制的四环素抗性区质粒测序描述缺失和替换，无营养缺陷回复；固定序列改变归 L3。
+23	3	move	SPD8/HPRT 的细胞重组回复频率，revertants 是真核细胞，保留原文系统说明。
+24	2	retain	一般 mutagen designation 未限定所有结果的系统；提到人细胞研究不能自动限定前文泛化声明。
+25	5	move	尿及肝微粒体中代谢产物的检测，no Ames result 为缺失说明；归代谢机制 L5。
+26	3	retain	果蝇 tRNA loci 的突变选择性，明确非细菌遗传终点。
+27	3	retain	E. coli rifampicin/fosfomycin 抗性 forward mutation；SOS 为伴随机制而非回复试验。
+28	3	retain	CHO 细胞 non-mutagenic 声明，系统明确，保留引用性与未给具体 locus 的限定。
+29	3	retain	人淋巴细胞与 CHO 的结构畸变/gaps 比较，均属染色体终点。
+30	3	retain	酵母 gene conversion，未包含细菌直接结果。
+31	3	retain	小鼠次级精母细胞 hyperploid MII 频率为染色体数量终点。
+32	3	retain	植物染色体畸变，物种缺失不使其成为 Ames。
+33	3	retain	小鼠显性致死阴性，保留剂量与配对条件。
+34	3	retain	CHO hprt 实测突变谱；NER 缺陷是条件，不把突变读数下放 L4。
+35	3	retain	转基因小鼠 gpt/lacZ mutant fractions，为动物体细胞突变。
+36	3	retain	TK6 hprt/tk 阳性对照的自身突变频率，非细菌 gold。
+37	3	retain	鸡胚 HET-MN 的定性高微核频率，缺数值仍是微核结果。
+38	3	retain	玉米配子体 wx locus 突变，保留 commercial-grade 试样限定。
+39	3	retain	酵母 ad2 forward mutation 频率，非细菌回复。
+40	3	retain	Rhizobium rifampin 抗性 forward mutants，存活率是配套读数。
+41	3	retain	小鼠宿主、酵母 indicator 的重组/转换阴性，终点生物是酵母。
+42	3	retain	人淋巴细胞 hyperdiploidy/polyploidy 染色体数量变化，非单纯纺锤机制。
+43	3	retain	仓鼠细胞染色体畸变剂量响应，保留 L3。
+44	3	retain	Muta Mouse 睾丸 lacZ 突变频率阴性，时间条件照常保留。
+45	3	retain	UV5 hprt 突变与谱，repair-deficient genotype 不替代固定突变终点。
+46	3	retain	Big Blue 大鼠 cII 及小鼠 K-ras 突变，均非细菌回复。
+47	3	retain	BHK/TG2 选择培养抗性克隆，保留仅部分克隆稳定耐受的限定。
+48	3	retain	人纤维母细胞 p53-positive 微核；p53 不是独立 DDR 测量。
+49	3	retain	果蝇 SMART 突变斑点，保留 doxorubicin inducer 与 metformin protectant 的角色。
+50	3	retain	E. coli rpsL forward mutation 测序，明确不是回复；修复缺陷仅实验条件。
+51	4	retain	8-OHdG 患者/对照生物监测，损伤产物角色明确，非试剂自身致突变结果。
+52	4	retain	尿 8-oxo-dG/creatinine 比值，治疗组比较不改变 DNA 损伤标志物 family。
+53	4	retain	尿 8-oxodGuo 方法应用，未给结果仍是 L4 方法证据。
+54	4	retain	gamma-H2AX foci/DDRs 读数，DAPI 是定位标记，不推定固定突变。
+55	4	retain	B. subtilis din-promoter cat-86 是损伤诱导转录 reporter，抗性只是报告系统输出，非固定抗性突变。
+56	5	move	mOgg1 蛋白含量无变化，原文明确只是酶活性背景、非独立 DDR 终点；归修复机制 L5。
+57	4	retain	人体骨骼肌 mtDNA damage 无变化，保留运动及补充剂条件。
+58	4	retain	comet 的 DNA 损伤保护效应，保留 2-ABP 与 spin-trap 的不同角色。
+59	4	retain	Fpg/comet 的链断裂和氧化位点，2D/3D 比较为条件。
+60	4	retain	尿 8-OHdG ELISA 生物监测，疾病相关性不可当分子致突变性。
+61	4	retain	Fpg-sensitive sites 和 DNA breaks 减少，protectant 不降低 family。
+62	4	retain	urea 对 8-OHdG ELISA 的交叉反应是 L4 测量干扰证据，不是 urea 造成 DNA 损伤。
+63	4	retain	尿 8-oxodG 同位素内标定量方法，缺结果不赋予损伤方向。
+64	4	retain	GC/MS 氧化碱基指纹，拼写错误不改变具体 DNA 损伤对象。
+65	4	retain	anti-8-oxoG/γH2AX 的组织 IF 方法，endpoint 枚举拼写有误但正文明确。
+66	4	retain	肾组织 γH2AX 和 phospho-p53 DDR markers，保留不同共同处理的效应。
+67	4	retain	8-oxoG lesion 的 transcription/repair reporter，Ogg1/Csb 是修复条件非 mutation outcome。
+68	4	retain	NER/BER excision 的 DNA lesion 修复效率；Sp 的名称歧义照原文限定。
+69	4	retain	BPDE-damaged duplex 的 UvrABC incision kinetics，明确修复读数。
+70	4	retain	单核细胞 UDS/thymidine repair incorporation 是修复合成，非固定突变。
+71	4	retain	大鼠 hepatocyte UDS，品系敏感性比较不改变 DNA repair family。
+72	4	retain	DNA single-strand breaks 与光氧化条件，归损伤而非 ROS-only。
+73	4	retain	患者术前术后 comet DNA damage，术中暴露条件保留。
+74	4	retain	ara-C 对 DNA molecular weight 恢复的抑制，属于损伤修复动力学，保留未发表来源限定。
+75	4	retain	PFGE 中 GSH 对裂解过程背景 DNA fragmentation 的影响，方法效应保留，不当作细胞内保护。
+76	5	retain	GSH 加速前药分解的动力学，未测 DNA lesion，归反应/活化机制。
+77	5	retain	CYP2B6 代谢产物形成及抑制，保留 CYP isoform 和次级引用限定。
+78	5	retain	CYP3A 酶失活、竞争底物保护及 ROS 排除说明，仍为酶机制证据。
+79	5	retain	人体尿 NPRO 的内源 nitrosation marker 及 ASC 抑制，非 DNA adduct。
+80	5	retain	CYC 与 4-OH-CYC 的 HPLC/PK 方法，缺数值仍可作代谢方法证据。
+81	5	retain	胆汁 TGZ conjugates/TGZQ 的 LC-MS，代谢检测不等于 DNA 损伤。
+82	3	move	H4 HGPRT 与微核已作为敏感性响应，不能因 source 只抽机制而留 L5。
+83	5	retain	CYP1A O-dealkylation 酶抑制，异常 native category 拼写不改变读数。
+84	4	move	RT4 的 3-NBA-DNA adduct 下降，NQO1/CYP inhibition 是条件，具体终点为 L4。
+85	5	retain	GSH trapping conjugates 非 DNA adduct，保留 L5。
+86	5	retain	duck microsome AFBO formation 与抑制，属于代谢产物读数。
+87	5	retain	人体血 EO 稳态浓度是代谢产物暴露，未测 DNA 加合物。
+88	5	retain	LC-MS 的 GSH conjugate 检测；predicted ions 为分析方法，不是 Ames prediction。
+89	5	retain	ticlopidine S-oxide dimer 形成动力学属于反应性代谢产物证据。
+90	4	move	明确 DMBA 对细胞 DNA 的共价结合及抑制，归 L4，非仅非共价 binding。
+91	5	boundary	CYP1A1 抑制伴随未指明终点的 genotoxicity 概述；尚不能明确 L3/L4，保留 L5 并标记边界。
+92	5	retain	HRP/H2O2 组织染色聚合反应，较弱 oxidation context，保留原文机制未证实限定。
+93	5	retain	同位素氧进入 nitroso metabolite 的 GC-MS，代谢反应分型。
+94	4	move	BPDE-dGuo DNA adduct 定量，组织与时间是条件，归 L4。
+95	5	retain	胎盘 sulfotransferase sulfate transfer 活性，未检出不等于 Ames 阴性。
+96	4	move	E. coli repair-deficient/proficient 差异致死，弱直接损伤指无需 S9，不是细菌回复。
+97	3	move	CREST 标记微核分类及频率属于细胞遗传终点；无生物学显著性仍是 L3。
+98	5	retain	topoisomerase catalytic relaxation/intercalation 无效，为 L5 酶/拓扑机制，无 lesion readout。
+99	5	retain	纯化 topoisomerase-I poisoning/cleavable-complex assay 为机制读数；不把酶催化切割自动当细胞 DNA lesion。
+100	5	retain	tubulin expression 与迁移/形态总结，机制关联有限，仍是 L5 背景并保留待核实限定。
+101	2	retain	mutagenicity 阴性而 assay 未明，不能排除 Ames；保留 L2。
+102	2	retain	表格明确 Ames N，与 SCE/MN 混合，保留 L2。
+103	2	retain	果蝇记录正文包含 TA98/100/1538 的阳性，保留 L2。
+104	2	retain	Drosophila Basc 与 Ames 阳性同时出现，run 内 excluded 说明无效。
+105	2	retain	表格同时有 bacteria mutation 阳性，微核主终点不能解除 L2。
+106	2	retain	表格明确 Ames -，未测试的是 MLA，不能将两者混淆。
+107	3	move	非整倍体结果明确，Ames not tested 是未做试验，归 L3。
+108	3	move	CHO 两个 neo fragments 重组产生 G418-resistant revertants，为真核重组 L3。
+109	3	move	现有完整记录明确将 endpoint organism 写为酵母；按该内容归 L3，保留试验方法与物种文本而不做真实性修正。
+110	3	move	酵母 lys1-1 回复与幸存者比例，非细菌回复，归 L3。
+111	2	retain	genotoxicity 阴性但 assay 未定，if Ames 为未知范围，保守保留 L2。
+112	2	retain	abasic-site 记录的 extra_details 明确伴随 revertants/10^6 数值，必须 L2。
+113	2	retain	TA104 mutagenic concentrations 是明确 mutagenicity 背景声明，即使主测 adduct，仍 L2。
+114	2	retain	bacterial cell context 与 increases mutagenicity 的完整声明并存，L2 约束保留。
+115	4	move	全文只有 umuC/SOS reporter，“mutagenic/SOS-inducing”指该读数，非另一个回复实验，归 L4。
+116	4	move	Saul and Ames 为作者引用，实际是尿 thymine glycol 氧化损伤产物，归 L4。
+117	4	move	WP2 uvrA rec-assay 的 differential growth inhibition，明确 DNA repair readout，归 L4。
+118	4	move	Ames et al. 为作者引用，实际是老龄大鼠 DNA 8OHdG，归 L4。
+119	2	retain	虽主要为 repair-dependent inhibition，extra_details 明确 negative mutation tests，保留 L2。
+120	2	retain	UDS 记录正文明确 Salmonella 阴性，必须 L2。
+121	2	retain	extra_details 明确 bacterial reverse mutation 阴性，不能仅按主微核读数放 L3。
+122	2	retain	正文提到该分子确有 Ames results，但未给方向；不同于未做实验说明，保守留 L2。
+123	2	retain	Ames-test negative 明确，即使作为机制解释仍限制 L2。
+124	2	retain	完整段落就是 bacterial 与 mammalian mutation 阴性总结，保留 L2。
+125	5	move	Ames dwarf 是小鼠品系名，实际 GST/tPBO 酶活性，归 L5。
+126	2	retain	E. coli mutation induction 阳性及 repair-deficient 阴性，未明确 forward，近直接 L2。
+127	2	retain	正文明确 Ames non-mutagenicity，即使声明 excluded 也不能下放。
+128	2	retain	并列 Ames Salmonella mutagenicity result 被提及但未给方向，保守保留 L2。
+129	3	move	S. cerevisiae convertant/revertant frequencies，GSH/P450 是条件，归 L3。
+130	4	move	exocyclic ethanol-DNA adduct，not an Ames revertant count 是终点排除，归 L4。
+131	3	retain	CBMN/centromeric probes 检测不分离与 chromosome loss，L3。
+132	3	retain	猪膀胱细胞 SCE 频率，细胞毒性为伴随比较，不改变 L3。
+133	3	retain	CA 或 SCE 未能细分但都属于 L3，GSTM1 genotype 保留。
+134	3	retain	果蝇阳性和 Neurospora 阴性均非细菌，系统明确。
+135	3	retain	多代小鼠显性致死/implantation loss，保留放射性示踪暴露及 proxy 性质。
+136	3	retain	微核/染色体损伤保护剂作用，原 positive 枚举不重写成致突变阳性。
+137	3	retain	小鼠骨髓微核频率增加，是 L3。
+138	3	retain	烟雾诱导微核受 NAC 影响不显著，保留保护角色及统计限定。
+139	3	retain	工程化细胞的 centromere-positive micronuclei，Phase I activation 不替代 L3 终点。
+140	3	retain	TK6 micronucleus/CREST 方法记录，未给 outcome 不补标签，但检索 family 明确 L3。
+141	3	retain	DEHP 的果蝇 SLRL 阴性；Drosophila 不含 ROS 语义，保持 L3。
+142	3	retain	果蝇 sex-linked recessive lethal mutations，保持 L3。
+143	3	retain	果蝇 SLRL 的 myricetin 保护作用，DNA damage 概述不改变固定遗传读数。
+144	3	retain	果蝇分 brood 的 recessive lethals，保持 L3。
+145	3	retain	果蝇精子细胞 mutation rate 与 post-treatment，保留初步结果限定。
+146	3	retain	果蝇/Bombyx 的 mutation frequency 阴性或可疑，保持 L3。
+147	3	retain	果蝇 SLRL 的剂量/染色体计数阴性，保持 L3。
+148	3	retain	果蝇 SLRL 未检测到显著 mutagenicity，保持 L3。
+149	3	retain	果蝇 SLRL mutation rate 与 larvae exposure，保持 L3。
+150	3	retain	果蝇 wing-spot/SMART spots，mixed_fixed_damage enum 不应被 ROS 子串误判。
+151	3	retain	果蝇 SLRL 边界弱阳性，保留 L3 与不确定性。
+152	3	retain	果蝇 SLRL 表格阴性，保持 L3。
+153	3	retain	果蝇 mutagenic effects 的引用总结，系统明确，保持 L3。
+154	3	retain	果蝇 dominant/recessive lethals，固定遗传 proxy 保持 L3。
+155	3	retain	果蝇 SLRL 染色体 lethal 计数，甲基化测量是配套剂量，保持 L3。
+156	4	retain	TB sperm abnormal DNA integrity，属于损伤完整性 L4。
+157	3	move	UDS 主记录额外明确所有列举的小鼠 fixed mutation/proxy tests 阴性，完整记录包含 L3。
+158	4	retain	bleomycin DNA scission 后游离碱基 HPLC，属于 DNA 损伤产物 L4。
+159	4	retain	S1 DNA-fiber assay 测 ssDNA replication gaps，具体 lesion readout 为 L4。
+160	4	retain	UDS thymidine uptake 属于修复合成，不能当一般 DNA synthesis L5。
+161	4	retain	肝切片 UDS 为 DNA repair readout，保留各物种结果。
+162	4	retain	小鼠 UDS 时序与修复合成，归 L4。
+163	4	retain	孤立核的 precursor incorporation 被记录为 repair_synthesis，保留 L4 和机制判读局限。
+164	4	retain	UDG/GC-MS 的 DNA uracil 检测干扰，属于 L4 方法证据，非试剂致损伤。
+165	4	retain	BrdUrd 光解检测 DNA gaps 修复合成，归 L4。
+166	4	retain	UDS autoradiography 阴性，cytotoxicity 同时保留，非一般增殖合成。
+167	4	retain	SCSA/TB sperm DNA denaturation/fragmentation，损伤完整性 L4。
+168	4	retain	BrdUrd photolysis repair assay 的修复相加性，属于 L4。
+169	4	retain	肾 UDS net grains/nucleus 及 repair fraction，属于 L4。
+170	4	retain	尿氧化核苷 biomarker 的条件比较；保留源字段与其 DNA 表述，名称/真实性不在此轮修正，分层保持 L4。
+171	4	retain	微核内部 PAR polymer 相对强度，微核是定位区室，未测微核形成率，保持 DDR L4。
+172	4	retain	SCGE tail moment 被作者称为 clastogenicity，实际方法仍 DNA breaks L4。
+173	4	retain	combined MN/comet 中此条具体给 comet tissue response，MN 只是协议/阈值比较，保持 L4。
+174	4	retain	PBMC SCGE 称 clastogenic effect，具体仍为链断裂，保持 L4。
+175	4	retain	H2AX-positive cells 作为 clastogenicity biomarker，非染色体畸变评分，保持 L4。
+176	4	retain	MultiFlow 的具体变化为 γH2AX/p53；polyploidy 仅列入 panel，无该读数结果，保持 L4。
+177	4	boundary	γH2AX-positive micronucleus-like structures 的身份仅 resemble，未明确 cytogenetic scoring，保留 L4 并标边界。
+178	4	retain	leukocyte strand breaks 被称 DNA clastogenicity，仍为 L4 损伤。
+179	3	move	Pennisetum 已评分 trisomy/polyploidy/micro-nuclei 并报告 trisomic plants，归 L3。
+180	3	move	CK1δ-siRNA 细胞明确 formation of micronuclei，伴随 H2AX 不改变 L3。
+181	3	move	OGG1-deficient yeast 的 mutation frequency，修复比较的最终读数为 L3。
+182	3	move	L5178Y micronuclei CREST 分类及94%无kinetochore，是 L3 cytogenetic。
+183	3	move	CBMN 的微核剂量响应斜率，ARA modifier 保留，归 L3。
+184	3	move	肝细胞 SCE 频率是 L3，保留 DMN 名称歧义原文而不进行身份修复。
+185	3	move	果蝇 wing-spot 固定突变/clastogenic spots，保留 vanillin protectant 角色，归 L3。
+186	3	move	人淋巴细胞微核及 kinetochore-positive 百分比，是 L3。
+187	4	move	酵母 DNA double-strand breaks 与 RAD52 敏感性，明确损伤为 L4。
+188	4	move	现有 endpoint 明确写 aflatoxin-DNA adduct，按该语义归 L4，方法缺失保持限定。
+189	5	boundary	只有 rad52-1 背景的 doubling time 与 triple mutant 同类结果，缺 proficient 对照/损伤测量，保留 L5 并标修复依赖边界。
+190	4	move	single-molecule DNA imaging 的损伤修复动力学，归 L4。
+191	4	move	DNA lesions 与 H2AX/ATM/ATR 同时报告，保留解释推断但具体损伤归 L4。
+192	4	move	comet 对 chelator 的响应比较，具体 DNA breaks，归 L4。
+193	4	move	S9 下 DNA adduct 未检出，阴性也是 L4 加合物终点。
+194	4	move	尿 8-hydroxy-deoxyguanosine 为 DNA oxidation marker，metabolism 共处理不使其留 L5。

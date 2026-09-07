@@ -81,6 +81,7 @@ from tools.chembl_tool.common.starling.conditioned_benchmark import (
 from tools.chembl_tool.tasks.bbb_martins import experiment_config as bbb_config
 from tools.chembl_tool.tasks.bioavailability_ma import experiment_config as bio_config
 from tools.chembl_tool.tasks.skin_reaction import experiment_config as skin_config
+from tools.chembl_tool.tasks.ames import experiment_config as ames_config
 
 
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
@@ -94,7 +95,7 @@ ARCHIVED_SINGLE_CACHE_ROOT = Path(
     "scaffold_valid_top20_control_matrix_deepseek_v4_flash_0731_v1/"
     "visible_standard"
 )
-TASK_NAMES = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TASK_NAMES = ("bbb_martins", "bioavailability_ma", "skin_reaction", "ames")
 REFERENCE_POOL = "direct_only_heldout_filtered"
 IDENTITY_POLICY_BY_SPLIT = {
     "scaffold": "scaffold_disjoint",
@@ -204,6 +205,7 @@ TASK_CONFIGS = {
     "bbb_martins": bbb_config,
     "bioavailability_ma": bio_config,
     "skin_reaction": skin_config,
+    "ames": ames_config,
 }
 
 SOURCE_PURITY_ROOT = Path(
@@ -228,6 +230,11 @@ def _progressive_task_specs(
         else RANDOM_INDEX_ROOT
     )
     return {
+        "ames": ProgressiveTaskSpec(
+            split_path("ames", evaluation_subset, split_scheme),
+            SOURCE_PURITY_ROOT / "indices" / "ames" / split_scheme / "assay_neighbor_index.pkl",
+            SOURCE_PURITY_ROOT / "family_catalogs/ames/manifest.json",
+        ),
         "bbb_martins": ProgressiveTaskSpec(
             split_path("bbb_martins", evaluation_subset, split_scheme),
             index_root
@@ -1365,6 +1372,9 @@ def _validate_inputs(
             "reference_pool": REFERENCE_POOL,
             "n_direct_heldout_records_after_filter": 0,
         }
+        if task == "ames":
+            expected.update(filter_source_id="", filter_scope_field="heldout_filter_scope",
+                            filter_scope_value="bacterial_outcome")
         if task in {"bioavailability_ma", "skin_reaction"}:
             expected.update(
                 {
@@ -1547,11 +1557,143 @@ def _run_query_rounds(args, prepared_queries, client, output_root: Path, *, run_
     return len(pending)
 
 
+def _prepare_fresh_query_priors(args, task_specs, provider_config):
+    """Prepare new tasks' single/None branches through the shared tools and query pool."""
+    import copy
+    import importlib
+    from tools.chembl_tool.common.identity_blind import prepare_reasoning_retrieval
+    from tools.chembl_tool.common.reasoning_payload import (
+        attach_external_condition, llm_query_payload, llm_evidence_query_payload,
+    )
+    from tools.chembl_tool.common.reasoning_validation import allowed_values_from_required_schema
+
+    if args.prepare_only or args.query_prior_source_root:
+        raise ValueError("fresh query priors require inference and no prior-source override")
+    root = Path(args.output_root) / "single_cache"
+    args.single_source_root = str(root)
+    records, queries, configs = {}, [], {}
+    for task in args.tasks:
+        config = configs[task] = importlib.import_module(f"tools.chembl_tool.tasks.{task}.query_prior")
+        path = task_specs[task].input_jsonl
+        rows = records[task] = read_jsonl(path)
+        manifest = {
+            "schema_version": "conditioned_query_priors.v1", "task": task,
+            "input_jsonl": str(path), "input_sha256": sha256_file(path),
+            "n_items": len(rows), "indices": _selected_indices(args, len(rows)),
+            "model": args.model, "model_identity": _model_identity(args.model),
+            "base_url": args.base_url, "max_tokens": args.max_tokens,
+            "temperature": 0.0, "thinking": "provider_default", "reasoning_effort": "omitted",
+            "visibility_mode": "deployment_visible_prefetched", "identity_blind": False,
+            "harness_prefetch_tools": True, "parallelism": args.parallelism,
+            "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
+            "prompt_contract_sha256": sha256_file(Path(config.__file__)),
+            "task_contract_sha256": sha256_file(Path(TASK_CONFIGS[task].__file__)),
+            "runner_sha256": sha256_file(Path(__file__)),
+            "retry_race_width": getattr(args, "retry_race_width", 1),
+        }
+        target = root / task / "none" / "manifest.json"
+        if target.exists():
+            previous = _read_json(target)
+            operational = {
+                "runner_sha256", "retry_race_width", "execution_history",
+                "parallelism", "endpoint_concurrency_budget",
+            }
+            if ({k: v for k, v in previous.items() if k not in operational}
+                    != {k: v for k, v in manifest.items() if k not in operational}):
+                raise ValueError(f"changed fresh prior inputs/settings: {target}")
+            history = previous.get("execution_history", [])
+            if any(previous.get(k) != manifest.get(k) for k in operational - {"execution_history"}):
+                history = [*history, {k: v for k, v in previous.items() if k != "execution_history"}]
+            if history:
+                manifest["execution_history"] = history
+        write_json_atomic(target, manifest)
+        for i in manifest["indices"]:
+            queries.append(PreparedQuery(task, i, _source_run_dir(task, i, root)))
+
+    def run_prior(_args, query, client):
+        config, contract = configs[query.task], _task_contract(query.task)
+        directory = query.query_dir
+
+        def validated_prior_call(messages, required_fields, branch, retry_pending):
+            validation = dict(required_fields=required_fields,
+                              allowed_values=allowed_values_from_required_schema(messages))
+
+            def routed(call_messages, retry=False):
+                if isinstance(client, ParallelRetryClient):
+                    return client.chat_validated(
+                        call_messages, task=query.task,
+                        width=_args.retry_race_width if retry or retry_pending else 1,
+                        validate=lambda response: response_validation_errors(response, **validation),
+                        receipt_path=directory / "retry_races" / branch / f"{time.time_ns()}.json",
+                    )
+                return client.chat_json(call_messages)
+
+            return call_with_json_validation(
+                routed, messages, **validation, branch_name=branch,
+                retry_call=lambda call_messages: routed(call_messages, retry=True),
+            )
+
+        retrieval_path = directory / "retrieval.json"
+        if retrieval_path.exists():
+            retrieval = _read_json(retrieval_path)
+        else:
+            row = records[query.task][query.index]
+            retrieval = attach_external_condition({
+                "query": {"input_smiles": row["drug"], "canonical_smiles": row["drug"]},
+                "groups": [], "experiment": {"mode": "none", "source": "starling"},
+            }, row)
+            retrieval = prepare_reasoning_retrieval(
+                retrieval, ToolServiceClient(args.tool_service_url, timeout_s=args.timeout_s),
+                identity_blind=False, harness_prefetch_tools=True,
+            )
+            if retrieval["query"]["prefetched_molecule_properties"].get("status") != "ok":
+                raise ValueError("query property prefetch failed")
+            write_json_atomic(retrieval_path, retrieval)
+        single_path = directory / "single_molecule_reasoning_output.json"
+        single = _read_json(single_path) if single_path.exists() else {}
+        if single.get("status") != "ok":
+            payload = llm_query_payload(retrieval["query"])
+            messages = config.build_query_prior_messages("single", payload)
+            llm = validated_prior_call(
+                messages, ("confidence", "reasoning_summary"), "single-molecule",
+                bool(single) or getattr(_args, "retry_round", 0) > 0,
+            )
+            llm["tool_results"] = [payload["prefetched_molecule_properties"]]
+            single = {"status": "ok" if structured_response_is_valid(llm) else "error", "llm": llm}
+            write_json_atomic(single_path, single)
+        if single["status"] != "ok":
+            return {"task": query.task, "index": query.index, "status": "error"}
+        final_path = directory / "final_reasoning_output.json"
+        final = _read_json(final_path) if final_path.exists() else {}
+        if final.get("status") != "ok":
+            messages = config.build_query_prior_messages(
+                "final", llm_evidence_query_payload(retrieval["query"]), single["llm"]["content"],
+            )
+            llm = validated_prior_call(
+                messages, (contract.prediction_field, "confidence", "main_reasons", "final_summary"),
+                "None-final", bool(final) or getattr(_args, "retry_round", 0) > 0,
+            )
+            final = {"status": "ok" if structured_response_is_valid(llm) else "error", "llm": llm}
+            write_json_atomic(final_path, final)
+        return {"task": query.task, "index": query.index, "status": final["status"]}
+
+    prior_args = copy.copy(args)
+    client = _make_client(prior_args, provider_config)
+    try:
+        return _run_query_rounds(prior_args, queries, client, root, run_query=run_prior)
+    finally:
+        if isinstance(client, ParallelRetryClient):
+            client.close()
+
+
 def run(args: argparse.Namespace) -> int:
     task_specs = _progressive_task_specs(args.split_scheme, args.evaluation_subset)
     provider_config = _resolve_provider_pool_config(args)
     if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
         raise ValueError("provider pool capacity exceeds the explicit endpoint budget")
+    if getattr(args, "fresh_query_priors", False):
+        if _prepare_fresh_query_priors(args, task_specs, provider_config):
+            return 1
     records_by_task = _validate_inputs(args, task_specs)
     run_identity_policy = _neighbor_identity_policy(args.split_scheme)
     output_root = Path(args.output_root)
@@ -1798,6 +1940,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--single-source-root", default=str(ARCHIVED_SINGLE_CACHE_ROOT))
+    parser.add_argument("--fresh-query-priors", action="store_true",
+                        help="Build resumable single/None priors using the task's declared prior prompt contract.")
     parser.add_argument(
         "--query-prior-source-root",
         default="",

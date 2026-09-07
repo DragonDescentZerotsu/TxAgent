@@ -19,17 +19,20 @@ from tools.chembl_tool.paper_experiments.paired_binary_predictions import (
 )
 
 
-TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+DEFAULT_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TASKS = (*DEFAULT_TASKS, "ames")
 PREDICTION_FIELDS = {
     "bbb_martins": "bbb_prediction",
     "bioavailability_ma": "bioavailability_prediction",
     "skin_reaction": "skin_reaction_prediction",
+    "ames": "ames_prediction",
 }
 
 TASK_DISPLAY = {
     "bbb_martins": "BBB",
     "bioavailability_ma": "Bioavailability",
     "skin_reaction": "Skin",
+    "ames": "Ames",
 }
 
 
@@ -452,7 +455,7 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
-    selected_tasks = tuple(dict.fromkeys(args.task or TASKS))
+    selected_tasks = tuple(dict.fromkeys(args.task or DEFAULT_TASKS))
     run_roots = _parse_task_roots(args.task_run_root, args.run_root, selected_tasks)
     rows = [
         row

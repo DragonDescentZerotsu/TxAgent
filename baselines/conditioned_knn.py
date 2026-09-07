@@ -10,6 +10,7 @@ CONDITION_POLICIES = (
     "row_agnostic",
     "all_train_unique_molecules",
     "same_condition_then_null",
+    "same_condition_then_null_then_all",
 )
 
 
@@ -67,7 +68,7 @@ def select_conditioned_ranked_indices(
         selected_keys.add(key)
         if len(selected) == k:
             return selected
-    if query_group == NO_REPORTED_CONDITION:
+    if query_group == NO_REPORTED_CONDITION and policy == "same_condition_then_null":
         return selected
 
     null_indices: dict[str, int] = {}
@@ -83,6 +84,8 @@ def select_conditioned_ranked_indices(
         selected_keys.add(key)
         if len(selected) == k:
             return selected
+    if policy == "same_condition_then_null_then_all":
+        select_group(None, "all_train_fallback", selected)
     return selected
 
 

@@ -9,7 +9,8 @@ The current public naming model is `source_group_id -> family_key -> level`.
 `legacy_family_id` is included only to locate older catalogs and traces; it is
 not a second semantic classification.
 
-- `source_record_level_membership.parquet` contains every current
+- `source_record_level_membership.parquet` (or the same-named directory without
+  the suffix, containing ordinary Parquet parts when the ledger exceeds 90 MB) contains every current
   `retrieval_eligible=True` source record whose purity-overlay `group_id` maps
   to a current progressive level. This is the static, pre-split level ledger.
 - `<split>/indexed_representative_cards.parquet` contains compact references to
@@ -24,7 +25,9 @@ visible card payload; all matching source rows remain in the membership table.
 Export fails unless every indexed-card key resolves to at least one source row.
 
 Read `manifest.json` first. It records row counts and SHA-256 hashes for every
-table and for the frozen inputs. A physical assay can occur at several record
+file and for the frozen inputs. Pass each table's `path` to `pyarrow.parquet.read_table`;
+both a single file and a directory of parts have the same schema. Sharded tables
+list individual file hashes under `parts`. A physical assay can occur at several record
 levels; `assay_first_level` is catalog metadata, not a retrieval gate.
 
 Regenerate the complete directory from the repository root with:

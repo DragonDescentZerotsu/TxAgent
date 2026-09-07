@@ -1,0 +1,9 @@
+Auditing scaffold
+scaffold query 45 neighbors [76, 355, 386, 458, 520]
+scaffold query 267 neighbors [0, 1, 1, 1, 5]
+scaffold query 97 neighbors [7, 38, 50, 89, 141]
+Auditing random
+random query 164 neighbors [105, 425, 460, 539, 607]
+random query 85 neighbors [31, 118, 131, 143, 160]
+random query 93 neighbors [65, 310, 364, 455, 523]
+PASSED data/starling_data/ames/retrieval_validation.json queries=6 level_results=30

@@ -109,6 +109,31 @@
           "test": 242
         }
       }
+    },
+    "ames": {
+      "root": "data/conditioned_benchmark/Ames/scaffold",
+      "roots": {
+        "scaffold": "data/conditioned_benchmark/Ames/scaffold",
+        "random": "data/conditioned_benchmark/Ames/random"
+      },
+      "target_definition": "bacterial reverse mutation (Ames) under the reported condition",
+      "split_counts": {
+        "train": 1926,
+        "valid": 274,
+        "test": 274
+      },
+      "split_counts_by_scheme": {
+        "scaffold": {
+          "train": 1926,
+          "valid": 274,
+          "test": 274
+        },
+        "random": {
+          "train": 1980,
+          "valid": 247,
+          "test": 247
+        }
+      }
     }
   },
   "split_schemes": {
@@ -125,7 +150,7 @@
       "parent_disjoint": true,
       "scaffold_disjoint": false,
       "condition_coverage": "all conditions in train, valid, and test",
-      "record_support_priority": "lexicographically minimize singleton-vote rows in valid+test for BBB, Bioavailability, and Skin; not applicable to ClinTox"
+      "record_support_priority": "lexicographically minimize singleton-vote rows in valid+test for assay-voter tasks including Ames; not applicable to ClinTox"
     }
   }
 }

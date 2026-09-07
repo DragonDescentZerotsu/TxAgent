@@ -1,6 +1,6 @@
 {
   "schema_version": "paper_artifact_registry.v2",
-  "updated_at": "2026-09-05",
+  "updated_at": "2026-09-07T16:50:36.536073+00:00",
   "benchmark": {
     "root": "data/conditioned_benchmark",
     "contract": "conditioned_benchmark.v1",
@@ -21,7 +21,13 @@
     "documentation": "tools/chembl_tool/paper_experiments/CURRENT_STARLING_RETRIEVAL.md",
     "rebuilder": "tools/chembl_tool/paper_experiments/rebuild_current_starling_retrieval.py",
     "share_exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
-    "share_dataset": "artifacts/chembl_tool/starling/current_level_records"
+    "share_dataset": "artifacts/chembl_tool/starling/current_level_records",
+    "tasks": [
+      "bbb_martins",
+      "bioavailability_ma",
+      "skin_reaction",
+      "ames"
+    ]
   },
   "paper_axes": {
     "retrieval_sources": [
@@ -127,7 +133,43 @@
         }
       },
       "runner": "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py",
-      "plotter": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py"
+      "plotter": "tools/chembl_tool/paper_experiments/plot_assay_retrieval_curve.py",
+      "four_task_comparison": {
+        "status": "complete_verified",
+        "tasks": [
+          "bbb_martins",
+          "bioavailability_ma",
+          "skin_reaction",
+          "ames"
+        ],
+        "split_scheme": "scaffold",
+        "evaluation_subset": "test",
+        "replicates_per_method": 3,
+        "n_rows_by_task": {
+          "bbb_martins": 393,
+          "bioavailability_ma": 269,
+          "skin_reaction": 241,
+          "ames": 274
+        },
+        "n_level_predictions": 34032,
+        "n_baselines": 20,
+        "n_baseline_omissions": 0,
+        "analysis": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair",
+        "figure": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_full_comparison_mean_sd.png",
+        "svg": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_full_comparison_mean_sd.svg",
+        "performance_figure": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_performance_mean_sd.png",
+        "performance_svg": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_performance_mean_sd.svg",
+        "receipt": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figure_receipt.json",
+        "summary": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/summary.json",
+        "replicate_statistic": "mean of three run-level metrics ±1 sample SD; fixed None and single-run baselines",
+        "source_suites": [
+          "scaffold_test_4_2",
+          "ames_scaffold_test_4_2"
+        ],
+        "verified_at": "2026-09-07T20:03:45.974871+00:00",
+        "ames_source_identity_repair_validation": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/completion_validation.json",
+        "previous_figure_receipt": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs/figure_receipt.json"
+      }
     },
     "scaffold_test_pro_0813_4_2": {
       "status": "complete",
@@ -215,6 +257,212 @@
       "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.svg",
       "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figure_receipt.json",
       "comparison_statistic": "Flash: three-run mean ±1 sample SD; Pro: one run, no interval; model-specific None; unchanged matched baselines"
+    },
+    "ames_scaffold_valid_4_2": {
+      "status": "complete_verified",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "valid",
+      "n_rows": 274,
+      "n_runs_per_organization": 1,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "endpoint": "http://127.0.0.1:50001/v1",
+      "endpoint_concurrency_budget": 256,
+      "progressive_root": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
+      "matched_full_flat_root": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/matched_full_flat_scaffold_valid_deepseek_v4_flash_0731",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/launch_receipt.json",
+      "baseline_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
+      "test_evaluation_performed": false,
+      "retry_race_width": 6,
+      "retry_policy": "First attempt width 1; validation and failed-query retries race up to 6 requests within the shared global 256 cap; first valid result wins and losers are cancelled.",
+      "progressive_status": "complete_zero_failures",
+      "matched_full_flat_status": "complete_zero_failures",
+      "results": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/valid_results.json",
+      "results_sha256": "751983e4d07dfa1d876d4f4f43907f9c9d640abba7202ad4b8058a8a51b3e937",
+      "agent_macro_f1": {
+        "progressive": {
+          "none": 0.7002241951394494,
+          "L1": 0.7198936822735638,
+          "L2": 0.7541866028708133,
+          "L3": 0.7561474058935989,
+          "L4": 0.7561474058935989,
+          "L5": 0.7506411847439398
+        },
+        "full_flat": {
+          "none": 0.7002241951394494,
+          "L1": 0.7164571564286564,
+          "L2": 0.7490842490842491,
+          "L3": 0.7509899383317105,
+          "L4": 0.7597087780259784,
+          "L5": 0.7632908027644869
+        }
+      },
+      "n_paired_prepared_files_verified": 1370,
+      "n_failed_queries": 0,
+      "comparison_analysis": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive",
+      "comparison_figure": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive/figures/full_flat_vs_progressive.png",
+      "comparison_svg": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive/figures/full_flat_vs_progressive.svg",
+      "comparison_receipt": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive/figure_receipt.json",
+      "comparison_statistic": "One complete 274-row valid run per organization; shared None and five full-coverage train-only baselines; no run-variability interval",
+      "trace_diagnosis": {
+        "report": "outputs/paper/analysis/ames_scaffold_valid_trace_diagnosis/TRACE_DIAGNOSIS.md",
+        "summary": "outputs/paper/analysis/ames_scaffold_valid_trace_diagnosis/diagnostic_summary.json",
+        "case_ledger": "outputs/paper/analysis/ames_scaffold_valid_trace_diagnosis/case_evidence_ledger.jsonl",
+        "n_query_level_outputs_audited": 2740,
+        "progressive_L4_to_L5_harmful_flip_indices": [
+          173
+        ],
+        "progressive_L2_to_L5_persistent_errors": 53,
+        "interpretation": "Single-run observational diagnosis; condition/endpoint transfer errors, retained earlier decisions and compound-label recall in inspected reasoning. No causal prompt ablation or new model calls.",
+        "selected_record_audit": "outputs/paper/analysis/ames_scaffold_valid_trace_diagnosis/RECORD_RELEVANCE_AUDIT.md",
+        "confirmed_source_identity_issue_query_indices": [
+          57
+        ],
+        "confirmed_card_value_fallback_issue_query_indices": [
+          18
+        ]
+      },
+      "source_identity_repair_note": "Historical valid result predates ames_base:76701 exclusion; no valid selected-surface equivalence audit or replay claimed by the test repair."
+    },
+    "ames_scaffold_test_4_2": {
+      "status": "complete_verified_source_identity_repair",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "test",
+      "n_rows": 274,
+      "n_runs_per_organization": 3,
+      "n_expected_level_outputs": 8220,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "endpoint": "http://127.0.0.1:50001/v1",
+      "endpoint_concurrency_budget": 768,
+      "concurrency_per_replicate": 256,
+      "replicates_parallel": true,
+      "root": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/launch_receipt.json",
+      "execution_status": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/completion_validation.json",
+      "progressive_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_01/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_02/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_03/progressive"
+      ],
+      "matched_full_flat_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_01/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_02/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_03/full_flat"
+      ],
+      "prepared_input_source": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/frozen_inputs",
+      "single_none_source": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_replicates_v1/replicate_01/progressive/single_cache",
+      "baseline_root": "outputs/baselines/ames_scaffold_test_v1",
+      "baseline_count": 5,
+      "baseline_repeats": 1,
+      "prompt_revision": "mechanistic evidence may change Ames prediction without new direct Ames data; distinguish prediction from measurement",
+      "task_contract_sha256": "879f0e060622e31127fc26ee439ea411502f0f3627ec8f114c34508ff902a924",
+      "retry_race_width": 6,
+      "retry_policy": "first attempt width 1; only validation failures or failed checkpoint retries race width 6; first fully valid response wins, client cancels losers; races share each 256-slot pool",
+      "max_stage_requeues": 3,
+      "retry_delay_s": 60,
+      "same_frozen_priors_tools_evidence_across_repeats": true,
+      "level_prediction_reuse_across_repeats": false,
+      "known_source_limitations": "Confirmed ames_base:76701 identity error excluded and affected test surfaces replayed; other source/trace caveats in the historical trace diagnosis remain unresolved.",
+      "prompt_comparison_caveat": "Historical valid scores used the previous Ames prompt; this is the revised-prompt test suite, not a paired prompt ablation.",
+      "baseline_status": "complete_5x274",
+      "baseline_completion": "outputs/baselines/ames_scaffold_test_v1/completion.json",
+      "n_completed_level_outputs": 8220,
+      "n_failed_queries": 0,
+      "execution_verified_at": "2026-09-07T20:00:14.181046+00:00",
+      "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair",
+      "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_full_comparison_mean_sd.png",
+      "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_full_comparison_mean_sd.svg",
+      "performance_figure": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figures/test_performance_mean_sd.png",
+      "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figure_receipt.json",
+      "trace_diagnosis": {
+        "root": "outputs/paper/analysis/ames_scaffold_test_trace_diagnosis",
+        "report": "outputs/paper/analysis/ames_scaffold_test_trace_diagnosis/report.html",
+        "statistics": "outputs/paper/analysis/ames_scaffold_test_trace_diagnosis/extended_statistics.json",
+        "case_ledger": "outputs/paper/analysis/ames_scaffold_test_trace_diagnosis/case_evidence_ledger.jsonl",
+        "progressive_late_adjacent_corrections_harms": [
+          3,
+          5
+        ],
+        "full_flat_late_adjacent_corrections_harms": [
+          68,
+          64
+        ],
+        "confirmed_source_identity_issue": "ames_base:76701, PMID 14981162: 3-Ac-ABA is acetylaminobenzanthrone, not the supplied anthranilic-acid derivative; selected for test q254/q255/q256.",
+        "confirmed_trace_fact_error": "replicate_03 progressive q121 L3 misidentifies yeast his1-7 as a frameshift reporter; PMID 9560384 defines it as missense.",
+        "interpretation": "Post-hoc trace and selected-source audit, not a causal card ablation; frozen sources, gold, prompts and predictions were not changed. Known record defects limit scientific interpretation of completed scores.",
+        "lineage": "Historical pre-3-Ac-ABA-repair suite; adjacent-flip counts describe original outputs."
+      },
+      "final_level_macro_f1": {
+        "Progressive": {
+          "level": 5,
+          "mean": 0.7574388193469122,
+          "sd": 0.0036274179135645135
+        },
+        "Full-flat": {
+          "level": 5,
+          "mean": 0.7458892253480078,
+          "sd": 0.011231903354950166
+        }
+      },
+      "source_identity_repair": {
+        "record": "ames_base:76701",
+        "receipt": "data/starling_data/ames/identity_repair_3acaba/receipt.json",
+        "status": "complete_verified",
+        "scope": "same frozen scaffold-test cohort and prompt, three repetitions per organization; affected selected surfaces only",
+        "replacement_root": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1",
+        "previous_scores_role": "historical before confirmed source identity exclusion",
+        "changed_queries": [
+          254,
+          255,
+          256
+        ],
+        "changed_levels": [
+          3,
+          4,
+          5
+        ],
+        "expected_fresh_level_outputs": 54,
+        "expected_reused_level_outputs": 8166,
+        "selected_surface_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/selected_surface_receipt.json",
+        "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/launch_receipt.json",
+        "independent_source_and_index_validation": "passed",
+        "completion_validation": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/completion_validation.json",
+        "previous_suite": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_replicates_v1",
+        "previous_registered_suite": "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/previous_registered_suite.json",
+        "n_fresh_level_outputs": 54,
+        "n_reused_level_outputs": 8166,
+        "verified_at": "2026-09-07T20:00:14.181046+00:00",
+        "comparison_figure_receipt": "outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/figure_receipt.json"
+      },
+      "replicate_logs": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_01.log",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_02.log",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1/replicate_03.log"
+      ],
+      "figure_status": "complete_verified",
+      "l1_to_l2_diagnosis": {
+        "root": "outputs/paper/analysis/ames_scaffold_test_l2_diagnosis",
+        "statistics": "outputs/paper/analysis/ames_scaffold_test_l2_diagnosis/statistics.json",
+        "case_ledger": "outputs/paper/analysis/ames_scaffold_test_l2_diagnosis/flip_evidence.jsonl",
+        "report": "outputs/paper/analysis/ames_scaffold_test_l2_diagnosis/report.html",
+        "validation": "outputs/paper/analysis/ames_scaffold_test_l2_diagnosis/validation.json",
+        "report_rendering": "semantic fallback available; enhanced reader QA failed reader_timeout",
+        "progressive_corrections_harms": [
+          12,
+          13
+        ],
+        "full_flat_corrections_harms": [
+          19,
+          36
+        ],
+        "full_flat_harms_without_new_basis": 14,
+        "interpretation": "Descriptive paired transition and trace audit, not causal ablation; no prompt/gold/source changes."
+      }
     }
   },
   "result_families": {
@@ -337,7 +585,8 @@
       "comparison_gate": "exact evaluation indices, input, experiment, visibility, identity policy, candidate generation, non-card selection semantics, prompt/generation/tool contract, model identity, and split; changed retrieval lineages require a selected-surface zero-change receipt",
       "four_two_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
-        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731"
+        "bioavailability_ma": "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/scaffold_valid_deepseek_v4_flash_0731",
+        "ames": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/scaffold_valid_deepseek_v4_flash_0731"
       },
       "eight_four_roots": {
         "bbb_martins": "outputs/paper/starling_conditioned_assay_progressive_visible_bbb_source_purity_v6_card_budget_8_4_v1/scaffold_valid_deepseek_v4_flash_0731",
@@ -354,6 +603,10 @@
           "2/1": "one query requires targeted replay",
           "4/2": "two queries require targeted replay",
           "8/4": "three queries require targeted replay"
+        },
+        "ames": {
+          "2/1": "not run",
+          "8/4": "not run"
         }
       },
       "skin_last_complete_roots_before_mdam_rebuild": {
@@ -575,7 +828,29 @@
         "last_exact_mcnemar_p": 0.8388197422027588,
         "n_failed_queries": 0
       },
-      "comparison_note": "BBB and Bioavailability retain their verified current comparisons. Skin values are last-complete references from before the final MDAM L2 rebuild; 1/2/3 affected queries require targeted replay for 2/1, 4/2, and 8/4. The rejected 0.7148 Bioavailability L1-only run used a different prompt contract and is not a variance estimate."
+      "comparison_note": "BBB and Bioavailability retain their verified current comparisons. Skin values are last-complete references from before the final MDAM L2 rebuild; 1/2/3 affected queries require targeted replay for 2/1, 4/2, and 8/4. The rejected 0.7148 Bioavailability L1-only run used a different prompt contract and is not a variance estimate.",
+      "ames_valid_extension": {
+        "status": "verified_available_current_cells",
+        "plot_tasks": [
+          "bbb_martins",
+          "bioavailability_ma",
+          "skin_reaction",
+          "ames"
+        ],
+        "analysis_root": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid",
+        "figure": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/figures/progressive_record_card_budget_with_ames_valid.png",
+        "svg": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/figures/progressive_record_card_budget_with_ames_valid.svg",
+        "summary": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/summary.json",
+        "receipt": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/figure_receipt.json",
+        "figure_sha256": "af4a93303db481c47c5a6564590632e7aaa4b6d71bed51ee3dfec07f9b104ae8",
+        "scope": "Four-column valid figure: current available progressive 2/1, 4/2, 8/4 curves plus Ames matched full-flat 4/2; all five Ames v2 baselines cover 274 rows. Unavailable Skin curves and stale Bioavailability baselines remain omitted.",
+        "configurations": [
+          "Progressive 2/1",
+          "Progressive 4/2",
+          "Progressive 8/4",
+          "Full-flat 4/2"
+        ]
+      }
     }
   },
   "matched_baselines": {
@@ -614,6 +889,29 @@
         "Bioavailability_Ma": "outputs/baselines/conditioned_scaffold_test_v1/Bioavailability_Ma/minimol_head/train_cv/summary.json",
         "Skin_Reaction": "outputs/baselines/starling_conditioned_skin_source_purity_v5_valid_v1/Skin_Reaction/minimol_head/train_cv/summary.json"
       }
+    },
+    "ames_scaffold_valid": {
+      "root": "outputs/baselines/ames_scaffold_valid_v2",
+      "status": "complete_full_coverage",
+      "results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
+      "methods": [
+        "minimol_head",
+        "minimol_knn_condition",
+        "minimol_knn_all",
+        "morgan_knn_condition",
+        "morgan_knn_all"
+      ],
+      "n_valid_rows": 274,
+      "n_condition_knn_evaluated": 274,
+      "knn_reference_splits": [
+        "train"
+      ],
+      "head_selection": "train-only five-fold scaffold CV AUROC epoch and pooled OOF macro-F1 threshold; all-train final five-member fit",
+      "valid_not_used_for_head_selection": true,
+      "test_evaluation_performed": false,
+      "condition_knn_policy": "same_condition_then_null_then_all",
+      "previous_results": "outputs/baselines/ames_scaffold_valid_v1/valid_results.json",
+      "fallback_scope": "22 queries and 30 added neighbors per KNN method; prior 252 predictions and neighbors unchanged"
     }
   },
   "progressive_tasks": {
@@ -710,6 +1008,36 @@
         "morgan_knn_same_then_null": 0.5005169720835074,
         "morgan_knn_all_train": 0.4976353126642144
       }
+    },
+    "ames": {
+      "n": 274,
+      "status": "current",
+      "metrics_role": "Fresh scaffold-valid 4/2 progressive curve, one DeepSeek-V4-Flash-0731 run",
+      "run_root": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
+      "run_manifest_sha256": "9bfdf0afe9d2f45cd953d35e2ed0c01a55d29554ca9fb593556f7c4f19c9a907",
+      "input_sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e",
+      "recorded_index_sha256": "e5c0b545564e5cb769015034bdf8f28ab32836b21e85823a911a904cd2c73649",
+      "current_index_sha256": "e5c0b545564e5cb769015034bdf8f28ab32836b21e85823a911a904cd2c73649",
+      "current_family_manifest_sha256": "d4ab1b9ebb8bcf20eaaa8c73ab6dd8318bde56642ed893907ec79bc96618544a",
+      "agent_macro_f1": {
+        "none": 0.7002241951394494,
+        "L1": 0.7198936822735638,
+        "L2": 0.7541866028708133,
+        "L3": 0.7561474058935989,
+        "L4": 0.7561474058935989,
+        "L5": 0.7506411847439398
+      },
+      "agent_accuracy": {
+        "none": 0.7773722627737226,
+        "L1": 0.781021897810219,
+        "L2": 0.8029197080291971,
+        "L3": 0.8029197080291971,
+        "L4": 0.8029197080291971,
+        "L5": 0.7992700729927007
+      },
+      "baselines_root": "outputs/baselines/ames_scaffold_valid_v2",
+      "baseline_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
+      "baselines_role": "All five baselines cover 274 rows; condition-first KNN uses same-condition, null-condition, then unrestricted train fallback"
     }
   },
   "random_progressive": {

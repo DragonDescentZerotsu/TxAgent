@@ -13,11 +13,14 @@ import argparse
 from collections import Counter
 from copy import deepcopy
 import json
+from itertools import groupby
 from pathlib import Path
 import pickle
 import re
+from time import perf_counter
 from typing import Any, Iterable
 
+import numpy as np
 import pandas as pd
 
 from tools.chembl_tool.common.evidence_contract import (
@@ -30,7 +33,6 @@ from tools.chembl_tool.common.evidence_contract import (
 from tools.chembl_tool.common.experiment_retrieval import flatten_retrieval_groups
 from tools.chembl_tool.common.json_utils import (
     read_jsonl,
-    sha256_file,
     write_json_atomic,
     write_jsonl_atomic,
 )
@@ -46,6 +48,16 @@ from tools.chembl_tool.common.task_workflows.retrieve_neighbors import (
     retrieve_neighbors,
 )
 from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
+from tools.chembl_tool.common.build_runtime import (
+    worker_pool,
+    sha256_file,
+    local_input,
+    local_workdir,
+    publish_file,
+    write_jsonl_local,
+    build_signature,
+    reusable,
+)
 
 INDEX_VERSION = "starling_assay_ranked_morgan.v1"
 RAW_CARD_INDEX_VERSION = "starling_assay_ranked_morgan.raw_v3"
@@ -86,6 +98,8 @@ def geometric_assay_prefixes(
 
 
 def _clean(value: Any) -> str:
+    if isinstance(value, str):
+        return value.strip()
     if value is None or pd.isna(value):
         return ""
     return str(value).strip()
@@ -122,6 +136,14 @@ def _parent_key(smiles: str) -> str:
     return identity.parent_inchi_key or identity.parent_smiles
 
 
+def _parent_keys(smiles, workers=1):
+    values = list(smiles)
+    if workers < 2 or len(values) < 1000:
+        return dict(zip(values, map(_parent_key, values)))
+    with worker_pool(workers) as pool:
+        return dict(zip(values, pool.map(_parent_key, values, chunksize=128)))
+
+
 def _assay_selection_rank(row: dict[str, Any]) -> int:
     value = row.get("selection_rank", row.get("relevance_rank"))
     if value in (None, ""):
@@ -148,6 +170,7 @@ def _filter_heldout_direct_records(
     filter_source_id: str,
     filter_scope_field: str = "",
     filter_scope_value: str = "",
+    workers: int = 1,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Remove held-out parents only from the benchmark-defining direct source."""
     if bool(filter_scope_field) != bool(filter_scope_value):
@@ -164,10 +187,9 @@ def _filter_heldout_direct_records(
         heldout_molecules_path,
         heldout_smiles_field,
     )
-    smiles_to_key = {
-        smiles: _parent_key(smiles)
-        for smiles in records["canonical_smiles"].dropna().astype(str).unique()
-    }
+    smiles_to_key = _parent_keys(
+        records["canonical_smiles"].dropna().astype(str).unique(), workers
+    )
     record_keys = records["canonical_smiles"].astype(str).map(smiles_to_key)
     direct_scope = pd.Series(True, index=records.index)
     if filter_source_id:
@@ -226,21 +248,28 @@ def _source_family_map(
 
 
 def _representative_records(
-    group: pd.DataFrame,
+    group: list[dict[str, Any]],
     *,
     limit: int,
     assay_metadata: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    ordered = group.sort_values(
-        ["confidence", "canonical_record_id"],
-        ascending=[False, True],
-        na_position="last",
-        kind="stable",
-    )
+    # Canonical confidence is numeric. Match pandas' stable ordering and put
+    # missing values last for each key, without creating a DataFrame per group.
+    def order(row):
+        confidence, record_id = row["confidence"], row["canonical_record_id"]
+        missing_confidence, missing_id = pd.isna(confidence), pd.isna(record_id)
+        return (
+            missing_confidence,
+            0 if missing_confidence else -confidence,
+            missing_id,
+            "" if missing_id else record_id,
+        )
+
+    ordered = sorted(group, key=order)
     examples = []
     seen: set[tuple[str, str, str, str]] = set()
     family_by_group = _source_family_map(assay_metadata)
-    for row in ordered.to_dict(orient="records"):
+    for row in ordered:
         family = family_by_group.get(str(row.get("group_id") or ""), {})
         example = {
             "endpoint_type": _clean(row.get("canonical_endpoint_name")),
@@ -284,14 +313,14 @@ def _aggregate_assay_molecule(
     task: str,
     assay_context: str,
     stable_assay_id: str,
-    group: pd.DataFrame,
+    group: list[dict[str, Any]],
     *,
     max_record_examples: int,
     max_support_text_chars: int,
     assay_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    molecule_id = str(group["molecule_id"].iloc[0])
-    canonical_smiles = str(group["canonical_smiles"].iloc[0])
+    molecule_id = str(group[0]["molecule_id"])
+    canonical_smiles = str(group[0]["canonical_smiles"])
     examples = _representative_records(
         group,
         limit=max_record_examples,
@@ -308,15 +337,26 @@ def _aggregate_assay_molecule(
     # does not invalidate completed LLM results.  support_text is intentionally
     # retained here as well as in source_support_texts for artifact parity.
     prompt_examples = [dict(example) for example in examples]
-    source_names = _unique_text(group["source_name"].tolist(), limit=8)
-    molecule_names = _unique_text(group["molecule_name"].tolist(), limit=8)
-    species = _unique_text(group["canonical_species_context"].tolist(), limit=8)
-    qualifying_conditions = _unique_text(
-        group["qualifying_conditions"].tolist(), limit=8
+    source_names = _unique_text((record["source_name"] for record in group), limit=8)
+    molecule_names = _unique_text(
+        (record["molecule_name"] for record in group), limit=8
     )
-    endpoint_summary = _compact_counts(group["canonical_endpoint_name"].tolist())
-    measurement_summary = _compact_counts(group["canonical_measurement_text"].tolist())
-    units_summary = _compact_counts(group["canonical_unit_text"].tolist())
+    species = _unique_text(
+        (record["canonical_species_context"] for record in group), limit=8
+    )
+    qualifying_conditions = _unique_text(
+        (record["qualifying_conditions"] for record in group), limit=8
+    )
+    endpoint_summary = _compact_counts(
+        (record["canonical_endpoint_name"] for record in group)
+    )
+    measurement_summary = _compact_counts(
+        (record["canonical_measurement_text"] for record in group)
+    )
+    units_summary = _compact_counts((record["canonical_unit_text"] for record in group))
+    confidence = [
+        record["confidence"] for record in group if pd.notna(record["confidence"])
+    ]
     row = {
         "molecule_chembl_id": molecule_id,
         "canonical_smiles": canonical_smiles,
@@ -335,9 +375,11 @@ def _aggregate_assay_molecule(
         ),
         "target_pref_name": assay_context,
         "organism": "; ".join(species),
-        "confidence_score": float(group["confidence"].median())
-        if group["confidence"].notna().any()
-        else "",
+        "confidence_score": (
+            float(confidence[0] if len(confidence) == 1 else np.median(confidence))
+            if confidence
+            else ""
+        ),
         "evidence_source": " + ".join(source_names) or "Starling",
         "evidence_role": "unspecified",
         "transferability": "not_assessed",
@@ -352,7 +394,7 @@ def _aggregate_assay_molecule(
         },
         "uncertainty": (
             ["some_source_rows_missing_support_text"]
-            if group["support_text"].map(_clean).eq("").any()
+            if any(not _clean(record["support_text"]) for record in group)
             else []
         ),
         "assay_retrieval": {
@@ -379,6 +421,95 @@ def _aggregate_assay_molecule(
     return attach_minimal_evidence(row)
 
 
+def _assay_molecule_groups(ordered: pd.DataFrame):
+    """Stream an already sorted, non-null frame in pandas groupby order.
+
+    Sorting once avoids constructing and sorting roughly one million tiny
+    DataFrames. Only the current group's dictionaries are materialized.
+    """
+    keys = ["assay_id", "molecule_id"]
+    columns = list(ordered.columns)
+    assay_pos, molecule_pos = (columns.index(key) for key in keys)
+    for key, values in groupby(
+        ordered.itertuples(index=False, name=None),
+        key=lambda row: (row[assay_pos], row[molecule_pos]),
+    ):
+        yield key, [dict(zip(columns, row)) for row in values]
+
+
+_aggregation_context = None
+
+
+def _aggregate_partition(task):
+    start, stop, path = task
+    name, ordered, ranking, max_examples, max_chars = _aggregation_context
+    result = [
+        _aggregate_assay_molecule(
+            name,
+            str(group[0]["assay_context"]),
+            str(aid),
+            group,
+            max_record_examples=max_examples,
+            max_support_text_chars=max_chars,
+            assay_metadata=ranking[str(aid)],
+        )
+        for (aid, _), group in _assay_molecule_groups(ordered.iloc[start:stop])
+    ]
+    with open(path, "wb") as handle:
+        pickle.dump(result, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    return path
+
+
+def _aggregate_evidence(task, records, ranking, max_examples, max_chars, workers):
+    global _aggregation_context
+    started = perf_counter()
+    evidence = []
+    keys = ["assay_id", "molecule_id"]
+    ordered = records.dropna(subset=keys).sort_values(keys, kind="stable")
+    if workers < 2 or len(ordered) < 10000:
+        for (aid, _), group in _assay_molecule_groups(ordered):
+            evidence.append(
+                _aggregate_assay_molecule(
+                    task,
+                    str(group[0]["assay_context"]),
+                    str(aid),
+                    group,
+                    max_record_examples=max_examples,
+                    max_support_text_chars=max_chars,
+                    assay_metadata=ranking[str(aid)],
+                )
+            )
+    else:
+        boundaries = np.flatnonzero(
+            ordered[keys].ne(ordered[keys].shift()).any(axis=1).to_numpy()
+        )
+        boundaries = list(boundaries[::5000]) + [len(ordered)]
+        _aggregation_context = task, ordered, ranking, max_examples, max_chars
+        try:
+            with local_workdir() as shards:
+                jobs = [
+                    (int(a), int(b), str(shards / f"{i}.pkl"))
+                    for i, (a, b) in enumerate(zip(boundaries, boundaries[1:]))
+                ]
+                with worker_pool(min(workers, len(jobs))) as pool:
+                    for path in pool.map(_aggregate_partition, jobs):
+                        with open(path, "rb") as handle:
+                            evidence.extend(pickle.load(handle))
+                        Path(path).unlink()
+                        if len(evidence) % 100000 == 0:
+                            print(
+                                f"Aggregated {len(evidence):,} assay-molecule groups in {perf_counter()-started:.1f}s",
+                                flush=True,
+                            )
+        finally:
+            _aggregation_context = None
+    print(
+        f"Aggregated all {len(evidence):,} assay-molecule groups in {perf_counter()-started:.1f}s",
+        flush=True,
+    )
+    return evidence
+
+
 def build_assay_evidence_rows(
     *,
     task: str,
@@ -395,6 +526,7 @@ def build_assay_evidence_rows(
     filter_source_id: str = "",
     filter_scope_field: str = "",
     filter_scope_value: str = "",
+    workers: int = 1,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     import pyarrow.parquet as pq
 
@@ -422,7 +554,7 @@ def build_assay_evidence_rows(
         if filter_scope_field and filter_scope_field not in columns:
             columns.append(filter_scope_field)
     ranked_all = sorted(
-        read_jsonl(ranked_assays_path),
+        read_jsonl(local_input(ranked_assays_path)),
         key=_assay_selection_rank,
     )
     ranked = ranked_all[:max_assays] if max_assays > 0 else ranked_all
@@ -437,10 +569,10 @@ def build_assay_evidence_rows(
     if family_catalog and not allowed_source_groups:
         raise ValueError("family assay catalog contains no source_groups")
 
-    records = pq.read_table(records_path, columns=columns).to_pandas()
+    records = pq.read_table(local_input(records_path), columns=columns).to_pandas()
     if membership_path is not None:
         member_ids = set(
-            pq.read_table(membership_path, columns=["canonical_record_id"])
+            pq.read_table(local_input(membership_path), columns=["canonical_record_id"])
             .column("canonical_record_id")
             .to_pylist()
         )
@@ -450,7 +582,9 @@ def build_assay_evidence_rows(
             "membership": str(membership_path.resolve()),
         }
     else:
-        records = records.loc[records["retrieval_eligible"].eq(True)].copy()  # noqa: E712
+        records = records.loc[
+            records["retrieval_eligible"].eq(True)
+        ].copy()  # noqa: E712
         membership_stats = {
             "record_selection": "stage03_retrieval_eligible",
             "membership": "",
@@ -472,6 +606,7 @@ def build_assay_evidence_rows(
             filter_source_id=filter_source_id,
             filter_scope_field=filter_scope_field,
             filter_scope_value=filter_scope_value,
+            workers=workers,
         )
     allowed_stats: dict[str, Any] = {}
     if allowed_molecules_path is not None:
@@ -479,10 +614,9 @@ def build_assay_evidence_rows(
             allowed_molecules_path,
             allowed_smiles_field,
         )
-        smiles_to_key = {
-            smiles: _parent_key(smiles)
-            for smiles in records["canonical_smiles"].dropna().astype(str).unique()
-        }
+        smiles_to_key = _parent_keys(
+            records["canonical_smiles"].dropna().astype(str).unique(), workers
+        )
         record_keys = records["canonical_smiles"].astype(str).map(smiles_to_key)
         records = records.loc[record_keys.isin(allowed_keys)].copy()
         retained_keys = {
@@ -526,22 +660,14 @@ def build_assay_evidence_rows(
             f"Ranked assay catalog is missing {len(missing_ids)} record assay ids"
         )
 
-    evidence_rows = []
-    for (stable_assay_id, molecule_id), group in records.groupby(
-        ["assay_id", "molecule_id"], sort=True
-    ):
-        assay_context = str(group["assay_context"].iloc[0])
-        evidence_rows.append(
-            _aggregate_assay_molecule(
-                task,
-                assay_context,
-                str(stable_assay_id),
-                group,
-                max_record_examples=max_record_examples,
-                max_support_text_chars=max_support_text_chars,
-                assay_metadata=ranking_by_id[str(stable_assay_id)],
-            )
-        )
+    evidence_rows = _aggregate_evidence(
+        task,
+        records,
+        ranking_by_id,
+        max_record_examples,
+        max_support_text_chars,
+        workers,
+    )
     ranking = [
         {
             "assay_id": str(row["assay_id"]),
@@ -613,6 +739,7 @@ def build_assay_index(
         filter_source_id=filter_source_id,
         filter_scope_field=filter_scope_field,
         filter_scope_value=filter_scope_value,
+        workers=workers,
     )
     index_version = {
         ASSAY_COMPACT_PROMPT_PROFILE: INDEX_VERSION,
@@ -628,6 +755,7 @@ def build_assay_index(
         index_version=index_version,
         workers=workers,
         progress_every=10000,
+        reuse_prepared_minimal_evidence=True,
     )
     index["assay_ranking"] = ranking
     index["source"] = {
@@ -1366,8 +1494,7 @@ def build_family_molecule_prefix_view(
             str(level): len(n_source_assays_by_level[level]) for level in normalized
         },
         "n_visible_representative_records_by_level": {
-            str(level): int(n_visible_examples_by_level[level])
-            for level in normalized
+            str(level): int(n_visible_examples_by_level[level]) for level in normalized
         },
     }
     view["source"] = {
@@ -1459,6 +1586,25 @@ def retrieve_family_molecule_prefixes(
 def _build_command(args: argparse.Namespace) -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    index_path = output_dir / "assay_neighbor_index.pkl"
+    evidence_path = output_dir / "assay_molecule_evidence.jsonl"
+    option_values = {
+        key: value
+        for key, value in vars(args).items()
+        if key not in {"workers", "output_dir", "func", "command"}
+    }
+    signature_paths = [Path(args.records), Path(args.ranked_assays)]
+    for key in ("membership", "allowed_molecules_jsonl", "heldout_molecules_jsonl"):
+        if getattr(args, key, None):
+            signature_paths.append(Path(getattr(args, key)))
+    signature = build_signature(signature_paths, option_values)
+    if reusable(
+        output_dir / "manifest.json",
+        signature,
+        [(index_path, "index_sha256"), (evidence_path, "evidence_sha256")],
+    ):
+        print(f"[{args.task}] reused verified assay index: {output_dir}", flush=True)
+        return
     index, evidence_rows, stats = build_assay_index(
         task=args.task,
         records_path=Path(args.records),
@@ -1481,12 +1627,18 @@ def _build_command(args: argparse.Namespace) -> None:
         filter_scope_value=args.filter_scope_value,
         evidence_prompt_profile=args.evidence_prompt_profile,
     )
-    index_path = output_dir / "assay_neighbor_index.pkl"
-    evidence_path = output_dir / "assay_molecule_evidence.jsonl"
-    with index_path.open("wb") as handle:
-        pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    write_jsonl_atomic(evidence_path, evidence_rows)
+    with local_workdir() as staging:
+        local_index, local_evidence = (
+            staging / index_path.name,
+            staging / evidence_path.name,
+        )
+        with local_index.open("wb") as handle:
+            pickle.dump(index, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        write_jsonl_local(local_evidence, evidence_rows, workers=min(args.workers, 16))
+        index_hash = publish_file(local_index, index_path)
+        evidence_hash = publish_file(local_evidence, evidence_path)
     manifest = {
+        "build_inputs": signature,
         "index_version": str(
             (index.get("source") or {}).get("index_version") or INDEX_VERSION
         ),
@@ -1494,15 +1646,15 @@ def _build_command(args: argparse.Namespace) -> None:
         "records": str(Path(args.records).resolve()),
         "records_sha256": sha256_file(Path(args.records)),
         "membership": str(Path(args.membership).resolve()) if args.membership else "",
-        "membership_sha256": sha256_file(Path(args.membership))
-        if args.membership
-        else "",
+        "membership_sha256": (
+            sha256_file(Path(args.membership)) if args.membership else ""
+        ),
         "ranked_assays": str(Path(args.ranked_assays).resolve()),
         "ranked_assays_sha256": sha256_file(Path(args.ranked_assays)),
         "index": str(index_path.resolve()),
-        "index_sha256": sha256_file(index_path),
+        "index_sha256": index_hash,
         "evidence": str(evidence_path.resolve()),
-        "evidence_sha256": sha256_file(evidence_path),
+        "evidence_sha256": evidence_hash,
         "top_k_per_assay_default": 3,
         "min_similarity_default": 0.3,
         "neighbor_identity_policy_default": args.neighbor_identity_policy_default,

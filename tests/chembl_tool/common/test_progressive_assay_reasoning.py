@@ -304,6 +304,39 @@ def test_progressive_reuse_allows_changed_family_lineage(tmp_path):
     )
 
 
+def test_source_repair_reuses_only_unchanged_prefix(tmp_path, monkeypatch):
+    source, target = tmp_path / "old", tmp_path / "new"
+    monkeypatch.setattr(runner, "_levels", lambda task: [{"level": i} for i in (1, 2, 3)])
+    for level in (1, 2, 3):
+        relative = f"ames/queries/query_idx00000/levels/level_{level}"
+        for root in (source, target):
+            path = root / relative
+            path.mkdir(parents=True)
+            prepared = {"level": level, "new_card_ids": ["old-card"]}
+            if root == target and level == 2:
+                prepared["new_card_ids"] = ["replacement-card"]
+            (path / "prepared.json").write_text(json.dumps(prepared))
+        (source / relative / "output.json").write_text(json.dumps({
+            "status": "ok", "model_called": True,
+            "state": {"ames_prediction": "positive"},
+        }))
+    receipt = runner._reuse_unchanged_progressive_prefixes(
+        prepared_queries=[runner.PreparedQuery("ames", 0, target / "ames/queries/query_idx00000")],
+        output_root=target, source_root=source,
+    )
+    assert receipt["n_reused_levels"] == 1
+    assert (target / "ames/queries/query_idx00000/levels/level_1/output.json").exists()
+    # Even an identical later prepared row depends on the changed prior state.
+    assert not (target / "ames/queries/query_idx00000/levels/level_3/output.json").exists()
+
+
+def test_matched_source_repair_rejects_ambiguous_suite_reuse():
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    with pytest.raises(SystemExit):
+        family.main(["--matched-progressive-root", "frozen", "--replicate-ids", "1", "2",
+                     "--level-reuse-source-root", "one-old-run"])
+
+
 def test_random_split_requires_explicit_output_root():
     with pytest.raises(SystemExit):
         runner.main(["--split-scheme", "random", "--prepare-only"])
@@ -363,7 +396,7 @@ def test_shared_query_pool_enforces_caps_without_blocking_ready_tasks(
     from types import SimpleNamespace
 
     tasks = list(runner.TASK_NAMES)
-    args = SimpleNamespace(tasks=tasks, parallelism=3, parallelism_per_task=1)
+    args = SimpleNamespace(tasks=tasks, parallelism=len(tasks), parallelism_per_task=1)
     active = dict.fromkeys(tasks, 0)
     peaks = dict.fromkeys(tasks, 0)
     lock = threading.Lock()
@@ -388,9 +421,9 @@ def test_shared_query_pool_enforces_caps_without_blocking_ready_tasks(
         for task_index, task in enumerate(tasks) for i in range(5)
     ]
     results = list(runner._query_results(args, queries, None))
-    assert len({(row["task"], row["index"]) for row in results}) == 15
+    assert len({(row["task"], row["index"]) for row in results}) == 5 * len(tasks)
     assert all(peak == 1 for peak in peaks.values())
-    assert total_peak == 3
+    assert total_peak == len(tasks)
 
 
 @pytest.mark.parametrize("permanent_failure", [False, True])

@@ -1,0 +1,27 @@
+{
+  "source_repository": "https://github.com/DragonDescentZerotsu/TxAgent",
+  "source_branch_at_acquisition": "codex/ames-compressed-parquets",
+  "source_commit": "03e4c7c694b45bcfdf7776ac1045bc3e69936f0a",
+  "files": {
+    "ames_base.parquet": {
+      "original_path": "data/send/compressed/ames_base.parquet",
+      "sha256": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
+      "bytes": 59172967
+    },
+    "ames_v1.parquet": {
+      "original_path": "data/send/compressed/ames_v1.parquet",
+      "sha256": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
+      "bytes": 16227161
+    },
+    "ames_v2.parquet": {
+      "original_path": "data/send/compressed/ames_v2.parquet",
+      "sha256": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c",
+      "bytes": 93627637
+    },
+    "ames_v3.parquet": {
+      "original_path": "data/send/compressed/ames_v3.parquet",
+      "sha256": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f",
+      "bytes": 99786951
+    }
+  }
+}

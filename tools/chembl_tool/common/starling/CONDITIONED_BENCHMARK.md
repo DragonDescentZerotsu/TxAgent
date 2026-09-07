@@ -1,6 +1,6 @@
 # Conditioned Benchmark
 
-This is the only active four-task evaluation dataset. It provides two frozen
+This is the only active conditioned evaluation dataset. It provides two frozen
 split schemes over the same molecule-condition rows and labels:
 
 ```text
@@ -19,6 +19,11 @@ part of active paths, runner flags, or result labels.
 | Bioavailability_Ma | 1,956 | 262 | 269 | oral bioavailability under the reported condition |
 | ClinTox | 1,144 | 142 | 142 | clinical-trial toxicity failure versus approved comparator |
 | Skin_Reaction | 1,941 | 239 | 241 | skin sensitization/contact allergy |
+| Ames | 1,926 | 274 | 274 | bacterial reverse mutation under the reported strain panel and metabolic activation |
+
+The table shows scaffold counts. Ames random counts are 1,980 / 247 / 247 over
+the same 2,474 rows; its data integration is complete but model evaluation has
+not been performed.
 
 Every split row has the same condition-aware schema:
 
@@ -41,8 +46,8 @@ into a script that reads the final JSONL files and guesses how they were made.
    claims are collapsed, and how conflicts are resolved. Rejected records and
    reasons remain in task-specific audit artifacts.
 2. **Parent and condition construction.** Valid structures are normalized to a
-   molecular-parent identity. Accepted external experimental conditions are
-   manually reviewed and become separate molecule-condition rows. Missing
+   molecular-parent identity. Accepted external experimental conditions follow
+   the task's recorded review method and become separate molecule-condition rows. Missing
    accepted external context uses `no_reported_external_condition`; it is not
    silently merged with a real condition.
 3. **Scaffold allocation.** Complete Bemis-Murcko scaffold groups are assigned
@@ -60,6 +65,7 @@ The active scientific voting contracts are:
 | Bioavailability_Ma | Canonical direct absolute oral bioavailability claim for the reported condition; human conditioned rows additionally require reviewed external context and exclude relative effects, non-IV comparisons, indirect analytes, predictions/simulations, and unresolved populations | `canonical_claim_id` is the claim unit; aggregate accepted claims within parent-condition only |
 | Skin_Reaction | Measured final skin-sensitization/contact-allergy outcome under the reviewed condition contract | Aggregate accepted final-outcome votes within parent-condition; model predictions, photo/irritation endpoints, integrated approaches, and mechanistic AOP rows do not vote |
 | ClinTox | Frozen source roles, not assay voting: AACT toxicity-failure evidence gives `Y=1`; an FDA-approved comparator with no positive source gives `Y=0` | A parent present in both roles is positive; there is no record-majority threshold |
+| Ames | Experimental bacterial reverse mutation under the exact reported strain panel and activation regime; deterministic gates plus payload-pinned semantic reviews and exact PubChem name-parent match | One unambiguous PMID-parent-condition vote; within-study conflicts do not vote; across studies require at least 60% agreement for external conditions (70% without a reported condition), excluding ties |
 
 Task-specific code remains authoritative for the scientific criteria. The
 shared publisher only normalizes the interface and is forbidden from revoting:
@@ -77,7 +83,20 @@ Skin_Reaction:
 ClinTox:
   tools/chembl_tool/tasks/clintox/clinical_trial_failure_benchmark.py
   tools/chembl_tool/tasks/clintox/build_clinical_trial_failure_benchmark.py
+Ames:
+  tools/chembl_tool/tasks/ames/source_contract.py
+  tools/chembl_tool/tasks/ames/build_dataset.py
 ```
+
+Ames is a name-parent-verified source subset, with unresolved identity requests
+explicitly excluded and retained in a pending ledger. Source review v4 adds
+individual agent review of 96 L1 and 48 L2 records and a hash-pinned decision
+ledger for claims from any source. It adds 12 study votes and withdraws 25; the
+current source has 3,333 actual voters. This is not exhaustive human/full-paper
+review, and a PubChem name match does not prove correct original-paper subject
+attribution. The task README and source_review_v4 retain the per-record evidence.
+See `tools/chembl_tool/tasks/ames/README.md` for its panel-any-positive semantics,
+source exclusions, audit artifacts and data-only integration status.
 
 ## Split and leakage contract
 
@@ -99,6 +118,12 @@ ClinTox:
   each evaluation split is `min(500, floor(0.1 * n))`; Bioavailability and Skin
   use `floor(0.1 * n)`. Current conditioned cohorts may preserve a frozen,
   already-reviewed assignment rather than reoptimize after a source repair.
+- A fresh Ames cohort starts at `max(number of eligible conditions, floor(0.1 * n))`
+  rows per held-out split and finds the smallest feasible equal valid/test size.
+  Every retained condition must have three parents and three nonempty scaffolds
+  and occur in all three partitions. The resolved size is frozen before quality
+  optimization; no condition is silently dropped to meet the nominal 10% target.
+  Explicitly requested sizes remain strict.
 - When a fresh scaffold allocation is required for a voter-based task, its
   lexicographic objectives are: minimize singleton-vote rows in valid+test;
   minimize their valid/test imbalance; minimize positive-label deviation;
@@ -120,7 +145,7 @@ is optimized, it enforces:
 - every condition has at least one parent in train, valid, and test;
 - valid and test each have their exact target row count.
 
-For BBB, Bioavailability, and Skin, the following objectives are strictly
+For BBB, Bioavailability, Skin, and Ames, the following objectives are strictly
 lexicographic: each optimum is frozen before the next stage is considered.
 
 1. Minimize the total number of `source_record_count == 1` rows in valid+test.
@@ -185,6 +210,7 @@ those historical paths.
 ```bash
 python -m tools.chembl_tool.tasks.skin_reaction.build_canonical_starling_source
 python -m tools.chembl_tool.tasks.skin_reaction.context_conditioned_benchmark build-selected
+python -m tools.chembl_tool.tasks.ames.build_dataset --phase all --workers 16
 python -m tools.chembl_tool.common.starling.publish_conditioned_benchmark
 python -m tools.chembl_tool.common.starling.build_conditioned_random_split
 python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve

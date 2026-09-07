@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import concurrent.futures
 import csv
 import gzip
 import json
@@ -20,6 +19,7 @@ from rdkit import Chem, DataStructs, RDLogger
 from rdkit.Chem import AllChem, inchi
 
 from tools.chembl_tool.common.evidence_contract import attach_minimal_evidence
+from tools.chembl_tool.common.build_runtime import worker_pool
 from tools.chembl_tool.common.export import ensure_dir
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 
@@ -155,6 +155,7 @@ def build_neighbor_index(
     index_version: str,
     progress_every: int = 0,
     workers: int = 1,
+    reuse_prepared_minimal_evidence: bool = False,
 ) -> dict[str, Any]:
     fps_by_molecule = fps_by_molecule or {}
     molecule_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
@@ -181,7 +182,7 @@ def build_neighbor_index(
     for molecule_id in molecule_ids:
         rows = molecule_rows[molecule_id]
         smiles = _first_nonempty(row.get("canonical_smiles") for row in rows)
-        canonical_smiles, inchi_key, fallback_fp = standardized.get(molecule_id, ("", "", None))
+        canonical_smiles, inchi_key, fallback_fp, identity = standardized.get(molecule_id, ("", "", None, {}))
         if molecule_id in fps_by_molecule:
             fp = fps_by_molecule[molecule_id]
         else:
@@ -191,7 +192,14 @@ def build_neighbor_index(
         for row in rows:
             row["canonical_smiles"] = canonical_smiles or smiles
             row["standard_inchi_key"] = inchi_key
-            attach_minimal_evidence(row)
+            if reuse_prepared_minimal_evidence:
+                # The fresh assay aggregator already sanitized every field;
+                # standardization changes only the visible molecular SMILES.
+                prepared = row.pop("minimal_evidence")
+                prepared["molecule"]["canonical_smiles"] = row["canonical_smiles"]
+                row["minimal_evidence"] = prepared
+            else:
+                attach_minimal_evidence(row)
         molecule_index = len(molecules)
         group_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for row in rows:
@@ -206,7 +214,7 @@ def build_neighbor_index(
                 "n_evidence_rows": len(rows),
                 "groups": sorted(group_rows),
                 "fingerprint_source": "chembl_fps" if molecule_id in fps_by_molecule else "canonical_smiles",
-                "molecule_identity": normalize_molecule_identity(canonical_smiles or smiles).to_dict(),
+                "molecule_identity": identity,
             }
         )
         fingerprints.append(fp)
@@ -229,7 +237,7 @@ def _standardize_molecules_for_index(
     *,
     workers: int,
     progress_every: int,
-) -> dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None]]:
+) -> dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None, dict]]:
     tasks = [
         (
             molecule_id,
@@ -240,21 +248,21 @@ def _standardize_molecules_for_index(
     ]
     total = len(tasks)
     started = time.monotonic()
-    results: dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None]] = {}
+    results: dict[str, tuple[str, str, DataStructs.ExplicitBitVect | None, dict]] = {}
     workers = max(1, int(workers or 1))
     if workers == 1 or total < 2:
         for i, task in enumerate(tasks, start=1):
-            molecule_id, canonical_smiles, inchi_key, fp = _standardize_molecule_task(task)
-            results[molecule_id] = (canonical_smiles, inchi_key, fp)
+            molecule_id, canonical_smiles, inchi_key, fp, identity = _standardize_molecule_task(task)
+            results[molecule_id] = (canonical_smiles, inchi_key, fp, identity)
             if progress_every and i % progress_every == 0:
                 _log(_progress_message("index molecule standardization", i, total, started))
     else:
         chunksize = max(1, min(1000, total // (workers * 4) if total >= workers * 4 else 1))
         _log(f"standardizing index molecules with workers={workers} chunksize={chunksize}")
-        with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
+        with worker_pool(workers) as executor:
             for i, result in enumerate(executor.map(_standardize_molecule_task, tasks, chunksize=chunksize), start=1):
-                molecule_id, canonical_smiles, inchi_key, fp = result
-                results[molecule_id] = (canonical_smiles, inchi_key, fp)
+                molecule_id, canonical_smiles, inchi_key, fp, identity = result
+                results[molecule_id] = (canonical_smiles, inchi_key, fp, identity)
                 if progress_every and i % progress_every == 0:
                     _log(_progress_message("index molecule standardization", i, total, started))
     if progress_every:
@@ -264,13 +272,15 @@ def _standardize_molecules_for_index(
 
 def _standardize_molecule_task(
     task: tuple[str, str, bool],
-) -> tuple[str, str, DataStructs.ExplicitBitVect | None]:
+) -> tuple[str, str, str, DataStructs.ExplicitBitVect | None, dict]:
     molecule_id, smiles, needs_fp = task
     if needs_fp:
         canonical_smiles, inchi_key, fp = standardize_smiles_and_fp(smiles)
-        return molecule_id, canonical_smiles, inchi_key, fp
-    canonical_smiles, inchi_key = standardize_smiles(smiles)
-    return molecule_id, canonical_smiles, inchi_key, None
+    else:
+        canonical_smiles, inchi_key = standardize_smiles(smiles)
+        fp = None
+    identity = normalize_molecule_identity(canonical_smiles or smiles).to_dict()
+    return molecule_id, canonical_smiles, inchi_key, fp, identity
 
 
 def fingerprint_metadata() -> dict[str, Any]:

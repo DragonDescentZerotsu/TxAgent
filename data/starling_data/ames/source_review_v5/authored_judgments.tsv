@@ -1,0 +1,200 @@
+1	1	retain	TA98 的 ±S9 阴性回复突变结果明确；pooled activation 不拆成两票。
+2	1	retain	TA98 +S9 的 392±72 回复菌落及原记录 positive 结论一致。
+3	1	retain	TA98/TA100 无外源活化的组氨酸回复阴性，条件和结果相符。
+4	1,2	gold_scope_boundary	实测细菌结果明确，但文本写 linear/branched 异构体混合物，与单一 parent gold 的边界需处理；问题来自记录内容，不是外部真实性核查。
+5	1	retain	TA100 的自身剂量反应为直接阳性；TA98 的近背景结果不能替代 TA100 条件。
+6	1	retain	Perylene 的 TA97 +S9 高致突变结果明确；非致癌性不改变 Ames family。
+7	1	retain	氘代 CPA 无 S9 阴性且菌苔正常，是该化合物直接结果。
+8	1	retain	记录明确 CP 单独处理 TA1535 时阴性；伴随 E. coli 结果不改变已明确的 TA1535 实验臂。
+9	1	retain	TA98 -S9 有具体阳性回复数；TA100 +S9 的 weak positive 不覆盖本实验臂。
+10	1	retain	各剂量无剂量依赖回复增加，明确 ±activation 阴性；最高剂量杀菌须保留为限定，不自动推翻整个阴性实验。
+11	1	retain	Methylglyoxal 在 TA100 +S9 的自身剂量依赖致突变明确。
+12	1	retain	TA100 +S9 的多剂量 His+ 菌落超过三倍背景，明确自身阳性。
+13	1	retain	6-MP 的 TA100 -S9 阳性明确，其他菌株或 +S9 阴性不应混入该条件。
+14	1	retain	分离出的代谢物本身在 TA98 -S9 被测；制备代谢物时使用 S9 不等于测试阶段 +S9。
+15	1	retain	Imazalil 水溶液的 -S9 自身回复实验有显著性且无菌苔毒性；实验结果应与原文真假核查分开。
+16	1	retain	1,2-Dibromoethane 在 S9 下自身突变增强，NADP 有无均无差别；非保护剂效果的错误归因。
+17	1	retain	TA98/TA100 -S9 回复数近对照，明确自身阴性。
+18	1	retain	DMBA 三菌株 +S9 均有具体剂量依赖回复增加，菌株敏感性差别不使结果失效。
+19	1	retain	原记录明确 BaP 在所列菌株和 S9 下阳性；按提供的当前实验标记审核分层，不核查文献真伪。
+20	1	retain	三种纯 chloroacetones 分别测试，明确均阳性；hexachloroacetone 不是未拆分混合物的推断结果。
+21	1,2	gold_condition_boundary	TA1535 自身阳性明确，但激活体系是新鲜小鼠肝细胞；当前仅 activation=present 未区分该限定，需单独处理条件表达，不可归为间接机制。
+22	1	retain	Chrysin 的 TA98 +S9 各剂量回复数与阴性对照无显著差异。
+23	1	retain	TA98/TA100 -S9 无清楚致突变响应，记录明确自身阴性。
+24	1	retain	记录报告本实验室对单独农药的回复测试，dimethoate 被明确列为阳性；保持 pooled panel，不推断每株均阳性。
+81		unresolved_family	只有 potential genotoxic agent 的概称，没有具体 mutation 或机制读数；L2 并非有明确支持，但也不能凭低相关性直接删除或硬塞 L5。
+82	3	move	Camphor 的 E. coli 多倍体是染色体数量变化；non-gene-mutation 字样不构成 Ames 结果。
+83	1	vote_recall_candidate	2-AA 的 TA98 +S9 两方法均有实测 mutation index；positive-control 角色不等于仅列名称，应进入逐记录投票审核，当前冻结身份表缺该名称。
+84	2	retain	正文确实把 EMS 列入含 Ames 的测试 battery；对照用途和推断 assay 不足以投票，不能下放机制层。
+85	3	move	小鼠 dominant-lethal 的胚胎晚期死亡结果；not a bacterial Ames assay 是排除语句，不是细菌结果。
+86	2	retain	Pig-a 主结果之外确实写了 Ames non-mutagenic，完整记录必须限制在 L2。
+87	3	move	NO 在淋巴母细胞的突变结果；No Ames/Salmonella data 是未报告声明，不是 Ames 阴性。
+88	2	retain	微核阴性正文的 extra_details 明确包含 Ames positive，不能放 L3。
+89	3	move	所述 gene mutations/chromosomal aberrations 限于人和动物组织；multiple_mutation_assays 标签不应自动压入 L2。
+90	2	retain	Drosophila 主结果之外明确称 thiourea 为 Salmonella negative，属于完整记录中的直接结果。
+91	2	retain	E. coli 色氨酸回复阳性但依赖光；仍是 direct-related，当前普通 Ames gold 不可直接收。
+92	3	move	T4 phage rII 突变谱与回复率；宿主 E. coli 和 reversion 不能把噬菌体结果变为 Ames。
+93	3	move	S. cerevisiae D7 的有丝分裂基因转换；酵母 reverse mutation 不属于细菌回复。
+94	2	retain	明确 Ames-mutagenicity 语境的既有 mutagen 概称，缺完整测试条件，保留 near-direct。
+95	3	move	EMS 处理亚麻种子后 LuALS1 可遗传碱基替换；No bacterial reverse mutation performed 不能触发 direct。
+96	3	move	MNNG 诱变小鼠畸胎癌细胞并筛选耐药突变株；系统明确，不能仅凭 unspecified 标签放 L2。
+97	5	move	Arecoline 的 ROS/apoptosis 机制描述；No mutagenicity or Ames-test result reported 是缺失声明，不是阴性。
+98	2	retain	真菌非整倍体主结果同时含 difficult to detect in bacterial mutagenicity assays 的直接测试相关叙述；保持 L2 边界。
+99	2	retain	光依赖的 TA98/TA100 阴性及 TA102 阳性仍属细菌回复相关，不能进间接层。
+100	3	move	人淋巴细胞染色体畸变；rather than bacterial reverse mutation 只是实验类型对比。
+131	1	vote_recall_candidate	AFB1 TA100 +S9 有 820 对 85 自发回复的实测自身阳性，不能因为 positive control 标记自动不投；冻结名称尚未核验。
+132	1	vote_recall_candidate	4NQO TA98/TA97a -S9 有实测回复数及相应 DMSO 背景，两株均升高；冻结名称-parent 已匹配，当前无同 PMID-parent 票。
+133	1	vote_recall_candidate	2-Nitrofluorene Test 2 的 TA98/TA1538 -S9 具体回复增加明确；Test 1 是额外支持，不能因 control 角色一概拦截。
+134	1	vote_recall_candidate	AFB1 TA98/TA100 +S9 多剂量具体回复数与自发对照构成实测自身阳性，并非仅列 positive-control 名称。
+135	1	vote_recall_candidate	2-Aminofluorene TA98 +S9 2951±390 回复菌落且明确 promutagen/control 实测，不应把 control 当非实验。
+136	1	vote_recall_candidate	Diaveridine 五菌株 ±S9 明确总体阴性；WP2 uvrA/pKH101 必须完整保存而非丢弃后投票；需扩展条件表达且冻结名称缺失。
+137	2	retain	引用 RIFM 实验且有弱/不稳定响应和方法比较；现行 current-study gold 不满足，仍保留 direct evidence。
+138	2	retain	明确 Ames 阴性，但原记录为 cited/read-across 支持；不能当作本 PMID 的新独立实验票。
+139	2	retain	有 NQNO control 实测数，但原记录名称写 9-nitroanthracene 且缩写解释不足；不做外部核查，也不在记录内部指代未清时授予新票。
+140	2	retain	Pentamidine 只有方法、剂量和判阳标准，没有实验结果；缺结果不能投票，仍是 direct-related。
+141	2	retain	混合未加/加 UDP-glucuronic acid 的多激活臂，包含自身结果但焦点名称/缩写与实验臂需要进一步在已有记录内拆清，不能直接当单一 +S9 票。
+142	1	vote_recall_candidate	4NPD TA1538 -S9 有明确实测 elevated revertants；冻结 identity 已匹配，当前无同 PMID-parent 票，应区别于仅列 control 的记录。
+143	2	retain	2-AA 只是指定 positive control 并预期增加，没有实际实验结果；不能与有回复数的控制混为一谈。
+144	2	retain	列出 4NOPD positive control 和通用判阳标准，没有该控制的实测响应或 activation arm。
+145	2	retain	阳性依赖 Tedlar bag 气相暴露，常规方法无响应；需要更完整的外部 condition，不能投成普通 TA100 -S9 通用票。
+181	2	retain	非 direct run 中明确存在 glycidamide Ames positive；原 run 的 excluded 说明不能阻止路由到 L2。
+182	2	retain	SCE/微核主结果同时明确 Salmonella 无点/移码突变，保留 L2 防止泄漏。
+183	2	retain	明确 deoxycholic acid 在 bacteria mutagenic，菌种和 assay 未定，不能作为普通机制 L3。
+184	3	move	C. elegans unc-93 运动表型回复，revertants 指线虫后代，不是细菌。
+185	2	retain	记录列举 Salmonella reverse-mutation negative 和其他微生物结果，完整内容有 direct outcome。
+186	2	retain	2'-FL 明确 bacterial reverse mutation negative，即使 native assay 是 micronucleus 也必须 L2。
+187	2	retain	HSac 明确三次 Salmonella reverse-mutation negative；不能仅按主要 CA/SCE 终点下放。
+188	2	retain	IAA 被明确称 Ames negative，非整倍体主结果不解除 direct 限制。
+189	3	move	V79/SP5 HPRT 的重组回复试验，真核细胞 reversion 不是 bacterial reverse mutation。
+190	3	move	Cutibacterium 耐 minocycline 的 forward mutants/选择实验；不是营养缺陷回复，保留选择与因果限定。
+191	2	retain	确实描述伴随 Ames/E. coli 测试及测试剂量，虽结果未展开仍为 direct-related 测试记录。
+192	2	retain	明确 bacteria and yeast 全部 mutagenicity tests negative，含细菌直接结果概称。
+221	2	retain	Nifedipine 的间接 DNA damage 记录明确包含 Ames non-mutagenic，必须 L2。
+222	4	move	B. subtilis thy+ revertant 是研究用基因型；实际读数为 uracil-glycosylase/alkali 引起链长变化，不是回复菌落数。
+223	3	move	BPDE plasmid DNA 加合物同时报告在人细胞复制后 supF 突变频率；属于其他固定基因变化，bacterial generation 被明确排除。
+224	2	retain	E. coli DNA-protein crosslink 内容同时明确 increased mutations，具体 assay 未明，保留 L2 安全边界。
+225	4	move	TA1535/pSK1002 的 umu/SOS response 是 DNA damage response；Salmonella 菌名本身不是 Ames 回复读数。
+226	4	move	Urinary 8-OHdG HPLC 方法/验证，Ames et al. 是作者引用，不是 Ames test。
+227	3	move	S. cerevisiae 的 revertant/recombinant colonies 是酵母固定突变/重组；原 v2 excluded 说明不影响跨来源 family。
+228	2	retain	Gentian Violet 的 repair assay 记录确实描述伴随 Ames assay 结论，保留 near-direct。
+229	4	move	鱼体维生素 C 保护 DNA 氧化，No Ames involved 是元说明；缺具体 assay 不妨碍归 DNA damage。
+230	2	retain	两组合测试中逃逸检测包含 reversion 的负结果；不能只保留 repair 标签然后下放。
+231	2	retain	UDS 主结果同时明确 Salmonella/WP2 阴性及 TA1535 -activation 阳性，必须 L2。
+232	2	retain	Comet/CBMN 阳性同时明确 Ames negative，完整记录不得放 L3/L4。
+271	2	retain	Conjugate 在 TA100 明确 non-mutagenic 而细菌有毒；direct outcome 不受 v3 原始 scope 影响。
+272	2	retain	GSH-DNA adduct 主结果同时明确其他物质的 bacterial mutagenicity 保护失败，完整记录含 direct-related 结果。
+273	2	retain	CDZ/DZ repair 比较同时描述 TA98/TA100 的真实 mutagenicity 测试，保持 L2。
+274	2	retain	Bacterial polymerase 机理叙述同时给出 in vivo transition mutations 结论，原文未明确限于哪个实验系统，保留 L2 而不把不确定性自动下放。
+275	4	move	Isolated DNA 的 exocyclic dG adduct；Douki and Ames 1994 是作者，不是细菌实验。
+276	4	move	NM5004 vs TA1535/pSK1002 的 umuC-lacZ β-gal induction，实际是 DDR reporter 而非 His+ reversion。
+277	5	move	Isoniazid 底物的 NAT 酶活性比较；bacterial O-acetyltransferase 与否定 direct mutagenicity 的叙述不能形成 Ames 结果。
+278	2	retain	BCNU weak Ames positive 的引用结果，属于 near-direct，不能因 other_mechanistic 标签进入 L5。
+279	2	retain	Plasmid DNA break 的内容同时写 Ames mutations，必须 L2。
+280	5	move	ACN 造成血 GSH depletion；not an Ames test 为明确排除说明，实际为氧化/亲电机制。
+281	3	move	Host-mediated 的终点生物为 S. cerevisiae D7，TRP+ convertants/ILV+ revertants 是酵母结果。
+282	4	move	WP2/WP67/CM871 差异存活的 repair-deficient comparison；WP2 菌名不把该试验变成回复突变。
+321	3	retain	乳酸处理后多倍体核/多核细胞已被观察，超出了只有 spindle 机制的 L5 范围。
+322	3	retain	大鼠骨髓染色体畸变频率是 L3，统计不显著和慢性条件照常保留。
+323	3	retain	Native chronology 拼写错误不改变实际染色体畸变/微核阴性的 L3 读数。
+324	3	retain	Steviol 的 forward mutation/gene mutation/CA 结果属于其他固定遗传改变，umu 伴随证据不降低到 L4。
+325	3	retain	EtO 小鼠显性致死和可遗传易位是 L3，吸入条件不是排除间接证据的理由。
+326	3	retain	人暴露工人 HPRT 移码和 exon deletion，属于其他固定突变。
+327	3	retain	Repair-deficient CHO 系统的 hprt mutation spectrum 是 L3 实际突变结果，不因 NER 机制下放 L4/L5。
+328	3	retain	Styrene-exposed 工人 HPRT mutant frequency，保留 GSTP1 genotype 限定，不属于 Ames。
+329	3	retain	V79 HGPRT/8-azaguanine-resistant mutants 是哺乳动物基因突变。
+330	3	retain	HPRT、MN、SCE 的阴性比较均属于 L3；hemoglobin adduct 是陪伴机制而非主读数。
+331	3	retain	Protectant/cited/inferred 的限定必须保留，但记录内容确实为微核与 CA 频率，仍 L3。
+332	3	retain	人淋巴细胞 micronuclei 结果明确，引用来源不改变 family。
+441	3	retain	PCB 的 micronucleus 阳性与 comet 结果共述，已有明确固定损伤结果故 L3。
+442	3	retain	NNKOAc 全外显子 mutation spectrum，DNA adduct 是机制伴随证据；不能误当 Damage-seq。
+443	3	retain	FB1 micronuclei 阳性明确；DNA breaks/MDA/catalase 伴随证据不取代 L3。
+444	3	retain	MLH1 crossover sites 测量减数重组事件，不是仅有 RAD51/DSB 响应；L3 合理。
+445	3	retain	Formaldehyde 明确 gene mutations/CA/MN 多实验结果；泛化与引用限定保留，不用不确定性删除。
+446	3	retain	记录给出 homologous recombination 增加的结果概述，按其他遗传重组保留 L3；无具体 assay 的局限保留。
+447	3	retain	PhIP 在 Big Blue lacI rat prostate 的 mutation readout 是 L3，DNA adduct 不应主导 family。
+448	3	retain	DMN 在 Drosophila vermilion locus 的 47 个实测序列突变为 L3。
+449	3	retain	DNA damage-induced sister chromatid exchange 缺陷是 SCE 结果；foci 是伴随 DDR 机制。
+450	3	retain	SkQR1 对 γ照射诱发 chromosomal aberrations 的保护是 L3；不因为保护剂角色退到 L5。
+451	3	retain	Bleomycin micronucleus 在 XRCC1 基因型间无差异仍是 L3，不能把 genotype-null-effect 当 Ames 阴性。
+452	3	retain	DHT+IR 后 TMPRSS2-ERG gene fusions 是结构遗传改变；共同处理限定保留。
+481	4	retain	Rutin 对精子 DNA damage 的保护属于 L4，needs_more_context 不构成删除依据。
+482	4	retain	ARP DNA base lesion 方法应用，虽未给方向仍有明确 DNA damage assay 的检索意义。
+483	4	retain	Calf DNA 的 AP/oxidized lesions，氧自由基清除作用的最终读数仍是 DNA 损伤。
+484	4	retain	GAPDH 对 THF-AP lesion 的识别/修复反应属于 DNA damage response，不能当作直接 AP-site 数量。
+485	4	retain	A172 genomic AP sites 经 ARP 实测，ELF/MMS 共处理限定保留。
+486	4	retain	SOS β-gal induction 是 DDR reporter；这与 TA1535 umu 记录应跨菌株/来源一致归 L4。
+487	4	retain	明确 comet 方法应用但无结果；可留 L4 检索，不能从 assay 存在推断损伤阳性。
+488	4	retain	DNA-bound radiolabel/CBI 的加合物读数，应与 v3 DNA covalent-binding 记录同归 L4。
+489	4	retain	8-OHdG 为实际检测对象/损伤标志物，角色与运动暴露条件保留，非 compound Ames label。
+490	4	retain	Cell-free DNA alkylation/crosslink readout；报告的是 unalkylated DNA 百分比，不能反读方向。
+491	4	retain	MS/NMR 给出 DNA interstrand crosslink 结构；不是只测非共价 DNA binding 的 L5。
+492	4	retain	GADD45B 表达作为明确 DDR endpoint，保持药物/细胞系/时间限定。
+561	4	retain	PFGE 的 heat-labile DNA sites 转换为碎片，非固定染色体畸变；不能见 chromosome fragmentation 就升 L3。
+562	4	retain	主记录是 comet 方法应用，提到为 MN 采样但未给 MN 结果；不凭陪伴 assay 名称升 L3。
+563	4	retain	Immunogold 的 DNA SSBs 是物理损伤读数，chromosomal chromatin 并非 CA 评分。
+564	3	move	完整内容明确 17β-estradiol 引起 chromosome abnormalities，除了 oxidized bases 还有 L3 固定染色体结果。
+565	4	retain	S1/PFGE 转换检测 ssDNA gaps，repair mutant 比较不等于遗传突变频率。
+566	4	retain	ATP 依赖 DNA incisions/breaks per chromosome，属于修复/物理损伤，不是 chromosome aberration。
+567	4	retain	152 个与 DNA 交联蛋白是 DNA-protein crosslinks，不能当作普通 protein covalent adduct 的 L5。
+568	4	retain	DAPI/flow DNA content/degradation 和 MMR-induced DSB，dam mutant 是模型，不是被测 mutation endpoint。
+569	4	retain	γH2AX 方法应用明确，spindle alignment 只是伴随检测且无异常结果，不强行升 L3。
+570	4	retain	NotI/PFGE DNA fragmentation 方法而无 outcome，保留 L4 方法证据与不确定性。
+571	4	retain	Drosophila repair-deficient/proficient differential survival 是修复损伤测试，与 v3 同类实验应一致。
+572	4	retain	MMEJ/NHEJ/HR/SSA repair reporter 的功能读数属于 L4；HR 一词不自动等于 L3 固定重组事件。
+641		unresolved_family	仅不同暴露时间的 HepG2-CYP3A4 TC50 比较，没有代谢调节或 DNA 读数；L5 相关性弱需单列边界，不能靠 engineered-cell 名称冒充机制，也不直接删除。
+642	3	move	c-PTIO 对 micronucleus frequency 有逐 clone 实测结果；同时有 γH2AX foci，最早实际遗传终点为 L3。
+643	5	retain	ESR DMPO-OH radical 与 glutathione-defense 活性，是氧化/解毒机制而非 DNA lesion。
+644	4	move	32P-postlabelling 定量 styrene N7/O6 guanine DNA adducts，与 v2 加合物必须同归 L4。
+645	5	retain	Clofibrate 的 epoxide hydrolase induction 减轻毒性，直接支持代谢解毒机制，引用与缺剂量仍保留。
+646	3,4	family_boundary	NO 暴露后 homologous recombinational repair frequency 明确超出 L5；原记录未区分遗传重组事件测量与 repair-reporter capacity，不能强选 L3/L4。
+647	4	move	Ercc1 缺失与野生型差异存活检测 repair dependence，与 v2 Drosophila repair test 应同归 L4。
+648	4	move	DEB 的 comet tail DNA/断裂重接动力学是 DNA damage/repair 读数，不能因 FA 机制归 L5。
+649	5	retain	Image cytometry 的 S-phase arrest 推断 replication impairment，没有具体 DNA lesion 或固定突变结果。
+650	5	retain	Urine/hair/nerve pyrrole adduct 非明确 DNA adduct，保持 electrophile/covalent-binding 机制 L5。
+651	4	move	Irinotecan 的 alkaline comet DNA damage，v3 写不满足原 run scope 不影响它在统一体系归 L4。
+652	5	retain	PCB118 抑制 CYP1A2 酶活性，代谢机制证据；未证明 bioactivation 不等于不能 retrieve。
+653	5	retain	TFM reductive metabolite 的 LC-MS/MS 形成读数属于代谢；保留未证明 reactive bioactivation 的限定。
+654	5	retain	细胞周期/viability 无变化为较弱 cell-cycle context，留 L5 并明确不是 DNA damage 或 Ames 阴性。
+655	5	retain	Melatonin 防止 lipid peroxidation/GSH depletion，oxidative injury 不特指 DNA。
+656	5	retain	Cocaine 的 TBA-RS lipid peroxidation 阴性与 LDH 毒性，未给 DNA lesion；留 L5。
+657	5	retain	Paraquat 线粒体 lipid/cardiolipin oxidation 属于 redox mechanism，不应移动到 DNA damage。
+658	5	retain	Lignan 降低 MDA 并保护 antioxidant enzymes，是非 DNA 氧化机制。
+659	5	retain	Native category 写 oxidative_damage_dna，但实际 TBARS/protein carbonyls 不测 DNA，保持 L5。
+660	4	move	Vitamin C 对 H2O2-induced lymphocyte DNA damage 的保护，直接 DNA 损伤读数，不因 modifier/needs_context 留 L5。
+661	5	retain	Hexobarbital 的 GSSG efflux/GPx1 depletion 比较是氧化机制，归因不确定保留。
+662	5	retain	Tempol 对 NO/ROS imbalance 相关 glomerular permeability 的保护是间接机制，不能当 DNA damage。
+663	5	retain	Ethoxycoumarin 的 GSSG 增加被 P450 抑制剂降低，是代谢相关氧化应激。
+664	5	retain	BHT 调节 γ-GCS 亚基表达，属于 GSH defense；不是 γH2AX 损伤读数。
+665	4	move	14C-IQ binding 指定 DNA adduct 形成，+S9 只是活化条件，不能掩盖 L4 endpoint。
+666	4	move	CapLC-MS/MS 定量 N7-GSO DNA alkylation product，Mb/P450 模拟膜机制不改变 L4。
+667	5	retain	GSH conjugates 捕获 imidazole reactive metabolites，不是 DNA adduct；置信度低不导致删除。
+668	5	retain	Citronellol 调节 P450/b5 蛋白含量，是 phase-I metabolism 机制。
+669	5	retain	Aroclor 后尿中原型 CP 减少反映 biotransformation，属于间接代谢线索而非突变测量。
+670	5	retain	Clotrimazole 增加 hepatic P450 浓度，native placeholder 拼写不改变酶活化机制。
+671	5	retain	Lutein 的 aminopyrine N-demethylase 方法描述，无数值仍可作代谢方法证据，不授予结果。
+672	5	retain	Ethoxyresorufin probe 的 EROD enzymatic capacity 是代谢背景，probe role 保留。
+673	5	retain	NEM 对 cadmium-induced AHH inhibition 无影响，thiol probe/metabolism 机制，非 DNA damage。
+674	5	retain	Methoxylamine 捕获 amodiaquine aldehyde metabolite，trapping adduct 非 DNA adduct。
+675	5	retain	α-NF 刺激 APAP P4503A2 activation，为代谢机制，不含 bacterial outcome。
+676	5	retain	APAP-cysteine urinary conjugate 是 NAPQI/GSH trapping 读数，不应把 cysteine adduct 当 DNA lesion。
+677	5	retain	α-Deuterated NDELA 的 glycolaldehyde 形成用于代谢位点机制，无 DNA outcome。
+678	5	retain	Macromolecular covalent binding 未具体到 DNA，配合 PCP inhibition 支持 electrophile metabolism，保持 L5。
+679	5	retain	NQO1 形成 17-AAG hydroquinone 的 LC/HPLC 是代谢读数；Hsp90 活化不是 DNA-reactive 结果，限定保留。
+680	5	retain	Curcumin 对 hepatic EROD 活性的引用结果属于 CYP 机制，非 Ames phenotype。
+721	4	move	EO 的 N7-HEG DNA adduct 实测与模型比较，endpoint 是 DNA lesion，prediction 混写不妨碍 L4。
+722	4	move	Estragole DNA adduct 数量的 PBD prediction 是 L4 预测损伤证据，不能因 prediction 排除或误作 Ames prediction。
+723	3	move	Ethanol 后胚胎 chromosome counting/aneuploidy 是 L3；predicted ovulation time 不表示终点来自模型。
+724	3	move	SVM/DM 的 chromosome aberration scoring 是 L3 结果，repair-gap 解释只是机制。
+725	4	move	EO N7-HEG DNA adduct MS 实测，和模型一致不改变其 L4 endpoint。
+726	3	move	Spindle 主读数之外有 BPA micronucleus NOEL 10.8 µg/ml 的实际终点信息；完整记录应至少 L3。
+727	4	move	Hex-PdG DNA adduct 32P-postlabelling/LCMS 数据与 PBK/D 比较，归 L4 并保留测量与预测差异。
+728	4	move	Inosine 降低 oxidative DNA damage 且有 γH2AX/DDR markers，属于 L4，不受 prediction 或 protectant 限制。
+729	4	move	Safrole liver DNA adduct 下降 55% 是具体损伤终点；SULT inhibitor/模型机制不能把整个记录留 L5。
+730	4	move	AAI-DNA adduct LC-ESI-MS/MS 测量和 PBK 外推均以 DNA lesion 为目标，归 L4。
+731	3,4	family_boundary	DSBs per metaphase 需区分 cytogenetic break scoring 与物理 DNA damage quantification；两者都不应在 L5，现有描述不足以硬分 L3/L4。
+732	4	move	除 AR metabolic rate 外还明确预测 liver DNA adduct 增加四倍；prediction 不比实测更低一层，完整记录已有 L4 损伤预测。
+733	3	move	17.9% female pronuclei aneuploid 经 chromosome counting 得到，属于 L3，不是只有 spindle 机制。
+734	5	retain	E. coli EC50 生长抑制/thiol antagonism 是毒性和解毒机制，CA/IA prediction 不是 Ames prediction。
+735	4	move	ROS 主读数的支持文本同时明确 observed DSBs 与 predicted DDR checkpoint activation，完整内容已有 L4。
+736	4	move	Damage-seq 测 N2-BPDE-dG adduct 位置，不是 mutation sequencing；predicted damage site 字样不使它成为 Ames prediction。
+737	4	move	Ethylene 暴露后的 lymphocyte N7-HEG DNA adduct 实测及预测比较，应归 L4。

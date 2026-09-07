@@ -671,6 +671,43 @@ def test_progressive_baseline_collector_accepts_current_minimol_head_path(tmp_pa
     assert head["metrics_path"].endswith("minimol_head/final/metrics.json")
 
 
+def test_ames_baseline_paths_keep_partial_coverage_explicit(tmp_path):
+    for method, _, _ in plotter.CONDITIONED_BASELINES:
+        relative = "minimol_head/final" if method == "minimol_head" else method
+        path = tmp_path / "Ames" / relative / "metrics.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"n_total": 274,
+                                    "n_evaluated": 252 if method.endswith("condition") else 274,
+                                    "macro_f1": 0.6, "accuracy": 0.7}))
+    kwargs = dict(task="ames", task_label="Ames", baseline_task="Ames",
+                  baseline_root=tmp_path, expected_n=274)
+    with pytest.raises(ValueError, match="sample-count mismatch"):
+        plotter._append_conditioned_baselines([], **kwargs)
+    rows = []
+    omissions = plotter._append_conditioned_baselines(rows, **kwargs, omit_sample_count_mismatch=True)
+    assert len(rows) == 3 and len(omissions) == 2
+    assert {row["baseline_n"] for row in omissions} == {252}
+    assert {row["agent_n"] for row in omissions} == {274}
+
+
+def test_ames_fourth_column_keeps_unavailable_tasks_empty(tmp_path):
+    roots = plotter._parse_configuration_task_path_overrides(["4/2:ames=/ames"])
+    assert "ames" in roots["4/2"]
+    svg = tmp_path / "four_tasks.svg"
+    plotter.plot_conditioned_progressive_configuration_comparison(
+        rows=[{"configuration": "4/2", "task": "ames", "level": 1, "n_queries": 274,
+               "macro_f1": 0.72, "mean_active_molecules": 4.0,
+               "mean_cards_per_active_molecule": 2.0, "mean_prompt_tokens_per_call": 1000.0,
+               "mean_reasoning_tokens_per_call": 500.0}],
+        output_svg=svg, output_png=tmp_path / "four_tasks.png",
+        tasks=("bbb_martins", "bioavailability_ma", "skin_reaction", "ames"),
+        configurations=("4/2", "8/4"),
+    )
+    text = svg.read_text()
+    assert "Ames  (n=274)" in text and "Current results unavailable" in text
+    assert text.index("BBB") < text.index("Bioavailability") < text.index("Skin") < text.index("Ames")
+
+
 def test_progressive_baseline_collector_accepts_minimol_train_path(tmp_path):
     baseline_root = tmp_path / "baselines"
     complete = {
@@ -1012,6 +1049,14 @@ def test_progressive_configuration_references_require_shared_none_and_baselines(
     assert summary["none_audits"]["bbb_martins"]["status"] == (
         "matched_across_configurations"
     )
+    none_only, omitted = plotter.collect_conditioned_progressive_configuration_reference_data(
+        configuration_roots=configuration_roots, none_root=tmp_path / "fallback_none",
+        baseline_root=tmp_path / "unavailable_baselines", omit_baseline_tasks=("bbb_martins",),
+    )
+    assert len(none_only) == 1 and none_only[0]["result_type"] == "none"
+    assert omitted["baseline_omissions"] == [
+        {"task": "bbb_martins", "reason": "explicit_task_baseline_omission"}
+    ]
 
     mismatched_none = (
         configuration_roots["8_4"]["bbb_martins"]

@@ -1,7 +1,7 @@
 {
   "schema_version": "current_starling_records.v1",
-  "updated_at": "2026-09-03",
-  "role": "sole frozen canonical-record inputs for current BBB, Bioavailability, and Skin progressive retrieval",
+  "updated_at": "2026-09-07",
+  "role": "sole frozen canonical-record inputs for current BBB, Bioavailability, Skin, and Ames retrieval",
   "local_restore_root": "outputs/chembl_tool/starling/current_records",
   "history": {
     "canonical_schema": "starling_canonical_record.v7",
@@ -14,7 +14,12 @@
       "skin_reaction": "40ac8cec4b49479372a668c598b6b7ed612f942881a23590d75d7986e3719c9e"
     },
     "selection_reason": "latest normalized and organized source snapshot used to build the current purity overlays",
-    "earlier_record_versions_retained": false
+    "earlier_record_versions_retained": false,
+    "applies_to_tasks": [
+      "bbb_martins",
+      "bioavailability_ma",
+      "skin_reaction"
+    ]
   },
   "tasks": {
     "bbb_martins": {
@@ -35,11 +40,31 @@
         }
       ],
       "files": [
-        {"path": "duplicates.parquet", "sha256": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084", "size": 27178},
-        {"path": "exclusions.parquet", "sha256": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7", "size": 6262685},
-        {"path": "manifest.json", "sha256": "1c1c794733a23eb0110435cbcaa8b178e99f768c664e549e8653cf7ca12c00ad", "size": 929},
-        {"path": "records.parquet", "sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1", "size": 140655571},
-        {"path": "scalar_distribution.parquet", "sha256": "f4b4da28434c3b93feff97ef769ff8f0d47da47204f29cca4d511a3a571676b4", "size": 419325}
+        {
+          "path": "duplicates.parquet",
+          "sha256": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084",
+          "size": 27178
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7",
+          "size": 6262685
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "1c1c794733a23eb0110435cbcaa8b178e99f768c664e549e8653cf7ca12c00ad",
+          "size": 929
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+          "size": 140655571
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "f4b4da28434c3b93feff97ef769ff8f0d47da47204f29cca4d511a3a571676b4",
+          "size": 419325
+        }
       ]
     },
     "bioavailability_ma": {
@@ -60,11 +85,31 @@
         }
       ],
       "files": [
-        {"path": "duplicates.parquet", "sha256": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1", "size": 21501},
-        {"path": "exclusions.parquet", "sha256": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958", "size": 2176106},
-        {"path": "manifest.json", "sha256": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15", "size": 943},
-        {"path": "records.parquet", "sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60", "size": 104905183},
-        {"path": "scalar_distribution.parquet", "sha256": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1", "size": 129611}
+        {
+          "path": "duplicates.parquet",
+          "sha256": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1",
+          "size": 21501
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958",
+          "size": 2176106
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15",
+          "size": 943
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+          "size": 104905183
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1",
+          "size": 129611
+        }
       ]
     },
     "skin_reaction": {
@@ -90,12 +135,105 @@
         }
       ],
       "files": [
-        {"path": "duplicates.parquet", "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386", "size": 51996},
-        {"path": "exclusions.parquet", "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e", "size": 18895455},
-        {"path": "manifest.json", "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b", "size": 934},
-        {"path": "records.parquet", "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697", "size": 214931670},
-        {"path": "scalar_distribution.parquet", "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a", "size": 47760}
+        {
+          "path": "duplicates.parquet",
+          "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
+          "size": 51996
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
+          "size": 18895455
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b",
+          "size": 934
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+          "size": 214931670
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a",
+          "size": 47760
+        }
       ]
+    },
+    "ames": {
+      "archive_sha256": "c8a78dbc3fd9e5191ee757b20015bfe5122e107d27e5830cbf20aefad307c1e4",
+      "archive_size": 478780025,
+      "records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
+      "records_size": 422823159,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
+          "size": 90000000,
+          "sha256": "617b68db49125cdb18468a3e0ab43549d18b9bfd142b6eef314b2000453dff7a"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
+          "size": 90000000,
+          "sha256": "b0737f5461b04883585292aefd63d093a4b87c99ca5387e33c6d46b5f665d70d"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
+          "size": 90000000,
+          "sha256": "f0c8a4204d70096ea901ffbafe5c5922c8c860dd71189174511230218c16a2f1"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
+          "size": 90000000,
+          "sha256": "029021bb88030d0a9ee11c97b37ab027869dc7400d0eca65e88d8acf5452cb19"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
+          "size": 90000000,
+          "sha256": "539bc5b8ec6aacd8f2de3f481186233349b9792f9d0317e79989d559de89ffcd"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
+          "size": 28780025,
+          "sha256": "aedf928f3eae8e511b0d1fe5e6f3466b3343fb57e72f4ac3d99fe6b2a402e916"
+        }
+      ],
+      "files": [
+        {
+          "path": "manifest.json",
+          "size": 9119,
+          "sha256": "f199bc4cca95c9b5d0208d8a48bb21e91739bd79be29c042256cb38cb26d1a29"
+        },
+        {
+          "path": "pending_identity.jsonl",
+          "size": 11597,
+          "sha256": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+        },
+        {
+          "path": "record_audit.parquet",
+          "size": 59953994,
+          "sha256": "dd54b40bdf4315ec0ac2407eb9268c2c46e17fe6974c525024b5248543e354e9"
+        },
+        {
+          "path": "records.parquet",
+          "size": 422823159,
+          "sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e"
+        },
+        {
+          "path": "source_votes.jsonl",
+          "size": 5626403,
+          "sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+        },
+        {
+          "path": "study_vote_audit.jsonl",
+          "size": 796947,
+          "sha256": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e"
+        }
+      ],
+      "source_stage": "reviewed canonical records with record-level family assignment",
+      "source_manifest": "data/starling_data/ames/dataset_manifest.json",
+      "raw_source_manifest": "data/starling_data/ames/raw_v1/manifest.json"
     }
   }
 }

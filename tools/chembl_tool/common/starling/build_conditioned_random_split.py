@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+import csv
 from dataclasses import dataclass
 import hashlib
 import json
@@ -659,12 +660,13 @@ def _pairwise_overlap(values: Mapping[str, set[str]]) -> dict[str, int]:
 
 
 def _write_group_distribution(root: Path, rows_by_split: Mapping[str, list[dict[str, Any]]]) -> None:
-    lines = ["condition_group,split,n_rows"]
-    for split in SPLITS:
-        for condition, count in _counts(rows_by_split[split], "condition_group").items():
-            lines.append(f"{condition},{split},{count}")
     with atomic_output_path(root / "group_distribution.csv") as temporary:
-        temporary.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        with temporary.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.writer(handle, lineterminator="\n")
+            writer.writerow(("condition_group", "split", "n_rows"))
+            for split in SPLITS:
+                for condition, count in _counts(rows_by_split[split], "condition_group").items():
+                    writer.writerow((condition, split, count))
 
 
 def build_task(
@@ -816,7 +818,7 @@ def _update_manifest(
             "condition_coverage": "all conditions in train, valid, and test",
             "record_support_priority": (
                 "lexicographically minimize singleton-vote rows in valid+test "
-                "for BBB, Bioavailability, and Skin; not applicable to ClinTox"
+                "for assay-voter tasks including Ames; not applicable to ClinTox"
             ),
         },
     }

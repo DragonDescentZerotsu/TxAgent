@@ -617,3 +617,186 @@ def test_family_catalog_filters_disallowed_source_groups_before_aggregation(
     assert ranking[0]["assay_id"] == stable_assay_id
     assert stats["family_catalog"] is True
     assert stats["allowed_source_groups"] == ["Direct.skin_reaction"]
+
+
+def test_streamed_assay_groups_preserve_pandas_order_and_missing_key_policy():
+    from tools.chembl_tool.common.assay_retrieval import _assay_molecule_groups
+
+    records = pd.DataFrame(
+        [
+            {"assay_id": "b", "molecule_id": "m", "ordinal": 0},
+            {"assay_id": "a", "molecule_id": "n", "ordinal": 1},
+            {"assay_id": "a", "molecule_id": "m", "ordinal": 2},
+            {"assay_id": "a", "molecule_id": "n", "ordinal": 3},
+            {"assay_id": None, "molecule_id": "m", "ordinal": 4},
+            {"assay_id": "b", "molecule_id": None, "ordinal": 5},
+        ],
+        index=[7, 7, 3, 0, 1, 2],
+    )
+    expected = [
+        (key, frame.to_dict("records"))
+        for key, frame in records.groupby(["assay_id", "molecule_id"], sort=True)
+    ]
+    ordered = records.dropna(subset=["assay_id", "molecule_id"]).sort_values(
+        ["assay_id", "molecule_id"], kind="stable"
+    )
+    assert list(_assay_molecule_groups(ordered)) == expected
+
+
+def test_streamed_aggregation_preserves_card_selection_and_source_order():
+    from tools.chembl_tool.common.assay_retrieval import _aggregate_assay_molecule
+
+    base = {
+        "molecule_id": "M",
+        "canonical_smiles": "CCO",
+        "canonical_endpoint_name": "endpoint",
+        "canonical_measurement_text": "positive",
+        "canonical_unit_text": "",
+        "canonical_assay_context": "assay",
+        "canonical_species_context": " human ",
+        "qualifying_conditions": "condition",
+        "molecule_name": "name",
+    }
+    records = [
+        {
+            **base,
+            "canonical_record_id": "z",
+            "confidence": 0.9,
+            "group_id": "L1",
+            "source_name": "first",
+            "support_text": "third",
+        },
+        {
+            **base,
+            "canonical_record_id": "a",
+            "confidence": 0.9,
+            "group_id": "L1",
+            "source_name": "second",
+            "support_text": "first",
+        },
+        {
+            **base,
+            "canonical_record_id": "b",
+            "confidence": 0.8,
+            "group_id": "L2",
+            "source_name": "first",
+            "support_text": "second",
+        },
+        {
+            **base,
+            "canonical_record_id": "c",
+            "confidence": float("nan"),
+            "group_id": "L2",
+            "source_name": "third",
+            "support_text": None,
+        },
+        {
+            **base,
+            "canonical_record_id": "d",
+            "confidence": None,
+            "group_id": "L2",
+            "source_name": "second",
+            "support_text": "second",
+        },
+    ]
+    metadata = {
+        "source_families": [
+            {"source_group_id": "L1", "endpoint_group": "direct", "level": 1},
+            {"source_group_id": "L2", "endpoint_group": "near", "level": 2},
+        ]
+    }
+    result = _aggregate_assay_molecule(
+        "ames",
+        "assay",
+        "A",
+        records,
+        max_record_examples=2,
+        max_support_text_chars=0,
+        assay_metadata=metadata,
+    )
+    assert result["source_support_texts"] == ["first", "second"]
+    assert [r["evidence_family_level"] for r in result["source_record_examples"]] == [
+        1,
+        2,
+    ]
+    assert result["evidence_source"] == "first + second + third"
+    assert result["confidence_score"] == 0.9
+    assert result["source_record_count"] == 5
+    assert result["standard_type"] == "endpoint (5)"
+    assert result["uncertainty"] == ["some_source_rows_missing_support_text"]
+    assert result["evidence_scope"]["species_context"] == ["human"]
+    for r in records:
+        r["confidence"] = None
+    assert (
+        _aggregate_assay_molecule(
+            "ames",
+            "assay",
+            "A",
+            records,
+            max_record_examples=2,
+            max_support_text_chars=0,
+        )["confidence_score"]
+        == ""
+    )
+
+
+def test_parallel_aggregation_and_prepared_index_match_serial(tmp_path, monkeypatch):
+    import json
+    from copy import deepcopy
+    from tools.chembl_tool.common import assay_retrieval as retrieval, build_runtime
+
+    monkeypatch.setattr(build_runtime, "BUILD_CACHE", tmp_path / "cache")
+    base = {
+        "molecule_id": "M",
+        "canonical_smiles": "OCC",
+        "canonical_endpoint_name": "endpoint",
+        "canonical_measurement_text": "positive",
+        "canonical_unit_text": "",
+        "canonical_assay_context": "assay",
+        "canonical_species_context": "human",
+        "qualifying_conditions": "condition",
+        "molecule_name": "name",
+        "confidence": 0.9,
+        "group_id": "L1",
+        "source_name": "source",
+        "support_text": "support",
+    }
+    records = pd.DataFrame(
+        [
+            {
+                **base,
+                "canonical_record_id": str(i),
+                "assay_id": str(i // 2),
+                "assay_context": "assay",
+            }
+            for i in range(10002)
+        ]
+    )
+    metadata = {aid: {} for aid in records.assay_id}
+    serial = retrieval._aggregate_evidence("ames", records, metadata, 3, 0, 1)
+    parallel = retrieval._aggregate_evidence("ames", records, metadata, 3, 0, 2)
+    assert json.dumps(serial, sort_keys=True) == json.dumps(parallel, sort_keys=True)
+    empty = records.assign(assay_id=None)
+    assert retrieval._aggregate_evidence("ames", empty, metadata, 3, 0, 2) == []
+    ordinary = build_neighbor_index(
+        deepcopy(serial[:2]), index_version="test", workers=1
+    )
+    reused = build_neighbor_index(
+        deepcopy(parallel[:2]),
+        index_version="test",
+        workers=2,
+        reuse_prepared_minimal_evidence=True,
+    )
+    assert ordinary["molecules"] == reused["molecules"]
+    assert (
+        ordinary["evidence_by_molecule_group"] == reused["evidence_by_molecule_group"]
+    )
+    assert json.dumps(ordinary["evidence_by_molecule_group"]) == json.dumps(
+        reused["evidence_by_molecule_group"]
+    )
+    assert ordinary["group_to_molecule_indices"] == reused["group_to_molecule_indices"]
+    assert [fp.ToBitString() for fp in ordinary["fingerprints"]] == [
+        fp.ToBitString() for fp in reused["fingerprints"]
+    ]
+    smiles = ["OCC", "CCO.Cl", "CCN"] * 334
+    assert retrieval._parent_keys(smiles, 1) == retrieval._parent_keys(smiles, 2)

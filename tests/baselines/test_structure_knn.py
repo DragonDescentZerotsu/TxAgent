@@ -10,6 +10,39 @@ from baselines.structure_knn.run import (
 )
 
 
+def test_conditioned_knn_fills_only_shortfall_from_all_train():
+    reference = [
+        {"drug": "A", "condition_group": "other"},
+        {"drug": "B", "condition_group": "other"},
+        {"drug": "C", "condition_group": "no_reported_external_condition"},
+        {"drug": "A", "condition_group": "target"},
+        {"drug": "D", "condition_group": "other"},
+    ]
+    kwargs = dict(ranked_indices=list(range(5)), reference=reference,
+                  query={"condition_group": "target"}, k=3)
+    strict = select_conditioned_ranked_indices(**kwargs, policy="same_condition_then_null")
+    filled = select_conditioned_ranked_indices(**kwargs, policy="same_condition_then_null_then_all")
+    assert strict == [(3, "same_condition"), (2, "null_fallback")]
+    assert filled == [*strict, (1, "all_train_fallback")]
+    assert len({reference[i]["drug"] for i, _ in filled}) == 3
+
+
+def test_conditioned_knn_all_fallback_handles_unseen_and_null_query_conditions():
+    reference = [{"drug": "A", "condition_group": "a"},
+                 {"drug": "B", "condition_group": "b"},
+                 {"drug": "C", "condition_group": "c"}]
+    for group in ("unseen", "no_reported_external_condition"):
+        selected = select_conditioned_ranked_indices(
+            [2, 1, 0], reference, {"condition_group": group}, k=3,
+            policy="same_condition_then_null_then_all",
+        )
+        assert selected == [(2, "all_train_fallback"), (1, "all_train_fallback"), (0, "all_train_fallback")]
+    assert select_conditioned_ranked_indices(
+        [2, 1, 0], reference, {"condition_group": "a"}, k=1,
+        policy="same_condition_then_null_then_all",
+    ) == [(0, "same_condition")]
+
+
 def _write_jsonl(path, rows):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 import hashlib
 import json
@@ -40,6 +41,7 @@ TASK_SPECS = {
         "Bioavailability", "#D55E00", "s", "starling_full_flat", "full-flat"
     ),
     "skin_reaction": TaskPlotSpec("Skin", "#CC79A7", "^", "starling_direct", "direct"),
+    "ames": TaskPlotSpec("Ames", "#009E73", "D", "", ""),
 }
 
 CONDITIONED_TASK_SPECS = {
@@ -47,6 +49,7 @@ CONDITIONED_TASK_SPECS = {
     "bioavailability_ma": ("Bioavailability", "Bioavailability_Ma"),
     "skin_reaction": ("Skin", "Skin_Reaction"),
     "clintox": ("ClinTox", "ClinTox"),
+    "ames": ("Ames", "Ames"),
 }
 
 CONDITIONED_BASELINES = (
@@ -57,7 +60,7 @@ CONDITIONED_BASELINES = (
     ),
     (
         "minimol_knn_condition",
-        "MiniMol KNN condition",
+        "MiniMol KNN condition-first",
         Path("minimol_knn/same_condition_then_null/metrics.json"),
     ),
     (
@@ -67,7 +70,7 @@ CONDITIONED_BASELINES = (
     ),
     (
         "morgan_knn_condition",
-        "Morgan KNN condition",
+        "Morgan KNN condition-first",
         Path("morgan_knn/same_condition_then_null/metrics.json"),
     ),
     (
@@ -457,8 +460,12 @@ def _append_conditioned_baselines(
                 ),
                 metrics_path,
             )
+        if not metrics_path.is_file():
+            candidate = baseline_root / baseline_task / method / "metrics.json"
+            if candidate.is_file():
+                metrics_path = candidate
         metrics = _load_json(metrics_path)
-        actual_n = _metric_n(metrics)
+        actual_n = int(metrics.get("n_evaluated", _metric_n(metrics)))
         if actual_n != expected_n:
             if omit_sample_count_mismatch:
                 omissions.append(
@@ -888,6 +895,23 @@ def collect_conditioned_progressive_configuration_data(
     if not expected_tasks:
         raise ValueError("Progressive configurations must provide at least one task")
 
+    collection_keys = list(dict.fromkeys(
+        (task, root)
+        for roots_by_task in configuration_roots.values()
+        for task, root_value in roots_by_task.items()
+        for root in _configuration_root_replicates(root_value)
+    ))
+
+    def collect_resource(key):
+        task, root = key
+        return collect_conditioned_progressive_resource_data(
+            progressive_roots_by_task={task: root}
+        )
+
+    # Overlap artifact reads while preserving input order and every contract gate.
+    with ThreadPoolExecutor(max_workers=min(8, len(collection_keys))) as pool:
+        collected_resources = dict(zip(collection_keys, pool.map(collect_resource, collection_keys)))
+
     all_rows: list[dict[str, Any]] = []
     contracts_by_configuration: dict[str, Any] = {}
     for configuration, roots_by_task in configuration_roots.items():
@@ -898,11 +922,7 @@ def collect_conditioned_progressive_configuration_data(
             replicate_rows: list[list[dict[str, Any]]] = []
             replicate_contracts: list[dict[str, Any]] = []
             for root in replicate_roots:
-                resource_rows, resource_summary = (
-                    collect_conditioned_progressive_resource_data(
-                        progressive_roots_by_task={task: root}
-                    )
-                )
+                resource_rows, resource_summary = collected_resources[(task, root)]
                 replicate_rows.append(resource_rows)
                 resource_contract = resource_summary["comparison_contract"]
                 split_schemes.add(str(resource_contract["split_scheme"]))
@@ -1134,6 +1154,7 @@ def collect_conditioned_progressive_configuration_reference_data(
     baseline_roots_by_task: dict[str, Path] | None = None,
     omit_mismatched_baselines: bool = False,
     allow_model_comparison: bool = False,
+    omit_baseline_tasks: tuple[str, ...] = (),
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Collect one shared None point and task-matched baseline references."""
     if allow_model_comparison:
@@ -1150,6 +1171,7 @@ def collect_conditioned_progressive_configuration_reference_data(
                 configuration_roots=configs, none_root=none_root, baseline_root=baseline_root,
                 baseline_roots_by_task=baseline_roots_by_task,
                 omit_mismatched_baselines=omit_mismatched_baselines,
+                omit_baseline_tasks=omit_baseline_tasks,
             )
             audits[model] = audit
             for row in model_rows:
@@ -1267,6 +1289,9 @@ def collect_conditioned_progressive_configuration_reference_data(
         }
         task_baseline_root = (baseline_roots_by_task or {}).get(task, baseline_root)
         effective_baseline_roots[task] = str(task_baseline_root)
+        if task in omit_baseline_tasks:
+            baseline_omissions.append({"task": task, "reason": "explicit_task_baseline_omission"})
+            continue
         baseline_omissions.extend(
             _append_conditioned_baselines(
                 rows,
@@ -1517,7 +1542,7 @@ def plot_conditioned_progressive_overview(
             "svg.fonttype": "none",
         }
     )
-    fig, axes = plt.subplots(5, len(tasks), figsize=(18.5, 21.5), squeeze=False)
+    fig, axes = plt.subplots(5, len(tasks), figsize=(18.5 / 3 * len(tasks), 21.5), squeeze=False)
     resource_specs = (
         (
             "mean_active_molecules",
@@ -1741,7 +1766,7 @@ def plot_conditioned_progressive_overview(
         f"{split_scheme.title()} {'validation' if evaluation_subset == 'valid' else evaluation_subset} "
         "· visible append-only DeepSeek-V4-Flash "
         "updates · task-specific source-purity contracts · latest complete "
-        "three-task runs",
+        f"{len(tasks)}-task runs",
         fontsize=10,
         color="#555555",
     )
@@ -2061,6 +2086,13 @@ def plot_conditioned_progressive_configuration_comparison(
     }
     for column, task in enumerate(tasks):
         task_rows = [row for row in rows if row["task"] == task]
+        if not task_rows:
+            for ax in axes[:, column]:
+                ax.set_axis_off()
+                ax.text(0.5, 0.5, "Current results unavailable", ha="center", va="center",
+                        transform=ax.transAxes, color="#777777")
+            axes[0, column].set_title(CONDITIONED_TASK_SPECS[task][0], fontweight="bold")
+            continue
         n_values = {int(row["n_queries"]) for row in task_rows}
         if len(n_values) != 1:
             raise ValueError(f"Mixed evaluation sizes for {task}: {sorted(n_values)}")
@@ -2118,13 +2150,13 @@ def plot_conditioned_progressive_configuration_comparison(
                 if row_index == 0:
                     offset = (7, -13, 20)[config_index % 3]
                     for x, y in (list(zip(levels, values)) if performance_only and not cross_model else [(levels[-1], values[-1])]):
-                        if performance_only:
+                        if performance_only or len(configurations) == 2:
                             peers = [float(row[field]) / divisor for row in task_rows if int(row["level"]) == x]
                             if config_index and all(abs(value - y) < 1e-12 for value in peers):
                                 continue
                             offset = 8 if y >= max(peers) else -14
                         label_y = y
-                        if performance_only:
+                        if performance_only or len(configurations) == 2:
                             point_index = levels.index(x)
                             label_y = upper[point_index] if offset > 0 else lower[point_index]
                         if cross_model:
@@ -2259,6 +2291,8 @@ def plot_conditioned_progressive_configuration_comparison(
         min(1.0, math.ceil((max(macro_values) + 0.015) * 50) / 50),
     )
     for column in range(len(tasks)):
+        if not axes[0, column].axison:
+            continue
         axes[0, column].set_ylim(*macro_limits)
         axes[0, column].text(
             0.99, 0.03, "Shared focused y-axis", transform=axes[0, column].transAxes,
@@ -2360,7 +2394,8 @@ def plot_conditioned_progressive_configuration_comparison(
     )
     reference_note = (
         "None is shared across configurations; baseline markers are task-specific "
-        "MiniMol/Morgan references and do not extend into resource panels.\n"
+        "MiniMol/Morgan references and do not extend into resource panels. "
+        "Condition-first KNN fallback follows each task's registered policy.\n"
         if reference_rows else ""
     )
     if cross_model:
@@ -2369,12 +2404,12 @@ def plot_conditioned_progressive_configuration_comparison(
     fig.text(
         0.055,
         0.175 if performance_only else 0.072,
-        ("All curves use the same test cohort, cumulative evidence and tools. None and query priors are model-specific.\n"
+        (f"All curves use the same {evaluation_subset} cohort, cumulative evidence and tools. None and query priors are model-specific.\n"
          "Dashed/open: full-flat; solid/filled: progressive. Right-side baselines are unchanged; KNN references are train-only.\n"
          "Whiskers show ±1 sample SD across repeated runs (not a confidence interval). Single-run curves have no estimated uncertainty interval."
          if cross_model and performance_only else
          "Each level uses identical cumulative evidence and tools; full-flat reasons independently, "
-         "progressive carries prior state.\nNone is shared. Right-side baselines use the same test cohort; "
+         f"progressive carries prior state.\nNone is shared. Right-side baselines use the same {evaluation_subset} cohort; "
          "KNN references are train-only.\n"
          + ("SD describes run-to-run variation with frozen inputs, not a confidence interval. None and baselines are single fixed references."
             if replicate_interval == "sd" else
@@ -2822,6 +2857,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--analysis-dir", default="")
     parser.add_argument("--output-stem", default="assay_retrieval_scaling")
     parser.add_argument(
+        "--omit-baseline-tasks", nargs="+", choices=tuple(CONDITIONED_TASK_SPECS), default=[],
+        help="Omit unavailable or stale task baselines from configuration figures; retain None and record omissions.",
+    )
+    parser.add_argument(
+        "--plot-tasks", nargs="+", choices=tuple(TASK_SPECS),
+        help="Ordered task columns for configuration comparisons; unavailable tasks stay explicitly empty.",
+    )
+    parser.add_argument(
         "--performance-only", action="store_true",
         help="For configuration comparisons, show only level Macro-F1 and baseline references.",
     )
@@ -2861,7 +2904,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--conditioned-progressive-overview",
         action="store_true",
         help=(
-            "Plot one unified three-task figure containing progressive performance, "
+            "Plot one column per supplied task containing progressive performance, "
             "None, current baselines, active molecules, cards per molecule, prompt "
             "tokens, and reasoning tokens."
         ),
@@ -2976,10 +3019,15 @@ def main(argv: list[str] | None = None) -> int:
                     args.omit_mismatched_progressive_baselines
                 ),
                 allow_model_comparison=args.allow_model_comparison,
+                omit_baseline_tasks=tuple(args.omit_baseline_tasks),
             )
         )
         summary["comparison_contract"]["performance_references"] = reference_summary
         summary["comparison_contract"]["replicate_interval"] = args.replicate_interval
+        plot_tasks = tuple(args.plot_tasks or summary["comparison_contract"]["tasks"])
+        if len(set(plot_tasks)) != len(plot_tasks) or not set(summary["comparison_contract"]["tasks"]) <= set(plot_tasks):
+            raise ValueError("--plot-tasks must contain each supplied task exactly once")
+        summary["plot_tasks"] = list(plot_tasks)
         if args.replicate_interval in {"sd", "sd_if_repeated"}:
             for row in rows:
                 _replicate_bounds(row, "macro_f1", args.replicate_interval)
@@ -3019,7 +3067,7 @@ def main(argv: list[str] | None = None) -> int:
             rows=rows,
             output_svg=figure_dir / f"{output_stem}.svg",
             output_png=figure_dir / f"{output_stem}.png",
-            tasks=tuple(comparison_contract["tasks"]),
+            tasks=plot_tasks,
             configurations=tuple(comparison_contract["configurations"]),
             reference_rows=reference_rows,
             split_scheme=str(comparison_contract["split_scheme"]),
@@ -3057,20 +3105,16 @@ def main(argv: list[str] | None = None) -> int:
         progressive_roots = _parse_task_path_overrides(
             args.conditioned_progressive_task_root
         )
-        expected_tasks = {"bbb_martins", "bioavailability_ma", "skin_reaction"}
-        if set(progressive_roots) != expected_tasks:
-            missing = sorted(expected_tasks - set(progressive_roots))
-            unexpected = sorted(set(progressive_roots) - expected_tasks)
+        if not progressive_roots or any(task not in TASK_SPECS for task in progressive_roots):
             raise ValueError(
-                "--conditioned-progressive-overview requires one current "
-                f"--conditioned-progressive-task-root per task; missing={missing}, "
-                f"unexpected={unexpected}"
+                "--conditioned-progressive-overview requires current "
+                "--conditioned-progressive-task-root entries for supported plot tasks"
             )
         if not args.analysis_dir:
             analysis_dir = (
-                progressive_roots["bbb_martins"].parent
+                next(iter(progressive_roots.values())).parent
                 / "analysis"
-                / "three_task_progressive_overview"
+                / "progressive_overview"
             )
         rows, summary = collect_conditioned_progressive_overview_data(
             progressive_roots_by_task=progressive_roots,
@@ -3089,7 +3133,7 @@ def main(argv: list[str] | None = None) -> int:
         output_stem = (
             args.output_stem
             if args.output_stem != "assay_retrieval_scaling"
-            else "three_task_progressive_overview"
+            else "progressive_overview"
         )
         plot_conditioned_progressive_overview(
             rows=rows,
@@ -3157,7 +3201,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     if args.relevance_decay_only:
-        tasks = list(TASK_SPECS)
+        tasks = [task for task, spec in TASK_SPECS.items() if spec.historical_best_condition]
         relevance_rows = _current_relevance_rows(tasks)
         analysis_dir.mkdir(parents=True, exist_ok=True)
         _write_tsv(analysis_dir / "assay_relevance_decay.tsv", relevance_rows)

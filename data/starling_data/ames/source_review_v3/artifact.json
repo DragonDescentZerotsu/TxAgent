@@ -1,0 +1,1898 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Ames 非投票记录语义审查：需要修正机械筛选",
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Ames 非投票记录语义审查：需要修正机械筛选\n\n2026-09-06 · TxAgent · 审查完成，候选尚未整合进活跃 gold"
+      },
+      {
+        "id": "answer",
+        "type": "markdown",
+        "body": "## 严格 gold 应落实到实验含义，而不是整段关键词\n\n逐条审阅 144 条非投票记录后，发现 10 条可按现有条件词汇进入补充投票审核，另有 7 条需要更丰富的条件，1 条已由同一研究同条件的另一条记录投票。其余记录分别缺上下文/原研究，存在身份问题，或没有可用的直接实验结果。这里的候选数不是新增 vote 数，也不是可新增分子数。当前 gold、split 和 index 均未改变。",
+        "sourceId": "review"
+      },
+      {
+        "id": "scope",
+        "type": "markdown",
+        "body": "## 统计单位是原始记录，不是分子或独立实验\n\n本次覆盖 96 条 ames_base 和其他三个 source 各 16 条，共 142 个 PMID、127 个非空 parent；133 条当前位于 L2，11 条是 audit-only。先按 15 类 base 排除原因、base 非 direct-family L2 和其他 run L2 抽取 120 条，再定向补充 24 条高优先级记录。原先的 91,511/334,211 = 27.4% 是原始 family 标记占比，不是人工审查后的保留率。\n\n各层样本配额不等、追加样本刻意寻找 direct 信息；不能将下面比例外推为总体误删率。",
+        "sourceId": "review"
+      },
+      {
+        "id": "findings",
+        "type": "markdown",
+        "body": "## 有漏掉的候选，也有必须保留的排除\n\n“needs_more_context=true”“weak_positive”“positive_control”“同时提到两种方法”都需要具体解释。它们有时掩盖明确实验，有时确实提示结果或条件不足。不能整体放开，也不能整体当作永久不合格。",
+        "sourceId": "review"
+      },
+      {
+        "id": "review_counts_chart",
+        "type": "chart",
+        "chartId": "review_counts"
+      },
+      {
+        "id": "counts",
+        "type": "table",
+        "tableId": "dispositions"
+      },
+      {
+        "id": "recover",
+        "type": "markdown",
+        "body": "## 明确实验被机制措辞、方法并列和用途标签挡下\n\n- **AMP397（ames_base:68578）**：原始抽取报告五株在 +S9 下两种方法均阴性；当前规则因同时出现平板掺入和预培养而拦截。这是 +S9 条件的候选，不能概括为该分子总体 Ames 阴性。\n- **1-nitropyrene-2-ol（ames_base:217918）**：+S9 的阳性明确；“possibly”修饰活性代谢物的位置，不是实验结果。当前已有 -S9 阴性票，两臂应分开。\n- **4NQO / Trp-P-1（ames_base:22360 / 89734）**：给出了实测阳性对照回复菌落数；应与“只列为阳性对照、没有结果”的记录区别审核。\n- **HEMF / AHTN（ames_base:245968 / 11149）**：前者明确 TA100-S9 阳性，后者报告七株 ±S9 阴性及有效阳性对照；上下文标志和沉淀说明应进入具体审核。\n\n10 条现有条件候选中 6 条已有 source name-parent 核验，3 条名称未查，1 条来自没有 molecule_name 字段的其他 run。即使身份已核验，仍须按逐条要求核对结果表、条件与 study 去重。",
+        "sourceId": "review"
+      },
+      {
+        "id": "primary",
+        "type": "markdown",
+        "body": "## 原始文献核验支持部分恢复，也纠正了一个看似可直接投票的来源\n\nPubMed 原始摘要确认了 1-nitropyrene-2-ol 的 +S9 阳性/-S9 阴性、HEMF 的 TA100-S9 阳性，以及 TNX 在 TA100+S9 的弱致突变且无观察到的细胞毒性。弱效力不能自动等同于 equivocal。AHTN 的摘要也报告了明确 strain panel 和 ±S9 下的 Ames 阴性。\n\npaepalantine 的 ames_v1:45744 正文包含完整的三株 ±S9 阳性，但其 PMID15720259 是综述。已找到相应原研究 PMID9261922；恢复时必须追溯原实验，并按原研究去重，不能给综述单独增加一票。",
+        "sourceId": "pubmed"
+      },
+      {
+        "id": "cross",
+        "type": "markdown",
+        "body": "## 跨 run 可以恢复直接结果，但必须重建目标 outcome\n\names_v3:556955 的 `no_effect` 指 MNUA 致突变不依赖 lexA，并不意味着 Ames 阴性；正文说明它在 WP2 与 WP2 lexA 均诱发回复突变。可提出 WP2/-S9 阳性候选，但还需核验来源中的化合物名称映射和方法。其他记录的 positive/negative 可能属于染色体、DNA adduct 或 SOS reporter，不能直接搬成 Ames 标签。\n\n一个合格 TA100+S9 描述（ames_base:277608）已有 ames_base:277613 代表同研究同条件投票。它应补充出处而不是新增票；L2 中有有效描述不必然代表漏掉独立实验。",
+        "sourceId": "review"
+      },
+      {
+        "id": "conditions",
+        "type": "markdown",
+        "body": "## 特殊方法需要保留条件，不代表实验质量低\n\nOECD 471 描述平板掺入、预培养等方法，并讨论气体/挥发性物质的测试与有科学理由的方法调整。方法名称本身不构成否定细菌回复突变的理由。我们构造的是指定条件下的文献结果，不应把它误称为每条都完成了完整监管测试组合。",
+        "sourceId": "oecd"
+      },
+      {
+        "id": "condition_cases",
+        "type": "markdown",
+        "body": "## 当前 strain×S9 签名不能容纳所有真实实验差异\n\nCrotonaldehyde 同一菌株在平板掺入为阴性、液体预培养为阳性；benzidine 在膀胱活化系统与肝活化系统不同。这样的记录不能机械排除为非 Ames，也不能去掉条件直接合成普通 +S9 票。气相暴露、光照/pH、特定酶/辅因子和基因型也需要在影响解释时保留。七条 richer-condition 候选是后续条件设计与审核输入，不是已发布的新 condition。",
+        "sourceId": "review"
+      },
+      {
+        "id": "limits",
+        "type": "markdown",
+        "body": "## 真正的非投票原因与本轮边界\n\n49 条本窗口没有可用直接实验票，包括仅预测、仅方法或对照用途、不同终点、别的分子受影响，以及明确 equivocal/无法评价的结果；这不等于它们都没有检索价值。67 条仍需上下文或原始研究；10 条有身份/受试物问题，其中既有明确结构矛盾，也有需要图表才能确认的疑点。\n\n这是 Codex 对完整 supplied records 的逐条语义阅读，并补查 15 篇 PubMed 元数据和摘要；不是人类专家标注，也不是 144 篇全文审查。原始抽取的语义错误、字段缺失和综述来源仍可能存在。未进行模型性能实验，也未估计全量可新增分子数。",
+        "sourceId": "review"
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "body": "## 下一次 gold 修订应同时检查纯度和遗漏\n\n1. 从四个 source 统一形成 direct 审核队列；原始 run/family 和整段关键词只用于优先级与提示。\n2. 逐条解析受试分子、实测 endpoint、结果、实验臂和 primary study；本轮的 10+7 条候选及 67 条待追溯记录保留明确后续要求。\n3. 完成身份核验，跨 run 合并 PMID×parent×condition，解决同研究冲突；保留有条件 60%、无条件 70% agreement 与去 tie 规则。缺必要条件不能自动变成无条件样本。\n4. 只有实际输出的 study-unit representative 进入 L1。未解决的 direct 相关记录仍限 L2，不能移入 L3–L5。\n5. 重建 benchmark、split 和 heldout-filtered indices 后核验，再进行模型评估。\n\n待解决的问题是可推广的语义审核规则、特殊条件表达和原文可获得性。当前纯度/泄漏检查通过，不代表 gold 覆盖已经完整。",
+        "sourceId": "review"
+      },
+      {
+        "id": "ledger",
+        "type": "markdown",
+        "body": "## 每条记录都有结论与来源\n\n下表列出全部 144 条。完整原始字段见 sample.jsonl；提议标签、条件、剩余核验要求和已有 study-vote 对照见 audit_annotations.jsonl；抽样与统计复现见 review.ipynb。",
+        "sourceId": "review"
+      },
+      {
+        "id": "details",
+        "type": "table",
+        "tableId": "reviews"
+      }
+    ],
+    "sources": [
+      {
+        "id": "review",
+        "label": "144 条逐条语义审查及当前 source 审计",
+        "path": "data/starling_data/ames/source_review_v3/audit_annotations.jsonl",
+        "description": "Full raw records: sample.jsonl; reproducible sampling: review.ipynb; lineage and sampling denominators: summary.json. Unequal strata and targeted followup; no population error-rate estimate."
+      },
+      {
+        "id": "pubmed",
+        "label": "NCBI PubMed：15 篇文献元数据和摘要",
+        "path": "data/starling_data/ames/source_review_v3/pubmed_evidence.xml",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=15720259,378447,25765378,9651047,12113769,6720027,17360228,11018744,3893781,375954,9261922,10613187,8377651,30268793,2067537&retmode=xml"
+      },
+      {
+        "id": "oecd",
+        "label": "OECD Test Guideline 471 (2020)",
+        "url": "https://www.oecd.org/en/publications/test-no-471-bacterial-reverse-mutation-test_9789264071247-en.html"
+      },
+      {
+        "id": "counts_sql",
+        "label": "SQLite：逐条审核处置计数",
+        "path": "data/starling_data/ames/source_review_v3/review.ipynb",
+        "query": {
+          "engine": "sqlite",
+          "sql": "SELECT disposition, COUNT(*) AS records FROM main.review_decisions GROUP BY disposition ORDER BY records DESC, disposition",
+          "tables": [
+            "main.review_decisions"
+          ],
+          "description": "In-memory table loaded solely from authored audit_annotations.jsonl; one row per reviewed source record; Chinese disposition names mapped without changing categories."
+        }
+      },
+      {
+        "id": "details_sql",
+        "label": "SQLite：全部 144 条审核记录",
+        "path": "data/starling_data/ames/source_review_v3/review.ipynb",
+        "query": {
+          "engine": "sqlite",
+          "sql": "SELECT number, id, pmid, decision, rationale, identity, support_text, extra_details, remaining_requirements FROM main.review_records ORDER BY number",
+          "tables": [
+            "main.review_records"
+          ],
+          "description": "Loaded from audit_annotations.jsonl joined to sample.jsonl by exact source record id; rationale is individually authored, not inferred by SQL."
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "dispositions",
+        "title": "144 条审查记录的处置",
+        "subtitle": "不等额分层加定向抽样；仅描述本批记录，不推算全量比例",
+        "dataset": "counts",
+        "sourceId": "counts_sql",
+        "defaultSort": {
+          "field": "records",
+          "direction": "desc"
+        },
+        "columns": [
+          {
+            "field": "disposition",
+            "label": "处置",
+            "type": "text"
+          },
+          {
+            "field": "records",
+            "label": "记录数",
+            "type": "number"
+          }
+        ]
+      },
+      {
+        "id": "reviews",
+        "title": "逐条语义审查",
+        "subtitle": "原始 record ID + PMID；候选尚未写入活跃 gold",
+        "dataset": "reviews",
+        "sourceId": "details_sql",
+        "defaultSort": {
+          "field": "number",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "number",
+            "label": "序号",
+            "type": "number"
+          },
+          {
+            "field": "id",
+            "label": "原始记录",
+            "type": "text"
+          },
+          {
+            "field": "pmid",
+            "label": "PMID",
+            "type": "text"
+          },
+          {
+            "field": "decision",
+            "label": "处置",
+            "type": "text"
+          },
+          {
+            "field": "rationale",
+            "label": "逐条结论",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "review_counts",
+        "title": "待补充上下文的记录多于可直接进入投票审核的候选",
+        "subtitle": "144 条已审查记录；不等额分层和定向抽样，不能外推总体误拦率",
+        "type": "bar",
+        "dataset": "counts",
+        "sourceId": "counts_sql",
+        "encodings": {
+          "x": {
+            "field": "disposition",
+            "type": "nominal",
+            "label": "审核处置"
+          },
+          "y": {
+            "field": "records",
+            "type": "quantitative",
+            "label": "记录数"
+          }
+        },
+        "orientation": "horizontal",
+        "intent": "comparison",
+        "question": "本批非投票记录分别需要什么处置？",
+        "rationale": "Compare counts within the reviewed batch only; horizontal bars keep long disposition labels readable. No population extrapolation.",
+        "palette": {
+          "kind": "sequential",
+          "name": "blue"
+        }
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-09-06T18:47:43.718038+00:00",
+    "status": "ready",
+    "datasets": {
+      "counts": [
+        {
+          "disposition": "需上下文或原始研究",
+          "records": 67
+        },
+        {
+          "disposition": "本条不是可用的直接实验票",
+          "records": 49
+        },
+        {
+          "disposition": "现有条件下的投票审核候选",
+          "records": 10
+        },
+        {
+          "disposition": "身份或受试物问题",
+          "records": 10
+        },
+        {
+          "disposition": "需补充条件定义的候选",
+          "records": 7
+        },
+        {
+          "disposition": "实验合格，但已有同研究同条件票",
+          "records": 1
+        }
+      ],
+      "reviews": [
+        {
+          "number": 1,
+          "id": "ames_base:277608",
+          "pmid": "3893781",
+          "decision": "实验合格，但已有同研究同条件票",
+          "rationale": "TA100 的括号是在解释菌株背景，不是第二个不明菌株；本文报告剂量相关阳性。现有 ames_base:277613 已覆盖同一 PMID-parent-TA100+S9，只能补来源，不能再加票。",
+          "identity": "verified_parent_match",
+          "support_text": "In the mutagenicity assay toward Salmonella typhimurium TA100, dose-dependent mutagenic activity was observed for 1,3-dimethylbenzo[b]fluoranthene (1,3-diMeBbF); the other methylated BbF derivatives tested were inactive at the doses tested. Thus 1,3-diMeBbF was a mutagenic (positive) test substance.",
+          "extra_details": "Dose-dependent mutagenic activity observed in the S. typhimurium TA100 assay (means of duplicate assays); S9 fraction from livers of male Fischer 344 rats treated with Aroclor-1254 (500 mg/kg). 1,3-diMeBbF (>99% pure) was also a strong tumor initiator with activity greater than BbF.",
+          "remaining_requirements": "Already represented; attach supporting provenance instead of creating a second vote."
+        },
+        {
+          "number": 2,
+          "id": "ames_base:27385",
+          "pmid": "26003925",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述中的 Ames 阳性总结，缺菌株和活化；触发比较词不是主要问题，需追原研究。",
+          "identity": "not_queried",
+          "support_text": "Among non-carcinogens/non-genotoxic carcinogens that were BSHC positive, no in vitro mammalian data were found for 4-Hydroxy-2,5-dimethyl-3(2H)furanone: it was Ames positive.",
+          "extra_details": "Ames positive; no in vitro mammalian mutagenicity data found; BSHC positive only at concentrations exceeding 1 mM; also tested negative in a 2y carcinogenicity study and in a dominant lethal test in mouse.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 3,
+          "id": "ames_base:149962",
+          "pmid": "3698943",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述汇总多个菌株和大鼠/仓鼠 S9；结构化 panel 漏 TA97。需追原试验并核实完整 panel 与活化来源。",
+          "identity": "verified_parent_match",
+          "support_text": "Genetic toxicity table for ethylene dibromide (CAS 106-93-4) in Salmonella Typhimurium TA strains: TA100 +/+, TA1535 +/+, TA97 -/-, TA98 +/+, where the first symbol is without and the second with S9. This shows positive Salmonella mutagenicity with and without S9 in TA100, TA1535, and TA98. Also positive in Drosophila SLRL/HT and mouse lymphoma TK (+/+).",
+          "extra_details": "Ames mutagenic in TA100 (+/+), TA1535 (+/+), and TA98 (+/+) with and without S9; TA97 negative (-/-). Salmonella tests used S9 from Aroclor 1254-induced Sprague-Dawley rat and Syrian hamster liver.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 4,
+          "id": "ames_base:47511",
+          "pmid": "7143479",
+          "decision": "身份或受试物问题",
+          "rationale": "引用多篇实验且盐包含多个有机组分；不同文献的 S9 结论不同。不能把盐和多研究合成单个票。",
+          "identity": "verified_parent_match",
+          "support_text": "Reverse bacterial mutagenesis studies with DMSO-solubilized pyrvinium pamoate by MacPhee and Podger (1977) and de la Iglesia et al. (1982) demonstrated unequivocal intrinsic frameshift and base-substitution activity in Salmonella strains TA98 and TA100 only in the presence of S9 fraction from Aroclor-1254 induced rat liver; Espinosa et al. (1981) reported similar findings and detected activity without metabolic activation.",
+          "extra_details": "Promutagen: frameshift and base-substitution activity, DMSO-solubilized; activity observed only with S9 fraction from Aroclor-1254-induced rat liver (MacPhee & Podger 1977; de la Iglesia et al. 1982); Espinosa et al. 1981 reported detection of activity without metabolic activation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 5,
+          "id": "ames_base:137455",
+          "pmid": "339071",
+          "decision": "需补充条件定义的候选",
+          "rationale": "确实报告本分子在 TA100 的弱致突变；human liver activation 是可表达的条件，不代表非 Ames。需保留人肝活化来源及弱结果判读。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Ames quantitative mutagenicity test using Salmonella typhimurium TA 100, a generally low mutagenic activity was observed in the capability of human liver enzymes to activate the polynuclear aromatic hydrocarbon 3-methylcholanthrene.",
+          "extra_details": "Ames quantitative mutagenicity test; human liver post-mitochondrial supernatant (10 individuals) as activation source; tested at 10, 50 and 500 µg per plate; DMSO solvent.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 6,
+          "id": "ames_base:217781",
+          "pmid": "3920514",
+          "decision": "身份或受试物问题",
+          "rationale": "正文 BP 明确为 benzo[a]pyrene，SMILES 却是环状硅氧烷；身份拦截正确，不能因有 Ames 结果而放行。",
+          "identity": "name_structure_mismatch",
+          "support_text": "For BP (benzo[a]pyrene), Tween 80 alone or formulated with the oils or liquid paraffin gave essentially the same results as in the absence of Tween 80, indicating BP mutagenicity was detected in the assay (consistent with the prior description that effects of oils on BP mutagenicity were determined as described for BA).",
+          "extra_details": "BP (benzo[a]pyrene) mutagenicity determined in S. typhimurium TA98 with S9 mix; effects of oils/liquid paraffin/Tween 80 on its mutagenicity essentially unchanged versus no Tween 80 (data not shown).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 7,
+          "id": "ames_base:258649",
+          "pmid": "33437655",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "只列阳性对照的用途与方法，没有该化合物实际结果；两种方法不是根本问题。",
+          "identity": "not_queried",
+          "support_text": "In the Ames test, positive controls in the absence of S9-mix were 4-nitro-1,2-phenylenediamine (NPD), sodium azide (SAZ), 9-aminoacridine (9AA) and methylmethanesulfonate (MMS); in the presence of S9-mix the positive control was 2-aminoanthracene (2AA) in the plate-incorporation and confirmatory pre-incubation experiments with S. typhimurium TA98, TA100, TA1535, TA1537 and E. coli WP2 uvrA.",
+          "extra_details": "Designated Ames positive control in the absence of S9-mix; DMSO was the vehicle control. Plate incorporation and confirmatory pre-incubation procedures; revertant colonies counted manually after incubation at 37 °C for 48 h.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 8,
+          "id": "ames_base:68578",
+          "pmid": "12113769",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "同一分子在五株、+S9 的平板掺入和预培养结果均无回复菌落增加；方法并列不造成标签冲突。-S9 的阳性不能覆盖本 +S9 阴性。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Ames test tables (plate incorporation and pre-incubation), AMP397 gave essentially no increase in revertant numbers across strains TA1535, TA97a, TA98, TA100, and TA102 in the presence of rat liver S9 up to 4400 µg/plate.",
+          "extra_details": "No concentration-dependent revertant increase with S9 in plate incorporation or pre-incubation; precipitation of test compound noted at 4400 µg/plate in plate incorporation.",
+          "remaining_requirements": "Review exact +S9 tables; permit concordant measured methods, preserve the distinct -S9 positive arm; current source identity is verified."
+        },
+        {
+          "number": 9,
+          "id": "ames_base:148599",
+          "pmid": "2671709",
+          "decision": "需上下文或原始研究",
+          "rationale": "液体预培养是直接回复突变，但该记录明确引用 Arni/Müller 1986；应追原研究而非算当前 PMID 的独立实验。",
+          "identity": "not_queried",
+          "support_text": "When a liquid incubation system was used, thioacetamide itself was also found to induce mutants with strains TA100 and TA1535 at concentrations of 90 µg/ml in the absence and in the presence of an S9 mixture (Arni and Müller, 1986).",
+          "extra_details": "Mutant induction at 90 µg/ml both in the absence and in the presence of an S9 mixture.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 10,
+          "id": "ames_base:227799",
+          "pmid": "2263204",
+          "decision": "需上下文或原始研究",
+          "rationale": "确有 hisC3108 回复突变；菌株是 SB1111，活化不明且无机物当前不投票。不是方法词就能决定无效。",
+          "identity": "verified_parent_match",
+          "support_text": "Hydrogen peroxide reverted all the hisC3108 strains SB1111, SB1106, and SB1106p in both the SPI and PRE protocols. Strain SB1111, carrying only the hisC3108 mutation, gave a weak positive response without exhibiting toxic effects at the H₂O₂ concentrations used.",
+          "extra_details": "Positive (though weak) in both SPI (plate incorporation) and PRE (preincubation?) protocols; no toxicity observed at the concentrations tested.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 11,
+          "id": "ames_base:90498",
+          "pmid": "2843765",
+          "decision": "需上下文或原始研究",
+          "rationale": "selenite 清除/加 cysteine 方法影响细胞毒性和反应物；需拆分处理臂并审核金属身份、活化、对照，不宜简单正负归并。",
+          "identity": "not_queried",
+          "support_text": "The mutagenicity of selenite was investigated using tester strain TA104 in the Salmonella mutagenicity assay. Because TA104 was very sensitive to killing in the standard plate incorporation procedure, a modified procedure (preincubation of TA104 with selenite for 20 min followed by treatment with cysteine, or removal of selenite by centrifugation) was used, and selenite was detected as a mutagen. A control in which cysteine was added before selenite, exposing cells to oxygen radicals produced by the reaction of selenite and cysteine without exposure to selenite alone, showed no significant mutagenic response.",
+          "extra_details": "Spontaneous revertants per plate of 274 (plus cysteine) and 240 (minus cysteine) were subtracted. With the centrifugation-based removal procedure, toxicity appeared at a much lower selenite concentration, attributed to increased exposure time; shortening preincubation and centrifugation times shifted the maximal mutagenic response to a higher selenite concentration. The tester strain TA104 is used to detect oxidizing agents as mutagens.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 12,
+          "id": "ames_base:285857",
+          "pmid": "7010151",
+          "decision": "需补充条件定义的候选",
+          "rationale": "同一 TA100 在平板掺入为阴性、液体预培养为阳性；必须把方法加入 condition，不能用当前 strain×S9 签名混成一票。",
+          "identity": "verified_parent_match",
+          "support_text": "In the liquid-suspension method with 0.1 M phosphate buffer (pH 7.4) (Method B), crotonaldehyde showed a distinct dose-response relationship and was mutagenic for strain TA100 even in the absence of S9 mix. Method A (plate-incorporation) gave negative results both with and without S9 mix, but Method B gave positive results.",
+          "extra_details": "Buffer (0.1 M phosphate, pH 7.4) liquid-suspension method, 90 min incubation at 37°C in closed tubes, 10 µl crotonaldehyde in DMSO added; mutagenic even without S9 mix. Optimal yield of about 1600 revertants per plate at a dosage of 0.1 µl crotonaldehyde per ml (without S9). With S9 mix a marked reduction of mutagenic potential was observed, correlating with other directly acting allylic mutagenic compounds. Means of three independent experiments, average deviation ≤15%.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 13,
+          "id": "ames_base:328224",
+          "pmid": "15147798",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "OTA 是一般性 mutagen 称谓且引用他文，没有本条 Ames 实验。",
+          "identity": "verified_parent_match",
+          "support_text": "In the introduction, the authors state that, apart from nephrotoxic and carcinogenic effects, there is now evidence of hepatotoxic, teratogenic, mutagenic and immunosuppressive properties of the mycotoxin ochratoxin A (OTA), citing Petzinger and Ziegler (2000) and Walker (2002). This is a narrative mutagen designation for OTA rather than a specific assay result.",
+          "extra_details": "General known-mutagen statement; OTA is additionally described as having nephrotoxic, carcinogenic, hepatotoxic, teratogenic and immunosuppressive properties, cited to Petzinger and Ziegler, 2000 and Walker, 2002. No specific mutation/chromosome assay or Ames result is described for OTA in this paper.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 14,
+          "id": "ames_base:109378",
+          "pmid": "7968583",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Klebsiella 波动实验不属于当前 Salmonella/E. coli 氨基酸回复突变目标；还存在同位素结构需核实。",
+          "identity": "not_queried",
+          "support_text": "In the test battery of Kramers and colleagues, methyl bromide gave about a 6-fold increase in a fluctuation test with Klebsiella pneumoniae, indicating mutagenic activity in this bacterial fluctuation test.",
+          "extra_details": "About 6-fold increase in the fluctuation test; Kramers et al., 1985.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 15,
+          "id": "ames_base:331194",
+          "pmid": "26343528",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "STZ 的胰岛细胞毒性/烷基化及 mutagen 称谓，不是本条细菌回复突变结果。",
+          "identity": "not_queried",
+          "support_text": "The text states that STZ (2-Deoxy-2-[(methylnitrosoamino)carbonyl]amino)-D-glucopyranose) is a DNA alkylating agent and mutagenic toxin for the pancreatic β-cells, leading to their damage and death (citing Lenzen, 2008a). This is an explicit designation of STZ as a mutagenic substance.",
+          "extra_details": "STZ is described as a DNA alkylating agent and mutagenic toxin for pancreatic β-cells causing their damage and death; used to induce experimental diabetes in rats; chemical name 2-Deoxy-2-[(methylnitrosoamino)carbonyl]amino)-D-glucopyranose; attribution per Lenzen 2008a.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 16,
+          "id": "ames_base:281463",
+          "pmid": "509687",
+          "decision": "需上下文或原始研究",
+          "rationale": "引用 ENU/MNU 活性比较，没有具体细菌回复系统和活化；需原研究。",
+          "identity": "verified_parent_match",
+          "support_text": "The introduction states that several investigators have compared the N-methyl and N-ethyl derivatives of N-nitrosourea (MNU and ENU) and have found ENU to be more mutagenic than MNU at equal survival levels [3-7], providing a cited-experiment basis for the mutagenicity of both MNU and ENU.",
+          "extra_details": "Cited comparison [3-7] reporting ENU more mutagenic than MNU at equal survival levels; also cites bacteriophage/repair studies and estimates of 0.35 mutations per O-6-ethylguanine. Assay family and context not specified in this passage.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 17,
+          "id": "ames_base:237241",
+          "pmid": "7859586",
+          "decision": "身份或受试物问题",
+          "rationale": "nitrosated cimetidine 产物自身未明确表征；不能把未确定产物的混合试验归给一个指定结构。",
+          "identity": "not_queried",
+          "support_text": "Short-term studies in vitro showed mutagenic activity in Salmonella typhimurium, E. coli, and Saccharomyces cerevisiae with nitrosated cimetidine (references 65-67). These nitrosation experiments reacted high concentrations of drug with excess nitrate in HCl, conditions the authors note are unlikely to be met in clinical use, and in none of the studies was there unequivocal characterization of the N-nitroso derivative generated by exposure to nitrite.",
+          "extra_details": "Review synthesis of cited short-term in vitro studies (refs 65-67); nitrosation procedure generally involved reacting high concentrations of drug with excess nitrate in HCl, conditions the authors emphasize are unlikely to be met in clinical use.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 18,
+          "id": "ames_base:319362",
+          "pmid": "33642212",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "光照下成纤维细胞突变，是不同细胞/暴露终点，不是 Ames。",
+          "identity": "not_queried",
+          "support_text": "The paper states that toluidine blue is expensive and has relatively toxic effects on fibroblasts, inducing mutagenesis of stained cells under high energy irradiation (reference 47 within the paper).",
+          "extra_details": "Toluidine blue (tolonium chloride) also reported as expensive and hazardous if swallowed; mutagenic effect described as induction of mutagenesis in stained cells under high-energy irradiation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 19,
+          "id": "ames_base:258553",
+          "pmid": "1986274",
+          "decision": "需上下文或原始研究",
+          "rationale": "Maillard 产物被引用为弱 mutagen；缺实验类型、菌株、活化和原始研究信息。",
+          "identity": "not_queried",
+          "support_text": "Spingarn and Garvie [4] isolated mutagenic 2-methylpyrazine from D-glucose-NH3, identified among weak mutagens formed via the Maillard reaction.",
+          "extra_details": "Designated mutagenic in the Maillard reaction; isolated from D-glucose-NH3 (reference [4]); no specific assay family given.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 20,
+          "id": "ames_base:37052",
+          "pmid": "6051828",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "真核回复突变及剂量依赖的突变谱比较，不是当前 Ames 目标。",
+          "identity": "not_queried",
+          "support_text": "The ratio of the reversion frequencies obtained with ICR-170 in mutants that revert by a base-pair insertion or deletion and those obtained in mutants that revert by another mechanism decreases with increasing dose of ICR-170. This means that the specificity of ICR-170 to induce base-pair insertions and deletions decreases with increasing dose and that the specificity for this particular genetic activity is most pronounced at a high level of survival.",
+          "extra_details": "Dose-dependent specificity: the ratio of frameshift (insertion/deletion) revertants to base-pair substitution revertants falls with increasing ICR-170 dose; frameshift specificity is strongest at high survival (low dose). The relative frequency of the two activities can only be determined in a forward-mutation experiment, which the paper states is in progress.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 21,
+          "id": "ames_base:205394",
+          "pmid": "14535235",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "白细胞 comet DNA 损伤，mutagen 称谓不能提供 Ames 标签。",
+          "identity": "verified_parent_match",
+          "support_text": "In a study of DNA-repair phenotypes, DNA damage induced by bleomycin or S9-activated benzo(a)pyrene was determined in peripheral blood leukocytes using an alkaline comet assay; laryngeal cancer subjects (n=52) showed higher levels of spontaneous and mutagen-induced DNA damage than healthy controls (n=56). Bleomycin and benzo(a)pyrene are explicitly referred to as 'the both used mutagens'.",
+          "extra_details": "Used as a mutagen to induce DNA damage in peripheral blood leukocytes; higher mutagen-induced DNA damage and lower efficient-repair fraction were seen in laryngeal cancer subjects (n=52) versus controls (n=56).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 22,
+          "id": "ames_base:7898",
+          "pmid": "16291527",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述中的明确 bacterial reverse mutation 定量结果，有恢复价值；应追原始 PMID 并跨引用去重。",
+          "identity": "verified_parent_match",
+          "support_text": "In the review summary (Table 8, footnote b) CMCF (3-chloro-4-(chloromethyl)-5-hydroxy-2(5H)-furanone) induced bacterial reverse mutations in Salmonella typhimurium without exogenous activation, with revertant potencies relative to MX of 0.47 (TA97), 0.016 (TA98) and 0.12 (TA100).",
+          "extra_details": "Equivalent to CMCF. Relative revertant potencies vs MX (1.0): TA97 0.47, TA98 0.016, TA100 0.12 (refs 7, 43, 55, 147).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 23,
+          "id": "ames_base:294215",
+          "pmid": "15374956",
+          "decision": "需上下文或原始研究",
+          "rationale": "细菌相对活性而非明确试验结果，缺菌株和 S9，且 platinum 当前身份范围未支持。",
+          "identity": "verified_parent_match",
+          "support_text": "The paper states that oxaliplatin is less mutagenic in bacteria than cisplatin (reference 3), implying both platinum agents display mutagenic activity in bacteria, with oxaliplatin weaker.",
+          "extra_details": "Mutagenic in bacteria per cited reference 3; exact assay strain, S9 condition, doses, and frequencies not given in this paper.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 24,
+          "id": "ames_base:81262",
+          "pmid": "6119816",
+          "decision": "需上下文或原始研究",
+          "rationale": "阳性是引用 Wade/Bartsch 的原研究；补菌株及原始实验 PMID。",
+          "identity": "verified_parent_match",
+          "support_text": "Vinyl bromide was found to be mutagenic with (metabolic) activation by Wade et al [15] and Bartsch et al [16], respectively.",
+          "extra_details": "Reported mutagenic with activation by Wade et al [15] and by Bartsch et al [16].",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 25,
+          "id": "ames_base:279342",
+          "pmid": "6681862",
+          "decision": "需上下文或原始研究",
+          "rationale": "当前实验与既往结果一致，引用词误拦了本研究结果；但该片段仍缺准确菌株和 S9，不能立即投票。",
+          "identity": "verified_parent_match",
+          "support_text": "The individual nitropyrene isomers (1-NP, 1,3-DNP, 1,6-DNP, 1,8-DNP, 1,3,6-TNP) were tested in Salmonella typhimurium and their mutagenicity was similar to that reported by Mermelstein et al. (1981), i.e., positive bacterial mutagenicity.",
+          "extra_details": "Reported as a group statement applying to all five purified nitropyrene isomers; mutagenicity similar to that reported by Mermelstein et al. (1981).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 26,
+          "id": "ames_base:11136",
+          "pmid": "26212295",
+          "decision": "需上下文或原始研究",
+          "rationale": "技术品与杂质可能贡献结果，且是引用；应确认原研究测试物组成和 panel，不能按纯分子直接赋值。",
+          "identity": "not_queried",
+          "support_text": "1,3-Dichloropropene (technical grade) was positive in the Ames test (±metabolic activation) [33], and both positive and negative results were reported in the in vitro CA test [12,48].",
+          "extra_details": "Positive in the Ames test with and without metabolic activation [33]; in vitro CA results were both positive and negative [12,48]. Oxidation can form the extremely mutagenic α-chloroacrolein; GSH depletion at higher doses influences in vivo genotoxicity findings.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 27,
+          "id": "ames_base:280011",
+          "pmid": "113678",
+          "decision": "需上下文或原始研究",
+          "rationale": "明确是引用 Bartsch 的 Salmonella 结果，缺 strain/S9；应追原研究。",
+          "identity": "not_queried",
+          "support_text": "The paper cites Bartsch et al. showing vinyl bromide was a mutagen in some histidine-requiring strains of Salmonella typhimurium, and notes (unpublished data) that vinyl bromide was also active in producing recessive-lethal mutations in Drosophila.",
+          "extra_details": "Mutagenic in some histidine-requiring S. typhimurium strains (Ames-type bacterial reverse mutation) per Bartsch et al.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 28,
+          "id": "ames_base:140842",
+          "pmid": "29964313",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "只列 sodium azide 为阳性对照，无实测回复菌落结果；不能用对照名称生成票。",
+          "identity": "verified_parent_match",
+          "support_text": "Mutagenicity was assessed by the Ames test using Salmonella typhimurium tester strains TA98 and TA100. The standard mutagens used as positive controls in experiments without the S9 mix were 4-nitroquinoline 1-oxide (4NQO, 5 µg/plate) for TA98 and sodium azide (NaN₃, 5 µg/plate) for TA100.",
+          "extra_details": "Used as the standard mutagenic positive control (5 µg/plate) in the Ames test without the S9 mix. Also written as NaN₃.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 29,
+          "id": "ames_base:192117",
+          "pmid": "6772179",
+          "decision": "需上下文或原始研究",
+          "rationale": "AFB1 自身有实测回复菌落，pretreatment 修饰的是活化供体。仍需菌株和各 microsome 处理臂，不是所有关系词都应硬排除。",
+          "identity": "verified_parent_match",
+          "support_text": "With AFB₁ used as substrate in the Ames-type mutagenesis assay, the highest frequency of revertant colonies was observed at 200 ng per incubation in the presence of hepatic microsomes (0.5 mg protein). Mutation frequency was several-fold higher than that obtained with benzo(a)pyrene, and revertant yield was dependent on the concentration and source of hepatic microsomal protein.",
+          "extra_details": "Metabolic activation was required; revertant colonies peaked at 200 ng AFB₁/incubation. Revertant number was several-fold higher than with benzo(a)pyrene regardless of microsome source. Pretreatment of Ah-responsive C57B1/6 mice with 3MC or βNF substantially depressed formation of mutagenic metabolites of AFB₁ (consistent with enhanced detoxification to AFM₁), whereas pretreatment of Ah-nonresponsive DBA/2 mice had no effect.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 30,
+          "id": "ames_base:154480",
+          "pmid": "7590525",
+          "decision": "需上下文或原始研究",
+          "rationale": "阳性对照有净诱发回复菌落计数，是真实实验信息；缺活化，需要核实后按实测而非用途审核。",
+          "identity": "verified_parent_match",
+          "support_text": "IQ (2-amino-3-methylimidazo[4,5-f]quinoline) was used as a positive control (standard) in the Salmonella TA98 revertant (Ames) assay, inducing 629 revertants per plate (range 474 to 769) at 2.5 ng/plate after subtraction of spontaneous DMSO-control revertants.",
+          "extra_details": "Ames/Salmonella reverse-mutation positive control (IQ, alias 2-amino-3-methylimidazo[4,5-f]quinoline). Dose 2.5 ng/plate; induced revertants 629 per plate, range 474-769. Plate counted 48 hr at 37°C; spontaneous DMSO-negative-control revertants (20-38/plate) subtracted.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 31,
+          "id": "ames_base:73116",
+          "pmid": "1094469",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "TA1538 的自身回复突变结果被描述为 S9 增强；presumably 只修饰机制，amino oxidation 触发关系词不等于 co-treatment。候选保留原 both_reported pooled 范围。",
+          "identity": "verified_parent_match",
+          "support_text": "The mutagenic activity of 2-amino-4-nitrophenol in reverting strain TA1538 is much greater if microsomes (S-9) are added, and since it has an amino group the activation presumably involves an amino oxidation in addition to, or instead of, a nitro reduction.",
+          "extra_details": "Compound with amino and nitro groups; mutagenic activity much greater with microsomal (S-9) activation, implying activity both with and without S-9; activation thought to involve amino oxidation.",
+          "remaining_requirements": "Review the S9 comparison and preserve only the source pooled both_reported scope; mechanism uncertainty must not disqualify the measured outcome."
+        },
+        {
+          "number": 32,
+          "id": "ames_base:22360",
+          "pmid": "30268793",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "4NQO 在 TA98、-S9 有 532±27 实测回复菌落且显著高于阴性对照；应区分实测阳性对照与只列对照用途。提议纳入需修订并审核 reference-use 规则。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Salmonella reverse-mutation (Ames) assay, 4-nitroquinoline N-oxide (4NQO) was used as a positive control and, at 0.5 µg/plate without S9, produced 532 ± 27 revertant colonies per plate in strain TA98, significantly different from the negative control (p < 0.05).",
+          "extra_details": "0.5 µg/plate; 532 ± 27 revertants/plate; dissolved in DMSO; mean ± SD of three plates.",
+          "remaining_requirements": "Check the positive-control results table and formally distinguish measured controls from control-name mentions; preserve study deduplication."
+        },
+        {
+          "number": 33,
+          "id": "ames_base:149265",
+          "pmid": "8760390",
+          "decision": "需上下文或原始研究",
+          "rationale": "Dimetridazole 在两菌株有实际阳性对照计数；缺活化，YG1042 需保留真实基因型，不能粗略合为 TA100。",
+          "identity": "not_queried",
+          "support_text": "Dimetridazole was used as a positive control in the Salmonella Ames mutagenicity assay, dosed at 10.0 µg for tester strain TA 100 and 1.0 µg for YG 1042, yielding 948 revertants per plate (TA 100) and 725 revertants per plate (YG 1042).",
+          "extra_details": "Positive control dose 10.0 µg (TA 100) and 1.0 µg (YG 1042); revertants per plate 948 (TA 100) and 725 (YG 1042).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 34,
+          "id": "ames_base:72769",
+          "pmid": "7272889",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述以相对活性描述 AFB2，缺明确菌株和独立实验；不确定机制词不应独自判无效，但本条不能直接投票。",
+          "identity": "verified_parent_match",
+          "support_text": "The review reports that aflatoxin B₂, which lacks the 2,3-double bond, is much less active than aflatoxin B₁ in the toxicity, mutagenicity, and carcinogenicity tests, indicating it retains some mutagenic activity for Salmonella typhimurium.",
+          "extra_details": "Much less active than aflatoxin B1 in toxicity, mutagenicity, and carcinogenicity tests because it lacks the 2,3-double bond; its activation is inferred to require dehydrogenation to aflatoxin B1 followed by epoxidation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 35,
+          "id": "ames_base:217918",
+          "pmid": "6720027",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "+S9 在 TA98/TA100 的突变增加明确；possibly 修饰环氧化位置，非实验结果。PubMed 原始摘要支持 +S9 阳性、-S9 阴性。",
+          "identity": "verified_parent_match",
+          "support_text": "In the presence of S9, 1-nitropyrene-2-ol produced a mutagenic response that was higher in Salmonella strain TA100 than in TA98. The paper interprets this as indicating that the ultimate mutagen is an arene dihydro epoxide, since such epoxides mostly give a higher response in TA100 than in TA98, possibly an epoxide at the 4,5-bond.",
+          "extra_details": "Mutagenic response in the presence of S9 was higher in TA100 than in TA98, interpreted as indicating the ultimate mutagen is an arene dihydro epoxide, e.g. at the 4,5-bond (contrasted with pyrene, which is not detectably mutagenic in the Salmonella assay despite epoxide intermediates in its metabolism).",
+          "remaining_requirements": "Review the +S9 result independently of the existing -S9 vote; mechanism-position uncertainty is not outcome uncertainty."
+        },
+        {
+          "number": 36,
+          "id": "ames_base:228627",
+          "pmid": "18041599",
+          "decision": "需上下文或原始研究",
+          "rationale": "引用 Zhu/Jeffrey 1993 的 Ames 活性；缺菌株/活化，could be formed 修饰形成过程，不是直接否定实验。",
+          "identity": "not_queried",
+          "support_text": "Fusarin X and fusarin Z, a gamma-lactone analogue of fusarin X, could be formed from fusarin C using an in vitro metabolic activation system and were more potent mutagens than fusarin C in the Ames test (Zhu and Jeffrey 1993).",
+          "extra_details": "Fusarin Z is a gamma-lactone analogue of fusarin X; could be formed from fusarin C using an in vitro metabolic activation system; reported as a more potent mutagen than fusarin C in the Ames test (Zhu and Jeffrey 1993).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 37,
+          "id": "ames_base:212972",
+          "pmid": "6197644",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "颗粒混合物活性中估算 1,8-DNP 的贡献，不足以作为本分子独立实验。",
+          "identity": "verified_parent_match",
+          "support_text": "The paper reports that in ambient particulate samples from an industrialized site small amounts of 1,6-dinitropyrene (1,6-DNP) and 1,8-dinitropyrene (1,8-DNP) were detected and could account for as much as 20% of the direct-acting TA98 mutagenicity, attributing mutagenic (Ames) activity to these specific dinitropyrene isomers.",
+          "extra_details": "Detected in ambient particulate from an industrialized site; the paper states it (along with 1,6-DNP) could account for as much as 20% of the direct-acting TA98 mutagenicity, implying direct-acting Ames mutagenicity. Alias: 1,8-DNP.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 38,
+          "id": "ames_base:4988",
+          "pmid": "27441588",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "原文明确 Ames inconclusive，严重杀菌性妨碍解读；不能强制为正或负。",
+          "identity": "not_queried",
+          "support_text": "The genotoxicities of silver acetate and silver nitrate were evaluated to compare the genotoxicity of nanosilver to that of ionic silver. The Ames test produced inconclusive results for all types of the silver materials due to the high toxicity of silver to the test bacteria and the lack of entry of the nanoparticles into the cells. The authors conclude that the Ames test cannot be used to quantitatively measure the genotoxic potencies of silver materials.",
+          "extra_details": "Ames test (bacterial reverse mutation) performed on silver materials; result inconclusive across all silver test materials including ionic silver forms.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 39,
+          "id": "ames_base:68291",
+          "pmid": "2404757",
+          "decision": "需上下文或原始研究",
+          "rationale": "建模论文引用 observed TA98 活性，不是纯 prediction；仍需原实验 PMID 和活化条件。",
+          "identity": "not_queried",
+          "support_text": "2-Acetylamino-7-nitrofluorene shows an observed log TA98 of 2.85 (revertants/nmol) in Salmonella Typhimurium TA98.",
+          "extra_details": "Observed log TA98 = 2.85 (revertants/nmol); listed as a poorly fit outlier not used in deriving Eq. 9 (amino/acetylamino group may be activated without nitro reduction).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 40,
+          "id": "ames_base:9361",
+          "pmid": "35991962",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "作者对该 TA1535+S9 臂明确判 equivocal，不能用 -S9 阳性替代；另有立体身份问题。",
+          "identity": "stereochemistry_or_isotope_unresolved",
+          "support_text": "The authors of this study considered as equivocal the increase of revertants observed for 2-phenylcrotonaldehyde in strain TA1535 in the presence of S9-mix.",
+          "extra_details": "Equivocal in TA1535 with S9-mix despite positive result in the same strain without S9-mix; the Panel conclusion also designated TA1535 with S9 as equivocal.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 41,
+          "id": "ames_base:1102",
+          "pmid": "29879436",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "genipin 的 TA97a-S9 臂明确 equivocal；GLP/OECD 方法合格并不使模糊结果成为二元标签。",
+          "identity": "not_queried",
+          "support_text": "In a GLP-compliant 5-strain bacterial reverse mutation assay (Ames test) conducted with and without metabolic activation, genipin gave an equivocal response in S. typhimurium TA97a without metabolic activation, while gardenia blue showed no mutagenicity. The assay battery was conducted according to OECD guidelines.",
+          "extra_details": "Equivocal response occurred specifically in TA97a without metabolic activation; part of a GLP-compliant 5-strain bacterial reverse mutation battery conducted per OECD guidelines, tested with and without metabolic activation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 42,
+          "id": "ames_base:54845",
+          "pmid": "30619512",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "显著但未达到作者明确阳性判断，原结果 equivocal；不自行以 p 值或二倍阈值改写。",
+          "identity": "not_queried",
+          "support_text": "For piperonal, it is reported that a statistically significant increase was observed with S9mix in the TMRL Ames test, but the level did not reach twice that of the negative control.",
+          "extra_details": "Statistically significant increase observed with S9mix in TA97 but level did not reach 2x negative control; no interpretation as positive reported.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 43,
+          "id": "ames_base:144764",
+          "pmid": "28314607",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "只列 2-aminoanthracene 阳性对照用途，没有实测反应。",
+          "identity": "verified_parent_match",
+          "support_text": "The positive controls used in the Ames test comprised 2-aminoanthracene (tested with both TA98 and TA100 with S9 activation), a reference pro-mutagen used to verify metabolic activation capacity.",
+          "extra_details": "Used as a pro-mutagen positive control requiring S9 metabolic activation; source Sigma-Aldrich USA; S9 prepared from liver of Sprague-Dawley rats pre-treated with Aroclor 1254.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 44,
+          "id": "ames_base:89734",
+          "pmid": "2067537",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "Trp-P-1 在 TA98+S9 有扣除背景的实测 448 His+ revertants/0.1 µg；reference-use 不应一概等同于非实验。",
+          "identity": "verified_parent_match",
+          "support_text": "The positive control 3-amino-1,4-dimethyl-5H-pyrido[4,3-b]indole (Trp-P-1) gave 448 His⁺ revertants/0.1 µg for TA98 with S9 mix, confirming its use as a mutagenic positive control requiring metabolic activation.",
+          "extra_details": "Trp-P-1 used as a mutagenic positive control with S9 mix; 448 His⁺ revertants/0.1 µg for TA98 with S9 mix. Data expressed after subtraction of spontaneous His⁺ revertant colonies.",
+          "remaining_requirements": "Check actual background-subtracted control measurements; revise reference-use eligibility only for measured self-outcomes."
+        },
+        {
+          "number": 45,
+          "id": "ames_base:131008",
+          "pmid": "20420314",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "列 NPD 用途和剂量，没有实测结果；不足以投票。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Salmonella typhimurium Ames test mutagenicity assay (strains TA98 and TA100, with and without metabolic activation using 500 µL of S9 mix), the positive control experiment incorporated the direct-acting mutagen 4-nitro-o-phenylenediamine (NPD, 5 µg/plate). NPD was used as a mutagenic positive-control/reference agent for the bacterial reverse-mutation assay.",
+          "extra_details": "Used as the direct-acting mutagenic positive control at 5 µg/plate in the Ames test; NPD acts without requiring exogenous activation (Ames/Salmonella plate-incorporation protocol).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 46,
+          "id": "ames_base:120313",
+          "pmid": "30118726",
+          "decision": "需上下文或原始研究",
+          "rationale": "预测和已发表 GLP 实验阴性可语义分开；仍需找到原实验、菌株和活化。不能把实验片段因同段有 prediction 永久丢弃。",
+          "identity": "not_queried",
+          "support_text": "Atovaquone 1 is approved as Mepron and in Malarone. It is predicted to be mutagenic in Derek Nexus due to the quinone substructure but predicted negative for mutagenicity in Leadscope. Atovaquone was negative in a standard battery of GLP genotoxicity tests, including the Ames Salmonella mutagenicity assay, Mouse Lymphoma mutagenesis assay, Cultured Human Lymphocyte cytogenetic assay, and in vivo Mouse Micronucleus assay.",
+          "extra_details": "Atovaquone was negative in a standard battery of GLP genotoxicity tests including Ames Salmonella mutagenicity assay, Mouse Lymphoma mutagenesis assay, Cultured Human Lymphocyte cytogenetic assay, and in vivo Mouse Micronucleus assay. It is predicted mutagenic in Derek Nexus due to the quinone substructure but predicted negative in Leadscope. GLP genotoxicity testing.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 47,
+          "id": "ames_base:176962",
+          "pmid": "3077082",
+          "decision": "需上下文或原始研究",
+          "rationale": "Bayesian carcinogenicity prediction 使用已编纂 Salmonella 阳性；预测不是 Ames 读数，但缺原实验/条件。",
+          "identity": "verified_parent_match",
+          "support_text": "For B[a]P, using a battery consisting of Sty and Mly tests, both of which are positive, a Bayesian calculation yields Θ⁺₂ = 0.8406. The test battery results used in the calculation are reported for B[a]P (Table 2), and the compound is described as a genotoxic carcinogen, with Θ⁺₈ = 0.9981 and Θ⁺₁₁ = 0.9998 for the batteries of 8 and 11 tests.",
+          "extra_details": "Sty test (Salmonella-based mutation assay) reported positive in the compiled test battery used for Bayesian carcinogenicity prediction; B[a]P is described as a genotoxic carcinogen with predicted-carcinogenicity probabilities Θ⁺₂=0.8406, Θ⁺₈=0.9981, and Θ⁺₁₁=0.9998 at a prior probability of 0.5.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 48,
+          "id": "ames_base:55549",
+          "pmid": "6659971",
+          "decision": "需上下文或原始研究",
+          "rationale": "Thio-TEPA 有实测 WP2uvrA 活性，predicted 只表示与化学反应推算值比较；需补 S9 和身份。",
+          "identity": "not_queried",
+          "support_text": "Table 1 lists for Thio-TEPA a mutagenicity of 60 x 10^-10 revertants/µM and an LD50 of 700 µM.",
+          "extra_details": "Mutagenicity 60 x 10^-10 revertants/µM; LD50 700 µM. NBP alkylation 0.034 (Δ560/1 h); guanosine reaction 3 (ΔI x 10^2/1 hr). More mutagenic than predicted from NBP reaction.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 49,
+          "id": "ames_base:333804",
+          "pmid": "40370100",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Vindoline 的 Ames No 明确为 in-silico 输出；current_study_experiment enum 错，不能信 enum 直接投票。",
+          "identity": "not_queried",
+          "support_text": "In the ADME/T analysis of the selected top-ranked drug molecules, toxicity analysis including AMES testing shows no mutagenicity for the selected drug agents. In Table 4, the AMES Toxicity value for Vindoline is reported as 'No', indicating a predicted non-mutagenic outcome.",
+          "extra_details": "In silico predicted AMES non-mutagenicity. HIA 96.576%, Caco-2 0.22, LogS -4.43, BBB 0.261, VDss 1.846, CYP1A2/CYP2C19/CYP2C9 non-inhibitor, CYP2D6 inhibitor = Yes. Evaluated as a candidate drug for Mpox and T2D; docking binding affinity with ALDH1A1 -11.5 kcal/mol.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 50,
+          "id": "ames_base:265077",
+          "pmid": "39139919",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Palmitic acid 的 TA1535_NA 是 QSAR 输出，不是细菌实验。",
+          "identity": "not_queried",
+          "support_text": "In the predicted toxicity table (Table 3), the Ames mutagenicity column lists '1535-NA' for the fatty acids (molecules 12–20), and the narrative states 'the fatty acids were mutagenic for strain TA1535_NA.' Molecule 13 is Palmitic acid.",
+          "extra_details": "Molecule 13 in the table; predicted mutagenic for Ames strain TA1535_NA; predicted carcinogenic for rats (P) but not for mice (N) in the Carcino column.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 51,
+          "id": "ames_base:230239",
+          "pmid": "3780617",
+          "decision": "需上下文或原始研究",
+          "rationale": "Malathion 的 Sty 阴性是编纂实验结果，预测的是致癌性；需原实验和 strain/S9。",
+          "identity": "verified_parent_match",
+          "support_text": "In the NTP battery summary table, Malathion is listed with Sty negative, Mly negative, Cvt positive, and SCE positive, giving P(CA|r)=0.775 interpreted as carcinogenic.",
+          "extra_details": "Sty (Salmonella mutagenicity) negative; P(CA|r)=0.775; predicted carcinogenic (ca).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 52,
+          "id": "ames_base:120587",
+          "pmid": "1373215",
+          "decision": "需上下文或原始研究",
+          "rationale": "纯化批次有接近背景的结果，但局部 Compound 1 身份及污染批次对照需解析，不能把批次差异压平。",
+          "identity": "not_queried",
+          "support_text": "The recrystallized racemic Compound 1 was now essentially inactive (2.3-fold background) in the Ames test, indicating that the mutagenicity of the unpurified material had been due to a contaminant.",
+          "extra_details": "Reported as essentially inactive at 2.3-fold background (Fig. 1, TA1538, +S9).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 53,
+          "id": "ames_base:245968",
+          "pmid": "9651047",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "正文明确 HEMF 在 TA100-S9 阳性，其他图线不影响这一臂；needs_more_context 不构成该结果语义缺失。PubMed 摘要支持，尚需 HEMF 异构/互变异构身份审核。",
+          "identity": "not_queried",
+          "support_text": "As well as HMF and DMHF, HEMF showed mutagenicity to Salmonella typhimurium strain TA100 without metabolic activation. The dose-response curve of mutagenicity of HEMF was assayed with S. typhimurium strain TA100 without S-9 mix (○) and with S-9 mix (●), and strain TA98 without S-9 mix (△) and with S-9 mix (▲); His+ revertant colonies/plate were expressed after background subtraction.",
+          "extra_details": "Dose-response mutagenicity curve presented (Fig. 1 of figure legend); His+ revertant colonies per plate after background subtraction, averages of duplicate plates. TA98 strains also assayed (△/▲) but no direct mutagenicity conclusion is stated for them. Mutagenicity required relatively high doses.",
+          "remaining_requirements": "Resolve the HEMF name, positional/tautomer ambiguity and exact parent identity; use only the explicit TA100-S9 arm."
+        },
+        {
+          "number": 54,
+          "id": "ames_base:282957",
+          "pmid": "12473741",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "只说检查了 AFB1 mutagenicity 并提供方法/剂量，没有实验结果；源 positive enum 不能填补缺失。",
+          "identity": "not_queried",
+          "support_text": "AFB1 mutagenicity (1 µg/plate) was checked in the Ames preincubation assay in the presence of liver S9 (150 µl S9/plate), using tester strain TA98.",
+          "extra_details": "Ames preincubation assay with liver S9; 150 µl S9/plate for AFB1. Dose 1 µg/plate. Representative of aflatoxin B1.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 55,
+          "id": "ames_base:133519",
+          "pmid": "6357520",
+          "decision": "需补充条件定义的候选",
+          "rationale": "benzidine 膀胱细胞/S9 阳性、肝细胞/S9 阴性；需器官/活化来源条件。不是非 Ames，也不能合成一般 +S9 阳性。",
+          "identity": "not_queried",
+          "support_text": "BZ (benzidine) was mutagenic in S. typhimurium TA98 and TA100 when activated by intact bovine bladder epithelial cells or bladder S-9, but bovine hepatocytes and liver S-9 did not activate BZ to a mutagen.",
+          "extra_details": "Dose 40 µg/plate. Positive in TA98 and TA100 (TA100 not shown in Figure 2). Toxic (reduced background growth) at 50 µg/plate in TA98. BZ (benzidine) is a bladder-carcinogen aromatic amine; not activated significantly by bovine liver cells even at 8 x 10^6 hepatocytes/plate.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 56,
+          "id": "ames_base:184048",
+          "pmid": "1881348",
+          "decision": "需上下文或原始研究",
+          "rationale": "微弱反应伴随超过溶解度范围的可疑机制，原文截断；需全文/剂量及可评价性，不能自动 weak_positive→1。",
+          "identity": "not_queried",
+          "support_text": "Eledoisin, from batch TF/20873 (one of the first synthesized batches), was assayed in the Salmonella (Ames) test and found to be slightly positive in S. typhimurium TA 1535 and TA 100 without metabolic activation (Figure 2). The mutagenicity was independent of the peptide purity as determined by HPLC (Figure 4).",
+          "extra_details": "Eledoisin batch TF/20873, slightly positive without metabolic activation. Data presented are mean revertants per plate from one experiment; three replicates per concentration, six for negative controls.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 57,
+          "id": "ames_base:125127",
+          "pmid": "6109575",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "只有图说明和 assay performed，没有可见数值或二元结论；需找图后再评。",
+          "identity": "not_queried",
+          "support_text": "A figure reports the mutagenic effect of alclofenac epoxide on Salmonella typhimurium TA100 both in the absence (open-circle) and in the presence (filled-square) of S-9, with results given as means ± S.E.M. of three plates, indicating an Ames/Salmonella reverse-mutation assay was performed on alclofenac epoxide under both activation conditions. The numeric outcome of the assay is not provided in the text window.",
+          "extra_details": "Mutagenic effect recorded in absence and presence of S-9; figure results given as means ± S.E.M. of three plates. Numeric revertant counts and positive/negative interpretation are not visible in the provided text window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 58,
+          "id": "ames_base:121164",
+          "pmid": "11470481",
+          "decision": "需上下文或原始研究",
+          "rationale": "ENU-alone 臂有实测 E. coli tyrA 回复突变，antimutagen 是另一臂；应核实 FX-11 目标扩展、S9 与生存对照，不能按关键词一概否定。",
+          "identity": "verified_parent_match",
+          "support_text": "E. coli FX-11 cells treated with 30 mM ENU (without genistein) showed a surviving fraction of 0.55±0.08 and an overall mutation frequency of 94±8.2×10^-6, with a backmutation frequency of 68±4.4×10^-6, consisting of both transition (CAA, TAG) and transversion (GAA, TCA, TAC, AAA, TTA, TAT) backmutations at the tyrA locus, plus GlnU0/GlnV0 tRNA suppressor mutations. Treatment with ENU alone is thus reported as inducing gene mutation in this bacterial reversion assay.",
+          "extra_details": "ENU used as the inducing mutagen, with genistein tested as an antimutagen. At 30 mM ENU (no genistein) mutation frequency was 94±8.2×10^-6 (surviving fraction 0.55±0.08); in a parallel set, 30 mM ENU gave 89±5.7×10^-6. Backmutation frequency was 6.8×10^-5 (≈76% of total), composed of transitions (CAA, TAG) and transversions (GAA, TCA, TAC, AAA, TTA, TAT). Additional GlnU0/GlnV0 tRNA suppressor mutations arise from G:C to A:T transitions. At 20 mM ENU, mutation frequency was about 5.5×10^-5 in the absence of genistein. Antimutagenicity context: genistein reduced transition mutations ~1.9-fold and transversions ~8.5-fold; base changes determined by DNA sequence analysis; exposure in A-0 buffer with plating on semi-enriched agar.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 59,
+          "id": "ames_base:281969",
+          "pmid": "8620581",
+          "decision": "需上下文或原始研究",
+          "rationale": "从引用的 eugenol 抑制关系推断 MNNG 阳性，缺本分子原始独立臂与条件。",
+          "identity": "verified_parent_match",
+          "support_text": "Eugenol inhibited the mutagenicity of N-methyl-N'-nitro-N-nitrosoguanidine (as well as aflatoxin B1 and dimethylbenzanthracene) in the Ames test (refs 3,4), indicating this agent was mutagenic (positive) in the Ames assay.",
+          "extra_details": "Mutagenic agent used to demonstrate eugenol's antimutagenicity; eugenol inhibited its mutagenicity in the Ames test. Also known as MNNG.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 60,
+          "id": "ames_base:292808",
+          "pmid": "4893411",
+          "decision": "需补充条件定义的候选",
+          "rationale": "neutral red 的光动态 tyr reversion 是真实条件依赖终点；要明确光照/pH/菌株与目标扩展，不能作常规暗条件 Ames。",
+          "identity": "not_queried",
+          "support_text": "When neutral red was used as the sensitizer, mutations were induced more easily when pH 8 rather than pH 6 buffer was used as the suspending medium in E. coli WU 36 (tyr⁻ to tyr⁺ reversion). At both pH values irradiation with green light was more effective than blue light; at pH 8, 450-nm radiation was unable to produce mutations.",
+          "extra_details": "3.3 × 10⁸ cells per ml in 10⁻⁵ M neutral red, pH 8.0; mutations produced only by the DH⁺ form of the dye; DNA-protein crosslinking observed in cells irradiated with 517-nm light.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 61,
+          "id": "ames_base:250674",
+          "pmid": "3909401",
+          "decision": "需上下文或原始研究",
+          "rationale": "漂白液中检出的被引 mutagens，当前研究未检出；需追原研究和纯化合物归属。",
+          "identity": "verified_parent_match",
+          "support_text": "Kringstad et al. (1981) detected strong direct-acting mutagens, 1,3-dichloroacetone and 2-chloropropenal, in the spent chlorinated liquor from the bleaching of Kraft pulp, and reported (Kringstad et al., 1983) that these compounds were formed by the chlorination of humic acid, although they were not detected in the present study.",
+          "extra_details": "Reported as a strong direct-acting mutagen by Kringstad et al. (1981).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 62,
+          "id": "ames_base:239433",
+          "pmid": "15598703",
+          "decision": "需补充条件定义的候选",
+          "rationale": "PhIP 自身 TA98 结果与供体 PhIP/ANIT 诱导处理相连，需表达 S9 供体/处理条件；另有身份请求未解决。",
+          "identity": "identity_request_unresolved",
+          "support_text": "The mutagenicity in Salmonella strain TA98 of PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine), four other heterocyclic amines, and benzo[a]pyrene was greatly enhanced in the presence of liver S9 mix prepared from rats pretreated with PhIP (but not with ANIT). The mutagenicities of these five HCAs were significantly decreased with liver S9 from rats pretreated with a combination of PhIP and ANIT compared with that pretreated with PhIP alone.",
+          "extra_details": "Reverse-mutation (Ames) activity in TA98 with rat liver S9 mix; mutagenicity was greatly enhanced by S9 from rats pretreated intragastrically with 85 mg/kg PhIP eight times for 11 days, and significantly decreased with S9 from rats fed 400 p.p.m. ANIT in combination with PhIP compared with PhIP alone. Female Sprague-Dawley rats on a high fat diet provided the liver S9.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 63,
+          "id": "ames_base:300315",
+          "pmid": "36720958",
+          "decision": "需上下文或原始研究",
+          "rationale": "当前 QSAR 与引用 Ames 结果混写；需要原研究，不可把 QSAR 0.92 作为实验标签。",
+          "identity": "verified_parent_match",
+          "support_text": "Kaempferol was reported to show mutagenicity on the in vitro Ames test elsewhere (refs 33, 34), consistent with the positive in-silico mutagenicity prediction for kaempferol in this study.",
+          "extra_details": "Positive Ames mutagenicity reported in in-vitro Ames tests in other studies (refs 33, 34). The current paper's in-silico drug profiling gave an Ames-positive probability of 0.92 for kaempferol, which is a QSAR prediction, not an Ames test result.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 64,
+          "id": "ames_base:127340",
+          "pmid": "375954",
+          "decision": "需补充条件定义的候选",
+          "rationale": "divinyl ether 的 TA100/TA1535-S9 剂量相关阳性明确；气相/密闭条件应保留。原始摘要确认实际 Salmonella 实验。",
+          "identity": "verified_parent_match",
+          "support_text": "Divinyl ether was mutagenic to Salmonella typhimurium strains TA100 and TA1535 in desiccator and liquid incubation. In desiccators, a dose-dependent increase in revertants occurred in the absence of the metabolic system at vapour concentrations greater than 1%; when the metabolic system was added, there was an increase above background of 8-11-fold for TA1535 and 2.5-3.5-fold for TA100.",
+          "extra_details": "Desiccator vapour-phase incubation; dose-dependent revertant increase at vapour concentrations greater than 1% in the absence of S-9.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 65,
+          "id": "ames_base:128225",
+          "pmid": "6757739",
+          "decision": "需上下文或原始研究",
+          "rationale": "methyl cyanoacrylate 蒸气有 TA100 阳性，但黏合剂与单体归属、S9 及身份需核验。",
+          "identity": "not_queried",
+          "support_text": "Alkyl 2-cyanoacrylate adhesives were tested for mutagenicity in Salmonella typhimurium strains TA98, TA100, TA1535 and TA1538 using a normal spot test, a spot test designed to test volatile compounds, and the plate incorporation assay. The investigations showed that methyl 2-cyanoacrylate adhesives are mutagenic in strain TA100. The spot test for volatile compounds showed that it is the vapors from the methyl 2-cyanoacrylate monomer that are responsible for the mutagenic effect.",
+          "extra_details": "Adhesives also tested in Salmonella typhimurium strains TA98, TA1535 and TA1538 and in a normal spot test and plate incorporation assay; positive result reported specifically in strain TA100. Paper concludes working with methyl 2-cyanoacrylate adhesives entails exposure to vapors with a mutagenic effect and may therefore pose a carcinogenic hazard in the work environment.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 66,
+          "id": "ames_base:268400",
+          "pmid": "6353221",
+          "decision": "需上下文或原始研究",
+          "rationale": "同株在有氧/厌氧均阴性不因比较就无效；本条是引用且 S9 未知，需追原研究。",
+          "identity": "verified_parent_match",
+          "support_text": "The paper states that 1-nitropyrene is not mutagenic to TA1535 under either anaerobic or aerobic incubation, yet this strain still reduced 1-nitropyrene to 1-aminopyrene at rates comparable to those of TA98.",
+          "extra_details": "Negative in the Ames assay under both anaerobic and aerobic incubation; this negative comes from an otherwise mutagenic substance (1-nitropyrene is mutagenic to TA98).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 67,
+          "id": "ames_base:91897",
+          "pmid": "1639083",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "无诱发且无自发菌落，缺可评价生长证明；不能把可能无法生长的厌氧板判为可靠阴性。",
+          "identity": "verified_parent_match",
+          "support_text": "Spontaneous and induced revertant colonies were not observed on plates treated and incubated anaerobically with all eight tester strains, including 2NF (2-nitrofluorene) on TA1538 and TA98, indicating no revertant induction under anaerobic conditions.",
+          "extra_details": "5 µg/plate 2-nitrofluorene; absence of revertants under anaerobic conditions across all eight tester strains.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 68,
+          "id": "ames_base:229284",
+          "pmid": "3892280",
+          "decision": "需上下文或原始研究",
+          "rationale": "真实厌氧 hisC3076 回复突变；要明确完整菌株、S9 和大气条件，不能默认为标准 strain。",
+          "identity": "verified_parent_match",
+          "support_text": "Anaerobic cultures of a strain carrying the frameshift hisC3076 marker are fully revertible by 9-aminoacridine.",
+          "extra_details": "9-aminoacridine causes full reversion of the hisC3076 frameshift marker in anaerobic cultures of Salmonella typhimurium.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 69,
+          "id": "ames_base:285386",
+          "pmid": "10986478",
+          "decision": "需上下文或原始研究",
+          "rationale": "carmustine 蒸气剂量响应是实测，需保留温度/挥发条件、核对 S9；方法特殊不等于质量低。",
+          "identity": "verified_parent_match",
+          "support_text": "In the vaporization Ames assay at 23 and 37°C, carmustine (strain TA100) increased revertants with dose, from 92–101 at baseline to 224–510 per plate at 3.33 mg/10 l. The paper interprets vaporized carmustine as mutagenic.",
+          "extra_details": "Vaporization assay, 24 h vapor exposure followed by 48 h (or 72 h) incubation at 37°C; revertants per plate at 0//0.84//1.67//3.33 mg/10 l = 92/118/224/223 (23°C) and 101/379/442/510 (37°C).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 70,
+          "id": "ames_base:31353",
+          "pmid": "25174529",
+          "decision": "需上下文或原始研究",
+          "rationale": "Cr(VI) 为价态而非唯一受试盐结构，结果是引用且 S9 缺失；不能只依据 WP2 字样纳入。",
+          "identity": "not_queried",
+          "support_text": "The number of Cr(VI)-induced mutants in E. coli strain WP2uvrA (equivalent to TA102) were similar to the positive control methyl methanosulfonate.",
+          "extra_details": "Cr(VI)-induced mutant frequency in WP2uvrA was similar to that of the positive control methyl methanesulfonate.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 71,
+          "id": "ames_base:74401",
+          "pmid": "34526143",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述称 MeAalphaC 是 TA98 强 mutagen，缺原实验及 S9。",
+          "identity": "not_queried",
+          "support_text": "The review states that 2-amino-3-methyl-9H-pyrido[2,3-b]indole (MeAalphaC) was isolated from the pyrolysates of amino acids and proteins as a potent mutagen in Salmonella typhimurium TA98.",
+          "extra_details": "Isolated from amino acid/protein pyrolysates as a potent Ames-test mutagen; a carcinogenic heterocyclic amine.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 72,
+          "id": "ames_base:163067",
+          "pmid": "378447",
+          "decision": "需上下文或原始研究",
+          "rationale": "ENU 在 WP2/WP2uvrA 的实测 reversion 可恢复，但 S9 未报，生存率相关条件需查原文。",
+          "identity": "not_queried",
+          "support_text": "Ethylnitrosourea (ENUA) induced a greater number of trp+ revertants in both WP2 and WP2 uvrA strains than did MNUA and BNUA, particularly at low survival rates. However, ENUA was non-mutagenic towards WP2 lexA, WP2 recA and WP2 uvrA lexA.",
+          "extra_details": "trp+ reversion in liquid suspension assay; ENUA and PNUA induced more revertants than MNUA and BNUA, especially at low survival rates. Toxicity increased in the order MNUA < PNUA < ENUA < BNUA. Mutation by ENUA is lexA-dependent (non-mutagenic in lexA/recA strains).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 73,
+          "id": "ames_base:78566",
+          "pmid": "7683765",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "MMS 仅被列为 positive control，无结果且无活化。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Salmonella plate incorporation (Ames) assay, methyl methanesulfonate (MMS) at 0.5 µg/plate was used as a mutagenic positive control.",
+          "extra_details": "0.5 µg MMS per plate as positive control in the Ames test.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 74,
+          "id": "ames_base:50579",
+          "pmid": "18333672",
+          "decision": "需上下文或原始研究",
+          "rationale": "文献汇总相对 TA100 potency，无独立原实验和活化；需引用追溯。",
+          "identity": "not_queried",
+          "support_text": "The authors collected mutagenic potency equivalence factors (TA100 Salmonella potency relative to that of benzo[a]pyrene) and carcinogenic potency equivalence factors from the literature for six PAHs: benzo[j]fluoranthene, benzo[k]fluoranthene, pyrene, benzo[b]fluoranthene, benzo[a]anthracene, and indeno[1,2,3-cd]pyrene. Regression of the two equivalence-factor sets across these six PAHs gave r² = 0.78 (F = 14.6, p < 0.02), slope 0.92 ± 0.24, and the paper characterizes them as a restricted set of mutagenic carcinogens acting via formation of stable, bulky adducts.",
+          "extra_details": "Mutagenic potency equivalence factor (TA100 potency relative to benzo[a]pyrene) taken from the literature and used in a carcinogenic-potency equivalence factor regression (r² = 0.78, slope 0.92 ± 0.24). Member of the mutagenic carcinogens acting via stable bulky adducts.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 75,
+          "id": "ames_base:289082",
+          "pmid": "8369761",
+          "decision": "需上下文或原始研究",
+          "rationale": "TA100 阳性明确，directly mutagenic 仍不能无证据填 S9=absent；需方法和身份。",
+          "identity": "not_queried",
+          "support_text": "2-Methylazo-2-propyl hydroperoxide was mutagenic in Salmonella typhimurium TA100 (Fig. 1), being a directly mutagenic autooxidation product of acetone methylhydrazone.",
+          "extra_details": "",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 76,
+          "id": "ames_base:46317",
+          "pmid": "17896788",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "作者 only likely weakly mutagenic、变异大，源 weak_positive 不应硬映射阳性；保留模糊结果。",
+          "identity": "not_queried",
+          "support_text": "At the frameshift allele, 4-AB (4-aminobiphenyl) was statistically nonmutagenic (P = 0.06) in strain uvrB (SN15944), but the authors judged the high variability made 4-AB likely weakly mutagenic in SN15944.",
+          "extra_details": "P-value 0.06 approached significance; the authors concluded 4-AB was likely weakly mutagenic in SN15944.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 77,
+          "id": "ames_base:223553",
+          "pmid": "12849733",
+          "decision": "需上下文或原始研究",
+          "rationale": "来自 NTP 数据库的分类，需要原试验与 strain/S9，不是本文实验。",
+          "identity": "verified_parent_match",
+          "support_text": "ENU (N-ethyl-N-nitrosourea), which is carcinogenic in experimental animals, is positive in the Salmonella assay and clastogenic in the in vitro chromosomal assay, per the operational classification from the NTP database rather than an assay run in this study.",
+          "extra_details": "Classified as a genotoxic carcinogen based on Salmonella (Ames) assay activity; also clastogenic in the in vitro chromosomal assay; produced numerous transformed foci in the cell transformation assay.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 78,
+          "id": "ames_base:196450",
+          "pmid": "7028306",
+          "decision": "需上下文或原始研究",
+          "rationale": "特定敏感株+未诱导 S9 阴性，关键菌株缺失且与诱导 S9 对立；需原研究条件。",
+          "identity": "verified_parent_match",
+          "support_text": "Using a bacterial strain found to be more sensitive to DMN-mediated mutagenicity than the standard S. typhimurium TA strains and the optimal pH, the authors demonstrated lack of mutagenicity of 100 µM DMN with control S9 mix.",
+          "extra_details": "100 µM DMN with control S9 mix showed lack of mutagenicity at optimal pH; contrast with potent effects observed with acetone-induced S9 mix.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 79,
+          "id": "ames_base:64283",
+          "pmid": "7857698",
+          "decision": "需上下文或原始研究",
+          "rationale": "综述中的 Salmonella 阴性，无原始 study、菌株或活化。",
+          "identity": "not_queried",
+          "support_text": "Nafenopin is negative in the Salmonella assay, with negative UDS responses in vitro and in vivo.",
+          "extra_details": "Negative Salmonella response; also negative for UDS in vitro and in vivo (UDS not an in-scope mutagenicity endpoint).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 80,
+          "id": "ames_base:247468",
+          "pmid": "11585689",
+          "decision": "需上下文或原始研究",
+          "rationale": "Formononetin 有实测和作者 moderate positive 标记；缺 strain/S9，不能因这两字段缺失称实验质量低。",
+          "identity": "verified_parent_match",
+          "support_text": "In the Ames test table, Formononetin produced 36±2.43 revertants at 20 mg/ml, 54±3.61 revertants at 50 mg/ml (marked '+' moderate mutagenicity), and 49±4.73 revertants at 75 mg/ml.",
+          "extra_details": "Revertants: 36±2.43 (20 mg/ml), 54±3.61 (50 mg/ml, marked '+' moderate mutagenicity), 49±4.73 (75 mg/ml).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 81,
+          "id": "ames_base:63816",
+          "pmid": "17613131",
+          "decision": "需上下文或原始研究",
+          "rationale": "Basic Blue 99 的综述弱致突变，需要原研究和组分身份；弱效力不等于 equivocal。",
+          "identity": "not_queried",
+          "support_text": "Basic Blue 99 was a weak mutagen with and without metabolic activation in the Ames test, producing both reverse and frameshift mutations, but did not induce mutations in Escherichia coli or in any mammalian cells tested.",
+          "extra_details": "Weak mutagen with and without metabolic activation; produced both reverse and frameshift mutations. Basic Blue 99 (CAS no. 68123-13-7) is a naphthoquinoneimine hair dye colorant, empirical formula C19H20BrN4O2·Cl; approximate LD50 2.7 g/kg in mice and 1.0–>2.0 g/kg in rats. Finding from a CIR Expert Panel safety review of Basic Blue 99 as a hair dye ingredient.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 82,
+          "id": "ames_base:68253",
+          "pmid": "30401633",
+          "decision": "需上下文或原始研究",
+          "rationale": "isoamyl nitrite 有剂量响应，控制略超历史范围不自动使实验无效；需核实并发对照及 miniaturized method 可评价性、身份。",
+          "identity": "not_queried",
+          "support_text": "Isoamyl nitrite was evaluated in the six-well Ames test with S9 using strain TA100. Despite ABBV's six-well TA100 with S9 vehicle control mean of 58 colonies (just outside historic control limits), the isoamyl nitrite wells showed several consecutive concentrations demonstrating a dose-response, confirmed with statistical analysis, and well outside the typical range for this strain and condition.",
+          "extra_details": "Six-well test; dose-response across several consecutive concentrations and confirmed by statistical analysis.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 83,
+          "id": "ames_base:218549",
+          "pmid": "6646153",
+          "decision": "身份或受试物问题",
+          "rationale": "锌盐多有机组分与未定义 process oil co-treatment；本条是相对响应不变，不能自行改成单分子阳性。",
+          "identity": "verified_parent_match",
+          "support_text": "The addition of 1000 µg per plate of the process oil blend (POB) to ZTC (10-160 µg/plate) in the presence of S9 fraction in the bacterial assay did not alter the response of strains TA1535 or TA100 compared with ZTC alone. At 160 µg/plate ZTC was more cytotoxic to both strains in the presence of POB.",
+          "extra_details": "POB did not qualitatively change the ZTC mutagenic response in TA1535/TA100 with S9. POB itself is a blend and its separate Ames data (para 63) are not extracted as a discrete chemical.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 84,
+          "id": "ames_base:95983",
+          "pmid": "29465807",
+          "decision": "身份或受试物问题",
+          "rationale": "名称/正文为 nitro-substituted 化合物，给定 SMILES 没有 nitro 基团；不仅是 qualifying_conditions 非空，而是明确结构与文本冲突。",
+          "identity": "not_queried",
+          "support_text": "Nitro-substituted acenaphtho[1,2-b]quinoline was very active in both Salmonella Typhimurium TA98 and TA100 strains with no metabolic activations, confirming that electron-withdrawing groups (nitro) tend to increase mutagenicity in such systems.",
+          "extra_details": "Ames test (reverse mutation); described as 'very active' in both TA98 and TA100 without added metabolic activation. Consistent with electron-withdrawing nitro groups increasing mutagenicity.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 85,
+          "id": "ames_base:80566",
+          "pmid": "8202924",
+          "decision": "需补充条件定义的候选",
+          "rationale": "1-hydroxymethylpyrene 在 STa/PAPS 活化下 TA98 阳性；应保留特定酶/辅因子条件，不能合为普通肝 S9。",
+          "identity": "verified_parent_match",
+          "support_text": "Cytosol of Chinese hamster V79-derived cell lines stably expressing a heterologous sulfotransferase (rat hydroxysteroid sulfotransferase a) effectively activated the benzylic alcohol 1-hydroxymethylpyrene (HMP) to mutagens detected in Salmonella typhimurium TA98.",
+          "extra_details": "Benzylic alcohol substrate activated via sulfotransferase-mediated sulfuric acid ester formation; required PAPS cofactor. No activation observed with cytosols from cell lines commonly used in mutagenicity and cell transformation assays.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 86,
+          "id": "ames_base:55171",
+          "pmid": "6777691",
+          "decision": "需上下文或原始研究",
+          "rationale": "Drosophila 提取物活化 no/barely 响应，需酶体系可评价性与明确阴性判读，不能泛化为普通 +S9 阴性。",
+          "identity": "verified_parent_match",
+          "support_text": "The results in Table 1 show that benzo[a]pyrene cannot be or is barely activated under the present experimental conditions to a mutagen for Salmonella TA98 with Drosophila extracts.",
+          "extra_details": "Table 1 lists benzo[a]pyrene at 300 ug/plate; the paper suggests activation mechanisms in vivo and in vitro may not be active enough to produce measurable mutations in this system.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 87,
+          "id": "ames_base:11149",
+          "pmid": "10613187",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "AHTN 在明确七株 ±S9、剂量范围内无回复增加且阳性对照有效；沉淀应做质量审核而非 qualifying 非空即排除。候选仍需名称身份与表格确认。",
+          "identity": "not_queried",
+          "support_text": "In the S. typhimurium/E. coli liquid preincubation assay with AHTN, average revertants per plate at all doses (8-5000 µg/plate; precipitation at ≥200 µg/plate) remained at or below vehicle-control levels in TA97, TA98, TA100, TA102, TA1535, TA1537 and WP2 uvrA, both without and with S9 activation, indicating a negative Ames result; positive controls gave elevated revertant counts.",
+          "extra_details": "Liquid preincubation protocol; doses 8, 40, 200, 1000, 5000 µg/plate; revertant counts at all doses comparable to or below vehicle both with and without S9; positive controls (e.g., TA97 4778±46 without S9, TA98 4339±21 with S9) confirmed assay function.",
+          "remaining_requirements": "Verify AHTN name-parent match and evaluability of precipitation/dose tables; retain qualified negative rather than dropping all nonempty qualifiers."
+        },
+        {
+          "number": 88,
+          "id": "ames_base:187743",
+          "pmid": "8377651",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "1,6-dinitrocarbazole 被明确列入实测 weak/moderate active 组，低效力不是不确定结果；应核对逐化合物表值/身份后判 positive，不能自动接纳所有 weak_positive。",
+          "identity": "not_queried",
+          "support_text": "1,6-dinitrocarbazole was among the compounds that ranged from moderately to weakly active (7-1 revertants/µg, 2-0.3 revertants/nmol) towards Salmonella typhimurium TA98 without S9 in the Ames plate-incorporation assay.",
+          "extra_details": "Described as moderately to weakly active within the collective range 7-1 revertants/µg (2-0.3 revertants/nmol) without S9; activity generally decreased with S9 and was lower in TA98NR, indicating dependence on the 'classical' bacterial nitroreductase; individual value not separately reported.",
+          "remaining_requirements": "Verify positional-isomer identity and compound-specific response table; low potency alone is not equivocal."
+        },
+        {
+          "number": 89,
+          "id": "ames_base:48004",
+          "pmid": "25079996",
+          "decision": "身份或受试物问题",
+          "rationale": "Endosulfan 被映射成 SMILES S；正文还有高剂量明确 positive，不能只看 weak enum，但身份错误先阻止投票。",
+          "identity": "name_structure_mismatch",
+          "support_text": "In the Ames table for Endosulfan, TA100 with S9 gave non-significant responses at 0.125, 0.25 and 0.5 µmol/plate, weak positive responses at 1 and 2.5, positive responses at 5 and 10, and a decrease in revertants after 10 µmol/plate.",
+          "extra_details": "Weak positive at 1 and 2.5 µmol/plate; non-significant at 0.125-0.5; revertant recovery decreased after 10 µmol/plate; also positive at 5 and 10 µmol/plate.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 90,
+          "id": "ames_base:214898",
+          "pmid": "17360228",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "TNX 在 TA100+S9 的弱致突变是明确实测且无细胞毒性，原始摘要确认；TA97a 已有票不覆盖 TA100 条件。",
+          "identity": "verified_parent_match",
+          "support_text": "TNX (hexahydro-1,3,5-trinitroso-1,3,5-triazine) caused weak mutagenesis to Salmonella typhimurium strain TA100 with S9 activation at the dose of 1200 µg/plate in the Ames reverse mutation assay.",
+          "extra_details": "Ames reverse mutation assay; weak mutagenesis with S9 activation at 1200 µg/plate; no cytotoxicity.",
+          "remaining_requirements": "Review weak-positive interpretation using the author call and noncytotoxic experiment, not an invented universal fold threshold."
+        },
+        {
+          "number": 91,
+          "id": "ames_v1:82772",
+          "pmid": "6180833",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "中国仓鼠 TK/HAT+ reversion，不是细菌回复突变；revertant 关键词导致保守 L2。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "When hexamethylene bisacetamide was added to cultures of 204-7 thymidine kinase-deficient Chinese hamster cells, the incidence of HAT+ revertants remained at background levels, despite variation in concentration and time of treatment (data not shown).",
+          "extra_details": "HAT+ reversion assay. Incidence of HAT+ revertants remained at background levels despite variation in concentration and time of treatment. Polar-planar compound, prime inducer of erythroleukemic cell differentiation; proposed action via cell-surface changes rather than DNA methylation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 92,
+          "id": "ames_v1:63093",
+          "pmid": "30203676",
+          "decision": "需上下文或原始研究",
+          "rationale": "CAB7β 记录有伴随 Ames 阴性概述；需辨别单独处理/共同处理、strain/S9，不能用 micronucleus 的 negative 代替 Ames。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The study assessed the genotoxic and antigenotoxic activity of the chalcone CAB7β using an Ames test (co-treatment) and a micronucleus assay of mouse bone marrow with co-, pre- and post-treatment models. The authors report no genotoxic effect for CAB7β in any of the tests applied. In the micronucleus assay, CAB7β alone displayed cytotoxic activity, whereas in co-, pre- and post-treatment it showed a significant antigenotoxic (protective) effect against doxorubicin.",
+          "extra_details": "Mouse bone marrow micronucleus assay carried out with co-, pre- and post-treatment models (administration route and exact dose concentrations not stated in the available text). CAB7β alone produced a negative genotoxicity call in this endpoint but displayed cytotoxic activity in the micronucleus test; it also exerted a significant antigenotoxic effect against doxorubicin in co-, pre- and post-treatment. The companion Ames/Salmonella bacterial reverse-mutation results are excluded per task criteria. CAB7β (1E,4E-1-(4-chlorophenyl)-5-(2,6,6-trimethylcyclohexen-1-yl)penta-1,4-dien-3-one) was synthesized via Claisen-Schmidt reaction.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 93,
+          "id": "ames_v1:74167",
+          "pmid": "28699625",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "cefotaxime 抗性选择后测序不是 Ames，不应将选择富集直接当诱变标签。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "We detected a total of 453 single-nucleotide mutations in the populations following selection, with an average of 2.32 mutations per surviving population, under cefotaxime selection. The most abundant mutation was G238S. Seven out of 35 detected mutations are known beneficial TEM-1 mutations, and the stabilizing mutation M182T was also observed. Of the detected mutations, 24% were synonymous.",
+          "extra_details": "Population-level sequencing detection of fixed single-nucleotide mutations in TEM-1 after growth/selection on cefotaxime; mean 2.32 mutations per surviving population; 24% of detected mutations synonymous; seven of 35 detected mutations are known beneficial TEM-1 mutations. Not a classical bacterial reverse-mutation (Ames) test; this is sequence-based measurement of exposure-linked fixed gene mutations. Species/strain of the host bacterium was not stated in the provided window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 94,
+          "id": "ames_v1:61996",
+          "pmid": "3896783",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "EMS 抗性突变筛选 pbpB，是 forward mutation 而非 Ames reversion。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Cultures of E. coli KN126 were mutagenised with EMS and, after overnight growth to allow expression of the mutant phenotype, the bacteria were plated on L agar containing cephalexin (40 µg ml⁻¹) and grown for 24 h at 37°C. Approximately 1:10⁷ of the mutagenized bacteria formed colonies under these conditions. The pbpB and leu genes are 80% co-transducible with bacteriophage P1, so mutant pbpB genes conferring cephalexin resistance were identified by co-transduction with leu⁺ into E. coli C600.",
+          "extra_details": "EMS forward-mutation assay in E. coli KN126: cultures were mutagenised with ethyl methanesulfonate and grown overnight for phenotype expression, then plated on L agar containing cephalexin (40 µg ml⁻¹) and grown 24 h at 37°C to select cephalexin-resistant mutants. Approximately 1:10⁷ (about 1 in 10 million) of the mutagenized bacteria formed colonies under these selection conditions, giving an approximate mutant-isolation frequency. Putative PBP 3 affinity mutants (pbpB mutations) were identified by 80% co-transduction of cephalexin resistance with the leu gene via P1vir (leu⁺ selection into E. coli C600), removing them from the mutagenized background. Only those showing at least a sevenfold MIC increase over strain C600 were selected for further study.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 95,
+          "id": "ames_v1:83961",
+          "pmid": "12189135",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "T4 噬菌体 rII reversion，尽管宿主是 E. coli，目标基因组是噬菌体，不是 Ames。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Table V reports 2AP-induced mutagenesis measured as rII+ revertants per 10^6 phages after exposure to 2AP at 1 mg/ml. The L412M-DNA polymerase gave 476 rII+ revertants/10^6 (relative 7.7), a >7-fold increase over the wild type DNA polymerase (62 rII+ revertants/10^6, relative 1) and >60-fold over I417V. The L412M substitution thus increased the 2AP-induced rII ochre reversion frequency in vivo.",
+          "extra_details": "rII ochre (TAA) reversion assay measuring 2AP-induced fixed base changes during T4 DNA replication in vivo; L412M-DNA polymerase produced >7-fold higher reversion than wild type and >60-fold higher than I417V; phages plated on E. coli for reversion scoring.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 96,
+          "id": "ames_v1:62847",
+          "pmid": "17387038",
+          "decision": "需上下文或原始研究",
+          "rationale": "Alpha-TEA 文本有伴随 Salmonella 阴性，但 CHO 的实验条件不能移植给 Ames；需细菌方法。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Table 1 reports for Alpha-TEA: CHO/CA (chromosomal aberration study in Chinese hamster ovary cells) = Negative; MN (mouse bone marrow micronucleus study) = Negative. Salmonella result negative and excluded.",
+          "extra_details": "CHO chromosome aberration assay; 200 cells analyzed per dose for structural aberrations, 1000 cells for mitotic index; exposure 3 and 21 h without S9 and 3 h with S9; MMS positive control without S9, cyclophosphamide with S9; Fisher's Exact test; DMSO solvent for in vitro, alpha-TEA dissolved in DMSO then suspended in peanut oil for in vivo.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 97,
+          "id": "ames_v1:15033",
+          "pmid": "17934948",
+          "decision": "需上下文或原始研究",
+          "rationale": "Hexanal 的伴随 Ames 阴性是引用，hamster 的 positive 不能代用；需原细菌研究。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Hexanal (CAS 66-25-1) was reported to cause forward mutation in hamster lung cells at 3 mmol/L (CCOHS, 2003); negative in the Ames test and in an unscheduled DNA synthesis test.",
+          "extra_details": "Forward mutation in hamster lung cells at 3 mmol/L (CCOHS, 2003), listed as a positive genotoxicity finding; cell line and selectable locus not specified. Companion non-eligible endpoints: negative Ames and negative UDS tests.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 98,
+          "id": "ames_v1:75271",
+          "pmid": "9230301",
+          "decision": "需上下文或原始研究",
+          "rationale": "MNNG 在 AB1157/poxyS 有 reversion 实测；plasmid/repair 背景要保留且需要相应溶剂基线，比较两种基因型不足以单独判阳性。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Table 3 reports rates of MNNG-induced mutagenesis in E. coli AB1157 as His^+ revertants per 5 × 10^7 cells. AB1157/poxyS gave 31 ± 21 His^+ revertants, compared with 250 ± 25 for AB1157/psyxO.",
+          "extra_details": "Mean ± SD; MNNG-induced His^+ reversion. Assays in mutS, mutL, mutM, and mutY backgrounds are reported separately; the oxyS antimutator effect was retained in mutM and mutY but reduced in mutS and mutL backgrounds. Values averaged from at least two independent experiments, each with two cultures per strain.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 99,
+          "id": "ames_v1:53391",
+          "pmid": "17846144",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "ciprofloxacin 加 reserpine 的耐药性 forward selection，不是 Ames，且为 co-treatment。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Spn-RC2 bacteria exposed to 2× MIC of ciprofloxacin with 20 µg/ml reserpine showed a mean log10 mutation frequency of -7.40 ± 0.22.",
+          "extra_details": "Forward mutation to quinolone resistance; mean ± 1 SD over 3 trials. MIC (no reserpine) = 2 µg/ml. Co-treatment with 20 µg/ml reserpine.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 100,
+          "id": "ames_v1:36110",
+          "pmid": "4628133",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "B. subtilis EMS mutant isolation 方法，没有本条回复突变 outcome。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Bacteria were grown to mid-log phase in PAB medium. An EMS commercial preparation (Eastman organic chemicals) was diluted 25-fold in MM medium and mixed with an equal volume of bacterial culture, then incubated 70 minutes at 37°C without shaking. EMS was washed out by centrifugation/resuspension in PAB, and the mutagenized bacteria were incubated 6 hours in PAB for mutation expression before enrichment and selection procedures for mutant isolation. The mutagenized strains were subsequently screened for constitutive and levansucrase high-production (Lvs^h) phenotypes by detecting sucrose-hydrolytic activity on solid plates using a glucostat/chromogen spray, with Lvs^h and Lvs+ reference-strain controls included.",
+          "extra_details": "EMS (Eastman organic chemicals) was diluted 25-fold in MM medium just before use and equal volumes of culture and diluted EMS were mixed; exposure 70 min at 37°C without shaking; EMS removed by centrifugation and resuspension in PAB; 6 h (PAB) post-exposure for mutation expression; subsequent enrichment/selection for mutant isolation; screening for constitutive and levansucrase high-production (Lvs^h) phenotypes by sucrose hydrolysis detection on solid medium with chromogen and glucostat reagent (Worthington), scored as red halo around Lvs^h clones; Lvs^h and Lvs+ reference-strain controls routinely included. No mutation-frequency or other outcome value is reported in this window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 101,
+          "id": "ames_v2:215386",
+          "pmid": "1383747",
+          "decision": "需上下文或原始研究",
+          "rationale": "thiourea 明确伴随 Ames 阴性，DDR 阳性不能代用；缺细菌条件及原始 study。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Chemicals detected as positive in the E. coli differential DNA repair test but negative in the Ames test were 4-aminophenol, catechol, diethylstilbestrol, thioacetamide and thiourea.",
+          "extra_details": "Thiourea scored positive in the E. coli differential repair test but negative in the Ames test. No dose, activation, timing, or control details given in the supplied text.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 102,
+          "id": "ames_v2:6265",
+          "pmid": "16468500",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "TA98 中的 DNA adduct negative 是后标记结果，不是回复突变阴性。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "32P-Postlabeling using Salmonella typhimurium TA98 with aniline (aniline base, 1 mg/ml, with metabolic activation +) gave a negative result (Mori et al., 1996).",
+          "extra_details": "test substance: aniline base (A); positive control/activation details not specified beyond metabolic activation '+' in table; evidence_source: Mori et al., 1996",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 103,
+          "id": "ames_v2:258189",
+          "pmid": "11840645",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "酵母 UVC 后 PLDR/基因转换，非 Ames，且是修饰作用。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "As compared to a post-irradiation (125 J/m² UVC) treatment in PB+G (10 mM), a treatment in PB+G (10 mM) + 2-DG (10 mM) showed a decreased recovery of potentially lethal damage (PLDR) in UVC-irradiated diploid yeast strain D7.",
+          "extra_details": "challenge_or_cotreatment: UVC 254 nm at 125 J/m²; route: in vitro cell suspension in phosphate buffer (PB) pH 6.0, 67 mM, 10 mM glucose (PBG); focal_entity_role: 2-DG post-irradiation treatment reduced PLDR relative to PB+G alone; evidence_source: abstract; note: same treatment increased reverse mutation and gene-conversion (excluded fixed-mutation endpoints), not represented here.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 104,
+          "id": "ames_v2:399580",
+          "pmid": "25765378",
+          "decision": "身份或受试物问题",
+          "rationale": "记录称 etodolac 的光稳定 spiro derivative，却给出 nitrofluorene 结构；PubMed 摘要确认受试衍生物类别，需结构图核验。UMU 阳性也不是 Ames 票。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "UMU-test (SOS/umu) was performed on S. typhimurium TA1535/pSK1002. Without S9, photostable derivative 2 gave Induction Ratios (IR) of 1.08±0.41 at 1.56 µg/mL, 1.51±0.32 at 3.125, 1.92±0.29 at 6.25, 1.93±0.39 at 12.5, and 1.96±0.27 at 25 µg/mL; IRs above 1.5 (at 3.125 µg/mL and higher) are bolded as positive induction. With +S9, all IRs for compound 2 were 0.44–0.78, below threshold. Positive controls were 4-nitroquinoline N-oxide (0.05 µg/mL, IR 3.71, -S9) and 2-aminoanthracene (2.0 µg/mL, IR 4.71, +S9); negative control IR was 1.0.",
+          "extra_details": "Focal entity is etodolac's photostable derivative 2. IRs ≥1.5 (3.125–25 µg/mL) bolded as positive. Three independent experiments, ±SD. positive_control: 4-nitroquinoline N-oxide 0.05 µg/mL, IR 3.71±1.0; negative_control: solvent, IR 1.0. No cytotoxic/companion endpoint reported.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 105,
+          "id": "ames_v2:321823",
+          "pmid": "8277523",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "NNK 的 hepatocyte DNA repair 比较，未提供同一分子的明确 Ames 结果；另有结构疑点需单独审核。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "In in vitro screening of TSNA for genotoxic activity, a DNA repair test with primary rat liver cells was employed. NNK was more active than NNN and was as genotoxic as NDMA in this DNA repair test; iso-NNAL was comparable to NNN in activity, while iso-NNAC was not genotoxic. The Ames test (Salmonella mutagenicity) results reported alongside were excluded as out of scope.",
+          "extra_details": "Review provenance: qualitative result from published in vitro DNA repair test (Table 6) in a TSNA genotoxicity review; comparative call: NNK more active than NNN and as genotoxic as NDMA. Companion Ames test (Salmonella) mutagenicity data excluded as out of scope.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 106,
+          "id": "ames_v2:72830",
+          "pmid": "29299944",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "5-FU 的 SOS/umuC reporter 和细胞毒性不是细菌回复突变。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "In the SOS/umuC assay with metabolic activation, mutagenic potential was detected for 5-FU (500 µM).",
+          "extra_details": "Focal entity: 5-Fluorouracil (5-FU), test/damage agent. Mutagenic potential detected at 500 µM with metabolic activation (activation source not specified). In the SOS/umuC experiments 5-FU showed cytotoxic effects at all tested concentrations in both activation conditions.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 107,
+          "id": "ames_v2:92989",
+          "pmid": "10930701",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "HMF 的 no_change 是加 microsome 不改变 SOS 信号，不是 Ames 阴性。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The genotoxic potential of HMF in the umu assay was not altered by addition of rat liver microsomes, compared to the result observed without external activation.",
+          "extra_details": "Addition of rat liver microsomes did not alter the genotoxic potential relative to the without-activation arm (which was positive at 16 mM: 185 rel. umu units, %).; compound_name: 5-(Hydroxymethyl)-2-furfural",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 108,
+          "id": "ames_v2:378348",
+          "pmid": "10472811",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "DNT 的 beta-gal SOS induction 不是回复突变；不能按有 Salmonella 名称判 L1。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "In the umu test with S. typhimurium NM2009 and NM3009 (umuC reporter), 2,4-DNT increased β-gal activity, higher in NM3009 than in NM2009, e.g., around 385±118 and 654±280 units at 12.5 µg/assay; values dropped at 100 µg/assay (50±35, 19±12).",
+          "extra_details": "DDR SOS-family reporter induction. Higher induction in NR+O-AT overexpressing NM3009 than NM2009. Positive control 4NQO 0.285/0.570 µg/assay. β-gal collapsed at 100 µg/assay (likely toxicity). Values mean ± S.D.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 109,
+          "id": "ames_v2:365107",
+          "pmid": "12176087",
+          "decision": "需上下文或原始研究",
+          "rationale": "Geniposide 同段 Ames 阴性可追溯，但缺 strain/S9；rec-assay negative 不能提供细菌条件。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Geniposide showed no mutagenicity (Ames test), no DNA-damaging activity in the rec-assay, and no ability to induce SCEs and tetraploids in the SCE assay.",
+          "extra_details": "Geniposide was negative for DNA-damaging activity in the B. subtilis rec-assay. The Ames-test (excluded endpoint) and SCE/tetraploid (excluded cytogenetic endpoints) results are mentioned for context only. The rec-assay protocol and tested dose are described in an earlier section not present in this window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 110,
+          "id": "ames_v2:373276",
+          "pmid": "8924613",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "GST5-5 对 umu expression 的增强是 DDR，非回复突变。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Ten of 29 chemicals were more genotoxic in the GST 5-5-expressing NM5004 strain than in TA1535/pSK1002 by the umu gene expression assay; 1-bromo-2,3-dichloropropane is one of these and is postulated to be converted to an episulfonium ion by GST 5-5.",
+          "extra_details": "GST 5-5-dependent activation to reactive GSH conjugate (episulfonium ion); part of 29-chemical umu/SOS comparison; no dose reported.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 111,
+          "id": "ames_v3:383851",
+          "pmid": "14645247",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "DBE 的 hisG+ assay 只有方法，没有本窗口结果；需后续结果页。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "For S. typhimurium, strain YG7108 (a TA1535 derivative lacking both endogenous AGT genes) was transformed with pIN or pIN-AGT vectors. Cell survival and mutation were measured per the Liu et al. protocol: aliquots (0.5 ml) were exposed to DBE at 0.035–1.2 mM or to Me2SO solvent for 30–90 min at 37°C; hisG+ revertants were selected on Vogel-Bonner minimal medium with trace histidine, and mutation frequency was calculated per 10^8 survivors, providing an AGT-proficient vs AGT-deficient comparison of DBE-induced mutagenesis.",
+          "extra_details": "Survival was measured by plating diluted cells on non-restrictive medium (M9 minimal, glucose, ampicillin/kanamycin), but survival/mutation values were not reported in this window. Results of the AGT protection comparison are expected in later paper sections.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 112,
+          "id": "ames_v3:451315",
+          "pmid": "2877394",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "EDTA 抑制 GSH 致突变，不是 EDTA 自身 Ames 阴性；酶 no_effect 也非阴性票。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The mutagenic effect of GSH in Salmonella TA100 was inhibited by the γ-GT inhibitor anthglutin and by the metal chelators bathocuproine, EDTA and diethyldithiocarbamate; because the chelating agents did not inhibit γ-GT activity, the mechanism of GSH mutagenicity was inferred to be a two-step process dependent on γ-GT cleavage of GSH plus free transition metals.",
+          "extra_details": "The γ-GT activity result is a supporting, non-Ames mechanistic endpoint; the associated mutagenicity inhibition findings are based on the Salmonella TA100 reversion (Ames) assay and are excluded. Chelator concentration and the exact γ-GT assay system are not reported in the provided text window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 113,
+          "id": "ames_v3:11600",
+          "pmid": "159413",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Neurospora 杀伤/修复比较，不是 Ames。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "MMS (methyl methanesulfonate) is among the agents whose toxicity was increased in the UV-sensitive heterokaryon strain 59 compared to the parent organism (Brockman et al., 1978).",
+          "extra_details": "Secondary-citation evidence (Brockman et al., 1978). The specific repair defect in UV-sensitive strain 59 is not described in the provided text. Readout is increased toxicity/lethality, not an Ames test.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 114,
+          "id": "ames_v3:35370",
+          "pmid": "20308224",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Sudan III 是供体 CYP inducer，不可把被活化底物的细菌结果归给 Sudan III。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Treatment of rats with sudan III, a typical CYP1A1 inducer, resulted in markedly increased CYP1A1 mRNA, protein expression, and CYP1A-dependent enzymatic activity in the tongue.",
+          "extra_details": "The accompanying increase in CYP1A-dependent mutagenic activity is based on bacterial mutagenicity and is excluded per Ames-test exclusion. Dosage, route, and assay values are in later sections not in this window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 115,
+          "id": "ames_v3:161818",
+          "pmid": "2272288",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "2-nitrofluorene 的 glucuronide/水解产物活性，不能反向赋给原始 parent 的条件标签。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "When administered to the isolated perfused rat liver, biliary glucuronides were obtained from 2-nitrofluorene. These glucuronide metabolites were not mutagenic. Upon treatment with β-glucuronidase, direct-acting mutagens were detected that were identical to those from rat lung. Since β-glucuronidase is present in human intestinal microflora, hydroxylated 2-nitrofluorene glucuronides may be metabolized to mutagenic metabolites in the colon.",
+          "extra_details": "The glucuronide conjugates were inactive, but β-glucuronidase (present in human intestinal microflora) hydrolysis released direct-acting mutagens identical to those from rat lung. Direct mutagenicity was assessed by the Salmonella reversion assay (excluded); only the glucuronide conjugation/detoxification step is extracted.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 116,
+          "id": "ames_v3:575765",
+          "pmid": "27530757",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "ofloxacin 杀菌/氧依赖，没有回复突变读数。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The authors state that the cellular effect of ofloxacin, a bactericidal antibiotic that produces reactive oxygen species, occurs only under aerobic conditions, which supports the idea that the additional effect of bactericidal antibiotics requires the presence of oxygen (reported in Table 1).",
+          "extra_details": "The organism/cell system for this specific ofloxacin result is not explicitly stated in the provided text (paper context is bacterial, likely Salmonella Typhimurium); exact ofloxacin concentration, exposure duration, and quantitative readout are not reported in this passage.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 117,
+          "id": "ames_v3:258043",
+          "pmid": "7735249",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "记录分子是 acetaldehyde；Ames 结果属于 N-nitrosodialkylamine 底物，不能把其结果赋给副产物。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "A chemical model for cytochrome P450 (tetrakis(pentafluorophenyl)porphyrinatoiron(III) chloride with tert-butyl hydroperoxide) was used to activate N-nitrosodialkylamines. The formation of aldehydes derived from dealkylation in the model was exemplified by the formation of acetaldehyde from NDE (N-nitrosodiethylamine), demonstrating oxidative dealkylation to reactive decomposition products.",
+          "extra_details": "The acetaldehyde formation exemplifies the aldehyde products released during dealkylation; α-hydroxy nitrosamines spontaneously break down to alkanediazohydroxides releasing aldehydes, with alkyldiazonium ions as the ultimate alkylating species. The same model system also activated NDM, NDE, NDP and NDB to mutagenicity in Salmonella typhimurium YG7108 (order NDB > NDM > NDE ≈ NDP; mutagenicity increased by pre-incubation and depended on mutagen concentration); that mutagenicity endpoint is an Ames/Salmonella reverse-mutation result and is not extracted here.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 118,
+          "id": "ames_v3:376494",
+          "pmid": "30376922",
+          "decision": "需上下文或原始研究",
+          "rationale": "7-oxo-IQ 有直接 Ames 语句，但来自综述且缺菌株/S9/身份核验；应追原研究。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Eubacterium and Clostridium oxidize IQ-type compounds to form 7-oxo species such as 2-amino-3-methyl-3H-imidazo[4,5-f]quinolone (7-oxo-IQ). These compounds are directly mutagenic in the Ames test strain Salmonella but are not carcinogenic in rodents.",
+          "extra_details": "Secondary-citation evidence from a review. The directly mutagenic result in the Ames Salmonella strain is an excluded Ames test and is not extracted; only the bacterial oxidation forming 7-oxo-IQ is recorded. 7-oxo-IQ not carcinogenic in rodents.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 119,
+          "id": "ames_v3:129452",
+          "pmid": "17292678",
+          "decision": "需上下文或原始研究",
+          "rationale": "SM/CEES 与 NER 背景比较混写，需要拆清化合物、菌株、对照和 S9；decreased 指机制比较，不是 Ames negative。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "For CEES-treated E. coli, NER causes a small increase in survival and a much larger decrease in mutagenesis. As in the case with SM, a functional NER system increases survival and decreases mutagenesis. The reported comparison used WT (MV1161), alkA1 (MV1174, glycosylase-deficient), uvrA6 (MV1273, NER-deficient), and uvrA6 alkA1 (MV1302) strains.",
+          "extra_details": "Principal endpoint taken as mutagenesis (decreased Arg+ revertants in NER-proficient cells); NER also increased survival for SM-exposed cells.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 120,
+          "id": "ames_v3:339513",
+          "pmid": "2975197",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "STZ 的 mouse GST induction，Ames 结果属于其他 HCA；不能从同段关系移植标签。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The activities of glutathione transferase in the mouse were increased by streptozotocin (STZ) but not by alloxan, and the increases were not prevented by nicotinamide, providing strong evidence that the induced-diabetic state was not responsible for this increase.",
+          "extra_details": "GST activity was increased by STZ but not by alloxan, and the STZ-induced increase was not prevented by nicotinamide, indicating the increase was independent of the induced-diabetic-state effect. No dose, unit, tissue, or assay-value details are given in this passage. This is a detoxification-enzyme activity measurement, distinct from the Ames reverse-mutation results for Trp-P-1/Trp-P-2/IQ/MeIQx/MeIQ discussed in the same section (which are excluded as Ames tests).",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 121,
+          "id": "ames_base:166865",
+          "pmid": "18555576",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "TM677 forward mutation；TA1535-derived/revertant 描述菌株来源，并不是本次 assay 为 reverse mutation。",
+          "identity": "not_queried",
+          "support_text": "Steviol was reported mutagenic in a forward mutation assay using S. typhimurium TM677, a histidine independent revertant of strain TA1535 that is repair deficient and contains both the plasmid pKM101 and rfa mutation. In order to be mutagenic in TM677, steviol must be metabolized to a reactive intermediate by S9 mix from rats induced by polychlorinated biphenyls.",
+          "extra_details": "Forward mutation assay.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 122,
+          "id": "ames_base:34064",
+          "pmid": "34271990",
+          "decision": "需上下文或原始研究",
+          "rationale": "perillaldehyde 有 TA98-S9 的伴随 Ames 增加，但为引用且作者分类需核验；结构字段的 negative 属于 HPRT，不能复用。",
+          "identity": "verified_parent_match",
+          "support_text": "In response to the EFSA request, perillaldehyde was assessed by Ames tests, in vitro micronucleus (MN) assays, and an in vitro HPRT mutation assay. Results showed a statistically significant increase in revertant colony number according to the Ames test (TA98, -S9 mix), whereas the in vitro MN and HPRT mutation assays showed negative results.",
+          "extra_details": "In vitro HPRT mutation assay negative for perillaldehyde in the EFSA-requested study [32]; note EFSA later reinterpreted this assay as equivocal.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 123,
+          "id": "ames_base:7880",
+          "pmid": "6993936",
+          "decision": "需上下文或原始研究",
+          "rationale": "TA98 no-revertants 为伴随 Ames 阴性引用；V79 的 weak_positive 是另一个 endpoint，需细菌 S9/原实验。",
+          "identity": "not_queried",
+          "support_text": "Table 12 shows that N-myristoyloxy-N-acetyl-2-aminofluorene was weakly mutagenic in V79 Chinese hamster cells when AZA^r was used as the genetic marker (0.28 ± 0.09 AZA^r mutants/10^5 survivors per 10^-9 mole per ml), tested without a metabolic activation system, despite giving no revertants in S. typhimurium TA98.",
+          "extra_details": "V79 data from Kuroki and Bartsch (1979). Weakly mutagenic; 0.28 ± 0.09 AZA^r mutants/10^5 survivors per 10^-9 mole per ml. Tested without metabolic activation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 124,
+          "id": "ames_base:105111",
+          "pmid": "23103588",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "steviol TM677 是 forward mutation，即使带 pKM101/rfa/TA1535 字样也不属于当前 Ames。",
+          "identity": "not_queried",
+          "support_text": "Steviol was reported positive in a forward mutation assay using Salmonella typhimurium TM677 (Pezzuto et al., 1985, 1986; Matsui et al., 1996a,b; Terai et al., 2002). An S9 mix from rats exposed to polychlorinated biphenyls is required for steviol to produce positive mutagenic effects. The strain is a prototrophic revertant of TA1535, deficient in DNA repair proteins and containing the plasmid pKM101 and rfa mutations.",
+          "extra_details": "",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 125,
+          "id": "ames_base:290695",
+          "pmid": "2193978",
+          "decision": "需上下文或原始研究",
+          "rationale": "WP2 reverse mutation 明确，源 family 过窄；但 Isopar G 的实际受试品组成和原始文献未核实，不能以单结构投票。",
+          "identity": "not_queried",
+          "support_text": "Isopar® G did not increase the number of tryptophane-independent revertants in the E. coli WP2 reverse mutation assay with or without S9 activation, and therefore was not mutagenic in the WP2 assay (references 14, 28).",
+          "extra_details": "WP2 reverse mutation assay (tryptophane auxotroph); counted tryptophane-independent revertants; with and without S9 activation; cited to references 14 and 28.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 126,
+          "id": "ames_base:161495",
+          "pmid": "27267998",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "TA100 whole-genome mutational signature 没有回复突变终点，原记录已明确说明。",
+          "identity": "not_queried",
+          "support_text": "The paper reports that whole-genome analysis of Salmonella typhimurium strain TA100 exposed to 1,2-dichloropropane (1,2-DCP) revealed a partial recapitulation of the mutational signature found in the occupational cholangiocarcinoma of printing workers, indicating that 1,2-DCP induced gene mutations in Salmonella with a defined trinucleotide signature. No reverse-mutation (Ames revertant counting) result or S9 activation status is described.",
+          "extra_details": "Whole-genome mutation analysis of exposed TA100 showed mutations with a mutational signature partially recapitulating the occupational cholangiocarcinoma signature (high mutation burden, strand bias, GpCpY-to-GpTpY and NpCpY-to-NpTpY/NpApY trinucleotide changes). This is a forward mutation/signature analysis rather than a classical reverse-mutation Ames revertant count. 1,2-DCP was recategorized by IARC as a Group 1 carcinogen; the paper notes prior in vitro and in vivo studies suggested limited mutagenic and tumorigenic capability.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 127,
+          "id": "ames_v1:45254",
+          "pmid": "18555576",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "与 base 的 TM677 forward-mutation 描述相同；跨 run 不得把它提升为 Ames。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Steviol was reported mutagenic in a forward mutation assay using S. typhimurium TM677, a histidine independent revertant of strain TA1535 that is repair deficient and contains both the plasmid pKM101 and the rfa mutation. In order to be mutagenic in TM677, steviol must be metabolized to a reactive intermediate by S9 mix from rats induced by polychlorinated biphenyls.",
+          "extra_details": "Forward mutation assay (non-Ames) using S. typhimurium TM677, a histidine-independent revertant of TA1535 that is repair deficient, carries plasmid pKM101 and the rfa mutation. Mutagenicity required metabolic activation by S9 mix from rats induced by polychlorinated biphenyls. Reactive intermediate not identified; several known/hypothesized steviol metabolites tested without definitive conclusions. Dose not reported.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 128,
+          "id": "ames_v1:45744",
+          "pmid": "15720259",
+          "decision": "需上下文或原始研究",
+          "rationale": "正文含明确 paepalantine 三株 ±S9 阳性，但 PMID15720259 实际是综述；已找到对应原研究 PMID9261922。需以原研究去重并核对身份，不能给综述新增独立票。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "A study assessed the mutagenic activity of a new isocoumarin, paepalantine, in assays with Salmonella typhimurium TA100, TA98, and TA102 and in Chinese hamster ovary (CHO) cell cultures. Paepalantine increased the frequency of revertants in the three Salmonella strains both with and without S9 mix at 2–128 µg/plate. The mutagenicity was confirmed in CHO cells treated in the G1, S, and G2 phases of the cell cycle, with an increase in chromosomal aberration frequency mainly in the G2 phase; the mitotic index of treated cultures (40, 80, and 160 µg/mL) was significantly lower, indicating cytotoxicity.",
+          "extra_details": "CHO cells treated in the G1, S, and G2 phases of the cell cycle; increase in chromosomal aberration frequency mainly in the G2 phase. Mitotic index of treated cultures was significantly lower at 40, 80, and 160 µg/mL, indicating cytotoxicity. Note: the companion Salmonella typhimurium TA100/TA98/TA102 reversion results (dose-dependent increase in revertant frequency at 2–128 µg/plate, with and without S9 mix) are an Ames-based reverse-mutation assay and are excluded from this extraction.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 129,
+          "id": "ames_v1:4656",
+          "pmid": "15162838",
+          "decision": "需上下文或原始研究",
+          "rationale": "Nonoxynol-9 的 Ames 阴性是 Meyer1988 引用；还需表面活性剂组分/同系物身份和完整 panel，不能把 TA98 字段作为整个 battery。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Without metabolic activation, Nonoxynol-9 was not mutagenic. With metabolic activation, the number of revertants was elevated 30% in strain TA98 cultures exposed to Nonoxynol-9 at 1000 µg/plate, but this was not considered a clear-cut mutagenic response because the increase was considerably less than 100%. It was concluded that Nonoxynol-9 was not mutagenic in the Ames test with or without metabolic activation (Meyer et al. 1988).",
+          "extra_details": "Ames/Salmonella reverse-mutation evaluation of Nonoxynol-9 (TA1535, TA1537, TA100, TA98; 40-25000 µg/plate). This record is provided only as context: Ames/Salmonella reverse-mutation results are EXCLUDED from the eligible fixed-mutation/chromosome endpoint extraction per task rules, so this does not form an included data record.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 130,
+          "id": "ames_v1:58291",
+          "pmid": "32268159",
+          "decision": "身份或受试物问题",
+          "rationale": "I2 complex 可能被错误映射为元素碘 II，需结构图和原研究核验；micronucleus positive 不能代替最大 MI1.75 的 Ames 判读。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The I2 complex significantly increased the frequency of micronuclei (MNs) at the two highest tested concentrations (50 µg/mL and 100 µg/mL) in the micronucleus-cytome assay, showing a genotoxic effect. This was additional to an increase in DNA migration by comet assay and an increase in revertant colonies in the TA97a strain after S9 (Ames test).",
+          "extra_details": "Micronucleus-cytome assay measuring micronucleus (MN) frequency in HepG2 cells. The same study also reported increased DNA migration (comet assay) at the highest concentration (50 µg/mL) and increased TA97a revertant colonies with S9 (Ames test, maximum MI 1.75), both excluded as non-eligible endpoints. Statistical significance reported relative to the negative control.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 131,
+          "id": "ames_v1:16070",
+          "pmid": "26324095",
+          "decision": "需上下文或原始研究",
+          "rationale": "多研究 Salmonella 阴性汇总且用大鼠/仓鼠活化；需要原研究、完整 panel，不能从 result_call 直接建一票。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "In bacteria, several studies with different Salmonella typhimurium strains in the presence and absence of exogenous metabolic activation systems from rat or hamster liver found no mutagenic effect when tested up to cytotoxic doses. A minimal, non-dose-dependent increase in revertants in a test with strains TA102 and TA104 in the absence of exogenous metabolic activation could not be confirmed in a further test with these strains.",
+          "extra_details": "Studies performed with and without exogenous metabolic activation systems derived from rat or hamster liver, tested up to cytotoxic dose ranges. A minimal non-dose-dependent revertant increase in strains TA102 and TA104 without exogenous activation was not reproducible in a further test.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 132,
+          "id": "ames_v1:10782",
+          "pmid": "2870945",
+          "decision": "需上下文或原始研究",
+          "rationale": "sotalol 有明确四株 Ames 阴性，但仅提到制备 S9，未清楚说明本结果对应 +S9/-S9/两者；需核实原方法/表格和身份。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Sotalol was tested for mutagenic activity. In the Ames test with S. typhimurium strains TA 98, TA 100, TA 1535, and TA 1537 there was no significant dose-dependent increase in histidine revertants. The same authors also tested sotalol in the micronucleus test using adult CF1 outbred mice; doses of 50, 100, and 150 mg/kg failed to produce a dose-related increase in the number of micronuclei. It was concluded from this study that the beta blockers tested, including sotalol, exhibited no evidence for mutagenic potential.",
+          "extra_details": "Micronucleus test in adult CF1 outbred mice; sotalol administered at 50, 100, and 150 mg/kg failed to produce a dose-related increase in micronuclei. Authors concluded the beta blockers tested, including sotalol, exhibited no evidence for mutagenic potential. (The companion Ames/Salmonella reverse-mutation portion of the same study is excluded by task criteria; an activating system was prepared from livers of male Wistar rats pretreated with Aroclor 1254 and sotalol was tested at 1 to 1000 µg/plate.); compound_name: Sotalol",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 133,
+          "id": "ames_v2:434515",
+          "pmid": "3511364",
+          "decision": "需上下文或原始研究",
+          "rationale": "valepotriates/metabolites 与毒性混写，TA100 倍增不能自动归给一个 valtrate 结构；需逐化合物处理臂和可评价剂量。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The valepotriates as epoxides developed mutagenic and cytotoxic effects in the presence of S9 mix. While the genotoxic effect of the emerged metabolites was shown with the strain TA100 by the doubling of the spontaneous revertant numbers, because of the cytotoxicity, this effect is more obvious with the SOS-chromotest.",
+          "extra_details": "Valtrate (VAL), as an epoxide, developed mutagenic and cytotoxic effects in the presence of S9 mix; the genotoxic effect of the emerged metabolites was more obvious in the SOS-chromotest because of cytotoxicity in the Ames TA100 assay. Metabolic activation source: S9 mix. No dose, sampling time, or response magnitude reported. Genotoxicity comparison with TA100 revertant doubling (Ames, excluded endpoint). Activation of VAL depends on ester hydrolysis by esterases.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 134,
+          "id": "ames_v2:495428",
+          "pmid": "1909211",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Allixin 是保护剂，回复突变归属于 AFB1；不能把抑制写成 Allixin 自身阴性。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Allixin, a phytoalexin isolated from garlic, showed a dose-related inhibition of His+ revertants induced by aflatoxin B1 (AFB1) in Salmonella typhimurium TA100 with rat liver S9 metabolic activation. Allixin at 75 µg/ml inhibited [3H]AFB1 binding to calf thymus DNA and reduced the formation of AFB1-DNA adducts. Allixin also concentration-dependently inhibited formation of organosoluble metabolites and glutathione conjugates of [3H]AFB1.",
+          "extra_details": "challenge_or_cotreatment: aflatoxin B1 (AFB1, SMILES:10830875); allixin evaluated as protective/modifying agent reducing AFB1 binding and adduct formation; proposed mechanism is inhibition of microsomal P-450 enzymes leading to reduced AFB1 bioactivation; the associated His+ revertant data reflect the excluded Ames test and are not part of this record; negative_control/positive_control and exact assay-version details for the binding assay are not present in the supplied text window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 135,
+          "id": "ames_v2:478508",
+          "pmid": "17724772",
+          "decision": "需上下文或原始研究",
+          "rationale": "Luteolin 的明确四株 ±S9 阴性来自 Czeczot1990；可恢复但需原 PMID 和身份，不能使用当前 review PMID 加票。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Luteolin applied separately did not show increased His+ revertants in Salmonella typhimurium strains TA97, TA98, TA100, TA102 with or without metabolic activation (Czeczot et al., 1990; Ames-type test). However, in the E. coli K-12 strain PQ 37 it weakly induced the SOS system (Czeczot and Bilbin, 1991; Czeczot and Kusztelak, 1993).",
+          "extra_details": "evidence_source: prior-study results clearly attributed to Czeczot and Bilbin (1991) and Czeczot and Kusztelak (1993). Agent applied separately (not as CCE/extract). Outcome described as weak induction. Luteolin did not increase His+ revertants in S. typhimurium (Ames test; excluded from this extraction). No dose, activation, positivity, or controls reported for the SOS endpoint.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 136,
+          "id": "ames_v2:61875",
+          "pmid": "8544756",
+          "decision": "需上下文或原始研究",
+          "rationale": "PhIP 同条同时声称 revertants increased 和 TA1978 no revertants；需要原表解开菌株/臂归属，不能以 adduct positive 替代。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "DNA adducts in Salmonella TA1978 were detected at an RAL of 21×10⁻⁷ adducts/nucleotide for 1116 µM PhIP. Increasing the S9 mix 5-fold in the incubation medium gave no increase in adduct formation, although revertant formation increased.",
+          "extra_details": "S9 mix present in incubation medium; ~90 min preincubation; a 5-fold increase in S9 mix produced no increase in adduct formation (an increase in revertants was observed); no revertants in TA1978 overall, so adduct level could not be correlated with revertant formation.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 137,
+          "id": "ames_v2:347629",
+          "pmid": "4584075",
+          "decision": "需上下文或原始研究",
+          "rationale": "7-bromomethylbenz[a]anthracene 的 WP2uvrA 有剂量相关 reversion 描述；缺活化和身份，需原方法。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The authors connect the induction of Trp+ revertants in WP2uvrA to the extent of benz[a]anthracenyl-7-methyl residues bound to DNA and other macromolecules, reaffirming that the mutagen binds covalently to DNA in E. coli and that this binding is proportional to dose.",
+          "extra_details": "DNA binding of 7-bromomethylbenz[a]anthracene stated to be proportional to dose; the attendant Trp+ revertant induction (a mutation endpoint, excluded) is described as proportional to dose and to benz[a]anthracenyl-7-methyl residues bound to DNA. WP2 data presented as insufficiently accurate to assess dose-mutagenesis relationship quantitatively. Method, dosing, and controls not given in this window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 138,
+          "id": "ames_v2:486481",
+          "pmid": "7045874",
+          "decision": "需上下文或原始研究",
+          "rationale": "paraquat 的 direct reversion endpoint 明确，但片段只有方法和 frequencies 的提及，没有二元结果/活化；适合作为结果页查找线索。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "The paper reports paraquat (PQ2+) mutagenicity in Salmonella typhimurium tester strains TA98 and TA100 measured as His+ revertant frequencies per 10^8 CFU in solid minimal medium, the spot assay, and a modified liquid incubation assay. All endpoints are reversion of base-pair substitution and frameshift mutations scored on selection plates with or without limited histidine.",
+          "extra_details": "",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 139,
+          "id": "ames_v3:364321",
+          "pmid": "8504462",
+          "decision": "身份或受试物问题",
+          "rationale": "正文 NDMA 是二甲基亚硝胺，SMILES 是带芳环的 nitroso dimethylaniline；明确主体-结构矛盾，不能投票或不经核验继续当同一分子证据。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Formaldehyde was assayed after a 1 h incubation of 2 mM NDMA with hamster liver S-9 mix, and 40 µM formaldehyde was recovered. The authors used this to argue that this concentration of formaldehyde induces <5% of the number of revertants in TA104 as a 2 mM solution of NDMA under the same conditions, i.e. formaldehyde is not responsible for NDMA's mutagenic effects.",
+          "extra_details": "NDMA metabolite formation (formaldehyde) as a marker of the bioactivation pathway; authors interpret that 40 µM formaldehyde alone induces <5% of TA104 revertants compared to 2 mM NDMA, so formaldehyde is not the mutagenic species.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 140,
+          "id": "ames_v3:352195",
+          "pmid": "2219155",
+          "decision": "身份或受试物问题",
+          "rationale": "正文 DCVC 的活化与 beta-lyase，SMILES 却无氯无硫的 dibutylcarbamate；主体-结构矛盾，需结构/名称核实。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "In the present study, antioxidants such as AOAA and cyanidol did not decrease the number of revertants induced by DCVC in the Ames test. However, GSH appears to be involved in the activation of DCVC in the renal cortex since GSH increased the formation of DNA single-strand breaks and increased DNA repair only when the renal cortex S-9 mix was used. The authors propose that DCVC-derived reactive species form after conjugation of DCVC with GSH, processing of these conjugates by renal dipeptidases and activation by renal β-lyase, and that the reactive intermediates react with DNA to induce DNA damage and mutagenicity.",
+          "extra_details": "Discussion-section summary of the activating role of GSH via conjugation, renal dipeptidase processing and renal beta-lyase activation. The experiments with AOAA and cyanidol antioxidants were performed in the Ames test and are therefore excluded. Secondary-citation provenance: assay systems and methods are described elsewhere in the paper, not in this window.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 141,
+          "id": "ames_v3:104716",
+          "pmid": "11018744",
+          "decision": "需上下文或原始研究",
+          "rationale": "CH2Br2 在外加 GSTT1/GSH 下 TA1535 无回复增加是可恢复的条件化结果；但 PMID11018744 是综述，须追原研究并保留外加酶条件。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "When CH2Br2 was tested exposing the parental strain TA1535 to purified rat enzyme GSTT1 and GSH, formaldehyde was produced but no increase of revertant frequency was observed, consistent with the view that activation of dihalomethanes must occur inside the bacteria and that formaldehyde formation itself is not enough to cause genetic damage.",
+          "extra_details": "Formaldehyde was produced but no increase of revertant frequency was observed; text interprets that formaldehyde formation is not sufficient for genetic damage. The Ames/revertant endpoint is excluded per task instructions; only the independent formaldehyde-formation endpoint is recorded.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 142,
+          "id": "ames_v3:123663",
+          "pmid": "3720914",
+          "decision": "需上下文或原始研究",
+          "rationale": "trenbolone 有低剂量阳性和 S9 消除描述；需菌株、毒性/溶解度、同位素身份及各剂量臂，不能统一成简单 no_effect。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Trenbolone (Tb), an anabolic steroid hormone analog, was irreversibly bound to DNA isolated from Salmonella after incubation of the bacteria with [³H]Tb. Because S9 eliminated the (Ames) mutagenicity while low doses increased revertants, covalent DNA binding is proposed as the mechanism of trenbolone mutagenicity. The authors caution that bactericidal or sparingly soluble compounds giving negative Ames results at high doses should be evaluated at low doses.",
+          "extra_details": "Outside the scoped endpoint, the same study reports Ames/revertant results (relative mutagenicities 1.2-1.3 at 30-60 ug/plate, abolished by S9, with reduced survival at higher doses); those revertant measurements are excluded per task rules. Covalent DNA binding is proposed as the enabling mechanism of mutagenicity.",
+          "remaining_requirements": ""
+        },
+        {
+          "number": 143,
+          "id": "ames_v3:556955",
+          "pmid": "378447",
+          "decision": "现有条件下的投票审核候选",
+          "rationale": "MNUA 在 WP2 与 WP2 lexA 都诱发回复突变；no_effect 是 lexA 改变不影响作用，不能映射 negative。可提出 WP2/-S9 positive 候选；lexA 臂保留独立基因型，身份及方法仍待审核。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "MNUA induced a similar number of revertants in E. coli WP2 lexA as in WP2, indicating that MNUA mutagenicity does not depend on the lexA gene product.",
+          "extra_details": "MNUA induced a similar number of revertants in WP2 lexA as in WP2, i.e., MNUA mutagenicity is lexA/SOS-independent. MNUA is mapped to N-methyl-N-nitrosourea (SMILES:8635137); an alternate entity N-nitrosomethylurea (SMILES:17558897) also carries the MNUA surface form. Bacterial reversion readout whose design directly varies a DNA-repair mechanism; included under the repair-deficient/proficient exception. Dose values only in figures; no numeric concentrations/units in text.",
+          "remaining_requirements": "Validate source-name mapping to N-methyl-N-nitrosourea and -S9 method; extract the WP2 self-outcome separately from lexA comparison. Do not map no_effect to Y=0."
+        },
+        {
+          "number": 144,
+          "id": "ames_v3:576199",
+          "pmid": "3919292",
+          "decision": "本条不是可用的直接实验票",
+          "rationale": "Tannic acid 降低 UV-induced revertants 属于抗突变修饰，不是其自身 Ames negative。",
+          "identity": "source_structure_without_name_field",
+          "support_text": "Tannic acid showed a bio-antimutagenic effect on UV-induced mutagenesis only in the repair-proficient strain E. coli B/r WP2 (uvr⁺); the number of Trp⁺ revertant colonies decreased as the tannic acid concentration increased, with an 80% decrease at 1 mg/plate, whereas little or no decrease was observed in the excision-repair-deficient strains WP2s (uvrA⁻) and ZA159 (uvrB⁻) under conditions where no cellular toxicity was observed. UV doses were 22.5 J/m² for WP2 and 2 J/m² for WP2s and ZA159.",
+          "extra_details": "At 1 mg/plate tannic acid reduced Trp⁺ revertants by 80% in repair-proficient WP2 but little if any in excision-repair-deficient WP2s and ZA159; explicitly no cellular toxicity observed under the test conditions. Each point is the average of duplicate plates.",
+          "remaining_requirements": ""
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "review",
+      "label": "144 条逐条语义审查及当前 source 审计",
+      "path": "data/starling_data/ames/source_review_v3/audit_annotations.jsonl",
+      "description": "Full raw records: sample.jsonl; reproducible sampling: review.ipynb; lineage and sampling denominators: summary.json. Unequal strata and targeted followup; no population error-rate estimate."
+    },
+    {
+      "id": "pubmed",
+      "label": "NCBI PubMed：15 篇文献元数据和摘要",
+      "path": "data/starling_data/ames/source_review_v3/pubmed_evidence.xml",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=15720259,378447,25765378,9651047,12113769,6720027,17360228,11018744,3893781,375954,9261922,10613187,8377651,30268793,2067537&retmode=xml"
+    },
+    {
+      "id": "oecd",
+      "label": "OECD Test Guideline 471 (2020)",
+      "url": "https://www.oecd.org/en/publications/test-no-471-bacterial-reverse-mutation-test_9789264071247-en.html"
+    },
+    {
+      "id": "counts_sql",
+      "label": "SQLite：逐条审核处置计数",
+      "path": "data/starling_data/ames/source_review_v3/review.ipynb",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT disposition, COUNT(*) AS records FROM main.review_decisions GROUP BY disposition ORDER BY records DESC, disposition",
+        "tables": [
+          "main.review_decisions"
+        ],
+        "description": "In-memory table loaded solely from authored audit_annotations.jsonl; one row per reviewed source record; Chinese disposition names mapped without changing categories."
+      }
+    },
+    {
+      "id": "details_sql",
+      "label": "SQLite：全部 144 条审核记录",
+      "path": "data/starling_data/ames/source_review_v3/review.ipynb",
+      "query": {
+        "engine": "sqlite",
+        "sql": "SELECT number, id, pmid, decision, rationale, identity, support_text, extra_details, remaining_requirements FROM main.review_records ORDER BY number",
+        "tables": [
+          "main.review_records"
+        ],
+        "description": "Loaded from audit_annotations.jsonl joined to sample.jsonl by exact source record id; rationale is individually authored, not inferred by SQL."
+      }
+    }
+  ]
+}

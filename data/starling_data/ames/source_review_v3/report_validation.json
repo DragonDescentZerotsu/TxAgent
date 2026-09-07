@@ -1,0 +1,22 @@
+{
+  "status": "structural_only",
+  "structure": {
+    "counts": {
+      "blocks": 15,
+      "charts": 1,
+      "html": 0,
+      "metrics": 0,
+      "tables": 2
+    },
+    "html": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v3/report.html",
+    "ok": true,
+    "title": "Ames 非投票记录语义审查：需要修正机械筛选"
+  },
+  "enhanced_browser_status": "failed_reader_fallback",
+  "enhanced_browser_error": "Portable reader remained in fallback during chart extraction, including a 15000ms readiness budget. No browser or plugin was installed or modified. Canonical builder exported the semantic fallback and exact artifact payload.",
+  "renderer": "bundled canonical build_portable_artifact.mjs",
+  "limitations": [
+    "Enhanced reader, browser interactions, and chart SVG extraction were not validated. Semantic fallback is packaged with the report."
+  ],
+  "exact_embedded_payload_match": true
+}

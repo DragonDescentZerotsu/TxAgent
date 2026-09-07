@@ -25,14 +25,19 @@ The maintained entrypoints are:
 - `run_train_cv.py`: train-only scaffold CV for epoch and OOF threshold selection.
 - `run_embedding_knn.py`: cosine KNN over frozen MiniMol embeddings.
 
-Use `--condition-field condition_group` for BBB, Bioavailability, and Skin.
+Use `--condition-field condition_group` for BBB, Bioavailability, Skin, and Ames.
 Freeze the condition vocabulary from outer train; valid/test categories must
 already exist in it. ClinTox has no accepted condition groups and omits this flag.
 Select the epoch by train-only scaffold-CV AUROC, freeze a macro-F1 threshold
 from pooled OOF scores, and fit the final head on all train rows. Outer valid/test
 labels are excluded from both selections. KNN uses unique train molecules only;
 the conditioned comparison retains same-condition-then-null and unrestricted
-train variants with frozen k=3.
+train variants with frozen k=3. Ames valid v2 explicitly uses
+`--condition-policy same_condition_then_null_then_all`: keep same-condition
+neighbors, then unannotated-condition neighbors, and fill any remaining slots
+from unrestricted train molecules by similarity. Molecules remain unique and
+each fallback neighbor is marked `all_train_fallback`. This optional policy
+does not change existing `same_condition_then_null` runs.
 
 Current scores, artifact roots, input hashes, and checkpoint dependencies have
 one authoritative index: [current_conditioned_results.json](../../tools/chembl_tool/paper_experiments/current_conditioned_results.json),

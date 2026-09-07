@@ -1,7 +1,7 @@
 """Restore and validate the frozen Starling records used by current retrieval.
 
-The current assay-progressive experiments start from one immutable Stage-03
-record snapshot per task.  Git-trackable zstd parts live under ``artifacts/``;
+The current assay-progressive experiments start from one immutable canonical
+record snapshot per task, restored under the shared Stage-03 directory layout.  Git-trackable zstd parts live under ``artifacts/``;
 this module restores them into the ignored ``outputs/`` tree.  No current
 builder may fall back to another user's checkout or silently select an older
 record version.
@@ -27,7 +27,7 @@ MANIFEST_PATH = (
 DEFAULT_LOCAL_ROOT = (
     PROJECT_ROOT / "outputs/chembl_tool/starling/current_records"
 )
-TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction", "ames")
 
 
 def _sha256(path: Path) -> str:

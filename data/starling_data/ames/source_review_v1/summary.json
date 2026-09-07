@@ -1,0 +1,42 @@
+{
+  "seed": 20260905,
+  "total_base": 334211,
+  "classifier_direct": 5345,
+  "identity_statuses": {
+    "unresolved_name_or_request": 1525,
+    "not_queried": 2620,
+    "verified_parent_match": 1076,
+    "name_structure_mismatch": 74,
+    "stereochemistry_or_isotope_unresolved": 43,
+    "ambiguous_name_resolution": 7
+  },
+  "eligible": 1076,
+  "frozen_names": 1884,
+  "sample_n": 48,
+  "sample_cells": {
+    "(0, 'absent')": 8,
+    "(0, 'both')": 8,
+    "(0, 'present')": 8,
+    "(1, 'absent')": 8,
+    "(1, 'both')": 8,
+    "(1, 'present')": 8
+  },
+  "population_cells": {
+    "(1, 'present')": 378,
+    "(0, 'both')": 101,
+    "(1, 'both')": 144,
+    "(0, 'absent')": 113,
+    "(1, 'absent')": 279,
+    "(0, 'present')": 61
+  },
+  "sample_unique_panels": 29,
+  "sample_unique_pmids": 44,
+  "hashes": {
+    "tools/chembl_tool/tasks/ames/source_contract.py": "72e50e9d9c0b6ff1bcc91a8fb531ce3fdb71014e49bec1fd13fdb5b22505ae1e",
+    "tools/chembl_tool/tasks/ames/identity_review.py": "98a532a21d5bd9b0b4f91924e41de590ac8fbff8cda8396a2fce0f4407250c4c",
+    "data/starling_data/ames/raw_v1/pubchem_name_responses.jsonl": "1387c58a36d2a63fd6d76f05916f81c3cc6883b2398ab36fa55479d204c069e6"
+  },
+  "review_method": "agent_review_of_supplied_source_text_not_full_paper_review",
+  "publication_status": "prebuild_candidate_audit",
+  "interpretation": "Stratified sample; findings are review flags, not estimated label-error prevalence."
+}

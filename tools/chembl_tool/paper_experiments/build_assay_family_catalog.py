@@ -19,11 +19,19 @@ from typing import Any
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import (
-    sha256_file,
     write_json_atomic,
     write_jsonl_atomic,
 )
 from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
+from tools.chembl_tool.common.build_runtime import (
+    sha256_file,
+    local_input,
+    local_workdir,
+    publish_file,
+    write_jsonl_local,
+    build_signature,
+    reusable,
+)
 
 
 VERSION = "starling_physical_assay_family_catalog.v1"
@@ -35,6 +43,13 @@ MECHANISM_OUTPUT_ROOT = Path(
     "family_catalogs_mechanism_tagged_v1"
 )
 TASKS = {
+    "ames": {
+        "records": "data/starling_data/ames/canonical_v1/records.parquet",
+        "config_module": "tools.chembl_tool.tasks.ames.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(DEFAULT_OUTPUT_ROOT),
+        "output_name": "ames",
+    },
     "bbb_martins": {
         "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bbb_source_family_purity_v6/records.parquet",
         "config_module": "tools.chembl_tool.tasks.bbb_martins.experiment_config",
@@ -188,7 +203,7 @@ def build_catalog(
         return _build_clintox_catalog(records_path, config_name)
     config = getattr(importlib.import_module(TASKS[task]["config_module"]), config_name)
     frame = pq.read_table(
-        records_path,
+        local_input(records_path),
         columns=[
             "group_id",
             "canonical_assay_context",
@@ -243,8 +258,17 @@ def build_catalog(
 
     rows = []
     overlap_patterns: Counter[tuple[int, ...]] = Counter()
-    for stable_assay_id, group in frame.groupby("assay_id", sort=True):
-        source_groups = sorted(set(group["group_id"].astype(str)))
+    grouped = {}
+    for stable_assay_id, context, source_group in zip(
+        frame["assay_id"], frame["assay_context"], frame["group_id"], strict=True
+    ):
+        if stable_assay_id not in grouped:
+            grouped[stable_assay_id] = [str(context), set(), 0]
+        entry = grouped[stable_assay_id]
+        entry[1].add(str(source_group))
+        entry[2] += 1
+    for stable_assay_id, (context, group_set, record_count) in grouped.items():
+        source_groups = sorted(group_set)
         family_levels = sorted(
             {
                 level
@@ -269,7 +293,7 @@ def build_catalog(
                 "catalog_version": VERSION,
                 "task": task,
                 "assay_id": str(stable_assay_id),
-                "assay_context": str(group["assay_context"].iloc[0]),
+                "assay_context": context,
                 "selection_rank": 0,
                 "first_level": earliest,
                 "first_family_id": levels[earliest - 1]["family_id"],
@@ -283,7 +307,7 @@ def build_catalog(
                 ],
                 "source_groups": source_groups,
                 "source_families": source_families,
-                "record_count": int(len(group)),
+                "record_count": record_count,
             }
         )
     rows.sort(key=lambda row: (row["first_level"], row["assay_id"]))
@@ -359,30 +383,41 @@ def main(argv: list[str] | None = None) -> None:
             "Without this flag, each task uses its current catalog config."
         ),
     )
+    parser.add_argument("--workers", type=int, default=16)
     args = parser.parse_args(argv)
     if (args.records or args.output_name) and len(args.tasks) != 1:
         parser.error("--records/--output-name require exactly one --tasks value")
     for task in args.tasks:
         records_path = Path(args.records or TASKS[task]["records"])
-        rows, manifest = build_catalog(
-            task,
-            records_path,
-            config_name=args.config_name or str(TASKS[task]["config_name"]),
-        )
+        config_name = args.config_name or str(TASKS[task]["config_name"])
+        config_module = importlib.import_module(TASKS[task]["config_module"])
         output_root = Path(args.output_root or TASKS[task]["output_root"])
         output_dir = output_root / str(
             args.output_name or TASKS[task].get("output_name") or task
         )
         output_dir.mkdir(parents=True, exist_ok=True)
         catalog_path = output_dir / "family_assays.jsonl"
-        write_jsonl_atomic(catalog_path, rows)
+        manifest_path = output_dir / "manifest.json"
+        signature = build_signature(
+            [records_path, Path(__file__), Path(config_module.__file__)],
+            {"task": task, "config_name": config_name},
+        )
+        if reusable(manifest_path, signature, [(catalog_path, "catalog_sha256")]):
+            print(f"[{task}] reused verified family catalog", flush=True)
+            continue
+        rows, manifest = build_catalog(task, records_path, config_name=config_name)
+        with local_workdir() as staging:
+            local_catalog = staging / catalog_path.name
+            write_jsonl_local(local_catalog, rows, workers=min(args.workers, 16))
+            catalog_hash = publish_file(local_catalog, catalog_path)
         manifest.update(
             {
                 "catalog": str(catalog_path.resolve()),
-                "catalog_sha256": sha256_file(catalog_path),
+                "catalog_sha256": catalog_hash,
+                "build_inputs": signature,
             }
         )
-        write_json_atomic(output_dir / "manifest.json", manifest)
+        write_json_atomic(manifest_path, manifest)
         print(json.dumps({"task": task, **manifest}, ensure_ascii=False))
 
 

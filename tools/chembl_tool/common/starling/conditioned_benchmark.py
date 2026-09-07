@@ -16,6 +16,7 @@ TASK_DIRECTORIES = {
     "bioavailability_ma": "Bioavailability_Ma",
     "clintox": "ClinTox",
     "skin_reaction": "Skin_Reaction",
+    "ames": "Ames",
 }
 
 

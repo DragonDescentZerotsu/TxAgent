@@ -68,6 +68,18 @@ def test_null_or_missing_condition_is_omitted():
         assert "external_condition" not in llm_evidence_query_payload(retrieval["query"])
 
 
+def test_keyed_condition_atom_separator_preserves_literal_plus_values():
+    ames = {"condition_group": "metabolic_activation=absent+strain_panel=TA100,TA98"}
+    assert external_condition_sentence(ames) == (
+        "This prediction concerns the query molecule under metabolic activation: "
+        "absent and strain panel: TA100,TA98."
+    )
+    assert external_condition_sentence({"condition_group": "co_treatment=Na+;disease=cirrhosis"}) == (
+        "This prediction concerns the query molecule under co-treatment with Na+ "
+        "and the disease condition cirrhosis."
+    )
+
+
 def test_cleaners_keep_only_frozen_prompt_fields():
     exact = clean_exact_match(
         {"molecule_chembl_id": "CHEMBL1", "alogp": 2.5, "secret": 1}

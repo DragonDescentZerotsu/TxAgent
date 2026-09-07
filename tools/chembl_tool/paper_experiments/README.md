@@ -245,6 +245,12 @@ It inherits the source split/subset and exact cumulative cards/tools, validates
 current lineage, and judges every level independently without previous decisions.
 Frozen inputs are copied atomically; altered destination inputs abort resume
 instead of being overwritten alongside existing predictions.
+After a source repair, a single matched run can add
+`--level-reuse-source-root OLD_RUN`. The shared reuse gate requires the same
+organization, model, generation settings, benchmark and priors, then compares
+every prepared model input. Only unchanged prefixes are copied; the first
+changed level and its successors run again. Each repetition must point to its
+own old run. This option cannot be combined with `--replicate-ids`.
 This visible matched control is distinct from the historical identity-blind,
 per-assay full-flat curve; see `ASSAY_LEVEL_RETRIEVAL.md` for the contract.
 
@@ -288,10 +294,27 @@ fixed None and baseline references remain single points. The completed three-run
 scaffold-test comparison, including all levels and baselines, is registered under
 `replicate_suites.scaffold_test_4_2.comparison_analysis`.
 The plotter compares actual prepared-input hashes across every replicate, not
-only configuration/index hashes. The registered `comparison_receipt` stores the
+only configuration/index hashes. Configuration comparisons read unique task/run
+artifacts with at most eight workers, then aggregate in the supplied order;
+all completeness, input-equivalence and lineage checks still apply.
+The registered `comparison_receipt` stores the
 exact plotting command, individual run scores and verification results; the
 suite's `launch_receipt` stores the run command. Use these receipts for exact
 reproduction rather than creating another launcher or duplicating root lists.
+
+Ames uses the same level-curve plotter: add
+`--conditioned-progressive-config-task-root CONFIG:ames=PATH` and
+`--conditioned-progressive-baseline-root ames=outputs/baselines/ames_scaffold_valid_v2`.
+`--plot-tasks bbb_martins bioavailability_ma skin_reaction ames` fixes the four-column
+order and leaves unavailable current task curves explicitly empty. The progressive
+overview also accepts Ames task roots and scales its width with the column count.
+All five Ames v2 baselines cover 274 rows: condition-first KNN fills remaining
+slots from unrestricted train molecules. Historical partial-coverage scores can
+still be omitted with `--omit-mismatched-progressive-baselines`.
+`--omit-baseline-tasks TASK` keeps None but excludes unavailable or
+stale baselines for that task. The current four-column valid figure and exact
+generation command are registered under
+`result_families.record_card_budget_ablation.ames_valid_extension`.
 
 To overlay different models in the same level/baseline figure, use the existing
 configuration comparison with `--allow-model-comparison`. This additionally
@@ -320,6 +343,16 @@ discarded/cancelled attempts; their available usage is in these receipts.
 active root, whose `execution_status.json` has query progress. An exclusive
 `launcher.lock` prevents duplicate suite launches. Exhausted failures remain
 `needs_attention`, while later suite jobs still run. No periodic Codex monitor is used.
+
+Ames fresh single/None preparation is available through the progressive runner
+with `--tasks ames --fresh-query-priors` and an explicit output root. Task-local
+`query_prior.py` owns its scientific prompt; tools, validation and concurrency
+use the shared implementations. Completed compatible priors are resumable.
+Changing `--parallelism` or `--endpoint-concurrency-budget` preserves compatible
+checkpoints and records the previous settings in `execution_history`; model,
+prompt, output-limit, and dataset changes still reject reuse.
+The Ames full-flat control requires `--matched-progressive-root`; it does not
+use the historical unpaired family-curve branch.
 
 The family runner owns matched full-flat and repeat-suite CLI orchestration;
 the progressive runner owns their shared query queue, retry rounds and summary.

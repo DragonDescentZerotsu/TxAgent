@@ -691,6 +691,9 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
         prior_state_used=not independent,
         level_output_reuse=False,
     )
+    reuse_root = str(getattr(args, "level_reuse_source_root", "") or "")
+    if reuse_root:
+        manifest.update(level_output_reuse=True, level_reuse_source_root=reuse_root)
     if prior_root is not None:
         manifest.update(model_identity=runtime._model_identity(args.model),
                         query_prior_source_root=str(prior_root),
@@ -733,6 +736,16 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
     if prior_root is not None:
         manifest["prepared_sha256"] = {relative: sha256_file(output_root / relative) for relative in hashes}
         write_json_atomic(manifest_path, {**manifest, "status": "running"})
+    if reuse_root:
+        runtime._validate_progressive_reuse_source(
+            source_root=Path(reuse_root), current_manifest=manifest,
+        )
+        receipt = runtime._reuse_unchanged_progressive_prefixes(
+            prepared_queries=queries, output_root=output_root,
+            source_root=Path(reuse_root),
+        )
+        print(f"[reuse] levels={receipt['n_reused_levels']} "
+              f"model_calls_avoided={receipt['n_reused_model_calls']}", flush=True)
     args.independent_levels = independent
     args.transport_max_retries = 0
     client = None if args.prepare_only else runtime._make_client(args, provider_config)
@@ -825,10 +838,12 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=tuple(TASKS), default=None)
+    parser.add_argument("--tasks", nargs="+", choices=(*TASKS, "ames"), default=None)
     parser.add_argument("--matched-progressive-root", default="",
                         help="Run independent full-flat on this frozen run's exact cumulative cards/tools.")
     parser.add_argument("--matched-organizations", nargs="+", choices=("full_flat", "progressive"), default=["full_flat"])
+    parser.add_argument("--level-reuse-source-root", default="",
+                        help="Completed run of the same organization: reuse exact unchanged input prefixes after a source repair.")
     parser.add_argument("--replicate-ids", nargs="+", type=int,
                         help="Sequential fresh replicate directories under output-root; existing checkpoints resume.")
     parser.add_argument("--retry-race-width", type=int, default=1)
@@ -879,6 +894,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     load_env_file(Path(args.env_file))
+    if args.level_reuse_source_root and (not args.matched_progressive_root or args.replicate_ids):
+        parser.error("--level-reuse-source-root requires one matched run without --replicate-ids")
     if args.refresh_query_priors and not (args.matched_progressive_root and args.replicate_ids):
         parser.error("--refresh-query-priors requires a matched suite")
     if args.refresh_query_priors and args.prepare_only:
@@ -911,6 +928,8 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--matched-progressive-root requires an explicit --output-root")
         return _run_matched_suite(args) if args.replicate_ids else _run_matched_curve(args)
     args.tasks = args.tasks or list(TASKS)
+    if "ames" in args.tasks and not args.matched_progressive_root:
+        parser.error("Ames full-flat uses --matched-progressive-root")
     if args.single_analysis_source_batch:
         if len(args.tasks) != 1:
             parser.error("--single-analysis-source-batch requires exactly one task")

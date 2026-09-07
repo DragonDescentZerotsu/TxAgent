@@ -62,6 +62,7 @@ def test_current_catalog_configs_are_explicit() -> None:
         "bbb_martins": "STARLING_SOURCE_PURITY",
         "bioavailability_ma": "STARLING",
         "skin_reaction": "STARLING",
+        "ames": "STARLING",
     }
 
 
@@ -95,6 +96,37 @@ def test_current_results_registry_points_to_portable_rebuild() -> None:
 def test_unknown_current_record_task_is_rejected(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="unknown current Starling task"):
         artifacts.current_records_path("unknown", local_root=tmp_path)
+
+
+def test_ames_rebuild_preserves_both_outcome_levels_and_custom_records_root(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    calls = []
+    monkeypatch.setattr(rebuild, "_run", calls.append)
+    records_root = tmp_path / "records"
+    rebuild.build_indices(tmp_path / "indices", workers=2, records_root=records_root)
+    assert len(calls) == 8
+    for args in calls:
+        task = args[args.index("--task") + 1]
+        scope = args[args.index("--filter-scope-field") + 1]
+        value = args[args.index("--filter-scope-value") + 1]
+        if task == "ames":
+            assert (scope, value) == ("heldout_filter_scope", "bacterial_outcome")
+            assert Path(args[args.index("--records") + 1]) == artifacts.current_records_path(
+                "ames", local_root=records_root
+            )
+        else:
+            assert scope == "group_id"
+
+
+def test_partial_export_cannot_overwrite_complete_current_manifest() -> None:
+    with pytest.raises(ValueError, match="Partial exports require"):
+        share_export.export_dataset(
+            artifact_root=rebuild.DEFAULT_ARTIFACT_ROOT,
+            records_root=artifacts.DEFAULT_LOCAL_ROOT,
+            output_dir=share_export.DEFAULT_OUTPUT_DIR,
+            tasks=["ames"], splits=["scaffold", "random"],
+        )
 
 
 def _write_test_catalog(path: Path) -> None:
@@ -230,3 +262,31 @@ def test_share_export_separates_source_membership_from_index_cards(
         "n_indexed_cards_checked": 2,
         "n_missing_source_card_keys": 0,
     }
+
+    # Ames assigns families during canonicalization and has no original group.
+    without_original = pq.read_table(records).drop(["source_family_original_group_id"])
+    pq.write_table(without_original, records)
+    share_export.export_source_membership(
+        task="example", records_path=records, catalog_manifest=catalog_manifest,
+        output_path=source_output,
+    )
+    assert pq.read_table(source_output).schema == share_export.SOURCE_MEMBERSHIP_SCHEMA
+    assert pq.read_table(source_output)["source_family_original_group_id"].null_count == 2
+    assert share_export.validate_card_links(source_output, [card_output])["n_missing_source_card_keys"] == 0
+
+
+def test_large_source_ledger_shards_preserve_rows_schema_and_hashes(tmp_path, monkeypatch):
+    table = share_export.pa.table({"id": range(131_072)})
+    path = tmp_path / "source.parquet"
+    pq.write_table(table, path, compression="zstd")
+    original_size = path.stat().st_size
+    monkeypatch.setattr(share_export, "MAX_PARQUET_BYTES", int(original_size * 0.75))
+    for _ in range(2):
+        pq.write_table(table, path, compression="zstd")
+        report = share_export._source_file_inventory(path)
+        assert not path.exists()
+        assert len(report["parts"]) == 2
+        assert pq.read_table(report["path"]).equals(table)
+        for part in report["parts"]:
+            assert part["size_bytes"] <= share_export.MAX_PARQUET_BYTES
+            assert share_export.sha256_file(Path(part["path"])) == part["sha256"]

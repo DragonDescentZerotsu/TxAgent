@@ -1,8 +1,8 @@
 # Current Starling retrieval and collaborator data
 
-更新时间：2026-09-04。
+更新时间：2026-09-07。
 
-本页是 BBB、Bioavailability 和 Skin progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
+本页是 BBB、Bioavailability、Skin 和 Ames progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
 验证和分享每个 level 的 records。日常复现不需要另一个 TxAgent checkout，也不需要在旧的 `v1`、`v2`、
 `v5` 或 `v6` 目录中选择输入。
 
@@ -31,14 +31,18 @@ artifacts/chembl_tool/starling/current_records/manifest.json
 tools/chembl_tool/paper_experiments/current_starling_retrieval.json
 ```
 
-第一个清单保存三个 task 当前唯一 Stage-03 snapshots 的压缩分片、完整 inventory 和 SHA-256。第二个清单
+第一个清单保存四个 task 当前唯一 canonical snapshots 的压缩分片、完整 inventory 和 SHA-256。第二个清单
 固定 overlay、catalog、scaffold/random index 的路径、参数和 SHA-256。大型 records 恢复到被 Git 忽略的：
 
 ```text
 outputs/chembl_tool/starling/current_records/<task>/03_records/
 ```
 
-所有当前 builder 都从该位置读取；找不到或 hash 不符时直接失败，不会回退到个人目录。
+统一重建入口从该位置读取；找不到或 hash 不符时直接失败，不会回退到个人目录。
+Ames 的 source adapter 在 `data/starling_data/ames/canonical_v1/` 生成带审查结果的 canonical records；
+其冻结副本已经包含 family assignment，`overlay_is_canonical=true`，无需再生成一份 purity overlay。
+统一验证同时检查 source adapter 的 records 与冻结副本字节一致；`restore-records` 会补齐缺失的
+大型 canonical records 文件，其余 raw、votes 和 review ledgers 保留在原有 provenance 目录。
 
 这里的 Stage-03 分片只是为了绕开 GitHub 普通 Git 的 100 MB 单文件限制，并由统一入口自动恢复；它不是
 交给协作者阅读的“分享包”。协作者实际浏览和交换的是下文 `current_level_records/` 中直接由 Git 跟踪的普通
@@ -62,7 +66,7 @@ Parquet 文件，不需要解压，也不需要安装 Git LFS。
   verify
 ```
 
-`build` 重建三个 overlays、三个 catalogs 和六个 split indices，然后执行 hash gate。也可单独运行
+`build` 重建原三项 overlays，直接采用 Ames 已审核的 canonical snapshot，构建四个 catalogs 和八个 split indices，然后执行 hash gate。也可单独运行
 `build-overlays`、`build-catalogs` 或 `build-indices`。clean-room 检查可通过
 `--output-root /local/tmp/<name>` 避免覆盖正式资源。若已恢复的 Stage-03 目录存在但 hash 不符，程序默认拒绝
 覆盖；确认该目录可替换后使用 `restore-records --force`。
@@ -74,7 +78,7 @@ deduplication，并保留 `support_text`、measurement、context、assay provena
 不同 Starling run 的原始 Parquet 没有原位修改；normalization 生成了新的 canonical records。current manifest
 还固定生成时 column contracts 的 SHA-256。
 
-Purity 修正也不改 Stage-03。它生成新的 overlay，并用同一个 `canonical_record_id` 记录：
+原三个任务的 purity 修正也不改 Stage-03。它生成新的 overlay，并用同一个 `canonical_record_id` 记录：
 
 - 新 `group_id`；
 - `source_family_original_group_id`；
@@ -84,6 +88,10 @@ Purity 修正也不改 Stage-03。它生成新的 overlay，并用同一个 `can
 因此“移动 record”是可审计地重新赋予 `group_id`，不是在文件间剪切行，也不会改 endpoint、value、unit 或
 `support_text`。Bioavailability 另有一个明确的 pre-overlay source repair：排除 6 条已复核的 nitrendipine
 structure-name mismatch，并从已有结构化字段补充 nondirect assay context；Stage-03 输入本身仍保持不变。
+
+Ames 的原始四批数据、名称核验和 record audit 保留 source-native 格式；导出的 canonical 字段、
+family/level 字段和 card-link keys 与其余任务完全相同。Ames 没有 pre-overlay group，导出中的
+`source_family_original_group_id` 为 null；其审核历史使用 `record_audit.parquet` 与 payload-hashed review ledgers。
 
 当前 purity 结果为：
 
@@ -118,13 +126,15 @@ record 的 level。同一个 physical assay 可含多个不同 family 的 record
 | BBB | 8,592 | 268,379 | 14,189 | 163,672 | 43,724 | - |
 | Bioavailability | 20,538 | 152,350 | 104,174 | 73,913 | 23,511 | 60,986 |
 | Skin | 42,435 | 12,522 | 12,010 | - | - | - |
+| Ames | 3,333 | 138,571 | 236,309 | 496,880 | 424,491 | - |
 
 这些不是某个 query 最终看到的卡片数。
 
 ### 2. Split-specific indexed representative cards
 
-构建 scaffold/random index 时，只从 benchmark-defining direct family 删除 valid+test heldout parents 的 direct
-outcome records；其 nondirect/mechanism records 仍可保留。随后按 physical assay×molecule 聚合，每组最多
+构建 scaffold/random index 时，按各 task 的冻结 scope 删除 valid+test heldout parents 的 outcome records：
+BBB/Bioavailability/Skin 删除 direct family；Ames 删除 `heldout_filter_scope=bacterial_outcome` 的全部 L1/L2。
+其余机制 records 仍可保留。随后按 physical assay×molecule 聚合，每组最多
 确定性保留 3 张 representative record cards。`support_text` 完整保留，`max_support_text_chars=0` 表示不截断。
 
 这是某个 split 实际可供 retrieval 的候选池，不是 overlay 所有行的副本。Git 分享表用
@@ -160,7 +170,9 @@ artifacts/chembl_tool/starling/current_level_records/
   <task>/random/indexed_representative_cards.parquet
 ```
 
-合作者 clone/pull 后可直接用 pandas、DuckDB 或 PyArrow 浏览。九个 Parquet 均小于 100 MB；`manifest.json`
+大于 90 MB 的 source membership 自动保存为同名目录中的普通 Parquet parts，所有任务仍使用同一 schema。
+合作者 clone/pull 后可直接用 pandas、DuckDB 或 PyArrow 浏览：读取 manifest 中的 `path`，它可以是
+单文件或目录；目录的各 part SHA-256 在 `parts` 中列出。`manifest.json`
 记录 row count、逐 level count、文件大小、SHA-256 和 card-link gate。为避免 scaffold/random 重复大段
 support text，indexed 表只保存 card 引用，完整 record 字段保存在 source membership 表。per-query cards
 仍由具体 run 的 `prepared.json` 表示。
@@ -171,7 +183,9 @@ support text，indexed 表只保存 card 引用，完整 record 字段保存在 
 python -m tools.chembl_tool.paper_experiments.export_current_starling_level_records
 ```
 
-导出前会核验 canonical records、overlays、catalogs 和六个 indices 的 current hashes。未来 lineage 改变时应
+正式输出目录必须完整导出四个任务和两种 split；部分导出须指定独立 `--output-dir`，避免覆盖完整清单。
+
+导出前会核验 canonical records、overlays、catalogs 和八个 indices 的 current hashes。未来 lineage 改变时应
 原位重建，并在 manifest/Git history 中记录变化，不能新增 `v2`、`final2` 等平行副本。
 
 ## Historical boundary

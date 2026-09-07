@@ -1,0 +1,88 @@
+{
+  "status": "record_placement_audit_completed; proposals_not_applied",
+  "review_method": "individual_agent_reading_of_all_supplied_semantic_fields; no_external_source_verification",
+  "prepared_candidate_pool_records": 800,
+  "individually_reviewed_records": 200,
+  "coverage": {
+    "source": {
+      "ames_base": 71,
+      "ames_v1": 24,
+      "ames_v2": 36,
+      "ames_v3": 69
+    },
+    "level": {
+      "1": 24,
+      "2": 71,
+      "3": 24,
+      "4": 24,
+      "5": 57
+    },
+    "selection": {
+      "endpoint_stratified": 144,
+      "boundary_or_recall_targeted": 56
+    }
+  },
+  "dispositions": {
+    "retain": 137,
+    "gold_scope_boundary": 1,
+    "gold_condition_boundary": 1,
+    "unresolved_family": 2,
+    "move": 49,
+    "vote_recall_candidate": 8,
+    "family_boundary": 2
+  },
+  "proposed_move_counts": {
+    "L2->L3": 15,
+    "L2->L5": 3,
+    "L2->L4": 7,
+    "L4->L3": 1,
+    "L5->L3": 5,
+    "L5->L4": 18
+  },
+  "vote_recall_frozen_identity": {
+    "not_queried": 3,
+    "verified_parent_match": 5
+  },
+  "external_requests_during_placement_audit": 0,
+  "validation": {
+    "unique_reviewed_raw_payloads_verified": 200,
+    "current_canonical_rows_verified": 200,
+    "actual_L1_vote_membership_checked": true,
+    "source_votes_unchanged": true,
+    "source_manifest_unchanged": true,
+    "sampling_replay": "200 reviewed rows byte-identical from the deterministic 800-candidate pool"
+  },
+  "input_lineage": {
+    "source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+    "source_policy_sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
+    "dataset_manifest_sha256": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81"
+  },
+  "limitations": [
+    "Risk-enriched and endpoint-stratified sample, not a population error-rate estimate.",
+    "Only 200 of the prepared 800 candidates were individually reviewed in this audit; the other 600 are not counted or annotated.",
+    "No authenticity, original-paper, PMID correctness, or new name-resolution review performed.",
+    "No candidate is granted L1 membership by this audit; existing votes/gold/splits/catalogs/indices are unchanged.",
+    "The earlier v4 source-review decisions remain in the active lineage; this audit does not silently reverse them."
+  ],
+  "repair_requirements": [
+    "Replace source-run-based indirect assignment with reviewed endpoint semantics, preserving qualified and predicted evidence.",
+    "Distinguish true bacterial outcome/test context from author surnames, explicit absence statements, nonbacterial reversion, and repair reporters; update production and independent validation together.",
+    "Keep actual bacterial outcome/prediction mixed passages at L2; do not move them merely because the primary assay is indirect.",
+    "Integrate accepted direct recall records through the existing identity, duplicate/conflict, condition and vote builder; preserve L1 as actual voters only."
+  ],
+  "artifacts": {
+    "README.md": "11aabcd39ac79650aff0eae7ce47984266a7520d958614124f2fc7fa9edec49b",
+    "audit_annotations.jsonl": "636232bb9855565f4dbcbdf0199fce131b0ea330aa4312bd3fca32ad8a767661",
+    "authored_judgments.tsv": "110283c019947908c1649d836a6991ddd6639e9932cf2afef3b3d6aa45397a9b",
+    "placement_changes.jsonl": "fe92f73f8617fdb425b88b80bb41a6f42f42e7f815dc75157a0856d968f1414f",
+    "previous_source_manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "previous_source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+    "prior_reviewed_source_ids.json": "d4d0339c2cb7f5043c0e936bcd8e7ac54b90fe53c6b435f3d72e80ca4040e69f",
+    "review_plan.json": "a266c502f1f46e7f64b21b2e1355f4ad5ea0a656feecb5fd9f9f968c2db11a38",
+    "reviewed_numbers.json": "65872a766b8f9c982ee692d77c056515c578156a3614d9c7ed6fb5371245bd0d",
+    "sample.jsonl": "b132e4498c9c48405a6b1da6a6644186e9d011f5178128eba224370af4d8bc55",
+    "sample_selection.py": "f32468d002ca062487b43c71f07e953b7c5199e25e88bb9141b3cfdcafcc64ac",
+    "vote_recall_candidates.jsonl": "98efc463a1f5e01e6633aec57e813d3e12232f3839af0142bcdca6d4122c4146"
+  }
+}

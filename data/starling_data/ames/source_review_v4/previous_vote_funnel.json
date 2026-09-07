@@ -1,0 +1,247 @@
+{
+  "schema_version": "ames_vote_funnel.v1",
+  "raw_rows": 1510447,
+  "normalized_raw_parents": 37410,
+  "base_rows": 334211,
+  "base_parents": 14116,
+  "bacterial_rows": 91511,
+  "bacterial_parents": 9643,
+  "semantic_rejection_counts": [
+    {
+      "reason": "activation_or_experiment_arms_require_review",
+      "rows": 21691,
+      "parents": 4219
+    },
+    {
+      "reason": "cited_or_previous_experiment_requires_provenance_review",
+      "rows": 17691,
+      "parents": 3737
+    },
+    {
+      "reason": "unresolved_or_nonstandard_strain_panel",
+      "rows": 11889,
+      "parents": 3294
+    },
+    {
+      "reason": "effect_attribution_requires_relational_review",
+      "rows": 10535,
+      "parents": 1253
+    },
+    {
+      "reason": "special_context_requires_semantic_review",
+      "rows": 10411,
+      "parents": 1600
+    },
+    {
+      "reason": "explicit_primary_bacterial_outcome",
+      "rows": 4944,
+      "parents": 2044
+    },
+    {
+      "reason": "unresolved_metabolic_activation",
+      "rows": 3704,
+      "parents": 1307
+    },
+    {
+      "reason": "nonprimary_or_reference_use",
+      "rows": 3237,
+      "parents": 576
+    },
+    {
+      "reason": "outside_in_vitro_bacterial_target",
+      "rows": 2216,
+      "parents": 800
+    },
+    {
+      "reason": "unresolved_local_compound_code",
+      "rows": 1458,
+      "parents": 950
+    },
+    {
+      "reason": "inferred_subject_or_outcome_requires_review",
+      "rows": 853,
+      "parents": 563
+    },
+    {
+      "reason": "unreviewed_qualifying_conditions",
+      "rows": 753,
+      "parents": 464
+    },
+    {
+      "reason": "weak_positive_requires_outcome_review",
+      "rows": 416,
+      "parents": 324
+    },
+    {
+      "reason": "named_stereochemistry_missing_from_structure",
+      "rows": 406,
+      "parents": 220
+    },
+    {
+      "reason": "assay_method_comparison_requires_review",
+      "rows": 330,
+      "parents": 161
+    },
+    {
+      "reason": "unresolved_chemical_entity",
+      "rows": 260,
+      "parents": 150
+    },
+    {
+      "reason": "special_exposure_requires_condition_review",
+      "rows": 232,
+      "parents": 125
+    },
+    {
+      "reason": "prediction_or_mixed_experiment_requires_review",
+      "rows": 222,
+      "parents": 191
+    },
+    {
+      "reason": "source_requests_more_context",
+      "rows": 214,
+      "parents": 152
+    },
+    {
+      "reason": "nonbinary_source_result",
+      "rows": 46,
+      "parents": 41
+    },
+    {
+      "reason": "known_source_identity_mismatch",
+      "rows": 3,
+      "parents": 2
+    }
+  ],
+  "semantic_candidate_rows": 4944,
+  "semantic_candidate_parents": 2044,
+  "candidate_final_reasons": {
+    "conflicting_study_parent_condition": {
+      "rows": 21,
+      "parents": 7
+    },
+    "explicit_primary_bacterial_outcome": {
+      "rows": 3346,
+      "parents": 1430
+    },
+    "identity_ambiguous_name_resolution": {
+      "rows": 33,
+      "parents": 20
+    },
+    "identity_identity_request_unresolved": {
+      "rows": 32,
+      "parents": 21
+    },
+    "identity_name_not_found": {
+      "rows": 615,
+      "parents": 433
+    },
+    "identity_stereochemistry_or_isotope_unresolved": {
+      "rows": 94,
+      "parents": 59
+    },
+    "inorganic_or_metal_material_requires_identity_review": {
+      "rows": 145,
+      "parents": 51
+    },
+    "invalid_structure_or_parent": {
+      "rows": 51,
+      "parents": 0
+    },
+    "multiple_organic_components_require_identity_review": {
+      "rows": 48,
+      "parents": 28
+    },
+    "pubchem_name_structure_mismatch": {
+      "rows": 263,
+      "parents": 167
+    },
+    "same_study_parent_condition_repeated_description": {
+      "rows": 288,
+      "parents": 190
+    },
+    "simple_inorganic_molecule_is_retrieval_only": {
+      "rows": 8,
+      "parents": 2
+    }
+  },
+  "candidate_identity": {
+    "ambiguous_name_resolution": {
+      "rows": 39,
+      "parents": 21
+    },
+    "identity_request_unresolved": {
+      "rows": 33,
+      "parents": 22
+    },
+    "name_not_found": {
+      "rows": 656,
+      "parents": 458
+    },
+    "name_structure_mismatch": {
+      "rows": 342,
+      "parents": 182
+    },
+    "stereochemistry_or_isotope_unresolved": {
+      "rows": 94,
+      "parents": 59
+    },
+    "verified_parent_match": {
+      "rows": 3780,
+      "parents": 1477
+    }
+  },
+  "precollapse_candidate_rows": 3655,
+  "precollapse_candidate_parents": 1430,
+  "study_audit_reasons": {
+    "primary_study_condition_vote": 3346,
+    "same_study_parent_condition_repeated_description": 288,
+    "conflicting_study_parent_condition": 21
+  },
+  "retrieval_parents": 34956,
+  "method": "Replay gold_candidate on raw ames_base bacterial_reverse_mutation rows; join source-native ordinal to complete canonical audit. Reasons are first failing rule; parent counts overlap between reasons and exclude empty identities. No vote or retrieval rule was relaxed in this audit.",
+  "source_eligibility": "Only ames_base bacterial_reverse_mutation rows currently supply gold candidates; v1-v3 remain retrieval-only.",
+  "input_hashes": {
+    "data/starling_data/ames/raw_v1/manifest.json": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+    "data/starling_data/ames/canonical_v1/manifest.json": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+    "tools/chembl_tool/tasks/ames/source_contract.py": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
+    "tools/chembl_tool/tasks/ames/build_conditioned_source.py": "f4d23749fcd4974e4bf06dca6df832f820349d73a4e4f0e9dec1bc0f5bcefc20"
+  },
+  "study_votes": {
+    "rows": 3346,
+    "parents": 1430,
+    "parent_condition_units": 2669
+  },
+  "benchmark_stages": {
+    "accepted_parent_conditions_before_group_gate": {
+      "rows": 2655,
+      "parents": 1427,
+      "conditions": 174,
+      "decisions": {
+        "accepted": 2655
+      }
+    },
+    "accepted_parent_conditions": {
+      "rows": 2487,
+      "parents": 1391,
+      "conditions": 73,
+      "decisions": {
+        "accepted": 2487
+      }
+    },
+    "rejected_parent_conditions": {
+      "rows": 182,
+      "parents": 146,
+      "conditions": 110,
+      "decisions": {
+        "parent_condition_label_tie": 14,
+        "condition_group_requires_three_parents_and_nonempty_scaffolds": 168
+      }
+    },
+    "agreement_policy": {
+      "external": 0.6,
+      "none_reported": 0.7
+    },
+    "singleton_vote_rows": 2243
+  }
+}

@@ -20,9 +20,14 @@ tools/chembl_tool/tasks/clintox/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
+Ames 的 Starling 数据接入位于 `tools/chembl_tool/tasks/ames/`：已提供 source audit、conditioned
+benchmark、五层 family catalog 和 split-specific indices；共享 progressive 入口已接入 fresh None/single，
+scaffold valid/test 的 Flash progressive、matched full-flat 与五个 baseline 状态以 current_conditioned_results.json 为准，
+不属于上面的 ChEMBL reasoning tasks。数据构建入口是 `python -m tools.chembl_tool.tasks.ames.build_dataset`。
+
 ## 当前 Conditioned Benchmark（2026-09-05）
 
-四个任务只有一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
+五个任务共用一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
 
 ```text
 data/conditioned_benchmark/<Task>/{scaffold,random}/
@@ -44,10 +49,40 @@ tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 | Bioavailability_Ma | 1,956 / 262 / 269 | 1,989 / 249 / 249 | oral bioavailability under the reported condition |
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 | clinical-trial toxicity failure versus approved comparator |
 | Skin_Reaction | 1,941 / 239 / 241 | 1,937 / 242 / 242 | skin sensitization/contact allergy |
+| Ames | 1,926 / 274 / 274 | 1,980 / 247 / 247 | bacterial reverse mutation under the reported strain panel and metabolic activation |
+
+Ames 是经过名称—结构核验和有限语义审查的 source subset：保留 2,474 条 molecule-condition rows、1,383 个 parents、73 个
+条件组。直接标签要求实验性细菌回复突变、明确菌株组合与活化条件及 PubChem name-parent 精确匹配；
+同一 PMID-parent-condition 最多一票，内部冲突不投票；跨 study 的有 condition 行按至少 60% 一致性接受，
+无 condition 行要求至少 70%，均排除 tie。当前 Ames 全部为有 condition 行。
+`both_reported` 保持 pooled 单元；panel positive 不表示每个菌株或每种活化条件都阳性。33 条候选、24 个
+名称因重复身份查询失败暂不进入 votes/retrieval，清单为 `data/starling_data/ames/canonical_v1/pending_identity.jsonl`。
+2026-09-06 的 source_review_v4 新增逐条审阅 96 条 L1 和 48 条 L2，并复读六条先前候选；不是人类专家
+或全量全文审查。基于 payload hash 的审核入口允许任意 source 的明确 direct claim 进入统一身份/去重复流程。
+新增 12 票、撤回 25 票（7 条对象错认、18 条条件/来源/试样待核实），实际 L1 为 3,333 条；同 study 的
+其它描述不能增加票数。仅 PubChem 名称匹配不能证明抽取名称就是论文试样。scaffold 的 nominal valid/test 各
+247 条与全条件覆盖不兼容，共享 fresh builder 求得最小可行等大 274 条后再优化质量；不丢弃合格条件。
+检索合同为 `ames_inclusive_retrieval.v3`，与严格 gold 合同分离。L1–L5 为 actual voter、nonvoter
+bacterial/unspecified outcome（含 prediction 与 mixed direct passages）、other genetic/chromosome damage、
+DNA damage/repair/response 和 genotoxicity mechanisms（含 redox/antioxidant 与 chromosome-segregation）。
+prediction、`needs_more_context`、mixed/equivocal 方向和 modifier/protectant role 不单独排除检索；
+必须保留源端点、角色与限定信息，不能把其他分子的结果归因给当前分子。全文任何 direct-related 内容
+先归 L2，绝不能留在 L3–L5；heldout valid+test parents 的全部 L1/L2 从 index 删除。无效结构、
+无法可靠归属的材料/多组分、已知身份错配及未解决名称身份仍不接纳；H2O2 等可明确表示的简单
+无机分子可用于检索，原有 gold 排除不变。`--phase refresh-retrieval`
+要求 source votes 字节不变并保留全部 benchmark 文件；`python -m tools.chembl_tool.tasks.ames.validate_retrieval`
+验证完整索引卡片、direct containment 和两种 split 的累计/progressive 检索。完整合同与哈希入口见
+`tools/chembl_tool/tasks/ames/README.md` 和
+`data/starling_data/ames/dataset_manifest.json`。已有三个任务的实验结果不能计作 Ames 结果。
+source_review_v6 接续 v5 的 family/level 审核，新增逐条阅读 194 条，两个 placement audits 共 394 条；
+95 条明确改层判定通过 payload/card hash 绑定应用。L3–L5 按具体 endpoint/assay 语义跨 source 分配，
+不再由 Starling run 决定。作者 Ames、Ames dwarf、明确未做试验、非细菌回复及 repair-only reporter 的
+误触发只可由逐条审核豁免；未审核记录仍通过独立 broad direct guard。不得用 group 手改绕过该检查。
+本轮不核验原始文献、不改变 gold votes/splits；八条 v5 gold recall 候选仍非新增 L1。
 
 random split 使用相同 molecule-condition rows/labels，按 parent 整组做确定性、quality-stratified 80/10/10
 分配；同一 parent 不会跨 split，每个 condition 在三路都出现，但 scaffold 允许跨 split。BBB、
-Bioavailability 和 Skin 先最小化 valid+test 的 singleton-vote rows，再平衡 valid/test singleton，最后才平衡
+Bioavailability、Skin 和 Ames 先最小化 valid+test 的 singleton-vote rows，再平衡 valid/test singleton，最后才平衡
 label 和 condition；ClinTox 的 source count 不是 assay vote，不应用该质量目标。生成和审计入口为
 `tools/chembl_tool/common/starling/build_conditioned_random_split.py`。所有 split 行使用统一的
 molecule-condition schema。没有外部 condition 的行使用
@@ -125,7 +160,7 @@ baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
 
-当前 progressive Starling source 不依赖任何个人 checkout。仓库只冻结 BBB、Bioavailability、Skin 实际使用
+当前 progressive Starling source 不依赖任何个人 checkout。仓库只冻结 BBB、Bioavailability、Skin、Ames 实际使用
 的唯一 Stage-03 records，清单位于 `artifacts/chembl_tool/starling/current_records/manifest.json`；
 `rebuild_current_starling_retrieval.py` 是恢复 records、重建 overlays/catalogs/scaffold+random indices 和 hash
 验证的统一入口。旧 source-purity 版本号只作为已有实验 provenance，不能作为新 run 的替代输入。

@@ -1,0 +1,79 @@
+{
+  "review_method": "agent_semantic_review_of_supplied_text_not_full_paper_review",
+  "source_contract_sha256": "1c16205fd1fdeb8b4fcb1bb8b808a08919a8fc4464e418b90344294f6208aca3",
+  "source_builder_sha256": "56c7fecaa3467302b1ba568f3834b4537a456cc6ab5a12b7d8f36199d65fc57c",
+  "dispositions": [
+    {
+      "source_record_id": "ames_base:209166",
+      "pmid": "20106502",
+      "review_flag": "material_identity",
+      "final_candidate_eligible": false,
+      "disposition": "inorganic_or_metal_material_requires_identity_review",
+      "built_record_reason": "inorganic_or_metal_material_requires_identity_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:110687",
+      "pmid": "8908188",
+      "review_flag": "assay_version_review",
+      "final_candidate_eligible": false,
+      "disposition": "assay_method_comparison_requires_review",
+      "built_record_reason": "assay_method_comparison_requires_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:247541",
+      "pmid": "28743524",
+      "review_flag": "provenance_review",
+      "final_candidate_eligible": false,
+      "disposition": "cited_or_previous_experiment_requires_provenance_review",
+      "built_record_reason": "cited_or_previous_experiment_requires_provenance_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:158909",
+      "pmid": "2202897",
+      "review_flag": "subject_and_stereochemistry_review",
+      "final_candidate_eligible": false,
+      "disposition": "inferred_subject_or_outcome_requires_review",
+      "built_record_reason": "inferred_subject_or_outcome_requires_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:53396",
+      "pmid": "392319",
+      "review_flag": "material_identity",
+      "final_candidate_eligible": false,
+      "disposition": "inorganic_or_metal_material_requires_identity_review",
+      "built_record_reason": "multiple_organic_components_require_identity_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:9584",
+      "pmid": "35631389",
+      "review_flag": "provenance_review",
+      "final_candidate_eligible": false,
+      "disposition": "cited_or_previous_experiment_requires_provenance_review",
+      "built_record_reason": "cited_or_previous_experiment_requires_provenance_review",
+      "built_is_voter": false
+    },
+    {
+      "source_record_id": "ames_base:122412",
+      "pmid": "25297906",
+      "review_flag": "panel_semantics_review",
+      "final_candidate_eligible": true,
+      "disposition": "retained: explicitly tested complete stated panel; TA1535 positive in both regimes establishes panel-any-positive, not positivity of every strain",
+      "built_record_reason": "explicit_primary_bacterial_outcome",
+      "built_is_voter": true
+    },
+    {
+      "source_record_id": "ames_base:312551",
+      "pmid": "7001215",
+      "review_flag": "panel_semantics_and_exposure_review",
+      "final_candidate_eligible": false,
+      "disposition": "special_exposure_requires_condition_review",
+      "built_record_reason": "special_exposure_requires_condition_review",
+      "built_is_voter": false
+    }
+  ]
+}

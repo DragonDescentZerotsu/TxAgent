@@ -14,3 +14,6 @@ data/.build/
 data/starling_data/**/pmids_to_process.json
 temp.md
 temp.tsv
+
+# Large Ames canonical table is restored from current_records archive parts.
+/data/starling_data/ames/canonical_v1/records.parquet

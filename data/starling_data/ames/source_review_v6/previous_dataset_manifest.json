@@ -1,0 +1,198 @@
+{
+  "schema_version": "ames_dataset.v1",
+  "task": "ames",
+  "phase": "retrieval",
+  "source_contract": "ames_bacterial_reverse_mutation.v1",
+  "retrieval_contract": "ames_inclusive_retrieval.v2",
+  "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+  "review_method": "deterministic_source_policy_with_payload_pinned_agent_semantic_reviews",
+  "model_evaluation_performed": false,
+  "benchmark_scope": "identity_verified_source_subset_with_explicit_pending_identity_exclusions",
+  "source": [
+    {
+      "path": "data/starling_data/ames/canonical_v1/records.parquet",
+      "sha256": "709891b22cd8ff9d76adf26338bca5b6d74cbb980caeb094441ddf1d1922849c"
+    },
+    {
+      "path": "data/starling_data/ames/canonical_v1/record_audit.parquet",
+      "sha256": "1a3811c81d61f19a33fcc371304845fc3c5d5ce2114880d1555f01405cc96edd"
+    },
+    {
+      "path": "data/starling_data/ames/canonical_v1/source_votes.jsonl",
+      "sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+    },
+    {
+      "path": "data/starling_data/ames/canonical_v1/study_vote_audit.jsonl",
+      "sha256": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e"
+    },
+    {
+      "path": "data/starling_data/ames/canonical_v1/pending_identity.jsonl",
+      "sha256": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+    },
+    {
+      "path": "data/starling_data/ames/raw_v1/ames_base.parquet",
+      "sha256": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905"
+    },
+    {
+      "path": "data/starling_data/ames/raw_v1/ames_v1.parquet",
+      "sha256": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151"
+    },
+    {
+      "path": "data/starling_data/ames/raw_v1/ames_v2.parquet",
+      "sha256": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c"
+    },
+    {
+      "path": "data/starling_data/ames/raw_v1/ames_v3.parquet",
+      "sha256": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f"
+    },
+    {
+      "path": "data/starling_data/ames/raw_v1/manifest.json",
+      "sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021"
+    },
+    {
+      "path": "data/starling_data/ames/canonical_v1/manifest.json",
+      "sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998"
+    },
+    {
+      "path": "data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl",
+      "sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py",
+      "sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py",
+      "sha256": "8ee7d62ebcad40f89293bf75660392a40bf0bacaa618a951013a3b9c39ea90d3"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py",
+      "sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845"
+    },
+    {
+      "path": "data/starling_data/ames/source_review_v4/applied_decisions.jsonl",
+      "sha256": "cecf331336d367cd9bf5df9f802dab8f1021285da4cde21990ac77d726d6f898"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/reviewed_source.py",
+      "sha256": "76e411bad51313a76f125c26425ed5d67cccdbec92915c58a78ba5839c0f9da2"
+    }
+  ],
+  "verification_method": "SHA256 of frozen sources, identity responses, policy, source votes and outputs; shared builders validate split integrity and condition coverage; index manifests must match records/catalog/heldout hashes and contain zero heldout bacterial outcome records across L1 and L2. No inference validation.",
+  "benchmark": [
+    {
+      "path": "data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json",
+      "sha256": "2b3311a33c8d5ccef155ca8a83958ae7d5c97fada72b74b8f150ece406b49d61"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/summary.json",
+      "sha256": "29d103a4de778e04029b2f903906043dbd2d4e0c300c075370908106b4e8a8d4"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl",
+      "sha256": "4c4361f16f82399c72463c62191eba75b0983188c968b55a02f005f517569f89"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train.jsonl",
+      "sha256": "faa0a5f8935e2fbe91099b81ff1d80d65e021617497df822613b5388cf3db493"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid.jsonl",
+      "sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test.jsonl",
+      "sha256": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "043584e111e3612ad38cd40bc1e501d16cd2d705cdc4adef97f0e0d34543b507"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl",
+      "sha256": "79ac8815be90fed01861aaf37107a811b5761c4a92058b433f388fed6ce5e4a6"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl",
+      "sha256": "e050d8c1eb6bc889eeb7386ad4b4e7e6a7dbaa00f0956f6c0b0974fdadfd1d6b"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/summary.json",
+      "sha256": "2bc33b16d362218aceb653d38da7f63aa191907183b2091b648b14d38c9c8ffd"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl",
+      "sha256": "6a58db47d8b4f1053149ac0299bb5671f931c67a0741a4e3886bf8565a3d02e9"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train.jsonl",
+      "sha256": "9063ee0f6e05eb52ac5f2e7c17b65edf8dd4bc08b932c575633b0da4e8d1fe21"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid.jsonl",
+      "sha256": "8773829ef13f1992d9432b9d42001f9ff8690455a05284aafcb0d967f930a4a0"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test.jsonl",
+      "sha256": "8533c6a85f445ac73ce7b6a0428d52bfa200686cee77197203b81961e14592a2"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl",
+      "sha256": "f60ef364bc14406a2c0d230916b40111c56c18b172788ac8ba8902a1955aa56f"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl",
+      "sha256": "193bbd930061ac0b15e7d9d16b31dd3c1dae6b6c7543b24971fe0bd554a20dc9"
+    },
+    {
+      "path": "data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl",
+      "sha256": "dbec86d029b33839b37815a42199635011943f8ef951097cde036f2baa4179cf"
+    }
+  ],
+  "retrieval": {
+    "catalog": [
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json",
+        "sha256": "037f7b9c4ed7645824511223bde1bf42f1847fe21c7c6b68212e30d210756436"
+      },
+      {
+        "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+        "sha256": "3fed628b5ca83641b5d1f3a419975aa0f209e93ef87a13368e7747a265ed0db3"
+      },
+      {
+        "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py",
+        "sha256": "945f7612b180aee8b8955c015a8a6d05f66d8019f728f09e6a7424036788317d"
+      }
+    ],
+    "indices": {
+      "scaffold": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json",
+          "sha256": "60e1da231d06ff70accb50df2c2cabbcefe13a37c5f8794843c4e28627274393"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+          "sha256": "729e1229c30f49b22785293f9cd0c9a2166eb3a4fca870b89f7f8774f2ad6751"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+          "sha256": "b33c3fa41e395b41f681ffeb57ad7f725292447d3b52943c04a37a78dee4e9f6"
+        }
+      ],
+      "random": [
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json",
+          "sha256": "405a0b33db81e358e16a87cc7fd42d11221dce74d960fc0f2a4547c6564ff4dd"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+          "sha256": "458479568158d072a33c6a7e19c60ca8557c29e065dfdda5511ef9b756559b36"
+        },
+        {
+          "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+          "sha256": "4c12bbac12daaea7deaf0dfecf37ba54c62786dee179fc87c773e6cae4ccf530"
+        }
+      ]
+    }
+  }
+}

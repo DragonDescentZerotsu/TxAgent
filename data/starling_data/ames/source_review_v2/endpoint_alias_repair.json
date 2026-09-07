@@ -1,0 +1,127 @@
+{
+  "method": "After a complete source rebuild, add the missing mouse-lymphoma alias; inspect every previously unresolved base/v1 endpoint, reconstruct restored records using the current canonical builder and identity helpers, and require no fingerprint collisions. Unaffected records remain unchanged.",
+  "prior_source_manifest_sha256": "f029b0b9512e409ab8fd9e1702778864a68eb852fbc1c3879b04f64076ef1148",
+  "prior_records_sha256": "83497a68511bb7288c23a63238c45c346b7cd0c35e4683f2e5648e591e98d6de",
+  "current_source_manifest_sha256": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+  "current_records_sha256": "fc4051781a85478ede2e22a4930523a9cb0893d37bb036cf59109243366bb99a",
+  "policy_source_sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
+  "source_votes_sha256": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+  "repairs": [
+    {
+      "source_record_id": "ames_v1:424",
+      "raw_payload_sha256": "b6f971a24a3558c071480db7af93b560b8207e51202b3e81c6055d604ba0259a",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "95630d4b99d3f70aa430479cd8187230e75efd00c6db52b5abe122968f50ed2d"
+    },
+    {
+      "source_record_id": "ames_v1:425",
+      "raw_payload_sha256": "b7b9725e250ab912bf4e67e485226e8772fb7cccf9a19eab3f4de49c8d1c1e55",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "bad40959f6f0d9437375b2a4969cb94b0a0d7f3bda65cfa5214819c69a92515b"
+    },
+    {
+      "source_record_id": "ames_v1:426",
+      "raw_payload_sha256": "ab7c33ee7c54f046b76d03759670390a118de79c00a06898dd0a0bcd81933d5c",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "d5fcbb7f94ca92f2e381069a77d2d2ad57b29522a1f2b31b9035f5a2a04f9e5e"
+    },
+    {
+      "source_record_id": "ames_v1:2909",
+      "raw_payload_sha256": "90d96af90c811e3a626dae93a9eabf4fc5b047259330128de4a51005a52c7f7c",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "a1b036e0eb5c67cb7161a051f3faf0d362898f05878244b1f08c4171b137c08f"
+    },
+    {
+      "source_record_id": "ames_v1:3108",
+      "raw_payload_sha256": "f958e027c02bd72e03ee1c6b47ba5c31cf791d8afe30b39b7492b4248e2e6ebe",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "45d7849cce54efe4c8b488e8281690121d52ea415c8c29c68a023940cc21cd20"
+    },
+    {
+      "source_record_id": "ames_v1:11926",
+      "raw_payload_sha256": "7a28727492f5b6ce658de279172e48a49ea18096e09ff6ee460ce5591477fff4",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "7fe04bc7d87e500ad5bde68be0084990a03e3a9d5dfa8ee34d3b0bfc6c85a6ea"
+    },
+    {
+      "source_record_id": "ames_v1:39326",
+      "raw_payload_sha256": "e2600ab16544fb7c211be2eee81aebaa0895ea542d9f0e47309bc7e526e53e56",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "bbba4c7234e0b89f752a2398797f3ce221b65ea46ee93943a5c07e6a3c4b1799"
+    },
+    {
+      "source_record_id": "ames_v1:39337",
+      "raw_payload_sha256": "7afc9fc85f8119547a0403405f5fe7762aee944addf01b2d12ee817c608600c9",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "667dc172b3a484da516aa863af7d74ab941ccfc9faed6400733145bca976f053"
+    },
+    {
+      "source_record_id": "ames_v1:49065",
+      "raw_payload_sha256": "eb8f7762a1285abc54312e95ac2c2a56cab38594ea7608279504872e99caf16b",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "fb32de4ceadbfc463e33406ae3ae97b0595f35830caa2d71f5df216f7bc80195"
+    },
+    {
+      "source_record_id": "ames_v1:49066",
+      "raw_payload_sha256": "04b79a574814a8b4cc0e9c743ec13feb773fa4b0003d01c92107d22e6c2f9cff",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "bd26b373f600c0c181f377c2574d7bc8d7448f0773c13f2eaadc90b0dfb52038"
+    },
+    {
+      "source_record_id": "ames_v1:52974",
+      "raw_payload_sha256": "97c9539d1b8fb4c5c7d449c1d30a9fd0fcb2d23aadec79b0aa43f06d783fcb31",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "d4206fe90fc7664d7b5cbc50ef00cbcf4c9c849c781b0a2e35d0f2d6b58f9883"
+    },
+    {
+      "source_record_id": "ames_v1:54825",
+      "raw_payload_sha256": "6f816cdc63892f429889e8784c9aca7c17465f33f106c1753e78ddceccaba84a",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "24d14a39eb4244368feda8d648ed7d8b3fafeb8a0450dee2af7b6ccbddbbbcd0"
+    },
+    {
+      "source_record_id": "ames_v1:78689",
+      "raw_payload_sha256": "7a6bb333d84522bd215ec469c3e409a65cda593dcc6fec9df7235fd21c9c583d",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "6a9b9929b6cc42fa5e5701f377850b3c4dbb0034bb0d35089a81e912c95b64ed"
+    },
+    {
+      "source_record_id": "ames_v1:78690",
+      "raw_payload_sha256": "c58d6abe91bf4865e742362d252f5f9de11af44fb33b4d32fc51bfcbeab21d3f",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "606073772d77a3a063e3eeb8d9ac7267cc3ff475a4da7cde40ac9d7540fe0148"
+    },
+    {
+      "source_record_id": "ames_v1:78691",
+      "raw_payload_sha256": "30cdbf546bfcecc699e7c8bccf6750aac87f30528d338ac45cf6e8fefe96b15c",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "e6074a5a3510041c7185bf61a93200a25efbedbf538ee19143bdd0b5b0576581"
+    },
+    {
+      "source_record_id": "ames_v1:78692",
+      "raw_payload_sha256": "995ecb2d497348dc74857926e4b76953f65d326e82e6acb62e95b503d06a6443",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "daa26a0a269e0022bf61ae88f7a2b322742e7d6302404d43c7665e46350cf8f0"
+    },
+    {
+      "source_record_id": "ames_v1:78693",
+      "raw_payload_sha256": "ae1406a22ea602fb8fcaf5bcba87906a6df182211a4e17112dffac926d805c1f",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "2be5762f38fb2ca956ce6a123a3c1b441285508e6736ff81856565722256e095"
+    },
+    {
+      "source_record_id": "ames_v1:78694",
+      "raw_payload_sha256": "32ecce86d417c3fbdcfdd0337a96a3ac7e0860dde140a92452cf43c204695eab",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "90bf392bef7f20dcf5674c76a97376e32fbca378924d1249f0a3b731d1c4e98a"
+    },
+    {
+      "source_record_id": "ames_v1:87115",
+      "raw_payload_sha256": "e5a98950bbaa24dc985dcd5fea07a2d9fcfbb049d36c64fcc454d7eb23356179",
+      "group": "Mechanism.other_genetic_damage",
+      "fingerprint": "e9d0a36cc0470479e8f1a2a5b0325b0693374f7dfd399c4375c5fab5d26f7241"
+    }
+  ],
+  "restored_records": 19,
+  "script_sha256": "1bfa8a87384177649d7791e5edd12207f2c4348f7b52bc9dad0ef0c64021f8d5"
+}

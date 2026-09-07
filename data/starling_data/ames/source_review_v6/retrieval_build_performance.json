@@ -1,0 +1,64 @@
+{
+  "records": 5255,
+  "groups": 5175,
+  "old_seconds": 17.10656023499905,
+  "new_seconds": 0.7143231779919006,
+  "aggregation_speedup": 23.9479282795903,
+  "serialized_outputs_identical": true,
+  "output_sha256": "1cc5903c430c377293588888b4d58d5be1969da79dbdf81a6b8ddd2643e1afc6",
+  "old_implementation_sha256": "0f727a231067d927bf48680277fbfc964698658fb534b2d0fc7db751ef0268a6",
+  "new_implementation_sha256": "9bd6b0572ac225f86fe8e362daddadff9b49ec6db6af9d0c3f696830945d038e",
+  "sample_selection": "Every 250th row within 16384-row canonical Parquet batches; 5235 source rows plus 20 missing-value variants, with identical five-family test metadata for both implementations.",
+  "final_run": {
+    "final_rebuild_seconds": 464.95831846198416,
+    "source_files_and_scaffold_evidence_byte_parity": true,
+    "final_warm_seconds": 3.3797226040042005,
+    "warm_dataset_manifest_byte_identical": true,
+    "final_validation_seconds": 385.0379197370203
+  },
+  "hardware": {
+    "host": "node002",
+    "logical_cpus": 256,
+    "physical_cores": 128,
+    "total_workers": 128,
+    "workers_per_concurrent_split": 64,
+    "serialization_workers_per_split": 16,
+    "native_threads_per_worker": 1,
+    "cache_path": "/local/tmp/txagent-build-cache",
+    "published_filesystem": "NFS4",
+    "cache_filesystem": "local NVMe XFS"
+  },
+  "measurement_scope": "Aggregation microbenchmark speedup is not end-to-end speedup. Final rebuild uses existing verified NVMe inputs and skips publication of identical outputs; it is not an empty-cache cold build. Warm refresh reuses dependency-validated source, catalog and indices. Independent validation remains a separate full audit.",
+  "earlier_full_parallel_build_seconds": 672.1546253060224,
+  "full_build_log_aggregation_lines": [
+    "Aggregated all 1,108,618 assay-molecule groups in 72.3s",
+    "Aggregated all 1,099,095 assay-molecule groups in 79.4s"
+  ],
+  "warm_cache_reuse_log": [
+    "Reusing canonical source: all input and output hashes match",
+    "[ames] reused verified family catalog",
+    "[ames] reused verified assay index: outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold",
+    "[ames] reused verified assay index: outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random",
+    "All build artifacts unchanged; preserving the dataset manifest"
+  ],
+  "byte_equivalence": {
+    "source_files": {
+      "records.parquet": "3a47903a30e6a8bd70a381e34436f74098eeca665d8e6c17076fe172b786bfee",
+      "record_audit.parquet": "41ca5dbc99d473af193c294cd4610eaff260fcea05e12b4c1c019e3a765e8d2b",
+      "source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+      "study_vote_audit.jsonl": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e",
+      "pending_identity.jsonl": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+    },
+    "scaffold_evidence_sha256": "61a4a56bfac22670fe1d853b5139301087e4489185f6c3a7024824fcbb8b2a42",
+    "gold_and_all_benchmark_files_unchanged": true
+  },
+  "final_code_sha256": {
+    "tools/chembl_tool/common/build_runtime.py": "e4201c4bb2ce83b5d0d74eb48034ca290f51ec9d4b3569e38306de8c7d5e1931",
+    "tools/chembl_tool/common/assay_retrieval.py": "7c0a804e274ca9a80c56db1933ebad628dbaf165b1707a17d6f670dac0ba28f4",
+    "tools/chembl_tool/common/task_workflows/evidence_library.py": "0b93c5eea8e1bd2d8239478a5b5932cec6033d2bdd2bd73527c290fdd315ac51",
+    "tools/chembl_tool/paper_experiments/build_assay_family_catalog.py": "3edb7b978be453bd3a62459cbb8c2655f58559d95a78bed7c80ea10aa1c4e722",
+    "tools/chembl_tool/tasks/ames/build_conditioned_source.py": "ab7d62a30589bd6091c8ef1fa111c5880d3b0d7f17d06471d67dddfaf0e3d241",
+    "tools/chembl_tool/tasks/ames/build_dataset.py": "b8a88bb9ee1246f27a8deb7f9bd565251b008038b234ad2e43a6d4139db3fd61",
+    "tools/chembl_tool/tasks/ames/validate_retrieval.py": "84d081863c8c913e464df3fc5b73838c151b566d49b7a236e14c34fd066ead86"
+  }
+}

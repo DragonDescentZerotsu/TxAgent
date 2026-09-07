@@ -1,0 +1,202 @@
+{
+  "status": "source_review_applied_and_benchmark_rebuilt",
+  "new_individually_reviewed_records": 144,
+  "new_L1_records": 96,
+  "new_L2_records": 48,
+  "previous_candidates_re_read": 6,
+  "sampling": "72 L1 label-by-activation stratified +24 targeted L1; 12 targeted L2 per run; distinct PMID within stratum; excludes previous sampled record IDs; not an error-rate estimator",
+  "dispositions": {
+    "retain": 75,
+    "pending_source": 20,
+    "quarantine_identity": 7,
+    "pending_condition": 10,
+    "pending_identity": 4,
+    "candidate_extended_panel": 4,
+    "already_represented": 3,
+    "accept_corrected_condition": 1,
+    "candidate_richer_condition": 4,
+    "candidate": 1,
+    "not_direct_vote": 15
+  },
+  "L1_dispositions": {
+    "retain": 75,
+    "pending_source": 7,
+    "quarantine_identity": 3,
+    "pending_condition": 10,
+    "pending_identity": 1
+  },
+  "applied_actions": {
+    "withhold": 19,
+    "exclude": 40,
+    "accept": 15
+  },
+  "limitations": "Codex individual source-text review, not a human-expert annotation or exhaustive full-paper audit. Pending records are not proven bad experiments. Most existing L1 records have not received primary-source review. PubChem verifies extracted name/structure, not original paper subject.",
+  "primary_abstracts_read_review_numbers": [
+    2,
+    12,
+    15,
+    16,
+    18,
+    19,
+    21,
+    25,
+    35,
+    38,
+    40,
+    41,
+    44,
+    46,
+    47,
+    54,
+    55,
+    65,
+    69,
+    72,
+    74,
+    80,
+    88,
+    89,
+    90,
+    91,
+    96,
+    100,
+    121,
+    141
+  ],
+  "fulltext_sections_read_pmids": [
+    "39468665",
+    "35182162",
+    "22565478",
+    "29632622"
+  ],
+  "source_vote_sha256_before": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+  "source_votes_sha256_after": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+  "current_source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+  "actual_vote_changes": {
+    "before": 3346,
+    "after": 3333,
+    "added": 12,
+    "withdrawn": 25,
+    "changed_existing_provenance": 2,
+    "withdrawal_reasons": {
+      "reviewed_direct_claim_pending_resolution": 18,
+      "reviewed_source_identity_mismatch": 7
+    }
+  },
+  "current_source_counts": {
+    "n_source_rows": 1510447,
+    "n_retrieval_records": 1299474,
+    "n_voters": 3333,
+    "n_pending_identity_candidate_rows": 33,
+    "n_pending_identity_candidate_names": 24,
+    "family_counts": {
+      "Observed.nonvoter_ames": 138568,
+      "Mechanism.other_genetic_damage": 227291,
+      "Direct.ames": 3333,
+      "Mechanism.dna_damage_response": 419791,
+      "Mechanism.genotoxicity_mechanisms": 510491
+    }
+  },
+  "benchmark": {
+    "scaffold": {
+      "splits": {
+        "train": {
+          "rows": 1926,
+          "parents": 1102,
+          "conditions": 73
+        },
+        "valid": {
+          "rows": 274,
+          "parents": 137,
+          "conditions": 73
+        },
+        "test": {
+          "rows": 274,
+          "parents": 144,
+          "conditions": 73
+        }
+      },
+      "rows": 2474,
+      "parents": 1383,
+      "conditions": 73,
+      "singleton_vote_rows": 2230
+    },
+    "random": {
+      "splits": {
+        "train": {
+          "rows": 1980,
+          "parents": 1217,
+          "conditions": 73
+        },
+        "valid": {
+          "rows": 247,
+          "parents": 80,
+          "conditions": 73
+        },
+        "test": {
+          "rows": 247,
+          "parents": 86,
+          "conditions": 73
+        }
+      },
+      "rows": 2474,
+      "parents": 1383,
+      "conditions": 73,
+      "singleton_vote_rows": 2230
+    }
+  },
+  "benchmark_changes": {
+    "added_rows": 3,
+    "removed_rows": 16,
+    "label_changes": []
+  },
+  "current_vote_funnel_sha256": "98a96a0ad0420e5a08500402a50a20be09788358e758c082197a3c0c88d1b366",
+  "actual_vote_parents": 1423,
+  "precollapse_candidates": 3642,
+  "artifacts": {
+    "previous_source_votes.jsonl": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
+    "previous_source_manifest.json": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
+    "sample.jsonl": "4b4fcbe8ad4dd3ff5f4c11d8bd0577e09014e55d5cf253ada1a24b0217f71c96",
+    "audit_annotations.jsonl": "1924c811ce3aa739a8df5f9fd00512c4b2ca784e9e58e9951b8b7609a8725e74",
+    "pubmed_0.xml": "c654babc39ce483aaaf3c9a434a8952a7acebb795f12602613216061696c660b",
+    "pubmed_35.xml": "fae0b5bcc1ae3e8b2fc8e78b1be5f50f05fabaaf5094571aa37f7d1b2341fa88",
+    "pubmed_70.xml": "5859aa1d836ebaee6442839cbea1c504e233fbc112ca41affdfd8b35053716f2",
+    "pubmed_105.xml": "5ca99b068ffde96f3934f39525f68b36086123a109d112f908acd56f15641555",
+    "pubmed_140.xml": "aefb5df2f25f747064861e64110d3a1877ce14abd4d9272338aed56c5b89b5cc",
+    "22565478_full.xml": "40dbd8bb8a961a362bf49f150b2830cf1b20f289eaa722a2d0017ab9faf3b2e6",
+    "35182162_full.xml": "9ba3794cfaf08451d980e1288c040fc1dbba42d8e34cdd7028a70187a94df6db",
+    "29632622_full.xml": "e012d8e3532937d77e86a0e9d54b87798cb26957c3be2d87d9183e5301e928ad",
+    "39468665_full.xml": "ef3273ba4c65b6607dbdc78f7b6ac9333595e4d9ad87f9a9d0a74f93ef4987fc",
+    "pubmed.json": "7d1f9313f65827542673c549927d6a33b97718e1beab04b7af38b3c7f8eb6142",
+    "sample_selection.py": "0d7548e60cbfa3dd8e1bb30dafeea4e22b04654fcdff27c377fe729f09609784",
+    "applied_decisions.jsonl": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
+    "vote_changes.json": "f27484c0aad321150540898147e9127913aad279ef97c0d0ff4d9248a3906a74",
+    "previous_vote_funnel.json": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
+    "sampling_L2_frame.parquet": "8aba065602cbe9b0f88d725e65555b847856ee679c8fc69999a5cfdc64937fd0",
+    "previous_sampled_ids.json": "ba54b2ed7c3a2df228f8b63250e9520b9b47deb19d58b597ba0336bf9c21bcce",
+    "previous_benchmark_rows.jsonl": "71395dd3ea142549e4619a08cba0ce00b3bba43191ff4fb8d4cb279f1391f36f"
+  },
+  "source_files_unchanged": {
+    "data/starling_data/ames/raw_v1/ames_base.parquet": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
+    "data/starling_data/ames/raw_v1/ames_v1.parquet": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
+    "data/starling_data/ames/raw_v1/ames_v2.parquet": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c",
+    "data/starling_data/ames/raw_v1/ames_v3.parquet": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f",
+    "data/starling_data/ames/raw_v1/manifest.json": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+    "data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77"
+  },
+  "other_task_files_unchanged": 97,
+  "sampling_replay": "byte-identical 144 records from frozen prior votes, prior L2 frame, prior sampled IDs and raw sources",
+  "review_method": "individual_agent_source_review_with_selected_primary_abstract_and_fulltext_checks",
+  "subsequent_applied_review_revisions": [
+    {
+      "receipt": "data/starling_data/ames/identity_repair_3acaba/receipt.json",
+      "added_source_record_ids": [
+        "ames_base:76701"
+      ],
+      "action": "exclude",
+      "previous_applied_decisions_sha256": "cecf331336d367cd9bf5df9f802dab8f1021285da4cde21990ac77d726d6f898",
+      "updated_applied_decisions_sha256": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
+      "scope": "Applied ledger/action counts include this later identity correction. Sampling, disposition counts, source/benchmark snapshots and vote changes above describe the original v4 review."
+    }
+  ]
+}

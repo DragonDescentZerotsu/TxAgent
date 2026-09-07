@@ -61,12 +61,112 @@ data/conditioned_benchmark/<Task>/{scaffold,random}/
 | Bioavailability_Ma | 1,956 / 262 / 269 | 1,989 / 249 / 249 |
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 |
 | Skin_Reaction | 1,941 / 239 / 241 | 1,937 / 242 / 242 |
+| Ames | 1,926 / 274 / 274 | 1,980 / 247 / 247 |
 
 Scaffold and random contain the same molecule-condition labels. Random is
 parent-grouped, not molecule-row independent. A result is current only when
 benchmark/split, heldout index, family catalog, source/organization, model,
 prompt, visibility, and identity policy all match. Directory names and sample
 counts are insufficient.
+
+Ames scaffold-valid progressive 4/2 is complete for all 274 rows with zero
+failures. None/L1/L2/L3/L4/L5 macro-F1 is
+0.7002/0.7199/0.7542/0.7561/0.7561/0.7506. Matched full-flat is also complete
+for all 274 rows with zero failures; its None/L1/L2/L3/L4/L5 macro-F1 is
+0.7002/0.7165/0.7491/0.7510/0.7597/0.7633. All 1,370 paired prepared files
+are byte-identical; both curves are single runs. The existing level plotter includes Ames as the fourth column in
+`outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/`.
+That current-lineage figure leaves Skin curves empty pending replay and Ames
+2/1 and 8/4 empty because they have not run. Stale Bioavailability valid baselines
+are omitted. Ames v2 includes all five baselines on 274 rows: MiniMol head,
+condition-first MiniMol KNN, unrestricted MiniMol KNN, condition-first Morgan KNN,
+and unrestricted Morgan KNN have macro-F1 0.6142/0.6328/0.5452/0.5823/0.5255.
+Condition-first KNN now fills remaining k=3 slots from unrestricted train
+molecules; only the 22 previously unpredicted queries change. Original v1
+252-row condition-KNN scores remain historical and are not mixed with v2.
+The four-column figure now also overlays Ames matched full-flat 4/2. A compact
+paired comparison with shared None and all five baselines is in
+`outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive/`, registered
+under `replicate_suites.ames_scaffold_valid_4_2.comparison_figure`. Both figure
+receipts retain the exact existing-plotter commands and matched-input audit.
+
+Ames trace diagnosis is recorded in
+`outputs/paper/analysis/ames_scaffold_valid_trace_diagnosis/TRACE_DIAGNOSIS.md`.
+The progressive L4-to-L5 drop is exactly one harmful flip (query 173, TA102
+without activation); 53 of the 54 L2 errors remain wrong through L5 despite
+792 actual L3-L5 calls. Inspected reasoning exposes cross-system/condition
+transfer errors, retention of earlier analog judgments, and compound-specific
+Ames-label recall in the one beneficial progressive L3 flip (query 119).
+These are observational findings, not a causal prompt ablation. Full-flat wins
+6 of 9 final discordances; the paired parent-bootstrap 95% interval for its
+macro-F1 advantage is [-0.0179, 0.0444], with model run variability unmeasured.
+The report links raw reasoning and source cards; no predictions or gold changed.
+The follow-up `RECORD_RELEVANCE_AUDIT.md` audits all 3,015 selected unique cards
+and identifies two name/structure-mismatched source cards used by query 57,
+plus one method-only card whose empty result is filled from a group aggregate
+for query 18. These findings are recorded for bounded source/renderer repair;
+the frozen inputs and predictions have not yet been changed or replayed.
+
+The revised Ames prompt scaffold-test suite is complete under
+`replicate_suites.ames_scaffold_test_4_2`: 274 rows, progressive and matched
+full-flat 4/2 each repeated three times, plus five train-only baselines once.
+After shared fresh test single/None and frozen evidence/tool preparation, the
+three repetitions run concurrently with 256 request slots each (768 total);
+each repetition runs progressive then full-flat. First attempts use one request;
+only failed calls/validation retries race up to six requests inside that same
+256-slot budget. Epoch 16 and threshold 0.5281078815460205 remain frozen from
+the previous train-only MiniMol CV; condition KNN uses the full fallback policy.
+The new prompt explicitly permits transferable mechanistic evidence to change
+an Ames prediction without new direct Ames measurements. The renderer and scientific settings remain frozen; the confirmed source identity
+error below was subsequently excluded with a bounded replay. All 8,220 level predictions
+(6 runs x 274 rows x 5 levels, including protocol-defined no-evidence reuse)
+have valid outputs, with zero failed queries; all five baselines also completed.
+The complete four-task test figure is registered under
+`replicate_suites.scaffold_test_4_2.four_task_comparison`, with both full
+performance/resource and compact performance-only PNG/SVG exports in
+`outputs/paper/analysis/conditioned_scaffold_test_full_flat_vs_progressive_4tasks_3runs_3acaba_repair/`.
+It includes all 20 baselines and four shared None references; each agent point
+shows the mean of three run-level metrics ±1 sample SD. All 34,032 level
+predictions, current input/index/family hashes, paired prepared inputs and
+baseline evaluation rows were verified. The prior three-task performance and
+resource values are preserved exactly. After the source repair below, Ames L5 Macro-F1 is
+0.7574 ± 0.0036 progressive and 0.7459 ± 0.0112 full-flat; these SDs describe
+reasoning-run variability over frozen inputs, not confidence intervals.
+
+The pre-repair revised-prompt test [trace diagnosis](../../../outputs/paper/analysis/ames_scaffold_test_trace_diagnosis/report.html)
+audits all 8,220 outputs and the eight progressive L2-to-L5 label flips:
+3 corrections versus 5 harms, compared with 68 versus 64 adjacent changes for
+full-flat. Progressive L5 never changes a label. The case ledger identifies a
+misassigned 3-Ac-ABA structure (`ames_base:76701`, PMID 14981162), resistance
+selection presented as induced mutation, and a model-invented frameshift meaning
+for yeast his1-7 (checked against PMID 9560384). Same-parent TA102/TA97 examples
+show how one surrogate negative corrects one condition and harms another.
+These are post-hoc observations, not causal ablations or an exhaustive source
+audit; its original artifacts remain preserved, and the remaining recorded
+defects constrain scientific interpretation of the completed scores.
+
+The separate L1-to-L2 audit in `ames_scaffold_test_l2_diagnosis` finds 12 corrections
+versus 13 harms for progressive and 19 versus 36 for full-flat across three repeats.
+Full-flat decreases in every repeat; 14 of its 36 harmful changes cite only L1
+cards as final prediction basis. Repeated q140 extra-enzyme transfer and q196
+strain-unspecified weak-analog negatives contrast with six consistent beneficial
+q0 changes. These are descriptive trace findings, not causal effect estimates;
+see the registered `l1_to_l2_diagnosis` for complete transitions and caveats.
+
+The confirmed 3-Ac-ABA identity error (`ames_base:76701`) has now been excluded
+through the payload-pinned source-review ledger. Both indices were rebuilt;
+all gold votes and benchmark files remain byte-identical. The complete test
+selected-surface comparison changes only q254/q255/q256 at L3-L5. Targeted replay
+completed in `starling_conditioned_ames_scaffold_test_4_2_3acaba_repair_v1`:
+54 fresh level outputs across six runs, with 8,166 unchanged-prefix outputs
+verified equal to each corresponding original repetition, zero failures, and
+all 274-row metrics independently recomputed. Progressive repeat 3 q256 is
+corrected at L3-L5; full-flat repeat 2 q255 becomes wrong at L4, while repeat 3
+q256 is corrected at L4 and becomes wrong at L5. L5 mean Macro-F1 changes by
++0.001761 progressive and -0.001695 full-flat; this small mixed effect does not
+resolve the late-level plateau or isolate model sampling variation. Baselines
+and single/None are unchanged. The registry's `source_identity_repair` points to
+the completion validation, per-level metrics and exact six prediction changes.
 
 ## Retained paper families
 

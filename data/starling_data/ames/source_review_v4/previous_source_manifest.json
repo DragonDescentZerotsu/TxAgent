@@ -1,0 +1,95 @@
+{
+  "contract": "ames_bacterial_reverse_mutation.v1",
+  "retrieval_contract": "ames_inclusive_retrieval.v2",
+  "source_commit": "03e4c7c694b45bcfdf7776ac1045bc3e69936f0a",
+  "source_manifest_sha256": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
+  "pubchem_name_responses_sha256": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
+  "policy_source_sha256": "95130f147328be1bed0c49f83ae5e73d2620c239544fa6991564908afc914db0",
+  "n_source_rows": 1510447,
+  "n_retrieval_records": 1299510,
+  "n_voters": 3346,
+  "n_pending_identity_candidate_rows": 33,
+  "n_pending_identity_candidate_names": 24,
+  "benchmark_scope": "identity_verified_source_subset_with_explicit_pending_identity_exclusions",
+  "family_counts": {
+    "Observed.nonvoter_ames": 138577,
+    "Mechanism.other_genetic_damage": 227301,
+    "Direct.ames": 3346,
+    "Mechanism.dna_damage_response": 419795,
+    "Mechanism.genotoxicity_mechanisms": 510491
+  },
+  "decision_counts": {
+    "ames_base:Direct.ames:explicit_primary_bacterial_outcome": 3346,
+    "ames_base:Mechanism.other_genetic_damage:other_genetic_damage_with_source_qualifications": 154925,
+    "ames_base:Observed.nonvoter_ames:conflicting_study_parent_condition": 21,
+    "ames_base:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 122682,
+    "ames_base:Observed.nonvoter_ames:same_study_parent_condition_repeated_description": 288,
+    "ames_base:Observed.nonvoter_ames:simple_inorganic_molecule_is_retrieval_only": 8,
+    "ames_base:excluded:exact_claim_duplicate": 15,
+    "ames_base:excluded:identity_ambiguous_name_resolution": 311,
+    "ames_base:excluded:identity_identity_request_unresolved": 3065,
+    "ames_base:excluded:identity_name_not_found": 3355,
+    "ames_base:excluded:identity_stereochemistry_or_isotope_unresolved": 3624,
+    "ames_base:excluded:inorganic_or_metal_material_requires_identity_review": 31093,
+    "ames_base:excluded:invalid_structure_or_parent": 2409,
+    "ames_base:excluded:known_source_identity_mismatch": 4,
+    "ames_base:excluded:multiple_organic_components_require_identity_review": 3141,
+    "ames_base:excluded:named_stereochemistry_missing_from_structure": 341,
+    "ames_base:excluded:pubchem_name_structure_mismatch": 4471,
+    "ames_base:excluded:unresolved_chemical_entity": 195,
+    "ames_base:excluded:unresolved_endpoint_without_family_support": 66,
+    "ames_base:excluded:unresolved_local_compound_code": 851,
+    "ames_v1:Mechanism.other_genetic_damage:other_genetic_damage_with_source_qualifications": 72376,
+    "ames_v1:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 6047,
+    "ames_v1:excluded:inorganic_or_metal_material_requires_identity_review": 10919,
+    "ames_v1:excluded:invalid_structure_or_parent": 738,
+    "ames_v1:excluded:known_source_identity_mismatch": 5,
+    "ames_v1:excluded:multiple_organic_components_require_identity_review": 1257,
+    "ames_v1:excluded:unresolved_endpoint_without_family_support": 191,
+    "ames_v2:Mechanism.dna_damage_response:dna_damage_response_with_source_qualifications": 419795,
+    "ames_v2:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 5963,
+    "ames_v2:excluded:exact_claim_duplicate": 2,
+    "ames_v2:excluded:inorganic_or_metal_material_requires_identity_review": 63340,
+    "ames_v2:excluded:invalid_structure_or_parent": 10704,
+    "ames_v2:excluded:known_source_identity_mismatch": 5,
+    "ames_v2:excluded:multiple_organic_components_require_identity_review": 4235,
+    "ames_v2:excluded:unresolved_endpoint_without_family_support": 277,
+    "ames_v3:Mechanism.genotoxicity_mechanisms:genotoxicity_mechanism_with_source_qualifications": 510491,
+    "ames_v3:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 3568,
+    "ames_v3:excluded:inorganic_or_metal_material_requires_identity_review": 56792,
+    "ames_v3:excluded:invalid_structure_or_parent": 5256,
+    "ames_v3:excluded:known_source_identity_mismatch": 2,
+    "ames_v3:excluded:missing_structure_or_support": 4,
+    "ames_v3:excluded:multiple_organic_components_require_identity_review": 4241,
+    "ames_v3:excluded:unresolved_endpoint_without_family_support": 28
+  },
+  "builder_sha256": "f4d23749fcd4974e4bf06dca6df832f820349d73a4e4f0e9dec1bc0f5bcefc20",
+  "identity_policy_sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845",
+  "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
+  "review_method": "deterministic_structured_source_policy_not_manual_review",
+  "condition_contract": "exact_reported_standard_strain_panel_and_metabolic_activation",
+  "identity_policy": "gold requires one exact normalized PubChem name-parent match; no automatic structure repair",
+  "unresolved_condition_policy": "nonvoter; never silently mapped to no_reported_external_condition",
+  "files": {
+    "records.parquet": {
+      "path": "data/starling_data/ames/canonical_v1/records.parquet",
+      "sha256": "fc4051781a85478ede2e22a4930523a9cb0893d37bb036cf59109243366bb99a"
+    },
+    "record_audit.parquet": {
+      "path": "data/starling_data/ames/canonical_v1/record_audit.parquet",
+      "sha256": "b39fa11bfb6d63cfb37496e5843cb4786df7e22cdeb636470d245c62fbccfbaf"
+    },
+    "source_votes.jsonl": {
+      "path": "data/starling_data/ames/canonical_v1/source_votes.jsonl",
+      "sha256": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1"
+    },
+    "study_vote_audit.jsonl": {
+      "path": "data/starling_data/ames/canonical_v1/study_vote_audit.jsonl",
+      "sha256": "a1a3c4b01c56201e5978e6a0d8f2cbd68926750935f6c85c84b3979a43701aa1"
+    },
+    "pending_identity.jsonl": {
+      "path": "data/starling_data/ames/canonical_v1/pending_identity.jsonl",
+      "sha256": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+    }
+  }
+}

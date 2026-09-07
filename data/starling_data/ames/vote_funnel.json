@@ -1,0 +1,70 @@
+{
+  "raw_rows": 1510447,
+  "normalized_raw_parents": 37410,
+  "base_rows": 334211,
+  "base_parents": 14116,
+  "bacterial_rows": 91511,
+  "bacterial_parents": 9643,
+  "schema_version": "ames_vote_funnel.v2",
+  "baseline_semantic_screen": {
+    "path": "data/starling_data/ames/source_review_v4/previous_vote_funnel.json",
+    "sha256": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
+    "scope": "historical deterministic base-only screen before the applied semantic review"
+  },
+  "review_actions": {
+    "withhold": 19,
+    "exclude": 39,
+    "accept": 15
+  },
+  "precollapse_candidate_rows": 3642,
+  "precollapse_candidate_parents": 1423,
+  "study_audit_reasons": {
+    "primary_study_condition_vote": 3333,
+    "same_study_parent_condition_repeated_description": 288,
+    "conflicting_study_parent_condition": 21
+  },
+  "study_votes": {
+    "rows": 3333,
+    "parents": 1423,
+    "parent_condition_units": 2660
+  },
+  "retrieval_parents": 34952,
+  "source_eligibility": "Deterministic base-family screen plus individually reviewed payload-pinned direct claims from any source; identity and study-collapse gates apply to all.",
+  "input_hashes": {
+    "data/starling_data/ames/canonical_v1/manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+    "data/starling_data/ames/canonical_v1/source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+    "data/starling_data/ames/source_review_v4/applied_decisions.jsonl": "cecf331336d367cd9bf5df9f802dab8f1021285da4cde21990ac77d726d6f898"
+  },
+  "benchmark_stages": {
+    "accepted_parent_conditions_before_group_gate": {
+      "rows": 2646,
+      "parents": 1420,
+      "conditions": 178,
+      "decisions": {
+        "accepted": 2646
+      }
+    },
+    "accepted_parent_conditions": {
+      "rows": 2474,
+      "parents": 1383,
+      "conditions": 73,
+      "decisions": {
+        "accepted": 2474
+      }
+    },
+    "rejected_parent_conditions": {
+      "rows": 186,
+      "parents": 147,
+      "conditions": 114,
+      "decisions": {
+        "parent_condition_label_tie": 14,
+        "condition_group_requires_three_parents_and_nonempty_scaffolds": 172
+      }
+    },
+    "agreement_policy": {
+      "external": 0.6,
+      "none_reported": 0.7
+    },
+    "singleton_vote_rows": 2230
+  }
+}

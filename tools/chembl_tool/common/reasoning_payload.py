@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 from typing import Any
 
 
@@ -35,7 +36,13 @@ def external_condition_sentence(record: dict[str, Any]) -> str:
     group = str(record.get("condition_group") or "").strip()
     if not group or group == NO_REPORTED_EXTERNAL_CONDITION:
         return ""
-    clauses = [_render_condition_atom(atom) for atom in group.split(";") if atom]
+    # Fresh source adapters join keyed atoms with '+'. Preserve literal plus
+    # signs in values, such as ions, and the historical semicolon syntax.
+    clauses = [
+        _render_condition_atom(atom)
+        for atom in re.split(r";|\+(?=[a-z][a-z0-9_]*=)", group)
+        if atom
+    ]
     return "This prediction concerns the query molecule under " + " and ".join(clauses) + "."
 
 
