@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI 19 个跨来源冲突：原始出处核验
 
 本轮结论：19 个 TDC=0 均与 Xu et al. 2015 作者原始补充表 S2.1 的 CID、结构、标签一致；18 个分子另有作者明确报告肝损伤的原始临床证据，amphetamine 的原记录出处细节仍待核实。这是对原始报告方向的判断，不是把18个默认条件最终gold直接改为1。

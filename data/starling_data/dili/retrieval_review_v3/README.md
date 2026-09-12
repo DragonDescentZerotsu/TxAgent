@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI 修复优先 source release v3
 
 本轮落实上次 trace 核查，并逐条补读同 PMID 的相关错绑记录，共修改 11 条；原始 1,645,109 条 acquisition records 不删除。原始 raw_record_json、source_smiles 和冻结 voter 标记保留；修正后的正文与身份用于 canonical retrieval fields，完整修订另存 reviewed_record_json 和 content_repairs.json。source_smiles 是原始获取值，不能覆盖修正后的 canonical_smiles 用于检索。

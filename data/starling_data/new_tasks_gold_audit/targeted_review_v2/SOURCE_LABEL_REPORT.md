@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # Final source-record classification
 
 All 148,079 queued records now have a validated decision: 147,708 GPT-OSS-120B successes plus 371 records individually read by the Codex assistant. This is not human expert review or external-paper verification. The residual review changed 111 directions; 260 retained their direction, with literal quotes and scope corrections recorded.

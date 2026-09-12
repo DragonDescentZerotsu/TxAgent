@@ -1,11 +1,13 @@
-Current status: all queued reviews finalized, including 371 Codex residual decisions. See [SOURCE_LABEL_REPORT.md](SOURCE_LABEL_REPORT.md) and `finalization_receipt.json`. Gold is not published.
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
+Completed source-direction review: all queued reviews finalized, including 371 Codex residual decisions. See [SOURCE_LABEL_REPORT.md](SOURCE_LABEL_REPORT.md) and `finalization_receipt.json`. This stage only produced direction ledgers; subsequent task-specific builders published the current Starling-only gold_v4.
 
 # Targeted source-direction review
 
 This replaces the exhaustive two-pass plan after the user's 2026-09-08 request
 to relax overly strict filters and reduce review volume. The old reviewer is
 stopped; its complete ledger is preserved and SHA256-pinned in this manifest.
-The existing node001 four-TP2 GPT-OSS-120B servers and HAProxy remain in use.
+Execution used node001 four-TP2 GPT-OSS-120B servers and HAProxy; their availability is not a current restoration requirement.
 
 This stage retains **source-label candidates**, not newly certified gold votes.
 Explicit source positive/negative categories can be retained without requiring
@@ -57,14 +59,14 @@ two recovery sweeps after the initial pass. No second complete pass is scheduled
 Errors remain errors. A new gold build requires explicit coverage, identity,
 study, conflict, condition and heldout-index checks; this runner publishes no gold.
 
-The persistent reviewer runs on node001 in tmux `gptoss-source-review-targeted`:
+Historical launch command (the per-round script has been removed):
 
 ```sh
 sh /data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/run_review.sh
 ```
 
 `manifest.json` pins original sources, selection ledgers, queues, prior reviews
-and the prompt. `progress.json` is the live progress counter; `reviews.jsonl`
+and the prompt. `progress.json` recorded progress during execution; `reviews.jsonl`
 contains complete answers, reasoning and output-validation errors. The successful
 64-record, two-task preflight is in `smoke.jsonl`; the three discussed negative
 scope examples are separately retained in `scope_examples_smoke.jsonl`.
@@ -80,7 +82,7 @@ the previous single-pool client saturated one CPU core. The runtime change reuse
 54,535 successful reviews and preserved the execution/protocol hash. Prior code
 and execution are in `runtime_before_pool_sharding/`; the change receipt and
 before/after samples are `pool_sharding_receipt.json` and
-`idle_diagnostic_{before,after}.jsonl`. Restart with `sh run_review.sh` as above.
+`idle_diagnostic_{before,after}.jsonl`. The completed review is not restarted during restoration.
 
 Earlier GPT-OSS task reviews were selected condition-extension queues rather than
 raw-source censuses: BBB 2,466, Bioavailability 2,452, Skin 14,059 and ClinTox 191.

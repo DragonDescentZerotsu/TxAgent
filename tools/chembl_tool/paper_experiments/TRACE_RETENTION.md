@@ -1,10 +1,11 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-08.
+Updated: 2026-09-12.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
-`current_conditioned_results.json`; do not duplicate that path list here.
+`current_conditioned_results.json` together with its linked `cleanup_history` receipt;
+do not duplicate those path lists here.
 Current retrieval inputs are independently locked by
 `artifacts/chembl_tool/starling/current_records/manifest.json` and
 `current_starling_retrieval.json`.
@@ -58,63 +59,19 @@ Preserve the source-exclusion receipt, all-query selected-surface comparison and
 per-run prefix-reuse receipts; copied results depend on the corresponding original
 repetition, not on a pooled or newly selected prediction.
 
-For the registered DILI retrieval_review_v1 targeted replay, retain its original
-no_prior_grounded_sim0 source run, frozen single/None cache, all-query surface
-audit, tool-freeze receipt, per-level checkpoint-reuse sidecars and paired metrics.
-Unchanged outputs and requests may be immutable hardlinks to that source run.
-The replacement combines fresh affected outputs with verified unchanged outputs;
-it is not an additional independent replicate.
+For DILI v1–v5 targeted replays, retain original predictions and requests, frozen
+single/None/tool caches, all-query selected-surface audits, prompt-equivalence
+receipts and progressive checkpoint-reuse sidecars. Later runs depend on the
+verified unchanged outputs of earlier runs; they are not independent replicates.
+The source versions and changed-output counts belong to the linked historical
+receipts. Only the final source/index materialization remains active.
 
-For the registered DILI retrieval_review_v2 targeted replay, retain the v1
-source run, the v2 four-record source release, the 804-row selected-surface
-audit, complete prompt/tool equivalence receipts, and checkpoint-reuse sidecars.
-Only 94 valid level outputs are freshly inferred; the other 11,162 are reused.
-The test executor explicitly forbids new model calls. Keep the shared-runner
-controller, run plan and final paired metrics with this registered result root.
-
-For `dili_l1_condition_priority_v1`, retain the pinned source-only card condition
-map and its source-ID lineage, contract/command, all 402 request comparisons,
-exact-input reuse receipt, L1 traces and paired metrics. Its reviewed-source
-baseline and frozen single/None/tool inputs remain provenance dependencies.
-Only L1 is executed; the full L1–L7 prompt plan is retained.
-The authorized OpenRouter replacement runs both valid/test with all 804 L1
-predictions fresh. Retain its version-pinned provider configuration, preflight,
-per-split commands, complete raw responses and input/paired-performance audits.
-Its PARCC comparison retains frozen priors/tools but changes hosting; it is not
-an isolated retrieval-effect estimate or another complete L1–L7 replicate.
-Retain the subsequent `dili_l1_condition_priority_parcc_endpoint_v1` comparison:
-all 804 prepared files and complete nominal requests match the completed OpenRouter
-run, with fresh PARCC L1 outputs for both splits. Preserve paired request hashes,
-raw responses and endpoint-disagreement metrics. Both DILI endpoint roots may be
-stored on local NVMe behind their original project paths; the completed OpenRouter
-storage-migration receipt verifies every retained file. Keep these physical targets
-while the registry or comparison depends on them.
-
-Retain `dili_l1_morgan_neighbors_condition_cards_v1`: source-only condition map dependency,
-frozen commands/contract, original-neighbor equality checks, frozen common tools, all
-valid/test fresh L1 requests/responses and changed/unchanged-input paired metrics. It
-changes only within-molecule card selection. Keep its local NVMe target behind
-`outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1`.
-
-Retain `dili_l1_morgan_neighbors_exact_condition_cards_v1` and its local NVMe target
-behind `outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1`:
-frozen plan/code hashes, exact-only contract, no-match original-card equality audit,
-fresh L1 requests/responses, and paired comparisons with both original and previous
-card-policy runs. It shares the preceding suite's bounded executor; retain that dependency.
-
-Retain `dili_l1_query_identity_pilot_v1` at
-`outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1`
-and its local NVMe target: frozen balanced cohort and selection contract, identity-cache
-joins, input/code hashes, both control/identity arms and their two fresh repeats,
-paired metrics and semantic trace reviews, rejection receipt and frozen implementation.
-The true-name method is rejected and audit-only. Preserve the exact-condition source run
-while this pilot depends on its frozen inputs.
-
-Retain `dili_l1_query_identity_exclusion_pilot_v1` at
-`outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1`
-and its NVMe target: the three pre-reviewed cases, exclusion-only request checks,
-two fresh repeats per control/exclusion arm, code/input hashes, endpoint receipts
-and manual identity/subject-attribution review. It depends on frozen exact-only L1 inputs.
+DILI L1 condition/card-selection, hosting comparisons and query-identity pilots
+are stopped diagnostics indexed by `cleanup_history`. Retain their frozen inputs,
+raw requests/responses, metrics, code hashes, rejection/selection receipts and
+any local NVMe targets still backing retained traces. Removed per-round controller
+and launcher scripts are recoverable from Git where committed; they are not
+required live dependencies or instructions to restart these pilots.
 
 For registered Carcinogens source-cleanup diagnostics, retain the hash-bound
 review overlay, source proposals and adjudication overrides, unresolved-concern

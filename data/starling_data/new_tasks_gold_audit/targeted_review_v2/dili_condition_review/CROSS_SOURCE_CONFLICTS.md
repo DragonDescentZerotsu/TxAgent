@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # 合并后 19 个跨来源冲突
 
 全部为旧 Starling gold=1 与 TDC=0。TDC 标签逐条回查冻结下载的 dili.tab 原始行，19 项均未发生导入翻转。后续已核查作者2015原始补充表及临床报告，逐分子结果见 [PRIMARY_SOURCE_REVIEW.md](PRIMARY_SOURCE_REVIEW.md)：18个有明确正向临床报告，amphetamine待核实。下表仍展示原始冲突，不代表新gold。

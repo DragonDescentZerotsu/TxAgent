@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI progressive level record review
 
 Reviewed 69 distinct complete canonical/raw payloads: base 14 and each v1–v5 11. Selection used fixed UID-hash ranks within source × random, clinical/direct-mention, and identity-held strata; overlaps were removed. Six actual voters (three of each label) were added. These are Codex semantic readings, not human expert review or a systematic full-paper audit. Two existing base-vote payloads were additionally re-read to resolve cross-source study duplication.

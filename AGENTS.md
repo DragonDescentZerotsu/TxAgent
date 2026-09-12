@@ -59,7 +59,8 @@ scaffold 与 random 的 train/valid/test 均为 3754/469/469，合计 3578 正�
 本轮清理已冻结为 `data/starling_data/<task>/retrieval_final/`：DILI 采用 v5 源，Carcinogens 固化 R18 修复。
 共享恢复包、catalog、两种 split 索引和 Parquet 表使用该最终源；旧大型暂存副本退出活跃路径。
 旧 DILI/Carcinogens gold_v3 的 Flash progressive/full-flat 和五种基线仅作历史参考。DILI scaffold valid/test 于 2026-09-08
-按用户要求交换，当前 test 是已查看的原 valid。数据、source-build 与共享恢复入口见
+按用户要求交换；后续 gold_v4 重建仍显式使用 `swap_evaluation_splits=True`，其 402-row
+valid/test 是新 cohort，不能与旧 gold_v3 的 103-row cohort 混用。两套 eval 均已查看。数据、source-build 与共享恢复入口见
 `tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md`；结果以 registry 为准。
 
 Ames 是经过名称—结构核验和有限语义审查的 source subset：保留 2,474 条 molecule-condition rows、1,383 个 parents、73 个
@@ -575,8 +576,9 @@ global_prompt_pool.py / reasoning_stage_runtime.py
   前者提供跨 task/condition 的唯一 ready queue 和全局 prompt 并发上限；后者提供 single/group/final stage
   checkpoint、依赖解锁、原子 artifact 写入和断点恢复。成功 prerequisite 改写会使旧 final/trace 失效；final
   只在 single 和精确 expected group set 全部成功后执行。五个现有 batch wrapper 都必须能接受公共
-  `--prepare-only` seed 命令；尚未迁移到共享 retrieval contract 的 DILI 只允许 native/operational/standard
-  默认组合，公共 parser 会拒绝伪装成 parent-disjoint 或 coverage ablation。
+  `--prepare-only` seed 命令。DILI 的旧 native ChEMBL batch wrapper 只允许
+  `native + operational + similarity + standard`；这项限制不适用于已接入共享 family/progressive
+  runner 的当前 Starling DILI，后者支持正式 scaffold/parent disjoint 合同。
   Pool 内部 sample key 必须使用绝对 batch directory 加 query index；`batch_id` 只在单个 batch root 内唯一，
   不能作为跨 fold/跨 root 的全局 key。single dependency 的 source key 必须使用同一绝对目录合同。
 

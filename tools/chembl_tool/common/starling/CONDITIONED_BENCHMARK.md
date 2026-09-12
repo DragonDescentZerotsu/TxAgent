@@ -264,8 +264,10 @@ current gold includes TDC labels. Source repair does not modify frozen votes.
 
 These tasks use `new_task_tautomer_identity.v2`: stable-stereo gold identity,
 connectivity/formula/charge leakage groups and terminal-pruned Murcko topology
-scaffold groups. Other tasks retain their own identity contracts. DILI test was
-previously inspected validation; source cleanup does not make it an unseen test.
+scaffold groups. Other tasks retain their own identity contracts. The DILI gold_v4
+builder explicitly swaps allocated valid/test names, preserving the earlier naming
+policy on its rebuilt cohort. Both subsets were inspected during diagnostics;
+source cleanup does not make test unseen.
 
 ### Current reviewed Starling-only releases (2026-09-09)
 
@@ -274,7 +276,10 @@ completed full-base direction ledgers without additional model review or TDC lab
 DILI has 4,024 benchmark rows; Carcinogens has 4,692, using exactly five organism
 groups (rodent/human/dog/monkey/rabbit). The shared `--reviewed-release` publisher
 validates the staged split/index hashes and preserves previous active inputs.
-Each task's `gold_v4/retrieval/canonical_publication.json` identifies that release.
+Each task's `gold_v4/retrieval/canonical_publication.json` records the initial
+gold_v4 publication. The retained final retrieval source and its two indices are
+identified by `retrieval_final/publication.json` and `current_starling_retrieval.json`;
+the initial temporary build/publish scripts have been removed.
 L1 contains actual publication-vote representatives; only heldout L1 is prefiltered,
 and L2 remains subject to query-time disjoint retrieval. Fresh cohort scores must
 not be inferred from historical gold_v3 runs. Full source policies and build

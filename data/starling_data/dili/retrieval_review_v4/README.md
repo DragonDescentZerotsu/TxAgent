@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 本轮阶段性运行（2026-09-12）：按用户“可以先跑一轮”的要求，冻结 712 条已确认修正（本轮新增 216 条），另列 10 张未核清卡片；重新检索还可能带来新的未审阅卡片。仅重建 scaffold valid/test 并做受影响输入的定点重跑。审阅覆盖报告继续如实标记未完成，partial_review_authorization.json 仅允许本轮诊断继续，不代表审阅通过或全局 source 采用。正式采用结果和 random 保留 v3。当前链见 partial_replay_launch.json / workflow_progress.json；推理保持 PARCC Flash0731、每模式 256、6 路竞速、20480 输出预算。Carcinogens 已在运行的请求结束前，仅准备 DILI 输入。新 scaffold artifacts 临时存于 /local/tmp，完成后需归档后才可作为长期可复现产物。
 
 # DILI retrieval review v4: repair first, then targeted replay

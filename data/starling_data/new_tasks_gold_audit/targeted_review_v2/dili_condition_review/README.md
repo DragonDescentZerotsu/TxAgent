@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI 条件合并与医学相关性审查
 
 本轮已执行条件映射、六条条件误归属修正、study 去重和 source-only label 重算。输出是本轮审阅目录的重建输入，尚未发布到正式 benchmark。输入为冻结 gold_v3 的 4,727 条 source votes，并非新一轮完整 base 的 20,573 条负向 records。不得混用两者计数。

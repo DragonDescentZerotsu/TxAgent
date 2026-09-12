@@ -18,8 +18,10 @@ Completed model, baseline and diagnostic results are indexed in
 `tools/chembl_tool/paper_experiments/current_conditioned_results.json`.
 
 These two tasks use the explicit `new_task_tautomer_identity.v2` leakage boundary;
-gold retains stereochemical identity. DILI scaffold valid/test names were exchanged
-on 2026-09-08, and both tasks' evaluation sets have been inspected. Full identity
+gold retains stereochemical identity. DILI retains the valid/test naming convention
+introduced on 2026-09-08: its gold_v4 builder sets `swap_evaluation_splits=True`.
+The rebuilt 402-row subsets differ from the historical 103-row gold_v3 subsets;
+both tasks' evaluation sets have been inspected. Full identity
 provenance remains in `data/starling_data/new_tasks_gold_audit/TAUTOMER_IDENTITY_REPAIR.md`.
 
 - `manifest.json`: task roots, target definitions, construction entrypoints,

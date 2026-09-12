@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # Carcinogens record semantic review v1
 
 72 supplied records were read individually, including every field in the complete `raw_record_json`. This is Codex source-text semantic review, not human-expert review or verification of original papers. Sampling used 12 distinct reporting PMIDs from each of base/v1/v2/v3/v4/v5, targeting actual voters, direct assertions, negative phrases, mechanism-only evidence and existing identity exclusions. It is a targeted error-discovery sample, not an estimate of error prevalence.

@@ -70,7 +70,8 @@ Carcinogens has five organism conditions: rodent, human, dog, monkey and rabbit.
 Sex, strain, route, dose and duration remain source qualifiers but are pooled in gold.
 Missing organism does not create an organism-specific vote. DILI uses its approved
 coarse conditions. Publication-parent-condition votes abstain on internal conflicts;
-accepted labels require a strict majority and at least 60% agreement. These are
+DILI requires at least 70% agreement for the default condition and 60% for reported
+conditions; Carcinogens requires 60% for its organism groups. Both reject ties. These are
 source-publication consensus labels, not exhaustive independent-experiment verification.
 
 L1 contains actual voters; L2 contains nonvoter direct-related outcomes; L3–L7 are

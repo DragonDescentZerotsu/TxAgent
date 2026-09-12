@@ -10,7 +10,8 @@ DILI 的 Starling 配置位于 `experiment_config.py` / `starling_levels.py`，�
 当前 Stage-03 恢复、重建和验证使用 `paper_experiments/rebuild_current_starling_retrieval.py`；
 完整数据合同见 `common/starling/NEW_TASK_SOURCE_DATA.md`。scaffold valid/test 的 Flash
 progressive、matched full-flat 和五个 baselines 已完成；结果以 `current_conditioned_results.json`
-为准。DILI scaffold test 是在 2026-09-08 按用户要求改名的原 valid，已被查看。
+为准。DILI 延续 2026-09-08 的 valid/test 命名交换策略；gold_v4 构建器显式交换分配结果。
+当前 402-row eval 是重新构建的 cohort，且 valid/test 均已在诊断中查看。
 
 2026-09-12 本轮清理冻结为 `data/starling_data/dili/retrieval_final/`，采用已完成 v5 诊断的源修复。
 保留全部 acquisition、冻结 gold/votes/splits 和必要的审计链；旧版本的大型暂存 source/index 与一次性脚本退出活跃路径。
@@ -70,9 +71,9 @@ group、prompt 和 final decision rule 必须是 DILI-specific。不要从 ClinT
 继承 hERG、neurotoxicity、renal toxicity、genotoxicity 等非肝脏安全分支；这些最多作为排除或背景
 context，不能进入 DILI 主 evidence tier。
 
-## Task-specific 文件规划
+## Native ChEMBL 文件职责
 
-后续新建代码时建议保持与 BBB_Martins / Skin_Reaction 类似的薄 wrapper 结构：
+下列已实现文件服务于旧 native ChEMBL workflow；当前 Starling 入口见页首：
 
 ```text
 constants.py
@@ -115,7 +116,7 @@ run_reasoning_batch.py
 endpoint-group 语义应只放在 `endpoint_groups.py`，prompt/schema 语义应只放在
 `run_reasoning_pipeline.py`。
 
-## 当前实现状态
+## Native ChEMBL 实现范围（2026-06）
 
 2026-06-29 已创建 DILI task v0 的可执行 screening / retrieval skeleton；2026-06-30 已完成 full
 screening、全量分布审核、evidence 校准和 DILI-specific reasoning pipeline/schema：
@@ -139,7 +140,7 @@ tools/chembl_tool/tasks/dili/
   run_reasoning_pipeline.py
 ```
 
-当前实现边界：
+该 native workflow 的实现边界：
 
 ```text
 rules.py / scoring.py / endpoint_groups.py 已实现 DILI v0 ontology：
@@ -159,382 +160,13 @@ tools/trace_viewer/viewer.html 已适配 dili_prediction、useful_for_dili_reaso
 effect_on_dili_reasoning 和 DILI-specific assessment fields。
 ```
 
-## Historical TRIM / DeepSeek properties-only baselines
-
-2026-06-29 跑了 3 个 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baseline，
-用于和当前 DILI-specific ChEMBL retrieval pipeline 做历史参考比较。它们不使用 TxAgent 当前
-`run_reasoning_pipeline.py`，也不使用 ChEMBL/Starling retrieval；prompt 来自
-`trim.reasoning.task_user_prompts.render_task_user_message`，tool mode 为 `properties`，
-唯一可见工具是 `get_mol_properties_and_fg`。数据 split 使用
-`/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl`
-的 96 条样本。
-
-```text
-identity allowed:
-  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_Skin_Reaction_DILI_test_20260629_194945.log
-  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_Skin_Reaction_DILI_test_20260629_194945.log/DILI.jsonl
-  n=96, failed parses=0
-  accuracy=0.7604
-  macro-F1=0.7506
-  class 0 precision/recall/F1=0.8710/0.5870/0.7013
-  class 1 precision/recall/F1=0.7077/0.9200/0.8000
-  tool usage: 94/96 questions with tools, avg tools/sample=0.98
-
-strict no identity / no memory comparison:
-  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_no_smiles_identity_Skin_Reaction_DILI_test_20260629_195403.log
-  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_no_smiles_identity_Skin_Reaction_DILI_test_20260629_195403.log/DILI.jsonl
-  n=96, failed parses=0
-  accuracy=0.6354
-  macro-F1=0.5988
-  class 0 precision/recall/F1=0.7619/0.3478/0.4776
-  class 1 precision/recall/F1=0.6000/0.9000/0.7200
-  tool usage: 96/96 questions with tools, avg tools/sample=1.00
-
-identity forbidden but memory comparison allowed:
-  log: /data1/tianang/Projects/Intern-S1/logs/deepseek-v4-pro_properties_no_smiles_identity_allow_memory_compare_Skin_Reaction_DILI_test_20260629_195652.log
-  trace: /data1/tianang/Projects/Intern-S1/reasoning-trajectory/deepseek-v4-pro_properties_no_smiles_identity_allow_memory_compare_Skin_Reaction_DILI_test_20260629_195652.log/DILI.jsonl
-  n=96, failed parses=0
-  accuracy=0.6667
-  macro-F1=0.6306
-  class 0 precision/recall/F1=0.8500/0.3696/0.5152
-  class 1 precision/recall/F1=0.6184/0.9400/0.7460
-  tool usage: 96/96 questions with tools, avg tools/sample=1.01
-```
-
-Interpretation caveat:
-
-```text
-These are historical TRIM properties-only baselines, not same-prompt zero-retrieval ablations of the
-current DILI-specific pipeline. Use them as a lower-context DeepSeek/tool reference point. The strong
-identity-allowed score may include molecule/class recognition from SMILES and should be reported
-separately from strict no-identity settings.
-```
-
-当前测试：
-
-```text
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 \
-  /data1/tianang/anaconda3/envs/vllm/bin/pytest tests/chembl_tool/tasks/dili -q
-
-result:
-  56 passed
-```
-
-`vllm` 环境中的 pytest 插件自动扫描在当前机器上可能卡在 conda dist-info entry point 读取；跑 DILI
-单元测试时使用 `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`。这不是 DILI 代码问题。
-
-2026-06-30 additional verification:
-
-```text
-PYTHONDONTWRITEBYTECODE=1 /data1/tianang/anaconda3/envs/vllm/bin/python -m py_compile \
-  $(find tools/chembl_tool/tasks/dili tests/chembl_tool/tasks/dili -name '*.py' | sort)
-
-PYTHONDONTWRITEBYTECODE=1 /data1/tianang/anaconda3/envs/vllm/bin/python \
-  -m tools.chembl_tool.tasks.dili.run_reasoning_pipeline --help
-
-PYTHONDONTWRITEBYTECODE=1 /data1/tianang/anaconda3/envs/vllm/bin/python \
-  -m tools.chembl_tool.tasks.dili.run_reasoning_batch --help
-
-result:
-  ok
-```
-
-2026-06-29 smoke screening / evidence QA 当前校准状态：
-
-```text
-clean smoke version:
-  outputs/chembl_tool/tasks/dili/assay_screening/smoke_v8_200k/
-
-screen command:
-  PYTHONDONTWRITEBYTECODE=1 /data1/tianang/anaconda3/envs/vllm/bin/python \
-    -m tools.chembl_tool.tasks.dili.screen_assays \
-    --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
-    --out-dir outputs/chembl_tool/tasks/dili/assay_screening/smoke_v8_200k \
-    --min-score 40 \
-    --limit 200000 \
-    --progress-every 50000 \
-    --export-activities
-
-smoke_v8_200k result:
-  scanned=200000
-  retained_assays=100
-  activity_evidence_rows=241
-  Tier 2=93
-  Tier 4=4
-  Tier 5=1
-  Tier 6=2
-  Tier 1=0
-  Tier 3=0
-
-current smoke evidence index:
-  outputs/chembl_tool/tasks/dili/evidence_library/smoke_v8_200k/
-  evidence_rows=241
-  indexed_molecules=142
-  groups=5
-
-retrieval smoke files:
-  retrieval_smoke_acetaminophen.json
-  retrieval_smoke_diclofenac.json
-```
-
-Important screening calibrations already applied:
-
-```text
-1. Exclude jaundiced-animal feces/clearance models; these are disease-model PK/clearance assays, not human DILI.
-2. Exclude bone-marrow ALP/ALPL; ALP is only liver-relevant with liver/bile/clinical context.
-3. Exclude ASBT/SLC10A2, ileal taurocholate, ileal brush-border and intestinal bile-acid uptake; these are not
-   hepatobiliary/cholestatic DILI transporter evidence.
-4. Exclude P-gp/ABCB1/MDR1; do not treat generic P-gp transport as DILI cholestasis evidence.
-5. Exclude APAP-induced hepatoprotective/protection assays; they measure protective efficacy, not compound-induced DILI.
-6. Exclude receptor/target covalent binding unless there is reactive metabolite, bioactivation, microsome, NADPH,
-   glutathione/GSH or hepatic metabolism context.
-7. Exclude hypolipidemic/hyperlipidemic/cholesterol-diet liver-weight efficacy assays.
-8. Exclude primary-hepatocyte genotoxicity/comet/DNA-break assays unless explicitly DILI/hepatotoxicity.
-9. Exclude generic HepG2 cancer-cell cytotoxicity / MTT / Alamar blue / acid-phosphatase assays; keep HepG2/C3A ADMET,
-   primary hepatocyte, HepaRG, LDH/apoptosis/caspase or explicit hepatotoxicity models.
-10. Require liver/hepatic context for Tier 2 necrosis/pathology/degeneration; this removes tumor-necrosis efficacy
-    assays such as EMT-6 tumor necrosis after photodynamic therapy.
-11. Downweight liver-weight-only in vivo findings to evidence_strength=moderate, while hepatic necrosis/pathology and
-    ALT/clinical chemistry remain strong.
-12. Map GSH/glutathione content/elevation assays to Tier 4.energy_failure_and_oxidative_stress but set direction to
-    neutral_or_unclear and strength=weak unless depletion/ROS/oxidative-stress language is present.
-```
-
-Additional QA notes:
-
-```text
-smoke_v6_200k retained 119 assays and exposed residual generic HepG2 cytotoxicity plus tumor-necrosis false positives.
-smoke_v7_200k retained 113 assays after generic HepG2 filtering but still had tumor-necrosis false positives.
-smoke_v8_200k retained 100 assays after both filters; generic HepG2 cytotoxicity and tumor-necrosis counts are 0.
-
-A full 1.89M-assay screening attempt reached 200k/1.89M at about 425 assays/s, implying roughly 75 minutes for a
-single full pass in the current common workflow. Use smoke windows for rule iteration, then run full screening once
-rules are stable enough.
-
-Post-200k audit window:
-  offset=400000
-  limit=10000
-  retained=12
-  tiers: Tier 3=2, Tier 6=2, Tier 2=2, Tier 4=6
-  generic_hepg2_cytotox_against=0
-  retained examples were MRP2 transporter, HepG2/C3A ADMET toxicity, liver weight, and rat liver mitochondrial swelling.
-```
-
-2026-06-30 full screening / full-distribution calibration:
-
-```text
-Initial full screening:
-  out_dir: outputs/chembl_tool/tasks/dili/assay_screening/v1_full
-  scanned=1,890,749
-  retained_assays=7,709
-  initial_activity_evidence_rows=514,437
-
-Full-screen calibration versions:
-  v1_full retained 7,709 assays
-  v2_full retained 7,222 assays, activity rows 38,493
-  v3_full retained 7,206 assays, activity rows 38,411
-  v4_full retained 7,065 assays, activity rows 36,232
-  v5_full retained 7,056 assays, activity rows 36,167
-  v6_full retained 7,024 assays, activity rows 36,112
-  v7_full retained 7,023 assays, activity rows 36,110
-
-Current clean full artifact:
-  outputs/chembl_tool/tasks/dili/assay_screening/v7_full/
-
-Current clean evidence library:
-  outputs/chembl_tool/tasks/dili/evidence_library/dili_molecule_evidence.jsonl
-  outputs/chembl_tool/tasks/dili/evidence_library/dili_neighbor_index.pkl
-  outputs/chembl_tool/tasks/dili/evidence_library/dili_neighbor_index.meta.json
-
-Final index metadata:
-  n_evidence_rows=36,110
-  n_index_molecules=8,284
-  n_groups=17
-  workers=128
-  elapsed_s≈16.3 for final index build
-
-Final v7 assay tier distribution:
-  Tier 6=2,753
-  Tier 3=1,550
-  Tier 2=1,281
-  Tier 4=616
-  Tier 5=517
-  Tier 1=306
-
-Final v7 molecule-level evidence group distribution:
-  hepatobiliary_transporter_panel=8,967
-  human_dili_or_hepatotoxicity=5,692
-  human_liver_laboratory_signal=5,458
-  hepatocyte_or_hepatic_cell_injury=4,543
-  bsep_or_bile_acid_efflux=2,593
-  in_vivo_liver_histopathology=2,322
-  reactive_metabolite_or_covalent_binding=1,534
-  er_lysosomal_lipid_stress=1,413
-  severe_liver_outcome_or_regulatory_signal=1,263
-  mitochondrial_function_or_respiration=736
-  in_vivo_liver_clinical_chemistry=593
-  energy_failure_and_oxidative_stress=477
-  context_dependent=315
-  cholestasis_or_bile_acid_accumulation=101
-  hepatic_metabolism_bioactivation=97
-  immune_or_idiosyncratic_context=5
-  in_vivo_hepatotoxic_dose_or_margin=1
-```
-
-Full-screen false-positive clusters found and calibrated out:
-
-```text
-1. Generic PCSK9/LDLR HepG2 reporter and target-biology assays.
-2. ABHD10/PME target assays and non-DILI activity-based protein profiling.
-3. Kidney/renal microsome, transporter or necrosis contexts without hepatic DILI relevance.
-4. LDHA/lactate-production target assays; do not confuse them with LDH release.
-5. Broad hepatoprotective/protection/rescue assays, including APAP protection and rotenone ATP rescue.
-6. H2O2-induced ROS antioxidant/protection assays; keep only direct ROS induction or reactive GSH/MPO/HRP chemistry.
-7. HFD/CCl4, NASH/NAFLD, antidiabetic, hypolipidemic and liver-disease efficacy models.
-8. Non-hepatobiliary bile-acid-adjacent enzymes/pathogens such as AKR1C/HSD, glucosidases, carboxylic ester
-   hydrolase and Cryptosporidium target assays.
-9. Generic receptor/kinase covalent binding without reactive metabolite, bioactivation or hepatic metabolism context.
-```
-
-Final retrieval smoke files:
-
-```text
-outputs/chembl_tool/tasks/dili/evidence_library/retrieval_smoke_acetaminophen_v7_full.json
-outputs/chembl_tool/tasks/dili/evidence_library/retrieval_smoke_diclofenac_v7_full.json
-
-settings:
-  top_k_per_group=3
-  min_similarity=0.2
-
-result:
-  both status=ok
-  both n_groups=17
-  both n_groups_with_neighbors=15
-  both n_neighbors_total=40
-
-QA conclusion:
-  acetaminophen retrieves direct human DILI/LTKB-like rows, human liver lab/severe outcome rows, mouse ALT/necrosis
-  rows, BSEP/OATP/MRP context, ROS induction, GSH adduct and hepatic cell injury rows.
-  diclofenac retrieves close human DILI/hepatotoxicity rows, BSEP/MRP/OATP rows, cholestatic liver injury,
-  mitochondrial dysfunction, GSH reactivity/acyl-glucuronide-related rows and HepG2 injury/apoptosis rows.
-  Previously observed protection/rescue/HFD disease-model false positives are absent in v7 smoke.
-```
-
-2026-06-30 DeepSeek-v4-pro full-pipeline LLM smoke:
-
-```text
-input:
-  /data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl
-
-batch:
-  outputs/chembl_tool/tasks/dili/reasoning/batches/dili_smoke_full_v7_idx0_3_6_20260630/
-
-command shape:
-  python -m tools.chembl_tool.tasks.dili.run_reasoning_batch \
-    --input-jsonl /data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl \
-    --indices 0 3 4 6 7 9 \
-    --parallelism 2 \
-    --batch-id dili_smoke_full_v7_idx0_3_6_20260630 \
-    --max-tokens 8192 \
-    --timeout-s 300 \
-    --max-tool-rounds 4 \
-    --top-k-per-group 3 \
-    --min-similarity 0.3 \
-    --skip-existing \
-    --stream-logs
-
-metrics:
-  n_total=6
-  n_successful=6
-  n_failed_runs=0
-  labels: 3 negative / 3 positive
-  prediction_distribution: no_dili_risk=3 / dili_risk=3
-  accuracy=1.0
-  macro_f1=1.0
-  confusion_matrix: tn=3, fp=0, fn=0, tp=3
-
-per-index predictions:
-  idx0 label=0 prediction=no_dili_risk confidence=moderate
-  idx3 label=1 prediction=dili_risk confidence=moderate
-  idx4 label=0 prediction=no_dili_risk confidence=low
-  idx6 label=1 prediction=dili_risk confidence=moderate
-  idx7 label=1 prediction=dili_risk confidence=moderate
-  idx9 label=0 prediction=no_dili_risk confidence=high
-
-QA:
-  final JSON complete for all 6 samples.
-  single-molecule branch called molecule_properties once for every sample.
-  all group outputs had status=ok.
-  no tool_result status=error in the 6-sample smoke.
-  combined trace lines=66.
-```
-
-Smoke-discovered retry fix:
-
-```text
-The first 6-sample smoke surfaced one blank DeepSeek group response:
-  idx9 Tier 4.er_lysosomal_lipid_stress raw_content was whitespace only.
-
-run_reasoning_pipeline.py now retries once when assistant content is blank or completely unparseable JSON by appending:
-  "Your previous response was empty or not valid JSON. Return only the required JSON object now."
-
-Regression test:
-  test_empty_or_unparsed_json_response_triggers_retry
-
-patched retry validation:
-  batch: outputs/chembl_tool/tasks/dili/reasoning/batches/dili_smoke_full_v7_retry_idx9_20260630/
-  idx9 status=ok prediction=no_dili_risk correct=True
-  groups=9 all ok
-  unparsed=[]
-  tool_errors=0
-  tool calls: molecule_properties=1, mmp_structure_compare=23, properties_compare=22
-```
-
-Scheduled full DILI run:
-
-```text
-scheduled_at:
-  2026-06-30 06:00:00 America/New_York
-
-scheduler script:
-  outputs/chembl_tool/tasks/dili/reasoning/scheduled/run_dili_full_20260630_0600.sh
-
-scheduler log:
-  outputs/chembl_tool/tasks/dili/reasoning/scheduled/run_dili_full_20260630_0600.scheduler.log
-
-scheduler pid file:
-  outputs/chembl_tool/tasks/dili/reasoning/scheduled/run_dili_full_20260630_0600.scheduler.pid
-
-batch:
-  outputs/chembl_tool/tasks/dili/reasoning/batches/dili_full_v7_deepseek_20260630_0600/
-
-parameters:
-  input_jsonl=/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl
-  n=96
-  parallelism=3
-  group_workers=20
-  max_tokens=8192
-  timeout_s=300
-  max_tool_rounds=4
-  top_k_per_group=3
-  min_similarity=0.3
-  skip_existing=true
-  chembl_exact_context=false
-
-The scheduler checks tool service health at 127.0.0.1:8765 before starting; if it is down, it starts
-uvicorn tools.service.app:app on that port and waits for health before running the batch.
-```
-
-下一步工作流：
-
-```text
-1. 若要做模型评估，直接用 v7_full evidence library 跑 run_reasoning_batch.py。
-2. Benchmark 默认不要开启 --enable-chembl-exact-context，避免 same-molecule ChEMBL evidence 泄漏。
-3. 下一轮建议从 6-sample smoke 扩到 20-sample balanced smoke，重点看 false positive/false negative traces。
-4. 如果 GLM-5.2 跑 DILI，沿用根 AGENTS.md 的 --disable-thinking / reasoning_effort="" 兼容参数。
-5. Starling acquisition 以冻结后的 DILI mechanism family 为 task/prompt 粒度；endpoint subtype、species、
-   dose 和 assay context 作为 family 内 schema 字段。旧 Tier.endpoint_group 只做接入审计，不逐组运行 Starling。
-```
+## Historical native experiments
+
+2026-06 的 TRIM properties-only、ChEMBL screening、6-sample smoke 和 96-row TDC
+实验属于 native runner 的历史记录，不是当前 Starling-only gold_v4 结果。
+当时的计数、参数、调度命令和排错日志可在 Git 提交 `9546716` 的本文件中查阅；
+旧 scheduler、PID、并发和“下一步”说明不再作为当前操作指令。
+当前模型、baseline、图及其输入版本统一查阅共享 `current_conditioned_results.json`。
 
 ## DILI evidence 总原则
 

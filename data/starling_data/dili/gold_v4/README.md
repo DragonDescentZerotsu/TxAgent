@@ -23,10 +23,11 @@
 | valid | 327 / 75 | 316 / 86 |
 | test | 320 / 82 | 316 / 86 |
 
-split 文件位于 `source_only_benchmark/DILI/{scaffold,random}/`。
-这是新 source-only release；历史 `data/conditioned_benchmark/DILI/` 和已有实验结果未改写。
-新 splits 对应的 L1/L2 records、catalog 和两种 retrieval index 已构建并通过校验，见 `retrieval/README.md`。
-历史实验默认入口保持原版本；新 release 不能直接复用旧 predictions。
+当前正式 split 位于 `data/conditioned_benchmark/DILI/{scaffold,random}/`；
+`source_only_benchmark/DILI/` 是这次 gold 构建的来源副本，不是另一个实验输入入口。
+当前检索源已冻结到 `data/starling_data/dili/retrieval_final/`，包含后续 v5 修复。
+`retrieval/README.md` 只记录初次 gold_v4 发布时的 L1/L2 变化，不能代表最终源的层级计数。
+最新实验和五种 baselines 以共享 `current_conditioned_results.json` 为准。
 
 ## 标签规则与审阅边界
 
@@ -61,10 +62,12 @@ PYTHONPATH=. /data1/tianang/anaconda3/envs/vllm/bin/python -m tools.chembl_tool.
 不需要运行 `review`；该入口已由取消 receipt 阻止重启。
 `validation.json` 已验证 source label 不变、gold 多数票重算、两种 split cohort/labels 完全一致、
 两种 split 的分子泄漏组交集为 0、scaffold split 的 scaffold 交集为 0、全部入选条件三路覆盖，
-以及历史 canonical split 字节不变。构建适配器和共享 fresh builder 的 39 项测试通过。
+以及构建当时的 canonical split 字节不变。该 validation 记录初次构建的验证范围；
+后续正式发布和 source 清理分别保留独立 receipt。
 输入/输出 SHA-256 与构建器 hash 记录在 `summary.json`、各 split summary、`validation.json`。
 已取消模型任务的日志和部分输出只保留为历史审计，不参与上述 gold。
 
-2026-09-09：已发布到正式 `data/conditioned_benchmark/DILI`，scaffold valid/test 各 402 条。
-新 progressive/full-flat 四个 runs 使用相同 4/2 冻结输入，每 run 256 并行，失败重试采用 6 路竞速。
-发布收据：`retrieval/canonical_publication.json`；运行入口以 current_conditioned_results.json 为准。
+2026-09-09 的初次正式发布收据为 `retrieval/canonical_publication.json`。
+2026-09-12 的最终 source、catalog 和两种索引见 `../retrieval_final/publication.json`。
+日常恢复无需重跑 gold 构建或模型审阅；统一命令见
+`tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md`。

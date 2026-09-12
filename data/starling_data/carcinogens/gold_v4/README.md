@@ -61,20 +61,21 @@ votes are in `gold_labels.jsonl` and `gold_label_provenance.jsonl`; undecided
 parent-condition pairs and publication conflicts have separate ledgers.
 No TDC label contributes to these gold labels or their splits.
 
-`retrieval/rebuild.sh` stages voter membership and exact-copy removal, builds
-both indices, exports ordinary Parquet level/card tables and checks all card
-links. L1 is actual vote representatives; nonrepresentative source support
-remains L2. Only heldout L1 is prefiltered. L2 remains in both indices, and
-all levels apply query-time scaffold/parent disjoint rules. Exact raw record
-copies are deleted from working records and listed separately, preserving the
-original acquisition. Raw scientific fields and structural identities are
-unchanged by level assignment.
+L1 contains actual vote representatives; nonrepresentative source support remains
+L2. Only heldout L1 is prefiltered, and all levels apply query-time scaffold/parent
+disjoint rules. Exact raw copies are removed from working records with a duplicate
+ledger, preserving original acquisition.
 
-Run `sh data/starling_data/carcinogens/gold_v4/retrieval/rebuild.sh` to stage and
-validate retrieval, then `python data/starling_data/carcinogens/gold_v4/retrieval/publish.py`
-to publish. That receipt-bound driver uses the shared `publish_conditioned_benchmark`
-reviewed-release publisher, packages Stage-03, verifies canonical inputs and
-updates level tables and result lineage. `retrieval/publication_completion.json`
-and the Stage-03 inventory identify the active data. Historical Carcinogens scores
-require fresh evaluation after this cohort change; no model experiment is
-launched as part of the data build.
+The final source incorporates R18 corrections and is frozen in
+`data/starling_data/carcinogens/retrieval_final/`. Its `publication.json` and the
+shared `current_starling_retrieval.json` identify the active source and both indices.
+The initial `retrieval/canonical_publication.json` and
+`retrieval/publication_completion.json` remain historical publication receipts;
+local `retrieval/rebuild.sh` and `retrieval/publish.py` have been removed.
+
+Use the shared restore/build/verify commands documented in
+`tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md`. The latest completed
+progressive diagnostic is R18; matched baselines and other completed runs are
+registered in `current_conditioned_results.json` with their actual input lineage.
+Data restoration does not launch an experiment or authorize reusing predictions
+under changed selected evidence.

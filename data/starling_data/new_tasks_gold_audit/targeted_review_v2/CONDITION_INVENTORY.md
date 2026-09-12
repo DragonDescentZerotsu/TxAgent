@@ -1,3 +1,5 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI / Carcinogens 当前条件清单与碎片化审计
 
 统计对象：当前冻结的 conditioned_benchmark scaffold（train+valid+test）及 gold_v3/source_only_benchmark/scaffold。最新 source-label 审阅尚未重建条件组，因此本清单不是新审阅结果的条件分布。条件按原始 condition_group 精确分组；每行计数单位是 molecule-condition row，不是原始 record。

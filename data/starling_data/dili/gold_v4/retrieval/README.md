@@ -1,8 +1,10 @@
+> 历史阶段记录（2026-09-12 归档说明）：正文中的计数、状态、路径和命令描述该阶段，不代表当前运行配置。当前两任务均使用 Starling-only gold_v4 和 `retrieval_final`；旧暂存 source/index 及一次性脚本已清理，保留的账本仍用于来源追溯。恢复与维护请见[当前合同](../../../../../tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md)。
+
 # DILI gold_v4 对应的 L1/L2 records
 
 本 release 与 `data/starling_data/dili/gold_v4/source_votes.jsonl` 精确绑定。
 2026-09-09 已通过 `canonical_publication.json` 切换正式 benchmark、records、catalog 和索引。
-`data/conditioned_benchmark/DILI` 现在使用 gold_v4；旧输入及检索索引保存在 `previous_active/`。
+`data/conditioned_benchmark/DILI` 使用 gold_v4；初次发布时的 `previous_active/` 暂存备份已清理，历史字节映射保留在发布 receipt。
 `manifest.json` 是发布前的校验快照，当前发布状态以 `canonical_publication.json` 和 current registry 为准。
 
 | 层 | 旧 records | 新 records |

@@ -4,7 +4,7 @@ This directory contains the maintained paper-facing experiment layer. Task
 science stays in `tools/chembl_tool/tasks/<task>/`; retrieval, visibility,
 reasoning, validation, checkpointing, analysis, and plotting are shared.
 
-DILI/Carcinogens 的当前数据合同和全部 source-build 入口见
+DILI/Carcinogens 的当前数据合同及保留的构建／维护入口见
 [`NEW_TASK_SOURCE_DATA.md`](../common/starling/NEW_TASK_SOURCE_DATA.md)。二者已接入统一
 Stage-03 恢复、catalog/index 重建和普通 Parquet level 导出；无需单独维护 runner 或画图程序。
 当前 benchmark 均为 Starling-only gold_v4，清理后的检索源统一冻结在 `retrieval_final`。
@@ -367,8 +367,10 @@ verified source-parent structures consistently for retrieval, tools and reasonin
 while retaining frozen benchmark rows and leakage identities. Pass the same map
 to fresh-prior preparation and evidence preparation; stale prior structures fail
 closed. Task-specific rules under `--evidence-grounding` are pinned in manifests
-and preserve the existing progressive update mechanism. The Carcinogens R5
-Valid/Test repair and its source-only decisions are linked from the result registry.
+and preserve the existing progressive update mechanism. Earlier Carcinogens rounds and their source-only decisions are indexed by the
+registry's `cleanup_history` receipt. The final `retrieval_final` snapshot already
+materializes the completed corrections; ordinary new runs use it without a
+historical `--record-review-overlay`.
 
 Ames fresh single/None preparation is available through the progressive runner
 with `--tasks ames --fresh-query-priors` and an explicit output root. Task-local
