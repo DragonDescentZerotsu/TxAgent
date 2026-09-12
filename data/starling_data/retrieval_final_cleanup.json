@@ -548,5 +548,97 @@
     "changed_python_files_identical_to_tested_worktree": 70,
     "compiled": 70,
     "task_source_manifest_hashes_match": true
+  },
+  "hidden_build_staging_cleanup": {
+    "status": "completed",
+    "removed": [
+      {
+        "path": "data/.build/tdc_augmented_conditioned_benchmark",
+        "files": 52,
+        "logical_bytes": 46521138
+      },
+      {
+        "path": "data/.build/new_task_tautomer_repair",
+        "files": 144,
+        "logical_bytes": 100557042637
+      }
+    ],
+    "retained_receipts": {
+      "archive": "data/starling_data/new_tasks_gold_audit/retired_build_receipts.tar.gz",
+      "sha256": "f642edf86ea6a2e8bd44742a6d83d5219662b30d6a0ffa59fa0db88facbfb7f9",
+      "inventory": [
+        {
+          "path": "data/.build/tdc_augmented_conditioned_benchmark/manifest.json",
+          "sha256": "f256100a8d66be7950a8e75557c2a83d627f60f57ffe84944f172be4da82d7b0",
+          "size_bytes": 22612
+        },
+        {
+          "path": "data/.build/tdc_augmented_conditioned_benchmark/tests.xml",
+          "sha256": "4c855fc4aa429ee526b2a9cc39f371c29ddea26ecd97f1da95181b6b0b2bce01",
+          "size_bytes": 18467
+        },
+        {
+          "path": "data/.build/tdc_augmented_conditioned_benchmark/validation.json",
+          "sha256": "762c288e989adee9d72e0563136891ad475c4148fb4613e7ff65ebaa0186d22f",
+          "size_bytes": 9470
+        },
+        {
+          "path": "data/.build/tdc_augmented_conditioned_benchmark/pre_quality_fix_counts.json",
+          "sha256": "031afceb85f2363fdc8e7eff61bf5cf2dc96d4656fb1be8b34c29daaec0c8f78",
+          "size_bytes": 2110
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/identity_fallback_manual_review.jsonl",
+          "sha256": "0825f34cd799e2b77aca26e47592f99599ba8ac4aa24c60bad95f65237c55eb5",
+          "size_bytes": 81963
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/specimen_identity_withdrawal_candidates.jsonl",
+          "sha256": "59af70d5ca14a034f06e41de9f828be80215ff877d037fd9c79787f8ae1640e1",
+          "size_bytes": 15763
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/identity_fallback_manual_review_summary.json",
+          "sha256": "4c9887af5bd165c2c800f7e6b1d432f9741a5c96c7507fef43b379aae885d5ed",
+          "size_bytes": 764
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/validation.json",
+          "sha256": "35773875d9d41f522e93c3d7b92632b4971b8fd5e780f7694356e58d6bae688c",
+          "size_bytes": 18878
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/native_smiles_mutation_e2e.json",
+          "sha256": "508b3f3f6ff6049ce6fa4a0ad56080bbd794b79fad98f2dc9b350ae238b7852c",
+          "size_bytes": 748
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/dili_scaffold_index_publication.json",
+          "sha256": "e9ef73b9f38abc1f12fcd0fe4ac3503b143a7c6fa948443564f47c77b944500e",
+          "size_bytes": 3843
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/dili_random_index_publication.json",
+          "sha256": "3ab0b06570616fd74be6ceb074a5f3066d7a1e0c094642b7eb67e940741b73f0",
+          "size_bytes": 3873
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/carcinogens_scaffold_index_publication.json",
+          "sha256": "3fbaede359467627194927540cbd7a5934a33644406a34c28db31f5612c54a28",
+          "size_bytes": 3919
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/carcinogens_random_index_publication.json",
+          "sha256": "a9e69e31d7e3d4008e581c28bf2f0fc710bd211bc27a84a5073db3cd97cd3b27",
+          "size_bytes": 3876
+        },
+        {
+          "path": "data/.build/new_task_tautomer_repair/retrieval_identity_publication.json",
+          "sha256": "a9de260639f0e6d5e174bf90fbe0c470b6d5f33356cfcce02a60d84ce34268f4",
+          "size_bytes": 4917
+        }
+      ]
+    },
+    "active_inputs_do_not_resolve_into_removed_staging": true
   }
 }
