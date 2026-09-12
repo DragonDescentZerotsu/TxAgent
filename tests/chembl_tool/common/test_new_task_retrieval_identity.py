@@ -16,6 +16,22 @@ def candidate(smiles):
             'retrieval_scaffold_leakage_group': value['scaffold_leakage_group']}
 
 
+def test_validator_cli_uses_explicit_source_and_index(tmp_path, monkeypatch):
+    import sys
+    from tools.chembl_tool.common.starling import validate_new_task_retrieval_identity as validator
+
+    calls = []
+    monkeypatch.setattr(validator, 'validate', lambda *args, **kw: calls.append((args, kw)))
+    monkeypatch.setattr(validator.gc, 'disable', lambda: None)
+    source, index, heldout = [tmp_path / name for name in ('source', 'index', 'heldout')]
+    monkeypatch.setattr(sys, 'argv', ['validate', '--task', 'carcinogens', '--scheme', 'random',
+                                    '--source-root', str(source),
+                                    '--index-dir', str(index), '--heldout-file', str(heldout)])
+    validator.main()
+    assert calls == [(('carcinogens', 'random', Path('data/conditioned_benchmark')),
+                      dict(source_root=source, index_dir=index, heldout_file=heldout))]
+
+
 def test_tautomer_forms_removed_from_direct_records_across_sources(tmp_path):
     keto, enol = 'CC(=O)C', 'C=C(O)C'
     assert leakage_identity('dili', keto)['leakage_group'] == leakage_identity('dili', enol)['leakage_group']
@@ -119,35 +135,6 @@ def test_formal_runner_rejects_old_index_even_if_heldout_hash_matches(tmp_path):
     metadata['retrieval_identity_task'] = 'carcinogens'
     with pytest.raises(ValueError, match='task mismatch'):
         _heldout_filter_validation(task='DILI', split_scheme='random', index_manifest=metadata, heldout_path=heldout)
-
-
-def test_thin_overlay_preserves_raw_and_only_exact_hold(tmp_path, monkeypatch):
-    import pyarrow as pa
-    import pyarrow.parquet as pq
-    from tools.chembl_tool.common.starling.stage_new_task_retrieval import stage_overlay
-    from tools.chembl_tool.common.starling.source_gold_review import payload_hash
-    monkeypatch.chdir(tmp_path)
-    source = Path('data/starling_data/dili/progressive_v1')
-    stage = Path('stage')
-    source.mkdir(parents=True)
-    (stage/'DILI/gold').mkdir(parents=True)
-    records = []
-    for uid in ['hold', 'keep']:
-        records.append({'source_row_uid': uid, 'raw_record_json': json.dumps({'same_name': 'mixture', 'same_smiles': 'CCO', 'uid': uid}),
-            'canonical_smiles': 'CCO', 'group_id': 'Group.dili_actual_voter', 'retrieval_eligible': True,
-            'is_gold_voter': True, 'progressive_level': 1, 'family_key': 'dili_actual_voter',
-            'level_assignment_reason': 'actual_voter', 'heldout_filter_scope': 'direct_outcome'})
-    pq.write_table(pa.Table.from_pylist(records), source/'records.parquet')
-    pq.write_table(pa.Table.from_pylist([{'source_row_uid': r['source_row_uid'], 'level': 1,
-        'family_key': 'dili_actual_voter', 'reason': 'actual_voter', 'is_gold_voter': True} for r in records]), source/'record_audit.parquet')
-    (stage/'DILI/gold/actual_voter_membership.jsonl').write_text(json.dumps({'source_record_id': 'keep'})+'\n')
-    (stage/'specimen_identity_withdrawal_candidates.jsonl').write_text(json.dumps({'task': 'DILI', 'source_row_uid': 'hold',
-        'source_payload_sha256': payload_hash(json.loads(records[0]['raw_record_json']))})+'\n')
-    output = stage_overlay('dili', stage)
-    changed = pq.read_table(output/'records.parquet').to_pylist()
-    assert [r['raw_record_json'] for r in changed] == [r['raw_record_json'] for r in records]
-    assert [r['progressive_level'] for r in changed] == [0, 1]
-    assert changed[1] == records[1]
 
 
 def test_annotation_uses_original_evidence_identity_after_native_smiles_reserialization():

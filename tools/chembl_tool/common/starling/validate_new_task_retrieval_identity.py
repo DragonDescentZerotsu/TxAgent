@@ -1,4 +1,4 @@
-"""Validate staged identity-repaired indices without repeating source extraction."""
+"""Validate an explicit reviewed source and its index without repeating extraction."""
 from __future__ import annotations
 
 import argparse
@@ -33,12 +33,11 @@ def heldout_excluded_levels(task, manifest):
     raise ValueError('Unsupported heldout filter: '+str(scope))
 
 
-def validate(task, scheme, root, benchmark, *, source_root=None, index_dir=None, heldout_file=None):
-    task_root = root/TASKS[task]
-    directory = Path(index_dir) if index_dir else task_root/'progressive_v1/indices'/scheme
+def validate(task, scheme, benchmark, *, source_root, index_dir, heldout_file=None):
+    source_root, directory = Path(source_root), Path(index_dir)
     manifest = json.loads((directory/'manifest.json').read_text())
-    cache = load_cache(task, Path(source_root)/'retrieval_identity_cache.jsonl' if source_root else task_root/'retrieval_identity_cache.jsonl')
-    overlay = Path(source_root)/'records.parquet' if source_root else task_root/'progressive_v1/records.parquet'
+    cache = load_cache(task, source_root/'retrieval_identity_cache.jsonl')
+    overlay = source_root/'records.parquet'
     heldout_path = Path(heldout_file) if heldout_file else benchmark/TASKS[task]/scheme/'heldout_molecule_condition_labels.jsonl'
     heldout_rows = read_jsonl(heldout_path)
     heldout = {leakage_identity(task, r['drug'])['leakage_group'] for r in heldout_rows}
@@ -50,8 +49,7 @@ def validate(task, scheme, root, benchmark, *, source_root=None, index_dir=None,
     for key, value in required.items():
         assert manifest[key] == value, (key, manifest[key], value)
     frame = pq.read_table(local_input(overlay), columns=['canonical_smiles','retrieval_eligible','progressive_level','source_row_uid','identity_review_reason']).to_pandas()
-    holds = (set(frame.loc[frame['identity_review_reason'].fillna('').ne(''),'source_row_uid']) if source_root else
-        {r['source_row_uid'] for r in read_jsonl(root/'specimen_identity_withdrawal_candidates.jsonl') if r['task'].lower() == task})
+    holds = set(frame.loc[frame['identity_review_reason'].fillna('').ne(''),'source_row_uid'])
     assert not frame.loc[frame['source_row_uid'].isin(holds), 'retrieval_eligible'].any()
     assert len(frame.loc[frame['source_row_uid'].isin(holds)]) == len(holds)
     selected = frame[frame['retrieval_eligible'].eq(True)]
@@ -155,15 +153,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--task', choices=TASKS, required=True)
     parser.add_argument('--scheme', choices=['scaffold','random'], required=True)
-    parser.add_argument('--stage-root', type=Path, default=Path('data/.build/new_task_tautomer_repair'))
     parser.add_argument('--benchmark-root', type=Path, default=Path('data/conditioned_benchmark'))
-    parser.add_argument('--source-root',type=Path,help='Explicit new source release with records and identity cache')
-    parser.add_argument('--index-dir',type=Path,help='Explicit index of that source release')
+    parser.add_argument('--source-root',type=Path,required=True,help='Explicit new source release with records and identity cache')
+    parser.add_argument('--index-dir',type=Path,required=True,help='Explicit index of that source release')
     parser.add_argument('--heldout-file',type=Path,help='Identity-enriched input with identical heldout query rows')
     args = parser.parse_args()
     # Loaded JSON/index records are acyclic; avoid repeated heap traversal.
     gc.disable()
-    validate(args.task,args.scheme,args.stage_root,args.benchmark_root,source_root=args.source_root,index_dir=args.index_dir,heldout_file=args.heldout_file)
+    validate(args.task,args.scheme,args.benchmark_root,source_root=args.source_root,index_dir=args.index_dir,heldout_file=args.heldout_file)
 
 
 if __name__ == '__main__':

@@ -42,6 +42,43 @@ def test_preserves_raw_rows_voters_and_input_snapshot(tmp_path):
     assert pq.read_table(source/'records.parquet').equals(before)
 
 
+def test_review_cannot_overwrite_source_or_published_hardlink(tmp_path):
+    import os
+
+    source, ledger, _ = fixture(tmp_path)
+    output = tmp_path / 'published'
+    output.mkdir()
+    os.link(source / 'records.parquet', output / 'records.parquet')
+    before = sha256_file(source / 'records.parquet')
+    for destination in (source, output):
+        with pytest.raises(ValueError, match='fresh versioned directory'):
+            apply_record_review('dili', source, destination, ledger)
+    assert sha256_file(source / 'records.parquet') == before
+    assert sha256_file(output / 'records.parquet') == before
+
+
+def test_direct_containment_exemption_requires_current_source_payload(tmp_path):
+    source, ledger, review = fixture(tmp_path)
+    records = pq.read_table(source / 'records.parquet').to_pylist()
+    raw = {'support_text': 'Drug-induced liver injury was observed.'}
+    records[1].update(raw_record_json=json.dumps(raw), support_text=raw['support_text'])
+    pq.write_table(pa.Table.from_pylist(records), source / 'records.parquet')
+    review['source_records_sha256'] = sha256_file(source / 'records.parquet')
+    decision = review['decisions'][0]
+    decision.update(source_payload_sha256=payload_hash(raw), quote=raw['support_text'])
+    ledger.write_text(json.dumps(review))
+    with pytest.raises(ValueError, match='Direct containment'):
+        apply_record_review('dili', source, tmp_path / 'blocked', ledger)
+    decision['direct_guard_exemption'] = True
+    ledger.write_text(json.dumps(review))
+    result = apply_record_review('dili', source, tmp_path / 'reviewed', ledger)
+    assert result['records_changed'] == 2
+    decision['source_payload_sha256'] = 'stale'
+    ledger.write_text(json.dumps(review))
+    with pytest.raises(ValueError, match='stale'):
+        apply_record_review('dili', source, tmp_path / 'stale', ledger)
+
+
 @pytest.mark.parametrize('problem',['source_hash','payload_hash','duplicate','voter','quote','missing'])
 def test_rejects_unbound_or_voter_edits(tmp_path,problem):
     source,ledger,review=fixture(tmp_path)

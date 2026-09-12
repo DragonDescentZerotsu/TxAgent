@@ -1,10 +1,8 @@
-"""Critical source conservation, vote membership and direct containment gates."""
+"""Current source membership, deduplication and heldout filtering gates."""
 import json
-from types import SimpleNamespace
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
-from tools.chembl_tool.common.starling import build_progressive_sources as build
 from tools.chembl_tool.common.starling.source_gold_review import payload_hash
 
 
@@ -17,54 +15,21 @@ def row(uid, direct=False):
             'support_text': 'clinical outcome' if direct else 'mechanism'}
 
 
-def setup(tmp_path, rows, reviews=None, voters=None):
-    source=tmp_path/'source.parquet';pq.write_table(pa.Table.from_pylist(rows),source)
-    policy=SimpleNamespace(FAMILIES={1:'actual',2:'near',3:'mechanism'},
-        classify=lambda r,is_voter: {'level':1 if is_voter else 3,'reason':'test'},
-        direct_guard=lambda r: 'clinical' in r['support_text'])
-    build._state=policy,set(voters or []),reviews or {},{}
-    return ('example',source,0,tmp_path/'out.parquet')
+@pytest.mark.parametrize('flag,function', [
+    ('--refresh-votes', 'refresh_membership'), ('--record-review', 'apply_record_review'),
+])
+def test_maintenance_cli_dispatches_explicit_release(tmp_path, monkeypatch, flag, function):
+    import sys
+    from tools.chembl_tool.common.starling import stage_new_task_retrieval as maintenance
 
-
-def test_direct_in_mechanism_moves_and_all_source_payloads_survive(tmp_path):
-    rows=[row('voter'),row('direct',True),row('mechanism')]
-    job=setup(tmp_path,rows,voters=['voter'])
-    build._classify_group(job)
-    out=pq.read_table(job[-1]).to_pylist()
-    assert [r['progressive_level'] for r in out]==[1,2,3]
-    assert [r['heldout_filter_scope'] for r in out]==['direct_outcome','direct_outcome','']
-    assert [r['raw_record_json'] for r in out]==[r['raw_record_json'] for r in rows]
-
-
-def test_review_cannot_grant_vote_or_silently_bypass_direct_guard(tmp_path):
-    r=row('candidate',True)
-    review={'source_payload_sha256':payload_hash(json.loads(r['raw_record_json'])),
-            'level':3,'reason':'manual placement'}
-    job=setup(tmp_path,[r],{'candidate':review})
-    build._classify_group(job)
-    assert pq.read_table(job[-1])['progressive_level'].to_pylist()==[2]
-    review['level']=1
-    with pytest.raises(ValueError,match='Nonvoter'):
-        build._classify_group(job)
-    review['source_payload_sha256']='stale'
-    with pytest.raises(ValueError,match='Stale'):
-        build._classify_group(job)
-
-
-def test_staged_overlay_cannot_truncate_published_hardlink(tmp_path, monkeypatch):
-    import os
-    import pytest
-    from tools.chembl_tool.common.starling.stage_new_task_retrieval import stage_overlay
-    monkeypatch.chdir(tmp_path)
-    source = tmp_path / "data/starling_data/dili/progressive_v1/records.parquet"
-    source.parent.mkdir(parents=True)
-    source.write_bytes(b"frozen-records")
-    staged = tmp_path / "stage/DILI/progressive_v1/records.parquet"
-    staged.parent.mkdir(parents=True)
-    os.link(source, staged)
-    with pytest.raises(ValueError, match="share the active inode"):
-        stage_overlay("dili", tmp_path / "stage")
-    assert source.read_bytes() == b"frozen-records"
+    calls = []
+    monkeypatch.setattr(maintenance, function, lambda *args, **kw: calls.append((args, kw)))
+    source, output, ledger = [tmp_path / name for name in ('source', 'output', 'ledger')]
+    monkeypatch.setattr(sys, 'argv', ['maintenance', '--task', 'dili', '--source', str(source),
+                                    '--output', str(output), flag, str(ledger)])
+    maintenance.main()
+    assert len(calls) == 1
+    assert calls[0][0] == ('dili', source, output, ledger)
 
 
 @pytest.mark.parametrize('exact_copy', [False, True])
@@ -194,14 +159,3 @@ def test_l1_prefilter_keeps_heldout_l2_and_training_l1(tmp_path):
         filter_scope_value='Group.dili_actual_voter',task='dili',identity_contract=VERSION,identity_cache=cache)
     assert set(retained['uid'])=={'heldout_l2','train_l1'}
     assert receipt['n_direct_heldout_records_excluded']==1
-
-
-def test_multitask_cli_spawns_isolated_checked_processes(monkeypatch):
-    calls = []
-    monkeypatch.setattr(build.subprocess, 'run', lambda args, **kw: calls.append((args, kw)))
-    monkeypatch.setattr(build.sys, 'argv', ['build', '--tasks', 'dili', 'carcinogens',
-                                         '--phase', 'retrieval', '--workers', '8'])
-    build.main()
-    assert len(calls) == 2
-    assert {args[args.index('--tasks') + 1] for args, _ in calls} == {'dili', 'carcinogens'}
-    assert all(args[args.index('--workers') + 1] == '4' and kw['check'] for args, kw in calls)

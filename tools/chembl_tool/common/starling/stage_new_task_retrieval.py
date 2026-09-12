@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 
 import pyarrow as pa
-import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import atomic_output_path, read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
@@ -216,107 +215,25 @@ def refresh_membership(task, source, output, votes_path, *, deduplicate_exact=Fa
     return manifest
 
 
-def stage_overlay(task, stage_root):
-    source = Path('data/starling_data') / task / 'progressive_v1'
-    output = Path(stage_root) / TASKS[task] / 'progressive_v1'
-    if (output/'records.parquet').exists() and (output/'records.parquet').samefile(source/'records.parquet'):
-        raise ValueError('Published staged records share the active inode; choose a fresh --stage-root')
-    output.mkdir(parents=True, exist_ok=True)
-    ledger = Path(stage_root) / TASKS[task] / 'gold/actual_voter_membership.jsonl'
-    voters = {r['source_record_id'] for r in read_jsonl(ledger)}
-    holds_path = Path(stage_root) / 'specimen_identity_withdrawal_candidates.jsonl'
-    holds = {r['source_row_uid']: r for r in read_jsonl(holds_path) if r['task'].lower() == task}
-    policy = importlib.import_module(f'tools.chembl_tool.tasks.{task}.starling_levels')
-    scan = pq.read_table(source/'records.parquet', columns=['source_row_uid', 'progressive_level'])
-    old_voters = set(pc.filter(scan['source_row_uid'], pc.equal(scan['progressive_level'], 1)).to_pylist())
-    if voters - old_voters:
-        raise ValueError('New ledger must not expand old nonvoters to L1')
-    changes = {uid: 2 for uid in old_voters - voters}
-    changes.update({uid: 0 for uid in holds})
-    if voters.intersection(holds):
-        raise ValueError('Held specimen remains an actual gold voter')
-    receipts = []
-    counts = Counter()
-    matched = set()
-    with atomic_output_path(output/'records.parquet') as temporary, pq.ParquetWriter(
-            temporary, pq.ParquetFile(source/'records.parquet').schema_arrow,
-            compression='zstd', compression_level=3) as writer:
-        for batch in pq.ParquetFile(source/'records.parquet').iter_batches(batch_size=65536):
-            table = pa.Table.from_batches([batch])
-            uid_list = table['source_row_uid'].to_pylist()
-            changed = [i for i, uid in enumerate(uid_list) if uid in changes]
-            if changed:
-                data = {key: table[key].to_pylist() for key in DERIVED}
-                for i in changed:
-                    uid, level = uid_list[i], changes[uid_list[i]]
-                    matched.add(uid)
-                    raw_hash = payload_hash(json.loads(table['raw_record_json'][i].as_py()))
-                    if uid in holds and raw_hash != holds[uid]['source_payload_sha256']:
-                        raise ValueError('Stale specimen payload review: ' + uid)
-                    reason = 'reviewed_exact_specimen_identity_hold' if not level else 'withdrawn_actual_vote_membership'
-                    receipts.append({'source_row_uid': uid, 'source_payload_sha256': raw_hash,
-                                     'previous_level': data['progressive_level'][i], 'level': level, 'reason': reason})
-                    values = {'group_id': 'Group.' + policy.FAMILIES[level] if level else 'Excluded.' + task,
-                              'retrieval_eligible': bool(level), 'is_gold_voter': False,
-                              'progressive_level': level, 'family_key': policy.FAMILIES[level] if level else '',
-                              'level_assignment_reason': reason, 'heldout_filter_scope': 'direct_outcome' if level == 2 else ''}
-                    for key, value in values.items():
-                        data[key][i] = value
-                original = table
-                for key, values in data.items():
-                    pos = table.schema.get_field_index(key)
-                    table = table.set_column(pos, table.schema.field(key), pa.array(values, type=table.schema.field(key).type))
-                assert all(table[key].equals(original[key]) for key in table.column_names if key not in DERIVED)
-            counts.update(table['progressive_level'].to_pylist())
-            writer.write_table(table)
-    if matched != set(changes) or counts[1] != len(voters):
-        raise ValueError('Withdrawal/hold coverage or exact L1 membership mismatch')
-    audit = pq.read_table(source/'record_audit.parquet').to_pandas()
-    for item in receipts:
-        mask = audit['source_row_uid'].eq(item['source_row_uid'])
-        assert int(mask.sum()) == 1
-        audit.loc[mask, 'level'] = item['level']
-        audit.loc[mask, 'family_key'] = policy.FAMILIES.get(item['level'], '')
-        audit.loc[mask, 'reason'] = item['reason']
-        audit.loc[mask, 'is_gold_voter'] = False
-    with atomic_output_path(output/'record_audit.parquet') as temporary:
-        pq.write_table(pa.Table.from_pandas(audit, preserve_index=False), temporary, compression='zstd')
-    write_jsonl_atomic(output/'identity_repair_changes.jsonl', receipts)
-    manifest = {'task': task, 'status': 'passed', 'source_rows': sum(counts.values()),
-                'source_rows_deleted': 0, 'source_raw_and_uid_preserved': True,
-                'level_counts': {str(k): v for k,v in sorted(counts.items())},
-                'membership_expanded': 0, 'records_changed': len(receipts),
-                'voter_withdrawals': len(old_voters-voters), 'exact_specimen_holds': len(holds),
-                'inputs': {str(p): sha256_file(p) for p in [source/'records.parquet', ledger, holds_path]},
-                'files': {name: sha256_file(output/name) for name in ['records.parquet','record_audit.parquet','identity_repair_changes.jsonl']}}
-    write_json_atomic(output/'identity_repair_overlay_receipt.json', manifest)
-    print(json.dumps(manifest, sort_keys=True), flush=True)
-    return output
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--task', choices=TASKS, required=True)
-    parser.add_argument('--stage-root', type=Path, default=Path('data/.build/new_task_tautomer_repair'))
-    parser.add_argument('--refresh-votes',type=Path,help='Explicit new source-vote release; permits exact new voter membership')
+    action = parser.add_mutually_exclusive_group(required=True)
+    action.add_argument('--refresh-votes',type=Path,help='Explicit new source-vote release; permits exact new voter membership')
     parser.add_argument('--identity-holds',type=Path,help='Reviewed source UID/payload-hash identity holds to exclude from gold/retrieval')
     parser.add_argument('--identity-clearances',type=Path,help='Reviewed UID/payload/structure-bound clearances of old identity holds')
     parser.add_argument('--deduplicate-exact',action='store_true',help='Remove identical record copies; preserve differing passages and study provenance')
-    parser.add_argument('--source',type=Path)
-    parser.add_argument('--output',type=Path)
-    parser.add_argument('--record-review',type=Path,help='Hash-bound source-only placement/exclusion ledger; never changes voters or raw records')
+    parser.add_argument('--source',type=Path,required=True)
+    parser.add_argument('--output',type=Path,required=True)
+    action.add_argument('--record-review',type=Path,help='Hash-bound source-only placement/exclusion ledger; never changes voters or raw records')
     parser.add_argument('--heldout-benchmark-root',type=Path,help='Task root of the new benchmark; stage explicit identity metadata')
     args = parser.parse_args()
     if args.record_review:
-        if not args.source or not args.output or args.refresh_votes:
-            parser.error('--record-review requires --source/--output and cannot refresh votes')
         apply_record_review(args.task,args.source,args.output,args.record_review)
     elif args.refresh_votes:
-        if not args.source or not args.output:parser.error('--refresh-votes requires --source and --output')
         refresh_membership(args.task,args.source,args.output,args.refresh_votes,deduplicate_exact=args.deduplicate_exact,identity_holds_path=args.identity_holds,identity_clearances_path=args.identity_clearances)
         if args.heldout_benchmark_root:
             stage_heldout_inputs(args.task,args.heldout_benchmark_root,args.output.parent/'heldout')
-    else:stage_overlay(args.task, args.stage_root)
 
 
 def apply_record_review(task, source, output, ledger):

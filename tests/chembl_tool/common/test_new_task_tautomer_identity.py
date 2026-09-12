@@ -1,11 +1,9 @@
-from copy import deepcopy
 
 import pytest
 from rdkit import Chem
 from rdkit.Chem import rdMolHash
 
 from tools.chembl_tool.common.starling import new_task_identity as identity
-from tools.chembl_tool.common.starling.build_new_task_tautomer_repair import regroup_votes
 
 DACARBAZINE = ('CN(C)/N=N/c1[nH]cnc1C(N)=O', 'CN(C)NN=C1N=CN=C1C(N)=O')
 
@@ -63,37 +61,10 @@ def test_noncomplete_enumeration_retains_original_graph(monkeypatch):
     assert status['canonicalization_applied'] is False
 
 
-def _votes():
-    rows = []
-    for index, smiles in enumerate(DACARBAZINE):
-        rows.append({'source_record_id': f'uid{index}', 'source_row_uid': f'uid{index}', 'drug': smiles,
-                     'molecule_identity_key': f'old{index}', 'bemis_murcko_scaffold': f'oldscaffold{index}',
-                     'study_id': 'pmid:123', 'condition_group': 'population=human', 'pmid': '123', 'Y': 1,
-                     'reviewer': 'codex_record_semantic_review', 'raw_record': {'SMILES': smiles},
-                     'study_source_row_uids': [f'uid{index}', f'duplicate{index}']})
-    return rows
-
-
-def test_tautomer_equivalence_cannot_double_count_one_study_or_resolve_conflict():
-    rows = _votes()
-    original = deepcopy(rows)
-    mapping = {s: identity.normalize_new_task_identity('dili', s) for s in DACARBAZINE}
-    votes, conflicts, merged = regroup_votes(rows, mapping)
-    assert rows == original
-    assert len(votes) == 1 and not conflicts and len(merged) == 1
-    assert votes[0]['identity_merged_vote_uids'] == ['uid0', 'uid1']
-    assert votes[0]['raw_record'] == rows[0]['raw_record']
-    rows[1]['Y'] = 0
-    votes, conflicts, merged = regroup_votes(rows, mapping)
-    assert not votes and len(conflicts) == 1 and not merged
-    assert len(conflicts[0]['old_source_votes']) == 2
-
-
 def test_adapter_cannot_change_existing_five_tasks():
     for task in ('ames', 'bbb_martins', 'bioavailability_ma', 'skin_reaction', 'clintox'):
         with pytest.raises(ValueError, match='restricted'):
             identity.normalize_new_task_identity(task, 'CCO')
-
 
 
 def test_element_formula_group_catches_keto_enol_without_hydrogenation_merge():
@@ -104,23 +75,3 @@ def test_element_formula_group_catches_keto_enol_without_hydrogenation_merge():
     assert keto['leakage_group'] != identity.leakage_identity('dili', 'CC(C)O')['leakage_group']
     assert identity.leakage_identity('dili', 'c1ccccc1')['leakage_group'] != identity.leakage_identity('dili', 'C1CCCCC1')['leakage_group']
     assert identity.leakage_identity('dili', '[13CH3]C(=O)C')['leakage_group'] != keto['leakage_group']
-
-
-def test_failed_gold_identity_writes_pending_audit_before_raising(tmp_path, monkeypatch):
-    import json
-    from tools.chembl_tool.common.starling import build_new_task_tautomer_repair as repair
-    monkeypatch.chdir(tmp_path)
-    source = tmp_path / "data/starling_data/dili/gold_v2/source_votes.jsonl"
-    source.parent.mkdir(parents=True)
-    source.write_text(json.dumps({"drug": "CC", "source_record_id": "uid-1"}) + "\n")
-    class Pool:
-        def __init__(self, **kwargs): pass
-        def __enter__(self): return self
-        def __exit__(self, *args): pass
-        def map(self, *args, **kwargs): return iter([("CC", None, "enumeration failed")])
-    monkeypatch.setattr(repair, "ProcessPoolExecutor", Pool)
-    import pytest
-    with pytest.raises(ValueError, match="non-complete enumeration"):
-        repair.build_source("dili", output_root=tmp_path / "staged", workers=1)
-    pending = tmp_path / "staged/DILI/gold/identity_pending.jsonl"
-    assert json.loads(pending.read_text())["reason"] == "enumeration failed"

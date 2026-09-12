@@ -45,7 +45,19 @@ calls. Task-specific gold builders remain `tasks/<task>/build_reviewed_starling.
 Their frozen identity/direction evidence and compact older gold ledgers are provenance,
 not alternative active datasets. The generic benchmark publisher refuses to replace
 these cohorts; deliberate gold promotion uses its existing `--reviewed-release` entry.
-The retired TDC-augmentation publisher is no longer a runnable branch.
+The retired initial gold_v2, gold_v3 tautomer-migration, progressive_v1 overlay and
+TDC-augmentation pipelines are available only in Git history. Their frozen ledgers
+remain inputs where the current gold builder needs provenance; routine restoration
+never runs those pipelines.
+
+Current source maintenance uses `stage_new_task_retrieval.py` with explicit
+`--source` and `--output`, and either `--refresh-votes` or `--record-review`.
+Content/identity repairs remain available through its `apply_content_repairs()` API;
+indexed-card repair and targeted replay remain in the shared review and runner code.
+For a source/index semantic audit, `validate_new_task_retrieval_identity.py` requires
+`--source-root` and `--index-dir`; it no longer guesses a retired staging layout.
+Current gold labels, family policies, prompts and prediction-reuse contracts are
+independent of these removed historical build entrypoints.
 
 ## Frozen benchmark and retrieval policy
 
