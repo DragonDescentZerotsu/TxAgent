@@ -1,0 +1,13 @@
+{
+  "parent_key": "ASNCCDZDWVIELM-NSCUHMNNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ASNCCDZDWVIELM-NSCUHMNNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL29857008",
+    "fumaryl acetoacetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    102176653
+  ]
+}

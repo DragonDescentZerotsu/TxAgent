@@ -1,0 +1,36 @@
+{
+  "parent_key": "LMBRFPRUZRLJAW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LMBRFPRUZRLJAW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(5-Amino-1,3-Dimethyl-1H-Pyrazol-4-yl(2-Fluorophenyl)Methanone",
+    "(5-Amino-1,3-dimethyl-1H-pyrazol-4-yl)(2-fluorophenyl)methanone",
+    "(5-Amino-1,3-dimethyl-1H-pyrazol-4-yl)-(2-fluoro-phenyl)-methanone",
+    "(5-Amino-1,3-dimethylpyrazol-4-yl)-(2-fluorophenyl)methanone",
+    "31272-21-6",
+    "5-25-15-00191 (Beilstein Handbook Reference)",
+    "5-Amino-1,3-dimethyl-4-pyrazolyl o-fluorophenyl ketone",
+    "7JV3564PNF",
+    "AMINO-1,3-DIMETHYLPYRAZOL-4-YL)(2-FLUOROPHENYL)-METHANONE, 5-",
+    "BDBM50019461",
+    "BRN 0662779",
+    "CCRIS 1811",
+    "CHEMBL284983",
+    "DTXCID20107686",
+    "DTXSID10185195",
+    "FP nucleus",
+    "Fluorobenzoyl pyrazolyl nucleus",
+    "KETONE, 5-AMINO-1,3-DIMETHYL-4-PYRAZOLYL o-FLUOROPHENYL",
+    "Ketone, 5-amino-1,3-dimethylpyrazol-4-yl o-fluorophenyl",
+    "Methanone, (5-amino-1,3-dimethyl-1H-pyrazol-4-yl)(2-fluorophenyl)-",
+    "PD 71627",
+    "PD-71627",
+    "RefChem:69587",
+    "SCHEMBL11199185",
+    "UNII-7JV3564PNF"
+  ],
+  "http_status": 200,
+  "cids": [
+    35765
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "parent_key": "MZGNSEAPZQGJRB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MZGNSEAPZQGJRB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2IMH4383Z4",
+    "4-04-00-00233 (Beilstein Handbook Reference)",
+    "79-45-8",
+    "AKOS006343044",
+    "BRN 1740846",
+    "CHEBI:83061",
+    "CHEMBL1208358",
+    "Carbamic acid, dimethyldithio-",
+    "Carbamodithioic acid, N,N-dimethyl-",
+    "Carbamodithioic acid, dimethyl-",
+    "Carbamodithioic acid, dimethyl-(9CI)",
+    "DIMETHYLCARBAMODITHIOIC ACID",
+    "DTXCID0023797",
+    "DTXSID2043797",
+    "Dimethyldithiocarbamic acid",
+    "IS9",
+    "N,N-Dimethylcarbamodithioic acid",
+    "N,N-Dimethyldithiocarbamic acid",
+    "N,N-dimethyldithiocarbamate",
+    "NCI60_041893",
+    "NS00003797",
+    "NSC-49508",
+    "NSC-70080",
+    "NSC-70081",
+    "NSC85566",
+    "Q27156609",
+    "RefChem:134344",
+    "SCHEMBL37535",
+    "SCHEMBL5905942",
+    "UNII-2IMH4383Z4",
+    "methanedithioic acid, dimethylamino-"
+  ],
+  "http_status": 200,
+  "throttling": "",
+  "cids": [
+    6599
+  ]
+}

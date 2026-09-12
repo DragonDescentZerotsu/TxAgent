@@ -1,0 +1,14 @@
+{
+  "parent_key": "XICPRTQGMNZJLE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "5-(2-phenylethyl) barbituric acid",
+    "SCHEMBL2340212",
+    "XICPRTQGMNZJLE-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    23126504
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XICPRTQGMNZJLE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

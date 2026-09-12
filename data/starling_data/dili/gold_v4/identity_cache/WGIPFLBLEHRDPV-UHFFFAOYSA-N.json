@@ -1,0 +1,14 @@
+{
+  "parent_key": "WGIPFLBLEHRDPV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "64636-23-3",
+    "DTXSID70495984",
+    "N-(1-OXO-1H-PHENALEN-2-YL)ACETAMIDE"
+  ],
+  "cids": [
+    12390347
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WGIPFLBLEHRDPV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

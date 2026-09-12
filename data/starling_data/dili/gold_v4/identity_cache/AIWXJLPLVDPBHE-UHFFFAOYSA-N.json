@@ -1,0 +1,13 @@
+{
+  "parent_key": "AIWXJLPLVDPBHE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL574618",
+    "ammonia salicylate"
+  ],
+  "cids": [
+    12598418
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AIWXJLPLVDPBHE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

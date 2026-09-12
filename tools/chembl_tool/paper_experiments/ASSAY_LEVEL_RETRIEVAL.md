@@ -86,12 +86,69 @@ CLI。completion cap 为 20,480 tokens，API `reasoning_effort` 参数省略，p
 `--delta-card-limit` 改变 card limits；molecule quotas、candidate ranking、prompt、identity policy 和 append-only
 语义不变，不定义新协议或独立 runner。
 
+Bounded source-cleanup diagnostics may opt into `selection_policy=endpoint_diverse_delta.v1`
+inside the hash-bound `--record-review-overlay`. Later-level card selection first spans
+reported endpoint types, then fills the existing budget using assay diversity and the
+original card order. It does not rank result direction, consult gold, pin individual cards,
+or change L1 selection. The default remains `assay_diverse.v1`. The overlay hash and
+selection policy are saved in the manifest; every query must be prepared again, and a
+changed visible prefix invalidates its entire progressive suffix. Cleanup plus endpoint
+diversity is a combined diagnostic, not an isolated estimate of either effect.
+
+The progressive runner also supports an opt-in `--initial-condition-map` diagnostic,
+bound to the task/index SHA256 and containing only card IDs and source condition groups.
+For explicit query conditions, L1 prefers exact-condition cards/molecules, then unspecified
+conditions, then other conditions; Morgan ranking and the existing card selector break
+ties within each bucket. Cross-condition fallback retains its raw restrictions. Null-condition
+queries keep the original ordering. Budgets and later progressive updates do not change.
+The complete L1 pool is materialized and map coverage is checked before inference; the
+default similarity-only shortlist would be invalid for this selector. `--max-level 1` limits
+preparation/execution/metrics to L1 while preserving the complete level plan in prompts.
+These optional fields are resume invariants; changed selection can reuse only exact
+model-visible input matches under the same budget and inference contract.
+With `--initial-condition-scope cards_only`, condition priority applies only inside each
+of the original Morgan-selected molecules. The top-ten molecule set/order stays unchanged,
+so the existing similarity shortlist remains valid. This scope has a distinct manifest
+version and must not resume the earlier molecule-and-card-priority run. Source-only map
+coverage, card budgets, null-condition behavior and the full prompt level plan are unchanged.
+With `--initial-condition-scope cards_exact_only`, the same Morgan molecule order is
+preserved, but only exact-condition cards receive priority. Missing, unspecified and
+explicit other conditions share one fallback pool with the original card selector.
+An analog with no exact match retains its original cards and order. The distinct
+`initial_condition_priority.cards_exact_only.v1` manifest prevents resuming older policies.
+
+The true-query-name pilot was completed but rejected because it reveals query identity.
+Its artifacts remain audit-only; the active runner rejects `query_identity_anchor`.
+The completed replacement L1 diagnostic was also retired by user: do not run future
+query-specific exclusions. Its historical preparations used `query_identity_exclusion` with only
+an excluded name and exact query SMILES binding. It adds only
+`query.identity_exclusion`: “The query molecule is not <wrong name>.” No true query
+name is added. The exclusion participates in the reuse signature; default messages
+are unchanged. Excluded names come from previously reviewed misidentifications,
+so this targeted diagnostic is not a blind or full-cohort benchmark result.
+
 `--query-prior-source-root` 只复用 identity-checked none/single prior 与 query tool summary，不复用 level
 prediction。`--progressive-reuse-source-root` 只有在完整 selection 和 inference contract 相同时才可复用逐 query
 完全相同的 visible prefix，并在首个不同 level 永久停止。跨 retrieval lineage 的 prediction 复用必须有逐 split
 selected-surface zero-change receipt。
 
 ## Matched independent full-flat control
+
+### Evidence-grounding ablation
+
+共享 progressive preparation 支持 `--min-similarity`（默认 0.3）、
+`--omit-query-prior-with-evidence` 和 `--evidence-grounding`。后两项按
+`reasoning_policy=evidence_grounding_ablation.v1` 冻结并由 matched full-flat 自动继承：有证据时不把
+single/None 的模型判断送入 prompt，首次获得证据不继承 None state；后续 progressive 的 evidence-based
+state、append-only、update/flip 规则均不变。Grounding 只补充研究对象归属、目标标签范围和正负证据
+对称评估。None 与原始 query 工具可以在同模型、同输入及显式 reuse receipt 下复用。
+
+threshold=0 仍按相似度排序并使用原 10/3/3 molecule quotas 和 4/2 card limits。准备阶段先算出原规则
+可能选中的 molecule union，再展开这些 molecules 在所有层的完整卡片，避免为每个 query 重复展开全库。
+这不改变选择结果；审计保留全量检索候选数，并把实际展开数记为 `n_materialized_*`。
+有 heldout alias guard 的任务继续使用完整展开路径。阈值和 reasoning policy 变化禁止复用旧 level predictions。
+CPU-heavy preparation 可显式使用 `--preparation-executor process`；Linux fork workers 共享只读 index，
+`--preparation-workers` 只限制准备进程数，不改变模型请求并发或科学设置。
 
 `conditioned_assay_matched_full_flat.v1` 使用当前 progressive 每个 level 的相同累计 cards、query prior、
 query/analog 工具文本、condition、模型和生成参数，每层独立判断。它不读取上一层 prediction/state，

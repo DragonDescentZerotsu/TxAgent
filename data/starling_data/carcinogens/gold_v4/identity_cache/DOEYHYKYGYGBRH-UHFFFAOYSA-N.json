@@ -1,0 +1,19 @@
+{
+  "parent_key": "DOEYHYKYGYGBRH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DOEYHYKYGYGBRH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-C7H15",
+    "2-Heptyl radical",
+    "3474-30-4",
+    "DTXCID10110785",
+    "DTXSID80188294",
+    "Hexyl, 1-methyl-",
+    "RefChem:1063273",
+    "heptan-2-yl"
+  ],
+  "http_status": 200,
+  "cids": [
+    137958
+  ]
+}

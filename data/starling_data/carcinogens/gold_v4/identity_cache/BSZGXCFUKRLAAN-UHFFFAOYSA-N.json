@@ -1,0 +1,38 @@
+{
+  "parent_key": "BSZGXCFUKRLAAN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSZGXCFUKRLAAN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Phenyl-2-propen-1-ol",
+    "2-Phenyl-2-propen-1-ol #",
+    "2-Phenylprop-2-en-1-ol",
+    "2-phenyl-prop-2-en-1-ol",
+    "227-857-5",
+    "3-hydroxy-2-phenylpropene",
+    "6006-81-1",
+    "A11577",
+    "AKOS027461008",
+    "AS-60430",
+    "Benzeneethanol, .beta.-methylene-",
+    "Benzeneethanol, beta-methylene-",
+    "DTXCID70131279",
+    "DTXSID20208788",
+    "EINECS 227-857-5",
+    "EN300-264486",
+    "F813340",
+    "MFCD18827455",
+    "NS00034294",
+    "RefChem:567915",
+    "SB84381",
+    "SCHEMBL2543701",
+    "SCHEMBL93850",
+    "SY213873",
+    "Tiotropium Bromide Impurity 49",
+    "beta-Methylenephenethyl alcohol",
+    "beta-methylene phenylethyl alcohol"
+  ],
+  "http_status": 200,
+  "cids": [
+    80106
+  ]
+}

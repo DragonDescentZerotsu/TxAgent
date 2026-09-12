@@ -1,0 +1,14 @@
+{
+  "parent_key": "CDILYTPEQRPZEX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CDILYTPEQRPZEX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-Dimethyl-2H-benzimidazole",
+    "SCHEMBL10446780",
+    "SCHEMBL3972365"
+  ],
+  "http_status": 200,
+  "cids": [
+    11435022
+  ]
+}

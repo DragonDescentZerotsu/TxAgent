@@ -1,0 +1,13 @@
+{
+  "parent_key": "LJMPVHCKUXKZAV-KOFPWNEFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LJMPVHCKUXKZAV-KOFPWNEFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".beta.-D-Glucopyranosiduronic acid, 4-[(1E)-1-ethyl-2-(4-hydroxyphenyl)-1-buten-1-yl]",
+    "Diethyl Stilbestrol ?-D-Glucuronide"
+  ],
+  "http_status": 200,
+  "cids": [
+    71316059
+  ]
+}

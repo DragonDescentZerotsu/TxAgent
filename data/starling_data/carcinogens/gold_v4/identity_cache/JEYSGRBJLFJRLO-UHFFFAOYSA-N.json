@@ -1,0 +1,13 @@
+{
+  "parent_key": "JEYSGRBJLFJRLO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JEYSGRBJLFJRLO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4,4-dihydroxy-2,2-diphenylpropane",
+    "SCHEMBL733286"
+  ],
+  "http_status": 200,
+  "cids": [
+    66782668
+  ]
+}

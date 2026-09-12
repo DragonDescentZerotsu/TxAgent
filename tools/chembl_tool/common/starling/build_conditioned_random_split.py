@@ -72,7 +72,8 @@ class ParentGroup:
 
     @property
     def singleton_count(self) -> int:
-        return sum(int(row[VOTE_COUNT_FIELD]) == 1 for row in self.rows)
+        return sum(int(row[VOTE_COUNT_FIELD]) == 1 for row in self.rows
+                   if row.get("record_support_eligible", True))
 
 
 def _rounded_fraction(total: int, fraction: float) -> int:
@@ -262,6 +263,9 @@ def allocate_parent_groups(
     *,
     seed: int = DEFAULT_SEED,
     optimize_record_support: bool = True,
+    required_labels: tuple[int, ...] = (),
+    minimum_feasible_eval_size: bool = False,
+    condition_eval_minimums: dict[str, int] | None = None,
 ) -> tuple[dict[str, str], dict[str, Any]]:
     """Assign complete parent groups to exact 80/10/10 row-count splits."""
 
@@ -270,8 +274,10 @@ def allocate_parent_groups(
         invalid_vote_counts = [
             row.get(VOTE_COUNT_FIELD)
             for row in rows
-            if not str(row.get(VOTE_COUNT_FIELD) or "").isdigit()
-            or int(row[VOTE_COUNT_FIELD]) < 1
+            if row.get("record_support_eligible", True) and (
+                not str(row.get(VOTE_COUNT_FIELD) or "").isdigit()
+                or int(row[VOTE_COUNT_FIELD]) < 1
+            )
         ]
         if invalid_vote_counts:
             raise ValueError(
@@ -281,6 +287,18 @@ def allocate_parent_groups(
     n_rows = len(rows)
     target_valid = _rounded_fraction(n_rows, EVAL_FRACTION)
     target_test = _rounded_fraction(n_rows, EVAL_FRACTION)
+    nominal_target = target_valid
+    if minimum_feasible_eval_size:
+        from tools.chembl_tool.common.starling.build_record_supported_benchmark import resolve_conditioned_eval_size
+        # Reuse the coverage solver with whole parents as its grouping keys.
+        # Actual scaffold annotations in source/output rows remain unchanged.
+        target_valid = target_test = resolve_conditioned_eval_size(
+            [{**row, "bemis_murcko_scaffold": row["molecule_identity_key"]} for row in rows],
+            nominal_target_size=max(1, nominal_target),
+            required_condition_groups={row["condition_group"] for row in rows},
+            seed=seed, required_labels=required_labels,
+            condition_eval_minimums=condition_eval_minimums,
+        )
     if target_valid + target_test >= n_rows:
         raise ValueError("evaluation targets leave no training rows")
 
@@ -320,13 +338,16 @@ def allocate_parent_groups(
     # Every condition must retain at least one parent in train, valid, and test.
     ordered_conditions = sorted(condition_totals)
     for condition in ordered_conditions:
+        minimum = (condition_eval_minimums or {}).get(condition, 1)
+        if not isinstance(minimum, int) or minimum < 1:
+            raise ValueError('Condition evaluation minimum must be a positive integer')
         present = np.asarray(
             [float(condition in group.condition_counts) for group in groups]
         )
         valid = np.r_[present, np.zeros(n_groups)]
         test = np.r_[np.zeros(n_groups), present]
-        _append_constraint(constraints, low, high, valid, 1.0, np.inf)
-        _append_constraint(constraints, low, high, test, 1.0, np.inf)
+        _append_constraint(constraints, low, high, valid, minimum, np.inf)
+        _append_constraint(constraints, low, high, test, minimum, np.inf)
         _append_constraint(
             constraints,
             low,
@@ -337,6 +358,13 @@ def allocate_parent_groups(
         )
 
     total_singletons = np.r_[singletons, singletons]
+    for label in required_labels:
+        counts = positives if label == 1 else sizes - positives
+        valid = np.r_[counts, np.zeros(n_groups)]
+        test = np.r_[np.zeros(n_groups), counts]
+        _append_constraint(constraints, low, high, valid, 1, np.inf)
+        _append_constraint(constraints, low, high, test, 1, np.inf)
+        _append_constraint(constraints, low, high, valid + test, -np.inf, sum(int(row["Y"]) == label for row in rows) - 1)
     valid_singletons = np.r_[singletons, np.zeros(n_groups)]
     test_singletons = np.r_[np.zeros(n_groups), singletons]
     minimum_singletons: int | None = None
@@ -476,6 +504,8 @@ def allocate_parent_groups(
     return assignment, {
         "method": "deterministic_lexicographic_parent_group_milp",
         "seed": seed,
+        "target_size_policy": "minimum_feasible_equal_eval_size" if minimum_feasible_eval_size else "exact_80_10_10",
+        "nominal_target_eval_rows": nominal_target,
         "target_fraction": {
             "train": 1.0 - 2 * EVAL_FRACTION,
             "valid": EVAL_FRACTION,
@@ -489,6 +519,7 @@ def allocate_parent_groups(
         "n_parent_groups": len(groups),
         "n_conditions": len(condition_totals),
         "record_support_objective_enabled": optimize_record_support,
+        "required_labels_in_each_split": list(required_labels),
         "record_support_field": VOTE_COUNT_FIELD if optimize_record_support else None,
         "multi_vote_definition": (
             f"{VOTE_COUNT_FIELD} >= 2" if optimize_record_support else None
@@ -675,6 +706,7 @@ def build_task(
     seed: int = DEFAULT_SEED,
     preserve_existing_split: bool = False,
     reference_root: Path = BENCHMARK_ROOT,
+    minimum_feasible_eval_size: bool = False,
 ) -> dict[str, Any]:
     source_root = task_root(task, "scaffold")
     destination = task_root(task, "random")
@@ -699,6 +731,9 @@ def build_task(
             source_rows, reference_rows
         )
     else:
+        required_labels = tuple(source_rows[0].get("split_required_labels", ())) if source_rows else ()
+        if any(tuple(row.get("split_required_labels", ())) != required_labels for row in source_rows):
+            raise ValueError("Inconsistent label coverage contract")
         assignment, optimizer = allocate_parent_groups(
             source_rows,
             seed=seed,
@@ -706,6 +741,8 @@ def build_task(
             # aggregation; its source_record_count is therefore not a comparable
             # held-out label-quality measure.
             optimize_record_support=task != "clintox",
+            required_labels=required_labels,
+            minimum_feasible_eval_size=minimum_feasible_eval_size,
         )
 
     rows_by_split: dict[str, list[dict[str, Any]]] = {split: [] for split in SPLITS}
@@ -844,6 +881,7 @@ def build_all(
     tasks: tuple[str, ...] | None = None,
     preserve_existing_split: bool = False,
     reference_root: Path = BENCHMARK_ROOT,
+    minimum_feasible_eval_size: bool = False,
 ) -> dict[str, Any]:
     requested = tuple(TASK_DIRECTORIES) if tasks is None else tasks
     summaries: dict[str, dict[str, Any]] = {}
@@ -860,6 +898,7 @@ def build_all(
             seed=seed,
             preserve_existing_split=preserve_existing_split,
             reference_root=reference_root,
+            minimum_feasible_eval_size=minimum_feasible_eval_size,
         )
         summaries[task] = rebuilt[task]
         print(f"[conditioned-random] completed {task}", flush=True)

@@ -1,0 +1,27 @@
+{
+  "parent_key": "ISNKNHAUYOWDHN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "263-505-7",
+    "3,3-Dimethylspiro(bicyclo(2.2.1)heptane-2,2'-oxirane)",
+    "3,3-dimethylspiro[bicyclo[2.2.1]heptane-2,2'-oxirane]",
+    "62318-94-9",
+    "Camphene epoxide",
+    "DB-304033",
+    "DTXCID001405203",
+    "DTXSID70977871",
+    "EINECS 263-505-7",
+    "ISNKNHAUYOWDHN-UHFFFAOYSA-N",
+    "NS00057283",
+    "QUG4NKJ2PL",
+    "RefChem:90824",
+    "SCHEMBL2697717",
+    "Spiro[bicyclo[2.2.1]heptane-2,2'-oxirane], 3,3-dimethyl-",
+    "camphene oxide"
+  ],
+  "cids": [
+    6454379
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ISNKNHAUYOWDHN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

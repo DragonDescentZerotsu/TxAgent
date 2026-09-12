@@ -1,0 +1,40 @@
+{
+  "parent_key": "IHUREIPXVFKEDT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IHUREIPXVFKEDT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "209-829-4",
+    "594-18-3",
+    "CAS-594-18-3",
+    "CCl2Br2",
+    "Carbon dibromide dichloride",
+    "DB-254408",
+    "DIBROMODICHLOROMETHANE",
+    "DTXCID304014",
+    "DTXSID4024014",
+    "Dibromodi(chloro)methane",
+    "EINECS 209-829-4",
+    "IHUREIPXVFKEDT-UHFFFAOYSA-N",
+    "J0GOV5L37I",
+    "Methane, dibromodichloro-",
+    "Methane, dibromodichloro-(8CI)",
+    "Methane, dibromodichloro-(8CI)(9CI)",
+    "NCGC00248588-01",
+    "NCGC00257946-01",
+    "NS00014237",
+    "NSC 6198",
+    "NSC-6198",
+    "NSC6198",
+    "Q3706878",
+    "RefChem:132902",
+    "SCHEMBL165155",
+    "Tox21_200392",
+    "UNII-J0GOV5L37I",
+    "dibromo(dichloro)methane",
+    "dibromo-dichloro-methane"
+  ],
+  "http_status": 200,
+  "cids": [
+    11659
+  ]
+}

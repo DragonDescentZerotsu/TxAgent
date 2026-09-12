@@ -1,0 +1,16 @@
+{
+  "parent_key": "KAOLEMQCYWHOJQ-QUAUAEOJSA-N",
+  "ok": true,
+  "synonyms": [
+    "3alpha,7alpha,12alpha,26,27-pentahydroxy-5alpha-cholestane 26-sulfate",
+    "5alpha-Cyprinol sulfate",
+    "LMST05020068",
+    "SCHEMBL29939305",
+    "ST 27:0;O5;S"
+  ],
+  "cids": [
+    101601854
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KAOLEMQCYWHOJQ-QUAUAEOJSA-N/synonyms/JSON",
+  "http_status": 200
+}

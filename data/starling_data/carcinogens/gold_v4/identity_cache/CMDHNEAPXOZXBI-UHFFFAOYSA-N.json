@@ -1,0 +1,13 @@
+{
+  "parent_key": "CMDHNEAPXOZXBI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CMDHNEAPXOZXBI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL3388548",
+    "dihydroxybenzidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    87519488
+  ]
+}

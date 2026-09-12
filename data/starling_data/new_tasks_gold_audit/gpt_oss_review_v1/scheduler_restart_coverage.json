@@ -1,0 +1,5 @@
+{
+  "ok_records_preserved": 3695,
+  "error_attempt_records_preserved": 11,
+  "resume_policy": "Skip exact successful source UID/payload/prompt/execution hashes; revisit errors and interrupted in-flight records."
+}

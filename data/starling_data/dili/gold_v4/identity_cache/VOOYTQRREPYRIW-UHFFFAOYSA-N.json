@@ -1,0 +1,39 @@
+{
+  "parent_key": "VOOYTQRREPYRIW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-Dihydrokawain",
+    "(6S)-5,6-Dihydro-4-methoxy-6-(2-phenylethyl)-2H-pyran-2-one",
+    "(S)-(+)-7,8-Dihydrokavain",
+    "106-462-0",
+    "2H-Pyran-2-one, 5,6-dihydro-4-methoxy-6-(2-phenylethyl)-, (6S)",
+    "3384-26-7",
+    "4-Methoxy-6-phenethyl-5,6-dihydropyran-2-one",
+    "4-methoxy-6-(2-phenylethyl)-5,6-dihydro-2H-pyran-2-one",
+    "5,6-Dihydro-4-methoxy-6-phenethyl-2H-Pyran-2-one",
+    "7,8-Dihydrokavain",
+    "7,8-Dihydrokawain;7,8-Dihydrokavain;Marindinin",
+    "73536-68-2",
+    "AKOS015897146",
+    "CHEMBL1338909",
+    "DS-005430",
+    "DTXSID101018162",
+    "Dihydro-Kavain",
+    "Dihydro-Kawain",
+    "Dihydrokawain [M+H]+",
+    "Marindinin",
+    "NCGC00091919-01",
+    "NCGC00091919-02",
+    "NSC-23875",
+    "NSC23875",
+    "Q5276436",
+    "RefChem:1088866",
+    "SCHEMBL2743647",
+    "VOOYTQRREPYRIW-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    98356
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VOOYTQRREPYRIW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

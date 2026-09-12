@@ -1,0 +1,23 @@
+{
+  "parent_key": "HAWXDOMASFLWHU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HAWXDOMASFLWHU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-Fluorobenzo(a)pyrene",
+    "10-Fluorobenzo[pqr]tetraphene",
+    "74018-58-9",
+    "BENZO(a)PYRENE, 10-FLUORO-",
+    "BRN 2380822",
+    "CHEMBL1982126",
+    "DTXCID70147310",
+    "DTXSID90224819",
+    "NCI60_006902",
+    "NSC-623138",
+    "NSC623138",
+    "RefChem:77493"
+  ],
+  "http_status": 200,
+  "cids": [
+    52859
+  ]
+}

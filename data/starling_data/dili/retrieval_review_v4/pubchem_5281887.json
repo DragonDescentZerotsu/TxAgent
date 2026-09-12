@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 5281887,
+        "MolecularFormula": "C24H32O8",
+        "SMILES": "C[C@]12CC[C@H]3[C@H]([C@@H]1CC[C@@H]2O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)CCC5=C3C=CC(=C5)O",
+        "InChIKey": "MTKNDAQYHASLID-QXYWQCSFSA-N"
+      }
+    ]
+  }
+}

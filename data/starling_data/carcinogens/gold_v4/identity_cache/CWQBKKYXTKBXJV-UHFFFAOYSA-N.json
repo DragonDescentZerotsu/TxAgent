@@ -1,0 +1,17 @@
+{
+  "parent_key": "CWQBKKYXTKBXJV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CWQBKKYXTKBXJV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,7-Dimethylbenz[a]anthracene",
+    "2,7-dimethylbenzo[a]anthracene",
+    "7,2-dimethylbenz[a]-anthracene",
+    "857535-92-3",
+    "DB-302572",
+    "SCHEMBL7783982"
+  ],
+  "http_status": 200,
+  "cids": [
+    53744023
+  ]
+}

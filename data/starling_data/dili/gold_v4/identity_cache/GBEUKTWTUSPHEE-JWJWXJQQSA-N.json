@@ -1,0 +1,43 @@
+{
+  "parent_key": "GBEUKTWTUSPHEE-JWJWXJQQSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,3aS,3bS,5aR,9aS,9bS,11aS)-8-fluoro-N-(1H-imidazo[4,5-b]pyridin-2-ylmethyl)-6,9a,11a-trimethyl-7-oxo-2,3,3a,3b,4,5,5a,9b,10,11-decahydro-1H-indeno[5,4-f]quinoline-1-carboxamide",
+    "(4aS,4bS,6aS,7S,9aS,9bS,11aR)-3-Fluoro-2,4a,4b,5,6,6a,7,8,9,9a,9b,10,11,11a-tetradecahydro-N-(3H-imidazo(4,5-b)pyridin-2-ylmethyl)-1,4a,6a-trimethyl-2-oxo-1H-indeno(5,4-f)quinoline-7-carboxamide",
+    "(4aS,4bS,6aS,7S,9aS,9bS,11aR)-N-((3H-imidazo[4,5-b]pyridin-2-yl)methyl)-3-fluoro-1,4a,6a-trimethyl-2-oxo-2,4a,4b,5,6,6a,7,8,9,9a,9b,10,11,11a-tetradecahydro-1H-indeno[5,4-f]quinoline-7-carboxamide",
+    "5730VNW22X",
+    "606101-58-0",
+    "AKOS040742149",
+    "AT25534",
+    "BDBM50594915",
+    "BRD-K38868394-001-01-3",
+    "C27H34FN5O2",
+    "CHEMBL3221237",
+    "CS-1508",
+    "DA-55517",
+    "DTXCID301509515",
+    "DTXSID701025274",
+    "EX-A10911",
+    "FM103641",
+    "HY-11027",
+    "MK 0773",
+    "MK-0773",
+    "MS-28922",
+    "N-(3H-IMIDAZO(4,5-B)PYRIDIN-2-YLMETHYL)-2-FLUORO-4-METHYL-3-OXO-4-AZA-5.ALPHA.-ANDROST-1-ENE-17.BETA.-CARBOXAMIDE",
+    "N-(3H-Imidazo(4,5-b)pyridin-2-ylmethyl)-2-fluoro-4-methyl-3-oxo-4-aza-5alpha-androst-1-ene-17beta-carboxamide",
+    "N-(3H-Imidazo[4,5-b]pyridin-2-ylmethyl)-2-fluoro-4-methyl-3-oxo-4-aza-5?-androst-1-ene-17?-carboxamide",
+    "PF 05314882",
+    "PF-05314882",
+    "Q27261459",
+    "RefChem:1050466",
+    "SCHEMBL4169171",
+    "T16090",
+    "UNII-5730VNW22X",
+    "orb1706975"
+  ],
+  "cids": [
+    11950726
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GBEUKTWTUSPHEE-JWJWXJQQSA-N/synonyms/JSON",
+  "http_status": 200
+}

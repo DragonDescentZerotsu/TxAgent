@@ -1,0 +1,12 @@
+{
+  "parent_key": "MSPOLKDRZJCLMQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MSPOLKDRZJCLMQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL7045794"
+  ],
+  "http_status": 200,
+  "cids": [
+    54089131
+  ]
+}

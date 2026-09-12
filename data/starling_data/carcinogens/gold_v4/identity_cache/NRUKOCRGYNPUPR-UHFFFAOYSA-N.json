@@ -1,0 +1,54 @@
+{
+  "parent_key": "NRUKOCRGYNPUPR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "125851-00-5",
+    "4'-Demethyl 1-O-(4,6-O,O-(2-thenylidene)-.beta.-D-glucopyranosyl)epipodophyllotoxin",
+    "4'-Demethyl-epipodophyllotoxin-.beta.-D-thenylidene-glucoside",
+    "4'-Demethylepipodophyllotoxin 9-(4,6-O-2-thenylidene-.beta.-D-glucopyranoside)",
+    "4'-Demethylepipodophyllotoxin 9-[4,6-O-(R)-2-thenylidene-.beta.-D-glucopyranoside]",
+    "4'-Demethylepipodophyllotoxin-.beta.-D-thenylideneglucoside",
+    "5-[[7,8-dihydroxy-2-(2-thienyl)-4,4a,6,7,8,8a-hexahydropyrano[3,2-d][1,3]dioxin-6-yl]oxy]-9-(4-hydroxy-3,5-dimethoxy-phenyl)-5a,6,8a,9-tetrahydro-5H-isobenzofuro[6,5-f][1,3]benzodioxol-8-one",
+    "9-(4-Hydroxy-3,5-dimethoxyphenyl)-8-oxo-5,5a,6,8,8a,9-hexahydro-2H-furo(3',4':6,7)naphtho(2,3-d)(1,3)dioxol-5-yl 4,6-O-((thiophen-2-yl)methylidene)hexopyranoside",
+    "9-(4-Hydroxy-3,5-dimethoxyphenyl)-8-oxo-5,5a,6,8,8a,9-hexahydro-2H-furo[3',4':6,7]naphtho[2,3-d][1,3]dioxol-5-yl 4,6-O-[(thiophen-2-yl)methylidene]hexopyranoside",
+    "AKOS026750133",
+    "C32H32O13S",
+    "CHEMBL1571037",
+    "DTXCID70209341",
+    "DTXSID60860440",
+    "Epipodophyllotoxin, 4'-demethyl-, 9-(4,6-O-2-thenylidene-.beta.-D-glucopyranoside)",
+    "Epipodophyllotoxin, 4'-demethyl-, 9-(4,6-O-2-thenylidene-beta-D-glucopyranoside)",
+    "Epipodophyllotoxin-.beta.-D-thenylidene-glucoside, 4'-demethyl-",
+    "Furo(3',4':6,7)naphtho(2,3-d)-1,3-dioxol-6(5aH)-one, 5,8,8a,9-tetrahydro-5-(4-hydroxy-3,5-dimethoxyphenyl)-9-((4,6-O-(2-thienylmethylene)-.beta.-D-glucopyranosyl)oxy)-, (5R-(5.alpha.,5a.beta.,8a.alpha.,9.beta.(R*)))-",
+    "Furo[3',4':6,7]naphtho[2,3-d]-1,3-dioxol-6(5aH)-one, 5,8,8a,9-tetrahydro-5-(4-hydroxy-3,5-dimethoxyphenyl)-9-[[4,6-O-(2-thienylmethylene)-.beta.-D-glucopyranosyl)",
+    "HMS5080G07",
+    "MLS000766234",
+    "NRUKOCRGYNPUPR-UHFFFAOYSA-N",
+    "NS00010051",
+    "Neuro_000056",
+    "RefChem:1074905",
+    "SCHEMBL13809319",
+    "SCHEMBL29355269",
+    "SMR000528847",
+    "SR-01000775528",
+    "SR-01000775528-2",
+    "Tenoposide",
+    "Veham-Sandoz",
+    "Vehem-sandoz",
+    "[5R-[5.alpha.,5a.beta.,8a.alpha.,9.beta.(R*)]]-5,8,8a,9-Tetrahydro-5-(4-hydroxy-3,5-dimethoxyphenyl)-9-[[4,6-O-(2-thienylmethylene)-.beta.-d-glucopyranosyl]oxy]furo[3',4':6,7]-naphtho[2,3-d]-1,3-dioxol-6(5aH)-one",
+    "s1787"
+  ],
+  "cids": [
+    5396
+  ],
+  "properties": [
+    {
+      "CID": 5396,
+      "InChIKey": "NRUKOCRGYNPUPR-UHFFFAOYSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/813,1254,2159,3676,4096,4472,5396,5583,7443,7991,8082,11473,11527,15530,15730,22626,23488,56160,79742,105131,127854,134508,153735,158636,165675,282531,452548,457964,566321,596375,5281522,9554464,13244484,21121112,21515625,22022801,54127091,71587169,71587514,73746259,85886323,136026170,165363851/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NLLNNSCWFJSDIR-UHFFFAOYSA-N,NLRKCXQQSUWLCH-UHFFFAOYSA-N,NLUSEGCKLCQNIB-UHFFFAOYSA-N,NMGAKRMEXQEIFQ-GCTWISOHSA-N,NMPVEAUIHMEAQP-UHFFFAOYSA-N,NMRKRCGNBHGSKA-UHFFFAOYSA-N,NMRPBPVERJPACX-UHFFFAOYSA-N,NMSAKPPCUJCCJQ-UHFFFAOYSA-N,NMTGSDIMWJJCNO-UHFFFAOYSA-N,NNCUVKVBUNEEKT-UHFFFAOYSA-N,NNFVURTYXFYQFZ-UHFFFAOYSA-N,NNHRVRJFHLVIIV-UHFFFAOYSA-N,NNJVILVZKWQKPM-UHFFFAOYSA-N,NNKVPIKMPCQWCG-UHFFFAOYSA-N,NNKXVWNQZVYIDG-UHFFFAOYSA-N,NNNDCDLZJSSHSZ-UHFFFAOYSA-N,NOCWDMQAHCQAKS-UHFFFAOYSA-N,NOFOAYPPHIUXJR-APNQCZIXSA-N,NOIIUHRQUVNIDD-UHFFFAOYSA-N,NOOLISFMXDJSKH-AEJSXWLSSA-N,NOOLISFMXDJSKH-UHFFFAOYSA-N,NOUDDDRYIOHXHS-UHFFFAOYSA-N,NOWATJMITOGNAE-UHFFFAOYSA-N,NOYPYLRCIDNJJB-UHFFFAOYSA-N,NPBVQXIMTZKSBA-UHFFFAOYSA-N,NPENPMDVCQGSSO-KULOWOMISA-N,NPNUFJAVOOONJE-FLFDDASRSA-N,NPRAEQKJCWHOCK-UHFFFAOYSA-N,NPWMTBZSRRLQNJ-UHFFFAOYSA-N,NPWPEPVYKMPDKK-UHFFFAOYSA-N,NPWQZYRDLOGPMX-OJYJAAIMSA-N,NPYPAHLBTDXSSS-OUBTZVSYSA-N,NPYPAHLBTDXSSS-UHFFFAOYSA-N,NQBWIRWVVJMLQL-UHFFFAOYSA-N,NQCJWEXYVVFKBT-UHFFFAOYSA-N,NQHZFAWDIPSZSW-UHFFFAOYSA-O,NQPDZGIKBAWPEJ-UHFFFAOYSA-N,NQRYJNQNLNOLGT-UHFFFAOYSA-N,NRGDZHVNEWCYNX-UHFFFAOYSA-N,NRHDCQLCSOWVTF-UHFFFAOYSA-N,NRSPMBWWMXPYGF-UHFFFAOYSA-N,NRUKOCRGYNPUPR-QBPJDGROSA-N,NRUKOCRGYNPUPR-UHFFFAOYSA-N,NRXQIUSYPAHGNM-UHFFFAOYSA-N,NSQMYBUUSJVJBK-VZUCSPMQSA-N,NSWAMPCUPHPTTC-UHFFFAOYSA-N,NSWBTWAHSWWHDN-UHFFFAOYSA-N,NTBYINQTYWZXLH-UHFFFAOYSA-N,NTDQQZYCCIDJRK-UHFFFAOYSA-N,NTJOBXMMWNYJFB-UHFFFAOYSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

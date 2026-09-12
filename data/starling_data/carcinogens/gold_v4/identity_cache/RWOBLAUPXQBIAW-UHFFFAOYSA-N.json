@@ -1,0 +1,13 @@
+{
+  "parent_key": "RWOBLAUPXQBIAW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RWOBLAUPXQBIAW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Dichlorathylsulfid",
+    "SCHEMBL246318"
+  ],
+  "http_status": 200,
+  "cids": [
+    23424468
+  ]
+}

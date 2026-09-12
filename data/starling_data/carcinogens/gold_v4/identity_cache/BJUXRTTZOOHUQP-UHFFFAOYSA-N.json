@@ -1,0 +1,35 @@
+{
+  "parent_key": "BJUXRTTZOOHUQP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BJUXRTTZOOHUQP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Methyl-3,4-benzophenanthrene",
+    "2-Methylbenzo(c)phenanthrene",
+    "2-Methylbenzo[c]phenanthrene",
+    "2606-85-1",
+    "4-05-00-02570 (Beilstein Handbook Reference)",
+    "6-Methyl-3,4-benzphenanthren",
+    "6-Methyl-3:4-benzphenanthrene",
+    "660-715-4",
+    "8DFC8R9Z8R",
+    "AKOS024340892",
+    "BENZO(c)PHENANTHRENE, 2-METHYL-",
+    "BJUXRTTZOOHUQP-UHFFFAOYSA-N",
+    "BRN 1872511",
+    "Benzo[c]phenanthrene, 2-methyl-",
+    "DTXCID10103192",
+    "DTXSID10180701",
+    "NSC 171295",
+    "NSC-171295",
+    "NSC171295",
+    "Q27270225",
+    "RefChem:88261",
+    "SCHEMBL597413",
+    "UNII-8DFC8R9Z8R",
+    "WLN: L C6 B666J E1"
+  ],
+  "http_status": 200,
+  "cids": [
+    17454
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "SZBDZGKFEAJNBX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL8887886",
+    "dibenzofuranquinone"
+  ],
+  "cids": [
+    19772945
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SZBDZGKFEAJNBX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

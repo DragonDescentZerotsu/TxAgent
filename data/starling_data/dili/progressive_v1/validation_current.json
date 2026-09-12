@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "task": "dili",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "schemes": {
+    "scaffold": {
+      "status": "passed",
+      "manifest": "data/starling_data/dili/progressive_v1/indices/scaffold/manifest.json",
+      "manifest_sha256": "0e5e7e2c9014778de49a158e3d5571bd471cbc338a13b1c596bb80bc5afcde3a",
+      "validation": "data/starling_data/dili/progressive_v1/indices/scaffold/identity_validation.json",
+      "validation_sha256": "e79c996115fb4129f31d81eb3e163640c5e29aebd35ecfea9d2c566fa9cfdd7f",
+      "index_sha256": "86d9d5c28f67225d68f5235c15eefecd69310c402f6c84984ec6b134c167e24f",
+      "evidence_sha256": "2dc98dba25f530d2435466ba29f31c798b9618f6c4ab9a4e2b324ea30aab6147",
+      "publication_receipt": "data/.build/new_task_tautomer_repair/dili_scaffold_index_publication.json",
+      "all_indexed_groups_checked": 916089,
+      "heldout_direct_cards": 0,
+      "excluded_direct_source_records": 39843
+    },
+    "random": {
+      "status": "passed",
+      "manifest": "data/starling_data/dili/progressive_v1/indices/random/manifest.json",
+      "manifest_sha256": "649713f6b6ec07a48efd55ccd6520bb7ebe39400f5423f443454d2a0f931aeb3",
+      "validation": "data/starling_data/dili/progressive_v1/indices/random/identity_validation.json",
+      "validation_sha256": "1ea8b4922d45f5d16a7f43278ded030c70099ceec5a176656c0b6c3ca1845149",
+      "index_sha256": "23698541158d7e392506daa9f4bfcf2a5ab712c3a370153bc4052011f54ef848",
+      "evidence_sha256": "6319786eb14e6beb35109141cf86d1bb762480a465542aa4d46719167a76e5b4",
+      "publication_receipt": "data/.build/new_task_tautomer_repair/dili_random_index_publication.json",
+      "all_indexed_groups_checked": 910304,
+      "heldout_direct_cards": 0,
+      "excluded_direct_source_records": 71088
+    }
+  },
+  "source_manifest_sha256": "3e293f9a200decc6d3755026f699b307f55dc4c85c31de9c34b3479f6203e22a",
+  "raw_uid_preservation_receipt": "data/starling_data/dili/progressive_v1/identity_repair_overlay_receipt.json",
+  "raw_uid_preservation_receipt_sha256": "00dd30c0622b90a1474a2898967fc6ffb5f4cab803d59b8a2538efa28887a988",
+  "historical_semantic_source_validation": {
+    "path": "data/starling_data/dili/progressive_v1/validation_all.json",
+    "sha256": "cbf106f8386ec6ab553c640f0a4f5a1715b3b23dfbed0de84ec394f7bcce7a90",
+    "status": "historical_before_tautomer_identity_v2",
+    "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
+  },
+  "source_records_deleted": 0,
+  "old_five_task_identity_changed": false
+}

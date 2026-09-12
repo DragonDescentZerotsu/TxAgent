@@ -1,0 +1,36 @@
+{
+  "parent_key": "BLTDCIWCFCUQCB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-Quinolinecarboxamide",
+    "3-quinoline-carboxamide",
+    "6480-67-7",
+    "BDBM60924",
+    "BLTDCIWCFCUQCB-UHFFFAOYSA-N",
+    "BS-29856",
+    "CHEMBL216226",
+    "CS-0209235",
+    "DB-117364",
+    "DTXCID30524961",
+    "DTXSID90574189",
+    "E83240",
+    "F637096",
+    "F7P7WJX4SQ",
+    "MFCD01366544",
+    "Quinoline-3-carboxamide",
+    "RefChem:911625",
+    "SB68370",
+    "SCHEMBL2005579",
+    "SCHEMBL23372",
+    "SCHEMBL29362497",
+    "SCHEMBL5748484",
+    "SCHEMBL5749007",
+    "Z1222423508",
+    "quinoline 3-carboxamide"
+  ],
+  "cids": [
+    15561101
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BLTDCIWCFCUQCB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

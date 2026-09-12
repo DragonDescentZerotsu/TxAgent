@@ -1,0 +1,12 @@
+{
+  "parent_key": "JGHOABMWQGIYFL-RVAGFXNCSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JGHOABMWQGIYFL-RVAGFXNCSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-METHYL-2-[(E)-HYDROXYIMINO]-5-NITRO-6-METHOXY-3-HEXENEAMIDE"
+  ],
+  "http_status": 200,
+  "cids": [
+    88090700
+  ]
+}

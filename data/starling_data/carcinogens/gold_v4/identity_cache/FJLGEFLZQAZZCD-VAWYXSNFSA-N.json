@@ -1,0 +1,27 @@
+{
+  "parent_key": "FJLGEFLZQAZZCD-VAWYXSNFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FJLGEFLZQAZZCD-VAWYXSNFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3S,5R)-7-[3-(4-fluorophenyl)-1-propan-2-yl-2-indolyl]-3,5-dihydroxy-6-heptenoic acid",
+    "(6E)-7-(3-(4-fluorophenyl)-1-(propan-2-yl)-1H-indol-2-yl)-3,5-dihydroxyhept-6-enoic acid",
+    "(6E)-7-[3-(4-fluorophenyl)-1-(propan-2-yl)-1H-indol-2-yl]-3,5-dihydroxyhept-6-enoic acid",
+    "(6E)-7-[3-(4-fluorophenyl)-1-isopropyl-1H-indol-2-yl]-3,5-dihydroxyhept-6-enoic acid",
+    "1025085-49-7",
+    "7-[3-(4-Fluorophenyl)-1-(1-methylethyl)-1H-indol-2-yl]-3,5-dihydroxy-6-heptenoic acid, sodium salt",
+    "7-[3-(4-fluorophenyl)-1-(propan-2-yl)-1h-indol-2-yl]-3,5-dihydroxyhept-6-enoic acid",
+    "7-[3-(4-fluorophenyl)-1-(propan-2-yl)-1h-indol-2-yl]-3,5-dihydroxyhept-6-enoicacid",
+    "BDBM50622531",
+    "CHEBI:38562",
+    "CHEBI:95159",
+    "CHEMBL2220442",
+    "EN300-295528",
+    "Q27117899",
+    "RefChem:934882",
+    "SCHEMBL2848"
+  ],
+  "http_status": 200,
+  "cids": [
+    5353627
+  ]
+}

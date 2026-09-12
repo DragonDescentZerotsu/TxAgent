@@ -1,0 +1,41 @@
+{
+  "parent_key": "VMVWLAPASRQXFL-QFWMQHCXSA-N",
+  "ok": true,
+  "synonyms": [
+    "((2S,4R)-1-((1R)-1-(4-Chlorophenyl)-4-methylpentyl)-2-(4-(trifluoromethyl)phenyl)-4-piperidinyl)acetic acid",
+    "(2S)-1-((.ALPHA.R)-.ALPHA.-(3-METHYLBUTYL)-4-CHLOROBENZYL)-2.ALPHA.-(4-(TRIFLUOROMETHYL)PHENYL)PIPERIDINE-4.ALPHA.-ACETIC ACID",
+    "(2S)-1-((1R)-1-(4-CHLOROPHENYL)-4-METHYLPENTYL)-2.ALPHA.-(4-(TRIFLUOROMETHYL)PHENYL)PIPERIDINE-4.ALPHA.-ACETIC ACID",
+    "(2S)-1-((1R)-1-(4-Chlorophenyl)-4-methylpentyl)-2alpha-(4-(trifluoromethyl)phenyl)piperidine-4alpha-acetic acid",
+    "(2S)-1-((alphaR)-alpha-(3-Methylbutyl)-4-chlorobenzyl)-2alpha-(4-(trifluoromethyl)phenyl)piperidine-4alpha-acetic acid",
+    "(2S,4R)-1-((1R)-1-(4-Chlorophenyl)-4-methylpentyl)-2-(4-(trifluoromethyl)phenyl)piperidine-4-acetic acid",
+    "(2S,4R)-1-[(1R)-1-(4-Chlorophenyl)-4-methylpentyl]-2-[4-(trifluoromethyl)phenyl]-4-piperidineacetic acid",
+    ".GAMMA. SECRETASE MODULATOR 1",
+    "2-[(2S,4R)-1-[(1R)-1-(4-chlorophenyl)-4-methylpentyl]-2-[4-(trifluoromethyl)phenyl]piperidin-4-yl]acetic acid",
+    "4-Piperidineacetic acid, 1-((1R)-1-(4-chlorophenyl)-4-methylpentyl)-2-(4-(trifluoromethyl)phenyl)-,(2S,4R)-",
+    "884600-68-4",
+    "AKOS040745832",
+    "BDBM50114792",
+    "CHEMBL2169963",
+    "CS-0069282",
+    "G17719",
+    "GLXC-25156",
+    "GSM 1 (enzyme modulator)",
+    "GSM-1",
+    "HY-119165",
+    "J2.559.799K",
+    "MS-28960",
+    "Q27288343",
+    "RY5QK2J15V",
+    "SCHEMBL2855563",
+    "T24116",
+    "UNII-RY5QK2J15V",
+    "gamma Secretase modulator 1",
+    "orb1703404",
+    "{(2s,4r)-1-[(1r)-1-(4-chlorophenyl)-4-methylpentyl]-2-[4-(trifluoromethyl)phenyl]piperidin-4-yl}acetic acid"
+  ],
+  "cids": [
+    57987388
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VMVWLAPASRQXFL-QFWMQHCXSA-N/synonyms/JSON",
+  "http_status": 200
+}

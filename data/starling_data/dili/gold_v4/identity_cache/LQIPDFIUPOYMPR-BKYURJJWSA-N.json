@@ -1,0 +1,38 @@
+{
+  "parent_key": "LQIPDFIUPOYMPR-BKYURJJWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2E,4E)-N-((((2R,3R,4R,5R,6S)-2-((1S)-1,2-dihydroxyethyl)-4,5-dihydroxy-6-((9H-purin-6-yl)amino)oxan-3-yl)carbamoyl)methyl)tetradeca-2,4-dienamide",
+    "151276-95-8",
+    "4-Deoxy-N-(7H-purin-6-yl)-4-({N-[(2E,4E)-tetradeca-2,4-dienoyl]glycyl}amino)-L-glycero-beta-L-manno-heptopyranosylamine",
+    "6-(4-Deoxy-4-((2E,4E)-tetradecadienoylglycyl)amino-L-glycero-b-L-mannoheptopyranosyl)amino-9H-purine",
+    "8VH13L5K20",
+    "AKOS040748681",
+    "CHEMBL4296683",
+    "CS-0007543",
+    "DB15215",
+    "DTXCID10820837",
+    "DTXSID60873333",
+    "HY-13659",
+    "KRN-5500",
+    "KRN5500",
+    "Krn 5500",
+    "L-glycero-beta-L-manno-Heptopyranosylamine, 4-deoxy-4-(((((2E,4E)-1-oxo-2,4-tetradecadienyl)amino)acetyl)amino)-N-1H-purin-6-yl-",
+    "L-glycero-beta-L-manno-Heptopyranosylamine, 4-deoxy-4-((((1-oxo-2,4-tetradecadienyl)amino)acetyl)amino)-N-1H-purin-6-yl-, (E,E)-",
+    "NSC 650426",
+    "NSC-650426",
+    "RefChem:151469",
+    "SCHEMBL2357505",
+    "SCHEMBL30626129",
+    "SCHEMBL31060330",
+    "SPK-241",
+    "T27745",
+    "UNII-8VH13L5K20",
+    "orb1700223"
+  ],
+  "cids": [
+    6440176
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LQIPDFIUPOYMPR-BKYURJJWSA-N/synonyms/JSON",
+  "http_status": 200
+}

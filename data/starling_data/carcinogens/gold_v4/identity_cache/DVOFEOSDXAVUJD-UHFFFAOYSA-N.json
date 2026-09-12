@@ -1,0 +1,22 @@
+{
+  "parent_key": "DVOFEOSDXAVUJD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DVOFEOSDXAVUJD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-amino-3-methylbutanal",
+    "98137-41-8",
+    "AKOS006352276",
+    "EN300-7577995",
+    "FV111807",
+    "H-D-Val-2-chlorotrityl resin (200-400 mesh)",
+    "SCHEMBL1064989",
+    "SCHEMBL15667306",
+    "SCHEMBL28220295",
+    "SCHEMBL436290",
+    "SCHEMBL77707"
+  ],
+  "http_status": 200,
+  "cids": [
+    14264596
+  ]
+}

@@ -1,0 +1,200 @@
+[
+  [
+    "decitabine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 451668,
+            "MolecularFormula": "C8H12N4O4",
+            "SMILES": "C1[C@@H]([C@H](O[C@H]1N2C=NC(=NC2=O)N)CO)O",
+            "InChIKey": "XAUDJQYHKZQPEU-KVQBGUIXSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "4-phenylbutyric acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 4775,
+            "MolecularFormula": "C10H12O2",
+            "SMILES": "C1=CC=C(C=C1)CCCC(=O)O",
+            "InChIKey": "OBKXEAXTFZPCHS-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "Fos-choline-16",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "miltefosine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 3599,
+            "MolecularFormula": "C21H46NO4P",
+            "SMILES": "CCCCCCCCCCCCCCCCOP(=O)([O-])OCC[N+](C)(C)C",
+            "InChIKey": "PQLXHQMOHUQAKB-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "LRH-1 antagonist 3d2",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "8-hydroxy-2-deoxyguanosine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 135440064,
+            "MolecularFormula": "C10H13N5O5",
+            "SMILES": "C1[C@@H]([C@H](O[C@H]1N2C3=C(C(=O)NC(=N3)N)NC2=O)CO)O",
+            "InChIKey": "HCAJQHYUCKICQH-VPENINKCSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "galactosamine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 24154,
+            "MolecularFormula": "C6H13NO5",
+            "SMILES": "C([C@@H]1[C@@H]([C@@H]([C@H](C(O1)O)N)O)O)O",
+            "InChIKey": "MSWZFWKMSRAUBD-GASJEMHNSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "N-acetyl-Leu-Leu-norleucinal",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "ortho-phenylphenol",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "chlorpyrifos",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "ribonolactone",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 111064,
+            "MolecularFormula": "C5H8O5",
+            "SMILES": "C([C@@H]1[C@H]([C@H](C(=O)O1)O)O)O",
+            "InChIKey": "CUOKHACJLGPRHD-BXXZVTAOSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "GB1107",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "kinoshenoside",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "kinsenoside",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 10422896,
+            "MolecularFormula": "C10H16O8",
+            "SMILES": "C1[C@H](COC1=O)O[C@H]2[C@@H]([C@H]([C@@H]([C@H](O2)CO)O)O)O",
+            "InChIKey": "MQEPWBMWFIVRPS-ZGSHZZHUSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "puerarin",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ]
+]

@@ -1,0 +1,107 @@
+{
+  "status": "staged_preview_not_published",
+  "policy": "synonyms_and_exact_redundant_descriptions_v1",
+  "current_before": {
+    "rows": 1464,
+    "condition_groups": 92,
+    "labels": {
+      "1": 1186,
+      "0": 278
+    }
+  },
+  "current_after_mapping": {
+    "rows": 1464,
+    "condition_groups": 83,
+    "labels": {
+      "1": 1186,
+      "0": 278
+    }
+  },
+  "current_after_unanimous_collapse": {
+    "rows": 1404,
+    "condition_groups": 83,
+    "labels": {
+      "0": 278,
+      "1": 1126
+    }
+  },
+  "current_unique_parent_conditions_after": 1404,
+  "current_colliding_parent_conditions": 57,
+  "current_opposite_label_collisions": 0,
+  "legacy_votes_before": 12571,
+  "legacy_votes_after": 12547,
+  "legacy_duplicate_study_units": 24,
+  "legacy_conflicting_study_units": 0,
+  "legacy_gold_before": {
+    "rows": 10800,
+    "condition_groups": 9240,
+    "labels": {
+      "0": 404,
+      "1": 10396
+    }
+  },
+  "legacy_gold_after": {
+    "rows": 10698,
+    "condition_groups": 9200,
+    "labels": {
+      "0": 403,
+      "1": 10295
+    }
+  },
+  "legacy_rejected_before": 1,
+  "legacy_rejected_after": 2,
+  "legacy_new_rejected_parent_conditions": 1,
+  "legacy_necessary_coverage_gate": {
+    "before": {
+      "groups": 121,
+      "rows": 1311,
+      "note": "necessary support gate only; no fresh split allocation run"
+    },
+    "after": {
+      "groups": 113,
+      "rows": 1275,
+      "note": "necessary support gate only; no fresh split allocation run"
+    }
+  },
+  "reviewed_base_inventory": {
+    "records": 354386,
+    "directions": {
+      "positive": 296079,
+      "negative": 35031,
+      "mixed": 7340,
+      "uncertain": 7406,
+      "specimen_or_material_hold": 6905,
+      "out_of_scope": 1625
+    },
+    "binary_records": 331110,
+    "all_groups_before": 221465,
+    "all_groups_after": 221342,
+    "binary_groups_before": 204386,
+    "binary_groups_after": 204264,
+    "changed_records": 12264,
+    "species_status": {
+      "single_species": 270590,
+      "unresolved_species": 75421,
+      "mixed_species": 8375
+    }
+  },
+  "record_labels_changed": 0,
+  "model_calls": 0,
+  "input_sha256": {
+    "data/starling_data/carcinogens/gold_v3/source_votes.jsonl": "c9b057201a9ec88a357a5874e47d5764e73d7a52f51fe521092c7beb3958fbcb",
+    "data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
+    "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet": "d23b2e9a2ad8774653b341a03e84f53b57d6dee69a32ec617cd75f83b5343e70",
+    "data/conditioned_benchmark/Carcinogens/scaffold/train.jsonl": "91df0117df87cfe6596eb51ea29ebcb3613cdc1e1931af43f70fcce5d32cfbab",
+    "data/conditioned_benchmark/Carcinogens/scaffold/valid.jsonl": "3bbc0d32a856960d70455d2a1eb1c4d9953d57ce611cab04b459ba9fb50a5fc8",
+    "data/conditioned_benchmark/Carcinogens/scaffold/test.jsonl": "0f1ac10f2d616211247ca72dd697010e018bc5ab8e7b2786d171cf08dbb220a1",
+    "data/conditioned_benchmark/Carcinogens/random/train.jsonl": "d08f320230e187d6bbf8d05b28aff8977387167f5f8aa94ca8582cffa71d006a",
+    "data/conditioned_benchmark/Carcinogens/random/valid.jsonl": "ede20db75c29d606289d770bfdf987d5c216bed7edf6c10d7dc8291b71233c12",
+    "data/conditioned_benchmark/Carcinogens/random/test.jsonl": "44c6adc84906b02d18fbd72ac83e07c8f21b9d06d3e9326f61b6c14274e756a5"
+  },
+  "limitations": [
+    "Legacy reaggregation is not gold from the full reviewed base.",
+    "Raw-record condition strings can contain outcome text and unresolved species; not approved query prompts.",
+    "Sex, strain, route, dose, duration, genotype and unparsed qualifiers remain distinct.",
+    "No canonical gold, splits, indices or experiment inputs are published."
+  ]
+}

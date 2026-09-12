@@ -1,0 +1,23 @@
+{
+  "parent_key": "MDEVHGNTMAPDQA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MDEVHGNTMAPDQA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,2,2,3,3,4,5,5,6,6,7,7,7-tetradecafluoro-4-(trifluoromethyl)heptane-1-sulfonic acid",
+    "1-Heptanesulfonic acid, 1,1,2,2,3,3,4,5,5,6,6,7,7,7-tetradecafluoro-4-(trifluoromethyl)-",
+    "4mPFOS",
+    "4mPFOS_i",
+    "4mPFOS_ii",
+    "4mPFOS_iii",
+    "775554-63-7",
+    "DTXSID101019146",
+    "P4MHpS",
+    "Perfluoro-4-methylheptane sulfonate",
+    "Perfluoro-4-methylheptanesulfonic acid",
+    "SCHEMBL31690637"
+  ],
+  "http_status": 200,
+  "cids": [
+    102175774
+  ]
+}

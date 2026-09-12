@@ -1,0 +1,29 @@
+{
+  "parent_key": "HQHACWYQWDKBOZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HQHACWYQWDKBOZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-NITROSO-1-AZACYCLOTRIDECANE",
+    "1-Nitroso-azacyclotridecane",
+    "1-Nitrosoazacyclotridecane",
+    "40580-89-0",
+    "5-20-04-00265 (Beilstein Handbook Reference)",
+    "AZACYCLOTRIDECANE, 1-NITROSO-",
+    "BRN 1682413",
+    "CHEMBL168074",
+    "DTXSID6021034",
+    "HQHACWYQWDKBOZ-UHFFFAOYSA-N",
+    "N-Nitrosododecamethyleneimine",
+    "N-Nitrosododecamethylenimine",
+    "Nitrosododecamethyleneimine",
+    "Nitrosododecamethylenimine",
+    "Nitrosododecamethylenimine, N-",
+    "RefChem:830849",
+    "SCHEMBL29390792",
+    "WG3MY6ZZ25"
+  ],
+  "http_status": 200,
+  "cids": [
+    38523
+  ]
+}

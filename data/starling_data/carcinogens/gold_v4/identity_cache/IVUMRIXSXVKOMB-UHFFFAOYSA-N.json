@@ -1,0 +1,22 @@
+{
+  "parent_key": "IVUMRIXSXVKOMB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IVUMRIXSXVKOMB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "15912-88-6",
+    "7H-Furo(3,2-g)(1)benzopyran-7-one, 9-methyl-",
+    "8-Methylpsoralen",
+    "9-Methyl-7H-furo(3,2-g)(1)benzopyran-7-one",
+    "9-Methyl-7H-furo[3,2-g][1]benzopyran-7-one",
+    "DTXSID90877061",
+    "NOCAS_877061",
+    "NS00094856",
+    "PSORALEN,8-METHYL",
+    "RefChem:914621",
+    "SCHEMBL8416177"
+  ],
+  "http_status": 200,
+  "cids": [
+    119073
+  ]
+}

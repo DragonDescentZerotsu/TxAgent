@@ -1,0 +1,36 @@
+{
+  "parent_key": "SHHLMGCHMMCOOS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "19090-04-1",
+    "2H-1-Benzopyran-3(4H)-one",
+    "2H-Chromen-3-ol, AldrichCPR",
+    "2H-chromen-3(4H)-one",
+    "3,4-dihydro-2H-1-benzopyran-3-one",
+    "3-CHROMANONE",
+    "4H-chromen-3-one",
+    "860-454-8",
+    "AKOS015915214",
+    "CS-0448978",
+    "DB-014733",
+    "DS-18057",
+    "DTXSID60456483",
+    "EN300-43451",
+    "F53084",
+    "F771492",
+    "MFCD09996937",
+    "RefChem:486120",
+    "SCHEMBL218651",
+    "SCHEMBL27459297",
+    "SCHEMBL3962887",
+    "SCHEMBL3998995",
+    "SHHLMGCHMMCOOS-UHFFFAOYSA-N",
+    "UAA09004",
+    "chroman-3-one"
+  ],
+  "cids": [
+    11137321
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SHHLMGCHMMCOOS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

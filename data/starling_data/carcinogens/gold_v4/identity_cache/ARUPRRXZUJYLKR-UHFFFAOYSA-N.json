@@ -1,0 +1,20 @@
+{
+  "parent_key": "ARUPRRXZUJYLKR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ARUPRRXZUJYLKR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,10-Dimethyl-5,6-benzacridine",
+    "3518-05-6",
+    "8,12-Dimethylbenz(a)acridine",
+    "8,12-dimethyl-benz(a)acridine",
+    "8,12-dimethylbenzo[a]acridine",
+    "BRN 0190112",
+    "Benz(a)acridine, 8,12-dimethyl-",
+    "DTXSID70188667"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Yellow (60%), Request Time status: Green (6%), Service status: Black (237%)",
+  "cids": [
+    197792
+  ]
+}

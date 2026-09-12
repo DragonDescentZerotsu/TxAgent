@@ -1,0 +1,26 @@
+{
+  "parent_key": "MXDMETWAEGIFOE-CABCVRRESA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R)-delta-elemene",
+    "(3R,4R)-1-isopropyl-4-methyl-3-(prop-1-en-2-yl)-4-vinylcyclohexene",
+    "(3R,4R)-4-ethenyl-4-methyl-1-propan-2-yl-3-prop-1-en-2-ylcyclohexene",
+    "(3R,trans)-1-isopropyl-4-methyl-3-(prop-1-en-2-yl)-4-vinylcyclohexene",
+    "(3R-trans)-4-ethenyl-4-methyl-3-(1-methylethenyl)-1-(1-methylethyl)-cyclohexene",
+    "(R,R)-1-isopropyl-4-methyl-3-(prop-1-en-2-yl)-4-vinylcyclohexene",
+    "11029-06-4",
+    "20307-84-0",
+    "CHEBI:132830",
+    "DTXSID10149196",
+    "Elemene",
+    "Q63409802",
+    "RefChem:131677",
+    "SCHEMBL17627747",
+    "delta-Elemene"
+  ],
+  "cids": [
+    12309449
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MXDMETWAEGIFOE-CABCVRRESA-N/synonyms/JSON",
+  "http_status": 200
+}

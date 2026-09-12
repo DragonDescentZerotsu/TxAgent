@@ -1,0 +1,13 @@
+{
+  "parent_key": "RYTPAHPNHGHPDE-UUOKFMHZSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL16569039"
+  ],
+  "cids": [
+    117953586,
+    137003844
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RYTPAHPNHGHPDE-UUOKFMHZSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "FQDIANVAWVHZIR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FQDIANVAWVHZIR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-DCB",
+    "1,4-DICHLORO-2-BUTENE",
+    "1,4-Dichloro-2-butene (cis+trans)",
+    "1,4-Dichloro-2-butene Solution in Methanol, 1000ug/mL",
+    "1,4-Dichloro-2-butylene",
+    "1,4-Dichloro-but-2-ene",
+    "1,4-Dichlorobut-2-ene",
+    "1,4-Dichlorobutene-2",
+    "1,4-Dichlorobutene-2 (65% trans-, 35% cis-)",
+    "1476-11-5",
+    "2-Butene, 1,4-dichloro-",
+    "2-Butylene dichloride",
+    "212-121-8",
+    "764-41-0",
+    "AKOS025243623",
+    "CHEMBL3182125",
+    "ClCH2CH=CHCH2Cl",
+    "DTXCID4028123",
+    "DTXSID9027310",
+    "MSK164287-1000M",
+    "NS00079386",
+    "RefChem:416736",
+    "SCHEMBL205123"
+  ],
+  "http_status": 200,
+  "cids": [
+    15122
+  ]
+}

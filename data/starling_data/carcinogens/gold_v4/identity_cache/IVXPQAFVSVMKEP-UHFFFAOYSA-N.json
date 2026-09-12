@@ -1,0 +1,14 @@
+{
+  "parent_key": "IVXPQAFVSVMKEP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IVXPQAFVSVMKEP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL5450051",
+    "o-Aminoazooxytoluol"
+  ],
+  "http_status": 200,
+  "cids": [
+    69446415,
+    87836943
+  ]
+}

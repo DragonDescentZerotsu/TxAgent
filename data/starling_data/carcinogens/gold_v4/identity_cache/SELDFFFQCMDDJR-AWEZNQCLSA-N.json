@@ -1,0 +1,17 @@
+{
+  "parent_key": "SELDFFFQCMDDJR-AWEZNQCLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SELDFFFQCMDDJR-AWEZNQCLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2194550-21-3",
+    "5-cyclopropyl-N-[(1S)-1-[4-(hydroxycarbamoyl)phenyl]ethyl]-2-(5-phenyl-1,3-thiazol-2-yl)-1,3-thiazole-4-carboxamide",
+    "BDBM50514463",
+    "CHEMBL4460552",
+    "HDAC-IN-H13",
+    "SCHEMBL21147073"
+  ],
+  "http_status": 200,
+  "cids": [
+    139303146
+  ]
+}

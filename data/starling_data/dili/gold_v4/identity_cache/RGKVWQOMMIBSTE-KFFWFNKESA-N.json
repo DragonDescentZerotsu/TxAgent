@@ -1,0 +1,12 @@
+{
+  "parent_key": "RGKVWQOMMIBSTE-KFFWFNKESA-N",
+  "ok": true,
+  "synonyms": [
+    "beta-d-galactosyl hydroxylysine"
+  ],
+  "cids": [
+    129653188
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RGKVWQOMMIBSTE-KFFWFNKESA-N/synonyms/JSON",
+  "http_status": 200
+}

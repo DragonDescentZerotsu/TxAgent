@@ -1,0 +1,26 @@
+{
+  "parent_key": "JVGWNJLSTCQSCZ-VIFPVBQESA-N",
+  "ok": true,
+  "synonyms": [
+    "(S)-N-Nitrosofenfluramine",
+    "1-ETHYL-1-((.ALPHA.S)-.ALPHA.-METHYL-3-(TRIFLUOROMETHYL)PHENETHYL)-2-OXYLATODIAZENE-1-IUM",
+    "1-Ethyl-1-((alphaS)-alpha-methyl-3-(trifluoromethyl)phenethyl)-2-oxylatodiazene-1-ium",
+    "5L447S1C3D",
+    "646998-54-1",
+    "AKOS040753300",
+    "BENZENEETHANAMINE, N-ETHYL-.ALPHA.-METHYL-N-NITROSO-3-(TRIFLUOROMETHYL)-, (.ALPHA.S)-",
+    "Benzeneethanamine, N-ethyl-alpha-methyl-N-nitroso-3-(trifluoromethyl)-, (alphaS)-",
+    "J1.936.463A",
+    "N-Nitrosofenfluramine, (S)-",
+    "N-ethyl-N-[(2S)-1-[3-(trifluoromethyl)phenyl]propan-2-yl]nitrous amide",
+    "Q27262505",
+    "T33707",
+    "UNII-5L447S1C3D",
+    "orb1695881"
+  ],
+  "cids": [
+    101260171
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JVGWNJLSTCQSCZ-VIFPVBQESA-N/synonyms/JSON",
+  "http_status": 200
+}

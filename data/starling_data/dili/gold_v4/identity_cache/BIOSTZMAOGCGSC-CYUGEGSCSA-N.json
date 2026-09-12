@@ -1,0 +1,39 @@
+{
+  "parent_key": "BIOSTZMAOGCGSC-CYUGEGSCSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-amino-5-[2-[2-[[(4S,6S,7R,8S)-8-(carbamoyloxymethyl)-7-methoxy-12-methyl-10,13-dioxo-2,5-diazatetracyclo[7.4.0.02,7.04,6]trideca-1(9),11-dien-11-yl]amino]ethyldisulanyl]ethylamino]-5-oxopentanoic acid",
+    "(2S)-2-amino-5-[2-[2-[[(4S,6S,7R,8S)-8-(carbamoyloxymethyl)-7-methoxy-12-methyl-10,13-dioxo-2,5-diazatetracyclo[7.4.0.02,7.04,6]trideca-1(9),11-dien-11-yl]amino]ethyldisulfanyl]ethylamino]-5-oxopentanoic acid",
+    "(2S)-5-Amino-2-[2-[2-[[(4S,6S,7R,8S)-8-(carbamoyloxymethyl)-7-methoxy-12-methyl-10,13-dioxo-2,5-diazatetracyclo[7.4.0.02,7.04,6]trideca-1(9),11-dien-11-yl]amino]ethyldisulfanyl]ethylamino]-5-oxopentanoic acid",
+    "118359-59-4",
+    "5-Hydroxy-5-({2-[(2-{[(1aS,8S,8aR,8bS)-8-{[hydroxy(imino)methoxy]methyl}-8a-methoxy-5-methyl-4,7-dioxo-1,1a,2,4,7,8,8a,8b-octahydroazirino[2',3':3,4]pyrrolo[1,2-a]indol-6-yl]amino}ethyl)disulfanyl]ethyl}imino)-L-norvaline",
+    "5-Hydroxy-5-{[2-({2-[(8-{[hydroxy(imino)methoxy]methyl}-8a-methoxy-5-methyl-4,7-dioxo-1,1a,2,4,7,8,8a,8b-octahydroazireno[2',3':3,4]pyrrolo[1,2-a]indol-6-yl)amino]ethyl}disulfanyl)ethyl]imino}norvaline",
+    "7-N-((2-((2-(R-L-Glutamylamino)ethyl)dithio)ethyl))mitomycin C",
+    "7-N-(2-((2-(gamma-L-Glutamylamino)ethyl)dithio)ethyl)mitomycin C",
+    "7-N-(2-((2-(gamma-glutamylamino)ethyl)dithio)ethyl)mitomycin C",
+    "AK8DKI0KMN",
+    "AKOS040752288",
+    "CHEBI:231227",
+    "DTXSID10922668",
+    "E-90/007",
+    "KT 6149",
+    "KT-6149",
+    "KT6149",
+    "KW 2149",
+    "KW-2149",
+    "L-Glutamine, N-(2-((2-(((1aS,8S,8aR,8bS)-8-(((aminocarbonyl)oxy)methyl)-1,1a,2,4,7,8,8a,8b-octahydro-8a-methoxy-5-methyl-4,7-dioxoazirino(2',3':3,4)pyrrolo(1,2-a)indol-6-yl)amino)ethyl)dithio)ethyl)-",
+    "L-Glutamine, N-(2-((2-((8-(((aminocarbonyl)oxy)methyl)-1,1a,2,4,7,8,8a,8b-octahydro-8a-methoxy-5-methyl-4,7-dioxoazirino(2',3':3,4)pyrrolo(1,2-a)indol-6-yl)amino)ethyl)dithio)ethyl)-, (1aS-(1a-alpha,8-beta,8a-alpha,8b-alpha))-",
+    "L-Glutamine, N-[2-[[2-[[(1aS,8S,8aR,8bS)-8-[[(aminocarbonyl)oxy]methyl]-1,1a,2,4,7,8,8a,8b-octahydro-8a-methoxy-5-methyl-4,7-dioxoazirino[2',3':3,4]pyrrolo[1,2-a]indol-6-yl]amino]ethyl]dithio]ethyl]-",
+    "N-(2-((2-(((1aS,8S,8aR,8bS)-8-(((Aminocarbonyl)oxy)methyl)-1,1a,2,4,7,8,8a,8b-octahydro-8a-methoxy-5-methyl-4,7-dioxoazirino(2',3':3,4)pyrrolo(1,2-a)indol-6-yl)amino)ethyl)dithio)ethyl)-L-glutamine",
+    "RefChem:926622",
+    "SCHEMBL29396611",
+    "T32429",
+    "UNII-AK8DKI0KMN",
+    "orb1696739"
+  ],
+  "cids": [
+    108151
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BIOSTZMAOGCGSC-CYUGEGSCSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "LKKWNBWRPDKMIB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL236047",
+    "metachlorophenylpiperazine"
+  ],
+  "cids": [
+    53400358
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LKKWNBWRPDKMIB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

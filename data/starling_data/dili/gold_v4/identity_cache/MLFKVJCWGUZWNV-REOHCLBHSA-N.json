@@ -1,0 +1,31 @@
+{
+  "parent_key": "MLFKVJCWGUZWNV-REOHCLBHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-amino-3-(hydroxy(nitroso)amino)propanoic acid",
+    "2CNI71214Y",
+    "3-(Hydroxynitrosoamino)-L-alanine",
+    "Alanosina",
+    "Alanosine",
+    "Alanosinum",
+    "DTXCID301508424",
+    "DTXSID501024175",
+    "L-2-Amino-3-((N-nitroso)hydroxylamino)propionic acid",
+    "L-2-Amino-3-(hydroxynitrosoamino)propionic Acid",
+    "L-2-amino-3-(N-nitroso)hydroxylaminopropionic acid",
+    "L-Alanosine Sodium",
+    "NSC 153353",
+    "NSC-153353",
+    "NSC-529469",
+    "NSC529469",
+    "RefChem:553255",
+    "SDX102",
+    "Sdx-102"
+  ],
+  "cids": [
+    22128,
+    90657278
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MLFKVJCWGUZWNV-REOHCLBHSA-N/synonyms/JSON",
+  "http_status": 200
+}

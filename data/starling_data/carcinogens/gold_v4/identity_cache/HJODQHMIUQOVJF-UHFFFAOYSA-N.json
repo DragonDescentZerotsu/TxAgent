@@ -1,0 +1,12 @@
+{
+  "parent_key": "HJODQHMIUQOVJF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HJODQHMIUQOVJF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,3',4',4'-tetrachlorobiphenyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    129849821
+  ]
+}

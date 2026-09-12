@@ -1,0 +1,20 @@
+{
+  "parent_key": "CPCRJSQNWHCGOP-KUHXKYQKSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CPCRJSQNWHCGOP-KUHXKYQKSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3-Propanetricarboxylic acid, 1,1'-((1S,2R)-1-((2S,4R,11S,12R)-12-amino-4,11-dihydroxy-2-methyltridecyl)-2-((1R)-1-methylpentyl)-1,2-ethanediyl) ester",
+    "1,2,3-Propanetricarboxylicacid,1,1'-[(1S,2R)-1-[(2S,4R,11S,12R)-12-amino-4,11-dihydroxy-2-methyltridecyl]-2-[(1R)-1-methylpentyl]-1,2-ethanediyl]ester",
+    "2-[2-[(5R,6R,7S,9S,11R,18R,19S)-19-amino-6-(3,4-dicarboxybutanoyloxy)-11,18-dihydroxy-5,9-dimethylicosan-7-yl]oxy-2-oxoethyl]butanedioic acid",
+    "2-[2-[(5R,6R,7S,9S,11R,18R,19S)-19-amino-6-(3-carboxy-5-hydroxy-5-oxopentanoyl)oxy-11,18-dihydroxy-5,9-dimethylicosan-7-yl]oxy-2-oxoethyl]butanedioic acid",
+    "CCRIS 4435",
+    "CHEBI:169172",
+    "DB-226994",
+    "FB3",
+    "SCHEMBL29391907"
+  ],
+  "http_status": 200,
+  "cids": [
+    3034751
+  ]
+}

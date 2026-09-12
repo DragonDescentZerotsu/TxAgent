@@ -1,0 +1,35 @@
+{
+  "parent_key": "VYNKVNDKAOGAAQ-RUZDIDTESA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-LY-517717",
+    "(r)-n-(2-(4-(1-methylpiperidin-4-yl)piperazin-1-yl)-2-oxo-1-phenylethyl)-1h-indole-6-carboxamide",
+    "1H-Indole-6-carboxamide, N-((1R)-2-(4-(1-methyl-4-piperidinyl)-1-piperazinyl)-2-oxo-1-phenylethyl)-",
+    "313489-71-3",
+    "AKOS040748822",
+    "BDBM50328742",
+    "CHEMBL1271162",
+    "CS-0002518",
+    "DB05713",
+    "HY-10269",
+    "LY 517717",
+    "LY-517717",
+    "LY517717",
+    "N-((1R)-2-(4-(1-methylpiperidin-4-yl)piperazin-1-yl)-2-oxo-1-phenylethyl)-1H-indole-6-carboxamide",
+    "N-[(1R)-2-[4-(1-methylpiperidin-4-yl)piperazin-1-yl]-2-oxo-1-phenylethyl]-1H-indole-6-carboxamide",
+    "NS00072184",
+    "Q27290249",
+    "RefChem:800178",
+    "SCHEMBL29376834",
+    "SCHEMBL676861",
+    "T27920",
+    "TSA990HP1K",
+    "UNII-TSA990HP1K",
+    "orb1700061"
+  ],
+  "cids": [
+    9939865
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VYNKVNDKAOGAAQ-RUZDIDTESA-N/synonyms/JSON",
+  "http_status": 200
+}

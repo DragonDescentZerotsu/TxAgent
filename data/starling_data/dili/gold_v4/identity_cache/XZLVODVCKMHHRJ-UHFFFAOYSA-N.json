@@ -1,0 +1,14 @@
+{
+  "parent_key": "XZLVODVCKMHHRJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,3,5-trinitrotoluene",
+    "SCHEMBL1886966",
+    "SCHEMBL19348543"
+  ],
+  "cids": [
+    87307174
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XZLVODVCKMHHRJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "JUTIJVADGQDBGY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JUTIJVADGQDBGY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1627-06-1",
+    "5,11-Di-o-benzenodibenzo[a,e]cyclooctene, 5,6,11,12-tetrahydro-",
+    "5,2']:6,11[1'',2'']-Dibenzenodibenzo[a,e]cyclooctene, 5,6,11,12-tetrahydro-",
+    "AKOS005454003",
+    "Anthracene photodimer",
+    "Anthracene, dimer",
+    "DTXCID6089927",
+    "DTXSID10167436",
+    "Dianthracen",
+    "Dianthracene",
+    "Heptacyclo[8.6.6.6~2,9~.0~3,8~.0~11,16~.0~17,22~.0~23,28~]octacosa-3,5,7,11,13,15,17,19,21,23,25,27-dodecaene",
+    "NSC 52620",
+    "NSC-52620",
+    "NSC52620",
+    "RefChem:113049",
+    "SCHEMBL29436947",
+    "STK398383",
+    "heptacyclo[8.6.6.62,9.03,8.011,16.017,22.023,28]octacosa-3,5,7,11,13,15,17,19,21,23,25,27-dodecaene",
+    "heptacyclo[8.6.6.6~2,9~.0~3,8~.0~11,16~.0~17,22~.0~23,28~]octacosa-3,5,7,11,13,15,17,19,21,23,25,27-dodecaene (non-preferred name)"
+  ],
+  "http_status": 200,
+  "cids": [
+    137122
+  ]
+}

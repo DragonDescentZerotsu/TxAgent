@@ -1,0 +1,35 @@
+{
+  "parent_key": "QMCOCIWNMHBIIA-LROMGURASA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-N-tert-Butyl-1-{N-[(2S)-2-(dimethylamino)-1-hydroxy-3-methylbutylidene]-L-valyl-N-methyl-L-valyl-L-prolyl}pyrrolidine-2-carboximidic acid",
+    "(2S)-N-tert-butyl-1-[(2S)-1-[(2S)-2-[[(2S)-2-[[(2S)-2-(dimethylamino)-3-methylbutanoyl]amino]-3-methylbutanoyl]-methylamino]-3-methylbutanoyl]pyrrolidine-2-carbonyl]pyrrolidine-2-carboxamide",
+    "05G07285DK",
+    "192658-64-3",
+    "BSF-223651",
+    "BSF223651",
+    "CHEMBL2111109",
+    "DTXSID80940930",
+    "LU-223651",
+    "LU223651",
+    "N,N-dimethyl-l-valyl-l-valyl-N-methyl-l-valyl-l-prolyl-lproline-t-butylamide",
+    "N-tert-Butyl-1-{N-[2-(dimethylamino)-1-hydroxy-3-methylbutylidene]valyl-N-methylvalylprolyl}pyrrolidine-2-carboximidic acid",
+    "Q27236114",
+    "RefChem:187482",
+    "SCHEMBL30068",
+    "T202915",
+    "TASIDOTIN [WHO-DD]",
+    "Tasidotin",
+    "Tasidotin [INN]",
+    "UNII-05G07285DK",
+    "orb2814798",
+    "tasidotina",
+    "tasidotine",
+    "tasidotinum"
+  ],
+  "cids": [
+    9895066
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QMCOCIWNMHBIIA-LROMGURASA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "JLFAFRJZNUBKDM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,2,3,3-Tetramethylcyclopropanecarboxamide",
+    "2,2,3,3-tetramethyl-Cyclopropanecarboxamide",
+    "2,2,3,3-tetramethylcyclopropane carboxamide",
+    "2,2,3,3-tetramethylcyclopropane-1-carboxamide",
+    "55265-53-7",
+    "AKOS006283073",
+    "CHEMBL188886",
+    "Cyclopropanecarboxamide, 2,2,3,3-tetramethyl-",
+    "Cyclopropanecarboxamide,2,2,3,3-tetramethyl-",
+    "DB-052705",
+    "DTXSID80203774",
+    "JLFAFRJZNUBKDM-UHFFFAOYSA-N",
+    "MFCD00012259",
+    "RefChem:908503",
+    "SCHEMBL2516720",
+    "SCHEMBL2516721",
+    "TMCD"
+  ],
+  "cids": [
+    181152
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JLFAFRJZNUBKDM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

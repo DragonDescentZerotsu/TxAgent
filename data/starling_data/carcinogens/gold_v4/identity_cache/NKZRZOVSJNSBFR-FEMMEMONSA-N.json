@@ -1,0 +1,58 @@
+{
+  "parent_key": "NKZRZOVSJNSBFR-FEMMEMONSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,3S)-3-((1S)-1,2-dihydroxyethyl)-3,5,12-trihydroxy-10-methoxy-6,11-dioxo-1,2,3,4,6,11-hexahydrotetracen-1-yl 3-amino-2,3,6-trideoxy-alpha-L-lyxo-hexopyranoside",
+    "(1S,3S)-3-[(1S)-1,2-dihydroxyethyl]-3,5,12-trihydroxy-10-methoxy-6,11-dioxo-1,2,3,4,6,11-hexahydrotetracen-1-yl 3-amino-2,3,6-trideoxy-alpha-L-lyxo-hexopyranoside",
+    "(7S,9S)-7-((2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyloxan-2-yl)oxy-9-((1S)-1,2-dihydroxyethyl)-6,9,11-trihydroxy-4-methoxy-8,10-dihydro-7H-tetracene-5,12-dione",
+    "(7S,9S)-7-[(2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyl-tetrahydropyran-2-yl]oxy-9-[(1S)-1,2-dihydroxyethyl]-6,9,11-trihydroxy-4-methoxy-8,10-dihydro-7H-tetracene-5,12-dione",
+    "(7S,9S)-7-[(2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyloxan-2-yl]oxy-9-[(1S)-1,2-dihydroxyethyl]-6,9,11-trihydroxy-4-methoxy-8,10-dihydro-7H-tetracene-5,12-dione",
+    "(8S,10S)-10-(((2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyloxan-2-yl)oxy)-8-((1S)-1,2-dihydroxyethyl)-6,8,11-trihydroxy-1-methoxy-5,7,8,9,10,12-hexahydrotetracene-5,12-dione",
+    "(8S,10S)-10-(((2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyltetrahydro-2H-pyran-2-yl)oxy)-8-((S)-1,2-dihydroxyethyl)-6,8,11-trihydroxy-1-methoxy-7,8,9,10-tetrahydrotetracene-5,12-dione",
+    "(8S,10S)-10-{[(2R,4S,5S,6S)-4-amino-5-hydroxy-6-methyloxan-2-yl]oxy}-8-[(1S)-1,2-dihydroxyethyl]-6,8,11-trihydroxy-1-methoxy-5,7,8,9,10,12-hexahydrotetracene-5,12-dione",
+    "13-Dihydroadriamycin hydrochloride",
+    "13-Dihydrodoxorubicin",
+    "5,12-Naphthacenedione, 10-((3-amino-2,3,6-trideoxy-alpha-L-lyxo-hexopyranosyl)oxy)-8-((1S)-1,2-dihydroxyethyl)-7,8,9,10-tetrahydro-6,8,11-trihydroxy-1-methoxy-, (8S,10S)-",
+    "5,12-Naphthacenedione, 7,8,9,10-tetrahydro-10-((3-amino-2,3,6-trideoxy-alpha-L-lyxo-hexopyranosyl)oxy)-8-(1,2-dihydroxyethyl)-1-methoxy-6,8,11-trihydroxy-, (8S-(8-alpha,8(R*),10-alpha))-",
+    "54193-28-1",
+    "AKOS040746779",
+    "Adriamycinol",
+    "Antibiotic 27706RP",
+    "C27H31NO11",
+    "CHEBI:133817",
+    "CHEMBL3277946",
+    "CS-0081325",
+    "DTXSID70920620",
+    "Doxorubicinol",
+    "Doxorubicinol (>90%)",
+    "Doxorubicinol (>90%)(Mixture of Diastereomers)",
+    "Doxorubicinol (hydrochloride)",
+    "Doxorubicinol,mixture of diastereomers",
+    "DoxorubicinolMixture of Diastereomers",
+    "FD76789",
+    "HUH05KI4CF",
+    "HY-121259",
+    "NKZRZOVSJNSBFR-FEMMEMONSA-N",
+    "Q27280114",
+    "RP 27706",
+    "RP-27706",
+    "RefChem:135734",
+    "SCHEMBL29366269",
+    "T25349",
+    "UNII-HUH05KI4CF",
+    "orb1987093"
+  ],
+  "cids": [
+    83970
+  ],
+  "properties": [
+    {
+      "CID": 83970,
+      "InChIKey": "NKZRZOVSJNSBFR-FEMMEMONSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/1052,2901,2906,6853,8554,10907,11045,11157,22469,23393,28657,41781,42668,51254,68434,70297,83970,88423,96865,107637,148189,151877,443375,667476,4975903,5369209,6917655,6918961,9942124,10953794,11205997,11828886,25085677,51371498,88398963,91866193,119095428,141057523/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCMONXLWVRSCBP-UHFFFAOYSA-N,NCZOVCDTUUZEEA-UHFFFAOYSA-N,NDYQUJCJQHALIC-UHFFFAOYSA-N,NESHJWDXJAMUAO-UHFFFAOYSA-N,NEUVWYDBJVHEMN-UHFFFAOYSA-N,NEXGLKJLQODWDW-UHFFFAOYSA-N,NEYNWQNXLHMEPN-UHFFFAOYSA-N,NFDFQCUYFHCNBW-SCGPFSFSSA-N,NFECHBROZMUUHH-UHFFFAOYSA-N,NFHRQQKPEBFUJK-HSZRJFAPSA-N,NFOMHWALMFWNAQ-UHFFFAOYSA-N,NFSSJSMMIRIPKZ-UHFFFAOYSA-N,NGBFQHCMQULJNZ-UHFFFAOYSA-N,NGDOAMUCOVXUSD-UHFFFAOYSA-N,NGEUYVFKUSFJIF-UHFFFAOYSA-N,NGGMYCMLYOUNGM-CSDLUJIJSA-N,NGTRARPAYZCLIC-UHFFFAOYSA-N,NHITXWFBUHDVKD-UHFFFAOYSA-N,NHJVRSWLHSJWIN-UHFFFAOYSA-N,NHMGJBOPOUILBE-UHFFFAOYSA-N,NHOWLEZFTHYCTP-UHFFFAOYSA-N,NHQDETIJWKXCTC-UHFFFAOYSA-N,NHSDXMPPGYANBX-UHFFFAOYSA-N,NHTMVDHEPJAVLT-UHFFFAOYSA-N,NHWCJRHPJLHJPL-UHFFFAOYSA-N,NHXNPBTUMFWNNT-UHFFFAOYSA-N,NHZMQXZHNVQTQA-UHFFFAOYSA-N,NICJCIQSJJKZAH-AWEZNQCLSA-N,NIDDZRQITRGTFU-UHFFFAOYSA-N,NIGUVXFURDGQKZ-KRAHZTDDSA-N,NIHNNTQXNPWCJQ-UHFFFAOYSA-N,NILMZQGTKPQKSL-UHFFFAOYSA-N,NILQLFBWTXNUOE-UHFFFAOYSA-N,NINIDFKCEFEMDL-AKLPVKDBSA-N,NIQCNGHVCWTJSM-UHFFFAOYSA-N,NISGSNTVMOOSJQ-UHFFFAOYSA-N,NIWWFAAXEMMFMS-FTXFMUIASA-N,NJGZJSVUOVZRKP-UHFFFAOYSA-N,NJOOSZZTDCOTJQ-UHFFFAOYSA-N,NJUCYYSYEVKHLP-UHFFFAOYSA-N,NJWIMFZLESWFIM-UHFFFAOYSA-N,NKHAVTQWNUWKEO-NSCUHMNNSA-N,NKIIUJXFMVHDGY-UHFFFAOYSA-N,NKOBVLJWRPLIOP-YFKPBYRVSA-N,NKZRZOVSJNSBFR-FEMMEMONSA-N,NLBQVWJHLWAFGJ-UHFFFAOYSA-N,NLCBRSKEAVVILM-UHFFFAOYSA-N,NLCKLZIHJQEMCU-UHFFFAOYSA-N,NLGBZFBLMUDPJS-UHFFFAOYSA-N,NLHHRLWOUZZQLW-XPULMUKRSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

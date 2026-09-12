@@ -1,0 +1,23 @@
+{
+  "parent_key": "OXDYCJOPPBIFHS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "14894-42-9",
+    "AKOS003859490",
+    "DTXSID20306197",
+    "N,N-DIMETHYL(PHENYL)METHANESULFONAMIDE",
+    "N,N-Dimethylbenzylsulamide",
+    "N,N-dimethyl-1-phenylmethanesulfonamide",
+    "NSC-174595",
+    "NSC174595",
+    "SCHEMBL3174757",
+    "SCHEMBL6623123",
+    "SCHEMBL8074310",
+    "SCHEMBL8481767"
+  ],
+  "cids": [
+    300257
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OXDYCJOPPBIFHS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

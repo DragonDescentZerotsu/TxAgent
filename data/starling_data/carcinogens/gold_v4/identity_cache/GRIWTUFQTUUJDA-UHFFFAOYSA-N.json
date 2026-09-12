@@ -1,0 +1,15 @@
+{
+  "parent_key": "GRIWTUFQTUUJDA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRIWTUFQTUUJDA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(methylnitrosoamino)-1-(pyridyl)-1-butanone",
+    "93065-06-6",
+    "DTXSID80758395",
+    "N-Methyl-N-[4-oxo-4-(pyridin-2-yl)butyl]nitrous amide"
+  ],
+  "http_status": 200,
+  "cids": [
+    71329590
+  ]
+}

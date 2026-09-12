@@ -1,0 +1,38 @@
+{
+  "parent_key": "KJNZIEGLNLCWTQ-KRWDZBQOSA-N",
+  "ok": true,
+  "synonyms": [
+    "1185887-21-1",
+    "1H-INDAZOLE-3-CARBOXAMIDE, N-((1S)-1-(AMINOCARBONYL)-2-METHYLPROPYL)-1-(CYCLOHEXYLMETHYL)-",
+    "AB-CHMINACA",
+    "AB-CHMINACA (1 mg/mL in Methanol)",
+    "AB-CHMINACA (1.0 mg/mL in Methanol)",
+    "AB-CHMINACA, 0.1mg/ml in Acetonitrile",
+    "AB-CHMINACA, 1mg/ml in Acetonitrile",
+    "AB-CHMINACA; N-[(1S)-1-Amino-3-methyl-1-oxobutan-2-yl]-1-(cyclohexylmethyl)-1H-indazole-3-carboxamide; N-[(1S)-1-(Aminocarbonyl)-2-methylpropyl]-1-(cyclohexylmethyl)-1H-indazole-3-carboxamide",
+    "AKOS027325275",
+    "BDBM50249591",
+    "C22702",
+    "CHEBI:230751",
+    "CHEMBL4097041",
+    "DEA No. 7031",
+    "DTXCID001436404",
+    "DTXSID101009983",
+    "FA64684",
+    "N-((1S)-1-(AMINOCARBONYL)-2-METHYLPROPYL)-1-(CYCLOHEXYLMETHYL)-1H-INDAZOLE-3-CARBOXAMIDE",
+    "N-[(2S)-1-Amino-3-methyl-1-oxobutan-2-yl]-1-(cyclohexylmethyl)-1H-indazole-3-carboxamide",
+    "N-[(2S)-1-Amino-3-methyl-1-oxobutan-2-yl]-1-cyclohexylmethyl-1H-indazole-3-carboxamide",
+    "N-[(2S)-1-amino-3-methyl-1-oxobutan-2-yl]-1-(cyclohexylmethyl)indazole-3-carboxamide",
+    "QG3J28E7L8",
+    "RefChem:108454",
+    "SCHEMBL29706145",
+    "SCHEMBL4052482",
+    "UNII-QG3J28E7L8",
+    "n-[(1S)-1-(aminocarbonyl)-2-methylpropyl]-1-(cyclohexylmethyl)-1h-indazole-3-carboxamide"
+  ],
+  "cids": [
+    44206133
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJNZIEGLNLCWTQ-KRWDZBQOSA-N/synonyms/JSON",
+  "http_status": 200
+}

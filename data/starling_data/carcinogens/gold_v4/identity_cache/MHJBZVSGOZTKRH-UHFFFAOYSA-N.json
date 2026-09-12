@@ -1,0 +1,25 @@
+{
+  "parent_key": "MHJBZVSGOZTKRH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MHJBZVSGOZTKRH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "110025-28-0",
+    "4-(1-(4-(2-(methylamino)ethoxy)phenyl)-2-phenylbut-1-en-1-yl)phenol",
+    "4-{1-[4-(2-methylaminoethoxy)-phenyl]-2-phenyl-but-1-enyl}-phenol",
+    "AKOS024457761",
+    "CHEMBL1949791",
+    "Endoxifen Z-Isomer",
+    "NCGC00346806-01",
+    "NS00001526",
+    "Phenol,4-[(1E)-1-[4-[2-(methylamino)ethoxy]phenyl]-2-phenyl-1-butenyl]-",
+    "Phenol,4-[1-[4-[2-(methylamino)ethoxy]phenyl]-2-phenyl-1-buten-1-yl]-",
+    "SB17252",
+    "SCHEMBL14391818",
+    "orb1226963"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Yellow (56%), Request Time status: Green (12%), Service status: Black (187%)",
+  "cids": [
+    130621
+  ]
+}

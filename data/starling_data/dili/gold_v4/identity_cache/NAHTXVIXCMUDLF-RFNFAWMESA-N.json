@@ -1,0 +1,35 @@
+{
+  "parent_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
+  "ok": true,
+  "synonyms": [
+    "((1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-4-acetyloxy-6-(furan-3-yl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo(13.3.3.01,14.02,11.05,10.08,10)henicosan-21-yl) acetate",
+    "(1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-21-(acetyloxy)-6-(furan-3-yl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo[13.3.3.0^{1,14}.0^{2,11}.0^{5,10}.0^{8,10}]henicosan-4-yl acetate",
+    "(1S,2aR,3aS,3bS,4R,5aR,6R,7R,9S,9aS,9bR,11R,11aR,14R)-1-(Furan-3-yl)-4,9,14-trihydroxy-3b,6,11a-trimethyl-10-oxotetradecahydro-1H-6,9a-(methanooxymethano)naphtho[1',2':6,7]indeno[1,7a-b]oxirene-7,11-diyl diacetate",
+    "(1S,3R,4R,4aR,6R,6aS,6bS,7aR,9S,9aR,10R,11aR,11bS,14R)-9-(Furan-3-yl)-1,6,14-trihydroxy-4,6a,9a-trimethyl-11-oxotetradecahydro-1H-4,11b-(methanooxymethano)naphtho[1',2':6,7]indeno[1,7a-b]oxirene-3,10-diyl diacetate",
+    "12-Acetoxyamoorastatin",
+    "58812-37-6",
+    "AKOS025311566",
+    "AS-56295",
+    "CHEBI:192461",
+    "CHEMBL503044",
+    "CS-0008285",
+    "Chuanliansu",
+    "EBC-617126",
+    "FT65803",
+    "HY-N0263",
+    "MFCD00210564",
+    "RefChem:898613",
+    "T6S0234",
+    "Toosendanin",
+    "[(1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-4-Acetyloxy-6-(furan-3-yl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo[13.3.3.01,14.02,11.05,10.08,10]henicosan-21-yl] acetate",
+    "[(1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-4-acetoxy-6-(3-furyl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo[13.3.3.01,14.02,11.05,10.08,10]henicosan-21-yl] acetate",
+    "[(1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-4-acetyloxy-6-(uran-3-yl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo[13.3.3.01,14.02,11.05,10.08",
+    "[(1S,2R,4R,5R,6S,8R,10S,11S,12R,14R,15R,16R,19S,21R)-4-acetyloxy-6-(uran-3-yl)-12,16,19-trihydroxy-5,11,15-trimethyl-3-oxo-9,17-dioxahexacyclo[13.3.3.01,14.02,11.05,10.08,10]henicosan-21-yl] acetate",
+    "orb1300256"
+  ],
+  "cids": [
+    9851101
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NAHTXVIXCMUDLF-RFNFAWMESA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "BBPLAZOIVLTQNM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BBPLAZOIVLTQNM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL3902411",
+    "nitroimidazolecarboxamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    129641692
+  ]
+}

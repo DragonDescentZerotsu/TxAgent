@@ -1,0 +1,28 @@
+{
+  "parent_key": "YGWHMSNGVVTUIT-XZTJDVGNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-DX 52-1",
+    "(1R,2S,10R,12R,13S,15R)-12-Cyano-10-(hydroxymethyl)-8-methoxy-16-methyl-11,16-diazatetracyclo[11.2.1.02,11.04,9]hexadeca-4(9),5,7-triene-15-carboxylic acid",
+    "64T9QZ8N2Y",
+    "7-Cyano-5,7,8,9,10,11,11a,12-octahydro-5-(hydroxymethyl)-4-methoxy-13-methyl-8,11-iminoazepino(1,2-b)isoquinoline-10-carboxylic acid",
+    "7-Cyanoquinocarcinol",
+    "8,11-IMINOAZEPINO(1,2-B)ISOQUINOLINE-10-CARBOXYLIC ACID, 7-CYANO-5,7,8,9,10,11,11A,12-OCTAHYDRO-5-(HYDROXYMETHYL)-4-METHOXY-13-METHYL-, (5R,7R,8S,10R,11R,11AS)-",
+    "8,11-Iminoazepino(1,2-b)isoquinoline-10-carboxylic acid, 7-cyano-5,7,8,9,10,11,11a,12-octahydro-5-(hydroxymethyl)-4-methoxy-13-methyl-",
+    "96251-59-1",
+    "CCRIS 9393",
+    "DX 52-1",
+    "DX-52-1",
+    "DX52-1",
+    "NSC-607097",
+    "NSC607097",
+    "Q27263793",
+    "RefChem:136029",
+    "UNII-64T9QZ8N2Y"
+  ],
+  "cids": [
+    9863558
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YGWHMSNGVVTUIT-XZTJDVGNSA-N/synonyms/JSON",
+  "http_status": 200
+}

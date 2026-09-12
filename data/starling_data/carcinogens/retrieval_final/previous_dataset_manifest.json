@@ -1,0 +1,109 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "historical_previous_manifest": "data/starling_data/carcinogens/gold_v4/retrieval/previous_active/dataset_manifest.json",
+  "raw_acquisition": "data/starling_data/carcinogens/raw_v1",
+  "normalized_source": "data/starling_data/carcinogens/canonical_v1",
+  "records": {
+    "path": "data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
+    "sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+    "rows": 3270087
+  },
+  "raw_records_deleted": 0,
+  "working_exact_copies_deleted": 0,
+  "gold": {
+    "path": "data/starling_data/carcinogens/gold_v4/source_votes.jsonl",
+    "sha256": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
+    "source_votes": 89617,
+    "labels": "data/starling_data/carcinogens/gold_v4/gold_labels.jsonl",
+    "gold_rows": 4692,
+    "cohort": "starling_only_reviewed",
+    "tdc_labels_used": false
+  },
+  "benchmark": {
+    "scaffold": {
+      "root": "data/conditioned_benchmark/Carcinogens/scaffold",
+      "splits": {
+        "train": {
+          "rows": 3754,
+          "label_counts": {
+            "0": 892,
+            "1": 2862
+          },
+          "sha256": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f"
+        },
+        "valid": {
+          "rows": 469,
+          "label_counts": {
+            "0": 111,
+            "1": 358
+          },
+          "sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a"
+        },
+        "test": {
+          "rows": 469,
+          "label_counts": {
+            "1": 358,
+            "0": 111
+          },
+          "sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520"
+        }
+      }
+    },
+    "random": {
+      "root": "data/conditioned_benchmark/Carcinogens/random",
+      "splits": {
+        "train": {
+          "rows": 3754,
+          "label_counts": {
+            "0": 892,
+            "1": 2862
+          },
+          "sha256": "035d7f27b119b78ae1a9fdf093f0015661a351eda299f04cd93e4b99833defbd"
+        },
+        "valid": {
+          "rows": 469,
+          "label_counts": {
+            "0": 111,
+            "1": 358
+          },
+          "sha256": "90648e833d42b5537b5800c85f7317a437eaa9398e08bb791b5dc5f7e9abbd40"
+        },
+        "test": {
+          "rows": 469,
+          "label_counts": {
+            "0": 111,
+            "1": 358
+          },
+          "sha256": "ade7cdd3836f4d98fd89e020c3fed5bd2f1deea477cabb4f57924776a229b28c"
+        }
+      }
+    }
+  },
+  "conditions": [
+    "species=rodent",
+    "species=human",
+    "species=dog",
+    "species=monkey",
+    "species=rabbit"
+  ],
+  "semantic_review": {
+    "direction_ledger": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
+    "reused_completed_review": true,
+    "new_model_calls": 0,
+    "scope": "source-field normalization and bounded identity/source corrections; not a new full-paper or human-expert review"
+  },
+  "progressive_retrieval": {
+    "root": "data/starling_data/carcinogens/gold_v4/retrieval",
+    "records": "data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
+    "levels": 7,
+    "heldout_prefilter_levels": [
+      1
+    ],
+    "source_manifest": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+    "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json",
+    "canonical_benchmark_root": "data/conditioned_benchmark/Carcinogens",
+    "identity_contract": "new_task_tautomer_identity.v2"
+  },
+  "evaluation_status": "fresh_evaluation_pending; no Carcinogens inference launched",
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json"
+}

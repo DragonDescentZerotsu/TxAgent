@@ -1,0 +1,13 @@
+{
+  "parent_key": "AWMOSXICKCOKEK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AWMOSXICKCOKEK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-amino-N-nitrosobenzenesulfonamide",
+    "Celecoxib Nitroso Impurity 84"
+  ],
+  "http_status": 200,
+  "cids": [
+    176473833
+  ]
+}

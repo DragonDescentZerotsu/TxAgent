@@ -1,0 +1,13 @@
+{
+  "parent_key": "KOPIAFZRYFXXBN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KOPIAFZRYFXXBN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-amino-3-methyl-imidazo[4,5-b]-quinoline",
+    "SCHEMBL4939972"
+  ],
+  "http_status": 200,
+  "cids": [
+    15360597
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "GSMPSRPMQQDRIB-WHFBIAKZSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSMPSRPMQQDRIB-WHFBIAKZSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[(2S)-2-AMINO-3-CARBOXYPROPANAMIDO]-4-CARBAMOYLBUTANOIC ACID",
+    "(2S)-5-amino-2-[[(2S)-2-amino-3-carboxypropanoyl]amino]-5-oxopentanoic acid",
+    "(S)-5-Amino-2-((S)-2-amino-3-carboxypropanamido)-5-oxopentanoic acid",
+    "13433-13-1",
+    "Asp-Gln",
+    "Aspartyl-Glutamine",
+    "CHEBI:73827",
+    "DQ",
+    "DTXSID50332888",
+    "FA107997",
+    "H-Asp-Gln-OH",
+    "L-Asp-L-Gln",
+    "L-Aspartyl-L-Glutamine",
+    "L-alpha-Asp-L-Gln",
+    "L-alpha-aspartyl-L-glutamine",
+    "NH2-Asp-Gln-COOH",
+    "Q27144145",
+    "RefChem:1076513",
+    "SCHEMBL1854115",
+    "alpha-L-Aspartyl-L-glutamine",
+    "alpha-aspartylglutamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    471584
+  ]
+}

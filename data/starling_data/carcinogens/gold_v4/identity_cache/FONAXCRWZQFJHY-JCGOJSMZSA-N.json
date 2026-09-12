@@ -1,0 +1,24 @@
+{
+  "parent_key": "FONAXCRWZQFJHY-JCGOJSMZSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FONAXCRWZQFJHY-JCGOJSMZSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "C22DH Sphingomyelin",
+    "CHEBI:89490",
+    "LMSP03010022",
+    "N-(docosanoyl)-sphinganine-1-phosphocholine",
+    "Q27161682",
+    "RefChem:1098593",
+    "SCHEMBL29693677",
+    "SM d40:0",
+    "SM(40:0)",
+    "SM(40:00)",
+    "SM(d18:0/22:0)",
+    "SM(d40:0)",
+    "Sphingomyelin (d18:0/22:0)"
+  ],
+  "http_status": 200,
+  "cids": [
+    44260132
+  ]
+}

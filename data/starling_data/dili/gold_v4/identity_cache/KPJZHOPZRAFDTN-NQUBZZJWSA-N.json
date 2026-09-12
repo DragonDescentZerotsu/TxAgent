@@ -1,0 +1,25 @@
+{
+  "parent_key": "KPJZHOPZRAFDTN-NQUBZZJWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4R,7R)-N-(1-hydroxybutan-2-yl)-6,11-dimethyl-6,11-diazatetracyclo[7.6.1.0^{2,7}.0^{12,16}]hexadeca-1(15),2,9,12(16),13-pentaene-4-carboxamide",
+    "(6aR,9R)-N-(1-Hydroxy-2-butanyl)-4,7-dimethyl-4,6,6a,7,8,9-hexahydroindolo[4,3-fg]quinoline-9-carboxamide",
+    "(8R)-N-[1-hydroxymethyl(propyl)]-1,6-dimethyl-9,10-didehydroergoline-8-carboxamide",
+    "220756-57-0",
+    "BDBM50469883",
+    "DB00247",
+    "DTXSID10859349",
+    "EN300-33419388",
+    "Methysergidum [INN-Latin]",
+    "Metisergide [DCIT]",
+    "Metisergido [INN-Spanish]",
+    "N-(1-Hydroxybutan-2-yl)-1,6-dimethyl-9,10-didehydroergoline-8beta-carboxamide",
+    "SCHEMBL29359107",
+    "SCHEMBL467883"
+  ],
+  "cids": [
+    6540428
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KPJZHOPZRAFDTN-NQUBZZJWSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "GABGSSHGUHMTAX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL145978",
+    "SCHEMBL6835577"
+  ],
+  "cids": [
+    13878536
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GABGSSHGUHMTAX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

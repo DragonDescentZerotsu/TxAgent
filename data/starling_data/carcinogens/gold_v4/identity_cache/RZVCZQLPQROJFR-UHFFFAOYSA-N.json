@@ -1,0 +1,28 @@
+{
+  "parent_key": "RZVCZQLPQROJFR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RZVCZQLPQROJFR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,10-Dimethyl-7,8-benzacridine",
+    "1,10-Dimethyl-7,8-benzacridine [French]",
+    "32740-01-5",
+    "5-20-08-00539 (Beilstein Handbook Reference)",
+    "7,11-DIMETHYLBENZ[C]ACRIDINE",
+    "7,11-Dimethylbenz(c)acridine",
+    "7,11-dimethyl-benz(c)acridine",
+    "7,11-dimethylbenzo[c]acridine",
+    "BRN 0200567",
+    "Benz(c)acridine, 7,11-dimethyl-",
+    "CCRIS 7724",
+    "DTXCID90108903",
+    "DTXSID80186412",
+    "L6JJD3VAV9",
+    "Q27282774",
+    "RefChem:117076",
+    "UNII-L6JJD3VAV9"
+  ],
+  "http_status": 200,
+  "cids": [
+    91608
+  ]
+}

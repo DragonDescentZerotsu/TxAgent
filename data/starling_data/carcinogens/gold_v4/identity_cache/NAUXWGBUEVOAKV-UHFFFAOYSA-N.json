@@ -1,0 +1,20 @@
+{
+  "parent_key": "NAUXWGBUEVOAKV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NAUXWGBUEVOAKV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-nitroso-1-undecylurea",
+    "71752-67-5",
+    "DTXCID90144467",
+    "DTXSID60221976",
+    "N-Nitroso-N-undecylurea",
+    "Nitrosoundecylurea",
+    "RefChem:388156",
+    "Urea, N-nitroso-N-undecyl-",
+    "nitroso-n-undecylurea"
+  ],
+  "http_status": 200,
+  "cids": [
+    135505
+  ]
+}

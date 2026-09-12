@@ -1,0 +1,13 @@
+{
+  "parent_key": "KNLKFMRFYACRAJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KNLKFMRFYACRAJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL7773914",
+    "dibenzo(a,b)anthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    129680867
+  ]
+}

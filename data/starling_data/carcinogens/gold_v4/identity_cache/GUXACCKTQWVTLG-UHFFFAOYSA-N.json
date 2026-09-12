@@ -1,0 +1,40 @@
+{
+  "parent_key": "GUXACCKTQWVTLG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GUXACCKTQWVTLG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,6-DINITROPYRENE",
+    "1,6-DINITROPYRENE [HSDB]",
+    "1,6-DINITROPYRENE [IARC]",
+    "1,6-Dinitro-pyrene",
+    "1,6-Dinitropyrene [Nitroarenes]",
+    "1,6-Dinitropyrene, 98%",
+    "1,6-Dinitropyrene, ~60% (TLC)",
+    "42397-64-8",
+    "636-984-9",
+    "66Q2ZUF83N",
+    "AKOS015913447",
+    "BIDD:ER0474",
+    "BRN 3413178",
+    "CCRIS 2212",
+    "CHEBI:34066",
+    "CHEMBL349860",
+    "DB-050908",
+    "DINITROPYRENE, 1,6-",
+    "DTXCID10820392",
+    "DTXSID90872819",
+    "FD146844",
+    "HSDB 7874",
+    "NS00006307",
+    "Pyrene, 1,6-dinitro-",
+    "Pyrene, 1,6-dinitro-; 1,6-Dinitropyrene",
+    "Q27115788",
+    "RefChem:73608",
+    "SCHEMBL967910",
+    "UNII-66Q2ZUF83N"
+  ],
+  "http_status": 200,
+  "cids": [
+    39184
+  ]
+}

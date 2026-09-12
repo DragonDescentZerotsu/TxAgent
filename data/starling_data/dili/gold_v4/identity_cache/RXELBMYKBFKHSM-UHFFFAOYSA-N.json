@@ -1,0 +1,31 @@
+{
+  "parent_key": "RXELBMYKBFKHSM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,3,5-Triazine, 2-phenyl- (9CI)",
+    "1,3,5-triazine, 2-phenyl-",
+    "1722-18-5",
+    "2-phenyl-1,3,5-triazine",
+    "2-phenyl-[1,3,5]triazine",
+    "2-phenyl-sym-triazine",
+    "AKOS015899580",
+    "DB-278822",
+    "DTXCID20226028",
+    "DTXSID30274555",
+    "InChI=1/C9H7N3/c1-2-4-8(5-3-1)9-11-6-10-7-12-9/h1-7",
+    "PHENYL-1,3,5-TRIAZINE",
+    "RXELBMYKBFKHSM-UHFFFAOYSA-N",
+    "RefChem:265144",
+    "SCHEMBL36826",
+    "SCHEMBL4721991",
+    "SCHEMBL608868",
+    "SCHEMBL608869",
+    "SCHEMBL9322432",
+    "SCHEMBL9454465"
+  ],
+  "cids": [
+    15594
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RXELBMYKBFKHSM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

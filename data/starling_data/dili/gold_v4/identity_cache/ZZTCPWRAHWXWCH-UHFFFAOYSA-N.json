@@ -1,0 +1,20 @@
+{
+  "parent_key": "ZZTCPWRAHWXWCH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Methylenebisbenzene diamino deriv.",
+    "1,1-Diphenylmethanediamine",
+    "10143-40-5",
+    "79004-74-3",
+    "Benzene, 1,1'-methylenebis-, diamino deriv.",
+    "DTXSID90872894",
+    "Methanediamine, 1,1-diphenyl-",
+    "SCHEMBL15366",
+    "ZZTCPWRAHWXWCH-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    3036810
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZZTCPWRAHWXWCH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

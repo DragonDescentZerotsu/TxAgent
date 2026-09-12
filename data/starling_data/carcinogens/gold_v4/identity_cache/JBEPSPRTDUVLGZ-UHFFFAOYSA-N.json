@@ -1,0 +1,24 @@
+{
+  "parent_key": "JBEPSPRTDUVLGZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBEPSPRTDUVLGZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,7,12-Trimethylbenz(a)anthracene",
+    "1,7,12-Trimethylbenz[a]anthracene",
+    "1,7,12-trimethylbenz[ a]anthracene",
+    "1,7,12-trimethyltetraphene",
+    "60786-51-8",
+    "BENZ(a)ANTHRACENE, 1,7,12-TRIMETHYL-",
+    "BRN 2274006",
+    "Benz[a]anthracene, 1,7,12-trimethyl-",
+    "D94W9SX46U",
+    "DTXCID50132108",
+    "DTXSID00209617",
+    "RefChem:321013",
+    "Trimethylbenz[a]anthracene, 1,7,12-"
+  ],
+  "http_status": 200,
+  "cids": [
+    43474
+  ]
+}

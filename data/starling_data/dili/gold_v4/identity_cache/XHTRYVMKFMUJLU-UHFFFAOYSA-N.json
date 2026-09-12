@@ -1,0 +1,24 @@
+{
+  "parent_key": "XHTRYVMKFMUJLU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "13768-07-5",
+    "Arsenenous acid",
+    "Arsenious acid (HAsO2)",
+    "Arsenite (ion)",
+    "CHEMBL1909222",
+    "DTXCID3082758",
+    "DTXSID30160267",
+    "DW7NR9H8C4",
+    "NS00076245",
+    "Q2823285",
+    "Q4796460",
+    "RefChem:1077203",
+    "SCHEMBL29380467"
+  ],
+  "cids": [
+    24577
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XHTRYVMKFMUJLU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

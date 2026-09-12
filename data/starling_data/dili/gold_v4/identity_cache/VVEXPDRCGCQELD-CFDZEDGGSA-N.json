@@ -1,0 +1,33 @@
+{
+  "parent_key": "VVEXPDRCGCQELD-CFDZEDGGSA-N",
+  "ok": true,
+  "synonyms": [
+    "(Z)-6-((7S,8R)-7-(((4-chloro-2-methylphenyl)sulfonylamino)methyl)-8-bicyclo(2.2.2)octanyl)hex-5-enoic acid",
+    "(Z)-6-[(2R,3S)-3-[[(4-Chloro-2-methylphenyl)sulfonylamino]methyl]-2-bicyclo[2.2.2]octanyl]hex-5-enoic acid",
+    "(Z)-6-[(7S,8R)-7-[[(4-chloro-2-methylphenyl)sulfonylamino]methyl]-8-bicyclo[2.2.2]octanyl]hex-5-enoic acid",
+    "216158-34-8",
+    "5-Hexenoic acid, 6-((2R,3S)-3-((((4-chloro-2-methylphenyl)sulfonyl)amino)methyl)bicyclo(2.2.2)oct-2-yl)-, (5Z)-",
+    "6-((2S,3S)-3-(4-chloro-2-methylphenysulfonylaminomethyl)-bicyclo(2.2.2)octan-2-yl)-5Z-hexenoic acid",
+    "6-[(2R,3S)-3-[[[(4-Chloro-2-methylphenyl)sulfonyl]amino]methyl]bicyclo[2.2.2]oct-2-yl]-5Z-hexenoic acid",
+    "AKOS040744985",
+    "CHEMBL1628612",
+    "CS-0003141",
+    "DA-56460",
+    "GLXC-20071",
+    "GTPL1920",
+    "HY-12182",
+    "ONO 8711",
+    "ONO-8711",
+    "ONO8711",
+    "Q27088189",
+    "RefChem:168272",
+    "SCHEMBL1983864",
+    "T22125",
+    "orb1704886"
+  ],
+  "cids": [
+    9824507
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VVEXPDRCGCQELD-CFDZEDGGSA-N/synonyms/JSON",
+  "http_status": 200
+}

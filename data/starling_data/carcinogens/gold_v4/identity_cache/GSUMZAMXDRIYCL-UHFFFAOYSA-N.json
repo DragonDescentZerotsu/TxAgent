@@ -1,0 +1,36 @@
+{
+  "parent_key": "GSUMZAMXDRIYCL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSUMZAMXDRIYCL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-Dinitro-1,4-diazacyclohexane",
+    "1,4-Dinitro-piperazine",
+    "1,4-Dinitropiperazine",
+    "224-010-1",
+    "4164-37-8",
+    "5-23-03-00226 (Beilstein Handbook Reference)",
+    "AI3-00500",
+    "AKOS006275351",
+    "BRN 0181941",
+    "DB-050787",
+    "DTXCID10116949",
+    "DTXSID00194458",
+    "EINECS 224-010-1",
+    "GSUMZAMXDRIYCL-UHFFFAOYSA-N",
+    "K5DUQ8K8XJ",
+    "N,N'-Dinitropiperazine",
+    "N,N-Dinitropiperazine",
+    "NS00031027",
+    "NSC 116254",
+    "NSC-116254",
+    "NSC116254",
+    "PIPERAZINE, 1,4-DINITRO-",
+    "Piperazine,4-dinitro-",
+    "RefChem:73324",
+    "SCHEMBL251934"
+  ],
+  "http_status": 200,
+  "cids": [
+    20124
+  ]
+}

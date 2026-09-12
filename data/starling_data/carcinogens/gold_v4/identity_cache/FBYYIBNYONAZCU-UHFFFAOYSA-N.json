@@ -1,0 +1,37 @@
+{
+  "parent_key": "FBYYIBNYONAZCU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FBYYIBNYONAZCU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3',5'-Dichloro-2-hydroxy-2-methylbut-3-enanilide",
+    "3-Butenamide, N-(3,5-dichlorophenyl)-2-hydroxy-2-methyl-",
+    "83792-61-4",
+    "BF 352-23; Metab. E; 116680",
+    "CHEBI:34827",
+    "CS-0107830",
+    "DTXCID7019789",
+    "DTXSID9039789",
+    "FBYYIBNYONAZCU-UHFFFAOYSA-N",
+    "HY-130431",
+    "J592.614I",
+    "MFCD00871983",
+    "MSK21395",
+    "N-(3,5-Dichlorophenyl)-2-hydroxy-2-methyl-3-butenamide",
+    "N-(3,5-dichlorophenyl)-2-hydroxy-2-methyl-but-3-enamide",
+    "NS00098665",
+    "Q26841216",
+    "RefChem:926730",
+    "SCHEMBL11100434",
+    "T84541",
+    "U6Y06GAX2T",
+    "UNII-U6Y06GAX2T",
+    "Vinclozolin M2",
+    "Vinclozolin metabolite M2",
+    "n-(3,5-dichlorophenyl)-2-hydroxy-2-methylbut-3-enamide",
+    "orb2283689"
+  ],
+  "http_status": 200,
+  "cids": [
+    115209
+  ]
+}

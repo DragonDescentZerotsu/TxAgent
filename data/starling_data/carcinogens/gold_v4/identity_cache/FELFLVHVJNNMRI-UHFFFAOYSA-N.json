@@ -1,0 +1,12 @@
+{
+  "parent_key": "FELFLVHVJNNMRI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FELFLVHVJNNMRI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL27971558"
+  ],
+  "http_status": 200,
+  "cids": [
+    14389419
+  ]
+}

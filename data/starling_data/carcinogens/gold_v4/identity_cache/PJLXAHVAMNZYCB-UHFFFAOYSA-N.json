@@ -1,0 +1,17 @@
+{
+  "parent_key": "PJLXAHVAMNZYCB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PJLXAHVAMNZYCB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(3H-Imidazo[4,5-b]pyridin-2-yl)aniline",
+    "2-amino-phenylimidazo[4,5-b]pyridine",
+    "951-73-5",
+    "AKOS011057138",
+    "CHEMBL1194899",
+    "SCHEMBL913494"
+  ],
+  "http_status": 200,
+  "cids": [
+    11085074
+  ]
+}

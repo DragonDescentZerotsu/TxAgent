@@ -1,0 +1,41 @@
+{
+  "parent_key": "JUVJQIPDVWOVNP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JUVJQIPDVWOVNP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-hexylurea",
+    "2158-11-4",
+    "4-04-00-00715 (Beilstein Handbook Reference)",
+    "8KVM9LDD6Z",
+    "AKOS009096252",
+    "BRN 1752086",
+    "Caprylurea",
+    "Carbamimidic acid, hexyl-",
+    "DTXCID5098424",
+    "DTXSID90175933",
+    "H39132",
+    "Hexylurea",
+    "MFCD00509173",
+    "N-Hexylurea",
+    "NSC 227415",
+    "NSC-227415",
+    "NSC227415",
+    "RefChem:1086686",
+    "SCHEMBL1415923",
+    "SCHEMBL1415925",
+    "SCHEMBL2889276",
+    "SCHEMBL292692",
+    "SCHEMBL292693",
+    "SCHEMBL31373288",
+    "SCHEMBL5145592",
+    "SY424627",
+    "Urea, N-hexyl-",
+    "Urea, hexyl-",
+    "WLN: ZVM6",
+    "monohexylurea"
+  ],
+  "http_status": 200,
+  "cids": [
+    75092
+  ]
+}

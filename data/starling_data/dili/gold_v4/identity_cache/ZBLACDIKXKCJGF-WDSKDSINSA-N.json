@@ -1,0 +1,32 @@
+{
+  "parent_key": "ZBLACDIKXKCJGF-WDSKDSINSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1R,2R)-Cyclobutane-1,2-diyl)dimethanamine",
+    "1-[(1R,2R)-2-(AMINOMETHYL)CYCLOBUTYL]METHANAMINE",
+    "1731-23-3",
+    "1932217-85-0",
+    "AKOS006308949",
+    "CS-0375732",
+    "Lobaplatin Impurity 1 DiHCl",
+    "Lobaplatin Impurity 12",
+    "Lobaplatin Impurity 9",
+    "MFCD04038803",
+    "MFCD11100032",
+    "SBB052512",
+    "SCHEMBL8423168",
+    "ST51044299",
+    "[(1R,2R)-2-(Aminomethyl)cyclobutyl]methylamine",
+    "[(1R,2R)-2-(aminomethyl)cyclobutyl]methanamine",
+    "[trans-2-(aminomethyl)cyclobutyl]methanamine",
+    "rel-((1R,2R)-Cyclobutane-1,2-diyl)dimethanamine",
+    "rel-[(1R,2R)-2-(Aminomethyl)cyclobutyl]methylamine",
+    "trans-1,2-Bis-(aminomethyl)-cyclobutane",
+    "trans-Cyclobutane-1,2-diyldimethanamine"
+  ],
+  "cids": [
+    6918109
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZBLACDIKXKCJGF-WDSKDSINSA-N/synonyms/JSON",
+  "http_status": 200
+}

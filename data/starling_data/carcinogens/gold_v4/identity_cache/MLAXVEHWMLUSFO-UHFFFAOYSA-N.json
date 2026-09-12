@@ -1,0 +1,13 @@
+{
+  "parent_key": "MLAXVEHWMLUSFO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MLAXVEHWMLUSFO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL2388379",
+    "iminoindole"
+  ],
+  "http_status": 200,
+  "cids": [
+    22452072
+  ]
+}

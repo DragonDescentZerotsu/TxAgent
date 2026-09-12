@@ -1,0 +1,38 @@
+{
+  "parent_key": "WUAPFZMCVAUBPE-NJFSPNSNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(~188~Re)Rhenium",
+    "14378-26-8",
+    "188Re",
+    "188Re (isotope)",
+    "188Re isotope",
+    "188Re radioisotope",
+    "188mRe (isotope)",
+    "188mRe isotope",
+    "229C124H5I",
+    "DTXSID50932089",
+    "Isotope:188Re",
+    "Isotope:188mRe",
+    "Isotope:Rhenium-188",
+    "Isotope:Rhenium-188m",
+    "Q18882931",
+    "RE 188",
+    "RHENIUM-188 [WHO-DD]",
+    "Re-188 radioisotope",
+    "RefChem:930708",
+    "Rhenium Re-188",
+    "Rhenium, isotope of mass 188",
+    "Rhenium-188",
+    "Rhenium-188 isotope",
+    "Rhenium-188m",
+    "Rhenium-188m isotope",
+    "SCHEMBL8718921",
+    "UNII-229C124H5I"
+  ],
+  "cids": [
+    167082
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WUAPFZMCVAUBPE-NJFSPNSNSA-N/synonyms/JSON",
+  "http_status": 200
+}

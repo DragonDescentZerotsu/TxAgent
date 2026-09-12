@@ -1,0 +1,13 @@
+{
+  "parent_key": "PEEBJBQQRADPDB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "N-methylphenyl ethyl hydantoin",
+    "SCHEMBL17794055"
+  ],
+  "cids": [
+    121372289
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PEEBJBQQRADPDB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

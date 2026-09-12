@@ -1,0 +1,42 @@
+{
+  "parent_key": "DYPLDWLIOGXSSE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DYPLDWLIOGXSSE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,5,6-Tetrahydro-pyridine-3-carboxylic acid methyl ester",
+    "3-(Methoxycarbonyl)-1,2,5,6-tetrahydropyridine",
+    "3-Pyridinecarboxylic acid, 1,2,5,6-tetrahydro-, methyl ester",
+    "495-19-2",
+    "498-96-4 (free base)",
+    "AKOS006326662",
+    "BDBM50024984",
+    "CHEBI:80754",
+    "CHEMBL268808",
+    "DTXCID40120296",
+    "DTXSID20197805",
+    "EN300-261947",
+    "Epitope ID:2271876",
+    "F14151",
+    "Guvacine free base",
+    "Guvacine methyl ester",
+    "Guvacoline",
+    "MFCD02683335",
+    "Methyl 1,2,5,6-tetrahydro-3-pyridinecarboxylate",
+    "Methyl 1,2,5,6-tetrahydronicotinate",
+    "NS00018300",
+    "Nicotinic acid, 1,2,5,6-tetrahydro-, methyl ester",
+    "Q27149807",
+    "RefChem:144804",
+    "SB53050",
+    "SCHEMBL3019132",
+    "UNII-YT3OF85P98",
+    "YT3OF85P98",
+    "guavacoline",
+    "methyl 1,2,3,6-tetrahydropyridine-5-carboxylate",
+    "methyl 1,2,5,6-tetrahydropyridine-3-carboxylate"
+  ],
+  "http_status": 200,
+  "cids": [
+    160492
+  ]
+}

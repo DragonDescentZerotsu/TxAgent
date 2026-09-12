@@ -1,0 +1,17 @@
+{
+  "parent_key": "HRGVPPDDYBOUEC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HRGVPPDDYBOUEC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2438-49-5",
+    "3-Methoxy-4-dimethylaminoazobenzene",
+    "Benzenamine, 2-methoxy-N,N-dimethyl-4-(2-phenyldiazenyl)-",
+    "DTXSID001038654",
+    "N,N-Dimethyl-4-phenylazo-o-anisidine",
+    "o-ANISIDINE, N,N-DIMETHYL-4-PHENYLAZO-"
+  ],
+  "http_status": 200,
+  "cids": [
+    17101
+  ]
+}

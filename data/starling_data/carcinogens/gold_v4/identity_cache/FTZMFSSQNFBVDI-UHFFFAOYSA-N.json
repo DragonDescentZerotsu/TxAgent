@@ -1,0 +1,14 @@
+{
+  "parent_key": "FTZMFSSQNFBVDI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FTZMFSSQNFBVDI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL2469365",
+    "SCHEMBL29919450",
+    "azopyrimidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    53818362
+  ]
+}

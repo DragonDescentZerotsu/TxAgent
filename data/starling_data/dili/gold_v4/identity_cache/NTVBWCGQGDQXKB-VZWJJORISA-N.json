@@ -1,0 +1,18 @@
+{
+  "parent_key": "NTVBWCGQGDQXKB-VZWJJORISA-N",
+  "ok": true,
+  "synonyms": [
+    "(4bS,5aS)-12-Cyclohexyl-N-(dimethylsulfamoyl)-3-methoxy-5a-{[(1R,5S)-3-methyl-3,8-diazabicyclo[3.2.1]octan-8-yl]methyl}-4b,5,5a,6-tetrahydrocyclopropa[d]indolo[2,1-a][2]benzazepine-9-carboxamide",
+    "1058073-52-1",
+    "12-Cyclohexyl-N-((dimethylamino)sulfonyl)-4b,5,5a,6-tetrahydro-3-methoxy-5a-((3-methyl-3,8-diazabicyclo(3.2.1)oct-8-yl)methyl)cycloprop(d)indolo(2,1-a)(2)benzazepine-9-carboxamide",
+    "Bms-791325",
+    "DTXCID9069845",
+    "DTXSID10147354",
+    "RefChem:917430"
+  ],
+  "cids": [
+    71587917
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NTVBWCGQGDQXKB-VZWJJORISA-N/synonyms/JSON",
+  "http_status": 200
+}

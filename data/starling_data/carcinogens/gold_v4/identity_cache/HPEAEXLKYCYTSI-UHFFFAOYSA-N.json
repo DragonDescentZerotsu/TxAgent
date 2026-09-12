@@ -1,0 +1,17 @@
+{
+  "parent_key": "HPEAEXLKYCYTSI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HPEAEXLKYCYTSI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Nitro-4-hydroxyphenylarsonic acid",
+    "3-nitro-4-hydroxyphenyl-arsenic acid",
+    "4-HYDROXY-3-NITROPHENYL ARSENIC ACID",
+    "RefChem:504433",
+    "SCHEMBL27816713",
+    "SLV15B0O2F"
+  ],
+  "http_status": 200,
+  "cids": [
+    129627698
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "GDSXNLDTQFFIEU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GDSXNLDTQFFIEU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-2-Fluoroamphetamine HCl",
+    "1-(2-FLUOROPHENYL)-2-PROPYLAMINE",
+    "1-(2-fluorophenyl)propan-2-amine",
+    "1716-60-5",
+    "2-FA",
+    "2-FLUORO-.ALPHA.-METHYLBENZENEETHANAMINE",
+    "2-Fluoroamphetamine",
+    "A1-19081",
+    "AKOS000163127",
+    "AKOS022196415",
+    "BRN 2082933",
+    "Benzeneethanamine, 2-fluoro-.alpha.-methyl-",
+    "Benzeneethanamine,2-fluoro-a-methyl-",
+    "DTXSID30938009",
+    "FF95453",
+    "GDSXNLDTQFFIEU-UHFFFAOYSA-N",
+    "MFCD01708100",
+    "N10828",
+    "NS00007508",
+    "PD048121",
+    "PHENETHYLAMINE, O-FLUORO-.ALPHA.-METHYL-",
+    "Phenethylamine, o-fluoro-alpha-methyl-",
+    "Q4029768",
+    "RefChem:87140",
+    "SCHEMBL17045268",
+    "SCHEMBL2563200",
+    "SCHEMBL29687549",
+    "UNII-V8Q7K3989D",
+    "V8Q7K3989D",
+    "o-Fluoro-alpha-methylphenethylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    121531
+  ]
+}

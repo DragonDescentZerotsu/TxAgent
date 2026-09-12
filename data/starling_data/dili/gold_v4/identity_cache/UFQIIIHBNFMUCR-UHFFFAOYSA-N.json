@@ -1,0 +1,17 @@
+{
+  "parent_key": "UFQIIIHBNFMUCR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "16671-89-9",
+    "DTXCID20463118",
+    "DTXSID60512311",
+    "Naphthalen-1-yl thiocyanate",
+    "RefChem:365239",
+    "SCHEMBL6580445"
+  ],
+  "cids": [
+    12885924
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UFQIIIHBNFMUCR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

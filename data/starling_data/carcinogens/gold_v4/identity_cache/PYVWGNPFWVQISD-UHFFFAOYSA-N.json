@@ -1,0 +1,37 @@
+{
+  "parent_key": "PYVWGNPFWVQISD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PYVWGNPFWVQISD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4'-Methyl-3:4-benzpyrene",
+    "4'-Methylbenzo(a)pyrene",
+    "63041-77-0",
+    "633-111-3",
+    "6J4BS15OLB",
+    "7-Methylbenz[a]pyrene",
+    "7-Methylbenzo(a)pyrene",
+    "7-Methylbenzo[a]pyrene",
+    "7-Methylbenzo[a]pyrene, 98%",
+    "7-Methylbenzo[alpha]pyrene",
+    "7-methylbenzo[pqr]tetraphene",
+    "BENZO(a)PYRENE, 7-METHYL-",
+    "BRN 2267228",
+    "CAS-63041-77-0",
+    "CCRIS 2440",
+    "CHEMBL3181846",
+    "DB-054386",
+    "DTXCID7029297",
+    "DTXSID7049340",
+    "NCGC00260484-01",
+    "NS00124569",
+    "RefChem:106370",
+    "SCHEMBL30822825",
+    "SCHEMBL531237",
+    "Tox21_202938",
+    "UNII-6J4BS15OLB"
+  ],
+  "http_status": 200,
+  "cids": [
+    44368
+  ]
+}

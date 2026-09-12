@@ -1,0 +1,18 @@
+{
+  "parent_key": "AFSHUZFNMVJNKX-QNGWXLTQSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AFSHUZFNMVJNKX-QNGWXLTQSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-hydroxy-3-(octadec-9-enoyloxy)propan-2-yl octadec-9-enoate",
+    "(S)-Glycerol 1,2-dioleate",
+    "9-Octadecenoic acid (9Z)-, 1,1'-[(1S)-1-(hydroxymethyl)-1,2-ethanediyl] ester",
+    "MFCD32206471",
+    "[(2S)-3-hydroxy-2-octadec-9-enoyloxy-propyl] octadec-9-enoate",
+    "[(2S)-3-hydroxy-2-octadec-9-enoyloxypropyl] octadec-9-enoate",
+    "orb1737608"
+  ],
+  "http_status": 200,
+  "cids": [
+    146937
+  ]
+}

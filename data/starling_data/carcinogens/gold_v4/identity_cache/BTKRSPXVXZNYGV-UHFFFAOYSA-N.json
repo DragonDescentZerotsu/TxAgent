@@ -1,0 +1,31 @@
+{
+  "parent_key": "BTKRSPXVXZNYGV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BTKRSPXVXZNYGV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(Hydroxymethyl)-Benzenediazonium",
+    "4-(Hydroxymethyl)benzenediazonium ion",
+    "4-(Hydroxymethyl)benzenediazonium sulphate",
+    "4-(Hydroxymethyl)benzenediazonium(1+)",
+    "4-(hydroxymethyl)benzene diazonium ion",
+    "4-(hydroxymethyl)benzene-1-diazonium",
+    "4-(hydroxymethyl)benzenediazonium",
+    "4-Hmbdi",
+    "78246-53-4",
+    "Benzenediazonium, 4-(hydroxymethyl)-",
+    "CHEBI:173561",
+    "DTXCID60151406",
+    "DTXSID10228915",
+    "J384.055G",
+    "Q27292745",
+    "RefChem:912262",
+    "SCHEMBL5376086",
+    "UNII-WO37VPG02W",
+    "WO37VPG02W",
+    "p-hydroxy- methylbenzene diazonium ion"
+  ],
+  "http_status": 200,
+  "cids": [
+    122997
+  ]
+}

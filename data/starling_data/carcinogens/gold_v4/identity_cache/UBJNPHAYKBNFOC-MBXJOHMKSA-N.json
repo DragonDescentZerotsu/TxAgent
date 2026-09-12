@@ -1,0 +1,21 @@
+{
+  "parent_key": "UBJNPHAYKBNFOC-MBXJOHMKSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UBJNPHAYKBNFOC-MBXJOHMKSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Z)-2-phenylbut-2-enoic acid",
+    "2-Phenylisocrotonic acid",
+    "3127-67-1",
+    "CS-0363214",
+    "DB-240416",
+    "F754160",
+    "HMS1661F14",
+    "Phenylisocrotonsaure",
+    "SCHEMBL2555171",
+    "SCHEMBL6966013"
+  ],
+  "http_status": 200,
+  "cids": [
+    5713354
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent_key": "CGEXUOTXYSGBLV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGEXUOTXYSGBLV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4358-63-8",
+    "AC-21033",
+    "AI3-03811",
+    "AKOS015964428",
+    "BS-25024",
+    "Benzenesulfonic acid phenyl ester",
+    "Benzenesulfonic acid, phenyl ester",
+    "CGEXUOTXYSGBLV-UHFFFAOYSA-N",
+    "DB-318647",
+    "DTXCID40118370",
+    "DTXSID50195879",
+    "F571412",
+    "H82322",
+    "MFCD00607983",
+    "RefChem:118082",
+    "SCHEMBL19146",
+    "SCHEMBL4175711",
+    "SCHEMBL4600112",
+    "SCHEMBL6030847",
+    "SCHEMBL687580",
+    "SCHEMBL6882273",
+    "SCHEMBL9789810",
+    "SensitizerPhenylBenzenesulfonate",
+    "phenoxysulfonylbenzene",
+    "phenyl benzenesulfonate"
+  ],
+  "http_status": 200,
+  "cids": [
+    78064
+  ]
+}

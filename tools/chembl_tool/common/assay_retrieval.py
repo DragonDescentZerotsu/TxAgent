@@ -171,6 +171,9 @@ def _filter_heldout_direct_records(
     filter_scope_field: str = "",
     filter_scope_value: str = "",
     workers: int = 1,
+    task: str = '',
+    identity_contract: str = '',
+    identity_cache: dict | None = None,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Remove held-out parents only from the benchmark-defining direct source."""
     if bool(filter_scope_field) != bool(filter_scope_value):
@@ -183,13 +186,33 @@ def _filter_heldout_direct_records(
             "heldout_molecules_path"
         )
 
-    heldout_keys, n_heldout_rows = _load_allowed_parent_keys(
-        heldout_molecules_path,
-        heldout_smiles_field,
-    )
-    smiles_to_key = _parent_keys(
-        records["canonical_smiles"].dropna().astype(str).unique(), workers
-    )
+    if identity_contract:
+        from tools.chembl_tool.common.starling.new_task_retrieval_identity import query_identity, validate_contract
+        validate_contract(task, identity_contract)
+        heldout_rows = read_jsonl(heldout_molecules_path)
+        keys = {}
+        for row in heldout_rows:
+            smiles = str(row[heldout_smiles_field])
+            value = (identity_cache or {}).get(smiles) or query_identity(task, smiles, identity_contract)
+            if row.get('leakage_group') != value['leakage_group']:
+                raise ValueError('Heldout benchmark leakage_group disagrees with identity adapter')
+            keys[smiles] = value['leakage_group']
+        heldout_keys, n_heldout_rows = set(keys.values()), len(heldout_rows)
+        if not heldout_keys:
+            raise ValueError('Empty heldout leakage-group union')
+        unique = records['canonical_smiles'].dropna().astype(str).unique()
+        missing = set(unique) - set(identity_cache or {})
+        if missing:
+            raise ValueError(f'{len(missing)} source molecular forms absent from identity cache')
+        smiles_to_key = {smiles: identity_cache[smiles]['leakage_group'] for smiles in unique}
+    else:
+        heldout_keys, n_heldout_rows = _load_allowed_parent_keys(
+            heldout_molecules_path,
+            heldout_smiles_field,
+        )
+        smiles_to_key = _parent_keys(
+            records["canonical_smiles"].dropna().astype(str).unique(), workers
+        )
     record_keys = records["canonical_smiles"].astype(str).map(smiles_to_key)
     direct_scope = pd.Series(True, index=records.index)
     if filter_source_id:
@@ -232,6 +255,9 @@ def _filter_heldout_direct_records(
         "n_records_after_heldout_filter": len(retained),
         "n_heldout_nondirect_records_retained": int(retained_heldout_nondirect.sum()),
         "n_direct_heldout_records_after_filter": 0,
+        **({'retrieval_identity_contract': identity_contract,
+            'heldout_identity_field': 'leakage_group',
+            'n_heldout_leakage_groups': len(heldout_keys)} if identity_contract else {}),
     }
 
 
@@ -527,6 +553,8 @@ def build_assay_evidence_rows(
     filter_scope_field: str = "",
     filter_scope_value: str = "",
     workers: int = 1,
+    identity_contract: str = '',
+    identity_cache: dict | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     import pyarrow.parquet as pq
 
@@ -607,6 +635,9 @@ def build_assay_evidence_rows(
             filter_scope_field=filter_scope_field,
             filter_scope_value=filter_scope_value,
             workers=workers,
+            task=task,
+            identity_contract=identity_contract,
+            identity_cache=identity_cache,
         )
     allowed_stats: dict[str, Any] = {}
     if allowed_molecules_path is not None:
@@ -712,6 +743,8 @@ def build_assay_index(
     membership_path: Path | None,
     ranked_assays_path: Path,
     workers: int = 1,
+    identity_contract: str = '',
+    identity_cache_path: Path | None = None,
     max_record_examples: int = 3,
     max_support_text_chars: int = 0,
     max_assays: int = 0,
@@ -724,6 +757,15 @@ def build_assay_index(
     filter_scope_value: str = "",
     evidence_prompt_profile: str = ASSAY_COMPACT_PROMPT_PROFILE,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, Any]]:
+    identity_cache = None
+    if bool(identity_contract) != bool(identity_cache_path):
+        raise ValueError('identity_contract and identity_cache_path must be provided together')
+    if identity_contract:
+        from tools.chembl_tool.common.starling.new_task_retrieval_identity import load_cache, validate_contract
+        validate_contract(task, identity_contract)
+        if identity_cache_path is None or heldout_molecules_path is None:
+            raise ValueError('Opt-in retrieval identity requires prepared cache and heldout union')
+        identity_cache = load_cache(task, identity_cache_path)
     evidence_rows, ranking, stats = build_assay_evidence_rows(
         task=task,
         records_path=records_path,
@@ -740,6 +782,8 @@ def build_assay_index(
         filter_scope_field=filter_scope_field,
         filter_scope_value=filter_scope_value,
         workers=workers,
+        identity_contract=identity_contract,
+        identity_cache=identity_cache,
     )
     index_version = {
         ASSAY_COMPACT_PROMPT_PROFILE: INDEX_VERSION,
@@ -750,6 +794,8 @@ def build_assay_index(
         raise ValueError(
             f"Unsupported new assay index prompt profile: {evidence_prompt_profile}"
         )
+    source_smiles_by_id = ({row['molecule_chembl_id']: row['canonical_smiles'] for row in evidence_rows}
+                           if identity_contract else None)
     index = build_neighbor_index(
         evidence_rows,
         index_version=index_version,
@@ -775,6 +821,14 @@ def build_assay_index(
             else "legacy_compact_excerpt"
         ),
     }
+    if identity_contract:
+        from tools.chembl_tool.common.starling.new_task_retrieval_identity import annotate_index
+        annotate_index(index, task, identity_cache, identity_contract, source_smiles_by_id)
+        stats.update({key: value for key, value in index['source'].items() if key.startswith('retrieval_')})
+        stats.update({'retrieval_identity_contract': identity_contract,
+                      'retrieval_identity_task': task,
+                      'retrieval_identity_cache': str(identity_cache_path),
+                      'retrieval_identity_cache_sha256': sha256_file(identity_cache_path)})
     return index, evidence_rows, stats
 
 
@@ -1406,6 +1460,7 @@ def build_family_molecule_prefix_view(
     }
     evidence_by_molecule_group: dict[str, dict[str, list[dict[str, Any]]]] = {}
     n_missing_family_level = 0
+    family_levels_by_molecule: dict[str, set[int]] = {}
     n_visible_examples_by_level = Counter()
     n_source_assays_by_level: dict[int, set[str]] = {
         level: set() for level in normalized
@@ -1438,6 +1493,7 @@ def build_family_molecule_prefix_view(
                         n_missing_family_level += 1
                         continue
                     tagged.append((family_level, example))
+                    family_levels_by_molecule.setdefault(molecule_id, set()).add(family_level)
                 if not tagged:
                     continue
                 assay_key = str(
@@ -1486,6 +1542,7 @@ def build_family_molecule_prefix_view(
         "group_ids": {str(level): virtual_groups[level] for level in normalized},
         "candidate_generation": "global_molecule_similarity_within_cumulative_record_families",
         "per_assay_neighbor_cap": None,
+        "family_levels_by_molecule": family_levels_by_molecule,
         "n_candidate_molecules_by_level": {
             str(level): len(group_to_molecule_indices[virtual_groups[level]])
             for level in normalized
@@ -1594,6 +1651,8 @@ def _build_command(args: argparse.Namespace) -> None:
         if key not in {"workers", "output_dir", "func", "command"}
     }
     signature_paths = [Path(args.records), Path(args.ranked_assays)]
+    if getattr(args, 'identity_cache', ''):
+        signature_paths.extend([Path(args.identity_cache), Path(args.identity_cache).with_suffix('.manifest.json')])
     for key in ("membership", "allowed_molecules_jsonl", "heldout_molecules_jsonl"):
         if getattr(args, key, None):
             signature_paths.append(Path(getattr(args, key)))
@@ -1611,6 +1670,8 @@ def _build_command(args: argparse.Namespace) -> None:
         membership_path=Path(args.membership) if args.membership else None,
         ranked_assays_path=Path(args.ranked_assays),
         workers=args.workers,
+        identity_contract=getattr(args, 'identity_contract', ''),
+        identity_cache_path=Path(args.identity_cache) if getattr(args, 'identity_cache', '') else None,
         max_record_examples=args.max_record_examples,
         max_support_text_chars=args.max_support_text_chars,
         max_assays=args.max_assays,
@@ -1932,6 +1993,8 @@ def build_parser() -> argparse.ArgumentParser:
     build.add_argument("--ranked-assays", required=True)
     build.add_argument("--output-dir", required=True)
     build.add_argument("--workers", type=int, default=1)
+    build.add_argument('--identity-contract', default='', help='Explicit DILI/Carcinogens tautomer-aware retrieval identity contract.')
+    build.add_argument('--identity-cache', default='', help='Prepared unique-SMILES cache for the opt-in identity contract.')
     build.add_argument(
         "--neighbor-identity-policy-default",
         choices=("parent_disjoint", "scaffold_disjoint"),

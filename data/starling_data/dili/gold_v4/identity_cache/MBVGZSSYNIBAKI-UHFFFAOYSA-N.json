@@ -1,0 +1,16 @@
+{
+  "parent_key": "MBVGZSSYNIBAKI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL11084150",
+    "SCHEMBL5746198",
+    "SCHEMBL596952",
+    "pyridyl thio-ketone",
+    "thiopicolinic acid"
+  ],
+  "cids": [
+    19849195
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBVGZSSYNIBAKI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

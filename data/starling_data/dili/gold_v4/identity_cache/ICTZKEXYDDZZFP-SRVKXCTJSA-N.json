@@ -1,0 +1,22 @@
+{
+  "parent_key": "ICTZKEXYDDZZFP-SRVKXCTJSA-N",
+  "ok": true,
+  "synonyms": [
+    "56610-49-2",
+    "CHEBI:144903",
+    "DTXSID00475330",
+    "L-Pro-L-Arg-L-Pro",
+    "L-Proline, L-prolyl-L-arginyl-",
+    "L-Prolyl-N~5~-(diaminomethylidene)-L-ornithyl-L-proline",
+    "L-prolyl-L-arginyl-L-proline",
+    "P-R-P",
+    "Pro-Arg-Pro",
+    "SCHEMBL29436971",
+    "SCHEMBL7351817"
+  ],
+  "cids": [
+    11990092
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ICTZKEXYDDZZFP-SRVKXCTJSA-N/synonyms/JSON",
+  "http_status": 200
+}

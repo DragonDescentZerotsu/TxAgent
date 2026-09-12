@@ -1,0 +1,40 @@
+{
+  "parent_key": "JJCLXJPUTJMRTM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJCLXJPUTJMRTM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(Hydroxyamino)fluorene",
+    "2-Fluorenylhydroxylamine",
+    "53-94-1",
+    "61M94X4V24",
+    "9H-Fluoren-2-amine, N-hydroxy-",
+    "BRN 2722130",
+    "CCRIS 1067",
+    "CHEMBL314422",
+    "DTXCID50123536",
+    "DTXSID50201045",
+    "HSDB 2113",
+    "HYDROXY-2-AMINOFLUORENE, N-",
+    "Hydroxylamine, N-fluoren-2-yl-",
+    "N-(9H-fluoren-2-yl)hydroxylamine",
+    "N-2-Fluorenylhydroxylamine",
+    "N-2-hydroxyaminofluorene",
+    "N-FLUORENE-2-YL-HYDROXYLAMINE [HSDB]",
+    "N-Fluorene-2-yl-hydroxylamine",
+    "N-Hydroxy-2-aminofluorene",
+    "N-Hydroxy-2-fluorenamine",
+    "N-Hydroxy-9H-fluoren-2-amine",
+    "N-Hydroxy-N-2-aminofluorene",
+    "N-Hydroxy-aminofluorene",
+    "NS00115892",
+    "Q27263358",
+    "RefChem:163378",
+    "SCHEMBL3095573",
+    "UNII-61M94X4V24",
+    "starbld0042967"
+  ],
+  "http_status": 200,
+  "cids": [
+    5895
+  ]
+}

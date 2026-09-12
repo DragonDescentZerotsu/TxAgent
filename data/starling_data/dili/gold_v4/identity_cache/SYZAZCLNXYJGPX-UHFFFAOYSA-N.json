@@ -1,0 +1,12 @@
+{
+  "parent_key": "SYZAZCLNXYJGPX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL4171277"
+  ],
+  "cids": [
+    145949174
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SYZAZCLNXYJGPX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

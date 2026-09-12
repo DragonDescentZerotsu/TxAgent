@@ -1,0 +1,14 @@
+{
+  "parent_key": "ARMVALCHXOEZJQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ARMVALCHXOEZJQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-dihydro-3-nitropyridine",
+    "SCHEMBL3505968",
+    "SCHEMBL7296782"
+  ],
+  "http_status": 200,
+  "cids": [
+    20216215
+  ]
+}

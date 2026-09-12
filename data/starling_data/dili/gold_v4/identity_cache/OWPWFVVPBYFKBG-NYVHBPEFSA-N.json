@@ -1,0 +1,39 @@
+{
+  "parent_key": "OWPWFVVPBYFKBG-NYVHBPEFSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,3aS,3bR,5aS,6aR,7aS,9R,11S,11aS,12aR,13aR,13bS,15aR)-3a,11,11a-Trihydroxy-9,15a-dimethyl-1-(5-oxo-2,5-dihydrofuran-3-yl)icosahydro-7aH,13aH-cyclopenta[7,8]phenanthro[2,3-b]pyrano[3,2-e][1,4]dioxine-13a-carbaldehyde",
+    "(1S,3R,5S,7R,9S,10S,12R,14R,15S,18R,19R,22S,23R)-9,10,22-trihydroxy-7,18-dimethyl-19-(5-oxo-2H-furan-3-yl)-4,6,11-trioxahexacyclo(12.11.0.03,12.05,10.015,23.018,22)pentacosane-14-carbaldehyde",
+    "(1S,3R,5S,7R,9S,10S,12R,14R,15S,18R,19R,22S,23R)-9,10,22-trihydroxy-7,18-dimethyl-19-(5-oxo-2H-furan-3-yl)-4,6,11-trioxahexacyclo[12.11.0.03,12.05,10.015,23.018,22]pentacosane-14-carbaldehyde",
+    "(1S,3R,7R,9S,10S,14R,15S,18R,19R,22S)-9,10,22-trihydroxy-7,18-dimethyl-19-(5-oxo-2H-furan-3-yl)-4,6,11-trioxahexacyclo(12.11.0.03,12.05,10.015,23.018,22)pentacosane-14-carbaldehyde",
+    "(2.ALPHA.,3.BETA.,5.ALPHA.)-14-HYDROXY-19-OXO-2,3-(((2S,3S,4S,6R)-TETRAHYDRO-3,4-DIHYDROXY-6-METHYL-2H-PYRAN-3,2-DIYL)BIS(OXY))CARD-20(22)-ENOLIDE",
+    "1986-70-5",
+    "3XK21U1BZS",
+    "BDBM50277173",
+    "C08855",
+    "CALOTROPIN",
+    "CALOTROPIN [MI]",
+    "CARD-20(22)-ENOLIDE, 14-HYDROXY-19-OXO-2,3-(((2S,3S,4S,6R)-TETRAHYDRO-3,4-DIHYDROXY-6-METHYL-2H-PYRAN-3,2-DIYL)BIS(OXY))-, (2.ALPHA.,3.BETA.,5.ALPHA.)-",
+    "CHEBI:3329",
+    "CHEMBL495949",
+    "Card-20(22)-enolide, 14-hydroxy-19-oxo-3,2-((tetrahydro-3,4-dihydroxy-6-methyl-2H-pyran-2,3-diyl)bis(oxy))-, (2alpha(2S,4S,6R),3beta,5alpha)-",
+    "DTXCID4096104",
+    "DTXSID10173613",
+    "HSDB 3470",
+    "LMST01120046",
+    "NS00094620",
+    "NSC 143925",
+    "NSC-143925",
+    "Pecilocerin A",
+    "Pekilocerin A",
+    "Q27106025",
+    "RefChem:123041",
+    "SCHEMBL868547",
+    "UNII-3XK21U1BZS"
+  ],
+  "cids": [
+    16142
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OWPWFVVPBYFKBG-NYVHBPEFSA-N/synonyms/JSON",
+  "http_status": 200
+}

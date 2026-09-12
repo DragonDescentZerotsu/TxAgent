@@ -1,0 +1,28 @@
+{
+  "parent_key": "FTMNZJASLMPPNW-MHFVGYLCSA-N",
+  "ok": true,
+  "synonyms": [
+    "1951476-79-1",
+    "77AP23J0GH",
+    "AT-2173",
+    "ATI-2173",
+    "CHEMBL5095214",
+    "DA-73532",
+    "Fosclevudina alafenamida",
+    "Fosclevudine alafenamide",
+    "L-ALANINE, N-((S)-HYDROXYPHENOXYPHOSPHINYL)-, 1-METHYLETHYL ESTER, 5'-ESTER WITH 1-(2-DEOXY-2-FLUORO-.BETA.-L-ARABINOFURANOSYL)-5-METHYL-2,4(1H,3H)-PYRIMIDINEDIONE",
+    "L-Alanine, N-((S)-hydroxyphenoxyphosphinyl)-, 1-methylethyl ester, 5'-ester with 1-(2-deoxy-2-fluoro-beta-L-arabinofuranosyl)-5-methyl-2,4(1H,3H)-pyrimidinedione",
+    "RefChem:199653",
+    "SCHEMBL29462222",
+    "UNII-77AP23J0GH",
+    "fosclevudine alafenamide [INN]",
+    "orb757576",
+    "propan-2-yl (2S)-2-[[[(2S,3S,4R,5S)-4-fluoro-3-hydroxy-5-(5-methyl-2,4-dioxopyrimidin-1-yl)oxolan-2-yl]methoxy-phenoxyphosphoryl]amino]propanoate",
+    "propan-2-yl N-[(P5'S)-2'-deoxy-2'-fluoro-5-methyl-OPphenyl- beta-L-arabino-5'-uridylyl]-L-alaninate"
+  ],
+  "cids": [
+    147565559
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FTMNZJASLMPPNW-MHFVGYLCSA-N/synonyms/JSON",
+  "http_status": 200
+}

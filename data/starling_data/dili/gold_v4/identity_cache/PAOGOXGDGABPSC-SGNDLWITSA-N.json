@@ -1,0 +1,36 @@
+{
+  "parent_key": "PAOGOXGDGABPSC-SGNDLWITSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1R)-1-(((2S)-1-((2R)-2-(((benzyloxy)carbonyl)amino)-3-phenylpropanoyl)pyrrolidin-2-yl)formamido)-4-methoxybutyl)boronic acid",
+    "(1R)-1-(N-((BENZYLOXY)CARBONYL)-D-PHENYLALANYL-L-PROLINAMIDO)BUTYLBORONIC ACID",
+    "(2S)-1-{N-[(Benzyloxy)(hydroxy)methylidene]-D-phenylalanyl}-N-[(1R)-1-borono-4-methoxybutyl]pyrrolidine-2-carboximidic acid",
+    "1-{N-[(Benzyloxy)(hydroxy)methylidene]phenylalanyl}-N-(1-borono-4-methoxybutyl)pyrrolidine-2-carboximidic acid",
+    "2WA50NUH6H",
+    "871576-03-3",
+    "AKOS040751815",
+    "CS-0002519",
+    "DA-73383",
+    "DB05714",
+    "DTXSID301007371",
+    "Flovagatran",
+    "Flovagatran [INN]",
+    "HY-10270",
+    "L-Prolinamide,N-[(phenylmethoxy)carbonyl]-D-phenylalanyl-N-[(1R)-1-borono-4-methoxybutyl]-",
+    "NS00073514",
+    "Q27255705",
+    "RefChem:140780",
+    "SCHEMBL971479",
+    "T31806",
+    "UNII-2WA50NUH6H",
+    "[(1R)-1-{[(2S)-1-[(2R)-2-{[(benzyloxy)carbonyl]amino}-3-phenylpropanoyl]pyrrolidin-2-yl]formamido}-4-methoxybutyl]boronic acid",
+    "[(1R)-4-methoxy-1-[[(2S)-1-[(2R)-3-phenyl-2-(phenylmethoxycarbonylamino)propanoyl]pyrrolidine-2-carbonyl]amino]butyl]boronic acid",
+    "flovagatranum",
+    "orb1697197"
+  ],
+  "cids": [
+    9871747
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PAOGOXGDGABPSC-SGNDLWITSA-N/synonyms/JSON",
+  "http_status": 200
+}

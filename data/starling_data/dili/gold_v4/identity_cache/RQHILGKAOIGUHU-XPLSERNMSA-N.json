@@ -1,0 +1,42 @@
+{
+  "parent_key": "RQHILGKAOIGUHU-XPLSERNMSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,5R,13R,14S,17S)-14-(2,5,8,11,14,17-hexaoxanonadecan-19-yloxy)-10-methoxy-4-methyl-12-oxa-4-azapentacyclo(9.6.1.0^(1,13).0^(5,17).0^(7,18))octadeca-7(18),8,10-trien-17-ol",
+    "(4R,4aS,7S,7aR,12bS)-9-methoxy-7-(2-(2-(2-(2-(2-(2-methoxyethoxy)ethoxy)ethoxy)ethoxy)ethoxy)ethoxy)-3-methyl-1,2,4,5,6,7,7a,13-octahydro-4,12-methanobenzofuro(3,2-e)isoquinolin-4a-ol",
+    "(4R,4aS,7S,7aR,12bS)-9-methoxy-7-[2-[2-[2-[2-[2-(2-methoxyethoxy)ethoxy]ethoxy]ethoxy]ethoxy]ethoxy]-3-methyl-1,2,4,5,6,7,7a,13-octahydro-4,12-methanobenzofuro[3,2-e]isoquinolin-4a-ol",
+    "1211231-76-3",
+    "4,5alpha-Epoxy-6alpha-((2,5,8,11,14,17-hexaoxanonadecan-19-yl)oxy)-3-methoxy-17-methylmorphinan-14-ol",
+    "4,5alpha-Epoxy-6alpha-[(2,5,8,11,14,17-hexaoxanonadecan-19-yl)oxy]-3-methoxy-17-methylmorphinan-14-ol",
+    "AKOS040748762",
+    "CS-0033429",
+    "D11424",
+    "DB14146",
+    "DTXSID801358652",
+    "EX-A10202",
+    "GTPL10652",
+    "J2WIV0JMML",
+    "Loxicodegol",
+    "Loxicodegol [INN]",
+    "MORPHINAN-14-OL, 4,5-EPOXY-6-(3,6,9,12,15,18-HEXAOXANONADEC-1-YLOXY)-3-METHOXY-17-METHYL-, (5.ALPHA.,6.ALPHA.)-",
+    "NKTR-181",
+    "NKTR181",
+    "NS00073593",
+    "OXYCODEGOL [INN]",
+    "Oxicodegol",
+    "Oxycodegol",
+    "Oxycodegol (USAN/INN)",
+    "Oxycodegol [USAN]",
+    "Oxycodegol [WHO-DD]",
+    "RefChem:169034",
+    "UNII-J2WIV0JMML",
+    "WHO 9971",
+    "loxicodegol (deleted INN)",
+    "oxycodegolum"
+  ],
+  "cids": [
+    73673720
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RQHILGKAOIGUHU-XPLSERNMSA-N/synonyms/JSON",
+  "http_status": 200
+}

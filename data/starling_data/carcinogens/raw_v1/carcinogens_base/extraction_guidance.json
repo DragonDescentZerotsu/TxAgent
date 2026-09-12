@@ -1,0 +1,152 @@
+{
+  "task": "Find all known carcinogens reported within PubMed.",
+  "task_instantiation": "The table exists to answer: (1) Which named agents, classes, mixtures, materials, physical agents, biological agents, or exposure circumstances are reported as carcinogenic or explicitly evaluated for carcinogenicity? (2) What is the direction and strength of each conclusion, including probable, possible, limited, equivocal, inadequate, and negative conclusions? (3) Is the evidence from humans, intact animals, in-vitro neoplastic transformation, a formal authority, or an unsourced literature assertion, and in which population or model? (4) Which cancer or tumor outcome is linked to the agent? (5) Is the agent described as a general carcinogen, initiator, promoter, or cocarcinogen? (6) Which formal authority/category and exposure route are reported?\n\nExtract claim-level records about carcinogenicity. Eligible primary entities include individual chemicals and drugs, chemical classes, complex mixtures and materials, occupational or industrial processes, behaviors or exposure circumstances, radiation and other physical agents, and infectious or other biological agents. A positive record qualifies when the text explicitly calls the entity carcinogenic, cancer-causing, oncogenic, leukemogenic, tumorigenic, an initiator, promoter, or cocarcinogen; reports a formal carcinogenicity classification; reports attributable induction of a benign or malignant neoplasm in humans or intact animals; reports neoplastic transformation in vitro and interprets it as carcinogenic evidence; or presents a human cancer association as etiologic or as evidence of carcinogenic risk. Also extract explicit probable, possible, suspected, limited, hypothetical, equivocal, inadequate, not-classifiable, and negative carcinogenicity conclusions. A negative or null result is in scope only when the passage explicitly evaluates carcinogenicity or the agent–cancer relationship; an unrelated null cancer endpoint is not.\n\nExclude mutagenicity, genotoxicity, DNA or protein adducts, oxidative stress, chromosome damage, cytotoxicity, irritation, endocrine effects, cell proliferation, preneoplastic lesions, non-neoplastic toxicity, metabolism, pharmacokinetics, exposure or biomonitoring measurements, environmental occurrence, presence in tumor tissue, and use in a carcinogenicity assay or as a positive control when no carcinogenicity conclusion or attributable neoplasm is reported. Exclude anticancer, chemopreventive, and tumor-regression findings. Do not infer carcinogenicity from outside knowledge, an entity-list label, chemical similarity, membership in a carcinogenic class, presence in a carcinogenic mixture, or being a precursor, metabolite, contaminant, biomarker, or co-exposure of a carcinogen. A virus or chemical merely detected in tumors is insufficient. A statistical association alone is not causal; include it only when the passage treats it as etiologic/carcinogenic evidence, and preserve its limited status. A promoter or cocarcinogen qualifies only when that role is explicitly assigned in carcinogenesis; do not relabel it as a complete carcinogen.\n\nOne record represents one agent × one cancer/tumor outcome × one materially distinct conclusion × one evidence basis/scope × one carcinogenic role. Split separately named agents in lists. Split distinct cancer sites or histologies when the agent–outcome pairing is supported, human versus animal versus in-vitro evidence, animal species with different findings, different conclusion strengths or directions, different roles, and different formal classifications. Split routes only when findings differ by route. Merge aliases, abbreviations, salts, and spelling variants that clearly denote the same agent in the same claim; use the most specific full paper-supported name in `agent_name`. Merge repeated statements and study details when agent, outcome, conclusion, evidence, and role are unchanged. Do not split only by dose, duration, sex, strain, study arm, or effect estimate unless they change the conclusion; retain material restrictions in `qualifying_conditions`. For an explicit general carcinogen claim with no tumor named, create one record with `cancer_or_tumor` and `cancer_identifier` null. For a class, mixture, process, or exposure-level claim, record that entity itself and do not invent constituent/member records. If both a class and particular members are explicitly assigned claims, extract each.\n\nUse only the supplied paper text, including clearly attributed prior findings in reviews. Normalize conservatively. In `carcinogenicity_conclusion`, `established` requires explicit known, established, proven, causal, sufficient-evidence, or equivalent highest-category wording; a direct positive experiment without such a broad designation is `positive`. Preserve probable, possible, limited/suspected, hypothetical, equivocal, inadequate/not-classifiable, and negative wording. Do not upgrade animal evidence to human carcinogenicity, association to causation, genotoxicity to carcinogenicity, or a single positive study to established status. Use `evidence_scope` for the population/system to which the conclusion directly applies, not for extrapolated hazard. Copy `cancer_identifier` only from an unambiguous matching `- Disease:` entity supplied with the paper; never invent or look up an identifier.\n\nAssume ordinary conditions for the stated study design and that an unqualified claim applies only to the named agent at the stated `evidence_scope`; assume no unstated species, human relevance, route, cancer site, dose, sex, strain, mechanism, co-exposure, or formal classification. Put genuine departures or generalizability limits in `qualifying_conditions`: critical dose/concentration or duration, sex/strain/life-stage restriction, susceptible genotype or disease, special chemical/material form or purity, local implantation or injection-site effect, route-specificity, required co-exposure or initiation–promotion regimen, unusual vehicle or diet, occupational/product setting when essential, and explicit lack of human relevance.\n\nSpill rules: aliases, abbreviations, CAS numbers, chemical subclasses, source products/matrices, incidental occupation or geography, exact doses and schedules that do not limit the claim, incidence, latency, effect estimates, confidence intervals, p-values, potency or unit-risk values, study citations and dates, monograph/report details, mechanisms and broad genotoxic/non-genotoxic mode, metabolites, mutations, adducts, biomarkers, assay names, non-neoplastic lesions, and ancillary positive or negative endpoints go in `extra_details`. Exact authority and category belong in `classification_authority` and `classification_label`; cancer site/histology belongs in `cancer_or_tumor`; material restrictions belong in `qualifying_conditions`. Leave unsupported fields null and create no record when the evidence threshold is not met.",
+  "schema_spec": [
+    {
+      "name": "agent_name",
+      "description": "Human-readable name of the primary agent, class, mixture, material, physical or biological agent, process, behavior, or exposure circumstance receiving the carcinogenicity claim. Use the most specific full name supported by the passage, one agent per record. Preserve a class-level or mixture-level name when that is the asserted entity; do not add an identifier or infer unnamed members. This should normally be non-null.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "agent_category",
+      "description": "Broad mutually exclusive type of the entity in `agent_name`, based on the entity actually receiving the claim. Use `individual_substance_or_drug` for a defined chemical, element, drug, hormone, radionuclide, fiber, or nanomaterial; `chemical_class` for a chemical family; `mixture_or_complex_material` for smoke, exhaust, soot, tar, dust, formulated mixtures, or natural materials; `physical_agent` for radiation or other physical causes; `biological_agent` for viruses, bacteria, parasites, or other biological causes; `occupational_or_industrial_process` for an occupation or process not resolved to a specific agent; and `behavior_or_exposure_circumstance` for smoking, dietary patterns, or other exposure circumstances. Null only when type is not recoverable.",
+      "value_type": "string",
+      "allowed_values": [
+        "individual_substance_or_drug",
+        "chemical_class",
+        "mixture_or_complex_material",
+        "physical_agent",
+        "biological_agent",
+        "occupational_or_industrial_process",
+        "behavior_or_exposure_circumstance",
+        "other"
+      ]
+    },
+    {
+      "name": "carcinogenicity_conclusion",
+      "description": "Direction and strength of the conclusion for this exact claim. `established` requires explicit known/established/proven/causal/sufficient-evidence or equivalent highest-category wording. `positive` is an ungraded carcinogen label or direct positive tumor/transformation result without an established designation. `probable` and `possible` require those levels or clear equivalents. `limited_or_suspected` covers limited, suggestive, suspected, weak, or an association presented as carcinogenic evidence. `hypothetical` is a proposed but unverified carcinogenic role. `equivocal_or_conflicting` is explicitly equivocal, inconsistent, or inseparably mixed. `inadequate_or_not_classifiable` is an explicit inability to assess or classify. `negative` is an explicit negative carcinogenicity conclusion or negative carcinogenicity assessment, not merely a negative short-term assay or an uninterpreted nonsignificant estimate.",
+      "value_type": "string",
+      "allowed_values": [
+        "established",
+        "positive",
+        "probable",
+        "possible",
+        "limited_or_suspected",
+        "hypothetical",
+        "equivocal_or_conflicting",
+        "inadequate_or_not_classifiable",
+        "negative"
+      ]
+    },
+    {
+      "name": "evidence_basis",
+      "description": "Primary direct basis for `carcinogenicity_conclusion`. Choose the basis actually reported: a formal expert/regulatory classification; human epidemiology; human clinical or case evidence; an intact-animal carcinogenicity bioassay; a specialized intact-animal tumor-induction or initiation/promotion model; in-vitro neoplastic transformation; a mechanistic study that also explicitly retains a carcinogen claim; or a review/list/narrative assertion without underlying evidence in the passage. Use `integrated_multiple` only for one inseparable conclusion explicitly synthesizing multiple bases. Null only when indeterminable.",
+      "value_type": "string",
+      "allowed_values": [
+        "authoritative_classification",
+        "human_epidemiology",
+        "human_clinical_or_case_evidence",
+        "animal_carcinogenicity_bioassay",
+        "experimental_tumor_model",
+        "in_vitro_neoplastic_transformation",
+        "mechanistic_with_explicit_carcinogen_claim",
+        "review_list_or_narrative_assertion",
+        "integrated_multiple"
+      ]
+    },
+    {
+      "name": "evidence_scope",
+      "description": "Biological scope to which the reported conclusion directly applies, independent of `evidence_basis`. Use `human`, `experimental_animal`, or `in_vitro`; use `mixed` only for an inseparable claim covering more than one scope, and `general_or_unspecified` for a bare designation or formal classification whose scope is not stated. Do not infer human scope from animal evidence or from an unqualified phrase such as `known carcinogen`.",
+      "value_type": "string",
+      "allowed_values": [
+        "human",
+        "experimental_animal",
+        "in_vitro",
+        "mixed",
+        "general_or_unspecified"
+      ]
+    },
+    {
+      "name": "evidence_population_or_model",
+      "description": "Species, experimental model, cell system, or human population directly supporting this record, as reported. Examples include `F344 rat`, `B6C3F1 mouse`, `nickel refinery workers`, or `human bronchial epithelial cells`. Include strain or sex only when essential to identify the model; otherwise place restrictions in `qualifying_conditions`. Null for general claims or classifications with no stated population/model.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "cancer_or_tumor",
+      "description": "One cancer, benign or malignant neoplasm, tumor site, or tumor histology explicitly linked to the agent, using the paper's wording and preserving site plus histology when available. Split materially distinct outcomes. Do not enter preneoplastic lesions, molecular endpoints, non-neoplastic toxicity, or a pre-existing tumor being treated. Null for a general carcinogenicity claim with no named outcome.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "cancer_identifier",
+      "description": "Identifier of the secondary Disease entity corresponding to `cancer_or_tumor`, copied only from an unambiguously matching `- Disease:` entity supplied with the extractor input. Use one identifier. Null when the outcome is absent, generic, unmatched, or ambiguous; never invent or externally look up an identifier.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "carcinogenic_role",
+      "description": "Functional role explicitly assigned to the agent. Use `general_or_unspecified_carcinogen` for an ordinary carcinogen/cancer-cause/tumor-induction claim without a narrower role; `initiator`, `promoter`, and `cocarcinogen_or_enhancer` only when explicitly stated; `multiple_roles` when multiple narrower roles are inseparable. For explicit negative or inadequate evaluations with no assigned role, leave null. Do not infer initiation from genotoxicity or promotion from proliferation.",
+      "value_type": "string",
+      "allowed_values": [
+        "general_or_unspecified_carcinogen",
+        "initiator",
+        "promoter",
+        "cocarcinogen_or_enhancer",
+        "multiple_roles"
+      ]
+    },
+    {
+      "name": "classification_authority",
+      "description": "Authority or formal scheme assigning the carcinogenicity classification, only when explicitly named. Use `other` for a named authority not listed and give its name with the exact category in `classification_label`. Null when no formal classification is reported.",
+      "value_type": "string",
+      "allowed_values": [
+        "IARC",
+        "NTP",
+        "US_EPA",
+        "EU_CLP_or_ECHA",
+        "ACGIH",
+        "California_OEHHA",
+        "other"
+      ]
+    },
+    {
+      "name": "classification_label",
+      "description": "Exact formal category or designation reported by `classification_authority`, preserving historical wording, such as `Group 1`, `Group 2A`, `known to be a human carcinogen`, or `Category 1B`. Do not infer, translate, or update a category from outside knowledge. Null when no exact formal label is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_route",
+      "description": "Physiological exposure or administration route for the carcinogenicity finding, only when explicitly stated or inherent in the described administration. Normalize diet, drinking water, gavage, and ingestion to `oral`; retain the exact subtype in `qualifying_conditions` only when it limits interpretation. Use setting values only when a setting is reported but no physiological route is known. Null for unstated or inapplicable routes.",
+      "value_type": "string",
+      "allowed_values": [
+        "oral",
+        "inhalation",
+        "dermal_or_topical",
+        "injection_or_parenteral",
+        "implantation_or_local_instillation",
+        "transplacental_or_perinatal",
+        "infection",
+        "irradiation",
+        "occupational_unspecified",
+        "environmental_unspecified",
+        "multiple_routes",
+        "other"
+      ]
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Concise non-default context that materially limits or changes generalization: critical dose/concentration or duration; sex, strain, life-stage, genotype, or disease restriction; special chemical/material form, formulation, purity, or vehicle; local implantation/injection-site effect; route dependence; required co-exposure, initiator, promoter, diet, or susceptibility condition; essential occupational/product setting; or an explicit species-specific lack of human relevance. Do not repeat ordinary study details already captured elsewhere. Null when no material qualifier is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional in-scope details not represented above: aliases/abbreviations, CAS numbers, subclasses, source/use, incidental occupation or geography, non-limiting doses and schedules, incidence and latency, quantitative risk estimates and uncertainty, potency, study citations/dates, monograph details, mechanisms including genotoxic/non-genotoxic mode, metabolism, mutations/adducts/biomarkers, assay names, non-neoplastic lesions, and ancillary findings. Do not use this field to justify an otherwise out-of-scope record.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

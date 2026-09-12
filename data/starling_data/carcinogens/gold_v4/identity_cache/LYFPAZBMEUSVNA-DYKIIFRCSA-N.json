@@ -1,0 +1,30 @@
+{
+  "parent_key": "LYFPAZBMEUSVNA-DYKIIFRCSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LYFPAZBMEUSVNA-DYKIIFRCSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3.BETA.)-ANDROST-5-EN-3-OL",
+    "(3S,8S,9S,10R,13S,14S)-10,13-DIMETHYL-2,3,4,7,8,9,11,12,14,15,16,17-DODECAHYDRO-1H-CYCLOPENTA(A)PHENANTHREN-3-OL",
+    "(3S,8S,9S,10R,13S,14S)-10,13-dimethyl-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    ".DELTA.5-ANDROSTEN-3.BETA.-OL",
+    "17-DEOXYDEHYDROEPIANDROSTERONE",
+    "3.BETA.-HYDROXYANDROST-5-ENE",
+    "3beta-hydroxy-5-androstene",
+    "5-Androsten-3.beta.-ol",
+    "ANDROST-5-EN-3.BETA.-OL",
+    "Androst-5-en-3-ol #",
+    "Androst-5-en-3-ol, (3.beta.)-",
+    "Androst-5-en-3beta-ol",
+    "Androst-5-ene-3.beta.-ol",
+    "Androst-5-ene-3.beta.ol",
+    "Androsterol",
+    "Q27259258",
+    "SCHEMBL25322082",
+    "SCHEMBL336035",
+    "UNII-498C13Y7JP"
+  ],
+  "http_status": 200,
+  "cids": [
+    7056608
+  ]
+}

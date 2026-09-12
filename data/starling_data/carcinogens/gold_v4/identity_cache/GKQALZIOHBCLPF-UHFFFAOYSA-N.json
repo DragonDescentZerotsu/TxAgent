@@ -1,0 +1,13 @@
+{
+  "parent_key": "GKQALZIOHBCLPF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GKQALZIOHBCLPF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-Ethoxy-5-methyl- 2(1H)-pyrimidinone; 4-Ethoxy-5-methyl-2(1H)-pyrimidinone; O4-Ethylthymine;",
+    "o4-ethylthymine"
+  ],
+  "http_status": 200,
+  "cids": [
+    102061458
+  ]
+}

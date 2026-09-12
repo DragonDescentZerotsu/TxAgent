@@ -1,0 +1,39 @@
+{
+  "parent_key": "JTHRRMFZHSDGNJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JTHRRMFZHSDGNJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-diazaperhydroine-2,3-dione",
+    "13092-86-9",
+    "2,3-Diketopiperazine",
+    "2,3-Piperazinedione",
+    "632-629-7",
+    "64DUD3CT57",
+    "AKOS005169820",
+    "ALBB-021992",
+    "AT12017",
+    "CS-0054985",
+    "DB-352642",
+    "DTXCID401355775",
+    "DTXSID20926970",
+    "F808586",
+    "JTHRRMFZHSDGNJ-UHFFFAOYSA-N",
+    "MFCD00053421",
+    "NSC 218330",
+    "NSC-218330",
+    "NSC218330",
+    "RefChem:442621",
+    "SBB079701",
+    "SCHEMBL2139246",
+    "SCHEMBL29750828",
+    "SCHEMBL31059",
+    "SCHEMBL464927",
+    "SY249852",
+    "UNII-64DUD3CT57",
+    "piperazine-2,3-dione"
+  ],
+  "http_status": 200,
+  "cids": [
+    72761
+  ]
+}

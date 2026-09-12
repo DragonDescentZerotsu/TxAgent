@@ -1,0 +1,12 @@
+{
+  "parent_key": "HEYGBRYPNRZSJA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HEYGBRYPNRZSJA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-[4-(nitro-2-furyl)-2-thiazolyl] formamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    53873768
+  ]
+}

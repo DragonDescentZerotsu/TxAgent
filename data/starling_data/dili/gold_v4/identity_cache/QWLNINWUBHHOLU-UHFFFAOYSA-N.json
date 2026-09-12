@@ -1,0 +1,36 @@
+{
+  "parent_key": "QWLNINWUBHHOLU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,5-Naphthyridine-3-carboxamide, 7-((4-fluorophenyl)methyl)-1,2-dihydro-4-hydroxy-N-(2-hydroxyethyl)-1-methyl-2-oxo-",
+    "7-((4-FLUOROPHENYL)METHYL)-4-HYDROXY-N-(2-HYDROXYETHYL)-1-METHYL-2-OXO-1,5-NAPHTHYRIDINE-3-CARBOXAMIDE",
+    "7-((4-fluorophenyl)methyl)-4-hydroxy-N-(2-hydroxyethyl)-1-methyl-2-oxo-1,2-dihydro-1,5-naphthyridine-3-carboxamide",
+    "7-(4-Fluorobenzyl)-4-hydroxy-N-(2-hydroxyethyl)-1-methyl-2-oxo-1,2-dihydro-1,5-naphthyridine-3-carboxamide",
+    "7-[(4-fluorophenyl)methyl]-4-hydroxy-N-(2-hydroxyethyl)-1-methyl-2-oxo-1,2-dihydro-1,5-naphthyridine-3-carboxamide",
+    "7-[(4-fluorophenyl)methyl]-4-hydroxy-N-(2-hydroxyethyl)-1-methyl-2-oxo-1,5-naphthyridine-3-carboxamide",
+    "863434-13-3",
+    "BDBM50045107",
+    "CHEMBL1256978",
+    "DB13119",
+    "GSK-364735",
+    "GSK364735",
+    "HY-16907",
+    "NS00073316",
+    "Q27289447",
+    "QWLNINWUBHHOLU-UHFFFAOYSA-N",
+    "RefChem:144523",
+    "S-364735",
+    "S/GSK 364735",
+    "S/GSK-364735",
+    "SCHEMBL5545304",
+    "SXN0KXT60S",
+    "T68517",
+    "UNII-SXN0KXT60S",
+    "orb1740963"
+  ],
+  "cids": [
+    54718859
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QWLNINWUBHHOLU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

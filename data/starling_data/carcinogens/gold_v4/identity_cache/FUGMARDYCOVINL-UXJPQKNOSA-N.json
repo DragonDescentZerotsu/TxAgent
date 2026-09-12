@@ -1,0 +1,20 @@
+{
+  "parent_key": "FUGMARDYCOVINL-UXJPQKNOSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FUGMARDYCOVINL-UXJPQKNOSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R,3E,5S,7E,11R)-8-(Hydroxymethyl)-1,5-dimethyl-5-(4-methylpent-3-en-1-yl)-12-oxabicyclo[9.1.0]dodeca-3,7-dien-2-yl 3-methylbut-2-enoate",
+    "2-Butenoic acid, 3-methyl-, (1R,2R,3E,5S,7E,11R)-8-(hydroxymethyl)-1,5-dimethyl-5-(4-methyl-3-penten-1-yl)-12-oxabicyclo[9.1.0]dodeca-3,7-dien-2-yl ester",
+    "72506-14-0",
+    "CHEMBL4649737",
+    "CS-0526928",
+    "DTXSID601100085",
+    "GLXC-21872",
+    "HY-N10393",
+    "Vibsanin A"
+  ],
+  "http_status": 200,
+  "cids": [
+    154708213
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "HHDDKDPLFXIPBX-DLFZDVPBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R)-1-(6-Bromo-2-methoxyquinolin-3-yl)-2-(2,6-dimethoxypyridin-4-yl)-4-(dimethylamino)-1-(2,3,6-trimethoxypyridin-4-yl)butan-2-ol",
+    "(1R,2S)-1-(6-bromo-2-methoxyquinolin-3-yl)-2-(2,6-dimethoxy-4-pyridinyl)-4-(dimethylamino)-1-(2,3,6-trimethoxy-4-pyridinyl)butan-2-ol",
+    "(1R,2S)-1-(6-bromo-2-methoxyquinolin-3-yl)-2-(2,6-dimethoxypyridin-4-yl)-4-(dimethylamino)-1-(2,3,6-trimethoxypyridin-4-yl)butan-2-ol",
+    "2332841-25-3",
+    "3-QUINOLINEETHANOL, 6-BROMO-.ALPHA.-(2,6-DIMETHOXY-4-PYRIDINYL)-.ALPHA.-(2-(DIMETHYLAMINO)ETHYL)-2-METHOXY-.BETA.-(2,3,6-TRIMETHOXY-4-PYRIDINYL)-, (.ALPHA.S,.BETA.R)-",
+    "BDBM50537234",
+    "CHEMBL4553146",
+    "CS-0101568",
+    "EX-A10445",
+    "GLXC-27285",
+    "GTPL13132",
+    "HY-128866",
+    "OYN1GF5B1M",
+    "RefChem:187629",
+    "SCHEMBL31549849",
+    "Sorfequiline",
+    "TBAJ-876",
+    "compound 46 [PMID: 30803745]",
+    "sorfequiline [INN]"
+  ],
+  "cids": [
+    155510360
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HHDDKDPLFXIPBX-DLFZDVPBSA-N/synonyms/JSON",
+  "http_status": 200
+}

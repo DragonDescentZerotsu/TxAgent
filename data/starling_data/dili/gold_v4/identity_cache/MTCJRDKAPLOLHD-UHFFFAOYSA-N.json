@@ -1,0 +1,22 @@
+{
+  "parent_key": "MTCJRDKAPLOLHD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "5-((4-((3,4-DIHYDRO-2,5,7,8-TETRAMETHYL-6-(SULFOOXY)-2H-1-BENZOPYRAN-2-YL)METHOXY)PHENYL)METHYL)-2,4-THIAZOLIDINEDIONE",
+    "CHEBI:143492",
+    "E6SH3NO0FM",
+    "ROY-1357",
+    "RefChem:192237",
+    "SCHEMBL9632486",
+    "TGZS cpd",
+    "TROGLITAZONE SULFATE ESTER",
+    "UNII-E6SH3NO0FM",
+    "[2-[[4-[(2,4-dioxo-1,3-thiazolidin-5-yl)methyl]phenoxy]methyl]-2,5,7,8-tetramethyl-3,4-dihydrochromen-6-yl] hydrogen sulfate",
+    "troglitazone sulfate"
+  ],
+  "cids": [
+    10229833
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MTCJRDKAPLOLHD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

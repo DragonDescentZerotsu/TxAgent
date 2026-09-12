@@ -1,0 +1,15 @@
+{
+  "records": 177049,
+  "counts": {
+    "accepted:1": 142581,
+    "name_not_verified_for_source_structure:1": 12692,
+    "accepted:0": 18213,
+    "multiple_organic_components:1": 987,
+    "multiple_organic_components:0": 187,
+    "name_not_verified_for_source_structure:0": 2097,
+    "invalid_structure_or_parent:1": 178,
+    "known_specimen_identity_withdrawal:0": 24,
+    "invalid_structure_or_parent:0": 52,
+    "known_specimen_identity_withdrawal:1": 38
+  }
+}

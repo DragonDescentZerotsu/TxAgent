@@ -1,0 +1,27 @@
+{
+  "parent_key": "IQONBPISLRWNJP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "25912-36-1",
+    "4(1H)-Pyrimidinone, 2,3-dihydro-5-(phenylmethyl)-2-thioxo-",
+    "5-Benzyl-2-sulfanylidene-2,3-dihydropyrimidin-4(1H)-one",
+    "5-benzyl-2-sulfanyl-3,4-dihydropyrimidin-4-one",
+    "5-benzyl-2-sulfanylidene-1H-pyrimidin-4-one",
+    "5-benzyl-2-thioxo-2,3-dihydropyrimidin-4(1H)-one",
+    "DA-37965",
+    "DTXCID40349263",
+    "DTXSID50398404",
+    "EN300-6738669",
+    "NSC-78394",
+    "NSC78394",
+    "RefChem:301309",
+    "SCHEMBL4418633",
+    "Z3251702531"
+  ],
+  "cids": [
+    254270,
+    3987924
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IQONBPISLRWNJP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

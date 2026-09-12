@@ -1,0 +1,28 @@
+{
+  "parent_key": "JCXGWMGPZLAOME-RNFDNDRNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCXGWMGPZLAOME-RNFDNDRNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "15776-20-2",
+    "213Bi (isotope)",
+    "213Bi isotope",
+    "213mBi (isotope)",
+    "213mBi isotope",
+    "Bismuth, isotope of mass 213",
+    "Bismuth-213",
+    "Bismuth-213 isotope",
+    "Bismuth-213m",
+    "Bismuth-213m isotope",
+    "DTXSID601357765",
+    "Isotope:213Bi",
+    "Isotope:213mBi",
+    "Isotope:Bismuth-213",
+    "Isotope:Bismuth-213m",
+    "RefChem:1080025",
+    "SCHEMBL29358865"
+  ],
+  "http_status": 200,
+  "cids": [
+    6337093
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "BWHWPDPMUUTEAZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BWHWPDPMUUTEAZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-HYDROXYBUTYL)-N-BUTYLNITROSAMINE",
+    "2-BUTANOL, 1-(BUTYLNITROSOAMINO)-",
+    "55621-29-9",
+    "AKOS006279327",
+    "BRN 2244575",
+    "DTXSID70970963",
+    "N-Butyl-N-(2-hydroxybutyl)nitrosamine",
+    "N-NITROSO-N-(2-HYDROXYBUTYL)BUTYLAMINE",
+    "N-butyl-N-(2-hydroxybutyl)nitrous amide",
+    "Q27288422",
+    "S108M5D91F",
+    "UNII-S108M5D91F"
+  ],
+  "http_status": 200,
+  "cids": [
+    41490
+  ]
+}

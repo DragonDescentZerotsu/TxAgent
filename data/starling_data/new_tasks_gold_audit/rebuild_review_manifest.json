@@ -1,0 +1,32 @@
+{
+  "n_reviewed": 297,
+  "reviewer": "Codex source-text semantic reading; not human-expert or full-paper verification",
+  "sampling": "v1 stratified audit88 including all36 initial negative votes; v2 accepted candidates48; rejected strata32; potential cohort32; targeted transplant-context6. v2.1 adds 24 prior conflict reviews, 39 affected votes, 4 recovered negative extractions, and 24 retained candidates. Not a probability estimate of full-dataset precision/recall.",
+  "tasks": {
+    "dili": {
+      "reviewed": 164,
+      "semantic_accept": 66,
+      "semantic_withhold": 98,
+      "semantic_accepted_labels": {
+        "0": 34,
+        "1": 32
+      },
+      "actual_representative_votes": 56,
+      "ledger": "data/starling_data/dili/gold_v2/record_reviews.jsonl",
+      "ledger_sha256": "b80cda8987c05b3a27123549accc38d73ae634b75e6a63b459b9ba3060959196"
+    },
+    "carcinogens": {
+      "reviewed": 133,
+      "semantic_accept": 41,
+      "semantic_withhold": 92,
+      "semantic_accepted_labels": {
+        "0": 18,
+        "1": 23
+      },
+      "actual_representative_votes": 34,
+      "ledger": "data/starling_data/carcinogens/gold_v2/record_reviews.jsonl",
+      "ledger_sha256": "cd81ce1e8347a3fe0496c4769d2e8e568dbade29ac1caf4697c72cb6aa47c531"
+    }
+  },
+  "reviewed_records_sha256": "37e233624d0fd4b9513a541628ca6f400008c4e0ca8ed0422a260c5408eccaef"
+}

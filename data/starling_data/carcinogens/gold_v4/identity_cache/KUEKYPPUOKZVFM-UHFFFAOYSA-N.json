@@ -1,0 +1,37 @@
+{
+  "parent_key": "KUEKYPPUOKZVFM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KUEKYPPUOKZVFM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "6325-54-8",
+    "7-(Chloromethyl)benz(a)anthracene",
+    "7-(Chloromethyl)benz[a]anthracene",
+    "7-(chloromethyl)benzo[a]anthracene",
+    "7-(chloromethyl)tetraphene",
+    "7-Chloromethylbenz(a)anthracene",
+    "AKOS024341193",
+    "BENZ(A)ANTHRACENE, 7-(CHLOROMETHYL)-",
+    "BRN 1977752",
+    "Benz(a)anthracene, 7-chloromethyl-",
+    "Benz[a]anthracene, 7-(chloromethyl)-",
+    "CCRIS 863",
+    "CH2GNG4L9C",
+    "CHLOROMETHYLBENZ(A)ANTHRACENE, 7-",
+    "DTXCID10135130",
+    "DTXSID30212639",
+    "ICR 451",
+    "NS00122984",
+    "NSC 30973",
+    "NSC-30973",
+    "NSC30973",
+    "RFC05460",
+    "RefChem:545215",
+    "SCHEMBL19065039",
+    "UNII-CH2GNG4L9C",
+    "WLN: L D6 B666J J1G"
+  ],
+  "http_status": 200,
+  "cids": [
+    95722
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "LRUXAVXOTVRPNY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LRUXAVXOTVRPNY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL31732365",
+    "dinitrobenzidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    129629992
+  ]
+}

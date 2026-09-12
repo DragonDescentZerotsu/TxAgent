@@ -1,0 +1,37 @@
+{
+  "parent_key": "FHIDNBAQOFJWCA-MNCSTQPFSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-((2R,3R,4S,5R)-3,4-Dihydroxy-5-(hydroxymethyl)tetrahydrofuran-2-yl)-5-fluoropyrimidine-2,4(1H,3H)-dione",
+    "1-((2R,3S,4S,5R)-3,4-dihydroxy-5-(hydroxymethyl)tetrahydrofuran-2-yl)-5-fluoropyrimidine-2,4(1H,3H)-dione",
+    "1-(Beta-D-Arabinofuranosyl)-5-fluoropyrimidine-2,4(1H,3H)-dione",
+    "1-Arabinofuranosyl-5-fluorouracil",
+    "1-Beta-D-Arabinosyl-5-fluorouracil",
+    "1-I(2)-D-Arabinofuranosyl-5-fluorouracil",
+    "1-[(2R,3S,4S,5R)-3,4-dihydroxy-5-(hydroxymethyl)oxolan-2-yl]-5-fluoropyrimidine-2,4-dione",
+    "1-[(2R,3S,4S,5R)-3,4-dihydroxy-5-(hydroxymethyl)tetrahydrofuran-2-yl]-5-fluoro-pyrimidine-2,4-dione",
+    "1-b-D-Arabinosyl-5-fluorouracil",
+    "1-beta-D-Arabinofuranosyl-5-fluoro-(1H,3H)-pyrimidine-2,4-dione",
+    "1-beta-D-Arabinofuranosyl-5-fluoropyrimidine-2,4(1H,3H)-dione",
+    "1-beta-D-Arabinofuranosyl-5-fluorouracil",
+    "131-06-6",
+    "2,4(1H,3H)-Pyrimidinedione, 1-beta-D-arabinofuranosyl-5- fluoro-",
+    "205-007-4",
+    "A51122",
+    "AFU",
+    "AKOS016008982",
+    "ARA-FU",
+    "CHEMBL5275764",
+    "DTXCID601718927",
+    "DTXSID701288284",
+    "EINECS 205-007-4",
+    "NSC 406444",
+    "RefChem:907519",
+    "SCHEMBL3385435"
+  ],
+  "cids": [
+    101317
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FHIDNBAQOFJWCA-MNCSTQPFSA-N/synonyms/JSON",
+  "http_status": 200
+}

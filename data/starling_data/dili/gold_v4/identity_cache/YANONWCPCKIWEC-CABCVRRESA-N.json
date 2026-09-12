@@ -1,0 +1,41 @@
+{
+  "parent_key": "YANONWCPCKIWEC-CABCVRRESA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,5S)-1-[4-[5-(4-Fluorophenoxymethyl)tetrahydrofuran-2-yl]-3-butynyl]-1-hydroxyurea",
+    "(2S,5S)-trans-5-(4-Fluorophenoxymethyl)-2-(1-N-hydroxyureidyl-3-butyn-4-yl)tetrahydrofuran",
+    "1-(4-((2S,5S)-5-((4-Fluorophenoxy)methyl)tetrahydrofuran-2-yl)but-3-yn-1-yl)-1-hydroxyurea",
+    "1-(4-((2S,5S)-5-((4-fluorophenoxy)methyl)oxolan-2-yl)but-3-yn-1-yl)-1-hydroxyurea",
+    "1-[4-[(2S,5S)-5-[(4-fluorophenoxy)methyl]oxolan-2-yl]but-3-ynyl]-1-hydroxyurea",
+    "1-{4-[(2S,5S)-5-[(4-fluorophenoxy)methyl]oxolan-2-yl]but-3-yn-1-yl}-1-hydroxyurea",
+    "175212-04-1",
+    "AC-31478",
+    "AKOS040741559",
+    "BDBM50144621",
+    "CHEMBL73148",
+    "CMI 977",
+    "CMI-977",
+    "CMI977",
+    "CS-7474",
+    "DA-72295",
+    "DB05431",
+    "HY-U00260",
+    "LDP 977",
+    "LDP-977",
+    "LDP977",
+    "MLN-977",
+    "N-(4-{(2S,5S)-5-[(4-fluorophenoxy)methyl]tetrahydrofuran-2-yl}but-3-ynyl)-N-hydroxyurea",
+    "RefChem:159259",
+    "SCHEMBL16932371",
+    "T14986",
+    "UNII-VNR0T3Q498",
+    "Urea, N-(4-((2S,5S)-5-((4-fluorophenoxy)methyl)tetrahydro-2-furanyl)-3-butyn-1-yl)-N-hydroxy-",
+    "VNR0T3Q498",
+    "orb1707439"
+  ],
+  "cids": [
+    9905233
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YANONWCPCKIWEC-CABCVRRESA-N/synonyms/JSON",
+  "http_status": 200
+}

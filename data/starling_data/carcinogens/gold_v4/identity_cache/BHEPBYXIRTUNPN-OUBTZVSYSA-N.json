@@ -1,0 +1,26 @@
+{
+  "parent_key": "BHEPBYXIRTUNPN-OUBTZVSYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BHEPBYXIRTUNPN-OUBTZVSYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~32~P)Phosphorus",
+    "690284A407",
+    "CHEBI:37972",
+    "NSC 741420",
+    "P-32",
+    "P32",
+    "PHOSPHORUS (32)",
+    "PHOSPHORUS (32) [WHO-DD]",
+    "Phosphorous, isotope of mass 32",
+    "Phosphorous-32",
+    "Phosphorus P 32",
+    "Phosphorus P-32",
+    "Phosphorus p32",
+    "Phosphorus, P-32",
+    "RefChem:57124"
+  ],
+  "http_status": 200,
+  "cids": [
+    156596599
+  ]
+}

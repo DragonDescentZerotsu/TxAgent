@@ -1,0 +1,19 @@
+{
+  "parent_key": "BQHPNDYUVBBCQF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BQHPNDYUVBBCQF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(5-Methyl-1,3-phenylene)diisocyanate",
+    "1,3-diisocyanato-5-methylbenzene",
+    "14219-05-7",
+    "BQHPNDYUVBBCQF-UHFFFAOYSA-N",
+    "DTXSID20943480",
+    "SCHEMBL109084",
+    "SCHEMBL2249762",
+    "toluene-3,5-diisocyanate"
+  ],
+  "http_status": 200,
+  "cids": [
+    14648216
+  ]
+}

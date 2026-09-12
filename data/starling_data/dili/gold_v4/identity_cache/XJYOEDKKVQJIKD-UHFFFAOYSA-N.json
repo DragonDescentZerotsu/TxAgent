@@ -1,0 +1,12 @@
+{
+  "parent_key": "XJYOEDKKVQJIKD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "[4-nitro-2-(trifluoromethyl)phenyl]urea"
+  ],
+  "cids": [
+    171371570
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XJYOEDKKVQJIKD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

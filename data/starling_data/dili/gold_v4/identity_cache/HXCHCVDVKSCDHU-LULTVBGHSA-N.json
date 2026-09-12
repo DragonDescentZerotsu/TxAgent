@@ -1,0 +1,14 @@
+{
+  "parent_key": "HXCHCVDVKSCDHU-LULTVBGHSA-N",
+  "ok": true,
+  "synonyms": [
+    "Calicheamicin",
+    "Calicheamicins",
+    "SCHEMBL31238936"
+  ],
+  "cids": [
+    11840932
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HXCHCVDVKSCDHU-LULTVBGHSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "DFNJKJJPJAVTNY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-(Methanesulfonyl)-1H-pyrrole",
+    "2-(Methylsulfonyl)-1H-pyrrole",
+    "2-Methanesulfonyl-1H-pyrrole",
+    "2-methylsulfonyl-1H-pyrrole",
+    "82511-61-3",
+    "AKOS006346872",
+    "BS-24258",
+    "CS-0211943",
+    "DTXCID10460717",
+    "DTXSID30509910",
+    "F638569",
+    "F86773",
+    "MFCD19217206",
+    "RefChem:254227",
+    "SB63372",
+    "SCHEMBL16593753",
+    "SCHEMBL18207416",
+    "SCHEMBL3578021",
+    "SCHEMBL4730556",
+    "SY319869",
+    "methanesulfonylpyrrole"
+  ],
+  "cids": [
+    12789403
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DFNJKJJPJAVTNY-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

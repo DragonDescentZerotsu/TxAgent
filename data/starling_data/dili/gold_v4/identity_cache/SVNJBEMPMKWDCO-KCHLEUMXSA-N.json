@@ -1,0 +1,41 @@
+{
+  "parent_key": "SVNJBEMPMKWDCO-KCHLEUMXSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[[(2S)-3-carboxy-2-[[2-[[(2S)-5-(diaminomethylideneamino)-2-[[4-oxo-4-[[4-(4-oxo-8-phenylchromen-2-yl)morpholin-4-ium-4-yl]methoxy]butanoyl]amino]pentanoyl]amino]acetyl]amino]propanoyl]amino]-3-hydroxypropanoate",
+    "936487-67-1",
+    "AKOS027326823",
+    "BDBM50507755",
+    "BS183202",
+    "CHEMBL2326966",
+    "CS-0002505",
+    "DL0Q912033",
+    "EX-A5997",
+    "F92002",
+    "HY-10220",
+    "L-SERINE, N2-(1,4-DIOXO-4-((4-(4-OXO-8-PHENYL-4H-1-BENZOPYRAN-2-YL)MORPHOLINIUM-4-YL)METHOXY)BUTYL)-L-ARGINYLGLYCYL-L-.ALPHA.-ASPARTYL-, INNER SALT",
+    "L-Serine, N2-(1,4-dioxo-4-((4-(4-oxo-8-phenyl-4H-1-benzopyran-2-yl)morpholinium-4-yl)methoxy)butyl)-L-arginylglycyl-L-alpha-aspartyl-, inner salt",
+    "PAN-PI3K/MTOR INHIBITOR SF1126",
+    "Q27276459",
+    "RefChem:182652",
+    "SCHEMBL15668089",
+    "SCHEMBL18548837",
+    "SCHEMBL29189754",
+    "SCHEMBL29352219",
+    "SF 1126",
+    "SF 1126 [WHO-DD]",
+    "SF-1126",
+    "SF-1126 INNER SALT",
+    "SF-1126, SF1126, SF 1126",
+    "SF1126",
+    "T16875",
+    "UNII-DL0Q912033",
+    "orb1706641"
+  ],
+  "cids": [
+    66577114,
+    92043140
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SVNJBEMPMKWDCO-KCHLEUMXSA-N/synonyms/JSON",
+  "http_status": 200
+}

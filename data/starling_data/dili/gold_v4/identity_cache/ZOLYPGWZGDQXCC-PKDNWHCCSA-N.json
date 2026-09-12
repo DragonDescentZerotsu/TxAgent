@@ -1,0 +1,22 @@
+{
+  "parent_key": "ZOLYPGWZGDQXCC-PKDNWHCCSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[[4-[(2-amino-4-oxo-5,6,7,8-tetrahydro-1H-quinazolin-6-yl)methyl-prop-2-ynylamino]benzoyl]amino]pentanedioic acid",
+    "(2S)-2-[[4-[(2-amino-4-oxo-5,6,7,8-tetrahydro-3H-quinazolin-6-yl)methyl-prop-2-ynylamino]benzoyl]amino]pentanedioic acid",
+    "107174-40-3",
+    "DTXSID10910247",
+    "L-Glutamic acid, N-(4-(((2-amino-1,4,5,6,7,8-hexahydro-4-oxo-6-quinazolinyl)methyl)-2-propynylamino)benzoyl)-",
+    "N(10)-Propargyl-5,8-dideaza-5,6,7,8-tetrahydrofolic acid",
+    "N-(4-{[(4-Hydroxy-2-imino-1,2,5,6,7,8-hexahydroquinazolin-6-yl)methyl](prop-2-yn-1-yl)amino}benzoyl)-L-glutamic acid",
+    "N-(4-{[(4-Hydroxy-2-imino-1,2,5,6,7,8-hexahydroquinazolin-6-yl)methyl](prop-2-yn-1-yl)amino}benzoyl)glutamic acid",
+    "N-Pddf",
+    "RefChem:160628"
+  ],
+  "cids": [
+    130576,
+    135625335
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZOLYPGWZGDQXCC-PKDNWHCCSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "OCAXLMVIWJWFHW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL27991936",
+    "dimethyl-triazeno imidazole carboxamide"
+  ],
+  "cids": [
+    54142484,
+    137239523
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OCAXLMVIWJWFHW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "JGUPIJPEVJYUIN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JGUPIJPEVJYUIN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3671-71-4",
+    "BENZOHYDROXAMIC ACID, N-FLUOREN-2-YL-",
+    "BRN 2758983",
+    "Benzamide, N-9H-fluoren-2-yl-N-hydroxy-",
+    "CCRIS 2719",
+    "CHEMBL311673",
+    "DTXCID30112665",
+    "DTXSID20190174",
+    "N-(9H-fluoren-2-yl)-N-hydroxybenzamide",
+    "N-9H-FLUOREN-2-YL-N-HYDROXYBENZAMIDE",
+    "N-Benzoyloxy-acetylaminofluorene",
+    "N-Fluoren-2-ylbenzohydroxamic acid",
+    "N-Hydroxy-2-benzoylaminofluorene",
+    "N-Hydroxy-N-(2-fluorenyl)benzamide",
+    "N-Hydroxy-N-2-fluorenylbenzamide",
+    "N-OH-2-FBA",
+    "QS2A8UW3HC",
+    "RefChem:163518",
+    "UNII-QS2A8UW3HC"
+  ],
+  "http_status": 200,
+  "cids": [
+    19347
+  ]
+}

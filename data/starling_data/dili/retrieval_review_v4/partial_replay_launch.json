@@ -1,0 +1,20 @@
+{
+  "started_at": "2026-09-12T04:45:41.713098+00:00",
+  "build_pid": 804504,
+  "replay_chain_pid": 804505,
+  "ledger_sha256": "52ffa1d403ef3b77097af0d8c456c3ef4867e39f8de9f28c5b99dfe93584a33f",
+  "source_repairs": 712,
+  "partial_review_diagnostic": true,
+  "temporary_artifacts_root": "/local/tmp/tianang_dili_v4_partial_712_scaffold_artifacts",
+  "random_deferred": true,
+  "existing_endpoint_jobs": [
+    {
+      "pid": 799353,
+      "create_time": 1789187840.81
+    },
+    {
+      "pid": 799354,
+      "create_time": 1789187840.81
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "CVBHEIRZLPKMSH-SNWVVRALSA-N",
+  "ok": true,
+  "synonyms": [
+    "2'-Acetylerythromycin",
+    "2'-Acetylerythromycin A",
+    "2'-O-Acetyl-erythromycin A",
+    "2'-O-Acetylerythromycin A",
+    "2'-acetyl erythromycin stearate salt",
+    "992-69-8",
+    "C21595",
+    "CHEBI:135882",
+    "CHEMBL2110577",
+    "CVBHEIRZLPKMSH-SNWVVRALSA-N",
+    "Erythromycin 2'-acetate",
+    "Erythromycin, 2'-acetate",
+    "Q27893913",
+    "RefChem:137775",
+    "S3Q5941GCW",
+    "UNII-S3Q5941GCW",
+    "[(2S,3R,4S,6R)-4-(dimethylamino)-2-[[(3R,4S,5S,6R,7R,9R,11R,12R,13S,14R)-14-ethyl-7,12,13-trihydroxy-4-[(2R,4R,5S,6S)-5-hydroxy-4-methoxy-4,6-dimethyloxan-2-yl]oxy-3,5,7,9,11,13-hexamethyl-2,10-dioxo-oxacyclotetradec-6-yl]oxy]-6-methyloxan-3-yl] acetate"
+  ],
+  "cids": [
+    114919
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CVBHEIRZLPKMSH-SNWVVRALSA-N/synonyms/JSON",
+  "http_status": 200
+}

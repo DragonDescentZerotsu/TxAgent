@@ -1,0 +1,12 @@
+{
+  "parent_key": "JCMLSKDXGLMQDI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCMLSKDXGLMQDI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitrosomethyl-2-phenylethylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    21115896
+  ]
+}

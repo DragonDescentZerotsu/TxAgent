@@ -1,0 +1,24 @@
+{
+  "parent_key": "MZAAHJYILRAGET-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MZAAHJYILRAGET-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(dibutylamino)naphthalen",
+    "1-Naphthalenamine, N,N-dibutyl-",
+    "204126-63-6",
+    "DTXCID40420768",
+    "DTXSID40469950",
+    "N,N-dibutylnaphthalen-1-amine",
+    "RefChem:232149",
+    "SCHEMBL1509321",
+    "SCHEMBL297647",
+    "SCHEMBL298360",
+    "SCHEMBL29862254",
+    "SCHEMBL30301305"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Yellow (55%), Request Time status: Green (13%), Service status: Black (217%)",
+  "cids": [
+    11644563
+  ]
+}

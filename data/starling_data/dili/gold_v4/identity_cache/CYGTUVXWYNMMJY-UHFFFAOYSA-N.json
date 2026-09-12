@@ -1,0 +1,15 @@
+{
+  "parent_key": "CYGTUVXWYNMMJY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3-BROMOPROPOXY)CYCLOPENTANE",
+    "1094240-45-5",
+    "AKOS009291698",
+    "EN300-675912"
+  ],
+  "cids": [
+    43135432
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CYGTUVXWYNMMJY-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

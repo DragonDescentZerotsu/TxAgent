@@ -1,0 +1,16 @@
+{
+  "parent_key": "AFDSETGKYZMEEA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "101311-24-4",
+    "2-HYDROXYOCTADECA-9,12-DIENOIC ACID",
+    "HCA81844",
+    "SCHEMBL378238",
+    "s9611"
+  ],
+  "cids": [
+    53639639
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AFDSETGKYZMEEA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

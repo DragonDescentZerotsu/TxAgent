@@ -1,0 +1,41 @@
+{
+  "parent_key": "LDHQCZJRKDOVOX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LDHQCZJRKDOVOX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".alpha.-Crotonic acid",
+    "2-Butenoic acid",
+    "26007-90-9",
+    "503-64-0",
+    "AKOS028109915",
+    "CH3CH=CHCOOH",
+    "CHEBI:17217",
+    "CHEMBL3185203",
+    "Crotonic acid (NIST)",
+    "DTXCID507544",
+    "DTXSID7027544",
+    "FA 4:1",
+    "FC14803",
+    "LMFA01030925",
+    "NS00077147",
+    "Q27102269",
+    "RefChem:1062626",
+    "SCHEMBL1007083",
+    "SCHEMBL22034",
+    "SCHEMBL23398",
+    "SCHEMBL27272056",
+    "SCHEMBL27529985",
+    "SCHEMBL27600725",
+    "SCHEMBL294338",
+    "SCHEMBL7670830",
+    "SCHEMBL7670833",
+    "SCHEMBL7677233",
+    "UN 2823",
+    "alpha-butenic acid",
+    "but-2-enoic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    19499
+  ]
+}

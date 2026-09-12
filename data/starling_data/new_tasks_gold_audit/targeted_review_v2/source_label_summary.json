@@ -1,0 +1,114 @@
+{
+  "created_utc": "2026-09-09T02:31:51.337925+00:00",
+  "status": "all_queued_records_reviewed",
+  "count_unit": "original base source record; not independent study, molecule, or gold row",
+  "rules": "Reviewed verdict overrides the selected source label, including QA. Unreviewed explicit labels and prior supported directions are retained. Mixed, uncertain, out_of_scope and specimen/material holds remain separate.",
+  "expected_reviews": 148079,
+  "gpt_oss_successes": 147708,
+  "codex_residual_reviews": 371,
+  "unresolved_output_errors": 0,
+  "gold_published": false,
+  "tasks": {
+    "dili": {
+      "raw_records": 189172,
+      "directions": {
+        "positive": 156476,
+        "negative": 20573,
+        "uncertain": 3781,
+        "specimen_or_material_hold": 4600,
+        "out_of_scope": 346,
+        "mixed": 3396
+      },
+      "decision_origins": {
+        "explicit_source_label_retained": 116399,
+        "gpt_oss_120b": 64302,
+        "prior_supported_direction_reused": 3601,
+        "selection_hold": 4600,
+        "codex_residual": 270
+      },
+      "qa_source_to_review": {
+        "negative->negative": 295,
+        "positive->positive": 258,
+        "positive->negative": 30,
+        "positive->mixed": 9,
+        "negative->positive": 2,
+        "positive->out_of_scope": 3,
+        "negative->uncertain": 2,
+        "negative->mixed": 1
+      },
+      "held_original_candidate_labels": {
+        "1": 2158,
+        "None": 2135,
+        "0": 307
+      },
+      "gpt_oss_successes": 64302,
+      "codex_residual_directions": {
+        "positive": 201,
+        "uncertain": 29,
+        "negative": 3,
+        "mixed": 33,
+        "out_of_scope": 4
+      },
+      "codex_changed_direction": 82,
+      "output_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet",
+      "output_sha256": "bd3fc98b419e851c1ab25264579dede9e954720c3793cc211c635aea7072c180"
+    },
+    "carcinogens": {
+      "raw_records": 354386,
+      "directions": {
+        "positive": 296079,
+        "negative": 35031,
+        "mixed": 7340,
+        "uncertain": 7406,
+        "specimen_or_material_hold": 6905,
+        "out_of_scope": 1625
+      },
+      "decision_origins": {
+        "explicit_source_label_retained": 263974,
+        "gpt_oss_120b": 83406,
+        "selection_hold": 6905,
+        "codex_residual": 101
+      },
+      "qa_source_to_review": {
+        "positive->positive": 286,
+        "negative->negative": 293,
+        "positive->mixed": 9,
+        "negative->mixed": 6,
+        "positive->out_of_scope": 2,
+        "positive->negative": 3,
+        "negative->out_of_scope": 1
+      },
+      "held_original_candidate_labels": {
+        "0": 709,
+        "1": 3629,
+        "None": 2567
+      },
+      "gpt_oss_successes": 83406,
+      "codex_residual_directions": {
+        "positive": 58,
+        "out_of_scope": 14,
+        "uncertain": 12,
+        "mixed": 15,
+        "negative": 2
+      },
+      "codex_changed_direction": 29,
+      "output_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
+      "output_sha256": "d23b2e9a2ad8774653b341a03e84f53b57d6dee69a32ec617cd75f83b5343e70"
+    }
+  },
+  "inputs": {
+    "manifest.json": "193e526f70fda338fba2296877d24784259459f9c17213e97022e87c37d19ae4",
+    "reviews.jsonl": "430b0698556537fa8fd1fc5e1ac70649be340bdcef1764bb7eebc47676e41c8e",
+    "codex_residual_review.jsonl": "957bd6e0a580d3971cd86adc137d2b9945079654d51dcfa66b2496d123c07888",
+    "residual_review_inputs.jsonl": "b07845db07e8315a5d8009ea30ceb0c9f0c791d2958006da4897cbb29bab10bf"
+  },
+  "script_sha256": "b42a80c9150c03f54ea9c50d12b7b1ba77fa5c0e7e5d53451d32a43e01d1ce9b",
+  "totals": {
+    "positive": 452555,
+    "negative": 55604,
+    "uncertain": 11187,
+    "specimen_or_material_hold": 11505,
+    "out_of_scope": 1971,
+    "mixed": 10736
+  }
+}

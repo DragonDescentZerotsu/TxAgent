@@ -1,0 +1,28 @@
+{
+  "parent_key": "JBXPKMHATRSERD-WVZVXSGGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBXPKMHATRSERD-WVZVXSGGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "17860-87-6",
+    "2-METHYL-L-ASCORBIC ACID",
+    "2-Methylascorbic acid",
+    "2-O-METHYLASCORBIC ACID, (+)-",
+    "2-O-Methyl-L-ascorbic acid",
+    "2-O-Methylascorbic acid",
+    "ASCORBIC ACID, 2-O-METHYL-",
+    "CHEMBL452673",
+    "DTXSID201357325",
+    "L-Ascorbic acid, 2-O-methyl-",
+    "NSC 219890",
+    "NSC-219890",
+    "OE7EI0514F",
+    "Q27896126",
+    "RefChem:88831",
+    "SCHEMBL3307566",
+    "UNII-OE7EI0514F"
+  ],
+  "http_status": 200,
+  "cids": [
+    54726398
+  ]
+}

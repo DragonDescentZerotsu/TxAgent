@@ -1,0 +1,19 @@
+{
+  "parent_key": "MDKKOHPKZPZNNE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MDKKOHPKZPZNNE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Methyl-6-phenyl-1H-imidazo(4,5-b)pyridine",
+    "1-methyl-6-phenyl-1H-imidazo[4,5-b]pyridine",
+    "1-methyl-6-phenylimidazo[4,5-b]pyridine",
+    "125572-33-0",
+    "1H-Imidazo(4,5-b)pyridine, 1-methyl-6-phenyl-",
+    "AKOS015905513",
+    "DTXSID20154791",
+    "SCHEMBL2563729"
+  ],
+  "http_status": 200,
+  "cids": [
+    180333
+  ]
+}

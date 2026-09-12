@@ -1,0 +1,12 @@
+{
+  "parent_key": "UPBIRWIJXLAXBK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL17271403"
+  ],
+  "cids": [
+    12535951
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UPBIRWIJXLAXBK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

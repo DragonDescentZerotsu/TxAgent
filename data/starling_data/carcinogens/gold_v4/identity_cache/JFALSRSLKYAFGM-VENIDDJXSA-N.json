@@ -1,0 +1,26 @@
+{
+  "parent_key": "JFALSRSLKYAFGM-VENIDDJXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JFALSRSLKYAFGM-VENIDDJXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~232~U)Uranium",
+    "14158-29-3",
+    "232U (isotope)",
+    "232U isotope",
+    "232U radioisotope",
+    "DTXSID50891768",
+    "Isotope:232U",
+    "Isotope:Uranium-232",
+    "RefChem:933835",
+    "SCHEMBL29418072",
+    "U-232 radioisotope",
+    "Uranium 232",
+    "Uranium, isotope of mass 232",
+    "Uranium-232",
+    "Uranium-232 isotope"
+  ],
+  "http_status": 200,
+  "cids": [
+    105163
+  ]
+}

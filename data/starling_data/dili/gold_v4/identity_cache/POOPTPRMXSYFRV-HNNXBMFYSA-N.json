@@ -1,0 +1,30 @@
+{
+  "parent_key": "POOPTPRMXSYFRV-HNNXBMFYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(S)-N-(4-amino-5-(quinolin-3-yl)-6,7,8,9-tetrahydropyrimido[5,4-b]indolizin-8-yl)acrylamide",
+    "1451370-01-6",
+    "2-Propenamide, N-((8S)-4-amino-6,7,8,9-tetrahydro-5-(3-quinolinyl)pyrimido(5,4-b)indolizin-8-yl)-",
+    "GLXC-24246",
+    "HY-164392",
+    "N-((8S)-4-Amino-6,7,8,9-tetrahydro-5-(3-quinolinyl)pyrimido(5,4-b)indolizin-8-yl)-2-propenamide",
+    "N-[(8S)-4-amino-5-quinolin-3-yl-6,7,8,9-tetrahydropyrimido[5,4-b]indolizin-8-yl]prop-2-enamide",
+    "POOPTPRMXSYFRV-HNNXBMFYSA-N",
+    "RefChem:187473",
+    "SCHEMBL15220964",
+    "SCHEMBL29415204",
+    "SCHEMBL30490475",
+    "T89599",
+    "TAS 121 [WHO-DD]",
+    "TAS-121",
+    "TAS121",
+    "UNII-Z36593C4RW",
+    "Z36593C4RW",
+    "orb2663940"
+  ],
+  "cids": [
+    71682991
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/POOPTPRMXSYFRV-HNNXBMFYSA-N/synonyms/JSON",
+  "http_status": 200
+}

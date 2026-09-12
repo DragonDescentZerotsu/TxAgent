@@ -1,0 +1,36 @@
+{
+  "parent_key": "AUZFRUHVDNDVJI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AUZFRUHVDNDVJI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,4-Pentanedione, 3-acetyl-",
+    "212-422-4",
+    "3-Acetyl-2,4-pentandione",
+    "3-Acetyl-2,4-pentanedione",
+    "3-acetylpentane-2,4-dione",
+    "815-68-9",
+    "AKOS025295785",
+    "DB-013564",
+    "DTXCID50153636",
+    "DTXSID50231145",
+    "Diacetylaceton",
+    "EINECS 212-422-4",
+    "EN300-1125828",
+    "InChI=1/C7H10O3/c1-4(8)7(5(2)9)6(3)10/h7H,1-3H",
+    "MFCD00004516",
+    "Methane triacetate",
+    "Methane, triacetyl-",
+    "Methine triacetate",
+    "NS00038139",
+    "RefChem:811733",
+    "SCHEMBL233035",
+    "SCHEMBL7729944",
+    "SY317988",
+    "Triacetylmethane",
+    "XF3T5YJT4R"
+  ],
+  "http_status": 200,
+  "cids": [
+    69950
+  ]
+}

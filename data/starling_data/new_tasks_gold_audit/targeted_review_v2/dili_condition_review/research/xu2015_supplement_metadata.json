@@ -1,0 +1,208 @@
+{
+  "files": [
+    {
+      "id": 3626295,
+      "name": "ci5b00238_si_002.xlsx",
+      "size": 142150,
+      "is_link_only": false,
+      "download_url": "https://ndownloader.figshare.com/files/3626295",
+      "supplied_md5": "135749d5b2437f8935723d71ca90a5bf",
+      "computed_md5": "135749d5b2437f8935723d71ca90a5bf",
+      "mimetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+  ],
+  "folder_structure": {},
+  "authors": [
+    {
+      "id": 1367775,
+      "full_name": "Youjun Xu",
+      "first_name": "Youjun",
+      "last_name": "Xu",
+      "is_active": false,
+      "url_name": "_",
+      "orcid_id": ""
+    },
+    {
+      "id": 1367781,
+      "full_name": "Ziwei Dai",
+      "first_name": "Ziwei",
+      "last_name": "Dai",
+      "is_active": false,
+      "url_name": "_",
+      "orcid_id": ""
+    },
+    {
+      "id": 187805,
+      "full_name": "Fangjin Chen",
+      "first_name": "Fangjin",
+      "last_name": "Chen",
+      "is_active": false,
+      "url_name": "_",
+      "orcid_id": ""
+    },
+    {
+      "id": 1367778,
+      "full_name": "Shuaishi Gao",
+      "first_name": "Shuaishi",
+      "last_name": "Gao",
+      "is_active": false,
+      "url_name": "_",
+      "orcid_id": ""
+    },
+    {
+      "id": 187818,
+      "full_name": "Jianfeng Pei",
+      "first_name": "Jianfeng",
+      "last_name": "Pei",
+      "is_active": false,
+      "url_name": "_",
+      "orcid_id": ""
+    },
+    {
+      "id": 36732,
+      "full_name": "Luhua Lai",
+      "first_name": "Luhua",
+      "last_name": "Lai",
+      "is_active": false,
+      "url_name": "Luhua_Lai",
+      "orcid_id": ""
+    }
+  ],
+  "custom_fields": [],
+  "figshare_url": "https://acs.figshare.com/articles/dataset/Deep_Learning_for_Drug_Induced_Liver_Injury/2054931",
+  "download_disabled": false,
+  "description": "Drug-induced liver\ninjury (DILI) has been the single most frequent\ncause of safety-related drug marketing withdrawals for the past 50\nyears. Recently, deep learning (DL) has been successfully applied\nin many fields due to its exceptional and automatic learning ability.\nIn this study, DILI prediction models were developed using DL architectures,\nand the best model trained on 475 drugs predicted an external validation\nset of 198 drugs with an accuracy of 86.9%, sensitivity of 82.5%,\nspecificity of 92.9%, and area under the curve of 0.955, which is\nbetter than the performance of previously described DILI prediction\nmodels. Furthermore, with deep analysis, we also identified important\nmolecular features that are related to DILI. Such DL models could\nimprove the prediction of DILI risk in humans. The DL DILI prediction\nmodels are freely available at http://www.repharma.cn/DILIserver/DILI_home.php.",
+  "funding": null,
+  "funding_list": [],
+  "version": 1,
+  "status": "public",
+  "size": 142150,
+  "created_date": "2015-12-17T10:22:34Z",
+  "modified_date": "2023-06-01T09:38:19Z",
+  "is_public": true,
+  "is_confidential": false,
+  "is_metadata_record": false,
+  "confidential_reason": "",
+  "metadata_reason": "",
+  "license": {
+    "value": 10,
+    "name": "CC BY-NC 4.0",
+    "url": "https://creativecommons.org/licenses/by-nc/4.0/"
+  },
+  "tags": [
+    "Such DL models",
+    "DL DILI prediction models",
+    "50 years",
+    "198 drugs",
+    "475 drugs",
+    "DILI prediction models",
+    "DL architectures",
+    "Deep Learning",
+    "DILI risk",
+    "drug marketing withdrawals"
+  ],
+  "keywords": [
+    "Such DL models",
+    "DL DILI prediction models",
+    "50 years",
+    "198 drugs",
+    "475 drugs",
+    "DILI prediction models",
+    "DL architectures",
+    "Deep Learning",
+    "DILI risk",
+    "drug marketing withdrawals"
+  ],
+  "categories": [
+    {
+      "id": 19,
+      "title": "Pharmacology",
+      "parent_id": 48,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    },
+    {
+      "id": 734,
+      "title": "Biological Sciences not elsewhere classified",
+      "parent_id": 48,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    },
+    {
+      "id": 931,
+      "title": "Information Systems not elsewhere classified",
+      "parent_id": 52,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    },
+    {
+      "id": 62,
+      "title": "Marine Biology",
+      "parent_id": 48,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    },
+    {
+      "id": 64,
+      "title": "Cancer",
+      "parent_id": 48,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    },
+    {
+      "id": 122,
+      "title": "Mental Health",
+      "parent_id": 18,
+      "path": "",
+      "source_id": "",
+      "taxonomy_id": 10
+    }
+  ],
+  "references": [
+    "https://doi.org/10.1021/acs.jcim.5b00238"
+  ],
+  "has_linked_file": false,
+  "citation": "Xu, Youjun; Dai, Ziwei; Chen, Fangjin; Gao, Shuaishi; Pei, Jianfeng; Lai, Luhua (2015). Deep Learning for Drug-Induced Liver Injury. ACS Publications. Dataset. https://doi.org/10.1021/acs.jcim.5b00238.s002",
+  "related_materials": [
+    {
+      "id": 17462477,
+      "identifier": "10.1021/acs.jcim.5b00238",
+      "title": "Deep Learning for Drug-Induced Liver Injury",
+      "relation": "IsSupplementTo",
+      "identifier_type": "DOI",
+      "is_linkout": true,
+      "link": "https://doi.org/10.1021/acs.jcim.5b00238"
+    }
+  ],
+  "is_embargoed": false,
+  "embargo_date": null,
+  "embargo_type": null,
+  "embargo_title": "",
+  "embargo_reason": "",
+  "embargo_options": [],
+  "id": 2054931,
+  "title": "Deep Learning for Drug-Induced Liver Injury",
+  "doi": "10.1021/acs.jcim.5b00238.s002",
+  "handle": "",
+  "url": "https://api.figshare.com/v2/articles/2054931",
+  "published_date": "2015-12-17T10:22:33Z",
+  "thumb": "",
+  "defined_type": 3,
+  "defined_type_name": "dataset",
+  "group_id": 2409,
+  "url_private_api": "https://api.figshare.com/v2/account/articles/2054931",
+  "url_public_api": "https://api.figshare.com/v2/articles/2054931",
+  "url_private_html": "https://figshare.com/account/articles/2054931",
+  "url_public_html": "https://acs.figshare.com/articles/dataset/Deep_Learning_for_Drug_Induced_Liver_Injury/2054931",
+  "timeline": {
+    "posted": "2015-12-17T10:22:33",
+    "firstOnline": "2015-12-17"
+  },
+  "resource_title": "Deep Learning for Drug-Induced Liver Injury",
+  "resource_doi": "10.1021/acs.jcim.5b00238"
+}

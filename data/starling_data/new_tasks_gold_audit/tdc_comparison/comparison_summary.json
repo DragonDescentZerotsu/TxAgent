@@ -1,0 +1,539 @@
+{
+  "dili": {
+    "tdc_dataset": "dili",
+    "tdc_rows": 475,
+    "tdc_labels": {
+      "0": 239,
+      "1": 236
+    },
+    "invalid_tdc_smiles": [],
+    "unique_tdc_parents": 474,
+    "conflict_free_tdc_parent_labels": {
+      "0": 238,
+      "1": 236
+    },
+    "conflict_free_parent_exact": {
+      "0": {
+        "tdc_rows": 238,
+        "records": 134,
+        "retrieval": 134,
+        "base": 104,
+        "raw_negative": 79,
+        "candidate_negative": 4,
+        "verified_negative": 4,
+        "gold_any": 26,
+        "gold_negative": 4,
+        "benchmark_any": 22,
+        "benchmark_negative": 2,
+        "gold_label_sets": {
+          "absent": 212,
+          "positive_only": 22,
+          "negative_only": 1,
+          "both": 3
+        },
+        "benchmark_label_sets": {
+          "absent": 216,
+          "positive_only": 20,
+          "negative_only": 1,
+          "both": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 236,
+        "records": 157,
+        "retrieval": 157,
+        "base": 144,
+        "raw_negative": 104,
+        "candidate_negative": 17,
+        "verified_negative": 16,
+        "gold_any": 90,
+        "gold_negative": 13,
+        "benchmark_any": 81,
+        "benchmark_negative": 2,
+        "gold_label_sets": {
+          "both": 13,
+          "positive_only": 77,
+          "absent": 146
+        },
+        "benchmark_label_sets": {
+          "positive_only": 79,
+          "absent": 155,
+          "both": 2
+        }
+      }
+    },
+    "conflict_free_parent_connectivity": {
+      "0": {
+        "tdc_rows": 238,
+        "records": 209,
+        "retrieval": 207,
+        "base": 179,
+        "raw_negative": 144,
+        "candidate_negative": 10,
+        "verified_negative": 9,
+        "gold_any": 46,
+        "gold_negative": 9,
+        "benchmark_any": 37,
+        "benchmark_negative": 4,
+        "gold_label_sets": {
+          "absent": 192,
+          "positive_only": 37,
+          "negative_only": 1,
+          "both": 8
+        },
+        "benchmark_label_sets": {
+          "absent": 201,
+          "positive_only": 33,
+          "negative_only": 2,
+          "both": 2
+        }
+      },
+      "1": {
+        "tdc_rows": 236,
+        "records": 221,
+        "retrieval": 220,
+        "base": 212,
+        "raw_negative": 164,
+        "candidate_negative": 24,
+        "verified_negative": 23,
+        "gold_any": 135,
+        "gold_negative": 20,
+        "benchmark_any": 112,
+        "benchmark_negative": 3,
+        "gold_label_sets": {
+          "both": 19,
+          "positive_only": 115,
+          "absent": 101,
+          "negative_only": 1
+        },
+        "benchmark_label_sets": {
+          "positive_only": 109,
+          "absent": 124,
+          "both": 3
+        }
+      }
+    },
+    "tdc_parent_label_conflicts": {},
+    "exact_parent": {
+      "0": {
+        "tdc_rows": 239,
+        "records": 135,
+        "retrieval": 135,
+        "base": 105,
+        "raw_negative": 80,
+        "candidate_negative": 4,
+        "verified_negative": 4,
+        "gold_any": 27,
+        "gold_negative": 4,
+        "benchmark_any": 22,
+        "benchmark_negative": 2,
+        "gold_label_sets": {
+          "absent": 212,
+          "positive_only": 23,
+          "negative_only": 1,
+          "both": 3
+        },
+        "benchmark_label_sets": {
+          "absent": 217,
+          "positive_only": 20,
+          "negative_only": 1,
+          "both": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 236,
+        "records": 157,
+        "retrieval": 157,
+        "base": 144,
+        "raw_negative": 104,
+        "candidate_negative": 17,
+        "verified_negative": 16,
+        "gold_any": 90,
+        "gold_negative": 13,
+        "benchmark_any": 81,
+        "benchmark_negative": 2,
+        "gold_label_sets": {
+          "both": 13,
+          "positive_only": 77,
+          "absent": 146
+        },
+        "benchmark_label_sets": {
+          "positive_only": 79,
+          "absent": 155,
+          "both": 2
+        }
+      }
+    },
+    "connectivity_only_diagnostic": {
+      "0": {
+        "tdc_rows": 239,
+        "records": 210,
+        "retrieval": 208,
+        "base": 180,
+        "raw_negative": 145,
+        "candidate_negative": 10,
+        "verified_negative": 9,
+        "gold_any": 47,
+        "gold_negative": 9,
+        "benchmark_any": 37,
+        "benchmark_negative": 4,
+        "gold_label_sets": {
+          "absent": 192,
+          "positive_only": 38,
+          "negative_only": 1,
+          "both": 8
+        },
+        "benchmark_label_sets": {
+          "absent": 202,
+          "positive_only": 33,
+          "negative_only": 2,
+          "both": 2
+        }
+      },
+      "1": {
+        "tdc_rows": 236,
+        "records": 221,
+        "retrieval": 220,
+        "base": 212,
+        "raw_negative": 164,
+        "candidate_negative": 24,
+        "verified_negative": 23,
+        "gold_any": 135,
+        "gold_negative": 20,
+        "benchmark_any": 112,
+        "benchmark_negative": 3,
+        "gold_label_sets": {
+          "both": 19,
+          "positive_only": 115,
+          "absent": 101,
+          "negative_only": 1
+        },
+        "benchmark_label_sets": {
+          "positive_only": 109,
+          "absent": 124,
+          "both": 3
+        }
+      }
+    },
+    "starling_distinct_parent_summary": {
+      "base": {
+        "parents": 4063,
+        "label_sets": {
+          "both": 1121,
+          "positive_only": 1254,
+          "negative_only": 859,
+          "other_only": 829
+        }
+      },
+      "gold": {
+        "parents": 652,
+        "label_sets": {
+          "both": 59,
+          "positive_only": 525,
+          "negative_only": 68
+        }
+      },
+      "benchmark": {
+        "parents": 487,
+        "label_sets": {
+          "positive_only": 444,
+          "negative_only": 38,
+          "both": 5
+        }
+      }
+    },
+    "negative_raw_gate_counts_for_tdc_negatives": {
+      "negative_endpoint_requires_semantic_review": 282,
+      "nonprimary_basis_requires_source_review": 143,
+      "no_explicit_injury_support": 104,
+      "unresolved_exposure_context": 97,
+      "individual_no_event_not_negative_hazard_evidence": 33,
+      "original_experimental_study_not_established": 11,
+      "negative_without_observed_human_study": 18,
+      "answer_bearing_condition_requires_semantic_review": 3,
+      "no_reports_or_residual_injury_risk_requires_review": 2,
+      "explicit_human_outcome_candidate": 21,
+      "source_context_flag_requires_review": 1,
+      "secondary_or_pooled_study_origin_requires_review": 7,
+      "codex_review_accepted_conditioned_claim": 3,
+      "codex_review_pending_or_excluded": 3
+    },
+    "input_hashes": {
+      "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/tdc_comparison/dili.tab": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
+      "data/starling_data/dili/dataset_manifest.json": "0537b1122d9a631eb13fdda618bdce2a5df3c038f1adda4bfed2ade10d424b64",
+      "data/starling_data/dili/raw_v1/dili_base/extraction_guidance.json": "a724600693b0da0c1047e12965879bf3c97f5875b23cece7730bb5121b404ff6",
+      "data/starling_data/dili/gold_v2/base_record_decisions.parquet": "76cbfed73cb346152bae31b51eb46086ad71470430b25abdc43b511de87d5190",
+      "data/starling_data/dili/gold_v2/source_votes.jsonl": "62c158f48ab581fe4e0fdd29fe5ff79efe4459c2170623ccb745e49a1a160c4c",
+      "data/starling_data/dili/gold_v2/parent_condition_labels.jsonl": "2dc825c15cbd7e87df7b3d361026bb8e07031fd53b8b98258587c34ff9189bed"
+    }
+  },
+  "carcinogens": {
+    "tdc_dataset": "carcinogens_lagunin",
+    "tdc_rows": 280,
+    "tdc_labels": {
+      "1": 60,
+      "0": 220
+    },
+    "invalid_tdc_smiles": [],
+    "unique_tdc_parents": 278,
+    "conflict_free_tdc_parent_labels": {
+      "1": 58,
+      "0": 218
+    },
+    "conflict_free_parent_exact": {
+      "0": {
+        "tdc_rows": 218,
+        "records": 127,
+        "retrieval": 124,
+        "base": 47,
+        "raw_negative": 29,
+        "candidate_negative": 2,
+        "verified_negative": 2,
+        "gold_any": 10,
+        "gold_negative": 2,
+        "benchmark_any": 6,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 208,
+          "positive_only": 8,
+          "negative_only": 2
+        },
+        "benchmark_label_sets": {
+          "absent": 212,
+          "positive_only": 5,
+          "negative_only": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 58,
+        "records": 30,
+        "retrieval": 29,
+        "base": 22,
+        "raw_negative": 15,
+        "candidate_negative": 8,
+        "verified_negative": 2,
+        "gold_any": 3,
+        "gold_negative": 2,
+        "benchmark_any": 3,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 55,
+          "both": 1,
+          "positive_only": 1,
+          "negative_only": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 55,
+          "positive_only": 2,
+          "negative_only": 1
+        }
+      }
+    },
+    "conflict_free_parent_connectivity": {
+      "0": {
+        "tdc_rows": 218,
+        "records": 156,
+        "retrieval": 155,
+        "base": 63,
+        "raw_negative": 40,
+        "candidate_negative": 3,
+        "verified_negative": 3,
+        "gold_any": 13,
+        "gold_negative": 3,
+        "benchmark_any": 7,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 205,
+          "positive_only": 10,
+          "negative_only": 2,
+          "both": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 211,
+          "positive_only": 6,
+          "negative_only": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 58,
+        "records": 41,
+        "retrieval": 40,
+        "base": 31,
+        "raw_negative": 22,
+        "candidate_negative": 10,
+        "verified_negative": 4,
+        "gold_any": 7,
+        "gold_negative": 4,
+        "benchmark_any": 3,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 51,
+          "positive_only": 3,
+          "negative_only": 3,
+          "both": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 55,
+          "positive_only": 2,
+          "negative_only": 1
+        }
+      }
+    },
+    "tdc_parent_label_conflicts": {
+      "UPZFHUODAYGHDZ-RMKNXTFCSA-N": [
+        0,
+        1
+      ],
+      "TVWOWDDBXAFQDG-QURGRASLSA-N": [
+        0,
+        1
+      ]
+    },
+    "exact_parent": {
+      "0": {
+        "tdc_rows": 220,
+        "records": 129,
+        "retrieval": 126,
+        "base": 49,
+        "raw_negative": 30,
+        "candidate_negative": 2,
+        "verified_negative": 2,
+        "gold_any": 10,
+        "gold_negative": 2,
+        "benchmark_any": 6,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 210,
+          "positive_only": 8,
+          "negative_only": 2
+        },
+        "benchmark_label_sets": {
+          "absent": 214,
+          "positive_only": 5,
+          "negative_only": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 60,
+        "records": 32,
+        "retrieval": 31,
+        "base": 24,
+        "raw_negative": 16,
+        "candidate_negative": 8,
+        "verified_negative": 2,
+        "gold_any": 3,
+        "gold_negative": 2,
+        "benchmark_any": 3,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 57,
+          "both": 1,
+          "positive_only": 1,
+          "negative_only": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 57,
+          "positive_only": 2,
+          "negative_only": 1
+        }
+      }
+    },
+    "connectivity_only_diagnostic": {
+      "0": {
+        "tdc_rows": 220,
+        "records": 158,
+        "retrieval": 157,
+        "base": 65,
+        "raw_negative": 41,
+        "candidate_negative": 3,
+        "verified_negative": 3,
+        "gold_any": 13,
+        "gold_negative": 3,
+        "benchmark_any": 7,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 207,
+          "positive_only": 10,
+          "negative_only": 2,
+          "both": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 213,
+          "positive_only": 6,
+          "negative_only": 1
+        }
+      },
+      "1": {
+        "tdc_rows": 60,
+        "records": 43,
+        "retrieval": 42,
+        "base": 33,
+        "raw_negative": 23,
+        "candidate_negative": 10,
+        "verified_negative": 4,
+        "gold_any": 7,
+        "gold_negative": 4,
+        "benchmark_any": 3,
+        "benchmark_negative": 1,
+        "gold_label_sets": {
+          "absent": 53,
+          "positive_only": 3,
+          "negative_only": 3,
+          "both": 1
+        },
+        "benchmark_label_sets": {
+          "absent": 57,
+          "positive_only": 2,
+          "negative_only": 1
+        }
+      }
+    },
+    "starling_distinct_parent_summary": {
+      "base": {
+        "parents": 8700,
+        "label_sets": {
+          "both": 2082,
+          "positive_only": 3865,
+          "negative_only": 1617,
+          "other_only": 1136
+        }
+      },
+      "gold": {
+        "parents": 1072,
+        "label_sets": {
+          "both": 159,
+          "positive_only": 781,
+          "negative_only": 132
+        }
+      },
+      "benchmark": {
+        "parents": 437,
+        "label_sets": {
+          "positive_only": 384,
+          "both": 16,
+          "negative_only": 37
+        }
+      }
+    },
+    "negative_raw_gate_counts_for_tdc_negatives": {
+      "not_direct_human_or_animal_outcome": 52,
+      "negative_endpoint_requires_semantic_review": 114,
+      "no_explicit_carcinogenicity_support": 38,
+      "animal_species_unresolved_or_mixed": 12,
+      "original_experimental_study_not_established": 2,
+      "site_limited_negative_not_overall_hazard": 4,
+      "non_single_substance": 1,
+      "initiator_promoter_or_cocarcinogen_role": 2,
+      "explicit_carcinogenicity_candidate": 3,
+      "answer_bearing_condition_requires_semantic_review": 1
+    },
+    "input_hashes": {
+      "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/tdc_comparison/carcinogens_lagunin.tab": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
+      "data/starling_data/carcinogens/dataset_manifest.json": "4101a0c15559dc9f6d2fa46a45a1274f9e3be3b98a97a4255f22d026b4d8f40d",
+      "data/starling_data/carcinogens/raw_v1/carcinogens_base/extraction_guidance.json": "a82bd065142a955e9c31a30c2ff9e8b9617f5b1fcb9776452fcdd2e9cdbe78a5",
+      "data/starling_data/carcinogens/gold_v2/base_record_decisions.parquet": "28dbaf24020b55d26a92e26d537085776d9963f8ed2b8fb5f42112cf4b57d88a",
+      "data/starling_data/carcinogens/gold_v2/source_votes.jsonl": "4718a30180a7c7cffb70f5c338db377a49340e19fe4d4f3ca4db8bbe8d985eee",
+      "data/starling_data/carcinogens/gold_v2/parent_condition_labels.jsonl": "23c5a1e1cc66ddd3e95080ce81420633df82fe3c0987fe8b2de0d47859fa9665"
+    }
+  }
+}

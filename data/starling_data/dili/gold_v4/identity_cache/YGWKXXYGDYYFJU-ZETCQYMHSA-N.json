@@ -1,0 +1,26 @@
+{
+  "parent_key": "YGWKXXYGDYYFJU-ZETCQYMHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-menthofuran",
+    "(6S)-3,6-dimethyl-4,5,6,7-tetrahydro-1-benzofuran",
+    "(S)-3,6-Dimethyl-4,5,6,7-tetrahydrobenzofuran",
+    "80183-38-6",
+    "Benzofuran, 4,5,6,7-tetrahydro-3,6-dimethyl-, (6S)-",
+    "Benzofuran, 4,5,6,7-tetrahydro-3,6-dimethyl-, (S)-",
+    "CHEBI:50544",
+    "DTXSID20230140",
+    "Menthofuran, (-)-",
+    "OS9602CGD2",
+    "Q27122109",
+    "S-(-)-Menthofuran",
+    "SCHEMBL12013745",
+    "UNII-OS9602CGD2",
+    "YGWKXXYGDYYFJU-ZETCQYMHSA-N"
+  ],
+  "cids": [
+    7168192
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YGWKXXYGDYYFJU-ZETCQYMHSA-N/synonyms/JSON",
+  "http_status": 200
+}

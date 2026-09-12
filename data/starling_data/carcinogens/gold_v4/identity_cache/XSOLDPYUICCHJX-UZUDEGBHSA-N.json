@@ -1,0 +1,54 @@
+{
+  "parent_key": "XSOLDPYUICCHJX-UZUDEGBHSA-N",
+  "ok": true,
+  "synonyms": [
+    "\"2-((4R)-4-((3R,5R,6S,7R,9S,10R,13R,14S,17R)-3,6,7-trihydroxy-10,13-dimethylhexadecahydro-1H-cyclopenta[a]phenanthren-17-yl)pentanamido)ethane-1-sulfonic acid\"",
+    "2-(((3alpha,5beta,6beta,7beta)-3,6,7-trihydroxy-24-oxocholan-24-yl)amino)ethane-1-sulfonic acid",
+    "2-((3alpha,6beta,7beta-trihydroxy-24-oxo-5beta-cholan-24-yl)amino)ethane-1-sulfonic acid",
+    "2-((4R)-4-((3R,5R,6S,7R,10R,13R,14S,17R)-3,6,7-trihydroxy-10,13-dimethylhexadecahydro-1H-cyclopenta[a]phenanthren-17-yl)pentanamido)ethanesulfonic acid",
+    "2-[(3alpha,6beta,7beta-trihydroxy-24-oxo-5beta-cholan-24-yl)amino]ethane-1-sulfonic acid",
+    "2-[[(3alpha,5beta,6beta,7beta)-3,6,7-Trihydroxy-24-oxocholan-24-yl]amino]ethanesulfonic acid",
+    "2-[[(4R)-4-[(3R,5R,6S,7R,8S,9S,10R,13R,14S,17R)-3,6,7-trihydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-17-yl]pentanoyl]amino]ethanesulfonic acid",
+    "2-{[(3alpha,5beta,6beta,7beta)-3,6,7-trihydroxy-24-oxocholan-24-yl]amino}ethane-1-sulfonic acid",
+    "25696-60-0",
+    "C9PN7GJL3R",
+    "CHEBI:133057",
+    "CS-0214075",
+    "DTXSID401353955",
+    "Ethanesulfonic acid, 2-[[(3alpha,5beta,6beta,7beta)-3,6,7-trihydroxy-24-oxocholan-24-yl]amino]-",
+    "HY-N9933",
+    "LMST05040012",
+    "N-(3a,6b,7b-trihydroxy-5b-cholan-24-oyl)-Taurine",
+    "N-(3alpha,6beta,7beta-trihydroxy-5beta-cholan-24-oyl)-taurine",
+    "RefChem:187523",
+    "SCHEMBL21888246",
+    "T-beta-MC",
+    "T-beta-MCA",
+    "T-betaMCA (sodium)",
+    "T81030",
+    "TBMCA",
+    "Taurine, N-(3alpha,6beta,7beta-trihydroxy-5beta-cholan-24-oyl)-",
+    "Tauro-b-muricholate",
+    "Tauro-beta-muricholate; T-beta-MCA",
+    "Tauro-|?-muricholic acid",
+    "T|?MCA",
+    "beta-tauromuricholic acid",
+    "orb1943734",
+    "tauro-b-muricholic acid",
+    "tauro-beta-muricholic acid",
+    "tauromuricholate"
+  ],
+  "cids": [
+    21124703
+  ],
+  "properties": [
+    {
+      "CID": 21124703,
+      "InChIKey": "XSOLDPYUICCHJX-UZUDEGBHSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/594,1176,3325,5827,5862,7441,7681,7858,7983,8146,11497,11643,11813,12041,13293,13328,16231,60823,82153,92327,147395,165571,688710,786655,2723897,5260155,5353622,5371578,5486887,5702160,6419722,11205153,12605277,16139342,21124703,21956122,22719066,25271089,46926973,52938427,85608160,90146053,90472060,131704318,131769817,135435090,141160148/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XRHQGKPLYOZTGE-UHFFFAOYSA-N,XRVDGNKRPOAQTN-FQEVSTJZSA-N,XSBUXVWJQVTYLC-UHFFFAOYSA-N,XSDQTOBWRPYKKA-UHFFFAOYSA-N,XSFJVAJPIHIPKU-XWCQMRHXSA-N,XSHOZPLZPDBZRE-UHFFFAOYSA-N,XSKZXGDFSCCXQX-UHFFFAOYSA-N,XSLWAEDZAMNHED-UHFFFAOYSA-N,XSOLDPYUICCHJX-UZUDEGBHSA-N,XSQUKJJJFZCRTK-UHFFFAOYSA-N,XSTYSYCSYHWAEB-UHFFFAOYSA-N,XTAARPJDFFXHGH-GRPBBMKTSA-N,XTDZGXBTXBEZDN-UHFFFAOYSA-N,XTEGDIRHIJHMMJ-UHFFFAOYSA-N,XTEURQCXJDIUCR-UHFFFAOYSA-N,XTJFYLJRCWKLBB-UHFFFAOYSA-N,XTRDKALNCIHHNI-UHFFFAOYSA-N,XTSBGIIJQVSHML-UHFFFAOYSA-N,XTTIQGSLJBWVIV-UHFFFAOYSA-N,XTVKUUHAAFHYEK-UHFFFAOYSA-N,XTXDLRODXSNGHD-UHFFFAOYSA-N,XTYREEWEUTUYMJ-UHFFFAOYSA-N,XUFQPHANEAPEMJ-UHFFFAOYSA-N,XUGISPSHIFXEHZ-VEVYEIKRSA-N,XUJNEKJLAYXESH-REOHCLBHSA-N,XUJNEKJLAYXESH-UHFFFAOYSA-N,XUKUURHRXDUEBC-KAYWLYCHSA-N,XUNYLLBGLKGFHO-UHFFFAOYSA-N,XUPYJHCZDLZNFP-UHFFFAOYSA-N,XUQVPITYLMRUJC-UHFFFAOYSA-N,XURWVKISYBUGHB-UHFFFAOYSA-N,XVAIDCNLVLTVFM-UHFFFAOYSA-N,XVPUMLOTNZVTSL-BLNOFITASA-N,XVVOERDUTLJJHN-IAEQDCLQSA-N,XVWJJHFBZIHTQH-NTEUORMPSA-N,XVYRZGMLMPSBHO-UHFFFAOYSA-N,XVZWACWGVWVKEW-UHFFFAOYSA-N,XWCDCDSDNJVCLO-UHFFFAOYSA-N,XWNJMSJGJFSGRY-UHFFFAOYSA-N,XWVCGVPSPHTRHE-BQYQJAHWSA-N,XWVCGVPSPHTRHE-UHFFFAOYSA-N,XXBDWLFCJWSEKW-UHFFFAOYSA-N,XXFALVSTGFPHMP-UHFFFAOYSA-N,XXHJVFHJZVVGKT-UHFFFAOYSA-N,XXJWCSMXWIHTRS-UHFFFAOYSA-N,XXJWXESWEXIICW-UHFFFAOYSA-N,XXRCUYVCPSWGCC-UHFFFAOYSA-N,XXROGKLTLUQVRX-UHFFFAOYSA-N,XXXSILNSXNPGKG-ZHACJKMWSA-N,XXYGTCZJJLTAGH-UHFFFAOYSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

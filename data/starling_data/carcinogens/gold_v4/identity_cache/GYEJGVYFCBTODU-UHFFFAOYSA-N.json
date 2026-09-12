@@ -1,0 +1,24 @@
+{
+  "parent_key": "GYEJGVYFCBTODU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GYEJGVYFCBTODU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "138542-40-2",
+    "2-Nitrobenzo(a)pyrene",
+    "2-Nitrobenzo[pqr]tetraphene",
+    "2-nitrobenzo[a]pyrene",
+    "BRN 5442357",
+    "Benzo(a)pyrene, 2-nitro-",
+    "Benzo[a]pyrene, 2-nitro-",
+    "CCRIS 4953",
+    "DTXCID0083200",
+    "DTXSID50160709",
+    "Nitrobenzo[a]pyrene, 2-",
+    "RefChem:326089",
+    "Z8G35ZY2C6"
+  ],
+  "http_status": 200,
+  "cids": [
+    154510
+  ]
+}

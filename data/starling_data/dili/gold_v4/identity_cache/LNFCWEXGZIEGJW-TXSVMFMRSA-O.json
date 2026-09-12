@@ -1,0 +1,41 @@
+{
+  "parent_key": "LNFCWEXGZIEGJW-TXSVMFMRSA-O",
+  "ok": true,
+  "synonyms": [
+    "1-[(4R,5R)-4-Hydroxy-N2-[[4 inverted exclamation marka inverted exclamation marka-(pentyloxy)[1,1 inverted exclamation marka:4 inverted exclamation marka,1 inverted exclamation marka inverted exclamation marka-terphenyl]-4-yl]carbonyl]-5-[2-(trimethylammonio)ethoxy]-L-ornithine]-4-[(4S)-4-hydroxy-4-(4-hydroxyphenyl)-L-allothreonine]",
+    "1-[(4R,5R)-4-Hydroxy-N2-[[4''-(pentyloxy)[1,1':4',1''-terphenyl]-4-yl]carbonyl]-5-[2-(trimethylammonio)ethoxy]-L-ornithine]-4-[(4S)-4-hydroxy-4-(4-hydroxyphenyl)-L-allothreonine]",
+    "1396640-59-7",
+    "2-[[(3S,6S,9S,11R,15S,18S,20R,21R,24S,25S,26S)-6-[(1S,2S)-1,2-dihydroxy-2-(4-hydroxyphenyl)ethyl]-11,20,25-trihydroxy-3,15-bis[(1R)-1-hydroxyethyl]-26-methyl-2,5,8,14,17,23-hexaoxo-18-[[4-[4-(4-pentoxyphenyl)phenyl]benzoyl]amino]-1,4,7,13,16,22-hexazatricyclo[22.3.0.09,13]heptacosan-21-yl]oxy]ethyl-trimethylazanium",
+    "AKOS040736671",
+    "AT46786",
+    "Biafungin",
+    "CD-101",
+    "CD101",
+    "CHEBI:229680",
+    "CHEMBL3989945",
+    "CS-0027142",
+    "EBC-2672075",
+    "EX-A5920",
+    "G013B5478J",
+    "GLXC-25143",
+    "HY-108009",
+    "REZAFUNGIN [WHO-DD]",
+    "REZZAYO",
+    "RefChem:58232",
+    "Rezafungin",
+    "Rezafungin [MI]",
+    "Rezafungin cation",
+    "Rezafungin ion",
+    "Rezafungin?",
+    "SCHEMBL23484740",
+    "SP 3025",
+    "SP-3025",
+    "T12732",
+    "orb1309158"
+  ],
+  "cids": [
+    78318119
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LNFCWEXGZIEGJW-TXSVMFMRSA-O/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,31 @@
+{
+  "parent_key": "LCZVSXRMYJUNFX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LCZVSXRMYJUNFX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4,7-TRIMETHYL-3,6-DIOXAOCTANE-1,8-DIOL",
+    "1-Propanol, 2-(2-(2-hydroxypropoxy)propoxy)-",
+    "2-(2-(2-Hydroxypropoxy)propoxy)-1-propanol",
+    "2-(2-(2-Hydroxypropoxy)propoxy)propan-1-ol",
+    "2-[2-(2-Hydroxypropoxy)propoxy]-1-propanol",
+    "2-[2-(2-hydroxypropoxy)propoxy]propan-1-ol",
+    "45096-22-8",
+    "5U049772F7",
+    "AKOS015899581",
+    "DTXSID90871342",
+    "LS-13724",
+    "NCGC00164417-02",
+    "NS00077386",
+    "Q27262866",
+    "RefChem:1060792",
+    "SB83838",
+    "SCHEMBL15169",
+    "SY057830",
+    "UNII-3C8845E7C1",
+    "UNII-5U049772F7"
+  ],
+  "http_status": 200,
+  "cids": [
+    32611
+  ]
+}

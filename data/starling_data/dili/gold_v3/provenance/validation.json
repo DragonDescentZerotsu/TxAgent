@@ -1,0 +1,215 @@
+{
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "tasks": {
+    "dili": {
+      "source_votes": 4727,
+      "actual_voter_uids": 4727,
+      "old_actual_voter_uids_removed": [
+        "sr_7ef199545505459b8e256010c00d5ae3",
+        "sr_9b1493645aa14fc7a77af3bfd86bb582"
+      ],
+      "raw_source_fields_unchanged": true,
+      "agreement_70_60_recomputed": true,
+      "splits": {
+        "scaffold": {
+          "rows": {
+            "train": 828,
+            "valid": 103,
+            "test": 103
+          },
+          "tautomer_leakage_group_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "scaffold_topology_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "starling_singletons": {
+            "valid": 13,
+            "test": 12
+          },
+          "quality_objective_matches_optimizer": true
+        },
+        "random": {
+          "rows": {
+            "train": 828,
+            "valid": 103,
+            "test": 103
+          },
+          "tautomer_leakage_group_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "scaffold_topology_overlap": {
+            "train__valid": 25,
+            "train__test": 21,
+            "valid__test": 5
+          },
+          "starling_singletons": {
+            "valid": 9,
+            "test": 10
+          },
+          "quality_objective_matches_optimizer": true
+        }
+      },
+      "source_gold_sha256": "1dce6c9d9b02cd849321e86a2fe4bebda62dd9fa3f27cc913d3eecaef9d6b25d",
+      "files": {
+        "data/.build/new_task_tautomer_repair/DILI/gold/identity_pending.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/DILI/gold/identity_lineage.jsonl": "94d4d2182cbe9abf4133c7ef34da80a6ea76c3b32b1f1a96cb23cdf0e44045b4",
+        "data/.build/new_task_tautomer_repair/DILI/gold/enumeration_limit_reviews.jsonl": "e1517a01f4ab60257ad13cf2bdcb6438fb4fa7e04b2f45c2d0630ea23984ae42",
+        "data/.build/new_task_tautomer_repair/DILI/gold/source_votes.jsonl": "9d0372d129481cb0af23e1d061c250636e21ffab2aa392f56c5afcc5cb96e68b",
+        "data/.build/new_task_tautomer_repair/DILI/gold/study_conflicts.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/DILI/gold/merged_study_votes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/DILI/gold/manifest.json": "59c481b4b54589b8eaaf8ea256e1df1cf324a3efa6d3c11b4e066b7956eeda18",
+        "data/.build/new_task_tautomer_repair/DILI/gold/enumeration_cache_before_grouping.jsonl": "3fe0cfb1c8af5a127376284c6773d3bdaa7f8adb0f9546a3ca5d6634deb55943",
+        "data/.build/new_task_tautomer_repair/DILI/gold/specimen_identity_withdrawals.jsonl": "59af70d5ca14a034f06e41de9f828be80215ff877d037fd9c79787f8ae1640e1",
+        "data/.build/new_task_tautomer_repair/DILI/gold/actual_voter_membership.jsonl": "5281a312a83c35db163511ce11fc949425105cb782269c308cc567a44c35ea23",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/train.jsonl": "f68f303b563e3bcbd6b25b2fe0a4e5b7ea7da3783884602718e2c289bc4eb153",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/train_molecule_condition_labels.jsonl": "16d031da03092423876829a32170765ee638b50399faf8135abce229aa0926d9",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/valid.jsonl": "674e1abd1644b02053fd7b94a48da8fa2e7486db14ae10f96e6e5ee917c90285",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/valid_molecule_condition_labels.jsonl": "8d9a22a0fa09ad5d1dfd4c446495fad975d8d3fe3abab2a529dd5163f30dafa8",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/test.jsonl": "976e6ab7b514eb9cafcc4cc86a7669c4ae8321353b9a1cf760f3c520e9d7ef7e",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/test_molecule_condition_labels.jsonl": "3121542af06c1cba497aa567fb27a11245a9d7d6fb6977d1afced67b0b708267",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/heldout_molecule_condition_labels.jsonl": "c44423ba74030bbda000097b4a1e3ddaf94ad23761a1ac38032ade1cab30145c",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/accepted_record_votes.jsonl": "fc223a61ec80d51bedd3a97eba5811caba175546727246185e10e4292b1ae35b",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "f3f78a1b46adb3f98663894c69eca3edec2cd50f5b2843ffbd20819070da53d2",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/accepted_parent_conditions.jsonl": "3a9ab695b23c2cef1d3101bdc04cd425e4030dc9097e600c678258df66fb3ff3",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/rejected_parent_conditions.jsonl": "bea814cf77a2f67ba00ba590c32168add0d5b22ec75c9e795baac36a4425d639",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/group_distribution.csv": "a14e7a1d6d14533bbd783cc7a2993c711349e98b5686bb108557faf1fbc3426d",
+        "data/.build/new_task_tautomer_repair/source_only/DILI/scaffold/summary.json": "73e82eb7c773965c88f731f7a8a5da57fbea6e1e0a2f1579768d5b1c2801197b",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/external_labels.jsonl": "7f07e4c05e56d309cff41f7c7f56d3f7d555940f95f82fa2304c580da7f66bb2",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/tdc_internal_conflicts.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/tdc_identity_pending.jsonl": "6ace62a1dc0f29af787d72921e4bfb7917dfd7150ae17ec3aad8a3d0174c2465",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/tdc_structure_reviews.jsonl": "3401e47d7c59501d62ed656a4e604734466a062f9d8b54b1785a3c17a2fc5f92",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/cross_source_disagreements.jsonl": "190b3bdca734740b9c2e6e260aefd98dbd54c6d0d1592549e40df9bbfa2b8f20",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/manifest.json": "29d363b08b361b622fdde3b01e5bd5f941ed4ab3d9e246aba867e0c9154fd2ad",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/train.jsonl": "c07d606d03e0cf095c5f0ec1074886ad84af102f40937f72eace471e5cffd8de",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/train_molecule_condition_labels.jsonl": "a86ff607b64ecb5aaaab4ba86591a30750312415f82a392810437c9259d4cc6e",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/valid.jsonl": "804363fb1a63d61499042b7a55512c929e195d536a67accb1e6df3a99b7c7460",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/valid_molecule_condition_labels.jsonl": "c7b56075732ab7e87c9210b9e49f0b99e24640f9a9fbdc4b17d894cdb1f842bd",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/test.jsonl": "3e202d8e4fd182a66c1140a6d9d0c6b1af6e3b47b1ec9d3a0024fe0e810d8db9",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/test_molecule_condition_labels.jsonl": "8c5bea7e22f5b203353f69dae1c55e1f67980ec0a294e9589812b6366f580d03",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/heldout_molecule_condition_labels.jsonl": "1326ebbc3f983bf7e414706268cdcffcf87d0257290bf98cfe9d957f240e8b3d",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/heldout_parents.json": "19daf1ec854b43df87346b53b6cf1a78d875148415d558029a43720ea50e7816",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/scaffold/evaluation_groups.json": "0a45572d4da3661cc4868e3fc230ddc4236aed126da79d5d5532d52daaf28a21",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/train.jsonl": "b90c12706e18840d8d01c43533b63a9dda78c52746671a0584dc22befb8ae556",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/train_molecule_condition_labels.jsonl": "1f74ba77fb0f6a6dfe779854e6ec8e14fe8e4504150d55b969520bdca6a2836d",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/valid.jsonl": "b33d55771ab0f1d2823355b4064f3d13a34b2aa011eecc12beb1e88f5c73d77d",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/valid_molecule_condition_labels.jsonl": "49b0ef1aafc3907081f666f968be7e80c510246d378da04c16a95a2b1cd28644",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/test.jsonl": "9d960868394b93d16949e9b302a00057017d70d0935bb53a3059a6a7dac51c7a",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/test_molecule_condition_labels.jsonl": "eb6542c619d4bd7646e0e90555babf9390a92b2ce4be84f8be300c647b9c9be4",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/heldout_molecule_condition_labels.jsonl": "7c1c242d657a1218a5fbfa5542b9be1f2a4aa4ed0da4324e436af4b6959eb5c6",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/heldout_parents.json": "1cdfab97d585483be2f5c5e3e203ef4dd93f1dfdee2245d87678ff94dfb87413",
+        "data/.build/new_task_tautomer_repair/augmented/DILI/random/evaluation_groups.json": "73cb03f8c8ebe9686a4584cded4b15518413eef3e448c47017bc71cf36e6dfba"
+      }
+    },
+    "carcinogens": {
+      "source_votes": 12571,
+      "actual_voter_uids": 12571,
+      "old_actual_voter_uids_removed": [],
+      "raw_source_fields_unchanged": true,
+      "agreement_70_60_recomputed": true,
+      "splits": {
+        "scaffold": {
+          "rows": {
+            "train": 840,
+            "valid": 312,
+            "test": 312
+          },
+          "tautomer_leakage_group_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "scaffold_topology_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "starling_singletons": {
+            "valid": 131,
+            "test": 221
+          },
+          "quality_objective_matches_optimizer": true
+        },
+        "random": {
+          "rows": {
+            "train": 1164,
+            "valid": 150,
+            "test": 150
+          },
+          "tautomer_leakage_group_overlap": {
+            "train__valid": 0,
+            "train__test": 0,
+            "valid__test": 0
+          },
+          "scaffold_topology_overlap": {
+            "train__valid": 13,
+            "train__test": 23,
+            "valid__test": 5
+          },
+          "starling_singletons": {
+            "valid": 83,
+            "test": 75
+          },
+          "quality_objective_matches_optimizer": true
+        }
+      },
+      "source_gold_sha256": "507ffec7aa6915d51e78a2f0522237f86bcd9e30bdb997466f8d65c9440b4942",
+      "files": {
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/identity_pending.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/identity_lineage.jsonl": "0877bf96fafab0fd53a4e36ca3ae6e3a9fed4f6c2acb77842f8258242c407e31",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/enumeration_limit_reviews.jsonl": "309c312b01067de26636ab016f0bb85c70ea11c8a352670c19d253914004ba7f",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/source_votes.jsonl": "c9b057201a9ec88a357a5874e47d5764e73d7a52f51fe521092c7beb3958fbcb",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/study_conflicts.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/merged_study_votes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/manifest.json": "05cac8ec1818bac6386d296e47a4b870dd09ede4e82d77739c200fcfe12ce7b3",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/enumeration_cache_before_grouping.jsonl": "176b81a520350216b5877003750c29ebba69060f654530dac2679211f010bd36",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/specimen_identity_withdrawals.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/Carcinogens/gold/actual_voter_membership.jsonl": "c2906a3791f608d1df3b8621564935fb0cd8ca1d253b2b78b53ee6abe8662bc9",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/train.jsonl": "20e20d759940685af05f5c57ec488af4b941191706d1e63caddcbbab450d9843",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/train_molecule_condition_labels.jsonl": "c1f7ae40c4ce5d65e3428b1d3e666fb5485503230470d1632cbbc96dc6e69c1d",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/valid.jsonl": "13f252ff92138d58861b550eca9e77bfb3b5873a2c89baf5778920e2a4dc991f",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/valid_molecule_condition_labels.jsonl": "189c2eade3280b5b6dd7f3def111b6c5532f0c2619b62143b35fcb35cb62c77a",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/test.jsonl": "a8ca45ecf0208e4292ef0efb5c31d6b4c6d551a93c47f77b3647c92bf0a3a3f6",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/test_molecule_condition_labels.jsonl": "073158142515b842a42eb5cfaf313cbba005d0867b7dbebae8f375cdac784a5e",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl": "06c045ddd5f5c1dc587e2afe2e58947ec8b19eacbfe351a7bfd3b91f0b13a393",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/accepted_record_votes.jsonl": "68fe09eb5745f87281ffb85ae0612e513df6e9e4540dc4df488a7e7e888db3b8",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "3114fd4912be039687cce457b707f808dc2d6f15a6c193fface1f31554a38460",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/accepted_parent_conditions.jsonl": "cec3eb518bdcc9d8ac831f93d09960c1f0f66ff96f424bd46ae16d6930b47a2d",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/rejected_parent_conditions.jsonl": "640d8c643730849e87d09df06d5a8fdfe7d63f9827c9df143d1cf4eb26b70ee8",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/group_distribution.csv": "ccd7a7aaea4206ac6c539eaa4684677aac971d89d2ef292240a2ede4be54f197",
+        "data/.build/new_task_tautomer_repair/source_only/Carcinogens/scaffold/summary.json": "ee67ee2ad28e994ee3d1ade3bcd92e719e7a9e65dc0c4f4c28346f5f5e85e366",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/external_labels.jsonl": "eeb24b2d84249720fc802fa79fa7897f68ee302ebd7968736bf20f013c11edec",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/tdc_internal_conflicts.jsonl": "94935a64d162f3a67ebdd9df3232676614391229c2e514d8db82d59dc8006d85",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/tdc_identity_pending.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/tdc_structure_reviews.jsonl": "040bcdbb3d352a7adca7ef694669f0cecf82bf039b385764175afa0e4ec40a99",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/cross_source_disagreements.jsonl": "f3dd4353e800f5e9c6277fc7c6d45c2358832747ab2ef95d9b61181a047040fe",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/manifest.json": "db36d92ec38505cabc3d1930fd26bda1c152238dfa849952fffdba38231e9031",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/train.jsonl": "91df0117df87cfe6596eb51ea29ebcb3613cdc1e1931af43f70fcce5d32cfbab",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/train_molecule_condition_labels.jsonl": "d2d4d7989d4248d91b5526cae10395738d1507e559289cbf5ebdf528ccc41e69",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/valid.jsonl": "3bbc0d32a856960d70455d2a1eb1c4d9953d57ce611cab04b459ba9fb50a5fc8",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/valid_molecule_condition_labels.jsonl": "bd6f14053e14ca1cdc6788bc93a60231f2babe3f2394187c3a031b343b679531",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/test.jsonl": "0f1ac10f2d616211247ca72dd697010e018bc5ab8e7b2786d171cf08dbb220a1",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/test_molecule_condition_labels.jsonl": "feb4419e1d6add8976887c079b345adf1c4e776f84ef43cbe1187f9f84c63955",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl": "d509731119b0c6a9e6aafaadef4ffa01682d81d0f3fb805ef3fb55ba4034e330",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/heldout_parents.json": "9bc08bde0d30c2d53bd3e8265f1818c48e24f2f2e195c27af195bf7b495530f7",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/scaffold/evaluation_groups.json": "990e48210e398624d099b3517dc62143ebb6ae73bad123d78299bf8f259dc0c2",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/train.jsonl": "d08f320230e187d6bbf8d05b28aff8977387167f5f8aa94ca8582cffa71d006a",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/train_molecule_condition_labels.jsonl": "95acf2d94b8d707b9afec8a0e3749f2708552d21c0f2df210328e3843d83f724",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/valid.jsonl": "ede20db75c29d606289d770bfdf987d5c216bed7edf6c10d7dc8291b71233c12",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/valid_molecule_condition_labels.jsonl": "83b1e169c11e70560686ebc65ada642e28f592c7b02daa15c3c7703bf0f2e91a",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/test.jsonl": "44c6adc84906b02d18fbd72ac83e07c8f21b9d06d3e9326f61b6c14274e756a5",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/test_molecule_condition_labels.jsonl": "0b11e99e0c7de47ecbebb7c062cd33371a37c29497bcc1573892e54e76533dd6",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/heldout_molecule_condition_labels.jsonl": "eaf0811b32fac1216da712ca2c4d0aeceaf2294fde3abe495c380bb8c82c7b55",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/heldout_parents.json": "3335c76eba04e858409a54ad926e35cd1e67129f5d2046a1e486cbbdac1b4dca",
+        "data/.build/new_task_tautomer_repair/augmented/Carcinogens/random/evaluation_groups.json": "bd49f48485f60adf7c9bb814663d4586acbce544cdcea72d9f7ce2bf07ed216d"
+      }
+    }
+  },
+  "status": "passed"
+}

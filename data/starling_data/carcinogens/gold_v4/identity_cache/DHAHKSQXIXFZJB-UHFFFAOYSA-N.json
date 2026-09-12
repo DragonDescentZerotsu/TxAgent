@@ -1,0 +1,40 @@
+{
+  "parent_key": "DHAHKSQXIXFZJB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DHAHKSQXIXFZJB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-((4-(Diethylamino)phenyl)(4-(diethyliminio)-2,5-cyclohexadien-1-ylidene)methyl)-4-hydroxy-5-sulfobenzenesulfonate",
+    "2-((4-(Diethylamino)phenyl)-(4-diethylazaniumylidenecyclohexa-2,5-dien-1-ylidene)methyl)-4-hydroxy-5-sulfobenzenesulfonate",
+    "2-((4-(diethylamino)phenyl)(4-(diethyliminio)cyclohexa-2,5-dien-1-ylidene)methyl)-4-hydroxy-5-sulfobenzenesulfonate",
+    "2-[[4-(diethylamino)phenyl]-(4-diethylazaniumylidenecyclohexa-2,5-dien-1-ylidene)methyl]-4-hydroxy-5-sulfobenzenesulfonate",
+    "25305-77-5",
+    "4-[[4-(diethylamino)phenyl]-(4-diethyliminiocyclohexa-2,5-dien-1-ylidene)methyl]-2-hydroxy-5-sulfo-benzenesulfonate",
+    "4-[[4-(diethylamino)phenyl]-(4-diethyliminiocyclohexa-2,5-dien-1-ylidene)methyl]-2-hydroxy-5-sulfo-besylate",
+    "4-{[4-(Diethylamino)phenyl][4-(diethyliminio)cyclohexa-2,5-dien-1-ylidene]methyl}-2-hydroxy-5-sulfobenzene-1-sulfonate",
+    "4-{[4-(Diethylamino)phenyl][4-(diethyliminio)cyclohexa-2,5-dien-1-ylidene]methyl}-2-hydroxy-5-sulfobenzenesulfonate",
+    "4-{[4-(Diethylamino)phenyl][4-(diethyliminio)cyclohexa-2,5-dien-1-ylidene]methyl}-6-hydroxybenzene-1,3-disulfonate",
+    "6-{[4-(diethylamino)phenyl][4-(diethylylidene)cyclohexa-2,5-dienylidene]methyl }-4-hydroxybenzene-1,3-disulfonic acid",
+    "AKOS024386977",
+    "CS-0213832",
+    "D4RJJ6R97N",
+    "DTXSID90892274",
+    "Ethanaminium, N-(4-((4-(diethylamino)phenyl)(5-hydroxy-2,4-disulfophenyl)methylene)-2,5-cyclohexadien-1-ylidene)-N-ethyl-, inner salt",
+    "Ethanaminium, N-[4-[[4-(diethylamino)phenyl](5-hydroxy-2,4-disulfophenyl)methylene]-2,5-cyclohexadien-1-ylidene]-N-ethyl-, inner salt",
+    "PATENT BLUE [USAN]",
+    "PD157229",
+    "Patent Blue V free acid",
+    "Patent Blue V, Acid blue",
+    "Q27276099",
+    "SCHEMBL1399043",
+    "SCHEMBL30186708",
+    "SCHEMBL4976229",
+    "ST51039036",
+    "UNII-D4RJJ6R97N"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (20%), Request Time status: Green (0%), Service status: Black (247%)",
+  "cids": [
+    4010672,
+    43835199
+  ]
+}

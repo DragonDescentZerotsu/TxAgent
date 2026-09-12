@@ -1,0 +1,24 @@
+{
+  "parent_key": "YOJRTDXCZANBTO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-(1-naphthyl)-2,5-diphenyl-2H-tetrazol-3-ium",
+    "CHEBI:75197",
+    "CHEMBL600951",
+    "GNF-Pf-3500",
+    "NCIOpen2_009855",
+    "NS00048389",
+    "Q27145162",
+    "SCHEMBL13814505",
+    "SCHEMBL29406379",
+    "SCHEMBL3670345",
+    "tetrazolium purple(1+)",
+    "tetrazolium violet(1+)",
+    "violet tetrazolium(1+)"
+  ],
+  "cids": [
+    74396
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YOJRTDXCZANBTO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

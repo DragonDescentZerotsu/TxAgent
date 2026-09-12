@@ -1,0 +1,26 @@
+{
+  "parent_key": "FPQFYIAXQDXNOR-XVNBXDOJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FPQFYIAXQDXNOR-XVNBXDOJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(12E)-8,16,18-trihydroxy-4-methyl-3-oxabicyclo[12.4.0]octadeca-1(14),12,15,17-tetraen-2-one",
+    "(4S,8R)-8,16,18-Trihydroxy-4-methyl-3-oxabicyclo[12.4.0]octadeca-1(14),12,15,17-tetraen-2-one",
+    "1H-2-Benzoxacyclotetradecin-1-one, 3,4,5,6,7,8,9,10-octahydro-7,14,16-trihydroxy-3-methyl-, (3S,7S,11E)-",
+    "5916-52-9",
+    "AKOS040738786",
+    "Compound NP-015244",
+    "FPQFYIAXQDXNOR-XVNBXDOJSA-N",
+    "NCGC00384542-01",
+    "RefChem:195891",
+    "SCHEMBL30576982",
+    "SCHEMBL588698",
+    "T129696",
+    "Z56763546",
+    "Zearalenol",
+    "orb3171756"
+  ],
+  "http_status": 200,
+  "cids": [
+    5933650
+  ]
+}

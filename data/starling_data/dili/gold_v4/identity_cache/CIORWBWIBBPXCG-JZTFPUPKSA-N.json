@@ -1,0 +1,19 @@
+{
+  "parent_key": "CIORWBWIBBPXCG-JZTFPUPKSA-N",
+  "ok": true,
+  "synonyms": [
+    "11030-71-0",
+    "2-((1R,4S,10S,13S,16S,34S)-34-(butan-2-yl)-13-((3R)-3,4-dihydroxybutan-2-yl)-8,22-dihydroxy-2,5,11,14,27,30,33,36,39-nonaoxo-27$l^(4)-thia-3,6,12,15,25,29,32,35,38-nonaazapentacyclo(14.12.11.0^(6,10).0^(18,26).0^(19,24))nonatriaconta-18(26),19,21,23-tetraen-4-yl)acetamide",
+    "2-[(1R,4S,10S,13S,16S,34S)-34-(butan-2-yl)-13-[(3R)-3,4-dihydroxybutan-2-yl]-8,22-dihydroxy-2,5,11,14,27,30,33,36,39-nonaoxo-27$l^{4}-thia-3,6,12,15,25,29,32,35,38-nonaazapentacyclo[14.12.11.0^{6,10}.0^{18,26}.0^{19,24}]nonatriaconta-18(26),19,21,23-tetraen-4-yl]acetamide",
+    "6429KFN06D",
+    "Amanitin",
+    "GTPL4632",
+    "NS00066769",
+    "RefChem:556859"
+  ],
+  "cids": [
+    73755106
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIORWBWIBBPXCG-JZTFPUPKSA-N/synonyms/JSON",
+  "http_status": 200
+}

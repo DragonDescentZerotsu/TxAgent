@@ -1,0 +1,14 @@
+{
+  "parent_key": "HMFKFHLTUCJZJO-HHVQYONYSA-N",
+  "ok": true,
+  "synonyms": [
+    "FT47117",
+    "Polyoxyethylene glycol sorbitan tristearate",
+    "SCHEMBL30569647"
+  ],
+  "cids": [
+    86289077
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HMFKFHLTUCJZJO-HHVQYONYSA-N/synonyms/JSON",
+  "http_status": 200
+}

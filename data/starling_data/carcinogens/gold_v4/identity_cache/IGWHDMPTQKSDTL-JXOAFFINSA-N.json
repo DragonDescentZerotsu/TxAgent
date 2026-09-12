@@ -1,0 +1,43 @@
+{
+  "parent_key": "IGWHDMPTQKSDTL-JXOAFFINSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IGWHDMPTQKSDTL-JXOAFFINSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "((2R,3S,4R,5R)-3,4-Dihydroxy-5-(5-methyl-2,4-dioxo-3,4-dihydropyrimidin-1(2H)-yl)tetrahydrofuran-2-yl)methyl dihydrogen phosphate",
+    "((2R,3S,4R,5R)-3,4-Dihydroxy-5-(5-methyl-2,4-dioxo-3,4-dihydropyrimidin-1(2H)-yl)tetrahydrofuran-2-yl)methyldihydrogenphosphate",
+    "3590-47-4",
+    "5-METHYLURIDINE 5'-MONOPHOSPHATE",
+    "5-Methyluridine monophosphate",
+    "5-methyl-5'-uridylic acid",
+    "5-methyl-UMP",
+    "5-methyluridine 5'-(dihydrogen phosphate)",
+    "5-methyluridine 5'-phosphate",
+    "5MU",
+    "5mUMP",
+    "CHEBI:45394",
+    "CHEBI:77120",
+    "CHEMBL1230421",
+    "DB04243",
+    "DTXCID10461047",
+    "DTXSID50510240",
+    "G66355",
+    "NS00070875",
+    "Q2817106",
+    "RefChem:304336",
+    "SCHEMBL2883629",
+    "Thymidine-5'- Monophosphate",
+    "[(2R,3S,4R,5R)-3,4-dihydroxy-5-(5-methyl-2,4-dioxopyrimidin-1-yl)oxolan-2-yl]methyl dihydrogen phosphate",
+    "orb3174821",
+    "rTMP",
+    "ribo-TMP",
+    "ribosylthymidine 5'-monophosphate",
+    "ribosylthymidine 5'-phosphate",
+    "ribosylthymine 5'-monophosphate",
+    "ribosylthymine 5'-phosphate",
+    "ribothymidine 5'-phosphate"
+  ],
+  "http_status": 200,
+  "cids": [
+    12803287
+  ]
+}

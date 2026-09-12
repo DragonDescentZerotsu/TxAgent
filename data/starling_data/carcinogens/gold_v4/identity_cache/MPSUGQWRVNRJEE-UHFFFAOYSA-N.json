@@ -1,0 +1,38 @@
+{
+  "parent_key": "MPSUGQWRVNRJEE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MPSUGQWRVNRJEE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3-triazolium-1-aminide",
+    "1,2,3-triazolylamine",
+    "1-amino-1,2,3-triazole",
+    "1H-1,2,3-TRIAZOL-1-AMIN",
+    "1H-1,2,3-triazol-1-amine",
+    "584-14-5",
+    "AB92480",
+    "AKOS005450602",
+    "CS-0044749",
+    "D72001",
+    "DTXCID30347798",
+    "DTXSID40396939",
+    "EN300-245863",
+    "F544362",
+    "MFCD01874348",
+    "MPSUGQWRVNRJEE-UHFFFAOYSA-N",
+    "RefChem:236896",
+    "SCHEMBL2723221",
+    "SCHEMBL60018",
+    "SCHEMBL7757478",
+    "SCHEMBL8193836",
+    "ST018524",
+    "STK379215",
+    "Triazol-3-amine",
+    "[1,2,3]Triazol-1-ylamine",
+    "n-aminotriazole",
+    "triazol-1-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    3825723
+  ]
+}

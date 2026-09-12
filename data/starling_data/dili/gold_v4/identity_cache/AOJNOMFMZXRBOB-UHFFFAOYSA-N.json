@@ -1,0 +1,37 @@
+{
+  "parent_key": "AOJNOMFMZXRBOB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-(4-chlorobenzamido)benzoic acid",
+    "2-(4-chlorobenzamido)benzoicacid",
+    "2-[(4-chlorobenzoyl)amino]benzenecarboxylic acid",
+    "2-[(4-chlorobenzoyl)amino]benzoic acid",
+    "2-[(4-chlorophenyl)carbonylamino]benzoic acid",
+    "2-{[(4-chlorophenyl)carbonyl]amino}benzoic acid",
+    "34425-87-1",
+    "AKOS000264028",
+    "Benzoic acid,2-[(4-chlorobenzoyl)amino]-",
+    "CCG-523",
+    "CS-0223272",
+    "DTXSID50353937",
+    "EN300-11456",
+    "G37481",
+    "HMS558O12",
+    "JBA42587",
+    "MFCD00276714",
+    "MS-0093",
+    "Maybridge1_006128",
+    "Oprea1_470664",
+    "SCHEMBL16583930",
+    "SR-01000389175",
+    "SR-01000389175-1",
+    "ST50104161",
+    "STK077957",
+    "Z57046939"
+  ],
+  "cids": [
+    759351
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AOJNOMFMZXRBOB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

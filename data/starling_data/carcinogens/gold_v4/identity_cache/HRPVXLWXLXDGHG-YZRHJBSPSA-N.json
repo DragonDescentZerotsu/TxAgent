@@ -1,0 +1,13 @@
+{
+  "parent_key": "HRPVXLWXLXDGHG-YZRHJBSPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HRPVXLWXLXDGHG-YZRHJBSPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL30749761",
+    "SCHEMBL5685814"
+  ],
+  "http_status": 200,
+  "cids": [
+    173181351
+  ]
+}

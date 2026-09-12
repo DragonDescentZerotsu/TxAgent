@@ -1,0 +1,12 @@
+{
+  "parent_key": "UPJFLBVSOWEZOE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UPJFLBVSOWEZOE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-hydroxyaminofluorene"
+  ],
+  "http_status": 200,
+  "cids": [
+    23616088
+  ]
+}

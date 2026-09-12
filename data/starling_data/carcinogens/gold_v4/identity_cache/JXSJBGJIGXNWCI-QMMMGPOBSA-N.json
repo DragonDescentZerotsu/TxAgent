@@ -1,0 +1,25 @@
+{
+  "parent_key": "JXSJBGJIGXNWCI-QMMMGPOBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JXSJBGJIGXNWCI-QMMMGPOBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S2-[(Dimethoxyphosphinothioyl)thio]butanedioic acid, 1,4-Diethyl ester",
+    "(S)-Malathion",
+    "(S)-O-(1,2-bis-(ethoxycarbonyl)ethyl)-O,O-dimethyl phosphorodithioate",
+    "(S)-O-[1,2-bis-(ethoxycarbonyl)ethyl]-O,O-dimethyl phosphorodithioate",
+    "145307-17-1",
+    "BIDD:ER0333",
+    "CHEBI:141476",
+    "DTXSID601020419",
+    "Diethyl (2S)-2-[(dimethoxyphosphorothioyl)sulfanyl]butanedioate",
+    "RefChem:211145",
+    "SCHEMBL3705116",
+    "diethyl (2S)-2-((dimethoxyphosphorothioyl)thio)succinate",
+    "diethyl (2S)-2-[(dimethoxyphosphorothioyl)thio]succinate",
+    "diethyl (2S)-2-dimethoxyphosphinothioylsulfanylbutanedioate"
+  ],
+  "http_status": 200,
+  "cids": [
+    10892866
+  ]
+}

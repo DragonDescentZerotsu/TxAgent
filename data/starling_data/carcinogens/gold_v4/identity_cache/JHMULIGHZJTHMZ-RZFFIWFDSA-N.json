@@ -1,0 +1,24 @@
+{
+  "parent_key": "JHMULIGHZJTHMZ-RZFFIWFDSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JHMULIGHZJTHMZ-RZFFIWFDSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+)-Gymnemic acid VII",
+    "(2S,3S,4S,5R,6R)-6-(((3S,4R,4aR,6aR,6bS,8S,8aS,10S,12aS,14aR,14bR)-8,10-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl)oxy)-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[[(3S,4R,4aR,6aR,6bS,8S,8aS,10S,12aS,14aR,14bR)-8,10-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl]oxy]-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.BETA.,4.ALPHA.,16.BETA.,21.BETA.)-16,21,23,28-TETRAHYDROXYOLEAN-12-EN-3-YL",
+    "121903-97-7",
+    "988995JB6C",
+    "Gymnemate VII",
+    "Gymnemic acid VII",
+    "Gymnemic acid vii, (+)-",
+    "Q27272105",
+    "RefChem:144873",
+    "UNII-988995JB6C",
+    "beta-D-Glucopyranosiduronic acid, (3beta,4alpha,16beta,21beta)-16,21,23,28-tetrahydroxyolean-12-en-3-yl"
+  ],
+  "http_status": 200,
+  "cids": [
+    91617592
+  ]
+}

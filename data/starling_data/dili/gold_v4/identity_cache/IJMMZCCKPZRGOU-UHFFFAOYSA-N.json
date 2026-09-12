@@ -1,0 +1,22 @@
+{
+  "parent_key": "IJMMZCCKPZRGOU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-(4-Methylbenzene-1-sulfonyl)benzoic acid",
+    "4-(4-methylphenyl)sulfonylbenzoic acid",
+    "7402-82-6",
+    "A1-05450",
+    "Benzoicacid, 4-[(4-methylphenyl)sulfonyl]-",
+    "DTXCID70273188",
+    "DTXSID70322069",
+    "NSC-400324",
+    "NSC400324",
+    "RefChem:288176",
+    "SCHEMBL7316384"
+  ],
+  "cids": [
+    343817
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IJMMZCCKPZRGOU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

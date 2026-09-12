@@ -1,0 +1,38 @@
+{
+  "parent_key": "JCXJVPUVTGWSNB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCXJVPUVTGWSNB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10102-44-0",
+    "233-272-6",
+    "Azoto",
+    "CHEBI:33101",
+    "DTXCID50974",
+    "DTXSID7020974",
+    "Dioxide, Nitrogen",
+    "Dioxido de nitrogeno",
+    "Dioxo-lambda~5~-azanyl",
+    "MFCD00085341",
+    "NITROGEN DIOXIDE, LIQUEFIED",
+    "Nitrito",
+    "Nitro",
+    "Nitrogen dioxide",
+    "Nitrogen dioxide (NO2)",
+    "Nitrogen dioxide (liquid)",
+    "Nitrogen dioxide, >=99.5%",
+    "Nitrogen oxide (NO2)",
+    "Nitrogen peroxide",
+    "Nitrogen peroxide, liquid",
+    "Peroxide, Nitrogen",
+    "Peroxyde d' azote",
+    "RCRA waste number P078",
+    "RefChem:6473",
+    "S7G510RUBH",
+    "Stickstoffdioxid",
+    "Stikstofdioxyde"
+  ],
+  "http_status": 200,
+  "cids": [
+    3032552
+  ]
+}

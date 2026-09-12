@@ -1,0 +1,15 @@
+{
+  "parent_key": "ALBWRRHELUFSEF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ALBWRRHELUFSEF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "ALBWRRHELUFSEF-UHFFFAOYSA-N",
+    "SCHEMBL16095230",
+    "tert-butyl 6-fluoro-2-(4-methyl-5-oxo-2,5-dihydrofuran-3-yl)-1-oxo-2,8-diazaspiro[4.5]decane-8-carboxylate",
+    "trans"
+  ],
+  "http_status": 200,
+  "cids": [
+    90457052
+  ]
+}

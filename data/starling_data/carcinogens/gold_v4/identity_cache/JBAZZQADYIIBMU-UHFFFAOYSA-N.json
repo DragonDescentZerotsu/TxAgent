@@ -1,0 +1,19 @@
+{
+  "parent_key": "JBAZZQADYIIBMU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBAZZQADYIIBMU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-chlorophenyl)-2,2,2-trichloroethane",
+    "1-chloro-4-(2,2,2-trichloroethyl)benzene",
+    "3883-14-5",
+    "DTXSID001273599",
+    "RefChem:229423",
+    "SCHEMBL11398496",
+    "SCHEMBL3658885",
+    "starbld0027643"
+  ],
+  "http_status": 200,
+  "cids": [
+    12385788
+  ]
+}

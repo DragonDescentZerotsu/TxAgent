@@ -1,0 +1,22 @@
+{
+  "parent_key": "LWGJTAZLEJHCPA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LWGJTAZLEJHCPA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(N-(2-Chloroethyl)-N-nitrosocarbamoyl)morpholine",
+    "4-Morpholinecarboxamide, N-(2-chloroethyl)-N-nitroso-",
+    "80153-69-1",
+    "CNCM",
+    "DTXCID80152596",
+    "DTXSID20230105",
+    "N-(2-chloroethyl)-N-nitrosomorpholine-4-carboxamide",
+    "NSC 356530",
+    "NSC-356530",
+    "NSC356530",
+    "RefChem:97527"
+  ],
+  "http_status": 200,
+  "cids": [
+    100736
+  ]
+}

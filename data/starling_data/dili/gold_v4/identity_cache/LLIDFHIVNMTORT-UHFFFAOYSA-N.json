@@ -1,0 +1,12 @@
+{
+  "parent_key": "LLIDFHIVNMTORT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL28615417"
+  ],
+  "cids": [
+    172759202
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LLIDFHIVNMTORT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

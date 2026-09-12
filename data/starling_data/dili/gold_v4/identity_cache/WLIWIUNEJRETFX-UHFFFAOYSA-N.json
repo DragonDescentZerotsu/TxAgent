@@ -1,0 +1,32 @@
+{
+  "parent_key": "WLIWIUNEJRETFX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    ".ALPHA.-METHYLAMINO-VALEROPHENONE",
+    "1-PENTANONE, 2-(METHYLAMINO)-1-PHENYL-",
+    "2-(Methylamino)-1-phenyl-1-Pentanone",
+    "2-(methylamino)-1-phenylpentan-1-one",
+    "2-Methylamino-1-phenylpentan-1-one",
+    "2ELU1B757Q",
+    "879722-57-3",
+    "C22784",
+    "DEA No. 1246",
+    "DTXCID501436728",
+    "DTXSID101014184",
+    "J3.114.083H",
+    "NS00009456",
+    "Pentedrone",
+    "Q2069408",
+    "RefChem:171481",
+    "SCHEMBL17644177",
+    "UNII-2ELU1B757Q",
+    "WLIWIUNEJRETFX-UHFFFAOYSA-N",
+    "alpha-methylaminovalerophenone",
+    "beta-Pentedrone"
+  ],
+  "cids": [
+    57501499
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WLIWIUNEJRETFX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

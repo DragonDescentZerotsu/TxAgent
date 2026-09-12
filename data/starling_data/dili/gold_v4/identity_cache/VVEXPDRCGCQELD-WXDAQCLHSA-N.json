@@ -1,0 +1,12 @@
+{
+  "parent_key": "VVEXPDRCGCQELD-WXDAQCLHSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL1983868"
+  ],
+  "cids": [
+    67237082
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VVEXPDRCGCQELD-WXDAQCLHSA-N/synonyms/JSON",
+  "http_status": 200
+}

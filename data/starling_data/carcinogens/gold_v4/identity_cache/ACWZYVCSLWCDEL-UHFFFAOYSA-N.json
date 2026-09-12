@@ -1,0 +1,14 @@
+{
+  "parent_key": "ACWZYVCSLWCDEL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ACWZYVCSLWCDEL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Hydroxy-1-naphthaldehyde-1-(3-chloro-2-quinoxalinyl)hydrazone",
+    "ACWZYVCSLWCDEL-UHFFFAOYSA-N",
+    "SCHEMBL2800590"
+  ],
+  "http_status": 200,
+  "cids": [
+    136337194
+  ]
+}

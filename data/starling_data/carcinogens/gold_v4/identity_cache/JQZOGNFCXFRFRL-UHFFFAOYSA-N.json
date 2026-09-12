@@ -1,0 +1,14 @@
+{
+  "parent_key": "JQZOGNFCXFRFRL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JQZOGNFCXFRFRL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Allyl-isopropyl-acetylharnstoff",
+    "N-propan-2-yl-N-(prop-2-enylcarbamoyl)acetamide",
+    "SCHEMBL662210"
+  ],
+  "http_status": 200,
+  "cids": [
+    9942324
+  ]
+}

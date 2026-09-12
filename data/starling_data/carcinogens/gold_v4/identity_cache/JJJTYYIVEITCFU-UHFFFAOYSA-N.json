@@ -1,0 +1,22 @@
+{
+  "parent_key": "JJJTYYIVEITCFU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJJTYYIVEITCFU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1(or 2)-(1,1-Dimethylethoxy)propanol",
+    "1-tert-butoxypropan-1-ol",
+    "80763-10-6",
+    "DTXCID701428436",
+    "DTXSID501001486",
+    "Dowanol PtB",
+    "JJJTYYIVEITCFU-UHFFFAOYSA-N",
+    "Propanol, 1(or 2)-(1,1-dimethylethoxy)-",
+    "RefChem:1057137",
+    "SCHEMBL4964904",
+    "SCHEMBL754933"
+  ],
+  "http_status": 200,
+  "cids": [
+    3036818
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/3220/property/CanonicalSMILES,InChIKey,MolecularFormula/JSON",
+  "response": {
+    "PropertyTable": {
+      "Properties": [
+        {
+          "CID": 3220,
+          "MolecularFormula": "C15H10O5",
+          "ConnectivitySMILES": "CC1=CC2=C(C(=C1)O)C(=O)C3=C(C2=O)C=C(C=C3O)O",
+          "InChIKey": "RHMXXJGYXNZAPX-UHFFFAOYSA-N"
+        }
+      ]
+    }
+  }
+}

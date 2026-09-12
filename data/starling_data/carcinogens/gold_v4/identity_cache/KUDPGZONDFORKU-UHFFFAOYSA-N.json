@@ -1,0 +1,29 @@
+{
+  "parent_key": "KUDPGZONDFORKU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KUDPGZONDFORKU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "24613-03-4",
+    "CHLOROANILINE",
+    "DTXCID10244135",
+    "DTXSID10292994",
+    "KUDPGZONDFORKU-UHFFFAOYSA-N",
+    "N-Phenylhypochlorous amide",
+    "NCIOpen2_001109",
+    "NSC-86669",
+    "NSC86669",
+    "Q15632807",
+    "RefChem:363661",
+    "SCHEMBL6709739",
+    "SCHEMBL9101830",
+    "SCHEMBL96569",
+    "SCHEMBL96570",
+    "chlorophenyl amine",
+    "chlorophenylamine",
+    "n-chloroaniline"
+  ],
+  "http_status": 200,
+  "cids": [
+    258030
+  ]
+}

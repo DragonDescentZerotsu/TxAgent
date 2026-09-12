@@ -1,0 +1,21 @@
+{
+  "parent_key": "FMNVZRPTPRRXRO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FMNVZRPTPRRXRO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Ethyl-3-nitrosoguanidine",
+    "17329-83-8",
+    "2-ethyl-1-nitrosoguanidine",
+    "AKOS006355987",
+    "DTXCID2092065",
+    "DTXSID90169574",
+    "N''-Ethyl-N-nitrosoguanidine",
+    "N-ethyl-N'-nitrosoguanidine",
+    "RefChem:260446",
+    "SCHEMBL26170050"
+  ],
+  "http_status": 200,
+  "cids": [
+    176923
+  ]
+}

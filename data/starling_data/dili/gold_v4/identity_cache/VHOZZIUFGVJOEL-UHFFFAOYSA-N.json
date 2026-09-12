@@ -1,0 +1,41 @@
+{
+  "parent_key": "VHOZZIUFGVJOEL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(1,3-Benzodioxol-5-yl)-1-butanone",
+    "1-(1,3-benzodioxol-5-yl)butan-1-one",
+    "1-(1,3-dioxaindan-5-yl)butan-1-one",
+    "1-(2H-1,3-benzodioxol-5-yl)butan-1-one",
+    "1-(2H-benzo[3,4-d]1,3-dioxolan-5-yl)butan-1-one",
+    "1-(2H-benzo[3,4-d]1,3-dioxolen-5-yl)butan-1-one",
+    "1-(5-Benzodioxolyl)-1-butanone",
+    "1-(benzo[d][1,3]dioxol-5-yl)butan-1-one",
+    "3',4'-(Methylenedioxy)butyrophenone",
+    "3,4-(Methylenedioxy)butyrophenone, AldrichCPR",
+    "63740-97-6",
+    "884-488-8",
+    "AC-9515",
+    "AKOS015909855",
+    "CS-0152464",
+    "DA-04121",
+    "DS-17626",
+    "DTXSID00473093",
+    "EN300-2754900",
+    "F222625",
+    "FM25830",
+    "MFCD01075043",
+    "RefChem:419375",
+    "SBB067418",
+    "SCHEMBL31490470",
+    "SCHEMBL3924051",
+    "ST092727",
+    "SY062284",
+    "VHOZZIUFGVJOEL-UHFFFAOYSA-N",
+    "s11933"
+  ],
+  "cids": [
+    11805554
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VHOZZIUFGVJOEL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

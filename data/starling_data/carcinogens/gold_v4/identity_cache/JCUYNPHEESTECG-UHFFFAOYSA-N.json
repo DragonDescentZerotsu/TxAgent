@@ -1,0 +1,17 @@
+{
+  "parent_key": "JCUYNPHEESTECG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCUYNPHEESTECG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4,4'-Diamino[1,1'-biphenyl]-2,3-disulfonic acid",
+    "56662-53-4",
+    "Benzidindisulfosaure",
+    "DTXSID60607110",
+    "SCHEMBL1270822",
+    "SCHEMBL29566314"
+  ],
+  "http_status": 200,
+  "cids": [
+    20436267
+  ]
+}

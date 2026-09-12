@@ -1,0 +1,15 @@
+{
+  "parent_key": "GKTXURNRIDXUNG-IYYTYHDMSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GKTXURNRIDXUNG-IYYTYHDMSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "66671-95-2",
+    "CHEBI:80718",
+    "Oscillatoxin A",
+    "Q27149758"
+  ],
+  "http_status": 200,
+  "cids": [
+    46173825
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "parent_key": "HVYWMOMLDIMFJA-VEIPTCAHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HVYWMOMLDIMFJA-VEIPTCAHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3R,8S,9S,10R,13R,14S,17R)-10,13-dimethyl-17-((R)-6-methylheptan-2-yl)-2,3,4,7,8,9,10,11,12,13,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    "(3R,8S,9S,10R,13R,14S,17R)-10,13-dimethyl-17-[(2R)-6-methylheptan-2-yl]-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    ".ALPHA.-CHOLESTEROL",
+    "3-Epi -Cholesterol",
+    "3-Epicholesterol",
+    "3.ALPHA.-CHOLESTEROL",
+    "3alpha-Cholesterol",
+    "474-77-1",
+    "AT29488",
+    "Cholest-5-en-3-ol #",
+    "Cholest-5-en-3-ol (3 alpha)",
+    "Cholest-5-en-3-ol, (3.alpha.)-",
+    "Cholest-5-en-3-ol, (3alpha)-",
+    "Cholest-5-en-3alpha-ol",
+    "Cholesterol Impurity 46",
+    "DTXSID50415281",
+    "Epicholesterol",
+    "Epicholesterol [MI]",
+    "F825155",
+    "FE183309",
+    "HVYWMOMLDIMFJA-VEIPTCAHSA-N",
+    "LMST01010081",
+    "MP3S3KD84I",
+    "Q27284159",
+    "RefChem:921017",
+    "SCHEMBL157673",
+    "SR-05000000442",
+    "SR-05000000442-2",
+    "SR-05000000442-3",
+    "UNII-MP3S3KD84I",
+    "alpha-Cholesterol",
+    "epi-Cholesterol"
+  ],
+  "http_status": 200,
+  "cids": [
+    5283629
+  ]
+}

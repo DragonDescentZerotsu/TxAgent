@@ -1,0 +1,33 @@
+{
+  "parent_key": "MVDXXGIBARMXSA-PYUWXLGESA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-5-(((2R)-2-BENZYL-6-CHROMANYL)METHYL)-2,4-THIAZOLIDINEDIONE",
+    "109229-58-5",
+    "2,4-Thiazolidinedione, 5-((3,4-dihydro-2-(phenylmethyl)-2H-1-benzopyran-6-yl)methyl)-",
+    "5-((3,4-Dihydro-2-phenylmethyl-2H-1-benzopyran-6-yl)methyl)thiazolidine-2,4-dione",
+    "5-(2-Benzyl-chroman-6-ylmethyl)-thiazolidine-2,4-dione",
+    "5-[[(2R)-2-benzyl-3,4-dihydro-2H-chromen-6-yl]methyl]-1,3-thiazolidine-2,4-dione",
+    "CP 68722",
+    "CP-68722",
+    "CP-72466",
+    "CP-72467",
+    "DB14035",
+    "DTXCID901022745",
+    "DTXSID80883191",
+    "Englitazone [INN]",
+    "RefChem:136833",
+    "SCHEMBL29377687",
+    "SCHEMBL4727851",
+    "UNII-ZQW5577C3O",
+    "ZQW5577C3O",
+    "englitazona",
+    "englitazone",
+    "englitazonum"
+  ],
+  "cids": [
+    6918151
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MVDXXGIBARMXSA-PYUWXLGESA-N/synonyms/JSON",
+  "http_status": 200
+}

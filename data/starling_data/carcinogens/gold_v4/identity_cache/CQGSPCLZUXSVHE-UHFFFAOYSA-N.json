@@ -1,0 +1,34 @@
+{
+  "parent_key": "CQGSPCLZUXSVHE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQGSPCLZUXSVHE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-(Methylnitrosamino)propanal",
+    "3-(Methylnitrosamino)propionaldehyde",
+    "3-(Methylnitrosoamino)-propanal",
+    "3-(Methylnitrosoamino)propanal",
+    "3-(N-NITROSOMETHYLAMINO)PROPIONALDEHYDE [IARC]",
+    "3-(N-Nitrosomethylamino)propionaldehyde",
+    "3-Methylnitrosaminopropionaldehyde",
+    "85502-23-4",
+    "AKOS006276212",
+    "C19484",
+    "CCRIS 4384",
+    "CHEBI:82514",
+    "DTXSID501006062",
+    "MSK170176",
+    "N-methyl-N-(3-oxopropyl)nitrous amide",
+    "NITROSOMETHYLAMINO)PROPIONALDEHYDE, 3-(N-",
+    "Propanal, 3-(methylnitrosoamino)-",
+    "Q27156027",
+    "RefChem:504274",
+    "SCHEMBL29044948",
+    "UNII-X4C3WCP5XF",
+    "X4C3WCP5XF",
+    "starbld0005965"
+  ],
+  "http_status": 200,
+  "cids": [
+    98533
+  ]
+}

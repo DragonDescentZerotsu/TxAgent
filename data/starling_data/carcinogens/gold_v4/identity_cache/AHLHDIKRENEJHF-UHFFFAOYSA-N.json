@@ -1,0 +1,37 @@
+{
+  "parent_key": "AHLHDIKRENEJHF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AHLHDIKRENEJHF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "19091-98-6",
+    "4-04-00-03403 (Beilstein Handbook Reference)",
+    "Athyl-nitro-amin",
+    "BRN 1743125",
+    "CCRIS 5860",
+    "DTXCID0095091",
+    "DTXSID50172600",
+    "ETHYLAMINE, N-NITRO-",
+    "Ethanamine, N-nitro-",
+    "Ethanamine, N-nitro- (9CI)",
+    "Ethanamine, N-nitro-(9CI)",
+    "Ethylnitramine",
+    "N-Ethylnitramine",
+    "N-NITRO-ETHANAMINE",
+    "N-Nitro-N-ethylamine",
+    "N-Nitroethanamine",
+    "N-Nitroethylamine",
+    "N-ethylnitramide",
+    "NSC-243630",
+    "NSC243630",
+    "RefChem:138037",
+    "SCHEMBL11687577",
+    "SCHEMBL3477482",
+    "UFD3Y2WI9C",
+    "UNII-UFD3Y2WI9C",
+    "ethylnitroamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    29422
+  ]
+}

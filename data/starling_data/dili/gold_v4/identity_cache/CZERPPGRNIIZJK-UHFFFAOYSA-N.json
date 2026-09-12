@@ -1,0 +1,37 @@
+{
+  "parent_key": "CZERPPGRNIIZJK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "19165-26-5",
+    "2-(PROPIONYLAMINO)BENZOIC ACID",
+    "2-(propanoylamino)benzoic acid",
+    "2-Propionamidobenzoic acid",
+    "2-Propionamidobenzoicacid",
+    "2-propanamidobenzoic acid",
+    "2-propionylamino-benzoic acid",
+    "898-829-3",
+    "AKOS000132641",
+    "BS-35835",
+    "Benzoic acid, 2-[(1-oxopropyl)amino]-",
+    "CZERPPGRNIIZJK-UHFFFAOYSA-N",
+    "ChemDiv2_002917",
+    "DTXSID80390815",
+    "EBC-618272",
+    "EN300-219199",
+    "F229137",
+    "HMS1377E13",
+    "MFCD00247023",
+    "N-propionyl anthranilic acid",
+    "N-propionylanthranilic acid",
+    "RefChem:478308",
+    "SCHEMBL111479",
+    "SCHEMBL29543730",
+    "Z85878916",
+    "benzoic acid, 2-[(1-oxopropyl)amino]"
+  ],
+  "cids": [
+    3264674
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CZERPPGRNIIZJK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

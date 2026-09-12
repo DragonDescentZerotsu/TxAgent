@@ -1,0 +1,15 @@
+{
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/46946323/property/CanonicalSMILES,InChIKey,MolecularFormula/JSON",
+  "response": {
+    "PropertyTable": {
+      "Properties": [
+        {
+          "CID": 46946323,
+          "MolecularFormula": "C17H15BrN2O4S",
+          "ConnectivitySMILES": "CCS(=O)(=O)C1=C([N+](=O)C2=C(N1[O-])C=CC(=C2)C)C3=CC=C(C=C3)Br",
+          "InChIKey": "MHYCOGDEWYAFLM-UHFFFAOYSA-N"
+        }
+      ]
+    }
+  }
+}

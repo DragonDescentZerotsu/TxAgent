@@ -1,0 +1,41 @@
+{
+  "parent_key": "AQTYXAPIHMXAAV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AQTYXAPIHMXAAV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-methoxyphenyl) hydrogen sulfate",
+    "(2-methoxyphenyl) hydrogen sulphate",
+    "19S58BLO87",
+    "2-Methoxyphenol sulfate",
+    "2-Methoxyphenyl hydrogen sulphate",
+    "2-Methoxyphenyl sulfate",
+    "2-MethoxyphenylsulfatePotassiumSalt",
+    "2-methoxyphenyl hydrogen sulfate",
+    "3233-59-8",
+    "995-165-7",
+    "CHEBI:133460",
+    "CHEBI:89609",
+    "DTXCID70872690",
+    "DTXSID701009412",
+    "GUAIACOL, SULFATE CONJUGATE",
+    "Guaiacol sulfate",
+    "Guaiacol, hydrogen sulfate",
+    "NS00115915",
+    "O-methoxycatechol-O-sulphate",
+    "O-methylcatechol hydrogen sulfate",
+    "O-methylcatechol sulfate",
+    "Phenol, 2-methoxy-, 1-(hydrogen sulfate)",
+    "Phenol, 2-methoxy-, hydrogen sulfate",
+    "Phenol, o-methoxy-, hydrogen sulfate",
+    "Q27161807",
+    "RefChem:855283",
+    "SCHEMBL560230",
+    "UNII-19S58BLO87",
+    "o-Methoxyphenyl sulfate",
+    "o-methoxyphenyl hydrogen sulfate"
+  ],
+  "http_status": 200,
+  "cids": [
+    22473
+  ]
+}

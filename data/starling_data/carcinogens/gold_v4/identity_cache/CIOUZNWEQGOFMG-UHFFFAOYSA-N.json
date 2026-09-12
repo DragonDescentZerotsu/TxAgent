@@ -1,0 +1,20 @@
+{
+  "parent_key": "CIOUZNWEQGOFMG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIOUZNWEQGOFMG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "31874-15-4",
+    "BRN 2865036",
+    "DTXCID90108221",
+    "DTXSID50185730",
+    "Hydroxylamine, N-(2-fluorenyl)-N-phenyl-",
+    "N-Phenyl-2-fluorenylhydroxylamine",
+    "N-Phenyl-N-9H-fluoren-2-ylhydroxylamine",
+    "RefChem:348396",
+    "n-hydroxy-n-phenyl-9h-fluoren-2-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    208267
+  ]
+}

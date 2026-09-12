@@ -1,0 +1,26 @@
+{
+  "parent_key": "DWZGLEPNCRFCEP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DWZGLEPNCRFCEP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-ethylphenyl) hydrogen sulfate",
+    "4-Ethylphenylsulfuric acid",
+    "4-Ethylphenylsulphate",
+    "4-Ethylphenylsulphuric acid",
+    "4-ethylphenyl hydrogen sulfate",
+    "CHEMBL4530825",
+    "CS-0757744",
+    "F75444",
+    "F867635",
+    "HY-W674241",
+    "Q27156471",
+    "SCHEMBL236312",
+    "T85456",
+    "orb2567211",
+    "p-Ethylphenylsulphuric Acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    20822574
+  ]
+}

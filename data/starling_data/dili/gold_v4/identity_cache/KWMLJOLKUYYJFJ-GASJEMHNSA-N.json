@@ -1,0 +1,31 @@
+{
+  "parent_key": "KWMLJOLKUYYJFJ-GASJEMHNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2.xi.)-D-Gluco-heptonic acid",
+    "(2xi)-D-gluco-heptonic acid",
+    "(2xi)-D-glycero-D-gulo-heptonic acid",
+    "(2xi)-D-glycero-D-ido-heptonic acid",
+    "(3R,4S,5R,6R)-2,3,4,5,6,7-hexahydroxyheptanoic acid",
+    "(3R,4S,5R,6R)-2,3,4,5,6,7-hexahydroxyheptanoicacid",
+    "23351-51-1",
+    "CHEBI:59201",
+    "D-gluco-Heptonic acid, (2xi)-",
+    "DTXCID40227092",
+    "DTXSID10891901",
+    "DTXSID60275676",
+    "EINECS 245-601-0",
+    "Glucoheptanoic acid",
+    "KWMLJOLKUYYJFJ-GASJEMHNSA-N",
+    "Q27126530",
+    "RefChem:663102",
+    "SCHEMBL2727482",
+    "orb3174619",
+    "rel-(3R,4S,5R,6R)-2,3,4,5,6,7-hexahydroxyheptanoic acid"
+  ],
+  "cids": [
+    61888
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KWMLJOLKUYYJFJ-GASJEMHNSA-N/synonyms/JSON",
+  "http_status": 200
+}

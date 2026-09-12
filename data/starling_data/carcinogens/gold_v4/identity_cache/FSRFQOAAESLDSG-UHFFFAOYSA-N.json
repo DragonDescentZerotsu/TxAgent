@@ -1,0 +1,22 @@
+{
+  "parent_key": "FSRFQOAAESLDSG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FSRFQOAAESLDSG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Nitro-3-nitrosoguanidine",
+    "21829-46-9",
+    "SCHEMBL165882",
+    "SCHEMBL28122730",
+    "SCHEMBL293861",
+    "SCHEMBL7029515",
+    "n'-nitro-n-nitrosoguanidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    21918316,
+    53816430,
+    57478244,
+    136037576,
+    173003984
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "review_payloads_equal_raw_parquet": 88,
+  "all_accepted_negative_source_votes_reviewed": 36,
+  "source_vote_files_unchanged": 2,
+  "initial_new_task_benchmark_jsonl_hashes_unchanged": true,
+  "existing_task_split_files_byte_unchanged": 86,
+  "new_votes_or_labels_added": 0,
+  "model_evaluations_run": 0,
+  "reviewed_records_sha256": "cb4f5571dda02fc61205fede2afcb07b74a390255cafeafe507b9c8fbdb0667b"
+}

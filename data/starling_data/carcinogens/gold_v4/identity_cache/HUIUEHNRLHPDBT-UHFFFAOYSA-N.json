@@ -1,0 +1,41 @@
+{
+  "parent_key": "HUIUEHNRLHPDBT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HUIUEHNRLHPDBT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-Dehydro-3-methylcholanthrene",
+    "20-Methylcholanthrylene",
+    "249VV7E1QH",
+    "3-MCE",
+    "3-METHYLCYCLOPENTA(IJ)TETRAPHENE",
+    "3-Methylbenz(j)aceanthrylene",
+    "3-Methylbenz[j]aceanthrylene",
+    "3-Methylbenzo[j]aceanthrylene #",
+    "3-Methylcholanthrylene",
+    "3-methylcyclopenta[ij]tetraphene",
+    "3343-10-0",
+    "BENZ(j)ACEANTHRYLENE, 3-METHYL-",
+    "BRN 2270883",
+    "Benz[j]aceanthrylene, 3-methyl-",
+    "CCRIS 2479",
+    "Cyclopenta[ij]benz[a]anthracene,9-methyl-",
+    "DS-001687",
+    "DTXCID00109567",
+    "DTXSID90187076",
+    "Dehydro-3-methylcholanthrene",
+    "HUIUEHNRLHPDBT-UHFFFAOYSA-N",
+    "J35.251I",
+    "NSC 400562",
+    "NSC-400562",
+    "NSC400562",
+    "Q27253832",
+    "RefChem:94861",
+    "SCHEMBL31494528",
+    "UNII-249VV7E1QH",
+    "WLN: L E6 D6656 1A TJ R1"
+  ],
+  "http_status": 200,
+  "cids": [
+    18761
+  ]
+}

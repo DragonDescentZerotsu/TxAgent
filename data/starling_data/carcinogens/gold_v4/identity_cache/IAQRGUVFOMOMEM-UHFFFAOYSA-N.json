@@ -1,0 +1,39 @@
+{
+  "parent_key": "IAQRGUVFOMOMEM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IAQRGUVFOMOMEM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".beta.-Butene",
+    ".beta.-Butylene",
+    "107-01-7",
+    "2-BUTENE",
+    "AKOS032960957",
+    "CHEBI:48363",
+    "DTXSID1026748",
+    "DTXSID30859189",
+    "Q3554956",
+    "RefChem:1080221",
+    "SCHEMBL108872",
+    "SCHEMBL1168",
+    "SCHEMBL15068",
+    "SCHEMBL15219",
+    "SCHEMBL1632",
+    "SCHEMBL16861434",
+    "SCHEMBL25250740",
+    "SCHEMBL28451",
+    "SCHEMBL522171",
+    "SCHEMBL5704808",
+    "SCHEMBL6392835",
+    "SCHEMBL776227",
+    "SCHEMBL778942",
+    "SCHEMBL80543",
+    "SCHEMBL846907",
+    "SCHEMBL9172347",
+    "beta-Butene",
+    "but-2-ene"
+  ],
+  "http_status": 200,
+  "cids": [
+    12220
+  ]
+}

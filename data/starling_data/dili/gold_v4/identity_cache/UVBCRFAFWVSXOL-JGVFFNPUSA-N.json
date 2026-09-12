@@ -1,0 +1,13 @@
+{
+  "parent_key": "UVBCRFAFWVSXOL-JGVFFNPUSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-azido-3' -deoxythymi-dine",
+    "SCHEMBL3813740"
+  ],
+  "cids": [
+    18640901
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UVBCRFAFWVSXOL-JGVFFNPUSA-N/synonyms/JSON",
+  "http_status": 200
+}

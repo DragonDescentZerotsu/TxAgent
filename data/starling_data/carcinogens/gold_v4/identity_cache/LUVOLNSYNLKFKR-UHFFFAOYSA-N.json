@@ -1,0 +1,22 @@
+{
+  "parent_key": "LUVOLNSYNLKFKR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LUVOLNSYNLKFKR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-[(2,3-Dihydroxypropyl)nitrosoamino]-2-propanone",
+    "1-[(2,3-dihydroxypropyl)(nitroso)amino]propan-2-one",
+    "2-Propanone, 1-[(2,3-dihydroxypropyl)nitrosoamino]-",
+    "92177-50-9",
+    "CCRIS 5591",
+    "DTXCID00991",
+    "DTXSID0020991",
+    "N-(2,3-dihydroxypropyl)-N-(2-oxopropyl)nitrous amide",
+    "N-Nitroso-2,3-dihydroxypropyl-2-oxopropylamine",
+    "Nitroso-2,3-dihydroxypropyl-2-oxopropylamine",
+    "RefChem:365731"
+  ],
+  "http_status": 200,
+  "cids": [
+    3792964
+  ]
+}

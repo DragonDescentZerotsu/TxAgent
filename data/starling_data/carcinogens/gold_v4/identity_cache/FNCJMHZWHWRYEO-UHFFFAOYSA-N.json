@@ -1,0 +1,24 @@
+{
+  "parent_key": "FNCJMHZWHWRYEO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FNCJMHZWHWRYEO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2,3-Dimethylenebutane-1,4-diyl)dibenzene",
+    "(3-benzyl-2-methylidenebut-3-en-1-yl)benzene",
+    "(3-benzyl-2-methylidenebut-3-enyl)benzene",
+    "2,3-Dibenzyl-1,3-butadiene",
+    "2,3-Dibenzyl-1,3-butadiene, 99%",
+    "622-944-8",
+    "62640-74-8",
+    "AKOS015889004",
+    "DTXCID40344258",
+    "DTXSID50393398",
+    "RefChem:244446",
+    "SCHEMBL12095508",
+    "dibenzylbutadiene"
+  ],
+  "http_status": 200,
+  "cids": [
+    3533591
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "parent_key": "ZIZFGSKWOGWBOO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(12-guanidinododecyl)guanidine",
+    "CHEMBL73627",
+    "Dodekamethylendiguanidin",
+    "SCHEMBL10728151"
+  ],
+  "cids": [
+    43558,
+    176526412
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZIZFGSKWOGWBOO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

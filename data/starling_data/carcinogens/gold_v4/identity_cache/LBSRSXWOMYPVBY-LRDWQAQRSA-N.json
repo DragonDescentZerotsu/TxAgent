@@ -1,0 +1,15 @@
+{
+  "parent_key": "LBSRSXWOMYPVBY-LRDWQAQRSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LBSRSXWOMYPVBY-LRDWQAQRSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(8S,9R,13S,14R,17S)-17-hydroxy-13-methyl-6,7,8,9,11,12,14,15,16,17-decahydrocyclopenta[a]phenanthrene-2,3-dione",
+    "17beta-Estradiol-2,3-quinone",
+    "CHEBI:174034",
+    "Q61580780"
+  ],
+  "http_status": 200,
+  "cids": [
+    131769816
+  ]
+}

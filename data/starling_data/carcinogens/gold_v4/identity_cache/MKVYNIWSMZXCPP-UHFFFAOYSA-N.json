@@ -1,0 +1,16 @@
+{
+  "parent_key": "MKVYNIWSMZXCPP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MKVYNIWSMZXCPP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-hydroxy-methyltriazene",
+    "SCHEMBL14370574",
+    "SCHEMBL14903080",
+    "SCHEMBL15037904",
+    "hydroxy-methyltriazene"
+  ],
+  "http_status": 200,
+  "cids": [
+    18985406
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "parent_key": "DYKJXWALYRGLPF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DYKJXWALYRGLPF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1H)-Imidazo[4,5-b]pyridine, 2-phenyl-",
+    "0441AA",
+    "1016-93-9",
+    "1H-Imidazo[4,5-b]pyridine, 2-phenyl-",
+    "2-Phenyl-1H-imidazo[4,5-b]pyridine",
+    "2-Phenyl-1H-imidazo[4,5-b]pyridine #",
+    "2-Phenyl-3H-imidazo[4,5-b]pyridine",
+    "2-Phenylimidazo(4,5-b)pyridine",
+    "2-phenylimidazo[4,5-b]pyridine",
+    "3H-Imidazo[4,5-b]pyridine, 2-phenyl-",
+    "AJ-077/33268031",
+    "AKOS001717477",
+    "AKOS011054340",
+    "C12H9N3",
+    "CHEMBL166077",
+    "DB-032309",
+    "DTXSID30345779",
+    "DYKJXWALYRGLPF-UHFFFAOYSA-N",
+    "EU-0084691",
+    "L10088",
+    "NCGC00376808-01",
+    "NCGC00376808-02",
+    "Oprea1_866371",
+    "RefChem:910219",
+    "SCHEMBL1284270",
+    "SCHEMBL2668125",
+    "ST50990826",
+    "phenylimidazopyridine"
+  ],
+  "http_status": 200,
+  "cids": [
+    606983
+  ]
+}

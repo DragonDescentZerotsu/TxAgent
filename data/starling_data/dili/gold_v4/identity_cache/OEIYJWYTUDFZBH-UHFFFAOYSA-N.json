@@ -1,0 +1,30 @@
+{
+  "parent_key": "OEIYJWYTUDFZBH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(9r,s)-2,5,8-tris(carboxymethyl)-12-phenyl-11-oxa-2,5,8-triazadodecane-1,9-dicarboxylic acid",
+    "113786-33-7",
+    "2,2 inverted exclamation mark -[1,9-Dicarboxy-2-(carboxymethyl)-12-phenyl-11-oxa-2,5,8-triazadodecane-5,8-diyl]diacetic Acid",
+    "2,2'-(1,9-Dicarboxy-2-(carboxymethyl)-12-phenyl-11-oxa-2,5,8-triazadodecane-5,8-diyl)diacetic Acid",
+    "2-[2-[2-[bis(carboxymethyl)amino]ethyl-(carboxymethyl)amino]ethyl-(carboxymethyl)amino]-3-phenylmethoxypropanoic acid",
+    "2-[2-[Carboxylatomethyl-[2-[carboxylatomethyl(carboxymethyl)amino]ethyl]amino]ethyl-(carboxymethyl)amino]-3-phenylmethoxypropanoate;gadolinium(3+);(2R,3R,4R,5S)-6-(methylamino)hexane-1,2,3,4,5-pentol",
+    "4-carboxy-5,8,11-tris(carboxymethyl)-1-phenyl-2-oxa-5,8,11-triazatridecan-13-oic acid",
+    "426-360-2",
+    "AT43128",
+    "BOPTA",
+    "CHEMBL107137",
+    "DTXSID40869572",
+    "MFCD35597905",
+    "NS00005011",
+    "O-Benzyl-N-{2-[{2-[bis(carboxymethyl)amino]ethyl}(carboxymethyl)amino]ethyl}-N-(carboxymethyl)serine",
+    "OEIYJWYTUDFZBH-UHFFFAOYSA-N",
+    "RefChem:330072",
+    "SCHEMBL1144138",
+    "SY511403"
+  ],
+  "cids": [
+    105125
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OEIYJWYTUDFZBH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

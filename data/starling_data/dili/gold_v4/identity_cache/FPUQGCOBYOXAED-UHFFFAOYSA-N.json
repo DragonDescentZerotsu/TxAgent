@@ -1,0 +1,42 @@
+{
+  "parent_key": "FPUQGCOBYOXAED-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "594842-13-4",
+    "916683-32-4",
+    "AKOS040751951",
+    "CHEMBL4297618",
+    "CS-0077063",
+    "DB12934",
+    "DIETHYL 2-((2-(3-(DIMETHYLCARBAMOYL)-4-(4'-(TRIFLUOROMETHYL)-(1,1'-BIPHENYL)-2-CARBOXAMIDO)PHENYL)ACETYLOXY)METHYL)-2-PHENYLPROPANEDIOATE",
+    "Diethyl 2-((2-(3-(dimethylcarbamoyl)-4-(4'-(trifluoromethyl)-[1,1'-biphenyl]-2-carboxamido)phenyl)acetoxy)methyl)-2-phenylmalonate",
+    "Diethyl 2-((3-dimethylcarbamoyl-4-((4'-trifluoromethylbiphenyl-2-carbonyl)amino)phenyl)acetyloxymethyl)-2-phenylmalonate",
+    "FPUQGCOBYOXAED-UHFFFAOYSA-N",
+    "GRANOTAPIDE [WHO-DD]",
+    "Granotapida",
+    "Granotapide",
+    "Granotapide [INN]",
+    "HY-119220",
+    "JTT 130",
+    "JTT-130",
+    "JTT130",
+    "PROPANEDIOIC ACID, ((((3-((DIMETHYLAMINO)CARBONYL)-4-(((4'-(TRIFLUOROMETHYL)(1,1'-BIPHENYL)-2-YL)CARBONYL)AMINO)PHENYL)ACETYL)OXY)METHYL)PHENYL-, DIETHYL ESTER",
+    "PROPANEDIOIC ACID, 2-(((2-(3-((DIMETHYLAMINO)CARBONYL)-4-(((4'-(TRIFLUOROMETHYL)(1,1'-BIPHENYL)-2-YL)CARBONYL)AMINO)PHENYL)ACETYL)OXY)METHYL)-2-PHENYL-, 1,3-DIETHYL ESTER",
+    "PSZ2YGB0DK",
+    "Q27286736",
+    "RefChem:920150",
+    "SCHEMBL1484041",
+    "T24223",
+    "T31992",
+    "UNII-PSZ2YGB0DK",
+    "diethyl 2-({2-[3-(dimethylcarbamoyl)-4-{4'-(trifluoromethyl)-[1,1'-biphenyl]-2-carboxamido}phenyl]acetyloxy}methyl)-2-phenylpropanedioate",
+    "diethyl 2-[[2-[3-(dimethylcarbamoyl)-4-[[2-[4-(trifluoromethyl)phenyl]benzoyl]amino]phenyl]acetyl]oxymethyl]-2-phenylpropanedioate",
+    "orb1697060",
+    "orb1737830"
+  ],
+  "cids": [
+    11607299
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FPUQGCOBYOXAED-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

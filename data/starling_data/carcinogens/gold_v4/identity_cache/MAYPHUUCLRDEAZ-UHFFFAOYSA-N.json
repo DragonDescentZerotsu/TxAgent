@@ -1,0 +1,25 @@
+{
+  "parent_key": "MAYPHUUCLRDEAZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MAYPHUUCLRDEAZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12292-23-8",
+    "CHEBI:35927",
+    "Chlorine peroxide (Cl2(O2))",
+    "Chlorperoxyd",
+    "Cl2O2",
+    "ClOOCl",
+    "DTXSID001310193",
+    "Dichlorine dioxide",
+    "Dioxygen dichloride",
+    "Q5272473",
+    "RefChem:125329",
+    "SCHEMBL180347",
+    "bis(chloridooxygen)(O--O)",
+    "chlorooxy hypochlorite"
+  ],
+  "http_status": 200,
+  "cids": [
+    123287
+  ]
+}

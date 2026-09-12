@@ -36,6 +36,8 @@ def test_current_record_contract_is_latest_only_and_repo_local() -> None:
 def test_active_source_defaults_do_not_depend_on_external_checkout() -> None:
     assert DEFAULT_RECORDS == artifacts.current_records_path("bbb_martins")
     assert DEFAULT_INPUT == artifacts.current_records_path("bioavailability_ma")
+    for task in ("dili", "carcinogens"):
+        assert catalog.TASKS[task]["records"] == str(artifacts.current_records_path(task))
     for task in ("bbb_martins", "bioavailability_ma", "skin_reaction"):
         assert "/data1/joseph" not in str(catalog.TASKS[task]["records"])
         assert "source_overlays" in str(catalog.TASKS[task]["records"])
@@ -63,6 +65,8 @@ def test_current_catalog_configs_are_explicit() -> None:
         "bioavailability_ma": "STARLING",
         "skin_reaction": "STARLING",
         "ames": "STARLING",
+        "dili": "STARLING",
+        "carcinogens": "STARLING",
     }
 
 
@@ -105,7 +109,7 @@ def test_ames_rebuild_preserves_both_outcome_levels_and_custom_records_root(
     monkeypatch.setattr(rebuild, "_run", calls.append)
     records_root = tmp_path / "records"
     rebuild.build_indices(tmp_path / "indices", workers=2, records_root=records_root)
-    assert len(calls) == 8
+    assert len(calls) == 2 * len(artifacts.TASKS)
     for args in calls:
         task = args[args.index("--task") + 1]
         scope = args[args.index("--filter-scope-field") + 1]
@@ -115,6 +119,11 @@ def test_ames_rebuild_preserves_both_outcome_levels_and_custom_records_root(
             assert Path(args[args.index("--records") + 1]) == artifacts.current_records_path(
                 "ames", local_root=records_root
             )
+        elif task in {"dili", "carcinogens"}:
+            assert (scope, value) == (("group_id", "Group.dili_actual_voter") if task == "dili"
+                                    else ("group_id", "Group.carcinogenicity_direct"))
+            assert args[args.index("--identity-contract") + 1] == "new_task_tautomer_identity.v2"
+            assert Path(args[args.index("--identity-cache") + 1]) == artifacts.current_records_path(task, local_root=records_root).with_name("retrieval_identity_cache.jsonl")
         else:
             assert scope == "group_id"
 
@@ -272,6 +281,17 @@ def test_share_export_separates_source_membership_from_index_cards(
     )
     assert pq.read_table(source_output).schema == share_export.SOURCE_MEMBERSHIP_SCHEMA
     assert pq.read_table(source_output)["source_family_original_group_id"].null_count == 2
+    # New source adapters expose the same review reason under their native name.
+    native = without_original.rename_columns([
+        "level_assignment_reason" if name == "source_family_purity_reason" else name
+        for name in without_original.column_names
+    ])
+    pq.write_table(native, records)
+    share_export.export_source_membership(
+        task="example", records_path=records, catalog_manifest=catalog_manifest,
+        output_path=source_output,
+    )
+    assert pq.read_table(source_output).schema == share_export.SOURCE_MEMBERSHIP_SCHEMA
     assert share_export.validate_card_links(source_output, [card_output])["n_missing_source_card_keys"] == 0
 
 
@@ -290,3 +310,35 @@ def test_large_source_ledger_shards_preserve_rows_schema_and_hashes(tmp_path, mo
         for part in report["parts"]:
             assert part["size_bytes"] <= share_export.MAX_PARQUET_BYTES
             assert share_export.sha256_file(Path(part["path"])) == part["sha256"]
+
+
+def test_selected_rebuild_does_not_launch_unrelated_tasks(tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr(rebuild, "_run", calls.append)
+    monkeypatch.setattr(rebuild, "require_current_records", lambda *a, **k: None)
+    rebuild.build_overlays(tmp_path, tasks=("dili", "carcinogens"))
+    assert calls == []
+    rebuild.build_catalogs(tmp_path, tasks=("dili",))
+    rebuild.build_indices(tmp_path, workers=2, tasks=("dili",))
+    assert len(calls) == 3
+    assert all("carcinogens" not in args and "ames" not in args for args in calls)
+
+
+def test_restore_published_audits_preserves_bytes_and_rejects_drift(tmp_path, monkeypatch):
+    import hashlib
+    stage = tmp_path / 'stage'
+    stage.mkdir()
+    payload = b'unchanged frozen vote ledger\n'
+    (stage / 'votes.jsonl').write_bytes(payload)
+    info = {'files': [{'path': 'votes.jsonl', 'sha256': hashlib.sha256(payload).hexdigest()}],
+            'published_file_aliases': {'data/votes.jsonl': 'votes.jsonl'}}
+    monkeypatch.setattr(artifacts, 'PROJECT_ROOT', tmp_path)
+    monkeypatch.setattr(artifacts, '_load_manifest', lambda: {'tasks': {'dili': info}})
+    artifacts.restore_published_files('dili', stage)
+    assert (tmp_path / 'data/votes.jsonl').read_bytes() == payload
+    (tmp_path / 'data/votes.jsonl').write_bytes(b'changed')
+    with pytest.raises(ValueError, match='changed published audit'):
+        artifacts.restore_published_files('dili', stage)
+    info['published_file_aliases'] = {'../outside.jsonl': 'votes.jsonl'}
+    with pytest.raises(ValueError, match='stay under data'):
+        artifacts.restore_published_files('dili', stage)

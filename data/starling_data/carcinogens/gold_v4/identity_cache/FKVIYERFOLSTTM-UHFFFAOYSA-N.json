@@ -1,0 +1,33 @@
+{
+  "parent_key": "FKVIYERFOLSTTM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FKVIYERFOLSTTM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".alpha.-Fluoroacetanilide",
+    "2-FLUOROACETANILINE",
+    "2-Fluoro-N-phenylacetamide",
+    "2-Fluoroacetanilide",
+    "2-fluoro-N-phenyl-acetamide",
+    "330-68-7",
+    "ACETANILIDE, 2-FLUORO-",
+    "AFL 1082",
+    "Acetamide, 2-fluoro-N-phenyl-",
+    "Anilid kyseliny fluoroctove",
+    "Anilid kyseliny fluoroctove [Czech]",
+    "BRN 2085851",
+    "DB-347049",
+    "DTXCID80818241",
+    "DTXSID60870524",
+    "Fluoracetanilid",
+    "Fluoroacetanilide",
+    "RefChem:1063111",
+    "SCHEMBL2781923",
+    "SCHEMBL7653975",
+    "SCHEMBL7653980",
+    "TL 1312"
+  ],
+  "http_status": 200,
+  "cids": [
+    9504
+  ]
+}

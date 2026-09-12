@@ -1,0 +1,32 @@
+{
+  "parent_key": "KJTLSVCANCCWHF-NJFSPNSNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJTLSVCANCCWHF-NJFSPNSNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~103~Ru)Ruthenium",
+    "103Ru",
+    "103Ru (isotope)",
+    "103Ru isotope",
+    "103Ru radioisotope",
+    "103mRu (isotope)",
+    "103mRu isotope",
+    "13968-53-1",
+    "DTXSID90930544",
+    "Isotope:103Ru",
+    "Isotope:103mRu",
+    "Isotope:Ruthenium-103",
+    "Isotope:Ruthenium-103m",
+    "RefChem:931017",
+    "Ru-103 radioisotope",
+    "Ruthenium, isotope of mass 103",
+    "Ruthenium-103",
+    "Ruthenium-103 isotope",
+    "Ruthenium-103m",
+    "Ruthenium-103m isotope",
+    "SCHEMBL27891055"
+  ],
+  "http_status": 200,
+  "cids": [
+    104749
+  ]
+}

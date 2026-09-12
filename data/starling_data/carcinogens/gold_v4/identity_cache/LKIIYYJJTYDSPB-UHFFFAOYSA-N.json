@@ -1,0 +1,13 @@
+{
+  "parent_key": "LKIIYYJJTYDSPB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LKIIYYJJTYDSPB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS014122309",
+    "Z1250127321"
+  ],
+  "http_status": 200,
+  "cids": [
+    64793566
+  ]
+}

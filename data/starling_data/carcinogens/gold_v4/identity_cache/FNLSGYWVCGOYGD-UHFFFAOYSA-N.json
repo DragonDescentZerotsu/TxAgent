@@ -1,0 +1,37 @@
+{
+  "parent_key": "FNLSGYWVCGOYGD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FNLSGYWVCGOYGD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,5-Cyclohexadien-1-one, 2,6-di-tert-butyl-4-hydroperoxy-4-methyl-",
+    "2,5-cyclohexadien-1-one, 2,6-bis(1,1-dimethylethyl)-4-hydroperoxy-4-methyl-",
+    "2,6-Bis(1,1-dimethylethyl)-4-hydroperoxy-4-methyl-2,5-cyclohexadien-1-one",
+    "2,6-Di-t-butyl-4-hydroperoxy-4-methyl-2,5-cyclohexadienone",
+    "2,6-Di-tert-butyl-4-hydroperoxy-4-methyl-2,5-cyclohexadien-1-one",
+    "2,6-Di-tert-butyl-4-hydroperoxy-4-methyl-2,5-cyclohexadienone",
+    "2,6-Di-tert-butyl-4-hydroperoxyl-2,5-cylohexadienone",
+    "2,6-Di-tert-butyl-4-hydroperoxyl-4-methyl-2,5-cyclohexadienone",
+    "2,6-di-tert-butyl-4-hydroperoxy-4-methylcyclohexa-2,5-dien-1-one",
+    "4-08-00-00143 (Beilstein Handbook Reference)",
+    "4-HYDROPEROXY-4-METHYL-2,6-DI-TERT-BUTYL-2,5-CYCLOHEXADIENONE",
+    "4-METHYL-4-HYDROPEROXY-2,6-DI-TERT-BUTYL-2,5-CYCLOHEXADIENONE",
+    "6485-57-0",
+    "BHT-OOH",
+    "BHTOOH",
+    "BRN 2053915",
+    "CCRIS 3709",
+    "DTXCID70137630",
+    "DTXSID20215139",
+    "FNLSGYWVCGOYGD-UHFFFAOYSA-N",
+    "HK05U8X26D",
+    "HYDROPEROXIDE, 3,5-DI-TERT-BUTYL-1-METHYL-4-OXO-2,5-CYCLOHEXADIEN-1-YL",
+    "Q27279960",
+    "RefChem:908850",
+    "SCHEMBL8965707",
+    "UNII-HK05U8X26D"
+  ],
+  "http_status": 200,
+  "cids": [
+    114687
+  ]
+}

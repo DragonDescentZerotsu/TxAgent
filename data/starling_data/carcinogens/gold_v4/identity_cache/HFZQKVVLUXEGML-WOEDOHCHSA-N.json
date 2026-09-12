@@ -1,0 +1,13 @@
+{
+  "parent_key": "HFZQKVVLUXEGML-WOEDOHCHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HFZQKVVLUXEGML-WOEDOHCHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "HFZQKVVLUXEGML-WOEDOHCHSA-N",
+    "SCHEMBL30277443"
+  ],
+  "http_status": 200,
+  "cids": [
+    129632688
+  ]
+}

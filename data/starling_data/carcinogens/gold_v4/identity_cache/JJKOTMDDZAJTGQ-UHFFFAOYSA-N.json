@@ -1,0 +1,14 @@
+{
+  "parent_key": "JJKOTMDDZAJTGQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJKOTMDDZAJTGQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "DB-041301",
+    "Pyrrolidine, 1-[2-[4-[(1E)-1-(4-iodophenyl)-2-phenyl-1-buten-1-yl]phenoxy]ethyl]-",
+    "SCHEMBL19217"
+  ],
+  "http_status": 200,
+  "cids": [
+    71331
+  ]
+}

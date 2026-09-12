@@ -44,6 +44,25 @@ def _cohort():
     ]
 
 
+def test_evaluation_swap_preserves_cohorts_votes_and_train(tmp_path):
+    original, swapped = tmp_path / "original", tmp_path / "swapped"
+    for root, swap in ((original, False), (swapped, True)):
+        build_fresh_conditioned_benchmark(
+            task="ames", record_votes=_cohort(), output_root=root,
+            swap_evaluation_splits=swap,
+        )
+    for new, old in (("train", "train"), ("valid", "test"), ("test", "valid")):
+        assert (swapped / f"{new}.jsonl").read_bytes() == (original / f"{old}.jsonl").read_bytes()
+        before = read_jsonl(original / f"{old}_molecule_condition_labels.jsonl")
+        after = read_jsonl(swapped / f"{new}_molecule_condition_labels.jsonl")
+        assert after == [{**row, "split": new} for row in before]
+    assert (swapped / "accepted_record_votes.jsonl").read_bytes() == (original / "accepted_record_votes.jsonl").read_bytes()
+    validate_split_integrity({
+        s: read_jsonl(swapped / f"{s}_molecule_condition_labels.jsonl")
+        for s in ("train", "valid", "test")
+    })
+
+
 def test_conditioned_and_unconditioned_agreement_boundaries(tmp_path):
     votes = [row for row in _cohort() if row["drug"] not in {"p00", "p01", "p02"}]
     for parent, positive, total in (("p00", 2, 3), ("p01", 3, 5), ("p02", 7, 10)):

@@ -1,0 +1,29 @@
+{
+  "parent_key": "AXVLZOYLQOEKAO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AXVLZOYLQOEKAO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1,1,2,2,2-Pentachloroethyl)benzene",
+    "(1,1,2,2,2-Pentachloroethyl)benzene #",
+    "(Pentachloroethyl)benzene",
+    "1-(Pentachloroethyl)benzene",
+    "706-93-4",
+    "AXVLZOYLQOEKAO-UHFFFAOYSA-N",
+    "BENZENE,(1,1,2,2,2-PENTACHLOROETHYL)-",
+    "Benzene, (pentachloroethyl)-",
+    "DS-006668",
+    "DTXSID30319298",
+    "NSC 343639",
+    "NSC-343639",
+    "NSC343639",
+    "SCHEMBL18241862",
+    "SCHEMBL18242458",
+    "SCHEMBL9529779",
+    "SCHEMBL9672534",
+    "dichlorophenyltrichloroethane"
+  ],
+  "http_status": 200,
+  "cids": [
+    335200
+  ]
+}

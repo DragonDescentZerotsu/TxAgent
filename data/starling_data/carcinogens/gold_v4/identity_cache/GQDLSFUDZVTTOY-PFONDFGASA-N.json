@@ -1,0 +1,23 @@
+{
+  "parent_key": "GQDLSFUDZVTTOY-PFONDFGASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GQDLSFUDZVTTOY-PFONDFGASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,6-OCTADIEN-3-OL, 3,7-DIMETHYL-, OLEATE",
+    "3,7-dimethylocta-1,6-dien-3-yl (Z)-octadec-9-enoate",
+    "31796-73-3",
+    "6QL355659E",
+    "9-OCTADECENOIC ACID (9Z)-, 1-ETHENYL-1,5-DIMETHYL-4-HEXEN-1-YL ESTER",
+    "Linalyl-oleate",
+    "Oleic acid, 1,5-dimethyl-1-vinyl-4-hexenyl ester",
+    "Q27265341",
+    "RefChem:201474",
+    "SCHEMBL2787713",
+    "UNII-6QL355659E",
+    "linalyl oleate"
+  ],
+  "http_status": 200,
+  "cids": [
+    6443465
+  ]
+}

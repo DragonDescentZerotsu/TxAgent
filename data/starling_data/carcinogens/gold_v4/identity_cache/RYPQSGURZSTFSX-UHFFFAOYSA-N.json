@@ -1,0 +1,59 @@
+{
+  "parent_key": "RYPQSGURZSTFSX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2-Benzenedicarboxylic acid, mono(2-ethyl-5-hydroxyhexyl) ester",
+    "1,2-Benzenedicarboxylic acid, mono(2-ethyl-5-hydroxyhexyl) ester (9CI); Mono-2-ethyl-5-hydroxyhexyl phthalate",
+    "1,2-Benzenedicarboxylicacid, 1-(2-ethyl-5-hydroxyhexyl) ester",
+    "2-(((2-Ethyl-5-hydroxyhexyl)oxy)carbonyl)benzoic acid",
+    "2-(2-ethyl-5-hydroxy-hexoxy)carbonylbenzoic acid",
+    "2-(2-ethyl-5-hydroxyhexoxy)carbonylbenzoic acid",
+    "2-{[(2-ethyl-5-hydroxyhexyl)oxy]carbonyl}benzoic acid",
+    "40321-99-1",
+    "5OH-MEHP",
+    "AKOS030255997",
+    "CCRIS 4282",
+    "CHEBI:132607",
+    "DTXCID40820663",
+    "DTXSID50873160",
+    "H20526",
+    "HY-133677",
+    "MEHHP",
+    "MEHHP cpd",
+    "MFCD01704544",
+    "MSK1152",
+    "Mono(2-ethyl-5-hydroxyhexyl) 1,2-benzenedicarboxylate",
+    "Mono(2-ethyl-5-hydroxyhexyl) Phthalate (Mixture of Diastereomers) (>90%)",
+    "Mono(2-ethyl-5-hydroxyhexyl) phthalate",
+    "Mono-(2-ethyl-5-hydroxyhexyl) phthalate",
+    "Mono-2-ethyl-5-hydroxyhexyl Phthalate",
+    "NIOSH/TI2510000",
+    "NS00077065",
+    "Phthalic acid, mono-(2-ethyl-5-hydroxyhexyl) ester",
+    "Phthalic acid, mono-2-ethyl-5-hydroxyhexyl ester 100 microg/mL in Methyl-tert-butyl ether",
+    "Phthalic acid, mono-2-ethyl-5-hydroxyhexyl ester 100 |Ig/mL in Methyl-tert-butyl ether",
+    "Q26841242",
+    "RefChem:819235",
+    "SCHEMBL15363960",
+    "SCHEMBL29975600",
+    "T204313",
+    "TI25100000",
+    "mono (2-ethyl-5-hydroxyhexyl) phthalate",
+    "mono(2-ethyl-5-hydroxyhexyl)phthalate",
+    "orb2945775",
+    "phthalic acid mono(2-ethyl-5-hydroxyhexyl) ester"
+  ],
+  "cids": [
+    170295
+  ],
+  "properties": [
+    {
+      "CID": 170295,
+      "InChIKey": "RYPQSGURZSTFSX-UHFFFAOYSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/227,402,2730,3282,3393,4767,6365,6635,6977,7813,12333,14300,15142,16562,33699,42138,88446,92272,124535,124886,135002,155166,170295,184432,237979,440667,442053,3037925,3081085,5282347,6440156,9547954,9917980,12000240,12100282,13882016,16132306,18779926,25246407,85971926,101919065,171390563/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RWSOTUBLDIXVET-UHFFFAOYSA-N,RWSXRVCMGQZWBV-WDSKDSINSA-N,RWTOQBZEEVCLAM-UHFFFAOYSA-N,RWVXZIHEOJRYRC-VXXXAWOJSA-N,RWWRSVXKOGFQOL-UHFFFAOYSA-N,RWZYAGGXGHYGMB-UHFFFAOYSA-N,RXCVUXLCNLVYIA-UHFFFAOYSA-N,RXGCXARXEYBFKU-UHFFFAOYSA-N,RXKNNAKAVAHBNK-UHFFFAOYSA-N,RXPKOTQRDGEKFY-UHFFFAOYSA-N,RXTHRRCPOZIOPJ-UYFOZJQFSA-N,RXXMCOXOJXIVRH-UHFFFAOYSA-N,RXXXJEQCRPLSOQ-UHFFFAOYSA-N,RYJSWBQOTNVYPL-UHFFFAOYSA-N,RYKQWXOLCNZEJT-IENPIDJESA-N,RYPQSGURZSTFSX-UHFFFAOYSA-N,RYTVNRTYMORAJT-UHFFFAOYSA-N,RZFHLOLGZPDCHJ-XZXLULOTSA-N,RZGVSNHPAIHNAP-UHFFFAOYSA-N,RZILCCPWPBTYDO-UHFFFAOYSA-N,RZIMNEGTIDYAGZ-HNSJZBNRSA-N,RZJSUWQGFCHNFS-UHFFFAOYSA-N,RZKKOBGFCAHLCZ-UHFFFAOYSA-N,RZRQIAWBCPHCEH-UHFFFAOYSA-N,RZXIRSKYBISPGF-UHFFFAOYSA-N,RZXLPPRPEOUENN-UHFFFAOYSA-N,RZXMPPFPUUCRFN-UHFFFAOYSA-N,SAADBVWGJQAEFS-UHFFFAOYSA-N,SATGKQGFUDXGAX-MYWFJNCASA-N,SBAFYVSEILDIIX-UHFFFAOYSA-N,SBHCLVQMTBWHCD-UHFFFAOYSA-N,SBJKKFFYIZUCET-JLAZNSOCSA-N,SBLYXIKLMHGUJZ-LBMXFXLMSA-N,SBMIVUVRFPGOEB-UHFFFAOYSA-N,SBNFWQZLDJGRLK-UHFFFAOYSA-N,SBNKFTQSBPKMBZ-UHFFFAOYSA-N,SBOZXXIZLLMJJG-UHFFFAOYSA-N,SBPAFMRNDOFNLB-UHFFFAOYSA-N,SBPBAQFWLVIOKP-UHFFFAOYSA-N,SBPPWJIDARICBS-QKFAOQDPSA-N,SBTPZUDGCFFGGV-UHFFFAOYSA-N,SBVBJPHMDABKJV-PGCJWIIOSA-N,SCJXNRGQLJAOGS-UHFFFAOYSA-N,SCKGCFZOPIYMSK-TXSUOPFHSA-N,SCVHJVCATBPIHN-SJCJKPOMSA-N,SCXJYXMEOJKLDB-FMQUCBEESA-N,SCYULBFZEHDVBN-UHFFFAOYSA-N,SDBITTRHSROXCY-TVMWCTMGSA-N,SDFLTYHTFPTIGX-UHFFFAOYSA-N,SDGBCPLLLCTXJG-UHFFFAOYSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

@@ -1,0 +1,24 @@
+{
+  "parent_key": "QLWASAJNCFHPGV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QLWASAJNCFHPGV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7-Fluorobenzo(a)pyrene",
+    "7-fluorobenzo[a]pyrene",
+    "7-fluorobenzo[pqr]tetraphene",
+    "71511-38-1",
+    "BENZO(a)PYRENE, 7-FLUORO-",
+    "BRN 2216469",
+    "CHEMBL1991981",
+    "DTXCID70144243",
+    "DTXSID40221752",
+    "NCI60_006900",
+    "NSC-623136",
+    "NSC623136",
+    "RefChem:106092"
+  ],
+  "http_status": 200,
+  "cids": [
+    51336
+  ]
+}

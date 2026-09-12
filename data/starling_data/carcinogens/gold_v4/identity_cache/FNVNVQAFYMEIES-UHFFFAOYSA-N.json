@@ -1,0 +1,16 @@
+{
+  "parent_key": "FNVNVQAFYMEIES-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FNVNVQAFYMEIES-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-[(3-Aminopropyl)amino]ethane-1-sulfonic acid",
+    "58210-12-1",
+    "DTXSID10482838",
+    "Ethanesulfonic acid, 2-[(3-aminopropyl)amino]-",
+    "SCHEMBL600849"
+  ],
+  "http_status": 200,
+  "cids": [
+    12260032
+  ]
+}

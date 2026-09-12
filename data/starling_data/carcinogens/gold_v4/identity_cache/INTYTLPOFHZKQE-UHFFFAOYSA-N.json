@@ -1,0 +1,21 @@
+{
+  "parent_key": "INTYTLPOFHZKQE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INTYTLPOFHZKQE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2'-Azonaphthalene",
+    "1,2'-Azonaphthalin",
+    "2653-63-6",
+    "Diazene, 1-naphthalenyl-2-naphthalenyl-",
+    "NSC-31017",
+    "NSC31017",
+    "SCHEMBL2291747",
+    "SCHEMBL9165035",
+    "SCHEMBL9165039",
+    "naphthalen-1-yl(naphthalen-2-yl)diazene"
+  ],
+  "http_status": 200,
+  "cids": [
+    232972
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "utc": "2026-09-09T00:15:29.288625+00:00",
+  "reason": "User requests relaxed rules and fewer LLM reviews; stop exhaustive two-pass census before replacing it with a targeted queue. Preserve all completed reviews and all four model servers.",
+  "pids": [
+    3873747
+  ],
+  "previous_progress": {
+    "round": 1,
+    "prior_ok": 3695,
+    "counts": {
+      "ok": 63679,
+      "dili:out_of_scope": 2835,
+      "dili:needs_context": 9492,
+      "dili:supported": 17757,
+      "error": 521,
+      "carcinogens:out_of_scope": 19098,
+      "carcinogens:needs_context": 4630,
+      "carcinogens:supported": 9867
+    },
+    "elapsed_s": 4739.5,
+    "updated_utc": "2026-09-09T00:15:28.347398+00:00",
+    "global_concurrency": 2048,
+    "active_reviews": 2047
+  }
+}

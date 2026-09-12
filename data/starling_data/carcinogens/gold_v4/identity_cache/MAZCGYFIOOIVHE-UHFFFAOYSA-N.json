@@ -1,0 +1,36 @@
+{
+  "parent_key": "MAZCGYFIOOIVHE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MAZCGYFIOOIVHE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-NITROPYRENE",
+    "2-NITROPYRENE [IARC]",
+    "2-Nitro-pyrene",
+    "789-07-1",
+    "AKOS015905447",
+    "BRN 2126122",
+    "C19476",
+    "CCRIS 3374",
+    "CHEBI:82506",
+    "CHEMBL354722",
+    "DTXCID50151859",
+    "DTXSID30229368",
+    "GI0F8R15CU",
+    "MAZCGYFIOOIVHE-UHFFFAOYSA-N",
+    "MFCD00229524",
+    "NITROPYRENE, 2-",
+    "NS00115901",
+    "Pyrene, 2-nitro-",
+    "Q27156013",
+    "RefChem:88751",
+    "SCHEMBL10788183",
+    "SCHEMBL29903867",
+    "SCHEMBL6419102",
+    "SY490923",
+    "UNII-GI0F8R15CU"
+  ],
+  "http_status": 200,
+  "cids": [
+    13090
+  ]
+}

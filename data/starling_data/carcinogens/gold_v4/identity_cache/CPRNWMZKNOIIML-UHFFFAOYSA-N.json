@@ -1,0 +1,30 @@
+{
+  "parent_key": "CPRNWMZKNOIIML-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CPRNWMZKNOIIML-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Heptadecafluorooctyl)phosphonic acid",
+    "(Perfluorooctyl)phosphonic acid",
+    "1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,8-heptadecafluorooctylphosphonic acid",
+    "40143-78-0",
+    "CPRNWMZKNOIIML-UHFFFAOYSA-N",
+    "DTXCID601017826",
+    "DTXSID80879832",
+    "MSK14853",
+    "NS00011280",
+    "PERFLUOROOCTANE-PHOSPHONIC ACID",
+    "PFO phosphinic acid",
+    "PFOPA",
+    "Perfluorooctylphosphinic acid",
+    "Perfluorooctylphosphoric Acid (>85%)",
+    "Perfluorooctylphosphoric acid",
+    "RefChem:1051023",
+    "SCHEMBL2783614",
+    "perfluorooctane phosphonic acid",
+    "perfluorooctyl phosphonic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    13528037
+  ]
+}

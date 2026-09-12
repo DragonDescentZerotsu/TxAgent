@@ -1,0 +1,37 @@
+{
+  "parent_key": "NXPLYKRKIFPEOA-BLLLJJGKSA-N",
+  "ok": true,
+  "synonyms": [
+    "1H-Pyrrolo(2,3-d)pyridazine, 7-((4-fluorophenyl)methoxy)-2,3-dimethyl-1-(((1S,2S)-2-methylcyclopropyl)methyl)-",
+    "313272-12-7",
+    "7-((4-Fluorophenyl)methoxy)-2,3-dimethyl-1-(((1S,2S)-2-methylcyclopropyl)methyl)-1H-pyrrolo(2,3-d)pyridazine",
+    "7-(4-Fluorobenzyloxy)-2,3-dimethyl-1-[(1S,2S)-2-methylcyclopropylmethyl]pyrrolo[2,3-d]pyridazine",
+    "7-(4-fluorobenzyloxy)-2,3-dimethyl-1-(((1S,2S)-2-methylcyclopropyl)methyl)-1H-pyrrolo[2,3-d]pyridazine",
+    "7-(4-fluorobenzyloxy)-2,3-dimethyl-1-((2-methylcyclopropyl)methyl)-1h-pyrrolo(2,3-d)pyridazine",
+    "7-(4-fluorobenzyloxy)-2,3-dimethyl-1-[(1s,2s)-2-methylcyclopropylmethyl]pyrrolo[2,3-d]-pyridazine",
+    "7-(4-fluorobenzyloxy)-2,3-dimethyl-1-{[(1s,2s)-2-methyl cyclopropyl]methyl}-1h-pyrrolo[2,3-d]pyridazine",
+    "7-[(4-fluorophenyl)methoxy]-2,3-dimethyl-1-[[(1S,2S)-2-methylcyclopropyl]methyl]pyrrolo[2,3-d]pyridazine",
+    "AKOS040748189",
+    "BDBM50311746",
+    "CHEMBL1087758",
+    "CS 526",
+    "CS-0018799",
+    "CS-526",
+    "CS526",
+    "CS526 cpd",
+    "HY-100413",
+    "K82NW38NLW",
+    "NXPLYKRKIFPEOA-BLLLJJGKSA-N",
+    "RefChem:919239",
+    "SCHEMBL2688495",
+    "SCHEMBL29405145",
+    "T27092",
+    "UNII-K82NW38NLW",
+    "orb1700794"
+  ],
+  "cids": [
+    9833312
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NXPLYKRKIFPEOA-BLLLJJGKSA-N/synonyms/JSON",
+  "http_status": 200
+}

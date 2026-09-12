@@ -1,0 +1,11 @@
+{
+  "version": "dili_reviewed_starling_only.v1",
+  "queue_records": 160794,
+  "source_rows": 189172,
+  "source_sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+  "labels_sha256": "bd3fc98b419e851c1ab25264579dede9e954720c3793cc211c635aea7072c180",
+  "bibliography_sha256": "0a636fb26007de45e375e1bdc45bc568515ba2407c8b62098ffa88c958850a14",
+  "identity_sha256": "947b007682e4f33e39350418d26b3f6c649ccb6ff679ca8da4e8335f60dac125",
+  "queue_sha256": "e105907d87f25c1486b28ae70417e7693ce59caa76d48dd9eae6ae3e02bfd336",
+  "prompt_sha256": "594e239cacf318482c347e3f50d646b60b5d1f6a49c8a3c07a4b47a9d3858c46"
+}

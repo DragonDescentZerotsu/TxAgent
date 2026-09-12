@@ -1,0 +1,162 @@
+{
+  "status": "passed",
+  "n_query_l1_surfaces": 14,
+  "scope": "All L1 cards flagged by the 304-record staged scaffold audit; comparison to frozen v3 cards",
+  "explanation": "Source-free unspecified-unit aggregation count changed; card hash changed with it. No change to the visible study claim, condition, role, molecule or evidence family. This remains a literal prompt difference, not a prediction reuse authorization.",
+  "rows": [
+    {
+      "subset": "test",
+      "query_index": 75,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 119,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 120,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 121,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 122,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 160,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 162,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 178,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 227,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 228,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 242,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 273,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 309,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    },
+    {
+      "subset": "test",
+      "query_index": 344,
+      "difference": {
+        "reported_unit": [
+          "unspecified (7)",
+          "unspecified (8)"
+        ]
+      },
+      "source_claim_condition_role_level_unchanged": true
+    }
+  ]
+}

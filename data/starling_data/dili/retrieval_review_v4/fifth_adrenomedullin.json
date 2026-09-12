@@ -1,0 +1,18 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 56841671,
+        "MolecularFormula": "C264H406N80O77S3",
+        "SMILES": "CC[C@H](C)[C@@H](C(=O)N[C@@H](CCCNC(=N)N)C(=O)N[C@@H](CO)C(=O)N[C@@H](CC1=CC=CC=C1)C(=O)NCC(=O)N[C@H]2CSSC[C@H](NC(=O)[C@@H](NC(=O)CNC(=O)[C@@H](NC(=O)[C@@H](NC2=O)CCCNC(=N)N)CC3=CC=CC=C3)[C@@H](C)O)C(=O)N[C@@H]([C@@H](C)O)C(=O)N[C@@H](C(C)C)C(=O)N[C@@H](CCC(=O)N)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CC(C)C)C(=O)N[C@@H](C)C(=O)N[C@@H](CC4=CN=CN4)C(=O)N[C@@H](CCC(=O)N)C(=O)N[C@@H]([C@@H](C)CC)C(=O)N[C@@H](CC5=CC=C(C=C5)O)C(=O)N[C@@H](CCC(=O)N)C(=O)N[C@@H](CC6=CC=CC=C6)C(=O)N[C@@H]([C@@H](C)O)C(=O)N[C@@H](CC(=O)O)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CC(=O)O)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CC(=O)O)C(=O)N[C@@H](CC(=O)N)C(=O)N[C@@H](C(C)C)C(=O)N[C@@H](C)C(=O)N7CCC[C@H]7C(=O)N[C@@H](CCCNC(=N)N)C(=O)N[C@@H](CO)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H]([C@@H](C)CC)C(=O)N[C@@H](CO)C(=O)N8CCC[C@H]8C(=O)N[C@@H](CCC(=O)N)C(=O)NCC(=O)N[C@@H](CC9=CC=C(C=C9)O)C(=O)N)NC(=O)CNC(=O)[C@H](CCC(=O)N)NC(=O)[C@H](CC1=CC=CC=C1)NC(=O)[C@H](CC(=O)N)NC(=O)[C@H](CC(=O)N)NC(=O)[C@H](CCSC)NC(=O)[C@H](CO)NC(=O)[C@H](CCC(=O)N)NC(=O)[C@H](CCCNC(=N)N)NC(=O)[C@H](CC1=CC=C(C=C1)O)N",
+        "InChIKey": "ULCUCJFASIJEOE-NPECTJMMSA-N"
+      },
+      {
+        "CID": 91976826,
+        "MolecularFormula": "C264H406N80O77S3",
+        "SMILES": "CCC(C)C(C(=O)NC(CCCNC(=N)N)C(=O)NC(CO)C(=O)NC(CC1=CC=CC=C1)C(=O)NCC(=O)NC2CSSCC(NC(=O)C(NC(=O)CNC(=O)C(NC(=O)C(NC2=O)CCCNC(=N)N)CC3=CC=CC=C3)C(C)O)C(=O)NC(C(C)O)C(=O)NC(C(C)C)C(=O)NC(CCC(=O)N)C(=O)NC(CCCCN)C(=O)NC(CC(C)C)C(=O)NC(C)C(=O)NC(CC4=CN=CN4)C(=O)NC(CCC(=O)N)C(=O)NC(C(C)CC)C(=O)NC(CC5=CC=C(C=C5)O)C(=O)NC(CCC(=O)N)C(=O)NC(CC6=CC=CC=C6)C(=O)NC(C(C)O)C(=O)NC(CC(=O)O)C(=O)NC(CCCCN)C(=O)NC(CC(=O)O)C(=O)NC(CCCCN)C(=O)NC(CC(=O)O)C(=O)NC(CC(=O)N)C(=O)NC(C(C)C)C(=O)NC(C)C(=O)N7CCCC7C(=O)NC(CCCNC(=N)N)C(=O)NC(CO)C(=O)NC(CCCCN)C(=O)NC(C(C)CC)C(=O)NC(CO)C(=O)N8CCCC8C(=O)NC(CCC(=O)N)C(=O)NCC(=O)NC(CC9=CC=C(C=C9)O)C(=O)N)NC(=O)CNC(=O)C(CCC(=O)N)NC(=O)C(CC1=CC=CC=C1)NC(=O)C(CC(=O)N)NC(=O)C(CC(=O)N)NC(=O)C(CCSC)NC(=O)C(CO)NC(=O)C(CCC(=O)N)NC(=O)C(CCCNC(=N)N)NC(=O)C(CC1=CC=C(C=C1)O)N",
+        "InChIKey": "ULCUCJFASIJEOE-UHFFFAOYSA-N"
+      }
+    ]
+  }
+}

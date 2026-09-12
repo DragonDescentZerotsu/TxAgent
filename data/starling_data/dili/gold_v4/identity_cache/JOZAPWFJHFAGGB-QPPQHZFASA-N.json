@@ -1,0 +1,12 @@
+{
+  "parent_key": "JOZAPWFJHFAGGB-QPPQHZFASA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL444268"
+  ],
+  "cids": [
+    66688036
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JOZAPWFJHFAGGB-QPPQHZFASA-N/synonyms/JSON",
+  "http_status": 200
+}

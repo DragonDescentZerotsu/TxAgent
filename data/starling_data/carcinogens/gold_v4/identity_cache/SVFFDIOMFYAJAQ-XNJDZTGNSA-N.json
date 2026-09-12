@@ -1,0 +1,15 @@
+{
+  "parent_key": "SVFFDIOMFYAJAQ-XNJDZTGNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SVFFDIOMFYAJAQ-XNJDZTGNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "75664-84-5",
+    "CCRIS 4293",
+    "N-(2-Hydroxypropyl)retinamide",
+    "SCHEMBL11278766"
+  ],
+  "http_status": 200,
+  "cids": [
+    6505798
+  ]
+}

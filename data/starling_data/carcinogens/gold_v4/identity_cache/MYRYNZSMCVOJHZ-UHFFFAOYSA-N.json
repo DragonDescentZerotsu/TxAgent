@@ -1,0 +1,36 @@
+{
+  "parent_key": "MYRYNZSMCVOJHZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MYRYNZSMCVOJHZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,6-Benzo(a)pyrenedione",
+    "3,6-Benzo(a)pyrenequinone",
+    "3-07-00-04370 (Beilstein Handbook Reference)",
+    "3067-14-9",
+    "64133-78-4",
+    "AKOS030255114",
+    "BENZO(A)PYRENE-3,6-DIONE",
+    "BP-3,6-Quinone",
+    "BRN 2334218",
+    "Benzo(a)pyrene 3,6-dione",
+    "Benzo(a)pyrene-3,6-dione, radical ion(1-)",
+    "Benzo(a)pyrene-3,6-quinone",
+    "Benzo[pqr]tetraphene-3,6-dione",
+    "Benzo[pqr]tetraphene-3,6-dione radical ion(1-)",
+    "CCRIS 799",
+    "CT61YDG18C",
+    "DTXSID40952918",
+    "RefChem:565152",
+    "SCHEMBL3342416",
+    "UNII-CT61YDG18C",
+    "benzo[a]pyrene-3,6-dione",
+    "benzo[a]pyrene-3,6-quinone",
+    "pentacyclo[10.6.2.0?,?.0?,??.0??,??]icosa-1(19),2,4,6,9,11,14,16(20),17-nonaene-8,13-dione",
+    "starbld0003247"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (35%), Request Time status: Green (3%), Service status: Black (143%)",
+  "cids": [
+    18301
+  ]
+}

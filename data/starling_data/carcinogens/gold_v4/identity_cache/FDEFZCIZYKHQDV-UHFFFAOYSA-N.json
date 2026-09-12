@@ -1,0 +1,15 @@
+{
+  "parent_key": "FDEFZCIZYKHQDV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FDEFZCIZYKHQDV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-(Pyridin-3-yl)butanal",
+    "79240-21-4",
+    "DB-135868",
+    "SCHEMBL7043773"
+  ],
+  "http_status": 200,
+  "cids": [
+    12727117
+  ]
+}

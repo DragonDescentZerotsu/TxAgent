@@ -1,0 +1,12 @@
+{
+  "parent_key": "HXCHCVDVKSCDHU-DATRAAMPSA-N",
+  "ok": true,
+  "synonyms": [
+    "Calicheamicin"
+  ],
+  "cids": [
+    164511723
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HXCHCVDVKSCDHU-DATRAAMPSA-N/synonyms/JSON",
+  "http_status": 200
+}

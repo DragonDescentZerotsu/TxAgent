@@ -1,0 +1,13 @@
+{
+  "parent_key": "BHGFSXDBVBWAGV-FGRDXJNISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BHGFSXDBVBWAGV-FGRDXJNISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "monoglutamyl folic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    129676085,
+    137199645
+  ]
+}

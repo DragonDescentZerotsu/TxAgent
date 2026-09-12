@@ -1,0 +1,20 @@
+{
+  "parent_key": "XMBWDFGMSWQBCA-YPZZEJLDSA-N",
+  "ok": true,
+  "synonyms": [
+    "(~125~I)Hydrogen iodide",
+    "(~125~I)iodine",
+    "CHEMBL4298559",
+    "DTXCID501359849",
+    "DTXSID10931134",
+    "Q27279305",
+    "RefChem:1051298",
+    "SCHEMBL2675855"
+  ],
+  "cids": [
+    104800,
+    92026959
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XMBWDFGMSWQBCA-YPZZEJLDSA-N/synonyms/JSON",
+  "http_status": 200
+}

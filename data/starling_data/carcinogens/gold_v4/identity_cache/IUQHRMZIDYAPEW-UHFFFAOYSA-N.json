@@ -1,0 +1,32 @@
+{
+  "parent_key": "IUQHRMZIDYAPEW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IUQHRMZIDYAPEW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1H-Imidazo(4,5-f)quinoline, 2-methyl-",
+    "2-Methyl-1H-imidazo(4,5-f)quinoline",
+    "2-Methyl-3H-imidazo[4,5-f]quinoline",
+    "2-methyl-1H-imidazo[4,5-f]quinoline",
+    "3H-Imidazo[4, 2-methyl",
+    "93201-85-5",
+    "AKOS034131193",
+    "CHEMBL1971863",
+    "DTXSID00239333",
+    "EN300-1440284",
+    "G54114",
+    "NCI60_007741",
+    "NSC-625168",
+    "NSC625168",
+    "SCHEMBL10146529",
+    "SCHEMBL12066505",
+    "TDA20185",
+    "Z1216829557",
+    "methylpyridobenzimidazole",
+    "starbld0022028",
+    "{3H-Imidazo[4,5-f]quinoline,} 2-methyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    150368
+  ]
+}

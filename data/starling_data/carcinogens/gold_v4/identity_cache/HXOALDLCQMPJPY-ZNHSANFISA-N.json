@@ -1,0 +1,13 @@
+{
+  "parent_key": "HXOALDLCQMPJPY-ZNHSANFISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HXOALDLCQMPJPY-ZNHSANFISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Adenosine-2',3'-dialdehyde",
+    "SCHEMBL94418"
+  ],
+  "http_status": 200,
+  "cids": [
+    22867782
+  ]
+}

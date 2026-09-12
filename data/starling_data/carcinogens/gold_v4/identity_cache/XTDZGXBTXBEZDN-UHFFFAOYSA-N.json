@@ -1,0 +1,62 @@
+{
+  "parent_key": "XTDZGXBTXBEZDN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,4-methanonaphthalen-5-yl)-1-methylpyrazole-4-carboxamide",
+    "1H-Pyrazole-4-carboxamide, 3-(difluoromethyl)-1-methyl-N-[1,2,3,4-tetrahydro-9-(1-methylethyl)-1,4-methanonaphthalen-5-yl]-",
+    "3-(Difluoromethyl)-1-methyl-N-[9-(propan-2-yl)-1,2,3,4-tetrahydro-1,4-methanonaphthalen-5-yl]-1H-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-1-methyl-N-(1,2,3,4-tetrahydro-9-(1-methylethyl)-1,4-methanonaphthalen-5-yl)-1H-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-1-methyl-N-(11-propan-2-yl-3-tricyclo[6.2.1.02,7]undeca-2(7),3,5-trienyl)pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-1-methyl-N-[11-(propan-2-yl)tricyclo[6.2.1.0(2),]undeca-2(7),3,5-trien-3-yl]-1H-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-1-methyl-N-[11-(propan-2-yl)tricyclo[6.2.1.0,undeca-2(7),3,5-trien-3-yl]-1H-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-1-methyl-n-[1,2,3,4-tetrahydro-9-(1-methylethyl)-1,4-methano-naphthalen-5-yl]-1h-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-N-(11-isopropyl-3-tricyclo[6.2.1.02,7]undeca-2(7),3,5-trienyl)-1-methyl-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-N-(9-isopropyl-1,2,3,4-tetrahydro-1,4-methanonaphthalen-5-yl)-1-methyl-1H-pyrazole-4-carboxamide",
+    "3-(difluoromethyl)-N-(9-isopropyl-1,2,3,4-tetrahydro-1,4-methanonaphthalen-5-yl)-1-methylpyrazole-4-carboxamide",
+    "3-difluoromethyl-1-methyl-1h-pyrazole-4-carboxylic acid (9-isopropyl-1,2,3,4-tetrahydro-1,4-methano-naphthalen-5-yl)-amide",
+    "881685-58-1",
+    "BONTIMA",
+    "C20H23F2N3O",
+    "CHEBI:83126",
+    "CHEBI:83128",
+    "CS-0853589",
+    "DTXCID0031976",
+    "DTXSID7058208",
+    "F098T24Q5Q",
+    "GKB68558",
+    "Isopyrazam",
+    "Isopyrazam (mixture of isomers)",
+    "Isopyrazam 100 microg/mL in Acetonitrile",
+    "Isopyrazam [ISO]",
+    "MFCD16652538",
+    "MSK21082",
+    "N-(9-isopropyl-1,2,3,4-tetrahydro-1,4-methanonaphthalen-5-yl)-3-difluoromethyl-1-methyl-1H-pyrazole-4-carboxamide",
+    "NS00040576",
+    "Q27156655",
+    "REFLECT",
+    "RefChem:792273",
+    "SCHEMBL162518",
+    "SCHEMBL437176",
+    "SEGURIS FLEXI",
+    "SYN520453",
+    "T201235",
+    "T201240",
+    "UNII-F098T24Q5Q",
+    "orb2695311",
+    "orb2695316",
+    "orb3025430"
+  ],
+  "cids": [
+    25271089
+  ],
+  "properties": [
+    {
+      "CID": 25271089,
+      "InChIKey": "XTDZGXBTXBEZDN-UHFFFAOYSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/594,1176,3325,5827,5862,7441,7681,7858,7983,8146,11497,11643,11813,12041,13293,13328,16231,60823,82153,92327,147395,165571,688710,786655,2723897,5260155,5353622,5371578,5486887,5702160,6419722,11205153,12605277,16139342,21124703,21956122,22719066,25271089,46926973,52938427,85608160,90146053,90472060,131704318,131769817,135435090,141160148/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XRHQGKPLYOZTGE-UHFFFAOYSA-N,XRVDGNKRPOAQTN-FQEVSTJZSA-N,XSBUXVWJQVTYLC-UHFFFAOYSA-N,XSDQTOBWRPYKKA-UHFFFAOYSA-N,XSFJVAJPIHIPKU-XWCQMRHXSA-N,XSHOZPLZPDBZRE-UHFFFAOYSA-N,XSKZXGDFSCCXQX-UHFFFAOYSA-N,XSLWAEDZAMNHED-UHFFFAOYSA-N,XSOLDPYUICCHJX-UZUDEGBHSA-N,XSQUKJJJFZCRTK-UHFFFAOYSA-N,XSTYSYCSYHWAEB-UHFFFAOYSA-N,XTAARPJDFFXHGH-GRPBBMKTSA-N,XTDZGXBTXBEZDN-UHFFFAOYSA-N,XTEGDIRHIJHMMJ-UHFFFAOYSA-N,XTEURQCXJDIUCR-UHFFFAOYSA-N,XTJFYLJRCWKLBB-UHFFFAOYSA-N,XTRDKALNCIHHNI-UHFFFAOYSA-N,XTSBGIIJQVSHML-UHFFFAOYSA-N,XTTIQGSLJBWVIV-UHFFFAOYSA-N,XTVKUUHAAFHYEK-UHFFFAOYSA-N,XTXDLRODXSNGHD-UHFFFAOYSA-N,XTYREEWEUTUYMJ-UHFFFAOYSA-N,XUFQPHANEAPEMJ-UHFFFAOYSA-N,XUGISPSHIFXEHZ-VEVYEIKRSA-N,XUJNEKJLAYXESH-REOHCLBHSA-N,XUJNEKJLAYXESH-UHFFFAOYSA-N,XUKUURHRXDUEBC-KAYWLYCHSA-N,XUNYLLBGLKGFHO-UHFFFAOYSA-N,XUPYJHCZDLZNFP-UHFFFAOYSA-N,XUQVPITYLMRUJC-UHFFFAOYSA-N,XURWVKISYBUGHB-UHFFFAOYSA-N,XVAIDCNLVLTVFM-UHFFFAOYSA-N,XVPUMLOTNZVTSL-BLNOFITASA-N,XVVOERDUTLJJHN-IAEQDCLQSA-N,XVWJJHFBZIHTQH-NTEUORMPSA-N,XVYRZGMLMPSBHO-UHFFFAOYSA-N,XVZWACWGVWVKEW-UHFFFAOYSA-N,XWCDCDSDNJVCLO-UHFFFAOYSA-N,XWNJMSJGJFSGRY-UHFFFAOYSA-N,XWVCGVPSPHTRHE-BQYQJAHWSA-N,XWVCGVPSPHTRHE-UHFFFAOYSA-N,XXBDWLFCJWSEKW-UHFFFAOYSA-N,XXFALVSTGFPHMP-UHFFFAOYSA-N,XXHJVFHJZVVGKT-UHFFFAOYSA-N,XXJWCSMXWIHTRS-UHFFFAOYSA-N,XXJWXESWEXIICW-UHFFFAOYSA-N,XXRCUYVCPSWGCC-UHFFFAOYSA-N,XXROGKLTLUQVRX-UHFFFAOYSA-N,XXXSILNSXNPGKG-ZHACJKMWSA-N,XXYGTCZJJLTAGH-UHFFFAOYSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

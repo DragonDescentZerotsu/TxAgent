@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any, Mapping
 
+import httpx
 from openai import AsyncOpenAI, OpenAI
 import requests
 
@@ -33,9 +34,12 @@ class OpenAICompatibleClient:
         enable_thinking: bool,
         transport_max_retries: int = TRANSPORT_MAX_RETRIES,
         request_extra_body: Mapping[str, Any] | None = None,
+        async_max_connections: int | None = None,
     ):
         if transport_max_retries < 0:
             raise ValueError("transport_max_retries must be non-negative")
+        if async_max_connections is not None and async_max_connections < 1:
+            raise ValueError("async_max_connections must be positive")
         self.client = OpenAI(
             api_key=api_key,
             base_url=base_url.rstrip("/"),
@@ -52,6 +56,7 @@ class OpenAICompatibleClient:
         self.enable_thinking = enable_thinking
         self.request_extra_body = dict(request_extra_body or {})
         self._async_client = None
+        self.async_max_connections = async_max_connections
 
     def chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         response = self._create_completion(messages)
@@ -60,9 +65,16 @@ class OpenAICompatibleClient:
     async def async_chat_json(self, messages: list[dict[str, Any]]) -> dict[str, Any]:
         """Cancellation closes the in-flight HTTP request; no worker thread is left behind."""
         if self._async_client is None:
+            http_options = {}
+            if self.async_max_connections is not None:
+                http_options["http_client"] = httpx.AsyncClient(limits=httpx.Limits(
+                    max_connections=self.async_max_connections,
+                    max_keepalive_connections=self.async_max_connections,
+                ))
             self._async_client = AsyncOpenAI(
                 api_key=self.client.api_key, base_url=self.client.base_url,
                 timeout=self.client.timeout, max_retries=self.client.max_retries,
+                **http_options,
             )
         response = await self._async_client.chat.completions.create(
             **self._completion_kwargs(messages)

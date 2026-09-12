@@ -1,0 +1,13 @@
+{
+  "parent_key": "XGGRLDLYDMMXND-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(hydroxy)stilbamidine",
+    "SCHEMBL27726579"
+  ],
+  "cids": [
+    136234694
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XGGRLDLYDMMXND-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

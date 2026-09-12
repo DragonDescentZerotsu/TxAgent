@@ -1,0 +1,13 @@
+{
+  "parent_key": "JIPUGCBCIYYRSB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Phenylchinolincarbonsaure",
+    "SCHEMBL2001891"
+  ],
+  "cids": [
+    3031738
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JIPUGCBCIYYRSB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

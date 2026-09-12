@@ -1,0 +1,32 @@
+{
+  "parent_key": "CKAGNBSBBQJLCI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKAGNBSBBQJLCI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-05-00-01949 (Beilstein Handbook Reference)",
+    "3-Nitro-9H-fluorene",
+    "3-Nitrofluorene",
+    "5397-37-5",
+    "9H-Fluorene, 3-nitro-",
+    "9H-Fluorene, 3-nitro-(9CI)",
+    "AH-262/15661004",
+    "BRN 2213592",
+    "CCRIS 8628",
+    "CKAGNBSBBQJLCI-UHFFFAOYSA-N",
+    "DB-315534",
+    "DTXCID40124754",
+    "DTXSID40202263",
+    "Fluorene, 3-nitro-",
+    "H39191",
+    "MFCD00032822",
+    "NSC 3016",
+    "NSC-3016",
+    "NSC3016",
+    "RefChem:95036",
+    "SCHEMBL7618863"
+  ],
+  "http_status": 200,
+  "cids": [
+    94787
+  ]
+}

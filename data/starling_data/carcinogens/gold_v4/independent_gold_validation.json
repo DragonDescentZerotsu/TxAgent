@@ -1,0 +1,181 @@
+{
+  "status": "passed",
+  "source_votes": 89617,
+  "no_tdc_votes": true,
+  "source_labels_and_nonrepresentative_labels_match_completed_ledger": true,
+  "publication_parent_condition_unique": true,
+  "gold_consensus_independently_recomputed": true,
+  "gold_unique_parents": 3484,
+  "pending_pairs": 367,
+  "pending_and_gold_disjoint": true,
+  "split_label_counts": {
+    "scaffold": {
+      "train": {
+        "0": 892,
+        "1": 2862
+      },
+      "valid": {
+        "0": 111,
+        "1": 358
+      },
+      "test": {
+        "1": 358,
+        "0": 111
+      }
+    },
+    "random": {
+      "train": {
+        "0": 892,
+        "1": 2862
+      },
+      "valid": {
+        "0": 111,
+        "1": 358
+      },
+      "test": {
+        "0": 111,
+        "1": 358
+      }
+    }
+  },
+  "inputs": {
+    "data/starling_data/carcinogens/gold_v4/source_votes.jsonl": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
+    "data/starling_data/carcinogens/gold_v4/gold_labels.jsonl": "9af552cd71a466417aca5a8d908a76f2762cab3406328e29bb6aa40e1e5f9c64"
+  },
+  "condition_counts_by_split": {
+    "scaffold": {
+      "train": {
+        "species=dog": {
+          "1": 74,
+          "0": 26
+        },
+        "species=human": {
+          "0": 247,
+          "1": 948
+        },
+        "species=monkey": {
+          "1": 27,
+          "0": 16
+        },
+        "species=rabbit": {
+          "1": 42,
+          "0": 12
+        },
+        "species=rodent": {
+          "0": 591,
+          "1": 1771
+        }
+      },
+      "valid": {
+        "species=dog": {
+          "0": 8,
+          "1": 6
+        },
+        "species=human": {
+          "0": 49,
+          "1": 138
+        },
+        "species=monkey": {
+          "1": 7,
+          "0": 6
+        },
+        "species=rabbit": {
+          "1": 1
+        },
+        "species=rodent": {
+          "0": 48,
+          "1": 206
+        }
+      },
+      "test": {
+        "species=dog": {
+          "0": 6,
+          "1": 14
+        },
+        "species=human": {
+          "1": 147,
+          "0": 41
+        },
+        "species=monkey": {
+          "1": 7,
+          "0": 6
+        },
+        "species=rabbit": {
+          "1": 4
+        },
+        "species=rodent": {
+          "1": 186,
+          "0": 58
+        }
+      }
+    },
+    "random": {
+      "train": {
+        "species=dog": {
+          "1": 71,
+          "0": 37
+        },
+        "species=human": {
+          "0": 261,
+          "1": 995
+        },
+        "species=monkey": {
+          "1": 34,
+          "0": 21
+        },
+        "species=rabbit": {
+          "0": 11,
+          "1": 36
+        },
+        "species=rodent": {
+          "0": 562,
+          "1": 1726
+        }
+      },
+      "valid": {
+        "species=dog": {
+          "1": 11,
+          "0": 2
+        },
+        "species=human": {
+          "0": 39,
+          "1": 118
+        },
+        "species=monkey": {
+          "1": 4,
+          "0": 3
+        },
+        "species=rabbit": {
+          "1": 5,
+          "0": 1
+        },
+        "species=rodent": {
+          "1": 220,
+          "0": 66
+        }
+      },
+      "test": {
+        "species=dog": {
+          "1": 12,
+          "0": 1
+        },
+        "species=human": {
+          "0": 37,
+          "1": 120
+        },
+        "species=monkey": {
+          "0": 4,
+          "1": 3
+        },
+        "species=rabbit": {
+          "1": 6
+        },
+        "species=rodent": {
+          "1": 217,
+          "0": 69
+        }
+      }
+    }
+  },
+  "condition_coverage_is_not_per_condition_label_coverage": true
+}

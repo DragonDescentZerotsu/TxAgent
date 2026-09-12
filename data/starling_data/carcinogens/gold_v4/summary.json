@@ -1,0 +1,147 @@
+{
+  "version": "carcinogens_reviewed_starling_only_five_groups.v1",
+  "raw_records": 354386,
+  "source_directions": {
+    "positive": 296079,
+    "negative": 35031,
+    "mixed": 7340,
+    "uncertain": 7406,
+    "specimen_or_material_hold": 6905,
+    "out_of_scope": 1625
+  },
+  "dispositions": {
+    "organism_unresolved": 52473,
+    "name_not_verified_for_source_structure": 41713,
+    "pubchem_name_structure_mismatch": 8846,
+    "mixed_organism_groups": 2473,
+    "source_mixed": 7340,
+    "source_uncertain": 7406,
+    "outside_five_groups": 2351,
+    "cell_model_not_organism_outcome": 1762,
+    "in_vitro_not_organism_outcome": 7567,
+    "multiple_organic_components": 836,
+    "source_specimen_or_material_hold": 6905,
+    "source_out_of_scope": 1625,
+    "invalid_structure_or_parent": 1251,
+    "confirmed_source_subject_mismatch": 5,
+    "within_publication_label_conflict": 39035,
+    "study_vote_representative": 89617,
+    "duplicate_support_of_study_vote": 83181
+  },
+  "dispositions_by_label": {
+    "organism_unresolved:1": 48434,
+    "name_not_verified_for_source_structure:1": 35512,
+    "pubchem_name_structure_mismatch:1": 8432,
+    "mixed_organism_groups:1": 2110,
+    "source_mixed:None": 7340,
+    "name_not_verified_for_source_structure:0": 6201,
+    "organism_unresolved:0": 4039,
+    "source_uncertain:None": 7406,
+    "outside_five_groups:1": 2162,
+    "cell_model_not_organism_outcome:1": 1644,
+    "in_vitro_not_organism_outcome:1": 7207,
+    "in_vitro_not_organism_outcome:0": 360,
+    "multiple_organic_components:1": 668,
+    "source_specimen_or_material_hold:None": 6905,
+    "mixed_organism_groups:0": 363,
+    "pubchem_name_structure_mismatch:0": 414,
+    "source_out_of_scope:None": 1625,
+    "multiple_organic_components:0": 168,
+    "invalid_structure_or_parent:1": 1090,
+    "invalid_structure_or_parent:0": 161,
+    "outside_five_groups:0": 189,
+    "cell_model_not_organism_outcome:0": 118,
+    "confirmed_source_subject_mismatch:1": 2,
+    "confirmed_source_subject_mismatch:0": 3,
+    "within_publication_label_conflict:1": 26732,
+    "within_publication_label_conflict:0": 12303,
+    "study_vote_representative:1": 82164,
+    "study_vote_representative:0": 7453,
+    "duplicate_support_of_study_vote:1": 79922,
+    "duplicate_support_of_study_vote:0": 3259
+  },
+  "source_votes": 89617,
+  "source_vote_labels": {
+    "0": 7453,
+    "1": 82164
+  },
+  "within_publication_conflicts": 5271,
+  "exact_passage_duplicate_links": 116,
+  "gold_rows": 4692,
+  "gold_labels": {
+    "0": 1114,
+    "1": 3578
+  },
+  "gold_by_condition": {
+    "rodent": {
+      "0": 697,
+      "1": 2163
+    },
+    "human": {
+      "0": 337,
+      "1": 1233
+    },
+    "dog": {
+      "1": 94,
+      "0": 40
+    },
+    "monkey": {
+      "1": 41,
+      "0": 28
+    },
+    "rabbit": {
+      "1": 47,
+      "0": 12
+    }
+  },
+  "split_cohort_rows": 4692,
+  "split_cohort_conditions": 5,
+  "splits": {
+    "scaffold": {
+      "train": {
+        "0": 892,
+        "1": 2862
+      },
+      "valid": {
+        "0": 111,
+        "1": 358
+      },
+      "test": {
+        "1": 358,
+        "0": 111
+      }
+    },
+    "random": {
+      "train": {
+        "0": 892,
+        "1": 2862
+      },
+      "valid": {
+        "0": 111,
+        "1": 358
+      },
+      "test": {
+        "0": 111,
+        "1": 358
+      }
+    }
+  },
+  "unclassified_parent_conditions": 260,
+  "only_conflicted_parent_conditions": 107,
+  "tdc_labels_used": false,
+  "new_model_calls": 0,
+  "retrieval_status": "records_indices_and_card_links_validated",
+  "inputs": {
+    "data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
+    "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet": "d23b2e9a2ad8774653b341a03e84f53b57d6dee69a32ec617cd75f83b5343e70",
+    "data/starling_data/carcinogens/gold_v4/record_conditions.parquet": "45e17198692c8bb56e14db9881743d8bbb89d3d9deac69502842f24bb207cbba",
+    "data/starling_data/carcinogens/gold_v4/identity_ledger.parquet": "0f255fd484d4a8713569f0bd4ae0edd38e1e0aac702ba98c2e6046eb5890e22e",
+    "data/starling_data/carcinogens/gold_v4/name_identity_evidence.jsonl": "a9281ef73f7e28bbb0f7cacce3edf7192cc740c00bdce89381e4375e5994a8a5",
+    "data/starling_data/carcinogens/gold_v4/build_policy.json": "97839f3d459706e63b44ca4797abf198be8669226793f3cab61845ec093eb506",
+    "data/starling_data/carcinogens/gold_v4/source_votes.jsonl": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
+    "data/starling_data/carcinogens/gold_v4/source_identity_holds.jsonl": "c9ce12e445e3f6c6c57b774b4473e09b4a192ec3df1fa9ef74f45f62d0e6a470",
+    "data/starling_data/carcinogens/gold_v4/source_identity_clearances.jsonl": "5e2f06014e1f5d5a48d840b129345801b6a13fba261d00495a524f182940807f",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py": "355480f0800046905f88d8afd474934ea8e24291cbd76b38061187eb790e34a9",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py": "27caeeb1411950dbc486a5afe23351ba0c98ab2e2a805edd20b8d156385fb34b"
+  }
+}

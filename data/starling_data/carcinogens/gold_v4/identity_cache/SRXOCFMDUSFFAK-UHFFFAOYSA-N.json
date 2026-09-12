@@ -1,0 +1,29 @@
+{
+  "parent_key": "SRXOCFMDUSFFAK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SRXOCFMDUSFFAK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(CH3O)2",
+    "(Methylperoxy)methane",
+    "(Methylperoxy)methane #",
+    "690-02-8",
+    "CHEBI:35928",
+    "DTXCID60141529",
+    "DTXSID40219038",
+    "Dimethyl peroxide",
+    "Methyl peroxide",
+    "NS00096073",
+    "Peroxide, dimethyl",
+    "Q27116633",
+    "RefChem:134263",
+    "SCHEMBL27257",
+    "SCHEMBL3829280",
+    "SCHEMBL4633650",
+    "SRXOCFMDUSFFAK-UHFFFAOYSA-N",
+    "methylperoxymethane"
+  ],
+  "http_status": 200,
+  "cids": [
+    136492
+  ]
+}

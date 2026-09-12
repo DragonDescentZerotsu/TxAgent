@@ -1,0 +1,14 @@
+{
+  "parent_key": "NWZUSUQDDYIIBM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "NWZUSUQDDYIIBM-UHFFFAOYSA-N",
+    "SCHEMBL8244538",
+    "p-isobutylacetanilide"
+  ],
+  "cids": [
+    12750106
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NWZUSUQDDYIIBM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

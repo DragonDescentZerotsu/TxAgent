@@ -1,0 +1,35 @@
+{
+  "parent_key": "GJJFMKBJSRMPLA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+-)-Milnacipran",
+    "(.+/-.)-cis-2-(Aminomethyl)-N,N-diethyl-1-phenylcyclopropanecarboxamide",
+    "1-phenyl-1-diethyl-aminocarbonyl-2-aminomethyl-cyclopropane",
+    "136090-84-1",
+    "2-(aminomethyl)-N,N-diethyl-1-phenylcyclopropane-1-carboxamide",
+    "AB01563301_01",
+    "AKOS026750554",
+    "BDBM50490618",
+    "BRD-A15202882-003-02-7",
+    "CHEBI:135005",
+    "CHEMBL259209",
+    "DB04896",
+    "DS-015843",
+    "DTXSID90861127",
+    "Dextromilnacipran",
+    "EBC-26308",
+    "EN300-26869031",
+    "GTPL7436",
+    "L-Milnacipran Hydrochloride",
+    "Milnacipran Impurity 46",
+    "Q27086377",
+    "SCHEMBL114034",
+    "TS-08444",
+    "cis-(.+/-.)-2-(Aminomethyl)-N,N-diethyl-1-phenylcyclopropanecarboxamide"
+  ],
+  "cids": [
+    11622909
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GJJFMKBJSRMPLA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

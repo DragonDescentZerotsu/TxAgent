@@ -1,0 +1,35 @@
+{
+  "parent_key": "SUDMKGNNRMLBMF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SUDMKGNNRMLBMF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Propen-1-yl methanesulfonate",
+    "4-04-00-00018 (Beilstein Handbook Reference)",
+    "6728-21-8",
+    "AKOS006279302",
+    "Allyl mesylate",
+    "Allyl methanesulfonate",
+    "BRN 1751182",
+    "DTXCID70140109",
+    "DTXSID20217618",
+    "EN300-367064",
+    "GAA72821",
+    "MFCD01715319",
+    "Methanesulfonic acid, 2-propenyl ester",
+    "Methanesulfonic acid, allyl ester",
+    "Methanesulfonic acid,2-propen-1-yl ester",
+    "RefChem:554877",
+    "SCHEMBL11829047",
+    "SCHEMBL30711",
+    "SCHEMBL3290675",
+    "SUDMKGNNRMLBMF-UHFFFAOYSA-N",
+    "mesyl allyl ether",
+    "prop-2-en-1-yl methanesulfonate",
+    "prop-2-en-1-ylmethanesulfonate",
+    "prop-2-enyl methanesulfonate"
+  ],
+  "http_status": 200,
+  "cids": [
+    81214
+  ]
+}

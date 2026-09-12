@@ -1,0 +1,27 @@
+{
+  "parent_key": "BRSGPHVHVGTCQM-VOTSOKGWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BRSGPHVHVGTCQM-VOTSOKGWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-5-Hydroxy-4-(2-phenylethenyl)-2(5H)-furanone",
+    "2(5H)-FURANONE, 5-HYDROXY-4-((1E)-2-PHENYLETHENYL)-",
+    "2(5H)-Furanone, 5-hydroxy-4-(2-phenylethenyl)-, (E)-",
+    "5-hydroxy-4-(2-phenyl-(e)-ethenyl)-2(5h)furanone",
+    "91269-98-6",
+    "CCRIS 7131",
+    "EA2A4GNX48",
+    "KYK 54",
+    "KYK-54",
+    "KYN-54",
+    "KYN54",
+    "Kyn 54",
+    "Q27277062",
+    "RefChem:151601",
+    "SCHEMBL7518444",
+    "UNII-EA2A4GNX48"
+  ],
+  "http_status": 200,
+  "cids": [
+    6439189
+  ]
+}

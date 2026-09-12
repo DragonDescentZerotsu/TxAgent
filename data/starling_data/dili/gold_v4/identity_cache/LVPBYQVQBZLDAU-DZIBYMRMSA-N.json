@@ -1,0 +1,38 @@
+{
+  "parent_key": "LVPBYQVQBZLDAU-DZIBYMRMSA-N",
+  "ok": true,
+  "synonyms": [
+    "1567915-38-1",
+    "3-(4-(3-Oxa-8-azabicyclo[3.2.1]octan-8-yl)-2-((S)-3-methylmorpholino)pyrido[2,3-d]pyrimidin-7-yl)-N-methylbenzamide",
+    "AKOS040754593",
+    "BDBM351976",
+    "Benzamide, N-methyl-3-(2-((3S)-3-methyl-4-morpholinyl)-4-(3-oxa-8-azabicyclo(3.2.1)oct-8-yl)pyrido(2,3-d)pyrimidin-7-yl)-",
+    "CHEMBL4594431",
+    "CS-0090395",
+    "DA-75794",
+    "HY-126077",
+    "LXI-15029",
+    "LXI15029",
+    "MS-28805",
+    "MTI-31",
+    "MTI-31?",
+    "Mtorc 1/2 inhibitor LXI-15029",
+    "N-methyl-3-[2-[(3S)-3-methylmorpholin-4-yl]-4-(3-oxa-8-azabicyclo[3.2.1]octan-8-yl)pyrido[2,3-d]pyrimidin-7-yl]benzamide",
+    "Preparation of 3-(4-(3-oxa-8-azabicyclo[3.2.1]octan-8-yl)-2-((S)-3-methylmorpholinyl)pyrido[2,3-d]pyrimidin-7-yl)-N-methylbenzamide",
+    "RM15YYQ1CI",
+    "RefChem:159962",
+    "SCC-31",
+    "SCHEMBL17354025",
+    "SCHEMBL29638190",
+    "SCHEMBL29921552",
+    "T35343",
+    "UNII-RM15YYQ1CI",
+    "US9796732, Compound 44",
+    "orb1304105"
+  ],
+  "cids": [
+    118591386
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVPBYQVQBZLDAU-DZIBYMRMSA-N/synonyms/JSON",
+  "http_status": 200
+}

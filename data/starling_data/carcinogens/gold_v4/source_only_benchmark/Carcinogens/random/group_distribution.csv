@@ -1,0 +1,16 @@
+condition_group,split,n_rows
+species=dog,train,108
+species=human,train,1256
+species=monkey,train,55
+species=rabbit,train,47
+species=rodent,train,2288
+species=dog,valid,13
+species=human,valid,157
+species=monkey,valid,7
+species=rabbit,valid,6
+species=rodent,valid,286
+species=dog,test,13
+species=human,test,157
+species=monkey,test,7
+species=rabbit,test,6
+species=rodent,test,286

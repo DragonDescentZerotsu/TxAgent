@@ -1,0 +1,25 @@
+{
+  "parent_key": "DJHWAIPYZDRNMH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DJHWAIPYZDRNMH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl,hexabromo-",
+    "1,2,3,4,5-pentabromo-6-(2-bromophenyl)benzene",
+    "2,2',3,4,5,6-Hexabromo-1,1'-biphenyl",
+    "2,2',3,4,5,6-hexabromobiphenyl",
+    "2181002-94-6",
+    "36355-01-8",
+    "DJHWAIPYZDRNMH-UHFFFAOYSA-N",
+    "DTXSID60871379",
+    "NS00121015",
+    "PBB 142",
+    "Q27288102",
+    "RG0EQ3CLU5",
+    "RefChem:197243",
+    "SCHEMBL26723"
+  ],
+  "http_status": 200,
+  "cids": [
+    22023651
+  ]
+}

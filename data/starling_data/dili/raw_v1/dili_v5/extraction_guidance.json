@@ -1,0 +1,111 @@
+{
+  "task": "Find all assays of molecules concerning redox stress, lipid-handling failure, ER and calcium stress, and lysosomal or autophagic dysfunction. This means measuring oxidative imbalance, neutral-lipid or phospholipid accumulation, unfolded-protein responses, calcium disruption, lysosomal trapping, phospholipidosis, or altered autophagic flux after molecule exposure. Make sure to include assays such as ROS, GSH and lipid-peroxidation assays; lipid-droplet, steatosis and phospholipidosis imaging; UPR and ER-stress reporters; calcium imaging; LysoTracker, lysosomal pH and autophagic-flux assays. Specify molecule concentration and units, Cmax multiple, treatment duration and repeated dosing, assay type, probe or analytical platform, endpoint and measurement unit, cell model, species, donor, metabolic competence, controls, and EC50, IC50, AC50, MEC, or fold change when reported. Include all key experimental details.",
+  "task_instantiation": "Build records answering which indexed molecules alter redox, lipid-handling, ER/UPR, calcium, lysosomal, or autophagy endpoints; under what exposure level, Cmax multiple, duration, route, sequence, and dosing frequency; by which assay, probe, and platform; in which biological model, species, donor, sample, and metabolic-competence context; relative to which controls, challenges, and modulators; and with what direction, magnitude, unit, or EC50/IC50/AC50/MEC.\n\nExtract original experiments performed in the current paper in which the molecule represented by global_identifier—or a defined mixture, class, material, particle, biologic, extract, diet, or formulation represented by that identifier—is intentionally applied to a biological, ex vivo, in vivo, organellar, biomimetic, or eligible cell-free system and an in-scope endpoint is actually measured. Do not create a redundant molecule-name field. If the paper's code, mixture label, formulation, or alias is needed to interpret the identifier, retain it in extra_details.\n\nIn scope are total or compartment-specific ROS/RNS and defined reactive species; GSH, GSSG, GSH/GSSG, thiols, redox potential, antioxidant-enzyme activity, and dedicated oxidative-stress reporters; lipid peroxidation and specific oxidative-damage products; neutral lipid, triglyceride, cholesterol, lipid droplets, steatosis, phospholipid accumulation, and phospholipidosis; targeted UPR/ER-stress markers, signatures, and reporters; directly measured cytosolic, extracellular, ER/SR, mitochondrial, or other organellar calcium level, entry, release, uptake, oscillation, or flux; lysosomal accumulation/trapping, mass, morphology, acidification/pH, membrane integrity/permeabilization, maturation, enzyme release/activity, or function; and static autophagy markers, autophagosome/autolysosome measurements, selective autophagy/mitophagy, cargo degradation, and true autophagic flux. Include induction, worsening, protection, reversal, biphasic findings, and explicit no-change findings. Canonical Nrf2/ARE, HO-1, PERK/eIF2α/ATF4/CHOP, IRE1/XBP1, ATF6, GRP78/BiP, LC3, p62/SQSTM1, Beclin-1, PINK1/Parkin, LAMP, and related readouts are eligible only when explicitly used as direct in-scope assay endpoints after the indexed exposure.\n\nCell-free experiments are eligible only when the focal molecule is tested in a defined biochemical, organelle, membrane, biomimetic, or lipid-peroxidation exposure model for causing or preventing reactive-species generation or lipid oxidation. Exclude generic antioxidant-capacity, reducing-power, scavenging-kinetics, and probe-characterization screens without such a biological or lipid-peroxidation model.\n\nExclude viability, proliferation, apoptosis/caspases, LDH release, ATP, respiration, mitochondrial membrane potential, generic morphology, ordinary DNA strand damage, inflammation, receptor/signaling activity, target binding, iron content, calcium deposition, and general cytotoxicity when no in-scope endpoint is directly measured. Exclude pathway annotations or generic gene/protein expression unless the measured item is a prespecified direct redox, UPR/ER-stress, lysosomal, or autophagy endpoint. Exclude ferroptosis, oxidative-stress, antioxidant, ER-stress, and autophagy claims unsupported by an identified in-scope measurement. Exclude purely genetic or disease-state comparisons without molecule exposure; physical exposures such as hypoxia or irradiation unless they are contextual challenges accompanying the indexed molecule; assay headings, reagent lists, planned protocols, simulations, computational predictions, reviews, cited prior-study summaries, and unsupported mechanistic discussion. Do not treat a probe, stain, assay substrate, loading control, vehicle, analytical standard, endogenous analyte, or challenge agent as the primary molecule unless it is itself the indexed exposure being evaluated.\n\nStatic LC3, p62, Beclin-1, ATG, LAMP, MDC/Cyto-ID, acidic-vesicle, puncta, or autophagosome abundance is in scope as autophagy_static_marker but must never be called autophagic_flux unless turnover or degradation is tested with a lysosomal inhibitor comparison, tandem pH-sensitive reporter, pulse-chase/clearance design, or equivalent dynamic evidence. Likewise, lysosome staining alone does not establish trapping unless exposure-material accumulation, sequestration, or colocalization is measured, and neutral-red uptake used only for viability is excluded.\n\nCreate one record per global_identifier molecule x biological model/sample x endpoint x assay implementation x exposure regimen x reported result metric. Split distinct molecules, mixtures versus separately tested ingredients, cell lines, species, donors, tissues, compartments when outcome-defining, endpoints/analytes, assay implementations with independent results, exact doses, durations, time points, schedules, and quantitative metrics when separate results are reported. Split ROS, GSH, GSSG, ratios, MDA, individual UPR markers, and individual autophagy markers when they have separable values or directions. Keep technical replicates and multiple channels confirming the same endpoint under the same condition together. Keep a dose range/list or time course in one record only when the paper reports one aggregate trend, threshold, potency estimate, or no-effect conclusion; preserve the full expression in exposure_level or treatment_and_comparator_context rather than inventing point results. If one condition reports both an endpoint value and a potency, threshold, or Cmax multiple, create separate metric records so each has one quantitative_measure_type, value, and unit.\n\nFor a tested mixture with no constituent-specific result, create one record for the mixture. For combinations, keep the indexed molecule as primary and describe every other challenge, partner, inhibitor, rescue agent, genetic modifier, dose, duration, and temporal sequence in treatment_and_comparator_context. Do not merge molecule-alone and combination outcomes. Record explicit untreated, vehicle, positive, negative, stressed, inhibitor, rescue, or challenge comparators in that field.\n\nRequire explicit evidence that the assay was performed and linked to the indexed exposure and model. Methods, results, figures, captions, and tables may be combined when the linkage is explicit. A methods-only record is allowed only when the paper explicitly states that the in-scope assay was applied to the named exposure and model; then leave effect_direction and quantitative fields null. A heading, generic protocol, or future-tense plan is insufficient. Use only the current paper's evidence, not a cited experiment or review summary.\n\nPreserve reported values, ranges, inequalities, lists, labels, and units without conversion. Do not calculate concentration, Cmax multiple, fold change, percent change, potency, species, donor attributes, metabolic competence, assay identity, or flux. Species may be normalized only when explicitly stated or unambiguous from a uniquely identified standard cell line or animal model; note any such normalization in extra_details. Do not borrow a dose, duration, probe, model, or result from another experiment. Probe and co-treatment concentrations are not the focal exposure level. For a reported mean, extract the central estimate and put uncertainty, confidence intervals, p values, and replicate counts in extra_details.\n\nOperational defaults are one direct in-vitro exposure in ordinary culture, an untreated or vehicle comparison, and no added metabolic activation. Do not restate these routine defaults, but do not use silence to assert a specific comparator, frequency, route, or competence state. Record explicit departures: pretreatment/cotreatment/post-treatment, repeated dosing, continuous infusion or dietary exposure, route, washout/recovery, challenge agents, unusual medium/pH/oxygen/serum/glucose, disease or genetic state, differentiation/3D culture, subcellular fractions, ex vivo/in vivo context, donor attributes, and metabolic activation or known competence limitations.\n\nUse null whenever information is absent. Never write not reported, unspecified, unclear, not applicable, or equivalent placeholders. Put probe loading, wavelengths, instrument model, kit/catalog, antibody details, sample preparation, normalization, seeding density, tissue subregion, formulation/particle properties, uncertainty, statistics, replicate counts, ancillary out-of-scope outcomes, and mechanistic interpretation in extra_details unless already essential to another field.",
+  "schema_spec": [
+    {
+      "name": "endpoint_class",
+      "description": "Choose exactly one normalized family for the directly measured endpoint, not the molecule's proposed mechanism. Values are sibling families. Use reactive_species for total or specific ROS/RNS regardless of compartment; put species and compartment in endpoint_name. Use glutathione_thiol_redox for glutathione, GSSG, ratios, free-thiol pools, and redox potential, and antioxidant_system for antioxidant or glutathione-cycle enzyme activities and expression and for redox-response reporters such as Nrf2/ARE, HO-1, and NQO1. Use lipid_peroxidation rather than oxidative_damage when lipids are oxidized; oxidative_damage covers protein, DNA, and other non-lipid oxidation products. Use lysosomal_accumulation_trapping for sequestration of the exposure material itself and for lysosome number, mass, or morphology, and lysosomal_function for acidification or pH, membrane integrity and permeabilization, lysosomal enzyme activity or release, and maturation or degradative capacity. Use autophagy_static_marker for abundance or localization markers without turnover evidence and autophagic_flux only for demonstrated turnover/degradation. For mitophagy or other selective autophagy, choose static versus flux according to the evidence and name the selective process in endpoint_name. Use other_in_scope_endpoint only when the endpoint is clearly in scope but fits none of the listed families, and always name it in endpoint_name. When no endpoint is stated, use null; no placeholder values are permitted.",
+      "value_type": "string",
+      "allowed_values": [
+        "reactive_species",
+        "glutathione_thiol_redox",
+        "antioxidant_system",
+        "oxidative_damage",
+        "lipid_peroxidation",
+        "neutral_lipid_steatosis",
+        "phospholipid_phospholipidosis",
+        "er_stress_upr",
+        "calcium_homeostasis",
+        "lysosomal_accumulation_trapping",
+        "lysosomal_function",
+        "autophagy_static_marker",
+        "autophagic_flux",
+        "other_in_scope_endpoint"
+      ]
+    },
+    {
+      "name": "endpoint_name",
+      "description": "Specific directly measured analyte, marker, ratio, activity, image feature, functional readout, and relevant compartment/isoform, such as mitochondrial superoxide, GSH/GSSG ratio, MDA, lipid-droplet area, XBP1 splicing, cytosolic Ca2+ transient amplitude, lysosomal pH, LC3-II abundance, p62 degradation, or tandem-reporter autolysosome count. Record one separable endpoint per record. Null if the paper does not name it; do not use a not-stated placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "assay_and_platform",
+      "description": "Concise description of the performed assay, including assay name or modality plus the central probe, stain, reporter, kit chemistry, antibody target, and analytical platform when reported; for example 'DCFH-DA ROS assay; flow cytometry', 'C11-BODIPY 581/591; confocal microscopy', 'TBARS/MDA; absorbance', or 'mCherry-GFP-LC3 with bafilomycin; high-content imaging'. This is the assay field, not the biological test system. Null if not stated; omit placeholder wording.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_model_context",
+      "description": "Concise biological test-system description combining model or sample, species, tissue/organ or compartment when model-defining, donor/source attributes, and explicitly reported metabolic competence or activation state. Examples: 'HepG2 cells; Homo sapiens; low CYP competence stated', 'primary human hepatocytes; donor 3', 'rat liver microsomes + S9 activation', or 'cell-free liposome system'. Do not infer donor attributes or metabolic competence from lineage alone. Null if absent; absence must not be encoded as a placeholder or as metabolic inactivity.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_level",
+      "description": "Primary indexed molecule's nominal concentration, administered dose, dilution, surface loading, range, list, inequality, or reported dose label, preserving the exact expression but excluding a separable unit, which goes in exposure_unit. If the level is stated only qualitatively or relatively, such as 'high dose' or 'at IC50', record that wording here and leave exposure_unit null. Use only the exposure tied to this result; do not substitute probe, vehicle, challenge-agent, or co-treatment levels. Null if absent; do not write a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_unit",
+      "description": "Unit applying to exposure_level, preserved with normalized typography but no numeric conversion, such as µM, µg/mL, mg/kg/day, µg/cm², particles/mL, %, ppm, or g/kg diet. Open text avoids losing uncommon but valid exposure units. Null if exposure is absent, unitless, or no unit is supplied; do not use not_applicable or other placeholder values.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "treatment_and_comparator_context",
+      "description": "Exact exposure duration and time course; single, maintained, or repeated schedule; frequency, route, pretreatment/cotreatment/post-treatment sequence, washout, and recovery; plus the stated comparator and all challenge, rescue, inhibitor, partner, or genetic-modifier exposures with doses and timing. For a simple routine exposure, include only explicitly reported details that are needed to interpret the result. Null if none are stated; do not encode silence as a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_direction",
+      "description": "Direction of the measured endpoint relative to the stated comparator, independent of whether the change is beneficial. Use increased or decreased for a single direction, no_change only for an explicit negative result, biphasic when direction reverses systematically across dose/time, and mixed for an irreducibly mixed unsplit result. For protective designs, code the endpoint direction versus the stressed comparator. Leave null for methods-only records or when direction is not supplied; not_reported and unclear are deliberately excluded.",
+      "value_type": "string",
+      "allowed_values": [
+        "increased",
+        "decreased",
+        "no_change",
+        "biphasic",
+        "mixed"
+      ]
+    },
+    {
+      "name": "quantitative_measure_type",
+      "description": "Meaning of quantitative_value. Values are mutually exclusive scales or named statistics. Create a separate metric record when one experimental condition reports more than one listed measure. absolute_endpoint_value covers any directly reported endpoint magnitude in its native scale, including concentrations, ratios, pH, enzyme activities, raw signals, counts, and areas, whose scale is given by quantitative_unit. Use normalized_signal only for a normalized or arbitrary-scale signal that is not already expressed as a fold change, a percent change, or a percent of control. Use other_potency_or_threshold for an explicitly named potency or threshold statistic outside the listed set, such as BMC, LOEC, TC50, or LC50, and name that statistic in extra_details. Cmax multiple is encoded here rather than as an exposure unit. Leave null when no numeric measure is reported; qualitative_only and not_reported are not allowed values.",
+      "value_type": "string",
+      "allowed_values": [
+        "absolute_endpoint_value",
+        "fold_change",
+        "percent_change",
+        "percent_of_control",
+        "normalized_signal",
+        "ec50",
+        "ic50",
+        "ac50",
+        "mec",
+        "cmax_multiple",
+        "other_potency_or_threshold"
+      ]
+    },
+    {
+      "name": "quantitative_value",
+      "description": "Numeric central estimate for the measure named by quantitative_measure_type. For inequalities, record the numeric boundary and preserve the qualifier in extra_details. Do not calculate values. Null for qualitative findings or absent numbers. Every non-null value must be paired with quantitative_unit in a separate field when the paper supplies a unit or normalization.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "quantitative_unit",
+      "description": "Reported unit or normalization basis for quantitative_value, as open text—for example 'nmol/mg protein', 'RFU', '% of control', '% change', 'fold', 'puncta/cell', 'pH', 'µM', or 'µg/mL'. Use 'fold' for fold_change and cmax_multiple. For ec50, ic50, ac50, mec, and other_potency_or_threshold, give the concentration or dose unit in which that statistic is expressed. Null only when quantitative_value is null or the paper genuinely gives no unit; never use unspecified, not_reported, not_applicable, other, or similar placeholders.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional non-core details that do not fit above: uncertainty, confidence intervals, p values, replicates, statistics, raw comparator values, probe loading, wavelengths, instrument model, kit/catalog or antibody details, normalization and image analysis, sample preparation, formulation or particle properties, unusual procedural details, ancillary out-of-scope outcomes, aliases needed to interpret global_identifier, and mechanistic interpretation. Null if there are no additional details; never use a not-stated placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

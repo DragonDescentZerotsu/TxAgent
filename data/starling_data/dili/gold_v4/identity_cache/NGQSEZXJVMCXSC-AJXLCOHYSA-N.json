@@ -1,0 +1,26 @@
+{
+  "parent_key": "NGQSEZXJVMCXSC-AJXLCOHYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,6R,7S,10R,15R,18S,19R,22S)-6,18-dimethyl-5-oxa-16-azahexacyclo(14.5.1.01,6.07,15.010,14.019,22)docos-13-en-4-one",
+    "(1S,6R,7S,10R,15R,18S,19R,22S)-6,18-dimethyl-5-oxa-16-azahexacyclo[14.5.1.01,6.07,15.010,14.019,22]docos-13-en-4-one",
+    "(2S,2aR,4aS,8aR,8bS,10aR,13bR,14aS)-1,2,2a,3,4,5,6,8a,8b,9,10,10a,11,12,13b,14a-Hexadecahydro-2,8a-dimethyl-7H-cyclopent[hi]indeno[4,5-e]pyrano[2,3-g]indolizin-7-one",
+    "619326-74-8",
+    "AKOS032961624",
+    "CS-0024125",
+    "DA-62774",
+    "Deoxycalyciphylline B",
+    "FS-8885",
+    "HY-N3731",
+    "NSC-787222",
+    "NSC787222",
+    "RefChem:131928",
+    "TN6004",
+    "orb1680736"
+  ],
+  "cids": [
+    10871573
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NGQSEZXJVMCXSC-AJXLCOHYSA-N/synonyms/JSON",
+  "http_status": 200
+}

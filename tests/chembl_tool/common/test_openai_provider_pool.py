@@ -96,3 +96,45 @@ def test_public_config_contains_only_credential_env_name():
 
     assert public["providers"][0]["api_key_env"] == ""
     assert "api_key" not in public["providers"][0]
+
+
+def test_async_attempt_deadline_cancels_keepalive_and_releases_slot():
+    import asyncio
+    from dataclasses import replace
+    from tools.chembl_tool.common.openai_provider_pool import ProviderPoolExhausted
+
+    class KeepaliveClient:
+        block = True
+        cancelled = False
+        heartbeats = 0
+
+        async def async_chat_json(self, messages):
+            if not self.block:
+                return {'content': {'ok': True}, 'model': 'same-model'}
+            try:
+                while True:
+                    self.heartbeats += 1
+                    await asyncio.sleep(0.01)
+            finally:
+                self.cancelled = True
+
+    client = KeepaliveClient()
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(replace(_spec('a', 1), timeout_s=1),), max_failovers=0),
+        client_factory=lambda spec: client,
+    )
+
+    async def exercise():
+        try:
+            await pool.async_chat_json([])
+            raise AssertionError('attempt never timed out')
+        except ProviderPoolExhausted as exc:
+            assert exc.attempts[0]['error_type'] == 'TimeoutError'
+        assert client.cancelled and client.heartbeats > 1
+        state = pool.snapshot()['providers'][0]
+        assert state['inflight'] == 0 and state['failures'] == 1
+        client.block = False
+        assert (await pool.async_chat_json([]))['content']['ok']
+        assert pool.snapshot()['providers'][0]['inflight'] == 0
+
+    asyncio.run(exercise())

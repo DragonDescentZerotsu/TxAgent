@@ -1,0 +1,25 @@
+{
+  "parent_key": "KPOVNLZGDMDGIK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KPOVNLZGDMDGIK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Acetamidodibenzthiophene",
+    "3-Acetaminodibenzothiophene",
+    "3-Acetylaminodibenzothiophene",
+    "4-18-00-07205 (Beilstein Handbook Reference)",
+    "64057-52-9",
+    "Acetamide, N-3-dibenzothienyl-",
+    "BRN 0192333",
+    "DB-315082",
+    "DTXCID80136694",
+    "DTXSID20214203",
+    "N-3-Dibenzothienylacetamide",
+    "RefChem:315541",
+    "SCHEMBL28124654",
+    "n-(dibenzo[b,d]thiophen-3-yl)acetamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    116464
+  ]
+}

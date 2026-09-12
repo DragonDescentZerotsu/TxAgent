@@ -1,0 +1,22 @@
+{
+  "parent_key": "HIZYETOZLYFUFF-BQBZGAKWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HIZYETOZLYFUFF-BQBZGAKWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHEBI:73582",
+    "DTXSID901372285",
+    "L-C",
+    "L-Leu-L-Cys",
+    "L-leucyl-L-cysteine",
+    "LC",
+    "Leu-Cys",
+    "Leucyl-Cysteine",
+    "Q27141754",
+    "RefChem:152975",
+    "SCHEMBL21828595"
+  ],
+  "http_status": 200,
+  "cids": [
+    10037021
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "IVBHGBMCVLDMKU-LDNFRZNASA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,5R,6R)-6-((2S)-2-(4-ETHYL-2,3-DIOXOPIPERAZINE-1-CARBOXAMIDO)-2-PHENYLACETAMIDO)-3,3-DIMETHYL-7-OXO-4-THIA-1-AZABICYCLO(3.2.0)HEPTANE-2-CARBOXYLIC ACID",
+    "(2S,5R,6R)-6-((S)-2-(4-ethyl-2,3-dioxopiperazine-1-carboxamido)-2-phenylacetamido)-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo[3.2.0]heptane-2-carboxylic acid",
+    "(2S,5R,6R)-6-((S)-2-(4-ethyl-2,3-dioxopiperazine-1-carboxamido)-2-phenylacetamido)-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo[3.2.0]heptane-2-carboxylic acid? (Piperacillin Impurity pound(c)",
+    "(2S,5R,6R)-6-[(2S)-2-[(4-ethyl-2,3-dioxopiperazine-1-carbonyl)amino]-2-phenylacetamido]-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo[3.2.0]heptane-2-carboxylic acid",
+    "2743427-34-9",
+    "CHEMBL1742952",
+    "CS-0164535",
+    "EBC-12397",
+    "EN300-27694685",
+    "IP183358",
+    "L-PIPERACILLIN",
+    "PIPERACILLIN SODIUM IMPURITY N (EP IMPURITY)",
+    "PIPERACILLIN SODIUM IMPURITY N [EP IMPURITY]",
+    "Piperacillin Impurity 19",
+    "Piperacillin Sodium EP Impurity N",
+    "RefChem:201410",
+    "SBI-0051484.P003",
+    "SCHEMBL27343970",
+    "WR79XRN93Q"
+  ],
+  "cids": [
+    6604563
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IVBHGBMCVLDMKU-LDNFRZNASA-N/synonyms/JSON",
+  "http_status": 200
+}

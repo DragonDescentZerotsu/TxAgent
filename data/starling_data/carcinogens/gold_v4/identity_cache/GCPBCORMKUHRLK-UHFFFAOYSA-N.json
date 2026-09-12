@@ -1,0 +1,13 @@
+{
+  "parent_key": "GCPBCORMKUHRLK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GCPBCORMKUHRLK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL12512791",
+    "SCHEMBL280624"
+  ],
+  "http_status": 200,
+  "cids": [
+    66641815
+  ]
+}

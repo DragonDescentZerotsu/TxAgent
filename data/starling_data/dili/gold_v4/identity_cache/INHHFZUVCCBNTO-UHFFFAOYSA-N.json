@@ -1,0 +1,30 @@
+{
+  "parent_key": "INHHFZUVCCBNTO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2-Propanediol, 3-phenylamino-",
+    "227-428-2",
+    "3-(n-phenylamino)-1,2-propanediol",
+    "3-(phenylamino)propane-1,2-diol",
+    "3-Anilinopropane-1,2-diol",
+    "3-Phenylamino-1,2-propanediol",
+    "3-Phenylamino-propane-1,2-diol",
+    "3-anilinopropylene glycol",
+    "5840-15-3",
+    "CHEBI:53758",
+    "DB-294229",
+    "DTXCID601401392",
+    "DTXSID50973952",
+    "EINECS 227-428-2",
+    "F95086",
+    "NS00047086",
+    "Q27124196",
+    "RefChem:911087",
+    "SCHEMBL1298434"
+  ],
+  "cids": [
+    91551
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INHHFZUVCCBNTO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "BBJOGQWGYPHPCA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BBJOGQWGYPHPCA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-(Hydroxymethyl)phenyl)hydrazine",
+    "(4-Hydrazineylphenyl)methanol",
+    "(4-hydrazinophenyl)methanol",
+    "(4-hydrazinylphenyl)methanol",
+    "4-(hydroxymethyl)phenylhydrazine",
+    "4-Hydrazinobenzenemethanol",
+    "4-Hydrazinylbenzenemethanol",
+    "4-Hydroxymethylphenylhydrazine",
+    "73454-78-1",
+    "AKOS006228292",
+    "Benzenemethanol, 4-hydrazino-",
+    "Benzenemethanol, 4-hydrazinyl-",
+    "C03994",
+    "CHEBI:16131",
+    "DB-184885",
+    "DTXSID70994205",
+    "HYDROXYMETHYLPHENYLHYDRAZINE, P-",
+    "P-(HYDROXYMETHYL)PHENYLHYDRAZINE",
+    "Q27098392",
+    "SCHEMBL1118026",
+    "UNII-V28QY96TWX",
+    "V28QY96TWX",
+    "p-Hydroxymethylphenylhydrazine"
+  ],
+  "http_status": 200,
+  "cids": [
+    135538
+  ]
+}

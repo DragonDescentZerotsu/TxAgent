@@ -1,0 +1,38 @@
+{
+  "parent_key": "JAHJITLFJSDRCG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JAHJITLFJSDRCG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,3',4,4',5,6-octachloro-",
+    "1,1'-Biphenyl, octachloro-",
+    "1,2,3,4,5-pentachloro-6-(2,3,4-trichlorophenyl)benzene",
+    "2,2',3,3',4,4',5,6-OCTACHLOROBIPHENYL",
+    "2,2',3,3',4,4',5,6-Octachloro-1,1'-biphenyl",
+    "2,2',3,3',4,4',5,6-Octachloro-1,1'-biphenyl #",
+    "31472-83-0",
+    "52663-78-2",
+    "DB-302065",
+    "DTXCID2041250",
+    "DTXSID1074171",
+    "EINECS 250-646-4",
+    "GBU232J61I",
+    "MSK3793",
+    "OCTACHLOROBIPHENYL",
+    "PCB 195",
+    "PCB No. 195",
+    "PCB No. 195 10 microg/mL in Isooctane",
+    "PCB No. 195 10 |Ig/mL in Isooctane",
+    "Q27279015",
+    "R323830CJ5",
+    "RefChem:53425",
+    "SCHEMBL2230317",
+    "SCHEMBL30301086",
+    "Tetrachloro(tetrachlorophenyl)benzene",
+    "UNII-GBU232J61I",
+    "UNII-R323830CJ5"
+  ],
+  "http_status": 200,
+  "cids": [
+    40485
+  ]
+}

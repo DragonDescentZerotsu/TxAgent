@@ -1,0 +1,17 @@
+{
+  "parent_key": "KEKAEHDXIJNAIJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "DTXCID001515058",
+    "DTXSID801029867",
+    "Octreotate",
+    "Q7077116",
+    "RefChem:1093827",
+    "SCHEMBL29359873"
+  ],
+  "cids": [
+    53990323
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KEKAEHDXIJNAIJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

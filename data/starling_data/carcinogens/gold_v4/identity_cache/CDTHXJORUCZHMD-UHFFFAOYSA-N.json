@@ -1,0 +1,24 @@
+{
+  "parent_key": "CDTHXJORUCZHMD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CDTHXJORUCZHMD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Oxybis(2,5-dibromobenzene)",
+    "1,4-dibromo-2-(2,5-dibromophenoxy)benzene",
+    "2,2',5,5'-Tetrabromodiphenyl ether",
+    "446254-24-6",
+    "BDE-52",
+    "Benzene, 1,4-dibromo-2-(2,5-dibromophenoxy)-",
+    "DTXSID60879875",
+    "PBDE 52",
+    "Q27290773",
+    "SCHEMBL29364619",
+    "SCHEMBL9488533",
+    "U701KJZ1HM",
+    "UNII-U701KJZ1HM"
+  ],
+  "http_status": 200,
+  "cids": [
+    19792406
+  ]
+}

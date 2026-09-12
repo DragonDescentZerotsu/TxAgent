@@ -1,0 +1,17 @@
+{
+  "parent_key": "ATSJJPKTXXFWFI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ATSJJPKTXXFWFI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "171828-11-8",
+    "CCRIS 8453",
+    "N-Nitroso-N-(3-keto-1,2-butanediol)-3'-nitrotyramine",
+    "NO-NTA",
+    "RefChem:163963",
+    "SCHEMBL30194979"
+  ],
+  "http_status": 200,
+  "cids": [
+    102601718
+  ]
+}

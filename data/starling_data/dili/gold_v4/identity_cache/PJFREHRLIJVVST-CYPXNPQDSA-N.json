@@ -1,0 +1,20 @@
+{
+  "parent_key": "PJFREHRLIJVVST-CYPXNPQDSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,2S)-4-[(E)-Prop-1-enyl]cyclopentane-1,2-diol",
+    "(1R,2S,4r)-4-((E)-prop-1-en-1-yl)cyclopentane-1,2-diol",
+    "(1S,2R)-4-[(E)-prop-1-enyl]cyclopentane-1,2-diol",
+    "CHEBI:229351",
+    "CHEMBL1760091",
+    "CHEMBL1760092",
+    "PJFREHRLIJVVST-CYPXNPQDSA-N",
+    "SCHEMBL29358084",
+    "TP-1"
+  ],
+  "cids": [
+    11182662
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PJFREHRLIJVVST-CYPXNPQDSA-N/synonyms/JSON",
+  "http_status": 200
+}

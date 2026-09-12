@@ -1,0 +1,15 @@
+{
+  "parent_key": "XYFFWTYOFPSZRM-FFFKWXGKSA-N",
+  "ok": true,
+  "synonyms": [
+    "17-Amino-17-demethoxygeldanamycin",
+    "CHEMBL2000224",
+    "CHEMBL4296949",
+    "MLS002702106"
+  ],
+  "cids": [
+    54607189
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XYFFWTYOFPSZRM-FFFKWXGKSA-N/synonyms/JSON",
+  "http_status": 200
+}

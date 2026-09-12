@@ -1,0 +1,13 @@
+{
+  "parent_key": "AJXDZTRQWPEVQU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL934934",
+    "iodobenzylguanidine"
+  ],
+  "cids": [
+    19830541
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AJXDZTRQWPEVQU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

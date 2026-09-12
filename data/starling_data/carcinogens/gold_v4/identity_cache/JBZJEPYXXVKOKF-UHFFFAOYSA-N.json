@@ -1,0 +1,33 @@
+{
+  "parent_key": "JBZJEPYXXVKOKF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBZJEPYXXVKOKF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".GAMMA.-CHLORDANE",
+    "1,4,4,7,8,9,10,10-octachlorotricyclo[5.2.1.02,6]dec-8-ene",
+    "2,2,4,5,6,7,8,8-Octachloro-2,3,3a,4,7,7a-hexahydro-4,7-methano-1H-indene",
+    "2,2,4,5,6,7,8,8-Octachloro-3a,4,7,7a-tetrahydro-4,7-methanoindan",
+    "2,2,4,5,6,7,8,8-octachloro-2,3,3a,4,7,7a-hexahydro-1H-4,7-methanoindene",
+    "2,2,4,5,6,7,8,8Octachloro2,3,3a,4,7,7ahexahydro4,7methano1Hindene",
+    "2,2,4,5,6,7,8,8Octachloro3a,4,7,7atetrahydro4,7methanoindan",
+    "226-938-2",
+    "4,7-Methano-1H-indene, 2,2,4,5,6,7,8,8-octachloro-2,3,3a,4,7,7a-hexahydro-",
+    "4,7-Methanoindan, 2,2,4,5,6,7,8,8-octachloro-3a,4,7,7a-tetrahydro-, stereoisomer",
+    "4,7Methano1Hindene, 2,2,4,5,6,7,8,8octachloro2,3,3a,4,7,7ahexahydro",
+    "4,7Methanoindan, 2,2,4,5,6,7,8,8octachloro3a,4,7,7atetrahydro, stereoisomer",
+    "5566-34-7",
+    "DTXCID10811528",
+    "DTXSID10858938",
+    "EINECS 226-938-2",
+    "GAMMA-CHLORDANE",
+    "JBZJEPYXXVKOKF-UHFFFAOYSA-N",
+    "NS00044294",
+    "RefChem:142287",
+    "SCHEMBL29460673",
+    "gammaChlordan"
+  ],
+  "http_status": 200,
+  "cids": [
+    21732
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "parent_key": "IUFNRUQKRBKPFP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IUFNRUQKRBKPFP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS001841233",
+    "CCG-30022",
+    "CHEMBL1428669",
+    "HMS1420P02",
+    "HMS2457E09",
+    "IDI1_009607",
+    "IFLab1_003148",
+    "MFCD04470796",
+    "MLS000092577",
+    "MLS002587635",
+    "N-[2-(4-ethylpiperazin-1-yl)-1-methyl-2-thien-2-ylethyl]-2-furamide",
+    "N~2~-[2-(4-ETHYLPIPERAZINO)-1-METHYL-2-(2-THIENYL)ETHYL]-2-FURAMIDE",
+    "SMR000028116",
+    "SR-01000132066",
+    "SR-01000132066-1"
+  ],
+  "http_status": 200,
+  "cids": [
+    3240718
+  ]
+}

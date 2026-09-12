@@ -1,0 +1,26 @@
+{
+  "parent_key": "AEMOLEFTQBMNLQ-SYJWYVCOSA-N",
+  "ok": true,
+  "synonyms": [
+    ".BETA.-D-MANNOPYRANURONIC ACID",
+    "33599-45-0",
+    "A625BAU59G",
+    "Alginsaure",
+    "BEM",
+    "CHEBI:468",
+    "G72970ZT",
+    "GlyTouCan:G72970ZT",
+    "MANNOPYRANURONIC ACID, .BETA.-D-",
+    "Mannopyranuronic acid, beta-D-",
+    "Q27273675",
+    "RefChem:199823",
+    "SCHEMBL6427205",
+    "UNII-A625BAU59G",
+    "beta-D-Mannopyranuronic acid"
+  ],
+  "cids": [
+    446145
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AEMOLEFTQBMNLQ-SYJWYVCOSA-N/synonyms/JSON",
+  "http_status": 200
+}

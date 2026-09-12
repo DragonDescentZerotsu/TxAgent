@@ -1,0 +1,39 @@
+{
+  "parent_key": "JLIHUJWAXSZIHS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JLIHUJWAXSZIHS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-METHYLCHRYSENE",
+    "3-METHYLCHRYSENE (purity)",
+    "3-METHYLCHRYSENE [IARC]",
+    "3-Methyl Chrysene",
+    "3-Methylchrysene, BCR(R) certified Reference Material",
+    "3351-31-3",
+    "681-938-3",
+    "A1D0DVO36T",
+    "AKOS025243237",
+    "BRN 2557419",
+    "C19449",
+    "CCRIS 6757",
+    "CHEBI:82486",
+    "Chrysene, 3-methyl-",
+    "Chrysene, 3-methyl-; 3-Methylchrysene; NSC 135887",
+    "DB-048428",
+    "DTXCID8038699",
+    "DTXSID3074818",
+    "JLIHUJWAXSZIHS-UHFFFAOYSA-N",
+    "NS00122561",
+    "NSC 135887",
+    "NSC-135887",
+    "NSC135887",
+    "Q27155984",
+    "RefChem:94862",
+    "SCHEMBL599225",
+    "UNII-A1D0DVO36T",
+    "WLN: L E6 B666J Q1"
+  ],
+  "http_status": 200,
+  "cids": [
+    18781
+  ]
+}

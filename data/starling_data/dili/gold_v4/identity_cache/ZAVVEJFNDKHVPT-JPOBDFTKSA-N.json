@@ -1,0 +1,13 @@
+{
+  "parent_key": "ZAVVEJFNDKHVPT-JPOBDFTKSA-N",
+  "ok": true,
+  "synonyms": [
+    "BDBM50407796",
+    "CHEMBL1255711"
+  ],
+  "cids": [
+    71457946
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZAVVEJFNDKHVPT-JPOBDFTKSA-N/synonyms/JSON",
+  "http_status": 200
+}

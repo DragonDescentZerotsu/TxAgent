@@ -1,0 +1,33 @@
+{
+  "parent_key": "VITDDUXZOHEQMU-BYSUZVQFSA-N",
+  "ok": true,
+  "synonyms": [
+    "1161877-58-2",
+    "ABX 196",
+    "ABX 196 [WHO-DD]",
+    "ABX-196",
+    "ABX196",
+    "CHEMBL4594427",
+    "CS-0905869",
+    "HY-156997",
+    "Invariant NKT Cell Agonist ABX196",
+    "N-((1S,2S,3R)-1-(((6-(ACETYLAMINO)-6-DEOXY-.ALPHA.-D-GALACTOPYRANOSYL)OXY)METHYL)-2,3-DIHYDROXYHEPTADECYL)TETRACOSANAMIDE",
+    "N-((1S,2S,3R)-1-(((6-(Acetylamino)-6-deoxy-alpha-D-galactopyranosyl)oxy)methyl)-2,3-dihydroxyheptadecyl)tetracosanamide",
+    "PBS 96",
+    "PBS96",
+    "RefChem:108586",
+    "SCHEMBL29422895",
+    "SOI87F7GN2",
+    "T85543",
+    "TETRACOSANAMIDE, N-((1S,2S,3R)-1-(((6-(ACETYLAMINO)-6-DEOXY-.ALPHA.-D-GALACTOPYRANOSYL)OXY)METHYL)-2,3-DIHYDROXYHEPTADECYL)-",
+    "Tetracosanamide, N-((1S,2S,3R)-1-(((6-(acetylamino)-6-deoxy-alpha-D-galactopyranosyl)oxy)methyl)-2,3-dihydroxyheptadecyl)-",
+    "UNII-SOI87F7GN2",
+    "iNKT Cell Agonist ABX196",
+    "orb2567124"
+  ],
+  "cids": [
+    42630569
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VITDDUXZOHEQMU-BYSUZVQFSA-N/synonyms/JSON",
+  "http_status": 200
+}

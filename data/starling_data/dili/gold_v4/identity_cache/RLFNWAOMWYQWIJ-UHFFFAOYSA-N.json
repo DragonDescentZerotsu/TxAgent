@@ -1,0 +1,16 @@
+{
+  "parent_key": "RLFNWAOMWYQWIJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1823858-15-6",
+    "2-(2,6-dimethylphenyl)propanoic acid",
+    "EN300-1869415",
+    "MFCD28022817",
+    "SY403116"
+  ],
+  "cids": [
+    22078094
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RLFNWAOMWYQWIJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,19 @@
+{
+  "parent_key": "YQKYLDVPCOGIRB-SEKJGCFDSA-N",
+  "ok": true,
+  "synonyms": [
+    "Asp-Leu-Thr-Asp",
+    "CHEBI:73433",
+    "D-L-T-D",
+    "DLTD",
+    "L-Asp-L-Leu-L-Thr-L-Asp",
+    "L-alpha-aspartyl-L-leucyl-L-threonyl-L-aspartic acid",
+    "Q27140519",
+    "SCHEMBL29466705"
+  ],
+  "cids": [
+    71464627
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YQKYLDVPCOGIRB-SEKJGCFDSA-N/synonyms/JSON",
+  "http_status": 200
+}

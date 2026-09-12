@@ -1,0 +1,141 @@
+{
+  "status": "known_remaining_model_limitations",
+  "smoke_unique_schema_successes": 48,
+  "unit_tests_passed": 23,
+  "findings": [
+    {
+      "task": "carcinogens",
+      "source_row_uid": "sr_00012cbd558c48abbda873e0cda2abe6",
+      "source_payload_sha256": "927dd6cf1f7950328f3e9db88f700dc3bebefdc220b0e5ce42648b78938ab8cf",
+      "issue": "Generic mixed-species estradiol assertion was assigned a primary-human reporting study. Study identity and species attribution require independent adjudication, regardless of schema validity or two-pass agreement.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_001591ae4d03449da9631df354f69563",
+      "source_payload_sha256": "a64c3bcf66063c68329e56b6a43da2e110df04dce72a59e81ba224cb1388174c",
+      "issue": "Source pools RECORD 1-4 trials. Do not count the citing PMID as one independent original experiment; resolve original trials and ascertainment scope before votes.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_00016f241ab240d4a2e09c1596577594",
+      "source_payload_sha256": "aec3087308457bb6b9fd00b6454ed71c88d25eccb9885574b408a1efc9a26f34",
+      "issue": "Hedged secondary human injury claim: preserve for contextual adjudication. A needs_context result is not a final exclusion or proof of absence.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_61fd0b80797049a88a97b077d7f950cc",
+      "source_payload_sha256": "984cfa91c2e4b368354321d218f25307b5cffaa1f41fe81915cff5b9d1f91179",
+      "issue": "The source explicitly supports a negative causal attribution in this patient. This is valid case-specific negative evidence, not intrinsically invalid data. Mapping it to a population/exposure DILI hazard vote requires an explicit target definition; the original clear-error wording conflated source fidelity with gold eligibility.",
+      "action": "preserve_source_negative_and_resolve_target_mapping_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json",
+      "issue_history": [
+        "Excluding a drug as the culprit in one patient is not an observed negative hazard cohort. Y=0 violates the explicit target contract."
+      ]
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_4c1c23481a61446f97946f2b97cc3b54",
+      "source_payload_sha256": "f05703c240afc3c498a2085d2673f0dc75044845c4d494a391a3f5470c4fd168",
+      "issue": "A general no-apparent-hepatotoxicity assertion plus treatment-benefit outcomes does not identify the reporting PMID as one original safety study; pilot and controlled trial are pooled.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_8e19e3c442bd4357b5ddeb6fea975ebc",
+      "source_payload_sha256": "965f064a91a9468f5f7c0f82d2f95bc2b2f3df161790c36749c2aa99b57c5e3a",
+      "issue": "No dose-related clinically significant injury may be narrower than absence of all clinically meaningful DILI; inspect the actual assessed endpoint before gold.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_4be4b3bad2c44f11bd85d70f34b978c9",
+      "source_payload_sha256": "c223742fccfc03fdf7eb094a18692abbb962a0f77e78fa593287d1127a60695e",
+      "issue": "The source supports no statistically significant excess in the measured enzyme-elevation endpoint. This is a source-backed negative comparison, not proof of zero events. Whether it receives Y=0 depends on whether the target is excess signal in this trial or observed absence of clinically meaningful DILI; preserve comparison and endpoint.",
+      "action": "preserve_source_negative_and_resolve_target_mapping_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json",
+      "issue_history": [
+        "No significant increase in a liver-enzyme elevation rate does not demonstrate absence of injury. Model limitations also admit lack of clinical injury data."
+      ]
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_be90523fd04249c39764fbde076ee8ee",
+      "source_payload_sha256": "d38a9d38559798cd5e2ea8c785d632f463c8a0457f3bdf52af175ee3e7c6c73c",
+      "issue": "Biomarker comparisons and no significant risk wording are not themselves observed absence of clinical DILI; the model itself notes no clinical injury outcomes.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_8da2a74e5922462387f611c434d8934d",
+      "source_payload_sha256": "49aa9773cb13723c47ffcb2728d69260fbe461bff36aa4b674e1b09e4ce664fa",
+      "issue": "The development program and ASTEROID are pooled, yet labeled as a single original reporting study. Dose up to 40 mg is also narrowed to 40 mg.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_64b807769bca4f39a75c12bd2a3430ed",
+      "source_payload_sha256": "b72d622cfc4ec95de7165b13c576daf198258b76047e01141c8898cd10b6be04",
+      "issue": "The source supports absence of attributed serious/fatal liver disease within this cohort, and the model preserves that restriction in limitations. Calling the source conclusion simply incorrect was too strong. Retain the severity-specific negative and decide explicitly whether the benchmark endpoint matches it.",
+      "action": "preserve_source_negative_and_resolve_target_mapping_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json",
+      "issue_history": [
+        "No serious or fatal liver disease is severity-limited, not an overall DILI negative. Model explicitly admits other forms were not evaluated."
+      ]
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_067a2502239142deb3da3004ce352a5e",
+      "source_payload_sha256": "f6403bcfd0a5895cafb9ce3d2247e50ec26dfed2a4a604d3bd49de9509c4e3c8",
+      "issue": "Generic safe wording is insufficient for automatic gold; unresolved source is correctly retained as a hold, but observed-absence category needs review.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_506eb31d1c98459f85d9d57d1525605f",
+      "source_payload_sha256": "ce6cc9eb16dca4a7e2883b9414c80395962a9061ebbe9645c661ab86f98e0d0d",
+      "issue": "Low potential for severe DILI and a reference classification are not an observed absence of target; unresolved study prevents immediate voting but does not fix the semantic category.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_cbc93547e14542efad7ef0334f7c03b3",
+      "source_payload_sha256": "09e5401c3a7f36f7985db7f8ac0d02c826821194697ec60f7d82de953f2c3ddd",
+      "issue": "Unresolved pooled randomized-study summary must remain held. Resolve original studies and distinguish trial populations from the separate NASH treatment-effect claim.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    },
+    {
+      "task": "dili",
+      "source_row_uid": "sr_312cd21d3aaa46bc8ba79966ed14263d",
+      "source_payload_sha256": "42d59640f6e7c3fffca4fe73195a2e3845f2a00c0b91b5f6f47dd1d98067e51d",
+      "issue": "General anesthesia review assertion requires original human observation and study identity; unresolved status must remain a hold.",
+      "action": "independent_source_adjudication_before_gold",
+      "automatic_label_override": false,
+      "found_in": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+    }
+  ],
+  "rule": "No full-run verdict directly publishes a gold vote. Preserve needs_context and unsupported candidates for downstream audit.",
+  "latest_quality_diagnostic": "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/quality_spotcheck_20260908_2312.json"
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "XVKTYEAUJPZPDZ-HIFRSBDPSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3S,5R)-N-(3-CHLORO-4-FLUOROPHENYL)-2-METHYL-5-(5-(1-METHYL-1HIMIDAZOL-4-YL)-1,3-THIAZOL-2-YL)-1,1-DIOXO-1.LAMBDA.6 ,2,6-THIADIAZINANE-3- CARBOXAMIDE",
+    "(3S,5R)-N-(3-CHLORO-4-FLUOROPHENYL)-2-METHYL-5-(5-(1-METHYL-1HIMIDAZOL-4-YL)-1,3-THIAZOL-2-YL)-1,1-DIOXO-1.LAMBDA.6,2,6-THIADIAZINANE-3-CARBOXAMIDE",
+    "(3S,5R)-N-(3-CHLORO-4-FLUOROPHENYL)-2-METHYL-5-(5-(1-METHYL-1HIMIDAZOL-4-YL)-1,3-THIAZOL-2-YL)-1,1-DIOXO-1LAMBDA6,2,6-THIADIAZINANE-3-CARBOXAMIDE",
+    "(3S,5R)-N-(3-Chloro-4-fluorophenyl)-2-methyl-5-(5-(1-methyl-1himidazol-4-yl)-1,3-thiazol-2-yl)-1,1-dioxo-1lambda6 ,2,6-thiadiazinane-3- carboxamide",
+    "(3S,5R)-N-(3-chloro-4-fluoro-phenyl)-2-methyl-5-[5-(1-methylimidazol-4-yl)thiazol-2-yl]-1,1-dioxo-1,2,6-thiadiazinane-3-carboxamide",
+    "(3S,5R)-N-(3-chloro-4-fluorophenyl)-2-methyl-5-(5-(1-methylimidazol-4-yl)-1,3-thiazol-2-yl)-1,1-dioxo-1,2,6-thiadiazinane-3-carboxamide",
+    "(3S,5R)-N-(3-chloro-4-fluorophenyl)-2-methyl-5-[5-(1-methylimidazol-4-yl)-1,3-thiazol-2-yl]-1,1-dioxo-1,2,6-thiadiazinane-3-carboxamide",
+    "2243747-96-6",
+    "ABI-H2158",
+    "AKOS040757462",
+    "CHEMBL6164856",
+    "CS-0213557",
+    "DA-53204",
+    "Firzacorvir",
+    "Firzacorvir [INN]",
+    "GTPL11792",
+    "HY-139574",
+    "RefChem:140478",
+    "SCHEMBL20487028",
+    "T3033L1ZRE",
+    "T39744",
+    "UNII-T3033L1ZRE",
+    "orb1691089"
+  ],
+  "cids": [
+    135317244
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XVKTYEAUJPZPDZ-HIFRSBDPSA-N/synonyms/JSON",
+  "http_status": 200
+}

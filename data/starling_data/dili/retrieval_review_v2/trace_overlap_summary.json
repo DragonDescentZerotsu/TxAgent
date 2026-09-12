@@ -1,0 +1,145 @@
+{
+  "status": "passed",
+  "scope": "804 rows; valid/test progressive/full-flat, seven levels. Frozen review_v1 predictions used only after source decisions for overlap accounting. Visibility and citation are not proof of causal influence. This is not a complete replay plan; replacement cards can affect other queries.",
+  "per_card": {
+    "card_14ff7a36d3313355": {
+      "valid/progressive": {
+        "visible_query_rows": 7,
+        "visible_query_level_outputs": 42,
+        "basis_query_rows": 2,
+        "wrong_basis_query_rows": 2,
+        "new_basis_regressions": [
+          {
+            "index": 291,
+            "level": 2
+          },
+          {
+            "index": 292,
+            "level": 2
+          }
+        ]
+      },
+      "valid/full_flat": {
+        "visible_query_rows": 7,
+        "visible_query_level_outputs": 42,
+        "basis_query_rows": 7,
+        "wrong_basis_query_rows": 5,
+        "new_basis_regressions": [
+          {
+            "index": 85,
+            "level": 2
+          },
+          {
+            "index": 292,
+            "level": 2
+          }
+        ]
+      },
+      "test/progressive": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/full_flat": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      }
+    },
+    "card_1ed065acd3db495d": {
+      "valid/progressive": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 1,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "valid/full_flat": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/progressive": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/full_flat": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      }
+    },
+    "card_5f8d40af5e4fc45a": {
+      "valid/progressive": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 1,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "valid/full_flat": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/progressive": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/full_flat": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      }
+    },
+    "card_3f822630930f676b": {
+      "valid/progressive": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "valid/full_flat": {
+        "visible_query_rows": 1,
+        "visible_query_level_outputs": 4,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/progressive": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      },
+      "test/full_flat": {
+        "visible_query_rows": 0,
+        "visible_query_level_outputs": 0,
+        "basis_query_rows": 0,
+        "wrong_basis_query_rows": 0,
+        "new_basis_regressions": []
+      }
+    }
+  },
+  "n_model_calls": 0
+}

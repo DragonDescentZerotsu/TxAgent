@@ -1,0 +1,32 @@
+{
+  "parent_key": "IYOIBZYIRXERTL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Pyridinepropaneamide",
+    "3-(2-Pyridyl)propanamide",
+    "3-(2-pyridyl)propanoic acid amide",
+    "3-(Pyridin-2-yl)propanamide",
+    "3-Pyridin-2-ylpropanamide",
+    "84199-91-7",
+    "AC6900",
+    "AKOS017456125",
+    "CS-0359639",
+    "DB-228309",
+    "DS-014368",
+    "DTXCID00506577",
+    "DTXSID70555794",
+    "IYOIBZYIRXERTL-UHFFFAOYSA-N",
+    "MFCD18384619",
+    "RefChem:275943",
+    "SCHEMBL3092743",
+    "SCHEMBL3261880",
+    "SCHEMBL403460",
+    "SCHEMBL626826",
+    "SY022420"
+  ],
+  "cids": [
+    14093009
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IYOIBZYIRXERTL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

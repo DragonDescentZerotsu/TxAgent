@@ -1,0 +1,23 @@
+{
+  "parent_key": "BTIKNFALDXFWCX-NSHDSACASA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-Amino-3-((((4-(dihydroxyarsanyl)phenyl)carbamoyl)methyl)sulfanyl)-3-methylbutanoic acid",
+    "1192411-43-0",
+    "3-((2-((4-(Dihydroxyarsino)phenyl)amino)-2-oxoethyl)thio)-D-valine",
+    "4-(N-(S-Penicillaminylacetyl)amino) phenyl arsonous acid",
+    "CHEMBL1079328",
+    "D-Valine, 3-((2-((4-(dihydroxyarsino)phenyl)amino)-2-oxoethyl)thio)-",
+    "HH7VUN8QBQ",
+    "PENAO",
+    "T207680",
+    "UNII-HH7VUN8QBQ",
+    "orb3027502"
+  ],
+  "cids": [
+    16049815,
+    46882297
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BTIKNFALDXFWCX-NSHDSACASA-N/synonyms/JSON",
+  "http_status": 200
+}

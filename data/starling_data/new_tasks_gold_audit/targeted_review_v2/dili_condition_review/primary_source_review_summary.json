@@ -1,0 +1,23 @@
+{
+  "version": "dili_cross_source_primary_review.v1",
+  "n_conflicts": 19,
+  "tdc_original_sheet_zero_confirmed": 19,
+  "tdc_cid_smiles_label_matches": 19,
+  "positive_primary_claim_found": 18,
+  "unresolved_primary_claim": 1,
+  "unresolved_names": [
+    "amphetamine"
+  ],
+  "upstream_opposite_table_labels": [
+    "Aminoglutethimide",
+    "Tacrine"
+  ],
+  "bibliographic_metadata_records_read": 97,
+  "old_source_votes_in_inventory": 103,
+  "verified_wrong_citation_records": 23,
+  "scope": "bounded publication-direction audit; mixed full text, abstracts and indexed primary body excerpts; not exhaustive all-base or final gold adjudication",
+  "formulation_votes_pooled": 9,
+  "condition_groups_after_current_mapping": 10,
+  "gold_published": false,
+  "supplement_sha256": "297b1095406b23e7486fbeae68c5cb1e0ed60ed718fd996238688e7cbd7e93c1"
+}

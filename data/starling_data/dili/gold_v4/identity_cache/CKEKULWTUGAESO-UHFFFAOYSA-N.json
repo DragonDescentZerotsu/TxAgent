@@ -1,0 +1,23 @@
+{
+  "parent_key": "CKEKULWTUGAESO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2-Phenylpropyl)hydrazine",
+    "1-(2-phenylpropyl)hydrazine",
+    "2-phenylpropylhydrazine",
+    "875-88-7",
+    "AKOS010334870",
+    "BDBM50416818",
+    "CHEMBL1241428",
+    "CS-0276184",
+    "DTXSID40274480",
+    "EN300-272882",
+    "SB76668",
+    "SCHEMBL163710"
+  ],
+  "cids": [
+    6183
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKEKULWTUGAESO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

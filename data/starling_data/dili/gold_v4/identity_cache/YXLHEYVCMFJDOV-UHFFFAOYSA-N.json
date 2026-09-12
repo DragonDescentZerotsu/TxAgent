@@ -1,0 +1,27 @@
+{
+  "parent_key": "YXLHEYVCMFJDOV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-(HYDRAZINYLMETHYL)PYRIDINE",
+    "4-(hydrazinomethyl)pyridine",
+    "4-Pyridylmethylhydrazine",
+    "7112-39-2",
+    "AKOS000131721",
+    "CS-0183145",
+    "DB-348802",
+    "DTXCID30326487",
+    "DTXSID10375458",
+    "EN300-57636",
+    "Pyridin-4-ylmethylhydrazine",
+    "RefChem:376422",
+    "SB10045",
+    "SCHEMBL1484885",
+    "YXLHEYVCMFJDOV-UHFFFAOYSA-N",
+    "pyridin-4-ylmethyl-hydrazine"
+  ],
+  "cids": [
+    2760984
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YXLHEYVCMFJDOV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

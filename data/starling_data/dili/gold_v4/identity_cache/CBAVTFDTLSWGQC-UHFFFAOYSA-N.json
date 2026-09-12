@@ -1,0 +1,12 @@
+{
+  "parent_key": "CBAVTFDTLSWGQC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL21587527"
+  ],
+  "cids": [
+    17883920
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CBAVTFDTLSWGQC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

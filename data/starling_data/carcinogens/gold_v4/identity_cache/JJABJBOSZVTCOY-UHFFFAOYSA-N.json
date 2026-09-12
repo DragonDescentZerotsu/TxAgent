@@ -1,0 +1,32 @@
+{
+  "parent_key": "JJABJBOSZVTCOY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJABJBOSZVTCOY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Diethylhydroxy)arsine oxide",
+    "4964-27-6",
+    "ANTINEOPLASTIC-152889",
+    "ARSINE OXIDE, DIETHYLHYDROXY-",
+    "Arsinic acid, As,As-diethyl-",
+    "Arsinic acid, diethyl-",
+    "As,As-Diethylarsinic acid",
+    "BRN 1743728",
+    "DTXCID20120436",
+    "DTXSID60197945",
+    "Diethyl arsinic acid",
+    "Diethylarsinic acid",
+    "Diethylhydroxy arsine oxide",
+    "Diethylhydroxyarsine oxide",
+    "L8MG5ZT4NJ",
+    "NSC 152889",
+    "NSC-152889",
+    "NSC152889",
+    "RefChem:1077213",
+    "SCHEMBL8930988",
+    "WLN: Q-AS-O&2&2"
+  ],
+  "http_status": 200,
+  "cids": [
+    21074
+  ]
+}

@@ -1,0 +1,1246 @@
+{
+  "diagnostic_input_sha256": "70b0d7abff0927c81eaecfde5f959d02921c20b62c647c539f2d0c0dc682bcb0",
+  "review_scope": "Codex read 25 complete diagnostic record surfaces, then replayed all 103 with exact field boundaries; not human expert review",
+  "previous_false_positives": 103,
+  "true_individual_field_direct_remaining": 0,
+  "production_classifier_or_overlay_changed": false,
+  "reason": "Joining distinct measurement, units, assay and context fields invented no/inhibition/induced to tumor/cancer relationships absent in every original full field. Independently scan every full field without joining unrelated fields.",
+  "records": [
+    {
+      "source_row_uid": "sr_949e1584eb7e4014b6e65ffeed0fd1ee",
+      "source_payload_sha256": "ff669ae70aab1402d50bde39a45072d95d08be64f649d697fd79129f998c1161",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no numeric value reported) assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_3b958a196e2d4bfcad812474cdfb0903",
+      "source_payload_sha256": "ddf61bb535fc97b1197d8bd79ba44c24df072749a05c0392e18bac82617f728d",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition, negative = cell lethality) assay method=NCI60 in vitro human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_60c196ea643049ae86d0b9a7fa2a6fb3",
+      "source_payload_sha256": "06155f9474030b210b6e48548ca442f573e185e3a199f137da926deb0d0930b5",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition, negative = cell lethality) assay method=NCI60 in vitro human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_a63c403a8be7441aa32caceb9af3c216",
+      "source_payload_sha256": "2e953b7a4b2351157af83f6a865b7df3ecfec09573ec440dd35846f2e89be233",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition, negative = cell lethality) assay method=NCI60 in vitro human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_f8e456a4be674ab58956b3b53bac4734",
+      "source_payload_sha256": "98df7e4a70cccb1e617767b0c6843894302d917dff856cedab27530f41ab3c31",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=Cell proliferation (growth) assay in benign tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_9ec875e48e544f6e96d0a199a200c514",
+      "source_payload_sha256": "0a88b8ff40202b433d75fa9ef002c10bab5adfab40afc5a3f45d7e0dae0fe6c9",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "producing 50% viability reduction) assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d4e36abbcfda4fa1a356e92d2847f279",
+      "source_payload_sha256": "8d27e6690633809ee4fb70f53aa2fb6f5b81590e8e260c2d9eeee8f8fad38c58",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "producing 50% viability reduction) assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_6094664ec4934130b2c231ba3a371d15",
+      "source_payload_sha256": "fa47279d4f27c4a864980bbcfd489bf6efd51cbc70279089406ffd99d2d81ba9",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "producing 50% viability reduction) assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_32f9ec00f9fe4fa3bff395f244bb24ea",
+      "source_payload_sha256": "621754fbdeef5f5d45844777df771ff3b50cb7d0ae57f8129c3bc67bb01c51c2",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=Bidimensional and multicellular tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d26e5eed57f14ed3a6c4e0a0d00a3e46",
+      "source_payload_sha256": "1ad9358f2144c8d7d48fd56ed277a33994e5c5ae4bff90603ef6a4051db67e9c",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_22c708391b6142dcb8c7c68ff42b8ca8",
+      "source_payload_sha256": "3cb60cc8672f4f607e1b1ea747371f3ce38514ebefa6f59898fcd25b86c5a1ea",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=Tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8044ec2d844c490c87700f186d445575",
+      "source_payload_sha256": "68acbae9bb9b1a6b23c0cb8085822173be799f71d33d4ada4da366de69c8a2e7",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no effect | result value=13.27 ± 1.31% apoptosis measurement unit=% of tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_155064000fcd426f875d0b58e666c1b6",
+      "source_payload_sha256": "a64fc734baa386fcafd6a74c7ea86823cad94df08c1d6c9e16652381b954c21e",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=ATP-TCA bioluminescence (ATP-based tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_66fb0124351e4311b7f0396213b54c15",
+      "source_payload_sha256": "c2ab6c45b2dfcfcc1eb028537b5fbe5465c12a635af5678e792c734fafbf9488",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_29eb80c2a1b14244a0ca2718cb1f0512",
+      "source_payload_sha256": "d1e8950cb4e3dc7578c010b6e6c2c487ee60516c261163368a7a823d22ef35a4",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_331b9b2c9ebc4c7e87b18123df0349d1",
+      "source_payload_sha256": "390648c87edc840a3b3647e3ecb1156d2f77c466c30e765a6d7aa732ad125c43",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_5ed3738b68f14dbd8036608dce1e23ba",
+      "source_payload_sha256": "d4dbba8cdcae54f6b58549a0627fe011e5b1b141bbdefbf92f8ce13f1e54a2c9",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8363f554ef234c4a8565e856a48e1f1d",
+      "source_payload_sha256": "ad61b3a88abbae2dc2814df605694c9ce336c5c8951a119861d921404961b25c",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_391d4e900ba1427297fccd1a394650cf",
+      "source_payload_sha256": "2bedc78219a20c2708c58169e56be52f868a59d38d7724d01e2c387b45aa219d",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_bb50303fff5248bda8b98d2f8543c4f5",
+      "source_payload_sha256": "9bd06895644e330dc9e54a93626d442a788368bf3eec78c3dcf3afc16047ecc1",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d492b41bb37d4937977f86d7134c9016",
+      "source_payload_sha256": "aefff9517f235b0f5da9c0e13fde515ebf8fa4377568769a0bb78d444c63202b",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition) assay method=NCI 60 human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_38d6529df69d451a97183a2bafd47aac",
+      "source_payload_sha256": "563bd4d9982723f3470391c5a339dd6a64fe955aca501babd139a3bf3be72a20",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no numeric value reported assay method=3D tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d49465a4a45a461194d29c954039367f",
+      "source_payload_sha256": "60f605258b75bc9912d6c53400b3fd2e5ac9580f7a700374c3a5a888f7837216",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no numeric value reported) assay method=TUNEL assay on JHU-013 solid tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_4d26386e2e564a3ca51af43272240c6c",
+      "source_payload_sha256": "9e3f7a583dcac7fa2ff05cb02f0152f88218bdf51b70e27a64aa6a7b25253a5a",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition vs vehicle control assay method=PCNA immunohistochemical staining of tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_a90b0aca52a9406a8e187fd4427e9aeb",
+      "source_payload_sha256": "3e3c0368fc2ad3ba7f9c747a23a6143c2e1503cae6572a3165ac86a0a8c0b932",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=[3H]thymidine incorporation into tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_580616a912ec4e63bbe1c61373c3ffb0",
+      "source_payload_sha256": "f53a01201d6bb30d97ad58565144a9505b0fb52d1bb5754c1bb971c299d9fc09",
+      "level": 3,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition assay method=[3H]thymidine incorporation into tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_0ba7e9575a114094a819053f16555fe8",
+      "source_payload_sha256": "b2314042a54fd0f5156e122fb5bb58fa6ef92311e4057c0ade47ba76330d1e47",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced mutants test system=in vitro; mouse; L5178YTk+/- lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_3f2ce34be8d1403a9397266339fd1c38",
+      "source_payload_sha256": "d0300e296fefb4f13e0ccbe2682161904f5b006377546c178ebdfdfae905959b",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced mutants test system=in vitro; mouse; L5178YTk+/- lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8e243c9d8c95471892663b36d8efa4ad",
+      "source_payload_sha256": "2194a966db7ff9fde84144ace838140504e73ab7bdc242091d749468a69591a7",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced mutants test system=in vitro; mouse; L5178YTk+/- lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_13204843a3234596bfc6e8cd6b3b8af8",
+      "source_payload_sha256": "383b3ef6309a1535ba3e53902e9896592a0a1dc22a0cae9159e8c300651e71eb",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced over background test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_b94e8ff8dd544334b1fdb44b0bd41546",
+      "source_payload_sha256": "6907674715b0dcb9ff178d746712bbde6f5b84c1a1dbf029de220d0eb8bd6927",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "incidence test system=in vitro; human; HT29-MTX colon cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_3a4b12bc88254eea8c3703795c3aa942",
+      "source_payload_sha256": "1b470a0551e0b6e3ff371ed1d527312f6aaa275734671f058814caca3ec9e436",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "produced test system=in vitro; human; Mer⁻ solid tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_c1050d79d68742609c29aa9dce457600",
+      "source_payload_sha256": "913f4156516e8ab561dd532535923c86a9d94220c2d66f1d65b6c6253f333508",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced mutations test system=in vitro; human; A549 lung carcinoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_f46ed314f727497090854ea92a35599f",
+      "source_payload_sha256": "cfe44bfa0e84bd743d48af4dd63fcb3b5c239cf72eef60372a8be5fa75316a49",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_74b8db78d7794886a2a68344757241b6",
+      "source_payload_sha256": "8d80895207b1700b0c72f1484d1d171cd02c3cc2b034124cf144c4ecdff08a2c",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_fe322d582ecb4353a5ee0331035c3032",
+      "source_payload_sha256": "b54d0b066f674bf38d3d88ca43fc53f5b655c64215d24d28b758f9d9c5dcb832",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_107df0874234477ba7be237da1ed1624",
+      "source_payload_sha256": "0bb57bdc65dce7f9a8624ea3fc614328d8e0dd68eb88ce54b68bffbc731cf2c9",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_0cb7f5141521491097fb3eb58489f861",
+      "source_payload_sha256": "aad945d0beba193e9814cce969a27b2985fb81ef64c47bc0595933fcacaafa98",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_9b8a3d61040244e48c3c7d961c0519ac",
+      "source_payload_sha256": "37c439b30366b71bcffb92993519d2acd8af23b86cc76ca03b265d436a008aae",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_0262714ccf9744529b5af4455f73ed5b",
+      "source_payload_sha256": "e7f1d0f3d09f9dc8bf12ac66e27cc0fa00d1a6000b39cffa923c0ab0f5f27e24",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_cee7bf81268542319a90ed3d979d16f2",
+      "source_payload_sha256": "d6133446b492bcc36755711f51450d80033ee68ae1987b0cb7884ab66263292f",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_7861ab83cb0b4c97a0d6d9216ec764dc",
+      "source_payload_sha256": "2263a57d1e29a85f2c8d3262b40dadd5067720334702c696e3976e07f3bb6f11",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d633d630056b4a939e2727fb3631e7a6",
+      "source_payload_sha256": "d91f0898c73910085916b9b0c069d62437052e574391485696c58270ec892962",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_b0e96d9726744b5b8774cc65f504d773",
+      "source_payload_sha256": "6ed5db879e64d6771af933c69bab59cfe78fa1eedd4cdefc7b0ebf7d99e19b19",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8c8cbfdecb58424fb91d402c55c578d8",
+      "source_payload_sha256": "0863f929a00917ab11a268627e0a7cc12b31d4f048455ac4fb958e9ba77a283d",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_24759a4c013d450b8981f7c00e5ceb76",
+      "source_payload_sha256": "d6e068c286540dfae35d2e1c15e8122232dbbd66d8a86aeeb9428dd85aa02e46",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_bf618d591d5e4b8792e05a6939ddf323",
+      "source_payload_sha256": "c5a50ae78507b0fedb8599a9815b6fa86365497e37c8beff17491b2dc36e9dda",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) test system=in vitro; mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_ddec658dd9fa421f9885f5bdf9c7f6ea",
+      "source_payload_sha256": "89be903729f60c4e37b5c85e4e02dd13e34b9549236b85f311302da8c39fef06",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition of MGMT activity test system=in vitro; human brain tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_5667186a2bf94cc4a2cd41e83d8db8ad",
+      "source_payload_sha256": "b1e45df2408941b7d270abf04a6203733e55fa44ccd3be306946fb6f61ce258e",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition of MGMT activity test system=in vitro; human brain tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_007b425b584b4c01928db52751750a24",
+      "source_payload_sha256": "92eea552bd20d5606ec33a9d79da552e4cc47ea99cb2a4950309dd699ec9be4d",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition / % of control test system=in vitro; human brain tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_462609f6692d46a2a6bebfd36c25a0b5",
+      "source_payload_sha256": "6d6a63ea6bc165e083dcf7419771bb9f072bdbbff6849185d87f7e80f6f320e4",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induced revertants test system=in vitro; mouse; FM3A mouse mammary tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_2998da52d78e415aa4fbced1b33fc16a",
+      "source_payload_sha256": "74e1594faceb6cb68756bb2b0c582c54075fc6fbadf64851c7b1ff589c91bee2",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induced revertants test system=in vitro; mouse; FM3A mouse mammary tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_99f9c317d582488e9f722d1dd154d388",
+      "source_payload_sha256": "f1e441fd1bb6bf5fc9464c2c88ff741ced58c114d953b107cb1ac9441e225f52",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induced revertants test system=in vitro; mouse; FM3A mouse mammary tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_589a158273dd4e209670f86bc258c36a",
+      "source_payload_sha256": "c9db80bffc0385cbf20aa961c1d5e8f999e88a42ccbfa957975f59c0802c0864",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction than SF-126 test system=in vitro; Homo sapiens; human brain tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_7be1f5bfa92a4f6f99a8e63e5fd1c3ff",
+      "source_payload_sha256": "22e2fc956d9e1a7e43d90e07fdc74be1f358059c5ecbbc4938f90ba8dfea248c",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction test system=in vitro; human lung tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_c763144681f94187b67ec2cccfaaabb6",
+      "source_payload_sha256": "b74177b3d838c5715f9c5e954a0c6d390c95a56bac052183a8afb12c0131bed2",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction test system=in vitro; human lung tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_b8e854749d9d49e0a0c14a86912a0838",
+      "source_payload_sha256": "6e218e249f0029f3cc534e918ef520975e63ae711ea4a130b8659a8f5c0bf0a0",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induction test system=in vitro; Mus musculus mouse lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_bcfbb61468b842ddb28ea3cf22369e46",
+      "source_payload_sha256": "c6e7d7fbb71d2927d2daea60e94c04f1d537ac8d40cca9d7752d8b22bdf771dd",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced test system=in vivo; mouse (Mus musculus); L1210 leukemia"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_31bca312528c49edbf1db6e25fb462f1",
+      "source_payload_sha256": "ee07e96a6c7c2d5585368256e275d1d77ba5b29c42151c80dad832cd9e0ccebc",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced test system=in vivo; mouse (Mus musculus); L1210 leukemia"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_bb9ff336015f4eda877eab1966b8dcfc",
+      "source_payload_sha256": "51c6ea7b8d43b50938f39abe1a4ffa6e0b6f1f76f708963cfcb457d8a6a8f7b9",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without) test system=in vivo; mouse; B16-BL6 tumor; total tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_e41269c17c804351a40471fdd5dd053c",
+      "source_payload_sha256": "115a77f96b6e82bf43a333c0638a93da6daf5efe974bddce5124cbfdfb6ebd0b",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without) test system=in vivo; mouse; B16-BL6 tumor; quiescent (Q) tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_64855a369072423aa9fdb7ad101a6e4b",
+      "source_payload_sha256": "7ba7643b97953283cdfb1986218aa4e7fda61be3b05824e3497f45115213daec",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without) test system=in vivo; mouse; B16-BL6 tumor; quiescent (Q) tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_f386d38cea394d7ba94e2eff32a6e90f",
+      "source_payload_sha256": "7abd8d3f009e930c64f535351e71c1443063036f13186a25c1b3394db757f1f0",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without) test system=in vivo; mouse; B16-BL6 tumor; quiescent (Q) tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8d4c75bb53be40898e5e63f9fd7427ab",
+      "source_payload_sha256": "81d3574dab3d7c1a8ff42cb2ca820ef493a79589f7d366cecf9ddf6600e582f2",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induction test system=in vitro; human; breast cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d7a478a86319400ca6268cc94e08b3c7",
+      "source_payload_sha256": "7e597f1e73410b28c98bea82a578d0ed3b05bf7fabde306b5d6792e6314b2e18",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced leukemias test system=in vivo; rat; leukemia"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_22d19dcfcfa74162a193e7162c37f78f",
+      "source_payload_sha256": "2a3eb135c3d58620da63aeb4606b328424b5807d6b890bf6093d45bc0539e67d",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition test system=in vitro; Homo sapiens; GCT27J human germ-cell tumour"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d6314a4e479847d0b4c3b5402f201b79",
+      "source_payload_sha256": "7b25545894057c788c7798bbe038ef7f5d0ced83faa2b254bd7782a740320550",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without 2-DG) test system=in vitro; human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_5f02c13639574668afad3afadab70a45",
+      "source_payload_sha256": "fd986117e86d4609e9e5bd2bb0fdc5b5a709f2691f3041911d64873222f8275f",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "without 2-DG) test system=in vitro; human tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_87974c90f1234518849fa433fa539a87",
+      "source_payload_sha256": "8a676f2ea745c152dc5a83b531a534d827c1fc209456bb625cbd0413d40f323e",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "product) test system=in vivo; rat; mammary adenocarcinoma; tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_40bcef32c7964bd398e7e72dced15d34",
+      "source_payload_sha256": "5a8714866f0af458cd91dc207a1b295ff2f3b01b7951238a9e28c95c42c5abb5",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction; ×10^-5 test system=in vitro; Homo sapiens; NCI-H2009 lung tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_cc4d0b763b404557b4e517bacb950bb6",
+      "source_payload_sha256": "6932014a5e26e27d2e7f59b7ecd16f97e75cbdfd1cdd5c782e60512d55d9ee23",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction; ×10^-5 test system=in vitro; Homo sapiens; HCC-15 lung tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_66b0ee3cf3734391a9060de2d2d61b96",
+      "source_payload_sha256": "1836c703c0d3ad3b41b09d924ede4d66d201a828114d0cee4ba72d1fb147bd68",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction; ×10^-5 test system=in vitro; Homo sapiens; A427 lung tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_bddf0fa51d994529bf30b53d1e32789d",
+      "source_payload_sha256": "6c98f1f6e4c4c3c08b83a98b6624826f55652ab52843b4158a6fa372f87d33ae",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no inhibitor test system=in vitro; EAT (Ehrlich ascites tumour"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_ed88c96faa7a42a6946dc1edd84dd048",
+      "source_payload_sha256": "0be66421f29df7950d10d97ce0ec3c5f5116ddac7751767e718edf25302e95fd",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "product yield test system=in vivo; mouse; pxn100 ovarian carcinoma xenograft tumour"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_0849014e0ead48a383891d8d410923eb",
+      "source_payload_sha256": "72b231507da10774c8c3a238872da48bebe52db421127bb60c752e69b4695f4f",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced frequency test system=in vitro; mouse; L5178Y lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_c528dd2ca4564fcbaf23d46536a72c96",
+      "source_payload_sha256": "024b2677ec801420e4e23555cba89171193cc98b07a13f76bf4daae3406f58fb",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced frequency test system=in vitro; mouse; L5178Y lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_c81a4691b0db41f08543d74e2b27bb94",
+      "source_payload_sha256": "fe16d84160ad34fc99d40c4f954a5ed65f6f22c93aad8e108a77471c2ae70e9d",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced frequency test system=in vitro; mouse; L5178Y lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_63607b42983c4ea5bb97eda56f1915de",
+      "source_payload_sha256": "9d7f2d3259c18655bedd5e4b9f58927353d71180d081f687ed7548d288093255",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced frequency test system=in vitro; mouse; L5178Y lymphoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_75a9c660d2e24e778b4189dd6ee934c5",
+      "source_payload_sha256": "3919d4e2e55bea939fa94729d20183d16b0090a66c0b441e1caf40bfd789e320",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no cisplatin) test system=in vitro; human; SQ20B head-and-neck tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_dc9d1801700f48f68055c70a4b3c8c1c",
+      "source_payload_sha256": "6c14ee2166daec96537adf11fa6667dbaff9abf46c93788eae4e49eb2a976352",
+      "level": 4,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibition test system=in vitro; Mus musculus; GL261 brain tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_63f734e6286a471f9b6ad0c65aedd437",
+      "source_payload_sha256": "b3e273ee44de9b5369c54aefbf9b0de34d9801356a95311effb3dfaab7b5efa7",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no effect) biological test system=MDA-MB-468 breast tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_5e9d14ddf60740a5b9045c5e6f3d8be3",
+      "source_payload_sha256": "5cbd73ab9fa3cda142c10a35dccd6af7cfd10b3e803498bf747fa0375d1a619d",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no effect) biological test system=MDA-MB-468 breast tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_890ea84fc8784763b0c1be0de31d32fb",
+      "source_payload_sha256": "f30e9ae0205915cf7614e9bf607fafae25444370e406093fadbd2e5ac8ca8dc1",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no unit reported) biological test system=Human, mixed solid tumours"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d1244533248846cfbc002a9b6a28973f",
+      "source_payload_sha256": "4f444d628bcea79c2ae7e248cf9d5613a4cb47d96021b66e488d2ad2af9a1c9f",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no unit reported) biological test system=Human, mostly breast tumours"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_e5bc79dfe2554171b9a1238fca559dd2",
+      "source_payload_sha256": "98138102861e8d98d1218fec869ab5414d5f7c8e2d63752b996db1d9ebb9f247",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no change in landscape) biological test system=Germ cell tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_ddfbf13637f142c6a3fac3e3def4de33",
+      "source_payload_sha256": "2c06468415f55dfdfa20e008c8d2e23997209a728f0cf4a3e700d44cfce3b483",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=T24 bladder cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_145cf9671a534903a75a2c21bbd2e4b6",
+      "source_payload_sha256": "7e607b0c98a76eeb836e8a1902df72eea82213430209ab2589198c22e812fe92",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no increase per patient, western blot) assay type=western blot of tumour"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_68743f8ff32f41e193a70215071b1f1b",
+      "source_payload_sha256": "957bf183476f06da36ec02b0024bfda193a3dc778ad2fff3affaad33bd8b9af5",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=PC3 prostate cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_71310034189b4ea490b57c0ba521449c",
+      "source_payload_sha256": "166c15da5b1d54f7258f99439add3eee932aeafa211dc99b3524821b1161bcd7",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no numeric scale reported) biological test system=HCT116 colorectal tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_97e67ca90bbc450180445733a4b3d4df",
+      "source_payload_sha256": "392adffe0c25c907a58909be287ec89df8e5a6debb0f62a82d034b0b83e78b8a",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no unit reported) assay type=H3K27me3 immunostaining of tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_ceaa9adc09654cbbb8a0104e00294d94",
+      "source_payload_sha256": "afb0ca1fc9a9c036ad164d72240305d50d667ea2156d2e0f77e77101365f2d0a",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=SW620 human colorectal carcinoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_7836b23f4e2649ea82876d6ecdf372f6",
+      "source_payload_sha256": "a19ecf1c08d3d68fd12ed3ce10d4c972ad6b474cf283ba8642b7abcd00b91242",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=SW620 human colorectal carcinoma"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_fd95285100fa410f9a5dd2ed5ba78f75",
+      "source_payload_sha256": "6be452b3614b6240cac00998ee3969b0dadb12c911abea7048bc2afa31c23009",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induction (qualitative) biological test system=ML-1 mouse leukemia"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_0d483066a21c4f57bd8ab4ebd1271b6b",
+      "source_payload_sha256": "0a8d4201ef118d290b8e34e7981f6bca1f15f1304c1219c834f3ba8fb0972f09",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced') biological test system=Human leukemia"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_5c530790b31e4d17b1ae8c52f9d6e186",
+      "source_payload_sha256": "ebd8b541791b72c5dad3f0475f9a0afe14b6b008f1b766fab6c230feced684dc",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no-increase readout biological test system=Tumors"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_f29d6aa6e1a741b5a094fa1738361489",
+      "source_payload_sha256": "4f5f1dcf6d22dcf7a688dd114a691b120c4c7f11dd08e2423e273155ec330772",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "induction observed within 4 h) biological test system=pediatric solid tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_4798e2669e9842c5b7e0ec25bd502b79",
+      "source_payload_sha256": "ce886d5b63630b2e12b8e99945e1b8119ee9e078260c5584485cdee2ff745ed1",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=Human DU-145 prostate cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_e29935cfad054b4cad8fdd769a1485ec",
+      "source_payload_sha256": "8963d13f1e09ab8ebceed3a690e4a3e7064f5629464f2c1c6a1f54cd668d8017",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced/not induced) biological test system=human breast cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_716e601d3b7745f790faa7c5b076bc8d",
+      "source_payload_sha256": "b2af05d7857d87db4138c826f334a8b219592ac51a0f8e9c5762fad24d1911a9",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "inhibited) biological test system=Homo sapiens; T24 and UM-UC-3 human bladder tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_d154edd33ced4d9ca6d54454f5a6ef18",
+      "source_payload_sha256": "de51ca9cd979af65f2a4e5f34a4dce5ec8db589451fa48acf24ba0fc5e22e117",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "cancer_subtype_outcome",
+          "matched_substring": "induced) biological test system=prostate cancer"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_b9d12c1a8e6b45fba31acb9fca2fbf2a",
+      "source_payload_sha256": "bf05310d4675a1b24aeec1b637986f147f0973cc93011537d699bd680f309d45",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no numeric unit reported) biological test system=Immune cells in the tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_8c99486c2401402ea49c43f884051a40",
+      "source_payload_sha256": "2ebd95ffad6dd15a4eafbc6f08ea80cba14477f2dfd8758b009e0a4a1039917c",
+      "level": 6,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no unit supplied assay type=ChIP-seq | biological test system=T cells (tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    },
+    {
+      "source_row_uid": "sr_62d437fc6105491db765e11fd9bbc1f8",
+      "source_payload_sha256": "57713944b60bf0db4f44c9f82552ce4a6a85c1a99272602a0c819e6d2e45eb7d",
+      "level": 7,
+      "previous_concatenated_matches": [
+        {
+          "pattern": "tumor_action",
+          "matched_substring": "no increase. endpoint unit=BrdU labeling index (labeled cells per 1000 tumor"
+        }
+      ],
+      "complete_individual_field_matches": []
+    }
+  ]
+}

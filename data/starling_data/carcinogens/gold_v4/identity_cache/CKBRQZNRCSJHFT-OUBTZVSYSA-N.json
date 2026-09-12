@@ -1,0 +1,23 @@
+{
+  "parent_key": "CKBRQZNRCSJHFT-OUBTZVSYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKBRQZNRCSJHFT-OUBTZVSYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~253~Es)Einsteinium",
+    "15840-02-5",
+    "253Es (isotope)",
+    "253Es isotope",
+    "DTXCID401364530",
+    "DTXSID70935911",
+    "Einsteinium-253",
+    "Einsteinium-253 isotope",
+    "Isotope:253Es",
+    "Isotope:Einsteinium-253",
+    "RefChem:1051339",
+    "SCHEMBL32663630"
+  ],
+  "http_status": 200,
+  "cids": [
+    167439
+  ]
+}

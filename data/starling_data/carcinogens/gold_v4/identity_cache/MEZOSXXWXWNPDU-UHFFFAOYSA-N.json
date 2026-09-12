@@ -1,0 +1,34 @@
+{
+  "parent_key": "MEZOSXXWXWNPDU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MEZOSXXWXWNPDU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Benzoylaminofluorene",
+    "3671-78-1",
+    "AKOS000544488",
+    "BRN 2812753",
+    "Benzamide, N-9H-fluoren-2-yl-",
+    "Benzamide, N-fluoren-2-yl-",
+    "CCRIS 2765",
+    "CHEMBL312812",
+    "DTXCID50112667",
+    "DTXSID40190176",
+    "N-(2-fluorenyl)benzamide",
+    "N-(9H-fluoren-2-yl)benzamide",
+    "N-2-Fluorenylbenzamide",
+    "N-9H-Fluoren-2-ylbenzamide",
+    "N-Fluoren-2-ylbenzamide",
+    "N-benzoyl-2-aminofluorene",
+    "Oprea1_688507",
+    "Oprea1_850940",
+    "RefChem:162467",
+    "SCHEMBL3363253",
+    "SR-01000461793",
+    "SR-01000461793-1",
+    "STL388991"
+  ],
+  "http_status": 200,
+  "cids": [
+    77240
+  ]
+}

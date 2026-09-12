@@ -1,0 +1,26 @@
+{
+  "parent_key": "FCKJYANJHNLEEP-SUUCIXNTSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FCKJYANJHNLEEP-SUUCIXNTSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3R,6R)-6-[(1R,3aS,7aR)-4-[2-[(5S)-5-hydroxy-2-methylenecyclohexylidene]ethylidene]-7a-methyl-2,3,3a,5,6,7-hexahydro-1H-inden-1-yl]-2-methylheptane-2,3-diol",
+    "Bio1_000104",
+    "Bio1_000593",
+    "Bio1_001082",
+    "Bio2_000129",
+    "Bio2_000609",
+    "CBiol_001818",
+    "KBio2_000129",
+    "KBio2_002697",
+    "KBio2_005265",
+    "KBio3_000257",
+    "KBio3_000258",
+    "KBioGR_000129",
+    "KBioSS_000129",
+    "Q27187524"
+  ],
+  "http_status": 200,
+  "cids": [
+    486588
+  ]
+}

@@ -1,0 +1,541 @@
+{
+  "schema_version": "current_starling_records.v1",
+  "updated_at": "2026-09-08",
+  "role": "sole frozen canonical-record inputs for current BBB, Bioavailability, Skin, Ames, DILI, and Carcinogens retrieval",
+  "local_restore_root": "outputs/chembl_tool/starling/current_records",
+  "history": {
+    "canonical_schema": "starling_canonical_record.v7",
+    "source_branch": "origin/joseph",
+    "source_commit": "70750c42035d6bde5ce9504211c4e22ac57e27f8",
+    "source_stage": "starling_normalized_v7/03_records",
+    "source_contract_sha256": {
+      "bbb_martins": "650810d338b1992a15ac8dcd565a97aaefdbe51b6ddb517f601cea392fe3f889",
+      "bioavailability_ma": "ac1145ae4da626d75c1aab29374b4cf951fe540a571a56d2df65c6ac1c80a7bb",
+      "skin_reaction": "40ac8cec4b49479372a668c598b6b7ed612f942881a23590d75d7986e3719c9e"
+    },
+    "selection_reason": "latest normalized and organized source snapshot used to build the current purity overlays",
+    "earlier_record_versions_retained": false,
+    "applies_to_tasks": [
+      "bbb_martins",
+      "bioavailability_ma",
+      "skin_reaction"
+    ]
+  },
+  "tasks": {
+    "bbb_martins": {
+      "archive_sha256": "a955bae1ff2e1b68814bf6ebad76c0af5666ecc23bcbc9347b5129bce1aea0ac",
+      "archive_size": 142500785,
+      "records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "records_size": 140655571,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "63117af3983d57bcb49e8a038795cadf6b0da51ca855eb789a323368bd5acc6a",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/bbb_martins/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "d52a80286aded00c3971671e88d37acec679225a5eb48c01d1ac8542220f1078",
+          "size": 52500785
+        }
+      ],
+      "files": [
+        {
+          "path": "duplicates.parquet",
+          "sha256": "4aa519d14410a02c8dec022ee6d7388494a4a8e9034012cc5a02367a79b60084",
+          "size": 27178
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "89998e3bb2f5e16854cfbb15855beb2847e5b32cd70f2313cdffbbedd402edd7",
+          "size": 6262685
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "1c1c794733a23eb0110435cbcaa8b178e99f768c664e549e8653cf7ca12c00ad",
+          "size": 929
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+          "size": 140655571
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "f4b4da28434c3b93feff97ef769ff8f0d47da47204f29cca4d511a3a571676b4",
+          "size": 419325
+        }
+      ]
+    },
+    "bioavailability_ma": {
+      "archive_sha256": "bc036b79c260b885130d78efc80b91ba5d894e3bf37ca1035b7249d063dc71b4",
+      "archive_size": 104751613,
+      "records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "records_size": 104905183,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "d8f4e34a27f15e90d1bf6cc800ca600a889030fe3ee3d42f133345b9faab629b",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/bioavailability_ma/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "588fdb9f036ea0a170ac8d477b592a803d277ed81b478b6c2be8be0141c71270",
+          "size": 14751613
+        }
+      ],
+      "files": [
+        {
+          "path": "duplicates.parquet",
+          "sha256": "fc43485f3dd1c89cf0b47adef403fe47767ae17eb5fb84abb93837d40bc332a1",
+          "size": 21501
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "98c3d6480ae9d2a7244cb69307ec60e10fc75a5819b58c10557e882dc8e84958",
+          "size": 2176106
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "f4280944d37334b42113008390aa0dcf6cd9fea299347c7eed6a5ab55da41e15",
+          "size": 943
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+          "size": 104905183
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "ec5dc0c0022ed0fb384794ad6c92ea731a49fed2951ac2bd3a7937cb4a7527e1",
+          "size": 129611
+        }
+      ]
+    },
+    "skin_reaction": {
+      "archive_sha256": "b8e56c120263e9e107b24375f4e603dc0c5e2640613a551770da17218b2d04ce",
+      "archive_size": 231882324,
+      "records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "records_size": 214931670,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+          "sha256": "587f7d221a3b59a19ad6fb1acf4bb3f93b6e5472a48f9c3844e33dd7747b743c",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+          "sha256": "20d84b264143255fc23f0868ddcfc27bdfc51f761d81a39a88980b0a66151e62",
+          "size": 90000000
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0003",
+          "sha256": "7e6b981e28b5afeb95060a3c13f681f11002b00fc556cd43f22c3b5525b1c5a7",
+          "size": 51882324
+        }
+      ],
+      "files": [
+        {
+          "path": "duplicates.parquet",
+          "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
+          "size": 51996
+        },
+        {
+          "path": "exclusions.parquet",
+          "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
+          "size": 18895455
+        },
+        {
+          "path": "manifest.json",
+          "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b",
+          "size": 934
+        },
+        {
+          "path": "records.parquet",
+          "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+          "size": 214931670
+        },
+        {
+          "path": "scalar_distribution.parquet",
+          "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a",
+          "size": 47760
+        }
+      ]
+    },
+    "ames": {
+      "archive_sha256": "7f8d63c7055d9150915eb2406bbd3187241f35142acf1f6b32f8e8d88845da31",
+      "archive_size": 478773376,
+      "records_sha256": "8119b26f0d44879312c87470798f75245ecc3efd337394dd55e005645347544b",
+      "records_size": 422824031,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
+          "size": 90000000,
+          "sha256": "a17a57d6f6cb36e33ce538ff2cfe3fd9c30a85ae66a52bc0978f3bc668df4f08"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
+          "size": 90000000,
+          "sha256": "90a0cdad474ec0c5c4432aaa56ee3106f9945d1ef002f4c51aef7cee9f7b0f83"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
+          "size": 90000000,
+          "sha256": "00c4016cb6b0accdf1e6b3ef377055c4d7e0585c74fe1c71a1ade062606b3241"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
+          "size": 90000000,
+          "sha256": "0f508ac2b173febb0b3581b6d4cfe5fa7c572244305810776ae9e807bc26c7af"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
+          "size": 90000000,
+          "sha256": "f7f1c24ba4a606f3da73e7f4dcd5b15f52311f9d7f0e91aa0f7a7f365e2dbba5"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
+          "size": 28773376,
+          "sha256": "a442593cdfdb24e075e174d7cfe9f4306880cb456aed8a98b36c9ba66e0fb624"
+        }
+      ],
+      "files": [
+        {
+          "path": "manifest.json",
+          "size": 9119,
+          "sha256": "9b1617d1da7c2a877f9b21eae84afa1b6adab446bfbf837296dbc5bd556f2dfb"
+        },
+        {
+          "path": "pending_identity.jsonl",
+          "size": 11597,
+          "sha256": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+        },
+        {
+          "path": "record_audit.parquet",
+          "size": 59953880,
+          "sha256": "fdd74471c7a5e3e25a302ad5d57e2cd4faaa83a1bd674e47640cbbfaaf8ffd89"
+        },
+        {
+          "path": "records.parquet",
+          "size": 422824031,
+          "sha256": "8119b26f0d44879312c87470798f75245ecc3efd337394dd55e005645347544b"
+        },
+        {
+          "path": "source_votes.jsonl",
+          "size": 5626403,
+          "sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+        },
+        {
+          "path": "study_vote_audit.jsonl",
+          "size": 796947,
+          "sha256": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e"
+        }
+      ],
+      "source_stage": "reviewed canonical records with record-level family assignment",
+      "source_manifest": "data/starling_data/ames/dataset_manifest.json",
+      "raw_source_manifest": "data/starling_data/ames/raw_v1/manifest.json"
+    },
+    "dili": {
+      "archive_sha256": "965eb026a1116aeab47efbe53db247f1f2c9db6c6e38429663caee64285439f7",
+      "archive_size": 937074282,
+      "records_sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16",
+      "records_size": 952951917,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0001",
+          "size": 90000000,
+          "sha256": "c1a7b20daa96ea720112c42c6fbfb84acc238463732e6ef21c3c947277856b14"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0002",
+          "size": 90000000,
+          "sha256": "8254c9255119e230dd9531d867873d460e706312664d37c34c7a3457895f6580"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0003",
+          "size": 90000000,
+          "sha256": "be5ac2b7a9546cea6e140781bf986ae4c48e4223ef7914b36b48c1d7862e1b06"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0004",
+          "size": 90000000,
+          "sha256": "69f21b936e32564ac630f8059bbd85f857caf17f51fe594d018f89a496ca7cb3"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0005",
+          "size": 90000000,
+          "sha256": "dd2d5e43f6e97f0cced06297c703324e4cf35c53952212ac33299667a63d473c"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0006",
+          "size": 90000000,
+          "sha256": "866246502af884f9a18c4843e32c862a62d5148addaecdd1d3631793ae2362d8"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0007",
+          "size": 90000000,
+          "sha256": "84c39eaf51d3d19d793015dc1d217b5c9f7b0c13b3795fef614867005385887d"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0008",
+          "size": 90000000,
+          "sha256": "5394ff669974d90a9f2892f2751023619e04b05c45c0333d0885edcbf8693dc4"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0009",
+          "size": 90000000,
+          "sha256": "e8053296beda17005297b2896d7360469dab485dd4d9919c0e35e979632e632f"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0010",
+          "size": 90000000,
+          "sha256": "fb7c5e9d324c19aa238d24b9e63f70f57b872614945a2e71a4aa333725e6c2c9"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v2/03_records/stage.tar.zst.part-0011",
+          "size": 37074282,
+          "sha256": "f27ce1cfa3a7d7bf820806bd0dd617078fee3c4fa825b8a9a6ecad668a26e84e"
+        }
+      ],
+      "files": [
+        {
+          "path": "actual_voter_membership.jsonl",
+          "size": 39722102,
+          "sha256": "c56c1c7be4a43e569af5e442a4b17505d2ed80f973a2d6863374308291e65234"
+        },
+        {
+          "path": "exact_duplicate_removals.jsonl",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "membership_changes.jsonl",
+          "size": 15331908,
+          "sha256": "3859dbc5ed0f639df833df3c29e81003ece37ae188e40258cef7e7395a59fd6a"
+        },
+        {
+          "path": "membership_refresh_receipt.json",
+          "size": 2230,
+          "sha256": "ba8e205d58ad1eb8cb60451298404ee6fdd2ef4e7a19fd4be3e193c9c30fb29a"
+        },
+        {
+          "path": "record_audit.parquet",
+          "size": 31182437,
+          "sha256": "ac75aeefbbac82c496aa016e8f491dfddb942a4e74e74a1b5484395b1afb2a57"
+        },
+        {
+          "path": "record_review.json",
+          "size": 4845,
+          "sha256": "fee7a3c5ff5aabe6cbb29472f9fb78fff350561e7f28874c789ecda2bcfd701d"
+        },
+        {
+          "path": "record_review_receipt.json",
+          "size": 656,
+          "sha256": "4ca6fc214ac01b3890786ea012f8d00f3e618826150b333f9f1ed7763a588cde"
+        },
+        {
+          "path": "records.parquet",
+          "size": 952951917,
+          "sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16"
+        },
+        {
+          "path": "retrieval_identity_cache.jsonl",
+          "size": 27173301,
+          "sha256": "62c9f5aa67ef0b139e64e524a116a433fb772eadf90b0a222f086ca6c23a27dc"
+        },
+        {
+          "path": "retrieval_identity_cache.manifest.json",
+          "size": 377,
+          "sha256": "3e4fdb53827c22b33a60e96f1ed450d14c371a3678ee9d0eb8cdc71e0538c958"
+        },
+        {
+          "path": "vote_support_links.parquet",
+          "size": 7097887,
+          "sha256": "acca03ae06e1baf1fe9fa0f49b8464644c7bf563c9476f094b97ed05944ff5ee"
+        }
+      ],
+      "source_release": "data/starling_data/dili/retrieval_review_v2/source"
+    },
+    "carcinogens": {
+      "archive_sha256": "9baeb877f2bf4659702e1c73e85a7945d721dbb00d1cbb98a3b740c32f0b878b",
+      "archive_size": 1974351504,
+      "records_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+      "records_size": 2019838822,
+      "parts": [
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0001",
+          "size": 90000000,
+          "sha256": "d819d24fec12e07c4969191769d2841ce50ee15681083b6a8c0e3eb8c23c3f78"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0002",
+          "size": 90000000,
+          "sha256": "391594fa6becf046e8a9366fdf312b6ca162c317cfd73ff378ebb9f880e5f1e7"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0003",
+          "size": 90000000,
+          "sha256": "76764197478bb92f9c369a1a81a1f63c80bde217332b2454d92d2cbc878637e4"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0004",
+          "size": 90000000,
+          "sha256": "00473b20f81f830c83998eeb961b010d8db1e8bc7f7ce6d31d6ed4199fbcce6d"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0005",
+          "size": 90000000,
+          "sha256": "818bb223215ee9e01ca0d3b196f878ecbab697199f722d6e219a59c0c591dff7"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0006",
+          "size": 90000000,
+          "sha256": "531046d38677c9ec68ff0cbdadc033a0627b99b718722889cf3a7e338f3b51cc"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0007",
+          "size": 90000000,
+          "sha256": "f8248a908f162bef7d4532b9835cc71dd7ffc04ee706f11359346d6b1b481c9e"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0008",
+          "size": 90000000,
+          "sha256": "cdeb436c405b4e42ccfcd4af1b8a765b948dcbca636dfa52f39b22bfa303e8c2"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0009",
+          "size": 90000000,
+          "sha256": "cc6a639a24743c8e83b868a26eef5c1cb34673dee23f7c676fcef00dd5782979"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0010",
+          "size": 90000000,
+          "sha256": "f579ba26717befd7bcd22820e3523504a5102be59a717e05477c978d6e8174cf"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0011",
+          "size": 90000000,
+          "sha256": "e825864592e486539b1ab9f40c8d079058901f5170b3e95332e20c8130aa3c77"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0012",
+          "size": 90000000,
+          "sha256": "74c14a42386e6c34b6f5f5a35dd1e6e4df25744311dc9ac179ec3577f59dae65"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0013",
+          "size": 90000000,
+          "sha256": "40a3eab5442fc3b1791e9f5abee606ac77c849937c6adb83bcd1556f1c69dbbc"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0014",
+          "size": 90000000,
+          "sha256": "1bd7ab4b9216bb43d11ec6ca48fb4970f211d380fec92feb7ec6c7a3fa8c5714"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0015",
+          "size": 90000000,
+          "sha256": "a93d54d3f7d9db782f8b98d256d76c4d2346bccde5c57c24db795445378310fa"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0016",
+          "size": 90000000,
+          "sha256": "9a7657c77e8b3930b610501536b4a2924bb297f05ac7fb0900e202c7027fe6f5"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0017",
+          "size": 90000000,
+          "sha256": "b39f0e4a76270ba8055a6d4da6fde8646157a6238feca50b75ab33cc2b736031"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0018",
+          "size": 90000000,
+          "sha256": "177d4e53e8ca931f42f1a3c4fb87cea281196492089b7d84e22aa2d668229edf"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0019",
+          "size": 90000000,
+          "sha256": "257425c7f09cfdc1c52c2823eb534bb88efe6efdb750ff600d56b7391fc6fdb7"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0020",
+          "size": 90000000,
+          "sha256": "e5369fee314f042d0f9f680eafc8357d678c5b6f0d7851b32e8e8a5559de6f9c"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0021",
+          "size": 90000000,
+          "sha256": "a01c5ac4fae59ea670fbaffa2a1450a038de0c099c265f1f4fc7a08aba4fef62"
+        },
+        {
+          "path": "artifacts/chembl_tool/tasks/carcinogens/starling_reviewed_gold_v4/03_records/stage.tar.zst.part-0022",
+          "size": 84351504,
+          "sha256": "0e80266a3a8d5f3e04d4a2db304b31d8144f5ed28db76695255cdff35ee6a985"
+        }
+      ],
+      "files": [
+        {
+          "path": "actual_voter_membership.jsonl",
+          "size": 31299372,
+          "sha256": "649746c5539b653c785f70a5e5a2382387819f531e97a10bb061681d9106e508"
+        },
+        {
+          "path": "exact_duplicate_removals.jsonl",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "membership_changes.jsonl",
+          "size": 13324153,
+          "sha256": "7b4775068ef3cdc425dd0727e108be9da837a3fa044e92f1b3a7ae08d0f75239"
+        },
+        {
+          "path": "membership_refresh_receipt.json",
+          "size": 3098,
+          "sha256": "f3f30f4c90d5609de1574137c173cd99649fcb00d3aed257a03ac14e6dde41e4"
+        },
+        {
+          "path": "record_audit.parquet",
+          "size": 62504273,
+          "sha256": "ac136cd81754bdddf6505ca166ba9fae93cd6a229c26be4d7bbbe3718babc2ac"
+        },
+        {
+          "path": "records.parquet",
+          "size": 2019838822,
+          "sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569"
+        },
+        {
+          "path": "retrieval_identity_cache.jsonl",
+          "size": 74189626,
+          "sha256": "a1c3d6f904f977795c758d93e9c443b6ee7b028f947f9f21953e708f4ab62a30"
+        },
+        {
+          "path": "retrieval_identity_cache.manifest.json",
+          "size": 384,
+          "sha256": "056bfd18a7ed5927bd549ca6759a92f5981f369e87c0c89c10294a3d746fc044"
+        },
+        {
+          "path": "retrieval_identity_cache.pending.jsonl",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "source_identity_clearances.jsonl",
+          "size": 60143,
+          "sha256": "5e2f06014e1f5d5a48d840b129345801b6a13fba261d00495a524f182940807f"
+        },
+        {
+          "path": "source_identity_holds.jsonl",
+          "size": 2855,
+          "sha256": "c9ce12e445e3f6c6c57b774b4473e09b4a192ec3df1fa9ef74f45f62d0e6a470"
+        },
+        {
+          "path": "vote_support_links.parquet",
+          "size": 7568728,
+          "sha256": "079ecf2cba17d619bc6a0c8cae4b0676395f24676b5e9f4d6949dba5ad86ddd5"
+        }
+      ],
+      "source_release": "data/starling_data/carcinogens/gold_v4/retrieval/source"
+    }
+  }
+}

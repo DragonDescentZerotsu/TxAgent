@@ -1,0 +1,33 @@
+{
+  "parent_key": "CRYMJHJFLJAFNU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CRYMJHJFLJAFNU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "65199-11-3",
+    "7,8-BENZO(A)PYRENEQUINONE",
+    "7,8-DIHYDROBENZO(A)PYRENE-7,8-DIONE",
+    "8V4WNR6N7H",
+    "B[a]P-7,8-dione",
+    "BaP-7,8-dione",
+    "Benzo(a)pyrene-7,8-dione",
+    "Benzo(a)pyrene-7,8-quinone",
+    "Benzo[a]?pyrene-?7,8-dione",
+    "C22356",
+    "CCRIS 7620",
+    "CHEBI:87752",
+    "DTXCID10137992",
+    "DTXSID50215501",
+    "Q27159898",
+    "RefChem:118180",
+    "SCHEMBL2338168",
+    "UNII-8V4WNR6N7H",
+    "benzo[a]pyrene-7,8-dione",
+    "benzo[a]pyrene-7,8-quinone",
+    "benzo[pqr]tetraphene-7,8-dione",
+    "benzopyrene-7,8-dione"
+  ],
+  "http_status": 200,
+  "cids": [
+    105020
+  ]
+}

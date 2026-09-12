@@ -1,0 +1,23 @@
+{
+  "parent_key": "MRJJQAVHEGLQJJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "21163-79-1",
+    "AKOS006348493",
+    "DTXCID20447872",
+    "DTXSID50497062",
+    "N-Formylacetamide",
+    "N-acetylformamide",
+    "RefChem:364079",
+    "SCHEMBL10840448",
+    "SCHEMBL4031891",
+    "SCHEMBL5972670",
+    "SCHEMBL87986",
+    "SCHEMBL87987"
+  ],
+  "cids": [
+    12412244
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MRJJQAVHEGLQJJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

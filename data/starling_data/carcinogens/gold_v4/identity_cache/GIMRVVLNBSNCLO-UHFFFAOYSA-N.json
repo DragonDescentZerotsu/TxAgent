@@ -1,0 +1,31 @@
+{
+  "parent_key": "GIMRVVLNBSNCLO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GIMRVVLNBSNCLO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-Hydroxy-2,6-diimino-1,2,5,6-tetrahydropyrimidin-5-yl)methanimidic acid",
+    "133310-38-0",
+    "2,6-Diamino-4-oxo-5-formamidopyrimidine",
+    "2,6-diamino-4-hydroxy-5-formamidopyrimidine",
+    "2,6-diamino-5-formamido-4-hydroxypyrimidine",
+    "CHEBI:29145",
+    "DTXSID20928075",
+    "Fapy guanine",
+    "Fapy-G",
+    "Fapygua",
+    "Formamide, N-(2,6-diamino-4,5-dihydro-4-oxo-pyrimidinyl)-",
+    "GIMRVVLNBSNCLO-UHFFFAOYSA-N",
+    "N-(2,4-diamino-6-oxo-5H-pyrimidin-5-yl)formamide",
+    "N-(2,6-Diamino-4,5-dihydro-4-oxo-5-pyrimidinyl)formamide",
+    "N-(2,6-diamino-4-oxo-4,5-dihydropyrimidin-5-yl)formamide",
+    "Q27109962",
+    "RefChem:926614",
+    "SCHEMBL29429095"
+  ],
+  "http_status": 200,
+  "cids": [
+    122328,
+    139031186,
+    152743479
+  ]
+}

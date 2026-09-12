@@ -1,0 +1,41 @@
+{
+  "parent_key": "FJNNGKMAGDPVIU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FJNNGKMAGDPVIU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16063-69-7",
+    "2,4,6-TRICHLOROPYRIDINE",
+    "2,4,6-Trichloro-pyridine",
+    "2,4,6-Trichloropyridine, 97%",
+    "2,4,6-trichloro- P",
+    "628-736-3",
+    "AC-1056",
+    "AKOS005259094",
+    "AMY9277",
+    "AS-16101",
+    "BRN 0114335",
+    "CS-W002718",
+    "DB-043462",
+    "DTXCID4089442",
+    "DTXSID80166951",
+    "EN300-86273",
+    "F047532",
+    "Fr12461",
+    "HY-W002718",
+    "MFCD00971928",
+    "PB19901",
+    "Pyridine, 2,4,6-trichloro-",
+    "Q-101047",
+    "RefChem:870586",
+    "SB21757",
+    "SCHEMBL190461",
+    "SCHEMBL2160548",
+    "SY005839",
+    "T3395",
+    "orb3031400"
+  ],
+  "http_status": 200,
+  "cids": [
+    27665
+  ]
+}

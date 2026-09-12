@@ -1,0 +1,16 @@
+[
+  {
+    "dataset": "dili",
+    "url": "https://dataverse.harvard.edu/api/access/datafile/4259585",
+    "sha256": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
+    "bytes": 26677,
+    "preview": "Drug_ID\tDrug\tY\n187.0\t\"CC(=O)OCC[N+](C)(C)C\"\t0.0\n247.0\t\"C[N+](C)(C)CC(=O)[O-]\"\t0.0\n298.0\t\"O=C(NC(CO)C(O)c1ccc([N+](=O)[O-])cc1)C(Cl)Cl\"\t0.0\n338.0\t\"O=C(O)c1ccccc1O\"\t0.0\n444.0\t\"CC(NC("
+  },
+  {
+    "dataset": "carcinogens_lagunin",
+    "url": "https://dataverse.harvard.edu/api/access/datafile/4259570",
+    "sha256": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
+    "bytes": 20221,
+    "preview": "Drug_ID\tDrug\tY\n\"Drug_1\"\t\"CC(CCl)OC(C)CCl\"\t1\n\"Drug_2\"\t\"COc1ccc(C(=O)/C(Br)=C\\C(=O)O)cc1\"\t1\n\"Drug_3\"\t\"O=S(=O)(O)c1cc(S(=O)(=O)O)c2c(/N=N/c3ccccc3)c(O)ccc2c1\"\t1\n\"Drug_4\"\t\"O=S(=O)(O)c1"
+  }
+]

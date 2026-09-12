@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "task": "carcinogens",
+  "base_source_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+  "records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+  "source_rows": 3270087,
+  "modified_source_rows": 1735,
+  "matched_modified_cards": 1735,
+  "level_counts": {
+    "2": 405813,
+    "1": 89617,
+    "0": 118947,
+    "3": 750569,
+    "4": 650547,
+    "7": 286938,
+    "6": 218187,
+    "5": 749469
+  },
+  "source_rows_deleted": 0,
+  "raw_acquisition_and_frozen_vote_membership_unchanged": true,
+  "review_sha256": "3b836800acb585497fca617b3ec3383cc6dcffaff86418e403fad6eab7805edf",
+  "all_unchanged_source_fields_independently_verified": true,
+  "excluded_identity_metadata_corrected": 52
+}

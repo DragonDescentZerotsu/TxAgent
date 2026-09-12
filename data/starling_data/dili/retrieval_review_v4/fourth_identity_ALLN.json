@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 443118,
+        "MolecularFormula": "C20H37N3O4",
+        "SMILES": "CCCC[C@@H](C=O)NC(=O)[C@H](CC(C)C)NC(=O)[C@H](CC(C)C)NC(=O)C",
+        "InChIKey": "FMYKJLXRRQTBOR-BZSNNMDCSA-N"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "ODSBLSVYNDTYQA-QCOLPVENSA-N",
+  "ok": true,
+  "synonyms": [
+    "2151063-66-8",
+    "DOTA-EB-TATE",
+    "EX-A13018"
+  ],
+  "cids": [
+    175678582
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ODSBLSVYNDTYQA-QCOLPVENSA-N/synonyms/JSON",
+  "http_status": 200
+}

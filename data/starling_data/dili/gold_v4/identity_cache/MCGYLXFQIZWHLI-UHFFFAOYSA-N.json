@@ -1,0 +1,32 @@
+{
+  "parent_key": "MCGYLXFQIZWHLI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,4-Tetrahydro-9-acridinecarboxamide",
+    "1,2,3,4-Tetrahydro-acridine-9-carboxylic acid amide",
+    "1,2,3,4-tetrahydroacridine-9-carboxamide",
+    "42878-53-5",
+    "968-640-1",
+    "AKOS000122653",
+    "CS-0102420",
+    "DTXCID60199409",
+    "DTXSID60366250",
+    "EN300-03860",
+    "Enamine_001129",
+    "G34939",
+    "HMS1397D07",
+    "Oprea1_378121",
+    "Oprea1_467356",
+    "RefChem:214491",
+    "SBA87853",
+    "SCHEMBL22208005",
+    "SR-01000029291",
+    "SR-01000029291-1",
+    "Z56792409"
+  ],
+  "cids": [
+    2063411
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MCGYLXFQIZWHLI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

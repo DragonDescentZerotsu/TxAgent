@@ -1,0 +1,39 @@
+{
+  "parent_key": "UJDATCBZIHYYMW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UJDATCBZIHYYMW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "26541-56-0",
+    "Acetamide, N-(acetyloxy)-N-(1,1'-biphenyl)-4-yl-",
+    "Acetamide, N-(acetyloxy)-N-[1,1'-biphenyl]-4-yl-",
+    "Acetanilide, 4-phenyl-, N-acetate (ester)",
+    "Acetic acid, (N-acetyl-N-(4-biphenyl)amino) ester",
+    "Acetic acid, ester with N-4-biphenylylacetohydroxamic acid",
+    "Acetohydroxamic acid, N-(4-biphenylyl)-, acetate",
+    "Acetoxy-4-acetylamino-1,1'-biphenyl, N-",
+    "BRN 2812954",
+    "CCRIS 728",
+    "CHEMBL310423",
+    "DTXCID40103605",
+    "DTXSID30181114",
+    "Hydroxylamine, N,O-diacetyl-N-(4-biphenylyl)-",
+    "N,O-Diacetyl-N-(4-biphenylyl)hydroxylamine",
+    "N-(4-Biphenylyl)acetohydroxamic acetate",
+    "N-(4-Biphenylyl)acetohydroxamic acid acetate",
+    "N-(Acetyloxy)-N-(1,1'-biphenyl)-4-ylacetamide",
+    "N-(Acetyloxy)-N-([1,1'-biphenyl]-4-yl)acetamide",
+    "N-(Acetyloxy)-N-[1,1'-biphenyl]-4-ylacetamide",
+    "N-Acetoxy-4-(acetylamino)biphenyl",
+    "N-Acetoxy-4-acetamidobiphenyl",
+    "N-Acetoxy-4-acetylamino-1,1'-biphenyl",
+    "N-Acetoxy-4-acetylaminobiphenyl",
+    "N-Acetoxy-4-biphenylacetamide",
+    "N-acetoxy-N-acetyl-4-aminobiphenyl",
+    "N5HQ7XN5UP",
+    "RefChem:162511"
+  ],
+  "http_status": 200,
+  "cids": [
+    91584
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "status": "stopped_verified_no_respawn",
+  "at": "2026-09-09T15:40:39.419528+00:00",
+  "host": "node001",
+  "services": [
+    {
+      "pid": 3870995,
+      "pgid": 3870995,
+      "command": "/data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8001 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai ",
+      "members": [
+        "3870995  147295 3870995 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8001 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai",
+        "3871479 3870995 3870995 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 -c from multiprocessing.resource_tracker import main;main(66)",
+        "3871480 3870995 3870995 VLLM::EngineCore",
+        "3871751 3871480 3870995 VLLM::Worker_TP0",
+        "3871752 3871480 3870995 VLLM::Worker_TP1"
+      ]
+    },
+    {
+      "pid": 3870998,
+      "pgid": 3870998,
+      "command": "/data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8002 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai ",
+      "members": [
+        "3870998  147295 3870998 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8002 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai",
+        "3871499 3870998 3870998 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 -c from multiprocessing.resource_tracker import main;main(66)",
+        "3871501 3870998 3870998 VLLM::EngineCore",
+        "3871739 3871501 3870998 VLLM::Worker_TP0",
+        "3871740 3871501 3870998 VLLM::Worker_TP1"
+      ]
+    },
+    {
+      "pid": 3871001,
+      "pgid": 3871001,
+      "command": "/data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8003 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai ",
+      "members": [
+        "3871001  147295 3871001 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8003 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai",
+        "3871498 3871001 3871001 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 -c from multiprocessing.resource_tracker import main;main(66)",
+        "3871500 3871001 3871001 VLLM::EngineCore",
+        "3871735 3871500 3871001 VLLM::Worker_TP0",
+        "3871736 3871500 3871001 VLLM::Worker_TP1"
+      ]
+    },
+    {
+      "pid": 3871004,
+      "pgid": 3871004,
+      "command": "/data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8004 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai ",
+      "members": [
+        "3871004  147295 3871004 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 /data1/tianang/anaconda3/envs/vllm/bin/vllm serve /local/tmp/tianang-gptoss-source-review/model --host 127.0.0.1 --port 8004 --api-key EMPTY --tensor-parallel-size 2 --served-model-name gpt-oss-120b --max-model-len 32768 --max-num-seqs 1024 --max-num-batched-tokens 8192 --gpu-memory-utilization 0.90 --enable-auto-tool-choice --tool-call-parser openai",
+        "3871486 3871004 3871004 /data1/tianang/anaconda3/envs/vllm/bin/python3.12 -c from multiprocessing.resource_tracker import main;main(66)",
+        "3871497 3871004 3871004 VLLM::EngineCore",
+        "3871747 3871497 3871004 VLLM::Worker_TP0",
+        "3871748 3871497 3871004 VLLM::Worker_TP1"
+      ]
+    }
+  ],
+  "preserved": [
+    "HAProxy",
+    "unrelated GPU jobs",
+    "tmux server"
+  ],
+  "verified_at": "2026-09-09T15:41:39.350715+00:00",
+  "remaining_requested_processes": [],
+  "gpu_snapshot": "index, memory.used [MiB], utilization.gpu [%]\n0, 0 MiB, 0 %\n1, 0 MiB, 0 %\n2, 0 MiB, 0 %\n3, 0 MiB, 0 %\n4, 0 MiB, 0 %\n5, 0 MiB, 0 %\n6, 0 MiB, 0 %\n7, 0 MiB, 0 %\n"
+}

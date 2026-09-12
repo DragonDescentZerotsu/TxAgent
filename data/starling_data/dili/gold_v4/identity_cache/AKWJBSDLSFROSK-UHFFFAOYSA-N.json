@@ -1,0 +1,18 @@
+{
+  "parent_key": "AKWJBSDLSFROSK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS006347292",
+    "AKWJBSDLSFROSK-UHFFFAOYSA-N",
+    "SCHEMBL14342337",
+    "SCHEMBL14868272",
+    "SCHEMBL20865510",
+    "SCHEMBL30234800",
+    "SCHEMBL340599"
+  ],
+  "cids": [
+    10197701
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AKWJBSDLSFROSK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

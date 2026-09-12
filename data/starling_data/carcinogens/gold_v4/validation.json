@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "all_raw_uids_accounted_once": true,
+  "source_directions_preserved": true,
+  "gold_majorities_recomputed": true,
+  "same_cohort_labels_across_splits": true,
+  "leakage_group_overlap": {
+    "scaffold": [
+      0,
+      0,
+      0
+    ],
+    "random": [
+      0,
+      0,
+      0
+    ]
+  },
+  "scaffold_overlap": 0,
+  "condition_coverage_all_splits": true,
+  "canonical_inputs_unchanged": true,
+  "tdc_votes": 0,
+  "new_model_calls": 0,
+  "gold_sha256": "9af552cd71a466417aca5a8d908a76f2762cab3406328e29bb6aa40e1e5f9c64"
+}

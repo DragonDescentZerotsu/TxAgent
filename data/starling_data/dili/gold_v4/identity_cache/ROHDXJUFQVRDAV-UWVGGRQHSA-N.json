@@ -1,0 +1,43 @@
+{
+  "parent_key": "ROHDXJUFQVRDAV-UWVGGRQHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[[(2S)-2-amino-3-phenyl-propanoyl]amino]-3-hydroxy-propanoic acid",
+    "(2S)-2-[[(2S)-2-amino-3-phenylpropanoyl]amino]-3-hydroxypropanoic acid",
+    "(2S)-2-{[(2S)-2-amino-3-phenylpropanoyl]amino}-3-hydroxypropanoic acid",
+    "(S)-2-((S)-2-Amino-3-phenylpropanamido)-3-hydroxypropanoic acid",
+    "(S)-2-[(S)-2-Amino-3-phenylpropanamido]-3-hydroxypropanoic Acid",
+    "16053-39-7",
+    "AKOS010408398",
+    "CHEBI:71032",
+    "CS-0655393",
+    "DA-74269",
+    "DTXSID60936336",
+    "F-S Dipeptide",
+    "F436962",
+    "FP108147",
+    "FS dipeptide",
+    "H-Phe-Ser-OH",
+    "HY-P4608",
+    "L-Phe-L-Ser",
+    "L-Serine, N-L-phenylalanyl-",
+    "MFCD00083787",
+    "N-(2-Amino-1-hydroxy-3-phenylpropylidene)serine",
+    "Phe-ser",
+    "Phenylalanine Serine dipeptide",
+    "Phenylalanine-Serine dipeptide",
+    "Phenylalanyl-Serine",
+    "Phenylalanylserine",
+    "Q27139264",
+    "RefChem:1094663",
+    "SCHEMBL11211279",
+    "SY485971",
+    "l-phenylalanyl-l-serine"
+  ],
+  "cids": [
+    193508,
+    7021825
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ROHDXJUFQVRDAV-UWVGGRQHSA-N/synonyms/JSON",
+  "http_status": 200
+}

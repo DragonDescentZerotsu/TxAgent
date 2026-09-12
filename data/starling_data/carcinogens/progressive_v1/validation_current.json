@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "task": "carcinogens",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "schemes": {
+    "scaffold": {
+      "status": "passed",
+      "manifest": "data/starling_data/carcinogens/progressive_v1/indices/scaffold/manifest.json",
+      "manifest_sha256": "4f68e32653a7d302dfae4a030528064ccabeaee8c64e73595ba90f0ee40e9b74",
+      "validation": "data/starling_data/carcinogens/progressive_v1/indices/scaffold/identity_validation.json",
+      "validation_sha256": "02d64f18f368fbbf0ac6ee02b88fa7986cbcaea6844315a662028f8c5dcd21cb",
+      "index_sha256": "ed84d3b2ddb613ef18083e7a81844c48a6aea4bd0fcbdce6b18b601a56aaeae0",
+      "evidence_sha256": "36b21a9d1a37afd70e6b57269f0a4531df959a21ac89829bf17fb3029d77c9ef",
+      "publication_receipt": "data/.build/new_task_tautomer_repair/carcinogens_scaffold_index_publication.json",
+      "all_indexed_groups_checked": 2464767,
+      "heldout_direct_cards": 0,
+      "excluded_direct_source_records": 107539
+    },
+    "random": {
+      "status": "passed",
+      "manifest": "data/starling_data/carcinogens/progressive_v1/indices/random/manifest.json",
+      "manifest_sha256": "ebdce1bef5d6de5878628b9185c8c5332d4a2955c8876fc12ea248e7d8d35b96",
+      "validation": "data/starling_data/carcinogens/progressive_v1/indices/random/identity_validation.json",
+      "validation_sha256": "0f89361875e613d4eded0043d83ab12cc526c015291c32d34be0e7aa6b666ff1",
+      "index_sha256": "63ce1fb9fe19de973bfe31c27bbe73f52e7fd94ab6fec1c5d4556f82f17e11e8",
+      "evidence_sha256": "90ccb9d352fae418c85d518b023117c8c7d8b6daa5f38c8ec7a1818b83898660",
+      "publication_receipt": "data/.build/new_task_tautomer_repair/carcinogens_random_index_publication.json",
+      "all_indexed_groups_checked": 2474560,
+      "heldout_direct_cards": 0,
+      "excluded_direct_source_records": 69003
+    }
+  },
+  "source_manifest_sha256": "fbf35ef19716798d22ba434d4bc73f2cda0cd124cce33264111a324261d73a7f",
+  "raw_uid_preservation_receipt": "data/starling_data/carcinogens/progressive_v1/identity_repair_overlay_receipt.json",
+  "raw_uid_preservation_receipt_sha256": "5db674a73cb6978d7d035f120bb11d893fd05e5b9d14b64e404a0bb40f5f1929",
+  "historical_semantic_source_validation": {
+    "path": "data/starling_data/carcinogens/progressive_v1/validation_all.json",
+    "sha256": "9e8ae339d1849930c87d422ac5a748b3ff33a52f6db63c4b985acaf29bd8638c",
+    "status": "historical_before_tautomer_identity_v2",
+    "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
+  },
+  "source_records_deleted": 0,
+  "old_five_task_identity_changed": false
+}

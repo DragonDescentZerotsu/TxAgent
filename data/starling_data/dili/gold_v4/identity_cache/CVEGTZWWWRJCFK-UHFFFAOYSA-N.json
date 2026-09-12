@@ -1,0 +1,35 @@
+{
+  "parent_key": "CVEGTZWWWRJCFK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2-Imino-1-methyl-1,2-dihydro-benzo[cd]indol-6-yl)-methyl-[4-(morpholine-4-sulfonyl)-benzyl]-amine; 0.5C6H6",
+    "138384-68-6",
+    "2-Imino-N-methyl-N-{[4-(morpholine-4-sulfonyl)phenyl]methyl}-1,2-dihydrobenzo[cd]indol-6-amine",
+    "2027T69J24",
+    "4-((4-(((2-AMINOBENZ(CD)INDOL-6-YL)METHYLAMINO)METHYL)PHENYL)SULFONYL)MORPHOLINE",
+    "6-N-methyl-6-N-[(4-morpholin-4-ylsulfonylphenyl)methyl]benzo[cd]indole-2,6-diamine",
+    "AG-331",
+    "AKOS040748907",
+    "BDBM50005210",
+    "CHEMBL9440",
+    "CS-0065004",
+    "DTXSID90930100",
+    "METESIND",
+    "METESIND [WHO-DD]",
+    "Metesind [INN]",
+    "N*6*-Methyl-N*6*-[4-(morpholine-4-sulfonyl)-benzyl]-benzo[cd]indole-2,6-diamine",
+    "N6-methyl-N6-(4-(morpholinosulfonyl)benzyl)benzo[cd]indole-2,6-diamine",
+    "Q27253390",
+    "RefChem:156827",
+    "SCHEMBL6703943",
+    "T28023",
+    "UNII-2027T69J24",
+    "metesindum",
+    "orb1699966"
+  ],
+  "cids": [
+    3047716
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CVEGTZWWWRJCFK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

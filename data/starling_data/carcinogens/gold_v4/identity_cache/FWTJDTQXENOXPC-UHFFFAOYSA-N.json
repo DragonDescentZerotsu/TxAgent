@@ -1,0 +1,24 @@
+{
+  "parent_key": "FWTJDTQXENOXPC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FWTJDTQXENOXPC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "102-086-6",
+    "2(3H)-Furanone, dihydro-3-(phenylmethyl)-",
+    "2-Benzyl-butyrolactone",
+    "2-benzyl-gamma-butyrolactone",
+    "3-Benzyldihydro-2(3H)-furanone #",
+    "3-benzyloxolan-2-one",
+    "61129-28-0",
+    "DTXSID60340232",
+    "EN300-316038",
+    "RefChem:498044",
+    "SCHEMBL3685687",
+    "alpha-benzyl-gamma-butyrolactone",
+    "benzylbutyrolactone"
+  ],
+  "http_status": 200,
+  "cids": [
+    562758
+  ]
+}

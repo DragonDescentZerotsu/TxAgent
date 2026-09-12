@@ -1,0 +1,27 @@
+{
+  "parent_key": "LOVDWMTZZYUFMA-MFIHWASWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LOVDWMTZZYUFMA-MFIHWASWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-Photodieldrin",
+    "(1aR,1bR,2S,2aS,4R,5S,5aS,5bS,6S,6aS,7R)-2a,3,3,4,5,5a-Hexachlorodecahydro-2,4,6-metheno-2H-cyclopenta[4,5]pentaleno[1,2-b]oxirene",
+    "10-Oxa-3,6-exo-4,5,13,13-hexachlorohexacyclo[6,3,1,13,6,19,11,02,7,05,12]tetradecane",
+    "13366-73-9",
+    "2,4,6-Metheno-2H-cyclopenta(4,5)pentaleno(1,2-b)oxirene, 2a,3,3,4,5,5a-hexachlorodecahydro-, (1aR,1bR,2S,2aS,4R,5S,5aS,5bS,6S,6aS,7R)-",
+    "2,4,6-Metheno-2H-cyclopenta[4,5]pentaleno[1,2-b]oxirene, 2a,3,3,4,5,5a-hexachlorodecahydro-, (1aR,1bR,2S,2aS,4R,5S,5aS,5bS,6S,6aS,7R)-",
+    "2,4,6-Metheno-2H-cyclopenta[4,5]pentaleno[1,2-b]oxirene, 2a,3,3,4,5,5a-hexachlorodecahydro-, (1aalpha,1bbeta,2alpha,2abeta,4beta,5beta,5abeta,5bbeta,6alpha,6aalpha,7R*)-",
+    "2,4,7-Metheno-1H-cyclopenta(a)pentalene, 1,1,2,3,3a,7a-hexachloro-5,6-epoxydecahydro-, stereoisomer",
+    "2,4,7-Metheno-1H-cyclopenta[a]pentalene, 1,1,2,3,3a,7a-hexachloro-5,6-epoxydecahydro-, stereoisomer",
+    "B9M2Y7GMR6",
+    "BL 6623",
+    "DTXCID501771831",
+    "DTXSID4020454",
+    "NCI-C00599",
+    "PHOTODIELDRIN",
+    "RefChem:173950"
+  ],
+  "http_status": 200,
+  "cids": [
+    131872351
+  ]
+}

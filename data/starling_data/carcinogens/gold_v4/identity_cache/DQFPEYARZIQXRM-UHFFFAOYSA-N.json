@@ -1,0 +1,28 @@
+{
+  "parent_key": "DQFPEYARZIQXRM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DQFPEYARZIQXRM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(N-ethoxy-C-ethyl-carbonimidoyl)-3-hydroxy-5-(2,4,6-trimethylphenyl)cyclohex-2-en-1-one",
+    "2-[1-(ethoxyimino)propyl]-3-hydroxy-5-mesitylcyclohex-2-en-1-one",
+    "4-(1-(Ethoxyimino)propyl)-5-hydroxy-2',4',6'-trimethyl-1,6-dihydro-[1,1'-biphenyl]-3(2H)-one",
+    "4-(N-Ethoxypropanimidoyl)-5-hydroxy-2',4',6'-trimethyl-1,6-dihydro[1,1'-biphenyl]-3(2H)-one",
+    "AC-37597",
+    "AKOS030236428",
+    "CHEMBL2355904",
+    "DB-057028",
+    "DQFPEYARZIQXRM-UHFFFAOYSA-N",
+    "NCGC00163930-02",
+    "NCGC00163930-03",
+    "NCGC00163930-04",
+    "NS00098683",
+    "Q19843298",
+    "SCHEMBL54230",
+    "orb1306791",
+    "orb3140202"
+  ],
+  "http_status": 200,
+  "cids": [
+    135474890
+  ]
+}

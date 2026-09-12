@@ -1,0 +1,20 @@
+{
+  "parent_key": "GDTXICBNEOEPAZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GDTXICBNEOEPAZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-Heptadecenoic acid",
+    "10-Heptadecenoic acid, (10Z)-",
+    "10tr-Heptadecenoic acid",
+    "62528-80-7",
+    "AKOS028109388",
+    "CHEBI:75098",
+    "RefChem:1057225",
+    "SCHEMBL236548",
+    "heptadec-10-enoic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    4385123
+  ]
+}

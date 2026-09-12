@@ -1,0 +1,26 @@
+{
+  "parent_key": "FMOZOFOCONBPNY-RAYWUTBOSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R,5R,7E)-7-ethylidene-1,2,8,8-tetramethylbicyclo(3.2.1)octane",
+    "(1R,2R,5R,7E)-7-ethylidene-1,2,8,8-tetramethylbicyclo[3.2.1]octane",
+    "(1R,2R,5R,E)-7-Ethylidene-1,2,8,8-tetramethylbicyclo(3.2.1)octane",
+    "(1R,2R,5R,E)-7-Ethylidene-1,2,8,8-tetramethylbicyclo[3.2.1]octane",
+    "193695-14-6",
+    "Bicyclo(3.2.1)octane, 7-ethylidene-1,2,8,8-tetramethyl-, (1R,2R,5R,7E)-",
+    "Bicyclo(3.2.1)octane, 7-ethylidene-1,2,8,8-tetramethyl-, (1R-(1alpha,2beta,5alpha,7E))-",
+    "Bicyclo[3.2.1]octane, 7-ethylidene-1,2,8,8-tetramethyl-, (1R,2R,5R,7E)-",
+    "Bicyclo[3.2.1]octane, 7-ethylidene-1,2,8,8-tetramethyl-, [1R-(1.alpha.,2.beta.,5.alpha.,7E)]-",
+    "Cyprotene",
+    "FMOZOFOCONBPNY-RAYWUTBOSA-N",
+    "FMOZOFOCONBPNY-WRGOHHSXSA-N",
+    "Q67879822",
+    "RefChem:130163",
+    "SCHEMBL29385378"
+  ],
+  "cids": [
+    91715050
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FMOZOFOCONBPNY-RAYWUTBOSA-N/synonyms/JSON",
+  "http_status": 200
+}

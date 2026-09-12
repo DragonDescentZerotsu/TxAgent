@@ -1,0 +1,26 @@
+{
+  "parent_key": "MHVNNXIUZUDMDB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MHVNNXIUZUDMDB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-Amino-1,2-benzanthracene",
+    "2381-18-2",
+    "7-Aminobenz(a)anthracene",
+    "7-Aminobenz[a]anthracene",
+    "7-aminobenz [a]anthracene",
+    "BRN 1820008",
+    "Benz(a)anthracen-7-amine",
+    "Benz[a]anthracen-7-amine",
+    "Benzo[c]anthracen-7-amine",
+    "DB-220168",
+    "DTXSID50178521",
+    "SCHEMBL20053356",
+    "benzo[a]anthracen-7-amine",
+    "tetraphen-7-amine"
+  ],
+  "http_status": 200,
+  "throttling": "",
+  "cids": [
+    75422
+  ]
+}

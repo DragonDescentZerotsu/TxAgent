@@ -1,0 +1,18 @@
+{
+  "parent_key": "MRCHHCXNURDQHS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MRCHHCXNURDQHS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "24390-70-3",
+    "AKOS006337888",
+    "DTXSID90179138",
+    "N-Nitro-N-methylurea",
+    "SCHEMBL1690545",
+    "Urea, 1-methyl-1-nitro-",
+    "n-methyl-n-nitrourea"
+  ],
+  "http_status": 200,
+  "cids": [
+    179420
+  ]
+}

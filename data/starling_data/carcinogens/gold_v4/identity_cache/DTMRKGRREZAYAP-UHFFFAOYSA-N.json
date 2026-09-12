@@ -1,0 +1,36 @@
+{
+  "parent_key": "DTMRKGRREZAYAP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DTMRKGRREZAYAP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,3',4,4',5,5'-octachloro-",
+    "1,2,3,4-tetrachloro-5-(2,3,4,5-tetrachlorophenyl)benzene",
+    "2,2',3,3',4,4',5,5'-OCTACHLOROBIPHENYL",
+    "2,2',3,3',4,4',5,5'-Octachlorbiphenyl",
+    "2,2',3,3',4,4',5,5'-Octachloro-1,1'-biphenyl",
+    "2,2',3,3',4,4',5,5'-Octachloro-1,1'-biphenyl #",
+    "2,2',3,3',4,4',5,5'-Octachlorobiphenyl; 2,2',3,3',4,4',5,5'-OCTACHLOROBIPHENYL; PCB 194",
+    "2,3,4,5,2',3',4',5'-Octachlorobiphenyl",
+    "35694-08-7",
+    "9UJN9A379B",
+    "CS-0451611",
+    "DTXCID9039078",
+    "DTXSID5074139",
+    "MSK3792",
+    "NS00050975",
+    "NS00114174",
+    "PCB 194",
+    "PCB No. 194",
+    "PCB No. 194 10 microg/mL in Isooctane",
+    "PCB No. 194 10 |Ig/mL in Isooctane",
+    "Q27273241",
+    "RefChem:53422",
+    "SCHEMBL2230314",
+    "SCHEMBL30034845",
+    "UNII-9UJN9A379B"
+  ],
+  "http_status": 200,
+  "cids": [
+    37251
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent_key": "JLNNQCUATONMIT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-Pipermethystine",
+    "(6-oxo-1-(3-phenylpropanoyl)-2,3-dihydropyridin-3-yl) acetate",
+    "111-873-3",
+    "2(1H)-Pyridinone, 5-(acetyloxy)-5,6-dihydro-1-(1-oxo-3-phenylpropyl)-",
+    "5-(Acetyloxy)-5,6-dihydro-1-(1-oxo-3-phenylpropyl)-2(1H)-pyridinone",
+    "5-Acetoxy-5,6-dihydro-1-(3-phenylpropanoyl)-2(1H)-pyridone",
+    "6-Oxo-1-(3-phenylpropanoyl)-1,2,3,6-tetrahydro-3-pyridinyl acetate #",
+    "6-oxo-1-(3-phenylpropanoyl)-1,2,3,6-tetrahydropyridin-3-yl acetate",
+    "71627-22-0",
+    "AKOS030558657",
+    "APX8C8S6AW",
+    "CHEBI:157726",
+    "CS-0892554",
+    "DA-76917",
+    "DTXSID60992199",
+    "HY-N12158",
+    "JLNNQCUATONMIT-UHFFFAOYSA-N",
+    "Pipermethystine",
+    "Q7197360",
+    "RefChem:174454",
+    "SCHEMBL6398794",
+    "T124340",
+    "UNII-APX8C8S6AW",
+    "[6-oxo-1-(3-phenylpropanoyl)-2,3-dihydropyridin-3-yl] acetate",
+    "orb1992283"
+  ],
+  "cids": [
+    194391
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JLNNQCUATONMIT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

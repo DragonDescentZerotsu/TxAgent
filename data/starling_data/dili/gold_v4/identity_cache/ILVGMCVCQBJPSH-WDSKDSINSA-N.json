@@ -1,0 +1,37 @@
+{
+  "parent_key": "ILVGMCVCQBJPSH-WDSKDSINSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-(((2S)-2-amino-3-hydroxypropanoyl)amino)-3-methylbutanoic acid",
+    "(2S)-2-(((2S)-2-azaniumyl-3-hydroxypropanoyl)amino)-3-methylbutanoate",
+    "(2S)-2-[[(2S)-2-amino-3-hydroxypropanoyl]amino]-3-methylbutanoic acid",
+    "51782-06-0",
+    "CHEBI:74823",
+    "DTXSID50427223",
+    "FS108181",
+    "H-Ser-Val-OH",
+    "L-Ser-L-Val",
+    "L-Serinyl-L-Valine",
+    "L-Valine, L-seryl-",
+    "L-seryl-L-valine",
+    "Q27144932",
+    "RefChem:1098475",
+    "S-V Dipeptide",
+    "SCHEMBL29777795",
+    "SV",
+    "SV dipeptide",
+    "Ser-Val",
+    "Serine Valine dipeptide",
+    "Serine-Valine dipeptide",
+    "Serinyl-Valine",
+    "Serinylvaline",
+    "seryl-valine",
+    "serylvaline"
+  ],
+  "cids": [
+    7020158,
+    7020159
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ILVGMCVCQBJPSH-WDSKDSINSA-N/synonyms/JSON",
+  "http_status": 200
+}

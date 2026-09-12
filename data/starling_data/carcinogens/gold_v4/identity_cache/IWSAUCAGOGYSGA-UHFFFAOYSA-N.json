@@ -1,0 +1,19 @@
+{
+  "parent_key": "IWSAUCAGOGYSGA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IWSAUCAGOGYSGA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "375798-08-6",
+    "Azete-2-carbaldehyde",
+    "DTXCID70567155",
+    "DTXSID20616400",
+    "RefChem:320306",
+    "SCHEMBL11533439",
+    "SCHEMBL23714680",
+    "SCHEMBL27639657"
+  ],
+  "http_status": 200,
+  "cids": [
+    21623160
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "VLCYCQAOQCDTCN-ZCFIWIBFSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-alpha-difluoromethylornithine",
+    "(-)-2-Difluoromethylornithine",
+    "(2S)-2,5-diamino-2-(difluoromethyl)pentanoic acid",
+    "(S)-2,5-diamino-2-(difluoromethyl)pentanoic acid",
+    "(S)-eflornithine",
+    "2-(difluoromethyl)-L-ornithine",
+    "66640-93-5",
+    "66640-93-5 (L-isomer)",
+    "AKOS030607731",
+    "BDBM50487426",
+    "BIDD:GT0723",
+    "C780YUS9YI",
+    "CHEMBL222838",
+    "CS-0083702",
+    "DB03856",
+    "DTXCID601021667",
+    "DTXSID00880061",
+    "EFLORNITHINE, (S)-",
+    "HY-B0744C",
+    "L-EFLORNITHINE",
+    "L-EflornithineL-|A-difluoromethylornithine",
+    "L-Ornithine, 2-(difluoromethyl)-",
+    "L-alpha-Difluoromethylornithine",
+    "NS00099035",
+    "Q27094728",
+    "RefChem:151848",
+    "SCHEMBL60698",
+    "T11812",
+    "UNII-C780YUS9YI",
+    "orb1709285"
+  ],
+  "cids": [
+    6992039
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VLCYCQAOQCDTCN-ZCFIWIBFSA-N/synonyms/JSON",
+  "http_status": 200
+}

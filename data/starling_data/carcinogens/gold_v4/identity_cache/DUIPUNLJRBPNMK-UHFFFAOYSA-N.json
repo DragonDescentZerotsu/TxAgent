@@ -1,0 +1,40 @@
+{
+  "parent_key": "DUIPUNLJRBPNMK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DUIPUNLJRBPNMK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-Dimethylaminobenzyl)methylamine",
+    "4-(Dimethylamino)-N-methyl-benzylamine",
+    "4-(Dimethylamino)-N-methylbenzenemethanamine",
+    "83671-43-6",
+    "AKOS000263899",
+    "Benzenemethanamine, 4-(dimethylamino)-N-methyl-",
+    "C78495",
+    "CS-0213196",
+    "DB-075957",
+    "DUIPUNLJRBPNMK-UHFFFAOYSA-N",
+    "EN300-12810",
+    "F639175",
+    "IDA67143",
+    "MFCD04600269",
+    "N,N-Dimethyl-4-((methylamino)methyl)aniline",
+    "N,N-dimethyl-4-(methylaminomethyl)aniline",
+    "N,N-dimethyl-4-[(methylamino)methyl]aniline",
+    "N-Methyl-4-(N,N-dimethylamino)benzylamine",
+    "Nmdmaba",
+    "RefChem:163707",
+    "SB76317",
+    "SBB052364",
+    "SCHEMBL4573651",
+    "SCHEMBL4573652",
+    "ST50949526",
+    "TS-01459",
+    "Z57327129",
+    "dimethyl{4-[(methylamino)methyl]phenyl}amine",
+    "p-dimethylamino-methylbenzylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    964742
+  ]
+}

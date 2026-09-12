@@ -1,0 +1,29 @@
+{
+  "parent_key": "QRMNFHXPNKCTAG-VQHVLOKHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QRMNFHXPNKCTAG-VQHVLOKHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "57590-22-4",
+    "BRN 2351696",
+    "CCRIS 4271",
+    "FORMIC ACID, HEXYLIDENEMETHYLHYDRAZIDE",
+    "HMFH",
+    "Hexanal methylformylhydrazone",
+    "Hexylidene gyromitrin",
+    "Hydrazinecarboxaldehyde, hexylidenemethyl-",
+    "N'-[(1E)-hexylidene]-N-methylformic hydrazide",
+    "N'-[(E)-Hexylidene]-N-methylformic hydrazide #",
+    "N-[(E)-hexylideneamino]-N-methylformamide",
+    "NSC 272568",
+    "NSC-272568",
+    "NSC272568",
+    "Q63088218",
+    "QRMNFHXPNKCTAG-VQHVLOKHSA-N",
+    "RefChem:146097",
+    "n-Hexanal N-methyl-N-formylhydrazone"
+  ],
+  "http_status": 200,
+  "cids": [
+    9556443
+  ]
+}

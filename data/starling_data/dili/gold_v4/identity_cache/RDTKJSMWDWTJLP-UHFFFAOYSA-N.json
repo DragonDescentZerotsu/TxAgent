@@ -1,0 +1,29 @@
+{
+  "parent_key": "RDTKJSMWDWTJLP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "171722-69-3",
+    "AKOS006273460",
+    "CHEMBL366070",
+    "Cyclopropanecarboxamide, N,2,2,3,3-pentamethyl-",
+    "Cyclopropanecarboxamide, N,2,2,3,3-pentamethyl- (9CI)",
+    "Cyclopropanecarboxylic acid,-2,2,3,3,N-pentamethyl amide",
+    "DA-43527",
+    "DTXCID5091642",
+    "DTXSID50169151",
+    "HS-7835",
+    "N,2,2,3,3-Pentamethylcyclopropanecarboxamide #",
+    "N,2,2,3,3-pentamethylcyclopropane-1-carboxamide",
+    "N-2-2-3-3-Pentamethylcyclopropane-1-carboxamide",
+    "N-Methyl-2,2,3,3-tetramethylcyclopropane carboxamide",
+    "N-Methyl-2,2,3,3-tetramethylcyclopropanecarboxamide",
+    "N-methyl-2,2,3,3-tetramethyl cyclopropyl carboxamide",
+    "RefChem:336209",
+    "SCHEMBL2939500"
+  ],
+  "cids": [
+    177237
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RDTKJSMWDWTJLP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

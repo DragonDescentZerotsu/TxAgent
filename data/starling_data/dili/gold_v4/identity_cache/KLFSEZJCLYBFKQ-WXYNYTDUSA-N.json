@@ -1,0 +1,34 @@
+{
+  "parent_key": "KLFSEZJCLYBFKQ-WXYNYTDUSA-N",
+  "ok": true,
+  "synonyms": [
+    "((3S)-3-(((2Z)-2-(2-amino-1,3-thiazol-4-yl)-2-((1,5-dihydroxy-4-oxopyridin-2-yl)methoxyimino)acetyl)amino)-2,2-dimethyl-4-oxoazetidin-1-yl) hydrogen sulfate",
+    "(2Z)-2-(2-Amino-1,3-thiazol-4-yl)-2-{[(1,5-dihydroxy-4-oxo-1,4-dihydro-2-pyridinyl)methoxy]imino}-N-[(3S)-2,2-dimethyl-4-oxo-1-(sulfooxy)-3-azetidinyl]acetamide",
+    "(S)-3-(2-(2-aminothiazol-4-yl)-2-((1,5-dihydroxy-4-oxo-1,4-dihydropyridin-2-yl)methoxyimino)acetamido)-2,2-dimethyl-4-oxoazetidin-1-yl hydrogen sulfate",
+    "4-THIAZOLEACETAMIDE, 2-AMINO-.ALPHA.-(((1,4-DIHYDRO-1,5-DIHYDROXY-4-OXO-2-PYRIDINYL)METHOXY)IMINO)-N-((3S)-2,2-DIMETHYL-4-OXO-1-(SULFOOXY)-3-AZETIDINYL)-, (.ALPHA.Z)-",
+    "4-Thiazoleacetamide, 2-amino-alpha-(((1,4-dihydro-1,5-dihydroxy-4-oxo-2-pyridinyl)methoxy)imino)-N-((3S)-2,2-dimethyl-4-oxo-1-(Sulfooxy)-3-azetidinyl)-, (alphaz)-",
+    "941285-15-0",
+    "AKOS040741286",
+    "BAL 30072",
+    "BAL-30072",
+    "BAL30072",
+    "BDBM50327179",
+    "CHEMBL1256967",
+    "DA-71280",
+    "DTXSID901352621",
+    "GTPL11004",
+    "LY97ZJM4QX",
+    "Q27283252",
+    "RefChem:116357",
+    "SCHEMBL13318507",
+    "T14492",
+    "UNII-LY97ZJM4QX",
+    "[(3S)-3-[[(2Z)-2-(2-amino-1,3-thiazol-4-yl)-2-[(1,5-dihydroxy-4-oxopyridin-2-yl)methoxyimino]acetyl]amino]-2,2-dimethyl-4-oxoazetidin-1-yl] hydrogen sulfate",
+    "orb1707597"
+  ],
+  "cids": [
+    52942440
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KLFSEZJCLYBFKQ-WXYNYTDUSA-N/synonyms/JSON",
+  "http_status": 200
+}

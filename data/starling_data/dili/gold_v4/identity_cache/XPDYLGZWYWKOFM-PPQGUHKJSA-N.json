@@ -1,0 +1,13 @@
+{
+  "parent_key": "XPDYLGZWYWKOFM-PPQGUHKJSA-N",
+  "ok": true,
+  "synonyms": [
+    "D-erythro-N,N-Dimethylsphingosine; Dimethylsphingosine",
+    "SCHEMBL29455695"
+  ],
+  "cids": [
+    129636442
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XPDYLGZWYWKOFM-PPQGUHKJSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,21 @@
+{
+  "parent_key": "CTCKXBIRQMSUIU-HPNKAZLSSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1R,4E,7R,17R)-4-ethylidene-7-methyl-6-methylidene-3,8-dioxo-2,9-dioxa-14-azatricyclo(9.5.1.014,17)heptadec-11-en-7-yl) acetate",
+    "11,16-Dioxo-13,19-didehydrosenecionan-12-yl acetate",
+    "90341-45-0",
+    "AKOS032948659",
+    "DTXCID001474771",
+    "DTXSID801016581",
+    "RefChem:182379",
+    "Senecionan-11,16-dione, 12-(acetyloxy)-13,19-didehydro-",
+    "Seneciphyllinine",
+    "[(1R,4E,7R,17R)-4-Ethylidene-7-methyl-6-methylidene-3,8-dioxo-2,9-dioxa-14-azatricyclo[9.5.1.014,17]heptadec-11-en-7-yl] acetate"
+  ],
+  "cids": [
+    6441161
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CTCKXBIRQMSUIU-HPNKAZLSSA-N/synonyms/JSON",
+  "http_status": 200
+}

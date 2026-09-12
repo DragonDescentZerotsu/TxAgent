@@ -1,0 +1,15 @@
+{
+  "parent_key": "HCYDZFJGUKMTQB-NTCAYCPXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HCYDZFJGUKMTQB-NTCAYCPXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "112574-50-2",
+    "CHEBI:166595",
+    "[34-Hydroxy-40-[(3E)-2-hydroxy-5-methylideneocta-3,7-dien-2-yl]-13,25,27,30,35-pentamethyl-39-methylidene-13-(2-sulfooxyethyl)-4,8,12,17,21,26,32,36,41,45,49-undecaoxaundecacyclo[25.22.0.03,25.05,22.07,20.09,18.011,16.031,48.033,46.035,44.037,42]nonatetracontan-14-yl] hydrogen sulfate",
+    "{34-hydroxy-40-[(3E)-2-hydroxy-5-methylideneocta-3,7-dien-2-yl]-13,25,27,30,35-pentamethyl-39-methylidene-13-[2-(sulfooxy)ethyl]-4,8,12,17,21,26,32,36,41,45,49-undecaoxaundecacyclo[25.22.0.0^{3,25}.0^{5,22}.0^{7,20}.0^{9,18}.0^{11,16}.0^{31,48}.0^{33,46}.0^{35,44}.0^{37,42}]nonatetracontan-14-yl}oxidanesulfonic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    13988278
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "status": "passed",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "tasks": {
+    "dili": {
+      "status": "passed",
+      "schemes": {
+        "scaffold": {
+          "status": "passed",
+          "manifest": "data/starling_data/dili/progressive_v1/indices/scaffold/manifest.json",
+          "manifest_sha256": "0e5e7e2c9014778de49a158e3d5571bd471cbc338a13b1c596bb80bc5afcde3a",
+          "validation": "data/starling_data/dili/progressive_v1/indices/scaffold/identity_validation.json",
+          "validation_sha256": "e79c996115fb4129f31d81eb3e163640c5e29aebd35ecfea9d2c566fa9cfdd7f",
+          "index_sha256": "86d9d5c28f67225d68f5235c15eefecd69310c402f6c84984ec6b134c167e24f",
+          "evidence_sha256": "2dc98dba25f530d2435466ba29f31c798b9618f6c4ab9a4e2b324ea30aab6147",
+          "publication_receipt": "data/.build/new_task_tautomer_repair/dili_scaffold_index_publication.json",
+          "all_indexed_groups_checked": 916089,
+          "heldout_direct_cards": 0,
+          "excluded_direct_source_records": 39843
+        },
+        "random": {
+          "status": "passed",
+          "manifest": "data/starling_data/dili/progressive_v1/indices/random/manifest.json",
+          "manifest_sha256": "649713f6b6ec07a48efd55ccd6520bb7ebe39400f5423f443454d2a0f931aeb3",
+          "validation": "data/starling_data/dili/progressive_v1/indices/random/identity_validation.json",
+          "validation_sha256": "1ea8b4922d45f5d16a7f43278ded030c70099ceec5a176656c0b6c3ca1845149",
+          "index_sha256": "23698541158d7e392506daa9f4bfcf2a5ab712c3a370153bc4052011f54ef848",
+          "evidence_sha256": "6319786eb14e6beb35109141cf86d1bb762480a465542aa4d46719167a76e5b4",
+          "publication_receipt": "data/.build/new_task_tautomer_repair/dili_random_index_publication.json",
+          "all_indexed_groups_checked": 910304,
+          "heldout_direct_cards": 0,
+          "excluded_direct_source_records": 71088
+        }
+      },
+      "validation": "data/starling_data/dili/progressive_v1/validation_current.json",
+      "validation_sha256": "51a80e9f8d4a1ce6620200d58c06abb4b751a5802c7ea5574d64cea7db69dd7e",
+      "dataset_manifest_sha256": "d5f5b42b7cb3e52f47eb57324d0b17b50291199189c65f5eaa899d07178ebec6"
+    },
+    "carcinogens": {
+      "status": "passed",
+      "schemes": {
+        "scaffold": {
+          "status": "passed",
+          "manifest": "data/starling_data/carcinogens/progressive_v1/indices/scaffold/manifest.json",
+          "manifest_sha256": "4f68e32653a7d302dfae4a030528064ccabeaee8c64e73595ba90f0ee40e9b74",
+          "validation": "data/starling_data/carcinogens/progressive_v1/indices/scaffold/identity_validation.json",
+          "validation_sha256": "02d64f18f368fbbf0ac6ee02b88fa7986cbcaea6844315a662028f8c5dcd21cb",
+          "index_sha256": "ed84d3b2ddb613ef18083e7a81844c48a6aea4bd0fcbdce6b18b601a56aaeae0",
+          "evidence_sha256": "36b21a9d1a37afd70e6b57269f0a4531df959a21ac89829bf17fb3029d77c9ef",
+          "publication_receipt": "data/.build/new_task_tautomer_repair/carcinogens_scaffold_index_publication.json",
+          "all_indexed_groups_checked": 2464767,
+          "heldout_direct_cards": 0,
+          "excluded_direct_source_records": 107539
+        },
+        "random": {
+          "status": "passed",
+          "manifest": "data/starling_data/carcinogens/progressive_v1/indices/random/manifest.json",
+          "manifest_sha256": "ebdce1bef5d6de5878628b9185c8c5332d4a2955c8876fc12ea248e7d8d35b96",
+          "validation": "data/starling_data/carcinogens/progressive_v1/indices/random/identity_validation.json",
+          "validation_sha256": "0f89361875e613d4eded0043d83ab12cc526c015291c32d34be0e7aa6b666ff1",
+          "index_sha256": "63ce1fb9fe19de973bfe31c27bbe73f52e7fd94ab6fec1c5d4556f82f17e11e8",
+          "evidence_sha256": "90ccb9d352fae418c85d518b023117c8c7d8b6daa5f38c8ec7a1818b83898660",
+          "publication_receipt": "data/.build/new_task_tautomer_repair/carcinogens_random_index_publication.json",
+          "all_indexed_groups_checked": 2474560,
+          "heldout_direct_cards": 0,
+          "excluded_direct_source_records": 69003
+        }
+      },
+      "validation": "data/starling_data/carcinogens/progressive_v1/validation_current.json",
+      "validation_sha256": "e04240ff8bd1f22c278b2266ab626a8f85184b3eccf63a9fbf7825ea43d36de6",
+      "dataset_manifest_sha256": "965a8b06df5a2b431667e37f2358b1672a7419c8023078939cb1e0a91de7067d"
+    }
+  },
+  "publication_method": "same_filesystem_atomic_hardlink_with_same_inode_verification",
+  "immutable_artifact_policy": "stage/current links must never be written in place; rebuilds atomically replace files",
+  "source_records_deleted": 0,
+  "old_five_task_identity_changed": false,
+  "publication_script": "data/.build/new_task_tautomer_repair/publish_retrieval_indices.py",
+  "publication_script_sha256": "367423ffc602557847d4fd88bf2c4b970407485ff03956b613ba1176519fe4cf"
+}

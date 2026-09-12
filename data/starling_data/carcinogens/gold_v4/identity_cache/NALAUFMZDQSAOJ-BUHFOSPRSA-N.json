@@ -1,0 +1,13 @@
+{
+  "parent_key": "NALAUFMZDQSAOJ-BUHFOSPRSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NALAUFMZDQSAOJ-BUHFOSPRSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-4,4',alpha,beta-Tetrachlorostilbene",
+    "4,4'-dichlorodiphenyldichloroethylene"
+  ],
+  "http_status": 200,
+  "cids": [
+    13114440
+  ]
+}

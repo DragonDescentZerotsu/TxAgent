@@ -1,0 +1,13 @@
+{
+  "parent_key": "CXZVPMKLJRYLSU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CXZVPMKLJRYLSU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-Hydroxy-N-Butylanilin",
+    "SCHEMBL1023113"
+  ],
+  "http_status": 200,
+  "cids": [
+    12696205
+  ]
+}

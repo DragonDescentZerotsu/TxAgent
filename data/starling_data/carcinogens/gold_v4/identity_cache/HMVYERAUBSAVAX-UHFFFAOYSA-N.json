@@ -1,0 +1,20 @@
+{
+  "parent_key": "HMVYERAUBSAVAX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HMVYERAUBSAVAX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-nitro-1-nitrosoguanidine",
+    "34225-54-2",
+    "DTXCID80110297",
+    "DTXSID60187806",
+    "Guanidine, N-nitro-N-nitroso-",
+    "N-Nitro-N-nitrosoguanidine",
+    "RefChem:347046",
+    "SCHEMBL623332",
+    "nitro-n-nitrosoguanidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    3015677
+  ]
+}

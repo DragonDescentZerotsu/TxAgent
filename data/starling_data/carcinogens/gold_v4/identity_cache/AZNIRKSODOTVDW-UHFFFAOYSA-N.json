@@ -1,0 +1,30 @@
+{
+  "parent_key": "AZNIRKSODOTVDW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AZNIRKSODOTVDW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-((1,1-Dimethylethyl)amino)-3-(5-methyl-2-nitrophenoxy)-2-propanol",
+    "1-(2-nitro-5-methyl-phenoxy) -3-t-butylamino-propan-2-ol",
+    "1-(tert-butylamino)-3-(5-methyl-2-nitrophenoxy)propan-2-ol",
+    "1-(tert-butylamino)-3-{2-nitro-5-methylphenoxy}-2-propanol",
+    "2-Propanol, 1-((1,1-dimethylethyl)amino)-3-(5-methyl-2-nitrophenoxy)-",
+    "2-Propanol, 3-(tert-butylamino)-1-(2-nitro-5-methylphenoxy)-, DL-",
+    "67971-73-7",
+    "86166-57-6",
+    "AE-848/32736022",
+    "AKOS005378197",
+    "CHEMBL1621422",
+    "DL-1-(2-Nitro-5-methylphenoxy)-3-tert-butylamino-propan-2-ol",
+    "DL-3-(tert-Butylamino)-1-(2-nitro-5-methylphenoxy)-2-propanol",
+    "DTXSID90987376",
+    "NCGC00246421-01",
+    "Oprea1_421058",
+    "RefChem:934483",
+    "STK018006",
+    "Zami 1327"
+  ],
+  "http_status": 200,
+  "cids": [
+    119519
+  ]
+}

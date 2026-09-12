@@ -1,0 +1,16 @@
+{
+  "parent_key": "QCZRUKIVQRTIFC-NUNZNLDCSA-N",
+  "ok": true,
+  "synonyms": [
+    "7-[(1S,2R,5S,6S)-6-Amino-2-methyl-3-azabicyclo[3.1.0]hex-3-yl]-1-(2,4-difluorophenyl)-6-fluoro-4-oxo-1,4-dihydro-1,8-naphthyridine-3-carboxylic acid",
+    "7-[(1S,4R,5S,6S)-6-amino-4-methyl-3-azabicyclo[3.1.0]hexan-3-yl]-1-(2,4-difluorophenyl)-6-fluoro-4-oxo-1,8-naphthyridine-3-carboxylic acid",
+    "CHEMBL1214187",
+    "SCHEMBL9180820",
+    "trovafloxacin1"
+  ],
+  "cids": [
+    10025695
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QCZRUKIVQRTIFC-NUNZNLDCSA-N/synonyms/JSON",
+  "http_status": 200
+}

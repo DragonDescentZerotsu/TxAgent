@@ -1,0 +1,15 @@
+{
+  "parent_key": "WRERTDQKTDJJIZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-(3-Amino-1h-Pyrazol-4-Yl)phenol",
+    "CHEMBL3806058",
+    "KTJ",
+    "Q27462129"
+  ],
+  "cids": [
+    24841368
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WRERTDQKTDJJIZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

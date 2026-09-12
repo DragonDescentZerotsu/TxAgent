@@ -1,0 +1,25 @@
+{
+  "parent_key": "BUSBFZWLPXDYIC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BUSBFZWLPXDYIC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "36465-76-6",
+    "Arsonic acid",
+    "BZ0G20838B",
+    "CHEBI:29850",
+    "DTXCID5032282",
+    "DTXSID5058515",
+    "H2AsHO3",
+    "Q2823240",
+    "RefChem:114209",
+    "SCHEMBL176080",
+    "[AsHO(OH)2]",
+    "arsonic acid, ion(2-)",
+    "hydridodihydroxidooxidoarsenic",
+    "orb3173948"
+  ],
+  "http_status": 200,
+  "cids": [
+    160269
+  ]
+}

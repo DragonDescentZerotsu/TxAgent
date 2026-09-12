@@ -1,0 +1,28 @@
+{
+  "parent_key": "JDSSLYZHFOIWFR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-Diacetylaminophenol",
+    "7403-76-1",
+    "Acetamide,N-acetyl-N-(4-hydroxyphenyl)-",
+    "DS-006333",
+    "DTXCID30147331",
+    "DTXSID00224840",
+    "Dapap compound",
+    "Diacetanilide, 4''-hydroxy-",
+    "Diacetyl para-aminophenol",
+    "JDSSLYZHFOIWFR-UHFFFAOYSA-N",
+    "NSC 400391",
+    "NSC-400391",
+    "NSC400391",
+    "RefChem:912479",
+    "SCHEMBL10292556",
+    "acetylparacetamol",
+    "n-acetyl-n-(4-hydroxyphenyl)acetamide"
+  ],
+  "cids": [
+    101212
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDSSLYZHFOIWFR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

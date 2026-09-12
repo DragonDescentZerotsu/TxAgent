@@ -1,0 +1,39 @@
+{
+  "parent_key": "HTDIUWINAKAPER-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HTDIUWINAKAPER-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(CH3)3As",
+    "209-815-8",
+    "4-04-00-03665 (Beilstein Handbook Reference)",
+    "593-88-4",
+    "Arsine, trimethyl-",
+    "AsMe3",
+    "BRN 1730780",
+    "C22417",
+    "C3H9As",
+    "CHEBI:27130",
+    "DB-009876",
+    "DTXCID1042603",
+    "DTXSID4073203",
+    "EINECS 209-815-8",
+    "H37695",
+    "HTDIUWINAKAPER-UHFFFAOYSA-N",
+    "MFCD00014838",
+    "MQ83UQ8A1Q",
+    "NS00079984",
+    "Q421500",
+    "RefChem:191775",
+    "SCHEMBL45177",
+    "Trimethylarsenic",
+    "Trimethylarsine",
+    "Trimethylarsine, elec. gr.",
+    "UNII-MQ83UQ8A1Q",
+    "trimethylarsane",
+    "trimethylarsane;trimethylarsenic"
+  ],
+  "http_status": 200,
+  "cids": [
+    68978
+  ]
+}

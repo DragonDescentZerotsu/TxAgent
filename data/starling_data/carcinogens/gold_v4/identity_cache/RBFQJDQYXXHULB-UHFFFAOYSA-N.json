@@ -1,0 +1,38 @@
+{
+  "parent_key": "RBFQJDQYXXHULB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RBFQJDQYXXHULB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "232-066-3",
+    "7784-42-1",
+    "ARSINE",
+    "Agent SA",
+    "Arsenic hydrid",
+    "Arsenic hydride",
+    "Arsenic hydride (AsH3)",
+    "Arsenic trihydride",
+    "Arseniuretted hydrogen",
+    "Arsenous hydride",
+    "Arsenowodor",
+    "Arsenwasserstoff",
+    "AsH3",
+    "CHEBI:22637",
+    "CHEBI:35822",
+    "CHEBI:47217",
+    "DTXCID503760",
+    "DTXSID3023760",
+    "Hydrogen arsenide",
+    "NS00080793",
+    "Q334599",
+    "RefChem:560078",
+    "SCHEMBL15912",
+    "V1I29R0RJQ",
+    "[AsH3]",
+    "arsane",
+    "trihydridoarsenic"
+  ],
+  "http_status": 200,
+  "cids": [
+    23969
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "parent_key": "ZDZSFWLPCFRASW-CPISFEQASA-N",
+  "ok": true,
+  "synonyms": [
+    "(20a)-2,3-Dihydroxy-6,23-dioxo-D:A-friedo-24-noroleana-1,3,5(10),7-tetraen-29-oic Acid; (9ss,13a,14ss,20a)-2,3-Dihydroxy-9,13-dimethyl-6,23-dioxo-24,25,26-trinoroleana-1,3,5(10),7-tetraen-29-oic Acid; TZ 93;",
+    "(2R,4aS,6aR,6aS,14aS,14bR)-9-formyl-10,11-dihydroxy-2,4a,6a,6a,14a-pentamethyl-8-oxo-1,3,4,5,6,13,14,14b-octahydropicene-2-carboxylic acid",
+    "(2R,4aS,6aS,12bR,14aS,14bR)-9-formyl-10,11-dihydroxy-2,4a,6a,12b,14a-pentamethyl-8-oxo-1,2,3,4,4a,5,6,6a,8,12b,13,14,14a,14b-t",
+    "(2R,4aS,6aS,12bR,14aS,14bR)-9-formyl-10,11-dihydroxy-2,4a,6a,12b,14a-pentamethyl-8-oxo-1,2,3,4,4a,5,6,6a,8,12b,13,14,14a,14b-tetradecahydropicene-2-carboxylic acid",
+    "(2S,4aS,6aS,12bR,14aR,14bS)-9-formyl-10,11-dihydroxy-2,4a,6a,12b,14a-pentamethyl-8-oxo-1,2,3,4,4a,5,6,6a,8,12b,13,14,14a,14b-tetradecahydropicene-2-carboxylic acid",
+    "(9beta,13alpha,14beta,20alpha)-2,3-Dihydroxy-9,13-dimethyl-6,23-dioxo-24,25,26-trinoroleana-1,3,5(10),7-tetraen-29-oic acid",
+    "107316-88-1",
+    "AC-34606",
+    "AKOS037514620",
+    "AN-668/21185001",
+    "BS-14299",
+    "CCG-269553",
+    "CHEBI:132314",
+    "CHEMBL3949551",
+    "CS-0009121",
+    "DTXCID201745617",
+    "DTXSID901315726",
+    "Demethylzeylasteral",
+    "Demethylzeylasteral (Standard)",
+    "Demethylzeylasteral (T-96)",
+    "EBC-513319",
+    "FD73925",
+    "HY-N0587",
+    "HY-N0587R",
+    "MFCD16660658",
+    "RefChem:131773",
+    "SCHEMBL22861859",
+    "TZ-93",
+    "orb1222888",
+    "orb1304219",
+    "orb3140502"
+  ],
+  "cids": [
+    10322911
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZDZSFWLPCFRASW-CPISFEQASA-N/synonyms/JSON",
+  "http_status": 200
+}

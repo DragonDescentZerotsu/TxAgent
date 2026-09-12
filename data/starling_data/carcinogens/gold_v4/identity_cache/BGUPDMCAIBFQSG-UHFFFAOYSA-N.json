@@ -1,0 +1,14 @@
+{
+  "parent_key": "BGUPDMCAIBFQSG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BGUPDMCAIBFQSG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-methyl-1H-indole-3-carboxaldehyde",
+    "BGUPDMCAIBFQSG-UHFFFAOYSA-N",
+    "SCHEMBL1094251"
+  ],
+  "http_status": 200,
+  "cids": [
+    22139118
+  ]
+}

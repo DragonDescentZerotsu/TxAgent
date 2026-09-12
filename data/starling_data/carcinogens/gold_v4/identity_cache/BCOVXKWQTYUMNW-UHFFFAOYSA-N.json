@@ -1,0 +1,32 @@
+{
+  "parent_key": "BCOVXKWQTYUMNW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BCOVXKWQTYUMNW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(2,4-Dichlorophenoxy)butanoic acid",
+    "2-(2,4-Dichlorophenoxy)butanoicacid",
+    "6956-86-1",
+    "AKOS B013892",
+    "AKOS000308710",
+    "ALBB-000871",
+    "BBL036336",
+    "Butanoic acid, 2-(2,4-dichlorophenoxy)-",
+    "Butanoic acid,2-(2,4-dichlorophenoxy)-",
+    "Butyric acid, 2-(2,4-dichlorophenoxy)-",
+    "CS-0319555",
+    "DTXSID201035006",
+    "H21166",
+    "MFCD03422252",
+    "NSC 65099",
+    "NSC-65099",
+    "NSC65099",
+    "RefChem:250115",
+    "SCHEMBL541271",
+    "STK500387",
+    "VS-13426"
+  ],
+  "http_status": 200,
+  "cids": [
+    97982
+  ]
+}

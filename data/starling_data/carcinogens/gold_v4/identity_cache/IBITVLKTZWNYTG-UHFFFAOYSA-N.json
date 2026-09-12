@@ -1,0 +1,13 @@
+{
+  "parent_key": "IBITVLKTZWNYTG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IBITVLKTZWNYTG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-p-Tolyl-taurin",
+    "SCHEMBL9100229"
+  ],
+  "http_status": 200,
+  "cids": [
+    53907442
+  ]
+}

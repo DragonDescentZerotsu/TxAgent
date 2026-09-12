@@ -1,0 +1,13 @@
+{
+  "parent_key": "UGGAYTQCFCFGLV-VQGPEPHFSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL147910",
+    "UGGAYTQCFCFGLV-VQGPEPHFSA-N"
+  ],
+  "cids": [
+    66606188
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UGGAYTQCFCFGLV-VQGPEPHFSA-N/synonyms/JSON",
+  "http_status": 200
+}

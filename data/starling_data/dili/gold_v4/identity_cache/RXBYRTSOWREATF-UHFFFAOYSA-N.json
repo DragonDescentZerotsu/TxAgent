@@ -1,0 +1,39 @@
+{
+  "parent_key": "RXBYRTSOWREATF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,4-Tetrahydro-acridine",
+    "1,2,3,4-Tetrahydroacridine",
+    "12T-0888",
+    "221-964-0",
+    "3295-64-5",
+    "69577-70-4",
+    "ACRIDINE, 1,2,3,4-TETRAHYDRO-",
+    "AKOS005081489",
+    "Acridine, tetrahydro-",
+    "BDBM50038731",
+    "CHEMBL292518",
+    "CS-0159509",
+    "DTXCID601382601",
+    "DTXSID70954586",
+    "EINECS 221-964-0",
+    "F227005",
+    "MFCD00972211",
+    "NCGC00186249-01",
+    "NS00048944",
+    "RefChem:1051928",
+    "SCHEMBL1532144",
+    "SCHEMBL1694673",
+    "SCHEMBL30645420",
+    "SCHEMBL3868709",
+    "SCHEMBL452908",
+    "SCHEMBL5987809",
+    "SY279201",
+    "tetrahydroacridine"
+  ],
+  "cids": [
+    155315
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RXBYRTSOWREATF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

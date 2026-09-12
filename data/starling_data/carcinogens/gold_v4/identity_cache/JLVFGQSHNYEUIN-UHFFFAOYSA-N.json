@@ -1,0 +1,29 @@
+{
+  "parent_key": "JLVFGQSHNYEUIN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JLVFGQSHNYEUIN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,8-Dihydroxy-10-acetylanthrone",
+    "1,8-dihydroxy-10-acetyl anthrone",
+    "10-Acetyl dithranol",
+    "10-Acetyl-1,8-dihydroxy-10H-anthracen-9-one",
+    "10-Acetyl-1,8-dihydroxy-9(10H)-anthracenone",
+    "10-acetyl-1,8-dihydroxyanthracen-9(10H)-one",
+    "2END7B3SG9",
+    "3022-61-5",
+    "9(10H)-Anthracenone, 10-acetyl-1,8-dihydroxy-",
+    "BDBM50060870",
+    "CCRIS 2039",
+    "CHEMBL339332",
+    "DTXCID40106813",
+    "DTXSID30184322",
+    "JLVFGQSHNYEUIN-UHFFFAOYSA-N",
+    "PD161366",
+    "RefChem:907890",
+    "SCHEMBL10630399"
+  ],
+  "http_status": 200,
+  "cids": [
+    3080591
+  ]
+}

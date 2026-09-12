@@ -1,0 +1,1197 @@
+{
+  "version": "indexed_record_review.v1",
+  "task": "dili",
+  "decisions": [
+    {
+      "card_id": "card_ee841830530c4472",
+      "canonical_smiles": "COc1ccc(C(OC[C@H]2O[C@@H](n3cc(C)c(=O)[nH]c3=O)C[C@@H]2OC(=O)CCC(=O)Oc2ccc([N+](=O)[O-])cc2[N+](=O)[O-])(c2ccccc2)c2ccc(OC)cc2)cc1",
+      "surface_sha256": "a98ca9fee2d3cf62f6e7fc98c7e19359c932836ce1c94358054f91b8c3b5f197",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish Disulfiram (tetraethylthiuramdisulfide, DTDS). Primary abstract explicitly expands DTDS as disulfiram, a DDTC metabolite. Preserve cell-cycle/apoptotic mechanism and distinguish the parent dithiocarbamate.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=400 | concentration_unit=umol_per_l | exposure_duration_and_schedule=8, 24, and 48 h | exposure_regimen=single_continuous | extra_details=Focal molecule DTDS (oxidized dithiocarbamate thiuramdisulfide); associated with cyclin E phosphorylation/degradation and decreased cdk2 kinase activity; flow-cytometry method per Materials and Methods. Primary abstract explicitly expands DTDS as disulfiram, a DDTC metabolite. Preserve cell-cycle/apoptotic mechanism and distinguish the parent dithiocarbamate. | needs_more_context=False"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "CCN(CC)C(=S)SSC(=S)N(CC)CC",
+      "allow_new_target": true,
+      "target_inchi_key": "AUZONCFQVSMFAP-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_9726816.json",
+        "document_sha256": "03a11d468ea621bc7a87a3afbd252623c2e7b78336f306804377f844758349db",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_d44a8ae640ff74fd",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "389019d30089b34580a9cd87c334c607543064e8b4a6f5547ca9ddc1efe8979b",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=Exogenous UDPG added to IFN-\u03b3/LPS-stimulated BMDMs for 24 or 36 h; in knockdown experiments cells were pretransfected with Pgm1/Ugp2/Pygl/P2ry14 siRNA before stimulation | extra_details=UDPG failed to rescue STAT1 in P2ry14-knockdown cells; RAR\u03b2/STAT1/UDPG pathway did not affect IL-4-stimulated macrophages. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_16cadc538785b636",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "4d30d6075c3d4c48276e85d93400976606a5b9b5bc21171383a10ad4ed245ba0",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=Pygl-siRNA-transfected BMDMs stimulated with IFN-\u03b3/LPS \u00b1 UDPG; western blot analysis of ERK1/2, JNK, P38, JAK1, JAK2, TC45 from 15 to 120 min after stimulation | extra_details=MAP kinase activation is linked here to TC45 downregulation and STAT1/JAK1/2 phosphorylation; ERK/JNK/P38 inhibitors (U0126, SP600125, SB203580) elevated TC45 and decreased STAT1/JAK phosphorylation and inflammatory genes. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_868ad92f50ee13af",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "a05998030963a648e765bda2396ab02cda9d02e5aca11a86d0331f0de9c2add0",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=BMDMs co-treated with UDPG (dose series 0, 100, 200 \u03bcM) and IFN-\u03b3/LPS for 24 or 36 h; sampling at 24/36 h | extra_details=Dose-response (100, 200 \u03bcM) reported collectively without dose-specific values; n=3 biologically independent experiments, mean\u00b1SEM, one-way ANOVA, **p<0.01, ****p<0.0001. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_d0caaee712cfedcb",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "14572862e90b53bfea76b568400de0482e9261755b9784c2e62cc7d2d6e3edef",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=BMDMs pretreated with GPI (20 or 50 \u03bcM) for 30 min or pretransfected with Pygl siRNA for 24 h, then stimulated with IFN-\u03b3/LPS with or without added UDPG; western blot of STAT1 phosphorylation from 15 to 120 min after stimulation | extra_details=STAT1 activation requires phosphorylation/dimerization/nuclear translocation; GPI or Pygl siRNA decreased STAT1-Y701 phosphorylation and nuclear import, reversed by added UDPG. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_fc4e61f0425822db",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "8a1116ff68ce682d178c8cc383bdf8704ac7ccc820ad914bfc220cd0a38b375a",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=BMDMs co-treated with UDPG (0, 100, 200 \u03bcM) and IFN-\u03b3/LPS for 24 or 36 h | extra_details=Qualitative increase reported; no numeric cytokine concentrations given in this legend. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=True"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_0822f675dfd88678",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "a0930854b9fe5a891bfe0b18ceca55cf3f7623152cfb1f18e110c7ca245a1ddb",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=BMDMs co-treated with UDPG (0, 100, 200 \u03bcM) and IFN-\u03b3/LPS for 24 or 36 h | extra_details=Qualitative upregulation; P2Y14 expression also compared across untreated, IFN-\u03b3/LPS- and IL-4-treated BMDMs. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_f61e41ec52bfd8eb",
+      "canonical_smiles": "O=c1ccn([C@@H]2O[C@H](COP(=O)(O)OP(=O)(O)O[C@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "f2549d6d176366a320e7681fae158292dfefe647d2d8c7cfdc72a29c68473253",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=IFN-\u03b3/LPS | exposure_schedule=PMA-differentiated THP-1 cells stimulated with IFN-\u03b3/LPS and treated with or without UDPG for 24 or 36 h | extra_details=n=3 biologically independent experiments; two-tailed unpaired Student's t-test used in the legend. Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_6d5e453c2ccd1b29",
+      "canonical_smiles": "CCCOC(=O)c1cc(O)c(O)c(O)c1",
+      "surface_sha256": "83d41c7a111c3ab317d54d8317714dea88da9629d8b72ccd431ac938d94e5f73",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=Microscopic morphological phenotyping\u2014cell shape, secretion vesicles, tumefaction, monolayer integrity versus untreated controls"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_adcd3a138768d96f",
+      "canonical_smiles": "CCCOC(=O)c1cc(O)c(O)c(O)c1",
+      "surface_sha256": "98361ded52081ed9933692d3403fbcb9cdd0c69c5459f81f7cd7dbc057ec1d9d",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=light-microscopy counting\u2014percent of cells with membrane blebbing"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_e5b51e3517afe6fd",
+      "canonical_smiles": "Cc1cc(C)c(SCC[n+]2[n-]oc(=O)c2C)c(C)c1",
+      "surface_sha256": "8bed75183aee84f9724e577ee5af1c8ffaec293280b9b77e411223716400b94c",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Whole-animal hepatic histopathology includes bile-duct proliferation and portal abnormalities; actual organ injury is near-direct outcome evidence.",
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "move"
+    },
+    {
+      "card_id": "card_254320c242faa8d7",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "9f3e51a98f509c155c2f397fedea96372810d7832a8a8f9b21d84daa2bb18e50",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | liver_injury_identifier=UMLS:C0235378 | qualifying_conditions=Association reported in patients receiving 6-MP therapy when 6-MMPR concentrations exceed 5,700 pmol/10^8 red blood corpuscles; claim cited from reference 33 rather than primary data in this paper. | extra_details=6-MMPR is a metabolite of 6-mercaptopurine (6-MP). The paper's own proposal that impaired XO-dependent oxidation of 6-MP may lead to 6-MMPR overproduction and increased thiopurine hepatotoxicity risk is a mechanistic speculation. TPMT and ITPA polymorphisms were noted not to be predisposing factors for thiopurine-induced hepatotoxicity. Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_20814157.json",
+        "document_sha256": "19497463ebc58584adc0d173beea747a0be87e6597a2b84787bc9bdf42e84773",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_41fdb9670b0ef594",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "472955d8111e638ee89647685b48071bee0a41a33a8c0428aa577fafec5954cf",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | liver_injury_identifier=UMLS:C0235378 | extra_details=6-MMPRs are TPMT-mediated methylated ribonucleotide metabolites derived from 6-TIMP during thiopurine therapy; they inhibit de novo purine synthesis, have weak anti-proliferative activity, and are described as causing or possibly causing liver injury. Stated in a review of thiopurine metabolism. Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_32363674.json",
+        "document_sha256": "1e67ed6748627502ae405fd1160b4f7444e6b993b00b63c87289f4e2ee63de80",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_7a38601d4946ce0b",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "93c1512925b5baf3c4796167b0133bf81c5abbd96d31682d1d818029ed90b4ba",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | liver_injury_identifier=UMLS:C0235378 | qualifying_conditions=In IBD patients who preferentially metabolize thiopurines to 6-MMPR, leading to toxic metabolite accumulation | extra_details=6-MMPR (methyl-mercaptopurine ribonucleotide) is formed from 6-MP/6-TIMP via TPMT; labeled hepatotoxic; its accumulation explains why some patients develop side effects and cannot remain on thiopurine therapy. Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22072847.json",
+        "document_sha256": "581cc5553f02f55ae274558fab490daf7ea616d28de9b017c0dd224354c899ce",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_25e4b8f51fb5a4d5",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "d4fee91cf2ff0db50bdbb9baa440a663100e3b0f8917c1833dfd962f507562e6",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | qualifying_conditions=Pediatric inflammatory bowel disease patients; entity is the 6-MP metabolite, not the parent drug. | extra_details=Drug-induced hepatotoxicity demonstrated in 10-15% of pediatric patients, associated with the 6-MP metabolite 6-methylmercaptopurine ribonucleotide (Dubinsky et al., 2000). Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_18222062.json",
+        "document_sha256": "a402325ef228bbfe523902f6071108c775d80e3fc6218ae343c943104710782f",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_b6bfbc370b4fdae8",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "2806c2c37f348f844c1fd5a27874053a54c64de4d56f900f3f60864ada6030d6",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | liver_injury_identifier=UMLS:C0235378 | qualifying_conditions=Elevated 6-MMPR concentrations in patients on thiopurine (6MP/AZA) therapy; most patients with elevated 6-MMPR have normal liver biochemistries. | extra_details=6-MMPR >5700 pmol/8\u00d710^8 RBC reported to increase risk of hepatotoxicity (Dubinsky); increasing 6-MMPR correlated with ALT rises (Nygaard); Goldenberg found 12% of thiopurine patients had elevated 6-MMPR but none had liver chemistry abnormalities. 6-MMPR (and 6-TGN) testing considered low predictive value for hepatotoxicity monitoring, mainly identifying noncompliers; combination thiopurine-allopurinol therapy lowered 6-MMPR and normalized transaminases (Sparrow). Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22500525.json",
+        "document_sha256": "13e2101d1b87925e982a843c2d7a97b8833ead5ec2987aa19218a6c35fa942d3",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_dd523a5356a0e416",
+      "canonical_smiles": "Cc1nc(=S)c2ncn([C@@H]3O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]3O)c2[nH]1",
+      "surface_sha256": "332fb4370d7624cb683fa2142178ff137f8874353901a4b80d4591e5655ee09e",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=hepatotoxic_metabolite | qualifying_conditions=Finding in IBD patients receiving therapeutic thiopurine (mercaptopurine or azathioprine) therapy; hepatotoxicity reported as correlating with 6-MMPR levels above 5700 pmol/8\u00d710E8 RBCs, not as an independently established single-agent causal attribution. | extra_details=Metabolite measured by HPLC; 6-MMPR was evaluated in the context of therapeutic drug monitoring of thiopurine metabolites. No biochemical pattern, phenotype detail, or severity level stated for the hepatotoxicity. No causal wording beyond correlation. Correct S-methyl connectivity against KEGG C16615. Clinical methylated-ribonucleotide measurements may pool phosphorylation states; the monophosphate is a representative chemical identity, not a phosphorylation-state-specific clinical causal claim. Preserve both positive associations and reported normal liver chemistries. Concentration-denominator formatting is retained as extracted and not independently verified; do not use it as a calibrated clinical threshold. | needs_more_context=True"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29512050.json",
+        "document_sha256": "60056c53480b4bead61efd89ea519d7813906b4400db6d11dacaec2733505dca",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_b2b2364c129d8b7b",
+      "canonical_smiles": "Nc1ncn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "6f89859eee49c3c07770c3efe7937e36fbb672c9fe596a615d631118392c778c",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "ISG20 expression is an antiviral transcriptional signature, not a canalicular endpoint.",
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "move"
+    },
+    {
+      "card_id": "card_362e5205ea26e7b9",
+      "canonical_smiles": "Nc1ncn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "ef042ba5833979b0959541b8a1c743eb07f4d82c64bcffcca65c809a70245a08",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Mixed hepatic differentiation gene panel is a transcriptional signature, not a bile-specific endpoint.",
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "move"
+    },
+    {
+      "card_id": "card_b3652274a4048eed",
+      "canonical_smiles": "CCCOC(=O)c1ccc(O)cc1",
+      "surface_sha256": "906fd70a765088aae909d4c1024e09454a7298bfc8da920a7f1b52648864218b",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=plasma-membrane blebbing (Fig. 3B)\u2014percentage of cells exhibiting blebbing"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_6262c5c03993f0a5",
+      "canonical_smiles": "CCCOC(=O)c1ccc(O)cc1",
+      "surface_sha256": "d50ead6bd7a2be382dc64582a0850d50f36d586e8a9a872d75ab0fa9a391aa81",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish Benzophenone-1 (BP-1). BP-1 is benzophenone-1, not propylparaben. Correct both chemical and model identity; original observations are preserved. Generic viability/nuclear or cellular morphology in this misidentified nonhepatic line lacks a liver-specific endpoint. Corrected redox mechanisms remain available.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_3cd3f749af856dbd",
+      "canonical_smiles": "CCCOC(=O)c1ccc(O)cc1",
+      "surface_sha256": "d3328a7eb93f748b70ef8167c08593f72ef72158788535cebd96e82f6d1a8a62",
+      "source_family": "dili_organelle_redox_stress",
+      "reason": "Original-paper test article and independently verified molecular structure establish Benzophenone-1 (BP-1). BP-1 is benzophenone-1, not propylparaben. Correct both chemical and model identity; original observations are preserved.",
+      "field_updates": {
+        "assay_context": "biological_model_context=SMMC-7721 cells, reported as hepatoma in the source; Cellosaurus CVCL_0534 identifies a HeLa derivative. This is not an authenticated hepatic model. | culture_format=2d_planar",
+        "qualifying_conditions": "concentration_values=10; 50; 200; 300 | concentration_unit=ug_per_ml | exposure_duration_and_schedule=24 h | exposure_regimen=single_continuous | extra_details=Focal molecule propylparaben (BP-1); DCFH-DA is an ROS probe, not the test agent. BP-1 is benzophenone-1, not propylparaben. Correct both chemical and model identity; original observations are preserved. | needs_more_context=False"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C(c1ccccc1)c1ccc(O)cc1O",
+      "allow_new_target": true,
+      "target_inchi_key": "ZXDDPOHVAMWLBH-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_40243607.json",
+        "document_sha256": "25893cc4163dbf5b973eb3e59a6cfa773a753cf1dc48441b769aa2ec339fcd26",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_1d47f1f499fe1609",
+      "canonical_smiles": "CCCOC(=O)c1ccc(O)cc1",
+      "surface_sha256": "350343ef49d726f5e28e8e15c7303af82f79fa67dd36c7e9bc95c739ac65875c",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Benzophenone-1 (BP-1). BP-1 is benzophenone-1, not propylparaben. Correct both chemical and model identity; original observations are preserved. Generic viability/nuclear or cellular morphology in this misidentified nonhepatic line lacks a liver-specific endpoint. Corrected redox mechanisms remain available.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_7b06020f205bf6af",
+      "canonical_smiles": "CCOC(=O)c1ccc2[nH]c3c(OC)c4[nH]c5ccc(C(=O)OCC)cc5c4cc3c2c1",
+      "surface_sha256": "b39e509e5ecfe5b48e7b09a71180f1e7adb269687f73f867ea79d02c25c7df07",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Measured CYP catalytic activity belongs with xenobiotic metabolic function, not gene signatures. Preserve lack of induction and enzyme-specific limits; this alone does not establish reactive bioactivation. Catalytic-activity assay, not mRNA expression. Retain negative enzyme effects as limited metabolic evidence.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=0.1; 1; 10 | concentration_unit=umol_per_l | exposure_regimen=single_continuous | extra_details=CYP2B6 activity data consistent with CYP2B6 mRNA data showing no marked increases. Catalytic-activity assay, not mRNA expression. Retain negative enzyme effects as limited metabolic evidence. | needs_more_context=True"
+      },
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_f2aa48614e8bb1b1",
+      "canonical_smiles": "Nc1nc2c(ncn2[C@@H]2O[C@H](COP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c(=O)[nH]1.[Na+].[Na+]",
+      "surface_sha256": "9c999c16e6ca33e490a9bb7fb0d9278e83e8839c0f183739d3ce95d0e25da87a",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Cellosaurus establishes model misidentification. Preserve the reported protective enzyme-leakage finding but do not present it as validated hepatic-cell injury. Separate in-vivo mouse evidence is unaffected. This record is generic ALT/AST leakage in a misidentified nonhepatic cell line, without an authenticated liver-specific model or separately measured mechanism.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_cb3d5450235caf7f",
+      "canonical_smiles": "CNC(=O)[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O",
+      "surface_sha256": "12f136e570979e91a75882c7c0cea84c3c9ece14b242142b77c1f3090d9d5742",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Methyl cholate (MeCA). MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | probe_or_analyte=BSEP expression | exposure_conditions=FXR agonist treatment; dose/concentration and time not reported in this review | extra_details=Cited as secondary reporting from reference [14]. Qualitative ('partially increase BSEP expression'). Increase in BSEP is an FXR-target functional response in the hepatobiliary homeostasis scope. MeDCA shows the same effect (separate record).; compound_name: MeCA MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "COC(=O)CC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3[C@H](O)C[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3C[C@H](O)[C@]12C",
+      "allow_new_target": true,
+      "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_d07d31d4f6a3858c",
+      "canonical_smiles": "CNC(=O)[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O",
+      "surface_sha256": "b383b9847ee514bfbb8bfdec13853492f37389bc8d8710b9191ae60f95b2f7f7",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish Methyl cholate (MeCA). MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | probe_or_analyte=CYP7A1 mRNA | exposure_conditions=FXR agonist treatment; dose/concentration and time not reported in this review | extra_details=Cited as secondary reporting from reference [14]. CYP7A1 mRNA repression is a direct FXR-target functional response to MeCA treatment (not a standalone synthesis-gene measurement). MeDCA shows the same effect (separate record).; compound_name: MeCA MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes. | needs_more_context=True"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "reassign",
+      "target_canonical_smiles": "COC(=O)CC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3[C@H](O)C[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3C[C@H](O)[C@]12C",
+      "allow_new_target": true,
+      "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_49709c057bcbd052",
+      "canonical_smiles": "CNC(=O)[C@H]1O[C@@H](n2cnc3c(N)ncnc32)[C@H](O)[C@@H]1O",
+      "surface_sha256": "d6a8efb1812f085a4fae943dedc366240ca6acc17d1787b229c3846f15e5f77b",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Methyl cholate (MeCA). MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | probe_or_analyte=FXR activation | exposure_conditions=Concentration-response series yielding EC50 \u2248 30 \u00b5M; exact concentrations not reported in this review | extra_details=Cited as secondary reporting from reference [14]. Weak FXR agonist. Methyl ester of an endogenous FXR ligand; the paper questions whether MeCA is hydrolyzed to act as CA. BSEP-expression and CYP7A1-mRNA endpoints are captured separately. MeDCA shows the same EC50 (see separate record).; compound_name: MeCA MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "COC(=O)CC[C@@H](C)[C@H]1CC[C@H]2[C@@H]3[C@H](O)C[C@@H]4C[C@H](O)CC[C@]4(C)[C@H]3C[C@H](O)[C@]12C",
+      "allow_new_target": true,
+      "target_inchi_key": "DLYVTEULDNMQAR-SRNOMOOLSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22571613.json",
+        "document_sha256": "4a01808baf4e466a239152665f39df31238e4c68152d9b229919f7dffcfee01f",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_8fdba0dde894ce47",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "a63c8d164c5f26ce5f6b6b1bc417acb7af88fd1608a0dfeb313c9f79702a8c88",
+      "source_family": "dili_organelle_redox_stress",
+      "reason": "Original-paper test article and independently verified molecular structure establish Toosendanin (TSN).",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=2.5; 5; 10; 20 | concentration_unit=umol_per_l | exposure_duration_and_schedule=6 h exposure | exposure_regimen=single_continuous | extra_details=Focal molecule TSN (Toosendanin). CTSB activity measured after lysing cells; lysate, reaction buffer, and substrate incubated 2 h at 37 \u00b0C before fluorescence read on a Multifunctional Microplate Reader (Biotek Synergy H1). Concentration series at 2.5, 5, 10, 20 \u00b5M. Outcome reported in results section not present in this window. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@@H]1C[C@H](O)[C@@]23CO[C@@H](O)[C@]1(C)[C@@H]2C[C@@H](O)[C@]1(C)[C@@H]3C(=O)[C@H](OC(C)=O)[C@@]2(C)[C@H](c3ccoc3)C[C@H]3O[C@]321",
+      "allow_new_target": true,
+      "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_6d2c5ec7bff2c31a",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "b0fb23a2a1692ab26da609e057ed53fd537d7a571eeb7e029b58740468ea4b5c",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Toosendanin (TSN). Full original Figure 3C concerns accumulation of autolysosomes, not canaliculi. Methods gives 0/6/12 h whereas Figure 3C gives 0/6/24 h; timing disagreement is unresolved and both are retained. Autolysosome ultrastructure belongs with lysosomal/autophagy stress, not bile transport.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=autolysosome_ultrastructure | assay_and_readout=Transmission electron microscopy\u2014intracellular ultrastructure (autophagic/vesicular and organelle morphology)",
+        "qualifying_conditions": "concentration_values=10 | concentration_unit=umol_per_l | exposure_duration_and_schedule=Treatment time course: 0, 6, 12 h exposure | exposure_regimen=single_continuous | extra_details=Focal molecule TSN (Toosendanin). Fixation with 2.5% glutaraldehyde in 0.1 M phosphate buffer (pH 7.4) for 2 h; graded ethanol dehydration and embedding; Hitachi HT7800/HT7700 microscope. The specific morphological endpoint quantified (e.g., autophagic vacuoles, mitochondria) is not stated in this methods passage; outcome reported in results section not present in this window. Full original Figure 3C concerns accumulation of autolysosomes, not canaliculi. Methods gives 0/6/12 h whereas Figure 3C gives 0/6/24 h; timing disagreement is unresolved and both are retained. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@@H]1C[C@H](O)[C@@]23CO[C@@H](O)[C@]1(C)[C@@H]2C[C@@H](O)[C@]1(C)[C@@H]3C(=O)[C@H](OC(C)=O)[C@@]2(C)[C@H](c3ccoc3)C[C@H]3O[C@]321",
+      "allow_new_target": true,
+      "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_d378dbdd82819221",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "62177c4ef9046b5f7874b9aa878833176755414d361e13eade063ce4c1dbcf3f",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Estradiol-17beta-D-glucuronide (E217G). Correct glucuronide identity with full steroid and beta-D-sugar stereochemistry. DBcAMP is a separate protective pretreatment; retain the reversible cholestatic outcome.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | probe_or_analyte=bile | exposure_conditions=Single dose of E\u2082\u2081\u2087G; bile flow measured over time (maximal effect 10-25 min after administration). Dose/concentration not stated in window. | extra_details=Reversible cholestasis as previously reported; paper's own name for the tested entity is E\u2082\u2081\u2087G. Paper text in window does not give the species explicitly, though methods are in vivo rat-based; bile flow returned to initial levels after the cholestatic phase. Correct glucuronide identity with full steroid and beta-D-sugar stereochemistry. DBcAMP is a separate protective pretreatment; retain the reversible cholestatic outcome. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "C[C@]12CC[C@@H]3c4ccc(O)cc4CC[C@H]3[C@@H]1CC[C@@H]2O[C@@H]1O[C@H](C(=O)O)[C@@H](O)[C@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "MTKNDAQYHASLID-QXYWQCSFSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
+        "document_sha256": "e3867b24e1737375caa051d244a5ea936514cdcbe0c307b67ec37ee1a2c92c12",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_e9638d7ab7b37436",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "5bcc2ccda8918d3bdaf23b9fdb3831cad6938bb9292d015c8d6d55f7dbe1b4b8",
+      "source_family": "dili_organelle_redox_stress",
+      "reason": "Original-paper test article and independently verified molecular structure establish Toosendanin (TSN). L02 is a documented HeLa derivative (Cellosaurus CVCL_6926), not a validated normal-hepatocyte comparator. Retain measured lysosomal mechanisms with that model limitation.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=10 | concentration_unit=umol_per_l | exposure_duration_and_schedule=6 h exposure | exposure_regimen=single_continuous | extra_details=Focal molecule TSN (Toosendanin); comparator treatments in the same assay were bafilomycin A1 (Baf, 0.5 \u00b5M) and sirolimus (Rapa, 1 \u00b5M), each a separate treatment arm. LysoTracker Red probe used at 50 nM for 20 min at 37 \u00b0C; imaging by confocal microscopy. Outcome (increase/decrease/effect direction) reported in results section not present in this window. L02 is a documented HeLa derivative (Cellosaurus CVCL_6926), not a validated normal-hepatocyte comparator. Retain measured lysosomal mechanisms with that model limitation. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@@H]1C[C@H](O)[C@@]23CO[C@@H](O)[C@]1(C)[C@@H]2C[C@@H](O)[C@]1(C)[C@@H]3C(=O)[C@H](OC(C)=O)[C@@]2(C)[C@H](c3ccoc3)C[C@H]3O[C@]321",
+      "allow_new_target": true,
+      "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_dc54ff007f3f5a05",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "24152604d58dff9ff2d3ad0a6bded602ad286cc9a10b1f135528a988719e3a2c",
+      "source_family": "dili_organelle_redox_stress",
+      "reason": "Original-paper test article and independently verified molecular structure establish Toosendanin (TSN). L02 is a documented HeLa derivative (Cellosaurus CVCL_6926), not a validated normal-hepatocyte comparator. Retain measured lysosomal mechanisms with that model limitation.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=10 | concentration_unit=umol_per_l | exposure_duration_and_schedule=1.5 h DQ-BSA preloading, then 6 h TSN treatment; DQ-BSA fluorescence read at 6 h after treatment start | exposure_regimen=single_continuous | extra_details=DQ-BSA probe (10 \u00b5g/mL) preloaded in EBSS for 1.5 h before TSN addition. Comparator arms were bafilomycin A1 (Baf 0.5 \u00b5M), aloxistatin (E64D 25 \u00b5M) plus pepstatin A (50 \u00b5M), and EBSS alone. Imaging by confocal microscopy. Outcome reported in results section not present in this window. L02 is a documented HeLa derivative (Cellosaurus CVCL_6926), not a validated normal-hepatocyte comparator. Retain measured lysosomal mechanisms with that model limitation. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@@H]1C[C@H](O)[C@@]23CO[C@@H](O)[C@]1(C)[C@@H]2C[C@@H](O)[C@]1(C)[C@@H]3C(=O)[C@H](OC(C)=O)[C@@]2(C)[C@H](c3ccoc3)C[C@H]3O[C@]321",
+      "allow_new_target": true,
+      "target_inchi_key": "NAHTXVIXCMUDLF-RFNFAWMESA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_36558960.json",
+        "document_sha256": "8adde11e402f6389406006008a89c6e6ec85a50d99c3aebd1a2b06167541dff7",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_fef7d547ea2fd78d",
+      "canonical_smiles": "CN1N=C(N)c2cn([C@@H]3O[C@H](CO)[C@@H](O)[C@H]3O)c3ncnc1c23",
+      "surface_sha256": "0153c1b748fc66899d34193e989bb6b988de0e1659281bebed247d48c2587e73",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Estradiol-17beta-D-glucuronide (E217G). Correct glucuronide identity with full steroid and beta-D-sugar stereochemistry. DBcAMP is a separate protective pretreatment; retain the reversible cholestatic outcome.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | probe_or_analyte=Mrp2 protein | exposure_conditions=Single dose of E\u2082\u2081\u2087G (estradiol-17\u03b2-D-glucuronide); Mrp2 detection compared across membrane fractions versus control (S). Dose not stated in window. | extra_details=About 100% increase with respect to S in intracellular membranes; no change in homogenates or mixed plasma membranes. Paper's own name for the tested entity: E\u2082\u2081\u2087G. Confocal microscopy of Mrp2 and ZO-1 canalicular retrieval is described in the methods but no numeric result was provided in the extracted window. Correct glucuronide identity with full steroid and beta-D-sugar stereochemistry. DBcAMP is a separate protective pretreatment; retain the reversible cholestatic outcome. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "C[C@]12CC[C@@H]3c4ccc(O)cc4CC[C@H]3[C@@H]1CC[C@@H]2O[C@@H]1O[C@H](C(=O)O)[C@@H](O)[C@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "MTKNDAQYHASLID-QXYWQCSFSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_12029626.json",
+        "document_sha256": "e3867b24e1737375caa051d244a5ea936514cdcbe0c307b67ec37ee1a2c92c12",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_97495fdf55e05151",
+      "canonical_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "surface_sha256": "40d9844e32387b07ce4e7dccf76826c6c7370a7e049bc5d85369cfc81b059f12",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=light microscopy\u2014morphological cytotoxicity at magnification \u00d7100"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_2496362e16d509d6",
+      "canonical_smiles": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+      "surface_sha256": "c1fb32ad1591f55216205aedc6b9232b522a2492fa7ac429871c077eb6565e7f",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Biliary metabolite conjugate detection characterizes metabolism and trapping; specimen bile does not make this a functional bile-transport assay.",
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "move"
+    },
+    {
+      "card_id": "card_db883575c9f22f0e",
+      "canonical_smiles": "O=C(c1ccccc1)c1cc(O)ccc1O",
+      "surface_sha256": "ca0d2fbd891381f7e95639db537c93dbe6e965948ce7af58250c30bc9d14039a",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. Cellular morphology in challenged HepG2 cells is not a bile-specific endpoint.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=hepatocyte_cellular_morphology | assay_and_readout=EZStain Hepatocyte Staining Kit (HiMedia)\u2014hepatocyte morphology imaging at 100x magnification",
+        "qualifying_conditions": "concentration_values=30 | concentration_unit=umol_per_l | exposure_duration_and_schedule=24 h co-treatment with RMP-INH challenge and lawsone, endpoint read at 24 h | exposure_regimen=single_continuous | extra_details=Morphological assessment of normal, RMP-INH intoxicated, and lawsone/silymarin-treated HepG2 cells; lawsone (30 \u00b5M) compared at same dose as silymarin (30 \u00b5M); numeric morphologic findings not resolvable from the legend. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C1C=C(O)c2ccccc2C1=O",
+      "allow_new_target": true,
+      "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_b0cef0294fe5e0b8",
+      "canonical_smiles": "O=C(c1ccccc1)c1cc(O)ccc1O",
+      "surface_sha256": "1b391053ff79a6f4176da286d033dcece9781b7657a4bb6845605dc8dec43468",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity.",
+      "field_updates": {
+        "qualifying_conditions": "exposure_duration_and_schedule=24 h co-treatment with RMP-INH challenge and lawsone, endpoint read at 24 h | exposure_regimen=single_continuous | extra_details=Focal molecule lawsone evaluated for hepatoprotection against RMP-INH challenge; three independent experiments, mean \u00b1 SD, Tukey's HSD p \u2264 0.05; numeric outcomes presented graphically and not resolvable from the text legend. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C1C=C(O)c2ccccc2C1=O",
+      "allow_new_target": true,
+      "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_2b12d7a9d033ee29",
+      "canonical_smiles": "O=C(c1ccccc1)c1cc(O)ccc1O",
+      "surface_sha256": "d17008087d69e5d798257d681ce367fb36f98efbd426ca1d8d3880128573fc25",
+      "source_family": "dili_organelle_redox_stress",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity.",
+      "field_updates": {
+        "qualifying_conditions": "exposure_duration_and_schedule=24 h co-treatment with RMP-INH challenge and lawsone, endpoint read at 24 h | exposure_regimen=single_continuous | extra_details=Focal molecule lawsone evaluated for hepatoprotection against RMP-INH challenge; three independent experiments, mean \u00b1 SD, Tukey's HSD p \u2264 0.05; numeric outcomes presented graphically and not resolvable from the text legend. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C1C=C(O)c2ccccc2C1=O",
+      "allow_new_target": true,
+      "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_a56690117fdd04d4",
+      "canonical_smiles": "O=C(c1ccccc1)c1cc(O)ccc1O",
+      "surface_sha256": "e62e49623a81cf6ee0a8b7611bc2907f7842e00f10238684bc969914515138d9",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity.",
+      "field_updates": {
+        "qualifying_conditions": "exposure_duration_and_schedule=24 h co-treatment with RMP-INH challenge and lawsone, endpoint read at 24 h | exposure_regimen=single_continuous | extra_details=Focal molecule lawsone evaluated for hepatoprotection against RMP-INH challenge; three independent experiments, mean \u00b1 SD, Tukey's HSD p \u2264 0.05; numeric outcomes presented graphically and not resolvable from the text legend. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C1C=C(O)c2ccccc2C1=O",
+      "allow_new_target": true,
+      "target_inchi_key": "WVCHIGAIXREVNS-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_29859372.json",
+        "document_sha256": "7c06bf7a0fbd906fb5a67acad2e7cd43d67de442a827452a9802a4c38dd970c6",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_5a36fefabaeb5972",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](CO)[C@@H](O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "0d39bfdfed02e5dd201787c0e6f53106e6f04fa86393478b36eb7dab445b0188",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original Methods names Sigma amide14-22 but gives no catalog or sequence/terminal modification. Current Sigma product 476485 is myristoylated GRTGRRNAI-amide; this does not establish the historical reagent form. The attached nucleoside is demonstrably wrong; preserve the canalicular no-effect observation without guessing a peptide structure. Repair-first attempt could not establish exact historical peptide formulation. Quarantine only the invalid molecular association; valid negative observation remains in the corrected source record.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_e91724d5ba687be2",
+      "canonical_smiles": "CC(C)NNC(=O)c1ccncc1",
+      "surface_sha256": "2e6b10b9c0045e5889c7ffa7fa54587a80c4f25544477377519ee181fe5b8727",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish isoniazid. Correct named isoniazid association; original attached structure is isopropyl hydrazide/iproniazid. Retain BSEP negative under the reported assay conditions.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=parent | probe_or_analyte=bile salt | exposure_conditions=Isoniazid tested for bile salt transport inhibition among the 14 sDILI drugs without substantial inhibition. | extra_details=Correct named isoniazid association; original attached structure is isopropyl hydrazide/iproniazid. Retain BSEP negative under the reported assay conditions. | needs_more_context=False"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "NNC(=O)c1ccncc1",
+      "allow_new_target": true,
+      "target_inchi_key": "QRXWMOHMRWLFEY-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27000539.json",
+        "document_sha256": "832484a325f632ab51ff8cb62de823119afe862f1033d55cb02661609747dac6",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_d54f953eb0b33cf5",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "afcb4a01ae3f76480f4b7b67eda370f13e2c45d2f271ac3b1fbfd94d71915626",
+      "source_family": "dili_bioactivation_mitochondria",
+      "reason": "Original-paper test article and independently verified molecular structure establish Palmitic acid (PA). PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=0.2 | concentration_unit=mmol_per_l | exposure_duration_and_schedule=24 h PA exposure, staining and microscopic read after administration | exposure_regimen=single_continuous | extra_details=Primary molecule PA (palmitic acid); MGIG cotreatment arm at 0.25 mM for 24 h. TMRM is a probe/dye, not the focal molecule. Mitochondrial membrane-potential outcome numbers not reported in the provided methods text. PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. | needs_more_context=True"
+      },
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "reassign",
+      "target_canonical_smiles": "CCCCCCCCCCCCCCCC(=O)O",
+      "allow_new_target": true,
+      "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_bd802fac6c7335a2",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "cea9755251782b9b247a712c665ea12806c98f25f8df9dd2b7a208bf36e2785d",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish Palmitic acid (PA). PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. ER morphology is organelle stress, not bile-canalicular morphology.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=endoplasmic_reticulum_morphology | assay_and_readout=ER-Tracker Red live-cell fluorescence\u2014endoplasmic reticulum morphology",
+        "qualifying_conditions": "concentration_values=0.2 | concentration_unit=mmol_per_l | exposure_duration_and_schedule=24 h PA exposure, ER staining and microscopic read after administration | exposure_regimen=single_continuous | extra_details=Primary molecule PA (palmitic acid); MGIG cotreatment arm at 0.25 mM for 24 h. ER-Tracker Red is a probe/dye, not the focal molecule. ER morphology outcome numbers not reported in the provided methods text. PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. | needs_more_context=True"
+      },
+      "target_level": 7,
+      "target_family": "dili_organelle_redox_stress",
+      "action": "reassign",
+      "target_canonical_smiles": "CCCCCCCCCCCCCCCC(=O)O",
+      "allow_new_target": true,
+      "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_db87d9c15878abb2",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "b0dff74401041fa94a0978fbc0ee61683a1fc014484a43864778e4335dbe00a5",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish Palmitic acid (PA). PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=0.2 | concentration_unit=mmol_per_l | exposure_duration_and_schedule=24 h PA exposure, then drug withdrawn and EdU added for 2 h, endpoint read after staining | exposure_regimen=single_pulse_then_washout | extra_details=Primary molecule PA (palmitic acid); MGIG cotreatment present in one arm at 0.25 mM with same 24 h timing; vehicle, controls, and proliferation outcome numbers not reported in the provided methods text. EdU is a label/probe, not the focal molecule. PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "CCCCCCCCCCCCCCCC(=O)O",
+      "allow_new_target": true,
+      "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_a5ff3a0ef45f7a0b",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "3b3567bf9d7412cab5b2c7337c1b21e3f86d95d9bf6163eba18ffc220e77ee63",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish Palmitic acid (PA). PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome.",
+      "field_updates": {
+        "qualifying_conditions": "exposure_duration_and_schedule=24 h exposure | exposure_regimen=single_continuous | extra_details=Primary molecule PA (palmitic acid); MGIG is a cotreatment partner at its own doses and timing, with order/dose not detailed here; vehicle, controls, and any dose-specific outcomes are not reported in the provided methods text. Concentration series referred to only as 'investigated concentrations'; no values given. PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "CCCCCCCCCCCCCCCC(=O)O",
+      "allow_new_target": true,
+      "target_inchi_key": "IPCSVZSSVZVIGE-UHFFFAOYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_34070938.json",
+        "document_sha256": "d3462ed39d12389c9d4cd49d0249f1d611a5f0dc7a90c2b37f6f8040ce126d23",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_54e0c1aca73d2714",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)CP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "surface_sha256": "726578f488e7568d9b25877843797a2608a4c39aa0471637eea224c2504e191b",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish Adenosine 5-prime-O-(2-thiodiphosphate), ADPbetaS. Correct terminal thiophosphate ADP analog, not a methylene-linked AMP phosphonate. Preserve nonhepatic NK-cell mechanistic context.",
+      "field_updates": {
+        "qualifying_conditions": "exposure_schedule=Sorted splenic NK cells were incubated with ADP\u03b2S at concentrations 1, 10, and 100 \u00b5M together with YAC-1 target cells during the cytotoxicity assay (dose series with a collective conclusion). | extra_details=ADP\u03b2S tested at 1, 10, and 100 \u00b5M (dose series, collective conclusion, no dose-specific numeric values). In the experiment of Fig. 7A/7D, target-to-effector ratio 1:20 for 4 hours. Correct terminal thiophosphate ADP analog, not a methylene-linked AMP phosphonate. Preserve nonhepatic NK-cell mechanistic context. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "reassign",
+      "target_canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)OP(O)(O)=S)[C@@H](O)[C@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "HCIKUKNAJRJFOW-KQYNXXCUSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_22898900.json",
+        "document_sha256": "0efe1c4ec787e3b3afa2f9ef9f6011425f85d3e9c2e63a2315277f4468142380",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_1c6a1a5ce50039d5",
+      "canonical_smiles": "Nc1nc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "213260be2411569ce8e04b4367d4bf449c37105c844fdfeb9887ace287521c68",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. Original mechanistic endpoint connects ATP preservation and survival during respiratory-chain inhibition; nonhepatic transfer remains explicitly limited.",
+      "field_updates": {
+        "assay_context": "biological_model_context=ROC-1 hybrid glial cells (rat oligodendrocyte and C6 glioma fusion), subjected to glucose deprivation and amobarbital respiratory-chain inhibition",
+        "qualifying_conditions": "concentration_values=500 | concentration_unit=umol_per_l | exposure_duration_and_schedule=read at 350 min of GDMI | exposure_regimen=single_continuous | extra_details=Guanosine is a protectant during the GDMI challenge. Control (no nucleoside) 27.9% (n=5); +dipyridamole 5 \u00b5M 40.3% and 12.5 \u00b5M 27.8%, corresponding to 59.7% and 95.3% inhibition of the protective effect. Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. | needs_more_context=False"
+      },
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_a4d057fb2765e357",
+      "canonical_smiles": "Nc1nc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+      "surface_sha256": "b8150019a48d30fbb34ddc3c9637c03d18bb311d3afbd8ef3965f87d00f50811",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. Original mechanistic endpoint connects ATP preservation and survival during respiratory-chain inhibition; nonhepatic transfer remains explicitly limited.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=viability_or_cell_number | assay_and_readout=Cell viability assay\u2014percent viable ROC-1 glial hybrid cells (method in Materials and Methods)",
+        "assay_context": "biological_model_context=ROC-1 hybrid glial cells (rat oligodendrocyte and C6 glioma fusion), subjected to glucose deprivation and amobarbital respiratory-chain inhibition | culture_format=suspension",
+        "species_context": "species=rat",
+        "qualifying_conditions": "concentration_values=500 | concentration_unit=umol_per_l | exposure_duration_and_schedule=Nucleoside added at -3 min, amobarbital at zero time; viability determined at a defined timepoint during GDMI (exact timepoint not specified in the window) | exposure_regimen=single_continuous | extra_details=Focal molecule guanosine; GDMI challenge induced by amobarbital present from zero time; control was nucleoside-free + amobarbital. Data are mean \u00b1 SD of triplicate assays from one experiment, typical of three experiments. Species of ROC-1 glial hybrid cells not stated in the provided window. Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. | needs_more_context=True"
+      },
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_153e1b79f8ffbd31",
+      "canonical_smiles": "NC1=C2N=CN([C@H]3C[C@H](O)[C@@H](CO)O3)C2(Cl)N(I)C=N1",
+      "surface_sha256": "23d5c590ce0d615319e33db84727d5320d65a9cbfd1bc1388ff6aabe7cd80b1d",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish CITCO. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=0-500 | concentration_unit=nmol_per_l | exposure_duration_and_schedule=EdU (10 uM) added 24 h prior to culture termination; compound-containing medium replaced every 24 h | exposure_regimen=repeated_dose | extra_details=Exact paper label 'CITCO' (4-chloro-3-iodo-2'-deoxyadenosine); vehicle DMSO 0.1% final; EdU is a probe. Result value not present in the provided methods window. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "Clc1ccc(-c2nc3sccn3c2/C=N/OCc2ccc(Cl)c(Cl)c2)cc1",
+      "allow_new_target": true,
+      "target_inchi_key": "ZQWBOKJVVYNKTL-AUEPDCJTSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
+        "document_sha256": "a155f75d1c5114d95733a3936d32fdfac0e046594ed548ee1cd3564ddfd2d718",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_34588980a4ad46fa",
+      "canonical_smiles": "NC1=C2N=CN([C@H]3C[C@H](O)[C@@H](CO)O3)C2(Cl)N(I)C=N1",
+      "surface_sha256": "cce8219165275be88b3fe23ab8231ef57a78b1e02dbe9492e4ad956a6cd2f15e",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original-paper test article and independently verified molecular structure establish CITCO. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone.",
+      "field_updates": {
+        "qualifying_conditions": "concentration_values=0-500 | concentration_unit=nmol_per_l | exposure_duration_and_schedule=48 h treatment; fresh culture medium with test compound every 24 h; iT-Green (1:5,000) applied for 30 min after 48 h | exposure_regimen=repeated_dose | extra_details=Exact paper label 'CITCO' (4-chloro-3-iodo-2'-deoxyadenosine); vehicle DMSO 0.1% final (1000x stock). Result value not present in the provided methods window. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone. | needs_more_context=True"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "reassign",
+      "target_canonical_smiles": "Clc1ccc(-c2nc3sccn3c2/C=N/OCc2ccc(Cl)c(Cl)c2)cc1",
+      "allow_new_target": true,
+      "target_inchi_key": "ZQWBOKJVVYNKTL-AUEPDCJTSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_27530964.json",
+        "document_sha256": "a155f75d1c5114d95733a3936d32fdfac0e046594ed548ee1cd3564ddfd2d718",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_1e46ac418a31a9bb",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2cc(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)c(O)c12",
+      "surface_sha256": "b7b4068881cd7a94fe97804ec8dbbc5e514dc8eb04883cf9d9c959f02b3b9f5a",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish scutellarin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | extra_details=Secondary reporting of cited experiment (Gao et al., 2012). Qualitative: Scutellarein-7-G (scutellarin) inhibits MRP2; no IC50 value given for MRP2 in this text (the 2\u20135 \u00b5M IC50 refers to OATP2B1). Scutellarein-7-G is the 7-O-glucoside. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C(O)[C@H]1O[C@@H](Oc2cc3oc(-c4ccc(O)cc4)cc(=O)c3c(O)c2O)[C@H](O)[C@@H](O)[C@@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "DJSISFGPUUYILV-ZFORQUDYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_113be05541686d79",
+      "canonical_smiles": "O=c1cc(-c2ccccc2)oc2cc(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)c(O)c12",
+      "surface_sha256": "6e7311b56e217627b50069e0087ba02548013dd9b444228062250127d32a0a4f",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | extra_details=Secondary reporting of cited experiments (Xu et al., 2013; Kalapos-Kov\u00e1cs et al., 2015). Reported as an upper bound (IC50 <20 \u00b5M). Baicalein-7-G is the 7-O-glucoside conjugate of baicalein. The same IC50 bound is reported for BCRP, MRP3, OATP1B3, OATP2B1, OAT3 and OAT4. Assay platform, probe and substrate not specified in this text. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C(O)[C@H]1O[C@@H](Oc2cc3oc(-c4ccccc4)cc(=O)c3c(O)c2O)[C@H](O)[C@@H](O)[C@@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "IKIIZLYTISPENI-ZFORQUDYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_a0e70c614d34258a",
+      "canonical_smiles": "O=c1cc(-c2ccccc2)oc2cc(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)c(O)c12",
+      "surface_sha256": "a569f256078e29788a96c3d904e37f74926d571c94368d600986913cbcffe16e",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Source explicitly rejects placeholder identity and describes several conjugates; attached baicalein glucoside is none of them. Preserve comparison outside single-molecule retrieval rather than invent a focal structure.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_4f1c1a59e3cfdbe0",
+      "canonical_smiles": "O=c1cc(-c2ccccc2)oc2cc(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)c(O)c12",
+      "surface_sha256": "47562412f0f3c122b0f62481a0c7a7932fe826995c34be6505277b6b9342036b",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope.",
+      "field_updates": {
+        "qualifying_conditions": "tested_entity_form=conjugate_or_derivative | extra_details=Secondary reporting of cited experiments (Xu et al., 2013; Kalapos-Kov\u00e1cs et al., 2015). Reported as an upper bound (IC50 <20 \u00b5M). Baicalein-7-G is the 7-O-glucoside conjugate of baicalein. The same IC50 bound is reported for BCRP, MRP4, OATP1B3, OATP2B1, OAT3 and OAT4. Assay platform, probe and substrate not specified in this text. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope. | needs_more_context=True"
+      },
+      "target_level": 4,
+      "target_family": "dili_hepatobiliary_homeostasis",
+      "action": "reassign",
+      "target_canonical_smiles": "O=C(O)[C@H]1O[C@@H](Oc2cc3oc(-c4ccccc4)cc(=O)c3c(O)c2O)[C@H](O)[C@@H](O)[C@@H]1O",
+      "allow_new_target": true,
+      "target_inchi_key": "IKIIZLYTISPENI-ZFORQUDYSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_35095509.json",
+        "document_sha256": "f1febd779767c9a30d312ac51ee52c8a1aec2c707a449f6a591601d39d515846",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_7f5bbba68941877a",
+      "canonical_smiles": "NC(=O)c1ncn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)n1",
+      "surface_sha256": "951ef8ba1e3b02741e37939f27f9480e451df1f26c36da528b36d11713d68d23",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=light-microscopic observation\u2014morphological alterations (dense granules, vacuoles, cell-shape changes)"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_6cff6badb3765446",
+      "canonical_smiles": "NC(=O)c1ncn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)n1",
+      "surface_sha256": "ba02a2350eb7c5f313e33b4e6ee450149f2a36c1c44ca8fad9f828eab2f2ca87",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=light microscopy\u2014virus-induced cell fusion (syncytia) formation in hepatocyte culture as a cytopathic/viability endpoint; presence or absence of syncytia"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_d8b4762703f7de25",
+      "canonical_smiles": "Nc1ncnc2c1ncn2[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O",
+      "surface_sha256": "848d3fa8661965652c91740d9f41df2055c3645027ed7f24987316468b509717",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=confocal fluorescence microscopy\u2014filopodia architecture visualized via EGFP reporter"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    },
+    {
+      "card_id": "card_1f609f2fe76bea4e",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "0452f6268b17023e399ad1116e1012b6cf513d7facaed26206f0049defe8e43e",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish Conophylline (CnP). CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=MCD diet (methionine-choline-deficient diet) as nonimmune liver-stress/NASH regimen; dose not stated, administered by feeding | exposure_schedule=CnP administered by feeding as part of the MCD diet (MCD+CnP diet), concurrent with the MCD challenge; sampling performed at end of feeding; exact duration not stated | extra_details=MCD diet increased inflammatory foci versus MCS (a P < 0.05); CnP decreased the MCD-induced increase in inflammatory foci. Original magnification \u00d7200. Focal molecule CnP = conophylline. CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints. | needs_more_context=False"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CC[C@@]12CC(C(=O)OC)=C3Nc4cc5c(cc4[C@@]34CCN(C[C@H]3O[C@H]31)[C@@H]24)[C@@H]1[C@H](O5)[C@@H](O)[C@@]2(CC)CC(C(=O)OC)=C3Nc4c(cc(O)c(OC)c4OC)[C@@]34CCN1[C@@H]24",
+      "allow_new_target": true,
+      "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_37f8602c5e75853e",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "7528ddb9ceaceb2d456847cc38eca3a17a1b875213483cad6620c48c9335e2d7",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). CPA is the antiandrogen in the original paper, not a dinucleotide. Preserve rare hepatic adverse-effect statement without changing frozen benchmark labels.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=small_molecule_or_chemical | liver_injury_identifier=UMLS:C0235378 | extra_details=Hepatitis and hepatotoxicity described as well-known though rare side effects; separate findings on CPA as a liver tumor promoter and potential hepatocarcinogen, including suppression of hepatocyte apoptosis (non-genotoxic mechanism) and genotoxic potential in rat liver cells attributed to the 1-2-alpha methylene group; CPA administration recommended only in restricted cases with targeted and conservative use. CPA is the antiandrogen in the original paper, not a dinucleotide. Preserve rare hepatic adverse-effect statement without changing frozen benchmark labels. | needs_more_context=False"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@]1(C(C)=O)CC[C@H]2[C@@H]3C=C(Cl)C4=CC(=O)[C@@H]5C[C@@H]5[C@]4(C)[C@H]3CC[C@@]21C",
+      "allow_new_target": true,
+      "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_9476091.json",
+        "document_sha256": "92e1c8084609c12437fb0b4637f1235c779ee6daf1cb33b561dde3736ce11777",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_756efa90be798f43",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "f172042dea92de4e0d0f095379fcf0aa0b9a467ccf0ad3d2bdbb46d93be0575c",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). Correct antiandrogen identity from the paper; this is a secondary adverse-effect statement, not a newly measured experiment.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=small_molecule_or_chemical | extra_details=CPA is cyproterone acetate, a steroidal antiandrogen used in prostate cancer therapy. Its potential hepatotoxicity, together with cardiovascular risk, is given as the basis for not recommending CPA for routine use in antiandrogen therapy. Correct antiandrogen identity from the paper; this is a secondary adverse-effect statement, not a newly measured experiment. | needs_more_context=False"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@]1(C(C)=O)CC[C@H]2[C@@H]3C=C(Cl)C4=CC(=O)[C@@H]5C[C@@H]5[C@]4(C)[C@H]3CC[C@@]21C",
+      "allow_new_target": true,
+      "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_16845534.json",
+        "document_sha256": "3d59fd74c34c105bf5ceb9de29f6841d23dbd466ca577ea3b7242427fa2e6b5b",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_3c03dbeb67f198b4",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "4c2ac0eb6a5176d31739aa8c5913e4ec6d9e9f029bdeb85f6f68783f388543bb",
+      "source_family": "dili_direct_outcome",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). Correct antiandrogen identity from the paper; this is a secondary adverse-effect statement, not a newly measured experiment.",
+      "field_updates": {
+        "qualifying_conditions": "agent_type=small_molecule_or_chemical | extra_details=Recognized as a complication of long-term (chronic) use. CPA is an antiandrogen with progestational properties used in androgen-independent prostate cancer (AIPC); described as generally well tolerated with rare edema, weight gain and shortness of breath. Not FDA-approved in the United States. Correct antiandrogen identity from the paper; this is a secondary adverse-effect statement, not a newly measured experiment. | needs_more_context=False"
+      },
+      "target_level": 2,
+      "target_family": "dili_direct_outcome",
+      "action": "reassign",
+      "target_canonical_smiles": "CC(=O)O[C@]1(C(C)=O)CC[C@H]2[C@@H]3C=C(Cl)C4=CC(=O)[C@@H]5C[C@@H]5[C@]4(C)[C@H]3CC[C@@]21C",
+      "allow_new_target": true,
+      "target_inchi_key": "UWFYSQMTEOIJJG-FDTZYFLXSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_16406864.json",
+        "document_sha256": "7f83bb5bbafe4d588fc37d6c13f0de87a72ad735b6f87842dbfd507c12d31e38",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_77f2fcf647599869",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "32fc8118f429a0a287aeba3e0fb686589706f378050f94521479e161658128d5",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish Conophylline (CnP). CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=MCD diet (methionine-choline-deficient diet) as nonimmune liver-stress/NASH regimen; dose not stated, administered by feeding | exposure_schedule=CnP administered by feeding as part of the MCD diet (MCD+CnP diet), concurrent with the MCD challenge; liver sampling at end of feeding; exact duration not stated | extra_details=MCD diet increased Bax mRNA versus MCS (a P < 0.05); CnP attenuated this increase. Focal molecule CnP = conophylline. CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "reassign",
+      "target_canonical_smiles": "CC[C@@]12CC(C(=O)OC)=C3Nc4cc5c(cc4[C@@]34CCN(C[C@H]3O[C@H]31)[C@@H]24)[C@@H]1[C@H](O5)[C@@H](O)[C@@]2(CC)CC(C(=O)OC)=C3Nc4c(cc(O)c(OC)c4OC)[C@@]34CCN1[C@@H]24",
+      "allow_new_target": true,
+      "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_ca9ea956005a72a2",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "bdd54ca1a85de719fde4831500db379c7383634575ea254fc793c80f36b66639",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish Conophylline (CnP). CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=MCD diet (methionine-choline-deficient diet) as nonimmune liver-stress/NASH regimen; dose not stated, administered by feeding | exposure_schedule=CnP administered by feeding as part of the MCD diet (MCD+CnP diet), concurrent with the MCD challenge; liver sampling at end of feeding; exact duration not stated | extra_details=MCD diet increased TGF-\u03b2 mRNA versus MCS (a P < 0.05); CnP attenuated this increase. Focal molecule CnP = conophylline. CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "reassign",
+      "target_canonical_smiles": "CC[C@@]12CC(C(=O)OC)=C3Nc4cc5c(cc4[C@@]34CCN(C[C@H]3O[C@H]31)[C@@H]24)[C@@H]1[C@H](O5)[C@@H](O)[C@@]2(CC)CC(C(=O)OC)=C3Nc4c(cc(O)c(OC)c4OC)[C@@]34CCN1[C@@H]24",
+      "allow_new_target": true,
+      "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_de78ebf93b1206b7",
+      "canonical_smiles": "Nc1ccn([C@@H]2O[C@H](CO)[C@@H](OP(=O)(O)OC[C@H]3O[C@@H](n4cnc5c(N)ncnc54)[C@H](O)[C@@H]3O)[C@H]2O)c(=O)n1",
+      "surface_sha256": "2e6286ea79a5f0879a77c5cdb10795b21e1c3e5038577190579acbf8b176cc11",
+      "source_family": "dili_immune_perturbational_signature",
+      "reason": "Original-paper test article and independently verified molecular structure establish Conophylline (CnP). CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints.",
+      "field_updates": {
+        "qualifying_conditions": "immune_stimulus_regimen=MCD diet (methionine-choline-deficient diet) as nonimmune liver-stress/NASH regimen; dose not stated, administered by feeding | exposure_schedule=CnP administered by feeding as part of the MCD diet (MCD+CnP diet), concurrent with the MCD challenge; liver sampling at end of feeding; exact duration not stated | extra_details=MCD diet increased TNF-\u03b1 mRNA versus MCS (a P < 0.05); CnP attenuated this increase. Focal molecule CnP = conophylline. CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints. | needs_more_context=False"
+      },
+      "target_level": 6,
+      "target_family": "dili_immune_perturbational_signature",
+      "action": "reassign",
+      "target_canonical_smiles": "CC[C@@]12CC(C(=O)OC)=C3Nc4cc5c(cc4[C@@]34CCN(C[C@H]3O[C@H]31)[C@@H]24)[C@@H]1[C@H](O5)[C@@H](O)[C@@]2(CC)CC(C(=O)OC)=C3Nc4c(cc(O)c(OC)c4OC)[C@@]34CCN1[C@@H]24",
+      "allow_new_target": true,
+      "target_inchi_key": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N",
+      "identity_provenance": {
+        "document_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pmid_28594915.json",
+        "document_sha256": "6cd8e8fa8d3ce013018dfdb5ad0415d19ecc9773a8c30d16d8fdd301c7b3cf32",
+        "locator": "Original paper title/abstract plus second_wave_identity_validation.json chemical identity receipt"
+      }
+    },
+    {
+      "card_id": "card_cadc95e100c06ab7",
+      "canonical_smiles": "CC(C)(C)c1cc(CO)cc(C(C)(C)C)c1O",
+      "surface_sha256": "7bad05d999728af0834e8998d851b7768ca92163e1a1e9d027c3ec9854a64540",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Biliary hydroxymethyl-BHT quinone-methide conjugate identifies reactive metabolism, not bile-flow function.",
+      "target_level": 5,
+      "target_family": "dili_bioactivation_mitochondria",
+      "action": "move"
+    },
+    {
+      "card_id": "card_87c3dae822922144",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2c([C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)cc(O)c12",
+      "surface_sha256": "1d5cced5b1c10ba658c15329d00f810c52a99d7359ea0c54a50299018ac18150",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_9b40c2ed06d098f3",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2c([C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)cc(O)c12",
+      "surface_sha256": "5f44fb3379ae8e9c4aa084c465f539d3532ac940b89a532bdced89f4ec058728",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_9ae8fb55778bd43b",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2c([C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)cc(O)c12",
+      "surface_sha256": "d694004a5a971053a06fb85dbfde4b439af3f8ef6cca7a490745cd72be6e783e",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_4ed44cb6c875dabc",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2c([C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)cc(O)c12",
+      "surface_sha256": "267ad4564bbf36a6040687b8137f0e0ab6c117baa4c94bfeda387aa737fee286",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_74a9e37246f595fa",
+      "canonical_smiles": "O=c1cc(-c2ccc(O)cc2)oc2c([C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)c(O)cc(O)c12",
+      "surface_sha256": "5ab955903948204d581bc77a5429b2c8d4f3c63b8cac988bf1801e276787a7ca",
+      "source_family": "dili_hepatic_cell_function",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence.",
+      "action": "exclude"
+    },
+    {
+      "card_id": "card_4a92c2589eb2feed",
+      "canonical_smiles": "NC(=O)c1ncn([C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c1N",
+      "surface_sha256": "7b8588d94dc5340687c7da25fa08c9e6515361d426abf82108b45f4f860547da",
+      "source_family": "dili_hepatobiliary_homeostasis",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations.",
+      "field_updates": {
+        "endpoint_type": "endpoint_category=cellular_morphology_or_membrane_integrity | assay_and_readout=microscopic inspection\u2014cell morphology, assessed 24 h post exposure"
+      },
+      "target_level": 3,
+      "target_family": "dili_hepatic_cell_function",
+      "action": "correct"
+    }
+  ]
+}

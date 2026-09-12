@@ -1,0 +1,39 @@
+{
+  "parent_key": "VOUMVHRRAVBACH-RXCQEBQVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-Quinocarcin",
+    "(1S,2R,3R,5S,6R,9R)-11-methoxy-18-methyl-7-oxa-17,18-diazapentacyclo(7.7.1.12,5.06,17.010,15)octadeca-10(15),11,13-triene-3-carboxylic acid",
+    "(1S,2R,3R,5S,6R,9R)-11-methoxy-18-methyl-7-oxa-17,18-diazapentacyclo[7.7.1.12,5.06,17.010,15]octadeca-10(15),11,13-triene-3-carboxylic acid",
+    "(2aR,3S,5R,6R,6aS,11bR)-11-Methoxy-12-methyl-2a,3,4,5,6,6a,7,11b-octahydro-1H-3,6-epimino-2-oxa-11c-azanaphtho[1,2,3-cd]azulene-5-carboxylic acid",
+    "11-Methoxy-12-methyl-2a,3,4,5,6,6a,7,11b-octahydro-1H-3,6-epimino-2-oxa-11c-azanaphtho[1,2,3-cd]azulene-5-carboxylic acid",
+    "3,6-Imino-1H-2-oxa-11c-azanaphth(1,2,3-cd)azulene-5-carboxylic acid, 2a,3,4,5,6,6a,7,11b-octahydro-11-methoxy-12-methyl-, (2a-alpha,3-alpha,5-alpha,6-alpha,6a-alpha,11b-alpha)-, (-)-",
+    "3,6-Imino-1H-2-oxa-11c-azanaphth(1,2,3-cd)azulene-5-carboxylic acid, 2a,3,4,5,6,6a,7,11b-octahydro-11-methoxy-12-methyl-, (2aalpha,3alpha,5alpha,6alpha,6aalpha,11balpha)-(-)-",
+    "84573-33-1",
+    "Antibiotic DC 52",
+    "CHEBI:218685",
+    "CHEMBL508248",
+    "D 52",
+    "D-52",
+    "DC 52",
+    "DC-52",
+    "DTXSID501004854",
+    "GLXC-22214",
+    "Isoquinocarcin",
+    "KW 2152",
+    "KW-2152",
+    "KW-2152;",
+    "KW2152",
+    "Quinocarcin",
+    "Quinocarmycin",
+    "RefChem:905573",
+    "SCHEMBL29460876",
+    "T210315",
+    "orb3134765"
+  ],
+  "cids": [
+    158486
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VOUMVHRRAVBACH-RXCQEBQVSA-N/synonyms/JSON",
+  "http_status": 200
+}

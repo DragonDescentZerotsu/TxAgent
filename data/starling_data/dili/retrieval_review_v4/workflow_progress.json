@@ -1,0 +1,7 @@
+{
+  "phase": "complete_verified",
+  "updated_at": "2026-09-12T17:05:57.839269+00:00",
+  "partial_review_diagnostic": true,
+  "global_source_published": false,
+  "results": "outputs/paper/starling_conditioned_dili_retrieval_review_v4_no_prior_grounded_sim0/paired_performance.json"
+}

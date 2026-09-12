@@ -1,0 +1,24 @@
+{
+  "parent_key": "CAULGCQHVOVVRN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(E,E)-Germacra-3,7(11),9-trien-6-one, trans,trans-3,7-Dimethyl-10-isopropylidene-3,7-cyclodecadien-1-one",
+    "10-isopropylidene-3,7-dimethyl-cyclodeca-3,7-dien-1-one",
+    "3,7-Cyclodecadien-1-one, 3,7-dimethyl-10-(1-methylethylidene)-, (Z,E)-",
+    "3,7-dimethyl-10-(propan-2-ylidene)cyclodeca-3,7-dien-1-one",
+    "3,7-dimethyl-10-propan-2-ylidenecyclodeca-3,7-dien-1-one",
+    "32663-51-7",
+    "AKOS030242668",
+    "CAULGCQHVOVVRN-UHFFFAOYSA-N",
+    "DTXCID30227162",
+    "DTXSID10275782",
+    "RefChem:272491",
+    "SCHEMBL6387694",
+    "s9311"
+  ],
+  "cids": [
+    81323
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CAULGCQHVOVVRN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

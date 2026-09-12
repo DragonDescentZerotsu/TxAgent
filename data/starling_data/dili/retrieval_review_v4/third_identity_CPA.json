@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 2907,
+        "MolecularFormula": "C7H15Cl2N2O2P",
+        "SMILES": "C1CNP(=O)(OC1)N(CCCl)CCCl",
+        "InChIKey": "CMSMOCZEIVJLDB-UHFFFAOYSA-N"
+      }
+    ]
+  }
+}

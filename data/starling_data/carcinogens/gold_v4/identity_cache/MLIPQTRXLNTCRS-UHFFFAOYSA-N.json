@@ -1,0 +1,21 @@
+{
+  "parent_key": "MLIPQTRXLNTCRS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MLIPQTRXLNTCRS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-Benzenedicarboxylic acid dihexyl ester",
+    "1,4-Benzenedicarboxylic acid, dihexyl ester",
+    "1818-96-8",
+    "DTXSID00334054",
+    "Dihexyl terephthalate",
+    "Dihexyl terephthalate #",
+    "SCHEMBL197446",
+    "Terephthalate, dihexyl",
+    "Terephthalic acid, dihexyl ester",
+    "dihexyl benzene-1,4-dicarboxylate"
+  ],
+  "http_status": 200,
+  "cids": [
+    519527
+  ]
+}

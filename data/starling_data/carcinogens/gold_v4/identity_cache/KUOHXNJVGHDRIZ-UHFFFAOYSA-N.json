@@ -1,0 +1,20 @@
+{
+  "parent_key": "KUOHXNJVGHDRIZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KUOHXNJVGHDRIZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,3-dichloroacrylonitrile",
+    "3,3-dichloroprop-2-enenitrile",
+    "7436-85-3",
+    "DTXCID90418973",
+    "DTXSID30468154",
+    "KUOHXNJVGHDRIZ-UHFFFAOYSA-N",
+    "RefChem:270223",
+    "SCHEMBL127573",
+    "dichloroacrylonitrile"
+  ],
+  "http_status": 200,
+  "cids": [
+    11535554
+  ]
+}

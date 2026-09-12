@@ -1,0 +1,13 @@
+{
+  "parent_key": "PBUKXDGKWGKZNQ-JOVRKVRASA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL29886092",
+    "hydroxycholestenone"
+  ],
+  "cids": [
+    129668119
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PBUKXDGKWGKZNQ-JOVRKVRASA-N/synonyms/JSON",
+  "http_status": 200
+}

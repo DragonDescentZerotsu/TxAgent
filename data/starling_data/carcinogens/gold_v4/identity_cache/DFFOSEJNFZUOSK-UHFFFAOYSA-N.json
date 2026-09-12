@@ -1,0 +1,27 @@
+{
+  "parent_key": "DFFOSEJNFZUOSK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DFFOSEJNFZUOSK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1H-Indole-5-acetic acid, 2-(2-(4-Phenoxy-2-propylphenoxy)ethyl)-",
+    "2-(2-(4-phenoxy-2-propylphenoxy)ethyl)indole-5-acetic acid",
+    "2-PPPE-IAA",
+    "2-[2-(4-Phenoxy-2-propylphenoxy)ethyl]-1H-indole-5-acetic acid",
+    "2-[2-[2-[4-(phenoxy)-2-propylphenoxy]ethyl]-1H-indol-5-yl]acetic acid",
+    "209808-51-5",
+    "COOH",
+    "DTXSID30434399",
+    "GTPL2715",
+    "L 805645",
+    "LS-191838",
+    "Q27076884",
+    "RefChem:909129",
+    "SCHEMBL2456261",
+    "SCHEMBL29701138",
+    "{2-[2-(4-phenoxy-2-propylphenoxy)ethyl]-1h-indol-5-yl}acetic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    10025649
+  ]
+}

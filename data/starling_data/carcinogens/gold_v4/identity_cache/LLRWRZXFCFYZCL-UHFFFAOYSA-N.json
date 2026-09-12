@@ -1,0 +1,32 @@
+{
+  "parent_key": "LLRWRZXFCFYZCL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LLRWRZXFCFYZCL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 4-nitroso-",
+    "1-nitroso-4-phenylbenzene",
+    "10125-76-5",
+    "4-Nitroso-1,1'-biphenyl",
+    "4-Nitroso-biphenyl",
+    "4-Nitrosobiphenyl",
+    "4-Nitrosodiphenyl",
+    "9U69963CQ2",
+    "AKOS006273146",
+    "BIPHENYL, 4-NITROSO-",
+    "BRN 1940223",
+    "C20316",
+    "CCRIS 2151",
+    "CHEBI:138830",
+    "DTXCID2066301",
+    "DTXSID50143810",
+    "NITROSO-1,1'-BIPHENYL, 4-",
+    "RefChem:100159",
+    "SCHEMBL464532",
+    "UNII-9U69963CQ2",
+    "p-Nitrosobiphenyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    24971
+  ]
+}

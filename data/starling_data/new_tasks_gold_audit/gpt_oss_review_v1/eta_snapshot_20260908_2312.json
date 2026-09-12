@@ -1,0 +1,57 @@
+{
+  "as_of_utc": "2026-09-08T23:12:28.685234+00:00",
+  "unique_ok": 13310,
+  "unresolved_error_records": 109,
+  "tasks": {
+    "dili": 13310
+  },
+  "semantic_status": {
+    "out_of_scope": 2393,
+    "needs_context": 4516,
+    "supported": 6401
+  },
+  "attempt_count": {
+    "1": 10060,
+    "2": 2986,
+    "3": 264
+  },
+  "errors": {
+    "ValueError: specimen quote not in source": 1159,
+    "ValueError: resolved study lacks source quote": 415,
+    "ValueError: invalid condition axis": 401,
+    "ValueError: Y contradicts model's negative_evidence category; indirect/narrower negatives are not target labels": 197,
+    "ValueError: condition quote not in source": 974,
+    "ValueError: claim quote not in source": 461,
+    "ValueError: multiple/generic/unresolved study scope cannot claim one original study ID": 151,
+    "ValueError: invalid endpoint alignment": 30,
+    "ValueError: exact_named_entity specimen.name must copy the focal molecule_name/agent_name, not a patient or comparator": 6,
+    "ValueError: invalid study kind": 17,
+    "ValueError: claims and semantic status disagree": 24,
+    "ValueError: secondary/unresolved evidence cannot use reporting PMID as an original study": 26,
+    "ValueError: cited PMID must identify a different explicitly cited original study": 6,
+    "ValueError: invalid claim fields": 4,
+    "ValueError: invalid verdict fields": 1,
+    "ValueError: supported verdict lacks specimen evidence": 2
+  },
+  "recent_windows": {
+    "5": {
+      "ok": 3238,
+      "per_second": 10.793333333333333,
+      "remaining_first_pass_h": 13.646489602635372,
+      "remaining_two_passes_h": 27.635526044883676
+    },
+    "10": {
+      "ok": 6698,
+      "per_second": 11.163333333333334,
+      "remaining_first_pass_h": 13.194187319597889,
+      "remaining_two_passes_h": 26.71956803025779
+    }
+  },
+  "claim_strata": {
+    "out_of_scope": 2393,
+    "needs_context": 4516,
+    "supported_negative_resolved": 5083,
+    "supported_negative_unresolved": 1252,
+    "supported_positive": 66
+  }
+}

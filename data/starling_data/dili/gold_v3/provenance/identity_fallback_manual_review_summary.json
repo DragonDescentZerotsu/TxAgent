@@ -1,0 +1,11 @@
+{
+  "n_reviewed": 18,
+  "n_unique_old_parents": 14,
+  "n_old_source_votes": 104,
+  "n_retained_identity_fallback": 16,
+  "n_separate_specimen_identity_candidates": 2,
+  "n_same_name_multiple_old_parents": 0,
+  "n_unassigned_stereo_identities": 1,
+  "fallback_judgment": "For enumeration-incomplete inputs keep the original verified parent and assigned stereochemistry; never use a truncated canonical result or increase enumeration without a bound. No-stereo HetAtomTautomerv2 is a conservative split/retrieval grouping key only, not authority to merge labels or stereoisomers. Two source specimen ambiguities are separately flagged by exact UID/hash.",
+  "read_only": "Only audit files written. No gold, source, split, code or index modified by this reviewer."
+}

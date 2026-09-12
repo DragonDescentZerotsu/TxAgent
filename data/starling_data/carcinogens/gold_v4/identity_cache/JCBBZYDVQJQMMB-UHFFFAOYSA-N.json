@@ -1,0 +1,35 @@
+{
+  "parent_key": "JCBBZYDVQJQMMB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCBBZYDVQJQMMB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(12-methylbenzo[a]anthracen-7-yl)methanol",
+    "(12-methyltetraphen-7-yl)methanol",
+    "12-Methylbenz(a)anthracene-7-methanol",
+    "12-Methylbenz[a]anthracene-7-methanol",
+    "568-75-2",
+    "7-(Hydroxymethyl)-12-methylbenz(a)anthracene",
+    "7-(Hydroxymethyl)-12-methylbenz[a]anthracene",
+    "7-HM-12-MBA",
+    "7-Hydroxymethyl-12-methylbenz(a)anthracene",
+    "7-Hydroxymethyl-12-methylbenz[a]anthracene",
+    "BENZ(a)ANTHRACENE-7-METHANOL, 12-METHYL-",
+    "BRN 2056478",
+    "Benz[a]anthracene-7-methanol, 12-methyl-",
+    "C19561",
+    "CCRIS 1082",
+    "CHEBI:82559",
+    "DB-009538",
+    "DTXCID20127844",
+    "DTXSID20205353",
+    "Hydroxymethyl-12-methylbenz-[a]-anthracene, 7-",
+    "L6MWC2VTY9",
+    "NS00115899",
+    "Q27156070",
+    "RefChem:106236"
+  ],
+  "http_status": 200,
+  "cids": [
+    11285
+  ]
+}

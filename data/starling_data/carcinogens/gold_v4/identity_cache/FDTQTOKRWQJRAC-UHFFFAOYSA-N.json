@@ -1,0 +1,30 @@
+{
+  "parent_key": "FDTQTOKRWQJRAC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FDTQTOKRWQJRAC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Naphthaleneacetonitrile, 4-cyano-1,2,3,4-tetrahydro-.alpha.-methyl-",
+    "1-Naphthaleneacetonitrile, 4-cyano-1,2,3,4-tetrahydro-alpha-methyl-",
+    "2-[1-(4-Cyano-1,2,3,4-tetrahydronaphthyl)]propanenitrile",
+    "2-[1-(4-cyano-1,2,3,4-tetra-hydronapthyl)]propanenitrile",
+    "4-(1-Cyanoethyl)-1,2,3,4-tetrahydro-1-naphthalenecarbonitrile #",
+    "4-(1-Cyanoethyl)-1,2,3,4-tetrahydronaphthalene-1-carbonitrile; 4-Cyano-1,2,3,4-tetrahydro-a-methyl-1-naphthaleneacetonitrile; 1-Cyano-4-(1-cyanoethyl)-1,2,3,4-tetrahydronaphthalene",
+    "4-(1-cyanoethyl)-1,2,3,4-tetrahydronaphthalene-1-carbonitrile",
+    "4-Cyano-1,2,3,4-tetrahydro-alpha-methyl-1-naphthaleneacetonitrile",
+    "57964-39-3",
+    "867-372-1",
+    "DTXCID6012093",
+    "DTXSID2057576",
+    "EN300-10893424",
+    "FDTQTOKRWQJRAC-UHFFFAOYSA-N",
+    "HCA96439",
+    "NS00076584",
+    "RefChem:510302",
+    "SCHEMBL9463787",
+    "Styrene-acrylonitrile trimer"
+  ],
+  "http_status": 200,
+  "cids": [
+    154379
+  ]
+}

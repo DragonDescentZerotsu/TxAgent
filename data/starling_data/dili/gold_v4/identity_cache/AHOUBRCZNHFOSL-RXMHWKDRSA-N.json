@@ -1,0 +1,22 @@
+{
+  "parent_key": "AHOUBRCZNHFOSL-RXMHWKDRSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3H)-Paroxetine",
+    "(3H)PAROXETINE",
+    "(3S,4R)-4-(4-fluorophenyl)-3-((6-tritio-1,3-benzodioxol-5-yl)oxymethyl)piperidine",
+    "(3S,4R)-4-(4-fluorophenyl)-3-[(6-tritio-1,3-benzodioxol-5-yl)oxymethyl]piperidine",
+    "AHOUBRCZNHFOSL-RXMHWKDRSA-N",
+    "CHEMBL1628650",
+    "GTPL4561",
+    "RefChem:69224",
+    "SCHEMBL30031240",
+    "[3H]-Paroxetine",
+    "[3H]Paroxetine"
+  ],
+  "cids": [
+    53316721
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AHOUBRCZNHFOSL-RXMHWKDRSA-N/synonyms/JSON",
+  "http_status": 200
+}

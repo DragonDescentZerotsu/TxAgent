@@ -1,0 +1,24 @@
+{
+  "parent_key": "GSUQMXXXXPNYEA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSUQMXXXXPNYEA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,3-Dihydro-3-methyl-2H-imidazo[4,5-f]quinolin-2-one",
+    "144486-08-8",
+    "2-Hydroxy-IQ",
+    "2H-Imidazo[4,5-f]quinolin-2-one, 1,3-dihydro-3-methyl-",
+    "2H-Imidazo[4,5-f]quinolin-2-one,1,3-dihydro-3-methyl-(9CI)",
+    "3-METHYL-2-HYDROXY-3H-IMIDAZO[4,5-F]QUINOLINE",
+    "3-Methyl-1,3-dihydro-2H-imidazo[4,5-f]quinolin-2-one",
+    "3-Methyl-1H-imidazo[4,5-f]quinolin-2(3H)-one",
+    "3-methyl-1H-imidazo[4,5-f]quinolin-2-one",
+    "AKOS006286779",
+    "DB-270352",
+    "DTXSID70434136",
+    "FM25639"
+  ],
+  "http_status": 200,
+  "cids": [
+    10012996
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "parent_key": "XPDICGYEJXYUDW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "12279-90-2",
+    "2,4,6,8-Tetrathia-1,3,5,7-tetraarsatricyclo[3.3.0.0~3,7~]octane",
+    "ARSENIC DISULPHIDE",
+    "ARSENIC MONOSULPHIDE",
+    "ARSENIC SULFIDE [MI]",
+    "ARSENIC SULPHIDE RED",
+    "ARSENICUM SULPHURATUM RUBRUM",
+    "ARSENICUM SULPHURATUM RUBRUM [HPUS]",
+    "Arsenicum sulphuratum rubrun",
+    "As4S4 cpd",
+    "C.I. 77085",
+    "CHEMBL5399274",
+    "DTXCID5076208",
+    "DTXSID50153717",
+    "Q27295581",
+    "REALGAR [CHP]",
+    "REALGAR [WHO-DD]",
+    "RefChem:56110",
+    "SCHEMBL29526807",
+    "TETRA-ARSENIC TETRA-SULFIDE",
+    "TETRA-ARSENIC TETRA-SULPHIDE",
+    "TETRAARSENIC TETRASULFIDE [WHO-DD]",
+    "TETRAARSENIC TETRASULPHIDE",
+    "Tetraarsenic tetrasulfide",
+    "UNII-ZIK02R2PSD",
+    "XIONGHUANG",
+    "XPDICGYEJXYUDW-UHFFFAOYSA-N",
+    "ZIK02R2PSD",
+    "realgar"
+  ],
+  "cids": [
+    139298
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XPDICGYEJXYUDW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

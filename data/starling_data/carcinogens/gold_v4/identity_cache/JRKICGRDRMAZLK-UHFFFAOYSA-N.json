@@ -1,0 +1,41 @@
+{
+  "parent_key": "JRKICGRDRMAZLK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JRKICGRDRMAZLK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "((HO)S(O)2OOS(O)2(OH))",
+    "13445-49-3",
+    "2RQ1860626",
+    "BDBM50147631",
+    "CHEBI:29268",
+    "CHEMBL1208163",
+    "Caswell No. 645",
+    "DTXCID501324484",
+    "DTXSID00894926",
+    "EPA Pesticide Chemical Code 063601",
+    "H2O8S2",
+    "H2S2O8",
+    "NS00013363",
+    "PERSULFURIC ACID (((HO)S(O)2)2O2)",
+    "PERVITOX",
+    "Peroxodischwefelsaure",
+    "Peroxodisulfuric acid",
+    "Peroxydisulfuric acid",
+    "Peroxydisulfuric acid (((HO)S(O)2)2O2)",
+    "Q410526",
+    "RefChem:171831",
+    "SCHEMBL715608",
+    "SCHEMBL7217",
+    "Sulfooxy hydrogen sulphate",
+    "UNII-2RQ1860626",
+    "[(HO)S(O)2OOS(O)2(OH)]",
+    "mu-peroxido-bis(hydroxidodioxidosulfur)",
+    "peroxydisulfuric acid H2S2O8",
+    "sulfooxy hydrogen sulfate"
+  ],
+  "http_status": 200,
+  "cids": [
+    24413,
+    173017665
+  ]
+}

@@ -1,0 +1,600 @@
+   Cellular and Molecular Events Leading to Mitochondrial Toxicity
+   of 1-(2-Deoxy-2-Fluoro-1-,f-D-Arabinofuranosyl)-5-lodouracil in Human
+   Liver Cells
+  Lixin Cui,* Sahyun Yoon,* Raymond F. Schinazi,*§ and Jean-Pierre Sommadossi*
+   *Department of Pharmacology and Toxicology, Division of Clinical Pharmacology, Comprehensive Cancer Center and Center for AIDS
+  Research, University of Alabama at Birmingham, Birmingham, Alabama 35294; Laboratory of Biochemical Pharmacology, Department
+  of Pediatrics, Emory University School of Medicine, Decatur, Georgia 30322; and 'Georgia VA Research Center for AIDS and HIV
+  Infections, Veterans Affairs Medical Center, Decatur, Georgia 30033
+
+
+
+  Abstract                                                                   micro- and macrovesicular steatosis. (J. Clin. Invest. 1995.
+                                                                             95:555-563.) Key words: FIAU * FMAU hepatitis B * liver
+                                                                                                                          -
+
+  We have explored the mechanism(s) related to FIAU-in-                      toxicity * mitochondria
+  duced liver toxicity, particularly focusing on its effect on
+  mitochondrial function in a human hepatoma cell line-
+  HepG2. The potential role of FMAU and FAU, metabolites                     Introduction
+  detected in FIAU-treated patients were also ascertained.
+  FIAU and FMAU inhibited cell growth and were effectively                  Hepatitis B virus (HBV)' can cause chronic hepatitis in humans
+  phosphorylated. A substantial increase in lactic acid produc-             ( 1 ) and it is postulated that tumor development may be triggered
+  tion in medium of cells incubated with 1-10 ,uM FIAU or                   directly by HBV or indirectly through chronic inflammation,
+  FMAU was consistent with mitochondrial dysfunction. Slot                  cirrhosis, and cell regeneration associated with the infection
+  blot analysis demonstrated that a two week exposure to 10                 (2). Approximately 300 million carriers are infected world-
+                                                                            wide. The only therapy for this disease is interferon alpha which
+ ,uM FIAU or FMAU was not associated with a decrease in
+                                                                            is effective in only 30% of patients with active liver disease,
+ total mitochondrial (mt) DNA content. However, FIAU and
+ FMAU were incorporated into nuclear and mtDNA and                          representing only a minority of infected individuals.
+ relative values suggest that both compounds incorporate at                      In 1990, a halogenated nucleoside analogue FIAU was
+ a much higher rate into mtDNA. Electron micrographs of
+                                                                              found to have a potent in vivo activity against HBV infection
+ cells incubated with 10 ,IM FIAU or FMAU revealed the                        in a chronically infected woodchuck animal model (3). Initial
+ presence of enlarged mitochondria with higher cristae den-
+                                                                              clinical studies of FIAU conducted in HIV infected persons
+ sity and lipid vesicles. In conclusion, these data suggest that              with HBV co-infection for periods of 2 wk supported the animal
+ despite the lack of inhibition of mtDNA content, incorpora-                 data with a marked suppression of circulating HBV DNA (4).
+ tion of FIAU and FMAU into mtDNA of HepG2 cells leads                       This effect lasted for several weeks after discontinuation of
+ to marked mitochondrial dysfunction as evidenced by dis-                    therapy (5). Two subsequent studies were then conducted in
+ turbance in cellular energy metabolism and detection of                     HIV negative HBV positive individuals. The first study involved
+                                                                             a 4-wk course of therapy and no toxicity was noted. In a follow
+                                                                             up clinical course trial in June, 1993, the death of 5 of the 15
+                                                                             enrolled patients, some of whom had received FIAU in the
+ Address correspondence to Dr. Jean-Pierre Sommadossi, University of         earlier 4-wk study, occurred after an 8-12-wk course therapy
+ Alabama at Birmingham, University Station, Box 600, 1670 University         (6). In these patients, major clinical toxicities included liver
+ Blvd., VH 113, Birmingham, AL 35294-0019. Phone: 205-934-8226;              failure with lactic acidosis, pancreatitis, neuropathy and myopa-
+ FAX: 205-975-4871.                                                          thy (5, 6). The liver biopsies showed massive micro- and mac-
+     Receivedfor publication 25 May 1994 and in revisedform 18 August       rovesicular steatosis and the absence of glycogen as well as
+ 1994.                                                                      enlarged and irregular mitochondria under electron microscopy
+                                                                            (5, 6). Liver mitochondrial damages subsequent to an inhibition
+ 1. Abbreviations used in this paper: 3TC, (-)-2'-3'-dideoxy-3'-thiacy-
+ tidine; AZT, 3 '-azido-3 '-deoxythymidine; ddC,2 ',3 '-dideoxycytidine;
+                                                                            of mtDNA synthesis by FIAU or incorporation of FIAU into
+ ddl,2',3'-dideoxyinosine; dThd, thymidine; FAU, 1-(2-deoxy-2-fluoro-       the mitochondrial genome have been hypothesized as possible
+ 1-/3-D-arabinofuranosyl)-uracil; FHMAU, 1-(2-deoxy-2-fluoro-1-f3-D-        causes of that toxicity (6, 7). Of note, mitochondrial toxicity
+arabinofuranosyl)-5-hydroxythymine; FIAC, 1-(2-deoxy-2-fluoro-1-/3-         has already been suggested as being responsible for side-effects
+D-arabinofuranosyl)-5-iodocytosine; FIAU, 1-(2-deoxy-2-fluoro-1-f3-         of some nucleoside analogs including peripheral neuropathy
+D-arabinofuranosyl)-5-iodouracil; FIAU-MP, FIAU-5 '-monophosphate;          with ddC (8) and ddI (9) and myopathy with AZT (10). In
+FIAU-DP, FIAU-5 '-diphosphate; FIAU-TP, FIAU-5 '-triphosphate;              contrast, we recently demonstrated that bone marrow toxicity
+FMAU, 1-(2-deoxy-2-fluoro-1-/3-D-arabinofuranosyl)-5-thymine; FMAU-         of AZT, which is dose-limiting, is not related to inhibition of
+DP, FMAU-5 '-diphosphate; FMAU-MP, FMAU-5 '-monophosphate;                 mtDNA content ( 11).
+FMAU-TP, FMAU-5'-triphosphate; HBV, hepatitis B virus; LC/MS/                    The purpose of this study was to explore the cellular and
+MS, liquid chromatography/mass spectrometry/mass spectrometry;
+mtDNA, mitochondrial DNA; TMP, thymidine-5 '-monophosphate;
+                                                                           molecular events related to FHAU-induced liver toxicity, partic-
+TTP, thymidine-5 '-triphosphate.                                           ularly focusing on its effect on mitochondrial functions. The
+                                                                           human hepatoma HepG2 cell line isolated by Aden et al. (12)
+J. Clin. Invest.                                                           and the 2.2.15 cell line which consists of HepG2 cells
+© The American Society for Clinical Investigation, Inc.                    transfected with HBV (13) were selected for these investiga-
+0021-9738/95/02/0555/09 $2.00                                              tions since the HepG2 cell line retains many characteristics of
+Volume 95, February 1995, 555-563                                          hepatocytes, is an adequate in vitro model in which to examine
+
+                                                                                           Mitochondrial Toxicity of FIA U and FMA U    555
+liver functions (14, 15), and can be transfected with HBV                     nucleotides was performed on a Hewlett-Packard 1050 HPLC system
+leading to production of infectious virions (13). Only scant                  (Avondale, PA). The extracts were analyzed by anion exchange chro-
+data have been reported on the in vitro and in vivo metabolism                matography with a Partisil 10 SAX column (Jones Chromatography,
+of FIAU but more extensive investigations have been carried                   Lakewood, CO). Elution was carried out at 1 ml/min with 15 mM
+out with FIAC, a nucleoside extensively deaminated in vivo                    KH2PO4 (pH 3.5) and a 45 min linear gradient of 1 M KH2PO4 (pH
+                                                                              3.5) from 0 to 100%, starting 10 min after the time of injection. The
+to FIAU (16-18). From these studies, it is clear that several                 total running time was 70 min. Under the conditions defined above, the
+metabolites of FIAU can be formed including FAU, FMAU,                        retention times of the unlabeled markers of FIAU, FIAU-MP, FIAU-
+FHMAU and glucuronides of FIAU and FMAU (16-18). Un-                          DP, FIAU-TP were 4, 18, 29, and 44 min, respectively. The retention
+published data from our laboratory substantiates these previous               times of FMAU, FMAU-MP, FMAU-DP and FMAU-TP were 3, 10,
+reports and LC/MS/MS analysis of biological specimens of                      26, and 41 min, respectively. After fractionation (1 ml) of the eluate
+FIAU-treated patients from the last clinical trial demonstrates               and addition of scintillation fluor (5 ml), radioactivity was measured
+that FIAU is substantially metabolized to FAU and FMAU                        by using a Beckman LS5000 TA scintillation counter equipped with an
+(19). Since it is possible that these metabolites may also have               automatic quench correction program. Reverse phase chromatography
+contributed to the liver induced toxicity observed in treated                 was used to separate FIAU, FMAU, and FAU. Samples were examined
+patients, effects of these FIAU metabolic derivatives were also               using Hypersil C-18 5/,m (Jones Chromatography, Lakewood, CO) as
+                                                                              stationary phase. Elution was carried out isocratically at 1 ml/min with
+investigated in HepG2 cells.                                                  25 mM KH2PO4 (pH 2.6) and 12% methanol. The retention times of
+                                                                              authentic standards of FAU, FMAU, and FIAU were 7.4, 16.5, and 28.2
+Methods                                                                       mm, respectively.
+                                                                                   Mitochondria isolation and phosphorylation studies. A l-ml pellet
+Materials. The HepG2 cell line was purchased from the American Type           of HepG2 cells was washed with cold 20 ml buffer containing 134 mM
+Culture Collection (Rockville, MD) and HBV-transfected 2.2.15 cells           NaCl, 5 mM KCl, 0.7 mM Na2HPO4, 2.5 mM Tris at pH 7.5 and
+were obtained from Dr. G. Acs (Mt. Sinai Medical Center, New York).           subsequently centrifuged for 5 min at 2,500 rpm and 4°C in a Beckman
+3TC was obtained from Dr. Raymond F. Schinazi (Emory University,              GPR centrifuge. Cells were then resuspended at 4°C in 12 ml of buffer
+Decatur, GA). FIAU, FAU, and FMAU were obtained from Dr. J. J.                containing 10 mM NaCl, 1.5 mM MgCl2 and 10 mM Tris at pH 7.5
+Fox (Memorial Sloan-Kettering Cancer Center, New York). FIAU and              and incubated for 10 min. Swollen cells were disrupted with a glass
+FMAU nucleotides were synthesized in our laboratory according to              Dounce homogenizer and one-sixth volume of cold 2 M sucrose, 35
+standard phosphorylation procedures published previously (20). [2-            mM EDTA, 50 mM Tris solution (pH 7.5) was added immediately
+'4C]-FIAU (56 mCi/mmol) and [methyl-3H]-FMAU (400 mCi/mmol)                   to stabilize mitochondria against osmotic rupture. Nuclei were then
+were purchased from Moravek Biochemicals (Brea, CA). MEM with                 eliminated by two successive sedimentations of 4 min each at 2,500
+non-essential amino acids, sodium pyruvate, dialyzed fetal bovine serum       rpm in a Beckman GPR centrifuge. The resulting supernatant was centri-
+and lOx trypsin-EDTA were purchased from GIBCO BRL (Grand                     fuged at 14,000 rpm for 20 min in a Beckman J2_20 centrifuge to obtain
+Island, NY). Lactic acid assay kit was purchased from Boehringer              the mitochondrial pellet.
+Mannheim Corp. (Mannheim, Germany). Luciferin-luciferase was ob-                   The mitochondrial pellet (600 Htg protein/sample) was resuspended
+tained from Calbiochem Corp. (La Jolla, CA). Alkaline phosphatase,            in incubation buffer containing 10 mM succinate, 2 mM ATP, 2 mM
+DNase I and snake venom 5 '-phosphodiesterase were purchased from             pyruvate, 1 mM malate, 2 mM nicotinic acid, 10 mM MgCl2, 2 mM
+Sigma Chemical Co. (St. Louis, MO). All other chemicals and reagents          KCl, 10 mM KH2PO4, and 25 mM Tris-HCl at pH 8. Experiments were
+were of the highest analytical grade available.                               initiated with addition of 3H-FMAU (888 dpm/pmole) or 14C-FIAU
+    Cell conditions. The HepG2- and HBV-transfected 2.2.15 cells were         (124 dpm/pmole) to achieve a final concentration of 10 IM. [3H]-
+grown in 25 or 75 cm2 tissue culture flasks in MEM with non-essential         Thymidine (1,000 dpm/pmole) was used as positive control. After 30
+amino acids supplemented with 10% heat-inactivated dialyzed fetal bo-         min at 37°C, mitochondria were centrifuged at 15,000 g for 5 min and
+vine serum, 1% sodium pyruvate, and 1% penicillin/streptomycin. The           washed three times with cold washing buffer containing 0.25 mM su-
+medium was changed every three days and cells were subcultured once           crose and 1 mM EDTA. Extraction of intra-mitochondrial nucleotides
+a week.                                                                       and HPLC analysis was performed with a similar procedures used for
+    Effects of compounds on cell growth. The HepG2 cells from stock           intracellular nucleotide determination as described above.
+culture were diluted and plated into 12-well cell culture clusters with 2.5        Effect of compounds on mtDNA content. After 14 d of incubation,
+X 104 cells/ml in each well. Various concentrations of FIAU, FMAU,            cells (5 x 104 per sample) incubated with varying concentrations of
+FAU or no compound (control) were added in media to each well. After          FIAU or FMAU and no compound (control) were heated under alkaline
+4 d of incubation, fresh medium with the tested compound was changed          condition and the DNA was immobilized on a Zeta-Probe membrane
+every other day until termination of the experiment at 14 d. Every other      (Bio-Rad, Richmond, CA) by using a slot-blot apparatus. The mtDNA
+day the cells in one cell culture cluster were removed from the bottom        on the membrane was detected with a specific human oligonucleotide
+of each well by using 0.05% trypsin-0.02% EDTA and counted with a             mitochondrial probe, encompassing nucleotide positions 4212-4242
+hemocytometer under the microscope. Cell viability, as assessed by trypan     (21). A gel-purified 625-base pair fragment of a human beta-actin
+blue exclusion, was 95% or greater during experiments.                        cDNA plasmid was used as a probe for standardizing the amount of
+     Determination of intracellular phosphorylated metabolites. Conflu-       total cellular DNA loaded on the membrane.
+ent HepG2 or 2.2.15 cells (2 x 106 cells/ml) were suspended in a total             Incorporation of FIAU and FMAU into nuclear and mtDNA of
+volume of 10 ml medium per time period in 25 or 75 cm2 tissue culture         HepG2 cells. Confluent cells (106 cells/ml) were incubated at 37°C for
+flask. After addition of radiolabeled 14C-FIAU( 124 dpm/pmole) or3H-          4 d after addition of 14C-FIAU (124 dpm/pmole) or 3H-FMAU (888
+FMAU (888 dpm/pmole) at a final concentration - 2 /iM, cells were             dpm/pmole) to achieve a final concentration of 2 1iM. Cells were then
+maintained at 37°C under a 5% CO2 atmosphere for specified time                harvested and washed twice at 4°C with cell culture media. Total nuclear
+periods. At the selected time points (6, 24, 48, 72, 96 h), cells were         DNA was isolated as previously described in detail (22). Mitochondrial
+centrifuged at 1,200 rpm for 10 min in a Beckman GPR centrifuge, and           DNA was prepared from purified mitochondria by a modified procedure
+were washed three times with 10 ml of cold phosphate-buffered saline.          of Welter et al. (23). All steps described below were performed at 4°C.
+Nucleotides present in the cell pellet were extracted by incubation over-          Briefly, the cell pellet was homogenized in a buffer containing 0.25
+night at -20°C with 1 ml of 60% methanol and were then extracted               M sucrose, 130 mM KC1, 30 mM Tris-HCl, pH 7.6, 3 mM Mg acetate,
+with 500 p1 of 60% methanol for 30 min in an ice bath. Combined                1 mM DTT and then centrifuged at 1,200 rpm for 5 min in a Beckman
+extracts were dried under a gentle nitrogen stream at room temperature         GPR centrifuge. The supernatant, which included unpelleted mitochon-
+ and the samples were stored at -20'C until analysis. Separation of            dria was aspirated and recentrifuged in the same manner. The mitochon-
+
+556      Cui et al.
+     dria in the supernatant were then layered on top of the sucrose gradient               1oo
+     which consisted of three concentrations of 1.0, 1.2, and 1.6 M sucrose
+     containing 10 mM Tris-HCI, pH 7.6, 1 mM EDTA, and 0.1% bovine
+     serum albumin and centrifuged at 28,000 rpm for 3 h in a Beckman L8                     80
+     ultracentrifuge. Three distinct bands appeared on each gradient interface.
+     The middle band (between 1.0 and 1.2 M sucrose gradient), which                 X       60
+     represented the purified fraction of mitochondria was aspirated and di-
+     luted with water to reduce the density and subsequently centrifuged at
+     12,000 rpm for 30 min in a Beckman L8 ultra centrifuge to pellet the            -j
+                                                                                          ~40
+     mitochondria. This pellet was used to isolate the mtDNA according               -j
+                                                                                     LU
+    to similar methods described above for cellular DNA. Radioactivity                      20
+    incorporated into nuclear and mt DNA was determined in a Beckman
+    LS 5000 TA counter. To assess the purity of isolated mtDNA, the same
+    amount of mt DNA which was used to determine radioactivity, was
+    analyzed by 0.8% agarose gel electrophoresis in the presence and ab-                          0       2   4    6    8   10 12 14 16 18
+    sence of Ava II restriction enzyme.                                                                       DAYS OF INCUBATION
+          Enzymatic digestion ofradiolabeled nuclear and mitochondrial DNA.
+    "C- or 3H-radiolabeled nuclear DNA was hydrolyzed with DNAse 1 (22
+    U) at 37°( for 1 h and digestion was confirmed by electrophoresis analy-
+    sis. Reaction volume was adjusted to 200 Ad with 20 1l of lOx phosphodi-
+    esterase I buffer (1.1 M Tris-HCl, pH 9.0, 1.1 M NaCl, 0.15M MgCl2)
+   including 0.5 U of snake venom 5 '-phosphodiesterase. After incubation                   100
+   at 370C for 4 h, 3 U of alkaline phosphatase were added in a final reaction                        B
+   volume of 300 til including 0.5 M tris-HCI, pH 9.3, 10 mM MgCl2, 1
+   mM ZnCl2, and 10 mM spermidine. This reaction was carried out at
+   37TC for 1 h. The digested material was then analyzed by the reverse
+   phase HPLC method described above. Hydrolysis of mtDNA was per-                          60
+   formed under similar conditions as described for nuclear DNA except
+   that reaction volume and amount of enzyme were decreased by half.
+         Lactic acid determination. HepG2 cells (2.5 x 104 cells/ml) were                   40
+                                                                                    co
+   plated into 12-well cell culture clusters and treated with various concen-       -j
+   trations of FIAU or FMAU under similar conditions described above.               Uj      20
+  After 2 and 4 d of incubation, cell number in each well was determined
+   with a hemocytometer, and medium was collected and filtered by using                       0
+  Acro disc LC13 PVDF from Fisher Scientific (Pittsburgh, PA). The
+  lactic acid content in the medium was measured using a Boerhinger
+  lactic acid assay kit, following the supplier's instructions. The amount                                    DAYS OF INCUBATION
+  of lactic acid in the medium was expressed as mg of lactic acid produc-
+  tion per 106 cells (24).                                                         Figure 1. HepG2 cell growth over a 14-d time period in the absence
+        Cell ATP determination by luciferase assay. HepG2 cells were incu-         (0, control) and in the presence of 0.1 (A), 1 (-), and 10 (A) 'iM
+  bated under similar conditions described above. After 4 d, one set of            FHAU (A) or FMAU (B). Each point represents the mean of two experi-
+  cell culture was used to measure cell number and the other to extract            ments.
+  the total ATP content with 1 ml of ice-cold 0.4 M perchloric acid over
+  a 20-min incubation period (25). Luminescence was measured by using
+ a Beckman LS 7500 scintillation counter in the noncoincidence mode.
+ For each sample, 50 ill of diluted PCA extract was added to 1 ml                  concentrations of FIAU, FMAU, and FAU as described in
+ arsenate buffer (0.1 M sodium arsenate, 40 mM magnesium sulphate,                 Methods. Under these conditions, both FIAU and FMAU inhib-
+ pH 7.4), 1 ml PBS (pH 7.4) and 1 ml distilled water in a glass scintilla-         ited cell growth in a dose-dependent manner, with a pronounced
+ tion vial. The reaction was started by the addition of 100 ,l of luciferin-       effect at concentrations comprised between 1 and 10 .sM (Fig.
+ luciferase and the vial was quickly transferred to the scintillation counter       1, A and B). After 6 and 14 d of incubation, the IC50 values
+ (25, 26). Standard curves were linear over concentrations of ATP com-             for FIAU and FMAU were 2.1 and 5.5 ,M, and 1.4 and 4.0
+ prised between 5 and 75 pmol. The total ATP content within cell was               ,sM respectively. In contrast, FAU had no inhibitory effect on
+ expressed as nmol of ATP per 106 cells.
+       Morphological evaluation. HepG2 cells (2.5 X 104 cells/ml) were             cell proliferation at concentrations up to 10 .M.
+plated into 35 x 10-mm tissue culture dishes and 10 ILM FIAU or                         Metabolism of FIAU and FMAU in HepG2 and HBV
+FMAU or no compound (control) were added to each dish. After a 4-                  transfected 2.2.15 cells. Confluent HepG2 and HBV transfected
+d incubation period, medium with and without (control) compounds                   2.2.15 cells were exposed to 2.5 1M '4C-FIAU or 2.5 MM 3H-
+was changed every other day. At selected time points (day, 2, 4, 7, and           FMAU over a 4-d time period. Both FIAU and FMAU were
+ 12), cells were fixed in 1% glutaraldehyde for one hr, rinsed in sodium          rapidly phosphorylated within cells to their 5'-mono-, 5'-di-,
+phosphate buffer and post-fixed in 1% osmium tetroxide for 1 h. The               and 5'- triphosphate derivatives, as analyzed by anion exchange
+cells were gradually dehydrated with graded concentrations of ethanol             chromatography. The intracellular concentrations of FIAU and
+starting with 50% through 100% ethanol to propylene oxide and subse-
+quently slowly infiltrated with epon (embedding medium) and embed-                FMAU 5 '-phosphorylated derivatives after 6-, 24-, 48-, 72-,
+ded in epon. Lastly, cells were sectioned with a Reichert-Jung ultra-             and 96-h incubation periods are illustrated in Table I. By 6
+microtome, stained with uranyl acetate and lead citrate, and examined             h, FIAU-TP was the predominant intracellular metabolite and
+with a Hitachi 7000 electron microscope.                                          reached a mean concentration of 0.37 pmol/ 106 cells, and an
+                                                                                  equilibrium approximating 0.3 pmol/ 106 cells was maintained
+Results                                                                           for the remaining 90 h of the experiment. Meanwhile, FIAU-
+Effect of FIAU, FMAU, and FAU on HepG2 cell proliferation.                        MP and FIAU-DP reached their maximum peaks at 48 h, and
+HepG2 cell growth was assessed in the presence of various                         subsequently slowly declined with concentrations below that of
+
+                                                                                                          Mitochondrial Toxicity of FIA U and FMA U   557
+Table L Intracellular Concentration of FIAU- and FMAU-5'-
+Phosphorylated Derivatives in Hep-G2 Cells after Exposure                                                                                                                     A
+to 2.5 jiM 14C-FIAU or 3H-FMAU                                                                                          TTP
+                                                                             3000 -
+                                             Metabolite
+Time of
+exposure            Treatment     MP             DP           TP
+                                                                     a.
+                                                                     0       2000 -
+   h                                        pmol/10M cells
+                                                                             1000 - dThd|
+    6                   FIAU      0.04          0.06         0.33
+
+  24
+                        FMAU
+                        FIAU
+                                  0.27
+                                  0.08
+                                                0.43
+                                                0.08
+                                                             0.36
+                                                             0.31               0;
+                                                                                            SS    0.       .        .       .   3                     I .       .         .       .
+
+
+
+
+                        FMAU      0.13          0.29         0.36                             I 0              20               30          40       S0             1N 0          70
+  48                    FIAU      0.25          0.10         0.36                                     Retention Time (min)
+                        FMAU      0.15          0.17         0.38
+  72                    FIAU      0.12          0.08         0.31
+                        FMAU      0.15          0.19         0.36
+  96                    FIAU      0.10          0.07         0.26
+                        FMAU      0.12          0.20         0.36
+
+Values are mean of two experiments.                                  a.m
+
+FIAU-TP at any time of exposure. FMAU was also rapidly
+phosphorylated to its 5 '-mono-, 5 '-di-, and 5 '-triphosphate. By
+6 h, both FMAU-MP and FMAU-DP were already at their
+highest intracellular levels and FMAU-TP accumulated to con-                         0       1 0               20               30          40       50         60                70
+centration comprised between 0.3 and 0.4 pmol/ 106 cells. In                                          Retention Time (min)
+general, FMAU generated slightly higher 5 '-triphosphate me-
+tabolite concentrations than FIAU. Using HBV-transfected
+2.2.15 cells, similar concentrations of phosphorylated metabo-
+lites were obtained with either FIAU or FMAU as compared to
+non-infected HepG2 cells (data not shown). Further analysis                               WFMAU                                                                               C
+by reverse phase chromatography of extracellular medium of
+2.2.15 cells 48 h after exposure of cells to FIAU revealed that
+                                                                             2000-
+14 to 15% of FIAU was intracellularly converted to FAU which
+was then released in medium while no FMAU was detected.              0
+
+Under similar conditions, FMAU remained unmetabolized and
+no other derivative was detected.                                            1000 -
+     Determination of FIAU and FMAU phosphorylation in iso-
+lated mitochondria of HepG2 cells. Before performing the ex-
+periment, a glucose 6-phosphatase assay was conducted to de-                     0                .    .        .       .           I   .    a   .    I     .         I
+
+tect the presence of cytosol in the mitochondrial fraction. Re-                       0       1 0              20               30          40       50             60            70
+lease of free phosphate was insignificant indicating a very low                                       Retention Time (min)
+percentage of cytosolic entities. A positive control performed
+with 10 jM [3H]thymidine demonstrated conversion to its 5'-          Figure 2. Anion exchange HPLC analysis of radioactivity after exposure
+phosphorylated derivatives, including thymidine-5 '-triphos-         of isolated mitochondria of HepG2 cells with [3H]thymidine (A), '4C-
+phate (Fig. 2 A). In contrast, no 5 '-phosphorylated derivatives     FIAU (B), and 3H-FMAU (C).
+were detected when '4C-FIAU (Fig. 2 B) or 3H-FMAU (Fig. 2
+C) were incubated with mitochondria under similar conditions.
+     Incorporation of FIAU and FMAU into nuclear and mtDNA.          the amount of radioactivity incorporated into nuclear and
+To evaluate the interaction of FIAU and FMAU with total DNA,         mtDNA, as a function of 4-d exposure to cells with 2 jM FIAU
+confluent HepG2 cells were exposed for 4 d to radiolabeled           or FMAU, radioactivity was measured in purified nuclear and
+ '4C-FIAU or 3H-FMAU at a final concentration of 2 MiM. Both         mtDNA as described in Methods. FIAU was incorporated into
+nuclear and mtDNA were isolated, purified and analyzed as            both nuclear and mtDNA with values of 90 and 9.6 pmole/jOg
+described in Methods. Identification and purity of mtDNA was         DNA respectively. The amount of FMAU incorporated into
+performed by analysis with a 0.8% agarose gel electrophoresis        nuclear DNA was 45.6 pmole/ jg DNA, being about twofold
+in the presence and absence of Ava II restriction enzyme. As         lower as compared with that observed with FIAU, whereas
+ illustrated in Fig. 3, lane 2, a unique mtDNA band appeared at      a modest increase of FMAU incorporation into mtDNA was
+ the expected size range of 16.5 kb when compared with molecu-       observed with a value of 11.5 pmole/,jg DNA. Identification
+ lar weight markers IV (Fig. 3, lane 1). This mtDNA was also         of the radioactivity detected in nuclear and mtDNA was per-
+ shown to retain expected cleavage sites for Ava II (Fig. 3, lane    formed by enzymatically hydrolyzing the DNA to nucleoside
+3) as previously published (27). To determine quantitatively         with subsequent HPLC analysis. Fig. 4 shows the radiochro-
+
+558        Cui et al.
+                        1               2        3                                                           concentration of 10 jtM. To observe the effect of FIAU and
+                                                                                                             FMAU on mitochondrial function, the lactic acid content in
+                                                                                                            HepG2 cell culture medium was determined. Table II demon-
+                                                                                                            strates that both FIAU and FMAU induced increased lactic acid
+                                                                                                            production in HepG2 cells in a dose-dependent manner. After
+     1Figure 3. Gel electropho-                                                                             2 d of incubation, enhancement in lactic acid production was
+     19.3-            of mtDNA. Isola-                              ~ ~ ~ ~ resis                           detected at concentrations of 1 AtM and predominately 10 AtM,
+                tion of mtDNA from                                                                          with both compounds. After incubation for 4 d, there was a
+      7.7- -9.8 HepG2 cells was per-                                                                        more profound effect in lactic acid production, resulting in a
+     55         formed as described in
+     5.5-                                                            Methods. MtDNA was                     twofold increase as compared with control when cells were
+     4.3-                                                            treated in the presence                exposed to 10 MM FIAU or FMAU. In contrast, under similar
+                                                                     and absence of restriction             conditions, 3TC at concentrations comprised between 0.1 and
+     3.1-                                                                                                   10 uM had no substantial effect on lactic acid production. As
+     2.7-                                                -3.0        enzyme (Ava II) and
+     2.3-                                                            fractionated by electro-               described in Methods, HepG2 cells were incubated in the pres-
+     1.9-                                                            phoresis on a 0.8% agar-               ence of various concentrations of FIAU or FMAU for 4 d. After
+     1.5-                                                            ose gel and visualized by              extraction with 0.4 M ice-cold perchloric acid, the total (cellular
+                                                                     ethidium bromide stain-                and mitochondrial) ATP content was measured by using a lucif-
+     1.2-                                                            ing. Lane 1, molecular                erase assay. Both FIAU and FMAU induced, in a dose-depen-
+     0.9-                                                            weight marker IV, Boeh-               dent manner and to a similar degree, an increase of total AT?
+     0.7-                                                            ringer-Mannheim; lane                 content in HepG2 cells, suggesting a disturbance in energy me-
+                                                                     2, undigested mtDNA;
+                                                                     lane 3, mtDNA Ava H                   tabolism (Table II).
+     0.4-                                                            fragments.                                 Electron microscopy evaluation. HepG2 cells incubated for
+                                                                                                           4 d with 10 MM FIAU or FMAU, as described in Methods,
+                                                                                                           were examined by electron microscopy. Electron micrographs
+matograms of enzymatically digested nuclear (A and B) and                                                  clearly delineate the formation of a large amount of lipid vesi-
+mitochondrial (C and D) DNA after exposure of cells to either                                              cles within cells treated with FIAU (Fig. 5 B) and FMAU
+ 14C-FIAU or 3H-FMAU. More than 94% of 14C radioactivity in                                                (Fig. 5 C) relative to control cells (Fig. 5 A). In addition,
+both nuclear and mtDNA coeluted with an authentic standard                                                 mitochondria of cells incubated with either FIAU (Fig. 6 B) or
+of FIAU and the remainder coeluted with FMAU (1.5%) and                                                    FMAU (data not shown) were enlarged and displayed a higher
+FAU (3.5%) standards. In contrast, all 3H-radioactivity coeluted                                           cristae density as compared with control (Fig. 6 A). In contrast,
+with an authentic FMAU standard.                                                                           3TC-treated cells did not induce any apparent morphological
+    Effect ofFIAU and FMAU on mtDNA content, extracellular                                                 changes under the same conditions (data not shown).
+lactic acid levels and total ATP content in HepG2 cells. Table
+II shows that FMAU exposed to HepG2 cells for 14 d had no                                                  Discussion
+effect on mtDNA content at concentrations up to 10 MiM, while                                              FIAU, a nucleoside fluorinated in the carbohydrate moiety syn-
+FIAU only caused a 14% decrease in mtDNA content at a                                                      thesized in the 1970s (28) and initially developed for treatment
+
+        12000-                                                                            80000        s             FA
+                        A                                 RAU
+
+                                                                                          6000
+a                                                                                   z
+                                                                                    IL
+IL                                                                                  0
+0
+
+        3000-
+                              FAU           F -AU         ll
+                               M.
+                0                                    I
+
+                    0               10              20         30                                  0           10          20      30
+                            Retention Time (min)                                                            Retention Time (min)
+
+
+
+                                                                                              4O
+                                                                                                                                             Figure 4. Reverse phase HPLC
+        m
+        4000                                                          I                   2000 -
+                                                                                                                                             analysis of '4C-labeled digested
+                        C                                RAU
+                                                                                            0                                               nuclear DNA (A) and mtDNA
+                                                                                                                                            (C) isolated from HepG2 cells ex-
+                                                                                                                                            posed to 2 ,M 14C-FIAU for 4 d;
+U                                                                                   a                                                       3H-labeled digested nuclear DNA
+IL
+0      2000                                                                         0     12000;l                                           (B) and mtDNA (D) isolated
+                                                                                                                                            from HepG2 cells exposed to 2
+       1000 -                                                                                                                               /IM 3H-FMAU for 4 d. DNA di-
+                             FAU            FU           ll                                                                                 gestion was performed by the se-
+            0                                                                                                                               quential addition of DNAse I,
+                                   10            20        30                                     0             10         20      30
+                                                                                                                                            snake venom 5 '-phosphodiester-
+                            Retention Time (min)                                                            Retention Time (min)            ase and alkaline phosphatase.
+
+                                                                                                                            Mitochondrial Toxicity of FLAU and FMAU     559
+Table II. Effect of FIAU and FMAU on Mitochondrial Functions in Hep-G2 Cells
+                                                                                Lactic acid production
+                                          Ratio to control of                                                                   ATP content
+      Compound         Concentration      mtDNA synthesis               Day 2                            Day 4                 (mmol/106 cells)
+
+                             [LM                  %                                  mg/JO6 cells
+
+                            0                    100             2.40+0.30*                     2.25+0.33                           9.24
+      FIAU                  0.1                  101             2.41+0.16 (0.4%)'              2.68+0.52 (19.1%)                   9.69
+                            1                    118             2.58+0.29 (7.5%)               3.02+0.61 (34.25%)                 14.40
+                           10                     86             3.38+0.30 (40.8%)              4.56+0.27 (102.7%)                 22.28
+      FMAU                  0.1                  100             2.38+0.34 (0%)                 2.76+0.54 (22.7%)                   9.48
+                            1                     97             2.46+0.29 (2.5%)               3.22+0.50 (43.1%)                  16.33
+                           10                    100             3.62+0.16 (50.8%)              5.33+0.92 (136.9%)                 23.54
+      3TC                   0.1                  ND              2.40+0.12 (0%)                 2.39+0.12 (6.2%)                    ND
+                            1                                    2.36+0.12 (0%)                 2.44+0.18 (8.4%)
+                            1.0                                  2.36+0.01 (0%)                 2.35+0.08 (4.4%)
+
+Values are mean of two experiments except * data represents mean ± SD of three different experiments.      * The number in the bracket is the
+percentage of increase on lactic acid production compare with control. ND, Not determined.
+
+
+of herpes simplex virus and cytomegalovirus infections (18,             induction of nucleoside kinases by HBV and raises the question
+29) was recently reported to be also effective against HBV              as to whether these infected cell cultures metabolize FIAU in
+replication (3, 4). The anti-HBV activity of the 5 '-triphosphate       a similar fashion as those livers of HBV infected patients. In-
+form of FIAU is assumed to result from its selective inhibition         deed, it is important to note that in these in vitro studies, only
+of viral targets, possibly HBV DNA polymerase (30). In con-             conversion of FIAU to FAU was observed while both FAU and
+trast to herpes simplex virus, HBV does not encode a deoxy-             FMAU are detected in biological fluids of FIAU treated patients
+nucleoside kinase and therefore the activation of FIAU is medi-         (19).
+ated by host cell enzymes, including thymidine kinase, thymi-               Although inhibition of mtDNA synthesis by FIAU or incor-
+dylate kinase and pyrimidine diphosphate kinase leading to              poration of FIAU into the mitochondrial genome have been
+formation of FIAU-TP, the likely active metabolite. Unantici-           hypothesized, no data has yet been reported. In the present
+pated lethal toxicity after 8-12 wk of treatment with FIAU in           study, both FIAU and FMAU, at concentrations inhibiting more
+HBV infected patients has led the scientific community to at-           than 75% of cell growth, had no detectable effect on the mtDNA
+tempt to understand the possible molecular mechanism(s) of              content of HepG2 cells after 14 d of continuous exposure to
+this FIAU-causing toxicity (6, 19).                                     drugs, suggesting that FIAU and FMAU may not affect the
+     Mitochondrial toxicity has been suggested to play a key            quantitative synthesis of mtDNA.
+role in this FIAU-causing liver failure (6, 7). Evidence for                Although incorporation of FIAU into total DNA has been
+mitochondrial damage in FIAU-treated patients includes severe           previously reported (32, 33), it is yet unclear whether FIAU is
+lactic acidosis with massive macro- and microvesicular steatosis        able to incorporate into mtDNA and whether incorporation of
+in liver biopsies suggestive of a disturbance in energy metabo-         that drug into nucleic acids is predominant in one of the two
+lism processes in which mitochondria are usually involved. Fur-         cellular compartments. In addition, no data are yet available on
+thermore, electron micrographs revealed enlarged and irregular          whether FMAU can also incorporate into either nuclear and
+mitochondria in those patients (5, 6).                                  mtDNA. In our studies, both radioactive FIAU and FMAU were
+     In an attempt to elucidate FIAU-induced liver toxicity with        detected in nuclear DNA and mtDNA and absolute values would
+possible molecular target sites, the present study examined the         suggest a preferential incorporation into nuclear DNA rather
+degree of toxicity of FIAU in a HepG2 cell line as well as              than mtDNA. However, mtDNA represents < 1% of total DNA
+potential mechanisms which may have led to impairment of                in mammalian cells (34), suggesting that both FIAU and
+cellular and mitochondrial functions in FIAU-treated patients.          FMAU incorporate at a much higher rate into mtDNA than
+As shown in Fig. 1, a dose-dependent inhibition on cell growth          nuclear DNA. Consistent with previous studies which demon-
+was observed with FIAU and FMAU, a metabolite which was                 strated that FIAU and FMAU are not subtrates for mitochondrial
+detected by our laboratory in biological fluids of FIAU-treated         thymidine kinase (35), phosphorylation of these two com-
+patients (19). Consistent with recently published data (30),            pounds was not detected in isolated mitochondria of HepG2
+FIAU was effectively phosphorylated to its triphosphate but             cells (Fig. 2). Therefore, as suggested previously with ddC
+rapidly plateaued to phosphate derivative levels well below             (36), a transport carrier on the mitochondrial membrane may
+those previously reported (30), probably reflecting our use of          be responsible for the uptake of intracellular FIAU and FMAU
+confluent rather than proliferating cells. A similar pattern profile    nucleotides toward the mitochondrial space resulting in a subse-
+was observed with FMAU, in agreement with the same affinity             quent incorporation into mtDNA. In contrast to 2 ',3 '-dideoxy-
+of these compounds for host phosphorylating enzymes (31).               nucleosides which lacks a free 3 '-hydroxyl group, FIAU con-
+The degree of phosphorylation of FIAU and FMAU was not                  tains a 3'-hydroxyl group probably leading to incorporation
+ affected when metabolism was investigated in 2.2.15 cells              into DNA at internucleotide linkages. This incorporation would
+ which have integrated HBV genomic sequences and produce                result in unfunctional DNA at the transcriptional level and prob-
+ infectious virions (13). This data is consistent with the non          ably affect gene expression of nuclear and mtDNA which are
+
+560       Cui et al.
+                                                                  Figur-e 5. Electron micrograph of a control HepG2 cell (A alld the sam11e
+                                                                  cell line incubated over 4 d with 10 pM FIALU B) or 10 pM FMAL
+                                                                  (C. x 12.000.
+
+
+important for cell function and thereby leading to cell damage.    the cellular energy metabolism of the mitochondria. When a
+The potential role of FIAU and FMAU incorporation into nu-         mitochondrial dysfunction occurs, cells can react in different
+cleic acids and into mtDNA in particular, in mediating toxicity    ways to compensate the decreased mitochondrial function. For
+of HepG2 cells is further suggested by their major effects on      instance, glycolysis can be enhanced as reflected by an increase
+
+                                                                                      Mitochondrial Toxicity of FIA U and FMAU         561
+                                                                      in lactic acid production. A significant increase in lactic acid
+                                                                      content was detected in HepG2 cells culture medium after 4 d
+                                                                      exposure to FIAU or FMAU (Table II), a phenomenon consis-
+                                                                      tent with clinical observation of FIAU-treated patients. The cel-
+                                                                      lular ATP content in HepG2 cells after 4 d treatment with FIAU
+                                                                      or FMAU markedly increased in a dose-dependent manner, sug-
+                                                                      gesting that the mitochondrial dysfunction induced by FIAU
+                                                                      and FMAU might initiate a glycolysis acceleration as a compen-
+                                                                      satory mechanism leading to energy enchancement. Meanwhile,
+                                                                      mitochondria may react in some way leading to an increased
+                                                                      mitochondrial volume and mitochondria numbers per hepato-
+                                                                      cyte, similarly as observed with liver cirrhosis (37). Consistent
+                                                                      with that hypothesis, mitochondria of HepG2 cells incubated
+                                                                      with FIAU or FMAU were enlarged and displayed a higher
+                                                                      cristae density (Fig. 4 B) which also reflect the activation of
+                                                                      compensatory energy mechanism. The electron micrographs
+                                                                      (Fig. 3, B and C) further demonstrate that both FIAU and
+                                                                      FMAU could cause micro- and macrovesicular steatosis in
+                                                                      HepG2 cells as demonstrated in liver cells of FIAU-treated
+                                                                      patients. The elevated cellular ATP levels concomittant to a
+                                                                      possible disturbance in the TCA cycle in mitochondria could
+                                                                      build up the steatosis which is a main route for energy storage.
+                                                                          In summary, the present data suggest that both FIAU and
+                                                                      FMAU can cause mitochondrial dysfunction like ddC and ddl
+                                                                      (38), but through different mechanisms. Notably, they do not
+                                                                      decrease mtDNA replication but are incorporated into nuclear
+                                                                      and mtDNA possibly resulting in unfunctional nucleic acids.
+                                                                      There is a major disturbance in cellular energy metabolism,
+                                                                      reflected by an increase in cellular ATP content, lactic acid
+                                                                      production and higher cristae density of mitochondria. Further-
+                                                                      more, the micro and macrovesicular steatosis as well as the
+                                                                      morphological change of mitochondria detected in HepG2 cells
+                                                                      after exposure with FIAU and FMAU are consistent with the
+                                                                      clinical observations in FIAU treated patients. These studies
+                                                                      emphasize the importance of such biochemical studies in the
+                                                                      development of novel entities for the treatment of viral infec-
+                                                                      tions and underlines the potential role of metabolites such as
+                                                                      FMAU in a possible synergistic toxicity with the parent drug.
+                                                                      The absence of such mitochondria effects with 3TC (Table
+                                                                      II) and (-)-2',3'-dideoxy-5-fluoro-3'-thiacytidine (39), two
+                                                                      nucleoside analogs being developed for the treatment of HIV
+                                                                      and HBV infections (40-42) demonstrate that each nucleoside
+                                                                      should be considered as a unique entity and further emphasizes
+                                                                      the usefulness of that class of compound to treat such viral
+                                                                      infections.
+
+                                                                      Acknowledgments
+                                                                      We would like to thank Eugene Arms for electron microscopy evaluation
+                                                                      and Terri Hicks for preparing and editing the manuscript.
+                                                                          This work was supported in part by Public Health Service grants
+                                                                      AI-33239 and AI-32775 (J. P. Sommadossi), AI-25899 (R. F. Schi-
+                                                                      nazi), by the Department of Veterans Affairs and the UAB Comprehen-
+                                                                      sive Cancer Center, Core Facility for Electron Microscopy. J.-P. Somma-
+                                                                      dossi is the recipient of a Faculty Research Award from the American
+                                                                      Cancer Society.
+
+                                                                      References
+                                                                          1. Hoofnagle, J. H., D. A. Shafritz, and H. Popper. 1987. Chronic type B
+                                                                      hepatitis and the healthy HBsAg carrier state. Hepatology. 7:758-763.
+                                                                          2. Szmuness. W. 1978. Hepatocellular carcinoma and the hepatitis B virus:
+Figure 6. Electron microscopy evaluation of mitochondria in control   evidence for a causal association. Prog. Med. Virol. 24:40-69.
+HepG2 cell (A) and cell exposed over 4 d with 10 MM FIAU (B).             3. Fourel, 1., 0. Hantz, K. A. Watanabe, C. Jacquet, B. Chomel, J. J. Fox,
+x30,000.                                                              and C. Trepo. 1990. Inhibitory effects of 2'-fluorinated arabinosyl-pyrimidine
+
+562     Cui et al.
+    nucleosides on woodchuck hepatitis virus replication in chronically infected wood-          tion of mitochondrial DNA suitable for studying restriction fragment length poly-
+    chucks. Antimicrob. Agents Chemother. 34:473-475.                                          morphisms. Gene (Aust.). 83:169-172.
+           4. Paar, D. P., T. M. Hooton, K. A. Smiles, A. Di Bisceglie, D. V. Havlir,                24. Chen, C. H., M. Vasquez-Padua, and Y. C. Cheng. 1991. Effect of anti-
+    D. D. Richman, D. R. Gretch, L. Corey, and S. E. Straus. 1992. The effect of               human immunodeficiency virus nucleoside analogs on mitochondrial DNA and
+    FIAU on chronic hepatitis B virus (HBV) infection in HIV-infected subjects                 its implication for delayed toxicity. Mol. Pharmacol. 39:625-628.
+    (ACTG 122b). The 32nd Interscience Conference on Antimicrobial Agents and                        25. Smith, J. B., and L. Smith. 1990. Energy dependence of sodium-calcium
+    Chemotherapy, Anaheim, CA. 264.                                                            exchange in vascular smooth muscle cells. Am. J. Physiol. 259(28):C302-309.
+          5. Dusheiko, G. M. 1994. Fialuridine toxicity: new hopes and false downs.                  26. Stanley, P. E., and S. G. Williams. 1969. Use of the liquid scintillation
+    International Antiviral News. 2 (2) :22-23.                                                spectrometer for determining adenosine triphosphate by the luciferase enzyme.
+          6. Touchette, N. 1993. HBV-drug deaths prompt restudy of similar antivirals.         Anal. Biochem. 29:381-392.
+    J. NIH Research. 5:33-35.                                                                        27. Poulton, J., M. E. Deadman, and R. M. Gardiner. 1989. Duplications of
+          7. Parker, W. B., and Y. C. Cheng. 1994. Mitochondrial toxicity of antiviral         mitochondrial DNA in mitochondrial myopathy. Lancet. 1:236-240.
+    nucleoside analogs. J. NIH Research. 6:57-61.                                                    28. Watanabe, K. A., U. Reichman, J. Kosaku, C. Lopez, and J. J. Fox.
+          8. Chen, C. H., and Y. C. Cheng. 1989. Delayed cytotoxicity and selective            Nucleosides. 1979. 110. Synthesis and antiherpes virus activity of some 2 '-fluoro-
+   loss of mitochondrial DNA in cells treated with the anti-human immunodeficiency             2'-deoxyarabinofuranosylpyrimidine nucleosides. J. Med. Chem. 22:21-24.
+   virus compound 2',3'-dideoxycytidine. J. Biol. Chem. 264:11934-11937.                            29. Drew, W. L., R. Miner, and D. King. 1991. Antiviral activity of FIAU
+          9. Faulds, D., and R. N. Brogden. 1992. Didanosine-a review of its antiviral         (1-[2'deoxy-2'fluoro-l-beta-D-arabinofuranosyl]-5-iodo-uridine) on strains of
+   activity, pharmacokinetic properties and therapeutic potential in human immuno-            cytomegalovirus sensitive and resistant to ganciclovir. J. Infect. Dis. 163:1388-
+   deficiency virus infection. Drugs. 44:94-116.                                               1389.
+          10. Dalakas, M. C., I. Mlla, G. H. Pezeshkpour, J. P. Laukaitis, B. Cohen, and            30. Staschke, K. A., J. M. Colacino, T. E. Mabry, and C. D. Jones. 1994.
+   J. L. Griffin. 1990. Mitochondrial myopathy caused by long-term zidovudine                 The in vitro anti-hepatitis B virus activity of FIAU[1-(2'-deoxy-2'-fluoro-l-,3-
+   therapy. N. Engl. J. Med. 322:1098-1105.                                                   o-arabinofuranosyl-5-iodo)uracil] is selective, reversible, and determined, at least
+          11. Faraj, A., D. A. Fowler, E. G. Bridges, and J. P. Sommadossi. 1994.             in part, by the host cell. Antiviral Research. 23:45-61.
+   Effects of 2 ',3 '-dideoxynucleosides on proliferation and differentiation of human              31. Chen, M. S., L. A. Amico, and D. J. Speelman. 1984. Kinetics of the
+  pluripotent progenitors in liquid culture and their effects on mitochondrial DNA            interaction of monophosphates of the antiviral nucleosides 2 '-fluoro- l-P-D-arabi-
+  synthesis. Antimicrob. Agents Chemother. 38:924-930.                                        nofuranosylpyrimidine and (E)-5- (2-bromovinyl)-2'-deoxyuridine with thymi-
+         12. Aden, D. P., A. Fogel, S. Plotkin, I. Damjanov, and B. B. Knowles. 1979.         dylate kinases from Vero cells and herpes simplex virus types 1 and 2. Antimicrob.
+  Controlled synthesis of HBsAg in a differentiated human liver carcinoma-derived            Agents Chemother. 26:778-780.
+  cell line. Nature (Lond.). 282:615-617.                                                           32. Grant, A. J., A. Feinberg, T. C. Chou, K. A. Watanabe, J. J. Fox, and
+         13. Sells, M. A., A. Z. Zelent, M. Shvartsman, and G. Acs. 1988. Replication         F. S. Philips. 1982. Incorporation of metabolites of 2'-fluoro-5-iodo-l-beta-D-
+  intermediates of hepatitis B virus in HepG2 cells that produce infectious virions.          arabinofuranosylcytosine into deoxyribonucleic acid of neoplastic and normal
+  J. Virol. 62:2836-2844.                                                                    mammalian tissues. Biochem. Pharmacol. 31:1103-1108.
+         14. Darlington, G. J., J. H. Kelly, and G. J. Buffone. 1987. Growth and                   33. Chen, M. S., M. V. Nostrand, and S. C. Oshana. 1986. Quantitative
+  hepatospecific gene expression of human hepatoma cells in a defined medium. In             determination of antiviral nucleoside analog in DNA. Anal. Biochem. 156:300-
+  Vitro Cell. Dev. Biol. 23(5):349-354.                                                       305.
+         15. Sassa, S., 0. Sugita, R. A. Galbraith, and A. Kappas. 1987. Drug metabo-              34. Clayton, D. A. 1982. Replication of animal mitochondrial DNA. Cell.
+  lism by the human hepatoma cell, HepG2. Biochem. Biophys. Res. Commun.                     28:693-705.
+  143:52-57.                                                                                       35. Cheng, Y. C., G. Dutschman, J. J. Fox, K. A. Watanabe, and H. Machida.
+        16. Chou, T. C., A. Feinberg, A. J. Grant, P. Vidal, U. Reichman, K. A.              1981. Differential activity of potential antiviral nucleoside analogs on herpes
+  Watanabe, J. J. Fox, and F. S. Philips. 1981. Pharmacological disposition of               simplex virus-induced and human cellular thymidine kinases. Antimicrob. Agents
+ metabolic fate of 2'-fluoro-5-iodo-l-13-D-arabinofuranosylcytosine in mice and              Chemother. 20:420-423.
+ rats. Cancer Res. 41:3336-3342.
+                                                                                                   36. Chen, G. H., and Y. C. Cheng. 1992. The role of cytoplasmic deoxycytidine
+                                                                                             kinase in the mitochondrial effects of the anti-human immunodeficiency virus
+        17. Philips, F. S., A. Feinberg, T. C. Chou, P. M. Vidal, T. L. Su, K. A.
+ Watanabe, and J. J. Fox. 1993. Distribution, metabolism, and excretion of 1-                compound 2',3'-dideoxycytidine. J. Biol. Chem. 267(5):2856-2859.
+                                                                                                   37. Kiahenbuhl, S., and J. Reichen. 1992. Adaptation of mitochondrial metabo-
+  (2-fluoro-2-deoxy-,/-D-arabinofuranosyl)thymine and 1-(2-fluoro-2-deoxy-fi-D-             lism in liver cirrhosis. Different strategies to maintain a vital function. Scand J.
+ arabinofuranosyl)-5-iodocytosine. Cancer Res. 43:3619-3627.                                Gastroenterol. 27(193):90-96.
+        18. Schinazi, R. F., J. J. Fox, K. A. Watanabe, and A. J. Nahmias. 1986.                  38. Sommadossi, J.-P. 1993. Nucleoside analogues: similarities and differ-
+ Activities of 1-(2-deoxy-2-fluoro-beta-i-arabinofuranosyl)-5-iodocytosine and              ences. Clin. Infect. Dis. 16(suppl 1):S7-S15.
+ its metabolites against herpes simplex virus types 1 and 2 in cell culture and in                39. Sommadossi, J.-P., R. F. Schinazi, A. Di Bisceglie and L. Cui. 1994.
+ mice infected intracerebrally with herpes simplex virus type 2. Antimicrob. Agents         Impairment of mitochondrial function by FIAU and its in vivo metabolite FMAU
+ Chemother. 29:77-84.                                                                       do not correlate with mitochondrial DNA content in HepG2 cells. The VII Interna-
+       19. Sommadossi, J. P. 1993. Dept. of Health and Human Services. Transcript           tional Conference on Antiviral Research, Charleston, SC., February 27-March
+ of FDA antiviral advisory committee meeting on FIAU toxicity. Transcript Dept.             4, 1994.
+ Health & Human Services.                                                                         40. Tyrrel, D. L. J., M. C. Mitchell, R. A. DeMan, S. W. Schalm, J. Maln,
+       20. White, E. L., W. B. Parker, L. J. Macy, S. C. Shaddix, G. McCaleb,               and H. J. Thomas, J. Fevery, F. Nevens, P. Beranek and C. Vicary. 1993. Phase
+J. A. I. Secrist, R. Vince, and W. M. Shannon. 1989. Comparison of the effect               II trial of lamuvidine for chronic hepatitis B. Hepatology. 18:224.
+of carbovir, AZT, and dideoxynucleoside trisphosphates on the activity of human                   41. Furman, P. A., M. Davis, D. C. Liotta, M. Paff, L. W. Frick, D. J. Nelson,
+immunodeficiency virus reverse transcriptase and selected human polymerases.               R. E. Dornsife, J. A. Wurster, L. J. Wilson, J. A. Fyfe, J. V. Tuttle, W. H. Miller,
+Biochem. Biophys. Res. Commun. 161:393-398.                                                L. Condreay, D. R. Averett, R. F. Schinazi, and G. R. Painter. 1992. The anti-
+      21. Anderson, S., A. T. Bankier, B. G. Barrell, M. H. L. de Brujin, A. R.            hepatitis B virus activities, cytotoxicities, and anabolic profiles of the (-) and
+Coulson, J. Drouin, I. C. Eperon, D. P. Nierlich, B. A. Roe, F. Sanger, P. H.              (+) enantiomers of cis-5-fluoro-1-[2-(hydroxymethyol)-1,3-oxythiolan-5-yl]-
+Schreier, A. J. H. Smith, R. Staden, and I. G. Young. 1981. Sequence and organiza-         cytosine (FTC). Antimicrob. Agents Chemoter. 36:2686-2692.
+tion of the human mitochondrial genome. Nature (Lond.). 290:457-465.                             42. Schinazi, R. F., A. McMillan, D. Cannon, R. Mathis, R. M. Lloyd, A.
+      22. Moore, D. 1989. Preparation and analysis of DNA. In Current Protocols            Peck, J.-P. Sommadossi, M. St. Clair, J. Wilson, P. A. Furman, G. Painter,
+in Molecular Biology. F. M. Ausubel, R. Brent, R. E. Kingston, D. Moore, J. G.             W.-B. Choi, and D. C. Liotta. 1992. Selective inhibition of human immunodefi-
+Seidman, J. A. Smith, and K. Struhl, editors. Current Protocols, Greene Publishing         ciency viruses by racemates and enantiomers of cis-5-fluoro-l-[2-(hydroxy-
+Associates, Inc. and John Wiley & Sons, Inc., New York. Vol. 1. 2.1.1-2.1.3.               methyl)-1,3-oxathiolan-5-yl]cytosine. Antimicrob. Agents Chemother. 36:2423-
+      23. Welter, C., S. Dooley, and N. Blin. 1989. A rapid protocol for the purifica-     2431.
+
+
+
+
+                                                                                                               Mitochondrial Toxicity of FIAU and FMAU                   563
+

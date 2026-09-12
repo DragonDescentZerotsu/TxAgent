@@ -1,0 +1,26 @@
+{
+  "parent_key": "JEHJDOIFMGNIQI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JEHJDOIFMGNIQI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Pyren-1-yl)methyl hydrogen sulfate",
+    "1-Hydroxymethylpyrene sulfate",
+    "1-PYRENEMETHANOL, 1-(HYDROGEN SULFATE)",
+    "1-Sulfooxymethylpyrene",
+    "1-sulphooxymethylpyrene",
+    "130965-73-0",
+    "CCRIS 4484",
+    "DTXCID8079310",
+    "DTXSID00156819",
+    "NS00116047",
+    "Q27291333",
+    "RefChem:77239",
+    "UNII-UYC2177X5N",
+    "UYC2177X5N",
+    "pyren-1-ylmethyl hydrogen sulfate"
+  ],
+  "http_status": 200,
+  "cids": [
+    131320
+  ]
+}

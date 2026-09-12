@@ -1,0 +1,28 @@
+{
+  "parent_key": "LIEIOJNANXUNDT-VKPCTYQGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LIEIOJNANXUNDT-VKPCTYQGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "((1R,4Z,6S,7S,11Z)-4-ethenyl-6,7,14-trimethyl-3,8,17-trioxo-2,9-dioxa-14-azabicyclo(9.5.1)heptadeca-4,11-dien-7-yl) acetate",
+    "((4Z)-4-ethenyl-17-hydroxy-6,7,14-trimethyl-3,8-dioxo-2,9-dioxa-14-azoniatricyclo(9.5.1.014,17)heptadeca-4,11-dien-7-yl) acetate",
+    "(1R,4Z,6S,7S,11Z)-6,7,14-trimethyl-3,8,17-trioxo-4-vinyl-2,9-dioxa-14-azabicyclo[9.5.1]heptadeca-4,11-dien-7-yl acetate",
+    "2,9-Dioxa-14-azabicyclo(9.5.1)heptadeca-4,11-diene-3,8,17-trione, 7-(acetyloxy)-4-ethenyl-6,7,14-trimethyl-, (1R,4Z,6S,7S)-",
+    "275806-81-0",
+    "AKOS040751217",
+    "Clivorine",
+    "Clivorine (neutral)",
+    "DTXCID10334",
+    "DTXSID3020334",
+    "J1.344.443I",
+    "P180OM3SJM",
+    "Q27285997",
+    "RefChem:127004",
+    "SCHEMBL30752196",
+    "UNII-P180OM3SJM",
+    "[(1R,4Z,6S,7S,11Z)-4-ethenyl-6,7,14-trimethyl-3,8,17-trioxo-2,9-dioxa-14-azabicyclo[9.5.1]heptadeca-4,11-dien-7-yl] acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    10069841
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "parent_key": "DWJMBQYORXLGAE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-pyridine sulfonamide",
+    "2-pyridinesulfonamide",
+    "2-pyridinylsulfonamide",
+    "63636-89-5",
+    "AKOS010997970",
+    "AN-584/43379922",
+    "CS-W022941",
+    "DS-16835",
+    "DTXSID50979853",
+    "DWJM",
+    "DWJMBQYORXLGAE-UHFFFAOYSA-N",
+    "EN300-79039",
+    "F235346",
+    "MFCD09260336",
+    "NCA63689",
+    "PB16122",
+    "PYRIDINE-2-SULFONIC ACID AMIDE",
+    "Pyridine-2-sulfonamide",
+    "Pyridinesulfonamide",
+    "RefChem:870736",
+    "SBB087299",
+    "SCHEMBL232617",
+    "SCHEMBL232618",
+    "SCHEMBL29757501",
+    "SCHEMBL5400629",
+    "SCHEMBL5768317",
+    "SCHEMBL6281126",
+    "SY042357",
+    "Z854066590",
+    "pyridine sulfonamide",
+    "pyridyl-sulfonamide",
+    "pyroxsulam TP3"
+  ],
+  "cids": [
+    12000791
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DWJMBQYORXLGAE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,35 @@
+{
+  "parent_key": "LDEBVRIURYMKQS-WISUUJSJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LDEBVRIURYMKQS-WISUUJSJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,3R)-2-{[(2S)-2-amino-3-hydroxypropanoyl]amino}-3-hydroxybutanoic acid",
+    "(2S,3R)-2-{[(2S)-2-azaniumyl-3-hydroxypropanoyl]amino}-3-hydroxybutanoate",
+    "CHEBI:141393",
+    "CHEBI:169955",
+    "H-Ser-Thr-OH zwitterion",
+    "L-Ser-L-Thr",
+    "L-Ser-L-Thr zwitterion",
+    "L-Serinyl-L-Threonine",
+    "L-seryl-L-threonine zwitterion",
+    "S-T",
+    "S-T Dipeptide",
+    "S-T zwitterion",
+    "SCHEMBL29379448",
+    "ST dipeptide",
+    "ST zwitterion",
+    "Ser-Thr",
+    "Ser-Thr zwitterion",
+    "Serine Threonine dipeptide",
+    "Serine-Threonine dipeptide",
+    "Serinylthreonine",
+    "l-Seryl-l-Threonin",
+    "serinylthreonine zwitterion",
+    "serylthreonine"
+  ],
+  "http_status": 200,
+  "cids": [
+    54027404,
+    155903250
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "NCRPQHAAUCSUHV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(Quinolin-4-yl)acetaldehyde",
+    "2-(QUINOLIN-4-YL)ACETALDEHYDE",
+    "2-quinolin-4-ylacetaldehyde",
+    "545423-96-9",
+    "AKOS006307160",
+    "DTXSID40627139",
+    "EN300-1868946",
+    "F31100",
+    "SB68011",
+    "SCHEMBL27651283",
+    "SCHEMBL3397178",
+    "SCHEMBL8688643"
+  ],
+  "cids": [
+    22631220
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCRPQHAAUCSUHV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

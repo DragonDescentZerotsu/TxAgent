@@ -1,0 +1,22 @@
+{
+  "parent_key": "LTDANPHZAHSOBN-ISABJOOBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LTDANPHZAHSOBN-ISABJOOBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1S,4R,24R)-24-{[beta-D-Glucopyranosyl-(1->2)-[beta-D-glucopyranosyl-(1->6)]-beta-D-glucopyranosyl]oxy}-11alpha,25-dihydroxy-9alpha,10,14-trimethyl-8beta-4,9-cyclo-9,10-secocholest-5-en-1-yl beta-D-glucopyranosyl-(1->2)-[beta-D-glucopyranosyl-(1->6)]-beta-D-glucopyranoside",
+    "(2R,3R,4S,5S,6R)-2-(((2R,3S,4S,5R,6R)-6-(((3S,8S,9R,10R,11R,13R,14S,17R)-17-((2R,5R)-5-((2S,3R,4S,5S,6R)-4,5-dihydroxy-3-((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxy-6-(((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxymethyl)oxan-2-yl)oxy-6-hydroxy-6-methylheptan-2-yl)-11-hydroxy-4,4,9,13,14-pentamethyl-2,3,7,8,10,11,12,15,16,17-decahydro-1H-cyclopenta(a)phenanthren-3-yl)oxy)-3,4-dihydroxy-5-((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxyoxan-2-yl)methoxy)-6-(hydroxymethyl)oxane-3,4,5-triol",
+    "(2R,3R,4S,5S,6R)-2-[[(2R,3S,4S,5R,6R)-6-[[(3S,8S,9R,10R,11R,13R,14S,17R)-17-[(2R,5R)-5-[(2S,3R,4S,5S,6R)-4,5-dihydroxy-3-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxy-6-[[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxymethyl]oxan-2-yl]oxy-6-hydroxy-6-methylheptan-2-yl]-11-hydroxy-4,4,9,13,14-pentamethyl-2,3,7,8,10,11,12,15,16,17-decahydro-1H-cyclopenta[a]phenanthren-3-yl]oxy]-3,4-dihydroxy-5-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxyoxan-2-yl]methoxy]-6-(hydroxymethyl)oxane-3,4,5-triol",
+    "189307-15-1",
+    "AKOS040760562",
+    "CHEBI:232052",
+    "DTXSID601317961",
+    "Neomogroside",
+    "RefChem:165305",
+    "TN1938",
+    "orb1684414"
+  ],
+  "http_status": 200,
+  "cids": [
+    101552120
+  ]
+}

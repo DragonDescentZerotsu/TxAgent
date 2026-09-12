@@ -1,0 +1,13 @@
+{
+  "parent_key": "GRFXXWWBAWFSRF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRFXXWWBAWFSRF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL172557",
+    "methyl-2-nitrosopropane"
+  ],
+  "http_status": 200,
+  "cids": [
+    53853136
+  ]
+}

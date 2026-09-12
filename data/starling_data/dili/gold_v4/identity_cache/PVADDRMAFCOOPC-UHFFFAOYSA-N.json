@@ -1,0 +1,22 @@
+{
+  "parent_key": "PVADDRMAFCOOPC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "157858-56-5",
+    "DTXSID00925502",
+    "Germanium monooxide",
+    "Germanium monoxide",
+    "Oxogermylene",
+    "PVADDRMAFCOOPC-UHFFFAOYSA-N",
+    "Q4115313",
+    "RJ3454T76W",
+    "SCHEMBL29161",
+    "germanium oxygen",
+    "germanone"
+  ],
+  "cids": [
+    6327639
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PVADDRMAFCOOPC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,39 @@
+{
+  "parent_key": "JNMALBXXJSWZQY-BBBUMGABSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3.ALPHA.,5.ALPHA.,7.ALPHA.,12.ALPHA.)-CHOLESTANE-3,7,12,26,27-PENTOL",
+    "(3R,5R,7R,8R,9S,10S,12S,13R,14S,17R)-17-((2R)-7-HYDROXY-6-(HYDROXYMETHYL)HEPTAN-2-YL)-10,13-DIMETHYL-2,3,4,5,6,7,8,9,11,12,14,15,16,17-TETRADECAHYDRO-1H-CYCLOPENTA(A)PHENANTHRENE-3,7,12-TRIOL",
+    "(3R,5R,7R,8R,9S,10S,12S,13R,14S,17R)-17-[(2R)-7-hydroxy-6-(hydroxymethyl)heptan-2-yl]-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthrene-3,7,12-triol",
+    "(3alpha,5alpha,7alpha,12alpha)-Cholestane-3,7,12,26,27-pentol",
+    "2952-70-7",
+    "3alpha,7alpha,12alpha,26,27-pentahydroxy-5alpha-cholestane",
+    "5 beta-cholestane-3 alpha,7-alpha,12 alpha,26,27-pentol",
+    "5.ALPHA.-CHOLESTANE-3.ALPHA.,7.ALPHA.,12.ALPHA.,26,27-PENTOL",
+    "5.ALPHA.-CYPRINOL",
+    "5alpha-Cholestane-3alpha,7alpha,12alpha,26,27-pentol",
+    "5alpha-cholestan-3alpha,7alpha,12alpha,26,27-pentol",
+    "5alpha-cyprinol",
+    "5beta-Cholestane-3alpha,7-alpha,12alpha,26,27-pentol",
+    "C16890",
+    "CHEBI:50421",
+    "CHEBI:50422",
+    "CHOLESTANE-3,7,12,26,27-PENTOL, (3.ALPHA.,5.ALPHA.,7.ALPHA.,12.ALPHA.)-",
+    "Cholestane-3,7,12,26,27-pentol",
+    "Cholestane-3,7,12,26,27-pentol, (3alpha,5alpha,7alpha,12alpha)-",
+    "Cyprinol",
+    "DTXCID601380124",
+    "DTXSID10952021",
+    "LMST04030019",
+    "Q27122059",
+    "RefChem:919486",
+    "S8URN8SD6R",
+    "SCHEMBL9697291",
+    "UNII-S8URN8SD6R"
+  ],
+  "cids": [
+    160665
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JNMALBXXJSWZQY-BBBUMGABSA-N/synonyms/JSON",
+  "http_status": 200
+}

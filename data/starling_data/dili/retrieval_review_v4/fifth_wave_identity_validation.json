@@ -1,0 +1,146 @@
+{
+  "status": "passed_for_applied_repairs",
+  "identities": {
+    "chlorpromazine": {
+      "CID": 2726,
+      "MolecularFormula": "C17H19ClN2S",
+      "SMILES": "CN(C)CCCN1C2=CC=CC=C2SC3=C1C=C(C=C3)Cl",
+      "InChIKey": "ZPEIMTDSQAKGNT-UHFFFAOYSA-N"
+    },
+    "4-phenylbutyric acid": {
+      "CID": 4775,
+      "MolecularFormula": "C10H12O2",
+      "SMILES": "C1=CC=C(C=C1)CCCC(=O)O",
+      "InChIKey": "OBKXEAXTFZPCHS-UHFFFAOYSA-N"
+    },
+    "nitracrine": {
+      "CID": 20628,
+      "MolecularFormula": "C18H20N4O2",
+      "SMILES": "CN(C)CCCNC1=C2C(=NC3=CC=CC=C31)C=CC=C2[N+](=O)[O-]",
+      "InChIKey": "YMVWGSQGCWCDGW-UHFFFAOYSA-N"
+    },
+    "cyproterone acetate": {
+      "CID": 9880,
+      "MolecularFormula": "C24H29ClO4",
+      "SMILES": "CC(=O)[C@]1(CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2C=C(C4=CC(=O)[C@@H]5C[C@@H]5[C@]34C)Cl)C)OC(=O)C",
+      "InChIKey": "UWFYSQMTEOIJJG-FDTZYFLXSA-N"
+    },
+    "cyclopiazonic acid": {
+      "CID": 54682463,
+      "MolecularFormula": "C20H20N2O3",
+      "SMILES": "CC(=O)C1=C([C@@H]2[C@@H]3[C@@H](CC4=C5C3=CNC5=CC=C4)C(N2C1=O)(C)C)O",
+      "InChIKey": "SZINUGQCTHLQAZ-DQYPLSBCSA-N"
+    },
+    "aminoguanidine": {
+      "CID": 2146,
+      "MolecularFormula": "CH6N4",
+      "SMILES": "C(=NN)(N)N",
+      "InChIKey": "HAMNKKUPIHEESI-UHFFFAOYSA-N"
+    },
+    "6-MMPR": {
+      "SMILES": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "InChIKey": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "MolecularFormula": "C11H15N4O7PS",
+      "source": "KEGG C16615 original molfile; S-methylated thiopurine nucleotide, not PubChem alias matches"
+    },
+    "acadesine": {
+      "CID": 17513,
+      "MolecularFormula": "C9H14N4O5",
+      "SMILES": "C1=NC(=C(N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N)C(=O)N",
+      "InChIKey": "RTRQQBHATOEIAF-UUOKFMHZSA-N"
+    },
+    "cycloheximide": {
+      "CID": 6197,
+      "MolecularFormula": "C15H23NO4",
+      "SMILES": "C[C@H]1C[C@@H](C(=O)[C@@H](C1)[C@@H](CC2CC(=O)NC(=O)C2)O)C",
+      "InChIKey": "YPHMISFOHDHNIV-FSZOTQKASA-N"
+    },
+    "Ac-6-FP": {
+      "CID": 135447887,
+      "MolecularFormula": "C9H7N5O3",
+      "SMILES": "CC(=O)NC1=NC2=NC=C(N=C2C(=O)N1)C=O",
+      "InChIKey": "DDBCPKAHJKOGKK-UHFFFAOYSA-N"
+    },
+    "lamivudine": {
+      "CID": 60825,
+      "MolecularFormula": "C8H11N3O3S",
+      "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=CC(=NC2=O)N",
+      "InChIKey": "JTEGQNOMFQHVDC-NKWVEPMBSA-N"
+    },
+    "dihydroactinidiolide unspecified stereochemistry": {
+      "SMILES": "CC1(C)CCCC2(C)OC(=O)C=C12",
+      "InChIKey": "IMKHDCBNRDRUEB-UHFFFAOYSA-N",
+      "MolecularFormula": "C11H16O2",
+      "source": "PMID 33617922 identifies dihydroactinidiolide; PubChem connectivity checked; experimental enantiomer not established, so no stereochemistry inferred"
+    },
+    "cis-parinaric acid": {
+      "CID": 5460995,
+      "MolecularFormula": "C18H28O2",
+      "SMILES": "CC/C=C\\C=C\\C=C\\C=C/CCCCCCCC(=O)O",
+      "InChIKey": "IJTNSXPMYKJZPR-ZSCYQOFPSA-N"
+    },
+    "CPC probe": {
+      "SMILES": "CCN(CC)c1ccc2cc(C=NNc3ccc(C(=O)O)cc3)c(=O)oc2c1",
+      "InChIKey": "ODNPYYPRCCOAMK-UHFFFAOYSA-N",
+      "MolecularFormula": "C21H21N3O4",
+      "source": "PMID 39439499 Figure 1D and Supporting Information: manually transcribed coumarin-hydrazone connectivity; E/Z not independently established"
+    },
+    "azathioprine": {
+      "CID": 2265,
+      "MolecularFormula": "C9H7N7O2S",
+      "SMILES": "CN1C=NC(=C1SC2=NC=NC3=C2NC=N3)[N+](=O)[O-]",
+      "InChIKey": "LMEKQMALGUDUQG-UHFFFAOYSA-N"
+    },
+    "dorsomorphin": {
+      "CID": 11524144,
+      "MolecularFormula": "C24H25N5O",
+      "SMILES": "C1CCN(CC1)CCOC2=CC=C(C=C2)C3=CN4C(=C(C=N4)C5=CC=NC=C5)N=C3",
+      "InChIKey": "XHBVYDAKJHETMP-UHFFFAOYSA-N"
+    },
+    "cryptocaryone": {
+      "CID": 10379026,
+      "MolecularFormula": "C17H14O4",
+      "SMILES": "C1[C@H]\\2[C@H](C=CC(=O)/C2=C(/C=C/C3=CC=CC=C3)\\O)OC1=O",
+      "InChIKey": "PTLQMLWEJRHXDU-VHIARPGFSA-N"
+    },
+    "cordycepin": {
+      "CID": 6303,
+      "MolecularFormula": "C10H13N5O3",
+      "SMILES": "C1[C@H](O[C@H]([C@@H]1O)N2C=NC3=C(N=CN=C32)N)CO",
+      "InChIKey": "OFEZSBMBBKLLBJ-BAJZRUMYSA-N"
+    },
+    "HL156A parent": {
+      "CID": 71512108,
+      "MolecularFormula": "C13H16F3N5O",
+      "SMILES": "C1CCN(C1)/C(=N/C(=NC2=CC=C(C=C2)OC(F)(F)F)N)/N",
+      "InChIKey": "NGFUHJWVBKTNOE-UHFFFAOYSA-N"
+    },
+    "phenytoin": {
+      "CID": 1775,
+      "MolecularFormula": "C15H12N2O2",
+      "SMILES": "C1=CC=C(C=C1)C2(C(=O)NC(=O)N2)C3=CC=CC=C3",
+      "InChIKey": "CXOFVDLJLONNDW-UHFFFAOYSA-N"
+    },
+    "galactosamine": {
+      "CID": 24154,
+      "MolecularFormula": "C6H13NO5",
+      "SMILES": "C([C@@H]1[C@@H]([C@@H]([C@H](C(O1)O)N)O)O)O",
+      "InChIKey": "MSWZFWKMSRAUBD-GASJEMHNSA-N"
+    },
+    "2-aminoethylphosphonic acid": {
+      "CID": 339,
+      "MolecularFormula": "C2H8NO3P",
+      "SMILES": "C(CP(=O)(O)O)N",
+      "InChIKey": "QQVDJLLNRSOCEL-UHFFFAOYSA-N"
+    },
+    "chenodeoxycholic acid": {
+      "CID": 10133,
+      "MolecularFormula": "C24H40O4",
+      "SMILES": "C[C@H](CCC(=O)O)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2[C@@H](C[C@H]4[C@@]3(CC[C@H](C4)O)C)O)C",
+      "InChIKey": "RUDATBOHQWOJDD-BSWAIDMHSA-N"
+    }
+  },
+  "decisions": 216,
+  "total_decisions": 712,
+  "labels_or_predictions_consulted": false
+}

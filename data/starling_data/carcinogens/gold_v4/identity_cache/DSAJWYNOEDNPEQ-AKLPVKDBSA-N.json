@@ -1,0 +1,24 @@
+{
+  "parent_key": "DSAJWYNOEDNPEQ-AKLPVKDBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DSAJWYNOEDNPEQ-AKLPVKDBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~140~Ba)Barium",
+    "140Ba",
+    "140Ba (isotope)",
+    "140Ba isotope",
+    "14798-08-4",
+    "Barium 140",
+    "Barium, isotope of mass 140",
+    "Barium-140",
+    "Barium-140 isotope",
+    "DTXSID601018200",
+    "Isotope:140Ba",
+    "Isotope:Barium-140",
+    "SCHEMBL29378467"
+  ],
+  "http_status": 200,
+  "cids": [
+    6335490
+  ]
+}

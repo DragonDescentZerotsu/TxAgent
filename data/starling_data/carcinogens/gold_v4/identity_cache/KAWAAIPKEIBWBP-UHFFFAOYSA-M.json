@@ -1,0 +1,15 @@
+{
+  "parent_key": "KAWAAIPKEIBWBP-UHFFFAOYSA-M",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KAWAAIPKEIBWBP-UHFFFAOYSA-M/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16457-43-5",
+    "DTXSID00586819",
+    "chlorobismuth(2+)"
+  ],
+  "http_status": 200,
+  "cids": [
+    16684909,
+    18364475
+  ]
+}

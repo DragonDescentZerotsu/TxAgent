@@ -1,0 +1,13 @@
+{
+  "parent_key": "GPJGXHXKGHJGIY-RUZDIDTESA-N",
+  "ok": true,
+  "synonyms": [
+    "BDBM50456561",
+    "CHEMBL4166922"
+  ],
+  "cids": [
+    145754982
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPJGXHXKGHJGIY-RUZDIDTESA-N/synonyms/JSON",
+  "http_status": 200
+}

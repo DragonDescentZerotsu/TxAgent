@@ -1,0 +1,23 @@
+{
+  "parent_key": "NSFMUHNGROVPRE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NSFMUHNGROVPRE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7-hexyloctadecane",
+    "7-n-Hexyloctadecane",
+    "7200-09-1",
+    "DTXCID20144773",
+    "DTXSID20222282",
+    "NSFMUHNGROVPRE-UHFFFAOYSA-N",
+    "Octadecane, 7-hexyl-",
+    "RefChem:366681",
+    "SCHEMBL1037729",
+    "SCHEMBL10521051",
+    "SCHEMBL11797136",
+    "SCHEMBL199525"
+  ],
+  "http_status": 200,
+  "cids": [
+    19842929
+  ]
+}

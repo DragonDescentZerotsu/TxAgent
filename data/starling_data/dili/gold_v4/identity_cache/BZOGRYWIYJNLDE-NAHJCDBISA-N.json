@@ -1,0 +1,33 @@
+{
+  "parent_key": "BZOGRYWIYJNLDE-NAHJCDBISA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6S)-6-((4-(N,N-Dipropylsulfamoyl)benzoyl)oxy)-3,4,5-trihydroxytetrahydro-2H-pyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6S)-6-[4-(dipropylsulfamoyl)benzoyl]oxy-3,4,5-trihydroxy-tetrahydropyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6S)-6-[4-(dipropylsulfamoyl)benzoyl]oxy-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "1-O-[4-(Dipropylsulfamoyl)benzoyl]hexopyranuronic acid",
+    "1-O-[4-(dipropylsulfamoyl)benzoyl]-beta-D-glucopyranuronic acid",
+    "1-[4-[(Dipropylamino)sulfonyl]benzoate]",
+    "34017-15-7",
+    "C19H27NO10S",
+    "CS-0451284",
+    "DB-257625",
+    "DTXSID20955588",
+    "MP16838",
+    "Probenecid Acyl ?-D-Glucuronide >90%",
+    "Probenecid Acyl Beta-D-Glucuronide >90%",
+    "Probenecid Acyl beta-D-Glucuronide >90per cent",
+    "Probenecid Acyl |A-D-Glucuronide",
+    "Probenecid Glucuronide",
+    "Probenecid acyl b-D-glucuronide",
+    "Probenecid acyl-beta-D-glucuronide",
+    "TSW-00320",
+    "beta-D-Glucopyranuronic acid, 1-(4-((dipropylamino)sulfonyl)benzoate)",
+    "orb2941711"
+  ],
+  "cids": [
+    182154
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BZOGRYWIYJNLDE-NAHJCDBISA-N/synonyms/JSON",
+  "http_status": 200
+}

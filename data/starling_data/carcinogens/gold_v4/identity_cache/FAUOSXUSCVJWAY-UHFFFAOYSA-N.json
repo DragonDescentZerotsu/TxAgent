@@ -1,0 +1,32 @@
+{
+  "parent_key": "FAUOSXUSCVJWAY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FAUOSXUSCVJWAY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "24655-84-3",
+    "CHEMBL1741005",
+    "DTXCID1023786",
+    "DTXSID3043786",
+    "FAUOSXUSCVJWAY-UHFFFAOYSA-N",
+    "J221.542J",
+    "NS00006715",
+    "Phosphonium, tetrakis(hydroxymethyl)-",
+    "Q27294997",
+    "RefChem:188739",
+    "SCHEMBL181564",
+    "SCHEMBL28363359",
+    "SCHEMBL29465010",
+    "SCHEMBL29465011",
+    "SG-1 (tanning agent)",
+    "Tetrakis(hydroxymethyl)phosphonium cation",
+    "UNII-Z4V2192F6X",
+    "Z4V2192F6X",
+    "tetrakis(hydroxymethyl)phosphanium",
+    "tetrakis(hydroxymethyl)phosphonium",
+    "tetramethylolphosphine"
+  ],
+  "http_status": 200,
+  "cids": [
+    10544
+  ]
+}

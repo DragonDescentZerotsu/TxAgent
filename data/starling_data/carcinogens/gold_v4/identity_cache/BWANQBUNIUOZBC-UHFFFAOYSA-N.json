@@ -1,0 +1,14 @@
+{
+  "parent_key": "BWANQBUNIUOZBC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BWANQBUNIUOZBC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL25393535",
+    "SCHEMBL30054772",
+    "trimethylangelicin"
+  ],
+  "http_status": 200,
+  "cids": [
+    129664851
+  ]
+}

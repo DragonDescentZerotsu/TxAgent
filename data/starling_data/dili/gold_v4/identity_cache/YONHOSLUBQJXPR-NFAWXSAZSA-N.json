@@ -1,0 +1,27 @@
+{
+  "parent_key": "YONHOSLUBQJXPR-NFAWXSAZSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-aristolochene",
+    "(1R,7R,8aS)-aristolochene",
+    "(4R,4aS,6R)-4,4a-dimethyl-6-(prop-1-en-2-yl)-1,2,3,4,4a,5,6,7-octahydronaphthalene",
+    "(4R,4aS,6R)-4,4a-dimethyl-6-(prop-1-en-2-yl)-1,2,3,4,4a,5,6,7-octahydronaphthalene;4betaH,5alpha-eremophila-9,11-diene",
+    "(4R,4aS,6R)-4,4a-dimethyl-6-prop-1-en-2-yl-2,3,4,5,6,7-hexahydro-1H-naphthalene",
+    "26620-71-3",
+    "4betaH,5alpha-eremophila-9,11-diene",
+    "CHEBI:18027",
+    "CHEBI:36529",
+    "DTXCID70103658",
+    "DTXSID60181167",
+    "Naphthalene, 1,2,3,4,6,7,8,8a-octahydro-1,8a-dimethyl-7-(1-methylethenyl)-, (1R-(1alpha,7beta,8aalpha))-",
+    "Q27102773",
+    "RefChem:114050",
+    "SCHEMBL29831667",
+    "aristolochene"
+  ],
+  "cids": [
+    161533
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YONHOSLUBQJXPR-NFAWXSAZSA-N/synonyms/JSON",
+  "http_status": 200
+}

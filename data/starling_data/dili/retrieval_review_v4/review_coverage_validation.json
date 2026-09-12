@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "ledger_sha256": "0eece036d0051c0745bf4300f6f95297f2c9c071b4a0b0714ee92c220cb54827",
+  "superseded_bad_selected_cards_rejected": 9,
+  "unchanged_actual_voter_bookkeeping_card_accepted": true,
+  "mechanism_cards_not_misrouted_by_reviewer_limitations": 40,
+  "source_validation": "separate full-source check running",
+  "n_model_calls": 0
+}

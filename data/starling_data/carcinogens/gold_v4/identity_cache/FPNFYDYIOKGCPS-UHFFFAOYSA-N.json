@@ -1,0 +1,25 @@
+{
+  "parent_key": "FPNFYDYIOKGCPS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FPNFYDYIOKGCPS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12-Formyl-7-methylbenz(a)anthracene",
+    "12-Formyl-7-methylbenz[a]anthracene",
+    "17513-40-5",
+    "7-Methylbenz(a)anthracene-12-carboxaldehyde",
+    "7-Methylbenzo[a]anthracene-12-carbaldehyde",
+    "7-Methylbenzo[a]anthracene-12-carbaldehyde #",
+    "7-methyltetraphene-12-carbaldehyde",
+    "BENZ(a)ANTHRACENE-12-CARBOXALDEHYDE, 7-METHYL-",
+    "BRN 2333173",
+    "Benz[a]anthracene-12-carboxaldehyde, 7-methyl-",
+    "DTXCID2092433",
+    "DTXSID80169942",
+    "FPNFYDYIOKGCPS-UHFFFAOYSA-N",
+    "RefChem:321031"
+  ],
+  "http_status": 200,
+  "cids": [
+    28577
+  ]
+}

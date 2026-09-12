@@ -1,0 +1,20 @@
+{
+  "parent_key": "BBIVKADJIGATEE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BBIVKADJIGATEE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3765-62-6",
+    "4-(dimethylamino)-N-phenylbenzamide",
+    "4-Dimethylamino-N-phenyl-benzamide",
+    "AKOS007979976",
+    "CHEMBL19651",
+    "CS-0294332",
+    "SCHEMBL26986068",
+    "SCHEMBL3638309",
+    "Z27782751"
+  ],
+  "http_status": 200,
+  "cids": [
+    13795759
+  ]
+}

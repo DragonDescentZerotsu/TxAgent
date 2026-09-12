@@ -1,0 +1,40 @@
+{
+  "parent_key": "ILPSCQCLBHQUEM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ILPSCQCLBHQUEM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,5-TETRABROMO-4-(2,4,5-TRIBROMOPHENOXY)BENZENE",
+    "1,2,3,5-Tetrabromo-4-(2,4,5-tribromophenoxy)-benzene",
+    "2,2',3,4,4',5',6-HeptaBDE",
+    "2,2',3,4,4',5',6-Heptabromodiphenylether Solution in Hexane, 100ug/mL",
+    "2,2',3,4,4',5',6-Hexabromodiphenyl ether",
+    "2,2',3,4,4',5',6-heptabromodiphenyl ether",
+    "207122-16-5",
+    "2234456-Heptabromodiphenyl ether",
+    "6M82N9DXAI",
+    "BDE 183",
+    "BDE-183",
+    "BDE183",
+    "Benzene, 1,2,3,5-tetrabromo-4-(2,4,5-tribromophenoxy)-",
+    "C18140",
+    "CHEBI:81537",
+    "CHEMBL219178",
+    "DTXCID2031291",
+    "DTXSID8052693",
+    "MFCD16661229",
+    "MSK6321-100H",
+    "NS00009517",
+    "PBDE 183",
+    "PBDE 183 50 microg/mL in Nonane",
+    "PBDE No. 183",
+    "Q27155453",
+    "RefChem:80577",
+    "SCHEMBL14938742",
+    "SCHEMBL29599809",
+    "UNII-6M82N9DXAI"
+  ],
+  "http_status": 200,
+  "cids": [
+    15509899
+  ]
+}

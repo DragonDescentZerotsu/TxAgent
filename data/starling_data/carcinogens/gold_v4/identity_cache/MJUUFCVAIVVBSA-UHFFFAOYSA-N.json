@@ -1,0 +1,13 @@
+{
+  "parent_key": "MJUUFCVAIVVBSA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MJUUFCVAIVVBSA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Propoxy-1H-pyrazole-4,5-diol",
+    "SCHEMBL1229819"
+  ],
+  "http_status": 200,
+  "cids": [
+    53442608
+  ]
+}

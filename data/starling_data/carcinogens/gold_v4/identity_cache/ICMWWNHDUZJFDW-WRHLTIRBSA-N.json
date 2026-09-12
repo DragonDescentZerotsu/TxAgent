@@ -1,0 +1,17 @@
+{
+  "parent_key": "ICMWWNHDUZJFDW-WRHLTIRBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ICMWWNHDUZJFDW-WRHLTIRBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(17I(2))-17-Hydroxy-2-(hydroxymethylene)-17-methylandrostan-3-one",
+    "17beta-Hydroxy-2-(hydroxymethylidene)-17alpha-methylandrostan-3-one",
+    "18045-52-8",
+    "DTXSID301176574",
+    "NS00087256",
+    "SCHEMBL11503176"
+  ],
+  "http_status": 200,
+  "cids": [
+    57370741
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "HABAPWZXRLIZDL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HABAPWZXRLIZDL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHLOROPHENOXYACETIC ACID",
+    "SCHEMBL101519",
+    "SCHEMBL10333646"
+  ],
+  "http_status": 200,
+  "cids": [
+    10214439
+  ]
+}

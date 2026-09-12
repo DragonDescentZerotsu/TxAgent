@@ -1,0 +1,14 @@
+{
+  "parent_key": "FTAJQPVAFOWCFP-OROHVZFPSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS025149476",
+    "DB-029434",
+    "SCHEMBL329625"
+  ],
+  "cids": [
+    57358112
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FTAJQPVAFOWCFP-OROHVZFPSA-N/synonyms/JSON",
+  "http_status": 200
+}

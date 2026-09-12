@@ -1,0 +1,14 @@
+{
+  "parent_key": "KAOYVBXRRJCZBG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KAOYVBXRRJCZBG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL4604800",
+    "SCHEMBL6339514",
+    "phenylcyclohexylurea"
+  ],
+  "http_status": 200,
+  "cids": [
+    13096397
+  ]
+}

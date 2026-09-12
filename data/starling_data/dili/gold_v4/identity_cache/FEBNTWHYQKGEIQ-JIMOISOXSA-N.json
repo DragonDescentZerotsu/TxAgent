@@ -1,0 +1,12 @@
+{
+  "parent_key": "FEBNTWHYQKGEIQ-JIMOISOXSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL403083"
+  ],
+  "cids": [
+    160702
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FEBNTWHYQKGEIQ-JIMOISOXSA-N/synonyms/JSON",
+  "http_status": 200
+}

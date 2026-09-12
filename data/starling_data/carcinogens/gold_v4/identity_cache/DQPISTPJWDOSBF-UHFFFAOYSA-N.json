@@ -1,0 +1,13 @@
+{
+  "parent_key": "DQPISTPJWDOSBF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DQPISTPJWDOSBF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL866389",
+    "nitrogen acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    56976113
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "parent_key": "JKKFKPJIXZFSSB-GUZDXLFXSA-N",
+  "ok": true,
+  "synonyms": [
+    "AB01563304_01",
+    "BRD-A22143024-231-01-2",
+    "BRD-A22143024-231-02-0",
+    "BRD-A22143024-231-03-8",
+    "BSPBio_002472",
+    "CHEBI:91584",
+    "JKKFKPJIXZFSSB-GUZDXLFXSA-N",
+    "NCGC00021137-02",
+    "NCGC00021137-04",
+    "Q27163418",
+    "SBI-0206780.P001",
+    "SCHEMBL14375453",
+    "[(13S)-13-methyl-17-oxo-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-3-yl] hydrogen sulfate",
+    "sulfuric acid [(13S)-13-methyl-17-oxo-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-3-yl] ester"
+  ],
+  "cids": [
+    10861069
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JKKFKPJIXZFSSB-GUZDXLFXSA-N/synonyms/JSON",
+  "http_status": 200
+}

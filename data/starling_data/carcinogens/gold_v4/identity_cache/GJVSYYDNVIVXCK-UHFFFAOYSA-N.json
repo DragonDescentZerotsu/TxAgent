@@ -1,0 +1,27 @@
+{
+  "parent_key": "GJVSYYDNVIVXCK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GJVSYYDNVIVXCK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(DIMETHYLAMINO)-1-METHYLPYRIDIN-1-IUM",
+    "4-(dimethylamino)-1-methylpyridinium",
+    "45795-83-3",
+    "AJ-333/25022024",
+    "AKOS002700742",
+    "CHEMBL71490",
+    "DTXCID70228017",
+    "DTXSID00276809",
+    "N,N,1-trimethylpyridin-1-ium-4-amine",
+    "PD099196",
+    "Pyridinium, 4-(dimethylamino)-1-methyl-",
+    "RefChem:377238",
+    "SBB085984",
+    "SCHEMBL13725621",
+    "SCHEMBL1940232",
+    "dimethyl(1-methyl(4-pyridyl))amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    202126
+  ]
+}

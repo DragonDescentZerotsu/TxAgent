@@ -1,0 +1,31 @@
+{
+  "parent_key": "NDVMOVOEROCRIO-SFHVURJKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(7S)-7-(4-Fluorophenyl)-2-N-[3-methoxy-4-(3-methyl-1,2,4-triazol-1-yl)phenyl]-4-N-methyl-6,7-dihydro-5H-cyclopenta[d]pyrimidine-2,4-diamine",
+    "(S)-7-(4-fluorophenyl)-N2-(3-methoxy-4-(3-methyl-1H-1,2,4-triazol-1-yl)phenyl)-N4-methyl-6,7-dihydro-5H-cyclopenta[d]pyrimidine-2,4-diamine",
+    "1263871-36-8",
+    "5H-Cyclopenta(d)pyrimidine-2,4-diamine, 7-(4-fluorophenyl)-6,7-dihydro-N2-(3-methoxy-4-(3-methyl-1H-1,2,4-triazol-1-yl)phenyl)-N4-methyl-, (7S)-",
+    "9W144SV55B",
+    "AKOS040748021",
+    "BDBM50458163",
+    "BMS 932481 [WHO-DD]",
+    "BMS-932481",
+    "BMS-932481(BMS932481;BMS 932481)?",
+    "CHEMBL4209316",
+    "CS-0068714",
+    "GLXC-20322",
+    "HY-117957",
+    "RefChem:120758",
+    "SCHEMBL21456214",
+    "SCHEMBL29678036",
+    "T26864",
+    "UNII-9W144SV55B",
+    "orb1700994"
+  ],
+  "cids": [
+    91844660
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NDVMOVOEROCRIO-SFHVURJKSA-N/synonyms/JSON",
+  "http_status": 200
+}

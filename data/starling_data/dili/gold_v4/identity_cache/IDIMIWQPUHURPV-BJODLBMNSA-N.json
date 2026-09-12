@@ -1,0 +1,40 @@
+{
+  "parent_key": "IDIMIWQPUHURPV-BJODLBMNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1,6)DIOXACYCLODODECINO(2,3,4-GH)PYRROLIZINE-2,7-DIONE, 3- ETHYLIDENE-3,4,5,6,9,11,13,14,14A,14B-DECAHYDRO-6-HYDROXY-6- (HYDROXYMETHYL)-5-METHYL-, 14-OXIDE, (3Z,5R,6S,14AR,14BR)-",
+    "(1,6)Dioxacyclododecino(2,3,4-gh)pyrrolizine-2,7-dione, 3-ethylidene-3,4,5,6,9,11,13,14,14a,14b-decahydro-6-hydroxy-6-(hydroxymethyl)-5-methyl-, 14-oxide, (3Z,5R,6S,14aR,14bR)-",
+    "(1R,4Z,6R,7S,14S,17R)-4-ethylidene-7-hydroxy-7-(hydroxymethyl)-6-methyl-14-oxido-2,9-dioxa-14-azoniatricyclo(9.5.1.014,17)heptadec-11-ene-3,8-dione",
+    "12,18-DIHYDROXYSENECIONAN-11,16-DIONE-4-OXIDE [HSDB]",
+    "12,18-Dihydroxysenecionan-11,16-dione 4-oxide",
+    "12,18-Dihydroxysenecionan-11,16-dione-4-oxide",
+    "15-ETHYLIDENE-12.BETA.-HYDROXY-12.ALPHA.-HYDROXYMETHYL- 13.BETA.-METHYLSENEC-1-ENINE-4-OXIDE, TRANS-",
+    "15503-86-3",
+    "4-27-00-06664 (Beilstein Handbook Reference)",
+    "51819GRV4U",
+    "BRN 0058804",
+    "CCRIS 4339",
+    "DTXCID60747",
+    "DTXSID4020747",
+    "HSDB 3499",
+    "ISATIDINE",
+    "ISATIDINE [IARC]",
+    "NS00066999",
+    "RET-NO",
+    "RefChem:148909",
+    "Retrorsine N-oxide",
+    "Retrorsine oxide",
+    "Retrorsine, N-oxide",
+    "Retrorsine-N-oxide",
+    "SCHEMBL31258584",
+    "Senecionan-11,16-dione, 12,18-dihydroxy-, 4-oxide",
+    "UNII-51819GRV4U",
+    "cis-Retronecic acid ester of retronecine-N-oxide",
+    "trans-15-Ethylidene-12beta-hydroxy-12alpha-hydroxymethyl-13beta-methylsenec-1-enine-4-oxide"
+  ],
+  "cids": [
+    76972338
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IDIMIWQPUHURPV-BJODLBMNSA-N/synonyms/JSON",
+  "http_status": 200
+}

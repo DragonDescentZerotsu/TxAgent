@@ -1,0 +1,14 @@
+{
+  "parent_key": "MGZNERAVOCFMCU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "N-[4-(1-cyanocyclopentyl)phenyl]-2-[(4-methylpyridin-3-yl)amino]pyridine-3-carboxamide",
+    "Q27074479",
+    "SCHEMBL22942072"
+  ],
+  "cids": [
+    66577012
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MGZNERAVOCFMCU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

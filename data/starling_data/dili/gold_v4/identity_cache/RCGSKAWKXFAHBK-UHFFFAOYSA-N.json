@@ -1,0 +1,14 @@
+{
+  "parent_key": "RCGSKAWKXFAHBK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Acetanilide,4'-formyl-,thiosemicarbazone",
+    "[(Z)-1-(4-formylanilino)ethylideneamino]thiourea"
+  ],
+  "cids": [
+    504038,
+    3006107
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RCGSKAWKXFAHBK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

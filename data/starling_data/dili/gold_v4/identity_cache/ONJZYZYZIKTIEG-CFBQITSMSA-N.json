@@ -1,0 +1,31 @@
+{
+  "parent_key": "ONJZYZYZIKTIEG-CFBQITSMSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3S,6S,9R,10R,11S,12S,13E,15E,18S,21S)-18-((2E,4E,8S,9S)-10-((2S,3R,4S,5S,6R,9S,11S)-9-ethyl-4-hydroxy-3,5,11-trimethyl-8-oxo-1-oxa-7-azaspiro(5.5)undecan-2-yl)-9-hydroxy-8-methyldeca-2,4-dien-2-yl)-10,12-dihydroxy-3-((3-hydroxyphenyl)methyl)-11-methyl-9-(3-oxobutyl)-6-propan-2-yl-19-oxa-1,4,7,25-tetrazabicyclo(19.3.1)pentacosa-13,15-diene-2,5,8,20-tetrone",
+    "(3S,6S,9R,10R,11S,12S,13E,15E,18S,21S)-18-((2E,4E,8S,9S)-10-((2S,3R,4S,5S,6R,9S,11S)-9-ethyl-4-hydroxy-3,5,11-trimethyl-8-oxo-1-oxa-7-azaspiro[5.5]undecan-2-yl)-9-hydroxy-8-methyldeca-2,4-dien-2-yl)-10,12-dihydroxy-3-(3-hydroxybenzyl)-6-isopropyl-11-methyl-9-(3-oxobutyl)-19-oxa-1,4,7,25-tetraazabicyclo[19.3.1]pentacosa-13,15-diene-2,5,8,20-tetraone",
+    "187148-13-6",
+    "1ynd",
+    "BDBM50218665",
+    "CHEMBL410807",
+    "DB03393",
+    "DTXCID901507224",
+    "DTXSID101022539",
+    "GTPL13322",
+    "HY-135643",
+    "ONJZYZYZIKTIEG-CFBQITSMSA-N",
+    "Q27465336",
+    "RefChem:181156",
+    "SANGLIFEHRIN A",
+    "SCHEMBL2587742",
+    "SCHEMBL30269754",
+    "SFA",
+    "YQF2675",
+    "orb3024442"
+  ],
+  "cids": [
+    5388925
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ONJZYZYZIKTIEG-CFBQITSMSA-N/synonyms/JSON",
+  "http_status": 200
+}

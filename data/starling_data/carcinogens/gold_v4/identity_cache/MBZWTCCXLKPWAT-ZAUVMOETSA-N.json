@@ -1,0 +1,14 @@
+{
+  "parent_key": "MBZWTCCXLKPWAT-ZAUVMOETSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBZWTCCXLKPWAT-ZAUVMOETSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHEBI:233703",
+    "SCHEMBL29730798",
+    "pregnenetriol sulfate"
+  ],
+  "http_status": 200,
+  "cids": [
+    129671303
+  ]
+}

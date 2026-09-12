@@ -1,0 +1,13 @@
+{
+  "parent_key": "XDMPTPPGEPYCJN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL29616897",
+    "benzyltetrahydroxyquinoline"
+  ],
+  "cids": [
+    154926276
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XDMPTPPGEPYCJN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

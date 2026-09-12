@@ -1,0 +1,6 @@
+{
+  "resumed_at": "2026-09-12T05:10:06.389422+00:00",
+  "controller_pid": 815968,
+  "fix": "Use the same isolated SOURCE_PURITY_ROOT in matched inference as in preparation; source hash validation retained",
+  "both_subsets_matched_task_preflight": "passed"
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "LRBHDUWDZCAYDA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3,4-bis(1H-indol-2-yl)pyrrole-2,5-dione",
+    "SCHEMBL29415921",
+    "SCHEMBL78989"
+  ],
+  "cids": [
+    10687637
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LRBHDUWDZCAYDA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

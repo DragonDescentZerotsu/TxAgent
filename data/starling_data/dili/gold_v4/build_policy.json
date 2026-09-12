@@ -1,0 +1,15 @@
+{
+  "version": "dili_reviewed_starling_only.v2",
+  "direction_ledger": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet",
+  "partial_provenance_reviews_used": false,
+  "new_model_calls": 0,
+  "vote_unit": "reporting_publication_or_verified_original_study_parent_condition",
+  "source_assertions_in_reviews": "eligible; publication deduplication does not prove independent experiments",
+  "condition_policy": "coarse typed prior conditions plus explicit source-field rules; routine indications/routes/formulations pooled",
+  "unknown_qualifiers": "preserved in raw provenance, not an eligibility gate or free-text query condition",
+  "default_agreement": 0.7,
+  "condition_agreement": 0.6,
+  "within_unit_conflict": "no vote",
+  "ties": "excluded",
+  "tdc_labels_used": false
+}

@@ -1,0 +1,18 @@
+{
+  "parent_key": "JXCHMDATRWUOAP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JXCHMDATRWUOAP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Diisocyanatotoluene",
+    "SCHEMBL10435655",
+    "SCHEMBL20146",
+    "SCHEMBL28378053",
+    "SCHEMBL28380440",
+    "phenylmethane diisocyanate",
+    "toluylene diisocyanate"
+  ],
+  "http_status": 200,
+  "cids": [
+    12905475
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "TYGCRCJYOWYGHM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "133906-26-0",
+    "3-(4-Azidophenyl)propanimidic acid",
+    "3-(4-azidophenyl)propanamide",
+    "4-APP",
+    "4-Azidobenzenepropanamide",
+    "4-Azidophenylpropionamide",
+    "Benzenepropanamide, 4-azido-",
+    "DTXSID00928336",
+    "RefChem:97944"
+  ],
+  "cids": [
+    125807
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TYGCRCJYOWYGHM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

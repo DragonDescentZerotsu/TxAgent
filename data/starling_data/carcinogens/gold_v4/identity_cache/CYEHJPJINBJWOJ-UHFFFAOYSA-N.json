@@ -1,0 +1,24 @@
+{
+  "parent_key": "CYEHJPJINBJWOJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CYEHJPJINBJWOJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,4-dibromo-5-(2,4-dibromophenoxy)phenol",
+    "5-Hydroxy-2,2',4,4'-tetrabromodiphenylether",
+    "5-OH-BDE-47",
+    "5-OH-Bde 47",
+    "5-hydroxy-2,2',4,4'-tetrabromodiphenyl ether",
+    "602326-30-7",
+    "CHEBI:233160",
+    "DTXSID60471252",
+    "MSK157954",
+    "NS00077077",
+    "Phenol, 2,4-dibromo-5-(2,4-dibromophenoxy)-",
+    "RefChem:304515",
+    "SCHEMBL31290606"
+  ],
+  "http_status": 200,
+  "cids": [
+    11730812
+  ]
+}

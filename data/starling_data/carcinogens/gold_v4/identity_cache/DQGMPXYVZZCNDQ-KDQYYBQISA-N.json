@@ -1,0 +1,41 @@
+{
+  "parent_key": "DQGMPXYVZZCNDQ-KDQYYBQISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DQGMPXYVZZCNDQ-KDQYYBQISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(8Z,10E,12Z)-8,10,12-Octadecatrienoic acid",
+    "(8Z,10E,12Z)-octadeca-8,10,12-trienoic acid",
+    "28872-28-8",
+    "8(Z),10(E),12(Z)-Octadecatrienoic acid(jacaric)",
+    "8,10,12-Octadecatrienoic acid, (8Z,10E,12Z)-",
+    "8,10,12-Octadecatrienoic acid, (Z,Z,E)-",
+    "8Z,10E,12Z-octadecatrienoic acid",
+    "AKOS040755046",
+    "APY53D8J4D",
+    "CHEBI:180177",
+    "CS-0082888",
+    "DTXCID501513138",
+    "DTXSID901027545",
+    "HY-121619",
+    "Jacaranda acid",
+    "Jacaric Acid (10mg/mL in Ethanol)",
+    "Jacaric acid",
+    "Jarcaric Acid; (8Z,10E,12Z)-8,10,12-Octadecatrienoic Acid;",
+    "Jarcaric acid",
+    "LMFA01030143",
+    "MFCD05864027",
+    "Q2823276",
+    "RefChem:150297",
+    "SCHEMBL3341880",
+    "T36099",
+    "UNII-APY53D8J4D",
+    "cis,trans,cis-8,10,12-octadecatrienoic acid",
+    "cis-8, trans-10, cis-12-octadecatrienoic acid",
+    "cis-8, trans-10, cis-12-octadecatrienoic acid; C18:3n-6,8,10; Jacaranda acid",
+    "orb1694039"
+  ],
+  "http_status": 200,
+  "cids": [
+    5282817
+  ]
+}

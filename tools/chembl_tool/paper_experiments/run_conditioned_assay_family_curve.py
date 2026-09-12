@@ -14,6 +14,7 @@ import importlib
 from pathlib import Path
 import shutil
 import subprocess
+import threading
 from typing import Any
 
 from tools.chembl_tool.common.evidence_contract import ASSAY_RAW_CARD_PROMPT_PROFILE
@@ -508,6 +509,18 @@ def _copy_matched_prepared(source: Path, target: Path, expected_hash: str) -> No
 def _validate_matched_task(runtime, source, task):
     spec = runtime._progressive_task_specs(source["split_scheme"], source["evaluation_subset"])[task]
     inputs = source["inputs"][task]
+    review = inputs.get("record_review_overlay")
+    if review:
+        if sha256_file(Path(review["path"])) != review["sha256"]:
+            raise ValueError(f"changed record review overlay: {task}")
+    structures = inputs.get("query_structure_map")
+    if structures and sha256_file(Path(structures["path"])) != structures["sha256"]:
+        raise ValueError(f"changed query structure map: {task}")
+    rules = (source.get("reasoning_policy") or {}).get("task_grounding_rules", {}).get(task)
+    if rules is not None and rules != dict(runtime._task_contract(task).evidence_grounding_rules):
+        raise ValueError(f"changed task grounding rules: {task}")
+    if inputs.get("heldout_direct_alias_guard") is not None:
+        raise ValueError(f"stale matched source: {task} heldout direct-alias guard")
     for field, path in (("input_sha256", spec.input_jsonl), ("index_sha256", spec.index),
                         ("family_manifest_sha256", spec.family_manifest)):
         if sha256_file(path) != inputs[field]:
@@ -575,6 +588,40 @@ def _refresh_matched_priors(args, source_root: Path, output_root: Path) -> int:
     endpoint = provider.providers[0]
     if endpoint.max_inflight > args.endpoint_concurrency_budget:
         raise ValueError("provider capacity exceeds endpoint budget")
+    tasks = args.tasks or source["tasks"]
+    single_root = Path(source.get("single_reuse_root") or source_root / "single_cache")
+    native_tasks = [task for task in tasks
+                    if (single_root / task / "none/manifest.json").is_file()
+                    and _read_json(single_root / task / "none/manifest.json").get("schema_version")
+                    == "conditioned_query_priors.v1"]
+    if native_tasks:
+        if native_tasks != list(tasks) or output_root.name != "single_cache":
+            raise ValueError("native query priors require one uniform suite single_cache")
+        specs = {}
+        for task in tasks:
+            specs[task] = _validate_matched_task(runtime, source, task)
+            original_path = single_root / task / "none/manifest.json"
+            original = _read_json(original_path)
+            if (sha256_file(original_path) != source["inputs"][task]["single_source_manifest_sha256"]
+                    or original["input_sha256"] != source["inputs"][task]["input_sha256"]
+                    or original["indices"] != source["evaluation_indices_by_task"][task]
+                    or original["indices"] != list(range(original["n_items"]))):
+                raise ValueError(f"changed native query-prior source: {task}")
+            for index in original["indices"]:
+                source_file = runtime._source_run_dir(task, index, single_root) / "retrieval.json"
+                target = runtime._source_run_dir(task, index, output_root) / "retrieval.json"
+                _copy_matched_prepared(source_file, target, sha256_file(source_file))
+        prior_args = copy.copy(args)
+        prior_args.output_root = str(output_root.parent)
+        prior_args.query_prior_source_root = ""
+        prior_args.transport_max_retries = 0
+        prior_args.tasks = list(tasks)
+        failed = runtime._prepare_fresh_query_priors(prior_args, specs, provider)
+        if not failed:
+            write_json_atomic(receipt, {"model": args.model, "sha256": {
+                str(path.relative_to(output_root)): sha256_file(path)
+                for task in tasks for path in (output_root / task / "none").rglob("*.json")}})
+        return failed
     for task in args.tasks or source["tasks"]:
         _validate_matched_task(runtime, source, task)
         source_batch = source_root / "single_cache" / task / "none"
@@ -641,6 +688,23 @@ def _refresh_matched_priors(args, source_root: Path, output_root: Path) -> int:
         write_json_atomic(receipt, {"model": args.model, "sha256": {
             str(path.relative_to(output_root)): sha256_file(path) for path in artifacts}})
     return failed
+
+
+def _merge_matched_resume_manifest(runtime, previous, current):
+    """Allow transport changes while preserving every scientific input contract."""
+    if runtime._model_identity(previous.get("model", "")) != runtime._model_identity(current.get("model", "")):
+        raise ValueError("cannot resume matched run with changed model identity")
+    for field, value in current.items():
+        if field not in {"base_url", "parallelism", "parallelism_per_task",
+                         "endpoint_concurrency_budget", "provider_pool", "model"} and previous.get(field) != value:
+            raise ValueError(f"cannot resume matched full-flat with changed {field}")
+    history = list(previous.get("provider_pool_history") or [])
+    for manifest in (previous, current):
+        pool = manifest.get("provider_pool")
+        if pool and pool not in history:
+            history.append(pool)
+    return {**current, "provider_pool_history": history,
+            "last_resumed_at": datetime.now(timezone.utc).isoformat()}
 
 
 def _run_matched_curve(args: argparse.Namespace) -> int:
@@ -711,9 +775,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
     manifest_path = output_root / "experiment_manifest.json"
     if manifest_path.exists():
         previous = _read_json(manifest_path)
-        for field, value in manifest.items():
-            if field not in {"base_url", "parallelism"} and previous.get(field) != value:
-                raise ValueError(f"cannot resume matched full-flat with changed {field}")
+        manifest = _merge_matched_resume_manifest(runtime, previous, manifest)
     manifest.update(parallelism_per_task=args.parallelism_per_task,
                     endpoint_concurrency_budget=args.endpoint_concurrency_budget,
                     retry_race_width=args.retry_race_width)
@@ -743,6 +805,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
         receipt = runtime._reuse_unchanged_progressive_prefixes(
             prepared_queries=queries, output_root=output_root,
             source_root=Path(reuse_root),
+            independent_levels=independent,
         )
         print(f"[reuse] levels={receipt['n_reused_levels']} "
               f"model_calls_avoided={receipt['n_reused_model_calls']}", flush=True)
@@ -766,7 +829,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
 
 
 def _run_matched_suite(args: argparse.Namespace) -> int:
-    """Run replicates sequentially; each run owns the single shared endpoint budget."""
+    """Run frozen-input replicates within the suite-wide endpoint budget."""
     source, root = _matched_roots(args)
     root.mkdir(parents=True, exist_ok=True)
     with (root / "launcher.lock").open("a") as lock:
@@ -784,6 +847,8 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
                   "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
                   "retry_race_width": args.retry_race_width, "max_stage_requeues": args.max_stage_requeues,
                   "retry_delay_s": args.retry_delay_s, "base_url": args.base_url, "timeout_s": args.timeout_s}
+        if args.concurrent_runs > 1:
+            config["concurrent_runs"] = args.concurrent_runs
         if args.refresh_query_priors:
             config["refresh_query_priors"] = True
         if args.provider_pool_config:
@@ -795,10 +860,15 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
         write_json_atomic(manifest_path, config)
         status = {"phase": "running", "pid": os.getpid(), "jobs": jobs,
                   "mode": "prepare_only" if args.prepare_only else "inference"}
+        status_lock = threading.RLock()
 
         def publish():
-            status["updated_at"] = datetime.now(timezone.utc).isoformat()
-            write_json_atomic(root / "suite_status.json", status)
+            with status_lock:
+                status["updated_at"] = datetime.now(timezone.utc).isoformat()
+                status["active_roots"] = [job["root"] for job in jobs if job["status"] == "running"]
+                if status["phase"] == "running":
+                    status["active_root"] = status["active_roots"][0] if len(status["active_roots"]) == 1 else None
+                write_json_atomic(root / "suite_status.json", status)
 
         publish()
         if args.refresh_query_priors:
@@ -816,20 +886,29 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
                 return 1
             args.matched_single_root = str(root / "single_cache")
             status["phase"] = "running"
-        for job in jobs:
-            job["status"] = "running"
-            status["active_root"] = job["root"]
-            publish()
+        def run_job(job):
+            with status_lock:
+                job["status"] = "running"
+                publish()
             child = copy.copy(args)
             child.output_root = job["root"]
             child.matched_organizations = [job["organization"]]
+            if args.concurrent_runs > 1:
+                child.endpoint_concurrency_budget = args.parallelism
             try:
                 code = _run_matched_curve(child)
-                job["status"] = "needs_attention" if code else ("prepared" if args.prepare_only else "complete")
-                job["exit_code"] = code
+                result = dict(status="needs_attention" if code else ("prepared" if args.prepare_only else "complete"), exit_code=code)
             except Exception as exc:
-                job.update(status="needs_attention", error_type=type(exc).__name__, error=str(exc))
-            publish()
+                result = dict(status="needs_attention", error_type=type(exc).__name__, error=str(exc))
+            with status_lock:
+                job.update(result)
+                publish()
+        if args.concurrent_runs == 1:
+            for job in jobs:
+                run_job(job)
+        else:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrent_runs) as pool:
+                list(pool.map(run_job, jobs))
         failed = any(job["status"] == "needs_attention" for job in jobs)
         status.update(phase="needs_attention" if failed else ("prepared" if args.prepare_only else "complete"), active_root=None)
         publish()
@@ -838,7 +917,7 @@ def _run_matched_suite(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--tasks", nargs="+", choices=(*TASKS, "ames"), default=None)
+    parser.add_argument("--tasks", nargs="+", choices=(*TASKS, "ames", "dili", "carcinogens"), default=None)
     parser.add_argument("--matched-progressive-root", default="",
                         help="Run independent full-flat on this frozen run's exact cumulative cards/tools.")
     parser.add_argument("--matched-organizations", nargs="+", choices=("full_flat", "progressive"), default=["full_flat"])
@@ -846,7 +925,10 @@ def main(argv: list[str] | None = None) -> int:
                         help="Completed run of the same organization: reuse exact unchanged input prefixes after a source repair.")
     parser.add_argument("--replicate-ids", nargs="+", type=int,
                         help="Sequential fresh replicate directories under output-root; existing checkpoints resume.")
-    parser.add_argument("--retry-race-width", type=int, default=1)
+    parser.add_argument("--concurrent-runs", type=int, default=1,
+                        help="Matched suite runs in parallel; each uses --parallelism slots within the total endpoint budget.")
+    parser.add_argument("--retry-race-width", type=int, default=None,
+                        help="Matched failed-level/JSON-repair race width; defaults to 6 within the task budget (legacy mode: 1).")
     parser.add_argument("--refresh-query-priors", action="store_true",
                         help="Before a matched suite, refresh single/None with the selected model over frozen source tools.")
     parser.add_argument("--provider-pool-config", default="")
@@ -893,6 +975,11 @@ def main(argv: list[str] | None = None) -> int:
         default="/data1/tianang/anaconda3/envs/vllm/bin/python",
     )
     args = parser.parse_args(argv)
+    if args.retry_race_width is None:
+        args.retry_race_width = (
+            min(6, args.parallelism_per_task or args.parallelism)
+            if args.matched_progressive_root else 1
+        )
     load_env_file(Path(args.env_file))
     if args.level_reuse_source_root and (not args.matched_progressive_root or args.replicate_ids):
         parser.error("--level-reuse-source-root requires one matched run without --replicate-ids")
@@ -903,6 +990,14 @@ def main(argv: list[str] | None = None) -> int:
     budget = args.endpoint_concurrency_budget if args.matched_progressive_root else 128
     if not 1 <= args.parallelism <= budget:
         parser.error(f"--parallelism must be between 1 and the endpoint budget {budget}")
+    if args.concurrent_runs < 1 or args.concurrent_runs * args.parallelism > budget:
+        parser.error("concurrent runs times parallelism must fit the endpoint budget")
+    if args.concurrent_runs > 1 and not (args.matched_progressive_root and args.replicate_ids):
+        parser.error("--concurrent-runs requires a matched replicate suite")
+    if args.concurrent_runs > 1 and args.provider_pool_config:
+        from tools.chembl_tool.common.openai_provider_pool import load_provider_pool_config
+        if sum(p.max_inflight for p in load_provider_pool_config(args.provider_pool_config).providers) > args.parallelism:
+            parser.error("each concurrent run's provider capacity must fit --parallelism")
     if not 0 <= args.parallelism_per_task <= args.parallelism:
         parser.error("--parallelism-per-task must be between 0 and --parallelism")
     if args.parallelism_per_task and not args.matched_progressive_root:
@@ -928,8 +1023,8 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--matched-progressive-root requires an explicit --output-root")
         return _run_matched_suite(args) if args.replicate_ids else _run_matched_curve(args)
     args.tasks = args.tasks or list(TASKS)
-    if "ames" in args.tasks and not args.matched_progressive_root:
-        parser.error("Ames full-flat uses --matched-progressive-root")
+    if {"ames", "dili", "carcinogens"}.intersection(args.tasks) and not args.matched_progressive_root:
+        parser.error("Ames, DILI and Carcinogens full-flat use --matched-progressive-root")
     if args.single_analysis_source_batch:
         if len(args.tasks) != 1:
             parser.error("--single-analysis-source-batch requires exactly one task")

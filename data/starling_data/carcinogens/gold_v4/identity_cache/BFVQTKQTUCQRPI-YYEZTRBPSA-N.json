@@ -1,0 +1,27 @@
+{
+  "parent_key": "BFVQTKQTUCQRPI-YYEZTRBPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BFVQTKQTUCQRPI-YYEZTRBPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "11034-88-1",
+    "881-019-9",
+    "Bacterial Pyrogen",
+    "CHEBI:89981",
+    "DTXSID0040468",
+    "Endotoxin",
+    "Endotoxin LPS",
+    "Endotoxin, salmonella typhi",
+    "Endotoxins",
+    "LPS with O-antigen",
+    "Lipopolysaccharide W, salmonella typhi",
+    "NOCAS_40468",
+    "RefChem:590839",
+    "Salmonella typhi endotoxin",
+    "Salmonella typhi lipopolysaccharide W",
+    "Salmonella typhosa endotoxin"
+  ],
+  "http_status": 200,
+  "cids": [
+    53481793
+  ]
+}

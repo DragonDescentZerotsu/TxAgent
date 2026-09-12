@@ -22,8 +22,12 @@ part of active paths, runner flags, or result labels.
 | Ames | 1,926 | 274 | 274 | bacterial reverse mutation under the reported strain panel and metabolic activation |
 
 The table shows scaffold counts. Ames random counts are 1,980 / 247 / 247 over
-the same 2,474 rows; its data integration is complete but model evaluation has
-not been performed.
+the same 2,474 rows; random model evaluation has not been performed.
+Ames scaffold valid/test names were exchanged on explicit user request on
+2026-09-08. Current test is the former validation cohort, which has already
+been inspected; it must not be described as an untouched test set. Train and
+random remain fixed. Exact row/hash mappings and heldout-set equivalence are
+recorded in `data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json`.
 
 Every split row has the same condition-aware schema:
 
@@ -250,3 +254,28 @@ The following are part of the benchmark, not disposable build intermediates:
 A benchmark release is incomplete if it contains only `train.jsonl`,
 `valid.jsonl`, and `test.jsonl`. Those minimal files are runner inputs; they do
 not preserve enough information to reproduce or audit the cohort.
+
+
+## DILI / Carcinogens publication
+
+Earlier external-label and tautomer-repair receipts are retained as historical
+provenance. Their TDC augmentation builder/publisher has been retired; neither
+current gold includes TDC labels. Source repair does not modify frozen votes.
+
+These tasks use `new_task_tautomer_identity.v2`: stable-stereo gold identity,
+connectivity/formula/charge leakage groups and terminal-pruned Murcko topology
+scaffold groups. Other tasks retain their own identity contracts. DILI test was
+previously inspected validation; source cleanup does not make it an unseen test.
+
+### Current reviewed Starling-only releases (2026-09-09)
+
+Both tasks now publish from `data/starling_data/<task>/gold_v4/`, reusing the
+completed full-base direction ledgers without additional model review or TDC labels.
+DILI has 4,024 benchmark rows; Carcinogens has 4,692, using exactly five organism
+groups (rodent/human/dog/monkey/rabbit). The shared `--reviewed-release` publisher
+validates the staged split/index hashes and preserves previous active inputs.
+Each task's `gold_v4/retrieval/canonical_publication.json` identifies that release.
+L1 contains actual publication-vote representatives; only heldout L1 is prefiltered,
+and L2 remains subject to query-time disjoint retrieval. Fresh cohort scores must
+not be inferred from historical gold_v3 runs. Full source policies and build
+entrypoints are in [NEW_TASK_SOURCE_DATA.md](NEW_TASK_SOURCE_DATA.md).

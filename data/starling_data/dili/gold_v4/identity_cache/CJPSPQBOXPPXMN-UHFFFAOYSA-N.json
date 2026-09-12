@@ -1,0 +1,25 @@
+{
+  "parent_key": "CJPSPQBOXPPXMN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2305865-93-2",
+    "5-(1,3-benzodioxol-5-yl)-6-[2-(5-bromopyrimidin-2-yl)oxyethoxy]-N-(2-methoxyethylsulfamoyl)pyrimidin-4-amine",
+    "Diosuxentan",
+    "GTPL13748",
+    "N-[5-(1,3-Benzodioxol-5-yl)-6-[2-[(5-bromo-2-pyrimidinyl)oxy]ethoxy]-4-pyrimidinyl]-N'-(2-methoxyethyl)sulfamide",
+    "RJ4QU53ZY3",
+    "SC-0062",
+    "SCHEMBL22404298",
+    "Sulfamide, N-[5-(1,3-benzodioxol-5-yl)-6-[2-[(5-bromo-2-pyrimidinyl)oxy]ethoxy]-4-pyrimidinyl]-N'-(2-methoxyethyl)-",
+    "T211846",
+    "WX-013",
+    "WX013",
+    "diosuxentan [INN]",
+    "orb3136231"
+  ],
+  "cids": [
+    155097467
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CJPSPQBOXPPXMN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,15 @@
+{
+  "parent_key": "GMSHJLUJOABYOM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GMSHJLUJOABYOM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Hydroxy-2-propenal",
+    "SCHEMBL2115997",
+    "SCHEMBL231162",
+    "SCHEMBL27735784"
+  ],
+  "http_status": 200,
+  "cids": [
+    21483
+  ]
+}

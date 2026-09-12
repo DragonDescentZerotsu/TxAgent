@@ -79,6 +79,11 @@ def retrieve_neighbors(
         }
 
     query_identity = normalize_molecule_identity(query_smiles)
+    identity_contract = (index.get('source') or {}).get('retrieval_identity_contract', '')
+    tautomer_query = None
+    if identity_contract:
+        from tools.chembl_tool.common.starling.new_task_retrieval_identity import query_identity as new_query_identity
+        tautomer_query = new_query_identity(index['source']['retrieval_identity_task'], query_smiles, identity_contract)
     query_atomic_number = monatomic_query_element(canonical_smiles)
     similarities = similarity_vector(
         query_fp,
@@ -105,6 +110,8 @@ def retrieve_neighbors(
             neighbor_identity_policy=neighbor_identity_policy,
             query_fingerprint=query_fp,
             neighbor_selector=neighbor_selector,
+            tautomer_query=tautomer_query,
+            identity_contract=identity_contract,
         )
         n_neighbors_total += len(neighbors)
         tier, endpoint_group = _split_group_id(group_id)
@@ -119,6 +126,8 @@ def retrieve_neighbors(
         )
 
     retrieval_policy = policy_metadata(neighbor_identity_policy)
+    if identity_contract:
+        retrieval_policy['retrieval_identity_contract'] = identity_contract
     retrieval_policy["structural_eligibility"] = structural_eligibility_metadata()
     if neighbor_selector == QUERY_FEATURE_COVERAGE_SELECTOR:
         retrieval_policy["neighbor_selector"] = selector_metadata(neighbor_selector)
@@ -169,6 +178,8 @@ def _top_neighbors_for_group(
     neighbor_identity_policy: str,
     query_fingerprint: Any,
     neighbor_selector: str,
+    tautomer_query: dict | None = None,
+    identity_contract: str = '',
 ) -> list[dict[str, Any]]:
     from tools.chembl_tool.common.retrieval_policy import decide_candidate
 
@@ -185,7 +196,15 @@ def _top_neighbors_for_group(
             str(molecule.get("canonical_smiles") or ""),
         ):
             continue
-        decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
+        if identity_contract:
+            from tools.chembl_tool.common.starling.new_task_retrieval_identity import decide_candidate as decide_new_candidate
+            decision = decide_new_candidate(tautomer_query, molecule, neighbor_identity_policy, identity_contract)
+            if not decision.excluded:
+                # Retain existing exact/component exclusions; raw scaffold is
+                # replaced by the task's explicitly declared tautomer scaffold.
+                decision = decide_candidate(query_identity, molecule, 'parent_disjoint')
+        else:
+            decision = decide_candidate(query_identity, molecule, neighbor_identity_policy)
         if decision.excluded:
             continue
         evidence_rows = index["evidence_by_molecule_group"].get(

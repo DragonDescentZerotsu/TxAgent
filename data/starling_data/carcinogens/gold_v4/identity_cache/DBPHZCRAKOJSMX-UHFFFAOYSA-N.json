@@ -1,0 +1,23 @@
+{
+  "parent_key": "DBPHZCRAKOJSMX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DBPHZCRAKOJSMX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-AZA-BICYCLO[2.2.2]OCT-4-YLAMINE",
+    "1-Azabicyclo[2.2.2]octan-4-amine",
+    "22766-61-6",
+    "4-aminoquinuclidine",
+    "AB92111",
+    "AKOS006338897",
+    "CS-0091561",
+    "D75164",
+    "DB-328864",
+    "EN300-187323",
+    "Quinuclidin-4-amine",
+    "SCHEMBL1980084"
+  ],
+  "http_status": 200,
+  "cids": [
+    12201519
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "parent_key": "MUSGYEMSJUFFHT-UWABRSFTSA-N",
+  "ok": true,
+  "synonyms": [
+    "1427001-89-5",
+    "2-((7S,13S,19S,22S,28S)-34-(((2S,3S)-2-(((2R)-2-amino-3-(4-hydroxyphenyl)propanoyl)amino)-3-methylpentanoyl)amino)-4-(((2S,3S)-1-amino-3-methyl-1-oxopentan-2-yl)-methylcarbamoyl)-25-(3-amino-3-oxopropyl)-7-(3-carbamimidamidopropyl)-10-(1H-imidazol-5-ylmethyl)-19-(1H-indol-3-ylmethyl)-13,17-dimethyl-28-((1-methylindol-3-yl)methyl)-6,9,12,15,18,21,24,27,30,33-decaoxo-31-propan-2-yl-1,2-dithia-5,8,11,14,17,20,23,26,29,32-decazacyclopentatriacont-22-yl)acetic acid",
+    "4Z4DFR9BX7",
+    "AMY 101 [WHO-DD]",
+    "AMY-101",
+    "AMY-101 acetate form",
+    "AMY101",
+    "Amy 101",
+    "C3 Complement Inhibitor AMY-101",
+    "C3 Inhibitor AMY-101",
+    "CHEMBL4297260",
+    "CP40",
+    "Compstatin 40",
+    "DA-50439",
+    "EX-A12115",
+    "GLXC-26151",
+    "GTPL11986",
+    "L-ISOLEUCINAMIDE, D-TYROSYL-L-ISOLEUCYL-L-CYSTEINYL-L-VALYL-1-METHYL-L-TRYPTOPHYL-L-GLUTAMINYL-L-.ALPHA.-ASPARTYL-L-TRYPTOPHYL-N-METHYLGLYCYL-L-ALANYL-L-HISTIDYL-L-ARGINYL-L-CYSTEINYL-N2-METHYL-, CYCLIC (3->13)-DISULFIDE",
+    "L-Isoleucinamide, D-tyrosyl-L-isoleucyl-L-cysteinyl-L-valyl-1-methyl-L-tryptophyl-L-glutaminyl-L-alpha-aspartyl-L-tryptophyl-N-methylglycyl-L-alanyl-L-histidyl-L-arginyl-L-cysteinyl-N2-methyl-, cyclic (3->13)-disulfide",
+    "RefChem:112374",
+    "S3,S13-Cyclo(D-tyrolsyl-L-isoleucyl-L-cysteinyl-L-valyl-1-methyl-L-tryptophyl-L-glutaminyl-L-aspartyl-L-tryptophyl-N-methyl-L-glycyl-L-alanyl-L-histidyl-L-arginyl-L-cysteinyl-N-methyl-L-isoleucinamide)",
+    "SCHEMBL24725150",
+    "SCHEMBL29358430",
+    "UNII-4Z4DFR9BX7",
+    "orb1983802",
+    "peptide 14 [PMID: 22795972]"
+  ],
+  "cids": [
+    131634231,
+    176448005
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MUSGYEMSJUFFHT-UWABRSFTSA-N/synonyms/JSON",
+  "http_status": 200
+}

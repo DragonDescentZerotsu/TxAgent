@@ -1,0 +1,30 @@
+{
+  "parent_key": "CVJNCIPPOLWWCO-ZAAZJSNSSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CVJNCIPPOLWWCO-ZAAZJSNSSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2207-76-3",
+    "6-Hydroperoxy-4-cholesten-3-one",
+    "6-beta-Hydroperoxy-delta(sup 4)-cholesten-3-one",
+    "6-hydroperoxycholest-4-en-3-one",
+    "6.BETA.-HYDROPEROXYCHOLEST-4-EN-3-ONE",
+    "6beta-hydroperoxycholest-4-en-3-one",
+    "CHOLEST-4-EN-3-ONE, 6-HYDROPEROXY-, (6.BETA.)-",
+    "CHOLEST-4-EN-3-ONE, 6-HYDROPEROXY-, (6BETA)-",
+    "CHOLEST-4-ENE-3-ONE 6.BETA.-HYDROPEROXIDE",
+    "CHOLEST-4-ENE-3-ONE 6BETA-HYDROPEROXIDE",
+    "Cholest-4-en-3-one, 6-beta-hydroperoxy-",
+    "DTXSID80944695",
+    "HY6J4Y6GE6",
+    "HYDROPEROXIDE, 3-OXOCHOLEST-4-EN-6.BETA.-YL",
+    "HYDROPEROXIDE, 3-OXOCHOLEST-4-EN-6BETA-YL",
+    "Q27280158",
+    "RefChem:105357",
+    "SCHEMBL8394730",
+    "UNII-HY6J4Y6GE6"
+  ],
+  "http_status": 200,
+  "cids": [
+    102224
+  ]
+}

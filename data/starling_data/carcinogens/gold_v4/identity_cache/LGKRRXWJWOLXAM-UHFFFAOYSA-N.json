@@ -1,0 +1,22 @@
+{
+  "parent_key": "LGKRRXWJWOLXAM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LGKRRXWJWOLXAM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2580941-14-4",
+    "BDBM50544825",
+    "CHEMBL4643970",
+    "CS-0541876",
+    "ESTROGEN RECEPTOR",
+    "Estrogen receptor ? antagonist 2",
+    "Estrogen receptor beta antagonist 2",
+    "Estrogen receptor |A antagonist 2",
+    "HY-150693",
+    "T62311",
+    "orb1687731"
+  ],
+  "http_status": 200,
+  "cids": [
+    156018436
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "BAOXJBYPTRZNSH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BAOXJBYPTRZNSH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-[(Furan-2-yl)methylidene]hydrazine-1-carboxamide",
+    "2411-74-7",
+    "AKOS017263210",
+    "DS-011251",
+    "DTXSID90859726",
+    "Furfural semicarbazone",
+    "Hydrazinecarboxamide,2-(2-furanylmethylene)-",
+    "RefChem:1085613",
+    "SCHEMBL9697563"
+  ],
+  "http_status": 200,
+  "cids": [
+    17007
+  ]
+}

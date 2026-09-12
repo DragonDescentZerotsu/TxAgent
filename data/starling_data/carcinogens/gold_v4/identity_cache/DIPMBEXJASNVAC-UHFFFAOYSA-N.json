@@ -1,0 +1,13 @@
+{
+  "parent_key": "DIPMBEXJASNVAC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DIPMBEXJASNVAC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "14,15-epoxyeicostrienoic acid",
+    "SCHEMBL1195177"
+  ],
+  "http_status": 200,
+  "cids": [
+    53762083
+  ]
+}

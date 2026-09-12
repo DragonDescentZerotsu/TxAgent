@@ -1,0 +1,31 @@
+{
+  "parent_key": "JKRIWPXSEMPTNP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JKRIWPXSEMPTNP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(hydroxyamino)benzoic acid",
+    "2-Hydroxylaminobenzoic acid",
+    "44X64VP739",
+    "579-73-7",
+    "AKOS017531881",
+    "Anthranilic acid, N-hydroxy-",
+    "Benzoic acid, 2-(hydroxyamino)-",
+    "CHEBI:25618",
+    "DTXSID10325216",
+    "Hydroxylamine, N-(2-carboxyphenyl)-",
+    "N-(2-carboxyphenyl)hydroxylamine",
+    "N-Hydroxyanthranilic acid",
+    "N-hydroxy-anthranilic acid",
+    "NSC-409266",
+    "NSC409266",
+    "Q27109888",
+    "SCHEMBL222251",
+    "SCHEMBL3056257",
+    "SCHEMBL30727557",
+    "o-(Hydroxyamino)benzoic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    349497
+  ]
+}

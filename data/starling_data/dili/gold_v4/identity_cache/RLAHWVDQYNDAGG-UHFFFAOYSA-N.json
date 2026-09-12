@@ -1,0 +1,29 @@
+{
+  "parent_key": "RLAHWVDQYNDAGG-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "463-78-5",
+    "CHEBI:167061",
+    "DTXCID001324158",
+    "DTXSID50894118",
+    "HYPOTHETICAL MONOHYDRATE OF FORMIC ACID",
+    "Methanetriol",
+    "Orthoformic acid",
+    "Orthoformic acid [MI]",
+    "Q2823293",
+    "RLAHWVDQYNDAGG-UHFFFAOYSA-N",
+    "RefChem:168603",
+    "SCHEMBL10788720",
+    "SCHEMBL19258",
+    "SCHEMBL226612",
+    "SCHEMBL568343",
+    "Trihydroxymethane",
+    "UNII-WIU6G972U6",
+    "WIU6G972U6"
+  ],
+  "cids": [
+    5231666
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RLAHWVDQYNDAGG-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

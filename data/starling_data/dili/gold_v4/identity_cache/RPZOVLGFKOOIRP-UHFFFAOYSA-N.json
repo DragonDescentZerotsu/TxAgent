@@ -1,0 +1,42 @@
+{
+  "parent_key": "RPZOVLGFKOOIRP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "18493-83-9",
+    "2,4(1H,3H)-Pyrimidinedione, 5-(phenylmethyl)-",
+    "2,4(1H,3H)-Pyrimidinedione,5-(phenylmethyl)-",
+    "5-(phenylmethyl)pyrimidine-2,4-diol",
+    "5-Benzyl-1,2,3,4-tetrahydropyrimidine-2,4-dione",
+    "5-Benzyl-1H-pyrimidine-2,4-dione",
+    "5-Benzyluracil",
+    "5-benzyl-2,4-(1H,3H)-pyrimidinedione",
+    "5-benzylpyrimidine-2,4(1H,3H)-dione",
+    "BDBM50030998",
+    "CHEMBL275965",
+    "CS-0221997",
+    "DS-003540",
+    "DTXCID30235843",
+    "DTXSID10284692",
+    "EBC-610692",
+    "EN300-101009",
+    "H40430",
+    "KLO",
+    "MFCD01119034",
+    "MLS002920263",
+    "NSC-135290",
+    "NSC-38356",
+    "NSC135290",
+    "NSC38356",
+    "RPZOVLGFKOOIRP-UHFFFAOYSA-N",
+    "RefChem:102060",
+    "SCHEMBL1752654",
+    "SMR001797859",
+    "TAA49383",
+    "Z1341835583"
+  ],
+  "cids": [
+    236212
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RPZOVLGFKOOIRP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "JIRRPAZFOGASCY-ZTNVNUCQSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL29745935",
+    "SCHEMBL66047",
+    "chlorodesoxyadenosine"
+  ],
+  "cids": [
+    66590330
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JIRRPAZFOGASCY-ZTNVNUCQSA-N/synonyms/JSON",
+  "http_status": 200
+}

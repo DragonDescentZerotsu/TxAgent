@@ -1,0 +1,24 @@
+{
+  "parent_key": "LWOLJZRFQMSDAZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LWOLJZRFQMSDAZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "174690-27-8",
+    "3,8-Dioxatricyclo(5.1.0.0(sup 2,4))oct-4-ene, syn-",
+    "3,8-Dioxatricyclo(5.1.0.0~2,4~)oct-5-ene",
+    "3,8-Dioxatricyclo[5.1.0.0~2,4~]oct-5-ene",
+    "3,8-dioxatricyclo[5.1.0.02,4]oct-5-ene",
+    "39078-08-5",
+    "DTXCID70220596",
+    "DTXSID70276917",
+    "DTXSID90959896",
+    "RefChem:1066228",
+    "SCHEMBL6535935",
+    "benzene dioxide",
+    "syn-Benzene dioxide"
+  ],
+  "http_status": 200,
+  "cids": [
+    217634
+  ]
+}

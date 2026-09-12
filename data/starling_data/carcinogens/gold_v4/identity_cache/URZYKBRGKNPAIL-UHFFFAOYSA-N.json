@@ -1,0 +1,13 @@
+{
+  "parent_key": "URZYKBRGKNPAIL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/URZYKBRGKNPAIL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Nitromethylbenzylamin",
+    "SCHEMBL9483313"
+  ],
+  "http_status": 200,
+  "cids": [
+    19981515
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "UTZPGFZOSLGODE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL350191"
+  ],
+  "cids": [
+    70700067
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UTZPGFZOSLGODE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,18 @@
+{
+  "parent_key": "GPMLJOOQCIHFET-JQWIXIFHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPMLJOOQCIHFET-JQWIXIFHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,4R)-2,4-Dimethyl-4-phenyltetrahydrofuran rel",
+    "(2S,4R)-2,4-dimethyl-4-phenyloxolane",
+    "99343-91-6",
+    "DTXCID8031237",
+    "DTXSID1052664",
+    "GPMLJOOQCIHFET-JQWIXIFHSA-N",
+    "RefChem:207155"
+  ],
+  "http_status": 200,
+  "cids": [
+    12104427
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "IRJPMACBKNQUFU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IRJPMACBKNQUFU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS006239589",
+    "Ethanamine,N-methyl-N-nitroso-",
+    "SCHEMBL606277"
+  ],
+  "http_status": 200,
+  "cids": [
+    53249231
+  ]
+}

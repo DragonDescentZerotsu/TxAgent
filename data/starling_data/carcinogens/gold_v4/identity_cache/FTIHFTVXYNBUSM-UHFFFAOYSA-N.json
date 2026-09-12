@@ -1,0 +1,17 @@
+{
+  "parent_key": "FTIHFTVXYNBUSM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FTIHFTVXYNBUSM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "13700-82-8",
+    "660-652-2",
+    "RefChem:555029",
+    "SCHEMBL3940728",
+    "alpha,alpha'-dichlorostilbene",
+    "dichlorodiphenylethylene"
+  ],
+  "http_status": 200,
+  "cids": [
+    13714
+  ]
+}

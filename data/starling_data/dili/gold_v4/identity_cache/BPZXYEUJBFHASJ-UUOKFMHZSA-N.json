@@ -1,0 +1,43 @@
+{
+  "parent_key": "BPZXYEUJBFHASJ-UUOKFMHZSA-N",
+  "ok": true,
+  "synonyms": [
+    "15867-02-4",
+    "2-Amino-9-(5-O-phosphono-beta-D-ribofuranosyl)-3,9-dihydro-6H-purine-6-thione",
+    "5'-Guanylic acid, 6-thio-",
+    "6-TG Nucleotide",
+    "6-Thio-5'-guanylate",
+    "6-Thio-GMP",
+    "6-Thioguanine nucleotide",
+    "6-Thioguanosine monophosphate",
+    "6-Thioguanosine-5'-phosphate",
+    "6-Thioguanylic acid",
+    "6-thioguanosine-5'-monophosphate",
+    "71V",
+    "7Y3025NR1U",
+    "BPZXYEUJBFHASJ-UUOKFMHZSA-N",
+    "CHEBI:80613",
+    "CHEMBL1812063",
+    "DTXCID3088982",
+    "DTXSID80166491",
+    "NSC 408090",
+    "NSC-408090",
+    "PD202822",
+    "Q27149660",
+    "RefChem:914084",
+    "SCHEMBL29395861",
+    "SCHEMBL600845",
+    "UNII-7Y3025NR1U",
+    "[(2R,3S,4R,5R)-5-(2-amino-6-sulfanylidene-3H-purin-9-yl)-3,4-dihydroxyoxolan-2-yl]methyl dihydrogen phosphate",
+    "[(2~{r},3~{s},4~{r},5~{r})-5-(2-Azanyl-6-Sulfanyl-Purin-9-Yl)-3,4-Bis(Oxidanyl)oxolan-2-Yl]methyl Dihydrogen Phosphate",
+    "[5-(2-amino-6-sulfanylidene-3H-purin-9-yl)-3,4-dihydroxyoxolan-2-yl]methyl dihydrogen phosphate",
+    "orb1734170",
+    "orb64762"
+  ],
+  "cids": [
+    101358,
+    3034646
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BPZXYEUJBFHASJ-UUOKFMHZSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,42 @@
+{
+  "parent_key": "XUYMIRYNRKXKOR-JUWHTYBZSA-N",
+  "ok": true,
+  "synonyms": [
+    "(7S)-N-((5-(Ethylsulfonyl)pyridin-2-yl)methyl)-7-isopropyl-6-(((trans)-4-(trifluoromethyl)cyclohexyl)methyl)-6,7-dihydro-5H-pyrrolo(3,4-b)pyridine-3-carboxamide",
+    "(7S)-N-[(5-ethylsulfonylpyridin-2-yl)methyl]-7-propan-2-yl-6-[[4-(trifluoromethyl)cyclohexyl]methyl]-5,7-dihydropyrrolo[3,4-b]pyridine-3-carboxamide",
+    "(7S)-N-[[5-(Ethylsulfonyl)-2-pyridinyl]methyl]-6,7-dihydro-7-(1-methylethyl)-6-[[trans-4-(trifluoromethyl)cyclohexyl]methyl]-5H-Pyrrolo[3,4-b]pyridine-3-carboxamide; (7S)-N-[[5-(Ethylsulfonyl)-2-pyridinyl]methyl]-6,7-dihydro-7-(1-methylethyl)-6-[[trans-4-(trifluoromethyl)cyclohexyl]methyl]-5H-Pyrrolo[3,4-b]pyridine-3-carboxamide",
+    "(S)-N-((5-(ethylsulfonyl)pyridin-2-yl)methyl)-7-isopropyl-6-(((1r,4S)-4-(trifluoromethyl)cyclohexyl)methyl)-6,7-dihydro-5H-pyrrolo[3,4-b]pyridine-3-carboxamide",
+    "(S)-N-((5-(ethylsulfonyl)pyridin-2-yl)methyl)-7-isopropyl-6-((trans-4-(trifluoromethyl)cyclohexyl)methyl)-6,7-dihydro-5H-pyrrolo[3,4-b]pyridine-3-carboxamide",
+    "1802706-04-2",
+    "5H-Pyrrolo(3,4-b)pyridine-3-carboxamide, N-((5-(ethylsulfonyl)-2-pyridinyl)methyl)-6,7-dihydro-7-(1-methylethyl)-6-((trans-4-(trifluoromethyl)cyclohexyl)methyl)-, (7S)-",
+    "98N",
+    "AKOS030529246",
+    "BDBM412666",
+    "BDBM50637612",
+    "CHEMBL4172726",
+    "CS-7819",
+    "CS-W000519",
+    "DA-77531",
+    "EBC-416041",
+    "EX-A9096",
+    "GLXC-15260",
+    "HY-103637",
+    "Q4D8POE1IP",
+    "RORgamma-IN-1",
+    "ROR|A-IN-1",
+    "SCHEMBL16968647",
+    "SCHEMBL16968648",
+    "SCHEMBL17538566",
+    "T16787",
+    "UNII-Q4D8POE1IP",
+    "US10399976, Compound 2",
+    "Vimirogant",
+    "Vimirogant [INN]",
+    "orb1706694"
+  ],
+  "cids": [
+    91826726
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XUYMIRYNRKXKOR-JUWHTYBZSA-N/synonyms/JSON",
+  "http_status": 200
+}

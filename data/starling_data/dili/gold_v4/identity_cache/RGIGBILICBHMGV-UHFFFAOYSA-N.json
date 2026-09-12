@@ -1,0 +1,14 @@
+{
+  "parent_key": "RGIGBILICBHMGV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "5-(methylsulfonyl)-1H-indole-3-carbaldehyde",
+    "RGIGBILICBHMGV-UHFFFAOYSA-N",
+    "SCHEMBL15902102"
+  ],
+  "cids": [
+    82392025
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RGIGBILICBHMGV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "GRVDJDISBSALJP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2143-68-2",
+    "CH3-O(.)",
+    "CH3O",
+    "CHEBI:32772",
+    "DTXCID501372364",
+    "DTXSID30944009",
+    "Methoxy",
+    "Methoxy radical",
+    "Methoxyl",
+    "Methyloxy",
+    "RefChem:352818",
+    "methyloxidanyl"
+  ],
+  "cids": [
+    123146
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRVDJDISBSALJP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

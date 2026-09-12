@@ -1,0 +1,43 @@
+{
+  "parent_key": "KEYWXKLGZZGHMT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KEYWXKLGZZGHMT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(p-Sulfophenylazo)-2-naphthol-6-sulfonic acid",
+    "2-NAPHTHALENESULFONIC ACID, 6-HYDROXY-5-)(4-SULFOPHENYL)AZO)-",
+    "5859-11-0",
+    "6-Hydroxy-5-((4-sulphophenyl)azo)naphthalene-2-sulphonic acid",
+    "6-Hydroxy-5-[(4-sulfophenyl)diazenyl]naphthalene-2-sulfonic acid",
+    "6-hydroxy-5-(4-sulfophenylazo)-2-naphthalenesulfonic acid",
+    "6-hydroxy-5-[(4-sulfophenyl) azo]-2-naphthalenesulfonic acid",
+    "6-hydroxy-5-[(4-sulfophenyl)azo]-2-naphthalenesulfonic acid",
+    "6-hydroxy-5-[(4-sulphophenyl)azo]naphthalene-2-sulphonic acid",
+    "6-hydroxy-5-[(E)-(4-sulfophenyl)azo]naphthalene-2-sulfonic acid",
+    "C.I. FOOD YELLOW 3 FREE ACID",
+    "C.I. Food Yellow 3, 8CI",
+    "C.I. Food Yellow 3, free acid",
+    "C.i. food Yellow 3 (free acid)",
+    "CHEMBL1616984",
+    "DB-263902",
+    "DTXSID5044287",
+    "EINECS 227-504-5",
+    "FD and C Yellow No. 6",
+    "Food Yellow No. 5",
+    "G2B7JWK1GG",
+    "KEYWXKLGZZGHMT-UHFFFAOYSA-N",
+    "NS00006685",
+    "NS00132705",
+    "Q27278647",
+    "RefChem:1073987",
+    "SCHEMBL112146",
+    "SCHEMBL5344213",
+    "SCHEMBL5344218",
+    "SCHEMBL628908",
+    "UNII-G2B7JWK1GG",
+    "food yellow 3 free acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    17731
+  ]
+}

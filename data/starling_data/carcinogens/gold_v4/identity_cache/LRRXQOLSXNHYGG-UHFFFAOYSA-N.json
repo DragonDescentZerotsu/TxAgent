@@ -1,0 +1,25 @@
+{
+  "parent_key": "LRRXQOLSXNHYGG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LRRXQOLSXNHYGG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-NDMP",
+    "1-Nitroso-3,5-dimethylpiperazine",
+    "3,5-Dimethyl-1-nitrosopiperazine",
+    "5-23-03-00333 (Beilstein Handbook Reference)",
+    "67774-31-6",
+    "AKOS006355489",
+    "BRN 0509433",
+    "CCRIS 1372",
+    "CHEMBL165739",
+    "DTXSID40875633",
+    "N-Nitroso-3,5-dimethylpiperazine",
+    "Nitroso-3,5-dimethylpiperazine",
+    "Piperazine, 3,5-dimethyl-1-nitroso-",
+    "RefChem:76608"
+  ],
+  "http_status": 200,
+  "cids": [
+    92376
+  ]
+}

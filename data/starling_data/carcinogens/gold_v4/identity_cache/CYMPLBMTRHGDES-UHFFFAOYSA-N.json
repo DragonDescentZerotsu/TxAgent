@@ -1,0 +1,36 @@
+{
+  "parent_key": "CYMPLBMTRHGDES-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CYMPLBMTRHGDES-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Chloro-N-(2-ethyl-phenyl)-acetamide",
+    "2-chloro-N-(2-ethylphenyl)acetamide",
+    "57503-02-3",
+    "AB01326695-02",
+    "AKOS000263325",
+    "ALBB-002267",
+    "BS-10266",
+    "CS-0116500",
+    "DTXCID70277964",
+    "DTXSID80326851",
+    "EN300-09194",
+    "F058136",
+    "G32822",
+    "MFCD00297026",
+    "NCGC00334908-01",
+    "NCGC00334908-03",
+    "NSC-618534",
+    "NSC618534",
+    "RefChem:259293",
+    "SBB004528",
+    "SCHEMBL28124394",
+    "ST45028605",
+    "STK115793",
+    "Z55993074",
+    "a-Chloro-2-ethylacetanilide"
+  ],
+  "http_status": 200,
+  "cids": [
+    358526
+  ]
+}

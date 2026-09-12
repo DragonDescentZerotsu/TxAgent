@@ -1,0 +1,23 @@
+{
+  "parent_key": "MXWHMTNPTTVWDM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,2'-(methyl-1,2-ethanediylidene)bis[hydrazine carboximidamide]",
+    "2-[1-(diaminomethylidenehydrazinylidene)propan-2-ylideneamino]guanidine",
+    "CHEMBL4571169",
+    "MXWHMTNPTTVWDM-UHFFFAOYSA-N",
+    "Mitoguanazone",
+    "NCI60_002879",
+    "NCIMech_000278",
+    "NCIOpen2_003298",
+    "SCHEMBL1736452",
+    "SCHEMBL468348"
+  ],
+  "cids": [
+    9991,
+    176518153,
+    176525271
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MXWHMTNPTTVWDM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

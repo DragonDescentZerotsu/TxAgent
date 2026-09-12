@@ -1,0 +1,39 @@
+{
+  "parent_key": "RBEICLNUPBZRMH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RBEICLNUPBZRMH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-(2,2-Dichloroethane-1,1-diyl)bis(4-methoxybenzene)",
+    "1,1'-(2,2-Dichloroethylidene)bis(4-methoxybenzene)",
+    "1,1'-(2,2-Dichloroethylidene)bis[4-methoxybenzene]",
+    "1,1-BIS(P-METHOXYPHENYL)-2,2-DICHLOROETHANE",
+    "1,1-Dichloro-2,2-bis(4-methoxyphenyl)ethane",
+    "1,1-dichloro-2,2-bis(p-methoxyphenyl)ethane",
+    "1-[2,2-Dichloro-1-(4-methoxyphenyl)ethyl]-4-methoxybenzene #",
+    "2,2-BIS(P-METHOXYPHENYL)-1,1-DICHLOROETHANE",
+    "2,2-Dichloro-1,1-bis(4-methoxyphenyl)ethane",
+    "4-06-00-06690 (Beilstein Handbook Reference)",
+    "7388-31-0",
+    "AI3-16268",
+    "BRN 2056447",
+    "Benzene, 1,1'-(2,2-dichloroethylidene)bis(4-methoxy-",
+    "Benzene, 1,1'-(2,2-dichloroethylidene)bis*4-methoxy-",
+    "Benzene, 1,1'-(2,2-dichloroethylidene)bis[4-methoxy-",
+    "Benzene, 1,1'-(2-dichloroethylidene)bis(4-methoxy-",
+    "DTXCID4021216",
+    "DTXSID6041216",
+    "ETHANE, 1,1-DICHLORO-2,2-BIS(P-METHOXYPHENYL)-",
+    "Ethane, 1,1-dichloro-2,2-bis(o-methoxyphenyl)-",
+    "NS00073873",
+    "OT3GW37Z9E",
+    "Q27285826",
+    "RBEICLNUPBZRMH-UHFFFAOYSA-N",
+    "RefChem:196624",
+    "SCHEMBL7768379",
+    "UNII-OT3GW37Z9E"
+  ],
+  "http_status": 200,
+  "cids": [
+    81869
+  ]
+}

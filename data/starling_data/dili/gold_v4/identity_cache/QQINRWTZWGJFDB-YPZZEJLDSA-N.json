@@ -1,0 +1,34 @@
+{
+  "parent_key": "QQINRWTZWGJFDB-YPZZEJLDSA-N",
+  "ok": true,
+  "synonyms": [
+    "(~225~Ac)Actinium",
+    "1261243-53-1",
+    "14265-85-1",
+    "225Ac (isotope)",
+    "225Ac isotope",
+    "225Ac radioisotope",
+    "Ac-225 radioisotope",
+    "Actimab-M",
+    "Actinium +3 cation Ac-225",
+    "Actinium Ac-225",
+    "Actinium cation Ac-225",
+    "Actinium, isotope of mass 225",
+    "Actinium, isotope of mass 225 (225Ac3+)",
+    "Actinium-225",
+    "Actinium-225 isotope",
+    "DTXSID50931577",
+    "E95CP8XCT3",
+    "HI04ACM8I1",
+    "Isotope:225Ac",
+    "Isotope:Actinium-225",
+    "RefChem:915088",
+    "SCHEMBL28317473",
+    "UNII-E95CP8XCT3"
+  ],
+  "cids": [
+    167045
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QQINRWTZWGJFDB-YPZZEJLDSA-N/synonyms/JSON",
+  "http_status": 200
+}

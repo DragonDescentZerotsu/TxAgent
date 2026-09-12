@@ -1,0 +1,34 @@
+{
+  "parent_key": "GNWBLLYJQXKPIP-ZOGIJGBBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,3aS,3bS,5aR,9aR,9bS,11aS)-N,N-diethyl-6,9a,11a-trimethyl-7-oxo-2,3,3a,3b,4,5,5a,8,9,9b,10,11-dodecahydro-1H-indeno[5,4-f]quinoline-1-carboxamide",
+    "17 beta-N,N-diethylcarbamoyl-4-methyl-4-aza-5 alpha-androstan-3-one",
+    "17-N,N-Diethylcarbamoyl-4-methyl-4-azaandrostane-3-one",
+    "17-N,N-diethyl-4-methyl-3-oxo-4-azaandrostane-17-carboxamide",
+    "17-beta-N,N-Diethylcarbamoyl-4-methyl-4-aza-5-alpha-androstan-3-one",
+    "17beta-n,n-diethylcarbamoyl-4-methyl-4-aza-5alpha-androstan-3-one",
+    "4-Azaandrostane-17-carboxamide, N,N-diethyl-4-methyl-3-oxo-, (5alpha,17beta)-",
+    "4-MA",
+    "4MA compound",
+    "5-alpha-4-AZAANDROSTANE-17-beta-CARBOXAMIDE, N,N-DIETHYL-4-METHYL-3-OXO-",
+    "73671-86-0",
+    "BDBM50213061",
+    "BRN 4269357",
+    "CHEMBL2298601",
+    "CS-0783044",
+    "DMAA [Steroid]",
+    "HY-153528",
+    "N,N-Diethyl-4-methyl-3-oxo-5-alpha-4-azaandrostane-17-beta-carboxamide",
+    "PD182245",
+    "RefChem:908261",
+    "SCHEMBL852296",
+    "T86284",
+    "orb2566399"
+  ],
+  "cids": [
+    6917653
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GNWBLLYJQXKPIP-ZOGIJGBBSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "PAZXUKOJTOTKBK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PAZXUKOJTOTKBK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Butanamine, N-butyl-N-hydroxy-",
+    "1-Butanamine,N-butyl-N-hydroxy-",
+    "13393-61-8",
+    "236-473-7",
+    "8P9TVP8VH3",
+    "DTXCID9080916",
+    "DTXSID10158425",
+    "Dibutylhydroxylamine",
+    "EINECS 236-473-7",
+    "N,N-dibutylhydroxylamine",
+    "N-BUTYL-N-HYDROXY-1-BUTANAMINE",
+    "NS00024316",
+    "PAZXUKOJTOTKBK-UHFFFAOYSA-N",
+    "RefChem:132960",
+    "SCHEMBL141406",
+    "SCHEMBL8001833",
+    "UNII-8P9TVP8VH3",
+    "n-butyl-n-hydroxybutan-1-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    83402
+  ]
+}

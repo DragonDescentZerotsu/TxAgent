@@ -1,0 +1,12 @@
+{
+  "parent_key": "DWYYKKCINMQGDG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DWYYKKCINMQGDG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Hydroxy-2-methylisonicotinamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    133063636
+  ]
+}

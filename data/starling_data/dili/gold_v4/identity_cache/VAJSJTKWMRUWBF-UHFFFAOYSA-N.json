@@ -1,0 +1,32 @@
+{
+  "parent_key": "VAJSJTKWMRUWBF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "109Mt",
+    "54038-01-6",
+    "Atomic Meitnerium",
+    "CHEBI:33361",
+    "DTXSID101020652",
+    "Element Meitnerium",
+    "Element-Mt",
+    "Element:Meitnerium",
+    "Element:Mt",
+    "Meitnerium (atomic)",
+    "Meitnerium (element)",
+    "Meitnerium element",
+    "Mt",
+    "Mt (element)",
+    "Mt meitnerium",
+    "RefChem:925439",
+    "SCHEMBL29393987",
+    "meitnerio",
+    "meitnerium",
+    "meitnerium atom",
+    "unnilennium"
+  ],
+  "cids": [
+    56951716
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VAJSJTKWMRUWBF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

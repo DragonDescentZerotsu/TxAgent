@@ -1,0 +1,42 @@
+{
+  "parent_key": "HVDGDHBAMCBBLR-PBHICJAKSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HVDGDHBAMCBBLR-PBHICJAKSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+)-ENTEROLACTONE",
+    "(+/-)-Enterolactone, analytical standard",
+    "(3R,4R)-3,4-bis((3-hydroxyphenyl)methyl)tetrahydrofuran-2-one",
+    "(3R,4R)-REL-DIHYDRO-3,4-BIS((3-HYDROXYPHENYL)METHYL)-2(3H)-FURANONE",
+    "(3s,4s)-3,4-bis(3-hydroxybenzyl)dihydrofuran-2(3h)-one",
+    "185254-87-9",
+    "2(3H)-Furanone, dihydro-3,4-bis((3-hydroxyphenyl)methyl)-, (3R,4R)-rel-",
+    "634-756-3",
+    "78473-71-9",
+    "C18165",
+    "CCRIS 3048",
+    "CHEBI:81555",
+    "CHEMBL2391150",
+    "COMPOUND 180/442",
+    "Dihydro-3,4-bis((3-hydroxyphenyl)methyl)-2(3H)-Furanone",
+    "ENTEROLACTONE [MI]",
+    "Enterolactone",
+    "Enterolactone, ~95% (HPLC)",
+    "HBBL",
+    "HMS3648C19",
+    "RefChem:590861",
+    "SCHEMBL11306724",
+    "SR-01000946199",
+    "SR-01000946199-1",
+    "T41314",
+    "TRANS-(+/-)-2,3-BIS(3'-HYDROXYBENZYL)-.GAMMA.-BUTYROLACTONE",
+    "UNII-X01E7E1D6H",
+    "X01E7E1D6H",
+    "orb1984334",
+    "orb3139563",
+    "trans-2,3-bis(3-hydroxybenzyl) butyrolactone"
+  ],
+  "http_status": 200,
+  "cids": [
+    114739
+  ]
+}

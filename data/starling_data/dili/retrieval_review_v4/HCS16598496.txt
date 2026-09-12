@@ -1,0 +1,1955 @@
+Arch Toxicol (2006) 80: 580–604
+DOI 10.1007/s00204-006-0091-3
+
+ O RG AN T OX IC ITY A N D M E CH AN I SM S
+
+
+
+P. J. O’Brien Æ W. Irwin Æ D. Diaz Æ E. Howard-Coﬁeld
+C. M. Krejsa Æ M. R. Slaughter Æ B. Gao
+N. Kaludercic Æ A. Angeline Æ P. Bernardi
+P. Brain Æ C. Hougham
+
+High concordance of drug-induced human hepatotoxicity with in vitro
+cytotoxicity measured in a novel cell-based model using high content
+screening
+
+Received: 30 April 2005 / Accepted: 1 March 2006 / Published online: 6 April 2006
+ Springer-Verlag 2006
+
+Abstract To develop and validate a practical, in vitro,             gan toxicities. For 201 positive assay results, 86% drugs
+cell-based model to assess human hepatotoxicity poten-              aﬀected cell number, 70% aﬀected nuclear area and
+tial of drugs, we used the new technology of high content           mitochondrial membrane potential and 45% aﬀected
+screening (HCS) and a novel combination of critical                 membrane permeability and 41% intracellular calcium
+model features, including (1) use of live, human he-                concentration. Cell number was the ﬁrst parameter af-
+patocytes with drug metabolism capability, (2) preincu-             fected for 56% of these drugs, nuclear area for 34% and
+bation of cells for 3 days with drugs at a range of                 mitochondrial membrane potential for 29% and mem-
+concentrations up to at least 30 times the eﬃcacious                brane permeability for 7% and intracellular calcium for
+concentration or 100 lM, (3) measurement of multiple                10%. Hormesis occurred for 48% of all drugs with po-
+parameters that were (4) morphological and biochemical,             sitive response, for 26% of mitochondrial and 34% nu-
+(5) indicative of prelethal cytotoxic eﬀects, (6) represen-         clear area changes and 12% of cell number changes.
+tative of diﬀerent mechanisms of toxicity, (7) at the single        Pattern of change was dependent on the class of drug and
+cell level and (8) amenable to rapid throughput. HCS is             mechanism of toxicity. The ratio of concentrations for in
+based on automated epiﬂuorescence microscopy and                    vitro cytotoxicity to maximal eﬃcaciousness in humans
+image analysis of cells in a microtiter plate format. The           was not diﬀerent across groups (12±22). Human toxicity
+assay was applied to HepG2 human hepatocytes cultured               potential was detected with 80% sensitivity and 90%
+in 96-well plates and loaded with four ﬂuorescent dyes              speciﬁcity at a concentration of 30· the maximal eﬃca-
+for: calcium (Fluo-4 AM), mitochondrial membrane                    cious concentration or 100 lM when eﬃcaciousness was
+potential (TMRM), DNA content (Hoechst 33342) to                    not considered. We conclude that human hepatotoxicity
+determine nuclear area and cell number and plasma                   is highly concordant with in vitro cytotoxicity in this
+membrane permeability (TOTO-3). Assay results were                  novel model and as detected by HCS.
+compared with those from 7 conventional, in vitro
+cytotoxicity assays that were applied to 611 compounds              Keywords HCS Æ Hepatotoxicity Æ Human Æ
+and shown to have low sensitivity (<25%), although                  Sublethal Æ Multi-parameter
+high speciﬁcity (90%) for detection of toxic drugs. For
+243 drugs with varying degrees of toxicity, the HCS,
+sublethal, cytotoxicity assay had a sensitivity of 93% and          Introduction
+speciﬁcity of 98%. Drugs testing positive that did not
+cause hepatotoxicity produced other serious, human or-              Drug-induced liver injury is a major cause of attrition in
+                                                                    preclinical and clinical drug development, and when a
+P. J. O’Brien (&) Æ M. R. Slaughter Æ P. Brain Æ C. Hougham         drug reaches the market. Hepatotoxicity is the most
+Safety Sciences Europe, Pﬁzer Global Research and Development,      frequent reason cited for labelling drugs with a black
+Sandwich Laboratories, Sandwich, England
+E-mail: Peter.OBrien@pﬁzer.com                                      box warning, and for withdrawal of an approved drug
+Fax: +44-1304-651224                                                (Fung et al. 2001). Hepatotoxicity accounts for one-
+                                                                    third to one-half of cases of acute liver failure (Andrade
+W. Irwin Æ D. Diaz Æ E. Howard-Coﬁeld Æ C. M. Krejsa Æ B. Gao       et al. 2004; Kaplowitz 2001; Lewis 2002; Russo et al.
+CEREP, Seattle, WA, USA
+                                                                    2004), and for 15% of associated liver transplantations.
+N. Kaludercic Æ A. Angeline Æ P. Bernardi                           Hepatic reactions occur in less than 1 per 10,000 persons
+University of Padua, Padua, Italy                                   exposed, in individuals using therapeutic doses after a
+                                                                                                                      581
+
+variable latency period, and are usually considered to be      compound potential for human hepatotoxicity (O’Brien
+idiosyncratic (Kaplowitz 2005). They typically occur on        et al. 2003; Xu et al. 2004; Abraham et al. 2004; Giuli-
+a background of a higher rate of mild, asymptomatic            ano et al. 2003), and for optimisation and prioritisation
+and transient liver injuries, such as indicated by a           of a compound’s safety. HCS is a recent advance in the
+threefold increase in serum alanine aminotransferase           automation of quantitative epiﬂuorescence microscopy
+(ALT) greater than the upper limit of normal.                  and image analysis, and in the application of microﬂu-
+    Human hepatotoxicity has not been predictable be-          orescent, multiprobe technology (Abraham et al. 2004;
+cause of its low concordance with either standard in           Giuliano et al. 2003; Haskins et al. 2001; Plymale et al.
+vitro cytotoxicity screening assay results (O’Brien et al.     1999). It enables kinetic monitoring in vitro of live cells
+2003; Xu et al. 2004) or regulatory animal study ﬁndings       in real time for multiple cellular biomarkers of processes
+(Olson et al. 1998, 2000). Whereas conventional cyto-          that are critically involved in the pathogenesis of toxic-
+toxicity assays frequently have more than 80% speci-           ity. These include inner mitochondrial membrane po-
+ﬁcity, they have less than 25% sensitivity for detection of    tential, intracellular free Ca2+ membrane permeability,
+human hepatotoxicity potential (O’Brien et al. 2003; Xu        as well as nuclear number and size (Giuliano et al. 2003;
+et al. 2004). Along with hypersensitivity and cutaneous        Haskins et al. 2001; Plymale et al. 1999).
+reactions, hepatotoxicity has the poorest correlation              This study tested the hypothesis that clinical occur-
+with regulatory animal toxicity tests (Olson et al. 1998,      rence of human hepatotoxicity concorded with in vitro
+2000). In only approximately half of the new pharma-           cytotoxicity assessed in a cell-based model with a novel
+ceuticals that produced hepatotoxicity in clinical drug        combination of critical features and using HCS.
+development was there any concordance with animal
+toxicity studies (Olson et al. 1998, 2000). This contrasted
+remarkably with the high correlation between animal
+                                                               Materials and methods
+and human toxicities aﬀecting the cardiovascular, he-
+matologic and gastrointestinal systems.
+                                                               Materials
+    Despite the poor predictivity, there is reasonable
+understanding of the general pathophysiological mech-
+                                                               Chemicals and supplies
+anism of most drug-induced hepatotoxicities (Boelsterli
+2003a, b; Jaeschke et al. 2002; Lee 2003; Xu et al. 2004).
+                                                               HepG2 cells that had undergone 84 passages were ac-
+Also, there are in vitro methods available for detection
+                                                               quired from the American type cell culture
+of the various pathogenetic mechanisms. The major
+                                                               (ATCC;#HB-8065) and stored in liquid nitrogen as a
+mechanistic classiﬁcations of hepatotoxicity include
+                                                               local cell bank for distribution as needed. Dulbecco’s
+inhibition of mitochondrial function, disruption of
+                                                               modiﬁed eagle’s medium (DMEM;#21969–035), fetal
+intracellular calcium homeostasis, activation of apop-
+                                                               bovine serum (FBS;#10108–165), L-glutamine (#25030–
+tosis, oxidative stress, inhibition of speciﬁc enzymes or
+                                                               024) and penicillin–streptomycin mixture (#15140–122)
+transporters and formations of reactive metabolites that
+                                                               were acquired from Gibco, Invitrogen. Poly-D-lysine
+cause direct toxicity or immunogenicity.
+                                                               hydrobromide (PDL, MW = 30,000–70,000,#P7280)
+    Conventional cytotoxicity assays have had poor sen-
+                                                               and non-essential amino acids mixture (#M7145) were
+sitivity for several reasons (Xu et al. 2004). Firstly, they
+                                                               acquired from Sigma. All dyes were from molecular
+have measured lethal events in late stages of toxicity,
+                                                               probes. Black-walled, 96-well plates with lids were ob-
+despite that serious toxicities may not be lethal by
+                                                               tained from packard (Packard ViewPlate#6005182). All
+themselves or that detection of this advanced endpoint
+                                                               other drugs and chemicals were acquired from Sigma-
+may be not be possible with drugs of limited solubility.
+                                                               Aldrich unless stated otherwise, and were of the highest
+Secondly, in vitro cytotoxicity frequently takes several
+                                                               purity possible.
+days to express itself (Slaughter et al 2002; Lewis et al.
+2003; Xu et al. 2004; Schoonen et al. 2005a, b) and most
+cytotoxicity assays do not include preincubation of cells      Cell culture
+with drugs for multiple days. Most assays evaluate only
+one endpoint, whereas there are multiple mechanisms of         Human hepatocellular carcinoma cells (HepG2) were
+toxicity that need to be tested for by diﬀerent methods,       subcultured less than ten times after being acquired from
+including use of morphological and biochemical or              the local cell bank. Their doubling time was 29±3 h.
+functional parameters. Measurements need to be made            They were grown according to ATCC instructions
+directly at the individual cell level to minimize artefact     (http://www.lgcpromochem.com/atcc/) in ﬂat-bottomed
+and ensure they reﬂect cell eﬀects. Cells need to be human     culture ﬂasks (T25), with bottom surface areas of
+and with capacity to metabolise drugs. Finally, tests need     25 cm2. The ﬂasks were manually coated with PDL and
+to be conducted at concentrations of drugs that are rel-       the cells grown in DMEM supplemented with 10% heat-
+evant to concentrations having eﬃcacious eﬀects in vivo.       inactivated FBS, 1% penicillin–streptomycin, 2 mM
+    High content screening (HCS) may be an important           glutamine and 1% non-essential amino acids mixture.
+predictive tool for application of the above mechanistic       Cells were grown in a standard, cell culture incubator at
+understanding to drug discovery for the assessment of          37C and 5% CO2 with a water reservoir for humidity
+582
+
+control. Cell counts were determined by hemocytometry         96-well plate. To avoid possible conﬂicts with the Cel-
+for addition of cells to 96-well plates.                      lomics software, no other software was loaded onto the
+                                                              computer excepting for computer virus scanning.
+Drugs and controls                                               Unless stated otherwise, ﬂuorescence was monitored
+                                                              kinetically for the four dyes for 3 h with a single cell count
+Drugs that have been marketed for use in man were             made at the end of the assay. The 20· objective was used
+classiﬁed into four categories according to the severity of   to collect images for all four ﬂuorescence channels with
+human hepatotoxicity they produce. Severe human               an appropriate ﬁlter set (XF93). Dyes were excited and
+hepatotoxicity was ascribed to drugs producing more           their ﬂuorescence monitored at excitation and emission
+than 1% frequency of increased serum ALT plus two of          wavelengths of, respectively: (1) 365±25 and
+either (1) jaundice, (2) more than three reports of liver     515±10 nm for Hoechst 33342 on channel 1, (2) 549±4
+failure, or (3) a black box warning. Moderate human           and 600±12.5 nm for TMRM on channel 2, (3) 475±20
+hepatotoxicity was ascribed to drugs producing 0.1–1%         and 515±10 nm for ﬂuo-4 on channel 3 and (4) 655±15
+frequency of increased serum ALT plus either jaundice         and 730±25 nm for TOTO-3 on channel 4. The channels
+or a label of occurrence of adverse eﬀect. Non-toxic or       for TMRM and ﬂuo-4 were set to auto-exposure. With
+minimally toxic drugs were deﬁned as those with less          this feature, the exposure time is automatically deter-
+than 0.1% frequency of increased ALT, and associated          mined based on the cellular ﬂuorescence of negative
+with no clinical symptoms. The fourth category con-           control wells, and then set constant for the whole plate.
+sisted of drugs that were not known to be hepatotoxic         The exposure for Hoechst was ﬁxed to 100 ms for con-
+but were known to have other organ toxicities. Addi-          venience. Exposure for TOTO-3 was set to a ﬁxed expo-
+tionally, a wide selection of toxic chemicals and chemi-      sure of 1 s. In the standard assay, each well is monitored
+cals known to be non-toxic were tested.                       at four ﬁelds-of-view per well each hour for 3 h.
+    Twelve drugs were selected to represent drugs causing        The KSR’s incubator was set to 37C and maintained
+idiosyncratic hepatotoxicity: acetaminophen, diclofenac,      at 5% carbon dioxide. Microplate lids were left on the
+felbamate, hydralazine, leﬂunomide, methyldopa, mino-         assay plate during kinetic monitoring to prevent evap-
+cycline, nitrofurantoin, rifampicin, sulindac, terbinaﬁne     oration. A study of evaporation occurring when lids
+and valproate (Kaplowitz 2005). Eighteen drugs were           were not placed on plates indicated losses of 21±4% of
+selected to represent drugs causing toxicity by virtue of     well volume.
+their metabolism to reactive metabolites: acetamino-             Cell counts were made after monitoring ﬂuorescences
+phen, chloramphenicol, danazol, diclofenac, ﬂutamide,         for 3 h. Ten ﬁelds per well were imaged and analysed
+ibuprofen, imipramine, indomethacin, isoniazid, hydral-       using the 10· objective. Fluorescence from an average of
+azine, nitrofurantoin, piroxicam, procainamide, sulpha-       41 cells using the 20· objective was measured for each of
+methoxazole, tacrine, tamoxifen, terbinaﬁne and               the four microscopic ﬁelds-of-view per well. Control
+valproate (Kalgutkar et al. 2005).                            wells had more cells, whereas wells with toxic doses of
+                                                              drugs had many fewer cells measured per ﬁeld,
+                                                              depending on the cytotoxicity of the drug.
+HCS analyser speciﬁcations and settings
+
+Plates were analysed by epiﬂuorescence microscopy             Methods
+using an automated, microplate-reading analyser (Ki-
+netic-Scan HCS Reader, KSR; Cellomics, Pittsburgh,           Conventional cytotoxicity assay methods
+PA). The system is equipped with an incubator to
+maintain constant temperature, CO2 and humidity               Seven independent, conventional cytotoxicity methods
+during analysis. The instrument enables fully automated       were evaluated for their sensitivity and speciﬁcity for
+monitoring of ﬂuorescence intensity at four wavelengths       detection of human hepatotoxicity. For all, positive test
+as well as image analysis (Compartmental Analysis             results were considered to be those that produce at least
+Bioapplication) and data viewing (Cellomics vHCSTM:           a 50% eﬀect in the assay at a concentration of 30 lM.
+View)                                                         New DNA synthesis was assayed by liquid scintillation
+   The imaging system of the KSR (Carl Zeiss) was             detection of pulse incorporation of 3H-thymidine
+controlled entirely via a personal computer (Dell Preci-      (Meselson and Stahl 1958). New protein synthesis was
+sion 650 Workstation), with dual (Xenon) 2.0 GHz              assayed by liquid scintillation of pulse-incorporation of
+                                                              14
+processors, with 4 Gb of random access memory (RAM)              C-methionine (Colombo et al. 1965). Glutathione
+and 4 Gb of virtual memory allocation. Of the more            depletion was assayed by ﬂuorometric detection of
+than 600 cellular ratios calculated per ﬁeld, only 10 were    monobromobimane-conjugated, buthionine sulfoxi-
+selected for this study. The KSR computer RAM and             mine-inhibitable cytoplasmic thiols (Barhoumi et al.
+virtual memory were upgraded to 4,000 MB each to              1995). Superoxide secretion was assayed by spectro-
+improve performance. Image and database ﬁles were             photometric detection of cytochrome c reduction (Lo-
+spooled to and stored on a remotely located server,           rico et al. 1986). Caspase-3 activity was assayed by
+which required approximately 2 GB storage space per           spectrophotometric detection of DEVD-pNA substrate
+                                                                                                                    583
+
+cleavage (Gurtu et al. 1997). Membrane integrity was          separate 96-well plate (‘‘drug plate’’). This was prepared
+assayed by ﬂuorometric detection of ethidium homodi-          with 1.5-fold the ﬁnal drug concentration needed in the
+mer-DNA conjugation in response to membrane dam-              cell plate. Each row had a diﬀerent drug whose con-
+age (Levesque et al. 1995). Cell viability was assayed in     centration halved from serial dilution, from the highest
+HepG2 cells for 48 h by ﬂuorometric detection of              concentration in column 12 to the lowest in column 2.
+reduction of resazurin (Alamar Blue) to resoruﬁn in           Wells in column 1 had no drug added.
+response to mitochondrial activity (Nociari et al. 1998).
+                                                              Incorporation of ﬂuorescent probes for HCS, sublethal,
+HCS, sublethal, cytotoxicity assay method For pre-            cytotoxicity assay Cells were simultaneously loaded
+liminary studies, the HCS assay was conducted imme-           with 0.8 lM Hoechst 33342, 20 nM TMRM, 1 lM ﬂuo-
+diately after addition of drugs to cells. However, in         4 AM and 1 lM TOTO-3. Cells were loaded in media
+most cases, the HCS assay was conducted after a per-          containing 10% FBS for 1 h at 37C.
+iod of preincubation of the cells with drug. Usually,
+this was for 3 days, although the eﬀects of incubation
+for 7 days were also determined. For studies in which         Data capture The following data were collected. Nu-
+there was no preincubation of drugs and cells, drug           clear size was deﬁned as the area of Hoechst 33342 ﬂu-
+eﬀects were tested only to 100 lM. However, for               orescence and measured as the mean object size for
+preincubation of drugs and cells, the drug eﬀects were        channel 1 in the nuclear region. Cellular mitochondrial
+tested to at least 100 lM and to a minimum concen-            membrane potential was deﬁned as the TMRM ﬂuo-
+tration of 30 times the maximum total concentration           rescence intensity in punctate cytosolic regions around
+(Cmax) of drugs reported circulating at the therapeutic       the nucleus and was measured as the mean ring spot
+dose. The eﬀects of protein binding were not consid-          average intensity for channel 2. To assess intracellular
+ered for determining the maximum concentration for            free calcium concentration, Fluo-4 ﬂuorescence intensity
+testing. Protein binding of drugs would be minimal in         was measured in a large intracellular circular region
+the assay, because of the low content of plasma protein       centered at the nucleus as the mean circular average
+in the culture medium.                                        intensity for channel 3. To assess plasma membrane
+   Drugs were initially dissolved as concentrated stock       permeability, TOTO-3 ﬂuorescence intensity in the nu-
+solutions in water or DMSO. When DMSO was used to             clear region was measured as the mean circular average
+dissolve drugs, it was added to the same ﬁnal concen-         intensity for channel 4. Selected object count was used
+tration of 0.5% (volume/volume) for all wells used for        for cell counting.
+determining the drug response.
+   In a preliminary experiment with 16 toxic drugs the        Quality control For positive controls, three chemicals
+optimal time for treatment of cells prior to assay was        with known eﬀects were added in triplicate to each plate
+determined. Cells were preincubated with the drug for         to conﬁrm quality of testing for the plate and to deter-
+0, 3 or 7 days. Initial seeding densities of the cells were   mine the maximum responses for TMRM, Fluo-4 and
+adjusted so that there would be suﬃcient cells for            TOTO-3 dyes. The three chemicals used were: the
+analysis but not overgrowth of cells: 5,000, 3,000 and        mitochondrial uncoupler FCCP (100 lM), the calcium
+1,000 cells per well, respectively. For all other experi-     ionophore ionomycin (10 lM) and the membrane-per-
+ments, cells were treated for a period of 3 days before       turbing detergent, Triton X-100 (0.05%). Column 1 of
+the assay. For determining drug eﬀects without prein-         each row contained drug solvent but no drug, and was
+cubation, the assay was started at drug addition and          used as a negative control. Fluorescence values for up to
+cells were analysed every 36 min for ten determina-           3 of the 11 wells with the same drug were considered
+tions; six determinations were used for preincubated          outliers and excluded if there were more than two cv’s
+cells. In this preliminary experiment, cells were analy-      (of the repeated measure of controls–see section on
+sed for only one microscopic ﬁeld-of-view. The ﬁrst           assessment of precision) diﬀerent from those of both
+time point is not included in the ﬁgures since the            adjacent wells. Tests in which more than three of the
+dilution eﬀect of adding the drug to the cells obscured       wells had outlying values, or wherever there were
+any drug eﬀects; thus the ﬁrst time point illustrated is      equivocal results, were repeated.
+36 min after drug addition.
+                                                              Data reduction and statistical analysis The dose-re-
+Preparation of plates for HCS, sublethal, cytotoxicity        sponse relationship for each parameter was quantiﬁed
+assay Depending on the duration of drug exposure,             where possible using the IC50, the concentration causing
+1,000–5,000 cells in 100 ul media were added to each          50% inhibition. For most compounds, the standard dose
+well of a 96-well plate (‘‘cell plate’’) and incubated for    response curve of drug dose was used to model the re-
+16–24 h, which ensured attachment of the cells to the         sponse. Data curves were generated using least-squares
+bottom of the plate before drug treatment. Prior to drug      ﬁtting routines with IC50 values determined using vari-
+addition, 50 ul of media were removed from each well.         able-slope, sigmoidal, curve-ﬁtting routines, using a log
+Drugs were added in 100-ul volumes to each well from a        scale for the drug dose on the horizontal axis and a
+584
+
+linear scale for the response on the vertical axis. This      was calculated. Outliers were deﬁned as values more
+was the four-parameter logistic curve versus logarithm.       than three standard deviations away from the mean of
+However for 43% of compounds with a positive test             the others, and were excluded, resulting in some plates
+response, there was hormesis (low dose enhancement). A        not being used and a smaller n. For every control well,
+modiﬁed version of the Brain and Cousens (1989) curve         mean, SD and CV were calculated for each plate. The
+was used to model this response. The hormesis dose            average CV was then used to determine variance be-
+response equation used is presented as Eq. (1) below.         tween wells.
+
+          ðC þ A  DoseÞ
+y¼                                    þ Bottom
+                             DoseB                         Deﬁnition of positive and negative test responses The re-
+   1 þ 1 þ 2A
+            C   expðIC 50 Þ   IC50
+                                                              sult of the HCS sublethal cytotoxicity assay of a com-
+                                                              pound is reported in terms of the (1) degree of positivity,
+Both curves were ﬁtted using non-linear regression            (2) the ratio (TI) of the lowest cytotoxic concentration to
+(which uses least squares) and the compound IC50’s            the total, maximal drug concentration (Cmax) in serum
+estimated where possible. The precision of the IC50’s was     that is associated with eﬃcacy (where this information is
+also found where possible, and can be presented as the        available) and (3) the concentrations at which clear ef-
+percentage coeﬃcient of variation. The regressions were       fects are ﬁrst observed with each parameter.
+carried out using the statistical packages Genstat and           Discrimination of a positive test result in the HCS
+Graphpad Prism.                                               assay was based on several criteria. Firstly, drug-induced
+                                                              eﬀects had to be greater than the variance in the measure
+                                                              of the parameter across wells within plate. When a
+Assessment of predictivity Sensitivity is the proportion      change was two and four times, respectively, the cv for
+of toxic drugs testing positive, TP/(TP+FN), where TP         determination of that parameter in controls, the test
+is the number of toxic compounds testing positive and         result was designated positive or strongly positive. For
+FN is the number of toxic drugs testing negative.             those compounds where biphasic changes (hormesis, see
+Speciﬁcity is the proportion of non-toxic drugs testing       below) were identiﬁed in cell number, nuclear area and
+negative, TN/(TN+FP), where TN is the number of               mitochondrial potential, the change had to be from the
+non-toxic drugs testing negative and FP is the number of      baseline level of the signal and not from the maximal
+non-toxic drugs testing positive.                             point of increase in the signal. Drugs producing a
+                                                              strongly positive test were considered to be markedly
+Assessment of assay imprecision Imprecision was studied       cytotoxicity. Secondly, at least two parameters had to
+in order to distinguish between a drug eﬀect and random       show this eﬀect. Thirdly, there needed to be clear dem-
+variation or artefact. Imprecision could occur at four        onstration of a concentration-response relationship for
+levels: the cell, the ﬁeld of view, the well and the plate.   the parameter. This included occurrence of the eﬀect in
+Accordingly, the imprecision in parameter measure-            at least one successively higher concentration, and ab-
+ments was determined: (a) from cell to cell within ﬁeld-      sence of the eﬀect in at least one lower concentration.
+of-view; (b) from ﬁeld-of-view to ﬁeld-of-view within         Alternatively, if the eﬀect occurred at the end of the
+well; (c) from well to well within plate and (d) from plate   concentration range, then its occurrence was supported
+to plate. In order to compare the diﬀerent sources of         by an eﬀect in at least one other parameter within one
+imprecision, each type was estimated based on a similar       concentration point on the dose-response curve. Bi-
+number of measures and this estimate was repeated a           phasic eﬀects were identiﬁed by a clear increase by two
+similar number of times. For this comparison of               cv followed by a clear decrease. Finally, the magnitude
+imprecision sources, each parameter measure was made          of the eﬀect had to be considered biologically relevant.
+seven times, except when limited by the number of                When the parameter change was between 1 and 2 cvs,
+measures made. This limitation occurred across ﬁeld-of-       test results were considered to be equivocal and weakly
+view because only four ﬁelds-of-view were used per well.      positive. A negative test result was designated to be a
+The imprecision was deﬁned as the SD divided by the           result where the above were absent, there was not a
+mean. Each imprecision estimate was made seven times          dose-response relationship, and all diﬀerences from
+and was expressed as the mean ± SD.                           baseline and control values were less than one CV, un-
+   KSR parameter variance between control wells on            less these could be unequivocally attributed to an
+the same plate and between control wells on diﬀerent          experimental artefact aﬀecting the well in question.
+plates was evaluated after three days. Negative control
+wells were used for assessing nuclear area, cell count and
+TMRM. Positive control wells were used for assessing          Results
+calcium after addition of 10 lM ionomycin and for
+assessing membrane permeability after addition of             Conventional cytotoxicity assays and their predictivity
+0.25% Tween 20. Plates used were OP17, OP18, OP19,
+OP20, OP21, OP22. To determine variance between               Table 1 compares the predictivity of various conven-
+plates, the CV of the well means for each of the six plates   tional cytotoxicity assays (see Materials and methods)
+                                                                                                                               585
+
+applied to 611 drugs: 42 drugs causing severe hepato-                   Cellular eﬀects in the HCS, sublethal, cytotoxicity assay
+toxicity, 283 drugs causing moderate hepatoxicity and
+286 non-hepatotoxic drugs. Table 1 demonstrates that                    When cells were seeded prior to incubation with drugs,
+these assays have only half the sensitivity that regulatory             3,000 cells were added per well. This corresponds to
+animal tests have. Although the in vitro assays were still              about 500 cells in ten ﬁelds at the 10· objective used for
+relatively insensitive at detecting hepatotoxicity, they                the cell count. This number did not change signiﬁcantly
+were highly speciﬁc, so that when drugs tested positive in              on the following day when incubation began, indicating
+these assays there was high probability that the drug                   that the stresses of plating had a cytostatic eﬀect. In the
+produced human toxicity.                                                four Channel Assay using a 20· objective this seeding
+   Comparison on the performance of the conventional                    density corresponds to 12 cells per ﬁeld. This data can be
+cytotoxicity assays with the new multiparametric assay                  used to assess whether a drug is merely halting cells in
+(Table 2) on identical compounds indicated similar re-                  their cell cycle, or actually killing them (i.e. cytostatic
+sults as when the conventional assays were applied to the               versus cytotoxic). Cell counts at Day 0 (i.e. 24 h after
+larger data set of 611 drugs.                                           plating) were slightly more than the theoretical amount
+   Although none of the conventional assays for cyto-                   that should be counted when they are ﬁrst plated.
+toxicity had adequate concordance with in vivo human                       Typical cytotoxic changes are illustrated in Fig. 1.
+toxicity, there were notable diﬀerences between assays.                 See HCS analyser speciﬁcations and settings for details
+The assay with greatest sensitivity, 19%, for detection of              on settings and procedures for image analysis. Fura-
+human toxicity potential was glutathione depletion,                     zolidone-induced decreases in cell number, nuclear area
+being twice as sensitive as the next most eﬀective assays,              and mitochondrial membrane potential are readily visi-
+namely DNA synthesis, as assessed by tritiated thymi-                   ble, as are the increases in cell calcium and plasma
+dine incorporation, and cell viability, as assessed by                  membrane permeability.
+mitochondrial redox cycling activity. The caspase-3
+induction test for apoptosis, protein synthesis, super-
+oxide induction test for oxidative stress and the mem-                  Eﬀects of duration on preincubation of cells with drugs
+brane integrity test were simply ineﬀective.                            on cytotoxicity
+
+                                                                        HCS assays for drug-induced cytotoxicity conducted on
+                                                                        23 toxic drugs and 6 non-toxic drugs at concentrations
+                                                                        up to 100 lM were far more eﬀective when cells were
+                                                                        preincubated with drugs prior to testing. Assays in
+                                                                        which cells had not been preincubated with the drug,
+Table 1 Predictivity of drug-induced human hepatotoxicity by            produced positive test results for only 17% of the toxic
+conventional, in vitro cytotoxicity assays and by regulatory animal     drugs (Fig. 2, top). However, cytotoxicity was seen for
+testing in vivo
+                                                                        70% of these toxic drugs after preincubation at up to
+Sl. no. Predictive test                       Sensitivity Speciﬁcity    100 lM for 3 days (Fig. 2, bottom). Toxic eﬀects were
+                                                                        induced after 3 days preincubation by amodiaquine,
+1       DNA synthesis                      10             92            cerivastatin, diclofenac, fenﬂuramine, furazolidone,
+2       Protein synthesis                   4             97            kanamycin, pamidronate, primaquine, pyrmethamine,
+3       Glutathione depletion              19             85
+4       Superoxide induction                1             97
+                                                                        rosiglitazone, tacrine and zidovudine. Cytotoxicity was
+5       Caspase-3 induction                 5             95            not seen, even after 3 days of incubation with up to
+6       Membrane integrity                  2             99            100 lM, for acetaminophen, cisapride, erythromycin,
+7       Cell viability                     10             92            isoniazide, lamivudine, sulphanilamide and vidaribine.
+8       Combination of above tests 1, 3, 7 25             83            However, in subsequent studies (Table 2) in which these
+9       Regulatory animal toxicity studies 52              –
+                                                                        six drugs were tested to higher concentrations of up to
+Sensitivity (percentage of hepatotoxic drugs detected) and speci-       30-fold the Cmax, cytotoxicity was also detected for
+ﬁcity (percentage of drugs testing positive that are hepatoxic) are     acetaminophen, erythromycin and lamivudine. There
+tabulated for seven conventional, cytotoxicity in vitro assays, for     were no eﬀects detected for any of the non-toxic drugs
+the optimal combination of these assays, and for regulatory, in
+vivo, animal toxicity studies. The in vitro tests were applied to 611   tested: ﬂufenamate, ﬂumazenil, glimepiride and zom-
+drugs, including: (a) 42 drugs causing severe human hepatotoxicity,     epirac. Eﬀects were not found for foscarnet nor primi-
+deﬁned as producing more than 1% frequency of increased serum           done, although in later studies in which these
+ALT plus at least two of either jaundice, more than three reports of    compounds were tested to 30-fold Cmax, their toxicity
+liver failure or a black box warning; (b) 283 drugs producing
+moderate human hepatotoxicity, deﬁned as producing 0.1–1%               was revealed.
+frequency of increased serum ALT, plus jaundice or a label of              Preincubation of cells with toxic drugs for 3 days
+occurrence of adverse eﬀect and (c) 286 drugs producing negligible      produced a fourfold greater frequency of change than
+human hepatotoxicity, deﬁned as less than 0.1% frequency of in-         when cells were not preincubated with drugs. Toxicity of
+creased ALT and absence of clinical symptoms. Sensitivity for
+regulatory animal toxicity studies is based on retrospective exam-
+                                                                        the following drugs was not detectable without prein-
+ination of outcomes in animal studies for drugs found in clinical       cubation with cells for 3 days: amodiaquine, cerivasta-
+studies to produce human hepatotoxicity (Olson et al. 2000)             tin, diclofenac, fenﬂuramine, foscarnet, furazolidone,
+Table 2 Cytotoxic eﬀects of drugs causing human toxicity
+                                                                                                                                                                                                     586
+
+
+
+Sl. no      Drug                Toxicity           Old     HCS       First     Cell                 Mitochondrial           Ca        Mem       Nuclear      Cmax       TI       PPB     Mechanism
+                                                   tests   test      signal    number               potential                         perm      area         (lM)                (%)
+
+Severely hepatotoxic drugs
+             i,r
+1               Acetaminophen   X,FH,HI,Ht                Str +     #         500›4,000ﬂ                    4,000              –         –       7,800       130         4        8     OS
+2            Aminosalycilate    0.005,W,X J               +         #            24›750ﬂ                      100              –         –           –        49         0.5     68     IM
+3            Amitryptilline     <10,H,C,LD                +         #                  13                      50             25        50          50         0.3      43       95
+4            Amiodarone         0.25,BBW,H         +       Str +     #              6›25ﬂ                      100             13        25          25         0.81      7       99     OP
+5            Amodiaquine        Wd,FH,HI           +       Str +     C                  25                      50             13        25          25         0.42     31       95     IM
+6            Cerivastatin       Wd,I,H             ND      Str +     #,M                 0.1›1.6ﬂ                0.1›0.8ﬂ       0.2       0.4         1.6       0.03      3       99     M,Ca,Ap
+7            Cyclosporin A      >3,C,Ht            +       Str +     M                  25                      2›             13        13          13         0.2      10       93     OS
+8            Danazol            50,W                      Str +     #,N                13               50›100ﬂ               25        50          13         0.16     81
+9            Dantrolene         0.012,BBW,H,X,LD          Str +     #                  25                     100             50        50          50         7.9       3       85     IM
+             i,r
+10              Diclofenac      0.04,W,H,FH,J             Str +     #            16›126ﬂ                      250              –       126       126›          4.2       4       99     OP,Ap
+11           Didanosine         65,BBW,H,FH,X      ND      +         #                  2›                       –              –         –           –        12         0.2      5     M
+12           Disulﬁram          H,FH,X             +       Str +     #                  13                      25             25        25          25         5.4       2       50     OS
+13           Efavirenz          8,Ht               ND      Str +     #                  50                     100            100       100         100        13         4       99.5   M
+14           Etoposide          20,H,HI,           ND      Str +     #,N                 0.5                   505             16         4           0.5›     17         0.03    96     Syn
+             i,r
+15              Felbamate       BBW,X,FH,H                Str +     M                 315                   160›               –         –         315        42         4       24     IM
+16           Fialuridine        Wd,X,Ht            ND      Str +     #                   2                       –              –       500       125›          1         2              M
+17           Flutamide          <1,w,H,C,J,X,FH           Str +     #,C,M,P            50                      50             50        50           –         6         8       90     M
+18           Indomethacin       W,FH,X,I                  +         N                 190                      47              –         –          2›         6         0.3     90     IM, OS
+19           Imipramine         <22,H,LD,C                Str +     #                   0.8›50ﬂ               100             50        50          50         0.6       1      100     IM, M
+             r
+20             Isoniazide       20,BBW,X,FH,H             +         M                   –                     50ﬂ              –         –           –        40         1        0     IM, OS
+21           Itraconazole       X                  ND      +         M                   2                       0.2            –         2           3         0.4       0.5     99.8   IM
+22           Ketoconazole       40,BW,X,H,C        +       Str +     N                 100               25›100ﬂ               25        50     13›50ﬂ          7         2       99     M
+23           Ketorolac          BW,FH,H,C                 Str +     M,N,CP          430›                    220›             220       220         220         7         0.25    99     IM
+24           Labetalol          W,I,H,FH,X,C,HI           Str +     N           13› 100ﬂ                      50›             50       100           6         0.4      15       50
+25           Lamivudine         4, BBW,X,                 +         #                 125                       –              –         –           –        17         7       36     M
+26           Mercaptopurine     40, W,             +       +         N                   –                       –              –         –           0.2       1         0.2     19     Syn
+27           Methapyrilene      Ht                        +         M                   –                     150              –         –           –       115         1.4            M,OP
+28           Methotrexate       BW,Ht,I,Ci,F       ND      Str +     #,N                 0.02                    –              –         –           0.02      0.02      1              Syn
+             i,r
+29              Methyldopa      W,I,H,FH           ND      Str +     All               330                     330            330       330         330        11        30       15
+             i
+30             Minocycline      W,I,H,B                   +         #                  13                      25              –         –         50›         8         2       76     IM, M
+31           Niacin             <5,W,FH,C,J        ND      +         #,N            3800›                     7500              –         –      3800›        126        30
+32           Nimesulide         X,Ht               ND      +         #,N               340                     680           1370      1370         340        15        23       99     M
+             i
+33             Nitrofurantoin   W,X,H                     Str +     N                  12                      50             50        50           0.7›      6         0.1     62     IM, OS, M
+34           Novobiocin         BBW,I                     Str +     #,P               100                     400            400       100         400         1       100              IM
+35           Phenylbutazone     Wd                        +         #,M,C           6,600          6,600›13,000ﬂ           6,600         –           –       438        15       99
+             r
+36             Piroxicam        2,W,H,X                   +         #,N                 5                     160              –         –          5›         5         1       99
+37           Propythiouracil    <30,W,H,FH,J              +         #                  25                       –              –         –           –        42         0.6     85     IM
+38           Pyrazinamide       W,I,               ND      +         #              2400›                   4800›               –         –           –       325         7       50
+49           Stavudine          BBW,H,FH           ND      Str +     #                 250                       –            500     1,000           –         4        63        5     M
+             i
+40             Sulindac         <1,W,H,X                  Str +     M                 285                     140              –         –       570›         19         8       94     IM, OS
+             i,r
+41              Valproate       44,BBW,B,X                Str +     #               1,000                 4,000›               –     4,000       8,000       540         2       93     OS, M
+42           Zileuton           W,Ht               ND      +         #                 100                       –              –         –           –        17         6       94     OS
+
+Sensitivity                                        20%     100%
+Moderately hepatotoxic drugs
+43          Aspirin             I,H,Ht                    Str +     M,C,N          6,250                   1,300           1,300     6,250       1,300      1,650        0.8     30     OS, M
+44          Azathioprine        <1,B,Ht                   +         #                  0.8                     –               –        25           –          0.34     2       30     OS
+45          Bupropion           <1,W,C,H,LD               Hi TI    #                300                   1,200             600       600         600          0.5    600       84
+Table 2 (Contd.)
+
+Sl. no   Drug                 Toxicity         Old     HCS       First     Cell           Mitochondrial          Ca        Mem       Nuclear                Cmax       TI          PPB    Mechanism
+                                               tests   test      signal    number         potential                        perm      area                   (lM)                   (%)
+
+46       Captopril            W,I,H,B                 +         N              –                –                   –         –     55›110ﬂ                  4            14      30
+47       Ceftazidime          I,C              +       Str +     #             12               24                  48        48           48               220             0.05   21
+48       Chloramphenicol      C,J,HI                  Str +     #            260                –                   –         –            –                57             5      53     OS
+49       Chlorpromazine       0.75,            ND      Str +     #              3               25                  13        13            6                 0.5           6      98.5   IM, M
+50       Ciproﬁbrate          I,H,HI                  +         #            100                –                   –         –            –                 5            20             M
+51       Cloﬁbrate            I,Hm,C                  +         M         14,000           7,100›                   –         –            –               470            15             M
+52       Colchicine           HI,              ND      +         #,N            0.1              –                   –         –            0.1               0.016         6      40
+53       Cyclophosphamide     J                       +         #,N        2,300                –                   –         –       2,300›               143            16      13
+54       Diethylcarbamazine   X,H,HI                  Weak+     #            100                –                   –         –            –                 1.3          77       0
+55       Doxorubicin          <1,H,C           +       Str +     #,C,P          0.1          1› 2ﬂ                   0.1       0.1          0.4               0.2           0.5    76     OS, M
+56       Enalapril            W,I,H,B,C        ND      +         N,M          100                1.6›                –         –            1.6               0.4           4      55     M
+         r
+57         Erythromycin       W,I,H,c,J,LD            +         #              1.6            50›                   –         –            –                11             0.15   84     OS
+58.      Ethylestrenol        Ht                      +         #              6                –                 100         –          100                 3             2             C
+         r
+69         Estradiol          W,C,J            +       Hi TI    #,N           25               50                   –         –          25›                 0.0006   42,000      98     C
+60       Famotidine           <1,C,J                  +         M              –                3                   –         –           25                 0.3          10      17
+61       Fenoﬁbrate           0.063,W,H,C             Str +     #            250                –               1,000     1,000        1,000                25            10      99     M
+62       Furazolidone         C,HI                    Str +     #              6               25                  25        50          100                 4             1.5           M
+         r
+63         Furosemide         C,J                     Str +     M          1,100              570               2,300     2,300        2,300                16            35      99     M
+64       Fusidic Acid         B,Ht,C                  +         M              –              516                   –         –            –                17            30      95
+65       Glyburide            I,H,C                   +         M             50               2›                   –       100          50›                 0.2          10      99.8
+         i,r
+66          Hydralazine       0.005,HHI,C,     ND      Str +     #,N           67             135›                 270         –           75                 5            13.5    87     IM
+67       Ibuprofen            <1,H,J                  +         #             50                –                   –         –            –               250             0.2    99     IM, M
+68       Ifosfamide           0.03,B,C                +         #          1,500                –                   –         –            –               203             8       0
+69       Isotretinoin         0.15,W,H         ND      +         #,M          100              100                                                            8            13
+70       Ketoprofen           H,C,LD                  Str +     M             47                3                  –         –            –                 15             0.2    98.7
+         i,r
+71          Leﬂunomide        0.05,W,B         +       +         #             25                –                  –         –            –                340             0.07   99.3   IM
+72       Lovastatin           0.019,W,H,C      ND      +         N              1.6›25ﬂ    3›100ﬂ                  13         6            0.4                0.01         40      95     M, Ap
+73       Mesalamine           I,H,B,FH,C,HI           +         #              6               10                  –         –          25›                 12             0.5    50     IM
+74       Methacycline         H,C                     +         #             13               50                  –         –            –                  5             3      85
+75       Naproxen             <1,FH,HI,C       ND      Hi TI    M,N          100              50›                  –         –           50                  0.2         250      99     IM
+76       Nizatidine           I,H,HI,C                +         N              –                –                  –         –           26                  4             7      35
+77       Norﬂoxacin           1.6, H                  Str +     N             28                7                  –         –            0.5›               8             0.8    18     IM
+78       Paclitaxel           0.19,B,HI        ND      Str +     #              0.1              –                 50        50          25›                  4.3           0.02   94
+79       Paroxetine           I,H,FH,HI        +       Str +     #              0.8›25ﬂ         13                  6.3      13           13                  0.2           4      95     M
+80       Pravastatin          0.045,W,H,B,HI   ND      Hi TI    #            100                –                  –         –            –                  0.1       1,000      50     Ap
+         r
+81         Procainamide       I,H,C            ND      Str +     N            630             630›                630         –          320                 12            27      18     IM
+82       Pyrimethamine        C,J,HI           ND      Str +     #              3                –                 10        10      10›100ﬂ                  3.3           1             Syn
+83       Quinacrine           H                +       Str +     C              2                3                  0.4       3            3                  1             0.4    90
+84       Quinidine            H,HI,Ht          ND      Str +     C              8               30                  0.5       1           15                  9             0.06   90     M
+85       Quinine              H                +       Str +     #,P,C,N       36               70                 36        36           36                 19             2      93
+         i
+86        Rifampicin          W,I,H            +       +         N             50                –                100       100          13›                  9             1      81
+87       Rosuvastatin         <0.5,            +       +         N              0.4›             0.4›1.6ﬂ3›        50         –            0.2›0.4ﬂ1.6›6ﬂ     0.01         20             M, Ca, Ap
+88       Simvastatin          0.05,W,H         ND      +         #,M,N          0.2›50ﬂ          0.2›0.9ﬂ3›50ﬂ      6         6            0.2ﬂ0.9›3ﬂ         0.02         10      94     M,IM
+         r
+99         Sulfamethizole     W,H                     +         M              –             1000                  –         –            –                222             5      90
+         r
+90         Sulfamethoxazole   W,H,B,C,J,HI            +         #         1,100›                –                  –         –            –                217             5      62     IM, M
+         r
+91         Sulfaphenazole                      ND      +         N            100              100                  –         –           50                 78             0.6
+         r
+92         Tacrine            0.29,W,H,B,Ht           Str +     N             25         50›100ﬂ                  50        25       13›50ﬂ                  0.1         130      55     OS, M
+         r
+93         Tamoxifen          W,I,H,B,C,HI     +       Str +     N           100›               25                  –        25            0.4›25ﬂ            0.4           1      98     M
+                                                                                                                                                                                                      587
+                                                                                                                                                                                           588
+
+
+Table 2 (Contd.)
+
+Sl. no        Drug                   Toxicity         Old     HCS       First    Cell        Mitochondrial   Ca      Mem      Nuclear    Cmax          TI              PPB     Mechanism
+                                                      tests   test      signal   number      potential               perm     area       (lM)                          (%)
+
+              i,r
+94               Terbinaﬁne          C,J,Ht,LD        ND      Str +     #             3          6              6        6       13           4                 0.8     99
+95            Terfenadine            I,H,C,J                  Hi TI    C             6          6              3        6       13           0.01            300              CA
+96            Tetracycline           I,Ht,C                  +         M,C,P         –        560            560      560        –           9                62       65     IM
+97            Tolazamide             C                       +         N            50          –              –        –        2          90                 0.02    94
+98            Tolbutamide            X,C,J                   +         #            30          –              –        –        –         590                 0.05    96
+99            Triﬂuoperazine         H,C              +       Hi TI    C            13         25              6       13       13           0.003         2,000       99
+100           Warfarin               I,H,C,J                 +         #,M,N       100        100              –        –      100           7                14       99     IM
+              i
+101             Zarﬁrlukast          W,Ht             ND      +         M,N         100         13              –      100      13›           1                13       99
+102           Zidovudine             BW,H,HI                 Str +     #            63          –            500        –        –           4                16       25     M
+
+Sensitivity                                           24%     88%
+Non-toxic drugs
+103           Acetylcysteine         HI                      –         –              –          –              –        –        –      1,900            >1           80
+104           Aminobenzoate                                  –         –              –          –              –        –        –         50           >30
+105           Bambuterol                                     –         –              –          –              –        –        –          0.015    >6,700           45
+106           Betaine                                        –         –              –          –              –        –        –        940           >30
+107           Biotin                                         –         –              –          –              –        –        –        <1           >100
+108           Bisacodyl                                      –         M              –        100              –        –                   0.15         667
+109           Buspirone              1                ND      –         #,N          100          –              –        –      100          0.01       1,000          95
+110           Carbidopa                               +       –         #            520          –              –        –        –          2            260          36
+111           Citicoline                                     –         –              –          –              –        –        –        700           >30
+112           Cromolyn               I (poss Alerg)          –         –              –          –              –        –        –          0.016    >6,600           68
+113           Cyanocobalamin                                 –         #,M            0.4        0.4            –        –        0.8        0.001        400
+114           Dexamethasone                                  –         M,N          100         50              –        –      50›          0.23         217          77
+115           Dimethylsulfoxide                       ND      –         #         35,000     70,000              –   70,000   70,000     <1,000           >30
+116           Diphenhydramine                                –         #          1,300      2,500          2,500    2,500    2,500          0.3        4,200          98.8
+117           Flumazenil                              +       –         P              –          –              –       50        –          0.1          500          45
+118           Eserine                                 ND      –         M              –         6›              –        –        –          0.22       >450                  M
+119           Fexofenadine                            ND      –                        –          –              –        –        –          0.57       >175
+120           Folate                                  ND      –         –              –          –              –        –        –          3.4         >30
+121           Folinic acid                            ND      –         –              –          –              –        –        –          3           >30
+122           Glimepiride            H (1 case),C            –         #,P          100          –              –      100        –          0.73     >137x2           99
+123           Isoproterenol                           ND      –         #        6›100ﬂ           –              –        –        –          0.006      1,000          68
+124           Isosorbide dinitrate                           –         –              –          –              –        –        –          0.0008   130,000          28
+125           Ketotifen                                      –         #,P,C         50      100›              50       50      100          0.0001   500,000
+126           Moxisylyte                              ND      –         M              –      100›               –        –        –          1.65        >61
+127           Myo-inositol                            ND      –                        –          –              –        –        –         22           >30
+128           Oxyphenonium                            ND      –         M,N            –        100              –        –      100          0.3          300
+129           Pargyline                               ND      –         #            100          –              –        –        –          0.3          333
+130           Picotamide                              ND      +         M             13          2            100      100       6›         50              0.04
+131           Pinacidil                               ND      –         #,M,N        100        100              –        –    100›           0.17         588          40
+132           Pioglitazone                                   –         –              –          –              –        –        –          2.6         >38           99     M
+133           Praziquantel                                   –         –              –          –              –        –        –          1.8         >56           80
+134           Propranolol            HI               –       –         C,P,N         50          –             25       25       25          0.1          250          87
+135           Pyridoxine                              ND      –         –              –          –              –        –        –          1.1         >91
+136           Rosiglitazone                           ND      –         #             50        100              –        –       80          0.67     >75x10          100     M
+137           Thiamine                                ND      –         –              –          –              –        –        –          6.8         >30
+Table 2 (Contd.)
+
+Sl. no      Drug                   Toxicity      Old     HCS       First    Cell           Mitochondrial            Ca        Mem       Nuclear         Cmax     TI         PPB    Mechanism
+                                                 tests   test      signal   number         potential                          perm      area            (lM)                (%)
+
+Speciﬁcity                                       88%     97%
+Drugs toxic to other organs
+138          Astemizole            CA            +       Hi TI    All            6                    6                6         6          6            0.01    600       97     IM
+139          Bezaﬁbrate            I                    +         #             50                    –                –         –          –           17         3       95     M
+140          Bupivacaine           Myo           ND      +         #,C            6                    –                6         –          –            0.7       9       96     OS
+141          Caﬀeine                                    +         #          1,250                    –                –     2,500     2,500›           42        30       36
+142          Capreomycin           I,R,O         ND      Str +     #          150›                   300                –         –          –           40         4
+143          Chloroquine           I,HI          +       Str +     #,C            6              26›50ﬂ                 6        13         13            0.48     13       61
+144          Chlorpheniramine                    ND      +         N             50             50›100ﬂ               100         –          0.4›6ﬂ       0.2       2       72
+145          Ciglitizone                         ND      +         M              –                    3                –         –         6›            5         0.6            M
+146          Cisapride             I,H, CA              Hi TI -   –              –                    –                –         –          –            0.12   >810       98     CA
+147          Clioquinol                                 +         #,N           64                2,000              500     2,000         64           69         1
+148          Dipyrone                                   +         #,P        1,000                    –                –     1,000          –           34.5      29       60     IM, Ag
+149          Fenﬂuramine                                +         #              6                   25               50        50         50            0.1      60       30     Card
+150          Flufenamate                                Str +     M,N            –                  100                –         –       100›           46         2       90
+151          Flucytosine           I,HI,LD       ND      Str +     #,P            6                    –                –         6          –          780         0.008          RM, Syn
+152          Fluvastatin           0.011,W,Myo   ND      Str +     C              1.6       3›6ﬂ13›50ﬂ                  0.8       1.6       13            0.45      2       99     M, Ap
+153          Foscarnet             5,R                  +         C,N        4,400        8,700›17000ﬂ             2,200     8,700      2,200          580         4       20     R
+154          Gentamycin            R,O           ND      +         N            185                    –              185       185        95›           13         7       28     R
+155          Halothane                           ND      +         N             13                    3                –         –         2›           10         1              RM, OS
+156          Indoprofen                          ND      +         #          2,100                    –                –         –          –           72        30       99
+157          Isoxicam              H,D,GI        ND      False    –              –                    –                –         –          –           20                 97.7   IM
+158          Kanamycin             HI,R,O               +         #,M           11                   11                –         –        25›           47         0.2      0     Trans
+159          Lidocaine             CNS                  +         M          1,300                  300            2,500     2,500      2,500           36         8       70     IM
+160          Memantine             N                    Str +     #             25                   50              100       100          –            0.2     125
+161          Metformin             Pan           ND      +         M          1,700                  220                –         –        440          116         2
+162          Metoclopramide        I,Ht                 +         N              –                   50                –         –         13            0.4      32       65
+163          Menadione                           +       Str +     #              6                   13               13        13         25            5         1              OS
+164          Mevastatin                          ND      +         N              3                    0.2›0.4ﬂ3›       0.4      13          0.1›0.2ﬂ                              Ap
+165          Mibefradil            Wd            ND      Str +     #              0.4›6ﬂ               6                6        50          6            1.1       0.4            Ca
+166          Nialamide             CNS           ND      Str +     N              –                    –                –         –        100           14         7
+167          Nicotine                            ND      +         M             27                    0.4              –         –        100            0.09      5        5
+168          Nocodazole                          ND      +         #              0.1                  –               25        25          0.4          0.5       0.2
+169          Nomifensine                         ND      +         #            100                    –                –         –          –            1.2      83
+170          Pamidronate           R                    Str +     #        3›100ﬂ                   100              100       100          –           11         0.3     30     Trans
+171          Phenacetin                          ND      +         #             25                  100                –         –       100›           12         2       33     R
+172          Phenformin                          ND      +         #,M           13                   13                –         –        25›            0.63     21       20     LA
+173          Pimozide              I             +       Str +     #,C,P          6                   13                6         6         13            0.11     55       99
+174          Primaquine                                 +         #,             3                   50               25        25         50            0.11     27
+175          Primidone                                  +         #            350                  690                –         –          –           23        15       20
+176          Propythiouracil                            Str+      M            630                  313                –         –      1,300           42         7
+177          Sodium chloride, mM                 ND      Str +     N             13                  100               50        50         3›          145       NA         0.1
+178          Streptomycin          R,O                  +         M          1,600                  780                –         –          –           52        15       50
+179          Streptozocin                        ND      ?         N              –                    –                –         –       100›
+180          Sulfabenzamide                             ?         #             25                  100                –         –
+181          Sulfanilamide                              ?         M,P            –                  100                –       100         –             –                 70     IM
+182          Telenzipine                                +         M              –                    1                –         –        3›             0.02        50
+183          Temozolomide          BM                   +         #             50                    –                –         –         –             6            8           Syn
+                                                                                                                                                                                               589
+Table 2 (Contd.)
+                                                                                                                                                                                        590
+
+
+
+Sl. no         Drug                        Toxicity   Old     HCS       First     Cell        Mitochondrial   Ca          Mem        Nuclear     Cmax     TI          PPB   Mechanism
+                                                      tests   test      signal    number      potential                   perm       area        (lM)                 (%)
+
+184            Theophylline                I,H               +         N             –           –                –          –         25        85        0.3       56
+185            Topiramate                  X,CNS      ND      +         #,M         300        300›                                               20       15         13
+186            Vancomycin                             ND      +         #,M         285        285›                                               19       15
+187            Vidarabine                  I,B               +         N           100          50                –         –           6        17        0.35      25    M
+188            Vincamine                   HI,CA      ND      Hi TI    M             –        100›                –         –           –         0.44   230               Hem
+189            Zalcitabine                            ND      +         #            63           –                –       500           –         0.37   170          4    M
+190            Zomepirac                                     False    -             –           –                –         –           –         5.6                92    R, IM
+191            Zonisamide                             ND      +         N             –           –                –         –           6        24           0.25   50
+
+Sensitivity                                           14%     92%
+Positive controls: chemicals causing toxicity
+192            Acetamidoﬂuorene                       ND      +         #,M         100          100               –         –           –       NA       NA
+193            Aﬂatoxin B1                            ND      Str +     #             0.1          0.2›            3.2       3.2         0.2›    NA       NA                OS
+194            Alloxan                                ND      +         M                        100                                             NA       NA                OS
+195            Ally alcohol                           ND      +         N              –           3               –          –           0.4›   NA       NA
+196            Benzopyrene                            ND      Str +     #              0.1         1.6›            1.6        0.8         1.6    NA       NA
+197            Betaine HCl (acidic)                   ND      Str +     #          7,100      28,000               –          –           –      NA       NA
+198            Bromobenzene                           ND      +         #            100           –               –          –           –      NA       NA                OS
+199            p-Bromophenol                          ND      +         #            630       2,500           1,300      1,300       1,300      NA       NA
+200            Buthionine                             ND      +         M             50           0.2             –         50           –      NA       NA                OS
+201            Butylhydroxytoluene                    ND      +         #             50           –               –          –           –      NA       NA                OS
+202            Carbon tetrachloride                   ND      +         N              –         50›               –          –           0.8    NA       NA                OS
+203            Chloroform                             ND      +         #            100           –               –          –           –      NA       NA                OS
+204            m-Cresol                               ND      +         M              –           0.8             –          –           3      NA       NA
+205            p-Cresol                               ND      +         M,N           50           0.2             –          –           0.2›   NA       NA
+206            Cytochalasin B                         ND      Str +     N              2           0.8             3         50           0.1    NA       NA
+207            Cytochalasin D                         ND      Str +     #              0.4       100             100         50           6      NA       NA
+208            Diaminotriazole                        ND      Str +     N          3,100           –               –          –       1,560      NA       NA
+209            Dichloroethylene                       ND      Str +     M,N            –         25›               –          –          25      NA       NA
+               r
+210             Diethylmaleate                        ND      +         N             50          25               –          –          13      NA       NA                OS
+               r
+211             Dimethylformamide                     ND      +         #,N            3          13               6         25           3      NA       NA
+212            Diquat                                 ND      Str +     #             13          50              50        100         100      NA       NA                OS
+213            Ethionine                              ND      +         N              –           –               –          –           3      NA       NA                M
+               r
+214             Eugenol                               ND      +         M              –         13›               –          –           –      NA       NA                OS
+215            FCCP                                   ND      Str +     N             25          50              50         50         13›      NA       NA                M,OS
+216            Formaldehyde                           ND      +         M, N           –         25›               –          –          25      NA       NA
+217            Galactosamine                          ND      Str +     #            780      12,500          13,000      1,600      13,000      NA       NA                Syn
+218            Glucosamine                            ND      Str +     N            750           –               –          –          5›      NA       NA
+219            Hydrochloric acid                      ND      Str +     #            10›           –               –          –           –      NA       NA
+220            Ionomycin                              ND      Str +     M              0.16        0.04            0.08       0.08        0.16   NA       NA                Ca
+221            Isopropylphenol                        ND      +         #,M          100         100               –          –           –      NA       NA
+222            Malonic acid                           ND      +         #          2,500           –               –          –           –      NA       NA                M
+223            Methoxyphenol                          ND      +         N             50           –               –          –          13      NA       NA
+224            Monensin                               ND      Str +     #              0.1         –               0.8        1.6         0.8    NA       NA                M
+225            Napthylisothiocyanate                  ND      +         #,M,C,P      100         100             100        100                  NA       NA
+226            Nitrosodimethylamine                   ND      +         M,N          100           6               –          –         6›       NA       NA
+227            Nitroproprionic acid                   ND      +         #            600           –               –      2,500          –       NA       NA
+228            Pentachlorophenol                      ND      +         M,N           25           6               –        100          6       NA       NA                OS
+229            Pyrazinamide                           ND      Str +     #,M       19,000      19,000               –          –          –       NA       NA
+Table 2 (Contd.)
+
+Sl. no           Drug                      Toxicity       Old        HCS          First       Cell          Mitochondrial        Ca        Mem        Nuclear       Cmax        TI            PPB        Mechanism
+                                                          tests      test         signal      number        potential                      perm       area          (lM)                      (%)
+
+230              Rotenone                                 ND         Str +        #,P             0.1           0.2              6         0.1          0.4          50          0.002                   M,OS
+231              Ryanodine                                ND         False       -               –             –                –         –            –           NA          NA                       Ca
+232              Sodium hydroxide                         ND         +            #           5,000             –                –         –            –           NA          NA
+233              Taurocholic                              ND         +            N               –             –                –         –           25           NA          NA                       M
+234              Taurodeoycholic                          ND         +            N           1,250         2,500                –         –          310           NA          NA                       M
+235              Taurolithocholic                         ND         +            N             310             –                –         –          156           NA          NA                       M
+236              Thioacetamide                            ND         +            M             100             6                –         –            –           NA          NA
+237              Trichloroethylene                        ND         +            M             100             6                –         –            –           NA          NA
+
+Sensitivity                                             ND         98%
+Negative controls: chemicals non-toxic to humans (at concentration up to 100 lM)
+238              3-Acetamidophenol                      ND         –           –                   –             –               –         –            –           NA          NA
+239              Ascorbate                                        –           –                   –             –               –         –            –           NA          NA
+240              Culture media                          ND         –           –                   –             –               –         –            –           NA          NA
+241              Ethanol                                ND         –           –                   –             –               –         –            –           NA          NA
+242              Lactose                                ND         –           –                   –             –               –         –            –           NA          NA
+243              Sorbitol                                         –           –                   –             –               –         –            –           NA          NA
+Overall                                                 21%        93%
+ sensitivity
+ (drugs)
+Overall                                                 90%        98%
+ speciﬁcity
+ (drugs)
+
+About 243 drugs and compounds are tabulated (column 1) in diﬀerent categories of human toxicity and compared with respect to how they tested in conventional cytotoxicity assays (column 3), the toxicity they
+produce (column 2), and how they tested in the HCS, sublethal, cytotoxicity assay (columns 4–10). Drugs and compounds are categorised according to their human hepatotoxicity as: (1) severely and (2)
+moderately hepatotoxic drugs, (3) non-toxic drugs, (4) chemicals toxic to other organs, (5) toxic chemicals, and (6) non-toxic chemicals. Results for the HCS cytototoxicity assay are tabulated for test outcome
+and degree of positivity in column 4, parameter aﬀected at the lowest concentration in column 5, and in columns 6–10 for the concentrations causing eﬀects on cell number, mitochondrial membrane potential,
+intracellular ionised calcium concentration, membrane permeability and nuclear area, respectively. The maximal plasma total concentration of drugs associated with eﬃcacy (Cmax) is indicated in column 11. The
+ratio of lowest cytotoxic concentration to Cmax is indicated in column 12 (TI). The percentage of drug that is bound to plasma proteins is also indicated (column 13), and where known the cellular mechanism of
+cytotoxicity (column 14). The sensitivities of the conventional assays and the HCS assay are indicated in the row at the bottom of the list of drugs in each category
+ND not determined, NA not applicable, ? not tested to 30· Cmax and therefore diagnosis uncertain. Mechanisms of toxicity are designated as follows: Ap apoptosis; Ca calcium dyshomeostasis, Card
+cardiotoxicity, Hem hematologic, IM immune-mediated, LA lactic acidosis, M mitochondrial, OP oxidative phosphorylation, OS oxidative stress, Syn DNA-synthesis, Trans membrane transporter inhibition,
+Superscript i idiosyncratic hepatotoxicity, Superscript r reactive metabolite, › signal increased. Toxicities (column 2 and 14): the number in this column refers to the % incidence of patients with increased liver
+function tests, Ag agranulocytosis, B hyperbilirubinemia, H hepatitis, BBW black box warning, BM myelotoxic, BW boxed warning, CA cardiac arrhythmia; C cholestasis, Ci cirrhosis, D dermatotoxic, F
+ﬁbrosis, FH fulminating hepatitis, GI gastrointestinal toxicity, HI Hepatocellular injury (with necrosis), Hm hepatomegaly, Ht hepatotoxicity, I incidence of elevated liver function tests (but % not given), J
+jaundice, LD liver dysfunction, Myo myotoxic, N neurotoxic, O ototoxic, Pan pancreatic, R renotoxic, St steatosis, W regulatory warning, Wd withdrawn, X deaths
+                                                                                                                                                                                                                        591
+592
+                                                          b
+                                                          Fig. 1 Photomicrographs of furazolidione-induced changes in
+                                                          prelethal cytotoxicity parameters. Eﬀects of preincubation of
+                                                          HepG2 cells with 100 lM furazolidone, compared to controls,
+                                                          respectively, on nuclear area (a, b), mitochondrial membrane
+                                                          potential (c, d), calcium (e, f), membrane permeability (g, h) and cell
+                                                          number (i, j). Furazolidone produced a marked reduction in cell
+                                                          number, nuclear area, and mitochondrial membrane potential, and
+                                                          marked increases in intracellular calcium and membrane perme-
+                                                          ability. See HCS analyser speciﬁcations and settings for details of
+                                                          instrument settings and procedures. Circular outlines indicate the
+                                                          areas within cells in which ﬂuorescence intensity is measured. Cells
+                                                          are viewed with the 20· objective for ﬂuorescence intensity
+                                                          quantitation and the 10· objective for cell counting
+
+
+                                                          counts obtained were highly variable and substantially
+                                                          reduced. This was attributed to the low seeding density,
+                                                          combined with lengthy preincubation time, resulting in
+                                                          the clonal expansion of small numbers of cells into
+                                                          irregular clumped colonies for which individual cells
+                                                          could not be distinguished.
+                                                              Based on the low frequency of detection of toxicity
+                                                          without drug preincubation and on the clumping of cells
+                                                          grown for 7 days, a three-day exposure protocol was
+                                                          selected for standardisation of the assay protocol for the
+                                                          collection of data reported in Tables 2 and 3 and Fig. 2
+                                                          (bottom), 3 and 4. In Table 2, cytotoxic eﬀects of drugs
+                                                          in conventional and the new multiparametric assay are
+                                                          tabulated.
+
+                                                          Time-course of cytotoxic change
+
+                                                          Above a threshold drug concentration, cytotoxic eﬀects
+                                                          progressively increased with time of incubation during
+                                                          the 3.4 h period that the cells were monitored for. These
+                                                          eﬀects occurred more rapidly, and followed a dose-re-
+                                                          sponse pattern. The threshold concentration producing
+                                                          eﬀect, the magnitude of the eﬀect, the sequence in which
+                                                          parameters were aﬀected and whether they were in-
+                                                          creased or decreased, varied across drugs.
+                                                             With the exception of TMRM, cell ﬂuorescence
+                                                          intensities were constant over time for the negative
+                                                          controls and for cells exposed to drugs not producing
+                                                          acute toxicity, or exposed at non-toxic concentrations of
+                                                          toxic drugs. Fluorescence of TMRM decreased gradu-
+                                                          ally over time, possibly due to its extrusion by the
+                                                          p-glycoprotein transporter, and/or to photobleaching.
+                                                          Toxic eﬀects were considered to occur only when the
+                                                          rate of change of ﬂuorescence was unmistakeably greater
+                                                          than for the negative controls.
+                                                             In Fig. 3, the time course of change in ﬂuorescence
+                                                          parameters is indicated at the critical concentration
+                                                          where each drug produced toxic eﬀects. Eﬀects are
+                                                          demonstrated for a representative single cell and for a
+                                                          population of cells for each drug at the concentration
+                                                          producing toxicity. The patterns of change are quite
+pamidronate, primaquine, pyrimethamine, rosiglitazone,    similar for single cells and populations of cells, although
+sulphanilamide and tacrine.                               the former is more precise in determining the sequence
+   Preincubation of cells for 7 days resulted in prepa-   of events. For example, for amiodarone and dantrolene,
+rations from which little data could be obtained. Cell    individual cell data conﬁrmed that calcium was the last
+                                                                                                                                       593
+
+Fig. 2 Cytotoxic eﬀects of
+
+
+
+
+                                       Nuclear area
+                                                       30
+speciﬁc drugs before and after
+3-day preincubation of cells                           20
+with drugs. Combined
+concentration-response and                             10 Amiodarone           Paroxetine            Dantrolene        Astemizole
+time-course of changes are
+shown in cell proliferation,                          600
+
+
+
+
+                                       TMRM
+mitochondrial function,                               400
+intracellular calcium                                 200
+homeostasis, cell membrane
+                                                        0
+permeability and nuclear area
+                                                      100
+for drugs producing immediate
+
+
+                                       Fluo-4
+toxicity without preincubation                         75
+(top half; amiodarone,                                 50
+paroxetine, dantrolene,                                25
+astemizole) and for drugs                               0
+                                       TOTO-3
+producing toxicity after 3-day                        900
+preincubation of drugs and cells                      600
+(bottom half; acetaminophen,
+                                                      300
+mibefradil, quinine,
+cerivastatin). At each                                  0
+concentration indicated, nine                         150
+                                       Cell Count
+
+
+
+
+measurements on                                       100
+approximately 40 cells in a
+single ﬁeld-of-view were made                          50
+with 36 min intervals for                               0
+nuclear area (Hoechst 33342;
+                                                                              0
+
+
+
+
+                                                                                                    0
+
+
+
+
+                                                                                                                      0
+
+
+
+
+                                                                                                                                       0
+                                                               1
+                                                               4
+                                                               6
+                                                               4
+
+
+
+
+                                                                              1
+                                                                              4
+                                                                              6
+                                                                              4
+
+
+
+
+                                                                                                    1
+                                                                                                    4
+                                                                                                    6
+                                                                                                    4
+
+
+
+
+                                                                                                                      1
+                                                                                                                      4
+                                                                                                                      6
+                                                                                                                      4
+                                                            25
+
+
+
+
+                                                                           25
+
+
+
+
+                                                                                                 25
+
+
+
+
+                                                                                                                   25
+                                                              0
+
+
+
+
+                                                                             0
+
+
+
+
+                                                                                                   0
+
+
+
+
+                                                                                                                     0
+                                                                          10
+
+
+
+
+                                                                                                10
+
+
+
+
+                                                                                                                  10
+
+
+
+
+                                                                                                                                      10
+                                                            0.
+                                                            0.
+                                                            1.
+                                                            6.
+
+
+
+
+                                                                           0.
+                                                                           0.
+                                                                           1.
+                                                                           6.
+
+
+
+
+                                                                                                 0.
+                                                                                                 0.
+                                                                                                 1.
+                                                                                                 6.
+
+
+
+
+                                                                                                                   0.
+                                                                                                                   0.
+                                                                                                                   1.
+                                                                                                                   6.
+top), mitochondrial membrane                                                            Drug Concentration (uM)
+potential (TMRM; second from
+                                   Nuclear area
+
+
+
+
+top), intracellular ionised Ca                         30
+(Fluo-4; third from top),
+plasma membrane permeability                           20
+(TOTO-3; second from bottom)
+and cell number (bottom). The                          10 Acetaminophen        Mibefradil            Quinine           Cerivastatin
+wells without drug addition                           600
+                                   TMRM
+
+
+
+
+served as negative controls. The
+eﬀects of FCCP for TMRM,                              400
+Tween-20 for TOTO-3 and                               200
+nuclear area and ionomycin for                          0
+Fluo-4 served as positive                             600
+controls. Toxic eﬀects occur at
+                                   Fluo-4
+
+
+
+
+the concentration producing a                         400
+downward time-curve for                        200
+TMRM (greater than that
+occurring for the negative                       0
+control) or nuclear area or an                2250
+                                   TOTO-3
+
+
+
+
+upward time-curve for Fluo-4                  1500
+or TOTO-3. Data is expressed                          750
+as mean ± SEM
+                                                        0
+                                                      150
+                                   Cell Count
+
+
+
+
+                                                      100
+                                                       50
+                                                        0
+                                                                             0
+
+
+
+
+                                                                                                   0
+
+
+
+
+                                                                                                                      0
+
+
+
+
+                                                                                                                                        0
+                                                           1
+                                                           4
+                                                           6
+                                                           4
+
+
+
+
+                                                                             1
+                                                                             4
+                                                                             6
+                                                                             4
+
+
+
+
+                                                                                                   1
+                                                                                                   4
+                                                                                                   6
+                                                                                                   4
+
+
+
+
+                                                                                                                      1
+                                                                                                                      4
+                                                                                                                      6
+                                                                                                                      4
+                                                        25
+
+
+
+
+                                                                           25
+
+
+
+
+                                                                                                 25
+
+
+
+
+                                                                                                                   25
+                                                          0
+
+
+
+
+                                                                            0
+
+
+
+
+                                                                                                  0
+
+
+
+
+                                                                                                                     0
+                                                                          10
+
+
+
+
+                                                                                                10
+
+
+
+
+                                                                                                                  10
+
+
+
+
+                                                                                                                                      10
+                                                        0.
+                                                        0.
+                                                        1.
+                                                        6.
+
+
+
+
+                                                                          0.
+                                                                          0.
+                                                                          1.
+                                                                          6.
+
+
+
+
+                                                                                                0.
+                                                                                                0.
+                                                                                                1.
+                                                                                                6.
+
+
+
+
+                                                                                                                   0.
+                                                                                                                   0.
+                                                                                                                   1.
+                                                                                                                   6.
+
+
+
+
+                                                                                       Drug Concentration (uM)
+
+
+parameter to change, and that mitochondrial membrane                              Although all four of these drugs inhibit MDR, there was
+potential change substantially preceded membrane per-                             not a correlation between the degree of TMRM increase
+meability change.                                                                 and potency of inhibition, 34, 16, 22 and 89%, respec-
+   As TMRM is known to be a substrate for the multi-                              tively.
+drug resistance (MDR) p-glycoprotein that extrudes                                   Antiproliferative eﬀect could only be measured in
+cations, the drug concentration causing ﬂuorescence                               assays in which cells were exposed to drug for multiple
+increase was compared to the concentration at which the                           days. For the four drugs that produced eﬀects with and
+drug inhibits MDR. Maximal TMRM ﬂuorescence in-                                   without preincubation for multiple days (acetamino-
+creases were 100, 200, 0 and 150% by, respectively,                               phen, mibefradil, quinine and cerivastatin), the most
+amiodarone, paroxetine, dantrolene and astemizole.                                conspicuous diﬀerence in patterns of parameter change
+594
+
+Table 3 Sources of imprecision in HCS, sublethal, cytotoxicity assay
+
+Imprecision due to well and plate variation
+
+KSR assay parameter                              Variation between wells                 Variation between plates
+                                                 within plate
+
+                                                 (% CV)                    N             (% CV)                  N
+
+Mitochondrial membrane potential                  9.36±1.33                7             14.60                   5
+Nuclear area                                      5.16±1.80                7              6.99                   6
+Calcium                                           7.25±4.15                3             18.35                   4
+Membrane permeability                             9.30±7.02                3             16.64                   6
+Cell count                                       16.45±4.30                7             16.10                   5
+
+Imprecision due to ﬁeld-of-view and cell variations (data for representative plate OP18)
+
+KSR assay parameter                           Variation between ﬁelds            Variation between cells                Variation between
+                                                                                                                        wells
+
+                                              (% CV)±SD              N           (% CV)±SD                 N            (% CV)            N
+
+Mitochondrial membrane potential               8.50±4.04             4            30.23±10.44              7             9.83             7
+Nuclear area                                   2.84±1.24             4            17.13±8.14               7             6.03             7
+Calcium                                       10.28±0.02             4            41.57±20.17              7             5.67             3
+Membrane permeability                          9.02±3.96             4            35.74±9.47               7            10.65             3
+Cell count                                    29.81±9.25             10          N/A                       N/A          21.47             7
+
+The cell-to-cell, ﬁeld-to-ﬁeld, well-to-well and plate-to-plate imprecisions are compared for the parameters measured in the HCS assay.
+Imprecision due to well and plate variation. For well-to-well variance, a mean, SD, and CV were calculated for every control well for each
+assay parameter. An average CV was then used to show the well-to-well variance for that parameter. Plate-to-plate variance was then
+estimated using the well-to-well data for each plate. The well-to-well mean for each assay parameter for all six plates was averaged and a
+CV calculated. This CV value then shows the plate-to-plate variance for each parameter. Imprecision due to ﬁeld-of-view and cell
+variations (data for representative plate OP18): To estimate the ﬁeld-to-ﬁeld variance, the average value of each parameter for each
+individual ﬁeld was calculated for all seven control wells on the plate. This gave a CV for each well, which when averaged gave the ﬁeld-to-
+ﬁeld variance for that plate. For nuclear area, TMRM, calcium and membrane permeability for four ﬁelds were used (as this was the
+maximum number of ﬁelds used for the assay), whilst ten ﬁelds were used for the cell count analysis. To estimate the cell-to-cell variance
+the KSR parameter value for individual cells was recorded. Seven groups of seven cells were randomly chosen (using a random number
+generator) within the same ﬁeld of view and within the same well. The mean, SD and CV were then calculated for each group of seven cells
+and an average CV value recorded
+
+was the eﬀect of cell number (Fig. 3). This was the least                mitochondrial inhibition at 13 lM, plasma membrane
+aﬀected of the measured parameters with acute toxicity.                  permeabilisation at 50 lM, then Ca rise at 100 lM.
+With chronic toxicity, it was the parameter aﬀected at                   Potential was decreased by one-third at 13 lM, and by
+the lowest toxic concentration of dantrolene and aste-                   two-thirds at 25 lM and higher. However, at lower
+mizole and at intermediate toxic concentrations for                      concentrations than this, potential was increased pro-
+amiodarone.                                                              gressively up to 100% at 12 lM. Nuclear area decreased
+                                                                         by 10% at 6 lM, 15% at 13 lM and by 30% at 100 lM.
+                                                                         Membrane permeability was increased to about half of
+Sequence and direction of drug-induced change (Fig. 3)                   that of the positive controls at 100 lM. Cell counts were
+                                                                         not adversely aﬀected.
+The sequence of change in parameters was similar with                        Paroxetine was tested on the same plate as amioda-
+the four diﬀerent drugs that caused toxicity without the                 rone. The sequence of changes were: nuclear shrinkage
+need for preincubation (Fig. 2, top). Nuclear area usu-                  at 3–6 lM, TMRM ﬂuorescence increase at 6 lM,
+ally changed early and marginally, then mitochondrial                    mitochondrial inhibition at 25–50 lM, permeabilisation
+potential, with or without permeability change, then                     at 25–50 lM, Ca rise at 100 lM and cell count decrease
+permeability change if it had not already occurred and                   at 50–100 lM. Nuclear area decreased 10% at 3 lM,
+ﬁnally Ca eﬀects occurred last. Three of the four drugs,                 15% at 6 lM and 30% at 25 lM. TMRM signal in-
+excepting dantrolene, had dual and opposing eﬀects on                    creased by 20% at 6 lM and by 80% at 25 lM. At
+TMRM ﬂuorescence, showing an initial increase fol-                       50 lM, it rose over time by 200% to its maximum value
+lowed by a decrease. This dual biphasic eﬀect was also                   and then fell to half of its baseline value; at 100 lM it
+noted for nuclear area for amiodarone and paroxetine                     fell to zero. Membrane permeability started to increase
+(see Hormesis).                                                          at 25 lM, reached half-maximal values at 50 lM and
+   For amiodarone, the sequence of change in the dose-                   maximal values at 100 lM. Calcium rose a slight
+response curves (Fig. 2) was TMRM ﬂuorescence                            amount and only at 100 lM. Cell counts apparently
+increase at 0.2–0.8 lM, nuclear shrinkage at 6 lM,                       decreased mildly at 50 and 100 lM.
+                                                                                                                                                                                            595
+
+Fig. 3 Kinetics of averaged                                                                        Average Cell Effects                                    Single Cell Effects:
+compared to individual cellular
+change for drugs producing                                                                          Amiodarone 50 uM                                     Amiodarone 50 uM Cell 28
+                                                                                        120
+acute toxicity. See Fig. 2 for
+details of assay. The patterns of                                                       100
+change in ﬂuorescences of the                                                            80
+diﬀerent dyes for a population
+of cells are similar to that of                                                          60
+individual cells. However, the
+sequence of change can be more                                                           40
+precisely determined at the                                                              20
+single cell level
+                                                                                                               Hoechst          TMRM
+                                                                                          0                    Fluo-4           Toto-3
+
+
+                                    Relative Fluorescence Intensity (arbitrary units)                   Paroxetine 100 uM                                Paroxetine 100uM Cell 25
+                                                                                        160
+
+                                                                                        120
+
+                                                                                         80
+
+                                                                                         40
+
+                                                                                         0
+
+                                                                                                    Astemizole 25 uM                                     Astemizole 25 uM Cell 4
+                                                                                        120
+
+                                                                                         90
+
+                                                                                         60
+
+                                                                                         30
+
+                                                                                          0
+
+                                                                                                    Dantrolene 100 uM                                    Dantrolene100 uM Cell 55
+                                                                                        120
+                                                                                        100
+                                                                                        80
+                                                                                        60
+                                                                                        40
+                                                                                        20
+                                                                                         0
+                                                                                              t1   t2    t3   t4 t5   t6   t7     t8     t9
+                                                                                                                                              t1    t2    t3   t4   t5   t6   t7   t8 t9   t10
+                                                                                                                                    Time (0- 3 h)
+
+
+   Dantrolene eﬀects were in the sequence: nuclear area                                                                  Membrane permeabilisation began at 13 lM and at
+decrease at 6–13 lM, potential decrease at 13 lM and                                                                     25 lM was about one-quarter that of the positive con-
+membrane eﬀects were much less and occurred only at                                                                      trols. Cell counts were not adversely aﬀected.
+100 lM. There was no clear change in Ca. Cell counts
+were not adversely aﬀected.
+   Astemizole eﬀects were in the sequence: TMRM ﬂu-                                                                      Hormesis
+orescence increase at 0.2 lM, nuclear shrinkage at
+6 lM, permeability increase at 13–25 lM and Ca rise at                                                                   As occurred without preincubation, some drugs pro-
+25 lM. The TMRM signal increased by 50% at 0.2 lM,                                                                       duced dual eﬀects, with increases followed by decreases
+100% at 1.6 lM and by 150% at 6 lM. However at                                                                           on TMRM ﬂuorescence in 26% drugs. This was espe-
+13 lM it rose over time to this level then fell to baseline.                                                             cially conspicuous for those drugs that were strong
+At 25 lM it had decreased 90% from the maximum.                                                                          inhibitors of the MDR pump (such as cyclosporine A
+Nuclei were apparently, transiently enlarged by 10% at                                                                   and quinacrine), where TMRM progressively increased
+6 lM and shrunk by one-third at 13 and 25 lM.                                                                            by approximately 100 and 150%, respectively (from 1.6
+596
+
+Fig. 4 Hormesis in dose-                                                                                                           600
+                                                              500
+response for drug-induced                                           Amiodoarone                                                          IC = 3.0uM
+                                                                                                                                              50
+cytochemical eﬀects. IC50 for                                 375                                                                  450 SE= 0.3 uM
+
+
+
+
+                                                                                                         TMRM Signal
+                                               Cell Count
+cerivastatin-induced
+hepatotoxicity. Biphasic dose-                                250                                                                        r2 = 0.87
+response curves occurred clearly                                                                                                   300
+for cell count, nuclear area and                              125
+mitochondrial potential.                                                                                                           150
+Representative examples are                                    0
+shown. Curve-ﬁtting to the                                                                                                           0
+dose-response data for                                    2000 Sulfamethoxazole
+cerivastatin cytotoxicity is                                                                                                2000
+
+
+
+
+                                                                                                    Membrane Permeability
+                                                                                                                                         IC =2.3 uM
+
+
+
+
+                                            Cell Count
+shown for each of the ﬁve                                 1600                                                                                50
+parameters assessed, with IC50                                                                                                           SE= 0.11uM
+                                                                                                                            1500
+indicated as mean and error                                                                                                               2
+                                                          1200                                                                           r = 0.99
+estimate                                                                                                                    1000
+                                                              800
+                                                              31                                                                   500
+                                                                    Etoposide
+
+                                               Nuclear Area
+                                                              28                                                                     0
+                                                                                                                                    25
+                                                              25
+
+                                                                                                                                    20
+
+
+
+
+                                                                                                         Nuclear Area
+                                                              22
+
+                                                              19                                                                    15
+                                                                                                                                         IC501.20 uM
+                                                               28 Diquat
+                                                                                                                                    10 SE= 0.16uM
+                                               Nuclear Area
+
+
+
+
+                                                                                                                                          2
+                                                               24                                                                        r = 0.97
+                                                                                                                                     5
+
+                                                               20                                                                  600
+                                                                                                                                         IC =0.90 uM
+                                                                                                                                              50
+
+
+
+
+                                                                                                               Cytosolic Calcium
+                                                               16                                                                  450   SE= 0.19uM
+                                                                                                                                         r2 = 0.88
+                                                          1000 Cyclosporin A                                                       300
+                                            TMRM Signal
+
+
+
+
+                                                              750                                                                  150
+
+                                                              500                                                                    0
+                                                                                                                                   100
+                                                              250
+                                                              800
+                                                                                                               Cells per Field
+
+
+
+
+                                                                                                                                    80
+                                                                    Ketoconazole
+                                               TMRM Signal
+
+
+
+
+                                                              600
+                                                                                                                                    60
+                                                                                                                                         IC = 0.42 uM
+                                                              400                                                                             50
+                                                                                                                                    40 SE= 0.16 uM
+                                                              200                                                                        2
+                                                                                                                                         r = 0.92
+                                                                                                                                    20
+                                                                0
+                                                                    -9 -8 -7 -6 -5 -4 -3 -2                                               -9       -8   -7    -6      -5   -4
+                                                                       Molar Concentration                                                         Cerivastatin (M)
+
+
+
+
+to 13 lM, and 0.1 to 0.2 lM). Dual eﬀects were also                             these parameters in healthy cells could only be measured
+noted for cell number for 12% compounds showing                                 in one direction.
+positive responses, and especially for nuclear area, where
+34% of compounds showing positive response.
+   Figure 4 (left) demonstrates dual, biphasic responses                        Sources of imprecision
+for cell number, nuclear area and mitochondrial mem-
+brane potential for several drugs. This phenomenon was                          Cell-to-cell, ﬁeld-to-ﬁeld, well-to-well and plate-to-plate
+seen with 43% drugs and could not be attributed to                              variances after 3 days of drug treatment are shown in
+artefacts of the position of wells within plates.                               Table 3. The greatest imprecision was in measurements
+   Hormesis could not be detected for calcium nor                               between cells within ﬁeld-of-view. Next most variable was
+membrane permeability, likely because measures of                               measurements between ﬁeld-of-views, then between
+                                                                                                                    597
+
+plates. Measurements between wells within plate were          least sensitive based on the parameter to ﬁrst change.
+usually the most precise, varying between wells by            This diﬀerence likely reﬂects the fact that the point of
+approximately 5% for nuclear area, 10% for mitochon-          ﬁrst clear eﬀect measures low dose enhancement which
+drial membrane potential, calcium and membrane per-           apparently delays the point of 50% loss of signal com-
+meability and 15% for cell count. Nuclear area was by far     pared to baseline.
+the most precise measurement for all types of variance.          In Fig. 4 (right), concentration-response curves with
+Mitochondrial membrane potential was next most precise        IC50 values are shown for each of the ﬁve parameters
+across cells, ﬁelds-of-view and across plates. Most vari-     measured for cerivastatin. Half-maximal inhibition oc-
+able of parameters was calcium, especially between cells.     curred ﬁrst for cell number at 0.4 lM, then intracellular
+   The high variance could be attributed in part to not       Ca and nuclear area at about 1 lM, then membrane
+collecting data greater than a threshold value that would     permeability and mitochondrial potential at 2–3 lM.
+ensure only viable cells were assessed (thresholding).        Hormesis is seen to occur for both TMRM and cell
+Because of the rapid rise and fall in Ca compared to the      number resulting in these parameters being aﬀected at
+speed of analyses, timing of data acquisition once ion-       doses of 1 and 0.1 lM, respectively.
+ophore was added was neither precise nor consistent,
+resulting in counts including dead or dying cells that had
+                                                              Predictivity of the HCS, sublethal, cytotoxicity assay
+lost ﬂuorescent dye. This could be overcome by ensuring
+that positive controls are in wells spread across the
+                                                              Comparison of eﬀectiveness of diﬀerent cytotoxicity
+whole of the plate at regular intervals. Because of the
+                                                              parameters
+time it takes for the KSR to scan through each well,
+positive controls are measured approximately 40 min
+                                                              Table 2 demonstrates that cell number was by far the
+after addition of ionomycin. Thresholding could also be
+                                                              parameter most frequently found to be aﬀected by
+used for exclusion of dying cells from the cell count.
+                                                              3 days exposure to toxic drugs and the most sensitive
+Dead cells are assumed to have lifted oﬀ the well surface
+                                                              indicator of cytotoxicity. About 86% of the 201 drugs
+and therefore not counted. Cell count variance is high
+                                                              that produced a positive test response aﬀected this
+both between wells and between plates, due to clumping
+                                                              parameter, although it was not directly determined
+of proliferating cells resulting in an uneven distribution.
+                                                              whether this was from antiproliferative or cell lytic ef-
+                                                              fects. In contrast, only 70% of drugs testing positive
+IC50 Determination                                            aﬀected nuclear area and mitochondrial membrane po-
+                                                              tential, and only 45% aﬀected membrane permeability
+Estimates of IC50 values could be made for those drugs        and intracellular calcium concentration. Cell number
+for which a near complete range of toxic eﬀects could be      was the ﬁrst parameter aﬀected in 56% of drugs testing
+determined in the concentration range studied, up to 30-      positive, with mitochondrial membrane potential and
+fold Cmax or 100 lM (Table 4). IC50 values could be           nuclear area being aﬀected ﬁrst for 30%, and cell per-
+obtained for 39 of 82 toxicants (48%). The IC50 was           meability and calcium aﬀected ﬁrst for only 10 and 7%,
+highly correlated with the concentration at which eﬀects      respectively.
+were ﬁrst seen. For cell number the correlation coeﬃ-            Cell permeability was the least sensitive parameters
+cient was 0.75 (P<0.0001) and the IC50 was 1.27±0.19          for detection of cytotoxicity, being the ﬁrst parameter
+fold this concentration.                                      aﬀected in only 7% of drugs (Table 1). As for all the
+    Based on an IC50 analysis, the parameter that was         parameters, this frequency was independent of the
+most sensitive in detection of cytotoxicity was cell count    severity of hepatotoxicity and was the same for toxicities
+for 56% of toxicants. The next most sensitive parameters      aﬀecting other organs.
+were nuclear area and calcium, detecting 33 and 26% of           The measurement of nuclear size was the most precise
+toxicants, respectively. The least sensitive parameter was    of all parameters. It decreased at toxic concentrations by
+mitochondrial membrane potential. The frequency with          50% for compounds such as astemizole, chloroquine,
+which a parameter was the most sensitive or second most       chlorpromazine, danazol, disulﬁram, furazolidone, ke-
+sensitive was 73 % each for cell count and nuclear area,      toconazol, mibefradil, paroxetine, primaquine, quina-
+48% each for calcium and membrane permeability and            crine, quinidine, quinine, tacrine, tamoxifen and
+28% for mitochondrial membrane potential.                     valproate. It decreased by about 25% for amodiaquine,
+    The ranking of the sensitivities of the diﬀerent          cyclosporine A, dantrolene, fenﬂuramine, imipramine,
+parameters for detection of cytotoxicity was somewhat         labetalol, methyldopa and novobiocin. However, it in-
+diﬀerent when assessed based on determination of IC50         creased by 20% for niacin, norﬂoxacin and vidarabine,
+values than when based on the concentration at which a        and by 50% for acetaminophen.
+clear eﬀect was detected. Both approaches indicated that
+cell number and nuclear area were the most sensitive          Sensitivity and speciﬁcity
+parameters. However, mitochondrial membrane poten-
+tial was ranked as the least sensitive based on IC50 val-     The sensitivity for detection of severely hepatotoxic,
+ues, whereas membrane permeability was ranked as the          moderately hepatotoxic and other organ toxic drugs
+598
+
+Table 4 IC50s for concentration-response curves for drug induced eﬀects on cell proliferation, mitochondrial function, intracellular
+calcium homeostasis, cell membrane permeability and nuclear area
+
+Drug                        Nuclear area         Mitochondrial potentialCalcium            Membrane permeabilityCell count
+
+Amiodarone                            9.8±0.33     19.2±0.42                  17.2±0.04         15.8±0.29                25.6±5.2
+Amodiaquine                          20.0±0.25     35.8                       13.5              17.6±0.34                24.8
+Astemizole                            2.6±0.49      5.6                        4.1               4.1±0.14                10.1±4.9
+Cerivastatin                          1.2±0.16      3.0±0.30                   0.9±0.19          2.3±0.11                 0.4±0.11
+Chlorpromazine                       12.6          20.7                       24.4±3.6          20.8±0.4                  6.4±1.0
+Chloroquine                          11.1±0.22     27.2±.02                   22.4±0.11         22.9±0.21                16.0±6.3
+Cyclosporin A                        10.1±0.3   >100                          35.1              78.8±0.6                 14.8±3.8
+Danazol                              58.8±0.1      73.6                       43.1±1.7          81.4±0.1                 39.2±19.3
+Dantrolene                           52.1±0.4     105.0±0.1                   67.1           >100                        14.5±31.6
+Diquat                               85.8±6.6      43.2± 5.4                  79.2±8.1          75.8±8.2                 39.6±11.2
+Doxorubicin                           0.7±0.34      3.1                        0.2±0.23          0.4±0.20                 0.2±0.03
+Etoposide                         >500            534.6                 1927±553               772.7±173.3                0.14±0.05
+Fenﬂuramine                          77.1±10.0  >100                         261.8±25.6        195.8±22.1                62.9 ±8.7
+Fluvastatin                          11.9±0.55     92.6±0.20                  13.4±0.75         51.6±0.39               106.7
+Furazolidone                         90.9±0.14     86.8±0.74                  76.2              58.2±0.12                28.7±13.5
+Furosemide                         2286          4285                   2890±181           2360±8                 1208±177
+Imipramine                        >100             84.9                       35.4±0.4          76.6±0.3                153.8
+Ketoconazole                         85.9±13.1     80.2                       71.6±0.2          62.2±0.2                 89.7±61.2
+Ketorolac                           215.7±77.3  >450                        >450               693.3±163.8              247.7±47.2
+Ketotifene                           91.2±15.8  >100                          70.0±0.5          86.5±0.7                 27.6±6.1
+Labetalol                            95.2±18.6  >100                          81.9±1.2         106.0±8.0                 80.2±9.0
+Lovastatin                           14.9±0.78     65.5                       17.9±1.11         86.3±0.49               104.2±54.1
+MethylDOPA                          257.7±42.8    187.3±23.0                >670             >670                       257.4±30.8
+Mevastatin                           25.2±0.7     330.4                       24.7±1.0          97.7±2.7              >100
+Mibefradil                            5.8±0.17      5.6                       16.9±0.60         29.5                      8.8±2.4
+Novobiocin                          397.3±89.2    202.0±49.9                 458.9±18.7        227.3±52.6               183.2±19.9
+Pamidronate                          52.9          70.1                      110.0±0.1          63.3                     63.2±15.7
+Paroxetine                            7.1           4.7±0.93                  14.3±0.05          7.7                     17.6±4.4
+Picotamide                        >100             12.5±5.4                   93.3±51.6        104.5±67.2                19.6±3.8
+Primaquine                           28.1          27.8                       58.9±0.08         55.2±0.14                31.4±11.6
+Propranolol                          13.9±0.41  >100                          57.7              61.6                     49.0±10.4
+Pyrimethamine                       212.3±128.2 >100                         124.2±10.8         77.8±3.8                  3.8±0.6
+Quinacrine                            2.3±0.18      2.6±0.51                   1.4±0.31          2.7±0.32                 1.4±0.17
+Quinidine                            72.8         118.8±26.2                 118.3±8.2         102.5±1.5                 14.7±2.4
+Quinine                              38.3 ±2.8     65.0±26.8                >600                40.5±1.3                 22.3±2.4
+Simvastatin                          16.1±0.42     51.7                       18.2±0.56         40.2                     51.4±25.0
+Sodium chloride                >100 mM             71.6 mM                   106.6 mM           95.1 mM                  20.0 mM
+Tacrine                              54.3          99.8                       58.3±0.06         87.5                     37.2±18.1
+Valproic acid                 6546±1309        >16200                     >16200        15930±915                      1520
+Most sensitive assay (%)             33            15                         26                 5                       56
+2nd most sensitive (%)               38            13                         20                44                       18
+1st or 2nd most sensitive (%)        72            28                         46                49                       74
+
+Values are reported as mean or, when there was suﬃcient data, mean ± SE. The parameter with the lowest and second lowest IC50 for each
+drug is indicated in bold lettering or by italics, respectively
+
+
+
+was, respectively, 20, 24 and 14% for the conventional             ratio was 12±22 for hepatotoxic compounds testing
+cytotoxicity assays, and 100, 88 and 92% for the mul-              positive and 20±34 for compounds toxic to other or-
+tiparameter, HCS cell health assay. Speciﬁcity for                 gans.
+detection of organ toxicity was 98% for the 35 non-toxic
+drugs and 100% for the 6 diﬀerent negative controls.
+Overall sensitivity and speciﬁcity were 90 and 98%,                Variation of assay sensitivity with drug concentration
+respectively, for the multiparametric assay.
+                                                                   Assay sensitivity was found to be dependent on the
+                                                                   absolute drug concentration tested and the safety margin
+Safety margin estimation                                           (Fig. 5): 30% at 1 lM or a TI of 10 lM; 60% at 30 lM or
+                                                                   a TI of 10 lM and 80% at 100 lM or a TI of 30 lM. Plots
+The ratio of the cytotoxic concentration in vitro to the in        of the false positive rate versus the false negative rate, that
+vivo concentration associated with eﬃcacy was assumed              is, receiver operating characteristic curves, indicate the
+to provide an indication of the safety margin or thera-            optimal sensitivity that the assay can provide without
+peutic index for the drug. This ratio was independent of           compromising speciﬁcity (Fig. 5). Sensitivity falls oﬀ
+whether toxicity was direct or metabolite-mediated. The            rapidly for speciﬁcity greater than about 93%.
+                                                                                                                                                                        599
+
+                                                                                        Receiver Operating Characteristic Curve
+                                                                                              for Optimising Threshold TI
+                                                                              100
+
+
+
+
+                                                         Rate (Sensitivity)
+                                                          False Negative
+                                                                               80
+                                                                                                                          TI = 100
+                                                                               60
+                                                                                                                        AUC = 0.92
+                                                                               40
+                                                                               20
+                                                                                0
+                                                                                    0      2     4      6     8     10      12                  14
+                                                         Line for random chance                        False Positive Rate
+                                                         TI data                                       (100% - Specificity)
+
+                                              Frequency Distribution of Cytotoxic                                                Frequency Distribution of TI
+                                                Concentration for Toxic Drugs                                                         for Toxic Drugs
+                                        1.0                                                                            1.0
+                                        0.8                                                                            0.8
+                          Sensitivity
+
+
+
+
+                                                                                                         Sensitivity
+                                        0.6                                                                            0.6                              90% at
+                                                                                                                                        80% at          Ti of100
+                                        0.4                                                80% at                      0.4              Ti of 30
+                                                               60% at                      100 to
+                                        0.2                    30 uM                       150 uM                      0.2
+                                        0.0                                                                            0.0
+                                              0     30      60    90    120                      150                         0     30      60      90   120     150
+                                                           Threshold (uM)
+                                                                                                                                         Threshold TI
+
+Fig. 5 Balancing assay sensitivity with speciﬁcity in deﬁning                                            0.92, corresponding to a toxic drug have 92% probability of having
+diagnostic cut-oﬀ cytotoxic drug concentrations relative to eﬃca-                                        a higher TI than a non-toxic drug. Frequency distribution curves
+cious concentration (TI). Receiver-operator characteristic curve for                                     show the proportion of toxic drugs that are identiﬁed at increasing
+TI from 102 hepatotoxicants and the 23 non-toxic drugs for which                                         cut-oﬀ cytotoxic concentrations or TI’s (cytotoxic concentration/
+a TI was determined are plotted. Curve was only slightly diﬀerent                                        eﬃcacious concentration [Cmax]) and indicate that a cut-oﬀ based
+when all toxicants were included. A cutoﬀ TI of 100 gave 93%                                             on TI has superior diagnostic value than based on concentration
+speciﬁcity and 90% speciﬁcity. Area under the curve (AUC) was                                            alone
+
+
+                                                                                                         rospective analyses support the value of conventional in
+Discussion                                                                                               vitro cytotoxicity screens in identiﬁcation of the
+                                                                                                         ‘‘overtly’’ toxic compounds, it points to the need of
+Conventional cytotoxicity assays                                                                         further reﬁnement in the method to predict subtle or
+                                                                                                         sub-lethal adverse events that account for the majority
+This study demonstrates that conventional cytotoxicity                                                   of side eﬀect proﬁles of human pharmaceuticals.
+assays have poor concordance with human toxicity. This                                                      Although none of the conventional cytotoxicity as-
+poor predictivity of cell-based assays for in vivo toxicity                                              says had adequate concordance with in vivo human
+likely reﬂects at least in part on the lateness of the point                                             toxicity, it is important to note which of the endpoints
+in the sequence of pathogenic events that they assess                                                    used by these tests were most predictive. Glutathione
+(Table 2). Assays that target late events in the process of                                              assay for oxidative stress was by far the most sensitive
+cell injury, when the cell is near death, are more likely to                                             (Table 1), supporting the proposal of the important role
+miss toxicities that require chronic exposure or exert                                                   of oxidative stress in drug toxicity (Xu et al. 2004). The
+adverse but non-lethal eﬀects. Many of the conventional                                                  two indicators that were next most sensitive were the
+cytotoxicity assays (e.g. LDH release, cell rupture,                                                     Alamar Blue assay for mitochondrial reductive activity
+membrane blebbing) are for late-stage toxicity and cel-                                                  and the DNA assay for cell proliferation, both having
+lular events associated with a lethal apoptotic or necrotic                                              sensitivities an order of magnitude greater than the tests
+eﬀect (Jaeschke et al. 2002; Olson et al. 2000). Such as-                                                for membrane integrity, protein synthesis, superoxide
+says have low sensitivity (Table 1) for detection of ad-                                                 and caspase-3. These ﬁndings support the inclusion in
+verse cellular eﬀects and furthermore provide little                                                     the HCS assay of parameters reﬂective of cell prolifer-
+mechanistic understanding of the toxicologic eﬀects in                                                   ation, mitochondrial function and oxidative stress. The
+humans. Conversely, assays that provide early assess-                                                    latter though is currently not yet incorporated into HCS
+ment of speciﬁc toxicologic mechanisms in cells (Ta-                                                     screening, although studies are under way to do this
+ble 2), prior to the onset of the late stages of non-speciﬁc                                             (Phillips et al. 2005).
+degeneration and apoptotic or necrotic death, should                                                        An additional important ﬁnding in this study of
+theoretically have greater predictive power and extrap-                                                  conventional cytotoxicity assays is that multiple and
+olatability across models and species. While these ret-                                                  diﬀerent early measurements of toxicity mechanisms are
+600
+
+critical for detection of human toxicity potential. Pre-     needed for expression of their toxicity. Predictivity was
+dictivity was additive for several of the conventional       increased by an order of magnitude by preincubating
+assays when combined, e.g. mitochondrial activity, glu-      cells with drugs for 3 days. This ﬁnding reasonably ex-
+tathione and cell proliferation. The data from the HCS       plains why sensitivity of the HCS cytotoxicity assay is an
+cytotoxicity assay also indicate the need for measure-       order of magnitude greater than that of conventional
+ment of multiple, independent and early mechanisms of        cytotoxicity assays. Support of this can be found in re-
+cytotoxicity. As well, similar conclusion that multiple      cent work where cells were preincubated with drugs for
+diﬀerent toxicity endpoints need to be measured has          3 days then subjected to conventional cytotoxicity as-
+recently been made by others (Schoonen et al. 2005a, b).     says performed independently (Schoonen et al. 2005a,
+    Retrospective analysis of the predictivity of testing    b). This ﬁnding of the eﬀect of preincubation of cells and
+strategies using a set of marketed drugs that have al-       drugs for multiple days is also consistent with our pre-
+ready been screened for those that were thought to be        vious observations (Slaughter et al. 2002; O’Brien et al.
+toxic, can only result in substantial underestimation.       2003; Xu et al. 2004) and recent studies by Schoonen
+However, such approach provides a common ground for          et al. (2005a, b). Whereas the preincubation time was
+comparisons across testing strategies. Thus, whereas         not titrated, the ﬁnding that cell proliferation was the
+predictivity for human hepatotoxicity (Table 1 and 2) of     most highly sensitive (although least speciﬁc) indicator
+regulatory animal toxicity testing, conventional cyto-       of toxicity, indicates that preincubation should extend
+toxicity tests and HCS sublethal cytotoxicity tests must     over multiple doubling times.
+necessarily be underestimated using this approach, this
+underestimation should be proportionately the same for       Identiﬁcation of idiosyncratic hepatotoxicity
+all testing strategies assessed.                             and hepatotoxicity due to reactive metabolites
+
+Predictivity of the HCS, sublethal cytotoxicity assay        The HCS sublethal cytotoxicity assay correctly identiﬁed
+                                                             drugs that produce toxicity via metabolites and drugs
+Hormesis                                                     that produced idiosyncratic hepatotoxicity. Surprisingly,
+                                                             after 3 days of pre-incubation with drug, the assay was
+The concentration-response curves for many drugs with        able to detect toxicity thought to be mediated by reactive
+toxic eﬀects were characterised by early positive re-        metabolites of the parent drug equally as well as for
+sponses in cell proliferation, nuclear area and mito-        drugs that produced their toxicity directly. Most of these
+chondrial potential, prior to negative responses in these    toxicities are thought to be caused by formation of
+parameters. Hormetic eﬀects were seen only after 3 days      reactive metabolites that are frequently linked with
+of preincubation with drug, with the exception of            oxidative stress (Kalgutkar et al. 2005). Also surprising
+mitochondrial membrane potential, for which biphasic         was that the assay was able to detect most of the 12
+eﬀects occurred acutely as well as after preincubation       drugs that have been associated with idiosyncratic hep-
+(see Fig. 2). The occurrence of these positive responses     atotoxicity. It is noteworthy, however, that there were
+prior to degenerative eﬀects is suggestive of them being     relatively few drugs that were clear in these categories.
+compensatory, adaptational and protective (Olson et al.      Cell count was aﬀected by all of these compounds and
+2001; Calabrese and Baldwin 2002). The basis for the         mitochondrial membrane potential and nuclear area was
+hormetic eﬀect on nuclear area is unknown, but may           aﬀected by 11 of them. Calcium and membrane perme-
+relate to a speciﬁc inhibition of the cell cycle in which    ability was aﬀected by only half of them.
+nuclear area is increased followed by a degenerative ef-
+fect in which the nucleus shrinks. The hormetic eﬀects       Most sensitive parameters are cell proliferation,
+for cell proliferation and mitochondrial potential re-       mitochondria and nuclear area; membrane permeability
+sulted in IC50 values being higher (see Fig. 4, right) be-   and calcium are least sensitive
+cause they were deﬁned as the concentration at which
+basal activities were decreased by 50% rather than the       Cell proliferation inhibition in most cases preceded the
+concentration at which maximal activities were de-           changes in other parameters. The high sensitivity of this
+creased by 50%.                                              parameter may reﬂect its dependency on the normal
+    Hormesis was found for approximately half the            functioning of a wide range of physiological processes.
+drugs, for nuclear area in 34% of the 136 drugs aﬀecting     On the other hand, this sensitivity comes at the expense
+it, for mitochondrial membrane potential in 26% of the       of speciﬁcity for the toxicologic mechanism. It is note-
+141 drugs aﬀecting this parameter, but for cell number in    worthy that cell proliferation was assessed by measure-
+only 12% of the 173 drugs aﬀecting it.                       ment of cell number, which could be aﬀected not only by
+                                                             eﬀects on cell proliferation but also by cell death. Thus a
+Requirement for exposure to drugs for multiple days          decrease in cell number could be attributed to a cyto-
+                                                             static eﬀect or both. However, in most cases, cell pro-
+The current study clearly demonstrates that preincuba-       liferation was aﬀected prior to any discernible eﬀect on
+tion of cells with drugs for multiple days is typically      the sub-lethal cytotoxicity parameters, indicating that
+                                                                                                                      601
+
+the eﬀects on cell number were sub-lethal rather than          novobiocin, rotenone and sulphanilamide. Such disrup-
+lethal. Results from this study support the idea that          tion of the barrier to the extracellular medium inevitably
+cytostatic eﬀects are a consistent and early eﬀect of sub-     produced immediate and rapid increases in mitochon-
+lethal cytotoxicity. However, cytostatic eﬀects may oc-        drial permeability and in intracellular calcium. In con-
+cur in the absence of cytotoxic eﬀects, as is shown by         trast, mitochondrial changes did not produce immediate
+eﬀects of speciﬁc inhibitors of cell proliferation that have   and rapid changes in cell membrane permeability.
+no other adverse eﬀects, such as azathioprine, colchi-             Cytotoxicity test results reported herein are sup-
+cines, cyclophosphamide and methotrexate. Thus,                ported by the literature. Comparison of the HCS results
+additional measures of adverse eﬀects on cells are nee-        with those for 7 conventional, independent, cytotoxicity
+ded to interpret the cytostatic eﬀect. These drugs did,        assays from recent studies by Schoonen et al. (2005a, b)
+however, aﬀect the nuclear area at the same time as cell       is possible because of overlap for 30 of the drugs and
+number.                                                        compounds studied (acetaminophen, amiodarone, aspi-
+    Nuclear area was found to have comparable sensi-           rin, benzopyrene, bromobenzene, carbon tetrachloride,
+tivity as cell count for detection of toxicants. The least     chlorpromazine, colchicine, cyclophosphamide, dantro-
+sensitive parameter, based on occurrence of a signiﬁcant       lene, dexamethasone, diclofenac, diethylmalemide,
+change, indicated that cell membrane permeability was          doxorubicin, erythromycin, estradiol, ﬂutamide, genta-
+least sensitive. However, ranking of parameters’ sensi-        mycin, imipramine, indomethacin, isoniazide, ketoco-
+tivities for cytotoxicity detection based on IC50 values       nazole, labetalol, nitrofurantoin, quinidine, rotenone,
+indicated that mitochondrial membrane potential was            sulphaphenazole, tacrine, tamoxifen, tetracycline).
+the least sensitive. The basis for these contradictory         There was high correlation of results between studies for
+ﬁndings likely relates to the hormesis eﬀect occurring in      all parameters, especially Alamar Blue, glutathione and
+the dose-response relationship for mitochondrial mem-          membrane permeability (r0.8), although lesser with
+brane potential but not detected for membrane perme-           DNA, ATP and NADPH (r0.6) and least with reactive
+ability. Based on the FCCP control well results from a         oxygen species (r=0.46). This correlation supports the
+random analysis of ten plates, the background signal           ﬁndings of the current study, especially for use of a
+contributes to 24.4% (SD=8.0%) of the total TMRM               mitochondrial function biomarker and glutathione.
+signal. Therefore, the useful dynamic range of the assay
+to measure mitochondrial uncoupling may limit sensi-
+tivity.                                                        Assessment of human toxicity potential: TI, PPB, AUC
+    The ﬁnding that membrane permeability and intra-
+cellular calcium were the least sensitive parameters is        The signiﬁcance of the cytotoxic signals should be
+expected on the basis that membrane integrity and              interpreted in terms of the ratio of cytotoxic concen-
+maintenance of an intact barrier to the extracellular          tration to the concentration causing eﬃcacy. The latter
+milieu are essential for cell function and are maintained      was estimated by comparing with the maximal total
+with highest priority by the cell. Rise in intracellular       concentration of the drug in human serum that is asso-
+calcium is an important ﬁnal event in the live of a cell. It   ciated with administration of the drug at an eﬃcacious
+is noteworthy that a more sensitive dye with greater           dose. However, the degree of plasma protein binding
+accuracy and precision for measurement of intracellular        was not considered in this study. As there is only one
+calcium at basal levels, rather than at cytotoxic levels,      tenth as much plasma protein in the in vitro system
+may be a more eﬀective biomarker for cytotoxicity. For         compared to in vivo, signiﬁcant protein binding would
+example, studies with indo-1 have shown that there may         be expected to result in an overestimate of the circulating
+be subtle elevations in resting intracellular calcium and      free drug compared to in vitro, with consequent pro-
+impairments in calcium regulatory capacity with genetic        portionate underestimate of the safety margin and
+and toxicologic cellular pathologies (O’Brien et al. 1989,     overestimate of the toxicity potential. For example,
+1990).                                                         rosiglitazone’s safety margin was underestimated with-
+    Whereas intracellular calcium was the second least         out consideration of the high plasma protein binding.
+sensitive parameter for detection of toxic eﬀect, it was an    Thus, this ratio should be considered an estimate of the
+early indicator for several classes of drugs, such as the      minimal safety margin. Finally, in this context, the best
+statins (cerivastatin, ﬂuvastatin, mevastatin), local ana-     estimates of safety margin for most drugs should be
+esthetics, (bupivacaine, lidocaine), antimalarials (amo-       based on drug exposure to free concentration per unit
+diaquine, chloroquin, quinacrine, quinidine, quinine),         time (i.e. area under the concentration time curve,
+neuroleptics (amitryptilline, triﬂuoperazine, paroxetine),     AUC). However, these values were not available for the
+anthracyclines (doxorubicin), amiodarone, tacrine and          in vitro studies.
+captopril. The basis for this early involvement of cal-           The risk associated with a low safety margin needs to
+cium dyshomeostasis is uncertain, but may relate to the        be considered with respect to the indication and to the
+mechanism of cytotoxicity.                                     dose being used. Lower safety margins will be accepted
+    Cell membrane permeability change was an early ef-         for drugs intended for treatment of life-threatening dis-
+fect in only 7% of drugs causing a positive response, e.g.     eases for which there are no equivalent alternatives.
+doxorubicin, pimozide, dipyrone, ﬂucytosine, foscarnet,        Lower safety margins may also be accepted for drugs in
+602
+
+which the ingestion is limited by the bulk required for         concentrations are measured (such as the minimally
+toxicity or by side-eﬀects such as vomiting.                    acceptable multiple of the concentration at eﬃcacy that
+   It may also be relevant to interpret the signiﬁcance of      would have no eﬀect) then throughput can be increased
+the signal based on the degree of change and the number         up to many hundreds of assays per week. Further
+of parameters aﬀected, and the mechanism and the                throughput enhancement would likely require adapta-
+steepness of the concentration-response curve.                  tion of the assay to a 384 well-plate format.
+
+
+Application of prelethal cytotoxicity testing                   Optimal drug concentration and safety margin for pre-
+                                                                dicting human toxicity potential The current study indi-
+Whereas drug-induced cytotoxicity may indicate poten-           cates the concentration of drug needed for assessment of
+tial for in vivo human hepatotoxicity, it is not predictive     human toxicity potential. At a concentration of 30 lM,
+of such. Cytotoxic eﬀects in vivo may be limited or even        60% of drugs with human toxicity potential were iden-
+aggravated, compared to those occurring in vitro.               tiﬁed, whereas 100 lM identiﬁed about 80% (Fig. 5).
+Cytotoxicity models are limited by their incomplete             These concentrations are considerably lower, that is the
+modelling of the cell type’s structure and function as it       assay is more sensitive, than previous reported assays
+occurs in vivo, by their incomplete modelling of other          (Bugelski et al. 2000; Schoonen et al. 2005a, b).
+cell types and of cell functions and interactions within a      Assessment of toxicity potential was more accurate
+tissue, organ, systems and whole body, e.g. (a) drug            when the concentration of drug tested was based on
+properties, concentrations, protein binding and trans-          multiples of the total eﬃcacious concentration (Cmax for
+port may diﬀer in vivo; (b) pharmacokinetic character-          marketed drugs), with 80% of cytotoxicities being de-
+istics of absorption, distribution, metabolism and              tected at a concentration of 30 times the eﬃcacious
+excretion can have a major inﬂuence on which target             concentration, Cmax. In the current study, toxicities
+organ is aﬀected and the severity of toxicity; (c) toxicities   occasionally went undetected by the HCS cytotoxicity
+occurring at the tissue or organ level such as cholestasis,     test when the Cmax had not been determined and the
+cataractogenesis and myelotoxicity cannot be eﬀectively         drug was not tested up to 30-fold the eﬃcacious con-
+predicted from cellular systems; (d) toxicities may occur       centration.
+secondarily to direct cytotoxicity and due to the inter-
+action of organs and systems, and other processes such          False test results in the HCS prelethal cytotoxicity
+as inﬂammation, immune-mediated hypersensitivity,               assay Examination of the false positives and negatives
+plasma volume expansion and endocrine eﬀects.                   may provide understanding of what toxicities the HCS
+                                                                cytotoxicity assay is not relevant for. As described above,
+Prelethal cytotoxicity assay as ﬁrst tier of laboratory         idiosyncratic heptoxicants and heptotoxicities attributed
+testing for organ toxicity potential Although cytotoxicity      to reactive metabolites were detected. However, there
+assays cannot predict human hepatotoxicity and cannot           were several speciﬁc examples of toxicities that were not
+be unequivocally used for ‘‘go - no go’’ decision-making        detected in the current study. For some of these drug
+in the progression of drug discovery, they nevertheless         toxicities, this could be attributed to the speciﬁc known
+have value. Knowledge of the cytotoxicity of drugs early        eﬀect of the drug on molecular targets that are not found
+in drug discovery can create opportunities for ranking          in heptocytes. For example, the assay applied to HepG2
+and prioritizing, or developing alternatives with lower         cells did not detect cholestatic eﬀects of estradiol, cal-
+toxicity potential and can also ﬂag the need for further        cium-channel eﬀects of ryanodine, potassium channel
+scholarship and experimental safety assessments if the          eﬀects of astemizole and terfenadine, renal toxicity of
+compound is to progress to preclinical development.             zomepirac, dermatotoxicity of isoxicam and hematologic
+Such assessments would need to include conduct of               toxicity of vincamine. Additionally, the human toxicity
+more mechanism-speciﬁc, or possibly tissue-speciﬁc, in          potential was not detected at relevant concentrations
+vitro assays, as well as in vivo animal studies. These in       in the HCS cytotoxicity assay for bupropion, diethyl-
+vitro models may also provide valuable mechanistic              carbamazine, naproxen, pravastatin and triﬂuopera-
+understanding of the toxicity.                                  zine. Furthermore, whereas picotamide is essentially
+                                                                nontoxic, it was found to be highly toxic in the cyotoxicity
+                                                                assay. The number of such false test results was too small
+Cytotoxicity testing throughput Throughput is an                to draw deﬁnitive conclusions, and additional work
+important consideration in assessment of the practicality       would be needed to conﬁrm these proposals.
+of an assay to be implemented for screening compounds
+in drug discovery. Throughput of the assay in which
+cells are exposed for 3 days to 12 concentrations of each       Limitations and need for further studies
+drug then measured at three diﬀerent time points over
+3 h is 14 drugs per standard workweek for a single              Although the HCS sub-lethal cytotoxicity assay had
+operator. However, the assay can be abbreviated so that         greater than 90% concordance with human toxicities, it
+only one time point is measured and only one or a few           failed to detect up to 10% of these. The basis for the
+                                                                                                                             603
+
+failure of the HCS cytotoxicity test for the other drugs is    large set of experimental variables including cell plating
+unknown, but may be partly attributable to either              density, cytotoxic indicators, drugs, drug concentrations
+incomplete metabolic competence of the cell-based model        and incubation times. However, further improvement
+used or else to toxicities being caused by, or mediated by,    may be obtainable by reﬁnement and optimisation of
+extra-hepatocytic eﬀects that require involvement of           cell culture factors such as cell substrate, media and drug
+some other molecular transporter or process, cell, tissue,     replacement during preincubation, and assessment of
+organ or system that cannot be represented by a hepa-          drug transport and stability. Imprecision will likely be
+tocyte cell line model. However, that the assay was posi-      decreased and diagnostic sensitivity improved by reﬁne-
+tive for most drugs that produce their toxicities by a         ment of culture conditions to facilitate cell attachment
+reactive metabolite argues against metabolic competence        and more uniform spreading across the well surface,
+being signiﬁcantly limiting. The extrahepatic toxicities       and by reducing evaporation and uneven heating and
+may involve (a) cytokine, growth factor or hormone             oxygenation of wells from the edges to the center of the
+production, (b) immune-mediated toxicity and (c) extra-        plates.
+hepatocytic, tissue-speciﬁc transporters which are found           Further studies are needed to deﬁne optimal strate-
+in hepatobiliary or renal tubular cells.                       gies for cytoﬂuorescent monitoring of relevant cytotox-
+                                                               icity biomarkers. The current study indicates signiﬁcant
+                                                               room for improvement in dye and parameter choice,
+Metabolic competence Developing further metabolic              especially with respect to membrane permeability and
+competence, either by using extracellular incubation of        also intracellular calcium concentration, at least as
+drugs with S9 microsomal fractions, or by using cells          measured with a non-ratiometric dye with relatively low
+that are more competent metabolically, may enhance             calcium-binding aﬃnity compared to basal, intracellular
+predictivity. Primary human hepatocytes would theo-            concentration of calcium. The eﬀectiveness and mecha-
+retically provide the best model of metabolic competence       nistic information of the HCS cytotoxicity assay may be
+for cytotoxicity assays. However, current culture meth-        enhanced by replacement of these dyes with others that
+ods in 96-well plates do not stabilise the phenotype of        could measure glutathione or reactive oxygen species,
+primary cells and prevent their rapid dediﬀerentiation         lysosomal mass, safety-signal transduction, additional
+over the several days of incubation needed for most drug       morphological cell features, cell cycle information indi-
+toxicities to be expressed. Furthermore, primary cells are     cated by nuclear staining or the mass, reductive activity
+also less suitable for cytotoxicity assessment because of      or DNA content of mitochondria. The speciﬁc need to
+their low rates of cellular proliferation, which is the most   incorporate an oxidative stress biomarker is also indi-
+sensitive measure of hepatotoxicity potential.                 cated by the results herein on conventional cytotoxicity
+    Given the need for a proliferating cell model for          assays, our preliminary studies currently underway
+predictive cytotoxicity studies, the eﬀectiveness of the       (Phillips et al. 2005), and by the importance of oxidative
+choice of HepG2 cells as a cell line to use is supported by    stress in drug-induced toxicity (Xu et al. 2004).
+other studies. Schoonen et al. (2005a, b) found them               Further studies are also needed to distinguish artefact
+slightly more predictive than HeLa, ECC-1 and CHO-k1           from toxic response from adaptive responses (eg mito-
+cells. Others have made similar ﬁndings (Bugelski et al.       chondrial potential dyes); to better model in vivo met-
+2000). However, a cell line with metabolic competence          abolic competency; to sensitise to cytotoxicity and
+and morphology more representative of the in vivo state        further enhance assay sensitivity; and to quantitate
+would likely further enhance the predictivity of cyto-         predictivity and correlation with human hepatotoxicity
+toxicity assays.                                               and its mechanistic basis. Finally, more non-toxic drugs
+                                                               need to be tested to more accurately assess the frequency
+Data processing We have identiﬁed two areas where              of false positives and the appropriate safety margin to
+improvement in analysis would result in increased eﬃ-          interpret cytotoxicity.
+ciency with regard to performing larger scale cytotox-
+icity screens on a routine basis. First, the number of
+cellular measurements generated by the image analysis          References
+algorithms used far exceeded those relevant for this as-
+say. This required handling and archiving of more data         Abraham VC, Taylor L, Haskins JR (2004) High content screening
+than was required. We are currently pursuing the use of           applied to large-scale cell biology. Trends Biotechnol 22:15–72
+                                                               Andrade RJ, Carmargo R, Lucena MI, Ganzalez-Grande R (2004)
+streamlined assay algorithms that generate only the re-           Causality assessment in drug-induced hepatotoxicity. Expert
+quired assay output. In addition, we are investigating            Opin Drug Saf 3:329–344
+ways to further automate data analysis of large volumes        Barhoumi R, Bailey RH, Burghardt RC (1995) Kinetic analysis of
+of kinetic data, especially the calculation of IC50 values        glutathione in anchored cells with monochlorobimane.
+                                                                  Cytometry 19:226–34
+using user-deﬁnable mathematical models.                       Bernardi P, Petronilli V, Di Lisa F, Forte M (2001) A mitochon-
+                                                                  drial perspective on cell death. Trends Biochem Sci 26:112–117
+                                                               Boelsterli UA (2003a) Disease-related determinants of susceptibil-
+Assay reﬁnement The Cellomics KSR was used suc-                   ity to drug-induced idiosyncratic hepatotoxicity. Curr Opin
+cessfully to apply automated HCS assays to investigate a          Drug Discov Devel 6:81–91
+604
+
+Boelsterli UA (2003b) Idiosyncratic drug hepatotoxicity revisited:   Lorico A, Masturzo P, Villa S, Salmona M, Semeraro N, de
+   new insights from mechanistic toxicology. Toxicol Mech               Gaetano G (1986) Gentisic acid: an aspirin metabolite with
+   Methods 13:3–20                                                      multiple eﬀects on human blood polymorphonuclear leuko-
+Brain P, Cousens R (1989) An equation to describe dose response         cytes. Biochem Pharmacol 35:2443–5
+   when there is stimulation of growth at low doses. Weed Res        Meselson M, Stahl FW (1958) The replication of DNA. Cold
+   29:93–96                                                             Spring Harb Symp Quant Biol 23:9–12
+Bugelski PJ, Atif U, Molton S, Toeg I, Lord PG, Morgan, DG.          Nociari MM, Shalev A, Benias P, Russo C (1998) A novel one-step,
+   (2000) A strategy for primary high throughput cytotoxicity           highly sensitive ﬂuorometric assay to evaluate cell-mediated
+   screening in pharmaceutical toxicology. Pharm Res 17:1265–72         cytotoxicity. J Immunol Methods 213:157–67
+Calabrese EJ, Baldwin LA (2002) Applications of hormesis in          O’Brien PJ, Kalow BI, Brown BD, Lumsden JH, Jacobs RM
+   toxicology, risk assessment and chemotherapeutics. Trends            (1989) Porcine malignant hyperthermia susceptibility: halo-
+   Pharmacol Sci 23:331–337                                             thane-induced increase in cytoplasmic free calcium of periph-
+Cerep (2005) In vitro Pharmacology and ADME-Tox Catalog                 eral blood lymphocytes. Am J Vet Res 50:131–135
+   Product No.900–59. Cerep, Redmond                                 O’Brien PJ, Kalow BI, Ali N, Lassaline LA, Lumsden JH (1990)
+Colombo B, Felicetti L, Baglioni C (1965) Inhibition of protein         Compensatory increase in calcium extrusion activity of un-
+   synthesis by cycloheximide in rabbit reticulocytes. Biochem          treated lymphocytes from swine susceptible to malignant
+   Biophys Res Commun 18:389–95                                         hyperthermia. Am J Vet Res 51:1038–1043
+Fung M, Thornton A, Mybeck K, Hsiao-Hui W, Hornbuckle K,             O’Brien PJ, Slaughter MR, Biagini C, Diaz D, Gao, B, Irwin W,
+   Muniz E (2001) Evaluation of the characteristics of safety           Krejsa C, Hougham C, Abraham V, Haskins JR (2003) Pre-
+   withdrawal of prescription drugs from worldwide pharmaceu-           dicting drug-induced human hepatotoxicity with in vitro cyto-
+   tical markets—1960–1999. Drug Inf J 35:293 – 317                     toxicity assays. In: Proceedings Tox ’03, London, UK
+GenStat (2002) GenStat for Windows Release 6.1, 6th (edn.). VSN      Olson H, Betton G, Stritar J, Robinson D (1998) The predictivity
+   International Ltd, Oxford                                            of the toxicity of pharmaceuticals in humans from animal da-
+Giuliano KA., Haskins JR, Taylor DL (2003) Advances in high             ta—an interim assessment. Toxicol Lett 102–103:535–538
+   content screening for drug discovery. Assay Drug Dev Technol      Olson H, Betton G, Robinson D, Thomas K, Monro A, Kolaja G,
+   1:565–577                                                            Lilly P, Sanders J, Sipes G, Bracken W, Dorato M, Van Deun
+Graphpad Prism (2004) Graphpad Prism version 4.01 for Win-              K, Smith P, Berger B, Heller A (2000) Concordance of the
+   dows. Graphpad Software Inc, San Diego                               toxicity of pharmaceuticals in humans and in animals. Regul
+Gurtu V, Kain SR, Zhang G (1997) Fluorometric and colorimetric          Toxicol Pharmacol 32:56–67
+   detection of caspase activity associated with apoptosis. Anal     Olson H, Kadyszewski E, Beierschmitt W (2001) Hormesis—a
+   Biochem 251:98–102                                                   pharmaceutical industry perspective. Crit Rev Toxicol 31:659–61
+Haskins JR, Rowse P, Rahbari R, de La Iglesia FA (2001) Thia-        Phillips GW, Irwin WA, Howard-Coﬁeld EJ, Randle LE, Abraham
+   zolidinedione toxicity to isolated hepatocytes revealed by           V, Haskins J, O’Brien PJ (2005) Incorporation of an oxidative
+   coherent multiprobe ﬂuorescence microscopy and correlated            stress biomarker into high content screening (HCS) for human
+   with multiparameter ﬂow cytometry of peripheral leukocytes.          toxicity potential. Proc Soc Biomol Screen
+   Arch Toxicol 75:425–438                                           Plymale DR, Haskins JR, De La Iglesia FA (1999) Monitoring of
+Jaeschke H, Gores GJ, Cedeerbau AI, Hinson JA, Pessayre D,              simultaneous subcellular events in vitro by means of coherent
+   Lemasters JJ (2002) Mechanisms of hepatotoxicity. Toxicol Sci        multiprobe ﬂuorescence. Nat Med 5:351–355
+   65:166–176                                                        Russo MW, Galanko JA, Shrestha R, Fried MW, Watkins P
+Kalgutkar AS, Gardner I, Obach RS, Shaﬀer CL, Callegari E,              (2004) Liver transplantation for acute liver failure from drug-
+   Henne KR, Mutlib AE, Dalvie DK, Lee JS, Nakai Y,                     induced liver injury in the United States. Liver Transpl
+   O’Donnell JP, Boer J, Harriman SP (2005) A comprehensive             10:1018–1023
+   listing of bioactivation pathways of organic functional groups.   Schoonen WGEJ, Westerink WMA, de Roos JADM, Debiton E.
+   Curr Drug Metab 6:1–65                                               (2005a) Cytotoxic eﬀects of 100 reference compounds on Hep
+Kaplowitz N (2001) Drug-induced liver disorders. Implications for       G2 and HeLa cells and of 60 compounds on ECC-1 and CHO
+   drug development and regulation. Drug Saf 24:483–490                 cells. I. Mechanistic assays on ROS, glutathione depletion and
+Kaplowitz N (2005) Idiosyncratic drug hepatotoxicity. Nat Rev           calcein uptake. Toxicol In Vitro 19:505–516
+   4:489–499                                                         Schoonen WGEJ, Westerink WMA, de Roos JADM, Debiton E.
+Lee WM (2003) Drug-induced hepatotoxicity. New Engl J Med               (2005b) Cytotoxic eﬀects of 110 reference compounds on Hep
+   349:474–85                                                           G2 and for 60 compounds on HeLa, ECC-1 and CHO cells. I.
+Levesque A, Paquet A, Page M (1995) Improved ﬂuorescent bio-            Mechanistic assays on NAD(P)H, ATP, and DNA contents.
+   assay for the detection of tumor necrosis factor activity. J         Toxicol In Vitro 19:491–503
+   Immunol Methods 178:71–6                                          Slaughter MR, Thakkar H, O’Brien PJ (2002) Eﬀect of diquat on
+Lewis JH (2002) Drug-induced liver disease. Curr Opin Gastro-           the antioxidant system and cell growth in human neuroblas-
+   enterol 18:307–313                                                   toma cells. Toxicol Appl Pharmacol 178:63–70
+Lewis W, Day BJ, Copeland WC (2003) Mitochondrial toxicity of        Xu JJ, Diaz D, O’Brien PJ (2004). Applications of cytotoxicity
+   NRTI antiviral drugs: an integrated cellular perspective. Nat        assays and pre-lethal mechanistic assays for assessment of hu-
+   Rev Drug Discov 2:812–822                                            man hepatotoxicity potential. Chem Biol Interact 150:115–128
+

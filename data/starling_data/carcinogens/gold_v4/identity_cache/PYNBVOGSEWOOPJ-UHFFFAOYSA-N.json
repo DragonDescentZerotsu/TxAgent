@@ -1,0 +1,12 @@
+{
+  "parent_key": "PYNBVOGSEWOOPJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PYNBVOGSEWOOPJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL20027200"
+  ],
+  "http_status": 200,
+  "cids": [
+    90732379
+  ]
+}

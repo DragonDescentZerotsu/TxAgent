@@ -1,0 +1,18 @@
+{
+  "parent_key": "FMQGOSLZLQKFAM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FMQGOSLZLQKFAM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4',5,7-trihydroxy flavonone",
+    "5,7-Dihydroxy-2-(4-hydroxyphenyl)chromane-3,4-dione",
+    "869650-15-7",
+    "CHEMBL198640",
+    "CNC-244131",
+    "S00073",
+    "SCHEMBL3513425"
+  ],
+  "http_status": 200,
+  "cids": [
+    6419773
+  ]
+}

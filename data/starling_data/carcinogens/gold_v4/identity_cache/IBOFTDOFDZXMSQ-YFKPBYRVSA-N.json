@@ -1,0 +1,12 @@
+{
+  "parent_key": "IBOFTDOFDZXMSQ-YFKPBYRVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IBOFTDOFDZXMSQ-YFKPBYRVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-acetyl-(1,2-dichlorovinyl)-l-cysteine"
+  ],
+  "http_status": 200,
+  "cids": [
+    53907759
+  ]
+}

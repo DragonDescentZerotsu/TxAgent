@@ -1,0 +1,26 @@
+{
+  "parent_key": "UQGLNXPQGUMNRU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UQGLNXPQGUMNRU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-Heptan-1,6-diol",
+    "1,6-Heptanediol",
+    "13175-27-4",
+    "6-heptanediol",
+    "AKOS017978046",
+    "DA-20903",
+    "DTXSID101350738",
+    "G67414",
+    "Heptane-1,6-diol",
+    "Heptane-1,6-diol , Heptane-1,6-diol",
+    "SCHEMBL15577149",
+    "SCHEMBL1868734",
+    "SCHEMBL28830462",
+    "SCHEMBL424124",
+    "SCHEMBL9730907"
+  ],
+  "http_status": 200,
+  "cids": [
+    11423617
+  ]
+}

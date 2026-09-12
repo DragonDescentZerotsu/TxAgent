@@ -1,0 +1,13 @@
+{
+  "parent_key": "CMSRNSXLYBWBIT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Q27116587",
+    "SCHEMBL139406"
+  ],
+  "cids": [
+    139031276
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CMSRNSXLYBWBIT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

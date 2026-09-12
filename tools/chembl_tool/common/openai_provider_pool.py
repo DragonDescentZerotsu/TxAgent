@@ -286,7 +286,12 @@ class OpenAIProviderPool:
             execution = {"provider": state.spec.name, "base_url": state.spec.base_url,
                          "requested_model": state.spec.model}
             try:
-                response = await state.client.async_chat_json(messages)
+                # HTTP read timeouts restart when bytes arrive. A provider can
+                # send keepalive bytes indefinitely without finishing a result.
+                # Bound the whole attempt so the retry race can actually start.
+                response = await asyncio.wait_for(
+                    state.client.async_chat_json(messages), timeout=state.spec.timeout_s,
+                )
             except asyncio.CancelledError:
                 with self._condition:
                     state.inflight -= 1

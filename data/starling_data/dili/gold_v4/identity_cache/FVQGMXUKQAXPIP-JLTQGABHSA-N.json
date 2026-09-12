@@ -1,0 +1,29 @@
+{
+  "parent_key": "FVQGMXUKQAXPIP-JLTQGABHSA-N",
+  "ok": true,
+  "synonyms": [
+    "1809266-03-2",
+    "4''-(p-Fluorobenzyl)tylosin A",
+    "4b-O-((4-Fluorophenyl)methyl)tylosin",
+    "ABBV-4083",
+    "ABBV4083",
+    "CHEMBL4649378",
+    "CS-0090788",
+    "EX-A8598",
+    "FLUBENTYLOSIN [INN]",
+    "Flubentylosin",
+    "GLXC-26871",
+    "HXL1F57P8O",
+    "HY-111757",
+    "RefChem:140798",
+    "SCHEMBL20841207",
+    "Tylosin, 4b-O-((4-fluorophenyl)methyl)-",
+    "UNII-HXL1F57P8O",
+    "orb1710509"
+  ],
+  "cids": [
+    92045060
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FVQGMXUKQAXPIP-JLTQGABHSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,40 @@
+{
+  "parent_key": "OZUPICRWMLEFCS-LBPRGKRZSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Amino-4-[(4R)-8-chloro-10-fluoro-12-oxo-3-(prop-2-enoyl)-2,3,4,4a,5,6-hexahydro-1H,12H-pyrazino[2,1-d][1,5]benzoxazocin-9-yl]-7-fluoro-1-benzothiophene-3-carbonitrile",
+    "2-Amino-4-[(4aS)-8-chloro-10-fluoro-2,3,4,4a,5,6-hexahydro-12-oxo-3-(1-oxo-2-propen-1-yl)-1H,12H-pyrazino[2,1-d][1,5]benzoxazocin-9-yl]-7-fluorobenzo[b]thiophene-3-carbonitrile",
+    "2-amino-4-[(4aS)-8-chloro-10-fluoro-2,3,4,4a,5,6-hexahydro-12-oxo-3-(1-oxo-2-propen-1-yl)-1H,12H-pyrazino[2,1-d][1,5]benzoxazocin-9-yl]-7-fluoro-Benzo[b]thiophene-3-carbonitrile",
+    "2649788-46-3",
+    "2771246-13-8",
+    "4-((S)-3-ACRYLOYL-8-CHLORO-10-FLUORO-12-OXO-2,3,4,4A,5,6-HEXAHYDRO-1H,12H-BENZO[B]PYRAZINO[1,2-E][1,5]OXAZOCIN-9-YL)-2-AMINO-7-FLUOROBENZO[B]THIOPHENE-3-CARBONITRILE",
+    "4-[(13aS)-10-chloro-8-fluoro-6-oxo-2-prop-2-enoyl-1,3,4,12,13,13a-hexahydropyrazino[2,1-d][1,5]benzoxazocin-9-yl]-2-amino-7-fluoro-1-benzothiophene-3-carbonitrile",
+    "AKOS040757943",
+    "Benzo[b]thiophene-3-carbonitrile, 2-amino-4-[(4aS)-8-chloro-10-fluoro-2,3,4,4a,5,6-hexahydro-12-oxo-3-(1-oxo-2-propen-1-yl)-1H,12H-pyrazino[2,1-d][1,5]benzoxazocin-9-yl]-7-fluoro-, (4R)-",
+    "C2VJ83PSN7",
+    "CHEMBL6068410",
+    "CS-0311440",
+    "DA-64768",
+    "EX-A6653",
+    "F78016",
+    "GTPL14417",
+    "HY-132980",
+    "KRAS G12C inhibitor 19",
+    "LY-3537982",
+    "LY3537982",
+    "NSC-853962",
+    "NSC853962",
+    "Olomorasib",
+    "Olomorasib [WHO-DD]",
+    "RefChem:1093882",
+    "SCHEMBL23496727",
+    "T40286",
+    "olomorasib [INN]",
+    "orb1690700"
+  ],
+  "cids": [
+    156472638
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OZUPICRWMLEFCS-LBPRGKRZSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,24 @@
+{
+  "parent_key": "AWYSLGMLVOSVIS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "224-845-1",
+    "4519-32-8",
+    "AWYSLGMLVOSVIS-UHFFFAOYSA-N",
+    "Arsenobenzene",
+    "DIPHENYLDIARSENE",
+    "DTXSID70862011",
+    "Diphenyldiarsenic acid",
+    "EINECS 224-845-1",
+    "NS00120268",
+    "NSC 41373",
+    "NSC-41373",
+    "NSC41373",
+    "RefChem:588894"
+  ],
+  "cids": [
+    78277
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AWYSLGMLVOSVIS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

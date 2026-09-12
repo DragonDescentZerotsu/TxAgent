@@ -1,0 +1,14 @@
+{
+  "round": 1,
+  "prior_ok": 46,
+  "counts": {
+    "scheduled": 2,
+    "ok": 2,
+    "dili:supported": 1,
+    "carcinogens:supported": 1
+  },
+  "elapsed_s": 16.8,
+  "updated_utc": "2026-09-08T22:45:57.880783+00:00",
+  "global_concurrency": 32,
+  "active_reviews": 0
+}

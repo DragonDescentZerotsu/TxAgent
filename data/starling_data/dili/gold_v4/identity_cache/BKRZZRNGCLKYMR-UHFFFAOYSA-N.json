@@ -1,0 +1,14 @@
+{
+  "parent_key": "BKRZZRNGCLKYMR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "BKRZZRNGCLKYMR-UHFFFAOYSA-N",
+    "N-tert-butyl-C-phenylmethyl nitrone",
+    "SCHEMBL5674577"
+  ],
+  "cids": [
+    315883
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BKRZZRNGCLKYMR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

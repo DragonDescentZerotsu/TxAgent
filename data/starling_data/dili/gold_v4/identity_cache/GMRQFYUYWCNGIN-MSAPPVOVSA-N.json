@@ -1,0 +1,20 @@
+{
+  "parent_key": "GMRQFYUYWCNGIN-MSAPPVOVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,5Z)-5-[(2E)-2-[(1R,3aS,7aR)-1-[(2R)-6-hydroxy-6-methylheptan-2-yl]-7a-methyl-2,3,3a,5,6,7-hexahydro-1H-inden-4-ylidene]ethylidene]-4-methylidenecyclohexane-1,3-diol",
+    "(1R,5Z)-Calcitriol",
+    "(3R,5Z,7E)-9,10-Secocholesta-5,7,10-triene-1,3,25-triol",
+    "1,25-Dihydroxyvitamin D3",
+    "32511-63-0",
+    "9,10-Sechocholesta-5,7,10(19)-triene-1,3,25-tiol, (3beta,5Z,7E)-",
+    "HY-10002B",
+    "RefChem:1052458",
+    "SCHEMBL39703"
+  ],
+  "cids": [
+    6437079
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GMRQFYUYWCNGIN-MSAPPVOVSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,18 @@
+{
+  "parent_key": "QGWFEAABRRZMNN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QGWFEAABRRZMNN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(bromomethyl)tetraphene",
+    "82507-19-5",
+    "DTXCID10154301",
+    "DTXSID80231810",
+    "RefChem:226247",
+    "SCHEMBL10582719",
+    "bromomethylbenzanthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    186260
+  ]
+}

@@ -1,0 +1,497 @@
+[
+  {
+    "parent": "ALYNCZNDIQEVRV-UHFFFAOYSA-N",
+    "name": "4-aminobenzoic acid",
+    "CID": "978",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 10,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "c1cc(ccc1C(=O)O)N"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 8,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1cc(ccc1C(=O)O)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 15,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1cc(ccc1C(=O)O)N"
+      }
+    ]
+  },
+  {
+    "parent": "BPEGJWRSRHCHSN-UHFFFAOYSA-N",
+    "name": "Temozolomide",
+    "CID": "5394",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.1",
+        "excel_row": 74,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "Cn1c(=O)n2cnc(c2nn1)C(=O)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 206,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "Cn1c(=O)n2cnc(c2nn1)C(=O)N"
+      }
+    ]
+  },
+  {
+    "parent": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+    "name": "Acetylsalicylic acid",
+    "CID": "2244",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.1",
+        "excel_row": 12,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 38,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      }
+    ]
+  },
+  {
+    "parent": "BUGYDGFZZOZRHP-UHFFFAOYSA-N",
+    "name": "Memantine",
+    "CID": "4054",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 105,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CC12CC3CC(C1)(CC(C3)(C2)N)C"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 89,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC12CC3CC(C1)(CC(C3)(C2)N)C"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 137,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC12CC3CC(C1)(CC(C3)(C2)N)C"
+      }
+    ]
+  },
+  {
+    "parent": "DHHVAGZRUROJKS-UHFFFAOYSA-N",
+    "name": "Phentermine",
+    "CID": "4771",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.2",
+        "excel_row": 66,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "CC(C)(Cc1ccccc1)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 174,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)(Cc1ccccc1)N"
+      }
+    ]
+  },
+  {
+    "parent": "GUGOEEXESWIERI-UHFFFAOYSA-N",
+    "name": "Terfenadine",
+    "CID": "5405",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 154,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CC(C)(C)c1ccc(cc1)C(CCCN2CCC(CC2)C(c3ccccc3)(c4ccccc4)O)O"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 124,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)(C)c1ccc(cc1)C(CCCN2CCC(CC2)C(c3ccccc3)(c4ccccc4)O)O"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 208,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)(C)c1ccc(cc1)C(CCCN2CCC(CC2)C(c3ccccc3)(c4ccccc4)O)O"
+      }
+    ]
+  },
+  {
+    "parent": "IIBYAHWJQTYFKB-UHFFFAOYSA-N",
+    "name": "Bezafibrate",
+    "CID": "39042",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 245,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CC(C)(C(=O)O)Oc1ccc(cc1)CCNC(=O)c2ccc(cc2)Cl"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 185,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)(C(=O)O)Oc1ccc(cc1)CCNC(=O)c2ccc(cc2)Cl"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 325,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)(C(=O)O)Oc1ccc(cc1)CCNC(=O)c2ccc(cc2)Cl"
+      }
+    ]
+  },
+  {
+    "parent": "JCCNYMKQOSZNPW-UHFFFAOYSA-N",
+    "name": "Loratidine",
+    "CID": "3957",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.2",
+        "excel_row": 51,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "CCOC(=O)N1CCC(=C2c3ccc(cc3CCc4c2nccc4)Cl)CC1"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 129,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CCOC(=O)N1CCC(=C2c3ccc(cc3CCc4c2nccc4)Cl)CC1"
+      }
+    ]
+  },
+  {
+    "parent": "JWHAUXFOSRPERK-UHFFFAOYSA-N",
+    "name": "Propafenone",
+    "CID": "4932",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 142,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CCCNCC(COc1ccccc1C(=O)CCc2ccccc2)O"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 117,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CCCNCC(COc1ccccc1C(=O)CCc2ccccc2)O"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 185,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CCCNCC(COc1ccccc1C(=O)CCc2ccccc2)O"
+      }
+    ]
+  },
+  {
+    "parent": "KRMDCWKBEZIMAB-UHFFFAOYSA-N",
+    "name": "Amitriptyline",
+    "CID": "2160",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 19,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CN(C)CCC=C1c2ccccc2CCc3c1cccc3"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 35,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CN(C)CCC=C1c2ccccc2CCc3c1cccc3"
+      }
+    ]
+  },
+  {
+    "parent": "KWTSXDURSIMDCE-UHFFFAOYSA-N",
+    "name": "amphetamine",
+    "CID": "5826",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.1",
+        "excel_row": 83,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "CC(Cc1ccccc1)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 230,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(Cc1ccccc1)N"
+      }
+    ]
+  },
+  {
+    "parent": "OLBCVFGFOZPWHH-UHFFFAOYSA-N",
+    "name": "Propofol",
+    "CID": "4943",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 143,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CC(C)c1cccc(c1O)C(C)C"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 186,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C)c1cccc(c1O)C(C)C"
+      }
+    ]
+  },
+  {
+    "parent": "RMUCZJUITONUFY-UHFFFAOYSA-N",
+    "name": "Phenelzine",
+    "CID": "3675",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 85,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "c1ccc(cc1)CCNN"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 72,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1ccc(cc1)CCNN"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 113,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1ccc(cc1)CCNN"
+      }
+    ]
+  },
+  {
+    "parent": "ROBVIMPUHSLWNV-UHFFFAOYSA-N",
+    "name": "Aminoglutethimide",
+    "CID": "2145",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.2",
+        "excel_row": 14,
+        "annotation": "Most DILI-concern",
+        "label": "1",
+        "smiles": "CCC1(CCC(=O)NC1=O)c2ccc(cc2)N"
+      },
+      {
+        "sheet": "supplementary table S1.3",
+        "excel_row": 22,
+        "annotation": "NE",
+        "label": "0",
+        "smiles": "CCC1(CCC(=O)NC1=O)c2ccc(cc2)N"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 17,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CCC1(CCC(=O)NC1=O)c2ccc(cc2)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 34,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CCC1(CCC(=O)NC1=O)c2ccc(cc2)N"
+      },
+      {
+        "sheet": "supplementary table S2.2",
+        "excel_row": 10,
+        "annotation": "Positive",
+        "label": "1",
+        "smiles": "CCC1(CCC(=O)NC1=O)c2ccc(cc2)N"
+      }
+    ]
+  },
+  {
+    "parent": "RTHCYVBBDHJXIQ-UHFFFAOYSA-N",
+    "name": "Fluoxetine",
+    "CID": "3386",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 60,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CNCCC(c1ccccc1)Oc2ccc(cc2)C(F)(F)F"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 99,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CNCCC(c1ccccc1)Oc2ccc(cc2)C(F)(F)F"
+      }
+    ]
+  },
+  {
+    "parent": "SNPPWIUOZRMYNY-UHFFFAOYSA-N",
+    "name": "Bupropion",
+    "CID": "444",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 4,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C(=O)c1cccc(c1)Cl)NC(C)(C)C"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 7,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CC(C(=O)c1cccc(c1)Cl)NC(C)(C)C"
+      }
+    ]
+  },
+  {
+    "parent": "WSEQXVZVJXJVFP-UHFFFAOYSA-N",
+    "name": "Citalopram",
+    "CID": "146570",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 209,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CN(C)CCCC1(c2ccc(cc2CO1)C#N)c3ccc(cc3)F"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 383,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CN(C)CCCC1(c2ccc(cc2CO1)C#N)c3ccc(cc3)F"
+      }
+    ]
+  },
+  {
+    "parent": "XZWYZXLIPXDOLR-UHFFFAOYSA-N",
+    "name": "Metformin",
+    "CID": "4091",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.2",
+        "excel_row": 52,
+        "annotation": "no DILI-concern",
+        "label": "0",
+        "smiles": "CN(C)C(=N)N=C(N)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 140,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "CN(C)C(=N)N=C(N)N"
+      }
+    ]
+  },
+  {
+    "parent": "YLJREFDVOIBQDA-UHFFFAOYSA-N",
+    "name": "Tacrine",
+    "CID": "1935",
+    "TDC_Y": 0,
+    "xu2015_rows": [
+      {
+        "sheet": "supplementary table S1.2",
+        "excel_row": 8,
+        "annotation": "Most DILI-concern",
+        "label": "1",
+        "smiles": "c1ccc2c(c1)c(c3c(n2)CCCC3)N"
+      },
+      {
+        "sheet": "supplementary table S1.4",
+        "excel_row": 11,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1ccc2c(c1)c(c3c(n2)CCCC3)N"
+      },
+      {
+        "sheet": "supplementary table S2.1",
+        "excel_row": 23,
+        "annotation": "Negative",
+        "label": "0",
+        "smiles": "c1ccc2c(c1)c(c3c(n2)CCCC3)N"
+      },
+      {
+        "sheet": "supplementary table S2.2",
+        "excel_row": 7,
+        "annotation": "Positive",
+        "label": "1",
+        "smiles": "c1ccc2c(c1)c(c3c(n2)CCCC3)N"
+      }
+    ]
+  }
+]

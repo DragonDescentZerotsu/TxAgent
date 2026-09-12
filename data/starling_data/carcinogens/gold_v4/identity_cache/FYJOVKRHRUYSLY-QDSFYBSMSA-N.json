@@ -1,0 +1,23 @@
+{
+  "parent_key": "FYJOVKRHRUYSLY-QDSFYBSMSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FYJOVKRHRUYSLY-QDSFYBSMSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "5,7-Dihydroxy-3-(((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-((((2R,3R,4R,5R,6S)-3,4,5-trihydroxy-6-methyltetrahydro-2H-pyran-2-yl)oxy)methyl)tetrahydro-2H-pyran-2-yl)oxy)-2-(4-(((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)tetrahydro-2H-pyran-2-yl)oxy)phenyl)-4H-chromen-4-one",
+    "5,7-dihydroxy-2-(4-((2S,3R,5S)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxyphenyl)-3-((2S,5S)-3,4,5-trihydroxy-6-(((2R,4S,5R)-3,4,5-trihydroxy-6-methyloxan-2-yl)oxymethyl)oxan-2-yl)oxychromen-4-one",
+    "5,7-dihydroxy-2-[4-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxyphenyl]-3-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-[[(2R,3R,4R,5R,6S)-3,4,5-trihydroxy-6-methyloxan-2-yl]oxymethyl]oxan-2-yl]oxychromen-4-one",
+    "89439-58-7",
+    "DTXSID101346054",
+    "Kaempferol 3-rutinoside 4'-glucoside",
+    "Kaempferol 3-rutinoside 4'-glucoside, >=95% (LC/MS-ELSD)",
+    "Kaempferol 3-rutinoside 4?-glucoside",
+    "Kaempferol 3-rutinoside-4'-glucoside",
+    "LMPK12111772",
+    "PDA43958",
+    "RefChem:1087944"
+  ],
+  "http_status": 200,
+  "cids": [
+    45359993
+  ]
+}

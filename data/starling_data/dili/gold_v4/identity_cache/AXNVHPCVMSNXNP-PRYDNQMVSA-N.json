@@ -1,0 +1,13 @@
+{
+  "parent_key": "AXNVHPCVMSNXNP-PRYDNQMVSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS015912891",
+    "NS00002539"
+  ],
+  "cids": [
+    6540443
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AXNVHPCVMSNXNP-PRYDNQMVSA-N/synonyms/JSON",
+  "http_status": 200
+}

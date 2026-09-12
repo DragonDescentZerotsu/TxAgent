@@ -1,0 +1,38 @@
+{
+  "parent_key": "SXLHPBDGZHWKSX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1- (5-Amino-2-hydroxy-phenyl)-ethanone",
+    "1-(5-amino-2-hydroxy-phenyl)-ethanone",
+    "1-(5-amino-2-hydroxy-phenyl)ethanone",
+    "1-(5-amino-2-hydroxyphenyl)ethan-1-one",
+    "1-(5-amino-2-hydroxyphenyl)ethanone",
+    "5 inverted exclamation mark -Amino-2 inverted exclamation mark -hydroxyacetophenone",
+    "5'-AMINO-2'-HYDROXYACETOPHENONE",
+    "5'-Amino-2'-hydroxyacetophenone, 97%",
+    "5-amino-2-hydroxyacetophenone",
+    "50-80-6",
+    "AKOS005665772",
+    "BBL028200",
+    "CS-W006911",
+    "DB-349831",
+    "DTXSID20379462",
+    "Ethanone, 1-(5-amino-2-hydroxyphenyl)-",
+    "F242457",
+    "F50472",
+    "FA70776",
+    "MFCD00100397",
+    "SB76605",
+    "SCHEMBL29526665",
+    "SCHEMBL3373646",
+    "STK936287",
+    "SXLHPBDGZHWKSX-UHFFFAOYSA-N",
+    "SY106816",
+    "TS-01989"
+  ],
+  "cids": [
+    2775222
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SXLHPBDGZHWKSX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,22 @@
+{
+  "parent_key": "CETXOEGRUBXUAL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CETXOEGRUBXUAL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-(Hydroxymethyl)furan-2-carbaldehyde",
+    "31830-31-6",
+    "888014-45-7",
+    "CETXOEGRUBXUAL-UHFFFAOYSA-N",
+    "DTXCID70538188",
+    "DTXSID20587424",
+    "RefChem:275610",
+    "SCHEMBL27669533",
+    "SCHEMBL51449",
+    "SCHEMBL7469749",
+    "hydroxymethyl furfural"
+  ],
+  "http_status": 200,
+  "cids": [
+    16730373
+  ]
+}

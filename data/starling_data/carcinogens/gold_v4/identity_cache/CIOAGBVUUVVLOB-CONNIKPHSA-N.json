@@ -1,0 +1,17 @@
+{
+  "parent_key": "CIOAGBVUUVVLOB-CONNIKPHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIOAGBVUUVVLOB-CONNIKPHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "96Sr (isotope)",
+    "96Sr isotope",
+    "Isotope:96Sr",
+    "Isotope:Strontium-96",
+    "Strontium-96",
+    "Strontium-96 isotope"
+  ],
+  "http_status": 200,
+  "cids": [
+    175671400
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "parent_key": "XUUXCWCKKCZEAW-YFKPBYRVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(S)-2-(2-Amino-5-guanidinopentanamido)acetic acid",
+    "108347-93-9",
+    "2-[[(2S)-2-amino-5-(diaminomethylideneamino)pentanoyl]amino]acetic acid",
+    "2418-67-9",
+    "AKOS015910638",
+    "Arg-Gly",
+    "Arginine Glycine dipeptide",
+    "Arginine-Glycine dipeptide",
+    "BDBM50188522",
+    "CHEBI:157792",
+    "CHEMBL382777",
+    "CS-0653353",
+    "DTXSID10178885",
+    "Glycine, N-L-arginyl-",
+    "HY-P4261",
+    "L-Arginyl-L-Glycine",
+    "L-Arginyl-glycine",
+    "L-Arginylglycine",
+    "N-L-Arginylglycine",
+    "N~5~-(Diaminomethylidene)-L-ornithylglycine",
+    "R-G Dipeptide",
+    "RG dipeptide",
+    "RefChem:1077175",
+    "SCHEMBL2117673",
+    "SCHEMBL29370742",
+    "arginyl-glycine",
+    "arginylglycine"
+  ],
+  "cids": [
+    142765,
+    177458703
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XUUXCWCKKCZEAW-YFKPBYRVSA-N/synonyms/JSON",
+  "http_status": 200
+}

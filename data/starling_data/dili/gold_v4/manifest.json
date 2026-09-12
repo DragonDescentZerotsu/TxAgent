@@ -1,0 +1,12 @@
+{
+  "prompt_sha256": "594e239cacf318482c347e3f50d646b60b5d1f6a49c8a3c07a4b47a9d3858c46",
+  "counts": {
+    "unique_queued": 160794
+  },
+  "tasks": {
+    "dili": {
+      "queue_path": "data/starling_data/dili/gold_v4/provenance_queue.parquet",
+      "queue_sha256": "e105907d87f25c1486b28ae70417e7693ce59caa76d48dd9eae6ae3e02bfd336"
+    }
+  }
+}

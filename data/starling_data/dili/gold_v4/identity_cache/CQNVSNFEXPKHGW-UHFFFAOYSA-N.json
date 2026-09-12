@@ -1,0 +1,30 @@
+{
+  "parent_key": "CQNVSNFEXPKHGW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2,8-Trihydroxy-3-methyl-9,10-anthracenedione, 9CI",
+    "1,2,8-Trihydroxy-3-methylanthraquinone",
+    "1,2,8-trihydroxy-3-methyl-9,10-anthraquinone",
+    "1,2,8-trihydroxy-3-methylanthracene-9,10-dione",
+    "2-Hydroxychrysophanol",
+    "58322-78-4",
+    "9,10-Anthracenedione, 1,2,8-trihydroxy-3-methyl-",
+    "AC-10899",
+    "AKOS015960424",
+    "CHEBI:7635",
+    "CHEMBL190245",
+    "DTXCID20129540",
+    "DTXSID70207049",
+    "LMPK13040011",
+    "Norobtusifolin",
+    "Q27107547",
+    "RefChem:87508",
+    "SCHEMBL31238107",
+    "SCHEMBL3192604"
+  ],
+  "cids": [
+    442759
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQNVSNFEXPKHGW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

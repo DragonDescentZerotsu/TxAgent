@@ -1,0 +1,20 @@
+{
+  "parent_key": "ZSJLQEPLLKMAKR-YDEIVXIUSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-methyl-1-nitroso-3-[(3R,4R,5S,6R)-2,4,5-trihydroxy-6-(hydroxymethyl)oxan-3-yl]urea",
+    "AKOS024456708",
+    "CHEMBL1651906",
+    "DB-303344",
+    "HMS3412N09",
+    "HMS3676N09",
+    "SCHEMBL444088",
+    "ZSJLQEPLLKMAKR-YDEIVXIUSA-N",
+    "orb1225824"
+  ],
+  "cids": [
+    2733335
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZSJLQEPLLKMAKR-YDEIVXIUSA-N/synonyms/JSON",
+  "http_status": 200
+}

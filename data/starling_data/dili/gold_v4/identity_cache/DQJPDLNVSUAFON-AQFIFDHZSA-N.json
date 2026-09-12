@@ -1,0 +1,19 @@
+{
+  "parent_key": "DQJPDLNVSUAFON-AQFIFDHZSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,4,6,8-Nonatetraenoic acid, 9-(2,6-dichloro-4-methoxy-3-methylphenyl)-3,7-dimethyl-, ethyl ester, (all-E)-",
+    "78548-88-6",
+    "CHEMBL23274",
+    "RefChem:179608",
+    "Ro 12-7554",
+    "Ro-127554",
+    "SCHEMBL5245273",
+    "ethyl (2E,4E,6E,8E)-9-(2,6-dichloro-4-methoxy-3-methylphenyl)-3,7-dimethylnona-2,4,6,8-tetraenoate"
+  ],
+  "cids": [
+    6438874
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DQJPDLNVSUAFON-AQFIFDHZSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,35 @@
+{
+  "parent_key": "OCHZHKVSLMBEJP-QYQYHAIPSA-N",
+  "ok": true,
+  "synonyms": [
+    "2H-1-BENZOPYRAN-2-ONE, 7-(((2E)-3-METHYL-5-((1S,2R,4R)-1,3,3-TRIMETHYL-7-OXABICYCLO(2.2.1)HEPT-2-YL)-2-PENTEN-1-YL)OXY)-",
+    "2H-1-BENZOPYRAN-2-ONE, 7-((3-METHYL-5-(1,3,3-TRIMETHYL-7-OXABICYCLO(2.2.1)HEPT-2-YL)-2-PENTENYL)OXY)-, (1S-(1.ALPHA.,2.ALPHA.(E),4.ALPHA.))-",
+    "512-17-4",
+    "56P18T724F",
+    "7-(((E)-3-Methyl-5-((1S,2R,4R)-1,3,3-trimethyl-7-oxabicyclo[2.2.1]heptan-2-yl)pent-2-en-1-yl)oxy)-2H-chromen-2-one",
+    "7-((E)-3-methyl-5-((1R,3R,4S)-2,2,4-trimethyl-7-oxabicyclo(2.2.1)heptan-3-yl)pent-2-enoxy)chromen-2-one",
+    "7-((E)-3-methyl-5-((1S,2R,4R)-1,3,3-trimethyl-7-oxabicyclo(2.2.1)heptan-2-yl)pent-2-enoxy)chromen-2-one",
+    "7-({(2E)-3-Methyl-5-[(1S,2R,4R)-1,3,3-trimethyl-7-oxabicyclo[2.2.1]heptan-2-yl]pent-2-en-1-yl}oxy)-2H-1-benzopyran-2-one",
+    "7-[(E)-3-methyl-5-[(1R,3R,4S)-2,2,4-trimethyl-7-oxabicyclo[2.2.1]heptan-3-yl]pent-2-enoxy]chromen-2-one",
+    "7-[(E)-3-methyl-5-[(1S,2R,4R)-1,3,3-trimethyl-7-oxabicyclo[2.2.1]heptan-2-yl]pent-2-enoxy]chromen-2-one",
+    "AKOS040748343",
+    "CHEMBL177697",
+    "COUMARIN, 7-((3-METHYL-5-(1.BETA.,3,3-TRIMETHYL-7-OXABICYCLO(2.2.1)HEPT-2.ALPHA.-YL)-2-PENTENYL)OXY)-",
+    "DTXCID501746995",
+    "DTXSID601317173",
+    "FARNESYLFEROL C",
+    "Farnesiferol C",
+    "HY-116938",
+    "Q27261410",
+    "RefChem:36139",
+    "SCHEMBL31238183",
+    "T27304",
+    "UNII-56P18T724F",
+    "orb1700620"
+  ],
+  "cids": [
+    15559239
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OCHZHKVSLMBEJP-QYQYHAIPSA-N/synonyms/JSON",
+  "http_status": 200
+}

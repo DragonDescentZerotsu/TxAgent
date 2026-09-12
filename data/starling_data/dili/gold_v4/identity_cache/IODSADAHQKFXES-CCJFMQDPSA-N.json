@@ -1,0 +1,21 @@
+{
+  "parent_key": "IODSADAHQKFXES-CCJFMQDPSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4R,9R,10R,13S,14S)-5,5,9,14-tetramethyltetracyclo[11.2.1.01,10.04,9]hexadec-7-ene",
+    "(4aR,6aR,8S,9R,11aR,11bR)-4,4,8,11b-tetramethyl-3,4,4a,5,6,7,8,9,10,11,11a,11b-dodecahydro-6a,9-methanocyclohepta[a]naphthalene",
+    "(4aR,8S,9S,11aR,11bR)-4,4,8,11b-tetramethyl-3,4,4a,5,6,7,8,9,10,11,11a,11b-dodecahydro-6a,9-methanocyclohepta[a]naphthalene",
+    "34424-57-2",
+    "CHEBI:167426",
+    "Kaurene",
+    "RefChem:151025",
+    "SCHEMBL30797244",
+    "T32365",
+    "orb1696789"
+  ],
+  "cids": [
+    3033942
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IODSADAHQKFXES-CCJFMQDPSA-N/synonyms/JSON",
+  "http_status": 200
+}

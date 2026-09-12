@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "corrected_records": 5,
+  "structure_repairs_with_rdkit_pubchem_agreement": 2,
+  "combination_subject_repairs": 1,
+  "organelle_material_repairs": 2,
+  "original_uid_pmid_payload_hashes_verified": true,
+  "original_raw_records_preserved": true,
+  "new_model_calls": 0,
+  "live_source_modified": false,
+  "gold_votes_splits_modified": false,
+  "next_required_steps": [
+    "Publish corrections through a source-content/identity-aware path, not the existing move/exclude-only applicator.",
+    "Audit the L1 combination record without mutating frozen gold or granting its corrected identity actual-voter status.",
+    "Rebuild identity, deduplication, disjoint, catalog and index dependencies before reusing any old results."
+  ],
+  "files": {
+    "repair_first_records.jsonl": "01ed434b1311845f1232010fe9d252a1b1390613b00c2617d3710fb98478ce65",
+    "pubchem_3220.json": "4f4b1f9d02fe90ec8af0c63755e183379a7ea8cd0f034f972be1b32dbc480954",
+    "pubchem_46946323.json": "33dedc2db41bf7b0902fc5e868efe72e1e5d1e0db8ca22624a9780b25e4f4525",
+    "PMC7845031.xml": "f3f2850a77309b7aade52b0e6eec3fee91ab343ed65577f1b7953d157aeee42c",
+    "PMC12382847.xml": "96398dd539053f7cc1cd29aaf44a52e9dfe1da1f14ee0a248badfc25e403b811"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "LVPSDNIDEVRWNL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVPSDNIDEVRWNL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitrosobisoxopropylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    101679604
+  ]
+}

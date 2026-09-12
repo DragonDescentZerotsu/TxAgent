@@ -1,0 +1,20 @@
+{
+  "parent_key": "GPVGDGBVGWUGAL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPVGDGBVGWUGAL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Cyclohexyl-1-nitrosourea",
+    "877-31-6",
+    "BRN 0910226",
+    "DTXSID80236567",
+    "N-Cyclohexyl-N-nitrosourea",
+    "Nitrosocyclohexylurea",
+    "SCHEMBL1238560",
+    "Urea, 1-cyclohexyl-1-nitroso-",
+    "cyclohexylnitrosourea"
+  ],
+  "http_status": 200,
+  "cids": [
+    160550
+  ]
+}

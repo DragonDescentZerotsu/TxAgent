@@ -1,0 +1,14 @@
+{
+  "parent_key": "ZOWYKNRPVANSSE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS030239768",
+    "Benzenamine,4-arsenoso-",
+    "SCHEMBL246340"
+  ],
+  "cids": [
+    71431066
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZOWYKNRPVANSSE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

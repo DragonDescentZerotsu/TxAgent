@@ -1,0 +1,36 @@
+{
+  "parent_key": "KHABBYNLBYZCKP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-AMINO-4-PIPERIDINECARBOXYLIC ACID",
+    "4-AMINO-4-PIPERIDINECARBOXYLIC ACID USP/EP/BP",
+    "4-Amino-piperidine-4-carboxylic acid",
+    "4-Amino-piperidine-4-carboxylic acid hydrochloride salt",
+    "4-Aminonipecotic Acid",
+    "4-Aminopiperidine-4-carboxylic acid",
+    "4-Aminopiperidine-4-carboxylicAci",
+    "4-Aminopiperidine-4-carboxylicacid",
+    "4-PIPERIDINECARBOXYLIC ACID, 4-AMINO-",
+    "40951-39-1",
+    "AC-24254",
+    "AKOS007930608",
+    "AS-42044",
+    "CS-W020662",
+    "DTXCID20314898",
+    "DTXSID70363851",
+    "EN300-118071",
+    "F225118",
+    "KHABBYNLBYZCKP-UHFFFAOYSA-N",
+    "MFCD01318770",
+    "PB12229",
+    "RefChem:290135",
+    "SCHEMBL180209",
+    "SCHEMBL6333366"
+  ],
+  "cids": [
+    1514306,
+    29414658
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KHABBYNLBYZCKP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

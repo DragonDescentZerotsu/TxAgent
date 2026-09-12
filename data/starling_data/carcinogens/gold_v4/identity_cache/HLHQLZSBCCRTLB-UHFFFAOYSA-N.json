@@ -1,0 +1,16 @@
+{
+  "parent_key": "HLHQLZSBCCRTLB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HLHQLZSBCCRTLB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Benzeneacetic acid,4-chloro-a-(4-chlorophenyl)-a-hydroxy-, ethyl ester",
+    "MFCD00055312",
+    "SCHEMBL1986527",
+    "chloro 2-hydroxy-2,2-diphenyl-acetate",
+    "chloro 2-hydroxy-2,2-diphenylacetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    67237911
+  ]
+}

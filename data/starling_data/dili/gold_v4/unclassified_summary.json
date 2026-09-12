@@ -1,0 +1,6 @@
+{
+  "parent_agreement_rejected": 498,
+  "all_eligible_units_conflicted": 22,
+  "total": 520,
+  "scope": "Identity-eligible binary source claims; nonbinary raw records and unresolved identity/PMID holds are counted separately in summary.json."
+}

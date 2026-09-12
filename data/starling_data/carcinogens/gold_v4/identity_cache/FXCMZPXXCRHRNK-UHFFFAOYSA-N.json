@@ -1,0 +1,19 @@
+{
+  "parent_key": "FXCMZPXXCRHRNK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXCMZPXXCRHRNK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "29343-64-4",
+    "4-hydroxy-2-butenal",
+    "4-hydroxybut-2-eneal",
+    "DB-106836",
+    "DTXSID901365252",
+    "FXCMZPXXCRHRNK-UHFFFAOYSA-N",
+    "SCHEMBL1694037",
+    "SCHEMBL1968528"
+  ],
+  "http_status": 200,
+  "cids": [
+    163325
+  ]
+}

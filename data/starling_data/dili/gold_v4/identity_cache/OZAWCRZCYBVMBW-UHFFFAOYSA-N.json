@@ -1,0 +1,23 @@
+{
+  "parent_key": "OZAWCRZCYBVMBW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Butene, 4,4-dichloro-1,1,2,3,3,4-hexafluoro-",
+    "1-Butene, 4,4-dichlorohexafluoro-",
+    "357-24-4",
+    "4,4-Dichloro-1,1,2,3,3,4-hexafluoro-1-butene #",
+    "4,4-Dichlorohexafluoro-1-butene",
+    "4,4-dichloro-1,1,2,3,3,4-hexafluorobut-1-ene",
+    "DTXCID30293620",
+    "DTXSID70342540",
+    "OZAWCRZCYBVMBW-UHFFFAOYSA-N",
+    "RefChem:228976",
+    "SCHEMBL8851217",
+    "dichlorohexafluorobutene"
+  ],
+  "cids": [
+    582842
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OZAWCRZCYBVMBW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

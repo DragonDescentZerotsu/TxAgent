@@ -1,0 +1,32 @@
+{
+  "parent_key": "DCPDZFRGNJDWPP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DCPDZFRGNJDWPP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,4,4',5,5',6-Octachloro-",
+    "1,1'-Biphenyl, 2,2',3,4,4',5,5',6-octachloro",
+    "1,2,3,4,5-pentachloro-6-(2,4,5-trichlorophenyl)benzene",
+    "2,2',3,4,4',5,5',6-OCTACHLOROBIPHENYL",
+    "2,2',3,4,4',5,5',6-Octachloro-1,1'-biphenyl",
+    "52663-76-0",
+    "DB-052161",
+    "DCPDZFRGNJDWPP-UHFFFAOYSA-N",
+    "DTXCID8041248",
+    "DTXSID7074169",
+    "NS00099807",
+    "PCB 203",
+    "PCB No. 203 10 microg/mL in Isooctane",
+    "PCB No. 203 10 |Ig/mL in Isooctane",
+    "Pcb No. 203",
+    "Q27292048",
+    "RefChem:53457",
+    "SCHEMBL29432665",
+    "SCHEMBL4458352",
+    "UNII-VW6YV64P5U",
+    "VW6YV64P5U"
+  ],
+  "http_status": 200,
+  "cids": [
+    40483
+  ]
+}

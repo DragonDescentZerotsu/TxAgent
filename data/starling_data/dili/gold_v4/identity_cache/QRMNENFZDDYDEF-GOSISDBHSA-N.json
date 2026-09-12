@@ -1,0 +1,38 @@
+{
+  "parent_key": "QRMNENFZDDYDEF-GOSISDBHSA-N",
+  "ok": true,
+  "synonyms": [
+    "154889-68-6",
+    "Benzo(1,2-b:4,3-b')dipyrrole-1-carboxylic Acid, 8-(bromomethyl)-3,6,7,8-tetrahydro-2-methy-4-(((4-methyl-1-piperazinyl)carbonyl)oxy)-6-((5,6,7,-trimethoxy-1H-indol-2-yl)carbonyl)-, Methyl Ester (S)",
+    "Benzo(1,2-b:4,3-b')dipyrrole-1-carboxylic acid, 8-(bromomethyl)-3,6,7,8-tetrahydro-2-methyl-4-(((4-methyl-1-piperazinyl)carbonyl)oxy)-6-((5,6,7-trimethoxy-1H-indol-2-yl)carbonyl)-, methyl ester, (S)-",
+    "CHEMBL36015",
+    "CS-0014876",
+    "DTXSID201351010",
+    "Duocamycin B2 Analog",
+    "HY-19137",
+    "IHK933KCIC",
+    "KW 2189",
+    "KW-2189",
+    "KW2189",
+    "Methyl (S)-8-(bromomethyl)-3,6,7,8-tetrahydro-4-hydroxy-2-methyl-6-((5,6,7-trimethoxyindol-2-yl)carbonyl)benzo(1,2-b:4,3-b')dipyrrole-1-carboxylate, 4-methyl-1-piperazinecarboxylate (ester)",
+    "Methyl(1S)-1-bromomethyl-7-methyl-5-((4-methylpiperazinyl)carbonyloxy)-3-((5,6,7-trimethoxy-2-indolyl)carbonyl)-1,2-dihydro-3H-pyrrolo(3,2-e)indole-8-carboxylate hydrobromide",
+    "NS00124767",
+    "PIBROZELESIN",
+    "PIBROZELESIN [WHO-DD]",
+    "Pibrozelesin [INN]",
+    "Q27280739",
+    "RefChem:174125",
+    "SCHEMBL14499178",
+    "UNII-IHK933KCIC",
+    "methyl (8S)-8-(bromomethyl)-2-methyl-4-(4-methylpiperazine-1-carbonyl)oxy-6-(5,6,7-trimethoxy-1H-indole-2-carbonyl)-7,8-dihydro-3H-pyrrolo[3,2-e]indole-1-carboxylate",
+    "orb1739018",
+    "pibrozelesina",
+    "pibrozelesine",
+    "pibrozelesinum"
+  ],
+  "cids": [
+    132979
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QRMNENFZDDYDEF-GOSISDBHSA-N/synonyms/JSON",
+  "http_status": 200
+}

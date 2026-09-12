@@ -1,0 +1,22 @@
+{
+  "updated_utc": "2026-09-09T01:00:11.550438+00:00",
+  "prior_ok": 0,
+  "counts": {
+    "ok": 52859,
+    "dili:positive": 20695,
+    "carcinogens:negative": 1653,
+    "dili:negative": 2565,
+    "carcinogens:positive": 19691,
+    "carcinogens:mixed": 2552,
+    "dili:mixed": 1357,
+    "carcinogens:out_of_scope": 514,
+    "dili:uncertain": 1456,
+    "carcinogens:uncertain": 2255,
+    "dili:out_of_scope": 121,
+    "error": 1041
+  },
+  "elapsed_s": 2193.3,
+  "workers": 2048,
+  "expected_full_queue": 148079,
+  "smoke_limit": 0
+}

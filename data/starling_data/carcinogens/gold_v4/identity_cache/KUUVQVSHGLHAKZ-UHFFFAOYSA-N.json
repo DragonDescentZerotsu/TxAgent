@@ -1,0 +1,18 @@
+{
+  "parent_key": "KUUVQVSHGLHAKZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KUUVQVSHGLHAKZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2Z,4Z,6Z,8Z)-Thionine",
+    "1-Thia-2,4,6,8-cyclononatetrene",
+    "DB-299297",
+    "DTXSID801045924",
+    "KUUVQVSHGLHAKZ-KZPCVFJPSA-N",
+    "KUUVQVSHGLHAKZ-UHFFFAOYSA-N",
+    "SCHEMBL40554"
+  ],
+  "http_status": 200,
+  "cids": [
+    13287583
+  ]
+}

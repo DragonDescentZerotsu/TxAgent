@@ -1,0 +1,18 @@
+{
+  "parent_key": "PZWXWCLLAAJOBK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PZWXWCLLAAJOBK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Benzyl-1-butyl-2-oxohydrazine #",
+    "40055-48-9",
+    "Benzenemethanamine, N-butyl-N-nitroso-",
+    "N-Butyl-N-nitrosobenzylamine",
+    "N-benzyl-N-butylnitrous amide",
+    "PZWXWCLLAAJOBK-UHFFFAOYSA-N",
+    "SCHEMBL11695902"
+  ],
+  "http_status": 200,
+  "cids": [
+    563226
+  ]
+}

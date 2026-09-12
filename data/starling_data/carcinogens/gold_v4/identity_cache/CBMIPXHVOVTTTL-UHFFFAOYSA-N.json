@@ -1,0 +1,35 @@
+{
+  "parent_key": "CBMIPXHVOVTTTL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CBMIPXHVOVTTTL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16065-91-1",
+    "7XM25QYI14",
+    "AU3+",
+    "Au(3+)",
+    "CBMIPXHVOVTTTL-UHFFFAOYSA-N",
+    "CHEBI:49496",
+    "DTXCID8089452",
+    "DTXSID30166961",
+    "GOLD 3+ ION",
+    "GOLD ION(+3)",
+    "GOLD, ION (AU3+)",
+    "Gold (Au(3+)), ion",
+    "Gold (III)",
+    "Gold (III) ion",
+    "Gold cation (3+)",
+    "Gold(3+), ion",
+    "Gold(III)",
+    "Q27104701",
+    "RefChem:58353",
+    "SCHEMBL29525828",
+    "UNII-7XM25QYI14",
+    "gold(3+)",
+    "gold(3+) ion",
+    "gold(III) cation"
+  ],
+  "http_status": 200,
+  "cids": [
+    105093
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "KDCDRDLFMIISIA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KDCDRDLFMIISIA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-Dimethyl-6-oxoheptanoic acid",
+    "461-11-0",
+    "6-keto-2,2-dimethyl-enanthic acid",
+    "DTXCID20119204",
+    "DTXSID80196713",
+    "Geronic acid",
+    "Heptanoic acid, 2,2-dimethyl-6-oxo-",
+    "RefChem:347249",
+    "SCHEMBL20295009"
+  ],
+  "http_status": 200,
+  "cids": [
+    3083567
+  ]
+}

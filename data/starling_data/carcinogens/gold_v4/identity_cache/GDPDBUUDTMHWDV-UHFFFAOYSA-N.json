@@ -1,0 +1,15 @@
+{
+  "parent_key": "GDPDBUUDTMHWDV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GDPDBUUDTMHWDV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(n-nitrosomethylamino)-1-(3-pyridyl)-1-butanol",
+    "4-(nitrosomethylamino)-1-pyridin-3-ylbutan-1-ol",
+    "SCHEMBL29500227",
+    "SCHEMBL4317220"
+  ],
+  "http_status": 200,
+  "cids": [
+    87650390
+  ]
+}

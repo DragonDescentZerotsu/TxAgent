@@ -1,0 +1,19 @@
+{
+  "parent_key": "DJENHUUHOGXXCB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DJENHUUHOGXXCB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "130223-24-4",
+    "2-BUTYL-6-METHOXYPHENOL",
+    "2-tert-butyl-4-methoxyphenol;3-tert-butyl-4-methoxyphenol",
+    "DTXCID20425453",
+    "DTXSID30474639",
+    "RefChem:369020",
+    "SCHEMBL29365570",
+    "SCHEMBL59746"
+  ],
+  "http_status": 200,
+  "cids": [
+    11954184
+  ]
+}

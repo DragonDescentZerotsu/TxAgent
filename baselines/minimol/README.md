@@ -30,8 +30,14 @@ Freeze the condition vocabulary from outer train; valid/test categories must
 already exist in it. ClinTox has no accepted condition groups and omits this flag.
 Select the epoch by train-only scaffold-CV AUROC, freeze a macro-F1 threshold
 from pooled OOF scores, and fit the final head on all train rows. Outer valid/test
-labels are excluded from both selections. KNN uses unique train molecules only;
-the conditioned comparison retains same-condition-then-null and unrestricted
+labels are excluded from both selections.
+
+For a dataset with a frozen, more conservative scaffold grouping, explicitly
+pass `--scaffold-group-field bemis_murcko_scaffold` to `run_train_cv.py`.
+This uses the aligned outer-train field and records its ordered hash; without
+the flag, the existing RDKit Murcko grouping remains unchanged.
+KNN uses unique train molecules only; the conditioned comparison retains
+same-condition-then-null and unrestricted
 train variants with frozen k=3. Ames valid v2 explicitly uses
 `--condition-policy same_condition_then_null_then_all`: keep same-condition
 neighbors, then unannotated-condition neighbors, and fill any remaining slots
@@ -70,3 +76,13 @@ protocol, results, diagnostics, and artifact locations are in
 This reproduction uses a different external release, task definitions, and
 splits. Its Table 2 metrics must not be added to the current TxAgent Starling
 benchmark ledger or canonical figures.
+
+### Unseen evaluation conditions in source ablations
+
+The head runner supports explicit `--unseen-condition-policy zero` when an
+ablation removes a training source and its condition categories. The vocabulary
+still comes only from training rows; unseen evaluation conditions append zeros
+without creating a fitted category or using evaluation labels. The checkpoint
+records this policy. The default remains `error`. DILI/Carcinogens Starling-only
+training results and split-preservation receipts are registered separately from
+the mixed-training baselines in `current_conditioned_results.json`.

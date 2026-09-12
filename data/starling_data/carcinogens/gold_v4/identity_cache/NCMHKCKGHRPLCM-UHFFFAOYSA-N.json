@@ -1,0 +1,30 @@
+{
+  "parent_key": "NCMHKCKGHRPLCM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCMHKCKGHRPLCM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "18459-37-5",
+    "CESIUM ION(1+)",
+    "CHEBI:49547",
+    "Cesium (I) ion",
+    "Cesium, ion (Cs1+)",
+    "Cs(+)",
+    "Cs+",
+    "DTXSID601318357",
+    "LCC4BG14DM",
+    "Q27104703",
+    "RefChem:54753",
+    "SCHEMBL29842321",
+    "UNII-LCC4BG14DM",
+    "caesium(1+)",
+    "cesium cation",
+    "cesium ion",
+    "cesium(1+)",
+    "cesium(I)"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Red (90%), Request Time status: Green (18%), Service status: Red (83%)",
+  "cids": [
+    104967
+  ]
+}

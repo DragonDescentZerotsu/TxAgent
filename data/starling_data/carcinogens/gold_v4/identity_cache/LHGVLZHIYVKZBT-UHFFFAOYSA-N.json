@@ -1,0 +1,25 @@
+{
+  "parent_key": "LHGVLZHIYVKZBT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LHGVLZHIYVKZBT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Furanol, tetrahydro-5-(3-pyridinyl)-",
+    "5-(3-Pyridyl))-2-hydroxytetrahydrofuran (lactol)",
+    "5-(3-Pyridyl)-2-hydroxytetrahydrofuran",
+    "5-(PYRIDIN-3-YL)OXOLAN-2-OL",
+    "5-pyridin-3-yloxolan-2-ol",
+    "53798-73-5",
+    "C19578",
+    "CHEBI:82572",
+    "CHEMBL279109",
+    "DTXSID30968583",
+    "NS00115043",
+    "Q27156086",
+    "RefChem:1048739",
+    "Tetrahydro-5-(3-pyridinyl)-2-furanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    179630
+  ]
+}

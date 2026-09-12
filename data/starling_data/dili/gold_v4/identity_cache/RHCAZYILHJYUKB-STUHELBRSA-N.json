@@ -1,0 +1,12 @@
+{
+  "parent_key": "RHCAZYILHJYUKB-STUHELBRSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL38256"
+  ],
+  "cids": [
+    22794253
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RHCAZYILHJYUKB-STUHELBRSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,36 @@
+{
+  "parent_key": "QVGXLLKOCUKJST-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "17778-80-2",
+    "29407-84-9",
+    "Atomic oxygen",
+    "CHEBI:29194",
+    "DTXCID6092869",
+    "DTXSID00170378",
+    "Dioxygen, Singlet",
+    "Element Oxygen",
+    "Element-O",
+    "Element:O",
+    "Element:Oxygen",
+    "Monooxygen",
+    "O (element)",
+    "O(2.)",
+    "Oxygen (atomic)",
+    "Oxygen (element)",
+    "Oxygen element",
+    "Oxygen(sup 3P)",
+    "Oxygen, Singlet",
+    "Oxygen, atomic",
+    "Photooxygen",
+    "RefChem:916454",
+    "Singlet oxygen",
+    "monooxygen(2.) (triplet)",
+    "oxidanediyl"
+  ],
+  "cids": [
+    159832
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QVGXLLKOCUKJST-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "NLBPDQSZAUCGRJ-OWOJBTEDSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL450966",
+    "SCHEMBL28392399"
+  ],
+  "cids": [
+    42632396
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NLBPDQSZAUCGRJ-OWOJBTEDSA-N/synonyms/JSON",
+  "http_status": 200
+}

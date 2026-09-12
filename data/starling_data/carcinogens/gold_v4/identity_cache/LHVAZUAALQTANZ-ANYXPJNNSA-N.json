@@ -1,0 +1,29 @@
+{
+  "parent_key": "LHVAZUAALQTANZ-ANYXPJNNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LHVAZUAALQTANZ-ANYXPJNNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1R,4R,5R,6R,16R)-5,6-dihydroxy-4,5,6-trimethyl-13-oxido-2,8-dioxa-13-azoniatricyclo[8.5.1.013,16]hexadec-10-ene-3,7-dione",
+    "(3R,4R,5R,13aR)-4,5-Dihydroxy-3,4,5-trimethyl-11-oxo-4,5,8,10,12,13,13a,13b-octahydro-2H,11H-11lambda~5~-[1,6]dioxacycloundecino[2,3,4-gh]pyrrolizine-2,6(3H)-dione",
+    "14,19-Dihydro-12,13-dihydroxy-20-norcrotalanan-11,15-dione 4-oxide (13-alpha,14-alpha)-",
+    "20-NORCROTALANAN-11,15-DIONE, 14,19-DIHYDRO-12,13-DIHYDROXY-, 4-OXIDE, (13ALPHA,14ALPHA)-",
+    "20-Norcrotalanan-11,15-dione, 14,19-dihydro-12,13-dihydroxy-, 4-oxide, (13-alpha,14-alpha)-",
+    "20-Norcrotalanan-11,15-dione, 14,19-dihydro-12,13-dihydroxy-, 4-oxide, (13.alpha.,14.alpha.)-",
+    "2H-(1,6)DIOXACYCLOUNDECINO(2,3,4-GH)PYRROLIZINE-2,6(3H)-DIONE, 4,5,8,10,12,13,13A,13B-OCTAHYDRO-4,5-DIHYDROXY-3,4,5-TRIMETHYL-, 11-OXIDE, (3R,4S,5S,13AR,13BR)-",
+    "2LCP0RBK6G",
+    "35337-98-5",
+    "CHEMBL469442",
+    "DTXSID70956767",
+    "Monocrotaline N-oxide",
+    "Monocrotaline oxide",
+    "Monocrotaline, N-oxide",
+    "NS00066966",
+    "Q27896174",
+    "RefChem:159549",
+    "UNII-2LCP0RBK6G"
+  ],
+  "http_status": 200,
+  "cids": [
+    21586627
+  ]
+}

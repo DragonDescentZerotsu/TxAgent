@@ -1,0 +1,31 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "raw_acquisition": "data/starling_data/dili/raw_v1",
+  "records": {
+    "path": "data/starling_data/dili/retrieval_final/source/records.parquet",
+    "sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+    "rows": 1645109
+  },
+  "raw_records_deleted": 0,
+  "gold": {
+    "root": "data/starling_data/dili/gold_v4",
+    "version": "gold_v4",
+    "tdc_labels_used": false,
+    "sha256": {
+      "source_votes.jsonl": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1",
+      "gold_labels.jsonl": "21b4631a0bf77d417a2a7f0c6023ea890f3d7d4035b2f391792ff1823217e9b7",
+      "gold_label_provenance.jsonl": "8151ac3d6c5b6de3fa0fd8ade8525ec6faeead5ba48e2c774ac93ad28ce4e4e9"
+    }
+  },
+  "benchmark_root": "data/conditioned_benchmark/DILI",
+  "progressive_retrieval": {
+    "root": "data/starling_data/dili/retrieval_final",
+    "heldout_prefilter_levels": [
+      1
+    ],
+    "identity_contract": "new_task_tautomer_identity.v2",
+    "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json"
+  },
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json",
+  "review_status": "bounded_cleaning_cycle_closed; unresolved candidates remain explicitly pending"
+}

@@ -13,7 +13,8 @@ not a second semantic classification.
   the suffix, containing ordinary Parquet parts when the ledger exceeds 90 MB) contains every current
   `retrieval_eligible=True` source record whose purity-overlay `group_id` maps
   to a current progressive level. This is the static, pre-split level ledger.
-- `<split>/indexed_representative_cards.parquet` contains compact references to
+- `<split>/indexed_representative_cards.parquet` (or a directory of parts above
+  90 MB) contains compact references to
   the exact record cards materialized in that split's frozen assay-molecule
   index after direct heldout filtering. The index keeps at most three cards per
   assay×molecule; card text stays normalized in the source ledger rather than

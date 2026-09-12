@@ -1,0 +1,12 @@
+{
+  "parent_key": "LIMWVHCBQUQEKK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LIMWVHCBQUQEKK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitrosoallyl-2-hydroxypropylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    129680649
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "parent_key": "FRQPPPXNFJANBD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FRQPPPXNFJANBD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "138608-88-5",
+    "2-((2-chlorophenyl)amino)acetamide",
+    "AKOS000254064",
+    "CS-0293038",
+    "SCHEMBL6314444",
+    "Z104528166"
+  ],
+  "http_status": 200,
+  "cids": [
+    15095052
+  ]
+}

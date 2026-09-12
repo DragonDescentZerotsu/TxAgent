@@ -1,0 +1,17 @@
+{
+  "parent_key": "NBGAYCYFNGPNPV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NBGAYCYFNGPNPV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-aminooxybenzoic acid",
+    "28088-64-4",
+    "NBGAYCYFNGPNPV-UHFFFAOYSA-N",
+    "SCHEMBL104479",
+    "SCHEMBL29352508"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Red (85%), Request Time status: Green (26%), Service status: Yellow (70%)",
+  "cids": [
+    16051978
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "FJSRPVWDOJSWBX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FJSRPVWDOJSWBX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1, 1-Bis(p-chlorophenyl)-2,2,2-trifluoroethane",
+    "1,1'-(2,2,2-Trifluoroethane-1,1-diyl)bis(4-chlorobenzene)",
+    "1,1'-(2,2,2-Trifluoroethylidene)bis[4-chlorobenzene]",
+    "1,1-Bis(p-chlorophenyl)-2,2,2-trifluoroethane",
+    "1,2,2-trifluoroethane",
+    "1-Chloro-4-[1-(4-chlorophenyl)-2,2,2-trifluoroethyl]benzene",
+    "1-Chloro-4-[1-(4-chlorophenyl)-2,2,2-trifluoroethyl]benzene #",
+    "2,2-bis-(p-chlorophenyl)-1,1,1-trifluoroethane",
+    "361-07-9",
+    "Benzene, 1,1'-(2,2,2-trifluoroethylidene)bis(4-chloro-",
+    "Benzene, 1,1'-(2,2,2-trifluoroethylidene)bis(4-chloro- (9CI)",
+    "Benzene, 1,1'-(2,2,2-trifluoroethylidene)bis*4-chloro-",
+    "Benzene, 1,1'-(2,2,2-trifluoroethylidene)bis[4-chloro-",
+    "Benzene,1'-(2,2,2-trifluoroethylidene)bis[4-chloro-",
+    "DS-008130",
+    "DTXSID50189677",
+    "Ethane, 2,2-bis(p-chlorophenyl)-1,1,1-trifluoro-",
+    "Ethane,2-bis(p-chlorophenyl)-1,1,1-trifluoro-",
+    "HWS9C43FFR",
+    "NSC 527830",
+    "NSC-527830",
+    "NSC527830",
+    "SCHEMBL11216942"
+  ],
+  "http_status": 200,
+  "cids": [
+    67761
+  ]
+}

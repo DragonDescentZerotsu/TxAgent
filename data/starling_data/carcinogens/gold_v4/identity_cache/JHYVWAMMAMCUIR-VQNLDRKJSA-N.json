@@ -1,0 +1,28 @@
+{
+  "parent_key": "JHYVWAMMAMCUIR-VQNLDRKJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JHYVWAMMAMCUIR-VQNLDRKJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4S)-2-((1S)-1-Hydroxy-1-((4R)-2-((R)-2-(2-hydroxyphenyl)-4,5-dihydrothiazol-4-yl)thiazolidin-4-yl)-2-methylpropan-2-yl)-4-methyl-4,5-dihydrothiazole-4-carboxylic acid",
+    "(4S)-2-((1S)-1-hydroxy-1-((4R)-2-((4R)-2-(2-hydroxyphenyl)-4,5-dihydro-1,3-thiazol-4-yl)-1,3-thiazolidin-4-yl)-2-methylpropan-2-yl)-4-methyl-5H-1,3-thiazole-4-carboxylic acid",
+    "(4S)-2-((2S)-2-hydroxy-1,1-dimethyl-2-((4R)-2-((2E,4R)-2-(6-oxocyclohexa-2,4-dien-1-ylidene)thiazolidin-4-yl)thiazolidin-4-yl)ethyl)-4-methyl-5H-thiazole-4-carboxylic acid",
+    "(4S)-2-[(1S)-1-hydroxy-1-[(4R)-2-[(4R)-2-(2-hydroxyphenyl)-4,5-dihydro-1,3-thiazol-4-yl]-1,3-thiazolidin-4-yl]-2-methylpropan-2-yl]-4-methyl-5H-1,3-thiazole-4-carboxylic acid",
+    "(4S)-2-[(1S)-1-hydroxy-1-{(4R)-2-[(4R)-2-(2-hydroxyphenyl)-4,5-dihydro-1,3-thiazol-4-yl]-1,3-thiazolidin-4-yl}-2-methylpropan-2-yl]-4-methyl-4,5-dihydro-1,3-thiazole-4-carboxylic acid",
+    "(4S)-2-[(2S)-2-hydroxy-1,1-dimethyl-2-[(4R)-2-[(2E,4R)-2-(6-oxocyclohexa-2,4-dien-1-ylidene)thiazolidin-4-yl]thiazolidin-4-yl]ethyl]-4-methyl-5H-thiazole-4-carboxylic acid",
+    "152166-40-0",
+    "AC1NUWEN",
+    "C12038",
+    "CHEBI:29707",
+    "CHEMBL1221692",
+    "DTXCID601514941",
+    "DTXSID501029725",
+    "Q8052674",
+    "RefChem:195630",
+    "SCHEMBL29364115",
+    "Yersiniabactin"
+  ],
+  "http_status": 200,
+  "cids": [
+    443589
+  ]
+}

@@ -1,4 +1,6 @@
 import torch
+import json
+import pytest
 
 from pathlib import Path
 from types import SimpleNamespace
@@ -16,7 +18,31 @@ from baselines.minimol.run_train_cv import (
     calibrate_oof_threshold,
     make_scaffold_folds,
     select_epoch,
+    scaffold_groups,
+    training_scaffold_groups,
 )
+
+
+def test_frozen_training_scaffold_groups_preserve_dataset_and_empty_groups(tmp_path):
+    path = tmp_path / "train.jsonl"
+    rows = [
+        {"drug": "CCO", "Y": 0, "bemis_murcko_scaffold": ""},
+        {"drug": "CCC", "Y": 1, "bemis_murcko_scaffold": ""},
+        {"drug": "c1ccccc1", "Y": 0, "bemis_murcko_scaffold": "conservative_group"},
+        {"drug": "C1CCCCC1", "Y": 1, "bemis_murcko_scaffold": "conservative_group"},
+    ]
+    path.write_text("".join(json.dumps(row) + "\n" for row in rows))
+    smiles = [row["drug"] for row in rows]
+    labels = [row["Y"] for row in rows]
+    groups = training_scaffold_groups(path, smiles, labels, field="bemis_murcko_scaffold")
+    assert groups == ["", "", "conservative_group", "conservative_group"]
+    for train, valid in make_scaffold_folds(labels, groups, n_folds=2, seed=1):
+        assert not {groups[i] for i in train} & {groups[i] for i in valid}
+    assert training_scaffold_groups(path, smiles, labels) == scaffold_groups(smiles)
+    with pytest.raises(ValueError, match="Missing or invalid"):
+        training_scaffold_groups(path, smiles, labels, field="absent")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        training_scaffold_groups(path, list(reversed(smiles)), labels, field="bemis_murcko_scaffold")
 
 
 def test_reusable_embeddings_are_indexed_by_exact_smiles(tmp_path):

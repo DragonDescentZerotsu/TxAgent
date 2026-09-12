@@ -1,0 +1,12 @@
+{
+  "parent_key": "CSORRSRFUOQGCX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CSORRSRFUOQGCX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL18189690"
+  ],
+  "http_status": 200,
+  "cids": [
+    149957694
+  ]
+}

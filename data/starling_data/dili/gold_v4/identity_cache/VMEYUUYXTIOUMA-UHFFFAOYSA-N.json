@@ -1,0 +1,12 @@
+{
+  "parent_key": "VMEYUUYXTIOUMA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS013801599"
+  ],
+  "cids": [
+    64477686
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VMEYUUYXTIOUMA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

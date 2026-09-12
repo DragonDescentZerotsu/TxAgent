@@ -1,0 +1,22 @@
+{
+  "parent_key": "HTUPGSGHOGPTAF-VKHMYHEASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HTUPGSGHOGPTAF-VKHMYHEASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2R)-2-amino-3-(2,2-dichloroethenylsulfanyl)propanoic acid",
+    "3-[(2,2-Dichlorovinyl)thio]-L-alanine",
+    "3326-09-8",
+    "Alanine, 3-((2,2-dichlorovinyl)thio)-, L-",
+    "DB-262027",
+    "DTXSID30954901",
+    "S-(2,2-Dichloroethen-1-yl)-L-cysteine",
+    "S-(2,2-Dichloroethenyl)cysteine",
+    "S-(2,2-Dichlorovinyl)-L-cysteine",
+    "S-dichloro-vinyl-l-cysteine",
+    "SCHEMBL7730058"
+  ],
+  "http_status": 200,
+  "cids": [
+    165104
+  ]
+}

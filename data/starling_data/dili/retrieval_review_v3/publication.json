@@ -1,0 +1,454 @@
+{
+  "status": "passed",
+  "release": "data/starling_data/dili/retrieval_review_v3",
+  "source_review": "data/starling_data/dili/retrieval_review_v3/content_repairs.json",
+  "record_counts": {
+    "status": "passed",
+    "task": "dili",
+    "source_records_sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16",
+    "records_sha256": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe",
+    "records_changed": 11,
+    "source_rows": 1645109,
+    "source_rows_deleted": 0,
+    "level_counts": {
+      "0": 258520,
+      "1": 108436,
+      "2": 166492,
+      "3": 141951,
+      "4": 76080,
+      "5": 294034,
+      "6": 196577,
+      "7": 403019
+    },
+    "changes": [
+      {
+        "source_row_uid": "sr_3e62e0aa73804ed7a2f5c0f9acf399c3",
+        "previous_level": 1,
+        "level": 0,
+        "reason": "Subject repaired as fixed_combination; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+        "direct_signal": true
+      },
+      {
+        "source_row_uid": "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91",
+        "previous_level": 0,
+        "level": 2,
+        "reason": "Repaired emodin identity and human-evidence-gap scope; preserve bounded evidence as L2 nonvoter.",
+        "direct_signal": true
+      },
+      {
+        "source_row_uid": "sr_b001c22b5fce4e4f9d2e7fcf329a047e",
+        "previous_level": 4,
+        "level": 3,
+        "reason": "Post-thaw hepatocyte monolayer attachment/morphology score is L3 cell recovery, not a bile/canalicular measurement.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_e524ceac2675463a8d557696bfb87350",
+        "previous_level": 4,
+        "level": 3,
+        "reason": "General hepatocyte ultrastructure preservation percentage is L3 recovery; retain protective treatment and rat microbead context.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_29ff4e55218249d3a20c490b1170219e",
+        "previous_level": 4,
+        "level": 3,
+        "reason": "The focal readout is abolished apoptosis and restored generic morphology under ethanol challenge. Canaliculi are ancillary culture-function markers; retain protective role in L3. The separate explicit canalicular-preservation card remains L4.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_5e44cda3da08417bbdf2dca93b7b1d4a",
+        "previous_level": 3,
+        "level": 0,
+        "reason": "Repaired Q39 identity; generic hepatoma anticancer efficacy without hepatic safety/ADMET outcome is outside DILI source scope.",
+        "direct_signal": true
+      },
+      {
+        "source_row_uid": "sr_9fa47648e3fe4ec1b4660b8abf2e4e5c",
+        "previous_level": 5,
+        "level": 0,
+        "reason": "Q39 identity repaired; K562 anticancer mitochondrial assay lacks a hepatic safety endpoint. Preserve corrected source, outside DILI retrieval scope.",
+        "direct_signal": true
+      },
+      {
+        "source_row_uid": "sr_349b2fb9de25463288a41f23bd5d26e9",
+        "previous_level": 5,
+        "level": 0,
+        "reason": "Subject repaired as organelle_delivery_material; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_a2af8276f5c240e3924b907349cc98c4",
+        "previous_level": 5,
+        "level": 0,
+        "reason": "Repaired mitochondrial-delivery material subject; ATP result belongs to the composite intervention, not the bound small molecule.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_26cf5e7d73964732b1ec8143fc431ee2",
+        "previous_level": 5,
+        "level": 0,
+        "reason": "Subject repaired as organelle_delivery_material; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+        "direct_signal": false
+      },
+      {
+        "source_row_uid": "sr_c69419fe6e6b4f2d9eb14467803c5eac",
+        "previous_level": 5,
+        "level": 5,
+        "reason": "Repair modifier versus challenge attribution and dose; retain explicitly bounded mitochondrial mechanism evidence.",
+        "direct_signal": false
+      }
+    ],
+    "raw_acquisition_and_frozen_vote_membership_unchanged": true,
+    "gold_labels_modified": false,
+    "ledger_sha256": "519ba82b46a867157cb281858d0ee14877ddf68bca26f0c4a5f99fb33a851e87"
+  },
+  "identity_evidence": "data/starling_data/dili/retrieval_review_v3/repair_first_validation.json",
+  "identity_validation": {
+    "scaffold": {
+      "status": "passed",
+      "task": "dili",
+      "scheme": "scaffold",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "manifest_sha256": "fb82df5da4143b75f29b7f7226189b7711b5e1e30d6a48abd49cd1e11d381c60",
+      "artifacts": {
+        "assay_neighbor_index.pkl": "5c2957af0b8b2c537a53e7cf04d7915a8878cd57fc3677c1be44b5274eb42b74",
+        "assay_molecule_evidence.jsonl": "4858fa0299cf6fa729ca57f643411c6cb59545b2cfa996e51b7348ec1ad74de0"
+      },
+      "molecule_identities_checked_against_pinned_unique_cache": 31844,
+      "exact_specimen_hold_source_records_excluded": 48855,
+      "all_indexed_groups_checked": 918935,
+      "cards_by_level": {
+        "3": 127941,
+        "5": 262428,
+        "7": 381751,
+        "1": 13627,
+        "2": 103942,
+        "6": 186052,
+        "4": 72282
+      },
+      "heldout_leakage_groups": 501,
+      "excluded_direct_source_records": 24715,
+      "retained_direct_records_by_level": {
+        "1": 83721,
+        "2": 166492
+      },
+      "heldout_prefilter_levels": [
+        1
+      ],
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 11637,
+      "heldout_l2_source_records_retained": 22660,
+      "query_smoke": [
+        {
+          "molecule_identity_key": "ASOADIZOVZTJSR-UHFFFAOYSA-N",
+          "Y": 0,
+          "heldout_l2_query_identity_decisions": {
+            "allowed_other_heldout_analog": 485,
+            "excluded": 1
+          },
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 2,
+              "cumulative_cards": 28,
+              "active_cards": 8
+            },
+            {
+              "level": 2,
+              "neighbors": 3,
+              "cumulative_cards": 125,
+              "active_cards": 13
+            },
+            {
+              "level": 3,
+              "neighbors": 3,
+              "cumulative_cards": 176,
+              "active_cards": 15
+            },
+            {
+              "level": 4,
+              "neighbors": 3,
+              "cumulative_cards": 195,
+              "active_cards": 17
+            },
+            {
+              "level": 5,
+              "neighbors": 3,
+              "cumulative_cards": 344,
+              "active_cards": 19
+            },
+            {
+              "level": 6,
+              "neighbors": 3,
+              "cumulative_cards": 361,
+              "active_cards": 21
+            },
+            {
+              "level": 7,
+              "neighbors": 3,
+              "cumulative_cards": 396,
+              "active_cards": 23
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "AAKJLRGGTJKAMG-UHFFFAOYSA-N",
+          "Y": 1,
+          "heldout_l2_query_identity_decisions": {
+            "allowed_other_heldout_analog": 485,
+            "excluded": 1
+          },
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 5,
+              "cumulative_cards": 32,
+              "active_cards": 14
+            },
+            {
+              "level": 2,
+              "neighbors": 7,
+              "cumulative_cards": 109,
+              "active_cards": 23
+            },
+            {
+              "level": 3,
+              "neighbors": 17,
+              "cumulative_cards": 204,
+              "active_cards": 32
+            },
+            {
+              "level": 4,
+              "neighbors": 18,
+              "cumulative_cards": 221,
+              "active_cards": 39
+            },
+            {
+              "level": 5,
+              "neighbors": 22,
+              "cumulative_cards": 404,
+              "active_cards": 51
+            },
+            {
+              "level": 6,
+              "neighbors": 23,
+              "cumulative_cards": 438,
+              "active_cards": 57
+            },
+            {
+              "level": 7,
+              "neighbors": 23,
+              "cumulative_cards": 537,
+              "active_cards": 63
+            }
+          ]
+        }
+      ]
+    },
+    "random": {
+      "status": "passed",
+      "task": "dili",
+      "scheme": "random",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "manifest_sha256": "5d770f91602ece852b1a5849db538c0bfc706a179b8a51ddc9ef01eacf0bd5de",
+      "artifacts": {
+        "assay_neighbor_index.pkl": "686b1aae5581069522cae65c56203394090bf1245254a7d25dde9693c26a6ef0",
+        "assay_molecule_evidence.jsonl": "04beea294229107825bdeb5bf3d5515c64d04f0d847888a37191d615c5ca6e61"
+      },
+      "molecule_identities_checked_against_pinned_unique_cache": 31860,
+      "exact_specimen_hold_source_records_excluded": 48855,
+      "all_indexed_groups_checked": 918759,
+      "cards_by_level": {
+        "3": 127941,
+        "5": 262428,
+        "7": 381752,
+        "1": 12917,
+        "2": 104210,
+        "6": 186052,
+        "4": 72282
+      },
+      "heldout_leakage_groups": 501,
+      "excluded_direct_source_records": 39170,
+      "retained_direct_records_by_level": {
+        "1": 69266,
+        "2": 166492
+      },
+      "heldout_prefilter_levels": [
+        1
+      ],
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 19241,
+      "heldout_l2_source_records_retained": 39972,
+      "query_smoke": [
+        {
+          "molecule_identity_key": "ASXBYYWOLISCLQ-HZYVHMACSA-N",
+          "Y": 0,
+          "heldout_l2_query_identity_decisions": {
+            "allowed_other_heldout_analog": 527,
+            "excluded": 1
+          },
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 4,
+              "cumulative_cards": 21,
+              "active_cards": 7
+            },
+            {
+              "level": 2,
+              "neighbors": 14,
+              "cumulative_cards": 108,
+              "active_cards": 15
+            },
+            {
+              "level": 3,
+              "neighbors": 15,
+              "cumulative_cards": 162,
+              "active_cards": 26
+            },
+            {
+              "level": 4,
+              "neighbors": 15,
+              "cumulative_cards": 190,
+              "active_cards": 32
+            },
+            {
+              "level": 5,
+              "neighbors": 18,
+              "cumulative_cards": 299,
+              "active_cards": 42
+            },
+            {
+              "level": 6,
+              "neighbors": 20,
+              "cumulative_cards": 446,
+              "active_cards": 54
+            },
+            {
+              "level": 7,
+              "neighbors": 23,
+              "cumulative_cards": 660,
+              "active_cards": 66
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "ACSIXWWBWUQEHA-UHFFFAOYSA-N",
+          "Y": 1,
+          "heldout_l2_query_identity_decisions": {
+            "allowed_other_heldout_analog": 526,
+            "excluded": 2
+          },
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 2,
+              "cumulative_cards": 2,
+              "active_cards": 2
+            },
+            {
+              "level": 2,
+              "neighbors": 4,
+              "cumulative_cards": 8,
+              "active_cards": 6
+            },
+            {
+              "level": 3,
+              "neighbors": 7,
+              "cumulative_cards": 21,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 8,
+              "cumulative_cards": 23,
+              "active_cards": 16
+            },
+            {
+              "level": 5,
+              "neighbors": 12,
+              "cumulative_cards": 52,
+              "active_cards": 27
+            },
+            {
+              "level": 6,
+              "neighbors": 13,
+              "cumulative_cards": 99,
+              "active_cards": 33
+            },
+            {
+              "level": 7,
+              "neighbors": 15,
+              "cumulative_cards": 169,
+              "active_cards": 43
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "card_link_validation": {
+    "n_unique_source_card_keys": 1386584,
+    "n_indexed_cards_checked": 2295605,
+    "n_missing_source_card_keys": 0
+  },
+  "frozen_files_verified_unchanged": 27,
+  "unrelated_task_entries_unchanged": {
+    "retrieval_contract": {
+      "bbb_martins": true,
+      "bioavailability_ma": true,
+      "skin_reaction": true,
+      "ames": true,
+      "carcinogens": true
+    },
+    "records_manifest": {
+      "bbb_martins": true,
+      "bioavailability_ma": true,
+      "skin_reaction": true,
+      "ames": true,
+      "carcinogens": true
+    },
+    "tables_manifest": {
+      "bbb_martins": true,
+      "bioavailability_ma": true,
+      "skin_reaction": true,
+      "ames": true,
+      "carcinogens": true
+    }
+  },
+  "n_model_calls": 0,
+  "gold_changed": false,
+  "scientific_reasoning_settings_changed": false,
+  "focused_tests": "see tests.log",
+  "current_contract": {
+    "canonical_records_sha256": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe",
+    "overlay_is_canonical": true,
+    "overlay_records_sha256": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe",
+    "source_records": "data/starling_data/dili/retrieval_review_v3/source/records.parquet",
+    "catalog": "family_catalogs/dili",
+    "catalog_config": "STARLING",
+    "catalog_sha256": "450fd44020d16030ea4d49c45cddac14f9ae1e5d8acf3d9a876f6ebd98a34dfe",
+    "direct_group": "Group.dili_actual_voter",
+    "filter_scope_field": "group_id",
+    "filter_scope_value": "Group.dili_actual_voter",
+    "identity_contract": "new_task_tautomer_identity.v2",
+    "indices": {
+      "scaffold": {
+        "path": "indices/dili/scaffold",
+        "index_sha256": "5c2957af0b8b2c537a53e7cf04d7915a8878cd57fc3677c1be44b5274eb42b74",
+        "evidence_sha256": "4858fa0299cf6fa729ca57f643411c6cb59545b2cfa996e51b7348ec1ad74de0"
+      },
+      "random": {
+        "path": "indices/dili/random",
+        "index_sha256": "686b1aae5581069522cae65c56203394090bf1245254a7d25dde9693c26a6ef0",
+        "evidence_sha256": "04beea294229107825bdeb5bf3d5515c64d04f0d847888a37191d615c5ca6e61"
+      }
+    },
+    "source_review": "data/starling_data/dili/retrieval_review_v3/content_repairs.json"
+  },
+  "agent_metrics_status": "pre_v2_retrieval_reference; affected inputs require replay or exact selected-surface audit",
+  "current_agent_metrics_status": "complete_verified_targeted_replay",
+  "replay_validation": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/completion_validation.json",
+  "replay_results": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/paired_performance.json"
+}

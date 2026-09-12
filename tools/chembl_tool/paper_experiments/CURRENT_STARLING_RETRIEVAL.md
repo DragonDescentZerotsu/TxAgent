@@ -1,8 +1,8 @@
 # Current Starling retrieval and collaborator data
 
-更新时间：2026-09-07。
+更新时间：2026-09-12。
 
-本页是 BBB、Bioavailability、Skin 和 Ames progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
+本页是 BBB、Bioavailability、Skin、Ames、DILI 和 Carcinogens progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
 验证和分享每个 level 的 records。日常复现不需要另一个 TxAgent checkout，也不需要在旧的 `v1`、`v2`、
 `v5` 或 `v6` 目录中选择输入。
 
@@ -31,7 +31,7 @@ artifacts/chembl_tool/starling/current_records/manifest.json
 tools/chembl_tool/paper_experiments/current_starling_retrieval.json
 ```
 
-第一个清单保存四个 task 当前唯一 canonical snapshots 的压缩分片、完整 inventory 和 SHA-256。第二个清单
+第一个清单保存六个 task 当前唯一 canonical snapshots 的压缩分片、完整 inventory 和 SHA-256。第二个清单
 固定 overlay、catalog、scaffold/random index 的路径、参数和 SHA-256。大型 records 恢复到被 Git 忽略的：
 
 ```text
@@ -66,10 +66,22 @@ Parquet 文件，不需要解压，也不需要安装 Git LFS。
   verify
 ```
 
-`build` 重建原三项 overlays，直接采用 Ames 已审核的 canonical snapshot，构建四个 catalogs 和八个 split indices，然后执行 hash gate。也可单独运行
+`build` 重建原三项 overlays，直接采用 Ames、DILI 和 Carcinogens 已审核的 canonical snapshots，构建六个 catalogs 和十二个 split indices，然后执行 hash gate。也可单独运行
 `build-overlays`、`build-catalogs` 或 `build-indices`。clean-room 检查可通过
+`--tasks dili carcinogens` 仅处理指定任务；使用
 `--output-root /local/tmp/<name>` 避免覆盖正式资源。若已恢复的 Stage-03 目录存在但 hash 不符，程序默认拒绝
 覆盖；确认该目录可替换后使用 `restore-records --force`。
+
+DILI 和 Carcinogens 的最终 reviewed snapshots 均为 `data/starling_data/<task>/retrieval_final/source/`。
+DILI 纳入已完成 v5 的修复；Carcinogens 把 R18 的全部已修改卡片固化到源行。
+`publication.json` 记录最终 source/catalog/scaffold/random 校验；旧实验仍绑定其实际输入。
+恢复包同时还原超过 Git 单文件限额的 gold/audit JSONL，保持原始路径与字节哈希。
+
+DILI/Carcinogens 同样采用 `overlay_is_canonical=true`，冻结全量 reviewed records，
+并打包 actual-voter ledger、record audit 和 unique-SMILES identity cache。统一导出将
+`level_assignment_reason` 映射到公共 `source_family_purity_reason`；缺失 pre-overlay group
+保持 null，不编造源分类。raw JSON 和永久 UID 不变。gold、TDC 和 split 合同见
+[NEW_TASK_SOURCE_DATA.md](../common/starling/NEW_TASK_SOURCE_DATA.md)。
 
 ## What is frozen and what changed
 
@@ -128,12 +140,22 @@ record 的 level。同一个 physical assay 可含多个不同 family 的 record
 | Skin | 42,435 | 12,522 | 12,010 | - | - | - |
 | Ames | 3,333 | 138,571 | 236,309 | 496,880 | 424,491 | - |
 
+DILI/Carcinogens 的七层 pre-split membership 为：
+
+| task | L1 | L2 | L3 | L4 | L5 | L6 | L7 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| DILI | 108,436 | 166,498 | 141,940 | 75,971 | 294,048 | 196,583 | 402,992 |
+| Carcinogens | 89,617 | 405,813 | 750,569 | 650,547 | 749,469 | 218,187 | 286,938 |
+
 这些不是某个 query 最终看到的卡片数。
 
 ### 2. Split-specific indexed representative cards
 
 构建 scaffold/random index 时，按各 task 的冻结 scope 删除 valid+test heldout parents 的 outcome records：
-BBB/Bioavailability/Skin 删除 direct family；Ames 删除 `heldout_filter_scope=bacterial_outcome` 的全部 L1/L2。
+BBB/Bioavailability/Skin 删除 direct family；Ames 删除 `heldout_filter_scope=bacterial_outcome` 的全部 L1/L2；
+DILI gold_v4 只删除 `group_id=Group.dili_actual_voter` 的 L1；Carcinogens gold_v4 只删除
+`group_id=Group.carcinogenicity_direct` 的 L1。两者都保留 L2，并使用冻结 tautomer identity cache，
+所有层在 query-time 应用 scaffold/parent disjoint。
 其余机制 records 仍可保留。随后按 physical assay×molecule 聚合，每组最多
 确定性保留 3 张 representative record cards。`support_text` 完整保留，`max_support_text_chars=0` 表示不截断。
 
@@ -206,3 +228,11 @@ matched baselines 仍为 current；scaffold-valid 2/1、4/2、8/4 分别有 1/2/
 旧版本号仍可能出现在已完成 run、receipt 和结果路径中，因为它们是 provenance，不是当前输入选项。当前选择
 只由上述两个机器可读清单决定；当前实验结果与 freshness 状态只由
 `current_conditioned_results.json` 和 `RESULTS.md` 报告。
+
+大型输入校验复用 `common/build_runtime.py` 的 inode/size/mtime/ctime 与同一启动周期绑定的
+摘要缓存；level 导出复用该模块的内容寻址 NVMe 输入缓存，避免反复读取网络盘。首次输入仍完整
+校验 SHA-256。普通 Parquet 表超过 90 MB 时自动拆成同 schema 分片，包括 split 卡片引用表。
+
+最终 DILI/Carcinogens 源的逐行修改、冻结 gold 哈希和两种索引校验统一见
+`data/starling_data/<task>/retrieval_final/publication.json`。旧 gold_v4 首次发布记录
+只作为历史来源；最终检索使用本页的 `retrieval_final` 快照。

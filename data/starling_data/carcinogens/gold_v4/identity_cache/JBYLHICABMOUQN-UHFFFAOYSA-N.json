@@ -1,0 +1,25 @@
+{
+  "parent_key": "JBYLHICABMOUQN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBYLHICABMOUQN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-fluoroanthracene",
+    "7651-80-1",
+    "AKOS006276324",
+    "DTXCID80468063",
+    "DTXSID30517257",
+    "Fluoroanthracene",
+    "JBYLHICABMOUQN-UHFFFAOYSA-N",
+    "RefChem:230587",
+    "SCHEMBL1392267",
+    "SCHEMBL21385219",
+    "SCHEMBL29069161",
+    "SCHEMBL5179135",
+    "SCHEMBL8596507",
+    "fluoranthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    13068655
+  ]
+}

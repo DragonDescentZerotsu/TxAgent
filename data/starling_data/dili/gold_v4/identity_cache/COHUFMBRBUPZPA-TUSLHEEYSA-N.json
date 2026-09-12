@@ -1,0 +1,41 @@
+{
+  "parent_key": "COHUFMBRBUPZPA-TUSLHEEYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,4E,7R,17R)-4-ethylidene-7-hydroxy-7-methyl-6-methylidene-14-oxido-2,9-dioxa-14-azoniatricyclo(9.5.1.014,17)heptadec-11-ene-3,8-dione",
+    "(1R,4E,7R,17R)-4-ethylidene-7-hydroxy-7-methyl-6-methylidene-14-oxido-2,9-dioxa-14-azoniatricyclo[9.5.1.014,17]heptadec-11-ene-3,8-dione",
+    "(1R,4Z,7R,17R)-4-Ethylidene-7-hydroxy-7-methyl-6-methylidene-14-oxido-2,9-dioxa-14-azoniatricyclo[9.5.1.014,17]heptadec-11-ene-3,8-dione",
+    "(3Z,6R,14aR,14bR)-3-ethylidene-6-hydroxy-6-methyl-5-methylidene-12-oxo-3,4,5,6,11,12,13,14,14a,14b-decahydro-9H-12lambda(5)-(1,6)dioxacyclododecino(2,3,4-gh)pyrrolizine-2,7-dione",
+    "(3Z,6R,14aR,14bR)-3-ethylidene-6-hydroxy-6-methyl-5-methylidene-12-oxo-3,4,5,6,11,12,13,14,14a,14b-decahydro-9H-12lambda(5)-[1,6]dioxacyclododecino[2,3,4-gh]pyrrolizine-2,7-dione",
+    "(6R,14aR,14bR)-3-Ethylidene-6-hydroxy-6-methyl-5-methylidene-12-oxo-3,4,5,6,11,12,13,14,14a,14b-decahydro-9H-12lambda~5~-[1,6]dioxacyclododecino[2,3,4-gh]pyrrolizine-2,7-dione",
+    "(6R,9a1R,14aR,Z)-3-ethylidene-6-hydroxy-6-methyl-5-methylene-2,7-dioxo-2,3,4,5,6,7,9,9a1,11,13,14,14a-dodecahydro-12H-[1,6]dioxacyclododecino[2,3,4-gh]pyrrolizine 12-oxide",
+    "13,19-didehydro-12-hydroxysenecionan-11,16-dione 4-oxide",
+    "38710-26-8",
+    "AKOS037514835",
+    "AKOS040760708",
+    "CHEBI:136404",
+    "CS-0022893",
+    "DTXCID001783207",
+    "DTXSID301016605",
+    "FS-9852",
+    "HY-N2561",
+    "RefChem:884870",
+    "Senecionan-11,16-dione, 13,19-didehydro-12-hydroxy-, 4-oxide",
+    "Seneciphylline N-oxide",
+    "Seneciphylline oxide",
+    "Seneciphylline-N-oxide",
+    "Seneciphylline-N-oxide 100 microg/mL in Water",
+    "SeneciphyllineN-oxide",
+    "TN2204",
+    "orb1220229",
+    "orb1684222",
+    "orb3140458",
+    "seneciphyllin N-oxide",
+    "speciophylline N-oxide"
+  ],
+  "cids": [
+    13258912
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/COHUFMBRBUPZPA-TUSLHEEYSA-N/synonyms/JSON",
+  "http_status": 200
+}

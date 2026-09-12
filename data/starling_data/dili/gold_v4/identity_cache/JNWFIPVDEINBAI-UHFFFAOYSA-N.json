@@ -1,0 +1,32 @@
+{
+  "parent_key": "JNWFIPVDEINBAI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1118915-78-8",
+    "3H-1,2,4-Triazol-3-one, 2,4-dihydro-5-(2-hydroxy-5-(1-methylethyl)-4-(phosphonooxy)phenyl)-4-(1-methyl-1H-indol-5-yl)-",
+    "5-Hydroxy-2-isopropyl-4-(4-(1-methyl-1H-indol-5-yl)-5-oxo-4,5-dihydro-1H-1,2,4-triazol-3-yl)phenyl dihydrogen phosphate",
+    "BDBM176684",
+    "CHEMBL3674153",
+    "Code name: STA1474.",
+    "DA-52398",
+    "Defibrotide Impurity 2",
+    "E1942E7K32",
+    "JNWFIPVDEINBAI-UHFFFAOYSA-N",
+    "Q27276739",
+    "RefChem:185249",
+    "SCHEMBL29357308",
+    "SCHEMBL30050709",
+    "SCHEMBL419884",
+    "SCHEMBL420150",
+    "STA-1474",
+    "UNII-E1942E7K32",
+    "US9120745, 3",
+    "[5-hydroxy-4-[4-(1-methylindol-5-yl)-5-oxo-1H-1,2,4-triazol-3-yl]-2-propan-2-ylphenyl] dihydrogen phosphate",
+    "orb1738054"
+  ],
+  "cids": [
+    135565962
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JNWFIPVDEINBAI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

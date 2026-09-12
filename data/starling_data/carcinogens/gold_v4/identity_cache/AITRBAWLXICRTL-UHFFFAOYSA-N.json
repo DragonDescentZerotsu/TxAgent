@@ -1,0 +1,25 @@
+{
+  "parent_key": "AITRBAWLXICRTL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AITRBAWLXICRTL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2605-70-1",
+    "4-04-00-00252 (Beilstein Handbook Reference)",
+    "BRN 1790178",
+    "DTXCID20103183",
+    "DTXSID80180692",
+    "O,O-Diethyl S-(N-methylcarbamoylmethyl) phosphorodithioate",
+    "O,O-diethyl S-[2-(methylamino)-2-oxoethyl] phosphorodithioate",
+    "OMS 297",
+    "Phosphorodithioic acid, O,O-diethyl S-(2-(methylamino)-2-oxoethyl) ester",
+    "Phosphorodithioic acid, O,O-diethyl S-[2-(methylamino)-2-oxoethyl] ester",
+    "Phosphorodithioic acid, O,O-diethyl ester, S-ester with 2-mercapto-N-methylacetamide",
+    "Phosphorodithioic acid, O,O-diethyl ester, S-ester with 2-mercapto-N-methylacetamide (8CI)",
+    "RefChem:366977",
+    "SCHEMBL8959108"
+  ],
+  "http_status": 200,
+  "cids": [
+    200728
+  ]
+}

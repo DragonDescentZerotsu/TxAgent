@@ -1,0 +1,40 @@
+{
+  "parent_key": "AGRVUDWDZKZCAA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(3,4-Dimethoxyphenyl)-2-(1-pyrrolidinyl)-1-pentanone",
+    "1-(3,4-dimethoxyphenyl)-2-pyrrolidin-1-yl-pentan-1-one",
+    "1-(3,4-dimethoxyphenyl)-2-pyrrolidin-1-ylpentan-1-one",
+    "1-Pentanone, 1-(3,4-dimethoxyphenyl)-2-(1-pyrrolidinyl)-",
+    "3',4'-DIMETHOXY-.ALPHA.-PYRROLIDINOPENTIOPHENONE",
+    "3',4'-Dimethoxy-alpha-pyrrolidinopentiophenone",
+    "3,4-DIMETHOXY-.ALPHA.-PVP",
+    "3,4-DIMETHOXY-.ALPHA.-PYRROLIDINOPENTIOPHENONE",
+    "3,4-DMEOPV",
+    "3,4-Dimethoxy-2-(1-pyrrolidinyl)-valerophenone",
+    "3,4-Dimethoxy-alpha-pvp",
+    "3,4-Dimethoxy-alpha-pyrrolidinopentiophenone",
+    "3,4-Dmpv",
+    "850442-84-1",
+    "AGRVUDWDZKZCAA-UHFFFAOYSA-N",
+    "BDBM50182566",
+    "CG1P9V70LE",
+    "CHEBI:183772",
+    "CHEMBL382768",
+    "DMEOPVP",
+    "DMPVP",
+    "DTXCID501492746",
+    "DTXSID701024688",
+    "NS00017353",
+    "PD048304",
+    "Q66025013",
+    "RefChem:1054097",
+    "SCHEMBL4930616",
+    "UNII-CG1P9V70LE"
+  ],
+  "cids": [
+    11493035
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AGRVUDWDZKZCAA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

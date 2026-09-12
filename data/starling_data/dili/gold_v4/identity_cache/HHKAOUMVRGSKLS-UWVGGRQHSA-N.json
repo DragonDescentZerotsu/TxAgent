@@ -1,0 +1,41 @@
+{
+  "parent_key": "HHKAOUMVRGSKLS-UWVGGRQHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[[5-[2-[(6S)-2-amino-4-oxo-1,6,7,8-tetrahydropyrimido[5,4-b][1,4]thiazin-6-yl]ethyl]thiophene-2-carbonyl]amino]pentanedioic acid",
+    "(2S)-2-[[5-[2-[(6S)-2-amino-4-oxo-3,6,7,8-tetrahydropyrimido[5,4-b][1,4]thiazin-6-yl]ethyl]thiophene-2-carbonyl]amino]pentanedioic acid",
+    "177575-17-6",
+    "4-(2-(2-amino-4-oxo-4,6,7,8-tetrahydro-3H-pyrimidino(5,4-6)(1,4)thiazin-6-yl)-(S)-ethyl)-2,5-thienoyl-L-glutamic acid",
+    "AG 2034",
+    "AG-2033",
+    "AG-2034",
+    "AG2034",
+    "AKOS040747775",
+    "C21280",
+    "CHEBI:176920",
+    "CID 177315",
+    "DTXSID30938963",
+    "FA46643",
+    "GLXC-07909",
+    "HY-10819",
+    "IC32U30905",
+    "L-Glutamic acid, N-((5-(2-((6S)-2-amino-4,6,7,8-tetrahydro-4-oxo-1H-pyrimido(5,4-b)(1,4)thiazin-6-yl)ethyl)-2-thienyl)carbonyl)-",
+    "L-Glutamic acid, N-((5-(2-(2-amino-4,6,7,8-tetrahydro-4-oxo-1H-pyrimido(5,4-b)(1,4)thiazin-6-yl)ethyl)-2-thienyl)carbonyl)-, (S)-",
+    "N-((5-(2-((6S)-2-Amino-4,6,7,8-tetrahydro-4-oxo-3H-pyrimido(5,4-b)(1,4)thiazin-6-yl)ethyl)-2-thienyl)carbonyl)-L-glutamic acid",
+    "N-((5-(2-(2-AMINO-4,6,7,8-TETRAHYDRO-4-OXO-1H-PYRIMIDO(5,4-6)(1,4)THIAZIN-6-YL)ETHYL)-2-THIENYL)CARBONYL)-GLUTAMIC ACID, S-",
+    "N-(5-{2-[(6S)-4-Hydroxy-2-imino-2,6,7,8-tetrahydro-1H-pyrimido[5,4-b][1,4]thiazin-6-yl]ethyl}thiophene-2-carbonyl)-L-glutamic acid",
+    "N-{5-[2-(4-Hydroxy-2-imino-2,6,7,8-tetrahydro-1H-pyrimido[5,4-b][1,4]thiazin-6-yl)ethyl]thiophene-2-carbonyl}glutamic acid",
+    "NS00123963",
+    "RefChem:926550",
+    "SCHEMBL29410383",
+    "T26572",
+    "UNII-IC32U30905",
+    "orb1701245"
+  ],
+  "cids": [
+    177315,
+    135465775
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HHKAOUMVRGSKLS-UWVGGRQHSA-N/synonyms/JSON",
+  "http_status": 200
+}

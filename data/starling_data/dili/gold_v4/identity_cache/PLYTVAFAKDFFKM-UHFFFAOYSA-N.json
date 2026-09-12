@@ -1,0 +1,21 @@
+{
+  "parent_key": "PLYTVAFAKDFFKM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3,4-dimethyl-morpholine",
+    "3,4-dimethylmorpholine",
+    "PLYTVAFAKDFFKM-UHFFFAOYSA-N",
+    "SCHEMBL2043294",
+    "SCHEMBL2045677",
+    "SCHEMBL2047240",
+    "SCHEMBL392917",
+    "SCHEMBL3960122",
+    "SCHEMBL4482571",
+    "SCHEMBL7054001"
+  ],
+  "cids": [
+    19892454
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PLYTVAFAKDFFKM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

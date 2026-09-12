@@ -1,0 +1,14 @@
+{
+  "parent_key": "KCOUXTVJDWNYJS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KCOUXTVJDWNYJS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Biozan R",
+    "E415",
+    "SCHEMBL23243659"
+  ],
+  "http_status": 200,
+  "cids": [
+    131750926
+  ]
+}

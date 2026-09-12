@@ -1,0 +1,19 @@
+{
+  "parent_key": "MOVTXHFIEXTPID-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MOVTXHFIEXTPID-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-Fluoro-7-methylbenz(a)anthracene",
+    "10-fluoro-7-methylbenzo[a]anthracene",
+    "10-fluoro-7-methyltetraphene",
+    "1881-76-1",
+    "7-Fluoro-10-methyl-1,2-benzanthracene",
+    "BRN 3308412",
+    "Benz(a)anthracene, 10-fluoro-7-methyl-",
+    "DTXSID20172152"
+  ],
+  "http_status": 200,
+  "cids": [
+    74660
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "WHTCLLAVOBBKHK-ISCYQWKGSA-N",
+  "ok": true,
+  "synonyms": [
+    "151069-12-4",
+    "6-N-FORMYLAMINO-12,13-DIHYDRO-1,11-DIHYDROXY-13-(.BETA.-D-GLUCOPYRANOSYL) 5H-INDOLO (2,3-A)PYRROLO (3,4-C)CARBAZOLE-5,7(6H)-DIONE",
+    "6-N-Formylamino-12,13-dihydro-1,11-dihydroxy-13-(beta-D-glucopyranosyl) 5H-indolo (2,3-a)pyrrolo (3,4-C)carbazole-5,7(6H)-dione",
+    "6-N-formylamino-12,13-dihydro-1,11-dihydroxy-13-(beta-d-glucopyranosyl)-5h-indolo[2,3-a]pyrrolo[3,4-c]carbazole-5,7(6h)-dione",
+    "CHEMBL2074831",
+    "FORMAMIDE, N-(12-.BETA.-D-GLUCOPYRANOSYL-5,7,12,13-TETRAHYDRO-1,11-DIHYDROXY-5,7-DIOXO-6H-INDOLO(2,3-A)PYRROLO(3,4-C)CARBAZOL-6-YL)-",
+    "Formamide, N-(12-beta-D-glucopyranosyl-5,7,12,13-tetrahydro-1,11-dihydroxy-5,7-dioxo-6H-indolo(2,3-a)pyrrolo(3,4-C)carbazol-6-yl)-",
+    "N-(1,11-Dihydroxy-5,7-dioxo-12-((2R,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)tetrahydro-2H-pyran-2-yl)-5H-indolo[2,3-a]pyrrolo[3,4-c]carbazol-6(7H,12H,13H)-yl)formamide",
+    "N-(12-.BETA.-D-GLUCOPYRANOSYL-5,7,12,13-TETRAHYDRO-1,11-DIHYDROXY-5,7-DIOXO-6H-INDOLO(2,3-A)PYRROLO(3,4-C)CARBAZOL-6-YL)FORMAMIDE",
+    "N-(12-beta-D-Glucopyranosyl-5,7,12,13-tetrahydro-1,11-dihydroxy-5,7-dioxo-6H-indolo(2,3-a)pyrrolo(3,4-C)carbazol-6-yl)formamide",
+    "N-[5,21-Dihydroxy-12,14-dioxo-3-[(2R,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]-3,13,23-triazahexacyclo[14.7.0.02,10.04,9.011,15.017,22]tricosa-1,4(9),5,7,10,15,17(22),18,20-nonaen-13-yl]formamide",
+    "NB 506",
+    "NB-506",
+    "Q7SF8H5TF6",
+    "RefChem:164896",
+    "SCHEMBL29376340",
+    "SCHEMBL5481070",
+    "UNII-Q7SF8H5TF6",
+    "orb1738967"
+  ],
+  "cids": [
+    9915861
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WHTCLLAVOBBKHK-ISCYQWKGSA-N/synonyms/JSON",
+  "http_status": 200
+}

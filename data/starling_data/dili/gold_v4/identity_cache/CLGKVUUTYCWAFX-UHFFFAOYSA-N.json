@@ -1,0 +1,19 @@
+{
+  "parent_key": "CLGKVUUTYCWAFX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "13323-56-3",
+    "Ethylene glycol, diester with N-(2-chloroethyl)sarcosine",
+    "FW6CP8VS9M",
+    "Glycine, N-(2-chloroethyl)-N-methyl-, 1,2-ethanediyl ester",
+    "NSC-41134",
+    "NSC41134",
+    "S-73",
+    "Sarcosine, N-(2-chloroethyl)-, ethylene ester"
+  ],
+  "cids": [
+    237513
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CLGKVUUTYCWAFX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

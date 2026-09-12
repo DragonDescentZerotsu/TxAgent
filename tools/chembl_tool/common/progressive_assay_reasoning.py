@@ -49,6 +49,7 @@ class ProgressiveTaskContract:
     negative_prediction: str
     system_role: str
     task_instructions: tuple[str, ...]
+    evidence_grounding_rules: tuple[tuple[str, str], ...] = ()
 
     @property
     def prediction_values(self) -> set[str]:
@@ -159,6 +160,38 @@ def _analog_order(analog: Mapping[str, Any]) -> tuple[Any, ...]:
     return (-float(analog.get("similarity") or 0.0), str(analog.get("analog_id") or ""))
 
 
+def shortlist_progressive_retrievals(retrievals, family_levels_by_molecule):
+    """Materialize cards only for molecules the unchanged budgets can select.
+
+    A card's family is part of its identity, so newly unlocked cards at level L
+    belong to family L. Rank both pools before expanding any record text, then
+    retain the union at every level (including its earlier, unselected cards).
+    The latter is essential to preserve the original delta-card semantics.
+    """
+    active_ids = set()
+    for level, retrieval in sorted(retrievals.items()):
+        candidates = {}
+        for group in retrieval.get("groups") or []:
+            for neighbor in group.get("neighbors") or []:
+                aid = stable_analog_id(neighbor)
+                row = candidates.setdefault(aid, {
+                    "analog_id": aid, "similarity": neighbor["similarity"], "unlocked": False,
+                })
+                row["unlocked"] |= level in family_levels_by_molecule[neighbor["molecule_chembl_id"]]
+        if level == 1:
+            active_ids.update(r["analog_id"] for r in sorted(candidates.values(), key=_analog_order)[:INITIAL_MOLECULE_LIMIT])
+        else:
+            new = [r for aid, r in candidates.items() if aid not in active_ids and r["unlocked"]]
+            active_ids.update(r["analog_id"] for r in sorted(new, key=_analog_order)[:NEW_MOLECULE_LIMIT])
+    return {
+        level: {**retrieval, "groups": [
+            {**group, "neighbors": [n for n in group.get("neighbors") or [] if stable_analog_id(n) in active_ids]}
+            for group in retrieval.get("groups") or []
+        ]}
+        for level, retrieval in retrievals.items()
+    }
+
+
 _NUMERIC_PATTERN = re.compile(r"[-+]?\d")
 
 
@@ -185,13 +218,38 @@ def _card_order(card: Mapping[str, Any]) -> tuple[Any, ...]:
     )
 
 
-def _select_cards(cards: Iterable[Mapping[str, Any]], limit: int) -> list[dict[str, Any]]:
+def _endpoint_diversity_key(card: Mapping[str, Any]) -> str:
+    """Use the reported endpoint type, never the result direction or query label."""
+    endpoint = _clean(card.get("endpoint")).lower()
+    match = re.search(
+        r"(?:^|\|)\s*(assay_family|endpoint_category|assay_domain|phenotype_domain)\s*=\s*([^|]+)",
+        endpoint,
+    )
+    return " ".join(match.group(2).split()) if match else endpoint
+
+
+def _select_cards(cards: Iterable[Mapping[str, Any]], limit: int, *,
+                  prefer_distinct_endpoints: bool = False) -> list[dict[str, Any]]:
     """Prefer informative cards while spanning physical assays first."""
     ordered = sorted((dict(card) for card in cards), key=_card_order)
     selected: list[dict[str, Any]] = []
     selected_ids: set[str] = set()
     used_assays: set[str] = set()
+    if prefer_distinct_endpoints:
+        used_endpoints: set[str] = set()
+        for card in ordered:
+            endpoint_key = _endpoint_diversity_key(card)
+            if not endpoint_key or endpoint_key in used_endpoints:
+                continue
+            selected.append(card)
+            selected_ids.add(str(card["card_id"]))
+            used_endpoints.add(endpoint_key)
+            used_assays.add(_clean(card.get("_assay_key")))
+            if len(selected) >= limit:
+                return selected
     for card in ordered:
+        if str(card["card_id"]) in selected_ids:
+            continue
         assay_key = _clean(card.get("_assay_key"))
         if assay_key and assay_key in used_assays:
             continue
@@ -234,11 +292,43 @@ def select_initial_evidence(
     level: int = 1,
     molecule_limit: int = INITIAL_MOLECULE_LIMIT,
     card_limit: int = INITIAL_CARD_LIMIT,
+    query_condition: str = "",
+    card_condition_groups: Mapping[str, list[str]] | None = None,
+    condition_priority_scope: str = "molecules_and_cards",
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    if condition_priority_scope not in {"molecules_and_cards", "cards_only", "cards_exact_only"}:
+        raise ValueError("unknown initial condition priority scope")
+    # Condition metadata is selection-only; neither votes nor derived labels enter here.
+    condition_priority = bool(card_condition_groups is not None and query_condition
+                              and query_condition != "no_reported_external_condition")
+
+    def condition_rank(card: Mapping[str, Any]) -> int:
+        groups = (card_condition_groups or {}).get(str(card["card_id"]), [])
+        if query_condition in groups:
+            return 0
+        if condition_priority_scope == "cards_exact_only":
+            return 1
+        if not groups or "no_reported_external_condition" in groups:
+            return 1
+        return 2
+
     selected: dict[str, dict[str, Any]] = {}
     candidates = sorted(cumulative.values(), key=_analog_order)
+    if condition_priority and condition_priority_scope == "molecules_and_cards":
+        # Stable sorting preserves the original Morgan order within each bucket.
+        candidates.sort(key=lambda a: min(
+            (condition_rank(c) for c in (a.get("cards") or {}).values()), default=1))
     for analog in candidates[:molecule_limit]:
-        cards = _select_cards((analog.get("cards") or {}).values(), card_limit)
+        available = list((analog.get("cards") or {}).values())
+        if condition_priority:
+            cards = []
+            for rank in range(3):
+                if len(cards) == card_limit:
+                    break
+                cards.extend(_select_cards(
+                    (c for c in available if condition_rank(c) == rank), card_limit - len(cards)))
+        else:
+            cards = _select_cards(available, card_limit)
         if not cards:
             continue
         analog_id = str(analog["analog_id"])
@@ -266,6 +356,7 @@ def select_progressive_delta(
     new_molecule_limit: int = NEW_MOLECULE_LIMIT,
     augmentation_molecule_limit: int = AUGMENTED_MOLECULE_LIMIT,
     card_limit: int = DELTA_CARD_LIMIT,
+    prefer_distinct_endpoints: bool = False,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]], dict[str, Any]]:
     """Select independent new-molecule and active-molecule augmentation pools."""
     new_candidates = []
@@ -288,7 +379,8 @@ def select_progressive_delta(
 
     selected_new: dict[str, dict[str, Any]] = {}
     for analog in sorted(new_candidates, key=_analog_order)[:new_molecule_limit]:
-        cards = _select_cards(analog["delta_cards"], card_limit)
+        cards = _select_cards(analog["delta_cards"], card_limit,
+                              prefer_distinct_endpoints=prefer_distinct_endpoints)
         analog_id = str(analog["analog_id"])
         selected_new[analog_id] = {
             **{key: analog.get(key) for key in (
@@ -300,7 +392,8 @@ def select_progressive_delta(
 
     selected_augmentations: dict[str, dict[str, Any]] = {}
     for analog in sorted(augmentation_candidates, key=_analog_order)[:augmentation_molecule_limit]:
-        cards = _select_cards(analog["delta_cards"], card_limit)
+        cards = _select_cards(analog["delta_cards"], card_limit,
+                              prefer_distinct_endpoints=prefer_distinct_endpoints)
         analog_id = str(analog["analog_id"])
         selected_augmentations[analog_id] = {
             "analog_id": analog_id,
@@ -482,6 +575,7 @@ def render_active_evidence(
     current_level: int,
     prior_state: Mapping[str, Any] | None,
     card_id_to_alias: Mapping[str, str],
+    family_labels: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     prior_roles = _prior_card_roles(prior_state)
     rendered = []
@@ -506,6 +600,8 @@ def render_active_evidence(
         cards = []
         for card in sorted((analog.get("cards") or {}).values(), key=lambda row: str(row["card_id"])):
             item = dict(card)
+            if family_labels and item.get("evidence_family") in family_labels:
+                item["evidence_family"] = family_labels[item["evidence_family"]]
             stable_card_id = str(item["card_id"])
             item["card_id"] = card_id_to_alias[stable_card_id]
             item["new_this_level"] = int(item.get("first_seen_level") or 0) == current_level
@@ -529,6 +625,9 @@ def build_progressive_messages(
     active: Mapping[str, Mapping[str, Any]],
     prior_state: Mapping[str, Any] | None,
     independent: bool = False,
+    omit_query_prior: bool = False,
+    evidence_grounding: bool = False,
+    excluded_query_name: str = "",
 ) -> list[dict[str, Any]]:
     if independent and prior_state is not None:
         raise ValueError("independent full-flat reasoning cannot consume prior state")
@@ -543,7 +642,7 @@ def build_progressive_messages(
     level_plan = [
         {
             "level": int(row["level"]),
-            "family": row.get("endpoint_group") or row.get("family_id"),
+            "family": row.get("family_label") or row.get("endpoint_group") or row.get("family_id"),
             "description": row.get("description") or row.get("label") or "",
         }
         for row in levels
@@ -630,11 +729,15 @@ def build_progressive_messages(
             current_level=current_level,
             prior_state=prior_state,
             card_id_to_alias=card_id_to_alias,
+            family_labels={str(row.get("endpoint_group") or row.get("family_id")): str(row["family_label"])
+                           for row in levels if row.get("family_label")},
         ),
         "required_json_schema": schema,
     }
     if condition_sentence:
         payload["query"]["external_condition"] = condition_sentence
+    if excluded_query_name:
+        payload["query"]["identity_exclusion"] = f"The query molecule is not {excluded_query_name}."
     if query_tool_summary:
         payload["query"]["molecule_property_tool_summary"] = _compact_tool_summary(query_tool_summary)
     if prior_state is not None:
@@ -669,6 +772,39 @@ def build_progressive_messages(
             for card in analog["evidence_cards"]:
                 card.pop("first_seen_level", None)
                 card.pop("new_this_level", None)
+    if omit_query_prior and active:
+        del payload["query_prior"]
+        payload["protocol"]["claim_rule"] = (
+            "Every empirical evidence claim must cite its card IDs and name the tested subject. "
+            "An inference from query structure or raw property tools must be identified as an inference, "
+            "not an observed outcome. No no-retrieval model judgment is supplied."
+        )
+        if independent:
+            payload["protocol"]["card_accounting"] = (
+                "Card aliases map to stable artifact IDs. Cite only materially relevant cards. "
+                "Repeated records are not independent votes. All supplied cards are available "
+                "to new_evidence_assessment; decision_effect describes their effect on this decision."
+            )
+    if evidence_grounding:
+        payload["protocol"]["identity_rule"] = (
+            "Retrieved neighbors are distinct from the query. Attribute each observation to the molecule "
+            "actually studied; never present an analog's trial, adverse event, or regulatory outcome as "
+            "the query's own result. For passages mentioning multiple molecules, distinguish their roles "
+            "and outcomes. Explain the structural and contextual basis for transferring analog evidence. "
+            "Do not identify the query by name merely because its structure is recognizable."
+        )
+        payload["protocol"]["endpoint_decision_rule"] = (
+            "Predict the defined endpoint label under the query's reported condition. A structural alert, "
+            "hypothetical mechanism, or reason for further safety investigation does not by itself establish "
+            "a positive endpoint outcome. Separate measured outcomes from mechanisms and predictions."
+        )
+        payload["protocol"]["evidence_balance_rule"] = (
+            "Assess positive and negative observations using the same standards of endpoint relevance, "
+            "study scope and analog transferability. A scoped negative observation is evidence within that "
+            "scope; it need not prove universal safety. An untested alternative mechanism is not observed "
+            "positive evidence. Preserve conflicting findings and do not equate missing evidence with a negative result."
+        )
+        payload["protocol"].update(dict(contract.evidence_grounding_rules))
     return [
         {
             "role": "system",
@@ -677,7 +813,9 @@ def build_progressive_messages(
                 + (" You are making an independent cumulative full-flat decision. " if independent
                    else " You are operating inside a progressive molecular-evidence experiment. ")
                 + "Use general medicinal-chemistry knowledge to interpret the supplied structures and evidence. "
-                + ("Ground every compound-specific empirical claim and the final prediction in the supplied query prior, "
+                + ("Ground empirical claims in the supplied tool results and cited evidence; use any supplied evidence-based state for progressive updates. "
+                   if omit_query_prior and active else
+                   "Ground every compound-specific empirical claim and the final prediction in the supplied query prior, "
                    if independent else
                    "Ground every compound-specific empirical claim and the final prediction in the supplied prior state, ")
                 + "tool summaries, or cited evidence cards. "

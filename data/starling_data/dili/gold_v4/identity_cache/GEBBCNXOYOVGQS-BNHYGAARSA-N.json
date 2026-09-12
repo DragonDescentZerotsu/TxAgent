@@ -1,0 +1,15 @@
+{
+  "parent_key": "GEBBCNXOYOVGQS-BNHYGAARSA-N",
+  "ok": true,
+  "synonyms": [
+    "Azacytidine Primary Hydrolytic Impurity 2 (Azacytidine Impurity pound(c)",
+    "CS-0164246",
+    "SCHEMBL12472103",
+    "SCHEMBL26080"
+  ],
+  "cids": [
+    18604151
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GEBBCNXOYOVGQS-BNHYGAARSA-N/synonyms/JSON",
+  "http_status": 200
+}

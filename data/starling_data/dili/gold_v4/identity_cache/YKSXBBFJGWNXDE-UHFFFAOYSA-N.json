@@ -1,0 +1,12 @@
+{
+  "parent_key": "YKSXBBFJGWNXDE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "pivaloylbenzylhydrazin"
+  ],
+  "cids": [
+    526690
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YKSXBBFJGWNXDE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

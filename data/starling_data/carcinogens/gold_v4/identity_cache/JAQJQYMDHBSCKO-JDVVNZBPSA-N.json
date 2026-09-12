@@ -1,0 +1,31 @@
+{
+  "parent_key": "JAQJQYMDHBSCKO-JDVVNZBPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JAQJQYMDHBSCKO-JDVVNZBPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R,6S,7S,8R,10S,11S,12R,14S,16R,18R)-6,7-DIHYDROXY-8-(HYDROXYMETHYL)-16-ISOPROPENYL-4,18-DIMETHYL-14-NONYL-9,13,15,19-TETRAOXAHEXACYCLO(12.4.1.01,11.0(SUP 2,6).0(SUP 8,10).0(SUP 12,16))NONADEC-3-EN-5-ONE",
+    "(1R,2R,6S,7S,8R,10S,11S,12R,14S,16R,18R)-6,7-dihydroxy-8-(hydroxymethyl)-4,18-dimethyl-14-nonyl-16-prop-1-en-2-yl-9,13,15,19-tetraoxahexacyclo(12.4.1.01,11.02,6.08,10.012,16)nonadec-3-en-5-one",
+    "(1R,2R,6S,7S,8R,10S,11S,12R,14S,16R,18R)-6,7-dihydroxy-8-(hydroxymethyl)-4,18-dimethyl-14-nonyl-16-prop-1-en-2-yl-9,13,15,19-tetraoxahexacyclo[12.4.1.01,11.02,6.08,10.012,16]nonadec-3-en-5-one",
+    "(2S,3AR,3BS,3CS,4AR,5S,5AS,8AR,8BR,9R,10AR)-5,5A-DIHYDROXY-4A-(HYDROXYMETHYL)-7,9-DIMETHYL-2-NONYL-10A-(PROP-1-EN-2-YL)-3A,3B,3C,4A,5,5A,8A,9,10,10A-DECAHYDRO-6H-2,8B-EPOXYOXIRENO(6,7)AZULENO(5,4-E)(1,3)BENZODIOXOL-6-ONE",
+    "1404-62-2",
+    "6H-2,8b-Epoxyoxireno(6,7)azuleno(5,4-e)-1,3-benzodioxol-6-one, 3a,3b,3c,4a,5,5a,8a,9,10,10a-decahydro-5,5a-dihydroxy-4a-(hydroxymethyl)-7,9-dimethyl-10a-(1-methylethenyl)-2-nonyl-, (2S,3aR,3bS,3cS,4aR,5S,5aS,8aR,8bR,9R,10aR)-",
+    "9QZ71FI0LO",
+    "BRN 1673551",
+    "CCRIS 707",
+    "CHEBI:70548",
+    "CHEMBL444290",
+    "Daphnopsis factor R3",
+    "J37.161K",
+    "Pimelea factor P1",
+    "Q27272908",
+    "RefChem:183095",
+    "SCHEMBL29353502",
+    "Simplexin",
+    "UNII-9QZ71FI0LO",
+    "Wikstrotoxin D"
+  ],
+  "http_status": 200,
+  "cids": [
+    119045
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "parent_key": "UFEJKYYYVXYMMS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3ALL2Y8QYF",
+    "6414-57-9",
+    "AKOS006291561",
+    "C22461",
+    "CARBAMIC ACID, N-METHYL-",
+    "CHEBI:193110",
+    "CHEBI:45379",
+    "Carbamic acid, methyl-",
+    "DTXCID60819872",
+    "DTXSID70872271",
+    "Methylcarbamic acid",
+    "Methylcarbamidsaeure",
+    "Monomethyl carbamate",
+    "N-Methylcarbamate",
+    "N-methyl carbamate ester",
+    "N-methylcarbamic acid",
+    "Q27104551",
+    "RefChem:925778",
+    "SCHEMBL1189824",
+    "SCHEMBL41154",
+    "SCHEMBL42167",
+    "SCHEMBL4826534",
+    "SCHEMBL87727",
+    "UNII-3ALL2Y8QYF",
+    "an N-methyl carbamate ester"
+  ],
+  "cids": [
+    30536,
+    177529340
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UFEJKYYYVXYMMS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

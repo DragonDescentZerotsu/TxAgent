@@ -1,0 +1,12 @@
+{
+  "parent_key": "IQJAIEABOGHWEZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IQJAIEABOGHWEZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-nitroso-methyl-bis-chloromethyl urea"
+  ],
+  "http_status": 200,
+  "cids": [
+    129847432
+  ]
+}

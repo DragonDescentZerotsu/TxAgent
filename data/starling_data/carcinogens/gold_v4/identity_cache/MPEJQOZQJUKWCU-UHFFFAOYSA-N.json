@@ -1,0 +1,13 @@
+{
+  "parent_key": "MPEJQOZQJUKWCU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MPEJQOZQJUKWCU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-nitroquinolone",
+    "SCHEMBL8566524"
+  ],
+  "http_status": 200,
+  "cids": [
+    19034588
+  ]
+}

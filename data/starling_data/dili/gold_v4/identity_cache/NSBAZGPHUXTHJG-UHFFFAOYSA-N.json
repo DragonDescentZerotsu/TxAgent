@@ -1,0 +1,16 @@
+{
+  "parent_key": "NSBAZGPHUXTHJG-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Bromo-1,1,1,3,3-pentafluoropropane",
+    "22692-16-6",
+    "DTXSID901345436",
+    "NSBAZGPHUXTHJG-UHFFFAOYSA-N",
+    "SCHEMBL27658479"
+  ],
+  "cids": [
+    101059407
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NSBAZGPHUXTHJG-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

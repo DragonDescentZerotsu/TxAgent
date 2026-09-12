@@ -1,0 +1,19 @@
+{
+  "parent_key": "FFUDFWWERMSSIT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FFUDFWWERMSSIT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-ethyl-1-nitrosoguanidine",
+    "29169-14-0",
+    "DTXCID30105916",
+    "DTXSID20183425",
+    "Guanidine, N-ethyl-N-nitroso-",
+    "N-ETHYL-N-NITROSOGUANIDINE",
+    "RefChem:347043",
+    "SCHEMBL27848931"
+  ],
+  "http_status": 200,
+  "cids": [
+    147301
+  ]
+}

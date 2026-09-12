@@ -1,0 +1,23 @@
+{
+  "parent_key": "OMNGEVNATYFZGG-BQYQJAHWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(E)-6-(2-(cyclohexa-1,5-dien-1-yl)vinyl)-4-methoxy-5,6-dihydro-2H-pyran-2-one",
+    "2-[(E)-2-cyclohexa-1,5-dien-1-ylethenyl]-4-methoxy-2,3-dihydropyran-6-one",
+    "6-((E)-2-(cyclohexa-1,5-dien-1-yl)ethenyl)-4-methoxy-5,6-dihydro-2H-pyran-2-one",
+    "6-[(1E)-2-(cyclohexa-1,5-dien-1-yl)ethenyl]-4-methoxy-5,6-dihydro-2H-pyran-2-one",
+    "958725-56-9",
+    "DB01322",
+    "EBC-26260",
+    "EN300-28265881",
+    "Kava",
+    "Q27092746",
+    "RefChem:1087976",
+    "SCHEMBL29878786"
+  ],
+  "cids": [
+    5281052
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OMNGEVNATYFZGG-BQYQJAHWSA-N/synonyms/JSON",
+  "http_status": 200
+}

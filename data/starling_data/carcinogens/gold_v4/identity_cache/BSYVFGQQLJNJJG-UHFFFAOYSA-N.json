@@ -1,0 +1,43 @@
+{
+  "parent_key": "BSYVFGQQLJNJJG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSYVFGQQLJNJJG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-bis(2-aminophenylthio)ethane",
+    "1,2-di(o-aminophenylthio)ethane",
+    "2,2'-(1,2-Ethanediylbis(thio))bisbenzenamine",
+    "2,2'-(Ethylenedithio)dianiline",
+    "2,2'-(ethane-1,2-diylbis(sulfanediyl))dianiline",
+    "2,2'-[Ethane-1,2-diylbis(sulfanediyl)]dianiline",
+    "2-({2-[(2-Aminophenyl)thio]ethyl}thio)aniline",
+    "2-({2-[(2-aminophenyl)sulfanyl]ethyl}sulfanyl)aniline",
+    "2-[2-(2-aminophenyl)sulfanylethylsulfanyl]aniline",
+    "2-[2-(2-aminophenylthio)ethylthio]phenylamine",
+    "257-901-9",
+    "4-13-00-00916 (Beilstein Handbook Reference)",
+    "52411-33-3",
+    "85340-40-5",
+    "BRN 2739761",
+    "Benzenamine, 2,2'-(1,2-ethanediylbis(thio))bis-",
+    "Benzenamine, 2,2'-[1,2-ethanediylbis(thio)]bis-",
+    "Bis(o-aminophenylthio)ethane",
+    "CCRIS 3551",
+    "CCRIS 7519",
+    "Cyanacure",
+    "Cynacure",
+    "DTXCID7030729",
+    "DTXSID0051495",
+    "EINECS 257-901-9",
+    "MFCD00119787",
+    "NS00022290",
+    "RefChem:129015",
+    "SBB051758",
+    "SCHEMBL292217",
+    "SCHEMBL29351476",
+    "ST50949471"
+  ],
+  "http_status": 200,
+  "cids": [
+    92343
+  ]
+}

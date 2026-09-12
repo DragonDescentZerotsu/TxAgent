@@ -1,0 +1,29 @@
+{
+  "parent_key": "MBKVPODUVNCLCP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBKVPODUVNCLCP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "195-84-6",
+    "4-26-00-01932 (Beilstein Handbook Reference)",
+    "4B1,5,10,15-tetraazanaphtho[1,2,3-gh]tetraphene",
+    "5,10,14c,15-tetraazabenzo[a]naphth[1,2,3-de]anthracene",
+    "5,10,14c,15-tetraazanaphtho[1,2,3-gh]tetraphene",
+    "5JBY8U0010",
+    "8,16,24,25-tetrazahexacyclo[15.7.1.02,7.09,25.010,15.018,23]pentacosa-1(24),2,4,6,8,10,12,14,16,18,20,22-dodecaene",
+    "AKOS000275106",
+    "BRN 0037697",
+    "DTXCID3095642",
+    "DTXSID90173151",
+    "MBKVPODUVNCLCP-UHFFFAOYSA-N",
+    "Q27262417",
+    "RefChem:191432",
+    "SBB044924",
+    "Tricyclochinazolin",
+    "Tricycloquinazoline",
+    "UNII-5JBY8U0010"
+  ],
+  "http_status": 200,
+  "cids": [
+    159606
+  ]
+}

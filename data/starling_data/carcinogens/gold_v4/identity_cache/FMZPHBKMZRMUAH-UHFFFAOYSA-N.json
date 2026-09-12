@@ -1,0 +1,27 @@
+{
+  "parent_key": "FMZPHBKMZRMUAH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FMZPHBKMZRMUAH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "63224-45-3",
+    "ACETOXY-N-MYRISTOYL-2-AMINOFLUORENE",
+    "ACETOXY-N-MYRISTOYL-2-AMINOFLUORENE, N-",
+    "AXN6D31SV4",
+    "CCRIS 732",
+    "DTXCID30135096",
+    "DTXSID40212605",
+    "Myristohydroxamic acid, N-(2-fluorenyl)-, acetate",
+    "N-(2-Fluorenyl)myristohydroxamic acid acetate",
+    "N-(Acetyloxy)-N-(9H-fluoren-2-yl)tetradecanamide",
+    "N-(Acetyloxy)-N-9H-fluoren-2-yltetradecanamide",
+    "N-Acetoxy-N-myristoyl-2-aminofluorene",
+    "N-acetoxy-2-myristoylaminofluorene",
+    "RefChem:162518",
+    "Tetradecanamide, N-(acetyloxy)-N-9H-fluoren-2-yl-",
+    "UNII-AXN6D31SV4"
+  ],
+  "http_status": 200,
+  "cids": [
+    148994
+  ]
+}

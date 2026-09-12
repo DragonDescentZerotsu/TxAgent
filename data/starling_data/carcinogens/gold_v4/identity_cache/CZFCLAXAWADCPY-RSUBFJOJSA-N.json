@@ -1,0 +1,25 @@
+{
+  "parent_key": "CZFCLAXAWADCPY-RSUBFJOJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CZFCLAXAWADCPY-RSUBFJOJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-6-(((3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-((E)-2-methylbut-2-enoyl)oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl)oxy)-4-((2S,4S,5S,6R)-4,5-dihydroxy-6-(hydroxymethyl)-3-oxooxan-2-yl)oxy-3,5-dihydroxyoxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[[(3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-[(E)-2-methylbut-2-enoyl]oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl]oxy]-4-[(2S,4S,5S,6R)-4,5-dihydroxy-6-(hydroxymethyl)-3-oxooxan-2-yl]oxy-3,5-dihydroxyoxane-2-carboxylic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.BETA.,4.ALPHA.,16.BETA.,21.BETA.(E),22.ALPHA.)-16,22,23,28-TETRAHYDROXY-21-((2-METHYL-1-OXO-2-BUTENYL)OXY)OLEAN-12-EN-3-YL 3-O-.BETA.-D-ARABINO-HEXOPYRANOS-2-ULOS-1-YL-",
+    "131653-20-8",
+    "4QWR1P5B0N",
+    "GYMNEMIC ACID IX (CONSTITUENT OF GYMNEMA)",
+    "GYMNEMIC ACID IX (CONSTITUENT OF GYMNEMA) [DSC]",
+    "Gymnemate IX",
+    "Gymnemic acid IX",
+    "Gymnemic acid ix, (+)-",
+    "Q27260377",
+    "RefChem:144870",
+    "UNII-4QWR1P5B0N",
+    "beta-D-Glucopyranosiduronic acid, (3beta,4alpha,16beta,21beta(E),22alpha)-16,22,23,28-tetrahydroxy-21-((2-methyl-1-oxo-2-butenyl)oxy)olean-12-en-3-yl 3-o-beta-D-arabino-hexopyranos-2-ulos-1-yl-"
+  ],
+  "http_status": 200,
+  "cids": [
+    91617808
+  ]
+}

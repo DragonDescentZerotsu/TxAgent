@@ -60,6 +60,8 @@ class RunResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--unseen-condition-policy", choices=("error", "zero"), default="error",
+                        help="Explicitly encode unseen evaluation conditions as all-zero features, or fail (default).")
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--embedding-cache-dir", type=Path, default=None)
@@ -369,22 +371,26 @@ def main() -> None:
         else None
     )
     train_embeddings = append_condition_one_hot(
-        split_embeddings["train"], train.conditions, vocabulary
+        split_embeddings["train"], train.conditions, vocabulary,
+        unseen_policy=getattr(args, "unseen_condition_policy", "error")
     )
     valid_embeddings = (
         append_condition_one_hot(
-            split_embeddings["valid"], valid.conditions, vocabulary
+            split_embeddings["valid"], valid.conditions, vocabulary,
+            unseen_policy=getattr(args, "unseen_condition_policy", "error")
         )
         if valid is not None
         else None
     )
     test_embeddings = append_condition_one_hot(
-        split_embeddings[args.evaluation_split], test.conditions, vocabulary
+        split_embeddings[args.evaluation_split], test.conditions, vocabulary,
+        unseen_policy=getattr(args, "unseen_condition_policy", "error")
     )
     feature_contract = condition_feature_contract(
         field=args.condition_field,
         vocabulary=vocabulary,
         molecule_embedding_dim=molecule_embedding_dim,
+        unseen_policy=getattr(args, "unseen_condition_policy", "error"),
     )
 
     valid_loader = (

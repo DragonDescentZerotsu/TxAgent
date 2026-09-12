@@ -1,0 +1,14 @@
+{
+  "parent_key": "GJHVUNPZKRIADK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GJHVUNPZKRIADK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL1916788",
+    "SCHEMBL1278284",
+    "nitrosoquinoline"
+  ],
+  "http_status": 200,
+  "cids": [
+    20065242
+  ]
+}

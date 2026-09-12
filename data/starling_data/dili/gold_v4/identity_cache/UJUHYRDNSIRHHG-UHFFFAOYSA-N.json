@@ -1,0 +1,41 @@
+{
+  "parent_key": "UJUHYRDNSIRHHG-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22521-79-5",
+    "A1-05992",
+    "AKOS000125277",
+    "Acetamide, N-(4-ethoxyphenyl)-2-hydroxy-",
+    "CHEMBL2106268",
+    "DB-032366",
+    "DTXSID20177041",
+    "EN300-54629",
+    "FENACETINOL [INN]",
+    "Fenacetinol",
+    "Fenacetinol [INN:DCF]",
+    "Fenacetinolum",
+    "Fenacetinolum [INN-Latin]",
+    "L10174",
+    "MLS006011940",
+    "N-(4-Ethoxyphenyl)glycolamide",
+    "N-(4-ethoxyphenyl)-2-hydroxyacetamide",
+    "Oxyphenacetin",
+    "Q27289323",
+    "SB84956",
+    "SCHEMBL2850567",
+    "SMR002529485",
+    "SP28AL52TM",
+    "SR-01000944877",
+    "SR-01000944877-1",
+    "UNII-SP28AL52TM",
+    "Z228585500",
+    "p-Ethoxyglycolanilide",
+    "p-Glycolophenetidide",
+    "p-Glycolophenetidide."
+  ],
+  "cids": [
+    3084372
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UJUHYRDNSIRHHG-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

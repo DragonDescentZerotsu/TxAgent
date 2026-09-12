@@ -1,0 +1,24 @@
+{
+  "parent_key": "OSICWVVWEXKSBD-LFAYTRTRSA-N",
+  "ok": true,
+  "synonyms": [
+    "((6aR,9S,10S,10aR)-7,9-dimethyl-5-(2-methylbut-3-en-2-yl)-6,6a,8,9,10,10a-hexahydro-4H-indolo(4,3-fg)quinolin-10-yl) acetate",
+    "(10xi)-6,8beta-Dimethyl-2-(2-methylbut-3-en-2-yl)ergolin-9beta-yl acetate",
+    "(8beta,9beta)-6,8-dimethyl-2-(2-methylbut-3-en-2-yl)ergolin-9-yl acetate",
+    "62867-47-4",
+    "BRN 0717965",
+    "CHEBI:64673",
+    "DTXCID701405911",
+    "DTXSID60978599",
+    "Ergolin-9-ol, 2-(1,1-dimethyl-2-propenyl)-6,8-dimethyl-, acetate (ester), (8-beta,9-beta)-",
+    "Fumigaclavine C",
+    "RefChem:141663",
+    "SCHEMBL24925832",
+    "SM-1"
+  ],
+  "cids": [
+    57339223
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OSICWVVWEXKSBD-LFAYTRTRSA-N/synonyms/JSON",
+  "http_status": 200
+}

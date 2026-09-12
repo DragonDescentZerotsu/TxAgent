@@ -1,0 +1,14 @@
+{
+  "parent_key": "SAZOSDSFLRXREA-RXMQYKEDSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R)-2-amino-3-(4-hydroxy-3,5-dinitrophenyl)propanoic acid",
+    "3,5-Dinitro-D-tyrosine",
+    "SCHEMBL16816920"
+  ],
+  "cids": [
+    1572636
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SAZOSDSFLRXREA-RXMQYKEDSA-N/synonyms/JSON",
+  "http_status": 200
+}

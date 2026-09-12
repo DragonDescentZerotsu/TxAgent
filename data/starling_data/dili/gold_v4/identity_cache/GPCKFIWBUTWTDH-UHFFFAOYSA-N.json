@@ -1,0 +1,15 @@
+{
+  "parent_key": "GPCKFIWBUTWTDH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "GPCKFIWBUTWTDH-UHFFFAOYSA-N",
+    "SCHEMBL320509",
+    "SCHEMBL4297886",
+    "ethylpropandiamin"
+  ],
+  "cids": [
+    19360640
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPCKFIWBUTWTDH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

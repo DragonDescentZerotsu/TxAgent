@@ -1,0 +1,28 @@
+{
+  "parent_key": "KTXGWKXVQGCPAR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KTXGWKXVQGCPAR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "119209-27-7",
+    "2-((((3,5-Dichlorophenyl)amino)carbonyl)oxy)-2-methyl-3-butenoic acid",
+    "2-(((3,5-Dichlorophenyl)carbamoyl)oxy)-2-methyl-3-butenoic acid",
+    "2-DCO-2-Me-butenoate",
+    "2-[(3,5-dichlorophenyl)carbamoyloxy]-2-methyl-but-3-enoic acid",
+    "2-[(3,5-dichlorophenyl)carbamoyloxy]-2-methylbut-3-enoic acid",
+    "2-[[(3,5-dichlorophenyl)-carbamoyl]oxy]-2-methyl-3-butenoic acid",
+    "2-{[(3,5-Dichlorophenyl)imino](hydroxy)methoxy}-2-methylbut-3-enoic acid",
+    "3-Butenoic acid, 2-((((3,5-dichlorophenyl)amino)carbonyl)oxy)-2-methyl-",
+    "ACMC-20mo8b",
+    "BF 352-22; Metab. B; 119208",
+    "C14206",
+    "CHEBI:34826",
+    "DTXSID40922893",
+    "NS00006052",
+    "Q26841331",
+    "RefChem:908935"
+  ],
+  "http_status": 200,
+  "cids": [
+    119359
+  ]
+}

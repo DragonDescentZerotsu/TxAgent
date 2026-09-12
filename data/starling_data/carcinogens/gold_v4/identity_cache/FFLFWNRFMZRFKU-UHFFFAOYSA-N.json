@@ -1,0 +1,35 @@
+{
+  "parent_key": "FFLFWNRFMZRFKU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FFLFWNRFMZRFKU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3Z9NVS44SL",
+    "7417-67-6",
+    "AKOS006278703",
+    "Acetamide, N-methyl-N-nitroso-",
+    "BRN 1751102",
+    "CCRIS 6334",
+    "DTXCID50147631",
+    "DTXSID50225140",
+    "FFLFWNRFMZRFKU-UHFFFAOYSA-N",
+    "METHYL-N-NITROSOACETAMIDE, N-",
+    "METHYLNITROSOACETAMIDE",
+    "Methylnitrosoacetamid",
+    "Methylnitrosoacetamid [German]",
+    "N-Methyl-N-nitrosoacetamide",
+    "N-Nitroso-N-methylacetamide",
+    "N-methyl-N-nitroso Acetamide",
+    "N-nitroso-N-methylacetamid",
+    "NSC 59622",
+    "NSC-59622",
+    "NSC59622",
+    "RefChem:163764",
+    "SCHEMBL103330",
+    "UNII-3Z9NVS44SL",
+    "WLN: ONN1&V1"
+  ],
+  "http_status": 200,
+  "cids": [
+    23898
+  ]
+}

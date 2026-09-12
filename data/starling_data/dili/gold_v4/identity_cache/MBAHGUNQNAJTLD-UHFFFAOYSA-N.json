@@ -1,0 +1,40 @@
+{
+  "parent_key": "MBAHGUNQNAJTLD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1381846-21-4",
+    "2-Chloro-5-(((2,2-dimethyl-1-oxopropyl)amino)methyl)-N-1H-imidazol-2-ylbenzamide",
+    "2-Chloro-5-[(2,2-dimethyl-propionylamino)-methyl]-N-(1H-imidazol-2-yl)-benzamide",
+    "2-Chloro-5-{[(2,2-Dimethylpropanoyl)amino]methyl}-N-(1h-Imidazol-2-Yl)benzamide",
+    "2-chloro-5-[(2,2-dimethylpropanoylamino)methyl]-N-(1H-imidazol-2-yl)benzamide",
+    "2-chloro-5-[[(2,2-dimethyl-1-oxopropyl)amino]methyl]-N-1H-imidazol-2-yl-benzamide",
+    "2-chloro-N-(1H-imidazol-2-yl)-5-(pivalamidomethyl)benzamide",
+    "AKOS040748956",
+    "BDBM50393042",
+    "BenzaMide, 2-chloro-5-[[(2,2-diMethyl-1-oxopropyl)aMino]Methyl]-N-1H-iMidazol-2-yl-",
+    "Benzamide, 2-chloro-5-(((2,2-dimethyl-1-oxopropyl)amino)methyl)-N-1H-imidazol-2-yl",
+    "CAY10700",
+    "CHEMBL2152712",
+    "CS-0007052",
+    "GLXC-07586",
+    "HY-13475",
+    "LY-3031207",
+    "LY-3031207, >98% (HPLC)",
+    "LY3031207",
+    "MBAHGUNQNAJTLD-UHFFFAOYSA-N",
+    "MFCD25976583",
+    "NQ7VQ61PBC",
+    "RefChem:154552",
+    "SCHEMBL9931208",
+    "T28089",
+    "UNII-NQ7VQ61PBC",
+    "mPGES-1 Inhibitor-1",
+    "mPGES1-IN-8",
+    "orb1699909"
+  ],
+  "cids": [
+    57382526
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBAHGUNQNAJTLD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

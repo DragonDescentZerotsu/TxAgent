@@ -1,0 +1,12 @@
+{
+  "parent_key": "GEHLQFQNZXOCAK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GEHLQFQNZXOCAK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL22406"
+  ],
+  "http_status": 200,
+  "cids": [
+    5388869
+  ]
+}

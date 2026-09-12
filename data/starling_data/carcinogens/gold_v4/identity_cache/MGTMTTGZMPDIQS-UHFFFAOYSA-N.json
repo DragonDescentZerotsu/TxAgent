@@ -1,0 +1,43 @@
+{
+  "parent_key": "MGTMTTGZMPDIQS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MGTMTTGZMPDIQS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "33953-73-0",
+    "5-Hydroxy-3,4-benzopyrene",
+    "6-Hydroxy benzo[a]pyrene",
+    "6-Hydroxybenzo(a)pyrene",
+    "6-Hydroxybenzo[a]pyrene",
+    "63455-19-6",
+    "AKOS015906069",
+    "BENZO(PQR)TETRAPHEN-6-OL",
+    "BENZO(a)PYREN-6-OL",
+    "BIDD:ER0458",
+    "BRN 1982121",
+    "Benzo(a)pyrene, 6-hydroxy-",
+    "Benzo(a)pyrenol",
+    "Benzo[a]pyren-6-ol",
+    "CCRIS 1072",
+    "CHEBI:34470",
+    "CHEMBL1908052",
+    "DTXCID501383525",
+    "DTXSID30955534",
+    "HYDROXYBENZO(A)PYRENE, 6-",
+    "I68U5515CI",
+    "NSC 30998",
+    "NSC-30998",
+    "NSC30998",
+    "Q27116091",
+    "RefChem:913974",
+    "SCHEMBL19689319",
+    "SCHEMBL3798629",
+    "UNII-I68U5515CI",
+    "benzo[b]pyren-6-ol",
+    "benzo[pqr]tetraphen-6-ol"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (41%), Request Time status: Green (10%), Service status: Red (93%)",
+  "cids": [
+    36636
+  ]
+}

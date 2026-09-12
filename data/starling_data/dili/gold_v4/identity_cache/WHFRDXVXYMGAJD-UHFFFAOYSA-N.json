@@ -1,0 +1,41 @@
+{
+  "parent_key": "WHFRDXVXYMGAJD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "135525-78-9",
+    "2(1H)-Pyridinone, 3-(((4,7-dichloro-2-benzoxazolyl)methyl)amino)-5-ethyl-6-methyl-",
+    "3-(((4,7-Dichloro-1,3-benzoxazol-2-yl)methyl)amino)-5-ethyl-6-methylpyridin-2(1H)-one",
+    "3-(((4,7-Dichlorobenzo[d]oxazol-2-yl)methyl)amino)-5-ethyl-6-methylpyridin-2(1H)-one",
+    "3-[(4,7-Dichlorobenzoxazolylmethyl)amino]-5-ethyl-6-methylpyridin-2(1H)-one",
+    "3-[(4,7-dichloro-1,3-benzoxazol-2-yl)methylamino]-5-ethyl-6-methyl-1H-pyridin-2-one",
+    "3-[[(4,7-Dichlorobenzoxazol-2-yl)-methyl]amino]-5-ethyl-6-methylpyridin-2(1H)-one",
+    "3-{[(4,7-dichloro-1,3-benzoxazol-2-yl)methyl]amino}-5-ethyl-6-methyl-1,2-dihydropyridin-2-one",
+    "3-{[(4,7-dichloro-1,3-benzoxazol-2-yl)methyl]amino}-5-ethyl-6-methylpyridin-2(1h)-one",
+    "4660N666EZ",
+    "AKOS030539285",
+    "BDBM1317",
+    "BDBM50478741",
+    "CHEMBL268871",
+    "CS-0025378",
+    "DB-151315",
+    "DTXCID3081948",
+    "DTXSID10159457",
+    "L 697,661",
+    "L 697661",
+    "L-697,661",
+    "L-697661",
+    "L697,661",
+    "RefChem:924336",
+    "SCHEMBL29456987",
+    "SCHEMBL30432096",
+    "SCHEMBL599639",
+    "T27770",
+    "UNII-4660N666EZ",
+    "orb1700199"
+  ],
+  "cids": [
+    65002
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WHFRDXVXYMGAJD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

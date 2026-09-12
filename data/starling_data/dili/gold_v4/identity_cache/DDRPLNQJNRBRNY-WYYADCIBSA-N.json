@@ -1,0 +1,36 @@
+{
+  "parent_key": "DDRPLNQJNRBRNY-WYYADCIBSA-N",
+  "ok": true,
+  "synonyms": [
+    "186901-48-4",
+    "193829-96-8",
+    "AKOS024457590",
+    "BDBM85324",
+    "CAS_186901-48-4",
+    "CHEMBL5192321",
+    "CS-0029008",
+    "CST-14",
+    "CST-14 (mouse, rat)",
+    "Corticostatin-14",
+    "Cortistatin 14 (mouse, rat)",
+    "Cortistatin 14, human, rat",
+    "Cortistatin-14, >=97% (HPLC)",
+    "DA-52063",
+    "DA-52064",
+    "DDRPLNQJNRBRNY-WYYADCIBSA-N",
+    "EX-A14706",
+    "HY-P1212",
+    "MS-32522",
+    "NCGC00167271-01",
+    "RefChem:1081278",
+    "SCHEMBL29564611",
+    "cortistatin",
+    "cortistatin14"
+  ],
+  "cids": [
+    16133803,
+    102119058
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DDRPLNQJNRBRNY-WYYADCIBSA-N/synonyms/JSON",
+  "http_status": 200
+}

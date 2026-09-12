@@ -1,0 +1,35 @@
+{
+  "parent_key": "JATVWVYVLWEYNL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JATVWVYVLWEYNL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "11-Hydroxy benzo[a]pyrene",
+    "11-Hydroxybenzo(a)pyrene",
+    "11-Hydroxybenzo[a]pyrene",
+    "11Hydroxybenzo(a)pyrene",
+    "3-06-00-03811 (Beilstein Handbook Reference)",
+    "56892-32-1",
+    "6A62A4E4ZJ",
+    "BENZO(a)PYREN-11-OL",
+    "BIDD:ER0543",
+    "BRN 3332602",
+    "Benzo(a)pyrene, 11-hydroxy-",
+    "Benzo(a)pyrene, 11hydroxy",
+    "Benzo(pqr)tetraphen-11-ol",
+    "Benzo[pqr]tetraphen-11-ol",
+    "CHEBI:34132",
+    "CHEMBL1908001",
+    "DB-291302",
+    "DTXCID00127908",
+    "DTXSID00205417",
+    "Hydroxybenzo[a]pyrene, 11-",
+    "Q27115835",
+    "RefChem:77894",
+    "SCHEMBL2767251",
+    "benzo[a]pyren-11-ol"
+  ],
+  "http_status": 200,
+  "cids": [
+    42029
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "parent_key": "FYRJJCYFYLLOSC-LXFBAYGMSA-N",
+  "ok": true,
+  "synonyms": [
+    ".BETA.-ALANINE, N-(4-((1S)-1-((R)-(4-CHLOROPHENYL)(7-FLUORO-5-METHYL-1H-INDOL-3-YL)METHYL)BUTYL)BENZOYL)-",
+    "03TW1410NL",
+    "1019112-29-8",
+    "3-((4-((1R,2S)-1-(4-chlorophenyl)-1-(7-fluoro-5-methyl-1H-indol-3-yl)pentan-2-yl)phenyl)formamido)propanoic acid",
+    "3-(4-((1R,2S)-1-(4-chlorophenyl)-1-(7-fluoro-5-methyl-1H-indol-3-yl)pentan-2-yl)benzamido)propanoic acid",
+    "3-({4-[(1R,2S)-1-(4-chlorophenyl)-1-(7-fluoro-5-methyl-1H-indol-3-yl)pentan-2-yl]phenyl}formamido)propanoic acid",
+    "3-[[4-[(1R,2S)-1-(4-chlorophenyl)-1-(7-fluoro-5-methyl-1H-indol-3-yl)pentan-2-yl]benzoyl]amino]propanoic acid",
+    "AKOS040748934",
+    "BDBM50360584",
+    "CHEMBL1933350",
+    "DB14957",
+    "FYRJJCYFYLLOSC-LXFBAYGMSA-N",
+    "HY-107129",
+    "MK-3577",
+    "MK3577",
+    "N-(4-((1S)-1-((R)-(4-CHLOROPHENYL)(7-FLUORO-5-METHYL-1H-INDOL-3-YL)METHYL)BUTYL)BENZOYL)-.BETA.-ALANINE",
+    "N-(4-((1S)-1-((R)-(4-CHLOROPHENYL)(7-FLUORO-5-METHYL-1H-INDOL-3-YL)METHYL)BUTYL)BENZOYL)-.BETA.-ALANINE, (-)-",
+    "N-(4-((1S)-1-((R)-(4-Chlorophenyl)(7-fluoro-5-methyl-1H-indol-3-yl)methyl)butyl)benzoyl)-beta-alanine",
+    "N-(4-((1S)-1-((R)-(4-Chlorophenyl)(7-fluoro-5-methyl-1H-indol-3-yl)methyl)butyl)benzoyl)-beta-alanine, (-)-",
+    "N-(4-{(1S)-1-[(R)-(4-chlorophenyl)(7-fluoro-5 -methyl-1H-indol-3-yl)methyl]butyl}benzoyl)-beta-alanine",
+    "Q27896057",
+    "RefChem:159201",
+    "SCHEMBL29404446",
+    "SCHEMBL826813",
+    "T28057",
+    "UNII-03TW1410NL",
+    "beta-Alanine, N-(4-((1S)-1-((R)-(4-chlorophenyl)(7-fluoro-5-methyl-1H-indol-3-yl)methyl)butyl)benzoyl)-",
+    "beta-Alanine, N-[4-[(1S)-1-[(R)-(4-chlorophenyl)(7-fluoro-5-methyl-1H-indol-3-yl)methyl]butyl]benzoyl]-",
+    "orb1699938"
+  ],
+  "cids": [
+    46240797
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FYRJJCYFYLLOSC-LXFBAYGMSA-N/synonyms/JSON",
+  "http_status": 200
+}

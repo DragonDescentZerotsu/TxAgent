@@ -1,0 +1,15 @@
+{
+  "status": "stopped_by_user",
+  "stopped_utc": "2026-09-09T05:05:49.452249+00:00",
+  "reason": "User requested stopping redundant full-base provenance/condition model review; reuse completed direction review and prior manual source/condition audits for benchmark rebuild.",
+  "process_pid": 4105256,
+  "node": "node001",
+  "review_counts": {
+    "ok": 12623,
+    "error": 118
+  },
+  "partial_outputs_are_not_a_complete_review": true,
+  "automatic_resume_authorized": false,
+  "existing_direction_review_preserved": true,
+  "benchmark_build_complete": false
+}

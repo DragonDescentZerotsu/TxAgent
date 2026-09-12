@@ -1,0 +1,41 @@
+{
+  "parent_key": "ZAGGGZCIFUQHOH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "0J0035E9FT",
+    "881413-29-2",
+    "AKOS040750671",
+    "ART-27.13",
+    "ART-2713",
+    "AZD 1940 [WHO-DD]",
+    "AZD-1940",
+    "AZD1940",
+    "BDBM50536919",
+    "C20H29F2N3O2S",
+    "CHEMBL4550236",
+    "CS-0068141",
+    "DTXSID701114855",
+    "EX-A4665",
+    "Ethanesulfonamide, N-(1-((4,4-difluorocyclohexyl)methyl)-2-(1,1-dimethylethyl)-1H-benzimidazol-5-yl)-",
+    "Ethanesulfonamide, N-[1-[(4,4-difluorocyclohexyl)methyl]-2-(1,1-dimethylethyl)-1H-benzimidazol-5-yl]-",
+    "G17619",
+    "GLXC-22566",
+    "GTPL12754",
+    "HY-119104",
+    "MS-27156",
+    "N-[1-[(4,4-Difluorocyclohexyl)methyl]-2-(1,1-dimethylethyl)-1H-benzimidazol-5-yl]ethanesulfonamide",
+    "N-[2-tert-butyl-1-[(4,4-difluorocyclohexyl)methyl]benzimidazol-5-yl]ethanesulfonamide",
+    "N-{2-tert-Butyl-1-[(4,4-difluorocyclohexyl)methyl]-1H-benzimidazol-5-yl}ethanesulfonamide",
+    "NEO-1940",
+    "Q27236840",
+    "SCHEMBL583386",
+    "T30252",
+    "UNII-0J0035E9FT",
+    "orb1698237"
+  ],
+  "cids": [
+    11675994
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZAGGGZCIFUQHOH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "HYXQFHFDWAQXLW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HYXQFHFDWAQXLW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "24743-02-0",
+    "DA-28331"
+  ],
+  "http_status": 200,
+  "cids": [
+    43457710
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "WDXRGPWQVHZTQJ-NRJJLHBYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-(E)-Guggulsterone (Standard)",
+    "(3aS,3bR,9aR,9bS,11aS)-1-ethylidene-9a,11a-dimethyl-1H,2H,3H,3aH,3bH,4H,5H,7H,8H,9H,9aH,9bH,10H,11H,11aH-cyclopenta[a]phenanthrene-2,7-dione",
+    "(8R,9S,10R,13S,14S)-17-Ethylidene-10,13-dimethyl-7,8,9,10,11,12,13,14,15,17-decahydro-1H-cyclopenta[a]phenanthrene-3,16(2H,6H)-dione",
+    "(8R,9S,10R,13S,14S)-17-ethylidene-10,13-dimethyl-1,2,6,7,8,9,11,12,14,15-decahydrocyclopenta[a]phenanthrene-3,16-dione",
+    "(8R9S10R13S14SZ)-17-ethylidene-1013-dimethyl-1678910111213141517-dodecahydro-3H-cyclopenta[a]phenanthrene-316(2H)-dione",
+    "(8S,9R,10R,13S,14S,17E)-17-(1-methoxyethylidene)-10,13-dimethyl-1,2,6,7,8,9,11,12,14,15-decahydrocyclopenta[a]phenanthrene-3,16-dione",
+    "(E)-Guggulsterone (Standard)",
+    "AKOS024456912",
+    "C21H28O2",
+    "GLXC-14909",
+    "GR-235",
+    "Guggulsterone E&Z",
+    "MFCD01310757",
+    "NS00030501",
+    "SCHEMBL177528",
+    "SY103001",
+    "orb1220857",
+    "orb1301679"
+  ],
+  "cids": [
+    146898
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WDXRGPWQVHZTQJ-NRJJLHBYSA-N/synonyms/JSON",
+  "http_status": 200
+}

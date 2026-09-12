@@ -1,0 +1,31 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "raw_acquisition": "data/starling_data/carcinogens/raw_v1",
+  "records": {
+    "path": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
+    "sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+    "rows": 3270087
+  },
+  "raw_records_deleted": 0,
+  "gold": {
+    "root": "data/starling_data/carcinogens/gold_v4",
+    "version": "gold_v4",
+    "tdc_labels_used": false,
+    "sha256": {
+      "source_votes.jsonl": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
+      "gold_labels.jsonl": "9af552cd71a466417aca5a8d908a76f2762cab3406328e29bb6aa40e1e5f9c64",
+      "gold_label_provenance.jsonl": "34a087e1f6a46582d6124f4d0305112ec6176899c120dc152371a2c67ec5ebe3"
+    }
+  },
+  "benchmark_root": "data/conditioned_benchmark/Carcinogens",
+  "progressive_retrieval": {
+    "root": "data/starling_data/carcinogens/retrieval_final",
+    "heldout_prefilter_levels": [
+      1
+    ],
+    "identity_contract": "new_task_tautomer_identity.v2",
+    "publication_receipt": "data/starling_data/carcinogens/retrieval_final/publication.json"
+  },
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json",
+  "review_status": "bounded_cleaning_cycle_closed; unresolved candidates remain explicitly pending"
+}

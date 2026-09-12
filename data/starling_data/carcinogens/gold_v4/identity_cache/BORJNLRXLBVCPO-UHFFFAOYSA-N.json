@@ -1,0 +1,17 @@
+{
+  "parent_key": "BORJNLRXLBVCPO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BORJNLRXLBVCPO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "53106-49-3",
+    "DTXCID20739527",
+    "DTXSID90788784",
+    "Methyl dimethylarsinate",
+    "RefChem:356636",
+    "trimethylarsinic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    71365365
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "parent_key": "JOXAVXHHSXOWJP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4-[(Prop-2-en-1-yl)amino]phenol",
+    "48121-05-7",
+    "AKOS006358704",
+    "DTXSID90555397",
+    "SCHEMBL174596"
+  ],
+  "cids": [
+    14069535
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JOXAVXHHSXOWJP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

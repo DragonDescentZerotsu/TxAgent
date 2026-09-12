@@ -1,0 +1,12 @@
+{
+  "parent_key": "GEOAYCVPNXPJJE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GEOAYCVPNXPJJE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL5740024"
+  ],
+  "http_status": 200,
+  "cids": [
+    444505
+  ]
+}

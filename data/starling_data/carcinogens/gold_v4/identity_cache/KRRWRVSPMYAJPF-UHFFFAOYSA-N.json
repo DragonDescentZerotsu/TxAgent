@@ -1,0 +1,34 @@
+{
+  "parent_key": "KRRWRVSPMYAJPF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KRRWRVSPMYAJPF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-BUTANONE, 4-(METHYLNITROSOAMINO)-1-(3-PYRIDINYL)-, N-OXIDE",
+    "1-Butanone, 4-(methylnitrosoamino)-1-(1-oxido-3-pyridinyl)-",
+    "3-(4-(methyl(nitroso)amino)butanoyl)pyridine 1-oxide",
+    "4-(Methylnitrosamino)-1-(1-oxido-3-pyridinyl)-1-butanone",
+    "4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanone N-Oxide",
+    "4-(Methylnitrosamino)-1-(3-pyridyl-N-oxide)-1-butanone",
+    "4-(Methylnitrosoamino)-1-(1-oxido-3-pyridinyl)-1-butanone",
+    "76014-82-9",
+    "AKOS030254262",
+    "C19602",
+    "CHEBI:82588",
+    "DTXCID70149415",
+    "DTXSID40226924",
+    "L9H5BL53ZJ",
+    "N-Methyl-N-[4-oxo-4-(1-oxo-1lambda~5~-pyridin-3-yl)butyl]nitrous amide",
+    "N-Nitroso-Cotinine Impurity 3",
+    "N-methyl-N-[4-(1-oxidopyridin-1-ium-3-yl)-4-oxobutyl]nitrous amide",
+    "NNK-N-oxide",
+    "NS00115042",
+    "Q27156105",
+    "RefChem:97490",
+    "SCHEMBL3937508",
+    "UNII-L9H5BL53ZJ"
+  ],
+  "http_status": 200,
+  "cids": [
+    156652
+  ]
+}

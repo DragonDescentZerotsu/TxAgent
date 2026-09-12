@@ -1,0 +1,16 @@
+{
+  "parent_key": "FJWGYAHXMCUOOM-QHOUIDNNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FJWGYAHXMCUOOM-QHOUIDNNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "C18H21N11O38",
+    "FJWGYAHXMCUOOM-QHOUIDNNSA-N",
+    "[(2S,3R,4S,5R,6R)-2-[(2R,3R,4S,5R,6S)-4,5-dinitrooxy-2-(nitrooxymethyl)-6-[(2R,3R,4S,5R,6S)-4,5,6-trinitrooxy-2-(nitrooxymethyl)oxan-3-yl]oxyoxan-3-yl]oxy-3,5-dinitrooxy-6-(nitrooxymethyl)oxan-4-yl] nitrate",
+    "[(2S,3R,4S,5R,6R)-2-[(2R,3R,4S,5R,6S)-4,5-dinitrooxy-2-(nitrooxymethyl)-6-[(2R,3R,4S,5R,6S)-4,5,6-trinitrooxy-2-(nitrooxymethyl)tetrahydropyran-3-yl]oxy-tetrahydropyran-3-yl]oxy-3,5-dinitrooxy-6-(nitrooxymethyl)tetrahydropyran-4-yl] nitrate",
+    "gun cotton"
+  ],
+  "http_status": 200,
+  "cids": [
+    44263835
+  ]
+}

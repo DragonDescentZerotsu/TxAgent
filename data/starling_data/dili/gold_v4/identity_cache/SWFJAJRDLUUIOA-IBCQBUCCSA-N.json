@@ -1,0 +1,42 @@
+{
+  "parent_key": "SWFJAJRDLUUIOA-IBCQBUCCSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(2'-Deoxy-2'-fluoro-b-D-arabinofuranosyl)-5-ethyluracil",
+    "1-(2-DEOXY-2-FLUORO-.BETA.-D-ARABINOFURANOSYL)-5-ETHYL-2,4(1H,3H)-PYRIMIDINEDIONE",
+    "1-(2-Deoxy-2-fluoro-beta-D-arabinofuranosyl)-5-ethylpyrimidine-2,4(1H,3H)-dione",
+    "1-(2-Deoxy-2-fluoro-beta-D-arabinofuranosyl)-5-ethyluracil",
+    "1-(2-Deoxy-2-fluoroarabinofuranosyl)-5-ethyluracil",
+    "1-Dfafeu",
+    "2 inverted exclamation mark -Deoxy-2 inverted exclamation mark -fluoro-5-ethyl-arabinouridine",
+    "2'-Fluoro-5-ethyl-.beta.-D-arabinofuranosyluracil",
+    "2,4(1H,3H)-PYRIMIDINEDIONE, 1-(2-DEOXY-2-FLUORO-.BETA.-D-ARABINOFURANOSYL)-5-ETHYL-",
+    "2,4(1H,3H)-Pyrimidinedione, 1-(2-deoxy-2-fluoro-beta-D-arabinofuranosyl)-5-ethyl",
+    "2AGF6PBM87",
+    "5-Ethyl-1-((2R,3S,4R,5R)-3-fluoro-4-hydroxy-5-(hydroxymethyl)tetrahydrofuran-2-yl)pyrimidine-2,4(1H,3H)-dione",
+    "5-ethyl-1-[(2R,3S,4R,5R)-3-fluoro-4-hydroxy-5-(hydroxymethyl)oxolan-2-yl]-1,2,3,4-tetrahydropyrimidine-2,4-dione",
+    "5-ethyl-1-[(2R,3S,4R,5R)-3-fluoro-4-hydroxy-5-(hydroxymethyl)oxolan-2-yl]pyrimidine-2,4-dione",
+    "5-ethyl-1-[(2R,3S,4R,5R)-3-fluoro-4-hydroxy-5-(hydroxymethyl)tetrahydrofuran-2-yl]pyrimidine-2,4-dione",
+    "83546-42-3",
+    "BDBM50367489",
+    "C11H15FN2O5",
+    "CHEMBL1269499",
+    "DA-69783",
+    "DTXCID30154924",
+    "DTXSID30232433",
+    "F12932",
+    "MFCD11973639",
+    "ND05411",
+    "RefChem:74135",
+    "SCHEMBL6538026",
+    "SWFJAJRDLUUIOA-IBCQBUCCSA-N",
+    "TNU0190",
+    "UNII-2AGF6PBM87",
+    "orb1908788"
+  ],
+  "cids": [
+    174316
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SWFJAJRDLUUIOA-IBCQBUCCSA-N/synonyms/JSON",
+  "http_status": 200
+}

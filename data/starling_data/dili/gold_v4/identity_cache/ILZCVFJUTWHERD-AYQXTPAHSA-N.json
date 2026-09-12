@@ -1,0 +1,28 @@
+{
+  "parent_key": "ILZCVFJUTWHERD-AYQXTPAHSA-N",
+  "ok": true,
+  "synonyms": [
+    "134646-41-6",
+    "2-Chloro-9-[2-deoxy-2-fluoro-5-O-(hydroxy{[hydroxy(phosphonooxy)phosphoryl]oxy}phosphoryl)-beta-D-arabinofuranosyl]-9H-purin-6-amine",
+    "2-Chloro-9-[2-deoxy-2-fluoro-5-O-[hydroxy[[hydroxy(phosphonooxy)phosphinyl]oxy]phosphinyl]-B-D-arabinofuranosyl]-9H-purin-6-amine",
+    "2-Chloro-9-[2-deoxy-2-fluoro-5-O-[hydroxy[[hydroxy(phosphonooxy)phosphinyl]oxy]phosphinyl]-beta-D-arabinofuranosyl]-9H-purin-6-amine",
+    "2-Chloro-9-[2-deoxy-2-fluoro-5-O-[hydroxy[[hydroxy(phosphonooxy)phosphinyl]oxy]phosphinyl]-beta-D-arabinofuranosyl]-9H-purin-6-amine Triethylamine Salt",
+    "9H-Purin-6-amine, 2-chloro-9-[2-deoxy-2-fluoro-5-O-[hydroxy[[hydroxy(phosphonooxy)phosphinyl]oxy]phosphinyl]-beta-D-arabinofuranosyl]-",
+    "CHEMBL1201370",
+    "CLOFARABINE TRIPHOSPHATE",
+    "Clofarabine Triphosphate Triethylamine Salt",
+    "Clofarabine-5'-triphosphate",
+    "DTXSID00432746",
+    "SCHEMBL8923866",
+    "T203136",
+    "YPJ8ZV99ZP",
+    "[[(2R,3R,4S,5R)-5-(6-amino-2-chloropurin-9-yl)-4-fluoro-3-hydroxyoxolan-2-yl]methoxy-hydroxyphosphoryl] phosphono hydrogen phosphate",
+    "orb2814588",
+    "orb533229"
+  ],
+  "cids": [
+    9915350
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ILZCVFJUTWHERD-AYQXTPAHSA-N/synonyms/JSON",
+  "http_status": 200
+}

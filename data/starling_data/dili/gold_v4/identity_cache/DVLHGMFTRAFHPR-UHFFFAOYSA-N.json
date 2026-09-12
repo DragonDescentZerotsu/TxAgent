@@ -1,0 +1,37 @@
+{
+  "parent_key": "DVLHGMFTRAFHPR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Pyrazolecarboxamide",
+    "1H-Pyrazole-1-carboxamide",
+    "2PS88G4BF9",
+    "931-08-8",
+    "AKOS006372445",
+    "AS-95899",
+    "CARZOLAMIDE",
+    "Carboxamidopyrazole",
+    "DTXCID40235435",
+    "DTXSID20284284",
+    "DVLHGMFTRAFHPR-UHFFFAOYSA-N",
+    "GS 1192",
+    "H54176",
+    "InChI=1/C4H5N3O/c5-4(8)7-3-1-2-6-7/h1-3H,(H2,5,8",
+    "MFCD00866290",
+    "N-carbamoylpyrazole",
+    "NSC-36539",
+    "NSC36539",
+    "Pyrazole-1-carboxamide",
+    "RefChem:79924",
+    "SCHEMBL1035052",
+    "SCHEMBL1275",
+    "SCHEMBL4521551",
+    "SCHEMBL750842",
+    "SCHEMBL751857",
+    "UNII-2PS88G4BF9"
+  ],
+  "cids": [
+    235303
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DVLHGMFTRAFHPR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

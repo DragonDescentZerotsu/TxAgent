@@ -1,0 +1,25 @@
+{
+  "parent_key": "CEPMBESUVXXFST-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-chloro-1-propanesulfonic acid",
+    "3-chloro-propane-1-sulfonic acid",
+    "3-chloropropane-1-sulfonic Acid",
+    "3-chloropropanesulfonic acid",
+    "56984-95-3",
+    "AKOS006383610",
+    "CEPMBESUVXXFST-UHFFFAOYSA-N",
+    "DTXCID40197842",
+    "DTXSID40276606",
+    "RefChem:1067633",
+    "SCHEMBL27553336",
+    "SCHEMBL27912098",
+    "SCHEMBL3294656",
+    "SCHEMBL388190"
+  ],
+  "cids": [
+    170962
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CEPMBESUVXXFST-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

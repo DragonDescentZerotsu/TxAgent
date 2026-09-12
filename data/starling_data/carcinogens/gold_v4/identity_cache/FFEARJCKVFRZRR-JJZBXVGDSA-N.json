@@ -1,0 +1,35 @@
+{
+  "parent_key": "FFEARJCKVFRZRR-JJZBXVGDSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FFEARJCKVFRZRR-JJZBXVGDSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(11C)methionine",
+    "(11C-methyl)-L-methionine",
+    "(Methyl-11C)-L-methionine",
+    "(~11~C)Methionine",
+    "11C-Methionine",
+    "2-Amino-4-(11C)methylsulfanyl-butanoic acid, l-(S methyl(11C)methionine",
+    "2-Amino-4-[11C]methylsulfanyl-butanoic acid, l-[S methyl[11C]methionine",
+    "60305-58-0",
+    "C11 Methionine",
+    "CHEMBL1770614",
+    "DTXSID10975715",
+    "ED857BWP29",
+    "L-(S-METHYL-11C)METHIONINE",
+    "L-(~11~C)Methionine",
+    "L-11C-METHYLMETHIONINE",
+    "L-METHIONINE ((11C)METHYL)",
+    "L-Methionine-methyl-11C",
+    "METHIONINE (11C) [WHO-DD]",
+    "Methionine (11C)",
+    "Methionine C-11",
+    "Q27277122",
+    "RefChem:157001",
+    "SCHEMBL29551449",
+    "UNII-ED857BWP29"
+  ],
+  "http_status": 200,
+  "cids": [
+    11789360
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "YXEBKWHSNZQQPQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "NCGC00274267-01",
+    "NS00040900",
+    "SCHEMBL12047846"
+  ],
+  "cids": [
+    160052
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YXEBKWHSNZQQPQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,9 @@
+{
+  "parent_key": "NCMMFDCYNFTCRM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCMMFDCYNFTCRM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": false,
+  "synonyms": [],
+  "http_status": 404,
+  "throttling": "Request Count status: Green (9%), Request Time status: Green (1%), Service status: Green (43%)",
+  "cids": []
+}

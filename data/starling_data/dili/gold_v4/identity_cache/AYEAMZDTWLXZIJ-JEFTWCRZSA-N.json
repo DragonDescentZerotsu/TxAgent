@@ -1,0 +1,33 @@
+{
+  "parent_key": "AYEAMZDTWLXZIJ-JEFTWCRZSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3E)-3-[[4-[(Z)-3-[4-[(2-methylimidazo[4,5-c]pyridin-1-yl)methyl]piperidin-1-yl]-3-oxo-1-phenylprop-1-enyl]phenyl]hydrazinylidene]-6-oxocyclohexa-1,4-diene-1-carboxylic acid",
+    "188913-58-8",
+    "2-Hydroxy-5-((4-((1Z)-3-(4-((2-methyl-1H-imidazo(4,5-c)pyridin-1-yl)methyl)piperidin-1-yl)-3-oxo-1-phenylprop-1-enyl)phenyl)diazenyl)benzoic acid",
+    "2-Hydroxy-5-((4-((Z)-3-(4-((2-methyl-1H-imidazo[4,5-c]pyridin-1-yl)methyl)piperidin-1-yl)-3-oxo-1-phenylprop-1-en-1-yl)phenyl)diazenyl)benzoic acid",
+    "2-hydroxy-5-[[4-[(Z)-3-[4-[(2-methylimidazo[4,5-c]pyridin-1-yl)methyl]piperidin-1-yl]-3-oxo-1-phenylprop-1-enyl]phenyl]diazenyl]benzoic acid",
+    "BENZOIC ACID, 2-HYDROXY-5-((4-((1Z)-3-(4-((2-METHYL-1H-IMIDAZO(4,5-C)PYRIDIN-1-YL)METHYL)-1-PIPERIDINYL)-3-OXO-1-PHENYL-1-PROPENYL)PHENYL)AZO)-",
+    "CHEMBL102620",
+    "DB06251",
+    "DERSALAZINE [WHO-DD]",
+    "DTXSID401364835",
+    "Dersalazina [INN-Spanish]",
+    "Dersalazine",
+    "Dersalazine [INN]",
+    "NS00069605",
+    "Q27292798",
+    "SCHEMBL3045662",
+    "SCHEMBL7843361",
+    "UNII-WS1IH75AJT",
+    "UR 12746",
+    "UR-12746",
+    "WS1IH75AJT",
+    "orb1739396"
+  ],
+  "cids": [
+    135484128
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AYEAMZDTWLXZIJ-JEFTWCRZSA-N/synonyms/JSON",
+  "http_status": 200
+}

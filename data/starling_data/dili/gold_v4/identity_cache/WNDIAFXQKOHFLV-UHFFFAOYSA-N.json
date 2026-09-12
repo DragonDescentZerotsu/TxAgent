@@ -1,0 +1,32 @@
+{
+  "parent_key": "WNDIAFXQKOHFLV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "186390-48-7",
+    "AKOS040757101",
+    "CHEMBL3735364",
+    "CP 346,086",
+    "CP 346086",
+    "CP 346086 Dihydrate",
+    "CP-346086",
+    "CS-0064764",
+    "E99044",
+    "EBC-848075",
+    "EX-A11367",
+    "HY-113955",
+    "MS-28857",
+    "N-(2-((1H-1,2,4-Triazol-5-yl)methyl)-1,2,3,4-tetrahydroisoquinolin-6-yl)-4'-(trifluoromethyl)-[1,1'-biphenyl]-2-carboxamide",
+    "N-(2-((1H-1,2,4-triazol-5-yl)methyl)-1,2,3,4-tetrahydroisoquinolin-6-yl)-4'-(trifluoromethyl)biphenyl-2-carboxamide",
+    "N-[2-(1H-1,2,4-triazol-5-ylmethyl)-3,4-dihydro-1H-isoquinolin-6-yl]-2-[4-(trifluoromethyl)phenyl]benzamide",
+    "NCGC00386720-01",
+    "NCGC00386720-02",
+    "SCHEMBL690395",
+    "SCHEMBL7041135",
+    "WNDIAFXQKOHFLV-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    9826309
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WNDIAFXQKOHFLV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

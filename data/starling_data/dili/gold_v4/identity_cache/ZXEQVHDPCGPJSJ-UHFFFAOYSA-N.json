@@ -1,0 +1,26 @@
+{
+  "parent_key": "ZXEQVHDPCGPJSJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-(chloromethyl)-1-methyl-pyrrolidine",
+    "2-(chloromethyl)-1-methylpyrrolidine",
+    "2-Chloromethyl-1-methyl-pyrrolidine",
+    "58055-93-9",
+    "AKOS012694605",
+    "ALBB-029048",
+    "CS-0301001",
+    "DB-227745",
+    "EN300-130282",
+    "MFCD18347654",
+    "Pyrrolidine, 2-(chloromethyl)-1-methyl-",
+    "Pyrrolidine, 2-(chloromethyl)-1-methyl-, hydrochloride",
+    "SB37781",
+    "SB45810",
+    "SCHEMBL4048423"
+  ],
+  "cids": [
+    198327
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZXEQVHDPCGPJSJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

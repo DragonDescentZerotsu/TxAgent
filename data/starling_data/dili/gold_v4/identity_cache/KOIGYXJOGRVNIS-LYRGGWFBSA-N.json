@@ -1,0 +1,40 @@
+{
+  "parent_key": "KOIGYXJOGRVNIS-LYRGGWFBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+-)-(12R*,13aR*,13bS*)-2,3,5,6,12,13,13a,13b-Octahydro-1H-indolo(3,2,1-de)pyrido(3,2,1-ij)(1,5)naphthyridin-12-ol",
+    "(+-)-(3alpha,14beta)-20,21-Dinoreburnamenin-14-ol",
+    "(+-)-20,21-Dinor-16alpha-eburnamine",
+    "(+/-)-20,21-DINOR-16.ALPHA.-EBURNAMINE",
+    "(-)-(12R*,13aR*,13bS*)-2,3,5,6,12,13,13a,13b-Octahydro-1H-indolo(3,2,1-de)pyrido(3,2,1-ij)(1,5)naphthyridin-12-ol",
+    "(12R,13aR,13bS)-2,3,5,6,12,13,13a,13b-octahydro-1H-indolo[3,2,1-de]pyrido[3,2,1-ij][1,5]naphthyridin-12-ol",
+    "(41S,12R,13aR)-2,3,41,5,6,12,13,13a-octahydro-1H-indolo[3,2,1-de]pyrido[3,2,1-ij][1,5]naphthyridin-12-ol",
+    "(A+/-)-(3I+/-,14I(2))-20,21-Dinoreburnamenin-14-ol",
+    "68779-67-9",
+    "AKOS040754356",
+    "CHEMBL6103090",
+    "DFR7VWX42K",
+    "DTXCID201700794",
+    "DTXSID201270189",
+    "EBURNAMENIN-14-OL, 14,15-DIHYDRO-, (3-.ALPHA.,14-.BETA.)-(+/-)-",
+    "Eburnamenin-14-ol, 14,15-dihydro-, (3-alpha,14-beta)-(+-)-",
+    "NS00122917",
+    "Q27276374",
+    "RU-24722",
+    "RefChem:905491",
+    "SCHEMBL2110451",
+    "SCHEMBL29789430",
+    "T35056",
+    "UNII-DFR7VWX42K",
+    "Vindeburnol",
+    "Vindeburnol [INN]",
+    "Vindeburnolum",
+    "Vindeburnolum [Latin]",
+    "orb1694923"
+  ],
+  "cids": [
+    68882
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KOIGYXJOGRVNIS-LYRGGWFBSA-N/synonyms/JSON",
+  "http_status": 200
+}

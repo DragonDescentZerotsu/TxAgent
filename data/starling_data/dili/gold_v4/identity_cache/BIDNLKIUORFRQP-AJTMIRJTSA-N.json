@@ -1,0 +1,40 @@
+{
+  "parent_key": "BIDNLKIUORFRQP-AJTMIRJTSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R,4S)-4-cyclohexyl-1-(2-((S)-((S)-2-methyl-1-(propionyloxy)propoxy)(4-phenylbutyl)phosphoryl)acetyl)pyrrolidine-2-carboxylic acid",
+    "(2S,4S)-4-cyclohexyl-1-(2-{[(1S)-2-methyl-1-(propanoyloxy)propoxy](4-phenylbutyl)phosphoryl}acetyl)pyrrolidine-2-carboxylic acid",
+    "(2S,4S)-4-cyclohexyl-1-[2-[[(1S)-2-methyl-1-(1-oxopropoxy)propoxy]-(4-phenylbutyl)phosphoryl]-1-oxoethyl]-2-pyrrolidinecarboxylic acid",
+    "(4S)-4-Cyclohexyl-1-[2-[(R)-[(1S)-2-methyl-1-(1-oxopropoxy)propoxy](4-phenylbutyl)phosphinyl]acetyl]-L-proline",
+    "845958-55-6",
+    "AKOS040744611",
+    "BRD-A51382177-236-01-4",
+    "BRD-A51382177-236-03-0",
+    "BRD-A51382177-236-04-8",
+    "C07016",
+    "CHEBI:93870",
+    "CHEMBL1886787",
+    "D07992",
+    "DivK1c_000908",
+    "EBC-15044",
+    "EN300-1710061",
+    "Fosinopril (INN)",
+    "Fosinopril USP  Rc B",
+    "IDI1_000908",
+    "KBio1_000908",
+    "KBioGR_001544",
+    "Monopril (TN)",
+    "NINDS_000908",
+    "Q27165624",
+    "SCHEMBL5928361",
+    "Spectrum4_001102",
+    "T20520",
+    "Z3207130728",
+    "orb1987352"
+  ],
+  "cids": [
+    6708482
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BIDNLKIUORFRQP-AJTMIRJTSA-N/synonyms/JSON",
+  "http_status": 200
+}

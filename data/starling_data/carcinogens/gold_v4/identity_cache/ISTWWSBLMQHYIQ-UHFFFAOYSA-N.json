@@ -1,0 +1,16 @@
+{
+  "parent_key": "ISTWWSBLMQHYIQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ISTWWSBLMQHYIQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(carboxycarbonylamino)-2-methyl-propanoic acid",
+    "N-oxalyl-alpha-methylalanine",
+    "SCHEMBL29420093",
+    "UQK",
+    "dimethyloxaloglycine"
+  ],
+  "http_status": 200,
+  "cids": [
+    14991444
+  ]
+}

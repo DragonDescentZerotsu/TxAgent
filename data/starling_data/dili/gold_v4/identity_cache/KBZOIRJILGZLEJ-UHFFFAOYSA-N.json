@@ -1,0 +1,32 @@
+{
+  "parent_key": "KBZOIRJILGZLEJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-[19-amino-7-(2-amino-2-oxo-ethyl)-10-(3-amino-3-oxo-propyl)-13-benzyl-16-[(4-hydroxyphenyl)methyl]-6,9,12,15,18-pentaoxo-1,2-dithia-5,8,11,14,17-pentazacycloicosane-4-carbonyl]-N-[1-[(2-amino-2-oxo-ethyl)carbamoyl]-4-guanidino-butyl]pyrrolidine-2-carboxamide",
+    "AVP",
+    "Arg-vasopressin",
+    "ArginineVasopressin-d5",
+    "Argpressin Acetate?",
+    "C46H65N15O12S2",
+    "H-[Cys-Tyr-Phe-Gln-Asn-Cys]-Pro-Arg-Gly-NH2",
+    "Intertocin; Pituitrin P; Tonephin",
+    "KBZOIRJILGZLEJ-UHFFFAOYSA-N",
+    "L001131",
+    "NS00023698",
+    "PVP-4085-V",
+    "RefChem:1077179",
+    "SCHEMBL19712236",
+    "SCHEMBL28279670",
+    "VAS-3878-PI",
+    "[Arg8]-Vasopressin",
+    "[Arg8]-Vasopressin (Human, Bovine, Ovine, Rat, Mouse) (0.5 mg vial)",
+    "[Arg8]-Vasopressin acetate salt",
+    "orb321779",
+    "vasopressin-neurophysin 2-copeptin"
+  ],
+  "cids": [
+    8230
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KBZOIRJILGZLEJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

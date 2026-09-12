@@ -1,0 +1,28 @@
+{
+  "parent_key": "IQJCZFBHCZXULX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IQJCZFBHCZXULX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,4-dichlorophenoxybenzoic acid",
+    "2-(2,4-dichlorophenoxy)benzoic acid",
+    "2-(2,4-dichlorophenoxy)benzoicacid",
+    "86308-86-3",
+    "AKOS009185363",
+    "Benzoic acid, 2-(2,4-dichlorophenoxy)-",
+    "CHEMBL283059",
+    "CS-0251844",
+    "DTXCID50426832",
+    "DTXSID80476022",
+    "EN300-56352",
+    "G21616",
+    "IQJCZFBHCZXULX-UHFFFAOYSA-N",
+    "LDA30886",
+    "RefChem:250114",
+    "SCHEMBL641133",
+    "Z335442256"
+  ],
+  "http_status": 200,
+  "cids": [
+    12025777
+  ]
+}

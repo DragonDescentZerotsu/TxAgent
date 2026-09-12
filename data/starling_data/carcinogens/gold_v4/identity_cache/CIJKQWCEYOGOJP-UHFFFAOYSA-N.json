@@ -1,0 +1,23 @@
+{
+  "parent_key": "CIJKQWCEYOGOJP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIJKQWCEYOGOJP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12-(Bromomethyl)-7-methylbenz[a]anthracene",
+    "12-(bromomethyl)-7-methyltetraphene",
+    "12-BROMOMETHYL -7-METHYLBENZ[A]ANTHRACENE",
+    "12-Bromomethyl-7-methylbenz(a)anthracene",
+    "12-Bromomethyl-7-methylbenz[a]anthracene",
+    "59230-81-8",
+    "8R8CZS8NFK",
+    "BENZ(a)ANTHRACENE, 12-BROMOMETHYL-7-METHYL-",
+    "Benz[a]anthracene, 12-(bromomethyl)-7-methyl-",
+    "CCRIS 2803",
+    "DB-363193",
+    "DTXSID40207975"
+  ],
+  "http_status": 200,
+  "cids": [
+    42983
+  ]
+}

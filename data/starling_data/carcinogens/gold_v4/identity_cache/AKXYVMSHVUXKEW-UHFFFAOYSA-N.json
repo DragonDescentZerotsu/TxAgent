@@ -1,0 +1,14 @@
+{
+  "parent_key": "AKXYVMSHVUXKEW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AKXYVMSHVUXKEW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1488540-56-2",
+    "2-amino-3-(1-methyl-1H-indol-5-yl)propanoic acid",
+    "EN300-1790292"
+  ],
+  "http_status": 200,
+  "cids": [
+    82393272
+  ]
+}

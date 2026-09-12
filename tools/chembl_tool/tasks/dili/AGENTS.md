@@ -1,13 +1,23 @@
 # DILI task notes
 
+源记录清理采用修复优先：发现错误后先回查原论文，修正能够确认的对象、结构、角色、端点和限定信息；仅在无法可靠修复或当前检索无法忠实表示受试对象时隔离错误绑定。保留原始 payload 和修订链，不以 benchmark 分数决定去留。复方和材料实验保留真实受试对象，不强行归给单一成分；结构修复后必须重新核对 identity、去重和 disjoint。修正检索记录不自动修改冻结 gold/votes，也不把修复后的新 identity 自动授予 L1 voter 身份。
+
 本文件记录 DILI 的 task-specific 语义、机制驱动的 evidence ontology、assay screening 方向、
 endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、tool service、batch/resume、
 trace viewer、输出目录和成本规范仍以仓库根 `AGENTS.md` 为准。
 
-DILI 当前不在四任务、21-condition 的 paper matrix 中，也还没有 `experiment_config.py`。本文件的大部分运行
-说明用于复现 2026-06 的 native endpoint-group runner。若将 DILI 纳入当前论文框架，必须先把细粒度 groups
-映射到少量、数据源无关的 mechanism families，再由通用 paper runner 做 family-level reasoning；不得直接
-把旧 endpoint groups 一一升级成论文分支。
+DILI 的 Starling 配置位于 `experiment_config.py` / `starling_levels.py`，共七层。
+当前 Stage-03 恢复、重建和验证使用 `paper_experiments/rebuild_current_starling_retrieval.py`；
+完整数据合同见 `common/starling/NEW_TASK_SOURCE_DATA.md`。scaffold valid/test 的 Flash
+progressive、matched full-flat 和五个 baselines 已完成；结果以 `current_conditioned_results.json`
+为准。DILI scaffold test 是在 2026-09-08 按用户要求改名的原 valid，已被查看。
+
+2026-09-12 本轮清理冻结为 `data/starling_data/dili/retrieval_final/`，采用已完成 v5 诊断的源修复。
+保留全部 acquisition、冻结 gold/votes/splits 和必要的审计链；旧版本的大型暂存 source/index 与一次性脚本退出活跃路径。
+最终 source、Stage-03 package、catalog、scaffold/random indices 及共享表统一由共享恢复入口维护。
+详细合同见 `common/starling/NEW_TASK_SOURCE_DATA.md`；最新完成结果仍按 v5 原始输入登记，不因文件整理自动成为新实验。
+
+本文件的大部分运行说明用于复现 2026-06 的 native endpoint-group runner；其中六个 ChEMBL tiers 不是当前 Starling 七层。不得把旧 endpoint groups 一一升级成论文分支。
 
 ## Task 定义
 
@@ -16,7 +26,7 @@ DILI 当前不在四任务、21-condition 的 paper matrix 中，也还没有 `e
 与 DILI 机制相关的相似分子实验读数，再由 reasoning LLM 判断这些 analog evidence 是否能 transfer
 到 query molecule。
 
-当前计划适配 TDC DILI 二分类数据：
+历史 native runner 的 TDC 输入（当前 Starling benchmark 使用 `data/conditioned_benchmark/DILI/`）：
 
 ```text
 data/processed/DILI/train.jsonl

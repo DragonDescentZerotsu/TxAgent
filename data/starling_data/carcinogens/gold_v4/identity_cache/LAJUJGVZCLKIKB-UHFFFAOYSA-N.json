@@ -1,0 +1,32 @@
+{
+  "parent_key": "LAJUJGVZCLKIKB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LAJUJGVZCLKIKB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12044-79-0",
+    "35280-76-3",
+    "ASS",
+    "Arsenic sulfide (As2S2)",
+    "Arsenic sulfide (As3S3)",
+    "Arsenic sulfide (AsS)",
+    "Arsine sulfide",
+    "Arsino, thioxo-",
+    "Arsino, thioxo- (9CI)",
+    "Caswell No. 058",
+    "DTXCID201079476",
+    "DTXSID00785123",
+    "DTXSID8058291",
+    "EPA Pesticide Chemical Code 006901",
+    "LAJUJGVZCLKIKB-UHFFFAOYSA-N",
+    "RefChem:319978",
+    "SCHEMBL93556",
+    "lambda~5~-Arsanethione",
+    "monothioarsane",
+    "sulfanylidenearsenic",
+    "thioxoarsenic"
+  ],
+  "http_status": 200,
+  "cids": [
+    15805528
+  ]
+}

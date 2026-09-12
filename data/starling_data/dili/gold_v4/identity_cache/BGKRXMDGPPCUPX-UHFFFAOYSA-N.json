@@ -1,0 +1,12 @@
+{
+  "parent_key": "BGKRXMDGPPCUPX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "propynoxybenzamide"
+  ],
+  "cids": [
+    129730231
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BGKRXMDGPPCUPX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,21 @@
+{
+  "parent_key": "VPHOSDZKGZRSAI-KTKRTIGZSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Aminoethyl oleate",
+    "2-aminoethyl (Z)-octadec-9-enoate",
+    "3282-75-5",
+    "9-Octadecenoic acid (9Z)-, 2-aminoethyl ester",
+    "CHEBI:230296",
+    "DTXSID201022918",
+    "EINECS 221-924-2",
+    "Ethanol, 2-amino-, oleate (ester)",
+    "NS00048203",
+    "SCHEMBL9202862"
+  ],
+  "cids": [
+    6436599
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VPHOSDZKGZRSAI-KTKRTIGZSA-N/synonyms/JSON",
+  "http_status": 200
+}

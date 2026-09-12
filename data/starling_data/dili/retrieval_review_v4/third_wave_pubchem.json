@@ -1,0 +1,175 @@
+[
+  [
+    "acadesine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 17513,
+            "MolecularFormula": "C9H14N4O5",
+            "SMILES": "C1=NC(=C(N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N)C(=O)N",
+            "InChIKey": "RTRQQBHATOEIAF-UUOKFMHZSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "azacitidine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 9444,
+            "MolecularFormula": "C8H12N4O5",
+            "SMILES": "C1=NC(=NC(=O)N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N",
+            "InChIKey": "NMUSYJAQQFHJEW-KVTDHHQDSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "dextroamphetamine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5826,
+            "MolecularFormula": "C9H13N",
+            "SMILES": "C[C@@H](CC1=CC=CC=C1)N",
+            "InChIKey": "KWTSXDURSIMDCE-QMMMGPOBSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "acetylshikonin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 479501,
+            "MolecularFormula": "C18H18O6",
+            "SMILES": "CC(=CC[C@H](C1=CC(=O)C2=C(C=CC(=C2C1=O)O)O)OC(=O)C)C",
+            "InChIKey": "WNFXUXZJJKTDOZ-OAHLLOKOSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "tritoqualine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 72145,
+            "MolecularFormula": "C26H32N2O8",
+            "SMILES": "CCOC1=C(C(=C(C2=C1C(OC2=O)C3C4=C(C5=C(C=C4CCN3C)OCO5)OC)N)OCC)OCC",
+            "InChIKey": "IRGJVQIJENCTQF-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "bromocresol green",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 6451,
+            "MolecularFormula": "C21H14Br4O5S",
+            "SMILES": "CC1=C(C(=C(C=C1C2(C3=CC=CC=C3S(=O)(=O)O2)C4=CC(=C(C(=C4C)Br)O)Br)Br)O)Br",
+            "InChIKey": "FRPHFZCDPYBUAU-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2-D08",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 22507438,
+            "MolecularFormula": "C15H10O5",
+            "SMILES": "C1=CC=C2C(=C1)C(=O)C=C(O2)C3=C(C(=C(C=C3)O)O)O",
+            "InChIKey": "JJAXTFSPCLZPIW-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "4-CMTB",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 4307629,
+            "MolecularFormula": "C14H15ClN2OS",
+            "SMILES": "CC(C)C(C1=CC=C(C=C1)Cl)C(=O)NC2=NC=CS2",
+            "InChIKey": "AZYDQCGCBQYFSE-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "vitexin 6",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "cyclosporin A",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5284373,
+            "MolecularFormula": "C62H111N11O12",
+            "SMILES": "CC[C@H]1C(=O)N(CC(=O)N([C@H](C(=O)N[C@H](C(=O)N([C@H](C(=O)N[C@H](C(=O)N[C@@H](C(=O)N([C@H](C(=O)N([C@H](C(=O)N([C@H](C(=O)N([C@H](C(=O)N1)[C@@H]([C@H](C)C/C=C/C)O)C)C(C)C)C)CC(C)C)C)CC(C)C)C)C)C)CC(C)C)C)C(C)C)CC(C)C)C)C",
+            "InChIKey": "PMATZTZNYRCHOR-CGLBZJNRSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "E3040 glucuronide",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 443294,
+            "MolecularFormula": "C22H25N3O7S",
+            "SMILES": "CC1=C(C2=C(C(=C1O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)C(=O)O)O)O)O)C)SC(=N2)NC)CC4=CN=CC=C4",
+            "InChIKey": "RJBKVKVYNJTHJS-DQSYDGHTSA-N"
+          }
+        ]
+      }
+    }
+  ]
+]

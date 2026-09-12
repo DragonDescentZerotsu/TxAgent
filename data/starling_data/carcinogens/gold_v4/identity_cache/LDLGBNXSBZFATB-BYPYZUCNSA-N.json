@@ -1,0 +1,15 @@
+{
+  "parent_key": "LDLGBNXSBZFATB-BYPYZUCNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LDLGBNXSBZFATB-BYPYZUCNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "DB-230221",
+    "LDLGBNXSBZFATB-BYPYZUCNSA-N",
+    "SCHEMBL8735",
+    "dl-difluoromethylornithine"
+  ],
+  "http_status": 200,
+  "cids": [
+    9812937
+  ]
+}

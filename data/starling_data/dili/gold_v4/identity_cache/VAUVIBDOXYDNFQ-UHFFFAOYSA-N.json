@@ -1,0 +1,12 @@
+{
+  "parent_key": "VAUVIBDOXYDNFQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS018542682"
+  ],
+  "cids": [
+    57360077
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VAUVIBDOXYDNFQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

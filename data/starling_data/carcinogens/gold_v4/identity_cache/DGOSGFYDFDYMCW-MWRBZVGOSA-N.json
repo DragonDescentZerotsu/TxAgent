@@ -1,0 +1,38 @@
+{
+  "parent_key": "DGOSGFYDFDYMCW-MWRBZVGOSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DGOSGFYDFDYMCW-MWRBZVGOSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-4a,7b-Dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl didecanoate",
+    "24928-17-4",
+    "4 alpha-PDD",
+    "4 beta-PDD",
+    "4-.beta.-Phorbol 12,13-didecanoate",
+    "4-alpha-Phorbol-12,13-didecanoate",
+    "4-beta-Phorbol didecanoate",
+    "4.b.-Phorbol 12,13-didecanoate",
+    "4a,7b-Dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl didecanoate",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a-alpha,1b-beta,4,4a,7a-alpha,7b,8,9,9a-decahydro-4a-alpha,7b-alpha,9-beta,9a-alpha-tetrahydroxy-3-hydroxymethyl-1,1,6,8-alpha-tetramethyl-, 9,9a-didecanoate",
+    "CCRIS 696",
+    "CHEMBL3586009",
+    "DA-66678",
+    "DGOSGFYDFDYMCW-MWRBZVGOSA-N",
+    "DTXSID50947810",
+    "Decanoic acid, (1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-9aH-cyclopropa[3,4]benz[1,2-e]azulene-9,9a-diyl ester",
+    "Decanoic acid, 1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-9aH-cyclopropa(3,4)benz(1,2-e)azulene-9,9a-diyl ester, (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-",
+    "HSCI1_000159",
+    "HY-160070",
+    "Phorbol 12,13-didecanoate",
+    "Phorbol dicaprate",
+    "Phorbol didecanoate",
+    "Phorbol-12,13-didecanoate",
+    "RefChem:929145",
+    "SCHEMBL29706042",
+    "[(1S,2S,6R,10S,11R,13S,14R,15R)-13-decanoyloxy-1,6-dihydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] decanoate",
+    "[decanoyloxy-dihydroxy-(hydroxymethyl)-tetramethyl-oxo-[?]yl] decanoate"
+  ],
+  "http_status": 200,
+  "cids": [
+    452543
+  ]
+}

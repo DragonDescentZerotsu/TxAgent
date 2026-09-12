@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "scope": "All 804 frozen no_prior_grounded_sim0 rows, seven levels; selected evidence content and metadata compared, excluding frozen tool summaries. No LLM or tool calls. Not a full prompt-reuse receipt.",
+  "new_index": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v5/artifacts/indices/dili/scaffold/assay_neighbor_index.pkl",
+  "cells": {
+    "valid": {
+      "rows": 402,
+      "changed_rows": 29,
+      "changed_by_level": {
+        "1": 0,
+        "2": 25,
+        "3": 25,
+        "4": 29,
+        "5": 29,
+        "6": 29,
+        "7": 29
+      },
+      "first_changed_level_by_query": {
+        "29": 4,
+        "65": 2,
+        "66": 2,
+        "67": 2,
+        "68": 2,
+        "69": 2,
+        "70": 2,
+        "71": 2,
+        "72": 2,
+        "73": 2,
+        "74": 2,
+        "75": 2,
+        "76": 2,
+        "77": 2,
+        "78": 2,
+        "79": 2,
+        "80": 2,
+        "81": 2,
+        "92": 2,
+        "101": 4,
+        "179": 2,
+        "204": 4,
+        "215": 2,
+        "226": 2,
+        "227": 2,
+        "327": 2,
+        "328": 2,
+        "347": 2,
+        "384": 4
+      }
+    },
+    "test": {
+      "rows": 402,
+      "changed_rows": 21,
+      "changed_by_level": {
+        "1": 0,
+        "2": 13,
+        "3": 18,
+        "4": 21,
+        "5": 21,
+        "6": 21,
+        "7": 21
+      },
+      "first_changed_level_by_query": {
+        "32": 4,
+        "59": 2,
+        "74": 2,
+        "80": 2,
+        "100": 3,
+        "101": 3,
+        "102": 3,
+        "103": 3,
+        "104": 3,
+        "111": 4,
+        "130": 2,
+        "131": 2,
+        "132": 2,
+        "263": 2,
+        "264": 2,
+        "275": 4,
+        "314": 2,
+        "315": 2,
+        "316": 2,
+        "317": 2,
+        "400": 2
+      }
+    }
+  },
+  "l1_804_rows_selected_evidence_unchanged": true
+}

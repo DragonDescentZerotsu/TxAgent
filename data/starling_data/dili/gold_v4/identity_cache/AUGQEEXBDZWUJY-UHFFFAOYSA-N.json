@@ -1,0 +1,33 @@
+{
+  "parent_key": "AUGQEEXBDZWUJY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4, 15-Diacetoxyscirpen-3-ol",
+    "4,15-Di-O-acetylscirpenol",
+    "4,15-Diacetoxyscirp-9-en-3-ol",
+    "4,15-Diacetoxyscirpen-3-ol",
+    "4.beta.,13-epoxytrichothec-9-ene",
+    "8-HYDROXYDIACETOXYSCIRPENOL; neosolaniol solution; Solaniol (van); NEOSOLANIOL; Neosalaniol;",
+    "Anguidin",
+    "CHEBI:181805",
+    "CHEMBL2002916",
+    "DB-045970",
+    "MM 4462",
+    "NSC-141537",
+    "Neuro_000074",
+    "SCHEMBL289702",
+    "Spiro(2,2'-oxirane)-5a(6H)-methanol, 2,3,4,5,7,9a-hexahydro-3,4-dihydroxy-5,8-dimethyl-, 4,5a-diacetate",
+    "Trichothec-9-ene,13-epoxy-4.beta.,15-diazetoxy-3.alpha.-hydroxy-",
+    "Trichothec-9-ene-3,15-triol, 12,13-epoxy-, 4,15-diacetate",
+    "Trichothec-9-ene-3,15-triol, 12,13-epoxy-, 4,15-diacetate, (3.alpha.,4.beta.)-",
+    "Trichothec-9-ene-3,4,15-triol, 12,13-epoxy-, 4,15-diacetate",
+    "Trichothec-9-ene-3,4,15-triol, 12,13-epoxy-, 4,15-diacetate, (3.alpha.,4.beta.)-",
+    "Trichothec-9-ene-3.alpha.,15-triol, 12,13-epoxy-, 4,15-diacetate",
+    "Trichothec-9-ene-3.alpha.,4.beta.,15-triol, 12,13-epoxy-, 4,15-diacetate"
+  ],
+  "cids": [
+    422111
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AUGQEEXBDZWUJY-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

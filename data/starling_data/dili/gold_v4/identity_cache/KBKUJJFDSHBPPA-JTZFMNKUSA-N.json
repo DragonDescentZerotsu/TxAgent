@@ -1,0 +1,16 @@
+{
+  "parent_key": "KBKUJJFDSHBPPA-JTZFMNKUSA-N",
+  "ok": true,
+  "synonyms": [
+    "C16932",
+    "CHEBI:80806",
+    "Q27149848",
+    "SCHEMBL21129736",
+    "[(2S,4R,5R,6R,7R,11R,14S,16S)-14,16-Dihydroxy-7,11-dimethyl-6-(6-oxopyran-3-yl)-3-oxapentacyclo[8.8.0.02,4.02,7.011,16]octadecan-5-yl] acetate"
+  ],
+  "cids": [
+    14203
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KBKUJJFDSHBPPA-JTZFMNKUSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,26 @@
+{
+  "parent_key": "KIFOYKWBRFBOHQ-XMNCZCGISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KIFOYKWBRFBOHQ-XMNCZCGISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+)-Gymnemic acid VIII",
+    "(2S,3S,4S,5R,6R)-6-(((3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-((2S)-2-methylbutanoyl)oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl)oxy)-4-((2S,4S,5S,6R)-4,5-dihydroxy-6-(hydroxymethyl)-3-oxooxan-2-yl)oxy-3,5-dihydroxyoxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[[(3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-[(2S)-2-methylbutanoyl]oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl]oxy]-4-[(2S,4S,5S,6R)-4,5-dihydroxy-6-(hydroxymethyl)-3-oxooxan-2-yl]oxy-3,5-dihydroxyoxane-2-carboxylic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.BETA.,4.ALPHA.,16.BETA.,21.BETA.-(S),22.ALPHA.)-16,22,23,28-TETRAHYDROXY-21-(2-METHYL-1-OXOBUTOXY)OLEAN-12-EN-3-YL 3-O-.BETA.-D-ARABINO-HEXOPYRANOS-2-ULOS-1-YL-",
+    "131653-19-5",
+    "GYMNEMIC ACID VIII (CONSTITUENT OF GYMNEMA)",
+    "GYMNEMIC ACID VIII (CONSTITUENT OF GYMNEMA) [DSC]",
+    "Gymnemate VIII",
+    "Gymnemic acid VIII",
+    "Gymnemic acid viii, (+)-",
+    "O9N5N83DZZ",
+    "Q27285522",
+    "RefChem:144874",
+    "UNII-O9N5N83DZZ",
+    "beta-D-Glucopyranosiduronic acid, (3beta,4alpha,16beta,21beta-(S),22alpha)-16,22,23,28-tetrahydroxy-21-(2-methyl-1-oxobutoxy)olean-12-en-3-yl 3-o-beta-D-arabino-hexopyranos-2-ulos-1-yl-"
+  ],
+  "http_status": 200,
+  "cids": [
+    91617623
+  ]
+}

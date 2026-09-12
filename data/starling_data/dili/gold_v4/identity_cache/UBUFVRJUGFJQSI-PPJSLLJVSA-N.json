@@ -1,0 +1,33 @@
+{
+  "parent_key": "UBUFVRJUGFJQSI-PPJSLLJVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-((2S,4R)-4-benzyl-2-hydroxy-5-(((1S,2R)-2-hydroxy-2,3-dihydro-1H-inden-1-yl)amino)-5-oxopentyl)-N-tert-butyl-4-(furo(2,3-b)pyridin-5-ylmethyl)piperazine-2-carboxamide",
+    "(2S)-1-[(2S,4R)-4-benzyl-2-hydroxy-5-[[(1S,2R)-2-hydroxy-2,3-dihydro-1H-inden-1-yl]amino]-5-oxopentyl]-N-tert-butyl-4-(furo[2,3-b]pyridin-5-ylmethyl)piperazine-2-carboxamide",
+    "(2S)-1-[(2S,4R)-4-benzyl-2-hydroxy-5-[[(1S,2R)-2-hydroxyindan-1-yl]amino]-5-oxo-pentyl]-N-tert-butyl-4-(furo[2,3-b]pyridin-5-ylmethyl)piperazine-2-carboxamide",
+    "1-Piperazinepentanamide, N-((1S,2R)-2,3-dihydro-2-hydroxy-1H-inden-1-yl)-2-(((1,1-dimethylethyl)amino)carbonyl)-4-(furo(2,3-b)pyridin-5-ylmethyl)-gamma-hydroxy-alpha-(phenylmethyl)-, (alphaR,gammaS,2S)-",
+    "160729-91-9",
+    "AKOS016007841",
+    "BDBM50408997",
+    "CHEMBL2062137",
+    "CS-0079243",
+    "D-erythro-Pentonamide, 2,3,5-trideoxy-N-[(1S,2R)-2,3-dihydro-2-hydroxy-1H-inden-1-yl]-5-[(2S)-2-[[(1,1-dimethylethyl)amino]carbonyl]-4-(furo[2,3-b]pyridin-5-ylmethyl)-1-piperazinyl]-2-(phenylmethyl)-",
+    "HIV-IN-11",
+    "HY-120812",
+    "L 754,394",
+    "L 754394",
+    "L-754,394",
+    "L-754394",
+    "N-(2(R)-Hydroxy-1(S)-indany)-2(R)-phenylmethyl-4(S)-hydroxy-5-(1-(4-(5-furo[2,3-b]pyridylmethyl)- 2(S)-N'-(tert-butylcarboxamido)piperazinyl)) pentanamide",
+    "PD095742",
+    "RefChem:151723",
+    "SCHEMBL29624041",
+    "T24361",
+    "orb1703181"
+  ],
+  "cids": [
+    5481990
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UBUFVRJUGFJQSI-PPJSLLJVSA-N/synonyms/JSON",
+  "http_status": 200
+}

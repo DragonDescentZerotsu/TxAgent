@@ -1,0 +1,12 @@
+{
+  "parent_key": "GSBIOCMLBLZDGW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "[3h]-paracetamol"
+  ],
+  "cids": [
+    129717904
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSBIOCMLBLZDGW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

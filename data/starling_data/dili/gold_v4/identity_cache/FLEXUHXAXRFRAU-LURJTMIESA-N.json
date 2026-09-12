@@ -1,0 +1,27 @@
+{
+  "parent_key": "FLEXUHXAXRFRAU-LURJTMIESA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-(dimethylamino)-4-(methylsulfanyl)butanoic acid",
+    "2812-42-2",
+    "CCG-36572",
+    "CHEMBL1229963",
+    "Dimethyl-L-methionine",
+    "N,N-Dimethyl-L-Methionine",
+    "NCGC00013544",
+    "NCGC00013544-02",
+    "NCGC00096657-01",
+    "NCI45514",
+    "NCIStruc1_000211",
+    "NCIStruc2_000012",
+    "NSC-45514",
+    "Q27453114",
+    "SCHEMBL197985",
+    "n,n-dimethylmethionine"
+  ],
+  "cids": [
+    3246177
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FLEXUHXAXRFRAU-LURJTMIESA-N/synonyms/JSON",
+  "http_status": 200
+}

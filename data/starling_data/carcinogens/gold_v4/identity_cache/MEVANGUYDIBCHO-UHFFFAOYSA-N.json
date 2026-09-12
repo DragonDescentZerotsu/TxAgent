@@ -1,0 +1,13 @@
+{
+  "parent_key": "MEVANGUYDIBCHO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MEVANGUYDIBCHO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "BDBM50631728",
+    "CHEMBL5409221"
+  ],
+  "http_status": 200,
+  "cids": [
+    172449596
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "ZKNJEOBYOLUGKJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-ENEVALPROICACID",
+    "2-Pentenoic acid, 2-propyl-",
+    "2-Pentenoic acid, 2-propyl-, (2E)-",
+    "2-Pentenoicacid,2-propyl-,(2E)-",
+    "2-Propyl-2-pentenoic acid",
+    "2-enVPA",
+    "2-envalproic acid",
+    "2-n-Propylpent-2-enoic acid",
+    "2-n-propylpenta-2-enoic acid",
+    "2-propylpent-2-enoic acid",
+    "33786-46-8",
+    "60218-41-9",
+    "AKOS026730287",
+    "DTXCID001742300",
+    "DTXSID201312507",
+    "MFCD00801107",
+    "Q27215252",
+    "RefChem:483268",
+    "SCHEMBL691600",
+    "delta2-Valproic acid",
+    "orb1693398"
+  ],
+  "cids": [
+    104893
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZKNJEOBYOLUGKJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

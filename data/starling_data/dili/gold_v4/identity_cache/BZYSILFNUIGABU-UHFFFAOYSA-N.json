@@ -1,0 +1,26 @@
+{
+  "parent_key": "BZYSILFNUIGABU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1415089-24-5",
+    "2-(Difluoromethyl)-5-{[(2-Methylpropanoyl)amino]methyl}-N-{5-Methyl-4-[4-(Trifluoromethyl)phenyl]-1h-Imidazol-2-Yl}pyridine-3-Carboxamide",
+    "2-(Difluoromethyl)-5-{[(2-methylpropanoyl)amino]methyl}-N-{4-methyl-5-[4-(trifluoromethyl)phenyl]-1H-imidazol-2-yl}pyridine-3-carboxamide",
+    "2-(difluoromethyl)-5-[(2-methylpropanoylamino)methyl]-N-[5-methyl-4-[4-(trifluoromethyl)phenyl]-1H-imidazol-2-yl]pyridine-3-carboxamide",
+    "4UL",
+    "BDBM50028854",
+    "CHEMBL3342693",
+    "GLXC-27196",
+    "GTPL12211",
+    "LY-3023703",
+    "LY3023703",
+    "Q27455012",
+    "SCHEMBL14053810",
+    "SCHEMBL31060984",
+    "compound 9 [PMID: 25260492]"
+  ],
+  "cids": [
+    71059525
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BZYSILFNUIGABU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

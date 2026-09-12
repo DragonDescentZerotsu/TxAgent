@@ -1,0 +1,31 @@
+{
+  "parent_key": "LFDOEFHQLNGBQQ-HNNXBMFYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2,6-diamino-N-[4-(5-fluoro-1,3-benzothiazol-2-yl)-2-methylphenyl]hexanamide",
+    "(S)-2,6-Diamino-N-(4-(5-fluorobenzo[d]thiazol-2-yl)-2-methylphenyl)hexanamide",
+    "741241-36-1",
+    "AKOS040734600",
+    "BRD-K74558903-300-01-5",
+    "CHEMBL1793887",
+    "CS-0102454",
+    "DA-66679",
+    "HY-128920",
+    "Hexanamide, 2,6-diamino-N-(4-(5-fluoro-2-benzothiazolyl)-2-methylphenyl)-, (2S)-",
+    "NCGC00379246-01",
+    "NCGC00379246-02",
+    "NCI60_038813",
+    "Phortress (NSC-710305)",
+    "Phortress (free base)",
+    "Phortress free base",
+    "RF59KJ79DG",
+    "T12449",
+    "UNII-RF59KJ79DG",
+    "orb1708873"
+  ],
+  "cids": [
+    399465
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LFDOEFHQLNGBQQ-HNNXBMFYSA-N/synonyms/JSON",
+  "http_status": 200
+}

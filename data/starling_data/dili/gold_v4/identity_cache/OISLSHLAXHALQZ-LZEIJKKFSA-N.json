@@ -1,0 +1,43 @@
+{
+  "parent_key": "OISLSHLAXHALQZ-LZEIJKKFSA-N",
+  "ok": true,
+  "synonyms": [
+    "(S)-Isopropyl 2-((S)-(((2R,3R,4R,5R)-5-(2-amino-6-(methylamino)-9H-purin-9-yl)-4-fluoro-3-hydroxy-4-methyltetrahydrofuran-2-yl)methoxy)(phenoxy)phosphorylamino)propanoate",
+    "1998705-64-8",
+    "7UM3SQL968",
+    "AKOS040759780",
+    "AT 511",
+    "AT-511",
+    "AT-511?",
+    "AT-527 free base",
+    "AT18098",
+    "AT511",
+    "BDBM476337",
+    "BEMNIFOSBUVIR [INN]",
+    "Bemnifosbuvir (USAN)",
+    "Bemnifosbuvir [USAN]",
+    "Bemnifosbuvir [WHO-DD]",
+    "C24H33FN7O7P",
+    "CHEMBL5189464",
+    "CS-0146079",
+    "D12255",
+    "GTPL11295",
+    "HY-137958A",
+    "L-Alanine, N-((p(S),2'R)-2-amino-2'-deoxy-2'-fluoro-N,2'-dimethyl-p-phenyl-5'-adenylyl)-, 1-methylethyl ester",
+    "N-((p(S),2'R)-2-Amino-2'-deoxy-2'-fluoro-N,2'-dimethyl-p-phenyl-5'-adenylyl)-L-alanine 1-methylethyl ester",
+    "RefChem:116936",
+    "SCHEMBL18061562",
+    "SCHEMBL29722790",
+    "UNII-7UM3SQL968",
+    "US10874687, Compound 1A",
+    "WHO 12031",
+    "bemnifosbuvir",
+    "isopropyl (2S)-2-[[[(2R,3R,4R,5R)-5-[2-amino-6-(methylamino)purin-9-yl]-4-fluoro-3-hydroxy-4-methyl-tetrahydrofuran-2-yl]methoxy-phenoxy-phosphoryl]amino]propanoate",
+    "orb1940237"
+  ],
+  "cids": [
+    122527275
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OISLSHLAXHALQZ-LZEIJKKFSA-N/synonyms/JSON",
+  "http_status": 200
+}

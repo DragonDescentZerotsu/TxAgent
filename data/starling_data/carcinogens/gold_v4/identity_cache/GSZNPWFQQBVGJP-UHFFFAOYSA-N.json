@@ -1,0 +1,27 @@
+{
+  "parent_key": "GSZNPWFQQBVGJP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSZNPWFQQBVGJP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-FLUORO-2-NITROBENZENESULFONAMIDE",
+    "4-Fluoro-2-nitrobenzenesulphonamide",
+    "4-Fluoro-2-nitrobenzolsulfonamide",
+    "4-fluoro-2-nitrobenzene-1-sulfonamide",
+    "4-fluoro-2-nitrobenzenesulfonamide(WXC03576)",
+    "655-01-6",
+    "AAA65501",
+    "AKOS000146607",
+    "Benzenesulfonamide, 4-fluoro-2-nitro-",
+    "DB-396986",
+    "EN300-98967",
+    "G27474",
+    "GS0942",
+    "MFCD03618462",
+    "SCHEMBL27030082",
+    "Z45415645"
+  ],
+  "http_status": 200,
+  "cids": [
+    16793289
+  ]
+}

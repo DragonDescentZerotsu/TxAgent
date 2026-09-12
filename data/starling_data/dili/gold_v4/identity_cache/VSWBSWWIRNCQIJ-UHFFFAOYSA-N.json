@@ -1,0 +1,41 @@
+{
+  "parent_key": "VSWBSWWIRNCQIJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,6S)-9-chloro-4-methyl-13-oxa-4-azatetracyclo[12.4.0.0^{2,6.0^{7,12]octadeca-1(18),7(12),8,10,14,16-hexaene",
+    "(3ars,12brs)-5-chloro-2-methyl-2,3,3a,12b-tetrahydro-1h dibenzo-[2,3:6,7]oxepino[4,5-c]pyrrole",
+    "158018-50-9",
+    "5-Chloro-2-methyl-2,3,3a,12b-tetrahydro-1H-dibenz[2,3:6,7]oxepino-[4,5-c]pyrrole",
+    "5-Chloro-2-methyl-2,3,3a,12b-tetrahydrodibenzo(2,3:6,7)oxepino(4,5-c)pyrrole",
+    "5-chloro-2-methyl-2,3,3a,12b-tetrahydro-1H-dibenzo(2,3:6,7)oxepino(4,5-c)pyrrole",
+    "5-chloro-2-methyl-2,3,3a,12b-tetrahydro-1H-dibenzo[2,3:6,7]oxepino[4,5-c]pyrrole",
+    "5-chloro-2-methyl-2,3,3a,12b-tetrahydrodibenzo[2,3:6,7]oxepino[4,5-c]pyrrole",
+    "9-chloro-4-methyl-13-oxa-4-azatetracyclo[12.4.0.02,6.07,12]octadeca-1(18),7(12),8,10,14,16-hexaene",
+    "9-chloro-4-methyl-13-oxa-4-azatetracyclo[12.4.0.0^{2,6}.0^{7,12}]octadeca-1(14),7(12),8,10,15,17-hexaene",
+    "BDBM84994",
+    "CAS_163091",
+    "CHEBI:71255",
+    "CHEMBL3187365",
+    "DTXSID50860813",
+    "EBC-615130",
+    "FXB84372",
+    "L000898",
+    "LS-14560",
+    "NSC_163091",
+    "Q27139471",
+    "QCA62178",
+    "RefChem:302428",
+    "SB17468",
+    "SCHEMBL2221502",
+    "SCHEMBL29365680",
+    "SCHEMBL30413463",
+    "SCHEMBL30544842",
+    "VSWBSWWIRNCQIJ-UHFFFAOYSA-N",
+    "cis-Asenapine"
+  ],
+  "cids": [
+    9903970
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VSWBSWWIRNCQIJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

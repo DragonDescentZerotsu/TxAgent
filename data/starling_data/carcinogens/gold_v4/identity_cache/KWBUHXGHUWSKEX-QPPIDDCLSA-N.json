@@ -1,0 +1,15 @@
+{
+  "parent_key": "KWBUHXGHUWSKEX-QPPIDDCLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KWBUHXGHUWSKEX-QPPIDDCLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "CHEBI:190215",
+    "SCHEMBL29678023",
+    "SM(d34:2)",
+    "[(2S,3R)-2-(hexadec-3-enoylamino)-3-hydroxyoctadec-5-enyl] 2-(trimethylazaniumyl)ethyl phosphate"
+  ],
+  "http_status": 200,
+  "cids": [
+    154573092
+  ]
+}

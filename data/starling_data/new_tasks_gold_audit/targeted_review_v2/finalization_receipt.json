@@ -1,0 +1,9 @@
+{
+  "status": "complete_with_explicit_nonbinary_outcomes",
+  "reviewed_unique_records": 148079,
+  "source_rows_accounted": 543558,
+  "unresolved_output_errors": 0,
+  "raw_sources_unchanged": true,
+  "gold_published": false,
+  "summary_sha256": "e1e81b774f5cc8fc01029f09d4d48480125508f340dc4cbbf532d9def733c5f7"
+}

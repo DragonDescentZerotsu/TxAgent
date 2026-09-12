@@ -1,0 +1,29 @@
+{
+  "parent_key": "JDPAVWAQGBGGHD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDPAVWAQGBGGHD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "202-03-9",
+    "68U0ZN4H6L",
+    "Aceanthrylene",
+    "BRN 3603293",
+    "CCRIS 1998",
+    "CHEBI:33086",
+    "DTXCID8096530",
+    "DTXSID60174039",
+    "JDPAVWAQGBGGHD-UHFFFAOYSA-N",
+    "Q27115548",
+    "RefChem:108739",
+    "SCHEMBL140032",
+    "SCHEMBL1663404",
+    "SCHEMBL1664717",
+    "SCHEMBL26028",
+    "SCHEMBL29562021",
+    "UNII-68U0ZN4H6L",
+    "aceanthrylen"
+  ],
+  "http_status": 200,
+  "cids": [
+    107781
+  ]
+}

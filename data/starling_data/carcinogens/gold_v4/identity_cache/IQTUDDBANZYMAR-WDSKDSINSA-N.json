@@ -1,0 +1,20 @@
+{
+  "parent_key": "IQTUDDBANZYMAR-WDSKDSINSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IQTUDDBANZYMAR-WDSKDSINSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-{[(2S)-2,4-diamino-4-oxobutanoyl]amino}-4-(methylthio)butanoic acid",
+    "Asparagine-Methionine dipeptide",
+    "Asparaginyl-Methionine",
+    "Asparaginylmethionine",
+    "CHEBI:141423",
+    "L-Asparaginyl-L-Methionine",
+    "N-M",
+    "NM dipeptide",
+    "SCHEMBL2546713"
+  ],
+  "http_status": 200,
+  "cids": [
+    9813901
+  ]
+}

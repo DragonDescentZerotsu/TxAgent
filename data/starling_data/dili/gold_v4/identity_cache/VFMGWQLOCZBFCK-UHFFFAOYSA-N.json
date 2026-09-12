@@ -1,0 +1,28 @@
+{
+  "parent_key": "VFMGWQLOCZBFCK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "118415-57-9",
+    "1H-INDOLE-2-PROPANOIC ACID, 3-(BUTYLTHIO)-1-((4-CHLOROPHENYL)METHYL)-.ALPHA.,.ALPHA.-DIMETHYL-5-(1-METHYLETHYL)-",
+    "1H-Indole-2-propanoic acid, 3-(butylthio)-1-((4-chlorophenyl)methyl)-alpha,alpha-dimethyl-5-(1-methylethyl)-",
+    "3-(3-(Butylsulfanyl)-1-((4-chlorophenyl)methyl)-5-(propan-2-yl)-1H-indol-2-yl)-2,2-dimethylpropanoic acid",
+    "3-(BUTYLTHIO)-1-((4-CHLOROPHENYL)METHYL)-.ALPHA.,.ALPHA.-DIMETHYL-5-(1-METHYLETHYL)-1H-INDOLE-2-PROPANOIC ACID",
+    "3-(Butylthio)-1-((4-chlorophenyl)methyl)-alpha,alpha-dimethyl-5-(1-methylethyl)-1H-indole-2-propanoic acid",
+    "3-[3-(Butylsulfanyl)-1-[(4-chlorophenyl)methyl]-5-(propan-2-yl)-1H-indol-2-yl]-2,2-dimethylpropanoic acid",
+    "99U9GL8GBL",
+    "BDBM50468890",
+    "CHEMBL4291396",
+    "DTXSID30274010",
+    "MK 866",
+    "MK-866",
+    "MK866",
+    "Q6460546",
+    "SCHEMBL1807093",
+    "UNII-99U9GL8GBL"
+  ],
+  "cids": [
+    105049
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VFMGWQLOCZBFCK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

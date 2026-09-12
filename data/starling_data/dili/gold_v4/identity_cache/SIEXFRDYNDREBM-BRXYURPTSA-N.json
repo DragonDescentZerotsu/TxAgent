@@ -1,0 +1,30 @@
+{
+  "parent_key": "SIEXFRDYNDREBM-BRXYURPTSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-((((7S,8S)-3-CARBOXYLATO-7-(2-CARBOXYLATOETHYL)-13-ETHENYL-18-ETHYL-2,8,12,17-TETRAMETHYL-7,8-DIHYDROPORPHYRIN-5-YL)ACETYL)AMINO)BUTANEDIOIC ACID",
+    "(2S)-2-[[2-[(2S,3S)-7-carboxy-3-(2-carboxyethyl)-17-ethenyl-12-ethyl-2,8,13,18-tetramethyl-2,3,23,24-tetrahydroporphyrin-5-yl]acetyl]amino]butanedioic acid",
+    "110230-98-3",
+    "AKOS040754137",
+    "CHEBI:135875",
+    "CHEMBL2111186",
+    "DB11812",
+    "DTXSID101318471",
+    "L-ASPARTIC ACID, N-(((7S,8S)-3-CARBOXY-7-(2-CARBOXYETHYL)-13-ETHENYL-18-ETHYL-7,8-DIHYDRO-2,8,12,17-TETRAMETHYL-21H,23H-PORPHIN-5-YL)ACETYL)-",
+    "Monoaspartyl chlorine6",
+    "N-{[(2S,3S)-7-Carboxy-3-(2-carboxyethyl)-17-ethenyl-12-ethyl-2,8,13,18-tetramethyl-2,3-dihydroporphyrin-5-yl]acetyl}-L-aspartic acid",
+    "NCGC00507698-01",
+    "T34777",
+    "TALAPORFIN [MI]",
+    "TALAPORFIN [WHO-DD]",
+    "Talaporfin free acid",
+    "Talaporfina",
+    "Talaporfine",
+    "orb1695111"
+  ],
+  "cids": [
+    5486799
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SIEXFRDYNDREBM-BRXYURPTSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,16 @@
+{
+  "parent_key": "HDODESNNQIATIS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HDODESNNQIATIS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1130-69-4",
+    "4-Nitrosoquinoline-1-oxide",
+    "4-nitrosoquinoline-N-oxide",
+    "RefChem:100166",
+    "SCHEMBL3927876"
+  ],
+  "http_status": 200,
+  "cids": [
+    119208
+  ]
+}

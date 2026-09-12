@@ -1,0 +1,31 @@
+{
+  "parent_key": "FGHMGRXAHIXTBM-TWFJNEQDSA-N",
+  "ok": true,
+  "synonyms": [
+    "1036915-08-8",
+    "4W44B4S9OC",
+    "AKOS040748561",
+    "CHEMBL3793161",
+    "CS-0015652",
+    "DA-74417",
+    "DTXSID901028050",
+    "EX-A11360",
+    "Guanosine, 2'-C-methyl-, 5'-(2-((3-hydroxy-2,2-dimethyl-1-oxopropyl)thio)ethyl N-(phenylmethyl)phosphoramidate)",
+    "HY-19558",
+    "IDX-184",
+    "IDX-184, >98% (HPLC)",
+    "Q27260574",
+    "S-[2-[[(2R,3R,4R,5R)-5-(2-amino-6-oxo-1H-purin-9-yl)-3,4-dihydroxy-4-methyl-tetrahydrofuran-2-yl]methoxy-(benzylamino)phosphoryl]oxyethyl] 3-hydroxy-2,2-dimethyl-propanethioate",
+    "S-[2-[[(2R,3R,4R,5R)-5-(2-amino-6-oxo-1H-purin-9-yl)-3,4-dihydroxy-4-methyloxolan-2-yl]methoxy-(benzylamino)phosphoryl]oxyethyl] 3-hydroxy-2,2-dimethylpropanethioate",
+    "SCHEMBL3132403",
+    "T27586",
+    "UNII-4W44B4S9OC",
+    "orb1741522"
+  ],
+  "cids": [
+    44610685,
+    135565589
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FGHMGRXAHIXTBM-TWFJNEQDSA-N/synonyms/JSON",
+  "http_status": 200
+}

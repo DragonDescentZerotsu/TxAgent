@@ -1,0 +1,180 @@
+[
+  [
+    "toosendanin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 9851101,
+            "MolecularFormula": "C30H38O11",
+            "SMILES": "CC(=O)O[C@@H]1C[C@@H]([C@@]23CO[C@H]([C@@]1([C@@H]2C[C@H]([C@@]4([C@@H]3C(=O)[C@@H]([C@@]5([C@]46[C@H](O6)C[C@H]5C7=COC=C7)C)OC(=O)C)C)O)C)O)O",
+            "InChIKey": "NAHTXVIXCMUDLF-RFNFAWMESA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "ADP beta S",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5310996,
+            "MolecularFormula": "C10H15N5O9P2S",
+            "SMILES": "C1=NC(=C2C(=N1)N(C=N2)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)OP(=S)(O)O)O)O)N",
+            "InChIKey": "HCIKUKNAJRJFOW-KQYNXXCUSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "6-methylthioinosine monophosphate",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 87235470,
+            "MolecularFormula": "C11H17N4O7PS",
+            "SMILES": "CC1(C2=NCN(C2=NC=N1)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)O)O)S)O",
+            "InChIKey": "JXZUKMSWHMOLDE-SPIULWCRSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "disulfiram",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 3117,
+            "MolecularFormula": "C10H20N2S4",
+            "SMILES": "CCN(CC)C(=S)SSC(=S)N(CC)CC",
+            "InChIKey": "AUZONCFQVSMFAP-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "palmitic acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 985,
+            "MolecularFormula": "C16H32O2",
+            "SMILES": "CCCCCCCCCCCCCCCC(=O)O",
+            "InChIKey": "IPCSVZSSVZVIGE-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "NRH",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 64961,
+            "MolecularFormula": "C11H8N2",
+            "SMILES": "C1=CC=C2C(=C1)C3=C(N2)C=NC=C3",
+            "InChIKey": "AIFRHYZBTHREPW-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "ML179",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 45100448,
+            "MolecularFormula": "C21H25F3N4O2",
+            "SMILES": "C1CCC(CC1)N2C(=O)C=C(NC2=O)N3CCN(CC3)C4=CC=CC(=C4)C(F)(F)F",
+            "InChIKey": "MFABFKUNLDYKGH-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "PKI 14-22 amide",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "66424",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 66424,
+            "MolecularFormula": "C24H32O8",
+            "SMILES": "C[C@]12CCC3C(C1CC[C@@H]2O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)CCC5=C3C=CC(=C5)O",
+            "InChIKey": "MTKNDAQYHASLID-RNFKDHMMSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "5310996",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5310996,
+            "MolecularFormula": "C10H15N5O9P2S",
+            "SMILES": "C1=NC(=C2C(=N1)N(C=N2)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)OP(=S)(O)O)O)O)N",
+            "InChIKey": "HCIKUKNAJRJFOW-KQYNXXCUSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "6MMPR.mol",
+    200,
+    {
+      "bytes": 2333
+    }
+  ],
+  [
+    "Suzuki_FXR.pdf",
+    200,
+    {
+      "bytes": 2877498
+    }
+  ],
+  [
+    "PMC3029747.html",
+    200,
+    {
+      "bytes": 189054
+    }
+  ]
+]

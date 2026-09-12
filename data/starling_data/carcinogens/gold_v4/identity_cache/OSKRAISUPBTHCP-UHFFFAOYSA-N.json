@@ -1,0 +1,38 @@
+{
+  "parent_key": "OSKRAISUPBTHCP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OSKRAISUPBTHCP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "202-33-5",
+    "844QXH8PK1",
+    "AKOS025296229",
+    "BENZ(J)ACEANTHRYLENE [IARC]",
+    "BRN 4247917",
+    "Benz(j)aceanthrylene",
+    "Benz[7,8]aceanthrylene",
+    "Benz[j]?aceanthrylene",
+    "Benzo(7,8)aceanthrylene",
+    "Benzo[j]aceanthrylene",
+    "C19195",
+    "CCRIS 2269",
+    "CHEBI:82290",
+    "CHEMBL153437",
+    "Cholanthrylene",
+    "Cyclopenta[ij]tetraphene",
+    "DTXCID8096532",
+    "DTXSID30174041",
+    "FB18174",
+    "NS00074077",
+    "Naphth(2,1-d)acenaphthylene",
+    "Q27155860",
+    "RefChem:561296",
+    "SCHEMBL1289323",
+    "UNII-844QXH8PK1",
+    "benz[j]aceanthrylene",
+    "naphth[2,1-d]acenaphthylene"
+  ],
+  "http_status": 200,
+  "cids": [
+    104987
+  ]
+}

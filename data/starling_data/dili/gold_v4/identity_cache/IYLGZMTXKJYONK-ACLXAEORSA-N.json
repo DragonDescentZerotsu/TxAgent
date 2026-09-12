@@ -1,0 +1,31 @@
+{
+  "parent_key": "IYLGZMTXKJYONK-ACLXAEORSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1R,4R,6R,7S,17R)-4-ethyl-4-hydroxy-6,7-dimethyl-3,8-dioxo-2,9-dioxa-14-azatricyclo(9.5.1.014,17)heptadec-11-en-7-yl) acetate",
+    "(1,6)Dioxacyclododecino(2,3,4-gh)pyrrolizine-2,7-dione, 6-(acetyloxy)-3-ethyl-3,4,5,6,9,11,13,14,14a,14b-decahydro-3-hydroxy-5,6-dimethyl-, (3R,5R,6S,14aR,14bR)-",
+    "(12s,15r)-15-hydroxy-11,16-dioxo-15,20-dihydrosenecionan-12-yl acetate",
+    "(3R,5R,6S,14AR,14BR)-6-(ACETYLOXY)-3-ETHYL-3,4,5,6,9,11,13,14,14A,14B-DECAHYDRO-3-HYDROXY-5,6-DIMETHYL(1,6)DIOXACYCLODODECINO(2,3,4-GH)PYRROLIZINE-2,7-DIONE",
+    "(3R,5R,6S,9a1R,14aR)-3-ethyl-3-hydroxy-5,6-dimethyl-2,7-dioxo-2,3,4,5,6,7,9,9a1,11,13,14,14a-dodecahydro-[1,6]dioxacyclododecino[2,3,4-gh]pyrrolizin-6-yl acetate",
+    "15-Hydroxy-11,16-dioxo-15,20-dihydrosenecionan-12-yl acetate",
+    "30000-36-3",
+    "AKOS040752118",
+    "DTXSID80952412",
+    "Isolin",
+    "Isoline",
+    "Isoline (alkaloid)",
+    "KGE82EDN24",
+    "RefChem:149487",
+    "Ruwenine",
+    "SCHEMBL29851525",
+    "T32215",
+    "UNII-KGE82EDN24",
+    "[(1R,4R,6R,7S,17R)-4-ethyl-4-hydroxy-6,7-dimethyl-3,8-dioxo-2,9-dioxa-14-azatricyclo[9.5.1.014,17]heptadec-11-en-7-yl] acetate",
+    "orb1696905"
+  ],
+  "cids": [
+    185716
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IYLGZMTXKJYONK-ACLXAEORSA-N/synonyms/JSON",
+  "http_status": 200
+}

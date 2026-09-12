@@ -1,0 +1,22 @@
+{
+  "parent_key": "JYJIGFIDKWBXDU-MNNPPOADSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JYJIGFIDKWBXDU-MNNPPOADSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AI3-19506",
+    "DB00638",
+    "EINECS 232-684-3",
+    "G35236GY",
+    "GlyTouCan:G35236GY",
+    "Inulin [USP:BAN]",
+    "Inulin-oligofructose enriched",
+    "JYJIGFIDKWBXDU-MNNPPOADSA-N",
+    "NS00122726",
+    "RefChem:976867",
+    "UNII-JOS53KRJ01"
+  ],
+  "http_status": 200,
+  "cids": [
+    24763
+  ]
+}

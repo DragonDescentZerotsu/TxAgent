@@ -1,0 +1,41 @@
+{
+  "parent_key": "DLYUQMMRRRQYAE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(P2O5)2",
+    "16752-60-6",
+    "1lambda~5~,3lambda~5~,5lambda~5~,7lambda~5~-Tricyclo[3.3.1.1~3,7~]tetraphosphoxane-1,3,5,7-tetrone",
+    "2,4,6,8,9,10-hexaoxa-1,3,5,7-tetraphosphatricyclo[3.3.1.1(3,7)]decane 1,3,5,7-tetraoxide",
+    "2,4,6,8,9,10-hexaoxa-1lambda5,3lambda5,5lambda5,7lambda5-tetraphosphatricyclo[3.3.1.13,7]decane 1,3,5,7-tetraoxide",
+    "CHEBI:37376",
+    "DTXCID4027737",
+    "DTXSID701335584",
+    "Diphosphorus pentoxide",
+    "O10P4",
+    "P2O5",
+    "P4 O10",
+    "P4O10",
+    "Phosphor(V)-oxid",
+    "Phosphoric acid anhydride",
+    "Phosphoric anhydride",
+    "Phosphoric pentoxide",
+    "Phosphorous pentoxide",
+    "Phosphorpentoxid",
+    "Phosphorus oxide (P4O10)",
+    "Phosphorus pentaoxide",
+    "Phosphorus pentoxide, >=99.99% trace metals basis",
+    "Q369309",
+    "RefChem:1095542",
+    "SCHEMBL1006",
+    "TETRAPHOSPHORUSDECAOXIDE",
+    "Tetraphosphorus decaoxide",
+    "Tricyclo[3.3.1.13,7]tetraphosphoxane 1,3,5,7-tetraoxide",
+    "diphosphorous pentoxide",
+    "tricyclo[3.3.1.1(3,7)]tetraphosphoxane 1,3,5,7-tetraoxide"
+  ],
+  "cids": [
+    14812
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DLYUQMMRRRQYAE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

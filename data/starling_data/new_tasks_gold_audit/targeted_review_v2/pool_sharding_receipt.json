@@ -1,0 +1,70 @@
+{
+  "changed_utc": "2026-09-09T01:03:16.876388+00:00",
+  "change": "one HTTP pool of 2048 to eight pools of 256; fixed workers per pool, same global 2048 request budget",
+  "reason": "12 seconds of all backend running/waiting=0 with all GPUs=0 and one client CPU core saturated; HTTPcore scans all pool connections on arrivals/completions",
+  "previous_execution": {
+    "protocol": "source_direction_targeted_review.v1",
+    "model": "gpt-oss-120b",
+    "reasoning_effort": "medium",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "prompt_sha256": "3b692b2b32357430c8295712206431605a9fcca79c5d17d1b4838454528374ae",
+    "selection_manifest_sha256": "193e526f70fda338fba2296877d24784259459f9c17213e97022e87c37d19ae4",
+    "execution_sha256": "d32c68b8f0b178564870275705d7feb34fdec312021a0c7ca09d0ff2d908a9f6",
+    "workers": 2048,
+    "base_url": "http://127.0.0.1:9001/v1",
+    "runner_sha256": "a4ef9edb76f15947d98e5cbd98446ba21b3e7fd56adc01db997b41243f7bce82",
+    "started_utc": "2026-09-09T00:23:38.277323+00:00",
+    "limit": 0
+  },
+  "current_execution": {
+    "protocol": "source_direction_targeted_review.v1",
+    "model": "gpt-oss-120b",
+    "reasoning_effort": "medium",
+    "temperature": 0,
+    "max_tokens": 2048,
+    "prompt_sha256": "3b692b2b32357430c8295712206431605a9fcca79c5d17d1b4838454528374ae",
+    "selection_manifest_sha256": "193e526f70fda338fba2296877d24784259459f9c17213e97022e87c37d19ae4",
+    "execution_sha256": "d32c68b8f0b178564870275705d7feb34fdec312021a0c7ca09d0ff2d908a9f6",
+    "workers": 2048,
+    "base_url": "http://127.0.0.1:9001/v1",
+    "client_pool_sizes": [
+      256,
+      256,
+      256,
+      256,
+      256,
+      256,
+      256,
+      256
+    ],
+    "runner_sha256": "37edb2c96af23a66131ba5b91f93221e10f476f23fc321927c102d2ddc39f00f",
+    "started_utc": "2026-09-09T01:02:32.066611+00:00",
+    "limit": 0
+  },
+  "successful_rows_reused": 54535,
+  "old_pid": 3936322,
+  "new_pid": 3960779,
+  "validation": "19 tests passed, including nondivisible pool allocation, concurrency capacity, both-task coverage and resume",
+  "protocol_unchanged": true,
+  "pre_change_success_rate_10min": 24.4616666667,
+  "pre_change_success_rate_5min": 23.43,
+  "status": "verified_running",
+  "post_change_observation": {
+    "updated_utc": "2026-09-09T01:05:15.167843+00:00",
+    "unique_successes": 59028,
+    "remaining": 89051,
+    "task_successes": {
+      "dili": 29381,
+      "carcinogens": 29647
+    },
+    "unresolved_error_keys": 414,
+    "rate_60s": 40.333333333333336,
+    "rate_90s": 39.022222222222226,
+    "observed_backend_samples": 77,
+    "observation_seconds": 142.42240524291992,
+    "empty_backend_samples": 0,
+    "minimum_outstanding_backend_requests": 2015.0,
+    "preemptions": 0.0
+  }
+}

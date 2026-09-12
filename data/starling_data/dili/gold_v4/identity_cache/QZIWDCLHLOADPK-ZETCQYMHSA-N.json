@@ -1,0 +1,29 @@
+{
+  "parent_key": "QZIWDCLHLOADPK-ZETCQYMHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)methyl-dopa",
+    "(2S)-3-(3,4-dihydroxyphenyl)-2-(methylamino)propanoic acid",
+    "3-Hydroxy-N-methyl-L-tyrosine",
+    "3-Hydroxy-N-methyl-L-tyrosine; 3-(3,4-Dihydroxyphenyl)-N-methylalanine; ss-(3,4-Dihydroxyphenyl)-N-methylalanine; N-Methyldopa;",
+    "70152-53-3",
+    "CHEBI:167490",
+    "CHEBI:167646",
+    "DB-231540",
+    "DTXCID00585963",
+    "DTXSID20635212",
+    "N-Methyl-L-DOPA",
+    "N-methyl-3,4-dihydroxy-L-phenylalanine",
+    "N-methyl-L-dopa zwitterion",
+    "QZIWDCLHLOADPK-ZETCQYMHSA-N",
+    "RefChem:279940",
+    "SCHEMBL2283369",
+    "beta-(3,4-dihydroxyphenyl)-N-methyl-L-alanine"
+  ],
+  "cids": [
+    23620856,
+    71771903
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QZIWDCLHLOADPK-ZETCQYMHSA-N/synonyms/JSON",
+  "http_status": 200
+}

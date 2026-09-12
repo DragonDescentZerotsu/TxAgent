@@ -1,0 +1,29 @@
+{
+  "parent_key": "JSXZMKNQTHRIJD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JSXZMKNQTHRIJD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,8-Tetrahydrocyclopenta(c)pyrido(3,2-a)carbazole",
+    "1,2,3,8-tetrahydrocyclopenta[c]pyrido[3,2-a]carbazole",
+    "3,4-CYCLOPENTENOPYRIDO(3,2-A)CARBAZOLE",
+    "3,4-Cyclopentenopyrido[3,2-a]carbazole",
+    "69477-66-3",
+    "8,14-diazapentacyclo[11.7.0.02,6.07,12.015,20]icosa-1,6,8,10,12,15,17,19-octaene",
+    "AKOS030591614",
+    "BRN 4811570",
+    "Cyclopenta(c)pyrido(3,2-a)carbazole, 1,2,3,8-tetrahydro-",
+    "Cyclopenta[c]pyrido[3,2-a]carbazole, 1,2,3,8-tetrahydro-",
+    "Cyclopenta[c]pyrido[3,2-a]carbazole,1,2,3,8-tetrahydro-",
+    "DTXSID60219696",
+    "GX56K3RSA4",
+    "Lys-P-1",
+    "Q63409163",
+    "SCHEMBL30166687",
+    "T33078",
+    "orb1985777"
+  ],
+  "http_status": 200,
+  "cids": [
+    107889
+  ]
+}

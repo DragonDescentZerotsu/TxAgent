@@ -1,0 +1,13 @@
+{
+  "parent_key": "JVANDLOBMHTTNX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Azepinamid",
+    "SCHEMBL1117797"
+  ],
+  "cids": [
+    21572520
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JVANDLOBMHTTNX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

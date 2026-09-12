@@ -1,0 +1,15 @@
+{
+  "parent_key": "MOTYWXWYBWDESX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MOTYWXWYBWDESX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "98025-74-2",
+    "N-nitrosoacetamide",
+    "SCHEMBL2373292",
+    "SCHEMBL72015"
+  ],
+  "http_status": 200,
+  "cids": [
+    10219377
+  ]
+}

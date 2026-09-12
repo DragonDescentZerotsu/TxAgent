@@ -1,0 +1,40 @@
+{
+  "parent_key": "LTZVLHHIAUKGBP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "343SLZ0F89",
+    "501364-82-5",
+    "501364-82-5 (free base)",
+    "5H-Indeno(1,2-C)isoquinoline-9-sulfonamide, 6,11-dihydro-N-(3-(4-morpholinyl)propyl)-5-oxo-",
+    "5H-Indeno[1,2-c]isoquinoline-9-sulfonamide,6,11-dihydro-N-[3-(4-morpholinyl)propyl]-5-oxo-",
+    "6,11-dihydro-N-[3-(4-morpholinyl)propyl]-5-oxo-5H-Indeno[1,2-c]isoquinoline-9-sulfonamide",
+    "BDBM27525",
+    "BDBM50613639",
+    "C23H25N3O4S",
+    "CHEMBL190434",
+    "CS-0003718",
+    "DB-350226",
+    "G14033",
+    "HY-15045",
+    "IN01001",
+    "INO-1001 free base",
+    "MFCD19443171",
+    "MS-27892",
+    "N-(3-Morpholinopropyl)-5-oxo-6,11-dihydro-5H-indeno[1,2-c]isoquinoline-9-sulfonamide",
+    "N-(3-morpholin-4-ylpropyl)-5-oxo-6,11-dihydroindeno[1,2-c]isoquinoline-9-sulfonamide",
+    "N-(3-morpholinopropyl)-5-oxo-6,11-dihydroindeno[1,2-c]isoquinoline-9-sulfonamide",
+    "N-[3-(4-Morpholinyl)propyl]-5-oxo-6,11-dihydro-5H-indeno[1,2-c]is oquinoline-9-sulfonamide",
+    "N-[3-(morpholin-4-yl)propyl]-8-oxo-9-azatetracyclo[8.7.0.0^{2,7}.0^{11,16}]heptadeca-1(10),2(7),3,5,11(16),12,14-heptaene-14-sulfonamide",
+    "NS00071813",
+    "SCHEMBL2769748",
+    "SCHEMBL29363040",
+    "UNII-343SLZ0F89",
+    "indeno[1,2-c]isoquinolinone, 11a",
+    "orb1687517"
+  ],
+  "cids": [
+    9889396
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LTZVLHHIAUKGBP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

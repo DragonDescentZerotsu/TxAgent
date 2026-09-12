@@ -1,0 +1,12 @@
+{
+  "parent_key": "HGTDGHARHWYQEY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HGTDGHARHWYQEY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitroso-5-methyloxazolidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    21122743
+  ]
+}

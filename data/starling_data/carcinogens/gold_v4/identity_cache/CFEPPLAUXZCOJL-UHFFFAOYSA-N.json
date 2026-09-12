@@ -1,0 +1,19 @@
+{
+  "parent_key": "CFEPPLAUXZCOJL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CFEPPLAUXZCOJL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "109621-27-4",
+    "2-amino-3,8-dimethylimidazo[4,5-f]quinoline",
+    "3,8-dimethyl-3h-imidazo[4,5-f]quinolin-2-amine",
+    "3H-Imidazo(4,5-f)quinolin-2-amine, 3,8-dimethyl-",
+    "DTXCID8071483",
+    "DTXSID60148992",
+    "RefChem:283139",
+    "SCHEMBL28523283"
+  ],
+  "http_status": 200,
+  "cids": [
+    184098
+  ]
+}

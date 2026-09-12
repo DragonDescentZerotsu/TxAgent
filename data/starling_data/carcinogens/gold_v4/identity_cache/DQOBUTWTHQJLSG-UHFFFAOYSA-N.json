@@ -1,0 +1,15 @@
+{
+  "parent_key": "DQOBUTWTHQJLSG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DQOBUTWTHQJLSG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "DTXSID20949442",
+    "N-(Acetyloxy)-N-[4-(2-phenylethen-1-yl)phenyl]acetamide",
+    "N-(Acetyloxy)-N-[4-(2-phenylethenyl)phenyl]acetamide",
+    "[N-acetyl-4-(2-phenylethenyl)anilino] acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    91583
+  ]
+}

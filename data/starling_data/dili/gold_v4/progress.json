@@ -1,0 +1,16 @@
+{
+  "updated_utc": "2026-09-09T05:05:30.903911+00:00",
+  "prior_ok": 0,
+  "counts": {
+    "ok": 12583,
+    "dili:unresolved": 7988,
+    "dili:own": 4256,
+    "dili:author_year": 226,
+    "dili:named": 113,
+    "error": 117
+  },
+  "elapsed_s": 427.0,
+  "workers": 2048,
+  "expected_full_queue": 160794,
+  "smoke_limit": 0
+}

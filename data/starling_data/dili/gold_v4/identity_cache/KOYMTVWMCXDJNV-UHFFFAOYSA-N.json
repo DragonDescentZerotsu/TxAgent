@@ -1,0 +1,42 @@
+{
+  "parent_key": "KOYMTVWMCXDJNV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+-)-1-((2-Methoxy-6-methyl-3-pyridyl)methyl)-2-aziridinecarbonitrile",
+    "(+/-)-1-((2-METHOXY-6-METHYL-3-PYRIDYL)METHYL)-2-AZIRIDINECARBONITRILE",
+    "1-[(2-methoxy-6-methyl-3-pyridinyl)methyl]aziridine-2-carbonitrile",
+    "1-[(2-methoxy-6-methylpyridin-3-yl)methyl]aziridine-2-carbonitrile",
+    "2-Aziridinecarbonitrile, 1-((2-methoxy-6-methyl-3-pyridinyl)methyl)-",
+    "2-cyan-1-((2-methoxy-6-methylpyridin-3-yl)methyl)aziridine",
+    "325PG708LF",
+    "75985-31-8",
+    "BM 41.332",
+    "BM 41332",
+    "BM 41332; Ciamexon",
+    "BM-41332",
+    "BM-42332",
+    "CHEMBL2104100",
+    "CIAMEXON [INN]",
+    "CIAMEXON [MART.]",
+    "CS-0025837",
+    "Ciamexon",
+    "Ciamexon [INN:BAN]",
+    "Ciamexonum",
+    "Ciamexonum [Latin]",
+    "DTXSID40868388",
+    "HY-106445",
+    "NS00122925",
+    "Q27256151",
+    "RefChem:126079",
+    "SCHEMBL125843",
+    "T68043",
+    "UNII-325PG708LF",
+    "ciamexone",
+    "orb1819186"
+  ],
+  "cids": [
+    71759
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KOYMTVWMCXDJNV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

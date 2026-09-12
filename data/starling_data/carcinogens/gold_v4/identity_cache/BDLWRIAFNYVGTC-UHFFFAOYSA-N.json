@@ -1,0 +1,36 @@
+{
+  "parent_key": "BDLWRIAFNYVGTC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BDLWRIAFNYVGTC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(N,N-bis(2-chloroethyl))-2-aminoethyl-3-((acridin-9-yl)amino)propionate",
+    "-Alanine, N-9-acridinyl-, 2-[bis(2-chloroethyl)amino]ethyl ester",
+    ".BETA.-ALANINE, N-9-ACRIDINYL-, 2-(BIS(2-CHLOROETHYL)AMINO)ETHYL ESTER",
+    "2-(bis(2-chloroethyl)amino)ethyl 3-(acridin-9-ylamino)propanoate",
+    "2-[Bis(2-chloroethyl)amino]ethyl N-(acridin-9-yl)-beta-alaninate",
+    "2-[bis(2-chloroethyl)amino]ethyl 3-(acridin-9-ylamino)propanoate",
+    "220180-88-1",
+    "25571657UW",
+    "878189-87-8",
+    "Amustaline",
+    "CHEMBL2111082",
+    "DTXCID6098964",
+    "DTXSID20176473",
+    "PIC 1",
+    "Q27253910",
+    "RefChem:112371",
+    "S 303",
+    "S-303",
+    "S-303 compound",
+    "S303 compound",
+    "SCHEMBL29371249",
+    "SCHEMBL685675",
+    "UNII-25571657UW",
+    "beta-Alanine, N-9-acridinyl-, 2-(bis(2-chloroethyl)amino)ethyl ester",
+    "beta-Alanine, N-9-acridinyl-, 2-[bis(2-chloroethyl)amino]ethyl ester"
+  ],
+  "http_status": 200,
+  "cids": [
+    6433104
+  ]
+}

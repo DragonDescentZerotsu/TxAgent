@@ -1,0 +1,14 @@
+{
+  "parent_key": "CGQDJEWCGIUXSD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "N-ethyl-pyridin-4-carbothioamide",
+    "SCHEMBL13434933",
+    "SCHEMBL21232582"
+  ],
+  "cids": [
+    53720017
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGQDJEWCGIUXSD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

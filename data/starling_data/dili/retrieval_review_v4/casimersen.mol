@@ -1,0 +1,253 @@
+<!doctype html>
+<html><head>
+<title>KEGG DRUG: Casimersen</title>
+<link type="text/css" rel="stylesheet" href="/css/gn2.css?1789187135">
+<link type="text/css" rel="stylesheet" href="/css/bget.css?1789187135">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link type="text/css" rel="stylesheet" href="/css/bgetm.css?1789187135" media="only screen and (max-width: 768px)">
+<style>.kcfd{display:none;}</style>
+<script>
+<!--
+var getElementsByClassName = document.getElementsByClassName ?
+  function (cl){
+    return document.getElementsByClassName(cl);
+  } :
+  function (cl){
+    var elms = [];
+    var objs = document.getElementsByTagName('*');
+    for(var i=0;i<objs.length;i++){
+      var obj = objs[i];
+      if(obj.className == cl){
+        elms.push(obj);
+      }
+    }
+    return elms;
+  };
+function toggleField(clk,cl,show,hide){
+  var objs = getElementsByClassName(cl);
+  for(var i=0;i<objs.length;i++){
+    var obj = objs[i];
+    if(!obj.style.display||obj.style.display == 'none'){
+      obj.style.display = 'block';
+      clk.innerHTML = '&nbsp;&laquo; '+hide;
+    }
+    else{
+      obj.style.display = 'none';
+      clk.innerHTML = '&nbsp;&raquo; '+show;
+    }
+  }
+}
+function toggleData(bobj,e){
+  var id = bobj.id.replace(/[^0-9]/g,'');
+  var dt = document.getElementById('kcfd'+id);
+  e.preventDefault();
+  if(!dt.style.display||dt.style.display == 'none'){
+    document.getElementById('kcfb'+id).innerHTML = 'Hide';
+    dt.style.display = 'block';
+  }
+  else{
+    document.getElementById('kcfb'+id).innerHTML = 'Show';
+    dt.style.display = 'none';
+  }
+}
+function btn(bobj,img) {
+  bobj.src = "/Fig/bget/button_" + img + ".gif";
+}
+function btn_e(e) {
+  e = e || event;
+  var obj = e.target;
+  var img = e.target.src;
+  var img_base = img.replace(/\\/g,'/').replace(/(b|bd|bh)\.gif$/,'');
+  if(e.type == 'mousedown'||e.type == 'touchstart'){
+    obj.src = img_base +'bd.gif';
+  }
+  else if(e.type == 'mouseover'){
+    obj.src = img_base +'bh.gif';
+  }
+  else if(e.type == 'mouseup'||e.type == 'touchend'){
+    obj.src = img_base +'b.gif';
+  }
+  else if(e.type == 'mouseout'){
+    obj.src = img_base +'b.gif';
+  }
+}
+function init(){
+  for(var i=1;i<=1;i++){
+    if(document.getElementById('kcfb'+i)){
+      document.getElementById('kcfb'+i).onclick = function(e){toggleData(this,e);};
+    }
+  }
+}
+function Link_XtrctSeq2(form) {
+    var dna_from;
+    var dna_to;
+    var dna_len;
+    var plus_up   = Number(form.XtrctSeq_UP.value) ;
+    var plus_down = Number(form.XtrctSeq_DOWN.value);
+    var vector    = Number(form.VECTOR.value);
+    var org       = form.ORG.value;
+    var chr       = form.CHR.value;
+    var kid       = form.KEGGID.value;
+    var url;
+
+    if (plus_up == 0 && plus_down == 0) {
+      url = "/entry/-f+-n+n+" + kid;
+    }
+    else {
+  if (vector == 1) {
+      dna_from  = Number(form.FROM.value)  - plus_up;
+      dna_to    = Number(form.TO.value) + plus_down;
+  } else {
+      dna_from  = Number(form.FROM.value)  - plus_down;
+      dna_to    = Number(form.TO.value) + plus_up;
+  }
+
+  url = "/dbget-bin/cut_sequence_genes.pl?FROM=" + dna_from + "&TO=" + dna_to +"&VECTOR=" + vector + "&ORG=" + org;
+  if (chr) url += "&CHR=" + chr;
+    }
+    //window.open( url, "_self" );
+    location.href = url;
+}
+function go_taxonomy(form,params){
+  for(var key in params){
+    if(form[key]){
+      form.setAttribute(key,params[key]);
+    }
+    else{
+      var obj = document.createElement('input');
+      obj.setAttribute('type','hidden');
+      obj.setAttribute('name',key);
+      obj.setAttribute('value',params[key]);
+      form.appendChild(obj);
+    }
+  }
+  form.submit();
+}
+window.onload=function(){window.focus();init();};
+//--->
+</script>
+
+</head>
+<body>
+<div>
+
+<table border=0 cellpadding=0 cellspacing=0><tr><td>
+<table border=0 cellpadding=0 cellspacing=0 width="650"><tr><td width=70><a href="/kegg/drug"><img align="middle" alt="KEGG" border=0 src="/Fig/bget/kegg5.gif"></a></td><td>&nbsp;&nbsp;&nbsp;</td><td><a name="drug:D11988"></a><font class="title5">DRUG: Casimersen</font></td><td class="tar vbot"><button class="btn" onclick="javascript:void(window.open(&#39;/kegg/document/help_bget_drug.html&#39;,&#39;KEGG_Help&#39;,&#39;toolbar=no,location=no,directories=no,width=720,height=640,resizable=yes,scrollbars=yes&#39;));return false;">Help</button></td></tr></table><form method="post" action="/entry/" enctype="application/x-www-form-urlencoded" id="form1" name="form1"></form><table class="w1" width="650">
+<tr>
+<td class="fr5 w1">
+<table width="650" class="w2">
+
+<tr><th class="th50 deft tal vmid"><span class="nowrap">Entry</span></th>
+<td class="td50 defd"><table class="w1" width="100%"><tr><td class="tal pd0"><code><span class="nowrap">D11988&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drug&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</span></code></td></tr></table></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Name</span></th>
+<td class="td51 defd"><div class="cel">Casimersen (USAN/INN);<br>Amondys 45 (TN)</div></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Product</span></th>
+<td class="td50 defd"><div class="cel"><a href="https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e9e5fd44-eeda-4580-bba1-a734828bbcc3">AMONDYS 45 (Sarepta Therapeutics)</a></div></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Formula</span></th>
+<td class="td51 defd"><div class="cel">C268H424N124O95P22<br>
+</div></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Exact mass</span></th>
+<td class="td50 defd"><div class="cel">7580.6386<br>
+</div></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Mol weight</span></th>
+<td class="td51 defd"><div class="cel">7584.44<br>
+</div></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Sequence</span></th>
+<td class="td50 defd"><div class="cel">RNA, [P-deoxy-P-(dimethylamino)<br>](2′,3′-dideoxy-2′,3′-imino-2′,3′-seco) (2′a→5′)<br>(C-A-A-m5U-G-C-C-A-m5U-C-C-m5U-G-G-A-G-m5U-m5U-C-C-m5U-G) ,<br>5′-[P-[4-[[2-[2-(2-hydroxyethoxy)<br>ethoxy]ethoxy]carbonyl]-1-piperazinyl]-N,N-dimethylphosphonamidate]</div></td></tr>
+
+
+<tr><th class="th51 rept tal vtop"><span class="nowrap">&nbsp;&nbsp;Type</span></th>
+<td class="td51 repd"><div class="cel">Nucleotide</div></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Remark</span></th>
+<td class="td50 defd"><table class="w1"><tr><td class="vtop pd0"><span class="nowrap">ATC code:&nbsp;</span></td><td><a href="/brite/br08303+D11988">M09AX13</a></td></tr></table><table class="w1"><tr><td class="vtop pd0"><span class="nowrap">Product:&nbsp;</span></td><td>D11988&lt;US&gt; </td></tr></table></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Efficacy</span></th>
+<td class="td51 defd"><div class="cel">Translation inhibitor</div></td></tr>
+
+
+<tr><th class="th50 rept tal vtop"><span class="nowrap">&nbsp;&nbsp;Disease</span></th>
+<td class="td50 repd"><div class="cel">Duchenne muscular dystrophy (DMD variant amenable to exon 45 skipping) [DS:<a href="/entry/H01963">H01963</a>]</div></td></tr>
+
+
+<tr><th class="th51 rept tal vtop"><span class="nowrap">&nbsp;&nbsp;Type</span></th>
+<td class="td51 repd"><div class="cel">Antisense oligonucleotide</div></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Comment</span></th>
+<td class="td50 defd"><div class="cel">Treatment of Duchenne muscular dystrophy<br>
+</div></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Target</span></th>
+<td class="td51 defd"><div class="cel">DMD* [HSA_VAR:<a href="/entry/hsa_var:1756v1">1756v1</a>] [HSA:<a href="/entry/hsa:1756">1756</a>] [KO:<a href="/entry/K10366">K10366</a>] (pre-mRNA exon45)</div></td></tr>
+
+
+<tr><th class="th50 rept tal vtop"><span class="nowrap">&nbsp;&nbsp;Pathway</span></th>
+<td class="td50 repd"><table class="w1"><tr><td class="vtop pd0"><span class="nowrap"><a href="/pathway/hsa04820+1756">hsa04820</a>&nbsp;&nbsp;</span></td><td>Cytoskeleton in muscle cells</td></tr></table></td></tr>
+
+
+<tr><th class="th51 rept tal vtop"><span class="nowrap">&nbsp;&nbsp;Network</span></th>
+<td class="td51 repd"><table class="w1"><tr><td class="vtop pd0"><span class="nowrap"><a href="/network/nt06539+D11988">nt06539</a>&nbsp;&nbsp;</span></td><td>Cytoskeleton in muscle cells</td></tr></table></td></tr>
+
+
+<tr><th class="th50 deft tal vtop"><span class="nowrap">Brite</span></th>
+<td class="td50 defd"><div class="cel"><span class="nowrap">Anatomical Therapeutic Chemical (ATC) classification [BR:<a href="/brite/br08303+D11988">br08303</a>]<br>
+&nbsp;M MUSCULO-SKELETAL SYSTEM<br>
+&nbsp;&nbsp;M09 OTHER DRUGS FOR DISORDERS OF THE MUSCULO-SKELETAL SYSTEM<br>
+&nbsp;&nbsp;&nbsp;M09A OTHER DRUGS FOR DISORDERS OF THE MUSCULO-SKELETAL SYSTEM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;M09AX Other drugs for disorders of the musculo-skeletal system<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M09AX13 Casimersen<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D11988&nbsp;&nbsp;Casimersen (USAN/INN) &lt;US&gt;<br>
+USP drug classification [BR:<a href="/brite/br08302+D11988">br08302</a>]<br>
+&nbsp;Genetic, Enzyme, or Protein Disorder: Replacement, Modifiers, Treatment<br>
+&nbsp;&nbsp;Casimersen<br>
+&nbsp;&nbsp;&nbsp;D11988&nbsp;&nbsp;Casimersen (USAN/INN)<br>
+Target-based classification of drugs [BR:<a href="/brite/br08310+D11988">br08310</a>]<br>
+&nbsp;Not elsewhere classified<br>
+&nbsp;&nbsp;Cellular process<br>
+&nbsp;&nbsp;&nbsp;Cytoskeleton<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DMD* [HSA_VAR:<a href="/entry/hsa_var:1756v1">1756v1</a>]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D11988&nbsp;&nbsp;Casimersen (USAN/INN) &lt;US&gt;<br>
+New drug approvals in the USA [<a href="/kegg/drug/br08319.html?id=D11988">br08319.html</a>]<br>
+&nbsp;New molecular entities and new therapeutic biological products<br>
+&nbsp;&nbsp;D11988<br>
+New drug approvals in the USA, Europe and Japan [<a href="/kegg/drug/br08328.html?id=D11988">br08328.html</a>]<br>
+&nbsp;Approval dates by FDA, EMA and PMDA<br>
+&nbsp;&nbsp;D11988<br>
+Pharmacogenomic biomarkers [<a href="/kegg/drug/br08341.html?id=D11988">br08341.html</a>]<br>
+&nbsp;Germline mutations in genetic disorder treatments<br>
+&nbsp;&nbsp;D11988<br>
+</span></div></td></tr>
+
+
+<tr><th class="th51 deft tal vtop"><span class="nowrap">Other DBs</span></th>
+<td class="td51 defd"><table class="w1"><tr><td class="vtop pd0"><span class="nowrap">CAS:&nbsp;</span></td><td>1422958-19-7</td></tr></table><table class="w1"><tr><td class="vtop pd0"><span class="nowrap">PubChem:&nbsp;</span></td><td><a href="https://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=497620401">497620401</a></td></tr></table></td></tr>
+
+
+<tr><th class="th50 deft tal vmid"><span class="nowrap">LinkDB</span></th>
+<td class="td50 defd"><button class="btn" onclick="location.href='https://www.genome.jp/dbget-bin/get_linkdb?drug+D11988';return false;">All DBs</button></td></tr>
+
+</table></td></tr></table>
+<br><span style="font-size:12px"><a href="/entry/dr_ja:D11988">&raquo; Japanese version</a>&nbsp;&nbsp;&nbsp;<a href="javascript:history.back();">&raquo; Back</a></span><br><br></td></tr></table>
+
+
+<a href="/dbget/">DBGET</a> integrated database retrieval system</div>
+
+</body>
+</html>

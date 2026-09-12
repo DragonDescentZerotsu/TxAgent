@@ -1,0 +1,43 @@
+{
+  "parent_key": "XBRCDWHXULVEFB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "4QZ570621E",
+    "668-34-8",
+    "694-821-7",
+    "AI3-28009",
+    "BRN 4139186",
+    "CCRIS 612",
+    "CHEBI:27139",
+    "Caswell No. 896E",
+    "DTXCID5031921",
+    "DTXSID9058153",
+    "EINECS 200-990-6",
+    "EPA Pesticide Chemical Code 083601",
+    "FENTIN",
+    "FENTIN CATION",
+    "FENTIN ION",
+    "Fentin [ISO]",
+    "Fentine (ISO-French)",
+    "Fentine [ISO-French]",
+    "HSDB 1784",
+    "NS00099820",
+    "NSC 113243",
+    "Q27109938",
+    "RefChem:598930",
+    "SnPh3(+)",
+    "Stannol, triphenyl-",
+    "Stannylium, triphenyl-",
+    "TIN(1+), TRIPHENYL-, ION",
+    "Triphenylstannylium",
+    "UNII-4QZ570621E",
+    "[SnPh3](+)",
+    "triphenylstannanylium",
+    "triphenyltin(1+)"
+  ],
+  "cids": [
+    91481
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XBRCDWHXULVEFB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

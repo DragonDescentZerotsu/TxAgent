@@ -1,0 +1,152 @@
+{
+  "tasks": {
+    "dili": {
+      "records": 1645109,
+      "retrieval_eligible": 1596264,
+      "identity_status_counts": {
+        "retrieval_eligible": 1596264,
+        "pubchem_name_structure_mismatch": 4366,
+        "multiple_organic_components": 17335,
+        "invalid_structure_or_parent": 27144
+      },
+      "gold_source_votes": 5450,
+      "complete_gold_rows": 3369,
+      "complete_gold_label_counts": {
+        "1": 3144,
+        "0": 225
+      },
+      "benchmark_rows": 574,
+      "splits": {
+        "scaffold": {
+          "train": {
+            "rows": 460,
+            "label_counts": {
+              "1": 423,
+              "0": 37
+            }
+          },
+          "valid": {
+            "rows": 57,
+            "label_counts": {
+              "0": 4,
+              "1": 53
+            }
+          },
+          "test": {
+            "rows": 57,
+            "label_counts": {
+              "1": 53,
+              "0": 4
+            }
+          }
+        },
+        "random": {
+          "train": {
+            "rows": 460,
+            "label_counts": {
+              "1": 423,
+              "0": 37
+            }
+          },
+          "valid": {
+            "rows": 57,
+            "label_counts": {
+              "1": 53,
+              "0": 4
+            }
+          },
+          "test": {
+            "rows": 57,
+            "label_counts": {
+              "1": 53,
+              "0": 4
+            }
+          }
+        }
+      },
+      "records_sha256": "f45527d798f3a14a5baf43ab248bbf41331bb5a52dbf57104547255cca27d4d2",
+      "dataset_manifest_sha256": "0537b1122d9a631eb13fdda618bdce2a5df3c038f1adda4bfed2ade10d424b64",
+      "all_raw_fields_checked": 1645109,
+      "evaluation_status": "rebuilt_source_derived_cohort_with_stratified_semantic_review; no model evaluations",
+      "reviewed_records": 118
+    },
+    "carcinogens": {
+      "records": 3270087,
+      "retrieval_eligible": 3179685,
+      "identity_status_counts": {
+        "retrieval_eligible": 3179685,
+        "pubchem_name_structure_mismatch": 19419,
+        "multiple_organic_components": 27200,
+        "invalid_structure_or_parent": 43783
+      },
+      "gold_source_votes": 14176,
+      "complete_gold_rows": 12657,
+      "complete_gold_label_counts": {
+        "0": 461,
+        "1": 12196
+      },
+      "benchmark_rows": 1080,
+      "splits": {
+        "scaffold": {
+          "train": {
+            "rows": 772,
+            "label_counts": {
+              "1": 726,
+              "0": 46
+            }
+          },
+          "valid": {
+            "rows": 154,
+            "label_counts": {
+              "0": 10,
+              "1": 144
+            }
+          },
+          "test": {
+            "rows": 154,
+            "label_counts": {
+              "1": 150,
+              "0": 4
+            }
+          }
+        },
+        "random": {
+          "train": {
+            "rows": 864,
+            "label_counts": {
+              "1": 813,
+              "0": 51
+            }
+          },
+          "valid": {
+            "rows": 108,
+            "label_counts": {
+              "1": 105,
+              "0": 3
+            }
+          },
+          "test": {
+            "rows": 108,
+            "label_counts": {
+              "1": 102,
+              "0": 6
+            }
+          }
+        }
+      },
+      "records_sha256": "80ee75679edf6b2f33e7b1590107f2f8f1905c89ba992d41db5158a4513b8ee2",
+      "dataset_manifest_sha256": "4101a0c15559dc9f6d2fa46a45a1274f9e3be3b98a97a4255f22d026b4d8f40d",
+      "all_raw_fields_checked": 3270087,
+      "evaluation_status": "rebuilt_source_derived_cohort_with_stratified_semantic_review; no model evaluations",
+      "reviewed_records": 88
+    }
+  },
+  "tests_passed": 53,
+  "record_conversion_seconds": 230.26,
+  "semantic_review": "206 Codex source-text reviews, accepted and rejected strata; not human expert or full-paper audit",
+  "existing_task_artifacts_unchanged": 86,
+  "cross_task_uid_collisions": 0,
+  "raw_records_deleted": 0,
+  "status": "passed",
+  "validation_script_sha256": "3f44c5755be02d02fe8414d9bb4dde6cff2e86562443de013479815c39411091"
+}

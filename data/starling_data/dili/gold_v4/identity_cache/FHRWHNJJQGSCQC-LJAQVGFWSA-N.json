@@ -1,0 +1,34 @@
+{
+  "parent_key": "FHRWHNJJQGSCQC-LJAQVGFWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(.BETA.S)-.BETA.-1-PROPYN-1-YL-4-((4-(SPIRO(1H-INDENE-1,4'-PIPERIDIN)-1'-YLMETHYL)PHENYL)METHOXY)BENZENEPROPANOIC ACID",
+    "(3S)-3-(4-((4-((spiro(indene-1,4'-piperidin)-1'-yl)methyl)phenyl)methoxy)phenyl)hex-4-ynoic acid",
+    "(3S)-3-(4-{[4-(1'H-Spiro[indene-1,4'-piperidin]-1'-ylmethyl)benzyl]oxy}hex-4-ynoic acid",
+    "(3S)-3-[4-[[4-(spiro[indene-1,4'-piperidine]-1'-ylmethyl)phenyl]methoxy]phenyl]hex-4-ynoic acid",
+    "(betaS)-beta-1-Propyn-1-yl-4-((4-(spiro(1H-indene-1,4'-piperidin)-1'-ylmethyl)phenyl)methoxy)benzenepropanoic acid",
+    "1292290-38-0",
+    "AKOS040748837",
+    "BDBM50200369",
+    "BENZENEPROPANOIC ACID, .BETA.-1-PROPYN-1-YL-4-((4-(SPIRO(1H-INDENE-1,4'-PIPERIDIN)-1'-YLMETHYL)PHENYL)METHOXY)-, (.BETA.S)-",
+    "Benzenepropanoic acid, beta-1-propyn-1-yl-4-((4-(spiro(1H-indene-1,4'-piperidin)-1'-ylmethyl)phenyl)methoxy)-, (betaS)-",
+    "CHEMBL3915620",
+    "CS-0027170",
+    "DB15046",
+    "HY-108020",
+    "LAD0ZG7FFO",
+    "LY-2881835",
+    "LY-2881835, >98% (HPLC)",
+    "LY2881835",
+    "RefChem:154546",
+    "SCHEMBL1587130",
+    "T27937",
+    "UNII-LAD0ZG7FFO",
+    "orb1700044"
+  ],
+  "cids": [
+    51049992
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FHRWHNJJQGSCQC-LJAQVGFWSA-N/synonyms/JSON",
+  "http_status": 200
+}

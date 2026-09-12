@@ -1,0 +1,286 @@
+{
+  "status": "reviewed_requires_reselection",
+  "n_cards": 40,
+  "cards": [
+    {
+      "candidate_index": 0,
+      "card_id": "card_1798e3c354b61107",
+      "source_row_uid": "sr_e7c43ec8a6b1427b8213ee551dd80b05",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: gliotoxin. Correct chemical and model identity first; generic nonhepatic cell-survival comparison in an antiparasitic study lacks a hepatic or specific transferable mechanism endpoint. Retain original negative and positive observations outside DILI retrieval."
+    },
+    {
+      "candidate_index": 1,
+      "card_id": "card_8d70dd488cfd8e68",
+      "source_row_uid": "sr_0568c67d47aa40b395d0f5388e110609",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: clofibrate."
+    },
+    {
+      "candidate_index": 2,
+      "card_id": "card_2f342683727c0805",
+      "source_row_uid": "sr_ace90e9de1514818a62a380d24301685",
+      "action": "repair",
+      "reason": "LDH release and MTT viability define cytotoxicity in ethanol-pretreated primary human hepatocytes; this record does not isolate a mitochondrial process."
+    },
+    {
+      "candidate_index": 3,
+      "card_id": "card_95aea8a95478506e",
+      "source_row_uid": "sr_241865331b5a4b33bf4a98090407b09c",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 4,
+      "card_id": "card_f2e343c9c417e1ab",
+      "source_row_uid": "sr_cfdc413ab9214d99a16b121c12a10c93",
+      "action": "repair",
+      "reason": "Confirmed mixture-to-single-molecule mismatch. Correct subject to original group preparation; retain records but quarantine invalid molecular association after original-paper identity review. This is not exclusion of a valid negative or uncertain relevance."
+    },
+    {
+      "candidate_index": 5,
+      "card_id": "card_2e816f01be0a3dcf",
+      "source_row_uid": "sr_d0e2a92aa65d4444be73827614ea1494",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: 1-naphthyl isothiocyanate."
+    },
+    {
+      "candidate_index": 6,
+      "card_id": "card_da4ccf39866c0386",
+      "source_row_uid": "sr_cb4a60dd1a1b4bfcab331f183c5cba71",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: vidarabine. Nuclear area measures cell morphology, not bile canalicular architecture."
+    },
+    {
+      "candidate_index": 7,
+      "card_id": "card_84914feb22f0e012",
+      "source_row_uid": "sr_a5612994095040168f0d2bcf7f91a3bd",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 8,
+      "card_id": "card_496b64a033621ff5",
+      "source_row_uid": "sr_b9e8bf01eac44fe29eff8e6b0e16d583",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: 2-acetylaminofluorene. Primary publisher Chemicals section identifies BP as benzo(a)pyrene; correct the erroneous bisphenol A expansion while retaining the AAF result."
+    },
+    {
+      "candidate_index": 9,
+      "card_id": "card_1781af61e948c60f",
+      "source_row_uid": "sr_0e9d0d6e126440f4aadb0a33bf53dba5",
+      "action": "repair",
+      "reason": "Measured endpoint is hepatocyte cell loss, spheroid architecture, or plasma-membrane blebbing, not bile transport or canalicular function. Preserve negative/protective observations."
+    },
+    {
+      "candidate_index": 10,
+      "card_id": "card_4279b97018c0e8ab",
+      "source_row_uid": "sr_d632bcc7ec014c6983da94ab13a9a9a1",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 11,
+      "card_id": "card_aa4b4108a8ce69a3",
+      "source_row_uid": "sr_eb25626b4f5e4f34b9b1dbf85674d9aa",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: HNG."
+    },
+    {
+      "candidate_index": 12,
+      "card_id": "card_4e02819086302c89",
+      "source_row_uid": "sr_423c69ed4efd41e79841b93f279f9fd1",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: 4-methylumbelliferyl beta-D-glucuronide. Correct glucuronide chemistry and the administered-versus-formed distinction from the original abstract."
+    },
+    {
+      "candidate_index": 13,
+      "card_id": "card_779719564e51a03a",
+      "source_row_uid": "sr_1dd0e087c094499e9b36f515f5c98832",
+      "action": "repair",
+      "reason": "Measured endpoint is hepatocyte cell loss, spheroid architecture, or plasma-membrane blebbing, not bile transport or canalicular function. Preserve negative/protective observations."
+    },
+    {
+      "candidate_index": 14,
+      "card_id": "card_48baf82874d18c06",
+      "source_row_uid": "sr_ed94faa3167644f88508e8fb4f82b593",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: geniposidic acid."
+    },
+    {
+      "candidate_index": 15,
+      "card_id": "card_9c577f608a09823f",
+      "source_row_uid": "sr_b366330da3a04c81846f322ecabc18a2",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 16,
+      "card_id": "card_3803d3bb6739f92c",
+      "source_row_uid": "sr_bdea341cfef84156ae4d4c416873796c",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: oxybenzone. After model correction this is generic cell viability/nuclear morphology in a misidentified nonhepatic line, without a liver-specific endpoint. Preserve corrected record outside DILI retrieval; distinct redox mechanisms retained."
+    },
+    {
+      "candidate_index": 17,
+      "card_id": "card_51becf6eda0921c6",
+      "source_row_uid": "sr_6f26a01d5adb4c8faaff294c245867ed",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 18,
+      "card_id": "card_71a28bf070adba60",
+      "source_row_uid": "sr_53d862e9795a4d2fb6bfebab5a57fac3",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: 1-naphthyl isothiocyanate."
+    },
+    {
+      "candidate_index": 19,
+      "card_id": "card_46e7a8696cb643be",
+      "source_row_uid": "sr_b11db26f1d1f437f877a489e70d06673",
+      "action": "repair",
+      "reason": "Measured endpoint is hepatocyte cell loss, spheroid architecture, or plasma-membrane blebbing, not bile transport or canalicular function. Preserve negative/protective observations."
+    },
+    {
+      "candidate_index": 20,
+      "card_id": "card_7b172b537560b91c",
+      "source_row_uid": "sr_6dad6708626a419f894185bd1d810454",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 21,
+      "card_id": "card_19a589277460d61b",
+      "source_row_uid": "sr_d692f1a4d87d47279952f1930431a8e9",
+      "action": "repair",
+      "reason": "Clarify individual activator conditions against original full text."
+    },
+    {
+      "candidate_index": 22,
+      "card_id": "card_33176a2847797bae",
+      "source_row_uid": "sr_6e0e52215f1e48dd8a542b55d5f260e3",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 23,
+      "card_id": "card_cba4a74b3202d8e5",
+      "source_row_uid": "sr_0920154f653a42bda786b02d8d944c40",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 24,
+      "card_id": "card_39abb42a05a3a8a9",
+      "source_row_uid": "sr_2fdbaab86902465790008bd5cd493002",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 25,
+      "card_id": "card_faa8243f77cb2bd9",
+      "source_row_uid": "sr_c0bbd8ff72684d38a2e7396e088a834b",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 26,
+      "card_id": "card_0f6ec8403d4c5ee0",
+      "source_row_uid": "sr_008b3aa59e9c44d492b7ab269558554e",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 27,
+      "card_id": "card_916413b20601a81a",
+      "source_row_uid": "sr_a3ce2b7570584f259485d93159ec1fe6",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 28,
+      "card_id": "card_e1cf20409cd094a2",
+      "source_row_uid": "sr_e94587b8958e445982ffbe182d0baf76",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 29,
+      "card_id": "card_eb84933174991369",
+      "source_row_uid": "sr_353f860867554a11909adde7949e5efa",
+      "action": "repair",
+      "reason": "Original full text supports the phenotypic observation; mark target attribution as author-reported, without silently rewriting paper claims."
+    },
+    {
+      "candidate_index": 30,
+      "card_id": "card_5d9e33513f5b5b0a",
+      "source_row_uid": "sr_1fa3867c14234a15b6587f8bc70d6822",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: 2-acetylaminofluorene. Primary publisher Chemicals section identifies BP as benzo(a)pyrene; correct the erroneous bisphenol A expansion while retaining the AAF result."
+    },
+    {
+      "candidate_index": 31,
+      "card_id": "card_cc0f5117d1a21056",
+      "source_row_uid": "sr_296c4e23c7044b7cacce7f65cf9ef5d0",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 32,
+      "card_id": "card_44af96682fbbab6d",
+      "source_row_uid": "sr_116b2c214a274521bcde8c0861022e03",
+      "action": "repair",
+      "reason": "Primary full text identifies a tumor-growth viability efficacy experiment without a non-tumor hepatic comparator or specific mechanistic endpoint in this record. Retain distinct mechanistic records from this study."
+    },
+    {
+      "candidate_index": 33,
+      "card_id": "card_9030c44c1997d3d7",
+      "source_row_uid": "sr_93fe408d3dd146abb9bd8d4e77e33618",
+      "action": "repair",
+      "reason": "Measured endpoint is hepatocyte cell loss, spheroid architecture, or plasma-membrane blebbing, not bile transport or canalicular function. Preserve negative/protective observations."
+    },
+    {
+      "candidate_index": 34,
+      "card_id": "card_49304937ce83a290",
+      "source_row_uid": "sr_27ebd56364f143618e1e248407575199",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 35,
+      "card_id": "card_bb5cd033850d850c",
+      "source_row_uid": "sr_f7c8801d9d424238b942f785743ec572",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 36,
+      "card_id": "card_05c028a80bae38c3",
+      "source_row_uid": "sr_a789384a8fea477ebfa64b09e6692342",
+      "action": "repair",
+      "reason": "Repair tested entity against original paper and independently checked structure: geniposidic acid."
+    },
+    {
+      "candidate_index": 37,
+      "card_id": "card_3bc5cb8949da819a",
+      "source_row_uid": "sr_51eea833451143fc849d65f4a47cb219",
+      "action": "retain",
+      "reason": "No confirmed identity, endpoint or role error from reviewed source. Preserve valid no-effect, protective and indirect mechanistic evidence with the explicitly reported system and co-treatment limitations."
+    },
+    {
+      "candidate_index": 38,
+      "card_id": "card_859128caae51b4e9",
+      "source_row_uid": "sr_251fd7db1d714f1ebee4f3512b6b12c8",
+      "action": "repair",
+      "reason": "Primary full text identifies a tumor-growth viability efficacy experiment without a non-tumor hepatic comparator or specific mechanistic endpoint in this record. Retain distinct mechanistic records from this study."
+    },
+    {
+      "candidate_index": 39,
+      "card_id": "card_0faa24e1781f6b9d",
+      "source_row_uid": "sr_af3a1f209dd54575a0009308bc5e70ba",
+      "action": "repair",
+      "reason": "Confirmed wrong lawsone association; preserve multi-compound comparative finding with corrected subjects, pending a faithful separate-record extraction. No invented individual concentration assignment."
+    }
+  ]
+}

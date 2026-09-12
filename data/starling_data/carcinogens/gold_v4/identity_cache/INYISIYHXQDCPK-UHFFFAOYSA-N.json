@@ -1,0 +1,29 @@
+{
+  "parent_key": "INYISIYHXQDCPK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INYISIYHXQDCPK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,3-Dihydro-7-hydroxy-3-(4-methoxyphenyl)-4H-1-benzopyran-4-one",
+    "4626-22-6",
+    "7-Hydroxy-3-(4-methoxyphenyl)-2,3-dihydro-4H-1-benzopyran-4-one",
+    "7-Hydroxy-4'-methoxyisoflavanone",
+    "7-hydroxy-3-(4-methoxyphenyl)-2,3-dihydrochromen-4-one",
+    "7-hydroxy-3-(4-methoxyphenyl)-3,4-dihydro-2H-1-benzopyran-4-one",
+    "7-hydroxy-3-(4-methoxyphenyl)chroman-4-one",
+    "BDBM50102651",
+    "CHEBI:174556",
+    "CHEMBL3343011",
+    "DTXSID401175698",
+    "Dihydroformononetin",
+    "FD66366",
+    "INYISIYHXQDCPK-UHFFFAOYSA-N",
+    "LMPK12050448",
+    "RefChem:1083608",
+    "SCHEMBL2069507",
+    "SCHEMBL29559241"
+  ],
+  "http_status": 200,
+  "cids": [
+    14730796
+  ]
+}

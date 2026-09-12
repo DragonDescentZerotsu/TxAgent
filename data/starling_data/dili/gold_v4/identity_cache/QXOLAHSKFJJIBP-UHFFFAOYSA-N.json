@@ -1,0 +1,21 @@
+{
+  "parent_key": "QXOLAHSKFJJIBP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "5-(( (2-(4-(3 ,4-Difluorophenoxy)phenyl)ethyl) amino)sulfonyl)-2-methylbenzoic acid",
+    "5-(2-(4-(3,4-difluorophenoxy)phenyl)ethylsulfamoyl)-2-methyl-benzoic acid",
+    "5-DPEMB cpd",
+    "871687-93-3",
+    "CHEMBL4785223",
+    "PF-00807925",
+    "PXK56F7P6Y",
+    "RefChem:913096",
+    "SCHEMBL1601180",
+    "UNII-PXK56F7P6Y"
+  ],
+  "cids": [
+    11568537
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QXOLAHSKFJJIBP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

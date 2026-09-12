@@ -1,0 +1,20 @@
+{
+  "parent_key": "HWPZEPGEOVIYMU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HWPZEPGEOVIYMU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3'-Methyl-1:2:5:6-dibenzanthracene",
+    "3-METHYLDIBENZO[A,H]ANTHRACENE",
+    "3-Methyldibenz(a,h)anthracene",
+    "3-methylbenzo[k]tetraphene",
+    "63041-84-9",
+    "AKOS024328921",
+    "BRN 3310872",
+    "DIBENZ(a,h)ANTHRACENE, 3-METHYL-",
+    "DTXSID80212366"
+  ],
+  "http_status": 200,
+  "cids": [
+    44372
+  ]
+}

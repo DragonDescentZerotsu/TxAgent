@@ -1,0 +1,27 @@
+{
+  "parent_key": "GRCYEAFJPWXUQL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,2,3-Trimethyl-1,3-oxazolidine",
+    "2,2,3-Trimethyl-1,3-oxazolidine #",
+    "2,2,3-trimethyloxazolidine",
+    "42219-47-6",
+    "AKOS024436497",
+    "DS-012113",
+    "DTXCID60242944",
+    "DTXSID10291801",
+    "GRCYEAFJPWXUQL-UHFFFAOYSA-N",
+    "NSC-78056",
+    "NSC78056",
+    "Oxazolidine, 2,2,3-trimethyl-",
+    "Oxazolidine,2,2,3-trimethyl-",
+    "RefChem:367277",
+    "SCHEMBL680132",
+    "trimethyl oxazolidine"
+  ],
+  "cids": [
+    254199
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRCYEAFJPWXUQL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

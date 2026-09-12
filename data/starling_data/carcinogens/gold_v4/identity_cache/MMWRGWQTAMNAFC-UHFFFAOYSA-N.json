@@ -1,0 +1,39 @@
+{
+  "parent_key": "MMWRGWQTAMNAFC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MMWRGWQTAMNAFC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-dihydropyridine",
+    "22694-45-7",
+    "AKOS006352484",
+    "DTXSID80945364",
+    "Dihydropyridine",
+    "Dihydropyridines",
+    "MMWRGWQTAMNAFC-UHFFFAOYSA-N",
+    "Pyridine, 1,2-dihydro-",
+    "Q15632861",
+    "RefChem:388934",
+    "SCHEMBL1045989",
+    "SCHEMBL1048169",
+    "SCHEMBL1048616",
+    "SCHEMBL14332545",
+    "SCHEMBL15273",
+    "SCHEMBL187895",
+    "SCHEMBL190739",
+    "SCHEMBL194024",
+    "SCHEMBL20597",
+    "SCHEMBL20598",
+    "SCHEMBL236065",
+    "SCHEMBL28717351",
+    "SCHEMBL29969",
+    "SCHEMBL6007958",
+    "SCHEMBL7768898",
+    "UNII-YA306KG67U",
+    "YA306KG67U",
+    "dihydroazine"
+  ],
+  "http_status": 200,
+  "cids": [
+    407038
+  ]
+}

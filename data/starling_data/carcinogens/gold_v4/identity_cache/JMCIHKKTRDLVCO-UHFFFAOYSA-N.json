@@ -1,0 +1,30 @@
+{
+  "parent_key": "JMCIHKKTRDLVCO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JMCIHKKTRDLVCO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "171977-44-9",
+    "2,4-DIBDE  (BDE-7) 50 UG/ML IN NONANE UNLABELED CERTIFIED STANDARD",
+    "2,4-Dibromo-1-phenoxybenzene",
+    "2,4-dibromodiphenyl ether",
+    "2,4?DIBROMODIPHENYL ETHER",
+    "Benzene, 2,4-dibromo-1-phenoxy-",
+    "Benzene, 2,4-dibromo-1-phenoxy-; 2,4-Dibromo-1-phenoxybenzene; 2,4-Dibromodiphenyl ether; 2,4-DiBDE; BDE 7; PBDE 7",
+    "DTXSID70565813",
+    "JMCIHKKTRDLVCO-UHFFFAOYSA-N",
+    "M0M026GK5L",
+    "MFCD17018978",
+    "NS00077094",
+    "PBDE 7",
+    "Q27283312",
+    "RefChem:1059704",
+    "SCHEMBL2750489",
+    "SCHEMBL2753212",
+    "SCHEMBL9480868",
+    "UNII-M0M026GK5L"
+  ],
+  "http_status": 200,
+  "cids": [
+    14942774
+  ]
+}

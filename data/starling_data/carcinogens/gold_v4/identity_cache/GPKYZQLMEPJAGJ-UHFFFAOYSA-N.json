@@ -1,0 +1,35 @@
+{
+  "parent_key": "GPKYZQLMEPJAGJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPKYZQLMEPJAGJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,3,3,3-TETRAFLUOROPROPANOICACID",
+    "2,3,3,3-Tetrafluoropropanoic acid, AldrichCPR",
+    "2,3,3,3-tetrafluoro-propionic acid",
+    "2,3,3,3-tetrafluoropropanoic Acid",
+    "2,3,3,3-tetrafluoropropionic acid",
+    "2h-tetrafluoropropionic acid",
+    "359-49-9",
+    "671-742-6",
+    "AKOS005173377",
+    "D0Q5TRW9MJ",
+    "DTXCID70333195",
+    "DTXSID40382170",
+    "EN300-180188",
+    "F010543",
+    "FS-5783",
+    "Hydrogen-substituted perfluoropropanoic acid",
+    "MFCD01328323",
+    "PFCA-H; C3H2F4O2",
+    "Propanoic acid, 2,3,3,3-tetrafluoro-",
+    "RefChem:197289",
+    "SCHEMBL301057",
+    "SCHEMBL5708719",
+    "SY157649",
+    "UNII-D0Q5TRW9MJ"
+  ],
+  "http_status": 200,
+  "cids": [
+    2782609
+  ]
+}

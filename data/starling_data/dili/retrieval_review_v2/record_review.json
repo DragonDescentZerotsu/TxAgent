@@ -1,0 +1,60 @@
+{
+  "version": "source_record_placement_review.v1",
+  "task": "dili",
+  "source_records_sha256": "f14addbb3c5acd8077f8daeb0123c5440b45a508e8fda20b60daa993f84dcdbe",
+  "previous_release": "data/starling_data/dili/retrieval_review_v1",
+  "decisions": [
+    {
+      "source_row_uid": "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91",
+      "source_payload_sha256": "9654bd6b942bb6c957917a916d0e103296a0d035d7b1f3fc844d77a0512b35ff",
+      "previous_level": 2,
+      "action": "exclude",
+      "level": 0,
+      "reason": "Confirmed entity-to-structure mismatch: the source names and discusses emodin, but the attached WQQBERXYUUFDDW structure has an additional dihydroxyphenyl ring and is not emodin (RHMXXJGYXNZAPX). Quarantine this invalid attachment; preserve the raw passage. Absence of human evidence is not established safety. No identity repair or gold change is inferred.",
+      "quote": "The paper notes that human clinical safety data for emodin are lacking and that higher human doses could in principle lead to side effects reported in experimental rodent studies using large doses, including mutagenic or hepatotoxic effects. However, it explicitly states that there is no evidence to support hepatotoxic effects of emodin in humans at this time, and the authors' own rodent studies at 20, 40, and 80 mg/kg appeared safe, so no conclusions on emodin safety in humans can yet be made.",
+      "reviewer": "Codex individual source review",
+      "review_scope": "Complete supplied source record; emodin structure checked independently; no reviewer model or gold-direction review",
+      "example_card_id": "card_14ff7a36d3313355",
+      "pmid": "33509280"
+    },
+    {
+      "source_row_uid": "sr_a70195c63a0742be9ab33f38e40d3059",
+      "source_payload_sha256": "7de22a4153e7d9a38d267ae67a7f6702ccb1f8bc589a802e61476797e3261f54",
+      "previous_level": 4,
+      "action": "move",
+      "level": 3,
+      "reason": "Monolayer attachment/morphology recovery of cryopreserved primary human hepatocytes under Z-VAD-FMK is hepatic cell function, without measured bile transport or canalicular endpoints. Preserve protective role, dose, control and batch limitations; L3 in the source is a batch label, not a retrieval level.",
+      "quote": "At 19 µM Z-VAD-FMK, the monolayer score of the lowest monolayer-score batch (L3) went from 1.2 to 2.3, thus approaching the hep_high group.",
+      "reviewer": "Codex individual source review",
+      "review_scope": "Complete supplied source record; emodin structure checked independently; no reviewer model or gold-direction review",
+      "example_card_id": "card_1ed065acd3db495d",
+      "pmid": "30560367"
+    },
+    {
+      "source_row_uid": "sr_bfca09fef44349679322abdf5dc24d8c",
+      "source_payload_sha256": "a02fc209a736825836b38033d9176cb75e2f960791b1e999ef193218bb772619",
+      "previous_level": 4,
+      "action": "move",
+      "level": 3,
+      "reason": "Post-thaw ultrastructure of encapsulated hepatocytes measures general hepatic cell morphology/recovery, without a measured bile transport or canalicular endpoint. Retain cytoprotective role, mixed cryoprotectant context, and unspecified species; move to hepatic cell function.",
+      "quote": "Improvements in the ultrastructure of encapsulated hepatocytes were observed with all 3 cytoprotectants (ZVAD 60 µM, DFO 1 mM, HSA 2%), with ZVAD tending to provide the greatest effect.",
+      "reviewer": "Codex individual source review",
+      "review_scope": "Complete supplied source record; emodin structure checked independently; no reviewer model or gold-direction review",
+      "example_card_id": "card_5f8d40af5e4fc45a",
+      "pmid": "28901189"
+    },
+    {
+      "source_row_uid": "sr_4fd383281e9e4dd3bed2f7029676f44c",
+      "source_payload_sha256": "e87db5df9705f3a2d9b844fa517accc7646d31e328dce010d1d29d80b877edfd",
+      "previous_level": 4,
+      "action": "move",
+      "level": 3,
+      "reason": "Late apoptotic cell shape after death-receptor agonists and caspase inhibition in HepG2 is hepatic cell death/morphology, not canalicular polarity or bile transport. Retain modifier role and tumor-cell context; move to hepatic cell function.",
+      "quote": "Analysis of late morphology after 24 h revealed that cells in which caspases had been inhibited by 1.5 µM zVAD-fmk displayed a distinct, round shape, whereas cells in which caspases had not been inhibited had completely disintegrated into apoptotic bodies. Thus, inhibition of caspases influenced both early and late apoptotic morphology of HepG2 cells treated with DR agonists.",
+      "reviewer": "Codex individual source review",
+      "review_scope": "Complete supplied source record; emodin structure checked independently; no reviewer model or gold-direction review",
+      "example_card_id": "card_3f822630930f676b",
+      "pmid": "17466932"
+    }
+  ]
+}

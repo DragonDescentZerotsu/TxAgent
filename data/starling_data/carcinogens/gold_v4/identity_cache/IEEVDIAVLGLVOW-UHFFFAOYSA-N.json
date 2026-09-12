@@ -1,0 +1,34 @@
+{
+  "parent_key": "IEEVDIAVLGLVOW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IEEVDIAVLGLVOW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,4,5-pentabromo-6-(2,3,4,6-tetrabromophenoxy)benzene",
+    "2,2',3,3',4,4',5,6,6'-Nonabromodiphenylether Solution in Isooctane, 5_g/mL",
+    "2,2',3,3',4,4',5,6,6'-nonabromodiphenyl ether",
+    "437701-79-6",
+    "872OKM983V",
+    "AKOS025295326",
+    "BDE 207",
+    "BDE-207",
+    "BDE207",
+    "Benzene, 1,2,3,4,5-pentabromo-6-(2,3,4,6-tetrabromophenoxy)-",
+    "DTXCID60402804",
+    "DTXSID30451985",
+    "IEEVDIAVLGLVOW-UHFFFAOYSA-N",
+    "MSK6350-5I",
+    "NS00077010",
+    "PBDE 207",
+    "PBDE Congener No. 207",
+    "PBDE No. 207",
+    "Q27269785",
+    "RefChem:80536",
+    "SCHEMBL16678555",
+    "SCHEMBL29599785",
+    "UNII-872OKM983V"
+  ],
+  "http_status": 200,
+  "cids": [
+    11018364
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "BFIIGQJDJWMBPV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BFIIGQJDJWMBPV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(4-(Phenylazo)phenyl)pyrrolidine",
+    "1-(p-(Phenylazo)phenyl)pyrrolidine",
+    "10282-34-5",
+    "4-N-Pyrrolidinylazobenzene",
+    "5-20-01-00446 (Beilstein Handbook Reference)",
+    "BRN 0220377",
+    "DTXSID101037742",
+    "Pyrrolidine, 1-(4-(phenylazo)phenyl)-",
+    "Pyrrolidine, 1-(p-(phenylazo)phenyl)-",
+    "Pyrrolidine, 1-[4-(2-phenyldiazenyl)phenyl]-",
+    "SCHEMBL10343353",
+    "SCHEMBL7764536"
+  ],
+  "http_status": 200,
+  "cids": [
+    114785
+  ]
+}

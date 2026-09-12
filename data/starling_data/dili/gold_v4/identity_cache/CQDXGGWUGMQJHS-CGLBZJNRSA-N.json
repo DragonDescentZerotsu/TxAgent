@@ -1,0 +1,25 @@
+{
+  "parent_key": "CQDXGGWUGMQJHS-CGLBZJNRSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R,4E)-1-[(2S,5S,11S,14S,17S,20S,23R,26S,29S,32S)-5-ethyl-1,7,10,16,20,23,25,28,31-nonamethyl-11,17,26,29-tetrakis(2-methylpropyl)-3,6,9,12,15,18,21,24,27,30,33-undecaoxo-14,32-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecaazacyclotritriacontan-2-yl]-2-methylhex-4-en-1-yl hydrogen sulfate",
+    "121673-00-5",
+    "CHEBI:230454",
+    "CsA-SO4H",
+    "Cyclosporin A Hydrogen Sulfate (ester)",
+    "Cyclosporin A Sulfate",
+    "Cyclosporin A sulphate",
+    "Cyclosporin A sulphate (*sodium salt*)",
+    "Cyclosporine-sulfate",
+    "NSC632301",
+    "[(E,1R,2R)-1-[(2S,5S,11S,14S,17S,20S,23R,26S,29S,32S)-5-ethyl-1,7,10,16,20,23,25,28,31-nonamethyl-11,17,26,29-tetrakis(2-methylpropyl)-3,6,9,12,15,18,21,24,27,30,33-undecaoxo-14,32-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecazacyclotritriacont-2-yl]-2-methylhex-4-enyl] hydrogen sulfate",
+    "[(E,1R,2R)-1-[(2S,5S,11S,14S,17S,20S,23R,26S,29S,32S)-5-ethyl-11,17,26,29-tetraisobutyl-14,32-diisopropyl-1,7,10,16,20,23,25,28,31-nonamethyl-3,6,9,12,15,18,21,24,27,30,33-undecaoxo-1,4,7,10,13,16,19,22,25,28,31-undecazacyclotritriacont-2-yl]-2-methyl-hex-4-enyl] hydrogen sulfate",
+    "cyclosporin A hydrogen sulfate",
+    "cyclosporine hydrogen sulfate"
+  ],
+  "cids": [
+    49767023
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQDXGGWUGMQJHS-CGLBZJNRSA-N/synonyms/JSON",
+  "http_status": 200
+}

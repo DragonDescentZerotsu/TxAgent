@@ -1,0 +1,26 @@
+{
+  "parent_key": "LCDJFVGAKJGCGB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LCDJFVGAKJGCGB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-Nitrophenoxy)oxirane",
+    "2'-(4-NITROPHENOXY)OXIRANE, (+/-)-",
+    "2'-(4-Nitrophenoxy)oxirane",
+    "2-(4-nitrophenoxy)oxirane",
+    "59485-08-4",
+    "AKOS006279047",
+    "CCRIS 8088",
+    "DTXCID701402305",
+    "DTXSID50974888",
+    "LX1821R4K9",
+    "OXIRANE, 2-(4-NITROPHENOXY)-",
+    "Oxirane, (4-nitrophenoxy)-",
+    "Q27894471",
+    "RefChem:80176",
+    "UNII-LX1821R4K9"
+  ],
+  "http_status": 200,
+  "cids": [
+    124682
+  ]
+}

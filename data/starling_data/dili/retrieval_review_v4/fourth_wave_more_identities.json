@@ -1,0 +1,111 @@
+[
+  [
+    "N-acetyl-Leu-Leu-norleucinal",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "ortho-phenylphenol",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 7017,
+            "MolecularFormula": "C12H10O",
+            "SMILES": "C1=CC=C(C=C1)C2=CC=CC=C2O",
+            "InChIKey": "LLEMOWNGBBNAJR-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "chlorpyrifos",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 2730,
+            "MolecularFormula": "C9H11Cl3NO3PS",
+            "SMILES": "CCOP(=S)(OCC)OC1=NC(=C(C=C1Cl)Cl)Cl",
+            "InChIKey": "SBPBAQFWLVIOKP-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "GB1107",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 122443390,
+            "MolecularFormula": "C20H16Cl2F3N3O4S",
+            "SMILES": "C1=CC(=C(C=C1S[C@@H]2[C@@H]([C@H]([C@H]([C@H](O2)CO)O)N3C=C(N=N3)C4=CC(=C(C(=C4)F)F)F)O)Cl)Cl",
+            "InChIKey": "CSGJIUAIYDKFPC-DABHTEOTSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "puerarin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5281807,
+            "MolecularFormula": "C21H20O9",
+            "SMILES": "C1=CC(=CC=C1C2=COC3=C(C2=O)C=CC(=C3[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)CO)O)O)O)O)O",
+            "InChIKey": "HKEAFJYKMMKDOR-VPRICQMDSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "glucuronolactone",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 92283,
+            "MolecularFormula": "C6H8O6",
+            "SMILES": "C(=O)[C@@H]([C@@H]1[C@@H]([C@@H](C(=O)O1)O)O)O",
+            "InChIKey": "UYUXSRADSPPKRZ-SKNVOMKLSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "4-(3-{1-[2-(dimethylamino)ethyl]-1H-pyrazol-3-yl}phenyl)-N,N,5,6-tetramethyl-2-pyrimidinamine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 30876879,
+            "MolecularFormula": "C21H28N6",
+            "SMILES": "CC1=C(N=C(N=C1C2=CC=CC(=C2)C3=NN(C=C3)CCN(C)C)N(C)C)C",
+            "InChIKey": "SVOZAMOPQXHFML-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ]
+]

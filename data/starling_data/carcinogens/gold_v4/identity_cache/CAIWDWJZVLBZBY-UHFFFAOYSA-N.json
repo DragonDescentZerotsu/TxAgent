@@ -1,0 +1,18 @@
+{
+  "parent_key": "CAIWDWJZVLBZBY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CAIWDWJZVLBZBY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-(1,2-Dichloroethane-1,1-diyl)dibenzene",
+    "59856-00-7",
+    "DTXCID70474895",
+    "DTXSID60524090",
+    "RefChem:211869",
+    "SCHEMBL7157506",
+    "dichlorodiphenylethane"
+  ],
+  "http_status": 200,
+  "cids": [
+    13164692
+  ]
+}

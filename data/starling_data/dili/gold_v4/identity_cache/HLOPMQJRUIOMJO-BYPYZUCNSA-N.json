@@ -1,0 +1,12 @@
+{
+  "parent_key": "HLOPMQJRUIOMJO-BYPYZUCNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(s)-2-amino-4-methoxybut-3-enoic acid"
+  ],
+  "cids": [
+    161890
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HLOPMQJRUIOMJO-BYPYZUCNSA-N/synonyms/JSON",
+  "http_status": 200
+}

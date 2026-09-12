@@ -1,0 +1,42 @@
+{
+  "parent_key": "LRNBWFXCDULFQF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LRNBWFXCDULFQF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "6976-69-8",
+    "9015-73-0",
+    "AKOS008948190",
+    "Benzoic acid, 4-methyl-, propyl ester",
+    "Colextran",
+    "Colextran (INN)",
+    "Colextran [INN]",
+    "Colextranum",
+    "Colextranum (INN-Latin)",
+    "Colextranum [INN-Latin]",
+    "DEAE dextran",
+    "DEAE-D",
+    "DEAE-DEXTRAN",
+    "DEAE-Dextran (MW 500000)",
+    "DTXSID40864168",
+    "Detaxtran",
+    "Dextran 2-(diethylamino)ethyl ether",
+    "Dextran, diethylaminoethyl-, polymer",
+    "F555042",
+    "LRNBWFXCDULFQF-UHFFFAOYSA-N",
+    "NS00068030",
+    "NSC-24768",
+    "NSC24768",
+    "Propyl 4-methylbenzoate",
+    "Propyl 4-methylbenzoate #",
+    "Propyl4-methylbenzoate",
+    "RefChem:578506",
+    "SCHEMBL1119455",
+    "SCHEMBL11452949",
+    "SCHEMBL6057220",
+    "Z53835724"
+  ],
+  "http_status": 200,
+  "cids": [
+    230181
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "CBMYJHIOYJEBSB-DYSINSMMSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CBMYJHIOYJEBSB-DYSINSMMSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Androstanediol",
+    "CHEMBL4644154",
+    "SCHEMBL18743628"
+  ],
+  "http_status": 200,
+  "cids": [
+    445071
+  ]
+}

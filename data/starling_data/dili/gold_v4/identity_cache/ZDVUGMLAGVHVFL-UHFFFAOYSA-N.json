@@ -1,0 +1,13 @@
+{
+  "parent_key": "ZDVUGMLAGVHVFL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "OCID190001103073",
+    "ZDVUGMLAGVHVFL-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    22387182
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZDVUGMLAGVHVFL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

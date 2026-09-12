@@ -1,0 +1,12 @@
+{
+  "parent_key": "HKULPWFIGOLFTA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HKULPWFIGOLFTA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL31425013"
+  ],
+  "http_status": 200,
+  "cids": [
+    176245340
+  ]
+}

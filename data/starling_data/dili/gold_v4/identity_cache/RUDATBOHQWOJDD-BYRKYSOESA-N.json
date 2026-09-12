@@ -1,0 +1,36 @@
+{
+  "parent_key": "RUDATBOHQWOJDD-BYRKYSOESA-N",
+  "ok": true,
+  "synonyms": [
+    "(3I+/-,7I+/-)-3,7-Dihydroxycholan-24-oic acid",
+    "(3a,7a)-3,7-dihydroxy-Cholan-24-oate",
+    "(3a,7a)-3,7-dihydroxy-Cholan-24-oic acid",
+    "(3alpha,7alpha)-3,7-Dihydroxycholan-24-oic acid",
+    "(3|A,7|A)-3,7-Dihydroxycholan-24-oic acid",
+    "(4R)-4-[(1R,3aS,3bR,4R,7R,9aS,9bS,11aR)-4,7-dihydroxy-9a,11a-dimethyl-hexadecahydro-1H-cyclopenta[a]phenanthren-1-yl]pentanoic acid",
+    "(4R)-4-[(3R,7R,8R,9S,10S,13R,14S,17R)-3,7-dihydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-17-yl]pentanoic acid",
+    "30634-99-2",
+    "3a,7a-Dihydroxy-cholanoate",
+    "3a,7a-Dihydroxy-cholanoic acid",
+    "3a,7a-Dihydroxycholanoate",
+    "3a,7a-Dihydroxycholanoic acid",
+    "3a,7a-Dihydroxycholansaure",
+    "3alpha,7alpha-Dihydroxycholan-24-oic acid",
+    "AKOS016001330",
+    "AS-40500",
+    "BDBM379113",
+    "CHEBI:175145",
+    "CHEMBL242200",
+    "DTXSID701279843",
+    "EBC-615926",
+    "Obeticholic Acid Impurity 7",
+    "RefChem:207835",
+    "SCHEMBL25056",
+    "US10266560, Example CDCA"
+  ],
+  "cids": [
+    21252245
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RUDATBOHQWOJDD-BYRKYSOESA-N/synonyms/JSON",
+  "http_status": 200
+}

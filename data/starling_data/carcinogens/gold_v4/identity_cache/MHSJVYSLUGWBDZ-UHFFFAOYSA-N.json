@@ -1,0 +1,9 @@
+{
+  "parent_key": "MHSJVYSLUGWBDZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MHSJVYSLUGWBDZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": false,
+  "synonyms": [],
+  "http_status": 404,
+  "throttling": "Request Count status: Yellow (53%), Request Time status: Green (12%), Service status: Black (187%)",
+  "cids": []
+}

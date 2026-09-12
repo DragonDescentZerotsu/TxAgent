@@ -1,0 +1,30 @@
+{
+  "parent_key": "IUOVOJHLRFQQNS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IUOVOJHLRFQQNS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "07G51A6FMA",
+    "1-(2-chloroethyl)-3-(2-methylsulfonylethyl)-1-nitrosourea",
+    "79955-36-5",
+    "C6H12ClN3O4S",
+    "CHEMBL26085",
+    "CMSO2EN2",
+    "Cystemustine",
+    "DTXCID10152463",
+    "DTXSID60229972",
+    "N'-(2-Chloroethyl)-N-(2-(methylsulfonyl)ethyl)-N'-nitrosourea",
+    "N-(2-Chloroethyl)-N'-(2-(methylsulfonyl)ethyl)-N-nitrosourea",
+    "N-(2-Chloroethyl)-N'-[2-(methanesulfonyl)ethyl]-N-nitrosourea",
+    "N-(2-chloroethyl)-N'-(2-(methylsulfonyl)ethyl)-N-nitroso-urea",
+    "RefChem:130242",
+    "SCHEMBL16174561",
+    "T212000",
+    "UNII-07G51A6FMA",
+    "Urea, N-(2-chloroethyl)-N'-(2-(methylsulfonyl)ethyl)-N-nitroso-",
+    "orb3136383"
+  ],
+  "http_status": 200,
+  "cids": [
+    119545
+  ]
+}

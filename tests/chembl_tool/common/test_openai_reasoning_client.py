@@ -91,6 +91,17 @@ def test_chat_json_accepts_vllm_reasoning_field():
     assert result["messages"][-1]["reasoning"] == "provider reasoning"
 
 
+def test_malformed_json_preserves_raw_reasoning_for_retry_audit():
+    client = _client()
+    client._create_completion = lambda *args, **kwargs: _response(
+        '{"unfinished":', reasoning="provider reasoning before truncation",
+    )
+    result = client.chat_json([{"role": "user", "content": "analyze"}])
+    assert "parse_error" in result["content"]
+    assert result["raw_content"] == '{"unfinished":'
+    assert result["reasoning_content"] == "provider reasoning before truncation"
+
+
 def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinking():
     client = _client()
     client.temperature = 0.0

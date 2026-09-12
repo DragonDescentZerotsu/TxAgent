@@ -1,0 +1,24 @@
+{
+  "parent_key": "DMSFWIJHZMGIJI-ARHYUZGJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DMSFWIJHZMGIJI-ARHYUZGJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(11beta,17beta)-11-methylestra-1,3,5(10)-triene-3,17-diol",
+    "(1S,3aS,3bS,9bS,10S,11aS)-10,11a-dimethyl-1H,2H,3H,3aH,3bH,4H,5H,9bH,10H,11H,11aH-cyclopenta[a]phenanthrene-1,7-diol",
+    "11-beta-Methylestradiol",
+    "11beta-Methyl-estra-1,3,5(10)-triene-3,17beta-diol",
+    "11beta-Methylestradiol",
+    "23637-93-6",
+    "52R3HC3JR7",
+    "CCRIS 7202",
+    "CHEMBL1628175",
+    "ESTRA-1,3,5(10)-TRIENE-3,17-beta-DIOL, 11-beta-METHYL-",
+    "Estra-1,3,5(10)-triene-3,17-diol, 11-methyl-, (11beta,17beta)-",
+    "Estra-1,3,5(10)-triene-3,17beta-diol, 11beta-methyl-",
+    "Methylestradiol, 11beta-"
+  ],
+  "http_status": 200,
+  "cids": [
+    23619914
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "JYEMHOTUCUFTLO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JYEMHOTUCUFTLO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Ethylimidazolidine-2,4-dione",
+    "3Z95RPI88U",
+    "61893-09-2",
+    "AKOS011091005",
+    "DB-312172",
+    "DTXSID60210906",
+    "EINECS 263-304-4",
+    "Hydantoin, 1-ethyl-",
+    "JYEMHOTUCUFTLO-UHFFFAOYSA-N",
+    "MFCD16113614",
+    "NS00034834",
+    "Q27258249",
+    "SCHEMBL1245411",
+    "SCHEMBL191785",
+    "SCHEMBL5235519",
+    "SCHEMBL8660652",
+    "SY270952",
+    "UNII-3Z95RPI88U"
+  ],
+  "http_status": 200,
+  "cids": [
+    521997
+  ]
+}

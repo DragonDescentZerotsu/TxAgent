@@ -1,0 +1,12 @@
+{
+  "parent_key": "KWERBAWTHMJUHY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KWERBAWTHMJUHY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL17565762"
+  ],
+  "http_status": 200,
+  "cids": [
+    201629
+  ]
+}

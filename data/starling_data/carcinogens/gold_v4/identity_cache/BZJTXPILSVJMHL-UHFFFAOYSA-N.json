@@ -1,0 +1,12 @@
+{
+  "parent_key": "BZJTXPILSVJMHL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BZJTXPILSVJMHL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "dichlorodiphenyl tetrachloroethane"
+  ],
+  "http_status": 200,
+  "cids": [
+    129862674
+  ]
+}

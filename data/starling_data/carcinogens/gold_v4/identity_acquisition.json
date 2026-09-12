@@ -1,0 +1,25 @@
+{
+  "records": 331110,
+  "counts": {
+    "accepted:1": 236652,
+    "accepted:0": 26353,
+    "pubchem_name_structure_mismatch:1": 10666,
+    "name_not_verified_for_source_structure:1": 46560,
+    "name_not_verified_for_source_structure:0": 7795,
+    "multiple_organic_components:1": 824,
+    "pubchem_name_structure_mismatch:0": 481,
+    "multiple_organic_components:0": 210,
+    "invalid_structure_or_parent:1": 1377,
+    "invalid_structure_or_parent:0": 192
+  },
+  "new_network_calls": 88,
+  "cached_synonym_parents": 5679,
+  "source_name_resolutions_sha256": "5285f5f6c14753ca53d15d83a6aba01f664eda654a5665a59445b8444b93a12f",
+  "cached_parent_entries": 6093,
+  "lookup_outcomes": {
+    "verified": 5679,
+    "not_verified": 79,
+    "parent_or_synonyms_not_returned": 414
+  },
+  "request_scope": "88 requests in the final batch pass; earlier interrupted per-parent passes are not included"
+}

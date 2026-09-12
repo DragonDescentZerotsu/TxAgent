@@ -1,0 +1,37 @@
+{
+  "parent_key": "HEFJMRLDXHSXEP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HEFJMRLDXHSXEP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,10-Dimethyl-7,8-benzacridine",
+    "3,10-Dimethyl-7,8-benzacridine [French]",
+    "633-626-3",
+    "7,9-DIMETHYLBENZ(C)ACRIDINE",
+    "7,9-Dimethyl benz(c)acridine",
+    "7,9-Dimethylbenz[c]acridine",
+    "7,9-Dimethylbenz[c]acridine, technical grade",
+    "7,9-Dimethylbenzo[c]acridine",
+    "7,9-Dimethylbenzo[c]acridine #",
+    "963-89-3",
+    "AKOS015889611",
+    "BDBM50599587",
+    "BRN 0192241",
+    "Benz(c)acridine, 7,9-dimethyl-",
+    "Benz[c]acridine, 7,9-dimethyl-",
+    "CCRIS 990",
+    "CHEMBL5172934",
+    "DTXSID0025105",
+    "Dimethyl-7,9-benz(c)acridine",
+    "Dimethylbenz[c]acridine, 7,9-",
+    "E3DL2KQ663",
+    "HEFJMRLDXHSXEP-UHFFFAOYSA-N",
+    "NS00121872",
+    "RefChem:544900",
+    "SCHEMBL15955589",
+    "starbld0001896"
+  ],
+  "http_status": 200,
+  "cids": [
+    13757
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "GAIHSQSRHYQICG-DACBVQKSSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GAIHSQSRHYQICG-DACBVQKSSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-[(6S,8R,9S,10R,13S,14S,17R)-17-hydroxy-6,10,13-trimethyl-1,2,3,6,7,8,9,11,12,14,15,16-dodecahydrocyclopenta[a]phenanthren-17-yl]ethanone",
+    "17-HYDROXY-6.ALPHA.-METHYLPREGN-4-EN-20-ONE",
+    "17-Hydroxy-6alpha-methyl-4-pregnen-20-on",
+    "17-Hydroxy-6alpha-methylpregn-4-en-20-one",
+    "17-hydroxy-6 alpha-methylpregn-4-en-20-one",
+    "2740-52-5",
+    "ANAGESTONE [MI]",
+    "ANAGESTONE [WHO-DD]",
+    "Anagestona",
+    "Anagestona [INN-Spanish]",
+    "Anagestone",
+    "Anagestone [INN]",
+    "Anagestonum",
+    "Anagestonum [INN-Latin]",
+    "DTXCID401525944",
+    "DTXSID001043405",
+    "NS00121526",
+    "Pregn-4-en-20-one, 17-hydroxy-6alpha-methyl-",
+    "Q27289050",
+    "RefChem:112506",
+    "S8FB38IU3G",
+    "SCHEMBL147582",
+    "UNII-S8FB38IU3G"
+  ],
+  "http_status": 200,
+  "cids": [
+    160650
+  ]
+}

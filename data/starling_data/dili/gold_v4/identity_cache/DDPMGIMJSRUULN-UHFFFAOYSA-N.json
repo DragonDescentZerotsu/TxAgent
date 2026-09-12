@@ -1,0 +1,33 @@
+{
+  "parent_key": "DDPMGIMJSRUULN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    ".ALPHA.-METHYLAMINO-BUTYROPHENONE",
+    "1-Butanone, 2-(methylamino)-1-phenyl-",
+    "2-(METHYLAMINO)-1-PHENYL-1-BUTANONE",
+    "2-(Methylamino)-1-phenylbutan-1-one",
+    "408332-79-6",
+    "AKOS015950992",
+    "BDBM50023180",
+    "Buphedrone",
+    "CHEMBL3298875",
+    "DDPMGIMJSRUULN-UHFFFAOYSA-N",
+    "DTXCID001436711",
+    "DTXSID701014170",
+    "J2.929.921H",
+    "MABP",
+    "NS00015383",
+    "Q4998026",
+    "RefChem:121920",
+    "SCHEMBL28190506",
+    "UNII-VD73947M0O",
+    "VD73947M0O",
+    "alpha-Methylamino-butyrophenone",
+    "alpha-methylaminobutyrophenone"
+  ],
+  "cids": [
+    53249194
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DDPMGIMJSRUULN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

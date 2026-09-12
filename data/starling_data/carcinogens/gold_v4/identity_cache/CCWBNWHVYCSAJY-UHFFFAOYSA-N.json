@@ -1,0 +1,14 @@
+{
+  "parent_key": "CCWBNWHVYCSAJY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CCWBNWHVYCSAJY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1243415-28-2",
+    "2-(4-BROMOPYRIDIN-3-YL)OXAZOLE",
+    "MB19186"
+  ],
+  "http_status": 200,
+  "cids": [
+    72220864
+  ]
+}

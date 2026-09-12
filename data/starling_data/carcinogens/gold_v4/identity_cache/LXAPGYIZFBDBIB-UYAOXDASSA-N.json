@@ -1,0 +1,22 @@
+{
+  "parent_key": "LXAPGYIZFBDBIB-UYAOXDASSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LXAPGYIZFBDBIB-UYAOXDASSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3R,4R)-7-(hydroxymethyl)-12-methyl-3,4-dihydrotetraphene-3,4-diol",
+    "(E)-3,4-Dihydroxy-12-methyl-3,4-dihydrobenz(a)anthracene-7-methanol",
+    "69260-84-0",
+    "7-(Hydroxymethyl)-12-methyl-3,4-dihydrotetraphene-3,4-diol",
+    "BENZ(a)ANTHRACENE-7-METHANOL, 3,4-DIHYDRO-3,4-DIHYDROXY-12-METHYL-, (E)-",
+    "BRN 2478339",
+    "Benz(a)anthracene-3,4-diol, 3,4-dihydro-7-(hydroxymethyl)-12-methyl-",
+    "DTXSID10988986",
+    "trans-3,4-Dihydroxy-3,4-dihydro-7-hydroxymethyl-12-methylbenz(a)anthracene",
+    "trans-7-Hydroxymethyl-12-methylbenz(a)anthracene-3,4-dihydrodiol"
+  ],
+  "http_status": 200,
+  "error": "JSONDecodeError",
+  "cids": [
+    50352
+  ]
+}

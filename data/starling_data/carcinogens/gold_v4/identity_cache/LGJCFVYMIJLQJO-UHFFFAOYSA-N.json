@@ -1,0 +1,29 @@
+{
+  "parent_key": "LGJCFVYMIJLQJO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LGJCFVYMIJLQJO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(DODECYLPEROXY)DODECANE",
+    "220-772-4",
+    "2895-03-6",
+    "CADOX LPO",
+    "DTXCID50105635",
+    "DTXSID40183144",
+    "Didodecyl peroxide",
+    "Dilauryl peroxide",
+    "EINECS 220-772-4",
+    "M5UVN2043C",
+    "NS00048148",
+    "Q27283523",
+    "RefChem:1088379",
+    "SCHEMBL22957",
+    "UNII-M5UVN2043C",
+    "dodecyl peroxide",
+    "lauryl peroxide",
+    "laurylperoxide"
+  ],
+  "http_status": 200,
+  "cids": [
+    76169
+  ]
+}

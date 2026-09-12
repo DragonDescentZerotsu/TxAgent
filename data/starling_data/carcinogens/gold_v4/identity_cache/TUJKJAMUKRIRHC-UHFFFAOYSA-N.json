@@ -1,0 +1,25 @@
+{
+  "parent_key": "TUJKJAMUKRIRHC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TUJKJAMUKRIRHC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(OH)(.)",
+    "3352-57-6",
+    "CHEBI:29191",
+    "CHEMBL1689064",
+    "DTXCID901748543",
+    "DTXSID901318744",
+    "HO(.)",
+    "Hydrogen Oxide",
+    "Hydroxyl",
+    "Hydroxyl radical",
+    "RefChem:147198",
+    "hydridooxygen(.)",
+    "lambda1-oxidane",
+    "oxidanyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    157350
+  ]
+}

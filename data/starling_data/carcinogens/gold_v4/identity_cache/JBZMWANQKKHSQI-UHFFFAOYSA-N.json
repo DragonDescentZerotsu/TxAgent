@@ -1,0 +1,13 @@
+{
+  "parent_key": "JBZMWANQKKHSQI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBZMWANQKKHSQI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(dimethyl-hydrazono)propanal",
+    "SCHEMBL28644611"
+  ],
+  "http_status": 200,
+  "cids": [
+    86013829
+  ]
+}

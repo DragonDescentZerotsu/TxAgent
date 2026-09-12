@@ -1,0 +1,36 @@
+{
+  "parent_key": "LMQJBFRGXHMNOX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LMQJBFRGXHMNOX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',4,4',5-pentachloro-",
+    "1,2,4-trichloro-5-(2,4-dichlorophenyl)benzene",
+    "2,2',4,4',5-PENTACHLOROBIPHENYL",
+    "2,2',4,4',5-Pentachloro-1,1'-biphenyl",
+    "2,2',4,4',5-Pentachloro-1,1'-biphenyl #",
+    "2,2',4,4'5-Pentachlorobiphenyl",
+    "38380-01-7",
+    "3PY435PFIO",
+    "690-177-6",
+    "CHEMBL2074793",
+    "CS-0451959",
+    "DTXCID0039483",
+    "DTXSID1073496",
+    "H59633",
+    "NS00099810",
+    "PCB 99",
+    "PCB No. 99",
+    "PCB No. 99 10 microg/mL in Isooctane",
+    "PCB No. 99 10 |Ig/mL in Isooctane",
+    "PCB99",
+    "Q27257876",
+    "RefChem:53515",
+    "SCHEMBL29624839",
+    "SCHEMBL4446838",
+    "UNII-3PY435PFIO"
+  ],
+  "http_status": 200,
+  "cids": [
+    38013
+  ]
+}

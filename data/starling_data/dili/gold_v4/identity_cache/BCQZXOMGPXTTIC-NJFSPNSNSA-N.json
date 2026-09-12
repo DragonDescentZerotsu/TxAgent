@@ -1,0 +1,13 @@
+{
+  "parent_key": "BCQZXOMGPXTTIC-NJFSPNSNSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-bromo-2-chloro-1,1,1-trifluoro(214C)ethane",
+    "BCQZXOMGPXTTIC-NJFSPNSNSA-N"
+  ],
+  "cids": [
+    157307598
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BCQZXOMGPXTTIC-NJFSPNSNSA-N/synonyms/JSON",
+  "http_status": 200
+}

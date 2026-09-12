@@ -1,0 +1,17 @@
+{
+  "parent_key": "OQVOZFPJUCUPLW-LURJTMIESA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OQVOZFPJUCUPLW-LURJTMIESA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-6-amino-2-(carboxymethylamino)hexanoic acid",
+    "CHEBI:190635",
+    "N-(1-Carboxymethyl)-L-lysine",
+    "RefChem:918057",
+    "SCHEMBL43620",
+    "carboxymethyllysine"
+  ],
+  "http_status": 200,
+  "cids": [
+    15691190
+  ]
+}

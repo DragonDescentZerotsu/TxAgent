@@ -1,0 +1,16 @@
+{
+  "parent_key": "LLLKOOLOQRBDSS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1,1,3,3-pentafluoro-2-methoxypropane",
+    "28523-91-3",
+    "LLLKOOLOQRBDSS-UHFFFAOYSA-N",
+    "MFCD32638675",
+    "SCHEMBL11883081"
+  ],
+  "cids": [
+    54039679
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LLLKOOLOQRBDSS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

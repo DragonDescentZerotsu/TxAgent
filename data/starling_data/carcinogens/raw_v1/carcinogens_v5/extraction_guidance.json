@@ -1,0 +1,104 @@
+{
+  "task": "Find all assays of molecules concerning tissue injury followed by regenerative proliferation and receptor-mediated growth phenotypes. Injury-driven regeneration is repeated sublethal damage followed by persistent repair or clonal expansion, while receptor-mediated growth is a whole-cell proliferative or differentiation response to hormonal or related signaling. Make sure to include assays such as repeated injury-recovery, compensatory proliferation, wound closure, organoid injury-regrowth, tissue hyperplasia, hormone-dependent proliferation, E-screen-like proliferation, differentiation-shift, and antagonist or competition-rescue assays. Exclude purified receptor-binding and reporter-gene-only assays. Specify the endpoint and measurement unit, molecule concentration or in-vivo dose, exposure schedule, washout and recovery duration, assay type, tissue and cell type, species, hormone-depleted or serum conditions, agonist and antagonist controls, cytotoxicity margin, histopathology criteria, and whether proliferation persists after exposure. Include all key experimental details.",
+  "task_instantiation": "Extract every experiment-specific assay in which the entity identified by `global_identifier`—a molecule, biologic, extract, conditioned medium, defined material/formulation, molecular perturbation, or inseparable fixed combination—is tested for either (1) injury-driven repair or regeneration after a defined physical, surgical, chemical, ischemic, infectious, radiation, inflammatory, ablation, resection, or repeated sublethal injury, or (2) a receptor-mediated whole-cell or tissue growth phenotype. Include repeated injury-recovery, compensatory proliferation, wound/scratch closure or re-epithelialization, organoid/explant injury-regrowth, blastema/appendage or structural regrowth, regenerative repopulation or clonal expansion, tissue hyperplasia or organ growth, hormone- or growth-factor-dependent proliferation, E-screen-like proliferation, whole-cell differentiation or morphogenesis shifts, and antagonist, competition, genetic-dependency, blockade, add-back, or rescue designs when the measured endpoint is one of these qualifying phenotypes. Include increased, decreased, no-effect, biphasic, mixed, and equivocal results. Scratch/wound closure remains in scope when migration contributes, but do not call it proliferation unless proliferation is directly measured; generic migration, invasion, chemotaxis, or adhesion without a wound/repair context is out of scope.\n\nExclude purified receptor-binding or ligand-displacement assays; cell-free, enzyme-only, and receptor-occupancy assays; reporter-gene-only assays; phosphorylation/signaling-only, transcript/protein-expression-only, secretion-only, and isolated marker-only studies without a qualifying whole-cell or tissue phenotype; apoptosis, survival, viability, cytotoxicity, or injury-protection studies without subsequent repair/regrowth; generic tumor growth or xenograft inhibition unless explicitly hormone-, growth-factor-, cytokine-, or receptor-mediated or part of injury-driven regeneration; and functional recovery, angiogenesis, neurite/process growth, fibrosis, inflammation, collagen production, or biomaterial characterization alone unless accompanied by a qualifying structural growth, repair, proliferation, hyperplasia, clonal, or differentiation endpoint. Viability/metabolic assays qualify only when the authors interpret them as proliferation or net growth. A differentiation result requires morphology, function, histology, or a coherent accepted marker panel establishing a whole-cell/tissue fate or maturation shift; a lone molecular marker is insufficient. Do not create records for vehicles, labels, stains, tracers, injury procedures, agonist/antagonist controls, or other assay reagents unless that entity is itself the indexed tested intervention.\n\nCreate one record per indexed primary molecule or inseparable fixed combination × biological model × injury/growth protocol × materially distinct exposure regimen × single qualifying endpoint. Keep a dose-response series or repeated time course in one record when the model, protocol, regimen framework, endpoint, unit, and overall direction are shared, preserving dose/time-to-result mappings. Split when species or biological model, physical format, injury protocol, exposure or washout design, endpoint class, endpoint unit, comparator design, or effect direction materially differs. Split proliferation, wound closure, differentiation, histopathology, and functional endpoints when separately measured; closely linked measurements may be combined only when the paper treats them as one inseparable composite phenotype. Keep agonist, antagonist, competition, genetic, and rescue arms with the same record when they are controls for its endpoint. For combinations, attribute an effect to an individual component only when its contribution is separately tested; otherwise record the combination as the intervention and describe partners in context.\n\nRequire an explicit assay result or explicit no-effect result. Do not create a record from a protocol, methods heading, planned experiment, background claim, or proposed mechanism alone. A concrete secondary report may be extracted only when the supplied paper text identifies a named intervention, biological model, qualifying assay, and actual outcome; mark it as secondary in `extra_details` and do not invent missing primary-study details. Use only information stated in the supplied paper. Do not infer receptor mediation from a molecule's known pharmacology or a cell line's receptor status, proliferation from viability or wound closure alone, species from an unexplained abbreviation, a washout that is not stated, or persistence from a late measurement during continuing exposure. Preserve reported precision, ranges, inequalities, dose/time series, and qualitative grades; do not calculate, convert, or normalize numeric values or units.\n\nTreat ordinary untreated/vehicle comparison, routine culture or husbandry, and continuous exposure until the endpoint as background defaults only; never populate unstated details from them. Null means the paper did not state or test the field. Record concentration or in-vivo dose, route, timing, frequency, duration, injury schedule, washout and recovery interval, and post-withdrawal behavior in `exposure_details`; physical setting in `assay_format`; species, tissue, and cell model in `biological_model`; injury or growth stimulus, receptor axis, and agonist/antagonist/competition/genetic/rescue evidence in `injury_or_growth_context`; the endpoint, its result, and its unit in their own fields; and serum or hormone-depletion conditions, cytotoxicity margin, histopathologic definitions, and migration-versus-proliferation separation in `interpretation_conditions`. Put the remaining sparse contextual details—disease, sex/age, genotype, transformed status, unusual matrix or coculture, hypoxia, infection, formulation, the molecule's pharmacologic role, statistics, ancillary markers, and secondary provenance—in `extra_details` when they do not fit a dedicated field.",
+  "schema_spec": [
+    {
+      "name": "phenotype_domain",
+      "description": "Why this assay is in scope. Use `injury_driven_regeneration` for repair or regrowth after a defined injury, `receptor_mediated_growth` for an uninjured receptor-linked whole-cell or tissue proliferation, growth, hyperplasia, differentiation, or morphogenesis phenotype, and `both` only when the same endpoint directly tests receptor-mediated control of defined post-injury regeneration. The values are mutually exclusive by that rule. This field is always populated, because a record that cannot be assigned a domain does not qualify; never use a missing-information placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "injury_driven_regeneration",
+        "receptor_mediated_growth",
+        "both"
+      ]
+    },
+    {
+      "name": "assay_type",
+      "description": "Single measured whole-cell or tissue phenotype class for this record, all at one abstraction level. Classify by the endpoint that was measured, not by detection technology, exposure protocol, or mechanistic control; named subformats such as repeated injury-recovery cycles, E-screen, uterotrophic assay, antagonist blockade, competition, or rescue are protocol and design descriptors and belong in `injury_or_growth_context` or `endpoint_and_method`, never here. Apply this precedence so that no record can match two values. (1) `differentiation_or_morphogenesis` when a cell-fate, maturation, or morphogenetic shift is the measured phenotype. (2) `clonal_expansion_or_repopulation` when clones, colonies, or repopulating units are counted. (3) `wound_repair_or_closure` when a created wound, gap, or denuded surface is closing or re-epithelializing. (4) `structural_tissue_or_organoid_regrowth` when a lost or damaged three-dimensional structure, appendage, organ, organoid, or explant regrows toward its original form. (5) `tissue_hyperplasia_or_organ_growth` when organ or tissue mass, weight, thickness, or cell-layer count increases beyond the untreated baseline. (6) `regenerative_or_compensatory_proliferation` when the phenotype is cell-level proliferation and `phenotype_domain` is `injury_driven_regeneration` or `both`. (7) `whole_cell_proliferation` otherwise, for cell-level proliferation or net growth with no preceding injury. Null rather than `other` when no class is text-supported.",
+      "value_type": "string",
+      "allowed_values": [
+        "wound_repair_or_closure",
+        "regenerative_or_compensatory_proliferation",
+        "structural_tissue_or_organoid_regrowth",
+        "clonal_expansion_or_repopulation",
+        "tissue_hyperplasia_or_organ_growth",
+        "whole_cell_proliferation",
+        "differentiation_or_morphogenesis"
+      ]
+    },
+    {
+      "name": "assay_format",
+      "description": "Physical setting in which the qualifying phenotype was measured; this is orthogonal to the phenotype recorded in `assay_type` and is almost always determinable from the text. Classify xenografts, grafts, and implants as `in_vivo_animal` and identify donor and host species in `biological_model`. Cultured human tissue, skin, or organ explants are `ex_vivo_tissue_or_explant`, not `in_vivo_human`; reserve `in_vivo_human` for living human subjects. Use `combined_formats` only when one inseparable reported result truly spans two settings; otherwise split the record. `combined_formats` is not a value for uncertainty. Null if the format is not stated; no unspecified or unclear value is permitted.",
+      "value_type": "string",
+      "allowed_values": [
+        "in_vitro_2d_cells",
+        "in_vitro_3d_or_organoid",
+        "ex_vivo_tissue_or_explant",
+        "in_vivo_animal",
+        "in_vivo_human",
+        "combined_formats"
+      ]
+    },
+    {
+      "name": "biological_model",
+      "description": "Compact identification of the responding biological model: species, organ/tissue or wound site, cell type/line or organoid, and donor/host roles for xenografts or mixed-species systems. Include relevant developmental stage, receptor-engineered status, or coculture partner only when needed to identify the model. Do not infer an unstated species or lineage. Null if none is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "injury_or_growth_context",
+      "description": "Exact qualifying context and causal design for this record. For injury records, give the injury type, agent, or surgery, the anatomical site, severity, repetition or cycle count, and timing, including explicit repeated injury-recovery schedules. For receptor-growth records, give the hormone, growth-factor, mitogen, or differentiation stimulus and its amount, or the experimental ablation or depletion used as the challenge, such as ovariectomy or castration. Name the receptor or proximal signaling axis only when the paper explicitly ties it to this phenotype, and keep receptor identity distinct from the evidence for it. Summarize the agonist, antagonist, neutralization, competition, genetic-dependency, add-back, rescue, vehicle, injury, and positive or negative controls that belong to this endpoint. Do not infer receptor mediation from the molecule's general pharmacology or a cell line's receptor status. Background culture conditions -- serum percentage, starvation, charcoal stripping, phenol-red status, hormone-depleted medium -- belong in `interpretation_conditions`, not here. Null if no such context is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_details",
+      "description": "Primary intervention concentration or in-vivo dose with the original unit and denominator, administration or application route, formulation or loading when essential, timing relative to the injury or stimulus, frequency, duration, continuous versus pulse design, replenishment, and endpoint time. Also record any explicit washout procedure and compound-free recovery duration, and -- only when dosing actually stopped or the molecule was removed and the qualifying phenotype was measured afterward -- whether the effect persisted, resolved toward baseline, rebounded or resumed, or reversed direction, and at what time. Preserve complete dose series, ranges, inequalities, and schedules without conversion. Do not put control-agent or stimulus doses here. Null if none of these details are stated; silence never implies a washout, and a late measurement taken during continuing exposure never establishes persistence.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_and_method",
+      "description": "One qualifying whole-cell or tissue endpoint and how it was measured, such as percent wound closure by image analysis, BrdU-positive nuclei, direct cell count, uterine wet weight, epithelial thickness by histomorphometry, organoid regrowth, clone count, or a morphology, functional, or marker-panel differentiation score. Include the exact assay name when it identifies the readout. Do not substitute a reporter or signaling readout. Histopathologic definitions and scoring rules belong in `interpretation_conditions`. Null only if the endpoint wording is unavailable despite an explicit result.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_result",
+      "description": "Reported quantitative or qualitative outcome for `endpoint_and_method`, including dose/time-to-value mappings, mean and uncertainty, ranges, thresholds, potency estimates, fold or percent change, grades, comparator values, and statistical qualification when available. Preserve the paper's values exactly and do not calculate or convert them. Null when direction is explicit but magnitude is not; do not write not_reported, qualitative, or another placeholder here.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_unit",
+      "description": "Unit or named scale applying to `endpoint_result`, exactly as reported, such as %, percent of control, fold change, cells per field, cpm, absorbance, area, volume, mass, or histopathology score. Keep concentration/dose units in `exposure_details`. Null for a qualitative result or when no unit/scale is supplied; never encode qualitative or missingness as an allowed value.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_direction",
+      "description": "Overall pattern of the primary intervention's effect on this endpoint relative to the stated comparator. `biphasic` is reserved for opposite directions across doses; `mixed` is for opposing directions across times, models, or other strata that remain inseparable; `equivocal` means the reported evidence does not support a firm directional conclusion. Blockade and rescue describe design and belong in `injury_or_growth_context`; choose the direction of the measured endpoint itself, so an antagonist that blocks induced growth is a `decrease` and a rescue that restores impaired growth is an `increase`. Because a record requires an explicit result or explicit no-effect result, this field is always populated; use `equivocal` rather than null and never a not-reported placeholder.",
+      "value_type": "string",
+      "allowed_values": [
+        "increase",
+        "decrease",
+        "no_effect",
+        "biphasic",
+        "mixed",
+        "equivocal"
+      ]
+    },
+    {
+      "name": "interpretation_conditions",
+      "description": "Conditions needed to judge whether this record's result is valid and comparable, restricted to four kinds. (1) Hormone and serum background: serum percentage, serum-free or starvation state, charcoal-stripped serum, phenol-red status, defined hormone- or growth-factor-depleted medium, or an endocrine-ablated host. (2) Cytotoxicity margin: viability or toxicity measured at the active concentrations and the separation between active and toxic levels, not merely a claim that toxicity was absent. (3) Histopathology or morphology criteria: the stain, definition, scoring rule, threshold, or grading scheme used to call the endpoint. (4) For a wound-closure or scratch endpoint, whether proliferation was separated from migration and how; state the unresolved contribution when it was not. Experimental stimuli, ablations used as the challenge, and mechanistic controls belong in `injury_or_growth_context`; disease, genotype, sex or age, coculture, matrix, oxygen, and other subject context belong in `extra_details`. State only reported facts. Null when the paper supplies none of these; never use a missingness placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional experiment-specific information not fitting above: the exact tested entity label when `global_identifier` is insufficient, secondary-report provenance, the molecule's pharmacologic or design role when it is not already evident, disease, sex, age, or genotype context, transformed or resistant status, unusual matrix, scaffold, coculture, hypoxia, or infection, formulation composition, non-control co-treatments, comparator details, ancillary molecular or functional findings, sample size, statistics, and protocol nuance. Do not duplicate content already recorded in `interpretation_conditions` or another field. Do not use this field to rescue an otherwise excluded molecular-only, viability-only, migration-only, or methods-only experiment. Use null when there are no additional stated details.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

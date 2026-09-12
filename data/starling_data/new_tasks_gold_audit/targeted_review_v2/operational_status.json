@@ -1,0 +1,17 @@
+{
+  "updated_utc": "2026-09-09T01:05:15.167843+00:00",
+  "unique_successes": 59028,
+  "remaining": 89051,
+  "task_successes": {
+    "dili": 29381,
+    "carcinogens": 29647
+  },
+  "unresolved_error_keys": 414,
+  "rate_60s": 40.333333333333336,
+  "rate_90s": 39.022222222222226,
+  "observed_backend_samples": 77,
+  "observation_seconds": 142.42240524291992,
+  "empty_backend_samples": 0,
+  "minimum_outstanding_backend_requests": 2015.0,
+  "preemptions": 0.0
+}

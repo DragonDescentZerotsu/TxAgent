@@ -1,7 +1,26 @@
 # Conditioned Benchmark data
 
-This directory is the single active gold dataset for BBB_Martins,
-Bioavailability_Ma, ClinTox, and Skin_Reaction.
+This is the active benchmark root for BBB_Martins, Bioavailability_Ma, ClinTox,
+Skin_Reaction, Ames, DILI, and Carcinogens.
+
+DILI uses Starling-only gold_v4: 4,024 molecule-condition rows, with
+train/valid/test 3,220/402/402 in scaffold and random. Carcinogens uses the same
+source-only contract: 4,692 rows (3,578 positive / 1,114 negative), with
+3,754/469/469 in both schemes and five organism conditions: rodent, human, dog,
+monkey and rabbit. Neither benchmark includes TDC labels.
+
+The final retrieval sources are frozen in `data/starling_data/<task>/retrieval_final/`.
+Their source consolidation preserves these gold labels and splits; publication and
+restoration receipts are in `data/starling_data/retrieval_final_cleanup.json`.
+Large detailed-label and vote JSONL files restore byte-for-byte through
+`rebuild_current_starling_retrieval restore-records --tasks dili carcinogens`.
+Completed model, baseline and diagnostic results are indexed in
+`tools/chembl_tool/paper_experiments/current_conditioned_results.json`.
+
+These two tasks use the explicit `new_task_tautomer_identity.v2` leakage boundary;
+gold retains stereochemical identity. DILI scaffold valid/test names were exchanged
+on 2026-09-08, and both tasks' evaluation sets have been inspected. Full identity
+provenance remains in `data/starling_data/new_tasks_gold_audit/TAUTOMER_IDENTITY_REPAIR.md`.
 
 - `manifest.json`: task roots, target definitions, construction entrypoints,
   split contracts, and split sizes.

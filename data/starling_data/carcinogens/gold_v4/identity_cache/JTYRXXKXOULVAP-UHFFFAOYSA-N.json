@@ -1,0 +1,33 @@
+{
+  "parent_key": "JTYRXXKXOULVAP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JTYRXXKXOULVAP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-dibromo-3-phenoxybenzene",
+    "2,3-Dibromodiphenyl ether",
+    "446254-14-4",
+    "53563-56-7",
+    "Benzene, 1,2-dibromo-3-phenoxy-",
+    "DTXSID10201783",
+    "DTXSID201334117",
+    "Diphenyl ether, dibromo-",
+    "JTYRXXKXOULVAP-UHFFFAOYSA-N",
+    "L921VU5R3L",
+    "PBDE 5",
+    "Q27282851",
+    "RefChem:197317",
+    "SCHEMBL2750494",
+    "SCHEMBL2752983",
+    "SCHEMBL29494593",
+    "SCHEMBL573706",
+    "UNII-L921VU5R3L",
+    "UNII-XZF81RMD4E",
+    "XZF81RMD4E",
+    "dibromo diphenyl ether",
+    "dibromodiphenyl ether"
+  ],
+  "http_status": 200,
+  "cids": [
+    185745
+  ]
+}

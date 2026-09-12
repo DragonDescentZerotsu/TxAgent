@@ -12,6 +12,7 @@ import csv
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 from typing import Any, Iterable
@@ -74,6 +75,8 @@ TASK_CONTRACTS = {
     "skin_reaction": "skin sensitization/contact allergy",
     "clintox": "clinical-trial toxicity failure versus approved comparator",
     "ames": "bacterial reverse mutation (Ames) under the reported condition",
+    "dili": "reported clinically meaningful human DILI outcome under the stated exposure and population; a negative is not universal absence of DILI risk",
+    "carcinogens": "reported any-site carcinogenic hazard under the reported species and exposure",
 }
 
 
@@ -349,6 +352,9 @@ def _verify_existing() -> dict[str, Any]:
 
 def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
     requested = tuple(TASK_DIRECTORIES) if tasks is None else tasks
+    if set(requested) & {'dili', 'carcinogens'}:
+        raise ValueError("DILI/Carcinogens require --reviewed-release; generic publication "
+                         "cannot replace their frozen Starling-only cohort")
     available_sources = {task: SOURCE_ROOTS[task].exists() for task in TASK_DIRECTORIES}
     if tasks is None and not any(available_sources.values()):
         return _verify_existing()
@@ -488,6 +494,112 @@ def publish(tasks: tuple[str, ...] | None = None) -> dict[str, Any]:
     return receipt
 
 
+def publish_reviewed_release(task: str, release_path: Path) -> dict[str, Any]:
+    """Promote a fully validated source release without revoting or resplitting."""
+    from tools.chembl_tool.common.build_runtime import sha256_file
+    from tools.chembl_tool.common.starling.build_conditioned_random_split import _union_hash
+    release = json.loads(release_path.read_text())
+    if release['status'] != 'records_indices_and_card_links_validated':
+        raise ValueError('Source release is not fully validated')
+    if release['heldout_prefilter_levels'] != [1]:
+        raise ValueError('Reviewed release must use the shared L1-only prefilter')
+    source = Path(release['benchmark_root'])
+    if source.name != TASK_DIRECTORIES[task]: raise ValueError('Release task mismatch')
+    root = release_path.parent
+    receipt_path = root/'canonical_publication.json'
+    if receipt_path.exists():
+        previous = json.loads(receipt_path.read_text())
+        for path, digest in previous['published_files'].items():
+            if sha256_file(Path(path)) != digest:
+                raise ValueError('Published release drift: '+path)
+        return previous
+    for path, digest in release['validation_inputs'].items():
+        if sha256_file(Path(path)) != digest: raise ValueError('Stale validation: '+path)
+    for key, file in [('source_gold_sha256',Path(release['source_gold'])),
+                      ('records_sha256',Path(release['records']))]:
+        if sha256_file(file) != release[key]: raise ValueError('Stale release: '+str(file))
+    unions = []
+    for scheme in SPLIT_SCHEMES:
+        rows = {s:read_jsonl(source/scheme/f'{s}_molecule_condition_labels.jsonl') for s in SPLITS}
+        unions.append(_union_hash(r for values in rows.values() for r in values))
+        parents = [{r['molecule_identity_key'] for r in values} for values in rows.values()]
+        if any(parents[i]&parents[j] for i in range(3) for j in range(i)):
+            raise ValueError('Parent overlap')
+        expected = read_jsonl(root/'heldout'/f'{scheme}.jsonl')
+        cohort = rows['valid']+rows['test']
+        key = lambda r:(r['benchmark_row_id'],r['drug'],r['Y'])
+        if sorted(map(key,expected)) != sorted(map(key,cohort)):
+            raise ValueError('Heldout query cohort changed')
+        index = Path(release['indices'][scheme]['path'])
+        check=json.loads((index/'identity_validation.json').read_text())
+        if check['status']!='passed' or check['heldout_prefilter_levels']!=[1]:
+            raise ValueError('Index validation failed')
+        if check['manifest_sha256']!=sha256_file(index/'manifest.json'):
+            raise ValueError('Index manifest changed')
+        for name,key in [('assay_neighbor_index.pkl','index_sha256'),('assay_molecule_evidence.jsonl','evidence_sha256')]:
+            if sha256_file(index/name)!=release['indices'][scheme][key]:raise ValueError('Index artifact changed')
+    if unions[0] != unions[1]: raise ValueError('Split schemes use different labels')
+    destination = BENCHMARK_ROOT/TASK_DIRECTORIES[task]
+    snapshot = root/'previous_active'
+    if snapshot.exists(): raise ValueError('Inspect incomplete publication snapshot: '+str(snapshot))
+    snapshot.mkdir()
+    shutil.copytree(destination,snapshot/'benchmark')
+    registries = [BENCHMARK_ROOT/n for n in ('manifest.json','migration_receipt.json','random_split_receipt.json')]
+    retrieval_registry=Path('tools/chembl_tool/paper_experiments/current_starling_retrieval.json')
+    registries.append(retrieval_registry)
+    for p in registries: shutil.copy2(p,snapshot/p.name)
+    # Replace whole split directories so stale audit files cannot appear current.
+    shutil.rmtree(destination)
+    destination.mkdir()
+    for scheme in SPLIT_SCHEMES:
+        shutil.copytree(source/scheme,destination/scheme,ignore=shutil.ignore_patterns('.*','*.lock'))
+        shutil.copy2(root/'heldout'/f'{scheme}.jsonl',destination/scheme/'heldout_molecule_condition_labels.jsonl')
+    runtime=Path('outputs/paper/starling_conditioned_assay_family_curve_v1')
+    for source_dir,target,backup in [(Path(release['catalog']),runtime/'family_catalogs'/task,snapshot/'catalog'),
+        *[(Path(release['indices'][s]['path']),runtime/'indices'/task/s,snapshot/('index_'+s)) for s in SPLIT_SCHEMES]]:
+        if target.exists(): target.rename(backup)
+        target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copytree(source_dir,target,copy_function=os.link)
+    counts={s:{split:len(read_jsonl(destination/s/f'{split}.jsonl')) for split in SPLITS} for s in SPLIT_SCHEMES}
+    manifest=json.loads(registries[0].read_text())
+    manifest['tasks'][task]={
+        'root':str(destination/'scaffold'),'roots':{s:str(destination/s) for s in SPLIT_SCHEMES},
+        'target_definition':release.get('target_definition',TASK_CONTRACTS[task]),'split_counts':counts['scaffold'],'split_counts_by_scheme':counts,
+        'source_gold_root':str(Path(release['source_gold']).parent),'cohort':'starling_only_reviewed',
+        'identity_contract':'new_task_tautomer_identity.v2','publication_receipt':str(receipt_path),
+        'evaluation_status':'fresh_evaluation_pending','retrieval_validation':str(release_path),
+        'test_previously_used_for_validation':release.get('test_previously_used_for_validation',True),
+        'evaluation_policy':release.get('evaluation_policy','Frozen method; valid/test concurrent by explicit user instruction; no test-driven tuning.')}
+    write_json_atomic(registries[0],manifest)
+    write_json_atomic(destination/'manifest.json',manifest['tasks'][task])
+    migration=json.loads(registries[1].read_text())
+    migration['tasks'][task]={**_task_receipt(task,source/'scaffold',destination/'scaffold',input_rows_byte_identical=True),
+        'publication_receipt':str(receipt_path),'cohort':'starling_only_reviewed',
+        'target_definition':manifest['tasks'][task]['target_definition']}
+    write_json_atomic(registries[1],migration)
+    random=json.loads(registries[2].read_text())
+    random['tasks'][task]={**json.loads((destination/'random/summary.json').read_text()),
+        'root':str(destination/'random'),'same_molecule_condition_rows_and_labels':True,
+        'source_union_sha256':unions[0],'random_union_sha256':unions[1],'publication_receipt':str(receipt_path)}
+    write_json_atomic(registries[2],random)
+    registry=json.loads(retrieval_registry.read_text());entry=registry['tasks'][task]
+    entry.update(canonical_records_sha256=release['records_sha256'],overlay_records_sha256=release['records_sha256'],
+        source_records=release['records'],catalog_sha256=sha256_file(Path(release['catalog'])/'family_assays.jsonl'),
+        filter_scope_field=release['filter_scope_field'],filter_scope_value=release['filter_scope_value'])
+    for scheme in SPLIT_SCHEMES:
+        for key in ('index_sha256','evidence_sha256'):entry['indices'][scheme][key]=release['indices'][scheme][key]
+    for entry in registry.get('source_releases',{}).values():
+        if entry['manifest']==str(release_path):entry.update(canonical_experiment_defaults_changed=True,publication_receipt=str(receipt_path))
+    write_json_atomic(retrieval_registry,registry)
+    result={'status':'passed','task':task,'release':str(release_path),'release_sha256':sha256_file(release_path),
+        'published_at':_now(),'previous_active':str(snapshot),'split_counts':counts,
+        'heldout_metadata_only_enrichment':True,'gold_and_query_labels_unchanged':True,
+        'unchanged_relative_to':'validated_staged_release, not the previous active cohort',
+        'published_files':{str(p):sha256_file(p) for s in SPLIT_SCHEMES for p in (destination/s).iterdir() if p.is_file()}}
+    write_json_atomic(receipt_path,result)
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -499,9 +611,14 @@ def main() -> int:
         choices=sorted(TASK_DIRECTORIES),
         help="Publish only rebuilt tasks while preserving verified current receipts.",
     )
+    parser.add_argument('--reviewed-release',type=Path,help='Promote one validated source/gold/index release atomically by artifact, without rebuilding labels')
     args = parser.parse_args()
     if args.output_root != BENCHMARK_ROOT:
         raise ValueError("The canonical publisher has one fixed output root")
+    if args.reviewed_release:
+        if not args.tasks or len(args.tasks)!=1:parser.error('--reviewed-release requires one task')
+        print(json.dumps(publish_reviewed_release(args.tasks[0],args.reviewed_release),indent=2))
+        return 0
     result = publish(tuple(args.tasks) if args.tasks else None)
     print(json.dumps(result, indent=2))
     return 0

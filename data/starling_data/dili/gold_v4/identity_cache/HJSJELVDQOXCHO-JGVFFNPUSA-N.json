@@ -1,0 +1,36 @@
+{
+  "parent_key": "HJSJELVDQOXCHO-JGVFFNPUSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-HELIOTRIDINE",
+    "(1S,7AR)-7-(hydroxymethyl)-2,3,5,7a-tetrahydro-1H-pyrrolizin-1-ol",
+    "(1S,8R)-7-(hydroxymethyl)-2,3,5,8-tetrahydro-1H-pyrrolizin-1-ol",
+    "1H-Pyrrolizine-7-methanol, 2,3,5,7a-tetrahydro-1-hydroxy-, (1S,7aR)-",
+    "520-63-8",
+    "7-(Hydroxymethyl)-2,3,5,7a-tetrahydro-1H-pyrrolizin-1-ol #",
+    "AC1L9DBH",
+    "AKOS006279573",
+    "C10321",
+    "CHEBI:5642",
+    "DTXCID801747730",
+    "DTXSID301317936",
+    "FS-6765",
+    "HELIOTRIDINE, (+)-",
+    "HJSJELVDQOXCHO-JGVFFNPUSA-N",
+    "HSDB 3491",
+    "Heliotridine",
+    "NS00094190",
+    "NSC 124684",
+    "NSC-124684",
+    "Q27106843",
+    "RefChem:145507",
+    "SCHEMBL23803917",
+    "UNII-UP6A16MHFO",
+    "UP6A16MHFO"
+  ],
+  "cids": [
+    442736
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HJSJELVDQOXCHO-JGVFFNPUSA-N/synonyms/JSON",
+  "http_status": 200
+}

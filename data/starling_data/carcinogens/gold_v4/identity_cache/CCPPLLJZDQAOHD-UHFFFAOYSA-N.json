@@ -1,0 +1,30 @@
+{
+  "parent_key": "CCPPLLJZDQAOHD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CCPPLLJZDQAOHD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(?)12(13)-EpOME",
+    "11-(3-pentyloxiran-2-yl)undec-9-enoic acid",
+    "12,13-epoxy-octadeca-9-enoic acid",
+    "Bio1_000096",
+    "Bio1_000585",
+    "Bio1_001074",
+    "Bio2_000082",
+    "Bio2_000562",
+    "CBiol_001810",
+    "DTXSID60987409",
+    "KBio2_000082",
+    "KBio2_002650",
+    "KBio2_005218",
+    "KBio3_000163",
+    "KBio3_000164",
+    "KBioGR_000082",
+    "KBioSS_000082",
+    "NCIOpen2_002285",
+    "SCHEMBL1568580"
+  ],
+  "http_status": 200,
+  "cids": [
+    1416
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "parent_key": "VSDVCKTXWATQAC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Phenylchinolin-4-carbonsaureallylester",
+    "4-Quinolinecarboxylic acid, 2-phenyl-, 2-propen-1-yl ester",
+    "524-34-5",
+    "974Q976QRD",
+    "AKOS025139134",
+    "ALLYL-2-PHENYLCINCHONIATE",
+    "Allyl 2-phenylcinchoninate",
+    "Allyl 2-phenylquinoline-4-carboxylate",
+    "Allyl phenylcinchonate",
+    "Allyl2-phenylquinoline-4-carboxylate",
+    "Atochinol",
+    "Atoquinol",
+    "Cinchoninic acid, 2-phenyl-, allyl ester",
+    "Cinchophen allyl ester",
+    "Cinchophen allyl ester [MI]",
+    "Q27271963",
+    "RefChem:200184",
+    "SB70895",
+    "UNII-974Q976QRD"
+  ],
+  "cids": [
+    10266169
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VSDVCKTXWATQAC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

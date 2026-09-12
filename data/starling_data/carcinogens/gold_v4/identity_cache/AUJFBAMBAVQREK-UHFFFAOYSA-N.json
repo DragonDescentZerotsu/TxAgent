@@ -1,0 +1,33 @@
+{
+  "parent_key": "AUJFBAMBAVQREK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AUJFBAMBAVQREK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-PHENYL-3-METHYLNITROSOMORPHOLINE",
+    "3-METHYL-4-NITROSO-2-PHENYLMORPHOLINE, (+-)-",
+    "3-METHYL-4-NITROSO-2-PHENYLMORPHOLINE, (+/-)-",
+    "3-methyl-4-nitroso-2-phenylmorpholine",
+    "34993-08-3",
+    "4-Nitroso-2-phenyl-3-methylmorpholine",
+    "4Nitroso2phenyl3methylmorpholine",
+    "CHEMBL451546",
+    "DB-241122",
+    "DTXSID30874216",
+    "Morpholine, 3-methyl-4-nitroso-2-phenyl-",
+    "Morpholine, 3methyl4nitroso2phenyl",
+    "N-Nitroso-2-phenyl-3-methylmorpholine",
+    "N-Nitrosophenmetrazine",
+    "N-Nitrosophenmetrazine; Morpholine, 3-methyl-4-nitroso-2-phenyl-; 3-Methyl-4-nitroso-2-phenylmorpholine; 2-Phenyl-3-methylnitrosomorpholine; N-Nitrosophenmetrazine; Nitrosophenmetrazine",
+    "NITROSOPHENMETRAZINE",
+    "NNitroso2phenyl3methylmorpholine",
+    "Q27290905",
+    "RefChem:94776",
+    "U8S25748J3",
+    "UNII-U8S25748J3",
+    "nitroso-3-methyl-2-phenylmorpholine"
+  ],
+  "http_status": 200,
+  "cids": [
+    92297
+  ]
+}

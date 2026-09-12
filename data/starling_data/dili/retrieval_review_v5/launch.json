@@ -1,0 +1,10 @@
+{
+  "pid": 979707,
+  "source_scope": "nine confirmed records, base v4",
+  "result_root": "outputs/paper/starling_conditioned_dili_retrieval_review_v5_no_prior_grounded_sim0",
+  "artifact_storage": "/local/tmp/tianang_dili_v5_scaffold_artifacts",
+  "parallelism_per_mode": 256,
+  "simultaneous_modes": 4,
+  "max_tokens": 20480,
+  "retry_race_width": 6
+}

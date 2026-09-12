@@ -1,0 +1,30 @@
+{
+  "parent_key": "LADVYSUMGRTFSZ-XKSSXDPKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-Isotussilagine",
+    "(+-)-Tussilagine",
+    "1H-PYRROLIZINE-1-CARBOXYLIC ACID, HEXAHYDRO-2-HYDROXY-2-METHYL-, METHYL ESTER, (1S-(1.ALPHA.,2.BETA.,7A.ALPHA.))-",
+    "1H-Pyrrolizine-1-carboxylic acid, hexahydro-2-hydroxy-2-methyl-, methyl ester, (1S,2R,7aS)-",
+    "1H-Pyrrolizine-1-carboxylic acid, hexahydro-2-hydroxy-2-methyl-, methyl ester, (1S-(1alpha,2beta,7aalpha))-",
+    "1H-Pyrrolizine-1-carboxylic acid, hexahydro-2-hydroxy-2-methyl-, methyl ester, (1alpha,2alpha,7aalpha))-(+-)-",
+    "1H26FL57DF",
+    "91108-31-5",
+    "91108-32-6",
+    "AKOS040734104",
+    "Isotussilagine",
+    "Isotussilagine, (+)-",
+    "Q27252409",
+    "RefChem:1087851",
+    "SCHEMBL30899615",
+    "T123941",
+    "UNII-1H26FL57DF",
+    "methyl (1S,2R,8S)-2-hydroxy-2-methyl-1,3,5,6,7,8-hexahydropyrrolizine-1-carboxylate",
+    "orb1992614"
+  ],
+  "cids": [
+    149801
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LADVYSUMGRTFSZ-XKSSXDPKSA-N/synonyms/JSON",
+  "http_status": 200
+}

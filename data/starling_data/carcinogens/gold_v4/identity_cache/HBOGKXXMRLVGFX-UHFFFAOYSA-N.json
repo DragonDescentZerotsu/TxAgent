@@ -1,0 +1,40 @@
+{
+  "parent_key": "HBOGKXXMRLVGFX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HBOGKXXMRLVGFX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-12-00-00465 (Beilstein Handbook Reference)",
+    "1-benzyl-1-nitrosourea",
+    "66R25GI5ER",
+    "775-11-1",
+    "AAA77511",
+    "BRN 0642551",
+    "Benzylnitrosourea",
+    "CCRIS 4432",
+    "DTXCID80150693",
+    "DTXSID00228202",
+    "EBC-53045",
+    "EN300-263673",
+    "G49944",
+    "N-Benzyl-N-nitrosourea",
+    "N-Benzylnitrosourea",
+    "N-NITROSO-N-(PHENYLMETHYL)UREA",
+    "N-Nitroso-N-benzylurea",
+    "N-Nitrosobenzylurea",
+    "N-nitroso-N-(phenylmethyl)-Urea",
+    "NSC 67523",
+    "NSC-67523",
+    "NSC67523",
+    "Nitrosobenzylurea",
+    "RefChem:829222",
+    "UNII-66R25GI5ER",
+    "Urea, 1-benzyl-1-nitroso-",
+    "Urea, N-nitroso-N-(phenylmethyl)-",
+    "Urea,N-nitroso-N-(phenylmethyl)-",
+    "Z1262622772"
+  ],
+  "http_status": 200,
+  "cids": [
+    96326
+  ]
+}

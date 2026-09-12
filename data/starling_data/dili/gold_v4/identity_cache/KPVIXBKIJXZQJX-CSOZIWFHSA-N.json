@@ -1,0 +1,36 @@
+{
+  "parent_key": "KPVIXBKIJXZQJX-CSOZIWFHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-LEFAMULIN",
+    "(1S,2R,3S,4S,6R,7R,8R)-4-ethenyl-3-hydroxy-2,4,7,14-tetramethyl-9-oxotricyclo(5.4.3.0^(1,8))tetradecan-6-yl 2-(((1R,2R,4R)-4-amino-2-hydroxycyclohexyl)sulfanyl)acetate",
+    "(1S,2R,3S,4S,6R,7R,8R)-4-ethenyl-3-hydroxy-2,4,7,14-tetramethyl-9-oxotricyclo[5.4.3.0,1,8]tetradecan-6-yl 2-{[(1R,2R,4R)-4-amino-2-hydroxycyclohexyl]sulfanyl}acetate",
+    "1061337-51-6",
+    "21904A5386",
+    "2743429-93-6",
+    "Acetic acid, 2-(((1R,2R,4R)-4-amino-2-hydroxycyclohexyl)thio)-, (3aS,4R,5S,6S,8R,9R,9aR,10R)-6-ethenyldecahydro-5-hydroxy-4,6,9,10-tetramethyl-1-oxo-3a,9-propano-3ah-cyclopentacycloocten-8-yl ester",
+    "DB12825",
+    "DTXCID801513456",
+    "DTXSID101027896",
+    "EN300-33419804",
+    "J01XX12",
+    "LEFAMULIN [MI]",
+    "LEFAMULIN [USAN]",
+    "LEFAMULIN [WHO-DD]",
+    "Lefamulin",
+    "Lefamulin [INN]",
+    "Lefamulin [USAN:INN]",
+    "RefChem:56440",
+    "SCHEMBL1083688",
+    "UNII-21904A5386",
+    "[(1S,2R,3S,4S,6R,7R,8R)-4-ethenyl-3-hydroxy-2,4,7,14-tetramethyl-9-oxo-6-tricyclo[5.4.3.01,8]tetradecanyl] 2-[(1R,2R,4R)-4-amino-2-hydroxycyclohexyl]sulfanylacetate",
+    "lefamulina",
+    "lefamuline",
+    "lefamulinum"
+  ],
+  "cids": [
+    58076382
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KPVIXBKIJXZQJX-CSOZIWFHSA-N/synonyms/JSON",
+  "http_status": 200
+}

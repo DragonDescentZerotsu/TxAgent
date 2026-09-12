@@ -1,0 +1,36 @@
+{
+  "parent_key": "XUSPWDAHGXSTHS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,5-pentanediylbis(trimethylaminium)",
+    "2365-25-5",
+    "521DS2D2HB",
+    "CHEBI:166825",
+    "CHEMBL2110996",
+    "DTXCID60100813",
+    "DTXSID30178322",
+    "InChI=1/C11H28N2/c1-12(2,3)10-8-7-9-11-13(4,5)6/h7-11H2,1-6H3/q+2",
+    "N(1),N(1),N(1),N(5),N(5),N(5)-hexamethylpentane-1,5-bis(aminium)",
+    "N,N,N,N',N',N'-Hexamethyl-1,5-pentanediaminium",
+    "N,N,N,N',N',N'-hexamethylpentane-1,5-bis(aminium)",
+    "N~1~,N~1~,N~1~,N~5~,N~5~,N~5~-Hexamethylpentane-1,5-bis(aminium)",
+    "PENTAMETHONIUM [WHO-DD]",
+    "Pentamethonium",
+    "Pentamethonium cation",
+    "Pentamethonium ion",
+    "Pentamethonum",
+    "Q27260943",
+    "RefChem:928792",
+    "SCHEMBL61798",
+    "UNII-521DS2D2HB",
+    "XUSPWDAHGXSTHS-UHFFFAOYSA-",
+    "pentamethylenebis(trimethylammonium)",
+    "trimethyl-(5-trimethylazaniumylpentyl)azanium dibromide",
+    "trimethyl-[5-(trimethylazaniumyl)pentyl]azanium"
+  ],
+  "cids": [
+    10920
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XUSPWDAHGXSTHS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

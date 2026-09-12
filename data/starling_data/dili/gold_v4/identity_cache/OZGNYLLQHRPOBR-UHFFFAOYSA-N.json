@@ -1,0 +1,26 @@
+{
+  "parent_key": "OZGNYLLQHRPOBR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(Z)-Naftifine",
+    "134274-83-2",
+    "DB00735",
+    "DTXSID90860812",
+    "MFCD31699965",
+    "N-Methyl-N-[(naphthalen-1-yl)methyl]-3-phenylprop-2-en-1-amine",
+    "N-methyl-N-(1-naphthalenylmethyl)-3-phenyl-2-propen-1-amine",
+    "N-methyl-N-(1-naphthylmethyl)-3-phenyl-prop-2-en-1-amine",
+    "Prestwick0_001063",
+    "Prestwick1_001063",
+    "Q27165018",
+    "QCA47308",
+    "SCHEMBL3692459",
+    "SPBio_002963",
+    "SY246336"
+  ],
+  "cids": [
+    73342
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OZGNYLLQHRPOBR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

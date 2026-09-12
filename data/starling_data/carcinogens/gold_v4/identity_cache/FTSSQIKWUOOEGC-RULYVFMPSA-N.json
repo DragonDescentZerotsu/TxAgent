@@ -1,0 +1,22 @@
+{
+  "parent_key": "FTSSQIKWUOOEGC-RULYVFMPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FTSSQIKWUOOEGC-RULYVFMPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "137405-40-4",
+    "AKOS037515376",
+    "CHEBI:190523",
+    "CS-0101572",
+    "DA-53410",
+    "Fructo-oligosaccharide DP12/GF11",
+    "G11975LC",
+    "GlyTouCan:G11975LC",
+    "HY-N7009",
+    "RefChem:951270",
+    "orb1987501"
+  ],
+  "http_status": 200,
+  "cids": [
+    138392202
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "FRCVKQKVZCCJPV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FRCVKQKVZCCJPV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL11396178"
+  ],
+  "http_status": 200,
+  "cids": [
+    70578411
+  ]
+}

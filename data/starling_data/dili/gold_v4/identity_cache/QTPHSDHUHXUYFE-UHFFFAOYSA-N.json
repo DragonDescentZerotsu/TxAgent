@@ -1,0 +1,24 @@
+{
+  "parent_key": "QTPHSDHUHXUYFE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S)-7-chloro-15-ethyl-10-azatetracyclo[11.3.1.0^{2,11}.0^{4,9}]heptadeca-2(11),3,5,7,9,14-hexaen-3-amine",
+    "7-chloro-15-ethyl-(1R,13S)-10-azoniatetracyclo[11.3.1.02,11.04,9]heptadeca-2,4,6,8,10,14-hexaen-3-amine",
+    "7-chloro-15-ethyl-10-azatetracyclo[11.3.1.0~2,11~.0~4,9~]heptadeca-2(11),3,5,7,9,14-hexaen-3-ylamine",
+    "AN-907/40848043",
+    "BDBM10597",
+    "CHEMBL143812",
+    "DTXCID801766958",
+    "DTXSID901336714",
+    "NCI60_041180",
+    "RefChem:923093",
+    "SCHEMBL7115053",
+    "huprine x",
+    "rac-huprine H7"
+  ],
+  "cids": [
+    3632
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QTPHSDHUHXUYFE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

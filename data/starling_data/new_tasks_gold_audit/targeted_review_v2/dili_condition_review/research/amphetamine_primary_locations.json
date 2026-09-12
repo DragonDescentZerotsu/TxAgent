@@ -1,0 +1,1666 @@
+{
+  "id": "https://openalex.org/W2027453598",
+  "doi": "https://doi.org/10.1002/hep.22056",
+  "title": "Transient elastography is unreliable for detection of cirrhosis in patients with acute liver damage",
+  "display_name": "Transient elastography is unreliable for detection of cirrhosis in patients with acute liver damage",
+  "publication_year": 2007,
+  "publication_date": "2007-12-21",
+  "ids": {
+    "openalex": "https://openalex.org/W2027453598",
+    "doi": "https://doi.org/10.1002/hep.22056",
+    "mag": "2027453598",
+    "pmid": "https://pubmed.ncbi.nlm.nih.gov/18098325"
+  },
+  "language": "en",
+  "primary_location": {
+    "id": "doi:10.1002/hep.22056",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.1002/hep.22056",
+    "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/hep.22056",
+    "source": {
+      "id": "https://openalex.org/S156174673",
+      "display_name": "Hepatology",
+      "issn_l": "0270-9139",
+      "issn": [
+        "0270-9139",
+        "1527-3350"
+      ],
+      "is_oa": false,
+      "is_in_doaj": false,
+      "is_core": true,
+      "host_organization": "https://openalex.org/P4310315671",
+      "host_organization_name": "Lippincott Williams & Wilkins",
+      "host_organization_lineage": [
+        "https://openalex.org/P4310315671",
+        "https://openalex.org/P4310318547"
+      ],
+      "host_organization_lineage_names": [
+        "Lippincott Williams & Wilkins",
+        "Wolters Kluwer"
+      ],
+      "type": "journal"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Hepatology",
+    "raw_type": "journal-article"
+  },
+  "type": "article",
+  "indexed_in": [
+    "crossref",
+    "pubmed"
+  ],
+  "open_access": {
+    "is_oa": true,
+    "oa_status": "bronze",
+    "oa_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/hep.22056",
+    "any_repository_has_fulltext": false
+  },
+  "authorships": [
+    {
+      "author_position": "first",
+      "author": {
+        "id": "https://openalex.org/A5063128049",
+        "display_name": "Abdurrahman Sagir",
+        "orcid": null
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I4210089242",
+          "display_name": "D\u00fcsseldorf University Hospital",
+          "ror": "https://ror.org/006k2kk72",
+          "country_code": "DE",
+          "type": "healthcare",
+          "lineage": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "id": "https://openalex.org/I44260953",
+          "display_name": "Heinrich Heine University D\u00fcsseldorf",
+          "ror": "https://ror.org/024z2rq82",
+          "country_code": "DE",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ],
+      "countries": [
+        "DE"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Abdurrahman Sagir",
+      "raw_affiliation_strings": [
+        "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242",
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ]
+    },
+    {
+      "author_position": "middle",
+      "author": {
+        "id": "https://openalex.org/A5108135353",
+        "display_name": "Andreas Erhardt",
+        "orcid": null
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I4210089242",
+          "display_name": "D\u00fcsseldorf University Hospital",
+          "ror": "https://ror.org/006k2kk72",
+          "country_code": "DE",
+          "type": "healthcare",
+          "lineage": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "id": "https://openalex.org/I44260953",
+          "display_name": "Heinrich Heine University D\u00fcsseldorf",
+          "ror": "https://ror.org/024z2rq82",
+          "country_code": "DE",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ],
+      "countries": [
+        "DE"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Andreas Erhardt",
+      "raw_affiliation_strings": [
+        "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+        "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "raw_affiliation_string": "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242",
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ]
+    },
+    {
+      "author_position": "middle",
+      "author": {
+        "id": "https://openalex.org/A5056930072",
+        "display_name": "Marcus Schmitt",
+        "orcid": null
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I4210089242",
+          "display_name": "D\u00fcsseldorf University Hospital",
+          "ror": "https://ror.org/006k2kk72",
+          "country_code": "DE",
+          "type": "healthcare",
+          "lineage": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "id": "https://openalex.org/I44260953",
+          "display_name": "Heinrich Heine University D\u00fcsseldorf",
+          "ror": "https://ror.org/024z2rq82",
+          "country_code": "DE",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ],
+      "countries": [
+        "DE"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Marcus Schmitt",
+      "raw_affiliation_strings": [
+        "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+        "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "raw_affiliation_string": "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242",
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ]
+    },
+    {
+      "author_position": "last",
+      "author": {
+        "id": "https://openalex.org/A5008452332",
+        "display_name": "Dieter H\u00e4ussinger",
+        "orcid": "https://orcid.org/0000-0002-5936-682X"
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I4210089242",
+          "display_name": "D\u00fcsseldorf University Hospital",
+          "ror": "https://ror.org/006k2kk72",
+          "country_code": "DE",
+          "type": "healthcare",
+          "lineage": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "id": "https://openalex.org/I44260953",
+          "display_name": "Heinrich Heine University D\u00fcsseldorf",
+          "ror": "https://ror.org/024z2rq82",
+          "country_code": "DE",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ],
+      "countries": [
+        "DE"
+      ],
+      "is_corresponding": true,
+      "raw_author_name": "Dieter H\u00e4ussinger",
+      "raw_affiliation_strings": [
+        "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+        "fax: 0049-211-811 8752",
+        "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Klinik fu\u0308r Gastroenterologie, Hepatologie und Infektiologie, Universita\u0308tsklinik Du\u0308sseldorf, Du\u0308sseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242"
+          ]
+        },
+        {
+          "raw_affiliation_string": "fax: 0049-211-811 8752",
+          "institution_ids": []
+        },
+        {
+          "raw_affiliation_string": "Klinik f\u00fcr Gastroenterologie, Hepatologie und Infektiologie, Universit\u00e4tsklinik D\u00fcsseldorf, D\u00fcsseldorf, Germany",
+          "institution_ids": [
+            "https://openalex.org/I4210089242",
+            "https://openalex.org/I44260953"
+          ]
+        }
+      ]
+    }
+  ],
+  "institutions": [],
+  "countries_distinct_count": 1,
+  "institutions_distinct_count": 2,
+  "corresponding_author_ids": [
+    "https://openalex.org/A5008452332"
+  ],
+  "corresponding_institution_ids": [
+    "https://openalex.org/I4210089242",
+    "https://openalex.org/I44260953"
+  ],
+  "apc_list": {
+    "value": 2900,
+    "currency": "USD",
+    "value_usd": 2900
+  },
+  "apc_paid": null,
+  "fwci": 24.2554,
+  "has_fulltext": true,
+  "cited_by_count": 511,
+  "citation_normalized_percentile": {
+    "value": 0.99721922,
+    "is_in_top_1_percent": true,
+    "is_in_top_10_percent": true
+  },
+  "cited_by_percentile_year": {
+    "min": 97,
+    "max": 100
+  },
+  "biblio": {
+    "volume": "47",
+    "issue": "2",
+    "first_page": "592",
+    "last_page": "595"
+  },
+  "is_retracted": false,
+  "is_paratext": false,
+  "is_xpac": false,
+  "primary_topic": {
+    "id": "https://openalex.org/T10351",
+    "display_name": "Liver Disease Diagnosis and Treatment",
+    "score": 0.6662999987602234,
+    "subfield": {
+      "id": "https://openalex.org/subfields/2713",
+      "display_name": "Epidemiology"
+    },
+    "field": {
+      "id": "https://openalex.org/fields/27",
+      "display_name": "Medicine"
+    },
+    "domain": {
+      "id": "https://openalex.org/domains/4",
+      "display_name": "Health Sciences"
+    }
+  },
+  "topics": [
+    {
+      "id": "https://openalex.org/T10351",
+      "display_name": "Liver Disease Diagnosis and Treatment",
+      "score": 0.6662999987602234,
+      "subfield": {
+        "id": "https://openalex.org/subfields/2713",
+        "display_name": "Epidemiology"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/27",
+        "display_name": "Medicine"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/4",
+        "display_name": "Health Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T10727",
+      "display_name": "Ultrasound Imaging and Elastography",
+      "score": 0.15389999747276306,
+      "subfield": {
+        "id": "https://openalex.org/subfields/2741",
+        "display_name": "Radiology, Nuclear Medicine and Imaging"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/27",
+        "display_name": "Medicine"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/4",
+        "display_name": "Health Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T10073",
+      "display_name": "Hepatocellular Carcinoma Treatment and Prognosis",
+      "score": 0.03849999979138374,
+      "subfield": {
+        "id": "https://openalex.org/subfields/2721",
+        "display_name": "Hepatology"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/27",
+        "display_name": "Medicine"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/4",
+        "display_name": "Health Sciences"
+      }
+    }
+  ],
+  "keywords": [
+    {
+      "id": "https://openalex.org/keywords/transient-elastography",
+      "display_name": "Transient elastography",
+      "score": 0.9577713012695312
+    },
+    {
+      "id": "https://openalex.org/keywords/cirrhosis",
+      "display_name": "Cirrhosis",
+      "score": 0.7315868139266968
+    },
+    {
+      "id": "https://openalex.org/keywords/medicine",
+      "display_name": "Medicine",
+      "score": 0.6276342868804932
+    },
+    {
+      "id": "https://openalex.org/keywords/transient",
+      "display_name": "Transient (computer programming)",
+      "score": 0.5278106927871704
+    },
+    {
+      "id": "https://openalex.org/keywords/liver-failure",
+      "display_name": "Liver failure",
+      "score": 0.4322824478149414
+    },
+    {
+      "id": "https://openalex.org/keywords/radiology",
+      "display_name": "Radiology",
+      "score": 0.4193205237388611
+    },
+    {
+      "id": "https://openalex.org/keywords/internal-medicine",
+      "display_name": "Internal medicine",
+      "score": 0.40914449095726013
+    },
+    {
+      "id": "https://openalex.org/keywords/gastroenterology",
+      "display_name": "Gastroenterology",
+      "score": 0.37845438718795776
+    },
+    {
+      "id": "https://openalex.org/keywords/computer-science",
+      "display_name": "Computer science",
+      "score": 0.16790145635604858
+    },
+    {
+      "id": "https://openalex.org/keywords/liver-fibrosis",
+      "display_name": "Liver fibrosis",
+      "score": 0.06027522683143616
+    }
+  ],
+  "concepts": [
+    {
+      "id": "https://openalex.org/C2780826214",
+      "wikidata": "https://www.wikidata.org/wiki/Q1324974",
+      "display_name": "Transient elastography",
+      "level": 4,
+      "score": 0.9577713012695312
+    },
+    {
+      "id": "https://openalex.org/C2777214474",
+      "wikidata": "https://www.wikidata.org/wiki/Q147778",
+      "display_name": "Cirrhosis",
+      "level": 2,
+      "score": 0.7315868139266968
+    },
+    {
+      "id": "https://openalex.org/C71924100",
+      "wikidata": "https://www.wikidata.org/wiki/Q11190",
+      "display_name": "Medicine",
+      "level": 0,
+      "score": 0.6276342868804932
+    },
+    {
+      "id": "https://openalex.org/C2780799671",
+      "wikidata": "https://www.wikidata.org/wiki/Q17087362",
+      "display_name": "Transient (computer programming)",
+      "level": 2,
+      "score": 0.5278106927871704
+    },
+    {
+      "id": "https://openalex.org/C2994427840",
+      "wikidata": "https://www.wikidata.org/wiki/Q970208",
+      "display_name": "Liver failure",
+      "level": 2,
+      "score": 0.4322824478149414
+    },
+    {
+      "id": "https://openalex.org/C126838900",
+      "wikidata": "https://www.wikidata.org/wiki/Q77604",
+      "display_name": "Radiology",
+      "level": 1,
+      "score": 0.4193205237388611
+    },
+    {
+      "id": "https://openalex.org/C126322002",
+      "wikidata": "https://www.wikidata.org/wiki/Q11180",
+      "display_name": "Internal medicine",
+      "level": 1,
+      "score": 0.40914449095726013
+    },
+    {
+      "id": "https://openalex.org/C90924648",
+      "wikidata": "https://www.wikidata.org/wiki/Q120569",
+      "display_name": "Gastroenterology",
+      "level": 1,
+      "score": 0.37845438718795776
+    },
+    {
+      "id": "https://openalex.org/C41008148",
+      "wikidata": "https://www.wikidata.org/wiki/Q21198",
+      "display_name": "Computer science",
+      "level": 0,
+      "score": 0.16790145635604858
+    },
+    {
+      "id": "https://openalex.org/C2994217296",
+      "wikidata": "https://www.wikidata.org/wiki/Q147778",
+      "display_name": "Liver fibrosis",
+      "level": 3,
+      "score": 0.06027522683143616
+    },
+    {
+      "id": "https://openalex.org/C111919701",
+      "wikidata": "https://www.wikidata.org/wiki/Q9135",
+      "display_name": "Operating system",
+      "level": 1,
+      "score": 0.0
+    }
+  ],
+  "mesh": [
+    {
+      "descriptor_ui": "D000208",
+      "descriptor_name": "Acute Disease",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000208",
+      "descriptor_name": "Acute Disease",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000208",
+      "descriptor_name": "Acute Disease",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000293",
+      "descriptor_name": "Adolescent",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000293",
+      "descriptor_name": "Adolescent",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000293",
+      "descriptor_name": "Adolescent",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000328",
+      "descriptor_name": "Adult",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000328",
+      "descriptor_name": "Adult",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D000328",
+      "descriptor_name": "Adult",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D001707",
+      "descriptor_name": "Biopsy, Needle",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D001707",
+      "descriptor_name": "Biopsy, Needle",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D001707",
+      "descriptor_name": "Biopsy, Needle",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D005260",
+      "descriptor_name": "Female",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D005260",
+      "descriptor_name": "Female",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D005260",
+      "descriptor_name": "Female",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000209",
+      "qualifier_name": "etiology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000209",
+      "qualifier_name": "etiology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000209",
+      "qualifier_name": "etiology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006505",
+      "descriptor_name": "Hepatitis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006801",
+      "descriptor_name": "Humans",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006801",
+      "descriptor_name": "Humans",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D006801",
+      "descriptor_name": "Humans",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000293",
+      "qualifier_name": "injuries",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000293",
+      "qualifier_name": "injuries",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000293",
+      "qualifier_name": "injuries",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008099",
+      "descriptor_name": "Liver",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000175",
+      "qualifier_name": "diagnosis",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000473",
+      "qualifier_name": "pathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008103",
+      "descriptor_name": "Liver Cirrhosis",
+      "qualifier_ui": "Q000503",
+      "qualifier_name": "physiopathology",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008297",
+      "descriptor_name": "Male",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008297",
+      "descriptor_name": "Male",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008297",
+      "descriptor_name": "Male",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008875",
+      "descriptor_name": "Middle Aged",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008875",
+      "descriptor_name": "Middle Aged",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D008875",
+      "descriptor_name": "Middle Aged",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D015203",
+      "descriptor_name": "Reproducibility of Results",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D015203",
+      "descriptor_name": "Reproducibility of Results",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D015203",
+      "descriptor_name": "Reproducibility of Results",
+      "qualifier_ui": null,
+      "qualifier_name": null,
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D054459",
+      "descriptor_name": "Elasticity Imaging Techniques",
+      "qualifier_ui": "Q000379",
+      "qualifier_name": "methods",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D054459",
+      "descriptor_name": "Elasticity Imaging Techniques",
+      "qualifier_ui": "Q000379",
+      "qualifier_name": "methods",
+      "is_major_topic": false
+    },
+    {
+      "descriptor_ui": "D054459",
+      "descriptor_name": "Elasticity Imaging Techniques",
+      "qualifier_ui": "Q000379",
+      "qualifier_name": "methods",
+      "is_major_topic": false
+    }
+  ],
+  "locations_count": 2,
+  "locations": [
+    {
+      "id": "doi:10.1002/hep.22056",
+      "is_oa": true,
+      "landing_page_url": "https://doi.org/10.1002/hep.22056",
+      "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/hep.22056",
+      "source": {
+        "id": "https://openalex.org/S156174673",
+        "display_name": "Hepatology",
+        "issn_l": "0270-9139",
+        "issn": [
+          "0270-9139",
+          "1527-3350"
+        ],
+        "is_oa": false,
+        "is_in_doaj": false,
+        "is_core": true,
+        "host_organization": "https://openalex.org/P4310315671",
+        "host_organization_name": "Lippincott Williams & Wilkins",
+        "host_organization_lineage": [
+          "https://openalex.org/P4310315671",
+          "https://openalex.org/P4310318547"
+        ],
+        "host_organization_lineage_names": [
+          "Lippincott Williams & Wilkins",
+          "Wolters Kluwer"
+        ],
+        "type": "journal"
+      },
+      "license": null,
+      "license_id": null,
+      "version": "publishedVersion",
+      "is_accepted": true,
+      "is_published": true,
+      "raw_source_name": "Hepatology",
+      "raw_type": "journal-article"
+    },
+    {
+      "id": "pmid:18098325",
+      "is_oa": false,
+      "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/18098325",
+      "pdf_url": null,
+      "source": {
+        "id": "https://openalex.org/S4306525036",
+        "display_name": "PubMed",
+        "issn_l": null,
+        "issn": null,
+        "is_oa": false,
+        "is_in_doaj": false,
+        "is_core": false,
+        "host_organization": "https://openalex.org/I1299303238",
+        "host_organization_name": "National Institutes of Health",
+        "host_organization_lineage": [
+          "https://openalex.org/I1299303238"
+        ],
+        "host_organization_lineage_names": [],
+        "type": "repository"
+      },
+      "license": null,
+      "license_id": null,
+      "version": "publishedVersion",
+      "is_accepted": true,
+      "is_published": true,
+      "raw_source_name": "Hepatology (Baltimore, Md.)",
+      "raw_type": "Journal Article"
+    }
+  ],
+  "best_oa_location": {
+    "id": "doi:10.1002/hep.22056",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.1002/hep.22056",
+    "pdf_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/hep.22056",
+    "source": {
+      "id": "https://openalex.org/S156174673",
+      "display_name": "Hepatology",
+      "issn_l": "0270-9139",
+      "issn": [
+        "0270-9139",
+        "1527-3350"
+      ],
+      "is_oa": false,
+      "is_in_doaj": false,
+      "is_core": true,
+      "host_organization": "https://openalex.org/P4310315671",
+      "host_organization_name": "Lippincott Williams & Wilkins",
+      "host_organization_lineage": [
+        "https://openalex.org/P4310315671",
+        "https://openalex.org/P4310318547"
+      ],
+      "host_organization_lineage_names": [
+        "Lippincott Williams & Wilkins",
+        "Wolters Kluwer"
+      ],
+      "type": "journal"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Hepatology",
+    "raw_type": "journal-article"
+  },
+  "sustainable_development_goals": [
+    {
+      "id": "https://metadata.un.org/sdg/3",
+      "score": 0.8500000238418579,
+      "display_name": "Good health and well-being"
+    }
+  ],
+  "awards": [],
+  "funders": [],
+  "has_content": {
+    "grobid_xml": true,
+    "pdf": true
+  },
+  "content_urls": {
+    "pdf": "https://content.openalex.org/works/W2027453598.pdf",
+    "grobid_xml": "https://content.openalex.org/works/W2027453598.grobid-xml"
+  },
+  "referenced_works_count": 16,
+  "referenced_works": [
+    "https://openalex.org/W1979277963",
+    "https://openalex.org/W1981772845",
+    "https://openalex.org/W1987060364",
+    "https://openalex.org/W2002163127",
+    "https://openalex.org/W2008132884",
+    "https://openalex.org/W2013716066",
+    "https://openalex.org/W2027498662",
+    "https://openalex.org/W2050449588",
+    "https://openalex.org/W2054995533",
+    "https://openalex.org/W2057320475",
+    "https://openalex.org/W2077668328",
+    "https://openalex.org/W2091595053",
+    "https://openalex.org/W2092607950",
+    "https://openalex.org/W2128366104",
+    "https://openalex.org/W2395397480",
+    "https://openalex.org/W4247258598"
+  ],
+  "related_works": [
+    "https://openalex.org/W3087778366",
+    "https://openalex.org/W2898092133",
+    "https://openalex.org/W3048500335",
+    "https://openalex.org/W2156508801",
+    "https://openalex.org/W2315162217",
+    "https://openalex.org/W2984764470",
+    "https://openalex.org/W2068244171",
+    "https://openalex.org/W2321805433",
+    "https://openalex.org/W2883987361",
+    "https://openalex.org/W2393158688"
+  ],
+  "abstract_inverted_index": {
+    "UNLABELLED:": [
+      0
+    ],
+    "Transient": [
+      1,
+      226
+    ],
+    "elastography": [
+      2,
+      227
+    ],
+    "[FibroScan": [
+      3
+    ],
+    "(FS)]": [
+      4
+    ],
+    "is": [
+      5,
+      31,
+      47,
+      240
+    ],
+    "a": [
+      6
+    ],
+    "rapid,": [
+      7
+    ],
+    "noninvasive,": [
+      8
+    ],
+    "and": [
+      9,
+      71,
+      167,
+      239
+    ],
+    "reproducible": [
+      10
+    ],
+    "method": [
+      11
+    ],
+    "for": [
+      12,
+      222,
+      242
+    ],
+    "measuring": [
+      13
+    ],
+    "liver": [
+      14,
+      22,
+      38,
+      45,
+      52,
+      69,
+      98,
+      110,
+      115,
+      127,
+      136,
+      184,
+      196,
+      212,
+      223,
+      237
+    ],
+    "stiffness,": [
+      15
+    ],
+    "which": [
+      16
+    ],
+    "correlates": [
+      17
+    ],
+    "with": [
+      18,
+      26,
+      43,
+      50,
+      183,
+      193,
+      235
+    ],
+    "the": [
+      19,
+      34,
+      64,
+      68,
+      75,
+      78,
+      89,
+      94,
+      105,
+      109,
+      130,
+      151,
+      204,
+      219
+    ],
+    "degree": [
+      20
+    ],
+    "of": [
+      21,
+      36,
+      54,
+      67,
+      77,
+      83,
+      93,
+      108,
+      114,
+      119,
+      126,
+      141,
+      203,
+      210
+    ],
+    "fibrosis": [
+      23
+    ],
+    "in": [
+      24,
+      33,
+      40,
+      88,
+      129,
+      139,
+      150,
+      208,
+      233,
+      245
+    ],
+    "patients": [
+      25,
+      41,
+      85,
+      122,
+      182,
+      192,
+      234
+    ],
+    "chronic": [
+      27
+    ],
+    "hepatitis.": [
+      28
+    ],
+    "Whether": [
+      29
+    ],
+    "FS": [
+      30,
+      103
+    ],
+    "useful": [
+      32
+    ],
+    "detection": [
+      35
+    ],
+    "preexisting": [
+      37
+    ],
+    "fibrosis/cirrhosis": [
+      39
+    ],
+    "presenting": [
+      42
+    ],
+    "acute": [
+      44,
+      51,
+      65,
+      79,
+      106,
+      205,
+      236
+    ],
+    "damage": [
+      46,
+      53,
+      70,
+      111,
+      238
+    ],
+    "unclear.": [
+      48
+    ],
+    "Patients": [
+      49
+    ],
+    "different": [
+      55
+    ],
+    "etiologies": [
+      56
+    ],
+    "were": [
+      57,
+      86,
+      112,
+      198
+    ],
+    "analyzed.": [
+      58
+    ],
+    "Liver": [
+      59
+    ],
+    "stiffness": [
+      60,
+      99,
+      185,
+      197,
+      213
+    ],
+    "was": [
+      61,
+      148
+    ],
+    "measured": [
+      62,
+      101
+    ],
+    "during": [
+      63,
+      104
+    ],
+    "phase": [
+      66,
+      107
+    ],
+    "followed": [
+      72,
+      199
+    ],
+    "up": [
+      73,
+      200
+    ],
+    "to": [
+      74,
+      201,
+      216
+    ],
+    "end": [
+      76
+    ],
+    "phase.": [
+      80
+    ],
+    "A": [
+      81,
+      145
+    ],
+    "total": [
+      82
+    ],
+    "20": [
+      84,
+      95
+    ],
+    "included": [
+      87
+    ],
+    "study.": [
+      90
+    ],
+    "In": [
+      91
+    ],
+    "15": [
+      92,
+      121,
+      142
+    ],
+    "patients,": [
+      96
+    ],
+    "initial": [
+      97,
+      152
+    ],
+    "values": [
+      100,
+      214,
+      217,
+      232
+    ],
+    "by": [
+      102
+    ],
+    "suggestive": [
+      113
+    ],
+    "cirrhosis.": [
+      116,
+      224
+    ],
+    "However,": [
+      117
+    ],
+    "none": [
+      118
+    ],
+    "these": [
+      120,
+      246
+    ],
+    "showed": [
+      123
+    ],
+    "any": [
+      124
+    ],
+    "signs": [
+      125
+    ],
+    "cirrhosis": [
+      128
+    ],
+    "physical": [
+      131
+    ],
+    "examination,": [
+      132,
+      134
+    ],
+    "ultrasound": [
+      133
+    ],
+    "or": [
+      135,
+      187
+    ],
+    "histology": [
+      137
+    ],
+    "[performed": [
+      138
+    ],
+    "11": [
+      140
+    ],
+    "(73%)": [
+      143
+    ],
+    "patients].": [
+      144
+    ],
+    "significant": [
+      146
+    ],
+    "difference": [
+      147
+    ],
+    "observed": [
+      149
+    ],
+    "bilirubin": [
+      153
+    ],
+    "levels": [
+      154
+    ],
+    "(5.8": [
+      155
+    ],
+    "+/-": [
+      156,
+      161,
+      170,
+      175
+    ],
+    "6.5": [
+      157
+    ],
+    "mg/dL": [
+      158
+    ],
+    "versus": [
+      159,
+      173
+    ],
+    "15.7": [
+      160
+    ],
+    "11.8": [
+      162
+    ],
+    "mg/dL;": [
+      163
+    ],
+    "P": [
+      164,
+      178
+    ],
+    "=": [
+      165,
+      179
+    ],
+    "0.042)": [
+      166,
+      180
+    ],
+    "age": [
+      168
+    ],
+    "(32.4": [
+      169
+    ],
+    "17.5": [
+      171
+    ],
+    "years": [
+      172
+    ],
+    "49.7": [
+      174
+    ],
+    "15.8": [
+      176
+    ],
+    "years;": [
+      177
+    ],
+    "between": [
+      181
+    ],
+    "below": [
+      186,
+      218
+    ],
+    "above": [
+      188
+    ],
+    "12.5": [
+      189
+    ],
+    "kPa.": [
+      190
+    ],
+    "Six": [
+      191
+    ],
+    "initially": [
+      194
+    ],
+    "high": [
+      195,
+      231
+    ],
+    "abatement": [
+      202
+    ],
+    "hepatitic": [
+      206
+    ],
+    "phase;": [
+      207
+    ],
+    "all": [
+      209
+    ],
+    "them,": [
+      211
+    ],
+    "decreased": [
+      215
+    ],
+    "cutoff": [
+      220
+    ],
+    "value": [
+      221
+    ],
+    "CONCLUSION:": [
+      225
+    ],
+    "frequently": [
+      228
+    ],
+    "yields": [
+      229
+    ],
+    "pathologically": [
+      230
+    ],
+    "unsuitable": [
+      241
+    ],
+    "detecting": [
+      243
+    ],
+    "cirrhosis/fibrosis": [
+      244
+    ],
+    "patients.": [
+      247
+    ]
+  },
+  "counts_by_year": [
+    {
+      "year": 2026,
+      "cited_by_count": 6
+    },
+    {
+      "year": 2025,
+      "cited_by_count": 14
+    },
+    {
+      "year": 2024,
+      "cited_by_count": 10
+    },
+    {
+      "year": 2023,
+      "cited_by_count": 13
+    },
+    {
+      "year": 2022,
+      "cited_by_count": 5
+    },
+    {
+      "year": 2021,
+      "cited_by_count": 17
+    },
+    {
+      "year": 2020,
+      "cited_by_count": 25
+    },
+    {
+      "year": 2019,
+      "cited_by_count": 18
+    },
+    {
+      "year": 2018,
+      "cited_by_count": 22
+    },
+    {
+      "year": 2017,
+      "cited_by_count": 21
+    },
+    {
+      "year": 2016,
+      "cited_by_count": 38
+    },
+    {
+      "year": 2015,
+      "cited_by_count": 37
+    },
+    {
+      "year": 2014,
+      "cited_by_count": 39
+    },
+    {
+      "year": 2013,
+      "cited_by_count": 34
+    },
+    {
+      "year": 2012,
+      "cited_by_count": 35
+    }
+  ],
+  "updated_date": "2026-09-05T08:02:43.246662",
+  "created_date": "2025-10-10T00:00:00"
+}

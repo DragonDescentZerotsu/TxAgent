@@ -1,0 +1,19 @@
+{
+  "parent_key": "LMLOFRDITXUVHZ-BPNNYVJBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LMLOFRDITXUVHZ-BPNNYVJBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-4a,7b-Dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl dipropanoate",
+    "51821-33-1",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-9,9a-bis(1-oxopropoxy)-, (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-",
+    "DTXCID10122267",
+    "DTXSID50199776",
+    "Phorbol-12,13-dipropionate",
+    "RefChem:173475",
+    "[(1S,2S,6R,10S,11R,13S,14R,15R)-1,6-dihydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-13-propanoyloxy-14-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] propanoate"
+  ],
+  "http_status": 200,
+  "cids": [
+    148543
+  ]
+}

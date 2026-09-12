@@ -1,0 +1,16 @@
+{
+  "parent_key": "MTGFQTZILIOORZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MTGFQTZILIOORZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "41385-99-3",
+    "5,7-DimethylBenz(a)anthracene",
+    "5,7-dimethyltetraphene",
+    "Benz(a)anthracene, 5,7-dimethyl-",
+    "DTXSID90194326"
+  ],
+  "http_status": 200,
+  "cids": [
+    181696
+  ]
+}

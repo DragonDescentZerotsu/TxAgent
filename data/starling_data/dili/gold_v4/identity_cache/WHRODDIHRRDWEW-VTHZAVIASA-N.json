@@ -1,0 +1,42 @@
+{
+  "parent_key": "WHRODDIHRRDWEW-VTHZAVIASA-N",
+  "ok": true,
+  "synonyms": [
+    ".GAMMA.-CYCLODEXTRIN, 6A,6B,6C,6D,6E,7F,6G,6H-OCTAKIS-S-(2-CARBOXYETHYL)-6A,6B,6C,6D,6E,7F,6G,6H-OCTATHIO-",
+    "3-(((1S,3S,5S,6S,8S,10S,11S,13S,15S,16S,18S,20S,21S,23S,25S,26S,28S,30S,31S,33S,35S,36S,38S,40S,41R,42R,43R,44R,45R,46R,47R,48R,49R,50R,51R,52R,53R,54R,55R,56R)-10,15,20,25,30,35,40-heptakis(2-carboxyethylsulfanylmethyl)-41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56-hexadecahydroxy-2,4,7,9,12,14,17,19,22,24,27,29,32,34,37,39-hexadecaoxanonacyclo(36.2.2.23,6.28,11.213,16.218,21.223,26.228,31.233,36)hexapentacontan-5-yl)methylsulfanyl)propanoic acid",
+    "343306-71-8",
+    "361LPM2T56",
+    "6,6',6'',6''',6'''',6''''',6'''''',6'''''''-OCTAKIS-S-(2-CARBOXYLATOETHYL)-6,6',6'',6''',6'''',6''''',6'''''',6'''''''-OCTATHIOCYCLO-.ALPHA.-(1->4)-D-OCTAGLUCOPYRANOSIDE",
+    "6A,6B,6C,6D,6E,6F,6G,6H-octakis-S-(2-Carboxyethyl)-6A,6B,6C,6D,6E,6F,6G,6H-octathio-gamma-cyclodextrin",
+    "6A,6B,6C,6D,6E,6F,6G,6H-octakis-S-(2-carboxyethyl)-6A,6B,6C,6D,6E,6F,6G,6H-octathio-?-Cyclodextrin",
+    "AC-35805",
+    "C72H112O48S8",
+    "C74763",
+    "CHEBI:90953",
+    "CHEMBL5412674",
+    "DB06206",
+    "DTXCID901324600",
+    "DTXSID90895043",
+    "Gamma-cyclodextrin, 6A,6B,6C,6D,6E,7F,6G,6H-octakis-S-(2-carboxyethyl)-6A,6B,6C,6D,6E,7F,6G,6H-octathio-",
+    "OS165431",
+    "RefChem:58917",
+    "SCHEMBL13917069",
+    "SUGAMMADEX [EMA EPAR]",
+    "SUGAMMADEX [MI]",
+    "SUGAMMADEX [USAN]",
+    "SUGAMMADEX [WHO-DD]",
+    "Sugammadex",
+    "Sugammadex [INN]",
+    "Sugammadex [USAN:INN:BAN]",
+    "Suggmadex Sodium",
+    "UNII-361LPM2T56",
+    "V03AB35",
+    "gamma-Cyclodextrin, 6A,6B,6C,6D,6E,6F,6G,6H-octakis-S-(2-carboxyethyl)-6A,6B,6C,6D,6E,6F,6G,6H-octathio-",
+    "sugammadexum"
+  ],
+  "cids": [
+    6918585
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WHRODDIHRRDWEW-VTHZAVIASA-N/synonyms/JSON",
+  "http_status": 200
+}

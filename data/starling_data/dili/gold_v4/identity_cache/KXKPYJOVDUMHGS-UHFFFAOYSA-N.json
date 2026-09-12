@@ -1,0 +1,28 @@
+{
+  "parent_key": "KXKPYJOVDUMHGS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-6-[[(2R,3R,4R,5R,6R)-3-acetamido-2,5-dihydroxy-6-sulfooxy-4-oxanyl]oxy]-3,4,5-trihydroxy-2-oxanecarboxylic acid",
+    "6-(3-acetamido-2,5-dihydroxy-6-sulfooxy-tetrahydropyran-4-yl)oxy-3,4,5-trihydroxy-tetrahydropyran-2-carboxylic acid",
+    "6-(3-acetamido-2,5-dihydroxy-6-sulfooxyoxan-4-yl)oxy-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "609-686-1",
+    "AKOS040750265",
+    "C13H21NO15S",
+    "Chondroitin sulfate sodium salt from shark cartilage",
+    "Chondroitin sulphate",
+    "Chondroitinsulfatesodiumsaltfromsharkcartilage",
+    "LS-14244",
+    "NCGC00181291-01",
+    "OC138665",
+    "RefChem:576093",
+    "T2980",
+    "orb1304776",
+    "s2416",
+    "s9004"
+  ],
+  "cids": [
+    21873177
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KXKPYJOVDUMHGS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

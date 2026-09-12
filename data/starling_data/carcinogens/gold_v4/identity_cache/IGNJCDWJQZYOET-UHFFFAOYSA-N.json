@@ -1,0 +1,28 @@
+{
+  "parent_key": "IGNJCDWJQZYOET-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IGNJCDWJQZYOET-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16395-80-5",
+    "9HXM69Y4VL",
+    "BRN 2074063",
+    "DTXCID5090173",
+    "DTXSID00167682",
+    "METHYL-N-NITROSOPROPANAMIDE, N-",
+    "Methyl-nitrosopropionsaeureamid",
+    "Methyl-nitrosopropionsaeureamid [German]",
+    "Methylnitroso-propionamide",
+    "Methylnitrosopropionylamide",
+    "N-Methyl-N-nitrosopropanamide",
+    "N-Methyl-N-nitrosopropionamide",
+    "Propanamide, N-methyl-N-nitroso-",
+    "Propionamide, N-methyl-N-nitroso-",
+    "Propionylamide, N-methyl-N-nitroso-",
+    "RefChem:375021",
+    "SCHEMBL103015"
+  ],
+  "http_status": 200,
+  "cids": [
+    85396
+  ]
+}

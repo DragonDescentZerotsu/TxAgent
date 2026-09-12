@@ -1,0 +1,17 @@
+{
+  "parent_key": "KZTIBWAYFKRYOI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KZTIBWAYFKRYOI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AE-848/07394022",
+    "AKOS008682142",
+    "CHEMBL85150",
+    "N-(9H-fluoren-2-yl)benzenesulfonamide",
+    "ST51045127",
+    "fluoren-2-yl(phenylsulfonyl)amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    3739908
+  ]
+}

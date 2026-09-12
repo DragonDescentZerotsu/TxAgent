@@ -1,0 +1,22 @@
+{
+  "parent_key": "MRGROCIVLXFMNN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MRGROCIVLXFMNN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(2-Fluoro-[1,1'-biphenyl]-4-yl)propanamide",
+    "2-(2-Fluoro-biphenyl-4-yl)-propionamide",
+    "2-Fluoro-alpha-methyl[1,1'-biphenyl]-4-acetamide",
+    "2-Fluoro-|A-methyl[1,1'-biphenyl]-4-acetamide",
+    "87657-78-1",
+    "BDBM50139248",
+    "CHEMBL350428",
+    "DB-213698",
+    "Flurbiprofen amide",
+    "MRGROCIVLXFMNN-UHFFFAOYSA-N",
+    "SCHEMBL2357848"
+  ],
+  "http_status": 200,
+  "cids": [
+    9837706
+  ]
+}

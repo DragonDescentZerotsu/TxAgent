@@ -1,0 +1,21 @@
+{
+  "parent_key": "FYQZGCBXYVWXSP-STTFAQHVSA-N",
+  "ok": true,
+  "synonyms": [
+    "123760-07-6",
+    "DTXSID401060336",
+    "Poly(maleic acid-styrene)neocarzinostatin",
+    "RefChem:934540",
+    "Smancs",
+    "YM 881",
+    "YM-881",
+    "YM881",
+    "Zinostatin stimalamer",
+    "copoly(styrene-maleic acid)neocarzinostatin"
+  ],
+  "cids": [
+    70682998
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FYQZGCBXYVWXSP-STTFAQHVSA-N/synonyms/JSON",
+  "http_status": 200
+}

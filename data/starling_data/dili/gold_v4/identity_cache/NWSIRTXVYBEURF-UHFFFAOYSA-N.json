@@ -1,0 +1,25 @@
+{
+  "parent_key": "NWSIRTXVYBEURF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "104699-06-1",
+    "124151-60-6",
+    "2-(6-(4-Chlorophenoxy)hexyl)oxirane-2-carboxylic acid",
+    "2-[6-(4-chlorophenoxy) hexyl]-oxirane carboxylic acid",
+    "2-[6-(4-chlorophenoxy)hexyl]oxirane-2-carboxylic acid",
+    "4-Cphoc",
+    "B 827-33",
+    "B-827-33",
+    "CHEMBL2216791",
+    "DTXCID10872816",
+    "DTXSID10909136",
+    "Oxiranecarboxylic acid, 2-(6-(4-chlorophenoxy)hexyl)-",
+    "RefChem:84520",
+    "SCHEMBL6260778"
+  ],
+  "cids": [
+    1231
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NWSIRTXVYBEURF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

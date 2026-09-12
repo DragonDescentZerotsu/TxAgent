@@ -1,0 +1,40 @@
+{
+  "parent_key": "IQPIBKBOFOVHBP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IQPIBKBOFOVHBP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-HYDROXY-N-ACETYL-2-AMINOFLUORENE",
+    "1-Hydroxy-2-acetamidofluorene",
+    "1-Hydroxy-2-acetylaminofluorene",
+    "1-Hydroxy-N-2-fluorenylacetamide",
+    "2784-86-3",
+    "4-13-00-02236 (Beilstein Handbook Reference)",
+    "ACETAMIDE, N-(1-HYDROXYFLUOREN-2-YL)-",
+    "BRN 2738062",
+    "CAA78486",
+    "CCRIS 2766",
+    "CHEBI:34090",
+    "CHEMBL50511",
+    "DTXSID20182155",
+    "E69KV8M7W5",
+    "HYDROXY-2-ACETYLAMINOFLUORENE, 1-",
+    "InChI=1/C15H13NO2/c1-9(17)16-14-7-6-12-11-5-3-2-4-10(11)8-13(12)15(14)18/h2-7,18H,8H2,1H3,(H,16,17",
+    "N-(1-Hydroxy-2-fluorenyl)acetamide",
+    "N-(1-Hydroxy-9H-fluoren-2-yl)-acetamide",
+    "N-(1-Hydroxyfluoren-2-yl)-acetamide",
+    "N-(1-hydroxy-9H-fluoren-2-yl)acetamide",
+    "NSC 40565",
+    "NSC-40565",
+    "NSC40565",
+    "Q27115803",
+    "SCHEMBL27620399",
+    "UNII-E69KV8M7W5",
+    "WLN: L B656 HHJ EMV1 FQ",
+    "acetamide, N-(1-hydroxy-9H-fluoren-2-yl)-",
+    "hydroxy-2-acetylaminofluorene"
+  ],
+  "http_status": 200,
+  "cids": [
+    17733
+  ]
+}

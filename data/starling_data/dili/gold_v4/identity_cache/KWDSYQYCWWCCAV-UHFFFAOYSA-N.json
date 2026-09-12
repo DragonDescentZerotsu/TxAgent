@@ -1,0 +1,33 @@
+{
+  "parent_key": "KWDSYQYCWWCCAV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2,3-Dichloro-4-(3-aminomethyl-4-hydroxybenzoyl)phenoxy)acetic acid ethyl ester",
+    "(2,3-dichloro-4-(3-aminomethyl-4-hydroxybenzoyl)phenoxy)ethyl ester",
+    "78235-72-0",
+    "898P546L4I",
+    "A 49816",
+    "A-49816",
+    "AKOS030599666",
+    "Acetic acid, (4-(3-(aminomethyl)-4-hydroxybenzoyl)-2,3-dichlorophenoxy)-, ethyl ester",
+    "CHEMBL1192111",
+    "DTXCID20151402",
+    "DTXSID70228911",
+    "Ethyl (2,3-dichloro-4-(3-aminomethyl-4-hydroxybenzoyl)phenoxy)acetate",
+    "Ethyl 2-(4-(3-(aminomethyl)-4-hydroxybenzoyl)-2,3-dichlorophenoxy)acetate",
+    "Ethyl {4-[3-(aminomethyl)-4-hydroxybenzoyl]-2,3-dichlorophenoxy}acetate",
+    "HY-129557",
+    "Q27270023",
+    "RefChem:138446",
+    "T29496",
+    "UNII-898P546L4I",
+    "ethyl 2-[4-[3-(aminomethyl)-4-hydroxy-benzoyl]-2,3-dichloro-phenoxy]acetate",
+    "ethyl 2-[4-[3-(aminomethyl)-4-hydroxybenzoyl]-2,3-dichlorophenoxy]acetate",
+    "orb1698826"
+  ],
+  "cids": [
+    132835
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KWDSYQYCWWCCAV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

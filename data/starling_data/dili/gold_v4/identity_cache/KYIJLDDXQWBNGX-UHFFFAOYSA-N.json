@@ -1,0 +1,35 @@
+{
+  "parent_key": "KYIJLDDXQWBNGX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    ".ALPHA.-PHP",
+    ".ALPHA.-PYRROLIDINOHEXIOPHENONE",
+    "1-Hexanone, 1-phenyl-2-(1-pyrrolidinyl)-",
+    "1-Phenyl-2-(1-pyrrolidinyl)-1-hexanone",
+    "1-phenyl-2-(pyrrolidin-1-yl)hexan-1-one",
+    "13415-86-6",
+    "297J9K8A4G",
+    "824-478-2",
+    "C22753",
+    "DTXCID401475107",
+    "DTXSID301016924",
+    "Hexanophenone, 2-(1-pyrrolidinyl)-",
+    "J3.226.366F",
+    "NS00018437",
+    "PD046435",
+    "PV-7",
+    "Q21098929",
+    "RefChem:555927",
+    "SCHEMBL21271156",
+    "UNII-297J9K8A4G",
+    "alpha-PHP",
+    "alpha-Pyrrolidinohexanophenone (Other names: alpha-PHP; alpha-pyrrolidinohexanophenone; 1-phenyl-2-(pyrrolidin-1-yl)hexan-1-one)",
+    "alpha-Pyrrolidinohexiophenone",
+    "alpha-pyrrolidinohexanophenone"
+  ],
+  "cids": [
+    102107923
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KYIJLDDXQWBNGX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

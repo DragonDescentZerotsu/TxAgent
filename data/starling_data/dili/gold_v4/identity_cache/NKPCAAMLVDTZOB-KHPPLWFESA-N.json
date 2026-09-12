@@ -1,0 +1,32 @@
+{
+  "parent_key": "NKPCAAMLVDTZOB-KHPPLWFESA-N",
+  "ok": true,
+  "synonyms": [
+    "(Z)-4-[3,4-bis(4-chlorophenyl)butan-2-ylamino]-4-oxobut-2-enoic acid",
+    "148-07-2",
+    "6ET4K804XA",
+    "Benzmalecene",
+    "Benzmalecene [INN]",
+    "Benzmaleceno",
+    "Benzmaleceno [INN-Spanish]",
+    "Benzmalecenum",
+    "Benzmalecenum [INN-Latin]",
+    "CHEMBL3989620",
+    "DTXCID901525856",
+    "DTXSID001043100",
+    "MK 135",
+    "N-(2,3-BIS(P-CHLOROPHENYL)-1-METHYLPROPYL)MALEAMIC ACID (.ALPHA.-FORM)",
+    "N-(2,3-Bis(4-chlorphenyl)-1-methylpropyl)maleamsaeure",
+    "N-(2,3-Bis(p-chlorophenyl)-1-methylpropyl)maleamic Acid (alpha-",
+    "N-(2,3-Bis(p-chlorophenyl)-1-methylpropyl)maleamic acid (alpha-form)",
+    "Q27264731",
+    "RefChem:118144",
+    "UNII-6ET4K804XA",
+    "alpha-N-(2,3-Bis(p-chlorophenyl)-1-methylpropyl)maleamic acid"
+  ],
+  "cids": [
+    20838642
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NKPCAAMLVDTZOB-KHPPLWFESA-N/synonyms/JSON",
+  "http_status": 200
+}

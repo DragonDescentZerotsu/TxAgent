@@ -1,0 +1,24 @@
+{
+  "parent_key": "FXQZICWUGFILLR-DZBDEXCTSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXQZICWUGFILLR-DZBDEXCTSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+-)-N-(2,3-DIHYDROXYPROPYL)RETINAMIDE",
+    "(+/-)-N-(2,3-DIHYDROXYPROPYL)RETINAMIDE",
+    "03DEY1684B",
+    "75664-72-1",
+    "BDBM50347596",
+    "CCRIS 4309",
+    "CHEMBL1803043",
+    "N-(2,3-Dihydroxypropyl)retinamide",
+    "Q27247556",
+    "RETINAMIDE, N-(2,3-DIHYDROXYPROPYL)-",
+    "RefChem:201960",
+    "SCHEMBL11272601",
+    "UNII-03DEY1684B"
+  ],
+  "http_status": 200,
+  "cids": [
+    6505795
+  ]
+}

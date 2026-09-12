@@ -1,0 +1,15 @@
+{
+  "parent_key": "GUMTZPGHTZFTOR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GUMTZPGHTZFTOR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,3-dimethoxy-4,4'-biphenyldiamine",
+    "AKOS024437529",
+    "GUMTZPGHTZFTOR-UHFFFAOYSA-N",
+    "SCHEMBL754105"
+  ],
+  "http_status": 200,
+  "cids": [
+    11673195
+  ]
+}

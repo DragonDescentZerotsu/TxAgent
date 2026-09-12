@@ -1,0 +1,8 @@
+{
+  "utc": "2026-09-08T23:00:23.937155+00:00",
+  "old_proxy_pid": 3851984,
+  "mode": "soft reload with in-flight request drain",
+  "option": "http-server-close",
+  "purpose": "leastconn must reflect busy requests rather than idle reused server sockets",
+  "config_sha256": "67ce58b38b02408cd7e29707caa963408759b9e76857fcd711bcc7c01085effb"
+}

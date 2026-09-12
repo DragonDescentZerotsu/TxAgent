@@ -1,0 +1,15 @@
+{
+  "parent_key": "NNULBSISHYWZJU-LDYMZIIASA-N",
+  "ok": true,
+  "synonyms": [
+    "(6R,7R)-7-[[2-(2-amino-1,3-thiazol-4-yl)-2-methoxyiminoacetyl]amino]-8-oxo-5-thia-1-azabicyclo[4.2.0]oct-2-ene-2-carboxylic acid",
+    "(E/Z)-ceftizoxime",
+    "Q13024939",
+    "SCHEMBL10557680"
+  ],
+  "cids": [
+    50194
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NNULBSISHYWZJU-LDYMZIIASA-N/synonyms/JSON",
+  "http_status": 200
+}

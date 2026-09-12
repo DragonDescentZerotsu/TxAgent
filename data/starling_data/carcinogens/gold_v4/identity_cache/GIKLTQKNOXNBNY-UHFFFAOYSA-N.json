@@ -1,0 +1,33 @@
+{
+  "parent_key": "GIKLTQKNOXNBNY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GIKLTQKNOXNBNY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-Chloroethenyl)arsonous dichloride",
+    "0N54LGU5WS",
+    "1-Chloro-2-di-chloroarsinoethane",
+    "2-Chlorovinyldichloroarsine",
+    "541-25-3",
+    "82TOY8U2KD",
+    "Arsine, dichloro(2-chlorovinyl)-",
+    "Arsonous dichloride, (2-chloroethenyl)-",
+    "Chlorovinyl dichloroarsine",
+    "Chlorovinylarsine dichloride",
+    "Chlorvinyldichlorarsin",
+    "DTXCID7041592",
+    "DTXSID3060245",
+    "Dichloro(2-chlorovinyl)arsine",
+    "GIKLTQKNOXNBNY-UHFFFAOYSA-N",
+    "Lewisite",
+    "Lewisite (arsenic compound)",
+    "NS00114049",
+    "RefChem:799047",
+    "SCHEMBL61499",
+    "beta-Chlorovinylbichloroarsine",
+    "beta-Chlorovinyldichloroarsine"
+  ],
+  "http_status": 200,
+  "cids": [
+    10923
+  ]
+}

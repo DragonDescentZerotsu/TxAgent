@@ -1,0 +1,31 @@
+{
+  "parent_key": "HOPMUCXYRNOABF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HOPMUCXYRNOABF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,3',4',5,5'-heptachloro",
+    "1,1'-Biphenyl, 2,2',3,3',4,5,5'-heptachloro-",
+    "1,2,3,4-tetrachloro-5-(2,3,5-trichlorophenyl)benzene",
+    "2,2',3,3',4,5,5'-Heptachloro-1,1'-biphenyl",
+    "2,2',3,3',4,5,5'-Heptachloro-1,1'-biphenyl #",
+    "2,2',3,3',4,5,5'-Heptachlorobiphenyl",
+    "52663-74-8",
+    "5MUM06YX8G",
+    "DB-052159",
+    "DTXCID8041246",
+    "DTXSID7074167",
+    "HOPMUCXYRNOABF-UHFFFAOYSA-N",
+    "NS00077096",
+    "PCB 172",
+    "Pcb No. 172",
+    "Q27262574",
+    "RefChem:53434",
+    "SCHEMBL30035850",
+    "SCHEMBL4453636",
+    "UNII-5MUM06YX8G"
+  ],
+  "http_status": 200,
+  "cids": [
+    40481
+  ]
+}

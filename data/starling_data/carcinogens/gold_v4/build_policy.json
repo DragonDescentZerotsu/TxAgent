@@ -1,0 +1,22 @@
+{
+  "version": "carcinogens_reviewed_starling_only_five_groups.v1",
+  "direction_ledger": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
+  "new_model_calls": 0,
+  "condition_policy": "carcinogens_five_organism_groups.v1",
+  "allowed_groups": [
+    "rodent",
+    "human",
+    "dog",
+    "monkey",
+    "rabbit"
+  ],
+  "missing_or_cross_group_species": "pending, never infer rodent",
+  "other_axes": "pooled for source-consensus target; original restrictions retained; not universal carcinogenicity across exposures",
+  "in_vitro": "retrieval/background only, no organism gold",
+  "vote_unit": "reporting_publication_parent_organism_with_exact_passage_deduplication",
+  "within_publication_conflict": "no vote",
+  "condition_agreement": 0.6,
+  "ties": "unclassified",
+  "tdc_labels_used": false,
+  "provenance_limit": "Publication-level consensus, not a full audit of independent primary experiments"
+}

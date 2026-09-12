@@ -1,0 +1,25 @@
+{
+  "parent_key": "HVGNLIKFFBYBQM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HVGNLIKFFBYBQM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12,19-dimethyl-3-oxapentacyclo[9.8.0.02,4.05,10.013,18]nonadeca-1(19),5,7,9,11,13,15,17-octaene",
+    "39834-38-3",
+    "6,11-Dimethyl-1a,11b-dihydrobenzo[3,4]anthra[1,2-b]oxirene #",
+    "6,11-dimethyl-1a,11b-dihydrotetrapheno[5,6-b]oxirene",
+    "7,12-Dimethyl-5,6-epoxy-5,6-dihydrobenz(a)anthracene",
+    "7,12-Dimethylbenz[a]anthracene K-region epoxide",
+    "BENZ(a)ANTHRACENE, 5,6-DIHYDRO-7,12-DIMETHYL-5,6-EPOXY-",
+    "C19604",
+    "CHEBI:82590",
+    "DMBA-5,6-epoxide",
+    "DTXSID00960397",
+    "Edmba",
+    "HVGNLIKFFBYBQM-UHFFFAOYSA-N",
+    "Q27156108"
+  ],
+  "http_status": 200,
+  "cids": [
+    38354
+  ]
+}

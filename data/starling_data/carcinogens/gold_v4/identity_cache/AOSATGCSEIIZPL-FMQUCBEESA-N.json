@@ -1,0 +1,16 @@
+{
+  "parent_key": "AOSATGCSEIIZPL-FMQUCBEESA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AOSATGCSEIIZPL-FMQUCBEESA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-methyl-4-[(E)-4-(4-methylphenyl)hex-3-en-3-yl]benzene",
+    "34983-45-4",
+    "SCHEMBL8993926",
+    "Stilbene, alpha,alpha'-diethyl-4,4'-dimethyl-, (E)-",
+    "trans-4,4'-Dimethyl-alpha,alpha'-diethylstilbene"
+  ],
+  "http_status": 200,
+  "cids": [
+    3038361
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "parent_key": "HCEQACRMJXGKHI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HCEQACRMJXGKHI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "63543-22-6",
+    "9-(1-Hydroxyethyl)-3-[5-(3-hydroxyphenyl)-5-methoxypentan-2-yl]-4,14,16,16-tetramethyl-2,6,10,17-tetraoxatricyclo[11.3.1.1~1,5~]octadec-13-ene-7,11-dione",
+    "9-(1-hydroxyethyl)-3-(5-(3-hydroxyphenyl)-5-methoxypentan-2-yl)-4,14,16,16-tetramethyl-2,6,10,17-tetraoxatricyclo(11.3.1.11,5)octadec-13-ene-7,11-dione",
+    "Anhydrodebromoaplysiatoxin",
+    "Aplysiatoxin, 17-debromo-3,4-didehydro-3-deoxy-",
+    "DTXCID501764846",
+    "DTXSID501335140",
+    "RefChem:112768"
+  ],
+  "http_status": 200,
+  "cids": [
+    2195
+  ]
+}

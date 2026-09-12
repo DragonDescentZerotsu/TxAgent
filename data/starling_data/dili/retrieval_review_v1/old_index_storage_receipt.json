@@ -1,0 +1,17 @@
+{
+  "reason": "Shared filesystem capacity; only historical DILI generated indices relocated; current indices remain on shared storage",
+  "files": [
+    {
+      "original_path": "data/starling_data/dili/gold_v4/retrieval/indices/scaffold/assay_neighbor_index.pkl",
+      "node002_backup": "/local/tmp/tianang/dili_retrieval_review_v1_old_scaffold/assay_neighbor_index.pkl",
+      "sha256": "8e437035120469939cded038f97fda05e807f25416a5c27265ba3271e900f209",
+      "status": "byte_identical_symlink_preserved"
+    },
+    {
+      "original_path": "data/starling_data/dili/gold_v4/retrieval/indices/scaffold/assay_molecule_evidence.jsonl",
+      "node002_backup": "/local/tmp/tianang/dili_retrieval_review_v1_old_scaffold/assay_molecule_evidence.jsonl",
+      "sha256": "6ef0c0d3d1691da774213887845c00d7c3054a5e489019baca70160d11ee864a",
+      "status": "byte_identical_symlink_preserved"
+    }
+  ]
+}

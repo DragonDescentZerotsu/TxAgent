@@ -1,0 +1,31 @@
+{
+  "parent_key": "LFTUYYPQNCJQGN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LFTUYYPQNCJQGN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-cyano-1-methyl-3-(2-{[(4-methyl-1H-imidazol-5-yl)methyl]thio}ethyl)-1-nitrosoguanidine",
+    "3-cyano-1-methyl-2-[2-[(5-methyl-1H-imidazol-4-yl)methylsulfanyl]ethyl]-1-nitrosoguanidine",
+    "5CXR4RUT8V",
+    "73785-40-7",
+    "CCRIS 1952",
+    "DTXCID701025",
+    "DTXSID7021025",
+    "Guanidine, 2-cyano-1-methyl-3-(2-(((5-methylimidazol-4-yl)methyl)thio)ethyl)-1-nitroso-",
+    "Guanidine, N'-cyano-N-methyl-N''-(2-(((5-methyl-1H-imidazol-4-yl)methyl)thio)ethyl)-N-nitroso-",
+    "Guanidine, N'-cyano-N-methyl-N''-[2-[[(4-methyl-1H-imidazol-5-yl)methyl]thio]ethyl]-N-nitroso-",
+    "N''-Cyano-N-methyl-N'-(2-{[(4-methyl-1H-imidazol-5-yl)methyl]sulfanyl}ethyl)-N-nitrosoguanidine",
+    "N''-cyano-N-methyl-N'-(2-{[(5-methyl-1H-imidazol-4-yl)methyl]sulfanyl}ethyl)-N-nitrosoguanidine",
+    "N'-Cyano-N-methyl-N''-(2-(((4-methyl-1H-imidazol-5-yl)methyl)thio)ethyl)-N-nitrosoguanidine",
+    "N'-Cyano-N-methyl-N''-[2-[[(4-methyl-1H-imidazol-5-yl)methyl]thio]ethyl]-N-nitrosoguanidine",
+    "N-Nitroso Cimetidine 1",
+    "N-Nitrosocimetidine",
+    "Nitrocimetidine",
+    "Nitrosocimetidine",
+    "Nitrosocimetidine, N-",
+    "RefChem:821240"
+  ],
+  "http_status": 200,
+  "cids": [
+    52445
+  ]
+}

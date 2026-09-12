@@ -1,0 +1,21 @@
+{
+  "parent_key": "LJNUIEQATDYXJH-GSVOUGTGSA-N",
+  "ok": true,
+  "synonyms": [
+    "((2R)-3-amino-2-fluoropropyl)phosphinic acid",
+    "(2R)-3-Amino-2-fluoropropylphosphinic acid",
+    "344413-67-8",
+    "4D6Q6HGC7Z",
+    "AZD-3355",
+    "DTXCID50110502",
+    "DTXSID20188011",
+    "Lesogaberan",
+    "RefChem:798961",
+    "lesogaberanum"
+  ],
+  "cids": [
+    16686147
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LJNUIEQATDYXJH-GSVOUGTGSA-N/synonyms/JSON",
+  "http_status": 200
+}

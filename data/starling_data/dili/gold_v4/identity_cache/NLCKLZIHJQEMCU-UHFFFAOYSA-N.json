@@ -1,0 +1,14 @@
+{
+  "parent_key": "NLCKLZIHJQEMCU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "NLCKLZIHJQEMCU-UHFFFAOYSA-N",
+    "SCHEMBL155012",
+    "acrylcyanate"
+  ],
+  "cids": [
+    9942124
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NLCKLZIHJQEMCU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

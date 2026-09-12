@@ -17,6 +17,8 @@ TASK_DIRECTORIES = {
     "clintox": "ClinTox",
     "skin_reaction": "Skin_Reaction",
     "ames": "Ames",
+    "dili": "DILI",
+    "carcinogens": "Carcinogens",
 }
 
 

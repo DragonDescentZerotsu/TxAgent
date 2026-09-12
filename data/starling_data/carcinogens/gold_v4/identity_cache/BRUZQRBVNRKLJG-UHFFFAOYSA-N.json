@@ -1,0 +1,38 @@
+{
+  "parent_key": "BRUZQRBVNRKLJG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BRUZQRBVNRKLJG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-methylpropyl carbamate",
+    "208-841-7",
+    "2T9125IDNU",
+    "543-28-2",
+    "AKOS006222720",
+    "CHEMBL3276741",
+    "Carbamic acid, 2-methylpropyl ester",
+    "Carbamic acid, isobutyl ester",
+    "Carbamic acid, isobutyl ester (8CI)",
+    "DS-007392",
+    "DTXCID7041673",
+    "DTXSID6060262",
+    "EINECS 208-841-7",
+    "ISOBUTYL CARBAMATE",
+    "ISOBUTYL CARBAMATE [MI]",
+    "NS00033046",
+    "NSC 31187",
+    "NSC-31187",
+    "NSC31187",
+    "Q27255578",
+    "RefChem:791623",
+    "SCHEMBL11644788",
+    "SCHEMBL42754",
+    "SCHEMBL42755",
+    "SCHEMBL4724903",
+    "UNII-2T9125IDNU",
+    "carbaminsaures Isobutyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    10973
+  ]
+}

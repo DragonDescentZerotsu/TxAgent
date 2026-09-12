@@ -1,0 +1,26 @@
+{
+  "parent_key": "JGYYGEYIQBZUCC-ZOOAIUBFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JGYYGEYIQBZUCC-ZOOAIUBFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3S)-3-[[(4R)-4-[(3R,5R,8R,9S,10S,13R,14S,17R)-3-hydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-17-yl]pentanoyl]amino]-4-(1H-indol-3-yl)butanoic acid",
+    "1639159-47-9",
+    "AKOS040747565",
+    "BDBM50234957",
+    "CHEMBL3735125",
+    "CS-0083824",
+    "EX-A7987",
+    "GLXC-04526",
+    "HY-123607",
+    "L-homo-Trp-conjugate of lithocholic acid",
+    "MS-30380",
+    "SCHEMBL30552805",
+    "T26310",
+    "UniPR129",
+    "orb1701494"
+  ],
+  "http_status": 200,
+  "cids": [
+    91668293
+  ]
+}

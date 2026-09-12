@@ -1,0 +1,26 @@
+{
+  "parent_key": "JWSLMDWREGSKAJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JWSLMDWREGSKAJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Benzyl-3-[(dimethylcarbamoyl)oxy]pyridin-1-ium",
+    "1-Benzyl-3-hydroxypyridinium dimethylcarbamate",
+    "701897-98-5",
+    "Benzpyrinium",
+    "Benzpyrinium cation",
+    "Benzpyrinium ion",
+    "CHEMBL2110802",
+    "DTXCID80142952",
+    "DTXSID80220461",
+    "P00DM5T7ZS",
+    "PYRIDINIUM, 3-(((DIMETHYLAMINO)CARBONYL)OXY)-1-(PHENYLMETHYL)-",
+    "Q27285944",
+    "RefChem:118820",
+    "SCHEMBL2111654",
+    "UNII-P00DM5T7ZS"
+  ],
+  "http_status": 200,
+  "cids": [
+    11482
+  ]
+}

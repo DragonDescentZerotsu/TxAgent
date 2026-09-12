@@ -1,0 +1,33 @@
+{
+  "parent_key": "MBDOYVRWFFCFHM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBDOYVRWFFCFHM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-2-hexen-1-al",
+    "(Z)-2-hexen-1-al",
+    "1335-39-3",
+    "2-Hexen-1-al",
+    "85761-70-2",
+    "AKOS025243569",
+    "CHEBI:19591",
+    "CHEBI:24578",
+    "D78252",
+    "DTXSID101052718",
+    "DTXSID7021609",
+    "Epitope ID:143637",
+    "Hexenal",
+    "Hexenal, Leaf aldehyde, trans-2-Hexenal, Hexobarbitone, Hexobarbital, Evipan, 2-trans-Hexenal, 2-HEXENAL, trans-Hex-2-enal, 2-Hexenal, (E)-, Hexylenic aldehyde, beta-Propyl acrolein, 3-propyl acrolein, beta-Propylacrolein, Sodium hexobarbital, Hex-2-enal, 2-hexenal, E, trans-2-Hexen-1-al, Hexobarbital, Sodium, (E)-2-HEXENAL",
+    "NS00080067",
+    "RefChem:787469",
+    "SB85391",
+    "SCHEMBL233667",
+    "SCHEMBL29822",
+    "Trans-3-propyalacrolein",
+    "n-C3H7CH=CHCHO",
+    "s6303"
+  ],
+  "http_status": 200,
+  "cids": [
+    10460
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "JVJFIQYAHPMBBX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JVJFIQYAHPMBBX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "29343-52-0",
+    "4-hydroxylnonenal",
+    "4-hydroxynon-2-enal",
+    "Bio1_000097",
+    "Bio1_000586",
+    "Bio1_001075",
+    "CBiol_001811",
+    "CHEBI:32585",
+    "DTXCID20810325",
+    "DTXSID00860989",
+    "Epitope ID:140432",
+    "HNE",
+    "NS00115882",
+    "PD022708",
+    "Q27115004",
+    "RefChem:1070830",
+    "SCHEMBL3921",
+    "SY039472"
+  ],
+  "http_status": 200,
+  "cids": [
+    1693
+  ]
+}

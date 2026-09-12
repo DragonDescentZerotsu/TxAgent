@@ -1,0 +1,116 @@
+{
+  "status": "passed",
+  "identities": {
+    "decitabine": {
+      "CID": 451668,
+      "MolecularFormula": "C8H12N4O4",
+      "SMILES": "C1[C@@H]([C@H](O[C@H]1N2C=NC(=NC2=O)N)CO)O",
+      "InChIKey": "XAUDJQYHKZQPEU-KVQBGUIXSA-N"
+    },
+    "azacitidine": {
+      "CID": 9444,
+      "MolecularFormula": "C8H12N4O5",
+      "SMILES": "C1=NC(=NC(=O)N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N",
+      "InChIKey": "NMUSYJAQQFHJEW-KVTDHHQDSA-N"
+    },
+    "cyproterone acetate": {
+      "CID": 9880,
+      "MolecularFormula": "C24H29ClO4",
+      "SMILES": "CC(=O)[C@]1(CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2C=C(C4=CC(=O)[C@@H]5C[C@@H]5[C@]34C)Cl)C)OC(=O)C",
+      "InChIKey": "UWFYSQMTEOIJJG-FDTZYFLXSA-N"
+    },
+    "1-naphthyl isothiocyanate": {
+      "CID": 11080,
+      "MolecularFormula": "C11H7NS",
+      "SMILES": "C1=CC=C2C(=C1)C=CC=C2N=C=S",
+      "InChIKey": "JBDOSUUXMYMWQH-UHFFFAOYSA-N"
+    },
+    "6-MMPR": {
+      "SMILES": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "InChIKey": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "MolecularFormula": "C11H15N4O7PS",
+      "source": "KEGG C16615 original molfile; S-methylated thiopurine nucleotide, not PubChem alias matches"
+    },
+    "acadesine": {
+      "CID": 17513,
+      "MolecularFormula": "C9H14N4O5",
+      "SMILES": "C1=NC(=C(N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N)C(=O)N",
+      "InChIKey": "RTRQQBHATOEIAF-UUOKFMHZSA-N"
+    },
+    "galactosamine": {
+      "CID": 24154,
+      "MolecularFormula": "C6H13NO5",
+      "SMILES": "C([C@@H]1[C@@H]([C@@H]([C@H](C(O1)O)N)O)O)O",
+      "InChIKey": "MSWZFWKMSRAUBD-GASJEMHNSA-N"
+    },
+    "cyclophosphamide": {
+      "CID": 2907,
+      "MolecularFormula": "C7H15Cl2N2O2P",
+      "SMILES": "C1CNP(=O)(OC1)N(CCCl)CCCl",
+      "InChIKey": "CMSMOCZEIVJLDB-UHFFFAOYSA-N"
+    },
+    "acetylshikonin": {
+      "CID": 479501,
+      "MolecularFormula": "C18H18O6",
+      "SMILES": "CC(=CC[C@H](C1=CC(=O)C2=C(C=CC(=C2C1=O)O)O)OC(=O)C)C",
+      "InChIKey": "WNFXUXZJJKTDOZ-OAHLLOKOSA-N"
+    },
+    "miltefosine": {
+      "CID": 3599,
+      "MolecularFormula": "C21H46NO4P",
+      "SMILES": "CCCCCCCCCCCCCCCCOP(=O)([O-])OCC[N+](C)(C)C",
+      "InChIKey": "PQLXHQMOHUQAKB-UHFFFAOYSA-N"
+    },
+    "4-phenylbutyric acid": {
+      "CID": 4775,
+      "MolecularFormula": "C10H12O2",
+      "SMILES": "C1=CC=C(C=C1)CCCC(=O)O",
+      "InChIKey": "OBKXEAXTFZPCHS-UHFFFAOYSA-N"
+    },
+    "3d2": {
+      "CID": 30876879,
+      "MolecularFormula": "C21H28N6",
+      "SMILES": "CC1=C(N=C(N=C1C2=CC=CC(=C2)C3=NN(C=C3)CCN(C)C)N(C)C)C",
+      "InChIKey": "SVOZAMOPQXHFML-UHFFFAOYSA-N"
+    },
+    "glucuronolactone": {
+      "CID": 92283,
+      "MolecularFormula": "C6H8O6",
+      "SMILES": "C(=O)[C@@H]([C@@H]1[C@@H]([C@@H](C(=O)O1)O)O)O",
+      "InChIKey": "UYUXSRADSPPKRZ-SKNVOMKLSA-N"
+    },
+    "ortho-phenylphenol": {
+      "CID": 7017,
+      "MolecularFormula": "C12H10O",
+      "SMILES": "C1=CC=C(C=C1)C2=CC=CC=C2O",
+      "InChIKey": "LLEMOWNGBBNAJR-UHFFFAOYSA-N"
+    },
+    "ALLN": {
+      "CID": 443118,
+      "MolecularFormula": "C20H37N3O4",
+      "SMILES": "CCCC[C@@H](C=O)NC(=O)[C@H](CC(C)C)NC(=O)[C@H](CC(C)C)NC(=O)C",
+      "InChIKey": "FMYKJLXRRQTBOR-BZSNNMDCSA-N"
+    },
+    "tritoqualine": {
+      "CID": 72145,
+      "MolecularFormula": "C26H32N2O8",
+      "SMILES": "CCOC1=C(C(=C(C2=C1C(OC2=O)C3C4=C(C5=C(C=C4CCN3C)OCO5)OC)N)OCC)OCC",
+      "InChIKey": "IRGJVQIJENCTQF-UHFFFAOYSA-N"
+    },
+    "chlorpyrifos": {
+      "CID": 2730,
+      "MolecularFormula": "C9H11Cl3NO3PS",
+      "SMILES": "CCOP(=S)(OCC)OC1=NC(=C(C=C1Cl)Cl)Cl",
+      "InChIKey": "SBPBAQFWLVIOKP-UHFFFAOYSA-N"
+    },
+    "PA": {
+      "CID": 46226294,
+      "MolecularFormula": "C21H21ClN2OS",
+      "SMILES": "CC(C)(C)[C@@H](C1=CC=C(C=C1)Cl)C(=O)NC2=NC=C(S2)C3=CC=CC=C3",
+      "InChIKey": "ZVAPEFXSRDIMFP-SFHVURJKSA-N"
+    }
+  },
+  "decisions": 193,
+  "total_decisions": 496,
+  "labels_or_predictions_consulted": false
+}

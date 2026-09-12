@@ -1,0 +1,29 @@
+{
+  "parent_key": "HOAHIHGOMCBTFW-XCJSNOFESA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R,4S)-4-amino-1-(5-O-(2-oxo-4-(4-pyridyl)-1,3,2-dioxaphosphorinan-2-yl)-beta-d-arabinofuranosyl)-2(1H)-pyrimidinone",
+    "2(1H)-PYRIMIDINONE, 4-AMINO-1-(5-O-((2R,4S)-2-OXIDO-4-(4-PYRIDINYL)-1,3,2-DIOXAPHOSPHORINAN-2-YL)-.BETA.-D-ARABINOFURANOSYL)-",
+    "2(1h)-pyrimidinone, 4-amino-1-(5-o-((2r,4s)-2-oxido-4-(4-pyridinyl)-1,3,2-dioxaphosphorinan-2-yl)-beta-d-arabinofuranosyl)-",
+    "4-AMINO-1-(5-O-((2R, 4S)-2-OXIDO-4-(4-PYRIDINYL)-1, 3, 2-DIOXAPHOSPHORINAN-2-YL)-.BETA.-D-ARABINOFURANOSYL)-2(1H)-PYRIMIDINONE",
+    "4-Amino-1-(5-O-(2-oxo-4-(4-pyridyl)-1,3,2-dioxaphosphorinan-2-yl)arabinofuranosyl)-2(1H)-pyrimidinone",
+    "4-amino-1-(5-o-((2r, 4s)-2-oxido-4-(4-pyridinyl)-1, 3, 2-dioxaphosphorinan-2-yl)-beta-d-arabinofuranosyl)-2(1h)-pyrimidinone",
+    "685111-92-6",
+    "BNL5ERR07R",
+    "Cytarabine Monophosphate Prodrug MB07133",
+    "Cytarabine Prodrug MB07133",
+    "MB 07133",
+    "MB 07133 [WHO-DD]",
+    "MB 7133",
+    "MB-07133",
+    "MB07133",
+    "Q27274768",
+    "RefChem:156033",
+    "UNII-BNL5ERR07R"
+  ],
+  "cids": [
+    76967524
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HOAHIHGOMCBTFW-XCJSNOFESA-N/synonyms/JSON",
+  "http_status": 200
+}

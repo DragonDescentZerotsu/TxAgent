@@ -1,0 +1,24 @@
+{
+  "parent_key": "JWUBBDSIWDLEOM-XHQRYOPUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JWUBBDSIWDLEOM-XHQRYOPUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3E)-3-[(2E)-2-[1-(5-hydroxy-1,5-dimethyl-hexyl)-7a-methyl-2,3,3a,5,6,7-hexahydro-1H-inden-4-ylidene]ethylidene]-4-methylene-cyclohexanol",
+    "(5Z,7E)-9,10-Secocholesta-5,7,10(19)-triene-3.beta.,25-diol #",
+    "25-HCC",
+    "25-Hydroxy D3",
+    "25-Hydroxy vitamin D",
+    "25-Hydroxy vitamin D3",
+    "5,6-cis-25-Hydroxy Vitamin D3",
+    "73809-05-9",
+    "9,10-Secocholesta-5,7,10(19)-triene-3,25-diol, (3.beta.,5Z,7E)-",
+    "9,10-Secocholesta-5,7,10(19)-triene-3.beta.,25-diol",
+    "Dedrogyl",
+    "MFCD23099205",
+    "SCHEMBL3333455"
+  ],
+  "http_status": 200,
+  "cids": [
+    5353325
+  ]
+}

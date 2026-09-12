@@ -1,0 +1,20 @@
+{
+  "parent_key": "MNMPRANMTVGWFG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MNMPRANMTVGWFG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2',3'-dimethyl-4-aminoazobenzene",
+    "4-(2-(2,3-Dimethylphenyl)diazenyl)benzenamine",
+    "4-[(2,3-dimethylphenyl)diazenyl]aniline",
+    "4-[2-(2,3-Dimethylphenyl)diazenyl]benzenamine",
+    "63020-84-8",
+    "DTXSID801251264",
+    "RefChem:286964",
+    "SCHEMBL11507475",
+    "SCHEMBL11645495"
+  ],
+  "http_status": 200,
+  "cids": [
+    20307996
+  ]
+}

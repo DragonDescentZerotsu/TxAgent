@@ -1,0 +1,13 @@
+{
+  "parent_key": "MAZGKYSXFOFFNY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MAZGKYSXFOFFNY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-(3,4-Dichlorophenyl)-N-methylurea",
+    "SCHEMBL11398672"
+  ],
+  "http_status": 200,
+  "cids": [
+    595299
+  ]
+}

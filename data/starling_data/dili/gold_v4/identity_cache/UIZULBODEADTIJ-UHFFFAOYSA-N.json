@@ -1,0 +1,17 @@
+{
+  "parent_key": "UIZULBODEADTIJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1H-Indene-1,2-dione, 3-phenyl-2,3-dihydro-",
+    "3-Phenyl-1H-indene-1,2(3H)-dione #",
+    "Phenylindandion",
+    "SCHEMBL29642916",
+    "SCHEMBL4937596",
+    "UIZULBODEADTIJ-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    596901
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UIZULBODEADTIJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

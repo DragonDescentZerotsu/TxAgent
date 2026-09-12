@@ -1,0 +1,13 @@
+{
+  "parent_key": "HSLPMLGQVWJHFL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HSLPMLGQVWJHFL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "99840-91-2",
+    "N-Butyl-N-nitrosobenzamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    15310829
+  ]
+}

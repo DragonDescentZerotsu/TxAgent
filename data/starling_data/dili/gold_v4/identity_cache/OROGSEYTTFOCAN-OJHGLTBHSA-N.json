@@ -1,0 +1,12 @@
+{
+  "parent_key": "OROGSEYTTFOCAN-OJHGLTBHSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL8218174"
+  ],
+  "cids": [
+    163159
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OROGSEYTTFOCAN-OJHGLTBHSA-N/synonyms/JSON",
+  "http_status": 200
+}

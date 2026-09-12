@@ -1,0 +1,34 @@
+{
+  "parent_key": "OHLVGBXMHDWRRX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1,1-Trifluoro-2-methoxyethane",
+    "1,1,1-Trifluoro-2-methoxyethane #",
+    "1,1,1-trifluoro-2-methoxy-ethane",
+    "1,1,1-tris(fluoranyl)-2-methoxy-ethane",
+    "2,2,2-Trifluoroethyl methyl ether",
+    "460-43-5",
+    "A826974",
+    "AKOS006229201",
+    "CF3CH2OCH3",
+    "DLRWHCOCSRFFPS-UHFFFAOYSA-N",
+    "DTXSID9074569",
+    "Ethane, 1,1,1-trifluoro-2-methoxy-",
+    "FT80876",
+    "MFCD00236114",
+    "Methyl 2,2,2-trifluoroethyl ether",
+    "OHLVGBXMHDWRRX-UHFFFAOYSA-N",
+    "RefChem:80809",
+    "SCHEMBL10230",
+    "SCHEMBL10297349",
+    "SCHEMBL126781",
+    "SCHEMBL12819366",
+    "SCHEMBL601772",
+    "trifluoroethyl methyl ether"
+  ],
+  "cids": [
+    136304
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OHLVGBXMHDWRRX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

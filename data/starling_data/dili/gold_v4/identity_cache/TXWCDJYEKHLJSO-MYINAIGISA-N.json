@@ -1,0 +1,12 @@
+{
+  "parent_key": "TXWCDJYEKHLJSO-MYINAIGISA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL51723"
+  ],
+  "cids": [
+    53628853
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TXWCDJYEKHLJSO-MYINAIGISA-N/synonyms/JSON",
+  "http_status": 200
+}

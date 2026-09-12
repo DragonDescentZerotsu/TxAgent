@@ -1,0 +1,12 @@
+{
+  "parent_key": "FLFBASUDBQAQQU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FLFBASUDBQAQQU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "METHYLNITROPHENANTHRENE"
+  ],
+  "http_status": 200,
+  "cids": [
+    86204365
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "input_hashes_unchanged": true,
+  "all_base_records_accounted_once": true,
+  "record_directions_unchanged": true,
+  "normalization_idempotent": true,
+  "species_and_route_atoms_preserved": true,
+  "study_unit_accounting_passed": true,
+  "script_sha256": "474a74a8ed4a01c0221fdd15ca2ee3eb58c5a6db46039c14fb58d773c985be15"
+}

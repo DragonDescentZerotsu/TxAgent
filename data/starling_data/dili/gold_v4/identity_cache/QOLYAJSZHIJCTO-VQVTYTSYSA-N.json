@@ -1,0 +1,40 @@
+{
+  "parent_key": "QOLYAJSZHIJCTO-VQVTYTSYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-((2S,3R)-2-amino-3-hydroxybutanoyl)pyrrolidine-2-carboxylic acid",
+    "(2S)-1-((2S,3R)-2-azaniumyl-3-hydroxybutanoyl)pyrrolidine-2-carboxylate",
+    "(2S)-1-[(2S,3R)-2-AMINO-3-HYDROXYBUTANOYL]PYRROLIDINE-2-CARBOXYLIC ACID",
+    "(S)-1-((2S,3R)-2-Amino-3-hydroxybutanoyl)pyrrolidine-2-carboxylic acid",
+    "46398-79-2",
+    "BDBM50049714",
+    "CHEBI:73662",
+    "CHEMBL3321984",
+    "CS-0655426",
+    "DA-54122",
+    "DTXSID40431470",
+    "H-THR-PRO-OH",
+    "HY-P4630",
+    "L-Thr-L-Pro",
+    "L-Threoninyl-L-Proline",
+    "L-threonyl-L-proline",
+    "Q27143833",
+    "RefChem:1100090",
+    "SCHEMBL24419900",
+    "T-P",
+    "T-P Dipeptide",
+    "TP dipeptide",
+    "Thr-Pro",
+    "Threonine Proline dipeptide",
+    "Threonine-Proline dipeptide",
+    "Threoninylproline",
+    "threonyl-proline",
+    "threonylproline"
+  ],
+  "cids": [
+    9834371,
+    11937736
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QOLYAJSZHIJCTO-VQVTYTSYSA-N/synonyms/JSON",
+  "http_status": 200
+}

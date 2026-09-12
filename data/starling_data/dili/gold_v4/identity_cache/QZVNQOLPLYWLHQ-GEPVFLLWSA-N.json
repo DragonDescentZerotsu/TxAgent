@@ -1,0 +1,16 @@
+{
+  "parent_key": "QZVNQOLPLYWLHQ-GEPVFLLWSA-N",
+  "ok": true,
+  "synonyms": [
+    "5-O-[(3R)-1-benzylpiperidin-3-yl] 3-O-methyl 2,6-dimethyl-4-(3-nitrophenyl)-1,4-dihydropyridine-3,5-dicarboxylate",
+    "BDBM50088385",
+    "CHEBI:135806",
+    "CHEMBL2218858",
+    "SCHEMBL1650512"
+  ],
+  "cids": [
+    60065
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QZVNQOLPLYWLHQ-GEPVFLLWSA-N/synonyms/JSON",
+  "http_status": 200
+}

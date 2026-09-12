@@ -1,0 +1,13 @@
+{
+  "parent_key": "DZHCUQFJZZHPFH-AWEZNQCLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DZHCUQFJZZHPFH-AWEZNQCLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL6512684",
+    "dibenzoyl cysteine"
+  ],
+  "http_status": 200,
+  "cids": [
+    53787126
+  ]
+}

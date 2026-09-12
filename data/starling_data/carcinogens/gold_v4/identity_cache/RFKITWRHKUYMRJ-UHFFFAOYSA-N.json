@@ -1,0 +1,24 @@
+{
+  "parent_key": "RFKITWRHKUYMRJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RFKITWRHKUYMRJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4,5-Dihydro-5-oxo-1-(4-sulphophenyl)-4-((4-sulphophenyl)azo)-1H-pyrazole-3-carboxylic acid",
+    "4,5-dihydro-5-oxo-1-(4-sulfophenyl)-4-[4-sulfophenylazo]-1h-pyrazole-3-carboxylic acid",
+    "5-oxo-1-(4-sulfophenyl)-4-[(E)-(4-sulfophenyl)diazenyl]-4,5-dihydro-1H-pyrazole-3-carboxylic acid",
+    "C.I. 19140",
+    "CHEBI:68629",
+    "EINECS 251-862-1",
+    "NS00124946",
+    "Q27137057",
+    "RFKITWRHKUYMRJ-UHFFFAOYSA-N",
+    "SCHEMBL839391",
+    "SCHEMBL839392",
+    "UNII-6TP696149N",
+    "tartrazine acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    62302
+  ]
+}

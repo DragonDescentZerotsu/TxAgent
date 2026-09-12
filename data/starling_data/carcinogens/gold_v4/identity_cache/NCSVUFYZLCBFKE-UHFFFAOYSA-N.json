@@ -1,0 +1,18 @@
+{
+  "parent_key": "NCSVUFYZLCBFKE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCSVUFYZLCBFKE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(Nitrosoamino)-1-(3-pyridinyl)-1-butanone",
+    "C19564",
+    "CHEBI:82562",
+    "Q27156075",
+    "SCHEMBL16703093",
+    "SCHEMBL18106042"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (10%), Request Time status: Green (2%), Service status: Black (203%)",
+  "cids": [
+    53297438
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "parent_key": "WPWHSFAFEBZWBB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Butyl radical",
+    "2492-36-6",
+    "DTXCID10102120",
+    "DTXSID00179629",
+    "RefChem:1055160",
+    "WPWHSFAFEBZWBB-UHFFFAOYSA-N",
+    "butyl",
+    "n-C4H9"
+  ],
+  "cids": [
+    137616
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WPWHSFAFEBZWBB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

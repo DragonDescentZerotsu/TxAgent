@@ -1,0 +1,39 @@
+{
+  "parent_key": "HXRSXEDVVARPHP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "((2H-1,3-benzodioxol-5-yl)methyl)(1-((2-(((5-((dimethylamino)methyl)furan-2-yl)methyl)sulfanyl)ethyl)amino)-2-nitroethenyl)amine",
+    "1,1-Ethenediamine, N-(1,3-benzodioxol-5-ylmethyl)-N'-(2-(((5-((dimethylamino)methyl)-2-furanyl)methyl)thio)ethyl)-2-nitro-",
+    "1-N'-(1,3-benzodioxol-5-ylmethyl)-1-N-[2-[[5-[(dimethylamino)methyl]furan-2-yl]methylsulfanyl]ethyl]-2-nitroethene-1,1-diamine",
+    "12JBD7U72K",
+    "284-304-0",
+    "84845-75-0",
+    "A02BA05",
+    "CHEBI:135706",
+    "DTXCID901474928",
+    "DTXSID201016745",
+    "EINECS 284-304-0",
+    "N-(1,3-Benzodioxol-5-ylmethyl)-N'-(2-((5-((dimethylamino)methyl)furfuryl)thio)ethyl)-2-nitrovinylidenediamine",
+    "N-(1,3-Benzodioxol-5-ylmethyl)-N'-[2-[[[5-[(dimethylamino)methyl]-2-furanyl]methyl]thio]ethyl]-2-nitro-1,1-ethenediamine",
+    "N-(1,3-benzodioxol-5-ylmethyl)-N'-(2-(((5-((dimethylamino)methyl)-2-furanyl)methyl)thio)ethyl)-2-nitro-1,1-ethenediamine",
+    "N-(2-((5-((Dimethylamino)methyl)furfuryl)thio)ethyl)-2-nitro-N'-piperonyl-1,1-ethenediamine",
+    "NIPEROTIDINE [WHO-DD]",
+    "Niperotidina",
+    "Niperotidina [Spanish]",
+    "Niperotidine",
+    "Niperotidine [INN]",
+    "Niperotidinum",
+    "Niperotidinum [Latin]",
+    "N~1~-[(2H-1,3-Benzodioxol-5-yl)methyl]-N'~1~-{2-[({5-[(dimethylamino)methyl]furan-2-yl}methyl)sulfanyl]ethyl}-2-nitroethene-1,1-diamine",
+    "Piperonyl-ranitidine",
+    "RefChem:165988",
+    "SCHEMBL30568105",
+    "SCHEMBL636674",
+    "UNII-12JBD7U72K"
+  ],
+  "cids": [
+    66753191
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HXRSXEDVVARPHP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

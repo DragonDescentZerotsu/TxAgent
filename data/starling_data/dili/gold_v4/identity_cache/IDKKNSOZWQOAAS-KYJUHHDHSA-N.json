@@ -1,0 +1,26 @@
+{
+  "parent_key": "IDKKNSOZWQOAAS-KYJUHHDHSA-N",
+  "ok": true,
+  "synonyms": [
+    "1380887-60-4",
+    "2-((8R)-8-(3,5-Difluorophenyl)-8-methyl-10-oxo-6,9-diazaspiro94.5)dec-9-yl)-N-((6S)-2'-oxo-1',2',5,7-tetrahydrospiro[cyclopenta(b)pyridine-6,3'-pyrrolo(2,3-b)pyridin)-3-yl)acetamide",
+    "2-((R)-8-(3,5-Difluorophenyl)-8-methyl-10-oxo-6,9-diazaspiro[4.5]decan-9-yl)-N-((S)-2'-oxo-1',2',5,7-tetrahydrospiro[cyclopenta[b]pyridine-6,3'-pyrrolo[2,3-b]pyridin]-3-yl)acetamide",
+    "2-[(8R)-8-(3,5-difluorophenyl)-8-methyl-10-oxo-6,9-diazaspiro[4.5]decan-9-yl]-N-[(3S)-2-oxospiro[1H-pyrrolo[2,3-b]pyridine-3,6'-5,7-dihydrocyclopenta[b]pyridine]-3'-yl]acetamide",
+    "6,9-Diazaspiro(4.5)decane-9-acetamide, 8-(3,5-difluorophenyl)-8-methyl-10-oxo-N-((3'S)-1',2',5,7-tetrahydro-2'-oxospiro(6H-cyclopenta(b)pyridine-6,3'-(3H)pyrrolo(2,3-b)pyridin)-3-yl)-, (8R)-",
+    "BDBM50385309",
+    "CHEMBL2035983",
+    "HY-117694",
+    "MK 8825",
+    "MK-8825",
+    "PD085897",
+    "RefChem:925973",
+    "SCHEMBL29787828",
+    "orb1738660",
+    "starbld0021910"
+  ],
+  "cids": [
+    56944164
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IDKKNSOZWQOAAS-KYJUHHDHSA-N/synonyms/JSON",
+  "http_status": 200
+}

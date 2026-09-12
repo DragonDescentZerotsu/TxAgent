@@ -1,0 +1,20 @@
+{
+  "parent_key": "LVVHLEIGMGTYJL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVVHLEIGMGTYJL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-METHYL-2-NONEN-4-ONE",
+    "2-Methyl-2-nonen-4-one #",
+    "2-Methylnon-2-en-4-one",
+    "2-Nonen-4-one, 2-methyl-",
+    "2903-23-3",
+    "DTXSID70183273",
+    "EINECS 220-800-5",
+    "NS00028605",
+    "SCHEMBL454224"
+  ],
+  "http_status": 200,
+  "cids": [
+    17942
+  ]
+}

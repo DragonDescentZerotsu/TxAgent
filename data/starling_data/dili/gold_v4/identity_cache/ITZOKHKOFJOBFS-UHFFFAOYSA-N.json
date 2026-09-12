@@ -1,0 +1,43 @@
+{
+  "parent_key": "ITZOKHKOFJOBFS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,7-N-heptylene-bis-9,9'-amino-1,2,3,4-tetrahydroacridine",
+    "181865-13-4",
+    "224445-12-9",
+    "2ckm",
+    "B7C",
+    "BDBM8963",
+    "Bis(7)-tacrine",
+    "Bis-7-Tacrine",
+    "CHEBI:138435",
+    "CHEMBL32823",
+    "DTXCID50384145",
+    "DTXSID10429546",
+    "DTXSID80433317",
+    "GLXC-02362",
+    "Heptylenebis-tacrine",
+    "N,N'-Di-1,2,3,4-Tetrahydroacridin-9-Ylheptane-1,7-Diamine",
+    "N,N'-bis(1,2,3,4-tetrahydro-9-acridinyl)-1,7-heptanediamine",
+    "N,N'-bis(1,2,3,4-tetrahydroacridin-9-yl)heptane-1,7-diamine",
+    "N,N'-di(1,2,3,4-tetrahydroacridin-9-yl)heptane-1,7-diamine",
+    "N-[7-(1,2,3,4-tetrahydroacridin-9-ylamino)heptyl]-1,2,3,4-tetrahydroacridin-9-amine",
+    "N1,N7-BIS(1,2,3,4-TETRAHYDROACRIDIN-9-YL)HEPTANE-1,7-DIAMINE",
+    "N~1~,N~7~-Di(1,2,3,4-tetrahydroacridin-9-yl)heptane-1,7-diamine",
+    "Q27457176",
+    "RefChem:1079960",
+    "SCHEMBL24164216",
+    "SCHEMBL29486236",
+    "Tacrine Dimer 3b",
+    "Tacrine-Based Inhibitor 2f",
+    "bis(7)-cognitin",
+    "bis(7)-tetrahydroaminacrine",
+    "heptylene-bis(tacrine)",
+    "tacrine homobivalent compound 3a"
+  ],
+  "cids": [
+    9549196
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ITZOKHKOFJOBFS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

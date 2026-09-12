@@ -1,0 +1,34 @@
+{
+  "parent_key": "PZBPKYOVPCNPJY-AWEZNQCLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PZBPKYOVPCNPJY-AWEZNQCLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(-)-enilconazole",
+    "(-)-imazalil",
+    "(R)-Enilconazole",
+    "(R)-Imazalil",
+    "1-[(2R)-2-(2,4-dichlorophenyl)-2-prop-2-enoxyethyl]imidazole",
+    "1-[(2R)-2-(allyloxy)-2-(2,4-dichlorophenyl)ethyl]-1H-imidazole",
+    "1-{(2R)-2-(2,4-Dichlorophenyl)-2-[(prop-2-en-1-yl)oxy]ethyl}-1H-imidazole",
+    "166734-81-2",
+    "1H-Imidazole, 1-((2R)-2-(2,4-dichlorophenyl)-2-(2-propen-1-yloxy)ethyl)-",
+    "1H-Imidazole, 1-((2R)-2-(2,4-dichlorophenyl)-2-(2-propenyloxy)ethyl)-",
+    "1H-Imidazole, 1-(2-(2,4-dichlorophenyl)-2-(2-propenyloxy)ethyl)-, (R)-",
+    "CAS-35554-44-0",
+    "CHEBI:83831",
+    "CHEMBL1359713",
+    "DTXSID901318025",
+    "ENILCONAZOLE, (R)-",
+    "Enilconazole, (-)-",
+    "K002UP533G",
+    "NCGC00016832-01",
+    "Q27157266",
+    "SCHEMBL29608451",
+    "SCHEMBL7913333",
+    "UNII-K002UP533G"
+  ],
+  "http_status": 200,
+  "cids": [
+    6604394
+  ]
+}

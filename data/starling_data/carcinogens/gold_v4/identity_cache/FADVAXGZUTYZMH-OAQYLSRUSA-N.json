@@ -1,0 +1,13 @@
+{
+  "parent_key": "FADVAXGZUTYZMH-OAQYLSRUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FADVAXGZUTYZMH-OAQYLSRUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(R)-N-Benzhydryl-alpha-p-tolylglycine nitrile",
+    "amino nitrile"
+  ],
+  "http_status": 200,
+  "cids": [
+    102171995
+  ]
+}

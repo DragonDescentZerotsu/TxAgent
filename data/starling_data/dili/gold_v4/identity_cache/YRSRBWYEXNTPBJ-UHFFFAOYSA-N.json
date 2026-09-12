@@ -1,0 +1,16 @@
+{
+  "parent_key": "YRSRBWYEXNTPBJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "6-(4-hydroxy-5-iodo-3-nitrobenzamido)hexanoic acid",
+    "6-[(4-hydroxy-3-iodo-5-nitrobenzoyl)amino]hexanoic acid",
+    "CHEBI:53087",
+    "Epitope ID:116193",
+    "Q27123957"
+  ],
+  "cids": [
+    44224035
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YRSRBWYEXNTPBJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "source_rows": 1645109,
+  "individually_reviewed_rows": 304,
+  "all_other_rows_byte_value_equal": true,
+  "all_raw_acquisition_and_frozen_voter_flags_unchanged": true,
+  "frozen_gold_split_files_checked": 27,
+  "repaired_voter_handling": "No historical voter record was modified. L1 and all frozen votes unchanged.",
+  "source_hash": "166d2da0e215e2ba6cca69ba9151365c1a1ea3d12bd6edf12020c07894b626bd"
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "FLTYACUMGDVPLP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FLTYACUMGDVPLP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-[4-(dimethylamino)phenyl]diazenesulfonic acid",
+    "150-70-9",
+    "Benzenediazosulfonic acid, p-(dimethylamino)-",
+    "CHEMBL1623553",
+    "CHEMBL2365661",
+    "DTXSID7047980",
+    "Diazenesulfonic acid, (4-(dimethylamino)phenyl)-",
+    "E6145RON95",
+    "FLTYACUMGDVPLP-MDZDMXLPSA-N",
+    "FLTYACUMGDVPLP-UHFFFAOYSA-N",
+    "Fenaminosulf parent",
+    "Q27276908",
+    "SCHEMBL7952797",
+    "SCHEMBL7952800",
+    "UNII-E6145RON95",
+    "[4-(Dimethylamino)phenyl]diazene-1-sulfonic acid",
+    "[4-(dimethylamino)phenyl]iminosulfamic acid",
+    "dexon (fungicide)",
+    "fenaminosulf free acid",
+    "p-(Dimethylamino)benzenediazosulfonic acid",
+    "p-Dimethylaminodiazobenzenesulfonic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    8808
+  ]
+}

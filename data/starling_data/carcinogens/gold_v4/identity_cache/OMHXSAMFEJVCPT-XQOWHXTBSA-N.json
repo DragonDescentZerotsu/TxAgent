@@ -1,0 +1,48 @@
+{
+  "parent_key": "OMHXSAMFEJVCPT-XQOWHXTBSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1S,2S,6R,10S,11R,13S,14R,15R)-13-acetyloxy-1,6-dihydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo(8.5.0.02,6.011,13)pentadeca-3,8-dienyl) acetate",
+    "(1ar,1bs,4ar,7as,7bs,8r,9r,9as)-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9ah-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl diacetate",
+    "12-O-Acetylphorbol-13-acetate",
+    "24928-15-2",
+    "4-.beta.-Phorbol 12,13-diacetate",
+    "4.b.-Phorbol 12,13-diacetate",
+    "4a,7b-Dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl diacetate",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a-alpha,16-beta,4,4a,7a-alpha,7b,8,9,9a-decahydro-4a-beta,7b-alpha,9-beta,9a-alpha-tetrahydroxy-3-(hydroxymethyl)-1,1,6,8-alpha-tetramethyl-, 9,9a-diacetate, (+)",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 9,9a-bis(acetyloxy)-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-, (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-",
+    "5H-Cyclopropa[3,4]benz[1,2-e]azulen-5-one, 9,9a-bis(acetyloxy)-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-, (1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-",
+    "5H-Cyclopropa[3,4]benz[1,2-e]azulen-5-one,9,9a-bis(acetyloxy)-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-,(1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-",
+    "636-718-1",
+    "9,9a-Bis(acetyloxy)-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5H-cyclopropa(3,4)benz(1,2-e)azulen-5-one (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-",
+    "Acetic acid (1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-9-acetoxy-4a,7b-dihydroxy-3-hydroxymethyl-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-cyclopropa[3,4]benzo[1,2-e]azulen-9a-yl ester",
+    "BDBM50080322",
+    "CHEMBL116437",
+    "DTXSID80947808",
+    "OMHXSAMFEJVCPT-XQOWHXTBSA-N",
+    "Phorbol 10,11-diacetate",
+    "Phorbol 11,12-diacetate",
+    "Phorbol 12,13-diacetate",
+    "Phorbol 12,13-diacetate >99%",
+    "Phorbol 12,13-diacetate, powder",
+    "Phorbol-12,13-diacetate",
+    "RefChem:173470",
+    "SCHEMBL29762786",
+    "[(1S,2S,6R,10S,11R,13S,14R,15R)-13-acetyloxy-1,6-dihydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] acetate",
+    "[acetoxy-dihydroxy-(hydroxymethyl)-tetramethyl-oxo-[?]yl] acetate",
+    "phorbol-10,11-diacetate"
+  ],
+  "cids": [
+    72293
+  ],
+  "properties": [
+    {
+      "CID": 72293,
+      "InChIKey": "OMHXSAMFEJVCPT-XQOWHXTBSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/187,2442,3735,4817,6374,7766,8972,9146,9270,10253,13165,16318,18689,21704,33535,37517,60961,68262,72293,92815,96814,146754,150311,155160,439336,443879,3036645,5484006,6992394,10079874,11388332,13346382,14258866,21226498,21484187,25102847,44230566/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OHUDHXZOSWBVNG-SECBINFHSA-N,OHUSLICMNWLNEJ-UHFFFAOYSA-N,OIFBSDVPJOWBCH-UHFFFAOYSA-N,OIFINQAUHKZSBV-UHFFFAOYSA-N,OIIMUKXVVLRCAF-UHFFFAOYSA-N,OIPILFWXSMYKGL-UHFFFAOYSA-N,OIRDTQYFTABQOQ-KQYNXXCUSA-N,OIRDTQYFTABQOQ-UHTZMRCNSA-N,OIRFJRBSRORBCM-UHFFFAOYSA-N,OIZKSHUSSYMHMF-UHFFFAOYSA-N,OJFOKJDIGADHQG-UHFFFAOYSA-N,OJGDCBLYJGHCIH-UHFFFAOYSA-N,OJLVEZYYLCGBOI-UHFFFAOYSA-N,OJXJOOTVXRKAQX-UHFFFAOYSA-N,OKCWMSMNMQPGAD-UHFFFAOYSA-N,OKIZZNWPFTUKQW-UHFFFAOYSA-N,OKJPEAGHQZHRQV-UHFFFAOYSA-N,OKKRPWIIYQTPQF-UHFFFAOYSA-N,OKLRVFDHFDMPOM-UHFFFAOYSA-N,OKMMPIIEAWVGFU-UHFFFAOYSA-N,OKUFKOIBIQGPIE-UHFFFAOYSA-N,OLBNOBQOQZRLMP-UHFFFAOYSA-N,OLESSNFDRFWWEK-UHFFFAOYSA-N,OLNTVTPDXPETLC-XPWALMASSA-N,OLTZHXYLLRJLST-UHFFFAOYSA-N,OLYIHBKFEFBTPM-UHFFFAOYSA-N,OMDNEQQMLDYBTR-UHFFFAOYSA-N,OMDQUFIYNPYJFM-XKDAHURESA-N,OMHXSAMFEJVCPT-XQOWHXTBSA-N,OMIGHNLMNHATMP-UHFFFAOYSA-N,OMNVYXHOSHNURL-WPRPVWTQSA-N,OMOIFGOKYAZCJT-UHFFFAOYSA-N,OMWZCLUNZCIVBN-LHNBZPRDSA-N,ONIQOQHATWINJY-UHFFFAOYSA-N,ONJSZLXSECQROL-UHFFFAOYSA-N,ONKUMRGIYFNPJW-KIEAKMPYSA-N,ONLRKTIYOMZEJM-UHFFFAOYSA-N,ONUFESLQCSAYKA-UHFFFAOYSA-N,ONWMLIDAHJTDPQ-UHFFFAOYSA-N,ONWMQORSVZYVNH-UWVGGRQHSA-N,ONXPZLFXDMAPRO-UHFFFAOYSA-N,OOGJQPCLVADCPB-HXUWFJFHSA-N,OOLDSGLUZNZTHN-UHFFFAOYSA-N,OOUFTJQAYCNJGB-UHFFFAOYSA-N,OPGSFDUODIJJGF-JBUZINEHSA-N,OPJZLUXFQFQYAI-GNPVFZCLSA-N,OPYZVNRJNJKSHR-UHFFFAOYSA-N,OQBOIWDLFFJYLC-UHFFFAOYSA-N,OQDXASJSCOTNQS-UHFFFAOYSA-N,OQFHJKZVOALSPV-UHFFFAOYSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

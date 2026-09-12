@@ -1,0 +1,18 @@
+{
+  "parent_key": "BLRDSHCRFJBEAI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,4-Tetrahydro-acridine-1,9-diamine",
+    "1,2,3,4-tetrahydro-1,9-acridinediamine",
+    "9-amino-1,2,3,4-tetrahydroaminoacridine",
+    "BDBM50281249",
+    "BLRDSHCRFJBEAI-UHFFFAOYSA-N",
+    "CHEMBL329465",
+    "SCHEMBL3807927"
+  ],
+  "cids": [
+    14536421
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BLRDSHCRFJBEAI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

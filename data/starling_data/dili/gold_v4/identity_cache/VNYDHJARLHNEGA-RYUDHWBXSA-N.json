@@ -1,0 +1,38 @@
+{
+  "parent_key": "VNYDHJARLHNEGA-RYUDHWBXSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-[(2S)-2-amino-3-(4-hydroxyphenyl)propanoyl]pyrrolidine-2-carboxylic Acid",
+    "51871-47-7",
+    "AKOS010419272",
+    "BDBM50348856",
+    "BETA-CASOMORPHIN (1-2)",
+    "CHEBI:141456",
+    "CHEMBL1807689",
+    "CS-0453191",
+    "DTXSID20430840",
+    "EN300-22842740",
+    "FC108236",
+    "H-Tyr-Pro-OH",
+    "L-Tyrosyl-L-proline",
+    "MFCD00236912",
+    "RefChem:192672",
+    "SCHEMBL5336562",
+    "Tyr-pro",
+    "Tyrosine Proline dipeptide",
+    "Tyrosyl-prolin",
+    "Y-P",
+    "Y-P Dipeptide",
+    "YP",
+    "YP dipeptide",
+    "b-Casomorphin (1-2)",
+    "tyrosyl-proline",
+    "tyrosylproline"
+  ],
+  "cids": [
+    9795637,
+    11902950
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VNYDHJARLHNEGA-RYUDHWBXSA-N/synonyms/JSON",
+  "http_status": 200
+}

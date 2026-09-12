@@ -1,0 +1,29 @@
+{
+  "parent_key": "CGWOIHAQZNLJFD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "8-Chloro-3-(2-fluorophenyl)-5,6-dihydrofuro(3,2-f)-1,2-benzisoxazole-6-carboxylate",
+    "8-chloro-3-(2-fluorophenyl)-5,6-dihydrofuro[3,2-f][1,2]benzoxazole-6-carboxylic acid",
+    "90247-08-8",
+    "A 53385",
+    "A-53385",
+    "AKOS040750008",
+    "Abbott 53385",
+    "Abbott-53385",
+    "CHEMBL268891",
+    "DTXSID001009273",
+    "Furo(3,2-f)-1,2-benzisoxazole-6-carboxylic acid, 8-chloro-3-(2-fluorophenyl)-5,6-dihydro-",
+    "H6QQM66416",
+    "Oprea1_209152",
+    "Q27279712",
+    "SCHEMBL10803444",
+    "T29497",
+    "UNII-H6QQM66416",
+    "orb1698825"
+  ],
+  "cids": [
+    174795
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGWOIHAQZNLJFD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "IJBFSOLHRKELLR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IJBFSOLHRKELLR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-5-Dodecenoic Acid",
+    "2761-84-4",
+    "5-Dodecenoic acid",
+    "CHEBI:83044",
+    "Q27156594",
+    "RefChem:913336",
+    "SCHEMBL201011",
+    "SY347189",
+    "dodec-5-enoic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    151007
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "parent_key": "LVLWZMQPBAFKMY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVLWZMQPBAFKMY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Naphthalenebutanamine",
+    "111182-22-0",
+    "4-(Naphthalen-1-yl)butan-1-amine",
+    "4-naphthalen-1-ylbutan-1-amine",
+    "AKOS013529069",
+    "DTXSID80548112",
+    "EN300-1857834",
+    "SCHEMBL11816702",
+    "SCHEMBL131655",
+    "SCHEMBL131656",
+    "SCHEMBL30301302"
+  ],
+  "http_status": 200,
+  "cids": [
+    13740180
+  ]
+}

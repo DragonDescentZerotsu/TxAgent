@@ -1,0 +1,26 @@
+{
+  "parent_key": "MZCOYFQGPZRXCS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MZCOYFQGPZRXCS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4'-(p-(Hydroxylamino)phenyl)acetanilide",
+    "71609-23-9",
+    "ACETANILIDE, 4'-(p-(HYDROXYLAMINO)PHENYL)-",
+    "Acetamide, N-(4'-(hydroxyamino)(1,1'-biphenyl)-4-yl)-",
+    "Acetamide, N-[4'-(hydroxyamino)[1,1'-biphenyl]-4-yl]-",
+    "CCRIS 4069",
+    "DTXCID50144347",
+    "DTXSID20221856",
+    "Hydroxy-N'-acetylbenzidine, N-",
+    "JD48HM834Q",
+    "N-HABZ",
+    "N-Hydroxy-N'-acetylbenzidine",
+    "N-[4'-(Hydroxyamino)[1,1'-biphenyl]-4-yl]acetamide",
+    "RefChem:163515"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (39%), Request Time status: Green (6%), Service status: Black (140%)",
+  "cids": [
+    51367
+  ]
+}

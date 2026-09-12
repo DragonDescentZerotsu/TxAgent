@@ -1,0 +1,303 @@
+{
+  "task": "dili",
+  "source_records_sha256": "969d0dc774f904cfbdfad5aba0c8d2d7e01910f4e2178102b874be27a3fc5d39",
+  "reference_source": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/source",
+  "source_review": "outputs/paper/starling_conditioned_dili_retrieval_review_v4_no_prior_grounded_sim0/error_record_audit_20260912/source_findings.json",
+  "decisions": [
+    {
+      "source_row_uid": "sr_f523870794e84363af2e866aa1d4dde0",
+      "source_payload_sha256": "bbb88e4342fd062230b5aaa0b7a2588990a4c89680bb02ead705dfe763cee676",
+      "previous_level": 3,
+      "level": 3,
+      "corrected_record": {
+        "paragraph_idx": 21,
+        "support_text": "Hepatocyte (≈2.0 × 10^6 cells/mL) suspensions were incubated with DPPD (10 µM) for 10 min before addition of S-(2-chloroethyl)-DL-cysteine (7.5 mM); viability assessed after 3.0 h. DPPD inhibited CEC cytotoxicity by 88 ± 6% by trypan blue exclusion and 98 ± 2% by LDH release.",
+        "endpoint_category": "membrane_integrity_or_necrosis",
+        "assay_and_readout": "trypan blue exclusion and LDH release—% inhibition of CEC-induced cytotoxicity",
+        "biological_model_context": "isolated rat hepatocyte suspensions, ≈2.0 × 10^6 cells/mL",
+        "species": "rat",
+        "culture_format": "suspension",
+        "concentration_values": "10",
+        "concentration_unit": "umol_per_l",
+        "exposure_duration_and_schedule": "10 min preincubation, then CEC (7.5 mM); assessed at 3.0 h",
+        "exposure_regimen": "single_continuous",
+        "result_value": "inhibited CEC-induced cytotoxicity by 88 ± 6% (trypan blue) and 98 ± 2% (LDH)",
+        "result_unit": "percent_inhibition",
+        "extra_details": "DPPD = N,N'-diphenyl-p-phenylenediamine, an antioxidant added as protective cotreatment against CEC (7.5 mM) challenge. Mean ± SD of three experiments. DPPD also prevented lipid peroxidation and maintained viability for 2.5 h in CEC-treated cells, with no effect on control hepatocytes. The original abstract identifies DPPD as N,N'-diphenyl-p-phenylenediamine and reports no protection against cell death at 4 h. Preserve the extracted earlier protective observation within its stated timing; it is not sustained protection. The exact extracted 3 h percentages have not been independently checked against a full original table.",
+        "confidence": 0.85,
+        "needs_more_context": true,
+        "pmid": "3607006",
+        "extraction_id": "ext_17",
+        "SMILES": "c1ccc(Nc2ccc(Nc3ccccc3)cc2)cc1",
+        "source_row_uid": "sr_f523870794e84363af2e866aa1d4dde0",
+        "molecule_name": "N,N'-diphenyl-p-phenylenediamine (DPPD)"
+      },
+      "reason": "DPPD is N,N'-diphenyl-p-phenylenediamine in the original CEC paper; the source instead expands and binds it to 1,3-diphenylisobenzofuran.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/3607006/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_467ef0c5d2eb48abadf0cdeb4db68ed8",
+      "source_payload_sha256": "99e0a5bfab47305f1e097f2f668c7b3b2af21577c48d3c8959ed6ad8ada1435e",
+      "previous_level": 7,
+      "level": 0,
+      "corrected_record": {
+        "paragraph_idx": 50,
+        "support_text": "Both bG and cG did not trigger intracellular ROS formation in NIH/3T3 cells at all tested doses... The same result was reported in THP-1-derived macrophages (Figure 5c).",
+        "endpoint_class": "reactive_species",
+        "endpoint_name": "intracellular ROS (MFI)",
+        "assay_and_platform": "fluorescence-based intracellular ROS detection; mean fluorescence intensity (MFI)",
+        "biological_model_context": "THP-1-derived macrophages; Homo sapiens monocytic cell line differentiated to macrophages",
+        "exposure_level": "all tested doses",
+        "exposure_unit": null,
+        "treatment_and_comparator_context": "compared to untreated cells (Figure 5c)",
+        "effect_direction": "no_change",
+        "quantitative_measure_type": null,
+        "quantitative_value": null,
+        "quantitative_unit": null,
+        "extra_details": "bG (bio-graphene material). MFI remained unchanged relative to untreated cells. The tested subjects are graphene materials, not benzoguanamine. Preserve the measured ROS-negative material result; no valid single-small-molecule structure represents the test article.",
+        "confidence": 0.8,
+        "needs_more_context": false,
+        "pmid": "36986854",
+        "extraction_id": "ext_10",
+        "SMILES": "",
+        "source_row_uid": "sr_467ef0c5d2eb48abadf0cdeb4db68ed8",
+        "molecule_name": "Bio-graphene (bG), compared with chemical-graphene (cG)"
+      },
+      "reason": "The original bG/cG experiments concern bio-graphene/chemical-graphene materials, not benzoguanamine.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10051938/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_6935cc40d4e24db3945006711d240551",
+      "source_payload_sha256": "a19f96d0daa0104c03cbb849da5658e2931a068a82582d06fd36bda9c43d3f38",
+      "previous_level": 7,
+      "level": 0,
+      "corrected_record": {
+        "paragraph_idx": 50,
+        "support_text": "Both bG and cG did not trigger intracellular ROS formation in NIH/3T3 cells at all tested doses, as mean fluorescence intensity (MFI) values remained unchanged compared to untreated cells (Figure 5a). The same result was reported in THP-1-derived macrophages (Figure 5c). HaCaT cells appeared more sensitive, as both bG and cG induced a mild increase (10%) in ROS production compared to the control (Figure 5b).",
+        "endpoint_class": "reactive_species",
+        "endpoint_name": "intracellular ROS (MFI)",
+        "assay_and_platform": "fluorescence-based intracellular ROS detection; mean fluorescence intensity (MFI)",
+        "biological_model_context": "NIH/3T3 cells; Homo sapiens-independent mouse fibroblast lineage (per cell line), standard cell culture",
+        "exposure_level": "all tested doses",
+        "exposure_unit": null,
+        "treatment_and_comparator_context": "exposure duration and schedule as reported in Figure 5a; compared to untreated cells",
+        "effect_direction": "no_change",
+        "quantitative_measure_type": null,
+        "quantitative_value": null,
+        "quantitative_unit": null,
+        "extra_details": "bG (bio-graphene material). MFI remained unchangeable relative to untreated cells at all tested doses. The tested subjects are graphene materials, not benzoguanamine. Preserve the measured ROS-negative material result; no valid single-small-molecule structure represents the test article.",
+        "confidence": 0.8,
+        "needs_more_context": false,
+        "pmid": "36986854",
+        "extraction_id": "ext_8",
+        "SMILES": "",
+        "source_row_uid": "sr_6935cc40d4e24db3945006711d240551",
+        "molecule_name": "Bio-graphene (bG), compared with chemical-graphene (cG)"
+      },
+      "reason": "The original bG/cG experiments concern bio-graphene/chemical-graphene materials, not benzoguanamine.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10051938/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_cca50b864c1a460a9f92ad6e81821e5e",
+      "source_payload_sha256": "36c19e89fede2f9c67b6c099ae00241278a0f5ebaf3e963f17c43db81e48da3c",
+      "previous_level": 2,
+      "level": 2,
+      "corrected_record": {
+        "paragraph_idx": 38,
+        "support_text": "HL-7702 cells were preincubated with 2.5–80 μM vernine for 24 h; the survival ratio of HL-7702 cells in incubations with 2.5–20 μM vernine for 24 h exceeded 80%, showing no obvious toxicity. Separately, HL-7702 cells were exposed to 0.5 mM H2O2 for 30 min to induce hepatocellular injury, then incubated with 2.5–20 μM vernine for 24 h, which did not protect against H2O2-induced injury.",
+        "endpoint_category": "viability_or_cell_number",
+        "assay_and_readout": "CCK-8 cell viability/proliferation assay in the source-named HL-7702 culture; preserve the stated treatment and comparator",
+        "biological_model_context": "HL-7702 cell culture as named by the paper; L-02/HL-7702 (Cellosaurus CVCL_6926) is documented as a misidentified HeLa derivative, not an authenticated primary/normal human hepatocyte model. Authentication of the original experimental culture is not established.",
+        "species": "human",
+        "culture_format": "2d_planar",
+        "concentration_values": "2.5-20",
+        "concentration_unit": "umol_per_l",
+        "exposure_duration_and_schedule": "24 h",
+        "exposure_regimen": "single_continuous",
+        "result_value": "survival ratio exceeded 80%; no obvious toxicity",
+        "result_unit": "percent",
+        "extra_details": "Cells preincubated with 2.5–80 μM; no toxicity noted through 20 μM. Molecule label: vernine, one of four active ingredients of CMCS. Vehicle, controls and statistical details not provided in the given window. Retain the source-reported cellular measurement and tested compound role. This model does not establish a hepatocyte-specific effect or a human DILI outcome. The named cell-line limitation is not a re-identification of the original experimental culture.",
+        "confidence": 0.85,
+        "needs_more_context": true,
+        "pmid": "25386220",
+        "extraction_id": "ext_3",
+        "SMILES": "Nc1nc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+        "source_row_uid": "sr_cca50b864c1a460a9f92ad6e81821e5e"
+      },
+      "reason": "Original study used HL-7702; current card calls it a human hepatocyte line without the documented L-02/HL-7702 HeLa-derivative limitation. Cell-line label is not authenticated primary hepatic evidence. Keep the qualified, nonvoter source-reported outcome in L2 under the unchanged direct-containment contract; no L1 promotion or unsupported hepatic identity.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4214045/",
+        "https://www.cellosaurus.org/CVCL_6926"
+      ]
+    },
+    {
+      "source_row_uid": "sr_dfb95d007ed441d1b751815a7c3bae1d",
+      "source_payload_sha256": "32aca9b407930343d914e6fdceae37a803801ffb5b4f187c32cb9dc17e0453be",
+      "previous_level": 2,
+      "level": 2,
+      "corrected_record": {
+        "paragraph_idx": 38,
+        "support_text": "HL-7702 cells were exposed to 0.5 mM H2O2 for 30 min to induce hepatocellular injury in vitro. Subsequently, cells were incubated with 2.5–20 μM vernine for 24 h; vernine was not able to protect against hepatocellular injury induced by H2O2 in vitro.",
+        "endpoint_category": "viability_or_cell_number",
+        "assay_and_readout": "CCK-8 cell viability/proliferation assay in the source-named HL-7702 culture; preserve the stated treatment and comparator",
+        "biological_model_context": "HL-7702 cell culture as named by the paper; L-02/HL-7702 (Cellosaurus CVCL_6926) is documented as a misidentified HeLa derivative, not an authenticated primary/normal human hepatocyte model. Authentication of the original experimental culture is not established.",
+        "species": "human",
+        "culture_format": "2d_planar",
+        "concentration_values": "2.5-20",
+        "concentration_unit": "umol_per_l",
+        "exposure_duration_and_schedule": "30 min H2O2 injury, then 24 h monomer exposure; read at 24 h",
+        "exposure_regimen": "single_continuous",
+        "result_value": "no protective effect against H2O2-induced hepatocellular injury",
+        "result_unit": null,
+        "extra_details": "Challenge: 0.5 mM H2O2 for 30 min prior to vernine treatment. Molecule label: vernine, one of four active ingredients of CMCS. Protection assay follow-up of the viability study. Retain the source-reported cellular measurement and tested compound role. This model does not establish a hepatocyte-specific effect or a human DILI outcome. The named cell-line limitation is not a re-identification of the original experimental culture.",
+        "confidence": 0.8,
+        "needs_more_context": true,
+        "pmid": "25386220",
+        "extraction_id": "ext_7",
+        "SMILES": "Nc1nc2c(ncn2[C@@H]2O[C@H](CO)[C@@H](O)[C@H]2O)c(=O)[nH]1",
+        "source_row_uid": "sr_dfb95d007ed441d1b751815a7c3bae1d"
+      },
+      "reason": "Original study used HL-7702; current card calls it a human hepatocyte line without the documented L-02/HL-7702 HeLa-derivative limitation. Keep the qualified, nonvoter source-reported outcome in L2 under the unchanged direct-containment contract; no L1 promotion or unsupported hepatic identity.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4214045/",
+        "https://www.cellosaurus.org/CVCL_6926"
+      ]
+    },
+    {
+      "source_row_uid": "sr_ccda8cdeda2a4ba89ff29f88442b81a6",
+      "source_payload_sha256": "8031786c1f3fc2120f4109945213d1ca8d4f77c73253a3c56a715ed8b28d0c89",
+      "previous_level": 2,
+      "level": 2,
+      "corrected_record": {
+        "paragraph_idx": 28,
+        "support_text": "The release of LDH in the PEM group increased from 5.8% to 46.1% compared to control. Cells were incubated with pemetrexed (250 nM) for 24 h.",
+        "endpoint_category": "membrane_integrity_or_necrosis",
+        "assay_and_readout": "LDH release—percent leakage into supernatant",
+        "biological_model_context": "LO-2 cell culture as named by the paper; L-02/HL-7702 (Cellosaurus CVCL_6926) is documented as a misidentified HeLa derivative, not an authenticated primary/normal human hepatocyte model. Authentication of the original experimental culture is not established.",
+        "species": "human",
+        "culture_format": "2d_planar",
+        "concentration_values": "250",
+        "concentration_unit": "nmol_per_l",
+        "exposure_duration_and_schedule": "24 h exposure",
+        "exposure_regimen": "single_continuous",
+        "result_value": "46.1 (increased from 5.8 vehicle control)",
+        "result_unit": "percent",
+        "extra_details": "Pemetrexed (PEM) chemical stressor increased LDH release from 5.8% (vehicle) to 46.1% after 24 h, indicating loss of membrane integrity. Significance #### P<0.0001 vs vehicle. Retain the source-reported cellular measurement and tested compound role. This model does not establish a hepatocyte-specific effect or a human DILI outcome. The named cell-line limitation is not a re-identification of the original experimental culture.",
+        "confidence": 0.9,
+        "needs_more_context": true,
+        "pmid": "35291928",
+        "extraction_id": "ext_9",
+        "SMILES": "Nc1nc(=O)c2c(CCc3ccc(C(=O)N[C@@H](CCC(=O)O)C(=O)O)cc3)c[nH]c2[nH]1",
+        "source_row_uid": "sr_ccda8cdeda2a4ba89ff29f88442b81a6"
+      },
+      "reason": "The original paper itself calls LO-2 primary human hepatocytes. This conflicts with the named cell line's documented identity and cannot substantiate direct human hepatocyte evidence. The source needs an explicit unresolved authentication/model limitation. Keep the qualified, nonvoter source-reported outcome in L2 under the unchanged direct-containment contract; no L1 promotion or unsupported hepatic identity.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9208499/",
+        "https://www.cellosaurus.org/CVCL_6926"
+      ]
+    },
+    {
+      "source_row_uid": "sr_4a9570983be740b4b34450b8ff6f8202",
+      "source_payload_sha256": "48cc9fe27b2b7a819044ebac4fc96442e468da2f80f5d0ae12a9a77381570f4c",
+      "previous_level": 4,
+      "level": 4,
+      "corrected_record": {
+        "paragraph_idx": 32,
+        "support_text": "BSEP, E297G BSEP were immunoprecipitated from MDCK II cells and Bsep from rCMVs prepared from 4PBA-treated SD rats, and subjected to western blot analysis for Ub and BSEP. The short-chain ubiquitination ratio (Ub/mature) was reduced in a time-dependent manner after 4PBA treatment in vitro, and reduced 5-fold following 4PBA treatment for 10 days in vivo.",
+        "tested_entity_form": "other_defined_test_article",
+        "assay_category": "transporter_regulation_or_expression",
+        "assay_format": "gene_or_protein_expression_assay",
+        "target_or_process": "BSEP/ABCB11",
+        "probe_or_analyte": "short-chain ubiquitinated Bsep relative to mature Bsep",
+        "biological_system_context": "Canalicular membrane-enriched fraction (rCMVs) from SD (Rattus norvegicus) rats treated with 4PBA; western blot for Ub and BSEP with densitometry",
+        "exposure_conditions": "4PBA (phenylbutyric acid) treatment for 10 days in vivo in SD rats",
+        "endpoint_metric": "short-chain ubiquitination ratio (Ub/mature Bsep), fold reduction vs untreated",
+        "effect_direction": "decrease",
+        "result_value": "5",
+        "result_unit": "fold",
+        "extra_details": "Paper's own name for the tested molecule: 4PBA (phenylbutyric acid), a chemical chaperone. The in vitro ratio was also reduced in a time-dependent manner after 4PBA treatment (Figures 3D,E); Figure 3C shows the in vivo 4PBA effect. Original study identifies 4-phenylbutyrate; the previous 2-phenylbutyrate structural association was incorrect. Retain the BSEP ubiquitination endpoint and protective context.",
+        "confidence": 0.85,
+        "needs_more_context": false,
+        "pmid": "18829893",
+        "extraction_id": "ext_7",
+        "SMILES": "O=C(O)CCCc1ccccc1",
+        "source_row_uid": "sr_4a9570983be740b4b34450b8ff6f8202",
+        "molecule_name": "4-Phenylbutyrate (4PBA)"
+      },
+      "reason": "Original study explicitly tested 4-phenylbutyrate; the source graph CCC(C(=O)O)c1ccccc1 is the 2-phenyl isomer.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/18829893/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_e8feff2cf30c47e1b06b121dac5a71e7",
+      "source_payload_sha256": "c2e1d1bdb39ed4dfd8a896b4bbe4b91c7503616935b790dda4de78ba76127bb8",
+      "previous_level": 4,
+      "level": 3,
+      "corrected_record": {
+        "paragraph_idx": 48,
+        "support_text": "TEM demonstrated that B[a]P exposed hepatocytes had intact mitochondria, but severe ultrastructural changes including disintegration of the cell membranes, increased presence of lysosomes, and areas of cytoplasmic lysis and chromatin margination were observed. Concurrently, B[a]P (10^-3 M) treated hepatocytes after a 72 h exposure show loss of membrane integrity but intact mitochondria (a), increased lysosomes (b), cytoplasmic lysis (CL) and chromatin margination.",
+        "endpoint_category": "cellular_morphology_or_cytoskeletal_injury",
+        "assay_and_readout": "transmission electron microscopy (TEM) and inverted light microscopy—ultrastructural/morphological cellular changes",
+        "biological_model_context": "Primary hepatocyte culture from African sharptooth catfish (Clarias gariepinus)",
+        "species": "fish",
+        "culture_format": "2d_planar",
+        "concentration_values": "10^-3",
+        "concentration_unit": "mol_per_l",
+        "exposure_duration_and_schedule": "72 h exposure",
+        "exposure_regimen": "single_continuous",
+        "result_value": "severe ultrastructural changes: disintegrated cell membranes, increased lysosomes, cytoplasmic lysis, chromatin margination, while mitochondria remained intact",
+        "result_unit": null,
+        "extra_details": "B[a]P is suggested to target the cell membrane, consistent with intact mitochondria and loss of membrane integrity. bar = 1 µm.; compound_name: Benzo[a]pyrene This is catfish hepatocyte cellular ultrastructure/membrane injury, not measured biliary secretion or canalicular function. Retain the intact mitochondria and discordance between MTT and membrane-integrity readouts.",
+        "confidence": 0.85,
+        "needs_more_context": false,
+        "pmid": "17270237",
+        "extraction_id": "ext_15",
+        "SMILES": "c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34",
+        "source_row_uid": "sr_e8feff2cf30c47e1b06b121dac5a71e7"
+      },
+      "reason": "The observed endpoint is catfish hepatocyte ultrastructural/cell-membrane injury, not biliary secretion or canalicular function; source is currently L4.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/17270237/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_3c766895a80e424fb8919361ba737d46",
+      "source_payload_sha256": "b556b476aca4eb3ecbdf2a3be702c5bf8c3803cf7d2d69edb0caa6697d664b75",
+      "previous_level": 4,
+      "level": 5,
+      "corrected_record": {
+        "paragraph_idx": 39,
+        "support_text": "Hepatocytes were treated with or without AICAR (200μM, 24hrs). Confocal images indicated that more hepatocytes had interconnected mitochondrial network when treated with AICAR, whereas many control hepatocytes had less interconnected mitochondrial network and mainly contained a mixture of fused and fragmented mitochondria.",
+        "endpoint_category": "mitochondrial_network_morphology",
+        "assay_and_readout": "confocal microscopy of mitochondrial network morphology (TMRE and MitoTracker Green staining)",
+        "biological_model_context": "Primary rat hepatocytes in collagen sandwich culture",
+        "species": "rat",
+        "culture_format": "2d_planar",
+        "concentration_values": "200",
+        "concentration_unit": "umol_per_l",
+        "exposure_duration_and_schedule": "24 h",
+        "exposure_regimen": "single_continuous",
+        "result_value": "increased interconnected mitochondrial network",
+        "result_unit": null,
+        "extra_details": "Focal molecule: AICAR (AICA ribonucleotide), role AMPK activator. AICAR 200 μM, 24 h promoted mitochondrial fusion/interconnected network, associated with increased Mfn1 (145%) and Opa1 (132%) without affecting Mfn2, Drp1 activity, or structure proteins Hsp60/Cox4/Tom20. The measured endpoint is mitochondrial network morphology, not canalicular morphology. The original Methods name Sigma AICAR as 5-aminoimidazole-4-carboxamide ribonucleotide without a catalog number; riboside versus phosphorylated test-form identity is not independently resolved. Preserve the source-associated structure as uncertain rather than infer a replacement. The fused-network observation remains a bounded mechanistic finding.",
+        "confidence": 0.7,
+        "needs_more_context": true,
+        "pmid": "27792760",
+        "extraction_id": "ext_56",
+        "SMILES": "NC(=O)c1ncn([C@@H]2O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]2O)c1N",
+        "source_row_uid": "sr_3c766895a80e424fb8919361ba737d46"
+      },
+      "reason": "The readout is AICAR-associated mitochondrial network morphology, currently placed in L4; it belongs to mitochondrial evidence. The identity question is unresolved; no riboside substitution is made.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5085033/"
+      ]
+    }
+  ]
+}

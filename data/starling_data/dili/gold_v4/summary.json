@@ -1,0 +1,119 @@
+{
+  "version": "dili_reviewed_starling_only.v2",
+  "source": "Starling DILI base only; no TDC votes",
+  "raw_records": 189172,
+  "source_directions": {
+    "positive": 156476,
+    "negative": 20573,
+    "uncertain": 3781,
+    "specimen_or_material_hold": 4600,
+    "out_of_scope": 346,
+    "mixed": 3396
+  },
+  "dispositions": {
+    "name_not_verified_for_source_structure": 14789,
+    "source_uncertain": 3781,
+    "source_specimen_or_material_hold": 4600,
+    "source_out_of_scope": 346,
+    "source_mixed": 3396,
+    "multiple_organic_components": 1174,
+    "invalid_structure_or_parent": 230,
+    "known_specimen_identity_withdrawal": 62,
+    "original_study_unresolved": 21,
+    "amphetamine_primary_attribution_unverified": 2,
+    "study_vote_representative": 108437,
+    "duplicate_support_of_study_vote": 41751,
+    "within_study_label_conflict": 10583
+  },
+  "dispositions_by_label": {
+    "name_not_verified_for_source_structure:1": 12692,
+    "source_uncertain:None": 3781,
+    "source_specimen_or_material_hold:None": 4600,
+    "source_out_of_scope:None": 346,
+    "source_mixed:None": 3396,
+    "multiple_organic_components:1": 987,
+    "multiple_organic_components:0": 187,
+    "name_not_verified_for_source_structure:0": 2097,
+    "invalid_structure_or_parent:1": 178,
+    "known_specimen_identity_withdrawal:0": 24,
+    "invalid_structure_or_parent:0": 52,
+    "known_specimen_identity_withdrawal:1": 38,
+    "original_study_unresolved:1": 21,
+    "amphetamine_primary_attribution_unverified:1": 2,
+    "study_vote_representative:1": 96228,
+    "duplicate_support_of_study_vote:1": 39903,
+    "study_vote_representative:0": 12209,
+    "within_study_label_conflict:1": 6427,
+    "within_study_label_conflict:0": 4156,
+    "duplicate_support_of_study_vote:0": 1848
+  },
+  "deduplicated_publication_or_verified_study_votes": 108437,
+  "study_vote_labels": {
+    "1": 96228,
+    "0": 12209
+  },
+  "within_study_conflict_units": 3328,
+  "splits": {
+    "scaffold": {
+      "train": {
+        "1": 2511,
+        "0": 709
+      },
+      "valid": {
+        "1": 327,
+        "0": 75
+      },
+      "test": {
+        "0": 82,
+        "1": 320
+      }
+    },
+    "random": {
+      "train": {
+        "1": 2526,
+        "0": 694
+      },
+      "valid": {
+        "1": 316,
+        "0": 86
+      },
+      "test": {
+        "1": 316,
+        "0": 86
+      }
+    }
+  },
+  "benchmark_root": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI",
+  "canonical_experiment_inputs_changed": false,
+  "retrieval_status": "records_indices_and_card_links_validated",
+  "inputs": {
+    "data/starling_data/dili/raw_v1/compressed/dili_base.parquet": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+    "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet": "bd3fc98b419e851c1ab25264579dede9e954720c3793cc211c635aea7072c180",
+    "data/starling_data/dili/gold_v4/identity_ledger.parquet": "947b007682e4f33e39350418d26b3f6c649ccb6ff679ca8da4e8335f60dac125",
+    "data/starling_data/dili/gold_v4/build_policy.json": "e310c70afc223b7306703e2c90250ab39fc472658b60f36582f49ee46303bfb3",
+    "data/starling_data/dili/gold_v4/applied_citation_corrections.jsonl": "781d225aaadddecdaee66a4a4b04fae1276ae5ea929c6df86714dd7764635c47",
+    "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_condition_review/source_votes.jsonl": "fd78e264f9783d2a10be53cbe1dd25113749168849b7311eecab986a1b68f265",
+    "data/starling_data/dili/gold_v4/source_votes.jsonl": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/build_reviewed_starling.py": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
+  },
+  "gold_labels": {
+    "1": 3193,
+    "0": 874
+  },
+  "gold_rows": 4067,
+  "gold_conditions": 69,
+  "split_cohort_rows": 4024,
+  "split_cohort_labels": {
+    "1": 3158,
+    "0": 866
+  },
+  "split_cohort_conditions": 38,
+  "gold_outside_split_coverage": {
+    "1": 35,
+    "0": 8
+  },
+  "unclassified_parent_conditions": 498,
+  "exact_passage_duplicate_links": 23,
+  "provenance_limit": "Publication-level source consensus; not all original studies or full texts independently verified.",
+  "retrieval_release_manifest": "data/starling_data/dili/gold_v4/retrieval/manifest.json"
+}

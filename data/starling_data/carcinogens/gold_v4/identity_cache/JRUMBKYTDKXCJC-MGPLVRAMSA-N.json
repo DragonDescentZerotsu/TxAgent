@@ -1,0 +1,23 @@
+{
+  "parent_key": "JRUMBKYTDKXCJC-MGPLVRAMSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JRUMBKYTDKXCJC-MGPLVRAMSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Cyclopenten-1-one, 3-((3aS,8aR)-3a,8a-dihydro-4-hydroxy-6-methoxyfuro(2,3-b)benzofuran-5-yl)-",
+    "2-Cyclopenten-1-one, 3-(3a,8a-dihydro-4-hydroxy-6-methoxyfuro(2,3-b)benzofuran-5-yl)-, (3aS-cis)-",
+    "3-(4-Hydroxy-6-methoxy-3a,8a-dihydrofuro[2,3-b][1]benzofuran-5-yl)cyclopent-2-en-1-one",
+    "3-[(3aS,8aR)-4-hydroxy-6-methoxy-3a,8a-dihydrofuro[2,3-b][1]benzofuran-5-yl]cyclopent-2-en-1-one",
+    "52373-83-8",
+    "Aflatoxin D1",
+    "DTXSID30966786",
+    "InChI=1/C16H14O5/c1-19-11-7-12-14(10-4-5-20-16(10)21-12)15(18)13(11)8-2-3-9(17)6-8/h4-7,10,16,18H,2-3H2,1H3/t10-,16+/m0/s1",
+    "JRUMBKYTDKXCJC-MGPLVRAMSA-",
+    "RefChem:915227",
+    "SCHEMBL29527203",
+    "SCHEMBL3489445"
+  ],
+  "http_status": 200,
+  "cids": [
+    114721
+  ]
+}

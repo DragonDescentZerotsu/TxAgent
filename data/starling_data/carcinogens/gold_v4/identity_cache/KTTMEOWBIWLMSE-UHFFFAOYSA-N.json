@@ -1,0 +1,32 @@
+{
+  "parent_key": "KTTMEOWBIWLMSE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KTTMEOWBIWLMSE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12505-67-8",
+    "2,4,6,7,8,10-Hexaoxa-1,3,5,7-tetraarsatricyclo[3.3.1.13,7]decane",
+    "2,4,6,7,8,10-Hexaoxa-1,3,5,7-tetraarsatricyclo[3.3.1.1<3,7>]decane",
+    "2,4,6,8,9,10-Hexaoxa-1,3,5,7-tetraarsatricyclo[3.3.1.13,7]decane",
+    "2,4,6,8,9,10-Hexaoxa-1,3,5,7-tetraarsatricyclo[3.3.1.1<3,7>]decane",
+    "Arsenic Oxide Nanoparticle Dispersion",
+    "Arsentrioxid",
+    "CHEBI:30621",
+    "DTXSID40925001",
+    "Diarsenic Trioxide",
+    "HMS2093H20",
+    "KTTMEOWBIWLMSE-UHFFFAOYSA-N",
+    "NSC759274",
+    "Pharmakon1600-01505957",
+    "RefChem:586310",
+    "SBI-0206862.P001",
+    "SCHEMBL29379320",
+    "tetraarsenic oxide",
+    "tricyclo(3.3.1.1(3,7))tetraarsoxane",
+    "tricyclo[3.3.1.1(3,7)]tetraarsoxane",
+    "tricyclo[3.3.1.1~3,7~]tetraarsoxane"
+  ],
+  "http_status": 200,
+  "cids": [
+    518605
+  ]
+}

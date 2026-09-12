@@ -1,0 +1,34 @@
+{
+  "parent_key": "LTGPFZWZZNUIIK-LURJTMIESA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LTGPFZWZZNUIIK-LURJTMIESA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2s)-2,6-Diaminohexan-1-Ol",
+    "(S)-2,6-Diaminohexan-1-ol",
+    "1-Hexanol, 2,6-diamino-, (2S)-",
+    "1-Hexanol, 2,6-diamino-, (S)-",
+    "110690-36-3",
+    "12772-68-8",
+    "603-238-9",
+    "AKOS006272502",
+    "CHEBI:189186",
+    "CP 99325",
+    "CS-0352973",
+    "DB-328073",
+    "DTXSID00107609",
+    "DTXSID60469336",
+    "EN300-7605888",
+    "H-Lys-ol",
+    "L-Lysinol",
+    "Lys-ol",
+    "Lysol",
+    "Q27462788",
+    "RefChem:800215",
+    "SCHEMBL99543",
+    "lysinol"
+  ],
+  "http_status": 200,
+  "cids": [
+    11607920
+  ]
+}

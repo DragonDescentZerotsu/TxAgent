@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "scope": "All 804 frozen no_prior_grounded_sim0 rows, seven levels; selected evidence content and metadata compared, excluding frozen tool summaries. No LLM or tool calls. Not a full prompt-reuse receipt.",
+  "new_index": "data/starling_data/dili/retrieval_review_v3/artifacts/indices/dili/scaffold/assay_neighbor_index.pkl",
+  "cells": {
+    "valid": {
+      "rows": 402,
+      "changed_rows": 1,
+      "changed_by_level": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1
+      },
+      "first_changed_level_by_query": {
+        "303": 1
+      }
+    },
+    "test": {
+      "rows": 402,
+      "changed_rows": 2,
+      "changed_by_level": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 2,
+        "5": 2,
+        "6": 2,
+        "7": 2
+      },
+      "first_changed_level_by_query": {
+        "3": 4,
+        "203": 1
+      }
+    }
+  },
+  "l1_804_rows_selected_evidence_unchanged": false
+}

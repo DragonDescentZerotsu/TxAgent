@@ -1,0 +1,36 @@
+{
+  "parent_key": "CKBRQZNRCSJHFT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKBRQZNRCSJHFT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7429-92-7",
+    "99Es",
+    "Atomic Einsteinium",
+    "CHEBI:33393",
+    "DTXCID90147796",
+    "DTXSID30225305",
+    "EINSTEINIUM",
+    "EINSTEINIUM [MI]",
+    "Einsteinium (atomic)",
+    "Einsteinium (element)",
+    "Einsteinium element",
+    "Element Einsteinium",
+    "Element-Es",
+    "Element:Einsteinium",
+    "Element:Es",
+    "Es",
+    "Es (element)",
+    "Q1892",
+    "RefChem:136403",
+    "SCHEMBL30504002",
+    "SCHEMBL348965",
+    "UNII-WV8XL34X3O",
+    "WV8XL34X3O",
+    "einsteinio",
+    "einsteinium atom"
+  ],
+  "http_status": 200,
+  "cids": [
+    23913
+  ]
+}

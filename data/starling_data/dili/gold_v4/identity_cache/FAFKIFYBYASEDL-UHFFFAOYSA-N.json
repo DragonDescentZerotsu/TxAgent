@@ -1,0 +1,36 @@
+{
+  "parent_key": "FAFKIFYBYASEDL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "13625-57-5",
+    "2-((2,6-Dichlorophenyl)amino)benzoic acid",
+    "2-((2,6-Dichlorophenyl)amino)benzoicacid",
+    "2-(2,6-dichloroanilino)benzoic acid",
+    "2-(2,6-dichlorophenylamino)benzoic acid",
+    "2-[(2,6-DICHLOROPHENYL)AMINO]BENZOICACID",
+    "2-[(2,6-Dichlorophenyl)amino]benzoic Acid",
+    "2-[(2,6-dichlorophenyl) amino]benzoic acid",
+    "AKOS013400491",
+    "Benzoic acid, 2-((2,6-dichlorophenyl)amino)-",
+    "CHEMBL23167",
+    "DS-10745",
+    "DTXCID9082241",
+    "DTXSID10159750",
+    "Diclofenac Carboxylic Acid",
+    "Diclofenac Carboxylic Acid (Diclofenac Metabolite)",
+    "FAFKIFYBYASEDL-UHFFFAOYSA-N",
+    "MFCD00792558",
+    "N-(2,6-Dichlorophenyl)anthranilic acid",
+    "NS00014214",
+    "RefChem:161539",
+    "SB82403",
+    "SCHEMBL374641",
+    "SCHEMBL8127105",
+    "o-(2,6-Dichloroanilino)benzoic acid"
+  ],
+  "cids": [
+    151812
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FAFKIFYBYASEDL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

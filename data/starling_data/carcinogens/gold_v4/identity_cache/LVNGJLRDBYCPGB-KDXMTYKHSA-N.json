@@ -1,0 +1,30 @@
+{
+  "parent_key": "LVNGJLRDBYCPGB-KDXMTYKHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVNGJLRDBYCPGB-KDXMTYKHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-aminoethoxy)((2S)-2,3-bis(octadecanoyloxy)propoxy)phosphinic acid",
+    "(2S)-3-{[(2-aminoethoxy)(hydroxy)phosphoryl]oxy}propane-1,2-diyl dioctadecanoate",
+    "(S)-1,2-dioctadecanoyl-sn-glycero-3-phosphoethanolamine",
+    "(S)-1,2-distearoylphosphatidylethanolamine",
+    "61177-32-0",
+    "BP-31060",
+    "CHEBI:47767",
+    "DB01966",
+    "DI-STEAROYL-3-SN-PHOSPHATIDYLETHANOLAMINE",
+    "NS00071944",
+    "PD008261",
+    "Q27093061",
+    "RefChem:586082",
+    "SCHEMBL3475885",
+    "SCHEMBL6671081",
+    "TYD-04401",
+    "[(2S)-3-[2-aminoethoxy(hydroxy)phosphoryl]oxy-2-octadecanoyloxypropyl] octadecanoate",
+    "orb3145056"
+  ],
+  "http_status": 200,
+  "cids": [
+    17754131,
+    172897708
+  ]
+}

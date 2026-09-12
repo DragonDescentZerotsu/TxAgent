@@ -1,0 +1,17 @@
+{
+  "parent_key": "JCXGWMGPZLAOME-OZWGYRPUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCXGWMGPZLAOME-OZWGYRPUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "220Bi (isotope)",
+    "220Bi isotope",
+    "Bismuth-220",
+    "Bismuth-220 isotope",
+    "Isotope:220Bi",
+    "Isotope:Bismuth-220"
+  ],
+  "http_status": 200,
+  "cids": [
+    175672464
+  ]
+}

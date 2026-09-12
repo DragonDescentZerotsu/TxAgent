@@ -1,0 +1,30 @@
+{
+  "parent_key": "DHPRQBPJLMKORJ-RQWFMOQPSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4S,4aS,6S,12aS)-7-chloro-4-(dimethylamino)-3,6,10,12,12a-pentahydroxy-6-methyl-1,11-dioxo-4,4a,5,5a-tetrahydrotetracene-2-carboxamide",
+    "2-Naphthacenecarboxamide, 7-chloro-4-(dimethylamino)-1,4,4a,5,5a,6,11,12a-octahydro-3,6,10,12,12a-pentahydroxy-6-methyl-1,11-dioxo-, monohydrochloride, [4S-(4.alpha.,4a.alpha.,5a.alpha.,6.beta.,12a.alpha.)]-",
+    "7-Chlortetracycline",
+    "AKOS015955624",
+    "BPBio1_000276",
+    "BSPBio_000250",
+    "CHEMBL1507",
+    "Chlorotetracycline",
+    "DHPRQBPJLMKORJ-RQWFMOQPSA-N",
+    "GLXC-20328",
+    "NCGC00179629-01",
+    "NCGC00179629-03",
+    "NCGC00185008-01",
+    "NCGC00185008-02",
+    "NCGC00185008-03",
+    "Prestwick3_000145",
+    "SCHEMBL13782594",
+    "SCHEMBL29944903",
+    "SMP1_000067"
+  ],
+  "cids": [
+    54676345
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DHPRQBPJLMKORJ-RQWFMOQPSA-N/synonyms/JSON",
+  "http_status": 200
+}

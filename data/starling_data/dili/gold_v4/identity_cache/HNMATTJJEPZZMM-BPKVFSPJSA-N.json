@@ -1,0 +1,27 @@
+{
+  "parent_key": "HNMATTJJEPZZMM-BPKVFSPJSA-N",
+  "ok": true,
+  "synonyms": [
+    "400046-53-9",
+    "CS-0102920",
+    "DTXSID001350185",
+    "EDM24GA51F",
+    "GLXC-21994",
+    "HY-128969",
+    "OZOGAMICIN",
+    "Ozogamicin [INN]",
+    "Q27277125",
+    "RefChem:169199",
+    "T205772",
+    "UNII-EDM24GA51F",
+    "orb2944327",
+    "ozogamicina",
+    "ozogamicine",
+    "ozogamicinum"
+  ],
+  "cids": [
+    9942071
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HNMATTJJEPZZMM-BPKVFSPJSA-N/synonyms/JSON",
+  "http_status": 200
+}

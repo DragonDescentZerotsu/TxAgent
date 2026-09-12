@@ -1,0 +1,17 @@
+{
+  "parent_key": "QFQUMHBUJBZOBZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QFQUMHBUJBZOBZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "71697-03-5",
+    "DODECA-2,4,6-TRIENOIC ACID",
+    "DTXCID50660633",
+    "DTXSID60709885",
+    "RefChem:339386",
+    "SCHEMBL3684736"
+  ],
+  "http_status": 200,
+  "cids": [
+    54225634
+  ]
+}

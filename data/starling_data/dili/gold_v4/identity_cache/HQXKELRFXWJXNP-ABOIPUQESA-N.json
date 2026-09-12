@@ -1,0 +1,39 @@
+{
+  "parent_key": "HQXKELRFXWJXNP-ABOIPUQESA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1'-((1R,2R,3S,4R,5R,6S)-4-(((2R,3R,4R,5S)-4-Formyl-4-hydroxy-3-(((2S,3S,4S,5R,6S)-4-hydroxy-6-(hydroxymethyl)-3-(methylamino)-5-(((2R,3S,4S,5S,6S)-3,4,5-trihydroxy-6-(hydroxymethyl)tetrahydro-2H-pyran-2-yl)oxy)tetrahydro-2H-pyran-2-yl)oxy)-5-methyltetrahydrofuran-2-yl)oxy)-2,5,6-trihydroxycyclohexane-1,3-diyl)diguanidine",
+    "128-45-0",
+    "2-((1R,2R,3S,4R,5R,6S)-3-(diaminomethylideneamino)-4-((2R,3R,4R,5S)-4-formyl-4-hydroxy-3-((2S,3S,4S,5R,6S)-4-hydroxy-6-(hydroxymethyl)-3-(methylamino)-5-((2R,3S,4S,5S,6S)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxyoxan-2-yl)oxy-5-methyloxolan-2-yl)oxy-2,5,6-trihydroxycyclohexyl)guanidine",
+    "2-((1R,2R,3S,4R,5R,6S)-3-(diaminomethylideneamino)-4-((2R,3R,4R,5S)-4-formyl-4-hydroxy-3-((2S,3S,4S,5R,6S)-4-hydroxy-6-(hydroxymethyl)-3-(methylamino)-5-((2S,3S,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxyoxan-2-yl)oxy-5-methyloxolan-2-yl)oxy-2,5,6-trihydroxycyclohexyl)guanidine",
+    "2-[(1R,2R,3S,4R,5R,6S)-3-(diaminomethylideneamino)-4-[(2R,3R,4R,5S)-4-formyl-4-hydroxy-3-[(2S,3S,4S,5R,6S)-4-hydroxy-6-(hydroxymethyl)-3-(methylamino)-5-[(2R,3S,4S,5S,6S)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxyoxan-2-yl]oxy-5-methyloxolan-2-yl]oxy-2,5,6-trihydroxycyclohexyl]guanidine",
+    "2-[(1R,2R,3S,4R,5R,6S)-3-(diaminomethylideneamino)-4-[(2R,3R,4R,5S)-4-formyl-4-hydroxy-3-[(2S,3S,4S,5R,6S)-4-hydroxy-6-(hydroxymethyl)-3-(methylamino)-5-[(2S,3S,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxyoxan-2-yl]oxy-5-methyloxolan-2-yl]oxy-2,5,6-trihydroxycyclohexyl]guanidine",
+    "204-887-7",
+    "4-18-00-07546 (Beilstein Handbook Reference)",
+    "BRN 0077587",
+    "CHEBI:135879",
+    "CJ1467C885",
+    "D-STREPTAMINE, O-.BETA.-D-MANNOPYRANOSYL-(1->4)-O-2-DEOXY-2-(METHYLAMINO)-.ALPHA.-L-GLUCOPYRANOSYL-(1->2)-O-5-DEOXY-3-C-FORMYL-.ALPHA.-L-LYXOFURANOSYL-(1->4)-N,N'-BIS(AMINOIMINOMETHYL)-",
+    "D-STREPTAMINE, O-.BETA.-D-MANNOPYRANOSYL-(1->4)-O-2-DEOXY-2-(METHYLAMINO)-.ALPHA.-L-GLUCOPYRANOSYL-(1->2)-O-5-DEOXY-3-C-FORMYL-.ALPHA.-L-LYXOFURANOSYL-(1->4)-N1,N3-BIS(AMINOIMINOMETHYL)-",
+    "D-STREPTAMINE, O-BETA-D-MANNOPYRANOSYL-(1->4)-O-2-DEOXY-2-(METHYLAMINO)-ALPHA-L-GLUCOPYRANOSYL-(1->2)-O-5-DEOXY-3-C-FORMYL-ALPHA-L-LYXOFURANOSYL-(1->4)-N,N'-BIS(AMINOIMINOMETHYL)-",
+    "D-STREPTAMINE, O-BETA-D-MANNOPYRANOSYL-(1->4)-O-2-DEOXY-2-(METHYLAMINO)-ALPHA-L-GLUCOPYRANOSYL-(1->2)-O-5-DEOXY-3-C-FORMYL-ALPHA-L-LYXOFURANOSYL-(1->4)-N1,N3-BIS(AMINOIMINOMETHYL)-",
+    "D-Streptamine, O-beta-D-mannopyranosyl-(1.fwdarw.4)-O-2-deoxy-2-(methylamino)-alpha-L-glucopyranosyl-(1.fwdarw.2)-O-5-deoxy-3-C-formyl-alpha-L-lyxofuranosyl-(1.fwdarw.4)-N,N'-bis(aminoiminomethyl)-",
+    "DTXCID203598",
+    "DTXSID9023598",
+    "EINECS 204-887-7",
+    "Mannosidostreptomycin",
+    "Q27275489",
+    "RefChem:185944",
+    "STREPTOMYCIN B [MI]",
+    "UNII-CJ1467C885",
+    "mannosylstreptomycin",
+    "streptomycin B"
+  ],
+  "cids": [
+    76971547,
+    176525880,
+    176527977
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HQXKELRFXWJXNP-ABOIPUQESA-N/synonyms/JSON",
+  "http_status": 200
+}

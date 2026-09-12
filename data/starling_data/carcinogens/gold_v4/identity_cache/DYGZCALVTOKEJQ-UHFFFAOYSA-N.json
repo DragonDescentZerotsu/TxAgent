@@ -1,0 +1,24 @@
+{
+  "parent_key": "DYGZCALVTOKEJQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DYGZCALVTOKEJQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-Dihydro-4-methylbenz(j)aceanthrylene",
+    "17012-89-4",
+    "22-Methylcholanthrene",
+    "4-Methylcholanthrene",
+    "4-methyl-1,2-dihydrobenzo[j]aceanthrylene",
+    "4-methyl-1,2-dihydrocyclopenta[ij]tetraphene",
+    "BRN 3316624",
+    "Benz(j)aceanthrylene, 1,2-dihydro-4-methyl-",
+    "Benz(j)aceanthrylene, 1,2-dihydro-4-methyl- (9CI)",
+    "C21H16",
+    "Cholanthrene, 4-methyl-",
+    "DTXSID90168800",
+    "SCHEMBL28783299"
+  ],
+  "http_status": 200,
+  "cids": [
+    146318
+  ]
+}

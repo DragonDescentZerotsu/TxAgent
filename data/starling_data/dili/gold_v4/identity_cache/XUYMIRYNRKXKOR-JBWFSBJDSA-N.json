@@ -1,0 +1,21 @@
+{
+  "parent_key": "XUYMIRYNRKXKOR-JBWFSBJDSA-N",
+  "ok": true,
+  "synonyms": [
+    "(7R)-N-[(5-ethylsulfonylpyridin-2-yl)methyl]-7-propan-2-yl-6-[[4-(trifluoromethyl)cyclohexyl]methyl]-5,7-dihydropyrrolo[3,4-b]pyridine-3-carboxamide",
+    "BDBM317900",
+    "CHEMBL5785392",
+    "RefChem:194649",
+    "SCHEMBL16977509",
+    "SCHEMBL29439065",
+    "US9624217, Compound 53",
+    "VTP-43742",
+    "XUYMIRYNRKXKOR-IOZGHAEBSA-N",
+    "XUYMIRYNRKXKOR-MMUCKZTOSA-N"
+  ],
+  "cids": [
+    118282339
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XUYMIRYNRKXKOR-JBWFSBJDSA-N/synonyms/JSON",
+  "http_status": 200
+}

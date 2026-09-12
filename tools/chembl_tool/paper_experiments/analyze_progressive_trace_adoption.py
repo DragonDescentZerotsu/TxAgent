@@ -20,12 +20,14 @@ from tools.chembl_tool.paper_experiments.paired_binary_predictions import (
 
 
 DEFAULT_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
-TASKS = (*DEFAULT_TASKS, "ames")
+TASKS = (*DEFAULT_TASKS, "ames", "dili", "carcinogens")
 PREDICTION_FIELDS = {
     "bbb_martins": "bbb_prediction",
     "bioavailability_ma": "bioavailability_prediction",
     "skin_reaction": "skin_reaction_prediction",
     "ames": "ames_prediction",
+    "dili": "dili_prediction",
+    "carcinogens": "carcinogenicity_prediction",
 }
 
 TASK_DISPLAY = {
@@ -33,6 +35,8 @@ TASK_DISPLAY = {
     "bioavailability_ma": "Bioavailability",
     "skin_reaction": "Skin",
     "ames": "Ames",
+    "dili": "DILI",
+    "carcinogens": "Carcinogens",
 }
 
 

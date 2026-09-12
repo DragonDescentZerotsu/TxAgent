@@ -1,0 +1,42 @@
+{
+  "parent_key": "AZXHAWRMEPZSSV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AZXHAWRMEPZSSV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,3',4,4',5,5'-hexachloro-",
+    "1,2,3-trichloro-5-(2,4,5-trichlorophenyl)benzene",
+    "1,2,4-trichloro-5-(3,4,5-trichlorophenyl)benzene",
+    "2,3',4,4',5,5'-Hexachloro-1,1'-biphenyl",
+    "2,3',4,4',5,5'-Hexachloro-1,1'-biphenyl #",
+    "2,3',4,4',5,5'-Hexachlorobiphenyl",
+    "2,3'4,4',5,5'-Hexachloro-1,1'-biphenyl",
+    "2,4,5,3',4',5'-HEXACHLOROBIPHENYL",
+    "23'44'55'-Hexachlorobiphenyl",
+    "52663-72-6",
+    "AZXHAWRMEPZSSV-UHFFFAOYSA-N",
+    "BDBM50408370",
+    "C18122",
+    "CHEBI:81524",
+    "CHEMBL136151",
+    "DTXCID8041244",
+    "DTXSID7074165",
+    "H59653",
+    "HD4MZI40CH",
+    "HSDB 3947",
+    "MSK3766",
+    "NS00099486",
+    "PCB 167",
+    "PCB No. 167",
+    "PCB No. 167 10 microg/mL in Isooctane",
+    "PCB No. 167 10 |Ig/mL in Isooctane",
+    "Q27155444",
+    "RefChem:53532",
+    "SCHEMBL2281805",
+    "SCHEMBL29944597",
+    "UNII-HD4MZI40CH"
+  ],
+  "http_status": 200,
+  "cids": [
+    40479
+  ]
+}

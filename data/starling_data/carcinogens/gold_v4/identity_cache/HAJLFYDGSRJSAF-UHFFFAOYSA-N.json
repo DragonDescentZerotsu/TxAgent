@@ -1,0 +1,16 @@
+{
+  "parent_key": "HAJLFYDGSRJSAF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HAJLFYDGSRJSAF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "205194-13-4",
+    "4-(Pyrrolidin-1-yl)but-2-en-1-ol",
+    "DTXSID30707252",
+    "SCHEMBL1466734",
+    "SCHEMBL1466735"
+  ],
+  "http_status": 200,
+  "cids": [
+    53866871
+  ]
+}

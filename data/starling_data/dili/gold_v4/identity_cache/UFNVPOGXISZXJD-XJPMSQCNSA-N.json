@@ -1,0 +1,16 @@
+{
+  "parent_key": "UFNVPOGXISZXJD-XJPMSQCNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,3S,6S,9S,12S,14R,16R,18S,20R,21R,22S,26R,29S,31R,32S,33S,35R,36S)-20-[(2S)-3-amino-2-hydroxypropyl]-21-methoxy-14-methyl-8,15-dimethylidene-2,19,30,34,37,39,40,41-octaoxanonacyclo[24.9.2.1^{3,32}.1^{3,33}.1^{6,9}.1^{12,16}.0^{18,22}.0^{29,36}.0^{31,35}]hentetracontan-24-one",
+    "2743427-58-7",
+    "EBC-27443",
+    "EN300-33419805",
+    "S-Eribulin"
+  ],
+  "cids": [
+    134990500
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UFNVPOGXISZXJD-XJPMSQCNSA-N/synonyms/JSON",
+  "http_status": 200
+}

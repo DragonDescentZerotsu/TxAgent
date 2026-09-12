@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "task": "carcinogens",
+  "release": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+  "release_sha256": "676936fa7c762723b37efa264ed5418ae2420a854f8dcc86289cb8d989a47a88",
+  "published_at": "2026-09-10T03:24:36.945721+00:00",
+  "previous_active": "data/starling_data/carcinogens/gold_v4/retrieval/previous_active",
+  "split_counts": {
+    "scaffold": {
+      "train": 3754,
+      "valid": 469,
+      "test": 469
+    },
+    "random": {
+      "train": 3754,
+      "valid": 469,
+      "test": 469
+    }
+  },
+  "heldout_metadata_only_enrichment": true,
+  "gold_and_query_labels_unchanged": true,
+  "unchanged_relative_to": "validated_staged_release, not the previous active cohort",
+  "published_files": {
+    "data/conditioned_benchmark/Carcinogens/scaffold/train.jsonl": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f",
+    "data/conditioned_benchmark/Carcinogens/scaffold/train_molecule_condition_labels.jsonl": "7d053870ead1a05f1c2e4163b275ab8b7fbcc0aa052b31b7f16df67f6ad3ced3",
+    "data/conditioned_benchmark/Carcinogens/scaffold/valid.jsonl": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+    "data/conditioned_benchmark/Carcinogens/scaffold/valid_molecule_condition_labels.jsonl": "1999f4ccd227998a5d9e2b37ec215411564ed82fa2f28ac196ee3adc3e9ae42e",
+    "data/conditioned_benchmark/Carcinogens/scaffold/test.jsonl": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+    "data/conditioned_benchmark/Carcinogens/scaffold/test_molecule_condition_labels.jsonl": "e557dc579ff6a3f3e02527eaf32190825b1b515b95a29d2941de83311db4f3eb",
+    "data/conditioned_benchmark/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl": "2330a5fcc928fb76af58bae88ae467de667538768d1940bd3d7f1402198596bc",
+    "data/conditioned_benchmark/Carcinogens/scaffold/accepted_record_votes.jsonl": "1a53c7b23ed403f71d6d13dcb7d1662f26b9e4b6742b0c55b3f1823ef0fd0af8",
+    "data/conditioned_benchmark/Carcinogens/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "cce4db468bedaa5b19d6420827e288c91b0469c69270788a5e84511203465dae",
+    "data/conditioned_benchmark/Carcinogens/scaffold/accepted_parent_conditions.jsonl": "e2fdbd4847e6bc8c039fbec2a49afcb9073ac26cf30376973dd0e80139bbd72a",
+    "data/conditioned_benchmark/Carcinogens/scaffold/rejected_parent_conditions.jsonl": "d6e9dc81050bb2ad30c7b1634a381273992ac2a5c471932e3508db29d758a8c6",
+    "data/conditioned_benchmark/Carcinogens/scaffold/group_distribution.csv": "8b162390628cef70513731d09d0170c89f915107fb824eb0563afa1c3ed543c4",
+    "data/conditioned_benchmark/Carcinogens/scaffold/summary.json": "72e7918f7d291a83d443aadbc480e17092f3d36f1b62acda65345fa38cc9bd13",
+    "data/conditioned_benchmark/Carcinogens/random/train_molecule_condition_labels.jsonl": "bf40cefd23ba7d9870883139fc144744e18e6d30222a5a4c975c7ec447729d53",
+    "data/conditioned_benchmark/Carcinogens/random/train.jsonl": "035d7f27b119b78ae1a9fdf093f0015661a351eda299f04cd93e4b99833defbd",
+    "data/conditioned_benchmark/Carcinogens/random/valid_molecule_condition_labels.jsonl": "dbfd22994bdf3b37582800509b8fe650da97cf27467c284589c46f1a245471d9",
+    "data/conditioned_benchmark/Carcinogens/random/valid.jsonl": "90648e833d42b5537b5800c85f7317a437eaa9398e08bb791b5dc5f7e9abbd40",
+    "data/conditioned_benchmark/Carcinogens/random/test_molecule_condition_labels.jsonl": "c14b4de06c3cdca35cdbd71139acea295d6b067d1207a55df578b3786a4682e2",
+    "data/conditioned_benchmark/Carcinogens/random/test.jsonl": "ade7cdd3836f4d98fd89e020c3fed5bd2f1deea477cabb4f57924776a229b28c",
+    "data/conditioned_benchmark/Carcinogens/random/heldout_molecule_condition_labels.jsonl": "5b982e8bf8122c8f4bb3d2c9795b870a18b247c4e298d8d06674a59865793f4f",
+    "data/conditioned_benchmark/Carcinogens/random/group_distribution.csv": "0737a16285da2279d175b69b5981e46835638d5952aaa569e3083ee23bd57f22",
+    "data/conditioned_benchmark/Carcinogens/random/summary.json": "30a21d3d2278b1159ff4a0a411d34e9837b478cf789736ddbad2f04d37f47e8b"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "task": "Carcinogens",
+  "benchmark": "conditioned_benchmark",
+  "contract": "conditioned_benchmark.v1",
+  "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
+  "source_scaffold_root": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold",
+  "root": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random",
+  "source_union_sha256": "a90020941aaef976f7a823ec49f9300ead9922448f687f2cb2eed20e225bd455",
+  "random_union_sha256": "a90020941aaef976f7a823ec49f9300ead9922448f687f2cb2eed20e225bd455",
+  "same_molecule_condition_rows_and_labels": true,
+  "optimizer": {
+    "method": "deterministic_lexicographic_parent_group_milp",
+    "seed": 20260830,
+    "target_size_policy": "minimum_feasible_equal_eval_size",
+    "nominal_target_eval_rows": 469,
+    "target_fraction": {
+      "train": 0.8,
+      "valid": 0.1,
+      "test": 0.1
+    },
+    "target_rows": {
+      "train": 3754,
+      "valid": 469,
+      "test": 469
+    },
+    "n_parent_groups": 3390,
+    "n_conditions": 5,
+    "record_support_objective_enabled": true,
+    "required_labels_in_each_split": [
+      0,
+      1
+    ],
+    "record_support_field": "source_record_count",
+    "multi_vote_definition": "source_record_count >= 2",
+    "objective_order": [
+      "minimum heldout singleton-vote rows",
+      "minimum valid/test singleton imbalance",
+      "minimum valid/test positive-label deviation",
+      "minimum valid/test condition-row deviation",
+      "seeded stable tie-break"
+    ],
+    "minimum_singletons_in_heldout": 0,
+    "minimum_singleton_imbalance": 0,
+    "selected_valid_singletons": 0,
+    "selected_test_singletons": 0,
+    "minimum_positive_label_l1_deviation": 0,
+    "minimum_condition_row_l1_deviation": 0,
+    "desired_positive_count_per_eval_split": 358,
+    "condition_coverage_constraint": "every condition has at least one parent in every split"
+  },
+  "splits": {
+    "train": {
+      "n": 3754,
+      "sha256": "035d7f27b119b78ae1a9fdf093f0015661a351eda299f04cd93e4b99833defbd",
+      "n_parents": 2865,
+      "label_counts": {
+        "0": 892,
+        "1": 2862
+      },
+      "condition_counts": {
+        "species=dog": 108,
+        "species=human": 1256,
+        "species=monkey": 55,
+        "species=rabbit": 47,
+        "species=rodent": 2288
+      }
+    },
+    "valid": {
+      "n": 469,
+      "sha256": "90648e833d42b5537b5800c85f7317a437eaa9398e08bb791b5dc5f7e9abbd40",
+      "n_parents": 310,
+      "label_counts": {
+        "0": 111,
+        "1": 358
+      },
+      "condition_counts": {
+        "species=dog": 13,
+        "species=human": 157,
+        "species=monkey": 7,
+        "species=rabbit": 6,
+        "species=rodent": 286
+      }
+    },
+    "test": {
+      "n": 469,
+      "sha256": "ade7cdd3836f4d98fd89e020c3fed5bd2f1deea477cabb4f57924776a229b28c",
+      "n_parents": 309,
+      "label_counts": {
+        "0": 111,
+        "1": 358
+      },
+      "condition_counts": {
+        "species=dog": 13,
+        "species=human": 157,
+        "species=monkey": 7,
+        "species=rabbit": 6,
+        "species=rodent": 286
+      }
+    }
+  },
+  "pairwise_identity_overlap": {
+    "train__valid": 0,
+    "train__test": 0,
+    "valid__test": 0
+  },
+  "pairwise_scaffold_overlap": {
+    "train__valid": 65,
+    "train__test": 60,
+    "valid__test": 31
+  },
+  "conditions_present_in_all_splits": [
+    "species=dog",
+    "species=human",
+    "species=monkey",
+    "species=rabbit",
+    "species=rodent"
+  ],
+  "missing_conditions_by_split": {
+    "train": [],
+    "valid": [],
+    "test": []
+  }
+}

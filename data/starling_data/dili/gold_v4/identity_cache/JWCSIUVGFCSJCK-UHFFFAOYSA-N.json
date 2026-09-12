@@ -1,0 +1,19 @@
+{
+  "parent_key": "JWCSIUVGFCSJCK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "7-[2-Carboxy(4-hydroxyphenyl)acetamido]-7-methoxy-3-{[(1-methyl-1H-tetrazol-5-yl)sulfanyl]methyl}-8-oxo-5-oxa-1-azabicyclo[4.2.0]oct-2-ene-2-carboxylic acid",
+    "7-[2-Carboxy-2-(4-hydroxyphenyl)acetamido]-7-methoxy-3-{[(1-methyl-1H-tetrazol-5-yl)sulfanyl]methyl}-8-oxo-5-oxa-1-azabicyclo[4.2.0]oct-2-ene-2-carboxylic acid",
+    "78997-87-2",
+    "AKOS025311559",
+    "DTXSID60860804",
+    "Q13020344",
+    "SCHEMBL49016",
+    "latamoxef (stereochemistry undefined)"
+  ],
+  "cids": [
+    3889
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JWCSIUVGFCSJCK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

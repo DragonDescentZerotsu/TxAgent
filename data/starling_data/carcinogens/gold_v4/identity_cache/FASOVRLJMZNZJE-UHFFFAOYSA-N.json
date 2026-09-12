@@ -1,0 +1,23 @@
+{
+  "parent_key": "FASOVRLJMZNZJE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FASOVRLJMZNZJE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "13407-18-6",
+    "4-METHYLIDENECYCLOHEX-1-ENE",
+    "4-methylene-cyclohexene",
+    "4-methylenecyclohexene",
+    "Cyclohexene, 4-methylene-",
+    "Cyclohexene,4-methylene-",
+    "DTXCID3081023",
+    "DTXSID20158532",
+    "RefChem:1082618",
+    "SCHEMBL1403443",
+    "SCHEMBL3632089",
+    "SCHEMBL5085138"
+  ],
+  "http_status": 200,
+  "cids": [
+    139449
+  ]
+}

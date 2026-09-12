@@ -1,0 +1,59 @@
+{
+  "protocol": "source_direction_targeted_review.v1",
+  "planned_passes": 1,
+  "qa_per_task_direction": 300,
+  "prompt_sha256": "3b692b2b32357430c8295712206431605a9fcca79c5d17d1b4838454528374ae",
+  "prior_ledger": {
+    "path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/round1.jsonl",
+    "sha256": "501d18f392e8b6b835c2d23c74a31ecd9c1ab874f2bd1ed34cecd47f940d5d0b"
+  },
+  "tasks": {
+    "dili": {
+      "source_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+      "source_sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+      "queue_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_queue.parquet",
+      "queue_sha256": "3a7608d5a2279acf76787e1a8f3184d4c45583f81705b6c6abb02cf1c268eba7",
+      "selection_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_selection.parquet",
+      "selection_sha256": "58e9c289adafc68b85f0a9315bb4ebb85dbb1f4ad0ec636a320efcced2cae9f7",
+      "counts": {
+        "explicit_source_label_retained": 116999,
+        "qa_selected": 600,
+        "nonbinary_source_review": 63844,
+        "prior_supported_direction_reused": 3601,
+        "specimen_or_material_hold": 4600,
+        "direction_conflict_review": 128,
+        "unique_queued": 64572,
+        "raw_records": 189172
+      }
+    },
+    "carcinogens": {
+      "source_path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
+      "source_sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
+      "queue_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_queue.parquet",
+      "queue_sha256": "f0ab8313dabca8fdb052d18e7166c2309f51f61028c0c6070196e8d01670a43e",
+      "selection_path": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_selection.parquet",
+      "selection_sha256": "b6e280a2ed82dd8a7066f9bde7088c7bfd6771da52f25e8108538eca5f38965c",
+      "counts": {
+        "explicit_source_label_retained": 264574,
+        "qa_selected": 600,
+        "nonbinary_source_review": 81782,
+        "direction_conflict_review": 1125,
+        "specimen_or_material_hold": 6905,
+        "unique_queued": 83507,
+        "raw_records": 354386
+      }
+    }
+  },
+  "publication": "Source-label candidates only; not gold or independent study votes",
+  "counts": {
+    "explicit_source_label_retained": 381573,
+    "qa_selected": 1200,
+    "nonbinary_source_review": 145626,
+    "prior_supported_direction_reused": 3601,
+    "specimen_or_material_hold": 11505,
+    "direction_conflict_review": 1253,
+    "unique_queued": 148079,
+    "raw_records": 543558
+  },
+  "created_utc": "2026-09-09T00:20:42.358399+00:00"
+}

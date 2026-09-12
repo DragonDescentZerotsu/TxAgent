@@ -1,0 +1,24 @@
+{
+  "parent_key": "UGYGETAMGVLMQD-XDDVJGMASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UGYGETAMGVLMQD-XDDVJGMASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+)-Gymnemic acid VI",
+    "(2S,3S,4S,5R,6R)-6-(((3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-((E)-2-methylbut-2-enoyl)oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl)oxy)-3,5-dihydroxy-4-((2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl)oxyoxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[[(3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8,9-dihydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-10-[(E)-2-methylbut-2-enoyl]oxy-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl]oxy]-3,5-dihydroxy-4-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxyoxane-2-carboxylic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.BETA.,4.ALPHA.,16.BETA.,21.BETA.,22.ALPHA.)-16,22,23,28-TETRAHYDROXY-21-(((2E)-2-METHYL-1-OXO-2-BUTENYL)OXY)OLEAN-12-EN-3-YL 3-O-.BETA.-D-GLUCOPYRANOSYL-",
+    "121903-98-8",
+    "FBT5C5U9T1",
+    "Gymnemate VI",
+    "Gymnemic acid VI",
+    "Gymnemic acid vi, (+)-",
+    "Q27277911",
+    "RefChem:144872",
+    "UNII-FBT5C5U9T1",
+    "beta-D-Glucopyranosiduronic acid, (3beta,4alpha,16beta,21beta,22alpha)-16,22,23,28-tetrahydroxy-21-(((2E)-2-methyl-1-oxo-2-butenyl)oxy)olean-12-en-3-yl 3-o-beta-D-glucopyranosyl-"
+  ],
+  "http_status": 200,
+  "cids": [
+    91617894
+  ]
+}

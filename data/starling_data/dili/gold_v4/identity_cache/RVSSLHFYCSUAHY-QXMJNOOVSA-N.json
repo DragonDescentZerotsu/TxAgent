@@ -1,0 +1,39 @@
+{
+  "parent_key": "RVSSLHFYCSUAHY-QXMJNOOVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R,3R,4R,5R)-2-(4-aminopyrrolo[2,1-f][1,2,4]triazin-7-yl-5-d)-2-cyano-5-((isobutyryloxy)methyl)tetrahydrofuran-3,4-diyl bis(2-methylpropanoate)",
+    "2647442-33-7",
+    "5407B",
+    "CHEMBL5314500",
+    "D-Altrononitrile, 2-C-(4-aminopyrrolo[2,1-f][1,2,4]triazin-7-yl-5-d)-2,5-anhydro-, 3,4,6-tris(2-methylpropanoate)",
+    "DTXSID601358901",
+    "EX-A5453A",
+    "GLXC-27679",
+    "GS-621763-d",
+    "GTPL11993",
+    "HY-145119S",
+    "MF2PS6XPS4",
+    "MSK179272",
+    "Mindavi",
+    "Mindeudesivir",
+    "RefChem:934152",
+    "T60016",
+    "VV-116",
+    "VV-116 free base",
+    "VV116",
+    "VV116 free base",
+    "VV116; VV 116; VV-116; JT001; JT-001; JT 001",
+    "VV116?",
+    "X6 hydrobromide [PMID: 34584244]",
+    "[(2R,3R,4R,5R)-5-(4-amino-5-deuteriopyrrolo[2,1-f][1,2,4]triazin-7-yl)-5-cyano-3,4-bis(2-methylpropanoyloxy)oxolan-2-yl]methyl 2-methylpropanoate",
+    "deuremidevir",
+    "mindeudesivir [INN]",
+    "orb1301221"
+  ],
+  "cids": [
+    163358784
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RVSSLHFYCSUAHY-QXMJNOOVSA-N/synonyms/JSON",
+  "http_status": 200
+}

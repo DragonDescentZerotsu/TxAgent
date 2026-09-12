@@ -4,6 +4,14 @@ This directory contains the maintained paper-facing experiment layer. Task
 science stays in `tools/chembl_tool/tasks/<task>/`; retrieval, visibility,
 reasoning, validation, checkpointing, analysis, and plotting are shared.
 
+DILI/Carcinogens 的当前数据合同和全部 source-build 入口见
+[`NEW_TASK_SOURCE_DATA.md`](../common/starling/NEW_TASK_SOURCE_DATA.md)。二者已接入统一
+Stage-03 恢复、catalog/index 重建和普通 Parquet level 导出；无需单独维护 runner 或画图程序。
+当前 benchmark 均为 Starling-only gold_v4，清理后的检索源统一冻结在 `retrieval_final`。
+最新已完成诊断为 DILI v5 与 Carcinogens R18；结果、baseline 和图均从
+`current_conditioned_results.json` 的对应 suite 读取。旧混合标签、旧 gold 和清理中间轮次
+只作历史参考。此次源整合没有新增模型结果，已完成预测保留其实际输入和复用凭据。
+
 ## Paper scope
 
 The retained paper matrix has six result families and two visibility controls:
@@ -268,6 +276,9 @@ job's prompt budget. It creates `replicate_02/{progressive,full_flat}/` and
 `replicate_03/{progressive,full_flat}/`; source level predictions are never copied.
 The original completed run remains replicate 1. None/query priors and tools stay
 frozen, so these repeats measure level-reasoning variability conditional on those inputs.
+To overlap complete runs, set `--concurrent-runs N`; each run uses `--parallelism`
+slots, and their product must fit `--endpoint-concurrency-budget`. Provider-pool
+capacity must also fit each run's slot count. The default remains sequential.
 
 For a different model, add `--refresh-query-priors` to a matched suite. The same
 runner generates fresh single/None branches under `single_cache/` using the
@@ -277,6 +288,9 @@ the new model's priors. Source and resulting prepared hashes are recorded separa
 completed priors are hash-checked on resume. The prior stage shares the global and
 per-task query caps, with sequential single/final calls and the legacy branch JSON
 validation policy; six-way racing applies to subsequent level retries.
+Tasks using `conditioned_query_priors.v1`, including Ames, refresh both branches
+through the shared fresh-prior runtime, with the configured failure-only racing.
+Only frozen tool retrievals are copied; old-model single/None predictions are not.
 `--provider-pool-config PATH` forwards routing options without changing prompts and
 freezes the public provider configuration in the suite manifest. Credentials are
 read from `--env-file` (default `.env`) and are never written to receipts.
@@ -343,6 +357,18 @@ discarded/cancelled attempts; their available usage is in these receipts.
 active root, whose `execution_status.json` has query progress. An exclusive
 `launcher.lock` prevents duplicate suite launches. Exhausted failures remain
 `needs_attention`, while later suite jobs still run. No periodic Codex monitor is used.
+
+Source-repair diagnostics use `--record-review-overlay` before cumulative
+selection. Hash-bound `correct` decisions may repair endpoint/measurement/context
+fields while preserving raw support, molecule identity and family membership;
+corrected cards receive new content-addressed IDs. `--query-structure-map` accepts
+an input-hash-bound `verified_query_structure.v1` map for DILI/Carcinogens. It uses
+verified source-parent structures consistently for retrieval, tools and reasoning
+while retaining frozen benchmark rows and leakage identities. Pass the same map
+to fresh-prior preparation and evidence preparation; stale prior structures fail
+closed. Task-specific rules under `--evidence-grounding` are pinned in manifests
+and preserve the existing progressive update mechanism. The Carcinogens R5
+Valid/Test repair and its source-only decisions are linked from the result registry.
 
 Ames fresh single/None preparation is available through the progressive runner
 with `--tasks ames --fresh-query-priors` and an explicit output root. Task-local

@@ -1,0 +1,43 @@
+{
+  "parent_key": "GLIUZQUNUNICGS-XUBYYPQFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GLIUZQUNUNICGS-XUBYYPQFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1S,4S,5S,6R,9S,10R,12R,14R)-5,6-dihydroxy-7-(hydroxymethyl)-3,11,11,14-tetramethyl-15-oxotetracyclo(7.5.1.0^(1,5).0^(10,12))pentadeca-2,7-dien-4-yl 3,5-diethyl-1,2-oxazole-4-carboxylate",
+    "(1aR,2S,3Z,5R,5aS,6S,8aS,9R,10aR)-5,5a-Dihydroxy-4-(hydroxymethyl)-1,1,7,9-tetramethyl-11-oxo-1a,2,5,5a,6,9,10,10a-octahydro-1H-2,8a-methanocyclopenta[a]cyclpropa[E][10]annulen-6-yl 3,5-diethylisoxazole-4-carboxylate",
+    "1383547-60-1",
+    "3B100VJ4ZW",
+    "4-Isoxazolecarboxylic acid, 3,5-diethyl-, (1aR,2S,5R,5aS,6S,8aS,9R,10aR)-1a,2,5,5a,6,9,10,10a-octahydro-5,5a-dihydroxy-4-(hydroxymethyl)-1,1,7,9-tetramethyl-11-oxo-1H-2,8a-methanocyclopenta(a)cyclopropa(E)cyclodecen-6-yl ester",
+    "812-481-1",
+    "AKOS040752081",
+    "CHEMBL3989918",
+    "CS-0014700",
+    "D11112",
+    "DB15109",
+    "Disoxate d'ingenol",
+    "Disoxato de ingenol",
+    "HY-17616",
+    "INGENOL 3-(3,5-DIETHYLISOXAZOLE-4-CARBOXYLATE)",
+    "INGENOL DISOXATE [USAN]",
+    "INGENOL DISOXATE [WHO-DD]",
+    "Ingenol disoxate",
+    "Ingenol disoxate (USAN/INN)",
+    "Ingenol disoxate [INN]",
+    "Ingenol disoxate [USAN:INN]",
+    "LEO 43204",
+    "LEO-43204",
+    "LEO43204",
+    "Q27256984",
+    "RefChem:791029",
+    "SCHEMBL16153426",
+    "T32162",
+    "UNII-3B100VJ4ZW",
+    "[(1S,4S,5S,6R,9S,10R,12R,14R)-5,6-dihydroxy-7-(hydroxymethyl)-3,11,11,14-tetramethyl-15-oxo-4-tetracyclo[7.5.1.01,5.010,12]pentadeca-2,7-dienyl] 3,5-diethyl-1,2-oxazole-4-carboxylate",
+    "ingenoli disoxas",
+    "orb1985962"
+  ],
+  "http_status": 200,
+  "cids": [
+    57410862
+  ]
+}

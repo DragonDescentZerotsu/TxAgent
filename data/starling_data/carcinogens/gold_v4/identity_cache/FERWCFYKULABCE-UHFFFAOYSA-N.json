@@ -1,0 +1,40 @@
+{
+  "parent_key": "FERWCFYKULABCE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FERWCFYKULABCE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "161262-29-9",
+    "161262-29-9 (free base)",
+    "3-((2-AMINOETHOXY)METHYL)-2,5,9-TRIMETHYL-7H-FURO(3,2-G)CHROMEN-7-ONE",
+    "3-((2-Aminoethoxy)methyl)-2,5,9-trimethyl-7H-furo(3,2-g)(1)benzopyran-7-one",
+    "3-(2-aminoethoxymethyl)-2,5,9-trimethylfuro[3,2-g]chromen-7-one",
+    "3-[(2-Aminoethoxy)methyl]-2,5,9-trimethyl-7H-furo[3,2-g][1]benzopyran-7-one",
+    "3-[(2-aminoethoxy)methyl]-2,5,9-trimethyl-7h-furo[3,2-g]chromen-7-one",
+    "7H-Furo(3,2-g)(1)benzopyran-7-one, 3-((2-aminoethoxy)methyl)-2,5,9-trimethyl-",
+    "AKOS040750488",
+    "AMOTOSALEN [WHO-DD]",
+    "Amotosalen",
+    "Amotosalen [INN]",
+    "Amotosalen free base",
+    "CHEMBL2110621",
+    "CS-0027096",
+    "DTXCID30200970",
+    "DTXSID70870075",
+    "FERWCFYKULABCE-UHFFFAOYSA-N",
+    "K1LDZ0VBC0",
+    "Q9150146",
+    "RefChem:112260",
+    "SCHEMBL29442584",
+    "SCHEMBL599618",
+    "T30030",
+    "UNII-K1LDZ0VBC0",
+    "amotosalene",
+    "amotosaleno",
+    "amotosalenum",
+    "orb1698405"
+  ],
+  "http_status": 200,
+  "cids": [
+    159599
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "DPGGDVPPQMXEOF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DPGGDVPPQMXEOF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Methyl-4-nitro-5-thioimidazole",
+    "1-methyl-4-nitro-1h-imidazole-5-thiol",
+    "1H-Imidazole-5-thiol, 1-methyl-4-nitro-",
+    "1H-Imidazole-5-thiol, 1-methyl-4-nitro-; Imidazole-5-thiol, 1-methyl-4-nitro- (6CI,7CI,8CI); 1-Methyl-4-nitro-1H-imidazole-5-thiol; 1-Methyl-4-nitro-5-thioimidazole; 5-Mercapto-1-methyl-4-nitroimidazole; Azathioprine Impurity D",
+    "1H-Imidazole-5-thiol,1-methyl-4-nitro-",
+    "3-methyl-5-nitro-imidazole-4-thiol",
+    "3-methyl-5-nitroimidazole-4-thiol",
+    "4-(Hydroxy(oxido)amino)-5-mercapto-1-methyl-1H-imidazole",
+    "5-Mercapto-1-methyl-4-nitroimidazole",
+    "6339-54-4",
+    "829-248-5",
+    "A1DBJ",
+    "AKOS025395134",
+    "AZATHIOPRINE IMPURITY D [EP IMPURITY]",
+    "Azathioprine EP Impurity D",
+    "CCRIS 3710",
+    "CHEMBL3544542",
+    "DS-002895",
+    "DTXCID40135289",
+    "DTXSID10212798",
+    "I6P7H2GT7J",
+    "Imidazole-5-thiol, 1-methyl-4-nitro-",
+    "NSC 38074",
+    "NSC-38074",
+    "NSC38074",
+    "Q27280517",
+    "RefChem:103004",
+    "SCHEMBL9453945",
+    "SY037228",
+    "UNII-I6P7H2GT7J"
+  ],
+  "http_status": 200,
+  "cids": [
+    95824
+  ]
+}

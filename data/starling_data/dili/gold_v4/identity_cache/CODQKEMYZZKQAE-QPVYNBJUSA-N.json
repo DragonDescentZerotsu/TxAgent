@@ -1,0 +1,26 @@
+{
+  "parent_key": "CODQKEMYZZKQAE-QPVYNBJUSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4R)-8-((4'-(3-methanesulfonylpropoxy)-2',6'-dimethyl-(1,1'-biphenyl)-3-yl)methoxy)-9-azatricyclo(4.4.0.0^(2,4))deca-1(6),7,9-triene-3-carboxylic acid",
+    "(2S,3S,4R)-8-{[4'-(3-methanesulfonylpropoxy)-2',6'-dimethyl-[1,1'-biphenyl]-3-yl]methoxy}-9-azatricyclo[4.4.0.0^{2,4}]deca-1(6),7,9-triene-3-carboxylic acid",
+    "(5ar,6s,6as)-3-({2',6'-Dimethyl-4'-[3-(Methylsulfonyl)propoxy][1,1'-Biphenyl]-3-Yl}methoxy)-5,5a,6,6a-Tetrahydrocyclopropa[4,5]cyclopenta[1,2-C]pyridine-6-Carboxylic Acid",
+    "11612L5SPI",
+    "1544739-75-4",
+    "BDBM50566358",
+    "CHEMBL4297471",
+    "Cyclopropa(4,5)cyclopenta(1,2-C)pyridine-6-carboxylic acid, 3-((2',6'-dimethyl-4'-(3-(methylsulfonyl)propoxy)(1,1'-biphenyl)-3-yl)methoxy)-5,5a,6,6a-tetrahydro-, (5aR,6S,6aS)-",
+    "DB14937",
+    "MK 8666",
+    "MK-8666",
+    "RefChem:159220",
+    "SCHEMBL15467128",
+    "SCHEMBL29376346",
+    "UNII-11612L5SPI"
+  ],
+  "cids": [
+    73051869
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CODQKEMYZZKQAE-QPVYNBJUSA-N/synonyms/JSON",
+  "http_status": 200
+}

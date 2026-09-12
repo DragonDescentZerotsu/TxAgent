@@ -1,0 +1,12 @@
+{
+  "parent_key": "LETRBJQEELPURX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LETRBJQEELPURX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL6753713"
+  ],
+  "http_status": 200,
+  "cids": [
+    21299826
+  ]
+}

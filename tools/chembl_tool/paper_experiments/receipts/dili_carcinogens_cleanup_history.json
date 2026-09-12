@@ -1,0 +1,2265 @@
+{
+  "status": "historical_diagnostics_on_inspected_evaluation_sets",
+  "active_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json",
+  "suites": {
+    "dili_retrieval_review_v1_no_prior_grounded_sim0": {
+      "tasks": [
+        "dili"
+      ],
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "n_rows_by_subset": {
+        "valid": 402,
+        "test": 402
+      },
+      "retry_race_width": 6,
+      "initial_card_limit": 4,
+      "delta_card_limit": 2,
+      "baseline_root": "outputs/baselines/dili_gold_v4_scaffold_v1",
+      "min_similarity": 0.0,
+      "reasoning_policy": {
+        "version": "evidence_grounding_ablation.v1",
+        "omit_query_prior_with_evidence": true,
+        "evidence_grounding": true
+      },
+      "progressive_update_rule_changed": false,
+      "test_previously_examined": true,
+      "n_expected_level_outputs": 11256,
+      "n_reused_single_none_pairs": 804,
+      "status": "stale_retrieval_requires_replay_or_selected_surface_audit",
+      "phase": "complete",
+      "root": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0",
+      "completion_status": "complete_verified_on_retrieval_review_v1",
+      "reference_suite": "dili_gold_v4_no_prior_grounded_sim0",
+      "completion_validation": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/completion_validation.json",
+      "source_review_publication": "data/starling_data/dili/retrieval_review_v1/publication.json",
+      "run_plan": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/run_plan.json",
+      "surface_audit": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/surface_audit_summary.json",
+      "paired_performance": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/paired_performance.json",
+      "n_new_model_called_levels": 1748,
+      "n_reused_level_outputs": 9508,
+      "n_failed_queries": 0,
+      "performance_available": true,
+      "metrics_role": "Completed retrieval_review_v1 performance; v2 corrects four nonvoter source records. No v2 inference has run. Unchanged evidence requires the existing full prompt/tool/progressive-prefix gates before reuse.",
+      "old_level_predictions_reused": true,
+      "max_tokens": 20480,
+      "n_affected_query_rows": 215,
+      "n_affected_rows_by_subset": {
+        "valid": 82,
+        "test": 133
+      },
+      "n_completed_hybrid_runs": 4,
+      "parallelism_per_run": 128,
+      "maximum_total_requests": 512,
+      "connection_timeout_s": 1800,
+      "transport_adjustment": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/transport_adjustment.json",
+      "resume_receipt": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/resume_receipt.json",
+      "roots_by_subset": {
+        "valid": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/dili/valid/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/dili/valid/runs/replicate_01/full_flat"
+        },
+        "test": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/dili/test/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/dili/test/runs/replicate_01/full_flat"
+        }
+      },
+      "final_level_results": {
+        "valid": {
+          "progressive": {
+            "accuracy": 0.8134328358208955,
+            "macro_f1": 0.6700554832073015,
+            "corrected": 2,
+            "regressed": 2
+          },
+          "full_flat": {
+            "accuracy": 0.7388059701492538,
+            "macro_f1": 0.6196577730922066,
+            "corrected": 3,
+            "regressed": 3
+          }
+        },
+        "test": {
+          "progressive": {
+            "accuracy": 0.7089552238805971,
+            "macro_f1": 0.6039408866995074,
+            "corrected": 3,
+            "regressed": 1
+          },
+          "full_flat": {
+            "accuracy": 0.6492537313432836,
+            "macro_f1": 0.5781930212309959,
+            "corrected": 6,
+            "regressed": 4
+          }
+        }
+      },
+      "figures": {
+        "root": "outputs/paper/analysis/dili_retrieval_review_v1",
+        "figure_receipt": "outputs/paper/analysis/dili_retrieval_review_v1/figure_receipt.json",
+        "current": {
+          "valid": {
+            "png": "outputs/paper/analysis/dili_retrieval_review_v1/after/valid/figures/dili_after_valid.png",
+            "svg": "outputs/paper/analysis/dili_retrieval_review_v1/after/valid/figures/dili_after_valid.svg"
+          },
+          "test": {
+            "png": "outputs/paper/analysis/dili_retrieval_review_v1/after/test/figures/dili_after_test.png",
+            "svg": "outputs/paper/analysis/dili_retrieval_review_v1/after/test/figures/dili_after_test.svg"
+          }
+        },
+        "pre_review_reference": {
+          "valid": {
+            "png": "outputs/paper/analysis/dili_retrieval_review_v1/before/valid/figures/dili_before_valid.png",
+            "svg": "outputs/paper/analysis/dili_retrieval_review_v1/before/valid/figures/dili_before_valid.svg"
+          },
+          "test": {
+            "png": "outputs/paper/analysis/dili_retrieval_review_v1/before/test/figures/dili_before_test.png",
+            "svg": "outputs/paper/analysis/dili_retrieval_review_v1/before/test/figures/dili_before_test.svg"
+          }
+        },
+        "retrieval_status": "retrieval_review_v1_reference_not_v2_performance"
+      },
+      "l1_knn_diagnostic": {
+        "status": "complete_verified_descriptive_audit",
+        "report": "outputs/paper/analysis/dili_l1_knn_diagnostic/REPORT.md",
+        "validation": "outputs/paper/analysis/dili_l1_knn_diagnostic/validation.json",
+        "n_query_rows": 804,
+        "n_manual_cases": 12,
+        "n_pending_source_questions": 2,
+        "new_model_calls": 0,
+        "source_or_reasoning_changes_applied": false
+      },
+      "valid_l2_l4_diagnostic": {
+        "status": "complete_verified",
+        "root": "outputs/paper/analysis/dili_valid_l2_l4_diagnostic",
+        "report": "outputs/paper/analysis/dili_valid_l2_l4_diagnostic/REPORT.md",
+        "validation": "outputs/paper/analysis/dili_valid_l2_l4_diagnostic/validation.json",
+        "n_queries": 402,
+        "n_target_transitions": 1206,
+        "n_flip_reviews": 15,
+        "n_nonflip_state_reviews": 12,
+        "n_unique_new_basis_cards_reviewed": 29,
+        "corrected": 4,
+        "regressed": 11,
+        "n_pending_source_questions": 0,
+        "source_gold_prompt_changes": false,
+        "new_model_calls": 0,
+        "n_resolved_source_questions": 4,
+        "source_question_resolution": "outputs/paper/analysis/dili_valid_l2_l4_diagnostic/source_question_resolutions.json"
+      },
+      "current_retrieval_review_publication": "data/starling_data/dili/retrieval_review_v2/publication.json",
+      "v2_selected_surface_audit": "data/starling_data/dili/retrieval_review_v2/selected_surface_audit_summary.json"
+    },
+    "dili_l1_condition_priority_v1": {
+      "status": "superseded_before_inference",
+      "task": "dili",
+      "split_scheme": "scaffold",
+      "evaluation_subset": "valid",
+      "organization": "progressive",
+      "executed_levels": [
+        1
+      ],
+      "full_prompt_level_plan": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "scope": "isolated condition-prioritized L1 selection diagnostic; targeted rerun with exact-input reuse",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1",
+      "run_root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/valid",
+      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/CONTRACT.md",
+      "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/command.json",
+      "startup_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/startup_validation.json",
+      "condition_map_coverage": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/valid/dili/condition_map_coverage.json",
+      "n_rows": 402,
+      "n_changed_queries": 140,
+      "n_reused_queries": 262,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "parallelism": 256,
+      "retry_race_width": 6,
+      "max_tokens": 20480,
+      "baseline_root": "outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/dili/valid/runs/replicate_01/progressive",
+      "test_run": false,
+      "source_changes": false,
+      "gold_changes": false,
+      "updated_at": "2026-09-11T00:48:44.044570+00:00",
+      "blocking_pids": [
+        84868,
+        84986,
+        84987
+      ],
+      "queue_pid": 101888,
+      "replacement_suite": "dili_l1_condition_priority_openrouter_v1",
+      "n_new_parcc_calls": 0
+    },
+    "dili_l1_condition_priority_openrouter_v1": {
+      "status": "complete_verified",
+      "task": "dili",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "organization": "progressive",
+      "executed_levels": [
+        1
+      ],
+      "full_prompt_level_plan": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter",
+      "selection_contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/CONTRACT.md",
+      "transport_contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/CONTRACT.md",
+      "provider_pool": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/provider_pool.json",
+      "provider_preflight": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/provider_preflight.json",
+      "model": "deepseek/deepseek-v4-flash-0731",
+      "parallelism_per_split": 256,
+      "total_request_budget": 512,
+      "retry_race_width": 6,
+      "max_tokens": 20480,
+      "n_fresh_L1_queries": 804,
+      "n_reused_level_predictions": 0,
+      "priors_and_tools": "frozen; inherited from corresponding PARCC cohort",
+      "inference_backend_comparison_limit": "Previous PARCC vs current OpenRouter is not an isolated retrieval-effect estimate",
+      "source_changes": false,
+      "gold_changes": false,
+      "subsets": {
+        "valid": {
+          "status": "complete_verified",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid_command.json",
+          "n_rows": 402,
+          "n_fresh_L1_queries": 402,
+          "runner_pid": 108932,
+          "updated_at": "2026-09-11T01:12:52.186019+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid/performance.json",
+          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/valid/completion_validation.json",
+          "exit_code": 0,
+          "metrics": {
+            "accuracy": 0.7910447761194029,
+            "macro_f1": 0.6325891108499804
+          },
+          "corrected_vs_parcc": 14,
+          "regressed_vs_parcc": 27
+        },
+        "test": {
+          "status": "complete_verified",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test_command.json",
+          "n_rows": 402,
+          "n_fresh_L1_queries": 402,
+          "runner_pid": 108933,
+          "updated_at": "2026-09-11T01:11:42.411760+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test/performance.json",
+          "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/test/completion_validation.json",
+          "exit_code": 0,
+          "metrics": {
+            "accuracy": 0.6990049751243781,
+            "macro_f1": 0.6063894350981963
+          },
+          "corrected_vs_parcc": 28,
+          "regressed_vs_parcc": 32
+        }
+      },
+      "controller_pid": 108918,
+      "n_completed_L1_queries": 804,
+      "n_failed_queries": 0,
+      "storage_migration_receipt": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/storage_migration_receipt.json",
+      "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
+    },
+    "dili_l1_condition_priority_parcc_endpoint_v1": {
+      "status": "complete_verified",
+      "task": "dili",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "organization": "progressive",
+      "executed_levels": [
+        1
+      ],
+      "full_prompt_level_plan": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1",
+      "reference_suite": "dili_l1_condition_priority_openrouter_v1",
+      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/CONTRACT.md",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "base_url": "http://127.0.0.1:50003/v1",
+      "parallelism_per_split": 256,
+      "total_request_budget": 512,
+      "retry_race_width": 6,
+      "max_tokens": 20480,
+      "n_fresh_L1_queries": 804,
+      "n_reused_level_predictions": 0,
+      "input_match_contract": "byte-identical prepared files and identical complete nominal requests to completed OpenRouter run",
+      "subsets": {
+        "valid": {
+          "status": "complete_verified",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid_command.json",
+          "n_rows": 402,
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid/performance.json",
+          "runner_pid": 139835,
+          "exit_code": 0,
+          "metrics": {
+            "n": 402,
+            "macro_f1": 0.6774814672186387,
+            "accuracy": 0.8134328358208955,
+            "tn_fp_fn_tp": [
+              33,
+              42,
+              33,
+              294
+            ]
+          },
+          "endpoint_disagreements": 41,
+          "parcc_corrected": 25,
+          "parcc_regressed": 16,
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/valid/completion_validation.json"
+        },
+        "test": {
+          "status": "complete_verified",
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test",
+          "command": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test_command.json",
+          "n_rows": 402,
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test/performance.json",
+          "runner_pid": 139836,
+          "exit_code": 0,
+          "metrics": {
+            "n": 402,
+            "macro_f1": 0.5943285024973923,
+            "accuracy": 0.7039800995024875,
+            "tn_fp_fn_tp": [
+              37,
+              45,
+              74,
+              246
+            ]
+          },
+          "endpoint_disagreements": 56,
+          "parcc_corrected": 29,
+          "parcc_regressed": 27,
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/test/completion_validation.json"
+        }
+      },
+      "controller_pid": 139760,
+      "n_completed_L1_queries": 804,
+      "n_failed_queries": 0,
+      "l1_knn_trace_audit": {
+        "status": "complete_verified",
+        "scope": "post_hoc_current_test_L1_trace_diagnostic",
+        "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit",
+        "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/REPORT.md",
+        "validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/validation.json",
+        "n_queries": 402,
+        "n_disagreement_summaries_read": 126,
+        "n_representative_cases": 12,
+        "n_selected_raw_card_cases": 9,
+        "n_state_geometry_only_cases": 3,
+        "source_gold_prompt_changed": false,
+        "new_model_calls": 0,
+        "macro_f1_L1": 0.5943285024973923,
+        "macro_f1_MiniMol_condition_KNN": 0.6334033505814847,
+        "knn_only_correct": 78,
+        "L1_only_correct": 48,
+        "explicit_condition_correct_L1_KNN": [
+          124,
+          156
+        ],
+        "null_condition_correct_L1_KNN": [
+          159,
+          157
+        ],
+        "empty_basis_false_negatives": 22,
+        "identical_old_current_messages_n": 225,
+        "identical_message_prediction_flips": 21,
+        "interpretation": "Condition coverage trades off structural similarity; weak evidence/negative transfer and role attribution need attention. Single runs do not establish stable retrieval gain; valid negatives retained and source questions remain pending.",
+        "valid_test_comparison": {
+          "status": "complete_verified",
+          "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/VALID_TEST_COMPARISON.md",
+          "summary": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/split_comparison.json",
+          "valid_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/valid/validation.json",
+          "n_queries": 804,
+          "additional_valid_representative_reviews": 6,
+          "valid_L1_KNN_macro_f1": [
+            0.6774814672186387,
+            0.6063454759106933
+          ],
+          "test_L1_KNN_macro_f1": [
+            0.5943285024973923,
+            0.6334033505814847
+          ],
+          "scaffold_counts_valid_test": [
+            225,
+            112
+          ],
+          "test_two_largest_scaffolds_n": 226,
+          "test_two_largest_scaffolds_L1_false_negatives": 61,
+          "source_gold_predictions_changed": false,
+          "new_model_calls": 0,
+          "interpretation": "Valid gain predates condition priority; distinct scaffold composition, raw-card interpretation, and unsupported class judgments contribute differently. Descriptive, not causal."
+        }
+      },
+      "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
+    },
+    "dili_l1_morgan_neighbors_condition_cards_v1": {
+      "status": "complete_verified",
+      "scope": "DILI scaffold valid/test fresh progressive L1, Morgan neighbors unchanged; condition prioritizes within-molecule cards only",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1",
+      "suite_key": "dili_l1_morgan_neighbors_condition_cards_v1",
+      "parallelism_per_split": 256,
+      "total_request_budget": 512,
+      "max_tokens": 20480,
+      "retry_race_width": 6,
+      "n_fresh_L1_queries": 804,
+      "subsets": {
+        "valid": {
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/valid",
+          "n_rows": 402,
+          "status": "complete_verified",
+          "runner_pid": 250578,
+          "exit_code": 0,
+          "n_changed_queries": 128,
+          "updated_at": "2026-09-11T04:40:50.741314+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/valid/performance.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/valid/completion_validation.json",
+          "metrics": {
+            "n": 402,
+            "accuracy": 0.8283582089552238,
+            "macro_f1": 0.6773863385245235,
+            "tn_fp_fn_tp": [
+              29,
+              46,
+              23,
+              304
+            ]
+          }
+        },
+        "test": {
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/test",
+          "n_rows": 402,
+          "status": "complete_verified",
+          "runner_pid": 250579,
+          "exit_code": 0,
+          "n_changed_queries": 157,
+          "updated_at": "2026-09-11T04:40:14.180071+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/test/performance.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/test/completion_validation.json",
+          "metrics": {
+            "n": 402,
+            "accuracy": 0.7039800995024875,
+            "macro_f1": 0.5999464788967963,
+            "tn_fp_fn_tp": [
+              39,
+              43,
+              76,
+              244
+            ]
+          }
+        }
+      },
+      "controller_pid": 249962,
+      "n_completed_L1_queries": 804,
+      "n_failed_queries": 0,
+      "results": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/RESULTS.md",
+      "trace_audit": {
+        "status": "complete_verified",
+        "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/trace_audit",
+        "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/trace_audit/REPORT.md",
+        "n_queries_checked": 804,
+        "n_manual_paired_summary_cases": 24,
+        "n_manual_selected_raw_card_cases": 7,
+        "no_new_model_calls": true,
+        "next_experiment_implemented": false,
+        "finding": "Valid exceeds KNN; test macro-F1 0.599946 vs MiniMol condition KNN 0.633403. Changed test inputs corrected 5/regressed 14; unspecified-condition fallback displaces informative cross-condition evidence. Exact-only promotion is proposed, not implemented."
+      },
+      "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
+    },
+    "dili_l1_morgan_neighbors_exact_condition_cards_v1": {
+      "status": "complete_verified",
+      "scope": "DILI scaffold valid/test fresh L1; original Morgan neighbors, exact-condition promotion with pooled fallback",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1",
+      "suite_key": "dili_l1_morgan_neighbors_exact_condition_cards_v1",
+      "parallelism_per_split": 256,
+      "total_request_budget": 512,
+      "max_tokens": 20480,
+      "retry_race_width": 6,
+      "n_fresh_L1_queries": 804,
+      "comparison_root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1",
+      "subsets": {
+        "valid": {
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/valid",
+          "n_rows": 402,
+          "status": "complete_verified",
+          "runner_pid": 337795,
+          "exit_code": 0,
+          "n_changed_queries": 51,
+          "updated_at": "2026-09-11T08:34:46.850799+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/valid/performance.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/valid/completion_validation.json",
+          "metrics": {
+            "n": 402,
+            "accuracy": 0.8159203980099502,
+            "macro_f1": 0.6604884729513809,
+            "tn_fp_fn_tp": [
+              28,
+              47,
+              27,
+              300
+            ]
+          },
+          "previous_policy_performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/valid/previous_policy_performance.json"
+        },
+        "test": {
+          "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/test",
+          "n_rows": 402,
+          "status": "complete_verified",
+          "runner_pid": 337796,
+          "exit_code": 0,
+          "n_changed_queries": 62,
+          "updated_at": "2026-09-11T08:34:10.136696+00:00",
+          "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/test/performance.json",
+          "completion_validation": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/test/completion_validation.json",
+          "metrics": {
+            "n": 402,
+            "accuracy": 0.6915422885572139,
+            "macro_f1": 0.5873509933774834,
+            "tn_fp_fn_tp": [
+              38,
+              44,
+              80,
+              240
+            ]
+          },
+          "previous_policy_performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/test/previous_policy_performance.json"
+        }
+      },
+      "controller_pid": 307706,
+      "n_completed_L1_queries": 804,
+      "n_failed_queries": 0,
+      "results": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/RESULTS.md",
+      "interpretation": "No demonstrated overall gain or test KNN parity. Compared with previous card policy, changed-input valid/test corrected-regressed=2-0/9-4, while unchanged-input reruns=6-13/12-22. Compared with original L1, changed inputs net +1/-1 correct; single-run variation prevents causal claims.",
+      "trace_audit": {
+        "status": "complete_verified",
+        "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/trace_audit",
+        "report": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1/trace_audit/REPORT.md",
+        "n_queries_checked": 804,
+        "n_current_FN_summaries_read": 107,
+        "n_correct_negative_control_summaries_read": 6,
+        "n_selected_cases": 11,
+        "n_selected_raw_card_cases": 9,
+        "no_new_model_calls": true,
+        "no_source_gold_changes": true,
+        "next_experiment_implemented": false
+      },
+      "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
+    },
+    "dili_l1_query_identity_pilot_v1": {
+      "status": "completed_rejected_method",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1",
+      "scope": "Only query.verified_chemical_name differs; all instructions/evidence/tools/condition/prior unchanged",
+      "n_queries": 32,
+      "n_expected_outputs": 128,
+      "subsets": [
+        "valid",
+        "test"
+      ],
+      "repeats_per_arm": 2,
+      "parallelism_per_split": 256,
+      "total_request_budget": 512,
+      "max_tokens": 20480,
+      "retry_race_width": 6,
+      "source_root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1",
+      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1/CONTRACT.md",
+      "n_fresh_L1_calls": 128,
+      "n_completed_L1_calls": 128,
+      "controller_pid": 434429,
+      "endpoint_scheduling": "Start immediately alongside Carcinogens, explicitly authorized by user; existing per-split budgets unchanged",
+      "runner_pids": [
+        434435,
+        434436
+      ],
+      "n_failed": 0,
+      "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1/performance.json",
+      "results": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1/RESULTS.md",
+      "scientific_status": "rejected_by_user",
+      "rejection_receipt": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_pilot_v1/rejection_receipt.json"
+    },
+    "dili_l1_query_identity_exclusion_pilot_v1": {
+      "status": "complete_verified",
+      "root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1",
+      "contract": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/CONTRACT.md",
+      "n_queries": 3,
+      "n_expected_outputs": 12,
+      "parallelism_per_split": 256,
+      "max_tokens": 20480,
+      "retry_race_width": 6,
+      "source_root": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_exact_condition_cards_v1",
+      "scope": "Trace-informed identity-exclusion diagnostic, no true query names, not full-cohort performance",
+      "n_fresh_L1_calls": 12,
+      "n_completed_L1_calls": 12,
+      "controller_pid": 451141,
+      "runner_pids": [
+        451149,
+        451150
+      ],
+      "n_failed": 0,
+      "performance": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/performance.json",
+      "results": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/RESULTS.md",
+      "manual_trace_review": "complete_verified",
+      "manual_review_summary": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/manual_review_summary.json",
+      "manual_trace_reviews": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/manual_trace_reviews.jsonl",
+      "recommendation": "no_expansion_observed_no_benefit",
+      "scientific_status": "retired_by_user",
+      "future_execution_allowed": false,
+      "retirement_receipt": "outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/query_identity_exclusion_pilot_v1/retirement_receipt.json",
+      "retrieval_lineage_note": "Completed on retrieval_review_v1. v2 changes only one L2 and three L4 source records; L1 source rows are unchanged. No fresh v2 inference or condition-policy-specific full prompt reuse audit in this release."
+    },
+    "dili_retrieval_review_v2_no_prior_grounded_sim0": {
+      "tasks": [
+        "dili"
+      ],
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "n_rows_by_subset": {
+        "valid": 402,
+        "test": 402
+      },
+      "retry_race_width": 6,
+      "initial_card_limit": 4,
+      "delta_card_limit": 2,
+      "baseline_root": "outputs/baselines/dili_gold_v4_scaffold_v1",
+      "min_similarity": 0.0,
+      "reasoning_policy": {
+        "version": "evidence_grounding_ablation.v1",
+        "omit_query_prior_with_evidence": true,
+        "evidence_grounding": true
+      },
+      "progressive_update_rule_changed": false,
+      "test_previously_examined": true,
+      "n_expected_level_outputs": 11256,
+      "n_reused_single_none_pairs": 804,
+      "status": "complete_verified",
+      "phase": "complete",
+      "root": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0",
+      "completion_status": "complete_verified_on_retrieval_review_v2",
+      "reference_suite": "dili_retrieval_review_v1_no_prior_grounded_sim0",
+      "completion_validation": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/completion_validation.json",
+      "source_review_publication": "data/starling_data/dili/retrieval_review_v2/publication.json",
+      "run_plan": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/run_plan.json",
+      "surface_audit": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/surface_audit_summary.json",
+      "paired_performance": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/paired_performance.json",
+      "n_new_model_called_levels": 94,
+      "n_reused_level_outputs": 11162,
+      "n_failed_queries": 0,
+      "performance_available": true,
+      "metrics_role": "Complete v2-source evaluation: only 94 affected valid level outputs freshly inferred; 11162 exact-input outputs reused. Descriptive paired comparison, not an independent replicate or proof of causal improvement.",
+      "old_level_predictions_reused": true,
+      "max_tokens": 20480,
+      "n_affected_query_rows": 8,
+      "n_affected_rows_by_subset": {
+        "valid": 8,
+        "test": 0
+      },
+      "n_completed_hybrid_runs": 4,
+      "parallelism_per_run": 256,
+      "maximum_active_request_budget": 512,
+      "connection_timeout_s": 1800,
+      "roots_by_subset": {
+        "valid": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/dili/valid/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/dili/valid/runs/replicate_01/full_flat"
+        },
+        "test": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/dili/test/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/dili/test/runs/replicate_01/full_flat"
+        }
+      },
+      "final_level_results": {
+        "valid": {
+          "progressive": {
+            "accuracy": 0.8134328358208955,
+            "macro_f1": 0.6661684105630294,
+            "corrected": 1,
+            "regressed": 1
+          },
+          "full_flat": {
+            "accuracy": 0.746268656716418,
+            "macro_f1": 0.625944170771757,
+            "corrected": 3,
+            "regressed": 0
+          }
+        },
+        "test": {
+          "progressive": {
+            "accuracy": 0.7089552238805971,
+            "macro_f1": 0.6039408866995074,
+            "corrected": 0,
+            "regressed": 0
+          },
+          "full_flat": {
+            "accuracy": 0.6492537313432836,
+            "macro_f1": 0.5781930212309959,
+            "corrected": 0,
+            "regressed": 0
+          }
+        }
+      }
+    },
+    "dili_retrieval_review_v3_no_prior_grounded_sim0": {
+      "tasks": [
+        "dili"
+      ],
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "n_rows_by_subset": {
+        "valid": 402,
+        "test": 402
+      },
+      "retry_race_width": 6,
+      "initial_card_limit": 4,
+      "delta_card_limit": 2,
+      "baseline_root": "outputs/baselines/dili_gold_v4_scaffold_v1",
+      "min_similarity": 0.0,
+      "reasoning_policy": {
+        "version": "evidence_grounding_ablation.v1",
+        "omit_query_prior_with_evidence": true,
+        "evidence_grounding": true
+      },
+      "progressive_update_rule_changed": false,
+      "test_previously_examined": true,
+      "n_expected_level_outputs": 11256,
+      "n_reused_single_none_pairs": 804,
+      "status": "complete_verified",
+      "phase": "complete",
+      "root": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0",
+      "reference_suite": "dili_retrieval_review_v2_no_prior_grounded_sim0",
+      "completion_status": "complete_verified_on_retrieval_review_v3",
+      "completion_validation": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/completion_validation.json",
+      "source_review_publication": "data/starling_data/dili/retrieval_review_v3/publication.json",
+      "run_plan": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/run_plan.json",
+      "surface_audit": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/surface_audit_summary.json",
+      "paired_performance": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/paired_performance.json",
+      "n_new_model_called_levels": 36,
+      "n_reused_level_outputs": 11220,
+      "n_failed_queries": 0,
+      "performance_available": true,
+      "metrics_role": "Complete v3-source targeted replay with exact-input/prefix reuse. Descriptive paired comparison, not an independent replicate or proof of causal benefit.",
+      "old_level_predictions_reused": true,
+      "max_tokens": 20480,
+      "n_affected_rows_by_subset": {
+        "valid": 1,
+        "test": 2
+      },
+      "n_completed_hybrid_runs": 4,
+      "parallelism_per_run": 256,
+      "maximum_active_request_budget": 512,
+      "connection_timeout_s": 1800,
+      "roots_by_subset": {
+        "valid": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/dili/valid/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/dili/valid/runs/replicate_01/full_flat"
+        },
+        "test": {
+          "progressive": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/dili/test/runs/replicate_01/progressive",
+          "full_flat": "outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/dili/test/runs/replicate_01/full_flat"
+        }
+      },
+      "final_level_results": {
+        "valid": {
+          "progressive": {
+            "accuracy": 0.8159203980099502,
+            "macro_f1": 0.672551954913702,
+            "corrected": 1,
+            "regressed": 0
+          },
+          "full_flat": {
+            "accuracy": 0.746268656716418,
+            "macro_f1": 0.625944170771757,
+            "corrected": 0,
+            "regressed": 0
+          }
+        },
+        "test": {
+          "progressive": {
+            "accuracy": 0.7089552238805971,
+            "macro_f1": 0.6039408866995074,
+            "corrected": 0,
+            "regressed": 0
+          },
+          "full_flat": {
+            "accuracy": 0.6492537313432836,
+            "macro_f1": 0.5781930212309959,
+            "corrected": 0,
+            "regressed": 0
+          }
+        }
+      },
+      "evidence_quality_review": {
+        "status": "not_passed_known_source_defects_and_incomplete_coverage",
+        "report": "outputs/paper/analysis/dili_retrieval_review_v3_quality_gate/REPORT.md",
+        "coverage": "outputs/paper/analysis/dili_retrieval_review_v3_quality_gate/coverage.json",
+        "findings": "outputs/paper/analysis/dili_retrieval_review_v3_quality_gate/findings.jsonl",
+        "pending_records_visible": 12,
+        "query_rows_exposed_to_pending_records": {
+          "valid": 26,
+          "test": 64
+        },
+        "metrics_computational_validation_unchanged": true,
+        "clean_source_certification": false,
+        "new_performance_runs_ready": false
+      }
+    }
+  },
+  "carcinogens_retrieval_cleanup_diagnostic": {
+    "status": "complete_verified",
+    "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1",
+    "contract": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/CONTRACT.md",
+    "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/run_plan.json",
+    "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/progress.json",
+    "record_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/record_review.json",
+    "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/input_change_summary.json",
+    "review_sha256": "48439a804bfb7007602cbd9104ade1ac7e13b6e93f433a5636d56a3e839a2620",
+    "n_cards_moved": 28,
+    "n_cards_excluded": 7,
+    "n_cards_explicitly_kept": 7,
+    "affected_queries": {
+      "valid": 38,
+      "test": 82
+    },
+    "n_level_outputs_to_recompute": 1272,
+    "n_level_outputs_reused": 11860,
+    "canonical_source_modified": false,
+    "independent_test_result": false,
+    "storage": "node002 local /local/tmp; project output path is a symlink",
+    "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/startup_validation.json",
+    "automatic_completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/completion_validation.json",
+    "current_transport": "PARCC DeepSeek-V4-Flash-0731 for remaining progressive; full-flat complete",
+    "transport_switch": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/transport_switch.json",
+    "parcc_stop_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_stop_receipt.json",
+    "successful_recomputed_levels_before_switch": 97,
+    "remaining_levels_at_switch": 1175,
+    "openrouter_resume_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/openrouter_resume_validation.json",
+    "deadline_recovery": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/deadline_recovery.json",
+    "parcc_resume_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_resume_receipt.json",
+    "parcc_recheck": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v1/parcc_recheck/summary.json",
+    "completed_at": "2026-09-10T21:07:13.311630+00:00",
+    "report": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v1/REPORT.md",
+    "completion_validation": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v1/completion_validation.json",
+    "paired_results": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v1/paired_results.json",
+    "final_level_metrics": [
+      {
+        "subset": "valid",
+        "organization": "progressive",
+        "level": 7,
+        "n": 469,
+        "affected": 38,
+        "reused": 431,
+        "fresh_model_calls": 38,
+        "fixed": 1,
+        "broken": 2,
+        "net_correct": -1,
+        "old_macro_f1": 0.6324451410658307,
+        "new_macro_f1": 0.6306539953222607,
+        "old_accuracy": 0.7185501066098081,
+        "new_accuracy": 0.7164179104477612,
+        "old_negative_recall": 0.4954954954954955,
+        "new_negative_recall": 0.4954954954954955,
+        "old_positive_recall": 0.7877094972067039,
+        "new_positive_recall": 0.7849162011173184
+      },
+      {
+        "subset": "valid",
+        "organization": "full_flat",
+        "level": 7,
+        "n": 469,
+        "affected": 38,
+        "reused": 431,
+        "fresh_model_calls": 38,
+        "fixed": 1,
+        "broken": 3,
+        "net_correct": -2,
+        "old_macro_f1": 0.6167972254123886,
+        "new_macro_f1": 0.6114377460475269,
+        "old_accuracy": 0.6950959488272921,
+        "new_accuracy": 0.6908315565031983,
+        "old_negative_recall": 0.5135135135135135,
+        "new_negative_recall": 0.5045045045045045,
+        "old_positive_recall": 0.7513966480446927,
+        "new_positive_recall": 0.7486033519553073
+      },
+      {
+        "subset": "test",
+        "organization": "progressive",
+        "level": 7,
+        "n": 469,
+        "affected": 82,
+        "reused": 387,
+        "fresh_model_calls": 82,
+        "fixed": 1,
+        "broken": 3,
+        "net_correct": -2,
+        "old_macro_f1": 0.5562357501139991,
+        "new_macro_f1": 0.5530292716133424,
+        "old_accuracy": 0.6460554371002132,
+        "new_accuracy": 0.6417910447761194,
+        "old_negative_recall": 0.4144144144144144,
+        "new_negative_recall": 0.4144144144144144,
+        "old_positive_recall": 0.7178770949720671,
+        "new_positive_recall": 0.7122905027932961
+      },
+      {
+        "subset": "test",
+        "organization": "full_flat",
+        "level": 7,
+        "n": 469,
+        "affected": 82,
+        "reused": 387,
+        "fresh_model_calls": 82,
+        "fixed": 5,
+        "broken": 18,
+        "net_correct": -13,
+        "old_macro_f1": 0.5807935469805974,
+        "new_macro_f1": 0.5639546793992972,
+        "old_accuracy": 0.650319829424307,
+        "new_accuracy": 0.6226012793176973,
+        "old_negative_recall": 0.5135135135135135,
+        "new_negative_recall": 0.5405405405405406,
+        "old_positive_recall": 0.6927374301675978,
+        "new_positive_recall": 0.6480446927374302
+      }
+    ],
+    "figures": {
+      "status": "complete_verified",
+      "root": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1",
+      "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/figure_receipt.json",
+      "subsets": {
+        "valid": {
+          "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/valid/figures/carcinogens_cleanup_valid.png",
+          "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/valid/figures/carcinogens_cleanup_valid.svg"
+        },
+        "test": {
+          "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/test/figures/carcinogens_cleanup_test.png",
+          "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/test/figures/carcinogens_cleanup_test.svg"
+        }
+      },
+      "before_after": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/before_after.png"
+    },
+    "trace_change_audit": {
+      "status": "complete_verified_read_only_diagnostic",
+      "report": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/trace_changes/REPORT.md",
+      "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/trace_changes/receipt.json",
+      "placement_candidates": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/trace_changes/placement_candidates.json",
+      "identity_candidate": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/trace_changes/identity_candidate.json",
+      "provider_equivalence": "unverified; substantial observed reasoning-token/return differences",
+      "source_changes_applied": false
+    },
+    "progressive_round2": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2",
+      "contract": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/CONTRACT.md",
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/run_plan.json",
+      "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/progress.json",
+      "review_sha256": "959a15c2315ef8cbd3236bb2d37a464bfd93098646686d8be7ea7041843fc1b8",
+      "source_only_candidates": 68,
+      "new_moves": 15,
+      "new_exclusions": 9,
+      "new_keeps": 44,
+      "cumulative_base_overlay": {
+        "move": 43,
+        "exclude": 16,
+        "keep": 50
+      },
+      "organizations": [
+        "progressive"
+      ],
+      "subsets": [
+        "valid",
+        "test"
+      ],
+      "provider": "PARCC",
+      "parallelism_per_run": 256,
+      "combined_maximum_requests": 512,
+      "retry_race_width": 6,
+      "timeout_s": 900,
+      "reuse_source": "original PARCC run; never round1 OpenRouter states",
+      "canonical_source_modified": false,
+      "independent_test_result": false,
+      "counts": {
+        "valid": {
+          "affected_queries": 38,
+          "levels_to_recompute": 185,
+          "additional_iteration_changed_queries": 10
+        },
+        "test": {
+          "affected_queries": 84,
+          "levels_to_recompute": 453,
+          "additional_iteration_changed_queries": 82
+        }
+      },
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/startup_validation.json",
+      "inference_verification": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/inference_verified.json",
+      "completed_at": "2026-09-10T22:52:23.170288+00:00",
+      "report": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v2/REPORT.md",
+      "completion_validation": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v2/completion_validation.json",
+      "paired_results": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v2/paired_results.json",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "organization": "progressive",
+          "level": 7,
+          "n": 469,
+          "affected": 38,
+          "reused": 431,
+          "fresh_model_calls": 38,
+          "fixed": 1,
+          "broken": 1,
+          "net_correct": 0,
+          "old_macro_f1": 0.6324451410658307,
+          "new_macro_f1": 0.6324451410658307,
+          "old_accuracy": 0.7185501066098081,
+          "new_accuracy": 0.7185501066098081,
+          "old_negative_recall": 0.4954954954954955,
+          "new_negative_recall": 0.4954954954954955,
+          "old_positive_recall": 0.7877094972067039,
+          "new_positive_recall": 0.7877094972067039
+        },
+        {
+          "subset": "test",
+          "organization": "progressive",
+          "level": 7,
+          "n": 469,
+          "affected": 84,
+          "reused": 385,
+          "fresh_model_calls": 84,
+          "fixed": 1,
+          "broken": 5,
+          "net_correct": -4,
+          "old_macro_f1": 0.5562357501139991,
+          "new_macro_f1": 0.5498328741135553,
+          "old_accuracy": 0.6460554371002132,
+          "new_accuracy": 0.6375266524520256,
+          "old_negative_recall": 0.4144144144144144,
+          "new_negative_recall": 0.4144144144144144,
+          "old_positive_recall": 0.7178770949720671,
+          "new_positive_recall": 0.7067039106145251
+        }
+      ],
+      "trace_analysis": {
+        "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/trace_analysis/REPORT.md",
+        "diagnostics": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/trace_analysis/diagnostics.json",
+        "receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2/trace_analysis/receipt.json",
+        "scope": "938 paired queries; 122 changed inputs; all 8 final flips; source-only follow-up candidates, no new inference"
+      }
+    },
+    "progressive_round3": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3",
+      "review_overlay": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/record_review.json",
+      "review_sha256": "c071a0e69e1ba9e8e5519258677cea71006dca6d680368514d1d4502e970ae93",
+      "adjudication": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/adjudication_summary.json",
+      "trace_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/trace_findings_summary.json",
+      "selection_policy": "endpoint_diverse_delta.v1",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v2",
+      "organizations": [
+        "progressive"
+      ],
+      "limitations": "Post-hoc inspected valid/test; source-only audit, unresolved concerns retained; selection and cleanup bundled.",
+      "counts": {
+        "valid": {
+          "affected_queries": 432,
+          "levels_to_recompute": 2361,
+          "additional_iteration_changed_queries": 432
+        },
+        "test": {
+          "affected_queries": 406,
+          "levels_to_recompute": 2229,
+          "additional_iteration_changed_queries": 406
+        }
+      },
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/startup_validation.json",
+      "inference_verified": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/inference_verified.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/AUDIT.md",
+      "source_attribution_240": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/240_source_attribution.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/replacement_audit_approved.json",
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/run_plan.json",
+      "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/progress.json",
+      "cumulative_source_actions": {
+        "move": 348,
+        "exclude": 52
+      },
+      "tests": {
+        "passed": 69,
+        "scope": "progressive selection and indexed-record overlay tests"
+      },
+      "per_run_parallelism": 512,
+      "maximum_total_requests": 1024,
+      "concurrency_change": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3/concurrency_change.json",
+      "completed_at": "2026-09-11T02:04:36.517115+00:00",
+      "report": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v3/REPORT.md",
+      "completion_validation": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v3/completion_validation.json",
+      "paired_results": "/local/tmp/txagent_carcinogens_retrieval_cleanup_diagnostic_v3/paired_results.json",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "organization": "progressive",
+          "level": 7,
+          "n": 469,
+          "affected": 432,
+          "reused": 37,
+          "fresh_model_calls": 406,
+          "fixed": 7,
+          "broken": 7,
+          "net_correct": 0,
+          "old_macro_f1": 0.6324451410658307,
+          "new_macro_f1": 0.6324451410658307,
+          "old_accuracy": 0.7185501066098081,
+          "new_accuracy": 0.7185501066098081,
+          "old_negative_recall": 0.4954954954954955,
+          "new_negative_recall": 0.4954954954954955,
+          "old_positive_recall": 0.7877094972067039,
+          "new_positive_recall": 0.7877094972067039
+        },
+        {
+          "subset": "test",
+          "organization": "progressive",
+          "level": 7,
+          "n": 469,
+          "affected": 406,
+          "reused": 63,
+          "fresh_model_calls": 395,
+          "fixed": 12,
+          "broken": 9,
+          "net_correct": 3,
+          "old_macro_f1": 0.5498328741135553,
+          "new_macro_f1": 0.5567383713362423,
+          "old_accuracy": 0.6375266524520256,
+          "new_accuracy": 0.6439232409381663,
+          "old_negative_recall": 0.4144144144144144,
+          "new_negative_recall": 0.42342342342342343,
+          "old_positive_recall": 0.7067039106145251,
+          "new_positive_recall": 0.7122905027932961
+        }
+      ]
+    },
+    "progressive_round4": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v3",
+      "review_overlay": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/record_review.json",
+      "review_sha256": "5438ada322825c1d52ed28788429d887377f7986d5d0468b890f25b8e12ec051",
+      "adjudication": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/adjudication_summary.json",
+      "selection_policy": "endpoint_diverse_delta.v1",
+      "selection_policy_changed": false,
+      "organizations": [
+        "progressive"
+      ],
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/run_plan.json",
+      "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/progress.json",
+      "per_run_parallelism": 512,
+      "maximum_total_requests": 1024,
+      "retry_race_width": 6,
+      "new_source_actions": {
+        "exclude": 149,
+        "move": 21
+      },
+      "limitations": "Bounded claims-based sibling cleanup; inspected valid/test post-hoc diagnostic, no gold or prompt change; unreviewed sources not certified clean.",
+      "inference_started_at": "2026-09-11T03:24:52.016722+00:00",
+      "changed_queries": {
+        "valid": 5,
+        "test": 0
+      },
+      "recomputed_suffix_levels": 14,
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/startup_validation.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/replacement_audit_approved.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/AUDIT.md",
+      "inference_verified": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/inference_verified.json",
+      "completed_at": "2026-09-11T03:37:11.788359+00:00",
+      "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/completion_validation.json",
+      "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4/REPORT.md",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "level": 7,
+          "n": 469,
+          "fixed": 1,
+          "broken": 0,
+          "fixed_indices": [
+            317
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.6324451410658307,
+          "new_macro_f1": 0.6342415925989867,
+          "old_accuracy": 0.7185501066098081,
+          "new_accuracy": 0.720682302771855,
+          "old_negative_recall": 0.4954954954954955,
+          "new_negative_recall": 0.4954954954954955
+        },
+        {
+          "subset": "test",
+          "level": 7,
+          "n": 469,
+          "fixed": 0,
+          "broken": 0,
+          "fixed_indices": [],
+          "broken_indices": [],
+          "old_macro_f1": 0.5567383713362423,
+          "new_macro_f1": 0.5567383713362423,
+          "old_accuracy": 0.6439232409381663,
+          "new_accuracy": 0.6439232409381663,
+          "old_negative_recall": 0.42342342342342343,
+          "new_negative_recall": 0.42342342342342343
+        }
+      ],
+      "figures": {
+        "status": "complete_verified",
+        "root": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4",
+        "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4/figure_receipt.json",
+        "subsets": {
+          "valid": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4/valid/figures/carcinogens_latest_valid.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4/valid/figures/carcinogens_latest_valid.svg"
+          },
+          "test": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4/test/figures/carcinogens_latest_test.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v4/test/figures/carcinogens_latest_test.svg"
+          }
+        },
+        "baseline_status": "complete_verified",
+        "scope": "Progressive R3 vs R4 on identical frozen gold and priors. Source overlay differs; R4 is a post-hoc diagnostic on inspected valid/test. Full-flat R1 not included as a matched current-evidence result. Single runs, no uncertainty interval."
+      }
+    },
+    "progressive_round5": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v4",
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/run_plan.json",
+      "review_overlay": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/record_review.json",
+      "review_sha256": "51d54a798c10ca8ac9b645616ce9bfdeb14183b79d97f703f25244436541494b",
+      "adjudication": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/adjudication_summary.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/AUDIT.md",
+      "query_structure_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/query_structure_summary.json",
+      "organizations": [
+        "progressive"
+      ],
+      "subsets": [
+        "valid",
+        "test"
+      ],
+      "per_run_parallelism": 512,
+      "maximum_total_requests": 1024,
+      "retry_race_width": 6,
+      "reasoning_policy": "evidence_grounding with task-specific subject/comparison rules; previous-state mechanism and query prior retained",
+      "source_actions": {
+        "exclude": 48,
+        "keep": 50,
+        "correct": 11
+      },
+      "changed_query_structure_rows": {
+        "valid": 41,
+        "test": 123
+      },
+      "expected_level_outputs": 6566,
+      "unchanged_prior_prompt_pairs_verified": 774,
+      "limitations": "User-authorized combined prompt/source/query-representation diagnostic on already inspected valid/test; not an independent held-out confirmation; gold and splits frozen; incomplete source library audit.",
+      "started_at": "2026-09-11T05:22:05.918758+00:00",
+      "error": "[Errno 2] No such file or directory: 'outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/carcinogens/valid/frozen_inputs/carcinogens/queries/query_idx00000/levels/level_1/request.json'",
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/startup_validation.json",
+      "prepared_summary": {
+        "valid": {
+          "prepared_queries": 469,
+          "prepared_levels": 3283,
+          "levels_with_new_cards": 2997,
+          "changed_query_representation_rows": 41,
+          "changed_evidence_or_comparison_queries": 41,
+          "representation_changed_indices": [
+            2,
+            6,
+            50,
+            51,
+            54,
+            65,
+            201,
+            238,
+            239,
+            251,
+            252,
+            279,
+            291,
+            292,
+            295,
+            297,
+            298,
+            320,
+            336,
+            342,
+            343,
+            344,
+            347,
+            358,
+            359,
+            379,
+            380,
+            389,
+            390,
+            391,
+            395,
+            396,
+            417,
+            418,
+            419,
+            420,
+            427,
+            428,
+            429,
+            433,
+            434
+          ],
+          "evidence_or_comparison_changed_indices": [
+            2,
+            6,
+            50,
+            51,
+            54,
+            65,
+            201,
+            238,
+            239,
+            251,
+            252,
+            279,
+            291,
+            292,
+            295,
+            297,
+            298,
+            320,
+            336,
+            342,
+            343,
+            344,
+            347,
+            358,
+            359,
+            379,
+            380,
+            389,
+            390,
+            391,
+            395,
+            396,
+            417,
+            418,
+            419,
+            420,
+            427,
+            428,
+            429,
+            433,
+            434
+          ]
+        },
+        "test": {
+          "prepared_queries": 469,
+          "prepared_levels": 3283,
+          "levels_with_new_cards": 2936,
+          "changed_query_representation_rows": 123,
+          "changed_evidence_or_comparison_queries": 123,
+          "representation_changed_indices": [
+            3,
+            4,
+            15,
+            18,
+            28,
+            30,
+            31,
+            32,
+            38,
+            42,
+            52,
+            62,
+            64,
+            65,
+            72,
+            81,
+            82,
+            95,
+            96,
+            98,
+            99,
+            100,
+            108,
+            109,
+            110,
+            111,
+            114,
+            128,
+            130,
+            133,
+            138,
+            140,
+            141,
+            148,
+            149,
+            150,
+            151,
+            154,
+            161,
+            173,
+            176,
+            183,
+            184,
+            190,
+            191,
+            193,
+            194,
+            201,
+            202,
+            210,
+            211,
+            214,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            246,
+            247,
+            248,
+            256,
+            264,
+            265,
+            278,
+            279,
+            287,
+            288,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            315,
+            316,
+            317,
+            322,
+            332,
+            335,
+            336,
+            344,
+            345,
+            350,
+            351,
+            359,
+            361,
+            362,
+            363,
+            374,
+            380,
+            386,
+            387,
+            392,
+            393,
+            399,
+            405,
+            409,
+            410,
+            411,
+            414,
+            415,
+            416,
+            417,
+            421,
+            422,
+            439,
+            440,
+            441,
+            442,
+            443,
+            453,
+            456,
+            461,
+            464,
+            465
+          ],
+          "evidence_or_comparison_changed_indices": [
+            3,
+            4,
+            15,
+            18,
+            28,
+            30,
+            31,
+            32,
+            38,
+            42,
+            52,
+            62,
+            64,
+            65,
+            72,
+            81,
+            82,
+            95,
+            96,
+            98,
+            99,
+            100,
+            108,
+            109,
+            110,
+            111,
+            114,
+            128,
+            130,
+            133,
+            138,
+            140,
+            141,
+            148,
+            149,
+            150,
+            151,
+            154,
+            161,
+            173,
+            176,
+            183,
+            184,
+            190,
+            191,
+            193,
+            194,
+            201,
+            202,
+            210,
+            211,
+            214,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            246,
+            247,
+            248,
+            256,
+            264,
+            265,
+            278,
+            279,
+            287,
+            288,
+            303,
+            304,
+            305,
+            306,
+            307,
+            308,
+            315,
+            316,
+            317,
+            322,
+            332,
+            335,
+            336,
+            344,
+            345,
+            350,
+            351,
+            359,
+            361,
+            362,
+            363,
+            374,
+            380,
+            386,
+            387,
+            392,
+            393,
+            399,
+            405,
+            409,
+            410,
+            411,
+            414,
+            415,
+            416,
+            417,
+            421,
+            422,
+            439,
+            440,
+            441,
+            442,
+            443,
+            453,
+            456,
+            461,
+            464,
+            465
+          ]
+        }
+      },
+      "inference_verified": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/inference_verified.json",
+      "inference_started_at": "2026-09-11T05:40:55.045398+00:00",
+      "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5/completion_validation.json",
+      "completed_at": "2026-09-11T08:06:57.797016+00:00",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "level": 7,
+          "n": 469,
+          "old_macro_f1": 0.6342415925989867,
+          "new_macro_f1": 0.6316866039631084,
+          "new_accuracy": 0.7249466950959488,
+          "new_negative_recall": 0.46846846846846846,
+          "new_positive_recall": 0.8044692737430168,
+          "fixed_indices": [
+            5,
+            16,
+            17,
+            18,
+            50,
+            80,
+            81,
+            133,
+            158,
+            177,
+            201,
+            208,
+            222,
+            251,
+            282,
+            358,
+            429,
+            462
+          ],
+          "broken_indices": [
+            25,
+            55,
+            62,
+            76,
+            116,
+            126,
+            211,
+            260,
+            274,
+            302,
+            318,
+            409,
+            415,
+            422,
+            426,
+            437
+          ]
+        },
+        {
+          "subset": "test",
+          "level": 7,
+          "n": 469,
+          "old_macro_f1": 0.5567383713362423,
+          "new_macro_f1": 0.5626813095731455,
+          "new_accuracy": 0.6545842217484008,
+          "new_negative_recall": 0.4144144144144144,
+          "new_positive_recall": 0.729050279329609,
+          "fixed_indices": [
+            42,
+            54,
+            104,
+            178,
+            190,
+            191,
+            192,
+            214,
+            216,
+            219,
+            229,
+            234,
+            235,
+            253,
+            267,
+            284,
+            370,
+            380,
+            384,
+            386,
+            387,
+            392,
+            424,
+            429,
+            431,
+            442,
+            455,
+            460
+          ],
+          "broken_indices": [
+            53,
+            55,
+            138,
+            139,
+            171,
+            197,
+            232,
+            248,
+            249,
+            254,
+            256,
+            296,
+            302,
+            318,
+            332,
+            341,
+            383,
+            403,
+            416,
+            418,
+            425,
+            426,
+            456
+          ]
+        }
+      ],
+      "figures": {
+        "status": "complete_verified",
+        "root": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5",
+        "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/figure_receipt.json",
+        "subsets": {
+          "valid": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/valid/figures/carcinogens_latest_valid.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/valid/figures/carcinogens_latest_valid.svg"
+          },
+          "test": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/test/figures/carcinogens_latest_test.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/test/figures/carcinogens_latest_test.svg"
+          }
+        },
+        "scope": "R4 versus R5 diagnostic on the same inspected cohort. R5 changes source review, grounding prompt and verified query representation with refreshed priors. None shown is R5 only. Baselines unchanged. Single runs; no uncertainty interval."
+      },
+      "trace_diagnosis": {
+        "status": "complete_verified",
+        "root": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/trace_diagnosis",
+        "report": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/trace_diagnosis/REPORT.md",
+        "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/trace_diagnosis/diagnosis_receipt.json",
+        "scope": "Read-only diagnostic. All 938 trajectories counted; 21 focal flips manually inspected against supplied cards; limited targeted primary-source checks; no source/prompt/gold changes or new inference."
+      }
+    },
+    "progressive_round6": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v5",
+      "review_overlay": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/record_review.json",
+      "review_sha256": "1f43ef814e1b35d44bf2b2305b65a3f917da7f2eb13d0d1489fb0f3e48bb6208",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/AUDIT.md",
+      "validation_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/validation_receipt.json",
+      "adjudication": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/adjudication.json",
+      "new_decisions_by_action": {
+        "move": 18,
+        "keep": 10,
+        "exclude": 160,
+        "correct": 10
+      },
+      "deferred_actual_voter_repairs": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/deferred_actual_voter_repairs.json",
+      "inference_started": true,
+      "limitations": "Post-hoc diagnostic on inspected Valid/Test. All 938 selected retrieval trajectories checked; 4 wrong actual-voter associations are deferred and unexposed. Selective source review does not resolve publication-internal Table 5/6 conflicts or certify the entire source library.",
+      "original_pdf_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/lpm570065_pdf_review.json",
+      "unresolved_publication_conflicts": [
+        "PMID 30030102 Tables 5 and 6 disagree with the unqualified negative narrative; original experimental data or author clarification required to resolve scientific direction."
+      ],
+      "validation_tests": {
+        "command": "pytest -q tests/chembl_tool/common/test_indexed_record_review.py",
+        "passed": 12
+      },
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/run_plan.json",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/input_change_summary.json",
+      "preflight_round": 5,
+      "inference_started_at": "2026-09-11T13:43:11.324491+00:00",
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/startup_validation.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/replacement_audit_approved.json",
+      "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/progress.json",
+      "completed_at": "2026-09-11T14:05:20.746968+00:00",
+      "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/completion_validation.json",
+      "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/REPORT.md",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "level": 7,
+          "n": 469,
+          "fixed": 1,
+          "broken": 0,
+          "fixed_indices": [
+            285
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.6316866039631084,
+          "new_macro_f1": 0.6355866355866356,
+          "old_accuracy": 0.7249466950959488,
+          "new_accuracy": 0.7270788912579957,
+          "old_negative_recall": 0.46846846846846846,
+          "new_negative_recall": 0.4774774774774775
+        },
+        {
+          "subset": "test",
+          "level": 7,
+          "n": 469,
+          "fixed": 0,
+          "broken": 1,
+          "fixed_indices": [],
+          "broken_indices": [
+            384
+          ],
+          "old_macro_f1": 0.5626813095731455,
+          "new_macro_f1": 0.5610656561306807,
+          "old_accuracy": 0.6545842217484008,
+          "new_accuracy": 0.652452025586354,
+          "old_negative_recall": 0.4144144144144144,
+          "new_negative_recall": 0.4144144144144144
+        }
+      ],
+      "figures": {
+        "status": "complete_verified",
+        "root": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6",
+        "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/figure_receipt.json",
+        "subsets": {
+          "valid": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/valid/figures/carcinogens_latest_valid.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/valid/figures/carcinogens_latest_valid.svg"
+          },
+          "test": {
+            "png": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/test/figures/carcinogens_latest_test.png",
+            "svg": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/test/figures/carcinogens_latest_test.svg"
+          }
+        }
+      },
+      "paired_results": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6/paired_results.json",
+      "trace_diagnosis": {
+        "status": "complete_verified",
+        "report": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/trace_diagnosis/REPORT.md",
+        "receipt": "outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/trace_diagnosis/diagnostic_receipt.json",
+        "summary": "Valid L3: two new L2 errors inherited; L3-L4: all 13 flips unchanged from R5; Test L7: new alpha/beta identity-history error with identical new L7 cards. Specific source defects remain; valid mechanistic evidence transfer also drives failures."
+      }
+    },
+    "progressive_round7": {
+      "status": "complete_verified",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v6",
+      "review_overlay": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/record_review.json",
+      "review_sha256": "bc45e9ad918e131397c604620fa44ab553c1b3bf5d32a51ca5ba5f9e68f91cbb",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/source_application_validation.json",
+      "reviewed_source_records": 54,
+      "new_moves": 36,
+      "identity_reassignments": 2,
+      "inference_started": true,
+      "gold_modified": false,
+      "canonical_source_modified": false,
+      "scope": "Hash-bound diagnostic retrieval-source overlay; original records and completed R6 results preserved.",
+      "tests": {
+        "command": "pytest -q tests/chembl_tool/common/test_indexed_record_review.py",
+        "passed": 18
+      },
+      "preflight_round": 3,
+      "wrong_associations_quarantined": 2,
+      "completed_at": "2026-09-11T23:12:10.470062+00:00",
+      "report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/REPORT.md",
+      "validation_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/validation_receipt.json",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/input_change_summary.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/replacement_audit_approved.json",
+      "affected_queries": {
+        "valid": 3,
+        "test": 1
+      },
+      "n_suffix_levels_to_recompute": 20,
+      "hash_bound_overlay_cards": 52,
+      "run_plan": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/run_plan.json",
+      "progress": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/progress.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/AUDIT.md",
+      "expected_recomputed_levels": 20,
+      "expected_reused_levels": 6546,
+      "inference_started_at": "2026-09-11T22:42:21.639823+00:00",
+      "startup_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/startup_validation.json",
+      "completion_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7/completion_validation.json",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "level": 7,
+          "n": 469,
+          "fixed": 1,
+          "broken": 0,
+          "fixed_indices": [
+            270
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.6355866355866356,
+          "new_macro_f1": 0.6373968891729827,
+          "old_accuracy": 0.7270788912579957,
+          "new_accuracy": 0.7292110874200426,
+          "old_negative_recall": 0.4774774774774775,
+          "new_negative_recall": 0.4774774774774775
+        },
+        {
+          "subset": "test",
+          "level": 7,
+          "n": 469,
+          "fixed": 1,
+          "broken": 0,
+          "fixed_indices": [
+            384
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.5610656561306807,
+          "new_macro_f1": 0.5626813095731455,
+          "old_accuracy": 0.652452025586354,
+          "new_accuracy": 0.6545842217484008,
+          "old_negative_recall": 0.4144144144144144,
+          "new_negative_recall": 0.4144144144144144
+        }
+      ]
+    },
+    "progressive_round8": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8/final_source_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8/input_change_summary.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v8/replacement_card_audit.json"
+    },
+    "progressive_round9": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/final_source_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/input_change_summary.json",
+      "original_15_resolution": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/original_15_resolution.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v9/replacement_card_audit.json"
+    },
+    "progressive_round10": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10/input_change_summary.json",
+      "replacement_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v10/replacement_card_audit.json",
+      "n_changed_queries_valid": 16,
+      "n_changed_queries_test": 3,
+      "progressive_levels_to_recompute": 46
+    },
+    "progressive_round11": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/input_change_summary.json",
+      "n_changed_valid_queries": 17,
+      "n_changed_test_queries": 3,
+      "n_progressive_suffix_levels_to_recompute": 59,
+      "n_replacement_followup_cards": 25,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v11/final_source_validation.json"
+    },
+    "progressive_round12": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/input_change_summary.json",
+      "n_changed_valid_queries": 19,
+      "n_changed_test_queries": 3,
+      "n_progressive_suffix_levels_to_recompute": 63,
+      "n_replacement_followup_cards": 25,
+      "n_applied_source_cards": 135,
+      "n_distinct_source_records": 135,
+      "n_seed_cards_processed": 25,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v12/final_source_validation.json"
+    },
+    "progressive_round13": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/input_change_summary.json",
+      "n_changed_valid_queries": 19,
+      "n_changed_test_queries": 3,
+      "n_progressive_suffix_levels_to_recompute": 63,
+      "n_replacement_followup_cards": 22,
+      "n_applied_source_cards": 143,
+      "n_adjudicated_source_cards": 146,
+      "n_distinct_source_records": 146,
+      "n_seed_cards_processed": 25,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v13/final_source_validation.json"
+    },
+    "progressive_round14": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/input_change_summary.json",
+      "n_changed_valid_queries": 19,
+      "n_changed_test_queries": 6,
+      "n_progressive_suffix_levels_to_recompute": 74,
+      "n_replacement_followup_cards": 21,
+      "n_applied_source_cards": 109,
+      "n_adjudicated_source_cards": 109,
+      "n_distinct_source_records": 109,
+      "n_seed_cards_processed": 22,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/final_source_validation.json",
+      "previous_round_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/previous_round_change_summary.json",
+      "n_prior_round_changed_valid_queries": 18,
+      "n_prior_round_changed_test_queries": 6,
+      "source_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v14/REPORT.md"
+    },
+    "progressive_round15": {
+      "status": "source_repairs_verified_replacement_followup_required",
+      "inference_started": false,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/record_review.json",
+      "audit_report": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/input_change_summary.json",
+      "n_changed_valid_queries": 19,
+      "n_changed_test_queries": 6,
+      "n_progressive_suffix_levels_to_recompute": 74,
+      "n_replacement_followup_cards": 16,
+      "n_applied_source_cards": 116,
+      "n_seed_cards_processed": 21,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/final_source_validation.json"
+    },
+    "progressive_round16": {
+      "status": "complete_verified",
+      "inference_started": true,
+      "source_review": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/record_review.json",
+      "audit_report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/REPORT.md",
+      "source_validation": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/source_application_validation.json",
+      "reference_root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v7",
+      "root": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16",
+      "input_change_summary": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/input_change_summary.json",
+      "n_changed_valid_queries": 19,
+      "n_changed_test_queries": 6,
+      "n_progressive_suffix_levels_to_recompute": 74,
+      "n_replacement_followup_cards": 11,
+      "n_applied_source_cards": 57,
+      "n_seed_cards_processed": 16,
+      "replacement_audit": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replacement_card_audit.json",
+      "pending_source_followup": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/pending_source_followup.json",
+      "final_source_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/final_source_validation.json",
+      "n_additional_sibling_followup_cards": 4,
+      "n_total_source_followup_cards": 15,
+      "inference_root": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay",
+      "source_checkpoint": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16",
+      "run_plan": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/run_plan.json",
+      "progress": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/progress.json",
+      "inference_started_at": "2026-09-12T04:37:20.924346+00:00",
+      "startup_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/startup_validation.json",
+      "completed_at": "2026-09-12T05:00:07.704609+00:00",
+      "completion_validation": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/completion_validation.json",
+      "report": "/data1/tianang/Projects/TxAgent/outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/REPORT.md",
+      "final_level_metrics": [
+        {
+          "subset": "valid",
+          "level": 7,
+          "n": 469,
+          "fixed": 1,
+          "broken": 0,
+          "fixed_indices": [
+            73
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.6373968891729827,
+          "new_macro_f1": 0.6392131483833154,
+          "old_accuracy": 0.7292110874200426,
+          "new_accuracy": 0.7313432835820896,
+          "old_negative_recall": 0.4774774774774775,
+          "new_negative_recall": 0.4774774774774775
+        },
+        {
+          "subset": "test",
+          "level": 7,
+          "n": 469,
+          "fixed": 2,
+          "broken": 0,
+          "fixed_indices": [
+            353,
+            418
+          ],
+          "broken_indices": [],
+          "old_macro_f1": 0.5626813095731455,
+          "new_macro_f1": 0.5680803057512548,
+          "old_accuracy": 0.6545842217484008,
+          "new_accuracy": 0.6588486140724946,
+          "old_negative_recall": 0.4144144144144144,
+          "new_negative_recall": 0.42342342342342343
+        }
+      ],
+      "remaining_error_trace_audit": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/trace_audit/REPORT.md",
+      "remaining_error_trace_audit_receipt": "outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/trace_audit/receipt.json"
+    }
+  },
+  "historical_status_prose": "DILI retrieval_review_v5 部分核验后的阶段性定点重跑已完成（仍有待核清记录，未全局采用）：新增 562 个层输出，等价复用 10694 个，四组各 402 行、零失败。独立 scaffold 结果以 `dili_retrieval_review_v5_no_prior_grounded_sim0` 和 `outputs/paper/starling_conditioned_dili_retrieval_review_v5_no_prior_grounded_sim0/REPORT.md` 为准；全局 source/random 仍保留 v3，本次未发布全局 source。 最新 valid/test 曲线（含 None 和五种 matched baselines、统一纵轴）见 `outputs/paper/starling_conditioned_dili_retrieval_review_v5_no_prior_grounded_sim0/analysis/figure_receipt.json`。\n\nDILI retrieval_review_v4 部分核验后的阶段性定点重跑已完成（仍有待核清记录，未全局采用）：新增 1474 个层输出，等价复用 9782 个，四组各 402 行、零失败。独立 scaffold 结果以 `dili_retrieval_review_v4_no_prior_grounded_sim0` 和 `outputs/paper/starling_conditioned_dili_retrieval_review_v4_no_prior_grounded_sim0/REPORT.md` 为准；全局 source/random 仍保留 v3，本次未发布全局 source。\n\nDILI retrieval_review_v3 定点重跑已完成：新增 36 个层输出，等价复用 11220 个，四组各 402 行、零失败。当前结果以 `dili_retrieval_review_v3_no_prior_grounded_sim0` 和 `outputs/paper/starling_conditioned_dili_retrieval_review_v3_no_prior_grounded_sim0/REPORT.md` 为准；v2 保留为上一版参考。\n\nDILI retrieval_review_v2 定点重跑完成：只新增 valid 8 条 query 的 94 个层输出，等价复用 11,162 个，四组各 402 行全部校验通过且零失败。valid L7 Macro-F1：progressive 0.6701 → 0.6662、full-flat 0.6197 → 0.6259；test 与全部 L1 预测不变。source/gold/prompt/prior/similarity 未继续修改。registry suite 为 `dili_retrieval_review_v2_no_prior_grounded_sim0`；报告见 `outputs/paper/starling_conditioned_dili_retrieval_review_v2_no_prior_grounded_sim0/REPORT.md`。\n\nDILI retrieval_review_v2 已发布并校验：四个待核问题中，1 条 emodin 名称—结构错绑退出检索、3 条肝细胞形态/恢复证据 L4→L3，均保留 raw records；gold/splits/votes、L1、prior/similarity/progressive 不变。scaffold/random 索引及共享 DILI 表已重建，L1-only 预排除/L2 保留/query-time disjoint 校验通过，19 项相关测试通过。该 source 发布阶段未调用推理模型；后续 v2 定点重跑已完成（见上文）；全部 804 行选卡变化见 `data/starling_data/dili/retrieval_review_v2/selected_surface_audit_summary.json`，处理依据及发布凭据见该目录 `README.md` / `publication.json`。\n\nDILI v1 完整主线的 valid L2–L4 诊断已完成：402 行、1,206 次更新，全量逐层统计并复核全部 15 个翻转、29 张不同新增 basis 卡及 12 个不翻转状态。L2/L3/L4 分别改对–改错 3–6、1–4、0–1，L1→L4 净少正确 7 行；新卡进入 basis 为 82.1%/55.7%/43.8%。L3 四次退步中三次明确把 DWN12088/FPH1 邻居当作 query；L2 有缺失人体证据被用作阴性，L4 多数新增 analog 的迁移依据较弱。该诊断阶段登记的四个 source/换层问题已在 retrieval_review_v2 后续修复；原诊断未改 source/gold/prompt，也未新增调用。报告见 `outputs/paper/analysis/dili_valid_l2_l4_diagnostic/REPORT.md`，registry 关联 `valid_l2_l4_diagnostic`。\n\nDILI identity-exclusion pilot 已完成 12/12 请求、零失败，并逐条复核最终状态及身份相关 reasoning：三个 query 各两遍，原输入正确 4/6 次，加入“不是 X”正确 2/6 次，配对改对 0、改错 2。valid #37 仅一遍改善 analog/query 归属，另一遍仍声称结构等价；test #57 转猜其他药名/靶点，test #173 的错认仍可绕过排除。没有观察到预测收益，用户已停止后续定向排除提示。实际 prompt 已有名称/对象归属及迁移约束，不能把重复提示当作明确新方案；不能将三例重复输出作为全量 performance。报告见 registry `dili_l1_query_identity_exclusion_pilot_v1` 的 results/manual_review_summary。此前提供真实 query 名称的 128 次实验已被用户否决，仅保留审计。\n\nDILI 精确条件选卡 L1 后续对照已全部完成并校验：valid/test 各 402 条，零失败；macro-F1=0.6605/0.5874，上一轮分子内条件选卡=0.6774/0.5999，MiniMol condition KNN=0.6063/0.6334，test 尚未齐平。相对上一轮，输入改变的 valid/test 子集改正/退步为 2/0、9/4；输入不变的重跑为 6/13、12/22，总体下降不能直接归因于选卡修改。相对原始 L1，实际改变输入子集净正确仅 +1/-1，尚无明确整体收益。PARCC 每组 256 并发、20480 输出上限、六路竞速重试；source/gold/prior/similarity/progressive 不变。完整结果见 registry `dili_l1_morgan_neighbors_exact_condition_cards_v1` 及其 `RESULTS.md`。 最新 trace 诊断对齐全部 804 条、复读 107 个 FN 摘要与 6 个正确阴性控制，并深查 11 例：test 三轮同输入 245 条中 43 条翻转，但有 34 个 FN 三轮同输入均阴性；valid #37 将 Telcagepant 错当 Atogepant，test #57 将 Repaglinide 错当 Firsocostat，另见有限阴性跨条件外推。详见该 suite 的 `trace_audit/REPORT.md`；身份锚定与决策对称性诊断尚未实施。\n\nDILI 固定 Morgan 邻居、仅分子内条件选卡的 L1 对照已完成并校验：valid/test 各 402 条 fresh PARCC Flash-0731，共 804 条、零失败；256 并发/组、总预算 512、20480 输出上限、六路竞速重试。valid/test macro-F1 为 0.6774/0.5999，对应 MiniMol condition KNN 为 0.6063/0.6334，test 尚未齐平。实际改变输入的 test 157 条改正 5、退步 14；未变输入 245 条重跑改正 17、退步 10，不能把总 F1 小涨归因于选卡成功。全量 trace/KNN 对齐及 24 对翻转摘要复核发现：未标明条件的优先级会挤掉有限但有效的跨条件证据，推理迁移也仍不稳定。下一轮只提升精确条件、其余恢复原排序的方案尚未实施。804 条输入保持原邻居和冻结工具，prior、similarity、progressive 与 source/gold 不变。结果以 registry 的 `dili_l1_morgan_neighbors_condition_cards_v1` 为准；报告位于 `outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/morgan_neighbors_condition_cards_v1/trace_audit/REPORT.md`。\n\nDILI retrieval_review_v1 重跑已完成（2026-09-10）：对 no_prior_grounded_sim0 的全部 804 行重新检索并审计模型可见输入，valid/test 各 82/133 行受影响；新运行 1,748 个层输出，严格等价复用 9,508 个层输出，四组共 11,256 个层预测通过完成校验，零剩余失败。Flash-0731、20,480 输出预算、4/2 卡片预算、prior/similarity 设置和 progressive 机制不变。\nL7 Macro-F1（旧 → 新）：valid progressive 0.6622 → 0.6701、full-flat 0.6197 → 0.6197；test progressive 0.5972 → 0.6039、full-flat 0.5743 → 0.5782。对应改正/新增错误为 2/2、3/3、3/1、6/4，每组指标均使用全部 402 行。这是 v1 定点重跑加等价复用的结果，不是独立 replicate，也不能单独证明清理的因果收益。完整逐层指标和案例见 `outputs/paper/starling_conditioned_dili_retrieval_review_v1_no_prior_grounded_sim0/REPORT.md`，registry suite 为 `dili_retrieval_review_v1_no_prior_grounded_sim0`。\n\nDILI 新版 valid/test 曲线及同尺度清理前对照已生成：`outputs/paper/analysis/dili_retrieval_review_v1/`，包含 None、L1–L7 与五种 matched baselines，纵轴统一 0.50–0.72；四图共 80 个源数据点校验通过，提供 PNG/SVG。\n\nDILI 无条件优先 L1/KNN 诊断（条件检索实验之前）：test L1 progressive 相对 None 改正 40、退步 61，净多判对 14 条阴性、少判对 35 条阳性；MiniMol condition KNN 与 L1 的严格同 parent 邻居重合率为 29.6%。全量 804 行统计、12 个案例与两个未实施的 source 疑点见 `outputs/paper/analysis/dili_l1_knn_diagnostic/REPORT.md`。未改 source/gold/prompt/threshold，未新增模型调用。\n\nDILI 条件优先 L1 的 OpenRouter Flash-0731 valid/test 已全部完成并校验：各 402 行 fresh L1，共 804 行，零失败。相对旧 PARCC L1，valid macro-F1 0.6680→0.6326、accuracy 0.8234→0.7910、纠正/退步 14/27；test macro-F1 0.5924→0.6064、accuracy 0.7090→0.6990、纠正/退步 28/32。两组各 256 并发，总预算 512，20480 输出上限、6 路竞速重试。valid/test 的 140/177 行改变 retrieval；完整 L1–L7 prompt plan、Morgan、10×4、prior/similarity 与 source/gold 不变，既有工具与 prior 冻结。结果见 registry `dili_l1_condition_priority_openrouter_v1` 和 `outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/openrouter/{valid,test}/performance.json`；与旧 PARCC 的比较同时改变了 hosting，不能单独归因于 retrieval，也尚未证明稳定整体收益。\n\nDILI 同输入 endpoint 对照已完成并校验：PARCC valid/test 各 402 行 fresh L1，共 804 行，零失败；全部 prepared 文件和完整 nominal requests 与 OpenRouter 精确相同。OpenRouter→PARCC：valid macro-F1 0.6326→0.6775、accuracy 0.7910→0.8134，41/402 个预测分歧（纠正/退步 25/16）；test macro-F1 0.6064→0.5943、accuracy 0.6990→0.7040，56/402 个预测分歧（29/27）。各 256 并发、合计 512，20480 输出上限、prior/tools/prompt 与 6 路竞速重试不变；没有重新选卡或复用 level predictions。结果见 registry `dili_l1_condition_priority_parcc_endpoint_v1` 和 `outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/{valid,test}/performance.json`。单次同输入对照仍不能分离 endpoint 实现与重复推理的随机波动。\n\nDILI 条件优先 PARCC L1/KNN trace 诊断已扩展至 valid/test 全部 804 行：test 126 个分歧摘要及 12 例代表复核，另复核 valid 6 例。Valid L1/MiniMol 条件 KNN Macro-F1 为 0.6775/0.6063，test 为 0.5943/0.6334；valid 净多正确 15 行，test 净少 30 行。Test 两大通用骨架组占 226/402 行、贡献 61/74 个 L1 假阴性；valid 最大骨架组仅 23 行。无 basis query 正确数 valid/test 为 30/35、24/48，原始记录解读与模型类别知识的收益必须区分。Valid 优势在条件优先之前已存在，单次重跑不能证明稳定 retrieval 收益。完整对照见 `outputs/paper/starling_conditioned_dili_l1_condition_priority_v1/parcc_endpoint_comparison_v1/l1_knn_trace_audit/VALID_TEST_COMPARISON.md`，原 test 案例见同目录 `REPORT.md`；registry 已关联。未新增模型调用，未修改 source/gold/split/prompt/prior/threshold。\n\nDILI source 修改为逐条审阅 112 条后实施的 44 条换层、10 条检索排除；发布凭据见 `data/starling_data/dili/retrieval_review_v1/publication.json`。gold/splits/votes 与五种 matched baselines 不变。下列两套旧 gold_v4 agent 分数及其图仍是修改前参考；本轮只完成 no_prior_grounded_sim0 scaffold 的新 source 评估，标准 prior 配置与 random 尚未重跑。\n\nDILI 更新（2026-09-09）：当前数据为 Starling-only gold_v4，scaffold valid/test 各 402 条。\n新的 progressive/full-flat valid/test 四个 runs 已完成并通过 11,256 个 level predictions 和 804 对 single/None 的逐项校验，零剩余失败。\n最终层 Macro-F1：valid progressive/full-flat = 0.5668/0.5879；test = 0.5983/0.6345。新版五种 matched baselines 已完成并校验：10 cells、4,020 predictions、9,648 train-only neighbors。\n新图与汇总：`outputs/paper/analysis/dili_gold_v4_scaffold/`；test MiniMol head / condition-first KNN Macro-F1 为 0.6209 / 0.6334。\n状态以 registry 的 `dili_gold_v4_scaffold_4_2` 为准；以下旧 DILI gold_v3 分数均为历史参考。\n\nDILI 新对照 `dili_gold_v4_no_prior_grounded_sim0`：有证据时移除无检索模型 prior，补充对象归属、\nendpoint scope 和对称证据评估，similarity threshold=0；progressive 的状态更新和翻转规则不变。\n按用户要求 valid/test × progressive/full-flat 四个 runs 同时运行、各 256 并行，失败后六路竞速重试。\n同输入的旧 single/None 与工具由 receipt 授权复用，所有 level predictions 新跑；状态及完成校验以 registry 为准。\n\nCarcinogens 更新（2026-09-10）：当前为 Starling-only gold_v4，五个 organism 条件，\n4,692 条样本（3,578 正 / 1,114 负）；scaffold/random 均为 3,754/469/469。\nbenchmark、Stage-03、catalog、两种 index 与普通 Parquet 表同步；仅预排除 heldout L1，保留 L2。\n新 cohort 的 scaffold valid/test × progressive/full-flat 四个 runs 已全部完成，13,132 个逐层预测通过完整校验，零剩余失败。\n最终层 Macro-F1：valid progressive/full-flat = 0.6324/0.6168；test = 0.5562/0.5808。\n各 run 使用 256 并行、失败后六路竞速重试；\n938 对 fresh single/None 和 6,566 份准备输入已校验，工具失败为 0，两种方法的 prepared hashes 一致；\n使用原有 4/2 卡片预算和 similarity 0.3，状态以 registry 的 `carcinogens_gold_v4_scaffold_4_2` 为准。\n五种新版 baseline 已完成 valid/test 共 10 cells、4,690 条预测，训练集邻居及指标重算校验通过。\nMiniMol head 使用 train-only scaffold CV、冻结 OOF threshold，valid/test 共用最终 ensemble；KNN 只查询训练集。\n最优 baseline 为 MiniMol condition-first KNN，valid/test Macro-F1 为 0.6257/0.5528；产物见 `outputs/baselines/carcinogens_gold_v4_scaffold_v1/`。\n以下 Carcinogens gold_v3 分数与图均仅作历史参考。\n新版 valid/test 逐层图：`outputs/paper/analysis/carcinogens_gold_v4_scaffold/`；统一纵轴 0.50–0.66，40 个点（包含五种新版 baseline）与 agent/baseline 完成校验逐项一致。\n\n# Current paper results and artifact status\n\nUpdated: 2026-09-08.\n\nThis is the human-readable companion to `current_conditioned_results.json`,\nthe machine-readable authority for result roots and freshness. Current\nrecords-to-index reconstruction is documented separately in\n`CURRENT_STARLING_RETRIEVAL.md`; the retrieval protocol is in\n`ASSAY_LEVEL_RETRIEVAL.md`.\n\nCarcinogens gold_v4 L2–L7 trace 审计：`outputs/paper/analysis/carcinogens_gold_v4_scaffold/trace_level_audit/REPORT.md`。全量统计 13,132 个 level 输出；L3 新卡 92.1% 为一般存活/增殖/凋亡/周期读数，L2 收益与改错抵消；8 例卡片核对包含明确邻居归因错误与有效的机制修正。结论为本轮观测诊断，未修改 gold、prompt 或检索。\n\nCarcinogens retrieval cleanup 诊断已完成并校验：28 张改层、7 张排除、7 张保留；938 query 全部重检索，valid/test 各 38/82 个受影响，重算 1,272 个 level 输出、复用 11,860 个。完整队列的逐层指标、纠正和退步见 registry 的 `replicate_suites.carcinogens_gold_v4_scaffold_4_2.retrieval_cleanup_diagnostic`。正式 source/gold/split/prompt 不变；这是已查看 valid/test 上的 post-hoc 诊断，artifacts 暂存 node002 本地盘。 新版 valid/test 曲线含 None 和五种 matched baselines，统一纵轴 0.50–0.66；清理前后四联图和校验收据见 `outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v1/`。 后续 trace 审计发现改层后的卡片预算挤出、补入记录错层及服务端 reasoning 行为差异，因此此图不能单独估计清理的因果效果；报告见上述目录的 `trace_changes/REPORT.md`。\n\nCarcinogens progressive 第二轮清理已完成并校验：valid/test 同时使用 PARCC；累计 overlay 与逐层结果见 registry 的 retrieval_cleanup_diagnostic.progressive_round2。Gold/split/prompt/预算保持冻结，结果仍为已查看 valid/test 上的诊断。逐条 trace 分析已登记于该条目的 trace_analysis：中间层有小幅收益，最终 Valid 持平、Test 净少正确 4 条；已确认预算挤出互补端点、跨分子证据拼接和迁移权重变化，不能把所有下降归因于新补位记录。\n\nCarcinogens progressive 第三轮清理已完成并通过逐层校验：2,004 张 source cards 的模型初审和边界复核后，累计 overlay 为 348 张改层、52 张隔离；另审查了 240 个先前未改变输入的错误 query。启用后续层端点多样性，L1、gold/split、prompt、0.3 阈值和 4/2 预算不变；938 个 query 全部重检索，valid/test 的 432/406 个改变输入，4,590 个后缀层使用 PARCC 并行重跑。只复用第二轮精确一致的前缀；没有新 full-flat 结果。未解决的 source/voter 问题和未审补位卡片仍在审计账本中，不能将本轮称为全库清洁或独立测试；入口为 registry 的 retrieval_cleanup_diagnostic.progressive_round3。\n\nCarcinogens progressive 第四轮清理已完成并通过逐层校验：按实际 claims 与同类补位记录新增隔离 149 张、改层 21 张；prompt、选卡策略、gold/split 和其他科学设置固定为第三轮。全部 938 个 query、6,566 层输入通过比对，Valid 5 个 query 的 14 个后缀层使用 PARCC 重跑；Test 输入完全一致，复用并校验。每路并发上限 512、width-6 竞速重试；实际 ready query 仅 5 个。此为已查看 valid/test 上的局部诊断；入口为 registry 的 retrieval_cleanup_diagnostic.progressive_round4。 最新 R3/R4 逐层图及五种 baselines 已核对，Valid L7 macro-F1 0.6324→0.6342，Test 维持 0.5567；图片与校验记录见同一 registry 条目的 figures。\n\nCarcinogens progressive 第五轮已完成并通过 6,566 层校验，按用户授权同时覆盖已查看的 Valid/Test 全部 L1–L7：补充实际启用的对象归属/比较对象 prompt，新增隔离 48 张错误对象或材料卡、修正 11 张保护性/混合方向卡；恢复 Valid 41、Test 123 条 query 的 verified source-parent 结构表示并刷新其 prior/工具/检索。gold、split、防泄漏分组、0.3 threshold、4/2 预算及 progressive 更新机制不变。其余 774 条 single/None 已确认原始 prompt 完全相同；全部 progressive 输出重新计算。PARCC 两路各 512 上限、width-6 竞速重试；状态和输入校验见 registry 的 retrieval_cleanup_diagnostic.progressive_round5。 R4/R5 历史逐层对比图见 `outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v5/`（含五个既有 baselines；None 仅代表本轮）。Valid L3/L7 macro-F1 为 0.6621/0.6317，Test L6/L7 为 0.5665/0.5627；两路同轴，单次结果不估计误差区间。 R5 trace 诊断见同目录 `trace_diagnosis/REPORT.md`：Valid L4 改对 5/改错 13，18 条的累计 evidence 与 R4 相同；Test L7 改对 1/改错 2。此次 source 隔离/修正仅命中 R4 已选记录中的 1 个 query（12 张卡）；仍有明确 TCP 对象错配、错层和正常生長到肿瘤的过度迁移。\n\nCarcinogens R6 progressive 已完成并通过全部 6,566 层校验，零失败：本轮 198 张卡判定（18 改层、160 隔离、10 修正、10 保留）经过补位复查；全 938 个 query 比对后重跑 Valid 11/Test 1 个 query 的 68 个后缀层，复用 6,498 层。29 张新增/提前卡已核对，4 张错误 actual-voter L1 均未暴露；gold、prompt、prior 和检索预算不变。L7 macro-F1：Valid 0.6317→0.6356（改对 1/改错 0），Test 0.5627→0.5611（改对 0/改错 1）；Valid L3/L4 为 0.6566/0.6395，Test L6/L7 为 0.5665/0.5611。最新 R5/R6 图见 `outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v6/`，含共享 None 和五个已核对的 baselines；两路同轴，单次诊断不估计不确定性区间。输入、完成与画图校验以 registry 的 retrieval_cleanup_diagnostic.progressive_round6 为准。 逐 trace 诊断见该 registry 的 `trace_diagnosis`：Valid L3 新降分来自 L2 的两个错误；L3→L4 的 13 个翻转全部复用旧输入/输出；Test 新增 L7 错误涉及 α/β 异构体身份与推理历史，该层新增卡与 R5 全字段相同。\n\nCarcinogens R7 已完成 targeted progressive replay 并通过 6,566 层校验，零失败：仅 Valid 3/Test 1 个 query 的 20 个后缀层重新计算，6,546 层复用。L7 macro-F1：Valid 0.6356→0.6374，Test 0.5611→0.5627。源修复、逐 query 变化和结果以 registry 的 `retrieval_cleanup_diagnostic.progressive_round7` 为准；这是已查看 Valid/Test 上的诊断，gold/split/prompt 不变。\n\nCarcinogens R8 源修复已应用并完成 938 query / 6,566 层输入校验：8 张 UMB 卡连同分子结构和错误名称修正为 Umbelliferone，7 张凋亡形态卡移至 L3，45 张普通分化/迁移/昆虫发育卡移出检索。当前 Valid 6 个 query 的 8 个后缀层改变，Test 输入不变；尚未启动新推理。22 张补位/提前卡复查中仍有 15 张需要后续来源核对或修复，因此未通过重跑前补位检查；完整清单和原文核对范围见 registry 的 `retrieval_cleanup_diagnostic.progressive_round8`。R7 仍为最新完成结果，gold/split/prompt 不变。\n\nCarcinogens R9 已解决 R8 标记的 15 张卡，并扩展同研究修复：104 项判定含 33 张身份修正、1 张结果字段修正、1 张单独改层、58 张排除和 11 张保留；另有 1 张身份修正同时改层，合计 2 张改层。25 项测试通过；938 query / 6,566 层完整比对显示 Valid 15 个 query、22 个后缀层改变，Test 输入不变。29 张新补位/提前卡中仍有 11 张需后续处理，另有 3 张既有 geranyl 身份候选仍被 Valid122 选中；尚未开始推理，R7 仍为最新完成结果。源文件、gold/split/prior/prompt 不变；入口见 registry 的 `retrieval_cleanup_diagnostic.progressive_round9`。\n\nCarcinogens R10 完成48张源卡修复（43张身份修正、1张单独改层、3张端点并改层、1张范围排除；其中4张身份修正同时改层），27项测试通过。938 query /6,566层比较对照已完成R7：Valid16个query/28后缀层、Test3个query/18后缀层改变；38张补位卡完成检查，18张继续由R11核对。没有启动推理，R7仍为最新完成结果；见 registry `retrieval_cleanup_diagnostic.progressive_round10`。\n\nCarcinogens R11 又完成52项源卡修改，其中25项为新增 Dicoumarol 身份纠正，8项延续已有醚类身份修正并处理端点，另有9项改层、4项字段修正、6项排除；共21项显式改层。R10+R11 去重为99条 source records、68条新增身份纠正。同一代码的27项测试收据、完整索引应用和938 query /6,566层比对均通过；相对已完成R7，Valid17个query/41后缀层、Test3个query/18后缀层改变。51张补位/提前卡均有审查记录，其中25张仍需后续处理（7张明确错层、1张明确错对象但目标待核实、5张身份待核实、10张范围/层级候选、2张条件待核实），不等同于25张已确认无效。尚未启动推理，不报告性能提升；R7仍是最新完成结果。修复、未应用候选和校验入口见 registry `retrieval_cleanup_diagnostic.progressive_round11`。\n\nCarcinogens R12 已处理上述25张候选及同研究相关记录，共135张卡/135条 source records：23项分子重关联、43项单独改层、4项字段修正、57项范围排除、8项未明确 VK2 同系物的暂时身份隔离；另有5项重关联同时改层，总计48项显式改层。源文档、结构、完整索引应用及938 query /6,566层准备输入验证通过；共享代码未变，复用同代码哈希的27项测试收据。累计相对已完成R7，Valid19个query/45后缀层、Test3个query/18后缀层需重跑。59张补位/提前卡均有审查记录，其中新发现25张待处理：6张明确错层、4张明确错对象但目标待核实、15张其他身份/范围/条件/端点候选；这些新候选尚未应用，也不等同于全部无效。gold、split、L1及推理设置不变，未启动推理，R7仍为最新完成结果。入口见 registry `retrieval_cleanup_diagnostic.progressive_round12`。\n\nCarcinogens R13 已处理 R12 的25张候选并核对同研究相关记录，共146张卡/146条 source records：19项分子重关联、42项单独改层、11项字段修正、71项排除、3项确认保留，共143张修改、52项显式改层。排除包括68项任务范围、1项混合提取物归属和2项暂时身份隔离；8项排除记录的有效源视图也纠正了分子。Aspernolide A 原文明确关联肺癌骨侵袭，保留相关 L7 端点。共享审阅模块新增严格限定的完整聚合行拆分，避免修复 BCP 错对象时破坏真正的 Tebuconazole 记录；本轮实际32项测试通过。完整索引应用、31个源文档哈希及938 query /6,566层准备输入验证通过。累计相对完成R7仍为Valid19个query/45后缀层、Test3个query/18后缀层；61张补位/提前卡均有审查记录，其中28张为新读表面，22张后续候选尚未应用（不等同于全部无效）。未启动推理，不报告性能改善；入口见 registry `retrieval_cleanup_diagnostic.progressive_round13`。\n\nCarcinogens R14 已处理 R13 的22张候选及限定的同研究相关卡，共109张卡/109条 source records：38项分子重关联、21项单独改层、24项字段修正、26项排除（23项范围、3项待原始结构表的 PD-1 暂时隔离），总计30项显式改层。分别修复 DC→Doxycycline/Docetaxel、GGO→Geranylgeraniol 和错 K2 同系物；5项排除记录另纠正有效源分子身份。Farnesol 保护性修饰与 CdCl2 损伤比较明确区分，未猜测冲突剂量换算；Daucosterol 阴性 CCK-8 对照保留L3。共享代码未变，复用同哈希R13实际32项通过测试。两路完整索引应用、44个文档哈希及938 query /6,566层校验通过；累计相对完成R7需Valid19个query/45后缀层、Test6个query/29后缀层（共25个query/74层）。本轮相对R13改变Valid18/Test6个query，但R13没有推理结果，不能作为预测复用源。69张补位/提前卡均已检查，21张新后续候选尚未应用，不等同于全部无效；未启动推理、未报告性能改善。入口见 registry `retrieval_cleanup_diagnostic.progressive_round14`。\n- Carcinogens R15 source-only checkpoint resolves all 21 R14 selected follow-ups: 116 source cards/records changed (68 corrections, 9 standalone moves, 39 exclusions; 41 retained cards change level). CMP is verified carboxymethylated pachyman rather than cytidine monophosphate; BSM is bronchial rather than bladder. Mixed cards preserve actual survival/death/redox endpoints. Full valid/test preparation and 938-query/6,566-level checks passed, L1/gold unchanged; relative to R7, valid 19 + test 6 queries / 74 suffix levels need replay (R14→R15: valid 17 + test 3 / 48 suffix levels). Replacement audit covers 67 surfaces, including 21 freshly read; 16 unapplied follow-ups remain. No new inference/performance result. Receipt: `outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v15/final_source_validation.json`; latest completed predictions remain R7.\n- Carcinogens R16 source-only checkpoint resolves all 16 R15 follow-ups: 57 source cards/records changed (8 corrections, 17 standalone moves, 32 exclusions; 24 retained cards change level). Corrected GF109203X identity, polymer CMP and radiolabeled-thymidine associations; removed two retracted Wang2017b BMSC claims while preserving other studies in the mixed Angelicin card. Actual RAS/H3K9me3 evidence stays L6 with stem-cell context. Both valid/test preparations and all 938 queries / 6,566 levels passed checks, L1/gold unchanged; cumulative replay versus R7 remains valid 19 + test 6 / 74 suffix levels (R15→R16: valid 17 + test 3 / 44 suffix levels). Replacement audit covers 64 surfaces, 12 freshly read; 11 replacement and 4 additional sibling candidates await source follow-up. No new inference or performance result. Receipt: `outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/final_source_validation.json`; completed predictions remain R7.\n\n\n\n\nCarcinogens R16 replay 已完成并通过 6,566 层校验，零失败：Valid 19/Test 6 个 query 的 74 个后缀层重算，6,492 层按输入一致性复用。L7 macro-F1：Valid 0.6374→0.6392，Test 0.5627→0.5681。保持 15 张待核候选不变，先比较已完成的 R16 源修复；这是已查看 Valid/Test 上的诊断。结果：`outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v16/replay/paired_results.json`。\nCarcinogens R17 replay 已完成并通过 6,566 层校验，零失败：Valid 2/Test 2 个 query，14 个后缀层重算，6552 层复用。L7 macro-F1：Valid 0.6392→0.6392，Test 0.5681→0.5643。只修正本次确认的两张源卡；这是已查看 Valid/Test 上的诊断。结果：`outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v17/replay/paired_results.json`。\nCarcinogens R17 figures：已生成 R16/R17 progressive Valid/Test 对照，含 None 与五个 matched baselines；28 个曲线点、10 个 baseline 点和两个 None 点均由预测重算验证。Valid 全曲线重合，Test L4–L7 略降。图与 receipt：`outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v17/figure_receipt.json`。\nCarcinogens R18 replay 已完成并通过 6,566 层校验，零失败：Valid 3/Test 3 个 query，18 个后缀层重算，6548 层复用。L7 macro-F1：Valid 0.6392→0.6392，Test 0.5643→0.5643。完成 72 张源卡修复及补位审核；这是已查看 Valid/Test 上的诊断。结果：`outputs/paper/carcinogens_retrieval_cleanup_diagnostic_v18/replay/paired_results.json`。\nCarcinogens R18 figures：已生成 R17/R18 progressive Valid/Test 对照，含 None 与五个 matched baselines；28 个曲线点、10 个 baseline 点和两个 None 点均由预测重算验证。Valid 全曲线重合，Test 仅 L4/L5 提升，L6/L7 不变。图与 receipt：`outputs/paper/analysis/carcinogens_retrieval_cleanup_diagnostic_v18/figure_receipt.json`。\n",
+  "previous_level_export_refreshes": {
+    "dili_retrieval_review_v1": {
+      "manifest": "data/starling_data/dili/retrieval_review_v1/tables/manifest.json",
+      "verified_current_inputs": true,
+      "current_retrieval_contract_sha256": "6886a568ec595e1f44ffe9b4e4858e1cc0084bb1402165ad422faaf1d4ac66c7",
+      "other_tasks_reexported": false
+    },
+    "dili_retrieval_review_v2": {
+      "manifest": "data/starling_data/dili/retrieval_review_v2/tables/manifest.json",
+      "verified_current_inputs": true,
+      "current_retrieval_contract_sha256": "f931647d5210c021f9e7b965e4c14ed6464033b0a54677123894153c5ca7fa2f",
+      "other_tasks_reexported": false
+    },
+    "dili_retrieval_review_v3": {
+      "manifest": "data/starling_data/dili/retrieval_review_v3/tables/manifest.json",
+      "verified_current_inputs": true,
+      "current_retrieval_contract_sha256": "d29abc076f46c2ac28982ed2ce61b7caa022af941ed74e631df0b2d32b489d12",
+      "other_tasks_reexported": false
+    }
+  },
+  "previous_source_releases": {
+    "dili_starling_only_gold_v4": {
+      "manifest": "data/starling_data/dili/gold_v4/retrieval/manifest.json",
+      "manifest_sha256": "6290e68d0eb7eed93744340addbf5824b7bcaadd92c6779b27f27724070b6e13",
+      "status": "records_indices_and_card_links_validated",
+      "canonical_experiment_defaults_changed": true,
+      "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json"
+    },
+    "carcinogens_starling_only_gold_v4": {
+      "manifest": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+      "manifest_sha256": "676936fa7c762723b37efa264ed5418ae2420a854f8dcc86289cb8d989a47a88",
+      "status": "records_indices_and_card_links_validated",
+      "canonical_experiment_defaults_changed": true,
+      "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json"
+    },
+    "dili_retrieval_review_v1": {
+      "root": "data/starling_data/dili/retrieval_review_v1",
+      "status": "validated",
+      "source_gold_unchanged": true,
+      "publication": "data/starling_data/dili/retrieval_review_v1/publication.json"
+    },
+    "dili_retrieval_review_v2": {
+      "root": "data/starling_data/dili/retrieval_review_v2",
+      "status": "validated",
+      "publication": "data/starling_data/dili/retrieval_review_v2/publication.json",
+      "source_gold_unchanged": true
+    },
+    "dili_retrieval_review_v3": {
+      "root": "data/starling_data/dili/retrieval_review_v3",
+      "status": "validated",
+      "publication": "data/starling_data/dili/retrieval_review_v3/publication.json",
+      "source_gold_unchanged": true
+    }
+  },
+  "previous_progressive_entries": {
+    "dili": null,
+    "carcinogens": {
+      "n": 469,
+      "status": "complete",
+      "input_sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+      "current_index_sha256": "328ef2c1a162dcc50045c1f905c988b1289b1c869fca4af39c2fc8ea644aa973",
+      "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json",
+      "metrics_role": "Validated scaffold-valid progressive on current five-group Starling-only gold_v4; test and full-flat in current_suite",
+      "baseline_status": "complete_verified",
+      "current_suite": "carcinogens_gold_v4_scaffold_4_2",
+      "run_plan": "outputs/paper/starling_conditioned_carcinogens_gold_v4_scaffold_4_2_v1/run_plan.json",
+      "completion_validation": "outputs/paper/starling_conditioned_carcinogens_gold_v4_scaffold_4_2_v1/completion_validation.json",
+      "agent_macro_f1": {
+        "none": 0.619545844805637,
+        "L1": 0.6344073321679974,
+        "L2": 0.6324451410658307,
+        "L3": 0.6306539953222607,
+        "L4": 0.6342415925989867,
+        "L5": 0.6380141540799849,
+        "L6": 0.6362080705805726,
+        "L7": 0.6324451410658307
+      },
+      "agent_accuracy": {
+        "none": 0.7078891257995735,
+        "L1": 0.7185501066098081,
+        "L2": 0.7185501066098081,
+        "L3": 0.7164179104477612,
+        "L4": 0.720682302771855,
+        "L5": 0.7228144989339019,
+        "L6": 0.720682302771855,
+        "L7": 0.7185501066098081
+      },
+      "baselines_root": "outputs/baselines/carcinogens_gold_v4_scaffold_v1",
+      "baseline_results": "outputs/baselines/carcinogens_gold_v4_scaffold_v1/Carcinogens/valid_results.json"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "parent_key": "GYNWSIBKBBWJJW-WWLGJQRMSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GYNWSIBKBBWJJW-WWLGJQRMSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-3,4,5-Trihydroxy-6-{[(1S,3aS,3bR,5aS,7R,9aS,9bS,11aS)-1-hydroxy-9a,11a-dimethylhexadecahydro-1H-cyclopenta[a]phenanthren-7-yl]oxy}oxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-3,4,5-trihydroxy-6-(((3R,5R,8R,9S,10S,13S,14S,17S)-17-hydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta(a)phenanthren-3-yl)oxy)oxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-3,4,5-trihydroxy-6-(((3R,5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta(a)phenanthren-3-yl)oxy)oxane-2-carboxylic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.ALPHA.,5.ALPHA.,17.BETA.)-17-HYDROXYANDROSTAN-3-YL",
+    "17beta-Hydroxy-5alpha-androstan-3alpha-yl beta-D-glucopyranosiduronic acid",
+    "27195-25-1",
+    "3 alpha-diol G",
+    "3,17-Androstanediol Glucuronide",
+    "3-Hydroxyandrostan-17-Yl-Glucopyranosiduronic Acid",
+    "3-alpha-Androstanediol glucuronide",
+    "3alpha-DIOL-G",
+    "3alpha-Diol G",
+    "3alpha-androstanediol glucuronide",
+    "5-Androstane-3alpha,17beta-Diol Glucuronide",
+    "5-alpha-Androstane-3alpha,17beta-diol glucuronide",
+    "5-alpha-androstan-3alpha,17beta-diol glucuronide",
+    "5-alpha-androstane-3 alpha,17 beta-diol glucuronide",
+    "5alpha-Androstan-3alpha,17ss-diol-O-3-ss-glucuronic acid",
+    "65535-18-4",
+    "Aandrostanediol glucuronide",
+    "Androstane-3,17-Diol Glucuronide",
+    "Androstane-3alpha,17beta-diol 3-D-glucuronide",
+    "Androstane-3alpha,17beta-diol 3-Glucuronide",
+    "DTXSID701335922",
+    "GLUCOSIDURONIC ACID, 17.BETA.-HYDROXY-5.ALPHA.-ANDROSTAN-3.ALPHA.-YL",
+    "LMST05010004",
+    "NS00098452",
+    "Q19903293",
+    "RefChem:915832",
+    "ST 19:0;O2;GlcA",
+    "UN7QBZ76AB",
+    "androstanediol glucuronide"
+  ],
+  "http_status": 200,
+  "cids": [
+    16727166
+  ]
+}

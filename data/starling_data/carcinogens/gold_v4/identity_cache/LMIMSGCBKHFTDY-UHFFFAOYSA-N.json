@@ -1,0 +1,27 @@
+{
+  "parent_key": "LMIMSGCBKHFTDY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LMIMSGCBKHFTDY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "38434-77-4",
+    "62MW9898WK",
+    "AKOS006277383",
+    "BRN 2349424",
+    "CYANAMIDE, N-ETHYL-N-NITROSO-",
+    "DTXCID10611",
+    "DTXSID9020611",
+    "ETHYL NITROSOCYANAMIDE",
+    "Ethanecarbamonitrile, nitroso-",
+    "Ethylamine, N-cyano-N-nitroso-",
+    "Ethylnitrosocyanamide",
+    "N-Ethyl-N-nitrosocyanamide",
+    "Q63088206",
+    "RefChem:345287",
+    "ethyl(nitroso)cyanamide",
+    "ethyl-nitrosocyanamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    93203
+  ]
+}

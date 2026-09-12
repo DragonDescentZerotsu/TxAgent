@@ -1,0 +1,203 @@
+{
+  "schema_version": "current_starling_retrieval.v1",
+  "updated_at": "2026-09-11T22:26:33.365465+00:00",
+  "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "artifact_root": "outputs/paper/starling_conditioned_assay_family_curve_v1",
+  "verification": {
+    "verified_date": "2026-09-08",
+    "result": "DILI/Carcinogens packaged/local/source/catalog/scaffold/random SHA-256 verified; clean restores and complete card links passed. Previous four task entries unchanged.",
+    "scratch_artifacts_retained": false,
+    "maintenance_receipt": "outputs/reviews/dili_carcinogens_20260908/review_receipt.json",
+    "latest_release_validation": {
+      "task": "carcinogens",
+      "release": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+      "status": "records_indices_and_card_links_validated"
+    }
+  },
+  "contract": {
+    "record_selection": "canonical_retrieval_eligible",
+    "reference_pool": "task_scoped_heldout_filtered",
+    "minimum_similarity": 0.3,
+    "max_record_examples": 3,
+    "max_support_text_chars": 0,
+    "overlay_parquet_batch_sizes": {
+      "bbb_martins": 500,
+      "bioavailability_ma": 10000,
+      "skin_reaction": 20000
+    },
+    "evidence_prompt_profile": "assay_compact.mechanism_tagged_v4",
+    "scaffold_identity_policy": "scaffold_disjoint",
+    "random_identity_policy": "parent_disjoint"
+  },
+  "tasks": {
+    "bbb_martins": {
+      "canonical_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "overlay": "source_overlays/bbb_source_family_purity_v6",
+      "overlay_records_sha256": "20a53f067fa6ebe3dbf1a151f20d7b3891834935227e4913524d351b8a792812",
+      "catalog": "family_catalogs_mechanism_tagged_v1/bbb_martins_source_purity_v6",
+      "catalog_config": "STARLING_SOURCE_PURITY",
+      "catalog_sha256": "fffbe6b4eaf3c967b0f72741956ba3214f2fe0ae379e1426a1e26899bcbc1c0e",
+      "direct_group": "Tier 1.starling_direct_bbb_evidence",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "d5417551e89261744b531367e3883d22c513f83cf2e7742540c91ed13cbabea3",
+          "evidence_sha256": "7fd8898e95458a002d6cd6c38601e6d57a52ba46d826008d53c2846cc5cacaa5"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "5d42d21a62a51eec5d7873f4e85003923e8c53b4461b8406f6382a7bf744393c",
+          "evidence_sha256": "e30161826ef7d9861d4f0397171e3c28678a725fbe88ba22e1ff28490ae3207a"
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "canonical_records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "intermediate_overlay": "source_overlays/bioavailability_nondirect_assay_context_v1",
+      "intermediate_overlay_records_sha256": "98138649ec4b458f56db4cb2ffc63cdde4a08546be924e8ba636e04baf34ddef",
+      "overlay": "source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1",
+      "overlay_records_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8",
+      "catalog": "family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "f261b7e698e5fbb0c4cb879d51cf85a969c553346ed3fe2a7eecf912bae5050e",
+      "direct_group": "Observed.direct_oral_bioavailability",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+          "evidence_sha256": "1df978c53c3290ea82855ff739059a8f9a968ba21df0b7facda2294dcff39d82"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "e68dac90d01bc659f122103e4f774240c97e6617aed9800c1d33be43722701d8",
+          "evidence_sha256": "051535f1269d9b356fad305009ac1ff4d18ed0f86b82bb8c40be749136eda343"
+        }
+      }
+    },
+    "skin_reaction": {
+      "canonical_records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "overlay": "source_overlays/source_family_purity_v5/skin_reaction",
+      "overlay_records_sha256": "d7132856b8226b455dd8e1c6393cd94ef986feb1d4eb40bd60e7acde8433e779",
+      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v5",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "9c1ab3e531b66a6463d66c7113b6b8b9d8624d2ef7116c3ca895d69512f0f0ab",
+      "direct_group": "Direct.skin_reaction",
+      "indices": {
+        "scaffold": {
+          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v5",
+          "index_sha256": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
+          "evidence_sha256": "69fa5f7634713ff54bec42140435127ea4f028a48c167c5be307c9e204b1d3aa"
+        },
+        "random": {
+          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v5",
+          "index_sha256": "96b4403709f4fa0e144026394a530f7313c885d603d6e95ae06341874bea8ba4",
+          "evidence_sha256": "4ded66d791a9d398efe8876807e0087d91d97ba62c5a391d53563ec9711f4cde"
+        }
+      }
+    },
+    "ames": {
+      "canonical_records_sha256": "8119b26f0d44879312c87470798f75245ecc3efd337394dd55e005645347544b",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "8119b26f0d44879312c87470798f75245ecc3efd337394dd55e005645347544b",
+      "catalog": "family_catalogs/ames",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "580bdf822b607b8684b2e57dccb659195a607de51a1da7cefd8392d239488b9f",
+      "direct_group": "Direct.ames",
+      "filter_scope_field": "heldout_filter_scope",
+      "filter_scope_value": "bacterial_outcome",
+      "indices": {
+        "scaffold": {
+          "path": "indices/ames/scaffold",
+          "index_sha256": "5cc4cbebd71a22882a66031f26aaaf99fb4be35c74dc21b81800588a7adb9c16",
+          "evidence_sha256": "70be06a896603521c2fa78db2024fa3cade5176e16cb00b2a88580c19fb883e6"
+        },
+        "random": {
+          "path": "indices/ames/random",
+          "index_sha256": "e60d5f8c47a64415e19567bbaf31eba01d9e76a2b5a5ad420715d07c3836e030",
+          "evidence_sha256": "67b4908b8d931fe2e5a5f8c77e3b5a2198a2b78442cb28e9bc6d93f5f6be67e3"
+        }
+      },
+      "source_records": "data/starling_data/ames/canonical_v1/records.parquet",
+      "source_repair_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json"
+    },
+    "dili": {
+      "canonical_records_sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16",
+      "source_records": "data/starling_data/dili/retrieval_review_v2/source/records.parquet",
+      "catalog": "family_catalogs/dili",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "9fe5ccbc9f5c337f940df919d7053233e0a4c84aafab997921ce64f5af5aebe8",
+      "direct_group": "Group.dili_actual_voter",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.dili_actual_voter",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/dili/scaffold",
+          "index_sha256": "174d24066d4a0e2017e722ee2ea641de5b8738075d1740d8387753a8c102823f",
+          "evidence_sha256": "568ab8daa82d0671bfbce11db8cdd6b84fa285f3d02e8c26f37d1bd8e5802d97"
+        },
+        "random": {
+          "path": "indices/dili/random",
+          "index_sha256": "a8de1fb04390da978cde8788fc5480d95a68b45137e86c568aefdbe536e65983",
+          "evidence_sha256": "9eacd812e1a0b9d2a6b27bb8074ce2349595dbfb7bfe433430c7a16786d35a88"
+        }
+      },
+      "source_review": "data/starling_data/dili/retrieval_review_v2/record_review.json"
+    },
+    "carcinogens": {
+      "canonical_records_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+      "source_records": "data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
+      "catalog": "family_catalogs/carcinogens",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "d4c1216c9ef6c48c4c22d9003a23ab5e7178a93d8d63122d4853cbe6c9050d10",
+      "direct_group": "Group.carcinogenicity_direct",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.carcinogenicity_direct",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/carcinogens/scaffold",
+          "index_sha256": "328ef2c1a162dcc50045c1f905c988b1289b1c869fca4af39c2fc8ea644aa973",
+          "evidence_sha256": "9945f7c5885e6d2e4a5cdc0a24d530727404c93356435a821000795a68a50de1"
+        },
+        "random": {
+          "path": "indices/carcinogens/random",
+          "index_sha256": "a48abb1dd7f88c80e331b5f9e0a3a4d061ca64bbfc3ea015f5811604b1543019",
+          "evidence_sha256": "689bc42768ea6d35e21c4759a8e965aa5e70333f58e60967bca1cc81c08fe84f"
+        }
+      }
+    }
+  },
+  "source_releases": {
+    "dili_starling_only_gold_v4": {
+      "manifest": "data/starling_data/dili/gold_v4/retrieval/manifest.json",
+      "manifest_sha256": "6290e68d0eb7eed93744340addbf5824b7bcaadd92c6779b27f27724070b6e13",
+      "status": "records_indices_and_card_links_validated",
+      "canonical_experiment_defaults_changed": true,
+      "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json"
+    },
+    "carcinogens_starling_only_gold_v4": {
+      "manifest": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+      "manifest_sha256": "676936fa7c762723b37efa264ed5418ae2420a854f8dcc86289cb8d989a47a88",
+      "status": "records_indices_and_card_links_validated",
+      "canonical_experiment_defaults_changed": true,
+      "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json"
+    },
+    "dili_retrieval_review_v1": {
+      "root": "data/starling_data/dili/retrieval_review_v1",
+      "status": "validated",
+      "source_gold_unchanged": true,
+      "publication": "data/starling_data/dili/retrieval_review_v1/publication.json"
+    },
+    "dili_retrieval_review_v2": {
+      "root": "data/starling_data/dili/retrieval_review_v2",
+      "status": "validated",
+      "publication": "data/starling_data/dili/retrieval_review_v2/publication.json",
+      "source_gold_unchanged": true
+    }
+  }
+}

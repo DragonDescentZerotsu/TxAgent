@@ -1,0 +1,123 @@
+{
+  "task": "Find all assays of molecules concerning bile-acid, phospholipid, and canalicular homeostasis. This includes inhibition or altered regulation of hepatobiliary transport, intracellular bile-acid accumulation, impaired phosphatidylcholine secretion, and abnormal bile-canalicular dynamics. Make sure to include assays such as BSEP, MRP2/3/4, MDR3, and NTCP transport assays, membrane-vesicle assays, sandwich-cultured hepatocyte canalicular-efflux assays, bile-acid accumulation or speciation, phosphatidylcholine-transport assays, bile-acid-mixture sensitization, FXR functional assays, and canalicular imaging. Specify test and probe concentrations and units, parent-versus-metabolite testing, total or unbound Cmax and IC50/Cmax ratio, incubation time, transporter substrate, assay format, bile-acid composition, cell or membrane source, species and donor, metabolic competence, and outputs such as IC50, transport rate, biliary-excretion index, intracellular bile-acid concentration, or canalicular morphology. Include all key experimental details.",
+  "task_instantiation": "Extract every concrete experimental assay result in which the entity referenced by the record’s `global_identifier`—a parent molecule, separately tested metabolite or derivative, endogenous molecule, defined mixture, biologic/genetic perturbation, or physiologic/disease perturbation—is actually tested or administered and directly measures hepatobiliary bile-acid, phospholipid/phosphatidylcholine, or bile-canalicular homeostasis.\n\nIN SCOPE: functional inhibition, stimulation, substrate transport, kinetics, trans-inhibition, expression/regulation, localization, trafficking, or functional variants of BSEP/ABCB11, MRP2/ABCC2, MRP3/ABCC3, MRP4/ABCC4, MDR3/ABCB4 (Mdr2 in rodents), NTCP/SLC10A1, relevant hepatic OATPs, OSTα/β, and ASBT only when the experiment directly addresses enterohepatic/hepatobiliary homeostasis; membrane-vesicle, reconstituted-membrane/ATPase, transporter-expressing cell or oocyte, transcellular, primary-hepatocyte, sandwich-cultured-hepatocyte/B-CLEAR/BEI, hepatocyte-couplet, spheroid/organoid, liver-slice, perfused-liver, in-vivo bile-collection, and clinical or biospecimen assays; uptake, canalicular or basolateral efflux, biliary clearance, BEI/SEI, bile flow, and biliary bile-acid or phospholipid output; intracellular, liver, bile, plasma/serum, urine, feces, or medium bile-acid accumulation, total amount, pool size, composition, conjugation, or species-specific measurements when tied to a tested perturbation and interpreted as homeostasis; phosphatidylcholine/phospholipid translocation or secretion; defined bile-acid-mixture sensitization or protection; direct FXR reporter/transactivation or validated FXR-target functional responses; experimentally measured regulation/localization of named homeostatic transporters; and imaging or morphometry of canalicular structure, integrity, area, contractions, dynamics, transporter insertion/retrieval, or fluorescent-probe retention. Include positive, negative/no-effect, weak, protective/restorative, mixed, biphasic, and condition-dependent findings. Canonical non-bile-acid MRP probes are eligible when they directly test a named hepatobiliary MRP.\n\nEXCLUDE: purely computational, docking, pharmacophore, PBPK, or predicted results; planned assays and method-only passages with no result; unsupported hypotheses and broad review/background claims; generic clinical cholestasis or DILI association without an assay endpoint; viral-entry assays using NTCP without bile-acid transport/regulation; intestinal-only ASBT, unrelated nonhepatic transport, and unrelated transporters/probes; generic pharmacokinetics, tissue concentration, protein binding, solubility, partitioning, synthesis chemistry, or stock preparation without an in-scope output; bile-acid synthesis/metabolism-gene measurements alone unless a bile-acid pool, composition, secretion, or direct FXR/homeostasis response is measured; and standalone cytotoxicity, apoptosis, ATP depletion, oxidative stress, LDH, ALT/AST/ALP, bilirubin, histology, inflammation, fibrosis, steatosis, or viability. Toxicity is eligible only as the explicit response to a defined bile-acid-mixture sensitization design or when paired in the same experiment with direct bile-acid accumulation/transport, phospholipid secretion, bile flow, or canalicular measurement. Do not create a record for an anesthetic, vehicle, buffer component, control, or probe unless its own effect is tested.\n\nRECORD GRANULARITY: create one record per tested entity/form × directly tested molecular target or explicit whole-system process × assay category × assay format/biological system/species/donor × probe or measured analyte × materially distinct exposure/time/condition × endpoint metric. Split parent and each separately tested metabolite; different targets, species, donor-resolved results, matrices, bile-acid species, probes, assay formats, exposure levels or time points with separately reported outcomes, and independently queryable endpoints such as IC50, Ki, Km, Vmax, transport rate, BEI, biliary clearance, intracellular concentration, bile flow, phospholipid output, FXR activity, expression/localization, and morphology. Split species-specific bile-acid values and keep a separate total-bile-acid record. Keep a concentration series that supports one fitted IC50/Ki/EC50/Km/Vmax as one record; put the full series/range in `exposure_conditions`, not in `result_value`. Split multiple fixed doses or times only when they have separate results. Keep matched vehicle, untreated, wild-type, ATP-free, sodium-free, or other controls in the same record and describe the comparison; do not make control-only records unless the comparator itself is the focal tested entity. Merge technical replicates and duplicate reports of the same result. Keep a fixed mixture/combination as one tested condition when only the joint result is reported, but split any component having its own result.\n\nEVIDENCE: require an explicit methods/results statement, table value, caption-described result, quantitative abstract statement, or clear assay-derived qualitative conclusion. A concrete cited prior experiment is eligible only when tested entity, target/process, and endpoint are identifiable; mark secondary reporting in `extra_details`. Exclude protocol-only and unsupported review assertions. Do not estimate values from unavailable plots or invent concentrations, units, targets, substrates, species, donors, metabolites, identifiers, Cmax basis, or assay conditions. Normalize unambiguous transporter aliases and obvious names only. Do not infer direct transporter inhibition from cholestasis, bile-flow change, expression change, or bile-acid accumulation; do not assign a transporter from probe identity alone. Infer transport direction only from an explicitly named transporter/compartment. Metabolic competence may be classified from an explicitly named model only as follows: intact in vivo systems, perfused liver, liver slices, and primary hepatocytes are intrinsically competent unless stated otherwise; isolated membrane vesicles and transporter-only recombinant systems are nonmetabolic unless metabolism is engineered. Otherwise do not infer it.\n\nCONDITIONS AND DEFAULTS: ordinary vehicle/untreated or wild-type comparison, routine physiological near-neutral buffer, standard mammalian assay temperature, standard culture conditions, and conventional ATP-containing conditions for ABC vesicle assays are defaults only; never fill unstated values from them. In `biological_system_context`, report the source, species, donor/lot/model, construct, culture state, and metabolic competence. In `exposure_conditions`, preserve test concentration/dose/range, unit, route, regimen, probe concentration, incubation/transport time, relevant preincubation or washout, exact bile-acid-mixture components and proportions, biological modifiers, and any stated total or unbound Cmax. Also record material departures that affect interpretation: disease/cholestasis or knockout/variant model, co-treatment, bile-acid loading/depletion, sodium-free or Ca/Mg-free conditions, ATP-versus-AMP controls, altered pH/osmolality/temperature, albumin/serum binding, metabolic inhibitor, repeated exposure, pregnancy/diet, and unusual culture state. Keep test exposure distinct from response: IC50/Ki/Km/Vmax and other outputs belong in `endpoint_metric`, `result_value`, and `result_unit`; the levels used to obtain them belong in `exposure_conditions`.\n\nRESULTS: choose one endpoint metric per record and extract one central numeric result when reported, with its separately recorded unit. For qualitative results, leave `result_value` and `result_unit` null and use `effect_direction`; use `no_change` for explicit negative/no-effect findings, never null. For inherently nondirectional endpoints such as a Km, composition profile, localization pattern, or morphology class, use `present`; leave `effect_direction` null only when the paper states no conclusion. For a reported range, put the upper bound in `result_value` and the full range in `extra_details`. Calculate IC50/Cmax only when the same tested form has explicit compatible molar IC50 and Cmax values and the operation is direct unit alignment and division; identify total versus unbound Cmax, and for an explicit Cmax range use the highest value for a conservative ratio and note the range. Do not derive unbound Cmax from protein binding unless the paper does so.\n\nSPILL RULES: use `extra_details` for the paper's own name for the tested entity whenever `global_identifier` is null or does not convey what was tested, explicit parent names/relationships, cited-result provenance, secondary target identifiers, uncertainty (SD/SEM/CI), replicate count, P values, comparator values, normalization/fitting method, detection platform, radiolabel activity, fluorescence or canalicular markers, buffer constituents, ATP/GSH amount, membrane preparation/orientation, construct/variant details, donor demographics, route/schedule details that do not fit cleanly in `exposure_conditions`, and mechanistic nuance. Do not place excluded adjacent endpoints into a record merely because they appear nearby.",
+  "schema_spec": [
+    {
+      "name": "tested_entity_form",
+      "description": "Form of the entity attached to `global_identifier` that was actually tested. Choose one mutually exclusive value. Use `metabolite` only for a separately identified biotransformation product; use `conjugate_or_derivative` for a deliberately conjugated, labeled, salt/formulation, prodrug, or designed analogue that is not reported as a metabolite; use `endogenous_molecule` for a native bile acid, lipid, or ligand tested as the perturbagen; use `mixture_or_combination` for inseparable aggregate testing. Use `other_defined_test_article` only for a stated in-scope test article that fits none of the above, and record the paper's own wording in `extra_details`. If the paper does not establish the form, return null; do not use a placeholder. Put an explicit parent name or relationship in `extra_details`.",
+      "value_type": "string",
+      "allowed_values": [
+        "parent",
+        "metabolite",
+        "conjugate_or_derivative",
+        "endogenous_molecule",
+        "mixture_or_combination",
+        "genetic_or_biologic_perturbation",
+        "physiologic_or_disease_perturbation",
+        "other_defined_test_article"
+      ]
+    },
+    {
+      "name": "assay_category",
+      "description": "Single endpoint-level biological question answered by this record, independent of physical platform. Values are at one abstraction level. When a record could match more than one value, choose the most endpoint-specific: `phosphatidylcholine_or_phospholipid_transport`, `bile_acid_mixture_sensitization`, `fxr_function`, `canalicular_morphology_or_dynamics`, `bile_acid_speciation_or_composition`, and `bile_acid_accumulation_or_pool` take precedence over the transporter categories and over `biliary_secretion_or_bile_flow`. Use `bile_acid_speciation_or_composition` when the endpoint is a fraction, profile, or conjugation pattern and `bile_acid_accumulation_or_pool` when it is an amount, concentration, or pool size. `canalicular_efflux_or_biliary_clearance` is for cell/SCH compartmental disposition; `biliary_secretion_or_bile_flow` is for organ- or organism-level output. Split records for distinct categories. Return null rather than a missingness placeholder when the category cannot be established.",
+      "value_type": "string",
+      "allowed_values": [
+        "transporter_inhibition_or_modulation",
+        "transporter_substrate_or_kinetics",
+        "transporter_regulation_or_expression",
+        "transporter_localization_or_trafficking",
+        "canalicular_efflux_or_biliary_clearance",
+        "bile_acid_accumulation_or_pool",
+        "bile_acid_speciation_or_composition",
+        "phosphatidylcholine_or_phospholipid_transport",
+        "biliary_secretion_or_bile_flow",
+        "bile_acid_mixture_sensitization",
+        "fxr_function",
+        "canalicular_morphology_or_dynamics"
+      ]
+    },
+    {
+      "name": "assay_format",
+      "description": "Physical experimental platform that generated the result, not its conclusion or biological domain. Choose exactly one. Apply this precedence so a record cannot match both its preparation and its detection modality: choose `imaging_or_morphometry` for morphology or localization endpoints, `gene_or_protein_expression_assay` for abundance endpoints, `reporter_assay` for transactivation endpoints, `analytical_biofluid_or_tissue_measurement` for untargeted composition or concentration measurements in a collected matrix; otherwise choose the biological platform that produced the material. Put finer preparation details in `biological_system_context` and detection details in `extra_details`. Return null if the platform is not supplied; `other_experimental` is only for a stated in-scope platform outside the list, never for missing information, and the platform must then be named in `extra_details`.",
+      "value_type": "string",
+      "allowed_values": [
+        "membrane_vesicle_or_reconstituted_membrane",
+        "transporter_expressing_cell_or_oocyte",
+        "polarized_or_transcellular_monolayer",
+        "primary_hepatocyte_suspension_or_monolayer",
+        "sandwich_cultured_hepatocyte",
+        "hepatocyte_couplet",
+        "hepatic_cell_line_or_3d_model",
+        "liver_slice_or_ex_vivo_tissue",
+        "isolated_perfused_liver",
+        "in_vivo_animal",
+        "human_clinical_or_biospecimen",
+        "reporter_assay",
+        "gene_or_protein_expression_assay",
+        "imaging_or_morphometry",
+        "analytical_biofluid_or_tissue_measurement",
+        "other_experimental"
+      ]
+    },
+    {
+      "name": "target_or_process",
+      "description": "One transporter, receptor, regulatory target, or explicit whole-system process directly interrogated, such as BSEP/ABCB11, MRP2/ABCC2, MDR3/ABCB4, NTCP/SLC10A1, FXR/NR1H4, or biliary phosphatidylcholine secretion. Normalize unambiguous aliases. Do not infer a molecular target from a probe, cholestatic phenotype, accumulation, or expression change. Do not restate the `assay_category` value here: record a process only when it names something more specific than the category already encodes. Split target-specific results. Null is allowed for genuinely untargeted analyses when the process is fully represented by `assay_category` and `endpoint_metric`.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "probe_or_analyte",
+      "description": "The substance or structure whose measurement defines the endpoint: the distinct transported, reporter, or imaging probe, or, when there is no distinct probe, the measured analyte or feature itself, such as total bile acids, taurocholate, phosphatidylcholine, FXR-driven luciferase, BSEP mRNA, BSEP protein, bile, or the canalicular network. Name the substance or feature, not the quantity applied to it: the metric term (rate, concentration, area, index, IC50) belongs in `endpoint_metric` and must not be duplicated here. Include isotope/fluorophore labels when stated. Use one probe or analyte per record and split species-specific bile-acid results. Null when the endpoint has no distinct probe, analyte, or feature; do not insert a placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "biological_system_context",
+      "description": "Lossless concise description of the biological source and model: cell/membrane/tissue/organ or specimen, culture configuration, host and transporter species, strain, donor/lot or pooled-donor status, genotype/disease state when central, and metabolic competence when explicit or permitted by the task rules. Distinguish expressed-transporter species from host-cell species. This field describes the system, never the treatment applied to it; applied conditions belong in `exposure_conditions`. Omit unstated components rather than writing `unknown` or `not reported`.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_conditions",
+      "description": "Lossless condition string that clearly labels and separates: focal test-article concentration/dose/range or series and unit; route/regimen; probe concentration/amount and unit; principal incubation, uptake, efflux, or treatment duration; preincubation/washout when material; exact bile-acid-mixture or co-treatment composition and proportions; nonstandard ions, ATP controls, binding medium, disease/genotype challenge, or other effect modifiers; and any reported total or unbound Cmax and IC50/Cmax ratio. Preserve reported units and do not convert except for the narrowly permitted direct ratio calculation. Null only when none of these details is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_metric",
+      "description": "One reported output or fitted parameter for this record, naming the quantity measured rather than the substance measured: for example IC50, Ki, EC50, Km, Vmax, percent inhibition, transport rate, uptake clearance, BEI, intrinsic biliary clearance, intracellular concentration, mass fraction, secretion or output rate, bile flow rate, reporter activity, transcript or protein abundance, membrane-localized fraction, canalicular area, or morphology score. Qualify it with the analyte only where the metric is otherwise unreadable (for example 'biliary phosphatidylcholine output rate'); the analyte itself belongs in `probe_or_analyte`. Include compartment or normalization needed to interpret the metric. Split independently queryable metrics. Null only if the paper gives a purely qualitative conclusion with no nameable metric; do not use a missingness placeholder.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "effect_direction",
+      "description": "Qualitative conclusion for the selected endpoint. Choose exactly one. If the endpoint expresses a change relative to a stated comparator — including potency constants such as IC50 or Ki that quantify inhibition — use `increase`, `decrease`, `no_change`, or `mixed_or_biphasic`. `mixed_or_biphasic` means opposite directions across dose or time within the unsplit reported conclusion; otherwise split condition-specific results. Explicit negative, inactive, or no-effect findings must be `no_change`, never null. Use `present` only when the endpoint establishes existence or characterizes a property with no comparator, such as substrate identification, a Km or Vmax of transport, a localization pattern, a composition profile, or a morphology class. Null only when the paper states no conclusion for this endpoint.",
+      "value_type": "string",
+      "allowed_values": [
+        "increase",
+        "decrease",
+        "no_change",
+        "mixed_or_biphasic",
+        "present"
+      ]
+    },
+    {
+      "name": "result_value",
+      "description": "Central numeric value for `endpoint_metric`, without its unit; its unit goes in `result_unit`. Do not place test or probe exposure here. Preserve the reported magnitude; do not estimate from plots. For an inequality, record the numeric boundary and preserve the relation in `extra_details`. For a reported range, record the upper bound and preserve the full range in `extra_details`. Leave null for qualitative or nonnumeric results and explain them with `effect_direction` and/or `extra_details`.",
+      "value_type": "number",
+      "allowed_values": []
+    },
+    {
+      "name": "result_unit",
+      "description": "Reported unit or dimensionless scale applying to `result_value`, such as µM, nmol/min/mg protein, %, fold, ratio, cells+bile/cells, or a named score scale. Every non-null `result_value` must have a non-null `result_unit`; use an explicit dimensionless label such as `fold` or `ratio` rather than omitting it. Null when `result_value` is null. Preserve the paper's scale and do not encode missingness placeholders.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional assay details and nuance not represented above. Record the paper's own name for the tested entity here whenever `global_identifier` is null, and whenever the identifier alone does not convey what was tested (mixtures, knockouts, disease models, unmatched class labels). Also record the explicit parent name/relationship, cited-prior-experiment provenance, secondary target identifiers, uncertainty and statistics, comparator values, mixture or condition elaboration, analytical/imaging method, labels and markers, construct or donor details, kinetic model, normalization, and mechanistic interpretation. Do not use this field to retain excluded unrelated endpoints or to duplicate structured values.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "CTVWCRZZOFXGRG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CTVWCRZZOFXGRG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "92569-51-2",
+    "Mono(8-?carboxyoctyl) Phthalate",
+    "SCHEMBL32680574"
+  ],
+  "http_status": 200,
+  "cids": [
+    86259226
+  ]
+}

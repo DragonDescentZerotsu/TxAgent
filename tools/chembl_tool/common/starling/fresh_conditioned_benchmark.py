@@ -48,8 +48,14 @@ def build_fresh_conditioned_benchmark(
     source_artifacts: Sequence[Path] = (),
     seed: int = SEED,
     target_size: int | None = None,
+    required_labels: Sequence[int] = (),
+    swap_evaluation_splits: bool = False,
 ) -> dict[str, Any]:
     """Write staging split/audit files and return their summary.
+
+    ``swap_evaluation_splits`` exchanges valid/test names after allocation;
+    train and cohort membership remain fixed. Optimizer diagnostics retain the
+    original allocation names; output rows and group summaries use the new names.
 
     Votes require source_record_id, drug, molecule_identity_key, scaffold, Y,
     condition_group, condition_atoms, pmid, label_method, reviewer, raw_value,
@@ -263,6 +269,7 @@ def build_fresh_conditioned_benchmark(
             nominal_target_size=nominal_target,
             required_condition_groups=required_groups,
             seed=seed,
+            required_labels=required_labels,
         )
     assignment, optimization = allocate_scaffold_groups(
         selected,
@@ -270,7 +277,13 @@ def build_fresh_conditioned_benchmark(
         seed=seed,
         exclude_empty_scaffold_from_heldout=True,
         required_condition_groups=required_groups,
+        required_labels=required_labels,
     )
+    if swap_evaluation_splits:
+        assignment = {
+            scaffold: {"valid": "test", "test": "valid"}.get(split, split)
+            for scaffold, split in assignment.items()
+        }
     # The historical allocator consumes one row per parent. Fresh conditioned
     # cohorts may have several rows per parent; report both units accurately.
     empty_rows = [row for row in selected if not row["bemis_murcko_scaffold"]]
@@ -281,7 +294,10 @@ def build_fresh_conditioned_benchmark(
     combined: dict[str, list[dict[str, Any]]] = {split: [] for split in SPLITS}
     for row in selected:
         split = assignment[row["bemis_murcko_scaffold"]]
-        combined[split].append({**row, "split": split, "split_policy": CONTRACT})
+        output = {**row, "split": split, "split_policy": CONTRACT}
+        if required_labels:
+            output["split_required_labels"] = list(required_labels)
+        combined[split].append(output)
     for rows in combined.values():
         rows.sort(
             key=lambda row: (row["molecule_identity_key"], row["condition_group"])
@@ -307,6 +323,7 @@ def build_fresh_conditioned_benchmark(
         "contract": CONTRACT,
         "protocol_version": "fresh_conditioned_benchmark.v2",
         "seed": seed,
+        "swap_evaluation_splits": swap_evaluation_splits,
         "source_votes_sha256": source_digest,
         "source_artifacts": [
             {"path": str(path), "sha256": sha256_file(path)}

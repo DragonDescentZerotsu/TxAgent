@@ -1,0 +1,24 @@
+{
+  "parent_key": "TUCNEACPLKLKNU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3170-69-2",
+    "Acetyl (6CI, 7CI, 8CI)",
+    "Acetyl radical",
+    "CH3CO",
+    "CHEBI:46887",
+    "DTXCID70108087",
+    "DTXSID30185596",
+    "Ethyl, 1-oxo- (9CI)",
+    "Methylcarbonyl radical",
+    "RefChem:109069",
+    "acetyl",
+    "methylcarbonyl",
+    "methyloxidocarbon(.)"
+  ],
+  "cids": [
+    137849
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TUCNEACPLKLKNU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

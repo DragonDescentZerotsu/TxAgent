@@ -1,0 +1,35 @@
+{
+  "parent_key": "FZQRSWHPNZTNQQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FZQRSWHPNZTNQQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "107551-67-7",
+    "3-(1,1-Dimethylethyl)-4-hydroxybenzenepropanoic acid",
+    "3-(3-(tert-Butyl)-4-hydroxyphenyl)propanoic acid",
+    "3-(3-(tert-Butyl)-4-hydroxyphenyl)propanoicacid",
+    "3-(3-tert-Butyl-4-hydroxyphenyl)propionic acid",
+    "3-(3-tert-butyl-4-hydroxy-phenyl)-propionic acid",
+    "3-(3-tert-butyl-4-hydroxyphenyl)-propionic acid",
+    "3-(3-tert-butyl-4-hydroxyphenyl)propanoic acid",
+    "3-(3-tert-butyl-4-oxidanyl-phenyl)propanoic acid",
+    "403-920-4",
+    "BS-49767",
+    "Benzenepropanoic acid, 3-(1,1-dimethylethyl)-4-hydroxy-",
+    "CS-0342940",
+    "DB-338856",
+    "DTXSID20420180",
+    "E84595",
+    "EC 403-920-4",
+    "F737825",
+    "MFCD19441447",
+    "NS00006451",
+    "RX93F57D48",
+    "RefChem:492212",
+    "SCHEMBL10504336",
+    "SCHEMBL1537791"
+  ],
+  "http_status": 200,
+  "cids": [
+    5463779
+  ]
+}

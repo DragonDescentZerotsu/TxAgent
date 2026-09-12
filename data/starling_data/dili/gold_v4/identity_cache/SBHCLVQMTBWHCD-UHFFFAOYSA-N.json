@@ -1,0 +1,15 @@
+{
+  "parent_key": "SBHCLVQMTBWHCD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS028110000",
+    "SCHEMBL20468",
+    "SCHEMBL5887868",
+    "eicosapentenoic acid"
+  ],
+  "cids": [
+    135002
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SBHCLVQMTBWHCD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

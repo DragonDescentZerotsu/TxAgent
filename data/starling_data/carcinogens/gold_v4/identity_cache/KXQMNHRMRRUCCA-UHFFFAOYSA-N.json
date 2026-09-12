@@ -1,0 +1,29 @@
+{
+  "parent_key": "KXQMNHRMRRUCCA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KXQMNHRMRRUCCA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1,1'-Biphenyl)-4-ol, 3-(1,1-dimethylethyl)-",
+    "2-t-butyl-4-phenylphenol",
+    "2-tert-butyl-4-phenylphenol",
+    "255-840-2",
+    "3-(1,1-Dimethylethyl)(1,1'-biphenyl)-4-ol",
+    "3-(1,1-Dimethylethyl)[1,1 inverted exclamation marka-biphenyl]-4-ol",
+    "3-(1,1-dimethylethyl)[1,1'-biphenyl]-4-ol",
+    "3-tert-Butyl[1,1'-biphenyl]-4-ol",
+    "4-Biphenylol, 3-tert-butyl-",
+    "42479-87-8",
+    "DB-203540",
+    "DTXCID1040114",
+    "DTXSID7068394",
+    "EINECS 255-840-2",
+    "NS00031187",
+    "RefChem:204035",
+    "SCHEMBL3565632",
+    "[1,1'-Biphenyl]-4-ol, 3-(1,1-dimethylethyl)-"
+  ],
+  "http_status": 200,
+  "cids": [
+    162519
+  ]
+}

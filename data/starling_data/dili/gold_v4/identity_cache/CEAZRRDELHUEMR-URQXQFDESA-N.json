@@ -1,0 +1,30 @@
+{
+  "parent_key": "CEAZRRDELHUEMR-URQXQFDESA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,2S,3S,4R,6S)-4,6-Diamino-3-{[3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyl]oxy}-2-hydroxycyclohexyl (6xi)-2-amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-alpha-D-erythro-heptopyranoside",
+    "(1R,2S,3S,4R,6S)-4,6-diamino-3-(3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyloxy)-2-hydroxycyclohexyl 2-amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-beta-L-lyxo-heptopyranoside",
+    "(1R,2S,3S,4R,6S)-4,6-diamino-3-[3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyloxy]-2-hydroxycyclohexyl 2-amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-beta-L-lyxo-heptopyranoside",
+    "(1R,2S,3S,4R,6S)-4,6-diamino-3-{[3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyl]oxy}-2-hydroxycyclohexyl (6x)-2-amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-alpha-D-erythro-heptopyranoside",
+    "(2R,3R,4R,5R)-2-(((1S,2S,3R,4S,6R)-4,6-Diamino-3-(((2R,3R,6S)-3-amino-6-(1-(methylamino)ethyl)tetrahydro-2H-pyran-2-yl)oxy)-2-hydroxycyclohexyl)oxy)-5-methyl-4-(methylamino)tetrahydro-2H-pyran-3,5-diol",
+    "(2R,3R,4R,5R)-2-((1S,2S,3R,4S,6R)-4,6-diamino-3-((2R,3R,6S)-3-amino-6-(1-(methylamino)ethyl)oxan-2-yl)oxy-2-hydroxycyclohexyl)oxy-5-methyl-4-(methylamino)oxane-3,5-diol",
+    "287730-69-2",
+    "BDBM50476074",
+    "CHEMBL195892",
+    "DTXSID20859638",
+    "Gentamicin C1 Deuterated Pentaacetate Salt (>90%)",
+    "Gentamycin C1",
+    "O-(6xi)-2-Amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-alpha-D-erythro-heptopyranosyl-(1a4)-O-[3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyl-(1a6)]-2-deoxy-D-streptamine",
+    "O-2-Amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-a-D-ribo-heptopyranosyl-(14)-O-[3-deoxy-4-C-methyl-3-(methylamino)-ss-L-arabinopyranosyl-(16)]-2-deoxy-D-streptamine Pentaacetate Salt Deuterated",
+    "O-2-amino-2,3,4,6,7-pentadeoxy-6-(methylamino)-alpha-D-ribo-heptopyranosyl-(1-4)-O-(3-deoxy-4-C-methyl-3-(methylamino)-beta-L-arabinopyranosyl-(1-6))-2-deoxy-D-streptamine",
+    "Q27103118",
+    "RefChem:1085751",
+    "SCH-9724",
+    "SCHEMBL196202"
+  ],
+  "cids": [
+    441305
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CEAZRRDELHUEMR-URQXQFDESA-N/synonyms/JSON",
+  "http_status": 200
+}

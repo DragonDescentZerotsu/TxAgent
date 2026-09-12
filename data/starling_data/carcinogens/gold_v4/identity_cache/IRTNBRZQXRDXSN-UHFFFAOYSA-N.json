@@ -1,0 +1,13 @@
+{
+  "parent_key": "IRTNBRZQXRDXSN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IRTNBRZQXRDXSN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL3503507",
+    "n-methyl-n'-nitro-n-nitrosoguanine"
+  ],
+  "http_status": 200,
+  "cids": [
+    53932014
+  ]
+}

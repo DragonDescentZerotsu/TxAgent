@@ -1,0 +1,38 @@
+{
+  "parent_key": "HTLWMOKBJQKDIJ-WJOKGBTCSA-N",
+  "ok": true,
+  "synonyms": [
+    "(R)-1-(4-hydroxy-3,5-dimethyl-benzyl)-2-(4-morpholin-4-yl-piperidin-1-yl)-2-oxo-ethyl 4-(2-oxo-1,2,4,5-tetrahydro-1,3-benzodiazepin-3-yl)-piperidine-1-carboxylate",
+    "1-Piperidinecarboxylic acid, 4-(1,2,4,5-tetrahydro-2-oxo-3H-1,3-benzodiazepin-3-yl)-, (1R)-1-((4-hydroxy-3,5-dimethylphenyl)methyl)-2-(4-(4-morpholinyl)-1-piperidinyl)-2-oxoethyl ester",
+    "4-(2-OXO-1,2,4,5-TETRAHYDRO-3H-1,3-BENZODIAZEPINE-3-YL)PIPERIDINE-1-CARBOXYLIC ACID (R)-.ALPHA.-((4-MORPHOLINOPIPERIDINO)CARBONYL)-3,5-DIMETHYL-4-HYDROXYPHENETHYL ESTER",
+    "4-(2-Oxo-1,2,4,5-tetrahydro-3H-1,3-benzodiazepine-3-yl)piperidine-1-carboxylic acid (R)-alpha-((4-morpholinopiperidino)carbonyl)-3,5-dimethyl-4-hydroxyphenethyl ester",
+    "7L3WOA232W",
+    "866086-05-7",
+    "AKOS040747965",
+    "BDBM50047356",
+    "BI 44370 TA",
+    "BI-44370",
+    "BI-44370-BS",
+    "BI44370",
+    "CGRP antagonist 2",
+    "CHEMBL3334624",
+    "CS-0064685",
+    "DA-72128",
+    "HTLWMOKBJQKDIJ-WJOKGBTCSA-N",
+    "HY-114945",
+    "J3.353.239C",
+    "Q27268496",
+    "RefChem:119608",
+    "SCHEMBL2088321",
+    "SCHEMBL29644516",
+    "T26796",
+    "UNII-7L3WOA232W",
+    "[(2R)-3-(4-hydroxy-3,5-dimethylphenyl)-1-(4-morpholin-4-ylpiperidin-1-yl)-1-oxopropan-2-yl] 4-(2-oxo-4,5-dihydro-1H-1,3-benzodiazepin-3-yl)piperidine-1-carboxylate",
+    "orb1986965"
+  ],
+  "cids": [
+    23654987
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HTLWMOKBJQKDIJ-WJOKGBTCSA-N/synonyms/JSON",
+  "http_status": 200
+}

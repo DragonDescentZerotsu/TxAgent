@@ -1,0 +1,30 @@
+{
+  "parent_key": "JYVYSXOKKXPQHQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JYVYSXOKKXPQHQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "203-18-9",
+    "CCRIS 8725",
+    "DB-220323",
+    "DTXCID2096673",
+    "DTXSID30174182",
+    "Dibenzo(j,l)fluoranthene",
+    "Dibenzo[j,I]fluoranthene",
+    "Dibenzo[j,l]fluoranthene",
+    "JYVYSXOKKXPQHQ-UHFFFAOYSA-N",
+    "NS00122732",
+    "RefChem:132836",
+    "SCHEMBL1263246",
+    "SCHEMBL18221912",
+    "SCHEMBL18221913",
+    "SCHEMBL18221914",
+    "SCHEMBL18221915",
+    "SCHEMBL18221935",
+    "SCHEMBL30123188",
+    "hexacyclo[14.7.1.02,15.03,8.09,14.020,24]tetracosa-1(23),2(15),3,5,7,9,11,13,16,18,20(24),21-dodecaene"
+  ],
+  "http_status": 200,
+  "cids": [
+    6428082
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "parent_key": "AFZQINPVUZQTKS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AFZQINPVUZQTKS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-propanol, 3-(ethylnitrosoamino)-",
+    "3-(Ethylnitrosoamino)-1-propanol",
+    "61734-88-1",
+    "AKOS006279292",
+    "BRN 2238807",
+    "DTXCID80133224",
+    "DTXSID50210733",
+    "Ethyl-N-(3-hydroxypropyl)nitrosamine, N-",
+    "N-Ethyl-N-(3-hydroxypropyl)nitrosamine",
+    "N-ethyl-N-(3-hydroxypropyl)nitrous amide",
+    "Propanol, 3-(ethylnitrosoamino)-",
+    "RefChem:163326",
+    "W828Z5E8CG"
+  ],
+  "http_status": 200,
+  "cids": [
+    119289
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "WZXKBPYJTFTQAL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1403564-06-6",
+    "4-Isoxazolecarboxamide, 5-methyl-N-(2-(trifluoromethyl)phenyl)-",
+    "5-Methyl-N-(2-(trifluoromethyl)phenyl)isoxazole-4-carboxamide",
+    "5-Methyl-N-[2-(trifluoromethyl)phenyl]-4-isoxazolecarboxamide",
+    "5-Methyl-N-[2-(trifluoromethyl)phenyl]isoxazole-4-carboxamide",
+    "5-methyl-N-[2-(trifluoromethyl)phenyl]-1,2-oxazole-4-carboxamide",
+    "935-274-9",
+    "AKOS027585599",
+    "DS-015834",
+    "DTXSID801347596",
+    "LEFLUNOMIDE IMPURITY F (EP IMPURITY)",
+    "LEFLUNOMIDE IMPURITY F [EP IMPURITY]",
+    "LEFLUNOMIDE IMPURITY, N-(2'-TRIFLUOROMETHYLPHENYL)-5-METHYLISOXAZOLE-4-CARBOXAMIDE- [USP IMPURITY]",
+    "LEFLUNOMIDE IMPURITY, N-(2'-TRIFLUOROMETHYLPHENYL)-5-METHYLISOXAZOLE-4-CARBOXAMIDE-(USP IMPURITY)",
+    "LEFLUNOMIDE IMPURITY, N-(2'-TRIFLUOROMETHYLPHENYL)-5-METHYLISOXAZOLE-4-CARBOXAMIDE-[USP IMPURITY]",
+    "LeflunoMide EP IMpurity F",
+    "Leflunomide Impurity F",
+    "Leflunomide impurity F [EP]",
+    "Leflunomide impurity, N-(2'-trifluoromethylphenyl)-5-methylisoxazole-4-carboxamide- [USP]",
+    "Leflunomide impurity, N-(2'-trifluoromethylphenyl)-5-methylisoxazole-4-carboxamide-(USP)",
+    "Leflunomide impurity, N-(2'-trifluoromethylphenyl)-5-methylisoxazole-4-carboxamide-[USP]",
+    "Leflunomide ortho-isomer",
+    "N-(trifluoromethylphenyl)-5-methylisoxazole-4-carboxamide",
+    "N207Y4RLU4",
+    "Q27284400",
+    "RefChem:103170",
+    "SCHEMBL19034",
+    "SCHEMBL29625262",
+    "UNII-N207Y4RLU4",
+    "WZXKBPYJTFTQAL-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    21912858
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WZXKBPYJTFTQAL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

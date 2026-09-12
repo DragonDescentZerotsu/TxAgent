@@ -1,0 +1,23 @@
+{
+  "parent_key": "FUWLWBDNQPTINE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FUWLWBDNQPTINE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "148104-31-8",
+    "3-Tert-butylquinolin-2(1H)-one",
+    "DTXCID60547562",
+    "DTXSID30596800",
+    "FUWLWBDNQPTINE-UHFFFAOYSA-N",
+    "RefChem:282698",
+    "SCHEMBL152565",
+    "SCHEMBL29445334",
+    "SCHEMBL31048730",
+    "SCHEMBL837270",
+    "t-butylhydroxyquinoline",
+    "t-butylquinolone"
+  ],
+  "http_status": 200,
+  "cids": [
+    18952779
+  ]
+}

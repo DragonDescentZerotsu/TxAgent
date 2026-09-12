@@ -1,0 +1,28 @@
+{
+  "parent_key": "FODTZLFLDFKIQH-AEUNZGHWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FODTZLFLDFKIQH-AEUNZGHWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12738-23-7",
+    "CACLATE",
+    "DTXSID90872334",
+    "FODTZLFLDFKIQH-AEUNZGHWSA-N",
+    "GAMMAJUST 50",
+    "GAMMATSUL",
+    "GUNTRIN",
+    "MASPIRON",
+    "ORYVITA",
+    "ORYZAAL",
+    "Orizanol",
+    "Oryzanol",
+    "RefChem:1093918",
+    "SCHEMBL29357024",
+    "THIAMINOGEN",
+    "[(1S,3R,6S,12S,15R,16R)-7,7,12,16-tetramethyl-15-(6-methylhept-5-en-2-yl)-6-pentacyclo[9.7.0.01,3.03,8.012,16]octadecanyl] (E)-3-(4-hydroxy-3-methoxyphenyl)prop-2-enoate",
+    "gamma-oz"
+  ],
+  "http_status": 200,
+  "cids": [
+    6450219
+  ]
+}

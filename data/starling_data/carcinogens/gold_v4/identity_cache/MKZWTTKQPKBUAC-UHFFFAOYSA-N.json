@@ -1,0 +1,12 @@
+{
+  "parent_key": "MKZWTTKQPKBUAC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MKZWTTKQPKBUAC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "11,12-dimethylbenz[a]anthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    129849247
+  ]
+}

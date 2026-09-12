@@ -1,0 +1,23 @@
+{
+  "parent_key": "CTXVUJJABIHCFU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CTXVUJJABIHCFU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7,8-Dihydrobenzo[1,12]tetrapheno[10,11-b]oxirene-7,8-diol",
+    "7,8-Dihydroxy-9,10-epoxy-7,8-dihydrobenzo(a)pyrene",
+    "7,8-dihydroxy-7,8-dihydro-9,10 epoxy-benzo[a]pyrene",
+    "72485-26-8",
+    "BENZO(a)PYRENE, 7,8-DIHYDRO-7,8-DIHYDROXY-9,10-EPOXY-",
+    "Benzo(a)pyrene 7,8-dihydrodiol-9,10-epoxide",
+    "Benzo(a)pyrene-7,8-dihydrodiol-9,10-epoxide",
+    "DTXSID50993312",
+    "Q42412393",
+    "RefChem:326095",
+    "SCHEMBL31553545",
+    "starbld0036906"
+  ],
+  "http_status": 200,
+  "cids": [
+    51604
+  ]
+}

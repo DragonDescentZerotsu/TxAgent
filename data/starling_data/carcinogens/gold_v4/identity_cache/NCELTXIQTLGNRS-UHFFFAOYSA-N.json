@@ -1,0 +1,13 @@
+{
+  "parent_key": "NCELTXIQTLGNRS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCELTXIQTLGNRS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-amino-3,8-dimethylimidazo[4,5-b]quinoxaline"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Red (90%), Request Time status: Green (26%), Service status: Yellow (73%)",
+  "cids": [
+    91051549
+  ]
+}

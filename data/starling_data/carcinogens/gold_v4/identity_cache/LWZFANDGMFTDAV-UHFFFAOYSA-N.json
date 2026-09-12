@@ -1,0 +1,41 @@
+{
+  "parent_key": "LWZFANDGMFTDAV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LWZFANDGMFTDAV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-anhydro-6-O-dodecanoyl-D-glucitol",
+    "16287-68-6",
+    "3,6-Anhydro-1-O-dodecanoylhexitol",
+    "CHEBI:169001",
+    "CHEMBL1706633",
+    "DTXSID70324260",
+    "E493",
+    "LMFA07011017",
+    "LS-14690",
+    "LWZFANDGMFTDAV-UHFFFAOYSA-N",
+    "NCGC00160357-01",
+    "NS00132713",
+    "NSC-406169",
+    "NSC406169",
+    "SCHEMBL3835",
+    "ST50827458",
+    "Sorbester P12",
+    "Sorbitan laurate (INN)",
+    "Sorbitan laurate, INN",
+    "Sorbitan monolaurate (NF)",
+    "Sorbitan monolaurate, BAN, USAN",
+    "Span 20",
+    "Span 20 (TN)",
+    "Span20;Arlacel20;Sorbitanmonolaurate;Sorbitanmonododecanoate",
+    "T20598",
+    "WE 18:1;O4",
+    "[2-(3,4-dihydroxyoxolan-2-yl)-2-hydroxyethyl] dodecanoate",
+    "[2-(3,4-dihydroxytetrahydrofuran-2-yl)-2-hydroxy-ethyl] dodecanoate",
+    "orb1705539"
+  ],
+  "http_status": 200,
+  "error": "JSONDecodeError",
+  "cids": [
+    347468
+  ]
+}

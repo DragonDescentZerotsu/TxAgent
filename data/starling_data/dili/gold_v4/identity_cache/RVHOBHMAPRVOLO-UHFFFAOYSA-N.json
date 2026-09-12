@@ -1,0 +1,39 @@
+{
+  "parent_key": "RVHOBHMAPRVOLO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Ethylbutanedioic acid",
+    "2-ethylsuccinic acid",
+    "211-259-6",
+    "636-48-6",
+    "AAA63648",
+    "AKOS MSC-0138",
+    "AKOS000282821",
+    "AKOS016052746",
+    "Athylbernsteinsaure",
+    "Butanedioic acid, 2-ethyl-",
+    "CHEBI:195363",
+    "DTXCID50835268",
+    "DTXSID70979815",
+    "EINECS 211-259-6",
+    "EN300-211722",
+    "Ethyl succinic acid",
+    "Ethylsuccinic acid",
+    "H38004",
+    "MFCD02258655",
+    "NS00042481",
+    "RefChem:471909",
+    "SCHEMBL293785",
+    "SCHEMBL61510",
+    "SCHEMBL6629922",
+    "SY518487",
+    "Z1205493643",
+    "alpha-ethylsuccinic acid",
+    "monoethylsuccinic acid"
+  ],
+  "cids": [
+    69466
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RVHOBHMAPRVOLO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

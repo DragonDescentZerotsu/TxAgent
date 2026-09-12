@@ -1,0 +1,43 @@
+{
+  "parent_key": "KPTYXJLOWLVCMU-XDNAFOTISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KPTYXJLOWLVCMU-XDNAFOTISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+-)-1-beta,2-alpha-Dihydroxy-3-alpha,4-alpha-epoxy-1,2,3,4-tetrahydrochrysene",
+    "(-)-Chrysene-1-beta,2-alpha-diol-3-alpha,4-alpha-epoxide 2",
+    "(1-beta,2-alpha,2a-alpha,3a-alpha)-1,2,2a,3a-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "(1R-(1alpha,2beta,2aalpha,3aalpha))-1,2,2a,3a-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "(1alpha,2beta,2aalpha,3aalpha)-1,2,2a,3a-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "(7R,8S,8aS,9aR)-7,8,8a,9a-tetrahydrochryseno[3,4-b]oxirene-7,8-diol",
+    "(Z)-1,2,2a,3a-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "1-alpha,2-beta,2a-alpha,3a-alpha-1,2,2a,3a-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "1-alpha,2-beta,2a-alpha,3a-alpha-Tetrahydrochryseno(3,4-b)oxirene-1,2-diol",
+    "1-beta,2-alpha-CHRYSENEDIOL, 1,2,3,4-TETRAHYDRO-3-alpha,4-alpha-EPOXY-, (+-)-",
+    "1-beta,2-alpha-CHRYSENEDIOL, 1,2,3,4-TETRAHYDRO-3-alpha,4-alpha-EPOXY-, (E)-(-)-",
+    "5-17-05-00479 (Beilstein Handbook Reference)",
+    "64938-66-5",
+    "72074-67-0",
+    "77123-23-0",
+    "BRN 4707048",
+    "CCRIS 2033",
+    "Chrysenediol, 3,4-epoxy-1,2,3,4-tetrahydro-, (+)-(E)-",
+    "Chryseno(3,4-b)oxirene-1,2-diol, 1,2,2a,3a-tetrahydro-, (1-alpha,2-beta,2a-alpha,3a-alpha)-",
+    "Chryseno(3,4-b)oxirene-1,2-diol, 1,2,2a,3a-tetrahydro-, (1-beta,2-alpha,2a-alpha,3a-alpha)-",
+    "Chryseno(3,4-b)oxirene-1,2-diol, 1,2,2a,3a-tetrahydro-, (1R,2S,2aS,3aR)-rel-",
+    "DTXSID801151860",
+    "GC20600000",
+    "NIOSH/GC2060000",
+    "anti-(+-)-Chrysene-trans-1,2-dihydrodiol-3,4-epoxide",
+    "anti-1,2,3,4-Tetrahydrochrysene-1,2-diol-3,4-epoxide",
+    "anti-Chrysene-1,2-diol-3,4-epoxide",
+    "r-1,t-2-Dihydroxy-t-3,4-oxy-1,2,3,4-tetrahydrochrysene",
+    "rel-(1R,2S,2aS,3aR)-1,2,2a,3a-Tetrahydrochryseno[3,4-b]oxirene-1,2-diol",
+    "syn-Chrysene-1,2-diol 3,4-oxide",
+    "trans-(-)-3-alpha,4-alpha-Epoxy-1,2,3,4-tetrahydro-1-beta,2-alpha-chrysenediol",
+    "trans-1,2-Dihydroxy-anti-3,4-epoxy-1,2,3,4-tetrahydrochrysene"
+  ],
+  "http_status": 200,
+  "cids": [
+    51545
+  ]
+}

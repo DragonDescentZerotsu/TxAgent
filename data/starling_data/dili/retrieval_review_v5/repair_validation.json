@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "n_source_records": 9,
+  "preserved_nonmaterial_records": 7,
+  "false_material_associations_removed": 2,
+  "moves": {
+    "4_to_3": 1,
+    "4_to_5": 1
+  },
+  "identities": {
+    "DPPD": {
+      "SMILES": "c1ccc(Nc2ccc(Nc3ccccc3)cc2)cc1",
+      "formula": "C18H16N2",
+      "inchikey": "UTGQNNCQYDRXCH-UHFFFAOYSA-N"
+    },
+    "4PBA": {
+      "SMILES": "O=C(O)CCCc1ccccc1",
+      "formula": "C10H12O2",
+      "inchikey": "OBKXEAXTFZPCHS-UHFFFAOYSA-N"
+    }
+  },
+  "unresolved_aicar_identity": "Retained reported structure with explicit uncertainty; only confirmed level and culture context repaired.",
+  "labels_or_predictions_used_to_choose_repair": false
+}

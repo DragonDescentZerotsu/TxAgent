@@ -1,0 +1,13 @@
+{
+  "parent_key": "LCDULVGLKPJBJT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,2-difluoro-1-(trifluoromethyl)vinyl-fluoromethyl ether",
+    "SCHEMBL5686016"
+  ],
+  "cids": [
+    87877476
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LCDULVGLKPJBJT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

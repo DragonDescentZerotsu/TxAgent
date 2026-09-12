@@ -1,0 +1,40 @@
+{
+  "parent_key": "HROMYAWHLUOUPY-AHCCQAQQSA-N",
+  "ok": true,
+  "synonyms": [
+    "195883-06-8",
+    "4-(((3BS,4AS,5AR,6R,6AS,7AS,7BS,8AS,8BS)-6A-ISOPROPYL-8B-METHYL-1-OXO-1,3,3B,4,4A,6,6A,7A,7B,8B,9,10-DODECAHYDROTRISOXIRENO(6,7:8A,9:4B,5)PHENANTHRO(1,2-C)FURAN-6-YL)OXY)-4-OXOBUTANOIC ACID",
+    "4-[[(1S,2S,4S,5S,7S,8R,9R,11S,13S)-1-methyl-17-oxo-7-propan-2-yl-3,6,10,16-tetraoxaheptacyclo[11.7.0.02,4.02,9.05,7.09,11.014,18]icos-14(18)-en-8-yl]oxy]-4-oxobutanoic acid",
+    "4-[[(1S,2S,4S,5S,7S,8R,9R,11S,13S)-7-isopropyl-1-methyl-17-oxo-3,6,10,16-tetraoxaheptacyclo[11.7.0.02,4.02,9.05,7.09,11.014,18]icos-14(18)-en-8-yl]oxy]-4-oxo-butanoic acid",
+    "AKOS040742336",
+    "BUTANEDIOIC ACID, MONO((3BS,4AS,5AR,6R,6AS,7AS,7BS,8AS,8BS)-1,3,3B,4,4A,6,6A,7A,7B,8B,9,10-DODECAHYDRO-8B-METHYL-6A-(1-METHYLETHYL)-1-OXOTRISOXIRENO(6,7:8A,9:4B,5)PHENANTHRO(1,2-C)FURAN-6-YL) ESTER",
+    "C24H28O9",
+    "CHEMBL2110669",
+    "CS-6982",
+    "D36ELM729P",
+    "G13660",
+    "HY-16363",
+    "MFCD09954137",
+    "MS-28442",
+    "OMTRIPTOLIDE [WHO-DD]",
+    "Omtripolide",
+    "Omtriptolide",
+    "Omtriptolide [INN]",
+    "Omtriptolide?",
+    "PG-490-88",
+    "PG490-88",
+    "Q27276034",
+    "RefChem:168234",
+    "SCHEMBL16312527",
+    "UNII-D36ELM729P",
+    "VHA88306",
+    "YM 262",
+    "omtriptolida",
+    "omtriptolidum"
+  ],
+  "cids": [
+    6918522
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HROMYAWHLUOUPY-AHCCQAQQSA-N/synonyms/JSON",
+  "http_status": 200
+}

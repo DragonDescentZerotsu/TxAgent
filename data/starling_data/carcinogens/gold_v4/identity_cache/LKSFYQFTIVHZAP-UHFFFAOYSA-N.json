@@ -1,0 +1,26 @@
+{
+  "parent_key": "LKSFYQFTIVHZAP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LKSFYQFTIVHZAP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,5-Cyclohexadien-1-one, 4,4'-(1,2-diethyl-1,2-ethanediylidene)bis-",
+    "2,5-Cyclohexadien-1-one, 4,4'-(diethylethanediylidene)di-",
+    "4,4'-(1,2-Diethyl-1,2-ethanediylidene)bis(2,5-cyclohexadien-1-one)",
+    "4,4'-(Diethylethanediylidene)di-2,5-cyclohexadien-1-one",
+    "4,4'-(Hexane-3,4-diylidene)di(cyclohexa-2,5-dien-1-one)",
+    "4-[4-(4-oxocyclohexa-2,5-dien-1-ylidene)hexan-3-ylidene]cyclohexa-2,5-dien-1-one",
+    "5664-37-9",
+    "BRN 5952518",
+    "DES quinone",
+    "DTXCID40127705",
+    "DTXSID40205214",
+    "Diethylstilbestrol quinone",
+    "Diethylstilbestrol-4',4''-quinone",
+    "RefChem:911805",
+    "Stilbestrol quinone"
+  ],
+  "http_status": 200,
+  "cids": [
+    3034826
+  ]
+}

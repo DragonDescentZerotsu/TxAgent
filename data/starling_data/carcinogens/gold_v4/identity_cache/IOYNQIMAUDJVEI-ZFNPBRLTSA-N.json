@@ -1,0 +1,23 @@
+{
+  "parent_key": "IOYNQIMAUDJVEI-ZFNPBRLTSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IOYNQIMAUDJVEI-ZFNPBRLTSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(N-{[(2E)-3-Chloroprop-2-en-1-yl]oxy}propanimidoyl)-3-hydroxy-5-(oxan-4-yl)cyclohex-2-en-1-one",
+    "2-Cyclohexen-1-one, 2-(1-((((2E)-3-chloro-2-propenyl)oxy)imino)propyl)-3-hydroxy-5-(tetrahydro-2H-pyran-4-yl)-",
+    "2-Cyclohexen-1-one, 2-(1-(((3-chloro-2-propenyl)oxy)imino)propyl)-3-hydroxy-5-(tetrahydro-2H-p",
+    "2-[N-[(E)-3-chloroprop-2-enoxy]-C-ethylcarbonimidoyl]-3-hydroxy-5-(oxan-4-yl)cyclohex-2-en-1-one",
+    "IOYNQIMAUDJVEI-ZFNPBRLTSA-N",
+    "MFCD03792787",
+    "NS00000562",
+    "SCHEMBL336827",
+    "Tepraloxydim 10 microg/mL in Cyclohexane",
+    "Tepraloxydim 10 |Ig/mL in Cyclohexane",
+    "Tepraloxydim [ISO]",
+    "UNII-8QHN14BQ7F"
+  ],
+  "http_status": 200,
+  "cids": [
+    136055781
+  ]
+}

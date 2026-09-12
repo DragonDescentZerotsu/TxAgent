@@ -1,0 +1,25 @@
+{
+  "parent_key": "SCKNFLZJSOHWIV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22541-22-6",
+    "CHEBI:49650",
+    "DTXCID501748008",
+    "DTXSID101318221",
+    "HOLMIUM (III) ATOM",
+    "Ho(3+)",
+    "Holmium, ion(Ho3 )",
+    "Holmium-III",
+    "Q27104713",
+    "RefChem:1086702",
+    "SCHEMBL29434685",
+    "holmium(3+)",
+    "holmium(3+) ion",
+    "holmium(III) cation"
+  ],
+  "cids": [
+    185493
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SCKNFLZJSOHWIV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

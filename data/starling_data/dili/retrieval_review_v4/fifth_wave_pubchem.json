@@ -1,0 +1,320 @@
+[
+  [
+    "chlorpromazine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 2726,
+            "MolecularFormula": "C17H19ClN2S",
+            "SMILES": "CN(C)CCCN1C2=CC=CC=C2SC3=C1C=C(C=C3)Cl",
+            "InChIKey": "ZPEIMTDSQAKGNT-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "nitracrine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 20628,
+            "MolecularFormula": "C18H20N4O2",
+            "SMILES": "CN(C)CCCNC1=C2C(=NC3=CC=CC=C31)C=CC=C2[N+](=O)[O-]",
+            "InChIKey": "YMVWGSQGCWCDGW-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cyclopiazonic acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 54682463,
+            "MolecularFormula": "C20H20N2O3",
+            "SMILES": "CC(=O)C1=C([C@@H]2[C@@H]3[C@@H](CC4=C5C3=CNC5=CC=C4)C(N2C1=O)(C)C)O",
+            "InChIKey": "SZINUGQCTHLQAZ-DQYPLSBCSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "aminoguanidine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 2146,
+            "MolecularFormula": "CH6N4",
+            "SMILES": "C(=NN)(N)N",
+            "InChIKey": "HAMNKKUPIHEESI-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cycloheximide",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 6197,
+            "MolecularFormula": "C15H23NO4",
+            "SMILES": "C[C@H]1C[C@@H](C(=O)[C@@H](C1)[C@@H](CC2CC(=O)NC(=O)C2)O)C",
+            "InChIKey": "YPHMISFOHDHNIV-FSZOTQKASA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "Ac-6-FP",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 135447887,
+            "MolecularFormula": "C9H7N5O3",
+            "SMILES": "CC(=O)NC1=NC2=NC=C(N=C2C(=O)N1)C=O",
+            "InChIKey": "DDBCPKAHJKOGKK-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "dihydroactinidiolide",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 6432173,
+            "MolecularFormula": "C11H16O2",
+            "SMILES": "C[C@@]12CCCC(C1=CC(=O)O2)(C)C",
+            "InChIKey": "IMKHDCBNRDRUEB-LLVKDONJSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cis-parinaric acid",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "dorsomorphin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 11524144,
+            "MolecularFormula": "C24H25N5O",
+            "SMILES": "C1CCN(CC1)CCOC2=CC=C(C=C2)C3=CN4C(=C(C=N4)C5=CC=NC=C5)N=C3",
+            "InChIKey": "XHBVYDAKJHETMP-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cryptocaryone",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 10379026,
+            "MolecularFormula": "C17H14O4",
+            "SMILES": "C1[C@H]\\2[C@H](C=CC(=O)/C2=C(/C=C/C3=CC=CC=C3)\\O)OC1=O",
+            "InChIKey": "PTLQMLWEJRHXDU-VHIARPGFSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "HL156A",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 154573779,
+            "MolecularFormula": "C15H20F3N5O3",
+            "SMILES": "CC(=O)O.C1CCN(C1)/C(=N/C(=NC2=CC=C(C=C2)OC(F)(F)F)N)/N",
+            "InChIKey": "AGFDCTOLSXWRDZ-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "phenytoin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 1775,
+            "MolecularFormula": "C15H12N2O2",
+            "SMILES": "C1=CC=C(C=C1)C2(C(=O)NC(=O)N2)C3=CC=CC=C3",
+            "InChIKey": "CXOFVDLJLONNDW-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2-aminoethylphosphonic acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 339,
+            "MolecularFormula": "C2H8NO3P",
+            "SMILES": "C(CP(=O)(O)O)N",
+            "InChIKey": "QQVDJLLNRSOCEL-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "chenodeoxycholic acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 10133,
+            "MolecularFormula": "C24H40O4",
+            "SMILES": "C[C@H](CCC(=O)O)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2[C@@H](C[C@H]4[C@@]3(CC[C@H](C4)O)C)O)C",
+            "InChIKey": "RUDATBOHQWOJDD-BSWAIDMHSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cordycepin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 6303,
+            "MolecularFormula": "C10H13N5O3",
+            "SMILES": "C1[C@H](O[C@H]([C@@H]1O)N2C=NC3=C(N=CN=C32)N)CO",
+            "InChIKey": "OFEZSBMBBKLLBJ-BAJZRUMYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "lamivudine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 60825,
+            "MolecularFormula": "C8H11N3O3S",
+            "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=CC(=NC2=O)N",
+            "InChIKey": "JTEGQNOMFQHVDC-NKWVEPMBSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "azathioprine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 2265,
+            "MolecularFormula": "C9H7N7O2S",
+            "SMILES": "CN1C=NC(=C1SC2=NC=NC3=C2NC=N3)[N+](=O)[O-]",
+            "InChIKey": "LMEKQMALGUDUQG-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "cCMP-AM",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "casimersen",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "adrenomedullin",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ],
+  [
+    "agarohexaose",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 54758566,
+            "MolecularFormula": "C36H56O28",
+            "SMILES": "C1[C@H]2[C@H]([C@@H](O1)[C@@H]([C@@H](O2)O)O)O[C@H]3[C@@H]([C@H]([C@H]([C@H](O3)CO)O)O[C@H]4[C@H]([C@H]5[C@@H]([C@@H](O4)CO5)O[C@H]6[C@@H]([C@H]([C@H]([C@H](O6)CO)O)O[C@H]7[C@H]([C@H]8[C@@H]([C@@H](O7)CO8)O[C@H]9[C@@H]([C@H]([C@H]([C@H](O9)CO)O)O)O)O)O)O)O",
+            "InChIKey": "WVSURSFOIYJHST-KFHNRSBBSA-N"
+          }
+        ]
+      }
+    }
+  ]
+]

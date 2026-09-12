@@ -1,0 +1,31 @@
+{
+  "parent_key": "XKXLEZCOELWNMB-ZETCQYMHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[4-Bromo-2-(1,2-oxazol-3-yl)phenoxy]propanoic acid",
+    "(S)-2-(4-Bromo-2-(isoxazol-3-yl)phenoxy)propanoic acid",
+    "(S)-2-(4-Bromo-2-(isoxazol-3-yl)phenoxy)propanoic acid , NMD670",
+    "(S)-2-[4-Bromo-2-(3-isoxazolyl)phenoxy]propionic acid",
+    "2354321-33-6",
+    "CS-1049125",
+    "D13283",
+    "EX-A9025",
+    "GTPL13343",
+    "H41466",
+    "HY-158183",
+    "Ignaseclant (USAN)",
+    "NMD-670",
+    "NMD670",
+    "NMD670?",
+    "Propanoic acid, 2-[4-bromo-2-(3-isoxazolyl)phenoxy]-, (2S)-",
+    "RMA-201",
+    "SCHEMBL21056999",
+    "T87024",
+    "orb2565660"
+  ],
+  "cids": [
+    138684045
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XKXLEZCOELWNMB-ZETCQYMHSA-N/synonyms/JSON",
+  "http_status": 200
+}

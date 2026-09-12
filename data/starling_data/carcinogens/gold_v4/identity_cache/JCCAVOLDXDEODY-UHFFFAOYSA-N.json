@@ -1,0 +1,35 @@
+{
+  "parent_key": "JCCAVOLDXDEODY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCCAVOLDXDEODY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(CH3N)2",
+    "(E)-CH3N=NCH3",
+    "(E)-Dimethyldiazene",
+    "(E)-dimethyl-diazene",
+    "1,2-dimethyldiazene",
+    "4143-41-3",
+    "503-28-6",
+    "AZOMETHANE",
+    "DTXCID80818281",
+    "DTXSID70870570",
+    "Diazene, dimethyl-",
+    "Diazene, dimethyl-, (1E)-",
+    "Dimethyldiazene",
+    "JCCAVOLDXDEODY-ONEGZZNKSA-N",
+    "JCCAVOLDXDEODY-UHFFFAOYSA-N",
+    "MMG2EML2S5",
+    "Q793997",
+    "RefChem:1083720",
+    "SCHEMBL10037908",
+    "SCHEMBL29674861",
+    "SCHEMBL566135",
+    "SCHEMBL639659",
+    "SCHEMBL70656",
+    "SCHEMBL8151904"
+  ],
+  "http_status": 200,
+  "cids": [
+    10421
+  ]
+}

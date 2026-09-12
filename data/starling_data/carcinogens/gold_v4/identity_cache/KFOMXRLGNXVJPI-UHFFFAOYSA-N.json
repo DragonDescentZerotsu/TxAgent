@@ -1,0 +1,23 @@
+{
+  "parent_key": "KFOMXRLGNXVJPI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KFOMXRLGNXVJPI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "35335-07-0",
+    "4-05-00-02739 (Beilstein Handbook Reference)",
+    "7,14-DMDBA",
+    "7,14-Dimethyldibenz(a,h)anthracene",
+    "7,14-dimethylbenzo[k]tetraphene",
+    "7,14-dimethyldibenzo(a,h)anthracene",
+    "9,10-Dimethyl-1,2,5,6-dibenzanthracene",
+    "9,10-Dimethyl-dba",
+    "BRN 1980422",
+    "DIBENZ(a,h)ANTHRACENE, 7,14-DIMETHYL-",
+    "DTXSID90956764",
+    "RefChem:105465"
+  ],
+  "http_status": 200,
+  "cids": [
+    37116
+  ]
+}

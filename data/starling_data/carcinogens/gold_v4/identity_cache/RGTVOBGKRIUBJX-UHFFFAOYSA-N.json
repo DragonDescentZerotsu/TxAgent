@@ -1,0 +1,21 @@
+{
+  "parent_key": "RGTVOBGKRIUBJX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RGTVOBGKRIUBJX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-(2,2-Dimethylpropylidene)bis(4-chlorobenzene)",
+    "1,1'-(2,2-dimethylpropane-1,1-diyl)bis(4-chlorobenzene)",
+    "19685-37-1",
+    "4-05-00-01967 (Beilstein Handbook Reference)",
+    "BRN 2107940",
+    "Benzene, 1,1'-(2,2-dimethylpropylidene)bis(4-chloro-",
+    "DTXCID9095840",
+    "DTXSID00173349",
+    "RefChem:323239",
+    "SCHEMBL23843796"
+  ],
+  "http_status": 200,
+  "cids": [
+    167830
+  ]
+}

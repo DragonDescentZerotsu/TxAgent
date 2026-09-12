@@ -1,0 +1,31 @@
+{
+  "parent_key": "TURJYGRXEJIBGT-OCOMGVANSA-N",
+  "ok": true,
+  "synonyms": [
+    "958646-17-8",
+    "BMS 753493",
+    "BMS-753493",
+    "BMS753493",
+    "CS-0016993",
+    "DTXCID50164484",
+    "DTXSID20241993",
+    "Epofolate",
+    "Epofolate [WHO-DD]",
+    "HY-19868",
+    "Q27286965",
+    "Q3XAW4B1DP",
+    "RefChem:137314",
+    "SCHEMBL29711527",
+    "T68232",
+    "TURJYGRXEJIBGT-OCOMGVANSA-N",
+    "UNII-Q3XAW4B1DP",
+    "orb1741249"
+  ],
+  "cids": [
+    23643138,
+    25076094,
+    135566069
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TURJYGRXEJIBGT-OCOMGVANSA-N/synonyms/JSON",
+  "http_status": 200
+}

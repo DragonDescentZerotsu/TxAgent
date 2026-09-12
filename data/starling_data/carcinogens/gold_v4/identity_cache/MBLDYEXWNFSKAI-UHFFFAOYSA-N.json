@@ -1,0 +1,17 @@
+{
+  "parent_key": "MBLDYEXWNFSKAI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MBLDYEXWNFSKAI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "100136-76-3",
+    "4'-Nitro[1,1'-biphenyl]-4-sulfonamide",
+    "BDBM50133394",
+    "CHEMBL3632830",
+    "DTXSID30730944",
+    "SCHEMBL8345548"
+  ],
+  "http_status": 200,
+  "cids": [
+    59079460
+  ]
+}

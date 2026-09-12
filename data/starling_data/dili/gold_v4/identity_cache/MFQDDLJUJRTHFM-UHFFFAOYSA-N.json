@@ -1,0 +1,14 @@
+{
+  "parent_key": "MFQDDLJUJRTHFM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1-dichloro-3-(3,3-dichloro-2,2-difluoropropoxy)-2,2-difluoropropane",
+    "MFQDDLJUJRTHFM-UHFFFAOYSA-N",
+    "SCHEMBL8736747"
+  ],
+  "cids": [
+    54069825
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MFQDDLJUJRTHFM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

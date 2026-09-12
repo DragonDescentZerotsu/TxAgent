@@ -1,0 +1,28 @@
+{
+  "parent_key": "LIQJBAPSLUZUTB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LIQJBAPSLUZUTB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,4,6-PENTACHLORODIBENZOFURAN",
+    "1,2,3,4,6-Penta-chlorodibenzofuran",
+    "1,2,3,4,6-pentachlorodibenzo[b,d]furan",
+    "3,4,5,6,10-pentachloro-8-oxatricyclo(7.4.0.02,7)trideca-1(13),2,4,6,9,11-hexaene",
+    "83704-47-6",
+    "DTXCID70155051",
+    "DTXSID40232560",
+    "Dibenzofuran, 1,2,3,4,6-pentachloro",
+    "Dibenzofuran, 1,2,3,4,6-pentachloro-",
+    "LIQJBAPSLUZUTB-UHFFFAOYSA-N",
+    "NS00123156",
+    "PCDF 87",
+    "Q27287531",
+    "QX0M6738NK",
+    "RefChem:1051910",
+    "SCHEMBL3188293",
+    "UNII-QX0M6738NK"
+  ],
+  "http_status": 200,
+  "cids": [
+    55127
+  ]
+}

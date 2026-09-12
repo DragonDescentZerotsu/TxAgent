@@ -1,0 +1,25 @@
+{
+  "parent_key": "KWWLFIMAJYMXDK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KWWLFIMAJYMXDK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-CHLORO-N-NITROSOPIPERIDINE",
+    "3-Chloro-1-nitrosopiperidine",
+    "3-Chloronitrosopiperidine",
+    "5-20-03-00573 (Beilstein Handbook Reference)",
+    "65445-60-5",
+    "9ZE26LV7CT",
+    "AKOS006276503",
+    "BRN 1563279",
+    "CHEMBL348942",
+    "DTXCID801411270",
+    "DTXSID20984050",
+    "N-Nitroso-3-chloropiperidine",
+    "Piperidine, 3-chloro-1-nitroso-",
+    "RefChem:93521"
+  ],
+  "http_status": 200,
+  "cids": [
+    12508358
+  ]
+}

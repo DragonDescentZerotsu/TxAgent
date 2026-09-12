@@ -1,0 +1,14 @@
+{
+  "parent_key": "GPHSJPVUEZFIDE-VGFVQWJBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPHSJPVUEZFIDE-VGFVQWJBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "C19515",
+    "CHEBI:82527",
+    "Q7256633"
+  ],
+  "http_status": 200,
+  "cids": [
+    53297436
+  ]
+}

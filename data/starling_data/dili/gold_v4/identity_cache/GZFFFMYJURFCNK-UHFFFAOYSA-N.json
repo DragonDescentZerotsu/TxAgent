@@ -1,0 +1,19 @@
+{
+  "parent_key": "GZFFFMYJURFCNK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "138540-99-5",
+    "4,7-dihydroxy-3a,4,5,6,7,7a-hexahydro-3H-2-benzofuran-1-one",
+    "4,7-dihydroxyhexahydro-2-benzofuran-1(3H)-one",
+    "AC-20243",
+    "AKOS006311320",
+    "DB-228962",
+    "DTXSID40569000",
+    "Garlicin_major"
+  ],
+  "cids": [
+    15144051
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GZFFFMYJURFCNK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

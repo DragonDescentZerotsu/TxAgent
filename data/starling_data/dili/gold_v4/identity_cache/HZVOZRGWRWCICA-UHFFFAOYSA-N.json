@@ -1,0 +1,33 @@
+{
+  "parent_key": "HZVOZRGWRWCICA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    ".carbene",
+    "2465-56-7",
+    "CH2",
+    "CH2(2.)",
+    "CHEBI:29357",
+    "CHEBI:51363",
+    "CHEBI:51375",
+    "CHEBI:51376",
+    "Carbene",
+    "DTXCID80101882",
+    "DTXSID50179391",
+    "Methylene",
+    "Methylene radical",
+    "RefChem:925787",
+    "dihydridocarbon(2.)",
+    "dihydridocarbon(2.) (singlet)",
+    "dihydridocarbon(2.) (triplet)",
+    "methanediyl",
+    "singlet carbene",
+    "singlet methanediyl",
+    "triplet carbene",
+    "triplet methanediyl"
+  ],
+  "cids": [
+    123164
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HZVOZRGWRWCICA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

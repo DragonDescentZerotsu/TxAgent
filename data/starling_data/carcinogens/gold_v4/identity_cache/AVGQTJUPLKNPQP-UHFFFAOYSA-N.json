@@ -1,0 +1,39 @@
+{
+  "parent_key": "AVGQTJUPLKNPQP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AVGQTJUPLKNPQP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,1-TRICHLOROPROPANE",
+    "1,1,1-trichloro-propane",
+    "25735-29-9",
+    "4-01-00-00198 (Beilstein Handbook Reference)",
+    "7789-89-1",
+    "AI3-08446",
+    "AKOS006279852",
+    "BRN 1731972",
+    "DB-246419",
+    "DTXCID3048079",
+    "DTXSID6073992",
+    "EINECS 247-216-3",
+    "L2DQH157P9",
+    "MFCD01697592",
+    "NS00048321",
+    "Propane, 1,1,1-trichloro-",
+    "Propane, trichloro-",
+    "Propane, trichloro-(6CI,7CI,8CI,9CI)",
+    "Q26840886",
+    "RefChem:1051667",
+    "SCHEMBL1349068",
+    "SCHEMBL22731",
+    "SCHEMBL234312",
+    "SCHEMBL3165552",
+    "SCHEMBL9800421",
+    "Trichloropropane",
+    "UNII-L2DQH157P9",
+    "ethyl chloroform"
+  ],
+  "http_status": 200,
+  "cids": [
+    24622
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "FPXGNLJKZKCTNE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FPXGNLJKZKCTNE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(Butylnitrosoamino)-2-propanone",
+    "2-Propanone, 1-(butylnitrosamino)-",
+    "4PCU8Y4ZV3",
+    "51938-15-9",
+    "BOPN",
+    "BRN 2242309",
+    "Butyl(2-oxopropyl)nitrosamine",
+    "Butyl(2-oxopropyl)nitrosoamine",
+    "Butyl(2-oxypropyl)nitrosamine",
+    "CCRIS 845",
+    "CHEMBL163665",
+    "DTXCID80122395",
+    "DTXSID60199904",
+    "N-Butyl-N-(2-oxopropyl)nitrosamine",
+    "N-Nitroso-(2-oxopropyl)-n-butylamine",
+    "N-Nitroso-1-butylamino-2-propanone",
+    "N-Nitrosobutyl-2-oxopropylamine",
+    "N-butyl-N-(2-oxopropyl)nitrous amide",
+    "RefChem:122298",
+    "SCHEMBL29462541",
+    "UNII-4PCU8Y4ZV3"
+  ],
+  "http_status": 200,
+  "cids": [
+    91647
+  ]
+}

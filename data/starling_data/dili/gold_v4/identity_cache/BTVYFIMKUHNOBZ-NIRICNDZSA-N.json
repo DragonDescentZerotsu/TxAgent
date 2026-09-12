@@ -1,0 +1,13 @@
+{
+  "parent_key": "BTVYFIMKUHNOBZ-NIRICNDZSA-N",
+  "ok": true,
+  "synonyms": [
+    "Rifamycin, 1,4-dideoxy-1,4-dihydro-1,4-dioxo-",
+    "SCHEMBL29467259"
+  ],
+  "cids": [
+    131954624
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BTVYFIMKUHNOBZ-NIRICNDZSA-N/synonyms/JSON",
+  "http_status": 200
+}

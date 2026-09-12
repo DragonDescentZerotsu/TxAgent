@@ -1,0 +1,36 @@
+{
+  "parent_key": "ABVBOWJCKJGCJM-DMTCNVIQSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ABVBOWJCKJGCJM-DMTCNVIQSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,4R)-4-hydroxy-1-nitroso-pyrrolidine-2-carboxylic acid",
+    "(2S,4R)-4-hydroxy-1-nitrosopyrrolidine-2-carboxylic acid",
+    "(4R)-4-hydroxy-1-nitroso-L-proline",
+    "30310-80-6",
+    "4-HYDROXY-1-NITROSO-L-PROLINE, TRANS-",
+    "4-Hydroxy-1-nitroso-L-proline",
+    "AKOS030241239",
+    "BRN 0475250",
+    "C19483",
+    "CHEBI:82513",
+    "D9BBV16TX0",
+    "DTXSID0021042",
+    "L-Proline, 4-hydroxy-1-nitroso-, (4R)-",
+    "MFCD27949049",
+    "N-NITROSOHYDROXYPROLINE (IARC)",
+    "N-NITROSOHYDROXYPROLINE [IARC]",
+    "N-Nitroso-L-hydroxyproline",
+    "N-Nitrosohydroxyproline",
+    "Nitrosohydroxyproline",
+    "Proline, 4-hydroxy-1-nitroso-, L-",
+    "Q27156026",
+    "RefChem:164009",
+    "SCHEMBL9340254",
+    "UNII-D9BBV16TX0",
+    "trans-4-Hydroxy-1-nitroso-L-proline"
+  ],
+  "http_status": 200,
+  "cids": [
+    61873
+  ]
+}

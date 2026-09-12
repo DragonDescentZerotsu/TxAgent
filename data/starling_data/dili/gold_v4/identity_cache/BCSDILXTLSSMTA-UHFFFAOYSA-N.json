@@ -1,0 +1,13 @@
+{
+  "parent_key": "BCSDILXTLSSMTA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-ethyl-2-phenyl butyramide",
+    "SCHEMBL5504222"
+  ],
+  "cids": [
+    69466890
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BCSDILXTLSSMTA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

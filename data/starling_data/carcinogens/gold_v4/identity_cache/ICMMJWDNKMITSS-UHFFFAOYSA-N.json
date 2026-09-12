@@ -1,0 +1,39 @@
+{
+  "parent_key": "ICMMJWDNKMITSS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ICMMJWDNKMITSS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Dibenzothiophenamine",
+    "2-aminodibenzothiophene",
+    "2-aminodibenzthiophene",
+    "7428-91-3",
+    "8-THIATRICYCLO[7.4.0.0(2),?]TRIDECA-1(9),2(7),3,5,10,12-HEXAEN-4-AMINE",
+    "8-thiatricyclo[7.4.0.0?,?]trideca-1(9),2(7),3,5,10,12-hexaen-4-amine",
+    "836-098-4",
+    "AKOS030524729",
+    "AS-57760",
+    "CHEMBL5172377",
+    "CS-0168583",
+    "D5521",
+    "DA-03144",
+    "DTXCID00256505",
+    "DTXSID50305375",
+    "Dibenzo(b,d)thiophen-2-amine",
+    "F693554",
+    "ICMMJWDNKMITSS-UHFFFAOYSA-N",
+    "MFCD00995227",
+    "NSC-170576",
+    "NSC170576",
+    "RefChem:471290",
+    "SCHEMBL29474205",
+    "SCHEMBL5110289",
+    "SY237623",
+    "Z56755375",
+    "dibenzo[b,d]thiophen-2-amine",
+    "dibenzothiophen-2-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    298442
+  ]
+}

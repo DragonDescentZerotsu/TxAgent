@@ -1,0 +1,13 @@
+{
+  "parent_key": "TZRFSLHOCZEXCC-HIVFKXHNSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL2219536",
+    "SCHEMBL29361067"
+  ],
+  "cids": [
+    44564108
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TZRFSLHOCZEXCC-HIVFKXHNSA-N/synonyms/JSON",
+  "http_status": 200
+}

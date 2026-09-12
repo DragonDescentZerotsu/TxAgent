@@ -1,0 +1,15 @@
+{
+  "parent_key": "IXZUPBUEKFXTSD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IXZUPBUEKFXTSD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(6,7-dihydroxy-3,7-dimethyloct-2-enoxy)furo[3,2-g]chromen-7-one",
+    "5-[(6a(2),7a(2)-Dihydroxy-3a(2),7a(2)-dimethyl-2-octenyl)oxy]psoralen",
+    "7H-Furo[3,2-g][1]benzopyran-7-one, 4-[[(2E,6R)-6,7-dihydroxy-3,7-dimethyl-2-octenyl]oxy]- (9CI); 4-[[(2E,6R)-6,7-Dihydroxy-3,7-dimethyl-2-octen-1-yl]oxy]-7H-furo[3,2-g][1]benzopyran-7-one; (R)-17,18-Dihydroxybergamottin",
+    "DTXSID901045472"
+  ],
+  "http_status": 200,
+  "cids": [
+    156147
+  ]
+}

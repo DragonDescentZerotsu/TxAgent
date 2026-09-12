@@ -1,0 +1,136 @@
+{
+  "archive_sha256": "d1ffc894f153fba8281d12ab16f7276556c2a1c0c32a119204d3c10e261a1b8a",
+  "archive_size": 932319385,
+  "records_sha256": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe",
+  "records_size": 947878301,
+  "parts": [
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0001",
+      "size": 90000000,
+      "sha256": "b786b558cbfa860c08d5901cdf97668e432361fb46120b9a3bc76b1fd6a972d0"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0002",
+      "size": 90000000,
+      "sha256": "8cba803e9efba5b2333e96da69dffe1f5061f0b1751c4788e7d35c1a139b2f5e"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0003",
+      "size": 90000000,
+      "sha256": "87c8c73f500f3c612ebe13ed99d5e00510ee3ef0330b2c79c2fffb067fa7139a"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0004",
+      "size": 90000000,
+      "sha256": "f0488b0afca6e56447bf79a14efedfe708636a7caaecefa4627baba9852db7d4"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0005",
+      "size": 90000000,
+      "sha256": "8a8d7deee30458b4d8e020980613b93a0002a068076912af336640f8b14d8fce"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0006",
+      "size": 90000000,
+      "sha256": "8a485334c85736ee2031cac4e3118ebfaa92560de047443ea90b68af855ff94b"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0007",
+      "size": 90000000,
+      "sha256": "c6cd4945ed7c75e9e63e079be41ad278c693043dbdcdc81ef4510bd0f3d12727"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0008",
+      "size": 90000000,
+      "sha256": "adf87e1b478b03341986146c1dc065e6b61a086ff056d561ddf9854216009fd2"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0009",
+      "size": 90000000,
+      "sha256": "83d3b9816bca42a2aea066f00bb02e71cb235169d84e439a6f3d441635921791"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0010",
+      "size": 90000000,
+      "sha256": "dbd4a231410136546ff6b706ee89851a4b9df1752ef6587c3958e2be9e1822e4"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/starling_retrieval_review_v3/03_records/stage.tar.zst.part-0011",
+      "size": 32319385,
+      "sha256": "709aeb7330d6ad7949d6d6637da7fe2a112d7a9ef2b255bb0b3b2d5c31fd0b26"
+    }
+  ],
+  "files": [
+    {
+      "path": "actual_voter_membership.jsonl",
+      "size": 39722102,
+      "sha256": "c56c1c7be4a43e569af5e442a4b17505d2ed80f973a2d6863374308291e65234"
+    },
+    {
+      "path": "content_repair_receipt.json",
+      "size": 4218,
+      "sha256": "5a042bfeef6a070705244593bfeb3069438526ff057a426d8f05d722aa3590a5"
+    },
+    {
+      "path": "content_repairs.json",
+      "size": 19601,
+      "sha256": "519ba82b46a867157cb281858d0ee14877ddf68bca26f0c4a5f99fb33a851e87"
+    },
+    {
+      "path": "exact_duplicate_removals.jsonl",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "membership_changes.jsonl",
+      "size": 15331908,
+      "sha256": "3859dbc5ed0f639df833df3c29e81003ece37ae188e40258cef7e7395a59fd6a"
+    },
+    {
+      "path": "membership_refresh_receipt.json",
+      "size": 2230,
+      "sha256": "ba8e205d58ad1eb8cb60451298404ee6fdd2ef4e7a19fd4be3e193c9c30fb29a"
+    },
+    {
+      "path": "record_audit.parquet",
+      "size": 31188676,
+      "sha256": "c7072c45d9833dc851f8dd054e20735b0fd65b37aa0665cc5dea2c2a20d3ec40"
+    },
+    {
+      "path": "record_review.json",
+      "size": 4845,
+      "sha256": "fee7a3c5ff5aabe6cbb29472f9fb78fff350561e7f28874c789ecda2bcfd701d"
+    },
+    {
+      "path": "record_review_receipt.json",
+      "size": 656,
+      "sha256": "4ca6fc214ac01b3890786ea012f8d00f3e618826150b333f9f1ed7763a588cde"
+    },
+    {
+      "path": "records.parquet",
+      "size": 947878301,
+      "sha256": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe"
+    },
+    {
+      "path": "retrieval_identity_cache.jsonl",
+      "size": 27173301,
+      "sha256": "62c9f5aa67ef0b139e64e524a116a433fb772eadf90b0a222f086ca6c23a27dc"
+    },
+    {
+      "path": "retrieval_identity_cache.manifest.json",
+      "size": 377,
+      "sha256": "3e4fdb53827c22b33a60e96f1ed450d14c371a3678ee9d0eb8cdc71e0538c958"
+    },
+    {
+      "path": "retrieval_identity_cache.pending.jsonl",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "vote_support_links.parquet",
+      "size": 7097887,
+      "sha256": "acca03ae06e1baf1fe9fa0f49b8464644c7bf563c9476f094b97ed05944ff5ee"
+    }
+  ],
+  "source_release": "data/starling_data/dili/retrieval_review_v3/source"
+}

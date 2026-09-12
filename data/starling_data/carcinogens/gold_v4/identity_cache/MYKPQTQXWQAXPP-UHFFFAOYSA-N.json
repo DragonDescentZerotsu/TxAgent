@@ -1,0 +1,25 @@
+{
+  "parent_key": "MYKPQTQXWQAXPP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MYKPQTQXWQAXPP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-Vinylcyclohexan-1-ol",
+    "4-ethenylcyclohexan-1-ol",
+    "76123-09-6",
+    "BVH",
+    "DTXSID70997478",
+    "DVH",
+    "EINECS 278-376-2",
+    "MYKPQTQXWQAXPP-UHFFFAOYSA-N",
+    "NS00059882",
+    "SCHEMBL12667255",
+    "SCHEMBL1360474",
+    "SCHEMBL7359812",
+    "SCHEMBL7970949"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Red (85%), Request Time status: Green (18%), Service status: Red (77%)",
+  "cids": [
+    3018636
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "parent_key": "FXBORMDRZVZQMH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXBORMDRZVZQMH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1'-Sulfooxyestragole",
+    "DTXSID901025913"
+  ],
+  "http_status": 200,
+  "cids": [
+    134967365
+  ]
+}

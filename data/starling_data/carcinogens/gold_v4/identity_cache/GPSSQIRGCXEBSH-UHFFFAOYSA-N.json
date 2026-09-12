@@ -1,0 +1,23 @@
+{
+  "parent_key": "GPSSQIRGCXEBSH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GPSSQIRGCXEBSH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12777-38-7",
+    "ARSENIC OXIDE",
+    "Arsenic oxise",
+    "Arsinoxyde",
+    "CHEBI:50527",
+    "DTXSID50872395",
+    "GPSSQIRGCXEBSH-UHFFFAOYSA-N",
+    "Oxoarsenic",
+    "RefChem:560062",
+    "SCHEMBL35827",
+    "arsenic oxides",
+    "lambda~5~-Arsanone"
+  ],
+  "http_status": 200,
+  "cids": [
+    6337026
+  ]
+}

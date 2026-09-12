@@ -1,0 +1,60 @@
+[
+  [
+    "2'-Fluoro-5-methyl-beta-D-arabinofuranosyluracil",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "D-FMAU",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 72327,
+            "MolecularFormula": "C10H13FN2O5",
+            "SMILES": "CC1=CN(C(=O)NC1=O)[C@H]2[C@H]([C@@H]([C@H](O2)CO)O)F",
+            "InChIKey": "GBBJCSTXCAQSSJ-JVZYCSMKSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2'-Deoxy-2'-fluoro-5-methyluridine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 159498,
+            "MolecularFormula": "C10H13FN2O5",
+            "SMILES": "CC1=CN(C(=O)NC1=O)[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)F",
+            "InChIKey": "GBBJCSTXCAQSSJ-JXOAFFINSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2'-Deoxy-2'-fluoro-5-methyl-beta-D-arabinofuranosyluracil",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ]
+]

@@ -1,0 +1,31 @@
+{
+  "parent_key": "CAMLSTGUJYUCDX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CAMLSTGUJYUCDX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-Dinitro-2-methylpyrrole",
+    "1,4-dinitro-2-methyl pyrrole",
+    "1H-Pyrrole, 2-methyl-1,4-dinitro-",
+    "1H-Pyrrole,2-methyl-1,4-dinitro-",
+    "1H-pyrrole, 2-methyl-1,4-dinitro",
+    "2-MDNP",
+    "2-Methyl-1,4-dinitropyrrole",
+    "2-methyl-1,4-dinitro-1H-Pyrrole",
+    "75142-42-6",
+    "CCRIS 5159",
+    "DS-003028",
+    "DTXCID70148605",
+    "DTXSID70226114",
+    "GGL27UH79H",
+    "NSC 325320",
+    "NSC-325320",
+    "NSC325320",
+    "Q27279098",
+    "RefChem:87974",
+    "UNII-GGL27UH79H"
+  ],
+  "http_status": 200,
+  "cids": [
+    100593
+  ]
+}

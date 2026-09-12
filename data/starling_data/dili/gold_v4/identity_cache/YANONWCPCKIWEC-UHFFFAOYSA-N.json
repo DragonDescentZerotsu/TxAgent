@@ -1,0 +1,12 @@
+{
+  "parent_key": "YANONWCPCKIWEC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "LDP977"
+  ],
+  "cids": [
+    22959686
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YANONWCPCKIWEC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "IJRZVTXSBZVUGI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IJRZVTXSBZVUGI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Methyl-diaminonaphthalin",
+    "SCHEMBL11185870",
+    "SCHEMBL31141533"
+  ],
+  "http_status": 200,
+  "cids": [
+    20468297
+  ]
+}

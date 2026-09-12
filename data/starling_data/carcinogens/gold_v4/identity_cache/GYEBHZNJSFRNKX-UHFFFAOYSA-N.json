@@ -1,0 +1,13 @@
+{
+  "parent_key": "GYEBHZNJSFRNKX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GYEBHZNJSFRNKX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-bis(chlorophenyl)-1-chloroethene",
+    "SCHEMBL9494498"
+  ],
+  "http_status": 200,
+  "cids": [
+    22164447
+  ]
+}

@@ -1,0 +1,811 @@
+{
+  "status": "reviewed_requires_reselection",
+  "cards": [
+    {
+      "candidate_index": 0,
+      "card_id": "card_025d34e7ff3159fa",
+      "source_row_uids": [
+        "sr_ef57e7b6b2134daea1b6c93cb5202a52"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 1,
+      "card_id": "card_0411fb9df5eef8ad",
+      "source_row_uids": [
+        "sr_b159af7f046a495497f1604d7f4c9e99"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 2,
+      "card_id": "card_0822f675dfd88678",
+      "source_row_uids": [
+        "sr_8a2c9673f1374caab5e3940c3061a052"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred."
+    },
+    {
+      "candidate_index": 3,
+      "card_id": "card_0bcec0d73df86905",
+      "source_row_uids": [
+        "sr_44297ea2771244709e7697c92d8a84cc"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 4,
+      "card_id": "card_0d2214ba9d220343",
+      "source_row_uids": [
+        "sr_b4e89f51140749aa8f4b46670d64819e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 6,
+      "card_id": "card_113be05541686d79",
+      "source_row_uids": [
+        "sr_66f1c85597ee428bbe8df86678d963cc",
+        "sr_dda805dc443b4a01a6e17fc3daff84c9"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope. Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope."
+    },
+    {
+      "candidate_index": 7,
+      "card_id": "card_11fd96d2c02eb22a",
+      "source_row_uids": [
+        "sr_19475f26a80841dbb056af419d5ebe4a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 8,
+      "card_id": "card_13c48e43b4f8238b",
+      "source_row_uids": [
+        "sr_06dd9ef9d2a0463ab503097a3e88917e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 9,
+      "card_id": "card_153e1b79f8ffbd31",
+      "source_row_uids": [
+        "sr_100c8910489948ae8b718448be1b0e0a"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish CITCO. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone."
+    },
+    {
+      "candidate_index": 10,
+      "card_id": "card_15c48d47928a3caf",
+      "source_row_uids": [
+        "sr_695ea04f4c5b496baaedc61133547e0e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 12,
+      "card_id": "card_1c6a1a5ce50039d5",
+      "source_row_uids": [
+        "sr_4a7c155119004ae2bf1a8ce92f8cd661"
+      ],
+      "action": "repair",
+      "reason": "Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. Original mechanistic endpoint connects ATP preservation and survival during respiratory-chain inhibition; nonhepatic transfer remains explicitly limited."
+    },
+    {
+      "candidate_index": 13,
+      "card_id": "card_1d47f1f499fe1609",
+      "source_row_uids": [
+        "sr_a2c7dcb9a50d4559aa1b2ec80a548d8f"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Benzophenone-1 (BP-1). BP-1 is benzophenone-1, not propylparaben. Correct both chemical and model identity; original observations are preserved. Generic viability/nuclear or cellular morphology in this misidentified nonhepatic line lacks a liver-specific endpoint. Corrected redox mechanisms remain available."
+    },
+    {
+      "candidate_index": 14,
+      "card_id": "card_1d80cbe5fd6650a9",
+      "source_row_uids": [
+        "sr_236167acf91546ecbefb7120066c7f1b"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 15,
+      "card_id": "card_1d8e341bfc86fd44",
+      "source_row_uids": [
+        "sr_f23c3b2d696245e08cd79967566f21c2"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 16,
+      "card_id": "card_1da8ca1ed2161fa9",
+      "source_row_uids": [
+        "sr_dba7d0b1ef394336b271de193d6693da"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 17,
+      "card_id": "card_1e46ac418a31a9bb",
+      "source_row_uids": [
+        "sr_0face61b79bb416e9987e370a1f84cab"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish scutellarin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope."
+    },
+    {
+      "candidate_index": 18,
+      "card_id": "card_1f609f2fe76bea4e",
+      "source_row_uids": [
+        "sr_694c0dafb17140eab781cd737bf6a15d"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Conophylline (CnP). CnP is conophylline, not a cytidine-adenosine dinucleotide. Preserve protective MCD-diet co-treatment and measured liver endpoints."
+    },
+    {
+      "candidate_index": 19,
+      "card_id": "card_22c51d99ba3f685a",
+      "source_row_uids": [
+        "sr_ad8c7ee1b90e407c92f077cf38ef714a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 20,
+      "card_id": "card_2496362e16d509d6",
+      "source_row_uids": [
+        "sr_4cd5b4303fc84f66b82bf09bde27407e"
+      ],
+      "action": "repair",
+      "reason": "Biliary metabolite conjugate detection characterizes metabolism and trapping; specimen bile does not make this a functional bile-transport assay."
+    },
+    {
+      "candidate_index": 21,
+      "card_id": "card_254320c242faa8d7",
+      "source_row_uids": [
+        "sr_4f9ac9bf768f4136a7eff7df31ef389b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction."
+    },
+    {
+      "candidate_index": 22,
+      "card_id": "card_257e585f2affaaab",
+      "source_row_uids": [
+        "sr_36f35b1dc1b04d25b2f418e002149192"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 23,
+      "card_id": "card_25e4b8f51fb5a4d5",
+      "source_row_uids": [
+        "sr_0dd56660b647420b886780c194453c01"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity against KEGG C16615. Clinical 6-MMPR assay may pool methylated nucleotide species; the monophosphate structure is a representative, not proof of phosphorylation-state-specific clinical causality. Preserve observational association and metabolite-versus-parent distinction."
+    },
+    {
+      "candidate_index": 24,
+      "card_id": "card_2fc6ddae9eae7e7b",
+      "source_row_uids": [
+        "sr_ad2aa404f3c64c13a67373483081664c"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 26,
+      "card_id": "card_34588980a4ad46fa",
+      "source_row_uids": [
+        "sr_c67afc72aeba4b598c0ac181b05c0f61"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish CITCO. This extracted passage describes assay methods; it does not state a measured viability or DNA-synthesis effect. No positive or negative result can be inferred from the method alone."
+    },
+    {
+      "candidate_index": 27,
+      "card_id": "card_34b91f5d2147f040",
+      "source_row_uids": [
+        "sr_d160abe49dbf4534952032f7b47aa62e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 28,
+      "card_id": "card_362e5205ea26e7b9",
+      "source_row_uids": [
+        "sr_11f1eee5cc6b4fb0a7e2262d35c6bfad"
+      ],
+      "action": "repair",
+      "reason": "Mixed hepatic differentiation gene panel is a transcriptional signature, not a bile-specific endpoint."
+    },
+    {
+      "candidate_index": 29,
+      "card_id": "card_37f8602c5e75853e",
+      "source_row_uids": [
+        "sr_1fc29681bc8048bc84cf8bd1e14281ae"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). CPA is the antiandrogen in the original paper, not a dinucleotide. Preserve rare hepatic adverse-effect statement without changing frozen benchmark labels."
+    },
+    {
+      "candidate_index": 34,
+      "card_id": "card_48a07791370c5803",
+      "source_row_uids": [
+        "sr_741b68b1536a48458b08c67833ebdba5"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 35,
+      "card_id": "card_48d0250e34d85010",
+      "source_row_uids": [
+        "sr_7c47834e29ac480ab1fea42120a34333"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 37,
+      "card_id": "card_49709c057bcbd052",
+      "source_row_uids": [
+        "sr_44318fbf9e07408da8be7420d81e2cce"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Methyl cholate (MeCA). MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes."
+    },
+    {
+      "candidate_index": 38,
+      "card_id": "card_497e39ee27da60d6",
+      "source_row_uids": [
+        "sr_ea00e2d23c6442ab9f3e5b0e27ab14fc"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 39,
+      "card_id": "card_4a92c2589eb2feed",
+      "source_row_uids": [
+        "sr_f3ce25b6977e45fc9c94390f7af163d7"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 40,
+      "card_id": "card_4adda1722d2b8625",
+      "source_row_uids": [
+        "sr_24e3b52e8f284706a232624db4654d76"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 41,
+      "card_id": "card_4e405046bf605d48",
+      "source_row_uids": [
+        "sr_8c72dbebabfd452b86a2a95a8ebcd300"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 42,
+      "card_id": "card_4f1c1a59e3cfdbe0",
+      "source_row_uids": [
+        "sr_66f1c85597ee428bbe8df86678d963cc",
+        "sr_dda805dc443b4a01a6e17fc3daff84c9"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope. Original-paper test article and independently verified molecular structure establish baicalin. G denotes glucuronide in this review, not a glucose conjugate. Retain cited transporter result as secondary evidence with its transporter-specific scope."
+    },
+    {
+      "candidate_index": 44,
+      "card_id": "card_524455ac90e6575c",
+      "source_row_uids": [
+        "sr_99363af4a19147848216ae164ae16db1"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 45,
+      "card_id": "card_54e0c1aca73d2714",
+      "source_row_uids": [
+        "sr_92011bdb3e5b40d0a9a73a2f5b18a550"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Adenosine 5-prime-O-(2-thiodiphosphate), ADPbetaS. Correct terminal thiophosphate ADP analog, not a methylene-linked AMP phosphonate. Preserve nonhepatic NK-cell mechanistic context."
+    },
+    {
+      "candidate_index": 46,
+      "card_id": "card_55fe3d09e2e3a198",
+      "source_row_uids": [
+        "sr_3c545aa29b20462b8b5ae28c7608fe79"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 47,
+      "card_id": "card_5a36fefabaeb5972",
+      "source_row_uids": [
+        "sr_c12dfc65d217459d915f0d754ab31690"
+      ],
+      "action": "repair",
+      "reason": "Original Methods names Sigma amide14-22 but gives no catalog or sequence/terminal modification. Current Sigma product 476485 is myristoylated GRTGRRNAI-amide; this does not establish the historical reagent form. The attached nucleoside is demonstrably wrong; preserve the canalicular no-effect observation without guessing a peptide structure. Repair-first attempt could not establish exact historical peptide formulation. Quarantine only the invalid molecular association; valid negative observation remains in the corrected source record."
+    },
+    {
+      "candidate_index": 48,
+      "card_id": "card_5c2afec32a1d49b2",
+      "source_row_uids": [
+        "sr_d8f369cfc77f4ac6aa36188170a301d5"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 49,
+      "card_id": "card_60d365d093b3c5ef",
+      "source_row_uids": [
+        "sr_b9bf5a7d16de4893a60c61981ea89744"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 50,
+      "card_id": "card_60e94582f0abd70a",
+      "source_row_uids": [
+        "sr_906a3a7c3d084c38804e6fb2c343043e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 51,
+      "card_id": "card_62a8a00224164f9b",
+      "source_row_uids": [
+        "sr_38db1d566ccc43e2b1a00387c5c8d2f1"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 52,
+      "card_id": "card_68bcbabde7b43f90",
+      "source_row_uids": [
+        "sr_8781aa5edd964b35ab85f4ccb235746a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 53,
+      "card_id": "card_6cff6badb3765446",
+      "source_row_uids": [
+        "sr_f4cd83c94482423da347671204b0a5b8"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 54,
+      "card_id": "card_6d2c5ec7bff2c31a",
+      "source_row_uids": [
+        "sr_b80284a49ae04b64a34e621fd71d92a9"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Toosendanin (TSN). Full original Figure 3C concerns accumulation of autolysosomes, not canaliculi. Methods gives 0/6/12 h whereas Figure 3C gives 0/6/24 h; timing disagreement is unresolved and both are retained. Autolysosome ultrastructure belongs with lysosomal/autophagy stress, not bile transport."
+    },
+    {
+      "candidate_index": 55,
+      "card_id": "card_6d5e453c2ccd1b29",
+      "source_row_uids": [
+        "sr_61d39ee6c790415cafacc0c56edb50ed"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 56,
+      "card_id": "card_711a6c311ebd40a6",
+      "source_row_uids": [
+        "sr_7cf8c895306d40418184c2cd944c168e"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 57,
+      "card_id": "card_7141ac8396f53a62",
+      "source_row_uids": [
+        "sr_1eb2e6e761d047738b3e7fab8463645b"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 58,
+      "card_id": "card_732ad1ceae379d36",
+      "source_row_uids": [
+        "sr_8885c901f2464553886dc5aef9b0acf5"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 59,
+      "card_id": "card_74a9e37246f595fa",
+      "source_row_uids": [
+        "sr_658b3f457ec4444db84f1b3ec7e4e871"
+      ],
+      "action": "repair",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence."
+    },
+    {
+      "candidate_index": 60,
+      "card_id": "card_7a938777ab340b52",
+      "source_row_uids": [
+        "sr_38cc914b84d2461bb09f166e4a5f9b7f"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 61,
+      "card_id": "card_7b06020f205bf6af",
+      "source_row_uids": [
+        "sr_d7eca19c33da46938dfc410979e57fe0",
+        "sr_329189db10a34a87b2cc536228fe4440",
+        "sr_f750f19655a14d20a8316d9ec4ff5567"
+      ],
+      "action": "repair",
+      "reason": "Measured CYP catalytic activity belongs with xenobiotic metabolic function, not gene signatures. Preserve lack of induction and enzyme-specific limits; this alone does not establish reactive bioactivation. Catalytic-activity assay, not mRNA expression. Retain negative enzyme effects as limited metabolic evidence. Measured CYP catalytic activity belongs with xenobiotic metabolic function, not gene signatures. Preserve lack of induction and enzyme-specific limits; this alone does not establish reactive bioactivation. Catalytic-activity assay, not mRNA expression. Retain negative enzyme effects as limited metabolic evidence. Measured CYP catalytic activity belongs with xenobiotic metabolic function, not gene signatures. Preserve lack of induction and enzyme-specific limits; this alone does not establish reactive bioactivation. Catalytic-activity assay, not mRNA expression. Retain negative enzyme effects as limited metabolic evidence."
+    },
+    {
+      "candidate_index": 63,
+      "card_id": "card_7bb16195a8c3a8db",
+      "source_row_uids": [
+        "sr_7241463cb10e4aac8db5ac789e8fc24d"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 64,
+      "card_id": "card_7f5bbba68941877a",
+      "source_row_uids": [
+        "sr_ede9c584fa8d468eb584be7541411bca"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 66,
+      "card_id": "card_868ad92f50ee13af",
+      "source_row_uids": [
+        "sr_81ba71ce568f498aa44afa44b5a571dd"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish UDP-glucose (UDPG). Glucose is the glucopyranose donor, not the previously attached furanose isomer. Macrophage immune-signaling mechanism; no direct hepatic outcome is inferred."
+    },
+    {
+      "candidate_index": 67,
+      "card_id": "card_87c3dae822922144",
+      "source_row_uids": [
+        "sr_4fde9bb38478417bb4abf2e400c09dc7"
+      ],
+      "action": "repair",
+      "reason": "Original study is HCC tumor-growth efficacy. This record is only MTT/colony growth without a normal-hepatic comparator or a specific mechanism; retain separate apoptosis, autophagy and protective co-treatment evidence."
+    },
+    {
+      "candidate_index": 68,
+      "card_id": "card_87c5314f9376f904",
+      "source_row_uids": [
+        "sr_fe618f786c304702abab01dca972709a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 69,
+      "card_id": "card_8dbc8aa214cea575",
+      "source_row_uids": [
+        "sr_c7f167683cb144c7bf5b03daf071ec72"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 71,
+      "card_id": "card_97495fdf55e05151",
+      "source_row_uids": [
+        "sr_ebe0f5c5c5f0495589a0c6bb0198f6df"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 72,
+      "card_id": "card_97ea5f6f98207eca",
+      "source_row_uids": [
+        "sr_4595fdf9b0184435aed0c2785d0b264a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 74,
+      "card_id": "card_9fd55a6744e7f7b0",
+      "source_row_uids": [
+        "sr_044a853312c74845b3a8b143c04550cf"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 75,
+      "card_id": "card_a4d057fb2765e357",
+      "source_row_uids": [
+        "sr_87f6a50bd5474511a645f313103b611f"
+      ],
+      "action": "repair",
+      "reason": "Original abstract establishes a nonhepatic model and ATP/viability preservation through nucleoside-derived glycolytic substrate under mitochondrial inhibition. Preserve protective indirect bioenergetic evidence; do not label this a hepatocyte assay. Original mechanistic endpoint connects ATP preservation and survival during respiratory-chain inhibition; nonhepatic transfer remains explicitly limited."
+    },
+    {
+      "candidate_index": 76,
+      "card_id": "card_a7e332a7988f5c74",
+      "source_row_uids": [
+        "sr_f68ea649c04240ed883c75b982d558aa"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 77,
+      "card_id": "card_adb7b759f1ddf459",
+      "source_row_uids": [
+        "sr_11ae9f4fe90543d9b8d1f0c2dc732e36"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 78,
+      "card_id": "card_adcd3a138768d96f",
+      "source_row_uids": [
+        "sr_0ad42589d9df429fbeb4f2c5b8347aef"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 79,
+      "card_id": "card_b2b2364c129d8b7b",
+      "source_row_uids": [
+        "sr_0c78b5d5203044c5b8fae4fcff323b9f"
+      ],
+      "action": "repair",
+      "reason": "ISG20 expression is an antiviral transcriptional signature, not a canalicular endpoint."
+    },
+    {
+      "candidate_index": 80,
+      "card_id": "card_b318bcd8da735816",
+      "source_row_uids": [
+        "sr_7116884b5bb04ad7bc07b8256272a8ba"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 81,
+      "card_id": "card_b3652274a4048eed",
+      "source_row_uids": [
+        "sr_8ff50ebe6deb49debfd271ad381f8422"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 83,
+      "card_id": "card_bcadd31ea20ca7ac",
+      "source_row_uids": [
+        "sr_21f9466b521d48c0b33544fc5e6e9ea6"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 84,
+      "card_id": "card_bd802fac6c7335a2",
+      "source_row_uids": [
+        "sr_fa4f39b042214d4fb266beecd5eea405"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Palmitic acid (PA). PA is the lipotoxic palmitic-acid challenge. MGIG is the separate protective co-treatment, not the focal PA structure. Methods-only passages do not themselves establish a treatment outcome. ER morphology is organelle stress, not bile-canalicular morphology."
+    },
+    {
+      "candidate_index": 85,
+      "card_id": "card_c6c221dcb368c0a7",
+      "source_row_uids": [
+        "sr_82f728c80d9f4819833d915a82619cfc"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 86,
+      "card_id": "card_cadc95e100c06ab7",
+      "source_row_uids": [
+        "sr_9654059bcc134d80acfe39c0b3369d66"
+      ],
+      "action": "repair",
+      "reason": "Biliary hydroxymethyl-BHT quinone-methide conjugate identifies reactive metabolism, not bile-flow function."
+    },
+    {
+      "candidate_index": 87,
+      "card_id": "card_cb3d5450235caf7f",
+      "source_row_uids": [
+        "sr_985105211b9943ada8b4526f3c313f32"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Methyl cholate (MeCA). MeCA denotes the methyl ester of cholic acid, not methylcarboxamidoadenosine. MeDCA is a separately tested comparator. Secondary review cites Suzuki et al., PMID 18603830; weak agonism does not establish whether ester hydrolysis contributes."
+    },
+    {
+      "candidate_index": 89,
+      "card_id": "card_d378dbdd82819221",
+      "source_row_uids": [
+        "sr_ccd2c40085324dce859e7d04e58db8f8"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Estradiol-17beta-D-glucuronide (E217G). Correct glucuronide identity with full steroid and beta-D-sugar stereochemistry. DBcAMP is a separate protective pretreatment; retain the reversible cholestatic outcome."
+    },
+    {
+      "candidate_index": 90,
+      "card_id": "card_d3abd122aad43e64",
+      "source_row_uids": [
+        "sr_6a2cb77874004c6fa24a977d52a15141"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 91,
+      "card_id": "card_d8b4762703f7de25",
+      "source_row_uids": [
+        "sr_2523377aa3254fbdbd552e46ddd0f4da"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is cell morphology, syncytium formation or membrane blebbing, not bile flow, transport or canalicular function; preserve original challenge and no-effect/protective limitations."
+    },
+    {
+      "candidate_index": 92,
+      "card_id": "card_da8ba5c9bd388c04",
+      "source_row_uids": [
+        "sr_8b7ee8864b894d82bf63534200ae4f19"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 93,
+      "card_id": "card_db883575c9f22f0e",
+      "source_row_uids": [
+        "sr_9b825d01ef2b4982ae14531846c88979"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. Cellular morphology in challenged HepG2 cells is not a bile-specific endpoint."
+    },
+    {
+      "candidate_index": 94,
+      "card_id": "card_e031717215d030a3",
+      "source_row_uids": [
+        "sr_094bb96f6dd84381916f3a4ea53b3145"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 97,
+      "card_id": "card_e39e3330f21dd3e9",
+      "source_row_uids": [
+        "sr_dc5df39a9043444a9cac6d569c42b299"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 98,
+      "card_id": "card_e5b51e3517afe6fd",
+      "source_row_uids": [
+        "sr_3841a87ac88e4ec0a67308570c5e156a"
+      ],
+      "action": "repair",
+      "reason": "Whole-animal hepatic histopathology includes bile-duct proliferation and portal abnormalities; actual organ injury is near-direct outcome evidence."
+    },
+    {
+      "candidate_index": 99,
+      "card_id": "card_e782781379624fcd",
+      "source_row_uids": [
+        "sr_4c518a07da5c4679b2cc9e0809ff070a"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 100,
+      "card_id": "card_e94bdfea7d873bb4",
+      "source_row_uids": [
+        "sr_8d48825d795a4f0788272c8afa936135"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 101,
+      "card_id": "card_ebc8b5269e51b622",
+      "source_row_uids": [
+        "sr_3798d823989940ad95cda860e6689ac2"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 102,
+      "card_id": "card_ee841830530c4472",
+      "source_row_uids": [
+        "sr_404c1a02259a4da1a5dfaffc8f334a4f"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Disulfiram (tetraethylthiuramdisulfide, DTDS). Primary abstract explicitly expands DTDS as disulfiram, a DDTC metabolite. Preserve cell-cycle/apoptotic mechanism and distinguish the parent dithiocarbamate."
+    },
+    {
+      "candidate_index": 103,
+      "card_id": "card_f07de70b20596c74",
+      "source_row_uids": [
+        "sr_3250d8a87d0f465a978324c9cef5a3d3"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    },
+    {
+      "candidate_index": 104,
+      "card_id": "card_f2aa48614e8bb1b1",
+      "source_row_uids": [
+        "sr_3455239f76e94e518e30327fd64728a3"
+      ],
+      "action": "repair",
+      "reason": "Cellosaurus establishes model misidentification. Preserve the reported protective enzyme-leakage finding but do not present it as validated hepatic-cell injury. Separate in-vivo mouse evidence is unaffected. This record is generic ALT/AST leakage in a misidentified nonhepatic cell line, without an authenticated liver-specific model or separately measured mechanism."
+    },
+    {
+      "candidate_index": 106,
+      "card_id": "card_ffeeb399bedc348c",
+      "source_row_uids": [
+        "sr_2b41d51486c24fec85d7dd10b6d81d91"
+      ],
+      "action": "retain",
+      "reason": "Source reviewed: no confirmed identity, role or endpoint error. Preserve original limitations, valid negatives, protection and indirect mechanisms. Compound-number/stereochemical uncertainties are not resolved by guessing."
+    }
+  ],
+  "n_cards": 89
+}

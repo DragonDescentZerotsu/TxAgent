@@ -1,0 +1,14 @@
+{
+  "parent_key": "OAZGEMFKOBBJJL-WUXMJOGZSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OAZGEMFKOBBJJL-WUXMJOGZSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS003543401",
+    "N-[(1E)-2-(3-aminophenyl)-1-azaprop-1-enyl]aminoamide",
+    "ST51009088"
+  ],
+  "http_status": 200,
+  "cids": [
+    9618576
+  ]
+}

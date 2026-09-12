@@ -1,0 +1,22 @@
+{
+  "parent_key": "NAUHUTWNLSBKCR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NAUHUTWNLSBKCR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "19788-34-2",
+    "2-oxo-1-phenyl-1-propylhydrazine",
+    "Benzeneamine, N-nitroso-N-propyl",
+    "DTXCID50464239",
+    "DTXSID90513432",
+    "N-Nitroso-N-propyl-benzenamine",
+    "N-Phenyl-N-propylnitrous amide",
+    "N-nitroso-N-propylaniline",
+    "RefChem:364812",
+    "SCHEMBL11356208"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Yellow (60%), Request Time status: Green (14%), Service status: Black (130%)",
+  "cids": [
+    12937302
+  ]
+}

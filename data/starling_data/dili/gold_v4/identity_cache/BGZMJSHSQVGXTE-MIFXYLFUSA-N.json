@@ -1,0 +1,20 @@
+{
+  "parent_key": "BGZMJSHSQVGXTE-MIFXYLFUSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1S,3R,15R,18S,19R,20R,21R,22S,23R,24R,25R,26S)-20,22,23,25-tetraacetyloxy-21-(acetyloxymethyl)-15,26-dihydroxy-3,15,26-trimethyl-6,16-dioxo-2,5,17-trioxa-11-azapentacyclo(16.7.1.01,21.03,24.07,12)hexacosa-7(12),8,10-trien-19-yl) furan-3-carboxylate",
+    "37239-48-8",
+    "9MVG0T4LUI",
+    "CHEMBL524713",
+    "DTXCID001527631",
+    "DTXSID601045704",
+    "RefChem:934213",
+    "SCHEMBL30785040",
+    "Wilfortrine"
+  ],
+  "cids": [
+    44583780
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BGZMJSHSQVGXTE-MIFXYLFUSA-N/synonyms/JSON",
+  "http_status": 200
+}

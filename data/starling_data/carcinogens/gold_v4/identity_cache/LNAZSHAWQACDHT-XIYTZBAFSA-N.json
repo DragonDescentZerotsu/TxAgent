@@ -1,0 +1,13 @@
+{
+  "parent_key": "LNAZSHAWQACDHT-XIYTZBAFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LNAZSHAWQACDHT-XIYTZBAFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "E461",
+    "LNAZSHAWQACDHT-XIYTZBAFSA-N"
+  ],
+  "http_status": 200,
+  "cids": [
+    44263857
+  ]
+}

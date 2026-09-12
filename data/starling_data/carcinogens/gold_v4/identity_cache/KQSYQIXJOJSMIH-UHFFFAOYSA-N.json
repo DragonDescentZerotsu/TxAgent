@@ -1,0 +1,36 @@
+{
+  "parent_key": "KQSYQIXJOJSMIH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KQSYQIXJOJSMIH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1,2-ethanediyl)-bis-isothiourea",
+    "1,1'-Ethylenebis(2-thiourea)",
+    "10017-49-9",
+    "2891O8BU1M",
+    "4-04-00-01223 (Beilstein Handbook Reference)",
+    "AKOS002230669",
+    "BRN 1771864",
+    "DTXSID20142996",
+    "ETHYLENEBIS(2-THIOUREA), 1,1'-",
+    "Ethylen-bis-thioharnstoff",
+    "Ethylenebis(thiourea)",
+    "N,N''-Ethylenebisthiourea",
+    "N,N'-Ethane-1,2-diylbis(thiourea)",
+    "Q27254291",
+    "SCHEMBL11060352",
+    "SCHEMBL15344088",
+    "SCHEMBL27008232",
+    "ST50114646",
+    "Thiourea, N,N''-1,2-ethanediylbis-",
+    "Thiourea, N,N''-ethylenebis-",
+    "Thiourea, N,N''-ethylenebis- (8CI)",
+    "UNII-2891O8BU1M",
+    "Urea, 1,1'-(1,2-ethanediyl)bis(2-thio-",
+    "amino({2-[(aminothioxomethyl)amino]ethyl}amino)methane-1-thione"
+  ],
+  "http_status": 200,
+  "cids": [
+    159249,
+    3036869
+  ]
+}

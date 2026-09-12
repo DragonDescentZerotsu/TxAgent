@@ -1,0 +1,30 @@
+{
+  "parent_key": "KXIMKQKQRACGHT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KXIMKQKQRACGHT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-(2,2-Dichloroethene-1,1-diyl)bis(2-chlorobenzene)",
+    "1,1-bis(chlorophenyl)dichloroethylene",
+    "1-chloro-2-[2,2-dichloro-1-(2-chlorophenyl)ethenyl]benzene",
+    "151Q6M24OJ",
+    "2,2'-(2,2-Dichloroethene-1,1-diyl)bis(chlorobenzene)",
+    "2,2'-DDE",
+    "2,2-bis(chlorophenyl)-1,1-dichloroethene",
+    "3328-98-1",
+    "AKOS030254834",
+    "BENZENE, 1,1'-(2,2-DICHLOROETHENYLIDENE)BIS(2-CHLORO-",
+    "Benzene, 1,1'-(dichloroethenylidene)bis(2-chloro-",
+    "DTXSID801358119",
+    "ETHYLENE, 1,1-DICHLORO-2,2-BIS(O-CHLOROPHENYL)-",
+    "KXIMKQKQRACGHT-UHFFFAOYSA-N",
+    "Q27251674",
+    "RefChem:167036",
+    "SCHEMBL9199572",
+    "UNII-151Q6M24OJ",
+    "o,o'-DDE"
+  ],
+  "http_status": 200,
+  "cids": [
+    14367289
+  ]
+}

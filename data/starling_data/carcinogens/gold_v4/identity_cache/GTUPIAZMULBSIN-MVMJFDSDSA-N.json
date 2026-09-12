@@ -1,0 +1,12 @@
+{
+  "parent_key": "GTUPIAZMULBSIN-MVMJFDSDSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GTUPIAZMULBSIN-MVMJFDSDSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Kaempferol 3-rutinoside-7-sophoroside"
+  ],
+  "http_status": 200,
+  "cids": [
+    44258853
+  ]
+}

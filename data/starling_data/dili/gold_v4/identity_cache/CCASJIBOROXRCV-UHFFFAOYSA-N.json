@@ -1,0 +1,13 @@
+{
+  "parent_key": "CCASJIBOROXRCV-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL670020",
+    "phenylazopyridine"
+  ],
+  "cids": [
+    66764706
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CCASJIBOROXRCV-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "CCEVPOURSCMDRL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CCEVPOURSCMDRL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,2,2,3,4,4,5,5,6,6,7,7,7-tetradecafluoro-3-(trifluoromethyl)heptane-1-sulfonic acid",
+    "1-Heptanesulfonic acid,1,1,2,2,3,4,4,5,5,6,6,7,7,7-tetradecafluoro-3-(trifluoromethyl)-",
+    "3mPFOS",
+    "740777-79-1",
+    "DTXSID801019147",
+    "P3MHpS",
+    "Perfluoro-3-methylheptane sulfonate",
+    "Perfluoro-3-methylheptanesulfonic acid",
+    "SCHEMBL31690638"
+  ],
+  "http_status": 200,
+  "cids": [
+    102175775
+  ]
+}

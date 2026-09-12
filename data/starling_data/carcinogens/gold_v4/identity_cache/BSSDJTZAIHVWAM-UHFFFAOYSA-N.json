@@ -1,0 +1,22 @@
+{
+  "parent_key": "BSSDJTZAIHVWAM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSSDJTZAIHVWAM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "63041-63-4",
+    "7,14-Dimethyldibenz(a,j)anthracene",
+    "7,14-Dmdb(a,j)A",
+    "7,14-dimethylbenzo[m]tetraphene",
+    "BSSDJTZAIHVWAM-UHFFFAOYSA-N",
+    "CHEMBL286317",
+    "DB-307226",
+    "DTXCID60134850",
+    "DTXSID10212359",
+    "Dibenz(a,j)anthracene, 7,14-dimethyl-",
+    "RefChem:105466"
+  ],
+  "http_status": 200,
+  "cids": [
+    124965
+  ]
+}

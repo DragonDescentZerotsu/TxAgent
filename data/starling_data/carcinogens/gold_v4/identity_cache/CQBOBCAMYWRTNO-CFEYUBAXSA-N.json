@@ -1,0 +1,31 @@
+{
+  "parent_key": "CQBOBCAMYWRTNO-CFEYUBAXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQBOBCAMYWRTNO-CFEYUBAXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-3-[(1E,3E,5E,7E,9E)-dodeca-1,3,5,7,9-pentaenoxy]propane-1,2-diol",
+    "(S-(ALL-E))-3-(1,3,5,7,9-DODECAPENTAENYLOXY)-1,2-PROPANEDIOL [MI]",
+    "(S-(all-E))-3-(1,3,4,7,9-Dodecapentaenyloxy)-1,2-propanediol",
+    "1,2-PROPANEDIOL, 3-((1E,3E,5E,7E,9E)-1,3,5,7,9-DODECAPENTAEN-1-YLOXY)-, (2S)-",
+    "1,2-Propanediol, 3-((1E,3E,5E,7E,9E)-1,3,5,7,9-dodecapentaenyloxy)-, (2S)-",
+    "1,2-Propanediol, 3-(1,3,5,7,9-dodecapentaenyloxy)-, (all-E)-",
+    "1-O-(1E,3E,5E,7E,9E-dodecapentenyl)-sn-glycerol",
+    "3'-(1,3,5,7,9-Dodecapentaenyloxy)-1',2'-propanediol",
+    "3-(1,3,5,7,9-DODECAPENTAENYLOXY)-1,2-PROPANEDIOL, (S-(ALL-E))-",
+    "91423-46-0",
+    "CCRIS 830",
+    "CHEMBL454514",
+    "Fecapentaene 12",
+    "Fecapentaene-12",
+    "LMGL01020070",
+    "MG O-12:5",
+    "MJL635TEW7",
+    "Q27284071",
+    "UNII-MJL635TEW7",
+    "all-trans-Fecapentaene 12"
+  ],
+  "http_status": 200,
+  "cids": [
+    6437067
+  ]
+}

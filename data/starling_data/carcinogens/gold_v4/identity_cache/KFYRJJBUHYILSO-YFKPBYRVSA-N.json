@@ -1,0 +1,23 @@
+{
+  "parent_key": "KFYRJJBUHYILSO-YFKPBYRVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KFYRJJBUHYILSO-YFKPBYRVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-amino-3-dimethylarsanylsulfanyl-3-methylbutanoic acid",
+    "3-((Dimethylarsino-76As)thio)-D-valine",
+    "3-[(Dimethylarsanyl)sulfanyl]-D-valine",
+    "3-[(Dimethylarsanyl)sulfanyl]valine",
+    "85653-38-9",
+    "D-Valine, 3-((dimethylarsino-76As)thio)-",
+    "DMAPA",
+    "DTXSID001006243",
+    "Dimethylarsinopenicillamine",
+    "KFYRJJBUHYILSO-YFKPBYRVSA-N",
+    "RefChem:134318",
+    "SCHEMBL30553885"
+  ],
+  "http_status": 200,
+  "cids": [
+    135080
+  ]
+}

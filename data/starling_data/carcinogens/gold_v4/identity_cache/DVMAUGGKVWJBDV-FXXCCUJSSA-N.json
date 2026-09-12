@@ -1,0 +1,30 @@
+{
+  "parent_key": "DVMAUGGKVWJBDV-FXXCCUJSSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DVMAUGGKVWJBDV-FXXCCUJSSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(16I+/-)-Estra-1,3,5(10)-triene-3,16-diol",
+    "(16alpha)-estra-1,3,5(10)-triene-3,16-diol",
+    "1090-04-6",
+    "16alpha-estradiol",
+    "CHEMBL1627567",
+    "DTXCID201713682",
+    "DTXSID101283179",
+    "Estra-1(10),2,4-triene-3,16alpha-diol",
+    "Estra-1,3,5(10)-triene-3,16-diol, (16alpha)-",
+    "Estra-1,5(10)-triene-3,16-diol, (16.alpha.)-",
+    "Estradiol-16",
+    "Estradiol-16alpha",
+    "Estradiol-16beta",
+    "NSC 19611",
+    "NSC-19611",
+    "NSC19611",
+    "RefChem:905651",
+    "SCHEMBL3357076",
+    "estra-1 ,3,5(10)-triene-3,16alpha-diol"
+  ],
+  "http_status": 200,
+  "cids": [
+    66421
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "NCNJWWGSQPHORD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL17202120"
+  ],
+  "cids": [
+    118469046
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCNJWWGSQPHORD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

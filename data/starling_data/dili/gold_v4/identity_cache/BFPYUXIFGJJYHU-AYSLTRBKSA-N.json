@@ -1,0 +1,41 @@
+{
+  "parent_key": "BFPYUXIFGJJYHU-AYSLTRBKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(E)-1-((1-METHYLETHYL)SULFONYL)-6-(1-PHENYL-1-PROPENYL)-1H-BENZIMIDAZOL-2-AMINE",
+    "(E)-2-Amino-1-(isopropylsulfonyl)-6-(1-phenylpropenyl)benzimidazole",
+    "1H-Benzimidazol-2-amine, 1-((1-methylethyl)sulfonyl)-6-(1-phenyl-1-propenyl)-, (E)-",
+    "6-[(1E)-1-Phenylprop-1-en-1-yl]-1-(propane-2-sulfonyl)-1H-1,3-benzimidazol-2-amine",
+    "6-[(E)-1-phenylprop-1-enyl]-1-propan-2-ylsulfonylbenzimidazol-2-amine",
+    "80883-55-2",
+    "9Q79A81839",
+    "CHEMBL290507",
+    "D04010",
+    "DTXCID80153260",
+    "DTXSID00230769",
+    "ENVIRADENE",
+    "ENVIRADENE [INN]",
+    "ENVIRADENE [USAN]",
+    "Enviradene (USAN)",
+    "Enviradene [USAN:INN]",
+    "Enviradeno",
+    "Enviradeno [Spanish]",
+    "Enviradenum",
+    "Enviradenum [Latin]",
+    "LY 127123",
+    "LY-127123",
+    "LY127123",
+    "NS00120371",
+    "Q27272893",
+    "RefChem:137064",
+    "SCHEMBL146323",
+    "SCHEMBL28759394",
+    "SCHEMBL29367493",
+    "UNII-9Q79A81839"
+  ],
+  "cids": [
+    6435398
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BFPYUXIFGJJYHU-AYSLTRBKSA-N/synonyms/JSON",
+  "http_status": 200
+}

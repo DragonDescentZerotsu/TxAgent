@@ -1,0 +1,638 @@
+{
+  "status": "reviewed_requires_reselection",
+  "n_cards": 70,
+  "cards": [
+    {
+      "candidate_index": 0,
+      "card_id": "card_ebc65b6482002f4a",
+      "source_row_uids": [
+        "sr_0e24500650c640479c8343e982d14c2a"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is interferon-response expression or hepatic transcriptome enrichment, not bile-canalicular function; retain challenge and protective role."
+    },
+    {
+      "candidate_index": 1,
+      "card_id": "card_081c4503bcb7181b",
+      "source_row_uids": [
+        "sr_dc2d9889a62046e295fdf2d8c8f759a3"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is interferon-response expression or hepatic transcriptome enrichment, not bile-canalicular function; retain challenge and protective role."
+    },
+    {
+      "candidate_index": 2,
+      "card_id": "card_58412f4bf9cbe411",
+      "source_row_uids": [
+        "sr_498d2aa5fc554ce7995f32ad627d0d45"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). This paper explicitly identifies CPA as cyproterone acetate. The abbreviation is not normalized globally because other papers use CPA for cyclophosphamide."
+    },
+    {
+      "candidate_index": 3,
+      "card_id": "card_08fdcd01f7775169",
+      "source_row_uids": [
+        "sr_d2c7e28327c04e3fb06152fcfe9ddf55"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). This paper explicitly identifies CPA as cyproterone acetate. The abbreviation is not normalized globally because other papers use CPA for cyclophosphamide."
+    },
+    {
+      "candidate_index": 4,
+      "card_id": "card_ee4bcc5865e71663",
+      "source_row_uids": [
+        "sr_4ee5fcd4edae45898524fe5636bcd047"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 5,
+      "card_id": "card_858ac7cd1cee86b5",
+      "source_row_uids": [
+        "sr_ace161c10d364ddfbb1430a4c50c0cbc"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 6,
+      "card_id": "card_d8965de681d22079",
+      "source_row_uids": [
+        "sr_c4c257c37730408793e4397dbba1cf5b"
+      ],
+      "action": "repair",
+      "reason": "Primary synthesis paper PMC4522399 confirms a conjugate with a linker, not ribavirin alone. A precise verified full conjugate structure was not recovered from identifier lookup; preserve conjugate transport as material-level evidence rather than parent ribavirin transport. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 7,
+      "card_id": "card_96bf985f809d6aea",
+      "source_row_uids": [
+        "sr_7603cff0e24443d2bc1d45ff07987915"
+      ],
+      "action": "repair",
+      "reason": "Original paper tests dietary cellulose polymer; free glucose is not the intervention. Preserve dietary bile-acid findings without false monomer association. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 8,
+      "card_id": "card_14449a368b142e29",
+      "source_row_uids": [
+        "sr_99e901459b9c432c9c58413db43b64dc"
+      ],
+      "action": "repair",
+      "reason": "Original paper tests dietary cellulose polymer, not glucose dosing. Preserve the unchanged daily bile-acid excretion result outside false monomer retrieval. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 9,
+      "card_id": "card_4d155fc70ccd4cba",
+      "source_row_uids": [
+        "sr_76ac48ea793a4dc6a425e512f6bd6d47"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). This paper explicitly identifies CPA as cyproterone acetate. The abbreviation is not normalized globally because other papers use CPA for cyclophosphamide."
+    },
+    {
+      "candidate_index": 10,
+      "card_id": "card_a7fb0027c0e82b60",
+      "source_row_uids": [
+        "sr_a92d02c31158480e9c086dd5f7a1e130"
+      ],
+      "action": "repair",
+      "reason": "Original paper tests cell adhesion to functionalized polymer substrates. A free monosaccharide structure does not encode the tested surface or ligand presentation; exact polymer cannot be reconstructed as a unique molecule. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 11,
+      "card_id": "card_1fe6b41a3ea876a2",
+      "source_row_uids": [
+        "sr_3adba01b20a446319a3dc9ef1f6f0c09"
+      ],
+      "action": "repair",
+      "reason": "Primary paper confirms sugar-functionalized crosslinked hydrogel; free ligand does not represent the test material or ligand density. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 12,
+      "card_id": "card_149307afe9e21a13",
+      "source_row_uids": [
+        "sr_e2a59a3096c64c5c98eccd5ff73e75ea"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 13,
+      "card_id": "card_efaff7931bd3f552",
+      "source_row_uids": [
+        "sr_7dfb9dd7dc274c78b7b08a1e3f1f1269"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 14,
+      "card_id": "card_2e4e135b69c04aab",
+      "source_row_uids": [
+        "sr_9e9bcfe975d04faab2fa76271cc960a4"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 15,
+      "card_id": "card_a6b09e4e1a0048c4",
+      "source_row_uids": [
+        "sr_72c92a61f2c14daebbca1ccdad75b4a5"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 16,
+      "card_id": "card_e4bf4ffd4f1c286c",
+      "source_row_uids": [
+        "sr_2be6918e5be24e63acd3ca135ddd05bc"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). S-methyl connectivity verified from KEGG C16615. Clinical assays may pool methylated nucleotide phosphorylation states; preserve uncertainty and association rather than asserting single-species causal thresholds."
+    },
+    {
+      "candidate_index": 17,
+      "card_id": "card_76cb80129128f3d5",
+      "source_row_uids": [
+        "sr_f6c22fb7b4084a42b40a43b0da87d277"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). S-methyl connectivity verified from KEGG C16615. Clinical assays may pool methylated nucleotide phosphorylation states; preserve uncertainty and association rather than asserting single-species causal thresholds."
+    },
+    {
+      "candidate_index": 18,
+      "card_id": "card_41a78ce5eb1b31a9",
+      "source_row_uids": [
+        "sr_3f68adb429674cfa8557e2ca82111c8f"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 19,
+      "card_id": "card_60485ece2b7f8e26",
+      "source_row_uids": [
+        "sr_6eaa43d2124949108feeb8c039b1346b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR (5-aminoimidazole-4-carboxamide riboside; acadesine). Original paper uses the membrane-permeable riboside; intracellular phosphorylation forms the distinct ZMP metabolite. Correct the unrelated phosphorylated heterocycle without changing protective or negative findings."
+    },
+    {
+      "candidate_index": 20,
+      "card_id": "card_f76cc361849d3533",
+      "source_row_uids": [
+        "sr_7401e25144e740dabe32309abb759858"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR (5-aminoimidazole-4-carboxamide riboside; acadesine). Original paper uses the membrane-permeable riboside; intracellular phosphorylation forms the distinct ZMP metabolite. Correct the unrelated phosphorylated heterocycle without changing protective or negative findings."
+    },
+    {
+      "candidate_index": 21,
+      "card_id": "card_677f2311888ef087",
+      "source_row_uids": [
+        "sr_4de43abaf88a45e68b817e292605a2df"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 22,
+      "card_id": "card_24be8ef427fe250e",
+      "source_row_uids": [
+        "sr_e5dfd6ff09b1448faae696f1b40bd02b",
+        "sr_f35882557ba6462993008a58faa6abd5"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 23,
+      "card_id": "card_6dae99678be6a5f1",
+      "source_row_uids": [
+        "sr_e846fd8a76ce4353a6dcac5f21849b6e"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 24,
+      "card_id": "card_ce30a27a9464ba5c",
+      "source_row_uids": [
+        "sr_0f2591338bbd41d991a26657188ac3e4"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish D-amphetamine. Primary abstract identifies D-amphetamine among four separately evaluated amphetamines and their mixture. Correct the false deoxyadenosine monophosphate association and the erroneous dimethoxyamphetamine expansion. This methods record alone does not establish an outcome."
+    },
+    {
+      "candidate_index": 25,
+      "card_id": "card_454f2efc732a8c85",
+      "source_row_uids": [
+        "sr_1a782af9301f48f789aba3f8580cccf7"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine). Correct the azacytosine-ribose connectivity; retain the explicitly nonhepatic myeloma ER/redox mechanism and methods-only limitations."
+    },
+    {
+      "candidate_index": 26,
+      "card_id": "card_39cef32deae84d7a",
+      "source_row_uids": [
+        "sr_aba7195e2ff143e1b65154eaeceff9bd"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine). Correct the azacytosine-ribose connectivity; retain the explicitly nonhepatic myeloma ER/redox mechanism and methods-only limitations."
+    },
+    {
+      "candidate_index": 27,
+      "card_id": "card_5dca00863990bd0a",
+      "source_row_uids": [
+        "sr_22347e926908448d8fb34ae1ff2591e2"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 28,
+      "card_id": "card_2cd79aaffbd0943f",
+      "source_row_uids": [
+        "sr_dab9df28420445378beab04fb3cda654"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 29,
+      "card_id": "card_e4a216e46d10ce97",
+      "source_row_uids": [
+        "sr_7874e1ab4f574679bec4421e819cf5f7"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 30,
+      "card_id": "card_3f65866d7fd0dd23",
+      "source_row_uids": [
+        "sr_de961787902c4214b26bb32eed492ffb"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 31,
+      "card_id": "card_edd7582712b1502f",
+      "source_row_uids": [
+        "sr_93aa703f5a064119af10b5345f4de607"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 32,
+      "card_id": "card_f52ccd5bb3dbde4c",
+      "source_row_uids": [
+        "sr_5cfeddfc5549442383efa95b2707a9e3"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 33,
+      "card_id": "card_93251ae0a2863295",
+      "source_row_uids": [
+        "sr_7d4b38913c27431eb503f30abcec74ca"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is interferon-response expression or hepatic transcriptome enrichment, not bile-canalicular function; retain challenge and protective role."
+    },
+    {
+      "candidate_index": 34,
+      "card_id": "card_864609fffa78e826",
+      "source_row_uids": [
+        "sr_746d7182780140aebc913dff6482e181"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is interferon-response expression or hepatic transcriptome enrichment, not bile-canalicular function; retain challenge and protective role."
+    },
+    {
+      "candidate_index": 35,
+      "card_id": "card_8741a853a4139a40",
+      "source_row_uids": [
+        "sr_9bfd471ec2204bdb82cd8d147bf4eeb3"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyclophosphamide (CPA). Primary paper Table 1 explicitly expands CPA as cyclophosphamide; it is not cyproterone acetate or a dinucleotide. Retain the secondary bile-salt observation and inference limits (reference 44)."
+    },
+    {
+      "candidate_index": 36,
+      "card_id": "card_e5b620312d761094",
+      "source_row_uids": [
+        "sr_2351d9aa4d99491788bcd6fefd57f28a"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA). This paper explicitly identifies CPA as cyproterone acetate. The abbreviation is not normalized globally because other papers use CPA for cyclophosphamide."
+    },
+    {
+      "candidate_index": 37,
+      "card_id": "card_e96c6a5e0c632597",
+      "source_row_uids": [
+        "sr_cd63234528ec4f45833c96e92099a0c2"
+      ],
+      "action": "repair",
+      "reason": "Original abstract explicitly identifies a botanical water extract, not Stribild or emtricitabine. Preserve protective and negative observations at extract level; L-02 additionally is a HeLa derivative. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 38,
+      "card_id": "card_ffcc32b4f4e420f4",
+      "source_row_uids": [
+        "sr_72d8127432444db0807df7d1bedb3f50"
+      ],
+      "action": "repair",
+      "reason": "Original abstract explicitly identifies a botanical water extract, not an antiretroviral. Preserve the HepRG no-cytotoxicity observation without assigning it to emtricitabine. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 39,
+      "card_id": "card_385959f38da42b40",
+      "source_row_uids": [
+        "sr_9cbcfb0f6f81421b8043ffb0adbbcc34"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 40,
+      "card_id": "card_75f589e62608c1f6",
+      "source_row_uids": [
+        "sr_f3f339f93ae34267a8915888e8126539"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 41,
+      "card_id": "card_87151f33e93d1c14",
+      "source_row_uids": [
+        "sr_cb5fa1a480764c3ab1f7c1666d70d9ea"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 42,
+      "card_id": "card_0082c2355f47d4d5",
+      "source_row_uids": [
+        "sr_108c50c529e647719a4b8f46f4480f17"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 43,
+      "card_id": "card_cdc7bfaa84f492ae",
+      "source_row_uids": [
+        "sr_488af567391d464d8a2c5c66a628602c"
+      ],
+      "action": "repair",
+      "reason": "Mitochondrial enlargement, reticulum disruption or fission is a mitochondrial endpoint, not bile-canalicular morphology. Negative/protective context retained."
+    },
+    {
+      "candidate_index": 44,
+      "card_id": "card_6b3cdbac53ff0569",
+      "source_row_uids": [
+        "sr_c6335043af8344fd8fe0c7b982e1b961"
+      ],
+      "action": "repair",
+      "reason": "E3040 is the administered/perfused parent. The measured analyte is its formed glucuronide; sulfate is a distinct comparison. Preserve this metabolic linkage without attributing conjugate transport to intact parent or inventing a dosed-metabolite experiment."
+    },
+    {
+      "candidate_index": 45,
+      "card_id": "card_a07e253673fb7929",
+      "source_row_uids": [
+        "sr_34f96e0a68ef4d3fb8a3dd709fc4a52e"
+      ],
+      "action": "repair",
+      "reason": "E3040 is the administered/perfused parent. The measured analyte is its formed glucuronide; sulfate is a distinct comparison. Preserve this metabolic linkage without attributing conjugate transport to intact parent or inventing a dosed-metabolite experiment."
+    },
+    {
+      "candidate_index": 46,
+      "card_id": "card_2623012d2b073a51",
+      "source_row_uids": [
+        "sr_6d09c3d3764443428adb076bdb65e560"
+      ],
+      "action": "repair",
+      "reason": "Original abstract reports 10^-5 M, which equals 10 micromolar. Repair unit normalization; retain protein-production endpoint and reported statistical limits."
+    },
+    {
+      "candidate_index": 47,
+      "card_id": "card_619c32fdb0d88b5b",
+      "source_row_uids": [
+        "sr_d4bbbf5d8b874c29b65fbf57c14be442"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 48,
+      "card_id": "card_67bd3f001942a577",
+      "source_row_uids": [
+        "sr_91173c3889da4010abd424f8db0654f5"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR (5-aminoimidazole-4-carboxamide riboside; acadesine). Original paper uses the membrane-permeable riboside; intracellular phosphorylation forms the distinct ZMP metabolite. Correct the unrelated phosphorylated heterocycle without changing protective or negative findings."
+    },
+    {
+      "candidate_index": 49,
+      "card_id": "card_156d1ff9655c179c",
+      "source_row_uids": [
+        "sr_4e00d493693841e9be2a4dc630e9b63a"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR (5-aminoimidazole-4-carboxamide riboside; acadesine). Original paper uses the membrane-permeable riboside; intracellular phosphorylation forms the distinct ZMP metabolite. Correct the unrelated phosphorylated heterocycle without changing protective or negative findings."
+    },
+    {
+      "candidate_index": 50,
+      "card_id": "card_af8ffb9f09e53ae8",
+      "source_row_uids": [
+        "sr_1d6f538563a547308107a5d70225cc5c"
+      ],
+      "action": "repair",
+      "reason": "Original paper describes a lignan, not the attached vitexin flavone glycoside. Structure lookup did not yield a verified VB6 structure. This particular record is tumor-cell MTT efficacy without a normal-hepatic comparator or mechanism. Corrected test-article description retained; confirmed wrong single-molecule association quarantined after attempted original-paper/structure recovery. Not a deletion of the underlying negative/protective observation."
+    },
+    {
+      "candidate_index": 51,
+      "card_id": "card_27f2a5b732a37805",
+      "source_row_uids": [
+        "sr_1c84c89cf90d4ae6b6cc7f33c0b75400"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 52,
+      "card_id": "card_388466a13df8afb6",
+      "source_row_uids": [
+        "sr_9dd35c0cfdaf46c0a481b425df6dd896"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 53,
+      "card_id": "card_4ebdf1686837e72d",
+      "source_row_uids": [
+        "sr_7e57ffb3c5ea4d2f828fe9e97bdc64f5"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 54,
+      "card_id": "card_66bc1c5bca13fed0",
+      "source_row_uids": [
+        "sr_4429b3d7669e4dd68b9bc57443879292"
+      ],
+      "action": "repair",
+      "reason": "Mitochondrial enlargement, reticulum disruption or fission is a mitochondrial endpoint, not bile-canalicular morphology. Negative/protective context retained."
+    },
+    {
+      "candidate_index": 55,
+      "card_id": "card_a48dbee844eef83d",
+      "source_row_uids": [
+        "sr_e196121fe81148368cb30425e3d2bb86"
+      ],
+      "action": "repair",
+      "reason": "Mitochondrial enlargement, reticulum disruption or fission is a mitochondrial endpoint, not bile-canalicular morphology. Negative/protective context retained."
+    },
+    {
+      "candidate_index": 56,
+      "card_id": "card_a77d0e5d821cc727",
+      "source_row_uids": [
+        "sr_3743720ca9174bba9fa863f81a08e8a8"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 57,
+      "card_id": "card_9bfdcb141cd873c0",
+      "source_row_uids": [
+        "sr_6f10a3078ec340e39ba5fbbac950c50d"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 58,
+      "card_id": "card_a467855f225bf3d7",
+      "source_row_uids": [
+        "sr_5d0e02736a034b83b434a78b48ec7941"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Acetylshikonin (ASK). Original paper names acetylshikonin and evaluates ER-stress-associated vacuolization. Correct false seliciclib association and placement; preserve mechanistic tumor-cell limits."
+    },
+    {
+      "candidate_index": 59,
+      "card_id": "card_e98bd442c04cc6fd",
+      "source_row_uids": [
+        "sr_3de11fe4de7747108e1b2a6f1e2b7cb0"
+      ],
+      "action": "retain",
+      "reason": "Read source record and original abstract; no confirmed identity, endpoint or role correction. Preserve original limitations and valid negatives/protective/indirect evidence. No full-library or full numerical verification claimed."
+    },
+    {
+      "candidate_index": 60,
+      "card_id": "card_f9e45baf690e097a",
+      "source_row_uids": [
+        "sr_65b35a8c9d5f43e3aeb049916d0824e9"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Tritoqualine (TRQ). Primary article title and abstract explicitly identify tritoqualine; the polydatin expansion and structure were extraction errors. Preserve bile secretion and unchanged bile-acid content per liver-weight observations."
+    },
+    {
+      "candidate_index": 61,
+      "card_id": "card_2281b8707b9fb165",
+      "source_row_uids": [
+        "sr_d4b3ddc5bf3248889f6a7620826615fe"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Tritoqualine (TRQ). Primary article title and abstract explicitly identify tritoqualine; the polydatin expansion and structure were extraction errors. Preserve bile secretion and unchanged bile-acid content per liver-weight observations."
+    },
+    {
+      "candidate_index": 62,
+      "card_id": "card_800880bc8765a929",
+      "source_row_uids": [
+        "sr_bd9688f505f149a884c989ff16d0fb41"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Bromocresol green (BCG). Original paper identifies a cholephilic dye, not benzoylecgonine. Preserve the negative endogenous bile-salt excretion result and infusion context."
+    },
+    {
+      "candidate_index": 63,
+      "card_id": "card_38de4e8951724b72",
+      "source_row_uids": [
+        "sr_6aa6d0cf6b41410c9d5b049a5af8dee8"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 64,
+      "card_id": "card_cad3e8accd530ded",
+      "source_row_uids": [
+        "sr_9f64676b06d24822b97272015f050f1d",
+        "sr_a90562a9eee9441fbaad56cb4e556f02"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations. Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 65,
+      "card_id": "card_eca3e51a52ab915c",
+      "source_row_uids": [
+        "sr_cef09c9af3044717ac28d70208c36f5a"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 66,
+      "card_id": "card_068b209412851b5b",
+      "source_row_uids": [
+        "sr_4d3060bed9364367923e1b468357992b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish (S)-2-(4-chlorophenyl)-3,3-dimethyl-N-(5-phenylthiazol-2-yl)butanamide (PA). Original abstract specifies the small-molecule agonist by complete chemical name. An abbreviation-only 4-CMTB lookup returns a different structure and is rejected. Preserve bounded nonhepatic inflammatory mechanism after correcting the model; do not infer effects from HBx transfer to another biological system."
+    },
+    {
+      "candidate_index": 67,
+      "card_id": "card_36ee845f7d5b4ad6",
+      "source_row_uids": [
+        "sr_a28d08cf3b1b4721bd5105f252d8facc"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish (S)-2-(4-chlorophenyl)-3,3-dimethyl-N-(5-phenylthiazol-2-yl)butanamide (PA). Original abstract specifies the small-molecule agonist by complete chemical name. An abbreviation-only 4-CMTB lookup returns a different structure and is rejected. Preserve bounded nonhepatic inflammatory mechanism after correcting the model; do not infer effects from HBx transfer to another biological system."
+    },
+    {
+      "candidate_index": 68,
+      "card_id": "card_0006737dc4ac43db",
+      "source_row_uids": [
+        "sr_67a7da8358144644a99650630dc98a5c"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    },
+    {
+      "candidate_index": 69,
+      "card_id": "card_ab46b09850fc820b",
+      "source_row_uids": [
+        "sr_45088436925240258f9ca8441453624d"
+      ],
+      "action": "repair",
+      "reason": "Actual endpoint is ordinary cell/nuclear morphology, cytoskeletal distribution, shrinkage, or membrane blebbing in the reported hepatic model, not bile transport or canalicular architecture. Preserve comparator, cytotoxic and protective observations."
+    }
+  ]
+}

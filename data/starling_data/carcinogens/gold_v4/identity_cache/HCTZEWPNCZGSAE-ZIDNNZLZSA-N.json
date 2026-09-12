@@ -1,0 +1,28 @@
+{
+  "parent_key": "HCTZEWPNCZGSAE-ZIDNNZLZSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HCTZEWPNCZGSAE-ZIDNNZLZSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+)-Gymnemic acid V",
+    "(2S,3S,4S,5R,6R)-6-(((3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8-hydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-9,10-bis(((E)-2-methylbut-2-enoyl)oxy)-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl)oxy)-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[[(3S,4R,4aR,6aR,6bS,8S,8aR,9R,10R,12aS,14aR,14bR)-8-hydroxy-4,8a-bis(hydroxymethyl)-4,6a,6b,11,11,14b-hexamethyl-9,10-bis[[(E)-2-methylbut-2-enoyl]oxy]-1,2,3,4a,5,6,7,8,9,10,12,12a,14,14a-tetradecahydropicen-3-yl]oxy]-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "(3beta,4alpha,16beta,21beta,22alpha)-21,22-bistigloxy-16,23,28-trihydroxyolean-12-en-3-yl-beta D-glucopyranosiduronic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, (3.BETA.,4.ALPHA.,16.BETA.,21.BETA.,22.ALPHA.)-16,23,28-TRIHYDROXY-21,22-BIS(((2E)-2-METHYL-1-OXO-2-BUTEN-1-YL)OXY)OLEAN-12-EN-3-YL",
+    "121903-99-9",
+    "GYMNEMIC ACID V (CONSTITUENT OF GYMNEMA)",
+    "GYMNEMIC ACID V (CONSTITUENT OF GYMNEMA) [DSC]",
+    "Gymnemate V",
+    "Gymnemic acid V",
+    "Gymnemic acid V, (+)-",
+    "LMPR0106150074",
+    "Q27288505",
+    "RefChem:144871",
+    "S2WOT0EOOX",
+    "UNII-S2WOT0EOOX",
+    "beta-D-Glucopyranosiduronic acid, (3beta,4alpha,16beta,21beta,22alpha)-16,23,28-trihydroxy-21,22-bis(((2E)-2-methyl-1-oxo-2-buten-1-yl)oxy)olean-12-en-3-yl"
+  ],
+  "http_status": 200,
+  "cids": [
+    14683206
+  ]
+}

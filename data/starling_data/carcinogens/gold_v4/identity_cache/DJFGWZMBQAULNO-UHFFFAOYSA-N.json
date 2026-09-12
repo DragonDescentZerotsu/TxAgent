@@ -1,0 +1,19 @@
+{
+  "parent_key": "DJFGWZMBQAULNO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DJFGWZMBQAULNO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,6-Dimethyl-1H-furo(2,3-b)imidazo(4,5-e)pyridin-2-amine",
+    "1,6-Dimethyl-1H-furo[2,3-b]imidazo[4,5-e]pyridin-2-amine",
+    "132898-08-9",
+    "6,11-dimethyl-12-oxa-2,4,6-triazatricyclo[7.3.0.03,7]dodeca-1,3(7),4,8,10-pentaen-5-amine",
+    "CHEBI:174011",
+    "DB-292572",
+    "DTXSID201236602",
+    "RefChem:221537"
+  ],
+  "http_status": 200,
+  "cids": [
+    53762944
+  ]
+}

@@ -1,0 +1,931 @@
+{
+  "task": "DILI",
+  "contract": "conditioned_benchmark.v1",
+  "protocol_version": "fresh_conditioned_benchmark.v2",
+  "seed": 20260807,
+  "swap_evaluation_splits": true,
+  "source_votes_sha256": "8237331fc9ef123c8b3df40b314c6ae7d1d380c5f596fd125d0b99dbdca61b7b",
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+      "sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573"
+    },
+    {
+      "path": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_source_labels.parquet",
+      "sha256": "bd3fc98b419e851c1ab25264579dede9e954720c3793cc211c635aea7072c180"
+    },
+    {
+      "path": "data/starling_data/dili/gold_v4/identity_ledger.parquet",
+      "sha256": "947b007682e4f33e39350418d26b3f6c649ccb6ff679ca8da4e8335f60dac125"
+    },
+    {
+      "path": "data/starling_data/dili/gold_v4/build_policy.json",
+      "sha256": "e310c70afc223b7306703e2c90250ab39fc472658b60f36582f49ee46303bfb3"
+    },
+    {
+      "path": "data/starling_data/dili/gold_v4/applied_citation_corrections.jsonl",
+      "sha256": "781d225aaadddecdaee66a4a4b04fae1276ae5ea929c6df86714dd7764635c47"
+    },
+    {
+      "path": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/dili_condition_review/source_votes.jsonl",
+      "sha256": "fd78e264f9783d2a10be53cbe1dd25113749168849b7311eecab986a1b68f265"
+    },
+    {
+      "path": "data/starling_data/dili/gold_v4/source_votes.jsonl",
+      "sha256": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/build_reviewed_starling.py",
+      "sha256": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
+    }
+  ],
+  "n_source_records": 108437,
+  "n_accepted_parent_conditions": 4024,
+  "n_rejected_parent_conditions": 541,
+  "label_policy": {
+    "agreement_threshold_by_condition_scope": {
+      "none_reported": 0.7,
+      "external": 0.6
+    },
+    "ties": "excluded",
+    "vote_unit": "task_accepted_source_record",
+    "review_policy": "caller-supplied label_method and reviewer retained verbatim; no manual review inferred"
+  },
+  "group_gate": {
+    "age_group=college_students": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=older_than_65": {
+      "n_parents": 280,
+      "n_nonempty_scaffolds": 200,
+      "eligible": true
+    },
+    "age_group=older_than_65+exposure=overdose_or_supratherapeutic": {
+      "n_parents": 8,
+      "n_nonempty_scaffolds": 6,
+      "eligible": true
+    },
+    "age_group=older_than_65+population_context=hepatitis_b": {
+      "n_parents": 5,
+      "n_nonempty_scaffolds": 5,
+      "eligible": true
+    },
+    "age_group=older_than_65+population_context=hepatitis_c": {
+      "n_parents": 4,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "age_group=older_than_65+population_context=metabolic_fatty_liver_disease": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=older_than_65+population_context=renal_impairment": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=older_than_65+population_context=type_2_diabetes": {
+      "n_parents": 7,
+      "n_nonempty_scaffolds": 6,
+      "eligible": true
+    },
+    "age_group=older_than_65+regimen=single_dose_or_one_day": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric": {
+      "n_parents": 362,
+      "n_nonempty_scaffolds": 209,
+      "eligible": true
+    },
+    "age_group=pediatric+exposure=overdose_or_supratherapeutic": {
+      "n_parents": 39,
+      "n_nonempty_scaffolds": 22,
+      "eligible": true
+    },
+    "age_group=pediatric+exposure=overdose_or_supratherapeutic+population_context=pregnancy": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+genotype=polg_mutation": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 0,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=alcohol_dependence": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=hepatitis_b": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=hiv": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=liver_transplant": {
+      "n_parents": 2,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=metabolic_fatty_liver_disease": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 0,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=pre_existing_liver_disease": {
+      "n_parents": 6,
+      "n_nonempty_scaffolds": 5,
+      "eligible": true
+    },
+    "age_group=pediatric+population_context=pre_existing_liver_disease+population_context=pregnancy": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+population_context=pregnancy": {
+      "n_parents": 8,
+      "n_nonempty_scaffolds": 7,
+      "eligible": true
+    },
+    "age_group=pediatric+population_context=renal_transplant": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "age_group=pediatric+regimen=single_dose_or_one_day": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic": {
+      "n_parents": 383,
+      "n_nonempty_scaffolds": 180,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=alcohol_dependence": {
+      "n_parents": 2,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=hepatitis_b": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c": {
+      "n_parents": 7,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=hiv": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=liver_transplant": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=metabolic_fatty_liver_disease": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=pre_existing_liver_disease": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=pregnancy": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=renal_impairment": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "exposure=overdose_or_supratherapeutic+population_context=renal_transplant": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day": {
+      "n_parents": 8,
+      "n_nonempty_scaffolds": 7,
+      "eligible": true
+    },
+    "genotype=polg_mutation": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 0,
+      "eligible": false
+    },
+    "no_reported_external_condition": {
+      "n_parents": 2150,
+      "n_nonempty_scaffolds": 1136,
+      "eligible": true
+    },
+    "population_context=alcohol_dependence": {
+      "n_parents": 10,
+      "n_nonempty_scaffolds": 6,
+      "eligible": true
+    },
+    "population_context=alcohol_dependence+population_context=hepatitis_c": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 0,
+      "eligible": false
+    },
+    "population_context=hepatitis_b": {
+      "n_parents": 115,
+      "n_nonempty_scaffolds": 87,
+      "eligible": true
+    },
+    "population_context=hepatitis_b+population_context=hepatitis_c": {
+      "n_parents": 4,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "population_context=hepatitis_b+population_context=hiv": {
+      "n_parents": 8,
+      "n_nonempty_scaffolds": 7,
+      "eligible": true
+    },
+    "population_context=hepatitis_b+population_context=pre_existing_liver_disease": {
+      "n_parents": 4,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "population_context=hepatitis_b+population_context=pregnancy": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=hepatitis_b+population_context=renal_transplant": {
+      "n_parents": 4,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "population_context=hepatitis_b+population_context=type_2_diabetes": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=hepatitis_c": {
+      "n_parents": 111,
+      "n_nonempty_scaffolds": 85,
+      "eligible": true
+    },
+    "population_context=hepatitis_c+population_context=hiv": {
+      "n_parents": 13,
+      "n_nonempty_scaffolds": 11,
+      "eligible": true
+    },
+    "population_context=hepatitis_c+population_context=liver_transplant": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=hepatitis_c+population_context=pre_existing_liver_disease": {
+      "n_parents": 4,
+      "n_nonempty_scaffolds": 4,
+      "eligible": true
+    },
+    "population_context=hepatitis_c+population_context=pregnancy": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=hepatitis_c+population_context=renal_transplant": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "population_context=hiv": {
+      "n_parents": 82,
+      "n_nonempty_scaffolds": 65,
+      "eligible": true
+    },
+    "population_context=hiv+population_context=pregnancy": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=liver_transplant": {
+      "n_parents": 59,
+      "n_nonempty_scaffolds": 48,
+      "eligible": true
+    },
+    "population_context=liver_transplant+population_context=pre_existing_liver_disease": {
+      "n_parents": 2,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "population_context=liver_transplant+population_context=renal_transplant": {
+      "n_parents": 3,
+      "n_nonempty_scaffolds": 3,
+      "eligible": true
+    },
+    "population_context=liver_transplant+regimen=single_dose_or_one_day": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=metabolic_fatty_liver_disease": {
+      "n_parents": 42,
+      "n_nonempty_scaffolds": 37,
+      "eligible": true
+    },
+    "population_context=pre_existing_liver_disease": {
+      "n_parents": 74,
+      "n_nonempty_scaffolds": 61,
+      "eligible": true
+    },
+    "population_context=pre_existing_liver_disease+population_context=renal_transplant": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=pregnancy": {
+      "n_parents": 66,
+      "n_nonempty_scaffolds": 46,
+      "eligible": true
+    },
+    "population_context=pregnancy+regimen=single_dose_or_one_day": {
+      "n_parents": 2,
+      "n_nonempty_scaffolds": 2,
+      "eligible": false
+    },
+    "population_context=renal_impairment": {
+      "n_parents": 20,
+      "n_nonempty_scaffolds": 18,
+      "eligible": true
+    },
+    "population_context=renal_impairment+population_context=type_2_diabetes": {
+      "n_parents": 1,
+      "n_nonempty_scaffolds": 1,
+      "eligible": false
+    },
+    "population_context=renal_transplant": {
+      "n_parents": 41,
+      "n_nonempty_scaffolds": 29,
+      "eligible": true
+    },
+    "population_context=type_2_diabetes": {
+      "n_parents": 31,
+      "n_nonempty_scaffolds": 27,
+      "eligible": true
+    },
+    "regimen=single_dose_or_one_day": {
+      "n_parents": 48,
+      "n_nonempty_scaffolds": 40,
+      "eligible": true
+    }
+  },
+  "optimization": {
+    "record_support_objective_enabled": true,
+    "empty_scaffold_heldout_eligible": false,
+    "minimum_singletons_in_heldout": 168,
+    "minimum_singleton_imbalance": 72,
+    "minimum_label_deviation": 17,
+    "desired_positive_count_per_eval_split": 315,
+    "maximum_prior_valid_reuse": 0,
+    "n_scaffold_groups": 1222,
+    "n_candidate_scaffold_groups": 1221,
+    "n_empty_scaffold_parents": 242,
+    "required_condition_groups": [
+      "age_group=older_than_65",
+      "age_group=older_than_65+exposure=overdose_or_supratherapeutic",
+      "age_group=older_than_65+population_context=hepatitis_b",
+      "age_group=older_than_65+population_context=hepatitis_c",
+      "age_group=older_than_65+population_context=type_2_diabetes",
+      "age_group=pediatric",
+      "age_group=pediatric+exposure=overdose_or_supratherapeutic",
+      "age_group=pediatric+population_context=pre_existing_liver_disease",
+      "age_group=pediatric+population_context=pregnancy",
+      "age_group=pediatric+regimen=single_dose_or_one_day",
+      "exposure=overdose_or_supratherapeutic",
+      "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c",
+      "exposure=overdose_or_supratherapeutic+population_context=hiv",
+      "exposure=overdose_or_supratherapeutic+population_context=liver_transplant",
+      "exposure=overdose_or_supratherapeutic+population_context=pregnancy",
+      "exposure=overdose_or_supratherapeutic+population_context=renal_transplant",
+      "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day",
+      "no_reported_external_condition",
+      "population_context=alcohol_dependence",
+      "population_context=hepatitis_b",
+      "population_context=hepatitis_b+population_context=hepatitis_c",
+      "population_context=hepatitis_b+population_context=hiv",
+      "population_context=hepatitis_b+population_context=pre_existing_liver_disease",
+      "population_context=hepatitis_b+population_context=renal_transplant",
+      "population_context=hepatitis_c",
+      "population_context=hepatitis_c+population_context=hiv",
+      "population_context=hepatitis_c+population_context=pre_existing_liver_disease",
+      "population_context=hepatitis_c+population_context=renal_transplant",
+      "population_context=hiv",
+      "population_context=liver_transplant",
+      "population_context=liver_transplant+population_context=renal_transplant",
+      "population_context=metabolic_fatty_liver_disease",
+      "population_context=pre_existing_liver_disease",
+      "population_context=pregnancy",
+      "population_context=renal_impairment",
+      "population_context=renal_transplant",
+      "population_context=type_2_diabetes",
+      "regimen=single_dose_or_one_day"
+    ],
+    "n_empty_scaffold_rows": 387
+  },
+  "target_eval_rows": 402,
+  "nominal_target_eval_rows": 402,
+  "target_size_policy": "minimum_feasible_equal_eval_size",
+  "target_expansion_reason": null,
+  "group_distribution": [
+    {
+      "condition_group": "no_reported_external_condition",
+      "condition_scope": "none_reported",
+      "n_molecule_condition_rows": 2150,
+      "n_unique_parents": 2150,
+      "n_distinct_scaffolds": 1137,
+      "n_train": 1664,
+      "n_valid": 261,
+      "n_test": 225,
+      "n_y0": 580,
+      "n_y1": 1570
+    },
+    {
+      "condition_group": "age_group=older_than_65",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 280,
+      "n_unique_parents": 280,
+      "n_distinct_scaffolds": 201,
+      "n_train": 243,
+      "n_valid": 22,
+      "n_test": 15,
+      "n_y0": 10,
+      "n_y1": 270
+    },
+    {
+      "condition_group": "age_group=older_than_65+exposure=overdose_or_supratherapeutic",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 8,
+      "n_unique_parents": 8,
+      "n_distinct_scaffolds": 7,
+      "n_train": 6,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 8
+    },
+    {
+      "condition_group": "age_group=older_than_65+population_context=hepatitis_b",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 5,
+      "n_unique_parents": 5,
+      "n_distinct_scaffolds": 5,
+      "n_train": 3,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 5
+    },
+    {
+      "condition_group": "age_group=older_than_65+population_context=hepatitis_c",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 4,
+      "n_unique_parents": 4,
+      "n_distinct_scaffolds": 4,
+      "n_train": 2,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 4
+    },
+    {
+      "condition_group": "age_group=older_than_65+population_context=type_2_diabetes",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 7,
+      "n_unique_parents": 7,
+      "n_distinct_scaffolds": 7,
+      "n_train": 5,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 7
+    },
+    {
+      "condition_group": "age_group=pediatric",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 362,
+      "n_unique_parents": 362,
+      "n_distinct_scaffolds": 210,
+      "n_train": 313,
+      "n_valid": 18,
+      "n_test": 31,
+      "n_y0": 56,
+      "n_y1": 306
+    },
+    {
+      "condition_group": "age_group=pediatric+exposure=overdose_or_supratherapeutic",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 39,
+      "n_unique_parents": 39,
+      "n_distinct_scaffolds": 23,
+      "n_train": 33,
+      "n_valid": 3,
+      "n_test": 3,
+      "n_y0": 2,
+      "n_y1": 37
+    },
+    {
+      "condition_group": "age_group=pediatric+population_context=pre_existing_liver_disease",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 6,
+      "n_unique_parents": 6,
+      "n_distinct_scaffolds": 6,
+      "n_train": 4,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 5
+    },
+    {
+      "condition_group": "age_group=pediatric+population_context=pregnancy",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 8,
+      "n_unique_parents": 8,
+      "n_distinct_scaffolds": 8,
+      "n_train": 6,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 8
+    },
+    {
+      "condition_group": "age_group=pediatric+regimen=single_dose_or_one_day",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 383,
+      "n_unique_parents": 383,
+      "n_distinct_scaffolds": 181,
+      "n_train": 325,
+      "n_valid": 22,
+      "n_test": 36,
+      "n_y0": 38,
+      "n_y1": 345
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 7,
+      "n_unique_parents": 7,
+      "n_distinct_scaffolds": 5,
+      "n_train": 5,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 6
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+population_context=hiv",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+population_context=liver_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+population_context=pregnancy",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+population_context=renal_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 8,
+      "n_unique_parents": 8,
+      "n_distinct_scaffolds": 8,
+      "n_train": 6,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 7
+    },
+    {
+      "condition_group": "population_context=alcohol_dependence",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 10,
+      "n_unique_parents": 10,
+      "n_distinct_scaffolds": 7,
+      "n_train": 7,
+      "n_valid": 1,
+      "n_test": 2,
+      "n_y0": 8,
+      "n_y1": 2
+    },
+    {
+      "condition_group": "population_context=hepatitis_b",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 115,
+      "n_unique_parents": 115,
+      "n_distinct_scaffolds": 88,
+      "n_train": 90,
+      "n_valid": 8,
+      "n_test": 17,
+      "n_y0": 17,
+      "n_y1": 98
+    },
+    {
+      "condition_group": "population_context=hepatitis_b+population_context=hepatitis_c",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 4,
+      "n_unique_parents": 4,
+      "n_distinct_scaffolds": 4,
+      "n_train": 2,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "population_context=hepatitis_b+population_context=hiv",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 8,
+      "n_unique_parents": 8,
+      "n_distinct_scaffolds": 7,
+      "n_train": 5,
+      "n_valid": 1,
+      "n_test": 2,
+      "n_y0": 0,
+      "n_y1": 8
+    },
+    {
+      "condition_group": "population_context=hepatitis_b+population_context=pre_existing_liver_disease",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 4,
+      "n_unique_parents": 4,
+      "n_distinct_scaffolds": 4,
+      "n_train": 2,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 1,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "population_context=hepatitis_b+population_context=renal_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 4,
+      "n_unique_parents": 4,
+      "n_distinct_scaffolds": 4,
+      "n_train": 2,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 3,
+      "n_y1": 1
+    },
+    {
+      "condition_group": "population_context=hepatitis_c",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 111,
+      "n_unique_parents": 111,
+      "n_distinct_scaffolds": 86,
+      "n_train": 91,
+      "n_valid": 11,
+      "n_test": 9,
+      "n_y0": 18,
+      "n_y1": 93
+    },
+    {
+      "condition_group": "population_context=hepatitis_c+population_context=hiv",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 13,
+      "n_unique_parents": 13,
+      "n_distinct_scaffolds": 12,
+      "n_train": 10,
+      "n_valid": 1,
+      "n_test": 2,
+      "n_y0": 3,
+      "n_y1": 10
+    },
+    {
+      "condition_group": "population_context=hepatitis_c+population_context=pre_existing_liver_disease",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 4,
+      "n_unique_parents": 4,
+      "n_distinct_scaffolds": 4,
+      "n_train": 2,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 4
+    },
+    {
+      "condition_group": "population_context=hepatitis_c+population_context=renal_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "population_context=hiv",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 82,
+      "n_unique_parents": 82,
+      "n_distinct_scaffolds": 66,
+      "n_train": 66,
+      "n_valid": 8,
+      "n_test": 8,
+      "n_y0": 13,
+      "n_y1": 69
+    },
+    {
+      "condition_group": "population_context=liver_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 59,
+      "n_unique_parents": 59,
+      "n_distinct_scaffolds": 49,
+      "n_train": 46,
+      "n_valid": 6,
+      "n_test": 7,
+      "n_y0": 24,
+      "n_y1": 35
+    },
+    {
+      "condition_group": "population_context=liver_transplant+population_context=renal_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 3,
+      "n_unique_parents": 3,
+      "n_distinct_scaffolds": 3,
+      "n_train": 1,
+      "n_valid": 1,
+      "n_test": 1,
+      "n_y0": 0,
+      "n_y1": 3
+    },
+    {
+      "condition_group": "population_context=metabolic_fatty_liver_disease",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 42,
+      "n_unique_parents": 42,
+      "n_distinct_scaffolds": 38,
+      "n_train": 35,
+      "n_valid": 3,
+      "n_test": 4,
+      "n_y0": 12,
+      "n_y1": 30
+    },
+    {
+      "condition_group": "population_context=pre_existing_liver_disease",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 74,
+      "n_unique_parents": 74,
+      "n_distinct_scaffolds": 62,
+      "n_train": 66,
+      "n_valid": 3,
+      "n_test": 5,
+      "n_y0": 20,
+      "n_y1": 54
+    },
+    {
+      "condition_group": "population_context=pregnancy",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 66,
+      "n_unique_parents": 66,
+      "n_distinct_scaffolds": 47,
+      "n_train": 54,
+      "n_valid": 3,
+      "n_test": 9,
+      "n_y0": 7,
+      "n_y1": 59
+    },
+    {
+      "condition_group": "population_context=renal_impairment",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 20,
+      "n_unique_parents": 20,
+      "n_distinct_scaffolds": 19,
+      "n_train": 15,
+      "n_valid": 2,
+      "n_test": 3,
+      "n_y0": 3,
+      "n_y1": 17
+    },
+    {
+      "condition_group": "population_context=renal_transplant",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 41,
+      "n_unique_parents": 41,
+      "n_distinct_scaffolds": 30,
+      "n_train": 33,
+      "n_valid": 5,
+      "n_test": 3,
+      "n_y0": 17,
+      "n_y1": 24
+    },
+    {
+      "condition_group": "population_context=type_2_diabetes",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 31,
+      "n_unique_parents": 31,
+      "n_distinct_scaffolds": 28,
+      "n_train": 27,
+      "n_valid": 3,
+      "n_test": 1,
+      "n_y0": 16,
+      "n_y1": 15
+    },
+    {
+      "condition_group": "regimen=single_dose_or_one_day",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 48,
+      "n_unique_parents": 48,
+      "n_distinct_scaffolds": 41,
+      "n_train": 45,
+      "n_valid": 2,
+      "n_test": 1,
+      "n_y0": 14,
+      "n_y1": 34
+    }
+  ],
+  "splits": {
+    "train": {
+      "n": 3220,
+      "n_parents": 1886
+    },
+    "valid": {
+      "n": 402,
+      "n_parents": 268
+    },
+    "test": {
+      "n": 402,
+      "n_parents": 246
+    }
+  },
+  "split_integrity_validated": true
+}

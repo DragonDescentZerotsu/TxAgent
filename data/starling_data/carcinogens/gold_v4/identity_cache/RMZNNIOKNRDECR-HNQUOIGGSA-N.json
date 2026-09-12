@@ -1,0 +1,43 @@
+{
+  "parent_key": "RMZNNIOKNRDECR-HNQUOIGGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RMZNNIOKNRDECR-HNQUOIGGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-5-Amino-3-(2-(5-nitro-2-furanyl)ethenyl)-1,2,4-oxadiazole",
+    "1,2,4-OXADIAZOL-5-AMINE, 3-((1E)-2-(5-NITRO-2-FURANYL)ETHENYL)-",
+    "1,2,4-Oxadiazol-5-amine, 3-(2-(5-nitro-2-furanyl)ethenyl)-, (E)-",
+    "1,2,4-Oxadiazol-5-amine, 3-[(E)-2-(5-nitro-2-furanyl)ethenyl]-",
+    "1,2,4-Oxadiazole, 5-amino-3-(2-(5-nitro-2-furyl)vinyl)- (E)-",
+    "28754-68-9",
+    "3-[(E)-2-(5-Nitrofuran-2-yl)ethen-1-yl]-1,2,4-oxadiazol-5-amine",
+    "3-[(E)-2-(5-nitro-2-furyl)vinyl]-1,2,4-oxadiazol-5-amine",
+    "3-[(E)-2-(5-nitrofuran-2-yl)ethenyl]-1,2,4-oxadiazol-5-amine",
+    "5-Amino-3-((5-nitro-2-furyl)vinyl)-1,2,4-oxadiazole",
+    "AI3-27918",
+    "B5J6S26XCE",
+    "BRN 1079486",
+    "CCRIS 5440",
+    "CHEMBL3252032",
+    "DTXSID1020061",
+    "Q63088098",
+    "RefChem:933280",
+    "S 18506",
+    "S-18506",
+    "S18506",
+    "SCHEMBL7854598",
+    "SQ 18 506",
+    "SQ 18506",
+    "SQ-18506",
+    "SQ18506",
+    "TRANS-5-AMINO-3-((5-NITRO-2-FURYL)VINYL)-1,2,4-OXADIAZOLE",
+    "UNII-B5J6S26XCE",
+    "trans-5-Amino-3-(2-(5-nitro-2-furyl)-vinyl)-1,2,4-oxadiazole",
+    "trans-5-Amino-3-(2-(5-nitro-2-furyl)vinyl)-1,2,4-oxadiazole",
+    "trans-5-Amino-3[2-(5-nitro-2-furyl)vinyl]-1,2,4-oxadiazole",
+    "trans-5-amino-3-(2-(5-nitro-2-furyl)vinyl)-1,2,4-oxadi-azole"
+  ],
+  "http_status": 200,
+  "cids": [
+    5284340
+  ]
+}

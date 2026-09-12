@@ -1,0 +1,32 @@
+{
+  "parent_key": "BYFIUFNRSNKODH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BYFIUFNRSNKODH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-AZABENZO (a) PYRENE (purity)",
+    "10-Azabenzo(a)pyrene",
+    "10-Azabenzo[a]pyrene",
+    "10-Azabenzo[a]pyrene, BCR(R) certified Reference Material",
+    "189-92-4",
+    "24407-49-6",
+    "2VY2X6M7F8",
+    "3-Azabenzo(d)pyrene",
+    "BRN 0014606",
+    "DTXCID1094773",
+    "DTXSID10172282",
+    "NS00014406",
+    "Phenaleno(1,9-gh)quinoline",
+    "Phenaleno[1,9-gh]quinoline",
+    "Pyreno(1,2-b)pyridine",
+    "Pyrenoline",
+    "Pyrido(2',3':4)pyrene",
+    "Q63392236",
+    "RefChem:77440",
+    "SCHEMBL17733175",
+    "pyreno[1,2-b]pyridine"
+  ],
+  "http_status": 200,
+  "cids": [
+    12435805
+  ]
+}

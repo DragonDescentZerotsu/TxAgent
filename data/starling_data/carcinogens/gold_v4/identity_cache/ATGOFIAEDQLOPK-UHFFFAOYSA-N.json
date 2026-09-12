@@ -1,0 +1,19 @@
+{
+  "parent_key": "ATGOFIAEDQLOPK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ATGOFIAEDQLOPK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-(5-methylhept-3-ene-3,4-diyl)dibenzene",
+    "63019-12-5",
+    "Benzene, 1,1'-(1-ethyl-2-(1-methylpropyl)-1,2-ethenediyl)bis-",
+    "DB-321884",
+    "DTXSID40978911",
+    "Stilbene, alpha-ethyl-alpha'-s-butyl-",
+    "alpha-Ethyl-beta-s-butyl-stilbene",
+    "alpha-Ethyl-beta-sec-butylstilbene"
+  ],
+  "http_status": 200,
+  "cids": [
+    112529
+  ]
+}

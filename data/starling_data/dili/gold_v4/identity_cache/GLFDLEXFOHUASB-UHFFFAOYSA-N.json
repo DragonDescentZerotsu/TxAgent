@@ -1,0 +1,43 @@
+{
+  "parent_key": "GLFDLEXFOHUASB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Tetradecanaminium, N,N,N-trimethyl-",
+    "10182-92-0",
+    "233-454-5",
+    "AKOS015915095",
+    "AMMONIUM, TRIMETHYLTETRADECYL-",
+    "BDBM50060597",
+    "CHEBI:232882",
+    "CHEMBL113150",
+    "CHEMBL1180003",
+    "DB-257225",
+    "DTXSID9045009",
+    "EINECS 233-454-5",
+    "GLFDLEXFOHUASB-UHFFFAOYSA-N",
+    "Myristyltrimethylammonium; Tetradecyltrimethylammonium",
+    "N,N,N-Trimethyl-1-tetradecanaminium",
+    "N,N,N-trimethyltetradecan-1-aminium",
+    "NCGC00166121-01",
+    "NCGC00166121-02",
+    "NS00002337",
+    "Q27294221",
+    "RefChem:188545",
+    "SCHEMBL119448",
+    "TETRADONIUM CATION",
+    "TETRADONIUM ION",
+    "Tetradecyltrimethylammonium",
+    "Trimethyl-tetradecyl-ammonium; bromide",
+    "Trimethyltetradecylammonium",
+    "UNII-Y3IR7RCT6J",
+    "Y3IR7RCT6J",
+    "myristyltrimethylammonium",
+    "tetradonium",
+    "trimethyl(tetradecyl)azanium"
+  ],
+  "cids": [
+    14251
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GLFDLEXFOHUASB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

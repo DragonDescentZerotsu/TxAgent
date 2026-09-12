@@ -1,0 +1,15 @@
+{
+  "parent_key": "JAYVHSBYKLLDJC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,3,5,4\\'-Tetrahydroxystilbene 2-O-glucoside",
+    "2-[2,4-dihydroxy-6-[2-(4-hydroxyphenyl)vinyl]phenoxy]-6-(hydroxymethyl)tetrahydropyran-3,4,5-triol",
+    "55327-45-2",
+    "SCHEMBL27637136"
+  ],
+  "cids": [
+    73981748
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JAYVHSBYKLLDJC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

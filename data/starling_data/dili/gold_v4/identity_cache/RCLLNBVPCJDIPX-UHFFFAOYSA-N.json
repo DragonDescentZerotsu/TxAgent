@@ -1,0 +1,43 @@
+{
+  "parent_key": "RCLLNBVPCJDIPX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(2-Chloroethyl)-3-(2-(dimethylaminosulfonyl)ethyl)-1-nitrosourea",
+    "1-(2-Chloroethyl)-3-(2-(dimethylsulfamoyl)ethyl)-1-nitrosourea",
+    "1-(2-chloroethyl)-3-[2-(dimethylsulfamoyl)ethyl]-1-nitrosourea",
+    "2-((((2-Chloroethyl)nitrosoamino)carbonyl)amino)-N,N-dimethylethanesulfonamide",
+    "2-(3-(2-chloroethyl)-3-nitrosoureido)-N,N-dimethylethane-1-sulfonamide",
+    "2-{[(2-Chloroethyl)(nitroso)carbamoyl]amino}-N,N-dimethylethane-1-sulfonamide",
+    "511F69K76Y",
+    "85977-49-7",
+    "CCRIS 6346",
+    "CHEMBL2104789",
+    "DTXCID20157808",
+    "DTXSID20235317",
+    "Ethanesulfonamide, 2-((((2-chloroethyl)nitrosoamino)carbonyl)amino)-N,N-dimethyl-",
+    "LS-2667",
+    "NS00115944",
+    "NSC-608678",
+    "NSC608678",
+    "Q27260849",
+    "RefChem:187536",
+    "SCHEMBL27914",
+    "TAUROMUSTINE",
+    "TAUROMUSTINE [MART.]",
+    "TAUROMUSTINE [WHO-DD]",
+    "TCNU",
+    "Tauricyt",
+    "Tauromustina",
+    "Tauromustina [INN-Spanish]",
+    "Tauromustine [INN]",
+    "Tauromustinum",
+    "Tauromustinum [INN-Latin]",
+    "UNII-511F69K76Y",
+    "Urea, 1-(2-chloroethyl)-3-[2-(dimethylaminosulfonyl)ethyl] 1-nitroso"
+  ],
+  "cids": [
+    55456
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RCLLNBVPCJDIPX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

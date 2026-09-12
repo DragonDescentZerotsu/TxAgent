@@ -1204,3 +1204,35 @@ def test_progressive_configuration_plot_supports_full_resource_panels(tmp_path, 
     assert "MiniMol head" in svg
     assert "Unavailable on current lineage: 2/1" in svg
     assert ("whiskers show observed min–max" if interval == "range" else "sample SD (ddof=1); 3 runs per point") in svg
+    for row in rows:
+        row["n_replicates"] = 1
+    plotter.plot_conditioned_progressive_configuration_comparison(
+        rows=rows, output_svg=output_svg, output_png=output_png,
+        tasks=("bbb_martins",), configurations=("4/2", "8/4"),
+        performance_only=True, replicate_interval="sd_if_repeated",
+    )
+    svg = output_svg.read_text(encoding="utf-8")
+    assert "single run per setting" in svg
+    assert "mean ± 1 sample SD" not in svg
+
+
+def test_split_scoped_baselines_do_not_mix_equal_sized_valid_and_test(tmp_path):
+    for subset, score in (("valid", 0.8), ("test", 0.6)):
+        for method, _, _ in plotter.CONDITIONED_BASELINES:
+            path = tmp_path / "DILI" / subset / method / "metrics.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"n_evaluated": 103, "macro_f1": score, "accuracy": score}))
+    for subset, expected in (("valid", 0.8), ("test", 0.6)):
+        rows = []
+        plotter._append_conditioned_baselines(
+            rows, task="dili", task_label="DILI", baseline_task="DILI",
+            baseline_root=tmp_path, expected_n=103, evaluation_subset=subset,
+        )
+        assert len(rows) == 5
+        assert {row["macro_f1"] for row in rows} == {expected}
+        assert all(f"/{subset}/" in row["metrics_path"] for row in rows)
+    with pytest.raises(ValueError, match="explicit evaluation subset"):
+        plotter._append_conditioned_baselines(
+            [], task="dili", task_label="DILI", baseline_task="DILI",
+            baseline_root=tmp_path, expected_n=103,
+        )

@@ -1,0 +1,35 @@
+{
+  "parent_key": "APOMSSAGEAOUGO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1977-08-8",
+    "2-Chloro-11-(4-methyl-1-piperazinyl)-5H-benzo(b,e)(1,4)diazepine",
+    "2-Chloro-11-(4-methyl-1-piperazinyl)-5H-dibenzo(b,e)(1,4)diazepine",
+    "2-Chloro-11-(4-methyl-piperazin-1-yl)-5H-dibenzo[b,e][1,4]diazepine",
+    "2-Chloro-11-(4-methyl-piperazin-1-yl)-5H-dibenzo[b,e][1,4]diazepine(isoclozapine)",
+    "2-chloro-11-(4-methylpiperazin-1-yl)-5H-dibenzo[b,e][1,4]diazepine",
+    "4Q6V732VRT",
+    "5H-DIBENZO(b,e)(1,4)DIAZEPINE, 2-CHLORO-11-(4-METHYL-1-PIPERAZINYL)-",
+    "8-CHLORANYL-6-(4-METHYLPIPERAZIN-1-YL)-11H-BENZO(B)(1,4)BENZODIAZEPINE",
+    "8-chloro-6-(4-methylpiperazin-1-yl)-11H-benzo[b][1,4]benzodiazepine",
+    "BAA97708",
+    "BDBM50010594",
+    "BRN 0763655",
+    "CHEMBL415300",
+    "DB-217114",
+    "DTXCID1095955",
+    "DTXSID40173464",
+    "E98703",
+    "ISOCLOZAPINE",
+    "NCGC00386501-01",
+    "RefChem:923661",
+    "SCHEMBL140207",
+    "SCHEMBL29822724",
+    "UNII-4Q6V732VRT"
+  ],
+  "cids": [
+    16104
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/APOMSSAGEAOUGO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "ZPZCSUWFWBCMJE-XSSJEEBDSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL4524560"
+  ],
+  "cids": [
+    155520179
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZPZCSUWFWBCMJE-XSSJEEBDSA-N/synonyms/JSON",
+  "http_status": 200
+}

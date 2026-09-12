@@ -1,0 +1,18 @@
+{
+  "model": "gpt-oss-120b",
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "max_tokens": 8192,
+  "protocol": "exhaustive_source_semantic_review.v3",
+  "execution_sha256": "4ec190db271790b1c9b31e3947633424fac20d73af022ee6cc3bf8fb4b14ee28",
+  "base_url": "http://127.0.0.1:9001/v1",
+  "workers": 2048,
+  "timeout": 600,
+  "attempts": 3,
+  "concurrency_file": "/data1/tianang/Projects/TxAgent/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/concurrency.json",
+  "limit": 0,
+  "runner_sha256": "db5b11464d5b4e2c6cdf1b35454985767d8707650602cfe560a247efd9e0716e",
+  "model_files_sha256": "82a29c6196d6df6436704467131320d6d70373e06751bf3081cdd85091791cc0",
+  "deployment_sha256": "64a87f07b4acde20524265527d9f0480e3190ef5192aa059e91d9518ea6b16f0",
+  "client_sha256": "37a5d85ac5a179a76c4ec13e144b3d62f5fe5e311fa96171caf75d7a7b3ccbe6"
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "IFYCAQIXDKZDTB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IFYCAQIXDKZDTB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "925-91-7",
+    "C2H5NO",
+    "CHEBI:50722",
+    "DB02646",
+    "DTXCID50161514",
+    "DTXSID30239023",
+    "EV3G0P128S",
+    "Ethane, nitroso-",
+    "NITROSOMETHYLMETHANE",
+    "NS00071557",
+    "Nitrosoethane",
+    "Nitrosomethylmethan",
+    "Q27093604",
+    "RefChem:166126",
+    "SCHEMBL31197",
+    "SCHEMBL7741807",
+    "UNII-EV3G0P128S"
+  ],
+  "http_status": 200,
+  "cids": [
+    79124
+  ]
+}

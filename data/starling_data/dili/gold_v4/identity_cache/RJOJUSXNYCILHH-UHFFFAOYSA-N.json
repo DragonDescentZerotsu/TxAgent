@@ -1,0 +1,30 @@
+{
+  "parent_key": "RJOJUSXNYCILHH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22541-19-1",
+    "AZV954TZ9N",
+    "CHEBI:49618",
+    "DB14578",
+    "DTXSID40892981",
+    "GADOLINIUM ION",
+    "GADOLINIUM, ION (3+)",
+    "Gadolinium Cation",
+    "Gadolinium cation (3+)",
+    "Gadolinium(3+)",
+    "Gadolinium, ion(Gd3 )",
+    "Gadolinium, ion(Gd3)",
+    "Gd(3+)",
+    "Q27104709",
+    "RefChem:58708",
+    "SCHEMBL29419549",
+    "UNII-AZV954TZ9N",
+    "gadolinium(3+) ion",
+    "gadolinium(III) cation"
+  ],
+  "cids": [
+    168050
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RJOJUSXNYCILHH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

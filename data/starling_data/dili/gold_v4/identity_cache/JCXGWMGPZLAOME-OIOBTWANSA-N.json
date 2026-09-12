@@ -1,0 +1,20 @@
+{
+  "parent_key": "JCXGWMGPZLAOME-OIOBTWANSA-N",
+  "ok": true,
+  "synonyms": [
+    "15776-19-9",
+    "206Bi (isotope)",
+    "206Bi isotope",
+    "Bismuth-206",
+    "Bismuth-206 isotope",
+    "DTXSID501357762",
+    "Isotope:206Bi",
+    "Isotope:Bismuth-206",
+    "SCHEMBL29377415"
+  ],
+  "cids": [
+    6336623
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JCXGWMGPZLAOME-OIOBTWANSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "OHULHWHSUJEYIT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Propanone, 2-amino-1-(4-methylphenyl)-",
+    "2-Amino-1-(4-methylphenyl)-1-propanone",
+    "2-Amino-1-(p-tolyl)propan-1-one",
+    "2-amino-1-(4-methylphenyl)propan-1-one",
+    "31952-47-3",
+    "4-Mc",
+    "4-Methylcathinone",
+    "AKOS010297287",
+    "CHEMBL2009774",
+    "CS-0082224",
+    "CY9HK59OK6",
+    "DB-268683",
+    "DTXCID201517543",
+    "DTXSID801032529",
+    "EN300-1260746",
+    "J3.321.826E",
+    "MEPHEDRONE METABOLITE M1",
+    "NCI60_004624",
+    "NS00017652",
+    "NSC 60487",
+    "NSC-60487",
+    "Normephedrone",
+    "OHULHWHSUJEYIT-UHFFFAOYSA-N",
+    "Propiophenone, 2-amino-4'-methyl-",
+    "Q20707078",
+    "RefChem:99857",
+    "SCHEMBL2631353",
+    "UNII-CY9HK59OK6",
+    "nor-Mephedrone",
+    "nor-Mephedrone (hydrochloride)"
+  ],
+  "cids": [
+    414532
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OHULHWHSUJEYIT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

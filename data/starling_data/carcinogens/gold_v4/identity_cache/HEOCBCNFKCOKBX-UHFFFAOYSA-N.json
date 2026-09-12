@@ -1,0 +1,27 @@
+{
+  "parent_key": "HEOCBCNFKCOKBX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HEOCBCNFKCOKBX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,7,7-trimethyl-3-(p-tolylmethylene)norbornan-2-one",
+    "1,7,7-trimethyl-3-[(4-methylphenyl)methylidene]bicyclo[2.2.1]heptan-2-one",
+    "3-(4'-Methylbenzylidene)camphor",
+    "3-(4'-methyl)benzylidene-bornan-2-one",
+    "36861-47-9",
+    "38102-62-4",
+    "4-Methylbenzylidenecamphor",
+    "Bicyclo(2.2.1)heptan-2-one, 1,7,7-trimethyl-3-((4-methylphenyl)methylene)-",
+    "DA-30146",
+    "Methyl Benzylidene Camphor; 3-(4'-Methyl)benzylidene-bornan-2-one",
+    "NS00009412",
+    "RefChem:1066747",
+    "SCHEMBL83091",
+    "UYB80641",
+    "orb1220335",
+    "s3704"
+  ],
+  "http_status": 200,
+  "cids": [
+    37563
+  ]
+}

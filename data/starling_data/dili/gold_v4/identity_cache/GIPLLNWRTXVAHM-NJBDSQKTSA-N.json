@@ -1,0 +1,22 @@
+{
+  "parent_key": "GIPLLNWRTXVAHM-NJBDSQKTSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S-(2 alpha,5 alpha,6 beta(S*)))-6-((((((aminoiminomethyl)amino)carbonyl)amino)phenylacetyl)amino)-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo(3.2.0)heptane-2-carboxylic acid",
+    "0BL51C9681",
+    "28889-87-4",
+    "4-THIA-1-AZABICYCLO(3.2.0)HEPTANE-2-CARBOXYLIC ACID, 6-((((((AMINOIMINOMETHYL)AMINO)CARBONYL)AMINO)PHENYLACETYL)AMINO)-3,3-DIMETHYL-7-OXO-, (2S-(2.ALPHA.,5.ALPHA.,6.BETA.(S*)))- 6-(D-.ALPHA.-(3-GUANYLUREIDO)PHENYLACETAMIDO)PENICILLANIC ACID",
+    "4-THIA-1-AZABICYCLO(3.2.0)HEPTANE-2-CARBOXYLIC ACID, 6-(((2R)-((((AMINOIMINOMETHYL)AMINO)CARBONYL)AMINO)PHENYLACETYL)AMINO)-3,3-DIMETHYL-7-OXO-, (2S,5R,6R)-",
+    "BL P1654",
+    "BL-P 1654",
+    "BL-P1654",
+    "Blp 1654",
+    "Blp-1654",
+    "RefChem:917388"
+  ],
+  "cids": [
+    127258018
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GIPLLNWRTXVAHM-NJBDSQKTSA-N/synonyms/JSON",
+  "http_status": 200
+}

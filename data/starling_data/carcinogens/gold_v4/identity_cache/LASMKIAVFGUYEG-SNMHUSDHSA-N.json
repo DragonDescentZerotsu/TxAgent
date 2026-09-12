@@ -1,0 +1,21 @@
+{
+  "parent_key": "LASMKIAVFGUYEG-SNMHUSDHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LASMKIAVFGUYEG-SNMHUSDHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1aR,1bS,4aR,7aS,7bS,8R,9R)-3-[(Acetyloxy)methyl]-4a,7b-dihydroxy-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl diacetate",
+    "3-[(acetyloxy)methyl]-4a,7b-dihydroxy-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9ah-cyclopropa[3,4]benzo[1,2-e]azulene-9,9a-diyl diacetate",
+    "4aalpha of phorbol 12,13,20-triacetate",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a-alpha,1b-beta,4,4a,7a-alpha,7b,8,9,9a-decahydro-3-(hydroxymethyl)-4a-beta,7b-alpha,9-beta,9a-alpha-tetrahydroxy-1,1,6,8-alpha-tetramethyl-, 3,9,9a-triacetate, (+)-",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 9,9a-bis(acetyloxy)-3-((acetyloxy)methyl)-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b-dihydroxy-1,1,6,8-tetramethyl-, (1aR,1bS,4aR,7aS,7bS,8R,9R)-",
+    "BRN 5191305",
+    "DTXSID90941756",
+    "PHORBOL 12,13,20-TRIACETATE, 4BETA",
+    "Phorbol triacetate",
+    "[(1S,2S,6R,10S,11R,14R,15R)-13,14-diacetyloxy-1,6-dihydroxy-4,12,12,15-tetramethyl-5-oxo-8-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl]methyl acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    3035203
+  ]
+}

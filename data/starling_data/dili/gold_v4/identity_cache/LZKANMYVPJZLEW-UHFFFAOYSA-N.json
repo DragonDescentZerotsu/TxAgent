@@ -1,0 +1,42 @@
+{
+  "parent_key": "LZKANMYVPJZLEW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-2-CHLORO-1,2,3,3-TETRAFLUOROCYCLOPROPYL METHYL ETHER",
+    "1-Chloro-1,2,2,3-tetrafluoro-3-methoxycyclopropane",
+    "1-chloro-2-methoxy-1,2,3,3-tetrafluorocyclopropane",
+    "2-Chlor-1,2,3,3-tetrafluorcyclopropylmethylether",
+    "2-Chloro-1,2,3,3-tetrafluorocyclopropyl methyl ether",
+    "2-chlorotetrafluorocyclopropyl methyl ether",
+    "26-P",
+    "26P",
+    "56689-41-9",
+    "AKOS006271732",
+    "ALIFLURANE",
+    "ALIFLURANE [INN]",
+    "ALIFLURANE [USAN]",
+    "Aliflurane (USAN/INN)",
+    "Aliflurane [USAN:INN]",
+    "Aliflurano",
+    "Aliflurano [INN-Spanish]",
+    "Alifluranum",
+    "Alifluranum [INN-Latin]",
+    "CHEMBL2104018",
+    "Cyclopropane, 1-chloro-1,2,2,3-tetrafluoro-3-methoxy-",
+    "D02812",
+    "DTXCID10814852",
+    "DTXSID80866580",
+    "LZKANMYVPJZLEW-UHFFFAOYSA-N",
+    "NS00123364",
+    "Q1069WKM8G",
+    "Q19595852",
+    "RefChem:915395",
+    "SCHEMBL592501",
+    "UNII-Q1069WKM8G"
+  ],
+  "cids": [
+    41967
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LZKANMYVPJZLEW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

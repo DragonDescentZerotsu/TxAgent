@@ -1,0 +1,13 @@
+{
+  "parent_key": "DRTNVNKYVPOWCY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DRTNVNKYVPOWCY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL322207",
+    "Trichlorperoxyessigsaure"
+  ],
+  "http_status": 200,
+  "cids": [
+    13629106
+  ]
+}

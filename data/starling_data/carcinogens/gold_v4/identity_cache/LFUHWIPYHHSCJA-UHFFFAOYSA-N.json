@@ -1,0 +1,12 @@
+{
+  "parent_key": "LFUHWIPYHHSCJA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LFUHWIPYHHSCJA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-nitrobis(2-oxopropyl)amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    54031313
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "RGTSAUBIQAKKLC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "480-12-6",
+    "4H-1-Benzopyran-4-one, 5-hydroxy-7-methoxy-2,6-dimethyl-",
+    "5-Hydroxy-7-methoxy-2,6-dimethyl-4H-1-Benzopyran-4-one",
+    "5-hydroxy-7-methoxy-2,6-dimethyl-4H-chromen-4-one",
+    "5-hydroxy-7-methoxy-2,6-dimethyl-4h -1-benzopyran-4-one",
+    "5-hydroxy-7-methoxy-2,6-dimethylchromen-4-one",
+    "AL8464M7FP",
+    "CHEBI:67491",
+    "CHEMBL3104955",
+    "CS-0746885",
+    "D85078",
+    "DTXCID40119867",
+    "DTXSID30197376",
+    "Eugenetin",
+    "Eugenitin",
+    "HY-W663230",
+    "MLS004257385",
+    "Q5408353",
+    "RefChem:1085261",
+    "SCHEMBL29403680",
+    "SMR003082516",
+    "T80648",
+    "orb1944107"
+  ],
+  "cids": [
+    3083581
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RGTSAUBIQAKKLC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

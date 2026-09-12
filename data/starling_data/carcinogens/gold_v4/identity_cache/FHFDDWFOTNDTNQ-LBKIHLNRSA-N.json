@@ -1,0 +1,25 @@
+{
+  "parent_key": "FHFDDWFOTNDTNQ-LBKIHLNRSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FHFDDWFOTNDTNQ-LBKIHLNRSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-ethyl-33-[(1R,2R,4E)-1-hydroxy-2-methylhex-4-en-1-yl]-9,24-bis(2-hydroxy-2-methylpropyl)-6,18-diisobutyl-3,21-diisopropyl-1,4,7,10,12,15,19,25,28-nonamethyl-1,4,7,10,13,16,19,22,25,28,31-undecaazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-ethyl-33-[(E,1R,2R)-1-hydroxy-2-methylhex-4-enyl]-9,24-bis(2-hydroxy-2-methylpropyl)-1,4,7,10,12,15,19,25,28-nonamethyl-6,18-bis(2-methylpropyl)-3,21-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "CHEBI:140167",
+    "CHEMBL3544883",
+    "SCHEMBL29696936",
+    "cyclosporin A metabolite AM49",
+    "cyclosporin A metabolite M10",
+    "cyclosporin metabolite AM49",
+    "cyclosporin metabolite M10",
+    "cyclosporine A metabolite AM49",
+    "cyclosporine A metabolite M10",
+    "cyclosporine metabolite AM49",
+    "cyclosporine metabolite M10",
+    "m10"
+  ],
+  "http_status": 200,
+  "cids": [
+    10192176
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "parent_key": "JAKVEOCMEMGHGB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Amino-3-(prop-2-yn-1-ylthio)propanoic acid",
+    "2-amino-3-prop-2-ynylsulfanyl-propanoic acid",
+    "AKOS000190517",
+    "DB-068669",
+    "SCHEMBL3247518"
+  ],
+  "cids": [
+    21201343,
+    74550135
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JAKVEOCMEMGHGB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

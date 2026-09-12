@@ -262,3 +262,9 @@ def test_preserved_random_assignment_rejects_new_or_changed_rows() -> None:
         preserve_parent_assignment(added, reference_rows)
     with pytest.raises(ValueError, match="changed content"):
         preserve_parent_assignment(changed, reference_rows)
+
+
+def test_generic_publication_cannot_replace_reviewed_starling_cohort():
+    from tools.chembl_tool.common.starling.publish_conditioned_benchmark import publish
+    with pytest.raises(ValueError, match='require --reviewed-release'):
+        publish(tasks=('dili', 'carcinogens'))

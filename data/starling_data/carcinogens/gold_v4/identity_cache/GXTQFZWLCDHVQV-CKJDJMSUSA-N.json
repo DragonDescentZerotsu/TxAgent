@@ -1,0 +1,22 @@
+{
+  "parent_key": "GXTQFZWLCDHVQV-CKJDJMSUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GXTQFZWLCDHVQV-CKJDJMSUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3R,4R,5R,7S)-5-(2-amino-6-oxo-1H-purin-9-yl)-4-hydroxy-11-methoxy-6,8,19-trioxapentacyclo[10.7.0.02,9.03,7.013,17]nonadeca-1,9,11,13(17)-tetraene-16,18-dione",
+    "(6aS,8R,9R,9aR)-9-Hydroxy-8-(6-hydroxy-2-imino-2,3-dihydro-9H-purin-9-yl)-4-methoxy-2,3,6a,8,9,9a-hexahydrocyclopenta[c]furo[3',2':4,5]furo[2,3-h][1]benzopyran-1,11-dione",
+    "79982-94-8",
+    "9-Hydroxy-8-(6-hydroxy-2-imino-2,3-dihydro-9H-purin-9-yl)-4-methoxy-2,3,6a,8,9,9a-hexahydrocyclopenta[c]furo[3',2':4,5]furo[2,3-h][1]benzopyran-1,11-dione",
+    "AFB1-N7-guanine",
+    "AKOS040750164",
+    "Cyclopenta(c)furo(3',2':4,5)furo(2,3-h)(1)benzopyran-1,11-dione, 8-(2-amino-1,6-dihydro-6-oxo-9H-purin-9-yl)-2,3,6a,8,9,9a-hexahydro-9-hydroxy-4-methoxy-, (6aS-(6aalpha,8beta,9alpha,9aalpha))-",
+    "DTXSID801000875",
+    "T29689",
+    "orb1698712"
+  ],
+  "http_status": 200,
+  "cids": [
+    119313,
+    135625225
+  ]
+}

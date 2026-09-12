@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "direction_labels_preserved": true,
+  "gold_majorities_recomputed": true,
+  "unique_vote_support_uids": 150188,
+  "same_cohort_labels_across_splits": true,
+  "leakage_group_overlap": {
+    "scaffold": [
+      0,
+      0,
+      0
+    ],
+    "random": [
+      0,
+      0,
+      0
+    ]
+  },
+  "scaffold_overlap": 0,
+  "conditions_covered_in_all_splits": true,
+  "frozen_canonical_inputs_unchanged": true,
+  "new_model_calls": 0,
+  "gold_sha256": "21b4631a0bf77d417a2a7f0c6023ea890f3d7d4035b2f391792ff1823217e9b7",
+  "source_votes_sha256": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1",
+  "builder_sha256": "1bc6a6e024a513860b455a17def16254d239ca632025cafe878fb39675aa1c79"
+}

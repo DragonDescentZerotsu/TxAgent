@@ -1,0 +1,38 @@
+{
+  "parent_key": "IIDMFFRDEFHWCJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IIDMFFRDEFHWCJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".DELTA.-(METHYLNITROSOAMINO)-3-PYRIDINEBUTANOL",
+    "3-PYRIDINEBUTANOL, .DELTA.-(METHYLNITROSOAMINO)-",
+    "3-Pyridinebutanol, delta-(methylnitrosoamino)-",
+    "4-(Methylnitrosamino)-4-(3-pyridyl)-1-butanol",
+    "4-(Methylnitrosoamino)-4-(3-pyridyl)-1-butanol",
+    "4-(N-Methyl-N-nitrosamino)-4-(3-pyridyl)butane-1-ol",
+    "5-22-14-00730 (Beilstein Handbook Reference)",
+    "59578-66-4",
+    "7M56WXK8NC",
+    "?-(Methylnitrosoamino)-3-pyridinebutanol",
+    "AKOS030255785",
+    "BRN 0400798",
+    "CCRIS 6652",
+    "DTXCID20889011",
+    "DTXSID30920505",
+    "FM25904",
+    "Iso-NNAL",
+    "MSK4934",
+    "N-(4-hydroxy-1-pyridin-3-ylbutyl)-N-methylnitrous amide",
+    "N-[4-Hydroxy-1-(pyridin-3-yl)butyl]-N-methylnitrous amide",
+    "NS00115035",
+    "Q27268552",
+    "RefChem:97493",
+    "SCHEMBL1086424",
+    "SCHEMBL29524261",
+    "UNII-7M56WXK8NC",
+    "delta-(Methylnitrosoamino)-3-pyridinebutanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    105067
+  ]
+}

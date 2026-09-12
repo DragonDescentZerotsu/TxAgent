@@ -1,0 +1,39 @@
+{
+  "parent_key": "WEYVVCKOOFYHRW-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)-Usniacin",
+    "(+)-Usnic acid from Usnea dasypoga",
+    "(+)-Usnic acid from Usnea longissima ach",
+    "2,6-Diacetyl-3,7,9-trihydroxy-8,9b-dimethyl-9bH-dibenzofuran-1-one (Usnic acid)",
+    "2,6-diacetyl-3,7,9-trihydroxy-8,9b-dimethyl-dibenzofuran-1-one",
+    "2,6-diacetyl-3,7,9-trihydroxy-8,9b-dimethyldibenzo[b,d]furan-1(9bH)-one",
+    "4,10-Diacetyl-3,11,13-trihydroxy-2,12-dimethyl-8-oxatricyclo[7.4.0.0(2,7)]trideca-1(13),3,6,9,11-pentaen-5-one",
+    "AKOS000281081",
+    "AKOS030500799",
+    "AKOS040765315",
+    "BDBM209638",
+    "CHEMBL242022",
+    "DB-050340",
+    "ICTZCAHDGHPRQR-UHFFFAOYSA-N",
+    "MFCD00065294",
+    "NCGC00160165-01",
+    "Q425335",
+    "SCHEMBL1767536",
+    "SCHEMBL30106722",
+    "US9273021, Usnic Acid",
+    "USNIC ACID [HSDB]",
+    "USNIC ACID [MI]",
+    "USNIC ACID [WHO-DD]",
+    "Usninsaure",
+    "WEYVVCKOOFYHRW-UHFFFAOYSA-N",
+    "s2252",
+    "usniacin-(+)",
+    "usnic acid [M+H]+"
+  ],
+  "cids": [
+    24211
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WEYVVCKOOFYHRW-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

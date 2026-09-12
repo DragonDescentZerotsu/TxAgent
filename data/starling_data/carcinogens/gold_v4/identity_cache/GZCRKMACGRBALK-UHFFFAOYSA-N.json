@@ -1,0 +1,12 @@
+{
+  "parent_key": "GZCRKMACGRBALK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GZCRKMACGRBALK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "DB-228718"
+  ],
+  "http_status": 200,
+  "cids": [
+    42477
+  ]
+}

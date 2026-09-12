@@ -1,0 +1,43 @@
+{
+  "parent_key": "ASMXXROZKSBQIH-VITNCHFBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3R)-1-(3-phenoxypropyl)-1-azoniabicyclo[2.2.2]octan-3-yl] 2-hydroxy-2,2-dithiophen-2-ylacetate",
+    "(3R)-3-(2-HYDROXY(DI-2-THIENYL)ACETOXY)-1-(3-PHENOXYPROPYL)-1-AZONIABICYCLO(2.2.2)OCTANE",
+    "(3R)-3-[2-hydroxy(di-2-thienyl)acetoxy]-1-(3-phenoxypropyl)-1-azoniabicyclo[2.2.2]octane",
+    "(3R)-3-{[Hydroxydi(thiophen-2-yl)acetyl]oxy}-1-(3-phenoxypropyl)-1-azabicyclo[2.2.2]octan-1-ium",
+    "1-AZONIABICYCLO(2.2.2)OCTANE, 3-((HYDROXYDI-2-THIENYLACETYL)OXY)-1-(3-PHENOXYPROPYL)-, (3R)-",
+    "727649-81-2",
+    "AB01565828_02",
+    "ACLIDINIUM [VANDF]",
+    "ACLIDINIUM [WHO-DD]",
+    "Aclidinium",
+    "Aclidinium cation",
+    "Aclidinium ion",
+    "BDBM50296331",
+    "BRD-K74363950-004-01-0",
+    "CHEBI:65346",
+    "CHEMBL1194325",
+    "CHEMBL551466",
+    "DB08897",
+    "DTXSID00223070",
+    "EX-A15231",
+    "GTPL7449",
+    "HY-159686",
+    "K17VY42F6C",
+    "NCGC00386257-01",
+    "NCGC00386257-02",
+    "Q521173",
+    "SCHEMBL72141",
+    "T200043",
+    "UNII-K17VY42F6C",
+    "[(3R)-1-(3-phenoxypropyl)-1-azoniabicyclo[2.2.2]octan-3-yl] 2-hydroxy-2,2-dithiophen-2-ylacetate",
+    "[(8R)-1-[3-(phenoxy)propyl]-1-azoniabicyclo[2.2.2]octan-8-yl] 2-hydroxy-2,2-di(thiophen-2-yl)acetate",
+    "orb2665566"
+  ],
+  "cids": [
+    11434515
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ASMXXROZKSBQIH-VITNCHFBSA-N/synonyms/JSON",
+  "http_status": 200
+}

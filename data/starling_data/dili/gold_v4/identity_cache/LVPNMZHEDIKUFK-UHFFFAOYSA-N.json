@@ -1,0 +1,32 @@
+{
+  "parent_key": "LVPNMZHEDIKUFK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,5-Dimethyl-3aH-pyrano(2,3,4-de)-1-benzopyran-3a,8-diol",
+    "2,5-Dimethyl-3aH-pyrano[2,3,4-de][1]benzopyran-3a,8-diol",
+    "2,5-dimethyl-3ah-pyrano[2,3,4-de]-1-benzopyran-3a,8-diol",
+    "2,5-dimethyl-8H-pyranol(2,3,4-de)-chromen-8-one",
+    "24506-68-1",
+    "3,7-dimethyl-2,6-dioxatricyclo(7.3.1.05,13)trideca-1(12),3,7,9(13),10-pentaene-5,11-diol",
+    "3,7-dimethyl-2,6-dioxatricyclo[7.3.1.05,13]trideca-1(12),3,7,9(13),10-pentaene-5,11-diol",
+    "3aH-Pyrano(2,3,4-de)-1-benzopyran-3a,8-diol, 2,5-dimethyl-",
+    "3aH-Pyrano[2,3,4-de]-1-benzopyran-3a,8-diol, 2,5-dimethyl-",
+    "Barakol",
+    "CHEMBL2164954",
+    "DTXCID401375658",
+    "DTXSID30947398",
+    "EZC4ABS2MU",
+    "Q4858279",
+    "RefChem:116457",
+    "T9901A-232",
+    "TN8213",
+    "UNII-EZC4ABS2MU",
+    "orb2695123",
+    "orb2695768"
+  ],
+  "cids": [
+    3080731
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LVPNMZHEDIKUFK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

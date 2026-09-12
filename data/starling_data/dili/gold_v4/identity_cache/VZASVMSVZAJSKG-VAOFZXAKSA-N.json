@@ -1,0 +1,12 @@
+{
+  "parent_key": "VZASVMSVZAJSKG-VAOFZXAKSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL629554"
+  ],
+  "cids": [
+    129627797
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VZASVMSVZAJSKG-VAOFZXAKSA-N/synonyms/JSON",
+  "http_status": 200
+}

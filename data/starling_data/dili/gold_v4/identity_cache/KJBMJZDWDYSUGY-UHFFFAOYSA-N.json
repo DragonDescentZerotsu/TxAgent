@@ -1,0 +1,21 @@
+{
+  "parent_key": "KJBMJZDWDYSUGY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2,2,3,3-tetramethylcyclopropanecarbonyl)urea",
+    "2,2,3,3-TETRAMETHYLCYCLOPROPANECARBONYLUREA",
+    "752250-12-7",
+    "AKOS014777967",
+    "CHEMBL184676",
+    "HS-7838",
+    "N-Carbamoyl-2-2-3-3-tetramethylcyclopropane-1-carboxamide",
+    "N-carbamoyl-2,2,3,3-tetramethylcyclopropane-1-carboxamide",
+    "RefChem:80828",
+    "SCHEMBL1577776"
+  ],
+  "cids": [
+    10176413
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJBMJZDWDYSUGY-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

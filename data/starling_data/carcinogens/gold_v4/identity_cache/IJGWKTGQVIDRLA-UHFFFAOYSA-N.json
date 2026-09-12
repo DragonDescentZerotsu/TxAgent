@@ -1,0 +1,43 @@
+{
+  "parent_key": "IJGWKTGQVIDRLA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IJGWKTGQVIDRLA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2381-31-9",
+    "5-Methyl-1,2-benzanthracen",
+    "5-Methyl-1,2-benzanthracene",
+    "8-METHYLBENZ(A)ANTHRACENE [HSDB]",
+    "8-Methylbenz(a)anthracene",
+    "8-Methylbenz[a]anthracene",
+    "8-Methylbenzanthracene",
+    "8-Methylbenzo[a]anthracene",
+    "8-Methylbenzo[a]anthracene #",
+    "8-methyltetraphene",
+    "AKOS024341197",
+    "AR-E36  8-METHYLBENZ(A)ANTHRACENE",
+    "BENZ(A)ANTHRACENE, 8-METHYL-",
+    "BRN 2047765",
+    "Benz[a]anthracene, 8-methyl-",
+    "CCRIS 1887",
+    "DB-307511",
+    "DTXCID70101013",
+    "DTXSID10178522",
+    "HSDB 4054",
+    "IJGWKTGQVIDRLA-UHFFFAOYSA-N",
+    "LP9SKC568Q",
+    "METHYLBENZ(A)ANTHRACENE, 8-",
+    "NS00122231",
+    "NSC 409458",
+    "NSC-409458",
+    "NSC409458",
+    "Q27283108",
+    "RefChem:107265",
+    "SCHEMBL1760734",
+    "UNII-LP9SKC568Q",
+    "WLN: L D6 B666J H1"
+  ],
+  "http_status": 200,
+  "cids": [
+    16933
+  ]
+}

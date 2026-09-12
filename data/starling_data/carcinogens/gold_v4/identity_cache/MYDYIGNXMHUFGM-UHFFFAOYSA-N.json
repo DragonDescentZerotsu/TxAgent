@@ -1,0 +1,17 @@
+{
+  "parent_key": "MYDYIGNXMHUFGM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MYDYIGNXMHUFGM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,4-dimethoxy-1-methyl-2H-pyridine",
+    "57680-57-6",
+    "Arecolidine",
+    "CHEBI:229053",
+    "SCHEMBL29431819"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (25%), Request Time status: Green (2%), Service status: Black (163%)",
+  "cids": [
+    5319882
+  ]
+}

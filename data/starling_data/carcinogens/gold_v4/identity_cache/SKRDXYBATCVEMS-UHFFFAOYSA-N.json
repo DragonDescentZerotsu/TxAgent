@@ -1,0 +1,37 @@
+{
+  "parent_key": "SKRDXYBATCVEMS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SKRDXYBATCVEMS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Propanol nitrite",
+    "208-779-0",
+    "2T3Y2PS0ZE",
+    "541-42-4",
+    "AKOS006272058",
+    "BRN 1698878",
+    "DB-004045",
+    "DTXCID8030762",
+    "DTXSID3052191",
+    "EINECS 208-779-0",
+    "ISOPROPYL NITRITE [MI]",
+    "ISOPROPYLNITRITE",
+    "Isopropyl nitrite",
+    "Isopropylester kyseliny dusite",
+    "Isopropylester kyseliny dusite [Czech]",
+    "NITROUS ACID, ISOPROPYL ESTER",
+    "NS00032972",
+    "Nitrous acid 1-methylethyl ester",
+    "Nitrous acid isopropyl ester",
+    "Nitrous acid, 1-methylethyl ester",
+    "Q15409423",
+    "RefChem:149832",
+    "SCHEMBL194332",
+    "UNII-2T3Y2PS0ZE",
+    "iso-Propyl nitrite",
+    "propan-2-yl nitrite"
+  ],
+  "http_status": 200,
+  "cids": [
+    10929
+  ]
+}

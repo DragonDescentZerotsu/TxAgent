@@ -1,0 +1,32 @@
+{
+  "task": "dili",
+  "contract": "dili_human_direct_source_votes.v1",
+  "target": "reported human drug-induced liver injury under the reported exposure and population",
+  "base_rows": 189172,
+  "candidate_rows": 4894,
+  "unambiguous_study_votes": 4735,
+  "study_conflicts": 0,
+  "two_study_supported_votes": 1325,
+  "identity_candidate_votes": 1194,
+  "identity_candidate_names": 291,
+  "identity_candidate_parents": 199,
+  "reason_counts": {
+    "not_primary_human_outcome": 119932,
+    "uncertain_or_indirect_causal_status": 34933,
+    "context_or_extraction_confidence_review_required": 8282,
+    "explicit_primary_human_outcome": 4894,
+    "unresolved_exposure_context": 1198,
+    "support_context_or_secondary_assertion_requires_review": 4304,
+    "no_explicit_injury_support": 5817,
+    "laboratory_signal_only": 1983,
+    "non_single_small_molecule": 4600,
+    "negative_not_explicit_or_contains_residual_risk": 2900,
+    "multiple_organic_components": 104,
+    "named_agent_not_explicit_in_support": 211,
+    "invalid_structure_or_parent": 14
+  },
+  "minimum_independent_pmids": 2,
+  "condition_policy": "exact structured species/model/exposure plus all reported qualifying_conditions; tumor site is an outcome, and site-limited negatives cannot establish overall negative hazard",
+  "semantic_review": "deterministic source-field and support-text checks; not full-text or human expert review",
+  "policy_sha256": "64bb12eef2ea585d51f5491a4a9597e946e4f22e6c075faa105711b8b4d8ed2a"
+}

@@ -1,0 +1,14 @@
+{
+  "records": 24,
+  "verdict_counts": {
+    "accepted_vote_provenance_problem": 3,
+    "conditioned_positive_supported_in_passage": 7,
+    "withhold_reason_semantically_supported": 6,
+    "negative_endpoint_contract_mismatch": 2,
+    "recoverable_negative_subclaim_needs_study_resolution": 3,
+    "accepted_vote_provenance_and_condition_problem": 2,
+    "recoverable_negative_subclaim_needs_identity_and_study_resolution": 1
+  },
+  "reviewed_samples_sha256": "bd08b1db8b6f00fc81385d1b91709fe6c89401340fcf3a6b08adde0a8a833fc3",
+  "scope": "24 stratified source-text readings for TDC comparison; diagnostic only, gold/splits unchanged"
+}

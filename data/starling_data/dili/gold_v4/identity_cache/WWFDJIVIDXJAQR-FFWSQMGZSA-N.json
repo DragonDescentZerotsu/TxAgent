@@ -1,0 +1,31 @@
+{
+  "parent_key": "WWFDJIVIDXJAQR-FFWSQMGZSA-N",
+  "ok": true,
+  "synonyms": [
+    "ASO-10-27 ; Ionis-SMNrx ; ISIS 396443",
+    "DA-76341",
+    "EX-A8111",
+    "FN170919",
+    "GTPL9416",
+    "H84473",
+    "ISIS SMNRx",
+    "ISIS-SMN(Rx)",
+    "ISIS396443",
+    "Ionis-SMNrx",
+    "Nusinersen [USAN:INN]",
+    "Nusinersen?sodium",
+    "RNA, (2'-0-(2-methoxyethyi))(p-thio)(m5u-c-a-c-m5u-m5u-m5u-c-a-m5ua- a-m5 u-g-c-m5u-g-g)",
+    "SCHEMBL29363015",
+    "SCHEMBL29363323",
+    "Spinraza",
+    "UNII-5Z9SP3X666"
+  ],
+  "cids": [
+    124037382,
+    131801471,
+    137166427,
+    168313233
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WWFDJIVIDXJAQR-FFWSQMGZSA-N/synonyms/JSON",
+  "http_status": 200
+}

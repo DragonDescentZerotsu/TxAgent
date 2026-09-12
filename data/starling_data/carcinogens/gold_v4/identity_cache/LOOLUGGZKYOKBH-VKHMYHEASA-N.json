@@ -1,0 +1,13 @@
+{
+  "parent_key": "LOOLUGGZKYOKBH-VKHMYHEASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LOOLUGGZKYOKBH-VKHMYHEASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL1669850",
+    "dichlorovinylcysteine"
+  ],
+  "http_status": 200,
+  "cids": [
+    87274822
+  ]
+}

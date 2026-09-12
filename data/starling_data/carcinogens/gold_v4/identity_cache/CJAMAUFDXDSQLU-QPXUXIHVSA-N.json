@@ -1,0 +1,40 @@
+{
+  "parent_key": "CJAMAUFDXDSQLU-QPXUXIHVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CJAMAUFDXDSQLU-QPXUXIHVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-Anti-DBPDE",
+    "(-)-ANTI-11R,12S-DIBENZO(A,L)PYRENEDIHYDRODIOL 13S,14R-EPOXIDE",
+    "(-)-ANTI-DBPDE",
+    "(-)-ANTI-DIBENZO(A,L)PYRENE-11R,12S-DIHYDRODIOL 13S,14R-EPOXIDE",
+    "(11R,12S,12AS,13AR)-11,12,12A,13A-TETRAHYDRODIBENZO(5,6:10,11)CHRYSENO(3,4-B)OXIRENE-11,12-DIOL",
+    "(11r,12s,12as,13ar)-11,12,12a,13a-tetrahydronaphtho[4',3',2',1':1,12]tetrapheno[10,11-b]oxirene-11,12-diol",
+    "(A+/-)-Anti-DBPDE",
+    "153926-04-6",
+    "173241-50-4",
+    "6L0M180994",
+    "ANTI-DBPDE, (+/-)-",
+    "ANTI-DIBENZO(A,L)PYRENE-11R,12S-DIHYDRODIOL 13S,14R-EPOXIDE, (-)-",
+    "ANTI-DIBENZO[A,L]PYRENE-11,12-DIHYDRODIOL-13,14-EPOXIDE",
+    "CCRIS 7384",
+    "DIBENZO(5,6:10,11)CHRYSENO(3,4-B)OXIRENE-11,12-DIOL, 11,12,12A,13A-TETRAHYDRO-, (11.ALPHA.,12.BETA.,12A.ALPHA.,13A.ALPHA.)-(+/-)-",
+    "DIBENZO(5,6:10,11)CHRYSENO(3,4-B)OXIRENE-11,12-DIOL, 11,12,12A,13A-TETRAHYDRO-, (11R,12S,12AS,13AR)-",
+    "DIBENZO(5,6:10,11)CHRYSENO(3,4-B)OXIRENE-11,12-DIOL, 11,12,12A,13A-TETRAHYDRO-, (11R,12S,12AS,13AR)-REL-",
+    "DTXSID701317469",
+    "Dibenzo(a,l)pyrene-11,12-dihydrodiol-13,14-epoxide, anti-(+/-)-",
+    "J1.002.966J",
+    "Q27265071",
+    "REL-(11R*,12S*,13S*,14R*)-13,14-EPOXY-11,12,13,14-TETRAHYDRODIBENZO(DEF,P)CHRYSENE-11,12-DIOL",
+    "UNII-6L0M180994",
+    "W9DF8LP3Q8",
+    "anti-(+/-)-dibenzo(a,L)pyrene-11,12-dihydrodiol-13,14-epoxide",
+    "anti-11,12,12a,13a-Tetrahydrodibenzo(5,6:10,11)chryseno(3,4-b)oxirene-11,12-diol",
+    "anti-DBPDE",
+    "anti-Dbpde, (-)-",
+    "anti-Dibenzo(a,l)pyrene-11,12-dihydrodiol-13,14-epoxide"
+  ],
+  "http_status": 200,
+  "cids": [
+    164497
+  ]
+}

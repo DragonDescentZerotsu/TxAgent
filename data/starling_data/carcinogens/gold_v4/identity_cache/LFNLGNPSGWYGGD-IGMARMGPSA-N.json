@@ -1,0 +1,29 @@
+{
+  "parent_key": "LFNLGNPSGWYGGD-IGMARMGPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LFNLGNPSGWYGGD-IGMARMGPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(237np)neptunium",
+    "(~237~Np)Neptunium",
+    "13994-20-2",
+    "237Np",
+    "237Np (isotope)",
+    "237Np isotope",
+    "237Np radioisotope",
+    "86954-34-9",
+    "DTXSID70930668",
+    "Isotope:237Np",
+    "Isotope:Neptunium-237",
+    "Neptunium, isotope of mass 237",
+    "Neptunium, isotope of mass 237 (237Np5+)",
+    "Neptunium-237",
+    "Neptunium-237 isotope",
+    "Np-237 radioisotope",
+    "RefChem:165485",
+    "SCHEMBL29375650"
+  ],
+  "http_status": 200,
+  "cids": [
+    104783
+  ]
+}

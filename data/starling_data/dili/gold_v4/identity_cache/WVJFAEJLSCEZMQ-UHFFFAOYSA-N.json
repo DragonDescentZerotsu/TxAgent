@@ -1,0 +1,13 @@
+{
+  "parent_key": "WVJFAEJLSCEZMQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Isonicotinyl-isopropylhydrazin",
+    "SCHEMBL27587590"
+  ],
+  "cids": [
+    54451612
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WVJFAEJLSCEZMQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

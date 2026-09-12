@@ -1,0 +1,12 @@
+{
+  "parent_key": "BVPGEIAGRUTQEQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BVPGEIAGRUTQEQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL8761648"
+  ],
+  "http_status": 200,
+  "cids": [
+    53703597
+  ]
+}

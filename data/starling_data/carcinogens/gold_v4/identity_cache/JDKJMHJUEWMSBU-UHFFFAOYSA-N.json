@@ -1,0 +1,20 @@
+{
+  "parent_key": "JDKJMHJUEWMSBU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDKJMHJUEWMSBU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "192200-76-3",
+    "6-Methoxy-7H-dibenzo(c,g)carbazole",
+    "6-Methoxy-7H-dibenzo[c,g]carbazole",
+    "6-Methoxydibenzo(c,g)carbazole",
+    "6-methoxy-DBC",
+    "7H-Dibenzo(c,g)carbazole, 6-methoxy-",
+    "DTXCID2095287",
+    "DTXSID00172796",
+    "RefChem:104934"
+  ],
+  "http_status": 200,
+  "cids": [
+    164523
+  ]
+}

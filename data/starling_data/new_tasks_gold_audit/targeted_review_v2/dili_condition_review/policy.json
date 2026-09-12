@@ -1,0 +1,35 @@
+{
+  "version": "dili_condition_group_review.v2",
+  "scope": "exact reviewed groups; unknown groups unchanged",
+  "mapping": {
+    "no_reported_external_condition": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=healthy_volunteers": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=alzheimer_disease": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=atrial_fibrillation": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=osteoarthritis": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=rheumatoid_arthritis": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=psoriasis": "no_reported_external_condition",
+    "exposure=therapeutic_use+population=human+population_context=inflammatory_bowel_disease": "no_reported_external_condition",
+    "age_group=pediatric+exposure=therapeutic_use+population=human+reported_condition=pediatric population": "age_group=pediatric+exposure=therapeutic_use+population=human",
+    "exposure=therapeutic_use+formulation=long_acting_injectable+population=human": "no_reported_external_condition"
+  },
+  "meaning": "No retained query modifier; source metadata retained. Not a claim that exposures/populations are identical.",
+  "retain": [
+    "pediatric age",
+    "older age",
+    "overdose",
+    "pre-existing liver disease",
+    "diabetes",
+    "HIV/immune context",
+    "pre-exposure transplant",
+    "short exposure"
+  ],
+  "formulation_policy": "Pool the nine reviewed formulation votes into default as explicitly requested; retain corrected context in provenance.",
+  "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9936988/",
+    "https://pubmed.ncbi.nlm.nih.gov/3102998/",
+    "https://clinicalinfo.hiv.gov/en/drugs/nevirapine/patient",
+    "https://pubmed.ncbi.nlm.nih.gov/8309029/"
+  ]
+}

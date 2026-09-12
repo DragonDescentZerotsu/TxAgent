@@ -1,0 +1,13 @@
+{
+  "scope": "scaffold_only",
+  "evaluation_subsets": [
+    "valid",
+    "test"
+  ],
+  "rows": 804,
+  "random_validation": "deferred_by_user",
+  "random_index": "already_built_before_scope_change; not adopted or validated",
+  "source_release": "staged_unpublished",
+  "reason": "User requested scaffold checks first",
+  "controller_flag": "--scaffold-check-only"
+}

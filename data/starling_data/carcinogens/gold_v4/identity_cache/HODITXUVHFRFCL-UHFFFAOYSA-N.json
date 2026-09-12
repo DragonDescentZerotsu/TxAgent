@@ -1,0 +1,31 @@
+{
+  "parent_key": "HODITXUVHFRFCL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HODITXUVHFRFCL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "15,16-Dihydro-17H-cyclopenta(a)phenanthren-17-one",
+    "15,16-Dihydrocyclopenta(a)phenanthren-17-one",
+    "15,16-dihydrocyclopenta[a]phenanthren-17-one",
+    "15H-Cyclopenta(a)phenanthren-17(16H)-one",
+    "15H-Cyclopenta[a]phenanthren-17(16H)-one",
+    "17H-Cyclopenta(a)phenanthren-17-one, 15,16-dihydro-",
+    "4-07-00-01789 (Beilstein Handbook Reference)",
+    "4AC2M48ZLA",
+    "786-66-3",
+    "BRN 2052489",
+    "CCRIS 6654",
+    "CPP-17-one",
+    "DTXCID90151691",
+    "DTXSID10229200",
+    "GY57105000",
+    "Gona-1(10),2,4,6,8,11,13-heptaen-17-one",
+    "Gona-1,3,5,7,9,11,13-heptaen-17-one",
+    "NIOSH/GY5710500",
+    "RefChem:922437",
+    "SCHEMBL9576677"
+  ],
+  "http_status": 200,
+  "cids": [
+    107708
+  ]
+}

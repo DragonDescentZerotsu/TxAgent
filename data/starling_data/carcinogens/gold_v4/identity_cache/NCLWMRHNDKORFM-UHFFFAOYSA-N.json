@@ -1,0 +1,19 @@
+{
+  "parent_key": "NCLWMRHNDKORFM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCLWMRHNDKORFM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3555-72-4",
+    "DAA55572",
+    "EN300-1863509",
+    "N-benzyl-N-methylhydroxylamine",
+    "N-methyl-N-benzyl-hydroxylamine",
+    "SCHEMBL10842660",
+    "SCHEMBL2462058"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Red (95%), Request Time status: Green (19%), Service status: Yellow (67%)",
+  "cids": [
+    10650288
+  ]
+}

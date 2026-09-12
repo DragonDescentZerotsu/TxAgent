@@ -22,6 +22,9 @@ from typing import Any, Iterable
 
 import pyarrow as pa
 import pyarrow.compute as pc
+import pyarrow.dataset as ds
+
+from tools.chembl_tool.common.build_runtime import local_input
 import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import sha256_file, write_json_atomic
@@ -42,6 +45,8 @@ _TASK_CONFIG_MODULES = {
     "bioavailability_ma": "tools.chembl_tool.tasks.bioavailability_ma.experiment_config",
     "skin_reaction": "tools.chembl_tool.tasks.skin_reaction.experiment_config",
     "ames": "tools.chembl_tool.tasks.ames.experiment_config",
+    "dili": "tools.chembl_tool.tasks.dili.experiment_config",
+    "carcinogens": "tools.chembl_tool.tasks.carcinogens.experiment_config",
 }
 
 _TEXT_COLUMNS = (
@@ -218,6 +223,8 @@ def _string_array(table: pa.Table, name: str) -> pa.Array | pa.ChunkedArray:
     # pre-existing source groups. Preserve that absence instead of inventing one.
     if name == "source_family_original_group_id" and name not in table.column_names:
         return pa.nulls(table.num_rows, type=pa.string())
+    if name == "source_family_purity_reason" and name not in table.column_names:
+        return pc.cast(table["level_assignment_reason"], pa.string(), safe=False)
     return pc.cast(table[name], pa.string(), safe=False)
 
 
@@ -232,6 +239,9 @@ def export_source_membership(
     descriptions = _level_descriptions(task, by_level)
     parquet = pq.ParquetFile(records_path)
     columns = ["group_id", "retrieval_eligible", *_TEXT_COLUMNS]
+    if "source_family_purity_reason" not in parquet.schema_arrow.names:
+        columns.remove("source_family_purity_reason")
+        columns.append("level_assignment_reason")
     required = set(columns) - {"source_family_original_group_id"}
     missing = required - set(parquet.schema_arrow.names)
     if missing:
@@ -404,9 +414,7 @@ def export_indexed_cards(
         raise
     _publish_parquet(writer, temporary, output_path)
     return {
-        "path": str(output_path),
-        "sha256": sha256_file(output_path),
-        "size_bytes": output_path.stat().st_size,
+        **_source_file_inventory(output_path),
         "n_assay_molecule_rows": n_assay_molecule_rows,
         "n_representative_cards": n_cards,
         "cards_by_level": {str(level): counts[level] for level in sorted(counts)},
@@ -433,10 +441,8 @@ def validate_card_links(
     n_cards = 0
     n_missing = 0
     for path in indexed_card_paths:
-        parquet = pq.ParquetFile(path)
-        for batch in parquet.iter_batches(
-            columns=["molecule_id", "card_fingerprint_sha256"],
-            batch_size=65_536,
+        for batch in ds.dataset(path, format="parquet").to_batches(
+            columns=["molecule_id", "card_fingerprint_sha256"], batch_size=65_536,
         ):
             table = pa.Table.from_batches([batch])
             keys = zip(
@@ -487,7 +493,8 @@ not a second semantic classification.
   the suffix, containing ordinary Parquet parts when the ledger exceeds 90 MB) contains every current
   `retrieval_eligible=True` source record whose purity-overlay `group_id` maps
   to a current progressive level. This is the static, pre-split level ledger.
-- `<split>/indexed_representative_cards.parquet` contains compact references to
+- `<split>/indexed_representative_cards.parquet` (or a directory of parts above
+  90 MB) contains compact references to
   the exact record cards materialized in that split's frozen assay-molecule
   index after direct heldout filtering. The index keeps at most three cards per
   assay×molecule; card text stays normalized in the source ledger rather than
@@ -536,7 +543,7 @@ def export_dataset(
         set(selected_tasks) != set(TASKS) or set(selected_splits) != {"scaffold", "random"}
     ):
         raise ValueError("Partial exports require a separate --output-dir; preserve the complete current dataset")
-    verification = rebuild.verify(artifact_root, records_root=records_root)
+    verification = rebuild.verify(artifact_root, records_root=records_root, tasks=selected_tasks)
     contract = rebuild._contract()
     overlays = rebuild._overlay_paths(artifact_root, contract, records_root=records_root)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -577,7 +584,7 @@ def export_dataset(
             "level_description_source_sha256": sha256_file(config_path),
             "source_membership": export_source_membership(
                 task=task,
-                records_path=overlay,
+                records_path=local_input(overlay),
                 catalog_manifest=catalog_manifest,
                 output_path=task_dir / "source_record_level_membership.parquet",
             ),
@@ -597,11 +604,11 @@ def export_dataset(
             task_report["indices"][split_scheme] = export_indexed_cards(
                 task=task,
                 split_scheme=split_scheme,
-                evidence_path=evidence_path,
+                evidence_path=local_input(evidence_path),
                 catalog_manifest=catalog_manifest,
                 output_path=indexed_output,
             )
-            indexed_card_paths.append(indexed_output)
+            indexed_card_paths.append(Path(task_report["indices"][split_scheme]["path"]))
         task_report["card_link_validation"] = validate_card_links(
             Path(task_report["source_membership"]["path"]),
             indexed_card_paths,

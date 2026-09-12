@@ -1,0 +1,15 @@
+{
+  "parent_key": "CJYMGANFUNYUNB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CJYMGANFUNYUNB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Methylthionine",
+    "SCHEMBL28570951",
+    "SCHEMBL30418396",
+    "SCHEMBL357322"
+  ],
+  "http_status": 200,
+  "cids": [
+    18784472
+  ]
+}

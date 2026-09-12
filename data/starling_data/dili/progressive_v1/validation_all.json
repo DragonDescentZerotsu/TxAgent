@@ -1,0 +1,625 @@
+{
+  "task": "dili",
+  "phase": "all",
+  "source": {
+    "n_source_records": 1645109,
+    "n_unique_uids": 1645109,
+    "all_original_fields_and_raw_payloads_unchanged": true,
+    "levels": {
+      "0": 258502,
+      "1": 4729,
+      "2": 270203,
+      "3": 141909,
+      "4": 76122,
+      "5": 294036,
+      "6": 196579,
+      "7": 403029
+    },
+    "actual_voters": 4729,
+    "payload_pinned_reviews": 69,
+    "independent_direct_anomalies": 0,
+    "independent_guard_hits": {
+      "clinical_liver_chemistry:L1": 341,
+      "clinical_liver_chemistry:L2": 14178,
+      "drug_hepatitis:L1": 1151,
+      "drug_hepatitis:L2": 19022,
+      "explicit_hepatotoxicity:L1": 2579,
+      "explicit_hepatotoxicity:L2": 125799,
+      "organ_injury_outcome:L1": 4630,
+      "organ_injury_outcome:L2": 234315
+    }
+  },
+  "model_evaluations_run": 0,
+  "indices": {
+    "scaffold": {
+      "heldout_parents": 156,
+      "excluded_direct_records": 37589,
+      "indexed_assay_molecule_groups": 916736,
+      "all_cards_traceable": true,
+      "cards_by_level": {
+        "3": 127910,
+        "5": 262442,
+        "7": 381771,
+        "2": 113350,
+        "6": 186064,
+        "4": 72324,
+        "1": 1287
+      },
+      "card_trace_examples": {
+        "3": {
+          "source_row_uid": "sr_917fcbd7a6584bdeb42d38be51b973a8",
+          "surface_sha256": "b8058920e1d82671017231417607faffbbe9167e8d9d04355b426a779d75280b"
+        },
+        "5": {
+          "source_row_uid": "sr_3381ddc7844f4efc924cf12b1734d668",
+          "surface_sha256": "84ff38df0d70724638e0895d0181a5124668862e3af5aa0b1563ffff9a1fa197"
+        },
+        "7": {
+          "source_row_uid": "sr_18451ff29f44433a9e16975454d33682",
+          "surface_sha256": "59589ec3c9290ef979897926423cfec8ca391dbf94d235482f30f3f03a6f9d15"
+        },
+        "2": {
+          "source_row_uid": "sr_d64b062fecd643e08ab616627e8f0a95",
+          "surface_sha256": "45336293ad9bd927977c81f7f68972b61de1a0d606906c280b595d33d2712114"
+        },
+        "6": {
+          "source_row_uid": "sr_77d6d7b610fa40938efcac25cb9c1460",
+          "surface_sha256": "336098deccf22913fbec1a46dd8123881303c01148bba6a7836c249c8cb6fd71"
+        },
+        "4": {
+          "source_row_uid": "sr_f18d07e88d6f4be2aad561f7c4c54f9a",
+          "surface_sha256": "70f5cb6bf97c7d6a4ed65998c2b35bbe36b27773721a4975c6331bc3a9fdb702"
+        },
+        "1": {
+          "source_row_uid": "sr_e82e93a864c844b886f1f60a3b1fb18f",
+          "surface_sha256": "9b3acaac02f2d52b67efd57291e94c28ed1e47daabfcd1c0c92d767ed6cc1745"
+        }
+      },
+      "cumulative_pool_cards": {
+        "3": 242547,
+        "4": 314871,
+        "5": 577313,
+        "6": 763377,
+        "7": 1145148,
+        "2": 114637,
+        "1": 1287
+      },
+      "query_smoke": [
+        {
+          "molecule_identity_key": "ADEBPBSSDYVVLD-UHFFFAOYSA-N",
+          "Y": 0,
+          "label_source": "starling",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 0,
+              "cumulative_cards": 0,
+              "active_molecules": 0,
+              "active_cards": 0
+            },
+            {
+              "level": 2,
+              "neighbors": 6,
+              "cumulative_cards": 52,
+              "active_molecules": 3,
+              "active_cards": 5
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 102,
+              "active_molecules": 6,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 10,
+              "cumulative_cards": 103,
+              "active_molecules": 7,
+              "active_cards": 15
+            },
+            {
+              "level": 5,
+              "neighbors": 19,
+              "cumulative_cards": 228,
+              "active_molecules": 10,
+              "active_cards": 26
+            },
+            {
+              "level": 6,
+              "neighbors": 20,
+              "cumulative_cards": 341,
+              "active_molecules": 12,
+              "active_cards": 36
+            },
+            {
+              "level": 7,
+              "neighbors": 28,
+              "cumulative_cards": 627,
+              "active_molecules": 15,
+              "active_cards": 47
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "ADEBPBSSDYVVLD-UHFFFAOYSA-N",
+          "Y": 0,
+          "label_source": "tdc",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 0,
+              "cumulative_cards": 0,
+              "active_molecules": 0,
+              "active_cards": 0
+            },
+            {
+              "level": 2,
+              "neighbors": 6,
+              "cumulative_cards": 52,
+              "active_molecules": 3,
+              "active_cards": 5
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 102,
+              "active_molecules": 6,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 10,
+              "cumulative_cards": 103,
+              "active_molecules": 7,
+              "active_cards": 15
+            },
+            {
+              "level": 5,
+              "neighbors": 19,
+              "cumulative_cards": 228,
+              "active_molecules": 10,
+              "active_cards": 26
+            },
+            {
+              "level": 6,
+              "neighbors": 20,
+              "cumulative_cards": 341,
+              "active_molecules": 12,
+              "active_cards": 36
+            },
+            {
+              "level": 7,
+              "neighbors": 28,
+              "cumulative_cards": 627,
+              "active_molecules": 15,
+              "active_cards": 47
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "AIZFEOPQVZBNGH-UHFFFAOYSA-N",
+          "Y": 1,
+          "label_source": "starling",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 0,
+              "cumulative_cards": 0,
+              "active_molecules": 0,
+              "active_cards": 0
+            },
+            {
+              "level": 2,
+              "neighbors": 2,
+              "cumulative_cards": 6,
+              "active_molecules": 2,
+              "active_cards": 3
+            },
+            {
+              "level": 3,
+              "neighbors": 2,
+              "cumulative_cards": 6,
+              "active_molecules": 2,
+              "active_cards": 3
+            },
+            {
+              "level": 4,
+              "neighbors": 2,
+              "cumulative_cards": 8,
+              "active_molecules": 2,
+              "active_cards": 5
+            },
+            {
+              "level": 5,
+              "neighbors": 3,
+              "cumulative_cards": 12,
+              "active_molecules": 3,
+              "active_cards": 8
+            },
+            {
+              "level": 6,
+              "neighbors": 3,
+              "cumulative_cards": 12,
+              "active_molecules": 3,
+              "active_cards": 8
+            },
+            {
+              "level": 7,
+              "neighbors": 5,
+              "cumulative_cards": 18,
+              "active_molecules": 5,
+              "active_cards": 12
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "BCFGMOOMADDAQU-UHFFFAOYSA-N",
+          "Y": 1,
+          "label_source": "tdc",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 1,
+              "cumulative_cards": 1,
+              "active_molecules": 1,
+              "active_cards": 1
+            },
+            {
+              "level": 2,
+              "neighbors": 3,
+              "cumulative_cards": 34,
+              "active_molecules": 3,
+              "active_cards": 6
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 188,
+              "active_molecules": 6,
+              "active_cards": 12
+            },
+            {
+              "level": 4,
+              "neighbors": 9,
+              "cumulative_cards": 199,
+              "active_molecules": 7,
+              "active_cards": 16
+            },
+            {
+              "level": 5,
+              "neighbors": 11,
+              "cumulative_cards": 370,
+              "active_molecules": 10,
+              "active_cards": 27
+            },
+            {
+              "level": 6,
+              "neighbors": 12,
+              "cumulative_cards": 429,
+              "active_molecules": 11,
+              "active_cards": 34
+            },
+            {
+              "level": 7,
+              "neighbors": 14,
+              "cumulative_cards": 587,
+              "active_molecules": 13,
+              "active_cards": 42
+            }
+          ]
+        }
+      ]
+    },
+    "random": {
+      "heldout_parents": 143,
+      "excluded_direct_records": 76914,
+      "indexed_assay_molecule_groups": 910472,
+      "all_cards_traceable": true,
+      "cards_by_level": {
+        "3": 127951,
+        "5": 262505,
+        "7": 381783,
+        "2": 105601,
+        "6": 186086,
+        "4": 72341,
+        "1": 1225
+      },
+      "card_trace_examples": {
+        "3": {
+          "source_row_uid": "sr_917fcbd7a6584bdeb42d38be51b973a8",
+          "surface_sha256": "b8058920e1d82671017231417607faffbbe9167e8d9d04355b426a779d75280b"
+        },
+        "5": {
+          "source_row_uid": "sr_3381ddc7844f4efc924cf12b1734d668",
+          "surface_sha256": "84ff38df0d70724638e0895d0181a5124668862e3af5aa0b1563ffff9a1fa197"
+        },
+        "7": {
+          "source_row_uid": "sr_18451ff29f44433a9e16975454d33682",
+          "surface_sha256": "59589ec3c9290ef979897926423cfec8ca391dbf94d235482f30f3f03a6f9d15"
+        },
+        "2": {
+          "source_row_uid": "sr_d64b062fecd643e08ab616627e8f0a95",
+          "surface_sha256": "45336293ad9bd927977c81f7f68972b61de1a0d606906c280b595d33d2712114"
+        },
+        "6": {
+          "source_row_uid": "sr_77d6d7b610fa40938efcac25cb9c1460",
+          "surface_sha256": "336098deccf22913fbec1a46dd8123881303c01148bba6a7836c249c8cb6fd71"
+        },
+        "4": {
+          "source_row_uid": "sr_f18d07e88d6f4be2aad561f7c4c54f9a",
+          "surface_sha256": "70f5cb6bf97c7d6a4ed65998c2b35bbe36b27773721a4975c6331bc3a9fdb702"
+        },
+        "1": {
+          "source_row_uid": "sr_e82e93a864c844b886f1f60a3b1fb18f",
+          "surface_sha256": "9b3acaac02f2d52b67efd57291e94c28ed1e47daabfcd1c0c92d767ed6cc1745"
+        }
+      },
+      "cumulative_pool_cards": {
+        "3": 234777,
+        "4": 307118,
+        "5": 569623,
+        "6": 755709,
+        "7": 1137492,
+        "2": 106826,
+        "1": 1225
+      },
+      "query_smoke": [
+        {
+          "molecule_identity_key": "ADEBPBSSDYVVLD-UHFFFAOYSA-N",
+          "Y": 0,
+          "label_source": "starling",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 0,
+              "cumulative_cards": 0,
+              "active_molecules": 0,
+              "active_cards": 0
+            },
+            {
+              "level": 2,
+              "neighbors": 6,
+              "cumulative_cards": 52,
+              "active_molecules": 3,
+              "active_cards": 5
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 102,
+              "active_molecules": 6,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 10,
+              "cumulative_cards": 103,
+              "active_molecules": 7,
+              "active_cards": 15
+            },
+            {
+              "level": 5,
+              "neighbors": 19,
+              "cumulative_cards": 228,
+              "active_molecules": 10,
+              "active_cards": 26
+            },
+            {
+              "level": 6,
+              "neighbors": 20,
+              "cumulative_cards": 341,
+              "active_molecules": 12,
+              "active_cards": 36
+            },
+            {
+              "level": 7,
+              "neighbors": 28,
+              "cumulative_cards": 627,
+              "active_molecules": 15,
+              "active_cards": 47
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "ADEBPBSSDYVVLD-UHFFFAOYSA-N",
+          "Y": 0,
+          "label_source": "tdc",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 0,
+              "cumulative_cards": 0,
+              "active_molecules": 0,
+              "active_cards": 0
+            },
+            {
+              "level": 2,
+              "neighbors": 6,
+              "cumulative_cards": 52,
+              "active_molecules": 3,
+              "active_cards": 5
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 102,
+              "active_molecules": 6,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 10,
+              "cumulative_cards": 103,
+              "active_molecules": 7,
+              "active_cards": 15
+            },
+            {
+              "level": 5,
+              "neighbors": 19,
+              "cumulative_cards": 228,
+              "active_molecules": 10,
+              "active_cards": 26
+            },
+            {
+              "level": 6,
+              "neighbors": 20,
+              "cumulative_cards": 341,
+              "active_molecules": 12,
+              "active_cards": 36
+            },
+            {
+              "level": 7,
+              "neighbors": 28,
+              "cumulative_cards": 627,
+              "active_molecules": 15,
+              "active_cards": 47
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "BCFGMOOMADDAQU-UHFFFAOYSA-N",
+          "Y": 1,
+          "label_source": "starling",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 2,
+              "cumulative_cards": 5,
+              "active_molecules": 2,
+              "active_cards": 5
+            },
+            {
+              "level": 2,
+              "neighbors": 4,
+              "cumulative_cards": 111,
+              "active_molecules": 4,
+              "active_cards": 12
+            },
+            {
+              "level": 3,
+              "neighbors": 9,
+              "cumulative_cards": 264,
+              "active_molecules": 7,
+              "active_cards": 20
+            },
+            {
+              "level": 4,
+              "neighbors": 9,
+              "cumulative_cards": 275,
+              "active_molecules": 7,
+              "active_cards": 24
+            },
+            {
+              "level": 5,
+              "neighbors": 11,
+              "cumulative_cards": 446,
+              "active_molecules": 10,
+              "active_cards": 35
+            },
+            {
+              "level": 6,
+              "neighbors": 12,
+              "cumulative_cards": 505,
+              "active_molecules": 11,
+              "active_cards": 42
+            },
+            {
+              "level": 7,
+              "neighbors": 14,
+              "cumulative_cards": 663,
+              "active_molecules": 13,
+              "active_cards": 50
+            }
+          ]
+        },
+        {
+          "molecule_identity_key": "AVJBPWGFOQAPRH-UHFFFAOYSA-N",
+          "Y": 1,
+          "label_source": "tdc",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 1,
+              "cumulative_cards": 1,
+              "active_molecules": 1,
+              "active_cards": 1
+            },
+            {
+              "level": 2,
+              "neighbors": 38,
+              "cumulative_cards": 334,
+              "active_molecules": 4,
+              "active_cards": 8
+            },
+            {
+              "level": 3,
+              "neighbors": 52,
+              "cumulative_cards": 590,
+              "active_molecules": 7,
+              "active_cards": 14
+            },
+            {
+              "level": 4,
+              "neighbors": 55,
+              "cumulative_cards": 729,
+              "active_molecules": 10,
+              "active_cards": 17
+            },
+            {
+              "level": 5,
+              "neighbors": 66,
+              "cumulative_cards": 1087,
+              "active_molecules": 13,
+              "active_cards": 28
+            },
+            {
+              "level": 6,
+              "neighbors": 72,
+              "cumulative_cards": 1761,
+              "active_molecules": 16,
+              "active_cards": 40
+            },
+            {
+              "level": 7,
+              "neighbors": 79,
+              "cumulative_cards": 2709,
+              "active_molecules": 19,
+              "active_cards": 51
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "verified_inputs_sha256": {
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/validate_progressive_sources.py": "56624ee2fa146c0f19ad7019e60b8f75fd552997dd1121ec8c503fca549d0303",
+    "data/starling_data/dili/progressive_v1/manifest.json": "114e8f76cc3898dc66e00701ce2852fef63d9df36125447265f753ce659520a4",
+    "data/starling_data/dili/canonical_v1/records.parquet": "764490a5cfc633c2482e95bb6cae8656af530b19e5748430b0191804dad06abd",
+    "data/starling_data/dili/gold_v2/source_votes.jsonl": "1dce6c9d9b02cd849321e86a2fe4bebda62dd9fa3f27cc913d3eecaef9d6b25d",
+    "data/starling_data/dili/level_review_v1/placement_decisions.jsonl": "2cde2284cd39a6b1651cfa377fcf53dc654f88440132a50c1b87b416d31a50c0",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/starling_levels.py": "50d844862a8bb21e8c9d101e7171a6daf6461a88efb1ee6a64c37e065c68057f",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_progressive_sources.py": "15165009a225a604a7323684f3d8ba8ce2dd39a8a821b950692eed45a8598f43",
+    "data/starling_data/dili/level_review_v1/identity_holds.jsonl": "98c642c4793bc331a47a90026cfd24e00be12af8dc865a2b31ed9152ffdbf562",
+    "data/starling_data/dili/progressive_v1/records.parquet": "9880eac4643d3789dd5dea45295c07dec7a42abf7111e8b1105fc8f9f9344543",
+    "data/starling_data/dili/progressive_v1/record_audit.parquet": "4c71acad13613beb954e158e72adbebb95899bcef64a34ecb101f75e3cfec8b5",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/experiment_config.py": "1e3957d06be22e5fd0d2e3b10e3900157b9c43ca6af358bef4c59865faaec9b9",
+    "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/manifest.json": "5ca02d608621e86834e709817845bf49f591ac2397fbd43d4194708012020e01",
+    "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/family_assays.jsonl": "780799b5e75c30b37629c6d237fe3d88407e6c58fd6aaa2430e9949467fef0eb",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl": "af9828bc31f628a8feb91523af482148d162e472ceb669caafc8e8a2993ba826",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/scaffold/valid_molecule_condition_labels.jsonl": "c333b6645b6c34510a1b3a0a27197d5aa9382eb1d5a9d5de14903c889c13451e",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/scaffold/test_molecule_condition_labels.jsonl": "9c82bc7a283c65f9c17aa6c9e866ec87567bf4b209d159101438df24358ef50b",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/scaffold/heldout_molecule_condition_labels.jsonl": "495053f9217073e2625258546903f6589e04e28fc4daa3660eef6b57d2dc8ac1",
+    "data/starling_data/dili/progressive_v1/indices/scaffold/manifest.json": "f617e85465095ba607a58886cd1694c592407fe7b53839e2a48a0971f2d909e2",
+    "data/starling_data/dili/progressive_v1/indices/scaffold/assay_neighbor_index.pkl": "1d89361025f80c3ec36813ef4355e9b3ef1dcbfeaf739cfee9321c29abae3f18",
+    "data/starling_data/dili/progressive_v1/indices/scaffold/assay_molecule_evidence.jsonl": "f37636f3ac11228cc2f2489b89f54d009693370c42f327c2a0ad69b71c714669",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/random/train_molecule_condition_labels.jsonl": "8829d145bbbefb785de986099aacc3b0a3236b9f72e06083ff81660dfe52baaa",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/random/valid_molecule_condition_labels.jsonl": "6659c18bcd743dbc10186f635f95f6e35a7036aece179c6079a55ee6d396189a",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/random/test_molecule_condition_labels.jsonl": "15be7e2e341d8752a7b706652be4c8f51cbfcb82845ca32bd40efb9157ba2c2e",
+    "data/.build/tdc_augmented_conditioned_benchmark/DILI/random/heldout_molecule_condition_labels.jsonl": "97eaf7adf91bfb1b38ad0c095850c0422f5e5dfc612a4f073674c1748a2a1d10",
+    "data/starling_data/dili/progressive_v1/indices/random/manifest.json": "ce5801abd104f45cecc47c5de45d9691fbacc7e8d754c2e0ee9121bc20c6ae39",
+    "data/starling_data/dili/progressive_v1/indices/random/assay_neighbor_index.pkl": "2af8c50a046f330298cd5fe9ded77c276698d00721c398daea18085797c27baf",
+    "data/starling_data/dili/progressive_v1/indices/random/assay_molecule_evidence.jsonl": "1ad6aef9022eccfc97f58bf9cea8836f12d0dd4eda9a0db0f74b37aced80bdcb"
+  },
+  "status": "passed"
+}

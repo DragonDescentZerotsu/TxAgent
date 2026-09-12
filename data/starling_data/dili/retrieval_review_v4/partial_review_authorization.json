@@ -1,0 +1,10 @@
+{
+  "status": "authorized",
+  "scope": "scaffold valid/test partial-review diagnostic replay only",
+  "user_instruction": "其实也不用都核对完？我们可以先跑一轮看看有没有性能变化",
+  "ledger_sha256": "52ffa1d403ef3b77097af0d8c456c3ef4867e39f8de9f28c5b99dfe93584a33f",
+  "n_confirmed_source_repairs": 712,
+  "pending_review": "replacement_fifth_pass_review.json",
+  "global_source_promotion": false,
+  "random_deferred": true
+}

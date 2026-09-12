@@ -1,0 +1,15 @@
+{
+  "parent_key": "JNZRPNHTEIAJDN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JNZRPNHTEIAJDN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2229276-54-2",
+    "3,3,4,4,5,5,5-heptafluoro-2-oxopentanoic acid",
+    "EN300-1970526",
+    "SCHEMBL1079202"
+  ],
+  "http_status": 200,
+  "cids": [
+    87196604
+  ]
+}

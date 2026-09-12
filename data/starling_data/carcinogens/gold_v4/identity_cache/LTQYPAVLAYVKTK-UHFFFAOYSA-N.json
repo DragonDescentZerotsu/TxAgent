@@ -1,0 +1,36 @@
+{
+  "parent_key": "LTQYPAVLAYVKTK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LTQYPAVLAYVKTK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "5,7-DIHYDRO-5-HYDROXY-1H-PURINE-2,6,8(3H)-TRIONE",
+    "5-Hydroxy-2,6-dioxo-2,5,6,7-tetrahydro-1H-purin-8-olate",
+    "5-Hydroxyisourate",
+    "5-hydroxy-2,3,5,6,7,8-hexahydro-1H-purine-2,6,8-trione",
+    "5-hydroxy-3,7-dihydropurine-2,6,8-trione",
+    "5-hydroxy-5,7-dihydro-1H-purine-2,6,8(3H)-trione",
+    "5-hydroxy-5,7-dihydro-1H-purine-2,6,8(9H)-trione",
+    "5-hydroxyisouric acid",
+    "5H-PURINE-2,5,6,8-TETROL",
+    "6960-30-1",
+    "CHEBI:18072",
+    "DTXCID80241737",
+    "DTXSID10290591",
+    "DU6PJ7L9BX",
+    "NSC 69826",
+    "NSC-69826",
+    "NSC69826",
+    "Q2823232",
+    "RefChem:912989",
+    "SCHEMBL11959537",
+    "SCHEMBL20520131",
+    "SCHEMBL21383432",
+    "SCHEMBL997117",
+    "UNII-DU6PJ7L9BX",
+    "orb3179915"
+  ],
+  "http_status": 200,
+  "cids": [
+    250388
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "JJWSNOOGIUMOEE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJWSNOOGIUMOEE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16056-34-1",
+    "CH3Hg(.)",
+    "CHEBI:30785",
+    "DTXSID2031615",
+    "J7U55S5JQ0",
+    "Mercury, methyl-",
+    "Methyl mercury",
+    "Methylmercury",
+    "Monomethyl mercury",
+    "Monomethylmercury",
+    "Q26840788",
+    "SCHEMBL154450",
+    "SCHEMBL4426945",
+    "SCHEMBL5845817",
+    "UNII-J7U55S5JQ0",
+    "methylemercury",
+    "methylmercury hydride",
+    "methylmercury(.)"
+  ],
+  "http_status": 200,
+  "cids": [
+    7906
+  ]
+}

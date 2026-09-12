@@ -1,0 +1,21 @@
+{
+  "parent_key": "TYEWCFOXOODIQX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1004020-09-0",
+    "AKOS008941097",
+    "BDBM50443044",
+    "CHEMBL3087812",
+    "EBC-08324",
+    "EN300-13269076",
+    "N-(2-(Diethylamino)ethyl)benzenesulfonamide",
+    "N-[2-(diethylamino)ethyl]benzenesulfonamide",
+    "SCHEMBL3712996",
+    "SCHEMBL3974097"
+  ],
+  "cids": [
+    4572952
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TYEWCFOXOODIQX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

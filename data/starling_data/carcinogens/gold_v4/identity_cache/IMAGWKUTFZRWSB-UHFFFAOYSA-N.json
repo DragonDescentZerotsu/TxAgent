@@ -1,0 +1,19 @@
+{
+  "parent_key": "IMAGWKUTFZRWSB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IMAGWKUTFZRWSB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Acetaldehyde methylformylhydrazone",
+    "DTXCID20810022",
+    "DTXSID0039225",
+    "N-(ethylideneamino)-N-methyl-formamide",
+    "RAA56802",
+    "RefChem:314233",
+    "SCHEMBL2932999",
+    "orb3141887"
+  ],
+  "http_status": 200,
+  "cids": [
+    27932
+  ]
+}

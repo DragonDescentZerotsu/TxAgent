@@ -1,0 +1,13 @@
+{
+  "parent_key": "GLXSNXOMMIPKEK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GLXSNXOMMIPKEK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,1,6,6,6-hexachlorohexane",
+    "SCHEMBL11048189"
+  ],
+  "http_status": 200,
+  "cids": [
+    20442030
+  ]
+}

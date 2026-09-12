@@ -1,0 +1,41 @@
+{
+  "parent_key": "CZAFLRAOEDDMCS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CZAFLRAOEDDMCS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-CHLORO-N-(2,6-DICHLORO-PHENYL)-ACETAMIDE",
+    "2-Chloro-N-(2,6-dichlorophenyl)-acetamide",
+    "2-Chloro-N-(2,6-dichlorophenyl)acetamide",
+    "222-874-4",
+    "3644-56-2",
+    "AB3530",
+    "AKOS000268706",
+    "ALBB-002314",
+    "AS-44718",
+    "Acetamide,2-chloro-N-(2,6-dichlorophenyl)-",
+    "Acetanilide, 2,2',6'-trichloro-",
+    "CS-0309196",
+    "DTXCID80112453",
+    "DTXSID20189962",
+    "Diclofenac Related Compound 14",
+    "Diclofenac Sodium Impurity 47",
+    "EINECS 222-874-4",
+    "EN300-16884",
+    "F1252-0975",
+    "F334100",
+    "MFCD00044773",
+    "N-(2,6-dichlorophenyl)-2-chloroacetamide",
+    "NCGC00661567-01",
+    "NS00030045",
+    "RefChem:86398",
+    "SBB003228",
+    "SCHEMBL7291906",
+    "ST056573",
+    "STK397271",
+    "Z56812706"
+  ],
+  "http_status": 200,
+  "cids": [
+    77206
+  ]
+}

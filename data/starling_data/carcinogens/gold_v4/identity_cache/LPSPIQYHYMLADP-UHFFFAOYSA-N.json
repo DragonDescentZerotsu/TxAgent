@@ -1,0 +1,13 @@
+{
+  "parent_key": "LPSPIQYHYMLADP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LPSPIQYHYMLADP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-methyl-N-nitrosomethylurea",
+    "SCHEMBL11488258"
+  ],
+  "http_status": 200,
+  "cids": [
+    23340418
+  ]
+}

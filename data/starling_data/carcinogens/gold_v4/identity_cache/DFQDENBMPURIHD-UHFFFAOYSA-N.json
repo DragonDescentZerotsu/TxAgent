@@ -1,0 +1,43 @@
+{
+  "parent_key": "DFQDENBMPURIHD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DFQDENBMPURIHD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".ALPHA.-ETHENYL-3,4-DIMETHOXYBENZENEMETHANOL",
+    "1'-(hydroxymethyl)eugenol",
+    "1'-HYDROXYMETHYLEUGENOL, (+-)-",
+    "1'-HYDROXYMETHYLEUGENOL, (+/-)-",
+    "1'-Hydroxymethyleugenol",
+    "1-(3,4-DIMETHOXYPHENYL)-2-PROPEN-1-OL",
+    "1-(3,4-Dimethoxy-phenyl)-prop-2-en-1-ol",
+    "1-(3,4-dimethoxyphenyl)prop-2-en-1-ol",
+    "2-(3,4-DIMETHOXYPHENYL)ALLYL ALCOHOL",
+    "31706-95-3",
+    "AKOS012403469",
+    "BENZENEMETHANOL, .ALPHA.-ETHENYL-3,4-DIMETHOXY-",
+    "BRN 1963718",
+    "Benzenemethanol, alpha-ethenyl-3,4-dimethoxy-",
+    "CS-0237360",
+    "DA6575YC8S",
+    "DFQDENBMPURIHD-UHFFFAOYSA-N",
+    "DTXSID20953660",
+    "EN300-1826887",
+    "GBA70695",
+    "MFCD00871518",
+    "NS00116156",
+    "Q27276301",
+    "RefChem:70677",
+    "SCHEMBL17371411",
+    "SCHEMBL3733650",
+    "SY503809",
+    "UNII-DA6575YC8S",
+    "VERATRYL ALCOHOL, .ALPHA.-VINYL-",
+    "Veratryl alcohol, alpha-vinyl-",
+    "Veratryl alcohol, alpha-vinyl-(6CI,8CI)",
+    "alpha-Ethenyl-3,4-dimethoxybenzenemethanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    198104
+  ]
+}

@@ -1,12 +1,140 @@
 # Current paper results and artifact status
 
-Updated: 2026-09-05.
+Updated: 2026-09-12.
 
-This is the human-readable companion to `current_conditioned_results.json`,
-the machine-readable authority for result roots and freshness. Current
-records-to-index reconstruction is documented separately in
-`CURRENT_STARLING_RETRIEVAL.md`; the retrieval protocol is in
-`ASSAY_LEVEL_RETRIEVAL.md`.
+`current_conditioned_results.json` is the authority for result roots and freshness.
+Source reconstruction is documented in `CURRENT_STARLING_RETRIEVAL.md`; the retrieval
+protocol is in `ASSAY_LEVEL_RETRIEVAL.md`.
+
+## DILI and Carcinogens: completed cleaning cycle
+
+Both tasks retain Starling-only gold_v4 and the final reviewed retrieval snapshots in
+`data/starling_data/<task>/retrieval_final/`. Scaffold and random use the same frozen
+cohorts: DILI 3,220/402/402 and Carcinogens 3,754/469/469. L1-only heldout prefiltering,
+L2 retention and query-time disjoint are unchanged. The final-source publication
+receipt is `data/starling_data/retrieval_final_cleanup.json`.
+
+Latest completed evaluations and figures remain in these registry entries:
+
+- DILI: `replicate_suites.dili_retrieval_review_v5_no_prior_grounded_sim0`,
+  valid/test × progressive/full-flat, 11,256 level outputs and zero failures.
+- Carcinogens: `replicate_suites.carcinogens_gold_v4_scaffold_4_2.retrieval_cleanup_diagnostic.progressive_round18`,
+  progressive valid/test, 6,566 level outputs and zero failures.
+- Five matched baselines remain attached to the corresponding gold_v4 suites.
+
+Source consolidation adds no model predictions and does not itself prove equivalence
+to the completed diagnostic inputs. Figures and retained predictions keep their actual
+prepared-input lineage. Both evaluation sets have been inspected during iterative
+cleaning, so these are diagnostic results. Earlier rounds and stopped L1 pilots are
+indexed once in `receipts/dili_carcinogens_cleanup_history.json`; their prediction and
+reuse dependencies are retained. Pending source questions are not declared resolved.
+
+## Historical DILI / Carcinogens gold_v3 results (2026-09-08)
+
+This historical suite used the identity-repaired TDC-augmented benchmark. Scaffold
+train/valid/test counts are DILI 828/103/103 and Carcinogens 840/312/312;
+random counts are 828/103/103 and 1164/150/150. Gold, storage, seven-level
+semantics and source-build entrypoints are documented in
+[`NEW_TASK_SOURCE_DATA.md`](../common/starling/NEW_TASK_SOURCE_DATA.md).
+
+DILI scaffold valid/test names were exchanged at the user's request **after
+viewing both cohorts**. Current test is former valid; it is not an unseen test
+or a model improvement. Train, random, labels and heldout union are unchanged.
+Use `replicate_suites.dili_scaffold_swapped_4_2` and
+`outputs/paper/starling_conditioned_dili_scaffold_swapped_4_2_v1/` for current
+DILI names. Immutable trace directories retain their original names; the dataset
+mapping is `data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json`.
+
+### Agent and baseline scope
+
+`replicate_suites.dili_carcinogens_scaffold_4_2` is complete: eight
+task/organization/subset cells, 11,620 level predictions and 830 shared fresh
+single/None pairs, with zero remaining failures. Each setting has one Flash run
+(no repeat SD), using PARCC DeepSeek-V4-Flash-0731, matched prepared evidence,
+4/2 cards, at most 256 requests per organization and 1,024 total. Failed-response
+six-way races remain within those budgets. Valid checks preceded test execution.
+Recovery and frozen-surface receipts are linked in the registry; no scientific
+setting changed during recovery. Random and Pro runs for these tasks are absent.
+
+Current final-level macro-F1:
+
+| Task / subset | Rows | None | Progressive L7 | Full-flat L7 |
+|---|---:|---:|---:|---:|
+| DILI / valid (former test) | 103 | 0.6710 | 0.5657 | 0.6411 |
+| DILI / test (former valid) | 103 | 0.6921 | 0.7399 | 0.7299 |
+| Carcinogens / valid | 312 | 0.7118 | 0.7296 | 0.7203 |
+| Carcinogens / test | 312 | 0.7240 | 0.7509 | 0.7562 |
+
+Five baselines were fitted on mixed training rows and separately on Starling-only
+training rows. Each suite has 20 pooled evaluation cells and 4,150 predictions,
+with frozen train-only CV/OOF choices, full coverage and zero failures. The
+Starling training cohorts are DILI 463 (426+/37−) and Carcinogens 719 (690+/29−).
+Unseen TDC null conditions explicitly use zero condition features in this ablation;
+the default remains error. Both suites evaluate the same heldout rows. This
+matches label source while also changing training size, balance and coverage;
+it does not isolate one causal factor or equalize the entire evidence pool.
+
+Current test macro-F1, mixed → Starling-only training:
+
+| Baseline | DILI | Carcinogens |
+|---|---:|---:|
+| MiniMol head | 0.7456 → 0.5657 | 0.6204 → 0.4809 |
+| MiniMol KNN condition | 0.8243 → 0.4148 | 0.7028 → 0.4782 |
+| MiniMol KNN all | 0.7031 → 0.4494 | 0.4870 → 0.4593 |
+| Morgan KNN condition | 0.8349 → 0.4246 | 0.7000 → 0.4564 |
+| Morgan KNN all | 0.7148 → 0.4246 | 0.6134 → 0.4583 |
+
+Canonical baseline entries are `matched_baselines.dili_carcinogens_scaffold`,
+`matched_baselines.dili_starling_only_scaffold_swapped`, and the combined suite's
+Starling-only ablation entry. Original pre-rename plots and baseline directories
+are historical views. Carcinogens mixed-training head AUROC is 0.7061 pooled,
+but 0.4974 within Starling and 0.5086 within TDC; pooled performance does not
+establish strong discrimination inside either source.
+
+### Starling-label test subset and figures
+
+Filtering current metadata by **`label_source=starling`** requires no new inference,
+training, retrieval or split. This is row-level label provenance, not removal of
+all molecules that also occur in TDC.
+
+| Current test subset | Rows (+ / −) | None | Progressive L7 | Full-flat L7 | Starling-trained head |
+|---|---:|---:|---:|---:|---:|
+| DILI | 56 (53 / 3) | 0.5771 | 0.6190 | 0.5962 | 0.8188 |
+| Carcinogens | 280 (258 / 22) | 0.7382 | 0.7500 | 0.7607 | 0.4796 |
+
+DILI head predicts all three negatives correctly, progressive only one; this
+small denominator makes the comparison unstable. All levels, five baselines,
+val/test source strata, row IDs and prediction hashes are in
+`outputs/paper/analysis/dili_carcinogens_current_source_strata/`; its
+`figures/starling_only_test.png` and `.svg` contain 40 verified points/references.
+
+The historical gold_v3 combined test overview is registered under `test_performance_figures`
+at `outputs/paper/analysis/conditioned_scaffold_test_all_tasks_dili_swapped/`:
+performance/resource overviews, two readable task panels and six individual
+panels, in PNG/SVG. All 104 curve points and 40 references were checked. The
+older four tasks retain their existing Flash three-run mean/SD and Pro single
+runs. DILI/Carcinogens show single Flash runs and Starling-trained baselines;
+missing Pro and ClinTox cells remain explicit. Ames and DILI test were previously
+inspected as validation. Rename receipts bind 1,030 baseline and 3,296 agent/None
+predictions to current DILI rows without changing their values.
+
+### Trace and source audit limits
+
+`outputs/paper/analysis/dili_test_evidence_decline_v2/REPORT.md` describes **former
+test/current valid**: 1,442 outputs, 721 matched input pairs, 10 harmful and four
+beneficial None-to-L7 progressive flips, with only one flip after L2. Three
+Bosentan conditions wrongly transfer clazosentan clinical observations at L2;
+full-flat L7 distinguishes the compounds. Other cases show exposure/endpoint
+transfer and an internally contradictory diphenhydramine card. These are
+single-run descriptions, not causal ablations or repaired source claims.
+
+Frozen-surface audits cover both heldout suites (415 queries × seven levels each).
+The direct-alias guard includes exact reviewed hold `card_04953d07291cbd0c`;
+replacement-card and real-request audits are preserved in the original suite.
+These are bounded Codex reviews of supplied cards, not exhaustive human-expert
+or original-paper verification. Raw records and all frozen experiment inputs
+remain intact. Current records, indices and repaired gold now use the shared
+restore/export layout; historical `.build` paths survive only as provenance.
 
 ## V4 Pro 0813 scaffold-test run (2026-09-05)
 
@@ -62,6 +190,8 @@ data/conditioned_benchmark/<Task>/{scaffold,random}/
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 |
 | Skin_Reaction | 1,941 / 239 / 241 | 1,937 / 242 / 242 |
 | Ames | 1,926 / 274 / 274 | 1,980 / 247 / 247 |
+| DILI | 3,220 / 402 / 402 | 3,220 / 402 / 402 |
+| Carcinogens | 3,754 / 469 / 469 | 3,754 / 469 / 469 |
 
 Scaffold and random contain the same molecule-condition labels. Random is
 parent-grouped, not molecule-row independent. A result is current only when

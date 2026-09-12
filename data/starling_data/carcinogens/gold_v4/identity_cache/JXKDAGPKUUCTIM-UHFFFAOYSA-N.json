@@ -1,0 +1,12 @@
+{
+  "parent_key": "JXKDAGPKUUCTIM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JXKDAGPKUUCTIM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitroso-2-meth-yloxazolidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    23620622
+  ]
+}

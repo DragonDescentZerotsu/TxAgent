@@ -1,0 +1,14 @@
+{
+  "parent_key": "YRLKASHTQWPWFO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Isofluorane",
+    "SCHEMBL29351317",
+    "YRLKASHTQWPWFO-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    53628799
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YRLKASHTQWPWFO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

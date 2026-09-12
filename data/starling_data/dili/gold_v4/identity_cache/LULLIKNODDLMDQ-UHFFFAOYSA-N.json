@@ -1,0 +1,39 @@
+{
+  "parent_key": "LULLIKNODDLMDQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22541-54-4",
+    "ARSENIC CATION (3)",
+    "ARSENIC CATION (AS3+)",
+    "ARSENIC ION(3+)",
+    "AS3+",
+    "Arsen [German,Polish]",
+    "Arsenic (III)",
+    "Arsenic (III) Standard: As+3 @ 100 microg/mL in 2% HCl",
+    "Arsenic III",
+    "Arsenic elemental",
+    "Arsenic ion (3+)",
+    "Arsenic(+3)",
+    "Arsenic(3+) ion",
+    "Arsenic(3+)ions",
+    "Arsenic, ion (As3+)",
+    "Arsenic, ion(As3 )",
+    "Arsenic, ion(As3)",
+    "As(3+)",
+    "As3",
+    "C96613F5AV",
+    "CHEBI:35828",
+    "DTXSID30872434",
+    "Q27116590",
+    "RefChem:58710",
+    "SCHEMBL29358262",
+    "UNII-C96613F5AV",
+    "arsenic cation (3+)",
+    "arsenic(3+)"
+  ],
+  "cids": [
+    104734
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LULLIKNODDLMDQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

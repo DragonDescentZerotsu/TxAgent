@@ -1,0 +1,27 @@
+{
+  "parent_key": "GQHYKMYMSVJXJM-SLHNCBLASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GQHYKMYMSVJXJM-SLHNCBLASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(17alpha)-19-Norpregna-1,3,5(10)-triene-3,17-diol",
+    "(1S,3aS,3bR,9bS,11aS)-1-ethyl-11a-methyl-1H,2H,3H,3aH,3bH,4H,5H,9bH,10H,11H,11aH-cyclopenta[a]phenanthrene-1,7-diol",
+    "17-Ethylestradiol",
+    "17-alpha-Ethyl-17-beta-estradiol",
+    "17-alpha-Ethylestradiol",
+    "17alpha-19-Norpregna-1(10),2,4-triene-3,17-diol",
+    "17alpha-Ethylestradiol",
+    "19-Nor-17-alpha-pregna-1,3,5(10)-triene-3,17-diol",
+    "2553-34-6",
+    "BDBM50369735",
+    "CHEMBL1627625",
+    "DTXSID10948429",
+    "JL3XDL8DYL",
+    "RefChem:908256",
+    "SCHEMBL4903619",
+    "UNII-JL3XDL8DYL"
+  ],
+  "http_status": 200,
+  "cids": [
+    66428
+  ]
+}

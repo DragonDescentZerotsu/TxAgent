@@ -1,0 +1,36 @@
+{
+  "parent_key": "BHERMCLNVOVDPU-DQFOBABISA-N",
+  "ok": true,
+  "synonyms": [
+    "(8S,11R,13S,14S,17R)-11-(4-(dimethylamino)phenyl)-17-hydroxy-17-(2-methoxyacetyl)-13-methyl-1,2,6,7,8,11,12,13,14,15,16,17-dodecahydro-3H-cyclopenta[a]phenanthren-3-one",
+    "(8S,11R,13S,14S,17R)-11-[4-(dimethylamino)phenyl]-17-hydroxy-17-(2-methoxyacetyl)-13-methyl-1,2,6,7,8,11,12,14,15,16-decahydrocyclopenta[a]phenanthren-3-one",
+    "11.BETA.-(4-(DIMETHYLAMINO)PHENYL)-17-HYDROXY-21-METHOXY-19-NORPREGNA-4,9-DIENE-3,20-DIONE",
+    "11beta-(4-(dimethylamino)phenyl)-17-hydroxy-21-methoxy-19-norpregna-4,9-diene-3,20-dione",
+    "11beta-[4-(Dimethylamino)phenyl]-17-hydroxy-21-methoxy-19-norpregna-4,9-diene-3,20-dione",
+    "19-NORPREGNA-4,9-DIENE-3,20-DIONE, 17-HYDROXY-11-(4-(DIMETHYLAMINO)PHENYL)-21-METHOXY-, (11.BETA.)-",
+    "19-Norpregna-4,9-diene-3,20-dione, 17-hydroxy-11-(4-(dimethylamino)phenyl)-21-methoxy-, (11beta)-",
+    "198414-30-1",
+    "65703MV349",
+    "AKOS040754151",
+    "CS-0003623",
+    "DTXCID4096077",
+    "DTXSID00173586",
+    "HY-14901",
+    "Q27263837",
+    "RefChem:187738",
+    "SCHEMBL2168441",
+    "T34798",
+    "TELAPRISTONE [WHO-DD]",
+    "Telapristone",
+    "Telapristone [INN]",
+    "UNII-65703MV349",
+    "orb1985270",
+    "telapristona",
+    "telapristonum"
+  ],
+  "cids": [
+    20761503
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BHERMCLNVOVDPU-DQFOBABISA-N/synonyms/JSON",
+  "http_status": 200
+}

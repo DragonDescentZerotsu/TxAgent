@@ -1,0 +1,22 @@
+{
+  "parent_key": "IYQKHZOGAWOVTF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IYQKHZOGAWOVTF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-METHYLIMIDAZO[4,5-B]PYRIDIN-2-AMINE",
+    "1-Methyl-1H-imidazo[4,5-b]pyridin-2-amine",
+    "178885-60-4",
+    "1H-Imidazo[4,5-b]pyridin-2-amine, 1-methyl-",
+    "1h-imidazo[4,5-b]pyridin-2-amine,1-methyl-",
+    "2-amino-1-methylimidazo[4,5-b]pyridine",
+    "AKOS006276144",
+    "DHA88560",
+    "EN300-152797",
+    "SCHEMBL19233647",
+    "Z1198163314"
+  ],
+  "http_status": 200,
+  "cids": [
+    15825453
+  ]
+}

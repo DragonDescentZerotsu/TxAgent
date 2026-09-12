@@ -1,0 +1,19 @@
+{
+  "parent_key": "OCBFFGCSTGGPSQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Propyl",
+    "2143-61-5",
+    "OCBFFGCSTGGPSQ-UHFFFAOYSA-N",
+    "Propyl",
+    "Propyl radical",
+    "RefChem:1097020",
+    "n-C3H7",
+    "n-Propyl radical"
+  ],
+  "cids": [
+    123145
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OCBFFGCSTGGPSQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

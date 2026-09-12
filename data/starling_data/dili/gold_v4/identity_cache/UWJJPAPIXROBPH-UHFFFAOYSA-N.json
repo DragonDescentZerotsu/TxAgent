@@ -1,0 +1,17 @@
+{
+  "parent_key": "UWJJPAPIXROBPH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Amino-3-phenylnaphthalene",
+    "115761-64-3",
+    "3-phenylnaphthalen-1-amine",
+    "DB-083938",
+    "DTXSID70432536",
+    "SCHEMBL10565222"
+  ],
+  "cids": [
+    9899306
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UWJJPAPIXROBPH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

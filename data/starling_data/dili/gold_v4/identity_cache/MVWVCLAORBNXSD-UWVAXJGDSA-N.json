@@ -1,0 +1,39 @@
+{
+  "parent_key": "MVWVCLAORBNXSD-UWVAXJGDSA-N",
+  "ok": true,
+  "synonyms": [
+    "0994X4C98G",
+    "1,2,5-Oxadiazole-3-carboxamide, N-[(S)-(4,4-difluorocyclohexyl)[7-[(1S)-2-methoxy-1-[(4S)-2-oxo-4-(trifluoromethyl)-1-imidazolidinyl]ethyl]imidazo[1,2-b]pyridazin-2-yl]methyl]-4-methyl-",
+    "2452464-73-0",
+    "AKOS040759822",
+    "BDBM727048",
+    "CHEMBL5595819",
+    "CS-0182019",
+    "DA-74434",
+    "E6588",
+    "EX-A7985",
+    "G18274",
+    "GTPL13164",
+    "HY-139206",
+    "IL-17A inhibitor 1",
+    "IL-17A inhibitor 1, 10 mM in DMSO",
+    "LY-3509754",
+    "LY-3509754 (IL-17A SMALL MOLECULE INHIBITOR)",
+    "LY-3533028",
+    "LY3509754",
+    "MS-30478",
+    "MVWVCLAORBNXSD-UWVAXJGDSA-N",
+    "N-((S)-(4,4-Difluorocyclohexyl)(7-((S)-2-methoxy-1-((S)-2-oxo-4-(trifluoromethyl)imidazolidin-1-yl)ethyl)imidazo[1,2-b]pyridazin-2-yl)methyl)-4-methyl-1,2,5-oxadiazole-3-carboxamide",
+    "N-[(S)-(4,4-difluorocyclohexyl)-[7-[(1S)-2-methoxy-1-[(4S)-2-oxo-4-(trifluoromethyl)imidazolidin-1-yl]ethyl]imidazo[1,2-b]pyridazin-2-yl]methyl]-4-methyl-1,2,5-oxadiazole-3-carboxamide",
+    "SCHEMBL22207566",
+    "T9448",
+    "US12252491, Example 24",
+    "inhibit,Inhibitor,Interleukin Related,COPD,Asthma,IL-17A inhibitor 1,IL17A inhibitor 1,IL 17A inhibitor 1",
+    "orb1298087"
+  ],
+  "cids": [
+    154642729
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MVWVCLAORBNXSD-UWVAXJGDSA-N/synonyms/JSON",
+  "http_status": 200
+}

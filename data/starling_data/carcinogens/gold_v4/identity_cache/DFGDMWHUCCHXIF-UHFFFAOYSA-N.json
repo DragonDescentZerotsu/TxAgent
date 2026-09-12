@@ -1,0 +1,26 @@
+{
+  "parent_key": "DFGDMWHUCCHXIF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DFGDMWHUCCHXIF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-dichloro dibenzo-p-dioxin",
+    "1,2-dichlorodibenzo-p-dioxin",
+    "1,2-dichlorooxanthrene",
+    "54536-18-4",
+    "DFGDMWHUCCHXIF-UHFFFAOYSA-N",
+    "DTXCID20125441",
+    "DTXSID90202950",
+    "Dibenzo-p-dioxin, 1,2-dichloro",
+    "NS00120963",
+    "PCDD 3",
+    "Q27287221",
+    "QEQ8K3CG9Q",
+    "RefChem:1052249",
+    "SCHEMBL5960341",
+    "UNII-QEQ8K3CG9Q"
+  ],
+  "http_status": 200,
+  "cids": [
+    41117
+  ]
+}

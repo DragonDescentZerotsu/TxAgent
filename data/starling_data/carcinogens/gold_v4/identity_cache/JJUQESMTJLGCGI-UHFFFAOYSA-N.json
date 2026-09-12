@@ -1,0 +1,12 @@
+{
+  "parent_key": "JJUQESMTJLGCGI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJUQESMTJLGCGI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "di-(2-amino-1-naphthyl)-hydrogen phosphate"
+  ],
+  "http_status": 200,
+  "cids": [
+    44389
+  ]
+}

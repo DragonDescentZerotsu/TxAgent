@@ -1,0 +1,14 @@
+{
+  "parent_key": "YQCUHZQMGUYNJA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS006349567",
+    "SCHEMBL1047051",
+    "sulphenylurea"
+  ],
+  "cids": [
+    18938996
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YQCUHZQMGUYNJA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

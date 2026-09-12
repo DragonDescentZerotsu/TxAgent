@@ -1,0 +1,28 @@
+{
+  "parent_key": "JAMGGIDPOXFRAM-RFYIAXDNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JAMGGIDPOXFRAM-RFYIAXDNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1bs,4ar,7as,7br,8r,9as)-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9ah-cyclopropa[3,4]benzo[1,2-e]azulen-9a-yl phenylacetate",
+    "12-DOPP",
+    "12-DOPPA",
+    "12-DPPA",
+    "12-Deoxyphorbol 13-phenylacetate",
+    "12-Deoxyphorbol-13-phenylacetate",
+    "12-Deoxyphorbolphenylacetate",
+    "4a,7b-Dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-9aH-cyclopropa[3,4]benzo[1,2-e]azulen-9a-yl phenylacetate",
+    "58821-98-0",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a-alpha,1b-beta,4,4a,7a-alpha,7b,8,9,9a-decahydro-4a-beta,7b-alpha,9a-alpha-trihydroxy-3-(hydroxymethyl)-1,1,6,8-alpha-tetramethyl-, 9a-phenylacetate",
+    "BRN 1898359",
+    "Benzeneacetic acid, (1aR,1bS,4aR,7aS,7bR,8R,9aS)-1,1a,1b,4,4a,5,7a,7b,8,9-decahydro-4a,7b-dihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-9aH-cyclopropa(3,4)benz(1,2-e)azulen-9a-yl ester",
+    "CCRIS 6293",
+    "DTXSID00974338",
+    "RefChem:78171",
+    "SCHEMBL22722450",
+    "[(1R,2S,6R,10S,13S,15R)-1,6-dihydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-13-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] 2-phenylacetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    105100
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "parent_key": "ISZIRXMFUSQQOS-NDXORKPFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ISZIRXMFUSQQOS-NDXORKPFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4bS,8aR,10aS)-10a-ethynyl-4b,8,8-trimethyl-3,7-dioxo-9,10-dihydro-8aH-phenanthrene-2,6-dicarbonitrile",
+    "936475-62-6",
+    "AKOS040749620",
+    "BDBM50096347",
+    "CHEMBL224752",
+    "HY-141439",
+    "PD138831",
+    "SCHEMBL8208843",
+    "T28929",
+    "TBE 31",
+    "TBE-31",
+    "TBE-31; TBE 31; TBE31;",
+    "[(+/-)-(4bs,8ar,10as)-10a-ethynyl-4b,8,8-trimethyl-3,7-dioxo-3,4b,7,8,8a,9,10,10a-octahydrophenanthrene-2,6-dicarbonitrile]",
+    "orb1699169"
+  ],
+  "http_status": 200,
+  "cids": [
+    16202704
+  ]
+}

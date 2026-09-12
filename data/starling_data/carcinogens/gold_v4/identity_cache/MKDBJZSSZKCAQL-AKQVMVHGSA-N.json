@@ -1,0 +1,25 @@
+{
+  "parent_key": "MKDBJZSSZKCAQL-AKQVMVHGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MKDBJZSSZKCAQL-AKQVMVHGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-ethyl-33-[(1R,2R,4E)-1-hydroxy-2-methylhex-4-en-1-yl]-9-(2-hydroxy-2-methylpropyl)-6,18,24-triisobutyl-3,21-diisopropyl-1,4,7,10,12,15,19,28-octamethyl-1,4,7,10,13,16,19,22,25,28,31-undecaazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-ethyl-33-[(E,1R,2R)-1-hydroxy-2-methylhex-4-enyl]-9-(2-hydroxy-2-methylpropyl)-1,4,7,10,12,15,19,28-octamethyl-6,18,24-tris(2-methylpropyl)-3,21-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "AM4N9",
+    "CHEBI:140166",
+    "CHEMBL3544882",
+    "M13",
+    "cyclosporin A metabolite AM4N9",
+    "cyclosporin A metabolite M13",
+    "cyclosporin metabolite AM4N9",
+    "cyclosporin metabolite M13",
+    "cyclosporine A metabolite AM4N9",
+    "cyclosporine A metabolite M13",
+    "cyclosporine metabolite AM4N9",
+    "cyclosporine metabolite M13"
+  ],
+  "http_status": 200,
+  "cids": [
+    10887707
+  ]
+}

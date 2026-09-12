@@ -1,0 +1,42 @@
+{
+  "parent_key": "INTMMHZKGCDQGT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INTMMHZKGCDQGT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1E)-1,2-Diethyldiazene",
+    "(C2H5)2NN",
+    "(E)-Azoethane",
+    "(E)-C2H5N=NC2H5",
+    "(E)-Diethyldiazene",
+    "(Z)-diethyl-diazene",
+    "1,2-Diethyldiazene",
+    "15463-99-7",
+    "4-04-00-03367 (Beilstein Handbook Reference)",
+    "685-710-4",
+    "821-14-7",
+    "AZOBIS(ETHANE)",
+    "AzoA currencythan",
+    "Azoaethan",
+    "Azoaethan [German]",
+    "Azoethane",
+    "BRN 1736139",
+    "DTXCID201450654",
+    "DTXSID601313995",
+    "DTXSID601316125",
+    "Diazene, 1,2-diethyl-",
+    "Diazene, diethyl-",
+    "Diethyldiazene",
+    "ETHANE, AZO-",
+    "INTMMHZKGCDQGT-UHFFFAOYSA-N",
+    "RefChem:560601",
+    "SCHEMBL13215765",
+    "SCHEMBL769165",
+    "SCHEMBL769166",
+    "UNII-UV600335V1",
+    "UV600335V1"
+  ],
+  "http_status": 200,
+  "cids": [
+    13183
+  ]
+}

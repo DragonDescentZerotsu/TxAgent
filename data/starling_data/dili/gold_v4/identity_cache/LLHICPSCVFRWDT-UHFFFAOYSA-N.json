@@ -1,0 +1,36 @@
+{
+  "parent_key": "LLHICPSCVFRWDT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(R)-3-((5-Acetamido-2-hydroxyphenyl)thio)-2-aminopropanoic acid",
+    "3-(5-acetamido-2-hydroxy-phenyl)sulfanyl-2-amino-propanoic acid",
+    "3-(5-acetamido-2-hydroxyphenyl)sulfanyl-2-aminopropanoic acid",
+    "3-(Cystein-S-yl)acetaminophen",
+    "3-(cystein-S-yl)acetaminophen zwitterion",
+    "3-(cystein-S-yl)paracetamol zwitterion",
+    "3-[(5-acetamido-2-hydroxyphenyl)sulfanyl]-2-azaniumylpropanoate",
+    "37398-30-4",
+    "CHEBI:133066",
+    "CHEBI:133067",
+    "CHEMBL2074942",
+    "DTXSID001379622",
+    "S-(5-acetamido-2-hydroxyphenyl)cysteine",
+    "S-(5-acetamido-2-hydroxyphenyl)cysteine zwitterion",
+    "S-[5-(Acetylamino)-2-hydroxyphenyl]cysteine",
+    "SCHEMBL29048126",
+    "acetaminophen cysteine conjugate",
+    "acetaminophen cysteine conjugate zwitterion",
+    "cysteine S-acetaminophen conjugate",
+    "cysteine S-acetaminophen conjugate zwitterion",
+    "cysteine S-paracetamol conjugate",
+    "cysteine S-paracetamol conjugate zwitterion",
+    "paracetamol cysteine conjugate",
+    "paracetamol cysteine conjugate zwitterion"
+  ],
+  "cids": [
+    5233914,
+    74600207
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LLHICPSCVFRWDT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

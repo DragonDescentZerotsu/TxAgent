@@ -1,0 +1,32 @@
+{
+  "task": "carcinogens",
+  "status": "passed",
+  "source_rows": 3270087,
+  "source_rows_deleted": 0,
+  "source_raw_and_uid_preserved": true,
+  "level_counts": {
+    "0": 118297,
+    "1": 12571,
+    "2": 483163,
+    "3": 750313,
+    "4": 650552,
+    "5": 749494,
+    "6": 218403,
+    "7": 287294
+  },
+  "membership_expanded": 0,
+  "records_changed": 0,
+  "voter_withdrawals": 0,
+  "exact_specimen_holds": 0,
+  "inputs": {
+    "data/starling_data/carcinogens/progressive_v1/records.parquet": "7b8eeb7c46f1a91116e26601d6dff696e652029afb0e5265e650ebf0f7011c60",
+    "data/.build/new_task_tautomer_repair/Carcinogens/gold/actual_voter_membership.jsonl": "c2906a3791f608d1df3b8621564935fb0cd8ca1d253b2b78b53ee6abe8662bc9",
+    "data/.build/new_task_tautomer_repair/specimen_identity_withdrawal_candidates.jsonl": "59af70d5ca14a034f06e41de9f828be80215ff877d037fd9c79787f8ae1640e1"
+  },
+  "files": {
+    "records.parquet": "7b8eeb7c46f1a91116e26601d6dff696e652029afb0e5265e650ebf0f7011c60",
+    "record_audit.parquet": "517006bce3a299335d8437381469d055a85b08b2d7e1c1885c0060fbbcf9fc76",
+    "identity_repair_changes.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final_membership_uid_set_verified": true
+}

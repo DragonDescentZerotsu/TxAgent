@@ -1,0 +1,16 @@
+{
+  "parent_key": "KJNWARLWTLTPFA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJNWARLWTLTPFA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-[(E)-(4-Methylphenyl)diazenyl]aniline",
+    "4-mono-methyl amino-azobenzene",
+    "99404-73-6",
+    "Benzenamine, 2-[(4-methylphenyl)azo]-",
+    "DTXSID10393091"
+  ],
+  "http_status": 200,
+  "cids": [
+    3501222
+  ]
+}

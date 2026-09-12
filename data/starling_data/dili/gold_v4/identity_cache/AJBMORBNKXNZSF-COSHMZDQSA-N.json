@@ -1,0 +1,30 @@
+{
+  "parent_key": "AJBMORBNKXNZSF-COSHMZDQSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-6-[(2R,3R,4S,5R,6R)-6-[(2R,3S,4S,5R,6R)-2-carboxy-4,5-dimethoxy-6-[(2R,3R,4S,5R,6S)-6-methoxy-4,5-disulfooxy-2-(sulfooxymethyl)oxan-3-yl]oxyoxan-3-yl]oxy-4,5-disulfooxy-2-(sulfooxymethyl)oxan-3-yl]oxy-4,5-dimethoxy-3-[(2R,3R,4S,5R,6R)-3,4,5-trimethoxy-6-(sulfooxymethyl)oxan-2-yl]oxyoxane-2-carboxylic acid",
+    "162610-17-5",
+    "6ADD3H8MFZ",
+    "CHEMBL5314801",
+    "DTXCID001513171",
+    "DTXSID801027578",
+    "IDRAPARINUX [MI]",
+    "IDRAPARINUX [WHO-DD]",
+    "Idraparinux",
+    "Methyl O-2,3,4-tri-O-methyl-6-O-sulfo-alpha-D-glucopyranosyl-(1->4)-O-2,3-di-O-methyl-beta-D-glucopyranuronosyl-(1->4)-O-2,3,6-tri-O-sulfo-alpha-D-glucopyranosyl-(1->4)-O-2,3-di-O-methyl-alpha-L-idopyranuronosyl-(1->4)-alpha-D-glucopyranoside 2,3,6-tris(hydrogen sulfate)",
+    "Q27890502",
+    "RefChem:790570",
+    "SCHEMBL427808",
+    "SR 34006",
+    "SR-34006",
+    "UNII-6ADD3H8MFZ",
+    "alpha-D-Glucopyranoside, methyl O-2,3,4-tri-O-methyl-6-O-sulfo-alpha-D-glucopyranosyl-(1-->4)-O-2,3-di-O-methyl-beta-D-glucopyranuronosyl-(1-->4)-O-2,3,6-tri-O-sulfo-alpha-D-glucopyranosyl-(1-->4)-O-2,3-di-O-methyl-alpha-L-idopyranuronosyl-(1-->4)-, 2,3,6-tris(hydrogen sulfate)",
+    "alpha-D-Glucopyranoside, methyl O-2,3,4-tri-O-methyl-6-O-sulfo-alpha-D-glucopyranosyl-(1-4)-O-2,3-di-O-methyl-beta-D-glucopyranuronosyl-(1-4)-O-2,3,6-tri-O-sulfo-alpha-D-lucopyranosyl-(1-4)-O-2,3-di-O-methyl-alpha-L-idopyranuronosyl-(1-4)-, tris(hydrogen sulfate)",
+    "sr34006"
+  ],
+  "cids": [
+    3083445
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AJBMORBNKXNZSF-COSHMZDQSA-N/synonyms/JSON",
+  "http_status": 200
+}

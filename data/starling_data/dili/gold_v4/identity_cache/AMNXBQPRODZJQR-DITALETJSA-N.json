@@ -1,0 +1,37 @@
+{
+  "parent_key": "AMNXBQPRODZJQR-DITALETJSA-N",
+  "ok": true,
+  "synonyms": [
+    "(.ALPHA.S)-.ALPHA.-(.ALPHA.-(2,4-DIMETHYL-9H-PYRIDO(2,3-B)INDOL-9-YL)-P-TOLYL)-N-((.ALPHA.R)-.ALPHA.-(HYDROXYMETHYL)BENZYL)CYCLOPENTANEACETAMIDE",
+    "(2S)-2-Cyclopentyl-2-{3-[(2,4-dimethyl-9H-pyrido[2,3-b]indol-9-yl)methyl]phenyl}-N-[(1R)-2-hydroxy-1-phenylethyl]acetamide",
+    "(2S)-2-cyclopentyl-2-(3-((2,4-dimethyl-9H-pyrido(2,3-b)indol-9-yl)methyl)phenyl)-N-((1R)-2-hydroxy-1-phenylethyl)acetamide",
+    "(2S)-2-cyclopentyl-2-(4-((2,4-dimethyl-9H-pyrido(2,3-b)indol-9-yl)methyl)phenyl)-N-((1S)-2-hydroxy-1-phenylethyl)ethanamide",
+    "(2S)-2-cyclopentyl-2-[3-[(2,4-dimethylpyrido[2,3-b]indol-9-yl)methyl]phenyl]-N-[(1R)-2-hydroxy-1-phenylethyl]acetamide",
+    "(2S)-2-cyclopentyl-2-[4-[(2,4-dimethylpyrido[2,3-b]indol-9-yl)methyl]phenyl]-N-[(1R)-2-hydroxy-1-phenylethyl]acetamide",
+    "(alphaS)-alpha-(alpha-(2,4-Dimethyl-9H-pyrido(2,3-b)indol-9-yl)-p-tolyl)-N-((alphaR)-alpha-(hydroxymethyl)benzyl)cyclopentaneacetamide",
+    "(alphaS)-alpha-(alpha-(2,4-Dimethyl-9H-pyrido(2,3-b)indol-9-yl)-p-tolyl)-N-((alphaR)-alpha-(hydroxymethyl)benzyl)cyclopentaneacetamide.",
+    "177469-96-4",
+    "BAY-13-9952",
+    "CHEMBL2105804",
+    "DA-64421",
+    "DB04852",
+    "DTXCID001511301",
+    "DTXSID70870136",
+    "IMPLITAPIDE [WHO-DD]",
+    "Implitapide",
+    "Implitapide [INN]",
+    "NS00072857",
+    "Q27095549",
+    "Q70OH404HR",
+    "RefChem:148047",
+    "SCHEMBL1650033",
+    "SCHEMBL29353371",
+    "implitapida",
+    "implitapidum"
+  ],
+  "cids": [
+    5745206
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AMNXBQPRODZJQR-DITALETJSA-N/synonyms/JSON",
+  "http_status": 200
+}

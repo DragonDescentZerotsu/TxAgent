@@ -1,0 +1,25 @@
+{
+  "parent_key": "DOSPRDHNGNPKKJ-BYPUAWAASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DOSPRDHNGNPKKJ-BYPUAWAASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "((1S,4S,5S,6R,9S,10R,12R,14R)-5,6-dihydroxy-7-(hydroxymethyl)-3,11,11,14-tetramethyl-15-oxo-4-tetracyclo(7.5.1.01,5.010,12)pentadeca-2,7-dienyl) hexadecanoate",
+    "52557-26-3",
+    "BDBM50493440",
+    "CHEMBL2430127",
+    "DA-64451",
+    "Hexadecanoic acid, 1a,2,5,5a,6,9,10,10a-octahydro-5,5a-dihydroxy-4-(hydroxymethyl)-1,1,7,9-tetramethyl-11-oxo-1H-2,8a-methanocyclopenta(a)cyclopropa(e)cyclodecen-6-yl ester, (1aR-(1aalpha,2alpha,5beta,5abeta,6beta,8aalpha,9alpha,10aalpha))-",
+    "Hexadecanoic acid, 1a,2,5,5a,6,9,10,10a-octahydro-5,5a-dihydroxy-4-(hydroxymethyl)-1,1,7,9-tetramethyl-11-oxo-1H-2,8a-methanocyclopenta(a)cyclopropa(e)cyclodecen-6-yl ester, (1aR-(1aalpha,2beta,5beta,5abeta,6beta,8aalpha,9alpha,10aalpha))-",
+    "Ingenol 3-hexadecanoate",
+    "Ingenol 3-palmitate",
+    "Ingenol-3-palmitate",
+    "RefChem:148288",
+    "TN4253",
+    "[(1S,4S,5S,6R,9S,10R,12R,14R)-5,6-dihydroxy-7-(hydroxymethyl)-3,11,11,14-tetramethyl-15-oxo-4-tetracyclo[7.5.1.01,5.010,12]pentadeca-2,7-dienyl] hexadecanoate",
+    "orb1682386"
+  ],
+  "http_status": 200,
+  "cids": [
+    56841025
+  ]
+}

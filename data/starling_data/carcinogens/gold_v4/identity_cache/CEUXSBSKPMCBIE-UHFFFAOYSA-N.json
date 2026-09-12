@@ -1,0 +1,12 @@
+{
+  "parent_key": "CEUXSBSKPMCBIE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CEUXSBSKPMCBIE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL2800333"
+  ],
+  "http_status": 200,
+  "cids": [
+    115320
+  ]
+}

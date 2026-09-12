@@ -1,0 +1,24 @@
+{
+  "parent_key": "QJJXYPPXXYFBGM-KVDYWLTISA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,9S,12S,13R,14R,17R,18Z,21R,23S,24R,25S,27R)-1,14-Dihydroxy-12-[(E)-1-[(1R,3R,4R)-4-hydroxy-3-methoxycyclohexyl]prop-1-en-2-yl]-23,25-dimethoxy-13,19,21,27-tetramethyl-17-prop-2-enyl-11,28-dioxa-4-azatricyclo[22.3.1.04,9]octacos-18-ene-2,3,10,16-tetrone",
+    "(1R,9S,12S,13R,14S,17R,21S,23S,24R,25S,27R)-1,14-dihydroxy-12-[(E)-1-[(1R,3R,4R)-4-hydroxy-3-methoxycyclohexyl]prop-1-en-2-yl]-23,25-dimethoxy-13,19,21,27-tetramethyl-17-prop-2-enyl-11,28-dioxa-4-azatricyclo[22.3.1.04,9]octacos-18-ene-2,3,10,16-tetrone",
+    "CCG-100888",
+    "CHEMBL1518873",
+    "CPD000466356",
+    "HMS2051C18",
+    "MFCD00869853",
+    "MLS000759471",
+    "MLS001424054",
+    "MRF-0000173",
+    "NC00138",
+    "SMR000466356",
+    "SY069910"
+  ],
+  "cids": [
+    23581796
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QJJXYPPXXYFBGM-KVDYWLTISA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "HHXDZOBGVZKIJO-JTQLQIEISA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-amino-2-methyl-3-(2,4,5-trihydroxyphenyl)propanoic acid",
+    "(S)-2-amino-2-methyl-3-(2,4,5-trihydroxyphenyl)propanoic acid",
+    "2,5-Dihydroxy-I+/--methyl-L-tyrosine",
+    "2,5-Dihydroxy-alpha-methyl-L-tyrosine",
+    "2-Methyl-3-(2,4,5-trihydroxyphenyl)alanine",
+    "72746-40-8",
+    "DTXSID701299326",
+    "RefChem:910046",
+    "Tyrosine, 2,5-dihydroxy-alpha-methyl-"
+  ],
+  "cids": [
+    23622171
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HHXDZOBGVZKIJO-JTQLQIEISA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "XAGQUKNVOPLINI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL5593737"
+  ],
+  "cids": [
+    177644403
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XAGQUKNVOPLINI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

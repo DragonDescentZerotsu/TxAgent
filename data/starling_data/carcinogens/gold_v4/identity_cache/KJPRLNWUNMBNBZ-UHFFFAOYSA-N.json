@@ -1,0 +1,39 @@
+{
+  "parent_key": "KJPRLNWUNMBNBZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJPRLNWUNMBNBZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Propenaldehyde, 3-phenyl-",
+    "3-phenyl-2-propen-1-one",
+    "3-phenyl-prop-2-enal",
+    "3-phenyl-propenal",
+    "3-phenylprop-2-enal",
+    "AKOS025243266",
+    "CHEBI:142921",
+    "CHEMBL3187944",
+    "DB-003616",
+    "DTXCID904835",
+    "DTXSID1024835",
+    "F996426",
+    "NS00098684",
+    "NSC 16935",
+    "Propenaldehyde, 3-phenyl-",
+    "RefChem:1068495",
+    "SCHEMBL27746",
+    "SCHEMBL3215000",
+    "SCHEMBL3442",
+    "SCHEMBL6765983",
+    "SCHEMBL787790",
+    "SCHEMBL8892833",
+    "formylstyrene",
+    "orb1222698",
+    "orb1222904",
+    "orb1302312",
+    "orb3025776",
+    "trans-3-Phenylacrylaldehyde"
+  ],
+  "http_status": 200,
+  "cids": [
+    307
+  ]
+}

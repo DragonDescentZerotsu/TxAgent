@@ -1,0 +1,14 @@
+{
+  "parent_key": "KCWQSNFJXVMEQC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KCWQSNFJXVMEQC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(5-hydroxy-1H-indol-2-yl)acetic acid",
+    "Q28000005",
+    "SCHEMBL115205"
+  ],
+  "http_status": 200,
+  "cids": [
+    15919788
+  ]
+}

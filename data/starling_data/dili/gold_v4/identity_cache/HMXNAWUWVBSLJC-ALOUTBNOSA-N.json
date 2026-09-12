@@ -1,0 +1,22 @@
+{
+  "parent_key": "HMXNAWUWVBSLJC-ALOUTBNOSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,7aR)-7-({[(2E)-2-Methylbut-2-enoyl]oxy}methyl)-2,3,5,7a-tetrahydro-1H-pyrrolizin-1-yl (2E)-2-methylbut-2-enoate",
+    "78513-20-9",
+    "AKOS040734356",
+    "Asperumine",
+    "DTXSID801019878",
+    "HMXNAWUWVBSLJC-ALOUTBNOSA-N",
+    "Heliotridine, 7,9-ditiglate",
+    "NS00094186",
+    "T124219",
+    "[(7S,8R)-7-[(E)-2-methylbut-2-enoyl]oxy-5,6,7,8-tetrahydro-3H-pyrrolizin-1-yl]methyl (E)-2-methylbut-2-enoate",
+    "orb1992378"
+  ],
+  "cids": [
+    6443107
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HMXNAWUWVBSLJC-ALOUTBNOSA-N/synonyms/JSON",
+  "http_status": 200
+}

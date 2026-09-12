@@ -1,0 +1,37 @@
+{
+  "parent_key": "JHEKLAXXCHLMNM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "19030-75-2",
+    "2,4(1H,3H)-Pyrimidinedione, 5-propyl-",
+    "2,4(1H,3H)-Pyrimidinedione,5-propyl-",
+    "5-N-PROPYLURACIL USP/EP/BP",
+    "5-N-Propyluracil ,98%",
+    "5-N-Propyluracil5",
+    "5-Propyluracil",
+    "5-n-Propyluracil",
+    "5-propyl-1,2,3,4-tetrahydropyrimidine-2,4-dione",
+    "5-propyl-1H-pyrimidine-2,4-dione",
+    "5-propyl-uracil",
+    "5-propylpyrimidine-2,4(1h,3h)-dione",
+    "AKOS006274123",
+    "CS-0187165",
+    "DS-1585",
+    "DTXCID4095005",
+    "DTXSID00172514",
+    "F092572",
+    "FS-3359",
+    "JHEKLAXXCHLMNM-UHFFFAOYSA-N",
+    "MFCD00083479",
+    "RefChem:103416",
+    "SB57607",
+    "SCHEMBL156784",
+    "SCHEMBL6218700",
+    "SY066805"
+  ],
+  "cids": [
+    73269
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JHEKLAXXCHLMNM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

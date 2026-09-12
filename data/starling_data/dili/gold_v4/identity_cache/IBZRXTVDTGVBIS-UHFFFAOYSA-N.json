@@ -1,0 +1,32 @@
+{
+  "parent_key": "IBZRXTVDTGVBIS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-1-(3,4-Dimethylphenyl)-2-(methylamino)propan-1-one",
+    "1-(3,4-dimethylphenyl)-2-(methylamino)propan-1-one",
+    "1-(3,4-dimethylphenyl)-2-methylaminopropan-1-one",
+    "1-Propanone, 1-(3,4-dimethylphenyl)-2-(methylamino)-",
+    "1082110-00-6",
+    "3,4-DMMC",
+    "3,4-DMMC HCl",
+    "3,4-Dimethylmethcathinone",
+    "3,4-Dimethylmethcathinone hydrochloride",
+    "C4EW58DTW5",
+    "CHEBI:189377",
+    "DTXCID601475153",
+    "DTXSID501016968",
+    "IBZRXTVDTGVBIS-UHFFFAOYSA-N",
+    "J3.065.113H",
+    "NS00015356",
+    "PD048189",
+    "Q4634067",
+    "RefChem:910644",
+    "SCHEMBL29392102",
+    "UNII-C4EW58DTW5"
+  ],
+  "cids": [
+    52988261
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IBZRXTVDTGVBIS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

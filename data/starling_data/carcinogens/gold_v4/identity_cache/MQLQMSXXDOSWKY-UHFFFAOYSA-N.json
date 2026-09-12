@@ -1,0 +1,24 @@
+{
+  "parent_key": "MQLQMSXXDOSWKY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MQLQMSXXDOSWKY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Nitroso-1-ethyl-3-methylurea",
+    "1-ethyl-3-methyl-1-nitrosourea",
+    "72479-23-3",
+    "AKOS006277345",
+    "BRN 4371425",
+    "CCRIS 6147",
+    "DTXCID80145266",
+    "DTXSID50222775",
+    "N-Ethyl-N'-methyl-N-nitrosourea",
+    "RSW45RR27F",
+    "RefChem:76606",
+    "UNII-RSW45RR27F",
+    "Urea, N-ethyl-N'-methyl-N-nitroso-"
+  ],
+  "http_status": 200,
+  "cids": [
+    126434
+  ]
+}

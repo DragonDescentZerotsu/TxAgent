@@ -1,0 +1,33 @@
+{
+  "parent_key": "XXXHSQBVHSJQKS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(aminooxy)(phenyl)methanone",
+    "54495-98-6",
+    "Benzoic acid azanyl ester",
+    "CS-0898461",
+    "DA-74348",
+    "DTXCID60125389",
+    "DTXSID30202898",
+    "HY-156846",
+    "Hydroxylamine,  O-benzoyl-  (6CI,7CI,9CI)",
+    "Hydroxylamine, O-benzoyl-",
+    "Hydroxylamine,O-benzoyl- (6CI,7CI,9CI)",
+    "O-Benzoylhydroxylamine",
+    "RefChem:167142",
+    "SCHEMBL3562766",
+    "SCHEMBL7030542",
+    "SCHEMBL72340",
+    "SCHEMBL9148648",
+    "T79911",
+    "XXXHSQBVHSJQKS-UHFFFAOYSA-N",
+    "amino benzoate",
+    "benzoic acid amino ester",
+    "orb2277569"
+  ],
+  "cids": [
+    191324
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XXXHSQBVHSJQKS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

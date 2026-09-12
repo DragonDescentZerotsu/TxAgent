@@ -1,0 +1,12 @@
+{
+  "parent_key": "JBYXPOFIGCOSSB-JSGCFVPUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBYXPOFIGCOSSB-JSGCFVPUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "9(Z),11(E)-Conjugated Linoleic Acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    172878197
+  ]
+}

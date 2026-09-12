@@ -1,0 +1,7 @@
+{
+  "model": "gpt-oss-120b",
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "max_tokens": 4096,
+  "protocol": "exhaustive_source_semantic_review.v1"
+}

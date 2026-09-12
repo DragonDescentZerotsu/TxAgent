@@ -1,0 +1,12 @@
+{
+  "parent_key": "DPHYMYNGFCHTGH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Novarsenobenzol"
+  ],
+  "cids": [
+    76961392
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DPHYMYNGFCHTGH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

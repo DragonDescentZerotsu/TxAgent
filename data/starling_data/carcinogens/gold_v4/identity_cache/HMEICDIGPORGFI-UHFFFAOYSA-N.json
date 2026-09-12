@@ -1,0 +1,33 @@
+{
+  "parent_key": "HMEICDIGPORGFI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HMEICDIGPORGFI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2,4,5,9,10-Triepoxydecane",
+    "1,2:4,5:9,10-Triepoxydecane",
+    "1,2:6,7:9,10-trianhydro-3,4,5,8-tetradeoxydecitol",
+    "1,4,5,9,10-Triepoxydecane",
+    "2-(oxiran-2-ylmethyl)-3-[3-(oxiran-2-yl)propyl]oxirane",
+    "52338-90-6",
+    "621-652-8",
+    "AI3-61790",
+    "AKOS024332934",
+    "DECANE, 1,2:4,5:9,10-TRIEPOXY-",
+    "DTXSID90966722",
+    "Decane,2:4,5:9,10-triepoxy-",
+    "Decitol, 1,2:4,5:9,10-trianhydro-3,6,7,8-tetradeoxy-",
+    "HMEICDIGPORGFI-UHFFFAOYSA-N",
+    "NSC 127944",
+    "NSC-127944",
+    "NSC127944",
+    "Oxirane, 2-(oxiranylmethyl)-3-(3-oxiranylpropyl)-",
+    "RefChem:412238",
+    "SCHEMBL4455644",
+    "Triepoxy decane",
+    "WLN: T3OTJ B3- BT3OTJ C1- BT3OTJ"
+  ],
+  "http_status": 200,
+  "cids": [
+    40323
+  ]
+}

@@ -1,9 +1,11 @@
 import json
+import random
 
 import pytest
 
 import tools.chembl_tool.common.openai_reasoning_client as client_module
 import tools.chembl_tool.paper_experiments.run_conditioned_assay_progressive_curve as runner
+from tools.chembl_tool.common.progressive_assay_reasoning import _select_cards
 from tools.chembl_tool.common.openai_reasoning_client import OpenAICompatibleClient
 from tools.chembl_tool.common.progressive_assay_reasoning import (
     ProgressiveTaskContract,
@@ -17,7 +19,273 @@ from tools.chembl_tool.common.progressive_assay_reasoning import (
     select_initial_evidence,
     select_progressive_delta,
     state_from_content,
+    shortlist_progressive_retrievals,
 )
+
+
+def test_opt_in_endpoint_diversity_retains_complementary_assays_with_same_budget():
+    cards = [
+        {"card_id": "a", "endpoint": "assay_family=bacterial_reverse_mutation | endpoint_detail=TA100",
+         "reported_value": "negative", "support_text": "Negative Ames test", "_assay_key": "study_a"},
+        {"card_id": "b", "endpoint": "assay_family=bacterial_reverse_mutation | endpoint_detail=TA98",
+         "reported_value": "negative", "support_text": "Negative Ames test", "_assay_key": "study_b"},
+        {"card_id": "c", "endpoint": "assay_family=micronucleus | endpoint_detail=CHO-K1",
+         "reported_value": "positive", "support_text": "Positive micronucleus test", "_assay_key": "study_c"},
+    ]
+    assert [c["card_id"] for c in _select_cards(cards, 2)] == ["a", "b"]
+    assert [c["card_id"] for c in _select_cards(cards, 2, prefer_distinct_endpoints=True)] == ["a", "c"]
+    swapped = [{**c, "reported_value": "positive" if c["reported_value"] == "negative" else "negative"}
+               for c in cards]
+    assert [c["card_id"] for c in _select_cards(swapped, 2, prefer_distinct_endpoints=True)] == ["a", "c"]
+    # When the pool has only one endpoint, use remaining slots for its other valid studies.
+    assert [c["card_id"] for c in _select_cards(cards[:2], 2, prefer_distinct_endpoints=True)] == ["a", "b"]
+
+
+def test_initial_condition_priority_retains_fallback_and_default_order():
+    def analog(name, similarity, cards):
+        return {"analog_id": name, "similarity": similarity, "cards": {
+            cid: {"card_id": cid, "support_text": "reported outcome", "_assay_key": cid,
+                  "qualifying_conditions": group, "reported_value": "negative"}
+            for cid, group in cards}}
+    cumulative = {a["analog_id"]: a for a in [
+        analog("closest", .9, [("a", "other")]),
+        analog("generic", .8, [("b", "unspecified")]),
+        analog("match_low", .1, [("c", "overdose")]),
+        analog("match_high", .3, [("d", "other"), ("e", "overdose"), ("f", "overdose")]),
+    ]}
+    groups = {"a": ["other"], "b": ["no_reported_external_condition"], "c": ["overdose"],
+              "d": ["other"], "e": ["overdose"], "f": ["overdose"]}
+    original, _ = select_initial_evidence(cumulative, molecule_limit=4, card_limit=2)
+    for condition in ("", "no_reported_external_condition"):
+        same, _ = select_initial_evidence(cumulative, molecule_limit=4, card_limit=2,
+                                         query_condition=condition, card_condition_groups=groups)
+        assert same == original
+    selected, audit = select_initial_evidence(cumulative, molecule_limit=4, card_limit=2,
+                                              query_condition="overdose", card_condition_groups=groups)
+    assert list(selected) == ["match_high", "match_low", "generic", "closest"]
+    assert list(selected["match_high"]["cards"]) == ["e", "f"]
+    assert selected["closest"]["cards"]["a"]["qualifying_conditions"] == "other"
+    assert audit["n_selected_cards"] == 5
+    card_only, _ = select_initial_evidence(
+        cumulative, molecule_limit=3, card_limit=2, query_condition="overdose",
+        card_condition_groups=groups, condition_priority_scope="cards_only")
+    # A distant condition match cannot displace the original three nearest molecules.
+    assert list(card_only) == ["closest", "generic", "match_high"]
+    assert list(card_only["match_high"]["cards"]) == ["e", "f"]
+    for condition in ("", "no_reported_external_condition"):
+        unchanged, _ = select_initial_evidence(
+            cumulative, molecule_limit=4, card_limit=2, query_condition=condition,
+            card_condition_groups=groups, condition_priority_scope="cards_only")
+        assert unchanged == original
+    for a in cumulative.values():
+        for c in a["cards"].values(): c["reported_value"] = "positive"
+    flipped, _ = select_initial_evidence(cumulative, molecule_limit=4, card_limit=2,
+                                         query_condition="overdose", card_condition_groups=groups)
+    assert {a: list(v["cards"]) for a, v in selected.items()} == {a: list(v["cards"]) for a, v in flipped.items()}
+
+
+def test_exact_condition_only_preserves_fallback_and_is_direction_blind():
+    cards = {cid: {"card_id": cid, "support_text": "reported outcome", "_assay_key": cid,
+                   "reported_value": "negative"} for cid in ("a", "b", "c", "d")}
+    pool = {"near": {"analog_id": "near", "similarity": .9, "cards": cards},
+            "far": {"analog_id": "far", "similarity": .1, "cards": cards}}
+    groups = {"a": ["other"], "b": ["no_reported_external_condition"], "d": ["HIV"]}
+    def select(condition, scope="cards_exact_only"):
+        return select_initial_evidence(pool, molecule_limit=1, card_limit=2,
+            query_condition=condition, card_condition_groups=groups, condition_priority_scope=scope)[0]
+    original = select_initial_evidence(pool, molecule_limit=1, card_limit=2)[0]
+    for condition in ("", "no_reported_external_condition", "overdose"):
+        assert select(condition) == original
+    assert list(select("HIV")) == ["near"]
+    assert list(select("HIV")["near"]["cards"]) == ["d", "a"]
+    assert list(select("HIV", "cards_only")["near"]["cards"]) == ["d", "b"]
+    for c in cards.values():
+        c["reported_value"] = "positive"
+    assert list(select("HIV")["near"]["cards"]) == ["d", "a"]
+
+
+def test_execution_l1_only_keeps_full_prompt_plan(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    full_plan = [{"level": i, "endpoint_group": f"family{i}"} for i in range(1, 8)]
+    monkeypatch.setattr(runner, "_levels", lambda task: full_plan)
+    monkeypatch.setattr(runner, "_task_contract", lambda task: _contract())
+    active, _ = select_initial_evidence(extract_cumulative_evidence(_retrieval([
+        _neighbor("CCO", .7, [_row("assay", "direct", 1, "measured support")])
+    ])))
+    level = tmp_path / "levels/level_1"
+    level.mkdir(parents=True)
+    (level / "prepared.json").write_text(json.dumps({
+        "active_evidence": active, "tool_prefetch_complete": True, "should_call_model": True,
+        "query_smiles": "CCN", "condition_sentence": "", "query_prior": {},
+    }))
+    runner._run_query(SimpleNamespace(prepare_only=True, max_level=1),
+                      runner.PreparedQuery("example", 0, tmp_path), None)
+    request = json.loads((level / "request.json").read_text())
+    assert "family7" in json.dumps(request)
+    assert list((tmp_path / "levels").iterdir()) == [level]
+    with pytest.raises(ValueError, match="execution maximum"):
+        runner._execution_levels("example", 8)
+
+
+def test_condition_policy_and_execution_scope_are_resume_invariants():
+    for field in ("execution_max_level", "initial_condition_priority"):
+        with pytest.raises(ValueError, match=field):
+            runner._merge_resume_manifest({field: "old"}, {field: "new"})
+
+
+@pytest.mark.parametrize("independent", [False, True])
+def test_evidence_ablation_omits_entire_prior_and_preserves_update_mechanism(independent):
+    cumulative = extract_cumulative_evidence(_retrieval([
+        _neighbor("CCO", .2, [_row("a", "direct", 1, "observed negative")]),
+    ]))
+    active, _ = select_initial_evidence(cumulative)
+    kwargs = dict(contract=_contract(), levels=[{"level": 1}], current_level=1,
+        query_smiles="CCN", condition_sentence="reported population",
+        query_prior={"endpoint_prior": "SENTINEL_PRIOR", "reasoning_summary": "SENTINEL_EXPLANATION"},
+        query_tool_summary={"tool_name": "molecule_properties", "content": "properties\nexact molecular weight: 45"},
+        active=active, prior_state=None, independent=independent)
+    original = json.loads(build_progressive_messages(**kwargs)[1]["content"])
+    messages = build_progressive_messages(**kwargs, omit_query_prior=True, evidence_grounding=True)
+    payload = json.loads(messages[1]["content"])
+    assert "query_prior" not in payload and "SENTINEL" not in json.dumps(messages)
+    assert payload["query"] == original["query"]
+    assert payload["active_evidence"] == original["active_evidence"]
+    for field in ("architecture", "flip_rule", "update_rule"):
+        assert payload["protocol"].get(field) == original["protocol"].get(field)
+    assert "distinct from the query" in payload["protocol"]["identity_rule"]
+    assert "same standards" in payload["protocol"]["evidence_balance_rule"]
+
+
+def test_query_identity_exclusion_changes_only_exclusion_and_blocks_cross_identity_reuse():
+    kwargs = dict(contract=_contract(), levels=[{"level": 1}], current_level=1,
+                  query_smiles="CCN", condition_sentence="", query_prior={},
+                  query_tool_summary={}, active={}, prior_state=None)
+    original = build_progressive_messages(**kwargs)
+    anchored = build_progressive_messages(**kwargs, excluded_query_name="Propylamine")
+    assert original[0] == anchored[0]
+    payload = json.loads(anchored[1]["content"])
+    assert payload["query"].pop("identity_exclusion") == "The query molecule is not Propylamine."
+    assert payload == json.loads(original[1]["content"])
+    prepared = {"query_smiles": "CCN", "level_definition": {"level": 1}}
+    anchored_prepared = {**prepared, "query_identity_exclusion": {"name": "Propylamine", "canonical_smiles": "CCN"}}
+    assert runner._excluded_query_name(prepared) == ""
+    assert runner._excluded_query_name(anchored_prepared) == "Propylamine"
+    assert runner._prepared_model_input(prepared) != runner._prepared_model_input(anchored_prepared)
+    with pytest.raises(ValueError, match="true query names"):
+        runner._prepared_model_input({**prepared, "query_identity_anchor": {"name": "Ethylamine", "canonical_smiles": "CCN"}})
+    assert "Ethylamine" not in json.dumps(anchored)
+    for anchor in ({"name": "Other", "canonical_smiles": "CCC"},
+                   {"name": "Ethylamine", "canonical_smiles": "CCN", "gold": 1}):
+        with pytest.raises(ValueError, match="identity exclusion"):
+            runner._excluded_query_name({**prepared, "query_identity_exclusion": anchor})
+
+
+def test_carcinogens_grounding_keeps_progressive_and_prior_with_scoped_transfer():
+    from tools.chembl_tool.tasks.carcinogens.experiment_config import get_progressive_task_contract
+    kwargs = dict(contract=get_progressive_task_contract(), levels=[{"level": 1}], current_level=1,
+                  query_smiles="CCN", condition_sentence="rodent", query_prior={"prior": "preserved"},
+                  query_tool_summary={}, active={}, prior_state=None)
+    original = json.loads(build_progressive_messages(**kwargs)[1]["content"])
+    grounded = json.loads(build_progressive_messages(**kwargs, evidence_grounding=True)[1]["content"])
+    for key in ("architecture", "flip_rule", "update_rule"):
+        assert original["protocol"][key] == grounded["protocol"][key]
+    assert grounded["query_prior"] == original["query_prior"]
+    assert "mixed passage" in grounded["protocol"]["identity_rule"]
+    assert "without new direct tumor data" in grounded["protocol"]["endpoint_decision_rule"]
+    assert "no detected protection" in grounded["protocol"]["comparison_rule"]
+    assert "comparison_rule" not in original["protocol"]
+
+
+@pytest.mark.parametrize("model_called", [False, True])
+def test_resumed_evidence_ablation_drops_none_state_but_keeps_evidence_state(monkeypatch, tmp_path, model_called):
+    from types import SimpleNamespace
+    monkeypatch.setattr(runner, "_levels", lambda task: [{"level": 1}, {"level": 2}])
+    monkeypatch.setattr(runner, "_task_contract", lambda task: _contract())
+    first = tmp_path / "levels/level_1"
+    first.mkdir(parents=True)
+    (first / "output.json").write_text(json.dumps({
+        "status": "ok" if model_called else "reused_none", "model_called": model_called,
+        "state": {"level": 1, "decision_summary": "PREVIOUS_STATE", "example_prediction": "positive"},
+    }))
+    active, _ = select_initial_evidence(extract_cumulative_evidence(_retrieval([
+        _neighbor("CCO", .2, [_row("a", "mechanism", 2, "new observation")]),
+    ])), level=2)
+    second = tmp_path / "levels/level_2"
+    second.mkdir(parents=True)
+    (second / "prepared.json").write_text(json.dumps({
+        "active_evidence": active, "tool_prefetch_complete": True, "should_call_model": True,
+        "query_smiles": "CCN", "condition_sentence": "", "query_prior": {"summary": "OMIT_THIS"},
+        "reasoning_policy": {"omit_query_prior_with_evidence": True, "evidence_grounding": True},
+    }))
+    runner._run_query(SimpleNamespace(prepare_only=True), runner.PreparedQuery("example", 0, tmp_path), None)
+    request = json.loads((second / "request.json").read_text())
+    payload = json.loads(request["messages"][1]["content"])
+    assert ("prior_state" in payload) is model_called
+    assert ("PREVIOUS_STATE" in json.dumps(request)) is model_called
+    assert "OMIT_THIS" not in json.dumps(request)
+    assert "flip_rule" in payload["protocol"]
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_molecule_shortlist_preserves_all_selected_cards_at_every_level(seed):
+    rng = random.Random(seed)
+    retrievals = {}
+    molecules = []
+    unlocked = {}
+    for i in range(90):
+        levels = {l for l in range(1, 8) if rng.random() < .55} or {7}
+        rows = [_row(f"assay-{i}-{l}-{j}", f"family-{l}", l, f"support-{i}-{l}-{j}")
+                for l in levels for j in range(rng.randint(1, 6))]
+        n = _neighbor(f"MOLECULE-{i // 2}", round((90-i//2)/100, 2), rows)
+        n["molecule_chembl_id"] = str(i)
+        molecules.append(n)
+        unlocked[str(i)] = levels
+    for level in range(1, 8):
+        neighbors = []
+        for n in molecules:
+            rows = [r for r in n["evidence_rows"] if r["source_record_examples"][0]["evidence_family_level"] <= level]
+            if rows:
+                neighbors.append({**n, "evidence_rows": rows})
+        retrievals[level] = _retrieval(neighbors)
+    bounded = shortlist_progressive_retrievals(retrievals, unlocked)
+    states = []
+    for inputs in (retrievals, bounded):
+        previous, active, snapshots = {}, {}, []
+        for level, retrieval in inputs.items():
+            current = extract_cumulative_evidence(retrieval)
+            if level == 1:
+                active, _ = select_initial_evidence(current)
+            else:
+                new, aug, _ = select_progressive_delta(previous, current, active, level=level)
+                active = append_evidence(active, new, aug)
+            snapshots.append(active)
+            previous = current
+        states.append(snapshots)
+    assert states[0] == states[1]
+
+
+@pytest.mark.parametrize("field,value", [("min_similarity", 0.0), ("reasoning_policy", {"omit_query_prior_with_evidence": True})])
+def test_resume_rejects_changed_evidence_ablation(field, value):
+    previous = {"min_similarity": .3}
+    with pytest.raises(ValueError, match=field):
+        runner._merge_resume_manifest(previous, {**previous, field: value})
+
+
+def test_fork_preparation_keeps_query_indices_and_shared_inputs(monkeypatch, tmp_path):
+    import concurrent.futures
+    import multiprocessing
+    def prepare(*, query_index, record, output_root):
+        path = output_root / str(query_index)
+        path.write_text(record["drug"])
+        return runner.PreparedQuery("example", query_index, path)
+    monkeypatch.setattr(runner, "_prepare_query", prepare)
+    monkeypatch.setattr(runner, "_PREPARATION_CONTEXT", {
+        "records": [{"drug": "CCO"}, {"drug": "CCN"}], "kwargs": {"output_root": tmp_path},
+    })
+    with concurrent.futures.ProcessPoolExecutor(max_workers=2, mp_context=multiprocessing.get_context("fork")) as pool:
+        results = list(pool.map(runner._prepare_indexed_query, [1, 0]))
+    assert [r.index for r in results] == [1, 0]
+    assert [r.query_dir.read_text() for r in results] == ["CCN", "CCO"]
 from tools.chembl_tool.tasks.bbb_martins import experiment_config as bbb_config
 from tools.chembl_tool.tasks.bioavailability_ma import experiment_config as bio_config
 from tools.chembl_tool.tasks.skin_reaction import experiment_config as skin_config
@@ -518,6 +786,80 @@ def test_refresh_prior_preserves_tools_and_cards_and_rejects_tool_drift():
     assert frozen["query_prior"] == "old"
     with pytest.raises(ValueError, match="changed frozen query tools"):
         family._replace_matched_prior(frozen, (prior[0], {"text": "changed"}, prior[2], 3))
+
+
+def test_matched_suite_concurrent_runs_share_total_budget(monkeypatch, tmp_path):
+    import threading
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "experiment_manifest.json").write_text("{}")
+    barrier = threading.Barrier(2)
+    seen = []
+
+    def run(args):
+        seen.append((threading.get_ident(), args.parallelism, args.endpoint_concurrency_budget))
+        barrier.wait(timeout=5)
+        status = json.loads((tmp_path / "suite/suite_status.json").read_text())
+        assert len(status["active_roots"]) == 2
+        barrier.wait(timeout=5)
+        return 0
+
+    monkeypatch.setattr(family, "_run_matched_curve", run)
+    assert family.main(["--matched-progressive-root", str(source), "--output-root", str(tmp_path / "suite"),
+                        "--replicate-ids", "1", "--matched-organizations", "progressive", "full_flat",
+                        "--concurrent-runs", "2", "--parallelism", "2", "--endpoint-concurrency-budget", "4"]) == 0
+    assert len({row[0] for row in seen}) == 2
+    assert all(row[1:] == (2, 2) for row in seen)
+    assert json.loads((tmp_path / "suite/suite_status.json").read_text())["phase"] == "complete"
+
+
+def test_matched_suite_rejects_concurrent_budget_overflow(tmp_path):
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    with pytest.raises(SystemExit):
+        family.main(["--matched-progressive-root", str(tmp_path / "source"), "--replicate-ids", "1",
+                     "--concurrent-runs", "2", "--parallelism", "256", "--endpoint-concurrency-budget", "256"])
+
+
+def test_native_matched_prior_refresh_copies_only_tools_and_checks_resume(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+    source_root, old, output = tmp_path / "source", tmp_path / "old", tmp_path / "new/single_cache"
+    source_root.mkdir()
+    original_path = old / "ames/none/manifest.json"
+    original_path.parent.mkdir(parents=True)
+    original_path.write_text(json.dumps(dict(schema_version="conditioned_query_priors.v1", input_sha256="input", indices=[0], n_items=1)))
+    source = dict(single_reuse_root=str(old), tasks=["ames"], inputs={"ames": {
+        "single_source_manifest_sha256": family.sha256_file(original_path), "input_sha256": "input"}},
+        evaluation_indices_by_task={"ames": [0]})
+    (source_root / "experiment_manifest.json").write_text(json.dumps(source))
+    old_run = runner._source_run_dir("ames", 0, old)
+    old_run.mkdir(parents=True)
+    for name in ["retrieval.json", "single_molecule_reasoning_output.json", "final_reasoning_output.json"]:
+        (old_run / name).write_text(json.dumps({"frozen": name}))
+    monkeypatch.setattr(family, "_validate_matched_source", lambda *a, **kw: None)
+    monkeypatch.setattr(family, "_validate_matched_task", lambda *a: "spec")
+    monkeypatch.setattr(runner, "_resolve_provider_pool_config", lambda a: SimpleNamespace(providers=[SimpleNamespace(max_inflight=2)]))
+    calls = []
+
+    def refresh(args, specs, provider):
+        calls.append(args.model)
+        assert args.retry_race_width == 6 and args.transport_max_retries == 0
+        assert specs == {"ames": "spec"} and args.output_root == str(output.parent)
+        copied = runner._source_run_dir("ames", 0, output)
+        assert (copied / "retrieval.json").read_bytes() == (old_run / "retrieval.json").read_bytes()
+        assert not (copied / "single_molecule_reasoning_output.json").exists()
+        assert not (copied / "final_reasoning_output.json").exists()
+        return 0
+
+    monkeypatch.setattr(runner, "_prepare_fresh_query_priors", refresh)
+    args = SimpleNamespace(tasks=["ames"], model="pro", endpoint_concurrency_budget=2, retry_race_width=6)
+    assert family._refresh_matched_priors(args, source_root, output) == 0
+    assert family._refresh_matched_priors(args, source_root, output) == 0
+    assert calls == ["pro"]
+    (runner._source_run_dir("ames", 0, output) / "retrieval.json").write_text("{}")
+    with pytest.raises(ValueError, match="changed refreshed prior"):
+        family._refresh_matched_priors(args, source_root, output)
 
 
 def test_prior_callback_uses_shared_pool_and_failure_receipts(tmp_path):

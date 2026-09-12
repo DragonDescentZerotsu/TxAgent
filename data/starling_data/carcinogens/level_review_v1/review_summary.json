@@ -1,0 +1,55 @@
+{
+  "n_read": 72,
+  "reviewer": "Codex full source-record text semantic reading; not human expert or full-paper review",
+  "per_source": {
+    "carcinogens_base": 12,
+    "carcinogens_v1": 12,
+    "carcinogens_v2": 12,
+    "carcinogens_v3": 12,
+    "carcinogens_v4": 12,
+    "carcinogens_v5": 12
+  },
+  "levels": {
+    "1": 2,
+    "2": 32,
+    "0": 22,
+    "3": 3,
+    "4": 4,
+    "5": 3,
+    "6": 3,
+    "7": 3
+  },
+  "new_identity_holds": 7,
+  "new_semantic_holds": 2,
+  "withdrawn_voters": 2,
+  "reviewed_new_vote_candidates": 12,
+  "accepted_new_votes": 0,
+  "scope": "Full supplied record payload; no external paper or fulltext verification; stratified sample not prevalence estimate",
+  "sampling": {
+    "source_row_groups": {
+      "base": 1,
+      "v1": 8,
+      "v2": 23,
+      "v3": 34,
+      "v4": 43,
+      "v5": 47
+    },
+    "shuffle_seed": "7301 + row_group",
+    "selection": "12 distinct PMID records per source; targeted direct/negative/mechanism/identity-rejected strata; base includes actual voters",
+    "source": "data/starling_data/carcinogens/canonical_v1/records.parquet",
+    "sample_artifact": "review_sample.jsonl",
+    "classification_tests": "6 passed; tests/chembl_tool/common/test_carcinogens_levels.py"
+  },
+  "additional_parent_agent_reviewed_voters": 1,
+  "additional_review_note": "Parent agent separately re-read actual oxaliplatin voter sr_742bbc4cd272415dbd4cbcca1945a1aa and withdrew complex-to-diamine identity mapping; not counted in this 72-record sample.",
+  "withdrawal_regression_audit": {
+    "complete_source_records_read": 57,
+    "restore_primary_votes": 4,
+    "remain_withdrawn": 53,
+    "origin_pending_among_remaining": 4,
+    "unique_records_across_sample_and_withdrawals": 128,
+    "sample_l1_uids_still_active": 2,
+    "artifact": "withdrawn_vote_audit.jsonl",
+    "restore_artifact": "restore_review_updates.jsonl"
+  }
+}

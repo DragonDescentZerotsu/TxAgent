@@ -1,0 +1,21 @@
+{
+  "parent_key": "CAFAOQIVXSSFSY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CAFAOQIVXSSFSY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-ethoxyethanol",
+    "7518-70-9",
+    "SCHEMBL15882",
+    "SCHEMBL440036",
+    "SCHEMBL4684",
+    "SCHEMBL5047425",
+    "SCHEMBL563837",
+    "SCHEMBL652362",
+    "SCHEMBL8019169",
+    "ethoxy-ethanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    10129898
+  ]
+}

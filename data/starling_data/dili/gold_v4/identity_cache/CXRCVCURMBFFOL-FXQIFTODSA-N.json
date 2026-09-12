@@ -1,0 +1,28 @@
+{
+  "parent_key": "CXRCVCURMBFFOL-FXQIFTODSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-((2S)-2-(((2S)-2-aminopropanoyl)amino)propanoyl)pyrrolidine-2-carboxylic acid",
+    "(2S)-1-((2S)-2-(((2S)-2-azaniumylpropanoyl)amino)propanoyl)pyrrolidine-2-carboxylate",
+    "(2S)-1-[(2S)-2-[[(2S)-2-aminopropanoyl]amino]propanoyl]pyrrolidine-2-carboxylic Acid",
+    "(2S)-1-[(2S)-2-[[(2S)-2-azaniumylpropanoyl]amino]propanoyl]pyrrolidine-2-carboxylate",
+    "61430-04-4",
+    "A-A-P",
+    "Ala-Ala-Pro",
+    "CHEBI:73323",
+    "FA108445",
+    "H-ALA-ALA-PRO-OH",
+    "H-Ala-Ala-Pro-OH (H-1420.0250)",
+    "L-Ala-L-Ala-L-Pro",
+    "L-alanyl-L-alanyl-L-proline",
+    "Q27140436",
+    "RefChem:110412",
+    "SCHEMBL2549572"
+  ],
+  "cids": [
+    10131317,
+    11902959
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CXRCVCURMBFFOL-FXQIFTODSA-N/synonyms/JSON",
+  "http_status": 200
+}

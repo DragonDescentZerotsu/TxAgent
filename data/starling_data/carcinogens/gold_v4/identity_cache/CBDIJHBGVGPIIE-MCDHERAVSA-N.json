@@ -1,0 +1,20 @@
+{
+  "parent_key": "CBDIJHBGVGPIIE-MCDHERAVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CBDIJHBGVGPIIE-MCDHERAVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1aR,1bS,4aR,7aS,7bR,8R,9aS)-4a,7b,9a-Trihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-5H-cyclopropa[3,4]benzo[1,2-e]azulen-5-one",
+    "(1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9aalpha))-1,1a,1b,4,4a,7a,7b,8,9,9a-Decahydro-4a,7b,9a-trihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5H-cyclopropa(3,4)benz(1,2-e)azulen-5-one",
+    "12-Deoxyphorbol",
+    "25090-75-9",
+    "4a,7b,9a-Trihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-5H-cyclopropa[3,4]benzo[1,2-e]azulen-5-one",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b,9a-trihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-, (1aR,1bS,4aR,7aS,7bR,8R,9aS)-",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a,1b,4,4a,7a,7b,8,9,9a-decahydro-4a,7b,9a-trihydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-, (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9aalpha))-",
+    "DTXSID90947955",
+    "SCHEMBL29725067"
+  ],
+  "http_status": 200,
+  "cids": [
+    119252
+  ]
+}

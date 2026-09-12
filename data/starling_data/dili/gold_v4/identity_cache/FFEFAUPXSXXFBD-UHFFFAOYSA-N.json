@@ -1,0 +1,13 @@
+{
+  "parent_key": "FFEFAUPXSXXFBD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "Diclofenac-2',3'-oxide",
+    "SCHEMBL10034726"
+  ],
+  "cids": [
+    59831280
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FFEFAUPXSXXFBD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

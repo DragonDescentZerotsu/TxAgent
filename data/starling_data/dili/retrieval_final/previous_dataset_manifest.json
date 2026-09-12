@@ -1,0 +1,201 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "records": {
+    "path": "data/starling_data/dili/canonical_v1/records.parquet",
+    "sha256": "764490a5cfc633c2482e95bb6cae8656af530b19e5748430b0191804dad06abd",
+    "rows": 1645109
+  },
+  "raw_records_deleted": 0,
+  "identity": "PubChem exact name-parent match required for gold; source identity eligibility for retrieval",
+  "evaluation_status": "gold_v4 scaffold valid/test progressive/full_flat suite running",
+  "semantic_review": {
+    "records": 169,
+    "ledger": "data/starling_data/dili/gold_v2/record_reviews.jsonl",
+    "scope": "Codex source-text reading of accepted and rejected strata; not exhaustive, human-expert, or full-paper verification"
+  },
+  "retrieval_status": "gold_v4_l1_only_indices_validated",
+  "policy_files": {
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/build_source_gold.py": "c4aa988f72f3af9e34c51921808249fc71427c6b7f28768be74068f804ffcc87",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/dili/starling_gold.py": "87dab29b238264f1b4bcfd86dc013d86ea5a4a59cb37a530dd88e5b1f9e6b135",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/starling/source_gold_review.py": "61d08a31fc6193360dee0361a2a5c515e172b180b2147f7f508d3abd4050de30"
+  },
+  "progressive_retrieval": {
+    "root": "data/starling_data/dili/gold_v4/retrieval",
+    "records": "data/starling_data/dili/gold_v4/retrieval/source/records.parquet",
+    "levels": 7,
+    "canonical_benchmark_root": "data/conditioned_benchmark/DILI",
+    "source_manifest": "data/starling_data/dili/gold_v4/retrieval/manifest.json",
+    "identity_contract": "new_task_tautomer_identity.v2",
+    "heldout_prefilter_levels": [
+      1
+    ],
+    "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json",
+    "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json"
+  },
+  "benchmark_role": "current Starling-only reviewed gold_v4",
+  "repaired_source_gold": {
+    "root": "data/starling_data/dili/gold_v3",
+    "source_votes_sha256": "9d0372d129481cb0af23e1d061c250636e21ffab2aa392f56c5afcc5cb96e68b",
+    "source_only_benchmark_root": "data/starling_data/dili/gold_v3/source_only_benchmark",
+    "identity_contract": "new_task_tautomer_identity.v2"
+  },
+  "historical_source_only": {
+    "gold": {
+      "path": "data/starling_data/dili/gold_v2/source_votes.jsonl",
+      "sha256": "1dce6c9d9b02cd849321e86a2fe4bebda62dd9fa3f27cc913d3eecaef9d6b25d",
+      "source_votes": 4729
+    },
+    "benchmark": {
+      "scaffold": {
+        "root": "data/.build/conditioned_benchmark_sources/DILI/source_only_snapshot/scaffold",
+        "files": {
+          "accepted_parent_conditions.jsonl": "aa80e2e436b1ec7bab4e6cae85aea8bb38b43ce7a9ba9089ef4aa4e79210af03",
+          "accepted_parent_conditions_before_group_gate.jsonl": "6cfe98395aba8d1a529e194151ddbb9fbedd130af86b4d9bd6d3e7da1d7f6f9b",
+          "accepted_record_votes.jsonl": "2acaa5108e393afbc087cc381e84ee3a35bc8316913a14e1ead714c5ceec58fc",
+          "heldout_molecule_condition_labels.jsonl": "ab0f9a0c8a2ccb78e4c0a57af98ac7a63c1acfe24e2b14d7a49b364717b1fe00",
+          "rejected_parent_conditions.jsonl": "6aac4910541161097fdc5bca2d6eb8c710c1af1fe8508806c30b8859a13781dd",
+          "test.jsonl": "c80001651a567135201a1e629b680eb29ee644ddd3961d5028aff9413714d8d7",
+          "test_molecule_condition_labels.jsonl": "945215a10ab2cf01f69e86bb4ab6a5016d087db0b945478c6ffade9dd00d2c7e",
+          "train.jsonl": "6cdac775c93617607df99072add5d78134f2c88eabb503bbe854148ab36f5b8f",
+          "train_molecule_condition_labels.jsonl": "b03b4d29f56a92ac17b6b68ef9c4a4e5f86578d8ac2138e3804ce210451511ba",
+          "valid.jsonl": "596e915c9fa2a955ea84575cd44c40a174c75b2e39dcaf64da26c87f4ae5d550",
+          "valid_molecule_condition_labels.jsonl": "af8e893263a5ad913d19b45180bda4f3c6f8bb4ee0f9fbd6f9aa0b90f7b4b61e"
+        },
+        "splits": {
+          "train": {
+            "rows": 457,
+            "label_counts": {
+              "1": 422,
+              "0": 35
+            }
+          },
+          "valid": {
+            "rows": 56,
+            "label_counts": {
+              "0": 4,
+              "1": 52
+            }
+          },
+          "test": {
+            "rows": 56,
+            "label_counts": {
+              "1": 52,
+              "0": 4
+            }
+          }
+        }
+      },
+      "random": {
+        "root": "data/.build/conditioned_benchmark_sources/DILI/source_only_snapshot/random",
+        "files": {
+          "heldout_molecule_condition_labels.jsonl": "b7a63a4af0c81e87507e7fd09d434246949e637011bc509a03310b9a5ee3ac37",
+          "test.jsonl": "c370580bcf4f97cfa417918c2b66c4263a58f3fdc4cd8b60c98fce7b3c34af0c",
+          "test_molecule_condition_labels.jsonl": "35566bf5b408af3fe1eed9c24875f17034986299e5cee31eb4f8369f827f58d0",
+          "train.jsonl": "600edf63445b2adda1e9442c46e7c975cbb52175dd677d441606cd9ebff09b78",
+          "train_molecule_condition_labels.jsonl": "f946a1988d383462de501bcd1b7850d6a208717a39e841680ed13fa44be2dbc7",
+          "valid.jsonl": "47dbb1a34a7c96a077f6b4ec9f742521c54a488e9555c64e3f9dd325ca3f0286",
+          "valid_molecule_condition_labels.jsonl": "f7bcae9d8d024bd34f6c9b3302c78e36f68b7c84a4bc21274dbb0817b808d9c0"
+        },
+        "splits": {
+          "train": {
+            "rows": 455,
+            "label_counts": {
+              "1": 420,
+              "0": 35
+            }
+          },
+          "valid": {
+            "rows": 57,
+            "label_counts": {
+              "1": 53,
+              "0": 4
+            }
+          },
+          "test": {
+            "rows": 57,
+            "label_counts": {
+              "1": 53,
+              "0": 4
+            }
+          }
+        }
+      }
+    },
+    "gold_artifacts": {
+      "audit_cohort_round1.jsonl": "428466196c49e62045d191e53b6d0c1c67967c70e65fb40a6d5ac20ec6490d67",
+      "audit_rejected_round1.jsonl": "3b11979a56c94de14dfa3b79a22f1ab7812bd039fc237b68261acbd9f918c6da",
+      "audit_round1.jsonl": "eb612002e0af8a054b063a1e57b7446645dc9983ab7e2dc1e2673ff2368364de",
+      "audit_transplant_context.jsonl": "b29b1d0ecee08f0e1dd2cc6dbffa9a5200ff487bba79fdbb70b0cbfded1f1b3e",
+      "base_record_decisions.parquet": "f8f440d8ee2d35fe0e24dec124ccbe944f9d5a54623122726635671754f6ff76",
+      "benchmark_selection.json": "48680f928144e079a853ade496512c838cd3d9f7bc91f825c82d2817b53ecc17",
+      "candidate_dispositions.parquet": "c3ea04583401701152492b68c59b9e79ec8bb5898d6ac56863d8d88ceff422bc",
+      "candidate_votes.jsonl": "8c466cc1d9a776cabee1e984013e44dd193ecb62252c73ee1e0369cfee4c1403",
+      "condition_definitions.json": "2fb07d4dc23d2aa6f509814ea6a4589fd4a1b8e22a2585344a0ce0bd0217b7b3",
+      "identity_candidates.jsonl": "f469cc02141f84e192958b58a20bec97a45b3f2ff5bef4e573ab80457e7a8974",
+      "identity_evidence.jsonl.gz": "a8dd930cc55a75fd88cf5602cff47cf981298e26012ed783bf7dc7b000cae9e8",
+      "identity_rejections.jsonl": "cbf4e34562f836e1c8f9195fcd6b5e11b55fe19daaf65936d802050f46ee30ed",
+      "name_resolutions.jsonl": "9ed4328b280943e01f7676cb81fb04b8c8248333df477eeb79be92876d91c0b1",
+      "parent_condition_exclusions.jsonl": "6aac4910541161097fdc5bca2d6eb8c710c1af1fe8508806c30b8859a13781dd",
+      "parent_condition_labels.jsonl": "6cfe98395aba8d1a529e194151ddbb9fbedd130af86b4d9bd6d3e7da1d7f6f9b",
+      "preparation.json": "30e9007bd11081149385bd1e36d660593d46b8a96bea922db2ebe5124977325a",
+      "record_reviews.jsonl": "688f2b01337f95c5a8f2c9608fe1e2b2589c95634b8f459e8aed5b175f72ed9b",
+      "source_votes.jsonl": "1dce6c9d9b02cd849321e86a2fe4bebda62dd9fa3f27cc913d3eecaef9d6b25d",
+      "study_conflicts.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "gold": {
+    "path": "data/starling_data/dili/gold_v3/source_votes.jsonl",
+    "sha256": "9d0372d129481cb0af23e1d061c250636e21ffab2aa392f56c5afcc5cb96e68b",
+    "source_votes": 4727,
+    "identity_contract": "new_task_tautomer_identity.v2"
+  },
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json",
+  "benchmark": {
+    "scaffold": {
+      "root": "data/conditioned_benchmark/DILI/scaffold",
+      "splits": {
+        "train": {
+          "rows": 828,
+          "sha256": "c07d606d03e0cf095c5f0ec1074886ad84af102f40937f72eace471e5cffd8de"
+        },
+        "valid": {
+          "rows": 103,
+          "sha256": "3e202d8e4fd182a66c1140a6d9d0c6b1af6e3b47b1ec9d3a0024fe0e810d8db9"
+        },
+        "test": {
+          "rows": 103,
+          "sha256": "804363fb1a63d61499042b7a55512c929e195d536a67accb1e6df3a99b7c7460"
+        }
+      }
+    },
+    "random": {
+      "root": "data/conditioned_benchmark/DILI/random",
+      "splits": {
+        "train": {
+          "rows": 828,
+          "sha256": "b90c12706e18840d8d01c43533b63a9dda78c52746671a0584dc22befb8ae556"
+        },
+        "valid": {
+          "rows": 103,
+          "sha256": "b33d55771ab0f1d2823355b4064f3d13a34b2aa011eecc12beb1e88f5c73d77d"
+        },
+        "test": {
+          "rows": 103,
+          "sha256": "9d960868394b93d16949e9b302a00057017d70d0935bb53a3059a6a7dac51c7a"
+        }
+      }
+    }
+  },
+  "current_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "current_level_records": "artifacts/chembl_tool/starling/current_level_records/dili",
+  "historical_augmented_benchmark": {
+    "root": "data/conditioned_benchmark/DILI",
+    "publication_receipt": "data/conditioned_benchmark/tautomer_identity_repair_publication.json",
+    "scaffold_split_rename_receipt": "data/conditioned_benchmark/DILI/provenance/scaffold_valid_test_swap_20260908.json",
+    "test_previously_used_for_validation": true
+  },
+  "active_benchmark": {
+    "root": "data/conditioned_benchmark/DILI",
+    "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json"
+  }
+}

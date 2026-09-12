@@ -1,0 +1,42 @@
+{
+  "parent_key": "OUXXDXXQNWKOIF-RYUDHWBXSA-N",
+  "ok": true,
+  "synonyms": [
+    "(12S)-8-(4-((2S)-2-aminopropanoyl)oxypiperidin-1-yl)-7-fluoro-12-methyl-4-oxo-1-azatricyclo(7.3.1.05,13)trideca-2,5,7,9(13)-tetraene-3-carboxylic acid",
+    "(12S)-8-[4-[(2S)-2-aminopropanoyl]oxypiperidin-1-yl]-7-fluoro-12-methyl-4-oxo-1-azatricyclo[7.3.1.05,13]trideca-2,5,7,9(13)-tetraene-3-carboxylic acid",
+    "(5S)-8-[4-(L-alanyloxy)piperidin-1-yl]-9-fluoro-5-methyl-1-oxo-6,7-dihydro-1H,5H-pyrido[3,2,1-ij]quinoline-2-carboxylic acid",
+    "(S)-8-(4-(((S)-2-Aminopropanoyl)oxy)piperidin-1-yl)-9-fluoro-5-methyl-1-oxo-1,5,6,7-tetrahydropyrido[3,2,1-ij]quinoline-2-carboxylic acid",
+    "(S)-8-[4-[[(S)-2-Aminopropanoyl]oxy]-1-piperidyl]-9-fluoro-5-methyl-1-oxo-1,5,6,7-tetrahydropyrido[3,2,1-ij]quinoline-2-carboxylic Acid",
+    "57B7E1D1TG",
+    "706809-20-3",
+    "706809-20-3 (free base);",
+    "AT37993",
+    "Alalevonadifloxacin",
+    "Alalevonadifloxacin [INN:WHO-DD]",
+    "Alalevonadifloxacin [INN]",
+    "Alalevonadifloxacin [WHO-DD]",
+    "CHEMBL5095635",
+    "DTXSID001375587",
+    "EX-A7844H",
+    "GTPL10756",
+    "L-Alanine, 1-((5S)-2-carboxy-9-fluoro-6,7-dihydro-5-methyl-1-oxo-1H,5H-benzo(ij)quinolizin-8-yl)-4-piperidinyl ester",
+    "L-Alanine, 1-((5S)-2-carboxy-9-fluoro-6,7-dihydro-5-methyl-1-oxo-1H,5H-benzo(ij)quinolizin-8-yl)-4-piperidinyl ester, (-)-",
+    "MFCD30533431",
+    "Q27261493",
+    "RefChem:110474",
+    "SCHEMBL966483",
+    "SY343578",
+    "UNII-57B7E1D1TG",
+    "WCK 2349",
+    "WCK-2349",
+    "WCK2349",
+    "alalevonadifloxacine",
+    "alalevonadifloxacino",
+    "alalevonadifloxacinum"
+  ],
+  "cids": [
+    16734914
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OUXXDXXQNWKOIF-RYUDHWBXSA-N/synonyms/JSON",
+  "http_status": 200
+}

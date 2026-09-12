@@ -1,0 +1,42 @@
+{
+  "parent_key": "MRFOLGFFTUGAEB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(3,4-Dihydroxy-5-nitrophenyl)-2-phenylethan-1-one",
+    "1-(3,4-dihydroxy-5-nitro-phenyl)-2-phenyl-ethanone",
+    "1-(3,4-dihydroxy-5-nitrophenyl)-2-phenylethanone",
+    "274925-86-9",
+    "3-NITRO-5-PHENYLACETYL CATECHOL",
+    "AKOS040742276",
+    "BDBM50108878",
+    "BIA 3-202",
+    "CHEMBL160038",
+    "CS-0025737",
+    "DB14849",
+    "DTXCID70104403",
+    "DTXSID30181912",
+    "Ethanone, 1-(3,4-dihydroxy-5-nitrophenyl)-2-phenyl-",
+    "G13659",
+    "HY-106405",
+    "MFCD09954136",
+    "MS-23873",
+    "NM2KXJ990T",
+    "Nebicapone",
+    "Nebicapone [INN]",
+    "Q21547145",
+    "RefChem:164945",
+    "SCHEMBL132167",
+    "SCHEMBL29379610",
+    "T16279",
+    "UNII-NM2KXJ990T",
+    "ZKA92586",
+    "nebicapona",
+    "nebicaponum",
+    "orb1706922"
+  ],
+  "cids": [
+    9838389
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MRFOLGFFTUGAEB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

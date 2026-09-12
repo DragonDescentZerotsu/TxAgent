@@ -1,0 +1,31 @@
+{
+  "parent_key": "CABMTIJINOIHOD-QGZVFWFLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CABMTIJINOIHOD-QGZVFWFLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(R)-IMAZAQUIN",
+    "2-((4R)-4-methyl-4-(1-methylethyl)-5-oxo-4,5-dihydro-1H-imidazol-2-yl)quinoline-3-carboxylic acid",
+    "2-((4R)-4-methyl-5-oxo-4-(propan-2-yl)-4,5-dihydro-1H-imidazol-2-yl)quinoline-3-carboxylic acid",
+    "2-((4R)-4-methyl-5-oxo-4-propan-2-yl-1H-imidazol-2-yl)quinoline-3-carboxylic acid",
+    "2-(4-ISOPROPYL-4-METHYL-5-OXO-4,5-DIHYDRO-1H-IMIDAZOL-2-YL)QUINOLINE-3-CARBOXYLIC ACID",
+    "2-[(4R)-4-methyl-4-(1-methylethyl)-5-oxo-4,5-dihydro-1H-imidazol-2-yl]quinoline-3-carboxylic acid",
+    "2-[(4R)-4-methyl-5-oxo-4-(propan-2-yl)-4,5-dihydro-1H-imidazol-2-yl]quinoline-3-carboxylic acid",
+    "2-[(4R)-4-methyl-5-oxo-4-propan-2-yl-1H-imidazol-2-yl]quinoline-3-carboxylic acid",
+    "246176-07-8",
+    "BDBM50487032",
+    "CHEBI:147359",
+    "CHEMBL1229742",
+    "DB04582",
+    "DTXCID90820496",
+    "DTXSID60872982",
+    "NS00099191",
+    "R-imazaquin",
+    "RefChem:70307",
+    "SCHEMBL18805",
+    "SCHEMBL29524779"
+  ],
+  "http_status": 200,
+  "cids": [
+    909781
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 71512108,
+        "MolecularFormula": "C13H16F3N5O",
+        "SMILES": "C1CCN(C1)/C(=N/C(=NC2=CC=C(C=C2)OC(F)(F)F)N)/N",
+        "InChIKey": "NGFUHJWVBKTNOE-UHFFFAOYSA-N"
+      }
+    ]
+  }
+}

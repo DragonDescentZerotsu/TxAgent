@@ -1,0 +1,14 @@
+{
+  "parent_key": "CRWHRMSWJOLABX-NXWCFRFGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CRWHRMSWJOLABX-NXWCFRFGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "C19435",
+    "CHEBI:82476",
+    "Q27155975"
+  ],
+  "http_status": 200,
+  "cids": [
+    53297431
+  ]
+}

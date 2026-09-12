@@ -1,0 +1,21 @@
+{
+  "parent_key": "JNMYQFUNYDSRDY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JNMYQFUNYDSRDY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10-Methylbenz(a)acridine",
+    "10-Methylbenzo[a]acridine",
+    "10-Methylbenzo[a]acridine #",
+    "3781-67-7",
+    "Benz(a)acridine, 10-methyl-",
+    "Benz[a]acridine, 10-methyl-",
+    "DTXCID20113742",
+    "DTXSID10191251",
+    "JNMYQFUNYDSRDY-UHFFFAOYSA-N",
+    "RefChem:117053"
+  ],
+  "http_status": 200,
+  "cids": [
+    618316
+  ]
+}

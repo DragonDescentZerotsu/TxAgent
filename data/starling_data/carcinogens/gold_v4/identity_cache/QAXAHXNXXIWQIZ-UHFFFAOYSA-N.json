@@ -1,0 +1,36 @@
+{
+  "parent_key": "QAXAHXNXXIWQIZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QAXAHXNXXIWQIZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-Diethyl-1-oxohydrazine 1-oxide #",
+    "7119-92-8",
+    "AKOS006278471",
+    "BIS(N-ETHYL)NITROAMINE",
+    "BRN 1752163",
+    "CCRIS 5859",
+    "D7TJ0C6RJO",
+    "DB-221688",
+    "DIETHYLAMINE, N-NITRO-",
+    "DTXCID00143880",
+    "DTXSID50221389",
+    "Diethylnitramine",
+    "Ethanamine, N-ethyl-N-nitro-",
+    "Ethanamine,N-ethyl-N-nitro-",
+    "N,N-diethylnitramide",
+    "N-Ethyl-N-nitroethanamine",
+    "N-Nitrodiethylamine",
+    "NSC 36184",
+    "NSC-36184",
+    "NSC36184",
+    "Q27276226",
+    "QAXAHXNXXIWQIZ-UHFFFAOYSA-N",
+    "RefChem:163946",
+    "SCHEMBL2038686",
+    "UNII-D7TJ0C6RJO"
+  ],
+  "http_status": 200,
+  "cids": [
+    23505
+  ]
+}

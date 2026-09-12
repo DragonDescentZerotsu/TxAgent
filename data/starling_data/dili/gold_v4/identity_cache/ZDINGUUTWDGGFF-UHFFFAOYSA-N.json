@@ -1,0 +1,30 @@
+{
+  "parent_key": "ZDINGUUTWDGGFF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22537-51-5",
+    "841L03HG64",
+    "ANTIMONY, ION (SB5+)",
+    "Antimony (V) ion",
+    "Antimony cation (5+)",
+    "Antimony(5+)",
+    "Antimony, ion(5+)",
+    "DB13047",
+    "DTXCID30820071",
+    "DTXSID50872431",
+    "Pentavalent Antimony",
+    "Q27269467",
+    "RefChem:113154",
+    "SB(V) NON-COMPLEXED",
+    "SB+5",
+    "SB5+",
+    "SCHEMBL29424570",
+    "Sb(5+)",
+    "UNII-841L03HG64"
+  ],
+  "cids": [
+    73608879
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZDINGUUTWDGGFF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

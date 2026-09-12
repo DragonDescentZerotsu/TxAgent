@@ -1,0 +1,22 @@
+{
+  "parent_key": "UZQJVUCHXGYFLQ-AYDHOLPZSA-N",
+  "ok": true,
+  "synonyms": [
+    "66594-14-7",
+    "DTXCID70139250",
+    "DTXSID90216759",
+    "Iscotec AB",
+    "Quil A",
+    "Quil-A",
+    "Quillaia A",
+    "RefChem:178141",
+    "SCHEMBL29351676",
+    "Spijoside",
+    "beta-D-Glucopyranosyl-(1->3)-beta-D-glucopyranosyl-(1->3)-beta-D-glucopyranosyl-(1->3)-beta-D-glucopyranosyl-(1->3)-1-O-[(18xi)-3beta-{[beta-D-glucopyranosyl-(1->3)-beta-D-glucopyranosyl-(1->3)-beta-D-glucopyranosyl]oxy}-16-hydroxy-23,28-dioxoolean-12-en-28-yl]-beta-D-glucopyranose"
+  ],
+  "cids": [
+    56841866
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UZQJVUCHXGYFLQ-AYDHOLPZSA-N/synonyms/JSON",
+  "http_status": 200
+}

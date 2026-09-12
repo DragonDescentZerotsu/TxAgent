@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 4055,
+        "MolecularFormula": "C11H8O2",
+        "SMILES": "CC1=CC(=O)C2=CC=CC=C2C1=O",
+        "InChIKey": "MJVAVZPDRWSRRC-UHFFFAOYSA-N"
+      }
+    ]
+  }
+}

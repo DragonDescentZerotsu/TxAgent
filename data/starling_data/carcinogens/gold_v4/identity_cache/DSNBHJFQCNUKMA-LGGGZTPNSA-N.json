@@ -1,0 +1,12 @@
+{
+  "parent_key": "DSNBHJFQCNUKMA-LGGGZTPNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DSNBHJFQCNUKMA-LGGGZTPNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "NS00121137"
+  ],
+  "http_status": 200,
+  "cids": [
+    169501842
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "version": "dili_condition_group_review.v2",
+  "status": "staged_condition_inputs_and_reaggregation_complete_not_published",
+  "source_sha256": "9d0372d129481cb0af23e1d061c250636e21ffab2aa392f56c5afcc5cb96e68b",
+  "frozen_split_sha256": {
+    "data/conditioned_benchmark/DILI/scaffold/train.jsonl": "c07d606d03e0cf095c5f0ec1074886ad84af102f40937f72eace471e5cffd8de",
+    "data/conditioned_benchmark/DILI/scaffold/valid.jsonl": "3e202d8e4fd182a66c1140a6d9d0c6b1af6e3b47b1ec9d3a0024fe0e810d8db9",
+    "data/conditioned_benchmark/DILI/scaffold/test.jsonl": "804363fb1a63d61499042b7a55512c929e195d536a67accb1e6df3a99b7c7460"
+  },
+  "source_records": 4727,
+  "changed_condition_records": 2397,
+  "record_labels_changed": 0,
+  "raw_payloads_changed": 0,
+  "study_votes_after_merge": 4716,
+  "duplicate_study_units": 11,
+  "conflicting_study_units": 0,
+  "accepted_parent_conditions": 2565,
+  "accepted_labels": {
+    "1": 2373,
+    "0": 192
+  },
+  "rejected_parent_conditions": 7,
+  "current_condition_groups_before": 20,
+  "current_condition_groups_after_group_mapping_only": 10,
+  "current_parent_condition_collisions": 122,
+  "current_opposite_label_collisions": 19,
+  "pending": [
+    "Full-base reviewed records have not yet been converted into study/condition gold.",
+    "Other unreviewed free-text conditions are preserved, not erased.",
+    "TDC/Starling conflicts require explicit resolution; their labels were not pooled as study votes.",
+    "Fresh splits, indices, registry and experiments are not published by this audit."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "parent_key": "AGAYZDNGCFSGLT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AGAYZDNGCFSGLT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-benzyl-4-isocyanatobenzene",
+    "1-isocyanato-4-(phenylmethyl)benzene",
+    "1823-37-6",
+    "4,4'-isocyanatodiphenylmethane",
+    "4-BENZYLPHENYL ISOCYANATE  97",
+    "4-Benzylphenyl isocyanate",
+    "4-Benzylphenyl isocyanate, 97%",
+    "4-isocyanato-4'-diphenylmethane",
+    "4-isocyanatodiphenylmethane",
+    "625-493-5",
+    "AKOS015889256",
+    "CHEBI:55312",
+    "DB-126842",
+    "DTXSID60171280",
+    "Epitope ID:120374",
+    "IDM",
+    "Isocyanic acid, alpha-phenyl-p-tolyl ester",
+    "MMI",
+    "NS00002306",
+    "Q27124220",
+    "RefChem:518547",
+    "SCHEMBL11019506",
+    "SCHEMBL11019508",
+    "SCHEMBL510929",
+    "alpha-Phenyl-p-tolyl isocyanate",
+    "diphenylmethane monoisocyanate"
+  ],
+  "http_status": 200,
+  "cids": [
+    3014044
+  ]
+}

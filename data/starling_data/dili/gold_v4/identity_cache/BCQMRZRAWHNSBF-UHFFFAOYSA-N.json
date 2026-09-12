@@ -1,0 +1,43 @@
+{
+  "parent_key": "BCQMRZRAWHNSBF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1-methyl-4-phenylpiperidin-4-yl) propanoate",
+    "07SGC963IR",
+    "1-Methyl-4-phenyl-4-piperidinol propionate",
+    "1-Methyl-4-phenyl-4-propionoxypiperidine",
+    "1-Methyl-4-phenyl-4-propionyloxypiperidine",
+    "1-Methyl-4-phenylpiperidin-4-yl propanoate",
+    "13147-09-6",
+    "3-Demethylprodine",
+    "4-PROPIONYLOXY-4-PHENYL-N-METHYLPIPERIDINE",
+    "4-Piperidinol, 1-methyl-4-phenyl-, propanoate (ester)",
+    "4-Piperidinol, 1-methyl-4-phenyl-, propionate (7CI)",
+    "C22797",
+    "CHEBI:233164",
+    "CHEMBL279865",
+    "DB01478",
+    "DEA No. 9661",
+    "DTXSID80157061",
+    "Desmethylprodine",
+    "IDS-NM-018",
+    "IDS-NM-018(SECT.3)",
+    "IK 13",
+    "MPPP",
+    "NCGC00247683-01",
+    "NS00068756",
+    "PPMP",
+    "Propionic acid, 1-methyl-4-phenyl-4-piperidyl ester",
+    "Propionic acid, 1-methyl-4-phenyl-4-piperidyl ester (6CI)",
+    "Q408952",
+    "RefChem:132253",
+    "SCHEMBL614226",
+    "Synthetic heroin",
+    "UNII-07SGC963IR"
+  ],
+  "cids": [
+    61583
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BCQMRZRAWHNSBF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

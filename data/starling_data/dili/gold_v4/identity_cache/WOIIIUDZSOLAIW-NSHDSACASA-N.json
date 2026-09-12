@@ -1,0 +1,12 @@
+{
+  "parent_key": "WOIIIUDZSOLAIW-NSHDSACASA-N",
+  "ok": true,
+  "synonyms": [
+    "DB07402"
+  ],
+  "cids": [
+    46937068
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WOIIIUDZSOLAIW-NSHDSACASA-N/synonyms/JSON",
+  "http_status": 200
+}

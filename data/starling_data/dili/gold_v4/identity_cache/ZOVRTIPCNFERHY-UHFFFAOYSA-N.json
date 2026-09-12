@@ -1,0 +1,28 @@
+{
+  "parent_key": "ZOVRTIPCNFERHY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(1-benzofuran-5-yl)-N-methylpropan-2-amine",
+    "1-(benzofuran-5-yl)-N-Methylpropan-2-aMine",
+    "1354631-77-8",
+    "5-(N-Methyl-2-aminopropyl)benzofuran",
+    "5-BENZOFURANETHANAMINE, N,.ALPHA.-DIMETHYL-",
+    "5-Benzofuranethanamine, N,alpha-dimethyl-",
+    "5-MAPB",
+    "6-MAPB (N-methyl (6-(2-aminopropyl)benzofuran))",
+    "AKOS028109813",
+    "DTXSID801017189",
+    "NS00017412",
+    "PD047085",
+    "Q4639615",
+    "SCHEMBL22027380",
+    "SCHEMBL30401357",
+    "UNII-XW34GUY2OY",
+    "XW34GUY2OY"
+  ],
+  "cids": [
+    102336592
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZOVRTIPCNFERHY-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

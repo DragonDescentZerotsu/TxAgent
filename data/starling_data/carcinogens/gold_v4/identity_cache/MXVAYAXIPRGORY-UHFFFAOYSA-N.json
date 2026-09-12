@@ -1,0 +1,31 @@
+{
+  "parent_key": "MXVAYAXIPRGORY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MXVAYAXIPRGORY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "01N0V0N4S2",
+    "1,1'-Biphenyl, 3,3',4,5,5'-pentachloro-",
+    "1,1'-Biphenyl, 3,3',4,5,5'-pentachloro- (9CI)",
+    "1,2,3-trichloro-5-(3,5-dichlorophenyl)benzene",
+    "3,3',4,5,5'-Pentachloro-1,1'-biphenyl",
+    "3,3',4,5,5'-Pentachlorobiphenyl",
+    "39635-33-1",
+    "CB 127",
+    "CHEMBL4086752",
+    "DTXCID3039662",
+    "DTXSID9074145",
+    "MXVAYAXIPRGORY-UHFFFAOYSA-N",
+    "NS00134876",
+    "PCB 127",
+    "Pcb No. 127",
+    "Q27231439",
+    "RefChem:53596",
+    "SCHEMBL463584",
+    "UNII-01N0V0N4S2"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (20%), Request Time status: Green (2%), Service status: Black (137%)",
+  "cids": [
+    63085
+  ]
+}

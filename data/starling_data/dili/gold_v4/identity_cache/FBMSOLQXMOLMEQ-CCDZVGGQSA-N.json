@@ -1,0 +1,13 @@
+{
+  "parent_key": "FBMSOLQXMOLMEQ-CCDZVGGQSA-N",
+  "ok": true,
+  "synonyms": [
+    "26-iodo-cholesterol",
+    "SCHEMBL29756435"
+  ],
+  "cids": [
+    129668136
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FBMSOLQXMOLMEQ-CCDZVGGQSA-N/synonyms/JSON",
+  "http_status": 200
+}

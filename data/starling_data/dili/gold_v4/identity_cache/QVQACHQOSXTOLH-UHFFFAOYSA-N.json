@@ -1,0 +1,28 @@
+{
+  "parent_key": "QVQACHQOSXTOLH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1147856-25-4",
+    "2694728-63-5",
+    "954-827-5",
+    "AKOS040733416",
+    "CS-0091751",
+    "EN300-28339506",
+    "G18287",
+    "HY-125469",
+    "ICA 105665",
+    "ICA-105665",
+    "MS-25548",
+    "N-(2-cyclopropyl-7-fluoro-4-oxo-3,4-dihydroquinazolin-3-yl)-2-(4-fluorophenyl)acetamide",
+    "RefChem:789648",
+    "SCHEMBL13102286",
+    "SCHEMBL29830753",
+    "T11606",
+    "orb1709449"
+  ],
+  "cids": [
+    70838704
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QVQACHQOSXTOLH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

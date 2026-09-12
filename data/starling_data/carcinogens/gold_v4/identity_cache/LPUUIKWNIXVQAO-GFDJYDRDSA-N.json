@@ -1,0 +1,27 @@
+{
+  "parent_key": "LPUUIKWNIXVQAO-GFDJYDRDSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LPUUIKWNIXVQAO-GFDJYDRDSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2E,4E,6E,8E)-3,7-dimethyl-N-phenyl-9-(2,6,6-trimethylcyclohex-1-en-1-yl)nona-2,4,6,8-tetraenamide",
+    "(2E,4E,6E,8E)-3,7-dimethyl-N-phenyl-9-(2,6,6-trimethylcyclohexen-1-yl)nona-2,4,6,8-tetraenamide",
+    "15-Anilinoretinal",
+    "33631-48-0",
+    "68M5DRG5D7",
+    "CCRIS 4285",
+    "CHEMBL245544",
+    "DTXCID50109810",
+    "DTXSID90187319",
+    "N-(Phenyl)retinamide",
+    "N-Phenylretinamide",
+    "PHENYLRETINAMIDE, N-",
+    "RefChem:164120",
+    "Retinamide, N-phenyl-",
+    "Retinanilide",
+    "SCHEMBL15199721"
+  ],
+  "http_status": 200,
+  "cids": [
+    6506008
+  ]
+}

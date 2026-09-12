@@ -1,0 +1,30 @@
+{
+  "parent_key": "MUJIDPITZJWBSW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MUJIDPITZJWBSW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "16065-88-6",
+    "625-870-4",
+    "Allyl(1,3-bis(2,6-diisopropylphenyl)imidazol-2-ylidene)chloropalladium(II)",
+    "Allyl[1,3-bis(2,6-diisopropylphenyl)imidazol-2-ylidene]chloropalladium(II)",
+    "DTXSID10936361",
+    "MUJIDPITZJWBSW-UHFFFAOYSA-N",
+    "PALLADIUM ION",
+    "PALLADIUM(II)",
+    "PDII",
+    "Palladium(2+), ion",
+    "Palladium, ion (Pd(2+))",
+    "Palladous ion",
+    "Pd++",
+    "Pd2+",
+    "Q27464366",
+    "RefChem:554893",
+    "SCHEMBL29372082",
+    "palladium(+2)",
+    "palladium(2+)"
+  ],
+  "http_status": 200,
+  "cids": [
+    105144
+  ]
+}

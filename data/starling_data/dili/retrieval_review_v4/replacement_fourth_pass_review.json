@@ -1,0 +1,821 @@
+{
+  "status": "reviewed_requires_reselection",
+  "n_cards": 90,
+  "n_bounded_sibling_records_read": 145,
+  "cards": [
+    {
+      "candidate_index": 0,
+      "card_id": "card_9ca1ae4feb8fb11c",
+      "source_row_uids": [
+        "sr_dec553ad959a49cc9ed8e8ae072d5658"
+      ],
+      "action": "repair",
+      "reason": "Measured viral-load efficacy alone is outside DILI retrieval scope. Preserve separate host-response and hepatic cell-safety records; no raw acquisition is deleted."
+    },
+    {
+      "candidate_index": 1,
+      "card_id": "card_d589051e5ae14ad0",
+      "source_row_uids": [
+        "sr_8d296d8dbbf347448010bd58d608fa75"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 5-Aza-2'-deoxycytidine (decitabine). Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 2,
+      "card_id": "card_4a00056414e72358",
+      "source_row_uids": [
+        "sr_f9d942171a58414b8723dddf8b0bac21"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine)."
+    },
+    {
+      "candidate_index": 3,
+      "card_id": "card_c7d412e9a0a11e32",
+      "source_row_uids": [
+        "sr_9be03aff8079412d94b387e6e441260b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine)."
+    },
+    {
+      "candidate_index": 4,
+      "card_id": "card_ce39906bcb58659f",
+      "source_row_uids": [
+        "sr_327da1d1c19d46dbbb43a5821176fe32"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA)."
+    },
+    {
+      "candidate_index": 5,
+      "card_id": "card_c5601c662229b748",
+      "source_row_uids": [
+        "sr_5d3fc8fa92bc4a6ab3aab282b5fa1fc9"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA)."
+    },
+    {
+      "candidate_index": 6,
+      "card_id": "card_9f979744acbdbb58",
+      "source_row_uids": [
+        "sr_8427a9fc34984958bcacafbbeff2c2b5"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 7,
+      "card_id": "card_ee34bfb940ea3974",
+      "source_row_uids": [
+        "sr_26d492b43bdb4c78a97bebca32713e3f"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations. Primary abstract reports 10^-5 mol/L, equivalent to 10 micromolar. Correct ambiguous extraction 10E-5 without changing the experiment."
+    },
+    {
+      "candidate_index": 8,
+      "card_id": "card_357350bc19f72148",
+      "source_row_uids": [
+        "sr_bb40d67c702542f2a3144f7afe4d1eaf"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 9,
+      "card_id": "card_4405a8c5cffbe351",
+      "source_row_uids": [
+        "sr_7aef45078cb24b55ae35548dcc876732"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 10,
+      "card_id": "card_f8f6a981967e72e9",
+      "source_row_uids": [
+        "sr_9169a5dbc983444f992e5296883e7bac"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations. This preprint examines redox-dependent biomass/cell-size regulation under MPC overexpression. Spheroid size recovery is an indirect functional observation, not a liver-safety outcome."
+    },
+    {
+      "candidate_index": 11,
+      "card_id": "card_45b94daac2bd9322",
+      "source_row_uids": [
+        "sr_35cb6184a22942f5b878ec906fef8bda"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 12,
+      "card_id": "card_3c9f193cacd35cbc",
+      "source_row_uids": [
+        "sr_c4e3171259b44e2fbf6582c3fbdfd66b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA)."
+    },
+    {
+      "candidate_index": 13,
+      "card_id": "card_05a51fe5d4e7871a",
+      "source_row_uids": [
+        "sr_321322b33f6b46d397f1e2de524acf41"
+      ],
+      "action": "repair",
+      "reason": "Original paper identifies a peptide-enriched calf spleen extract, not butyl gallate. A mixture has no unique small-molecule structure. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence."
+    },
+    {
+      "candidate_index": 14,
+      "card_id": "card_25e1440dc07226ce",
+      "source_row_uids": [
+        "sr_9c7c792f038d417a86a662dbc4f567a9"
+      ],
+      "action": "repair",
+      "reason": "Original paper identifies a peptide-enriched calf spleen extract, not butyl gallate. A mixture has no unique small-molecule structure. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence."
+    },
+    {
+      "candidate_index": 15,
+      "card_id": "card_69fa5288ce4c1887",
+      "source_row_uids": [
+        "sr_fa193b321a3b422b80491ab0d80b4580"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Alpha-naphthylisothiocyanate (ANIT)."
+    },
+    {
+      "candidate_index": 16,
+      "card_id": "card_cd53a11b3fba7fe4",
+      "source_row_uids": [
+        "sr_96ec57391bbc4d048e5ffccc91b763dc"
+      ],
+      "action": "retain",
+      "reason": "Only shared unspecified-unit count changed from 7 to 8. Existing l1_surface_difference_explanation.json verifies identical actual-voter card claim and condition; gold direction was not re-reviewed."
+    },
+    {
+      "candidate_index": 17,
+      "card_id": "card_20a40e8edfb75b23",
+      "source_row_uids": [
+        "sr_6223c4da43074a8b832e8fc43b77159f"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 18,
+      "card_id": "card_4e12d3f8f6a3c35c",
+      "source_row_uids": [
+        "sr_b5c075472ba24f8ca2ddd4851763cd4d"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 19,
+      "card_id": "card_efbaa6588db9686a",
+      "source_row_uids": [
+        "sr_dae852d28d8b40a59de41e32e463fe18"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 20,
+      "card_id": "card_21af9ad4b2f31dea",
+      "source_row_uids": [
+        "sr_86c7e04e8e0f4a94a0e821e9da335e1e"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 21,
+      "card_id": "card_4bbdac24ca552c4c",
+      "source_row_uids": [
+        "sr_278a335817434bc9a658355140da7f76"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity verified from KEGG C16615; clinical assays may pool methylated nucleotide phosphorylation states. Preserve association and original qualification rather than treating the measurement as a single-species causal threshold."
+    },
+    {
+      "candidate_index": 22,
+      "card_id": "card_6406c664e70d4f96",
+      "source_row_uids": [
+        "sr_a1d672e05e7d48f5af76bae2559d1cb3"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 6-Methylmercaptopurine ribonucleotide (S-methylthioinosine monophosphate). Correct S-methyl connectivity verified from KEGG C16615; clinical assays may pool methylated nucleotide phosphorylation states. Preserve association and original qualification rather than treating the measurement as a single-species causal threshold."
+    },
+    {
+      "candidate_index": 23,
+      "card_id": "card_2da2d3a86453b634",
+      "source_row_uids": [
+        "sr_c8b05ad9e1d1415ca94bc54b4d7b60ab"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR riboside (acadesine). The administered AICAR riboside is distinct from intracellular phosphorylated ZMP. Preserve the original negative, protective and mechanistic findings."
+    },
+    {
+      "candidate_index": 24,
+      "card_id": "card_dbba81911c71295b",
+      "source_row_uids": [
+        "sr_d4cb9cc1d1b4484482791b0fa8a5c44c"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR riboside (acadesine). The administered AICAR riboside is distinct from intracellular phosphorylated ZMP. Preserve the original negative, protective and mechanistic findings."
+    },
+    {
+      "candidate_index": 25,
+      "card_id": "card_91735b7bcc8b41ad",
+      "source_row_uids": [
+        "sr_84d11196a39e4916833e3aca5ec1d245"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR riboside (acadesine). The administered AICAR riboside is distinct from intracellular phosphorylated ZMP. Preserve the original negative, protective and mechanistic findings."
+    },
+    {
+      "candidate_index": 26,
+      "card_id": "card_a32bca80457fa022",
+      "source_row_uids": [
+        "sr_1de4a1886c174aeda5a4ed1fcdb145f3"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish AICAR riboside (acadesine). The administered AICAR riboside is distinct from intracellular phosphorylated ZMP. Preserve the original negative, protective and mechanistic findings."
+    },
+    {
+      "candidate_index": 27,
+      "card_id": "card_2e13ad711a22c215",
+      "source_row_uids": [
+        "sr_8c07de06f37a4bedbe5f478e1d3a86a6"
+      ],
+      "action": "repair",
+      "reason": "HL-7702/L-02/LO-2 is a documented HeLa derivative (Cellosaurus CVCL_6926). Preserve the cell-line name and bounded mechanism; MIHA is a separate immortalized hepatic model, and neither is primary human hepatocytes."
+    },
+    {
+      "candidate_index": 28,
+      "card_id": "card_ed37308fd7d4cb8c",
+      "source_row_uids": [
+        "sr_c00afa667fa44feca31066adab1c6e0e"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 29,
+      "card_id": "card_ee947bf2f34741a3",
+      "source_row_uids": [
+        "sr_def79ee63b8f41d2a5e394b1894e7db8"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 30,
+      "card_id": "card_5743803df49608d5",
+      "source_row_uids": [
+        "sr_b2e9606b7d17481890fcbef9354365cb"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine)."
+    },
+    {
+      "candidate_index": 31,
+      "card_id": "card_e10b3a70424279af",
+      "source_row_uids": [
+        "sr_8e58537aa603417392785a126fbc84a6"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Azacytidine (azacitidine)."
+    },
+    {
+      "candidate_index": 32,
+      "card_id": "card_44dd089e55fe9a28",
+      "source_row_uids": [
+        "sr_be6ed52fe4d74c81ba592e0a9b4f648a"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 33,
+      "card_id": "card_78f8bb90a296f263",
+      "source_row_uids": [
+        "sr_1220cd6168fb463a91f3c1447b248f72"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 34,
+      "card_id": "card_d85a20958a4069fe",
+      "source_row_uids": [
+        "sr_d338c3b840bd4e2ab6e10fef8dd166db"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish D-galactosamine (GalN)."
+    },
+    {
+      "candidate_index": 35,
+      "card_id": "card_f5ea0450597fd16a",
+      "source_row_uids": [
+        "sr_876642fcbd5a4ebd80cfc87548841a86"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 36,
+      "card_id": "card_0e4010913a9c84dd",
+      "source_row_uids": [
+        "sr_6402739461f440d4ab99263ef1bd19f6"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 37,
+      "card_id": "card_7b0c0736be46eb80",
+      "source_row_uids": [
+        "sr_3d0203ec086d4bd28b0d1315d4c38b63",
+        "sr_2b2fa48ccd3d4fe1820ccfd6da2bac1f"
+      ],
+      "action": "repair",
+      "reason": "Original paper explicitly identifies a botanical water extract, not Stribild or emtricitabine. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence. Original paper explicitly identifies a botanical water extract, not Stribild or emtricitabine. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence."
+    },
+    {
+      "candidate_index": 38,
+      "card_id": "card_a2ea9ff8f9a2f2f5",
+      "source_row_uids": [
+        "sr_19a7b87e4ec94a059fb62dda8e686b8b"
+      ],
+      "action": "repair",
+      "reason": "Original paper explicitly identifies a botanical water extract, not Stribild or emtricitabine. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence."
+    },
+    {
+      "candidate_index": 39,
+      "card_id": "card_8fb2815da632e3ef",
+      "source_row_uids": [
+        "sr_0ddde553795048f4ad47052c17fb5b23"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 40,
+      "card_id": "card_5fa08404569b836d",
+      "source_row_uids": [
+        "sr_88c7589b6a584a3f9c826ed800c1c57d"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 41,
+      "card_id": "card_953c947a63bca63f",
+      "source_row_uids": [
+        "sr_8645b69e10f74cf79e7244c3ed3abdc7"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyproterone acetate (CPA)."
+    },
+    {
+      "candidate_index": 42,
+      "card_id": "card_4fceb226514262d1",
+      "source_row_uids": [
+        "sr_d24e5db6fa7b41f2b7b3e5628f3491c2"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Cyclophosphamide (CPA)."
+    },
+    {
+      "candidate_index": 43,
+      "card_id": "card_8532126daba84a56",
+      "source_row_uids": [
+        "sr_0882957080da4b00ae7e9e49a545f52b"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 44,
+      "card_id": "card_2e523de08d8c14e6",
+      "source_row_uids": [
+        "sr_6c79f003a2e8442692f1b3d1258bb6f3"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Acetylshikonin (ASK). ASK is acetylshikonin in the original paper, not seliciclib. Preserve JNK/ER/ROS co-treatment mechanisms and transformed-cell limitations; the source uses inconsistent SP600129/SP600125 spelling, which is not silently resolved."
+    },
+    {
+      "candidate_index": 45,
+      "card_id": "card_63ae95b9bb3c95fa",
+      "source_row_uids": [
+        "sr_60f4bfd415ce45cc89866e4206c14079"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 46,
+      "card_id": "card_ae7227f548b02ab1",
+      "source_row_uids": [
+        "sr_20918d2eb6b74d92a867cb049198e82e"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Acetylshikonin (ASK). ASK is acetylshikonin in the original paper, not seliciclib. Preserve JNK/ER/ROS co-treatment mechanisms and transformed-cell limitations; the source uses inconsistent SP600129/SP600125 spelling, which is not silently resolved."
+    },
+    {
+      "candidate_index": 47,
+      "card_id": "card_b07e58e7bc6295bb",
+      "source_row_uids": [
+        "sr_012b26980cdb48429076aca0421a0b2c"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Fos-choline-16 (n-hexadecylphosphocholine)."
+    },
+    {
+      "candidate_index": 48,
+      "card_id": "card_04225af3b499fca2",
+      "source_row_uids": [
+        "sr_48190613573743b0b271e5d0b7f44a22"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 4-Phenylbutyrate (4PBA)."
+    },
+    {
+      "candidate_index": 49,
+      "card_id": "card_7200ec8ffc777ccc",
+      "source_row_uids": [
+        "sr_ae1f3e620f904a1da2beebf638733046"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish 4-Phenylbutyrate (4PBA)."
+    },
+    {
+      "candidate_index": 50,
+      "card_id": "card_842f346e89d35980",
+      "source_row_uids": [
+        "sr_7abb5b3aa6054faaa971b63c47ccc09f"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish LRH-1 antagonist 3d2. The original study cites Benod et al. PMID 23667258, whose full text gives the complete chemical name of 3d2; PubChem CID 30876879 matches it. SR1848 is a distinct comparator. The attached deoxynucleoside was incorrect."
+    },
+    {
+      "candidate_index": 51,
+      "card_id": "card_707eb8742b4b3b2f",
+      "source_row_uids": [
+        "sr_632998e2725b4e1aae24822d89de8c0b"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish LRH-1 antagonist 3d2. The original study cites Benod et al. PMID 23667258, whose full text gives the complete chemical name of 3d2; PubChem CID 30876879 matches it. SR1848 is a distinct comparator. The attached deoxynucleoside was incorrect."
+    },
+    {
+      "candidate_index": 52,
+      "card_id": "card_da97eae43a044f38",
+      "source_row_uids": [
+        "sr_8a4706a630374fcebe9d40084f184dbd"
+      ],
+      "action": "repair",
+      "reason": "E3040 is the administered parent and E3040 sulfate is the measured metabolite; the co-reported glucuronide is a distinct analyte. This record does not establish biliary transport of intact E3040."
+    },
+    {
+      "candidate_index": 53,
+      "card_id": "card_c06d126c245e4a89",
+      "source_row_uids": [
+        "sr_31ed378e73ae40c48ed92c5d1dba94af"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 54,
+      "card_id": "card_17c0856c14286584",
+      "source_row_uids": [
+        "sr_65d6945f58c64d96b87e915f537eafdd"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish D-Glucuronolactone (GA). Original reference 144 and its Table III establish glucuronolactone, chicken hepatocytes, early-apoptosis endpoint and comparator."
+    },
+    {
+      "candidate_index": 55,
+      "card_id": "card_4c7c9a20b6a31b7f",
+      "source_row_uids": [
+        "sr_2ab6175c86154cc89ce4440f0f6a3315",
+        "sr_c73a76730b0e4469a2606eaa0d621c29"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 56,
+      "card_id": "card_84d282ead1e95a9f",
+      "source_row_uids": [
+        "sr_6c7801cc07054eba83b560c1235b5a34"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 57,
+      "card_id": "card_6501e5aa563c57b8",
+      "source_row_uids": [
+        "sr_41218851d3b14475bc496eba8710a3b2"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 58,
+      "card_id": "card_2b1f59551e7b4a34",
+      "source_row_uids": [
+        "sr_a92372c06e7f4665b845eb8c96c68f20"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 59,
+      "card_id": "card_12e72be1cd080994",
+      "source_row_uids": [
+        "sr_11a2177e293f4945ba455b757a2bc720"
+      ],
+      "action": "repair",
+      "reason": "Anatomical tissue of the readout is not the injection site; preserve explicitly nonhepatic mitochondrial evidence."
+    },
+    {
+      "candidate_index": 60,
+      "card_id": "card_7a7513bf20ec01b8",
+      "source_row_uids": [
+        "sr_be224fc9a9e24828818395101f511b3a"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 61,
+      "card_id": "card_3e3c9c13f9c91bfe",
+      "source_row_uids": [
+        "sr_afcf025e276244c697e851c22488d349"
+      ],
+      "action": "repair",
+      "reason": "The measured endpoint is ROS/lipid peroxidation or lipid-droplet stress, not general cell viability or bile-canalicular function."
+    },
+    {
+      "candidate_index": 62,
+      "card_id": "card_4ea47d5e95e120df",
+      "source_row_uids": [
+        "sr_8bc0a1fe13b046d3947eea2aca4211e6"
+      ],
+      "action": "repair",
+      "reason": "The measured endpoint is ROS/lipid peroxidation or lipid-droplet stress, not general cell viability or bile-canalicular function. HL-7702/L-02/LO-2 is a documented HeLa derivative (Cellosaurus CVCL_6926). Preserve the cell-line name and bounded mechanism; MIHA is a separate immortalized hepatic model, and neither is primary human hepatocytes. The source methods wording that all groups except control received METH conflicts with its QR-alone group description; preserve this unresolved group-assignment limitation without inferring a new treatment allocation."
+    },
+    {
+      "candidate_index": 63,
+      "card_id": "card_2277b7b58fa6208f",
+      "source_row_uids": [
+        "sr_df7fdd2f6ad44a2a970deb65e31665a8"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Ortho-phenylphenol (OPP)."
+    },
+    {
+      "candidate_index": 64,
+      "card_id": "card_5bf104705cd6fddc",
+      "source_row_uids": [
+        "sr_e458beb02a3e499e83c9006743964579"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Ortho-phenylphenol (OPP)."
+    },
+    {
+      "candidate_index": 65,
+      "card_id": "card_5ba00a766a0735d1",
+      "source_row_uids": [
+        "sr_ea8cb9a82c2e4db68414b0effb1fb532"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Ortho-phenylphenol (OPP)."
+    },
+    {
+      "candidate_index": 66,
+      "card_id": "card_41a9f46401636d36",
+      "source_row_uids": [
+        "sr_e3dac287c27746749d940e5cb4a6c708"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 67,
+      "card_id": "card_083ad80f251743d8",
+      "source_row_uids": [
+        "sr_7fec36f376d94af29e9270342f00a7fa"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 68,
+      "card_id": "card_482543c9aae540af",
+      "source_row_uids": [
+        "sr_d09e587e06b241b58a72c9aa1d7074c6"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 69,
+      "card_id": "card_36f1a3c5c37a2079",
+      "source_row_uids": [
+        "sr_37e09453a3b948409144401a185f9630"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 70,
+      "card_id": "card_249e688959852fad",
+      "source_row_uids": [
+        "sr_b8ff5a5bf9274f239eabcc2ee71d4a55"
+      ],
+      "action": "repair",
+      "reason": "Mallory-Denk inclusions/aggresomes measure protein aggregation and proteostasis; no bile-canalicular endpoint. Preserve SAMe protection and negative comparator findings."
+    },
+    {
+      "candidate_index": 71,
+      "card_id": "card_14ed321ce4e10d20",
+      "source_row_uids": [
+        "sr_650a706028974543ac2f041fd799994a"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 72,
+      "card_id": "card_bb547af84b024c84",
+      "source_row_uids": [
+        "sr_a7cf1dd7e77e4c48878d24101c76be0a"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 73,
+      "card_id": "card_e7d046db2fc6d4b6",
+      "source_row_uids": [
+        "sr_fbc48a734bd84b30a86e1b0bac70ddbb"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 74,
+      "card_id": "card_e588bd5dab902a82",
+      "source_row_uids": [
+        "sr_2f47fe489a854d8384b1cf976399bb9c"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish N-Acetyl-L-leucyl-L-leucyl-L-norleucinal (ALLN). Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 75,
+      "card_id": "card_052acd68ce89a19c",
+      "source_row_uids": [
+        "sr_afdce36e35bd44869892274447729332"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish N-Acetyl-L-leucyl-L-leucyl-L-norleucinal (ALLN). Mallory-Denk inclusions/aggresomes measure protein aggregation and proteostasis; no bile-canalicular endpoint. Preserve SAMe protection and negative comparator findings."
+    },
+    {
+      "candidate_index": 76,
+      "card_id": "card_6a01d6e96434f4a8",
+      "source_row_uids": [
+        "sr_dde01d4104284f6687214e17a9b446a2"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish D-galactosamine. Original study uses D-galactosamine plus endotoxin as a distinct challenge arm. Bile duct ligation is a distinct comparator arm and does not make the Gal/End biomarker a bile-transport endpoint. In-vivo plasma marker of hepatic injury/cell death; retain as nonvoter outcome with Gal/End challenge and comparator limits."
+    },
+    {
+      "candidate_index": 77,
+      "card_id": "card_1b400bc9bf7b59ab",
+      "source_row_uids": [
+        "sr_fb18c213f3e14319bfb3b6c6607ae018"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish D-galactosamine. Original study uses D-galactosamine plus endotoxin as a distinct challenge arm. Bile duct ligation is a distinct comparator arm and does not make the Gal/End biomarker a bile-transport endpoint. Actual endpoint is HMGB1 inflammatory signaling or neutrophil accumulation, not bile transport."
+    },
+    {
+      "candidate_index": 78,
+      "card_id": "card_8b167f643fa13ffa",
+      "source_row_uids": [
+        "sr_eb2c2b9763ab42e7928bcf09816783aa"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Tritoqualine (TRQ)."
+    },
+    {
+      "candidate_index": 79,
+      "card_id": "card_40d45287d19b801d",
+      "source_row_uids": [
+        "sr_94e53b885b65428b95eceba3e09f22b7"
+      ],
+      "action": "repair",
+      "reason": "Original article title and abstract identify peppermint oil, not polydatin. Preserve mixture-level choleretic evidence without assigning it to a single flavonoid. Correct material description remains in reviewed/raw records. Quarantine the confirmed false molecule association after original-paper recovery; retain underlying protective, negative and mechanistic observations as material-level evidence."
+    },
+    {
+      "candidate_index": 80,
+      "card_id": "card_4bec54b00ca1d488",
+      "source_row_uids": [
+        "sr_38c9454e94df47bb905ab829f9f62ce7"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 81,
+      "card_id": "card_b82ecafdcea74dd1",
+      "source_row_uids": [
+        "sr_7906942868764f598dd2805bf97699b0"
+      ],
+      "action": "retain",
+      "reason": "Read source role, endpoint, conditions and original abstract/support; no confirmed correction. Valid negatives, protection and indirect mechanisms retained; no independent full numerical verification claimed."
+    },
+    {
+      "candidate_index": 82,
+      "card_id": "card_759b6236efe0544f",
+      "source_row_uids": [
+        "sr_702530ed4b6148abb82a261d602362ea"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity."
+    },
+    {
+      "candidate_index": 83,
+      "card_id": "card_bd1658508785341f",
+      "source_row_uids": [
+        "sr_9b825d01ef2b4982ae14531846c88979"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish lawsone. Correct lawsone (2-hydroxy-1,4-naphthoquinone), retaining RMP-INH challenge and silymarin comparator; protective context is not intrinsic lawsone toxicity. Cellular morphology in challenged HepG2 cells is not a bile-specific endpoint."
+    },
+    {
+      "candidate_index": 84,
+      "card_id": "card_53499fa6c8e7ba48",
+      "source_row_uids": [
+        "sr_cb5ad9bf2abc4c2bbc788b11437878b7"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Chlorpyrifos (CPF). Original full text identifies CPF as chlorpyrifos and the model as A549 lung cells. Retain bounded inflammatory/transcriptional evidence; these are transcripts from a nonhepatic model; protein activity and in-vivo applicability are unestablished."
+    },
+    {
+      "candidate_index": 85,
+      "card_id": "card_4163cb5e0a8ae4fe",
+      "source_row_uids": [
+        "sr_2302226c941047e88532191e33bb953d"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish Chlorpyrifos (CPF). Original full text identifies CPF as chlorpyrifos and the model as A549 lung cells. Retain bounded inflammatory/transcriptional evidence; these are transcripts from a nonhepatic model; protein activity and in-vivo applicability are unestablished."
+    },
+    {
+      "candidate_index": 86,
+      "card_id": "card_477d3f21703a81be",
+      "source_row_uids": [
+        "sr_39ad5b057cd141c7b63f4cbfdf4eb591"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish (S)-2-(4-chlorophenyl)-3,3-dimethyl-N-(5-phenylthiazol-2-yl)butanamide (PA). Correct original-paper PA identity and model scope. Retain bounded inflammatory/redox mechanism with source challenge context; in-vivo applicability is unestablished."
+    },
+    {
+      "candidate_index": 87,
+      "card_id": "card_6009a26dc2e17fbc",
+      "source_row_uids": [
+        "sr_01c530751560462db457f8043ce110f5"
+      ],
+      "action": "repair",
+      "reason": "Original-paper test article and independently verified molecular structure establish (S)-2-(4-chlorophenyl)-3,3-dimethyl-N-(5-phenylthiazol-2-yl)butanamide (PA). Correct original-paper PA identity and model scope. Retain bounded inflammatory/redox mechanism with source challenge context; in-vivo applicability is unestablished."
+    },
+    {
+      "candidate_index": 88,
+      "card_id": "card_15d1faf5547b2d5c",
+      "source_row_uids": [
+        "sr_0e455a77ef7a4f269b4cdd339e42f7ea"
+      ],
+      "action": "repair",
+      "reason": "Measured ordinary hepatic-cell morphology, cytoskeleton, cell size or organelle morphology is not bile transport or canalicular function. Preserve injury, negative and rescue observations and their model limitations."
+    },
+    {
+      "candidate_index": 89,
+      "card_id": "card_6b9b4b3f40109735",
+      "source_row_uids": [
+        "sr_18a18c964c2745fe9aa1a33eec6fb2fd"
+      ],
+      "action": "repair",
+      "reason": "The measured endpoint is ROS/lipid peroxidation or lipid-droplet stress, not general cell viability or bile-canalicular function."
+    }
+  ],
+  "labels_or_predictions_consulted": false,
+  "limitations": "Source-only manual review, not human-expert certification or full numerical/full-library audit."
+}

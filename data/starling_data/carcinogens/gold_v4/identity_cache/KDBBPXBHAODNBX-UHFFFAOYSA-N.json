@@ -1,0 +1,25 @@
+{
+  "parent_key": "KDBBPXBHAODNBX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KDBBPXBHAODNBX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(2-Chloroethyl)-1-nitroso-3-(methylene-2-pyridinyl)urea",
+    "1-(2-chloroethyl)-1-nitroso-3-(pyridin-2-ylmethyl)urea",
+    "42471-25-0",
+    "CNMPU",
+    "DTXSID40962512",
+    "J8E9NW2VLF",
+    "N-(2-Chloroethyl)-N-nitroso-N'-(2-pyridinylmethyl)urea",
+    "N-(2-Chloroethyl)-N-nitroso-N'-[(pyridin-2-yl)methyl]carbamimidic acid",
+    "NSC 356545",
+    "NSC-356545",
+    "NSC356545",
+    "RefChem:74101",
+    "SCHEMBL11702558",
+    "Urea, N-(2-chloroethyl)-N-nitroso-N'-(2-pyridinylmethyl)-"
+  ],
+  "http_status": 200,
+  "cids": [
+    100738
+  ]
+}

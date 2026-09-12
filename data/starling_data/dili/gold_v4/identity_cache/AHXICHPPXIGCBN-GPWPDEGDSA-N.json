@@ -1,0 +1,27 @@
+{
+  "parent_key": "AHXICHPPXIGCBN-GPWPDEGDSA-N",
+  "ok": true,
+  "synonyms": [
+    "((1S,2S,3R,4S,7R,9S,10S,12R,15S)-12-acetyloxy-1,9-dihydroxy-15-((2R,3S)-2-hydroxy-4,4-dimethyl-3-((2-methylpropan-2-yl)oxycarbonylamino)pentanoyl)oxy-4-methoxycarbonyloxy-10,14,17,17-tetramethyl-11-oxo-6-oxatetracyclo(11.3.1.03,10.04,7)heptadec-13-en-2-yl) benzoate",
+    "355113-98-3",
+    "BMS 275183 [WHO-DD]",
+    "BMS-275183",
+    "BMS275183",
+    "CHEMBL4297268",
+    "DB12144",
+    "NS00073084",
+    "NS00116396",
+    "Q27291199",
+    "RefChem:120716",
+    "SCHEMBL13900214",
+    "UNII-UQC681JJIV",
+    "UQC681JJIV",
+    "[(1S,2S,3R,4S,7R,9S,10S,12R,15S)-12-acetyloxy-1,9-dihydroxy-15-[(2R,3S)-2-hydroxy-4,4-dimethyl-3-[(2-methylpropan-2-yl)oxycarbonylamino]pentanoyl]oxy-4-methoxycarbonyloxy-10,14,17,17-tetramethyl-11-oxo-6-oxatetracyclo[11.3.1.03,10.04,7]heptadec-13-en-2-yl] benzoate",
+    "orb3174613"
+  ],
+  "cids": [
+    6918594
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AHXICHPPXIGCBN-GPWPDEGDSA-N/synonyms/JSON",
+  "http_status": 200
+}

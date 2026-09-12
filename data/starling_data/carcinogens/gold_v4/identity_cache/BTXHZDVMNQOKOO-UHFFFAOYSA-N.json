@@ -1,0 +1,13 @@
+{
+  "parent_key": "BTXHZDVMNQOKOO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BTXHZDVMNQOKOO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-dichlorovinyl sulfide",
+    "SCHEMBL9633104"
+  ],
+  "http_status": 200,
+  "cids": [
+    57271226
+  ]
+}

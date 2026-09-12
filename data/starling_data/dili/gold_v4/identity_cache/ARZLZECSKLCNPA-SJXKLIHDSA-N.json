@@ -1,0 +1,13 @@
+{
+  "parent_key": "ARZLZECSKLCNPA-SJXKLIHDSA-N",
+  "ok": true,
+  "synonyms": [
+    "7-ethyl-10-[4-(1-piperidino)-1-piperidino] carbonyloxycamptothecin",
+    "SCHEMBL29562295"
+  ],
+  "cids": [
+    129711748
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ARZLZECSKLCNPA-SJXKLIHDSA-N/synonyms/JSON",
+  "http_status": 200
+}

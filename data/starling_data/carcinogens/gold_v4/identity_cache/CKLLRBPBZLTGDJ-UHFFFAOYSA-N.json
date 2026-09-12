@@ -1,0 +1,32 @@
+{
+  "parent_key": "CKLLRBPBZLTGDJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKLLRBPBZLTGDJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,4,4',5-hexachloro-",
+    "1,2,3,4-tetrachloro-5-(2,4-dichlorophenyl)benzene",
+    "2,2',3,4,4',5-HEXACHLOROBIPHENYL",
+    "2,2',3,4,4',5-Hexachloro-1,1'-biphenyl",
+    "35694-06-5",
+    "CS-0451622",
+    "DTXCID4039077",
+    "DTXSID0074138",
+    "H59630",
+    "MSK3736",
+    "NS00076972",
+    "PCB 137",
+    "PCB No. 137 10 microg/mL in Isooctane",
+    "PCB No. 137 10 |Ig/mL in Isooctane",
+    "Pcb No. 137",
+    "Q27293567",
+    "RefChem:53473",
+    "SCHEMBL29355007",
+    "SCHEMBL4456776",
+    "UNII-X578739527",
+    "X578739527"
+  ],
+  "http_status": 200,
+  "cids": [
+    37250
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "SUQYTYOVPXAUGB-RDPSFJRHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SUQYTYOVPXAUGB-RDPSFJRHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(10S,13S)-13-(hydroxymethyl)-9-methyl-5-octyl-10-propan-2-yl-3,9,12-triazatricyclo[6.6.1.04,15]pentadeca-1,4,6,8(15)-tetraen-11-one",
+    "(10S,13S)-13-Hydroxymethyl-10-isopropyl-9-methyl-5-octyl-3,9,12-triaza-tricyclo[6.6.1.0*4,15*]pentadeca-1,4,6,8(15)-tetraen-11-one",
+    "(2S,5S)-5-(Hydroxymethyl)-1-methyl-9-octyl-2-(propan-2-yl)-2,5,6,8-tetrahydro-1H-[1,4]diazonino[7,6,5-cd]indol-3-ol",
+    "109346-66-9",
+    "13-Hydroxymethyl-10-isopropyl-9-methyl-5-octyl-3,9,12-triaza-tricyclo[6.6.1.0*4,15*]pentadeca-1,4,6,8(15)-tetraen-11-one (n-octyl-ILV)",
+    "3H-Pyrrolo(4,3,2-gh)-1,4-benzodiazonin-3-one, 1,2,4,5,6,8-hexahydro-5-(hydroxymethyl)-1-methyl-2-(1-methylethyl)-9-octyl-, (2S-(2R*,5R*))-",
+    "3H-Pyrrolo[4,3,2-gh]-1,4-benzodiazonin-3-one,1,2,4,5,6,8-hexahydro-5-(hydroxymethyl)-1-methyl-2-(1-methylethyl)-9-octyl-,(2S,5S)-",
+    "5-(Hydroxymethyl)-1-methyl-9-octyl-2-(propan-2-yl)-2,5,6,8-tetrahydro-1H-[1,4]diazonino[7,6,5-cd]indol-3-ol",
+    "7-Octylindolactam V",
+    "BDBM50057514",
+    "CHEMBL285801",
+    "DTXSID60911123",
+    "PD119412",
+    "PDSP1_001379",
+    "PDSP2_001363",
+    "RefChem:106494",
+    "SCHEMBL10032033"
+  ],
+  "http_status": 200,
+  "cids": [
+    159320
+  ]
+}

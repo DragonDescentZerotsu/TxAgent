@@ -1,0 +1,32 @@
+{
+  "parent_key": "HSZLKTCKAYXVBX-LYIMTGTFSA-N",
+  "ok": true,
+  "synonyms": [
+    "0NHE9TRJ93",
+    "24916-52-7",
+    "C18844",
+    "CHEBI:82005",
+    "CHEMBL6143528",
+    "DTXCID403596",
+    "DTXSID9023596",
+    "FS75020",
+    "Foromacidin C",
+    "MSK161305",
+    "MSK161305-100M",
+    "Q27155685",
+    "RefChem:932049",
+    "SCHEMBL31065710",
+    "SPIRAMYCIN III [MI]",
+    "Spiramycin - mixture of spiramycins",
+    "Spiramycin III",
+    "Spiramycin III (contains up to 13% Spiramycin I)",
+    "Spiramycin III Solution in Methanol, 100ug/mL",
+    "[(4R,5S,6S,7R,9R,10R,11E,13E,16R)-6-[(2S,3R,4R,5S,6R)-5-[(2S,4R,5S,6S)-4,5-Dihydroxy-4,6-dimethyloxan-2-yl]oxy-4-(dimethylamino)-3-hydroxy-6-methyloxan-2-yl]oxy-10-[(2R,5S,6R)-5-(dimethylamino)-6-methyloxan-2-yl]oxy-5-methoxy-9,16-dimethyl-2-oxo-7-(2-oxoethyl)-1-oxacyclohexadeca-11,13-dien-4-yl] propanoate",
+    "orb1701573"
+  ],
+  "cids": [
+    53297409
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HSZLKTCKAYXVBX-LYIMTGTFSA-N/synonyms/JSON",
+  "http_status": 200
+}

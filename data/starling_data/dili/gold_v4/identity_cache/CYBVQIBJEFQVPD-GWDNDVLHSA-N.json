@@ -1,0 +1,14 @@
+{
+  "parent_key": "CYBVQIBJEFQVPD-GWDNDVLHSA-N",
+  "ok": true,
+  "synonyms": [
+    "DB02426",
+    "NS00073104",
+    "SCHEMBL1612964"
+  ],
+  "cids": [
+    46936378
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CYBVQIBJEFQVPD-GWDNDVLHSA-N/synonyms/JSON",
+  "http_status": 200
+}

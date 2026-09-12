@@ -1,0 +1,13 @@
+{
+  "parent_key": "QQWXZMMUJHOVJM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL65677",
+    "methylglyoxal-bis-guanylhydrazone"
+  ],
+  "cids": [
+    54242347
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QQWXZMMUJHOVJM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

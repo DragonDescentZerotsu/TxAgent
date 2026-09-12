@@ -1,0 +1,15 @@
+{
+  "parent_key": "AWZBZYRFTSPJSH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AWZBZYRFTSPJSH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Amino-1-methyl-benzen",
+    "SCHEMBL11242893",
+    "SCHEMBL2373795",
+    "SCHEMBL4781674"
+  ],
+  "http_status": 200,
+  "cids": [
+    20551076
+  ]
+}

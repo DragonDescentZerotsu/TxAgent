@@ -1,0 +1,17 @@
+{
+  "parent_key": "CYVBUBORVHPEGF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS006348614",
+    "CYVBUBORVHPEGF-UHFFFAOYSA-N",
+    "SCHEMBL253858",
+    "SCHEMBL29593323",
+    "SCHEMBL519065",
+    "pyridinyl carbamate"
+  ],
+  "cids": [
+    18793474
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CYVBUBORVHPEGF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

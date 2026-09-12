@@ -1,0 +1,16 @@
+{
+  "parent_key": "SNVLJLYUUXKWOJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SNVLJLYUUXKWOJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2143-69-3",
+    "CH2=C",
+    "DTXSID901046563",
+    "ethen-1,1-diyl",
+    "ethenylidene"
+  ],
+  "http_status": 200,
+  "cids": [
+    6432236
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "GMDLNCSIWJNFPC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GMDLNCSIWJNFPC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL6665397",
+    "SCHEMBL6665400",
+    "phenylazo-2-naphthylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    22639446
+  ]
+}

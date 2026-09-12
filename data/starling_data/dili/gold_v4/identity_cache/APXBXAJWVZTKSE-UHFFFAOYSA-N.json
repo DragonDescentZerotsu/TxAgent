@@ -1,0 +1,36 @@
+{
+  "parent_key": "APXBXAJWVZTKSE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,3,4-Pyridinetriamine",
+    "2,3,4-TRIAMINOPYRIDINE",
+    "52559-11-2",
+    "A7695",
+    "AB52988",
+    "AC-26687",
+    "AKOS006328749",
+    "AMY11036",
+    "CS-0045825",
+    "CS1386",
+    "DB-083171",
+    "DTXCID80573489",
+    "DTXSID90622735",
+    "EN300-91567",
+    "F225056",
+    "FT-0648612",
+    "GS-5825",
+    "MFCD09834976",
+    "Pyridine-2,3,4-triamine",
+    "RefChem:376873",
+    "SCHEMBL29655645",
+    "SCHEMBL4527914",
+    "SCHEMBL563824",
+    "SY113209",
+    "triaminopyridine"
+  ],
+  "cids": [
+    22135565
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/APXBXAJWVZTKSE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

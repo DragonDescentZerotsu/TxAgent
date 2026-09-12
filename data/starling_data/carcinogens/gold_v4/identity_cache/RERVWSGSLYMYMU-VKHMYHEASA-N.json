@@ -1,0 +1,13 @@
+{
+  "parent_key": "RERVWSGSLYMYMU-VKHMYHEASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RERVWSGSLYMYMU-VKHMYHEASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-dichlorovinylcysteine",
+    "SCHEMBL4265554"
+  ],
+  "http_status": 200,
+  "cids": [
+    129654392
+  ]
+}

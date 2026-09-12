@@ -1,0 +1,38 @@
+{
+  "parent_key": "DOQJUNNMZNNQAD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DOQJUNNMZNNQAD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,4-Pyrrolidinedione",
+    "2,4-Pyrrolidinedione #",
+    "2,4-dioxopyrrolidine",
+    "37772-89-7",
+    "A823861",
+    "AKOS006306931",
+    "ALBB-030115",
+    "AM20120511",
+    "AS-57324",
+    "CS-0048723",
+    "DB-069594",
+    "DTXCID40220508",
+    "DTXSID80338858",
+    "EN300-95516",
+    "F2147-2476",
+    "F326253",
+    "FT-0752586",
+    "J-507264",
+    "MFCD11110992",
+    "Pyrrolidine-2,4-dione",
+    "RefChem:1059968",
+    "SB40753",
+    "SCHEMBL23631617",
+    "SCHEMBL427935",
+    "SCHEMBL867966",
+    "SY097622",
+    "pyrrolidin-2,4-dione"
+  ],
+  "http_status": 200,
+  "cids": [
+    551491
+  ]
+}

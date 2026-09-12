@@ -1,0 +1,13 @@
+{
+  "parent_key": "LUMSACMEZQCYBR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LUMSACMEZQCYBR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "147057-15-6",
+    "3-METHYL-3H-IMIDAZO[4,5-F]QUINOXALINE"
+  ],
+  "http_status": 200,
+  "cids": [
+    45078085
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "parent_key": "CVPDOJLPICSIGR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CVPDOJLPICSIGR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-Fluoro-7,12-dimethylbenz(a)anthracene",
+    "4-Fluoro-7,12-dimethylbenz[a]anthracene",
+    "4-fluoro-7,12-dimethyl-benz[a]anthracene",
+    "4-fluoro-7,12-dimethyltetraphene",
+    "7,12-Dimethyl-4-fluorobenz(a)anthracene",
+    "7,12-Dimethyl-4-fluorobenz[a]anthracene",
+    "737-22-4",
+    "BRN 2535521",
+    "Benz(a)anthracene, 4-fluoro-7,12-dimethyl-",
+    "Benz(a)anthracene, 4-fluoro-7,12-dimethyl-(8CI)",
+    "Benz(a)anthracene, 4-fluoro-7,12-dimethyl-(8CI)(9CI)",
+    "Benz(a)anthracene, 7,12-dimethyl-4-fluoro-",
+    "Benz[a]anthracene,12-dimethyl-4-fluoro-",
+    "DTXCID20146494",
+    "DTXSID60224003",
+    "JA99UUV23Z",
+    "NSC 97730",
+    "NSC-97730",
+    "NSC97730",
+    "RefChem:198674",
+    "UNII-JA99UUV23Z",
+    "WLN: L D6 B666J C1 J1 OF"
+  ],
+  "http_status": 200,
+  "cids": [
+    97043
+  ]
+}

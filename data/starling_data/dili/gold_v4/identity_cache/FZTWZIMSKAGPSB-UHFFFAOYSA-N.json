@@ -1,0 +1,21 @@
+{
+  "parent_key": "FZTWZIMSKAGPSB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22569-71-7",
+    "CHEBI:33468",
+    "DTXSID901318582",
+    "Phosphide",
+    "Q27115661",
+    "RefChem:173510",
+    "SCHEMBL29576326",
+    "phosphanetriide",
+    "phosphide(3-)",
+    "phosphorus(3-)"
+  ],
+  "cids": [
+    5182128
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FZTWZIMSKAGPSB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

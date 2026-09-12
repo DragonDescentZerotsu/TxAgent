@@ -1,0 +1,40 @@
+{
+  "parent_key": "UHCLFIWDCYOTOL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UHCLFIWDCYOTOL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,5,5',6-hexachloro-",
+    "1,1'-Biphenyl, 2,3,5,6,2',5'-hexachloro-",
+    "1,2,4,5-tetrachloro-3-(2,5-dichlorophenyl)benzene",
+    "2,2',3,5,5',6-HEXACHLOROBIPHENYL",
+    "2,2',3,5,5',6-Hcbp",
+    "2,2',3,5,5',6-Hexachlorbiphenyl",
+    "2,2',3,5,5',6-Hexachloro-1,1'-biphenyl",
+    "2,3,5,6,2',5'-Hexachlorobiphenyl",
+    "52663-63-5",
+    "AKOS015903530",
+    "DTXCID4041236",
+    "DTXSID2074160",
+    "InChI=1/C12H4Cl6/c13-5-1-2-7(14)6(3-5)10-11(17)8(15)4-9(16)12(10)18/h1-4",
+    "MFCD00152538",
+    "MSK3750",
+    "NS00099812",
+    "PCB 151",
+    "PCB No 151, analytical standard",
+    "PCB No. 151",
+    "PCB No. 151 10 microg/mL in Isooctane",
+    "PCB No. 151 10 |Ig/mL in Isooctane",
+    "PCB-151",
+    "PCB151",
+    "Q27287953",
+    "R846435E65",
+    "RefChem:53501",
+    "SCHEMBL4453366",
+    "UHCLFIWDCYOTOL-UHFFFAOYSA-N",
+    "UNII-R846435E65"
+  ],
+  "http_status": 200,
+  "cids": [
+    40471
+  ]
+}

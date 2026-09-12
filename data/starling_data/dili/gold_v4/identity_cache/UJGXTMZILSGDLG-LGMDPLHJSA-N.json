@@ -1,0 +1,25 @@
+{
+  "parent_key": "UJGXTMZILSGDLG-LGMDPLHJSA-N",
+  "ok": true,
+  "synonyms": [
+    "(z)-N-(2-(diethylamino)ethyl)-2,4-dimethyl-5-((2-oxoindolin-3-ylidene)methyl)-1h-pyrrole-3-carboxamide",
+    "1H-Pyrrole-3-carboxamide, N-[2-(diethylamino)ethyl]-5-[(Z)-(1,2-dihydro-2-oxo-3H-indol-3-ylidene)methyl]-2,4-dimethyl-",
+    "326914-09-4",
+    "BDBM4813",
+    "CHEMBL275117",
+    "DTXSID301106127",
+    "N-[2-(Diethylamino)ethyl]-2,4-dimethyl-5-[(Z)-(2-oxoindolin-3-ylidene)methyl]-1H-pyrrole-3-carboxamide (Desfluorosunitinib)",
+    "N-[2-(Diethylamino)ethyl]-2,4-dimethyl-5-[(Z)-(2-oxoindolin-3-ylidene)methyl]-1H-pyrrole-3-carboxamide; 1H-Pyrrole-3-carboxamide, N-[2-(diethylamino)ethyl]-5-[(Z)-(1,2-dihydro-2-oxo-3H-indol-3-ylidene)methyl]-2,4-dimethyl-; N-[2-(Diethylamino)ethyl]-2,4-dimethyl-5-[(Z)-(2-oxoindolin-3-ylidene)methyl]-1H-pyrrole-3-carboxamide; Desfluorosunitinib",
+    "N-[2-(Diethylamino)ethyl]-5-[(Z)-(1,2-dihydro-2-oxo-3H-indol-3-ylidene)methyl]-2,4-dimethyl-1H-pyrrole-3-carboxamide",
+    "N-[2-(diethylamino)ethyl]-2,4-dimethyl-5-{[(3Z)-2-oxo-2,3-dihydro-1H-indol-3-ylidene]methyl}-1H-pyrrole-3-carboxamide",
+    "SCHEMBL18631666",
+    "SCHEMBL2114999",
+    "SCHEMBL29856874",
+    "TH 11077"
+  ],
+  "cids": [
+    5329101
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UJGXTMZILSGDLG-LGMDPLHJSA-N/synonyms/JSON",
+  "http_status": 200
+}

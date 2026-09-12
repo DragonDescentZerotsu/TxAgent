@@ -1,0 +1,38 @@
+{
+  "parent_key": "BVGDXTYHVRFEQZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BVGDXTYHVRFEQZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 3,3',4,4'-tetrabromo-",
+    "1,2-dibromo-4-(3,4-dibromophenyl)benzene",
+    "3,3',4,4'-Tetrabromobiphenyl",
+    "3,3',4,4'-Tetrabromobiphenyl (PBB 77)",
+    "3,3',4,4'-tetrabromo-1,1'-biphenyl",
+    "3,3'4,4'-Tetrabromobiphenyl",
+    "3,3,4,4-Tetrabromobiphenyl",
+    "3,4,3',4'- Tetrabromobiphenyl",
+    "3,4,3',4'-TETRABROMOBIPHENYL",
+    "77102-82-0",
+    "BVGDXTYHVRFEQZ-UHFFFAOYSA-N",
+    "CCRIS 5775",
+    "DTXSID4074770",
+    "FT146374",
+    "MFCD00661120",
+    "MSK159027",
+    "NS00134781",
+    "O9I88185BK",
+    "PBB 077",
+    "PBB 77",
+    "PBB No. 77",
+    "PBB No. 77 100 microg/mL in Isooctane",
+    "Q27285518",
+    "RefChem:928644",
+    "SCHEMBL21820782",
+    "SCHEMBL29776924",
+    "UNII-O9I88185BK"
+  ],
+  "http_status": 200,
+  "cids": [
+    107953
+  ]
+}

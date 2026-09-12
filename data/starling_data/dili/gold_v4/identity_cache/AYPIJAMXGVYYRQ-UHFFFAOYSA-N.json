@@ -1,0 +1,40 @@
+{
+  "parent_key": "AYPIJAMXGVYYRQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1097628-00-6",
+    "3-(3-ethyl-2,6-dioxo-5-propan-2-ylpyrimidine-4-carbonyl)-5-methylbenzonitrile",
+    "3-(3-ethyl-5-isopropyl-2,6-dioxo-1,2,3,6-tetrahydro-pyrimidine-4-carbonyl)-5-methyl-benzonitrile",
+    "3-(3-ethyl-5-isopropyl-2,6-dioxo-1,2,3,6-tetrahydropyrimidine-4-carbonyl)-5-methylbenzonitrile",
+    "3-(3-ethyl-5-isopropyl-2,6-dioxo-pyrimidine-4-carbonyl)-5-methyl-benzonitrile",
+    "3-[[3-Ethyl-1,2,3,6-tetrahydro-5-(1-methylethyl)-2,6-dioxo-4-pyrimidinyl]carbonyl]-5-methylbenzonitrile",
+    "3-{[3-ethyl-5-(1-methylethyl)-2,6-dioxo-1,2,3,6-tetrahydropyrimidin-4-yl]carbonyl}-5-methylbenzonitrile",
+    "ACC-007",
+    "AYPIJAMXGVYYRQ-UHFFFAOYSA-N",
+    "Ainuovirine",
+    "Ainuovirine [WHO-DD]",
+    "Benzonitrile, 3-[[3-ethyl-1,2,3,6-tetrahydro-5-(1-methylethyl)-2,6-dioxo-4-pyrimidinyl]carbonyl]-5-methyl-",
+    "CHEMBL1081658",
+    "CS-0181222",
+    "DTXSID201385215",
+    "GTPL13766",
+    "HY-139158",
+    "KM-023",
+    "KM023",
+    "KRV",
+    "NMA4LK5WG9",
+    "Q27462110",
+    "SCHEMBL12752130",
+    "SCHEMBL12752132",
+    "SCHEMBL642371",
+    "T67804",
+    "TS-09387",
+    "compound 10b [PMID: 20138513]",
+    "orb1741422"
+  ],
+  "cids": [
+    25215428
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AYPIJAMXGVYYRQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

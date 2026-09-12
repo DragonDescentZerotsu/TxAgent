@@ -1,0 +1,40 @@
+{
+  "parent_key": "JJCZGVLYNIVKKD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2019-54-7",
+    "3-HYDROXY-2-PHENYL-PROPANAMIDE",
+    "3-hydroxy-2-phenylpropanamide",
+    "4FV9E8QN3P",
+    "56598-62-0",
+    "AKOS015837553",
+    "AS-47867",
+    "Benzeneacetamide, a-(hydroxymethyl)-",
+    "Benzeneacetamide, alpha-(hydroxymethyl)-",
+    "Benzeneacetamide, alpha-(hydroxymethyl)-, (+/-)-",
+    "CS-0453658",
+    "DS-016649",
+    "F16398",
+    "F533045",
+    "MFCD00068669",
+    "NSC-21320",
+    "NSC21320",
+    "SB19324",
+    "SB76415",
+    "SCHEMBL1454492",
+    "SCHEMBL23977",
+    "SY244292",
+    "T124645",
+    "Tropamide",
+    "UNII-4FV9E8QN3P",
+    "alpha-(Hydroxymethyl)benzeneacetamide",
+    "orb1992012",
+    "tropamid",
+    "tropicimide"
+  ],
+  "cids": [
+    228404
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JJCZGVLYNIVKKD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

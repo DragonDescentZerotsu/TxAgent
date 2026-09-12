@@ -1,0 +1,40 @@
+{
+  "parent_key": "KNPUXTWHFSLCDT-BBYIEOQPSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KNPUXTWHFSLCDT-BBYIEOQPSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-3,4,5-trihydroxy-6-(4-(methyl(nitroso)amino)-1-(pyridin-3-yl)butoxy)tetrahydro-2H-pyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-3,4,5-trihydroxy-6-[4-[methyl(nitroso)amino]-1-(3-pyridyl)butoxy]tetrahydropyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-3,4,5-trihydroxy-6-[4-[methyl(nitroso)amino]-1-pyridin-3-ylbutoxy]oxane-2-carboxylic acid",
+    "(2S,3s,4s,5r,6r)-3,4,5-trihydroxy-6-[4-(methyl-nitrosoamino)-1-pyridin-3-ylbutoxy]oxane-2-carboxylic acid",
+    "131119-04-5",
+    "4-((methylnitrosoamino)-1-(3-pyridyl)but-1-yl)beta-omega-glucosiduronic acid",
+    "4-(METHYLNITROSAMINO)-1-(3-PYRIDYL)-1-BUTANYL ALPHA-D-GLUCURONIDE",
+    "4-(Methyl-D3-nitrosamino)-1-(3-pyridyl)-1-butanol-N-b-D-glucuronide",
+    "4-(Methylnitrosamino)-1-(3-Pyridyl)-1-(Beta-D-Glucopyranuronosyl)Butanol",
+    "4-(Methylnitrosamino)-1-(3-Pyridyl)-1-Butanol Beta-D-Glucuronide",
+    "4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanol N-b-D-Glucuronide",
+    "4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanol glucuronide",
+    "4-(Methylnitrosoamino)-1-(3-Pyridyl)-1-Butanol Beta-D-Glucuronide",
+    "4-[Methyl(nitroso)amino]-1-(pyridin-3-yl)butyl beta-D-glucopyranosiduronic acid",
+    "C19605",
+    "CHEBI:82591",
+    "DB-222828",
+    "DTXSID30927079",
+    "Glucuronidated-NNAL",
+    "MM04552",
+    "N-Nitroso-Cotinine Impurity 5",
+    "NNAL-Gluc",
+    "NNAL-O-glucuronide",
+    "NNAL-d3-N-b-glucuronide",
+    "NNAL-glucuronide",
+    "Q27156110",
+    "RefChem:97489",
+    "SCHEMBL29824955",
+    "beta-D-Glucopyranosiduronic acid, 4-(methylnitrosoamino)-1-(3-pyridinyl)butyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    183009
+  ]
+}

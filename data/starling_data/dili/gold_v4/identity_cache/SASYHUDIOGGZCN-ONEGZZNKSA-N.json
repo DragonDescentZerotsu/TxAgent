@@ -1,0 +1,22 @@
+{
+  "parent_key": "SASYHUDIOGGZCN-ONEGZZNKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2E)-2-ETHYLBUT-2-ENEDIOIC ACID",
+    "2-Butenedioic acid, 2-ethyl-, (2Z)-",
+    "2-Ethylfumaric acid",
+    "2-ethylbut-2-enedioicacid",
+    "606488-68-0",
+    "AKOS006377021",
+    "Athylfumarsaure",
+    "EN300-7640590",
+    "NSC-25305",
+    "NSC25305",
+    "SCHEMBL106219"
+  ],
+  "cids": [
+    5355088
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SASYHUDIOGGZCN-ONEGZZNKSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,18 @@
+{
+  "scaffold": {
+    "source": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl",
+    "source_sha256": "3843ec142c185317bf5726cc6027b6f7475b98e9cc2bcabcdcbfe22b850c8ebb",
+    "path": "data/starling_data/carcinogens/gold_v4/retrieval/heldout/scaffold.jsonl",
+    "sha256": "2330a5fcc928fb76af58bae88ae467de667538768d1940bd3d7f1402198596bc",
+    "rows": 938,
+    "ordered_query_labels_unchanged": true
+  },
+  "random": {
+    "source": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/heldout_molecule_condition_labels.jsonl",
+    "source_sha256": "beda94e4149ab7bbadaf04a30054be4adc539ca4b6d6fafde38008bc169bb4d5",
+    "path": "data/starling_data/carcinogens/gold_v4/retrieval/heldout/random.jsonl",
+    "sha256": "5b982e8bf8122c8f4bb3d2c9795b870a18b247c4e298d8d06674a59865793f4f",
+    "rows": 938,
+    "ordered_query_labels_unchanged": true
+  }
+}

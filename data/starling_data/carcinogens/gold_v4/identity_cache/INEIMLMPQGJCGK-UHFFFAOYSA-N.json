@@ -1,0 +1,30 @@
+{
+  "parent_key": "INEIMLMPQGJCGK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INEIMLMPQGJCGK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "163451-82-9",
+    "2-Hydroxy-4-(2-hydroxyethoxy)benzoic acid",
+    "2-Hydroxy-4-(2-hydroxyethoxy)benzoic acid #",
+    "2-Hydroxy-4-(2-hydroxyethoxy)benzoicacid",
+    "2-hydroxy-4-(2-hydroxy-ethoxy)benzoic acid",
+    "4-(2-Hydroxyethoxy)salicylic acid",
+    "834-911-7",
+    "932-566-8",
+    "Benzoic acid, 2-hydroxy-4-(2-hydroxyethoxy)-",
+    "CS-0336944",
+    "F733455",
+    "H0730",
+    "INEIMLMPQGJCGK-UHFFFAOYSA-",
+    "InChI=1/C9H10O5/c10-3-4-14-6-1-2-7(9(12)13)8(11)5-6/h1-2,5,10-11H,3-4H2,(H,12,13)",
+    "MFCD00143215",
+    "RefChem:512510",
+    "SCHEMBL29664618",
+    "SCHEMBL632103",
+    "SY234835"
+  ],
+  "http_status": 200,
+  "cids": [
+    586463
+  ]
+}

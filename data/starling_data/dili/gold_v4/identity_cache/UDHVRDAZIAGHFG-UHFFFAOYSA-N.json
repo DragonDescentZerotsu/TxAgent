@@ -1,0 +1,29 @@
+{
+  "parent_key": "UDHVRDAZIAGHFG-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(5-(2-Fluorophenyl)-1-((3-(3-methoxypropoxy)phenyl)sulfonyl)-1H-pyrrol-3-yl)-N-methylmethanamine",
+    "1-(5-(2-fluorophenyl)-1-(3-(3-methoxypropoxy)phenyl)sulfonylpyrrol-3-yl)-N-methylmethanamine",
+    "1-[5-(2-fluorophenyl)-1-[3-(3-methoxypropoxy)phenyl]sulfonylpyrrol-3-yl]-N-methylmethanamine",
+    "1978371-23-1",
+    "1H-Pyrrole-3-methanamine, 5-(2-fluorophenyl)-1-[[3-(3-methoxypropoxy)phenyl]sulfonyl]-N-methyl-",
+    "5-(2-Fluorophenyl)-1-[[3-(3-methoxypropoxy)phenyl]sulfonyl]-N-methyl-1H-pyrrole-3-methanamine",
+    "CS-0655389",
+    "DA-56626",
+    "Example 1 [WO2016119505A1]",
+    "GTPL12653",
+    "HY-153219A",
+    "Keprason",
+    "P-CAB agent 2",
+    "RefChem:1088056",
+    "SCHEMBL19638167",
+    "SOC12UY3ZP",
+    "keverprazan",
+    "orb1744591"
+  ],
+  "cids": [
+    132164139
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UDHVRDAZIAGHFG-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

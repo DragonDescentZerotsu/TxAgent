@@ -1,0 +1,28 @@
+{
+  "parent_key": "DHZFLGHMWUHWQO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DHZFLGHMWUHWQO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-chloro-4-nitrophenoxy)-diethoxy-sulfanylidene-lambda5-phosphane",
+    "4-06-00-01356 (Beilstein Handbook Reference)",
+    "6012-87-9",
+    "AI3-10615",
+    "AKOS040746815",
+    "BRN 3429349",
+    "Caswell No. 335A",
+    "DTXSID50208872",
+    "Ethyl dicapthon",
+    "Ethylisochlorthion",
+    "O,O-Diethyl O-(2-chloro-4-nitrophenyl) phosphorothioate",
+    "O-(2-Chloro-4-nitrophenyl) O,O-diethyl phosphorothioate",
+    "Phosphorothioic acid, O-(2-chloro-4-nitrophenyl) O,O-diethyl ester",
+    "SCHEMBL10838335",
+    "T25397",
+    "Thiophosphoric acid O,O-diethyl O-(2-chloro-4-nitrophenyl) ester",
+    "orb1702288"
+  ],
+  "http_status": 200,
+  "cids": [
+    201452
+  ]
+}

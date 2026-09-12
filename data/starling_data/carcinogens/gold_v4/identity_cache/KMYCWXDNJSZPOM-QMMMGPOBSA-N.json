@@ -1,0 +1,12 @@
+{
+  "parent_key": "KMYCWXDNJSZPOM-QMMMGPOBSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KMYCWXDNJSZPOM-QMMMGPOBSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS020237776"
+  ],
+  "http_status": 200,
+  "cids": [
+    2054613
+  ]
+}

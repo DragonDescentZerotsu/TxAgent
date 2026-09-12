@@ -1,0 +1,39 @@
+{
+  "parent_key": "WAVYAFBQOXCGSZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-FLUOROPYRIMIDINE ISO 90012015 REACH",
+    "2-Fluoro-1,3-diazine",
+    "2-Fluoropyrimidine 97%",
+    "2-fluoro-pyrimidine",
+    "2-fluoropyrimidine",
+    "31575-35-6",
+    "835-285-8",
+    "AKOS005258968",
+    "AS-57144",
+    "CS-W018601",
+    "DTXSID40185466",
+    "EBC-77053",
+    "EN300-194488",
+    "F226141",
+    "MFCD08059530",
+    "Pyrimidine, 2-fluoro-",
+    "Pyrimidine, 2-fluoro- (8CI,9CI)",
+    "Pyrimidine, fluoro-",
+    "Pyrimidine,2-fluoro-",
+    "RefChem:472672",
+    "SB55512",
+    "SCHEMBL448185",
+    "SCHEMBL449028",
+    "SCHEMBL5676",
+    "SY034282",
+    "WAVYAFBQOXCGSZ-UHFFFAOYSA-N",
+    "Z1255443066",
+    "fluoropyrimidine"
+  ],
+  "cids": [
+    141643
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WAVYAFBQOXCGSZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

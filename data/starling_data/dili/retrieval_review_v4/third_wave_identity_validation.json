@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "identities": {
+    "cyproterone acetate": {
+      "CID": 9880,
+      "MolecularFormula": "C24H29ClO4",
+      "SMILES": "CC(=O)[C@]1(CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2C=C(C4=CC(=O)[C@@H]5C[C@@H]5[C@]34C)Cl)C)OC(=O)C",
+      "InChIKey": "UWFYSQMTEOIJJG-FDTZYFLXSA-N"
+    },
+    "cyclophosphamide": {
+      "CID": 2907,
+      "MolecularFormula": "C7H15Cl2N2O2P",
+      "SMILES": "C1CNP(=O)(OC1)N(CCCl)CCCl",
+      "InChIKey": "CMSMOCZEIVJLDB-UHFFFAOYSA-N"
+    },
+    "6-MMPR": {
+      "SMILES": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "InChIKey": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "MolecularFormula": "C11H15N4O7PS",
+      "source": "KEGG C16615 original molfile; S-methylated thiopurine nucleotide, not PubChem alias matches"
+    },
+    "acadesine": {
+      "CID": 17513,
+      "MolecularFormula": "C9H14N4O5",
+      "SMILES": "C1=NC(=C(N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N)C(=O)N",
+      "InChIKey": "RTRQQBHATOEIAF-UUOKFMHZSA-N"
+    },
+    "dextroamphetamine": {
+      "CID": 5826,
+      "MolecularFormula": "C9H13N",
+      "SMILES": "C[C@@H](CC1=CC=CC=C1)N",
+      "InChIKey": "KWTSXDURSIMDCE-QMMMGPOBSA-N"
+    },
+    "azacitidine": {
+      "CID": 9444,
+      "MolecularFormula": "C8H12N4O5",
+      "SMILES": "C1=NC(=NC(=O)N1[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)O)N",
+      "InChIKey": "NMUSYJAQQFHJEW-KVTDHHQDSA-N"
+    },
+    "acetylshikonin": {
+      "CID": 479501,
+      "MolecularFormula": "C18H18O6",
+      "SMILES": "CC(=CC[C@H](C1=CC(=O)C2=C(C=CC(=C2C1=O)O)O)OC(=O)C)C",
+      "InChIKey": "WNFXUXZJJKTDOZ-OAHLLOKOSA-N"
+    },
+    "tritoqualine": {
+      "CID": 72145,
+      "MolecularFormula": "C26H32N2O8",
+      "SMILES": "CCOC1=C(C(=C(C2=C1C(OC2=O)C3C4=C(C5=C(C=C4CCN3C)OCO5)OC)N)OCC)OCC",
+      "InChIKey": "IRGJVQIJENCTQF-UHFFFAOYSA-N"
+    },
+    "bromocresol green": {
+      "CID": 6451,
+      "MolecularFormula": "C21H14Br4O5S",
+      "SMILES": "CC1=C(C(=C(C=C1C2(C3=CC=CC=C3S(=O)(=O)O2)C4=CC(=C(C(=C4C)Br)O)Br)Br)O)Br",
+      "InChIKey": "FRPHFZCDPYBUAU-UHFFFAOYSA-N"
+    },
+    "PA": {
+      "CID": 46226294,
+      "MolecularFormula": "C21H21ClN2OS",
+      "SMILES": "CC(C)(C)[C@@H](C1=CC=C(C=C1)Cl)C(=O)NC2=NC=C(S2)C3=CC=CC=C3",
+      "InChIKey": "ZVAPEFXSRDIMFP-SFHVURJKSA-N"
+    }
+  },
+  "decisions": 53,
+  "total_decisions": 304,
+  "labels_or_predictions_consulted": false
+}

@@ -1,0 +1,20 @@
+{
+  "parent_key": "HAHASQAKYSVXBE-WAYWQWQTSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HAHASQAKYSVXBE-WAYWQWQTSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Z)-2,3-diethylbut-2-enedioic acid",
+    "13406-97-8",
+    "2-BUTENEDIOIC ACID, 2,3-DIETHYL-, (Z)-",
+    "CHEMBL1741101",
+    "GTPL13948",
+    "KHD3WK6W87",
+    "ME1071",
+    "SCHEMBL101165",
+    "diethylmaleic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    3081281
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "parent_key": "QRFDENJATPJOKG-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS030228668",
+    "N-[2-hydroxy-2-(4-methoxyphenyl)ethyl]-3-phenyl-prop-2-enamide",
+    "N-cinnamoyl-2-hydroxy-2-(4-methoxyphenyl)ethylamine",
+    "SCHEMBL15675391"
+  ],
+  "cids": [
+    72833851
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QRFDENJATPJOKG-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

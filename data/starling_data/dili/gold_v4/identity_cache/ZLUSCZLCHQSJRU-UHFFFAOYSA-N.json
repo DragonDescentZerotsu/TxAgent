@@ -1,0 +1,40 @@
+{
+  "parent_key": "ZLUSCZLCHQSJRU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "22537-56-0",
+    "CHEBI:49920",
+    "DTXCID7099553",
+    "DTXSID80177062",
+    "HQ02V0P496",
+    "NCGC00248578-01",
+    "NCGC00248578-02",
+    "Q27104736",
+    "RefChem:189103",
+    "SCHEMBL29407964",
+    "SR-01000944601",
+    "SR-01000944601-1",
+    "THALLIUM (I) ION",
+    "THALLIUM ION (TL+)",
+    "THALLIUM ION (TL1+)",
+    "THALLIUM ION(1+)",
+    "THALLOUS ION",
+    "Thallium (I)",
+    "Thallium (l) ion",
+    "Thallium(1+)",
+    "Thallium(I)",
+    "Thallium, ion (Tl1+)",
+    "Thallous cation",
+    "Tl(+)",
+    "Tl+",
+    "UNII-HQ02V0P496",
+    "ZLUSCZLCHQSJRU-UHFFFAOYSA-N",
+    "thallium(1+) ion",
+    "thallium(I) cation"
+  ],
+  "cids": [
+    105005
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZLUSCZLCHQSJRU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

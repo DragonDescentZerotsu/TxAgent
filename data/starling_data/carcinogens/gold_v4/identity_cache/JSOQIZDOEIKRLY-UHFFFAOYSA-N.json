@@ -1,0 +1,29 @@
+{
+  "parent_key": "JSOQIZDOEIKRLY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JSOQIZDOEIKRLY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-1-Hydroxy-2-propyldiazene",
+    "(Z)-1-Hydroxy-2-propyldiazene",
+    "1-Propanamine, N-nitroso-",
+    "3083WOY1TQ",
+    "89017-33-4",
+    "92142-92-2",
+    "92142-93-3",
+    "DTXSID001008613",
+    "N-Nitroso-1-propanamine",
+    "N-nitrosopropylamine",
+    "N-propylnitrous amide",
+    "NPRA",
+    "Propyldiazen-1-ol",
+    "Q27255928",
+    "SCHEMBL1288197",
+    "SCHEMBL13965299",
+    "SCHEMBL14818714",
+    "UNII-3083WOY1TQ"
+  ],
+  "http_status": 200,
+  "cids": [
+    115341
+  ]
+}

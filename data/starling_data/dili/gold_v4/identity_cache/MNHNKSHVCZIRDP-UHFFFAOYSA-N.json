@@ -1,0 +1,21 @@
+{
+  "parent_key": "MNHNKSHVCZIRDP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "174858-27-6",
+    "5-n-butyl-7-(3,4,5-trimethoxybenzoylamino) pyrazolo[1,5-a]pyrimidine",
+    "DB-403391",
+    "L001527",
+    "MNHNKSHVCZIRDP-UHFFFAOYSA-N",
+    "N-(5-butylpyrazolo[1,5-a]pyrimidin-7-yl)-3,4,5-trimethoxybenzamide",
+    "OT 7100",
+    "OT-7100",
+    "SCHEMBL3421020",
+    "orb3173587"
+  ],
+  "cids": [
+    9821437
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MNHNKSHVCZIRDP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

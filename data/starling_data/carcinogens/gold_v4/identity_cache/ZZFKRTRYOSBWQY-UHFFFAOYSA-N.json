@@ -1,0 +1,40 @@
+{
+  "parent_key": "ZZFKRTRYOSBWQY-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "101043-55-4",
+    "2-(4-methylphenyl)phenol",
+    "2-(p-Tolyl)phenol",
+    "4'-Methyl-[1,1'-biphenyl]-2-ol",
+    "4'-Methyl[1,1'-biphenyl]-2-ol",
+    "4'-methyl-2-hydroxy-1,1'-biphenyl",
+    "4-methyl-2'-hydroxy-1,1'-biphenyl",
+    "AKOS004119018",
+    "BS-19079",
+    "CS-0209727",
+    "MFCD06802423",
+    "Methylphenyl-phenole",
+    "SCHEMBL2194083",
+    "SCHEMBL28018336",
+    "SCHEMBL29360137",
+    "SCHEMBL7182219",
+    "SCHEMBL894974",
+    "SCHEMBL9328286",
+    "SCHEMBL9988099",
+    "SCHEMBL9988102",
+    "[1,1'-Biphenyl]-2-ol, 4'-methyl-"
+  ],
+  "cids": [
+    11298348
+  ],
+  "properties": [
+    {
+      "CID": 11298348,
+      "InChIKey": "ZZFKRTRYOSBWQY-UHFFFAOYSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/4936,12408,37484,68111,73432,153929,327653,3034811,5281707,11298348,14091485,22105017/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZYHMJXZULPZUED-UHFFFAOYSA-N,ZYMCGHKVJXMQRR-UHFFFAOYSA-N,ZYQBJPKCRWPPDB-UHFFFAOYSA-N,ZYUPCPODFRIXGT-UHFFFAOYSA-N,ZYURHZPYMFLWSH-UHFFFAOYSA-N,ZYVVPQKFJIHXJE-UHFFFAOYSA-N,ZYWGSKGRLVYULL-UHFFFAOYSA-N,ZYXJZVASBCHRQL-UHFFFAOYSA-N,ZYYNLLHFNBENFK-UHFFFAOYSA-N,ZZBWSNKBZKPGAK-UHFFFAOYSA-N,ZZDXPKONIIAVGO-UHFFFAOYSA-N,ZZFKRTRYOSBWQY-UHFFFAOYSA-N,ZZIALNLLNHEQPJ-UHFFFAOYSA-N,ZZIJOQHRUPVPQC-UHFFFAOYSA-N,ZZPVZDALVDWRHM-UHFFFAOYSA-N,ZZSZQATYGVHNLZ-USYZEHPZSA-N,ZZUZYEMRHCMVTB-UHFFFAOYSA-N,ZZZYHIMVKOHVIH-VILODJCFSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

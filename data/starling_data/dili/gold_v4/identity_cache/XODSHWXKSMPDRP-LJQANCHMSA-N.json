@@ -1,0 +1,42 @@
+{
+  "parent_key": "XODSHWXKSMPDRP-LJQANCHMSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4R)-4-Cyclopropyl-7,8-difluoro-5-[4-(trifluoromethyl)benzene-1-sulfonyl]-4,5-dihydro-1H-pyrazolo[4,3-c]quinoline",
+    "(4R)-4-cyclopropyl-7,8-difluoro-4,5-dihydro-5-[[4-(trifluoromethyl)phenyl]sulfonyl]-1H-Pyrazolo[4,3-                              c]quinoline",
+    "(4R)-4-cyclopropyl-7,8-difluoro-4,5-dihydro-5-[[4-(trifluoromethyl)phenyl]sulfonyl]-1H-Pyrazolo[4,3-c]quinoline",
+    "(4R)-4-cyclopropyl-7,8-difluoro-5-(4-(trifluoromethyl)benzenesulfonyl)-1H,4H,5H-pyrazolo(4,3-c)quinoline",
+    "(4R)-4-cyclopropyl-7,8-difluoro-5-[4-(trifluoromethyl)benzenesulfonyl]-1H,4H,5H-pyrazolo[4,3-c]quinoline",
+    "(4R)-4-cyclopropyl-7,8-difluoro-5-[4-(trifluoromethyl)phenyl]sulfonyl-1,4-dihydropyrazolo[4,3-c]quinoline",
+    "(R)-4-Cyclopropyl-7,8-difluoro-5-(4-(trifluoromethyl)phenylsulfonyl)-4,5-dihydro-1H-pyrazolo(4,3-c)quinoline",
+    "(R)-4-cyclopropyl-7,8-difluoro-5-((4-(trifluoromethyl)phenyl)sulfonyl)-4,5-dihydro-1H-pyrazolo[4,3-c]quinoline",
+    "(R)-4-cyclopropyl-7,8-difluoro-5-(4-(trifluoromethyl)phenylsulfonyl)-4,5-dihydro-1H-pyrazolo[4,3-c]quinoline",
+    "1333990-84-3",
+    "1H-Pyrazolo(4,3-c)quinoline, 4-cyclopropyl-7,8-difluoro-4,5-dihydro-5-((4-(trifluoromethyl)phenyl)sulfonyl)-, (4R)-",
+    "7F5QGV49GL",
+    "959997-22-9",
+    "BDBM50492093",
+    "CHEMBL2396778",
+    "CS-0009195",
+    "DTXCID40164554",
+    "DTXSID40242063",
+    "ELND 006",
+    "ELND-006",
+    "ELND0006",
+    "ELND006",
+    "GLXC-01739",
+    "GTPL7337",
+    "HY-16632",
+    "Q27077173",
+    "RefChem:136545",
+    "SCHEMBL29573794",
+    "SCHEMBL486044",
+    "UNII-7F5QGV49GL",
+    "orb1738529"
+  ],
+  "cids": [
+    53308121
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XODSHWXKSMPDRP-LJQANCHMSA-N/synonyms/JSON",
+  "http_status": 200
+}

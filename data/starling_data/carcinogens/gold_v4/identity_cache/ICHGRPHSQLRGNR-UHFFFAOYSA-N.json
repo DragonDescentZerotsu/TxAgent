@@ -1,0 +1,13 @@
+{
+  "parent_key": "ICHGRPHSQLRGNR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ICHGRPHSQLRGNR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,4-dichlorodiphenyltrichloroethane",
+    "SCHEMBL9187069"
+  ],
+  "http_status": 200,
+  "cids": [
+    13829181
+  ]
+}

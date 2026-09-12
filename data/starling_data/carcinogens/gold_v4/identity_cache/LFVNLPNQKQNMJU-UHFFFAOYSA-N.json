@@ -1,0 +1,22 @@
+{
+  "parent_key": "LFVNLPNQKQNMJU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LFVNLPNQKQNMJU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "15H-Cyclopenta(a)phenanthrene",
+    "219-07-8",
+    "DTXCID7098795",
+    "DTXSID90176304",
+    "Gona-1(10),2,4,6,8,11,13,16-octaene",
+    "H1E7J9818C",
+    "RefChem:78910",
+    "SCHEMBL159626",
+    "SCHEMBL30541938",
+    "SCHEMBL31497107",
+    "UNII-H1E7J9818C"
+  ],
+  "http_status": 200,
+  "cids": [
+    6451371
+  ]
+}

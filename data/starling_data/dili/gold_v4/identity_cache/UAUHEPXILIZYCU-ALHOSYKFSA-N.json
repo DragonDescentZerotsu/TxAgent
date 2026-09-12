@@ -1,0 +1,41 @@
+{
+  "parent_key": "UAUHEPXILIZYCU-ALHOSYKFSA-N",
+  "ok": true,
+  "synonyms": [
+    "(17R,21-alpha)-17,21-Dihydroxy-4-propylajmalanium",
+    "(1R,9R,10S,12R,13S,14R,15R,16S,17S,18R)-13-ethyl-14,18-dihydroxy-8-methyl-15-propyl-8,15-diazahexacyclo(14.2.1.0^(1,9).0^(2,7).0^(10,15).0^(12,17))nonadeca-2(7),3,5-trien-15-ium",
+    "(1R,9R,10S,12R,13S,14R,15R,16S,17S,18R)-13-ethyl-8-methyl-15-propyl-8-aza-15-azoniahexacyclo[14.2.1.01,9.02,7.010,15.012,17]nonadeca-2,4,6-triene-14,18-diol",
+    "35080-11-6",
+    "75934UD4GJ",
+    "AJMALANINE, 17,21-DIHYDROXY-4-PROPYL-, (17R,21.ALPHA.)-",
+    "Ajmalanium, 17,21-dihydroxy-4-propyl-, (17R,21-alpha)-",
+    "Ajmalanium, 17,21-dihydroxy-4-propyl-, (17R,21alpha)-",
+    "Bitartrate, Prajmaline",
+    "Bitartrate, Prajmalium",
+    "CHEBI:135560",
+    "DB13555",
+    "DTXCID901778403",
+    "DTXSID6023494",
+    "N(sup 4)-Propylajmalinium",
+    "N-Propylajmaline",
+    "N-Propylajmalinium",
+    "Neo Gilurytmal",
+    "NeoGilurytmal",
+    "PRAJMALINE [MI]",
+    "PRAJMALIUM [WHO-DD]",
+    "Prajmaline",
+    "Prajmalium",
+    "Prajmalium cation",
+    "Prajmalium ion",
+    "Prajmalum",
+    "Q7238143",
+    "RefChem:175711",
+    "SCHEMBL29915551",
+    "UNII-75934UD4GJ"
+  ],
+  "cids": [
+    76959818
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UAUHEPXILIZYCU-ALHOSYKFSA-N/synonyms/JSON",
+  "http_status": 200
+}

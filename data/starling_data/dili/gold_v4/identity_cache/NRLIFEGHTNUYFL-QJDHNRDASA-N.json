@@ -1,0 +1,36 @@
+{
+  "parent_key": "NRLIFEGHTNUYFL-QJDHNRDASA-N",
+  "ok": true,
+  "synonyms": [
+    "(E)-(((1R,2R,3S,5S)-3-(3,4-dichlorophenyl)-8-methyl-8-azabicyclo(3.2.1)octan-2-yl)methylidene)(methoxy)amine",
+    "(E)-1-[(1R,2R,3S,5S)-3-(3,4-Dichlorophenyl)-8-methyl-8-azabicyclo[3.2.1]octan-2-yl]-N-methoxymethanimine",
+    "(E)-1R,2R,3S-3-(3,4-dichlorophenyl)-8-methyl-8-azabicyclo(3.2.1)octane-2-carbaldehyde O-methyloxime",
+    "171655-91-7",
+    "1YP2S94RVH",
+    "3.BETA.-(3,4-DICHLOROPHENYL)-1.ALPHA.H,5.ALPHA.H-TROPANE-2.ALPHA.-CARBOXALDEHYDE (E)-(O-METHYLOXIME)",
+    "AKOS040750905",
+    "BMS-204756",
+    "BRASOFENSINE [WHO-DD]",
+    "Brasofensina",
+    "Brasofensine",
+    "Brasofensine [INN]",
+    "CHEMBL2104184",
+    "DB04857",
+    "DTXCID701334205",
+    "DTXSID00905102",
+    "HY-120206",
+    "NS00069637",
+    "NS2214",
+    "Q4957842",
+    "RefChem:570202",
+    "SCHEMBL539079",
+    "T30576",
+    "brasofensinum",
+    "orb1698041"
+  ],
+  "cids": [
+    9614919
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NRLIFEGHTNUYFL-QJDHNRDASA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,36 @@
+{
+  "parent_key": "GAQNUGISBQJMKO-YFKPBYRVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GAQNUGISBQJMKO-YFKPBYRVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(S)-3-((1,3-Dicarboxypropyl)carbamoyl)-3-hydroxypentanedioic acid",
+    "3-[[(1S)-1,3-dicarboxypropyl]carbamoyl]-3-hydroxypentanedioic acid",
+    "69281-09-0",
+    "73590-26-8",
+    "BC8",
+    "C20775",
+    "CHEBI:77065",
+    "DTXSID00989003",
+    "H38491",
+    "L-Glutamic acid, N-[3-carboxy-2-(carboxymethyl)-2-hydroxy-1-oxopropyl]-",
+    "MFCD30550266",
+    "N-[3-Carboxy-2-(carboxymethyl)-1,2-dihydroxypropylidene]-L-glutamic acid",
+    "N-[3-Carboxy-2-(carboxymethyl)-1,2-dihydroxypropylidene]glutamic acid",
+    "Pentanedioic acid, 3-(((1,3-dicarboxypropyl)amino)carbonyl)-3-hydroxy-",
+    "Q27146605",
+    "RefChem:917050",
+    "SCHEMBL26036955",
+    "SY523617",
+    "TN8079",
+    "beta-CG",
+    "beta-Citrylglutamic acid",
+    "beta-citryl-L-glutamate",
+    "beta-citrylglutamate",
+    "n-[3-carboxy-2-(carboxymethyl)-2-hydroxypropanoyl]-l-glutamic acid",
+    "orb2663528"
+  ],
+  "http_status": 200,
+  "cids": [
+    189741
+  ]
+}

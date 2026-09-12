@@ -1,0 +1,22 @@
+{
+  "parent_key": "MTIIEXDARCCRDH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MTIIEXDARCCRDH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "584-07-6",
+    "Carbamic acid, hydroxy-, methyl ester",
+    "DTXCID50129598",
+    "DTXSID90207107",
+    "MTIIEXDARCCRDH-UHFFFAOYSA-N",
+    "Methyl hydroxycarbamate",
+    "RefChem:332464",
+    "SCHEMBL1533401",
+    "SCHEMBL3327867",
+    "methoxy hydroxamic acid",
+    "methyl N-hydroxycarbamate"
+  ],
+  "http_status": 200,
+  "cids": [
+    164688
+  ]
+}

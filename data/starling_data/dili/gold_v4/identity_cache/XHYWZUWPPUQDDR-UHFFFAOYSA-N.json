@@ -1,0 +1,13 @@
+{
+  "parent_key": "XHYWZUWPPUQDDR-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL3421732",
+    "hydrazine dicarboxamide"
+  ],
+  "cids": [
+    18944669
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XHYWZUWPPUQDDR-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

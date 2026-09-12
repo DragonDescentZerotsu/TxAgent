@@ -1,0 +1,29 @@
+{
+  "status": "requires_additional_manual_review",
+  "phase": "actual_prepared_cards",
+  "ledger_sha256": "2619fc8a661e94d6a103f66f34eea03f260c39878d258a5d0c14f777fa33f6a3",
+  "n_checked_changed_surfaces": 8,
+  "n_reviewed_matching_surfaces": 3,
+  "n_unreviewed_surfaces": 5,
+  "accepted": [
+    {
+      "card_id": "card_d308f0b4f653d40c",
+      "source_row_uids": [
+        "sr_cca50b864c1a460a9f92ad6e81821e5e"
+      ]
+    },
+    {
+      "card_id": "card_2e6303acdc1c6586",
+      "source_row_uids": [
+        "sr_dfb95d007ed441d1b751815a7c3bae1d"
+      ]
+    },
+    {
+      "card_id": "card_1a0ba40ce0604494",
+      "source_row_uids": [
+        "sr_ccda8cdeda2a4ba89ff29f88442b81a6"
+      ]
+    }
+  ],
+  "scope": "Only nine confirmed source repairs. Newly reselected unrelated surfaces are explicitly pending; user-authorized diagnostic, not full cleanup."
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "IJUQCWMZCMFFJP-GQSLRNSLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IJUQCWMZCMFFJP-GQSLRNSLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2O4BE0K238",
+    "915430-78-3",
+    "APOC-III antisense inhibitor",
+    "AT44170",
+    "Ade-MeOEt(-2)Ribf-sP-Gua-MeOEt(-2)Ribf-sP-m5Cyt-MeOEt(-2)Ribf-sP-Thy-MeOEt(-2)Ribf-sP-Thy-MeOEt(-2)Ribf-sP-m5Cyt-dRibf-sP-dThd-sP-dThd-sP-dGuo-sP-dThd-sP-m5Cyt-dRibf-sP-m5Cyt-dRibf-sP-dAdo-sP-dGuo-sP-m5Cyt-dRibf-sP-Thy-MeOEt(-2)Ribf-sP-Thy-MeOEt(-2)Ribf-sP-Thy-MeOEt(-2)Ribf-sP-Ade-MeOEt(-2)Ribf-sP-Thy-MeOEt(-2)Ribf",
+    "DA-68619",
+    "DTXSID801337064",
+    "Free acid",
+    "GTPL8681",
+    "ISIS 304801",
+    "ISIS 304801 FREE ACID",
+    "ISIS-304801",
+    "ISIS-APOCIIIRx",
+    "RefChem:56218",
+    "SCHEMBL29390498",
+    "UNII-2O4BE0K238",
+    "Volanesorsen [USAN:INN]",
+    "Volanesorsen [USAN]",
+    "Waylivra",
+    "volanesorsen",
+    "volanesorsenum"
+  ],
+  "http_status": 200,
+  "cids": [
+    121489236,
+    121494123,
+    122409770
+  ]
+}

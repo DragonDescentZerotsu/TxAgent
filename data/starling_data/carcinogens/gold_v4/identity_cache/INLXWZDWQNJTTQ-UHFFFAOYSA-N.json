@@ -1,0 +1,21 @@
+{
+  "parent_key": "INLXWZDWQNJTTQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/INLXWZDWQNJTTQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Nitroso-4-cyclohexylpiperidine",
+    "4-Cyclohexyl-N-nitrosopiperidine",
+    "4-cyclohexyl-1-nitroso-Piperidine",
+    "4-cyclohexyl-1-nitrosopiperidine",
+    "75881-21-9",
+    "DTXCID30149274",
+    "DTXSID00226783",
+    "N-nitroso-4-cyclohexylpiperidine",
+    "Piperidine, 4-cyclohexyl-1-nitroso-",
+    "RefChem:76612"
+  ],
+  "http_status": 200,
+  "cids": [
+    135653
+  ]
+}

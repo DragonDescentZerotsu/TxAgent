@@ -1,0 +1,42 @@
+{
+  "parent_key": "AOBORMOPSGHCAX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-O-(2-hydroxyethyl) 4-O-[2,5,7,8-tetramethyl-2-(4,8,12-trimethyltridecyl)-3,4-dihydrochromen-6-yl] butanedioate",
+    "1217678-66-4",
+    "2-Hydroxyethyl (2,5,7,8-tetramethyl-2-(4,8,12-trimethyltridecyl)chroman-6-yl) succinate",
+    "2-Hydroxyethyl 2,5,7,8-tetramethyl-2-(4,8,12-trimethyltridecyl)-3,4-dihydro-2H-1-benzopyran-6-yl butanedioate",
+    "30999-06-5",
+    "AKOS015967005",
+    "Aquasol E Tpgs Liquid 77iu/Ml",
+    "BRD-A39830855-001-01-6",
+    "CHEBI:176233",
+    "D06174",
+    "DTXCID30210296",
+    "DTXSID50860035",
+    "FT40328",
+    "HMS5084P20",
+    "NS00014159",
+    "O1-(2-hydroxyethyl) O4-[2,5,7,8-tetramethyl-2-(4,8,12-trimethyltridecyl)chroman-6-yl] butanedioate",
+    "Q172409",
+    "RefChem:1063424",
+    "SBI-0654656.0001",
+    "SCHEMBL3139787",
+    "T202517",
+    "Tocofersolan (INN)",
+    "Tocofersolan [INN]",
+    "Tocofersolan, INN",
+    "Tocofersolano",
+    "Tocophersolan (USAN)",
+    "Tocophersolan [USAN]",
+    "Tocophersolan, USAN",
+    "Vitamin E TPGS",
+    "alpha-Tocopherol Polyethylene Glycol Succinate",
+    "orb2815193"
+  ],
+  "cids": [
+    71406
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AOBORMOPSGHCAX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

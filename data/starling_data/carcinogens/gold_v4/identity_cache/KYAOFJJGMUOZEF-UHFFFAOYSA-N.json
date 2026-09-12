@@ -1,0 +1,22 @@
+{
+  "parent_key": "KYAOFJJGMUOZEF-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KYAOFJJGMUOZEF-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Methyl-2-phenyl-1,2-dihydro-3H-pyrazol-3-one",
+    "1-Phenyl-2-methyl-5-pyrazolon",
+    "1-methyl-2-phenyl-1H-pyrazol-3(2H)-one",
+    "2-methyl-1-phenyl-3-pyrazolin-5-one",
+    "22717-34-6",
+    "DTXCID80513067",
+    "DTXSID20562291",
+    "KYAOFJJGMUOZEF-UHFFFAOYSA-N",
+    "RefChem:231661",
+    "SCHEMBL5265770",
+    "pyrazole, 2,3-dihydro-1-methyl-3-oxo-2-phenyl-"
+  ],
+  "http_status": 200,
+  "cids": [
+    14620000
+  ]
+}

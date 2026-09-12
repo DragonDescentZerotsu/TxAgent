@@ -1,0 +1,23 @@
+{
+  "parent_key": "HUKYDKSXFKBBIW-DTOMAXNRSA-N",
+  "ok": true,
+  "synonyms": [
+    "10605-34-2",
+    "4-{[(2S,3R,4S,6R)-4-(Dimethylamino)-2-{[(3R,4S,5S,6R,7R,9R,11R,12R,13S,14R)-14-ethyl-7,12,13-trihydroxy-4-{[(2R,4R,5S,6S)-5-hydroxy-4-methoxy-4,6-dimethyloxan-2-yl]oxy}-3,5,7,9,11,13-hexamethyl-2,10-dioxo-1-oxacyclotetradecan-6-yl]oxy}-6-methyloxan-3-yl]oxy}-4-oxobutanoic acid",
+    "831SF5M65L",
+    "DTXCID4069979",
+    "DTXSID40147488",
+    "Erythromycin succinate",
+    "Erythromycin, butanedioate (1:1) (Salt)",
+    "Erythromycin, succinate (1:1) (Salt)",
+    "Q27269376",
+    "RefChem:137796",
+    "SCHEMBL31005471",
+    "UNII-831SF5M65L"
+  ],
+  "cids": [
+    10328144
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HUKYDKSXFKBBIW-DTOMAXNRSA-N/synonyms/JSON",
+  "http_status": 200
+}

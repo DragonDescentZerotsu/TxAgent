@@ -1,0 +1,15 @@
+{
+  "parent_key": "ATXUERBKWRHCMX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ATXUERBKWRHCMX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2,6-dinitrophenyl)hydrazine",
+    "2,6-dinitrophenylhydrazine",
+    "AKOS006334657",
+    "SCHEMBL6549393"
+  ],
+  "http_status": 200,
+  "cids": [
+    13016529
+  ]
+}

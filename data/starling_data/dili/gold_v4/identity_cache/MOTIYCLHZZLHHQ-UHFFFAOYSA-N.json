@@ -1,0 +1,31 @@
+{
+  "parent_key": "MOTIYCLHZZLHHQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(2-chlorophenyl)-1-(4-chlorophenyl)-2,2-dichloropropane",
+    "1-(o-chlorophenyl)-1-(p-chlorophenyl)-2,2-dichloropropane",
+    "1-Chloro-2-(2,2-dichloro-1-(4-chlorophenyl)propyl)benzene",
+    "1-chloro-2-[2,2-dichloro-1-(4-chlorophenyl)propyl]benzene",
+    "1-chloro-4-(2,2-dichloro-1-(2-chlorophenyl)propyl)benzene",
+    "107465-03-2",
+    "2,2-DDP",
+    "2,2-dichloro-1-(2-chlorophenyl)-1-(4-chlorophenyl)propane",
+    "Benzene, 1-chloro-2-(2,2-dichloro-1-(4-chlorophenyl)propyl)-",
+    "DB12117",
+    "DDP",
+    "DTXSID80910335",
+    "H8MTN7XVC2",
+    "Mitometh",
+    "Q27279769",
+    "RefChem:159092",
+    "SCHEMBL4732835",
+    "T202837",
+    "UNII-H8MTN7XVC2",
+    "orb2814875"
+  ],
+  "cids": [
+    129873
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MOTIYCLHZZLHHQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

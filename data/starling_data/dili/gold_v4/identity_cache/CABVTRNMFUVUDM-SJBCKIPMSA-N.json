@@ -1,0 +1,32 @@
+{
+  "parent_key": "CABVTRNMFUVUDM-SJBCKIPMSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4-carboxy-3-hydroxy-3-methylbutanoyl)-CoA",
+    "(4-carboxy-3-hydroxy-3-methylbutanoyl)-CoA;(4-carboxy-3-hydroxy-3-methylbutanoyl)-coenzyme A;3-hydroxy-3-methylglutaryl-coenzyme A",
+    "(4-carboxy-3-hydroxy-3-methylbutanoyl)-coenzyme A",
+    "(9R)-1-[(2R,3S,4R,5R)-5-(6-Amino-9H-purin-9-yl)-4-hydroxy-3-(phosphonooxy)oxolan-2-yl]-3,5,9,21-tetrahydroxy-8,8,21-trimethyl-3,5,10,14,19-pentaoxo-2,4,6-trioxa-18-thia-11,15-diaza-3lambda~5~,5lambda~5~-diphosphatricosan-23-oic acid",
+    "3'-phosphoadenosine 5'-(3-((3R)-4-((3-((2-((4-carboxy-3-hydroxy-3-methylbutanoyl)sulfanyl)ethyl)amino)-3-oxopropyl)amino)-3-hydroxy-2,2-dimethyl-4-oxobutyl) dihydrogen diphosphate)",
+    "3'-phosphoadenosine 5'-{3-[(3R)-4-{[3-({2-[(4-carboxy-3-hydroxy-3-methylbutanoyl)sulfanyl]ethyl}amino)-3-oxopropyl]amino}-3-hydroxy-2,2-dimethyl-4-oxobutyl] dihydrogen diphosphate}",
+    "3-Hydroxy-3-methylglutaryl-CoA",
+    "5-(2-(3-(((2R)-4-((((2R,3S,4R,5R)-5-(6-aminopurin-9-yl)-4-hydroxy-3-phosphonooxyoxolan-2-yl)methoxy-hydroxyphosphoryl)oxy-hydroxyphosphoryl)oxy-2-hydroxy-3,3-dimethylbutanoyl)amino)propanoylamino)ethylsulfanyl)-3-hydroxy-3-methyl-5-oxopentanoic acid",
+    "5-[2-[3-[[(2R)-4-[[[(2R,3S,4R,5R)-5-(6-aminopurin-9-yl)-4-hydroxy-3-phosphonooxyoxolan-2-yl]methoxy-hydroxyphosphoryl]oxy-hydroxyphosphoryl]oxy-2-hydroxy-3,3-dimethylbutanoyl]amino]propanoylamino]ethylsulfanyl]-3-hydroxy-3-methyl-5-oxopentanoic acid",
+    "CABVTRNMFUVUDM-SJBCKIPMSA-N",
+    "CHEBI:11814",
+    "Coenzyme A, S-(hydrogen 3-hydroxy-3-methylpentanedioate)",
+    "DTXSID00935181",
+    "EINECS 216-301-7",
+    "LMFA07050209",
+    "PD131704",
+    "Q27108899",
+    "RefChem:1067952",
+    "S-(Hydrogen 3-hydroxy-3-methylglutaryl)coenzyme A",
+    "SCHEMBL219453",
+    "SCHEMBL29353902"
+  ],
+  "cids": [
+    91506
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CABVTRNMFUVUDM-SJBCKIPMSA-N/synonyms/JSON",
+  "http_status": 200
+}

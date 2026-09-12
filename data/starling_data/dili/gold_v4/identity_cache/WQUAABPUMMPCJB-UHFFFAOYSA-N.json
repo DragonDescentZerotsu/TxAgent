@@ -1,0 +1,27 @@
+{
+  "parent_key": "WQUAABPUMMPCJB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Phenyl-3,5,7,8-tetrahydroxy-4H-1-benzopyran-4-one",
+    "3,5,7,8-Tetrahydroxy-2-phenyl-4H-1-benzopyran-4-one",
+    "3,5,7,8-Tetrahydroxyflavone",
+    "3,5,7,8-tetrahydroxy-2-phenylchromen-4-one",
+    "4-18-00-03279 (Beilstein Handbook Reference)",
+    "4H-1-Benzopyran-4-one, 2-phenyl-3,5,7,8-tetrahydroxy-",
+    "4H-1-Benzopyran-4-one, 2-phenyl-3,5,7,8-tetrahydroxy- (9CI)",
+    "4H-1-Benzopyran-4-one, 2-phenyl-3,5,7,8-tetrahydroxy-(9CI)",
+    "74693-69-9",
+    "8-Hydroxygalangin",
+    "BRN 0295943",
+    "DTXCID30148161",
+    "DTXSID00225670",
+    "FLAVONE, 3,5,7,8-TETRAHYDROXY-",
+    "LMPK12113088",
+    "RefChem:107174"
+  ],
+  "cids": [
+    5362017
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WQUAABPUMMPCJB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "FIKTURVKRGQNQD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FIKTURVKRGQNQD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".DELTA.2-cis Eicosenoic Acid",
+    "2(Z)-Eicosenoic acid",
+    "?2-Trans eicosenoic acid",
+    "CKD09572",
+    "DTXSID00865318",
+    "Delta2-cis Eicosenoic Acid",
+    "ICOS-2-ENOIC ACID",
+    "JEA26421",
+    "RefChem:147668",
+    "SCHEMBL551802",
+    "eicosaenoic acid",
+    "icos-2-enoate"
+  ],
+  "http_status": 200,
+  "cids": [
+    3035221
+  ]
+}

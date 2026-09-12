@@ -1,0 +1,20 @@
+{
+  "parent_key": "JISNDAMZBNGEAC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JISNDAMZBNGEAC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-1,2-Bis-(4-hydroxy-phenyl)-propane",
+    "4,4''-(propane-1,2-diyl)diphenol",
+    "4,4'-(propane-1,2-diyl)diphenol",
+    "BDBM50297519",
+    "CHEMBL554507",
+    "SCHEMBL11514717",
+    "SCHEMBL547164",
+    "SCHEMBL8080737",
+    "SCHEMBL9810145"
+  ],
+  "http_status": 200,
+  "cids": [
+    62082
+  ]
+}

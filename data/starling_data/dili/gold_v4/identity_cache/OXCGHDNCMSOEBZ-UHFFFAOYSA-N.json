@@ -1,0 +1,41 @@
+{
+  "parent_key": "OXCGHDNCMSOEBZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Furyl methyl ether",
+    "2-Furyl methyl ether #",
+    "2-Methoxyfuran",
+    "2-Methoxyfuran, 97%",
+    "2-methoxy furan",
+    "2-methoxy-furan",
+    "246-953-8",
+    "25414-22-6",
+    "25Y8I1P35T",
+    "AKOS015912861",
+    "DB-008218",
+    "DTXCID10102569",
+    "DTXSID00180078",
+    "F10347",
+    "F500136",
+    "Furan, 2-methoxy-",
+    "GEO-02985",
+    "InChI=1/C5H6O2/c1-6-5-3-2-4-7-5/h2-4H,1H",
+    "M0936",
+    "MFCD00003227",
+    "NCGC00166235-01",
+    "NS00049740",
+    "Q27254009",
+    "RefChem:474656",
+    "SCHEMBL170531",
+    "SCHEMBL446578",
+    "SCHEMBL448098",
+    "SCHEMBL6847362",
+    "SCHEMBL826030",
+    "SCHEMBL827212"
+  ],
+  "cids": [
+    117476
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OXCGHDNCMSOEBZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

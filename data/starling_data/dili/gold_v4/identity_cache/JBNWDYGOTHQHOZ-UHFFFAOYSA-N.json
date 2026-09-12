@@ -1,0 +1,19 @@
+{
+  "parent_key": "JBNWDYGOTHQHOZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "309913-51-7",
+    "CHEMBL1614702",
+    "RefChem:181890",
+    "SCHEMBL2043229",
+    "SCIO-323",
+    "T68139",
+    "TS-09537",
+    "orb1745181"
+  ],
+  "cids": [
+    10288822
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JBNWDYGOTHQHOZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

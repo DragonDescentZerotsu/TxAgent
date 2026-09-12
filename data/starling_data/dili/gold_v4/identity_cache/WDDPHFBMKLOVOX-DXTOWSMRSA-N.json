@@ -1,0 +1,19 @@
+{
+  "parent_key": "WDDPHFBMKLOVOX-DXTOWSMRSA-N",
+  "ok": true,
+  "synonyms": [
+    "156357-18-5",
+    "2-Chloro-2`-deoxy-2`-fluoroadenosine",
+    "2-chloro-2'-deoxy-2'-fluoroadenosine",
+    "2-chloro-9-(2-deoxy-2-fluoro-beta-d-ribofuranosyl)adenine",
+    "CHEMBL3142980",
+    "NC76633",
+    "NCGC00164553-03",
+    "SCHEMBL1467619"
+  ],
+  "cids": [
+    9882903
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WDDPHFBMKLOVOX-DXTOWSMRSA-N/synonyms/JSON",
+  "http_status": 200
+}

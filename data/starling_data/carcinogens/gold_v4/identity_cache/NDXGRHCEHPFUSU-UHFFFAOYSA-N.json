@@ -1,0 +1,42 @@
+{
+  "parent_key": "NDXGRHCEHPFUSU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NDXGRHCEHPFUSU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1,1'-Biphenyl)-3,3'-diamine",
+    "1,1'-Biphenyl]-3,3'-diamine",
+    "1,1'-biphenyl-3,3'-diamine",
+    "2050-89-7",
+    "3,3'-Diaminobiphenyl",
+    "3-(3-aminophenyl)aniline",
+    "3-(3-aminophenyl)phenylamine",
+    "AB01331473-02",
+    "AKOS005171387",
+    "ALBB-005206",
+    "CS-0088809",
+    "CS-16110",
+    "D71940",
+    "DTXCID5096985",
+    "DTXSID20174494",
+    "F604595",
+    "MFCD00210852",
+    "NCGC00338576-01",
+    "RefChem:203940",
+    "SBB019098",
+    "SCHEMBL251095",
+    "SCHEMBL2585792",
+    "SCHEMBL28303777",
+    "SCHEMBL29403794",
+    "SCHEMBL30500254",
+    "SCHEMBL5395355",
+    "ST4146404",
+    "STK502089",
+    "[1,1'-Biphenyl]-3,3'-diamine",
+    "biphenyl-3,3'-diamine"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (26%), Request Time status: Green (2%), Service status: Yellow (73%)",
+  "cids": [
+    74912
+  ]
+}

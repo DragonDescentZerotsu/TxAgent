@@ -1,0 +1,39 @@
+{
+  "parent_key": "ZLVJWOGZEAIPAO-KPKSGTNCSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R,3S,4R,5R)-5-(4-Amino-2-oxopyrimidin-1(2H)-yl)-4-hydroxy-2-(hydroxymethyl)oxolan-3-yl [(2R,3S,4R,5R)-5-(6-amino-9H-purin-9-yl)-3,4-dihydroxyoxolan-2-yl]methyl hydrogen phosphate",
+    "(3'-5')CpA",
+    "219-187-7",
+    "2382-66-3",
+    "ADENYLYL(3>5)CYTIDINEFREEACID",
+    "ADENYLYL-(3'-->5')-CYTIDINE",
+    "Adenosine, cytidylyl-(3'-->5')-",
+    "Adenosine, cytidylyl-(3'-5')-",
+    "CpA (VAN)",
+    "Cytidilyl-3',5'-adenosine",
+    "Cytidine, adenylyl-(5'-->3')-",
+    "Cytidine, adenylyl-(5'-3')-",
+    "Cytidylyl adenosine",
+    "Cytidylyl(3'.5')adenosine",
+    "Cytidylyl-(3 inverted exclamation marka inverted exclamation marku5 inverted exclamation marka)-adenosine",
+    "Cytidylyl-(3'-->5')-adenosine",
+    "Cytidylyl-(3'->5')-adenosine",
+    "Cytidylyl-(3a(2)a5a(2))-adenosine",
+    "Cytidylyl-3',5'-adenosine phosphate",
+    "DTXCID501740642",
+    "DTXSID801310804",
+    "EINECS 219-187-7",
+    "NSC 91552",
+    "NSC-91552",
+    "RefChem:130317",
+    "Z59MA6MM9W",
+    "[(2R,3S,4R,5R)-5-(4-amino-2-oxopyrimidin-1-yl)-4-hydroxy-2-(hydroxymethyl)oxolan-3-yl] [(2R,3S,4R,5R)-5-(6-aminopurin-9-yl)-3,4-dihydroxyoxolan-2-yl]methyl hydrogen phosphate",
+    "cytidylyl-(3'-5')-adenosine"
+  ],
+  "cids": [
+    91519
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZLVJWOGZEAIPAO-KPKSGTNCSA-N/synonyms/JSON",
+  "http_status": 200
+}

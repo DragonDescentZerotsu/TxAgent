@@ -1,0 +1,39 @@
+{
+  "parent_key": "CIDYIYSNDAJNGX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,4-Naphthalenedione, 2-phenyl-",
+    "1,4-Naphthalenedione,2-phenyl-",
+    "1,4-Naphthoquinone, 2-phenyl-",
+    "2 - Phenyl-1,4-naphthoquinone",
+    "2-Phenyl-1,4-naphthoquinone",
+    "2-Phenylnaphthoquinone",
+    "2-Phenylnaphthoquinone #",
+    "2-phenylnaphthalene-1,4-dione",
+    "2348-77-8",
+    "AE-641/00823016",
+    "AKOS040758949",
+    "Anti-infective agent 1",
+    "BDBM50340585",
+    "CHEMBL1762552",
+    "CIDYIYSNDAJNGX-UHFFFAOYSA-N",
+    "CS-0499123",
+    "DTXCID30255869",
+    "DTXSID60304738",
+    "HMS1580M15",
+    "HY-146487",
+    "NSC-167124",
+    "NSC167124",
+    "RefChem:89031",
+    "SCHEMBL18123681",
+    "SCHEMBL29673492",
+    "SCHEMBL5485068",
+    "T60315",
+    "orb1689701"
+  ],
+  "cids": [
+    296675
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIDYIYSNDAJNGX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

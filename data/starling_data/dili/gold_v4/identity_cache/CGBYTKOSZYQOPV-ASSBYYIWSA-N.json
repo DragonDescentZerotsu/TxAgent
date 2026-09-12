@@ -1,0 +1,29 @@
+{
+  "parent_key": "CGBYTKOSZYQOPV-ASSBYYIWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(R)-(methyl (2-carbamoyl-5-chloro-1H-indol-3-yl)[3-(2-cyanoeth-1-en-1-yl)-5-methylphenyl]phosphinate)",
+    "1097733-15-7",
+    "5-chloro-3-[[3-[(E)-2-cyanoethenyl]-5-methylphenyl]-methoxyphosphoryl]-1H-indole-2-carboxamide",
+    "5DV",
+    "CHEBI:229854",
+    "CHEMBL2104968",
+    "CS-0003617",
+    "D09906",
+    "DTXSID501031227",
+    "EBC-63076",
+    "EN300-37081906",
+    "Fosdevirine (USAN/INN)",
+    "GSK 2248761",
+    "GSK2248761",
+    "HY-14891",
+    "RefChem:922526",
+    "SCHEMBL1035677",
+    "SCHEMBL29376155"
+  ],
+  "cids": [
+    44232529
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGBYTKOSZYQOPV-ASSBYYIWSA-N/synonyms/JSON",
+  "http_status": 200
+}

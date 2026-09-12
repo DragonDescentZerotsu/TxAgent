@@ -1,0 +1,41 @@
+{
+  "parent_key": "AHZXFRRDQXXPJD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AHZXFRRDQXXPJD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,8-dihydroxy-10-butyryl-9-anthrone",
+    "10-Butanoyl-1,8-dihydroxyanthracen-9(10H)-one",
+    "10-Butyryl dithranol",
+    "10-Butyryl-1,8-dihydroxy-10H-anthracen-9-one (Butantrone)",
+    "10-Butyryl-1,8-dihydroxy-10H-anthracen-9-one(Butantrone)",
+    "10-Butyryl-1,8-dihydroxyanthrone",
+    "10-butanoyl-1,8-dihydroxy-10H-anthracen-9-one",
+    "75464-11-8",
+    "9(10H)-ANTHRACENONE, 1,8-DIHYDROXY-10-(1-OXOBUTYL)-",
+    "9P148IBA8M",
+    "AHZXFRRDQXXPJD-UHFFFAOYSA-N",
+    "BDBM50043351",
+    "BRN 4197920",
+    "BUTANTRONE [WHO-DD]",
+    "Butantrona",
+    "Butantrona [Spanish]",
+    "Butantrone",
+    "Butantrone [INN]",
+    "Butantronum",
+    "Butantronum [Latin]",
+    "CCRIS 2041",
+    "CHEMBL130968",
+    "DTXCID10148886",
+    "DTXSID10226395",
+    "Dithranol, 10-butyryl-",
+    "NS00120086",
+    "Q27272844",
+    "RefChem:122126",
+    "SCHEMBL2109872",
+    "UNII-9P148IBA8M"
+  ],
+  "http_status": 200,
+  "cids": [
+    53271
+  ]
+}

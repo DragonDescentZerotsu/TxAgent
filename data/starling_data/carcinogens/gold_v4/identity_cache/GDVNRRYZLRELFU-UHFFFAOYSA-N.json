@@ -1,0 +1,13 @@
+{
+  "parent_key": "GDVNRRYZLRELFU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GDVNRRYZLRELFU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,3',5,5'-tetrachloro-1,4 bis(pyridyloxy) benzene",
+    "SCHEMBL4262427"
+  ],
+  "http_status": 200,
+  "cids": [
+    68978951
+  ]
+}

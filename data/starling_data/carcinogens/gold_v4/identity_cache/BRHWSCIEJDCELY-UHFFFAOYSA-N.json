@@ -1,0 +1,22 @@
+{
+  "parent_key": "BRHWSCIEJDCELY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BRHWSCIEJDCELY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "105802-11-7",
+    "5-Methyl-6-nitrochrysene",
+    "6-Nitro-5-methylchrysene",
+    "CCRIS 1787",
+    "CHRYSENE, 5-METHYL-6-NITRO-",
+    "D2LQ2KQL3Q",
+    "DTXCID4069842",
+    "DTXSID30147351",
+    "RefChem:105084",
+    "UNII-D2LQ2KQL3Q"
+  ],
+  "http_status": 200,
+  "throttling": "",
+  "cids": [
+    60025
+  ]
+}

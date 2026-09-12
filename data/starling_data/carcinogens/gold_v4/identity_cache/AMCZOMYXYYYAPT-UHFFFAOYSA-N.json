@@ -1,0 +1,13 @@
+{
+  "parent_key": "AMCZOMYXYYYAPT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AMCZOMYXYYYAPT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL1093222"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (3%), Request Time status: Green (0%), Service status: Red (97%)",
+  "cids": [
+    145837
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "WKCMLORRPISTPL-SNVBAGLBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(R)-3-(3-CYANO-4-FLUOROPHENYL)-1-(1-(6,7-DIFLUORO-1-OXO-1,2-DIHYDROISOQUINOLIN-4-YL)ETHYL)-1-METHYLUREA",
+    "2445597-31-7",
+    "3-(3-cyano-4-fluorophenyl)-1-[(1R)-1-(6,7-difluoro-1-oxo-2H-isoquinolin-4-yl)ethyl]-1-methylurea",
+    "AB-836",
+    "CHEMBL5314907",
+    "CS-0619622",
+    "DA-50078",
+    "EX-A6898",
+    "H54283",
+    "HY-148348",
+    "MHY5H5WMW6",
+    "N'-(3-Cyano-4-fluorophenyl)-N-[(1R)-1-(6,7-difluoro-1,2-dihydro-1-oxo-4-isoquinolinyl)ethyl]-N-methylurea",
+    "SCHEMBL22094191",
+    "SCHEMBL30223351",
+    "T73492",
+    "Urea, N'-(3-cyano-4-fluorophenyl)-N-[(1R)-1-(6,7-difluoro-1,2-dihydro-1-oxo-4-isoquinolinyl)ethyl]-N-methyl-",
+    "orb1744125"
+  ],
+  "cids": [
+    152274851
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WKCMLORRPISTPL-SNVBAGLBSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "VPKDCDLSJZCGKE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "151-51-9",
+    "8EF7219C-682B-48F8-8A33-5852D4DE56BD",
+    "CHEBI:53091",
+    "CHEBI:87623",
+    "CHEMBL116583",
+    "Carbodiimide",
+    "Carbodimide",
+    "DTXCID1034892",
+    "DTXSID2075188",
+    "Methanediimine",
+    "Methanediimine (9CI)",
+    "Methanediylidenediamine",
+    "Q27159783",
+    "RefChem:388858",
+    "SCHEMBL1235",
+    "SCHEMBL1387952",
+    "Stabilisator 9000",
+    "carbodiimides"
+  ],
+  "cids": [
+    160435
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VPKDCDLSJZCGKE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

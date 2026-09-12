@@ -1,0 +1,24 @@
+{
+  "parent_key": "DRNMSWBRUAIIJO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,3 -dichloro-1,1,1,4,4,4-hexafluorobutane",
+    "2,3-dichloro- 1,1,1,4,4,4-hexafluorobutane",
+    "2,3-dichloro-1,1,1,4,4,4-hexafluorobutane",
+    "384-54-3",
+    "AKOS015848821",
+    "Butane,2,3-dichloro-1,1,1,4,4,4-hexafluoro-",
+    "DTXCID10329875",
+    "DTXSID10378848",
+    "Dichlorhexafluorbutan",
+    "MFCD02093296",
+    "RefChem:244521",
+    "SBB098335",
+    "SCHEMBL8084168"
+  ],
+  "cids": [
+    2774025
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DRNMSWBRUAIIJO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

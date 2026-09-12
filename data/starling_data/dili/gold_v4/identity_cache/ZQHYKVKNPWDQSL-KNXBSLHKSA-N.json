@@ -1,0 +1,36 @@
+{
+  "parent_key": "ZQHYKVKNPWDQSL-KNXBSLHKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-.ALPHA.-PHENAZOCINE",
+    "(-)-.ALPHA.-PHENAZOCINE",
+    "(-)-Phenazocine",
+    "(-)-alpha-Phenazocine",
+    "(1R,9R,13R)-1,13-dimethyl-10-(2-phenylethyl)-10-azatricyclo(7.3.1.02,7)trideca-2(7),3,5-trien-4-ol",
+    "(1R,9R,13R)-1,13-dimethyl-10-(2-phenylethyl)-10-azatricyclo[7.3.1.02,7]trideca-2(7),3,5-trien-4-ol",
+    "(2R,6R,11R)-6,11-Dimethyl-3-(2-phenylethyl)-1,2,3,4,5,6-hexahydro-2,6-methano-3-benzazocin-8-ol",
+    "2,6-METHANO-3-BENZAZOCIN-8-OL, 1,2,3,4,5,6-HEXAHYDRO-6,11-DIMETHYL-3-(2-PHENYLETHYL)-, (2R-(2.ALPHA.,6.ALPHA.,11R*))-",
+    "2,6-Methano-3-benzazocin-8-ol, 1,2,3,4,5,6-hexahydro-6,11-dimethyl-3-(2-phenylethyl)-, (2R-(2alpha,6alpha,11R*))-",
+    "58073-76-0",
+    "58640-87-2",
+    "7UZW80C91Q",
+    "C11790",
+    "CHEMBL316632",
+    "DB13606",
+    "DTXCID701349418",
+    "DTXSID30110040",
+    "NS00114169",
+    "PDSP2_001226",
+    "PHENAZOCINE CIS-(-)-FORM",
+    "Phenazocine cis-(-)-form [MI]",
+    "Phenazocine, (-)-",
+    "RefChem:172643",
+    "SCHEMBL21994211",
+    "UNII-7UZW80C91Q"
+  ],
+  "cids": [
+    443405
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZQHYKVKNPWDQSL-KNXBSLHKSA-N/synonyms/JSON",
+  "http_status": 200
+}

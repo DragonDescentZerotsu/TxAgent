@@ -1,0 +1,30 @@
+{
+  "parent_key": "RGXSEQYXMRRSTM-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "119290-77-6",
+    "86JH2NO0B2",
+    "Benzeneethanamine, N-ethyl-N,.alpha.-dimethyl-",
+    "Benzeneethanamine, N-ethyl-N,alpha-dimethyl-",
+    "DTXSID101377031",
+    "Ethyl-methylamphetamine",
+    "Methylethylamphetamine",
+    "N,N-Ethylmethamphetamine",
+    "N-Ethyl-N-methyl-1-phenyl-2-propanamine #",
+    "N-Ethyl-N-methylamphetamine",
+    "N-Ethylmethamphetamine (hydrochloride)",
+    "N-Methyl,N-ethyl-amphetamine",
+    "N-Methyl-N-ethylamphetamine",
+    "Q27269738",
+    "RGXSEQYXMRRSTM-UHFFFAOYSA-N",
+    "RefChem:202146",
+    "SCHEMBL14492357",
+    "UNII-86JH2NO0B2",
+    "n-ethylmethamphetamine"
+  ],
+  "cids": [
+    559453
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RGXSEQYXMRRSTM-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

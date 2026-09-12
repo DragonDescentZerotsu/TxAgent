@@ -1,0 +1,12 @@
+{
+  "parent_key": "ALRJMBWQUGBAGX-LCFRHISUSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL19235882"
+  ],
+  "cids": [
+    130324171
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ALRJMBWQUGBAGX-LCFRHISUSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,33 @@
+{
+  "parent_key": "LNOUMTOCQWMBOJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LNOUMTOCQWMBOJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1'-Oxosafrole",
+    "1,3-Benzodioxol-5-yl vinyl ketone",
+    "1-(1,3-benzodioxol-5-yl)-2-propen-1-one",
+    "1-(1,3-benzodioxol-5-yl)prop-2-en-1-one",
+    "1-(1,3-dioxaindan-5-yl)prop-2-en-1-one",
+    "1-(2H-1,3-BENZODIOXOL-5-YL)PROP-2-EN-1-ONE",
+    "2-Propen-1-one, 1-(1,3-benzodioxol-5-yl)-",
+    "3',4'-(Methylenedioxy)acrylophenone",
+    "3,4-METHYLENEDIOXYPHENYL VINYL KETONE",
+    "30418-53-2",
+    "AKOS006279008",
+    "Acrylophenone, 3',4'-(methylenedioxy)-",
+    "BRN 4180990",
+    "DTXCID601092",
+    "DTXSID0021092",
+    "EN300-1997107",
+    "OXOSAFROLE, 1'-",
+    "Q53FM79UX6",
+    "Q63409483",
+    "RefChem:907128",
+    "SCHEMBL998638",
+    "UNII-Q53FM79UX6"
+  ],
+  "http_status": 200,
+  "cids": [
+    160188
+  ]
+}

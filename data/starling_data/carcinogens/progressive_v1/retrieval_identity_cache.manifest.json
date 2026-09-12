@@ -1,0 +1,10 @@
+{
+  "task": "carcinogens",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "adapter_sha256": "2c15aea5151d4ede25fcc2c986ff354a9e2b65aebe57d9a10fc8734a70517f9c",
+  "rdkit_version": "2025.09.4",
+  "cache_sha256": "851527a1b274cd9c02764970a7366ea2390f29af79a6556a575fdfb6abd10c9f",
+  "unique_smiles": 86271,
+  "identity_unit": "unique_smiles",
+  "source_records_modified": 0
+}

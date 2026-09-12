@@ -1,0 +1,14 @@
+{
+  "parent_key": "DZMYOBBWRZTUTA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DZMYOBBWRZTUTA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(4-ethenylphenoxy)-6-[(3,4,5-trihydroxyoxan-2-yl)oxymethyl]oxane-3,4,5-triol",
+    "90899-20-0",
+    "CHEBI:172655"
+  ],
+  "http_status": 200,
+  "cids": [
+    13964506
+  ]
+}

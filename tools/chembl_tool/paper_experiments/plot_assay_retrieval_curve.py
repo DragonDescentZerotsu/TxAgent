@@ -10,14 +10,16 @@ from __future__ import annotations
 
 import argparse
 import csv
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass
 import hashlib
 import json
 import math
+from multiprocessing import get_context
 from pathlib import Path
 import re
 from statistics import mean, stdev
+import textwrap
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -42,6 +44,8 @@ TASK_SPECS = {
     ),
     "skin_reaction": TaskPlotSpec("Skin", "#CC79A7", "^", "starling_direct", "direct"),
     "ames": TaskPlotSpec("Ames", "#009E73", "D", "", ""),
+    "dili": TaskPlotSpec("DILI", "#0072B2", "o", "", ""),
+    "carcinogens": TaskPlotSpec("Carcinogens", "#D55E00", "s", "", ""),
 }
 
 CONDITIONED_TASK_SPECS = {
@@ -50,6 +54,8 @@ CONDITIONED_TASK_SPECS = {
     "skin_reaction": ("Skin", "Skin_Reaction"),
     "clintox": ("ClinTox", "ClinTox"),
     "ames": ("Ames", "Ames"),
+    "dili": ("DILI", "DILI"),
+    "carcinogens": ("Carcinogens", "Carcinogens"),
 }
 
 CONDITIONED_BASELINES = (
@@ -442,11 +448,19 @@ def _append_conditioned_baselines(
     baseline_task: str,
     baseline_root: Path,
     expected_n: int,
+    evaluation_subset: str | None = None,
     omit_sample_count_mismatch: bool = False,
 ) -> list[dict[str, Any]]:
     omissions: list[dict[str, Any]] = []
+    task_root = baseline_root / baseline_task
+    if any((task_root / subset).is_dir() for subset in ("valid", "test")):
+        if evaluation_subset not in {"valid", "test"}:
+            raise ValueError("Split-scoped baselines require an explicit evaluation subset")
+        task_root = task_root / evaluation_subset
+        if not task_root.is_dir():
+            raise FileNotFoundError(task_root)
     for method, plot_label, relative_path in CONDITIONED_BASELINES:
-        metrics_path = baseline_root / baseline_task / relative_path
+        metrics_path = task_root / relative_path
         if method == "minimol_head" and not metrics_path.is_file():
             candidates = (
                 Path("minimol_train/final/metrics.json"),
@@ -454,14 +468,14 @@ def _append_conditioned_baselines(
             )
             metrics_path = next(
                 (
-                    baseline_root / baseline_task / candidate
+                    task_root / candidate
                     for candidate in candidates
-                    if (baseline_root / baseline_task / candidate).is_file()
+                    if (task_root / candidate).is_file()
                 ),
                 metrics_path,
             )
         if not metrics_path.is_file():
-            candidate = baseline_root / baseline_task / method / "metrics.json"
+            candidate = task_root / method / "metrics.json"
             if candidate.is_file():
                 metrics_path = candidate
         metrics = _load_json(metrics_path)
@@ -844,6 +858,13 @@ def _matched_organization_comparison(reference: dict, comparison: dict, *, cross
     return True
 
 
+def _collect_configuration_resource(key):
+    task, root = key
+    return collect_conditioned_progressive_resource_data(
+        progressive_roots_by_task={task: root}
+    )
+
+
 def collect_conditioned_progressive_configuration_data(
     *,
     configuration_roots: dict[str, dict[str, Path | list[Path]]],
@@ -902,15 +923,15 @@ def collect_conditioned_progressive_configuration_data(
         for root in _configuration_root_replicates(root_value)
     ))
 
-    def collect_resource(key):
-        task, root = key
-        return collect_conditioned_progressive_resource_data(
-            progressive_roots_by_task={task: root}
-        )
-
-    # Overlap artifact reads while preserving input order and every contract gate.
-    with ThreadPoolExecutor(max_workers=min(8, len(collection_keys))) as pool:
-        collected_resources = dict(zip(collection_keys, pool.map(collect_resource, collection_keys)))
+    # Large comparisons spend substantial CPU parsing and hashing JSON. Processes
+    # avoid the GIL; small figures avoid process startup. Both preserve every gate.
+    pool = (
+        ProcessPoolExecutor(max_workers=min(16, len(collection_keys)), mp_context=get_context("spawn"))
+        if len(collection_keys) > 8
+        else ThreadPoolExecutor(max_workers=min(8, len(collection_keys)))
+    )
+    with pool:
+        collected_resources = dict(zip(collection_keys, pool.map(_collect_configuration_resource, collection_keys)))
 
     all_rows: list[dict[str, Any]] = []
     contracts_by_configuration: dict[str, Any] = {}
@@ -1300,6 +1321,7 @@ def collect_conditioned_progressive_configuration_reference_data(
                 baseline_task=baseline_task,
                 baseline_root=task_baseline_root,
                 expected_n=expected_n,
+                evaluation_subset=reference_manifest.get("evaluation_subset"),
                 omit_sample_count_mismatch=omit_mismatched_baselines,
             )
         )
@@ -1422,6 +1444,7 @@ def collect_conditioned_progressive_agent_baseline_data(
                 baseline_task=baseline_task,
                 baseline_root=task_baseline_root,
                 expected_n=expected_n,
+                evaluation_subset=manifest.get("evaluation_subset"),
                 omit_sample_count_mismatch=omit_mismatched_baselines,
             )
         )
@@ -2020,6 +2043,8 @@ def plot_conditioned_progressive_configuration_comparison(
     organization_comparison: bool = False,
     performance_only: bool = False,
     replicate_interval: str = "range",
+    figure_note: str = "",
+    macro_f1_limits: tuple[float, float] | None = None,
 ) -> None:
     """Plot multiple progressive configurations with full resource panels."""
     if len(configurations) < 2:
@@ -2049,7 +2074,7 @@ def plot_conditioned_progressive_configuration_comparison(
         for field in resource_fields
         if any(field not in row for row in rows)
     )
-    if missing_resource_fields:
+    if missing_resource_fields and not performance_only:
         raise ValueError(
             "Configuration comparison requires full resource metrics: "
             f"{missing_resource_fields}"
@@ -2076,11 +2101,12 @@ def plot_conditioned_progressive_configuration_comparison(
     fig, axes = plt.subplots(
         n_rows,
         len(tasks),
-        figsize=(5.7 * len(tasks), 6.5 if performance_only else 4.15 * n_rows + 1.1),
+        figsize=(max(8.5, 5.7 * len(tasks)), 6.5 if performance_only else 4.15 * n_rows + 1.1),
         squeeze=False,
         sharex=False,
     )
     reference_rows = reference_rows or []
+    has_baselines = any(row.get("result_type") == "baseline" for row in reference_rows)
     baseline_order = {
         method: index for index, (method, _, _) in enumerate(CONDITIONED_BASELINES)
     }
@@ -2213,7 +2239,7 @@ def plot_conditioned_progressive_configuration_comparison(
             performance_ticks.insert(0, 0)
             performance_labels.insert(0, "None")
         baseline_start = max(levels) + 1.8
-        baseline_x = [baseline_start + 0.82 * index for index in range(len(baseline_rows))]
+        baseline_x = [baseline_start + 1.02 * index for index in range(len(baseline_rows))]
         for x_value, row in zip(baseline_x, baseline_rows, strict=True):
             method = str(row["method"])
             marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
@@ -2236,7 +2262,7 @@ def plot_conditioned_progressive_configuration_comparison(
         axes[0, column].tick_params(axis="x", labelsize=6.4)
         right_edge = baseline_x[-1] + 0.5 if baseline_x else max(levels) + 0.45
         axes[0, column].set_xlim(-0.45 if none_rows else 0.55, right_edge)
-        molecule_series = [
+        molecule_series = [] if performance_only else [
             [
                 float(row["mean_active_molecules"])
                 for row in sorted(
@@ -2276,7 +2302,7 @@ def plot_conditioned_progressive_configuration_comparison(
                 levels, [f"L{level}" for level in levels]
             )
         axes[n_rows - 1, column].set_xlabel(
-            "Cumulative evidence level / baselines" if performance_only
+            ("Cumulative evidence level / baselines" if has_baselines else "Cumulative evidence level") if performance_only
             else "Cumulative assay-family level"
         )
 
@@ -2290,12 +2316,17 @@ def plot_conditioned_progressive_configuration_comparison(
         max(0.0, math.floor((min(macro_values) - 0.015) * 50) / 50),
         min(1.0, math.ceil((max(macro_values) + 0.015) * 50) / 50),
     )
+    if macro_f1_limits is not None:
+        lower, upper = macro_f1_limits
+        if not (0 <= lower < upper <= 1) or min(macro_values) < lower or max(macro_values) > upper:
+            raise ValueError("Macro-F1 limits must contain all plotted values and intervals within [0, 1]")
+        macro_limits = (lower, upper)
     for column in range(len(tasks)):
         if not axes[0, column].axison:
             continue
         axes[0, column].set_ylim(*macro_limits)
         axes[0, column].text(
-            0.99, 0.03, "Shared focused y-axis", transform=axes[0, column].transAxes,
+            0.99, 1.02, "Shared focused y-axis", transform=axes[0, column].transAxes,
             ha="right", fontsize=7.0, color="#777777"
         )
     axes[0, 0].set_ylabel(panel_specs[0][1])
@@ -2311,7 +2342,7 @@ def plot_conditioned_progressive_configuration_comparison(
     fig.suptitle(
         " vs ".join(_model_plot_label(model) for model in models) + " · full-flat and progressive" if cross_model else
         "Full-flat vs progressive · matched evidence" if organization_comparison
-        else "Progressive record-card budget comparison",
+        else "Progressive configuration comparison",
         fontsize=16,
         fontweight="bold",
         x=0.055,
@@ -2325,13 +2356,21 @@ def plot_conditioned_progressive_configuration_comparison(
         if replicate_interval in {"sd", "sd_if_repeated"} else
         "means across reruns · whiskers show observed min–max (absent for a single run)"
     )
+    if all(row.get("n_replicates") == 1 for row in rows):
+        interval_note = "single run per setting · no estimated uncertainty interval"
     if cross_model:
-        interval_note = " · ".join(
-            _model_plot_label(model) + ": " + (
-                f"{max(int(row.get('n_replicates', 1)) for row in rows if row.get('model_identity') == model)} runs, mean ± SD"
-                if any(int(row.get("n_replicates", 1)) > 1 for row in rows if row.get("model_identity") == model)
-                else "1 run, no SD") for model in models
-        ) + " · default 4/2 card budget"
+        model_intervals = []
+        for model in models:
+            counts = sorted({int(row.get("n_replicates", 1)) for row in rows
+                             if row.get("model_identity") == model})
+            if counts == [1]:
+                description = "1 run, no SD"
+            elif len(counts) == 1:
+                description = f"{counts[0]} runs, mean ± SD"
+            else:
+                description = f"{'/'.join(map(str, counts))} runs by task; SD only for repeated runs"
+            model_intervals.append(_model_plot_label(model) + ": " + description)
+        interval_note = " · ".join(model_intervals) + " · default 4/2 card budget"
     fig.text(
         0.055,
         0.935 if performance_only else 0.965,
@@ -2401,7 +2440,7 @@ def plot_conditioned_progressive_configuration_comparison(
     if cross_model:
         reference_note = "None is model-specific; matched baselines are shared.\n"
         transport_note = "Models and providers differ; token panels show observed usage, not a controlled transport comparison."
-    fig.text(
+    footnote = fig.text(
         0.055,
         0.175 if performance_only else 0.072,
         (f"All curves use the same {evaluation_subset} cohort, cumulative evidence and tools. None and query priors are model-specific.\n"
@@ -2409,16 +2448,29 @@ def plot_conditioned_progressive_configuration_comparison(
          "Whiskers show ±1 sample SD across repeated runs (not a confidence interval). Single-run curves have no estimated uncertainty interval."
          if cross_model and performance_only else
          "Each level uses identical cumulative evidence and tools; full-flat reasons independently, "
-         f"progressive carries prior state.\nNone is shared. Right-side baselines use the same {evaluation_subset} cohort; "
-         "KNN references are train-only.\n"
+         f"progressive carries prior state.\nNone is shared. "
+         + (f"Right-side baselines use the same {evaluation_subset} cohort; KNN references are train-only.\n"
+            if has_baselines else "Matched baselines have not been included.\n")
          + ("SD describes run-to-run variation with frozen inputs, not a confidence interval. None and baselines are single fixed references."
             if replicate_interval == "sd" else
-            "Whiskers, when present, are rerun ranges, not confidence intervals.")
+            ("Single-run curves have no estimated uncertainty interval." if all(row.get("n_replicates") == 1 for row in rows)
+             else "Whiskers, when present, are rerun ranges, not confidence intervals."))
          if performance_only and organization_comparison else
+         "Same evaluation cohort and model; each curve uses its declared evidence configuration.\n"
+         + (f"None and matched baselines use the same {evaluation_subset} cohort; KNN references are train-only.\n"
+            if has_baselines else "Matched baselines have not been included.\n")
+         + interval_note + "."
+         if performance_only else
          reference_note + resource_note + "\n" + lineage_note + " " + transport_note),
         fontsize=8.0, color="#555555", linespacing=1.35,
         va="top" if performance_only else "baseline",
     )
+    if figure_note:
+        footnote.set_text(footnote.get_text() + "\n" + figure_note)
+    if len(tasks) == 1:
+        footnote.set_text("\n".join(
+            textwrap.fill(line, width=125) for line in footnote.get_text().splitlines()
+        ))
     fig.subplots_adjust(
         left=0.075,
         right=0.985,
@@ -2856,12 +2908,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--analysis-dir", default="")
     parser.add_argument("--output-stem", default="assay_retrieval_scaling")
+    parser.add_argument("--figure-note", default="", help="Additional provenance note on configuration figures.")
+    parser.add_argument("--macro-f1-limits", nargs=2, type=float, metavar=("LOWER", "UPPER"),
+                        help="Optional common Macro-F1 axis limits for configuration figures; must contain all points and intervals.")
     parser.add_argument(
         "--omit-baseline-tasks", nargs="+", choices=tuple(CONDITIONED_TASK_SPECS), default=[],
         help="Omit unavailable or stale task baselines from configuration figures; retain None and record omissions.",
     )
     parser.add_argument(
-        "--plot-tasks", nargs="+", choices=tuple(TASK_SPECS),
+        "--plot-tasks", nargs="+", choices=tuple(CONDITIONED_TASK_SPECS),
         help="Ordered task columns for configuration comparisons; unavailable tasks stay explicitly empty.",
     )
     parser.add_argument(
@@ -3075,6 +3130,8 @@ def main(argv: list[str] | None = None) -> int:
             organization_comparison=any("organization_comparison" in audit for audit in task_audits.values()),
             performance_only=args.performance_only,
             replicate_interval=args.replicate_interval,
+            figure_note=args.figure_note,
+            macro_f1_limits=tuple(args.macro_f1_limits) if args.macro_f1_limits else None,
             transport_matched=all(
                 bool(audit["execution_base_urls_equal"])
                 for audit in task_audits.values()

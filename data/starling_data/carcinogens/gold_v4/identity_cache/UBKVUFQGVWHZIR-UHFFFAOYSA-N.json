@@ -1,0 +1,24 @@
+{
+  "parent_key": "UBKVUFQGVWHZIR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UBKVUFQGVWHZIR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Amino-6H-purine-6,8(9H)-dione",
+    "2-amino-3H-purine-6,8-dione",
+    "8-Oxyguanine",
+    "8-oxo-guanine",
+    "82014-86-6",
+    "DTXCID90154006",
+    "DTXSID60231515",
+    "Q4644284",
+    "RefChem:909595",
+    "SCHEMBL22143",
+    "UBKVUFQGVWHZIR-UHFFFAOYSA-N"
+  ],
+  "http_status": 200,
+  "cids": [
+    119315,
+    5289088,
+    135498233
+  ]
+}

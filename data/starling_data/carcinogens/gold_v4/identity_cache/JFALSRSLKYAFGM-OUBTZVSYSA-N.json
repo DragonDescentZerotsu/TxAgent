@@ -1,0 +1,24 @@
+{
+  "parent_key": "JFALSRSLKYAFGM-OUBTZVSYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JFALSRSLKYAFGM-OUBTZVSYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(~239~U)Uranium",
+    "13982-01-9",
+    "239U (isotope)",
+    "239U isotope",
+    "DTXCID001359349",
+    "DTXSID70930623",
+    "Isotope:239U",
+    "Isotope:Uranium-239",
+    "RefChem:1051337",
+    "SCHEMBL29370410",
+    "Uranium, isotope of mass 239",
+    "Uranium-239 isotope",
+    "uranium-239"
+  ],
+  "http_status": 200,
+  "cids": [
+    166963
+  ]
+}

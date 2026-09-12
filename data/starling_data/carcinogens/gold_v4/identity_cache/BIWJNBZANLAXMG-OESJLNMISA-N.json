@@ -1,0 +1,32 @@
+{
+  "parent_key": "BIWJNBZANLAXMG-OESJLNMISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BIWJNBZANLAXMG-OESJLNMISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1R,2R,3S,4S,6R,7S)-1,3,4,7,8,9,10,10-octachlorotricyclo[5.2.1.0(2,6)]dec-8-ene",
+    "(1R,3R,4R,7S)-1,3,4,7,8,9,10,10-octachlorotricyclo(5.2.1.02,6)dec-8-ene",
+    "(1S,2S,3aR,4S,7R,7aR)-1,2,4,5,6,7,8,8-octachloro-2,3,3a,4,7,7a-hexahydro-1H-4,7-methanoindene",
+    "(1alpha,2beta,3aalpha,4beta,7beta,7aalpha)-1,2,4,5,6,7,8,8-Octachloro-2,3,3a,4,7,7a-hexahydro-4,7-methano-1H-indene",
+    "225-826-0",
+    "4,7-Methano-1H-indene, 1,2,4,5,6,7,8,8-octachloro-2,3,3a,4,7,7a-hexahydro-, (1R,2R,3aS,4S,7R,7aS)-rel-",
+    "5103-74-2",
+    "CHEBI:39069",
+    "Chlordane trans",
+    "Chlordane, trans-",
+    "DTXCID10820190",
+    "DTXSID4038346",
+    "E90X846H9S",
+    "Q27118120",
+    "RefChem:1100259",
+    "SCHEMBL5053401",
+    "beta-Chlordane",
+    "gamma-Chlordan",
+    "trans-Chlordan",
+    "trans-Chlordane",
+    "trans-gamma-Chlordane"
+  ],
+  "http_status": 200,
+  "cids": [
+    12303036
+  ]
+}

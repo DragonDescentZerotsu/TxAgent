@@ -1,0 +1,19 @@
+{
+  "round": 1,
+  "prior_ok": 0,
+  "counts": {
+    "scheduled": 48,
+    "ok": 39,
+    "dili:out_of_scope": 5,
+    "dili:supported": 13,
+    "carcinogens:out_of_scope": 7,
+    "carcinogens:supported": 9,
+    "dili:needs_context": 3,
+    "carcinogens:needs_context": 2,
+    "error": 9
+  },
+  "elapsed_s": 55.7,
+  "updated_utc": "2026-09-08T22:33:11.215836+00:00",
+  "global_concurrency": 32,
+  "active_reviews": 0
+}

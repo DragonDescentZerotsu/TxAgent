@@ -1,0 +1,15 @@
+{
+  "parent_key": "MTMNAHRXCPNHIW-KNJTYGQXSA-N",
+  "ok": true,
+  "synonyms": [
+    "CHEBI:195317",
+    "G06511XS",
+    "GlyTouCan:G06511XS",
+    "RefChem:945285"
+  ],
+  "cids": [
+    91856669
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MTMNAHRXCPNHIW-KNJTYGQXSA-N/synonyms/JSON",
+  "http_status": 200
+}

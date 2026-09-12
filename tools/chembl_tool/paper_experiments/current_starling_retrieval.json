@@ -1,12 +1,18 @@
 {
   "schema_version": "current_starling_retrieval.v1",
-  "updated_at": "2026-09-07",
+  "updated_at": "2026-09-12T00:16:04.083965+00:00",
   "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
   "artifact_root": "outputs/paper/starling_conditioned_assay_family_curve_v1",
   "verification": {
-    "verified_date": "2026-09-07",
-    "result": "Four task canonical snapshots, published sources, overlays, catalogs and eight split indices hash verified",
-    "scratch_artifacts_retained": false
+    "verified_date": "2026-09-08",
+    "result": "DILI/Carcinogens packaged/local/source/catalog/scaffold/random SHA-256 verified; clean restores and complete card links passed. Previous four task entries unchanged.",
+    "scratch_artifacts_retained": false,
+    "maintenance_receipt": "outputs/reviews/dili_carcinogens_20260908/review_receipt.json",
+    "latest_release_validation": {
+      "task": "carcinogens",
+      "release": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+      "status": "records_indices_and_card_links_validated"
+    }
   },
   "contract": {
     "record_selection": "canonical_retrieval_eligible",
@@ -112,6 +118,72 @@
         }
       },
       "source_records": "data/starling_data/ames/canonical_v1/records.parquet"
+    },
+    "dili": {
+      "canonical_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+      "source_records": "data/starling_data/dili/retrieval_final/source/records.parquet",
+      "catalog": "family_catalogs/dili",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "f890c5ee726965e257732ee08dd960b0c01bdfbdc8b8e38859355306b58d25c0",
+      "direct_group": "Group.dili_actual_voter",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.dili_actual_voter",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/dili/scaffold",
+          "index_sha256": "14f72639ad51d35be3acf641b223ed7fedaa1ea8d0671672efde789065ec26ea",
+          "evidence_sha256": "7bc55b055c170a05aaf7f8d2e4c01d3c5d69ee3ba97b612309787cd9bb6d0ebb"
+        },
+        "random": {
+          "path": "indices/dili/random",
+          "index_sha256": "5ecfbe24230d7458b1bdd309cbe5c1fbb262287ae5c7cbacc9a4390b48ad79df",
+          "evidence_sha256": "acb2e2ff0d32c774e1680d2034554a800e56dfb16ee0d266e77c5ad0fcb23e80"
+        }
+      },
+      "source_review": "data/starling_data/dili/retrieval_final/source_changes.jsonl"
+    },
+    "carcinogens": {
+      "canonical_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
+      "catalog": "family_catalogs/carcinogens",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "5d200bd614e5ef39b84e0cb97c4e56509bf45445f2e63bd08584db33b30d4370",
+      "direct_group": "Group.carcinogenicity_direct",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.carcinogenicity_direct",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/carcinogens/scaffold",
+          "index_sha256": "2dcde5bc3f3148e726682d6a0603e328de461fb14b4dead358630fb90e1132fa",
+          "evidence_sha256": "a0fd390f3667b892380735ce90cb3867b7f789ea80e491d09e817a9034b86ce6"
+        },
+        "random": {
+          "path": "indices/carcinogens/random",
+          "index_sha256": "1d138c7f4ff5e0661e068fc32ae37b5ca5addf5ad36ca75b33814598351f03f7",
+          "evidence_sha256": "8274a8ac270265dea56e3b975d57dda3ad569c911accdc359271e4151e60932a"
+        }
+      },
+      "source_review": "data/starling_data/carcinogens/retrieval_final/source_changes.jsonl"
+    }
+  },
+  "source_releases": {
+    "dili_retrieval_final": {
+      "root": "data/starling_data/dili/retrieval_final",
+      "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json",
+      "gold_labels_modified": false,
+      "status": "source_and_both_indices_validated"
+    },
+    "carcinogens_retrieval_final": {
+      "root": "data/starling_data/carcinogens/retrieval_final",
+      "publication_receipt": "data/starling_data/carcinogens/retrieval_final/publication.json",
+      "gold_labels_modified": false,
+      "status": "source_and_both_indices_validated"
     }
   }
 }

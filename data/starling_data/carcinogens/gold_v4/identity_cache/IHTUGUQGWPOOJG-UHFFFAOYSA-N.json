@@ -1,0 +1,13 @@
+{
+  "parent_key": "IHTUGUQGWPOOJG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IHTUGUQGWPOOJG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "DB-221735",
+    "N-methyl-N-(pentylideneamino)formamide"
+  ],
+  "http_status": 200,
+  "cids": [
+    42476
+  ]
+}

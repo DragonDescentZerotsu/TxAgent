@@ -1,0 +1,36 @@
+{
+  "parent_key": "NLPWTTIYIIOESZ-UHFFFAOYSA-L",
+  "ok": true,
+  "synonyms": [
+    "(4-Aminophenyl)di(hydroxy)-lambda~5~-stibanone",
+    "(4-aminophenyl)stibonic acid",
+    "2HBU9HP3EK",
+    "4-(Dihydroxyoxidostibino)benzenamine",
+    "4-Aminobenzenestibonic acid",
+    "4-Stibonobenzenamine",
+    "554-76-7",
+    "693B",
+    "AKOS040753242",
+    "ANILINE, p-STIBONO-",
+    "Astaril",
+    "Astaril; Bayer 693; Ethylstibamine",
+    "Benzenamine, 4-stibono-",
+    "DTXCID30126444",
+    "DTXSID00203953",
+    "NS00123788",
+    "Neostibosan",
+    "Q27254749",
+    "R1197EAL5N",
+    "RefChem:912255",
+    "SCHEMBL153722",
+    "Stibanilic acid",
+    "UNII-2HBU9HP3EK",
+    "p-Aminobenzenestibonic acid",
+    "starbld0000921"
+  ],
+  "cids": [
+    11135
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NLPWTTIYIIOESZ-UHFFFAOYSA-L/synonyms/JSON",
+  "http_status": 200
+}

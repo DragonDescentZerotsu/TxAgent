@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "source_rows": 3270087,
+  "aligned_columns": [
+    "molecule_identity_key",
+    "level",
+    "family_key",
+    "reason",
+    "is_gold_voter",
+    "reviewed"
+  ],
+  "changed_columns": [
+    "molecule_identity_key",
+    "family_key",
+    "reason"
+  ],
+  "record_audit_sha256": "dc88ca29c38a3733f1629e815b929a8d708d995febe9aa3e6c301879eea9b7db"
+}

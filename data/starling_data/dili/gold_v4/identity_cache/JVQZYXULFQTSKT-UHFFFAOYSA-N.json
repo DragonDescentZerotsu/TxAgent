@@ -1,0 +1,13 @@
+{
+  "parent_key": "JVQZYXULFQTSKT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "N-(2-thiazolyl)-4-hydroxy-2-methyl-2h-1,2-benzothiazine-3-carboxamide",
+    "SCHEMBL2517853"
+  ],
+  "cids": [
+    54688181
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JVQZYXULFQTSKT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

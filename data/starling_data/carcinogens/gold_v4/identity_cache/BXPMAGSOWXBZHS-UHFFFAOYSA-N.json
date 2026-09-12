@@ -1,0 +1,31 @@
+{
+  "parent_key": "BXPMAGSOWXBZHS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BXPMAGSOWXBZHS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1E)-2-Methyl-1-(([(methylamino)carbonyl]oxy)imino)-2-(methylsulfinyl)propane #",
+    "1646-87-3",
+    "2-Methyl-2-(methylsulfinyl)-proPionaldehyd- O-(methyl-carbamoyl)-oxim",
+    "7,7-Dimethyl-8-oxo-4-oxa-8lambda~4~-thia-2,5-diazanon-5-en-3-one",
+    "7XX24C9Y7X",
+    "Aldicarb sulfoxide",
+    "Aldicarb sulphoxide",
+    "Aldicarb-sulfoxide",
+    "Aldicarb-sulfoxide 1000 microg/mL in Acetone",
+    "BXPMAGSOWXBZHS-UHFFFAOYSA-N",
+    "Caswell No. 011AAA",
+    "DTXCID70809805",
+    "DTXSID1033161",
+    "Propanal, 2-methyl-2-(methylsulfinyl)-, O-[(methylamino)carbonyl]",
+    "Propionaldehyde, 2-methyl-2-(methylsulfinyl)-, O-(methylcarbamoyl)oxime",
+    "RefChem:553938",
+    "SCHEMBL10535934",
+    "Temik sulfoxide",
+    "VWC13636",
+    "[(2-methyl-2-methylsulfinylpropylidene)amino] N-methylcarbamate"
+  ],
+  "http_status": 200,
+  "cids": [
+    15437
+  ]
+}

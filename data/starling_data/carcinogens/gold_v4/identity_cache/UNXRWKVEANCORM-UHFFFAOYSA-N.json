@@ -1,0 +1,43 @@
+{
+  "parent_key": "UNXRWKVEANCORM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UNXRWKVEANCORM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,7-dihydrido-2,4,6-trihydroxido-2,4,6-trioxido-1,3,5,7-tetraoxy-2,4,6-triphosphy-[7]catena",
+    "10380-08-2",
+    "233-840-3",
+    "Bis(phosphonooxy)phosphinic acid",
+    "C00404",
+    "C00536",
+    "C02174",
+    "CHEBI:39949",
+    "CHEMBL1230191",
+    "DB03896",
+    "DTXCID5027483",
+    "DTXSID7047483",
+    "EINECS 233-840-3",
+    "H5P3O10",
+    "NU43IAG5BC",
+    "Oligophosphate",
+    "Q2823316",
+    "RefChem:191923",
+    "SCHEMBL18714",
+    "TRIPHOSPHORIC ACID (H5P3O10)",
+    "Triphoshoric acid",
+    "Triphosphoric acid",
+    "Triphosphorsaeure",
+    "UNII-NU43IAG5BC",
+    "UNXRWKVEANCORM-UHFFFAOYSA-N",
+    "acide triphosphorique",
+    "bis(dihydroxidodioxidophosphato)hydroxidooxidophosphorus",
+    "catena-triphosphoric acid",
+    "diphosphono hydrogen phosphate",
+    "mu-[hydroxidotrioxidophosphato(2-)-1kappaO,2kappaO]-bis(dihydroxidooxidophosphorus)",
+    "pentahydroxido-1kappa(2)O,2kappaO,3kappa(2)O-di-mu-oxido-trioxido-1kappaO,2kappaO,3kappaO-triphosphorus",
+    "{[hydroxy(phosphonooxy)phosphoryl]oxy}phosphonic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    983
+  ]
+}

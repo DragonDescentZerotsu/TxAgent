@@ -1,0 +1,18 @@
+{
+  "updated_utc": "2026-09-09T00:22:16.330094+00:00",
+  "prior_ok": 0,
+  "counts": {
+    "scheduled": 64,
+    "ok": 64,
+    "dili:negative": 20,
+    "carcinogens:positive": 14,
+    "carcinogens:negative": 17,
+    "dili:positive": 11,
+    "dili:out_of_scope": 1,
+    "carcinogens:mixed": 1
+  },
+  "elapsed_s": 12.2,
+  "workers": 32,
+  "expected_full_queue": 148079,
+  "smoke_limit": 64
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "AUGQEEXBDZWUJY-ZLJUKNTDSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AUGQEEXBDZWUJY-ZLJUKNTDSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(3beta,4alpha,12R)-3-Hydroxy-12,13-epoxytrichothec-9-ene-4,15-diyl diacetate",
+    "4,15-Diacetoxyscirpen-3-ol",
+    "4.beta.,13-epoxytrichothec-9-ene",
+    "A12296",
+    "AKOS030213162",
+    "AS-57020",
+    "AUGQEEXBDZWUJY-ZLJUKNTDSA-N",
+    "Anguidin",
+    "Anguidine, Anguidin",
+    "BRD-K45724504-001-01-6",
+    "C19H26O7",
+    "CCG-208424",
+    "CHEBI:4478",
+    "CHEMBL2005379",
+    "Diacetoxyscirpenol 100 microg/mL in Acetonitrile",
+    "FD63584",
+    "MFCD00866334",
+    "MM 4462",
+    "NCI60_001481",
+    "PD063329",
+    "Q426731",
+    "SCHEMBL16444688",
+    "Trichothec-9-3n3-3,4,15-triol, 12,13-epoxy-, 4,15-diacetate, (3.alpha.,4.beta.)-",
+    "Trichothec-9-ene,13-epoxy-4.beta.,15-diazetoxy-3.alpha.-hydroxy-",
+    "Trichothec-9-ene-3,15-triol, 12,13-epoxy-, 4,15-diacetate",
+    "Trichothec-9-ene-3,15-triol, 12,13-epoxy-, 4,15-diacetate, (3.alpha.,4.beta.)-",
+    "Trichothec-9-ene-3.alpha.,15-triol, 12,13-epoxy-, 4,15-diacetate",
+    "[(1S,2R,7R,9R,10R,11S,12R)-11-acetoxy-10-hydroxy-1,5-dimethyl-spiro[8-oxatricyclo[7.2.1.02,7]dodec-5-ene-12,2'-oxirane]-2-yl]methyl acetate",
+    "[(2R)-acetoxy-hydroxy-dimethyl-spiro[[?]-2,2'-oxirane]yl]methyl acetate",
+    "orb1707381"
+  ],
+  "http_status": 200,
+  "cids": [
+    91518
+  ]
+}

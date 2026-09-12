@@ -1,0 +1,20 @@
+{
+  "parent_key": "OJYGBLRPYBAHRT-ZMKYHYQQSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2-O-(2,2,2-Trichloroethylidene)-alpha-D-glucofuranose",
+    "1,2-o-(2,2,2-trichloroethylidene)-",
+    "14798-36-8",
+    "39598-39-5",
+    "DTXSID90276671",
+    "SCHEMBL6909955",
+    "a-d-glucofuranose",
+    "alpha-Chloralose",
+    "alpha-D-Glucofuranose, 1,2-O-(2,2,2-trichloroethylidene)-"
+  ],
+  "cids": [
+    186624
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OJYGBLRPYBAHRT-ZMKYHYQQSA-N/synonyms/JSON",
+  "http_status": 200
+}

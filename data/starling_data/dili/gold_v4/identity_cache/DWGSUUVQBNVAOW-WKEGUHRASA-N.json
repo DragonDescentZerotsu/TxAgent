@@ -1,0 +1,13 @@
+{
+  "parent_key": "DWGSUUVQBNVAOW-WKEGUHRASA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL5180860",
+    "fluorodideoxyadenosine"
+  ],
+  "cids": [
+    69343993
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DWGSUUVQBNVAOW-WKEGUHRASA-N/synonyms/JSON",
+  "http_status": 200
+}

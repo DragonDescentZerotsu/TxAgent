@@ -1,0 +1,35 @@
+{
+  "parent_key": "FIJSKXFJFGTBRV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FIJSKXFJFGTBRV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2'-(Methylenebis(2,1-phenyleneoxymethylene))bis(oxirane)",
+    "2,2'-(Methylenebis(o-phenyleneoxymethylene))bisoxirane",
+    "2,2'-(Methylenebis(phenyleneoxymethylene))bisoxirane",
+    "2,2'-[Methylenebis(2,1-phenyleneoxymethylene)]bis(oxirane)",
+    "2,2'-[Methylenebis(2,1-phenyleneoxymethylene)]bis[oxirane]",
+    "2,2'-[methylenebis(o-phenyleneoxymethylene)]bisoxirane",
+    "2,2'-[methylenebis(phenyleneoxymethylene)]bisoxirane",
+    "2,2'-methylenebis(phenyleneoxymethylene)bisoxirane",
+    "2-[[2-[[2-(oxiran-2-ylmethoxy)phenyl]methyl]phenoxy]methyl]oxirane",
+    "54208-63-8",
+    "58145-38-3",
+    "Bisphenol F diglycidyl ether, ortho-ortho'",
+    "DTXSID00866406",
+    "EINECS 259-026-8",
+    "Methylenebis(2-gylcidyloxyphenyl)",
+    "Methylenebis(o-phenol), 3-propylene oxide ether",
+    "Methylenebis[2-gylcidyloxyphenyl]",
+    "NS00058721",
+    "Oxirane, 2,2'-(methylenebis(2,1-phenyleneoxymethylene))bis-",
+    "Oxirane, 2,2'-[methylenebis(2,1-phenyleneoxymethylene)]bis-",
+    "RefChem:440166",
+    "SCHEMBL1745602",
+    "bis(2-(oxiran-2-ylmethoxy)phenyl)methane",
+    "o,o'-Bisphenol F diglycidyl ether"
+  ],
+  "http_status": 200,
+  "cids": [
+    62078
+  ]
+}

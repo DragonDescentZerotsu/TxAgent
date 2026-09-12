@@ -1,0 +1,42 @@
+{
+  "parent_key": "LYVDQJOFFUOJJT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LYVDQJOFFUOJJT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-propan-2-yloxyphenyl) N-methyl-N-nitrosocarbamate",
+    "2-(1-Methylethoxy)phenyl N-methyl-N-nitrosocarbamate",
+    "2-Isopropoxyphenyl N-methylcarbamate, nitrosated",
+    "2-[(1-methylethyl)oxy]phenyl methyl(nitroso)carbamate",
+    "2-[(Propan-2-yl)oxy]phenyl methyl(nitroso)carbamate",
+    "2-isopropoxyphenyl methyl(nitroso)carbamate",
+    "38777-13-8",
+    "BRN 2291628",
+    "Baygon, nitroso derivative",
+    "CARBAMIC ACID, N-METHYL-N-NITROSO-, o-ISOPROPOXYPHENYL ESTER",
+    "CCRIS 1213",
+    "Carbamic acid, N-methyl-N-nitroso-, 2-(1-methylethoxy)phenyl ester",
+    "Carbamic acid, methylnitroso-, 2-(1-methylethoxy)phenyl ester",
+    "Carbamic acid, methylnitroso-, o-isopropoxyphenyl ester",
+    "DTXSID1020986",
+    "EX5G59PV93",
+    "Methylnitrosocarbamic acid o-isopropoxyphenyl ester",
+    "N-Nitroso-2-isopropoxyphenyl-N-methylcarbamate",
+    "N-Nitrosopropoxur",
+    "N-nitrosoaprocarb",
+    "NO-PPX",
+    "Nitroso-Baygon",
+    "Nitrosobaygon",
+    "Nitrosopropoxur",
+    "Nitrosopropoxur, N-",
+    "Propoxur nitroso",
+    "RefChem:830865",
+    "Suncide, nitrosated",
+    "Suncide, nitrosated [Japanese]",
+    "o-Isopropoxyphenyl N-methyl-N-nitrosocarbamate",
+    "o-Isopropoxyphenyl methylnitrosocarbamate"
+  ],
+  "http_status": 200,
+  "cids": [
+    38097
+  ]
+}

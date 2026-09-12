@@ -1,0 +1,28 @@
+{
+  "parent_key": "LGTPJLYTRSHHTM-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LGTPJLYTRSHHTM-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(2-Methoxyethyl)-1-nitrosourea",
+    "1-(2-Methyoxyethyl)-1-nitrosourea",
+    "1-Nitrosomethoxyethylurea",
+    "108278-70-2",
+    "4V28WEW7N9",
+    "AKOS006363489",
+    "BRN 4177243",
+    "CCRIS 1854",
+    "DTXCID8070966",
+    "DTXSID40148475",
+    "N-(2-Methoxyethyl)-N-nitrosourea",
+    "N-(2-methoxyethyl)-N-nitroso-Urea",
+    "N-2(2-Methoxyethyl)-N-nitrosourea",
+    "Nitroso-2-methoxyethylurea",
+    "RefChem:74196",
+    "UNII-4V28WEW7N9",
+    "Urea, N-(2-methoxyethyl)-N-nitroso-"
+  ],
+  "http_status": 200,
+  "cids": [
+    130063
+  ]
+}

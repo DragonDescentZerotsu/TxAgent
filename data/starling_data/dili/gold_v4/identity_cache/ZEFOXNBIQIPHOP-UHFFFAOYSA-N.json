@@ -1,0 +1,22 @@
+{
+  "parent_key": "ZEFOXNBIQIPHOP-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2,3-DIISOPROPYLPHENOL",
+    "2,3-di(propan-2-yl)phenol",
+    "51335-39-8",
+    "DTXSID50865404",
+    "MB22638",
+    "NS00127159",
+    "SCHEMBL2049100",
+    "SCHEMBL30521988",
+    "SCHEMBL4632329",
+    "SCHEMBL478223",
+    "SCHEMBL9672407"
+  ],
+  "cids": [
+    14512768
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZEFOXNBIQIPHOP-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

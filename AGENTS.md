@@ -27,7 +27,7 @@ scaffold valid/test 的 Flash progressive、matched full-flat 与五个 baseline
 
 ## 当前 Conditioned Benchmark（2026-09-05）
 
-五个任务共用一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
+七个任务共用一个活跃 benchmark 根，并提供 scaffold 与 random 两种 split：
 
 ```text
 data/conditioned_benchmark/<Task>/{scaffold,random}/
@@ -50,6 +50,17 @@ tools/chembl_tool/common/starling/CONDITIONED_BENCHMARK.md
 | ClinTox | 1,144 / 142 / 142 | 1,142 / 143 / 143 | clinical-trial toxicity failure versus approved comparator |
 | Skin_Reaction | 1,941 / 239 / 241 | 1,937 / 242 / 242 | skin sensitization/contact allergy |
 | Ames | 1,926 / 274 / 274 | 1,980 / 247 / 247 | bacterial reverse mutation under the reported strain panel and metabolic activation |
+
+DILI 当前为 Starling-only gold_v4，scaffold 与 random 的 train/valid/test 均为 3220/402/402；
+检索建库只预排除 heldout L1，L2 保留，所有层在 query-time 执行 disjoint。旧 DILI gold_v3 实验仅作历史参考。
+Carcinogens 当前同样为 Starling-only gold_v4，五个条件为 rodent/human/dog/monkey/rabbit；
+scaffold 与 random 的 train/valid/test 均为 3754/469/469，合计 3578 正类、1114 负类。
+它复用已完成的全 base 方向审阅，L1-only heldout 预排除、L2 保留；两任务的模型与五种基线结果以 registry 为准。
+本轮清理已冻结为 `data/starling_data/<task>/retrieval_final/`：DILI 采用 v5 源，Carcinogens 固化 R18 修复。
+共享恢复包、catalog、两种 split 索引和 Parquet 表使用该最终源；旧大型暂存副本退出活跃路径。
+旧 DILI/Carcinogens gold_v3 的 Flash progressive/full-flat 和五种基线仅作历史参考。DILI scaffold valid/test 于 2026-09-08
+按用户要求交换，当前 test 是已查看的原 valid。数据、source-build 与共享恢复入口见
+`tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md`；结果以 registry 为准。
 
 Ames 是经过名称—结构核验和有限语义审查的 source subset：保留 2,474 条 molecule-condition rows、1,383 个 parents、73 个
 条件组。直接标签要求实验性细菌回复突变、明确菌株组合与活化条件及 PubChem name-parent 精确匹配；
@@ -160,7 +171,7 @@ baselines/conditioned_knn.py
 baselines/structure_knn/run.py
 ```
 
-当前 progressive Starling source 不依赖任何个人 checkout。仓库只冻结 BBB、Bioavailability、Skin、Ames 实际使用
+当前 progressive Starling source 不依赖任何个人 checkout。仓库只冻结 BBB、Bioavailability、Skin、Ames、DILI、Carcinogens 实际使用
 的唯一 Stage-03 records，清单位于 `artifacts/chembl_tool/starling/current_records/manifest.json`；
 `rebuild_current_starling_retrieval.py` 是恢复 records、重建 overlays/catalogs/scaffold+random indices 和 hash
 验证的统一入口。旧 source-purity 版本号只作为已有实验 provenance，不能作为新 run 的替代输入。

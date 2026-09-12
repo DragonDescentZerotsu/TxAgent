@@ -1,0 +1,12 @@
+{
+  "parent_key": "BDQUGJCOXDENQA-QZTJIDSGSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BDQUGJCOXDENQA-QZTJIDSGSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "trans-1,2-dihydroxy-1,2-dihydro-6-amino-chrysene"
+  ],
+  "http_status": 200,
+  "cids": [
+    21118316
+  ]
+}

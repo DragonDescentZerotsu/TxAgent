@@ -1,0 +1,12 @@
+{
+  "parent_key": "BPVBTSVRULALAY-GUGJDKNPSA-O",
+  "ok": true,
+  "synonyms": [
+    "CHEMBL1178415"
+  ],
+  "cids": [
+    6918017
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BPVBTSVRULALAY-GUGJDKNPSA-O/synonyms/JSON",
+  "http_status": 200
+}

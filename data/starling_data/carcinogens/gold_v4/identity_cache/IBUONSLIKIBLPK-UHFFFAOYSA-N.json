@@ -1,0 +1,22 @@
+{
+  "parent_key": "IBUONSLIKIBLPK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IBUONSLIKIBLPK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-(Tetrahydro-2-furanyl)pyridine",
+    "3-(Tetrahydrofuran-2-yl)pyridine",
+    "3-(oxolan-2-yl)pyridine",
+    "78210-50-1",
+    "DTXSID101335831",
+    "NS00115028",
+    "SCHEMBL1607384",
+    "SCHEMBL31699793",
+    "SCHEMBL6471291",
+    "SCHEMBL9217960",
+    "SCHEMBL972955"
+  ],
+  "http_status": 200,
+  "cids": [
+    53908098
+  ]
+}

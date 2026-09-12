@@ -1,0 +1,26 @@
+{
+  "parent_key": "DMNFZTKVDDFCQE-WJXNTJCASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DMNFZTKVDDFCQE-WJXNTJCASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "6-O-Acetyl-4-O-[6-O-acetyl-3-O-(2-carboxybenzoyl)-beta-D-glucopyranosyl]-2-O-(2-carboxybenzoyl)-beta-D-glucopyranose",
+    "618-382-8",
+    "9004-38-0",
+    "CAS-9004-38-0",
+    "CHEMBL3189049",
+    "Cellulose acetate phthalate",
+    "Cellulose, acetate hydrogen 1,2-benzenedicarboxylate",
+    "Cellulose, acetate phthalate",
+    "DTXCID9028594",
+    "DTXSID2048668",
+    "MFCD00072769",
+    "NCGC00188441-01",
+    "RefChem:124308",
+    "SY284405",
+    "Tox21_113034"
+  ],
+  "http_status": 200,
+  "cids": [
+    53315792
+  ]
+}

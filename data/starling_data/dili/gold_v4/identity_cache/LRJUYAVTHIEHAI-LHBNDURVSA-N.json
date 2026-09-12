@@ -1,0 +1,40 @@
+{
+  "parent_key": "LRJUYAVTHIEHAI-LHBNDURVSA-N",
+  "ok": true,
+  "synonyms": [
+    "(22R)-2beta,3beta,5,11alpha,14,20,22-Heptahydroxy-5beta-cholest-7-en-6-one",
+    "(2S,3R,5S,9R,10R,11R,13R,14S,17S)-17-((2R,3R)-2,3-dihydroxy-6-methylheptan-2-yl)-2,3,5,11,14-pentahydroxy-10,13-dimethyl-1,2,3,4,9,11,12,15,16,17-decahydrocyclopenta(a)phenanthren-6-one",
+    "(2S,3R,5S,9R,10R,11R,13R,14S,17S)-17-[(1R,2R)-1,2-dihydroxy-1,5-dimethyl-hexyl]-2,3,5,11,14-pentahydroxy-10,13-dimethyl-1,2,3,4,9,11,12,15,16,17-decahydrocyclopenta[a]phenanthren-6-one",
+    "(2S,3R,5S,9R,10R,11R,13R,14S,17S)-17-[(2R,3R)-2,3-dihydroxy-6-methylheptan-2-yl]-2,3,5,11,14-pentahydroxy-10,13-dimethyl-1,2,3,4,9,11,12,15,16,17-decahydrocyclopenta[a]phenanthren-6-one",
+    "2,3,5,11,14,20,22-heptahydroxycholest-7-en-6-one",
+    "2B,3B,5A,11A,14,2,22-Heptahydroxy-5B-7-Cholesten-6-One",
+    "2beta,3beta,5beta,11alpha,14alpha,20R,22R-Heptahydro xycholest-7-en-6-one",
+    "2beta,3beta,5beta,11alpha,14alpha,20R,22R-hepta-hydroxy-cholest-7-en-6-one",
+    "38778-30-2",
+    "AKOS024457813",
+    "BDBM50488539",
+    "CHEBI:232104",
+    "CHEMBL2087139",
+    "CS-0026791",
+    "Cholest-7-en-6-one, 2,3,5,11,14,20,22-heptahydroxy-, (2beta,3beta,5beta,11alpha,22R)-",
+    "DTXSID40959583",
+    "FM52413",
+    "HB3985",
+    "HY-103273",
+    "LMST01010542",
+    "M02095",
+    "MFCD00056450",
+    "MS-32731",
+    "Muristerone",
+    "RefChem:160129",
+    "SCHEMBL19419608",
+    "T21672",
+    "muristerone a",
+    "orb1704998"
+  ],
+  "cids": [
+    122217
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LRJUYAVTHIEHAI-LHBNDURVSA-N/synonyms/JSON",
+  "http_status": 200
+}

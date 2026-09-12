@@ -1,0 +1,20 @@
+{
+  "parent_key": "AJMYPCAFZCFWGG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AJMYPCAFZCFWGG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-Benzenedicarboxylic acid, 1-butyl 2-propyl ester",
+    "102148-87-8",
+    "2-O-butyl 1-O-propyl benzene-1,2-dicarboxylate",
+    "Butyl Propyl Benzene-1,2-dicarboxylate",
+    "DTXCID6067204",
+    "DTXSID20144713",
+    "O1-Butyl O2-propyl benzene-1,2-dicarboxylate",
+    "RefChem:167322",
+    "SCHEMBL6057088"
+  ],
+  "http_status": 200,
+  "cids": [
+    179810
+  ]
+}

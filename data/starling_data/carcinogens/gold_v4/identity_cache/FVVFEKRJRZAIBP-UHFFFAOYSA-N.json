@@ -1,0 +1,14 @@
+{
+  "parent_key": "FVVFEKRJRZAIBP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FVVFEKRJRZAIBP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Butyrylathylenimin",
+    "SCHEMBL20342531",
+    "SCHEMBL27735280"
+  ],
+  "http_status": 200,
+  "cids": [
+    123726434
+  ]
+}

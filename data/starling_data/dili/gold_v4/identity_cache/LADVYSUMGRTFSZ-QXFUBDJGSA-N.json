@@ -1,0 +1,40 @@
+{
+  "parent_key": "LADVYSUMGRTFSZ-QXFUBDJGSA-N",
+  "ok": true,
+  "synonyms": [
+    "(-)-(1S,2S,8S)-1.ALPHA.-(METHOXYCARBONYL)-2.ALPHA.-HYDROXY-2.BETA.-METHYL-1,2,3,5,6,8-HEXAHYDRO-7H-PYRROLIZINE",
+    "(-)-(1S,2S,8S)-1alpha-(METHOXYCARBONYL)-2alpha-HYDROXY-2beta-METHYL-1,2,3,5,6,8-HEXAHYDRO-7H-PYRROLIZINE",
+    "(-)-Isotussilagine",
+    "(-)-TUSSILAGINE",
+    "1H-PYRROLIZINE-1-CARBOXYLIC ACID, HEXAHYDRO-2-HYDROXY-2-METHYL-, METHYL ESTER, (1S,2S,7AS)-",
+    "1H-PYRROLIZINE-1-CARBOXYLIC ACID, HEXAHYDRO-2-HYDROXY-2-METHYL-, METHYL ESTER, (1S-(1.ALPHA.,2.ALPHA.,7A.ALPHA.))-",
+    "1H-Pyrrolizine-1-carboxylic acid, hexahydro-2-hydroxy-2-methyl-, methyl ester, (1S-(1alpha,2alpha,7aalpha))-",
+    "1H-Pyrrolizine-1-carboxylic acid, hexahydro-2-hydroxy-2-methyl-, methyl ester, (1alpha,2beta,7aalpha))-(+-)-",
+    "80151-77-5",
+    "91108-33-7",
+    "AC1L4G3Z",
+    "AKOS040734337",
+    "C10411",
+    "CHEBI:9782",
+    "CTK5G8948",
+    "DTXSID30919954",
+    "Methyl (1S,2S,7aS)-2-hydroxy-2-methylhexahydro-1H-pyrrolizine-1-carboxylate",
+    "Methyl 2-hydroxy-2-methylhexahydro-1H-pyrrolizine-1-carboxylate",
+    "N9VOG4YJ1H",
+    "NS00094203",
+    "Q27108497",
+    "RefChem:50666",
+    "SCHEMBL29865713",
+    "T124199",
+    "TUSSILAGINE, (-)-",
+    "Tussilagine",
+    "UNII-N9VOG4YJ1H",
+    "methyl (1S,2S,8S)-2-hydroxy-2-methyl-1,3,5,6,7,8-hexahydropyrrolizine-1-carboxylate",
+    "orb2279505"
+  ],
+  "cids": [
+    185071
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LADVYSUMGRTFSZ-QXFUBDJGSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,19 @@
+{
+  "parent_key": "JSFATNQSLKRBCI-NLORQXDXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JSFATNQSLKRBCI-NLORQXDXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(5E,8E,11E,13E)-15-hydroxyicosa-5,8,11,13-tetraenoic acid",
+    "15(S)-HETE-d8",
+    "15-Hydroxy-5,8,11,13-eicosatetraenoic acid",
+    "5,8,11,13-Eicosatetraenoic acid, 15-hydroxy-",
+    "73945-47-8",
+    "84807-87-4",
+    "RefChem:78804",
+    "SCHEMBL1478265"
+  ],
+  "http_status": 200,
+  "cids": [
+    5353283
+  ]
+}

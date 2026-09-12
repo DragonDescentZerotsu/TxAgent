@@ -1,0 +1,27 @@
+{
+  "parent_key": "GSTUMYVOFKPZNS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "26849YC38E",
+    "4,4'-Methylenebis(N,N,N-trimethylcyclohexan-1-aminium)",
+    "4,4'-methylenebis(cyclohexyltrimethyl)ammonium",
+    "688299-17-4",
+    "CHEMBL2110994",
+    "CYCLOHEXANAMINIUM, 4,4'-METHYLENEBIS(N,N,N-TRIMETHYL-",
+    "DTXCID00141427",
+    "DTXSID50218936",
+    "Mebezonium",
+    "Mebezonium cation",
+    "Mebezonium ion",
+    "NCGC00521082-01",
+    "Q27254071",
+    "RefChem:156185",
+    "SCHEMBL2110883",
+    "UNII-26849YC38E"
+  ],
+  "cids": [
+    71850
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSTUMYVOFKPZNS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

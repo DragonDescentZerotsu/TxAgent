@@ -1,0 +1,29 @@
+{
+  "parent_key": "MYUNWHTZYXUCIK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(6E)-6-(hydrazinylmethylidene)cyclohexa-2,4-dien-1-one",
+    "2-Hydroxybenzaldehyde hydrazone",
+    "263153-46-4",
+    "3291-00-7",
+    "Benzaldehyde, 2-hydroxy-, hydrazone",
+    "Benzaldehyde, 2-hydroxy-, hydrazone, [C(E)]- (9CI)",
+    "DB-021199",
+    "DB-266724",
+    "DTXCID7038608",
+    "DTXSID6062961",
+    "EINECS 221-953-0",
+    "F575384",
+    "MYUNWHTZYXUCIK-UHFFFAOYSA-N",
+    "NS00048942",
+    "RefChem:561326",
+    "SCHEMBL11606915",
+    "SCHEMBL2316554",
+    "SCHEMBL29615332"
+  ],
+  "cids": [
+    102390
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MYUNWHTZYXUCIK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

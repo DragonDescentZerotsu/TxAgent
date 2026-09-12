@@ -1,0 +1,25 @@
+{
+  "parent_key": "DHHFDKNIEVKVKS-FMOSSLLZSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DHHFDKNIEVKVKS-FMOSSLLZSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-1-[(2E)-2-[(2S)-2,6-dicarboxy-2,3-dihydro-1H-pyridin-4-ylidene]ethylidene]-6-hydroxy-5-[(2S,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)tetrahydropyran-2-yl]oxy-indolin-1-ium-2-carboxylate",
+    "AC1O44K9",
+    "B0397",
+    "BETACYANIN",
+    "C08540",
+    "CHEBI:3080",
+    "CHEMBL1172614",
+    "D88638",
+    "DHHFDKNIEVKVKS-FMOSSLLZSA-N",
+    "NS00013408",
+    "RefChem:1079723",
+    "SCHEMBL21638973"
+  ],
+  "http_status": 200,
+  "cids": [
+    441603,
+    6324775,
+    11953901
+  ]
+}

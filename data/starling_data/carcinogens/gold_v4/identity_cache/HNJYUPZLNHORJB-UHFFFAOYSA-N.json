@@ -1,0 +1,12 @@
+{
+  "parent_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HNJYUPZLNHORJB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "N-(nitrosomethyl)cyclohexanamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    23618405
+  ]
+}

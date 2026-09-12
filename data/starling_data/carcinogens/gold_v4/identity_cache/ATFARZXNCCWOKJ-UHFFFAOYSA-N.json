@@ -1,0 +1,27 @@
+{
+  "parent_key": "ATFARZXNCCWOKJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ATFARZXNCCWOKJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "22244-14-0",
+    "4-Amino-3-((E)-(4'-((E)-(2,4-diaminophenyl)diazenyl)-[1,1'-biphenyl]-4-yl)diazenyl)-5-hydroxy-6-((E)-phenyldiazenyl)naphthalene-2,7-disulfonic acid",
+    "4-Amino-3-[(E)-{4'-[(E)-(2,4-diaminophenyl)diazenyl][1,1'-biphenyl]-4-yl}diazenyl]-5-hydroxy-6-[(E)-phenyldiazenyl]naphthalene-2,7-disulfonic acid",
+    "4-amino-3-[[4-[4-[(2,4-diaminophenyl)diazenyl]phenyl]phenyl]diazenyl]-5-hydroxy-6-phenyldiazenylnaphthalene-2,7-disulfonic acid",
+    "AKOS040741647",
+    "C.I. Direct Black 38 parent",
+    "CHEMBL1093278",
+    "CS-0102892",
+    "DTXSID9047207",
+    "Direct Black 38 (free acid)",
+    "Direct Black 38 free acid",
+    "HY-D0256A",
+    "SCHEMBL29518699",
+    "SCHEMBL31122165",
+    "T15135L",
+    "orb1989289"
+  ],
+  "http_status": 200,
+  "cids": [
+    5284350
+  ]
+}

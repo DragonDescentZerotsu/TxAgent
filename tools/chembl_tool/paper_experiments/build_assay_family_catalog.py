@@ -20,9 +20,9 @@ import pyarrow.parquet as pq
 
 from tools.chembl_tool.common.json_utils import (
     write_json_atomic,
-    write_jsonl_atomic,
 )
 from tools.chembl_tool.common.starling.assay_catalog import assay_id, assay_unit
+from tools.chembl_tool.common.starling.current_retrieval_artifacts import current_records_path
 from tools.chembl_tool.common.build_runtime import (
     sha256_file,
     local_input,
@@ -43,6 +43,20 @@ MECHANISM_OUTPUT_ROOT = Path(
     "family_catalogs_mechanism_tagged_v1"
 )
 TASKS = {
+    "dili": {
+        "records": str(current_records_path("dili")),
+        "config_module": "tools.chembl_tool.tasks.dili.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(DEFAULT_OUTPUT_ROOT),
+        "output_name": "dili",
+    },
+    "carcinogens": {
+        "records": str(current_records_path("carcinogens")),
+        "config_module": "tools.chembl_tool.tasks.carcinogens.experiment_config",
+        "config_name": "STARLING",
+        "output_root": str(DEFAULT_OUTPUT_ROOT),
+        "output_name": "carcinogens",
+    },
     "ames": {
         "records": "data/starling_data/ames/canonical_v1/records.parquet",
         "config_module": "tools.chembl_tool.tasks.ames.experiment_config",

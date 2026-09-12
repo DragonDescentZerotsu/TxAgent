@@ -1,0 +1,19 @@
+{
+  "parent_key": "NKVLDFAVEWLOCX-GUSKIFEASA-N",
+  "ok": true,
+  "synonyms": [
+    "328056-98-0",
+    "GPI 0100",
+    "GPI-0100",
+    "GPI0100",
+    "IC5V8479H3",
+    "RefChem:782659",
+    "SCHEMBL29351734",
+    "UNII-IC5V8479H3"
+  ],
+  "cids": [
+    56841660
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NKVLDFAVEWLOCX-GUSKIFEASA-N/synonyms/JSON",
+  "http_status": 200
+}

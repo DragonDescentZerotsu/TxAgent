@@ -1,0 +1,37 @@
+{
+  "parent_key": "HHJUWIANJFBDHT-ZVTSDNJWSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-(Aminocarbonyl)-O(sup 4)-deacetyl-3-de(methoxycarbonyl)vincaleukoblastine",
+    "3-(Aminocarbonyl)-O4-deacetyl-3-de(methoxycarbonyl)vincaleukoblastine",
+    "CHEMBL238071",
+    "DB00309",
+    "EBC-27451",
+    "EINECS 258-682-2",
+    "EN300-33412062",
+    "HSDB 6961",
+    "Lilly 112531",
+    "R-Vindesine",
+    "SCHEMBL13524311",
+    "SCHEMBL29379155",
+    "UNII-RSA8KO39WH",
+    "VINDESINE [HSDB]",
+    "VINDESINE [INN]",
+    "VINDESINE [MI]",
+    "VINDESINE [USAN]",
+    "VINDESINE [VANDF]",
+    "VINDESINE [WHO-DD]",
+    "Vincaleukoblastine, 23-amino-O(sup 4)-deacetyl-23-demethoxy-",
+    "Vincaleukoblastine, 3-(aminocarbonyl)-O(sup 4)-deacetyl-3-de(methoxycarbonyl)-",
+    "Vindesina [INN-Spanish]",
+    "Vindesine [USAN:INN:BAN]",
+    "Vindesinum [INN-Latin]",
+    "methyl (13S,15R,17S)-13-[(1R,9R,10S,11R,12R,19R)-10-carbamoyl-12-ethyl-10,11-dihydroxy-5-methoxy-8-methyl-8,16-diazapentacyclo[10.6.1.01,9.02,7.016,19]nonadeca-2,4,6,13-tetraen-4-yl]-17-ethyl-17-hydroxy-1,11-diazatetracyclo[13.3.1.04,12.05,10]nonadeca-4(12),5,7,9-tetraene-13-carboxylate",
+    "methyl (13S,15R,17S)-13-[(1R,9R,10S,11R,12R,19R)-10-carbamoyl-12-ethyl-10,11-dihydroxy-5-methoxy-8-methyl-8,16-diazapentacyclo[10.6.1.0^{1,9}.0^{2,7}.0^{16,19}]nonadeca-2,4,6,13-tetraen-4-yl]-17-ethyl-17-hydroxy-1,11-diazatetracyclo[13.3.1.0^{4,12}.0^{5,10}]nonadeca-4(12),5(10),6,8-tetraene-13-carboxylate"
+  ],
+  "cids": [
+    11643449
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HHJUWIANJFBDHT-ZVTSDNJWSA-N/synonyms/JSON",
+  "http_status": 200
+}

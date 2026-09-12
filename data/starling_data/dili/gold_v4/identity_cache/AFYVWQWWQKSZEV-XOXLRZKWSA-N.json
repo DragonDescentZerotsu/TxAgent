@@ -1,0 +1,14 @@
+{
+  "parent_key": "AFYVWQWWQKSZEV-XOXLRZKWSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R)-2,3-dihydroxypropyl (2S)-2-{[(3R)-3,7,11,15-tetramethylhexadecyl]oxy}-3-{[(3R,7R,11R)-3,7,11,15-tetramethylhexadecyl]oxy}propyl hydrogen (R)-phosphate",
+    "2,3-DI-O-PHYTANLY-3-SN-GLYCERO-1-PHOSPHORYL-3'-SN-GLYCEROL",
+    "3-[GLYCEROLYLPHOSPHONYL]-[1,2-DI-PHYTANYL]GLYCEROL"
+  ],
+  "cids": [
+    14350928
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AFYVWQWWQKSZEV-XOXLRZKWSA-N/synonyms/JSON",
+  "http_status": 200
+}

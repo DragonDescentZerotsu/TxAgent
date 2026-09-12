@@ -1,0 +1,13 @@
+{
+  "parent_key": "KUUQFNKNEJOHQX-YFKPBYRVSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL4412610",
+    "s-allyl mercaptocysteine"
+  ],
+  "cids": [
+    20657680
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KUUQFNKNEJOHQX-YFKPBYRVSA-N/synonyms/JSON",
+  "http_status": 200
+}

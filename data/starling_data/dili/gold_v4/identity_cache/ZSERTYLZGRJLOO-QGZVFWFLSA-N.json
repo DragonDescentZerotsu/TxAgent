@@ -1,0 +1,25 @@
+{
+  "parent_key": "ZSERTYLZGRJLOO-QGZVFWFLSA-N",
+  "ok": true,
+  "synonyms": [
+    "(R)-2-(5-chloro-6-(2,2,2-trifluoroethoxy)-4'-(trifluoromethyl)-[1,1'-biphenyl]-3-yl)-3-cyclobutylpropanoic acid",
+    "(r)-2-(5-chloro-6-(2,2,2-trifluoroethoxy)-4'-(trifluoromethyl)biphenyl-3-yl)-3-cyclobutylpropanoic acid",
+    "1447811-26-8",
+    "AKOS040751758",
+    "BDBM50114789",
+    "CHEMBL3609747",
+    "EVP-0015962",
+    "EVP-0962",
+    "GLXC-15642",
+    "SCHEMBL29549427",
+    "SCHEMBL3713834",
+    "T31733",
+    "ZSERTYLZGRJLOO-QGZVFWFLSA-N",
+    "orb1697249"
+  ],
+  "cids": [
+    71623049
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZSERTYLZGRJLOO-QGZVFWFLSA-N/synonyms/JSON",
+  "http_status": 200
+}

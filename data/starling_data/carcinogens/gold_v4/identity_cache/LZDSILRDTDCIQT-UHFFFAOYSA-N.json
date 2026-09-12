@@ -1,0 +1,36 @@
+{
+  "parent_key": "LZDSILRDTDCIQT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LZDSILRDTDCIQT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10544-73-7",
+    "16E0524PXI",
+    "234-128-5",
+    "CHEBI:29799",
+    "DINITROGEN TRIOXIDE [MI]",
+    "DTXCID9032959",
+    "DTXSID7065120",
+    "Dinitrogen trioxide",
+    "Dinitrogen trioxide (gas) (unlabeled N2O3)",
+    "EINECS 234-128-5",
+    "N-oxonitramide",
+    "N2O3",
+    "NITROGEN TRIOXIDE",
+    "NS00051971",
+    "Nitrogen oxide (N2O3)",
+    "Nitrogen trioxide 10% by volume or more",
+    "Nitrogen trioxide [UN2421]  [Poison gas]",
+    "Nitrous anhydride",
+    "O2NNO",
+    "Q407833",
+    "RefChem:166100",
+    "SCHEMBL51949",
+    "UN2421",
+    "UNII-16E0524PXI",
+    "trioxido-1kappa(2)O,2kappaO-dinitrogen(N--N)"
+  ],
+  "http_status": 200,
+  "cids": [
+    61526
+  ]
+}

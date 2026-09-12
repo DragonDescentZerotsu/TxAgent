@@ -1,0 +1,36 @@
+{
+  "parent_key": "QNGBRPMOFJSFMF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(4-mercapto-phenyl)-ethanone",
+    "1-(4-mercaptophenyl)ethan-1-one",
+    "1-(4-mercaptophenyl)ethanone",
+    "1-(4-sulfanylphenyl)ethan-1-one",
+    "1-(4-sulfanylphenyl)ethanone",
+    "3814-20-8",
+    "4 inverted exclamation mark -Mercaptoacetophenone",
+    "4'-mercaptoacetophenone",
+    "4-MERCAPTOACETOPHENONE",
+    "676-357-7",
+    "AS-86970",
+    "CS-0244211",
+    "DAA81420",
+    "DB-121026",
+    "DTXSID20901222",
+    "EN300-27357",
+    "F659620",
+    "H38367",
+    "MFCD08272193",
+    "QNGBRPMOFJSFMF-UHFFFAOYSA-N",
+    "RefChem:426026",
+    "SCHEMBL2210552",
+    "SCHEMBL487360",
+    "SY171213",
+    "p-acetyl benzenethiol"
+  ],
+  "cids": [
+    4713180
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QNGBRPMOFJSFMF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

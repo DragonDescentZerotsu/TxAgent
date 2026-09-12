@@ -1,0 +1,21 @@
+{
+  "parent_key": "AIUAVRQIJPKJTG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AIUAVRQIJPKJTG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "10089-09-5",
+    "17,18-Dichloro-7-ethyl-1,5,8,11-tetrahydroxy-10,13-bis(hydroxymethyl)-3-phenyl-4,7,10,13,16,17,18,18a-octahydropyrrolo[2,1-c][1,4,7,10,13]pentaazacyclohexadecin-14(3H)-one",
+    "17,18-Dichloro-7-ethyldodecahydro-10,13-bis(hydroxymethyl)-3-phenylpyrrolo(2,1-c)(1,4,7,10,13)pentaazacyclohexadecine-1,5,8,11,14(2H)-pentone",
+    "17,18-dichloro-9-ethyl-3,6-bis(hydroxymethyl)-13-phenyl-1,4,7,10,14-pentazabicyclo[14.3.0]nonadecane-2,5,8,11,15-pentone",
+    "CHEBI:192211",
+    "Cyclic(3-phenyl-b-alanyl-a-aminobutyrylserylseryl-3,4-dichloroprolyl), 9CI",
+    "Cyclo(L-Abu-L-Ser-L-Ser-3beta,4beta-dichloro-L-Pro-3-phenyl-betaAla-)",
+    "DTXSID40905823",
+    "Islanditoxin",
+    "Pyrrolo(2,1-c)(1,4,7,10,13)pentaazacyclohexadecine-1,5,8,11,14(2H)-pentone, 17,18-dichloro-7-ethyldodecahydro-10,13-bis(hydroxymethyl)-3-phenyl-"
+  ],
+  "http_status": 200,
+  "cids": [
+    114782
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "parent_key": "HUKDAABRKOWPNA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HUKDAABRKOWPNA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4-octylphenyl)boronic Acid",
+    "(4-octylphenyl)boronicAcid",
+    "133997-05-4",
+    "4-(n-Octyl)benzeneboronic acid",
+    "4-(n-Octyl)benzeneboronic acid  97%",
+    "4-n-Octylphenylboronic acid",
+    "4-octylbenzeneboronic acid",
+    "4-octylphenylboronic acid",
+    "AKOS BRN-0161",
+    "AKOS004116143",
+    "Boronic acid, B-(4-octylphenyl)-",
+    "C72354",
+    "CS-0178448",
+    "DB-063005",
+    "DS-18678",
+    "DTXSID50400718",
+    "F623349",
+    "HUKDAABRKOWPNA-UHFFFAOYSA-N",
+    "IFA99705",
+    "MFCD04039034",
+    "SCHEMBL1021739",
+    "p-n-octylphenylboronic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    4197992
+  ]
+}

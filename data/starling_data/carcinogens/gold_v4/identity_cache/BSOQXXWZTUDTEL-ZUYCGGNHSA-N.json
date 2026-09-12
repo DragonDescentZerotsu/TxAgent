@@ -1,0 +1,40 @@
+{
+  "parent_key": "BSOQXXWZTUDTEL-ZUYCGGNHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSOQXXWZTUDTEL-ZUYCGGNHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(4R)-4-(((2S)-2-(((2R)-2-((2R,3R,4R,5S,6R)-3-acetamido-2,5-dihydroxy-6-(hydroxymethyl)oxan-4-yl)oxypropanoyl)amino)propanoyl)amino)-5-amino-5-oxopentanoic acid",
+    "(4R)-4-[[(2S)-2-[[(2R)-2-[(2R,3R,4R,5S,6R)-3-acetamido-2,5-dihydroxy-6-(hydroxymethyl)oxan-4-yl]oxypropanoyl]amino]propanoyl]amino]-5-amino-5-oxopentanoic acid",
+    "(4R)-4-[[(2S)-2-[[(2R)-2-[(2R,3R,4R,5S,6R)-3-acetamido-2,5-dihydroxy-6-(hydroxymethyl)tetrahydropyran-4-yl]oxypropanoyl]amino]propanoyl]amino]-5-amino-5-oxo-pentanoic acid",
+    "(4R)-4-{[(2S)-2-{[(2R)-2-{[(2R,3R,4R,5S,6R)-3-(acetylamino)-2,5-dihydroxy-6-(hydroxymethyl)tetrahydro-2H-pyran-4-yl]oxy}propanoyl]amino}propanoyl]amino}-5-amino-5-oxopentanoic acid (non-preferred name)",
+    "(4r)-4-[[(2s)-2-[[(2r)-2-[(2r,3s,4r,5r,6r)-5-Acetamido-2-(Hydroxymethyl)-3,6-Bis(Oxidanyl)oxan-4-Yl]oxypropanoyl]amino]propanoyl]amino]-5-Azanyl-5-Oxidanylidene-Pentanoic Acid",
+    "258-696-9",
+    "2U7S2HVO96",
+    "3-O-[(2R)-1-{[(2S)-1-{[(2R)-4-Carboxy-1-hydroxy-1-iminobutan-2-yl]imino}-1-hydroxypropan-2-yl]imino}-1-hydroxypropan-2-yl]-2-deoxy-2-[(1-hydroxyethylidene)amino]-beta-D-glucopyranose",
+    "3-O-[1-({1-[(4-Carboxy-1-hydroxy-1-iminobutan-2-yl)imino]-1-hydroxypropan-2-yl}imino)-1-hydroxypropan-2-yl]-2-deoxy-2-[(1-hydroxyethylidene)amino]hexopyranose",
+    "87420-48-2",
+    "Acetylmuramyl-L-alanyl-D-isoglutamine",
+    "BDBM50164885",
+    "CHEBI:59414",
+    "CHEMBL369794",
+    "D-.alpha.-Glutamine, N2-[N-(N-acetyl-.beta.-allo-muramoyl)-L-alanyl]-",
+    "D-alpha-Glutamine, N2-(N-(N-acetyl-beta-allo-muramoyl)-L-alanyl)-",
+    "DTXSID101007551",
+    "GTPL5024",
+    "MurNAc-L-Ala-gamma-D-Glu",
+    "Muramyl Dipeptide",
+    "N-Acetyl-muramyl-L-alanyl-D-isoglutamine",
+    "N-Acetylmuramyl-L-alanyl-D-isoglutamine",
+    "N-acetylmuramyl dipeptide",
+    "N2-(N-(N-Acetylmuramoyl)-L-alanyl)-D-alpha-glutamine",
+    "Q27453912",
+    "RefChem:1048409",
+    "SCHEMBL41814",
+    "acetylmuramyl-alanyl-iso-glutamine",
+    "muramyldipeptide"
+  ],
+  "http_status": 200,
+  "cids": [
+    451714
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "parent_key": "ZTOKCBJDEGPICW-MYRNNJPSSA-N",
+  "ok": true,
+  "synonyms": [
+    "(Man)3(GlcNAc)2",
+    "70858-45-6",
+    "CHEBI:53458",
+    "Epitope ID:123886",
+    "G20624LQ",
+    "GlyTouCan:G20624LQ",
+    "Hex3HexNAc2",
+    "Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)GlcNAc",
+    "N_FULL_32000000000000_GS_1053_c1",
+    "Paucimannose",
+    "Q27124061",
+    "RefChem:805781",
+    "SCHEMBL29540408",
+    "alpha-D-Man-(1->3)-[alpha-D-Man-(1->6)]-beta-D-Man-(1->4)-beta-D-GlcNAc-(1->4)-D-GlcNAc",
+    "alpha-D-Manp-(1->3)-(alpha-D-Manp-(1->6))-beta-D-Manp-(1->4)-beta-D-GlcpNAc-(1->4)-D-GlcpNAc",
+    "alpha-D-Manp-(1->3)-[alpha-D-Manp-(1->6)]-beta-D-Manp-(1->4)-beta-D-GlcpNAc-(1->4)-D-GlcpNAc",
+    "alpha-D-mannopyranosyl-(1->3)-(alpha-D-mannopyranosyl-(1->6))-beta-D-mannopyranosyl-(1->4)-2-acetamido-2-deoxy-beta-D-glucopyranosyl-(1->4)-2-acetamido-2-deoxy-D-glucopyranose",
+    "alpha-D-mannopyranosyl-(1->3)-[alpha-D-mannopyranosyl-(1->6)]-beta-D-mannopyranosyl-(1->4)-2-acetamido-2-deoxy-beta-D-glucopyranosyl-(1->4)-2-acetamido-2-deoxy-D-glucopyranose",
+    "alpha-D-mannose-(1-3)-[alpha-D-mannose-(1-6)]-beta-D-mannose-(1-4)-beta-N-acetyl-D-glucosamine-(1-4)-N-acetyl-D-glucosamine",
+    "alpha-D-mannose-(1->3)-[alpha-D-mannose-(1->6)]-beta-D-mannose-(1->4)-beta-N-acetyl-D-glucosamine-(1->4)-N-acetyl-D-glucosamine",
+    "alpha-D-mannosyl-(1-3)-[alpha-D-mannosyl-(1-6)]-beta-D-mannosyl-(1-4)-beta-N-acetyl-D-glucosaminyl-(1-4)-N-acetyl-D-glucosamine",
+    "alpha-D-mannosyl-(1->3)-[alpha-D-mannosyl-(1->6)]-beta-D-mannosyl-(1->4)-beta-N-acetyl-D-glucosaminyl-(1->4)-N-acetyl-D-glucosamine"
+  ],
+  "cids": [
+    44263861
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZTOKCBJDEGPICW-MYRNNJPSSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "RMPWIIKNWPVWNG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/RMPWIIKNWPVWNG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,3',4,4',5-heptachloro-",
+    "1,2,3,4-tetrachloro-5-(2,3,4-trichlorophenyl)benzene",
+    "2,2 inverted exclamation marka,3,3 inverted exclamation marka,4,4 inverted exclamation marka,5-Heptachlorobiphenyl",
+    "2,2',3,3',4,4',5-HEPTACHLOROBIPHENYL",
+    "2,2',3,3',4,4',5-Heptachloro-1,1'-biphenyl",
+    "2,2',3,3',4,4',5-Heptachlorobiphenyl, 99%, vial of 100 mg, BZ# 170",
+    "2I988FUS7H",
+    "35065-30-6",
+    "634-856-7",
+    "AKOS015903357",
+    "DTXCID8038938",
+    "DTXSID2073481",
+    "G91094",
+    "KBA06530",
+    "MFCD00152517",
+    "MSK3769",
+    "NS00047766",
+    "PCB 170",
+    "PCB No 170, analytical standard",
+    "PCB No. 170",
+    "PCB No. 170 10 microg/mL in Isooctane",
+    "PCB No. 170 10 |Ig/mL in Isooctane",
+    "PCB-170",
+    "PCB170",
+    "Q27254781",
+    "RefChem:53421",
+    "SCHEMBL2229300",
+    "SCHEMBL29450677",
+    "SCHEMBL4437195",
+    "UNII-2I988FUS7H"
+  ],
+  "http_status": 200,
+  "cids": [
+    37037
+  ]
+}

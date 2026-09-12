@@ -1,0 +1,18 @@
+{
+  "parent_key": "GSXQDAMFIGMKIK-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GSXQDAMFIGMKIK-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2974826-73-6",
+    "6-Phenyl-3H-imidazo[4,5-b]pyridine",
+    "6-phenylimidazo[4,5-b]pyridine",
+    "A1-39176",
+    "SCHEMBL2974783",
+    "SCHEMBL31665907",
+    "SCHEMBL3493474"
+  ],
+  "http_status": 200,
+  "cids": [
+    21882754
+  ]
+}

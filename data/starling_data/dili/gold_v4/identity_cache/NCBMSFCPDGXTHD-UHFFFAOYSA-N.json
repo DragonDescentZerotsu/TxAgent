@@ -1,0 +1,31 @@
+{
+  "parent_key": "NCBMSFCPDGXTHD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "110Ds",
+    "54083-77-1",
+    "Atomic Darmstadtium",
+    "CHEBI:33367",
+    "DTXSID801020653",
+    "Darmstadtium (atomic)",
+    "Darmstadtium (element)",
+    "Darmstadtium atom",
+    "Darmstadtium element",
+    "Ds (element)",
+    "Ds darmstadtium",
+    "Element Darmstadtium",
+    "Element-Ds",
+    "Element:Darmstadtium",
+    "Element:Ds",
+    "RefChem:130966",
+    "SCHEMBL29394270",
+    "darmstadtio",
+    "darmstadtium",
+    "ununnilium"
+  ],
+  "cids": [
+    135476787
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NCBMSFCPDGXTHD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "LUWZNZOQYOFDFD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LUWZNZOQYOFDFD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "112700-14-8",
+    "2-(tert-butyl)-6-(1-hydroxy-2-methylpropan-2-yl)-4-methylphenol",
+    "2-tert-butyl-6-(1-hydroxy-2-methylpropan-2-yl)-4-methylphenol",
+    "3-(1,1-Dimethylethyl)-2-hydroxy-beta,beta,5- trimethylbenzeneethanol",
+    "3-(1,1-Dimethylethyl)-2-hydroxy-beta,beta,5-trimethylbenzeneethanol",
+    "3-TERT-BUTYL-2-HYDROXY-BETA,BETA,5-TRIMETHYLBENZENEETHANOL",
+    "7B7Y8CEM7E",
+    "BENZENEETHANOL, 3-(1,1-DIMETHYLETHYL)-2-HYDROXY-.BETA.,.BETA.,5-TRIMETHYL-",
+    "Benzeneethanol, 3-(1,1-dimethylethyl)-2-hydroxy-beta,beta,5-trimethyl-",
+    "DB-422360",
+    "DTXCID1072636",
+    "DTXSID50150145",
+    "EN300-7429875",
+    "PHENETHYL ALCOHOL, 3-TERT-BUTYL-2-HYDROXY-.BETA.,.BETA. 5-TRIMETHYL-",
+    "PHENETHYL ALCOHOL, 3-TERT-BUTYL-2-HYDROXY-BETA,BETA 5-TRIMETHYL-",
+    "Q27268013",
+    "RefChem:92032",
+    "UNII-7B7Y8CEM7E"
+  ],
+  "http_status": 200,
+  "cids": [
+    11413690
+  ]
+}

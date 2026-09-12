@@ -1,9 +1,9 @@
 {
   "schema_version": "current_starling_level_record_share.v1",
   "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
-  "exporter_sha256": "7c5eeac1a0c6fb6c570d121db5ceec0a6b3413aa1667eb3631ff1068043dab0f",
+  "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
   "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
-  "current_retrieval_contract_sha256": "48472e6f68f803a55bde198dcdde6918a39b54ec3d67ef16c098ed1f3a436675",
+  "current_retrieval_contract_sha256": "3f77279af26d9a89a6a8439b7bfc06b6779883c9b90e854fbe14af56dca0ca30",
   "verified_current_inputs": true,
   "interpretation": {
     "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
@@ -328,6 +328,924 @@
         "n_indexed_cards_checked": 2408617,
         "n_missing_source_card_keys": 0
       }
+    },
+    "dili": {
+      "level_description_source": "tools/chembl_tool/tasks/dili/experiment_config.py",
+      "level_description_source_sha256": "fad7ae48db7d0790e1edf98b06b18b7122ae4a9ccf954a7aa6c20486e5c607bb",
+      "source_membership": {
+        "path": "dili/source_record_level_membership",
+        "parts": [
+          {
+            "path": "dili/source_record_level_membership/part-00000.parquet",
+            "sha256": "97db3257f2c3e2526800f3c7ac6d88ec89b41d2bba2cfadd6b72a4625e77a216",
+            "size_bytes": 22245628
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00001.parquet",
+            "sha256": "02bbff5dd5f8d65b8c7b682454ef56157651409c34e4f4538a068edc17f89254",
+            "size_bytes": 24576537
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00002.parquet",
+            "sha256": "e1dd05ecd00cd5f0490bd90eb9a0e5bddee9d565e9000d31eb5226204f72b6d2",
+            "size_bytes": 22040126
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00003.parquet",
+            "sha256": "8662a28602035c4ac2d33eb68231b547cce559698dc6db44f4c19dd99167f5c9",
+            "size_bytes": 18227787
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00004.parquet",
+            "sha256": "08a12ad06be28f7ee39086805585dd4d1df62542860e0a3a4661357e46501153",
+            "size_bytes": 18987369
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00005.parquet",
+            "sha256": "b2b18d91b44a5a1960f4c7b021940b309dc1f31e9751defc3508cf40081e1fdb",
+            "size_bytes": 19148892
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00006.parquet",
+            "sha256": "a78dcc8084e40df176f065137745f3f027025b7ad0602edd223dc06148b773f1",
+            "size_bytes": 20103503
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00007.parquet",
+            "sha256": "b2f6fd03195b21d3004e01e1a305e6341cd8dd7205026ef13de2b8a0faae58a9",
+            "size_bytes": 22411895
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00008.parquet",
+            "sha256": "7995b2f6057cce6da55bcfcaef4ea9ca9d73bceac8be189f28cd5012422499e3",
+            "size_bytes": 23206264
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00009.parquet",
+            "sha256": "2520a598d7885527c900960b29f426330f0672fd99cbe6c39d3eb2041a0db9d7",
+            "size_bytes": 23524147
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00010.parquet",
+            "sha256": "8043de93523dfc60d969225ec7a1402ae7d6271ff11ba49ee6772eed707e72a8",
+            "size_bytes": 21124855
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00011.parquet",
+            "sha256": "da84932e231c19900ce93596d9961b41416a5e45a2f135497cac96fc1562f128",
+            "size_bytes": 21167673
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00012.parquet",
+            "sha256": "3a8a35049e244bb3ff40e2e1ef7b275897b8505d00beda31d94aaff86e97d891",
+            "size_bytes": 22411082
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00013.parquet",
+            "sha256": "10d81c406290c3605dec2ece113f516d0c3f3f232a3ae4f9ef8ee11ac9a3109e",
+            "size_bytes": 22749180
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00014.parquet",
+            "sha256": "fea431a625b79341eb436e277f55567e80fcf525afebe57c6be8d837d952d311",
+            "size_bytes": 23122750
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00015.parquet",
+            "sha256": "b683d7eaf05d2241687f1b098f40bc3e992d10c890c34a207918dc4339e7a935",
+            "size_bytes": 20357658
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00016.parquet",
+            "sha256": "b82508fdf96a75a525305e0d896785eede06f9f43d861b07fbfe79ebe6bd29dd",
+            "size_bytes": 16787338
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00017.parquet",
+            "sha256": "57bf1e2cdc242f2624dda29d5b01b67f31bec38d7c6154600c9feaf187704ecf",
+            "size_bytes": 17310161
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00018.parquet",
+            "sha256": "045a8de7bdf50c4f6709c6719b2964bd94d291acad4704facc36a0258bfe9173",
+            "size_bytes": 17375023
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00019.parquet",
+            "sha256": "e57053afd1a216764710aeacd0315f1291ba6f27960daf3c20423de2dc9f9efb",
+            "size_bytes": 17576388
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00020.parquet",
+            "sha256": "5a9bd5a2cd61eb4f27f299d4adbbab06c2f793cec26b0d8a7c7c88afabe4e458",
+            "size_bytes": 17702206
+          },
+          {
+            "path": "dili/source_record_level_membership/part-00021.parquet",
+            "sha256": "d8254175b54ae60837adf52e6e19536b695cb697cd63836a2a2f81be17578d07",
+            "size_bytes": 2825583
+          }
+        ],
+        "size_bytes": 434982045,
+        "n_records": 1386468,
+        "records_by_level": {
+          "1": 108436,
+          "2": 166498,
+          "3": 141940,
+          "4": 75971,
+          "5": 294048,
+          "6": 196583,
+          "7": 402992
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "dili/scaffold/indexed_representative_cards.parquet",
+          "sha256": "fc78c2321e670792ac3d558b1b99452dc81c885f72d1a56089772c7c55b9886c",
+          "size_bytes": 74340340,
+          "n_assay_molecule_rows": 918869,
+          "n_representative_cards": 1147923,
+          "cards_by_level": {
+            "1": 13627,
+            "2": 103946,
+            "3": 127952,
+            "4": 72173,
+            "5": 262438,
+            "6": 186056,
+            "7": 381731
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "dili/random/indexed_representative_cards.parquet",
+          "sha256": "b85a913af358c878ef4e450dbb62f009218199045f676c7b385be43abe41b95d",
+          "size_bytes": 74377195,
+          "n_assay_molecule_rows": 918693,
+          "n_representative_cards": 1147482,
+          "cards_by_level": {
+            "1": 12917,
+            "2": 104214,
+            "3": 127952,
+            "4": 72173,
+            "5": 262438,
+            "6": 186056,
+            "7": 381732
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 1386463,
+        "n_indexed_cards_checked": 2295405,
+        "n_missing_source_card_keys": 0
+      }
+    },
+    "carcinogens": {
+      "level_description_source": "tools/chembl_tool/tasks/carcinogens/experiment_config.py",
+      "level_description_source_sha256": "215be65d9b1755ae42f6aa4829684057d0324898841dc0198f070e21c2112216",
+      "source_membership": {
+        "path": "carcinogens/source_record_level_membership",
+        "parts": [
+          {
+            "path": "carcinogens/source_record_level_membership/part-00000.parquet",
+            "sha256": "ba1b3fd88c90085debb0081e1ab1660326e11133056496f65d6af6517ffa7000",
+            "size_bytes": 16679749
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00001.parquet",
+            "sha256": "bab486590696f724a74e264c04a3b788e828f3fd4218c3384e4947b01dec044d",
+            "size_bytes": 18278385
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00002.parquet",
+            "sha256": "79c6f6a7456c66be62726b2b1be51f6287fafdaa5a18c09ec7025399d23ee41c",
+            "size_bytes": 18808053
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00003.parquet",
+            "sha256": "71490057ee477fc5bb274a6d24c2404d20b3e7206a3b3c6a5f0db2414290051e",
+            "size_bytes": 19086627
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00004.parquet",
+            "sha256": "93f50ea4747636bd4b863cf70827abdc6783d8b386264be5bb045f87b417cd61",
+            "size_bytes": 19290123
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00005.parquet",
+            "sha256": "d01a1860902dd8bfde6e8eb05584201a31193a20934f1713c79d45aa3c7b9ec5",
+            "size_bytes": 22549703
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00006.parquet",
+            "sha256": "18f581ae79e7a537dbad34b99853319951da48e0b01796c6a78bc240a9725056",
+            "size_bytes": 21950185
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00007.parquet",
+            "sha256": "d6cc1c4973fd08d58b0ae29c6d0c2489a5dbe89bb1f5d24db3fcc0f1975c3e89",
+            "size_bytes": 22498198
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00008.parquet",
+            "sha256": "38e167a9c5cb5002104f3b133c4563c0848cf6a60a904991498f8e320c17b0af",
+            "size_bytes": 22338582
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00009.parquet",
+            "sha256": "5d443cd7f507514ec206fc570c3c2682c0982c3b8363c0c506405d2133a4ce3b",
+            "size_bytes": 22449490
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00010.parquet",
+            "sha256": "2079431c92f4baf55ab21325a15e447f358343d72672aa1aa260801d4ca08d00",
+            "size_bytes": 22556121
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00011.parquet",
+            "sha256": "cb3594cec4b7aad2d932d3f282bb06004e6a53b0e2ab7028a0302096d3aad2ea",
+            "size_bytes": 22304544
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00012.parquet",
+            "sha256": "81cc0fb4b35f134955a970c975bec3974123c7e719678dc68221e744ba964bb0",
+            "size_bytes": 22855073
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00013.parquet",
+            "sha256": "5beacdb720cd0edc2c1823ddefbb8c7cec4d111eb12f54f64485271cab1f8afd",
+            "size_bytes": 22902315
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00014.parquet",
+            "sha256": "c0a392d6fcadd4edcd85262bc84e4150fb743e479bed9a92bfaac34112884ab0",
+            "size_bytes": 22924722
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00015.parquet",
+            "sha256": "58c5a7917d1d53fe6a7af629cd7314f4deec9d5a81f0cd64f8935d4b04e81179",
+            "size_bytes": 23146027
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00016.parquet",
+            "sha256": "c558a245a0c30134a9110abc333e66b85d369ed6f15e658516150fcc198dcdbe",
+            "size_bytes": 23358396
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00017.parquet",
+            "sha256": "aa61e36f2c70812d536d3ce62e98377a4af26f151ee0578dd75ba15c71e2f3a0",
+            "size_bytes": 23501115
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00018.parquet",
+            "sha256": "89c367a39fe0258a12b86658f540a5679d9a88618fa0c5fe70bc4c85c78a6b71",
+            "size_bytes": 20276299
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00019.parquet",
+            "sha256": "935170576b2dc876dbe14219596fdfb674579a23197876f9ad06c3f7463ed02f",
+            "size_bytes": 16490599
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00020.parquet",
+            "sha256": "35bf0fe46a06525190ba9a43e3e1e575cc34efdff419670d0009b66318d8fdf6",
+            "size_bytes": 17673190
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00021.parquet",
+            "sha256": "8050f7da18501ad055ac7b6edea5cb38a319391bff6a66ef75f76ab16c29bd5d",
+            "size_bytes": 18550440
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00022.parquet",
+            "sha256": "33dd239e063741e52e09d55327a9a3d27b30ba3995fac6cff7c8e08f9b2516b6",
+            "size_bytes": 19295197
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00023.parquet",
+            "sha256": "1887cfc9d6a5d4eaacb99bf3c28c87778457c7f824dfde0bf8bd0558e7072cb6",
+            "size_bytes": 20145707
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00024.parquet",
+            "sha256": "31cb22c827bf0604d964a85d28321819105fcbc4f24956308e1d1932dda2ceff",
+            "size_bytes": 21152510
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00025.parquet",
+            "sha256": "8a421e655dc24d352f1b7d4339801604680c509d097281f88fbf40881daeafd1",
+            "size_bytes": 22230733
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00026.parquet",
+            "sha256": "64fe7f04e02b1adc7639f2b41fd7ea5d6d6da05945e5c2c071a7ca10216a6a0b",
+            "size_bytes": 23256617
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00027.parquet",
+            "sha256": "281a8d50764872ad321707c43eccbf6c7473b9ea54cf0f0bbf62d9ca1b5f05ca",
+            "size_bytes": 23373657
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00028.parquet",
+            "sha256": "1c601dd2a47c932fc66108c90163e0e38d5473b55c6b6773b6e68b89eb1d5ad0",
+            "size_bytes": 23961866
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00029.parquet",
+            "sha256": "f882accfc4e34ec2f47fa5cfbfe6a43c5788fb23919aea3623b51d54f5790004",
+            "size_bytes": 22503798
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00030.parquet",
+            "sha256": "222c7773a453b1c5e81265cf96dcd55a864f4a5d04e4cd559db515cb0ed48b06",
+            "size_bytes": 22609625
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00031.parquet",
+            "sha256": "1aecdb519447aa3e35669b57d96ea09a33533779609ecf849cc23d378649b08b",
+            "size_bytes": 22718280
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00032.parquet",
+            "sha256": "2132f712c69ed026c8387b5040dee2ec6847f58143704fff5fcf282cb34e523c",
+            "size_bytes": 22830778
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00033.parquet",
+            "sha256": "220c0d00daf360095bb6718824d6680c559c1b0ff8e65ffa6b628b3dc440e7e7",
+            "size_bytes": 23314587
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00034.parquet",
+            "sha256": "5d6920708d4c0d0b813b940abdab95985c436979acd0730338c3319e1014d9a9",
+            "size_bytes": 23437716
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00035.parquet",
+            "sha256": "fb6587c88c094906d05826493857111e83af78fff2ebb2cfb409fd5d3fbbf2dc",
+            "size_bytes": 23677010
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00036.parquet",
+            "sha256": "626566337827ed5450cdf223fcf695d958f18d6ca34875de8d6ce109cdf76ba9",
+            "size_bytes": 23953134
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00037.parquet",
+            "sha256": "153aef47d791cb7029595651e3026eb188fedba2d655fea8619f1017de1f6790",
+            "size_bytes": 24300346
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00038.parquet",
+            "sha256": "59e73d2f92d1f47611fce9eaf3b021575f4d4dfa8cea26d29fafcae6308246ec",
+            "size_bytes": 24403455
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00039.parquet",
+            "sha256": "7b2758776ca4441a6562bbe94e64589ef73f1fdb00b6915e2b1e27af416fee70",
+            "size_bytes": 24935428
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00040.parquet",
+            "sha256": "50c5efce863e87a1773bb94876210ac2c7433d1d05b48a3d0c6537ba444e3965",
+            "size_bytes": 24873533
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00041.parquet",
+            "sha256": "a2fb6b8ec37ef18918faaa8322195acd66faabedee511d34c6bebff8bc447184",
+            "size_bytes": 26438770
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00042.parquet",
+            "sha256": "b8c0fff4a10a37b24cad739ac0d6930e36e982e999466f4ada59fa0d44deed22",
+            "size_bytes": 27768307
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00043.parquet",
+            "sha256": "6df33fec875a015ed397dc1dd70575b5a3df0cfbed1576fa313cefa76187af57",
+            "size_bytes": 31796869
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00044.parquet",
+            "sha256": "83ed20d68177798ae91b2344c40e17ccbdb85865c060c04e379d445a26f4246a",
+            "size_bytes": 34462411
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00045.parquet",
+            "sha256": "6e17fea227db4ec145c3f7c367b180fdf83c36b02d7a60731e072e5a40fed84d",
+            "size_bytes": 35444452
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00046.parquet",
+            "sha256": "b021bdbbbad5c7b9da6f318d2ff408528743a781e60aa658c5888f691a6f89ae",
+            "size_bytes": 36045368
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00047.parquet",
+            "sha256": "c374016e2730f89c9a22c0cc2af489e25fb07c6cceafa1715eb86067039461a1",
+            "size_bytes": 36563213
+          },
+          {
+            "path": "carcinogens/source_record_level_membership/part-00048.parquet",
+            "sha256": "ebf16c4dae7daf710e5120697185d580a316d7fd57f7a0e210ea1b8d662464b7",
+            "size_bytes": 3116797
+          }
+        ],
+        "size_bytes": 1129078100,
+        "n_records": 3151140,
+        "records_by_level": {
+          "1": 89617,
+          "2": 405813,
+          "3": 750569,
+          "4": 650547,
+          "5": 749469,
+          "6": 218187,
+          "7": 286938
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "carcinogens/scaffold/indexed_representative_cards",
+          "parts": [
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00000.parquet",
+              "sha256": "f9fad4483a0e5ce13e7494b0dc39863516a15424818134d0f81bb9dce572ae5e",
+              "size_bytes": 4272210
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00001.parquet",
+              "sha256": "d7fa79b7f537cda35d0643c6d0864323885d6e2a7f7a42c033051a42b5d7c545",
+              "size_bytes": 4423214
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00002.parquet",
+              "sha256": "fb4e9b39b065732a907ce9c69ee69bb6b61aac82e011f3d2027ec07845c73cb3",
+              "size_bytes": 4391626
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00003.parquet",
+              "sha256": "aa2d8e2581b94e73aecb096683f6e3c842801780dbca7f302ebf03f5e87e615c",
+              "size_bytes": 4441251
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00004.parquet",
+              "sha256": "fbeb67c4c66333a8520529519ec98fa010b6e4e1b1752b556913532db8fa79f2",
+              "size_bytes": 4416189
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00005.parquet",
+              "sha256": "90da4fd2f4b3bc339846cac6f7519e2f3221dab0b6189284828b35f9f9165b59",
+              "size_bytes": 4367338
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00006.parquet",
+              "sha256": "b1e443b34c06ff5fe9139acefdb27e43cc17297d7b0da3cc6b71092f2a71eebc",
+              "size_bytes": 4424280
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00007.parquet",
+              "sha256": "5eaf5f04522b1cd0043d72a6f8eb1c2170e5caaadaab934425da1711149d474e",
+              "size_bytes": 4414594
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00008.parquet",
+              "sha256": "5aca3aaee4b6eaa809d463a6bc54ea75957b608d31a7bf0de16da47d85ac64e9",
+              "size_bytes": 4410471
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00009.parquet",
+              "sha256": "72560fe3805b112571796ee2704a313c21b3c7c7219c4d67d9697f41f2e18138",
+              "size_bytes": 4332794
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00010.parquet",
+              "sha256": "57a1e7c98abc8f277ea5e2d853ecbddc31182a6a078e853e17ed9aab22d38a0e",
+              "size_bytes": 4455406
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00011.parquet",
+              "sha256": "6b7a0da1d4d85331dfb9752601301d23cd662752ce25159e0578d53521236e05",
+              "size_bytes": 4429385
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00012.parquet",
+              "sha256": "a68335555863d77ae2d9ea146b927629f769eaa9bf1435305e791994cdd66c48",
+              "size_bytes": 4388353
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00013.parquet",
+              "sha256": "bab49c9c829ec0124b27f9e7a6debe530950f24f410052e8edf81da56c93e924",
+              "size_bytes": 4436472
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00014.parquet",
+              "sha256": "00193cbdd27ee626d03b2c3d970e065c7e73d414fac700727b8974b7fb653b53",
+              "size_bytes": 4410548
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00015.parquet",
+              "sha256": "e6126257c57cf823fe5be1d90715c3157c605662da371643f9bd9f21b34645ec",
+              "size_bytes": 4436794
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00016.parquet",
+              "sha256": "d354a7acc3147ca9264caf904fba1c28eb2894c935a56532d138a9277b078331",
+              "size_bytes": 4357480
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00017.parquet",
+              "sha256": "51012e77899ca3c16922cc14abca4e99cf84c502a7740c1c7971f326e733d3b6",
+              "size_bytes": 4431317
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00018.parquet",
+              "sha256": "d6888899249d685b5c457b2f17ecba017a49e4feae46de40e63b7c5795b9edc0",
+              "size_bytes": 4316337
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00019.parquet",
+              "sha256": "fb8a4fba4783430e898db1513f93a675d0cf11cec4dc4d4299e0a8a185d66d1f",
+              "size_bytes": 4310683
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00020.parquet",
+              "sha256": "fef5dc52ddaf082f193aa8b0bf5e151f97aa4c48130c5bcf12866b6f898dcb4b",
+              "size_bytes": 4434713
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00021.parquet",
+              "sha256": "59b660be5410214e40775f277aecb9919aa84d87dba306e91952eba350cb54b0",
+              "size_bytes": 4387781
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00022.parquet",
+              "sha256": "3d6e3998356bbbfd6312f392f75b1e3b08e403d82f6e65468f3454f010eefebf",
+              "size_bytes": 4413599
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00023.parquet",
+              "sha256": "7fa509bb4158ad9481586a21864b2b1061e5643cb8f165b8372f5fc6d2a22861",
+              "size_bytes": 4450540
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00024.parquet",
+              "sha256": "f2288801c414cf90000b3d83739d02246c9a1a243a8c088f3257f7e6c09f13ba",
+              "size_bytes": 4447294
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00025.parquet",
+              "sha256": "7b6c16d5983c76ada9ff4ea424cf166363d3dea0e7cbe4ba4b81561c24b85f8d",
+              "size_bytes": 4410500
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00026.parquet",
+              "sha256": "15ff302f8231db3071e149692ea18c4a4db58c35b5363bac465b646722e7d425",
+              "size_bytes": 4421919
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00027.parquet",
+              "sha256": "bd0d49c36ab113b4ee3be7b90986ac1ee623623e7a15bd0a5a266adc67a76583",
+              "size_bytes": 4454709
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00028.parquet",
+              "sha256": "461d4b6902012e44ab39ff4d7600e28a41f466c529c79e982249e28f0c1e3420",
+              "size_bytes": 4455326
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00029.parquet",
+              "sha256": "f1db7b580ffcee9db6cee46d4cc19a80aaf671134fd9acb283fb8031ebce0b0c",
+              "size_bytes": 4427878
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00030.parquet",
+              "sha256": "3fba109e9e54607b36fc45a3ae85ac955e873026d8f2c769119a766d304b58b1",
+              "size_bytes": 4436343
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00031.parquet",
+              "sha256": "e69d35a2f21609d75136e74b6731b1b356cab4473b00a2fe931b8bedfef5e21b",
+              "size_bytes": 4448233
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00032.parquet",
+              "sha256": "a8d029ef58fb948847efb64ae97904e19759b6a17a91f92df2f595690dc2fa05",
+              "size_bytes": 4407048
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00033.parquet",
+              "sha256": "96c2ea42da51556dee52a78da9945c4d5c7ee102355f3265473aad6e7610ae03",
+              "size_bytes": 4449183
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00034.parquet",
+              "sha256": "93d405571dd09784347440aca351a65c36e36aa551ee7da0d402671e7e559731",
+              "size_bytes": 4414536
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00035.parquet",
+              "sha256": "30d92da650608a4c5af4f90ef77460f12d04e64ab22870def96933594b18a111",
+              "size_bytes": 4417001
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00036.parquet",
+              "sha256": "5d64bd0eeddcb1aa70355dfd004d575480fefd0b52d8092feec6a2864e875491",
+              "size_bytes": 4312999
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00037.parquet",
+              "sha256": "cb1b2c52e67bd287413cd6ae298b2c00b4303c2d6be0e0b7cee51f405a577007",
+              "size_bytes": 4427041
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00038.parquet",
+              "sha256": "ce9ffa104cde12fc057c1755be3cef60fe87f5c3906a51714c5a9f5fe0053cc7",
+              "size_bytes": 4381369
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00039.parquet",
+              "sha256": "3f8f1ec08d81a47c48e243a551a3aff85779b7a0cec4edf836e3d60fd89e71fb",
+              "size_bytes": 4426825
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00040.parquet",
+              "sha256": "1362eaba60052ee2599cf90a14684e3661f6ef0b9bbfcdc77c57752643c3a52f",
+              "size_bytes": 4429645
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00041.parquet",
+              "sha256": "ff59575ee1cb1af8943181dbce52719b1d3518cf7303cdfc133d868e1ba7c74d",
+              "size_bytes": 4418999
+            },
+            {
+              "path": "carcinogens/scaffold/indexed_representative_cards/part-00042.parquet",
+              "sha256": "5dccfbc4506e48688c251c75ec8702259f8f6e96a62deae57ca1b1b78fcd9f9c",
+              "size_bytes": 2443696
+            }
+          ],
+          "size_bytes": 187583919,
+          "n_assay_molecule_rows": 2486116,
+          "n_representative_cards": 2787776,
+          "cards_by_level": {
+            "1": 12536,
+            "2": 197580,
+            "3": 748487,
+            "4": 597331,
+            "5": 734812,
+            "6": 211060,
+            "7": 285970
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "carcinogens/random/indexed_representative_cards",
+          "parts": [
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00000.parquet",
+              "sha256": "d612c68cedd7f32afafba9501729ad6fd806c5682c87f9fcb7a0a56bc702445d",
+              "size_bytes": 4278741
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00001.parquet",
+              "sha256": "30b3a05dafb1f7c7700ddca1fde74ecb4c40d47255986ed8af4ec848e6c38305",
+              "size_bytes": 4427499
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00002.parquet",
+              "sha256": "6da044aaa2f5b02755c0d92ba209d5752102ea3957dd8526dd36990c1f822cc9",
+              "size_bytes": 4409398
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00003.parquet",
+              "sha256": "56933c48be2953710573ac7ed3fbbae367da25c26c2995189ca0625adf9cf60c",
+              "size_bytes": 4433763
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00004.parquet",
+              "sha256": "0a79c0e3b548ad9fc4dc32b04a37631f55ffa6d610aee78ee7956e0045743e65",
+              "size_bytes": 4434493
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00005.parquet",
+              "sha256": "ab56bedf7f808f05830cd71063c0f0d6226d770884178e1e43e3e9250011978b",
+              "size_bytes": 4365081
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00006.parquet",
+              "sha256": "a507c93e2f701f44366394570d4bc2e9711c473a95c0c882e3d8fe0cf5f9eb40",
+              "size_bytes": 4432011
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00007.parquet",
+              "sha256": "e368ce87b783aa52fd3f7345b4c55907ddb219815c22adb2fa7bec62afb7e3c2",
+              "size_bytes": 4399294
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00008.parquet",
+              "sha256": "b954f74f157e89bba0e99246bbb7f7a60ea4f9fa54637d2383ab0fc491ee3edd",
+              "size_bytes": 4405555
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00009.parquet",
+              "sha256": "10bcf3da17157345422f0de30b1f62df6bc95ab9833344e50b0131700f4f8094",
+              "size_bytes": 4332348
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00010.parquet",
+              "sha256": "2ab0cffd7af7722e55da1a6c4ab4b508c058134e9dfed81f24a96a718ffd2cf3",
+              "size_bytes": 4458567
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00011.parquet",
+              "sha256": "20184fd79fa819b26ad921bceae662091c12f55de86c7b687d9176406fc11cb1",
+              "size_bytes": 4423655
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00012.parquet",
+              "sha256": "248fec1a77b0e3d8726cf063759fd95e27c3285556c4d25eaa9c24723da1035e",
+              "size_bytes": 4393149
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00013.parquet",
+              "sha256": "e7b63dfdbfb5c6e54a239a38e6adea4c9c0169f60fafb59f501aed79d45a6792",
+              "size_bytes": 4440869
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00014.parquet",
+              "sha256": "f23b6ffb1e82628562fe12fa8de609f2ebc0eb67c324dd8c58863292db723a91",
+              "size_bytes": 4414775
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00015.parquet",
+              "sha256": "557cacd2adbf4833a3bc08175fdba85c5dcddafe2bba3c1c19ca66c631991eb0",
+              "size_bytes": 4442458
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00016.parquet",
+              "sha256": "abd0b65cf1e1a30dacfda92e4e8a9a0ea7de53c735ce636462bd676cdd5edcc9",
+              "size_bytes": 4369198
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00017.parquet",
+              "sha256": "06cbcb249232d4bd177d61f56da6d91e4a5bb690917edad35e84e8727a66b359",
+              "size_bytes": 4436414
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00018.parquet",
+              "sha256": "f44673a06fc4283ea6ae50019f67e675426fe8ce229134f283d4cf2421ed7f4f",
+              "size_bytes": 4311392
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00019.parquet",
+              "sha256": "9fbdff60a5b6d6a1667d8107b5d0eedd82102da0a32147b1d4527a517b4323be",
+              "size_bytes": 4313019
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00020.parquet",
+              "sha256": "c223ad448d4d5ce897f8eda86fe07a501e9d3fac65d873442dab53cb2617dae3",
+              "size_bytes": 4451175
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00021.parquet",
+              "sha256": "11ec9ae2157be52f220b606ed2a71d91a1e2e39550345e9fadb3fd3346d0552b",
+              "size_bytes": 4397025
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00022.parquet",
+              "sha256": "4e9ecff2552cef7df942164f3a9d9cfdb5d81c2022491280f6d3330760f479a9",
+              "size_bytes": 4413986
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00023.parquet",
+              "sha256": "53cf6647f9b550ea603fb2eaef4399aa50b5cf43fdf07d30453779369f42fe1a",
+              "size_bytes": 4459594
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00024.parquet",
+              "sha256": "457773204a46256a6fdb241f58d09f7f0b31ad12a6440a3e45060c388b8ecac2",
+              "size_bytes": 4464323
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00025.parquet",
+              "sha256": "df48de0a19d126846bdad8c943e6adc87719e5dbedfc1785a01697a2f2a8a17c",
+              "size_bytes": 4407443
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00026.parquet",
+              "sha256": "93ca6fcecd70aefaf6243a5e74e790053b7182b158e626cf94ff0f16d7944c8d",
+              "size_bytes": 4433607
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00027.parquet",
+              "sha256": "d4571cd27d8423ca4234b6715157f78b27c3068bf175dccfa532a208fa426a78",
+              "size_bytes": 4446541
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00028.parquet",
+              "sha256": "6708189115e6cf8a90d346e7c97e33fb65dfd9486132504eb636961b09f2599d",
+              "size_bytes": 4454668
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00029.parquet",
+              "sha256": "ea726c970d8ce50ebf9372ea0a1c1dbc1825c427fb49b2bf904754ee31f9f42b",
+              "size_bytes": 4430684
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00030.parquet",
+              "sha256": "02a4f5d3f5c98f6bbac57c31f1bda9e21967c7c6b032c7d0aca510e3c2e293af",
+              "size_bytes": 4441289
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00031.parquet",
+              "sha256": "ce09f500f89ed7209e7ece719012e8c5edbe2ca759281d564bee140ae0b6266e",
+              "size_bytes": 4441153
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00032.parquet",
+              "sha256": "93491487401b3e0c0bc69b811b9268a0bea8e31b4de54f2caa50fdef434e922a",
+              "size_bytes": 4386488
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00033.parquet",
+              "sha256": "4d1a3e5cdbd3246dbf730c96c97bf4b1598868c400f8fba7df2cba6c6718272c",
+              "size_bytes": 4461574
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00034.parquet",
+              "sha256": "78873fd7848b17e3eaed99a8ab9118afcd314ef3b2b33190a6e343167ae68c56",
+              "size_bytes": 4399593
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00035.parquet",
+              "sha256": "e956f1ec62aa46f3f079d426961c5250ee9af692478c7640f33ff6d73b9b3251",
+              "size_bytes": 4415899
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00036.parquet",
+              "sha256": "3da10c9ab6647ebdf02dea92d376d8f578ba143a04e5b458b8b6d760fb3f1e52",
+              "size_bytes": 4311605
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00037.parquet",
+              "sha256": "11c6b65b078dfb3776943fc1e7823ceba4bf164b909b7c34b3f1aa3d643cf3bf",
+              "size_bytes": 4447054
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00038.parquet",
+              "sha256": "efc3f85bff652665bc290fdebaac3c3ec6b6431689b80133e2da36e0fd71faf0",
+              "size_bytes": 4376019
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00039.parquet",
+              "sha256": "862ead69f8bb1d9c9b16f1ecf6ec15e8f98b8bd975b4ac711aea2da704d69746",
+              "size_bytes": 4427573
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00040.parquet",
+              "sha256": "56aa509d39a66cc56cafc7bdf3e370c320cf5eadb68d77493cdef38740037bad",
+              "size_bytes": 4416268
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00041.parquet",
+              "sha256": "e72e29298ed1dbc32fd07e0f86fbe297b1edc550e6b3b686beb9e4c02dfbe514",
+              "size_bytes": 4408578
+            },
+            {
+              "path": "carcinogens/random/indexed_representative_cards/part-00042.parquet",
+              "sha256": "55eca254907d2b03e01c48a874c8698ec9c971a76ddce0afebbba0e6e602926c",
+              "size_bytes": 2429435
+            }
+          ],
+          "size_bytes": 187643253,
+          "n_assay_molecule_rows": 2486039,
+          "n_representative_cards": 2787532,
+          "cards_by_level": {
+            "1": 11794,
+            "2": 198078,
+            "3": 748487,
+            "4": 597331,
+            "5": 734812,
+            "6": 211060,
+            "7": 285970
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 3151104,
+        "n_indexed_cards_checked": 5575308,
+        "n_missing_source_card_keys": 0
+      }
+    }
+  },
+  "scoped_refreshes": {
+    "dili_carcinogens_final": {
+      "publication": "data/starling_data/retrieval_final_cleanup.json",
+      "verified_current_inputs": true,
+      "other_tasks_reexported": false
     }
   }
 }

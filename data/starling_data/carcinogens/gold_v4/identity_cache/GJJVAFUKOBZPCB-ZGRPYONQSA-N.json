@@ -1,0 +1,40 @@
+{
+  "parent_key": "GJJVAFUKOBZPCB-ZGRPYONQSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GJJVAFUKOBZPCB-ZGRPYONQSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(R)-3,4-Dihydro-2-methyl-2-(4,8,12-trimethyl-3,7,11-tridecatrienyl)-2H-1-benzopyran-6-ol",
+    "0867I0N41V",
+    "2-Methyl-2-((3E,7E)-4,8,12-trimethyltrideca-3,7,11-trien-1-yl)chroman-6-ol",
+    "2-Methyl-2-(4,8,12-trimethyltrideca-3,7,11-trien-1-yl)chroman-6-ol",
+    "2-methyl-2-((3E,7E)-4,8,12-trimethyltrideca-3,7,11-trienyl)-3,4-dihydrochromen-6-ol",
+    "2-methyl-2-[(3E,7E)-4,8,12-trimethyltrideca-3,7,11-trien-1-yl]-3,4-dihydro-2H-1-benzopyran-6-ol",
+    "2-methyl-2-[(3E,7E)-4,8,12-trimethyltrideca-3,7,11-trienyl]-3,4-dihydrochromen-6-ol",
+    "2H-1-BENZOPYRAN-6-OL, 3,4-DIHYDRO-2-METHYL-2-(4,8,12-TRIMETHYL-3,7,11-TRIDECATRIENYL)-",
+    "3,4-Dihydro-2-methyl-2-[(3E,7E)-4,8,12-trimethyl-3,7,11-tridecatrien-1-yl]-2H-1-benzopyran-6-ol",
+    "6829-55-6",
+    "807-459-3",
+    "97530-73-9",
+    "Alpha tocotrienol",
+    "CCRIS 7711",
+    "CHEBI:197268",
+    "CHEBI:33235",
+    "CHEMBL120643",
+    "DB12647",
+    "DTXCID201506851",
+    "DTXSID001021938",
+    "DTXSID601336446",
+    "KP2MW85SSQ",
+    "NCGC00186586-01",
+    "Q27236375",
+    "RefChem:933163",
+    "SCHEMBL1448780",
+    "Tocotrienol",
+    "Tocotrienols",
+    "UNII-0867I0N41V"
+  ],
+  "http_status": 200,
+  "cids": [
+    9929901
+  ]
+}

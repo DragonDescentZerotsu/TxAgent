@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "reviewed_unique_records": 24,
+  "input_files_checked": 48,
+  "gold_and_split_input_hashes_verified": true,
+  "tdc_labels_not_applied_to_gold": true,
+  "tables_use_conflict_free_exact_parent_unless_marked": true,
+  "script_sha256": "59e7c64f0663990a38178c9ae4fe744d493f073b98d5de6d87327f2a9f22abbd",
+  "output_hashes": {
+    "README.md": "25193bee6e1821332f03eae10ba81d9a6a32322ef74fc64f1d00eab5596af564",
+    "acquisition.json": "b347311209f0ae342ee85565eaa6919e12b9710f4622c3b235a26b89509fde4d",
+    "carcinogens_lagunin.tab": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
+    "carcinogens_molecule_comparison.csv": "90b08fa0742a0fdb82728676841e3d9791df223dca627e5e1c4befe090b71207",
+    "carcinogens_molecule_comparison.jsonl": "776452c40245794655b9e8a559a231b8eb8572de63170b98502ee16644388747",
+    "carcinogens_tdc_normalized.jsonl": "79036df5ee5e126b7919d0b600e98e6532f22088a526ac29bbe40553dce08481",
+    "compare.py": "59e7c64f0663990a38178c9ae4fe744d493f073b98d5de6d87327f2a9f22abbd",
+    "comparison_summary.json": "8da604c127ccb4493b38eec053a73fd733d11609ee65fcb442e1569c501ddab4",
+    "dili.tab": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
+    "dili_molecule_comparison.csv": "f8629f0bac6237baf070b711e9094f03f9e25ba7bdcda5294d7e30e0ad8ff87d",
+    "dili_molecule_comparison.jsonl": "0b04aca947999da294e67649018b7b3ffed4710f4afcf9998148982460c9eff9",
+    "dili_tdc_normalized.jsonl": "a04f30eb2e11bfa5eb709c323202f498012697e7cb0f62c6be5772b3f5db52b6",
+    "load.py.txt": "bc8f7a93165e21135e71d87d6d7f374fc4a2f6f14694047d9e10437ae4f5c278",
+    "retrieve.py.txt": "ff526e0de73106491d97a6786b3dfcb7a6a1513d9fc7d46e495df87793b7c804",
+    "review_manifest.json": "876fff3b4aec4bb26a39dea27970337220417140432618a1d353a60bd2661117",
+    "review_samples.jsonl": "d58809122f7d58a5dd482a633eb45960e00e1d90646e1954b52fa01c342b7c8c",
+    "reviewed_samples.jsonl": "bd08b1db8b6f00fc81385d1b91709fe6c89401340fcf3a6b08adde0a8a833fc3",
+    "tdc_metadata.py.txt": "f169cd7464eb5e8ba4339015c65aaf614d52356c5ff42872b89821c278cc692c"
+  }
+}

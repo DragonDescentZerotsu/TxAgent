@@ -17,3 +17,62 @@ temp.tsv
 
 # Large Ames canonical table is restored from current_records archive parts.
 /data/starling_data/ames/canonical_v1/records.parquet
+
+# DILI/Carcinogens full tables restore from shared current_records parts;
+# raw acquisition parts and compact audit/gold ledgers remain ordinary files.
+/data/starling_data/dili/canonical_v1/records.parquet
+/data/starling_data/carcinogens/canonical_v1/records.parquet
+/data/starling_data/dili/progressive_v1/records.parquet
+/data/starling_data/carcinogens/progressive_v1/records.parquet
+/data/starling_data/dili/progressive_v1/indices/*/assay_neighbor_index.pkl
+/data/starling_data/dili/progressive_v1/indices/*/assay_molecule_evidence.jsonl
+/data/starling_data/carcinogens/progressive_v1/indices/*/assay_neighbor_index.pkl
+/data/starling_data/carcinogens/progressive_v1/indices/*/assay_molecule_evidence.jsonl
+
+# Final DILI/Carcinogens source and large audits restore from verified archive parts.
+/data/starling_data/dili/retrieval_final/source/
+/data/starling_data/carcinogens/retrieval_final/source/
+/data/conditioned_benchmark/Carcinogens/random/train_molecule_condition_labels.jsonl
+/data/conditioned_benchmark/Carcinogens/scaffold/accepted_parent_conditions.jsonl
+/data/conditioned_benchmark/Carcinogens/scaffold/accepted_parent_conditions_before_group_gate.jsonl
+/data/conditioned_benchmark/Carcinogens/scaffold/accepted_record_votes.jsonl
+/data/conditioned_benchmark/Carcinogens/scaffold/train_molecule_condition_labels.jsonl
+/data/conditioned_benchmark/DILI/random/train_molecule_condition_labels.jsonl
+/data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions.jsonl
+/data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl
+/data/conditioned_benchmark/DILI/scaffold/accepted_record_votes.jsonl
+/data/conditioned_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl
+/data/starling_data/carcinogens/gold_v4/gold_label_provenance.jsonl
+/data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/train_molecule_condition_labels.jsonl
+/data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_parent_conditions.jsonl
+/data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_parent_conditions_before_group_gate.jsonl
+/data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_record_votes.jsonl
+/data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/train_molecule_condition_labels.jsonl
+/data/starling_data/carcinogens/gold_v4/source_votes.jsonl
+/data/starling_data/dili/gold_v4/gold_label_provenance.jsonl
+/data/starling_data/dili/gold_v4/source_only_benchmark/DILI/random/train_molecule_condition_labels.jsonl
+/data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_parent_conditions.jsonl
+/data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl
+/data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_record_votes.jsonl
+/data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl
+/data/starling_data/dili/gold_v4/source_votes.jsonl
+/data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/round1.jsonl
+/data/starling_data/new_tasks_gold_audit/targeted_review_v2/reviews.jsonl
+
+# Local paper downloads and unpacked supplements; keep source references and review ledgers.
+/data/starling_data/dili/**/*.pdf
+/data/starling_data/dili/**/*.xml
+/data/starling_data/dili/**/*.html
+/data/starling_data/dili/**/*.docx
+/data/starling_data/dili/**/*.zip
+/data/starling_data/carcinogens/**/*.pdf
+/data/starling_data/carcinogens/**/*.xml
+/data/starling_data/carcinogens/**/*.html
+/data/starling_data/carcinogens/**/*.docx
+/data/starling_data/carcinogens/**/*.zip
+/data/starling_data/new_tasks_gold_audit/**/*.pdf
+/data/starling_data/new_tasks_gold_audit/**/*.xml
+/data/starling_data/new_tasks_gold_audit/**/*.html
+/data/starling_data/new_tasks_gold_audit/**/*.docx
+/data/starling_data/new_tasks_gold_audit/**/*.zip
+/data/starling_data/dili/retrieval_review_v4/CPC_supplement/

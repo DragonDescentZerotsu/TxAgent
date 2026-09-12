@@ -1,0 +1,29 @@
+{
+  "parent_key": "CQIJHYPCKYZMIV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQIJHYPCKYZMIV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-NBaP",
+    "3-Nitrobenz(a)pyrene",
+    "3-Nitrobenzo(a)pyrene",
+    "3-nitrobenzo[a]pyrene",
+    "3-nitrobenzo[pqr]tetraphene",
+    "70021-98-6",
+    "BENZO(a)PYRENE, 3-NITRO-",
+    "BRN 4322790",
+    "CCRIS 2433",
+    "CHEMBL353831",
+    "DTXCID30142801",
+    "DTXSID30220310",
+    "HSDB 8188",
+    "NITROBENZO(A)PYRENE, 3-",
+    "R4GCL2XE8T",
+    "RefChem:95024",
+    "SCHEMBL12014664",
+    "UNII-R4GCL2XE8T"
+  ],
+  "http_status": 200,
+  "cids": [
+    50961
+  ]
+}

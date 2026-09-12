@@ -1,0 +1,43 @@
+{
+  "parent_key": "NBYWEYFBDHRDOS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,1-Difluoro-2-bromo-2-chloroethylene",
+    "1,1-Difluoro-2-chloro-2-bromo-ethylene",
+    "1,1-difluoro-2-chloro-2-bromoethylene",
+    "1- Bromo-1-chloro-2,2-difluoroethene",
+    "1-Bromo-1-chloro-2,2-difluoroethene",
+    "1-Bromo-1-chloro-2,2-difluoroethylene",
+    "1-Bromo-1-chlorodifluoroethylene",
+    "1-bromo-1-chloro-2,2-difluoro-ethylene",
+    "2-Bromo-2-chloro-1,1-difluoroethylene",
+    "2-bromo-2-chloro-1,1-difluoroethene",
+    "4-01-00-00720 (Beilstein Handbook Reference)",
+    "758-24-7",
+    "AKOS006228597",
+    "BRN 1740591",
+    "BROMO-2-CHLORO-1,1-DIFLUOROETHYLENE, 2-",
+    "Bromochloro-1,1-difluoroethylene",
+    "C0938Q37MI",
+    "C2BrClF2",
+    "DTXCID20149203",
+    "DTXSID90226712",
+    "EINECS 212-062-8",
+    "ETHYLENE, 1-BROMO-1-CHLORO-2,2-DIFLUORO-",
+    "Ethene, 1-bromo-1-chloro-2,2-difluoro-",
+    "Ethene,1-bromo-1-chloro-2,2-difluoro-",
+    "Halothane EP Impurity G",
+    "MFCD00166977",
+    "NS00042176",
+    "Q27275006",
+    "RefChem:71078",
+    "SBB089324",
+    "SCHEMBL976029",
+    "UNII-C0938Q37MI"
+  ],
+  "cids": [
+    12963
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NBYWEYFBDHRDOS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

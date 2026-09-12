@@ -1,0 +1,12 @@
+{
+  "parent_key": "IIOARZIDUZHXQQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IIOARZIDUZHXQQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitroso-N-methylpiperazine"
+  ],
+  "http_status": 200,
+  "cids": [
+    23619349
+  ]
+}

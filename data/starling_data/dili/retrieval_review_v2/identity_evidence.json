@@ -1,0 +1,37 @@
+{
+  "structures": [
+    {
+      "role": "attached_source",
+      "smiles": "Cc1cc(O)c2c(c1)C(=O)c1cc(-c3cc(O)cc(O)c3)cc(O)c1C2=O",
+      "inchikey": "WQQBERXYUUFDDW-UHFFFAOYSA-N",
+      "formula": "C21H14O6"
+    },
+    {
+      "role": "emodin_reference",
+      "smiles": "Cc1cc(O)c2c(c1)C(=O)c1cc(O)cc(O)c1C2=O",
+      "inchikey": "RHMXXJGYXNZAPX-UHFFFAOYSA-N",
+      "formula": "C15H10O5"
+    }
+  ],
+  "reference": "https://pubchem.ncbi.nlm.nih.gov/compound/3220",
+  "paper": "https://pubmed.ncbi.nlm.nih.gov/33509280/",
+  "decision": "quarantine invalid attachment, do not overwrite raw extraction",
+  "pubchem_property_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/3220/property/InChIKey,MolecularFormula/JSON",
+  "pubchem_property_response": {
+    "PropertyTable": {
+      "Properties": [
+        {
+          "CID": 3220,
+          "MolecularFormula": "C15H10O5",
+          "InChIKey": "RHMXXJGYXNZAPX-UHFFFAOYSA-N"
+        }
+      ]
+    }
+  },
+  "reference_verified": true,
+  "same_canonical_smiles_source_uids": [
+    "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91"
+  ],
+  "same_canonical_smiles_source_row_count": 1,
+  "reviewed_source_records_sha256": "f14addbb3c5acd8077f8daeb0123c5440b45a508e8fda20b60daa993f84dcdbe"
+}

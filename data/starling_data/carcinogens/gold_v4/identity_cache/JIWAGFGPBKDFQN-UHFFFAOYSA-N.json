@@ -1,0 +1,29 @@
+{
+  "parent_key": "JIWAGFGPBKDFQN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JIWAGFGPBKDFQN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-Dinitroso-2,6-dimethylpiperazine",
+    "2,6-Dimethyl-1,4-dinitrosopiperazine",
+    "2,6-Dimethyl-1,4-dinitrosopiperazine #",
+    "2,6-Dimethyl-dnpz",
+    "2,6-Dimethyldinitrosopiperazine",
+    "55380-34-2",
+    "8P7FYE3F7K",
+    "AKOS006277119",
+    "CHEMBL348953",
+    "DB-327237",
+    "DTXSID0021468",
+    "Dinitroso-2,6-dimethylpiperazine",
+    "Dndmp",
+    "JIWAGFGPBKDFQN-UHFFFAOYSA-N",
+    "N,N'-Dinitroso-2,6-dimethylpiperazine",
+    "PIPERAZINE, 2,6-DIMETHYL-1,4-DINITROSO-",
+    "RefChem:83317",
+    "SCHEMBL2344953"
+  ],
+  "http_status": 200,
+  "cids": [
+    41432
+  ]
+}

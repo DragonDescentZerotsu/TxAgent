@@ -1,0 +1,13 @@
+{
+  "parent_key": "CEEFBRAJYPJGQT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CEEFBRAJYPJGQT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL10446896",
+    "nitroso nitrosoguanidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    88613066
+  ]
+}

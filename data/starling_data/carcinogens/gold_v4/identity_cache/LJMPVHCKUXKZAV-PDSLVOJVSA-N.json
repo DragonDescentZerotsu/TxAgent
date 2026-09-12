@@ -1,0 +1,41 @@
+{
+  "parent_key": "LJMPVHCKUXKZAV-PDSLVOJVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LJMPVHCKUXKZAV-PDSLVOJVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6S)-3,4,5-Trihydroxy-6-(4-((E)-4-(4-hydroxyphenyl)hex-3-en-3-yl)phenoxy)tetrahydro-2H-pyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6S)-3,4,5-trihydroxy-6-[4-[(E)-4-(4-hydroxyphenyl)hex-3-en-3-yl]phenoxy]oxane-2-carboxylic acid",
+    "(2S,3S,4S,5R,6S)-6-[4-[(E)-1-ethyl-2-(4-hydroxyphenyl)but-1-enyl]phenoxy]-3,4,5-trihydroxy-tetrahydropyran-2-carboxylic acid",
+    "(E)-4-(1-Ethyl-2-(4-hydroxyphenyl)but-1-enyl)phenyl-beta-D-glucopyranosiduronic acid",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, 4-((1E)-1-ETHYL-2-(4-HYDROXYPHENYL)-1-BUTEN-1-YL)PHENYL",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, 4-((1E)-1-ETHYL-2-(4-HYDROXYPHENYL)-1-BUTENYL)PHENYL",
+    ".BETA.-D-GLUCOPYRANOSIDURONIC ACID, 4-(1-ETHYL-2-(4-HYDROXYPHENYL)-1-BUTENYL)PHENYL, (E)-",
+    "219-310-4",
+    "2408-40-4",
+    "4-[(3E)-4-(4-Hydroxyphenyl)hex-3-en-3-yl]phenyl beta-D-glucopyranosiduronic acid",
+    "DESBMG",
+    "DTXCID201728033",
+    "DTXSID901297869",
+    "Diethyl Stilbestrol ?-D-Glucuronide",
+    "Diethyl Stilbestrol beta-D-Glucuronide",
+    "Diethyl stilbestrol b-D-glucuronide",
+    "Diethylstilbestrol glucuronide",
+    "Diethylstilbestrol monoglucuronide",
+    "EINECS 219-310-4",
+    "GLUCOPYRANOSIDURONIC ACID, P-(.ALPHA.,.BETA.-DIETHYL-P-HYDROXYSTYRYL)PHENYL, (E)-, .BETA.-D-",
+    "HCS07E193J",
+    "HY-W777237",
+    "MD10197",
+    "NS00040618",
+    "Q27279866",
+    "RefChem:133531",
+    "Stilbestrol Monoglucuronide",
+    "TSW-00729",
+    "UNII-HCS07E193J",
+    "orb2941303"
+  ],
+  "http_status": 200,
+  "cids": [
+    10411193
+  ]
+}

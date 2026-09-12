@@ -1,0 +1,17 @@
+{
+  "parent_key": "HCWPIIXVSYCSAN-KLOSUXQXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HCWPIIXVSYCSAN-KLOSUXQXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "210Ra (isotope)",
+    "210Ra isotope",
+    "Isotope:210Ra",
+    "Isotope:Radium-210",
+    "Radium-210",
+    "Radium-210 isotope"
+  ],
+  "http_status": 200,
+  "cids": [
+    175672418
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent_key": "GLJZEYQJFGCTQN-ZDUSSCGKSA-N",
+  "ok": true,
+  "synonyms": [
+    "((4-(Bis(2-iodoethyl)amino)phenoxy)carbonyl)-L-glutamic acid",
+    "(2S)-2-[[4-[bis(2-iodoethyl)amino]phenoxy]carbonylamino]pentanedioic acid",
+    "156079-88-8",
+    "4-[N,N-bis(2-iodoethyl)amino]-phenyl-oxycarbonyl-l-glutamic acid",
+    "CHEMBL147758",
+    "DTXSID401179288",
+    "H57549",
+    "K6Q7XZ93C7",
+    "L-Glutamic acid, N-[[4-[bis(2-iodoethyl)amino]phenoxy]carbonyl]-",
+    "N-((4-(Bis(2-iodoethyl)amino)phenoxy)carbonyl)-L-glutamic Acid",
+    "N-({4-[Bis(2-iodoethyl)amino]phenoxy}carbonyl)-L-glutamic acid",
+    "N-[[4-[Bis(2-iodoethyl)amino]phenoxy]carbonyl]-L-glutamic acid",
+    "RefChem:359646",
+    "SCHEMBL4161725",
+    "ZD-2767P",
+    "ZD2767",
+    "ZD2767P"
+  ],
+  "cids": [
+    9916501
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GLJZEYQJFGCTQN-ZDUSSCGKSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,19 @@
+{
+  "parent_key": "BCJMNZRQJAVDLD-XKLVTHTNSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BCJMNZRQJAVDLD-XKLVTHTNSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS030254943",
+    "LSM-2938",
+    "Prestwick0_000637",
+    "Prestwick1_000637",
+    "Q27164507",
+    "SPBio_002853",
+    "TimTec1_004158"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (10%), Request Time status: Green (0%), Service status: Black (110%)",
+  "cids": [
+    10191
+  ]
+}

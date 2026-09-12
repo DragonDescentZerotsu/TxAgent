@@ -1,0 +1,156 @@
+[
+  [
+    "gliotoxin",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 6223,
+            "MolecularFormula": "C13H14N2O4S2",
+            "SMILES": "CN1C(=O)[C@]23CC4=CC=C[C@@H]([C@H]4N2C(=O)[C@]1(SS3)CO)O",
+            "InChIKey": "FIVPIPIDMRVLAY-RBJBARPLSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "clofibrate",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 2796,
+            "MolecularFormula": "C12H15ClO3",
+            "SMILES": "CCOC(=O)C(C)(C)OC1=CC=C(C=C1)Cl",
+            "InChIKey": "KNHUKKLJHYUCFP-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "1-naphthyl isothiocyanate",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 11080,
+            "MolecularFormula": "C11H7NS",
+            "SMILES": "C1=CC=C2C(=C1)C=CC=C2N=C=S",
+            "InChIKey": "JBDOSUUXMYMWQH-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2-acetylaminofluorene",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 5897,
+            "MolecularFormula": "C15H13NO",
+            "SMILES": "CC(=O)NC1=CC2=C(C=C1)C3=CC=CC=C3C2",
+            "InChIKey": "CZIHNRWJTSTCEX-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "vidarabine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 21704,
+            "MolecularFormula": "C10H13N5O4",
+            "SMILES": "C1=NC(=C2C(=N1)N(C=N2)[C@H]3[C@H]([C@@H]([C@H](O3)CO)O)O)N",
+            "InChIKey": "OIRDTQYFTABQOQ-UHTZMRCNSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "geniposidic acid",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 443354,
+            "MolecularFormula": "C16H22O10",
+            "SMILES": "C1C=C([C@@H]2[C@H]1C(=CO[C@H]2O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O)C(=O)O)CO",
+            "InChIKey": "ZJDOESGVOWAULF-OGJQONSISA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "oxybenzone",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 4632,
+            "MolecularFormula": "C14H12O3",
+            "SMILES": "COC1=CC(=C(C=C1)C(=O)C2=CC=CC=C2)O",
+            "InChIKey": "DXGLGDHPHMLXJC-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "4-methylumbelliferyl beta-D-glucuronide",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 91553,
+            "MolecularFormula": "C16H16O9",
+            "SMILES": "CC1=CC(=O)OC2=C1C=CC(=C2)O[C@H]3[C@@H]([C@H]([C@@H]([C@H](O3)C(=O)O)O)O)O",
+            "InChIKey": "ARQXEQLMMNGFDU-JHZZJYKESA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "AICAR",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 65110,
+            "MolecularFormula": "C9H15N4O8P",
+            "SMILES": "C1=NC(=C(N1[C@H]2[C@@H]([C@@H]([C@H](O2)COP(=O)(O)O)O)O)N)C(=O)N",
+            "InChIKey": "NOTGFIUVDGNKRI-UUOKFMHZSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "lawsone",
+    503,
+    {
+      "Fault": {
+        "Code": "PUGREST.ServerBusy",
+        "Message": "Too many requests or server too busy"
+      }
+    }
+  ]
+]

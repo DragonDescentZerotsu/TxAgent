@@ -1,0 +1,40 @@
+{
+  "parent_key": "JQQSUOJIMKJQHS-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JQQSUOJIMKJQHS-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,3:6,7-DIBENZOPHENANTHRENE",
+    "2,3:6,7-DIBENZPHENANTHRENE [MI]",
+    "2,3:6,7-Dibenzphenanthrene",
+    "205-927-6",
+    "222-93-5",
+    "CHEBI:33147",
+    "DIBENZO(B,H)PHENANTHRENE",
+    "DTXCID5099234",
+    "DTXSID90176743",
+    "EINECS 205-927-6",
+    "G67609",
+    "IF94R180Q0",
+    "JQQSUOJIMKJQHS-UHFFFAOYSA-N",
+    "MFCD00215866",
+    "NS00041764",
+    "PENTAPHENE",
+    "Pentapheno",
+    "Q2069346",
+    "RefChem:171450",
+    "SCHEMBL21464320",
+    "SCHEMBL23664",
+    "SCHEMBL27494442",
+    "SCHEMBL27813028",
+    "SCHEMBL27904402",
+    "SCHEMBL27980290",
+    "SCHEMBL28814502",
+    "SCHEMBL29532882",
+    "UNII-IF94R180Q0",
+    "dibenzo[b,h]phenanthrene"
+  ],
+  "http_status": 200,
+  "cids": [
+    519935
+  ]
+}

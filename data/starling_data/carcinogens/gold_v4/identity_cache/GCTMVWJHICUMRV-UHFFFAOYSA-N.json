@@ -1,0 +1,17 @@
+{
+  "parent_key": "GCTMVWJHICUMRV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GCTMVWJHICUMRV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "109925-03-3",
+    "DTXSID50911399",
+    "Phosphoric acid, 1-ethylhexyl diphenyl ester",
+    "SCHEMBL321088",
+    "ethylhexyl diphenyl phosphate",
+    "octan-3-yl diphenyl phosphate"
+  ],
+  "http_status": 200,
+  "cids": [
+    135395
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "IELOKBJPULMYRW-IKTKBOKFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IELOKBJPULMYRW-IKTKBOKFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    ".ALPHA.-TOCOPHEROL SUCCINATE, DL-",
+    ".ALPHA.-TOCOPHERYL SUCCINATE, DL-",
+    "47801-19-4",
+    "7VJE08U49E",
+    "Butanedioic acid, mono((2R)-3,4-dihydro-2,5,7,8-tetramethyl-2-((4R,8R)-4,8,12-trimethyltridecyl)-2H-1-benzopyran-6-yl) ester, rel-",
+    "DL-.ALPHA.-TOCOPHEROL SUCCINIC ACID",
+    "DL-.ALPHA.-TOCOPHERYL SUCCINATE",
+    "DL-alpha Tocopherol succinate [WHO-DD]",
+    "DL-alpha-Tocopherol succinic acid",
+    "DL-alpha-Tocopheryl hydrogen succinate",
+    "DL-alpha-Tocopheryl succinate",
+    "J667.664B",
+    "Q27268912",
+    "SCHEMBL29409614",
+    "TOCOPHEROL SUCCINIC ACID, DL-.ALPHA.-",
+    "Tocopherol succinic acid, DL-alpha-",
+    "UNII-7VJE08U49E",
+    "alpha-Tocopherol succinate, DL-"
+  ],
+  "http_status": 200,
+  "cids": [
+    92257186
+  ]
+}

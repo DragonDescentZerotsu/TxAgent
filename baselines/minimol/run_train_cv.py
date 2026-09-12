@@ -8,6 +8,7 @@ cached embeddings and labels from ``train.jsonl``; outer ``valid.jsonl`` and
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -56,6 +57,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument(
+        "--scaffold-group-field",
+        default=None,
+        help="Optional frozen grouping field in outer train.jsonl; otherwise recompute Murcko scaffolds.",
+    )
+    parser.add_argument(
         "--condition-field",
         default=None,
         help=(
@@ -78,6 +84,26 @@ def scaffold_groups(smiles: list[str]) -> list[str]:
                 includeChirality=False,
             )
         )
+    return groups
+
+
+def training_scaffold_groups(
+    path: Path, smiles: list[str], labels: list[int], *, field: str | None = None
+) -> list[str]:
+    """Use explicit dataset groups without reading outer validation or test."""
+    if field is None:
+        return scaffold_groups(smiles)
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    if len(rows) != len(smiles) or len(labels) != len(smiles):
+        raise ValueError("Frozen scaffold groups do not align with training rows")
+    groups = []
+    for index, (row, value, label) in enumerate(zip(rows, smiles, labels, strict=True)):
+        if row.get("drug") != value or row.get("Y") != label:
+            raise ValueError(f"Frozen scaffold group identity mismatch at train row {index}")
+        if field not in row or not isinstance(row[field], str):
+            raise ValueError(f"Missing or invalid scaffold group field {field!r} at train row {index}")
+        # Empty scaffolds are a valid shared acyclic group, not missing data.
+        groups.append(row[field])
     return groups
 
 
@@ -197,7 +223,9 @@ def main() -> None:
         vocabulary=vocabulary,
         molecule_embedding_dim=int(molecule_embeddings.shape[1]),
     )
-    groups = scaffold_groups(train.smiles)
+    groups = training_scaffold_groups(
+        train_path, train.smiles, train.labels, field=args.scaffold_group_field
+    )
     folds = make_scaffold_folds(train.labels, groups, n_folds=args.folds, seed=args.seed)
     device = torch.device(args.device)
 
@@ -332,6 +360,12 @@ def main() -> None:
         "cv_members_per_fold": 1,
         "selected_epoch_oof_predictions": str(oof_path),
         "n_scaffolds": len(set(groups)),
+        "scaffold_grouping": {
+            "source": "outer_train_field" if args.scaffold_group_field else "rdkit_murcko_from_smiles",
+            "field": args.scaffold_group_field,
+            "ordered_groups_sha256": hashlib.sha256(json.dumps(groups).encode()).hexdigest(),
+            "train_sha256": hashlib.sha256(train_path.read_bytes()).hexdigest(),
+        },
         "condition_features": feature_contract,
         "args": {
             key: str(value) if isinstance(value, Path) else value

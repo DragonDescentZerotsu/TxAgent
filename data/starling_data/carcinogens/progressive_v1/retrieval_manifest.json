@@ -1,0 +1,28 @@
+{
+  "task": "carcinogens",
+  "benchmark_root": "data/conditioned_benchmark",
+  "indices": {
+    "scaffold": {
+      "manifest": "data/starling_data/carcinogens/progressive_v1/indices/scaffold/manifest.json",
+      "sha256": "4f68e32653a7d302dfae4a030528064ccabeaee8c64e73595ba90f0ee40e9b74"
+    },
+    "random": {
+      "manifest": "data/starling_data/carcinogens/progressive_v1/indices/random/manifest.json",
+      "sha256": "ebdce1bef5d6de5878628b9185c8c5332d4a2955c8876fc12ea248e7d8d35b96"
+    }
+  },
+  "catalog": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/carcinogens/family_assays.jsonl",
+  "catalog_sha256": "57be6e629bbd7ff25c4ddc26ad1f4a6be032ec3bbf669c9299e1e9abd5f558e2",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "validation": "data/starling_data/carcinogens/progressive_v1/validation_current.json",
+  "validation_sha256": "e04240ff8bd1f22c278b2266ab626a8f85184b3eccf63a9fbf7825ea43d36de6",
+  "validation_status": "passed",
+  "historical_validation": {
+    "path": "data/starling_data/carcinogens/progressive_v1/validation_all.json",
+    "sha256": "9e8ae339d1849930c87d422ac5a748b3ff33a52f6db63c4b985acaf29bd8638c",
+    "status": "historical_before_tautomer_identity_v2",
+    "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
+  },
+  "publication_receipt": "data/starling_data/carcinogens/gold_v3/provenance/retrieval_identity_publication.json",
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json"
+}

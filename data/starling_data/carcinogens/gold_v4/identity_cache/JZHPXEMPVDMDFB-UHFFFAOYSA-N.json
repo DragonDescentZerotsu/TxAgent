@@ -1,0 +1,27 @@
+{
+  "parent_key": "JZHPXEMPVDMDFB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JZHPXEMPVDMDFB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "18967-41-4",
+    "2,4-Dichloro-1-(isothiocyanatomethyl)benzene",
+    "2,4-Dichloro-1-(isothiocyanatomethyl)benzene #",
+    "2,4-Dichlorobenzyl isothiocyanate",
+    "2,4-Dichlorobenzylisothiocyanate",
+    "AKOS015850179",
+    "Benzene, 2,4-dichloro-1-(isothiocyanatomethyl)-",
+    "DB-019911",
+    "DTXCID0094869",
+    "DTXSID60172378",
+    "F018521",
+    "FS-4740",
+    "JZHPXEMPVDMDFB-UHFFFAOYSA-N",
+    "MFCD00046818",
+    "RefChem:82383",
+    "SCHEMBL3365419"
+  ],
+  "http_status": 200,
+  "cids": [
+    140455
+  ]
+}

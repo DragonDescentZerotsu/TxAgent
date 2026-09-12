@@ -1,0 +1,22 @@
+{
+  "parent_key": "FUUNETATXBTDDS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3-Imino-5-phenyl(5-hydrophenazin-2-yl))phenylamine",
+    "2-Phenazinamine, 3,5-dihydro-3-imino-N,5-diphenyl-",
+    "2-anilino-3-imino-5-phenyl phenazine",
+    "3,5-Dihydro-3-imino-N,5-diphenyl-2-phenazinamine",
+    "3-IMINO-N,5-DIPHENYL-3,5-DIHYDROPHENAZIN-2-AMINE",
+    "3-imino-N,5-diphenyl-phenazin-2-amine",
+    "4733-21-5",
+    "B 283",
+    "CHEMBL346033",
+    "DTXSID40963807",
+    "SCHEMBL16306592"
+  ],
+  "cids": [
+    165263
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FUUNETATXBTDDS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

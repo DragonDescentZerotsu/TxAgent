@@ -1,0 +1,41 @@
+{
+  "parent_key": "CGKQZIULZRXRRJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    ".BETA.-KETO-N-METHYLBENZODIOXOLYLBUTANAMINE",
+    "1-(1,3-benzodioxol-5-yl)-2-(methylamino)butan-1-one",
+    "1-(1,3-benzodioxol-5-yl)-2-(methylamino)butan-1-one)",
+    "1-(3,4-Methylenedioxyphenyl)-2-methylamino-1-butanone",
+    "1-BUTANONE, 1-(1,3-BENZODIOXOL-5-YL)-2-(METHYLAMINO)-",
+    "1-Butanone, 1-(1,3-benzodioxol-5-yl)-2-(methylamino)-, hydrochloride (1:1)",
+    "2-methylamino-1-(3,4-methylenedioxyphenyl)butan-1-one",
+    "802575-11-7",
+    "BUTYROPHENONE, 2-(METHYLAMINO)-3',4'-(METHYLENEDIOXY)-",
+    "Butylone",
+    "Butylone (hydrochloride)",
+    "Butylone [Designer Drug]",
+    "Butylone hydrochloride",
+    "CGKQZIULZRXRRJ-UHFFFAOYSA-N",
+    "CHEBI:189244",
+    "DEA No. 7541",
+    "DTXCID20842267",
+    "DTXSID001024651",
+    "J2.528.306F",
+    "NS00007778",
+    "Q4100204",
+    "RefChem:571866",
+    "SCHEMBL1838487",
+    "SCHEMBL29416771",
+    "UNII-X72T4EQ4FQ",
+    "X72T4EQ4FQ",
+    "beta-Keto-N-methylbenzodioxolylpropylamine, hydrochloride",
+    "beta-keto-N-methylbenzodioxolylbutanamine",
+    "bk-MBDB",
+    "butylone bk-MBDB"
+  ],
+  "cids": [
+    56843046
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGKQZIULZRXRRJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

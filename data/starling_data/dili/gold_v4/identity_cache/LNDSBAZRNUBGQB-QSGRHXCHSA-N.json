@@ -1,0 +1,19 @@
+{
+  "parent_key": "LNDSBAZRNUBGQB-QSGRHXCHSA-N",
+  "ok": true,
+  "synonyms": [
+    "1207451-95-3",
+    "5'-O-[(Benzylamino){2-[(3-hydroxy-2,2-dimethylpropanoyl)sulfanyl]ethoxy}phosphoryl]-2'-C-methyl-4,5-dihydroguanosine",
+    "DTXCID1075488",
+    "DTXSID00152997",
+    "IDX184",
+    "Idx 184",
+    "RefChem:923295",
+    "SCHEMBL29970874"
+  ],
+  "cids": [
+    71300869
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LNDSBAZRNUBGQB-QSGRHXCHSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,29 @@
+{
+  "parent_key": "YLYLCQRQSRDSQR-ADTLFGHVSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-(((3aS,7aS)-2-hydroxy-3a,4,5,6,7,7a-hexahydro-3H-furo(3,2-b)pyridin-2-yl)methyl)quinazolin-4-one",
+    "3-[[(3aS,7aS)-2-hydroxy-3a,4,5,6,7,7a-hexahydro-3H-furo[3,2-b]pyridin-2-yl]methyl]quinazolin-4-one",
+    "32434-44-9",
+    "AKOS037515131",
+    "C10698",
+    "CHEBI:6008",
+    "CHEMBL105789",
+    "Dichroine-alpha",
+    "FS-7650",
+    "HX75740000",
+    "Isofebrifugine",
+    "NIOSH/HX7574000",
+    "Q27106979",
+    "RefChem:923697",
+    "SCHEMBL12033795",
+    "SCHEMBL29521353",
+    "alpha-Dichroine",
+    "isofebrifugin"
+  ],
+  "cids": [
+    9851693
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YLYLCQRQSRDSQR-ADTLFGHVSA-N/synonyms/JSON",
+  "http_status": 200
+}

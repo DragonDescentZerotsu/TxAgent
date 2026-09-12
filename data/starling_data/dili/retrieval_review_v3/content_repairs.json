@@ -1,0 +1,290 @@
+{
+  "version": "source_content_repairs.v1",
+  "task": "dili",
+  "source_records_sha256": "5a7c185f82aa78091a2843ab6f2aacb613ffd731770be4e6d830230b78077f16",
+  "frozen_gold_policy": "No vote, gold or split changes. is_gold_voter is immutable historical membership; an ineligible corrected voter remains unindexed and cannot grant its repaired identity an L1 vote.",
+  "decisions": [
+    {
+      "source_row_uid": "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91",
+      "source_payload_sha256": "9654bd6b942bb6c957917a916d0e103296a0d035d7b1f3fc844d77a0512b35ff",
+      "previous_level": 0,
+      "level": 2,
+      "reason": "Repaired emodin identity and human-evidence-gap scope; preserve bounded evidence as L2 nonvoter.",
+      "corrected_record": {
+        "paragraph_idx": 69,
+        "support_text": "The authors discuss a mouse study of emodin and explicitly state that its safety in humans cannot yet be concluded. Their mouse studies at 20, 40 and 80 mg/kg appeared safe under the tested conditions. Potential effects at higher human exposures remain unresolved; this passage supplies no tested human negative outcome.",
+        "molecule_name": "Emodin",
+        "agent_type": "small_molecule_or_chemical",
+        "liver_injury_identifier": "UMLS:C0235378",
+        "causal_status": null,
+        "human_evidence_basis": "human_clinical_evidence_gap_author_discussion",
+        "exposure_context": null,
+        "reaction_type": null,
+        "biochemical_pattern": null,
+        "clinical_phenotype": null,
+        "maximum_reported_severity": null,
+        "qualifying_conditions": "This is an author discussion in a mouse safety study, not a negative human clinical study. The animal findings are limited to the reported species, doses and duration; absence of human clinical data does not establish human safety.",
+        "extra_details": "Hepatotoxic and mutagenic effects were reported only in experimental rodent studies at large doses; emodin lacks FDA approval and has limited human use as a marketed laxative/anti-cortisol dietary supplement. The paper explicitly states there is no evidence supporting hepatotoxic effects of emodin in humans at this time.",
+        "confidence": 0.85,
+        "needs_more_context": false,
+        "pmid": "33509280",
+        "extraction_id": "ext_1",
+        "SMILES": "Cc1cc(O)c2c(c1)C(=O)c1cc(O)cc(O)c1C2=O",
+        "source_row_uid": "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7845031/",
+        "https://pubchem.ncbi.nlm.nih.gov/compound/3220"
+      ]
+    },
+    {
+      "source_row_uid": "sr_9fa47648e3fe4ec1b4660b8abf2e4e5c",
+      "source_payload_sha256": "f030e20656748b62c2a969da02e237e4fe9b1bf01f1539afa1c87b5bbe430234",
+      "previous_level": 5,
+      "level": 0,
+      "reason": "Q39 identity repaired; K562 anticancer mitochondrial assay lacks a hepatic safety endpoint. Preserve corrected source, outside DILI retrieval scope.",
+      "corrected_record": {
+        "paragraph_idx": 30,
+        "support_text": "Loss of ΔΨm in K562 cells treated with 6.0 µM Q39 for 6–48 h in hypoxia was assessed with JC-1 staining, indicated by a switch from red to green fluorescence. Compared with the corresponding control, Q39 decreased ΔΨm in K562 cells after 12–48 h incubation in a time-dependent manner. Quantitative flow cytometry showed the percentages of cells with low ΔΨm increased nearly 10-fold in cells exposed to Q39 for 48 h compared with the corresponding control in hypoxia.",
+        "molecule_name": "Q39 (3-(4-bromophenyl)-2-(ethylsulfonyl)-6-methylquinoxaline 1,4-dioxide)",
+        "tested_entity_role": "parent",
+        "assay_category": "mitochondrial_membrane_potential",
+        "assay_detail": "JC-1 red-to-green fluorescence switch assessed by fluorescent microscopy and flow cytometry; metric is percentage of cells with low ΔΨm",
+        "biological_system": "K562 cells incubated in hypoxia (3% O2)",
+        "species": null,
+        "mechanistic_entities_and_components": "probe: JC-1; condition: hypoxia versus normoxia",
+        "test_concentration": "6.0",
+        "test_concentration_unit": "uM",
+        "exposure_time": "6–48 h",
+        "reported_result": "percentage of cells with low ΔΨm increased nearly 10-fold after 48 h exposure versus control; ΔΨm decreased in a time-dependent manner after 12–48 h",
+        "extra_details": "Q39 is the quinoxaline 1,4-dioxide compound explicitly named in PMID 18215659. The tested system is hypoxic K562 leukemia cells. The reported mitochondrial response is an anticancer mechanistic observation, not a hepatic or human DILI outcome. Numerical assay details retained from the supplied extraction have not been independently checked against the full article.",
+        "confidence": 0.85,
+        "needs_more_context": false,
+        "pmid": "18215659",
+        "extraction_id": "ext_2",
+        "SMILES": "CCS(=O)(=O)c1c(-c2ccc(Br)cc2)[n+](=O)c2cc(C)ccc2n1[O-]",
+        "source_row_uid": "sr_9fa47648e3fe4ec1b4660b8abf2e4e5c"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/18215659/",
+        "https://pubchem.ncbi.nlm.nih.gov/compound/46946323"
+      ]
+    },
+    {
+      "source_row_uid": "sr_3e62e0aa73804ed7a2f5c0f9acf399c3",
+      "source_payload_sha256": "497435349246f2a427442c6ff783d6fdc691a8ef87a897d93c9243a97f980a53",
+      "previous_level": 1,
+      "level": 0,
+      "reason": "Subject repaired as fixed_combination; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+      "corrected_record": {
+        "paragraph_idx": 29,
+        "support_text": "In the co-amoxiclav dosing cohort, hepatotoxicity occurred in 2 of 94 standard-regimen patients and 1 of 95 optimised-regimen patients (p=0.62). One standard-group case had ALT and bilirubin elevations; the other two cases had ALP and GGT elevations. These are combination-treatment observations.",
+        "molecule_name": "intravenous co-amoxiclav (amoxicillin/clavulanate)",
+        "agent_type": "fixed_combination",
+        "liver_injury_identifier": "UMLS:C0235378",
+        "causal_status": null,
+        "human_evidence_basis": "clinical_observational_cohort",
+        "exposure_context": "therapeutic_use",
+        "reaction_type": null,
+        "biochemical_pattern": null,
+        "clinical_phenotype": "nonspecific_liver_injury",
+        "maximum_reported_severity": "liver_test_abnormality_only",
+        "qualifying_conditions": "Adults with diabetic foot infection receiving intravenous co-amoxiclav. Standard group: 94 patients, 1.2 g every 8 h; optimised group: 95 patients, 1.2 g every 6 h. Outcomes belong to the combination treatment. The optimised group is not an untreated observation group. No individual-component causal attribution is established here.",
+        "extra_details": "The paper reports two hepatotoxicity events in the standard group and one in the optimised group; the latter case has Naranjo +3 (possible), whereas the two standard-group cases have +5 (probable). Preserve these separate case attributions; do not assign probable status to the optimised-group case or an individual component.",
+        "confidence": 0.7,
+        "needs_more_context": false,
+        "pmid": "40867953",
+        "extraction_id": "ext_1",
+        "SMILES": null,
+        "source_row_uid": "sr_3e62e0aa73804ed7a2f5c0f9acf399c3"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC12382847/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_349b2fb9de25463288a41f23bd5d26e9",
+      "source_payload_sha256": "e0ec5d1a85f23ddcf530633c1457f104e4d7adc21cb0b8a526c8a612b9d788b8",
+      "previous_level": 5,
+      "level": 0,
+      "reason": "Subject repaired as organelle_delivery_material; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+      "corrected_record": {
+        "paragraph_idx": 53,
+        "support_text": "After 3 days of PMD, the range of mitochondrial membrane potential in the mitochondria-treated MERRF cells relative to cells before treatment was significantly increased from 1.7-fold to 3.0-fold; the most significant effect was in the 210 µg Pep-1-Mito group.",
+        "molecule_name": "Pep-1-conjugated isolated donor mitochondria (Pep-1-Mito)",
+        "tested_entity_role": "organelle_delivery_material",
+        "assay_category": "mitochondrial_membrane_potential",
+        "assay_detail": "mitochondrial membrane potential measurement",
+        "biological_system": "MERRF fibroblasts",
+        "species": null,
+        "mechanistic_entities_and_components": "delivered material: Pep-1-conjugated isolated Mito-GFP mitochondria; endpoint: mitochondrial membrane potential",
+        "test_concentration": null,
+        "test_concentration_unit": null,
+        "exposure_time": "3 days",
+        "reported_result": "mitochondrial membrane potential increased from 1.7-fold to 3.0-fold relative to cells before treatment",
+        "extra_details": "PMD = Pep-1-mediated delivery; delivered doses 52.5, 105 and 210 µg Pep-1-Mito; most significant effect at 210 µg.",
+        "confidence": 0.75,
+        "needs_more_context": false,
+        "pmid": "24199594",
+        "extraction_id": "ext_8",
+        "SMILES": null,
+        "source_row_uid": "sr_349b2fb9de25463288a41f23bd5d26e9"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24199594/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_26cf5e7d73964732b1ec8143fc431ee2",
+      "source_payload_sha256": "00d16b233e61727319c740625192fdff1afbbd4b9b619b3f587136b4ef7654dd",
+      "previous_level": 5,
+      "level": 0,
+      "reason": "Subject repaired as organelle_delivery_material; current single-molecule index cannot represent the full tested intervention. Preserve material/combination result, no arbitrary component attribution.",
+      "corrected_record": {
+        "paragraph_idx": 61,
+        "support_text": "After 21 days of delivery, compared with the 210 µg Pep-1-Mito group, the 105 µg Pep-1-Mito group showed a reduction in the percentage of depolarized mitochondria from 22.4 ± 3.09% to 4.0 ± 0.06% and a significant increase in mitochondrial membrane potential of approximately 2.3-fold.",
+        "molecule_name": "Pep-1-conjugated isolated donor mitochondria (Pep-1-Mito)",
+        "tested_entity_role": "organelle_delivery_material",
+        "assay_category": "mitochondrial_membrane_potential",
+        "assay_detail": "depolarized-mitochondria population and mitochondrial membrane potential measurement",
+        "biological_system": "MERRF fibroblasts",
+        "species": null,
+        "mechanistic_entities_and_components": "delivered material: Pep-1-conjugated isolated Mito-GFP mitochondria; endpoint: mitochondrial membrane potential/depolarization",
+        "test_concentration": null,
+        "test_concentration_unit": null,
+        "exposure_time": "21 days",
+        "reported_result": "depolarized mitochondria decreased from 22.4 ± 3.09% to 4.0 ± 0.06%; mitochondrial membrane potential increased approximately 2.3-fold",
+        "extra_details": "Also compared with 210 µg Pep-1-Mito (mitochondrial elongation, 1.9-fold); 16.8 ± 0.02% reduction in cellular ROS production also reported for 105 µg group.",
+        "confidence": 0.7,
+        "needs_more_context": false,
+        "pmid": "24199594",
+        "extraction_id": "ext_13",
+        "SMILES": null,
+        "source_row_uid": "sr_26cf5e7d73964732b1ec8143fc431ee2"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24199594/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_5e44cda3da08417bbdf2dca93b7b1d4a",
+      "source_payload_sha256": "83af4e534ed8c4356bd6a7cf4c1b8950271480ae9df647909eb28520ec3eafa7",
+      "previous_level": 3,
+      "level": 0,
+      "reason": "Repaired Q39 identity; generic hepatoma anticancer efficacy without hepatic safety/ADMET outcome is outside DILI source scope.",
+      "corrected_record": {
+        "paragraph_idx": 32,
+        "support_text": "Cytotoxicity of Q39 was tested on a panel of five human cancer cell lines exposed to various concentrations for 72 h in hypoxia (3% O2) and in normoxia (20% O2). For the human hepatoma cell line SMMC-7721, the IC50 was 3.17±0.82 µM at 3% O2 and 6.86±1.74 µM at 20% O2. Results were expressed as mean±SD. (The parallel apoptosis, mitochondrial-membrane-potential, and caspase measurements in this window were all performed in K562 chronic myelocytic leukemia cells, which are not a hepatocyte-containing model and are excluded from this extraction.)",
+        "endpoint_category": "viability_or_cell_number",
+        "assay_and_readout": "72 h exposure – IC50 (µM) determination; specific viability readout not stated",
+        "biological_model_context": "Human hepatoma cell line SMMC-7721 from the paper's five-cell-line panel; no metabolic-competence or donor data reported",
+        "species": "human",
+        "culture_format": null,
+        "concentration_values": null,
+        "concentration_unit": null,
+        "exposure_duration_and_schedule": "72 h",
+        "exposure_regimen": "single_continuous",
+        "result_value": "IC50 at 3% O2: 3.17±0.82; IC50 at 20% O2: 6.86±1.74",
+        "result_unit": "umol_per_l",
+        "extra_details": "Q39 is the quinoxaline 1,4-dioxide compound named in PMID 18215659. This is a cancer-cell growth-inhibition assay in SMMC-7721, with hypoxic/normoxic IC50 endpoints; no normal-hepatocyte safety comparator or DILI endpoint. Numeric details are retained from supplied extraction and not independently full-text verified.",
+        "confidence": 0.7,
+        "needs_more_context": false,
+        "pmid": "18215659",
+        "extraction_id": "ext_2",
+        "SMILES": "CCS(=O)(=O)c1c(-c2ccc(Br)cc2)[n+](=O)c2cc(C)ccc2n1[O-]",
+        "source_row_uid": "sr_5e44cda3da08417bbdf2dca93b7b1d4a",
+        "molecule_name": "Q39 (3-(4-bromophenyl)-2-(ethylsulfonyl)-6-methylquinoxaline 1,4-dioxide)"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/18215659/",
+        "https://pubchem.ncbi.nlm.nih.gov/compound/46946323"
+      ]
+    },
+    {
+      "source_row_uid": "sr_a2af8276f5c240e3924b907349cc98c4",
+      "source_payload_sha256": "daf75d99d809630a20ae8f68a14870257f14ca23fc3761aaea3d4c9a3f046c20",
+      "previous_level": 5,
+      "level": 0,
+      "reason": "Repaired mitochondrial-delivery material subject; ATP result belongs to the composite intervention, not the bound small molecule.",
+      "corrected_record": {
+        "paragraph_idx": 53,
+        "support_text": "After 3 days of PMD, ATP synthesis in the mitochondria-treated MERRF cells relative to cells before treatment was significantly increased from 7.5-fold to 10.0-fold.",
+        "molecule_name": "Pep-1-conjugated isolated donor mitochondria (Pep-1-Mito)",
+        "tested_entity_role": "organelle_delivery_material",
+        "assay_category": "atp_or_energy_charge",
+        "assay_detail": "ATP synthesis measurement",
+        "biological_system": "MERRF fibroblasts",
+        "species": null,
+        "mechanistic_entities_and_components": "delivered material: Pep-1-conjugated isolated Mito-GFP mitochondria; endpoint: ATP synthesis",
+        "test_concentration": null,
+        "test_concentration_unit": null,
+        "exposure_time": "3 days",
+        "reported_result": "ATP synthesis increased from 7.5-fold to 10.0-fold relative to cells before treatment",
+        "extra_details": "PMD = Pep-1-mediated delivery; delivered doses 52.5, 105 and 210 µg Pep-1-Mito.",
+        "confidence": 0.75,
+        "needs_more_context": false,
+        "pmid": "24199594",
+        "extraction_id": "ext_9",
+        "SMILES": null,
+        "source_row_uid": "sr_a2af8276f5c240e3924b907349cc98c4"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/24199594/"
+      ]
+    },
+    {
+      "source_row_uid": "sr_c69419fe6e6b4f2d9eb14467803c5eac",
+      "source_payload_sha256": "aca8b529f1cf8e2be971f94da63548fe05c8c6db1c331267a2229bea0da91ab3",
+      "previous_level": 5,
+      "level": 5,
+      "reason": "Repair modifier versus challenge attribution and dose; retain explicitly bounded mitochondrial mechanism evidence.",
+      "corrected_record": {
+        "paragraph_idx": 34,
+        "support_text": "Monocytes were pre-incubated with Z-VAD.Fmk (5 µM, 1 h) before exposure to tobacco smoke (3 h), and Δψm was determined as percent cells with polarized mitochondria. With Z-VAD.Fmk present, tobacco smoke at 0.18 puff/ml gave 4.7 ± 0.9 (n=5) percent polarized cells.",
+        "molecule_name": "Z-VAD.Fmk",
+        "tested_entity_role": "modifier_or_cotreatment",
+        "assay_category": "mitochondrial_membrane_potential",
+        "assay_detail": "Mitochondrial membrane potential (Δψm) by flow cytometry, expressed as percent cells with polarized mitochondria, under Z-VAD.Fmk co-treatment",
+        "biological_system": "human peripheral blood monocytes",
+        "species": "Homo sapiens",
+        "mechanistic_entities_and_components": "modifier/co-treatment: Z-VAD.Fmk (caspase inhibitor, 5 µM, 1 h preincubation); exposure: tobacco smoke, 0.18 puff/ml",
+        "test_concentration": "5",
+        "test_concentration_unit": "uM",
+        "exposure_time": "1 h preincubation before 3 h tobacco-smoke challenge",
+        "reported_result": "4.7 ± 0.9% cells with polarized mitochondria (n=5), vs controls adjusted to 100%",
+        "extra_details": "Z-VAD.Fmk is the 5 µM caspase-inhibitor modifier. Tobacco smoke at 0.18 puff/ml is the challenge, not the indexed molecular entity or its concentration. The reported endpoint is under joint exposure in human peripheral blood monocytes, not a liver assay or an isolated Z-VAD.Fmk effect. Preserve the indirect-mechanism and role limits; mean ± SEM, n=5.",
+        "confidence": 0.9,
+        "needs_more_context": false,
+        "pmid": "10731097",
+        "extraction_id": "ext_11",
+        "SMILES": "COC(=O)C[C@H](NC(=O)[C@H](C)NC(=O)[C@@H](NC(=O)OCc1ccccc1)C(C)C)C(=O)CF",
+        "source_row_uid": "sr_c69419fe6e6b4f2d9eb14467803c5eac"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/10731097/",
+        "supplied_source_record:sr_c69419fe6e6b4f2d9eb14467803c5eac"
+      ]
+    },
+    {
+      "source_row_uid": "sr_b001c22b5fce4e4f9d2e7fcf329a047e",
+      "source_payload_sha256": "b9ac161cb80773aa81543de6c15a5618304496526ec5b22eee07878f2f6e65a1",
+      "previous_level": 4,
+      "level": 3,
+      "reason": "Post-thaw hepatocyte monolayer attachment/morphology score is L3 cell recovery, not a bile/canalicular measurement."
+    },
+    {
+      "source_row_uid": "sr_e524ceac2675463a8d557696bfb87350",
+      "source_payload_sha256": "33c91b4a42c23eabd96f9f0038f7d8f9fb08ff4aa5aa20d6b8ee7f9e9471f03f",
+      "previous_level": 4,
+      "level": 3,
+      "reason": "General hepatocyte ultrastructure preservation percentage is L3 recovery; retain protective treatment and rat microbead context."
+    },
+    {
+      "source_row_uid": "sr_29ff4e55218249d3a20c490b1170219e",
+      "source_payload_sha256": "f45d4adc085ac0d95681a54728664ecd943a7016d6e9f357892ae5d29a9466ea",
+      "previous_level": 4,
+      "level": 3,
+      "reason": "The focal readout is abolished apoptosis and restored generic morphology under ethanol challenge. Canaliculi are ancillary culture-function markers; retain protective role in L3. The separate explicit canalicular-preservation card remains L4."
+    }
+  ]
+}

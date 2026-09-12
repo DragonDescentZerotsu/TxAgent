@@ -1,0 +1,22 @@
+{
+  "parent_key": "ABXYOVCSAGTJAC-JGWLITMVSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ABXYOVCSAGTJAC-JGWLITMVSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2R,3S,4R,5R)-2,3,4,5,6-pentahydroxyhexanethial",
+    "1-Thioglucose",
+    "7211-44-1",
+    "D-Glucose, 1-thio-",
+    "RefChem:77282",
+    "SCHEMBL1052094",
+    "Sodium thioglucse",
+    "U1XQK5MJ1D",
+    "UNII-NG6BJW0OE1",
+    "UNII-U1XQK5MJ1D",
+    "beta-D-Thioglucose"
+  ],
+  "http_status": 200,
+  "cids": [
+    151466
+  ]
+}

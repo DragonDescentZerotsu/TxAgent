@@ -1,0 +1,30 @@
+{
+  "parent_key": "FSRNFKKSRMNQDG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FSRNFKKSRMNQDG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1H-1,2,4-Triazole-1-propanenitrile",
+    "3-(1,2,4-TRIAZOL-1-YL)PROPANENITRILE",
+    "3-(1H-1,2,4-triazol-1-yl)-propanenitrile",
+    "3-(1H-1,2,4-triazol-1-yl)propanenitrile",
+    "3-[1,2,4]Triazol-1-yl-propionitrile",
+    "76686-83-4",
+    "829-896-9",
+    "AKOS000206522",
+    "ALBB-037419",
+    "BDA68683",
+    "CS-0244614",
+    "DTXCID20484383",
+    "DTXSID90533594",
+    "EN300-28535",
+    "FK-0003",
+    "FSRNFKKSRMNQDG-UHFFFAOYSA-N",
+    "MFCD03727265",
+    "RefChem:489737",
+    "SCHEMBL5094113"
+  ],
+  "http_status": 200,
+  "cids": [
+    13271094
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "parent_key": "KBSBUGUKMIUBEE-WQYXQGCUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KBSBUGUKMIUBEE-WQYXQGCUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "((1R,2R,6S,10S,11R,13S,14R,15R)-13-acetyloxy-1-hydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo(8.5.0.02,6.011,13)pentadeca-3,8-dienyl) 2-(methylamino)benzoate",
+    "(1R,2R,6S,10S,11R,13S,14R,15R)-13-(acetyloxy)-1-hydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxotetracyclo[8.5.0.0^{2,6}.0^{11,13}]pentadeca-3,8-dien-14-yl 2-(methylamino)benzoate",
+    "(1aR,1bS,4aS,7aR,7bR,8R,9R,9aS)-9a-(Acetyloxy)-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-1H-cyclopropa[3,4]benzo[1,2-e]azulen-9-yl 2-(methylamino)benzoate",
+    "(1aR,1bS,4aS,7aR,7bR,8R,9R,9aS)-9a-acetoxy-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-1H-cyclopropa[3,4]benzo[1,2-e]azulen-9-yl 2-(methylamino)benzoate",
+    "12-O-(N-methylaminobenzoyl)-13-O-acetyl-4-deoxyphorbol",
+    "2HF34UL2QC",
+    "79083-69-5",
+    "9a-(Acetyloxy)-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-1H-cyclopropa[3,4]benzo[1,2-e]azulen-9-yl 2-(methylamino)benzoate",
+    "Benzoic acid, 2-(methylamino)-, (1aR,1bS,4aS,7aR,7bR,8R,9R,9aS)-9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymentyl)-1,1,6,6-tetramethyl-5-oxo-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester",
+    "Benzoic acid, 2-(methylamino)-, (1aR,1bS,4aS,7aR,7bR,8R,9R,9aS)-9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester",
+    "Benzoic acid, 2-(methylamino)-, (1aR,1bS,4aS,7aR,7bR,8R,9R,9aS)-9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa[3,4]benz[1,2-e]azulen-9-yl ester",
+    "Benzoic acid, 2-(methylamino)-, 9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester, (1aR-(1a-alpha,1b-beta,4a-beta,7a-alpha,7b-alpha,8-alpha,9-beta,9a-alpha))-",
+    "Benzoic acid, 2-(methylamino)-, 9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester, (1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-",
+    "Benzoic acid, 2-(methylamino)-, 9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa[3,4]benz[1,2-e]azulen-9-yl ester, [1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha)]-",
+    "CHEMBL503534",
+    "DTXSID601000255",
+    "HY-123487",
+    "RefChem:916924",
+    "Sapintoxin A",
+    "TN8170",
+    "[(1R,2R,6S,10S,11R,13S,14R,15R)-13-acetyloxy-1-hydroxy-8-(hydroxymethyl)-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] 2-(methylamino)benzoate",
+    "orb2663437"
+  ],
+  "http_status": 200,
+  "cids": [
+    108085
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent_key": "NHUWXMNVGMRODJ-UHFFFAOYSA-P",
+  "ok": true,
+  "synonyms": [
+    "10-methoxy-2-[2-[4-[1-[2-(10-methoxy-7H-pyrido[4,3-c]carbazol-2-ium-2-yl)ethyl]-4-piperidyl]-1-piperidyl]ethyl]-7H-pyrido[4,3-c]carbazol-2-ium",
+    "2,2'-((4,4'-BIPIPERIDINE)-1,1'-DIYLDIETHYLENE)BIS(10-METHOXY-7H-PYRIDO(4,3-C)CARBAZOLIUM)",
+    "2,2'-((4,4'-Bipiperidine)-1,1'-diyldi-2,1-ethanediyl)bis(10-methoxy-7H-pyrido(4,3-c)carbazolium)",
+    "2,2'-(4,4'-bipiperidine-1,1'-diyldiethane-2,1-diyl)bis(10-methoxy-7h-pyrido[4,3-c]carbazol-2-ium)",
+    "2,2'-([4,4'-Bipiperidine]-1,1'-diyldi-2,1-ethanediyl)bis[10-methoxy-7-pyrido[4,3-c]carbazolium, dichloride",
+    "7H-Pyrido(4,3-c)carbazolium, 2,2'-((4,4'-bipiperidine)-1,1'-diyldi-2,1-ethanediyl)bis(10-methoxy-",
+    "82765-18-2",
+    "CHEMBL1182165",
+    "Ditercalinio",
+    "Ditercalinio [Spanish]",
+    "Ditercalinium cation",
+    "Ditercalinium ion",
+    "NSC 335153",
+    "NSC 366241",
+    "NSC335153",
+    "Neuro_000207",
+    "Q27291812",
+    "RefChem:135175",
+    "UNII-VFS4ZUK33P",
+    "VFS4ZUK33P",
+    "ditercalinium"
+  ],
+  "cids": [
+    3119
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NHUWXMNVGMRODJ-UHFFFAOYSA-P/synonyms/JSON",
+  "http_status": 200
+}

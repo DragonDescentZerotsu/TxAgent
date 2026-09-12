@@ -1,0 +1,41 @@
+{
+  "parent_key": "CTNFTPUIYFUXBE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-Hydroxy-4-methoxy-3-(3-methylbut-2-en-1-yl)-6-(2-phenylethyl)benzoic acid",
+    "2-Hydroxy-4-methoxy-3-(3-methylbut-2-en-1-yl)-6-phenethylbenzoic acid",
+    "2-Hydroxy-4-methoxy-3-(3-methylbut-2-en-1-yl)-6-phenethylbenzoicacid",
+    "2-hydroxy-4-methoxy-3-(3-methylbut-2-enyl)-6-(2-phenylethyl)benzoic acid",
+    "2-hydroxy-4-methoxy-3-(3-methylbut-2-enyl)-6-phenethyl-benzoic acid",
+    "2-hydroxy-4-methoxy-3-prenyl-6-(2-phenylethyl) benzoic acid",
+    "3-hydroxy-4-isopentenyl-5-methoxybibenzyl-2-carboxylic acid",
+    "4-methoxy-3-(3-methylbut-2-enyl)-2-oxidanyl-6-(2-phenylethyl)benzoic acid",
+    "80489-90-3",
+    "AKOS016012286",
+    "Amorfrutin",
+    "Amorfrutin 1",
+    "Amorfrutin A",
+    "BDBM91427",
+    "CHEBI:195312",
+    "CHEMBL491820",
+    "DB-293135",
+    "DTXSID00591701",
+    "FDA48990",
+    "HY-130073",
+    "MLS002630965",
+    "NCGC00384544-01!2-hydroxy-4-methoxy-3-(3-methylbut-2-enyl)-6-(2-phenylethyl)benzoic acid",
+    "Q27467733",
+    "RefChem:915737",
+    "SCHEMBL29610231",
+    "SCHEMBL3689670",
+    "SMR001544280",
+    "T124190",
+    "cid_17950432",
+    "orb1992400"
+  ],
+  "cids": [
+    17950432
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CTNFTPUIYFUXBE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

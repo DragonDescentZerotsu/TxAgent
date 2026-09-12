@@ -1,0 +1,28 @@
+{
+  "parent_key": "CZIAHOKVOQSYHN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Decanaminium, N-decyl-N-methyl-N-(3-(trimethoxysilyl)propyl)",
+    "114431-91-3",
+    "CHEMBL3558930",
+    "DTXCID8073219",
+    "DTXSID70150728",
+    "Didecylmethyl(3-(trimethoxysilyl)propyl)ammonium",
+    "Disiquonium",
+    "Disiquonium [WHO-DD]",
+    "Disiquonium cation",
+    "Disiquonium ion",
+    "N-Decyl-N-methyl-N-[3-(trimethoxysilyl)propyl]-1-decanaminium",
+    "Q27292694",
+    "RefChem:134933",
+    "SCHEMBL1123236",
+    "UNII-WK985DZ7EZ",
+    "WK985DZ7EZ",
+    "n-decyl-n-methyl-n-[3-(trimethoxysilyl)propyl]decan-1-aminium"
+  ],
+  "cids": [
+    62254
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CZIAHOKVOQSYHN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

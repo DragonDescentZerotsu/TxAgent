@@ -1,0 +1,135 @@
+{
+  "task": "Find all molecules known to cause drug-induced liver injury (DILI) within PubMed.",
+  "task_instantiation": "Build a human agent-DILI relation table that answers: (1) which specifically named molecular agents are reported as DILI causes, candidates, signals, conflicting claims, or explicit negatives; (2) how certain each relationship is and what human evidence supports it; (3) which biochemical patterns and clinical liver-injury phenotypes are attributed to each agent; (4) whether injury is intrinsic, idiosyncratic, or indirect and occurs at therapeutic exposure or overdose; and (5) what maximum clinical severity has been reported and under what limiting conditions.\n\nExtract a record when the paper explicitly states a human DILI relationship for a specifically named drug, biologic, medicinal chemical, investigational agent, active/toxic metabolite, chemically defined natural constituent, or named fixed combination. Qualifying liver injury includes DILI, clinically characterized hepatotoxicity, drug-induced hepatitis or cholestasis, steatosis/steatohepatitis, vascular or ductal injury, hepatic necrosis, and drug-induced acute liver failure. Include therapeutic-dose and overdose injury; case reports, case series, registries, trials, observational studies, pharmacovigilance, regulatory or curated classifications, and review/reference assertions. Also extract an explicit agent-specific negative conclusion as `not_supported`, but never infer a negative from silence or absence of events.\n\nHuman relevance is required. Exclude animal-, cell-, organoid-, assay-, or computational-only toxicity; model hepatotoxins; compounds merely screened, benchmarked, or labeled assay-positive; transporter inhibition, mitochondrial effects, reactive-metabolite formation, structural alerts, and mechanistic potential without an explicit human DILI claim. Exclude isolated liver-test changes unless the authors call them DILI/hepatotoxicity or clinically meaningful drug-related liver injury. Exclude hepatic tumors without non-neoplastic injury, non-hepatic adverse effects, pre-existing liver disease, dose adjustment or monitoring recommendations, drugs used to treat/prevent DILI, protectants, biomarkers, genes/HLA alleles, endogenous molecules, and interacting drugs or co-medications not themselves attributed as causes. Exclude alcohol, infection, foods, environmental/occupational poisons, and laboratory toxins unless intentionally administered as a medicine or supplement and explicitly framed as human DILI. Exclude broad drug classes, whole botanicals, herbal extracts, supplements, proprietary mixtures, and multidrug regimens when no chemically defined causal entity is identified; do not invent constituent molecules. A fixed combination is allowed only when it is a defined product and causality is assigned to the combination. A metabolite or natural constituent gets its own record only when the text independently identifies that exact chemical as the liver-injuring entity, not when it is merely a mechanism, biomarker, contaminant, or detected ingredient.\n\nOne record represents one named agent × one distinct human DILI relationship × one exposure context within the paper. Split lists into one record per named agent. Split therapeutic-use and overdose claims, and split materially different restricted populations or co-exposure settings when their causal status or outcome differs. Merge synonyms, brands, salts, abbreviations, spelling variants, repeated mentions, evidence sources, injury manifestations, and individual cases that concern the same active moiety and context. Use the clearest human-readable name supported by the paper in `molecule_name`; do not silently correct an ambiguous identity. Keep a fixed combination as one record when only the combination is blamed, and do not assign causality to its components unless each is separately implicated. If two alternative drugs remain possible culprits, create one `suspected_cause` record for each and state the unresolved co-attribution in `qualifying_conditions`. When several biochemical patterns or clinical phenotypes are attributed in one merged claim, use the relevant multiple/variable value rather than duplicating records.\n\nRequire explicit attribution. Causal wording, an induced-injury construction, a formal causality assessment, or inclusion in a clearly labeled human DILI-causative list qualifies. Preserve the paper's certainty in `causal_status`: do not upgrade a case, temporal association, dechallenge, regulatory warning, pharmacovigilance signal, or mechanism. Map known/established/confirmed/definite or unqualified “causes” language to `established_or_definite`; retain explicit highly probable, probable, possible, and suspected grades separately. Use `association_signal` for a positive epidemiologic, trial, registry, label, or pharmacovigilance association without causal attribution; `conflicting` when meaningful positive and negative evidence is presented without resolution; and `not_supported` only for an explicit negative causal conclusion.\n\nAssume as the default a general adult human population, ordinary therapeutic systemic use, standard formulation/route, and single-agent attribution without a required co-exposure. Record clear therapeutic use in `exposure_context`; leave `exposure_context` null rather than guessing when the setting is absent. Put genuine departures or limits in `qualifying_conditions`: pediatric, elderly, pregnancy, sex-, genotype-, disease-, or indication-restricted findings; pre-existing liver disease or infection; required combination therapy, interacting drugs, or unresolved co-suspects; unusual route/formulation; overdose or exposure details beyond the structured category; chronic or unusually high dosing; and other susceptibility requirements.\n\nSpill rules: place exact dose, schedule, duration, latency, case count, incidence or disproportionality estimates, confidence intervals, laboratory values, R ratio, histology, symptoms, named causality instrument and score, dechallenge/rechallenge, recovery, detailed transplant/death counts, indication, therapeutic class, aliases, regulatory action, database/study name, biomarkers, genes/HLA associations, molecular mechanisms, metabolites not independently causal, transporters, assay results, and supporting animal/cell findings in `extra_details`. Place competing causes and all non-default population, exposure, formulation, route, or co-medication restrictions in `qualifying_conditions`. If only an excluded adjacent concept is reported, emit no record.\n\nEncoding convention: when the paper does not state a value for an enumerated field, leave that field null rather than selecting a placeholder value. No field carries an explicit `unspecified`, `not_reported`, or `not_applicable` value, so a null means only that the paper did not supply the value; read `causal_status` to tell a negative claim from a positive one whose detail is missing.",
+  "schema_spec": [
+    {
+      "name": "molecule_name",
+      "description": "Human-readable name of the implicated molecular agent or defined fixed combination. Prefer the generic active-moiety name explicitly supported by the paper; merge explicit synonyms, brands, salts, and abbreviations. Preserve a combination name when the combination itself is the attributed culprit. Do not enter an unnamed class, botanical, variable mixture, regimen, gene, assay label, or inferred constituent. Normally non-null for every record.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "agent_type",
+      "description": "Form of the entity represented by the record. Use `small_molecule_or_chemical` for a specific conventional or investigational chemical drug or chemically defined natural constituent; `biologic` for a named antibody, protein, peptide, oligonucleotide, or other biologic medicine; `hepatotoxic_metabolite` only when the exact metabolite is independently identified as the injuring entity; and `fixed_combination` only when a defined combination product is attributed as a unit. Leave null if the paper does not permit classification.",
+      "value_type": "string",
+      "allowed_values": [
+        "small_molecule_or_chemical",
+        "biologic",
+        "hepatotoxic_metabolite",
+        "fixed_combination"
+      ]
+    },
+    {
+      "name": "liver_injury_identifier",
+      "description": "Identifier of the secondary Disease entity corresponding to DILI or the most specific explicitly attributed liver-injury phenotype, copied exactly from a matching `Disease:` entry in the appended entity list. Prefer the most specific supplied matching identifier. Never invent, normalize, or externally look up an identifier; leave null when none is supplied.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "causal_status",
+      "description": "Strength and direction of the paper's human agent-DILI claim. `established_or_definite` covers known/established/confirmed/definite causes and unqualified statements that the agent causes DILI; `highly_probable`, `probable`, `possible`, and `suspected_cause` require the corresponding explicit wording or reported adjudication; `association_signal` is a positive statistical, trial, registry, label, or pharmacovigilance association without causal attribution; `conflicting` is unresolved material positive and negative evidence; `not_supported` requires an explicit negative or unlikely-causality conclusion. Do not infer or upgrade status from chronology, mechanism, warning, or study design.",
+      "value_type": "string",
+      "allowed_values": [
+        "established_or_definite",
+        "highly_probable",
+        "probable",
+        "possible",
+        "suspected_cause",
+        "association_signal",
+        "conflicting",
+        "not_supported"
+      ]
+    },
+    {
+      "name": "human_evidence_basis",
+      "description": "Most direct human evidence basis actually described for this relationship. Choose one: `individual_case` for a single attributed patient; `case_series` for multiple nonsystematically enrolled cases; `registry_or_adjudicated_cohort` for a DILI registry or systematically assessed cohort; `clinical_trial`; `observational_epidemiology` for comparative cohort, case-control, or claims/EHR analyses; `pharmacovigilance` for spontaneous reports or disproportionality; `regulatory_or_curated_classification` for labels, regulator actions, compendia, or curated human DILI categories; `review_or_reference_assertion` for a narrative or tabulated literature assertion without primary patient data presented; `explicit_negative_evidence` when the record's main claim is not supported. Select the basis supporting the extracted claim, not accompanying preclinical work; leave null if indiscernible.",
+      "value_type": "string",
+      "allowed_values": [
+        "individual_case",
+        "case_series",
+        "registry_or_adjudicated_cohort",
+        "clinical_trial",
+        "observational_epidemiology",
+        "pharmacovigilance",
+        "regulatory_or_curated_classification",
+        "review_or_reference_assertion",
+        "explicit_negative_evidence"
+      ]
+    },
+    {
+      "name": "exposure_context",
+      "description": "Exposure setting of the attributed human injury. `therapeutic_use` means ordinary intended clinical use, including idiosyncratic reactions; `overdose_or_supratherapeutic` means deliberate, accidental, abusive, or explicitly excessive exposure; `both` means both settings are explicitly attributed in an inseparable aggregate claim. Leave null when the paper does not establish the setting. Do not infer overdose merely from dose dependence. Exact exposure details belong in `qualifying_conditions` or `extra_details`.",
+      "value_type": "string",
+      "allowed_values": [
+        "therapeutic_use",
+        "overdose_or_supratherapeutic",
+        "both"
+      ]
+    },
+    {
+      "name": "reaction_type",
+      "description": "Broad clinical DILI mode explicitly assigned by the paper. `intrinsic` is predictable, usually dose-related direct toxicity; `idiosyncratic` is unpredictable host-dependent injury; `indirect` is liver injury produced through the drug's biological action or alteration of host physiology rather than direct toxicity; `multiple_types` is used when more than one mode is explicitly attributed and cannot be separated. Leave null when no mode is stated. Do not infer this from dose, latency, immune findings, mechanism, phenotype, or outside knowledge.",
+      "value_type": "string",
+      "allowed_values": [
+        "intrinsic",
+        "idiosyncratic",
+        "indirect",
+        "multiple_types"
+      ]
+    },
+    {
+      "name": "biochemical_pattern",
+      "description": "Canonical biochemical DILI pattern explicitly stated or explicitly calculated/classified by the paper. Use `hepatocellular`, `cholestatic`, or `mixed`; use `multiple_or_variable` when an aggregate claim explicitly includes more than one pattern and they cannot be separated. Leave null when DILI is reported without a canonical pattern. Do not calculate a pattern from laboratory values or infer it from hepatitis, jaundice, histology, or mechanism.",
+      "value_type": "string",
+      "allowed_values": [
+        "hepatocellular",
+        "cholestatic",
+        "mixed",
+        "multiple_or_variable"
+      ]
+    },
+    {
+      "name": "clinical_phenotype",
+      "description": "Principal clinical or histopathologic liver-injury syndrome explicitly attributed to the agent, separate from `biochemical_pattern`. Use the most specific applicable value; use `multiple_phenotypes` for an inseparable spectrum and `nonspecific_liver_injury` for generic DILI/hepatotoxicity, and also when only a liver-test abnormality is reported, recording that level in `maximum_reported_severity` rather than here. Leave null for `not_supported` or a signal with no reported phenotype. Do not infer phenotype from isolated laboratory values or mechanism; preserve an unlisted named phenotype in `extra_details` and use `other_specific_phenotype`.",
+      "value_type": "string",
+      "allowed_values": [
+        "nonspecific_liver_injury",
+        "acute_hepatitis",
+        "chronic_hepatitis",
+        "autoimmune_like_hepatitis",
+        "steatosis_or_steatohepatitis",
+        "hepatic_necrosis",
+        "vanishing_bile_duct_or_cholangiopathy",
+        "sinusoidal_or_other_vascular_injury",
+        "fibrosis_or_cirrhosis",
+        "multiple_phenotypes",
+        "other_specific_phenotype"
+      ]
+    },
+    {
+      "name": "maximum_reported_severity",
+      "description": "Highest human clinical severity or outcome explicitly attributed in this record. Apply this hierarchy: `death` > `liver_transplantation` > `acute_liver_failure` > `severe_liver_injury` > `clinically_apparent_liver_injury` > `liver_test_abnormality_only`. Leave null when a positive relationship lacks a stated severity and for `not_supported`; the two cases are distinguished by reading `causal_status`. Do not infer severity from enzyme magnitude, hospitalization, histology, Hy's Law, or warning language alone.",
+      "value_type": "string",
+      "allowed_values": [
+        "liver_test_abnormality_only",
+        "clinically_apparent_liver_injury",
+        "severe_liver_injury",
+        "acute_liver_failure",
+        "liver_transplantation",
+        "death"
+      ]
+    },
+    {
+      "name": "qualifying_conditions",
+      "description": "Concise non-default context that limits attribution or generalization: restricted age, pregnancy, sex, genotype, indication, disease state, pre-existing liver disease/infection, required co-medication or combination exposure, unresolved co-suspects or competing causes, unusual route/formulation, overdose details, chronic or unusually high dose, or another susceptibility requirement. Null for an unrestricted general-human therapeutic-use claim.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Additional useful details not represented above: exact dose, schedule, duration, latency, case count, incidence/risk estimates, confidence intervals, laboratory values, R ratio, symptoms, histology, causality scores, dechallenge/rechallenge, recovery, detailed outcomes, indication/class, aliases, regulatory or study provenance, mechanisms, noncausal metabolites, transporters, genes/HLA associations, biomarkers, assays, and supporting animal/cell findings.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

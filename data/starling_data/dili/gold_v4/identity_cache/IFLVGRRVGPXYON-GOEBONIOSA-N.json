@@ -1,0 +1,18 @@
+{
+  "parent_key": "IFLVGRRVGPXYON-GOEBONIOSA-N",
+  "ok": true,
+  "synonyms": [
+    "183904-41-8",
+    "5H-Dibenzo(a,d)cyclohepten-5,10-imine-5-carboxamide, 10,11-dihydro-, (5R,10S)-",
+    "61LHY51Y8J",
+    "RefChem:931673",
+    "SGB 017",
+    "SGB-017",
+    "UNII-61LHY51Y8J"
+  ],
+  "cids": [
+    92845171
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IFLVGRRVGPXYON-GOEBONIOSA-N/synonyms/JSON",
+  "http_status": 200
+}

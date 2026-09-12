@@ -1,0 +1,19 @@
+{
+  "parent_key": "APJLTUBHYCOZJI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/APJLTUBHYCOZJI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-(4-(tert-Butyl)phenyl)-2-cyano-1-(1,3,4-trimethyl-1H-pyrazol-5-yl)vinyl pivalate",
+    "2-(4-tert-Butylphenyl)-2-cyano-1-(1,3,4-trimethyl-1H-pyrazol-5-yl)ethen-1-yl 2,2-dimethylpropanoate",
+    "2-Cyano-2-[4-(1,1-dimethylethyl)phenyl]-1-(1,3,4-trimethyl-1H-pyrazol-5-yl)ethenyl 2,2-dimethylpropanoate",
+    "268743-66-4",
+    "DTXSID00870366",
+    "KXA12152",
+    "NS00007022",
+    "SCHEMBL728428"
+  ],
+  "http_status": 200,
+  "cids": [
+    66781246
+  ]
+}

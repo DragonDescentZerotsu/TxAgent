@@ -1,0 +1,36 @@
+{
+  "parent_key": "CMMXCVYESRODNH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CMMXCVYESRODNH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,2-Trichloroepoxyethane",
+    "16967-79-6",
+    "2,2,3-trichloro-oxi-rane",
+    "2,2,3-trichlorooxirane",
+    "AKOS015951110",
+    "CHEBI:28888",
+    "CMMXCVYESRODNH-UHFFFAOYSA-N",
+    "DTXCID101366220",
+    "DTXSID80937663",
+    "DXK2817N87",
+    "ETHANE, 1,1,2-TRICHLORO-1,2-EPOXY-",
+    "Epoxy-1,1,2-trichloroethane",
+    "Ethane, trichloroepoxy-",
+    "Oxirane, trichloro-",
+    "Q27103944",
+    "RefChem:191005",
+    "SCHEMBL3842853",
+    "TCE epoxide",
+    "TCEO",
+    "TRICHLOROOXIRANE",
+    "Trichloro-oxirane",
+    "Trichloroepoxyethane",
+    "Trichloroethylene epoxide",
+    "Trichloroethylene oxide",
+    "UNII-DXK2817N87"
+  ],
+  "http_status": 200,
+  "cids": [
+    28167
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "parent_key": "BOOQTIHIKDDPRW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BOOQTIHIKDDPRW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1H-Indole-3-ethanamine, N,N-dipropyl-",
+    "3-(2-(Dipropylamino)ethyl)indole",
+    "4-22-00-04323 (Beilstein Handbook Reference)",
+    "61-52-9",
+    "AKOS015967123",
+    "BDBM707613",
+    "BOOQTIHIKDDPRW-UHFFFAOYSA-N",
+    "BRN 0173122",
+    "C16086",
+    "CHEMBL1779153",
+    "DB-023078",
+    "DPT [Experimental Drug]",
+    "DTXCID80132338",
+    "DTXSID30209847",
+    "Dipropyltryptamine",
+    "INDOLE, 3-(2-(DIPROPYLAMINO)ETHYL)-",
+    "MB02028",
+    "MFCD01718836",
+    "N,N-Dipropyl-1H-indole-3-ethanamine",
+    "N,N-Dipropyltryptamine",
+    "N-(2-(1H-indol-3-yl)ethyl)-N-propylpropan-1-amine",
+    "N-[2-(1H-indol-3-yl)ethyl]-N-propyl-propan-1-amine",
+    "N-[2-(1H-indol-3-yl)ethyl]-N-propylpropan-1-amine",
+    "NCGC00247727-01",
+    "NS00017419",
+    "Q2723010",
+    "RefChem:134860",
+    "S7272VWU50",
+    "SCHEMBL1118996",
+    "UNII-S7272VWU50",
+    "indole, 3-(2-dipropylaminoethyl)-"
+  ],
+  "http_status": 200,
+  "cids": [
+    6091
+  ]
+}

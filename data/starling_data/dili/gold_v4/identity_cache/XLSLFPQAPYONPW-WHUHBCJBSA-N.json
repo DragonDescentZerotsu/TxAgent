@@ -1,0 +1,33 @@
+{
+  "parent_key": "XLSLFPQAPYONPW-WHUHBCJBSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S,3S,4S,5R,6R)-6-((R)-cyano(phenyl)methoxy)-3,4,5-trihydroxytetrahydro-2H-pyran-2-carboxylic acid",
+    "(2S,3S,4S,5R,6R)-6-[(R)-cyano(phenyl)methoxy]-3,4,5-trihydroxyoxane-2-carboxylic acid",
+    "1332-94-1",
+    "AKOS040748858",
+    "BRN 5608756",
+    "CS-0068324",
+    "Cyanophenylmethyl-beta-D-glucopyranosiduronic acid",
+    "Laetrile",
+    "Laetrille",
+    "Mandelonitrile beta-glucuronide",
+    "Mandelonitrile-beta-glucuronide",
+    "NSC 103055",
+    "NSC103055",
+    "RefChem:152107",
+    "T2795L",
+    "Vitamin",
+    "Vitamin B(sub 17)",
+    "Vitamin B17",
+    "beta-D-Glucopyranosiduronic acid, alpha-cyanobenzyl",
+    "beta-D-Glucopyranosiduronic acid, cyanophenylmethyl, (R)-",
+    "l-Mandelonitrile-beta-glucuronoside",
+    "orb1700022"
+  ],
+  "cids": [
+    5484354
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XLSLFPQAPYONPW-WHUHBCJBSA-N/synonyms/JSON",
+  "http_status": 200
+}

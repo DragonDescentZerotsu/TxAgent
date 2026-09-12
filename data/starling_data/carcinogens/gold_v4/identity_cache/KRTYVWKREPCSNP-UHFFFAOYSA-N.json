@@ -1,0 +1,29 @@
+{
+  "parent_key": "KRTYVWKREPCSNP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KRTYVWKREPCSNP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,8-Dihydroxy-10-propionylanthrone",
+    "1,8-dihydroxy-10-propanoyl-10H-anthracen-9-one",
+    "1,8-dihydroxy-10-propanoylanthracen-9(10h)-one",
+    "1,8-dihydroxy-10-propionyl anthrone",
+    "1,8-dihydroxy-10-propionyl-9-anthrone",
+    "1-Propanone, 1-(4,5,10-trihydroxyanthracen-9-yl)-",
+    "10-Propionyl dithranol",
+    "10-Propionyldithranol",
+    "75464-10-7",
+    "9(10H)-Anthracenone, 1,8-dihydroxy-10-(1-oxopropyl)-",
+    "BRN 4196644",
+    "CCRIS 2040",
+    "DTXSID30996922",
+    "Dithranol, 10-propionyl-",
+    "KRTYVWKREPCSNP-UHFFFAOYSA-N",
+    "PD161793",
+    "RefChem:77638",
+    "SCHEMBL10631861"
+  ],
+  "http_status": 200,
+  "cids": [
+    126522
+  ]
+}

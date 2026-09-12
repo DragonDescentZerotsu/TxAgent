@@ -1,0 +1,32 @@
+{
+  "parent_key": "IENHCEGSGRQUTP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IENHCEGSGRQUTP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "103659-08-1",
+    "2-Methyl-3-nitrosothiazolidine-4-carboxylic acid",
+    "2-Methyl-N-nitrosothiazolidine-4-carboxylic acid",
+    "2-methyl-3-nitroso-1,3-thiazolidine-4-carboxylic acid",
+    "2-methyl-3-nitroso-thiazolidine-4-carboxylic acid",
+    "4-Thiazolidinecarboxylic acid, 2-methyl-3-nitroso-",
+    "4-Thiazolidinecarboxylicacid, 2-methyl-3-nitroso-",
+    "AKOS030254563",
+    "CS-0255620",
+    "DB-298800",
+    "DTXSID30908540",
+    "HY-115773",
+    "MFCD18382407",
+    "MNCA",
+    "N-Nitroso-2-methylthiazolidine 4-Carboxylic Acid",
+    "NMTCA",
+    "RefChem:88239",
+    "SCHEMBL29454365",
+    "T38437",
+    "n-nitroso-2-methylthiazolidine-4-carboxylic acid",
+    "orb1692007"
+  ],
+  "http_status": 200,
+  "cids": [
+    115101
+  ]
+}

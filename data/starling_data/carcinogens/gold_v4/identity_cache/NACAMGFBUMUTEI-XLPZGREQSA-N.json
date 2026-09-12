@@ -1,0 +1,9 @@
+{
+  "parent_key": "NACAMGFBUMUTEI-XLPZGREQSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NACAMGFBUMUTEI-XLPZGREQSA-N/synonyms/JSON",
+  "ok": false,
+  "synonyms": [],
+  "http_status": 404,
+  "throttling": "Request Count status: Yellow (65%), Request Time status: Green (15%), Service status: Black (113%)",
+  "cids": []
+}

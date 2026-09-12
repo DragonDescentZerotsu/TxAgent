@@ -1,0 +1,34 @@
+{
+  "parent_key": "CKHJYUSOUQDYEN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CKHJYUSOUQDYEN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "22537-33-3",
+    "CHEBI:84043",
+    "DB14524",
+    "DTXCID3099549",
+    "DTXSID90177058",
+    "F7K5MP217W",
+    "Ga(3+)",
+    "Ga(III)",
+    "Ga3+",
+    "Gallium (III) ion",
+    "Gallium (ga3+)",
+    "Gallium cation",
+    "Gallium ion(3+)",
+    "Gallium(3+) cation",
+    "Gallium, ion (Ga3+)",
+    "Gallium, ion(3+)",
+    "Q27157431",
+    "RefChem:58707",
+    "SCHEMBL29393695",
+    "UNII-F7K5MP217W",
+    "gallium ion",
+    "gallium(3+)",
+    "gallium(III) cation"
+  ],
+  "http_status": 200,
+  "cids": [
+    105145
+  ]
+}

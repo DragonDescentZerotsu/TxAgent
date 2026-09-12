@@ -1,0 +1,26 @@
+{
+  "parent_key": "OOJZCXFXPZGUBJ-GDVGLLTNSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-amino-3-(2-methylenecyclopropyl)propanoic acid",
+    "(2S,4RS)-Hypoglycin A",
+    "(S)-Hypoglycine A",
+    "(S)-Hypoglycine A, 85%",
+    "1263274-08-3",
+    "156-56-9",
+    "2-amino-3-(2-methylidenecyclopropyl)propanoic acid",
+    "3-(Methylencyclopropyl)-L-alanin",
+    "AKOS015902302",
+    "CHEBI:134622",
+    "DTXSID601381558",
+    "Hypoglycin A",
+    "MSK177639",
+    "RefChem:923211",
+    "SCHEMBL25660908"
+  ],
+  "cids": [
+    45039541
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OOJZCXFXPZGUBJ-GDVGLLTNSA-N/synonyms/JSON",
+  "http_status": 200
+}

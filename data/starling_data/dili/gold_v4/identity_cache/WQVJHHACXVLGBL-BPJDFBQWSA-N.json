@@ -1,0 +1,31 @@
+{
+  "parent_key": "WQVJHHACXVLGBL-BPJDFBQWSA-N",
+  "ok": true,
+  "synonyms": [
+    "1404-26-8",
+    "215-768-4",
+    "A07AA05",
+    "BDBM50410807",
+    "DB00781",
+    "DTXSID1048467",
+    "GLXC-26343",
+    "J01XB02",
+    "J2VZ07J96K",
+    "N-((2S)-4-amino-1-(((2S,3R)-1-(((2S)-4-amino-1-oxo-1-(((3S,6S,9S,12S,15R,18R,21S)-6,9,18-tris(2-aminoethyl)-15-benzyl-3-((1R)-1-hydroxyethyl)-12-(2-methylpropyl)-2,5,8,11,14,17,20-heptaoxo-1,4,7,10,13,16,19-heptazacyclotricos-21-yl)amino)butan-2-yl)amino)-3-hydroxy-1-oxobutan-2-yl)amino)-1-oxobutan-2-yl)-6-methyloctanamide",
+    "N-(4-amino-1-((1-((4-amino-1-oxo-1-((6,9,18-tris(2-aminoethyl)-15-benzyl-3-(1-hydroxyethyl)-12-(2-methylpropyl)-2,5,8,11,14,17,20-heptaoxo-1,4,7,10,13,16,19-heptazacyclotricos-21-yl)amino)butan-2-yl)amino)-3-hydroxy-1-oxobutan-2-yl)amino)-1-oxobutan-2-yl)-6-methyloctanamide",
+    "N-[(2S)-4-amino-1-[[(2S,3R)-1-[[(2S)-4-amino-1-oxo-1-[[(3S,6S,9S,12S,15R,18R,21S)-6,9,18-tris(2-aminoethyl)-15-benzyl-3-[(1R)-1-hydroxyethyl]-12-(2-methylpropyl)-2,5,8,11,14,17,20-heptaoxo-1,4,7,10,13,16,19-heptazacyclotricos-21-yl]amino]butan-2-yl]amino]-3-hydroxy-1-oxobutan-2-yl]amino]-1-oxobutan-2-yl]-6-methyloctanamide",
+    "POLUMYXIN B",
+    "POLYSPORIN COMPONENT POLYMYXIN B",
+    "Polimixina B",
+    "RefChem:55878",
+    "S01AA18",
+    "S02AA11",
+    "S03AA03",
+    "WQVJHHACXVLGBL-BPJDFBQWSA-N"
+  ],
+  "cids": [
+    49800004
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WQVJHHACXVLGBL-BPJDFBQWSA-N/synonyms/JSON",
+  "http_status": 200
+}

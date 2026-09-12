@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "source_rows": 1645109,
+  "individually_reviewed_rows": 11,
+  "all_other_rows_byte_value_equal": true,
+  "all_raw_acquisition_and_frozen_voter_flags_unchanged": true,
+  "frozen_gold_split_files_checked": 27,
+  "repaired_voter_handling": "One frozen voter is now retrieval-ineligible; historical is_gold_voter flag and frozen vote files remain unchanged. Corrected combination gains no L1 membership.",
+  "source_hash": "130084e2f92f0256331c1994a595cfa551af603454bae23e49f0b00d44855afe"
+}

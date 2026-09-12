@@ -1,0 +1,22 @@
+{
+  "parent_key": "MYKFSDGCGNRIEA-KXTJMAPWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MYKFSDGCGNRIEA-KXTJMAPWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "275801-62-2",
+    "BDBM50398385",
+    "DA-53589",
+    "GLP-2 (3-33)",
+    "GLP-2(3-33)",
+    "GLXC-26361",
+    "GTPL1143",
+    "SCHEMBL29599744",
+    "glucagon-like peptide 2-(3-33)"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (30%), Request Time status: Green (3%), Service status: Black (137%)",
+  "cids": [
+    71455345,
+    91928510
+  ]
+}

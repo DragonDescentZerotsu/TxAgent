@@ -1,0 +1,12 @@
+{
+  "parent_key": "CNDKWFYCTPBDHO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CNDKWFYCTPBDHO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7-bromo-methylbenz(a)anthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    129651598
+  ]
+}

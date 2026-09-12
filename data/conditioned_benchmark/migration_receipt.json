@@ -1,7 +1,7 @@
 {
   "benchmark": "conditioned_benchmark",
   "contract": "conditioned_benchmark.v1",
-  "published_at": "2026-09-06T19:34:57.574125+00:00",
+  "published_at": "2026-09-08T05:40:37.417411+00:00",
   "active_root": "data/conditioned_benchmark",
   "policy": "one active condition-aware benchmark per task; legacy names are provenance only and are not evaluation entrypoints",
   "tasks": {
@@ -545,6 +545,237 @@
           }
         }
       }
+    },
+    "dili": {
+      "task": "dili",
+      "task_directory": "DILI",
+      "target_definition": "reported clinically meaningful human DILI outcome under the stated exposure and population; a negative is not universal absence of DILI risk",
+      "source_build_root": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold",
+      "canonical_root": "data/conditioned_benchmark/DILI/scaffold",
+      "input_rows_byte_identical_expected": true,
+      "splits": {
+        "train": {
+          "n": 3220,
+          "source_sha256": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076",
+          "canonical_sha256": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 709,
+            "1": 2511
+          },
+          "condition_counts": {
+            "age_group=older_than_65": 243,
+            "age_group=older_than_65+exposure=overdose_or_supratherapeutic": 6,
+            "age_group=older_than_65+population_context=hepatitis_b": 3,
+            "age_group=older_than_65+population_context=hepatitis_c": 2,
+            "age_group=older_than_65+population_context=type_2_diabetes": 5,
+            "age_group=pediatric": 313,
+            "age_group=pediatric+exposure=overdose_or_supratherapeutic": 33,
+            "age_group=pediatric+population_context=pre_existing_liver_disease": 4,
+            "age_group=pediatric+population_context=pregnancy": 6,
+            "age_group=pediatric+regimen=single_dose_or_one_day": 1,
+            "exposure=overdose_or_supratherapeutic": 325,
+            "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c": 5,
+            "exposure=overdose_or_supratherapeutic+population_context=hiv": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=liver_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=pregnancy": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=renal_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day": 6,
+            "no_reported_external_condition": 1664,
+            "population_context=alcohol_dependence": 7,
+            "population_context=hepatitis_b": 90,
+            "population_context=hepatitis_b+population_context=hepatitis_c": 2,
+            "population_context=hepatitis_b+population_context=hiv": 5,
+            "population_context=hepatitis_b+population_context=pre_existing_liver_disease": 2,
+            "population_context=hepatitis_b+population_context=renal_transplant": 2,
+            "population_context=hepatitis_c": 91,
+            "population_context=hepatitis_c+population_context=hiv": 10,
+            "population_context=hepatitis_c+population_context=pre_existing_liver_disease": 2,
+            "population_context=hepatitis_c+population_context=renal_transplant": 1,
+            "population_context=hiv": 66,
+            "population_context=liver_transplant": 46,
+            "population_context=liver_transplant+population_context=renal_transplant": 1,
+            "population_context=metabolic_fatty_liver_disease": 35,
+            "population_context=pre_existing_liver_disease": 66,
+            "population_context=pregnancy": 54,
+            "population_context=renal_impairment": 15,
+            "population_context=renal_transplant": 33,
+            "population_context=type_2_diabetes": 27,
+            "regimen=single_dose_or_one_day": 45
+          }
+        },
+        "valid": {
+          "n": 402,
+          "source_sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
+          "canonical_sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 75,
+            "1": 327
+          },
+          "condition_counts": {
+            "age_group=older_than_65": 22,
+            "age_group=older_than_65+exposure=overdose_or_supratherapeutic": 1,
+            "age_group=older_than_65+population_context=hepatitis_b": 1,
+            "age_group=older_than_65+population_context=hepatitis_c": 1,
+            "age_group=older_than_65+population_context=type_2_diabetes": 1,
+            "age_group=pediatric": 18,
+            "age_group=pediatric+exposure=overdose_or_supratherapeutic": 3,
+            "age_group=pediatric+population_context=pre_existing_liver_disease": 1,
+            "age_group=pediatric+population_context=pregnancy": 1,
+            "age_group=pediatric+regimen=single_dose_or_one_day": 1,
+            "exposure=overdose_or_supratherapeutic": 22,
+            "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=hiv": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=liver_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=pregnancy": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=renal_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day": 1,
+            "no_reported_external_condition": 261,
+            "population_context=alcohol_dependence": 1,
+            "population_context=hepatitis_b": 8,
+            "population_context=hepatitis_b+population_context=hepatitis_c": 1,
+            "population_context=hepatitis_b+population_context=hiv": 1,
+            "population_context=hepatitis_b+population_context=pre_existing_liver_disease": 1,
+            "population_context=hepatitis_b+population_context=renal_transplant": 1,
+            "population_context=hepatitis_c": 11,
+            "population_context=hepatitis_c+population_context=hiv": 1,
+            "population_context=hepatitis_c+population_context=pre_existing_liver_disease": 1,
+            "population_context=hepatitis_c+population_context=renal_transplant": 1,
+            "population_context=hiv": 8,
+            "population_context=liver_transplant": 6,
+            "population_context=liver_transplant+population_context=renal_transplant": 1,
+            "population_context=metabolic_fatty_liver_disease": 3,
+            "population_context=pre_existing_liver_disease": 3,
+            "population_context=pregnancy": 3,
+            "population_context=renal_impairment": 2,
+            "population_context=renal_transplant": 5,
+            "population_context=type_2_diabetes": 3,
+            "regimen=single_dose_or_one_day": 2
+          }
+        },
+        "test": {
+          "n": 402,
+          "source_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+          "canonical_sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 82,
+            "1": 320
+          },
+          "condition_counts": {
+            "age_group=older_than_65": 15,
+            "age_group=older_than_65+exposure=overdose_or_supratherapeutic": 1,
+            "age_group=older_than_65+population_context=hepatitis_b": 1,
+            "age_group=older_than_65+population_context=hepatitis_c": 1,
+            "age_group=older_than_65+population_context=type_2_diabetes": 1,
+            "age_group=pediatric": 31,
+            "age_group=pediatric+exposure=overdose_or_supratherapeutic": 3,
+            "age_group=pediatric+population_context=pre_existing_liver_disease": 1,
+            "age_group=pediatric+population_context=pregnancy": 1,
+            "age_group=pediatric+regimen=single_dose_or_one_day": 1,
+            "exposure=overdose_or_supratherapeutic": 36,
+            "exposure=overdose_or_supratherapeutic+population_context=hepatitis_c": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=hiv": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=liver_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=pregnancy": 1,
+            "exposure=overdose_or_supratherapeutic+population_context=renal_transplant": 1,
+            "exposure=overdose_or_supratherapeutic+regimen=single_dose_or_one_day": 1,
+            "no_reported_external_condition": 225,
+            "population_context=alcohol_dependence": 2,
+            "population_context=hepatitis_b": 17,
+            "population_context=hepatitis_b+population_context=hepatitis_c": 1,
+            "population_context=hepatitis_b+population_context=hiv": 2,
+            "population_context=hepatitis_b+population_context=pre_existing_liver_disease": 1,
+            "population_context=hepatitis_b+population_context=renal_transplant": 1,
+            "population_context=hepatitis_c": 9,
+            "population_context=hepatitis_c+population_context=hiv": 2,
+            "population_context=hepatitis_c+population_context=pre_existing_liver_disease": 1,
+            "population_context=hepatitis_c+population_context=renal_transplant": 1,
+            "population_context=hiv": 8,
+            "population_context=liver_transplant": 7,
+            "population_context=liver_transplant+population_context=renal_transplant": 1,
+            "population_context=metabolic_fatty_liver_disease": 4,
+            "population_context=pre_existing_liver_disease": 5,
+            "population_context=pregnancy": 9,
+            "population_context=renal_impairment": 3,
+            "population_context=renal_transplant": 3,
+            "population_context=type_2_diabetes": 1,
+            "regimen=single_dose_or_one_day": 1
+          }
+        }
+      },
+      "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json",
+      "cohort": "starling_only_reviewed"
+    },
+    "carcinogens": {
+      "task": "carcinogens",
+      "task_directory": "Carcinogens",
+      "target_definition": "Starling source-consensus carcinogenicity within one of five reported organism groups; sex, strain, route, dose and duration pooled, with original record restrictions preserved; no universal exposure claim",
+      "source_build_root": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold",
+      "canonical_root": "data/conditioned_benchmark/Carcinogens/scaffold",
+      "input_rows_byte_identical_expected": true,
+      "splits": {
+        "train": {
+          "n": 3754,
+          "source_sha256": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f",
+          "canonical_sha256": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 892,
+            "1": 2862
+          },
+          "condition_counts": {
+            "species=dog": 100,
+            "species=human": 1195,
+            "species=monkey": 43,
+            "species=rabbit": 54,
+            "species=rodent": 2362
+          }
+        },
+        "valid": {
+          "n": 469,
+          "source_sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+          "canonical_sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 111,
+            "1": 358
+          },
+          "condition_counts": {
+            "species=dog": 14,
+            "species=human": 187,
+            "species=monkey": 13,
+            "species=rabbit": 1,
+            "species=rodent": 254
+          }
+        },
+        "test": {
+          "n": 469,
+          "source_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+          "canonical_sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+          "byte_identical": true,
+          "same_ordered_drug_labels": true,
+          "label_counts": {
+            "0": 111,
+            "1": 358
+          },
+          "condition_counts": {
+            "species=dog": 20,
+            "species=human": 188,
+            "species=monkey": 13,
+            "species=rabbit": 4,
+            "species=rodent": 244
+          }
+        }
+      },
+      "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json",
+      "cohort": "starling_only_reviewed"
     }
   }
 }

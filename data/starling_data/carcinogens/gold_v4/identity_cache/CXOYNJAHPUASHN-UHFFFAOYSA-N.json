@@ -1,0 +1,35 @@
+{
+  "parent_key": "CXOYNJAHPUASHN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CXOYNJAHPUASHN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,3',4',5,6-heptachloro",
+    "1,1'-Biphenyl, 2,2',3,3',4,5',6'-heptachloro-",
+    "1,2,4,5-tetrachloro-3-(2,3,4-trichlorophenyl)benzene",
+    "1.1'-Biphenyl, 2,2',3,3',4,5',6'-heptachloro-",
+    "2,2',3,3',4',5,6-HEPTACHLOROBIPHENYL",
+    "2,2',3,3',4,5',6'-HEPTACHLOROBIPHENYL",
+    "2,2',3,3',4,5',6'-Heptachloro-1,1'-biphenyl",
+    "2,2',3,3',4,5',6'-Heptachloro-1,1'-biphenyl #",
+    "52663-70-4",
+    "CS-0453329",
+    "CXOYNJAHPUASHN-UHFFFAOYSA-N",
+    "DTXCID8041242",
+    "DTXSID2074164",
+    "H55283",
+    "LEE72YP9XF",
+    "NS00099816",
+    "PCB 177",
+    "PCB No. 177",
+    "PCB No. 177 10 microg/mL in Isooctane",
+    "PCB No. 177 10 |Ig/mL in Isooctane",
+    "Q27282945",
+    "RefChem:53429",
+    "SCHEMBL5685708",
+    "UNII-LEE72YP9XF"
+  ],
+  "http_status": 200,
+  "cids": [
+    40477
+  ]
+}

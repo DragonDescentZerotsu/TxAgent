@@ -1,0 +1,71 @@
+{
+  "tasks": {
+    "dili": {
+      "before_votes": 5450,
+      "after_votes": 4737,
+      "after_label_counts": {
+        "1": 4500,
+        "0": 237
+      },
+      "changes": {
+        "withdrawn_representative": 1342,
+        "added_representative": 629,
+        "study_or_condition_corrected": 7
+      },
+      "new_review_count": 46,
+      "all_review_count": 164,
+      "source_votes_sha256": "a0367d31015bc3844c50ab3d63201c9d2f8d74526148a897ac6aa7cad0bbd829",
+      "vote_changes_sha256": "7045686bd54e854addcd1983fd5ed2b89510449b7f849c8c3b2b20b70c20f8f5"
+    },
+    "carcinogens": {
+      "before_votes": 14176,
+      "after_votes": 12624,
+      "after_label_counts": {
+        "1": 12215,
+        "0": 409
+      },
+      "changes": {
+        "withdrawn_representative": 4149,
+        "added_representative": 2597,
+        "study_or_condition_corrected": 166
+      },
+      "new_review_count": 45,
+      "all_review_count": 133,
+      "source_votes_sha256": "008d996e659fea7535d33cdb00d030d8998615493bebc8d57de2f977d23da332",
+      "vote_changes_sha256": "c1e67da73a138d3280a2a9b35a8b3e13f5144b077dff7a3f913b25cd0d9d7e7e"
+    }
+  },
+  "tdc_labels_imported": 0,
+  "tests_passed": 68,
+  "ketamine_recovered": [
+    {
+      "source_row_uid": "sr_7400a322f8584bba944f605189f81d73",
+      "study_id": "pmid:28492426",
+      "Y": 0,
+      "condition_group": "ascertainment=retrospective_case_series+exposure=therapeutic_use+formulation=compounded_ketamine+population=human+population_context=treatment_resistant_depression+regimen=mean_222_mg_every_3_days+route=oral",
+      "study_source_row_uids": [
+        "sr_7400a322f8584bba944f605189f81d73",
+        "sr_75481bd403774f8da678fe76490429b1"
+      ]
+    },
+    {
+      "source_row_uid": "sr_9ab4b3f0d4714e50b9f053126cd6d67f",
+      "study_id": "pmid:34092024",
+      "Y": 0,
+      "condition_group": "ascertainment=retrospective_self_reported_adverse_events+dose=25_to_600_mg_day+duration=2_to_89_months+exposure=therapeutic_use+population=human+population_context=chronic_nonmalignant_pain+regimen=inpatient_subcutaneous_then_outpatient_sublingual_troches",
+      "study_source_row_uids": [
+        "sr_9ab4b3f0d4714e50b9f053126cd6d67f",
+        "sr_fa8dbd3803104de0b60e7784572c8a17"
+      ]
+    }
+  ],
+  "five_known_invalid_votes_withdrawn": [
+    "sr_cacd5ffd15bb4c99b37873e3f610f8b8",
+    "sr_08f17a689b654bc2904e0624ef3a2441",
+    "sr_91704ea5ba88451e9becaf5df9bad316",
+    "sr_8c867fcbd7e8482a86ef563c2d39779e",
+    "sr_2932fe9f32f84650acf8fe7df2fa37ef"
+  ],
+  "reviewed_records_sha256": "8f3f1560b2f1318060b48b0df42825c9ac120dae4ebea7233810115f80f7ab91",
+  "sampling": "91 additional unique source-text reviews:24 previously diagnosed cases,39 rule-change samples,4 duplicate records for two negative cohorts,24 retained candidates; not random precision/recall estimation; Codex review, not human expert or full-paper verification."
+}

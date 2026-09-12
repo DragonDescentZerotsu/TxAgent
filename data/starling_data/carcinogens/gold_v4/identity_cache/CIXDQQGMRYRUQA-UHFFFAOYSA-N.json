@@ -1,0 +1,27 @@
+{
+  "parent_key": "CIXDQQGMRYRUQA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CIXDQQGMRYRUQA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-(4-Dimethylaminostyryl)quinoline ,",
+    "4-(p-Dimethylaminostyryl)-chinolin",
+    "DB-057159",
+    "F981368",
+    "MFCD00191349",
+    "N,N-Dimethyl-4-[(Z)-2-quinolin-4-ylethenyl]aniline",
+    "N,N-dimethyl-4-(2-quinolin-4-ylethenyl)aniline",
+    "N,N-dimethyl-4-[(E)-2-quinolin-4-ylethenyl]aniline",
+    "N,N-dimethyl-4-[2-(4-quinolyl)vinyl]aniline",
+    "NCI60_000117",
+    "NCIOpen2_008060",
+    "Oprea1_396038",
+    "SB68606",
+    "SCHEMBL1348947",
+    "dimethaminostyrylquinoline",
+    "dimethyl-[4-(2-quinolin-4-yl-vinyl)-phenyl]-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    13476
+  ]
+}

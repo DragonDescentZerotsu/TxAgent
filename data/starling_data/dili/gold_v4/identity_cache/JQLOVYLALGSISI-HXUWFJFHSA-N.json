@@ -1,0 +1,40 @@
+{
+  "parent_key": "JQLOVYLALGSISI-HXUWFJFHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R)-4-(5-Cyclopropyl[1,3]thiazolo[4,5-d]pyrimidin-2-yl)-N-{[3-fluoro-4-(trifluoromethoxy)phenyl]methyl}-1-[4-(trifluoromethyl)benzene-1-sulfonyl]piperazine-2-carboxamide",
+    "(2R)-4-(5-cyclopropyl-(1,3)thiazolo(4,5-d)pyrimidin-2-yl)-N-((3-fluoro-4-(trifluoromethoxy)phenyl)methyl)-1-(4-(trifluoromethyl)benzenesulfonyl)piperazine-2-carboxamide",
+    "(2R)-4-(5-cyclopropyl-[1,3]thiazolo[4,5-d]pyrimidin-2-yl)-N-[[3-fluoro-4-(trifluoromethoxy)phenyl]methyl]-1-[4-(trifluoromethyl)phenyl]sulfonylpiperazine-2-carboxamide",
+    "(2r)-4-(5-Cyclopropyl[1,3]thiazolo[4,5-D]pyrimidin-2-Yl)-N-[3-Fluoro-4-(Trifluoromethoxy)benzyl]-1-{[4-(Trifluoromethyl)phenyl]sulfonyl}piperazine-2-Carboxamide",
+    "(R)-4-(5-cyclopropyl-thiazolo[4,5-d]pyrimidin-2-yl)-1-(4-trifluoromethyl-benzenesulfonyl)-piperazine-2-carboxylic acid 3-fluoro-4-trifluoromethoxy-benzylamide",
+    "2-Piperazinecarboxamide, 4-(5-cyclopropylthiazolo(4,5-d)pyrimidin-2-yl)-n-((3-fluoro-4-(trifluoromethoxy)phenyl)methyl)-1-((4-(trifluoromethyl)phenyl)sulfonyl)-, (2R)-",
+    "3vqs",
+    "954389-09-4",
+    "AKOS040741902",
+    "CHEMBL4297295",
+    "CS-0016935",
+    "DA-54563",
+    "DB13095",
+    "DTXCID90164327",
+    "DTXSID60241836",
+    "GLXC-23345",
+    "HY-19921",
+    "JT1",
+    "JTK 853",
+    "JTK-853",
+    "NS00073157",
+    "Q27292580",
+    "RefChem:150586",
+    "SCHEMBL2440999",
+    "SCHEMBL30518874",
+    "T15631",
+    "UNII-WDX8QQD13B",
+    "WDX8QQD13B",
+    "orb1707152"
+  ],
+  "cids": [
+    57519700
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JQLOVYLALGSISI-HXUWFJFHSA-N/synonyms/JSON",
+  "http_status": 200
+}

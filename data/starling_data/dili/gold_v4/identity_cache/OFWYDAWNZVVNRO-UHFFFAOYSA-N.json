@@ -1,0 +1,13 @@
+{
+  "parent_key": "OFWYDAWNZVVNRO-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AS-12163",
+    "SCHEMBL5985571"
+  ],
+  "cids": [
+    54148239
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OFWYDAWNZVVNRO-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

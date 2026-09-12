@@ -1,0 +1,33 @@
+{
+  "parent_key": "HGCNKOLVKRAVHD-RYUDHWBXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HGCNKOLVKRAVHD-RYUDHWBXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-[[(2S)-2-amino-4-methylsulfanylbutanoyl]amino]-3-phenylpropanoic acid",
+    "(S)-2-((S)-2-Amino-4-(methylthio)butanamido)-3-phenylPropanoic acid",
+    "14492-14-9",
+    "AKOS010420857",
+    "BDBM50049558",
+    "CHEBI:74708",
+    "CHEMBL3321989",
+    "CS-0654145",
+    "FM108134",
+    "H-Met-Phe-OH",
+    "HY-P4437",
+    "L-Met-L-Phe",
+    "L-methionyl-L-phenylalanine",
+    "MF",
+    "MFCD00037259",
+    "Met-phe",
+    "Methionyl-Phenylalanine",
+    "Q27144847",
+    "RefChem:1088235",
+    "SCHEMBL9442973",
+    "methionyl phenylalanine"
+  ],
+  "http_status": 200,
+  "cids": [
+    6992349,
+    6992350
+  ]
+}

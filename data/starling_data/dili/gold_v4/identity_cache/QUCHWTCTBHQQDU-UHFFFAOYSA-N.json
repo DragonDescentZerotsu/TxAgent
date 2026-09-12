@@ -1,0 +1,28 @@
+{
+  "parent_key": "QUCHWTCTBHQQDU-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-AMINO-4-OXO-PENTOATE",
+    "2-Amino-4-oxopentanoic acid",
+    "2-amino-4-oxo-pentanoic acid",
+    "2-amino-4-oxopentanoic acid zwitterion",
+    "2-ammonio-4-oxopentanoate",
+    "2-azaniumyl-4-oxopentanoate",
+    "4-oxonorvaline",
+    "AKOS006342397",
+    "CHEBI:15914",
+    "CHEBI:57563",
+    "EN300-149365",
+    "Q61041490",
+    "RefChem:1062192",
+    "SB75648",
+    "SCHEMBL8244",
+    "alpha-aminolevulinic acid"
+  ],
+  "cids": [
+    423,
+    25201293
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QUCHWTCTBHQQDU-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

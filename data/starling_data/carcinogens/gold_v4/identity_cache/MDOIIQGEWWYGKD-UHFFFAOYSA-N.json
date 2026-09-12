@@ -1,0 +1,35 @@
+{
+  "parent_key": "MDOIIQGEWWYGKD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MDOIIQGEWWYGKD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S,6R)-2,6-dimethyl-1-nitrosopiperidine",
+    "17721-95-8",
+    "2,6-Dimethyl-1-nitrosopiperidine",
+    "2,6-Dimethyl-1-nitrosopiperidine #",
+    "2,6-Dimethyl-N-nitrosopiperidine",
+    "2,6-Dimethylnitrosopiperidine",
+    "2,6Dimethyl1nitrosopiperidine",
+    "2,6DimethylNnitrosopiperidine",
+    "2,6Dimethylnitrosopiperidine",
+    "3W4UV8346D",
+    "5-20-04-00188 (Beilstein Handbook Reference)",
+    "877-192-5",
+    "BRN 0114715",
+    "CHEMBL349863",
+    "DTXSID00875699",
+    "EBC-395096",
+    "EN300-21626292",
+    "MDOIIQGEWWYGKD-UHFFFAOYSA-N",
+    "N-Nitroso-2,6-dimethylpiperidine",
+    "PIPERIDINE, 2,6-DIMETHYL-1-NITROSO-",
+    "Piperidine, 2,6dimethyl1nitroso",
+    "RefChem:830825",
+    "SCHEMBL8944270",
+    "nitroso-2,6-dimethylpiperidine"
+  ],
+  "http_status": 200,
+  "cids": [
+    28717
+  ]
+}

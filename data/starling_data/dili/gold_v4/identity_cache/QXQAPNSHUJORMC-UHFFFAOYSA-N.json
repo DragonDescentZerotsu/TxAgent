@@ -1,0 +1,42 @@
+{
+  "parent_key": "QXQAPNSHUJORMC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(p-chlorophenyl)propane",
+    "1-Chloro-4-propylbenzene",
+    "1-Chloro-4-propylbenzene, AldrichCPR",
+    "1-chloro-4-propyl-benzene",
+    "4-Propylchlorobenzene",
+    "52944-34-0",
+    "674-009-9",
+    "AKOS006346473",
+    "Benzene, 1-chloro-4-propyl-",
+    "C2087",
+    "CS-0319886",
+    "D89488",
+    "DB-052221",
+    "DTXCID90285723",
+    "DTXSID80334633",
+    "F018453",
+    "FS-4490",
+    "MFCD00270099",
+    "QXQAPNSHUJORMC-UHFFFAOYSA-N",
+    "RefChem:431427",
+    "SCHEMBL11516994",
+    "SCHEMBL1197029",
+    "SCHEMBL1609713",
+    "SCHEMBL193200",
+    "SCHEMBL2123502",
+    "SCHEMBL4222881",
+    "SCHEMBL7803552",
+    "SCHEMBL840432",
+    "SCHEMBL91196",
+    "SY050395",
+    "p-Chloropropylbenzene"
+  ],
+  "cids": [
+    521435
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QXQAPNSHUJORMC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

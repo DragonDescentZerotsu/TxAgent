@@ -1,0 +1,23 @@
+{
+  "parent_key": "HUINNTZAYMOQQO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HUINNTZAYMOQQO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-DIMETHYLAMINO-3-NITROFLUORENE",
+    "57105-64-3",
+    "9H-Fluoren-2-amine,N-dimethyl-3-nitro-",
+    "AKOS024341691",
+    "DB-303348",
+    "DTXCID60230482",
+    "DTXSID70279327",
+    "N,N-dimethyl-3-nitro-9H-fluoren-2-amine",
+    "N,N-dimethyl-N-(3-nitro-9H-fluoren-2-yl)amine",
+    "NSC-12295",
+    "NSC12295",
+    "RefChem:260166"
+  ],
+  "http_status": 200,
+  "cids": [
+    224052
+  ]
+}

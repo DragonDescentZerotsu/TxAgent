@@ -1,0 +1,12 @@
+{
+  "parent_key": "MVWPTZQHBOWRTF-MCNSXXNHSA-N",
+  "ok": true,
+  "synonyms": [
+    "NS00094630"
+  ],
+  "cids": [
+    150812
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MVWPTZQHBOWRTF-MCNSXXNHSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,114 @@
+{
+  "task": "Find all assays of molecules concerning heritable mutation, chromosome instability, DNA damage, and DNA repair. These outcomes include sequence mutations, micronuclei, chromosome aberrations, aneuploidy, DNA strand breaks, cross-links, adducts, unscheduled DNA synthesis, and delayed or incomplete repair. Make sure to include assays such as Ames, mouse lymphoma TK, HPRT/XPRT mutation, micronucleus, chromosome-aberration, aneuploidy, comet, enzyme-modified comet, alkaline elution, unscheduled DNA synthesis, and DNA-adduct assays. Specify the endpoint and measurement unit, molecule concentration or dose, exposure and recovery duration, assay type, cell or tissue type, species, sampling time, metabolic activation with and without S9, cell-division status, cytotoxicity, and positive and negative controls. Include all key experimental details.",
+  "task_instantiation": "Extract molecule-specific experimental assay results for the primary tested article, named verbatim in `entity_name` and mapped to `global_identifier` when a corpus entity matches unambiguously. The table must show which assay and biological system measured which heritable-mutation, chromosome-instability, direct-DNA-damage, or DNA-repair endpoint; the dose/concentration, route, exposure/recovery/sampling conditions, and metabolic-activation condition; the exact quantitative response and unit; the authors’ or reviewing body’s interpretation; and any cytotoxicity, cell-division, control, co-treatment, or validity context needed to interpret it.\n\nIN SCOPE: directly measured sequence or locus mutation (including bacterial/yeast reverse or forward mutation, Ames, mouse lymphoma TK, HPRT/HGPRT/XPRT, Pig-a, transgenic or specific-locus mutation); somatic mutation, recombination, or gene conversion; germ-cell/heritable mutation and dominant-lethal outcomes when explicitly interpreted as mutation; micronuclei; structural chromosome aberrations; sister-chromatid exchange; aneuploidy, polyploidy, chromosome loss, or nondisjunction; DNA single- or double-strand breaks and alkali-labile sites measured by comet, enzyme-modified comet, alkaline elution/unwinding, or equivalent direct methods; DNA-DNA or DNA-protein cross-links; covalent DNA adducts, experimentally measured DNA binding, or directly measured modified/base lesions; unscheduled DNA synthesis; differential repair-proficient/deficient assays; and functional repair capacity, lesion-removal, break-rejoining, persistence, delayed, inhibited, or incomplete repair. Include SOS/umu/rec/prophage or similar damage-response assays only when used as a molecule-specific experimental genotoxicity or differential-repair endpoint. Include bacterial, fungal, plant, insect, cultured-cell, animal, germ-cell, human-biomonitoring, host-mediated, environmental-sample, and acellular systems when the eligible endpoint is directly measured. Mixtures, formulations, extracts, fractions, nanomaterials, environmental samples, metabolites, and coded materials may be the primary article when that is what was actually tested.\n\nInclude antimutagenic, antigenotoxic, protective, sensitizing, comutagenic, metabolic-modulation, and repair-modulation experiments only when an in-scope endpoint is directly measured. Record the measured effect's polarity in `result_interpretation` and put the direction of modification - protective, potentiating, repair-enhanced, repair-impaired, or no repair effect - together with the challenge agent or physical challenge, its supplied identifier, its dose, and the design in `extra_details`.\n\nEXCLUDE carcinogenicity or tumor incidence alone; cell transformation; generic acute/chronic, developmental, or reproductive toxicity; sperm morphology; apoptosis; TUNEL; viability, growth, clonogenic survival, mitotic index, or cytotoxicity-only studies; ordinary DNA replication or synthesis inhibition; oxidative stress, ROS, antioxidant activity, lipid peroxidation, or glutathione effects without a qualifying DNA endpoint; pharmacokinetics or exposure concentrations alone; protein/gene expression, pathway signaling, p53/GADD45/transcriptomic reporters, or repair-protein studies without a qualifying genomic endpoint; hemoglobin, RNA, or other non-DNA adducts without accompanying eligible DNA data; structural alerts, QSAR, in-silico predictions, inferred reactivity, and mechanistic speculation; assay-development, validation, reagent, control-composition, or methods-only passages without a molecule-specific outcome; absence-of-data statements; and generic claims such as “genotoxic” or “negative in a battery” when no qualifying assay or endpoint is identifiable. Physical agents alone are not primary entities, though they may be challenges in molecular modulation experiments.\n\nEVIDENCE THRESHOLD: require an explicit molecule-specific numerical endpoint, qualitative positive/negative/graded outcome, dose-response or threshold statement, direct comparison with control, or explicit review/regulatory-summary conclusion tied to an identifiable assay or endpoint and biological system. Use explicit text, directly readable tables, figure captions, or clearly attributed review summaries. Do not create a record merely because an assay was performed, proposed, requested, or listed. Follow the authors’ or reviewing body’s biological interpretation when stated; do not infer positivity from significance alone or negativity from silence. Preserve discrepancies between raw values and the stated conclusion in `extra_details`.\n\nRECORD GRANULARITY: one record represents one primary entity × assay family × biological system × endpoint × metabolic-activation condition × dose/concentration × route/exposure/recovery/sampling condition with one separately interpretable result. Split when assay family, endpoint, species, strain/model, cell line, tissue/cell type, S9/activation condition, route, dose, exposure schedule, recovery interval, sampling/harvest time, sex when outcomes differ, interpretation, or quantitative response differs. In particular, split different Ames strains, +S9 and −S9 results, tissues, doses, time points, and separately reported endpoint metrics. Do not split technical replicates or repeated experiments summarized by one value. A dose series, strain list, tissue list, or both S9 conditions may remain one record only when the source supplies one shared conclusion or aggregate value and no component-specific result; preserve the complete series or list in the relevant field or `extra_details`. Never combine different cited studies merely because a review summarizes them together. Do not create standalone cytotoxicity, cell-division, or control records. A control chemical receives a record only when it is the primary globally identified entity and its own eligible assay response is reported.\n\nEXTRACTION RULES: use the paper’s reported units without conversion. Put dose only in `dose_or_concentration` and `dose_unit`, and response only in `response_value` and `response_unit`; each value field and its unit field are a pair, so strip the unit out of the value and populate whichever of the two the source supplies. Use `assay_family` for the broad assay and biological class and `endpoint_detail` for the exact measured metric; there is no separate endpoint-category field, so when the endpoint is not the one its assay family usually measures, say so in `endpoint_detail`. Preserve means, uncertainty, ranges, inequalities, ratios, fractions, fold changes, and compact aligned series as reported. Normalize obvious assay names, abbreviations, species names, and typography, but do not infer an unreported dose, unit, route, duration, tissue, S9 condition, control, toxicity finding, significance, strain, or protocol from customary practice. An unambiguous standard organism/cell-line mapping may be used, but note it in `extra_details` if consequential.\n\nMETABOLIC ACTIVATION: record the condition actually represented, not inferred dependence. Split +S9 and −S9 when separately reported; use `both_with_and_without_s9` only for an inseparable shared result. In-vivo endogenous metabolism is not S9, and intrinsic cellular competence is not exogenous activation. Leave null when activation is not stated.\n\nDEFAULTS AND SPILL: assume ordinary assay temperature, medium, staining, electrophoresis, scoring, replicate structure, and conventional execution only to decide what need not be repeated; never use defaults to populate missing fields or presume controls passed. Put in `extra_details` the exact assay variant; formulation, salt, purity, or mixture nuance beyond the name already in `entity_name`; challenge/co-treatment; cytotoxicity, cytostasis, viability, tissue toxicity, cell-cycle or division indices; positive and negative control identities, doses, values, and performance; dose-response shape and statistics; replication and cells scored; sex and age; route, exposure, recovery, and sampling nuance that does not fit the compact `exposure_timing` string; S9 source/cofactors; repair enzyme; mutation/adduct/aberration subtype; guideline/GLP status; and interpretation-limiting conditions such as precipitation, solubility limits, excessive toxicity, absent division, inadequate target exposure, engineered metabolism or repair deficiency, unusual matrices, photoactivation, nonstandard activation, disputed validity, or review-only evidence. Do not hide a second independently reportable assay result in `extra_details`. For every field, use null—not a placeholder phrase—when the paper does not supply the information.",
+  "schema_spec": [
+    {
+      "name": "entity_name",
+      "description": "Name of the primary tested article exactly as the paper designates it, including salt, isomer, formulation, mixture, extract, fraction, nanomaterial, environmental sample, or internal code when that is what was tested. Always populate this from the paper text; it is the human-readable identity of the record and remains required even when `global_identifier` is supplied, because that identifier is null whenever no corpus entity maps unambiguously. Record only the tested article here, never the challenge or co-exposure agent, which belongs in `extra_details`. Null only if the source names no test article at all.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "assay_family",
+      "description": "Canonical assay family that generated the result. Choose exactly one most-specific family; this field owns the broad biological class of the record, and `endpoint_detail` carries the exact metric. Conventional and enzyme-modified comet are distinct. `differential_dna_repair_assay` is for differential survival or killing of repair-proficient versus repair-deficient strains or cells (rec-assay, uvrB/polA comparisons); `sos_umu_or_prophage_induction` is for reporter-based damage-response induction (SOS chromotest, umu-test, inductest/prophage induction) and never for a differential-survival design. `other_*` values are fallbacks only when no named family fits, and the paper's own assay wording must then be preserved in `extra_details`. Named protocol variants, loci, reporters, detection methods, and guideline designations go in `extra_details`. Null if an eligible endpoint is explicit but the assay family cannot be identified; do not use a placeholder value.",
+      "value_type": "string",
+      "allowed_values": [
+        "bacterial_reverse_mutation",
+        "other_microbial_mutation",
+        "mammalian_cell_gene_mutation",
+        "transgenic_or_in_vivo_gene_mutation",
+        "somatic_mutation_recombination_or_gene_conversion",
+        "germ_cell_heritable_or_dominant_lethal",
+        "micronucleus",
+        "chromosome_aberration",
+        "aneuploidy_or_chromosome_loss",
+        "sister_chromatid_exchange",
+        "comet",
+        "enzyme_modified_comet",
+        "alkaline_elution_or_unwinding",
+        "dna_crosslink_assay",
+        "dna_adduct_or_covalent_binding_assay",
+        "unscheduled_dna_synthesis",
+        "differential_dna_repair_assay",
+        "functional_dna_repair_kinetics",
+        "sos_umu_or_prophage_induction",
+        "other_direct_genetic_or_dna_damage_assay"
+      ]
+    },
+    {
+      "name": "test_system",
+      "description": "Compact labeled description of the physical setting and biological material, preserving when stated: in vitro / in vivo / ex vivo / host-mediated / acellular / human biomonitoring / environmental bioassay; species; strain or model; cell line; and tissue or cell type. Example: `in_vivo; mouse; CD-1; bone marrow PCE`. This field describes where and in what the result was obtained; the activation chemistry belongs in `metabolic_activation`. Do not infer missing components from assay convention; omit them. Null if none are supplied.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "endpoint_detail",
+      "description": "Exact measured endpoint or metric for this record, stated as the paper states it: locus, mutation subtype, lesion or adduct identity, single- versus double-strand break, DNA-DNA versus DNA-protein cross-link, scored cell population, scoring basis, and denominator when given. Examples: His+ revertants, TK mutant frequency, frameshift mutation, MNPCE per 2000 PCE, percent aberrant metaphases, percent tail DNA, Olive tail moment, FPG-sensitive sites, N7-guanine adducts, net nuclear grains, repair half-time. The broad class lives in `assay_family`; do not restate it here, and never put the numeric result here. Where the endpoint is not the one the assay family usually measures - alkaline elution scoring cross-links, mouse lymphoma small-colony mutants read as chromosomal damage, CREST/FISH-typed micronuclei - say so explicitly here. Null if not supplied.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "metabolic_activation",
+      "description": "Metabolic-activation condition represented by this record, encoding presence and type rather than dependence. Choose exactly one; precedence is S9 status first, then other exogenous activation, then intrinsic competence, then in-vivo endogenous metabolism or acellular. `in_vivo_endogenous_metabolism` and `acellular_no_metabolic_system` exist so that null is unambiguous: use them when the design itself settles that no exogenous activation applies, and reserve null strictly for cases where the activation condition is simply not stated. `without_s9` requires an explicitly stated or explicitly contrasted -S9 condition, never inferred from silence. This field describes the activation chemistry only; the biological material and setting belong in `test_system`. Split +S9 and -S9 into separate records when reported separately, and use `both_with_and_without_s9` only for one inseparable shared result. Put S9 source, inducer, cofactors, and any statement of activation dependence in `extra_details`.",
+      "value_type": "string",
+      "allowed_values": [
+        "with_s9",
+        "without_s9",
+        "both_with_and_without_s9",
+        "other_exogenous_activation",
+        "intrinsic_metabolic_competence",
+        "in_vivo_endogenous_metabolism",
+        "acellular_no_metabolic_system"
+      ]
+    },
+    {
+      "name": "dose_or_concentration",
+      "description": "Exact primary-article dose, concentration, range, tested series, threshold, or repeated regimen applying to this result, as a bare quantity with its unit stripped out and placed in `dose_unit`; the two fields are a pair and must be read together. Preserve inequalities and inseparable series as text (`50`, `0-2000`, `12.5, 25, 50`). Split dose-specific values into separate records when the source reports dose-specific results; retain a series only for an aggregate result. If the source gives a quantity with no unit, populate this field and leave `dose_unit` null; if it names a unit with no quantity, leave this null and populate `dose_unit`. Null if no dose is reported. Never put a response value here.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "dose_unit",
+      "description": "Unit and denominator for the quantity in `dose_or_concentration`, exactly as reported and normalized only for typography, never converted - for example ug/plate, ug/mL, mM, mg/kg, mg/kg/day, ppm, %. These two fields are a pair: populate this whenever the source supplies a unit, including when `dose_or_concentration` is null because only a unit was named. Null when no unit is reported. Keep any equivalent alternative unit in `extra_details`.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "exposure_timing",
+      "description": "Compact labeled exposure conditions: administration/contact route, exposure duration and schedule, recovery interval, and sampling/harvest time. Example: `oral gavage; daily for 5 days; harvest 24 h after final dose`. Preserve only explicit information, split records when a component has a separate result, and use null rather than placeholder text when none is stated.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "result_interpretation",
+      "description": "Authors' or reviewing body's overall call on this exact record, on a single polarity axis so that no record can match two values. `weakly_positive` requires explicitly weak, slight, or marginal but positive language; `equivocal` is a borderline or ambiguous signal; `inconclusive` means validity, exposure, toxicity, or evidence was insufficient to decide; `conflicting` is reserved for irreducible discordance that cannot be split into separate records. `negative` requires an explicit no-effect or negative conclusion, never silence, and never statistical non-significance alone. For antimutagenicity, co-mutagenicity, or repair-modulation records this field still records the polarity of the measured effect; the direction of modification - protective, potentiating, repair-enhanced, repair-impaired, or no repair effect - and the challenge agent go in `extra_details`. If quantitative data qualify the record but no interpretation is supplied, use null, never `not_reported` or `not_determined`.",
+      "value_type": "string",
+      "allowed_values": [
+        "positive",
+        "weakly_positive",
+        "equivocal",
+        "negative",
+        "inconclusive",
+        "conflicting"
+      ]
+    },
+    {
+      "name": "response_value",
+      "description": "Reported endpoint response for this condition as a bare quantity, with its unit stripped out and placed in `response_unit`; the two fields are a pair and must be read together. Preserve the complete expression as text: point estimate, mean with uncertainty, range, inequality, ratio, numerator/denominator, fold change, or compact aligned series. If a quantity is reported with no unit, populate this and leave `response_unit` null; if a scale is named with no quantity, leave this null and populate `response_unit`. Null for qualitative-only findings. Never put the dose here and do not convert values.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "response_unit",
+      "description": "Unit, scale, or denominator for `response_value`, exactly as reported and normalized only for typography - for example revertants/plate, mutants/10^6 survivors, MN/2000 PCE, % aberrant cells, % tail DNA, SCE/cell, adducts/10^8 nucleotides, net grains/nucleus, fold control. These two fields are a pair: populate this whenever the source names a scale, including when `response_value` is null. Null when the source supplies no unit or scale.",
+      "value_type": "string",
+      "allowed_values": []
+    },
+    {
+      "name": "extra_details",
+      "description": "Free-form string for additional details that do not fit other top-level fields: formulation, salt, purity, or mixture nuance beyond the name in `entity_name`; exact assay variant; challenge/co-treatment and supplied identifier; dose-response/statistics; cytotoxicity, cytostasis, cell division, tissue toxicity, precipitation, or target exposure; positive/negative controls; replication/scoring; unusual activation or repair-deficient systems; route, exposure, recovery, or sampling nuance that does not fit the compact `exposure_timing` string; provenance; limitations; and protocol details. Do not store a second independently reportable assay result here. Use null, never a placeholder, when there are no additional details.",
+      "value_type": "string",
+      "allowed_values": []
+    }
+  ]
+}

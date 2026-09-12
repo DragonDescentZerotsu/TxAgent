@@ -1,0 +1,26 @@
+{
+  "parent_key": "DRRMEMPJCIGHMB-ZNLOGFMMSA-N",
+  "ok": true,
+  "synonyms": [
+    "(11C)CSar",
+    "2-[methyl-[(4R)-4-[(3R,5S,7R,8R,9S,10S,12S,13R,14S,17R)-3,7,12-trihydroxy-10,13-dimethyl-2,3,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-17-yl]pentanoyl]amino]acetic acid",
+    "93790-70-6",
+    "CHEMBL5095508",
+    "Cholylsarcosine",
+    "GLYCINE, N-METHYL-N-((3.ALPHA.,5.BETA.,7.ALPHA.,12.ALPHA.)-3,7,12-TRIHYDROXY-24-OXOCHOLAN-24-YL)-",
+    "Glycine, N-methyl-N-((3alpha,5beta,7alpha,12alpha)-3,7,12-trihydroxy-24-oxocholan-24-yl)-",
+    "Glycine, N-methyl-N-[(3a,5b,7a,12a)-3,7,12-trihydroxy-24-oxocholan-24-yl]-",
+    "IUB3L95RAQ",
+    "Q27280896",
+    "RefChem:125768",
+    "SARCOCHOLIC ACID",
+    "SCHEMBL12137394",
+    "UNII-IUB3L95RAQ",
+    "cholyl-n-methylglycine"
+  ],
+  "cids": [
+    11662986
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DRRMEMPJCIGHMB-ZNLOGFMMSA-N/synonyms/JSON",
+  "http_status": 200
+}

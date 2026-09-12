@@ -1,0 +1,13 @@
+{
+  "parent_key": "LJIWMADGOGMTOR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LJIWMADGOGMTOR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL29405783",
+    "aza-l-serine"
+  ],
+  "http_status": 200,
+  "cids": [
+    54036539
+  ]
+}

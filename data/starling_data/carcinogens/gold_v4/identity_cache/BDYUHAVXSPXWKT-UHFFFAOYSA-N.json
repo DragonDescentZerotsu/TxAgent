@@ -1,0 +1,14 @@
+{
+  "parent_key": "BDYUHAVXSPXWKT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BDYUHAVXSPXWKT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Ethyl-3-nitro-1-nitrosourea",
+    "119387-24-5",
+    "N-ethylnitro-N-nitrosourea"
+  ],
+  "http_status": 200,
+  "cids": [
+    85583201
+  ]
+}

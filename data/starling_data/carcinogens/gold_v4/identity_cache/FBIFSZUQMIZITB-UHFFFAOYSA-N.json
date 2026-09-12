@@ -1,0 +1,23 @@
+{
+  "parent_key": "FBIFSZUQMIZITB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FBIFSZUQMIZITB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "20627-31-0",
+    "5,9-Dimethyl-1,2-benzanthracene",
+    "8,12-Dimethylbenz(a)anthracene",
+    "8,12-Dimethylbenz[a]anthracene",
+    "8,12-dimethyltetraphene",
+    "BRN 1959352",
+    "Benz(a)anthracene, 8,12-dimethyl-",
+    "Benz[a]anthracene, 8,12-dimethyl-",
+    "DTXSID60174655",
+    "FBIFSZUQMIZITB-UHFFFAOYSA-N",
+    "SCHEMBL20788832",
+    "YNY664FRX2"
+  ],
+  "http_status": 200,
+  "cids": [
+    88620
+  ]
+}

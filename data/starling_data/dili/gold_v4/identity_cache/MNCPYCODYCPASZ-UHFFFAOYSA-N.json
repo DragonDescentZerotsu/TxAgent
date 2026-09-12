@@ -1,0 +1,14 @@
+{
+  "parent_key": "MNCPYCODYCPASZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "MNCPYCODYCPASZ-UHFFFAOYSA-N",
+    "SCHEMBL2504614",
+    "difluorovinylether"
+  ],
+  "cids": [
+    21835878
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MNCPYCODYCPASZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

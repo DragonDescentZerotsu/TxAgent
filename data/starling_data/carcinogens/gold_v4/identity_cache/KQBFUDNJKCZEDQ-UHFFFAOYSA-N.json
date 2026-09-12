@@ -1,0 +1,33 @@
+{
+  "parent_key": "KQBFUDNJKCZEDQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KQBFUDNJKCZEDQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1'-Biphenyl, 2,2',3,4,4',5',6-heptachloro-",
+    "1,2,3,5-tetrachloro-4-(2,4,5-trichlorophenyl)benzene",
+    "2,2',3,4,4',5',6-HEPTACHLOROBIPHENYL",
+    "2,2',3,4,4',5',6-Heptachloro-1,1'-biphenyl",
+    "2,2',3,4,4',5',6-Heptachlorobiphenyl; 2,2',3,4,4',5',6-HEPTACHLOROBIPHENYL; 2,2',3,4,4',5',6-Heptachloro-1,1'-biphenyl",
+    "52663-69-1",
+    "DTXCID3041241",
+    "DTXSID7074163",
+    "H55284",
+    "KQBFUDNJKCZEDQ-UHFFFAOYSA-N",
+    "MSK3781",
+    "NS00099815",
+    "PCB 183",
+    "PCB No. 183",
+    "PCB No. 183 10 microg/mL in Isooctane",
+    "PCB No. 183 10 |Ig/mL in Isooctane",
+    "Q27288061",
+    "RD2022B03O",
+    "RefChem:53453",
+    "SCHEMBL30035407",
+    "SCHEMBL4446978",
+    "UNII-RD2022B03O"
+  ],
+  "http_status": 200,
+  "cids": [
+    40476
+  ]
+}

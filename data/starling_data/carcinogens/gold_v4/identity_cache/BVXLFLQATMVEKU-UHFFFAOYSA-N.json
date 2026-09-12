@@ -1,0 +1,29 @@
+{
+  "parent_key": "BVXLFLQATMVEKU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BVXLFLQATMVEKU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "13629-82-8",
+    "2-methyl-4-(3-methylphenyl)aniline",
+    "3,3'-Dimethyl-4-aminobiphenyl",
+    "3,3'-Dimethyl-4-aminodiphenyl",
+    "3,3'-Dimethyl-4-biphenylamine",
+    "3,3'-Dimethyl[1,1'-biphenyl]-4-amine",
+    "3,3'-dimethyl-[1,1'-biphenyl]-4-amine",
+    "3,3/'-Dimethyl-4-(1,1/'-biphenyl)amine",
+    "4-12-00-03330 (Beilstein Handbook Reference)",
+    "4-Amino-3,3'-dimethyl-biphenyl",
+    "4-BIPHENYLAMINE, 3,3'-DIMETHYL-",
+    "AKOS004117143",
+    "BRN 2831593",
+    "DTXSID90159758",
+    "H90496",
+    "SCHEMBL11514119",
+    "SCHEMBL25261675",
+    "SCHEMBL29943184"
+  ],
+  "http_status": 200,
+  "cids": [
+    26151
+  ]
+}

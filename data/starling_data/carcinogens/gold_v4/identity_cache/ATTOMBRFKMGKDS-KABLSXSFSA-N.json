@@ -1,0 +1,13 @@
+{
+  "parent_key": "ATTOMBRFKMGKDS-KABLSXSFSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ATTOMBRFKMGKDS-KABLSXSFSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "5-Hydroxyarachidonic acid",
+    "SCHEMBL2523988"
+  ],
+  "http_status": 200,
+  "cids": [
+    87400913
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "parent_key": "CSCFSVBKSFKSMX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CSCFSVBKSFKSMX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "05M0WVA6SQ",
+    "81943-37-5",
+    "AKOS006275959",
+    "AMPhN",
+    "Acetic acid, (N-nitrosoanilino)methyl ester",
+    "Acetoxymethylphenylnitrosamine",
+    "CCRIS 5460",
+    "DTXSID701002323",
+    "METHANOL, 1-(NITROSOPHENYLAMINO)-, 1-ACETATE",
+    "Methanol, (nitrosophenylamino)-, acetate (ester)",
+    "Methanol, (nitrosophenylamino)-, actate (ester)",
+    "Q27894512",
+    "RefChem:109034",
+    "UNII-05M0WVA6SQ",
+    "[nitroso(phenyl)amino]methyl acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    133796
+  ]
+}

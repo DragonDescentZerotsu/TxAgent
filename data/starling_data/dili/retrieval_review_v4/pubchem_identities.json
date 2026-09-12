@@ -1,0 +1,95 @@
+[
+  [
+    "fialuridine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 50313,
+            "MolecularFormula": "C9H10FIN2O5",
+            "SMILES": "C1=C(C(=O)NC(=O)N1[C@H]2[C@H]([C@@H]([C@H](O2)CO)O)F)I",
+            "InChIKey": "IPVFGAYTKQKGBM-BYPJNBLXSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "2\u2032-Deoxy-2\u2032-fluoro-5-methyl-beta-D-arabinofuranosyluracil",
+    404,
+    {
+      "Fault": {
+        "Code": "PUGREST.NotFound",
+        "Message": "No CID found",
+        "Details": [
+          "No CID found that matches the given name"
+        ]
+      }
+    }
+  ],
+  [
+    "lamivudine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 60825,
+            "MolecularFormula": "C8H11N3O3S",
+            "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=CC(=NC2=O)N",
+            "InChIKey": "JTEGQNOMFQHVDC-NKWVEPMBSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "emtricitabine",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 60877,
+            "MolecularFormula": "C8H10FN3O3S",
+            "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=C(C(=NC2=O)N)F",
+            "InChIKey": "XQSPYNMVSIKCOC-NTSWFWBYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "4-[4-(4-hydroxyphenoxy)phenoxy]phenol",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 786365,
+            "MolecularFormula": "C18H14O4",
+            "SMILES": "C1=CC(=CC=C1O)OC2=CC=C(C=C2)OC3=CC=C(C=C3)O",
+            "InChIKey": "RLSMYIFSFZLJQZ-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "rhein",
+    200,
+    {
+      "PropertyTable": {
+        "Properties": [
+          {
+            "CID": 10168,
+            "MolecularFormula": "C15H8O6",
+            "SMILES": "C1=CC2=C(C(=C1)O)C(=O)C3=C(C2=O)C=C(C=C3O)C(=O)O",
+            "InChIKey": "FCDLCPWAQCPTKC-UHFFFAOYSA-N"
+          }
+        ]
+      }
+    }
+  ]
+]

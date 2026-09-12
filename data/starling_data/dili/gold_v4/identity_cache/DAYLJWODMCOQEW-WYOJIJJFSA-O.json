@@ -1,0 +1,13 @@
+{
+  "parent_key": "DAYLJWODMCOQEW-WYOJIJJFSA-O",
+  "ok": true,
+  "synonyms": [
+    "DB03227",
+    "Q27094156"
+  ],
+  "cids": [
+    6093202
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DAYLJWODMCOQEW-WYOJIJJFSA-O/synonyms/JSON",
+  "http_status": 200
+}

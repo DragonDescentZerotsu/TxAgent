@@ -1,0 +1,16 @@
+{
+  "parent_key": "JTRIUPVSQUCCHH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JTRIUPVSQUCCHH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4853-80-9",
+    "DTXSID101316956",
+    "JTRIUPVSQUCCHH-UHFFFAOYSA-N",
+    "Methyl(dioxo)-lambda~6~-sulfanyl",
+    "methanesulfonyl"
+  ],
+  "http_status": 200,
+  "cids": [
+    57476620
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "parent_key": "KSDIHKMNSYWRFB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KSDIHKMNSYWRFB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Aminochrysene",
+    "2-CHRYSENAMINE",
+    "212-334-6",
+    "789-47-9",
+    "AI3-52508",
+    "BRN 2806929",
+    "CCRIS 6985",
+    "Chrysene-2-amine",
+    "DB-020517",
+    "DTXCID80151862",
+    "DTXSID60229371",
+    "EINECS 212-334-6",
+    "FA66865",
+    "NS00042669",
+    "NSC 14764",
+    "NSC-14764",
+    "NSC14764",
+    "Q27288364",
+    "RefChem:85372",
+    "S00XF35AE0",
+    "SCHEMBL6138724",
+    "UNII-S00XF35AE0",
+    "chrysen-2-amine"
+  ],
+  "http_status": 200,
+  "cids": [
+    13092
+  ]
+}

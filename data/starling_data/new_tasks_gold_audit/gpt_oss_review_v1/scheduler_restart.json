@@ -1,0 +1,33 @@
+{
+  "utc": "2026-09-08T22:53:33.501840+00:00",
+  "reason": "raise per-backend max_num_seqs from 256 to 1024 and batched tokens to 8192",
+  "terminated_own_groups": [
+    {
+      "pid": 3851960,
+      "pgid": 3851960,
+      "kind": "backend"
+    },
+    {
+      "pid": 3851963,
+      "pgid": 3851963,
+      "kind": "backend"
+    },
+    {
+      "pid": 3851968,
+      "pgid": 3851968,
+      "kind": "backend"
+    },
+    {
+      "pid": 3851981,
+      "pgid": 3851981,
+      "kind": "backend"
+    },
+    {
+      "pid": 3865903,
+      "pgid": 3865903,
+      "kind": "review"
+    }
+  ],
+  "ledger_preserved": true,
+  "proxy_preserved": true
+}

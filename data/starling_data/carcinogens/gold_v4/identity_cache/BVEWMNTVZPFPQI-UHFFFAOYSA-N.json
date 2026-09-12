@@ -1,0 +1,35 @@
+{
+  "parent_key": "BVEWMNTVZPFPQI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BVEWMNTVZPFPQI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1391053-76-1",
+    "2,4,5,6-Pyrimidinetetrol",
+    "2,4,6(1H,3H,5H)-Pyrimidinetrione, 5-hydroxy-",
+    "207-145-0",
+    "444-15-5",
+    "5-Hydroxy-2,4,6(1H,3H,5H)-pyrimidinetrione",
+    "5-Hydroxy-2,4,6(1H,3H,5H)-pyrimidinetrione #",
+    "5-Hydroxybarbituric acid",
+    "5-alloxanol",
+    "5-hydroxy-1,3-diazinane-2,4,6-trione",
+    "5-hydroxy-hexahydro-pyrimidine-2,4,6-trione",
+    "5-hydroxypyrimidine-2,4,6(1H,3H,5H)-trione",
+    "AKOS006230288",
+    "Barbituric acid, 5-hydroxy-",
+    "CHEBI:76452",
+    "DTXCID201456583",
+    "DTXSID601265223",
+    "Dialuric acid",
+    "DialuricAcid-13C,15N2",
+    "NS00043415",
+    "Q27145999",
+    "RefChem:913404",
+    "SCHEMBL133284",
+    "T856T7DXN9"
+  ],
+  "http_status": 200,
+  "cids": [
+    179547
+  ]
+}

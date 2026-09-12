@@ -1,0 +1,13 @@
+{
+  "parent_key": "OULFZHLYCZVUKI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OULFZHLYCZVUKI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Methylarsinsaure",
+    "SCHEMBL629550"
+  ],
+  "http_status": 200,
+  "cids": [
+    165585
+  ]
+}

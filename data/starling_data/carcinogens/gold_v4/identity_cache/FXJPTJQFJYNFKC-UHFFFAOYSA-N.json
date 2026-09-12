@@ -1,0 +1,28 @@
+{
+  "parent_key": "FXJPTJQFJYNFKC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXJPTJQFJYNFKC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "162616-70-8",
+    "3',8-Di-(dimethylallyl)-genistein",
+    "5,7-dihydroxy-3-(4-hydroxy-3-(3-methylbut-2-en-1-yl)phenyl)-8-(3-methylbut-2-en-1-yl)-4H-chromen-4-one",
+    "5,7-dihydroxy-3-[4-hydroxy-3-(3-methylbut-2-enyl)phenyl]-8-(3-methylbut-2-enyl)chromen-4-one",
+    "AKOS040761899",
+    "CHEBI:143751",
+    "CHEMBL461061",
+    "CS-0144675",
+    "DA-64548",
+    "H63379",
+    "HY-N8477",
+    "Isolupabigenin",
+    "NCGC00384924-01!5,7-dihydroxy-3-[4-hydroxy-3-(3-methylbut-2-enyl)phenyl]-8-(3-methylbut-2-enyl)chromen-4-one",
+    "RefChem:149498",
+    "SCHEMBL27013648",
+    "isolupalbigenin",
+    "orb1682332"
+  ],
+  "http_status": 200,
+  "cids": [
+    26238934
+  ]
+}

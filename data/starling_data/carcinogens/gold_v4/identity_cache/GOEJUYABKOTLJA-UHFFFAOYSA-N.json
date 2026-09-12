@@ -1,0 +1,21 @@
+{
+  "parent_key": "GOEJUYABKOTLJA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GOEJUYABKOTLJA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "36504-66-2",
+    "4-oxahexacyclo[11.6.2.02,8.03,5.010,20.017,21]henicosa-1(20),2(8),6,9,11,13(21),14,16,18-nonaene",
+    "8a,9a-Dihydrobenzo(10,11)chryseno(3,4-b)oxirene",
+    "8a,9a-dihydrobenzo[1,12]tetrapheno[10,11-b]oxirene",
+    "Benzo[a]pyrene-9,10-oxide",
+    "CHEBI:34564",
+    "DTXSID40957807",
+    "NS00115932",
+    "Q27116153",
+    "RefChem:936010"
+  ],
+  "http_status": 200,
+  "cids": [
+    37456
+  ]
+}

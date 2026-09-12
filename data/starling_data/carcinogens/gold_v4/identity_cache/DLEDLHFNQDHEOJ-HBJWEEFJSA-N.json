@@ -1,0 +1,16 @@
+{
+  "parent_key": "DLEDLHFNQDHEOJ-HBJWEEFJSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DLEDLHFNQDHEOJ-HBJWEEFJSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "C09134",
+    "CHEBI:6918",
+    "CHEMBL126750",
+    "NCGC00163595-02",
+    "SMP2_000004"
+  ],
+  "http_status": 200,
+  "cids": [
+    5281382
+  ]
+}

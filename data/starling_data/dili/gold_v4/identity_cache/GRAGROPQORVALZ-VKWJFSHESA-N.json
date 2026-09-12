@@ -1,0 +1,21 @@
+{
+  "parent_key": "GRAGROPQORVALZ-VKWJFSHESA-N",
+  "ok": true,
+  "synonyms": [
+    "(1R,4beta,7abeta)-2,3,5,7a-Tetrahydro-1,7a-dihydroxy-7-(hydroxymethyl)-4-methyl-1H-pyrrolizin-4-ium",
+    "(3Z,6R)-6-hydroxy-4-(hydroxymethyl)-1-methyl-1,2,5,6,7,8-hexahydroazocin-5-one",
+    "AC1NQYZV",
+    "AKOS040734508",
+    "C10356",
+    "CHEBI:7804",
+    "FS-6719",
+    "Q27107590",
+    "T124387",
+    "orb1992241"
+  ],
+  "cids": [
+    5281740
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRAGROPQORVALZ-VKWJFSHESA-N/synonyms/JSON",
+  "http_status": 200
+}

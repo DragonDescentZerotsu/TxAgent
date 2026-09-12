@@ -1,0 +1,37 @@
+{
+  "parent_key": "MEEPUSVTMHGIPC-MVGASCEISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MEEPUSVTMHGIPC-MVGASCEISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(-)-NINANDROGRAPHOLIDE",
+    "14-Deoxyandrographoside",
+    "2(5H)-FURANONE, 3-(2-((1R,4AS,5R,6R,8AS)-5-((.BETA.-D-GLUCOPYRANOSYLOXY)METHYL)DECAHYDRO-6-HYDROXY-5,8A-DIMETHYL-2-METHYLENE-1-NAPHTHALENYL)ETHYL)-",
+    "2(5H)-FURANONE, 3-(2-(5-((.BETA.-D-GLUCOPYRANOSYLOXY)METHYL)DECAHYDRO-6-HYDROXY-5,8A-DIMETHYL-2-METHYLENE-1-NAPHTHALENYL)ETHYL)-, (1R-(1.ALPHA.,4A.BETA.,5.ALPHA.,6.ALPHA.,8A.ALPHA.))-",
+    "2(5H)-Furanone, 3-(2-(5-((beta-D-glucopyranosyloxy)methyl)decahydro-6-hydroxy-5,8a-dimethyl-2-methylene-1-naphthalenyl)ethyl)-, (1R-(1alpha,4abeta,5alpha,6alpha,8aalpha))-",
+    "4-[2-[(1R,4aS,5R,6R,8aS)-6-hydroxy-5,8a-dimethyl-2-methylidene-5-[[(2R,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]oxymethyl]-3,4,4a,6,7,8-hexahydro-1H-naphthalen-1-yl]ethyl]-2H-furan-5-one",
+    "82209-72-1",
+    "AKOS032948876",
+    "AN-668/21246017",
+    "CHEMBL482237",
+    "CS-0023447",
+    "DA-61053",
+    "Deoxyandrographoside (Andrographoside; Ninandrographolide)",
+    "FS-9248",
+    "HY-N2868",
+    "Ninandrographolide",
+    "Q27295134",
+    "RefChem:908138",
+    "SCHEMBL29922791",
+    "TN1381",
+    "UNII-Z87B39FVT4",
+    "Z87B39FVT4",
+    "andropanoside",
+    "deoxyandrographiside",
+    "deoxyandrographoside",
+    "orb1684771"
+  ],
+  "http_status": 200,
+  "cids": [
+    44575270
+  ]
+}

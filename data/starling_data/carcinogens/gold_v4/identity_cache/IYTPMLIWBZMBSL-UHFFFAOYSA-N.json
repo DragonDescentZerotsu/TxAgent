@@ -1,0 +1,36 @@
+{
+  "parent_key": "IYTPMLIWBZMBSL-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IYTPMLIWBZMBSL-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-Benzenedicarboxylic Acid Mono(3-carboxypropyl) Ester",
+    "1,2-Benzenedicarboxylic acid, 1-(3-carboxypropyl) ester",
+    "2-((3-Carboxypropoxy)carbonyl)benzoic acid",
+    "2-(4-OXIDANYL-4-OXIDANYLIDENE-BUTOXY)CARBONYLBENZOIC ACID",
+    "2-[(3-carboxypropoxy)carbonyl]benzoic acid",
+    "3-cx-MCPP",
+    "66851-46-5",
+    "CHEBI:132872",
+    "DTXSID8052726",
+    "FM26048",
+    "MG42ZW4LTL",
+    "MONO(3-CARBOXYPROPYL) PHTHALATE",
+    "MSK15514",
+    "Mono(3-carboxypropyl) phthalate (MCPP)",
+    "Mono(3-carboxypropyl)phthalate",
+    "NS00077105",
+    "Phthalic acid 3-carboxypropyl ester",
+    "Q27225679",
+    "RefChem:819226",
+    "SCHEMBL15646940",
+    "WDC60069",
+    "mono (3-carboxypropyl) phthalate",
+    "mono-(3-carboxypropyl) phthalate",
+    "mono-3-carboxypropyl phthalate",
+    "orb3174906"
+  ],
+  "http_status": 200,
+  "cids": [
+    53435015
+  ]
+}

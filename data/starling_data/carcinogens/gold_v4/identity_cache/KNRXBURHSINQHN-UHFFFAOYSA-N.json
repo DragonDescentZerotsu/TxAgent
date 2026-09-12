@@ -1,0 +1,15 @@
+{
+  "parent_key": "KNRXBURHSINQHN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KNRXBURHSINQHN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2-dibromo-1,1,1-trichloroethane",
+    "594-62-7",
+    "DTXSID201299745",
+    "SCHEMBL1764491"
+  ],
+  "http_status": 200,
+  "cids": [
+    54004218
+  ]
+}

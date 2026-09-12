@@ -1,0 +1,38 @@
+{
+  "parent_key": "MONRWRVYLOHUFA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MONRWRVYLOHUFA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-pentylurea",
+    "38869-91-9",
+    "4-04-00-00681 (Beilstein Handbook Reference)",
+    "AKOS000156464",
+    "Amylharnstoff",
+    "BRN 1749459",
+    "DTXCID80114614",
+    "DTXSID70192123",
+    "EINECS 254-168-7",
+    "N-Amylurea",
+    "N-Pentylurea",
+    "NS00030476",
+    "PJD1H5449P",
+    "Pentylurea",
+    "Q27286589",
+    "RefChem:162877",
+    "SCHEMBL1268125",
+    "SCHEMBL2889345",
+    "SCHEMBL28947",
+    "SCHEMBL294158",
+    "SCHEMBL8006098",
+    "SCHEMBL9428824",
+    "UNII-PJD1H5449P",
+    "Urea, N-amyl-",
+    "Urea, N-pentyl-",
+    "Urea, pentyl-",
+    "pentyl urea"
+  ],
+  "http_status": 200,
+  "cids": [
+    198194
+  ]
+}

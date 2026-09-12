@@ -1,0 +1,39 @@
+{
+  "parent_key": "ZOXZWYWOECCBSH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+/-)-4'-METHYL-N-ETHYLCATHINONE",
+    "1-Propanone, 2-(ethylamino)-1-(4-methylphenyl)-",
+    "1225617-18-4",
+    "2-(Ethylamino)-1-(4-methylphenyl)-1-propanone",
+    "2-(ethylamino)-1-(4-methylphenyl)propan-1-one",
+    "2-Ethylamino-1-(4-methylphenyl)propan-1-one",
+    "4 Methyl N-ethylcathinone",
+    "4'-methyl-N-ethylmethcathinone",
+    "4-MEC",
+    "4-MEC compound",
+    "4-Methylethcathinone",
+    "4-methyl-N-ethyl-cathinone",
+    "4-methylethcathinone (4-MEC)",
+    "9665W17SH3",
+    "C22707",
+    "CHEBI:168695",
+    "DEA No. 1249",
+    "DTXCID401475090",
+    "DTXSID001016901",
+    "J2.929.922F",
+    "NRG-2",
+    "NS00007248",
+    "PD046854",
+    "Q4637173",
+    "RefChem:99880",
+    "SCHEMBL20472234",
+    "UNII-9665W17SH3",
+    "ZOXZWYWOECCBSH-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    52988259
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZOXZWYWOECCBSH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

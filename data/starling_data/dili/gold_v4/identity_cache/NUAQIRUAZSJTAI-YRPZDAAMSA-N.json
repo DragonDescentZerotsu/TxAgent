@@ -1,0 +1,30 @@
+{
+  "parent_key": "NUAQIRUAZSJTAI-YRPZDAAMSA-N",
+  "ok": true,
+  "synonyms": [
+    "56-DEMETHYLVANCOMYCIN",
+    "91700-98-0",
+    "91700-98-0(Free Base)",
+    "ANTIBIOTIC A 51568A",
+    "ANTIBIOTIC A-51568A",
+    "BP129IOC93",
+    "CHEMBL4303504",
+    "DESMETHYLVANCOMYCIN",
+    "FN164675",
+    "J985.647A",
+    "N-Desmethyl Vancomycin B",
+    "NCGC00484083-01",
+    "NORVANCOMYCIN [WHO-DD]",
+    "Norvancomycin",
+    "Q27274780",
+    "RefChem:166729",
+    "SCHEMBL29413133",
+    "Vancomycin EP Impurity A",
+    "orb2802050"
+  ],
+  "cids": [
+    10419027
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NUAQIRUAZSJTAI-YRPZDAAMSA-N/synonyms/JSON",
+  "http_status": 200
+}

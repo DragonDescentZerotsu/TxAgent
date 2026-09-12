@@ -1,0 +1,12 @@
+{
+  "parent_key": "CQTODRXHKLJBEC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQTODRXHKLJBEC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "7,12-dihydroxybenz[a]anthracene"
+  ],
+  "http_status": 200,
+  "cids": [
+    53735313
+  ]
+}

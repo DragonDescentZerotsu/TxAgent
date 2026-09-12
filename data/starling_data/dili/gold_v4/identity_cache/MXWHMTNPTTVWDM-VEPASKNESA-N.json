@@ -1,0 +1,23 @@
+{
+  "parent_key": "MXWHMTNPTTVWDM-VEPASKNESA-N",
+  "ok": true,
+  "synonyms": [
+    "(2E)-2-[2-(2-Carbamimidoylhydrazinylidene)propylidene]hydrazine-1-carboximidamide",
+    "AI3-60317",
+    "BRN 1912590",
+    "Mitoguazona [INN-Spanish]",
+    "Mitoguazone [INN:DCF]",
+    "Mitoguazonum [INN-Latin]",
+    "PD058333",
+    "SCHEMBL15012880",
+    "SCHEMBL1736591",
+    "UNII-OD5Q0L447W"
+  ],
+  "cids": [
+    76961227,
+    176525263,
+    176528393
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MXWHMTNPTTVWDM-VEPASKNESA-N/synonyms/JSON",
+  "http_status": 200
+}

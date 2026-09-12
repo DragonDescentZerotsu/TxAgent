@@ -1,0 +1,41 @@
+{
+  "parent_key": "FYHRJWMENCALJY-CCDZVGGQSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FYHRJWMENCALJY-CCDZVGGQSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "\"(3S,8S,9S,10R,13R,14S,17R)-17-((2R)-7-hydroxy-6-methylheptan-2-yl)-10,13-dimethyl-2,3,4,7,8,9,10,11,12,13,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-3-ol\"",
+    "(25S)-26-hydroxy cholesterol",
+    "(3S,8S,9S,10R,13R,14S,17R)-17-((2R)-7-hydroxy-6-methylheptan-2-yl)-10,13-dimethyl-2,3,4,7,8,9,10,11,12,13,14,15,16,17-tetradecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    "13095-61-9",
+    "26- hydroxycholesterol",
+    "26-Hydroxycholesterol",
+    "26-hydroxy-cholesterol",
+    "26259-77-8",
+    "27-hydroxy-cholesterol",
+    "A11370",
+    "AKOS030228167",
+    "CHEBI:17703",
+    "CHEMBL3217768",
+    "CS-0444283",
+    "Cholest-5-ene-3,26-diol #",
+    "Cholest-5-ene-3,26-diol, (3beta)-",
+    "Cholest-5-ene-3-beta,26-diol",
+    "Cholest-5-ene-3beta,26-diol",
+    "DB-223062",
+    "DTXSID101314679",
+    "FYHRJWMENCALJY-CCDZVGGQSA-N",
+    "LMST01010057",
+    "NSC 226105",
+    "Q27102543",
+    "RefChem:918517",
+    "SCHEMBL159618",
+    "SCHEMBL29065677",
+    "cholest-5-en-3beta,26-diol",
+    "cholest-5-ene-3 beta,26-diol",
+    "orb1990829"
+  ],
+  "http_status": 200,
+  "cids": [
+    99470
+  ]
+}

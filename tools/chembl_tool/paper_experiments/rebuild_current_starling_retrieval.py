@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -13,12 +12,14 @@ from typing import Any
 
 from tools.chembl_tool.common.starling.conditioned_benchmark import task_root
 from tools.chembl_tool.common.json_utils import atomic_output_path
+from tools.chembl_tool.common.build_runtime import sha256_file as _sha256
 from tools.chembl_tool.common.starling.current_retrieval_artifacts import (
     DEFAULT_LOCAL_ROOT,
     TASKS,
     current_records_path,
     require_current_records,
     restore,
+    restore_published_files,
     verify_local,
     verify_packaged,
 )
@@ -29,14 +30,6 @@ CONTRACT_PATH = Path(__file__).with_name("current_starling_retrieval.json")
 DEFAULT_ARTIFACT_ROOT = (
     PROJECT_ROOT / "outputs/paper/starling_conditioned_assay_family_curve_v1"
 )
-
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
 
 def _contract(path: Path = CONTRACT_PATH) -> dict[str, Any]:
     contract = json.loads(path.read_text(encoding="utf-8"))
@@ -70,63 +63,45 @@ def build_overlays(
     root: Path,
     *,
     records_root: Path = DEFAULT_LOCAL_ROOT,
+    tasks: tuple[str, ...] = TASKS,
 ) -> None:
     contract = _contract()
-    for task in TASKS:
+    for task in tasks:
         require_current_records(task, local_root=records_root)
     overlays = _overlay_paths(root, contract, records_root=records_root)
-    # Ames freezes the reviewed, already classified source. It needs no second
-    # purity overlay; restore-records supplies the exact audited input.
-    _run(
-        [
+    # Reviewed canonical snapshots (Ames/DILI/Carcinogens) need no overlay replay.
+    if "bbb_martins" in tasks:
+        _run([
             "tools.chembl_tool.paper_experiments.build_bbb_source_family_purity",
-            "--records",
-            str(current_records_path("bbb_martins", local_root=records_root)),
-            "--output-dir",
-            str(overlays["bbb_martins"]),
-        ]
-    )
-    bio_intermediate = root / str(
-        contract["tasks"]["bioavailability_ma"]["intermediate_overlay"]
-    )
-    _run(
-        [
+            "--records", str(current_records_path("bbb_martins", local_root=records_root)),
+            "--output-dir", str(overlays["bbb_martins"]),
+        ])
+    if "bioavailability_ma" in tasks:
+        intermediate = root / contract["tasks"]["bioavailability_ma"]["intermediate_overlay"]
+        _run([
             "tools.chembl_tool.tasks.bioavailability_ma.build_nondirect_assay_context",
-            "--input-records",
-            str(current_records_path("bioavailability_ma", local_root=records_root)),
-            "--output-dir",
-            str(bio_intermediate),
-        ]
-    )
-    _run(
-        [
+            "--input-records", str(current_records_path("bioavailability_ma", local_root=records_root)),
+            "--output-dir", str(intermediate),
+        ])
+        _run([
             "tools.chembl_tool.paper_experiments.build_bioavailability_vote_pure_source",
-            "--input-records",
-            str(bio_intermediate / "records.parquet"),
-            "--output-dir",
-            str(overlays["bioavailability_ma"]),
-        ]
-    )
-    skin_parent = overlays["skin_reaction"].parent
-    _run(
-        [
+            "--input-records", str(intermediate / "records.parquet"),
+            "--output-dir", str(overlays["bioavailability_ma"]),
+        ])
+    if "skin_reaction" in tasks:
+        _run([
             "tools.chembl_tool.paper_experiments.build_conditioned_source_family_purity",
-            "--task",
-            "skin_reaction",
-            "--input-records",
-            str(current_records_path("skin_reaction", local_root=records_root)),
-            "--output-root",
-            str(skin_parent),
-            "--batch-size",
-            "20000",
-        ]
-    )
+            "--task", "skin_reaction",
+            "--input-records", str(current_records_path("skin_reaction", local_root=records_root)),
+            "--output-root", str(overlays["skin_reaction"].parent),
+            "--batch-size", "20000",
+        ])
 
 
-def build_catalogs(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> None:
+def build_catalogs(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT, tasks: tuple[str, ...] = TASKS) -> None:
     contract = _contract()
     overlays = _overlay_paths(root, contract, records_root=records_root)
-    for task in TASKS:
+    for task in tasks:
         catalog = root / str(contract["tasks"][task]["catalog"])
         _run(
             [
@@ -147,13 +122,14 @@ def build_catalogs(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> No
 
 def build_indices(
     root: Path, *, workers: int, records_root: Path = DEFAULT_LOCAL_ROOT,
+    tasks: tuple[str, ...] = TASKS,
 ) -> None:
     contract = _contract()
     settings = contract["contract"]
     overlays = _overlay_paths(root, contract, records_root=records_root)
     for split_scheme in ("scaffold", "random"):
         identity_policy = settings[f"{split_scheme}_identity_policy"]
-        for task in TASKS:
+        for task in tasks:
             task_contract = contract["tasks"][task]
             catalog = root / str(task_contract["catalog"])
             index_dir = root / str(task_contract["indices"][split_scheme]["path"])
@@ -188,16 +164,19 @@ def build_indices(
                     str(task_contract.get("filter_scope_value", task_contract["direct_group"])),
                     "--evidence-prompt-profile",
                     str(settings["evidence_prompt_profile"]),
-                ]
+                ] + ([
+                    "--identity-contract", task_contract["identity_contract"],
+                    "--identity-cache", str(overlays[task] / "retrieval_identity_cache.jsonl"),
+                ] if task_contract.get("identity_contract") else [])
             )
 
 
-def verify(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT) -> dict[str, Any]:
+def verify(root: Path, *, records_root: Path = DEFAULT_LOCAL_ROOT, tasks: tuple[str, ...] = TASKS) -> dict[str, Any]:
     contract = _contract()
     overlays = _overlay_paths(root, contract, records_root=records_root)
     report: dict[str, Any] = {"schema_version": contract["schema_version"], "tasks": {}}
     failures: list[str] = []
-    for task in TASKS:
+    for task in tasks:
         task_contract = contract["tasks"][task]
         task_report: dict[str, Any] = {}
         for check_name, check in (
@@ -280,17 +259,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-root", type=Path, default=DEFAULT_ARTIFACT_ROOT)
     parser.add_argument("--records-root", type=Path, default=DEFAULT_LOCAL_ROOT)
     parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     parser.add_argument(
         "--force",
         action="store_true",
         help="Replace a nonmatching restored Stage-03 directory (restore-records only).",
     )
     args = parser.parse_args(argv)
+    tasks = tuple(args.tasks)
     if args.force and args.action != "restore-records":
         parser.error("--force is only valid with restore-records")
     if args.action == "restore-records":
-        for task in TASKS:
-            print(restore(task, local_root=args.records_root, force=args.force))
+        for task in tasks:
+            restored = restore(task, local_root=args.records_root, force=args.force)
+            print(restored)
+            if args.records_root.resolve() == DEFAULT_LOCAL_ROOT.resolve():
+                restore_published_files(task, restored)
             source_records = _contract()["tasks"][task].get("source_records")
             # Restore missing source-adapter output, preserving existing reviews.
             if source_records and args.records_root.resolve() == DEFAULT_LOCAL_ROOT.resolve():
@@ -299,18 +283,18 @@ def main(argv: list[str] | None = None) -> int:
                     with atomic_output_path(published) as temporary:
                         shutil.copyfile(current_records_path(task), temporary)
     elif args.action == "build":
-        build_overlays(args.output_root, records_root=args.records_root)
-        build_catalogs(args.output_root, records_root=args.records_root)
-        build_indices(args.output_root, workers=args.workers, records_root=args.records_root)
-        print(json.dumps(verify(args.output_root, records_root=args.records_root), indent=2))
+        build_overlays(args.output_root, records_root=args.records_root, tasks=tasks)
+        build_catalogs(args.output_root, records_root=args.records_root, tasks=tasks)
+        build_indices(args.output_root, workers=args.workers, records_root=args.records_root, tasks=tasks)
+        print(json.dumps(verify(args.output_root, records_root=args.records_root, tasks=tasks), indent=2))
     elif args.action == "build-overlays":
-        build_overlays(args.output_root, records_root=args.records_root)
+        build_overlays(args.output_root, records_root=args.records_root, tasks=tasks)
     elif args.action == "build-catalogs":
-        build_catalogs(args.output_root, records_root=args.records_root)
+        build_catalogs(args.output_root, records_root=args.records_root, tasks=tasks)
     elif args.action == "build-indices":
-        build_indices(args.output_root, workers=args.workers, records_root=args.records_root)
+        build_indices(args.output_root, workers=args.workers, records_root=args.records_root, tasks=tasks)
     else:
-        print(json.dumps(verify(args.output_root, records_root=args.records_root), indent=2))
+        print(json.dumps(verify(args.output_root, records_root=args.records_root, tasks=tasks), indent=2))
     return 0
 
 

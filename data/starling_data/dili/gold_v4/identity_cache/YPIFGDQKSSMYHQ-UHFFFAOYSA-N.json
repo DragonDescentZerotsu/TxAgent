@@ -1,0 +1,38 @@
+{
+  "parent_key": "YPIFGDQKSSMYHQ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "130776-67-9",
+    "3HN3T2UTE6",
+    "52627-73-3",
+    "610-878-2",
+    "7,7-Dimethyloctanoic acid (mixture of isomers)",
+    "7,7-Dimethyloctanoicacid",
+    "7,7-dimethyloctanoic acid",
+    "AKOS006345516",
+    "CS-W022922",
+    "DB-156517",
+    "DTXSID00866704",
+    "DTXSID401020770",
+    "EN300-198006",
+    "F242830",
+    "FN32451",
+    "MFCD00068291",
+    "NEO-DECANOIC ACID",
+    "Neo decanoic acid",
+    "Neodecanoic Acid, mixture of isomers",
+    "RefChem:1100968",
+    "SCHEMBL1962457",
+    "SY459225",
+    "Versatic 10",
+    "Versatic 10 acid",
+    "Z1201618722",
+    "neo-decanoic acid, AldrichCPR",
+    "tert-DECANOIC ACID"
+  ],
+  "cids": [
+    62838
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YPIFGDQKSSMYHQ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

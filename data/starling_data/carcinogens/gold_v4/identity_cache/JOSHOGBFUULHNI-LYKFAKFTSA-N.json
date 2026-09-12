@@ -1,0 +1,34 @@
+{
+  "parent_key": "JOSHOGBFUULHNI-LYKFAKFTSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JOSHOGBFUULHNI-LYKFAKFTSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2E,4E,6E,8E)-N-(2-HYDROXYETHYL)-3,7-DIMETHYL-9-(2,6,6-TRIMETHYLCYCLOHEX-1-EN-1-YL)NONA-2,4,6,8-TETRAENAMIDE",
+    "(2E,4E,6E,8E)-N-(2-hydroxyethyl)-3,7-dimethyl-9-(2,6,6-trimethylcyclohexen-1-yl)nona-2,4,6,8-tetraenamide",
+    "15-[(2-Hydroxyethyl)amino]retinal",
+    "2-Hydroxyethyl retinamide",
+    "2-Hydroxyethylretinamide",
+    "33631-47-9",
+    "BDBM50347597",
+    "BRN 2161307",
+    "CCRIS 4284",
+    "CHEMBL60405",
+    "DTXCID501739643",
+    "DTXSID801309774",
+    "HYDROXYETHYL)RETINAMIDE, ALL-TRANS-4-N-(2-",
+    "Hydroxyethyl retinamide",
+    "N-(2-Hydroxyethyl)retinamide",
+    "N-2-Hydroxyethyl retinamide",
+    "RefChem:161777",
+    "Retinamide, N-(2-hydroxyethyl)-",
+    "Retinoic acid 2-hydroxyethylamide",
+    "Ro 8-4969",
+    "Ro-8-4969",
+    "SCHEMBL2467990",
+    "ZBJ8HC23XW"
+  ],
+  "http_status": 200,
+  "cids": [
+    6437840
+  ]
+}

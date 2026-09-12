@@ -1,0 +1,391 @@
+{
+  "status": "requires_additional_manual_review",
+  "phase": "staged_selected_evidence",
+  "selected_input_sha256": "398496264dfa4bf9f7b3eb6963d806dc975aaec3d8fc4a0427ca0b7e4ae995ba",
+  "ledger_sha256": "2d2879a8a7c6d7b732cf2eded06d50b320a06e96a0d6af6e58c049c43a35644a",
+  "n_checked_changed_surfaces": 181,
+  "n_reviewed_matching_surfaces": 91,
+  "n_unreviewed_surfaces": 90,
+  "pending_packet": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_review_v4/pending_reselected_cards.jsonl",
+  "accepted": [
+    {
+      "card_id": "card_0ddc420703043ca1",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_91173c3889da4010abd424f8db0654f5"
+    },
+    {
+      "card_id": "card_5d9d987282fa624b",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_4e00d493693841e9be2a4dc630e9b63a"
+    },
+    {
+      "card_id": "card_e26d942e0629b4cb",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_faa8243f77cb2bd9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_d668bac654271e87",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_11f1eee5cc6b4fb0a7e2262d35c6bfad"
+    },
+    {
+      "card_id": "card_ee4bcc5865e71663",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_7141ac8396f53a62",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_5c2afec32a1d49b2",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_0bcec0d73df86905",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_524455ac90e6575c",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_55fe3d09e2e3a198",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_ebc8b5269e51b622",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_c5ef26f9cde2f7e0",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_81ba71ce568f498aa44afa44b5a571dd"
+    },
+    {
+      "card_id": "card_17ac12519a640661",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_f6ef3dccd248448a89216ad15df61006"
+    },
+    {
+      "card_id": "card_8dbc8aa214cea575",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_f07de70b20596c74",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_60d365d093b3c5ef",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_1d80cbe5fd6650a9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_4adda1722d2b8625",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_732ad1ceae379d36",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_60e94582f0abd70a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_efaff7931bd3f552",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_2e4e135b69c04aab",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_9c15540bc92dd187",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_196519fd75de37f0",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_34b91f5d2147f040",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_0d2214ba9d220343",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_41a78ce5eb1b31a9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_24be8ef427fe250e",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_6dae99678be6a5f1",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_5dca00863990bd0a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_2cd79aaffbd0943f",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_ffeeb399bedc348c",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_497e39ee27da60d6",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e782781379624fcd",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_025d34e7ff3159fa",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_4e405046bf605d48",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_bcadd31ea20ca7ac",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_93251ae0a2863295",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_864609fffa78e826",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_49304937ce83a290",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e1cf20409cd094a2",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_c612992dde4f746f",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_d7eca19c33da46938dfc410979e57fe0"
+    },
+    {
+      "card_id": "card_d13eca0dc4010687",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_f750f19655a14d20a8316d9ec4ff5567"
+    },
+    {
+      "card_id": "card_e031717215d030a3",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_1d8e341bfc86fd44",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_11fd96d2c02eb22a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_22c51d99ba3f685a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_48a07791370c5803",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_3bc5cb8949da819a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_da8ba5c9bd388c04",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_adb7b759f1ddf459",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_4df688b29968d704",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_6d09c3d3764443428adb076bdb65e560"
+    },
+    {
+      "card_id": "card_87151f33e93d1c14",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_7bb16195a8c3a8db",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e09cb6ed41552a49",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_34f96e0a68ef4d3fb8a3dd709fc4a52e"
+    },
+    {
+      "card_id": "card_d3abd122aad43e64",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e39e3330f21dd3e9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_97ea5f6f98207eca",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_a7e332a7988f5c74",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_c6c221dcb368c0a7",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_711a6c311ebd40a6",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_1da8ca1ed2161fa9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_68bcbabde7b43f90",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_2fc6ddae9eae7e7b",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_257e585f2affaaab",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_39efcb703d0503b7",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_65b35a8c9d5f43e3aeb049916d0824e9"
+    },
+    {
+      "card_id": "card_c8c0498acd2d2424",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_d4b3ddc5bf3248889f6a7620826615fe"
+    },
+    {
+      "card_id": "card_7a938777ab340b52",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e94bdfea7d873bb4",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_619c32fdb0d88b5b",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_7b172b537560b91c",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_cc0f5117d1a21056",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_27f2a5b732a37805",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_388466a13df8afb6",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_84914feb22f0e012",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_bb5cd033850d850c",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_4ebdf1686837e72d",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_a77d0e5d821cc727",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_9bfdcb141cd873c0",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_e98bd442c04cc6fd",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_410851232a551645",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_916413b20601a81a",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_0f6ec8403d4c5ee0",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_39abb42a05a3a8a9",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_cbd8829e8cb5a3b2",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_833277e0534b48a6b80783b780667c84"
+    },
+    {
+      "card_id": "card_33176a2847797bae",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_9fd55a6744e7f7b0",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_62a8a00224164f9b",
+      "basis": "Exact previously read candidate surface"
+    },
+    {
+      "card_id": "card_92627cb393db8f19",
+      "basis": "Exact corrected source fields and full InChIKey",
+      "source_row_uid": "sr_bd9688f505f149a884c989ff16d0fb41"
+    },
+    {
+      "card_id": "card_4279b97018c0e8ab",
+      "basis": "Exact previously read candidate surface"
+    }
+  ],
+  "scope": "Manual review coverage of actual newly selected surfaces, not full-library certification",
+  "labels_or_predictions_consulted": false
+}

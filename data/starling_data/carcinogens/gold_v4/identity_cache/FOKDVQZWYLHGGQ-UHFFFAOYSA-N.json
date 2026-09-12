@@ -1,0 +1,20 @@
+{
+  "parent_key": "FOKDVQZWYLHGGQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FOKDVQZWYLHGGQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "14127-55-0",
+    "DTXCID70425680",
+    "DTXSID80474866",
+    "Fe6+",
+    "Iron ion(6+)",
+    "Iron(6+)",
+    "Iron, ion (Fe6+) (8CI,9CI)",
+    "RefChem:349501",
+    "SCHEMBL29464181"
+  ],
+  "http_status": 200,
+  "cids": [
+    11963693
+  ]
+}

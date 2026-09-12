@@ -1,0 +1,26 @@
+{
+  "parent_key": "KZZXOYFLVCIWCW-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KZZXOYFLVCIWCW-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-CARBAMIMIDAMIDO-N-ETHYL-N-PHENYLMETHANIMIDAMIDE",
+    "1-[[{[AMINO(IMINO)METHYL]AMINO}(IMINO)METHYL](ETHYL)AMINO]BENZENE",
+    "100133-87-7",
+    "AKOS002224910",
+    "CHEMBL1408939",
+    "HMS1589J02",
+    "HMS2606K19",
+    "MLS000662102",
+    "N-ethyl-N-phenylimidodicarbonimidic diamide",
+    "SCHEMBL18762979",
+    "SMR000292755",
+    "ST50106279",
+    "STK134873",
+    "amino[(ethylphenylamino)iminomethyl]carboxamidine",
+    "phenyl-ethyl-biguanide"
+  ],
+  "http_status": 200,
+  "cids": [
+    2943065
+  ]
+}

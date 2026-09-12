@@ -1,0 +1,13 @@
+{
+  "parent_key": "CQMVUTWTFBRWMW-MYINAIGISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CQMVUTWTFBRWMW-MYINAIGISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Joddesoxyuridin",
+    "SCHEMBL249822"
+  ],
+  "http_status": 200,
+  "cids": [
+    66632859
+  ]
+}

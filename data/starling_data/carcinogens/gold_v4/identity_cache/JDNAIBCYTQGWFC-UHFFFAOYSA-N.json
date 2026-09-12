@@ -1,0 +1,18 @@
+{
+  "parent_key": "JDNAIBCYTQGWFC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDNAIBCYTQGWFC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "AKOS016487279",
+    "CID 17397714",
+    "Crofelemer - API Standards",
+    "GLXC-27507",
+    "N-[(2-methoxyphenyl)methyl]-5-phenyl-1,2-oxazole-3-carboxamide",
+    "SCHEMBL29378299",
+    "Z164754034"
+  ],
+  "http_status": 200,
+  "cids": [
+    17397714
+  ]
+}

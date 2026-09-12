@@ -1,0 +1,19 @@
+{
+  "parent_key": "TXBKXUGBNVFEIF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Bromo-1-chloro-2,2-difluoroethane",
+    "430-89-7",
+    "DTXCID501390627",
+    "DTXSID90962845",
+    "Ethane, 1-bromo-1-chloro-2,2-difluoro-",
+    "RefChem:1055011",
+    "SCHEMBL28043435",
+    "TXBKXUGBNVFEIF-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    92757
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/TXBKXUGBNVFEIF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

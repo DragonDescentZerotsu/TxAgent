@@ -1,0 +1,37 @@
+{
+  "parent_key": "XMYKNCNAZKMVQN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2E)-2-[(3-Amino-2-pyridinyl)methylene]hydrazinecarbothioamide",
+    "2-((3-Aminopyridin-2-yl)methylene)hydrazinecarbothioamide",
+    "2-[(3-Aminopyridin-2-yl)methylene]hydrazinecarbothioamide",
+    "3-Aminopyridine-2-carboxaldehyde-thiosemicarbazone",
+    "3-[(3-amino-2-pyridyl)methyleneamino]isothiourea",
+    "3-amino-2-formylpyridine thiosemicarbazone",
+    "3-aminopyridine-carboxaldehyde thiosemicarbazone",
+    "802-845-8",
+    "A3132",
+    "AKOS030228055",
+    "DB-348131",
+    "DS-016608",
+    "HMS3653H07",
+    "Hydrazinecarbothioamide, 2-[(3-amino-2-pyridinyl)methylene]-, (E)-",
+    "NCI60_021728",
+    "PAN-811;NSC# 663249;OCX191",
+    "RefChem:448113",
+    "SB17340",
+    "SCHEMBL29362841",
+    "SCHEMBL29371",
+    "SW219730-1",
+    "Triapine (3-AP)",
+    "XMYKNCNAZKMVQN-UHFFFAOYSA-N",
+    "s7470",
+    "{[(3-aminopyridin-2-yl)methylidene]amino}thiourea"
+  ],
+  "cids": [
+    126752,
+    3006315
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XMYKNCNAZKMVQN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

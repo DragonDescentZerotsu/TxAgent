@@ -1,0 +1,33 @@
+{
+  "parent_key": "YXHVCZZLWZYHSA-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(Z)-2-Hydroxy-6-(pentadec-8-en-1-yl)benzoic acid",
+    "2-hydroxy-6-(pentadec-8-en-1-yl) benzoic acid",
+    "2-hydroxy-6-(pentadec-8-en-1-yl)benzoic acid",
+    "2-hydroxy-6-[(8Z)-pentadec-8-en-1-yl]benzoic acid",
+    "2-hydroxy-6-pentadec-8-enyl-benzoic acid",
+    "2-hydroxy-6-pentadec-8-enylbenzoic acid",
+    "6-[(8Z)-Pentadecenyl]-salicylic acid",
+    "76261-14-8",
+    "Benzoic acid, 2-hydroxy-6-(8-pentadecenyl)-",
+    "C22H34O3",
+    "DTXSID40327243",
+    "KBio3_002125",
+    "KBioGR_002483",
+    "NCI60_012889",
+    "SCHEMBL30139889",
+    "SCHEMBL3937217",
+    "SPBio_000467",
+    "Spectrum2_000514",
+    "Spectrum3_001133",
+    "Spectrum4_001979",
+    "orb1222493",
+    "s9432"
+  ],
+  "cids": [
+    368156
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YXHVCZZLWZYHSA-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

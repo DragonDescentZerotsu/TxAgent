@@ -1,0 +1,21 @@
+{
+  "parent_key": "WTINJQXJTHUFRF-AJTZDPNRSA-N",
+  "ok": true,
+  "synonyms": [
+    "16898-32-1",
+    "240-940-0",
+    "Antamanide",
+    "Cyclo(L-alanyl-L-phenylalanyl-L-phenylalanylprolyl-L-prolyl-L-phenylalanyl-L-phenylalanyl-L-valylprolyl-L-prolyl)",
+    "DTXCID601331903",
+    "DTXSID80903964",
+    "EINECS 240-940-0",
+    "NSC 263652",
+    "RefChem:112940",
+    "WTINJQXJTHUFRF-AJTZDPNRSA-N"
+  ],
+  "cids": [
+    3036887
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WTINJQXJTHUFRF-AJTZDPNRSA-N/synonyms/JSON",
+  "http_status": 200
+}

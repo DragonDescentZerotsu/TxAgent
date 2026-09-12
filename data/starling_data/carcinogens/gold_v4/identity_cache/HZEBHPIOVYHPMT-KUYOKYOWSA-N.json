@@ -1,0 +1,37 @@
+{
+  "parent_key": "HZEBHPIOVYHPMT-KUYOKYOWSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HZEBHPIOVYHPMT-KUYOKYOWSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(218)84Po",
+    "(218)Po",
+    "(~218~Po)polonium",
+    "15422-74-9",
+    "218Po",
+    "218Po (isotope)",
+    "218Po isotope",
+    "218Po radioisotope",
+    "218Po1+",
+    "93862-53-4",
+    "CHEBI:37348",
+    "DTXCID601331941",
+    "DTXSID20904016",
+    "Isotope:218Po",
+    "Isotope:Polonium-218",
+    "Po-218 radioisotope",
+    "Polonium, isotope of mass 218",
+    "Polonium, isotope of mass 218 (218Po1+)",
+    "Polonium-218",
+    "Polonium-218 isotope",
+    "Polonium-218(1+)",
+    "Q18888391",
+    "Radium A",
+    "RefChem:175048",
+    "SCHEMBL29426621",
+    "polonium-218 atom"
+  ],
+  "http_status": 200,
+  "cids": [
+    6328554
+  ]
+}

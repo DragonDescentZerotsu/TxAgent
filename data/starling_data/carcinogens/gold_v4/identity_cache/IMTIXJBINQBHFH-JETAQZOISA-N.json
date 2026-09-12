@@ -1,0 +1,32 @@
+{
+  "parent_key": "IMTIXJBINQBHFH-JETAQZOISA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IMTIXJBINQBHFH-JETAQZOISA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1aR,2S,5R,5aR,6S,8aS,9R,10aR)-4-[(Acetyloxy)methyl]-5a-hydroxy-1,1,7,9-tetramethyl-11-oxo-1a,2,5,5a,6,9,10,10a-octahydro-1H-2,8a-methanocyclopenta[a]cyclopropa[e][10]annulene-5,6-diyl diacetate",
+    "1H-2,8A-METHANOCYCLOPENTA(A)CYCLOPROPA(E)CYCLODECEN-11-ONE, 5,6-BIS(ACETYLOXY)-4-((ACETYLOXY)METHYL)-1A,2,5,5A,6,9,10,10A-OCTAHYDRO-5A-HYDROXY-1,1,7,9-TETRAMETHYL-, (1AR,2S,5R,5AR,6S,8AS,9R,10AR)-",
+    "1H-2,8a-Methanocyclopenta(a)cyclopropa(e)cyclodecen-11-one, 1a,2,5,5a,6,9,10,10a-octahydro-4-(hydroxymethyl)-1,1,7,9-tetramethyl-5,5a,6-trihydroxy-, 4,5,6-triacetate, (1ar,2S,5R,5ar, 6S,8as,9R,10aR)-",
+    "1H-2,8a-Methanocyclopenta[a]cyclopropa[e]cyclodecen-11-one, 5,6-bis(acetyloxy)-4-[(acetyloxy)methyl]-1a,2,5,5a,6,9,10,10a-octahydro-5a-hydroxy-1,1,7,9-tetramethyl-, (1aR,2S,5R,5aR,6S,8aS,10aR)-",
+    "3,5,20-TRI-O-ACETYLINGENOL",
+    "30220-45-2",
+    "4-[(Acetyloxy)methyl]-5a-hydroxy-1,1,7,9-tetramethyl-11-oxo-1a,2,5,5a,6,9,10,10a-octahydro-1H-2,8a-methanocyclopenta[a]cyclopropa[e][10]annulene-5,6-diyl diacetate",
+    "BRN 2230536",
+    "DTXSID50952601",
+    "Ingenol 3,5,20-triacetate",
+    "Ingenol triacetate",
+    "Ingenol, 3,5,20-triacetate",
+    "Ingenol-3,5,20-triacetate",
+    "JJ7S550U27",
+    "Q27281531",
+    "RD 3-2118",
+    "RD3-2118",
+    "RefChem:148291",
+    "SCHEMBL2038691",
+    "UNII-JJ7S550U27",
+    "[(1S,4S,5R,6R,9S,10R,12R,14R)-4,6-diacetyloxy-5-hydroxy-3,11,11,14-tetramethyl-15-oxo-7-tetracyclo[7.5.1.01,5.010,12]pentadeca-2,7-dienyl]methyl acetate"
+  ],
+  "http_status": 200,
+  "cids": [
+    65377
+  ]
+}

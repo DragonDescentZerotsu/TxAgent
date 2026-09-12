@@ -1,0 +1,42 @@
+{
+  "parent_key": "JDOZJEUDSLGTLU-VWUMJDOOSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDOZJEUDSLGTLU-VWUMJDOOSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-((1R,3aS,3bS,9aR,9bS,10S,11aS)-1,10-dihydroxy-9a,11a-dimethyl-7-oxo-1H,2H,3H,3aH,3bH,4H,5H,7H,9aH,9bH,10H,11H,11aH-cyclopenta(a)phenanthren-1-yl)-2-oxoethoxy)phosphonic acid",
+    "11,17-dihydroxy-21-(phosphonooxy)-Pregna-1,4-diene-3,20-dione",
+    "11beta,17,21-Trihydroxypregna-1,4-diene-3,20-dione 21-(dihydrogen phosphate)",
+    "11beta,17-dihydroxy-3,20-dioxopregna-1,4-dien-21-yl dihydrogen phosphate",
+    "2-((8S,9S,10R,11S,13S,14S,17R)-11,17-dihydroxy-10,13-dimethyl-3-oxo-6,7,8,9,10,11,12,13,14,15,16,17-dodecahydro-3H-cyclopenta[a]phenanthren-17-yl)-2-oxoethyl dihydrogen phosphate",
+    "206-120-1",
+    "302-25-0",
+    "752SY38R6C",
+    "CHEBI:145705",
+    "CHEMBL1201231",
+    "DB14631",
+    "DTXCID5027481",
+    "DTXSID7047481",
+    "EBC-27105",
+    "EINECS 206-120-1",
+    "EN300-7481415",
+    "PREDNISOLONE 21-PHOSPHATE",
+    "PREDNISOLONE PHOSPHATE [WHO-DD]",
+    "PREDONINE-21-PHOSPHATE",
+    "PREGNA-1,4-DIENE-3,20-DIONE, 11,17-DIHYDROXY-21-(PHOSPHONOOXY)-, (11.BETA.)-",
+    "Prednisolone 21-(dihydrogen phosphate)",
+    "Prednisolone Phosphoric Acid",
+    "Prednisolone phosphate",
+    "Q27266327",
+    "RefChem:868418",
+    "SCHEMBL136773",
+    "UNII-752SY38R6C",
+    "[2-[(8S,9S,10R,11S,13S,14S,17R)-11,17-dihydroxy-10,13-dimethyl-3-oxo-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-17-yl]-2-oxoethyl] dihydrogen phosphate",
+    "prednisolone 21-monophosphate",
+    "prednisolone-sodium-phosphate",
+    "{2-[(1R,3aS,3bS,9aR,9bS,10S,11aS)-1,10-dihydroxy-9a,11a-dimethyl-7-oxo-1H,2H,3H,3aH,3bH,4H,5H,7H,9aH,9bH,10H,11H,11aH-cyclopenta[a]phenanthren-1-yl]-2-oxoethoxy}phosphonic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    72078
+  ]
+}

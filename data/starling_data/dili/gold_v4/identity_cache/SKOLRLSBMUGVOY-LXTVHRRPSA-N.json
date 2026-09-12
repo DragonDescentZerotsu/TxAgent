@@ -1,0 +1,12 @@
+{
+  "parent_key": "SKOLRLSBMUGVOY-LXTVHRRPSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1S,2S,9S,10R)-3,15-diazatetracyclo[7.7.1.02,7.010,15]heptadec-7-ene"
+  ],
+  "cids": [
+    10752071
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SKOLRLSBMUGVOY-LXTVHRRPSA-N/synonyms/JSON",
+  "http_status": 200
+}

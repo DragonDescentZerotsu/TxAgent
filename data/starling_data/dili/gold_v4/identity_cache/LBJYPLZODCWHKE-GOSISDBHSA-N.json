@@ -1,0 +1,32 @@
+{
+  "parent_key": "LBJYPLZODCWHKE-GOSISDBHSA-N",
+  "ok": true,
+  "synonyms": [
+    "(4R)-4-Cyclopropyl-8-fluoro-4,5-dihydro-5-((6-(trifluoromethyl)-3-pyridinyl)sulfonyl)-2H-pyrazolo(4,3-C)quinoline",
+    "(4R)-4-cyclopropyl-8-fluoro-5-[6-(trifluoromethyl)pyridin-3-yl]sulfonyl-1,4-dihydropyrazolo[4,3-c]quinoline",
+    "(R)-4-Cyclopropyl-8-fluoro-5-(6-(trifluoromethyl)pyridin-3-ylsulfonyl)-4,5-dihydro-2H-pyrazolo[4,3-c]quinoline",
+    "(R)-4-cyclopropyl-8-fluoro-5-(6-(trifluoromethyl)pyridin-3-ylsulfonyl)-4,5-dihydro-1H-pyrazolo[4.3-c]quinoline",
+    "1444006-79-4",
+    "2H-Pyrazolo(4,3-C)quinoline, 4-cyclopropyl-8-fluoro-4,5-dihydro-5-((6-(trifluoromethyl)-3-pyridinyl)sulfonyl)-, (4R)-",
+    "5-(((4R)-4-Cyclopropyl-8-fluoro-2H,4H,5H-pyrazolo(4,3-C)quinolin-5-yl)sulfonyl)-2-(trifluoromethyl)pyridine",
+    "CHEMBL2396772",
+    "CS-0009196",
+    "ELND 007",
+    "ELND-007",
+    "ELND007",
+    "HY-16633",
+    "RefChem:136546",
+    "SCHEMBL2704511",
+    "SCHEMBL29496198",
+    "SCHEMBL30077678",
+    "SCHEMBL486211",
+    "UNII-VKU3JVL7UC",
+    "VKU3JVL7UC",
+    "orb1738845"
+  ],
+  "cids": [
+    46912223
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LBJYPLZODCWHKE-GOSISDBHSA-N/synonyms/JSON",
+  "http_status": 200
+}

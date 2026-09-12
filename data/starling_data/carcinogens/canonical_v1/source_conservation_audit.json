@@ -1,0 +1,8 @@
+{
+  "task": "carcinogens",
+  "rows_checked": 3270087,
+  "all_raw_fields_equal": true,
+  "permanent_uid_equal": true,
+  "source_ordinals_equal": true,
+  "raw_parquet_parts": 12
+}

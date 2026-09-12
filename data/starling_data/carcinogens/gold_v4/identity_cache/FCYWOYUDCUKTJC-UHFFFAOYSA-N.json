@@ -1,0 +1,30 @@
+{
+  "parent_key": "FCYWOYUDCUKTJC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FCYWOYUDCUKTJC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "82018-90-4",
+    "84UCP6J2LJ",
+    "AKOS006278472",
+    "CCRIS 481",
+    "DIETHYLAMINE, N-NITROSO-2,2,2-TRIFLUORO-",
+    "DTXSID3021011",
+    "Ethanamine, N-ethyl-2,2,2-trifluoro-N-nitroso-",
+    "F-3-NDEA",
+    "FCYWOYUDCUKTJC-UHFFFAOYSA-N",
+    "N-Nitroso(2,2,2-trifluoroethyl) ethylamine",
+    "N-Nitroso(2,2,2-trifluoroethyl)ethylamine",
+    "N-Nitroso-(2,2,2-trifluoroethyl)ethylamine",
+    "N-Nitroso-2,2,2-trifluorodiethylamine",
+    "N-Nitroso-2,2,2-trifluoroethyl-ethylamine",
+    "N-ethyl-2,2,2-trifluoro-N-nitrosoethanamine",
+    "N-ethyl-N-(2,2,2-trifluoroethyl)nitrous amide",
+    "NITROSO(2,2,2-TRIFLUOROETHYL)ETHYLAMINE, N-",
+    "RefChem:927288",
+    "UNII-84UCP6J2LJ"
+  ],
+  "http_status": 200,
+  "cids": [
+    54806
+  ]
+}

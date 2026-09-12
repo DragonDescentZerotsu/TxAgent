@@ -1,0 +1,217 @@
+{
+  "dili": {
+    "raw_path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+    "raw_sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+    "raw_records": 189172,
+    "raw_status_counts": {
+      "established_or_definite": 98209,
+      "association_signal": 36369,
+      "possible": 11719,
+      "not_supported": 15563,
+      "suspected_cause": 20108,
+      "probable": 5190,
+      "highly_probable": 630,
+      "None": 106,
+      "conflicting": 1256,
+      "associated_with_low_mortality_DILI": 1,
+      "establishment_or_definite": 1,
+      "review_or_reference_assertion": 8,
+      "definite": 1,
+      "clinical_trial": 1,
+      "establishment_note": 1,
+      "establish_or_definite": 1,
+      "possibly": 1,
+      "pharmacovigilance": 1,
+      "suspected": 5,
+      "establishing": 1
+    },
+    "strict_positive_categories": [
+      "established_or_definite",
+      "highly_probable",
+      "probable"
+    ],
+    "strict_positive": 104029,
+    "explicit_negative": 15563,
+    "other": 69580,
+    "negative_by_evidence_basis": {
+      "review_or_reference_assertion": 2132,
+      "explicit_negative_evidence": 8235,
+      "clinical_trial": 3101,
+      "pharmacovigilance": 86,
+      "individual_case": 480,
+      "regulatory_or_curated_classification": 95,
+      "observational_epidemiology": 826,
+      "registry_or_adjudicated_cohort": 49,
+      "case_series": 545,
+      "None": 14
+    },
+    "negative_first_rejection_reasons": {
+      "not_primary_human_outcome": 10394,
+      "negative_not_explicit_or_contains_residual_risk": 2900,
+      "non_single_small_molecule": 307,
+      "laboratory_signal_only": 6,
+      "no_explicit_injury_support": 1512,
+      "support_context_or_secondary_assertion_requires_review": 38,
+      "context_or_extraction_confidence_review_required": 181,
+      "unresolved_exposure_context": 50,
+      "explicit_primary_human_outcome": 160,
+      "named_agent_not_explicit_in_support": 12,
+      "invalid_structure_or_parent": 2,
+      "multiple_organic_components": 1
+    },
+    "stages": {
+      "initial_candidates": {
+        "n": 4894,
+        "labels": {
+          "1": 4734,
+          "0": 160
+        }
+      },
+      "one_pmid_parent_condition": {
+        "n": 4735,
+        "labels": {
+          "1": 4578,
+          "0": 157
+        }
+      },
+      "at_least_two_pmids": {
+        "n": 1325,
+        "labels": {
+          "1": 1287,
+          "0": 38
+        }
+      },
+      "condition_coverage_before_identity": {
+        "n": 1194,
+        "labels": {
+          "1": 1156,
+          "0": 38
+        }
+      },
+      "final_source_votes": {
+        "n": 1015,
+        "labels": {
+          "1": 985,
+          "0": 30
+        }
+      }
+    },
+    "final_gold": {
+      "1": 158,
+      "0": 9
+    },
+    "negative_distinct_names": 2445,
+    "negative_distinct_pmids": 9611,
+    "files": {
+      "dili/gold_v1/base_record_decisions.parquet": "11f19ca01587dfa9b45446abdecddd5fe998923d3cf7e01b5a430ad1a4cfb146",
+      "dili/gold_v1/candidate_votes.jsonl": "4a2e851d8c27054f7120f4a78bcd92fe7cbd209b682fdefdf5b4ae56b58411da",
+      "dili/gold_v1/source_votes.jsonl": "ccb75c92a00bdbf25195c8dadcf4af037e08570dda97b3e2eb743af337e1eeea"
+    }
+  },
+  "carcinogens": {
+    "raw_path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
+    "raw_sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
+    "raw_records": 354386,
+    "raw_status_counts": {
+      "positive": 219420,
+      "established": 16890,
+      "negative": 33727,
+      "equivocal_or_conflicting": 4906,
+      "hypothetical": 10857,
+      "inadequate_or_not_classifiable": 4293,
+      "None": 101,
+      "limited_or_suspected": 51387,
+      "probable": 3113,
+      "possible": 9684,
+      "cocarcinogen_or_enhancer": 1,
+      "mixed": 1,
+      "likely_limited_association_not_reported": 1,
+      "explanation": 2,
+      "suspect": 3
+    },
+    "strict_positive_categories": [
+      "established",
+      "positive"
+    ],
+    "strict_positive": 236310,
+    "explicit_negative": 33727,
+    "other": 84349,
+    "negative_by_evidence_basis": {
+      "animal_carcinogenicity_bioassay": 11297,
+      "review_list_or_narrative_assertion": 4590,
+      "mechanistic_with_explicit_carcinogen_claim": 203,
+      "experimental_tumor_model": 2038,
+      "in_vitro_neoplastic_transformation": 292,
+      "human_epidemiology": 12953,
+      "authoritative_classification": 746,
+      "integrated_multiple": 357,
+      "human_clinical_or_case_evidence": 1062,
+      "animal_carcinogenicity_bioassay_historical": 1,
+      "None": 187,
+      "in_vitro_neoplastic_formation": 1
+    },
+    "negative_first_rejection_reasons": {
+      "negative_not_explicit": 15686,
+      "no_explicit_carcinogenicity_support": 2371,
+      "not_direct_human_or_animal_outcome": 9086,
+      "animal_species_missing_or_pooled": 3272,
+      "non_single_substance": 709,
+      "site_limited_negative_not_overall_hazard": 693,
+      "context_or_extraction_confidence_review_required": 762,
+      "initiator_promoter_or_cocarcinogen_role": 402,
+      "explicit_direct_carcinogenicity_outcome": 437,
+      "named_agent_not_explicit_in_support": 79,
+      "support_context_or_secondary_assertion_requires_review": 204,
+      "invalid_structure_or_parent": 7,
+      "multiple_organic_components": 19
+    },
+    "stages": {
+      "initial_candidates": {
+        "n": 13781,
+        "labels": {
+          "1": 13344,
+          "0": 437
+        }
+      },
+      "one_pmid_parent_condition": {
+        "n": 12635,
+        "labels": {
+          "1": 12199,
+          "0": 436
+        }
+      },
+      "at_least_two_pmids": {
+        "n": 1016,
+        "labels": {
+          "1": 1007,
+          "0": 9
+        }
+      },
+      "condition_coverage_before_identity": {
+        "n": 612,
+        "labels": {
+          "1": 606,
+          "0": 6
+        }
+      },
+      "final_source_votes": {
+        "n": 500,
+        "labels": {
+          "1": 494,
+          "0": 6
+        }
+      }
+    },
+    "final_gold": {
+      "1": 108,
+      "0": 3
+    },
+    "negative_distinct_names": 6544,
+    "negative_distinct_pmids": 11143,
+    "files": {
+      "carcinogens/gold_v1/base_record_decisions.parquet": "9937df8ea665007f2be659e0558df55b4048570b59f323d541a741518a718428",
+      "carcinogens/gold_v1/candidate_votes.jsonl": "4fb93fffa4207d792a51eb7000646963a6055120b1374c496b6dd9a3ba7d22f5",
+      "carcinogens/gold_v1/source_votes.jsonl": "c6af7aac75cd97be8d34ce3134c6809f4b4b9eb3864336aeeeffe95f1e8f0271"
+    }
+  }
+}

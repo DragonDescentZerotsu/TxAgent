@@ -1,0 +1,19 @@
+{
+  "parent_key": "JPTHBLUOBPHXEN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JPTHBLUOBPHXEN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-(4-METHYL-1-OXO-2(1H)-PHTHALAZINYL)PROPANOIC ACID",
+    "3-(4-Methyl-1-oxophthalazin-2(1H)-yl)propanoic acid",
+    "3-(4-Methyl-1-oxophthalazin-2(1H)-yl)propanoicacid",
+    "3-(4-methyl-1-oxo-1H-phthalazin-2-yl)-propionic acid",
+    "661-784-3",
+    "91393-18-9",
+    "AKOS024328102",
+    "RefChem:493271"
+  ],
+  "http_status": 200,
+  "cids": [
+    90481553
+  ]
+}

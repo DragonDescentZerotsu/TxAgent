@@ -1,0 +1,28 @@
+{
+  "parent_key": "SSLKYUHVHLAUNE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2(1H)-PYRIDINONE,5-FLUORO-4-HYDROXY-(9CI)",
+    "2(1H)-Pyridinone, 5-fluoro-4-hydroxy-",
+    "2,4-Dihydroxy-5-fluoropyridine",
+    "41935-70-0",
+    "5-FLUORO-4-HYDROXY-2(1H)-PYRIDINONE",
+    "5-Fluoro-4-hydroxypyridin-2(1H)-one",
+    "5-fluoro-2-hydroxy-1H-pyridin-4-one",
+    "5-fluoro-4-hydroxy-1,2-dihydropyridin-2-one",
+    "5-fluoro-4-hydroxy-1H-pyridin-2-one",
+    "AKOS006359566",
+    "AS-82814",
+    "DB-349920",
+    "F87938",
+    "F928864",
+    "MFCD18071436",
+    "SCHEMBL3464747"
+  ],
+  "cids": [
+    21827422,
+    54703956
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SSLKYUHVHLAUNE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,39 @@
+{
+  "parent_key": "KOPVBVBUIYTJBG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KOPVBVBUIYTJBG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "20268-51-3",
+    "7-NITROBENZ(A)ANTHRACENE",
+    "7-NITROBENZ(A)ANTHRACENE [IARC]",
+    "7-Nitro benz(a)anthracene",
+    "7-Nitrobenz[a]anthracene",
+    "7-Nitrobenzanthracene",
+    "7-Nitrobenzo[a]anthracene",
+    "7-Nitrobenzo[a]anthracene #",
+    "7-nitrotetraphene",
+    "72LYC65SLS",
+    "BRN 2284800",
+    "Benz(a)anthracene, 7-nitro-",
+    "Benz[a]anthracene, 7-nitro-",
+    "C19471",
+    "CCRIS 5863",
+    "CHEBI:82502",
+    "CHEMBL167941",
+    "DB-045144",
+    "DTXSID0075077",
+    "MFCD00215950",
+    "MSK4352",
+    "NITROBENZ(A)ANTHRACENE, 7-",
+    "NS00075566",
+    "Q27156007",
+    "RefChem:546917",
+    "SCHEMBL15900491",
+    "SCHEMBL31677789",
+    "UNII-72LYC65SLS"
+  ],
+  "http_status": 200,
+  "cids": [
+    30086
+  ]
+}

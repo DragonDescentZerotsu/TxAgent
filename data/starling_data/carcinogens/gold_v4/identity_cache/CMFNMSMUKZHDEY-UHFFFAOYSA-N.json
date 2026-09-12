@@ -1,0 +1,34 @@
+{
+  "parent_key": "CMFNMSMUKZHDEY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CMFNMSMUKZHDEY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(-)Oxoperoxonitrate",
+    "(1-)oxidoperoxidonitrate",
+    "(dioxidanido)oxidonitrogen",
+    "14691-52-2",
+    "AKOS015910235",
+    "Acid, Peroxynitrous",
+    "CHEBI:25942",
+    "CHEMBL1794794",
+    "DTXCID2086034",
+    "DTXSID00163543",
+    "HNO(O2)",
+    "HOONO",
+    "Peroxynitrous acid",
+    "Q27110016",
+    "Q7169514",
+    "RefChem:171839",
+    "SCHEMBL15117",
+    "SCHEMBL6060231",
+    "[NO(OOH)]",
+    "azoperoxous acid",
+    "dioxidanidooxidonitrogen",
+    "hydroxy nitrite",
+    "t,perp-HOONO"
+  ],
+  "http_status": 200,
+  "cids": [
+    123349
+  ]
+}

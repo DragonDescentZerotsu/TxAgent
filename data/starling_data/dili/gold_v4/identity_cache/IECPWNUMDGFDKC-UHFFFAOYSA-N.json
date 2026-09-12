@@ -1,0 +1,17 @@
+{
+  "parent_key": "IECPWNUMDGFDKC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3a,4a,8a,9b,11a,13a,147b,167b,17Z)-16-(Acetyloxy)-3,11-dihydroxy-29-nordammara-17(20);24-dien-21-oic acid",
+    "2-(16-acetoxy-3,11-dihydroxy-4,8,10,14-tetramethyl-2,3,4,5,6,7,9,11,12,13,15,16-dodecahydro-1H-cyclopenta[a]phenanthren-17-ylidene)-6-methyl-hept-5-enoic acid",
+    "C31H48O6",
+    "DB-055357",
+    "SCHEMBL15387476",
+    "s3971"
+  ],
+  "cids": [
+    3443
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IECPWNUMDGFDKC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

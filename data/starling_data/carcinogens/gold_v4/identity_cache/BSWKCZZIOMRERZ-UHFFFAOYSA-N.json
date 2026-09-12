@@ -1,0 +1,25 @@
+{
+  "parent_key": "BSWKCZZIOMRERZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSWKCZZIOMRERZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(4-nitrosophenyl)-2-phenylhydrazine",
+    "4'-Hydroxyaminoazobenzene",
+    "6530-27-4",
+    "BRN 1842271",
+    "Benzenamine, N-hydroxy-4-(phenylazo)-",
+    "CCRIS 1066",
+    "CHEMBL81419",
+    "DTXSID90983934",
+    "Hydroxylamine, N-(p-(phenylazo)phenyl)-",
+    "N-(p-(Phenylazo)phenyl)hydroxylamine",
+    "N-Hydroxy-4-(phenylazo)benzenamine",
+    "N-Hydroxy-4-aminoazobenzene",
+    "SCHEMBL11597838",
+    "p-Hydroxylamino-Azobenzol"
+  ],
+  "http_status": 200,
+  "cids": [
+    107710
+  ]
+}

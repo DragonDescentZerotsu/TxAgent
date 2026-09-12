@@ -1,0 +1,6 @@
+{
+  "pid": 772216,
+  "script": "rebuild_scaffold.py",
+  "scope": "scaffold only",
+  "log": "data/starling_data/dili/retrieval_review_v4/scaffold_rebuild.log"
+}

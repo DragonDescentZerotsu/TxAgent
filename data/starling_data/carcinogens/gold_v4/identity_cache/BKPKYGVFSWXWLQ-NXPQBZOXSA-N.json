@@ -1,0 +1,21 @@
+{
+  "parent_key": "BKPKYGVFSWXWLQ-NXPQBZOXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BKPKYGVFSWXWLQ-NXPQBZOXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(all-E)-2-(3,7-Dimethyl-9-(2,6,6-trimethyl-1-cyclohexen-1-yl)-2,4,6,8-nonatetraenylidene)-5,5- dimethyl-1,3-cyclohexanedione",
+    "(all-E)-2-(3,7-Dimethyl-9-(2,6,6-trimethyl-1-cyclohexen-1-yl)-2,4,6,8-nonatetraenylidene)-5,5-dimethyl-1,3-cyclohexanedione",
+    "2-[(2E,4E,6E,8E)-3,7-dimethyl-9-(2,6,6-trimethylcyclohexen-1-yl)nona-2,4,6,8-tetraenylidene]-5,5-dimethylcyclohexane-1,3-dione",
+    "2-retinylidene-5,5-dimethyl-1,3-cyclohexanedione",
+    "70424-15-6",
+    "CCRIS 5527",
+    "CHEMBL167469",
+    "RefChem:178995",
+    "Retinylidene dimedone",
+    "SCHEMBL30719986"
+  ],
+  "http_status": 200,
+  "cids": [
+    6438646
+  ]
+}

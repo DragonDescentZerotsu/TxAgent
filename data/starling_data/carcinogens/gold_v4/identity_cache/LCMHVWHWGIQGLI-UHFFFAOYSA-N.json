@@ -1,0 +1,21 @@
+{
+  "parent_key": "LCMHVWHWGIQGLI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LCMHVWHWGIQGLI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "20-Isopropylcholanthrene",
+    "3-(Propan-2-yl)-1,2-dihydrocyclopenta[ij]tetraphene",
+    "3-05-00-02505 (Beilstein Handbook Reference)",
+    "3-Isopropyl-1,2-dihydrobenz[j]aceanthrylene",
+    "63041-70-3",
+    "BRN 3359201",
+    "Benz(j)aceanthrylene, 1,2-dihydro-3-(1-methylethyl)-",
+    "Cholanthrene, 3-isopropyl-",
+    "DB-218095",
+    "DTXSID80212361"
+  ],
+  "http_status": 200,
+  "cids": [
+    3047222
+  ]
+}

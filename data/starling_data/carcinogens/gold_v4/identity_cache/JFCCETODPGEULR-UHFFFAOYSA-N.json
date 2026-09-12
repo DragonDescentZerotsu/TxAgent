@@ -1,0 +1,12 @@
+{
+  "parent_key": "JFCCETODPGEULR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JFCCETODPGEULR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL10669966"
+  ],
+  "http_status": 200,
+  "cids": [
+    154388020
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "parent_key": "SODSCLKYSYCYLH-OZZRDPTJSA-N",
+  "ok": true,
+  "synonyms": [
+    "10H-Benzo(b)thioxanthene-9-carboxamide, 7-(dimethylamino)-5a,b,6a,7,10a,12-hexahydro-1,8,10a,11-tetrahydroxy-10,12-dioxo-, (5aS-(5aalpha,6aalpha,7alpha,10aalpha))-",
+    "59753-24-1",
+    "6-Thiatetracycline",
+    "Emd 33330",
+    "SODSCLKYSYCYLH-OZZRDPTJSA-N",
+    "Thiacycline"
+  ],
+  "cids": [
+    54676882
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/SODSCLKYSYCYLH-OZZRDPTJSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,40 @@
+{
+  "parent_key": "XEAQIWGXBXCYFX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+)- Kavain",
+    "1635-33-2",
+    "4-methoxy-2-(2-phenylethenyl)-2,3-dihydropyran-6-one",
+    "5,6-Dihydro-4-methoxy-6-(2-phenylethenyl)-2H-pyran-2-one",
+    "Bio2_000432",
+    "Bio2_000912",
+    "D,L Kavain",
+    "DTXCID40809731",
+    "DTXSID00859419",
+    "FK170267",
+    "HMS3369B03",
+    "HMS3370O04",
+    "KBio2_000524",
+    "KBio2_003092",
+    "KBio2_005660",
+    "KBio3_000947",
+    "KBio3_000948",
+    "KBioGR_000524",
+    "KBioSS_000524",
+    "L-KAWAIN",
+    "NS00006920",
+    "Q27163656",
+    "R,E)-4-Methoxy-6-styryl-5,6-dihydro-2H-pyran-2-one",
+    "RefChem:935828",
+    "SCHEMBL9016224",
+    "orb1301522",
+    "orb3140984",
+    "s9409",
+    "trans-5,6-Dihydro-4-methoxy-6-(2-phenylethenyl)-2H-pyran-2-one"
+  ],
+  "cids": [
+    10376
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XEAQIWGXBXCYFX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

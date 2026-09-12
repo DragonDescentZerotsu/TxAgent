@@ -1,0 +1,17 @@
+{
+  "parent_key": "ADHNUPOJJCKWRT-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ADHNUPOJJCKWRT-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2E,4E)-2,4-Octadecadienoicacid",
+    "1-octadecadienoic acid",
+    "ADHNUPOJJCKWRT-UHFFFAOYSA-N",
+    "Octadecadienoic acid, (Z,Z)-",
+    "SCHEMBL135346",
+    "octadeca-2,4-dienoic acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    154212
+  ]
+}

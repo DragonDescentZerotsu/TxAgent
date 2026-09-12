@@ -1,0 +1,42 @@
+{
+  "parent_key": "DEKNNWJXAQTLFA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DEKNNWJXAQTLFA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3-Hydroxytyramine-4-O-sulfate",
+    "3-Hydroxytyramine-4-O-sulphate",
+    "38339-02-5",
+    "4-(2-Aminoethyl)-1,2-benzenediol 1-(Hydrogen Sulfate); 3-Hydroxytyramine-4-O-sulfate; Dopamine Sulfate",
+    "4-(2-Aminoethyl)-1,2-benzenediol 1-(hydrogen sulfate)",
+    "4-(2-Aminoethyl)-1,2-benzenediol, 1-(hydrogen sulfate)",
+    "4-(2-aminoethyl)-2-hydroxyphenyl hydrogen sulfate",
+    "4-(2-azaniumylethyl)-2-hydroxyphenyl sulfate",
+    "5-(2-Aminoethyl)-2-(sulfooxy)phenol",
+    "AKOS027447849",
+    "BRD-K33811357-001-01-3",
+    "CHEBI:133529",
+    "CHEBI:34729",
+    "CS-0059445",
+    "DB-225332",
+    "DTXCID20114193",
+    "DTXSID20191702",
+    "Dopamine 4-O-sulphate",
+    "Dopamine 4-sulfate",
+    "HY-113257",
+    "Q27116247",
+    "RefChem:590368",
+    "SCHEMBL3135466",
+    "[4-(2-aminoethyl)-2-hydroxyphenyl] hydrogen sulfate",
+    "[4-(2-aminoethyl)-2-hydroxyphenyl]oxidanesulfonic acid",
+    "dopamine 4-O-sulfate",
+    "dopamine 4-O-sulfate zwitterion",
+    "dopamine 4-monosulfate",
+    "dopamine 4-monosulfate zwitterion",
+    "dopamine 4-sulfate zwitterion"
+  ],
+  "http_status": 200,
+  "cids": [
+    123932,
+    122164835
+  ]
+}

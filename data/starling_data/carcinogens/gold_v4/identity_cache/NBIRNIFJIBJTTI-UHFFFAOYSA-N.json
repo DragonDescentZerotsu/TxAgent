@@ -1,0 +1,23 @@
+{
+  "parent_key": "NBIRNIFJIBJTTI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NBIRNIFJIBJTTI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-(aziridin-1-yl)nonan-1-one",
+    "1-Nonanoylaziridine",
+    "63021-51-2",
+    "AZIRIDINE, 1-NONANOYL-",
+    "Aziridine, 1-(1-oxononyl)-",
+    "DTXSID40212307",
+    "NSC 162170",
+    "NSC-162170",
+    "NSC162170",
+    "Nonanoylethyleneimine",
+    "SCHEMBL27979628"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Yellow (60%), Request Time status: Green (16%), Service status: Black (103%)",
+  "cids": [
+    44330
+  ]
+}

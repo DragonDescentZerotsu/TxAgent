@@ -1,0 +1,15 @@
+{
+  "parent_key": "JDFWAYHAYKODRR-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDFWAYHAYKODRR-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "JDFWAYHAYKODRR-UHFFFAOYSA-N",
+    "Phthalic acid, di(oct-3-yl) ester",
+    "SCHEMBL913893",
+    "bis(ethylhexyl)phthalate"
+  ],
+  "http_status": 200,
+  "cids": [
+    15764573
+  ]
+}

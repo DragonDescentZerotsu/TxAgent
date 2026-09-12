@@ -1,0 +1,21 @@
+{
+  "parent_key": "OOAFLQVYVWVEFX-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(di-n-propylsulfamyl)-benzoic acid",
+    "1016723-74-2",
+    "2-(DIPROPYLSULFAMOYL)BENZOIC ACID",
+    "2-(N,N-Dipropylsulfamoyl)benzoic acid",
+    "2-[(Dipropylamino)sulfonyl]benzoic Acid",
+    "AKOS000165471",
+    "EN300-6744496",
+    "RQB72374",
+    "SCHEMBL3454762",
+    "Z285613588"
+  ],
+  "cids": [
+    18072777
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/OOAFLQVYVWVEFX-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

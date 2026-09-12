@@ -1,0 +1,19 @@
+{
+  "parent_key": "AWOUERYHOVSIAI-REOHCLBHSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AWOUERYHOVSIAI-REOHCLBHSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2S)-2-(hydroxyamino)propanoic acid",
+    "21209-71-2",
+    "AWOUERYHOVSIAI-REOHCLBHSA-N",
+    "DTXSID20595100",
+    "Hydroxyalanine",
+    "N-Hydroxy-L-alanine",
+    "RefChem:1087050",
+    "SCHEMBL1461150"
+  ],
+  "http_status": 200,
+  "cids": [
+    18605011
+  ]
+}

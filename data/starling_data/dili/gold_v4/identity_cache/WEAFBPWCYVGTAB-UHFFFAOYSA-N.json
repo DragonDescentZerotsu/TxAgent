@@ -1,0 +1,20 @@
+{
+  "parent_key": "WEAFBPWCYVGTAB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2-(p-Benzylphenoxy)-heptanoic acid",
+    "2-[([1,1'-Biphenyl]-4-yl)oxy]heptanoic acid",
+    "23471-35-4",
+    "DTXSID70946148",
+    "GP 45,699",
+    "GP 45699",
+    "GP-45,699",
+    "GP-45699",
+    "RefChem:144212"
+  ],
+  "cids": [
+    193026
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WEAFBPWCYVGTAB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

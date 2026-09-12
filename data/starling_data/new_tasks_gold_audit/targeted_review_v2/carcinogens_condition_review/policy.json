@@ -1,0 +1,38 @@
+{
+  "model_aliases": {
+    "sd rat": "sprague-dawley rat",
+    "male sd rat": "male sprague-dawley rat",
+    "female sd rat": "female sprague-dawley rat",
+    "sprague-dawley female rat": "female sprague-dawley rat",
+    "sprague-dawley male rat": "male sprague-dawley rat",
+    "f344 rat (female)": "female f344 rat",
+    "f344 rat (male)": "male f344 rat",
+    "rat (male and female)": "male and female rat",
+    "mouse (male and female)": "male and female mouse",
+    "ovarian cancer patients (international case-control study, 114 taml cases)": "ovarian cancer patients"
+  },
+  "redundant_models": {
+    "rat": [
+      "rat",
+      "rat (rattus norvegicus)",
+      "rats",
+      "rattus norvegicus",
+      "rattus norvegicus (rat)"
+    ],
+    "mouse": [
+      "mice",
+      "mouse",
+      "mouse (mus musculus)",
+      "mus musculus",
+      "mus musculus (mouse)"
+    ],
+    "human": [
+      "human",
+      "humans"
+    ]
+  },
+  "qualifier_aliases": {
+    "applied on dorsal skin of 20 rats each; observation period of 15 months": "applied on dorsal skin; observation period of 15 months"
+  },
+  "unknown_atoms": "preserve unchanged"
+}

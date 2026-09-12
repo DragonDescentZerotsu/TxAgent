@@ -1,0 +1,156 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "source_branch": "joseph",
+  "original_root": "data/raw/starling/dili/",
+  "format": "ordinary_lossless_parquet_parts",
+  "uid_policy": "preserve_source_row_uid_verbatim",
+  "sources": [
+    {
+      "authoritative_path": "dili/dili_base/extractions.parquet",
+      "authoritative_sha256": "0258817d39a87bf8c95430d959141c89b86aeb512bc4b4c03686c65cd187423c",
+      "parts": [
+        {
+          "bytes": 50388986,
+          "name": "dili_base.parquet",
+          "sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573"
+        }
+      ],
+      "rows": 189172,
+      "source_id": "dili_base",
+      "task_id": "dili"
+    },
+    {
+      "authoritative_path": "dili/dili_v1/extractions.parquet",
+      "authoritative_sha256": "b0138a14eb80b42a38a9219a13a6223d2f28bd8675643d82d7d9ea755226c008",
+      "parts": [
+        {
+          "bytes": 56892870,
+          "name": "dili_v1.parquet",
+          "sha256": "a605cb2b3218a239be872b3ccdac1f2dc9103a4af69493531549eca8fda6ac22"
+        }
+      ],
+      "rows": 277550,
+      "source_id": "dili_v1",
+      "task_id": "dili"
+    },
+    {
+      "authoritative_path": "dili/dili_v2/extractions.parquet",
+      "authoritative_sha256": "7cdc22603dbd49c0f11654bc432d2a448a725e1b35bfc012409032611c6adb28",
+      "parts": [
+        {
+          "bytes": 78048838,
+          "name": "dili_v2.parquet",
+          "sha256": "ecee8d79386a7744fe17447b94886d7ae94677bc7217ae400131a15865d506f5"
+        }
+      ],
+      "rows": 297544,
+      "source_id": "dili_v2",
+      "task_id": "dili"
+    },
+    {
+      "authoritative_path": "dili/dili_v3/extractions.parquet",
+      "authoritative_sha256": "316320145796bb761496ba5a24515325c6e99ee42c94f4c934d1277dcdea8082",
+      "parts": [
+        {
+          "bytes": 15724475,
+          "name": "dili_v3.parquet",
+          "sha256": "f0d63f125da6bbe1ca494538bf8101f782da929501bae8b8862a1e10461a23ec"
+        }
+      ],
+      "rows": 77201,
+      "source_id": "dili_v3",
+      "task_id": "dili"
+    },
+    {
+      "authoritative_path": "dili/dili_v4/extractions.parquet",
+      "authoritative_sha256": "094893cd25bf10c0714d962127cf6e5470d959004eb123bb2b988ffe54f1761f",
+      "parts": [
+        {
+          "bytes": 73422367,
+          "name": "dili_v4.parquet",
+          "sha256": "099521c74375b788c077090d7d1e45f64129912818c5bdbf5d235f3358c17a68"
+        }
+      ],
+      "rows": 278638,
+      "source_id": "dili_v4",
+      "task_id": "dili"
+    },
+    {
+      "authoritative_path": "dili/dili_v5/extractions.parquet",
+      "authoritative_sha256": "6ece09f29cfd9992edc9760bee11ec7b24f3877435bc49b95ae56f51dc9ce366",
+      "parts": [
+        {
+          "bytes": 48100166,
+          "name": "dili_v5.part-0001.parquet",
+          "sha256": "dcd50da8adc38fc19f45fa8719448c9a940fd03bc2c5f600583dcd5d3e3f6b93"
+        },
+        {
+          "bytes": 50235670,
+          "name": "dili_v5.part-0002.parquet",
+          "sha256": "2334dddee184ba95f7212510aaff1554f4904ec76bdf35ace7f9b5ba10ac92d7"
+        }
+      ],
+      "rows": 525004,
+      "source_id": "dili_v5",
+      "task_id": "dili"
+    }
+  ],
+  "files": {
+    "compressed/dili_base.parquet": {
+      "sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+      "git_path": "data/raw/starling/dili/compressed/dili_base.parquet"
+    },
+    "compressed/dili_v1.parquet": {
+      "sha256": "a605cb2b3218a239be872b3ccdac1f2dc9103a4af69493531549eca8fda6ac22",
+      "git_path": "data/raw/starling/dili/compressed/dili_v1.parquet"
+    },
+    "compressed/dili_v2.parquet": {
+      "sha256": "ecee8d79386a7744fe17447b94886d7ae94677bc7217ae400131a15865d506f5",
+      "git_path": "data/raw/starling/dili/compressed/dili_v2.parquet"
+    },
+    "compressed/dili_v3.parquet": {
+      "sha256": "f0d63f125da6bbe1ca494538bf8101f782da929501bae8b8862a1e10461a23ec",
+      "git_path": "data/raw/starling/dili/compressed/dili_v3.parquet"
+    },
+    "compressed/dili_v4.parquet": {
+      "sha256": "099521c74375b788c077090d7d1e45f64129912818c5bdbf5d235f3358c17a68",
+      "git_path": "data/raw/starling/dili/compressed/dili_v4.parquet"
+    },
+    "compressed/dili_v5.part-0001.parquet": {
+      "sha256": "dcd50da8adc38fc19f45fa8719448c9a940fd03bc2c5f600583dcd5d3e3f6b93",
+      "git_path": "data/raw/starling/dili/compressed/dili_v5.part-0001.parquet"
+    },
+    "compressed/dili_v5.part-0002.parquet": {
+      "sha256": "2334dddee184ba95f7212510aaff1554f4904ec76bdf35ace7f9b5ba10ac92d7",
+      "git_path": "data/raw/starling/dili/compressed/dili_v5.part-0002.parquet"
+    },
+    "compressed/manifest.json": {
+      "sha256": "3c949885ee38178b789d077eb020355b75c59e13cbf2ee6b549030daa1cac285",
+      "git_path": "data/raw/starling/dili/compressed/manifest.json"
+    },
+    "dili_base/extraction_guidance.json": {
+      "sha256": "a724600693b0da0c1047e12965879bf3c97f5875b23cece7730bb5121b404ff6",
+      "git_path": "data/raw/starling/dili/dili_base/extraction_guidance.json"
+    },
+    "dili_v1/extraction_guidance.json": {
+      "sha256": "502ef83e780870e35bfdfa7dc8ca68e999d5ac13989a424bed8a7fb66f371520",
+      "git_path": "data/raw/starling/dili/dili_v1/extraction_guidance.json"
+    },
+    "dili_v2/extraction_guidance.json": {
+      "sha256": "9f5dd7d6b9cbfc61bb3d1274dd35418d4e258fd9e5b06059b54461a8277c8945",
+      "git_path": "data/raw/starling/dili/dili_v2/extraction_guidance.json"
+    },
+    "dili_v3/extraction_guidance.json": {
+      "sha256": "54f6a2feb7d385a3a72432cea6160b31b0a62a6dac53e2f6ec6009e9fd92233f",
+      "git_path": "data/raw/starling/dili/dili_v3/extraction_guidance.json"
+    },
+    "dili_v4/extraction_guidance.json": {
+      "sha256": "a4fba5710f859681c6584391797010e0dd2a4c0a2545757ff187c92756813468",
+      "git_path": "data/raw/starling/dili/dili_v4/extraction_guidance.json"
+    },
+    "dili_v5/extraction_guidance.json": {
+      "sha256": "e6c664663dfe2faf4b02ab6207926bc8974eb9391baa99696ca680aef2d1ffc9",
+      "git_path": "data/raw/starling/dili/dili_v5/extraction_guidance.json"
+    }
+  }
+}

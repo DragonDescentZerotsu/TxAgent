@@ -1,0 +1,12 @@
+{
+  "parent_key": "IAYZODRKEQJGNP-DIKHCDEOSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL354635"
+  ],
+  "cids": [
+    57244454
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IAYZODRKEQJGNP-DIKHCDEOSA-N/synonyms/JSON",
+  "http_status": 200
+}

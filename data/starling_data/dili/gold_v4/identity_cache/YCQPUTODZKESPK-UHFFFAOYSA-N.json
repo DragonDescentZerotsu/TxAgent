@@ -1,0 +1,31 @@
+{
+  "parent_key": "YCQPUTODZKESPK-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R)-1,2,3,6-tetrahydropyridine-2-carboxylic acid",
+    "1,2,3,6-TETRAHYDRO-PYRIDINE-2-CARBOXYLIC ACID",
+    "1,2,3,6-Tetrahydro-2-pyridinecarboxylic acid",
+    "1,2,3,6-Tetrahydro-2-pyridinecarboxylic acid #",
+    "1,2,3,6-Tetrahydropyridin-2-carboxylic acid",
+    "1,2,3,6-tetrahydropyridine-2-carboxylic acid",
+    "2-Pyridinecarboxylic acid, 1,2,3,6-tetrahydro-",
+    "4,5-Dehydropipecolic acid",
+    "498-98-6",
+    "DTXSID20964413",
+    "EN300-2118681",
+    "RefChem:96420",
+    "SB46020",
+    "SCHEMBL1476768",
+    "SCHEMBL9603001",
+    "SCHEMBL9603004",
+    "SCHEMBL9603008",
+    "YCQPUTODZKESPK-UHFFFAOYSA-N",
+    "baikiain"
+  ],
+  "cids": [
+    557590,
+    74492146
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YCQPUTODZKESPK-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

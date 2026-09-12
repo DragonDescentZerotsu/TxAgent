@@ -1,0 +1,35 @@
+{
+  "parent_key": "FJQLVOHCPDYIFE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FJQLVOHCPDYIFE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(Benzo[pqr]tetraphen-6-yl)methanol",
+    "21247-98-3",
+    "6-(Hydroxymethyl)benzo(a)pyrene",
+    "6-(Hydroxymethyl)benzo[a]pyrene",
+    "6-HMBP",
+    "6-Hydroxymethylbenzo(a)pyrene",
+    "6-Hydroxymethylbenzo[A]Pyrene",
+    "6-hydroxymethanolbenzo(a)pyrene",
+    "9L76EWQ6Q3",
+    "BENZO(A)PYREN-6-YLMETHANOL",
+    "BENZO(a)PYRENE-6-METHANOL",
+    "BRN 2218844",
+    "Benzo(a)pyrene, 6-hydroxymethyl-",
+    "CCRIS 1079",
+    "CHEMBL170043",
+    "DTXCID2097982",
+    "DTXSID70175491",
+    "FJQLVOHCPDYIFE-UHFFFAOYSA-N",
+    "HYDROXYMETHYLBENZO(A)PYRENE, 6-",
+    "NS00115925",
+    "RefChem:104092",
+    "SCHEMBL936443",
+    "UNII-9L76EWQ6Q3",
+    "benzo[b]pyren-6-ylmethanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    30544
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "review_date": "2026-09-07",
+  "review_scope": "Provided raw fields, complete support_text, qualifying_conditions, extra_details, and existing vote lineage. No original PubMed paper verification.",
+  "sampling": "SHA256(audit_v1|UID) ascending within six predeclared strata per task; 32 per task, plus census of remaining 24 accepted DILI negative source votes. Purposive stratification, not a population error-rate estimate.",
+  "n_reviewed": 88,
+  "by_task": {
+    "dili": 56,
+    "carcinogens": 32
+  },
+  "by_verdict": {
+    "accepted_vote_requires_repair": 45,
+    "retain_positive_claim": 2,
+    "recall_candidate": 9,
+    "hold_for_review": 8,
+    "retain_exclusion": 23,
+    "hold_primary_provenance": 1
+  },
+  "all_final_negative_source_votes_reviewed": {
+    "dili": 30,
+    "carcinogens": 6
+  },
+  "evaluation_status": "blocked_pending_gold_semantic_rebuild",
+  "counts_sha256": "02de37dae0d9a6b62ebb082ac2635490e2b1dc2293798edeb3836cf7017b0713",
+  "reviewed_records_sha256": "cb4f5571dda02fc61205fede2afcb07b74a390255cafeafe507b9c8fbdb0667b",
+  "gold_votes_changed": false,
+  "splits_changed": false
+}

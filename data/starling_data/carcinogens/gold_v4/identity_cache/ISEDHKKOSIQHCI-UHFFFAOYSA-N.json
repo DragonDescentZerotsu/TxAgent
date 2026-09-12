@@ -1,0 +1,12 @@
+{
+  "parent_key": "ISEDHKKOSIQHCI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ISEDHKKOSIQHCI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "nitrosomethyl-n-tetradecylamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    21119312
+  ]
+}

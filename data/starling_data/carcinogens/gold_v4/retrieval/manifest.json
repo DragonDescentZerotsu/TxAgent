@@ -1,0 +1,101 @@
+{
+  "schema_version": "carcinogens_gold_v4_retrieval_release.v1",
+  "status": "records_indices_and_card_links_validated",
+  "source_gold": "data/starling_data/carcinogens/gold_v4/source_votes.jsonl",
+  "source_gold_sha256": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0",
+  "benchmark_root": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens",
+  "records": "data/starling_data/carcinogens/gold_v4/retrieval/source/records.parquet",
+  "records_sha256": "1ae4bea6126b5ea632774e87621e939bcd0d2a6d50aaed72e63dfabb4bfef569",
+  "catalog": "data/starling_data/carcinogens/gold_v4/retrieval/catalog",
+  "catalog_sha256": "93783ec234b8eafd1c234fa23c56e2742d51ad1200d1708413eb9c8cac9f71c0",
+  "level_counts_before_heldout": {
+    "0": 118157,
+    "1": 89617,
+    "2": 406257,
+    "3": 750313,
+    "4": 650552,
+    "5": 749494,
+    "6": 218403,
+    "7": 287294
+  },
+  "l1_source_labels": {
+    "0": 7453,
+    "1": 82164
+  },
+  "source_rows_deleted": 0,
+  "new_hash_bound_identity_holds": 5,
+  "hash_bound_identity_clearances": 137,
+  "nonrepresentative_study_support_in_l2": 83181,
+  "heldout_prefilter_levels": [
+    1
+  ],
+  "filter_scope_field": "group_id",
+  "filter_scope_value": "Group.carcinogenicity_direct",
+  "exact_deduplication_policy": "All raw fields including PMID, support, conditions and confidence plus canonical identity and identity hold; ignore only source_row_uid/extraction_id/paragraph_idx. Prefer actual voter.",
+  "gold_labels_sha256": "9af552cd71a466417aca5a8d908a76f2762cab3406328e29bb6aa40e1e5f9c64",
+  "card_link_validation": {
+    "n_unique_source_card_keys": 3151894,
+    "n_indexed_cards_checked": 5576810,
+    "n_missing_source_card_keys": 0
+  },
+  "target_definition": "Starling source-consensus carcinogenicity within one of five reported organism groups; sex, strain, route, dose and duration pooled, with original record restrictions preserved; no universal exposure claim",
+  "evaluation_policy": "New cohort requires fresh evaluation; historical inspected cohorts may overlap. No Carcinogens inference launched by this data release.",
+  "test_previously_used_for_validation": true,
+  "new_model_calls": 0,
+  "tdc_labels_used": false,
+  "indices": {
+    "scaffold": {
+      "path": "data/starling_data/carcinogens/gold_v4/retrieval/indices/scaffold",
+      "index_sha256": "328ef2c1a162dcc50045c1f905c988b1289b1c869fca4af39c2fc8ea644aa973",
+      "evidence_sha256": "9945f7c5885e6d2e4a5cdc0a24d530727404c93356435a821000795a68a50de1",
+      "retained_direct_records_by_level": {
+        "1": 69518,
+        "2": 406257
+      },
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 35868,
+      "heldout_l2_source_records_retained": 71925,
+      "validation": "data/starling_data/carcinogens/gold_v4/retrieval/indices/scaffold/identity_validation.json"
+    },
+    "random": {
+      "path": "data/starling_data/carcinogens/gold_v4/retrieval/indices/random",
+      "index_sha256": "a48abb1dd7f88c80e331b5f9e0a3a4d061ca64bbfc3ea015f5811604b1543019",
+      "evidence_sha256": "689bc42768ea6d35e21c4759a8e965aa5e70333f58e60967bca1cc81c08fe84f",
+      "retained_direct_records_by_level": {
+        "1": 60863,
+        "2": 406257
+      },
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 38640,
+      "heldout_l2_source_records_retained": 95466,
+      "validation": "data/starling_data/carcinogens/gold_v4/retrieval/indices/random/identity_validation.json"
+    }
+  },
+  "validation_inputs": {
+    "data/starling_data/carcinogens/gold_v4/retrieval/source/membership_refresh_receipt.json": "f3f30f4c90d5609de1574137c173cd99649fcb00d3aed257a03ac14e6dde41e4",
+    "data/starling_data/carcinogens/gold_v4/retrieval/tables/validation.json": "beadb3056f8c664e1266c5a83b23e4c9f2c2f846e36c19a745f2d7c54d3b3455",
+    "data/starling_data/carcinogens/gold_v4/retrieval/heldout/receipt.json": "6cdadd68e211a58d52bca73b19e1f2c48ef97ec25e41d63a6655803cc9b32eca",
+    "data/starling_data/carcinogens/gold_v4/retrieval/rebuild.sh": "3e3038d89f7d1c0d03f3185cb06d1f9544a60a30db8ea8a9484f86727c1cffe2",
+    "data/starling_data/carcinogens/gold_v4/validation.json": "a6c71253de0a582934affa802ead9ca62782574298a92aa52dee2c8862391f83",
+    "data/starling_data/carcinogens/gold_v4/summary.json": "7c320e9eacab65d31891f4fc6f293c417b49da28aa1d5113c06c286f09c4258e",
+    "tools/chembl_tool/common/starling/validate_new_task_retrieval_identity.py": "6349edc5344492801c58fcd631f243010e3c824d92164510c3686b6ce0649af7",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/train.jsonl": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/train_molecule_condition_labels.jsonl": "7d053870ead1a05f1c2e4163b275ab8b7fbcc0aa052b31b7f16df67f6ad3ced3",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/valid.jsonl": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/valid_molecule_condition_labels.jsonl": "1999f4ccd227998a5d9e2b37ec215411564ed82fa2f28ac196ee3adc3e9ae42e",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/test.jsonl": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/test_molecule_condition_labels.jsonl": "e557dc579ff6a3f3e02527eaf32190825b1b515b95a29d2941de83311db4f3eb",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/heldout_molecule_condition_labels.jsonl": "3843ec142c185317bf5726cc6027b6f7475b98e9cc2bcabcdcbfe22b850c8ebb",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_record_votes.jsonl": "1a53c7b23ed403f71d6d13dcb7d1662f26b9e4b6742b0c55b3f1823ef0fd0af8",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "cce4db468bedaa5b19d6420827e288c91b0469c69270788a5e84511203465dae",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/accepted_parent_conditions.jsonl": "e2fdbd4847e6bc8c039fbec2a49afcb9073ac26cf30376973dd0e80139bbd72a",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/rejected_parent_conditions.jsonl": "d6e9dc81050bb2ad30c7b1634a381273992ac2a5c471932e3508db29d758a8c6",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/train_molecule_condition_labels.jsonl": "bf40cefd23ba7d9870883139fc144744e18e6d30222a5a4c975c7ec447729d53",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/train.jsonl": "035d7f27b119b78ae1a9fdf093f0015661a351eda299f04cd93e4b99833defbd",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/valid_molecule_condition_labels.jsonl": "dbfd22994bdf3b37582800509b8fe650da97cf27467c284589c46f1a245471d9",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/valid.jsonl": "90648e833d42b5537b5800c85f7317a437eaa9398e08bb791b5dc5f7e9abbd40",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/test_molecule_condition_labels.jsonl": "c14b4de06c3cdca35cdbd71139acea295d6b067d1207a55df578b3786a4682e2",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/test.jsonl": "ade7cdd3836f4d98fd89e020c3fed5bd2f1deea477cabb4f57924776a229b28c",
+    "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/random/heldout_molecule_condition_labels.jsonl": "beda94e4149ab7bbadaf04a30054be4adc539ca4b6d6fafde38008bc169bb4d5"
+  }
+}

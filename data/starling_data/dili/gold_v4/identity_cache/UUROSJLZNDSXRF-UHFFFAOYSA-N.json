@@ -1,0 +1,39 @@
+{
+  "parent_key": "UUROSJLZNDSXRF-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-NAPHTHALENEACETAMIDE, N-(5-(1,1-DIMETHYLETHYL)-2-METHOXY-3-((METHYLSULFONYL)AMINO)PHENYL)-4-(2-(4-MORPHOLINYL)ETHOXY)-.ALPHA.-OXO-",
+    "1-Naphthaleneacetamide, N-(5-(1,1-dimethylethyl)-2-methoxy-3-((methylsulfonyl)amino)phenyl)-4-(2-(4-morpholinyl)ethoxy)-alpha-oxo-",
+    "848144-15-0",
+    "AKOS025158440",
+    "BDBM50323654",
+    "BRD-K76911699-001-01-6",
+    "BRD-K76911699-001-02-4",
+    "CHEMBL1208829",
+    "DB-214152",
+    "DTXCID30156367",
+    "DTXSID00233876",
+    "ITX 5061 free base",
+    "ITX-5061 free base",
+    "KC-706 FREE BASE",
+    "N-(5-(tert-Butyl)-2-methoxy-3-(methylsulfonamido)phenyl)-2-(4-(2-morpholinoethoxy)naphthalen-1-yl)-2-oxoacetamide",
+    "N-(5-tert-Butyl-3-methanesulfonylamino-2-methoxy-phenyl)-2-[4-(2-morpholin-4-yl-ethoxy)-naphthalen-1-yl]-2-oxo-acetamide",
+    "N-(5-tert-butyl-2-methoxy-3-(methylsulfonamido)phenyl)-2-(4-(2-morpholinoethoxy)naphthalen-1-yl)-2-oxoacetamide",
+    "N-[5-tert-Butyl-3-(methanesulfonamido)-2-methoxyphenyl]-2-{4-[2-(morpholin-4-yl)ethoxy]naphthalen-1-yl}-2-oxoacetamide",
+    "N-[5-tert-butyl-3-(methanesulfonamido)-2-methoxyphenyl]-2-[4-(2-morpholin-4-ylethoxy)naphthalen-1-yl]-2-oxoacetamide",
+    "N-{2-methoxy-5-(2-methyl-2-propanyl)-3-[(methylsulfonyl)amino]phenyl}-2-{4-[2-(4-morpholinyl)ethoxy]-1-Naphthyl}-2-oxoacetamide",
+    "Q27288066",
+    "RDD1D7O9YX",
+    "RefChem:150236",
+    "SB17514",
+    "SCHEMBL1598868",
+    "SCHEMBL29437772",
+    "UNII-RDD1D7O9YX",
+    "UUROSJLZNDSXRF-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    11786594
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/UUROSJLZNDSXRF-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

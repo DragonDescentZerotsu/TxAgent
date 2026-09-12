@@ -1,0 +1,17 @@
+{
+  "parent_key": "MLOLQJNKXBNWFW-SAGGEDDASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MLOLQJNKXBNWFW-SAGGEDDASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "EX-A7826E",
+    "GTPL13769",
+    "T76279",
+    "Triple G",
+    "orb1981169"
+  ],
+  "http_status": 200,
+  "cids": [
+    171390338,
+    175647808
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "FOGYNLXERPKEGN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FOGYNLXERPKEGN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Hydroxy-3-methoxy-beta-[2-methoxy-4-(3-sulfopropyl)phenoxy]benzenepropanesulfonic acid",
+    "3-(2-hydroxy-3-methoxyphenyl)-2-[2-methoxy-4-(3-sulfopropyl)phenoxy]propane-1-sulfonic acid",
+    "617-129-9",
+    "8062-15-5",
+    "861329-58-0",
+    "DTXSID4051249",
+    "DTXSID70864136",
+    "FOGYNLXERPKEGN-UHFFFAOYSA-N",
+    "LIGNOSULFONIC ACID",
+    "NS00013424",
+    "RefChem:799131",
+    "SCHEMBL21563979"
+  ],
+  "http_status": 200,
+  "cids": [
+    24712
+  ]
+}

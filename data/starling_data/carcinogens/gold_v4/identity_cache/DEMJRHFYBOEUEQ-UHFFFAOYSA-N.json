@@ -1,0 +1,17 @@
+{
+  "parent_key": "DEMJRHFYBOEUEQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DEMJRHFYBOEUEQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,3,3',4',5,5'-hexabromobiphenyl",
+    "2181003-01-8",
+    "DTXSID501044941",
+    "PBB 162",
+    "Q27288028",
+    "RAD7PKG9YH"
+  ],
+  "http_status": 200,
+  "cids": [
+    90478968
+  ]
+}

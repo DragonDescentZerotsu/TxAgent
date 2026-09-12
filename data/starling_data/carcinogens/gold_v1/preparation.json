@@ -1,0 +1,33 @@
+{
+  "task": "carcinogens",
+  "contract": "carcinogens_conditioned_direct_source_votes.v1",
+  "target": "reported any-site carcinogenic hazard under the reported species and exposure",
+  "base_rows": 354386,
+  "candidate_rows": 13781,
+  "unambiguous_study_votes": 12635,
+  "study_conflicts": 0,
+  "two_study_supported_votes": 1016,
+  "identity_candidate_votes": 612,
+  "identity_candidate_names": 233,
+  "identity_candidate_parents": 88,
+  "reason_counts": {
+    "context_or_extraction_confidence_review_required": 43739,
+    "not_direct_human_or_animal_outcome": 102324,
+    "negative_not_explicit": 15686,
+    "animal_species_missing_or_pooled": 24105,
+    "support_context_or_secondary_assertion_requires_review": 10986,
+    "uncertain_or_nonbinary_conclusion": 81782,
+    "no_explicit_carcinogenicity_support": 17316,
+    "initiator_promoter_or_cocarcinogen_role": 30827,
+    "explicit_direct_carcinogenicity_outcome": 13781,
+    "multiple_organic_components": 261,
+    "non_single_substance": 6905,
+    "site_limited_negative_not_overall_hazard": 693,
+    "named_agent_not_explicit_in_support": 5709,
+    "invalid_structure_or_parent": 272
+  },
+  "minimum_independent_pmids": 2,
+  "condition_policy": "exact structured species/model/exposure plus all reported qualifying_conditions; tumor site is an outcome, and site-limited negatives cannot establish overall negative hazard",
+  "semantic_review": "deterministic source-field and support-text checks; not full-text or human expert review",
+  "policy_sha256": "34a18482f688adf413ef218609cbc920440043c02c54861bb5a32d3a35156d98"
+}

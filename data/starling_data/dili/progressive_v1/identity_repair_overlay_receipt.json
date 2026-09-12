@@ -1,0 +1,32 @@
+{
+  "task": "dili",
+  "status": "passed",
+  "source_rows": 1645109,
+  "source_rows_deleted": 0,
+  "source_raw_and_uid_preserved": true,
+  "level_counts": {
+    "0": 258504,
+    "1": 4727,
+    "2": 270203,
+    "3": 141909,
+    "4": 76122,
+    "5": 294036,
+    "6": 196579,
+    "7": 403029
+  },
+  "membership_expanded": 0,
+  "records_changed": 2,
+  "voter_withdrawals": 2,
+  "exact_specimen_holds": 2,
+  "inputs": {
+    "data/starling_data/dili/progressive_v1/records.parquet": "9880eac4643d3789dd5dea45295c07dec7a42abf7111e8b1105fc8f9f9344543",
+    "data/.build/new_task_tautomer_repair/DILI/gold/actual_voter_membership.jsonl": "5281a312a83c35db163511ce11fc949425105cb782269c308cc567a44c35ea23",
+    "data/.build/new_task_tautomer_repair/specimen_identity_withdrawal_candidates.jsonl": "59af70d5ca14a034f06e41de9f828be80215ff877d037fd9c79787f8ae1640e1"
+  },
+  "files": {
+    "records.parquet": "e05a52372cbe04dcde23f18534783a8e44df6ad762019c5d555a4ba8ab734a44",
+    "record_audit.parquet": "9913d4d7147e349dbc2f5945e0beb62c2ae704765993ea4647255e836a3c44d9",
+    "identity_repair_changes.jsonl": "0914ef55db325c370256fdf4d478c761fcd5d67e40e0ed950680aba4d4e8c1ea"
+  },
+  "final_membership_uid_set_verified": true
+}

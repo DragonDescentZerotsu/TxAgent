@@ -1,0 +1,85 @@
+{
+  "schema_version": "dili_gold_v4_retrieval_release.v2",
+  "status": "records_indices_and_card_links_validated",
+  "source_gold": "data/starling_data/dili/gold_v4/source_votes.jsonl",
+  "source_gold_sha256": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1",
+  "benchmark_root": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI",
+  "records": "data/starling_data/dili/gold_v4/retrieval/source/records.parquet",
+  "records_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
+  "catalog": "data/starling_data/dili/gold_v4/retrieval/catalog",
+  "catalog_sha256": "b3cecf65f00cc5e106e3911164d2ec222ed8596c3f45fa4bdb73a5ae75f6afb3",
+  "level_counts_before_heldout": {
+    "0": 258504,
+    "1": 108437,
+    "2": 166495,
+    "3": 141909,
+    "4": 76120,
+    "5": 294036,
+    "6": 196579,
+    "7": 403029
+  },
+  "l1_source_labels": {
+    "1": 96228,
+    "0": 12209
+  },
+  "changes": {
+    "2->1": 105809,
+    "1->2": 2101,
+    "1->1": 2626,
+    "4->1": 2
+  },
+  "source_rows_deleted": 0,
+  "indices": {
+    "scaffold": {
+      "path": "data/starling_data/dili/gold_v4/retrieval/indices/scaffold",
+      "index_sha256": "8e437035120469939cded038f97fda05e807f25416a5c27265ba3271e900f209",
+      "evidence_sha256": "6ef0c0d3d1691da774213887845c00d7c3054a5e489019baca70160d11ee864a",
+      "retained_direct_records_by_level": {
+        "1": 83722,
+        "2": 166495
+      },
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 11636,
+      "heldout_l2_source_records_retained": 22659,
+      "validation": "data/starling_data/dili/gold_v4/retrieval/indices/scaffold/identity_validation.json"
+    },
+    "random": {
+      "path": "data/starling_data/dili/gold_v4/retrieval/indices/random",
+      "index_sha256": "a893b9564535be2b77fdfc829c4b9132e6a7e95716539227f5da43d8dd8a1489",
+      "evidence_sha256": "a20b1a13d33d36299f9256c8d452e7778adab52a73e736afd4f999e7c775521e",
+      "retained_direct_records_by_level": {
+        "1": 69267,
+        "2": 166495
+      },
+      "heldout_l1_cards": 0,
+      "heldout_l2_cards": 19241,
+      "heldout_l2_source_records_retained": 39972,
+      "validation": "data/starling_data/dili/gold_v4/retrieval/indices/random/identity_validation.json"
+    }
+  },
+  "card_link_validation": {
+    "n_unique_source_card_keys": 1386600,
+    "n_indexed_cards_checked": 2295637,
+    "n_missing_source_card_keys": 0
+  },
+  "new_model_calls": 0,
+  "gold_labels_changed": false,
+  "canonical_experiment_defaults_changed": false,
+  "scope": "New source-only gold release; current experiment defaults remain frozen v3. Canonical promotion and updated runtime name guards are separate from this source-record refresh.",
+  "rebuild_script": "data/starling_data/dili/gold_v4/retrieval/rebuild.sh",
+  "validation_inputs": {
+    "data/starling_data/dili/gold_v4/retrieval/source/membership_refresh_receipt.json": "ba8e205d58ad1eb8cb60451298404ee6fdd2ef4e7a19fd4be3e193c9c30fb29a",
+    "data/starling_data/dili/gold_v4/retrieval/tables/validation.json": "9d5dff8abc3cf660c93a1f3722d3e807b4c59a44434fdbcab43ed4f1e61a5381",
+    "data/starling_data/dili/gold_v4/retrieval/heldout/receipt.json": "2511da3675deedbaa6e3518dc2d88e648c3a3a3b0d17108767d335c016fe88a2",
+    "data/starling_data/dili/gold_v4/retrieval/rebuild.sh": "77f47e32da427807c96213003e4a7cbc68ff0bde4862db1e2ec19641862ff453",
+    "tools/chembl_tool/common/starling/validate_new_task_retrieval_identity.py": "6349edc5344492801c58fcd631f243010e3c824d92164510c3686b6ce0649af7"
+  },
+  "nonrepresentative_study_support_in_l2": 41751,
+  "heldout_prefilter_levels": [
+    1
+  ],
+  "filter_scope_field": "group_id",
+  "filter_scope_value": "Group.dili_actual_voter",
+  "exact_deduplication_policy": "All raw fields including PMID, support, conditions and confidence plus canonical identity and identity hold; ignore only source_row_uid/extraction_id/paragraph_idx. Prefer actual voter.",
+  "gold_labels_sha256": "21b4631a0bf77d417a2a7f0c6023ea890f3d7d4035b2f391792ff1823217e9b7"
+}

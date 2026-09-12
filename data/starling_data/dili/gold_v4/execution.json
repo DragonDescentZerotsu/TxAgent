@@ -1,0 +1,25 @@
+{
+  "protocol": "dili_reviewed_starling_only.v1.provenance",
+  "model": "gpt-oss-120b",
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "max_tokens": 2048,
+  "prompt_sha256": "594e239cacf318482c347e3f50d646b60b5d1f6a49c8a3c07a4b47a9d3858c46",
+  "selection_manifest_sha256": "dd70b150e148f9b1e2804e6082db5a508a96be635c2712e1e5b6243cce10e35e",
+  "execution_sha256": "164f893409c1cf3727a3f65cc377b3c46a7444fb339b58bd0201f78b269525fd",
+  "workers": 2048,
+  "base_url": "http://127.0.0.1:9001/v1",
+  "client_pool_sizes": [
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256,
+    256
+  ],
+  "runner_sha256": "37edb2c96af23a66131ba5b91f93221e10f476f23fc321927c102d2ddc39f00f",
+  "started_utc": "2026-09-09T04:58:23.902812+00:00",
+  "limit": 0
+}

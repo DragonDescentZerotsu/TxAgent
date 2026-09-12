@@ -1,0 +1,22 @@
+{
+  "parent_key": "PUGXFORZVIPNNN-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PUGXFORZVIPNNN-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "4-t-butylguaiacol",
+    "5-(tert-butyl)-2-methoxyphenol",
+    "5-TERT-BUTYL-2-METHOXYPHENOL",
+    "69770-00-9",
+    "DTXCID40422469",
+    "DTXSID80471653",
+    "MB13563",
+    "Phenol, 5-(1,1-dimethylethyl)-2-methoxy-",
+    "RefChem:304918",
+    "SCHEMBL30135395",
+    "SCHEMBL420149"
+  ],
+  "http_status": 200,
+  "cids": [
+    11745233
+  ]
+}

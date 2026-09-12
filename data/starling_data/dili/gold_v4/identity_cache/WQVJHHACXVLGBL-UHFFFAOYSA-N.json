@@ -1,0 +1,40 @@
+{
+  "parent_key": "WQVJHHACXVLGBL-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AB00053527_02",
+    "Aerosporin",
+    "BRD-A08641215-065-04-8",
+    "BSPBio_002197",
+    "CHEMBL241797",
+    "DivK1c_000732",
+    "EAA13511",
+    "GTPL10338",
+    "IDI1_000732",
+    "KBio1_000732",
+    "KBio2_001597",
+    "KBio2_004165",
+    "KBio2_006733",
+    "KBio3_001697",
+    "KBioGR_000961",
+    "KBioSS_001597",
+    "NCGC00178768-01",
+    "NCGC00178768-03",
+    "NINDS_000732",
+    "Polymyxin B1-d3",
+    "SBI-0051486.P003",
+    "SCHEMBL7799155",
+    "SPBio_000359",
+    "Spectrum2_000490",
+    "Spectrum3_000549",
+    "Spectrum4_000481",
+    "Spectrum5_001331",
+    "Spectrum_001117",
+    "WQVJHHACXVLGBL-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    4868
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/WQVJHHACXVLGBL-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

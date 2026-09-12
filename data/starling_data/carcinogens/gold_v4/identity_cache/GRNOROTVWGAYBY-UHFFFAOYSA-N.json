@@ -1,0 +1,29 @@
+{
+  "parent_key": "GRNOROTVWGAYBY-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/GRNOROTVWGAYBY-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "63224-44-2",
+    "ACETOHYDROXAMIC ACID, N-(FLUOREN-2-YL)-O-TETRADECANOYL-",
+    "ACETYL-N-MYRISTOYLOXY-2-AMINOFLUORENE, N-",
+    "Acetamide, N-9H-fluoren-2-yl-N-((1-oxotetradecyl)oxy)-",
+    "CCRIS 419",
+    "DB-221687",
+    "DTXCID70135095",
+    "DTXSID80212604",
+    "N-(9H-Fluoren-2-yl)-N-(tetradecanoyloxy)acetamide",
+    "N-(Fluoren-2-yl)-o-tetradecanoylacetohydroxamic acid",
+    "N-Acetyl-N-myristoyloxy-2-aminofluorene",
+    "N-Acetyl-N-tetradecanoyloxy-2-aminofluorene",
+    "N-Myristoyloxy-N-acetyl-2-aminofluorene",
+    "N-Myristoyloxy-aaf",
+    "N-myristoyloxy-2-acetylaminofluorene",
+    "RefChem:163928",
+    "UNII-W6T6LBI42L",
+    "W6T6LBI42L"
+  ],
+  "http_status": 200,
+  "cids": [
+    44437
+  ]
+}

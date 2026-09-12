@@ -1,0 +1,38 @@
+{
+  "parent_key": "XZDDMPMZGYEESG-VNHFGJPGSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-Ethyl-12-[(2-hydroxyethoxy)methyl]-33-[(1R,2R,4E)-1-hydroxy-2-methylhex-4-en-1-yl]-1,4,7,10,15,19,25,28-octamethyl-6,9,18,24-tetrakis(2-methylpropyl)-3,21-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecaazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "(3S,6S,9S,12R,15S,18S,21S,24S,30S,33S)-30-ethyl-12-(2-hydroxyethoxymethyl)-33-[(E,1R,2R)-1-hydroxy-2-methylhex-4-enyl]-1,4,7,10,15,19,25,28-octamethyl-6,9,18,24-tetrakis(2-methylpropyl)-3,21-di(propan-2-yl)-1,4,7,10,13,16,19,22,25,28,31-undecazacyclotritriacontane-2,5,8,11,14,17,20,23,26,29,32-undecone",
+    "135548-15-1",
+    "2-[O-(2-Hydroxyethyl)-D-serine]cyclosporin A",
+    "CHEMBL217642",
+    "Cyclo(((2S,3R,4R,6E)-3-hydroxy-4-methyl-2-(methylamino)-6-octenoyl)-L-2-aminobutyryl-N-methylglycyl-N-methyl-L-leucyl-L-valyl-N-methyl-L-leucyl-L-alanyl-O-(2-hydroxyethyl)-D-seryl-N-methyl-L-leucyl-N-methyl-L-leucyl-N-methyl-L-valyl)",
+    "Cyclosporin A, 2-(O-(2-hydroxyethyl)-D-serine)-",
+    "DTXSID10873121",
+    "IMM-125",
+    "IMM125",
+    "NS00116374",
+    "OXECLOSPORIN [WHO-DD]",
+    "Oxeclosporin",
+    "Oxeclosporin [INN]",
+    "Oxeclosporina",
+    "Oxeclosporine",
+    "Q27287882",
+    "R7988D03JM",
+    "RefChem:928359",
+    "SCHEMBL1229430",
+    "SDZ-IMM 125",
+    "SDZ-IMM-125",
+    "SDZIMM125",
+    "Sdz imm 125",
+    "UNII-R7988D03JM",
+    "orb1738591",
+    "oxeclosporinum"
+  ],
+  "cids": [
+    6436153
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XZDDMPMZGYEESG-VNHFGJPGSA-N/synonyms/JSON",
+  "http_status": 200
+}

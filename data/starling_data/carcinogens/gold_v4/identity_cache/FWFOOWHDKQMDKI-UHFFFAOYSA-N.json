@@ -1,0 +1,34 @@
+{
+  "parent_key": "FWFOOWHDKQMDKI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FWFOOWHDKQMDKI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(TETRAPHEN-7-YL)METHANOL",
+    "10-Hydroxymethyl-1,2-benzanthracen",
+    "10-Hydroxymethyl-1,2-benzanthracene",
+    "16110-13-7",
+    "7-(Hydroxymethyl)benz[a]anthracene",
+    "7-Hmba",
+    "7-Hydroxymethylbenz(a)anthracene",
+    "7-hydroxymethylbenz[a]anthracene",
+    "7-hydroxymethylbenzanthracene",
+    "AKOS030254770",
+    "BRN 1882113",
+    "Benz(a)anthracene-7-methanol",
+    "Benz[a]anthracene-7-methanol",
+    "CCRIS 2361",
+    "DB-264345",
+    "DTXCID1089556",
+    "DTXSID40167065",
+    "FWFOOWHDKQMDKI-UHFFFAOYSA-N",
+    "RAA11013",
+    "RefChem:916842",
+    "SCHEMBL3343719",
+    "benzo[a]anthracen-7-ylmethanol",
+    "tetraphen-7-ylmethanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    85290
+  ]
+}

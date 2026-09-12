@@ -1,0 +1,22 @@
+{
+  "parent_key": "FXMOIYLVKOALHC-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1,2,3,11a-Tetrahydro-3,8-dihydroxy-7-methoxy-5H-pyrrolo(2,1-c)(1,4)benzodiazepin-5-one",
+    "3,8-Dihydroxy-7-methoxy-1,2,3,11a-tetrahydro-5H-pyrrolo[2,1-c][1,4]benzodiazepin-5-one",
+    "3,9-dihydroxy-2-methoxy-6a,7,8,9-tetrahydropyrrolo[2,1-c][1,4]benzodiazepin-11-one",
+    "67298-49-1",
+    "FXMOIYLVKOALHC-UHFFFAOYSA-N",
+    "NSC 285223",
+    "Neothramycin",
+    "Neothramycins",
+    "Neuro_000143",
+    "RefChem:165414",
+    "SCHEMBL30758037"
+  ],
+  "cids": [
+    122745
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXMOIYLVKOALHC-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

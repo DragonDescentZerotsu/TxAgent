@@ -1,0 +1,13 @@
+{
+  "parent_key": "AVEJQUZPUQOOQX-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AVEJQUZPUQOOQX-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL4591880"
+  ],
+  "http_status": 200,
+  "throttling": "Request Count status: Green (7%), Request Time status: Green (0%), Service status: Red (90%)",
+  "cids": [
+    20608064
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "parent_key": "PXPGRGGVENWVBD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/PXPGRGGVENWVBD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1a,9b-Dihydro-1-oxa-cyclopropa<l>phenanthrene",
+    "1a,9b-Dihydrophenanthro(9,10-b)oxirene",
+    "1a,9b-dihydro-1-oxa-cyclopropaphenanthrene",
+    "1a,9b-dihydrophenanthro[9,10-b]oxiren",
+    "1a,9b-dihydrophenanthro[9,10-b]oxirene",
+    "585-08-0",
+    "9,10- Dihydro-9,10-epoxy-phenanthren",
+    "9,10-Dihydro-9,10-epoxyphenanthrene",
+    "9,10-EDPN",
+    "9,10-Epoxy-9,10-dihydro-phenanthrene",
+    "9,10-Epoxy-9,10-dihydrophenanthrene",
+    "9,10-Phenanthrene oxide",
+    "9,10-dihydrophenanthrene 9,10-epoxide",
+    "AKOS006279295",
+    "CCRIS 1986",
+    "CHEBI:25957",
+    "CHEMBL48158",
+    "DTXCID701431655",
+    "DTXSID201004762",
+    "PXPGRGGVENWVBD-UHFFFAOYSA-N",
+    "Phenanthrene 9,10-oxide",
+    "Phenanthrene, 9,10-dihydro-9,10-epoxy-",
+    "Phenanthrene-9,10-epoxide",
+    "Phenanthro(9,10-b)oxirene, 1a,9b-dihydro-",
+    "Phenanthro[9,10-b]oxirene, 1a,9b-dihydro-",
+    "Q27109898",
+    "RefChem:908308",
+    "SCHEMBL14870743",
+    "SCHEMBL29941785",
+    "phenanthrene 9, 10-oxide"
+  ],
+  "http_status": 200,
+  "cids": [
+    104975
+  ]
+}

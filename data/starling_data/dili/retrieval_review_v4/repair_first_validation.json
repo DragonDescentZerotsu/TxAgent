@@ -1,0 +1,73 @@
+{
+  "status": "passed",
+  "candidate_records": 240,
+  "changed_records": 168,
+  "identities": {
+    "fialuridine": {
+      "CID": 50313,
+      "MolecularFormula": "C9H10FIN2O5",
+      "SMILES": "C1=C(C(=O)NC(=O)N1[C@H]2[C@H]([C@@H]([C@H](O2)CO)O)F)I",
+      "InChIKey": "IPVFGAYTKQKGBM-BYPJNBLXSA-N"
+    },
+    "lamivudine": {
+      "CID": 60825,
+      "MolecularFormula": "C8H11N3O3S",
+      "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=CC(=NC2=O)N",
+      "InChIKey": "JTEGQNOMFQHVDC-NKWVEPMBSA-N"
+    },
+    "emtricitabine": {
+      "CID": 60877,
+      "MolecularFormula": "C8H10FN3O3S",
+      "SMILES": "C1[C@H](O[C@H](S1)CO)N2C=C(C(=NC2=O)N)F",
+      "InChIKey": "XQSPYNMVSIKCOC-NTSWFWBYSA-N"
+    },
+    "4-[4-(4-hydroxyphenoxy)phenoxy]phenol": {
+      "CID": 786365,
+      "MolecularFormula": "C18H14O4",
+      "SMILES": "C1=CC(=CC=C1O)OC2=CC=C(C=C2)OC3=CC=C(C=C3)O",
+      "InChIKey": "RLSMYIFSFZLJQZ-UHFFFAOYSA-N"
+    },
+    "rhein": {
+      "CID": 10168,
+      "MolecularFormula": "C15H8O6",
+      "SMILES": "C1=CC2=C(C(=C1)O)C(=O)C3=C(C2=O)C=C(C=C3O)C(=O)O",
+      "InChIKey": "FCDLCPWAQCPTKC-UHFFFAOYSA-N"
+    },
+    "D-FMAU": {
+      "CID": 72327,
+      "MolecularFormula": "C10H13FN2O5",
+      "SMILES": "CC1=CN(C(=O)NC1=O)[C@H]2[C@H]([C@@H]([C@H](O2)CO)O)F",
+      "InChIKey": "GBBJCSTXCAQSSJ-JVZYCSMKSA-N"
+    },
+    "2'-Deoxy-2'-fluoro-5-methyluridine": {
+      "CID": 159498,
+      "MolecularFormula": "C10H13FN2O5",
+      "SMILES": "CC1=CN(C(=O)NC1=O)[C@H]2[C@@H]([C@@H]([C@H](O2)CO)O)F",
+      "InChIKey": "GBBJCSTXCAQSSJ-JXOAFFINSA-N"
+    },
+    "emodin": {
+      "CID": 3220,
+      "SMILES": "Cc1cc(O)c2c(c1)C(=O)c1cc(O)cc(O)c1C2=O",
+      "InChIKey": "RHMXXJGYXNZAPX-UHFFFAOYSA-N",
+      "MolecularFormula": "C15H10O5"
+    }
+  },
+  "primary_evidence": {
+    "7860738": "Full JCI PDF, Results, Discussion, Table II image",
+    "28531143": "Full PMC XML including normal Clone 9 comparator",
+    "27032576": "Original abstract and supplied full extraction; full article inaccessible. Quantitative details not claimed independently verified."
+  },
+  "no_model_calls": true,
+  "no_labels_or_predictions": true,
+  "scope_limit": "Targeted three-paper and replacement/sibling correction; not clearance of the whole retrieved pool.",
+  "initial_three_paper_changed_records": 80,
+  "replacement_followup": "replacement_identity_validation.json",
+  "n_content_repairs": 304,
+  "reviewed_source_inventory": 490,
+  "second_replacement_review": "data/starling_data/dili/retrieval_review_v4/replacement_second_pass_review.json",
+  "additional_identity_validation": "data/starling_data/dili/retrieval_review_v4/second_wave_identity_validation.json",
+  "scope": "Targeted source, replacement-card and matching-identity review; not full-library certification",
+  "third_replacement_review": "data/starling_data/dili/retrieval_review_v4/replacement_third_pass_review.json",
+  "third_identity_validation": "data/starling_data/dili/retrieval_review_v4/third_wave_identity_validation.json",
+  "release_status": "staged_rebuilding; selected_surface_quality_gate_pending"
+}

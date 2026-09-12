@@ -1,0 +1,33 @@
+{
+  "parent_key": "ZOBLZIKVIHJGRN-JAJWTYFOSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(2-Chloroethyl)-3-(.beta.-D-glucopyranosyl)-1-nitrosourea",
+    "1-(2-Chloroethyl)-3-(beta-D-glucopyranosyl)-1-nitrosourea",
+    "1-(2-chloroethyl)-1-nitroso-3-[(2R,3R,4S,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]urea",
+    "1-(2-chloroethyl)-3-(beta-d-gluco-pyranosyl)-1-nitrosourea",
+    "1EU50CXT9P",
+    "3-(beta-D-glucopyranosyl)-1-(2 -chloroethyl)-1-nitrosourea",
+    "3-(beta-D-glucopyranosyl)-1-(2-chloroethyl)-1-nitrosourea",
+    "58484-07-4",
+    "CHEMBL3228413",
+    "DB-225532",
+    "GANU",
+    "N-(2-CHLOROETHYL)-N'-.BETA.-D-GLUCOPYRANOSYL-N-NITROSOUREA",
+    "N-(2-Chloroethyl)-N'-beta-D-glucopyranosyl-N-nitrosourea",
+    "NSC D 254157",
+    "NSC-254157",
+    "NSC-D-254157",
+    "RefChem:201976",
+    "SCHEMBL3341237",
+    "UNII-1EU50CXT9P",
+    "Urea, 1-(2-chloroethyl)-3-(beta-D-glucopyranosyl)-1-nitroso-",
+    "Urea, N-(2-chloroethyl)-N'-.beta.-D-glucopyranosyl-N-nitroso-",
+    "ZOBLZIKVIHJGRN-JAJWTYFOSA-N"
+  ],
+  "cids": [
+    9972891
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZOBLZIKVIHJGRN-JAJWTYFOSA-N/synonyms/JSON",
+  "http_status": 200
+}

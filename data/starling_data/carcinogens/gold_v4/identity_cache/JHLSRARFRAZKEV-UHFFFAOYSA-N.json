@@ -1,0 +1,24 @@
+{
+  "parent_key": "JHLSRARFRAZKEV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JHLSRARFRAZKEV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,4-DIMETHYLHEPTYLAMINE",
+    "2-Octanamine, 5-methyl-",
+    "5-methyloctan-2-amine",
+    "67953-04-2",
+    "AKOS011549298",
+    "DTXCID001026376",
+    "DTXSID70887062",
+    "EINECS 267-941-9",
+    "EN300-1867379",
+    "JHLSRARFRAZKEV-UHFFFAOYSA-N",
+    "NS00054710",
+    "RefChem:477281",
+    "SCHEMBL4201028"
+  ],
+  "http_status": 200,
+  "cids": [
+    50007
+  ]
+}

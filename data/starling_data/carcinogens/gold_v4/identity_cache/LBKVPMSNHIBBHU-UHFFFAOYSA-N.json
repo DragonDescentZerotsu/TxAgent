@@ -1,0 +1,14 @@
+{
+  "parent_key": "LBKVPMSNHIBBHU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LBKVPMSNHIBBHU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "Benz(c)pyren",
+    "SCHEMBL31146463",
+    "SCHEMBL5268627"
+  ],
+  "http_status": 200,
+  "cids": [
+    129662595
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "parent_key": "JPVYNHNXODAKFH-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "15158-11-9",
+    "8CBV67279L",
+    "C22424",
+    "CHEBI:29036",
+    "Copper Ion",
+    "Copper ion (Cu++)",
+    "Copper ions",
+    "Copper(2+)ions",
+    "Copper(II)ions",
+    "Copper, ion (Cu2+)",
+    "Cu(2+)",
+    "Cu++",
+    "Cu+2",
+    "Cu2+",
+    "CuII",
+    "Cupric cation",
+    "DB14552",
+    "DTXSID40934294",
+    "Epitope ID:174839",
+    "SCHEMBL29355672",
+    "UNII-8CBV67279L",
+    "at. no. 29",
+    "copper (II)",
+    "copper(2+)",
+    "copper(II)",
+    "copper(II) cation",
+    "copper(II) ions",
+    "cupric copper",
+    "cupric ion"
+  ],
+  "cids": [
+    27099
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JPVYNHNXODAKFH-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

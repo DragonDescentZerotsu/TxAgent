@@ -45,7 +45,8 @@ class ScaffoldGroup:
 
     @property
     def singleton_count(self) -> int:
-        return sum(int(row["source_record_count"]) == 1 for row in self.rows)
+        return sum(int(row["source_record_count"]) == 1 for row in self.rows
+                   if row.get("record_support_eligible", True))
 
     @property
     def positive_count(self) -> int:
@@ -69,6 +70,8 @@ def allocate_scaffold_groups(
     optimize_record_support: bool = True,
     exclude_empty_scaffold_from_heldout: bool = False,
     required_condition_groups: Collection[str] | None = None,
+    required_labels: Collection[int] = (),
+    condition_eval_minimums: dict[str, int] | None = None,
 ) -> tuple[dict[str, str], dict[str, Any]]:
     """Allocate whole scaffolds; optional conditions must occur in every split.
 
@@ -100,7 +103,7 @@ def allocate_scaffold_groups(
     integrality = np.ones(2 * n_groups)
     base_rows, base_low, base_high = _base_constraints(size, target_size)
     coverage_rows, coverage_low, coverage_high = _condition_coverage_constraints(
-        rows, candidates, required_condition_groups
+        rows, candidates, required_condition_groups, required_labels, condition_eval_minimums
     )
     base_rows.extend(coverage_rows)
     base_low.extend(coverage_low)
@@ -232,6 +235,8 @@ def resolve_conditioned_eval_size(
     nominal_target_size: int,
     required_condition_groups: Collection[str],
     seed: int = SEED,
+    required_labels: Collection[int] = (),
+    condition_eval_minimums: dict[str, int] | None = None,
 ) -> int:
     """Find the smallest feasible equal held-out size for a fresh benchmark.
 
@@ -248,7 +253,7 @@ def resolve_conditioned_eval_size(
     sizes = np.asarray([group.size for group in candidates], dtype=float)
     constraints, low, high = _base_constraints(sizes, 0)
     coverage, coverage_low, coverage_high = _condition_coverage_constraints(
-        rows, candidates, required_condition_groups
+        rows, candidates, required_condition_groups, required_labels, condition_eval_minimums
     )
     constraints.extend(coverage)
     low.extend(coverage_low)
@@ -272,20 +277,27 @@ def _condition_coverage_constraints(
     rows: list[dict[str, Any]],
     candidates: list[ScaffoldGroup],
     required_condition_groups: Collection[str] | None,
+    required_labels: Collection[int] = (),
+    condition_eval_minimums: dict[str, int] | None = None,
 ) -> tuple[list[np.ndarray], list[float], list[float]]:
     constraints, low, high = [], [], []
     zeros = np.zeros(len(candidates))
-    for condition in sorted(set(required_condition_groups or ())):
+    requirements = [("condition_group", value) for value in sorted(set(required_condition_groups or ()))]
+    requirements += [("Y", value) for value in sorted(set(required_labels))]
+    for field, condition in requirements:
+        minimum = (condition_eval_minimums or {}).get(condition, 1) if field == 'condition_group' else 1
+        if not isinstance(minimum, int) or minimum < 1:
+            raise ValueError('Condition evaluation minimum must be a positive integer')
         counts = np.asarray([
-            sum(row.get("condition_group") == condition for row in group.rows)
+            sum(row.get(field) == condition for row in group.rows)
             for group in candidates
         ], dtype=float)
-        total = sum(row.get("condition_group") == condition for row in rows)
+        total = sum(row.get(field) == condition for row in rows)
         # At least one row per held-out split and one left in train, including
         # condition rows on scaffolds ineligible for held-out allocation.
         for vector, lower, upper in (
-            (np.r_[counts, zeros], 1, np.inf),
-            (np.r_[zeros, counts], 1, np.inf),
+            (np.r_[counts, zeros], minimum, np.inf),
+            (np.r_[zeros, counts], minimum, np.inf),
             (np.r_[counts, counts], -np.inf, total - 1),
         ):
             constraints.append(vector)

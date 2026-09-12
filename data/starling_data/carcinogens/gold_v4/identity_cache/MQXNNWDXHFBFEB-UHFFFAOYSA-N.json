@@ -1,0 +1,33 @@
+{
+  "parent_key": "MQXNNWDXHFBFEB-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MQXNNWDXHFBFEB-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2,2'-(propane-2,2-diyl)diphenol",
+    "2,2'-isopropylidene bisphenol",
+    "2,2'-isopropylidenediphenol",
+    "2,2-Bis(2'hydroxyphenyl)propane",
+    "2,2-Bis(2-hydroxyphenyl)-propane",
+    "2,2-Bis(2-hydroxyphenyl)propane",
+    "2,2-bis(2'-hydroxyphenyl)propane",
+    "2-[1-(2-hydroxyphenyl)-1-methyl-ethyl]phenol",
+    "2-[2-(2-hydroxyphenyl)propan-2-yl]phenol",
+    "7559-72-0",
+    "AKOS030253223",
+    "CHEBI:131348",
+    "DB-260255",
+    "DTXCID80293019",
+    "DTXSID90341939",
+    "Phenol, 2,2'-(1-methylethylidene)bis-",
+    "Q27225108",
+    "RefChem:1059053",
+    "SCHEMBL1660597",
+    "SCHEMBL29613273",
+    "SCHEMBL584830",
+    "isopropylidenediphenol"
+  ],
+  "http_status": 200,
+  "cids": [
+    577157
+  ]
+}

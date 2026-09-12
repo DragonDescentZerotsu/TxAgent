@@ -1,0 +1,31 @@
+{
+  "parent_key": "MFBSRFKHKCKLIC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MFBSRFKHKCKLIC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "11-Methyl-1a,11b-dihydrobenzo[3,4]anthra[1,2-b]oxirene #",
+    "11-methyl-1a,11b-dihydrotetrapheno[5,6-b]oxirene",
+    "1155-38-0",
+    "1a,11b-Dihydro-11-methylbenz(3,4)anthra(1,2-b)oxirene",
+    "1a,11b-Dihydro-11-methylbenz(a)anthra(5,6-b)oxirene",
+    "5,6-Epoxy-5,6-dihydro-7-methylbenz(a)anthracene",
+    "7-Methylbenz(a)anthracene 5,6 oxide",
+    "7-Methylbenz(a)anthracene 5,6-oxide",
+    "7-Methylbenz(a)anthracene-5,6-oxide",
+    "7-Methylbenz[a]anthracene 5,6-epoxide",
+    "7-Methylbenz[a]anthracene 5,6-oxide",
+    "7-Methylbenzanthracene 5,6-oxide",
+    "BENZ(a)ANTHRACENE, 5,6-EPOXY-5,6-DIHYDRO-7-METHYL-",
+    "Benz(a)anthracene, 5,6-dihydro-5,6-epoxy-7-methyl-",
+    "Benz[3,4]anthra[1,2-b]oxirene, 1a,11b-dihydro-11-methyl-",
+    "Benz[a]anthracene, 5,6-epoxy-5,6-dihydro-7-methyl-",
+    "CCRIS 1118",
+    "DTXSID30921739",
+    "MFBSRFKHKCKLIC-UHFFFAOYSA-N",
+    "RefChem:908306"
+  ],
+  "http_status": 200,
+  "cids": [
+    14388
+  ]
+}

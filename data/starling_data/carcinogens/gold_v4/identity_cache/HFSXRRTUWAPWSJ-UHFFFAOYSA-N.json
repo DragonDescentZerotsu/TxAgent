@@ -1,0 +1,40 @@
+{
+  "parent_key": "HFSXRRTUWAPWSJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HFSXRRTUWAPWSJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,2-Benzenediol, 3,4-dichloro-",
+    "1,2-Benzenediol, dichloro-",
+    "25167-85-5",
+    "3,4-DICHLOROCATECHOL",
+    "3,4-Dichloro-1,2-benzenediol",
+    "3,4-Dichloro-1,2-benzenediol #",
+    "3,4-Dichloro-benzene-1,2-diol",
+    "3,4-dichloro-1,2benzenediol",
+    "3,4-dichlorobenzene-1,2-diol",
+    "3978-67-4",
+    "AKOS022640105",
+    "CHEBI:90882",
+    "CS-0128397",
+    "DB-330884",
+    "DCBZ",
+    "DICHLORO-1,2-BENZENEDIOL",
+    "DTXCID2039679",
+    "DTXSID3073973",
+    "H68696",
+    "HY-133611",
+    "MFCD24713470",
+    "Q27162853",
+    "RefChem:485979",
+    "SCHEMBL29499539",
+    "SCHEMBL69375",
+    "SY299595",
+    "T40497",
+    "dichlorocatechol",
+    "orb1690548"
+  ],
+  "http_status": 200,
+  "cids": [
+    19877
+  ]
+}

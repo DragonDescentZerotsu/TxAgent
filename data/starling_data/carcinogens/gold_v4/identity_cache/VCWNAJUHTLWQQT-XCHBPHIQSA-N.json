@@ -1,0 +1,51 @@
+{
+  "parent_key": "VCWNAJUHTLWQQT-XCHBPHIQSA-N",
+  "ok": true,
+  "synonyms": [
+    "(1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-9a-(Acetyloxy)-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-5-oxo-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-1H-cyclopropa[3,4]benzo[1,2-e]azulen-9-yl tetradecanoate",
+    "(1aR-(1a alpha,1b beta,4a beta,7a alpha,7b alpha, 8 alpha,9 beta,9a alpha))-tetradecanoic acid, 9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester",
+    "(1aR-(1aalpha,1bbeta,4abeta,7aalpha,7balpha,8alpha,9beta,9aalpha))-Tetradecanoic acid, 9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester",
+    "4-.beta.-O-Methyl phorbol myristate acetate",
+    "4-O-Methyl-12-O-tetradecanoylphorbol 13-acetate",
+    "4-O-Methyl-12-O-tetradecanoylphorbol-13-acetate",
+    "4-O-Methyl-12-tetradecanoylphorbol 13-acetate",
+    "4-O-Methyl-tpa",
+    "4-O-Methylphorbol 12-myristate 13-acetate",
+    "4-O-Methylphorbol-12-myristate acetate",
+    "4-methyl-TPA",
+    "4.b.-O-Methyl phorbol myristate OAc",
+    "57716-89-9",
+    "5H-Cyclopropa(3,4)benz(1,2-e)azulen-5-one, 1,1a-alpha,1b-beta,4,4a,7a-alpha,7b,8,9,9a-decahydro-3-(hydroxymethyl)-4a-beta-methoxy-1,1,6,8-alpha-tetramethyl-7b-alpha,9-beta-9a-alpha-trihydroxy-, 9-acetate 9a-tetradecanoate",
+    "9a-(acetyloxy)-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-5-oxo-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-1h-cyclopropa[3,4]benzo[1,2-e]azulen-9-yl tetradecanoate",
+    "BDBM50478562",
+    "CHEMBL502491",
+    "DTXSID00973306",
+    "Me-Tpa",
+    "NSC 262645",
+    "NSC-262645",
+    "NSC262645",
+    "PHORBOL-13-ACETATE,-4-O-METHYL-12-TETRADECANOYL-",
+    "PMA-4-O-methyl ether",
+    "Phorbol 12-myristate 13-acetate 4-O-methyl ether",
+    "RefChem:100220",
+    "SCHEMBL29363001",
+    "Tetradecanoic acid, (1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa(3,4)benz(1,2-e)azulen-9-yl ester",
+    "Tetradecanoic acid, (1aR,1bS,4aR,7aS,7bS,8R,9R,9aS)-9a-(acetyloxy)-1a,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa[3,4]benz[1,2-e]azulen-9-yl ester",
+    "Tetradecanoic acid,1b,4,4a,5,7a,7b,8,9,9a-decahydro-7b-hydroxy-3-(hydroxymethyl)-4a-methoxy-1,1,6,8-tetramethyl-5-oxo-1H-cyclopropa[3,4]benz[1,2-e]azulen-9-yl ester, [1aR-(1a.alpha.,1b.beta.,4a.beta.,7a.alpha.,7b.alpha.,8.alpha.,9.beta.,9a.alpha.)]-",
+    "[(1S,2S,6R,10S,11R,13S,14R,15R)-13-acetyloxy-1-hydroxy-8-(hydroxymethyl)-6-methoxy-4,12,12,15-tetramethyl-5-oxo-14-tetracyclo[8.5.0.02,6.011,13]pentadeca-3,8-dienyl] tetradecanoate",
+    "[acetoxy-hydroxy-(hydroxymethyl)-methoxy-tetramethyl-oxo-[?]yl] tetradecanoate"
+  ],
+  "cids": [
+    72292
+  ],
+  "properties": [
+    {
+      "CID": 72292,
+      "InChIKey": "VCWNAJUHTLWQQT-XCHBPHIQSA-N"
+    }
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2206,2543,3071,4617,5053,5761,6497,6531,6618,7724,8005,9482,10205,10313,11295,11790,11811,13265,13385,18321,24699,25474,25935,29698,61191,65493,72172,72292,107720,160213,162041,185792,442042,674884,1272788,3035657,5284380,5371560,6992132,11953919,18760386,21133548,22849350,46174141,46224413,49791998,56841080,73265216/synonyms/JSON",
+  "identity_url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/VAYGXNSJCAHWJZ-UHFFFAOYSA-N,VAYJWFGRGMQINH-UHFFFAOYSA-N,VAYOSLLFUXYJDT-RDTXWAMCSA-N,VAYTZRYEBVHVLE-UHFFFAOYSA-N,VBAFPUVFQZWOJM-MHJRRCNVSA-N,VBCVPMMZEGZULK-NRFANRHFSA-N,VBEGHXKAFSLLGE-UHFFFAOYSA-N,VBGLYOIFKLUMQG-UHFFFAOYSA-N,VBICKXHEKHSIBG-UHFFFAOYSA-N,VBKKVDGJXVOLNE-UHFFFAOYSA-N,VCCZBYPHZRWKFY-UHFFFAOYSA-N,VCKPUUFAIGNJHC-LURJTMIESA-N,VCMMXZQDRFWYSE-UHFFFAOYSA-N,VCPMTKKWBCDKNB-UHFFFAOYSA-N,VCQRVYCLJARKLE-XQOWHXTBSA-N,VCWNAJUHTLWQQT-XCHBPHIQSA-N,VCZNNAKNUVJVGX-UHFFFAOYSA-N,VDEGQTCMQUFPFH-UHFFFAOYSA-N,VDEUYMSGMPQMIK-UHFFFAOYSA-N,VDJHFHXMUKFKET-IYACTCEOSA-N,VDJHFHXMUKFKET-UXMMOKKRSA-N,VDNLFJGJEQUWRB-UHFFFAOYSA-N,VDNMIIDPBBCMTM-UHFFFAOYSA-N,VDZZTXBMKRQEPO-UHFFFAOYSA-N,VEBBCQINQQBIOM-UHFFFAOYSA-N,VEBVPUXQAPLADL-POYOOMFHSA-N,VEDFQDDNPDHDKB-UHFFFAOYSA-N,VEENJGZXVHKXNB-VOTSOKGWSA-N,VEFQDSXSELSHMX-HMZDNQSVSA-N,VEFSVJGWJQPWFS-ZXKKMYOJSA-N,VEGDJCLVAHXQEM-UHFFFAOYSA-N,VEIIKKORADXUKD-UHFFFAOYSA-N,VEJDYQPYKKISOH-UHFFFAOYSA-N,VEMKTZHHVJILDY-UHFFFAOYSA-N,VEORPZCZECFIRK-UHFFFAOYSA-N,VEPXTLDJAORPCZ-UHFFFAOYSA-N,VEQOALNAAJBPNY-UHFFFAOYSA-N,VFCNQNZNPKRXIT-UHFFFAOYSA-N,VFCRKLWBYMDAED-REWPJTCUSA-N,VFEXYZINKMLLAK-UHFFFAOYSA-N,VFFTVZUIDYJUQS-UHFFFAOYSA-N,VFKZTMPDYBFSTM-GUCUJZIJSA-N,VFLQJBVJJLGBKM-HZPDHXFCSA-N,VFMMPHCGEFXGIP-UHFFFAOYSA-N,VFPLSXYJYAKZCT-UHFFFAOYSA-N,VFPLSXYJYAKZCT-VOTSOKGWSA-N,VFTRKSBEFQDZKX-UHFFFAOYSA-N,VFWCMGCRMGJXDK-UHFFFAOYSA-N,VGEWEGHHYWGXGG-YZRHJBSPSA-N,VGGGPCQERPFHOB-RDBSUJKOSA-N/property/InChIKey/JSON",
+  "http_status": 200,
+  "reason": ""
+}

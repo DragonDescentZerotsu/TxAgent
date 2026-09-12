@@ -1,0 +1,12 @@
+{
+  "parent_key": "FXDGYTUMQPXTNK-ZAAZJSNSSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FXDGYTUMQPXTNK-ZAAZJSNSSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "6beta-hydroxyperoxycholest-4-en-3-one"
+  ],
+  "http_status": 200,
+  "cids": [
+    138857683
+  ]
+}

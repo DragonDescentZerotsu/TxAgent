@@ -1,0 +1,16 @@
+{
+  "parent_key": "JGNRRLIALFGFSQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JGNRRLIALFGFSQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "35670-49-6",
+    "Methyldiazenylmethanol",
+    "SCHEMBL11717074",
+    "SCHEMBL7191906",
+    "methylazomethanol"
+  ],
+  "http_status": 200,
+  "cids": [
+    182247
+  ]
+}

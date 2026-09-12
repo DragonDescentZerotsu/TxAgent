@@ -1,0 +1,19 @@
+{
+  "parent_key": "JHORJRSRQZDYPZ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JHORJRSRQZDYPZ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,1,4,7,9-pentamethyldodecahydro-1h-2,8a-methanocyclopenta[a]cyclopropa[e][10]annulene",
+    "1H-2,8a-Methanocyclopenta(a)cyclopropa(e)cyclodecene, dodecahydro-1,1,4,7,9-pentamethyl-, (1aS,2R,4R,5aR,7R,8aR,9R,10aR)-",
+    "1H-2,8a-Methanocyclopenta(a)cyclopropa(e)cyclodecene, dodecahydro-1,1,4,7,9-pentamethyl-, (1aS-(1aalpha,2alpha,4beta,5abeta,7beta,8aalpha,9alpha,10aalpha))-",
+    "67707-88-4",
+    "DTXSID10987055",
+    "Ingenane",
+    "RefChem:148286",
+    "SCHEMBL29353051"
+  ],
+  "http_status": 200,
+  "cids": [
+    115319
+  ]
+}

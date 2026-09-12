@@ -1,0 +1,16 @@
+{
+  "parent_key": "BRUIGSFNDPUVNI-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-phenyl-2-(trifluoromethyl)piperazine",
+    "BRUIGSFNDPUVNI-UHFFFAOYSA-N",
+    "SCHEMBL11209721",
+    "SCHEMBL2172917",
+    "SCHEMBL878133"
+  ],
+  "cids": [
+    53249496
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BRUIGSFNDPUVNI-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

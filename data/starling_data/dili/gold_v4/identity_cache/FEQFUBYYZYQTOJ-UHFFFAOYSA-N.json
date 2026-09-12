@@ -1,0 +1,36 @@
+{
+  "parent_key": "FEQFUBYYZYQTOJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Azetidinyl(8-(((2,6-dimethylphenyl)methyl)amino)-2,3-dimethylimidazo(1,2-a)pyridin-6-yl)methanone",
+    "2133852-18-1",
+    "AKOS040757321",
+    "Azetidin-1-yl(8-((2,6-dimethylbenzyl)amino)-2,3-dimethylimidazo[1,2-a]pyridin-6-yl)methanone",
+    "CS-0204155",
+    "D13240",
+    "DA-79076",
+    "G18417",
+    "GTPL13433",
+    "HY-139557",
+    "JAQBO",
+    "JP-1366",
+    "JP1366",
+    "MS-25766",
+    "Methanone, 1-azetidinyl(8-(((2,6-dimethylphenyl)methyl)amino)-2,3-dimethylimidazo(1,2-a)pyridin-6-yl)-",
+    "RefChem:195872",
+    "SCHEMBL20986992",
+    "UNII-W9S9KZX5MD",
+    "W9S9KZX5MD",
+    "Zastaprazan",
+    "Zastaprazan (INN)",
+    "Zastaprazan [INN]",
+    "Zastaprazan [WHO-DD]",
+    "azetidin-1-yl-[8-[(2,6-dimethylphenyl)methylamino]-2,3-dimethylimidazo[1,2-a]pyridin-6-yl]methanone",
+    "orb3033037"
+  ],
+  "cids": [
+    138622158
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FEQFUBYYZYQTOJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

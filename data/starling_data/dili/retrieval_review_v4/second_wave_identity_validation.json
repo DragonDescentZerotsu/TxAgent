@@ -1,0 +1,109 @@
+{
+  "status": "passed",
+  "identities": {
+    "6-MMPR": {
+      "SMILES": "CSc1ncnc2c1ncn2[C@@H]1O[C@H](COP(=O)(O)O)[C@@H](O)[C@H]1O",
+      "InChIKey": "BMYFUCYXRGTQQL-IOSLPCCCSA-N",
+      "MolecularFormula": "C11H15N4O7PS",
+      "source": "KEGG C16615 original molfile; S-methylated thiopurine nucleotide, not PubChem alias matches"
+    },
+    "cyproterone acetate": {
+      "CID": 9880,
+      "MolecularFormula": "C24H29ClO4",
+      "SMILES": "CC(=O)[C@]1(CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2C=C(C4=CC(=O)[C@@H]5C[C@@H]5[C@]34C)Cl)C)OC(=O)C",
+      "InChIKey": "UWFYSQMTEOIJJG-FDTZYFLXSA-N"
+    },
+    "CITCO": {
+      "CID": 9600409,
+      "MolecularFormula": "C19H12Cl3N3OS",
+      "SMILES": "C1=CC(=CC=C1C2=C(N3C=CSC3=N2)/C=N/OCC4=CC(=C(C=C4)Cl)Cl)Cl",
+      "InChIKey": "ZQWBOKJVVYNKTL-AUEPDCJTSA-N"
+    },
+    "toosendanin": {
+      "CID": 9851101,
+      "MolecularFormula": "C30H38O11",
+      "SMILES": "CC(=O)O[C@@H]1C[C@@H]([C@@]23CO[C@H]([C@@]1([C@@H]2C[C@H]([C@@]4([C@@H]3C(=O)[C@@H]([C@@]5([C@]46[C@H](O6)C[C@H]5C7=COC=C7)C)OC(=O)C)C)O)C)O)O",
+      "InChIKey": "NAHTXVIXCMUDLF-RFNFAWMESA-N"
+    },
+    "benzophenone-1": {
+      "CID": 8572,
+      "MolecularFormula": "C13H10O3",
+      "SMILES": "C1=CC=C(C=C1)C(=O)C2=C(C=C(C=C2)O)O",
+      "InChIKey": "ZXDDPOHVAMWLBH-UHFFFAOYSA-N"
+    },
+    "palmitic acid": {
+      "CID": 985,
+      "MolecularFormula": "C16H32O2",
+      "SMILES": "CCCCCCCCCCCCCCCC(=O)O",
+      "InChIKey": "IPCSVZSSVZVIGE-UHFFFAOYSA-N"
+    },
+    "lawsone": {
+      "CID": 6755,
+      "MolecularFormula": "C10H6O3",
+      "SMILES": "C1=CC=C2C(=C1)C(=CC(=O)C2=O)O",
+      "InChIKey": "WVCHIGAIXREVNS-UHFFFAOYSA-N"
+    },
+    "disulfiram": {
+      "CID": 3117,
+      "MolecularFormula": "C10H20N2S4",
+      "SMILES": "CCN(CC)C(=S)SSC(=S)N(CC)CC",
+      "InChIKey": "AUZONCFQVSMFAP-UHFFFAOYSA-N"
+    },
+    "methyl cholate": {
+      "CID": 10960835,
+      "MolecularFormula": "C25H42O5",
+      "SMILES": "C[C@H](CCC(=O)OC)[C@H]1CC[C@@H]2[C@@]1([C@H](C[C@H]3[C@H]2[C@@H](C[C@H]4[C@@]3(CC[C@H](C4)O)C)O)O)C",
+      "InChIKey": "DLYVTEULDNMQAR-SRNOMOOLSA-N"
+    },
+    "estradiol 17beta glucuronide": {
+      "CID": 5281887,
+      "MolecularFormula": "C24H32O8",
+      "SMILES": "C[C@]12CC[C@H]3[C@H]([C@@H]1CC[C@@H]2O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)CCC5=C3C=CC(=C5)O",
+      "InChIKey": "MTKNDAQYHASLID-QXYWQCSFSA-N"
+    },
+    "baicalin": {
+      "CID": 64982,
+      "MolecularFormula": "C21H18O11",
+      "SMILES": "C1=CC=C(C=C1)C2=CC(=O)C3=C(C(=C(C=C3O2)O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)O)O",
+      "InChIKey": "IKIIZLYTISPENI-ZFORQUDYSA-N"
+    },
+    "scutellarin": {
+      "CID": 185617,
+      "MolecularFormula": "C21H18O12",
+      "SMILES": "C1=CC(=CC=C1C2=CC(=O)C3=C(C(=C(C=C3O2)O[C@H]4[C@@H]([C@H]([C@@H]([C@H](O4)C(=O)O)O)O)O)O)O)O",
+      "InChIKey": "DJSISFGPUUYILV-ZFORQUDYSA-N"
+    },
+    "UDP-glucose": {
+      "CID": 8629,
+      "MolecularFormula": "C15H24N2O17P2",
+      "SMILES": "C1=CN(C(=O)NC1=O)[C@H]2[C@@H]([C@@H]([C@H](O2)COP(=O)(O)OP(=O)(O)O[C@@H]3[C@@H]([C@H]([C@@H]([C@H](O3)CO)O)O)O)O)O",
+      "InChIKey": "HSCJRCZFDFQWRP-JZMIEXBBSA-N"
+    },
+    "ADP beta S": {
+      "CID": 5310996,
+      "MolecularFormula": "C10H15N5O9P2S",
+      "SMILES": "C1=NC(=C2C(=N1)N(C=N2)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)(O)OP(=S)(O)O)O)O)N",
+      "InChIKey": "HCIKUKNAJRJFOW-KQYNXXCUSA-N"
+    },
+    "conophylline": {
+      "CID": 15226696,
+      "MolecularFormula": "C44H50N4O10",
+      "SMILES": "CC[C@]12CC(=C3[C@@]4([C@H]1N(CC4)[C@H]5[C@@H]([C@H]2O)OC6=CC7=C(C=C56)[C@]89CCN1[C@H]8[C@](CC(=C9N7)C(=O)OC)([C@H]2[C@@H](C1)O2)CC)C1=CC(=C(C(=C1N3)OC)OC)O)C(=O)OC",
+      "InChIKey": "QZRIMAMDGWAHPQ-ATPAGDLWSA-N"
+    },
+    "isoniazid": {
+      "SMILES": "NNC(=O)c1ccncc1",
+      "InChIKey": "QRXWMOHMRWLFEY-UHFFFAOYSA-N",
+      "MolecularFormula": "C6H7N3O"
+    }
+  },
+  "decisions": 85,
+  "total_decisions": 251,
+  "labels_or_predictions_consulted": false,
+  "rejected_ambiguous_aliases": [
+    "PubChem NRH beta-carboline",
+    "PubChem 6-MMPR misconnected aliases",
+    "partially specified E217G stereochemistry",
+    "unverified historical PKI terminal modification"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "parent_key": "BTHCJHQOYFUIMG-LWWONICKSA-N",
+  "ok": true,
+  "synonyms": [
+    "12-Hydroxy-1,2-dihydrosenecionan-11,16-dione"
+  ],
+  "cids": [
+    91459
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BTHCJHQOYFUIMG-LWWONICKSA-N/synonyms/JSON",
+  "http_status": 200
+}

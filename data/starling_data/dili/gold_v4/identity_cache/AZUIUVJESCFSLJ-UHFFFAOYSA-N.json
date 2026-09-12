@@ -1,0 +1,42 @@
+{
+  "parent_key": "AZUIUVJESCFSLJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "2(1H)-Isoquinolinecarboxylic acid, 3,4-dihydro-6-(((6-methoxy-4'-(trifluoromethyl)(1,1'-biphenyl)-2-yl)carbonyl)amino)-, phenyl ester",
+    "2(1H)-Isoquinolinecarboxylic acid, 3,4-dihydro-6-[[[6-methoxy-4'-(trifluoromethyl)[1,1'-biphenyl]-2-yl]carbonyl]amino]-, phenyl ester",
+    "913541-47-6",
+    "AKOS030628491",
+    "AS-35287",
+    "AZUIUVJESCFSLJ-UHFFFAOYSA-N",
+    "CHEMBL4297326",
+    "CS-0024621",
+    "DA-77887",
+    "DB05678",
+    "EX-A15035",
+    "F84YQX13FV",
+    "HY-106011",
+    "KD-026",
+    "KD026",
+    "MFCD28502203",
+    "Phenyl 6-((3-methoxy-2-(4-(trifluoromethyl)phenyl)benzoyl)amino)-3,4-dihydro-1H-isoquinoline-2-carboxylate",
+    "Phenyl 6-(6-methoxy-4'-(trifluoromethyl)-[1,1'-biphenyl]-2-carboxamido)-3,4-dihydroisoquinoline-2(1H)-carboxylate",
+    "Phenyl 6-(6-methoxy-4'-(trifluoromethyl)-[1,1'-biphenyl]-2-ylcarboxamido)-3,4-dihydroisoquinoline-2(1H)-carboxylate",
+    "Phenyl6-(6-methoxy-4'-(trifluoromethyl)-[1,1'-biphenyl]-2-ylcarboxamido)-3,4-dihydroisoquinoline-2(1H)-carboxylate",
+    "RefChem:183374",
+    "SB17241",
+    "SCHEMBL14585862",
+    "SCHEMBL29357213",
+    "SLx-4090",
+    "T27719",
+    "UNII-F84YQX13FV",
+    "orb1305038",
+    "phenyl 6-(6-methoxy-4'-(trifluoromethyl)-(1,1'-biphenyl)-2-amido)-1,2,3,4-tetrahydroisoquinoline-2-carboxylate",
+    "phenyl 6-[6-methoxy-4'-(trifluoromethyl)-[1,1'-biphenyl]-2-amido]-1,2,3,4-tetrahydroisoquinoline-2-carboxylate",
+    "phenyl 6-[[3-methoxy-2-[4-(trifluoromethyl)phenyl]benzoyl]amino]-3,4-dihydro-1H-isoquinoline-2-carboxylate"
+  ],
+  "cids": [
+    53497429
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AZUIUVJESCFSLJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

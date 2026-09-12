@@ -1,0 +1,38 @@
+{
+  "parent_key": "CGBYBGVMDAPUIH-ONEGZZNKSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2E)-2,3-Dimethyl-2-butenedioic acid",
+    "(2E)-2,3-Dimethyl-2-butenedioic acid #",
+    "(2E)-DIMETHYLBUT-2-ENEDIOIC ACID",
+    "(2E)-DIMETHYLBUT-2-ENEDIOICACID",
+    "(E)-2,3-dimethylbut-2-enedioic acid",
+    ".GAMMA.-METHYLMESACONIC ACID",
+    "2,3-Dimethylfumaric acid",
+    "2,3-dimethyl-2-butenedioic acid",
+    "2-Butenedioic acid, 2,3-dimethyl-, (E)-",
+    "21788-49-8",
+    "AB-131/42301000",
+    "AKOS006223269",
+    "CGBYBGVMDAPUIH-ONEGZZNKSA-N",
+    "CS-0170278",
+    "EN300-1699970",
+    "Fumaric acid, dimethyl-",
+    "Furan Impurity 2",
+    "G28507",
+    "MFCD19159881",
+    "NSC-174100",
+    "RefChem:81855",
+    "SCHEMBL105998",
+    "UNII-VBQ8FG19GP",
+    "VBQ8FG19GP",
+    "Z2607361494",
+    "dimethylfumaric acid",
+    "gamma-Methylmesaconic acid"
+  ],
+  "cids": [
+    5371506
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGBYBGVMDAPUIH-ONEGZZNKSA-N/synonyms/JSON",
+  "http_status": 200
+}

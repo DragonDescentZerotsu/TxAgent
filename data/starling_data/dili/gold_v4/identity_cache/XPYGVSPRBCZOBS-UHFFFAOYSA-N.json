@@ -1,0 +1,13 @@
+{
+  "parent_key": "XPYGVSPRBCZOBS-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL1430143",
+    "diazine-2-carboxamide"
+  ],
+  "cids": [
+    23087819
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XPYGVSPRBCZOBS-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

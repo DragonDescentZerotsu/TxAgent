@@ -1,0 +1,93 @@
+old_condition_group,new_condition_group,positive_rows,negative_rows
+model=a/j mouse+route=oral+species=mouse,model=a/j mouse+route=oral+species=mouse,3,0
+model=a/j mouse+species=mouse,model=a/j mouse+species=mouse,8,0
+model=aci rat+species=rat,model=aci rat+species=rat,4,0
+model=adolescent female rat+species=rat,model=adolescent female rat+species=rat,4,0
+model=b6c3f1 and cd-1 mouse+species=mouse,model=b6c3f1 and cd-1 mouse+species=mouse,4,0
+model=b6c3f1 mouse+route=inhalation+species=mouse,model=b6c3f1 mouse+route=inhalation+species=mouse,11,0
+model=b6c3f1 mouse+route=oral+species=mouse,model=b6c3f1 mouse+route=oral+species=mouse,20,3
+model=b6c3f1 mouse+species=mouse,model=b6c3f1 mouse+species=mouse,24,0
+model=balb/c mouse+species=mouse,model=balb/c mouse+species=mouse,12,0
+model=c57bl/6 mouse+route=oral+species=mouse,model=c57bl/6 mouse+route=oral+species=mouse,4,0
+model=c57bl/6 mouse+species=mouse,model=c57bl/6 mouse+species=mouse,8,0
+model=cd-1 mouse+species=mouse,model=cd-1 mouse+species=mouse,7,0
+model=cdf1 mouse+reported_condition=0.02-0.08%25 in diet+route=oral+species=mouse,model=cdf1 mouse+reported_condition=0.02-0.08%25 in diet+route=oral+species=mouse,4,0
+model=cdf1 mouse+route=oral+species=mouse,model=cdf1 mouse+route=oral+species=mouse,6,0
+model=cf1 mouse+route=oral+species=mouse,model=cf1 mouse+route=oral+species=mouse,3,0
+model=f344 rat (female)+route=oral+species=rat,model=female f344 rat+route=oral+species=rat,4,0
+model=f344 rat+route=oral+species=rat,model=f344 rat+route=oral+species=rat,18,3
+model=f344 rat+species=rat,model=f344 rat+species=rat,38,1
+model=f344/n rat+route=oral+species=rat,model=f344/n rat+route=oral+species=rat,9,0
+model=female a/j mouse+species=mouse,model=female a/j mouse+species=mouse,5,0
+model=female b6c3f1 mouse+route=oral+species=mouse,model=female b6c3f1 mouse+route=oral+species=mouse,3,0
+model=female mouse+species=mouse,model=female mouse+species=mouse,8,0
+model=female nmri mouse+route=dermal_or_topical+species=mouse,model=female nmri mouse+route=dermal_or_topical+species=mouse,3,0
+model=female rat+route=oral+species=rat,model=female rat+route=oral+species=rat,10,0
+model=female rat+species=rat,model=female rat+species=rat,7,0
+model=female sprague-dawley rat+route=oral+species=rat,model=female sprague-dawley rat+route=oral+species=rat,10,0
+model=female wistar spf rat+reported_condition=applied on dorsal skin of 20 rats each; observation period of 15 months+route=dermal_or_topical+species=rat,model=female wistar spf rat+reported_condition=applied on dorsal skin; observation period of 15 months+route=dermal_or_topical+species=rat,3,1
+model=hairless mouse+reported_condition=requires combined exposure to uva irradiation; photocarcinogenic effect+route=oral+species=mouse,model=hairless mouse+reported_condition=requires combined exposure to uva irradiation; photocarcinogenic effect+route=oral+species=mouse,4,0
+model=hamster (mesocricetus auratus)+species=hamster,model=hamster (mesocricetus auratus)+species=hamster,9,2
+model=male b6c3f1 and cd-1 mouse+species=mouse,model=male b6c3f1 and cd-1 mouse+species=mouse,3,0
+model=male b6c3f1 mouse+route=oral+species=mouse,model=male b6c3f1 mouse+route=oral+species=mouse,8,0
+model=male f344 rat+route=oral+species=rat,model=male f344 rat+route=oral+species=rat,20,1
+model=male f344 rat+species=rat,model=male f344 rat+species=rat,9,0
+model=male fischer rat+route=oral+species=rat,model=male fischer rat+route=oral+species=rat,4,0
+model=male hras128 rat (human c-ha-ras proto-oncogene transgenic)+reported_condition=male hras128 rats; sacrifice at week 20+species=rat,model=male hras128 rat (human c-ha-ras proto-oncogene transgenic)+reported_condition=male hras128 rats; sacrifice at week 20+species=rat,3,0
+model=male mouse+species=mouse,model=male mouse+species=mouse,9,0
+model=male rat+route=oral+species=rat,model=male rat+route=oral+species=rat,10,0
+model=male rat+species=rat,model=male rat+species=rat,15,0
+model=male sprague-dawley rat+route=oral+species=rat,model=male sprague-dawley rat+route=oral+species=rat,8,0
+model=male strain a/j mouse+reported_condition=single intraperitoneal injection of pah in tricaprylin vehicle; lungs harvested 8 months after treatment+route=injection_or_parenteral+species=mouse,model=male strain a/j mouse+reported_condition=single intraperitoneal injection of pah in tricaprylin vehicle; lungs harvested 8 months after treatment+route=injection_or_parenteral+species=mouse,3,0
+model=male wistar rat+route=oral+species=rat,model=male wistar rat+route=oral+species=rat,8,1
+model=mouse (mus musculus)+species=mouse,species=mouse,8,0
+model=mouse skin+species=mouse,model=mouse skin+species=mouse,3,0
+model=mrc rat+species=rat,model=mrc rat+species=rat,4,0
+model=mus musculus (mouse)+route=dermal_or_topical+species=mouse,route=dermal_or_topical+species=mouse,3,0
+model=mus musculus (mouse)+route=oral+species=mouse,route=oral+species=mouse,8,1
+model=mus musculus (mouse)+species=mouse,species=mouse,14,1
+model=neonatal cd-1 mouse+reported_condition=neonatal treatment on days 1–5 at 2 μg/pup·d; evaluated in aged mice+species=mouse,model=neonatal cd-1 mouse+reported_condition=neonatal treatment on days 1–5 at 2 μg/pup·d; evaluated in aged mice+species=mouse,5,0
+"model=neonatal male b6c3f1 mouse+reported_condition=neonatal bioassay; i.p. dosing divided 1/7, 2/7, 4/7 given within 24 h of birth and at 8 and 15 days; dmso vehicle+route=injection_or_parenteral+species=mouse","model=neonatal male b6c3f1 mouse+reported_condition=neonatal bioassay; i.p. dosing divided 1/7, 2/7, 4/7 given within 24 h of birth and at 8 and 15 days; dmso vehicle+route=injection_or_parenteral+species=mouse",4,0
+model=newborn mouse+route=injection_or_parenteral+species=mouse,model=newborn mouse+route=injection_or_parenteral+species=mouse,1,2
+model=osborne-mendel rat+route=oral+species=rat,model=osborne-mendel rat+route=oral+species=rat,3,1
+"model=ovarian cancer patients (international case-control study, 114 taml cases)+species=human",model=ovarian cancer patients+species=human,5,0
+model=rat (2-year bioassay)+species=rat,model=rat (2-year bioassay)+species=rat,3,0
+model=rat (male and female)+route=oral+species=rat,model=male and female rat+route=oral+species=rat,3,1
+model=rat (male and female)+species=rat,model=male and female rat+species=rat,4,0
+model=rat (mammary gland)+species=rat,model=rat (mammary gland)+species=rat,5,0
+model=rat liver+species=rat,model=rat liver+species=rat,4,0
+model=rattus norvegicus (rat)+route=oral+species=rat,route=oral+species=rat,14,0
+model=rattus norvegicus (rat)+species=rat,species=rat,28,0
+model=sd rat+route=oral+species=rat,model=sprague-dawley rat+route=oral+species=rat,5,0
+model=sd rat+species=rat,model=sprague-dawley rat+species=rat,3,0
+model=sprague-dawley female rat+route=oral+species=rat,model=female sprague-dawley rat+route=oral+species=rat,2,1
+model=sprague-dawley rat+route=oral+species=rat,model=sprague-dawley rat+route=oral+species=rat,14,3
+model=sprague-dawley rat+species=rat,model=sprague-dawley rat+species=rat,15,1
+model=swiss albino mouse+route=oral+species=mouse,model=swiss albino mouse+route=oral+species=mouse,2,1
+model=swiss albino mouse+species=mouse,model=swiss albino mouse+species=mouse,4,1
+model=transplant patients on immunosuppressive therapy+species=human,model=transplant patients on immunosuppressive therapy+species=human,3,0
+model=wistar rat+route=injection_or_parenteral+species=rat,model=wistar rat+route=injection_or_parenteral+species=rat,9,0
+model=wistar rat+route=oral+species=rat,model=wistar rat+route=oral+species=rat,10,1
+model=wistar rat+species=rat,model=wistar rat+species=rat,12,0
+no_reported_external_condition,no_reported_external_condition,58,218
+reported_condition=administered in the diet+route=oral+species=rat,reported_condition=administered in the diet+route=oral+species=rat,2,1
+reported_condition=chronic bioassay dosing+species=mouse,reported_condition=chronic bioassay dosing+species=mouse,3,0
+reported_condition=chronic bioassay dosing+species=rat,reported_condition=chronic bioassay dosing+species=rat,3,0
+route=dermal_or_topical+species=mouse,route=dermal_or_topical+species=mouse,10,3
+route=inhalation+species=mouse,route=inhalation+species=mouse,10,0
+route=inhalation+species=rat,route=inhalation+species=rat,26,2
+route=injection_or_parenteral+species=mouse,route=injection_or_parenteral+species=mouse,20,2
+route=injection_or_parenteral+species=rat,route=injection_or_parenteral+species=rat,24,0
+route=multiple_routes+species=rat,route=multiple_routes+species=rat,7,0
+route=oral+species=dog,route=oral+species=dog,3,0
+route=oral+species=monkey,route=oral+species=monkey,4,1
+route=oral+species=mouse,route=oral+species=mouse,45,5
+route=oral+species=rat,route=oral+species=rat,97,9
+route=other+species=mouse,route=other+species=mouse,8,0
+route=other+species=rat,route=other+species=rat,12,0
+species=dog,species=dog,7,0
+species=hamster,species=hamster,7,0
+species=human,species=human,13,2
+species=monkey,species=monkey,6,0
+species=mouse,species=mouse,106,4
+species=rat,species=rat,164,5

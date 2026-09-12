@@ -1,0 +1,25 @@
+{
+  "parent_key": "XJRMFKRYVTYFPN-NQFCYCSRSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3R,5S,5'aS,7'R,8'aR)-5-(3-Furanyl)-3',4,5,5',5'a,7',8',8'a-octahydro-7'-methylspiro[furan-3(2H),6'-[6H]naphtho[1,8-bc]furan]-2,2'(4'H)-dione",
+    "(5S,3R)-5-(3-Furyl)-3',4,5,5',5'abeta,7',8',8'aalpha-octahydro-7'alpha-methylspiro[furan-3(2H),6'-[6H]naphtho[1,8-bc]furan]-2,2'(4'H)-dione",
+    "4ZX27K8S4X",
+    "6-epi-Teucvin",
+    "72541-00-5",
+    "AKOS040734459",
+    "DTXSID101383242",
+    "NS00093848",
+    "NSC-258598",
+    "Spiro[furan-3(2H),6'-[6H]naphtho[1,8-bc]furan]-2,2'(4'H)-dione, 5-(3-furanyl)-3',4,5,5',5'a,7',8',8'a-octahydro-7'-methyl-, (3R,5S,5'aS,7'R,8'aR)-",
+    "T124325",
+    "Teuchamaedryn A",
+    "Teuflin",
+    "orb2279491"
+  ],
+  "cids": [
+    13071598
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/XJRMFKRYVTYFPN-NQFCYCSRSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,23 @@
+{
+  "parent_key": "JRLHFEXLBNGRJO-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JRLHFEXLBNGRJO-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1-Naphthalenesulfonic acid, 4-hydroxy-3-[2-(2-methoxyphenyl)diazenyl]-",
+    "22036-97-1",
+    "4-Hydroxy-3-[2-(2-methoxyphenyl)diazenyl]-1-naphthalenesulfonic acid",
+    "4-hydroxy-3-[(2-methoxyphenyl)diazenyl]naphthalene-1-sulfonic acid",
+    "Acid red 4 free acid",
+    "CHEBI:87098",
+    "Q27159368",
+    "SCHEMBL110002",
+    "SCHEMBL29566193",
+    "SCHEMBL334052",
+    "XXR35M8AGD",
+    "acid red 4 (free acid form)"
+  ],
+  "http_status": 200,
+  "cids": [
+    22137
+  ]
+}

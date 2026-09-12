@@ -1,0 +1,27 @@
+{
+  "parent_key": "FSIRXIHZBIXHKT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "10-EdAM",
+    "10-Ethyl-10-dezaz-aminopterin",
+    "2-[[4-[1-(2,4-diaminopteridin-6-yl)butan-2-yl]benzoyl]amino]pentanedioic acid",
+    "2-{4-[1-(2,4-Diamino-pteridin-6-ylmethyl)-propyl]-benzoylamino}-pentanedioic acid",
+    "2-{4-[1-(2,4-Diamino-pteridin-6-ylmethyl)-propyl]-benzoylamino}-pentanedioic acid(1.75H2O)",
+    "2-{4-[1-(2,4-Diamino-pteridin-6-ylmethyl)-propyl]-benzoylamino}-pentanedioic acid(10-Et-10-DA)",
+    "2-{4-[1-(2,4-Diamino-pteridin-6-ylmethyl)-propyl]-benzoylamino}-pentanedioic acid(Edatrexate)",
+    "2-{4-[2-(2,4-Diamino-pteridin-6-yl)-ethyl]-benzoylamino}-pentanedioic acid(10-EDAM)",
+    "BDBM50004544",
+    "CGP 30694;NSC 626715",
+    "CHEMBL9798",
+    "N-[4-[1-[(2,4-Diamino-6-pteridinyl)-methyl]propyl]benzoyl]-L-glutamic acid",
+    "NCI60_008442",
+    "NS00121418",
+    "NSC626715",
+    "SCHEMBL1650127"
+  ],
+  "cids": [
+    54586
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FSIRXIHZBIXHKT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

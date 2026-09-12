@@ -1,0 +1,17 @@
+{
+  "parent_key": "DNKBUJPNQWHIHC-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DNKBUJPNQWHIHC-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-((3-((6-Chloro-2-methoxyacridin-9-yl)amino)propyl)amino)ethanol",
+    "2-({3-[(6-CHLORO-2-METHOXYACRIDIN-9-YL)AMINO]PROPYL}AMINO)ETHAN-1-OL",
+    "2-({3-[(6-chloro-2-methoxyacridin-9-yl)amino]propyl}amino)ethanol",
+    "2-[3-(6-chloro-2-methoxy-9-acridyl amino)propylamino]ethanol",
+    "37020-26-1",
+    "DTXSID50276152"
+  ],
+  "http_status": 200,
+  "cids": [
+    114956
+  ]
+}

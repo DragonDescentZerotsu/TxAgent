@@ -1,0 +1,16 @@
+{
+  "parent_key": "ZQPPWKWNKBNZDZ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "805978-56-7",
+    "DB-094169",
+    "DTXSID40656328",
+    "N-(4-Hydroxyphenyl)-beta-alaninamide",
+    "SCHEMBL19150356"
+  ],
+  "cids": [
+    43710647
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/ZQPPWKWNKBNZDZ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

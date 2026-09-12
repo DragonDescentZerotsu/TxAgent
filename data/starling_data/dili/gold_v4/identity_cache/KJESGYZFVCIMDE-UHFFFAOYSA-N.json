@@ -1,0 +1,27 @@
+{
+  "parent_key": "KJESGYZFVCIMDE-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-Chloro ethanol",
+    "1-Chloroethan-1-ol",
+    "1-Chloroethanol",
+    "594-01-4",
+    "DTXCID40456082",
+    "DTXSID50505272",
+    "KJESGYZFVCIMDE-UHFFFAOYSA-N",
+    "RefChem:229551",
+    "SCHEMBL23055",
+    "SCHEMBL23056",
+    "SCHEMBL2474845",
+    "SCHEMBL465163",
+    "SCHEMBL6593330",
+    "chioroethanol",
+    "chloro ethanol",
+    "chloro-ethanol"
+  ],
+  "cids": [
+    12639035
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KJESGYZFVCIMDE-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

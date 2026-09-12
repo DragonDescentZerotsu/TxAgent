@@ -1,0 +1,32 @@
+{
+  "route=oral+species=rat": [
+    "route=oral",
+    "species=rat"
+  ],
+  "species=rat": [
+    "species=rat"
+  ],
+  "route=oral+species=mouse": [
+    "route=oral",
+    "species=mouse"
+  ],
+  "species=mouse": [
+    "species=mouse"
+  ],
+  "species=human": [
+    "species=human"
+  ],
+  "model=mouse (Mus musculus)+species=mouse": [
+    "model=mouse (Mus musculus)",
+    "species=mouse"
+  ],
+  "route=dermal_or_topical+species=mouse": [
+    "route=dermal_or_topical",
+    "species=mouse"
+  ],
+  "model=CDF1 mouse+route=oral+species=mouse": [
+    "model=CDF1 mouse",
+    "route=oral",
+    "species=mouse"
+  ]
+}

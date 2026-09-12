@@ -1,0 +1,28 @@
+{
+  "task": "dili",
+  "benchmark_root": "data/conditioned_benchmark",
+  "indices": {
+    "scaffold": {
+      "manifest": "data/starling_data/dili/progressive_v1/indices/scaffold/manifest.json",
+      "sha256": "5adb292700608b09b3bbb54493a1173d8cacccdc51d2d33b46d6677e12bef770"
+    },
+    "random": {
+      "manifest": "data/starling_data/dili/progressive_v1/indices/random/manifest.json",
+      "sha256": "649713f6b6ec07a48efd55ccd6520bb7ebe39400f5423f443454d2a0f931aeb3"
+    }
+  },
+  "catalog": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/family_assays.jsonl",
+  "catalog_sha256": "7de165ae979ead92c4bb29f7ae79703b4faf3188196085cc7060a9c79f0ef3f4",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "validation": "data/starling_data/dili/progressive_v1/validation_current.json",
+  "validation_sha256": "51a80e9f8d4a1ce6620200d58c06abb4b751a5802c7ea5574d64cea7db69dd7e",
+  "validation_status": "passed",
+  "historical_validation": {
+    "path": "data/starling_data/dili/progressive_v1/validation_all.json",
+    "sha256": "cbf106f8386ec6ab553c640f0a4f5a1715b3b23dfbed0de84ec394f7bcce7a90",
+    "status": "historical_before_tautomer_identity_v2",
+    "reuse_scope": "unchanged source semantics and raw fields only; current identity/index checks are the new scheme receipts"
+  },
+  "publication_receipt": "data/starling_data/dili/gold_v3/provenance/retrieval_identity_publication.json",
+  "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json"
+}

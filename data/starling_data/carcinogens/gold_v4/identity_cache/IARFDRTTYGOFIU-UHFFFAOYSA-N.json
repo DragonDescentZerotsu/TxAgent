@@ -1,0 +1,19 @@
+{
+  "parent_key": "IARFDRTTYGOFIU-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/IARFDRTTYGOFIU-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(9H-Fluoren-9-yl)ethanimidic acid",
+    "14683-96-6",
+    "2-(9H-Fluoren-9-yl)ethanimidic acid",
+    "2-(9H-fluoren-9-yl)acetamide",
+    "958811-96-6",
+    "DTXSID60932939",
+    "SCHEMBL87862",
+    "SCHEMBL87863"
+  ],
+  "http_status": 200,
+  "cids": [
+    139805
+  ]
+}

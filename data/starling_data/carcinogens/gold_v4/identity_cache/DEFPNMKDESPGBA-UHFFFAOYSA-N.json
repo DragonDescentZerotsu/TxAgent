@@ -1,0 +1,36 @@
+{
+  "parent_key": "DEFPNMKDESPGBA-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DEFPNMKDESPGBA-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2-aminobenzoyl)glycine",
+    "2-((2-aminobenzoyl)amino)acetic acid",
+    "2-(2-aminobenzamido)acetic acid",
+    "2-(2-aminobenzoylamino)ethanoic acid",
+    "2-Aminohippuric acid",
+    "2-[(2-aminobenzoyl)amino]acetic acid",
+    "526-21-6",
+    "AKOS000287858",
+    "CHEBI:165184",
+    "CHEMBL276221",
+    "DB-343082",
+    "DEFPNMKDESPGBA-UHFFFAOYSA-N",
+    "DTXCID80123064",
+    "DTXSID50200573",
+    "Glycine, N-(2-aminobenzoyl)-",
+    "HMS1789F03",
+    "RefChem:926672",
+    "SCHEMBL196585",
+    "Sivelestat Impurity 15",
+    "Sivelestat Sodium Impurity 8",
+    "[(2-aminobenzoyl)amino]acetic acid",
+    "n-(2-aminobenzoyl)glycine",
+    "o-Aminobenzoylglycine",
+    "o-Aminohippuric acid",
+    "ortho-Aminohippuric acid"
+  ],
+  "http_status": 200,
+  "cids": [
+    3080562
+  ]
+}

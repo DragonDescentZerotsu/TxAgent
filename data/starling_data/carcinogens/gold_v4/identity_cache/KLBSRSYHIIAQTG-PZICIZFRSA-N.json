@@ -1,0 +1,15 @@
+{
+  "parent_key": "KLBSRSYHIIAQTG-PZICIZFRSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KLBSRSYHIIAQTG-PZICIZFRSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(5S)-3-acetyl-5-[(2S)-butan-2-yl]pyrrolidine-2,4-dione",
+    "(5S,8S)-3-Acetyl-5-sec-butylpyrrolidine-2,4-dione",
+    "C08511",
+    "Q27108395"
+  ],
+  "http_status": 200,
+  "cids": [
+    441580
+  ]
+}

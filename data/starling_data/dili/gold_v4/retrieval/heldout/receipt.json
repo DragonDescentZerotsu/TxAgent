@@ -1,0 +1,18 @@
+{
+  "scaffold": {
+    "source": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/heldout_molecule_condition_labels.jsonl",
+    "source_sha256": "c068d27dfef5debd869088847d4b34d4b24797ff88c15e699a857447e091c548",
+    "path": "data/starling_data/dili/gold_v4/retrieval/heldout/scaffold.jsonl",
+    "sha256": "2fd1424c6271455fc1e1766a23c37ac28b2e679d397646a4e43b75fadea89ecf",
+    "rows": 804,
+    "ordered_query_labels_unchanged": true
+  },
+  "random": {
+    "source": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/random/heldout_molecule_condition_labels.jsonl",
+    "source_sha256": "2d03d4687378c9b055c4d6a636e5726d17a640626b35162a77a6849523a39809",
+    "path": "data/starling_data/dili/gold_v4/retrieval/heldout/random.jsonl",
+    "sha256": "f7c03842a9816ff35d73948bc8cac2a66b26a6c67d2c97f3967d197b3d3c4ff8",
+    "rows": 804,
+    "ordered_query_labels_unchanged": true
+  }
+}

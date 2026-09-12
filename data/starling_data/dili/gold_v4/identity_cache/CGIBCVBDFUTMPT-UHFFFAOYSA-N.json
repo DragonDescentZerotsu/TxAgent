@@ -1,0 +1,29 @@
+{
+  "parent_key": "CGIBCVBDFUTMPT-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-(2-hydroxy-4,6-dimethoxy-phenyl)-3-(4-methoxyphenyl)prop-2-en-1-one",
+    "1-(2-hydroxy-4,6-dimethoxyphenyl)-3-(4-methoxyphenyl)prop-2-en-1-one",
+    "2a(2)-Hydroxy-4,4a(2),6a(2)-trimethoxychalcone",
+    "6'-hydroxy-2',4,4'-trimethoxychalcone",
+    "AKOS030231179",
+    "C18H18O5",
+    "CGIBCVBDFUTMPT-UHFFFAOYSA-N",
+    "DTXSID701285842",
+    "Flavokavain A",
+    "Flavokawain A (cis/trans mixture); Flavokavain A (cis/trans mixture)",
+    "FlavokawainA",
+    "H1571",
+    "RefChem:140657",
+    "SCHEMBL2289188",
+    "orb1222348",
+    "orb1303413",
+    "orb609322",
+    "s5600"
+  ],
+  "cids": [
+    235736
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/CGIBCVBDFUTMPT-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

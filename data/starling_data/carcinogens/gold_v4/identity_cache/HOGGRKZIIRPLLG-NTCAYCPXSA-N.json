@@ -1,0 +1,16 @@
+{
+  "parent_key": "HOGGRKZIIRPLLG-NTCAYCPXSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HOGGRKZIIRPLLG-NTCAYCPXSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "12-OxoOME(10E)",
+    "12-oxo-10E-octadecenoic acid",
+    "12-oxo-trans-10-octadecenoic acid",
+    "LMFA02000265",
+    "SCHEMBL15742841"
+  ],
+  "http_status": 200,
+  "cids": [
+    5312910
+  ]
+}

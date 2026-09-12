@@ -1,0 +1,24 @@
+{
+  "parent_key": "HAPNXLWNFLTTIE-JLHYYAGUSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HAPNXLWNFLTTIE-JLHYYAGUSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-8-(1H-indol-1-yl)-2,6-dimethyloct-7-en-2-ol",
+    "00NG926C95",
+    "7-OCTEN-2-OL, 2,6-DIMETHYL-8-(1H-INDOL-1-YL)-",
+    "8-(1H-Indol-1-yl)-2,6-dimethyloct-7-en-2-ol",
+    "8-(N-Indolyl)-2,6-dimethyl-7-octen-2-ol",
+    "EINECS 271-284-3",
+    "Hydroxycitronellal-indole (schiff base)",
+    "Hydroxycitronellylidene indol Schiff Base",
+    "Hydroxycitronellylidene-indole",
+    "Q27231361",
+    "SCHEMBL15914389",
+    "SCHEMBL29364131",
+    "UNII-00NG926C95"
+  ],
+  "http_status": 200,
+  "cids": [
+    6435060
+  ]
+}

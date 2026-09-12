@@ -1,0 +1,15 @@
+{
+  "parent_key": "YCABHAGDPZAUBJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "AKOS006388072",
+    "SCHEMBL468058",
+    "YCABHAGDPZAUBJ-UHFFFAOYSA-N"
+  ],
+  "cids": [
+    21276947,
+    162809553
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/YCABHAGDPZAUBJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

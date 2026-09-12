@@ -1,0 +1,14 @@
+{
+  "parent_key": "BEYRARVOHDHKTG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BEYRARVOHDHKTG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Methyl-4-allyl-phenol",
+    "SCHEMBL219534",
+    "SCHEMBL5961687"
+  ],
+  "http_status": 200,
+  "cids": [
+    13660470
+  ]
+}

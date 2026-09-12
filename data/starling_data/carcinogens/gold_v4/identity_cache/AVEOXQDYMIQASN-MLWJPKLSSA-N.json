@@ -1,0 +1,23 @@
+{
+  "parent_key": "AVEOXQDYMIQASN-MLWJPKLSSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/AVEOXQDYMIQASN-MLWJPKLSSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(2R)-2-acetamido-3-(3-chloro-2-hydroxypropyl)sulfanylpropanoic acid",
+    "3-Chloro-2-hydroxypropylmercapturic acid",
+    "97729-49-2",
+    "Chpma cpd",
+    "DTXSID00913681",
+    "L-Cysteine, N-acetyl-S-(3-chloro-2-hydroxypropyl)-",
+    "N-Acetyl-S-(3-chloro-2-hydroxypropyl)-L-cysteine",
+    "N-Acetyl-S-(3-chloro-2-hydroxypropyl)cysteine",
+    "N-acetyl-S-(3-chloro-2-hydroxypropyl) cysteine",
+    "RefChem:93400",
+    "S-(3-Chloro-2-hydroxypropyl)-N-(1-hydroxyethylidene)-L-cysteine",
+    "S-(3-Chloro-2-hydroxypropyl)-N-(1-hydroxyethylidene)cysteine"
+  ],
+  "http_status": 200,
+  "cids": [
+    126802
+  ]
+}

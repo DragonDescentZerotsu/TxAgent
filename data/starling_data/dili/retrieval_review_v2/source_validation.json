@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "changed_fields_by_uid": {
+    "sr_ffbdcfa6e1e440c6ae2e5ab9284f7f91": [
+      "group_id",
+      "retrieval_eligible",
+      "progressive_level",
+      "family_key",
+      "level_assignment_reason",
+      "heldout_filter_scope",
+      "placement_reviewed"
+    ],
+    "sr_a70195c63a0742be9ab33f38e40d3059": [
+      "group_id",
+      "progressive_level",
+      "family_key",
+      "level_assignment_reason",
+      "placement_reviewed"
+    ],
+    "sr_bfca09fef44349679322abdf5dc24d8c": [
+      "group_id",
+      "progressive_level",
+      "family_key",
+      "level_assignment_reason",
+      "placement_reviewed"
+    ],
+    "sr_4fd383281e9e4dd3bed2f7029676f44c": [
+      "group_id",
+      "progressive_level",
+      "family_key",
+      "level_assignment_reason",
+      "placement_reviewed"
+    ]
+  },
+  "all_l1_source_rows_equal": true,
+  "n_l1_source_rows": 108437,
+  "four_raw_records_and_non_derived_fields_equal": true
+}

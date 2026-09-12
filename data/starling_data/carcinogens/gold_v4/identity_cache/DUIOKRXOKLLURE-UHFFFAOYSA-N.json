@@ -1,0 +1,39 @@
+{
+  "parent_key": "DUIOKRXOKLLURE-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/DUIOKRXOKLLURE-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-OCTYLPHENOL",
+    "2-n-Octylphenol",
+    "2-octyl-phenol",
+    "266-717-8",
+    "4-06-00-03472 (Beilstein Handbook Reference)",
+    "67554-50-1",
+    "949-13-3",
+    "BRN 1951485",
+    "DTXCID501326828",
+    "DTXSID3061344",
+    "DTXSID90897481",
+    "EINECS 213-437-9",
+    "EINECS 266-717-8",
+    "NS00006912",
+    "Octylphenol",
+    "Phenol, 2-octyl-",
+    "Phenol, o-octyl-",
+    "RefChem:856100",
+    "SCHEMBL11654587",
+    "SCHEMBL18808",
+    "SCHEMBL29356690",
+    "SCHEMBL3597535",
+    "SCHEMBL396018",
+    "SCHEMBL5271614",
+    "SCHEMBL5271616",
+    "n-Octylphenol",
+    "o-Octylphenol",
+    "o-Octylphenol, Octylphenol, Phenol, o-octyl-, Phenol, 2-octyl-, 2-OCTYLPHENOL, Phenol, 2-octyl- (9CI), EINECS 213-437-9, CID13700, BRN 1951485, LS-105014, 4-06-00-03472 (Beilstein Handbook Reference), 949-13-3"
+  ],
+  "http_status": 200,
+  "cids": [
+    13700
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "parent_key": "NVKAWKQGWWIWPM-ZYKVSKEMSA-N",
+  "ok": true,
+  "synonyms": [
+    "E653927E-6B72-48C1-80BC-A7C4A4B559DE",
+    "Etiocholan-17alpha-ol-3-one",
+    "SCHEMBL1502216"
+  ],
+  "cids": [
+    12446748
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NVKAWKQGWWIWPM-ZYKVSKEMSA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,24 @@
+{
+  "parent_key": "LJVLWBNWPQLYFD-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LJVLWBNWPQLYFD-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "2-Diethylamino-N-[4-(2-fluoro-benzoyl)-2,5-dimethyl-2H-pyrazol-3-yl]-acetamide",
+    "257Z6WWW6D",
+    "85747-92-8",
+    "ACETAMIDE, 2-(DIETHYLAMINO)-N-(4-(2-FLUOROBENZOYL)-1,3-DIMETHYL-1H-PYRAZOL-5-YL)-",
+    "BDBM50019457",
+    "CCRIS 1810",
+    "CHEMBL42084",
+    "DTXSID50235042",
+    "N~2~,N~2~-Diethyl-N-[4-(2-fluorobenzoyl)-1,3-dimethyl-1H-pyrazol-5-yl]glycinamide",
+    "PD 109394",
+    "PD-109394",
+    "SCHEMBL11193510",
+    "UNII-257Z6WWW6D"
+  ],
+  "http_status": 200,
+  "cids": [
+    59750
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "source_commit": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "source_branch": "joseph",
+  "original_root": "data/raw/starling/carcinogens/",
+  "format": "ordinary_lossless_parquet_parts",
+  "uid_policy": "preserve_source_row_uid_verbatim",
+  "sources": [
+    {
+      "authoritative_path": "carcinogens/carcinogens_base/extractions.parquet",
+      "authoritative_sha256": "a27a9a1b1a91b04443313099639646c4aa4a9c21ee1cc6817c8cd298971e0ac9",
+      "parts": [
+        {
+          "bytes": 70721934,
+          "name": "carcinogens_base.parquet",
+          "sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c"
+        }
+      ],
+      "rows": 354386,
+      "source_id": "carcinogens_base",
+      "task_id": "carcinogens"
+    },
+    {
+      "authoritative_path": "carcinogens/carcinogens_v1/extractions.parquet",
+      "authoritative_sha256": "0f9541956d6ffb98e27cf7c30a52a8157b87247cca4dfbb212b00d430664ddcd",
+      "parts": [
+        {
+          "bytes": 78299871,
+          "name": "carcinogens_v1.part-0001.parquet",
+          "sha256": "f9dc8f2aa22af92d50efb9adb5eb477206b198999c48ac391b35ed19811b1420"
+        },
+        {
+          "bytes": 78663768,
+          "name": "carcinogens_v1.part-0002.parquet",
+          "sha256": "1632a96c554da44ada8695d96fff4bb1b204c38f6e71537f5cd04882c8ade8d0"
+        },
+        {
+          "bytes": 81329640,
+          "name": "carcinogens_v1.part-0003.parquet",
+          "sha256": "8b5e18bb3272cd10c6bba7e91138c382ab1c4a51e9d3d3a17648f4cb273e7ffc"
+        }
+      ],
+      "rows": 911078,
+      "source_id": "carcinogens_v1",
+      "task_id": "carcinogens"
+    },
+    {
+      "authoritative_path": "carcinogens/carcinogens_v2/extractions.parquet",
+      "authoritative_sha256": "926b8cdbb4ace8367259a12db87239d5596ad4209e4ea9926601ff6c9382c7f7",
+      "parts": [
+        {
+          "bytes": 67094604,
+          "name": "carcinogens_v2.part-0001.parquet",
+          "sha256": "f3946de07e70d494e003c394f8e7843ca51bae86d42a4a7ea59d3f57b0e12fb2"
+        },
+        {
+          "bytes": 86517194,
+          "name": "carcinogens_v2.part-0002.parquet",
+          "sha256": "1c7205bef9b69241e42fbc0aa77fb4c98c973abbdbae743739cff76a3a91106c"
+        }
+      ],
+      "rows": 677230,
+      "source_id": "carcinogens_v2",
+      "task_id": "carcinogens"
+    },
+    {
+      "authoritative_path": "carcinogens/carcinogens_v3/extractions.parquet",
+      "authoritative_sha256": "524aebc8d28e116bf15ff2b27ad12257a3ec8706f4bdf75db969385e7c00c40c",
+      "parts": [
+        {
+          "bytes": 68438703,
+          "name": "carcinogens_v3.part-0001.parquet",
+          "sha256": "fd003f93428c0c63d8599165f49376b5701b161754d6abb377fd19e0c552d55b"
+        },
+        {
+          "bytes": 71341403,
+          "name": "carcinogens_v3.part-0002.parquet",
+          "sha256": "ceba72f2027241f307815aa63ad3fa0eeadd8f913ff270040cf52ca4e684cc5a"
+        },
+        {
+          "bytes": 74503946,
+          "name": "carcinogens_v3.part-0003.parquet",
+          "sha256": "53b6d2a9f8e02c6d8ef038a3df43731a5526c0224630dea3a4a917ec28632839"
+        }
+      ],
+      "rows": 791726,
+      "source_id": "carcinogens_v3",
+      "task_id": "carcinogens"
+    },
+    {
+      "authoritative_path": "carcinogens/carcinogens_v4/extractions.parquet",
+      "authoritative_sha256": "071f36d99f4042697b6f821bc336e09c71e3dae231d619a7c1a8d96cd8c29b80",
+      "parts": [
+        {
+          "bytes": 66894638,
+          "name": "carcinogens_v4.parquet",
+          "sha256": "6663520589252f0df8d29680d960249d5eb7b1207a6be1b7b2b9b15ccd6936d9"
+        }
+      ],
+      "rows": 211843,
+      "source_id": "carcinogens_v4",
+      "task_id": "carcinogens"
+    },
+    {
+      "authoritative_path": "carcinogens/carcinogens_v5/extractions.parquet",
+      "authoritative_sha256": "157f8efe01a537eb586d1247c04941e779905bb7af31e5a28d1d96a191d61026",
+      "parts": [
+        {
+          "bytes": 67537029,
+          "name": "carcinogens_v5.part-0001.parquet",
+          "sha256": "166737f2031a88bc10c438641f578ebc8d0e14ca7931d765232484efaa7bd652"
+        },
+        {
+          "bytes": 71675207,
+          "name": "carcinogens_v5.part-0002.parquet",
+          "sha256": "43ba529b7a5f62130978ad5106931b805f9f167c2baa2da86b0867f7cd0f806e"
+        }
+      ],
+      "rows": 323824,
+      "source_id": "carcinogens_v5",
+      "task_id": "carcinogens"
+    }
+  ],
+  "files": {
+    "carcinogens_base/extraction_guidance.json": {
+      "sha256": "a82bd065142a955e9c31a30c2ff9e8b9617f5b1fcb9776452fcdd2e9cdbe78a5",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_base/extraction_guidance.json"
+    },
+    "carcinogens_v1/extraction_guidance.json": {
+      "sha256": "f16d96055dd7b9c835c27579ad3b96b8a5c1f8216fd800b15f7bcabc9d16cb52",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_v1/extraction_guidance.json"
+    },
+    "carcinogens_v2/extraction_guidance.json": {
+      "sha256": "9fd01eff70cef46d8adac5532c03035bce5c04297350238c1d77ae04f503b9ef",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_v2/extraction_guidance.json"
+    },
+    "carcinogens_v3/extraction_guidance.json": {
+      "sha256": "769a473e795f5cab5e3d1002d479240d8e8d6767c0a40028a3c3c89ee31c8a03",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_v3/extraction_guidance.json"
+    },
+    "carcinogens_v4/extraction_guidance.json": {
+      "sha256": "051e2e2f8d36091538d5a3efc28a6231f29ffb7b8e2db7e4ad5a5f30a230ddd9",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_v4/extraction_guidance.json"
+    },
+    "carcinogens_v5/extraction_guidance.json": {
+      "sha256": "906eb148ababbbca5d6127d8c7881c03b43e129732ae21a0160018726eb66459",
+      "git_path": "data/raw/starling/carcinogens/carcinogens_v5/extraction_guidance.json"
+    },
+    "compressed/carcinogens_base.parquet": {
+      "sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_base.parquet"
+    },
+    "compressed/carcinogens_v1.part-0001.parquet": {
+      "sha256": "f9dc8f2aa22af92d50efb9adb5eb477206b198999c48ac391b35ed19811b1420",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v1.part-0001.parquet"
+    },
+    "compressed/carcinogens_v1.part-0002.parquet": {
+      "sha256": "1632a96c554da44ada8695d96fff4bb1b204c38f6e71537f5cd04882c8ade8d0",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v1.part-0002.parquet"
+    },
+    "compressed/carcinogens_v1.part-0003.parquet": {
+      "sha256": "8b5e18bb3272cd10c6bba7e91138c382ab1c4a51e9d3d3a17648f4cb273e7ffc",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v1.part-0003.parquet"
+    },
+    "compressed/carcinogens_v2.part-0001.parquet": {
+      "sha256": "f3946de07e70d494e003c394f8e7843ca51bae86d42a4a7ea59d3f57b0e12fb2",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v2.part-0001.parquet"
+    },
+    "compressed/carcinogens_v2.part-0002.parquet": {
+      "sha256": "1c7205bef9b69241e42fbc0aa77fb4c98c973abbdbae743739cff76a3a91106c",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v2.part-0002.parquet"
+    },
+    "compressed/carcinogens_v3.part-0001.parquet": {
+      "sha256": "fd003f93428c0c63d8599165f49376b5701b161754d6abb377fd19e0c552d55b",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v3.part-0001.parquet"
+    },
+    "compressed/carcinogens_v3.part-0002.parquet": {
+      "sha256": "ceba72f2027241f307815aa63ad3fa0eeadd8f913ff270040cf52ca4e684cc5a",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v3.part-0002.parquet"
+    },
+    "compressed/carcinogens_v3.part-0003.parquet": {
+      "sha256": "53b6d2a9f8e02c6d8ef038a3df43731a5526c0224630dea3a4a917ec28632839",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v3.part-0003.parquet"
+    },
+    "compressed/carcinogens_v4.parquet": {
+      "sha256": "6663520589252f0df8d29680d960249d5eb7b1207a6be1b7b2b9b15ccd6936d9",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v4.parquet"
+    },
+    "compressed/carcinogens_v5.part-0001.parquet": {
+      "sha256": "166737f2031a88bc10c438641f578ebc8d0e14ca7931d765232484efaa7bd652",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v5.part-0001.parquet"
+    },
+    "compressed/carcinogens_v5.part-0002.parquet": {
+      "sha256": "43ba529b7a5f62130978ad5106931b805f9f167c2baa2da86b0867f7cd0f806e",
+      "git_path": "data/raw/starling/carcinogens/compressed/carcinogens_v5.part-0002.parquet"
+    },
+    "compressed/manifest.json": {
+      "sha256": "0f8f31d476b2e699d70a31bf0fa5d90c6a63c8b17d0802da894db11c6e28dcfc",
+      "git_path": "data/raw/starling/carcinogens/compressed/manifest.json"
+    }
+  }
+}

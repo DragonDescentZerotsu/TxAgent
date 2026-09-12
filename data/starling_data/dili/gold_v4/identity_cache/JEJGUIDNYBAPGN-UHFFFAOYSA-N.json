@@ -1,0 +1,42 @@
+{
+  "parent_key": "JEJGUIDNYBAPGN-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "(+-)-N,N-DIMETHYL-3,4-(METHYLENEDIOXY)AMPHETAMINE",
+    "(+/-)-N,N-Dimethyl-3,4-(methylenedioxy)amphetamine",
+    "(1-(2H-1,3-BENZODIOXOL-5-YL)PROPAN-2-YL)DIMETHYLAMINE",
+    "1,3-BENZODIOXOLE-5-ETHANAMINE, N,N,.ALPHA.-TRIMETHYL-",
+    "1,3-Benzodioxole-5-ethanamine, N,N,alpha-trimethyl-",
+    "1-(1,3-Benzodioxol-5-yl)-N,N-dimethyl-2-propanamine #",
+    "1-(1,3-benzodioxol-5-yl)-N,N-dimethylpropan-2-amine",
+    "3,4-Methylenedioxy-N,N-dimethylamphetamine",
+    "3,4-methylenedioxydimethylamphetamine",
+    "74698-50-3",
+    "DTXSID701024545",
+    "Dimethyl-3,4-methylenedioxyamphetamine, N,N-",
+    "JEJGUIDNYBAPGN-UHFFFAOYSA-N",
+    "L6K8DR1S8O",
+    "MDDM",
+    "MDDMA",
+    "MDDMA (NFLIS-DRUG)",
+    "MDDMA (hydrochloride)",
+    "MDDMA [NFLIS-DRUG]",
+    "MDMMA",
+    "Methylenedioxydimethylamphetamine",
+    "N,N Dimethyl-3,4-methylenedioxyamphetamine",
+    "N,N,.ALPHA.-TRIMETHYL-1,3-BENZODIOXOLE-5-ETHANAMINE",
+    "N,N,alpha-Trimethyl-1,3-benzodioxole-5-ethanamine",
+    "N,N-DIMETHYL-3,4-METHYLENEDIOXYAMPHETAMINE",
+    "NS00017411",
+    "Q6823984",
+    "RefChem:161245",
+    "SCHEMBL29564700",
+    "SCHEMBL4809616",
+    "UNII-L6K8DR1S8O"
+  ],
+  "cids": [
+    551630
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JEJGUIDNYBAPGN-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

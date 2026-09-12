@@ -1,0 +1,7413 @@
+{
+  "schema_version": "heldout_direct_aliases.v1",
+  "task": "carcinogens",
+  "split_scheme": "random",
+  "heldout_file_sha256": "eaf0811b32fac1216da712ca2c4d0aeceaf2294fde3abe495c380bb8c82c7b55",
+  "parents": [
+    {
+      "parent_connectivity_key": "ANJTVLIZGCUXLD",
+      "aliases": [
+        {
+          "text": "Baptitoxin",
+          "kind": "name"
+        },
+        {
+          "text": "Baptitoxine",
+          "kind": "name"
+        },
+        {
+          "text": "CYTISINE",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Cytisinicline",
+          "kind": "name"
+        },
+        {
+          "text": "Cytiton",
+          "kind": "name"
+        },
+        {
+          "text": "Laburnin",
+          "kind": "name"
+        },
+        {
+          "text": "Sophorine",
+          "kind": "name"
+        },
+        {
+          "text": "Ulexin",
+          "kind": "name"
+        },
+        {
+          "text": "Ulexine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "c485e5a86287648efd239a50af201216011444208be68b3aaf7fd4b8ff971049",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/ANJTVLIZGCUXLD.json",
+          "original_parent_connectivity_key": "ANJTVLIZGCUXLD",
+          "cids": [
+            10235
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ANJTVLIZGCUXLD"
+      ]
+    },
+    {
+      "parent_connectivity_key": "AQKCJDFMDAPELP",
+      "aliases": [
+        {
+          "text": "Adumbran",
+          "kind": "name"
+        },
+        {
+          "text": "Droxacepam",
+          "kind": "name"
+        },
+        {
+          "text": "Oxazepam",
+          "kind": "name"
+        },
+        {
+          "text": "oxazepam",
+          "kind": "name"
+        },
+        {
+          "text": "Rondar",
+          "kind": "name"
+        },
+        {
+          "text": "Serax",
+          "kind": "name"
+        },
+        {
+          "text": "Serenid",
+          "kind": "name"
+        },
+        {
+          "text": "Serepax",
+          "kind": "name"
+        },
+        {
+          "text": "Seresta",
+          "kind": "name"
+        },
+        {
+          "text": "Tazepam",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b559a0d1943e7d6e9131edcc49a098e8a8b535e1871ceb99a360f43b6284a7d5",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ADIMAYPTOBDMTL-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ADIMAYPTOBDMTL",
+          "cids": [
+            4616
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ADIMAYPTOBDMTL",
+        "AQKCJDFMDAPELP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ARSRBNBHOADGJU",
+      "aliases": [
+        {
+          "text": "1,4-Dimethyl-2,3-benzphenanthrene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethyl-1,2-benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethyl-1,2-benzanthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-DIMETHYLBENZ(A)ANTHRACENE",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenz(a)anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenz(a)anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenz(a)anthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenz(a)anthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenz[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenz[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenz[a]anthracene (7,12-DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenz[a]anthracene (7,12-DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenz[a]anthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenz[a]anthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenzanthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-Dimethylbenzo[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethylbenzo[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-dimethyltetraphene",
+          "kind": "name"
+        },
+        {
+          "text": "7,12-DMBA",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-dimethyl-1,2-benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-Dimethyl-1,2-Benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-Dimethyl-1,2-benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-dimethyl-1,2-benzanthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-dimethylbenz(a)anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-dimethylbenz[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "9,10-dimethylbenz[a]anthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "dimethylbenzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Dimethylbenzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "dimethylbenzanthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "Dimethylbenzanthracene (DMBA)",
+          "kind": "name"
+        },
+        {
+          "text": "DMBA",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "DMBA (7,12-dimethylbenz[a]anthracene)",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "26e501bc63f980d2ce7e55992f8f6f41eeeade1289d54a7a770846b5d9fbd850",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ARSRBNBHOADGJU-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ARSRBNBHOADGJU",
+          "cids": [
+            6001
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ARSRBNBHOADGJU"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ASWVTGNCAZCNNR",
+      "aliases": [
+        {
+          "text": "4-amino-N-(4,6-dimethylpyrimidin-2-yl)benzenesulfonamide",
+          "kind": "name"
+        },
+        {
+          "text": "Sulfadimerazine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulfadimethylpyrimidine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulfadimezine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulfadimidine",
+          "kind": "name"
+        },
+        {
+          "text": "sulfamethazine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulfamezathine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulphadimidine",
+          "kind": "name"
+        },
+        {
+          "text": "Sulphamethazine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "0bd9e8065916f61775299b96a4ccd99606a0a19fba1b8c5a9b33e720bb3fb69d",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ASWVTGNCAZCNNR-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ASWVTGNCAZCNNR",
+          "cids": [
+            5327
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ASWVTGNCAZCNNR"
+      ]
+    },
+    {
+      "parent_connectivity_key": "AYLURHVFAYRSHT",
+      "aliases": [
+        {
+          "text": "2-amino-6-methyldipyrido(1,2-a-3',2'-d)imidazole",
+          "kind": "name"
+        },
+        {
+          "text": "2-amino-6-methyldipyrido[1,2-a:3',2'-d]imidazole",
+          "kind": "name"
+        },
+        {
+          "text": "2-amino-6-methyldipyrido[1,2-a:3',2'-d]imidazole (Glu-P-1)",
+          "kind": "name"
+        },
+        {
+          "text": "6-Me-Glu-P-2",
+          "kind": "name"
+        },
+        {
+          "text": "6-Methyldipyrido(1,2-a:3',2'-d)imidazol-2-amine",
+          "kind": "name"
+        },
+        {
+          "text": "Dipyrido(1,2-a:3',2'-d)imidazol-2-amine, 6-methyl-",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID5020657",
+          "kind": "name"
+        },
+        {
+          "text": "Glu P-1",
+          "kind": "name"
+        },
+        {
+          "text": "GLU-P 1",
+          "kind": "name"
+        },
+        {
+          "text": "Glu-P-1",
+          "kind": "name"
+        },
+        {
+          "text": "RXM718XV6O",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4c7129b43b17a5a61dd1f25863ae824bd210288a4fbc7b0df0156c5888625a44",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/AYLURHVFAYRSHT-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "AYLURHVFAYRSHT",
+          "cids": [
+            49971
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "AYLURHVFAYRSHT"
+      ]
+    },
+    {
+      "parent_connectivity_key": "AZAZKLKDEOMJBJ",
+      "aliases": [
+        {
+          "text": "BPBio1_000901",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000819",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:7469",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:91754",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL1487558",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2097I21",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2232L20",
+          "kind": "name"
+        },
+        {
+          "text": "LSM-1634",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000690",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL30304104",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "03d06ed5f2453e6917905e9f19865cb25ed7d6f0d2e9a33a28b9cff1e4922c43",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/AZAZKLKDEOMJBJ.json",
+          "original_parent_connectivity_key": "AZAZKLKDEOMJBJ",
+          "cids": [
+            441749
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "AZAZKLKDEOMJBJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "BBDKZWKEPDTENS",
+      "aliases": [
+        {
+          "text": "1,2,3,4-Tetrahydrostyrene",
+          "kind": "name"
+        },
+        {
+          "text": "1-Vinylcyclohexene-3",
+          "kind": "name"
+        },
+        {
+          "text": "4-Ethenyl-1-cyclohexene",
+          "kind": "name"
+        },
+        {
+          "text": "4-Ethenylcyclohexene",
+          "kind": "name"
+        },
+        {
+          "text": "4-VINYL-1-CYCLOHEXENE",
+          "kind": "name"
+        },
+        {
+          "text": "4-vinylcyclohexene",
+          "kind": "name"
+        },
+        {
+          "text": "4-Vinylcyclohexene",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclohexene, 4-vinyl-",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclohexenylethylene",
+          "kind": "name"
+        },
+        {
+          "text": "Ethenyl-1-cyclohexene",
+          "kind": "name"
+        },
+        {
+          "text": "NCI-C54999",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f112f2c4345899a7c0f4b8c13400b036fc5131df0ec72c8e6c1cccb0c9990fac",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/BBDKZWKEPDTENS-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "BBDKZWKEPDTENS",
+          "cids": [
+            7499
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "BBDKZWKEPDTENS"
+      ]
+    },
+    {
+      "parent_connectivity_key": "BBMULGJBVDDDNI",
+      "aliases": [
+        {
+          "text": "Antibiotic X 537A",
+          "kind": "name"
+        },
+        {
+          "text": "Ionophore X 537A",
+          "kind": "name"
+        },
+        {
+          "text": "lasalocid",
+          "kind": "name"
+        },
+        {
+          "text": "Lasalocid A",
+          "kind": "name"
+        },
+        {
+          "text": "Lasalocide",
+          "kind": "name"
+        },
+        {
+          "text": "Lasalocido",
+          "kind": "name"
+        },
+        {
+          "text": "Lasalocidum",
+          "kind": "name"
+        },
+        {
+          "text": "W7V2ZZ2FWB",
+          "kind": "name"
+        },
+        {
+          "text": "X 537A",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "fab51bea7c5ce5c9f8148e8ee12d735180fb1e92063b25a8c757b009adb091e4",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/BBMULGJBVDDDNI.json",
+          "original_parent_connectivity_key": "BBMULGJBVDDDNI",
+          "cids": [
+            5360807
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "BBMULGJBVDDDNI"
+      ]
+    },
+    {
+      "parent_connectivity_key": "BZCXQYVNASLLQO",
+      "aliases": [
+        {
+          "text": "29XD62TN4D",
+          "kind": "name"
+        },
+        {
+          "text": "Acepyrylene",
+          "kind": "name"
+        },
+        {
+          "text": "CYCLOPENTA(C,D)PYRENE",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclopenta(cd)pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclopenta[cd]pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "cyclopenta[cd]pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "cyclopenteno(cd)pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID2037639",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID7074822",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:129827",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b0be7c6f75369ac6a7caf0e25fe114a422e41e21b16d9522ca88453a981acf53",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/BZCXQYVNASLLQO.json",
+          "original_parent_connectivity_key": "BZCXQYVNASLLQO",
+          "cids": [
+            33743
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "BZCXQYVNASLLQO"
+      ]
+    },
+    {
+      "parent_connectivity_key": "CAWXEEYDBZRFPE",
+      "aliases": [
+        {
+          "text": "3-Cyclohexyl-6-(dimethylamino)-1-methyl-1,3,5-triazine-2,4(1H,3H)-dione",
+          "kind": "name"
+        },
+        {
+          "text": "3-cyclohexyl-6-(dimethylamino)-1-methyl-1,3,5-triazine-2,4-dione",
+          "kind": "name"
+        },
+        {
+          "text": "Brushkiller",
+          "kind": "name"
+        },
+        {
+          "text": "Caswell No. 271AA",
+          "kind": "name"
+        },
+        {
+          "text": "Gridball",
+          "kind": "name"
+        },
+        {
+          "text": "HEXAZINONE",
+          "kind": "name"
+        },
+        {
+          "text": "hexazinone",
+          "kind": "name"
+        },
+        {
+          "text": "Velpar",
+          "kind": "name"
+        },
+        {
+          "text": "Velpar L",
+          "kind": "name"
+        },
+        {
+          "text": "Velpar weed killer",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "690baa12b038057fbc7a281315d31b5d21342099f167358025b8a05f97c28c76",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/CAWXEEYDBZRFPE-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "CAWXEEYDBZRFPE",
+          "cids": [
+            39965
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "CAWXEEYDBZRFPE"
+      ]
+    },
+    {
+      "parent_connectivity_key": "CEHDRGBLVBQUPH",
+      "aliases": [
+        {
+          "text": "Antigestil",
+          "kind": "name"
+        },
+        {
+          "text": "Diethylstilbestrol",
+          "kind": "name"
+        },
+        {
+          "text": "diethylstilbestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Diethylstilbestrol (DES)",
+          "kind": "name"
+        },
+        {
+          "text": "diethylstilbestrol (DES)",
+          "kind": "name"
+        },
+        {
+          "text": "diethylstilboestrol",
+          "kind": "name"
+        },
+        {
+          "text": "diethylstilboestrol (DES)",
+          "kind": "name"
+        },
+        {
+          "text": "Distilbene",
+          "kind": "name"
+        },
+        {
+          "text": "Estrobene",
+          "kind": "name"
+        },
+        {
+          "text": "Estromenin",
+          "kind": "name"
+        },
+        {
+          "text": "Stilbetin",
+          "kind": "name"
+        },
+        {
+          "text": "Stilboestroform",
+          "kind": "name"
+        },
+        {
+          "text": "Stilboestrol",
+          "kind": "name"
+        },
+        {
+          "text": "stilboestrol (diethylstilbestrol)",
+          "kind": "name"
+        },
+        {
+          "text": "Vagestrol",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "3bdcfffcbf597cdb00559e1700d2b004017b3bfc31fdd6cdfca2ec5b71423274",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RGLYKWWBQGJZGM-ISLYRVAYSA-N.json",
+          "original_parent_connectivity_key": "RGLYKWWBQGJZGM",
+          "cids": [
+            448537
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "CEHDRGBLVBQUPH",
+        "RGLYKWWBQGJZGM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "COBBNRKBTCBWQP",
+      "aliases": [
+        {
+          "text": "2-(1,3-benzodioxol-5-yl)-1-methylquinolin-4-one",
+          "kind": "name"
+        },
+        {
+          "text": "2-(2H-1,3-benzodioxol-5-yl)-1-methyl-1,4-dihydroquinolin-4-one",
+          "kind": "name"
+        },
+        {
+          "text": "2-(benzo[d][1,3]dioxol-5-yl)-1-methylquinolin-4(1H)-one",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID10277706",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID80326593",
+          "kind": "name"
+        },
+        {
+          "text": "Graveolin",
+          "kind": "name"
+        },
+        {
+          "text": "Graveoline",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:922499",
+          "kind": "name"
+        },
+        {
+          "text": "Rutamine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b8f746c7cbf418904c335254c37be73b13057bf2b0c7532eb6b62504c1ed141f",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/COBBNRKBTCBWQP.json",
+          "original_parent_connectivity_key": "COBBNRKBTCBWQP",
+          "cids": [
+            353825
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "COBBNRKBTCBWQP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "CZIHNRWJTSTCEX",
+      "aliases": [
+        {
+          "text": "2-(acetylamino)fluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-(Acetylamino)fluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-AAF",
+          "kind": "name"
+        },
+        {
+          "text": "2-Acetamidofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetamidofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetoaminofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetylaminofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Acetylaminofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetylaminofluorene (2-AAF)",
+          "kind": "name"
+        },
+        {
+          "text": "2-Acetylaminofluorene (2-AAF)",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetylaminofluorene (AAF)",
+          "kind": "name"
+        },
+        {
+          "text": "2-acetylaminofluorine",
+          "kind": "name"
+        },
+        {
+          "text": "2-FAA",
+          "kind": "name"
+        },
+        {
+          "text": "2-FAA (2-acetylaminofluorene)",
+          "kind": "name"
+        },
+        {
+          "text": "Acetamide, N-9H-fluoren-2-yl-",
+          "kind": "name"
+        },
+        {
+          "text": "acetylaminofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "Acetylaminofluorene",
+          "kind": "name"
+        },
+        {
+          "text": "N-(9H-Fluoren-2-yl)acetamide",
+          "kind": "name"
+        },
+        {
+          "text": "N-2-Fluorenylacetamide",
+          "kind": "name"
+        },
+        {
+          "text": "N-2-fluorenylacetamide",
+          "kind": "name"
+        },
+        {
+          "text": "N-2-fluorenylacetamide (2-FAA)",
+          "kind": "name"
+        },
+        {
+          "text": "N-acetyl-2-aminofluorene",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f00bef648901e2a5364e71918ef436d3271f726808718e886ae7acd64b5ad5ee",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/CZIHNRWJTSTCEX-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "CZIHNRWJTSTCEX",
+          "cids": [
+            5897
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "CZIHNRWJTSTCEX"
+      ]
+    },
+    {
+      "parent_connectivity_key": "DDBREPKUVSBGFI",
+      "aliases": [
+        {
+          "text": "Dormiral",
+          "kind": "name"
+        },
+        {
+          "text": "Fenobarbital",
+          "kind": "name"
+        },
+        {
+          "text": "Gardenal",
+          "kind": "name"
+        },
+        {
+          "text": "Luminal",
+          "kind": "name"
+        },
+        {
+          "text": "Nunol",
+          "kind": "name"
+        },
+        {
+          "text": "phenobarbital",
+          "kind": "name"
+        },
+        {
+          "text": "Phenobarbital",
+          "kind": "name"
+        },
+        {
+          "text": "Phenobarbitol",
+          "kind": "name"
+        },
+        {
+          "text": "phenobarbitone",
+          "kind": "name"
+        },
+        {
+          "text": "Phenobarbitone",
+          "kind": "name"
+        },
+        {
+          "text": "Phenylethylbarbiturate",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4d6547d2ee87fb123bc4dc19fc52cf03ade9f598a2ee623a990845d1d28e7589",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DDBREPKUVSBGFI-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "DDBREPKUVSBGFI",
+          "cids": [
+            4763
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "DDBREPKUVSBGFI"
+      ]
+    },
+    {
+      "parent_connectivity_key": "DFBKLUNHFCTMDC",
+      "aliases": [
+        {
+          "text": "Aldrin epoxide",
+          "kind": "name"
+        },
+        {
+          "text": "Dieldrex",
+          "kind": "name"
+        },
+        {
+          "text": "Dieldrin",
+          "kind": "name"
+        },
+        {
+          "text": "dieldrin",
+          "kind": "name"
+        },
+        {
+          "text": "Dieldrine",
+          "kind": "name"
+        },
+        {
+          "text": "Dielmoth",
+          "kind": "name"
+        },
+        {
+          "text": "Dorytox",
+          "kind": "name"
+        },
+        {
+          "text": "Endrex",
+          "kind": "name"
+        },
+        {
+          "text": "Endricol",
+          "kind": "name"
+        },
+        {
+          "text": "endrin",
+          "kind": "name"
+        },
+        {
+          "text": "Endrin",
+          "kind": "name"
+        },
+        {
+          "text": "ENDRIN",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Endrine",
+          "kind": "name"
+        },
+        {
+          "text": "Hexadrin",
+          "kind": "name"
+        },
+        {
+          "text": "Mendrin",
+          "kind": "name"
+        },
+        {
+          "text": "Nendrin",
+          "kind": "name"
+        },
+        {
+          "text": "Octalox",
+          "kind": "name"
+        },
+        {
+          "text": "Oktanex",
+          "kind": "name"
+        },
+        {
+          "text": "Stardrin",
+          "kind": "name"
+        },
+        {
+          "text": "Termitox",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "429a54d51881768cbb45841df4f4e16a7433c36bb9187c7759f124c3da884005",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DFBKLUNHFCTMDC-GKRDHZSOSA-N.json",
+          "original_parent_connectivity_key": "DFBKLUNHFCTMDC",
+          "cids": [
+            12358480
+          ]
+        },
+        {
+          "frozen_evidence_entry_sha256": "0489b0e479986329d76dfe03017651d55a06c80493998d4b74e1cd0001fb4d93",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DFBKLUNHFCTMDC-PICURKEMSA-N.json",
+          "original_parent_connectivity_key": "DFBKLUNHFCTMDC",
+          "cids": [
+            969491
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "DFBKLUNHFCTMDC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "DILDHNKDVHLEQB",
+      "aliases": [
+        {
+          "text": "(17beta)-Estra-1,3,5(10)-triene-2,3,17-triol",
+          "kind": "name"
+        },
+        {
+          "text": "2-hydroxy-17beta-estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "2-Hydroxyestradiol",
+          "kind": "name"
+        },
+        {
+          "text": "2-Hydroxyestradiol-17beta",
+          "kind": "name"
+        },
+        {
+          "text": "2-OH-E2",
+          "kind": "name"
+        },
+        {
+          "text": "2-OH-Estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "AYU2L67YUU",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:28744",
+          "kind": "name"
+        },
+        {
+          "text": "Estra-1,3,5(10)-triene-2,3,17beta-triol",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "55c67495a702c059da426fa89bf117b720a214af20f65ca298eb920dcf686d2d",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DILDHNKDVHLEQB-XSSYPUMDSA-N.json",
+          "original_parent_connectivity_key": "DILDHNKDVHLEQB",
+          "cids": [
+            247304
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "DILDHNKDVHLEQB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "DVCCCQNKIYNAKB",
+      "aliases": [
+        {
+          "text": "2-Amino-3,8-dimethyl-3H-imidazo(4,5-f)quinoxaline",
+          "kind": "name"
+        },
+        {
+          "text": "2-AMINO-3,8-DIMETHYLIMIDAZO(4,5-F)QUINOXALINE",
+          "kind": "name"
+        },
+        {
+          "text": "2-amino-3,8-dimethylimidazo[4,5-f]quinoxaline",
+          "kind": "name"
+        },
+        {
+          "text": "2-Amino-3,8-dimethylimidazo[4,5-f]quinoxaline",
+          "kind": "name"
+        },
+        {
+          "text": "2-amino-3,8-dimethylimidazo[4,5-f]quinoxaline (MeIQx)",
+          "kind": "name"
+        },
+        {
+          "text": "3,8-dimethyl-3H-imidazo[4,5-f]quinoxalin-2-amine",
+          "kind": "name"
+        },
+        {
+          "text": "8-MeIQX",
+          "kind": "name"
+        },
+        {
+          "text": "8-Methyl-IQX",
+          "kind": "name"
+        },
+        {
+          "text": "Me-IQX",
+          "kind": "name"
+        },
+        {
+          "text": "MeIQx",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "MeIQx cpd",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "24f5e7943873609c80159f283b563364e5d6d569582ce5448744f2a226ed628b",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DVCCCQNKIYNAKB-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "DVCCCQNKIYNAKB",
+          "cids": [
+            62275
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "DVCCCQNKIYNAKB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "DXBHBZVCASKNBY",
+      "aliases": [
+        {
+          "text": "1,2-Benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "BENZ(A)ANTHRACENE",
+          "kind": "name"
+        },
+        {
+          "text": "benz[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Benz[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzanthrene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzo[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "benzo[a]anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzoanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Naphthanthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Tetraphene",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "8b54fb3d490eab1e7efc9d4f1067156cb812248ff9873a5532d9cad41efab4b7",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/DXBHBZVCASKNBY-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "DXBHBZVCASKNBY",
+          "cids": [
+            5954
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "DXBHBZVCASKNBY"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FCEVNJIUIMLVML",
+      "aliases": [
+        {
+          "text": "LSM-2853",
+          "kind": "name"
+        },
+        {
+          "text": "NCI60_002608",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000599",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000599",
+          "kind": "name"
+        },
+        {
+          "text": "Q27164380",
+          "kind": "name"
+        },
+        {
+          "text": "SPBio_002697",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "8dbafa6b74c14fb6787a4c9882b1798017604e13968d1d70a7153ebc3c6f7321",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/FCEVNJIUIMLVML-IIDMSEBBSA-N.json",
+          "original_parent_connectivity_key": "FCEVNJIUIMLVML",
+          "cids": [
+            10196
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FCEVNJIUIMLVML"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FJTNLJLPLJDTRM",
+      "aliases": [
+        {
+          "text": "1H-Pyrido(2,3-b)indol-2-amine",
+          "kind": "name"
+        },
+        {
+          "text": "2-AMINO-9H-PYRIDO(2,3-B)INDOLE",
+          "kind": "name"
+        },
+        {
+          "text": "2-Amino-9H-pyrido[2,3-b]indole",
+          "kind": "name"
+        },
+        {
+          "text": "2-Amino-alpha-carboline",
+          "kind": "name"
+        },
+        {
+          "text": "9H-pyrido[2,3-b]indol-2-amine",
+          "kind": "name"
+        },
+        {
+          "text": "A-alpha-C",
+          "kind": "name"
+        },
+        {
+          "text": "AalphaC",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Amino-alpha-carboline",
+          "kind": "name"
+        },
+        {
+          "text": "Glob-P-2",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "5c8ee86838b5e6ebdf9ae0df3d3d8a9c63eea29a49ea1f3f38f723d57e44fb69",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/FJTNLJLPLJDTRM-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "FJTNLJLPLJDTRM",
+          "cids": [
+            62805
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FJTNLJLPLJDTRM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FLAQQSHRLBFIEZ",
+      "aliases": [
+        {
+          "text": "4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(methylnitrosamino)-1-(3-Pyridyl)-1-Butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(METHYLNITROSAMINO)-1-(3-PYRIDYL)-1-BUTANONE",
+          "kind": "name"
+        },
+        {
+          "text": "4-(Methylnitrosamino)-1-(3-pyridyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(methylnitrosoamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(methylnitrosoamino)-1-(3-pyridyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-Methyl-N-nitrosamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-methyl-N-nitrosamino)-1-(3-pyridyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-nitrosomethylamino)-1-(3-pyridinyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-nitrosomethylamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-Nitrosomethylamino)-1-(3-pyridyl)-1-butanone",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-nitrosomethylamino)-1-(3-pyridyl)-1-butanone (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-nitrosomethylamino)-1-(3-pyridyl)butan-1-one",
+          "kind": "name"
+        },
+        {
+          "text": "4-(n-nitrosomethylamino)-1-(3-pyridyl)butan-1-one",
+          "kind": "name"
+        },
+        {
+          "text": "4-(N-nitrosomethylamino)-1-(3-pyridyl)butan-1-one (NNK)",
+          "kind": "name"
+        },
+        {
+          "text": "4-[methyl(nitroso)amino]-1-(pyridin-3-yl)butan-1-one",
+          "kind": "name"
+        },
+        {
+          "text": "7S395EDO61",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:32692",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID3020881",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-N-(4-oxo-4-pyridin-3-ylbutyl)nitrous amide",
+          "kind": "name"
+        },
+        {
+          "text": "Nicotine-derived nitrosamine ketone",
+          "kind": "name"
+        },
+        {
+          "text": "NNK",
+          "kind": "abbreviation"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e763dc60459f4a0eab0cb8e8647337604fbfa90674c81222e57601762953a45e",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/FLAQQSHRLBFIEZ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "FLAQQSHRLBFIEZ",
+          "cids": [
+            47289
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FLAQQSHRLBFIEZ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FMMWHPNWAFZXNH",
+      "aliases": [
+        {
+          "text": "3,4-Benz[a]pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "3,4-Benzopyrene",
+          "kind": "name"
+        },
+        {
+          "text": "3,4-Benzpyrene",
+          "kind": "name"
+        },
+        {
+          "text": "3,4-benzpyrene",
+          "kind": "name"
+        },
+        {
+          "text": "6,7-Benzopyrene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzo(a)pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "benzo(a)pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "BENZO(A)PYRENE",
+          "kind": "name"
+        },
+        {
+          "text": "Benzo[a]pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "benzo[a]pyrene",
+          "kind": "name"
+        },
+        {
+          "text": "benzo[def]chrysene",
+          "kind": "name"
+        },
+        {
+          "text": "benzo[pqr]tetraphene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzpyrene",
+          "kind": "name"
+        },
+        {
+          "text": "BP",
+          "kind": "abbreviation"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "3961aba65f7288972aa279c09bd30a3b17f5e4d7ee29cc929dfbffe066956705",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/FMMWHPNWAFZXNH.json",
+          "original_parent_connectivity_key": "FMMWHPNWAFZXNH",
+          "cids": [
+            2336
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FMMWHPNWAFZXNH"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FMWLUWPQPKEARP",
+      "aliases": [
+        {
+          "text": "BDCM",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "bromo(dichloro)methane",
+          "kind": "name"
+        },
+        {
+          "text": "BROMODICHLOROMETHANE",
+          "kind": "name"
+        },
+        {
+          "text": "Bromodichloromethane",
+          "kind": "name"
+        },
+        {
+          "text": "bromodichloromethane",
+          "kind": "name"
+        },
+        {
+          "text": "Dichlorobromomethane",
+          "kind": "name"
+        },
+        {
+          "text": "Dichloromonobromomethane",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID1020198",
+          "kind": "name"
+        },
+        {
+          "text": "Methane, bromodichloro-",
+          "kind": "name"
+        },
+        {
+          "text": "Monobromodichloromethane",
+          "kind": "name"
+        },
+        {
+          "text": "NCI-C55243",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "25b9d36aeda69b41e6a3459a5328f4b4f6ca5883d417356ae487b72667bdf470",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/FMWLUWPQPKEARP-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "FMWLUWPQPKEARP",
+          "cids": [
+            6359
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FMWLUWPQPKEARP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "FXGQUGCFZKMIJW",
+      "aliases": [
+        {
+          "text": "1,3-Benzenediamine, 2,4,5,6-tetrafluoro-",
+          "kind": "name"
+        },
+        {
+          "text": "1,3-Diamino-2,4,5,6-tetrafluorobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "1,3-Diaminotetrafluorobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "2,4,5,6-Tetrafluoro-1,3-benzenediamine",
+          "kind": "name"
+        },
+        {
+          "text": "2,4,5,6-Tetrafluorobenzene-1,3-diamine",
+          "kind": "name"
+        },
+        {
+          "text": "2,4,5,6-Tetrafluorophenylene-1,3-diamine",
+          "kind": "name"
+        },
+        {
+          "text": "m-Phenylenediamine, 2,4,5,6-tetrafluoro-",
+          "kind": "name"
+        },
+        {
+          "text": "Tetrafluoro-m-phenylenediamine",
+          "kind": "name"
+        },
+        {
+          "text": "Tetrafluoro-meta-phenylenediamine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "2102d3ff8ebcb29b2880487d88f992a2e9b9fb9bb5bea831d72adc34f3ec592f",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/FXGQUGCFZKMIJW.json",
+          "original_parent_connectivity_key": "FXGQUGCFZKMIJW",
+          "cids": [
+            70978
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "FXGQUGCFZKMIJW"
+      ]
+    },
+    {
+      "parent_connectivity_key": "GSDSWSVVBLHKDQ",
+      "aliases": [
+        {
+          "text": "(-)-Ofloxacin",
+          "kind": "name"
+        },
+        {
+          "text": "(S)-Ofloxacin",
+          "kind": "name"
+        },
+        {
+          "text": "Cravit",
+          "kind": "name"
+        },
+        {
+          "text": "Iquix",
+          "kind": "name"
+        },
+        {
+          "text": "Levaquin",
+          "kind": "name"
+        },
+        {
+          "text": "LEVOFLOXACIN",
+          "kind": "name"
+        },
+        {
+          "text": "Levofloxacine",
+          "kind": "name"
+        },
+        {
+          "text": "Ofloxacin",
+          "kind": "name"
+        },
+        {
+          "text": "Quixin",
+          "kind": "name"
+        },
+        {
+          "text": "Tavanic",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "0314b26e62b4580113d202187ffd1b6910f3a2f593006995a2c4e4c6ce718905",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/GSDSWSVVBLHKDQ.json",
+          "original_parent_connectivity_key": "GSDSWSVVBLHKDQ",
+          "cids": [
+            149096,
+            6956357
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "GSDSWSVVBLHKDQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "GTCAXTIRRLKXRU",
+      "aliases": [
+        {
+          "text": "Carbamic acid methyl ester",
+          "kind": "name"
+        },
+        {
+          "text": "Carbamic acid, methyl ester",
+          "kind": "name"
+        },
+        {
+          "text": "methyl carbamate",
+          "kind": "name"
+        },
+        {
+          "text": "METHYL CARBAMATE",
+          "kind": "name"
+        },
+        {
+          "text": "Methyl carbamate",
+          "kind": "name"
+        },
+        {
+          "text": "Methylcarbamate",
+          "kind": "name"
+        },
+        {
+          "text": "Methylkarbamat",
+          "kind": "name"
+        },
+        {
+          "text": "Methylurethan",
+          "kind": "name"
+        },
+        {
+          "text": "Methylurethane",
+          "kind": "name"
+        },
+        {
+          "text": "NCI-C55594",
+          "kind": "name"
+        },
+        {
+          "text": "Urethylane",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f7cf41c0b5a53f2729fa4af1eeee8699290073b7e36933173ee42e5848bbe668",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/GTCAXTIRRLKXRU-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "GTCAXTIRRLKXRU",
+          "cids": [
+            11722
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "GTCAXTIRRLKXRU"
+      ]
+    },
+    {
+      "parent_connectivity_key": "GUCKKCMJTSNWCU",
+      "aliases": [
+        {
+          "text": "BPBio1_001280",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_001162",
+          "kind": "name"
+        },
+        {
+          "text": "CCG-221091",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:94808",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL1518212",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2098K04",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2235J22",
+          "kind": "name"
+        },
+        {
+          "text": "HMS3715K04",
+          "kind": "name"
+        },
+        {
+          "text": "MLS002154148",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_001091",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f475eb20094ea4e0ba1f430cb077d2b27986252183f286ee60026bdf5c609058",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/GUCKKCMJTSNWCU.json",
+          "original_parent_connectivity_key": "GUCKKCMJTSNWCU",
+          "cids": [
+            23760140
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "GUCKKCMJTSNWCU"
+      ]
+    },
+    {
+      "parent_connectivity_key": "GXFAIFRPOKBQRV",
+      "aliases": [
+        {
+          "text": "(S)-3,6-Diamino-N-((3S,9S,12S,15S,Z)-3-((4R,6S)-2-amino-6-hydroxy-3,4,5,6-tetrahydropyrimidin-4-yl)-9,12-bis(hydroxymethyl)-2,5,8,11,14-pentaoxo-6-(ureidomethylene)-1,4,7,10,13-pentaazacyclohexadecan-15-yl)hexanamide",
+          "kind": "name"
+        },
+        {
+          "text": "BPBio1_001371",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_001246",
+          "kind": "name"
+        },
+        {
+          "text": "Celiomycin",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:94788",
+          "kind": "name"
+        },
+        {
+          "text": "Florimycin",
+          "kind": "name"
+        },
+        {
+          "text": "Floromycin",
+          "kind": "name"
+        },
+        {
+          "text": "GTPL13252",
+          "kind": "name"
+        },
+        {
+          "text": "GXFAIFRPOKBQRV-GHXCTMGLSA-N",
+          "kind": "name"
+        },
+        {
+          "text": "orb1703938",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_001113",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL22263509",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL34586",
+          "kind": "name"
+        },
+        {
+          "text": "Tuberactinomycin B",
+          "kind": "name"
+        },
+        {
+          "text": "Vinacetin A",
+          "kind": "name"
+        },
+        {
+          "text": "Vioactane",
+          "kind": "name"
+        },
+        {
+          "text": "Viomicina",
+          "kind": "name"
+        },
+        {
+          "text": "VIOMYCIN",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Viomycine",
+          "kind": "name"
+        },
+        {
+          "text": "Viomycinum",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "839067b902d709a45ab8e6c48137d66bff0e05d7dbeaa73f419ed7c078d06033",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/GXFAIFRPOKBQRV.json",
+          "original_parent_connectivity_key": "GXFAIFRPOKBQRV",
+          "cids": [
+            3037981,
+            135398671
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "GXFAIFRPOKBQRV"
+      ]
+    },
+    {
+      "parent_connectivity_key": "HCFDWZZGGLSKEP",
+      "aliases": [
+        {
+          "text": "2-(alpha-(2-(Dimethylamino)ethoxy)-alpha-methylbenzyl)pyridine",
+          "kind": "name"
+        },
+        {
+          "text": "2-Dimethylaminoethoxyphenylmethyl-2-picoline",
+          "kind": "name"
+        },
+        {
+          "text": "Dossilamina",
+          "kind": "name"
+        },
+        {
+          "text": "doxilamina",
+          "kind": "name"
+        },
+        {
+          "text": "Doxilminio",
+          "kind": "name"
+        },
+        {
+          "text": "doxylamine",
+          "kind": "name"
+        },
+        {
+          "text": "Doxylaminum",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-Dimethyl-2-(1-phenyl-1-(2-pyridinyl)ethoxy)ethanamine",
+          "kind": "name"
+        },
+        {
+          "text": "Phenyl-2-pyridylmethyl-beta-N,N-dimethylaminoethyl ether",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "68bbc8ca3cb78aeebf9f751f7636032c0ff3b3dd5ed69bdc79bf777a6b32fa55",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/HCFDWZZGGLSKEP-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "HCFDWZZGGLSKEP",
+          "cids": [
+            3162
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "HCFDWZZGGLSKEP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "HNJJXZKZRAWDPF",
+      "aliases": [
+        {
+          "text": "Metapyrilene",
+          "kind": "name"
+        },
+        {
+          "text": "Methapyrilene",
+          "kind": "name"
+        },
+        {
+          "text": "methapyrilene",
+          "kind": "name"
+        },
+        {
+          "text": "Paradormalene",
+          "kind": "name"
+        },
+        {
+          "text": "Pyrinistol",
+          "kind": "name"
+        },
+        {
+          "text": "Restryl",
+          "kind": "name"
+        },
+        {
+          "text": "Semikon",
+          "kind": "name"
+        },
+        {
+          "text": "Sleepwell",
+          "kind": "name"
+        },
+        {
+          "text": "Thenylpyramine",
+          "kind": "name"
+        },
+        {
+          "text": "Thionylan",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "dd4a3a066a4161e669a1273badb58fbfa0de2337877f04831f37fc96b872abf1",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/HNJJXZKZRAWDPF-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "HNJJXZKZRAWDPF",
+          "cids": [
+            4098
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "HNJJXZKZRAWDPF"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ISWSIDIOOBJBQZ",
+      "aliases": [
+        {
+          "text": "Benzenol",
+          "kind": "name"
+        },
+        {
+          "text": "carbolic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Hydroxybenzene",
+          "kind": "name"
+        },
+        {
+          "text": "Monophenol",
+          "kind": "name"
+        },
+        {
+          "text": "Oxybenzene",
+          "kind": "name"
+        },
+        {
+          "text": "Phenic acid",
+          "kind": "name"
+        },
+        {
+          "text": "phenol",
+          "kind": "name"
+        },
+        {
+          "text": "Phenol",
+          "kind": "name"
+        },
+        {
+          "text": "Phenylic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Phenylic alcohol",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL11137144",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "ba0d4635e8b3765cf60ea75112fafdc98c0f5398b43319c28ed89c0066295796",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ISWSIDIOOBJBQZ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ISWSIDIOOBJBQZ",
+          "cids": [
+            996,
+            20488062
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ISWSIDIOOBJBQZ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "IUBSYMUCCVWXPE",
+      "aliases": [
+        {
+          "text": "(RS)-Metoprolol",
+          "kind": "name"
+        },
+        {
+          "text": "1-(Isopropylamino)-3-(4-(2-methoxyethyl)phenoxy)propan-2-ol",
+          "kind": "name"
+        },
+        {
+          "text": "Beatrolol",
+          "kind": "name"
+        },
+        {
+          "text": "dl-Metoprolol",
+          "kind": "name"
+        },
+        {
+          "text": "metoprolol",
+          "kind": "name"
+        },
+        {
+          "text": "Metoprolol",
+          "kind": "name"
+        },
+        {
+          "text": "Metoprololum",
+          "kind": "name"
+        },
+        {
+          "text": "Seroken",
+          "kind": "name"
+        },
+        {
+          "text": "Spesikor",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e7a88883d2b3ff0faa0f3e820a62cbe77106a1a8a38685c86d793980f2af9f19",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/IUBSYMUCCVWXPE-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "IUBSYMUCCVWXPE",
+          "cids": [
+            4171
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "IUBSYMUCCVWXPE"
+      ]
+    },
+    {
+      "parent_connectivity_key": "IYRMWMYZSQPJKC",
+      "aliases": [
+        {
+          "text": "Indigo Yellow",
+          "kind": "name"
+        },
+        {
+          "text": "kaempferol",
+          "kind": "name"
+        },
+        {
+          "text": "Kaempherol",
+          "kind": "name"
+        },
+        {
+          "text": "Pelargidenolon",
+          "kind": "name"
+        },
+        {
+          "text": "Populnetin",
+          "kind": "name"
+        },
+        {
+          "text": "Rhamnolutein",
+          "kind": "name"
+        },
+        {
+          "text": "Rhamnolutin",
+          "kind": "name"
+        },
+        {
+          "text": "Robigenin",
+          "kind": "name"
+        },
+        {
+          "text": "Trifolitin",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f66e64b3a1e507fc932f764a5596694b1dbd68bea83fc52df58c2287b57bc941",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/IYRMWMYZSQPJKC.json",
+          "original_parent_connectivity_key": "IYRMWMYZSQPJKC",
+          "cids": [
+            5280863
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "IYRMWMYZSQPJKC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "JBIJLHTVPXGSAM",
+      "aliases": [
+        {
+          "text": "2-amino-naphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Aminonaphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Naphthalamine",
+          "kind": "name"
+        },
+        {
+          "text": "2-Naphthalenamine",
+          "kind": "name"
+        },
+        {
+          "text": "2-Naphthylamin",
+          "kind": "name"
+        },
+        {
+          "text": "2-naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "2-NAPHTHYLAMINE",
+          "kind": "name"
+        },
+        {
+          "text": "2-Naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "6-Naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "beta naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "beta-Naftilamina",
+          "kind": "name"
+        },
+        {
+          "text": "beta-naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "beta-Naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "Beta-naphthylamine",
+          "kind": "name"
+        },
+        {
+          "text": "naphthalen-2-amine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "69b8282de04aeca8987e842bff4edc0cc4a49d3a20c4a8528dad90728912a195",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/JBIJLHTVPXGSAM-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "JBIJLHTVPXGSAM",
+          "cids": [
+            7057
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "JBIJLHTVPXGSAM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "JCYPECIVGRXBMO",
+      "aliases": [
+        {
+          "text": "4-(Dimethylamino)azobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "4-(dimethylamino)azobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "4-Dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "4-dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "C.I. Solvent Yellow 2",
+          "kind": "name"
+        },
+        {
+          "text": "DMAB",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Fat Yellow",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-dimethyl-4-(phenyldiazenyl)aniline",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-dimethyl-4-aminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "p-dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "P-dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "Resinol Yellow GR",
+          "kind": "name"
+        },
+        {
+          "text": "Solvent Yellow 2",
+          "kind": "name"
+        },
+        {
+          "text": "Sudan Yellow GG",
+          "kind": "name"
+        },
+        {
+          "text": "Sudan Yellow GGA",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b7929d9042aa50a84691d00ae3214a19cba282074776392ab011dcb3565fbd5a",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/JCYPECIVGRXBMO-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "JCYPECIVGRXBMO",
+          "cids": [
+            6053
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "JCYPECIVGRXBMO"
+      ]
+    },
+    {
+      "parent_connectivity_key": "JFAYRTHYLOZRNL",
+      "aliases": [
+        {
+          "text": "BPBio1_000908",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000824",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:91929",
+          "kind": "name"
+        },
+        {
+          "text": "N-cyclohexyl-4-(4H-imidazol-4-yl)-1-piperidinecarbothioamide",
+          "kind": "name"
+        },
+        {
+          "text": "N-cyclohexyl-4-(4H-imidazol-4-yl)piperidine-1-carbothioamide",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000922",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000922",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick2_000922",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000922",
+          "kind": "name"
+        },
+        {
+          "text": "SPBio_003003",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "15294b04b183dff54f62106b8b4b7b9acfaab6d366db5d9c8e2b5f4694c5a44d",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/JFAYRTHYLOZRNL.json",
+          "original_parent_connectivity_key": "JFAYRTHYLOZRNL",
+          "cids": [
+            6713984
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "JFAYRTHYLOZRNL"
+      ]
+    },
+    {
+      "parent_connectivity_key": "JMEVHYCNAPFOAB",
+      "aliases": [
+        {
+          "text": "2-(1,3-Dihydro-3-oxo-5-sulpho-2H-indol-2-ylidene)-3-oxoindoline-5-sulphonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "5,5'-Indigotindisulfonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Blue X",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID0044288",
+          "kind": "name"
+        },
+        {
+          "text": "Indigo carmine acid",
+          "kind": "name"
+        },
+        {
+          "text": "Indigotin I",
+          "kind": "name"
+        },
+        {
+          "text": "Indigotindisulfonate",
+          "kind": "name"
+        },
+        {
+          "text": "INDIGOTINDISULFONIC ACID",
+          "kind": "name"
+        },
+        {
+          "text": "Saxon blue",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "233b02b1820213256ee7e8b3f1c075630b3acf8ed1808e6a97f1611bd935aa00",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/CFZXDJWFRVEWSR.json",
+          "original_parent_connectivity_key": "CFZXDJWFRVEWSR",
+          "cids": [
+            3705
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "CFZXDJWFRVEWSR",
+        "JMEVHYCNAPFOAB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "KTEXNACQROZXEV",
+      "aliases": [
+        {
+          "text": "(1aR,4E,7aS,10aS,10bR)-1a,5-dimethyl-8-methylidene-2,3,6,7,7a,8,10a,10b-octahydrooxireno[9,10]cyclodeca[1,2-b]furan-9(1aH)-one",
+          "kind": "name"
+        },
+        {
+          "text": "(1S,2R,4R,7E,11S)-4,8-dimethyl-12-methylidene-3,14-dioxatricyclo[9.3.0.02,4]tetradec-7-en-13-one",
+          "kind": "name"
+        },
+        {
+          "text": "(3aS,9aR,10aR,10bS,E)-6,9a-dimethyl-3-methylene-3a,4,5,8,9,9a,10a,10b-octahydrooxireno[2',3':9,10]cyclodeca[1,2-b]furan-2(3H)-one",
+          "kind": "name"
+        },
+        {
+          "text": "4,5-alpha-Epoxy-6-beta-hydroxygermacra-1(10),11(13)-dien-12-oic acid gamma-lactone",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL465158",
+          "kind": "name"
+        },
+        {
+          "text": "MFCD00134592",
+          "kind": "name"
+        },
+        {
+          "text": "partenolide",
+          "kind": "name"
+        },
+        {
+          "text": "Parthenolide CRS",
+          "kind": "name"
+        },
+        {
+          "text": "Parthenolide?",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e2eed884516a7be24c0ce153a9aad766dfbe46b06c3037a2ed7bda5e62803a21",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/KTEXNACQROZXEV.json",
+          "original_parent_connectivity_key": "KTEXNACQROZXEV",
+          "cids": [
+            7251185
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "KTEXNACQROZXEV"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LKCWBDHBTVXHDL",
+      "aliases": [
+        {
+          "text": "1-N-(L(-)-gamma-Amino-alpha-hydroxybutyryl)kanamycin A",
+          "kind": "name"
+        },
+        {
+          "text": "amikacin",
+          "kind": "name"
+        },
+        {
+          "text": "Amikacina",
+          "kind": "name"
+        },
+        {
+          "text": "amikacine",
+          "kind": "name"
+        },
+        {
+          "text": "Amikacinum",
+          "kind": "name"
+        },
+        {
+          "text": "BAY 41-6551",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID3022586",
+          "kind": "name"
+        },
+        {
+          "text": "Lukadin",
+          "kind": "name"
+        },
+        {
+          "text": "Potentox",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "df3566c432db6e199ca32409003653a859a29b81025285f869499d1b0caed481",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/LKCWBDHBTVXHDL-RMDFUYIESA-N.json",
+          "original_parent_connectivity_key": "LKCWBDHBTVXHDL",
+          "cids": [
+            37768
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LKCWBDHBTVXHDL"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LNEPOXFFQSENCJ",
+      "aliases": [
+        {
+          "text": "Aloperidin",
+          "kind": "name"
+        },
+        {
+          "text": "Aloperidolo",
+          "kind": "name"
+        },
+        {
+          "text": "Eukystol",
+          "kind": "name"
+        },
+        {
+          "text": "Galoperidol",
+          "kind": "name"
+        },
+        {
+          "text": "Haloperidol",
+          "kind": "name"
+        },
+        {
+          "text": "haloperidol",
+          "kind": "name"
+        },
+        {
+          "text": "Linton",
+          "kind": "name"
+        },
+        {
+          "text": "Serenace",
+          "kind": "name"
+        },
+        {
+          "text": "Serenase",
+          "kind": "name"
+        },
+        {
+          "text": "Serenelfi",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "18ce7b8d1dfe401efce3560423ac853837974ea861aa40cb47b8c7cbee28bf0d",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/LNEPOXFFQSENCJ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "LNEPOXFFQSENCJ",
+          "cids": [
+            3559
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LNEPOXFFQSENCJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LVTFSVIRYMXRSR",
+      "aliases": [
+        {
+          "text": "3'-MDAB",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Mdab",
+          "kind": "name"
+        },
+        {
+          "text": "3'-MDAB (3'-methyl-4-dimethylaminoazobenzene)",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Me-DAB",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Me-Dab",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Methyl-4-dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "3'-methyl-4-dimethylaminoazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "3'-methyl-4-dimethylaminoazobenzene (3'-Me-DAB)",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Methyl-4-dimethylaminoazobenzene (3'-Me-DAB)",
+          "kind": "name"
+        },
+        {
+          "text": "3'-methyl-DAB",
+          "kind": "name"
+        },
+        {
+          "text": "3'-Methylbuttergelb",
+          "kind": "name"
+        },
+        {
+          "text": "4-Dimethylamino-3'-methylazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "4-dimethylamino-3'-methylazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "4-dimethylamino-3'-methylazobenzene (3'-methyl-DAB)",
+          "kind": "name"
+        },
+        {
+          "text": "MDAB",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "N,N-Dimethyl-4-(2-(3-methylphenyl)diazenyl)benzenamine",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-dimethyl-4-(m-tolylazo)aniline",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-Dimethyl-4-[2-(3-methylphenyl)diazenyl]benzenamine",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:201922",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "2ccddaea9ea188e5c2411d64fcf0ec6f29b60e69db4d2606dd031845dbb08729",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/LVTFSVIRYMXRSR-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "LVTFSVIRYMXRSR",
+          "cids": [
+            5934
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LVTFSVIRYMXRSR"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LVWZTYCIRDMTEY",
+      "aliases": [
+        {
+          "text": "(antipyrinylmethylamino)methanesulfonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "934T64RMNJ",
+          "kind": "name"
+        },
+        {
+          "text": "Metamizol",
+          "kind": "name"
+        },
+        {
+          "text": "Metamizole",
+          "kind": "name"
+        },
+        {
+          "text": "Methamizole",
+          "kind": "name"
+        },
+        {
+          "text": "METHAMIZOLE-",
+          "kind": "name"
+        },
+        {
+          "text": "Methanesulfonic acid, (antipyrinylmethylamino)-",
+          "kind": "name"
+        },
+        {
+          "text": "Novamine sulfone",
+          "kind": "name"
+        },
+        {
+          "text": "UNII-934T64RMNJ",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "00e0f6a18dabf6070351a6d095003d8f13d3d8eccc6d7e278f87c766b8bbbec7",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/LVWZTYCIRDMTEY-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "LVWZTYCIRDMTEY",
+          "cids": [
+            3111
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LVWZTYCIRDMTEY"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LYCAIKOWRPUZTN",
+      "aliases": [
+        {
+          "text": "1,2-Dihydroxyethane",
+          "kind": "name"
+        },
+        {
+          "text": "1,2-ethanediol",
+          "kind": "name"
+        },
+        {
+          "text": "2-hydroxyethanol",
+          "kind": "name"
+        },
+        {
+          "text": "Ethane-1,2-diol",
+          "kind": "name"
+        },
+        {
+          "text": "Ethylene alcohol",
+          "kind": "name"
+        },
+        {
+          "text": "Ethylene glycol",
+          "kind": "name"
+        },
+        {
+          "text": "ETHYLENE GLYCOL",
+          "kind": "name"
+        },
+        {
+          "text": "glycol",
+          "kind": "name"
+        },
+        {
+          "text": "Glycol alcohol",
+          "kind": "name"
+        },
+        {
+          "text": "monoethylene glycol",
+          "kind": "name"
+        },
+        {
+          "text": "Monoethylene glycol",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b135da57cbe1647ed1544592ffc81ba43399339a7237f2ced6207ef88a9f8287",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/LYCAIKOWRPUZTN-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "LYCAIKOWRPUZTN",
+          "cids": [
+            174
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LYCAIKOWRPUZTN"
+      ]
+    },
+    {
+      "parent_connectivity_key": "LZHNQLKWDOQXRT",
+      "aliases": [
+        {
+          "text": "SCHEMBL14400279",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "94e7ba2130fe69577bd8fd1b4628dd9b036ff9388e7b1e186d1dc4b3b60abe2d",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/LZHNQLKWDOQXRT.json",
+          "original_parent_connectivity_key": "LZHNQLKWDOQXRT",
+          "cids": [
+            135801117
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "LZHNQLKWDOQXRT"
+      ]
+    },
+    {
+      "parent_connectivity_key": "MGFYIUFZLHCRTH",
+      "aliases": [
+        {
+          "text": "2-[bis(carboxymethyl)amino]acetic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Aminotriacetic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Hampshire NTA acid",
+          "kind": "name"
+        },
+        {
+          "text": "Komplexon I",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-Bis(carboxymethyl)glycine",
+          "kind": "name"
+        },
+        {
+          "text": "nitrilotriacetic acid",
+          "kind": "name"
+        },
+        {
+          "text": "NITRILOTRIACETIC ACID",
+          "kind": "name"
+        },
+        {
+          "text": "Nitrilotriacetic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Nitrilotriacetic acid (NTA)",
+          "kind": "name"
+        },
+        {
+          "text": "Triglycollamic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Trilon A",
+          "kind": "name"
+        },
+        {
+          "text": "Versene NTA acid",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "574161476979b052f78072d9b599eb318613b4f06ff03f3026277c4f44b32201",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/MGFYIUFZLHCRTH-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "MGFYIUFZLHCRTH",
+          "cids": [
+            8758,
+            139057210
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "MGFYIUFZLHCRTH"
+      ]
+    },
+    {
+      "parent_connectivity_key": "MQJKPEGWNLWLTK",
+      "aliases": [
+        {
+          "text": "4,4'-Diaminodiphenyl sulfone",
+          "kind": "name"
+        },
+        {
+          "text": "4,4'-Diaminodiphenylsulfone",
+          "kind": "name"
+        },
+        {
+          "text": "4,4'-Sulfonyldianiline",
+          "kind": "name"
+        },
+        {
+          "text": "DADPS",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Dapson",
+          "kind": "name"
+        },
+        {
+          "text": "Dapsone",
+          "kind": "name"
+        },
+        {
+          "text": "dapsone",
+          "kind": "name"
+        },
+        {
+          "text": "Diaphenylsulfone",
+          "kind": "name"
+        },
+        {
+          "text": "Diphenasone",
+          "kind": "name"
+        },
+        {
+          "text": "Novophone",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "db7984e3f42079c42fc7f225f28bfff997015042eae1927dfebbc887db74a98b",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/MQJKPEGWNLWLTK.json",
+          "original_parent_connectivity_key": "MQJKPEGWNLWLTK",
+          "cids": [
+            2955
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "MQJKPEGWNLWLTK"
+      ]
+    },
+    {
+      "parent_connectivity_key": "MTXSIJUGVMTTMU",
+      "aliases": [
+        {
+          "text": "(R)-3-(PIPERIDIN-2-YL)PYRIDINE",
+          "kind": "name"
+        },
+        {
+          "text": "(R)-Anabasine",
+          "kind": "name"
+        },
+        {
+          "text": "(R)-Anabasine, > 98% ee",
+          "kind": "name"
+        },
+        {
+          "text": "3-((2R)-2-piperidyl)pyridine",
+          "kind": "name"
+        },
+        {
+          "text": "3-((2R)-Piperidin-2-Yl)Pyridine",
+          "kind": "name"
+        },
+        {
+          "text": "3-[(2R)-piperidin-2-yl]pyridine",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL1496898",
+          "kind": "name"
+        },
+        {
+          "text": "MFCD09257455",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:1066283",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b6f8c9d726f6f122e8b755d3f4b08b9a2387b966d17916ec222bbf9d94f0dfad",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/MTXSIJUGVMTTMU.json",
+          "original_parent_connectivity_key": "MTXSIJUGVMTTMU",
+          "cids": [
+            641266
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "MTXSIJUGVMTTMU"
+      ]
+    },
+    {
+      "parent_connectivity_key": "MWPLVEDNUUSJAV",
+      "aliases": [
+        {
+          "text": "Anthracen",
+          "kind": "name"
+        },
+        {
+          "text": "anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "ANTHRACENE",
+          "kind": "name"
+        },
+        {
+          "text": "Anthracene",
+          "kind": "name"
+        },
+        {
+          "text": "Anthracin",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:35298",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID0023878",
+          "kind": "name"
+        },
+        {
+          "text": "NSC 7958",
+          "kind": "name"
+        },
+        {
+          "text": "p-Naphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "Paranaphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "Tetra Olive N2G",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "47e8848f2ec6b5faf6ce2213053cad524a13d706e7dbfcd7ad5c37dc515b4ffa",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/MWPLVEDNUUSJAV.json",
+          "original_parent_connectivity_key": "MWPLVEDNUUSJAV",
+          "cids": [
+            8418
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "MWPLVEDNUUSJAV"
+      ]
+    },
+    {
+      "parent_connectivity_key": "MWYPSCPMURJPPE",
+      "aliases": [
+        {
+          "text": "(2',7'-Dibromo-3',6'-dihydroxy-3-oxo-3H-spiro[[2]benzofuran-1,9'-xanthen]-4'-yl)mercury(1+)",
+          "kind": "name"
+        },
+        {
+          "text": "58L0ARN50R",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID701334281",
+          "kind": "name"
+        },
+        {
+          "text": "Merbromin cation",
+          "kind": "name"
+        },
+        {
+          "text": "Mercury, (2',7'-dibromo-3',6'-dihydroxy-3-oxospiro(isobenzofuran-1(3H),9'-(9H)xanthen)-4'-yl)-",
+          "kind": "name"
+        },
+        {
+          "text": "Q27261603",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:156548",
+          "kind": "name"
+        },
+        {
+          "text": "UNII-58L0ARN50R",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "6eafd1fadbb2f763c25fa8a6cf81ec311224faddfff9d09bbb89222d25e63f74",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/MWYPSCPMURJPPE.json",
+          "original_parent_connectivity_key": "MWYPSCPMURJPPE",
+          "cids": [
+            13504271
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "MWYPSCPMURJPPE"
+      ]
+    },
+    {
+      "parent_connectivity_key": "NFYYATWFXNPTRM",
+      "aliases": [
+        {
+          "text": "AB00513878",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL2373664",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2097E05",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "09305c87575693645d0f25c0e08134b05653cc1ce1529372db199ede915d3fc8",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/NFYYATWFXNPTRM.json",
+          "original_parent_connectivity_key": "NFYYATWFXNPTRM",
+          "cids": [
+            24776144
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "NFYYATWFXNPTRM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "NJWIMFZLESWFIM",
+      "aliases": [
+        {
+          "text": "2-(Chloromethyl)pyridine",
+          "kind": "name"
+        },
+        {
+          "text": "2-Chloromethylpyridine",
+          "kind": "name"
+        },
+        {
+          "text": "2-CMP",
+          "kind": "name"
+        },
+        {
+          "text": "2-Picolyl chloride",
+          "kind": "name"
+        },
+        {
+          "text": "59YW2EH117",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:76601",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID2043824",
+          "kind": "name"
+        },
+        {
+          "text": "picolyl chloride",
+          "kind": "name"
+        },
+        {
+          "text": "Pyridine, 2-(chloromethyl)-",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "200933524453b1b0c198a9df5fb5db8bdaffd11bff8bc0f86fde3d2ed656778d",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/NJWIMFZLESWFIM.json",
+          "original_parent_connectivity_key": "NJWIMFZLESWFIM",
+          "cids": [
+            23393
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "NJWIMFZLESWFIM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "NMUSYJAQQFHJEW",
+      "aliases": [
+        {
+          "text": "5-Aza-CR",
+          "kind": "name"
+        },
+        {
+          "text": "5-azacitidine",
+          "kind": "name"
+        },
+        {
+          "text": "5-Azacytidine",
+          "kind": "name"
+        },
+        {
+          "text": "5-azacytidine",
+          "kind": "name"
+        },
+        {
+          "text": "5-azacytidine (Azacitidine)",
+          "kind": "name"
+        },
+        {
+          "text": "Antibiotic U 18496",
+          "kind": "name"
+        },
+        {
+          "text": "Azacitidina",
+          "kind": "name"
+        },
+        {
+          "text": "Azacitidine",
+          "kind": "name"
+        },
+        {
+          "text": "Azacitidinum",
+          "kind": "name"
+        },
+        {
+          "text": "Azacytidine",
+          "kind": "name"
+        },
+        {
+          "text": "Ladakamycin",
+          "kind": "name"
+        },
+        {
+          "text": "Mylosar",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e08405962c8b29e09d1687c9650e611a7320770c0d1bd30fbbb21b439e012c75",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/NMUSYJAQQFHJEW-KVTDHHQDSA-N.json",
+          "original_parent_connectivity_key": "NMUSYJAQQFHJEW",
+          "cids": [
+            9444
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "NMUSYJAQQFHJEW"
+      ]
+    },
+    {
+      "parent_connectivity_key": "NULAJYZBOLVQPQ",
+      "aliases": [
+        {
+          "text": "02X37521XE",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:53510",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID7043744",
+          "kind": "name"
+        },
+        {
+          "text": "N-(1-naphthyl)ethane-1,2-diamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-(1-Naphthyl)ethylenediamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-1-EDAN",
+          "kind": "name"
+        },
+        {
+          "text": "N-1-ethylenediaminonaphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "N-1-naphthylethylenediamine",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:823647",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "afab085cf674cdca8c218ca92e0251e0af7e556420426d3ab91e28c4b2004197",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/NULAJYZBOLVQPQ.json",
+          "original_parent_connectivity_key": "NULAJYZBOLVQPQ",
+          "cids": [
+            15107
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "NULAJYZBOLVQPQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "NVEPPWDVLBMNMB",
+      "aliases": [
+        {
+          "text": "(E)-1-methyl-2-(2-(3-methylthiophen-2-yl)vinyl)-1,4,5,6-tetrahydropyrimidine",
+          "kind": "name"
+        },
+        {
+          "text": "7NJ031HAX5",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID2028191",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID9048562",
+          "kind": "name"
+        },
+        {
+          "text": "morantel",
+          "kind": "name"
+        },
+        {
+          "text": "Pyrimidine, 1,4,5,6-tetrahydro-1-methyl-2-(2-(3-methyl-2-thienyl)ethenyl)-, (E)-",
+          "kind": "name"
+        },
+        {
+          "text": "Pyrimidine, 1,4,5,6-tetrahydro-1-methyl-2-[2-(3-methyl-2-thienyl)ethenyl]-, (E)-",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:57351",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "946010399ad1db20f3df1c18443538fa7d66fddf665819ef4e6d0904e480a3eb",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/NVEPPWDVLBMNMB.json",
+          "original_parent_connectivity_key": "NVEPPWDVLBMNMB",
+          "cids": [
+            5353792
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "NVEPPWDVLBMNMB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "OBZHEBDUNPOCJG",
+      "aliases": [
+        {
+          "text": "(2S,4aS,6aR,6aS,6bR,8aR,10S,12aS,14bR)-10-(3-carboxypropanoyloxy)-2,4a,6a,6b,9,9,12a-heptamethyl-13-oxo-3,4,5,6,6a,7,8,8a,10,11,12,14b-dodecahydro-1H-picene-2-carboxylic acid",
+          "kind": "name"
+        },
+        {
+          "text": "(2S,4aS,6aR,6aS,6bR,8aR,10S,12aS,14bR)-10-(4-hydroxy-4-oxobutanoyl)oxy-2,4a,6a,6b,9,9,12a-heptamethyl-13-oxo-3,4,5,6,6a,7,8,8a,10,11,12,14b-dodecahydro-1H-picene-2-carboxylic acid",
+          "kind": "name"
+        },
+        {
+          "text": "(3beta,20beta)-3-(3-Carboxy-1-oxopropoxy)-11-oxoolean-12-en-29-oic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Carbenoxolona",
+          "kind": "name"
+        },
+        {
+          "text": "carbenoxolone",
+          "kind": "name"
+        },
+        {
+          "text": "Carbenoxolonum",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID4022733",
+          "kind": "name"
+        },
+        {
+          "text": "MM6384NG73",
+          "kind": "name"
+        },
+        {
+          "text": "Olean-12-en-29-oic acid, 3-(3-carboxy-1-oxopropoxy)-11-oxo-, (3beta,20beta)-",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "d48e72d855100f5b125dc5e75fceec6d40c01c4c853c5b4e5c54227a8122b824",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/OBZHEBDUNPOCJG.json",
+          "original_parent_connectivity_key": "OBZHEBDUNPOCJG",
+          "cids": [
+            636403
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "OBZHEBDUNPOCJG"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ODJLBQGVINUMMR",
+      "aliases": [
+        {
+          "text": "Convallatoxigenin",
+          "kind": "name"
+        },
+        {
+          "text": "Corchorgenin",
+          "kind": "name"
+        },
+        {
+          "text": "Corchorin",
+          "kind": "name"
+        },
+        {
+          "text": "Corchoside A aglycon",
+          "kind": "name"
+        },
+        {
+          "text": "Corchsularin",
+          "kind": "name"
+        },
+        {
+          "text": "Erysimupicrone",
+          "kind": "name"
+        },
+        {
+          "text": "k-Strophanthidin",
+          "kind": "name"
+        },
+        {
+          "text": "strophanthidin",
+          "kind": "name"
+        },
+        {
+          "text": "Strophanthidine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f7d13aff66700dc4c2306dc3e5a246a4e2aa194b3d3d3c8244c548183b290908",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/ODJLBQGVINUMMR.json",
+          "original_parent_connectivity_key": "ODJLBQGVINUMMR",
+          "cids": [
+            6185
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ODJLBQGVINUMMR"
+      ]
+    },
+    {
+      "parent_connectivity_key": "OEJNXTAZZBRGDN",
+      "aliases": [
+        {
+          "text": "Agricide",
+          "kind": "name"
+        },
+        {
+          "text": "Camphechlore",
+          "kind": "name"
+        },
+        {
+          "text": "Camphochlor",
+          "kind": "name"
+        },
+        {
+          "text": "Camphoclor",
+          "kind": "name"
+        },
+        {
+          "text": "Crestoxo",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID7021368",
+          "kind": "name"
+        },
+        {
+          "text": "Kamfochlor",
+          "kind": "name"
+        },
+        {
+          "text": "Toxaphen",
+          "kind": "name"
+        },
+        {
+          "text": "toxaphene",
+          "kind": "name"
+        },
+        {
+          "text": "Toxaphene",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "5447c3ceccf87ad64dbccccafa12c8ce888b339c069c0ad6de2b5a12aca1281b",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/OEJNXTAZZBRGDN.json",
+          "original_parent_connectivity_key": "OEJNXTAZZBRGDN",
+          "cids": [
+            5284469
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "OEJNXTAZZBRGDN"
+      ]
+    },
+    {
+      "parent_connectivity_key": "OZKTVDIYALBSMA",
+      "aliases": [
+        {
+          "text": "(3-endo)-8-Methyl-8-azabicyclo(3.2.1)oct-3-yl 4-hydroxy-3-methoxybenzoate",
+          "kind": "name"
+        },
+        {
+          "text": "(3-endo)-8-methyl-8-azabicyclo[3.2.1]oct-3-yl 4-hydroxy-3-methoxybenzoate",
+          "kind": "name"
+        },
+        {
+          "text": "(8-methyl-8-azabicyclo(3.2.1)octan-3-yl) 4-hydroxy-3-methoxybenzoate",
+          "kind": "name"
+        },
+        {
+          "text": "(8-METHYL-8-AZABICYCLO[3.2.1]OCT-3-YL) 4-HYDROXY-3-METHOXY-BENZOATE",
+          "kind": "name"
+        },
+        {
+          "text": "(8-methyl-8-azabicyclo[3.2.1]octan-3-yl) 4-hydroxy-3-methoxybenzoate",
+          "kind": "name"
+        },
+        {
+          "text": "3alpha-vanilloyloxytropane",
+          "kind": "name"
+        },
+        {
+          "text": "3beta-vanilloyloxytropane",
+          "kind": "name"
+        },
+        {
+          "text": "4-hydroxy-3-methoxybenzoic acid [(1S,5R)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] ester",
+          "kind": "name"
+        },
+        {
+          "text": "[(1R,5S)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] 4-hydroxy-3-methoxybenzoate",
+          "kind": "name"
+        },
+        {
+          "text": "AC1L9DUK",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Concneorine",
+          "kind": "name"
+        },
+        {
+          "text": "Fillalbin",
+          "kind": "name"
+        },
+        {
+          "text": "Phyllalbine",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000691",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000691",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000691",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick_1029",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:1095567",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:400165",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "d29208df2f00d27a2c9a48171f128dd72aaac691279c615967f41da75bbd48ee",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/OZKTVDIYALBSMA.json",
+          "original_parent_connectivity_key": "OZKTVDIYALBSMA",
+          "cids": [
+            933171,
+            443007,
+            6347546
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "OZKTVDIYALBSMA"
+      ]
+    },
+    {
+      "parent_connectivity_key": "PBBGSZCBWVPOOL",
+      "aliases": [
+        {
+          "text": "Cycloestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Erythrohexestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Estronal",
+          "kind": "name"
+        },
+        {
+          "text": "Hexanoestrol",
+          "kind": "name"
+        },
+        {
+          "text": "hexestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Hexestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Hexoestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Hormoestrol",
+          "kind": "name"
+        },
+        {
+          "text": "meso-Hexestrol",
+          "kind": "name"
+        },
+        {
+          "text": "Mesohexestrol",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b6b9e99037f18706c09f9c64a54f05b14755a987f4939e65ef64a11f5dd2f2a2",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/PBBGSZCBWVPOOL-HDICACEKSA-N.json",
+          "original_parent_connectivity_key": "PBBGSZCBWVPOOL",
+          "cids": [
+            192197
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "PBBGSZCBWVPOOL"
+      ]
+    },
+    {
+      "parent_connectivity_key": "PGBHMTALBVVCIT",
+      "aliases": [
+        {
+          "text": "4,6-diamino-2-{[3-o-(2,6-diamino-2,6-dideoxyhexopyranosyl)pentofuranosyl]oxy}-3-hydroxycyclohexyl 2,6-diamino-2,6-dideoxyhexopyranoside",
+          "kind": "name"
+        },
+        {
+          "text": "5-amino-2-(aminomethyl)-6-[5-[3,5-diamino-2-[3-amino-6-(aminomethyl)-4 ,5-dihydroxy-oxan-2-yl]oxy-6-hydroxy-cyclohexyl]oxy-4-hydroxy-2-(hydro xymethyl)oxolan-3-yl]oxy-oxane-3,4-diol",
+          "kind": "name"
+        },
+        {
+          "text": "5-amino-2-(aminomethyl)-6-[5-[3,5-diamino-2-[3-amino-6-(aminomethyl)-4,5-dihydroxy-oxan-2-yl]oxy-6-hydroxy-cyclohexyl]oxy-4-hydroxy-2-(hydroxymethyl)oxolan-3-yl]oxy-oxane-3,4-diol",
+          "kind": "name"
+        },
+        {
+          "text": "AKOS037478322",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL266347",
+          "kind": "name"
+        },
+        {
+          "text": "Fradiomycin B;Neomycin B",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL851702",
+          "kind": "name"
+        },
+        {
+          "text": "STL372821",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "de2198f7858e96eada2d652697b25a10e9a86527ab3152447cafe01abd6ee485",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/PGBHMTALBVVCIT.json",
+          "original_parent_connectivity_key": "PGBHMTALBVVCIT",
+          "cids": [
+            4454
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "PGBHMTALBVVCIT"
+      ]
+    },
+    {
+      "parent_connectivity_key": "PGRKJDDEUNIWAZ",
+      "aliases": [
+        {
+          "text": "6-Nitrocholesterol",
+          "kind": "name"
+        },
+        {
+          "text": "6-nitrocholesterol",
+          "kind": "name"
+        },
+        {
+          "text": "Cholest-5-en-3-ol, 6-nitro-, (3beta)-",
+          "kind": "name"
+        },
+        {
+          "text": "NSC 128354",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:105091",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL8410918",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "edec2fa5d41e3101a1b71592b97d5855c370d6cb6ee050829ca56002cc83e00f",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/PGRKJDDEUNIWAZ-OLSNINGUSA-N.json",
+          "original_parent_connectivity_key": "PGRKJDDEUNIWAZ",
+          "cids": [
+            133811
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "PGRKJDDEUNIWAZ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "PMATZTZNYRCHOR",
+      "aliases": [
+        {
+          "text": "Ciclosporin",
+          "kind": "name"
+        },
+        {
+          "text": "ciclosporin",
+          "kind": "name"
+        },
+        {
+          "text": "Ciclosporine",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclosporin",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclosporin A",
+          "kind": "name"
+        },
+        {
+          "text": "cyclosporin A",
+          "kind": "name"
+        },
+        {
+          "text": "cyclosporine",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclosporine",
+          "kind": "name"
+        },
+        {
+          "text": "Cyclosporine A",
+          "kind": "name"
+        },
+        {
+          "text": "cyclosporine A",
+          "kind": "name"
+        },
+        {
+          "text": "Neoplanta",
+          "kind": "name"
+        },
+        {
+          "text": "Neoral",
+          "kind": "name"
+        },
+        {
+          "text": "Sandimmun",
+          "kind": "name"
+        },
+        {
+          "text": "Sandimmune",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "42fa9b0b59d8f0d45c95bf618d3a0a8bba6672069dee813023c5c7874255866b",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/PMATZTZNYRCHOR-CGLBZJNRSA-N.json",
+          "original_parent_connectivity_key": "PMATZTZNYRCHOR",
+          "cids": [
+            5284373
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "PMATZTZNYRCHOR"
+      ]
+    },
+    {
+      "parent_connectivity_key": "QVCMHGGNRFRMAD",
+      "aliases": [
+        {
+          "text": "(13-alpha,14-alpha)-14,19-Dihydro-12,13-dihydroxy-20-norcrotalanan-11,15-dione",
+          "kind": "name"
+        },
+        {
+          "text": "73077K8HYV",
+          "kind": "name"
+        },
+        {
+          "text": "A 6080",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:6980",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID9020902",
+          "kind": "name"
+        },
+        {
+          "text": "Monocrotalin",
+          "kind": "name"
+        },
+        {
+          "text": "monocrotaline",
+          "kind": "name"
+        },
+        {
+          "text": "Monocrotaline",
+          "kind": "name"
+        },
+        {
+          "text": "NCI-C56462",
+          "kind": "name"
+        },
+        {
+          "text": "Retronecine cyclic 2,3-dihydroxy-2,3,4-trimethylglutarate",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4e2e90631c7e89f9306c36252fc9f3303db84a2cafd045efed82b4aeb6f86581",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/QVCMHGGNRFRMAD-XFGHUUIASA-N.json",
+          "original_parent_connectivity_key": "QVCMHGGNRFRMAD",
+          "cids": [
+            9415
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "QVCMHGGNRFRMAD"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RAPBNVDSDCTNRC",
+      "aliases": [
+        {
+          "text": "Acaraben",
+          "kind": "name"
+        },
+        {
+          "text": "Akar",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorbenzilat",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorbenzilate",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorbenzylate",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorobenzilate",
+          "kind": "name"
+        },
+        {
+          "text": "chlorobenzilate",
+          "kind": "name"
+        },
+        {
+          "text": "CHLOROBENZILATE",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorobenzylate",
+          "kind": "name"
+        },
+        {
+          "text": "Ethyl 4,4'-dichlorobenzilate",
+          "kind": "name"
+        },
+        {
+          "text": "Folbex",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e490d9b6f3532de16c32dfe58fd9474a607a74acba09234512f6e948bd4ae167",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RAPBNVDSDCTNRC-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RAPBNVDSDCTNRC",
+          "cids": [
+            10522
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RAPBNVDSDCTNRC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RAPZEAPATHNIPO",
+      "aliases": [
+        {
+          "text": "Risperdal",
+          "kind": "name"
+        },
+        {
+          "text": "Risperdal Consta",
+          "kind": "name"
+        },
+        {
+          "text": "Risperidal M-Tab",
+          "kind": "name"
+        },
+        {
+          "text": "Risperidona",
+          "kind": "name"
+        },
+        {
+          "text": "Risperidone",
+          "kind": "name"
+        },
+        {
+          "text": "risperidone",
+          "kind": "name"
+        },
+        {
+          "text": "Risperin",
+          "kind": "name"
+        },
+        {
+          "text": "Rispolept",
+          "kind": "name"
+        },
+        {
+          "text": "Rispolin",
+          "kind": "name"
+        },
+        {
+          "text": "Sequinan",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "01cca0a40a3e832bbbe1c815b192724f6a80e790ec29814096b45ed0e6b070b9",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RAPZEAPATHNIPO-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RAPZEAPATHNIPO",
+          "cids": [
+            5073
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RAPZEAPATHNIPO"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RCFKQVLHWYOSFF",
+      "aliases": [
+        {
+          "text": "0VCF90A5FP",
+          "kind": "name"
+        },
+        {
+          "text": "AZOCINE, OCTAHYDRO-1-NITROSO-",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID601039",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID1021039",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitrosoazacyclooctane",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitrosoheptamethyleneimine",
+          "kind": "name"
+        },
+        {
+          "text": "NHMI",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Nitrosoheptamethyleneimine",
+          "kind": "name"
+        },
+        {
+          "text": "nitrosoheptamethyleneimine",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:164007",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "5dcbf44ad76e6a858f42e12622d5f3d0fd3df31f85bae0b8ff8ed6d32dd8c806",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RCFKQVLHWYOSFF-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RCFKQVLHWYOSFF",
+          "cids": [
+            30360
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RCFKQVLHWYOSFF"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RHUYHJGZWVXEHW",
+      "aliases": [
+        {
+          "text": "1,1-Dimethylhydrazin",
+          "kind": "name"
+        },
+        {
+          "text": "1,1-Dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "1,1-DIMETHYLHYDRAZINE",
+          "kind": "name"
+        },
+        {
+          "text": "1,1-dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "Dimazine",
+          "kind": "name"
+        },
+        {
+          "text": "gem-Dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "Hydrazine, 1,1-dimethyl-",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-Dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "UDMH",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Unsym-dimethylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "Unsymmetrical dimethylhydrazine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "1b37792a567b1838279cc934578702cb703d3f3cd55f6210e89491e0c5ca465f",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RHUYHJGZWVXEHW-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RHUYHJGZWVXEHW",
+          "cids": [
+            5976
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RHUYHJGZWVXEHW"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RIOXQFHNBCKOKP",
+      "aliases": [
+        {
+          "text": "Agrocit",
+          "kind": "name"
+        },
+        {
+          "text": "Benlate",
+          "kind": "name"
+        },
+        {
+          "text": "Benlate 50",
+          "kind": "name"
+        },
+        {
+          "text": "benomyl",
+          "kind": "name"
+        },
+        {
+          "text": "BENOMYL",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Benomyl-Imex",
+          "kind": "name"
+        },
+        {
+          "text": "Fundazol",
+          "kind": "name"
+        },
+        {
+          "text": "Fungicide D-1991",
+          "kind": "name"
+        },
+        {
+          "text": "Fungochrom",
+          "kind": "name"
+        },
+        {
+          "text": "Uzgen",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "40357c6aee9c8e1b706619b43244d080062932eec1fed39f9413f0e55c734c0b",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RIOXQFHNBCKOKP-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RIOXQFHNBCKOKP",
+          "cids": [
+            28780
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RIOXQFHNBCKOKP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RLFWWDJHLFCNIJ",
+      "aliases": [
+        {
+          "text": "4-Aminoantipyrene",
+          "kind": "name"
+        },
+        {
+          "text": "4-Aminoantipyrine",
+          "kind": "name"
+        },
+        {
+          "text": "4-Aminophenazone",
+          "kind": "name"
+        },
+        {
+          "text": "Aminoantipyrin",
+          "kind": "name"
+        },
+        {
+          "text": "Aminoantipyrine",
+          "kind": "name"
+        },
+        {
+          "text": "Aminoazophene",
+          "kind": "name"
+        },
+        {
+          "text": "AMPYRONE",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Metapirazone",
+          "kind": "name"
+        },
+        {
+          "text": "Solvapyrin-A",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "01f628b795ec73484eb906d3483835d208d310be44a719ff9b8c9c90a2e71e3f",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RLFWWDJHLFCNIJ.json",
+          "original_parent_connectivity_key": "RLFWWDJHLFCNIJ",
+          "cids": [
+            2151
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RLFWWDJHLFCNIJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RNFNDJAIBTYOQL",
+      "aliases": [
+        {
+          "text": "2,2,2-Trichloroethane-1,1-diol",
+          "kind": "name"
+        },
+        {
+          "text": "Chloral hydrate",
+          "kind": "name"
+        },
+        {
+          "text": "chloral hydrate",
+          "kind": "name"
+        },
+        {
+          "text": "Chloral monohydrate",
+          "kind": "name"
+        },
+        {
+          "text": "Chloraldurat",
+          "kind": "name"
+        },
+        {
+          "text": "Chloralhydrate",
+          "kind": "name"
+        },
+        {
+          "text": "Noctec",
+          "kind": "name"
+        },
+        {
+          "text": "Phaldrone",
+          "kind": "name"
+        },
+        {
+          "text": "Tosyl",
+          "kind": "name"
+        },
+        {
+          "text": "Trichloroacetaldehyde hydrate",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "a47c6c5566c8763f2a148791f95460529ec28fce9ee5ce49bfba4c60091863cf",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RNFNDJAIBTYOQL.json",
+          "original_parent_connectivity_key": "RNFNDJAIBTYOQL",
+          "cids": [
+            2707
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RNFNDJAIBTYOQL"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RTHCYVBBDHJXIQ",
+      "aliases": [
+        {
+          "text": "Animex-On",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID7023067",
+          "kind": "name"
+        },
+        {
+          "text": "Fluoxetin",
+          "kind": "name"
+        },
+        {
+          "text": "Fluoxetin ratiopharm",
+          "kind": "name"
+        },
+        {
+          "text": "Fluoxetina",
+          "kind": "name"
+        },
+        {
+          "text": "Fluoxetine",
+          "kind": "name"
+        },
+        {
+          "text": "fluoxetine",
+          "kind": "name"
+        },
+        {
+          "text": "Fluoxetinum",
+          "kind": "name"
+        },
+        {
+          "text": "Fluval",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-3-phenyl-3-[4-(trifluoromethyl)phenoxy]propan-1-amine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4ae46cb363305c3ce5e49c3272dc8c3591cb28f2c7ed96f2c744145fd70c78df",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RTHCYVBBDHJXIQ.json",
+          "original_parent_connectivity_key": "RTHCYVBBDHJXIQ",
+          "cids": [
+            3386
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RTHCYVBBDHJXIQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RWGFKTVRMDUZSP",
+      "aliases": [
+        {
+          "text": "(1-Methylethyl)benzene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Phenylpropane",
+          "kind": "name"
+        },
+        {
+          "text": "Benzene, (1-methylethyl)-",
+          "kind": "name"
+        },
+        {
+          "text": "Cumeen",
+          "kind": "name"
+        },
+        {
+          "text": "cumene",
+          "kind": "name"
+        },
+        {
+          "text": "Cumene",
+          "kind": "name"
+        },
+        {
+          "text": "CUMENE",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Cumol",
+          "kind": "name"
+        },
+        {
+          "text": "Isopropilbenzene",
+          "kind": "name"
+        },
+        {
+          "text": "Isopropylbenzene",
+          "kind": "name"
+        },
+        {
+          "text": "Isopropylbenzol",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "8d3240fc73c7d3b98df8cc919f2a248b824575d7f423a7106cc0ce5be0fed408",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/RWGFKTVRMDUZSP-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "RWGFKTVRMDUZSP",
+          "cids": [
+            7406
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RWGFKTVRMDUZSP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RXERRVKLABZRCU",
+      "aliases": [
+        {
+          "text": "4-acetamido-5-hydroxy-6-((7-sulfo-4-((4-sulfophenyl)diazenyl)naphthalen-1-yl)diazenyl)naphthalene-1,7-disulfonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "4-Acetamido-5-hydroxy-6-({7-sulfo-4-[(4-sulfophenyl)diazenyl]naphthalen-1-yl}diazenyl)naphthalene-1,7-disulfonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "4-acetamido-5-hydroxy-6-[[7-sulfo-4-[(4-sulfophenyl)diazenyl]naphthalen-1-yl]diazenyl]naphthalene-1,7-disulfonic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Black BN",
+          "kind": "name"
+        },
+        {
+          "text": "Blue Black BN",
+          "kind": "name"
+        },
+        {
+          "text": "Brilliant Acid Black BN Extra Pure A",
+          "kind": "name"
+        },
+        {
+          "text": "Brilliant Acid Black BNA Export",
+          "kind": "name"
+        },
+        {
+          "text": "Brilliant Black A",
+          "kind": "name"
+        },
+        {
+          "text": "Brilliant Black BN",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "686377f9adad6bb5ce244af53798994a4594bd81a08131adaef377d30af0f7a1",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RXERRVKLABZRCU.json",
+          "original_parent_connectivity_key": "RXERRVKLABZRCU",
+          "cids": [
+            17294
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RXERRVKLABZRCU"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RXPRRQLKFXBCSJ",
+      "aliases": [
+        {
+          "text": "(+)-Vincamin",
+          "kind": "name"
+        },
+        {
+          "text": "(41S,12R,13aS)-methyl 13a-ethyl-12-hydroxy-2,3,41,5,6,12,13,13a-octahydro-1H-indolo[3,2,1-de]pyrido[3,2,1-ij][1,5]naphthyridine-12-carboxylate",
+          "kind": "name"
+        },
+        {
+          "text": "16-Epivincamine",
+          "kind": "name"
+        },
+        {
+          "text": "Epivincamine",
+          "kind": "name"
+        },
+        {
+          "text": "methyl (15S,17R,19S)-15-ethyl-17-hydroxy-1,11-diazapentacyclo(9.6.2.02,7.08,18.015,19)nonadeca-2,4,6,8(18)-tetraene-17-carboxylate",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick_873",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:1084155",
+          "kind": "name"
+        },
+        {
+          "text": "Vinpocetine Impurity I",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "9ce374d0e3cc2a1609dc3308d1ce0ab402cb34388940eefbd561434803de3755",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RXPRRQLKFXBCSJ.json",
+          "original_parent_connectivity_key": "RXPRRQLKFXBCSJ",
+          "cids": [
+            637570
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RXPRRQLKFXBCSJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "RZPAKFUAFGMUPI",
+      "aliases": [
+        {
+          "text": "Amimycin",
+          "kind": "name"
+        },
+        {
+          "text": "Landomycin",
+          "kind": "name"
+        },
+        {
+          "text": "Matromycin",
+          "kind": "name"
+        },
+        {
+          "text": "Oleandomicina",
+          "kind": "name"
+        },
+        {
+          "text": "oleandomycin",
+          "kind": "name"
+        },
+        {
+          "text": "Oleandomycine",
+          "kind": "name"
+        },
+        {
+          "text": "Oleandomycinum",
+          "kind": "name"
+        },
+        {
+          "text": "P8ZQ646136",
+          "kind": "name"
+        },
+        {
+          "text": "Romicil",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "757bb5e97e86ebb4c49deb835abc96529a0398837b222d3ba10294df799821ac",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RZPAKFUAFGMUPI.json",
+          "original_parent_connectivity_key": "RZPAKFUAFGMUPI",
+          "cids": [
+            72493
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RZPAKFUAFGMUPI"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SBGPASZOVGSOFJ",
+      "aliases": [
+        {
+          "text": "(2R,16R,21S)-4,14,20-Triazahexacyclo[13.6.2.02,14.03,11.05,10.016,21]tricosa-3(11),5,7,9-tetraene",
+          "kind": "name"
+        },
+        {
+          "text": "AB00514640",
+          "kind": "name"
+        },
+        {
+          "text": "BPBio1_000891",
+          "kind": "name"
+        },
+        {
+          "text": "BRD-A60583491-300-02-7",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000809",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:91781",
+          "kind": "name"
+        },
+        {
+          "text": "LSM-1674",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000685",
+          "kind": "name"
+        },
+        {
+          "text": "Q27163584",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "d33b7eb6134e0f628f86b347e6de7fa9c22690107c4cbea1a40b918313782abd",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/SBGPASZOVGSOFJ.json",
+          "original_parent_connectivity_key": "SBGPASZOVGSOFJ",
+          "cids": [
+            23789069
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SBGPASZOVGSOFJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SGDBTWWWUNNDEQ",
+      "aliases": [
+        {
+          "text": "L-PAM",
+          "kind": "name"
+        },
+        {
+          "text": "L-Phenylalanine mustard",
+          "kind": "name"
+        },
+        {
+          "text": "L-Sarcolysin",
+          "kind": "name"
+        },
+        {
+          "text": "L-Sarcolysine",
+          "kind": "name"
+        },
+        {
+          "text": "L-Sarkolysin",
+          "kind": "name"
+        },
+        {
+          "text": "Levofalan",
+          "kind": "name"
+        },
+        {
+          "text": "Melfalan",
+          "kind": "name"
+        },
+        {
+          "text": "melphalan",
+          "kind": "name"
+        },
+        {
+          "text": "Melphalan",
+          "kind": "name"
+        },
+        {
+          "text": "Phenylalanine mustard",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "d7e6c6a9ad8d88cbcbb478972e79890b01c55c2486efa276efc97e35e77423ff",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/SGDBTWWWUNNDEQ-LBPRGKRZSA-N.json",
+          "original_parent_connectivity_key": "SGDBTWWWUNNDEQ",
+          "cids": [
+            460612,
+            6918992
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SGDBTWWWUNNDEQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SGEWCQFRYRRZDC",
+      "aliases": [
+        {
+          "text": "5,7-dihydroxy-2-(4-hydroxyphenyl)-8-[(3R,4R,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)-2-oxanyl]-1-benzopyran-4-one",
+          "kind": "name"
+        },
+        {
+          "text": "5,7-dihydroxy-2-(4-hydroxyphenyl)-8-[(3R,4R,5S,6R)-3,4,5-trihydroxy-6-(hydroxymethyl)oxan-2-yl]chromen-4-one",
+          "kind": "name"
+        },
+        {
+          "text": "BPBio1_000795",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000721",
+          "kind": "name"
+        },
+        {
+          "text": "MLS002153939",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000661",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000661",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick2_000661",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000661",
+          "kind": "name"
+        },
+        {
+          "text": "SPBio_002642",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "36691364a2f8a4bd399b83d6e078fc5e6dbd2d6895445b257d917f384f96ab43",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/SGEWCQFRYRRZDC.json",
+          "original_parent_connectivity_key": "SGEWCQFRYRRZDC",
+          "cids": [
+            6713958
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SGEWCQFRYRRZDC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SLUYGGAVUSVJOT",
+      "aliases": [
+        {
+          "text": "Advagraf",
+          "kind": "name"
+        },
+        {
+          "text": "Fujimycin",
+          "kind": "name"
+        },
+        {
+          "text": "Modigraf",
+          "kind": "name"
+        },
+        {
+          "text": "Prograf",
+          "kind": "name"
+        },
+        {
+          "text": "Protopic",
+          "kind": "name"
+        },
+        {
+          "text": "tacrolimus",
+          "kind": "name"
+        },
+        {
+          "text": "Tacrolimus",
+          "kind": "name"
+        },
+        {
+          "text": "Tacrolimus anhydrous",
+          "kind": "name"
+        },
+        {
+          "text": "Tsukubaenolide",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "75dcfa02a5c3c58da3ec3d72de4b42cab9cde425def2106325ea2cd6e0dfa5f3",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/QJJXYPPXXYFBGM-LFZNUXCKSA-N.json",
+          "original_parent_connectivity_key": "QJJXYPPXXYFBGM",
+          "cids": [
+            445643
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "QJJXYPPXXYFBGM",
+        "SLUYGGAVUSVJOT"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SMWDFEZZVXVKRB",
+      "aliases": [
+        {
+          "text": "1-Azanaphthalene",
+          "kind": "name"
+        },
+        {
+          "text": "1-Benzazine",
+          "kind": "name"
+        },
+        {
+          "text": "Chinoleine",
+          "kind": "name"
+        },
+        {
+          "text": "Chinolin",
+          "kind": "name"
+        },
+        {
+          "text": "Chinoline",
+          "kind": "name"
+        },
+        {
+          "text": "Leucol",
+          "kind": "name"
+        },
+        {
+          "text": "Leukol",
+          "kind": "name"
+        },
+        {
+          "text": "Quinolin",
+          "kind": "name"
+        },
+        {
+          "text": "QUINOLINE",
+          "kind": "name"
+        },
+        {
+          "text": "quinoline",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "fdf30b57f80a3759917c6a68dd2869b92a98b0f7442eec90a84b51cffbbc3e72",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/SMWDFEZZVXVKRB.json",
+          "original_parent_connectivity_key": "SMWDFEZZVXVKRB",
+          "cids": [
+            7047
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SMWDFEZZVXVKRB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SOEDEYVDCDYMMH",
+      "aliases": [
+        {
+          "text": "3,3',4',5',7-Pentahydroxyflavone",
+          "kind": "name"
+        },
+        {
+          "text": "3,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)chromen-4-one",
+          "kind": "name"
+        },
+        {
+          "text": "4H-1-Benzopyran-4-one, 3,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)-",
+          "kind": "name"
+        },
+        {
+          "text": "5-Deoxymyricetin",
+          "kind": "name"
+        },
+        {
+          "text": "5-Hydroxyfisetin",
+          "kind": "name"
+        },
+        {
+          "text": "KJ6DBC4U7E",
+          "kind": "name"
+        },
+        {
+          "text": "Norkanugin",
+          "kind": "name"
+        },
+        {
+          "text": "NSC-407331",
+          "kind": "name"
+        },
+        {
+          "text": "Robinetin",
+          "kind": "name"
+        },
+        {
+          "text": "robinetin",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "6a680c940b1b2a42fd0f62980b04b13cc68ea1857bdfc3743f56a46f68ec3bd0",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/SOEDEYVDCDYMMH-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "SOEDEYVDCDYMMH",
+          "cids": [
+            5281692
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SOEDEYVDCDYMMH"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SOYKEARSMXGVTM",
+      "aliases": [
+        {
+          "text": "Allergican",
+          "kind": "name"
+        },
+        {
+          "text": "Allergisan",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorophenylpyridamine",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorphenamine",
+          "kind": "name"
+        },
+        {
+          "text": "chlorpheniramine",
+          "kind": "name"
+        },
+        {
+          "text": "Clorfenamina",
+          "kind": "name"
+        },
+        {
+          "text": "Clorfeniramina",
+          "kind": "name"
+        },
+        {
+          "text": "Haynon",
+          "kind": "name"
+        },
+        {
+          "text": "Histadur",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "766dfefa23703d201994bc22c395bbbdbeaa658fbfdc52dff5cb2d0ed1ba34ff",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/SOYKEARSMXGVTM.json",
+          "original_parent_connectivity_key": "SOYKEARSMXGVTM",
+          "cids": [
+            2725
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "SOYKEARSMXGVTM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "SXSWSYRFTJDJTA",
+      "aliases": [
+        {
+          "text": "4,5-Dihydro-5-oxo-1-(4-sulphophenyl)-4-((4-sulphophenyl)azo)-1H-pyrazole-3-carboxylic acid",
+          "kind": "name"
+        },
+        {
+          "text": "5-oxo-1-(4-sulfophenyl)-4-[(E)-(4-sulfophenyl)diazenyl]-4,5-dihydro-1H-pyrazole-3-carboxylic acid",
+          "kind": "name"
+        },
+        {
+          "text": "C.I. 19140",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:68629",
+          "kind": "name"
+        },
+        {
+          "text": "EINECS 251-862-1",
+          "kind": "name"
+        },
+        {
+          "text": "RFKITWRHKUYMRJ-UHFFFAOYSA-N",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL839391",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL839392",
+          "kind": "name"
+        },
+        {
+          "text": "Tartrazine",
+          "kind": "name"
+        },
+        {
+          "text": "tartrazine",
+          "kind": "name"
+        },
+        {
+          "text": "tartrazine acid",
+          "kind": "name"
+        },
+        {
+          "text": "UNII-6TP696149N",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "cb3eb9e90fb69c53fbdcbf5931bcbb648edd48cdc694080c39bd5e5a8bc05f87",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/RFKITWRHKUYMRJ.json",
+          "original_parent_connectivity_key": "RFKITWRHKUYMRJ",
+          "cids": [
+            62302,
+            92328380,
+            98043204
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "RFKITWRHKUYMRJ",
+        "SXSWSYRFTJDJTA"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UAWLTQJFZUYROA",
+      "aliases": [
+        {
+          "text": "6-nitrochrysene",
+          "kind": "name"
+        },
+        {
+          "text": "6-Nitrochrysene",
+          "kind": "name"
+        },
+        {
+          "text": "6-NITROCHRYSENE",
+          "kind": "name"
+        },
+        {
+          "text": "82ZK83O33Y",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL82858",
+          "kind": "name"
+        },
+        {
+          "text": "Chrysene, 6-nitro-",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID2047727",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID9075454",
+          "kind": "name"
+        },
+        {
+          "text": "NSC-407609",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:105092",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "91f619a0cf0524f27b7f9341fdba9f808003ad92065412082a5a16461dd1ae70",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/UAWLTQJFZUYROA.json",
+          "original_parent_connectivity_key": "UAWLTQJFZUYROA",
+          "cids": [
+            24121
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UAWLTQJFZUYROA"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UCSJYZPVAKXKNQ",
+      "aliases": [
+        {
+          "text": "2,4-Diguanidino-3,5,6-trihydroxycyclohexyl 5-deoxy-2-O-(2-deoxy-2-methylamino-|A-glucopyranosyl)-3-formylpentofuranoside",
+          "kind": "name"
+        },
+        {
+          "text": "Agrept",
+          "kind": "name"
+        },
+        {
+          "text": "Agrimycin",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL372795",
+          "kind": "name"
+        },
+        {
+          "text": "CS-0013964",
+          "kind": "name"
+        },
+        {
+          "text": "DA-78060",
+          "kind": "name"
+        },
+        {
+          "text": "EBC-27348",
+          "kind": "name"
+        },
+        {
+          "text": "EN300-7481099",
+          "kind": "name"
+        },
+        {
+          "text": "Fourth International Standard for Streptomycin",
+          "kind": "name"
+        },
+        {
+          "text": "Gerox",
+          "kind": "name"
+        },
+        {
+          "text": "GTPL10923",
+          "kind": "name"
+        },
+        {
+          "text": "HY-B1906",
+          "kind": "name"
+        },
+        {
+          "text": "N-[(1R,2R,3S,4R,5R,6S)-3-carbamimidamido-4-{[(2R,3R,4R,5S)-3-{[(2S,3S,4S,5R,6S)-4,5-dihydroxy-6-(hydroxymethyl)-3-(methylamino)oxan-2-yl]oxy}-4-formyl-4-hydroxy-5-methyloxolan-2-yl]oxy}-2,5,6-trihydroxycyclohexyl]guanidine",
+          "kind": "name"
+        },
+        {
+          "text": "orb1982109",
+          "kind": "name"
+        },
+        {
+          "text": "Q192717",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL3276",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL5060",
+          "kind": "name"
+        },
+        {
+          "text": "Strepcen",
+          "kind": "name"
+        },
+        {
+          "text": "Streptomicina",
+          "kind": "name"
+        },
+        {
+          "text": "streptomycin",
+          "kind": "name"
+        },
+        {
+          "text": "streptomycin?",
+          "kind": "name"
+        },
+        {
+          "text": "Streptomycine",
+          "kind": "name"
+        },
+        {
+          "text": "Streptomycinum",
+          "kind": "name"
+        },
+        {
+          "text": "Streptomyzin",
+          "kind": "name"
+        },
+        {
+          "text": "T75320",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "33776ed9d516eba3c4340285c97c8f76a96d58bd0144cc8ef10e1b555babee87",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/UCSJYZPVAKXKNQ.json",
+          "original_parent_connectivity_key": "UCSJYZPVAKXKNQ",
+          "cids": [
+            19649,
+            176517432,
+            176519357
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UCSJYZPVAKXKNQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UIFFUZWRFRDZJC",
+      "aliases": [
+        {
+          "text": "BPBio1_000291",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000263",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:94424",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL4303196",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000222",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000222",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick2_000222",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000222",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick_922",
+          "kind": "name"
+        },
+        {
+          "text": "SPBio_002184",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "ab1b5dee9a3bbc1cdd8f73ca8b29349e4637076b6be2bda51e5488331b255cc3",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/UIFFUZWRFRDZJC.json",
+          "original_parent_connectivity_key": "UIFFUZWRFRDZJC",
+          "cids": [
+            6420045
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UIFFUZWRFRDZJC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UJLAWZDWDVHWOW",
+      "aliases": [
+        {
+          "text": "3-((3R,4R)-4-methyl-3-(methyl(7H-pyrrolo[2,3-d]pyrimidin-4-yl)amino)piperidin-1-yl)-3-oxopropanenitrile",
+          "kind": "name"
+        },
+        {
+          "text": "3-{(3R,4R)-4-methyl-3-[methyl(7H-pyrrolo[2,3-d]pyrimidin-4-yl)amino]piperidin-1-yl}-3-oxopropanenitrile",
+          "kind": "name"
+        },
+        {
+          "text": "CP 690550",
+          "kind": "name"
+        },
+        {
+          "text": "Cp-690 free base",
+          "kind": "name"
+        },
+        {
+          "text": "CP-690550",
+          "kind": "name"
+        },
+        {
+          "text": "Tasocitinib",
+          "kind": "name"
+        },
+        {
+          "text": "Tofacitinib",
+          "kind": "name"
+        },
+        {
+          "text": "tofacitinib",
+          "kind": "name"
+        },
+        {
+          "text": "tofacitinibum",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e5522228e76284a2ecc20d6c1a10b9181933ddd0a2722d51ebd8d2a2847dd868",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/UJLAWZDWDVHWOW.json",
+          "original_parent_connectivity_key": "UJLAWZDWDVHWOW",
+          "cids": [
+            9926791
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UJLAWZDWDVHWOW"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UKPBXIFLSVLDPA",
+      "aliases": [
+        {
+          "text": "1-Propylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "DTXCID3023841",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID5043841",
+          "kind": "name"
+        },
+        {
+          "text": "Hydrazine, propyl-",
+          "kind": "name"
+        },
+        {
+          "text": "MFCD08146663",
+          "kind": "name"
+        },
+        {
+          "text": "n-Propylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "Propylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:348125",
+          "kind": "name"
+        },
+        {
+          "text": "UKPBXIFLSVLDPA-UHFFFAOYSA-N",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "6a33807eff2d94b1bdf374089261e03568379ed4ed58a6e0bbf3db7ed0f1f28c",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/UKPBXIFLSVLDPA.json",
+          "original_parent_connectivity_key": "UKPBXIFLSVLDPA",
+          "cids": [
+            42007
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UKPBXIFLSVLDPA"
+      ]
+    },
+    {
+      "parent_connectivity_key": "UWFKFZIKRTXLKN",
+      "aliases": [
+        {
+          "text": "3'-methyl-dimethylaminoazobenzene",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "39712cce9a3700e6563536d2b894a5f3dd1904b67d0da39cd3b59b02ec00765a",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/UWFKFZIKRTXLKN-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "UWFKFZIKRTXLKN",
+          "cids": [
+            54375520
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "UWFKFZIKRTXLKN"
+      ]
+    },
+    {
+      "parent_connectivity_key": "VABYUUZNAVQNPG",
+      "aliases": [
+        {
+          "text": "(E)-1-(3-(3,4,5-trimethoxyphenyl)acryloyl)-5,6-dihydropyridin-2(1H)-one",
+          "kind": "name"
+        },
+        {
+          "text": "1-((E)-3-(3,4,5-trimethoxyphenyl)prop-2-enoyl)-2,3-dihydropyridin-6-one",
+          "kind": "name"
+        },
+        {
+          "text": "1-[(E)-3-(3,4,5-trimethoxyphenyl)prop-2-enoyl]-2,3-dihydropyridin-6-one",
+          "kind": "name"
+        },
+        {
+          "text": "2(1H)-Pyridinone, 5,6-dihydro-1-(1-oxo-3-(3,4,5-trimethoxyphenyl)-2-propenyl)-, (E)-",
+          "kind": "name"
+        },
+        {
+          "text": "5,6-dihydro-1-(1-oxo-3-(3,4,5-trimethoxyphenyl)-2-propenyl)-2(1H)pyridinone",
+          "kind": "name"
+        },
+        {
+          "text": "Piperlongumine",
+          "kind": "name"
+        },
+        {
+          "text": "Piplartine",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:45515",
+          "kind": "name"
+        },
+        {
+          "text": "SGD66V4SVJ",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "9d2c43451f94b4ea4d0d95e0620c18ebb972ed41a2b2c64a7b7623e11ebce334",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/VABYUUZNAVQNPG.json",
+          "original_parent_connectivity_key": "VABYUUZNAVQNPG",
+          "cids": [
+            637858
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "VABYUUZNAVQNPG"
+      ]
+    },
+    {
+      "parent_connectivity_key": "VOXZDWNPVJITMN",
+      "aliases": [
+        {
+          "text": "(8R,9S,13S,14S)-13-methyl-6,7,8,9,11,12,14,15,16,17-decahydrocyclopenta(a)phenanthrene-3,17-diol",
+          "kind": "name"
+        },
+        {
+          "text": "(8R,9S,13S,14S)-13-methyl-6,7,8,9,11,12,14,15,16,17-decahydrocyclopenta[a]phenanthrene-3,17-diol",
+          "kind": "name"
+        },
+        {
+          "text": "17beta-Estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "Aquadiol",
+          "kind": "name"
+        },
+        {
+          "text": "beta-Estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "Dihydrofolliculin",
+          "kind": "name"
+        },
+        {
+          "text": "Diogynets",
+          "kind": "name"
+        },
+        {
+          "text": "Divigel",
+          "kind": "name"
+        },
+        {
+          "text": "Estra-1,3,5(10)-triene-3,17-diol",
+          "kind": "name"
+        },
+        {
+          "text": "Estrace",
+          "kind": "name"
+        },
+        {
+          "text": "Estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "estradiol",
+          "kind": "name"
+        },
+        {
+          "text": "estradiol (E2)",
+          "kind": "name"
+        },
+        {
+          "text": "Estradiol Impurity 55",
+          "kind": "name"
+        },
+        {
+          "text": "estradiols",
+          "kind": "name"
+        },
+        {
+          "text": "Estrone Impurity 17",
+          "kind": "name"
+        },
+        {
+          "text": "Oestradiol",
+          "kind": "name"
+        },
+        {
+          "text": "Q12415847",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:1084275",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL1649986",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL29883738",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "03aa99acb0f7c7c9b516a25dd0a09f6291d821a5cf757685dd112a5f553e9158",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/VOXZDWNPVJITMN-WKUFJEKOSA-N.json",
+          "original_parent_connectivity_key": "VOXZDWNPVJITMN",
+          "cids": [
+            9811784
+          ]
+        },
+        {
+          "frozen_evidence_entry_sha256": "192d94290cb2456dd588fab02a1d06894d25efb59780bc2cd7bb49e78f306258",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/VOXZDWNPVJITMN-ZBRFXRBCSA-N.json",
+          "original_parent_connectivity_key": "VOXZDWNPVJITMN",
+          "cids": [
+            5757
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "VOXZDWNPVJITMN"
+      ]
+    },
+    {
+      "parent_connectivity_key": "VQAYFKKCNSOZKM",
+      "aliases": [
+        {
+          "text": "6-Methyladenosine",
+          "kind": "name"
+        },
+        {
+          "text": "6-Methylaminopurine D-riboside",
+          "kind": "name"
+        },
+        {
+          "text": "6-Methylaminopurine ribonucleoside",
+          "kind": "name"
+        },
+        {
+          "text": "6-Methylaminopurine riboside",
+          "kind": "name"
+        },
+        {
+          "text": "6-Methylaminopurinosine",
+          "kind": "name"
+        },
+        {
+          "text": "N(6)-Methyladenosine",
+          "kind": "name"
+        },
+        {
+          "text": "N-Methyladenosine",
+          "kind": "name"
+        },
+        {
+          "text": "N6-Methyladenosine",
+          "kind": "name"
+        },
+        {
+          "text": "N6-methyladenosine (m6A)",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "f47f5480009e6b44a9306e436133c99d123f35d8c20434354656b7de99d8a5d3",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/VQAYFKKCNSOZKM.json",
+          "original_parent_connectivity_key": "VQAYFKKCNSOZKM",
+          "cids": [
+            102175
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "VQAYFKKCNSOZKM"
+      ]
+    },
+    {
+      "parent_connectivity_key": "VYZAMTAEIAYCRO",
+      "aliases": [
+        {
+          "text": "BioChrome",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:28073",
+          "kind": "name"
+        },
+        {
+          "text": "Chrom",
+          "kind": "name"
+        },
+        {
+          "text": "Chrome",
+          "kind": "name"
+        },
+        {
+          "text": "Chromium",
+          "kind": "name"
+        },
+        {
+          "text": "chromium",
+          "kind": "name"
+        },
+        {
+          "text": "CHROMIUM",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Chromium (Cr)",
+          "kind": "name"
+        },
+        {
+          "text": "Chromium metal",
+          "kind": "name"
+        },
+        {
+          "text": "Chromium, elemental",
+          "kind": "name"
+        },
+        {
+          "text": "Dinakrome",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID3031022",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "c992a44a62ccbd6cacea193d7596dd348cf5ad9ee8ee326ce8743db4e18cb081",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/VYZAMTAEIAYCRO-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "VYZAMTAEIAYCRO",
+          "cids": [
+            23976
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "VYZAMTAEIAYCRO"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WCGUUGGRBIKTOS",
+      "aliases": [
+        {
+          "text": "(+)-Ursolic acid",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:9908",
+          "kind": "name"
+        },
+        {
+          "text": "Malol",
+          "kind": "name"
+        },
+        {
+          "text": "Micromerol",
+          "kind": "name"
+        },
+        {
+          "text": "NSC-167406",
+          "kind": "name"
+        },
+        {
+          "text": "NSC-4060",
+          "kind": "name"
+        },
+        {
+          "text": "Prunol",
+          "kind": "name"
+        },
+        {
+          "text": "Ursolic acid",
+          "kind": "name"
+        },
+        {
+          "text": "Urson",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "fc550b7c76549cc374915f26739fee94281f27336df97763ea76abf5add661e0",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/WCGUUGGRBIKTOS-GPOJBZKASA-N.json",
+          "original_parent_connectivity_key": "WCGUUGGRBIKTOS",
+          "cids": [
+            64945
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WCGUUGGRBIKTOS"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WHHGLZMJPXIBIX",
+      "aliases": [
+        {
+          "text": "Bis(pentabromophenyl) ether",
+          "kind": "name"
+        },
+        {
+          "text": "Bromkal 82-0DE",
+          "kind": "name"
+        },
+        {
+          "text": "Bromkal 83-10DE",
+          "kind": "name"
+        },
+        {
+          "text": "Dbdpo",
+          "kind": "name"
+        },
+        {
+          "text": "Decabrom",
+          "kind": "name"
+        },
+        {
+          "text": "Decabromobiphenyl oxide",
+          "kind": "name"
+        },
+        {
+          "text": "decabromodiphenyl ether",
+          "kind": "name"
+        },
+        {
+          "text": "Decabromodiphenyl ether",
+          "kind": "name"
+        },
+        {
+          "text": "Decabromodiphenyl oxide",
+          "kind": "name"
+        },
+        {
+          "text": "Pentabromophenyl ether",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "7631e662f4e052608dd819878c54e7576bd975a0dab7f2b680cb70d58533fcbd",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/WHHGLZMJPXIBIX-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "WHHGLZMJPXIBIX",
+          "cids": [
+            14410
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WHHGLZMJPXIBIX"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WJCNZQLZVWNLKY",
+      "aliases": [
+        {
+          "text": "2-(4-Thiazolyl)benzimidazole",
+          "kind": "name"
+        },
+        {
+          "text": "Lombristop",
+          "kind": "name"
+        },
+        {
+          "text": "Mintezol",
+          "kind": "name"
+        },
+        {
+          "text": "Minzolum",
+          "kind": "name"
+        },
+        {
+          "text": "Omnizole",
+          "kind": "name"
+        },
+        {
+          "text": "Thiabendazole",
+          "kind": "name"
+        },
+        {
+          "text": "thiabendazole",
+          "kind": "name"
+        },
+        {
+          "text": "Thiabenzole",
+          "kind": "name"
+        },
+        {
+          "text": "Thibenzole",
+          "kind": "name"
+        },
+        {
+          "text": "Tiabendazole",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "bfa072b43cbe8074c1818c29f5a8247cc077bd36061c5505958c88b6471bb00b",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/WJCNZQLZVWNLKY.json",
+          "original_parent_connectivity_key": "WJCNZQLZVWNLKY",
+          "cids": [
+            5430
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WJCNZQLZVWNLKY"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WNSYEWGYAFFSSQ",
+      "aliases": [
+        {
+          "text": "1,4-DINITROSOPIPERAZINE",
+          "kind": "name"
+        },
+        {
+          "text": "1,4-dinitrosopiperazine",
+          "kind": "name"
+        },
+        {
+          "text": "Dinitrosopiperazin",
+          "kind": "name"
+        },
+        {
+          "text": "dinitrosopiperazine",
+          "kind": "name"
+        },
+        {
+          "text": "Dinitrosopiperazine",
+          "kind": "name"
+        },
+        {
+          "text": "DNPZ",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "DTXSID0020527",
+          "kind": "name"
+        },
+        {
+          "text": "N,N'-Dinitrosopiperazine",
+          "kind": "name"
+        },
+        {
+          "text": "N-Dinitrosopiperazine",
+          "kind": "name"
+        },
+        {
+          "text": "NSC 339",
+          "kind": "name"
+        },
+        {
+          "text": "USAF DO-36",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "9a6bd18312c188dbe2af6fd44a0cfc8f823dcd6b421fd82a39001027faf0a818",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/WNSYEWGYAFFSSQ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "WNSYEWGYAFFSSQ",
+          "cids": [
+            8819
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WNSYEWGYAFFSSQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WYYCRMBIYYRAEW",
+      "aliases": [
+        {
+          "text": "Clinovir",
+          "kind": "name"
+        },
+        {
+          "text": "Depo-Provera",
+          "kind": "name"
+        },
+        {
+          "text": "Depot-medroxyprogesterone acetate",
+          "kind": "name"
+        },
+        {
+          "text": "Farlutin",
+          "kind": "name"
+        },
+        {
+          "text": "Gestapuran",
+          "kind": "name"
+        },
+        {
+          "text": "Lutopolar",
+          "kind": "name"
+        },
+        {
+          "text": "Medroxyprogesterone 17-acetate",
+          "kind": "name"
+        },
+        {
+          "text": "medroxyprogesterone acetate",
+          "kind": "name"
+        },
+        {
+          "text": "Medroxyprogesterone acetate",
+          "kind": "name"
+        },
+        {
+          "text": "Metigestrona",
+          "kind": "name"
+        },
+        {
+          "text": "Provera",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "8f9efab412eb7084d401ee929b25ccdaf8668d522878942b159d8f40442bdea9",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/PSGAAPLEWMOORI-PEINSRQWSA-N.json",
+          "original_parent_connectivity_key": "PSGAAPLEWMOORI",
+          "cids": [
+            6279
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "PSGAAPLEWMOORI",
+        "WYYCRMBIYYRAEW"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WZNJWVWKTVETCG",
+      "aliases": [
+        {
+          "text": "(2S)-2-amino-3-(3-hydroxy-4-oxopyridin-1-yl)propanoic acid",
+          "kind": "name"
+        },
+        {
+          "text": "(2S)-2-azaniumyl-3-(3-hydroxy-4-oxopyridin-1(4H)-yl)propanoate",
+          "kind": "name"
+        },
+        {
+          "text": "(L)-MIMOSINE",
+          "kind": "name"
+        },
+        {
+          "text": "3-(3,4-dihydroxypyridinium-1-yl)-L-alanine zwitterion",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:77689",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:77848",
+          "kind": "name"
+        },
+        {
+          "text": "L-mimosine",
+          "kind": "name"
+        },
+        {
+          "text": "L-mimosine zwitterion",
+          "kind": "name"
+        },
+        {
+          "text": "Leucaenine",
+          "kind": "name"
+        },
+        {
+          "text": "Leucaenol",
+          "kind": "name"
+        },
+        {
+          "text": "Leucenine",
+          "kind": "name"
+        },
+        {
+          "text": "Mimosin",
+          "kind": "name"
+        },
+        {
+          "text": "Mimosine",
+          "kind": "name"
+        },
+        {
+          "text": "Z46B1LUI5N",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "2c1e2b26517d32a508ef435fd11196e9368085c4f60b9717cee005e22a5993aa",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/WZNJWVWKTVETCG.json",
+          "original_parent_connectivity_key": "WZNJWVWKTVETCG",
+          "cids": [
+            440473,
+            6971294
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WZNJWVWKTVETCG"
+      ]
+    },
+    {
+      "parent_connectivity_key": "WZOZEZRFJCJXNZ",
+      "aliases": [
+        {
+          "text": "cefoxitin",
+          "kind": "name"
+        },
+        {
+          "text": "Cefoxitina",
+          "kind": "name"
+        },
+        {
+          "text": "Cefoxitine",
+          "kind": "name"
+        },
+        {
+          "text": "Cefoxitinum",
+          "kind": "name"
+        },
+        {
+          "text": "ceftoxitin",
+          "kind": "name"
+        },
+        {
+          "text": "Cenomycin",
+          "kind": "name"
+        },
+        {
+          "text": "CEPHOXITIN",
+          "kind": "name"
+        },
+        {
+          "text": "Mefoxitin",
+          "kind": "name"
+        },
+        {
+          "text": "Rephoxitin",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "2f77ae559a379b437936ab8ce9721eb7447a71af7a899545b89bf1dfe3e77db1",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/WZOZEZRFJCJXNZ-ZBFHGGJFSA-N.json",
+          "original_parent_connectivity_key": "WZOZEZRFJCJXNZ",
+          "cids": [
+            441199
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "WZOZEZRFJCJXNZ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XBJBPGROQZJDOJ",
+      "aliases": [
+        {
+          "text": "6,8-difluoro-1-(2-fluoroethyl)-7-(4-methylpiperazin-4-ium-1-yl)-4-oxoquinoline-3-carboxylate",
+          "kind": "name"
+        },
+        {
+          "text": "AM-833",
+          "kind": "name"
+        },
+        {
+          "text": "Fleroxacin",
+          "kind": "name"
+        },
+        {
+          "text": "fleroxacin",
+          "kind": "name"
+        },
+        {
+          "text": "Fleroxacine",
+          "kind": "name"
+        },
+        {
+          "text": "Fleroxacino",
+          "kind": "name"
+        },
+        {
+          "text": "Fleroxacinum",
+          "kind": "name"
+        },
+        {
+          "text": "Fleroxicin",
+          "kind": "name"
+        },
+        {
+          "text": "Megalocin",
+          "kind": "name"
+        },
+        {
+          "text": "Megalone",
+          "kind": "name"
+        },
+        {
+          "text": "Quinodis",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "ec807ea9decebb973ed018b3170b3558ec80e0000a568d8f5e947e22a3946925",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/XBJBPGROQZJDOJ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "XBJBPGROQZJDOJ",
+          "cids": [
+            3357,
+            40466912
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XBJBPGROQZJDOJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XCPGHVQEEXUHNC",
+      "aliases": [
+        {
+          "text": "Acridinyl Anisidide",
+          "kind": "name"
+        },
+        {
+          "text": "Acridinylanisidide",
+          "kind": "name"
+        },
+        {
+          "text": "Amekrin",
+          "kind": "name"
+        },
+        {
+          "text": "Amsacrina",
+          "kind": "name"
+        },
+        {
+          "text": "amsacrine",
+          "kind": "name"
+        },
+        {
+          "text": "Amsacrine",
+          "kind": "name"
+        },
+        {
+          "text": "Amsidine",
+          "kind": "name"
+        },
+        {
+          "text": "Amsidyl",
+          "kind": "name"
+        },
+        {
+          "text": "Lamasine",
+          "kind": "name"
+        },
+        {
+          "text": "m-AMSA",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "6943ffcbff537f58aaab937c2d15a8eea01b6ea11777f75d1694f1ee17888f3d",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/XCPGHVQEEXUHNC-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "XCPGHVQEEXUHNC",
+          "cids": [
+            2179
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XCPGHVQEEXUHNC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XEMRAKSQROQPBR",
+      "aliases": [
+        {
+          "text": "(Trichloromethyl)benzene",
+          "kind": "name"
+        },
+        {
+          "text": "1-(Trichloromethyl)benzene",
+          "kind": "name"
+        },
+        {
+          "text": "alpha,alpha,alpha-Trichlorotoluene",
+          "kind": "name"
+        },
+        {
+          "text": "Benzenyl trichloride",
+          "kind": "name"
+        },
+        {
+          "text": "BENZOTRICHLORIDE",
+          "kind": "name"
+        },
+        {
+          "text": "Benzotrichloride",
+          "kind": "name"
+        },
+        {
+          "text": "Phenylchloroform",
+          "kind": "name"
+        },
+        {
+          "text": "Phenyltrichloromethane",
+          "kind": "name"
+        },
+        {
+          "text": "Toluene trichloride",
+          "kind": "name"
+        },
+        {
+          "text": "Trichlorophenylmethane",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "c8e8c383b5c6d095678d4090c647529044448a267f175366a1705966a3651102",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/XEMRAKSQROQPBR-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "XEMRAKSQROQPBR",
+          "cids": [
+            7367
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XEMRAKSQROQPBR"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XFSBVAOIAHNAPC",
+      "aliases": [
+        {
+          "text": "BPBio1_000390",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_000354",
+          "kind": "name"
+        },
+        {
+          "text": "HMS1569B16",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2096B16",
+          "kind": "name"
+        },
+        {
+          "text": "MLS000728676",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick0_000567",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick1_000567",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick2_000567",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_000567",
+          "kind": "name"
+        },
+        {
+          "text": "SPBio_002573",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b838506d40932e055a70f979286db9f4348bb61ba8e730d5a884c9c0b4d882e2",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/XFSBVAOIAHNAPC.json",
+          "original_parent_connectivity_key": "XFSBVAOIAHNAPC",
+          "cids": [
+            6713948
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XFSBVAOIAHNAPC"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XRXDAJYKGWNHTQ",
+      "aliases": [
+        {
+          "text": "2-(1-Piperazinyl)quinoline",
+          "kind": "name"
+        },
+        {
+          "text": "2-Piperazin-1-ylquinoline",
+          "kind": "name"
+        },
+        {
+          "text": "4WCY05C0SJ",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID3046952",
+          "kind": "name"
+        },
+        {
+          "text": "Quinoline, 2-(1-piperazinyl)-",
+          "kind": "name"
+        },
+        {
+          "text": "Quipazina",
+          "kind": "name"
+        },
+        {
+          "text": "quipazine",
+          "kind": "name"
+        },
+        {
+          "text": "Quipazinum",
+          "kind": "name"
+        },
+        {
+          "text": "RefChem:178376",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e35f935e4c7707ecc3bed2e9e955b30822d8ab1d4bf5aedadd0b3a9d5df2a11b",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/XRXDAJYKGWNHTQ.json",
+          "original_parent_connectivity_key": "XRXDAJYKGWNHTQ",
+          "cids": [
+            5011
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XRXDAJYKGWNHTQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XSYCDVWYEVUDKQ",
+      "aliases": [
+        {
+          "text": "(1S,2R,10S,11R)-21,24-dimethyl-3,12,21,24-tetrazahexacyclo(9.7.3.32,10.01,10.04,9.013,18)tetracosa-4,6,8,13,15,17-hexaene",
+          "kind": "name"
+        },
+        {
+          "text": "(1S,2R,10S,11R)-21,24-dimethyl-3,12,21,24-tetrazahexacyclo[9.7.3.32,10.01,10.04,9.013,18]tetracosa-4,6,8,13,15,17-hexaene",
+          "kind": "name"
+        },
+        {
+          "text": "(4bS,5R,10bS,11R)-13,18-dimethyl-5,6,11,12-tetrahydro-5,10b:11,4b-di(epiminoethano)dibenzo(c,h)-2,6-naphthyridine",
+          "kind": "name"
+        },
+        {
+          "text": "(4bS,5R,10bS,11R)-13,18-dimethyl-5,6,11,12-tetrahydro-5,10b:11,4b-di(epiminoethano)dibenzo[c,h]-2,6-naphthyridine",
+          "kind": "name"
+        },
+        {
+          "text": "Calycanthine",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:3333",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID10974900",
+          "kind": "name"
+        },
+        {
+          "text": "F62N8QPR7V",
+          "kind": "name"
+        },
+        {
+          "text": "NSC-99016",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "614c54c0ef968b0f4bde287706ef499f24d08a53f509d75fd5651cae00f484e8",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/XSYCDVWYEVUDKQ.json",
+          "original_parent_connectivity_key": "XSYCDVWYEVUDKQ",
+          "cids": [
+            5392245
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XSYCDVWYEVUDKQ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "XXPANQJNYNUNES",
+      "aliases": [
+        {
+          "text": "(+-)-Nomifensin",
+          "kind": "name"
+        },
+        {
+          "text": "(+-)-Nomifensine",
+          "kind": "name"
+        },
+        {
+          "text": "8-Isoquinolinamine, 1,2,3,4-tetrahydro-2-methyl-4-phenyl-",
+          "kind": "name"
+        },
+        {
+          "text": "D,L-nomifensine",
+          "kind": "name"
+        },
+        {
+          "text": "Linamiphen",
+          "kind": "name"
+        },
+        {
+          "text": "nomifensin",
+          "kind": "name"
+        },
+        {
+          "text": "Nomifensina",
+          "kind": "name"
+        },
+        {
+          "text": "Nomifensine",
+          "kind": "name"
+        },
+        {
+          "text": "Nomifensinum",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "ac4685cb424c730bbc1d338979e350585072191ad21c03cae4cdaed9a53a4cb0",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/XXPANQJNYNUNES.json",
+          "original_parent_connectivity_key": "XXPANQJNYNUNES",
+          "cids": [
+            4528
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "XXPANQJNYNUNES"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YACLQRRMGMJLJV",
+      "aliases": [
+        {
+          "text": "1,3-Butadiene, 2-chloro-",
+          "kind": "name"
+        },
+        {
+          "text": "2-Chloro-1,3-butadiene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Chlorobuta-1,3-diene",
+          "kind": "name"
+        },
+        {
+          "text": "2-Chlorobutadiene",
+          "kind": "name"
+        },
+        {
+          "text": "beta-Chloroprene",
+          "kind": "name"
+        },
+        {
+          "text": "Chlorobutadiene",
+          "kind": "name"
+        },
+        {
+          "text": "Chloropreen",
+          "kind": "name"
+        },
+        {
+          "text": "Chloroprene",
+          "kind": "name"
+        },
+        {
+          "text": "chloroprene",
+          "kind": "name"
+        },
+        {
+          "text": "CHLOROPRENE",
+          "kind": "name"
+        },
+        {
+          "text": "Cloroprene",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b26049c432bab76c606bdb9f13828abb13e9b740e006dd1308f90917e75f3edf",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/YACLQRRMGMJLJV-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "YACLQRRMGMJLJV",
+          "cids": [
+            31369
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "YACLQRRMGMJLJV"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YAHNGTQFNICUIJ",
+      "aliases": [
+        {
+          "text": "(+)-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "(S)-(+)-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "(S)-(+)-p-Mentha-6,8-dien-2-one",
+          "kind": "name"
+        },
+        {
+          "text": "(S)-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "1-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "2-Methyl-5-(1-methylethenyl)-2-cyclohexen-1-one",
+          "kind": "name"
+        },
+        {
+          "text": "2-methyl-5-(prop-1-en-2-yl)cyclohex-2-enone",
+          "kind": "name"
+        },
+        {
+          "text": "2-Methyl-5-isopropenyl-2-cyclohexenone",
+          "kind": "name"
+        },
+        {
+          "text": "Carvol",
+          "kind": "name"
+        },
+        {
+          "text": "CARVONE",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Carvone (natural)",
+          "kind": "name"
+        },
+        {
+          "text": "Carvone, (+)-",
+          "kind": "name"
+        },
+        {
+          "text": "D(+)-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "D-(+)-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "d-Carvone",
+          "kind": "name"
+        },
+        {
+          "text": "d-carvone",
+          "kind": "name"
+        },
+        {
+          "text": "Karvon",
+          "kind": "name"
+        },
+        {
+          "text": "p-Mentha-6,8-dien-2-one",
+          "kind": "name"
+        },
+        {
+          "text": "S-(+)-carvone",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e849a7010ae8d35df6e70812135823ec95b45b5ba2421432bcc8946cd223b3c5",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ULDHMXUKGWMISQ-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ULDHMXUKGWMISQ",
+          "cids": [
+            7439
+          ]
+        },
+        {
+          "frozen_evidence_entry_sha256": "f30946906f5b512d268ac9796692cbbfff6e671f4b9b18200f4669c56d89534f",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ULDHMXUKGWMISQ-VIFPVBQESA-N.json",
+          "original_parent_connectivity_key": "ULDHMXUKGWMISQ",
+          "cids": [
+            16724
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ULDHMXUKGWMISQ",
+        "YAHNGTQFNICUIJ"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YBQZXXMEJHZYMB",
+      "aliases": [
+        {
+          "text": "(sym)-Diphenylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "1,2-diphenylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "1,2-DIPHENYLHYDRAZINE",
+          "kind": "name"
+        },
+        {
+          "text": "Benzene, hydrazodi-",
+          "kind": "name"
+        },
+        {
+          "text": "Hydrazine, 1,2-diphenyl-",
+          "kind": "name"
+        },
+        {
+          "text": "Hydrazobenzen",
+          "kind": "name"
+        },
+        {
+          "text": "Hydrazobenzene",
+          "kind": "name"
+        },
+        {
+          "text": "N,N'-Bianiline",
+          "kind": "name"
+        },
+        {
+          "text": "N,N'-Diphenylhydrazine",
+          "kind": "name"
+        },
+        {
+          "text": "NCI-C01854",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4c55e732f240c492c8625242bcc34bd9a20bd1d6f5037d6e6b06609360ee5757",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/YBQZXXMEJHZYMB-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "YBQZXXMEJHZYMB",
+          "cids": [
+            31222
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "YBQZXXMEJHZYMB"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YCPOZVAOBBQLRI",
+      "aliases": [
+        {
+          "text": "Dihydroxybusulfan",
+          "kind": "name"
+        },
+        {
+          "text": "NSC 39069",
+          "kind": "name"
+        },
+        {
+          "text": "Ovastat",
+          "kind": "name"
+        },
+        {
+          "text": "threosulphan",
+          "kind": "name"
+        },
+        {
+          "text": "Trecondi",
+          "kind": "name"
+        },
+        {
+          "text": "Treosulfan",
+          "kind": "name"
+        },
+        {
+          "text": "Treosulfano",
+          "kind": "name"
+        },
+        {
+          "text": "Treosulphan",
+          "kind": "name"
+        },
+        {
+          "text": "Tresulfan",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "4cd0567b6fd99b0e9fb8358f8629a15a98bfe75cdd284608d626a1792ccae23d",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/YCPOZVAOBBQLRI-WDSKDSINSA-N.json",
+          "original_parent_connectivity_key": "YCPOZVAOBBQLRI",
+          "cids": [
+            9882105
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "YCPOZVAOBBQLRI"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YGJHZCLPZAZIHH",
+      "aliases": [
+        {
+          "text": "DBNA",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Dibutylnitrosamine",
+          "kind": "name"
+        },
+        {
+          "text": "Dibutylnitrosamine (DBNA)",
+          "kind": "name"
+        },
+        {
+          "text": "Dibutylnitrosoamine",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-di-n-butylnitrosamine",
+          "kind": "name"
+        },
+        {
+          "text": "N,N-Dibutylnitrosoamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-Butyl-N-nitroso-1-butanamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitroso-di-n-butylamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitrosodi-n-butylamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-NITROSODI-N-BUTYLAMINE",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitrosodibutylamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitrosodibutylamine",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitrosodibutylamine (NDBA)",
+          "kind": "name"
+        },
+        {
+          "text": "NDBA",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "Nitrosodibutylamine",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "039eb9423b733996b84f83b428fc6427d449c6c39266dfa91e683d57b5af6c8b",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/YGJHZCLPZAZIHH-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "YGJHZCLPZAZIHH",
+          "cids": [
+            13542
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "YGJHZCLPZAZIHH"
+      ]
+    },
+    {
+      "parent_connectivity_key": "YSSBJODGIYRAMI",
+      "aliases": [
+        {
+          "text": "(-)-Vesamicol",
+          "kind": "name"
+        },
+        {
+          "text": "(1R,2R)-2-(4-Phenyl-1-piperidinyl)cyclohexanol",
+          "kind": "name"
+        },
+        {
+          "text": "(1R,2R)-2-(4-phenylpiperidin-1-yl)cyclohexan-1-ol",
+          "kind": "name"
+        },
+        {
+          "text": "3D416V0FLM",
+          "kind": "name"
+        },
+        {
+          "text": "CHEMBL20730",
+          "kind": "name"
+        },
+        {
+          "text": "I1A877466V",
+          "kind": "name"
+        },
+        {
+          "text": "L-(-)-Vesamicol hydrochloride",
+          "kind": "name"
+        },
+        {
+          "text": "Vesamicol, (+/-)-",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "15815ab7e302bb8c1a23e5e5f990b7a63cd9f826f4c7071d1211be66709e357b",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/YSSBJODGIYRAMI.json",
+          "original_parent_connectivity_key": "YSSBJODGIYRAMI",
+          "cids": [
+            659840
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "YSSBJODGIYRAMI"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ZEBMMHUDQRRILP",
+      "aliases": [
+        {
+          "text": "[(1S,2R,3R,4S,5R,6S,8S,9R,13S,16S,17R)-11-Ethyl-8,16-dihydroxy-6-methoxy-13-(methoxymethyl)-11-azahexacyclo[7.7.2.12,5.01,10.03,8.013,17]nonadecan-4-yl] acetate",
+          "kind": "name"
+        },
+        {
+          "text": "[(1S,2R,3R,4S,5R,6S,8S,9S,13S,16S,17R)-11-ethyl-8,16-dihydroxy-6-methoxy-13-(methoxymethyl)-11-azahexacyclo[7.7.2.12,5.01,10.03,8.013,17]nonadecan-4-yl] acetate",
+          "kind": "name"
+        },
+        {
+          "text": "BPBio1_001240",
+          "kind": "name"
+        },
+        {
+          "text": "BSPBio_001126",
+          "kind": "name"
+        },
+        {
+          "text": "CHEBI:3852",
+          "kind": "name"
+        },
+        {
+          "text": "DTXSID50997693",
+          "kind": "name"
+        },
+        {
+          "text": "HMS2098I08",
+          "kind": "name"
+        },
+        {
+          "text": "Prestwick3_001083",
+          "kind": "name"
+        },
+        {
+          "text": "SCHEMBL970665",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "b49e83420222eede513fbd93e416da9b9ed0ab55378e0208cb97904fbbad302a",
+          "historical_source_path": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v1/heldout_alias_evidence/ZEBMMHUDQRRILP.json",
+          "original_parent_connectivity_key": "ZEBMMHUDQRRILP",
+          "cids": [
+            441720
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ZEBMMHUDQRRILP"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ZLCUIOWQYBYEBG",
+      "aliases": [
+        {
+          "text": "1-Amino-2-methylanthraquinone",
+          "kind": "name"
+        },
+        {
+          "text": "1-amino-2-methylanthraquinone",
+          "kind": "name"
+        },
+        {
+          "text": "1-AMINO-2-METHYLANTHRAQUINONE",
+          "kind": "name"
+        },
+        {
+          "text": "Artisil Orange 3RP",
+          "kind": "name"
+        },
+        {
+          "text": "Celliton Orange R",
+          "kind": "name"
+        },
+        {
+          "text": "Cilla Orange R",
+          "kind": "name"
+        },
+        {
+          "text": "Disperse Orange",
+          "kind": "name"
+        },
+        {
+          "text": "Disperse Orange 11",
+          "kind": "name"
+        },
+        {
+          "text": "Duranol Orange G",
+          "kind": "name"
+        },
+        {
+          "text": "Serisol Orange YL",
+          "kind": "name"
+        },
+        {
+          "text": "Supracet Orange R",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "d1fe6cf986232d8b7cb61efd1c5125e79b3738d569810e3701d30b714dabb8f8",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ZLCUIOWQYBYEBG-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ZLCUIOWQYBYEBG",
+          "cids": [
+            6702
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ZLCUIOWQYBYEBG"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ZRKWMRDKSOPRRS",
+      "aliases": [
+        {
+          "text": "1-methyl-1-nitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "1-methyl-1-nitrosourea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "1-methyl-1-nitrosourea (N-methyl-N-nitrosourea)",
+          "kind": "name"
+        },
+        {
+          "text": "1-Nitroso-1-methylurea",
+          "kind": "name"
+        },
+        {
+          "text": "Methylnitroso-harnstoff",
+          "kind": "name"
+        },
+        {
+          "text": "Methylnitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "methylnitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "Methylnitrosourea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "methylnitrosourea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "Methylnitrosouree",
+          "kind": "name"
+        },
+        {
+          "text": "MNU",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "MNU (N-methyl-N-nitrosourea)",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-N-nitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "N-Methyl-N-nitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-N-nitrosourea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "N-Methyl-N-nitrosourea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-N-nitrosourea (NMU)",
+          "kind": "name"
+        },
+        {
+          "text": "N-methyl-nitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "N-methylnitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "N-Methylnitrosourea",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitroso-N-methylcarbamide",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitroso-N-Methylurea",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitroso-N-methylurea",
+          "kind": "name"
+        },
+        {
+          "text": "n-nitroso-N-methylurea",
+          "kind": "name"
+        },
+        {
+          "text": "N-NITROSO-N-METHYLUREA",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitroso-N-methylurea",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitroso-N-methylurea (MNU)",
+          "kind": "name"
+        },
+        {
+          "text": "N-Nitroso-N-methylurea (NMU)",
+          "kind": "name"
+        },
+        {
+          "text": "N-nitroso-N-methylurea (NMU)",
+          "kind": "name"
+        },
+        {
+          "text": "NMU",
+          "kind": "abbreviation"
+        },
+        {
+          "text": "NMU (N-nitroso-N-methylurea)",
+          "kind": "name"
+        },
+        {
+          "text": "Urea, 1-methyl-1-nitroso-",
+          "kind": "name"
+        },
+        {
+          "text": "Urea, N-methyl-N-nitroso-",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "fce256ada880077d66a1d88f219ceca338e16395f4966abfca0f9becdca33791",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ZRKWMRDKSOPRRS-UHFFFAOYSA-N.json",
+          "original_parent_connectivity_key": "ZRKWMRDKSOPRRS",
+          "cids": [
+            12699
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ZRKWMRDKSOPRRS"
+      ]
+    },
+    {
+      "parent_connectivity_key": "ZYZCGGRZINLQBL",
+      "aliases": [
+        {
+          "text": "Akerstox",
+          "kind": "name"
+        },
+        {
+          "text": "Cyanoginosin LR",
+          "kind": "name"
+        },
+        {
+          "text": "Cyanoginosin-LR",
+          "kind": "name"
+        },
+        {
+          "text": "MCYST-LR",
+          "kind": "name"
+        },
+        {
+          "text": "Microcystin LR",
+          "kind": "name"
+        },
+        {
+          "text": "Microcystin-a",
+          "kind": "name"
+        },
+        {
+          "text": "microcystin-LR",
+          "kind": "name"
+        },
+        {
+          "text": "Microcystin-LR",
+          "kind": "name"
+        },
+        {
+          "text": "Microcystis aeruginosa toxin",
+          "kind": "name"
+        },
+        {
+          "text": "Toxin I (Microcystis aeruginosa)",
+          "kind": "name"
+        }
+      ],
+      "verification": [
+        {
+          "frozen_evidence_entry_sha256": "e49adcdbc57ae36f164086692a8aeb3550c2bb0289c72c0c05422fd811f7aafa",
+          "historical_source_path": "/local/tmp/txagent-new-starling/parent_synonym_cache/ZYZCGGRZINLQBL-GWRQVWKTSA-N.json",
+          "original_parent_connectivity_key": "ZYZCGGRZINLQBL",
+          "cids": [
+            445434
+          ]
+        }
+      ],
+      "source_identity_lineage_keys": [
+        "ZYZCGGRZINLQBL"
+      ]
+    }
+  ],
+  "excluded_aliases": {},
+  "coverage": {
+    "n_parents": 117,
+    "n_empty": 0,
+    "empty_parents": []
+  },
+  "frozen_evidence": {
+    "path": "data/starling_data/carcinogens/progressive_v1/heldout_direct_aliases/random_evidence.jsonl.gz",
+    "sha256": "32751fbc115e0fb3416aa382b0170957eff6463ffd633ea62b236b72173f1f22",
+    "n_entries": 253
+  },
+  "identity_lineage": {
+    "path": "data/.build/new_task_tautomer_repair/Carcinogens/gold/identity_lineage.jsonl",
+    "sha256": "0877bf96fafab0fd53a4e36ca3ae6e3a9fed4f6c2acb77842f8258242c407e31",
+    "external_path": "data/.build/new_task_tautomer_repair/augmented/Carcinogens/external_labels.jsonl",
+    "external_sha256": "eeb24b2d84249720fc802fa79fa7897f68ee302ebd7968736bf20f013c11edec"
+  },
+  "alias_selection": {
+    "policy": "verified source-native names plus first 10 ordered PubChem synonyms per mapped CID, IUPAC fallback, reviewed aflatoxin variants; generic terms excluded; abbreviations case-sensitive",
+    "generic_terms_excluded": [
+      "antibiotic",
+      "antineoplastic",
+      "carcinogen",
+      "carcinogenic",
+      "chemical",
+      "compound",
+      "drug",
+      "experimental",
+      "hydrate",
+      "inhibitor",
+      "monohydrate",
+      "mutagen",
+      "reference",
+      "skin",
+      "solid",
+      "solution",
+      "steroid",
+      "toxin",
+      "unknown"
+    ]
+  },
+  "limitations": [
+    "Coverage means at least one verified name per heldout connectivity, not exhaustive synonyms.",
+    "Name transfer follows frozen source and TDC gold identity lineage; no label votes are inferred from aliases."
+  ],
+  "reviewed_card_exclusions": [
+    {
+      "card_id": "card_04953d07291cbd0c",
+      "visible_payload_sha256": "53d8a15775b974fbba4a68a03c3ca4cff90f9ef98465b48fd2d3bf349784f6c2",
+      "reason": "Source dimethylated acetaminophen analog includes acetaminophen oxygen/amide chemistry, but assigned analog is oxygen-free 2,6-dimethylaniline; no parent/metabolite relationship supports attribution. Exact supplied card held, not the whole parent.",
+      "manual_review_sha": "38e709afa1ff56f5a7ff0625ecab52c8dda7ca7d8cddd2f9292400b55a10f510"
+    }
+  ],
+  "reviewed_card_exclusion_provenance": {
+    "review_artifact": "outputs/paper/starling_conditioned_dili_carcinogens_scaffold_4_2_v2/carcinogens_valid_selected_surface_manual_review.json",
+    "sha256": "38e709afa1ff56f5a7ff0625ecab52c8dda7ca7d8cddd2f9292400b55a10f510",
+    "original_visible_card": {
+      "card_id": "card_04953d07291cbd0c",
+      "evidence_family": "epigenetic_intercellular_growth_restraint",
+      "assay_context": "assay_and_detection_method=immunoblotting of liver proteins with affinity-purified antibody raised against the 2,6-DMA-dimethylated acetaminophen analog | biological_system=liver fractions (cytosolic and microsomal) from treated mice",
+      "endpoint": "endpoint_category=covalent_adduct_or_binding | endpoint=2,6-DMA (dimethylated acetaminophen analog) immunoreactive protein adducts; 58-kD cytosolic protein recognition",
+      "reported_value": "effect_direction=detected | reported_result=The anti-2,6-DMA antibody selectively recognized the 58-kD cytosolic protein with only minimal binding to the 44-kD protein",
+      "reported_unit": "unspecified",
+      "species": "species=Mus musculus",
+      "qualifying_conditions": "metabolic_activation_system=reactive-metabolite (electrophilic) formation from the dimethylated acetaminophen analog in treated mice | extra_details=Cited prior evidence (review summary, ref 140). The selective binding of the anti-2,6-DMA antibody to the thiol-rich 58-kD protein vs the thiol-free 44-kD protein illustrates that free protein sulfhydryl content influences target-protein susceptibility to electrophilic attack. | needs_more_context=True",
+      "support_text": "The affinity-purified antibody raised against the dimethylated acetaminophen analog 2,6-DMA selectively recognized the 58-kD cytosolic protein, with only minimal binding to the 44-kD protein.",
+      "first_seen_level": 6
+    },
+    "source_records_deleted": 0,
+    "gold_or_split_changes": 0
+  }
+}

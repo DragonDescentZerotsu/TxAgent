@@ -1,0 +1,28 @@
+{
+  "parent_key": "JFALSRSLKYAFGM-FTXFMUIASA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JFALSRSLKYAFGM-FTXFMUIASA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(233U)uranium",
+    "(~233~U)Uranium",
+    "13968-55-3",
+    "233U (isotope)",
+    "233U isotope",
+    "233U radioisotope",
+    "DTXCID001030943",
+    "DTXSID20891755",
+    "Isotope:233U",
+    "Isotope:Uranium-233",
+    "RefChem:193205",
+    "SCHEMBL5113079",
+    "U-233 radioisotope",
+    "Uranium 233",
+    "Uranium, isotope of mass 233",
+    "Uranium-233",
+    "Uranium-233 isotope"
+  ],
+  "http_status": 200,
+  "cids": [
+    61707
+  ]
+}

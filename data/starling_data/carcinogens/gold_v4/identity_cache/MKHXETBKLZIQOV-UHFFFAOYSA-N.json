@@ -1,0 +1,21 @@
+{
+  "parent_key": "MKHXETBKLZIQOV-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/MKHXETBKLZIQOV-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "3,4-Dibromo-N-nitrosopiperidine",
+    "3,4-Dibromonitrosopiperidine",
+    "3,4-dibromo-1-nitrosopiperidine",
+    "57541-73-8",
+    "CHEMBL165959",
+    "DB-314766",
+    "DTXSID70875601",
+    "N-Nitroso-3,4-dibromopiperidine",
+    "Piperidine, 3,4-dibromo-1-nitroso-",
+    "RefChem:91008"
+  ],
+  "http_status": 200,
+  "cids": [
+    92355
+  ]
+}

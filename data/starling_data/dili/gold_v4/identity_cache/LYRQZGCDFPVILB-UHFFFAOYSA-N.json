@@ -1,0 +1,24 @@
+{
+  "parent_key": "LYRQZGCDFPVILB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1060283-53-5",
+    "2-(4-acetamidophenyl)acetamide",
+    "842-021-5",
+    "AKOS008997114",
+    "EN300-69804",
+    "F5097-0684",
+    "KSB28353",
+    "N-[4-(2-amino-2-oxoethyl)phenyl]acetamide",
+    "N-[4-(carbamoylmethyl)phenyl]acetamide",
+    "RefChem:456622",
+    "SCHEMBL4086221",
+    "UQM",
+    "Z87615031"
+  ],
+  "cids": [
+    25862032
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/LYRQZGCDFPVILB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

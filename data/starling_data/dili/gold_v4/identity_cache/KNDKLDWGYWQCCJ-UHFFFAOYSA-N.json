@@ -1,0 +1,39 @@
+{
+  "parent_key": "KNDKLDWGYWQCCJ-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "3-(Methylthio)acetaminophen",
+    "3-(Methylthio)paracetamol",
+    "3-Methylthio-4-hydroxyacetanilide",
+    "3-Thiomethylacetaminophen sulfate",
+    "3-Thiomethylparacetamol",
+    "3-Thiomethylparacetamol sulfate",
+    "3-Tmas",
+    "37398-23-5",
+    "4'-Hydroxy-3'-(methylthio)acetanilide",
+    "4-hydroxy-3-methylthio-acetanilide",
+    "AKOS006326890",
+    "Acetamide, N-(4-hydroxy-3-(methylthio)phenyl)-",
+    "Acetamide, N-[4-hydroxy-3-(methylthio)phenyl]-",
+    "DTXCID80113324",
+    "DTXSID40190833",
+    "KNDKLDWGYWQCCJ-UHFFFAOYSA-N",
+    "METHYLTHIOACETAMINOPHEN",
+    "N-(4-hydroxy-3-(methylthio)phenyl)acetamide",
+    "N-(4-hydroxy-3-methylsulfanylphenyl)acetamide",
+    "N-[4-Hydroxy-3-(methylsulfanyl)phenyl]acetamide",
+    "N-[4-Hydroxy-3-(methylsulfanyl)phenyl]acetamide #",
+    "Q27295286",
+    "RefChem:926869",
+    "S-Methyl-3-thioacetaminophen",
+    "SCHEMBL11323733",
+    "SCHEMBL29426352",
+    "UNII-ZBY89Z1CWX",
+    "ZBY89Z1CWX"
+  ],
+  "cids": [
+    162260
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KNDKLDWGYWQCCJ-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

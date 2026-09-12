@@ -1,0 +1,12 @@
+{
+  "parent_key": "FEDYMSUPMFCVOD-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "CCG-270058"
+  ],
+  "cids": [
+    137797052
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FEDYMSUPMFCVOD-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

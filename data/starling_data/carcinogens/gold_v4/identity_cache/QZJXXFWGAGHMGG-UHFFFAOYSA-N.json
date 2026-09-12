@@ -1,0 +1,30 @@
+{
+  "parent_key": "QZJXXFWGAGHMGG-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/QZJXXFWGAGHMGG-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "20589-63-3",
+    "3-NITROPERYLENE",
+    "4-05-00-02690 (Beilstein Handbook Reference)",
+    "BRN 1888364",
+    "C19475",
+    "CCRIS 4148",
+    "CHEBI:82505",
+    "CHEMBL168143",
+    "DB-045298",
+    "DCG4K35YXW",
+    "DTXCID4097091",
+    "DTXSID10174600",
+    "Nitroperylene, 3-",
+    "Perylene, 3-nitro-",
+    "Q27156012",
+    "QZJXXFWGAGHMGG-UHFFFAOYSA-N",
+    "RefChem:95039",
+    "SCHEMBL1275010",
+    "UNII-DCG4K35YXW"
+  ],
+  "http_status": 200,
+  "cids": [
+    62743
+  ]
+}

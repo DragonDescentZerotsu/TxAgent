@@ -1,0 +1,26 @@
+{
+  "parent_key": "JDRCAGKFDGHRNQ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JDRCAGKFDGHRNQ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "22541-64-6",
+    "CHEBI:49423",
+    "DTXCID6099560",
+    "DTXSID00177069",
+    "J7B7WZ5ZMT",
+    "NICKEL (NI3+)",
+    "NICKEL(III) ION",
+    "Ni3+",
+    "Nickel ion(3+)",
+    "Nickel, ion (Ni3+)",
+    "Q27104655",
+    "RefChem:1092369",
+    "SCHEMBL29387350",
+    "UNII-J7B7WZ5ZMT",
+    "nickel(3+)"
+  ],
+  "http_status": 200,
+  "cids": [
+    115291
+  ]
+}

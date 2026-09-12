@@ -1,0 +1,27 @@
+{
+  "parent_key": "HAYXDMNJJFVXCI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/HAYXDMNJJFVXCI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "17428-41-0",
+    "Arsenic (V) Standard: As+5 @ 100 microg/mL in H2O",
+    "Arsenic V",
+    "Arsenic ion (5+)",
+    "Arsenic(5+) ion",
+    "Arsenic, ion (As5+)",
+    "As(5+)",
+    "As5+",
+    "CHEBI:35829",
+    "DTXCID50820073",
+    "DTXSID70872433",
+    "Q26840818",
+    "RefChem:1077205",
+    "SCHEMBL29349764",
+    "arsenic(5+)",
+    "arsenic(V) cation"
+  ],
+  "http_status": 200,
+  "cids": [
+    104737
+  ]
+}

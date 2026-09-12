@@ -1,0 +1,32 @@
+{
+  "parent_key": "KZJWDPNRJALLNS-ICLVQLPZSA-N",
+  "ok": true,
+  "synonyms": [
+    "(3S,8S,9S,10R,13R,17R)-17-[(1R,4R)-4-ethyl-1,5-dimethyl-hexyl]-10,13-dimethyl-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    "(3S,8S,9S,10R,13R,17R)-17-[(2R,5R)-5-ethyl-6-methylheptan-2-yl]-10,13-dimethyl-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-ol",
+    "619-079-3",
+    "AC-13728",
+    "C29H50O",
+    "CHEBI:26124",
+    "CardioAid M",
+    "DTXSID901031481",
+    "EC 619-079-3",
+    "H51788",
+    "KZJWDPNRJALLNS-ICLVQLPZSA-N",
+    "Phytosteroid",
+    "PhytosterolsDISCONTINUED",
+    "Plant Steroid",
+    "Plant Steroids",
+    "Plant Sterols",
+    "RefChem:389218",
+    "Steroid, Plant",
+    "Sterol, Plant",
+    "Sterols, Plant",
+    "Sterols, phytosterols"
+  ],
+  "cids": [
+    12303662
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KZJWDPNRJALLNS-ICLVQLPZSA-N/synonyms/JSON",
+  "http_status": 200
+}

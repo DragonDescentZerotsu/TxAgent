@@ -1,0 +1,33 @@
+{
+  "parent_key": "NDAYQJDHGXTBJL-MWWSRJDJSA-N",
+  "ok": true,
+  "synonyms": [
+    "(2R)-2-((2-(((2S)-2-formamido-3-methylbutanoyl)amino)acetyl)amino)-N-((2S)-1-(((2R)-1-(((2S)-1-(((2R)-1-(((2S)-1-(((2R)-1-(((2S)-1-(((2R)-1-(((2S)-1-(((2R)-1-(((2S)-1-(2-hydroxyethylamino)-3-(1H-indol-3-yl)-1-oxopropan-2-yl)amino)-4-methyl-1-oxopentan-2-yl)amino)-3-(1H-indol-3-yl)-1-oxopropan-2-yl)amino)-4-methyl-1-oxopentan-2-yl)amino)-3-(1H-indol-3-yl)-1-oxopropan-2-yl)amino)-4-methyl-1-oxopentan-2-yl)amino)-3-(1H-indol-3-yl)-1-oxopropan-2-yl)amino)-3-methyl-1-oxobutan-2-yl)amino)-3-methyl-1-oxobutan-2-yl)amino)-3-methyl-1-oxobutan-2-yl)amino)-1-oxopropan-2-yl)-4-methylpentanamide",
+    "(2R)-2-[[2-[[(2S)-2-formamido-3-methylbutanoyl]amino]acetyl]amino]-N-[(2S)-1-[[(2R)-1-[[(2S)-1-[[(2R)-1-[[(2S)-1-[[(2R)-1-[[(2S)-1-[[(2R)-1-[[(2S)-1-[[(2R)-1-[[(2S)-1-(2-hydroxyethylamino)-3-(1H-indol-3-yl)-1-oxopropan-2-yl]amino]-4-methyl-1-oxopentan-2-yl]amino]-3-(1H-indol-3-yl)-1-oxopropan-2-yl]amino]-4-methyl-1-oxopentan-2-yl]amino]-3-(1H-indol-3-yl)-1-oxopropan-2-yl]amino]-4-methyl-1-oxopentan-2-yl]amino]-3-(1H-indol-3-yl)-1-oxopropan-2-yl]amino]-3-methyl-1-oxobutan-2-yl]amino]-3-methyl-1-oxobutan-2-yl]amino]-3-methyl-1-oxobutan-2-yl]amino]-1-oxopropan-2-yl]-4-methylpentanamide",
+    "1393-88-0",
+    "1405-97-6",
+    "215-738-0",
+    "65443-76-7",
+    "Bacillus brevis gramicidin D",
+    "CHEMBL557217",
+    "DB00027",
+    "EBC-27585",
+    "EINECS 215-738-0",
+    "Gramicidin D",
+    "Gramicidin Dubos",
+    "Gramicidin, Linear",
+    "Gramicidina D",
+    "Gramicidine",
+    "Linear Gramicidin",
+    "NDAYQJDHGXTBJL-MWWSRJDJSA-N",
+    "Q418980",
+    "RefChem:144272",
+    "SCHEMBL29351100"
+  ],
+  "cids": [
+    45267103,
+    170843003
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NDAYQJDHGXTBJL-MWWSRJDJSA-N/synonyms/JSON",
+  "http_status": 200
+}

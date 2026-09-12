@@ -73,3 +73,15 @@ def test_head_runtime_accepts_condition_augmented_input() -> None:
 
     assert model.dense1.in_features == 515
     assert model.final_dense.in_features == 519
+
+
+def test_unseen_condition_zero_is_opt_in_and_preserves_known_features():
+    values = ["fed", "no_reported_external_condition", "fasted"]
+    vocabulary = ["fasted", "fed"]
+    encoded = condition_one_hot(values, vocabulary, unseen_policy="zero")
+    assert encoded.tolist() == [[0., 1.], [0., 0.], [1., 0.]]
+    with pytest.raises(ValueError, match="absent from train"):
+        condition_one_hot(values, vocabulary)
+    contract = condition_feature_contract(field="condition_group", vocabulary=vocabulary,
+                                          molecule_embedding_dim=512, unseen_policy="zero")
+    assert contract["unseen_evaluation_policy"] == "zero"

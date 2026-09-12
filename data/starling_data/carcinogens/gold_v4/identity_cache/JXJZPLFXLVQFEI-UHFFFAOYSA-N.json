@@ -1,0 +1,24 @@
+{
+  "parent_key": "JXJZPLFXLVQFEI-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/JXJZPLFXLVQFEI-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "1,7-Dimethyl benz(a)anthracene",
+    "1,7-Dimethylbenz(a)anthracene",
+    "1,7-Dimethylbenz[a]anthracene",
+    "1,7-dimethylbenzo[a]anthracene",
+    "1,7-dimethyltetraphene",
+    "21297-20-1",
+    "7,1-dimethylbenz[a]anthracene",
+    "B2GDJ4NE3X",
+    "BRN 3275432",
+    "Benz(a)anthracene, 1,7-dimethyl-",
+    "Benz[a]anthracene, 1,7-dimethyl-",
+    "DTXSID80175563",
+    "Dimethylbenz[a]anthracene, 1,7-"
+  ],
+  "http_status": 200,
+  "cids": [
+    146691
+  ]
+}

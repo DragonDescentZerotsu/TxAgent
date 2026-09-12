@@ -1,0 +1,25 @@
+{
+  "parent_key": "BNUOCVTVOYWNJC-DTMQFJJTSA-N",
+  "ok": true,
+  "synonyms": [
+    "17-Methylandrost-4-ene-3beta,17beta-diol",
+    "17Alpha-methyl-3beta,17beta-dihydroxyandrost-4-ene",
+    "17a-methyl-androstenediol",
+    "571-03-9",
+    "83255K3MTP",
+    "Androst-4-ene-3,17-diol, 17-methyl-, (3I(2),17I(2))-",
+    "Androst-4-ene-3beta,17beta-diol, 17-methyl-",
+    "DB01474",
+    "DTXSID601249328",
+    "NS00072240",
+    "PD060328",
+    "Q27269378",
+    "SCHEMBL4964035",
+    "UNII-83255K3MTP"
+  ],
+  "cids": [
+    69259387
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BNUOCVTVOYWNJC-DTMQFJJTSA-N/synonyms/JSON",
+  "http_status": 200
+}

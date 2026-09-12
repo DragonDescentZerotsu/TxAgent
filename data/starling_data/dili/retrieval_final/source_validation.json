@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "task": "dili",
+  "base_source_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
+  "records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "source_rows": 1645109,
+  "modified_source_rows": 789,
+  "source_rows_deleted": 0,
+  "raw_acquisition_and_frozen_vote_membership_unchanged": true,
+  "all_other_source_fields_equal": true,
+  "latest_review": "retrieval_review_v5",
+  "gold_labels_modified": false
+}

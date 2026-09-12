@@ -1,0 +1,15 @@
+{
+  "parent_key": "BPHFBQJMFWCHGH-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BPHFBQJMFWCHGH-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(E)-1-[4-[2-(DIMETHYLAMINO)ETHOXY]PHENYL]-1,2-DIPHENYL-1-BUTENE-3-OL",
+    "(E)-alpha-Hydroxy tamoxifen;alpha-OHTAM",
+    ".alpha.-hydroxy Tamoxifen",
+    "AKOS030254257"
+  ],
+  "http_status": 200,
+  "cids": [
+    150456
+  ]
+}

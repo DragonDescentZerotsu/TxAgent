@@ -1,0 +1,42 @@
+{
+  "parent_key": "FWVHWDSCPKXMDB-CABCVRRESA-N",
+  "ok": true,
+  "synonyms": [
+    "(E)-3-(3-(3-Hydroxy-2-piperidinyl)-2-oxopropyl)-4(3H)-quinazolinone",
+    "(E)-3-(3-(3-Hydroxy-2-piperidinyl)acetonyl)-4-(3H)-quinazolinone",
+    ".BETA.-DICHROIN",
+    ".beta.-Dichroine",
+    "24159-07-7",
+    "3-(3-((2R,3S)-3-HYDROXY-2-PIPERIDINYL)-2-OXOPROPYL)-4(3H)-QUINAZOLINONE",
+    "3-(3-((2R,3S)-3-hydroxypiperidin-2-yl)-2-oxopropyl)quinazolin-4(3H)-one",
+    "3-{3-[(2R,3S)-3-hydroxypiperidin-2-yl]-2-oxopropyl}-3,4-dihydroquinazolin-4-one",
+    "3-{3-[(2R,3S)-3-hydroxypiperidin-2-yl]-2-oxopropyl}quinazolin-4(3H)-one",
+    "4(3H)-Quinazolinone, 3-(3-(3-hydroxy-2-piperidinyl)-2-oxopropyl)-, (2S-trans)-",
+    "9SF",
+    "AC-34102",
+    "AKOS040760109",
+    "BDBM50606503",
+    "CHEMBL322782",
+    "CS-0022587",
+    "DA-63399",
+    "Dichroin",
+    "EBC-618504",
+    "FEBRIFUGINE [MI]",
+    "Ferbifrugin",
+    "HY-N2384",
+    "MS-24342",
+    "NSC 315535",
+    "SCHEMBL9542831",
+    "TN1012",
+    "TRANS-(+)-FEBRIFUGINE",
+    "UNII-89UWD0FH2I",
+    "orb104700",
+    "orb3141504",
+    "trans-3-(beta-Keto-gamma-(3-hydroxy-2-piperidyl)propyl)-4-quinazolone"
+  ],
+  "cids": [
+    9851692
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/FWVHWDSCPKXMDB-CABCVRRESA-N/synonyms/JSON",
+  "http_status": 200
+}

@@ -1,0 +1,37 @@
+{
+  "parent_key": "USMNOWBWPHYOEA-VWHDNNRLSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/USMNOWBWPHYOEA-VWHDNNRLSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1S,5R)-1-Isopropyl-4-methylbicyclo[3.1.0]hexan-3-one",
+    "(1S,5R)-1-isopropyl-4-methyl-bicyclo[3.1.0]hexan-3-one",
+    "(1S,5R)-4-Methyl-1-(propan-2-yl)bicyclo[3.1.0]hexan-3-one",
+    "(1S,5R)-4-methyl-1-propan-2-ylbicyclo[3.1.0]hexan-3-one",
+    ".ALPHA.,.BETA.-THUJONE",
+    "629-556-8",
+    "76231-76-0",
+    "AKOS015914170",
+    "CAS-76231-76-0",
+    "CHEMBL3277899",
+    "CS-0795550",
+    "DTXCID601474050",
+    "DTXSID3040774",
+    "FT139145",
+    "HSDB 8144",
+    "HY-W751152",
+    "NCGC00255622-01",
+    "RefChem:554992",
+    "T80716",
+    "Tox21_301840",
+    "UNII-86HK1QRJ4K",
+    "alpha, beta-Thujone",
+    "alpha,beta-Thujone",
+    "orb1944047",
+    "orb3139326",
+    "|  cent,|?-Thujone"
+  ],
+  "http_status": 200,
+  "cids": [
+    10931629
+  ]
+}

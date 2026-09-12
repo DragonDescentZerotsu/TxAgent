@@ -1,0 +1,26 @@
+{
+  "task": "carcinogens",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "input_source_votes": "data/starling_data/carcinogens/gold_v2/source_votes.jsonl",
+  "input_sha256": "507ffec7aa6915d51e78a2f0522237f86bcd9e30bdb997466f8d65c9440b4942",
+  "source_votes": 12571,
+  "old_source_votes": 12571,
+  "labels": {
+    "1": 12165,
+    "0": 406
+  },
+  "merged_studies": 0,
+  "conflicting_studies": 0,
+  "merged_parent_groups": 0,
+  "stereo_changed_identity_forms": 26,
+  "noncomplete_identity_forms_retained": 8,
+  "new_source_vote_eligibility_granted": 0,
+  "raw_records_changed": 0,
+  "specimen_identity_withdrawn_votes": 0,
+  "enumeration_cache": {
+    "path": "data/.build/new_task_tautomer_repair/Carcinogens/gold/enumeration_cache_before_grouping.jsonl",
+    "sha256": "176b81a520350216b5877003750c29ebba69060f654530dac2679211f010bd36",
+    "reuse": "gold enumeration only; current graph/scaffold groups recomputed without enumeration"
+  },
+  "adapter_sha256": "2c15aea5151d4ede25fcc2c986ff354a9e2b65aebe57d9a10fc8734a70517f9c"
+}

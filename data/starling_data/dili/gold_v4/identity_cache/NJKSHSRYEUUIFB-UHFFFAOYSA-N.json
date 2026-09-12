@@ -1,0 +1,20 @@
+{
+  "parent_key": "NJKSHSRYEUUIFB-UHFFFAOYSA-N",
+  "ok": true,
+  "synonyms": [
+    "1-benzyl-2-nitro-1H-imidazole",
+    "501650-56-2",
+    "DB-337065",
+    "N-benzyl-2-nitroimidazole",
+    "NJKSHSRYEUUIFB-UHFFFAOYSA-N",
+    "NSC-321260",
+    "NSC321260",
+    "SCHEMBL1126153",
+    "SCHEMBL27442483"
+  ],
+  "cids": [
+    331120
+  ],
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/NJKSHSRYEUUIFB-UHFFFAOYSA-N/synonyms/JSON",
+  "http_status": 200
+}

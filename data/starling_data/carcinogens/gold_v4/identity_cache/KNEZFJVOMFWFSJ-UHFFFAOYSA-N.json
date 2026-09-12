@@ -1,0 +1,14 @@
+{
+  "parent_key": "KNEZFJVOMFWFSJ-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KNEZFJVOMFWFSJ-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "SCHEMBL3315743",
+    "SCHEMBL98867",
+    "diepoxy-butane"
+  ],
+  "http_status": 200,
+  "cids": [
+    21895627
+  ]
+}

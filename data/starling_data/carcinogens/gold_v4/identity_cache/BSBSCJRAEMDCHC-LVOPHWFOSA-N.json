@@ -1,0 +1,22 @@
+{
+  "parent_key": "BSBSCJRAEMDCHC-LVOPHWFOSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/BSBSCJRAEMDCHC-LVOPHWFOSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "(1S)-1-[(2S)-butan-2-yl]-7-hydroxy-5-methyl-2,8,13-trioxo-1,2,8,13-tetrahydro-3aH-benzo[b][1,3]oxazolo[3,2-f]phenanthridin-12-yl 2,6-dideoxy-alpha-L-ribo-hexopyranoside",
+    "(3S,6S)-3-((2S)-butan-2-yl)-19-((2S,4R,5R,6S)-4,5-dihydroxy-6-methyloxan-2-yl)oxy-11-hydroxy-9-methyl-5-oxa-2-azapentacyclo(11.8.0.02,6.07,12.015,20)henicosa-1(13),7(12),8,10,15(20),16,18-heptaene-4,14,21-trione",
+    "149633-99-8",
+    "AKOS027326605",
+    "CHEBI:31738",
+    "DTXCID501362349",
+    "DTXSID50933692",
+    "Jadomycin B",
+    "RefChem:923872",
+    "T24190",
+    "orb1987169"
+  ],
+  "http_status": 200,
+  "cids": [
+    46173799
+  ]
+}

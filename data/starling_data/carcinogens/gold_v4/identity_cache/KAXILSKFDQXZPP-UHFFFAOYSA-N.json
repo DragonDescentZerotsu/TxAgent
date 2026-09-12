@@ -1,0 +1,42 @@
+{
+  "parent_key": "KAXILSKFDQXZPP-UHFFFAOYSA-N",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/inchikey/KAXILSKFDQXZPP-UHFFFAOYSA-N/synonyms/JSON",
+  "ok": true,
+  "synonyms": [
+    "13256-13-8",
+    "AKOS006276484",
+    "Aethyl-vinyl-nitrosoamin",
+    "Aethyl-vinyl-nitrosoamin [German]",
+    "BRN 2072075",
+    "CCRIS 303",
+    "CHEMBL165390",
+    "Capivasertib Impurity 24",
+    "DTXCID6080109",
+    "DTXSID90157618",
+    "ETHENYL-N-ETHYLNITROSAMINE, N-",
+    "Ethenamine, N-ethyl-N-nitroso-",
+    "Ethenylamine, N-ethyl-N-nitroso-",
+    "Ethylvinylnitrosamine",
+    "K5TH5XTS8U",
+    "N-ETHYL-N-NITROSO-ETHENAMINE",
+    "N-Ethenyl-N-ethylnitrosamine",
+    "N-Ethyl-N-nitrosoethenamine",
+    "N-Ethyl-N-nitrosovinylamine",
+    "N-Ethyl-N-vinylnitrous amide",
+    "N-Nitroso-N-ethylvinylamine",
+    "N-Nitrosoethylvinylamine",
+    "N-ethenyl-N-ethylnitrous amide",
+    "N-nitroso-ethylvinyl amine",
+    "RefChem:194339",
+    "SCHEMBL3500931",
+    "UNII-K5TH5XTS8U",
+    "Vinylamine, N-ethyl-N-nitroso-",
+    "Vinylethylnitrosamin",
+    "Vinylethylnitrosamin [German]",
+    "Vinylethylnitrosamine"
+  ],
+  "http_status": 200,
+  "cids": [
+    25807
+  ]
+}
