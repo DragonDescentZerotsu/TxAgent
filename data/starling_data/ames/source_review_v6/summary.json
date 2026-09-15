@@ -144,7 +144,7 @@
     "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
   },
   "artifacts": {
-    "placement_decisions.jsonl": "b8046ea5afcf6bee8801e4d06eb3ae752df3d4b1f3ed011c1b2f7745a021ca26",
+    "placement_decisions.jsonl": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc",
     "previous_source_manifest.json": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
     "previous_dataset_manifest.json": "1aa533645beac89e1ca945c660cfee900a930b3edb0a1e7703ede340d2778b81",
     "sample.jsonl": "d6df9522effa52bae4a82678d663ecdcc127991f26fa0976d0bf1f613b5d909a",
@@ -153,5 +153,19 @@
     "README.md": "97cce656876f0db22b58f67b052a842ce8cdf56f07aa1700ce8eb767147b4975",
     "family_changes.parquet": "6be7e76f3636d6ea9f4f19116062a9d5d1d5b0bb1e05fb6e55e403c3a61fe1a6",
     "retrieval_build_performance.json": "404a90fe0501615f6be01b9378201ee64495738e13ac2b64e1c90dbf6c3abc5b"
-  }
+  },
+  "historical_scope": "Original v6 review statistics below are frozen; subsequent ledger additions are reported separately.",
+  "subsequent_placement_revisions": [
+    {
+      "origin": "trace_review_20260913",
+      "receipt": "data/starling_data/ames/trace_review_20260913/verification.json",
+      "additional_reviewed_records": 2,
+      "additional_moves": 2,
+      "current_ledger_decisions": 102,
+      "current_combined_reviewed_records": 396,
+      "current_audited_relocations": 97,
+      "validation_status": "passed",
+      "retrieval_validation_sha256": "1846d154654b0dc9c8b5d38f28b51912e3816bca0cae2bae16d899b4c544392e"
+    }
+  ]
 }

@@ -153,5 +153,9 @@ def get_progressive_task_contract() -> ProgressiveTaskContract:
         positive_prediction="high",
         negative_prediction="low",
         system_role=profile.final_system_role,
-        task_instructions=tuple(profile.final_instructions),
+        task_instructions=tuple(
+            instruction.replace("For every group,", "For the supplied evidence,")
+            for instruction in profile.final_instructions
+            if not instruction.startswith("You must choose exactly one")
+        ),
     )

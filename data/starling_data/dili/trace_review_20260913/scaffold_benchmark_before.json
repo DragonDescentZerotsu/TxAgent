@@ -1,0 +1,16 @@
+{
+  "data/conditioned_benchmark/DILI/scaffold/train.jsonl": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076",
+  "data/conditioned_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl": "b8f93676ecb93e0153891ee91e7e06222e5760346a14420a75cac1df5a7faa60",
+  "data/conditioned_benchmark/DILI/scaffold/valid.jsonl": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
+  "data/conditioned_benchmark/DILI/scaffold/valid_molecule_condition_labels.jsonl": "bf292c6b533b55b4a1e437a4e1c4c56f7bce4ea6e9dd5fb9f003bb5ea15acedf",
+  "data/conditioned_benchmark/DILI/scaffold/test.jsonl": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19",
+  "data/conditioned_benchmark/DILI/scaffold/test_molecule_condition_labels.jsonl": "a4842c611ad8d3237dcd7c6f6e2b52c17c51961655b6d33c9ac2301930d9cf67",
+  "data/conditioned_benchmark/DILI/scaffold/heldout_molecule_condition_labels.jsonl": "2fd1424c6271455fc1e1766a23c37ac28b2e679d397646a4e43b75fadea89ecf",
+  "data/conditioned_benchmark/DILI/scaffold/accepted_record_votes.jsonl": "b8cf1485e7631a248ce0f1e2084ca627421fedc4028b7aa534b0e512d757d2c2",
+  "data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "dc7dc40ea4a556a62bb9b2534aa3bd1ea48cd47eec7273dec54a8ae1e4f62533",
+  "data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions.jsonl": "fd2effa0c59a2ba5e70cf261d9d7feb5b74c1090143c3a80d5e222934d2c87d9",
+  "data/conditioned_benchmark/DILI/scaffold/.rejected_parent_conditions.jsonl.558vba_z.tmp": "79bc5dd810f791002133086b5b03e8e50bb424152ead4450d4322bd630f9441c",
+  "data/conditioned_benchmark/DILI/scaffold/rejected_parent_conditions.jsonl": "f9f8a15bfcbdf453029003c7b5e7cbfb92099c0d2f974925ead2e8049b310fa7",
+  "data/conditioned_benchmark/DILI/scaffold/group_distribution.csv": "6fd82b53cd5fe79f83ca511dac1ff51af9802435191ea8efe6224d0def2570e9",
+  "data/conditioned_benchmark/DILI/scaffold/summary.json": "c442ab195000d0e845378b29e07c9042d48b3ce8b9561e1e33c9ce0cdf723269"
+}

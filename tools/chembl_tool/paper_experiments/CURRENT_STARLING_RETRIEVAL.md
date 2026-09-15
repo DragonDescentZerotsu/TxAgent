@@ -1,6 +1,6 @@
 # Current Starling retrieval and collaborator data
 
-更新时间：2026-09-12。
+更新时间：2026-09-14。
 
 本页是 BBB、Bioavailability、Skin、Ames、DILI 和 Carcinogens progressive retrieval 的唯一当前数据说明。它同时说明如何恢复、重建、
 验证和分享每个 level 的 records。日常复现不需要另一个 TxAgent checkout，也不需要在旧的 `v1`、`v2`、
@@ -48,6 +48,11 @@ Ames 的 source adapter 在 `data/starling_data/ames/canonical_v1/` 生成带审
 交给协作者阅读的“分享包”。协作者实际浏览和交换的是下文 `current_level_records/` 中直接由 Git 跟踪的普通
 Parquet 文件，不需要解压，也不需要安装 Git LFS。
 
+Skin 当前 v7 使用单独发布的 identity-rebound canonical snapshot：7 条记录按原研究修复分子绑定，
+其中 INF 重复项保留源记录并由已有正确记录代表；M16/M17 两条仍待结构核验。Overlay 保持只改 family，
+并保留 3 条整体结果由 L3→L2 的修复。Gold/split 不变，旧 v5/v6 索引保留给冻结实验。
+源重绑入口、文献、计数和复用边界见 `data/starling_data/skin_reaction/trace_review_20260914/README.md`。
+
 ## Restore, rebuild, and verify
 
 在项目根目录执行：
@@ -90,7 +95,7 @@ deduplication，并保留 `support_text`、measurement、context、assay provena
 不同 Starling run 的原始 Parquet 没有原位修改；normalization 生成了新的 canonical records。current manifest
 还固定生成时 column contracts 的 SHA-256。
 
-原三个任务的 purity 修正也不改 Stage-03。它生成新的 overlay，并用同一个 `canonical_record_id` 记录：
+Purity 分类修正不改输入 Stage-03，而是生成 overlay，并用同一个 `canonical_record_id` 记录：
 
 - 新 `group_id`；
 - `source_family_original_group_id`；
@@ -100,6 +105,7 @@ deduplication，并保留 `support_text`、measurement、context、assay provena
 因此“移动 record”是可审计地重新赋予 `group_id`，不是在文件间剪切行，也不会改 endpoint、value、unit 或
 `support_text`。Bioavailability 另有一个明确的 pre-overlay source repair：排除 6 条已复核的 nitrendipine
 structure-name mismatch，并从已有结构化字段补充 nondirect assay context；Stage-03 输入本身仍保持不变。
+Skin 的分子重绑则单独发布新的 Stage-03 snapshot，再应用 purity overlay；不能把身份修复描述为仅改层。
 
 Ames 的原始四批数据、名称核验和 record audit 保留 source-native 格式；导出的 canonical 字段、
 family/level 字段和 card-link keys 与其余任务完全相同。Ames 没有 pre-overlay group，导出中的
@@ -137,17 +143,18 @@ record 的 level。同一个 physical assay 可含多个不同 family 的 record
 |---|---:|---:|---:|---:|---:|---:|
 | BBB | 8,592 | 268,379 | 14,189 | 163,672 | 43,724 | - |
 | Bioavailability | 20,538 | 152,350 | 104,174 | 73,913 | 23,511 | 60,986 |
-| Skin | 42,435 | 12,522 | 12,010 | - | - | - |
-| Ames | 3,333 | 138,571 | 236,309 | 496,880 | 424,491 | - |
+| Skin | 42,435 | 12,524 | 12,005 | - | - | - |
+| Ames | 3,333 | 138,569 | 236,310 | 496,881 | 424,491 | - |
 
 DILI/Carcinogens 的七层 pre-split membership 为：
 
 | task | L1 | L2 | L3 | L4 | L5 | L6 | L7 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| DILI | 108,436 | 166,498 | 141,940 | 75,971 | 294,048 | 196,583 | 402,992 |
+| DILI | 108,435 | 166,498 | 141,940 | 75,971 | 294,047 | 196,582 | 402,982 |
 | Carcinogens | 89,617 | 405,813 | 750,569 | 650,547 | 749,469 | 218,187 | 286,938 |
 
-这些不是某个 query 最终看到的卡片数。
+计数来自 `artifacts/chembl_tool/starling/current_level_records/manifest.json` 的
+`tasks.<task>.source_membership.records_by_level`，不是某个 query 最终看到的卡片数。
 
 ### 2. Split-specific indexed representative cards
 
@@ -166,8 +173,9 @@ provenance。导出器会硬校验每张 indexed card 都至少连接到一条 s
 
 ### 3. Per-query model-visible cards
 
-每一层在截至该层的 cumulative family pool 内做全局 Morgan molecule-similarity retrieval，minimum similarity
-为 0.3。scaffold 使用 `scaffold_disjoint`，random 使用 `parent_disjoint`。L1 最多选择 10 个 molecules，默认
+每一层在截至该层的 cumulative family pool 内做全局 Morgan molecule-similarity retrieval。默认 minimum
+similarity 为 0.3，scaffold 使用 `scaffold_disjoint`，random 使用 `parent_disjoint`；已登记的 DILI
+similarity-zero 和 L3+ parent-disjoint 实验使用各自冻结的 run plan，不改变这些默认值。L1 最多选择 10 个 molecules，默认
 每个 molecule 最多 4 张卡；后续每层最多新增 3 个 molecules、补充 3 个 active molecules，并给每个被选
 molecule 新增最多 2 张卡。已有卡 append-only 保留。
 
@@ -205,12 +213,24 @@ support text，indexed 表只保存 card 引用，完整 record 字段保存在 
 python -m tools.chembl_tool.paper_experiments.export_current_starling_level_records
 ```
 
-正式输出目录必须完整导出四个任务和两种 split；部分导出须指定独立 `--output-dir`，避免覆盖完整清单。
+正式输出目录必须完整导出六个任务和两种 split；部分导出须指定独立 `--output-dir`，避免覆盖完整清单。
 
-导出前会核验 canonical records、overlays、catalogs 和八个 indices 的 current hashes。未来 lineage 改变时应
+导出前会核验 canonical records、overlays、catalogs 和十二个 indices 的 current hashes。未来 lineage 改变时应
 原位重建，并在 manifest/Git history 中记录变化，不能新增 `v2`、`final2` 等平行副本。
 
 ## Historical boundary
+
+版本目录按用途保留，不按版本号大小判断是否可删：
+
+| 用途 | 当前选择与保留边界 |
+|---|---|
+| 日常检索和重建 | 只读取两个 current manifests；Skin v7、Ames `canonical_v1`、DILI/Carcinogens `retrieval_final`。|
+| 冻结实验输入 | Skin v5/v6、修复前 Ames/DILI，以及 Bioavailability/Skin legacy runtime 仍被登记结果或运行中的 full-flat 引用，保留但不作为默认入口。|
+| 审核与修复历史 | Ames `source_review_v1`–`v6`、DILI `retrieval_review_v1`–`v5` 是增量审核记录，包含当前修复依据、原文或复用证明，不是六套可互换数据集。|
+| 可重建的旧副本 | 无 current/登记实验依赖的 overlay、catalog、index 可以删除；精确清单和保留哈希见结果 registry 的维护 receipt。|
+
+发布源仍使用 `common.starling.current_retrieval_artifacts.publish_snapshot`；archive 分片路径必须相对
+仓库的 `artifacts/`，以便换 checkout 恢复。仅修正清单路径不改变 records 或 archive 字节，也不产生新实验。
 
 Stage-03 之前的 raw ingestion 与 normalized-v7 历史实现来自
 `origin/joseph@70750c42035d6bde5ce9504211c4e22ac57e27f8`，只说明 frozen snapshot 的来源，不是运行依赖。

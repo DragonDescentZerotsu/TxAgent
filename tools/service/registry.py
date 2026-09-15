@@ -21,7 +21,7 @@ from tools.service.schemas import (
 from tools.service.tools.base import BaseTool
 
 
-TOOL_CACHE_NAMESPACE = "tool-service-2026-09-04-v3"
+TOOL_CACHE_NAMESPACE = "tool-service-2026-09-13-v5"
 
 
 class ToolRegistry:

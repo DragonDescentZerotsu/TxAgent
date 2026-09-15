@@ -1,0 +1,17 @@
+{
+  "status": "complete_verified",
+  "n_rows": 806599,
+  "n_changed_rows": 7,
+  "changed_source_keys": [
+    "sensitization_aop:18020",
+    "sensitization_aop:18027",
+    "sensitization_aop:38405",
+    "sensitization_aop:38407",
+    "sensitization_aop:38408",
+    "sensitization_aop:38409",
+    "sensitization_aop:38410"
+  ],
+  "all_other_rows_and_fields_equal": true,
+  "schema_equal": true,
+  "n_unchanged_benchmark_files": 18
+}

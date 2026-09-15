@@ -1,0 +1,12 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 2214,
+        "MolecularFormula": "C9H10O3",
+        "ConnectivitySMILES": "CC(=O)C1=CC(=C(C=C1)O)OC",
+        "InChIKey": "DFYRUELUNQRZTB-UHFFFAOYSA-N"
+      }
+    ]
+  }
+}

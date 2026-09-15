@@ -49,6 +49,7 @@ from tools.chembl_tool.common.progressive_assay_reasoning import (
     INITIAL_MOLECULE_LIMIT,
     NEW_MOLECULE_LIMIT,
     PROGRESSIVE_PROTOCOL_VERSION,
+    PROGRESSIVE_PROMPT_PROFILE,
     ProgressiveTaskContract,
     append_evidence,
     attach_analog_tool_summaries,
@@ -62,6 +63,7 @@ from tools.chembl_tool.common.progressive_assay_reasoning import (
     select_initial_evidence,
     select_progressive_delta,
     state_from_content,
+    tool_functional_group_tree,
 )
 from tools.chembl_tool.common.reasoning_payload import external_condition_sentence
 from tools.chembl_tool.common.reasoning_validation import (
@@ -276,10 +278,10 @@ def _progressive_task_specs(
         "skin_reaction": ProgressiveTaskSpec(
             split_path("skin_reaction", evaluation_subset, split_scheme),
             index_root
-            / "skin_reaction/mechanism_tagged_v4_source_purity_v5/assay_neighbor_index.pkl",
+            / "skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
             SOURCE_PURITY_ROOT
             / "family_catalogs_mechanism_tagged_v1/"
-            "skin_reaction_source_purity_v5/manifest.json",
+            "skin_reaction_source_purity_v7/manifest.json",
         ),
     }
 
@@ -548,8 +550,10 @@ def _prefetch_analog_tools(
     analogs: Mapping[str, Mapping[str, Any]],
     tool_service_url: str,
     timeout_s: int,
-) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]]]:
-    calls: list[tuple[str, dict[str, Any]]] = []
+) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]], dict[str, Any]]:
+    calls: list[tuple[str, dict[str, Any]]] = [
+        ("molecule_properties", {"query_smiles": query_smiles, "logd_ph": 7.4})
+    ]
     order: list[str] = []
     for analog in sorted(analogs.values(), key=lambda row: str(row["analog_id"])):
         analog_id = str(analog["analog_id"])
@@ -590,22 +594,27 @@ def _prefetch_analog_tools(
     failures = []
     for position, result in enumerate(results):
         if result.get("status") == "ok":
+            tool_name = calls[position][0]
+            if tool_name in {"molecule_properties", "properties_compare"} and not tool_functional_group_tree(
+                result, reference=tool_name == "properties_compare"
+            ):
+                raise ValueError("Tool service lacks functional-group trees; use the updated service and fresh tool receipts")
             continue
-        analog_id = order[position // 2]
+        analog_id = order[(position - 1) // 2] if position else "query"
         failures.append({"analog_id": analog_id, **dict(result)})
         results[position] = {
             "tool_name": result.get("tool_name"),
             "status": "error",
             "content": (
                 f"[{result.get('tool_name')}]\n"
-                "Comparison unavailable for this analog; do not infer a missing result."
+                "Tool result unavailable; do not infer a missing result."
             ),
         }
     summaries = {
-        analog_id: results[position * 2 : position * 2 + 2]
+        analog_id: results[1 + position * 2 : 3 + position * 2]
         for position, analog_id in enumerate(order)
     }
-    return summaries, failures
+    return summaries, failures, results[0]
 
 
 def _prepare_query(
@@ -647,6 +656,7 @@ def _prepare_query(
             manifest.get("status") == "ok"
             and manifest.get("query_smiles") == query_smiles
             and manifest.get("protocol") == PROGRESSIVE_PROTOCOL_VERSION
+            and manifest.get("prompt_profile") == PROGRESSIVE_PROMPT_PROFILE
             and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
             and manifest.get("neighbor_identity_policy")
             == neighbor_identity_policy
@@ -745,8 +755,8 @@ def _prepare_query(
         selection_audits[level] = selection_audit
         previous_cumulative = cumulative
 
-    if prefetch_tools and active:
-        summaries, tool_failures = _prefetch_analog_tools(
+    if prefetch_tools:
+        summaries, tool_failures, query_tool_summary = _prefetch_analog_tools(
             query_smiles=query_smiles,
             analogs=active,
             tool_service_url=tool_service_url,
@@ -766,6 +776,7 @@ def _prepare_query(
         new_ids = current_ids - previous_ids
         prepared = {
             "protocol": PROGRESSIVE_PROTOCOL_VERSION,
+            "prompt_profile": PROGRESSIVE_PROMPT_PROFILE,
             "task": task,
             "query_index": query_index,
             "benchmark_row_id": record.get("benchmark_row_id"),
@@ -806,6 +817,7 @@ def _prepare_query(
         {
             "status": "ok",
             "protocol": PROGRESSIVE_PROTOCOL_VERSION,
+            "prompt_profile": PROGRESSIVE_PROMPT_PROFILE,
             "task": task,
             "query_index": query_index,
             "n_levels": len(levels),
@@ -883,21 +895,33 @@ def _make_client(
     args: argparse.Namespace,
     provider_config: ProviderPoolConfig,
 ) -> OpenAIProviderPool:
+    if any(spec.transport == "openrouter_batch" for spec in provider_config.providers):
+        if getattr(args, "retry_race_width", 1) != 1 or args.transport_max_retries:
+            raise ValueError("Batch transport requires --retry-race-width 1 --transport-max-retries 0")
+
     def client_factory(spec: ProviderSpec) -> OpenAICompatibleClient:
-        return OpenAICompatibleClient(
+        client_type, options = OpenAICompatibleClient, {}
+        if spec.transport == "openrouter_batch":
+            from tools.chembl_tool.common.openrouter_batch import OpenRouterBatchClient
+            client_type = OpenRouterBatchClient
+            options = {"batch_dir": Path(args.output_root) / "batch_jobs" / spec.name,
+                       "batch_options": spec.batch_options}
+        return client_type(
             api_key=os.getenv(spec.api_key_env) or "local-no-auth",
             base_url=spec.base_url,
             model=spec.model,
             timeout_s=spec.timeout_s or args.timeout_s,
             max_tokens=args.max_tokens,
-            temperature=0.0,
+            temperature=spec.temperature,
             tool_service_url=args.tool_service_url,
             enable_group_tools=False,
             max_tool_rounds=0,
-            reasoning_effort="",
+            reasoning_effort=spec.reasoning_effort,
             enable_thinking=False,
             transport_max_retries=args.transport_max_retries,
             request_extra_body=spec.request_extra_body,
+            async_max_connections=spec.max_inflight,
+            **options,
         )
 
     pool = OpenAIProviderPool(provider_config, client_factory=client_factory)
@@ -907,6 +931,15 @@ def _make_client(
             task_limits={task: args.parallelism_per_task or args.parallelism for task in args.tasks},
         )
     return pool
+
+
+def _generation_settings(provider_config):
+    """Freeze actual generation settings; provider defaults remain backward compatible."""
+    temperatures = {p.temperature for p in provider_config.providers}
+    efforts = {p.reasoning_effort or "omitted" for p in provider_config.providers}
+    if len(temperatures) != 1 or len(efforts) != 1:
+        raise ValueError("One experiment must use the same temperature and reasoning effort across providers")
+    return {"temperature": temperatures.pop(), "thinking": "provider_default", "reasoning_effort": efforts.pop()}
 
 
 def _execution_levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
@@ -1308,6 +1341,7 @@ def _selected_indices(args: argparse.Namespace, n_records: int) -> list[int]:
 
 _PREPARED_MODEL_INPUT_FIELDS = (
     "protocol",
+    "prompt_profile",
     "task",
     "query_smiles",
     "condition_sentence",
@@ -1728,9 +1762,11 @@ def _run_query_rounds(args, prepared_queries, client, output_root: Path, *, run_
 
 
 def _prepare_fresh_query_priors(args, task_specs, provider_config):
-    """Prepare new tasks' single/None branches through the shared tools and query pool."""
+    """Prepare task-native single/None branches through the shared tools and query pool."""
     import copy
     import importlib
+    from types import SimpleNamespace
+    from tools.chembl_tool.common.experiment_retrieval import _query_only_retrieval
     from tools.chembl_tool.common.identity_blind import prepare_reasoning_retrieval
     from tools.chembl_tool.common.reasoning_payload import (
         attach_external_condition, llm_query_payload, llm_evidence_query_payload,
@@ -1745,7 +1781,6 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
     for task in args.tasks:
         if task in {"dili", "carcinogens"}:
             from functools import partial
-            from types import SimpleNamespace
             from tools.chembl_tool.common import conditioned_query_prior
             config = SimpleNamespace(
                 __file__=conditioned_query_prior.__file__,
@@ -1753,8 +1788,10 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
                     conditioned_query_prior.build_query_prior_messages, _task_contract(task)
                 ),
             )
-        else:
+        elif task == "ames":
             config = importlib.import_module(f"tools.chembl_tool.tasks.{task}.query_prior")
+        else:
+            config = importlib.import_module(f"tools.chembl_tool.tasks.{task}.run_reasoning_pipeline")
         configs[task] = config
         path = task_specs[task].input_jsonl
         rows, structure_receipt = _query_structure_records(args, task, path, read_jsonl(path))
@@ -1765,15 +1802,18 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
             "n_items": len(rows), "indices": _selected_indices(args, len(rows)),
             "model": args.model, "model_identity": _model_identity(args.model),
             "base_url": args.base_url, "max_tokens": args.max_tokens,
-            "temperature": 0.0, "thinking": "provider_default", "reasoning_effort": "omitted",
+            **_generation_settings(provider_config),
             "visibility_mode": "deployment_visible_prefetched", "identity_blind": False,
             "harness_prefetch_tools": True, "parallelism": args.parallelism,
+            "tool_text_profile": PROGRESSIVE_PROMPT_PROFILE,
             "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
             "prompt_contract_sha256": sha256_file(Path(config.__file__)),
             "task_contract_sha256": sha256_file(Path(TASK_CONFIGS[task].__file__)),
             "runner_sha256": sha256_file(Path(__file__)),
             "retry_race_width": getattr(args, "retry_race_width", 1),
         }
+        if hasattr(config, "_reason_single_molecule"):
+            manifest["native_prompt_profile_sha256"] = sha256_file(Path(config.__file__).with_name("prompt_profiles.py"))
         target = root / task / "none" / "manifest.json"
         if structure_receipt:
             manifest["query_structure_map"] = structure_receipt
@@ -1799,23 +1839,28 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
         config, contract = configs[query.task], _task_contract(query.task)
         directory = query.query_dir
 
-        def validated_prior_call(messages, required_fields, branch, retry_pending):
-            validation = dict(required_fields=required_fields,
-                              allowed_values=allowed_values_from_required_schema(messages))
-
-            def routed(call_messages, retry=False):
+        def prior_chat(required_fields, branch, retry_pending):
+            attempts = 0
+            def routed(call_messages):
+                nonlocal attempts
+                attempts += 1
+                validation = dict(required_fields=required_fields,
+                                  allowed_values=allowed_values_from_required_schema(call_messages))
                 if isinstance(client, ParallelRetryClient):
                     return client.chat_validated(
                         call_messages, task=query.task,
-                        width=_args.retry_race_width if retry or retry_pending else 1,
+                        width=_args.retry_race_width if attempts > 1 or retry_pending else 1,
                         validate=lambda response: response_validation_errors(response, **validation),
                         receipt_path=directory / "retry_races" / branch / f"{time.time_ns()}.json",
                     )
                 return client.chat_json(call_messages)
+            return routed
 
+        def validated_prior_call(messages, required_fields, branch, retry_pending):
             return call_with_json_validation(
-                routed, messages, **validation, branch_name=branch,
-                retry_call=lambda call_messages: routed(call_messages, retry=True),
+                prior_chat(required_fields, branch, retry_pending), messages,
+                required_fields=required_fields,
+                allowed_values=allowed_values_from_required_schema(messages), branch_name=branch,
             )
 
         retrieval_path = directory / "retrieval.json"
@@ -1826,10 +1871,11 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
             if retrieval["query"].get("input_smiles") != query_smiles:
                 raise ValueError("cached prior retrieval has a different query representation")
         else:
-            retrieval = attach_external_condition({
+            base = _query_only_retrieval(query_smiles, mode="none") if hasattr(config, "_reason_single_molecule") else {
                 "query": {"input_smiles": query_smiles, "canonical_smiles": query_smiles},
                 "groups": [], "experiment": {"mode": "none", "source": "starling"},
-            }, row)
+            }
+            retrieval = attach_external_condition(base, row)
             retrieval = prepare_reasoning_retrieval(
                 retrieval, ToolServiceClient(args.tool_service_url, timeout_s=args.timeout_s),
                 identity_blind=False, harness_prefetch_tools=True,
@@ -1837,15 +1883,24 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
             if retrieval["query"]["prefetched_molecule_properties"].get("status") != "ok":
                 raise ValueError("query property prefetch failed")
             write_json_atomic(retrieval_path, retrieval)
+        query_properties = retrieval["query"]["prefetched_molecule_properties"]
+        if query_properties.get("status") != "ok" or not tool_functional_group_tree(query_properties):
+            raise ValueError("Fresh query priors require functional-group tree tool receipts")
         single_path = directory / "single_molecule_reasoning_output.json"
         single = _read_json(single_path) if single_path.exists() else {}
         if single.get("status") != "ok":
             payload = llm_query_payload(retrieval["query"])
-            messages = config.build_query_prior_messages("single", payload)
-            llm = validated_prior_call(
-                messages, ("confidence", "reasoning_summary"), "single-molecule",
-                bool(single) or getattr(_args, "retry_round", 0) > 0,
-            )
+            retry_pending = bool(single) or getattr(_args, "retry_round", 0) > 0
+            if hasattr(config, "_reason_single_molecule"):
+                # Reuse the native messages and validator; only adapt transport.
+                native_client = SimpleNamespace(chat_json=prior_chat(
+                    ("confidence", "reasoning_summary"), "single-molecule", retry_pending))
+                llm = config._reason_single_molecule(native_client, payload)["llm"]
+            else:
+                llm = validated_prior_call(
+                    config.build_query_prior_messages("single", payload),
+                    ("confidence", "reasoning_summary"), "single-molecule", retry_pending,
+                )
             llm["tool_results"] = [payload["prefetched_molecule_properties"]]
             single = {"status": "ok" if structured_response_is_valid(llm) else "error", "llm": llm}
             write_json_atomic(single_path, single)
@@ -1854,13 +1909,16 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
         final_path = directory / "final_reasoning_output.json"
         final = _read_json(final_path) if final_path.exists() else {}
         if final.get("status") != "ok":
-            messages = config.build_query_prior_messages(
-                "final", llm_evidence_query_payload(retrieval["query"]), single["llm"]["content"],
-            )
-            llm = validated_prior_call(
-                messages, (contract.prediction_field, "confidence", "main_reasons", "final_summary"),
-                "None-final", bool(final) or getattr(_args, "retry_round", 0) > 0,
-            )
+            required = (contract.prediction_field, "confidence", "main_reasons", "final_summary")
+            retry_pending = bool(final) or getattr(_args, "retry_round", 0) > 0
+            if hasattr(config, "_run_final_reasoning"):
+                native_client = SimpleNamespace(chat_json=prior_chat(required, "None-final", retry_pending))
+                llm = config._run_final_reasoning(native_client, retrieval, single, [])["llm"]
+            else:
+                llm = validated_prior_call(
+                    config.build_query_prior_messages("final", llm_evidence_query_payload(retrieval["query"]), single["llm"]["content"]),
+                    required, "None-final", retry_pending,
+                )
             final = {"status": "ok" if structured_response_is_valid(llm) else "error", "llm": llm}
             write_json_atomic(final_path, final)
         return {"task": query.task, "index": query.index, "status": final["status"]}
@@ -1870,8 +1928,7 @@ def _prepare_fresh_query_priors(args, task_specs, provider_config):
     try:
         return _run_query_rounds(prior_args, queries, client, root, run_query=run_prior)
     finally:
-        if isinstance(client, ParallelRetryClient):
-            client.close()
+        client.close()
 
 
 def run(args: argparse.Namespace) -> int:
@@ -2019,7 +2076,7 @@ def run(args: argparse.Namespace) -> int:
             "append_only": True,
             "cumulative_per_molecule_card_cap": None,
         },
-        "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+        "prompt_profile": PROGRESSIVE_PROMPT_PROFILE,
         "condition_policy": "natural-language sentence for non-null group; omit null group",
         "single_reuse_root": str(Path(args.single_source_root)),
         "query_prior_source_root": (
@@ -2037,9 +2094,7 @@ def run(args: argparse.Namespace) -> int:
         "parallelism_per_task": args.parallelism_per_task,
         "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
         "max_tokens": args.max_tokens,
-        "temperature": 0.0,
-        "thinking": "provider_default",
-        "reasoning_effort": "omitted",
+        **_generation_settings(provider_config),
         "transport_max_retries": args.transport_max_retries,
         "retry_race_width": args.retry_race_width,
         "tool_prefetch_complete": not args.skip_tool_prefetch,
@@ -2186,8 +2241,7 @@ def run(args: argparse.Namespace) -> int:
     try:
         failed = _run_query_rounds(args, prepared_queries, client, output_root)
     finally:
-        if isinstance(client, ParallelRetryClient):
-            client.close()
+        client.close()
 
     for task in args.tasks:
         records = records_by_task[task]

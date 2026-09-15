@@ -1,0 +1,95 @@
+{
+  "status": "retired_by_user_request",
+  "removed_at": "2026-09-13T03:43:53.591405+00:00",
+  "role": "Compact historical conclusion; not a formal result or runnable experiment",
+  "reason": "No gain in the frozen 16-parent validation pilot; intermediate labels overcompressed uncertain evidence and increased invalid outputs. User requested removing the method and cleaning its code.",
+  "task": "bioavailability_ma",
+  "evaluation_subset": "scaffold valid",
+  "indices": [
+    22,
+    46,
+    52,
+    57,
+    82,
+    90,
+    99,
+    110,
+    134,
+    146,
+    177,
+    207,
+    211,
+    212,
+    221,
+    248
+  ],
+  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+  "input_sha256": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+  "matched_prepared_levels": 96,
+  "primary_level": 6,
+  "primary_result": {
+    "control": {
+      "correct": 13,
+      "incorrect": 3,
+      "missing": 0
+    },
+    "candidate": {
+      "correct": 10,
+      "incorrect": 4,
+      "missing": 2
+    },
+    "candidate_accuracy_bounds": [
+      0.625,
+      0.75
+    ]
+  },
+  "completion": {
+    "control_full_flat": {
+      "ok": 95,
+      "reused_none": 1
+    },
+    "neighbor_assessment_full_flat": {
+      "ok": 89,
+      "reused_none": 1,
+      "error": 2,
+      "missing": 4
+    }
+  },
+  "limitations": [
+    "Exploratory validation pilot, not test performance or a population estimate.",
+    "Frozen prior reused identically; old prior tool equivalence to repaired MolGpKa was not certified.",
+    "Accepted output structure does not establish semantic correctness or internal reasoning order."
+  ],
+  "deleted_paths": [
+    "outputs/paper/analysis/neighbor_task_assessment_bio_pilot_20260912",
+    "tools/chembl_tool/common/neighbor_task_reasoning.py",
+    "tools/chembl_tool/common/__pycache__/neighbor_task_reasoning.cpython-312.pyc"
+  ],
+  "deleted_pilot_files": 733,
+  "deleted_pilot_bytes": 62350388,
+  "removed_cli_flags": [
+    "--neighbor-task-assessment"
+  ],
+  "restored_shared_files": [
+    "tools/chembl_tool/common/progressive_assay_reasoning.py",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py",
+    "tools/chembl_tool/paper_experiments/README.md",
+    "tests/chembl_tool/common/test_progressive_assay_reasoning.py"
+  ],
+  "source_receipt_sha256": {
+    "plan.json": "0a1adfd690685b0c16bea1f04f4e9ceafb3d1f3c16bfb280a4cbc048249edca3",
+    "summary.json": "426e1fc5d81113b1634a9b9a128837f67875741b0ab5ff5d81751c0ab8b2c7a2",
+    "input_parity.json": "a01138ef03e5d58e1169a8ffdfb7c0c3db39881def5a7796c92e4d1a5317c7c1",
+    "semantic_audit.json": "af6abdf1541366abb2636bed45a9435b4774095bc5b00f5de0763e25bd498361"
+  },
+  "note": "Pilot raw outputs and scripts intentionally removed; hashes identify the retired artifacts and do not imply they remain replayable.",
+  "verification": {
+    "shared_tests_passed": 68,
+    "removed_cli_rejected": true,
+    "bbb_group_instruction_removal_preserved": true,
+    "retired_artifacts_absent": true,
+    "registry_references_to_retired_pilot": 0,
+    "removed_test_cache_entries": 14
+  }
+}

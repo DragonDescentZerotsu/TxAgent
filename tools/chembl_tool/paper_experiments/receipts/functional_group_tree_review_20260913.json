@@ -1,0 +1,70 @@
+{
+  "status": "complete",
+  "scope": "Functional-group tree implementation review only; unrelated Ames/source work preserved",
+  "current_prompt_profile": "progressive_functional_group_tree.v4",
+  "current_tool_cache_namespace": "tool-service-2026-09-13-v5",
+  "findings_fixed": [
+    "Reduce hierarchy edges by actual atom matches, not group names, to avoid losing independent contained matches.",
+    "Reject unsuccessful cached prior tool receipts before model calls.",
+    "Report per-molecule extraction failure accurately in debug availability."
+  ],
+  "new_maintained_entrypoints": [],
+  "new_internal_module": "tools/service/functional_group_tree.py",
+  "existing_entrypoints": [
+    "tools/service/app.py",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py"
+  ],
+  "kept_compatibility": "Historical flat tool-text renderer remains readable; fresh runs require the current profile and tree receipts.",
+  "validation": {
+    "tests_passed": 167,
+    "original_diagnostic_molecules": 43,
+    "changed_recorded_tool_texts": 0,
+    "renderer_audit": "outputs/paper/diagnostics/functional_group_tree_20260913/renderer_review.json",
+    "service_rollover": "outputs/paper/diagnostics/functional_group_tree_20260913/review_service_rollover.json",
+    "production_batch_tool_results": 192,
+    "production_workers": 32,
+    "temporary_service_stopped": true
+  },
+  "experiment_record": {
+    "original_prompt_profile": "progressive_functional_group_tree.v3",
+    "level_outputs": 32,
+    "primary_model_calls": 52,
+    "auxiliary_fresh_prior_calls": 2,
+    "final_failures": 0,
+    "new_model_calls_during_review": 0,
+    "result": "No reviewed-level label gain; BBB correct 2/2 in both arms, DILI and Carcinogens 0/2 in both. Both auxiliary fresh priors still claim an enone.",
+    "promotion": "None; preserve the original v3 experiment identity. Equality receipt is limited to its 43 molecules."
+  },
+  "cleanup": {
+    "status": "complete",
+    "snapshots": [
+      {
+        "removed_entrypoint": "outputs/paper/diagnostics/functional_group_tree_20260913/replay.py",
+        "snapshot": "outputs/paper/diagnostics/functional_group_tree_20260913/execution_snapshot.md",
+        "sha256": "28a9d63ff1ef6aa5fb7376db6bf647f0cc9d38ee08ad6d7faa25a25971f8736e"
+      },
+      {
+        "removed_entrypoint": "outputs/paper/diagnostics/functional_group_tree_20260913/fresh_prior.py",
+        "snapshot": "outputs/paper/diagnostics/functional_group_tree_20260913/execution_snapshot.md",
+        "sha256": "08fd2839719bda6c941b0d8e2a602d19146ac1ae711f0ed32e79809560a709c9"
+      },
+      {
+        "removed_entrypoint": "outputs/paper/analysis/functional_group_trace_audit_20260913/scan.py",
+        "snapshot": "outputs/paper/analysis/functional_group_trace_audit_20260913/execution_snapshot.md",
+        "sha256": "4e8e29e01e6598a5ca6040de5562ed331ee5b27b3f2c16fb224bef9b6a5b7815"
+      }
+    ],
+    "scope": "Retain scripts byte-for-byte inside Markdown snapshots; remove executable diagnostic entrypoints only. Prepared inputs, requests, outputs and source traces preserved.",
+    "temporary_review_cache_removed": true
+  },
+  "code_sha256": {
+    "tools/service/functional_group_tree.py": "542cc8e7166af476c0280b54e3bc72b2161b9a565ebe773eb69b2c966328ccd2",
+    "tools/service/tools/rdkit_properties.py": "c2c45d459f2b0f3bc5da964a1c01daaa55104255bf9f1b834d951eceb26994f3",
+    "tools/service/tools/properties_compare.py": "923defe75d6ca69c393eea6c6b24e7b23b236136452e9c15b93234c8477ee951",
+    "tools/service/registry.py": "40a0d4310181d3e842b9e218531312c877fcb43083cbe7b5d691c5628d073d63",
+    "tools/chembl_tool/common/progressive_assay_reasoning.py": "84aaf80885db0781f167db204309df10ea23ae39799867285f0bdda685bfb79a",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py": "cfeaa4677da1611c0385a4d03831991bde0560455a4dc8cd640bee1fcdd38d98",
+    "tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py": "250a66cde0a6717365b3870377ba632a13bd4e3d0824b92ddf57bb9bfdc050d3"
+  }
+}

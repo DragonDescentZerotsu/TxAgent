@@ -1,0 +1,524 @@
+{
+  "schema_version": "retired_research_code.v1",
+  "status": "complete_verified",
+  "date": "2026-09-14",
+  "source_commit": "80f26e7a623bd8c8daeb9bc9fd2fe6c3c80bb5fa",
+  "authorization": "User explicitly requested deletion of router_oof and rl_lora research lines.",
+  "scope": "Remove packages, dedicated tests, configuration, patches, scripts and obsolete plans from the working tree; historical experiment artifacts and current shared workflows remain intact.",
+  "research_summary": {
+    "router_oof": "Train-only OOF KNN-versus-agent selectors. Stopped after task-local and shared-transfer diagnostics; formal test was not run.",
+    "rl_lora": "Historical GPT-OSS LoRA/GRPO experiments using hosted Tinker and local NeMo. Both training lines were explicitly stopped; deletion does not resume or promote either."
+  },
+  "retained_artifact_roots": [
+    "outputs/paper/router_oof",
+    "outputs/paper/rl_lora_gpt_oss_120b",
+    "/local/tianang/txagent_rl_lora"
+  ],
+  "removed_files": [
+    {
+      "path": "tests/chembl_tool/common/test_router_oof.py",
+      "sha256": "b9bbcf30f4352d56ebe6b8e74d798e0a02838253546546c8169b3c0746822e01",
+      "size_bytes": 27715,
+      "lines": 763
+    },
+    {
+      "path": "tests/chembl_tool/paper_experiments/test_one_pass_rl.py",
+      "sha256": "080b32d59646a110c03f6cd17aa441c9f7d6629c44d22dd9e27924bcdfd32e78",
+      "size_bytes": 11066,
+      "lines": 310
+    },
+    {
+      "path": "tests/chembl_tool/paper_experiments/test_rl_backend_contract.py",
+      "sha256": "c10dfc207be814564dddf982092ea413b9bfd6e5cb4446d4bb88f77f8e2d3b22",
+      "size_bytes": 6339,
+      "lines": 189
+    },
+    {
+      "path": "tests/chembl_tool/paper_experiments/test_rl_lora_reward.py",
+      "sha256": "239c913ea123bd7cd7c3e03d731943d3440c79d74d0128cdcd6adf24d8a7a118",
+      "size_bytes": 4238,
+      "lines": 141
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/ROUTER_OOF_IMPLEMENTATION_PLAN.md",
+      "sha256": "d8b0f06b3196c88e1dc5c6a0471814fd1f64ef27ac82d91534cec43ad57f7155",
+      "size_bytes": 26971,
+      "lines": 399
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/AGENTS.md",
+      "sha256": "dbd9e44c48bcc5e8a9b4673aabb4f732c6f0f0ca7b1b03395c3c0cfcab508751",
+      "size_bytes": 9840,
+      "lines": 119
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/BACKEND_PARITY.md",
+      "sha256": "771a2b6a1c7e5e09bebadde51795ef1c8cb9ec2b6a70affb6203abcdd237543e",
+      "size_bytes": 3850,
+      "lines": 80
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/IMPLEMENTATION_PLAN.md",
+      "sha256": "42b57c9858bb1f0e68a9b0afde9f8b1ba9cc18c6125d6acfd5382f3e54df139e",
+      "size_bytes": 8843,
+      "lines": 166
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/LOCAL_NEMO_RUNBOOK.md",
+      "sha256": "911002bb3542f1579eff7c10da5586ef32c91f0b7ab7f9e2bc9403a2e2cb32b1",
+      "size_bytes": 13357,
+      "lines": 277
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/ONE_PASS_BASE_VALID_RESULTS.md",
+      "sha256": "ae4de68b38b622bd267a723ab9703aa5c5b73be34613ae7a22704abd64a26002",
+      "size_bytes": 4272,
+      "lines": 84
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/ONE_PASS_IMPLEMENTATION_PLAN.md",
+      "sha256": "5f0224fddff564ecbde3aa6494ba8cbe993bea102e677dc24f122021d45c2b75",
+      "size_bytes": 4814,
+      "lines": 93
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/ONE_PASS_REASONING.md",
+      "sha256": "f2829129b9761b8592a3958d67c91b817cd0bb00a16db838db1bda264df27e42",
+      "size_bytes": 4897,
+      "lines": 113
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/README.md",
+      "sha256": "10db305642e6ca438d12ba39fd64d07e9d3bc1d4d2320ddf3a346eb6fa99a3d9",
+      "size_bytes": 4440,
+      "lines": 89
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/REFACTOR_STATUS.md",
+      "sha256": "943331b49327b294aeb74185ba4ea385794d3ff3b9c3dbe2605e0533b46548a3",
+      "size_bytes": 3411,
+      "lines": 60
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/TINKER_EVALUATION.md",
+      "sha256": "59e59723ad70b0f56be91e4e1e1d62b867b58d7efcb834ecde6545bc8eb8bc26",
+      "size_bytes": 21764,
+      "lines": 427
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/VISIBLE_ONE_PASS_VALID_RESULTS.md",
+      "sha256": "f30c3707b2db8672b7a43de4b972505922eb948d31ba1cc5d80a76d6bf7ab006",
+      "size_bytes": 7665,
+      "lines": 148
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/__init__.py",
+      "sha256": "c8fdd56f9cf193d6ffc593c2326eb88d2b3d3e952e79a3f4c8daa2a48b273afe",
+      "size_bytes": 76,
+      "lines": 1
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/audit_one_pass_data.py",
+      "sha256": "48201f7c94aa336c0a22d95ca33e0bb358a2b2493cac1c477de8b37087356dee",
+      "size_bytes": 12128,
+      "lines": 277
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/audit_one_pass_tokens.py",
+      "sha256": "3b44695964035d898df1b89e6d3f610b58328eba10690116089fb2487853c334",
+      "size_bytes": 3255,
+      "lines": 105
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/build_retrieval_batch.py",
+      "sha256": "c7f35c586e0a7a61641dfdd9a3759693d844461e8523a428c7bd6e7b26a980ce",
+      "size_bytes": 4456,
+      "lines": 124
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/README.md",
+      "sha256": "e6b2da4db683b29e5c05a588d9f6e713100c73e01a12192426c586950c6ec971",
+      "size_bytes": 997,
+      "lines": 19
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_120b_lora_feasibility.yaml",
+      "sha256": "4aa9973aa36301110d803ab65ce15a5b1bc244cbca59bcae7be86a02ce1c575d",
+      "size_bytes": 2433,
+      "lines": 95
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_120b_lora_smoke.yaml",
+      "sha256": "9a738009d9e7a18d6ccd0ae1a2e40b624f1fbee9a262e8593f09e0036a0143b8",
+      "size_bytes": 2854,
+      "lines": 101
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio.yaml",
+      "sha256": "0c6a6a8fdc485a8745648fd03f8733d15b8eb5e19fd7209e824e64644f3f7fc9",
+      "size_bytes": 3602,
+      "lines": 123
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio_2step.yaml",
+      "sha256": "8706a239acceb3a4a67e5d248a8921bcd7ec113b44bdcc8de35a210ce21d9dc9",
+      "size_bytes": 530,
+      "lines": 17
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio_full_2step.yaml",
+      "sha256": "ea28e6be40575426362821d8510e7cba7f7054b477a0dcfaf214c32c55cb41ab",
+      "size_bytes": 631,
+      "lines": 22
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/configs/grpo_gpt_oss_20b_one_pass_bio_smoke.yaml",
+      "sha256": "e1cedb93b3f9429d7f403818cb10f5bd1aca8a1a3a26daaa06979446c39a68dc",
+      "size_bytes": 746,
+      "lines": 23
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/convert_gpt_oss_checkpoint.py",
+      "sha256": "8c9986aeec9999c6a02d80840852dad5e2f186571d46593d33560f464a25e024",
+      "size_bytes": 2283,
+      "lines": 62
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/evaluate_tinker_one_pass.py",
+      "sha256": "2a68c6b6961a739c5dc72988f270dc1b9f8af72430cc035e41812b45809a7ec3",
+      "size_bytes": 9006,
+      "lines": 247
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/experiment_contract.py",
+      "sha256": "850755a86bdca788fbb49715d0e686cbe07bb71279703343804db458326b99ba",
+      "size_bytes": 2220,
+      "lines": 69
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/materialize.py",
+      "sha256": "6b82c2d668bedb44769850525dd0e8fc36af5f482cca13432333000c72be72b2",
+      "size_bytes": 6184,
+      "lines": 181
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/materialize_one_pass.py",
+      "sha256": "684bf89586fc67b10cf91e1ad864551b7c30116de9f1a0c12ecdb7d9880f1650",
+      "size_bytes": 4249,
+      "lines": 126
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/materialize_split_one_pass.py",
+      "sha256": "22a6214388fb4869549345ccd8fd4946ce9ae94c79086c6f3adafb4436beb6d1",
+      "size_bytes": 15997,
+      "lines": 406
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/mixed_retrieval.py",
+      "sha256": "075866b7c599175e42fc8f56b989cd4d79900a8bffc8b896e60714fbc6043b0f",
+      "size_bytes": 3821,
+      "lines": 112
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/nemo_adapter.py",
+      "sha256": "753aa4419b6b826fb048d5720564661485a7a8acde53ed0d2c9531aaf1dac960",
+      "size_bytes": 5507,
+      "lines": 149
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/one_pass.py",
+      "sha256": "8df40b91be5c948dda127c6beccfa7281939b6033a22109a22ba8097f8f6f927",
+      "size_bytes": 9013,
+      "lines": 222
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/one_pass_contract.py",
+      "sha256": "cc9da2b01181506b5e5bdd0fc1004d399b54ce71e8759d19f749708f9f397cf1",
+      "size_bytes": 2861,
+      "lines": 88
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/one_pass_reward.py",
+      "sha256": "35b1aaa12976af3ee394433b9c20265c9fb20d1fb5e1cd09f552b141d6a8190c",
+      "size_bytes": 3833,
+      "lines": 98
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/one_pass_runtime.py",
+      "sha256": "0d9b659484558e6b0b9a6806b571caf98f2615fddec53f800350f0f7b3716237",
+      "size_bytes": 5293,
+      "lines": 140
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/patches/megatron_bridge_grouped_expert_lora_export_order.patch",
+      "sha256": "01e84f8007b0f9ae2bf7badb5917e8b66cb1a21ad5c4d6e3cff950d641d4a8f0",
+      "size_bytes": 7174,
+      "lines": 139
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/patches/nemo_rl_grpo_ragged_final_batch.patch",
+      "sha256": "b5cbb4cd53f4aa4a0faaf143e5469289e4ca2fb32a28ce6195b413986c1321be",
+      "size_bytes": 1327,
+      "lines": 33
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/patches/nemo_rl_refit_empty_cache.patch",
+      "sha256": "e884ec5bbd4c3909c725bfa49b0364f0a39bf3262966704a453550c93e18cec5",
+      "size_bytes": 821,
+      "lines": 17
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/patches/nemo_rl_refit_zero_copy_oversized.patch",
+      "sha256": "91474487454729f9a19858c51d4db93b2377d6d288fbdba77cc25aaae00db9d8",
+      "size_bytes": 2224,
+      "lines": 41
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/plot_training_curves.py",
+      "sha256": "e08feb26a2e63716f075bf18c4836ab2eef19f5765c5547d8edf6778b4ec9476",
+      "size_bytes": 6444,
+      "lines": 186
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/probe_reward_variance.py",
+      "sha256": "e19be8bc0786dfd6cfa251f0327ab487273601dd5fa0e4a1df08ba6efea6a1a0",
+      "size_bytes": 3097,
+      "lines": 94
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/reward.py",
+      "sha256": "d1ebfe43c7809036093c30eff29fdf91be3ca1095d698823c44135616cd8a99d",
+      "size_bytes": 2437,
+      "lines": 78
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/run_grpo.py",
+      "sha256": "de02826860066cdc1117cca5eabc68a7456c075f48178386be270b0c54230f3b",
+      "size_bytes": 2294,
+      "lines": 68
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/run_one_pass.py",
+      "sha256": "4af26b550f9fd095dfd6b677b8c45df122401b65401ccaf311546dbc42a1ecea",
+      "size_bytes": 8060,
+      "lines": 227
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/run_tinker.py",
+      "sha256": "c69f7c79c3961c3506ed6cc3844acce6be1b4bcec5d01760cb8d28f96f759d56",
+      "size_bytes": 20116,
+      "lines": 567
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/runtime/deny_cuda12_dlopen.c",
+      "sha256": "f6935f895f99443122607afa34c370c29e02dc701d102a5bfdbf9b356ca8d2e3",
+      "size_bytes": 935,
+      "lines": 28
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/scripts/build_feasibility_contexts.sh",
+      "sha256": "098ae61c2a080c2b03478acbc50b8ffcaadd7c01824c9fda289204f65192a8f6",
+      "size_bytes": 2872,
+      "lines": 79
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/scripts/run_node_smoke.sh",
+      "sha256": "eb42ef14c3247613094ed403849f8b040be674cf38da4c58e495e4bb3f656ef3",
+      "size_bytes": 2987,
+      "lines": 67
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/scripts/sync_node001_to_node002.sh",
+      "sha256": "def10b3728c827d3bc745c6be8efc213c2656718703e5317bf44487d531ffe25",
+      "size_bytes": 1586,
+      "lines": 37
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/select_one_pass_checkpoint.py",
+      "sha256": "24dab79b4fe0275fa5d81f887015c3b5bfc856779e492cd8b51c57f4ca3152f9",
+      "size_bytes": 2702,
+      "lines": 78
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/summarize_one_pass.py",
+      "sha256": "dddf99accf4b141b7d6fefb5d1d10ca7d5129e53e93d2038fd15ffd8fd559d4a",
+      "size_bytes": 8827,
+      "lines": 230
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/training_contract.py",
+      "sha256": "d0e3232b5a4a009d31f5477107dad49ae0ac96f895d432e948eb4c0fe71e630d",
+      "size_bytes": 4748,
+      "lines": 138
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/rl_lora/validate_backend_contract.py",
+      "sha256": "f1f0721bcfbaff660f4d7766447d29041663686378fa17ddf80f836074a82189",
+      "size_bytes": 5622,
+      "lines": 155
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/README.md",
+      "sha256": "17da9bd2a188d6e49ea4cca55d83c483c01ef5a2790e6d532d524664152e0c93",
+      "size_bytes": 563,
+      "lines": 11
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/__init__.py",
+      "sha256": "37499913a173436296a1d7f33636c5e5de3524766264d3e2a68c1b00da08cf53",
+      "size_bytes": 265,
+      "lines": 10
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/__main__.py",
+      "sha256": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+      "size_bytes": 80,
+      "lines": 5
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/agent.py",
+      "sha256": "aa0a77eba39a159851d22129391e65cf30fd0c001d4162dae722d149f52573f3",
+      "size_bytes": 6379,
+      "lines": 170
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/cli.py",
+      "sha256": "562371ba94c279886212f628b5b7f3339d8f2ccd6e0ce02d7fad28e1d77106f4",
+      "size_bytes": 21866,
+      "lines": 607
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/contract.py",
+      "sha256": "ff18a0e0ef17682be65b1b88e2b4974034dde2bdc22331407f6f625d309a8a38",
+      "size_bytes": 3934,
+      "lines": 111
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/features.py",
+      "sha256": "6ffb16f9bf16ea37aee2424cbbc9f4cd55e54b0749597c92b0156cba48f49150",
+      "size_bytes": 14605,
+      "lines": 378
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/folds.py",
+      "sha256": "76c6093b4c7af7806f4dab75b23f07c177b6585d9b97b037e4f867d000384c39",
+      "size_bytes": 11942,
+      "lines": 294
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/indices.py",
+      "sha256": "1a711e73d5dd44c6365a9c89b23ed8cd7bc26dcf3f4fabe5e3d8c5b322a7d419",
+      "size_bytes": 7910,
+      "lines": 205
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/io.py",
+      "sha256": "372aa5dcbfe36ac911d977f8d54345b155dabe0adbf9752e1aa670e63e63b467",
+      "size_bytes": 601,
+      "lines": 24
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/knn.py",
+      "sha256": "cb5d45dbbe9505048bbdb17480f1d09a1cb9b104641356e177d01f71b682c2eb",
+      "size_bytes": 6898,
+      "lines": 182
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_contract.py",
+      "sha256": "7dbde5666e4ac16d7b1f2e94f87ffad9fe8a4afdbfe578cc402035c2433cb5ad",
+      "size_bytes": 2231,
+      "lines": 66
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_features.py",
+      "sha256": "32943ddd3c1122dc75ea556ae91b50031ba1fff759b77f1301300ad3012c9a0e",
+      "size_bytes": 14752,
+      "lines": 344
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_train.py",
+      "sha256": "587cc5707ae42b0050d93c9c3692cd762b099f3d0411e920a85208288ef25d7c",
+      "size_bytes": 19268,
+      "lines": 433
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_v31_common.py",
+      "sha256": "5a95ca5f2eb80aa3df5743ac1038fd7f285ce63a03995f350736a26d8e7b0f07",
+      "size_bytes": 2250,
+      "lines": 67
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_v31_learning_curve.py",
+      "sha256": "3a4ef95d88863a631615b2355c93cb6375ea637768bac0edc3b462d1e0c7dbdb",
+      "size_bytes": 17481,
+      "lines": 475
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_v31_train.py",
+      "sha256": "5f88895af836ce4972aa7d02b3422ed9c1490de90719d5940f913912d829e409",
+      "size_bytes": 26152,
+      "lines": 687
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_v31_transfer.py",
+      "sha256": "4e0ba5dc27f207b9895b1e227d41b5f294890b565d861bd6b0cee9fb0fe22576",
+      "size_bytes": 18700,
+      "lines": 484
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_v31_valid.py",
+      "sha256": "cb14a6f52d9f2ba24aac8a4f529a299fbe72fefca8649fc41dad836bc4222923",
+      "size_bytes": 9629,
+      "lines": 243
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/post_valid.py",
+      "sha256": "72afb363b17fe8220da162353a1bcc30c6ef78efce65efd6a71c00c4bbb0dc17",
+      "size_bytes": 6567,
+      "lines": 148
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/postprocess_watch.py",
+      "sha256": "fbfe4558bcbc64a0dcafc4bd7b66cdca8061ce9941835840d897f47bee324b99",
+      "size_bytes": 4239,
+      "lines": 129
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/progress.py",
+      "sha256": "77826278306db3a374706150396b20ac47b0af6eae52a06f03577e47d35c28c7",
+      "size_bytes": 5479,
+      "lines": 153
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/train.py",
+      "sha256": "f5ea6668a09997897bf93843ab99adbf2ce81b9a0bb8ab95267349af8865b835",
+      "size_bytes": 35345,
+      "lines": 884
+    },
+    {
+      "path": "tools/chembl_tool/paper_experiments/router_oof/valid.py",
+      "sha256": "7496463aba70780126b14a9baceb4770d8872042808b897b4f20afd20f4707cf",
+      "size_bytes": 17802,
+      "lines": 446
+    }
+  ],
+  "n_removed_tracked_files": 81,
+  "n_removed_python_files": 53,
+  "removed_text_lines": 15083,
+  "verification_before_removal": {
+    "active_branch_processes": 0,
+    "noncache_untracked_files_in_packages": 0,
+    "uncommitted_changes_in_removed_files": false,
+    "external_code_references": "Four dedicated test modules only; no maintained runtime imports."
+  },
+  "verification_after_removal": {
+    "removed_paths_absent": true,
+    "all_removed_files_recoverable_from_source_commit": true,
+    "remaining_source_test_document_references_to_removed_entrypoints": 0,
+    "maintained_workflow_regression_tests_passed": 117,
+    "remaining_tests_collected_without_import_errors": 2079,
+    "diff_check_passed": true,
+    "historical_results_and_checkpoints_modified": false,
+    "active_full_flat_configuration_modified": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "current_starling_retrieval.v1",
+  "tasks": {
+    "skin_reaction": {
+      "packaged_stage03": {
+        "ok": true
+      },
+      "local_stage03_inventory": {
+        "ok": true
+      },
+      "canonical_records": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/skin_reaction/03_records/records.parquet",
+        "expected_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+        "actual_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+        "ok": true
+      },
+      "overlay_records": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v6/skin_reaction/records.parquet",
+        "expected_sha256": "c6569b5154f410a1a19d7d1fa660c52f70a58a1e064f02c437f6e960361221ce",
+        "actual_sha256": "c6569b5154f410a1a19d7d1fa660c52f70a58a1e064f02c437f6e960361221ce",
+        "ok": true
+      },
+      "catalog": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v6/family_assays.jsonl",
+        "expected_sha256": "f4974900c43ec9e3576db556cebd995914dad6191e2c56cab37aa55fc440bae6",
+        "actual_sha256": "f4974900c43ec9e3576db556cebd995914dad6191e2c56cab37aa55fc440bae6",
+        "ok": true
+      },
+      "scaffold_index": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
+        "expected_sha256": "247d22d4bbaa0ca5355ec0408b31bb508d46a065b4ee6c6c9d3bc3ed464bc0dc",
+        "actual_sha256": "247d22d4bbaa0ca5355ec0408b31bb508d46a065b4ee6c6c9d3bc3ed464bc0dc",
+        "ok": true
+      },
+      "scaffold_evidence": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v6/assay_molecule_evidence.jsonl",
+        "expected_sha256": "c92c868fde566c92cff957d9173ed5f3557a1226d748b992aa28316c03f80abd",
+        "actual_sha256": "c92c868fde566c92cff957d9173ed5f3557a1226d748b992aa28316c03f80abd",
+        "ok": true
+      },
+      "random_index": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
+        "expected_sha256": "fa15c9043d06257f51e3641c1e1ed64a05e9b24bfe0a478ee29fa3d4febe03ac",
+        "actual_sha256": "fa15c9043d06257f51e3641c1e1ed64a05e9b24bfe0a478ee29fa3d4febe03ac",
+        "ok": true
+      },
+      "random_evidence": {
+        "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v6/assay_molecule_evidence.jsonl",
+        "expected_sha256": "6c289b134096dacad366b48e89d907ce8c419cd557ae6ee93c41ecbcf707b85d",
+        "actual_sha256": "6c289b134096dacad366b48e89d907ce8c419cd557ae6ee93c41ecbcf707b85d",
+        "ok": true
+      }
+    }
+  },
+  "ok": true,
+  "failures": []
+}

@@ -1,0 +1,141 @@
+{
+  "status": "passed",
+  "task": "dili",
+  "scheme": "scaffold",
+  "identity_contract": "new_task_tautomer_identity.v2",
+  "manifest_sha256": "d3c09d09528e172aba0d14987ec9dbab90af26984e3f00956d9be594f9281017",
+  "artifacts": {
+    "assay_neighbor_index.pkl": "14f72639ad51d35be3acf641b223ed7fedaa1ea8d0671672efde789065ec26ea",
+    "assay_molecule_evidence.jsonl": "7bc55b055c170a05aaf7f8d2e4c01d3c5d69ee3ba97b612309787cd9bb6d0ebb"
+  },
+  "molecule_identities_checked_against_pinned_unique_cache": 31824,
+  "exact_specimen_hold_source_records_excluded": 48930,
+  "all_indexed_groups_checked": 918869,
+  "cards_by_level": {
+    "3": 127952,
+    "5": 262438,
+    "7": 381731,
+    "1": 13627,
+    "2": 103946,
+    "6": 186056,
+    "4": 72173
+  },
+  "heldout_leakage_groups": 501,
+  "excluded_direct_source_records": 24715,
+  "retained_direct_records_by_level": {
+    "1": 83721,
+    "2": 166498
+  },
+  "heldout_prefilter_levels": [
+    1
+  ],
+  "heldout_l1_cards": 0,
+  "heldout_l2_cards": 11637,
+  "heldout_l2_source_records_retained": 22662,
+  "query_smoke": [
+    {
+      "molecule_identity_key": "ASOADIZOVZTJSR-UHFFFAOYSA-N",
+      "Y": 0,
+      "heldout_l2_query_identity_decisions": {
+        "allowed_other_heldout_analog": 485,
+        "excluded": 1
+      },
+      "levels": [
+        {
+          "level": 1,
+          "neighbors": 2,
+          "cumulative_cards": 28,
+          "active_cards": 8
+        },
+        {
+          "level": 2,
+          "neighbors": 3,
+          "cumulative_cards": 125,
+          "active_cards": 13
+        },
+        {
+          "level": 3,
+          "neighbors": 3,
+          "cumulative_cards": 176,
+          "active_cards": 15
+        },
+        {
+          "level": 4,
+          "neighbors": 3,
+          "cumulative_cards": 195,
+          "active_cards": 17
+        },
+        {
+          "level": 5,
+          "neighbors": 3,
+          "cumulative_cards": 344,
+          "active_cards": 19
+        },
+        {
+          "level": 6,
+          "neighbors": 3,
+          "cumulative_cards": 361,
+          "active_cards": 21
+        },
+        {
+          "level": 7,
+          "neighbors": 3,
+          "cumulative_cards": 396,
+          "active_cards": 23
+        }
+      ]
+    },
+    {
+      "molecule_identity_key": "AAKJLRGGTJKAMG-UHFFFAOYSA-N",
+      "Y": 1,
+      "heldout_l2_query_identity_decisions": {
+        "allowed_other_heldout_analog": 485,
+        "excluded": 1
+      },
+      "levels": [
+        {
+          "level": 1,
+          "neighbors": 5,
+          "cumulative_cards": 32,
+          "active_cards": 14
+        },
+        {
+          "level": 2,
+          "neighbors": 7,
+          "cumulative_cards": 109,
+          "active_cards": 23
+        },
+        {
+          "level": 3,
+          "neighbors": 17,
+          "cumulative_cards": 204,
+          "active_cards": 32
+        },
+        {
+          "level": 4,
+          "neighbors": 18,
+          "cumulative_cards": 221,
+          "active_cards": 39
+        },
+        {
+          "level": 5,
+          "neighbors": 22,
+          "cumulative_cards": 404,
+          "active_cards": 51
+        },
+        {
+          "level": 6,
+          "neighbors": 23,
+          "cumulative_cards": 438,
+          "active_cards": 57
+        },
+        {
+          "level": 7,
+          "neighbors": 23,
+          "cumulative_cards": 537,
+          "active_cards": 63
+        }
+      ]
+    }
+  ]
+}

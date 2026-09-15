@@ -56,12 +56,20 @@ DILI 当前为 Starling-only gold_v4，scaffold 与 random 的 train/valid/test 
 Carcinogens 当前同样为 Starling-only gold_v4，五个条件为 rodent/human/dog/monkey/rabbit；
 scaffold 与 random 的 train/valid/test 均为 3754/469/469，合计 3578 正类、1114 负类。
 它复用已完成的全 base 方向审阅，L1-only heldout 预排除、L2 保留；两任务的模型与五种基线结果以 registry 为准。
-本轮清理已冻结为 `data/starling_data/<task>/retrieval_final/`：DILI 采用 v5 源，Carcinogens 固化 R18 修复。
+本轮清理已冻结为 `data/starling_data/<task>/retrieval_final/`：DILI 采用 v5 源并合入
+`trace_review_20260913` 的 13 条源记录修复，Carcinogens 固化 R18 修复。此次 DILI replay 使用
+`progressive_evidence_revision.v5`；旧 retrieval-review v5 的版本号不代表新版 prompt。
 共享恢复包、catalog、两种 split 索引和 Parquet 表使用该最终源；旧大型暂存副本退出活跃路径。
 旧 DILI/Carcinogens gold_v3 的 Flash progressive/full-flat 和五种基线仅作历史参考。DILI scaffold valid/test 于 2026-09-08
 按用户要求交换；后续 gold_v4 重建仍显式使用 `swap_evaluation_splits=True`，其 402-row
 valid/test 是新 cohort，不能与旧 gold_v3 的 103-row cohort 混用。两套 eval 均已查看。数据、source-build 与共享恢复入口见
 `tools/chembl_tool/common/starling/NEW_TASK_SOURCE_DATA.md`；结果以 registry 为准。
+
+2026-09-08 按用户要求正式交换 Ames scaffold valid/test 名称：新 test 是原 valid 的 274 条 rows，
+新 valid 是原 test；train、random、gold 和 heldout identity union 不变。新 test 已用于先前验证与分析，
+不能描述成从未查看过的测试集。构建器在分配后显式交换 eval 名称，逐文件映射与索引等价证明见
+`data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json`；历史实验目录不改名，
+新的 Pro/Flash test 结果入口以 registry 的 `ames_scaffold_test_swapped*` suites 为准。
 
 Ames 是经过名称—结构核验和有限语义审查的 source subset：保留 2,474 条 molecule-condition rows、1,383 个 parents、73 个
 条件组。直接标签要求实验性细菌回复突变、明确菌株组合与活化条件及 PubChem name-parent 精确匹配；
@@ -92,6 +100,14 @@ source_review_v6 接续 v5 的 family/level 审核，新增逐条阅读 194 条�
 误触发只可由逐条审核豁免；未审核记录仍通过独立 broad direct guard。不得用 group 手改绕过该检查。
 本轮不核验原始文献、不改变 gold votes/splits；八条 v5 gold recall 候选仍非新增 L1。
 
+2026-09-13 trace follow-up 在既有审核 ledger 中追加两条改层：`ames_v2:425939` L2→L4、
+`ames_base:186648` L2→L3；另补齐 cinnoline `ames_base:80868` 的 quinoline 结构规律例外。
+PMID7022455 原文支持旧 quinoline TA98/+S9 阳性，保留跨研究冲突及 gold。3333 个 study-unit labels
+与六个 split 的 rowsets 不变；scaffold 输入字节不变，random 行序改变。源、双 split 索引和共享
+Parquet 已重建；验证及复用边界见 `data/starling_data/ames/trace_review_20260913/verification.json`。
+Bioavailability/Skin 按用户选择恢复的旧 prompt、旧工具 context、旧 prior 配置使用独立冻结 runtime，
+入口登记在 `replicate_suites.bio_skin_legacy_configuration_20260913`，不改写运行中的 v5/DILI 配置。
+
 random split 使用相同 molecule-condition rows/labels，按 parent 整组做确定性、quality-stratified 80/10/10
 分配；同一 parent 不会跨 split，每个 condition 在三路都出现，但 scaffold 允许跨 split。BBB、
 Bioavailability、Skin 和 Ames 先最小化 valid+test 的 singleton-vote rows，再平衡 valid/test singleton，最后才平衡
@@ -104,7 +120,7 @@ Bemis-Murcko scaffold overlap 为 0。
 
 BBB 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同；Skin gold vote 仍排除 prediction-only、
 photo/light-dependent、irritation-only、non-contact severe cutaneous reaction、integrated/defined-approach 和
-mechanistic records；retrieval source-purity v5 对 L1/L2/L3 共用同一个 strict ordinary-sensitization scope gate，
+mechanistic records；retrieval source-purity v6 对 L1/L2/L3 共用同一个 strict ordinary-sensitization scope gate，
 因此 photo/light、纯 irritation、SJS/TEN/DRESS/AGEP/Sweet syndrome 等 record 不可被任何 level 检索；L1 之外仍
 保留 target-aligned prediction/defined-approach/unspecified-mechanism evidence。2026-09-04 最终可复现性检查又将
 37 条 MDAM final-outcome nonvoters 补入 L2；gold/split 不变，但 scaffold/random indices 均改变。matched baselines
@@ -189,16 +205,22 @@ min-max（默认），或用 `--replicate-interval sd` 展示均值 ±1 样本 S
 task/configuration cell 必须明确留空，不能用历史结果补齐。
 跨模型 level 图显式使用 `--allow-model-comparison`，严格匹配证据/工具并分开 None；同一模型的
 matched full-flat/progressive 仍须匹配完整 prepared inputs。混合重复数使用 `sd_if_repeated`，单次不估计 SD。
-Router 与 RL 属于隔离的 archived/stopped research，不能由本节当作默认入口继续启动。其它已经删除的
-no-go 方法开发只从 Git history 或冻结 receipt 读取。
+Router 与 RL 两条停止分支的代码、专属测试和运行文档已按用户要求删除；历史定位见
+`tools/chembl_tool/paper_experiments/receipts/retired_research_code_20260914.json`。
+已删除的 no-go 方法只从 Git history 或冻结 receipt 读取，不作为当前入口。
 
 当前 BBB scaffold progressive v6 与输入/index hash 匹配；BBB random v6 index 已构建但 predictions 仍为
-v5 历史参考、需要 replay。Skin source-purity v5 已重建：L1 是 actual voters；L2 是 nonvoter measured outcomes
+v5 历史参考、需要 replay。Skin source-purity v7 已重建：L1 是 actual voters；L2 是 nonvoter measured outcomes
 及 predicted/defined-approach overall classifications；L3 是 experimental/predicted AOP mechanisms，包括有实质
 内容但无法唯一归入某个 KE 的 records；三层都先通过 strict target-scope gate。最新 L1/L2/L3 可检索 records
-为 42,435/12,522/12,010。matched MiniMol/Morgan baselines 已重跑且 split 未再变化；scaffold-valid 2/1、4/2、
+为 42,435/12,524/12,005。matched MiniMol/Morgan baselines 已重跑且 split 未再变化；scaffold-valid 2/1、4/2、
 8/4 的上一轮完整结果在 MDAM repair 后需要小范围 targeted replay，当前不能作为最终 current score；random
 predictions 仍需完整 replay。
+Skin v7 采用原文重绑后的独立源快照：7 条 DO3/INF/M4/M6/M8/M9 修复，INF 重复项由既有
+正确记录代表，M16/M17 两条仍待可靠结构核验；保留 3 条整体结果 L3→L2。Gold/split 不变，
+旧 v5/v6 索引保留。完整原文与重建入口见 `data/starling_data/skin_reaction/trace_review_20260914/README.md`。
+相对已完成的 v6 隔离实验，仅 test #39、valid #222 的 L3 新增变化；结果以
+`replicate_suites.skin_identity_rebinding_replay_20260914` 为准，不把准备状态当作完成。
 Bioavailability 在 2026-09-01
 删除六条错误 nitrendipine identity source records 后 scaffold/random retrieval index 均已变化。scaffold-valid
 已逐 query、逐 level 审计 262 条 rows，模型可见 selected retrieval surface 变化为 0，并由
@@ -311,10 +333,10 @@ tools/service/tools/base.py
   BaseTool 抽象。
 
 tools/service/tools/rdkit_properties.py
-  molecule_properties v1。计算 RDKit descriptors、MolGpKa pKa/logD、AccFG 顶层 functional groups。
+  molecule_properties v1。计算 RDKit descriptors、MolGpKa pKa/logD、AccFG functional-group tree（隐藏 atom indices）。
 
 tools/service/tools/properties_compare.py
-  properties_compare v1。比较两个分子的 molecule_properties 输出，functional groups 除外。
+  properties_compare v1。比较两个分子的数值属性，另返回 reference functional-group tree；不计算官能团差值。
 
 tools/service/tools/mmp_structure_compare.py
   mmp_structure_compare v1。只比较结构：Morgan Tanimoto、similarity bucket、mmpdb matched-pair transformation、MCS。
@@ -2251,7 +2273,7 @@ POST /tools/{tool_name}
 1. 标准化 query SMILES，返回 canonical_smiles 和 standard_inchi_key。
 2. 计算易解释 RDKit descriptors。
 3. 通过 MolGpKa 计算 acidic/basic pKa 和 logD。
-4. 通过 AccFG 识别最顶层 functional groups。
+4. 通过 AccFG 识别官能团和子结构包含层级，显示无 atom indices 的 functional-group tree。
 5. 生成自然语言 output.text，作为 LLM 唯一直接消费的工具文本。
 ```
 
@@ -2260,8 +2282,9 @@ POST /tools/{tool_name}
 ```text
 output.text
 output.query
-output.properties
+output.features
 output.functional_groups
+output.functional_group_tree
 output.raw_features
 ```
 
@@ -2274,12 +2297,10 @@ logP
 TPSA
 HBD/HBA
 rotatable bonds
-formal charge
 heavy atom count
 aromatic rings
 fraction Csp3
 QED
-rule flags
 ```
 
 ## Tool: properties_compare v1
@@ -2290,8 +2311,7 @@ rule flags
 {
   "query_smiles": "CCN(CC)CC",
   "reference_smiles": "CCO",
-  "query_label": "query",
-  "reference_label": "reference"
+  "logd_ph": 7.4
 }
 ```
 
@@ -2310,10 +2330,12 @@ rule flags
 output.text
 output.query
 output.reference
-output.comparisons
+output.feature_comparisons
+output.reference_functional_group_tree
 ```
 
-functional groups 不在此工具中比较。FG 信息只由 `molecule_properties` 单独返回。
+官能团不计算数值差值；`properties_compare` 另返回 `reference_functional_group_tree`，并在 `output.text` 中显示。
+prior 读取 query 的完整属性工具文本（含树段落）；progressive/full-flat 将 query 和 neighbor 的树拆成独立字段。
 
 ## Tool: mmp_structure_compare v1
 
@@ -2323,8 +2345,7 @@ functional groups 不在此工具中比较。FG 信息只由 `molecule_propertie
 {
   "query_smiles": "CCN(CC)CC",
   "reference_smiles": "CCO",
-  "query_label": "query",
-  "reference_label": "reference"
+  "logd_ph": 7.4
 }
 ```
 

@@ -1,0 +1,14 @@
+{
+  "pid": 2461305,
+  "command": [
+    "/data1/tianang/anaconda3/envs/vllm/bin/python",
+    "-u",
+    "-m",
+    "tools.chembl_tool.tasks.ames.build_dataset",
+    "--phase",
+    "refresh-retrieval",
+    "--workers",
+    "128"
+  ],
+  "started_at": "2026-09-08T04:49:17.359497+00:00"
+}

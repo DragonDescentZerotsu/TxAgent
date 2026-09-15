@@ -1,0 +1,258 @@
+{
+  "version": "skin_source_review.v1",
+  "scope": "retrieval source only; no gold/split edits; exclude wrong identity bindings without inventing replacement structures",
+  "decisions": [
+    {
+      "source_record_key": "sensitization_aop:18020",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "DO3_azo_dye_text_bound_to_anthraquinone_structure",
+      "expected": {
+        "pmid": "18844695",
+        "extraction_id": "ext_22",
+        "canonical_smiles": "Cc1ccc2c(c1N)C(=O)c1ccccc1C2=O",
+        "support_text": "In a subset of five TCC from PPD-sensitized persons, reactions were found for DO3 (Disperse Orange) in three of five TCC, indicating T-cell activation.",
+        "canonical_assay_context": "t-cell proliferation assay",
+        "canonical_endpoint_name": "t-cell proliferation stimulation index",
+        "canonical_measurement_text": "3",
+        "qualifying_conditions": null,
+        "experimental_conditions": "TCC from PPD-sensitized persons, concentration 1-50 \u00b5M, 2 days, [3H]thymidine incorporation",
+        "extra_details": "3 out of 5 T-cell clones responded"
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/18844695.pdf",
+      "document_sha256": "0062c00cf7679041952a79df944650a5d490fe32905efa056ca0157d2b25cbb3",
+      "locator": "pages 205-208, Figure 1 and DO3 results; DO3 is Disperse Orange 3"
+    },
+    {
+      "source_record_key": "sensitization_aop:18027",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "DO3_azo_dye_text_bound_to_anthraquinone_structure",
+      "expected": {
+        "pmid": "18844695",
+        "extraction_id": "ext_29",
+        "canonical_smiles": "Cc1ccc2c(c1N)C(=O)c1ccccc1C2=O",
+        "support_text": "On the polyclonal level, an 85% correlation rate between positive responses to PPD and DO3 (Disperse Orange) was observed, indicating cross-reactive T-cell activation.",
+        "canonical_assay_context": "t-cell proliferation assay",
+        "canonical_endpoint_name": "clinical_sensitization_incidence",
+        "canonical_measurement_text": "85",
+        "qualifying_conditions": null,
+        "experimental_conditions": "PBMC from PPD-sensitized persons, polyclonal level",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/18844695.pdf",
+      "document_sha256": "0062c00cf7679041952a79df944650a5d490fe32905efa056ca0157d2b25cbb3",
+      "locator": "pages 205-208, Figure 1 and DO3 results; DO3 is Disperse Orange 3"
+    },
+    {
+      "source_record_key": "sensitization_aop:20616",
+      "action": "move",
+      "new_group": "Observed.nonvoter_skin_outcome",
+      "reason": "overall_in_vivo_and_in_vitro_sensitization_outcome_not_AOP_only",
+      "expected": {
+        "pmid": "35652689",
+        "extraction_id": "ext_2",
+        "canonical_smiles": "CCn1cc[n+](C)c1.[Cl-]",
+        "support_text": "Emim-Cl was negative in all in vivo, in chemico (DPRA), and in vitro (KeratinoSens, h-CLAT) assessments for skin sensitization.",
+        "canonical_assay_context": "dpra",
+        "canonical_endpoint_name": "peptide reactivity",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": null,
+        "extra_details": "Emim-Cl was negative in all assessments including DPRA."
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/ntp_tox103.pdf",
+      "document_sha256": "a4ba5b9dacc8161bb7f9a3d20b7ede6f9b608db4e3858d44714db626110d697c",
+      "locator": "printed page 6, paragraph beginning irritancy assay; reference 69"
+    },
+    {
+      "source_record_key": "sensitization_aop:20617",
+      "action": "move",
+      "new_group": "Observed.nonvoter_skin_outcome",
+      "reason": "overall_in_vivo_and_in_vitro_sensitization_outcome_not_AOP_only",
+      "expected": {
+        "pmid": "35652689",
+        "extraction_id": "ext_3",
+        "canonical_smiles": "CCn1cc[n+](C)c1.[Cl-]",
+        "support_text": "Emim-Cl was negative in all in vivo, in chemico, and in vitro assessments including KeratinoSens.",
+        "canonical_assay_context": "keratinosens",
+        "canonical_endpoint_name": "are-nrf2 activation",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": null,
+        "extra_details": "Emim-Cl was negative in KeratinoSens assay."
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/ntp_tox103.pdf",
+      "document_sha256": "a4ba5b9dacc8161bb7f9a3d20b7ede6f9b608db4e3858d44714db626110d697c",
+      "locator": "printed page 6, paragraph beginning irritancy assay; reference 69"
+    },
+    {
+      "source_record_key": "sensitization_aop:20618",
+      "action": "move",
+      "new_group": "Observed.nonvoter_skin_outcome",
+      "reason": "overall_in_vivo_and_in_vitro_sensitization_outcome_not_AOP_only",
+      "expected": {
+        "pmid": "35652689",
+        "extraction_id": "ext_4",
+        "canonical_smiles": "CCn1cc[n+](C)c1.[Cl-]",
+        "support_text": "Emim-Cl was negative in all in vivo, in chemico, and in vitro assessments including h-CLAT.",
+        "canonical_assay_context": "h-clat",
+        "canonical_endpoint_name": "cd54/cd86",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": null,
+        "extra_details": "Emim-Cl was negative in h-CLAT."
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/ntp_tox103.pdf",
+      "document_sha256": "a4ba5b9dacc8161bb7f9a3d20b7ede6f9b608db4e3858d44714db626110d697c",
+      "locator": "printed page 6, paragraph beginning irritancy assay; reference 69"
+    },
+    {
+      "source_record_key": "sensitization_aop:38402",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_2",
+        "canonical_smiles": "C/C=C/C[C@@H](C)[C@@H](O)[C@H]1C(=O)N[C@@H](CC)C(=O)N(C)CC(=O)N(C)[C@@H](CC(C)C)C(=O)N[C@@H](C(C)C)C(=O)N(C)[C@@H](CC(C)(C)O)C(=O)N[C@@H](C)C(=O)N[C@H](C)C(=O)N(C)[C@@H](CC(C)(C)O)C(=O)N(C)[C@@H](CC(C)C)C(=O)N(C)[C@@H](C(C)C)C(=O)N1C",
+        "support_text": "M16 appeared at 53.9 min and was identified as a GSH conjugate. CID of the M16 ion at m/z 837 produced fragment ions at m/z 748 and m/z 708. The product ion at m/z 708 resulted from loss of the pyroglutamic acid moiety (129 Da), consistent with GSH conjugate formation. LC-MS/MS screening for GSH conjugates used constant neutral loss scan of ions that lost 129 Da.",
+        "canonical_assay_context": "gsh conjugation assay",
+        "canonical_endpoint_name": "gsh conjugation",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": "Formed from INF metabolites via 1,4-benzoquinone intermediate; requires metabolic bioactivation",
+        "experimental_conditions": "In vitro metabolism using rat or human liver microsomes with GSH; LC-MS/MS with positive ion mode, constant neutral loss of 129 Da; M16 retention time 53.9 min; parent ion m/z 837, fragment ions at m/z 748 and m/z 708",
+        "extra_details": "The fragment at m/z 708 results from loss of pyroglutamic acid (129 Da), confirming GSH conjugation."
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38403",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_3",
+        "canonical_smiles": "CC[C@@H]1NC(=O)[C@H]([C@H](O)[C@H](C)C/C=C/CO)N(C)C(=O)[C@H](C(C)C)N(C)C(=O)[C@H](CC(C)C)N(C)C(=O)[C@H](CC(C)C)N(C)C(=O)[C@@H](C)NC(=O)[C@H](C)NC(=O)[C@H](CC(C)C)N(C)C(=O)[C@H](C(C)C)NC(=O)[C@H](CC(C)C)N(C)C(=O)CN(C)C1=O",
+        "support_text": "M17 appeared at 52.7 min and was identified as a GSH conjugate. CID of the M17 ion at m/z 805 produced fragment ions at m/z 676 and m/z 308. The product ion at m/z 676 resulted from loss of the pyroglutamic acid moiety (129 Da), consistent with GSH conjugate formation. LC-MS/MS screening for GSH conjugates used constant neutral loss scan of ions that lost 129 Da.",
+        "canonical_assay_context": "gsh conjugation assay",
+        "canonical_endpoint_name": "gsh conjugation",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": "Formed from INF metabolites via 1,4-benzoquinone intermediate; requires metabolic bioactivation",
+        "experimental_conditions": "In vitro metabolism using rat or human liver microsomes with GSH; LC-MS/MS with positive ion mode, constant neutral loss of 129 Da; M17 retention time 52.7 min; parent ion m/z 805, fragment ions at m/z 676 and m/z 308",
+        "extra_details": "The fragment at m/z 676 results from loss of pyroglutamic acid (129 Da), confirming GSH conjugation."
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38405",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_5",
+        "canonical_smiles": "O=P1(NCCCl)OCCCN1CCCl",
+        "support_text": "In the DEREK in silico toxicity table, ifosfamide (INF) is assigned 'Plausible' for skin sensitization, with the structural alert 'ortho or para Amino- or hydroxy-aniline'.",
+        "canonical_assay_context": "derek",
+        "canonical_endpoint_name": "skin sensitization",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": "In silico prediction using DEREK software; structural alert: ortho or para amino- or hydroxy-aniline",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38407",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_7",
+        "canonical_smiles": "C[C@H](CC[C@@H](O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)C(C)(C)O)[C@H]1CC[C@@]2(C)[C@@H]3CC=C4[C@@H](CC[C@H](O[C@@H]5O[C@H](CO[C@@H]6O[C@H](CO)[C@@H](O)[C@H](O)[C@H]6O)[C@@H](O)[C@H](O)[C@H]5O)C4(C)C)[C@]3(C)[C@H](O)C[C@]12C",
+        "support_text": "In the DEREK in silico toxicity table, metabolite M4 is assigned 'Plausible' for skin sensitization, with the structural alert 'ortho or para Amino- or hydroxy-aniline'.",
+        "canonical_assay_context": "derek",
+        "canonical_endpoint_name": "skin sensitization",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": "In silico prediction using DEREK software; structural alert: ortho or para amino- or hydroxy-aniline",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38408",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_8",
+        "canonical_smiles": "C[C@H](CC[C@@H](O[C@@H]1O[C@H](CO[C@@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)[C@@H](O)[C@H](O)[C@H]1O[C@@H]1O[C@H](CO)[C@@H](O)[C@H](O)[C@H]1O)C(C)(C)O)[C@H]1CC[C@@]2(C)[C@@H]3CC=C4[C@@H](CC[C@H](O[C@@H]5O[C@H](CO[C@@H]6O[C@H](CO)[C@@H](O)[C@H](O)[C@H]6O)[C@@H](O)[C@H](O)[C@H]5O[C@@H]5O[C@H](CO)[C@@H](O)[C@H](O)[C@H]5O)C4(C)C)[C@]3(C)[C@H](O)C[C@]12C",
+        "support_text": "In the DEREK in silico toxicity table, metabolite M6 is assigned 'Plausible' for skin sensitization, with the structural alert 'ortho or para Amino- or hydroxy-aniline'.",
+        "canonical_assay_context": "derek",
+        "canonical_endpoint_name": "skin sensitization",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": "In silico prediction using DEREK software; structural alert: ortho or para amino- or hydroxy-aniline",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38409",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_9",
+        "canonical_smiles": "CC[C@@H]1NC(=O)[C@H]([C@H](O)[C@H](C)C/C=C/CO)N(C)C(=O)[C@H](C(C)C)N(C)C(=O)[C@H](CC(C)C)N(C)C(=O)[C@H](CC(C)(C)O)N(C)C(=O)[C@@H](C)NC(=O)[C@H](C)NC(=O)[C@H](CC(C)C)N(C)C(=O)[C@H](C(C)C)NC(=O)[C@H](CC(C)C)N(C)C(=O)CN(C)C1=O",
+        "support_text": "In the DEREK in silico toxicity table, metabolite M8 is assigned 'Plausible' for skin sensitization, with the structural alert 'ortho or para Amino- or hydroxy-aniline'.",
+        "canonical_assay_context": "derek",
+        "canonical_endpoint_name": "skin sensitization",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": "In silico prediction using DEREK software; structural alert: ortho or para amino- or hydroxy-aniline",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    },
+    {
+      "source_record_key": "sensitization_aop:38410",
+      "action": "exclude",
+      "new_group": "Excluded.skin_sensitization_source_purity",
+      "reason": "infigratinib_INF_or_metabolite_text_bound_to_unrelated_structure",
+      "expected": {
+        "pmid": "35498820",
+        "extraction_id": "ext_10",
+        "canonical_smiles": "C/C=C/C[C@@H](C)[C@@H](O)[C@H]1C(=O)N[C@@H](CC)C(=O)N(C)CC(=O)N[C@@H](CC(C)C)C(=O)N[C@@H](C(C)C)C(=O)N(C)[C@@H](CC(C)(C)O)C(=O)N[C@@H](C)C(=O)N[C@H](C)C(=O)N(C)[C@@H](CC(C)(C)O)C(=O)N(C)[C@@H](CC(C)C)C(=O)N(C)[C@@H](C(C)C)C(=O)N1C",
+        "support_text": "In the DEREK in silico toxicity table, metabolite M9 is assigned 'Plausible' for skin sensitization, with the structural alert 'ortho or para Amino- or hydroxy-aniline'.",
+        "canonical_assay_context": "derek",
+        "canonical_endpoint_name": "skin sensitization",
+        "canonical_measurement_text": null,
+        "qualifying_conditions": null,
+        "experimental_conditions": "In silico prediction using DEREK software; structural alert: ortho or para amino- or hydroxy-aniline",
+        "extra_details": null
+      },
+      "source_document": "data/starling_data/skin_reaction/trace_review_20260914/documents/35498820.xml",
+      "document_sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "locator": "Introduction; Tables 2, 3, 6; sections 3.5.2 and Figures 9-10"
+    }
+  ]
+}

@@ -50,6 +50,11 @@ reproducibility rebuild 将 37 条 MDAM nonvoter outcomes 补入 L2，gold/split
 仍为 current；上一轮 scaffold-valid 2/1、4/2、8/4 分别有 1/2/3 个 queries 等待 targeted replay，random agent
 predictions 则仍需完整 replay。
 
+2026-09-14 当前 retrieval 是 source-purity v7：按原研究重绑 7 条 DO3/INF/M4/M6/M8/M9
+记录；INF 重复项由既有 38411 代表，M16/M17 两条仍待可靠结构核验。保留 3 条 EMIM 整体结果
+L3→L2 修复。L1/L2/L3 为 42,435/12,524/12,005；gold/split 不变，旧 v5/v6 冻结路径保留。
+源快照修复、原文、验证与逐 query 重跑：`data/starling_data/skin_reaction/trace_review_20260914/README.md`。
+
 当前二分类约定：
 
 ```text
@@ -268,7 +273,12 @@ formulation、duration、light condition、skin model 等 context 必须继续�
 
 ```text
 constants.py
-  label / prediction mapping。当前二分类约定：Y=1 -> risk，Y=0 -> no_risk。
+  label / prediction mapping。2026-09-14 的当前 retrieval 是 source-purity v6：隔离 9 条明确的 INF/metabolite/DO3 分子错绑，
+并将 3 条 EMIM 整体体内外结果从 L3 移到 L2。原始内容、gold 和 split 不变。
+L1/L2/L3 为 42,435/12,520/12,003 条；v5 路径保留给冻结实验。审核 ledger、源文档、
+验证与重跑说明：`data/starling_data/skin_reaction/trace_review_20260914/README.md`。
+
+当前二分类约定：Y=1 -> risk，Y=0 -> no_risk。
 
 rules.py
   Skin_Reaction assay keyword、negative keyword、context/weak evidence family 配置。

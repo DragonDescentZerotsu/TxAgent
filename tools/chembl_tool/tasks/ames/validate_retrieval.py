@@ -115,8 +115,12 @@ def placement_exceptions():
     assert track(path) == meta["placement_reviews_sha256"]
     assert len(decisions) == meta["n_applied_placement_reviews"]
     samples, expected = {}, {}
-    for version in ("v5", "v6"):
-        root = MANIFEST.parent / f"source_review_{version}"
+    review_origins = {"source_review_v5", "source_review_v6"} | {
+        row["review_origin"] for row in decisions
+    }
+    for origin in sorted(review_origins):
+        assert Path(origin).name == origin, "Review origin must name a local audit directory"
+        root = MANIFEST.parent / origin
         for name in ("sample.jsonl", "audit_annotations.jsonl"):
             track(root / name)
         for r in read_jsonl(root / "sample.jsonl"):
@@ -131,7 +135,7 @@ def placement_exceptions():
                     if r["disposition"] == "move"
                     else r["group_id"]
                 )
-                if version == "v5"
+                if origin == "source_review_v5"
                 else r["group_id"]
             )
     assert samples.keys() == expected.keys()
@@ -358,6 +362,10 @@ def main():
             assert not row["group_id"] and not row["is_voter"]
         elif action["action"] == "withhold":
             assert not row["is_voter"]
+        elif action["action"] == "correct_structure":
+            assert not row["is_voter"]
+            assert row["parent_inchi_key"] == action["corrected_parent_inchi_key"]
+            assert row["identity_verification"] == "payload_pinned_structure_correction"
     del current_audit
     preservation = {
         "source_votes_sha256": track(VOTES),

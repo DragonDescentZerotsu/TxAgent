@@ -63,10 +63,14 @@ def load_reviews(path: Path = DECISIONS) -> dict[str, dict]:
     for line in path.read_text().splitlines():
         row = json.loads(line)
         rid = row["source_record_id"]
-        if rid in reviews or row["action"] not in {"accept", "withhold", "exclude"}:
+        if rid in reviews or row["action"] not in {"accept", "withhold", "exclude", "correct_structure"}:
             raise ValueError(f"Invalid or duplicate source review: {rid}")
         if not row["rationale"] or not row["raw_sha256"] or not row["pmid"]:
             raise ValueError(f"Incomplete source review: {rid}")
+        if row["action"] == "correct_structure" and not all(
+            row.get(key) for key in ("corrected_smiles", "corrected_parent_inchi_key", "identity_reference")
+        ):
+            raise ValueError(f"Incomplete structure correction: {rid}")
         if row["action"] == "accept":
             atoms = row["condition_atoms"]
             if (
@@ -82,13 +86,17 @@ def load_reviews(path: Path = DECISIONS) -> dict[str, dict]:
     return reviews
 
 
-def apply_review(review: dict, raw: dict, parent: str) -> Decision:
+def apply_review(review: dict, raw: dict, parent: str, *, original_decision: Decision | None = None) -> Decision:
     rid = review["source_record_id"]
     if payload_hash(raw) != review["raw_sha256"] or str(raw["pmid"]) != review["pmid"]:
         raise ValueError(f"Reviewed source payload changed: {rid}")
     if parent != review["parent_inchi_key"]:
         raise ValueError(f"Reviewed source parent changed: {rid}")
     action = review["action"]
+    if action == "correct_structure":
+        if original_decision is None or original_decision.label is not None or not original_decision.group:
+            raise ValueError(f"Structure correction must preserve an eligible nonvoter: {rid}")
+        return original_decision
     if action == "exclude":
         return Decision("", "reviewed_source_identity_mismatch")
     if action == "withhold":

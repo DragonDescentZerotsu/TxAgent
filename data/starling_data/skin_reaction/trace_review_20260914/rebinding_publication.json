@@ -1,0 +1,36 @@
+{
+  "archive_sha256": "b4013671ddd935557c980b26bbdf8931313a8a47a5984432ca837b0926b0adee",
+  "archive_size": 224185146,
+  "records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+  "records_size": 231535064,
+  "parts": [
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0001",
+      "size": 90000000,
+      "sha256": "a7d2efc79d02b6108b682e02ad83355a90a324854dd01cb88138527527969ae5"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0002",
+      "size": 90000000,
+      "sha256": "57a0164972e8a2caa98450ba6b1c06f610c8d4d195b112cf17c40f1c60860029"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0003",
+      "size": 44185146,
+      "sha256": "474ef9834db0c8aca81ef3ab8a1c4456da47d2b15c2b1983ed8c4f8baa8954d6"
+    }
+  ],
+  "files": [
+    {
+      "path": "rebinding_receipt.json",
+      "size": 3449,
+      "sha256": "bb9bb486b5911942acad1486ae20184f64cd0a0ae01f8e0b6c7c01285f618105"
+    },
+    {
+      "path": "records.parquet",
+      "size": 231535064,
+      "sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76"
+    }
+  ],
+  "source_release": "outputs/chembl_tool/starling/skin_reaction_identity_rebound_20260914/03_records"
+}

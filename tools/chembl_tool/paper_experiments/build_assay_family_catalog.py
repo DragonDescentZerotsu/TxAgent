@@ -79,11 +79,11 @@ TASKS = {
         "output_name": "bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
     },
     "skin_reaction": {
-        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v5/skin_reaction/records.parquet",
+        "records": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v7/skin_reaction/records.parquet",
         "config_module": "tools.chembl_tool.tasks.skin_reaction.experiment_config",
         "config_name": "STARLING",
         "output_root": str(MECHANISM_OUTPUT_ROOT),
-        "output_name": "skin_reaction_source_purity_v5",
+        "output_name": "skin_reaction_source_purity_v7",
     },
     "clintox": {
         "records": "outputs/paper/starling_assay_relevance_all_v1/clintox/assay_catalog.jsonl",

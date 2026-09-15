@@ -12,21 +12,21 @@
   "n_pending_identity_candidate_names": 24,
   "benchmark_scope": "identity_verified_source_subset_with_explicit_pending_identity_exclusions",
   "family_counts": {
-    "Observed.nonvoter_ames": 138571,
-    "Mechanism.other_genetic_damage": 236309,
+    "Observed.nonvoter_ames": 138569,
+    "Mechanism.other_genetic_damage": 236310,
     "Direct.ames": 3333,
     "Mechanism.genotoxicity_mechanisms": 424491,
-    "Mechanism.dna_damage_response": 496880
+    "Mechanism.dna_damage_response": 496881
   },
   "decision_counts": {
-    "ames_base:Direct.ames:explicit_primary_bacterial_outcome": 3321,
-    "ames_base:Direct.ames:reviewed_primary_bacterial_outcome": 12,
+    "ames_base:Direct.ames:explicit_primary_bacterial_outcome": 3320,
+    "ames_base:Direct.ames:reviewed_primary_bacterial_outcome": 13,
     "ames_base:Mechanism.genotoxicity_mechanisms:payload_pinned_record_placement_review": 2,
-    "ames_base:Mechanism.other_genetic_damage:payload_pinned_record_placement_review": 20,
+    "ames_base:Mechanism.other_genetic_damage:payload_pinned_record_placement_review": 21,
     "ames_base:Mechanism.other_genetic_damage:source_independent_fixed_genetic_readout": 134418,
     "ames_base:Mechanism.other_genetic_damage:source_independent_other_genetic_endpoint": 20504,
     "ames_base:Observed.nonvoter_ames:conflicting_study_parent_condition": 21,
-    "ames_base:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 122642,
+    "ames_base:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 122641,
     "ames_base:Observed.nonvoter_ames:reviewed_direct_claim_pending_resolution": 19,
     "ames_base:Observed.nonvoter_ames:same_study_parent_condition_repeated_description": 286,
     "ames_base:Observed.nonvoter_ames:simple_inorganic_molecule_is_retrieval_only": 8,
@@ -57,7 +57,7 @@
     "ames_v1:excluded:multiple_organic_components_require_identity_review": 1257,
     "ames_v1:excluded:reviewed_source_identity_mismatch": 9,
     "ames_v1:excluded:unresolved_endpoint_without_family_support": 108,
-    "ames_v2:Mechanism.dna_damage_response:payload_pinned_record_placement_review": 9,
+    "ames_v2:Mechanism.dna_damage_response:payload_pinned_record_placement_review": 10,
     "ames_v2:Mechanism.dna_damage_response:source_independent_damage_endpoint": 22,
     "ames_v2:Mechanism.dna_damage_response:source_independent_dna_damage_endpoint_class": 419264,
     "ames_v2:Mechanism.dna_damage_response:source_independent_dna_damage_or_response_readout": 496,
@@ -65,7 +65,7 @@
     "ames_v2:Mechanism.genotoxicity_mechanisms:source_independent_mechanistic_readout": 30,
     "ames_v2:Mechanism.other_genetic_damage:payload_pinned_record_placement_review": 4,
     "ames_v2:Mechanism.other_genetic_damage:source_independent_fixed_genetic_readout": 1,
-    "ames_v2:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 5949,
+    "ames_v2:Observed.nonvoter_ames:nonvoter_direct_or_mixed_bacterial_context": 5948,
     "ames_v2:Observed.nonvoter_ames:same_study_parent_condition_repeated_description": 1,
     "ames_v2:excluded:exact_claim_duplicate": 2,
     "ames_v2:excluded:inorganic_or_metal_material_requires_identity_review": 63340,
@@ -91,30 +91,30 @@
     "ames_v3:excluded:reviewed_source_identity_mismatch": 4,
     "ames_v3:excluded:unresolved_endpoint_without_family_support": 26
   },
-  "builder_sha256": "caa1e4eb2234aef37f3a82a2f2ef87c3b67b55a0d05d19be2ad7a04d54f7a0ff",
+  "builder_sha256": "1d996e77453eeec7228b4cc4d0335fc4005caa66896dadbada1ed82c68c1f143",
   "identity_policy_sha256": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845",
   "vote_unit": "one_unambiguous_pmid_parent_exact_condition",
   "review_method": "deterministic_source_policy_with_payload_pinned_agent_semantic_reviews",
-  "semantic_reviews_sha256": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
-  "semantic_review_policy_sha256": "e570fad4016ded3ff0ff58ca4d8c69cefb6c8aa5536f48606ccc1ac294d0a4d3",
-  "n_applied_semantic_reviews": 74,
-  "placement_reviews_sha256": "b8046ea5afcf6bee8801e4d06eb3ae752df3d4b1f3ed011c1b2f7745a021ca26",
-  "n_applied_placement_reviews": 100,
+  "semantic_reviews_sha256": "6a1e0cca7594209567e4c314e24c36476277ca4efafa5c8f63468f0ccd4d9e53",
+  "semantic_review_policy_sha256": "42cb35b4d38f68606922546c7bea0c274cf64ed9cd14a06bd7c5f77d3efd2a57",
+  "n_applied_semantic_reviews": 82,
+  "placement_reviews_sha256": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc",
+  "n_applied_placement_reviews": 102,
   "condition_contract": "exact_reported_standard_strain_panel_and_metabolic_activation",
   "identity_policy": "gold requires one exact normalized PubChem name-parent match; no automatic structure repair",
   "unresolved_condition_policy": "nonvoter; never silently mapped to no_reported_external_condition",
   "files": {
     "records.parquet": {
       "path": "data/starling_data/ames/canonical_v1/records.parquet",
-      "sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e"
+      "sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a"
     },
     "record_audit.parquet": {
       "path": "data/starling_data/ames/canonical_v1/record_audit.parquet",
-      "sha256": "dd54b40bdf4315ec0ac2407eb9268c2c46e17fe6974c525024b5248543e354e9"
+      "sha256": "538b6328c75782f940bc440ba6fb53581d4ffadcd69fd5c875ecdaaa82e2ec8a"
     },
     "source_votes.jsonl": {
       "path": "data/starling_data/ames/canonical_v1/source_votes.jsonl",
-      "sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+      "sha256": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6"
     },
     "study_vote_audit.jsonl": {
       "path": "data/starling_data/ames/canonical_v1/study_vote_audit.jsonl",

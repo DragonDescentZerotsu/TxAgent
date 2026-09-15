@@ -1,18 +1,13 @@
 {
   "schema_version": "current_starling_retrieval.v1",
-  "updated_at": "2026-09-12T00:16:04.083965+00:00",
+  "updated_at": "2026-09-15T00:26:22.518132+00:00",
   "canonical_records_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
   "artifact_root": "outputs/paper/starling_conditioned_assay_family_curve_v1",
   "verification": {
-    "verified_date": "2026-09-08",
-    "result": "DILI/Carcinogens packaged/local/source/catalog/scaffold/random SHA-256 verified; clean restores and complete card links passed. Previous four task entries unchanged.",
-    "scratch_artifacts_retained": false,
-    "maintenance_receipt": "outputs/reviews/dili_carcinogens_20260908/review_receipt.json",
-    "latest_release_validation": {
-      "task": "carcinogens",
-      "release": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
-      "status": "records_indices_and_card_links_validated"
-    }
+    "verified_date": "2026-09-14",
+    "result": "All six packaged/local sources, overlays, catalogs and scaffold/random index and evidence SHA-256 verified. Current exported Parquet bytes independently verified against their manifest. Source/task bindings unchanged by maintenance.",
+    "maintenance_receipt": "tools/chembl_tool/paper_experiments/receipts/source_version_cleanup_20260914.json",
+    "scratch_artifacts_retained": false
   },
   "contract": {
     "record_selection": "canonical_retrieval_eligible",
@@ -75,58 +70,62 @@
       }
     },
     "skin_reaction": {
-      "canonical_records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
-      "overlay": "source_overlays/source_family_purity_v5/skin_reaction",
-      "overlay_records_sha256": "d7132856b8226b455dd8e1c6393cd94ef986feb1d4eb40bd60e7acde8433e779",
-      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v5",
+      "canonical_records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+      "overlay": "source_overlays/source_family_purity_v7/skin_reaction",
+      "overlay_records_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
+      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7",
       "catalog_config": "STARLING",
-      "catalog_sha256": "9c1ab3e531b66a6463d66c7113b6b8b9d8624d2ef7116c3ca895d69512f0f0ab",
+      "catalog_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
       "direct_group": "Direct.skin_reaction",
       "indices": {
         "scaffold": {
-          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v5",
-          "index_sha256": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
-          "evidence_sha256": "69fa5f7634713ff54bec42140435127ea4f028a48c167c5be307c9e204b1d3aa"
+          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v7",
+          "index_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
+          "evidence_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22"
         },
         "random": {
-          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v5",
-          "index_sha256": "96b4403709f4fa0e144026394a530f7313c885d603d6e95ae06341874bea8ba4",
-          "evidence_sha256": "4ded66d791a9d398efe8876807e0087d91d97ba62c5a391d53563ec9711f4cde"
+          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7",
+          "index_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
+          "evidence_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956"
         }
-      }
+      },
+      "source_review": "data/starling_data/skin_reaction/trace_review_20260914/decisions_rebound.json",
+      "identity_rebinding": "data/starling_data/skin_reaction/trace_review_20260914/rebindings.json"
     },
     "ames": {
-      "canonical_records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
+      "canonical_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
       "overlay_is_canonical": true,
-      "overlay_records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
+      "overlay_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
       "catalog": "family_catalogs/ames",
       "catalog_config": "STARLING",
-      "catalog_sha256": "580bdf822b607b8684b2e57dccb659195a607de51a1da7cefd8392d239488b9f",
+      "catalog_sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
       "direct_group": "Direct.ames",
       "filter_scope_field": "heldout_filter_scope",
       "filter_scope_value": "bacterial_outcome",
       "indices": {
         "scaffold": {
           "path": "indices/ames/scaffold",
-          "index_sha256": "2e78c733dd0cfa89d151f31c62f89e0dd3e8039b4e38c552201d5b2bf3278043",
-          "evidence_sha256": "4591e3cb52e6a9c77990e19cc1f27ee57a77f649dc9360d0d40e44b78846d9d6"
+          "index_sha256": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+          "evidence_sha256": "23326d5f5a41f86f9f407de3e00b66f309a0a529f653b43d7c62c490c9eeefae"
         },
         "random": {
           "path": "indices/ames/random",
-          "index_sha256": "a2ebde08b400eb4931b15439daf5a5fecbb74780ea898c38b3c82b1052bef405",
-          "evidence_sha256": "1fc87dd7974c765f0bea1494cad1fa754deb6b40a09512c343c53f67fcd14515"
+          "index_sha256": "3692c1c2d60f19aef2bb53ccb3015605458131b6999d3e0f963f2494afe9e20b",
+          "evidence_sha256": "8c3c6289ab4e0722554eb67ca41937847a6a700c0c0f6a2164d58a05e6edcbee"
         }
       },
-      "source_records": "data/starling_data/ames/canonical_v1/records.parquet"
+      "source_records": "data/starling_data/ames/canonical_v1/records.parquet",
+      "source_repair_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+      "trace_review_receipt": "data/starling_data/ames/trace_review_20260913/verification.json"
     },
     "dili": {
-      "canonical_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+      "canonical_records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
       "overlay_is_canonical": true,
-      "overlay_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+      "overlay_records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
       "source_records": "data/starling_data/dili/retrieval_final/source/records.parquet",
       "catalog": "family_catalogs/dili",
       "catalog_config": "STARLING",
-      "catalog_sha256": "f890c5ee726965e257732ee08dd960b0c01bdfbdc8b8e38859355306b58d25c0",
+      "catalog_sha256": "2671847749b2408b40fb7bdffc439778c3f14958c3c271d1f2d8f4c7f9e87691",
       "direct_group": "Group.dili_actual_voter",
       "filter_scope_field": "group_id",
       "filter_scope_value": "Group.dili_actual_voter",
@@ -134,13 +133,13 @@
       "indices": {
         "scaffold": {
           "path": "indices/dili/scaffold",
-          "index_sha256": "14f72639ad51d35be3acf641b223ed7fedaa1ea8d0671672efde789065ec26ea",
-          "evidence_sha256": "7bc55b055c170a05aaf7f8d2e4c01d3c5d69ee3ba97b612309787cd9bb6d0ebb"
+          "index_sha256": "aaed6f0c66fd9c82e048fb230bf42cb28585b02519bb57c2d6f183cdbdb74e09",
+          "evidence_sha256": "f13283690dc42f4eda39f0bdf5e18369620f387e1211d5075f58bfb35c03e35f"
         },
         "random": {
           "path": "indices/dili/random",
-          "index_sha256": "5ecfbe24230d7458b1bdd309cbe5c1fbb262287ae5c7cbacc9a4390b48ad79df",
-          "evidence_sha256": "acb2e2ff0d32c774e1680d2034554a800e56dfb16ee0d266e77c5ad0fcb23e80"
+          "index_sha256": "e14ef971413f4605e6955d233629076f2857a0aa7d3d91700a96a996ece065ce",
+          "evidence_sha256": "40d6037c4ed06da6b1f8533077ad33484a8e9b67033548c77f93251bf08e7d0e"
         }
       },
       "source_review": "data/starling_data/dili/retrieval_final/source_changes.jsonl"
@@ -177,7 +176,8 @@
       "root": "data/starling_data/dili/retrieval_final",
       "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json",
       "gold_labels_modified": false,
-      "status": "source_and_both_indices_validated"
+      "status": "source_and_both_indices_validated",
+      "latest_incremental_review": "data/starling_data/dili/trace_review_20260913"
     },
     "carcinogens_retrieval_final": {
       "root": "data/starling_data/carcinogens/retrieval_final",

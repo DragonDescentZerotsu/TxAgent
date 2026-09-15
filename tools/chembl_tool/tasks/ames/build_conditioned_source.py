@@ -238,7 +238,12 @@ def _prepare_record(source, ordinal, raw, identities, resolutions, reviews, plac
     rid = f"{source}:{ordinal}"
     review = reviews.get(rid)
     if review:
-        decision = apply_review(review, raw, identity["parent_inchi_key"])
+        decision = apply_review(review, raw, identity["parent_inchi_key"], original_decision=decision)
+    structure_corrected = bool(review and review["action"] == "correct_structure")
+    if structure_corrected:
+        identity = _identity(review["corrected_smiles"])[1]
+        if identity["status"] != "ok" or identity["parent_inchi_key"] != review["corrected_parent_inchi_key"]:
+            raise ValueError(f"Invalid reviewed structure correction: {rid}")
     if rid in placements:
         if review:
             raise ValueError(f"Gold and placement reviews overlap: {rid}")
@@ -258,6 +263,8 @@ def _prepare_record(source, ordinal, raw, identities, resolutions, reviews, plac
         if source == "ames_base" or (review and review["action"] == "accept")
         else "source_structure_without_name_field"
     )
+    if structure_corrected:
+        status = "payload_pinned_structure_correction"
     if decision.label is not None and status == "identity_request_unresolved":
         attempts = resolutions[name]["n_request_attempts"]
         if attempts < 4:
@@ -279,6 +286,7 @@ def _prepare_record(source, ordinal, raw, identities, resolutions, reviews, plac
     elif source == "ames_base" and status not in {
         "not_queried",
         "verified_parent_match",
+        "payload_pinned_structure_correction",
     }:
         reason, group = "identity_" + status, ""
     elif decision.label is not None and status != "verified_parent_match":

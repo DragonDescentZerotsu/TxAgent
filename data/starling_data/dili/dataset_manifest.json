@@ -3,7 +3,7 @@
   "raw_acquisition": "data/starling_data/dili/raw_v1",
   "records": {
     "path": "data/starling_data/dili/retrieval_final/source/records.parquet",
-    "sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+    "sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
     "rows": 1645109
   },
   "raw_records_deleted": 0,
@@ -24,8 +24,9 @@
       1
     ],
     "identity_contract": "new_task_tautomer_identity.v2",
-    "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json"
+    "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json",
+    "latest_source_review": "data/starling_data/dili/trace_review_20260913"
   },
   "results_registry": "tools/chembl_tool/paper_experiments/current_conditioned_results.json",
-  "review_status": "bounded_cleaning_cycle_closed; unresolved candidates remain explicitly pending"
+  "review_status": "bounded trace-source repair applied; remaining records are not certified clean"
 }

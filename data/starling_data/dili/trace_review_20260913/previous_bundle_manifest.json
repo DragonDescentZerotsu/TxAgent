@@ -1,0 +1,172 @@
+{
+  "archive_sha256": "5c7e292ab9c2abf47971a65e9c44524a9d2099c8095be15785279b83e45bb470",
+  "archive_size": 1204320738,
+  "records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "records_size": 948584298,
+  "parts": [
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0001",
+      "size": 90000000,
+      "sha256": "63d90be19fb214646d86763c1e6162c154769e841bd7bbb942c0d9453151fa55"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0002",
+      "size": 90000000,
+      "sha256": "4c75dbed66f540e09829084fa6b62b23a38fa07d07fa9e65ebbd399eb9b605b6"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0003",
+      "size": 90000000,
+      "sha256": "4b78256cc4dd29693cb9f853d18c84e072d0169a47fb534491263fd6e8e7b0f8"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0004",
+      "size": 90000000,
+      "sha256": "6a975fa1b8e922c17755b6ef419cdf429282a5593e7fe1a79c927ede7890d810"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0005",
+      "size": 90000000,
+      "sha256": "d532cb562b39bbd201f55c0bce83b3192d8661244bab15b2315bb9d16c2516ac"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0006",
+      "size": 90000000,
+      "sha256": "89796d71d209d93fde4f69a57187a3dcbc96a091de75c6737fd33e89d435de1c"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0007",
+      "size": 90000000,
+      "sha256": "a65f8e437109a06cf8b0ca0a9caed6327f67f299a2d649ad72c9cf9cce8ce2a1"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0008",
+      "size": 90000000,
+      "sha256": "4dfd6f6d891ce5eb5f6a8e3d700682150373bf08d9ce0942da6b342a165c3b9f"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0009",
+      "size": 90000000,
+      "sha256": "c7c6905b3ea5082fb1ac6f276f06810ad871372c930f690da6c747550ae23d69"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0010",
+      "size": 90000000,
+      "sha256": "67a06174cae1ec96b785288866c26e8be316dbde8ff1da158ac0d4d2405fe7ee"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0011",
+      "size": 90000000,
+      "sha256": "b782b982b3dee7ef2637cdf525466d005ee5ed007f5aa968699f7022117f17c1"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0012",
+      "size": 90000000,
+      "sha256": "83e9e44c535f9f9dd669a2e15e5498c54c3d267cec9dcea7360e3138ae6d48e5"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0013",
+      "size": 90000000,
+      "sha256": "9e2ce562751fe612a445678ae744ee49d23b650dc426b01d9fc92506f9a2b1a7"
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0014",
+      "size": 34320738,
+      "sha256": "d3db87275b52efbe34fd546bf294e919bc857678c074508516e61f5b88a449a1"
+    }
+  ],
+  "files": [
+    {
+      "path": "actual_voter_membership.jsonl",
+      "size": 39722102,
+      "sha256": "c56c1c7be4a43e569af5e442a4b17505d2ed80f973a2d6863374308291e65234"
+    },
+    {
+      "path": "audit_430b0698556537fa.jsonl",
+      "size": 515315886,
+      "sha256": "430b0698556537fa8fd1fc5e1ac70649be340bdcef1764bb7eebc47676e41c8e"
+    },
+    {
+      "path": "audit_501d18f392e8b6b8.jsonl",
+      "size": 513981260,
+      "sha256": "501d18f392e8b6b835c2d23c74a31ecd9c1ab874f2bd1ed34cecd47f940d5d0b"
+    },
+    {
+      "path": "audit_8151ac3d6c5b6de3.jsonl",
+      "size": 203700877,
+      "sha256": "8151ac3d6c5b6de3fa0fd8ade8525ec6faeead5ba48e2c774ac93ad28ce4e4e9"
+    },
+    {
+      "path": "audit_89442b35cc6503af.jsonl",
+      "size": 128112047,
+      "sha256": "89442b35cc6503af53b40043fd115a0209c6a8d1debf3548dec33846ffd6c3d5"
+    },
+    {
+      "path": "audit_a19f799e202a3a16.jsonl",
+      "size": 206004327,
+      "sha256": "a19f799e202a3a16db867f3093c2d6d249e17bb13a6ef3b83c40a65ef3b81af1"
+    },
+    {
+      "path": "audit_b8cf1485e7631a24.jsonl",
+      "size": 206004327,
+      "sha256": "b8cf1485e7631a248ce0f1e2084ca627421fedc4028b7aa534b0e512d757d2c2"
+    },
+    {
+      "path": "audit_b8f93676ecb93e01.jsonl",
+      "size": 154631230,
+      "sha256": "b8f93676ecb93e0153891ee91e7e06222e5760346a14420a75cac1df5a7faa60"
+    },
+    {
+      "path": "audit_dc7dc40ea4a556a6.jsonl",
+      "size": 203107052,
+      "sha256": "dc7dc40ea4a556a62bb9b2534aa3bd1ea48cd47eec7273dec54a8ae1e4f62533"
+    },
+    {
+      "path": "audit_fd2effa0c59a2ba5.jsonl",
+      "size": 203246312,
+      "sha256": "fd2effa0c59a2ba5e70cf261d9d7feb5b74c1090143c3a80d5e222934d2c87d9"
+    },
+    {
+      "path": "record_audit.parquet",
+      "size": 31202820,
+      "sha256": "c63e4c8eb2c291b764166afa8340a957f3cc0eb887d6f53d7fc649c04e4ad01e"
+    },
+    {
+      "path": "records.parquet",
+      "size": 948584298,
+      "sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d"
+    },
+    {
+      "path": "retrieval_identity_cache.jsonl",
+      "size": 27180417,
+      "sha256": "7cf2d24c7948d5bb07691fef9cedace6ac4e54f9f118a08154a955062ff3a63a"
+    },
+    {
+      "path": "retrieval_identity_cache.manifest.json",
+      "size": 377,
+      "sha256": "92a909d07d7cbeaa25347822ce7866401d6eabe33612a2c088803cc92eb35691"
+    },
+    {
+      "path": "vote_support_links.parquet",
+      "size": 7097887,
+      "sha256": "acca03ae06e1baf1fe9fa0f49b8464644c7bf563c9476f094b97ed05944ff5ee"
+    }
+  ],
+  "source_release": "data/starling_data/dili/retrieval_final/source",
+  "published_file_aliases": {
+    "data/conditioned_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl": "audit_b8f93676ecb93e01.jsonl",
+    "data/conditioned_benchmark/DILI/scaffold/accepted_record_votes.jsonl": "audit_b8cf1485e7631a24.jsonl",
+    "data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "audit_dc7dc40ea4a556a6.jsonl",
+    "data/conditioned_benchmark/DILI/scaffold/accepted_parent_conditions.jsonl": "audit_fd2effa0c59a2ba5.jsonl",
+    "data/conditioned_benchmark/DILI/random/train_molecule_condition_labels.jsonl": "audit_89442b35cc6503af.jsonl",
+    "data/starling_data/dili/gold_v4/source_votes.jsonl": "audit_a19f799e202a3a16.jsonl",
+    "data/starling_data/dili/gold_v4/gold_label_provenance.jsonl": "audit_8151ac3d6c5b6de3.jsonl",
+    "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl": "audit_b8f93676ecb93e01.jsonl",
+    "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_record_votes.jsonl": "audit_b8cf1485e7631a24.jsonl",
+    "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_parent_conditions_before_group_gate.jsonl": "audit_dc7dc40ea4a556a6.jsonl",
+    "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/accepted_parent_conditions.jsonl": "audit_fd2effa0c59a2ba5.jsonl",
+    "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/random/train_molecule_condition_labels.jsonl": "audit_89442b35cc6503af.jsonl",
+    "data/starling_data/new_tasks_gold_audit/gpt_oss_review_v1/round1.jsonl": "audit_501d18f392e8b6b8.jsonl",
+    "data/starling_data/new_tasks_gold_audit/targeted_review_v2/reviews.jsonl": "audit_430b0698556537fa.jsonl"
+  }
+}

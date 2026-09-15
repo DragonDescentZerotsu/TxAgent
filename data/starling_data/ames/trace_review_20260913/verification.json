@@ -1,0 +1,52 @@
+{
+  "status": "complete_verified",
+  "quinoline_gold": "retain positive; PMID7022455 Table 2 and pp3782-3783 directly verified TA98 +S9 and positive statistical conclusion, including sensitivity analysis.",
+  "primary_pdf_url": "https://europepmc.org/articles/PMC319656?pdf=render",
+  "primary_pdf_sha256": "deb686072965c512e363974d365286bed8ed1115afdf1d0ad12953fd228c0aa0",
+  "additional_gold_source": "PMID1373859 abstract verified; full original tables unavailable through accessible publisher/repository routes. Do not mark source false based on abstract omitting TA98.",
+  "newer_study": "PMID39543775 reports quinoline TA100 positive and TA98 negative; retain cross-study disagreement; do not overwrite older measured outcome.",
+  "benchmark_expectation": "Same study-unit labels, parent-condition rows and split assignments; updated source-review metadata/fingerprint only for cinnoline.",
+  "raw_files_changed": false,
+  "new_model_calls": 0,
+  "decisions": "data/starling_data/ames/trace_review_20260913/decisions.json",
+  "source_publication": "data/starling_data/ames/trace_review_20260913/snapshot_publication.json",
+  "sharing_publication": "data/starling_data/ames/trace_review_20260913/sharing_export.json",
+  "independent_validation": "data/starling_data/ames/retrieval_validation.json",
+  "test_results": {
+    "reviewed_source_and_source_contract": 107,
+    "placement_review": 565,
+    "total_passed": 672
+  },
+  "preservation": {
+    "same_3333_study_unit_labels": true,
+    "same_six_split_rowsets": true,
+    "same_scaffold_train_valid_test_input_bytes": true,
+    "random_membership_labels_unchanged_row_order_changed": true,
+    "vote_metadata_changed_only": [
+      "ames_base:80868"
+    ],
+    "raw_files_unchanged": true
+  },
+  "current_hashes": {
+    "data/starling_data/ames/canonical_v1/manifest.json": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b",
+    "data/starling_data/ames/canonical_v1/source_votes.jsonl": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6",
+    "data/starling_data/ames/source_review_v4/applied_decisions.jsonl": "6a1e0cca7594209567e4c314e24c36476277ca4efafa5c8f63468f0ccd4d9e53",
+    "data/starling_data/ames/source_review_v6/placement_decisions.jsonl": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc",
+    "data/starling_data/ames/dataset_manifest.json": "811cbbf5d564e0342b650ef5343ccb9ed499e5dad8aa21fa306975d4f5f14942"
+  },
+  "source_freshness": "New source/index publication does not authorize reuse of historical progressive outputs without selected-surface validation. Active v5 matched experiment uses frozen pre-repair Ames inputs.",
+  "independent_validation_sha256": "1846d154654b0dc9c8b5d38f28b51912e3816bca0cae2bae16d899b4c544392e",
+  "independent_validation_result": {
+    "status": "passed",
+    "source_rows_accounted_for": 1510447,
+    "retrievable_records": 1299584,
+    "actual_l1_voters": 3333,
+    "payload_pinned_placement_decisions": 102,
+    "individually_reviewed_payloads_and_memberships": 396,
+    "full_index_and_source_card_audit": true,
+    "sampled_queries": 6,
+    "cumulative_progressive_level_checks": 30,
+    "direct_related_records_above_l2": 0
+  },
+  "validation_note": "Final independent run used stable completed review files and passed. The earlier run correctly rejected a sample-file edit during validation; its results were not published."
+}

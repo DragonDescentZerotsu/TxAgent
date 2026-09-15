@@ -158,15 +158,7 @@
           "valid": 402,
           "test": 402
         }
-      },
-      "source_gold_root": "data/starling_data/dili/gold_v4",
-      "cohort": "starling_only_reviewed",
-      "identity_contract": "new_task_tautomer_identity.v2",
-      "publication_receipt": "data/starling_data/dili/gold_v4/retrieval/canonical_publication.json",
-      "evaluation_status": "fresh_evaluation_pending",
-      "retrieval_validation": "data/starling_data/dili/gold_v4/retrieval/manifest.json",
-      "test_previously_used_for_validation": true,
-      "evaluation_policy": "Frozen method; valid/test concurrent by explicit user instruction; no test-driven tuning."
+      }
     },
     "carcinogens": {
       "root": "data/conditioned_benchmark/Carcinogens/scaffold",
@@ -174,7 +166,7 @@
         "scaffold": "data/conditioned_benchmark/Carcinogens/scaffold",
         "random": "data/conditioned_benchmark/Carcinogens/random"
       },
-      "target_definition": "Starling source-consensus carcinogenicity within one of five reported organism groups; sex, strain, route, dose and duration pooled, with original record restrictions preserved; no universal exposure claim",
+      "target_definition": "reported any-site carcinogenic hazard under the reported species and exposure",
       "split_counts": {
         "train": 3754,
         "valid": 469,
@@ -191,15 +183,7 @@
           "valid": 469,
           "test": 469
         }
-      },
-      "source_gold_root": "data/starling_data/carcinogens/gold_v4",
-      "cohort": "starling_only_reviewed",
-      "identity_contract": "new_task_tautomer_identity.v2",
-      "publication_receipt": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json",
-      "evaluation_status": "fresh_evaluation_pending",
-      "retrieval_validation": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
-      "test_previously_used_for_validation": true,
-      "evaluation_policy": "New cohort requires fresh evaluation; historical inspected cohorts may overlap. No Carcinogens inference launched by this data release."
+      }
     }
   },
   "split_schemes": {

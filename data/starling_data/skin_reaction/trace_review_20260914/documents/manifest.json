@@ -1,0 +1,111 @@
+{
+  "retrieved_date": "2026-09-14",
+  "files": [
+    {
+      "path": "18844695.pdf",
+      "sha256": "0062c00cf7679041952a79df944650a5d490fe32905efa056ca0157d2b25cbb3",
+      "size": 624413
+    },
+    {
+      "path": "18844695.txt",
+      "sha256": "151701d3a019a52e9c693061a2d177b193b2bbcc70434b23b04ede61b4e40b1e",
+      "size": 45268
+    },
+    {
+      "path": "18844695_metadata.json",
+      "sha256": "56a9ef39466307fc09c6a77091b4b33e857dd3abc6c7f8dfdac67dc97d7581bc",
+      "size": 7350
+    },
+    {
+      "path": "19229520_metadata.json",
+      "sha256": "3aa8af193e2bcef43b04f702f14e180110fe0b164d42f4e299c4686022a2de15",
+      "size": 2042
+    },
+    {
+      "path": "27458072_metadata.json",
+      "sha256": "9a14a7438b03739fd9e43b6e841667ad52b675ad2acb60c7a5bd91bf5416eab1",
+      "size": 5209
+    },
+    {
+      "path": "31006869_metadata.json",
+      "sha256": "4572ef4e8bc9592f08f6f5bb79c1f78510b065d00c57efbd18674063a5a6222f",
+      "size": 10712
+    },
+    {
+      "path": "35498820.txt",
+      "sha256": "de1afa9bda50b47b4bcd7bf8bc21069638e52a8fe938a3b7efbfb8c4109f87a1",
+      "size": 44713
+    },
+    {
+      "path": "35498820.xml",
+      "sha256": "35d444883b7ff5fcc278a5a6d11abc5109a0496ab8151b45813d34970aeb5354",
+      "size": 114541
+    },
+    {
+      "path": "40206139.xml",
+      "sha256": "efce25cb5bce26cfdf4755d74df41f04fcdc83928b6667d2e2a26ffde2c067ab",
+      "size": 62406
+    },
+    {
+      "path": "40206139_metadata.json",
+      "sha256": "dfd8af86d7430f71639b25e359bab996d0f531cc57f5478e66ff563f75bd1501",
+      "size": 6258
+    },
+    {
+      "path": "CHEBI75648.html",
+      "sha256": "9d461edd1d6abf9e7df6a7c5fb854781620bc5e4a8f65deb9b29e3904cd305a0",
+      "size": 834779
+    },
+    {
+      "path": "hair_dyes_author_summary.pdf",
+      "sha256": "95de1e1245125bdea1c7b99bc564d55a1657219df8dff6e4a8bcfd3959517a72",
+      "size": 917330
+    },
+    {
+      "path": "lovastatin_primary.xml",
+      "sha256": "a0c021fa3dca31beebd83f17651ec4ec68e2d675df750f3918cd6f7d4e9cb504",
+      "size": 157365
+    },
+    {
+      "path": "ntp_tox103.pdf",
+      "sha256": "a4ba5b9dacc8161bb7f9a3d20b7ede6f9b608db4e3858d44714db626110d697c",
+      "size": 4875890
+    },
+    {
+      "path": "ntp_tox103.txt",
+      "sha256": "fc548830ba1eb5a3647e1e4609b32af17cdd01b7b910267f8b38fe86e4d341c0",
+      "size": 588809
+    },
+    {
+      "path": "RA-010-C9RA10871H-s001.pdf",
+      "size": 727443,
+      "sha256": "79934c7c6813b74609c61c124d5173b01d2ae92f8d1d7f48ea5b0af25ad4740a",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9052791/supplementaryFiles",
+      "archive_member": "RA-010-C9RA10871H-s001.pdf"
+    },
+    {
+      "path": "c9ra10871h-f9.jpg",
+      "size": 87986,
+      "sha256": "4bc86877b72dfc14fac27d25bdcb76a04b3e120a7767cafba0b503b392d576e0",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9052791/supplementaryFiles",
+      "archive_member": "c9ra10871h-f9.jpg"
+    },
+    {
+      "path": "c9ra10871h-f10.jpg",
+      "size": 82397,
+      "sha256": "33f53732ae975d67250ce2ecdbfe0d1acc1547e0639bf5dcaab876a1a564e5f4",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9052791/supplementaryFiles",
+      "archive_member": "c9ra10871h-f10.jpg"
+    }
+  ],
+  "primary_urls": {
+    "35498820.xml": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9052791/fullTextXML",
+    "18844695.pdf": "https://pure.rug.nl/ws/files/6724191/Skazik_2008_Contact_Dermatitis.pdf",
+    "ntp_tox103.pdf": "https://ntp.niehs.nih.gov/sites/default/files/ntp/htdocs/st_rpts/tox103_508.pdf",
+    "40206139.xml": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11979709/fullTextXML",
+    "lovastatin_primary.xml": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7991087/fullTextXML",
+    "CHEBI75648.html": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:75648",
+    "hair_dyes_author_summary.pdf": "https://senzagen.com/wp-content/uploads/2019/09/Application-note_Natural-mixtures-Hair-dyes_20190830.pdf"
+  },
+  "discarded_responses": "PubMed direct fetch returned HTTP 203 browser challenges; they were not used as evidence. Europe PMC metadata and downloaded primary documents are retained."
+}

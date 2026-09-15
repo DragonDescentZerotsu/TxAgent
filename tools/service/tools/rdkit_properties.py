@@ -13,6 +13,7 @@ from rdkit.Chem.MolStandardize import rdMolStandardize
 from tools.service.config import ServiceSettings
 from tools.service.cache import ToolResultCache
 from tools.service.errors import InvalidInputError
+from tools.service.functional_group_tree import render_functional_group_tree
 from tools.service.molgpka_predictor import MolGpKaInputError
 from tools.service.tools.base import BaseTool
 
@@ -160,7 +161,7 @@ def _inchi_key(mol: Chem.Mol) -> str | None:
 class MoleculePropertiesTool(BaseTool):
     name = "molecule_properties"
     version = "v1"
-    description = "Compute a compact, natural-language-ready RDKit descriptor and MolGpKa/logD profile."
+    description = "Compute RDKit descriptors, MolGpKa/logD properties and an AccFG functional-group hierarchy."
     input_schema = {
         "type": "object",
         "properties": {
@@ -177,6 +178,7 @@ class MoleculePropertiesTool(BaseTool):
             "raw_features": {"type": "object"},
             "functional_groups": {"type": "array"},
             "present_functional_groups": {"type": "array"},
+            "functional_group_tree": {"type": "string"},
             "text": {"type": "string"},
         },
     }
@@ -235,7 +237,7 @@ class MoleculePropertiesTool(BaseTool):
         canonical_smiles = Chem.MolToSmiles(mol, canonical=True, isomericSmiles=True)
         cache_key = hashlib.sha256(
             json.dumps(
-                ["molecule-properties-internal-v1", canonical_smiles, logd_ph, return_debug],
+                ["molecule-properties-internal-v3", canonical_smiles, logd_ph, return_debug],
                 separators=(",", ":"),
             ).encode("utf-8")
         ).hexdigest()
@@ -263,9 +265,14 @@ class MoleculePropertiesTool(BaseTool):
         raw_features.update(pka_features)
         if pka_debug.get("error"):
             warnings.append(pka_debug["error"])
-        functional_groups = self._functional_groups(canonical_smiles)
-        if self._fg_error:
-            warnings.append(self._fg_error)
+        try:
+            functional_groups, functional_group_tree = self._functional_groups(canonical_smiles)
+            functional_groups_available = True
+        except Exception as exc:
+            functional_groups = []
+            functional_groups_available = False
+            functional_group_tree = "Unavailable; do not infer absence of functional groups."
+            warnings.append(f"Functional group extraction unavailable: {type(exc).__name__}: {exc}")
 
         features = [
             self._feature_payload(feature_name, raw_features.get(feature_name), raw_features)
@@ -281,11 +288,12 @@ class MoleculePropertiesTool(BaseTool):
             "raw_features": raw_features,
             "functional_groups": functional_groups,
             "present_functional_groups": functional_groups,
-            "text": self._render_text(features, functional_groups),
+            "functional_group_tree": functional_group_tree,
+            "text": self._render_text(features, functional_group_tree),
             "_warnings": warnings,
         }
         if return_debug:
-            output["debug"] = {"pka": pka_debug, "functional_groups_available": self._fg_detector is not None}
+            output["debug"] = {"pka": pka_debug, "functional_groups_available": functional_groups_available}
         return output
 
     def _compute_rdkit_features(self, mol: Chem.Mol) -> dict[str, float | None]:
@@ -397,19 +405,15 @@ class MoleculePropertiesTool(BaseTool):
             "feature_value_missing_reason": missing_reason,
         }
 
-    def _functional_groups(self, smiles: str) -> list[dict[str, Any]]:
+    def _functional_groups(self, smiles: str) -> tuple[list[dict[str, Any]], str]:
         if self._fg_detector is None:
-            return []
-        try:
-            matched_fgs = self._fg_detector.run(
-                smiles,
-                show_atoms=True,
-                show_graph=False,
-                canonical=True,
-            )
-        except Exception as exc:
-            self._fg_error = f"{type(exc).__name__}: {exc}"
-            return []
+            raise RuntimeError(self._fg_error or "AccFG unavailable")
+        matched_fgs, graph = self._fg_detector.run(
+            smiles,
+            show_atoms=True,
+            show_graph=True,
+            canonical=True,
+        )
 
         functional_groups = []
         for fg_name, atom_matches in sorted(matched_fgs.items(), key=lambda item: str(item[0]).lower()):
@@ -422,17 +426,12 @@ class MoleculePropertiesTool(BaseTool):
                     "atom_matches": normalized_matches,
                 }
             )
-        return functional_groups
+        return functional_groups, render_functional_group_tree(matched_fgs, graph)
 
-    def _render_text(self, features: list[dict[str, Any]], functional_groups: list[dict[str, Any]]) -> str:
+    def _render_text(self, features: list[dict[str, Any]], functional_group_tree: str) -> str:
         lines = []
         for feature in features:
             lines.append(f"{feature['display_name']}: {feature['feature_value_text']}")
         lines.append("")
-        if functional_groups:
-            lines.append("functional groups:")
-            for group in functional_groups:
-                lines.append(f"{group['display_name']}: {group['count']}")
-        else:
-            lines.append("functional groups: none")
+        lines.extend(["[functional_group_tree]", functional_group_tree])
         return "\n".join(lines)

@@ -1,0 +1,92 @@
+{
+  "status": "implemented_not_model_evaluated",
+  "prompt_profile": "progressive_evidence_revision.v5",
+  "previous_prompt_profile": "progressive_functional_group_tree.v4",
+  "scope": [
+    "shared progressive and matched full-flat prompts",
+    "task instruction adapters for BBB, Bioavailability and Skin",
+    "flip validator explanation and citation checks"
+  ],
+  "unchanged": [
+    "tool implementation/cache and prefetch",
+    "retrieval selection and level plan",
+    "output field names",
+    "native query-only prompts",
+    "Bioavailability high/low scientific criteria",
+    "existing predictions and benchmark scores"
+  ],
+  "changes": [
+    "deduplicate generic format/label/uncertainty instructions and remove stale group/output terms",
+    "prior judgments cannot source empirical claims; inherited claims cite evidence",
+    "decisive claims describe tested subject, conditions, transfer and decision effect; summary addresses strongest relevant counterevidence",
+    "flip may correct an old error without citing new cards; require explanation and retain citation/label consistency checks"
+  ],
+  "limitations": [
+    "validator checks explanation presence, not scientific correctness",
+    "no new model call on evidence-equivalent carry-forward levels",
+    "no new efficacy experiment; template size is not runtime token usage"
+  ],
+  "template_comparison": {
+    "bbb_martins": {
+      "old_characters": 6052,
+      "new_characters": 5597,
+      "old_instruction_count": 11,
+      "new_instruction_count": 7
+    },
+    "bioavailability_ma": {
+      "old_characters": 5147,
+      "new_characters": 5109,
+      "old_instruction_count": 7,
+      "new_instruction_count": 6
+    },
+    "skin_reaction": {
+      "old_characters": 4960,
+      "new_characters": 4599,
+      "old_instruction_count": 10,
+      "new_instruction_count": 6
+    },
+    "ames": {
+      "old_characters": 5789,
+      "new_characters": 5671,
+      "old_instruction_count": 9,
+      "new_instruction_count": 8
+    },
+    "dili": {
+      "old_characters": 5352,
+      "new_characters": 5258,
+      "old_instruction_count": 8,
+      "new_instruction_count": 7
+    },
+    "carcinogens": {
+      "old_characters": 5835,
+      "new_characters": 5746,
+      "old_instruction_count": 9,
+      "new_instruction_count": 8
+    }
+  },
+  "template_comparison_method": "Same synthetic empty-evidence initial progressive payload per task; summed system/user content characters, not tokens. Query, prior, evidence, level plan and output field names verified unchanged.",
+  "code_sha256": {
+    "tools/chembl_tool/common/progressive_assay_reasoning.py": "6171ebd3921462a2c69b7826ee9ba3a3229b549a44e04258db35ede747cdc85b",
+    "tools/chembl_tool/tasks/bbb_martins/experiment_config.py": "8a224d18ca6cf2e5ffc810f6bb081f7628010565cd782e81f6ccc5f383a260bb",
+    "tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py": "3ae3640a85509a772b71b7cec32205f99906a1511bfa5c8ace4fee2a6f792910",
+    "tools/chembl_tool/tasks/skin_reaction/experiment_config.py": "18b5d47cf9c7db4d092da51ece8789392339390f1fe71b99b72984f76928680b"
+  },
+  "new_model_calls": 0,
+  "review_report": "outputs/paper/analysis/reasoning_prompt_review_20260913/REPORT.md",
+  "validation": {
+    "tests_passed": 140,
+    "test_files": [
+      "tests/chembl_tool/common/test_progressive_assay_reasoning.py",
+      "tests/chembl_tool/common/test_new_task_runner_contracts.py",
+      "tests/chembl_tool/common/test_identity_blind.py",
+      "tests/chembl_tool/common/test_openai_reasoning_client.py"
+    ],
+    "task_mode_cases": 24,
+    "real_query_only_message_equivalence": [
+      "dili",
+      "carcinogens"
+    ],
+    "tool_source_hashes_unchanged": true,
+    "bioavailability_native_policy_sha256": "59f64784169fbbe51b17b2af803b491f9ea390c7519b36d9089b6e86405e05e1"
+  }
+}

@@ -20,8 +20,11 @@ ROOT = Path("data/starling_data/ames")
 
 
 def judgments():
-    for version in ("v5", "v6"):
-        root = ROOT / f"source_review_{version}"
+    origins = {"source_review_v5", "source_review_v6"} | {
+        row["review_origin"] for row in load_placements().values()
+    }
+    for origin in sorted(origins):
+        root = ROOT / origin
         samples = {
             r["source_record_id"]: r
             for r in map(json.loads, (root / "sample.jsonl").read_text().splitlines())
@@ -38,7 +41,7 @@ def judgments():
                     if row["disposition"] == "move"
                     else row["group_id"]
                 )
-                if version == "v5"
+                if origin == "source_review_v5"
                 else row["group_id"]
             )
             yield sample, expected

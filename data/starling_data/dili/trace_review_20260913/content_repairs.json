@@ -1,0 +1,248 @@
+{
+  "schema_version": "dili_source_content_repairs.v1",
+  "task": "dili",
+  "source_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "scope": "Four user-selected records plus nine identity-mismatched BG records from the single PMID exposed during replacement review; all 12 rows from that PMID examined, three correctly bound baicalein records retained; no model calls before decisions",
+  "decisions": [
+    {
+      "source_row_uid": "sr_d1faca51571745429ada36e60ae8c7b2",
+      "source_payload_sha256": "571fcaec66574eeb7a5b501973db4c5f0653a320edae8d58bb52e6b771fdb8aa",
+      "previous_level": 1,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "sources": [
+        "https://escholarship.org/content/qt3h7691xw/qt3h7691xw_noSplash_ba0c0bae7518259765f8f05ce96c110c.pdf",
+        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2010/021897s005s010lbl.pdf"
+      ],
+      "reason": "primary_source_drug_attribution_conflict: review names naloxone but historical FDA warning is for excessive naltrexone exposure; not attributable naloxone evidence; do not silently transfer frozen vote to naltrexone",
+      "verification": "Review wording checked against the historical FDA label. No new DILI outcome or label is inferred. Frozen voter membership retained for independent gold audit."
+    },
+    {
+      "source_row_uid": "sr_67d4472144124f7590d47e886dab7207",
+      "source_payload_sha256": "7d89d8c58fb00bef826bf1cbca6a75194eb5e29ca42c39edc0bad1c66a5c9602",
+      "previous_level": 5,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "sources": [
+        "https://doi.org/10.3109/00498254.2014.894219",
+        "https://www.ebm-journal.org/journals/experimental-biology-and-medicine/articles/10.3181/00379727-133-34465/pdf"
+      ],
+      "reason": "unsupported_reactive_acylglucuronide_annotation: naloxone lacks carboxyl group; ordinary glucuronidation does not establish reactive bioactivation; original table remains pending",
+      "corrected_record": {
+        "paragraph_idx": 73,
+        "support_text": "In 2 h human hepatocyte incubations, naloxone produced naloxone-glucuronide with an MS/MS area ratio (x10^-3) of 3.95 in control, reduced to 0.148, 0.0560 and 0.0940 by borneol 100, 300 and 500 uM (96.3%, 98.6% and 97.6% inhibition), whereas ABT 1 and 3 mM gave 4.12 and 3.89 (-4.2% and 1.5%).",
+        "molecule_name": "Naloxone",
+        "tested_entity_role": "parent",
+        "assay_category": "glucuronide_formation",
+        "assay_detail": "UGT-metabolite MS/MS area ratio after 2 h incubation in human hepatocytes; original numerical table not independently reverified",
+        "biological_system": "human hepatocytes",
+        "species": "Homo sapiens",
+        "mechanistic_entities_and_components": "formed metabolite: naloxone-glucuronide; modifier/inhibitor: borneol 100-500 uM (UGT inhibitor); modifier: ABT 1-3 mM (CYP inhibitor); naloxone reported metabolized mainly by UGT2B7",
+        "test_concentration": null,
+        "test_concentration_unit": null,
+        "exposure_time": "2 h incubation",
+        "reported_result": "naloxone-glucuronide MS/MS area ratio (x10^-3) 3.95 control; 0.148, 0.0560, 0.0940 with borneol 100/300/500 uM (96.3%, 98.6%, 97.6% inhibition); 4.12/3.89 with ABT 1/3 mM",
+        "extra_details": "The original extraction incorrectly calls the naloxone glucuronide an acylglucuronide and a bioactivation pathway. Naloxone has no carboxylic acid; naloxone-3-O-glucuronide was identified in a separate primary study (PMID 5412354). The numerical values copied from the original extraction are retained without independent table verification; they do not establish reactive metabolite formation or liver injury.",
+        "confidence": 0.82,
+        "needs_more_context": true,
+        "pmid": "24575896",
+        "extraction_id": "ext_5",
+        "SMILES": "C=CCN1CC[C@]23c4c5ccc(O)c4O[C@H]2C(=O)CC[C@@]3(O)[C@H]1C5",
+        "source_row_uid": "sr_67d4472144124f7590d47e886dab7207"
+      },
+      "verification": "Chemical annotation repaired; original numerical table inaccessible, so numbers preserved as unverified acquisition and record quarantined from DILI retrieval."
+    },
+    {
+      "source_row_uid": "sr_5f5eb8a0ff8440c8a0f7ca743877e25c",
+      "source_payload_sha256": "b379e62beed3cab0930de42bda59a6d85756be2b7ddf9bce4c119365492f6a82",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "sources": [
+        "https://www.research.unipd.it/handle/11577/2481430",
+        "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2214/property/CanonicalSMILES,MolecularFormula,InChIKey/JSON"
+      ],
+      "reason": "primary_source_identity_corrected_to_apocynin_and_excluded_nonhepatic_sperm_ROS_without_hepatic_endpoint",
+      "corrected_record": {
+        "paragraph_idx": 65,
+        "support_text": "APO (100 µmol/l), a NADPH oxidase (NOX) inhibitor, decreased ROS production to a considerable extent in all analysed human sperm samples. In HRP and VHRP samples, high ROS production was not completely abolished by APO, which affected almost 75-90% of ROS generation. In LRP and NRP samples, where baseline ROS production was below 0.1 RLU, APO completely abolished ROS production. APO-induced prevention of ROS production caused cell death.",
+        "endpoint_class": "reactive_species",
+        "endpoint_name": "ROS (H2O2) production in sperm suspensions",
+        "assay_and_platform": "chemiluminescence-based ROS measurement (reported in RLU)",
+        "biological_model_context": "human sperm suspensions; Homo sapiens",
+        "exposure_level": "100 µmol/l",
+        "exposure_unit": "µmol/l",
+        "treatment_and_comparator_context": "single in-vitro exposure to APO; compared against sperm without APO; samples classified into low (LRP), normal (NRP), high (HRP) and very high (VHRP) ROS-production groups",
+        "effect_direction": "decreased",
+        "quantitative_measure_type": null,
+        "quantitative_value": null,
+        "quantitative_unit": null,
+        "extra_details": "APO (NOX inhibitor) reduced ROS generation by almost 75-90% in HRP and VHRP and completely abolished ROS production in LRP and NRP samples (baseline ROS below 0.1 RLU); APO-induced prevention of ROS production caused cell death.",
+        "confidence": 0.85,
+        "needs_more_context": false,
+        "pmid": "21940394",
+        "extraction_id": "ext_11",
+        "SMILES": "COc1cc(C(C)=O)ccc1O",
+        "source_row_uid": "sr_5f5eb8a0ff8440c8a0f7ca743877e25c",
+        "molecule_name": "Apocynin (APO)"
+      },
+      "verification": "Author institutional abstract explicitly identifies APO as apocynin; PubChem CID 2214 matches C9H10O3. Sperm ROS assay has no hepatic endpoint. Numerical details not independently certified."
+    },
+    {
+      "source_row_uid": "sr_157c252db704415e820f047490147170",
+      "source_payload_sha256": "8d8ceb9cc49dc78542445176ee7286ed323e28d3490450d1b081304febd9283c",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "sources": [
+        "https://www.research.unipd.it/handle/11577/2481430",
+        "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/2214/property/CanonicalSMILES,MolecularFormula,InChIKey/JSON"
+      ],
+      "reason": "primary_source_identity_corrected_to_apocynin_and_excluded_nonhepatic_sperm_ROS_without_hepatic_endpoint",
+      "corrected_record": {
+        "paragraph_idx": 66,
+        "support_text": "Incubation of normal human sperm in conditions of NOX activity modulation showed that adding increasing concentrations of NADPH induced NOX activation, which was partially or totally inhibited by the addition of 10 µM APO. ROS evaluation confirmed both the activation and the gradual inactivation of the enzyme, and ARC percentages varied accordingly.",
+        "endpoint_class": "reactive_species",
+        "endpoint_name": "ROS production (NADPH-stimulated NOX activation) in sperm",
+        "assay_and_platform": "ROS evaluation in suspensions of capacitating sperm (NOX modulation conditions)",
+        "biological_model_context": "normal human sperm; Homo sapiens",
+        "exposure_level": "10 µM",
+        "exposure_unit": "µM",
+        "treatment_and_comparator_context": "NADPH (increasing concentrations) added to activate NOX; 10 µM APO added to inhibit it; ROS measured during capacitation",
+        "effect_direction": "decreased",
+        "quantitative_measure_type": null,
+        "quantitative_value": null,
+        "quantitative_unit": null,
+        "extra_details": "NADPH-induced NOX activation was partially or totally inhibited by 10 µM APO; ROS evaluation confirmed both the activation and gradual inactivation of the enzyme.",
+        "confidence": 0.8,
+        "needs_more_context": false,
+        "pmid": "21940394",
+        "extraction_id": "ext_12",
+        "SMILES": "COc1cc(C(C)=O)ccc1O",
+        "source_row_uid": "sr_157c252db704415e820f047490147170",
+        "molecule_name": "Apocynin (APO)"
+      },
+      "verification": "Author institutional abstract explicitly identifies APO as apocynin; PubChem CID 2214 matches C9H10O3. Sperm ROS assay has no hepatic endpoint. Numerical details not independently certified."
+    },
+    {
+      "source_row_uid": "sr_68b499beeb00415392c8e534c5c27b38",
+      "source_payload_sha256": "b37a68ab54f561885d2df5aa7e523fad77cc0c5104ac4f3782eca751999c9e77",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_sugar-free positional isomer C15H10O5",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_3a567baaa9e64e63a4b4457bac94850c",
+      "source_payload_sha256": "7277758865613f04d2f2ae90e73bde5e22b9cba2eb414b21c6b8ab51385e84b4",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_sugar-free positional isomer C15H10O5",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_722569c803c44bdda3d885846728f346",
+      "source_payload_sha256": "463b79112ed183bf75ef460bbb14741cf096b58eb619ed660d2ed5117c50693c",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_sugar-free positional isomer C15H10O5",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_4ae0ba5246cc48e083d9673fc0f4d832",
+      "source_payload_sha256": "05477ef3b4b971aeec617cbc315bea3513f0453cf3cdc8d9abc2092b36c7e67a",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_sugar-free positional isomer C15H10O5",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_44f5b4b20b5d4afa9e2002f4fd814f70",
+      "source_payload_sha256": "158b2f5180cd63147553c3c3d0d4639e956aa6e5ac63d98c447d2b40e0e8023e",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_sugar-free positional isomer C15H10O5",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_33503f7d55514df297ea0e8a6183e180",
+      "source_payload_sha256": "0a23f9989413d8cde8b71194d1b8e72650ee827de2da13ad6472554b6dd7ce44",
+      "previous_level": 6,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_baicalin glucuronide, not the baicalein-6-alpha-glucoside tested",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_d4f9fa8e26504e44bc577b60548b34cd",
+      "source_payload_sha256": "755968cfdccb4cd88a3059115a892d77e66a6af65446b7ce27be6407462078de",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_baicalin glucuronide, not the baicalein-6-alpha-glucoside tested",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_143571ca7723475d9a1cb7e036fe3c3b",
+      "source_payload_sha256": "7a3ffbc65d27c59abc2db635493564121b289cc6b54d649bca6ac0827493177e",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_baicalin glucuronide, not the baicalein-6-alpha-glucoside tested",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    },
+    {
+      "source_row_uid": "sr_c27a1ae2651440f69c928373d5280a52",
+      "source_payload_sha256": "b9c8018e07c7c70f6a3c5ef85f5354d4a63786ec2fc130aaf6fc57cf63931caf",
+      "previous_level": 7,
+      "level": 0,
+      "action": "exclude_from_retrieval_preserve_raw_and_frozen_vote",
+      "reason": "primary_source_BG_is_baicalein_6_alpha_glucoside_but_bound_to_baicalin glucuronide, not the baicalein-6-alpha-glucoside tested",
+      "sources": [
+        "https://khu.elsevierpure.com/en/publications/synthesis-and-biological-evaluation-of-a-novel-baicalein-glycosid-2/",
+        "https://doi.org/10.1016/j.ejphar.2014.10.013"
+      ],
+      "verification": "Primary abstract explicitly names baicalein-6-alpha-glucoside. This row reports BG but carries a different molecular structure. Wrong binding quarantined without guessing replacement stereochemistry. Three correctly bound baicalein rows from the same PMID retained; numerical measurements not independently certified."
+    }
+  ],
+  "gold_labels_used_for_decisions": false,
+  "numerical_table_24575896_status": "not_obtained_after_publisher_and_public_fulltext_checks",
+  "replacement_review_trigger": "APO removal exposed two BG cards; same-PMID identity check found nine BG misbindings in total. Source-only review, no new endpoint or gold rule."
+}

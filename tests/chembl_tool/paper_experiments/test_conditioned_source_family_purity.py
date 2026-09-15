@@ -408,3 +408,25 @@ def test_exact_voter_gate_rejects_nonvoters_and_misrouted_voters():
             direct_group="L1",
             record_id=lambda row: row["record_id"],
         )
+
+
+def test_skin_review_preserves_source_and_blocks_stale_or_voter_changes():
+    from tools.chembl_tool.tasks.skin_reaction.canonical_starling_source import AOP_PARTITION
+    from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
+        load_reviewed_source_decisions,
+    )
+
+    for key, decision in load_reviewed_source_decisions().items():
+        row = {
+            **decision["expected"], "source_id": key[0],
+            "source_row_number": key[1] + 1, "group_id": SKIN_AOP_GROUP,
+        }
+        semantic = {key: PartitionDecision(AOP_PARTITION, "review fixture", "")}
+        before = dict(row)
+        result = skin_vote_pure_family_move(row, set(), semantic)
+        assert result.new_group == decision["new_group"]
+        assert row == before
+        with pytest.raises(ValueError, match="frozen voter"):
+            skin_vote_pure_family_move(row, {key}, semantic)
+        with pytest.raises(ValueError, match="signature changed"):
+            skin_vote_pure_family_move({**row, "support_text": "revised source"}, set(), semantic)

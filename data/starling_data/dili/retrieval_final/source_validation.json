@@ -2,12 +2,16 @@
   "status": "passed",
   "task": "dili",
   "base_source_sha256": "5a152e85befa525c385ef02189d3658f8d2a3ce52f6d23010c5ad3d2f7382694",
-  "records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
   "source_rows": 1645109,
-  "modified_source_rows": 789,
+  "modified_source_rows": 802,
   "source_rows_deleted": 0,
   "raw_acquisition_and_frozen_vote_membership_unchanged": true,
   "all_other_source_fields_equal": true,
-  "latest_review": "retrieval_review_v5",
-  "gold_labels_modified": false
+  "latest_review": "trace_review_20260913",
+  "gold_labels_modified": false,
+  "both_benchmark_schemes_byte_identical": true,
+  "source_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "incremental_modified_source_rows": 13,
+  "incremental_validation": "data/starling_data/dili/trace_review_20260913/source_validation.json"
 }

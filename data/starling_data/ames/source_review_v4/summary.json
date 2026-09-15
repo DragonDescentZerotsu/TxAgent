@@ -28,7 +28,8 @@
   "applied_actions": {
     "withhold": 19,
     "exclude": 40,
-    "accept": 15
+    "accept": 15,
+    "correct_structure": 7
   },
   "limitations": "Codex individual source-text review, not a human-expert annotation or exhaustive full-paper audit. Pending records are not proven bad experiments. Most existing L1 records have not received primary-source review. PubChem verifies extracted name/structure, not original paper subject.",
   "primary_abstracts_read_review_numbers": [
@@ -70,8 +71,8 @@
     "29632622"
   ],
   "source_vote_sha256_before": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
-  "source_votes_sha256_after": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
-  "current_source_manifest_sha256": "e227be2ba85890f46764666acd78e92663e37ed27c2974812a866a6e988b2998",
+  "source_votes_sha256_after": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6",
+  "current_source_manifest_sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b",
   "actual_vote_changes": {
     "before": 3346,
     "after": 3333,
@@ -169,7 +170,7 @@
     "39468665_full.xml": "ef3273ba4c65b6607dbdc78f7b6ac9333595e4d9ad87f9a9d0a74f93ef4987fc",
     "pubmed.json": "7d1f9313f65827542673c549927d6a33b97718e1beab04b7af38b3c7f8eb6142",
     "sample_selection.py": "0d7548e60cbfa3dd8e1bb30dafeea4e22b04654fcdff27c377fe729f09609784",
-    "applied_decisions.jsonl": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
+    "applied_decisions.jsonl": "6a1e0cca7594209567e4c314e24c36476277ca4efafa5c8f63468f0ccd4d9e53",
     "vote_changes.json": "f27484c0aad321150540898147e9127913aad279ef97c0d0ff4d9248a3906a74",
     "previous_vote_funnel.json": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
     "sampling_L2_frame.parquet": "8aba065602cbe9b0f88d725e65555b847856ee679c8fc69999a5cfdc64937fd0",
@@ -197,6 +198,16 @@
       "previous_applied_decisions_sha256": "cecf331336d367cd9bf5df9f802dab8f1021285da4cde21990ac77d726d6f898",
       "updated_applied_decisions_sha256": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
       "scope": "Applied ledger/action counts include this later identity correction. Sampling, disposition counts, source/benchmark snapshots and vote changes above describe the original v4 review."
+    },
+    {
+      "revision": "trace_review_20260913",
+      "action": "preserve cinnoline outcome and correct incomplete series SAR context",
+      "changed_source_record_ids": [
+        "ames_base:80868"
+      ],
+      "study_unit_labels_unchanged": true
     }
-  ]
+  ],
+  "structure_correction_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+  "trace_context_correction_receipt": "data/starling_data/ames/trace_review_20260913/verification.json"
 }

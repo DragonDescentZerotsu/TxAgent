@@ -16,6 +16,7 @@ from typing import Any, Iterable, Mapping
 
 
 PROGRESSIVE_PROTOCOL_VERSION = "conditioned_assay_progressive_visible.v8"
+PROGRESSIVE_PROMPT_PROFILE = "progressive_evidence_revision.v5"
 INITIAL_MOLECULE_LIMIT = 10
 INITIAL_CARD_LIMIT = 4
 NEW_MOLECULE_LIMIT = 3
@@ -454,6 +455,15 @@ def attach_analog_tool_summaries(
         ]
 
 
+def tool_functional_group_tree(result: Mapping[str, Any], *, reference: bool = False) -> str:
+    """Read the tree from tool output.text, never from internal atom mappings."""
+    if result.get("status") == "error":
+        return "Unavailable; do not infer absence of functional groups."
+    section = "reference_functional_group_tree" if reference else "functional_group_tree"
+    _, separator, tree = str(result.get("content") or "").partition(f"[{section}]\n")
+    return tree.split("\nWarnings:", 1)[0].strip() if separator else ""
+
+
 def _compact_tool_summary(result: Mapping[str, Any]) -> dict[str, Any]:
     """Keep full tool receipts in artifacts while bounding their prompt view."""
     compact = dict(result)
@@ -467,6 +477,8 @@ def _compact_tool_summary(result: Mapping[str, Any]) -> dict[str, Any]:
         name = line.split(":", 1)[0].strip()
         if name in _CORE_PROPERTY_NAMES:
             selected.append(line)
+    # Historical receipts remain renderable for paired replay; new tool results
+    # carry a separate tree and have no flat functional-group section.
     if tool_name == "molecule_properties" and "functional groups:" in lines:
         start = lines.index("functional groups:")
         selected.extend(lines[start:])
@@ -597,6 +609,11 @@ def render_active_evidence(
                 _compact_tool_summary(result)
                 for result in analog["query_analog_tool_summaries"]
             ]
+            for result in analog["query_analog_tool_summaries"]:
+                if result.get("tool_name") == "properties_compare":
+                    tree = tool_functional_group_tree(result, reference=True)
+                    if tree:
+                        public_analog["functional_group_tree"] = tree
         cards = []
         for card in sorted((analog.get("cards") or {}).values(), key=lambda row: str(row["card_id"])):
             item = dict(card)
@@ -665,7 +682,7 @@ def build_progressive_messages(
             }
         ],
         "evidence_gaps": ["string"],
-        "decision_summary": "concise string",
+        "decision_summary": "Explain the decision and why the strongest relevant counterevidence does not prevail, if any.",
     }
     payload: dict[str, Any] = {
         "protocol": {
@@ -673,20 +690,20 @@ def build_progressive_messages(
             "mode": "initial decision" if is_initial else "progressive update",
             "architecture": (
                 "Evidence is append-only. Every selected raw card accumulated through the current level is shown. "
-                "Later levels add biologically more indirect families. All older cards remain visible so that a prior "
-                "decision can be corrected, but on an update start with the new cards and their effect on the prior "
-                "decision. Revisit only relevant older cards when new evidence conflicts with the prior reasoning or "
-                "with those cards; do not re-audit every older card by default."
+                "Later levels add biologically more indirect families. Start with new cards and revisit relevant older "
+                "cards when evidence conflicts or a prior factual, attribution, or inference error is apparent."
             ),
             "card_accounting": (
-                "Cards use short aliases that the workflow maps back to stable artifact IDs. On an older card, prior_use "
-                "lists the roles it had in the previous decision; an absent prior_use means that it was not used. "
-                "List only cards that materially support or contradict the current decision. Unlisted visible cards are "
-                "deterministically recorded as not_used by the workflow. Repeated records are not independent votes."
+                "Card aliases are stable. prior_use records previous citation roles, not evidence quality. "
+                "Supportive/contradictory lists refer to the current prediction; unlisted cards are recorded as not_used. "
+                "Repeated records are not independent votes."
             ),
             "claim_rule": (
-                "Every evidence-card claim must cite its card IDs. A claim based only on query_prior may use an "
-                "empty card_ids list, but must say explicitly that it is a query-property prior rather than experimental evidence."
+                "Query priors and prior states are revisable judgments, not sources of experimental facts. "
+                "Ground compound-specific empirical claims in the supplied evidence cards, including inherited claims. "
+                "For each decisive claim, name the tested subject and relevant conditions, explain transfer to the "
+                "query and its effect on the task label, and cite the cards. Structure/computed-property inferences may have empty card_ids "
+                "but must be labeled as inferences, not observed outcomes."
             ),
             "update_rule": (
                 "Judge endpoint-to-task relevance, direction, species/condition compatibility, formulation or route "
@@ -697,13 +714,14 @@ def build_progressive_messages(
                 "Do not identify the query by name even if its structure is recognizable."
             ),
             "flip_rule": (
-                "A flip is allowed only when new evidence is strong enough to overturn the prior decision; if you flip, "
-                "prediction_basis_card_ids must include at least one card from new_card_ids."
+                "A flip may follow new evidence or correction of a prior factual, attribution, or inference error. "
+                "Explain the new evidence or specific correction in decision_summary and cite the relevant visible "
+                "basis cards; correction of an earlier error does not require a new card."
             ),
             "output_control": (
-                "Use the minimum sufficient number of claims, evidence gaps, assessments, and card citations. Empty "
-                "lists are valid; do not fill arrays merely to appear complete or to approach a target count. Cite only "
-                "cards that materially affect the prediction, omit irrelevant cards, and do not repeat card text."
+                "Choose one prediction from the schema. Express uncertainty through confidence, evidence_gaps, "
+                "and decision_summary. Use only decisive claims and citations; do not repeat card text or assess "
+                "every neighbor. Empty lists are valid. Maximum 8 claims and 6 evidence gaps; these are limits, not targets."
             ),
         },
         "task_definition": {
@@ -714,7 +732,9 @@ def build_progressive_messages(
                 contract.positive_prediction: "positive class (label 1)",
                 contract.negative_prediction: "negative class (label 0)",
             },
-            "instructions": list(contract.task_instructions),
+            # Native query-only branches share these contracts; omit their
+            # generic binary-choice instruction only in this shared prompt.
+            "instructions": [s for s in contract.task_instructions if not s.startswith("Choose ")],
         },
         "level_context": {
             "current_level": current_level,
@@ -740,6 +760,16 @@ def build_progressive_messages(
         payload["query"]["identity_exclusion"] = f"The query molecule is not {excluded_query_name}."
     if query_tool_summary:
         payload["query"]["molecule_property_tool_summary"] = _compact_tool_summary(query_tool_summary)
+        tree = tool_functional_group_tree(query_tool_summary)
+        if tree:
+            payload["query"]["functional_group_tree"] = tree
+    if "functional_group_tree" in payload["query"] or any(
+        "functional_group_tree" in analog for analog in payload["active_evidence"]
+    ):
+        payload["protocol"]["functional_group_tree_rule"] = (
+            "Trees show nested substructure matches, not chemical connectivity. "
+            "Counts apply within each branch; do not add parent and child counts."
+        )
     if prior_state is not None:
         payload["prior_state"] = _render_prior_state(
             prior_state,
@@ -774,11 +804,6 @@ def build_progressive_messages(
                 card.pop("new_this_level", None)
     if omit_query_prior and active:
         del payload["query_prior"]
-        payload["protocol"]["claim_rule"] = (
-            "Every empirical evidence claim must cite its card IDs and name the tested subject. "
-            "An inference from query structure or raw property tools must be identified as an inference, "
-            "not an observed outcome. No no-retrieval model judgment is supplied."
-        )
         if independent:
             payload["protocol"]["card_accounting"] = (
                 "Card aliases map to stable artifact IDs. Cite only materially relevant cards. "
@@ -813,13 +838,8 @@ def build_progressive_messages(
                 + (" You are making an independent cumulative full-flat decision. " if independent
                    else " You are operating inside a progressive molecular-evidence experiment. ")
                 + "Use general medicinal-chemistry knowledge to interpret the supplied structures and evidence. "
-                + ("Ground empirical claims in the supplied tool results and cited evidence; use any supplied evidence-based state for progressive updates. "
-                   if omit_query_prior and active else
-                   "Ground every compound-specific empirical claim and the final prediction in the supplied query prior, "
-                   if independent else
-                   "Ground every compound-specific empirical claim and the final prediction in the supplied prior state, ")
-                + "tool summaries, or cited evidence cards. "
-                "Return exactly one valid JSON object and do not reveal hidden chain-of-thought."
+                + "Follow the evidence and inference rules below. "
+                "Return exactly one valid JSON object matching the schema and do not reveal hidden chain-of-thought."
             ),
         },
         {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
@@ -875,8 +895,11 @@ def progressive_state_errors(
         if action == "flip":
             if prediction == prior_prediction:
                 errors.append("revision_action=flip requires a changed prediction")
-            if new_card_ids and not basis.intersection(new_card_ids):
-                errors.append("a flip must cite at least one newly added card in prediction basis")
+            # Old evidence or a corrected property inference can justify a flip.
+            # Validate the explanation's presence, not its scientific truth.
+            summary = content.get("decision_summary")
+            if not isinstance(summary, str) or not summary.strip():
+                errors.append("a flip requires a decision_summary explaining the evidence or correction")
         elif prediction and prior_prediction and prediction != prior_prediction:
             errors.append("changed prediction requires revision_action=flip")
 

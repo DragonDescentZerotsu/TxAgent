@@ -1,0 +1,50 @@
+{
+  "archive_sha256": "b8e56c120263e9e107b24375f4e603dc0c5e2640613a551770da17218b2d04ce",
+  "archive_size": 231882324,
+  "records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+  "records_size": 214931670,
+  "parts": [
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
+      "sha256": "587f7d221a3b59a19ad6fb1acf4bb3f93b6e5472a48f9c3844e33dd7747b743c",
+      "size": 90000000
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
+      "sha256": "20d84b264143255fc23f0868ddcfc27bdfc51f761d81a39a88980b0a66151e62",
+      "size": 90000000
+    },
+    {
+      "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0003",
+      "sha256": "7e6b981e28b5afeb95060a3c13f681f11002b00fc556cd43f22c3b5525b1c5a7",
+      "size": 51882324
+    }
+  ],
+  "files": [
+    {
+      "path": "duplicates.parquet",
+      "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
+      "size": 51996
+    },
+    {
+      "path": "exclusions.parquet",
+      "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
+      "size": 18895455
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b",
+      "size": 934
+    },
+    {
+      "path": "records.parquet",
+      "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+      "size": 214931670
+    },
+    {
+      "path": "scalar_distribution.parquet",
+      "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a",
+      "size": 47760
+    }
+  ]
+}

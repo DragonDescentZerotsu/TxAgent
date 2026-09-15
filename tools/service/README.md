@@ -19,6 +19,8 @@ tools/service/runtime.py
   Native-library thread caps applied before model initialization.
 tools/service/molgpka_predictor.py
   Process-resident acid/base MolGpKa networks reused by molecule_properties.
+tools/service/functional_group_tree.py
+  Internal AccFG match-hierarchy renderer used by molecule_properties; no CLI or endpoint.
 tools/chembl_tool/common/openai_reasoning_client.py
   Batch-capable client with backward-compatible fallback to individual invokes.
 tools/chembl_tool/common/identity_blind.py
@@ -27,6 +29,37 @@ tools/chembl_tool/common/identity_blind.py
 
 Keep retrieval selection outside this package. A new retriever should emit the common retrieval payload and
 reuse `identity_blind` plus this service; it should not add another cache or tool-prefetch implementation.
+
+## Functional-group trees
+
+The existing `molecule_properties` response includes `[functional_group_tree]` in
+`output.text`; `properties_compare` includes `[reference_functional_group_tree]`
+for its reference molecule. Both use the shared, cached properties calculation.
+The per-query bundle remains one query properties call and two comparisons per
+neighbor, submitted through `/tools/batch`; no extra service tool or LLM call is
+needed. The progressive/full-flat renderer places these sections in separate
+query and neighbor `functional_group_tree` fields and leaves numeric property
+summaries free of functional-group lists. Query-only single/None priors receive
+the complete query properties text, including its tree section, inside
+`prefetched_molecule_properties`; they have no neighbor/comparison inputs.
+
+AccFG trees show nested substructure matches, not bond connectivity. They omit
+atom indices and retain counts within each parent branch; parent and child counts
+must not be added. Edge reduction runs on actual matches, so instances of the
+same group at different positions cannot hide one another. Internal atom mappings
+remain available for debugging. Rendering
+uses local strings rather than capturing AccFG's global stdout, so concurrent
+requests cannot mix tree text. Extraction failures retain numeric properties and
+explicitly mark the tree unavailable. The implementation uses installed AccFG
+0.0.9 and does not require an environment upgrade.
+
+This output revision uses cache namespace `tool-service-2026-09-13-v5` and a new
+internal properties-cache key. Start updated workers on a side port before a
+production rollover; a successful health check alone does not prove tree support.
+Check both tree sections with `/tools/batch`. New progressive runs reject successful
+old tool receipts that lack the tree sections; fresh prior manifests also bind
+the tool text profile. Historical single/None reuse remains explicit and does not
+regenerate its old reasoning when the service changes.
 
 ## Production launch on node002
 

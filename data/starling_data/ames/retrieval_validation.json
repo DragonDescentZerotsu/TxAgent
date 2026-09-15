@@ -1,7 +1,7 @@
 {
   "schema_version": "ames_retrieval_validation.v2",
   "status": "passed",
-  "created_at": "2026-09-07T21:49:21.989052+00:00",
+  "created_at": "2026-09-13T21:12:47.159732+00:00",
   "model_evaluation_performed": false,
   "llm_calls": 0,
   "tool_service_calls": 0,
@@ -34,11 +34,11 @@
   "sample_selection": "Greedy unseen label, activation, exact condition, then SHA256 benchmark_row_id; three unique parents per split cover both labels and all three activation states; no prediction-based selection.",
   "source_trace_method": "Actual hashed canonical_record_id lookup after exact source molecule_id + semantic family + seven raw card-field matching. Index molecule SMILES/InChIKeys are separately checked against the shared source-SMILES standardizer. Representative cards omit record IDs; matching canonical IDs and ambiguity are reported, never inferred from source_record_id or assay IDs.",
   "source_records_by_level": {
-    "2": 138571,
-    "3": 236309,
+    "2": 138569,
+    "3": 236310,
     "1": 3333,
     "5": 424491,
-    "4": 496880
+    "4": 496881
   },
   "actual_l1_voters": 3333,
   "direct_related_records_above_l2": 0,
@@ -52,7 +52,7 @@
   "min_similarity": 0.3,
   "splits": {
     "scaffold": {
-      "validated_at": "2026-09-07T21:51:07.378732+00:00",
+      "validated_at": "2026-09-13T21:14:27.276264+00:00",
       "identity_policy": "scaffold_disjoint",
       "heldout_parent_count": 281,
       "split_rows": {
@@ -86,10 +86,10 @@
         "1": 937
       },
       "indexed_representative_cards_by_level": {
-        "4": 474776,
-        "3": 220326,
+        "4": 474777,
+        "3": 220327,
         "5": 422448,
-        "2": 90216,
+        "2": 90214,
         "1": 2255
       },
       "canonical_trace_examples_by_level": {
@@ -136,8 +136,8 @@
       "cumulative_pool_card_counts": {
         "4": 787573,
         "5": 1210021,
-        "3": 312797,
-        "2": 92471,
+        "3": 312796,
+        "2": 92469,
         "1": 2255
       },
       "heldout_bacterial_outcome_overlap": 0,
@@ -185,210 +185,216 @@
       },
       "queries": [
         {
-          "valid_index": 45,
-          "benchmark_row_id": "AMES_2A4674B6631A78A7429A",
+          "valid_index": 267,
+          "benchmark_row_id": "AMES_723663A1F3E1C7482F25",
+          "Y": 1,
+          "condition_group": "metabolic_activation=present+strain_panel=TA100,TA98",
+          "rendered_condition": "This prediction concerns the query molecule under metabolic activation: present and strain panel: TA100,TA98.",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 1,
+              "visible_cards": 1,
+              "cards_by_family": {
+                "direct_ames": 1
+              },
+              "active_molecules_4_2": 1,
+              "active_cards_4_2": 1
+            },
+            {
+              "level": 2,
+              "neighbors": 20,
+              "visible_cards": 102,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 101,
+                "direct_ames": 1
+              },
+              "active_molecules_4_2": 4,
+              "active_cards_4_2": 8
+            },
+            {
+              "level": 3,
+              "neighbors": 23,
+              "visible_cards": 178,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 101,
+                "other_genetic_damage": 76,
+                "direct_ames": 1
+              },
+              "active_molecules_4_2": 7,
+              "active_cards_4_2": 15
+            },
+            {
+              "level": 4,
+              "neighbors": 25,
+              "visible_cards": 260,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 101,
+                "dna_damage_response": 82,
+                "other_genetic_damage": 76,
+                "direct_ames": 1
+              },
+              "active_molecules_4_2": 10,
+              "active_cards_4_2": 25
+            },
+            {
+              "level": 5,
+              "neighbors": 29,
+              "visible_cards": 532,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 101,
+                "genotoxicity_mechanisms": 272,
+                "dna_damage_response": 82,
+                "other_genetic_damage": 76,
+                "direct_ames": 1
+              },
+              "active_molecules_4_2": 13,
+              "active_cards_4_2": 36
+            }
+          ]
+        },
+        {
+          "valid_index": 128,
+          "benchmark_row_id": "AMES_BCF61ED2F3A80D97FBA5",
+          "Y": 0,
+          "condition_group": "metabolic_activation=both_reported+strain_panel=TA100,TA98",
+          "rendered_condition": "This prediction concerns the query molecule under metabolic activation: both reported and strain panel: TA100,TA98.",
+          "levels": [
+            {
+              "level": 1,
+              "neighbors": 16,
+              "visible_cards": 23,
+              "cards_by_family": {
+                "direct_ames": 23
+              },
+              "active_molecules_4_2": 10,
+              "active_cards_4_2": 13
+            },
+            {
+              "level": 2,
+              "neighbors": 56,
+              "visible_cards": 457,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 434,
+                "direct_ames": 23
+              },
+              "active_molecules_4_2": 13,
+              "active_cards_4_2": 21
+            },
+            {
+              "level": 3,
+              "neighbors": 75,
+              "visible_cards": 1462,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 434,
+                "other_genetic_damage": 1005,
+                "direct_ames": 23
+              },
+              "active_molecules_4_2": 16,
+              "active_cards_4_2": 30
+            },
+            {
+              "level": 4,
+              "neighbors": 138,
+              "visible_cards": 4197,
+              "cards_by_family": {
+                "nonvoter_ames_outcome": 434,
+                "dna_damage_response": 2735,
+                "other_genetic_damage": 1005,
+                "direct_ames": 23
+              },
+              "active_molecules_4_2": 19,
+              "active_cards_4_2": 39
+            },
+            {
+              "level": 5,
+              "neighbors": 192,
+              "visible_cards": 8884,
+              "cards_by_family": {
+                "genotoxicity_mechanisms": 4687,
+                "nonvoter_ames_outcome": 434,
+                "dna_damage_response": 2735,
+                "other_genetic_damage": 1005,
+                "direct_ames": 23
+              },
+              "active_molecules_4_2": 22,
+              "active_cards_4_2": 50
+            }
+          ]
+        },
+        {
+          "valid_index": 8,
+          "benchmark_row_id": "AMES_012A5533302A03621D64",
           "Y": 1,
           "condition_group": "metabolic_activation=absent+strain_panel=TA98",
           "rendered_condition": "This prediction concerns the query molecule under metabolic activation: absent and strain panel: TA98.",
           "levels": [
             {
               "level": 1,
-              "neighbors": 76,
-              "visible_cards": 144,
+              "neighbors": 55,
+              "visible_cards": 115,
               "cards_by_family": {
-                "direct_ames": 144
+                "direct_ames": 115
               },
               "active_molecules_4_2": 10,
-              "active_cards_4_2": 21
+              "active_cards_4_2": 16
             },
             {
               "level": 2,
-              "neighbors": 355,
-              "visible_cards": 2061,
+              "neighbors": 211,
+              "visible_cards": 2887,
               "cards_by_family": {
-                "nonvoter_ames_outcome": 1917,
-                "direct_ames": 144
+                "nonvoter_ames_outcome": 2772,
+                "direct_ames": 115
               },
               "active_molecules_4_2": 13,
-              "active_cards_4_2": 30
+              "active_cards_4_2": 25
             },
             {
               "level": 3,
-              "neighbors": 386,
-              "visible_cards": 8158,
+              "neighbors": 230,
+              "visible_cards": 5257,
               "cards_by_family": {
-                "nonvoter_ames_outcome": 1917,
-                "direct_ames": 144,
-                "other_genetic_damage": 6097
+                "nonvoter_ames_outcome": 2772,
+                "other_genetic_damage": 2370,
+                "direct_ames": 115
               },
               "active_molecules_4_2": 16,
-              "active_cards_4_2": 42
+              "active_cards_4_2": 36
             },
             {
               "level": 4,
-              "neighbors": 458,
-              "visible_cards": 24965,
+              "neighbors": 266,
+              "visible_cards": 9361,
               "cards_by_family": {
-                "nonvoter_ames_outcome": 1917,
-                "dna_damage_response": 16807,
-                "direct_ames": 144,
-                "other_genetic_damage": 6097
+                "dna_damage_response": 4104,
+                "nonvoter_ames_outcome": 2772,
+                "other_genetic_damage": 2370,
+                "direct_ames": 115
               },
               "active_molecules_4_2": 19,
-              "active_cards_4_2": 54
+              "active_cards_4_2": 46
             },
             {
               "level": 5,
-              "neighbors": 520,
-              "visible_cards": 34693,
+              "neighbors": 309,
+              "visible_cards": 12543,
               "cards_by_family": {
-                "nonvoter_ames_outcome": 1917,
-                "dna_damage_response": 16807,
-                "genotoxicity_mechanisms": 9728,
-                "direct_ames": 144,
-                "other_genetic_damage": 6097
+                "dna_damage_response": 4104,
+                "nonvoter_ames_outcome": 2772,
+                "genotoxicity_mechanisms": 3182,
+                "other_genetic_damage": 2370,
+                "direct_ames": 115
               },
               "active_molecules_4_2": 22,
-              "active_cards_4_2": 63
-            }
-          ]
-        },
-        {
-          "valid_index": 267,
-          "benchmark_row_id": "AMES_C7495228AA4305DBFBE0",
-          "Y": 0,
-          "condition_group": "metabolic_activation=both_reported+strain_panel=WP2UVRA",
-          "rendered_condition": "This prediction concerns the query molecule under metabolic activation: both reported and strain panel: WP2UVRA.",
-          "levels": [
-            {
-              "level": 1,
-              "neighbors": 0,
-              "visible_cards": 0,
-              "cards_by_family": {},
-              "active_molecules_4_2": 0,
-              "active_cards_4_2": 0
-            },
-            {
-              "level": 2,
-              "neighbors": 1,
-              "visible_cards": 35,
-              "cards_by_family": {
-                "nonvoter_ames_outcome": 35
-              },
-              "active_molecules_4_2": 1,
-              "active_cards_4_2": 2
-            },
-            {
-              "level": 3,
-              "neighbors": 1,
-              "visible_cards": 516,
-              "cards_by_family": {
-                "other_genetic_damage": 481,
-                "nonvoter_ames_outcome": 35
-              },
-              "active_molecules_4_2": 1,
-              "active_cards_4_2": 4
-            },
-            {
-              "level": 4,
-              "neighbors": 1,
-              "visible_cards": 885,
-              "cards_by_family": {
-                "other_genetic_damage": 481,
-                "dna_damage_response": 369,
-                "nonvoter_ames_outcome": 35
-              },
-              "active_molecules_4_2": 1,
-              "active_cards_4_2": 6
-            },
-            {
-              "level": 5,
-              "neighbors": 5,
-              "visible_cards": 1228,
-              "cards_by_family": {
-                "other_genetic_damage": 481,
-                "genotoxicity_mechanisms": 343,
-                "dna_damage_response": 369,
-                "nonvoter_ames_outcome": 35
-              },
-              "active_molecules_4_2": 4,
-              "active_cards_4_2": 12
-            }
-          ]
-        },
-        {
-          "valid_index": 97,
-          "benchmark_row_id": "AMES_4957CEAC6F320D4971F1",
-          "Y": 1,
-          "condition_group": "metabolic_activation=present+strain_panel=TA100",
-          "rendered_condition": "This prediction concerns the query molecule under metabolic activation: present and strain panel: TA100.",
-          "levels": [
-            {
-              "level": 1,
-              "neighbors": 7,
-              "visible_cards": 12,
-              "cards_by_family": {
-                "direct_ames": 12
-              },
-              "active_molecules_4_2": 7,
-              "active_cards_4_2": 11
-            },
-            {
-              "level": 2,
-              "neighbors": 38,
-              "visible_cards": 280,
-              "cards_by_family": {
-                "nonvoter_ames_outcome": 268,
-                "direct_ames": 12
-              },
-              "active_molecules_4_2": 10,
-              "active_cards_4_2": 22
-            },
-            {
-              "level": 3,
-              "neighbors": 50,
-              "visible_cards": 633,
-              "cards_by_family": {
-                "nonvoter_ames_outcome": 268,
-                "other_genetic_damage": 353,
-                "direct_ames": 12
-              },
-              "active_molecules_4_2": 13,
-              "active_cards_4_2": 32
-            },
-            {
-              "level": 4,
-              "neighbors": 89,
-              "visible_cards": 2255,
-              "cards_by_family": {
-                "nonvoter_ames_outcome": 268,
-                "dna_damage_response": 1622,
-                "other_genetic_damage": 353,
-                "direct_ames": 12
-              },
-              "active_molecules_4_2": 16,
-              "active_cards_4_2": 41
-            },
-            {
-              "level": 5,
-              "neighbors": 141,
-              "visible_cards": 6133,
-              "cards_by_family": {
-                "nonvoter_ames_outcome": 268,
-                "dna_damage_response": 1622,
-                "genotoxicity_mechanisms": 3878,
-                "other_genetic_damage": 353,
-                "direct_ames": 12
-              },
-              "active_molecules_4_2": 19,
-              "active_cards_4_2": 52
+              "active_cards_4_2": 57
             }
           ]
         }
       ]
     },
     "random": {
-      "validated_at": "2026-09-07T21:53:01.910544+00:00",
+      "validated_at": "2026-09-13T21:16:25.333031+00:00",
       "identity_policy": "parent_disjoint",
       "heldout_parent_count": 166,
       "split_rows": {
@@ -422,10 +428,10 @@
         "1": 1135
       },
       "indexed_representative_cards_by_level": {
-        "4": 474779,
+        "4": 474780,
         "1": 2172,
-        "2": 78804,
-        "3": 220392,
+        "2": 78802,
+        "3": 220393,
         "5": 422449
       },
       "canonical_trace_examples_by_level": {
@@ -473,8 +479,8 @@
         "4": 776147,
         "5": 1198596,
         "1": 2172,
-        "2": 80976,
-        "3": 301368
+        "2": 80974,
+        "3": 301367
       },
       "heldout_bacterial_outcome_overlap": 0,
       "future_family_visibility_violations": 0,
@@ -521,7 +527,7 @@
       },
       "queries": [
         {
-          "valid_index": 164,
+          "valid_index": 223,
           "benchmark_row_id": "AMES_2A4674B6631A78A7429A",
           "Y": 1,
           "condition_group": "metabolic_activation=absent+strain_panel=TA98",
@@ -731,10 +737,10 @@
     }
   },
   "input_hashes": {
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/validate_retrieval.py": "84d081863c8c913e464df3fc5b73838c151b566d49b7a236e14c34fd066ead86",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/validate_retrieval.py": "4075114ff3bec7c9e3feedc220e95ee8239f62ade0d6fa496ca97f617cee2377",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/build_runtime.py": "e4201c4bb2ce83b5d0d74eb48034ca290f51ec9d4b3569e38306de8c7d5e1931",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/dataset_manifest.json": "4b92c978f65a706d31bacc894a8aea6f176f811baafe13169b51e2818b00032c",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/summary.json": "a078188d1a110672ebe21b3e6e140f2f66bb484f608fd14c2c61633c2c7efd66",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/dataset_manifest.json": "811cbbf5d564e0342b650ef5343ccb9ed499e5dad8aa21fa306975d4f5f14942",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/summary.json": "9c8f1ffca1db1683adcf2a0f398c644a4714ff731cebdaef9a4b452f7b13773c",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/previous_source_votes.jsonl": "a505bbb4ff2ef37c2497253fc89e01f3974bf1ad3a4ffe6ff6c58200fbef48b1",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/previous_source_manifest.json": "fc8e6f1badc7a414b59f47e07a6ca29e16c9ff96a4ec50d92244d9274cc53809",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/sample.jsonl": "4b4fcbe8ad4dd3ff5f4c11d8bd0577e09014e55d5cf253ada1a24b0217f71c96",
@@ -750,67 +756,69 @@
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/39468665_full.xml": "ef3273ba4c65b6607dbdc78f7b6ac9333595e4d9ad87f9a9d0a74f93ef4987fc",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/pubmed.json": "7d1f9313f65827542673c549927d6a33b97718e1beab04b7af38b3c7f8eb6142",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/sample_selection.py": "0d7548e60cbfa3dd8e1bb30dafeea4e22b04654fcdff27c377fe729f09609784",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/applied_decisions.jsonl": "62ee898d681c7fd249c45c800bde7c51300e8639a3af71217ff4cdfcea491878",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/applied_decisions.jsonl": "6a1e0cca7594209567e4c314e24c36476277ca4efafa5c8f63468f0ccd4d9e53",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/vote_changes.json": "f27484c0aad321150540898147e9127913aad279ef97c0d0ff4d9248a3906a74",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/previous_vote_funnel.json": "c46d29a7b9577e2dd63c590d86336466abdc4808fabcce04ab0b07bd352e8cfb",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/sampling_L2_frame.parquet": "8aba065602cbe9b0f88d725e65555b847856ee679c8fc69999a5cfdc64937fd0",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/previous_sampled_ids.json": "ba54b2ed7c3a2df228f8b63250e9520b9b47deb19d58b597ba0336bf9c21bcce",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v4/previous_benchmark_rows.jsonl": "71395dd3ea142549e4619a08cba0ce00b3bba43191ff4fb8d4cb279f1391f36f",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/manifest.json": "f199bc4cca95c9b5d0208d8a48bb21e91739bd79be29c042256cb38cb26d1a29",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v6/placement_decisions.jsonl": "b8046ea5afcf6bee8801e4d06eb3ae752df3d4b1f3ed011c1b2f7745a021ca26",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/manifest.json": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/source_votes.jsonl": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v6/placement_decisions.jsonl": "6bc83b1b0442afe02249601655a9608cd69b10c7f7bde053ebf696182cf425fc",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v5/sample.jsonl": "b132e4498c9c48405a6b1da6a6644186e9d011f5178128eba224370af4d8bc55",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v5/audit_annotations.jsonl": "636232bb9855565f4dbcbdf0199fce131b0ea330aa4312bd3fca32ad8a767661",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v6/sample.jsonl": "d6df9522effa52bae4a82678d663ecdcc127991f26fa0976d0bf1f613b5d909a",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/source_review_v6/audit_annotations.jsonl": "089d8349c3e322e9e47bf0989efb16c51686d0fd66302aa371c8463d8340bc6d",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/trace_review_20260913/sample.jsonl": "e43816e228df5a7470f543be0a0da136dc3c87d6f471afd0de257df2ebf17916",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/trace_review_20260913/audit_annotations.jsonl": "c4f46e98ada9a27a7eba530fdf86f82944eff579c52b6e61c07c6c43252627a7",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_base.parquet": "c29f6268eee8f97eef1e5cb1c1352a7825055091835fc2033325d003fcb5f905",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v1.parquet": "8fce6d2c773dc43d37129ef1cdb1b5591c4618b57dab15e8da75e6db7a4a2151",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v2.parquet": "dc2a1762ed91a63e7f65439255c64f6e6c3f7b54a57b37891770a52133dcfb0c",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/ames_v3.parquet": "765e6b8c1cd152e9e8ce5450ade8bf96f97e08aa5ee899abca55ec02534ed42f",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/assay_retrieval.py": "fc4fea3b08a8c9b733812e0ca26bd90059b5692ad112a6e342897752288d2e33",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/progressive_assay_reasoning.py": "40b96e7584e369561e3c74a0e0d3f07117bf1890ef2298302544223b6d587896",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/assay_retrieval.py": "7cb21eba2912628ad11b8c8ca751e48ba00af9d2d8716a954a3fe8a2d3288b04",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/progressive_assay_reasoning.py": "6171ebd3921462a2c69b7826ee9ba3a3229b549a44e04258db35ede747cdc85b",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/retrieval_policy.py": "1a4f0d48181dd86dbe56a1509866e75c1cff0c410a1dc1191b0f4c81500deac2",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/molecule_identity.py": "d9f5e9e005ee2e17ca33c7aadf298ef9d59c0831b36b1fa1f0227e0776617050",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/reasoning_payload.py": "102f5f92cc9b20e8bdfa5ba4edf8307bdaecb54db867b4d72d63823a2c202480",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/retrieve_neighbors.py": "96def078ec64c19cb931cc6d4f851899b5cac2935e0a4ebfeec18eab32b3c7f0",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/retrieve_neighbors.py": "e64ed29a69b82e9f1a839724ef42d19035030d6713f56453a775ec5e7fb02c59",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/common/task_workflows/evidence_library.py": "0b93c5eea8e1bd2d8239478a5b5932cec6033d2bdd2bd73527c290fdd315ac51",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
-    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/record_audit.parquet": "dd54b40bdf4315ec0ac2407eb9268c2c46e17fe6974c525024b5248543e354e9",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+    "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/record_audit.parquet": "538b6328c75782f940bc440ba6fb53581d4ffadcd69fd5c875ecdaaa82e2ec8a",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/study_vote_audit.jsonl": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/pending_identity.jsonl": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/raw_v1/manifest.json": "7f5645c242f53447b3f0afac4102d6a2189db9482f9881212cea5634222b5021",
     "/data1/tianang/Projects/TxAgent/data/starling_data/ames/identity_review_v1/pubchem_name_responses.jsonl": "ba4797eea2682e9629a085e1c868e79f2d5d5f2c8d2ae42c570f382ba9b23c77",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/source_contract.py": "cd0796468c4007c8e3e9319826e641635850b774c57685e57001077ce6d7d732",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py": "caa1e4eb2234aef37f3a82a2f2ef87c3b67b55a0d05d19be2ad7a04d54f7a0ff",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/build_conditioned_source.py": "1d996e77453eeec7228b4cc4d0335fc4005caa66896dadbada1ed82c68c1f143",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/identity_review.py": "7b65b7dd1d480258782256fb42295851ba44a03151a2de29f03fd021702cf845",
-    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/reviewed_source.py": "e570fad4016ded3ff0ff58ca4d8c69cefb6c8aa5536f48606ccc1ac294d0a4d3",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json": "2b3311a33c8d5ccef155ca8a83958ae7d5c97fada72b74b8f150ece406b49d61",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/summary.json": "29d103a4de778e04029b2f903906043dbd2d4e0c300c075370908106b4e8a8d4",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl": "4c4361f16f82399c72463c62191eba75b0983188c968b55a02f005f517569f89",
+    "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/reviewed_source.py": "42cb35b4d38f68606922546c7bea0c274cf64ed9cd14a06bd7c5f77d3efd2a57",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/provenance/scaffold_build_summary.json": "6cb0d2a5be1bc47ab5e032daaf27c7004506149abb4ee669ec64d810ae841faa",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/summary.json": "d13841ff4902202132b3828621fb3b44af7f047131b520bb9d7f145378a9de21",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/heldout_molecule_condition_labels.jsonl": "6c15d3e6541ffd1a99e96d8d16add81dc55283f93652bef9155a55ef0f752bb5",
     "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train.jsonl": "faa0a5f8935e2fbe91099b81ff1d80d65e021617497df822613b5388cf3db493",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl": "043584e111e3612ad38cd40bc1e501d16cd2d705cdc4adef97f0e0d34543b507",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl": "79ac8815be90fed01861aaf37107a811b5761c4a92058b433f388fed6ce5e4a6",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl": "e050d8c1eb6bc889eeb7386ad4b4e7e6a7dbaa00f0956f6c0b0974fdadfd1d6b",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/summary.json": "2bc33b16d362218aceb653d38da7f63aa191907183b2091b648b14d38c9c8ffd",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl": "6a58db47d8b4f1053149ac0299bb5671f931c67a0741a4e3886bf8565a3d02e9",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl": "9063ee0f6e05eb52ac5f2e7c17b65edf8dd4bc08b932c575633b0da4e8d1fe21",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl": "8773829ef13f1992d9432b9d42001f9ff8690455a05284aafcb0d967f930a4a0",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl": "8533c6a85f445ac73ce7b6a0428d52bfa200686cee77197203b81961e14592a2",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl": "f60ef364bc14406a2c0d230916b40111c56c18b172788ac8ba8902a1955aa56f",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl": "193bbd930061ac0b15e7d9d16b31dd3c1dae6b6c7543b24971fe0bd554a20dc9",
-    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl": "dbec86d029b33839b37815a42199635011943f8ef951097cde036f2baa4179cf",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json": "239b5094d57cb5a56d83cb3ee9bfc424ae950afd3ee4442aab953002fd45a90b",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl": "580bdf822b607b8684b2e57dccb659195a607de51a1da7cefd8392d239488b9f",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid.jsonl": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test.jsonl": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/train_molecule_condition_labels.jsonl": "30cda3cb9b451a7c3116e56518166abdafc48b5b9c3c1931e6e82c5a8c51f73a",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/valid_molecule_condition_labels.jsonl": "cb33b6a6e28b847ffb84654aa2b80cd3d3b3755ca50647ad03c5caeffb050767",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/scaffold/test_molecule_condition_labels.jsonl": "1f74a0d12d4200f33254f4494b8fe280e4e4ce08b61e7a941adc3c9b240d66dd",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/summary.json": "db806e2b6d846f19db7427e805316124dca8a20b5f8e8f1f0b93bbd1302ac3a4",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/heldout_molecule_condition_labels.jsonl": "014c0d20c63aecece1c42411766f5e944cfade43679d0851e5f40bf4fe9718c9",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train.jsonl": "0ef3cd70dc001b2c8857b068f1714458b45a1c352e4d5a3218f4220f1336187b",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid.jsonl": "46fe442020f173ea38fe543a438cafa8f9c4551e7320e7a9e56b73ed39501301",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test.jsonl": "8a27d04db517adb175360f553893ef807e29d5940f17a0d3d4ab5c525f8666bd",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/train_molecule_condition_labels.jsonl": "ee00344e68d72633f1de4699c79456cb56f5aa402bf54693f1e8470e3227d50a",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/valid_molecule_condition_labels.jsonl": "cbe0195ffc68fde33764ed7cd19f3cd6873917571bcbefdfecc45689343552d0",
+    "/data1/tianang/Projects/TxAgent/data/conditioned_benchmark/Ames/random/test_molecule_condition_labels.jsonl": "26c03665b4ea513dd43282f00c18f5edb876bcc4c9e34f7c2983bc82d59aa76b",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/manifest.json": "e0ea46e2af899f2530147f96c81a4bb5eae91b8e4d3ef7d968efe66e20bf297c",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
     "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/experiment_config.py": "879f0e060622e31127fc26ee439ea411502f0f3627ec8f114c34508ff902a924",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json": "afeb4d0e51dc891097cace83ab5acde23406f9dcd27770b809ddf3c5f4b26c4f",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl": "2e78c733dd0cfa89d151f31c62f89e0dd3e8039b4e38c552201d5b2bf3278043",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl": "4591e3cb52e6a9c77990e19cc1f27ee57a77f649dc9360d0d40e44b78846d9d6",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json": "1531aac6cfc76081ed3b0ea8bd7d7ed02704fd54a6dfe205472c9c405e135508",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl": "a2ebde08b400eb4931b15439daf5a5fecbb74780ea898c38b3c82b1052bef405",
-    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl": "1fc87dd7974c765f0bea1494cad1fa754deb6b40a09512c343c53f67fcd14515"
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/manifest.json": "3f8086b8f2a439149e14de3400b7bf0c21578d25bfc3eb05c821d6d52569c67b",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl": "23326d5f5a41f86f9f407de3e00b66f309a0a529f653b43d7c62c490c9eeefae",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/manifest.json": "e0b37ce71414ba851f4801fbb1a128a6cb61486f543f9c69d4fe3d628aa876ec",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl": "3692c1c2d60f19aef2bb53ccb3015605458131b6999d3e0f963f2494afe9e20b",
+    "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl": "8c3c6289ab4e0722554eb67ca41937847a6a700c0c0f6a2164d58a05e6edcbee"
   },
-  "validator_sha256": "84d081863c8c913e464df3fc5b73838c151b566d49b7a236e14c34fd066ead86",
+  "validator_sha256": "4075114ff3bec7c9e3feedc220e95ee8239f62ade0d6fa496ca97f617cee2377",
   "validator_path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/ames/validate_retrieval.py"
 }

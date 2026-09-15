@@ -546,12 +546,12 @@ def _validate_matched_source(runtime, args, source, *, refresh_priors=False):
     expected = {
         "experiment": runtime.PROGRESSIVE_PROTOCOL_VERSION,
         "visibility_mode": "deployment_visible_prefetched",
-        "prompt_profile": "progressive_compact_tools_short_aliases.v2",
-        "temperature": 0.0, "thinking": "provider_default", "reasoning_effort": "omitted",
+        "prompt_profile": runtime.PROGRESSIVE_PROMPT_PROFILE,
         "max_tokens": args.max_tokens, "tool_prefetch_complete": True,
     }
     if not refresh_priors:
         expected["model"] = args.model
+        expected.update(runtime._generation_settings(runtime._resolve_provider_pool_config(args)))
     for field, value in expected.items():
         if source.get(field) != value:
             raise ValueError(f"unsupported matched source {field}")
@@ -561,7 +561,16 @@ def _validate_matched_source(runtime, args, source, *, refresh_priors=False):
 
 def _replace_matched_prior(prepared, prior):
     query_prior, tool, none, prior_index = prior
-    if tool != prepared["query_tool_summary"]:
+    # Fresh priors may store the prompt-facing tool view. Their query identity
+    # and frozen retrieval are validated by the caller; retain the full receipt.
+    frozen = dict(prepared["query_tool_summary"])
+    refreshed = dict(tool)
+    for field in ("latency_ms", "cache_hit"):
+        frozen.pop(field, None)
+        refreshed.pop(field, None)
+    if "arguments" not in refreshed:
+        frozen.pop("arguments", None)
+    if refreshed != frozen:
         raise ValueError("refreshed prior changed frozen query tools")
     return {**prepared, "query_prior": query_prior, "reused_none_final": none,
             "reused_single_source_index": prior_index}
@@ -768,6 +777,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
             manifest["inputs"][task]["single_source_manifest_sha256"] = manifest["refreshed_single_manifest_sha256"][task]
         manifest["source_prepared_sha256"] = manifest.pop("prepared_sha256")
     provider_config = runtime._resolve_provider_pool_config(args)
+    manifest.update(runtime._generation_settings(provider_config))
     if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
         raise ValueError("provider capacity exceeds endpoint budget")
     if args.provider_pool_config:
@@ -815,7 +825,7 @@ def _run_matched_curve(args: argparse.Namespace) -> int:
     try:
         failed = runtime._run_query_rounds(args, queries, client, output_root)
     finally:
-        if isinstance(client, runtime.ParallelRetryClient):
+        if client is not None:
             client.close()
     if not args.prepare_only:
         for task in args.tasks:

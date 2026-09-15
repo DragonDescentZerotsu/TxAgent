@@ -172,6 +172,7 @@ def _source_files() -> list[dict]:
 def _build_benchmark(source_files: list[dict]) -> list[dict]:
     build_fresh_conditioned_benchmark(
         task="ames",
+        swap_evaluation_splits=True,
         record_votes=read_jsonl(VOTES),
         source_artifacts=(
             VOTES,

@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "test_log": "source_repair_tests.txt",
+  "passed_tests": 18,
+  "files": {
+    "tools/chembl_tool/common/starling/stage_new_task_retrieval.py": "fca3f4df937e5c20b04d1a15e3940e652154f32caeb816b553fd842b13069deb",
+    "tests/chembl_tool/common/test_source_record_placement_review.py": "1df137e117e5ee9c94a2ad1c2117cb23b4dc4fb40f6bc8af8aa6083ad477cb73"
+  },
+  "scope": "Synchronize corrected molecule identity in record audit; no prompt/reasoning changes"
+}

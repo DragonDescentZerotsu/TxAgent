@@ -18,7 +18,11 @@ retrieval release is `data/starling_data/<task>/retrieval_final/`.
 | Runtime catalog and indices | `outputs/paper/starling_conditioned_assay_family_curve_v1/{family_catalogs,indices}/<task>/` |
 | Ordinary Parquet level/card tables | `artifacts/chembl_tool/starling/current_level_records/<task>/` |
 
-The final DILI snapshot incorporates the completed v5 diagnostic source repairs.
+The final DILI snapshot incorporates the earlier retrieval-review v5 repairs and
+the separately authorized `trace_review_20260913` source review: 13 records were
+corrected or quarantined for attribution, chemical identity or endpoint scope.
+The latter replay uses reasoning prompt `progressive_evidence_revision.v5`;
+the older retrieval-review version number is not a prompt version.
 Carcinogens materializes all 1,735 modified R18 card decisions into the corresponding
 source rows. Corrections are now part of the source; new runs do not need the old
 indexed review overlay. Both sources preserve original `raw_record_json`, permanent
@@ -52,7 +56,8 @@ never runs those pipelines.
 
 Current source maintenance uses `stage_new_task_retrieval.py` with explicit
 `--source` and `--output`, and either `--refresh-votes` or `--record-review`.
-Content/identity repairs remain available through its `apply_content_repairs()` API;
+Content/identity repairs remain available through its `apply_content_repairs()` API,
+which keeps corrected molecule identity synchronized in records and record audit;
 indexed-card repair and targeted replay remain in the shared review and runner code.
 For a source/index semantic audit, `validate_new_task_retrieval_identity.py` requires
 `--source-root` and `--index-dir`; it no longer guesses a retired staging layout.
@@ -84,8 +89,9 @@ stereochemical identity. Source repair never grants a new L1 vote.
 ## Results and retention
 
 Current result locations and historical comparisons are recorded in
-`paper_experiments/current_conditioned_results.json`. DILI v5 and Carcinogens R18
-remain the latest completed diagnostics on already inspected Valid/Test cohorts.
+`paper_experiments/current_conditioned_results.json`. The DILI prompt-v5 source
+replay is registered separately from historical retrieval-review v5; Carcinogens
+R18 remains a retained diagnostic. These Valid/Test cohorts were already inspected.
 Final source consolidation does not create new model results: original predictions,
 prepared inputs, figures and reuse receipts remain pinned to their actual run inputs.
 Any new source-to-result equivalence claim requires a selected-surface audit.

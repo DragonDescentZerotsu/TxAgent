@@ -18,23 +18,15 @@ Maintain only these result families:
 
 Both `identity_blind` and `deployment_visible_prefetched` must remain supported.
 `deployment_visible` may remain as the end-to-end deployment mode. Router and
-RL are retained only as isolated archived/stopped research; they are not active
-paper entrypoints. Removed no-go method branches must not be reintroduced into
-the maintained matrix.
+RL code have been removed at the user's request. Removed no-go method branches
+must not be reintroduced into the maintained matrix.
 
-## Isolated historical research
+## Retired research
 
-The following packages remain reproducible but are outside the active paper
-dependency graph:
-
-```text
-router_oof/
-rl_lora/
-```
-
-Active runners, result registries, and default documentation must not import or
-launch them. Their own README/plan files are the only operational documentation
-for those stopped branches.
+The two stopped research packages, their dedicated tests and launch documentation
+were removed on 2026-09-14. `receipts/retired_research_code_20260914.json` records
+the exact files, recoverable Git commit and retained historical artifact roots.
+Historical outputs are provenance, not runnable current experiment configurations.
 
 ## Canonical data
 

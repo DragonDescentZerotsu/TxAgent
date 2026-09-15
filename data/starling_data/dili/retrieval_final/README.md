@@ -1,6 +1,8 @@
 # dili: final reviewed retrieval release
 
-The closed cleaning cycle is frozen in the single current source bundle.
+The reviewed source is frozen in the single current source bundle, including the
+13-record incremental `../trace_review_20260913/` repair. That review preserves
+raw acquisition and frozen gold; it is not a full-library certification.
 `publication.json` binds the source, both indices, benchmark hashes and card-link
 validation. `source_changes.jsonl` records every applied field change against the
 original gold_v4 source; raw source records and gold voting membership are preserved.

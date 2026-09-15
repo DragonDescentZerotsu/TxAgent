@@ -37,9 +37,11 @@ from tools.chembl_tool.tasks.skin_reaction.source_family_purity import (
     DIRECT_GROUP as SKIN_DIRECT_GROUP,
     NEAR_DIRECT_GROUP as SKIN_NEAR_DIRECT_GROUP,
     PURITY_VERSION as SKIN_PURITY_VERSION,
+    SOURCE_REVIEW as SKIN_SOURCE_REVIEW,
     SourceRecordKey,
     canonical_partition as skin_canonical_partition,
     load_canonical_partition_decisions as load_skin_canonical_partition_decisions,
+    load_reviewed_source_decisions as load_skin_source_review,
     load_voter_source_keys as load_skin_voter_source_keys,
     upstream_source_key as skin_upstream_source_key,
     vote_pure_family_move as skin_vote_pure_family_move,
@@ -53,7 +55,7 @@ PURITY_VERSION = "conditioned_source_family_purity.v1"
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/"
-    "source_family_purity_v5"
+    "source_family_purity_v7"
 )
 
 
@@ -337,6 +339,8 @@ def finalize_skin_manifest(
     strict_scope_violations: Counter[str] = Counter()
     strict_scope_examples: list[dict[str, Any]] = []
     mismatch_examples: list[dict[str, Any]] = []
+    source_review = load_skin_source_review()
+    reviewed_keys_seen: set[SourceRecordKey] = set()
     semantic_rows = (
         row for batch in parquet.iter_batches() for row in batch.to_pylist()
     )
@@ -344,6 +348,8 @@ def finalize_skin_manifest(
         key = skin_upstream_source_key(row)
         if key is None:
             continue
+        if key in source_review:
+            reviewed_keys_seen.add(key)
         source_rows_audited += 1
         decision = skin_canonical_partition(row, canonical_partitions)
         if decision is None:
@@ -405,12 +411,19 @@ def finalize_skin_manifest(
         ),
         "strict_target_scope_violation_examples": strict_scope_examples,
     }
+    if reviewed_keys_seen != set(source_review):
+        raise RuntimeError("Skin source review references absent acquisition rows")
     if mismatch_count or strict_scope_violations:
         raise RuntimeError(f"Skin semantic-family gate failed: {semantic_gate}")
     manifest_path = output_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest.update(
         {
+            "source_review": {
+                "path": _project_path(SKIN_SOURCE_REVIEW),
+                "sha256": sha256_file(SKIN_SOURCE_REVIEW),
+                "n_verified_records": len(reviewed_keys_seen),
+            },
             "l1_contract": (
                 "exact source-record membership in the current voter ledger; "
                 "retrieval L1 additionally intersects retrieval eligibility and "

@@ -113,97 +113,83 @@
       ]
     },
     "skin_reaction": {
-      "archive_sha256": "b8e56c120263e9e107b24375f4e603dc0c5e2640613a551770da17218b2d04ce",
-      "archive_size": 231882324,
-      "records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
-      "records_size": 214931670,
+      "archive_sha256": "b4013671ddd935557c980b26bbdf8931313a8a47a5984432ca837b0926b0adee",
+      "archive_size": 224185146,
+      "records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+      "records_size": 231535064,
       "parts": [
         {
-          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0001",
-          "sha256": "587f7d221a3b59a19ad6fb1acf4bb3f93b6e5472a48f9c3844e33dd7747b743c",
-          "size": 90000000
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0001",
+          "size": 90000000,
+          "sha256": "a7d2efc79d02b6108b682e02ad83355a90a324854dd01cb88138527527969ae5"
         },
         {
-          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0002",
-          "sha256": "20d84b264143255fc23f0868ddcfc27bdfc51f761d81a39a88980b0a66151e62",
-          "size": 90000000
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0002",
+          "size": 90000000,
+          "sha256": "57a0164972e8a2caa98450ba6b1c06f610c8d4d195b112cf17c40f1c60860029"
         },
         {
-          "path": "artifacts/chembl_tool/tasks/skin_reaction/starling_normalized_v7/03_records/stage.tar.zst.part-0003",
-          "sha256": "7e6b981e28b5afeb95060a3c13f681f11002b00fc556cd43f22c3b5525b1c5a7",
-          "size": 51882324
+          "path": "artifacts/chembl_tool/tasks/skin_reaction/identity_rebound_20260914/03_records/stage.tar.zst.part-0003",
+          "size": 44185146,
+          "sha256": "474ef9834db0c8aca81ef3ab8a1c4456da47d2b15c2b1983ed8c4f8baa8954d6"
         }
       ],
       "files": [
         {
-          "path": "duplicates.parquet",
-          "sha256": "d9859cf24109695c1eb33bdda3649b6fa930d3e8f2ee217b3e696f8e0c04c386",
-          "size": 51996
-        },
-        {
-          "path": "exclusions.parquet",
-          "sha256": "ef257efa7349be1aaac6f1b1922e56095d8599e4309d9c2102d54704da518c2e",
-          "size": 18895455
-        },
-        {
-          "path": "manifest.json",
-          "sha256": "93e8cca779947f2b66fdb23efcb8b9bc254ef42c1865b45fc6079e39d28da83b",
-          "size": 934
+          "path": "rebinding_receipt.json",
+          "size": 3449,
+          "sha256": "bb9bb486b5911942acad1486ae20184f64cd0a0ae01f8e0b6c7c01285f618105"
         },
         {
           "path": "records.parquet",
-          "sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
-          "size": 214931670
-        },
-        {
-          "path": "scalar_distribution.parquet",
-          "sha256": "800e112b3a264c76850076b9db6e51a0fcafe925981a6c0bf2639e0b8d394f8a",
-          "size": 47760
+          "size": 231535064,
+          "sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76"
         }
-      ]
+      ],
+      "source_release": "outputs/chembl_tool/starling/skin_reaction_identity_rebound_20260914/03_records"
     },
     "ames": {
-      "archive_sha256": "c8a78dbc3fd9e5191ee757b20015bfe5122e107d27e5830cbf20aefad307c1e4",
-      "archive_size": 478780025,
-      "records_sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e",
-      "records_size": 422823159,
+      "archive_sha256": "2f57468aad24f77ee4d6e63f08bee31bf06e8797f5312f38312230992c9fbb32",
+      "archive_size": 478749947,
+      "records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+      "records_size": 422824120,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
           "size": 90000000,
-          "sha256": "617b68db49125cdb18468a3e0ab43549d18b9bfd142b6eef314b2000453dff7a"
+          "sha256": "7efe0de131d0d5b1c880bfd03c69202745c292386ef1ae6d9eb2cdcf5c506583"
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
           "size": 90000000,
-          "sha256": "b0737f5461b04883585292aefd63d093a4b87c99ca5387e33c6d46b5f665d70d"
+          "sha256": "5db27f2f8ab27b96e6b8d8a56fbe67a67c514abf196c0a306f53742fbcbd1ac1"
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
           "size": 90000000,
-          "sha256": "f0c8a4204d70096ea901ffbafe5c5922c8c860dd71189174511230218c16a2f1"
+          "sha256": "807469b63e72ec4089c56f08de21fc9b9d3e2dcd0acedb17ed0ebb8aa4a99d26"
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
           "size": 90000000,
-          "sha256": "029021bb88030d0a9ee11c97b37ab027869dc7400d0eca65e88d8acf5452cb19"
+          "sha256": "a435240c7f37dbff2dab6706888a795ec61c2ce482879e4aa526f9a6e9339a9b"
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
           "size": 90000000,
-          "sha256": "539bc5b8ec6aacd8f2de3f481186233349b9792f9d0317e79989d559de89ffcd"
+          "sha256": "f5c5d87644d404b0a5aa9941ea07c74beb9272d3bf6c2e46318a76a1720a8c63"
         },
         {
           "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
-          "size": 28780025,
-          "sha256": "aedf928f3eae8e511b0d1fe5e6f3466b3343fb57e72f4ac3d99fe6b2a402e916"
+          "size": 28749947,
+          "sha256": "9bbe037652e31471555cd2308df2f04b01371c19658ab94c86222b132c40e0f1"
         }
       ],
       "files": [
         {
           "path": "manifest.json",
-          "size": 9119,
-          "sha256": "f199bc4cca95c9b5d0208d8a48bb21e91739bd79be29c042256cb38cb26d1a29"
+          "size": 9120,
+          "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
         },
         {
           "path": "pending_identity.jsonl",
@@ -212,18 +198,18 @@
         },
         {
           "path": "record_audit.parquet",
-          "size": 59953994,
-          "sha256": "dd54b40bdf4315ec0ac2407eb9268c2c46e17fe6974c525024b5248543e354e9"
+          "size": 59953881,
+          "sha256": "538b6328c75782f940bc440ba6fb53581d4ffadcd69fd5c875ecdaaa82e2ec8a"
         },
         {
           "path": "records.parquet",
-          "size": 422823159,
-          "sha256": "1a9a5eeedafb1b4531dbd910183f6acadf90ce08891fec06a66339e6b779954e"
+          "size": 422824120,
+          "sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a"
         },
         {
           "path": "source_votes.jsonl",
-          "size": 5626403,
-          "sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9"
+          "size": 5626362,
+          "sha256": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6"
         },
         {
           "path": "study_vote_audit.jsonl",
@@ -231,20 +217,18 @@
           "sha256": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e"
         }
       ],
-      "source_stage": "reviewed canonical records with record-level family assignment",
-      "source_manifest": "data/starling_data/ames/dataset_manifest.json",
-      "raw_source_manifest": "data/starling_data/ames/raw_v1/manifest.json"
+      "source_release": "data/starling_data/ames/canonical_v1"
     },
     "dili": {
-      "archive_sha256": "5c7e292ab9c2abf47971a65e9c44524a9d2099c8095be15785279b83e45bb470",
-      "archive_size": 1204320738,
-      "records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
-      "records_size": 948584298,
+      "archive_sha256": "ec218249e1e93e41c486292d11c9c84e3ab7ebbda5c6fc3f1257a6b6a239a5c7",
+      "archive_size": 1204363677,
+      "records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+      "records_size": 948586630,
       "parts": [
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0001",
           "size": 90000000,
-          "sha256": "63d90be19fb214646d86763c1e6162c154769e841bd7bbb942c0d9453151fa55"
+          "sha256": "30943f0c2ae83f7162e1be5d61f6d29722473cf89db54064a50db865b5e30cd1"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0002",
@@ -259,57 +243,57 @@
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0004",
           "size": 90000000,
-          "sha256": "6a975fa1b8e922c17755b6ef419cdf429282a5593e7fe1a79c927ede7890d810"
+          "sha256": "bf3f70ae4edb24d35c89bf866d3a6c9510ed0d4a33a4be093c5245ab7d39a8e0"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0005",
           "size": 90000000,
-          "sha256": "d532cb562b39bbd201f55c0bce83b3192d8661244bab15b2315bb9d16c2516ac"
+          "sha256": "3298ae5a0838f235ab25027a46c0b85608e2a0e26b617778b505a0a2610db5ec"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0006",
           "size": 90000000,
-          "sha256": "89796d71d209d93fde4f69a57187a3dcbc96a091de75c6737fd33e89d435de1c"
+          "sha256": "7be1913c8f7186ba4d172092ea491a0a1d07950c1a3a9d464860f8336bb18706"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0007",
           "size": 90000000,
-          "sha256": "a65f8e437109a06cf8b0ca0a9caed6327f67f299a2d649ad72c9cf9cce8ce2a1"
+          "sha256": "09040193a2b36cdb0141a7be45c8c1ac2c57c07c3dc8d3e23a3ad095d31f2a0c"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0008",
           "size": 90000000,
-          "sha256": "4dfd6f6d891ce5eb5f6a8e3d700682150373bf08d9ce0942da6b342a165c3b9f"
+          "sha256": "ba83d622879d64a12db648821df428ab501982d4c7ce3365695be1cd1b21de74"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0009",
           "size": 90000000,
-          "sha256": "c7c6905b3ea5082fb1ac6f276f06810ad871372c930f690da6c747550ae23d69"
+          "sha256": "076112d5fa74cb6e15131b332f95e3a589ae6dd9c310aba6cd9f69ebe5e02324"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0010",
           "size": 90000000,
-          "sha256": "67a06174cae1ec96b785288866c26e8be316dbde8ff1da158ac0d4d2405fe7ee"
+          "sha256": "9c486fcc421feaa270be6ecbed80930434067a013a1af770d41a40e06731ea3e"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0011",
           "size": 90000000,
-          "sha256": "b782b982b3dee7ef2637cdf525466d005ee5ed007f5aa968699f7022117f17c1"
+          "sha256": "8d622be8affe74408c016ac52d7bf45825a0d34684558805ae46f7e4ad0afbda"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0012",
           "size": 90000000,
-          "sha256": "83e9e44c535f9f9dd669a2e15e5498c54c3d267cec9dcea7360e3138ae6d48e5"
+          "sha256": "885ee9795ec2156e73946837be074981e4439e8d29e6c8c832975d3dc454fcfa"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0013",
           "size": 90000000,
-          "sha256": "9e2ce562751fe612a445678ae744ee49d23b650dc426b01d9fc92506f9a2b1a7"
+          "sha256": "0885331b4a2964a598cfc21f686803012383ac2e9827c03027ce5364c5ae511d"
         },
         {
           "path": "artifacts/chembl_tool/tasks/dili/retrieval_final/03_records/stage.tar.zst.part-0014",
-          "size": 34320738,
-          "sha256": "d3db87275b52efbe34fd546bf294e919bc857678c074508516e61f5b88a449a1"
+          "size": 34363677,
+          "sha256": "7de60dffde80c52ba58d98979777985f3d4723eeb157be194bcd8e66959c94eb"
         }
       ],
       "files": [
@@ -364,14 +348,24 @@
           "sha256": "fd2effa0c59a2ba5e70cf261d9d7feb5b74c1090143c3a80d5e222934d2c87d9"
         },
         {
+          "path": "content_repair_receipt.json",
+          "size": 4475,
+          "sha256": "b22d80ee51982433e06802459965013b1ca70dc1196292ecb73420a4f4665880"
+        },
+        {
+          "path": "content_repairs.json",
+          "size": 18469,
+          "sha256": "fe02659dbce44c167e019bdaf92c04a292440b64ad2af517f1bffbb8646b5643"
+        },
+        {
           "path": "record_audit.parquet",
-          "size": 31202820,
-          "sha256": "c63e4c8eb2c291b764166afa8340a957f3cc0eb887d6f53d7fc649c04e4ad01e"
+          "size": 31201242,
+          "sha256": "4d96be5aed34b3c0210f5d887c32fcf984c1b0ef5dbe27dc48072f797b295449"
         },
         {
           "path": "records.parquet",
-          "size": 948584298,
-          "sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d"
+          "size": 948586630,
+          "sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf"
         },
         {
           "path": "retrieval_identity_cache.jsonl",
@@ -382,6 +376,11 @@
           "path": "retrieval_identity_cache.manifest.json",
           "size": 377,
           "sha256": "92a909d07d7cbeaa25347822ce7866401d6eabe33612a2c088803cc92eb35691"
+        },
+        {
+          "path": "retrieval_identity_cache.pending.jsonl",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         },
         {
           "path": "vote_support_links.parquet",

@@ -1,0 +1,69 @@
+{
+  "status": "passed",
+  "n_rows_compared": 806599,
+  "all_source_content_and_identity_columns_unchanged": true,
+  "gold_and_split_files_byte_identical": true,
+  "changed_records": [
+    {
+      "source_record_key": "sensitization_aop:18020",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:18027",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:20616",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Observed.nonvoter_skin_outcome"
+    },
+    {
+      "source_record_key": "sensitization_aop:20617",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Observed.nonvoter_skin_outcome"
+    },
+    {
+      "source_record_key": "sensitization_aop:20618",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Observed.nonvoter_skin_outcome"
+    },
+    {
+      "source_record_key": "sensitization_aop:38402",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38403",
+      "before": "Mechanism.sensitization_aop",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38405",
+      "before": "Observed.nonvoter_skin_outcome",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38407",
+      "before": "Observed.nonvoter_skin_outcome",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38408",
+      "before": "Observed.nonvoter_skin_outcome",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38409",
+      "before": "Observed.nonvoter_skin_outcome",
+      "after": "Excluded.skin_sensitization_source_purity"
+    },
+    {
+      "source_record_key": "sensitization_aop:38410",
+      "before": "Observed.nonvoter_skin_outcome",
+      "after": "Excluded.skin_sensitization_source_purity"
+    }
+  ],
+  "source_review_sha256": "3e6e61ba6163b27fa7af64f73132ccff134fe673e1fae2ecf2d075a89b6e0864"
+}

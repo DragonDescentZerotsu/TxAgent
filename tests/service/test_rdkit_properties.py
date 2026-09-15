@@ -18,7 +18,9 @@ def test_molecule_properties_returns_core_rdkit_features_without_pka_initializat
     assert features["pka__most_acidic_pka"]["feature_value_text"] == "not applicable (pKa predictor unavailable)"
     assert any(group["name"] == "primary hydroxyl" for group in output["functional_groups"])
     assert output["present_functional_groups"] == output["functional_groups"]
-    assert "functional groups:" in output["text"]
+    assert "[functional_group_tree]" in output["text"]
+    assert "primary hydroxyl: 1" in output["functional_group_tree"]
+    assert "functional groups:" not in output["text"]
     assert "molecular weight:" in output["text"]
 
 

@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -9,6 +10,17 @@ from tools.chembl_tool.common.conditioned_query_prior import build_query_prior_m
 from tools.chembl_tool.common.reasoning_validation import allowed_values_from_required_schema
 from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
 from tools.chembl_tool.paper_experiments import run_conditioned_assay_progressive_curve as runner
+
+
+TEST_PROVIDER = SimpleNamespace(providers=[SimpleNamespace(temperature=0.0, reasoning_effort="")])
+
+
+
+
+
+
+
+
 
 
 @pytest.mark.parametrize("task", ["dili", "carcinogens"])
@@ -117,9 +129,9 @@ def prior_resume(tmp_path, monkeypatch):
     source = tmp_path / "valid.jsonl"
     source.write_text('{"drug":"CCO","Y":0}\n')
     specs = {"dili": SimpleNamespace(input_jsonl=source)}
-    monkeypatch.setattr(runner, "_make_client", lambda *args: object())
+    monkeypatch.setattr(runner, "_make_client", lambda *args: SimpleNamespace(close=lambda: None))
     monkeypatch.setattr(runner, "_run_query_rounds", lambda *args, **kwargs: 0)
-    assert runner._prepare_fresh_query_priors(args, specs, None) == 0
+    assert runner._prepare_fresh_query_priors(args, specs, TEST_PROVIDER) == 0
     manifest = tmp_path / "priors/single_cache/dili/none/manifest.json"
     return args, specs, source, manifest
 
@@ -130,12 +142,97 @@ def test_prior_resume_transport_migration_preserves_history(prior_resume):
     previous["runner_sha256"] = "previous-runner-hash"
     manifest.write_text(json.dumps(previous))
     args.base_url = "http://127.0.0.1:50002/v1"
-    assert runner._prepare_fresh_query_priors(args, specs, None) == 0
+    assert runner._prepare_fresh_query_priors(args, specs, TEST_PROVIDER) == 0
     current = json.loads(manifest.read_text())
     assert current["base_url"] == args.base_url
     assert current["execution_history"] == [previous]
     assert current["model"] == previous["model"]
     assert current["input_sha256"] == previous["input_sha256"]
+
+
+@pytest.mark.parametrize("task,profile", [
+    ("bbb_martins", ""), ("bioavailability_ma", ""), ("skin_reaction", ""),
+])
+def test_fresh_native_priors_reuse_messages_and_race_validation_retries(task, profile, monkeypatch, tmp_path):
+    import importlib
+    from types import SimpleNamespace
+    from tools.chembl_tool.common.experiment_retrieval import _query_only_retrieval
+    from tools.chembl_tool.common.reasoning_payload import llm_query_payload
+
+    monkeypatch.setattr(runner, "run", lambda args: args)
+    args = runner.main(["--tasks", task, "--output-root", str(tmp_path / "priors"), "--retry-race-width", "6"])
+    source = tmp_path / "valid.jsonl"
+    source.write_text('{"drug":"CCO","Y":0}\n')
+    directory = runner._source_run_dir(task, 0, tmp_path / "priors/single_cache")
+    directory.mkdir(parents=True)
+    retrieval = _query_only_retrieval("CCO", mode="none")
+    retrieval["query"].update(tools_prefetched=True, prefetched_molecule_properties={
+        "tool_name": "molecule_properties", "status": "ok",
+        "content": "[molecule_properties]\nexact molecular weight: 46\n[functional_group_tree]\nalcohol: 1",
+    })
+    (directory / "retrieval.json").write_text(json.dumps(retrieval))
+
+    def response(messages):
+        schema = json.loads(messages[1]["content"])["required_json_schema"]
+        allowed = allowed_values_from_required_schema(messages)
+        content = {k: sorted(allowed[k])[0] if k in allowed else ([] if isinstance(v, list) else "test")
+                   for k, v in schema.items()}
+        return {"content": content, "messages": messages}
+
+    class Race:
+        def __init__(self):
+            self.widths, self.messages = [], []
+        def chat_validated(self, messages, *, width, validate, **kwargs):
+            self.widths.append(width)
+            self.messages.append(messages)
+            result = {"content": {}} if len(self.widths) == 1 else response(messages)
+            assert bool(validate(result)) == (len(self.widths) == 1)
+            return result
+        def close(self):
+            pass
+
+    client = Race()
+    monkeypatch.setattr(runner, "ParallelRetryClient", Race)
+    monkeypatch.setattr(runner, "_make_client", lambda *a: client)
+    monkeypatch.setattr(runner, "_run_query_rounds", lambda a, queries, client, root, run_query:
+                        0 if run_query(a, queries[0], client)["status"] == "ok" else 1)
+    assert runner._prepare_fresh_query_priors(args, {task: SimpleNamespace(input_jsonl=source)}, TEST_PROVIDER) == 0
+    assert client.widths == [1, 6, 1]
+    native = importlib.import_module(f"tools.chembl_tool.tasks.{task}.run_reasoning_pipeline")
+    direct_client = SimpleNamespace(chat_json=response)
+    single = native._reason_single_molecule(direct_client, llm_query_payload(retrieval["query"]))
+    final = native._run_final_reasoning(direct_client, retrieval, single, [])
+    assert client.messages[0] == single["llm"]["messages"]
+    assert client.messages[-1] == final["llm"]["messages"]
+    assert json.loads((directory / "final_reasoning_output.json").read_text())["status"] == "ok"
+
+
+def test_prior_resume_rejects_receipts_from_before_the_tree_tool_profile(prior_resume):
+    args, specs, _, manifest = prior_resume
+    previous = json.loads(manifest.read_text())
+    previous.pop("tool_text_profile")
+    manifest.write_text(json.dumps(previous))
+    old_bytes = manifest.read_bytes()
+    with pytest.raises(ValueError, match="changed fresh prior inputs/settings"):
+        runner._prepare_fresh_query_priors(args, specs, TEST_PROVIDER)
+    assert manifest.read_bytes() == old_bytes
+
+
+@pytest.mark.parametrize("status", ["error", "ok"])
+def test_cached_prior_tools_must_succeed_and_include_a_tree(prior_resume, monkeypatch, status):
+    args, specs, _, _ = prior_resume
+    directory = runner._source_run_dir("dili", 0, Path(args.single_source_root))
+    directory.mkdir(parents=True)
+    (directory / "retrieval.json").write_text(json.dumps({"query": {
+        "input_smiles": "CCO", "prefetched_molecule_properties": {
+            "status": status, "content": "failed call" if status == "error" else "old flat properties",
+        },
+    }}))
+    monkeypatch.setattr(runner, "_run_query_rounds", lambda a, queries, client, root, run_query:
+                        run_query(a, queries[0], client))
+    with pytest.raises(ValueError, match="Fresh query priors require"):
+        runner._prepare_fresh_query_priors(args, specs, TEST_PROVIDER)
+    assert not (directory / "single_molecule_reasoning_output.json").exists()
 
 
 @pytest.mark.parametrize("change", ["model", "input"])
@@ -148,7 +245,7 @@ def test_prior_resume_still_rejects_scientific_changes(prior_resume, change):
     else:
         source.write_text('{"drug":"CCC","Y":0}\n')
     with pytest.raises(ValueError, match="changed fresh prior inputs/settings"):
-        runner._prepare_fresh_query_priors(args, specs, None)
+        runner._prepare_fresh_query_priors(args, specs, TEST_PROVIDER)
     assert manifest.read_bytes() == old_bytes
 
 

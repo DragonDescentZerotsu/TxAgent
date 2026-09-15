@@ -1,0 +1,79 @@
+{
+  "status": "published",
+  "same_study_unit_labels": true,
+  "same_six_split_row_sets": true,
+  "vote_metadata_changed": [
+    "ames_base:80868"
+  ],
+  "snapshot": {
+    "archive_sha256": "2f57468aad24f77ee4d6e63f08bee31bf06e8797f5312f38312230992c9fbb32",
+    "archive_size": 478749947,
+    "records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+    "records_size": 422824120,
+    "parts": [
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0001",
+        "size": 90000000,
+        "sha256": "7efe0de131d0d5b1c880bfd03c69202745c292386ef1ae6d9eb2cdcf5c506583"
+      },
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0002",
+        "size": 90000000,
+        "sha256": "5db27f2f8ab27b96e6b8d8a56fbe67a67c514abf196c0a306f53742fbcbd1ac1"
+      },
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0003",
+        "size": 90000000,
+        "sha256": "807469b63e72ec4089c56f08de21fc9b9d3e2dcd0acedb17ed0ebb8aa4a99d26"
+      },
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0004",
+        "size": 90000000,
+        "sha256": "a435240c7f37dbff2dab6706888a795ec61c2ce482879e4aa526f9a6e9339a9b"
+      },
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0005",
+        "size": 90000000,
+        "sha256": "f5c5d87644d404b0a5aa9941ea07c74beb9272d3bf6c2e46318a76a1720a8c63"
+      },
+      {
+        "path": "artifacts/chembl_tool/tasks/ames/canonical_v1/03_records/stage.tar.zst.part-0006",
+        "size": 28749947,
+        "sha256": "9bbe037652e31471555cd2308df2f04b01371c19658ab94c86222b132c40e0f1"
+      }
+    ],
+    "files": [
+      {
+        "path": "manifest.json",
+        "size": 9120,
+        "sha256": "8ebf1e9ed0cb2e0eb7cca2904f9c1f863d8de180d7c2c24d6519ad6cfe81977b"
+      },
+      {
+        "path": "pending_identity.jsonl",
+        "size": 11597,
+        "sha256": "c93cdae71bc6e1c7721eeaaef7c034174d2062ece7c46d26888b685762fd8924"
+      },
+      {
+        "path": "record_audit.parquet",
+        "size": 59953881,
+        "sha256": "538b6328c75782f940bc440ba6fb53581d4ffadcd69fd5c875ecdaaa82e2ec8a"
+      },
+      {
+        "path": "records.parquet",
+        "size": 422824120,
+        "sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a"
+      },
+      {
+        "path": "source_votes.jsonl",
+        "size": 5626362,
+        "sha256": "fc9d80c8a3e49cab9ce55229b3c891ba2cfef25c4003f395beb04e7d7698a3a6"
+      },
+      {
+        "path": "study_vote_audit.jsonl",
+        "size": 796947,
+        "sha256": "1877349ac1ad113172f2dc05dbf6f8c6b1b14b37aba56a0cc637fecfcfd2bf0e"
+      }
+    ],
+    "source_release": "data/starling_data/ames/canonical_v1"
+  }
+}

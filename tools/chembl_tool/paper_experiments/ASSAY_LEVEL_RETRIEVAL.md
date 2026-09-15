@@ -79,7 +79,7 @@ source record 都会进入 index。静态 membership、split index cards 和 per
 - 下一层仍可见所有旧 cards、prior reasoning 和新增 cards。
 
 每层只调用一次模型，不按 assay/card 单独调用。默认不启用 flip verifier。Prompt profile 是
-`progressive_compact_tools_short_aliases.v2`，每层展示完整 level plan；已否决的 prefix-only 分支不保留 alternate
+`progressive_evidence_revision.v5`（历史 v2/v3/v4 保留各自实验合同），每层展示完整 level plan；已否决的 prefix-only 分支不保留 alternate
 CLI。completion cap 为 20,480 tokens，API `reasoning_effort` 参数省略，provider 自身 reasoning 保持默认。
 
 正式 4/2 是默认 card budget。2/1 和 8/4 只通过同一 runner 的 `--initial-card-limit` 与
@@ -156,6 +156,26 @@ query/analog 工具文本、condition、模型和生成参数，每层独立判�
 无任何 evidence 的层只使用同一冻结 query-only 结果。模型输出仍使用共享 card-citation schema，
 `new_evidence_assessment` 在此模式下可引用全部可见卡，`revision_action` 固定为 `initial`。
 
+新准备的 progressive/full-flat 输入采用 `progressive_evidence_revision.v5`，沿用 v4 的工具展示：query 与每个 neighbor
+各有 `functional_group_tree`，数值属性摘要不再重复官能团列表。树来自常驻工具服务已有的
+`molecule_properties` / `properties_compare`，同一 `/tools/batch` 预取并复用缓存；prompt 层不计算结构。
+树隐藏 atom indices，表示 AccFG 子结构包含关系，不表示化学键连接；一条简短说明约束其解释。
+检索 v8、卡片预算、任务 label policy 和输出 schema 不变，不增加逐 neighbor label 推断。
+新 profile 和工具缓存 namespace 阻止静默复用旧输入；fresh single/None 也记录并校验 tool text profile。
+旧 v2/v3 结果仍是原合同的历史结果。v4 修复跨匹配位置的树删边，不改变任务指令或输出 schema。
+single/None prior 的来源继续单独记录，冻结 prior 的配对诊断不能计作整条 pipeline 的 fresh rerun。
+prior 当前通过 `prefetched_molecule_properties.content` 接收完整属性和树段落；其 JSON 布局与
+progressive/full-flat 的独立 tree 字段不同，未额外创建一套 prior 提取器。
+
+V5 简化共享格式/标签指令，修正 progressive 中的 group 术语及 Skin 输出字段要求。
+`query_prior` / `prior_state` 是可撤销的模型判断，实验性 claims（包括继承的说法）须引用原始卡片；
+决定性 claims 说明研究对象、条件、迁移依据及对目标预测的影响，decision_summary 处理最强相关反证。
+flip 允许新证据或纠正旧事实/归属/推断错误；validator 保留引用与预测变化检查，要求非空解释，
+不再强制 basis 含新卡。它不验证解释的科学真实性，也不为没有证据增量的层增加模型调用。
+输出字段、完整 level plan、原始证据、工具及 Bioavailability high/low 判据不变；query-only prompt 未改。
+V5 六任务 valid/test progressive 与 valid matched full-flat 已完成，结果登记在
+`replicate_suites.reasoning_prompt_v5_scaffold_20260913`；不得把 v4 及更早版本的 predictions 标为 v5 结果。
+
 入口为 `run_conditioned_assay_family_curve.py --matched-progressive-root PATH --output-root NEW_PATH`，
 可先加 `--prepare-only`。共享池用 `--parallelism`，每 task 可用 `--parallelism-per-task` 限流；
 超过默认全局 512 必须显式指定已授权的 `--endpoint-concurrency-budget`。
@@ -218,6 +238,11 @@ transport/429/5xx failure 会临时熔断，一次调用最多 fail over 到一�
 每次调用将 provider、requested/served model、request ID、latency 和失败链写入
 `llm.execution_provider_attempts`。在 canonical model identity 相同的前提下 resume 可更换 execution provider；
 prompt、retrieval、max tokens 和其它语义合同仍须完全一致。
+
+共享 progressive/matched runner 另支持 `transport: openrouter_batch`，通过同一 provider
+配置选用；请求合批、remote job 恢复和计费 provenance 由 `common/openrouter_batch.py` 负责。
+每个 query 的逐层依赖不变，Batch 不使用竞速或自动 failover。完整调用、配置与恢复规则见
+[`README.md#openrouter-batch-transport`](README.md#openrouter-batch-transport)。
 
 ## Current source-purity rules
 

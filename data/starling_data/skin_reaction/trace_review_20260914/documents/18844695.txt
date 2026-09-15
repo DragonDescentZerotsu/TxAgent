@@ -1,0 +1,533 @@
+University of Groningen
+
+
+
+Reactivity of in vitro activated human T lymphocytes to p-phenylenediamine and related
+substances
+Skazik, Claudia; Grannemann, Silke; Wilbers, Liane; Merk, Hans F.; Coenraads, Pieter-Jan;
+Breuer, Sebastian; Bloemeke, Brunhilde; Blomeke, B.
+Published in:
+Contact Dermatitis
+
+
+
+
+IMPORTANT NOTE: You are advised to consult the publisher's version (publisher's PDF) if you wish to cite from
+it. Please check the document version below.
+
+Document Version
+Publisher's PDF, also known as Version of record
+
+
+
+
+Publication date:
+2008
+
+
+Link to publication in University of Groningen/UMCG research database
+
+
+
+      Citation for published version (APA):
+      Skazik, C., Grannemann, S., Wilbers, L., Merk, H. F., Coenraads, P.-J., Breuer, S., Bloemeke, B., &
+      Blomeke, B. (2008). Reactivity of in vitro activated human T lymphocytes to p-phenylenediamine and
+      related substances. Contact Dermatitis, 59(4), 203-211.
+
+
+
+
+Copyright
+Other than for strictly personal use, it is not permitted to download or to forward/distribute the text or part of it without the consent of the
+author(s) and/or copyright holder(s), unless the work is under an open content license (like Creative Commons).
+
+
+The publication may also be distributed here under the terms of Article 25fa of the Dutch Copyright Act, indicated by the “Taverne” license.
+More information can be found on the University of Groningen website: https://www.rug.nl/library/open-access/self-archiving-pure/taverne-
+amendment.
+
+
+Take-down policy
+If you believe that this document breaches copyright please contact us providing details, and we will remove access to the work immediately
+and investigate your claim.
+
+
+Downloaded from the University of Groningen/UMCG research database (Pure): http://www.rug.nl/research/portal. For technical reasons the
+number of authors shown on this cover page is limited to 10 maximum.
+
+
+
+
+Download date: 14-09-2026
+                                                                                                      # 2008 The Authors
+Contact Dermatitis 2008: 59: 203–211                                                   Journal compilation # 2008 Blackwell Munksgaard
+Printed in Singapore. All rights reserved
+                                                                                               CONTACT DERMATITIS
+
+
+
+
+Reactivity of in vitro activated human T lymphocytes
+   to p-phenylenediamine and related substances
+      CLAUDIA SKAZIK1,2,*,†, SILKE GRANNEMANN2,†, LIANE WILBERS1, HANS F. MERK1, PIETER-JAN COENRAADS3,
+                                   SEBASTIAN BREUER2 AND BRUNHILDE BLÖMEKE2
+     1
+      Department of Dermatology and Allergology, University Hospital of the RWTH Aachen, 52074 Aachen,
+   2
+     Department of Environmental Toxicology, University of Trier, 54296 Trier, Germany, and 3Department of
+Dermatology, University Medical Center Groningen, University of Groningen, 9700 RB Groningen, the Netherlands
+
+
+             Background: Patch tests to p-phenylenediamine (PPD) and related substances often show concurrent
+             reactions that can be attributed to separate sensitization or cross-reactivity.
+
+             Objectives: In order to understand the health risks associated with cross-reactivity, we studied cross-
+             reactivity of eight chemicals in vitro by measurement of T-cell proliferation of peripheral blood
+             mononuclear cells (PBMC), T-cell lines (TCL), and T-cell clones (TCC) of subjects with a positive
+             patch test result to PPD.
+
+             Patients/Methods: We studied PBMC from 13 patients and were able to generate TCL from seven
+             and TCC from four patients. Their proliferative responses to the chemicals were estimated.
+
+             Results: Concurrent reactions to these compounds on the polyclonal and monoclonal level were
+             found. A restricted T-cell receptor (TCR) Vb16-usage was observed (5/8 clones). A detailed analysis
+             of 34 TCL showed broad cross-reactivity (64.7%) between PPD, p-toluenediamine, Bandrowski’s
+             Base, and p-aminoazobenzene. More restricted patterns were found in 8.8%, which responded only
+             to compounds with two or three benzene rings, whereas 26.5% of the clones reacted specifically only
+             to one compound.
+
+             Conclusion: More than 60% of the clones showed a broad cross-reactivity pattern. Hence, clinically
+             observed cross-reactivity between different para-amino compounds can be based on a TCR recog-
+             nizing similar epitopes of these compounds with low specificity.
+
+             Key words: cross-reaction; delayed-type hypersensitivity; para-amino compounds; p-phenylenediamine;
+             T-cell clones; Vb analysis. # Blackwell Munksgaard, 2008.
+                                            Accepted for publication 13 May 2008
+
+
+
+
+Allergic contact dermatitis, a delayed hypersensitiv-              USA and Japan indicate that hair dyeing and
+ity reaction to small molecular weight compounds                   skin paintings have become much more prevalent
+(haptens), is a common skin reaction causing                       during the past 10 years; it is performed at a youn-
+personal and occupational problems (1, 2). Chem-                   ger age and the proportion of men is increasing
+icals such as p-phenylenediamine (PPD) and re-                     (3). Thus, contact allergy to PPD and related
+lated para-amino compounds, frequently found in                    compounds has increased significantly in eczema
+dyes, are raising increasing concerns due to their                 patients (3, 4) and also in the general population
+strong allergenicity. Recent surveys in Europe,                    (5) over the past decades.
+                                                                      So far, the mechanism of skin sensitization and
+                                                                   elicitation to the pro- or prehapten PPD (6) has
+*Present address: Department of Dermatology and                    not been elucidated, but some hypotheses on the
+Allergology, University Hospital of the RWTH                       sensitization to small chemicals exist. The hapten
+Aachen, Pauwelsstr. 30, 52074 Aachen, Germany                      concept (7) suggests that small chemically reac-
+†
+  These authors contributed equally to this work.                  tive compounds, which are not immunogenic by
+204   SKAZIK ET AL.                                                           Contact Dermatitis 2008: 59: 203–211
+
+
+themselves, bind to proteins or peptides and mod-     clear cells (PBMC), T-cell lines (TCL), and T-cell
+ify them. The modified proteins are processed and     clones (TCC).
+presented as hapten-modified peptides in associa-
+tion with human leucocyte antigen molecules to
+T cells and are able to activate them (8, 9). Hapt-                 Materials and Methods
+ens are often derived from chemicals considered as    Subjects
+prohaptens, which are not chemically reactive per
+se and have to be metabolized into an electrophilic   We investigated 13 subjects (10 females and 3
+hapten endowed with antigenic properties first        males; 11 tested with the German patch test base-
+(10, 11). Moreover, it has been recently reported     line series and 2 with the Dutch standard series)
+that chemically inert substances can bind directly    showing at least þþ positive patch test reactions
+to the major histocompatibility complex (MHC)–        to PPD according to the International Contact
+peptide complex in a processing-independent way       Dermatitis Research Group’s recommendations
+and thus can interact with the T-cell receptor        (application period: 2 days; readings at 2, 3, and
+(TCR) and stimulate T cells (12). We found data       7 days) and a strong history of allergic contact der-
+supporting this concept while studying the contact    matitis due to personal (hair dyeing and tattoo) or
+allergen PPD (13) showing that PPD can activate       occupational exposure (hairdresser) to PPD. The
+memory T cells using glutaraldehyde-fixed anti-       study was approved by the local ethics committee,
+gen-presenting cells (APC) that are incapable of      and all subjects gave informed consent. Patch test
+processing. Based on this context, it is supposed     materials were purchased from Hermal (Reinbek,
+that the cross-reactivity of structurally related     Germany) (1% in petrolatum) and applied in Finn
+compounds depends on the affinity, concentra-         chambers (Epitest Ltd Oy, Tuusula, Finland).
+tion, and TCR density expressed on the cell surface
+(14). Different mechanisms have been assumed to       Antigens
+account for frequently observed cross-reactivity to
+haptens: generation of a common reactive metab-       PPD (freebase), AAB, DO3, DY3, DDM, BBY,
+olite that acts as a hapten, the T cell would then    and 2-MBT were obtained from Sigma (Stein-
+recognize identical neoantigens, T-cell recognition   heim, Germany). BB was purchased from INC
+of cryptic self-peptides, or true cross-reactions,    Biomedicals (Aurora, OH, USA) and PTD from
+whereas the TCR of a T cell is incapable to distin-   Merck (Hohenbrunn, Germany). Stock solutions
+guish between the different haptens (15). Further-    of each antigen were prepared freshly in culture
+more, some evidence indicates that the concomitant    medium by using light-protected tubes to avoid
+reactions to PPD and textile dyes (16) may also be    unspecific effects. The non-toxic antigen concen-
+due to metabolic conversion of dyes to PPD at the     tration was determined as concentration that did
+surface by skin bacteria (17).                        not affect phytohaemagglutinin (PHA)-induced
+   In patients with positive patch tests to PPD,      proliferation of PBMC as described earlier (22).
+high frequencies of simultaneous sensitivity (16,     The purity of PPD and PTD was 98%, AAB was
+18, 19) of memory T cells to p-toluenediamine         98.9% and DDM and MBT was 99% or more
+(PTD), para-aminoazobenzene (AAB), and also           based on the information given by the companies.
+azo dyes used in textiles, like Disperse Orange 3     The manufacturers of BB, DO3, DY3, and BBY
+(DO3), Disperse Yellow 3 (DY3), and Disperse          did not provide the purity but provided informa-
+Blue (DB 106/124), or Bandrowski’s Base (BB)          tion on the melting point and lmax or thin layer
+(20), an autoxidation product of PPD (21), have       chromatography comparisons of the product with
+been diagnosed.                                       standards. We used the same substances as are
+   Hence, to be able to estimate and decrease the     commonly used in patch tests, although we are
+health risks associated with exposure to these        aware of the existing differences in purity (23).
+substances, it is important to understand the
+mechanism of cross-reactivity to different para-
+amino compounds. In order to analyse T-cell           Culture medium
+cross-reactivity to para-amino compounds such         The cell culture medium used in this study was
+as PTD, BB, AAB, DO3, 4,49-diaminodiphenyl-           RPMI-1640 supplemented with L-glutamine, 10%
+methane (DDM), Bismarck Brown Y (BBY), and            foetal calf serum (FCS) (PAA, Pasching, Austria),
+DY3, and the unrelated contact allergen mercap-       1% 100 mM sodium pyruvate, 1% 10 non-essential
+tobenzothiazole (MBT) (Fig. 1) in humans, we          amino acids, and 1% antibiotic-antimycotic solu-
+investigated in vitro T-lymphocyte responses from     tion (Gibco BRL, Paisley, Scotland).
+PPD-positive cases in polyclonal and monoclonal          For growing TCL and TCC, the complete
+T-cell subsets such as peripheral blood mononu-       culture medium was prepared without any
+Contact Dermatitis 2008: 59: 203–211             CROSS-REACTIVITY TO PARA-AMINO COMPOUNDS               205
+
+
+
+
+Fig. 1. Chemical structures of the
+investigated compounds.
+
+
+
+antibiotics, but with the addition of 2% heat-       bated for additional 16 hr. Cells were harvested
+inactivated pooled human AB serum (Sigma).           on a glass fibre filter, and the [3H]thymidine in-
+                                                     corporation was measured as counts per minute
+                                                     (c.p.m.) using a Wallac MicroBeta Counter (Perkin
+Proliferation assays                                 Elmer, Zaventem, Belgium). Stimulation indexes
+PBMC were isolated by density centrifugation         (SI) were calculated as c.p.m. in the presence of
+over Ficoll-PaqueÔ (Uppsala, Sweden). Antigen-       a compound (antigen) divided by c.p.m. in the
+specific proliferation was investigated by cultur-   absence of compound (mean c.p.m.  SD of tripli-
+ing (37°C, 5% CO2) PBMC alone (2  105 cells),       cate cultures). SI of greater than 2.0 were considered
+TCL, or TCC (1  105 cells) plus autologous          as significant responses.
+gamma-irradiated PBMC (2.5  105 cells) in
+the presence and absence of antigen (1–50 mM
+in order to avoid toxicity for PBMC, data not        Generation of TCC
+shown), 4.25 Lf/ml tetanus toxoid (TT) as control    TCC were generated using the limiting dilution
+for specificity, and PHA as a mitogenic control in   technique as described (13). Briefly, chemical-
+a total volume of 200 ml (96-well plates with flat   specific TCL (PTD, BB or PPD, and only a few
+bottom; Falcon BD, Cedex, France). After two         with AAB or BBY) were diluted to a cell density of
+(TCL and TCC) or 6 days (PBMC), cultures were        0.5 cell/well and cultured in 96-well round-bottom
+pulsed with [3H]thymidine (0.5 mCi) and incu-        culture plates with 4  105 autologous-irradiated
+206   SKAZIK ET AL.                                                                 Contact Dermatitis 2008: 59: 203–211
+
+
+PBMC in the presence of antigen and interleukin       Table 1. Comparison of the patch test results and in vitro pro-
+(IL)-2 (50 U/ml; Endogen, Woburn, MA, USA)            liferative responses to PPD
+in complete culture medium (10% FCS and 2%                             Patch test reaction             In vitro reaction
+pooled human AB serum). Growing TCC were              Cases            to PPDa                         to PPD SIb
+maintained in complete culture medium by peri-         1               þþþ                              2.7
+odic restimulation in the presence of irradiated       2               þþ                               2.2
+PBMC, antigen, and IL-2. The specificity was           3               þþþ                             13.3
+                                                       4               þþ                               2.1
+tested as described above.                             5               þþ                               4.5
+                                                       6               þþ                              <2.0
+                                                       7               þþ                              <2.0
+Flow cytometric analysis                               8               þþ                               3.3
+                                                       9               þþþ                              4.0
+Aliquots that contained 105 cells were stained with   10               þþ                               9.4
+fluorochrome conjugated antibodies in 50 ml of        11               þþþ                              6.3
+buffer (phosphate-buffered saline with 1% FCS         12               þþ                               2.1
+and 0.02% NaN3) for 30 min at 4°C and analysed        13               þþþ                             49.3
+on a FACSCalibur flow cytometer (BD Bioscien-         PPD, p-phenylenediamine; SI, stimulation indices.
+                                                      a
+ces, Heidelberg, Germany). Anti-CD3 (HIT3a,            Patch test readings were taken at D2, D3, and D7 after exposure.
+                                                      b
+                                                        Peripheral blood mononuclear cells were cultured with concen-
+mIgG2a), anti-CD8 (HIT8a, mIgG1), anti-CD4            trations between 1 mM and 50 mM of PPD for 6 days and the
+(RPA-T4, mIgG1), anti-CD45RA (HI100,                  proliferative responses were measured by [3H]thymidine incor-
+mIgG2b), and anti-CD45RO (UCHL1, mIgG2a)              poration assay. Positive reactions were defined as SI > 2 only the
+were purchased from BD Biosciences. TCR-Vb            highest indices are presented.
+expression of TCC was analysed by staining us-
+ing a panel of 24 monoclonal antibodies against       AAB, DO3, DDM, and BBY as classical para-
+various Vb gene products (DPC Biermann, Bad           amino compounds (Figs 1 and 2) and azo dye
+Nauheim, Germany): Anti-TCR-ab (BMA031,               DY3. There was also a similar SI for MBT as
+mIgG2b), anti-TCR-gd (Immu510, mIgG1),                a contact allergen that does not belong to any of
+anti-Vb1 (BL37.2, rIgG1), anti-Vb2 (mIgG1),
+anti-Vb3 (CH92, mIgM), anti-Vb5.1 (3D11,
+mIgG1), anti-Vb5.2 (36213, mIgG1), anti-Vb5.3
+(3D11, mIgG1), anti-Vb7 (ZOE, mIgG2a), anti-
+Vb8.1/8.2 (56C5, mIgG2a), anti-Vb9 (FIN9,
+mIgG2a), anti-Vb11 (C21, MigG2a), anti-Vb12
+(Ver2.32.1, MigG2a), anti-Vb13.1 (Immu222,
+mIgG2b), anti-Vb13.6 (JU-74, mIgG1), anti-Vb14
+(CAS1.1.3, mIgG1), anti-Vb16 (TAMAYA1.2,
+mIgG1), anti-Vb17 (E17.5F3, mIgG1), anti-Vb18
+(BA62, mIgG1), anti-Vb20 (ELL1.4, mIgG1), anti-
+Vb21.3 (IG125, mIgG2a), anti-Vb22 (Immu546,
+mIgG1), and anti-Vb23 (AF-23, mIgG1).
+
+
+                                                      Fig. 2. Proliferative responses (c.p.m.) of PBMC (6 days)
+                      Results                         and TCL (2–3 days) from 11 PPD-sensitized persons to dif-
+                                                      ferent para-amino compounds/arylamines (1–50 mM) and the
+T-cell responses to para-amino compounds              chemically unrelated MBT. Antigen-specific T-cell prolifera-
+including some azo dyes were characterized using      tion was measured by [3H]thymidine incorporation assay. In
+PBMC of 10 females and 3 males (mean age ¼ 50         this graph, the results are shown as proliferation after sub-
+ years, range: 26–93) based on at least þþ positive   traction of control without antigen (PBMC: 575–175375
+                                                      c.p.m. and TCL: 520–52760 c.p.m.). Only results with SI > 2
+patch test reactions to PPD and a history of aller-   are depicted (PBMC: 2.1–49.3 SI; TCL: 2.1–24.6 SI). TT-
+gic contact dermatitis due to personal or occupa-     specific responses served as positive control for T-cell func-
+tional exposures. Specific proliferative responses    tionality, finding lower responses in TCL compared with
+of PBMC to PPD were observed in 11 cases              PBMC because antigen-specific T cells accumulate during
+                                                      restimulation. For this reason, positive TT data in this figure
+(SI ¼ 2.2–49.3; Table 1). No associations with        derive from PBMC only.
+sex and age were observed. Thus, we found a good         AAB, p-aminoazobenzene; BB, Bandrowski’s Base; BBY,
+correlation (83%) between our in vitro results and    Bismarck Brown Y; c.p.m., counts per minute; DDM, diami-
+the in vivo test.                                     nodiphenylmethane; DO3, Disperse Orange; DY3, Disperse
+                                                      Yellow; MBT, mercaptobenzothiazole; PBMC, peripheral
+   Further proliferation studies on the polyclonal    blood mononuclear cells; PPD, p-phenylenediamine; PTD,
+level found similar SI (2.1–49.3) for BB, PTD,        p-toluenediamine; SI, stimulation indices; TT, tetanus toxoid.
+Contact Dermatitis 2008: 59: 203–211                    CROSS-REACTIVITY TO PARA-AMINO COMPOUNDS                 207
+
+
+the mentioned chemical groups. Antigen concen-              reaction to MBT in further experiments (n ¼ 34)
+trations between 1 mM and 50 mM were applied.               because MBT is structurally not related to the
+TT-specific responses served as positive control            other tested substances and no cross-reactions
+for T-cell functionality, finding as expected lower         with para-amino compounds are expected. Nine
+responses in TCL compared with PBMC, because                TCC were additionally tested for reactions to ben-
+antigen-specific T cells accumulate during restim-          zoquinone and did not react to this compound
+ulation. For this reason, positive TT data in Fig. 2        (data not shown). A subgroup of 18 TCC was
+derive from PBMC only.                                      analysed by flow cytometry (fluorescence-acti-
+   Overall, on the polyclonal level, most concom-           vated cell sorter). The tested clones were CD4 pos-
+itant reactions to PPD arose for AAB (92%) fol-             itive and expressed TCR-ab (Fig. 3) except one
+lowed by DO3 (85%). Furthermore, we found                   TCC that was CD8 positive and expressed TCR-
+co-reactions to BB (69%), DDM (62%), DY3                    gd. Unfortunately, we were not able to culture this
+(54%), BBY (46%), PTD (39%), and MBT (23%).                 clone long enough for a detailed functional ana-
+These in vitro results confirmed earlier clinical           lysis. Further Vb chain analysis of eight TCC
+observations and patch-testing studies in PPD-              showed a strong expression (>90%) of one Vb
+sensitized subjects that display reactions to more          chain and a restricted TCR-Vb usage, indicating
+than just one substance.                                    the oligoclonality of the dye-specific immune
+   In order to validate our findings on the mono-           response (Table 2). Interestingly, five of eight
+clonal level, we aimed for generation of TCC from           TCC were positive for Vb16 (62.5%).
+all PPD-allergic persons by restimulation of their             A summary of the TCC responses to the com-
+PBMC with different antigens, mainly PPD, PTD,              pounds (SI ¼ 2–62, n ¼ 190) is depicted in Fig. 4,
+DO3, AAB, and BB. Overall, 35 TCC from four                 whereas antigen concentrations between 1 mM and
+subjects were successfully generated by limiting            50 mM were applied. Surprisingly, the pattern was
+dilution. TT was used as control for cloning suc-           comparable to our findings on the polyclonal
+cess, finding no responses in specific TCC. More-           level. Against the overall idea that one clone reacts
+over, we only included TCC that showed no                   to one specific antigen, we found that the TCC
+
+
+
+
+Fig. 3. Characterization of the generated T-cell clones through flow cytometry. (a) untagged, (b) CD4þ T lymphocytes,
+(c) expressed T-cell receptor-ab, and (d) CD45RO accordingly representing memory T cells.
+208   SKAZIK ET AL.                                                                        Contact Dermatitis 2008: 59: 203–211
+
+
+Table 2. Vb chain expression in a subset of the generated TCC      and AAB and tested 34 TCC for cross-reactions.
+(n ¼ 8) estimated by flow cytometric analysis. In total, 21 Vb     Beside PPD and its autoxidation product BB, we
+chains were analysed
+                                                                   included PTD because of its structural similarity to
+T-cell clones          T-cell receptor Vb chain           Vb%      PPD, and AAB, which exhibits only one free amino
+1                      Vb16                               95.34    group (Fig. 1). The results lead to the identification
+2                      Vb16                               92.92    of certain reaction patterns: group I (26.5%, 9)
+3                      Vb16                               97.36    reacting specifically only to one antigen, group II
+4                      Vb16                               91.57
+5                      Vb16                               93.78    (64.7%, 22) reacted to compounds with one as well
+6                      Vb2                                94.03    as two or three benzene rings, and group III (8.8%,
+7                      Vb9                                88.96    3) TCC responded only to compounds with two
+8                      Vb22                               77.15    or three benzene rings. Hence, the following fre-
+                                                                   quency distribution arose: group II > group I >
+                                                                   group III. Secondly, we tested the validity of these
+reacted to several of the tested related antigens                  groups in 21 TCC and included two textile dyes
+independent of the antigens they were generated                    DO3 and BBY (Fig. 5). DO3 differs from AAB
+with. Therefore, in the context of our research                    only concerning one amino group; BBY was cho-
+question, we defined ‘antigen specific’ as the pro-                sen because it consists of three benzene rings like
+liferative response of a TCC with a specific reac-                 BB, but in addition contains two azo groups
+tion pattern to one or more antigens.                              (Fig. 1). We validated our initial findings and even
+   In a subset of five TCC, we examined the occur-                 the extension to nine tested antigens had no effect
+rence of concomitant reactions to PPD. All nine                    on the grouping (data not shown). Moreover, inde-
+substances were tested and most reactions besides                  pendent evaluation by considering responses only
+PPD were found for AAB, DO3, PTD (three of five                    with a stimulation index of SI  3 instead of 2
+TCC), and BB (two of five TCC). Only one co-                       did not change the results. These results confirm
+reaction was found for DY and DDM and no                           and extend our previous results showing that
+responses occurred to BBY and MBT. First, we                       PPD-specific monoclonal T cells can clearly
+concentrated further studies on PPD, PTD, BB,                      respond to several related para-amino compounds.
+
+                                                                                       Discussion
+                                                                   Concomitant positive reactions to PPD and other
+                                                                   arylamines, para-amino compounds, and some
+                                                                   azo dyes are frequently reported in patch test stud-
+                                                                   ies. Theoretically, concomitant reactions can be
+                                                                   explained by concomitant sensitization or by
+                                                                   true cross-reactions (18, 24, 25). In addition, in
+                                                                   the case of azo dyes, simultaneous reactions may
+                                                                   result from metabolic conversion of dyes to the
+                                                                   corresponding monomers (17, 26). Furthermore,
+                                                                   early cross-reactivity analysis in inbred guinea-
+                                                                   pigs indicates that the recognizing ability of
+                                                                   hapten-specific lymphocytes varies according to
+                                                                   the position of the functional group and its type
+Fig. 4. Proliferative responses (c.p.m.) of arylamine-specific
+TCC from PPD-sensitized persons to various para-amino              (27). Thus, the aim of this study was to explore
+compounds/arylamines (1–50 mM). Antigen-specific T-cell            concomitant reactions and cross-reactivity pat-
+proliferation was measured after 2 days by [3H]thymidine           terns among PPD and para-amino compounds
+incorporation. In this graph, the results are shown as pro-        in vitro. We tested whether PPD-specific T cells
+liferation after subtraction of control without antigen (c.p.m.
+¼ 960–64050). Only results with SI > 2 are depicted (SI            also reacted to BB, PTD, AAB, DO3 (Fig. 1) on
+¼ 2.1–62). TT served as control for cloning success, finding       the polyclonal (PBMC and TCL) and monoclonal
+no responses in specific TCC. Overall, the pattern of TCC          T cell level in order to better understand if this
+reactivity was similar to the polyclonal level but, as expected,
+the clones did not react to the unrelated MBT. The one TCC
+                                                                   finding is due to cross-reactions or simply due to
+that reacted to MBT was excluded from further analysis.            co-sensitization.
+   AAB, para-aminoazobenzene; BB, Bandrowski’s Base;                  We found that all substances showed concomi-
+BBY, Bismarck Brown Y; c.p.m., counts per minute;                  tant reactions to PPD, basically confirming in vivo
+DDM, diaminodiphenylmethane; DO3, Disperse Orange;
+DY3, Disperse Yellow; MBT, mercaptobenzothiazole;                  patch test data. Seidenari et al. (18) showed in
+PPD, p-phenylenediamine; PTD, p-toluenediamine; SI, stimu-         patch tests highest concomitant reactions to PPD
+lation indices; TCC, T-cell clones; TT, tetanus toxoid.            for AAB (75%) and DO3 (66%). We observed
+Contact Dermatitis 2008: 59: 203–211                          CROSS-REACTIVITY TO PARA-AMINO COMPOUNDS                        209
+
+
+
+
+Fig. 5. Distinct proliferation patterns of representative TCC (n ¼ 21) from PPD-sensitized persons divided into three groups:
+group I specific reaction to only one antigen (n ¼ 6); group II reactions to compounds with one and more benzene rings
+(n ¼ 12) and group III reactions to antigens with two and more benzene rings (n ¼ 3). Cells were cultured in vitro with the
+different para-amino compounds for 2 days. Afterwards, T-cell responses were measured by [3H]thymidine incorporation
+assay. The line in the graph indicates stimulation indices ¼ 2, threshold for positive responses. TT served as control for cloning
+success.
+   AAB, p-aminoazobenzenes; BB, Bandrowski’s Base; BBY, Bismarck Brown Y; DO3, Disperse Orange; PPD, p-phenylenedi-
+amine; PTD, p-toluenediamine; TCC, T-cell clones; TT, tetanus toxoid.
+
+
+
+in vitro on the polyclonal level the highest correla-                To provide further laboratory evidence of the
+tion rates between positive reponses to PPD and                    immune pathogenesis of allergic contact dermatitis,
+AAB (92%) respectively DO3 (85%), too. How-                        we cloned arylamine-specific T cells from the peri-
+ever, we cannot confirm other patch test studies                   pheral blood of PPD-sensitive patients and analysed
+noticing that the stronger a patient reacts to PPD,                their phenotype, specificity in vitro, and the require-
+the higher is the probability for further reactions                ments of TCR activation by stimulating clones with
+to different substances (28).                                      up to eight structurally related compounds.
+   In our study, BB, DDM, DY3, and BBY like-                         We found that monoclonal T cells can be activa-
+wise showed various parallel reactions to PPD,                     ted by various para-amino compounds similar to
+whereas in patch tests, no concomitant responses                   the pattern found in polyclonal cultures (compare
+to BBY were found in one study (16). Further-                      Figs 2 and 4). Some TCC showed very specific
+more, this in vitro study found similar to others                  reactions to only one substance, but most TCC
+(29) concomitant responses for BB (69%), while                     displayed responses to more than one antigen.
+only 16% of PPD-positive cases were positive to                    Usually, antigens are presented in the context
+BB by patch testing even when PPD reactions                        of MHC expressed on the surface of APC, but
+were strong (20). This discrepancy may indicate                    some chemicals for instance isopentenyl pyro-
+different bioavailability.                                         phosphate and fluorescein can activate T cells
+210   SKAZIK ET AL.                                                                    Contact Dermatitis 2008: 59: 203–211
+
+
+without the involvement of MHC molecules                 pattern suggests an explanation for the in vivo
+through a TCR-dependent process (30, 31). In             observed predisposition to immune reactivity after
+addition, some drugs are able to elicit hypersensi-      a single exposure to related compounds.
+tivity reactions without evidence for metabolism
+or covalent binding to a carrier protein (32, 12).
+Furthermore, for these drugs, the kinetics of TCR                          Acknowledgements
+downregulation is too fast for the involvement of        We are grateful to the staff of the clinics (Aachen and
+antigen processing. Due to these aspects, an addi-       Groningen) for performing the patch tests and blood
+tional model was proposed, referred as ‘pharma-          collection. C. S. was supported by a grant from the
+                                                         Interdisciplinary Centre for Clinical Research ‘BIOMAT’
+cological interaction of drugs with immune               within the faculty of Medicine at the RWTH Aachen
+receptors’ (p-i concept) (33). The idea is that some     University (Germany).
+chemicals bind reversibly to immune receptors
+like MHC or TCR thereby stimulating T cells.
+However, we found no proliferation when TCC                                       References
+were incubated with the substances in the absence         1. Rietschel R L. Occupational contact dermatitis. Lancet 1997:
+of APC. These data indicate that our isolated                349: 1093–1095.
+                                                          2. Nielsen N H, Linneberg A, Menńe T, Madsen F, Frolund L,
+TCC do not present para-amino compounds to                   Dirksen A, Jorgensen T. Persistence of contact allergy
+each other. Interestingly, we found a restricted             among Danish adults: an 8-year follow-up study. Contact
+usage of Vb chains in the arylamine-specific                 Dermatitis 2001: 45: 350–353.
+CD4þ TCC, predominantly Vb16, exactly as                  3. McFadden J P, White I R, Frosch P J, Sosted H, Johansen J D,
+                                                             Menné T. Allergy to hair dye. BMJ 2007: 334: 220.
+found earlier (13) This finding suggests that the         4. Patel S, Basketter D A, Jefferies D, White I R, Rycroft R J,
+Vb16 chain plays an important role in the recog-             McFadden J P, Ho S Y. Patch test frequency to p-phenyl-
+nition of para-amino compounds, although fur-                enediamine: follow up over the last 6 years. Contact Derma-
+ther studies are required. So far, no comparable             titis 2007: 56: 35–37.
+                                                          5. White J M, Gilmour N J, Jeffries D, Duangdeeden I, Kulla-
+data are available for PPD, but for nickel-specific          vanijaya P, Basketter D A, McFadden J P. A general popu-
+CD4þ T cells, it has been suggested that Vb17 is             lation from Thailand: incidence of common allergens with
+involved in antigen recognition and possibly                 emphasis on para-phenylenediamine. Clin Exp Allergy 2007:
+severity of disease (34,35).                                 37: 1848–1853.
+                                                          6. Lepoittevin J P. Metabolism versus chemical transformation
+   With the gathered data, we identified three               or pro- versus prehaptens? Contact Dermatitis 2006: 54: 73–74.
+types of TCC. This grouping was valid in tests            7. Landsteiner K, Jacobs J L. Studies on the sensitization of
+with four, six, or nine substances and was also              animals with simple chemicals. J Exp Med 1936: 64: 625–639.
+found on the polyclonal level. This proves the            8. Martin S, Weltzien H. T cell recognition of haptens, a mol-
+                                                             ecular view. Int Arch Allergy Immunol 1994: 104: 10–16.
+grouping to be no in vitro artefact and not to be         9. Weltzien H, Moulon C, Martin S, Padovan E, Hartmann U,
+restricted to in vitro-generated TCC. The com-               Kohler J. T cell immune responses to haptens. Structural
+pounds we used in our study consist of prohapt-              models for allergic and autoimmune reactions. Toxicology
+                                                             1996: 107: 141–151.
+ens, so that it is possible that these substances are    10. Basketter D A, Liden C. Further investigation of the pro-
+presented to a TCC through different pathways                hapten concept: reactions to benzene derivatives in man.
+including the p-i concept (reviewed in 33). It is            Contact Dermatitis 1992: 27: 90–97.
+conceivable that both pathways, with and without         11. Griem P, Wulferink M, Sachs B, Gonzalez J, Gleichmann E.
+                                                             Allergic and autoimmune reactions to xenobiotics: How do
+antigen processing, are involved in the antigen              they arise? Immunol Today 1998: 19: 133–141.
+presentation of the tested arylamines, but more          12. Zanni M P, von Greyerz S, Schnyder B, Brander K A, Frutig
+detailed investigations are warranted.                       K, Hari Y, Valitutti S, Pichler W J. HLA-restricted, process-
+   Overall, for each molecule, activity and potential        ing- and metabolism-independent pathway of drug recogni-
+                                                             tion by human alpha beta T lymphocytes. J Clin Invest 1998:
+to give rise to cross-reactions in vivo will depend on       102: 1591–1598.
+skin penetration capacities including resorption,        13. Sieben S, Kawakubo Y, Masaoudi T A, Merk H F, Blomeke
+and the balance between routes of individual skin            B. Delayed-type hypersensitivity reaction to paraphenylene-
+metabolism. The latter may also account for the              diamine is mediated by 2 different pathways of antigen rec-
+                                                             ognition by specific alphabeta human T-cell clones. J Allergy
+discrepancy between in vitro and in vivo findings            Clin Immunol 2002: 109: 1005–1011.
+for BB in humans as described above.                     14. Depta J P, Altznauer F, Gamerdinger K, Burkhart C,
+   In summary, the para-group allergy is charac-             Weltzien H U, Pichler W J. Drug interaction with T-cell
+terized in vitro by three types of specific CD4þ T           receptors: T-cell receptor density determines degree of
+                                                             cross-reactivity. J Allergy Clin Immunol 2004: 113: 519–527.
+cells, while in vivo also CD8þ T cells play an im-       15. Wulferink M, Dierkes S, Gleichmann E. Cross-sensitization
+portant role. The majority (>60%) of the CD4þ T              to haptens: formation of common haptenic metabolites, T
+cells bears a TCR with minor specificity. T cells            cell recognition of cryptic peptides, and true T cell cross-
+                                                             reactivity. Eur J Immunol 2002: 32: 1338–1348.
+with a low specificity TCR likely account for the        16. Goon A T, Gilmour N J, Basketter D A, White I R, Rycroft
+in vivo observed cross-reactions between related             R J, McFadden J P. High frequency of simultaneous
+chemicals. Our observed broad cross-reactivity               sensitivity to Disperse Orange 3 in patients with positive
+Contact Dermatitis 2008: 59: 203–211                              CROSS-REACTIVITY TO PARA-AMINO COMPOUNDS                          211
+
+
+    patch tests to para-phenylenediamine. Contact Dermatitis          28. Uter W, Lessmann H, Geier J, Becker D, Fuchs T, Richter
+    2003: 48: 248–250.                                                    G. The spectrum of allergic (cross-)sensitivity in clinical
+17. Platzek T, Lang C, Grohmann G, Gi U S, Baltes W. Formation            patch testing with ‘para amino’ compounds. Allergy 2002:
+    of a carcinogenic aromatic amine from an azo dye by human             57: 319–322.
+    skin bacteria in vitro. Hum Exp Toxicol 1999: 18: 552–559.        29. Coulter E M, Jenkinson C, Wu Y et al. Activation of
+18. Seidenari S, Mantovani L, Manzini B M, Pignatti M. Cross-             T-cells from allergic patients and volunteers by p-phenyl-
+    sensitizations between azo dyes and para-amino compound.              enediamine and Bandrowski’s Base. J Invest Dermatol
+    A study of 236 azo-dye-sensitive subjects. Contact Dermatitis         2007: 128: 897–905.
+    1997: 36: 91–96.                                                  30. Diamond D J, Szalay P, Symer D et al. Major histocompat-
+19. Uter W, Geier J, Lessmann H, Hausen B M. Contact allergy              ibility complex independent T cell receptor-antigen interac-
+    to Disperse Blue 106 and Disperse Blue 124 in German and              tion: functional analysis using fluorescein derivatives. J Exp
+    Austrian patients, 1995 to 1999. Contact Dermatitis 2001: 44:         Med 1991: 174: 229–241.
+    173–177.                                                          31. Morita C, Beckman E, Bukowski J et al. Direct presenta-
+20. White J M, Kullavanijaya P, Duangdeeden I, Zazzeroni R,               tion of nonpeptide prenyl pyrophosphate antigens to human
+    Gilmour N J, Basketter D A, McFadden J P. p-Phenylenediamine          gd T cells. Immunity 1995: 3: 495–507.
+    allergy: the role of Bandrowski’s base. Clin Exp Allergy          32. Schnyder B, Mauri-Hellweg D, Zanni M, Bettens F, Pichler
+    2006: 36: 1289–1293.                                                  W J. Direct, MHC-dependent presentation of the drug
+21. Möllgaard B, Hansen J, Kreilgard B, Wildfang L. Cross-               sulfamethoxazole to human alphabeta T cell clones. J Clin
+    sensitization in guinea pigs between p-paraphenylenediamine           Invest 1997: 100: 136–141.
+    and oxidation products thereof. Contact Dermatitis 1990:          33. Pichler W J, Beeler A, Keller M et al. Pharmacological inter-
+    23: 274.                                                              action of drugs with immune receptors: the p-i concept.
+22. Sieben S, Hertl M, Al Masaoudi T, Merk H F, Blomeke B.                Allergol Int 2006: 55: 17–25.
+    Characterization of T cell responses to fragrances. Toxicol       34. Vollmer J, Fritz M, Weltzien H, Moulon C. Dominance of
+    Appl Pharmacol 2001: 172: 172–178.                                    BV17 element in nickel-specific human T cell receptors
+23. Ryberg K, Gruvberger B, Zimerson E, Isaksson M, Persson               relates to severity of contact sensitivity. Eur J Immunol
+    L, Sorensen O, Goossens A, Bruze M. Chemical investiga-               1997: 27: 1865–1874.
+    tions of disperse dyes in patch test preparations. Contact        35. Budinger L, Neuser N, Totzke U, Merk H F, Hertl M. Pref-
+    Dermatitis 2008: 58: 199–209.                                         erential usage of TCR-Vbeta17 by peripheral and cutaneous
+24. Engler O B, Strasser I, Naisbitt D J, Cerny A, Pichler W J.           T cells in nickel-induced contact dermatitis. J Immunol 2001:
+    A chemically inert drug can stimulate T cells in vitro by their       167: 6038–6044.
+    T cell receptor in non-sensitised individuals. Toxicology
+    2004: 197: 47–56.                                                 Address:
+25. Matulich J, Sullivan J. A temporary henna tattoo causing hair     Brunhilde Blömeke
+    and clothing dye allergy. Contact Dermatitis 2005: 53: 33–36.     Department of Environmental Toxicology
+26. Pielesz A, Baranowska I, Rybakt A, Wlochowicz A. Detec-           University Trier
+    tion and determination of aromatic amines as products of          Am Wissenschaftspark 25-27
+    reductive splitting from selected azo dyes. Ecotoxicol Environ    54296 Trier
+    Saf 2002: 53: 42–47.                                              Germany
+27. Shigematsu T, Ozawa N, Nakayama H. In vitro study of the          Tel: 49 651 201 3781
+    cross-sensitivity of hair dye using hapten-specific lympho-       Fax: 49 651 201 3780
+    cytes. Contact Dermatitis 1988: 19: 30–35.                        e-mail: bloemeke@uni-trier.de
+

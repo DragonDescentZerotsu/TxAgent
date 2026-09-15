@@ -408,6 +408,7 @@ def apply_content_repairs(task, source, output, ledger):
                     if rows[i]['retrieval_eligible']: new_smiles.add(rows[i]['canonical_smiles'])
                     changes.append({'source_row_uid':uid,'previous_level':old['progressive_level'],
                                     'level':rows[i]['progressive_level'],'reason':rows[i]['level_assignment_reason'],
+                                    'molecule_identity_key':rows[i].get('molecule_identity_key', ''),
                                     'direct_signal':rows[i]['direct_signal']})
                 table = pa.Table.from_pylist(rows, schema=schema)
             counts.update(table['progressive_level'].to_pylist());writer.write_table(table)
@@ -418,6 +419,7 @@ def apply_content_repairs(task, source, output, ledger):
         if int(mask.sum()) != 1: raise ValueError('Repair audit UID mismatch')
         policy = importlib.import_module(f'tools.chembl_tool.tasks.{task}.starling_levels')
         for key, value in {'level':c['level'],'family_key':policy.FAMILIES.get(c['level'],''),
+                           'molecule_identity_key':c['molecule_identity_key'],
                            'reason':c['reason'],'reviewed':True,'direct_signal':c['direct_signal']}.items():
             if key in audit.columns: audit.loc[mask,key] = value
     pq.write_table(pa.Table.from_pandas(audit,preserve_index=False),output/'record_audit.parquet',compression='zstd')

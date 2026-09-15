@@ -1,6 +1,6 @@
 # Paper trace and artifact retention
 
-Updated: 2026-09-12.
+Updated: 2026-09-14.
 
 Retain evidence needed to reproduce the paper result families, not every smoke,
 retry, or abandoned method branch. The canonical allowlist of result roots is
@@ -12,12 +12,69 @@ Current retrieval inputs are independently locked by
 
 ## Retain
 
+For `replicate_suites.l3_parent_disjoint_progressive_test_20260914`, retain the
+retrieval diagnostic, mixed-policy prepared contexts, exact prefix-reuse receipts,
+old/current tool and prompt runtime provenance, queue-handoff receipt, and actual
+requests/results. Keep its strict reference trajectories, including Bioavailability/
+Skin legacy replicate 03. Paused v5 test full-flat dependencies remain retained.
+
+For the registered Skin identity-rebinding replay, retain the full-row source patch
+ledger, original-document hashes, source snapshot publication, frozen legacy runtime,
+480-row surface comparison, exact prefix-reuse receipts and actual requests/results.
+The v5 hybrid and v6 quarantine runs remain its provenance dependencies; reused
+outputs do not count as fresh replicates.
+
+For registered OpenRouter Batch runs, retain `batch_jobs/` alongside actual
+requests, structured results and model/usage provenance. Its remote IDs and
+request custom IDs are required for recovery without duplicate paid submissions.
+Preserve matched source tool/card hashes and fresh single/None dependencies;
+completed upstream jobs alone do not establish validated query completion.
+After a smoke batch is adopted by a completed formal run, remove its abandoned
+local directory only after matching remote/custom IDs, exact requests and frozen
+retrievals to the retained run. Keep the small handoff and cleanup receipts;
+the smoke is not a separate replicate or a second billing item.
+
+For the running L3+ parent-disjoint matched full-flat suite, retain its coordinator,
+run plan, frozen runtimes, prepared inputs and all successful checkpoints. Keep the
+admission/rebalance receipts and failed-attempt traces: local admission precedes the
+HTTP deadline and retry races share the same limits. Read `execution_status.json`
+for live progress; preparation completion is not inference completion.
+
+For `replicate_suites.dili_v5_trace_source_replay_20260913`, retain the source
+decision ledger, publication/restore checks, all-804-row selected-input audit,
+complete valid/test trajectories and actual-request verification. Its reference
+is `progressive_evidence_revision.v5`, not the historical v2-prompt DILI diagnostic.
+Retain the original v5 suite's frozen pre-repair DILI catalog/index dependencies
+for its queued matched full-flat stages. Reused outputs are not new replicates.
+
+For `replicate_suites.ames_trace_source_replay_20260913`, retain the complete new
+valid/test results, all-query selected-input audit, prefix-reuse receipts, code
+equivalence receipt and changed-decision comparison. The original v5 progressive
+roots remain provenance dependencies; reused levels do not count as fresh replicates.
+
+Retain the registered Bioavailability/Skin legacy restoration package, including
+its pinned runtime, prepared historical tool/prior inputs, source hashes,
+preflight and commands, plus its linked input-comparison report. No predictions
+are implied by configuration restoration. Retain the ongoing v5 suite's frozen
+runtime and pre-repair Ames benchmark/index/catalog dependencies until all
+matched stages and lineage checks finish. The Ames trace-source repair ledger,
+raw/canonical sample, primary-paper verification and publication/validation
+receipts are source provenance, separate from the preceding read-only diagnostic.
+
 For the Ames scaffold valid/test rename, retain the registered
 `starling_conditioned_ames_scaffold_test_swapped_4_2_v1` model roots, their
 original reuse sources, and `outputs/paper/ames_scaffold_split_swap_20260908/`.
 The latter contains the original split/index metadata snapshots referenced by
 the canonical rename receipt. Renaming a cohort does not create a new replicate;
 the figures must disclose that current Ames test was previously validation.
+
+For the registered functional-group tree diagnostic, retain its paired prepared
+inputs, tool receipts, requests/responses, manual structural review, auxiliary fresh
+single-prior pair and service verification receipts, including the registered code-review and
+43-molecule text-equivalence receipts. Retain the non-executable execution snapshots
+in place of the retired diagnostic scripts. Its original trace roots remain
+provenance dependencies. The diagnostic is not a paper benchmark replicate or an
+alternate maintained launcher.
 
 ### Benchmark and source provenance
 
@@ -29,6 +86,12 @@ overlays/catalogs/indices enumerated by the retrieval manifests.
 
 Superseded record and family versions are not active alternatives. Their useful
 history belongs in compact receipts and Git history.
+The 2026-09-14 maintenance removed the unreferenced Skin v2–v4 overlays,
+catalogs and scaffold/random indices (12 directories, 1.325 GiB logical size).
+Exact paths, file hashes and dependency checks are in
+`receipts/source_version_cleanup_20260914.json`. Skin v5/v6 remain frozen run
+dependencies; v7 is current. Incremental Ames/DILI review ledgers remain source
+provenance and must not be treated as disposable duplicate datasets.
 
 ### Matched baselines
 
@@ -189,8 +252,10 @@ stdout/stderr is disposable after a replacement is complete and audited.
 
 Never delete current benchmark/source ledgers, migration receipts, packaged
 current records, or the only complete trace for a retained paper cell. Router
-and RL remain separately archived/stopped work and require their own deliberate
-cleanup decision.
+and RL packages, dedicated tests and obsolete runbooks were removed at the user's
+request on 2026-09-14. `receipts/retired_research_code_20260914.json` pins the
+recoverable Git commit and file inventory. Their historical outputs/checkpoints
+remain preserved; they are not current paper results or maintained entrypoints.
 
 ## Safe cleanup
 
@@ -223,7 +288,7 @@ bash tools/trace_viewer/start_viewer.sh 8776
 ```
 ## DILI / Carcinogens dependencies
 
-The September cleaning cycle is closed. Keep only the final retrieval source,
+The bounded reviews are frozen after publication. Keep only the final retrieval source,
 portable archive parts and current catalog/scaffold/random indices; source inventory
 and hashes are in `current_starling_retrieval.json`. Per-task final release receipts
 and `source_changes.jsonl` are under `data/starling_data/<task>/retrieval_final/`.
@@ -235,7 +300,14 @@ input or tool files merely because their round is old: later exact-input replays
 trace views may depend on them. Retained experiment roots and compact historical
 registrations are indexed by `current_conditioned_results.json` and its history receipt.
 
-Latest completed diagnostics are DILI v5 and Carcinogens R18. Preserve their original
-inputs, metrics, figures and reuse receipts, plus the previous-round figure references.
+Historical DILI retrieval-review v5 and Carcinogens R18 remain retained diagnostics;
+the newer DILI prompt-v5 replay has its own registry entry above. Preserve original
+inputs, metrics, figures and reuse receipts, plus previous-round figure references.
 Final source consolidation does not rerun the models or authorize automatic reuse
 under a changed selected evidence surface. Both Valid/Test cohorts have been inspected.
+
+The completed `l3_parent_disjoint_progressive_valid_20260914` suite retains its
+experiment-local execution snapshots, valid source preflights, strict legacy
+reference repair for Skin #193/#206, unchanged-prefix receipts and fresh actual
+request traces. It completed after the registered test suite; both policy arms and
+their baseline-verified comparison figures remain retained.

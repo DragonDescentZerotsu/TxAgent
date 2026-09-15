@@ -1,0 +1,969 @@
+{
+  "schema_version": "source_version_cleanup.v1",
+  "status": "complete_verified",
+  "created_at_utc": "2026-09-15T00:25:37.421473+00:00",
+  "authorization": "User explicitly requested removal of obsolete unused record versions and documentation maintenance.",
+  "dependency_audit": {
+    "metadata_files_scanned": 9758,
+    "retained_dependency_hits": [],
+    "method": "Registry and history transitive JSON references plus manifest ancestry; source/default paths searched separately."
+  },
+  "removed_directories": [
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v2/skin_reaction",
+      "size_bytes": 233929121,
+      "files": [
+        {
+          "path": "manifest.json",
+          "size_bytes": 2856,
+          "sha256": "141469ae64b0f69d9508baf1aa13ee79c3cdc3b410efec9f691adaacd5777ceb"
+        },
+        {
+          "path": "moved_records.parquet",
+          "size_bytes": 2335629,
+          "sha256": "76d86786773e37362d54920f938b102ef29bfb1cee9ce1fa07ebbf204a93d175"
+        },
+        {
+          "path": "records.parquet",
+          "size_bytes": 231590636,
+          "sha256": "bb3c6f08310c239b94307c6101664ea3999f7cea788e50021adbc67ce2a58069"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v2",
+      "size_bytes": 879443,
+      "files": [
+        {
+          "path": "family_assays.jsonl",
+          "size_bytes": 877049,
+          "sha256": "8e70dc44465f6391bb33021ebae6033ae960f9243f5004c5de4f6af47422c73b"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 2394,
+          "sha256": "853a5a45ddd0f8549404ddf68b165763765c6a256223f00187e14981c7a908ad"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v2",
+      "size_bytes": 135967676,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 95779920,
+          "sha256": "fd1821b42876d0010b66161648b2f3fdaff8dad9c186691170892c0daf980060"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 40184710,
+          "sha256": "624860f613f82147f6c8dc458f29a563d31c0e0161917f8201e34e0e6e06e9d2"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3046,
+          "sha256": "e0a84d8f62b388ad96a87d8265753ed9430a36e779aa2b9001b48ae62aeb4e6f"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v2",
+      "size_bytes": 132645789,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 93397657,
+          "sha256": "6775d459e45474e664169a327797c35a5136b314a952ee64674ea197f2888ff4"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 39245055,
+          "sha256": "c1d8bdd1ff22a93877a77071e73145d5060499432edf99004109d3466399c552"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3077,
+          "sha256": "ca34c83b2239d41f88fa97e0a9ad99ca978f70d41164cf59512ea816475718f3"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v3/skin_reaction",
+      "size_bytes": 236389907,
+      "files": [
+        {
+          "path": "manifest.json",
+          "size_bytes": 5227,
+          "sha256": "0a0ec4ebcb246c419d5061bff08aaf3807d99a16b59f3385db8179d35dff14df"
+        },
+        {
+          "path": "moved_records.parquet",
+          "size_bytes": 4761592,
+          "sha256": "4ed871e7304d831244f9579bb3f65fd15438a88a7ee3322270b4ca757f571a21"
+        },
+        {
+          "path": "records.parquet",
+          "size_bytes": 231623088,
+          "sha256": "402763cb326e8086e5c98e36a8c52d043760398206ba4aea0045ac5d6aac22fb"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v3",
+      "size_bytes": 690026,
+      "files": [
+        {
+          "path": "family_assays.jsonl",
+          "size_bytes": 687636,
+          "sha256": "cafaff22fa7d2c2bf96ef7c66c14d2de67771472608f121cc3f37dfda68729ff"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 2390,
+          "sha256": "70063d158014594333cdc54140d43537e28acfe1eb00ebd20ab716a7c08569ad"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v3",
+      "size_bytes": 110018187,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 77747560,
+          "sha256": "94129006de2a8c9a7dbfc24ce8973385a3ba8a1869472e1017784080a1bcd928"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 32267583,
+          "sha256": "14a6db22fb00efb81a66d08ede8b996c4d9fa5321876015bc5d12799ca9462c1"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3044,
+          "sha256": "43e94929671c67bb8a227c3bb7c6c2924dd26816c23b9a3a750d9c4edc10d84e"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v3",
+      "size_bytes": 106520153,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 74870284,
+          "sha256": "4aab12bb791a485776dbdd39eedbd74304b17fc59568b9aa621f0f61525a7182"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 31646794,
+          "sha256": "e35107c3e1b0f76c82cc18e127a4e3daa8346b59edba501fd48eab84275597a9"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3075,
+          "sha256": "fb87b6ad7701cb2fefaff5da407d4a8d366c0d767527e9259565a3f00ed2526f"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v4/skin_reaction",
+      "size_bytes": 236398310,
+      "files": [
+        {
+          "path": "manifest.json",
+          "size_bytes": 7045,
+          "sha256": "c10c20f9023fbd7a2f4d51a439e9bd3f29a231dd9a5f100707b8f9c3d85c0bfc"
+        },
+        {
+          "path": "moved_records.parquet",
+          "size_bytes": 4764953,
+          "sha256": "2d8f5664804c918d09c497522e1f331806e0fcf7dfb39ec2d3116703c0d375e7"
+        },
+        {
+          "path": "records.parquet",
+          "size_bytes": 231626312,
+          "sha256": "24472b957821ad55e81578d64aae0ea90bd5746b42bb5516cec6f42198d0f24f"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v4",
+      "size_bytes": 738037,
+      "files": [
+        {
+          "path": "family_assays.jsonl",
+          "size_bytes": 735642,
+          "sha256": "8b6a8f162b4ed0ba41438a1f40bbf47f1487fab62d98a8edbc15b5a882825906"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 2395,
+          "sha256": "267e482dc118e420ad86099c6a8bc117f084edfe54e915dff5f65645278650ba"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v4",
+      "size_bytes": 115915925,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 81902532,
+          "sha256": "f30d3a4dfbe85081b7a77f443e56e6f5f2beb88404ebbe6bd7d7499d738dfe38"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 34010347,
+          "sha256": "615b0ace55f02365fa5c2cf4b709591887c03a07296ac290cd76903ede347fbe"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3046,
+          "sha256": "1578556594e458bebe617abd8ed569e56ddf8c02c9ac7b50978674694425bc84"
+        }
+      ]
+    },
+    {
+      "path": "outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v4",
+      "size_bytes": 112440859,
+      "files": [
+        {
+          "path": "assay_molecule_evidence.jsonl",
+          "size_bytes": 79019072,
+          "sha256": "9d493a2dbedd5875ce59882db635a13883dfc00c0f419f00eaf9e9aa238f0a4f"
+        },
+        {
+          "path": "assay_neighbor_index.pkl",
+          "size_bytes": 33418710,
+          "sha256": "f031da1b61bcdf2349af206aa9878ce384e04f67f7b627aeca248d6249dfea95"
+        },
+        {
+          "path": "manifest.json",
+          "size_bytes": 3077,
+          "sha256": "79ccebf1078ec67eef2c21f4877afb570f570955d5d70859fd9ca8e64e276eb0"
+        }
+      ]
+    }
+  ],
+  "removed_logical_bytes": 1422533433,
+  "preserved_current_task_bindings": {
+    "bbb_martins": {
+      "canonical_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+      "overlay": "source_overlays/bbb_source_family_purity_v6",
+      "overlay_records_sha256": "20a53f067fa6ebe3dbf1a151f20d7b3891834935227e4913524d351b8a792812",
+      "catalog": "family_catalogs_mechanism_tagged_v1/bbb_martins_source_purity_v6",
+      "catalog_config": "STARLING_SOURCE_PURITY",
+      "catalog_sha256": "fffbe6b4eaf3c967b0f72741956ba3214f2fe0ae379e1426a1e26899bcbc1c0e",
+      "direct_group": "Tier 1.starling_direct_bbb_evidence",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "d5417551e89261744b531367e3883d22c513f83cf2e7742540c91ed13cbabea3",
+          "evidence_sha256": "7fd8898e95458a002d6cd6c38601e6d57a52ba46d826008d53c2846cc5cacaa5"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bbb_martins/mechanism_tagged_v4_source_purity_v6",
+          "index_sha256": "5d42d21a62a51eec5d7873f4e85003923e8c53b4461b8406f6382a7bf744393c",
+          "evidence_sha256": "e30161826ef7d9861d4f0397171e3c28678a725fbe88ba22e1ff28490ae3207a"
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "canonical_records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+      "intermediate_overlay": "source_overlays/bioavailability_nondirect_assay_context_v1",
+      "intermediate_overlay_records_sha256": "98138649ec4b458f56db4cb2ffc63cdde4a08546be924e8ba636e04baf34ddef",
+      "overlay": "source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1",
+      "overlay_records_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8",
+      "catalog": "family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "f261b7e698e5fbb0c4cb879d51cf85a969c553346ed3fe2a7eecf912bae5050e",
+      "direct_group": "Observed.direct_oral_bioavailability",
+      "indices": {
+        "scaffold": {
+          "path": "indices/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+          "evidence_sha256": "1df978c53c3290ea82855ff739059a8f9a968ba21df0b7facda2294dcff39d82"
+        },
+        "random": {
+          "path": "indices_random_valid_test/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1",
+          "index_sha256": "e68dac90d01bc659f122103e4f774240c97e6617aed9800c1d33be43722701d8",
+          "evidence_sha256": "051535f1269d9b356fad305009ac1ff4d18ed0f86b82bb8c40be749136eda343"
+        }
+      }
+    },
+    "skin_reaction": {
+      "canonical_records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+      "overlay": "source_overlays/source_family_purity_v7/skin_reaction",
+      "overlay_records_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
+      "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
+      "direct_group": "Direct.skin_reaction",
+      "indices": {
+        "scaffold": {
+          "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v7",
+          "index_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
+          "evidence_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22"
+        },
+        "random": {
+          "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7",
+          "index_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
+          "evidence_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956"
+        }
+      },
+      "source_review": "data/starling_data/skin_reaction/trace_review_20260914/decisions_rebound.json",
+      "identity_rebinding": "data/starling_data/skin_reaction/trace_review_20260914/rebindings.json"
+    },
+    "ames": {
+      "canonical_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+      "catalog": "family_catalogs/ames",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
+      "direct_group": "Direct.ames",
+      "filter_scope_field": "heldout_filter_scope",
+      "filter_scope_value": "bacterial_outcome",
+      "indices": {
+        "scaffold": {
+          "path": "indices/ames/scaffold",
+          "index_sha256": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+          "evidence_sha256": "23326d5f5a41f86f9f407de3e00b66f309a0a529f653b43d7c62c490c9eeefae"
+        },
+        "random": {
+          "path": "indices/ames/random",
+          "index_sha256": "3692c1c2d60f19aef2bb53ccb3015605458131b6999d3e0f963f2494afe9e20b",
+          "evidence_sha256": "8c3c6289ab4e0722554eb67ca41937847a6a700c0c0f6a2164d58a05e6edcbee"
+        }
+      },
+      "source_records": "data/starling_data/ames/canonical_v1/records.parquet",
+      "source_repair_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+      "trace_review_receipt": "data/starling_data/ames/trace_review_20260913/verification.json"
+    },
+    "dili": {
+      "canonical_records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+      "source_records": "data/starling_data/dili/retrieval_final/source/records.parquet",
+      "catalog": "family_catalogs/dili",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "2671847749b2408b40fb7bdffc439778c3f14958c3c271d1f2d8f4c7f9e87691",
+      "direct_group": "Group.dili_actual_voter",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.dili_actual_voter",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/dili/scaffold",
+          "index_sha256": "aaed6f0c66fd9c82e048fb230bf42cb28585b02519bb57c2d6f183cdbdb74e09",
+          "evidence_sha256": "f13283690dc42f4eda39f0bdf5e18369620f387e1211d5075f58bfb35c03e35f"
+        },
+        "random": {
+          "path": "indices/dili/random",
+          "index_sha256": "e14ef971413f4605e6955d233629076f2857a0aa7d3d91700a96a996ece065ce",
+          "evidence_sha256": "40d6037c4ed06da6b1f8533077ad33484a8e9b67033548c77f93251bf08e7d0e"
+        }
+      },
+      "source_review": "data/starling_data/dili/retrieval_final/source_changes.jsonl"
+    },
+    "carcinogens": {
+      "canonical_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "overlay_is_canonical": true,
+      "overlay_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+      "source_records": "data/starling_data/carcinogens/retrieval_final/source/records.parquet",
+      "catalog": "family_catalogs/carcinogens",
+      "catalog_config": "STARLING",
+      "catalog_sha256": "5d200bd614e5ef39b84e0cb97c4e56509bf45445f2e63bd08584db33b30d4370",
+      "direct_group": "Group.carcinogenicity_direct",
+      "filter_scope_field": "group_id",
+      "filter_scope_value": "Group.carcinogenicity_direct",
+      "identity_contract": "new_task_tautomer_identity.v2",
+      "indices": {
+        "scaffold": {
+          "path": "indices/carcinogens/scaffold",
+          "index_sha256": "2dcde5bc3f3148e726682d6a0603e328de461fb14b4dead358630fb90e1132fa",
+          "evidence_sha256": "a0fd390f3667b892380735ce90cb3867b7f789ea80e491d09e817a9034b86ce6"
+        },
+        "random": {
+          "path": "indices/carcinogens/random",
+          "index_sha256": "1d138c7f4ff5e0661e068fc32ae37b5ca5addf5ad36ca75b33814598351f03f7",
+          "evidence_sha256": "8274a8ac270265dea56e3b975d57dda3ad569c911accdc359271e4151e60932a"
+        }
+      },
+      "source_review": "data/starling_data/carcinogens/retrieval_final/source_changes.jsonl"
+    }
+  },
+  "previous_retrieval_verification_metadata": {
+    "verified_date": "2026-09-08",
+    "result": "DILI/Carcinogens packaged/local/source/catalog/scaffold/random SHA-256 verified; clean restores and complete card links passed. Previous four task entries unchanged.",
+    "scratch_artifacts_retained": false,
+    "maintenance_receipt": "outputs/reviews/dili_carcinogens_20260908/review_receipt.json",
+    "latest_release_validation": {
+      "task": "carcinogens",
+      "release": "data/starling_data/carcinogens/gold_v4/retrieval/manifest.json",
+      "status": "records_indices_and_card_links_validated"
+    }
+  },
+  "verification_before_cleanup": {
+    "schema_version": "current_starling_retrieval.v1",
+    "tasks": {
+      "bbb_martins": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/bbb_martins/03_records/records.parquet",
+          "expected_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+          "actual_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bbb_source_family_purity_v6/records.parquet",
+          "expected_sha256": "20a53f067fa6ebe3dbf1a151f20d7b3891834935227e4913524d351b8a792812",
+          "actual_sha256": "20a53f067fa6ebe3dbf1a151f20d7b3891834935227e4913524d351b8a792812",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/bbb_martins_source_purity_v6/family_assays.jsonl",
+          "expected_sha256": "fffbe6b4eaf3c967b0f72741956ba3214f2fe0ae379e1426a1e26899bcbc1c0e",
+          "actual_sha256": "fffbe6b4eaf3c967b0f72741956ba3214f2fe0ae379e1426a1e26899bcbc1c0e",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
+          "expected_sha256": "d5417551e89261744b531367e3883d22c513f83cf2e7742540c91ed13cbabea3",
+          "actual_sha256": "d5417551e89261744b531367e3883d22c513f83cf2e7742540c91ed13cbabea3",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_molecule_evidence.jsonl",
+          "expected_sha256": "7fd8898e95458a002d6cd6c38601e6d57a52ba46d826008d53c2846cc5cacaa5",
+          "actual_sha256": "7fd8898e95458a002d6cd6c38601e6d57a52ba46d826008d53c2846cc5cacaa5",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_neighbor_index.pkl",
+          "expected_sha256": "5d42d21a62a51eec5d7873f4e85003923e8c53b4461b8406f6382a7bf744393c",
+          "actual_sha256": "5d42d21a62a51eec5d7873f4e85003923e8c53b4461b8406f6382a7bf744393c",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/bbb_martins/mechanism_tagged_v4_source_purity_v6/assay_molecule_evidence.jsonl",
+          "expected_sha256": "e30161826ef7d9861d4f0397171e3c28678a725fbe88ba22e1ff28490ae3207a",
+          "actual_sha256": "e30161826ef7d9861d4f0397171e3c28678a725fbe88ba22e1ff28490ae3207a",
+          "ok": true
+        }
+      },
+      "bioavailability_ma": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/bioavailability_ma/03_records/records.parquet",
+          "expected_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+          "actual_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_source_family_purity_legacy_record_supported_v2_vote_pure_v1/records.parquet",
+          "expected_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8",
+          "actual_sha256": "b1b5b29f1724b6c91af0c88ae97fbb66de78491a3c577e592a877da17c0599d8",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/bioavailability_ma_legacy_record_supported_v2_vote_pure_v1/family_assays.jsonl",
+          "expected_sha256": "f261b7e698e5fbb0c4cb879d51cf85a969c553346ed3fe2a7eecf912bae5050e",
+          "actual_sha256": "f261b7e698e5fbb0c4cb879d51cf85a969c553346ed3fe2a7eecf912bae5050e",
+          "ok": true
+        },
+        "intermediate_overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/bioavailability_nondirect_assay_context_v1/records.parquet",
+          "expected_sha256": "98138649ec4b458f56db4cb2ffc63cdde4a08546be924e8ba636e04baf34ddef",
+          "actual_sha256": "98138649ec4b458f56db4cb2ffc63cdde4a08546be924e8ba636e04baf34ddef",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_neighbor_index.pkl",
+          "expected_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+          "actual_sha256": "c7e6b67dc94979234918e39eee968ba977429350d5f95c3490b0f34983360652",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_molecule_evidence.jsonl",
+          "expected_sha256": "1df978c53c3290ea82855ff739059a8f9a968ba21df0b7facda2294dcff39d82",
+          "actual_sha256": "1df978c53c3290ea82855ff739059a8f9a968ba21df0b7facda2294dcff39d82",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_neighbor_index.pkl",
+          "expected_sha256": "e68dac90d01bc659f122103e4f774240c97e6617aed9800c1d33be43722701d8",
+          "actual_sha256": "e68dac90d01bc659f122103e4f774240c97e6617aed9800c1d33be43722701d8",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/bioavailability_ma/mechanism_tagged_v4_legacy_record_supported_v2_vote_pure_v1/assay_molecule_evidence.jsonl",
+          "expected_sha256": "051535f1269d9b356fad305009ac1ff4d18ed0f86b82bb8c40be749136eda343",
+          "actual_sha256": "051535f1269d9b356fad305009ac1ff4d18ed0f86b82bb8c40be749136eda343",
+          "ok": true
+        }
+      },
+      "skin_reaction": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/skin_reaction/03_records/records.parquet",
+          "expected_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+          "actual_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/source_overlays/source_family_purity_v7/skin_reaction/records.parquet",
+          "expected_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
+          "actual_sha256": "999453952793d890209968a659d8a13cf43dd5c2b97892a96e76546353ee2945",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v7/family_assays.jsonl",
+          "expected_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
+          "actual_sha256": "728c046848b84347b86f72f841410dc4c37d529f1590fec427b8e1d7b13b65a0",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
+          "expected_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
+          "actual_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
+          "expected_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22",
+          "actual_sha256": "ba8f5304f86de123ca03fe45bc5afb38506dad2a116b61f97d3a87ed3b972a22",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_neighbor_index.pkl",
+          "expected_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
+          "actual_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v7/assay_molecule_evidence.jsonl",
+          "expected_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956",
+          "actual_sha256": "2a38280a96230500ecc697513fdf17c199f8ae25aa9a20864286ce3800d72956",
+          "ok": true
+        }
+      },
+      "ames": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/ames/03_records/records.parquet",
+          "expected_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "actual_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/ames/03_records/records.parquet",
+          "expected_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "actual_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/ames/family_assays.jsonl",
+          "expected_sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
+          "actual_sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
+          "ok": true
+        },
+        "published_source_records": {
+          "path": "/data1/tianang/Projects/TxAgent/data/starling_data/ames/canonical_v1/records.parquet",
+          "expected_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "actual_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_neighbor_index.pkl",
+          "expected_sha256": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+          "actual_sha256": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/scaffold/assay_molecule_evidence.jsonl",
+          "expected_sha256": "23326d5f5a41f86f9f407de3e00b66f309a0a529f653b43d7c62c490c9eeefae",
+          "actual_sha256": "23326d5f5a41f86f9f407de3e00b66f309a0a529f653b43d7c62c490c9eeefae",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_neighbor_index.pkl",
+          "expected_sha256": "3692c1c2d60f19aef2bb53ccb3015605458131b6999d3e0f963f2494afe9e20b",
+          "actual_sha256": "3692c1c2d60f19aef2bb53ccb3015605458131b6999d3e0f963f2494afe9e20b",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/ames/random/assay_molecule_evidence.jsonl",
+          "expected_sha256": "8c3c6289ab4e0722554eb67ca41937847a6a700c0c0f6a2164d58a05e6edcbee",
+          "actual_sha256": "8c3c6289ab4e0722554eb67ca41937847a6a700c0c0f6a2164d58a05e6edcbee",
+          "ok": true
+        }
+      },
+      "dili": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
+          "expected_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "actual_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/dili/03_records/records.parquet",
+          "expected_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "actual_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/dili/family_assays.jsonl",
+          "expected_sha256": "2671847749b2408b40fb7bdffc439778c3f14958c3c271d1f2d8f4c7f9e87691",
+          "actual_sha256": "2671847749b2408b40fb7bdffc439778c3f14958c3c271d1f2d8f4c7f9e87691",
+          "ok": true
+        },
+        "published_source_records": {
+          "path": "/data1/tianang/Projects/TxAgent/data/starling_data/dili/retrieval_final/source/records.parquet",
+          "expected_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "actual_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_neighbor_index.pkl",
+          "expected_sha256": "aaed6f0c66fd9c82e048fb230bf42cb28585b02519bb57c2d6f183cdbdb74e09",
+          "actual_sha256": "aaed6f0c66fd9c82e048fb230bf42cb28585b02519bb57c2d6f183cdbdb74e09",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/scaffold/assay_molecule_evidence.jsonl",
+          "expected_sha256": "f13283690dc42f4eda39f0bdf5e18369620f387e1211d5075f58bfb35c03e35f",
+          "actual_sha256": "f13283690dc42f4eda39f0bdf5e18369620f387e1211d5075f58bfb35c03e35f",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_neighbor_index.pkl",
+          "expected_sha256": "e14ef971413f4605e6955d233629076f2857a0aa7d3d91700a96a996ece065ce",
+          "actual_sha256": "e14ef971413f4605e6955d233629076f2857a0aa7d3d91700a96a996ece065ce",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/dili/random/assay_molecule_evidence.jsonl",
+          "expected_sha256": "40d6037c4ed06da6b1f8533077ad33484a8e9b67033548c77f93251bf08e7d0e",
+          "actual_sha256": "40d6037c4ed06da6b1f8533077ad33484a8e9b67033548c77f93251bf08e7d0e",
+          "ok": true
+        }
+      },
+      "carcinogens": {
+        "packaged_stage03": {
+          "ok": true
+        },
+        "local_stage03_inventory": {
+          "ok": true
+        },
+        "canonical_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
+          "expected_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "actual_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "ok": true
+        },
+        "overlay_records": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/chembl_tool/starling/current_records/carcinogens/03_records/records.parquet",
+          "expected_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "actual_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "ok": true
+        },
+        "catalog": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/family_catalogs/carcinogens/family_assays.jsonl",
+          "expected_sha256": "5d200bd614e5ef39b84e0cb97c4e56509bf45445f2e63bd08584db33b30d4370",
+          "actual_sha256": "5d200bd614e5ef39b84e0cb97c4e56509bf45445f2e63bd08584db33b30d4370",
+          "ok": true
+        },
+        "published_source_records": {
+          "path": "/data1/tianang/Projects/TxAgent/data/starling_data/carcinogens/retrieval_final/source/records.parquet",
+          "expected_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "actual_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c",
+          "ok": true
+        },
+        "scaffold_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_neighbor_index.pkl",
+          "expected_sha256": "2dcde5bc3f3148e726682d6a0603e328de461fb14b4dead358630fb90e1132fa",
+          "actual_sha256": "2dcde5bc3f3148e726682d6a0603e328de461fb14b4dead358630fb90e1132fa",
+          "ok": true
+        },
+        "scaffold_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/scaffold/assay_molecule_evidence.jsonl",
+          "expected_sha256": "a0fd390f3667b892380735ce90cb3867b7f789ea80e491d09e817a9034b86ce6",
+          "actual_sha256": "a0fd390f3667b892380735ce90cb3867b7f789ea80e491d09e817a9034b86ce6",
+          "ok": true
+        },
+        "random_index": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_neighbor_index.pkl",
+          "expected_sha256": "1d138c7f4ff5e0661e068fc32ae37b5ca5addf5ad36ca75b33814598351f03f7",
+          "actual_sha256": "1d138c7f4ff5e0661e068fc32ae37b5ca5addf5ad36ca75b33814598351f03f7",
+          "ok": true
+        },
+        "random_evidence": {
+          "path": "/data1/tianang/Projects/TxAgent/outputs/paper/starling_conditioned_assay_family_curve_v1/indices/carcinogens/random/assay_molecule_evidence.jsonl",
+          "expected_sha256": "8274a8ac270265dea56e3b975d57dda3ad569c911accdc359271e4151e60932a",
+          "actual_sha256": "8274a8ac270265dea56e3b975d57dda3ad569c911accdc359271e4151e60932a",
+          "ok": true
+        }
+      }
+    },
+    "ok": true,
+    "failures": []
+  },
+  "retained_boundaries": [
+    "Skin v7 is current; v5/v6 and pre-rebinding Stage-03 archive remain frozen experiment/source-repair dependencies.",
+    "Ames and DILI incremental review ledgers, original papers, frozen gold/splits and reused prediction trajectories remain provenance.",
+    "Running matched full-flat coordinator, checkpoints, prepared inputs, provider configuration and frozen runtimes are untouched.",
+    "OpenRouter Batch and Carcinogens prompt adaptation remain separate active work."
+  ],
+  "code_review": {
+    "fixes": [
+      "Repository-relative archive part paths in publish_snapshot and DILI current manifest.",
+      "Skin runner test expectation updated from v5 to v7."
+    ],
+    "validation": [
+      "Initial selected suite: 806 passed, two failures identified and repaired.",
+      "Follow-up publisher/runner/provider/batch suite: 125 passed, including checkout-move restore."
+    ],
+    "no_new_production_entrypoint": true
+  },
+  "deleted_at_utc": "2026-09-15T00:25:56.154502+00:00",
+  "previous_share_contract_sha256": "8e97c74013700ab9d1bbf2b72fe8d0a57413219e70256519a532bb3725a3347e",
+  "verified_share_files": [
+    "artifacts/chembl_tool/starling/current_level_records/bbb_martins/source_record_level_membership.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/bbb_martins/scaffold/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/bbb_martins/random/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/bioavailability_ma/source_record_level_membership.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/bioavailability_ma/scaffold/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/bioavailability_ma/random/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/skin_reaction/source_record_level_membership.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/skin_reaction/scaffold/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/skin_reaction/random/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00000.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00001.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00002.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00003.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00004.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00005.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00006.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00007.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00008.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00009.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00010.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00011.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00012.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00013.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00014.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00015.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00016.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00017.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00018.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/source_record_level_membership/part-00019.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/scaffold/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/ames/random/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00000.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00001.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00002.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00003.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00004.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00005.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00006.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00007.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00008.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00009.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00010.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00011.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00012.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00013.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00014.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00015.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00016.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00017.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00018.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00019.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00020.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/source_record_level_membership/part-00021.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/scaffold/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/dili/random/indexed_representative_cards.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00000.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00001.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00002.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00003.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00004.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00005.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00006.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00007.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00008.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00009.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00010.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00011.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00012.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00013.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00014.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00015.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00016.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00017.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00018.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00019.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00020.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00021.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00022.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00023.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00024.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00025.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00026.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00027.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00028.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00029.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00030.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00031.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00032.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00033.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00034.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00035.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00036.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00037.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00038.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00039.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00040.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00041.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00042.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00043.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00044.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00045.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00046.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00047.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/source_record_level_membership/part-00048.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00000.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00001.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00002.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00003.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00004.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00005.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00006.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00007.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00008.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00009.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00010.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00011.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00012.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00013.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00014.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00015.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00016.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00017.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00018.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00019.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00020.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00021.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00022.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00023.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00024.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00025.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00026.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00027.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00028.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00029.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00030.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00031.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00032.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00033.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00034.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00035.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00036.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00037.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00038.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00039.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00040.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00041.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/scaffold/indexed_representative_cards/part-00042.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00000.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00001.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00002.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00003.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00004.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00005.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00006.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00007.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00008.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00009.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00010.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00011.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00012.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00013.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00014.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00015.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00016.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00017.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00018.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00019.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00020.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00021.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00022.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00023.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00024.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00025.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00026.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00027.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00028.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00029.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00030.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00031.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00032.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00033.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00034.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00035.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00036.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00037.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00038.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00039.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00040.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00041.parquet",
+    "artifacts/chembl_tool/starling/current_level_records/carcinogens/random/indexed_representative_cards/part-00042.parquet"
+  ],
+  "current_share_contract_sha256": "d8c1db5f2ac47475677b2adba4846a575fff02c1e91f5083b41ea2a5b4aecbea",
+  "post_cleanup_verification": {
+    "all_six_current_sources_and_both_split_indices_verified": true,
+    "task_bindings_unchanged": true,
+    "deleted_paths_absent": true,
+    "skin_v5_v6_v7_indices_retained": true,
+    "share_parquet_files_hash_verified": 190,
+    "share_contract_hash_current": true,
+    "changed_python_files_ast_and_critical_lint_passed": 40,
+    "post_metadata_contract_tests_passed": 14
+  },
+  "documentation_updates": [
+    "CURRENT_STARLING_RETRIEVAL.md: current counts, six-task/twelve-index scope, version retention and portable publication.",
+    "RESULTS.md: completed valid/test progressive, paused original v5 full-flat, separate running hybrid full-flat, trace audit; redundant operational chronology shortened.",
+    "README.md: shared multi-endpoint admission entrypoint.",
+    "TRACE_RETENTION.md: completed suites, preserved runtime/source dependencies and explicit deletion receipt.",
+    "Registry: trace audit and this maintenance receipt."
+  ]
+}

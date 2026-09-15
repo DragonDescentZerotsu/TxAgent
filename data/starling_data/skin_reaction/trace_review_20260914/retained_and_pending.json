@@ -1,0 +1,63 @@
+[
+  {
+    "records": [
+      "sensitization_aop:38404"
+    ],
+    "decision": "keep_unretrievable",
+    "finding": "Original full text section 3.5.2.1 identifies M14 as a GSH conjugate. The apparent abstract/figure ambiguity is not an extraction error. No resolved structure was available, so it remains unretrievable.",
+    "document": "35498820.xml"
+  },
+  {
+    "records": [
+      "sensitization_aop:38411"
+    ],
+    "decision": "keep",
+    "finding": "INF is infigratinib and its existing correctly bound DEREK prediction agrees with Table 6. It remains a predicted overall outcome in L2.",
+    "document": "35498820.xml"
+  },
+  {
+    "records": [
+      "PMID34453447 ext_56",
+      "PMID34453447 ext_98",
+      "PMID34453447 ext_110"
+    ],
+    "decision": "keep",
+    "finding": "EMIM negative mechanistic results agree with the primary paper. BMIM is a different compound; over-transfer is not evidence that EMIM records are false. Primary LLNA did not reach SI3 for BMIM.",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11938944/"
+  },
+  {
+    "records": [
+      "PMID40206139 ext_3",
+      "PMID40206139 ext_5"
+    ],
+    "decision": "keep",
+    "finding": "Original section on user safety confirms thiamine HCl OECD 442C low-reactivity positive and 442D/442E negative; the overall sensitization assessment also uses clinical/earlier evidence. Contradictory endpoints are not erroneous assays.",
+    "document": "40206139.xml"
+  },
+  {
+    "records": [
+      "card_0fb2321da5939e50"
+    ],
+    "decision": "keep_scoped_mechanism",
+    "finding": "Lovastatin is a positive control for cholesterol depletion in the NiSO4 MoDC study. The reported cholesterol readout is correct, but is not a sensitization final outcome. The focal model explicitly discounted it.",
+    "document": "lovastatin_primary.xml"
+  },
+  {
+    "records": [
+      "PMID31006869 ext_1",
+      "PMID31006869 ext_5"
+    ],
+    "decision": "retain_pending_exact_table_check",
+    "finding": "Author-associated summary supports 1,4-diaminoanthraquinone identity and sensitizer status. The exact mDPRA category and 521 pg/mg IL18 table entry were not independently verified from the full original article; no confirmed error established.",
+    "document": "hair_dyes_author_summary.pdf"
+  },
+  {
+    "records": [
+      "PMID27458072 ext_10",
+      "PMID19229520 ext_5",
+      "PMID19125718 ext_76"
+    ],
+    "decision": "retain_unresolved",
+    "finding": "No confirmed source error established. Exact original assay tables/abstract passage were not obtained in this review; negative or limited-scope results alone are not grounds for exclusion."
+  }
+]

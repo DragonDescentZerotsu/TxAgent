@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from collections.abc import Mapping
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -31,7 +33,11 @@ DIRECT_GROUP = "Direct.skin_reaction"
 NEAR_DIRECT_GROUP = "Observed.nonvoter_skin_outcome"
 AOP_GROUP = "Mechanism.sensitization_aop"
 EXCLUDED_GROUP = "Excluded.skin_sensitization_source_purity"
-PURITY_VERSION = "skin_source_family_purity.strict_target_aligned.v5"
+PURITY_VERSION = "skin_source_family_purity.strict_target_aligned.v7"
+SOURCE_REVIEW = (
+    Path(__file__).resolve().parents[4]
+    / "data/starling_data/skin_reaction/trace_review_20260914/decisions_rebound.json"
+)
 DEFAULT_CONDITION_REVIEW = task_root("skin_reaction") / "source_condition_review.jsonl"
 SourceRecordKey = tuple[str, int]
 
@@ -171,6 +177,24 @@ def canonical_partition(
     return canonical_partitions.get(key) if key is not None else None
 
 
+@lru_cache(maxsize=1)
+def load_reviewed_source_decisions() -> dict[SourceRecordKey, dict[str, Any]]:
+    """Load narrow source repairs; raw acquisition and frozen votes stay intact."""
+    review = json.loads(SOURCE_REVIEW.read_text(encoding="utf-8"))
+    if review.get("version") != "skin_source_review.v1":
+        raise ValueError("unsupported Skin source review")
+    decisions = {}
+    for row in review["decisions"]:
+        key = source_record_key_from_id(row["source_record_key"])
+        if key in decisions or row["new_group"] not in {EXCLUDED_GROUP, NEAR_DIRECT_GROUP, AOP_GROUP}:
+            raise ValueError(f"invalid Skin source review: {key}")
+        document = Path(__file__).resolve().parents[4] / row["source_document"]
+        if hashlib.sha256(document.read_bytes()).hexdigest() != row["document_sha256"]:
+            raise ValueError(f"Skin source review document changed: {key}")
+        decisions[key] = row
+    return decisions
+
+
 def vote_pure_family_move(
     record: Mapping[str, Any],
     voter_source_keys: set[SourceRecordKey] | frozenset[SourceRecordKey],
@@ -187,6 +211,14 @@ def vote_pure_family_move(
         raise RuntimeError(
             f"Skin source row {key!r} is absent from the canonical partition audit"
         )
+
+    review = load_reviewed_source_decisions().get(key)
+    if review is not None:
+        if key in voter_source_keys:
+            raise ValueError(f"Skin source review cannot edit a frozen voter: {key}")
+        if any(record.get(k) != v for k, v in review["expected"].items()):
+            raise ValueError(f"Skin source review signature changed: {key}")
+        return FamilyMove(review["new_group"], "reviewed_source:" + review["reason"])
 
     strict_exclusion = strict_scope_exclusion_reason(record)
     if strict_exclusion:

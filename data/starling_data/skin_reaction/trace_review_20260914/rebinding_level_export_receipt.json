@@ -1,0 +1,66 @@
+{
+  "schema_version": "current_starling_level_record_share.v1",
+  "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
+  "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
+  "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
+  "current_retrieval_contract_sha256": "22f8d0eb2e8390c3255a63a7983e364c0bbc435ad2807550ea7070348c0aad76",
+  "verified_current_inputs": true,
+  "interpretation": {
+    "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
+    "indexed_representative_cards": "compact references to exact representative cards materialized in each split index; join to source membership for the card fields",
+    "per_query_selected_cards": "not included; read active_evidence/new_card_ids in each run's prepared.json"
+  },
+  "tasks": {
+    "skin_reaction": {
+      "level_description_source": "tools/chembl_tool/tasks/skin_reaction/experiment_config.py",
+      "level_description_source_sha256": "18b5d47cf9c7db4d092da51ece8789392339390f1fe71b99b72984f76928680b",
+      "source_membership": {
+        "path": "skin_reaction/source_record_level_membership.parquet",
+        "sha256": "859329b5f5bca89fe004e9a7e36a9c4fee75c7dc2a8a1c6e6a8103e2f0053a7f",
+        "size_bytes": 7978939,
+        "n_records": 66964,
+        "records_by_level": {
+          "1": 42435,
+          "2": 12524,
+          "3": 12005
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "skin_reaction/scaffold/indexed_representative_cards.parquet",
+          "sha256": "ea1c9354a3c5c4e1dc44999ccc63816b909a0d1f21ea35c655a334c630a90227",
+          "size_bytes": 1124717,
+          "n_assay_molecule_rows": 15672,
+          "n_representative_cards": 25686,
+          "cards_by_level": {
+            "1": 10714,
+            "2": 6708,
+            "3": 8264
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "skin_reaction/random/indexed_representative_cards.parquet",
+          "sha256": "c03bf8e91f4d502bb838ac1a440cb3ca92bb7f841368344bc459bfd0ac1c9477",
+          "size_bytes": 1097251,
+          "n_assay_molecule_rows": 15168,
+          "n_representative_cards": 24796,
+          "cards_by_level": {
+            "1": 9745,
+            "2": 6788,
+            "3": 8263
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 65366,
+        "n_indexed_cards_checked": 50482,
+        "n_missing_source_card_keys": 0
+      }
+    }
+  },
+  "published_to": "artifacts/chembl_tool/starling/current_level_records",
+  "temporary_export_removed_after_hash_checked_publication": true
+}

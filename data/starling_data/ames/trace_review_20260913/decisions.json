@@ -1,0 +1,39 @@
+[
+  {
+    "source_record_id": "ames_v2:425939",
+    "raw_sha256": "a1d4d81f31eed977d887a087936353354159c9d16f1f9c79701abbe80fe7038e",
+    "previous_group_id": "Observed.nonvoter_ames",
+    "group_id": "Mechanism.dna_damage_response",
+    "rationale": "Pure bacterial SOS/umu DNA-response screen; standardized Ames mentioned only as future confirmation, not a performed reverse-mutation outcome.",
+    "review_origin": "trace_review_20260913",
+    "canonical_surface_sha256": "a7fa4fa7562c8d7b10ec7acc6028c666e6185637e79e26ff794f528d842d7b8b"
+  },
+  {
+    "source_record_id": "ames_base:186648",
+    "raw_sha256": "6361ab3d5e08209c81e01a5a974dd4c2fc17871f4e2ad40a5d323ff43cbd668a",
+    "previous_group_id": "Observed.nonvoter_ames",
+    "group_id": "Mechanism.other_genetic_damage",
+    "rationale": "Allium chromosomal aberration/micronucleus and Tradescantia context; no bacterial reverse-mutation endpoint in the complete recovered record.",
+    "review_origin": "trace_review_20260913",
+    "canonical_surface_sha256": "e9cc2b0ea04fb33524baa22d9196777262ce991c47e9f46792da70b884397960"
+  },
+  {
+    "source_record_id": "ames_base:80868",
+    "pmid": "39543775",
+    "raw_sha256": "9d9b3c3f4bb3d9ee64b8b509b5c6ae3100227e7b343493b4b6e27bc6ba9ac5a0",
+    "parent_inchi_key": "WCZVZNOTHYJIEI-UHFFFAOYSA-N",
+    "molecule_name": "cinnoline",
+    "action": "accept",
+    "Y": 1,
+    "condition_atoms": [
+      "metabolic_activation=absent",
+      "strain_panel=TA1537"
+    ],
+    "rationale": "Full-text verification of PMID39543775 preserves the measured cinnoline TA1537 -S9 outcome and repairs the incomplete series SAR in extra_details using the explicit quinoline exception in the structural-alert discussion. No outcome or condition change.",
+    "review_origin": "trace_review_20260913",
+    "source_reference": "https://link.springer.com/article/10.1186/s41021-024-00316-6",
+    "evidence_correction": {
+      "qualifying_conditions": "extra_details=Pre-incubation method; no S9 mix. Series-level structural alert also includes quinoline with only the position-1 nitrogen; a second ring nitrogen is not a necessary condition. Series outcomes differ by strain and activation. This record reports cinnoline positivity in TA1537 without S9. | evidence_basis=current_study_experiment | experimental_context=in_vitro | needs_more_context=False"
+    }
+  }
+]

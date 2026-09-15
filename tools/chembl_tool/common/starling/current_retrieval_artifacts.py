@@ -131,6 +131,9 @@ def publish_snapshot(task: str, source: Path, bundle_root: Path) -> dict[str, An
 
     if task not in TASKS:
         raise ValueError(task)
+    bundle_root = bundle_root.resolve()
+    # Published parts must remain usable after cloning into another checkout.
+    bundle_root.relative_to(PROJECT_ROOT / "artifacts")
     files = [
         p for p in sorted(source.iterdir()) if p.is_file() and p.suffix not in {".lock"}
     ]
@@ -159,7 +162,7 @@ def publish_snapshot(task: str, source: Path, bundle_root: Path) -> dict[str, An
                 publish_file(local, target)
                 parts.append(
                     {
-                        "path": str(target),
+                        "path": target.relative_to(PROJECT_ROOT).as_posix(),
                         "size": len(chunk),
                         "sha256": hashlib.sha256(chunk).hexdigest(),
                     }
@@ -171,7 +174,10 @@ def publish_snapshot(task: str, source: Path, bundle_root: Path) -> dict[str, An
             "records_size": (source / "records.parquet").stat().st_size,
             "parts": parts,
             "files": inventory,
-            "source_release": str(source),
+            "source_release": (
+                source.resolve().relative_to(PROJECT_ROOT).as_posix()
+                if source.resolve().is_relative_to(PROJECT_ROOT) else str(source)
+            ),
         }
     for p, expected in zip(files, inventory):
         if sha256_file(p) != expected["sha256"]:

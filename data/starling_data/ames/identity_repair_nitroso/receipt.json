@@ -1,0 +1,243 @@
+{
+  "status": "complete_verified",
+  "scope": "correct seven nonvoter source structures; preserve frozen gold and raw sources; replay affected Pro scaffold-valid inputs",
+  "corrections": [
+    {
+      "source_record_id": "ames_base:74075",
+      "action": "correct_structure",
+      "pmid": "3306361",
+      "raw_sha256": "aaf959a7aaf3b3093fc6844326ff755c86c8edb6effd2f0350b66c91c15fb7f9",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    },
+    {
+      "source_record_id": "ames_base:222392",
+      "action": "correct_structure",
+      "pmid": "6355832",
+      "raw_sha256": "150c806a3eafdca3d8781cf002a9fdf752c1edc5c9f2b610265e5c407b9556bf",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    },
+    {
+      "source_record_id": "ames_base:222393",
+      "action": "correct_structure",
+      "pmid": "6355832",
+      "raw_sha256": "6c3d5e553acda82b97d938222c03459fa72ba86da3253abd993369167ae23dfa",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    },
+    {
+      "source_record_id": "ames_v2:195316",
+      "action": "correct_structure",
+      "pmid": "3319273",
+      "raw_sha256": "c66bc805afdc244873c87283f51f1503644f90220138c92e27ababeb1deb77b3",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "[2H]C([2H])([2H])N(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-FIBGUPNXSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction. Preserve methyl-d3 isotope labeling explicitly."
+    },
+    {
+      "source_record_id": "ames_v2:195322",
+      "action": "correct_structure",
+      "pmid": "3319273",
+      "raw_sha256": "4517004de6da4d9534d2fbcf895b88799db84990da0d87bc8ac8d50fe2212237",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    },
+    {
+      "source_record_id": "ames_v3:479286",
+      "action": "correct_structure",
+      "pmid": "778923",
+      "raw_sha256": "ae2cf7c1b22dd3b5c17f048371b9066b1b9df5a9162c834c83bcb0ab4135a7fc",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    },
+    {
+      "source_record_id": "ames_v3:479287",
+      "action": "correct_structure",
+      "pmid": "778923",
+      "raw_sha256": "d5100780d8a8ffcab193292f4546a7f1223fcef107b1ef04f4a937aa1eac8a7d",
+      "parent_inchi_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+      "corrected_smiles": "CN(N=O)C1CCCCC1",
+      "corrected_parent_inchi_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+      "identity_reference": "https://pubchem.ncbi.nlm.nih.gov/compound/21567",
+      "rationale": "Source text identifies N-nitroso-N-methylcyclohexylamine, but supplied O=NCNC1CCCCC1 lacks the N-N bond. Correct explicit connectivity while retaining source text, endpoint, nonvoter status and raw extraction."
+    }
+  ],
+  "source_votes_sha256_before": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+  "source_build_verified": true,
+  "n_source_records": 1299584,
+  "changed_record_ids": [
+    "ames_base:74075",
+    "ames_base:222392",
+    "ames_base:222393",
+    "ames_v2:195316",
+    "ames_v2:195322",
+    "ames_v3:479286",
+    "ames_v3:479287"
+  ],
+  "only_seven_record_fingerprints_changed": true,
+  "source_votes_unchanged": true,
+  "all_record_groups_unchanged": true,
+  "record_changes": [
+    {
+      "source_record_id": "ames_base:222392",
+      "before": {
+        "source_record_id": "ames_base:222392",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "03d30b4a20f2260cdce33b15b20b2134afcda33d3b391a94f033a8354834410b"
+      },
+      "after": {
+        "source_record_id": "ames_base:222392",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "28ccee631c386fac199b67c3ff9cb8d6de793ca96025154140050cce80414fb3"
+      }
+    },
+    {
+      "source_record_id": "ames_base:222393",
+      "before": {
+        "source_record_id": "ames_base:222393",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "37e9519ada8ec577cbb0f87ffd46f896863c34a6ff0538b57b572476372025a4"
+      },
+      "after": {
+        "source_record_id": "ames_base:222393",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "39d5083e6844325f9fbebacd255e05e6dc90e8c842227499aa7bf94daa4a8588"
+      }
+    },
+    {
+      "source_record_id": "ames_base:74075",
+      "before": {
+        "source_record_id": "ames_base:74075",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "c25aa037d638649a982c79039803d9cae6f83149919604b512886541b351144a"
+      },
+      "after": {
+        "source_record_id": "ames_base:74075",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Observed.nonvoter_ames",
+        "record_fingerprint_sha256": "cd64eb219ab7ba1f0f7632375c6a2d6a24cc560e888874253fa08d18eed4bb57"
+      }
+    },
+    {
+      "source_record_id": "ames_v2:195316",
+      "before": {
+        "source_record_id": "ames_v2:195316",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "dc6c3da0aec2f89f0e1a57adee02369649e3e7a5b43c2a0d4244ca6d378005ab"
+      },
+      "after": {
+        "source_record_id": "ames_v2:195316",
+        "canonical_smiles": "[2H]C([2H])([2H])N(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-FIBGUPNXSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "6e69298523d23d329b98c1000118e978781bcda5bd1ac01cda1eb554fd40a7f6"
+      }
+    },
+    {
+      "source_record_id": "ames_v2:195322",
+      "before": {
+        "source_record_id": "ames_v2:195322",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "0e3ce9dd9f993c55bb5c8c1be15860c012a4b48146e8f605b291f8a16422e088"
+      },
+      "after": {
+        "source_record_id": "ames_v2:195322",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "70846e5b4067144e4d2d9280d19a51b9e8c85b8b4dabed4dc97a6890ca591677"
+      }
+    },
+    {
+      "source_record_id": "ames_v3:479286",
+      "before": {
+        "source_record_id": "ames_v3:479286",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Mechanism.genotoxicity_mechanisms",
+        "record_fingerprint_sha256": "cc45f4a50e0dab05dabc1286f15dc7d3c24883276d50e1a7027c8e803b9746d6"
+      },
+      "after": {
+        "source_record_id": "ames_v3:479286",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Mechanism.genotoxicity_mechanisms",
+        "record_fingerprint_sha256": "e85c7fd4f1fe0d5a5ad4fe9c3921cd6478cb90bb1dde35840fe7df51218b4722"
+      }
+    },
+    {
+      "source_record_id": "ames_v3:479287",
+      "before": {
+        "source_record_id": "ames_v3:479287",
+        "canonical_smiles": "O=NCNC1CCCCC1",
+        "molecule_identity_key": "HNJYUPZLNHORJB-UHFFFAOYSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "d0e952757f829fc95575d5b2b59cbb1eb92c0ccee1da71d466e404231f5a32cc"
+      },
+      "after": {
+        "source_record_id": "ames_v3:479287",
+        "canonical_smiles": "CN(N=O)C1CCCCC1",
+        "molecule_identity_key": "KZRHBQXJMQDNEZ-UHFFFAOYSA-N",
+        "group_id": "Mechanism.dna_damage_response",
+        "record_fingerprint_sha256": "8100fb582d327e489a343620c4a07a8a4a6f4b6baadd7f186d328cc3c6af1653"
+      }
+    }
+  ],
+  "gold_preservation": {
+    "source_votes_sha256": "d6ddb3a52a2545b11fdf0fc7241c596abad115bd01b326cfb531000d4e613ac9",
+    "previous_dataset_manifest_sha256": "4b92c978f65a706d31bacc894a8aea6f176f811baafe13169b51e2818b00032c",
+    "benchmark_files_unchanged": true,
+    "split_allocation_repeated": false
+  },
+  "dataset_manifest": "data/starling_data/ames/dataset_manifest.json",
+  "affected_evaluation": "Pro scaffold-valid, one progressive and one full-flat run",
+  "retrieval_validation": "data/starling_data/ames/retrieval_validation.json",
+  "retrieval_validation_sha256": "da048dfbd42b879b583bff84f2d9e01f33d202a6241c22ffcd128c8cf9bab8d0",
+  "canonical_snapshot_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "shared_snapshot_verified": true,
+  "shared_export_manifest": "artifacts/chembl_tool/starling/current_level_records/manifest.json",
+  "shared_export_manifest_sha256": "2e0b2939c03825758b0114fbb669f05e88ea522ee126b21ea07c83dee4cd6d23",
+  "shared_card_link_validation": {
+    "n_unique_source_card_keys": 1299583,
+    "n_indexed_cards_checked": 2408617,
+    "n_missing_source_card_keys": 0
+  },
+  "pro_valid_selected_surface_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/selected_surface_receipt.json",
+  "finished_at": "2026-09-08T05:33:05.672929+00:00",
+  "pro_valid_completion_validation": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/completion_validation.json",
+  "pro_valid_repair_report": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/REPAIR_RESULTS.md",
+  "subsequent_split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json"
+}

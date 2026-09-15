@@ -8,6 +8,7 @@ from tools.chembl_tool.common.json_utils import sha256_file
 from tools.chembl_tool.common.starling.source_gold_review import payload_hash
 from tools.chembl_tool.common.starling.stage_new_task_retrieval import apply_record_review
 from tools.chembl_tool.common.starling.stage_new_task_retrieval import _repair_source_row
+from tools.chembl_tool.common.starling.stage_new_task_retrieval import apply_content_repairs
 
 
 def fixture(tmp_path):
@@ -114,6 +115,34 @@ def test_identity_repair_updates_visible_fields_but_preserves_acquisition():
     assert fixed['raw_record_json']==row['raw_record_json']
     assert fixed['source_smiles']=='CCO' and not fixed['is_gold_voter']
     assert json.loads(fixed['reviewed_record_json'])==d['corrected_record']
+
+
+def test_published_identity_repair_keeps_record_audit_aligned(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        'tools.chembl_tool.common.starling.new_task_retrieval_identity.prepare_cache',
+        lambda *args: None,
+    )
+    original, decision = content_fixture()
+    fixed = _repair_source_row('dili', original, decision)
+    row = {**fixed, **original, 'molecule_identity_key': 'old_identity'}
+    source = tmp_path / 'source'
+    source.mkdir()
+    pq.write_table(pa.Table.from_pylist([row]), source / 'records.parquet')
+    pq.write_table(pa.Table.from_pylist([{
+        'source_row_uid': 'u', 'molecule_identity_key': 'old_identity', 'level': 2,
+    }]), source / 'record_audit.parquet')
+    ledger = tmp_path / 'review.json'
+    ledger.write_text(json.dumps({
+        'task': 'dili', 'source_records_sha256': sha256_file(source / 'records.parquet'),
+        'decisions': [decision],
+    }))
+    output = tmp_path / 'repaired'
+    apply_content_repairs('dili', source, output, ledger)
+    repaired = pq.read_table(output / 'records.parquet').to_pylist()[0]
+    audit = pq.read_table(output / 'record_audit.parquet').to_pylist()[0]
+    assert audit['molecule_identity_key'] == repaired['molecule_identity_key']
+    assert audit['molecule_identity_key'] != 'old_identity'
+    assert repaired['raw_record_json'] == original['raw_record_json']
 
 
 def test_material_correction_cannot_inherit_single_molecule_or_vote():

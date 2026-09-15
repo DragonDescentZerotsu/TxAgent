@@ -84,6 +84,10 @@ class OpenAICompatibleClient:
     async def aclose(self) -> None:
         if self._async_client is not None:
             await self._async_client.close()
+        self.client.close()
+
+    def close(self) -> None:
+        self.client.close()
 
     def _json_response(self, response: Any, messages: list[dict[str, Any]]) -> dict[str, Any]:
         message = response.choices[0].message

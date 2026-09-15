@@ -16,6 +16,8 @@ import threading
 import time
 from typing import Any, Callable, Mapping, Protocol
 
+from .request_admission import admitted_call, admitted_sync
+
 
 POOL_CONFIG_VERSION = "openai_provider_pool.v1"
 
@@ -36,6 +38,11 @@ class ProviderSpec:
     initial_latency_s: float = 60.0
     timeout_s: int | None = None
     request_extra_body: Mapping[str, Any] | None = None
+    transport: str = "chat_completions"
+    temperature: float | None = 0.0
+    reasoning_effort: str = ""
+    batch_options: Mapping[str, Any] | None = None
+    admission_socket: str = ""
 
     @classmethod
     def from_mapping(cls, row: Mapping[str, Any]) -> "ProviderSpec":
@@ -48,6 +55,11 @@ class ProviderSpec:
             initial_latency_s=float(row.get("initial_latency_s") or 60.0),
             timeout_s=(int(row["timeout_s"]) if row.get("timeout_s") is not None else None),
             request_extra_body=dict(row.get("request_extra_body") or {}),
+            transport=str(row.get("transport", "chat_completions")),
+            temperature=(float(row.get("temperature", 0.0)) if row.get("temperature", 0.0) is not None else None),
+            reasoning_effort=str(row.get("reasoning_effort") or ""),
+            batch_options=dict(row.get("batch_options") or {}),
+            admission_socket=str(row.get("admission_socket") or ""),
         )
         spec.validate()
         return spec
@@ -65,9 +77,15 @@ class ProviderSpec:
             raise ValueError(f"provider {self.name!r} initial_latency_s must be positive")
         if self.timeout_s is not None and self.timeout_s < 1:
             raise ValueError(f"provider {self.name!r} timeout_s must be positive")
+        if self.transport not in {"chat_completions", "openrouter_batch"}:
+            raise ValueError(f"unsupported provider transport: {self.transport}")
+        if self.batch_options and self.transport != "openrouter_batch":
+            raise ValueError("batch_options require openrouter_batch transport")
+        if self.admission_socket and self.transport != "chat_completions":
+            raise ValueError("shared request admission requires chat_completions transport")
 
     def public_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "name": self.name,
             "base_url": self.base_url,
             "model": self.model,
@@ -77,6 +95,15 @@ class ProviderSpec:
             "timeout_s": self.timeout_s,
             "request_extra_body": dict(self.request_extra_body or {}),
         }
+        if self.transport != "chat_completions":
+            result.update(transport=self.transport, batch_options=dict(self.batch_options or {}))
+        if self.temperature != 0.0:
+            result["temperature"] = self.temperature
+        if self.reasoning_effort:
+            result["reasoning_effort"] = self.reasoning_effort
+        if self.admission_socket:
+            result["admission_socket"] = self.admission_socket
+        return result
 
 
 @dataclass(frozen=True)
@@ -121,6 +148,9 @@ class ProviderPoolConfig:
             raise ValueError("max_failovers must be non-negative")
         if not 0 < self.latency_ewma_alpha <= 1:
             raise ValueError("latency_ewma_alpha must be in (0, 1]")
+        if any(p.transport == "openrouter_batch" for p in self.providers):
+            if self.max_failovers or any(p.transport != "openrouter_batch" for p in self.providers):
+                raise ValueError("Batch pools cannot use automatic failover or mix with realtime providers")
 
     def public_dict(self) -> dict[str, Any]:
         return {
@@ -210,8 +240,12 @@ class OpenAIProviderPool:
         for _ in range(max_attempts):
             state = self._acquire(excluded)
             started = self._clock()
+            admission_wait = 0.0
             try:
-                response = state.client.chat_json(messages)
+                with admitted_sync(state.spec.admission_socket):
+                    admission_wait = max(0.0, self._clock() - started)
+                    started = self._clock()
+                    response = state.client.chat_json(messages)
             except Exception as exc:  # noqa: BLE001 - provider boundary
                 latency_s = max(0.0, self._clock() - started)
                 circuit_failure = _is_transport_or_provider_failure(exc)
@@ -230,6 +264,8 @@ class OpenAIProviderPool:
                     "error": str(exc)[:500],
                     "circuit_failure": circuit_failure,
                 }
+                if state.spec.admission_socket:
+                    attempt["admission_wait_seconds"] = admission_wait
                 attempts.append(attempt)
                 excluded.add(state.spec.name)
                 continue
@@ -245,6 +281,8 @@ class OpenAIProviderPool:
                 "status": "ok",
                 "latency_seconds": latency_s,
             }
+            if state.spec.admission_socket:
+                execution["admission_wait_seconds"] = admission_wait
             attempts.append(execution)
             response["execution_provider"] = execution
             response["execution_provider_attempts"] = attempts
@@ -285,12 +323,22 @@ class OpenAIProviderPool:
             started = self._clock()
             execution = {"provider": state.spec.name, "base_url": state.spec.base_url,
                          "requested_model": state.spec.model}
+            def on_admitted():
+                nonlocal started
+                now = self._clock()
+                if state.spec.admission_socket:
+                    execution["admission_wait_seconds"] = max(0.0, now - started)
+                started = now
+
             try:
                 # HTTP read timeouts restart when bytes arrive. A provider can
                 # send keepalive bytes indefinitely without finishing a result.
                 # Bound the whole attempt so the retry race can actually start.
-                response = await asyncio.wait_for(
-                    state.client.async_chat_json(messages), timeout=state.spec.timeout_s,
+                response = await admitted_call(
+                    state.spec.admission_socket,
+                    lambda: state.client.async_chat_json(messages),
+                    timeout=None if state.spec.transport == "openrouter_batch" else state.spec.timeout_s,
+                    on_admitted=on_admitted,
                 )
             except asyncio.CancelledError:
                 with self._condition:
@@ -320,6 +368,12 @@ class OpenAIProviderPool:
     async def aclose(self) -> None:
         for state in self._states:
             await state.client.aclose()
+
+    def close(self) -> None:
+        for state in self._states:
+            close = getattr(state.client, "close", None)
+            if close is not None:
+                close()
 
     def _acquire(self, excluded: set[str], *, wait: bool = True) -> _ProviderState | None:
         with self._condition:

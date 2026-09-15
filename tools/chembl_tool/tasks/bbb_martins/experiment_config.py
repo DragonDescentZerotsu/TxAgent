@@ -160,6 +160,12 @@ def get_progressive_task_contract() -> ProgressiveTaskContract:
         instruction
         for instruction in profile.final_instructions
         if "If you recognize the molecule" not in instruction
+        # The shared schema/protocol owns formatting, labels and prior handling.
+        and not instruction.startswith((
+            "Return compact complete JSON.", "Use bbb_prediction=",
+            "Use the single-molecule analysis as", "Use group analyses as analog evidence;",
+            "You must choose exactly one",
+        ))
     )
     return ProgressiveTaskContract(
         task="bbb_martins",

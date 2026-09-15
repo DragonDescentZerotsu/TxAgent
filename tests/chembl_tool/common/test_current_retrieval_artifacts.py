@@ -33,6 +33,35 @@ def test_current_record_contract_is_latest_only_and_repo_local() -> None:
         assert artifacts.current_records_path(task).is_relative_to(artifacts.PROJECT_ROOT)
 
 
+def test_published_snapshot_restores_after_checkout_move(tmp_path, monkeypatch):
+    import shutil
+
+    project = tmp_path / "original"
+    source = project / "data/source"
+    source.mkdir(parents=True)
+    (source / "records.parquet").write_bytes(b"frozen record bytes")
+    manifest = project / "artifacts/chembl_tool/starling/current_records/manifest.json"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(json.dumps({"schema_version": "current_starling_records.v1", "tasks": {}}))
+    monkeypatch.setattr(artifacts, "PROJECT_ROOT", project)
+    monkeypatch.setattr(artifacts, "MANIFEST_PATH", manifest)
+    monkeypatch.setattr(artifacts, "_load_manifest", lambda path=manifest: json.loads(path.read_text()))
+    monkeypatch.setattr(artifacts, "current_records_path", lambda task:
+                        project / "outputs/current_records" / task / "03_records/records.parquet")
+    info = artifacts.publish_snapshot("dili", source, project / "artifacts/dili/03_records")
+    assert info["source_release"] == "data/source"
+    assert all(part["path"].startswith("artifacts/") for part in info["parts"])
+
+    moved = tmp_path / "moved"
+    shutil.copytree(project / "artifacts", moved / "artifacts")
+    shutil.rmtree(project)
+    restored = artifacts.restore(
+        "dili", local_root=moved / "outputs/current_records",
+        manifest_path=moved / manifest.relative_to(project),
+    )
+    assert (restored / "records.parquet").read_bytes() == b"frozen record bytes"
+
+
 def test_active_source_defaults_do_not_depend_on_external_checkout() -> None:
     assert DEFAULT_RECORDS == artifacts.current_records_path("bbb_martins")
     assert DEFAULT_INPUT == artifacts.current_records_path("bioavailability_ma")

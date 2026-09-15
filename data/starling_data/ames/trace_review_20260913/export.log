@@ -1,0 +1,171 @@
+{
+  "schema_version": "current_starling_level_record_share.v1",
+  "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
+  "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
+  "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
+  "current_retrieval_contract_sha256": "e75ae10d358c63ab7b789752dae539c4b402bdac5bd797ddf7adf3bef76881ec",
+  "verified_current_inputs": true,
+  "interpretation": {
+    "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
+    "indexed_representative_cards": "compact references to exact representative cards materialized in each split index; join to source membership for the card fields",
+    "per_query_selected_cards": "not included; read active_evidence/new_card_ids in each run's prepared.json"
+  },
+  "tasks": {
+    "ames": {
+      "level_description_source": "tools/chembl_tool/tasks/ames/experiment_config.py",
+      "level_description_source_sha256": "879f0e060622e31127fc26ee439ea411502f0f3627ec8f114c34508ff902a924",
+      "source_membership": {
+        "path": "ames/source_record_level_membership",
+        "parts": [
+          {
+            "path": "ames/source_record_level_membership/part-00000.parquet",
+            "sha256": "9f865abde793782b64ad479c5bce364fb1063598a51ab6755e962d0f11f65c65",
+            "size_bytes": 16340024
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00001.parquet",
+            "sha256": "a531597d75af275b39aea3ebf4038b918cd33a63ad8cce484aa973788a848c94",
+            "size_bytes": 18060932
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00002.parquet",
+            "sha256": "049e9c6697fcc77303a9088c0e0aefacceceba260e56f36e3564a7311a2f4189",
+            "size_bytes": 19486147
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00003.parquet",
+            "sha256": "0e402c2ef7eb18ae0163991d3a7ef6b0b55a943f6c0531e6007787fa0cfc671a",
+            "size_bytes": 20905857
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00004.parquet",
+            "sha256": "052a8ee7f20b2f2d33a0e264ee93e6d59e42d59e7714e1e2ba19f2e4fbb07d92",
+            "size_bytes": 18441230
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00005.parquet",
+            "sha256": "4b3679eeaa55af4b9a3173a09138c00289d74313b25de5963738ce33ec785d20",
+            "size_bytes": 20088467
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00006.parquet",
+            "sha256": "1d10b7ac7e68143ac4832cc2747e8d38e2be4528268dae18b855b610e172aea4",
+            "size_bytes": 21085692
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00007.parquet",
+            "sha256": "458ef0b02f11f3a9957536e7c59f7017f3c3d7d46e1bc0921858419b7124fa9d",
+            "size_bytes": 21736658
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00008.parquet",
+            "sha256": "d2555b7f5824370c6407d8831b458975da78448ecb703f45d235c89d3957992c",
+            "size_bytes": 22012321
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00009.parquet",
+            "sha256": "6befd635f7b2eff6b66dca0470ccc9814bf97143bc82b352fc93b67fc2812bd0",
+            "size_bytes": 22731331
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00010.parquet",
+            "sha256": "a75c6f7911e2cd72b9deb2f4961d6e661e6064abad75b484efeac63921cbd996",
+            "size_bytes": 23122704
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00011.parquet",
+            "sha256": "e0a6eaf850bccc89136b816f6e1440022e0504f25e4b0d9cb801fcae30f8970f",
+            "size_bytes": 23760550
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00012.parquet",
+            "sha256": "cf7a69dd1ee1f7ad06148aff6543f1f5649b20e1e2a9de4c4812a2462ce90fd9",
+            "size_bytes": 21647138
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00013.parquet",
+            "sha256": "2122ea1c1281ba187181b6b6ee862c532b7c709921e53ba76331be228e6a3b10",
+            "size_bytes": 21022128
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00014.parquet",
+            "sha256": "2c1b064f88693d417ee9ca261ca0f0ad6cef02cf38272bfc6f3b09337b12a129",
+            "size_bytes": 20923919
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00015.parquet",
+            "sha256": "bf7332113f5ccd7633654035c607561ea9335fbeaed6b8c2bb6e5e3965f64be1",
+            "size_bytes": 21319854
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00016.parquet",
+            "sha256": "f1495f36e6d3d6b4959b34c4497ed6e4359c3012c4d3440b254a411f87f4f0a7",
+            "size_bytes": 21060050
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00017.parquet",
+            "sha256": "f9c095225a337898f42cc89fdb476694eb2778070ac2d8dbce19c0bd019cea76",
+            "size_bytes": 21732107
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00018.parquet",
+            "sha256": "25306bdb712ef183f73db4d79bbd0337e3d6efbae71bb98d32abce006a7aac57",
+            "size_bytes": 21940548
+          },
+          {
+            "path": "ames/source_record_level_membership/part-00019.parquet",
+            "sha256": "9bd9e82403de04224427b60171b754615147b3acf80a34ef7bd7f1e4f2ab3d6d",
+            "size_bytes": 18420147
+          }
+        ],
+        "size_bytes": 415837804,
+        "n_records": 1299584,
+        "records_by_level": {
+          "1": 3333,
+          "2": 138569,
+          "3": 236310,
+          "4": 496881,
+          "5": 424491
+        },
+        "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
+      },
+      "indices": {
+        "scaffold": {
+          "path": "ames/scaffold/indexed_representative_cards.parquet",
+          "sha256": "0ce88122f51017e82ce77e0af535a91d50ede409b00ae7685b657b2545836ec0",
+          "size_bytes": 81009811,
+          "n_assay_molecule_rows": 1108617,
+          "n_representative_cards": 1210021,
+          "cards_by_level": {
+            "1": 2255,
+            "2": 90214,
+            "3": 220327,
+            "4": 474777,
+            "5": 422448
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        },
+        "random": {
+          "path": "ames/random/indexed_representative_cards.parquet",
+          "sha256": "16013f03fa5f708097c5773334a4a8df9beb667488ddaee10d43609478c75eb2",
+          "size_bytes": 80282732,
+          "n_assay_molecule_rows": 1099094,
+          "n_representative_cards": 1198596,
+          "cards_by_level": {
+            "1": 2172,
+            "2": 78802,
+            "3": 220393,
+            "4": 474780,
+            "5": 422449
+          },
+          "scope": "compact references to exact representative cards materialized in the frozen split index"
+        }
+      },
+      "card_link_validation": {
+        "n_unique_source_card_keys": 1299583,
+        "n_indexed_cards_checked": 2408617,
+        "n_missing_source_card_keys": 0
+      }
+    }
+  }
+}

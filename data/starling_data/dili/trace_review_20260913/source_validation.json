@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "source_rows": 1645109,
+  "modified_source_rows": 13,
+  "all_other_source_fields_equal": true,
+  "raw_acquisition_and_frozen_vote_membership_unchanged": true,
+  "gold_labels_modified": false,
+  "both_benchmark_schemes_byte_identical": true,
+  "source_records_sha256": "bd23861a58a1230ece855e6887b74088dc1279fcd7a68df1d4ce3e6bea76247d",
+  "records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf"
+}

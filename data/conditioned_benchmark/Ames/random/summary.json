@@ -5,12 +5,14 @@
   "split_contract": "conditioned_random_parent_grouped_quality_stratified.v2",
   "source_scaffold_root": "data/conditioned_benchmark/Ames/scaffold",
   "root": "data/conditioned_benchmark/Ames/random",
-  "source_union_sha256": "8bf20eacf88db10a8d97a06ed146ab79210bc2b5176e10661fa3789ff79cdefc",
-  "random_union_sha256": "8bf20eacf88db10a8d97a06ed146ab79210bc2b5176e10661fa3789ff79cdefc",
+  "source_union_sha256": "60d95f2b9f9eada4199e5fba7305617cb8585d33b074dd266a5c33b0712a37cb",
+  "random_union_sha256": "60d95f2b9f9eada4199e5fba7305617cb8585d33b074dd266a5c33b0712a37cb",
   "same_molecule_condition_rows_and_labels": true,
   "optimizer": {
     "method": "deterministic_lexicographic_parent_group_milp",
     "seed": 20260830,
+    "target_size_policy": "exact_80_10_10",
+    "nominal_target_eval_rows": 247,
     "target_fraction": {
       "train": 0.8,
       "valid": 0.1,
@@ -24,6 +26,7 @@
     "n_parent_groups": 1383,
     "n_conditions": 73,
     "record_support_objective_enabled": true,
+    "required_labels_in_each_split": [],
     "record_support_field": "source_record_count",
     "multi_vote_definition": "source_record_count >= 2",
     "objective_order": [
@@ -45,7 +48,7 @@
   "splits": {
     "train": {
       "n": 1980,
-      "sha256": "9063ee0f6e05eb52ac5f2e7c17b65edf8dd4bc08b932c575633b0da4e8d1fe21",
+      "sha256": "0ef3cd70dc001b2c8857b068f1714458b45a1c352e4d5a3218f4220f1336187b",
       "n_parents": 1217,
       "label_counts": {
         "0": 675,
@@ -129,7 +132,7 @@
     },
     "valid": {
       "n": 247,
-      "sha256": "8773829ef13f1992d9432b9d42001f9ff8690455a05284aafcb0d967f930a4a0",
+      "sha256": "46fe442020f173ea38fe543a438cafa8f9c4551e7320e7a9e56b73ed39501301",
       "n_parents": 80,
       "label_counts": {
         "0": 67,
@@ -213,7 +216,7 @@
     },
     "test": {
       "n": 247,
-      "sha256": "8533c6a85f445ac73ce7b6a0428d52bfa200686cee77197203b81961e14592a2",
+      "sha256": "8a27d04db517adb175360f553893ef807e29d5940f17a0d3d4ab5c525f8666bd",
       "n_parents": 86,
       "label_counts": {
         "0": 69,

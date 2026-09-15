@@ -43,7 +43,7 @@ def _format_delta(value: object) -> str:
 class PropertiesCompareTool(BaseTool):
     name = "properties_compare"
     version = "v1"
-    description = "Compare all molecule_properties numeric and missing-value properties for two molecules, excluding functional groups."
+    description = "Compare numeric molecule properties and provide the reference molecule's functional-group hierarchy."
     input_schema = {
         "type": "object",
         "properties": {
@@ -59,6 +59,7 @@ class PropertiesCompareTool(BaseTool):
             "query": {"type": "object"},
             "reference": {"type": "object"},
             "feature_comparisons": {"type": "array"},
+            "reference_functional_group_tree": {"type": "string"},
             "text": {"type": "string"},
         },
     }
@@ -106,7 +107,11 @@ class PropertiesCompareTool(BaseTool):
             "query": query_output["query"],
             "reference": reference_output["query"],
             "feature_comparisons": comparisons,
-            "text": self._render_text(comparisons),
+            "reference_functional_group_tree": reference_output["functional_group_tree"],
+            "text": (
+                self._render_text(comparisons) + "\n\n[reference_functional_group_tree]\n"
+                + reference_output["functional_group_tree"]
+            ),
             "_warnings": sorted(set(str(warning) for warning in warnings)),
         }
         if return_debug:
@@ -153,4 +158,3 @@ class PropertiesCompareTool(BaseTool):
                 f"delta={comparison['delta_text']}"
             )
         return "\n".join(lines)
-

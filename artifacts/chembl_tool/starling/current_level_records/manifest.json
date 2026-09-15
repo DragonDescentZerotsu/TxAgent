@@ -3,7 +3,7 @@
   "exporter": "tools/chembl_tool/paper_experiments/export_current_starling_level_records.py",
   "exporter_sha256": "40686ab1dbfb15aff4b2d6c0832d3a9fe3ffbc32c563130bf168e16a65ad98ed",
   "current_retrieval_contract": "tools/chembl_tool/paper_experiments/current_starling_retrieval.json",
-  "current_retrieval_contract_sha256": "3f77279af26d9a89a6a8439b7bfc06b6779883c9b90e854fbe14af56dca0ca30",
+  "current_retrieval_contract_sha256": "d8c1db5f2ac47475677b2adba4846a575fff02c1e91f5083b41ea2a5b4aecbea",
   "verified_current_inputs": true,
   "interpretation": {
     "source_membership": "all retrieval-eligible overlay records assigned to a current level, before split-specific direct heldout filtering",
@@ -126,50 +126,50 @@
     },
     "skin_reaction": {
       "level_description_source": "tools/chembl_tool/tasks/skin_reaction/experiment_config.py",
-      "level_description_source_sha256": "741de3db7db8f0897ba1e083dd8c1d5f5fe0beb6b5bdbf424ebf46cdebee3b6a",
+      "level_description_source_sha256": "18b5d47cf9c7db4d092da51ece8789392339390f1fe71b99b72984f76928680b",
       "source_membership": {
         "path": "skin_reaction/source_record_level_membership.parquet",
-        "sha256": "944aa0870506d5626ef9e69a256637013c430214d723a8d1d67a67eb69fce500",
-        "size_bytes": 7978402,
-        "n_records": 66967,
+        "sha256": "859329b5f5bca89fe004e9a7e36a9c4fee75c7dc2a8a1c6e6a8103e2f0053a7f",
+        "size_bytes": 7978939,
+        "n_records": 66964,
         "records_by_level": {
           "1": 42435,
-          "2": 12522,
-          "3": 12010
+          "2": 12524,
+          "3": 12005
         },
         "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
       },
       "indices": {
         "scaffold": {
           "path": "skin_reaction/scaffold/indexed_representative_cards.parquet",
-          "sha256": "34a4fd3e07eb664534a24d27aae42bb7d3ac0b36d246ba620df62b67a2dfa71b",
-          "size_bytes": 1124523,
-          "n_assay_molecule_rows": 15671,
-          "n_representative_cards": 25689,
+          "sha256": "ea1c9354a3c5c4e1dc44999ccc63816b909a0d1f21ea35c655a334c630a90227",
+          "size_bytes": 1124717,
+          "n_assay_molecule_rows": 15672,
+          "n_representative_cards": 25686,
           "cards_by_level": {
             "1": 10714,
-            "2": 6706,
-            "3": 8269
+            "2": 6708,
+            "3": 8264
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
         },
         "random": {
           "path": "skin_reaction/random/indexed_representative_cards.parquet",
-          "sha256": "6ed20c4dde44e3ab65f3ca8713b235c09576e4678a2833bbb45f4ea6ddb4bff6",
-          "size_bytes": 1093647,
-          "n_assay_molecule_rows": 15167,
-          "n_representative_cards": 24799,
+          "sha256": "c03bf8e91f4d502bb838ac1a440cb3ca92bb7f841368344bc459bfd0ac1c9477",
+          "size_bytes": 1097251,
+          "n_assay_molecule_rows": 15168,
+          "n_representative_cards": 24796,
           "cards_by_level": {
             "1": 9745,
-            "2": 6786,
-            "3": 8268
+            "2": 6788,
+            "3": 8263
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
         }
       },
       "card_link_validation": {
-        "n_unique_source_card_keys": 65369,
-        "n_indexed_cards_checked": 50488,
+        "n_unique_source_card_keys": 65366,
+        "n_indexed_cards_checked": 50482,
         "n_missing_source_card_keys": 0
       }
     },
@@ -181,18 +181,18 @@
         "parts": [
           {
             "path": "ames/source_record_level_membership/part-00000.parquet",
-            "sha256": "044a39be958abfca49d00b264a015288b2d8a16da927e2c0009a692cb8a70a9e",
+            "sha256": "9f865abde793782b64ad479c5bce364fb1063598a51ab6755e962d0f11f65c65",
             "size_bytes": 16340024
           },
           {
             "path": "ames/source_record_level_membership/part-00001.parquet",
-            "sha256": "8e1a2d5341bf7d406f1e5194a6b368cdfabdad6e8ed13a8a568e47c43b0e56a4",
-            "size_bytes": 18060875
+            "sha256": "a531597d75af275b39aea3ebf4038b918cd33a63ad8cce484aa973788a848c94",
+            "size_bytes": 18060932
           },
           {
             "path": "ames/source_record_level_membership/part-00002.parquet",
-            "sha256": "04d6161bc02abc483c3086f88d4e04ce39f4d8f800877886a386e12482266686",
-            "size_bytes": 19486139
+            "sha256": "049e9c6697fcc77303a9088c0e0aefacceceba260e56f36e3564a7311a2f4189",
+            "size_bytes": 19486147
           },
           {
             "path": "ames/source_record_level_membership/part-00003.parquet",
@@ -221,8 +221,8 @@
           },
           {
             "path": "ames/source_record_level_membership/part-00008.parquet",
-            "sha256": "5babfc082cb5e0eb7bce3b29d87cf9f52bf04c22e7f7c9728fc7e10d5280f094",
-            "size_bytes": 22012294
+            "sha256": "d2555b7f5824370c6407d8831b458975da78448ecb703f45d235c89d3957992c",
+            "size_bytes": 22012321
           },
           {
             "path": "ames/source_record_level_membership/part-00009.parquet",
@@ -231,8 +231,8 @@
           },
           {
             "path": "ames/source_record_level_membership/part-00010.parquet",
-            "sha256": "3e7411c06257a4ad5244348d5849c0e39ea72369e1229fca62067f809dead6c1",
-            "size_bytes": 23122706
+            "sha256": "a75c6f7911e2cd72b9deb2f4961d6e661e6064abad75b484efeac63921cbd996",
+            "size_bytes": 23122704
           },
           {
             "path": "ames/source_record_level_membership/part-00011.parquet",
@@ -271,8 +271,8 @@
           },
           {
             "path": "ames/source_record_level_membership/part-00018.parquet",
-            "sha256": "25ae3b3e09bc523543490f6b93b49f1d95ae2baf19a1adf3605b4f5a75b717bd",
-            "size_bytes": 21940541
+            "sha256": "25306bdb712ef183f73db4d79bbd0337e3d6efbae71bb98d32abce006a7aac57",
+            "size_bytes": 21940548
           },
           {
             "path": "ames/source_record_level_membership/part-00019.parquet",
@@ -280,13 +280,13 @@
             "size_bytes": 18420147
           }
         ],
-        "size_bytes": 415837707,
+        "size_bytes": 415837804,
         "n_records": 1299584,
         "records_by_level": {
           "1": 3333,
-          "2": 138571,
-          "3": 236309,
-          "4": 496880,
+          "2": 138569,
+          "3": 236310,
+          "4": 496881,
           "5": 424491
         },
         "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
@@ -294,30 +294,30 @@
       "indices": {
         "scaffold": {
           "path": "ames/scaffold/indexed_representative_cards.parquet",
-          "sha256": "b2e515c090f236138266872bb4935cdb758a8fa013bf5da2ca8062f551fd500b",
-          "size_bytes": 81009783,
+          "sha256": "0ce88122f51017e82ce77e0af535a91d50ede409b00ae7685b657b2545836ec0",
+          "size_bytes": 81009811,
           "n_assay_molecule_rows": 1108617,
           "n_representative_cards": 1210021,
           "cards_by_level": {
             "1": 2255,
-            "2": 90216,
-            "3": 220326,
-            "4": 474776,
+            "2": 90214,
+            "3": 220327,
+            "4": 474777,
             "5": 422448
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
         },
         "random": {
           "path": "ames/random/indexed_representative_cards.parquet",
-          "sha256": "bc9f895ace5c3bea41249a68c3bd3e3c2c00e57234020a1c9c00063bbb03952e",
-          "size_bytes": 80282747,
+          "sha256": "16013f03fa5f708097c5773334a4a8df9beb667488ddaee10d43609478c75eb2",
+          "size_bytes": 80282732,
           "n_assay_molecule_rows": 1099094,
           "n_representative_cards": 1198596,
           "cards_by_level": {
             "1": 2172,
-            "2": 78804,
-            "3": 220392,
-            "4": 474779,
+            "2": 78802,
+            "3": 220393,
+            "4": 474780,
             "5": 422449
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
@@ -347,157 +347,157 @@
           },
           {
             "path": "dili/source_record_level_membership/part-00002.parquet",
-            "sha256": "e1dd05ecd00cd5f0490bd90eb9a0e5bddee9d565e9000d31eb5226204f72b6d2",
-            "size_bytes": 22040126
+            "sha256": "7796f4822e387565ddb1c0d8cb449e213805e7f00b56ea609225c9b7add3529e",
+            "size_bytes": 22034647
           },
           {
             "path": "dili/source_record_level_membership/part-00003.parquet",
-            "sha256": "8662a28602035c4ac2d33eb68231b547cce559698dc6db44f4c19dd99167f5c9",
-            "size_bytes": 18227787
+            "sha256": "8ae598f743aeb5f3e35cb57a063bb14d022e3d18873a8f231b36af8fa36ade23",
+            "size_bytes": 18229559
           },
           {
             "path": "dili/source_record_level_membership/part-00004.parquet",
-            "sha256": "08a12ad06be28f7ee39086805585dd4d1df62542860e0a3a4661357e46501153",
-            "size_bytes": 18987369
+            "sha256": "018f81fbd4ad848e848f7f004b243ba02ef0e1a08f57373d26f14cc6b4abd6e3",
+            "size_bytes": 18980539
           },
           {
             "path": "dili/source_record_level_membership/part-00005.parquet",
-            "sha256": "b2b18d91b44a5a1960f4c7b021940b309dc1f31e9751defc3508cf40081e1fdb",
-            "size_bytes": 19148892
+            "sha256": "f091c842b4a07ae7a271357dc2daaa11eff97afca00d0a36cfb2b0349c2fd6d2",
+            "size_bytes": 19148074
           },
           {
             "path": "dili/source_record_level_membership/part-00006.parquet",
-            "sha256": "a78dcc8084e40df176f065137745f3f027025b7ad0602edd223dc06148b773f1",
-            "size_bytes": 20103503
+            "sha256": "8c8ffd3fa036d229a47ad58035d9d38bf9604ad208940cd7f4edb0900a737caa",
+            "size_bytes": 20097990
           },
           {
             "path": "dili/source_record_level_membership/part-00007.parquet",
-            "sha256": "b2f6fd03195b21d3004e01e1a305e6341cd8dd7205026ef13de2b8a0faae58a9",
-            "size_bytes": 22411895
+            "sha256": "a729776bdb0f78902c892c87736a91bf2baeb62c6e8d9bdcbba71934f7f8702e",
+            "size_bytes": 22410308
           },
           {
             "path": "dili/source_record_level_membership/part-00008.parquet",
-            "sha256": "7995b2f6057cce6da55bcfcaef4ea9ca9d73bceac8be189f28cd5012422499e3",
-            "size_bytes": 23206264
+            "sha256": "d62c5a2cbae8a2042b53c08b764f0f7f95065ae6a9232580d420bd9319087718",
+            "size_bytes": 23222668
           },
           {
             "path": "dili/source_record_level_membership/part-00009.parquet",
-            "sha256": "2520a598d7885527c900960b29f426330f0672fd99cbe6c39d3eb2041a0db9d7",
-            "size_bytes": 23524147
+            "sha256": "be896b17a68b805ad1ca765c7633ecf98d313117cd665d8d874e700ae9b7209f",
+            "size_bytes": 23524686
           },
           {
             "path": "dili/source_record_level_membership/part-00010.parquet",
-            "sha256": "8043de93523dfc60d969225ec7a1402ae7d6271ff11ba49ee6772eed707e72a8",
-            "size_bytes": 21124855
+            "sha256": "75d00844741452f31cbd7feccb50817cdf9067c3489dc4e6487b500a98666582",
+            "size_bytes": 21116357
           },
           {
             "path": "dili/source_record_level_membership/part-00011.parquet",
-            "sha256": "da84932e231c19900ce93596d9961b41416a5e45a2f135497cac96fc1562f128",
-            "size_bytes": 21167673
+            "sha256": "caed52c8b641b753f294bf7aa5b49392d1119dfdfa76a9748363fe4476466237",
+            "size_bytes": 21163213
           },
           {
             "path": "dili/source_record_level_membership/part-00012.parquet",
-            "sha256": "3a8a35049e244bb3ff40e2e1ef7b275897b8505d00beda31d94aaff86e97d891",
-            "size_bytes": 22411082
+            "sha256": "961a0aa36b9b500b83a7d20ffde02891b5cf9d908b96724d4c682a19e76e3e58",
+            "size_bytes": 22415901
           },
           {
             "path": "dili/source_record_level_membership/part-00013.parquet",
-            "sha256": "10d81c406290c3605dec2ece113f516d0c3f3f232a3ae4f9ef8ee11ac9a3109e",
-            "size_bytes": 22749180
+            "sha256": "f84a03962730e6db863aa6bbaf4cf080a64a432b31e52cf55023ef5a2f848b03",
+            "size_bytes": 22752810
           },
           {
             "path": "dili/source_record_level_membership/part-00014.parquet",
-            "sha256": "fea431a625b79341eb436e277f55567e80fcf525afebe57c6be8d837d952d311",
-            "size_bytes": 23122750
+            "sha256": "fd914877f9532df181a94aa503d1d111bd654134b2f15839025bde447f862379",
+            "size_bytes": 23127234
           },
           {
             "path": "dili/source_record_level_membership/part-00015.parquet",
-            "sha256": "b683d7eaf05d2241687f1b098f40bc3e992d10c890c34a207918dc4339e7a935",
-            "size_bytes": 20357658
+            "sha256": "378e5f69115311a401e1f6c7ab73f64227a376cee2ae15ae057042b24b793994",
+            "size_bytes": 20363624
           },
           {
             "path": "dili/source_record_level_membership/part-00016.parquet",
-            "sha256": "b82508fdf96a75a525305e0d896785eede06f9f43d861b07fbfe79ebe6bd29dd",
-            "size_bytes": 16787338
+            "sha256": "8731d716496b29e074a25c1245fdced84d6e3f53aeedd184031d478474459b3d",
+            "size_bytes": 16802922
           },
           {
             "path": "dili/source_record_level_membership/part-00017.parquet",
-            "sha256": "57bf1e2cdc242f2624dda29d5b01b67f31bec38d7c6154600c9feaf187704ecf",
-            "size_bytes": 17310161
+            "sha256": "cf502802f362c734f48c28e4ee4951c9af31ec2ecf6bd463da4017761b57a749",
+            "size_bytes": 17311209
           },
           {
             "path": "dili/source_record_level_membership/part-00018.parquet",
-            "sha256": "045a8de7bdf50c4f6709c6719b2964bd94d291acad4704facc36a0258bfe9173",
-            "size_bytes": 17375023
+            "sha256": "1b52369ba319d1ed7912bdcc59ae76ba6c63962db710a6cdfca0070f1eaf79e5",
+            "size_bytes": 17383939
           },
           {
             "path": "dili/source_record_level_membership/part-00019.parquet",
-            "sha256": "e57053afd1a216764710aeacd0315f1291ba6f27960daf3c20423de2dc9f9efb",
-            "size_bytes": 17576388
+            "sha256": "8feeb0caf349c2dbf977a43791d035a3539960e69d4f9cf105ebe15b4159d20d",
+            "size_bytes": 17584871
           },
           {
             "path": "dili/source_record_level_membership/part-00020.parquet",
-            "sha256": "5a9bd5a2cd61eb4f27f299d4adbbab06c2f793cec26b0d8a7c7c88afabe4e458",
-            "size_bytes": 17702206
+            "sha256": "293eee57310abf28569101c5233b61a499efe6932b07f4ee516548a415cf95cc",
+            "size_bytes": 17700997
           },
           {
             "path": "dili/source_record_level_membership/part-00021.parquet",
-            "sha256": "d8254175b54ae60837adf52e6e19536b695cb697cd63836a2a2f81be17578d07",
-            "size_bytes": 2825583
+            "sha256": "cc8e944654baa58691fa3bb63c94a0ec2f9212cbe9b225650efc1c022e2fc078",
+            "size_bytes": 2823008
           }
         ],
-        "size_bytes": 434982045,
-        "n_records": 1386468,
+        "size_bytes": 435016721,
+        "n_records": 1386455,
         "records_by_level": {
-          "1": 108436,
+          "1": 108435,
           "2": 166498,
           "3": 141940,
           "4": 75971,
-          "5": 294048,
-          "6": 196583,
-          "7": 402992
+          "5": 294047,
+          "6": 196582,
+          "7": 402982
         },
         "scope": "retrieval-eligible source records before split-specific direct heldout filtering"
       },
       "indices": {
         "scaffold": {
           "path": "dili/scaffold/indexed_representative_cards.parquet",
-          "sha256": "fc78c2321e670792ac3d558b1b99452dc81c885f72d1a56089772c7c55b9886c",
-          "size_bytes": 74340340,
-          "n_assay_molecule_rows": 918869,
-          "n_representative_cards": 1147923,
+          "sha256": "e36df7351902512496188028bc928ad634fb8d576aadbb4e4568ef790d3fb304",
+          "size_bytes": 74325291,
+          "n_assay_molecule_rows": 918857,
+          "n_representative_cards": 1147910,
           "cards_by_level": {
-            "1": 13627,
+            "1": 13626,
             "2": 103946,
             "3": 127952,
             "4": 72173,
-            "5": 262438,
-            "6": 186056,
-            "7": 381731
+            "5": 262437,
+            "6": 186055,
+            "7": 381721
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
         },
         "random": {
           "path": "dili/random/indexed_representative_cards.parquet",
-          "sha256": "b85a913af358c878ef4e450dbb62f009218199045f676c7b385be43abe41b95d",
-          "size_bytes": 74377195,
-          "n_assay_molecule_rows": 918693,
-          "n_representative_cards": 1147482,
+          "sha256": "04549cf3655b5c4922afbb419bc1b7ffce55c45b1553419cfb1cd889f63b70f9",
+          "size_bytes": 74410245,
+          "n_assay_molecule_rows": 918681,
+          "n_representative_cards": 1147469,
           "cards_by_level": {
-            "1": 12917,
+            "1": 12916,
             "2": 104214,
             "3": 127952,
             "4": 72173,
-            "5": 262438,
-            "6": 186056,
-            "7": 381732
+            "5": 262437,
+            "6": 186055,
+            "7": 381722
           },
           "scope": "compact references to exact representative cards materialized in the frozen split index"
         }
       },
       "card_link_validation": {
-        "n_unique_source_card_keys": 1386463,
-        "n_indexed_cards_checked": 2295405,
+        "n_unique_source_card_keys": 1386450,
+        "n_indexed_cards_checked": 2295379,
         "n_missing_source_card_keys": 0
       }
     },

@@ -91,13 +91,13 @@ def get_source_config(source: str) -> SourceExperimentConfig:
 def get_progressive_task_contract() -> ProgressiveTaskContract:
     profile = get_skin_prompt_profile(DEFAULT_SKIN_PROMPT_PROFILE)
     instructions = tuple(
-        (
-            "Express uncertainty through confidence, conflicts, caveats, and evidence_gaps while "
-            "still choosing exactly one prediction."
-            if "supplied anonymous query" in instruction
-            else instruction
-        )
+        instruction.replace("records, cards, and their group summaries", "records and cards")
         for instruction in profile.final_instructions
+        # The shared schema supplies labels; this branch has no group summaries.
+        if not instruction.startswith((
+            "Return compact complete JSON.", "Set label_scope exactly",
+            "Use skin_reaction_prediction=", "Use only the supplied anonymous query",
+        ))
     )
     return ProgressiveTaskContract(
         task="skin_reaction",

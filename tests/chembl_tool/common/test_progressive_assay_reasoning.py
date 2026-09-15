@@ -1,4 +1,5 @@
 import json
+import importlib
 import random
 
 import pytest
@@ -788,6 +789,26 @@ def test_refresh_prior_preserves_tools_and_cards_and_rejects_tool_drift():
         family._replace_matched_prior(frozen, (prior[0], {"text": "changed"}, prior[2], 3))
 
 
+def test_refresh_prior_accepts_prompt_tool_view_but_preserves_full_receipt():
+    from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
+
+    tool = {"tool_name": "molecule_properties", "status": "ok", "content": "frozen properties",
+            "warnings": [], "errors": []}
+    receipt = {**tool, "arguments": {"query_smiles": "CCO", "logd_ph": 7.4},
+               "latency_ms": 2, "cache_hit": True}
+    frozen = {"query_tool_summary": receipt, "cards": [{"value": 42}]}
+    for refreshed_tool in (tool, {**receipt, "latency_ms": 10, "cache_hit": False}):
+        result = family._replace_matched_prior(frozen, ({"reasoning": "new"}, refreshed_tool, {}, 0))
+        assert result["query_tool_summary"] == receipt
+        assert result["cards"] == frozen["cards"]
+    for change in ({"content": "changed"}, {"status": "error"}, {"warnings": ["changed"]},
+                   {"errors": ["changed"]}, {"tool_name": "other"},
+                   {"arguments": {"query_smiles": "CCN", "logd_ph": 7.4}},
+                   {"arguments": {"query_smiles": "CCO", "logd_ph": 6.5}}):
+        with pytest.raises(ValueError, match="changed frozen query tools"):
+            family._replace_matched_prior(frozen, ({}, {**tool, **change}, {}, 0))
+
+
 def test_matched_suite_concurrent_runs_share_total_budget(monkeypatch, tmp_path):
     import threading
     from tools.chembl_tool.paper_experiments import run_conditioned_assay_family_curve as family
@@ -1128,7 +1149,7 @@ def test_prompt_is_visible_append_only_and_hides_internal_source_ids():
     assert "secret-assay" not in serialized
     assert "INTERNAL_SOURCE_ID" not in serialized
     assert "Use general medicinal-chemistry knowledge" in messages[0]["content"]
-    assert "Ground every compound-specific empirical claim" in messages[0]["content"]
+    assert "Ground compound-specific empirical claims in the supplied evidence cards" in prompt["protocol"]["claim_rule"]
     assert "identity_and_selection" not in prompt["protocol"]
 
 
@@ -1316,7 +1337,7 @@ def test_prompt_uses_stable_short_aliases_and_compact_prior_state():
     assert restored["claims"][0]["card_ids"] == [used_id]
 
 
-def test_state_validator_requires_sparse_valid_citations_and_new_card_for_flip():
+def test_state_validator_accepts_new_evidence_or_correction_with_valid_citations():
     contract = _contract()
     prior = {"example_prediction": "negative"}
     valid = {
@@ -1346,9 +1367,10 @@ def test_state_validator_requires_sparse_valid_citations_and_new_card_for_flip()
         new_card_ids={"new"},
         prior_state=prior,
     )
-    invalid = {**valid, "prediction_basis_card_ids": ["old"]}
-    assert "a flip must cite at least one newly added card in prediction basis" in progressive_state_errors(
-        invalid,
+    corrected = {**valid, "prediction_basis_card_ids": ["old"],
+                 "decision_summary": "The prior attributed the old observation to the wrong subject."}
+    assert not progressive_state_errors(
+        corrected,
         contract=contract,
         visible_card_ids={"old", "new"},
         new_card_ids={"new"},
@@ -1362,6 +1384,26 @@ def test_state_validator_requires_sparse_valid_citations_and_new_card_for_flip()
     )
     assert state["not_used_card_ids"] == ["unused"]
 
+    for changes, expected in (
+        ({"decision_summary": " "}, "a flip requires a decision_summary"),
+        ({"prediction_basis_card_ids": ["unknown"]}, "prediction_basis_card_ids contains unknown"),
+        ({"example_prediction": "negative"}, "revision_action=flip requires a changed prediction"),
+        ({"revision_action": "keep"}, "changed prediction requires revision_action=flip"),
+    ):
+        errors = progressive_state_errors(
+            {**corrected, **changes}, contract=contract,
+            visible_card_ids={"old", "new"}, new_card_ids={"new"}, prior_state=prior,
+        )
+        assert any(expected in error for error in errors)
+
+    # Correcting a computed-property inference need not invent an experiment.
+    assert not progressive_state_errors(
+        {**valid, "prediction_basis_card_ids": [], "supportive_card_ids": [],
+         "contradictory_card_ids": [], "claims": [], "new_evidence_assessment": [],
+         "decision_summary": "Corrected the prior's computed-property interpretation; no experimental claim."},
+        contract=contract, visible_card_ids=set(), new_card_ids=set(), prior_state=prior,
+    )
+
 
 def test_visible_task_contracts_do_not_retain_identity_blind_wording():
     for contract in (
@@ -1373,6 +1415,45 @@ def test_visible_task_contracts_do_not_retain_identity_blind_wording():
         assert "anonymous query" not in instructions
         assert "ignore that recognition" not in instructions
         assert "external measurements" not in instructions
+
+
+@pytest.mark.parametrize("task", ["bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens"])
+@pytest.mark.parametrize("independent", [False, True])
+@pytest.mark.parametrize("omit_prior", [False, True])
+def test_shared_decision_contract_across_tasks_and_modes(task, independent, omit_prior):
+    contract = importlib.import_module(
+        f"tools.chembl_tool.tasks.{task}.experiment_config"
+    ).get_progressive_task_contract()
+    active, _ = select_initial_evidence(extract_cumulative_evidence(_retrieval([
+        _neighbor("CCO", .5, [_row("a", "direct", 1, "observed outcome")]),
+    ])))
+    messages = build_progressive_messages(
+        contract=contract, levels=[{"level": 1}], current_level=1,
+        query_smiles="CCN", condition_sentence="reported condition",
+        query_prior={"reasoning_summary": "MODEL_JUDGMENT"}, query_tool_summary=None,
+        active=active, prior_state=None, independent=independent,
+        omit_query_prior=omit_prior, evidence_grounding=omit_prior,
+    )
+    payload = json.loads(messages[1]["content"])
+    instructions = " ".join(payload["task_definition"]["instructions"])
+    for obsolete in ("For every group", "group analyses", "group summaries", "Set label_scope",
+                     "Return compact complete JSON", "You must choose exactly one", "conflicts, caveats"):
+        assert obsolete not in instructions
+    assert ("query_prior" in payload) is not omit_prior
+    assert "not sources of experimental facts" in payload["protocol"]["claim_rule"]
+    assert "tested subject and relevant conditions" in payload["protocol"]["claim_rule"]
+    assert "strongest relevant counterevidence" in payload["required_json_schema"]["decision_summary"]
+    assert "prior state, tool summaries" not in messages[0]["content"]
+    assert "full_level_plan" in payload["level_context"]
+    assert ("flip_rule" in payload["protocol"]) is not independent
+    assert set(payload["required_json_schema"]) == {
+        contract.prediction_field, "confidence", "revision_action", "supportive_card_ids",
+        "contradictory_card_ids", "prediction_basis_card_ids", "claims",
+        "new_evidence_assessment", "evidence_gaps", "decision_summary",
+    }
+    if task == "bioavailability_ma":
+        assert "Predict low only when affirmative threshold-relevant evidence supports F < 20%" in instructions
+        assert "Generic descriptor liabilities or speculative mechanisms alone are insufficient" in instructions
 
 
 def test_progressive_prompts_use_positive_grounding_without_identity_priming():
@@ -1401,7 +1482,7 @@ def test_progressive_prompts_use_positive_grounding_without_identity_priming():
             prior_state=None,
         )
         serialized = " ".join(message["content"] for message in messages).lower()
-        assert "ground every compound-specific empirical claim" in serialized
+        assert "ground compound-specific empirical claims in the supplied evidence cards" in serialized
         assert (
             "do not identify the query by name even if its structure is recognizable"
             in serialized
@@ -1441,11 +1522,14 @@ def test_analog_tool_prefetch_retries_then_preserves_unavailable_receipt(monkeyp
             pass
 
         def invoke_many(self, calls):
+            assert [name for name, _ in calls] == [
+                "molecule_properties", "mmp_structure_compare", "properties_compare"
+            ]
             return [
                 {
                     "tool_name": tool_name,
                     "status": "error" if tool_name == "mmp_structure_compare" else "ok",
-                    "content": "initial result",
+                    "content": "initial result\n[functional_group_tree]\nquery tree\n[reference_functional_group_tree]\nreference tree",
                     "errors": [{"message": "molecule-specific failure"}],
                 }
                 for tool_name, _ in calls
@@ -1460,7 +1544,7 @@ def test_analog_tool_prefetch_retries_then_preserves_unavailable_receipt(monkeyp
             }
 
     monkeypatch.setattr(runner, "ToolServiceClient", FakeToolClient)
-    summaries, failures = runner._prefetch_analog_tools(
+    summaries, failures, query_summary = runner._prefetch_analog_tools(
         query_smiles="CCN",
         analogs={
             "analog_one": {
@@ -1473,12 +1557,66 @@ def test_analog_tool_prefetch_retries_then_preserves_unavailable_receipt(monkeyp
     )
 
     assert len(failures) == 1
+    assert query_summary["tool_name"] == "molecule_properties"
     assert failures[0]["analog_id"] == "analog_one"
     assert failures[0]["errors"][0]["message"] == "molecule-specific failure"
     prompt_result = summaries["analog_one"][0]
     assert prompt_result["status"] == "error"
-    assert "Comparison unavailable" in prompt_result["content"]
+    assert "Tool result unavailable" in prompt_result["content"]
     assert "molecule-specific failure" not in prompt_result["content"]
+
+
+def test_new_prefetch_rejects_old_successful_service_receipts(monkeypatch):
+    class OldService:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def invoke_many(self, calls):
+            return [{"tool_name": name, "status": "ok", "content": "MolWt: 46.07"}
+                    for name, _ in calls]
+
+    monkeypatch.setattr(runner, "ToolServiceClient", OldService)
+    with pytest.raises(ValueError, match="lacks functional-group trees"):
+        runner._prefetch_analog_tools(query_smiles="CCO", analogs={},
+                                     tool_service_url="http://old-service", timeout_s=10)
+
+
+@pytest.mark.parametrize("independent", [False, True])
+def test_tool_trees_are_attached_to_the_correct_molecules_without_property_duplication(independent):
+    from tools.service.config import ServiceSettings
+    from tools.service.tools.rdkit_properties import MoleculePropertiesTool
+    from tools.service.tools.properties_compare import PropertiesCompareTool
+    from tools.chembl_tool.common.openai_reasoning_client import ToolServiceClient
+    from tools.chembl_tool.common.progressive_assay_reasoning import attach_analog_tool_summaries
+
+    tool = MoleculePropertiesTool()
+    tool.initialize(ServiceSettings(enable_molgpka=False, prewarm_molgpka=False))
+    try:
+        query = tool.invoke({"query_smiles": "CCN"})
+        comparison = PropertiesCompareTool(tool).invoke({"query_smiles": "CCN", "reference_smiles": "CCO"})
+        def receipt(name, output):
+            return ToolServiceClient._format_result(name, {}, {"status": "ok", "output": output})
+        active, _ = select_initial_evidence(extract_cumulative_evidence(_retrieval([
+            _neighbor("CCO", .7, [_row("a", "direct", 1, "Unchanged raw evidence")])
+        ])))
+        analog_id = next(iter(active))
+        attach_analog_tool_summaries(active, {analog_id: [receipt("properties_compare", comparison)]})
+        payload = json.loads(build_progressive_messages(
+            contract=_contract(), levels=[{"level": 1}], current_level=1,
+            query_smiles="CCN", condition_sentence="", query_prior={},
+            query_tool_summary=receipt("molecule_properties", query),
+            active=active, prior_state=None, independent=independent,
+        )[1]["content"])
+        assert "primary aliphatic amine: 1" in payload["query"]["functional_group_tree"]
+        neighbor = payload["active_evidence"][0]
+        assert "primary hydroxyl: 1" in neighbor["functional_group_tree"]
+        assert "amine" not in neighbor["functional_group_tree"]
+        assert "tree" not in payload["query"]["molecule_property_tool_summary"]["content"]
+        assert "tree" not in neighbor["query_analog_tool_summaries"][0]["content"]
+        assert "Unchanged raw evidence" in json.dumps(neighbor["evidence_cards"])
+        assert "not chemical connectivity" in payload["protocol"]["functional_group_tree_rule"]
+    finally:
+        tool.close()
 
 
 def test_progressive_runner_isolates_purity_indices_from_historical_top20_runner():
@@ -1488,7 +1626,7 @@ def test_progressive_runner_isolates_purity_indices_from_historical_top20_runner
         version = {
             "bbb_martins": "source_purity_v6",
             "bioavailability_ma": "legacy_record_supported_v2_vote_pure_v1",
-            "skin_reaction": "source_purity_v5",
+            "skin_reaction": "source_purity_v7",
         }[task]
         assert version in str(spec.index)
         assert version in str(spec.family_manifest)

@@ -1,10 +1,290 @@
 # Current paper results and artifact status
 
-Updated: 2026-09-12.
+Updated: 2026-09-14.
 
 `current_conditioned_results.json` is the authority for result roots and freshness.
 Source reconstruction is documented in `CURRENT_STARLING_RETRIEVAL.md`; the retrieval
 protocol is in `ASSAY_LEVEL_RETRIEVAL.md`.
+
+## Skin primary-source rebinding replay (2026-09-14)
+
+`replicate_suites.skin_identity_rebinding_replay_20260914` uses source-purity v7:
+seven records rebound from primary structures, one repaired INF duplicate represented
+by the existing correct record, two unresolved conjugate structures still quarantined.
+Gold/splits and the legacy prompt/tools/prior remain fixed. All 480 scaffold rows were
+audited against actual original hybrid inputs. Relative to the completed quarantine
+replay, only test #39 L3 and valid #222 L3 require new inference; 22 unchanged levels
+are reused. Both new L3 calls are complete and actual-request/state verified;
+test #39 and valid #222 keep their previous risk labels. Full-test final Macro-F1
+remains 0.582343 (171/241 correct); valid remains 0.650761 (178/239 correct).
+The source repair improves identity fidelity but has no observed label/score gain.
+
+The preceding `skin_trace_source_replay_20260914` v6 quarantine experiment is complete
+on both sets, with no label changes among its six affected queries. Its full-test
+Macro-F1 is 0.582343 and valid is 0.650761; this is not the rebinding result.
+Source evidence and reproducibility: `data/starling_data/skin_reaction/trace_review_20260914/README.md`.
+
+## L3+ parent-disjoint test progressive priority run (2026-09-14)
+
+The matched-full-flat follow-up is launched under
+`replicate_suites.l3_parent_disjoint_matched_full_flat_20260914`: valid first
+(2,043 rows / 11,741 levels), then test (2,048 rows / 11,769 levels). It consumes
+the exact frozen prepared inputs of the progressive comparison below, including
+legacy Bioavailability/Skin prompt/tools/prior; the later Skin v7 repair is separate.
+All six tasks dynamically share three endpoint pools of 512 admission permits each
+(1,536 total),
+including width-6 retry races, through `common.request_admission`. The initial HAProxy-only limiter
+allowed excess client-side queueing inside the 900-second deadline; it was replaced
+with admission before HTTP submission, preserving successful checkpoints. Calls now
+use direct SSH endpoints without a second proxy queue: dgx007:50002,
+dgx011:50001 and dgx014:50002, all reporting DeepSeek-V4-Flash-0731 and the same default
+thinking/max-reasoning settings. Model weight revision was not independently verified.
+The contended dgx005 backend has been removed from this run. dgx007 passed a
+512-request stress probe; dgx011 initially had 80 connection ReadErrors during
+simultaneous burst probes, then passed two isolated 512-request repeats. These probes
+use a repeated real prompt capped at 128 output tokens and do not establish
+full-completion throughput. Rebalance and checkpoint preservation evidence is in
+`endpoint_rebalance_three_hosts_20260915.json` under the run root, with a link to
+the previous dgx014 admission check. Experiment calls bypass LiteLLM.
+Both subsets passed input preparation checks. Valid inference has been launched;
+test is gated on successful output, independent-request and metric verification.
+Live phase, exact commands, frozen runtime hashes and the resumable coordinator are in
+`outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/`.
+
+The complete valid/test six-task policy comparison figures, including None and five
+matched baselines, are registered under `diagnostics.scaffold_vs_l3_parent_disjoint_figures_20260914`.
+PNG/SVG and exact plotting tables are in `outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/`.
+All 60 baseline cells were checked against current molecule/label/condition row order
+and their metrics recomputed. These are single-run paired policy comparisons, with
+no estimated uncertainty interval; the later Skin source-rebinding intervention is separate.
+
+The valid overlay `valid/performance_with_v5_full_flat.{png,svg}` adds all six completed
+original v5 scaffold-disjoint matched-full-flat curves (11,741 verified level outputs),
+with exact values in `valid/metrics_with_v5_full_flat.tsv` and provenance in
+`full_flat_overlay_receipt.json` under the same figure root. It preserves the original
+two-arm figures. The third curve is a historical configuration comparison: Bioavailability/Skin
+also differ in prompt/tools/prior, and Ames/DILI use pre-repair evidence. The displayed
+None references belong to progressive; this overlay is not a matched organization ablation.
+
+L3+ parent-disjoint progressive is complete and verified on all six tasks: test 2,048 rows /
+11,769 levels, followed by valid 2,043 rows / 11,741 levels.
+The user paused both remaining v5 test matched-full-flat stages. This six-task
+2,048-row experiment retains scaffold exclusion on source-family L1/L2 cards
+and relaxes only L3+ cards to parent exclusion. Budgets and similarity thresholds
+match the completed retrieval diagnostic. Bioavailability/Skin use their frozen
+legacy v2 prompt, old query tools/prior, and commit 80f26e7 tool implementation
+for newly selected neighbor pairs; the other four tasks use v5. Exact unchanged
+prefixes are reused and downstream states are regenerated after the first changed
+input. Three frozen runners dynamically share one 1,024-request upstream limit through
+a local HAProxy gate, without task or runtime reservations,
+including width-6 retry races. Source inputs, queue handoff and results are linked
+by `replicate_suites.l3_parent_disjoint_progressive_test_20260914`.
+The default retrieval protocol and paused v5 test queue are not promoted or resumed.
+
+## L3+ parent-disjoint valid follow-up (2026-09-14)
+
+`replicate_suites.l3_parent_disjoint_progressive_valid_20260914` is complete and
+verified: all six scaffold-valid tasks, 2,043 rows / 11,741 levels. Runtime, prompts,
+tools/prior, retrieval settings, shared 1,024 request cap and retry behavior match
+test. Bioavailability/Skin retain legacy v2. Five source-repaired Skin valid levels
+(#193/#206) received the missing legacy strict-reference replay before hybrid
+inference. Exact unchanged prefixes were reused; paired results and baseline-verified
+figures are linked by the registry. This is one policy comparison, not a new replicate.
+
+## L3+ parent-disjoint retrieval diagnostic (2026-09-14)
+
+`diagnostics.l3_parent_disjoint_retrieval_20260914` records a retrieval-only
+comparison across all 4,091 current scaffold valid/test rows. L1/L2 retain
+scaffold exclusion; only source-family L3+ cards admit parent-disjoint neighbors.
+Current source indices, thresholds and 4/2 append-only budgets remain fixed.
+All 23,510 strict-arm selected surfaces match current prepared inputs; L1/L2
+are identical between arms. Final query-mean neighbor similarity increases in
+all six tasks on both subsets. No model inference was run, so no predictive
+performance improvement is claimed. See
+`outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914/REPORT.md` and `level_statistics.csv`.
+Production retrieval defaults are unchanged.
+
+The subsequent trace audit, `diagnostics.l3_parent_disjoint_trace_effects_20260914`,
+compares all 4,091 rows and reads 32 purposively selected paired trajectories.
+Of 2,403 changed final contexts, 136 correct earlier errors and 82 introduce errors;
+2,295 cite new cards in claims. In 2,150 contexts the fixed budget also replaces
+some strict-arm cards, so this is not a pure evidence-addition experiment.
+Endpoint/condition transfer and unsupported prior judgments remain important observed
+failure patterns; citation alone does not establish causal benefit. Full task metrics,
+examples and limitations are in the registered report. This audit is separate from
+the later Skin source rebinding and the running matched full-flat comparison.
+
+## Six-task v5 rerun: progressive complete, valid full-flat complete, test full-flat paused
+
+`replicate_suites.reasoning_prompt_v5_scaffold_20260913` tracks fresh scaffold
+valid and test runs of BBB, Bioavailability, Skin, Ames, DILI and Carcinogens:
+2,043 valid / 2,048 test rows, one progressive and one matched-full-flat run,
+47,020 expected level outputs. Fresh single/None and tree tools; DILI retains
+its no-prior/grounded similarity-zero setting. Sequential existing runners use
+one global 1024-slot pool per stage (explicitly authorized); failed/invalid attempts race at width 6
+within that pool. Settings are frozen before inference. Completion and scores
+are recorded in the registry: all valid matched-full-flat tasks are now complete and
+verified (11,741 level outputs), while test full-flat remains paused by user request.
+This is not an isolated prompt ablation against historical tools.
+Progressive is complete on both subsets: valid 11,741 and test 11,769 successful
+level outputs. The suite retains provider/tunnel changes, DILI preparation acceleration
+and checkpoint-preservation receipts as operational provenance; configured providers
+must not be confused with providers observed in successful request traces.
+
+The completed valid figure is registered as `valid_progressive_figure`, with
+PNG/SVG, per-level metrics and a 30-cell baseline audit. Bioavailability valid
+baselines were refreshed with frozen current-train settings; Ames historical test
+baseline rows were verified against current valid after the split-name exchange.
+The older `test_progressive_five_task_figure` omits DILI and remains a historical view;
+the six-task figure below includes DILI and the user-selected legacy Bioavailability/
+Skin runs. Figure versions must not be pooled as independent experiments.
+
+## Six-task test figure with user-selected historical versions
+
+`replicate_suites.scaffold_test_six_tasks_selected_versions_20260913` registers
+[the six-task progressive figure](../../../outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/figures/test_six_tasks_progressive_baselines.png),
+its SVG, plot command and verification receipt. It adds completed DILI test
+(402 queries, 2,814 successful level outputs) to the previous five-task overview.
+All six tasks cover 2,048 test queries with 30 matched baseline cells.
+
+At the user's request, Bioavailability and Skin use **all three historical v2
+progressive runs**, with their frozen old tool context and priors, including the
+corresponding old None references. Their final Macro-F1 means are 0.7824 ± 0.0112
+and 0.5870 ± 0.0035 (sample SD). These are existing measured results, not results
+from a new run of the restored configuration. BBB, Carcinogens and DILI use one
+v5 run each; Ames uses the completed source-repair replay, whose test predictions
+are unchanged. DILI final L7 Macro-F1 is 0.6053, versus None 0.5629.
+This is a **mixed-version overview**, not a uniform v5 suite or an isolated prompt
+ablation. Every included level prediction and None score was recomputed against
+current ordered test labels; all baselines also passed molecule/condition/label
+and training-lineage checks. The older five-task v5 figure remains historical.
+
+## Current DILI prompt-v5 source replay
+
+`replicate_suites.dili_v5_trace_source_replay_20260913` uses the current
+`reasoning_prompt_v5_scaffold_20260913` progressive runs and
+`progressive_evidence_revision.v5`, not the historical v2-prompt diagnostic below.
+The source review corrected or quarantined 13 attribution/identity/scope records;
+gold and both benchmark split schemes are unchanged. Both indices, portable
+source restore and exported card tables passed validation. All 804 selected-input
+trajectories were compared: valid has no changed input, while 15 test queries
+require 75 fresh level outputs. Exact unchanged prefixes and frozen v5 tools/priors
+are reused. The replay is complete and verified: 75 fresh outputs, zero failed queries. Test L7 Macro-F1 is 0.605307 (before 0.605307), with 0 corrected and 0 regressed final labels. Valid L7 remains 0.679991. Full per-level changes and actual-request checks are linked from the registry.
+
+Before repair, current test L2→L7 has 18 adjacent flip events, 10 beneficial and
+8 harmful: correct predictions rise from 281 to 283 of 402, and Macro-F1 from
+0.595980 to 0.605307. Object misidentification also remains in current traces
+(for example #284 and #395); source validity and model misuse are separate.
+The detailed report is `outputs/paper/dili_trace_source_replay_20260913/REPORT.md`.
+The verified before/after test Macro-F1 figure, including None and five matched
+baselines, is linked from this suite's `test_performance_figure`; both curves use
+prompt v5. L1/L2 improve; L3-L7 are identical.
+
+## Historical DILI test plateau diagnostic
+
+`diagnostics.dili_legacy_test_level_plateau_20260913` audits the old v2-prompt
+progressive run on retrieval-review v5 (402 rows, 2,814 levels). L2→L7 changes
+only six labels: four corrected, two regressed, with 116 errors persisting;
+Macro-F1 moves from 0.5895 to 0.6019. All levels actually called the model.
+The report separates weak analog transfer, inherited evidence-state judgments,
+protective-outcome misuse, source-attribution conflicts, two verified APO
+structure mismatches, a naloxone glucuronide annotation inconsistency whose
+original numerical table remains unverified, and an MTT placement candidate.
+Source findings and wrong/correct trace applications are separate; presence or
+citation does not establish causal harm. Existing v4→v5 repairs left every test
+progressive label unchanged, verified again. This diagnostic does not modify
+source, gold, retrieval, prompts or run new inference; it is not a full-library
+quality certificate.
+
+## Ames valid level-decline diagnostic (2026-09-13)
+
+`diagnostics.ames_valid_v5_level_decline_20260913` links the read-only review of
+all 23 adjacent label flips in the current 274-row valid run. Macro-F1 falls
+from 0.7546 at L1 to 0.7152 at L5; L2 accounts for 13 harmful and 6 beneficial
+flips. Two source-level placement candidates coexist with endpoint/condition
+transfer errors, unsupported mechanistic vetoes and incomplete SAR context.
+The report retains same-card beneficial controls and an unresolved quinoline
+TA98 cross-study/gold discrepancy. No source, prompt or gold change and no
+model replay accompany this diagnostic; it does not establish removal effects.
+
+The subsequent authorized source repair is separately registered as
+`diagnostics.ames_trace_source_repair_20260913`: `ames_v2:425939` moves from L2
+to L4 (SOS/umu), and `ames_base:186648` from L2 to L3 (plant chromosome damage).
+The cinnoline card `ames_base:80868` now preserves the quinoline exception in
+its series-level structural context. PMID7022455's original Table 2 and text
+confirm the older quinoline TA98/+S9 positive result; the newer study's negative
+result remains a cross-study disagreement. Study-unit labels and split membership
+are unchanged. Rebuilt retrieval requires a selected-input audit or fresh replay;
+the ongoing v5 suite retains its pre-repair Ames inputs in its frozen runtime.
+
+`replicate_suites.ames_trace_source_replay_20260913` now records the completed
+targeted progressive replay over current repaired retrieval: valid 19 affected
+queries / 77 levels, test four queries / 20 levels. The other 2,643 levels pass
+exact unchanged-prefix reuse checks. There are 93 newly inferred levels and four
+carry-forward levels, with zero final failures; all 548 rows and 2,740 level
+inputs/outputs are verified against frozen v5 priors, tools, prompt and gold.
+Only valid #173 needs tools for one newly selected neighbor.
+
+Final Macro-F1 and accuracy are unchanged: valid 0.7152 / 0.7555, test 0.7545 /
+0.7993. Valid #211/#220 improve and #173/#229 regress; all test level labels stay
+the same. Valid L3 rises from 0.7186 to 0.7268, but the gain disappears by L5.
+In #230, moving SOS/umu to L4 delays the wrong negative flip from L2 to L4;
+#173/#229 also use this explicitly non-Ames assay as decisive negative evidence.
+The repair changes error distribution without improving final performance in
+this single targeted replay. The linked report separates source correctness,
+budgeted selection changes and model transfer behavior. This is not a new
+independent replicate; the original v5 matched suite remains on its frozen source.
+
+## Bioavailability / Skin legacy configuration restoration (2026-09-13)
+
+`replicate_suites.bio_skin_legacy_configuration_20260913` records the requested
+restoration of the v2 prompt/validator, cached historical query/neighbor tools,
+query prior and None through the existing matched family runner. The isolated
+package contains 1,011 rows and 4,626 level inputs; all pass the matched-input
+preflight, and 32 rendered requests exactly match saved historical requests.
+Skin valid #193/#206 retain the MDAM retrieval repair (five level inputs).
+This is a verified runnable configuration, with no new model calls or scores.
+The main v5 implementation and running DILI stage remain separate.
+
+Final progressive Macro-F1 (old versus v5): Bioavailability valid 0.7608 versus
+0.7716, test 0.7824 versus 0.7707; Skin valid 0.6429 versus 0.6114, test 0.5870
+versus 0.5696. Old test values are means of three runs (SD 0.0112 and 0.0035);
+v5 is one run. Old Skin valid is a pre-MDAM historical reference. This is not
+a prompt-only comparison: functional-group context and priors also changed,
+with additional saved numerical-tool differences in valid and one missing
+Bioavailability test neighbor tool result. The registry links the complete
+input comparison, limitations, frozen configuration and execution commands.
+
+## Reasoning prompt revision (2026-09-13)
+
+`diagnostics.reasoning_prompt_revision_20260913` records `progressive_evidence_revision.v5`:
+shared instruction cleanup, empirical-claim source boundaries, decisive analog-transfer
+explanations, and old-error correction without mandatory new-card citations. Existing
+output fields and Bioavailability high/low rules are preserved. No model calls or new
+benchmark scores accompany this implementation; historical results retain their original
+prompt profiles. Validation and scope are recorded in the linked receipt.
+
+## Functional-group tree diagnostic (2026-09-13)
+
+`diagnostics.functional_group_tree_20260913` records the completed tool/context change
+and its bounded Flash paired replay: three previously inspected error cases, two runs
+per arm, 32 level outputs, 52 requests including validation retries, zero final failures.
+At the reviewed levels, correct labels were unchanged: BBB #343 L3 2/2 versus 2/2,
+DILI #345 L4 0/2 versus 0/2, Carcinogens #104 L1 0/2 versus 0/2. Both arms avoided
+BBB's historical AZD3759 identity error; DILI's sultam error and Carcinogens' enone
+error persisted. One additional fresh single-prior pair (two calls) reproduced the
+enone error in both arms without inheriting the old prior.
+
+The experiment used `progressive_functional_group_tree.v3`. The subsequent code
+review fixed match-specific hierarchy reduction and cached-tool failure handling;
+that review introduced v4 with tool cache namespace `tool-service-2026-09-13-v5`. All 167
+related tests passed, and the review checked all 43 diagnostic molecules against
+the saved inputs: numerical properties and complete tool text were unchanged.
+The original experiment keeps its v3 identity; no new model run or benchmark gain
+is claimed. The registry links the review receipt, preceding source trace audit,
+and frozen execution snapshots; the three one-off scripts are no longer runnable
+entrypoints. Prior text still embeds the query tree, while progressive/full-flat
+expose independent query/neighbor tree fields through the same batch tools.
 
 ## DILI and Carcinogens: completed cleaning cycle
 
@@ -14,7 +294,7 @@ cohorts: DILI 3,220/402/402 and Carcinogens 3,754/469/469. L1-only heldout prefi
 L2 retention and query-time disjoint are unchanged. The final-source publication
 receipt is `data/starling_data/retrieval_final_cleanup.json`.
 
-Latest completed evaluations and figures remain in these registry entries:
+The completed pre-prompt-v5 evaluations and figures remain historical registry entries:
 
 - DILI: `replicate_suites.dili_retrieval_review_v5_no_prior_grounded_sim0`,
   valid/test × progressive/full-flat, 11,256 level outputs and zero failures.
@@ -202,7 +482,58 @@ benchmark/split, heldout index, family catalog, source/organization, model,
 prompt, visibility, and identity policy all match. Directory names and sample
 counts are insufficient.
 
-Ames scaffold-valid progressive 4/2 is complete for all 274 rows with zero
+Ames scaffold valid/test names were formally exchanged on explicit user request
+on 2026-09-08. Current test is the former 274-row validation cohort; it has already
+been inspected and is not an untouched test set. Train, random, gold labels and
+the heldout identity union are unchanged. The canonical rename receipt is
+`data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json`.
+Current test Flash (three runs per organization) and Pro (one per organization)
+are registered in `replicate_suites.ames_scaffold_test_swapped_4_2` and
+`replicate_suites.ames_scaffold_test_swapped_pro_0813_4_2`. All 10,960 level outputs
+passed cohort/lineage and recomputed-metric checks with zero failures: 24 Flash
+outputs were rerun for q57 L2–L5, and 10,936 outputs were exactly reused. Flash
+predictions and scores did not change after this source repair. Flash mean
+L1–L5 macro-F1 is 0.7323/0.7458/0.7483/0.7532/0.7477 (progressive) and
+0.7228/0.7556/0.7536/0.7464/0.7543 (full-flat). Five baselines were migrated by
+exact ordered molecule-condition/label equality and retain their original scores.
+The current four-task Flash/Pro performance and full resource figures are under
+`outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/`.
+All 76 curve points and 28 references passed comparison checks; the original
+BBB/Bioavailability/Skin numeric fields are unchanged. Both images explicitly
+disclose the Ames split rename. The existing plotter now uses up to 16 processes
+for large trace collections while retaining its complete contract checks.
+
+Before the rename, Ames scaffold-valid Flash completed three fresh 4/2 runs per organization under the
+test prompt and retrieval preceding the nitroso structure repair: all 8,220 level outputs passed
+completion checks with zero failed queries. Execution used at most three
+simultaneous 256-slot runners, with width-six racing only after failure. The
+None control was refreshed once under the current prompt; unchanged
+structure-only priors and tools were reused. See `replicate_suites.ames_scaffold_valid_4_2_replicates` and its
+launch/completion receipts for live status. The previous valid run cannot count
+toward these repetitions because its task instructions and source lineage differ.
+These historical performance and complete resource figures are under
+`outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/`;
+all curves show three-run means ±1 sample SD and all five 274-row baselines.
+The seven-record nitroso structure correction was replayed in the current test
+suite above. Original Flash test is now current valid and still requires its own
+selected-input audit before reuse. Frozen gold and matched baselines are unchanged.
+
+Before the rename, Ames scaffold-valid Pro 0813 completed one matched full-flat and one progressive
+run through OpenRouter. The seven-record nitroso structure correction was then
+applied to both methods: all 1,370 selected inputs were compared, only q57 L2–L5
+changed, and eight new level calls completed successfully. The other 2,732 outputs
+were reused with exact equality checks; original Pro single/None priors and the
+prompt remain unchanged. All 2,740 level outputs, recomputed cohort metrics and
+current input/index hashes passed validation, with zero failures. The repair used
+concurrent 256-slot pools (512 total) and failure-only width-six racing.
+None macro-F1 is 0.6806. Progressive L1–L5 is
+0.7174/0.6998/0.7032/0.7066/0.7002; full-flat is
+0.7339/0.7303/0.7572/0.7292/0.7122. These are single-run results.
+Progressive q57 L4/L5 changed from incorrect positive to correct negative;
+full-flat labels are unchanged. Completion validation and corrected frozen inputs are registered under
+`replicate_suites.ames_scaffold_valid_pro_0813_4_2`.
+
+The historical Ames scaffold-valid progressive 4/2 run completed all 274 rows with zero
 failures. None/L1/L2/L3/L4/L5 macro-F1 is
 0.7002/0.7199/0.7542/0.7561/0.7561/0.7506. Matched full-flat is also complete
 for all 274 rows with zero failures; its None/L1/L2/L3/L4/L5 macro-F1 is
@@ -570,6 +901,11 @@ hence the range. Keep all values labeled historical until the matched current
 matrix is complete.
 
 ## Removed no-go branches
+
+The per-neighbor target-label pilot showed no gain on 16 Bioavailability validation
+parents and increased invalid outputs. Its code, CLI and pilot artifacts were
+removed; only the [compact retirement receipt](receipts/neighbor_task_assessment_removed_20260912.json)
+remains. It is not a formal result or an active alternative.
 
 The 2026-09-01 broad-L1 Skin 8/4 comparison is not a current result. A
 connectivity-confounded Bioavailability 8/4 root is excluded. The L1-only

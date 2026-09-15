@@ -8,9 +8,9 @@ DILI/Carcinogens 的当前数据合同及保留的构建／维护入口见
 [`NEW_TASK_SOURCE_DATA.md`](../common/starling/NEW_TASK_SOURCE_DATA.md)。二者已接入统一
 Stage-03 恢复、catalog/index 重建和普通 Parquet level 导出；无需单独维护 runner 或画图程序。
 当前 benchmark 均为 Starling-only gold_v4，清理后的检索源统一冻结在 `retrieval_final`。
-最新已完成诊断为 DILI v5 与 Carcinogens R18；结果、baseline 和图均从
+DILI 新版 prompt-v5 源修复 replay 与历史 retrieval-review v5 分开登记；Carcinogens 保留 R18 诊断。结果、baseline 和图均从
 `current_conditioned_results.json` 的对应 suite 读取。旧混合标签、旧 gold 和清理中间轮次
-只作历史参考。此次源整合没有新增模型结果，已完成预测保留其实际输入和复用凭据。
+只作历史参考。源整合本身不产生模型结果；另行登记的 targeted replay 保留实际输入、请求和复用凭据。
 
 ## Paper scope
 
@@ -44,6 +44,31 @@ retrieval hashes match. Add `--performance-only` for one three-task Macro-F1 row
 with None and the five right-side baselines; omit it to retain resource panels.
 Use `--conditioned-baseline-root` to select baselines from the same evaluation subset.
 
+## Shared request admission across launchers
+
+When frozen runtimes require several launcher processes, use one host-local
+admission broker and set the same `admission_socket` in every participating
+provider configuration:
+
+```bash
+python -m tools.chembl_tool.common.request_admission \
+  --socket /local/tmp/txagent-request-admission.sock --capacity 1024
+```
+
+Normal calls and parallel retry attempts share these permits. The provider's
+request deadline starts after admission; `execution_provider.admission_wait_seconds`
+records the separate wait. Connect to the direct model endpoint without a second
+proxy queue. Cancellation awaits HTTP cleanup before releasing the permit;
+process exit closes its lease connection. The async client cancels its HTTP work
+if the broker connection is lost. Stop participating launchers before restarting
+the broker. Client cancellation does not guarantee immediate server-side abort.
+Sending `status\n` to the Unix socket returns capacity, active/waiting counts,
+peak active permits and total grants. This is transport configuration only;
+prompt, retrieval and generation contracts remain unchanged.
+For multiple physical endpoints, use one broker per endpoint, shared by every
+launcher using that endpoint; their capacities sum to the global budget. Current
+addresses and allocations belong in the suite's provider config and run plan.
+
 ## Canonical benchmark
 
 All active evaluation data lives at:
@@ -74,6 +99,15 @@ Historical molecule-only, `selected_vN`, task gold-vN, and source-build names
 are provenance only. Runners and plots must use the canonical roots above.
 
 ## Maintained entrypoints
+
+The requested Bioavailability/Skin legacy configuration is registered under
+`replicate_suites.bio_skin_legacy_configuration_20260913`. Its `restoration.json`
+contains verified frozen inputs and four commands for valid/test ×
+progressive/full-flat, using the existing family runner from a pinned runtime.
+Use those commands to restore the old prompt, tool context and prior together;
+do not regenerate the prior or tool cache. This experimental package is not a
+second maintained runner. It retains the confirmed Skin MDAM retrieval repair
+and has no newly evaluated scores; see `RESULTS.md` for the comparison.
 
 ### Benchmark and evidence construction
 
@@ -114,6 +148,31 @@ tools/chembl_tool/paper_experiments/starling_benchmark_matrix.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_family_curve.py
 tools/chembl_tool/paper_experiments/run_conditioned_assay_progressive_curve.py
 ```
+
+### Molecular tools and fresh priors
+
+The three existing tools and `/tools/batch` remain the only molecular service
+entrypoints; deployment and caching are documented in [the service README](../../service/README.md).
+`tools/service/functional_group_tree.py` is an internal renderer, not a fourth tool
+or a launcher. New progressive/matched-full-flat inputs use
+`progressive_evidence_revision.v5`; retain historical results under their
+recorded profiles.
+
+Use the existing progressive runner's `--fresh-query-priors` to generate new
+single/None branches, or add `--query-priors-only` to stop after those branches.
+All six tasks are supported: BBB/Bioavailability/Skin reuse their native branch
+builders and validators, with the shared query pool and retry races.
+`--single-source-root` and `--query-prior-source-root` explicitly select frozen
+priors; updating the tool service does not update that prior reasoning. Fresh
+priors receive the query's complete properties text and tree section; progressive
+and matched full-flat expose separate query/neighbor tree fields. Both reuse the
+same service computation and caches. No neighbor-label branch is added.
+
+The bounded tree diagnostic and preceding trace audit are linked from
+`diagnostics.functional_group_tree_20260913` in the registry. Its scripts are
+retained as execution snapshots, not additional runnable entrypoints. The
+observed label results did not improve; these inspected cases are not a formal
+benchmark rerun. See [RESULTS.md](RESULTS.md) for the outcome.
 
 ### Analysis and figures
 
@@ -171,7 +230,7 @@ same-condition-then-null and unrestricted-train variants.
   `current_conditioned_results.json`. BBB has current strict-voter-L1 results
   for all three budgets. Bioavailability 8/4 has two exact-contract full-curve
   runs, so the combined figure reports their mean and observed min-max range.
-  Skin source-purity v5 applies the strict target-scope gate to gold and
+  Skin source-purity v7 applies the strict target-scope gate to gold and
   L1/L2/L3. A final reproducibility rebuild added 37 MDAM nonvoter outcomes to
   L2 without changing the benchmark split; this changed the index-selected
   surface for 1, 2, and 3 validation queries under 2/1, 4/2, and 8/4,
@@ -216,7 +275,7 @@ It distinguishes:
 
 At the 2026-09-05 snapshot, BBB scaffold-valid has fresh 2/1, 4/2, and 8/4
 runs over the strict-voter-L1 v6 index; its random v6 index is built but still
-requires LLM replay. Skin source-purity v5 has current matched trained/KNN
+requires LLM replay. Skin has unchanged matched trained/KNN
 baselines, but the final MDAM L2 rebuild leaves 1/2/3 scaffold-validation
 queries pending targeted replay for 2/1, 4/2, and 8/4. Its random agent cell
 still requires full replay. The exact affected prefixes are frozen in
@@ -332,8 +391,11 @@ generation command are registered under
 
 To overlay different models in the same level/baseline figure, use the existing
 configuration comparison with `--allow-model-comparison`. This additionally
-requires identical prepared evidence/tools, card selection and retrieval lineage;
-only model-derived priors/None may differ. Full-flat/progressive within each model
+requires identical prepared evidence/tools, card selection and retrieval lineage.
+Model-derived priors/None and model-specific temperature/reasoning effort may
+differ; generation differences are recorded in the comparison audit and must be
+identified in the figure note. Same-model generation settings remain strict.
+Full-flat/progressive within each model
 must still share exact prepared inputs, including priors. None references are checked within
 each model and plotted separately, while matched baselines appear once.
 `--replicate-interval sd_if_repeated` shows sample SD for repeated configurations
@@ -388,6 +450,79 @@ the progressive runner owns their shared query queue, retry rounds and summary.
 races through `openai_provider_pool.py` and `openai_reasoning_client.py`.
 `reasoning_validation.py` remains the single validator. There is no separate
 retry or replicate executable.
+
+## OpenRouter Batch transport
+
+The shared progressive and matched-family runners also accept provider
+`transport: "openrouter_batch"`. The default remains `chat_completions` for PARCC
+and ordinary OpenRouter requests. The reusable example is
+[`provider_pools/gpt56_sol_openrouter_batch.json`](provider_pools/gpt56_sol_openrouter_batch.json).
+Use the base model ID (`openai/gpt-5.6-sol`, without `:batch`); the transport calls
+`POST /api/beta/batches` and polls the returned job ID. Set
+`--retry-race-width 1 --transport-max-retries 0` for the progressive runner, or
+`--retry-race-width 1` for matched-family runs. Batch pools require
+`max_failovers: 0` and cannot mix with realtime providers.
+
+`common/openrouter_batch.py` collects concurrent ready requests without changing
+their messages. `max_inflight` bounds outstanding logical requests, while
+`batch_options.max_requests` and `max_bytes` bound each submitted batch. The
+example uses 128 outstanding requests and at most 128 requests/16 MiB per batch;
+these are local settings, not provider limits. Multiple remote batches can be
+pending together. Size the runner's global parallelism and provider capacity
+together when running larger suites. The existing runner controls each query's
+progressive dependencies; it never
+submits L2 before that query's valid L1 result. Different tasks/queries may share
+a batch. Remote completion windows, rather than realtime HTTP timeouts, determine
+latency. GPT generation settings are explicit provider fields: `temperature: null`
+omits sampling temperature, and `reasoning_effort: "medium"` requests reasoning.
+The manifests record the actual settings; provider-returned reasoning and usage
+are preserved, without assuming GPT exposes its full internal reasoning text.
+
+Each run owns `batch_jobs/<provider>/job_*.json`: exact requests, remote IDs,
+status/results and billing usage. `llm.batch` links each output to its custom ID
+and journal. Repeating a stopped run recovers submitted results before making new
+calls. A local stop does not cancel remote jobs. An interrupted POST with an
+unknown outcome blocks resubmission until its remote job is reconciled; poll
+errors never cause another submission. Keep journals with the reasoning traces,
+and never use one journal directory concurrently from two clients.
+Unchanged remote responses are not rewritten to disk. A journal's modification
+time therefore reflects a status/result/error change, not the latest poll;
+use the remote job status and runner process to diagnose a quiet queue.
+
+For model comparisons, use the existing matched suite with
+`--matched-organizations progressive --replicate-ids 1 --refresh-query-priors`.
+This freezes source tools/cards, regenerates the new model's single/None, and
+builds every progressive state with that model. It does not reuse DeepSeek
+judgments as GPT judgments. The registered Carcinogens valid Sol Batch run is
+`replicate_suites.carcinogens_scaffold_valid_gpt56_sol_batch_20260913`.
+Matched prior replacement accepts the prompt-facing tool receipt after frozen
+retrieval and query-identity validation. Tool content, status, warnings, errors
+and supplied arguments must match; latency/cache metadata may differ. The
+progressive input retains the original full tool receipt.
+
+Example for a new matched Carcinogens valid run (change task, frozen source and
+output directory for other experiments; copy the provider example to change its
+model or capacity):
+
+```bash
+python -m tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve \
+  --tasks carcinogens \
+  --matched-progressive-root outputs/paper/reasoning_prompt_v5_scaffold_20260913/valid/standard/progressive \
+  --matched-organizations progressive --replicate-ids 1 --refresh-query-priors \
+  --output-root outputs/paper/carcinogens_sol_batch_replicate \
+  --model openai/gpt-5.6-sol --base-url https://openrouter.ai/api/v1 \
+  --api-key-env OPENROUTER_API_KEY_Mark_1 \
+  --provider-pool-config tools/chembl_tool/paper_experiments/provider_pools/gpt56_sol_openrouter_batch.json \
+  --parallelism 128 --parallelism-per-task 128 --endpoint-concurrency-budget 128 \
+  --retry-race-width 1 --max-tokens 20480
+```
+
+Repeat the same command/output directory to resume. Preserve the submitted model,
+generation settings and frozen inputs. Use `suite_status.json` for the active
+stage; `single_cache/execution_status.json` counts complete single+None query
+chains, and `replicate_01/progressive/execution_status.json` counts complete
+progressive query chains. Count billing once per remote batch from `usage.cost`;
+carry-forward level outputs are not additional model calls.
 
 ## Documentation map
 

@@ -1,6 +1,6 @@
 {
   "schema_version": "paper_artifact_registry.v2",
-  "updated_at": "2026-09-12",
+  "updated_at": "2026-09-14T01:42:15.907086+00:00",
   "benchmark": {
     "root": "data/conditioned_benchmark",
     "contract": "conditioned_benchmark.v1",
@@ -44,7 +44,10 @@
         "new_inference_in_source_consolidation": false,
         "prediction_reuse_requires_selected_surface_verification": true
       }
-    }
+    },
+    "ames_trace_repair_receipt": "data/starling_data/ames/trace_review_20260913/verification.json",
+    "skin_identity_rebinding_receipt": "data/starling_data/skin_reaction/trace_review_20260914/rebinding_retrieval_verification.json",
+    "version_cleanup_receipt": "tools/chembl_tool/paper_experiments/receipts/source_version_cleanup_20260914.json"
   },
   "paper_axes": {
     "retrieval_sources": [
@@ -269,14 +272,29 @@
           }
         }
       },
-      "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro",
-      "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.png",
-      "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.svg",
-      "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figure_receipt.json",
-      "comparison_statistic": "Flash: three-run mean ±1 sample SD; Pro: one run, no interval; model-specific None; unchanged matched baselines"
+      "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped",
+      "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.png",
+      "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.svg",
+      "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figure_receipt.json",
+      "comparison_statistic": "Flash: three-run mean ±1 sample SD; Pro: one run, no interval; model-specific None; unchanged matched baselines",
+      "previous_three_task_comparison": {
+        "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.png",
+        "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figures/flash_vs_pro_full_flat_progressive.svg",
+        "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro/figure_receipt.json",
+        "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro"
+      },
+      "full_comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.png",
+      "full_comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.svg",
+      "comparison_tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames"
+      ],
+      "ames_comparison_suite": "replicate_suites.ames_scaffold_test_swapped_pro_0813_4_2"
     },
     "ames_scaffold_valid_4_2": {
-      "status": "complete_verified",
+      "status": "historical_pre_prompt_and_identity_repair",
       "tasks": [
         "ames"
       ],
@@ -341,10 +359,13 @@
           18
         ]
       },
-      "source_identity_repair_note": "Historical valid result predates ames_base:76701 exclusion; no valid selected-surface equivalence audit or replay claimed by the test repair."
+      "source_identity_repair_note": "Historical valid result predates ames_base:76701 exclusion; no valid selected-surface equivalence audit or replay claimed by the test repair.",
+      "original_evaluation_subset": "valid",
+      "current_evaluation_subset": "test",
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json"
     },
     "ames_scaffold_test_4_2": {
-      "status": "complete_verified_source_identity_repair",
+      "status": "historical_pending_nitroso_selected_surface_audit",
       "tasks": [
         "ames"
       ],
@@ -479,7 +500,265 @@
         ],
         "full_flat_harms_without_new_basis": 14,
         "interpretation": "Descriptive paired transition and trace audit, not causal ablation; no prompt/gold/source changes."
-      }
+      },
+      "nitroso_structure_repair": {
+        "source_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+        "benchmark_and_baselines_unchanged": true,
+        "note": "Seven nonvoter structures corrected. Prior scores retain their original source lineage; only Pro valid is being replayed in this repair.",
+        "pro_valid_repair_root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1"
+      },
+      "original_evaluation_subset": "test",
+      "current_evaluation_subset": "valid",
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json"
+    },
+    "ames_scaffold_valid_4_2_replicates": {
+      "status": "historical_original_cohort_name_current_test_registered_separately",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "valid",
+      "n_rows": 274,
+      "n_runs_per_organization": 3,
+      "n_expected_level_outputs": 8220,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "endpoint": "http://127.0.0.1:50001/v1",
+      "root": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/launch_receipt.json",
+      "execution_status": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/completion_validation.json",
+      "launcher": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/launch.py",
+      "prepared_input_source": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/frozen_inputs",
+      "single_none_source": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/current_priors/single_cache",
+      "prior_refresh_status": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/current_priors/single_cache/execution_status.json",
+      "prior_valid_compatibility_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/prior_valid_compatibility.json",
+      "prior_binding_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/prior_binding_receipt.json",
+      "progressive_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_01/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_02/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_03/progressive"
+      ],
+      "matched_full_flat_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_01/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_02/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_4_2_replicates_v1/replicate_03/full_flat"
+      ],
+      "max_parallel_runs": 3,
+      "concurrency_per_run": 256,
+      "endpoint_concurrency_budget": 768,
+      "retry_race_width": 6,
+      "retry_policy": "Initial width 1; failures/validation retries race width 6 inside the same 256-slot pool; first valid wins, other client requests are cancelled.",
+      "prompt_revision": "Same as current test: sufficiently strong transferable mechanisms may overturn Ames prediction without new direct measurements.",
+      "original_valid_run_counted": false,
+      "n_fresh_none": 274,
+      "single_reuse": "Exact unchanged structure-only prior and tool outputs; current task-instruction None-final is recomputed once and shared.",
+      "baseline_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
+      "note": "Three fresh curves per organization replace the old-prompt valid run; no level predictions are reused from that historical run. Completion status lives in launch_receipt and completion_validation.",
+      "launch_started_at": "2026-09-07T22:26:33.095317+00:00",
+      "finished_at": "2026-09-08T00:46:13.951508+00:00",
+      "n_failed_queries": 0,
+      "n_completed_level_outputs": 8220,
+      "agent_macro_f1": {
+        "progressive": {
+          "level_1": {
+            "mean": 0.7322738612892629,
+            "sd": 0.01975763131074608,
+            "runs": [
+              0.7550880088008801,
+              0.7208667875334542,
+              0.7208667875334542
+            ]
+          },
+          "level_2": {
+            "mean": 0.7457779285982052,
+            "sd": 0.011629729154008079,
+            "runs": [
+              0.7506411847439398,
+              0.7325059981798627,
+              0.7541866028708133
+            ]
+          },
+          "level_3": {
+            "mean": 0.7482923146997769,
+            "sd": 0.008875693308146393,
+            "runs": [
+              0.7526060904539112,
+              0.7380842507746062,
+              0.7541866028708133
+            ]
+          },
+          "level_4": {
+            "mean": 0.7531689471689991,
+            "sd": 0.00985249278033531,
+            "runs": [
+              0.7526060904539112,
+              0.7436099482885989,
+              0.7632908027644869
+            ]
+          },
+          "level_5": {
+            "mean": 0.7476509202146883,
+            "sd": 0.009845127456671486,
+            "runs": [
+              0.7471158283341024,
+              0.7380842507746062,
+              0.7577526815353562
+            ]
+          }
+        },
+        "full_flat": {
+          "level_1": {
+            "mean": 0.7228328781790041,
+            "sd": 0.006921369794967123,
+            "runs": [
+              0.7148407687504337,
+              0.7268289328932893,
+              0.7268289328932893
+            ]
+          },
+          "level_2": {
+            "mean": 0.7556112958656904,
+            "sd": 0.006276188207581908,
+            "runs": [
+              0.7616022326192234,
+              0.7561474058935989,
+              0.7490842490842491
+            ]
+          },
+          "level_3": {
+            "mean": 0.7536158382222363,
+            "sd": 0.003910742946775089,
+            "runs": [
+              0.7521608040201004,
+              0.7506411847439398,
+              0.7580455259026688
+            ]
+          },
+          "level_4": {
+            "mean": 0.7464445120032261,
+            "sd": 0.0037082445000213085,
+            "runs": [
+              0.7506411847439398,
+              0.7450824029771397,
+              0.7436099482885989
+            ]
+          },
+          "level_5": {
+            "mean": 0.754347590521835,
+            "sd": 0.007654561232174421,
+            "runs": [
+              0.7577526815353562,
+              0.7455813120041703,
+              0.7597087780259784
+            ]
+          }
+        }
+      },
+      "comparison_analysis": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs",
+      "comparison_figure": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/figures/valid_performance_mean_sd.png",
+      "comparison_svg": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/figures/valid_performance_mean_sd.svg",
+      "full_comparison_figure": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/figures/valid_full_comparison_mean_sd.png",
+      "full_comparison_svg": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/figures/valid_full_comparison_mean_sd.svg",
+      "comparison_receipt": "outputs/paper/analysis/ames_scaffold_valid_full_flat_vs_progressive_3runs/figure_receipt.json",
+      "comparison_statistic": "Three complete 274-row runs per organization; mean plus/minus sample SD; current shared None and five fixed train-only baselines.",
+      "nitroso_structure_repair": {
+        "source_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+        "benchmark_and_baselines_unchanged": true,
+        "note": "Seven nonvoter structures corrected. Prior scores retain their original source lineage; only Pro valid is being replayed in this repair.",
+        "pro_valid_repair_root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1",
+        "valid_evidence_impact": "Pro valid selected-input audit changes only q57 L2-L5; this Flash suite still needs its own replay and prior/tool equivalence gate."
+      },
+      "original_evaluation_subset": "valid",
+      "current_evaluation_subset": "test",
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json",
+      "current_result_suite": "replicate_suites.ames_scaffold_test_swapped_4_2"
+    },
+    "ames_scaffold_valid_pro_0813_4_2": {
+      "status": "historical_original_cohort_name_current_test_registered_separately",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "valid",
+      "n_rows": 274,
+      "n_runs_per_organization": 1,
+      "n_expected_level_outputs": 2740,
+      "model": "deepseek/deepseek-v4-pro-0813",
+      "endpoint": "https://openrouter.ai/api/v1",
+      "root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/launch_receipt.json",
+      "execution_status": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/completion_validation.json",
+      "endpoint_preflight": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1/endpoint_preflight.json",
+      "provider_pool": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1/provider_pool.json",
+      "source_progressive_root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/frozen_inputs",
+      "single_none_source": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1/single_cache",
+      "prior_refresh_status": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1/single_cache/execution_status.json",
+      "progressive_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/replicate_01/progressive"
+      ],
+      "matched_full_flat_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/replicate_01/full_flat"
+      ],
+      "concurrent_runs": 2,
+      "concurrency_per_run": 256,
+      "endpoint_concurrency_budget": 512,
+      "retry_race_width": 6,
+      "retry_policy": "Single initial attempt; failed or invalid calls race six attempts within each 256-slot pool. All eight repair calls succeeded on their first attempt.",
+      "frozen_inputs": "Corrected Ames source retrieval; unchanged original Pro query priors/None and query tools. All 1,370 selected inputs compared; only q57 L2-L5 changed. Unchanged outputs exactly reused from original Pro run.",
+      "prompt_revision": "Same current Ames prompt as Flash valid/test; indirect mechanistic evidence may overturn prediction when strong and transferable.",
+      "baseline_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
+      "n_fresh_single": 0,
+      "n_fresh_none": 0,
+      "provider_routing": {
+        "sort": "price",
+        "max_price": {
+          "prompt": 1.32,
+          "completion": 3.96
+        },
+        "require_parameters": true
+      },
+      "price_cap_note": "Previous 0.66/1.98 USD per million input/output cap returned no endpoints; updated to current ordinary provider prices after live API preflight.",
+      "completion_validation": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/completion_validation.json",
+      "finished_at": "2026-09-08T05:33:05.672929+00:00",
+      "n_failed_queries": 0,
+      "n_completed_level_outputs": 2740,
+      "agent_macro_f1": {
+        "progressive": {
+          "none": 0.6806349558750069,
+          "level_1": 0.7174092409240924,
+          "level_2": 0.6997525627430187,
+          "level_3": 0.7031630170316302,
+          "level_4": 0.7065962307252998,
+          "level_5": 0.7002241951394494
+        },
+        "full_flat": {
+          "none": 0.6806349558750069,
+          "level_1": 0.7338513841670714,
+          "level_2": 0.7303289303289304,
+          "level_3": 0.7572411913037552,
+          "level_4": 0.7292305595311115,
+          "level_5": 0.7121848739495799
+        }
+      },
+      "nitroso_structure_repair": {
+        "source_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+        "benchmark_and_baselines_unchanged": true,
+        "note": "Seven nonvoter structures corrected; Pro valid targeted replay complete and verified. Frozen gold, split, baselines and prompt unchanged.",
+        "pro_valid_repair_root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1"
+      },
+      "previous_root": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1",
+      "previous_registered_suite": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/previous_registered_suite.json",
+      "n_reused_single": 274,
+      "n_reused_none": 274,
+      "n_fresh_level_outputs": 8,
+      "n_reused_level_outputs": 2732,
+      "selected_surface_receipt": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/selected_surface_receipt.json",
+      "prompt_equivalence": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/prompt_equivalence.json",
+      "repair_report": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_nitroso_repair_v1/REPAIR_RESULTS.md",
+      "previous_suite_manifest": "outputs/paper/starling_conditioned_ames_scaffold_valid_deepseek_v4_pro_0813_4_2_v1/suite_manifest.json",
+      "original_evaluation_subset": "valid",
+      "current_evaluation_subset": "test",
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json",
+      "current_result_suite": "replicate_suites.ames_scaffold_test_swapped_pro_0813_4_2"
     },
     "dili_carcinogens_scaffold_4_2": {
       "status": "historical_gold_v3",
@@ -869,6 +1148,212 @@
       "carcinogens_lineage_status": "historical_before_starling_only_five_group_gold_v4",
       "eligible_for_current_comparison": false,
       "current_carcinogens_publication": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json"
+    },
+    "ames_scaffold_test_swapped_4_2": {
+      "status": "complete_verified",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "test",
+      "original_evaluation_subset": "valid",
+      "test_previously_used_for_validation": true,
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json",
+      "root": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/launch_receipt.json",
+      "selected_surface_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/selected_surface_receipt.json",
+      "n_rows": 274,
+      "n_runs_per_organization": 3,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "progressive_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_01/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_02/progressive",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_03/progressive"
+      ],
+      "matched_full_flat_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_01/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_02/full_flat",
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/flash/replicate_03/full_flat"
+      ],
+      "baseline_results": "outputs/baselines/ames_scaffold_test_swapped_v1/test_results.json",
+      "completion_validation": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/completion_validation.json",
+      "finished_at": "2026-09-08T06:39:00.520297+00:00",
+      "n_failed_queries": 0,
+      "n_completed_level_outputs": 8220,
+      "n_fresh_level_outputs": 24,
+      "n_reused_level_outputs": 8196,
+      "agent_macro_f1": {
+        "progressive": {
+          "level_1": {
+            "mean": 0.7322738612892629,
+            "sd": 0.01975763131074608,
+            "runs": [
+              0.7550880088008801,
+              0.7208667875334542,
+              0.7208667875334542
+            ]
+          },
+          "level_2": {
+            "mean": 0.7457779285982052,
+            "sd": 0.011629729154008079,
+            "runs": [
+              0.7506411847439398,
+              0.7325059981798627,
+              0.7541866028708133
+            ]
+          },
+          "level_3": {
+            "mean": 0.7482923146997769,
+            "sd": 0.008875693308146393,
+            "runs": [
+              0.7526060904539112,
+              0.7380842507746062,
+              0.7541866028708133
+            ]
+          },
+          "level_4": {
+            "mean": 0.7531689471689991,
+            "sd": 0.00985249278033531,
+            "runs": [
+              0.7526060904539112,
+              0.7436099482885989,
+              0.7632908027644869
+            ]
+          },
+          "level_5": {
+            "mean": 0.7476509202146883,
+            "sd": 0.009845127456671486,
+            "runs": [
+              0.7471158283341024,
+              0.7380842507746062,
+              0.7577526815353562
+            ]
+          },
+          "none": 0.6971827158257089
+        },
+        "full_flat": {
+          "level_1": {
+            "mean": 0.7228328781790041,
+            "sd": 0.006921369794967123,
+            "runs": [
+              0.7148407687504337,
+              0.7268289328932893,
+              0.7268289328932893
+            ]
+          },
+          "level_2": {
+            "mean": 0.7556112958656904,
+            "sd": 0.006276188207581908,
+            "runs": [
+              0.7616022326192234,
+              0.7561474058935989,
+              0.7490842490842491
+            ]
+          },
+          "level_3": {
+            "mean": 0.7536158382222363,
+            "sd": 0.003910742946775089,
+            "runs": [
+              0.7521608040201004,
+              0.7506411847439398,
+              0.7580455259026688
+            ]
+          },
+          "level_4": {
+            "mean": 0.7464445120032261,
+            "sd": 0.0037082445000213085,
+            "runs": [
+              0.7506411847439398,
+              0.7450824029771397,
+              0.7436099482885989
+            ]
+          },
+          "level_5": {
+            "mean": 0.754347590521835,
+            "sd": 0.007654561232174421,
+            "runs": [
+              0.7577526815353562,
+              0.7455813120041703,
+              0.7597087780259784
+            ]
+          },
+          "none": 0.6971827158257089
+        }
+      },
+      "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.png",
+      "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.svg",
+      "full_comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.png",
+      "full_comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.svg",
+      "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figure_receipt.json",
+      "comparison_tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames"
+      ],
+      "report": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/RESULTS.md",
+      "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped"
+    },
+    "ames_scaffold_test_swapped_pro_0813_4_2": {
+      "status": "complete_verified",
+      "tasks": [
+        "ames"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "test",
+      "original_evaluation_subset": "valid",
+      "test_previously_used_for_validation": true,
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json",
+      "root": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/pro",
+      "launch_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/launch_receipt.json",
+      "selected_surface_receipt": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/selected_surface_receipt.json",
+      "n_rows": 274,
+      "n_runs_per_organization": 1,
+      "model": "deepseek/deepseek-v4-pro-0813",
+      "progressive_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/pro/replicate_01/progressive"
+      ],
+      "matched_full_flat_roots": [
+        "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/pro/replicate_01/full_flat"
+      ],
+      "baseline_results": "outputs/baselines/ames_scaffold_test_swapped_v1/test_results.json",
+      "completion_validation": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/completion_validation.json",
+      "finished_at": "2026-09-08T06:39:00.520297+00:00",
+      "n_failed_queries": 0,
+      "n_completed_level_outputs": 2740,
+      "n_fresh_level_outputs": 0,
+      "n_reused_level_outputs": 2740,
+      "agent_macro_f1": {
+        "progressive": {
+          "level_1": 0.7174092409240924,
+          "level_2": 0.6997525627430187,
+          "level_3": 0.7031630170316302,
+          "level_4": 0.7065962307252998,
+          "level_5": 0.7002241951394494,
+          "none": 0.6806349558750069
+        },
+        "full_flat": {
+          "level_1": 0.7338513841670714,
+          "level_2": 0.7303289303289304,
+          "level_3": 0.7572411913037552,
+          "level_4": 0.7292305595311115,
+          "level_5": 0.7121848739495799,
+          "none": 0.6806349558750069
+        }
+      },
+      "comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.png",
+      "comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks.svg",
+      "full_comparison_figure": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.png",
+      "full_comparison_svg": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figures/flash_vs_pro_4tasks_full.svg",
+      "comparison_receipt": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped/figure_receipt.json",
+      "comparison_tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames"
+      ],
+      "report": "outputs/paper/starling_conditioned_ames_scaffold_test_swapped_4_2_v1/RESULTS.md",
+      "comparison_analysis": "outputs/paper/analysis/conditioned_scaffold_test_flash_vs_pro_4tasks_swapped"
     },
     "dili_scaffold_swapped_4_2": {
       "status": "historical_gold_v3",
@@ -1807,6 +2292,857 @@
           }
         }
       }
+    },
+    "reasoning_prompt_v5_scaffold_20260913": {
+      "status": "valid_full_flat_complete_test_full_flat_paused",
+      "root": "outputs/paper/reasoning_prompt_v5_scaffold_20260913",
+      "run_plan": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/run_plan.json",
+      "execution_status": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/execution_status.json",
+      "input_preflights": [
+        "outputs/paper/reasoning_prompt_v5_scaffold_20260913/input_preflight_valid.json",
+        "outputs/paper/reasoning_prompt_v5_scaffold_20260913/input_preflight_test.json"
+      ],
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "dili",
+        "carcinogens"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "prompt_profile": "progressive_evidence_revision.v5",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "repetitions_per_method": 1,
+      "n_rows_by_subset": {
+        "valid": 2043,
+        "test": 2048
+      },
+      "expected_total_level_outputs": 47020,
+      "global_parallelism": 1024,
+      "retry_race_width": 6,
+      "source_tool_policy": "fresh current retrieval, tree tools and single/None priors; DILI retains no-prior with evidence, grounding and similarity zero",
+      "interpretation": "Current-system rerun, not isolated prompt ablation; valid/test settings frozen before inference.",
+      "endpoint_concurrency_budget": 1024,
+      "concurrency_change_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/concurrency_change_1024.json",
+      "execution": "Detached coordinator; completed dgx019 single/None priors preserved. Evidence stages share 1024 requests across dgx019 SGLang (768) and dgx005 vLLM (256), including width-6 retry races.",
+      "provider_pool_config": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/provider_pool.json",
+      "provider_pool_change_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/provider_pool_change.json",
+      "progress_snapshot": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/progress_check.json",
+      "tunnel_repair_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/dgx005_tunnel_repair.json",
+      "valid_progressive_figure": {
+        "status": "complete_verified",
+        "n": 2043,
+        "level_outputs": 11741,
+        "tasks": [
+          "bbb_martins",
+          "bioavailability_ma",
+          "skin_reaction",
+          "ames",
+          "dili",
+          "carcinogens"
+        ],
+        "baseline_cells": 30,
+        "analysis_root": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_valid_20260913",
+        "png": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_valid_20260913/figures/valid_six_tasks_progressive_baselines.png",
+        "svg": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_valid_20260913/figures/valid_six_tasks_progressive_baselines.svg",
+        "receipt": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_valid_20260913/figure_receipt.json",
+        "replicates": 1
+      },
+      "execution_shape": "Test progressive: five-task tail and DILI run concurrently at 512 requests each; combined cap 1024 including width-6 retry races. Successful checkpoints preserved; future full-flat stages remain sequential.",
+      "overlap_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/dili_overlap_512.json",
+      "active_provider_note": "dgx005:8100 refused connections; its local tunnel was disabled. Overlapping test runners use dgx019 only, 512 slots each. Historical per-request provider provenance is retained.",
+      "test_progressive_five_task_figure": {
+        "status": "complete_verified",
+        "n": 1646,
+        "level_outputs": 8955,
+        "tasks": [
+          "bbb_martins",
+          "bioavailability_ma",
+          "skin_reaction",
+          "ames",
+          "carcinogens"
+        ],
+        "baseline_cells": 25,
+        "analysis_root": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_test_20260913",
+        "png": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_test_20260913/figures/test_five_tasks_progressive_baselines.png",
+        "svg": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_test_20260913/figures/test_five_tasks_progressive_baselines.svg",
+        "receipt": "outputs/paper/analysis/reasoning_prompt_v5_scaffold_test_20260913/figure_receipt.json",
+        "replicates": 1,
+        "dili": "excluded while pending at figure creation; completed DILI now appears in the separately registered six-task selected-versions figure"
+      },
+      "dili_preparation_acceleration_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/dili_preparation_process.json",
+      "frozen_runtime_receipt": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/frozen_runtime_receipt.json",
+      "retrieval_status_by_task": {
+        "ames": "frozen_before_trace_review_20260913; queued matched full-flat uses the same pre-repair input/index/catalog as progressive",
+        "dili": "frozen before 13-record trace_review_20260913 repair; original progressive and queued matched full-flat retain pre-repair source. Current-source progressive replay is a separate v5 suite."
+      },
+      "test_progressive_selected_versions_figure_suite": "scaffold_test_six_tasks_selected_versions_20260913",
+      "priority_suite": "l3_parent_disjoint_progressive_test_20260914",
+      "valid_full_flat_comparison_figure": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance_with_v5_full_flat.png",
+      "valid_full_flat_verification_receipt": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/full_flat_overlay_receipt.json"
+    },
+    "bio_skin_legacy_configuration_20260913": {
+      "status": "restored_ready_verified_not_run",
+      "root": "outputs/paper/bio_skin_legacy_configuration_20260913",
+      "receipt": "outputs/paper/bio_skin_legacy_configuration_20260913/restoration.json",
+      "readme": "outputs/paper/bio_skin_legacy_configuration_20260913/README.md",
+      "comparison_report": "outputs/paper/analysis/bio_skin_v2_v5_comparison_20260913/REPORT.md",
+      "input_comparison": "outputs/paper/analysis/bio_skin_v2_v5_comparison_20260913/input_comparison.json",
+      "tasks": [
+        "bioavailability_ma",
+        "skin_reaction"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "organizations": [
+        "progressive",
+        "full_flat"
+      ],
+      "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "restored_components": [
+        "historical_prompt_and_validator",
+        "cached_historical_query_and_neighbor_tools",
+        "frozen_historical_query_prior_and_none"
+      ],
+      "n_rows": 1011,
+      "n_prepared_levels": 4626,
+      "exact_historical_request_checks": 32,
+      "new_model_calls": 0,
+      "retrieval_policy": "Current corrected retrieval retained; only Skin valid #193/#206 differ from historical evidence (five level inputs).",
+      "interpretation": "Requested configuration restoration; not new evaluated performance and not a prompt-only ablation. Test has already been inspected."
+    },
+    "ames_trace_source_replay_20260913": {
+      "status": "complete_verified",
+      "root": "outputs/paper/ames_trace_source_replay_20260913",
+      "execution_status": "outputs/paper/ames_trace_source_replay_20260913/execution_status.json",
+      "input_audit": "outputs/paper/ames_trace_source_replay_20260913/input_audit_summary.json",
+      "concurrency_receipt": "outputs/paper/ames_trace_source_replay_20260913/concurrency_receipt.json",
+      "source_repair_receipt": "data/starling_data/ames/trace_review_20260913/verification.json",
+      "task": "ames",
+      "split_scheme": "scaffold",
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "organization": "progressive",
+      "prompt_profile": "progressive_evidence_revision.v5",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "frozen_query_priors_and_tools": true,
+      "affected_queries": {
+        "valid": 19,
+        "test": 4
+      },
+      "levels_to_replay": {
+        "valid": 77,
+        "test": 20
+      },
+      "unchanged_prefix_levels_reused": 2643,
+      "interpretation": "Targeted source-repair replay of the original v5 run; not an independent replicate. Both evaluation cohorts have already been inspected.",
+      "comparison": "outputs/paper/ames_trace_source_replay_20260913/comparison.json",
+      "report": "outputs/paper/ames_trace_source_replay_20260913/REPORT.md",
+      "changed_predictions": "outputs/paper/ames_trace_source_replay_20260913/changed_predictions.jsonl",
+      "new_successful_model_levels": 93,
+      "n_failed_queries": 0,
+      "final_metrics": [
+        {
+          "subset": "valid",
+          "level": 5,
+          "n": 274,
+          "old_macro_f1": 0.7152341508058386,
+          "new_macro_f1": 0.7152341508058386,
+          "old_accuracy": 0.7554744525547445,
+          "new_accuracy": 0.7554744525547445,
+          "beneficial_indices": [
+            211,
+            220
+          ],
+          "harmful_indices": [
+            173,
+            229
+          ],
+          "delta_macro_f1": 0.0,
+          "delta_accuracy": 0.0
+        },
+        {
+          "subset": "test",
+          "level": 5,
+          "n": 274,
+          "old_macro_f1": 0.7545082835127959,
+          "new_macro_f1": 0.7545082835127959,
+          "old_accuracy": 0.7992700729927007,
+          "new_accuracy": 0.7992700729927007,
+          "beneficial_indices": [],
+          "harmful_indices": [],
+          "delta_macro_f1": 0.0,
+          "delta_accuracy": 0.0
+        }
+      ],
+      "n_rows_by_subset": {
+        "valid": 274,
+        "test": 274
+      }
+    },
+    "scaffold_test_six_tasks_selected_versions_20260913": {
+      "status": "complete_verified",
+      "artifact_type": "figure_over_existing_runs",
+      "evaluation_subset": "test",
+      "split_scheme": "scaffold",
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "carcinogens",
+        "dili"
+      ],
+      "n": 2048,
+      "baseline_cells": 30,
+      "agent_level_outputs_across_replicates": 16443,
+      "analysis_root": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913",
+      "png": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/figures/test_six_tasks_progressive_baselines.png",
+      "svg": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/figures/test_six_tasks_progressive_baselines.svg",
+      "summary": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/summary.json",
+      "receipt": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/figure_receipt.json",
+      "plot_command": "outputs/paper/analysis/scaffold_test_six_tasks_selected_versions_20260913/plot_command.json",
+      "task_versions": {
+        "bbb_martins": {
+          "prompt_profile": "progressive_evidence_revision.v5",
+          "n_replicates": 1,
+          "roots": [
+            "outputs/paper/reasoning_prompt_v5_scaffold_20260913/test/standard/progressive"
+          ]
+        },
+        "bioavailability_ma": {
+          "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+          "n_replicates": 3,
+          "roots": [
+            "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731",
+            "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive",
+            "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive"
+          ]
+        },
+        "skin_reaction": {
+          "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+          "n_replicates": 3,
+          "roots": [
+            "outputs/paper/starling_conditioned_assay_progressive_visible_test_card_budget_4_2_v1/scaffold_test_deepseek_v4_flash_0731",
+            "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_02/progressive",
+            "outputs/paper/starling_conditioned_test_replicates_4_2_v1/replicate_03/progressive"
+          ]
+        },
+        "ames": {
+          "prompt_profile": "progressive_evidence_revision.v5",
+          "n_replicates": 1,
+          "roots": [
+            "outputs/paper/ames_trace_source_replay_20260913/test/progressive"
+          ]
+        },
+        "carcinogens": {
+          "prompt_profile": "progressive_evidence_revision.v5",
+          "n_replicates": 1,
+          "roots": [
+            "outputs/paper/reasoning_prompt_v5_scaffold_20260913/test/standard/progressive"
+          ]
+        },
+        "dili": {
+          "prompt_profile": "progressive_evidence_revision.v5",
+          "n_replicates": 1,
+          "roots": [
+            "outputs/paper/reasoning_prompt_v5_scaffold_20260913/test/dili/progressive"
+          ]
+        }
+      },
+      "selection_note": "User requested historical Bioavailability/Skin; three completed v2 runs used, not newly rerun restored configuration; other tasks v5 single run. Not a uniform-version suite.",
+      "replicate_statistic": "Bioavailability/Skin: mean +/-1 sample SD across all three historical runs with frozen inputs; other tasks one run with no interval; None and five baselines are fixed per-task references.",
+      "ames_note": "Completed current-source targeted replay; test predictions unchanged from original v5; not an independent replicate.",
+      "final_level_performance": {
+        "bbb_martins": {
+          "level": 5,
+          "macro_f1": 0.71233697098749,
+          "sample_sd": null,
+          "accuracy": 0.7760814249363868,
+          "n_replicates": 1
+        },
+        "bioavailability_ma": {
+          "level": 6,
+          "macro_f1": 0.7824282298558551,
+          "sample_sd": 0.011238542510136111,
+          "accuracy": 0.8314745972738538,
+          "n_replicates": 3
+        },
+        "skin_reaction": {
+          "level": 3,
+          "macro_f1": 0.5870186276822381,
+          "sample_sd": 0.003483746335513067,
+          "accuracy": 0.710926694329184,
+          "n_replicates": 3
+        },
+        "ames": {
+          "level": 5,
+          "macro_f1": 0.7545082835127959,
+          "sample_sd": null,
+          "accuracy": 0.7992700729927007,
+          "n_replicates": 1
+        },
+        "carcinogens": {
+          "level": 7,
+          "macro_f1": 0.551740334358291,
+          "sample_sd": null,
+          "accuracy": 0.6268656716417911,
+          "n_replicates": 1
+        },
+        "dili": {
+          "level": 7,
+          "macro_f1": 0.6053067993366501,
+          "sample_sd": null,
+          "accuracy": 0.7039800995024875,
+          "n_replicates": 1
+        }
+      },
+      "verified_at": "2026-09-13T22:45:31.546928+00:00",
+      "dili_source_note": "The existing figure uses current prompt-v5 DILI before the 13-record source repair; see dili_v5_trace_source_replay_20260913 for the separately registered replay. This DILI cell is not legacy prompt-v2."
+    },
+    "dili_v5_trace_source_replay_20260913": {
+      "status": "complete_verified",
+      "root": "outputs/paper/dili_trace_source_replay_20260913",
+      "reference_root": "outputs/paper/reasoning_prompt_v5_scaffold_20260913",
+      "prompt_profile": "progressive_evidence_revision.v5",
+      "source_review": "data/starling_data/dili/trace_review_20260913/content_repairs.json",
+      "source_records_changed": 13,
+      "gold_labels_modified": false,
+      "new_model_calls_started": true,
+      "initial_four_record_preparation_invalidated": true,
+      "reason": "Additional BG identity errors found during replacement-card review before inference",
+      "performance_available": true,
+      "endpoint_concurrency_budget": 128,
+      "retry_race_width": 6,
+      "source_publication_verified": true,
+      "selected_surface_audit": "outputs/paper/dili_trace_source_replay_20260913/selected_surface_audit_summary.json",
+      "affected_queries": {
+        "valid": 0,
+        "test": 15
+      },
+      "planned_fresh_level_outputs": 75,
+      "reference_config": "Current v5 prompt and frozen v5 tools/priors; DILI was not restored to legacy",
+      "publication_verification": "data/starling_data/dili/trace_review_20260913/publication_verification.json",
+      "report": "outputs/paper/dili_trace_source_replay_20260913/REPORT.md",
+      "postprocess": {
+        "pid": 1713325,
+        "status_path": "outputs/paper/dili_trace_source_replay_20260913/postprocess_status.json",
+        "log": "outputs/paper/dili_trace_source_replay_20260913/postprocess.log",
+        "actions": "After inference exits: validate all trajectories and requests, restore queued 1024 capacity without cancelling active work, save paired metrics and update this result entry."
+      },
+      "completed_at": "2026-09-14T01:42:15.907086+00:00",
+      "paired_performance": "outputs/paper/dili_trace_source_replay_20260913/paired_performance.json",
+      "fresh_request_validation": "outputs/paper/dili_trace_source_replay_20260913/fresh_request_validation.json",
+      "query_comparison": "outputs/paper/dili_trace_source_replay_20260913/after_trace_comparison.jsonl",
+      "fresh_level_outputs": 75,
+      "reused_level_outputs": {
+        "valid": 2814,
+        "test": 2739
+      },
+      "n_failed_queries": 0,
+      "metrics": {
+        "valid": {
+          "n": 402,
+          "final_level": 7,
+          "macro_f1": 0.6799913941480207,
+          "accuracy": 0.8159203980099502
+        },
+        "test": {
+          "n": 402,
+          "final_level": 7,
+          "macro_f1": 0.6053067993366501,
+          "accuracy": 0.7039800995024875
+        }
+      },
+      "interpretation": "Current prompt-v5 source-only paired replay; unchanged prefixes reused, not an independent replicate. Both evaluation cohorts were already inspected.",
+      "test_performance_figure": {
+        "analysis_root": "outputs/paper/analysis/dili_v5_source_repair_test_20260914",
+        "png": "outputs/paper/analysis/dili_v5_source_repair_test_20260914/figures/dili_v5_source_repair_test.png",
+        "svg": "outputs/paper/analysis/dili_v5_source_repair_test_20260914/figures/dili_v5_source_repair_test.svg",
+        "receipt": "outputs/paper/analysis/dili_v5_source_repair_test_20260914/figure_receipt.json",
+        "comparison": "Both v5: before versus after source repair, with None and five matched baselines."
+      },
+      "scaffold_distribution_audit": "outputs/paper/dili_trace_source_replay_20260913/scaffold_error_distribution.json"
+    },
+    "carcinogens_scaffold_valid_gpt56_sol_batch_20260913": {
+      "status": "complete",
+      "root": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913",
+      "reference_root": "outputs/paper/reasoning_prompt_v5_scaffold_20260913/valid/standard/progressive",
+      "task": "carcinogens",
+      "split_scheme": "scaffold",
+      "evaluation_subset": "valid",
+      "n_rows": 469,
+      "model": "openai/gpt-5.6-sol",
+      "transport": "openrouter_batch",
+      "reasoning_effort": "medium",
+      "temperature": null,
+      "organizations": [
+        "progressive"
+      ],
+      "fresh_query_priors": true,
+      "frozen_tools_and_cards": true,
+      "provider_config": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/providers.json",
+      "transport_smoke": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/transport_smoke_result.json",
+      "cost_estimate": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/cost_estimate.json",
+      "performance_available": true,
+      "completion_verification": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/completion_verification.json",
+      "deepseek_comparison_figure": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/comparison/figures/gpt_vs_deepseek.png",
+      "deepseek_comparison_receipt": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/comparison/figure_receipt.json",
+      "paired_trace_diagnostic": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/comparison/trace_diagnostic.json",
+      "prompt_adaptation_followup": {
+        "profile": "gpt_calibration.v1",
+        "regression_tests_passed": 191,
+        "task": "carcinogens",
+        "requires_fresh_query_priors": true,
+        "preview": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/comparison/prompt_adaptation_preview.json",
+        "suite": "carcinogens_scaffold_valid_gpt56_sol_prompt_v1_batch_20260914"
+      },
+      "paired_bootstrap": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/comparison/paired_bootstrap.json",
+      "cleanup_review": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/cleanup_review.json",
+      "completed_queries": 469,
+      "completed_level_outputs": 3283,
+      "failed_queries": 0,
+      "run_cost_usd": 104.8726226,
+      "none_macro_f1": 0.5167540853672751,
+      "final_macro_f1": 0.6009256184625602,
+      "final_accuracy": 0.650319829424307,
+      "run_root": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/run",
+      "live_status": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/run/suite_status.json",
+      "progressive_root": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/run/replicate_01/progressive",
+      "launch": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/launch.json",
+      "submission_validation": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/submission_validation.json",
+      "smoke_handoff": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/smoke_handoff.json",
+      "regression_tests_passed": 158,
+      "completed_single_none_requests": 938,
+      "prior_tool_compatibility_resume": "outputs/paper/carcinogens_scaffold_valid_gpt56_sol_batch_20260913/prior_tool_compatibility_resume.json"
+    },
+    "l3_parent_disjoint_progressive_test_20260914": {
+      "status": "complete_verified",
+      "root": "outputs/paper/l3_parent_disjoint_progressive_test_20260914",
+      "run_plan": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/run_plan.json",
+      "execution_status": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/execution_status.json",
+      "queue_pause_receipt": "outputs/paper/l3_parent_disjoint_progressive_test_20260914/queue_pause_receipt.json",
+      "retrieval_diagnostic": "outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914/summary.json",
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "dili",
+        "carcinogens"
+      ],
+      "split_scheme": "scaffold",
+      "evaluation_subset": "test",
+      "n_rows": 2048,
+      "expected_level_outputs": 11769,
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "prompt_profiles": {
+        "bioavailability_ma": "progressive_compact_tools_short_aliases.v2",
+        "skin_reaction": "progressive_compact_tools_short_aliases.v2",
+        "other_tasks": "progressive_evidence_revision.v5"
+      },
+      "tool_policy": "Freeze previous query/neighbor tools, query priors and None. New neighbor pairs use v5 tools for current tasks and commit 80f26e7 old tool implementation for Bioavailability/Skin.",
+      "neighbor_identity_policy": "scaffold_L1_L2__parent_L3_plus",
+      "global_endpoint_budget": 1024,
+      "retry_race_width": 6,
+      "prefix_reuse": "Exact unchanged model-input prefixes only; no stale downstream state after first changed level.",
+      "baseline": "Current source-repaired v5 for Ames/DILI; original v5 for BBB/Carcinogens; frozen legacy replicate 03 for Bioavailability/Skin.",
+      "v5_test_full_flat": "paused by user; no automatic resume",
+      "preflight": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/ready.json",
+      "n_reused_levels": 6808,
+      "n_L1_L2_verified_levels": 4096,
+      "request_scheduling": "All six tasks dynamically share one HAProxy backend cap; no task or runtime reservations.",
+      "shared_request_pool": {
+        "url": "http://127.0.0.1:50004/v1",
+        "upstream": "http://127.0.0.1:50003/v1",
+        "max_inflight": 1024,
+        "config": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
+      },
+      "queued_followup": "l3_parent_disjoint_progressive_valid_20260914",
+      "paired_performance": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/paired_performance.json",
+      "n_level_outputs": 11769,
+      "n_fresh_successful_requests": 4855,
+      "performance_comparison_figure": {
+        "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/performance.png",
+        "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/performance.svg",
+        "metrics": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/metrics.tsv",
+        "references": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/references.tsv"
+      }
+    },
+    "l3_parent_disjoint_progressive_valid_20260914": {
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "dili",
+        "carcinogens"
+      ],
+      "split_scheme": "scaffold",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "prompt_profiles": {
+        "bioavailability_ma": "progressive_compact_tools_short_aliases.v2",
+        "skin_reaction": "progressive_compact_tools_short_aliases.v2",
+        "other_tasks": "progressive_evidence_revision.v5"
+      },
+      "tool_policy": "Freeze previous query/neighbor tools, query priors and None. New neighbor pairs use v5 tools for current tasks and commit 80f26e7 old tool implementation for Bioavailability/Skin.",
+      "neighbor_identity_policy": "scaffold_L1_L2__parent_L3_plus",
+      "global_endpoint_budget": 1024,
+      "retry_race_width": 6,
+      "prefix_reuse": "Exact unchanged model-input prefixes only; no stale downstream state after first changed level.",
+      "request_scheduling": "All six tasks dynamically share one HAProxy backend cap; no task or runtime reservations.",
+      "shared_request_pool": {
+        "url": "http://127.0.0.1:50004/v1",
+        "upstream": "http://127.0.0.1:50003/v1",
+        "max_inflight": 1024,
+        "config": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914/shared_request_pool.cfg"
+      },
+      "status": "complete_verified",
+      "root": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914",
+      "run_plan": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/run_plan.json",
+      "execution_status": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/execution_status.json",
+      "evaluation_subset": "valid",
+      "n_rows": 2043,
+      "expected_level_outputs": 11741,
+      "start_after": {
+        "suite_root": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_test_20260914",
+        "required_status": "complete_verified"
+      },
+      "configuration_comparison": "outputs/paper/l3_parent_disjoint_progressive_valid_20260914/configuration_comparison.json",
+      "reference_repair": {
+        "task": "skin_reaction",
+        "query_indices": [
+          193,
+          206
+        ],
+        "reason": "Existing MDAM source repair retained in restored valid inputs; five historical level inputs differ. Refresh only the changed prefixes and dependent levels before reuse.",
+        "expected_new_levels": 5,
+        "command": [
+          "/data1/tianang/anaconda3/envs/vllm/bin/python",
+          "-m",
+          "tools.chembl_tool.paper_experiments.run_conditioned_assay_family_curve",
+          "--tasks",
+          "bioavailability_ma",
+          "skin_reaction",
+          "--matched-progressive-root",
+          "/data1/tianang/Projects/TxAgent/outputs/paper/bio_skin_legacy_configuration_20260913/prepared/valid",
+          "--matched-organizations",
+          "progressive",
+          "--output-root",
+          "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy",
+          "--model",
+          "deepseek-ai/DeepSeek-V4-Flash-0731",
+          "--base-url",
+          "http://127.0.0.1:50004/v1",
+          "--api-key-env",
+          "DEEPSEEK_API_KEY",
+          "--env-file",
+          "/data1/tianang/Projects/TxAgent/.env",
+          "--provider-pool-config",
+          "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/providers_legacy.json",
+          "--parallelism",
+          "1024",
+          "--parallelism-per-task",
+          "0",
+          "--endpoint-concurrency-budget",
+          "1024",
+          "--retry-race-width",
+          "6",
+          "--max-stage-requeues",
+          "3",
+          "--max-tokens",
+          "20480",
+          "--timeout-s",
+          "900"
+        ],
+        "cwd": "/data1/tianang/Projects/TxAgent/outputs/paper/bio_skin_legacy_configuration_20260913/runtime",
+        "output_root": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/reference/legacy"
+      },
+      "v5_test_full_flat": "remains paused; no automatic resume",
+      "source_repair_followup": "skin_trace_source_replay_20260914",
+      "paired_performance": "/data1/tianang/Projects/TxAgent/outputs/paper/l3_parent_disjoint_progressive_valid_20260914/paired_performance.json",
+      "performance_comparison_figure": {
+        "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.png",
+        "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.svg",
+        "metrics": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/metrics.tsv",
+        "references": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/references.tsv"
+      }
+    },
+    "skin_trace_source_replay_20260914": {
+      "status": "complete_verified",
+      "root": "outputs/paper/skin_trace_source_replay_20260914",
+      "run_plan": "outputs/paper/skin_trace_source_replay_20260914/run_plan.json",
+      "source_review": "data/starling_data/skin_reaction/trace_review_20260914/README.md",
+      "decisions": "data/starling_data/skin_reaction/trace_review_20260914/decisions.json",
+      "source_validation": "data/starling_data/skin_reaction/trace_review_20260914/source_validation.json",
+      "retrieval_validation": "data/starling_data/skin_reaction/trace_review_20260914/retrieval_verification.json",
+      "surface_changes": "outputs/paper/skin_trace_source_replay_20260914/retrieval/selected_surface_changes.json",
+      "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+      "tools_and_prior": "same restored legacy configuration; newly needed analog pairs use original batch tool service",
+      "source_changes": {
+        "excluded_wrong_identity_records": 9,
+        "moved_L3_to_L2": 3,
+        "gold_split_unchanged": true
+      },
+      "test": {
+        "indices": [
+          45,
+          82,
+          133,
+          154,
+          179
+        ],
+        "levels": [
+          3
+        ],
+        "process": "outputs/paper/skin_trace_source_replay_20260914/test/process.json",
+        "verification": "outputs/paper/skin_trace_source_replay_20260914/test/verification.json",
+        "status": "complete_verified",
+        "metrics": [
+          {
+            "level": 1,
+            "n": 241,
+            "before_macro_f1": 0.5586080586080586,
+            "after_macro_f1": 0.5586080586080586,
+            "before_accuracy": 0.7012448132780082,
+            "after_accuracy": 0.7012448132780082,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 2,
+            "n": 241,
+            "before_macro_f1": 0.5909929409449788,
+            "after_macro_f1": 0.5909929409449788,
+            "before_accuracy": 0.7136929460580913,
+            "after_accuracy": 0.7136929460580913,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 3,
+            "n": 241,
+            "before_macro_f1": 0.5823430382253911,
+            "after_macro_f1": 0.5823430382253911,
+            "before_accuracy": 0.7095435684647303,
+            "after_accuracy": 0.7095435684647303,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          }
+        ]
+      },
+      "valid": {
+        "indices": [
+          9
+        ],
+        "levels": [
+          2,
+          3
+        ],
+        "queue_status": "outputs/paper/skin_trace_source_replay_20260914/valid/queue_status.json",
+        "start_after": "l3_parent_disjoint_progressive_valid_20260914",
+        "verification": "outputs/paper/skin_trace_source_replay_20260914/valid/verification.json",
+        "status": "complete_verified",
+        "metrics": [
+          {
+            "level": 1,
+            "n": 239,
+            "before_macro_f1": 0.6375276596802666,
+            "after_macro_f1": 0.6375276596802666,
+            "before_accuracy": 0.7447698744769874,
+            "after_accuracy": 0.7447698744769874,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 2,
+            "n": 239,
+            "before_macro_f1": 0.6349375681900837,
+            "after_macro_f1": 0.6349375681900837,
+            "before_accuracy": 0.7364016736401674,
+            "after_accuracy": 0.7364016736401674,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 3,
+            "n": 239,
+            "before_macro_f1": 0.650760570128159,
+            "after_macro_f1": 0.650760570128159,
+            "before_accuracy": 0.7447698744769874,
+            "after_accuracy": 0.7447698744769874,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          }
+        ]
+      },
+      "concurrency": "same shared HAProxy 1024 cap, race width 6; no extra upstream budget",
+      "unchanged_test_strict_retrieval": true
+    },
+    "skin_identity_rebinding_replay_20260914": {
+      "status": "complete_verified",
+      "root": "outputs/paper/skin_identity_rebinding_replay_20260914",
+      "run_plan": "outputs/paper/skin_identity_rebinding_replay_20260914/run_plan.json",
+      "source_review": "data/starling_data/skin_reaction/trace_review_20260914/rebindings.json",
+      "source_validation": "data/starling_data/skin_reaction/trace_review_20260914/rebinding_validation.json",
+      "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+      "source_changes": {
+        "rebound_records": 7,
+        "retrieval_duplicate_represented_by_existing_record": 1,
+        "pending_metabolite_records": 2,
+        "gold_split_unchanged": true
+      },
+      "comparison": "Original six-task hybrid runs remain frozen; replay every changed Skin selected surface and reuse only verified unchanged prefixes.",
+      "test": {
+        "status": "complete_verified",
+        "newly_changed_indices": [
+          39
+        ],
+        "newly_changed_levels": [
+          3
+        ],
+        "verification": "outputs/paper/skin_identity_rebinding_replay_20260914/test/verification.json",
+        "process": "outputs/paper/skin_identity_rebinding_replay_20260914/test/process.json",
+        "metrics": [
+          {
+            "level": 1,
+            "n": 241,
+            "before_macro_f1": 0.5586080586080586,
+            "after_macro_f1": 0.5586080586080586,
+            "before_accuracy": 0.7012448132780082,
+            "after_accuracy": 0.7012448132780082,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 2,
+            "n": 241,
+            "before_macro_f1": 0.5909929409449788,
+            "after_macro_f1": 0.5909929409449788,
+            "before_accuracy": 0.7136929460580913,
+            "after_accuracy": 0.7136929460580913,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 3,
+            "n": 241,
+            "before_macro_f1": 0.5823430382253911,
+            "after_macro_f1": 0.5823430382253911,
+            "before_accuracy": 0.7095435684647303,
+            "after_accuracy": 0.7095435684647303,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          }
+        ]
+      },
+      "valid": {
+        "status": "complete_verified",
+        "newly_changed_indices": [
+          222
+        ],
+        "newly_changed_levels": [
+          3
+        ],
+        "verification": "outputs/paper/skin_identity_rebinding_replay_20260914/valid/verification.json",
+        "process": "outputs/paper/skin_identity_rebinding_replay_20260914/valid/process.json",
+        "metrics": [
+          {
+            "level": 1,
+            "n": 239,
+            "before_macro_f1": 0.6375276596802666,
+            "after_macro_f1": 0.6375276596802666,
+            "before_accuracy": 0.7447698744769874,
+            "after_accuracy": 0.7447698744769874,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 2,
+            "n": 239,
+            "before_macro_f1": 0.6349375681900837,
+            "after_macro_f1": 0.6349375681900837,
+            "before_accuracy": 0.7364016736401674,
+            "after_accuracy": 0.7364016736401674,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          },
+          {
+            "level": 3,
+            "n": 239,
+            "before_macro_f1": 0.650760570128159,
+            "after_macro_f1": 0.650760570128159,
+            "before_accuracy": 0.7447698744769874,
+            "after_accuracy": 0.7447698744769874,
+            "beneficial_indices": [],
+            "harmful_indices": []
+          }
+        ]
+      },
+      "surface_changes": "outputs/paper/skin_identity_rebinding_replay_20260914/retrieval/selected_surface_changes.json",
+      "retrieval_validation": "data/starling_data/skin_reaction/trace_review_20260914/rebinding_retrieval_verification.json"
+    },
+    "l3_parent_disjoint_matched_full_flat_20260914": {
+      "status": "running_valid_test_queued",
+      "root": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914",
+      "run_plan": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/run_plan.json",
+      "execution_status": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/execution_status.json",
+      "preflight_receipt": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/preflight_receipt.json",
+      "endpoint_receipt": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/endpoint_receipt.json",
+      "coordinator": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/coordinator.py",
+      "subset_order": [
+        "valid",
+        "test"
+      ],
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "dili",
+        "carcinogens"
+      ],
+      "n_rows": {
+        "valid": 2043,
+        "test": 2048
+      },
+      "expected_level_outputs": {
+        "valid": 11741,
+        "test": 11769
+      },
+      "reasoning_organization": "matched independent full-flat at every cumulative level",
+      "retrieval_identity_policy": "scaffold_L1_L2__parent_L3_plus",
+      "global_endpoint_budget": 1536,
+      "retry_race_width": 6,
+      "transport": "Direct SSH to dgx007:50002 (local 50008), dgx011:50001 (local 50009), and dgx014:50002 (local 50007); each endpoint has one host-wide 512-permit admission broker shared across all runners and retry races; total 1536; same DeepSeek-V4-Flash-0731 and provider-default thinking/max reasoning; no proxy request queue. Contended dgx005 removed from this run.",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "configuration": "Exact frozen prepared inputs from the displayed completed six-task progressive policy comparison; Bioavailability/Skin legacy prompt/tools/prior. Later Skin v7 source-rebinding intervention remains separate.",
+      "completion_gate": "All valid outputs, input hashes, independent request messages and recomputed metrics must verify before test starts. Read execution_status for live phase.",
+      "admission_verification": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/endpoint_rebalance_three_hosts_20260915.json",
+      "admission_restart_receipt": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/global_admission_restart_receipt.json",
+      "admission_sockets": {
+        "dgx007": "/local/tmp/txagent-full-flat-dgx007-512.sock",
+        "dgx011": "/local/tmp/txagent-full-flat-dgx011-512.sock",
+        "dgx014": "/local/tmp/txagent-full-flat-dgx014-512.sock"
+      },
+      "endpoint_rebalance_receipt": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/endpoint_rebalance_three_hosts_20260915.json",
+      "endpoint_probe": "outputs/paper/l3_parent_disjoint_matched_full_flat_20260914/endpoint_probe_three_hosts_20260915.json",
+      "unavailable_endpoints_at_probe": [
+        "dgx024:50001",
+        "dgx027:50001"
+      ],
+      "endpoint_probe_note": "dgx007 passed 512/512; dgx011 initially had 80 ReadErrors during simultaneous burst probes, then passed two isolated 512/512 repeats. Both use repeated real prompts capped to 128 tokens; full-completion throughput is unestablished."
     }
   },
   "result_families": {
@@ -2174,7 +3510,7 @@
       },
       "comparison_note": "BBB and Bioavailability retain their verified current comparisons. Skin values are last-complete references from before the final MDAM L2 rebuild; 1/2/3 affected queries require targeted replay for 2/1, 4/2, and 8/4. The rejected 0.7148 Bioavailability L1-only run used a different prompt contract and is not a variance estimate.",
       "ames_valid_extension": {
-        "status": "verified_available_current_cells",
+        "status": "historical_ames_cell_requires_source_repair_replay",
         "plot_tasks": [
           "bbb_martins",
           "bioavailability_ma",
@@ -2187,7 +3523,7 @@
         "summary": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/summary.json",
         "receipt": "outputs/paper/analysis/progressive_record_card_budget_with_ames_valid/figure_receipt.json",
         "figure_sha256": "af4a93303db481c47c5a6564590632e7aaa4b6d71bed51ee3dfec07f9b104ae8",
-        "scope": "Four-column valid figure: current available progressive 2/1, 4/2, 8/4 curves plus Ames matched full-flat 4/2; all five Ames v2 baselines cover 274 rows. Unavailable Skin curves and stale Bioavailability baselines remain omitted.",
+        "scope": "Historical four-column figure; the Ames cell predates the prompt/source repairs and is not a current-lineage score. Other cells retain their documented lineage.",
         "configurations": [
           "Progressive 2/1",
           "Progressive 4/2",
@@ -2236,7 +3572,7 @@
     },
     "ames_scaffold_valid": {
       "root": "outputs/baselines/ames_scaffold_valid_v2",
-      "status": "complete_full_coverage",
+      "status": "historical_name_current_cohort_is_test",
       "results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
       "methods": [
         "minimol_head",
@@ -2255,7 +3591,9 @@
       "test_evaluation_performed": false,
       "condition_knn_policy": "same_condition_then_null_then_all",
       "previous_results": "outputs/baselines/ames_scaffold_valid_v1/valid_results.json",
-      "fallback_scope": "22 queries and 30 added neighbors per KNN method; prior 252 predictions and neighbors unchanged"
+      "fallback_scope": "22 queries and 30 added neighbors per KNN method; prior 252 predictions and neighbors unchanged",
+      "current_evaluation_subset": "test",
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json"
     },
     "dili_carcinogens_scaffold": {
       "status": "historical_gold_v3",
@@ -2599,6 +3937,21 @@
       "carcinogens_lineage_status": "historical_before_starling_only_five_group_gold_v4",
       "eligible_for_current_comparison": false,
       "current_carcinogens_publication": "data/starling_data/carcinogens/gold_v4/retrieval/canonical_publication.json"
+    },
+    "ames_scaffold_test_swapped": {
+      "status": "complete_verified_cohort_rename",
+      "root": "outputs/baselines/ames_scaffold_test_swapped_v1",
+      "results": "outputs/baselines/ames_scaffold_test_swapped_v1/test_results.json",
+      "n_test_rows": 274,
+      "methods": [
+        "minimol_head",
+        "minimol_knn_condition",
+        "minimol_knn_all",
+        "morgan_knn_condition",
+        "morgan_knn_all"
+      ],
+      "split_rename_receipt": "data/conditioned_benchmark/Ames/provenance/scaffold_valid_test_swap_20260908.json",
+      "previous_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json"
     },
     "dili_carcinogens_starling_only_scaffold": {
       "status": "historical_gold_v3",
@@ -2955,6 +4308,16 @@
           }
         }
       }
+    },
+    "bioavailability_scaffold_valid_current": {
+      "status": "complete",
+      "root": "outputs/baselines/conditioned_scaffold_valid_refresh_v1",
+      "completion": "outputs/baselines/conditioned_scaffold_valid_refresh_v1/completion.json",
+      "task": "bioavailability_ma",
+      "evaluation_subset": "valid",
+      "n": 262,
+      "methods": 5,
+      "selection_policy": "Frozen current-train MiniMol ensemble and OOF threshold; train-only KNN k=3, existing condition policies; no new tuning."
     }
   },
   "progressive_tasks": {
@@ -2990,7 +4353,7 @@
       "metrics_role": "current scaffold-valid agent metrics; all 262 selected retrieval surfaces were unchanged by the 2026-09-01 nitrendipine source-identity fix",
       "retrieval_change_receipt": "tools/chembl_tool/paper_experiments/receipts/bioavailability_scaffold_valid_nitrendipine_fix_zero_change.json",
       "n_selected_retrieval_changed": 0,
-      "baselines_role": "last_completed_before_2026-09-01_train_source_identity_fix; retrain required because two train rows were removed",
+      "baselines_role": "current scaffold-valid; frozen current-train checkpoint and threshold evaluated on valid, with train-only KNN; refreshed 2026-09-13",
       "agent_macro_f1": {
         "none": 0.6314369393261536,
         "L1": 0.6899932386747802,
@@ -3001,24 +4364,25 @@
         "L6": 0.7608142493638678
       },
       "baselines": {
-        "minimol_head": 0.5871884282577813,
+        "minimol_head": 0.6423696423696423,
         "minimol_knn_same_then_null": 0.5983535983535984,
         "minimol_knn_all_train": 0.6228534355168988,
         "morgan_knn_same_then_null": 0.5890896692806,
         "morgan_knn_all_train": 0.5887697579308058
-      }
+      },
+      "baselines_root": "outputs/baselines/conditioned_scaffold_valid_refresh_v1",
+      "restored_configuration": "replicate_suites.bio_skin_legacy_configuration_20260913"
     },
     "skin_reaction": {
       "n": 239,
       "input_sha256": "fa673c9d2f33f18f6ec35e5e506fd13dd1c7c5120fb9006f8ad527d8db70e130",
       "recorded_index_sha256": "b36aaf7f3a93085fd086d63bd0c1b3d53f59b472ecacfd6fbdb3f561eba924d9",
-      "current_index_sha256": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
+      "current_index_sha256": "0dda1a2a67ad50f76ff6eb653f1d0a98a97a82a3d9f5f0b0e1719481060e6349",
       "recorded_family_manifest_sha256": "7869eee925ec270f07dc53f6ce1886381d5e019b40c1cf19c651ad3bfb35759c",
-      "current_family_manifest_sha256": "30ef7618b421208f5bb52c4a59e114fa83f3f0a6e9651ea8e87fba9379f5db84",
+      "current_family_manifest_sha256": "4160d1fad3a02dccd51ea3eebd2282edf76cff0ae1b9aca3f39f30f0815acb01",
       "status": "last_complete_reference_pending_targeted_replay",
-      "metrics_role": "last complete scaffold-valid 4/2 curve before the final MDAM L2 rebuild; two queries require targeted replay before these metrics are current",
+      "metrics_role": "Historical strict scaffold-valid 4/2 reference predating MDAM and identity repairs; latest hybrid replay is a separate registered suite.",
       "retrieval_change_receipt": "tools/chembl_tool/paper_experiments/receipts/skin_scaffold_valid_mdam_family_rebuild.json",
-      "n_selected_retrieval_changed": 2,
       "run_root": "outputs/paper/starling_conditioned_assay_progressive_visible_skin_source_purity_v5_card_budget_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
       "run_manifest_sha256": "964742e2b64c702b3c188471ffd7f31cac4f91b8f218b3b43a799b76e18f95fc",
       "query_prior_root": "outputs/paper/starling_conditioned_skin_query_prior_v1/scaffold_valid_deepseek_v4_flash_0731",
@@ -3050,18 +4414,21 @@
         "minimol_knn_all_train": 0.5858410819949282,
         "morgan_knn_same_then_null": 0.5005169720835074,
         "morgan_knn_all_train": 0.4976353126642144
-      }
+      },
+      "restored_configuration": "replicate_suites.bio_skin_legacy_configuration_20260913",
+      "latest_source_rebinding_suite": "skin_identity_rebinding_replay_20260914",
+      "historical_mdam_changed_queries": 2
     },
     "ames": {
       "n": 274,
-      "status": "current",
-      "metrics_role": "Fresh scaffold-valid 4/2 progressive curve, one DeepSeek-V4-Flash-0731 run",
+      "status": "historical_pre_prompt_and_source_repairs",
+      "metrics_role": "Historical single Flash valid run; use the registered replicate suites and their lineage status.",
       "run_root": "outputs/paper/starling_conditioned_ames_source_review_v6_4_2_v1/scaffold_valid_deepseek_v4_flash_0731",
       "run_manifest_sha256": "9bfdf0afe9d2f45cd953d35e2ed0c01a55d29554ca9fb593556f7c4f19c9a907",
       "input_sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e",
       "recorded_index_sha256": "e5c0b545564e5cb769015034bdf8f28ab32836b21e85823a911a904cd2c73649",
-      "current_index_sha256": "e5c0b545564e5cb769015034bdf8f28ab32836b21e85823a911a904cd2c73649",
-      "current_family_manifest_sha256": "d4ab1b9ebb8bcf20eaaa8c73ab6dd8318bde56642ed893907ec79bc96618544a",
+      "current_index_sha256": "ee034faf142743f8f3e542872ae270d804b3763d7944e14543c681a17fdd41ef",
+      "current_family_manifest_sha256": "f30a2e59be114d58904170eefe87628b68a0dd511323682ea7c2c7488a4aa643",
       "agent_macro_f1": {
         "none": 0.7002241951394494,
         "L1": 0.7198936822735638,
@@ -3080,7 +4447,10 @@
       },
       "baselines_root": "outputs/baselines/ames_scaffold_valid_v2",
       "baseline_results": "outputs/baselines/ames_scaffold_valid_v2/valid_results.json",
-      "baselines_role": "All five baselines cover 274 rows; condition-first KNN uses same-condition, null-condition, then unrestricted train fallback"
+      "baselines_role": "All five baselines cover 274 rows; condition-first KNN uses same-condition, null-condition, then unrestricted train fallback",
+      "source_repair_receipt": "data/starling_data/ames/identity_repair_nitroso/receipt.json",
+      "trace_source_repair_receipt": "data/starling_data/ames/trace_review_20260913/verification.json",
+      "latest_source_replay_suite": "replicate_suites.ames_trace_source_replay_20260913"
     },
     "carcinogens": {
       "n": 469,
@@ -3094,13 +4464,15 @@
     },
     "dili": {
       "n": 402,
-      "status": "latest_completed_diagnostic_input_pinned",
+      "status": "current_v5_source_replay_complete_verified",
       "input_sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
-      "current_index_sha256": "14f72639ad51d35be3acf641b223ed7fedaa1ea8d0671672efde789065ec26ea",
+      "current_index_sha256": "aaed6f0c66fd9c82e048fb230bf42cb28585b02519bb57c2d6f183cdbdb74e09",
       "publication_receipt": "data/starling_data/dili/retrieval_final/publication.json",
-      "current_suite": "dili_retrieval_review_v5_no_prior_grounded_sim0",
-      "metrics_role": "Latest completed diagnostic remains bound to its actual prepared inputs; consolidated source does not itself authorize reuse",
-      "baseline_status": "gold_v4_matched_baselines_complete_verified"
+      "current_suite": "dili_v5_trace_source_replay_20260913",
+      "metrics_role": "Current v5 progressive valid/test with 13-record source repair; preserved legacy v2 diagnostic is historical. Prefix reuse verified.",
+      "baseline_status": "gold_v4_matched_baselines_complete_verified",
+      "historical_suite": "dili_retrieval_review_v5_no_prior_grounded_sim0",
+      "prompt_profile": "progressive_evidence_revision.v5"
     }
   },
   "random_progressive": {
@@ -3133,10 +4505,10 @@
     },
     "skin_reaction": {
       "n": 242,
-      "status": "stale_after_final_mdam_l2_rebuild_requires_full_replay",
+      "status": "stale_after_source_repairs_requires_full_replay",
       "recorded_index_sha256": "2e15558c5541ee242a18094b4498bf7c09734bb8693165058a24541e13dbb794",
-      "current_index_sha256": "96b4403709f4fa0e144026394a530f7313c885d603d6e95ae06341874bea8ba4",
-      "metrics_role": "last completed broad-L1 v1 random reference; Skin v5 replay required",
+      "current_index_sha256": "c61c8e6e54c8cd8b9ec187da847fea68a2c6c5c60fd4938e3faf73b8e417b06c",
+      "metrics_role": "Historical random reference; current Skin source-purity v7 requires independent full replay.",
       "agent_macro_f1": {
         "none": 0.6848101265822786,
         "L1": 0.7204176105584557,
@@ -3198,5 +4570,197 @@
       "retrieval_status": "latest_completed_diagnostic; actual run inputs remain pinned"
     }
   },
-  "cleanup_history": "tools/chembl_tool/paper_experiments/receipts/dili_carcinogens_cleanup_history.json"
+  "cleanup_history": "tools/chembl_tool/paper_experiments/receipts/dili_carcinogens_cleanup_history.json",
+  "diagnostics": {
+    "functional_group_tree_20260913": {
+      "status": "complete",
+      "kind": "posthoc_selected_error_diagnostic_not_benchmark",
+      "root": "outputs/paper/diagnostics/functional_group_tree_20260913",
+      "summary": "outputs/paper/diagnostics/functional_group_tree_20260913/summary.json",
+      "report": "outputs/paper/diagnostics/functional_group_tree_20260913/REPORT.md",
+      "prompt_profile": "progressive_functional_group_tree.v3",
+      "tool_cache_namespace": "tool-service-2026-09-13-v4",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "cases": [
+        "dili scaffold valid #345 through L4",
+        "bbb_martins scaffold test #343 through L3",
+        "carcinogens scaffold test #104 through L1"
+      ],
+      "repetitions_per_arm": 2,
+      "level_outputs": 32,
+      "model_calls": 52,
+      "validation_retries": 20,
+      "final_failures": 0,
+      "auxiliary": "One fresh single-prior pair for Carcinogens #104; two additional model calls. Both still misidentify an enone.",
+      "result": "No terminal-label gain in paired replay: BBB 2/2 vs 2/2, DILI 0/2 vs 0/2, Carcinogens 0/2 vs 0/2. DILI and Carcinogens target structural errors persist.",
+      "controls": "Frozen cards, structures, numerical tools and query priors; fresh progressive states. Current task contract in both arms; previously inspected source snapshots, not fresh retrieval or held-out validation.",
+      "service_rollover": "outputs/paper/diagnostics/functional_group_tree_20260913/service_rollover.json",
+      "formal_results": "Existing suites retain their frozen prompt/tool contracts and scores; this entry does not promote diagnostic predictions.",
+      "review_receipt": "tools/chembl_tool/paper_experiments/receipts/functional_group_tree_review_20260913.json",
+      "source_trace_audit": "outputs/paper/analysis/functional_group_trace_audit_20260913",
+      "execution_snapshot": "outputs/paper/diagnostics/functional_group_tree_20260913/execution_snapshot.md",
+      "total_model_calls_including_auxiliary": 54
+    },
+    "reasoning_prompt_revision_20260913": {
+      "status": "implemented_not_model_evaluated",
+      "prompt_profile": "progressive_evidence_revision.v5",
+      "receipt": "tools/chembl_tool/paper_experiments/receipts/reasoning_prompt_revision_20260913.json",
+      "review_report": "outputs/paper/analysis/reasoning_prompt_review_20260913/REPORT.md",
+      "model_calls": 0,
+      "benchmark_promotion": false,
+      "scope": "Shared progressive/full-flat instruction cleanup, empirical source boundaries, decisive transfer explanations, and old-error correction. Bioavailability high/low rules and query-only prompts unchanged."
+    },
+    "ames_valid_v5_level_decline_20260913": {
+      "status": "complete_read_only",
+      "kind": "posthoc_trace_and_source_diagnostic_not_ablation",
+      "root": "outputs/paper/analysis/ames_valid_v5_level_decline_20260913",
+      "report": "outputs/paper/analysis/ames_valid_v5_level_decline_20260913/REPORT.md",
+      "summary": "outputs/paper/analysis/ames_valid_v5_level_decline_20260913/summary.json",
+      "source_review_candidates": "outputs/paper/analysis/ames_valid_v5_level_decline_20260913/source_review_candidates.json",
+      "run_suite": "reasoning_prompt_v5_scaffold_20260913",
+      "rows": 274,
+      "level_outputs": 1370,
+      "adjacent_harmful_flips": 17,
+      "adjacent_beneficial_flips": 6,
+      "l1_to_l5_net_correct": -11,
+      "model_calls": 0,
+      "scientific_inputs_changed": false,
+      "conclusion": "Decline concentrated at L2; placement candidates coexist with condition/endpoint over-transfer, unsupported mechanism vetoes and incomplete SAR context. Source changes and causal benefit remain untested.",
+      "source_followup": "diagnostics.ames_trace_source_repair_20260913"
+    },
+    "bio_skin_v2_v5_comparison_20260913": {
+      "status": "complete",
+      "report": "outputs/paper/analysis/bio_skin_v2_v5_comparison_20260913/REPORT.md",
+      "input_comparison": "outputs/paper/analysis/bio_skin_v2_v5_comparison_20260913/input_comparison.json",
+      "restoration_suite": "replicate_suites.bio_skin_legacy_configuration_20260913",
+      "interpretation": "Multiple input components changed; historical test means use three runs versus one v5 run. Historical Skin valid predates MDAM repair."
+    },
+    "ames_trace_source_repair_20260913": {
+      "status": "complete_verified",
+      "receipt": "data/starling_data/ames/trace_review_20260913/verification.json",
+      "decisions": "data/starling_data/ames/trace_review_20260913/decisions.json",
+      "retrieval_validation": "data/starling_data/ames/retrieval_validation.json",
+      "moves": {
+        "ames_v2:425939": "L2 -> L4",
+        "ames_base:186648": "L2 -> L3"
+      },
+      "context_correction": "ames_base:80868",
+      "new_model_calls": 0,
+      "prediction_status": "Existing predictions retain pre-repair inputs; selected-surface audit or replay required for current-source claims.",
+      "model_replay_suite": "replicate_suites.ames_trace_source_replay_20260913"
+    },
+    "dili_legacy_test_level_plateau_20260913": {
+      "status": "complete_read_only_diagnostic",
+      "task": "dili",
+      "evaluation_subset": "test",
+      "split_scheme": "scaffold",
+      "source_suite": "dili_retrieval_review_v5_no_prior_grounded_sim0",
+      "prompt_profile": "progressive_compact_tools_short_aliases.v2",
+      "root": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913",
+      "report": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913/REPORT.md",
+      "summary": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913/diagnostic_summary.json",
+      "receipt": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913/audit_receipt.json",
+      "source_findings": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913/source_findings.json",
+      "source_trace_applications": "outputs/paper/analysis/dili_legacy_test_level_plateau_20260913/source_trace_applications.json",
+      "n_queries": 402,
+      "n_level_outputs": 2814,
+      "l2_to_l7_corrected": 4,
+      "l2_to_l7_regressed": 2,
+      "l2_to_l7_stable_wrong": 116,
+      "n_source_findings": 5,
+      "source_review_scope": "targeted, not complete library review; original naloxone metabolite numeric table pending",
+      "source_modified": false,
+      "prompt_modified": false,
+      "model_replay_performed": false,
+      "interpretation_limit": "Historical v2 DILI trace diagnostic; do not use its adoption/flip counts to explain reasoning_prompt_v5 results. Current v5 audit is in dili_v5_trace_source_replay_20260913."
+    },
+    "l3_parent_disjoint_retrieval_20260914": {
+      "status": "retrieval_only_complete_verified",
+      "root": "outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914",
+      "report": "outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914/REPORT.md",
+      "summary": "outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914/summary.json",
+      "level_statistics": "outputs/paper/analysis/l3_parent_disjoint_retrieval_20260914/level_statistics.csv",
+      "tasks": [
+        "bbb_martins",
+        "bioavailability_ma",
+        "skin_reaction",
+        "ames",
+        "dili",
+        "carcinogens"
+      ],
+      "evaluation_subsets": [
+        "valid",
+        "test"
+      ],
+      "n_rows": 4091,
+      "n_baseline_selected_surface_checks": 23510,
+      "n_mismatches": 0,
+      "policy": "source-family L1/L2 scaffold_disjoint; L3+ parent_disjoint; current index, budgets and thresholds unchanged",
+      "model_calls": 0,
+      "predictive_performance": "not_evaluated",
+      "production_defaults_modified": false
+    },
+    "skin_l3_parent_disjoint_trace_20260914": {
+      "status": "complete_read_only",
+      "root": "outputs/paper/analysis/skin_l3_parent_disjoint_trace_20260914",
+      "report": "outputs/paper/analysis/skin_l3_parent_disjoint_trace_20260914/REPORT.md",
+      "task": "skin_reaction",
+      "evaluation_subset": "test",
+      "n_rows": 241,
+      "changed_contexts": 36,
+      "paired_label_changes": [
+        82
+      ],
+      "source_binding_review_candidates": [
+        "sensitization_aop:38402",
+        "sensitization_aop:38403"
+      ],
+      "source_repair_followup": "replicate_suites.skin_trace_source_replay_20260914"
+    },
+    "scaffold_vs_l3_parent_disjoint_figures_20260914": {
+      "status": "complete_verified",
+      "root": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914",
+      "receipt": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/figure_receipt.json",
+      "comparison": "Scaffold-disjoint versus parent-disjoint for L3+ source cards; frozen paired runs, single run per setting",
+      "baseline_methods": [
+        "minimol_head",
+        "minimol_knn_condition",
+        "minimol_knn_all",
+        "morgan_knn_condition",
+        "morgan_knn_all"
+      ],
+      "cohort_validation": "All 60 baseline cells matched current molecule/label/condition row order, with recomputed metrics; Ames valid uses renamed old-test cohort.",
+      "test": {
+        "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/performance.png",
+        "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/performance.svg",
+        "metrics": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/metrics.tsv",
+        "references": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/test/references.tsv"
+      },
+      "valid": {
+        "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.png",
+        "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance.svg",
+        "metrics": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/metrics.tsv",
+        "references": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/references.tsv"
+      },
+      "valid_with_original_v5_full_flat": {
+        "status": "complete_verified",
+        "png": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance_with_v5_full_flat.png",
+        "svg": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/performance_with_v5_full_flat.svg",
+        "metrics": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/metrics_with_v5_full_flat.tsv",
+        "references": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/valid/references.tsv",
+        "receipt": "outputs/paper/analysis/scaffold_vs_l3_parent_disjoint_20260914/full_flat_overlay_receipt.json",
+        "comparison_scope": "Original v5 scaffold-disjoint matched full-flat added to both progressive policy curves, on the same valid cohort and model. Bioavailability/Skin differ in prompt, tools and prior; Ames/DILI differ in source repairs. This is not a fully matched three-arm ablation. None points refer to the progressive configurations."
+      }
+    },
+    "l3_parent_disjoint_trace_effects_20260914": {
+      "status": "complete_read_only",
+      "root": "outputs/paper/analysis/l3_parent_disjoint_trace_effects_20260914",
+      "report": "outputs/paper/analysis/l3_parent_disjoint_trace_effects_20260914/REPORT.md",
+      "audit_receipt": "outputs/paper/analysis/l3_parent_disjoint_trace_effects_20260914/audit_receipt.json",
+      "n_rows": 4091,
+      "n_changed_final_contexts": 2403,
+      "n_purposively_selected_paired_cases": 32,
+      "interpretation": "Paired observations, not causal attribution or a primary-source re-audit. Fixed card budgets can replace strict-arm cards. Later Skin v7 repair and running matched full-flat are separate."
+    }
+  }
 }

@@ -1,0 +1,21 @@
+{
+  "canonical_records_sha256": "39f43e2910957a132d34a52547621524603bae5f3ad1c67e8b400c32309a4697",
+  "overlay": "source_overlays/source_family_purity_v5/skin_reaction",
+  "overlay_records_sha256": "d7132856b8226b455dd8e1c6393cd94ef986feb1d4eb40bd60e7acde8433e779",
+  "catalog": "family_catalogs_mechanism_tagged_v1/skin_reaction_source_purity_v5",
+  "catalog_config": "STARLING",
+  "catalog_sha256": "9c1ab3e531b66a6463d66c7113b6b8b9d8624d2ef7116c3ca895d69512f0f0ab",
+  "direct_group": "Direct.skin_reaction",
+  "indices": {
+    "scaffold": {
+      "path": "indices/skin_reaction/mechanism_tagged_v4_source_purity_v5",
+      "index_sha256": "db7363e4ae8f1f95d7eb35d9b0b84a4fa770fb95524cc84fa79301e9a02075a4",
+      "evidence_sha256": "69fa5f7634713ff54bec42140435127ea4f028a48c167c5be307c9e204b1d3aa"
+    },
+    "random": {
+      "path": "indices_random_valid_test/skin_reaction/mechanism_tagged_v4_source_purity_v5",
+      "index_sha256": "96b4403709f4fa0e144026394a530f7313c885d603d6e95ae06341874bea8ba4",
+      "evidence_sha256": "4ded66d791a9d398efe8876807e0087d91d97ba62c5a391d53563ec9711f4cde"
+    }
+  }
+}
