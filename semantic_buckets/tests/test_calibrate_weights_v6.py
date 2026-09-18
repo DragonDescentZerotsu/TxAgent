@@ -122,7 +122,8 @@ def test_local_speculative_queue_never_requires_openrouter_snapshot(
     connection = calibration.core._request_database(":memory:")
     try:
         request_ids = calibration._queue(
-            connection, rows, {}, {}, {"anchor": {}}, local_speculative=True
+            connection, rows, {}, {}, {"anchor": {}}, local_speculative=True,
+            local_base_url="http://dgx005:50002/v1",
         )
         validation = json.loads(connection.execute(
             "select validation_json from requests where request_id=?", request_ids
@@ -131,7 +132,7 @@ def test_local_speculative_queue_never_requires_openrouter_snapshot(
         connection.close()
 
     assert validation["requested_model"] == calibration.speculative.DEFAULT_MODEL
-    assert validation["selected_provider_route"] == "dgx008_speculative_first4"
+    assert validation["selected_provider_route"] == "dgx005_50002_speculative_first4"
 
 
 def test_enriched_prompt_shows_prior_context_and_hides_bucket_id() -> None:

@@ -78,6 +78,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_LAYOUTS,
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V4_VARIANTS,
+    CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
     JOSEPH_PROMPT_VERSION,
@@ -489,7 +490,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
         "provider_pool_config": (
             {
                 "path": str(Path(args.provider_pool_config).resolve()),
-                "sha256": sha256_file(args.provider_pool_config),
+                "sha256": sha256_file(Path(args.provider_pool_config)),
                 "selection": args.endpoint_selection,
             }
             if args.provider_pool_config
@@ -2091,18 +2092,18 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
             raise SystemExit("Joseph flat requires its cache-matched selection manifest")
         if args.flat_prompt_version == JOSEPH_PROMPT_VERSION and not args.disable_flat_tools:
             raise SystemExit("joseph_flat_v2 requires --disable-flat-tools")
-        if args.flat_prompt_version == CONTEXT_V4_PROMPT_VERSION:
+        if args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS:
             if args.flat_reranking not in CONTEXT_V4_VARIANTS:
                 raise SystemExit(
-                    "joseph_flat_context_v4_v1 requires one of its five retrieval modes"
+                    f"{args.flat_prompt_version} requires one of its five retrieval modes"
                 )
             if not args.disable_flat_tools:
                 raise SystemExit(
-                    "joseph_flat_context_v4_v1 requires --disable-flat-tools"
+                    f"{args.flat_prompt_version} requires --disable-flat-tools"
                 )
             if args.reasoning_effort != "high":
                 raise SystemExit(
-                    "joseph_flat_context_v4_v1 requires --reasoning-effort high"
+                    f"{args.flat_prompt_version} requires --reasoning-effort high"
                 )
             if args.flat_query_prior == "cached" and not args.single_analysis_source_batch:
                 raise SystemExit(
@@ -2154,7 +2155,7 @@ def _validated_flat_selection_manifest(
         "input_jsonl": str(Path(args.input_jsonl).resolve()),
         "input_sha256": sha256_file(Path(args.input_jsonl)),
     }
-    if args.flat_prompt_version == CONTEXT_V4_PROMPT_VERSION:
+    if args.flat_prompt_version in CONTEXT_PROMPT_VERSIONS:
         expected.update(
             layout=args.flat_layout,
             query_prior=args.flat_query_prior,
@@ -2172,7 +2173,7 @@ def _validated_flat_selection_manifest(
         raise SystemExit("flat selection manifest has an invalid record pool")
     if not manifest.get("selection_contract_sha256"):
         raise SystemExit("flat selection manifest lacks its contract hash")
-    if args.flat_prompt_version in {JOSEPH_PROMPT_VERSION, CONTEXT_V4_PROMPT_VERSION}:
+    if args.flat_prompt_version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}:
         expected_projection = {
             "evidence_projection": EVIDENCE_PROJECTION,
             "extra_details_policy": EXTRA_DETAILS_POLICY,

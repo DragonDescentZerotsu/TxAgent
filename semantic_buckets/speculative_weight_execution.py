@@ -14,6 +14,7 @@ import sqlite3
 import statistics
 import time
 from typing import Any
+from urllib.parse import urlsplit
 import uuid
 
 import httpx
@@ -360,7 +361,7 @@ def persist_result(
          core._canonical_json(result.get("response")) if result.get("response") else None,
          medoid.get("reasoning_content") if medoid else None,
          model if result["status"] == "complete" else None,
-         "dgx008_speculative_first8", base_url,
+         f"{urlsplit(base_url).netloc.replace(':', '_')}_speculative", base_url,
          int(row["input_tokens"]) + prompt_tokens,
          int(row["output_tokens"]) + output_tokens,
          result.get("error"), request_id),
@@ -430,10 +431,13 @@ async def execute_pending(
     connection: sqlite3.Connection, request_ids: Sequence[str], benchmark_path: Path,
     *, required: int = REQUIRED_REPLICAS, fanout: int | None = None,
     maximum_requests: int = MAX_ROUND_REQUESTS, require_endpoint_drain: bool = True,
+    base_url: str | None = None,
 ) -> dict[str, Any]:
     benchmark, benchmark_sha256 = load_benchmark(benchmark_path)
     selection = benchmark["selection"]
-    endpoint = benchmark["endpoint"]
+    endpoint = dict(benchmark["endpoint"])
+    if base_url is not None:
+        endpoint["base_url"] = base_url
     initial_fanout = int(fanout or selection["fanout"])
     maximum = initial_fanout if fanout is not None else MAX_FANOUT
     if not 1 <= required <= initial_fanout <= MAX_FANOUT:

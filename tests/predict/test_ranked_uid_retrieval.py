@@ -11,6 +11,7 @@ from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
     _select_assay_contrastive,
     load_candidates,
     load_ranked_panels,
+    load_ranked_universe,
 )
 from predict.utils.json import sha256_file
 
@@ -106,6 +107,9 @@ def _release(tmp_path: Path) -> tuple[dict, Path]:
     index.write_text(json.dumps({
         "schema_version": "ranked_uid_task_release_index.v1",
         "status": "complete", "task_id": "bbb_martins",
+        "profile": "ranked_level_retrieval_v3", "gold_release": "v1",
+        "pool": "all", "parent_capacity": 100,
+        "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
         "evidence": {
             "manifest": "evidence/VERSION.json", "content_id": "evidence",
             "manifest_sha256": sha256_file(evidence_manifest),
@@ -131,6 +135,22 @@ def _release(tmp_path: Path) -> tuple[dict, Path]:
     }, l2
 
 
+def test_load_ranked_universe_reads_all_rows_before_hydration(tmp_path: Path) -> None:
+    policy, manifest = _release(tmp_path)
+
+    ranked, evidence_manifest, audit = load_ranked_universe(
+        Path(policy["cache_index"]), task="bbb_martins", subset="valid",
+        levels=("L2",), queries={"q1": "CCC"},
+    )
+
+    assert [row["item_id"] for row in ranked["L2"]["q1"]] == [
+        "u3", "u4", "u5", "u6", "u7",
+    ]
+    assert evidence_manifest.name == "VERSION.json"
+    assert audit["parent_capacity"] == 100
+    assert audit["level_manifests"]["L2"]["path"] == str(manifest.resolve())
+
+
 def test_expanded_parent_universe_selects_records_then_hydrates_once(tmp_path: Path) -> None:
     policy, _ = _release(tmp_path)
     molecules, later, audit = load_candidates(
@@ -145,6 +165,20 @@ def test_expanded_parent_universe_selects_records_then_hydrates_once(tmp_path: P
     assert audit["neighbor_identity_policy_by_level"]["L2"] == "parent_disjoint"
     assert audit["cache_capacities"] == {"L1": 100, "L2": 5}
     assert audit["cache_content_ids"] == {"L1": "L1", "L2": "L2"}
+
+
+def test_assay_records_are_reranked_inside_morgan_parent_width(tmp_path: Path) -> None:
+    policy, _ = _release(tmp_path)
+    _, later, audit = load_candidates(
+        {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=1, l1_limit=10, later_limit={"L2": 3}, cache_pool="all",
+        morgan_primary_parent_width=1,
+    )
+
+    assert [row["record_id"] for row in later["q1"]["L2"]["records"]] == [
+        "r4", "r5", "r3",
+    ]
+    assert audit["contract"]["morgan_primary_parent_width"] == 1
 
 
 def test_contrastive_selection_widens_only_for_missing_label() -> None:

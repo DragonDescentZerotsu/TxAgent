@@ -20,6 +20,8 @@ from predict.harnesses.branches.flat import (
     ASSAY_TRANSFER_VARIANT,
     CONTEXT_V4_HARNESS_VERSION,
     CONTEXT_V4_PROMPT_VERSION,
+    CONTEXT_V5_HARNESS_VERSION,
+    CONTEXT_V5_PROMPT_VERSION,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
     JOINT_VARIANT,
@@ -32,6 +34,7 @@ from predict.harnesses.branches.flat import (
     apply_flat_group_prompt,
     build_flat_context_request,
     cache_matched_flat_retrieval,
+    derive_flat_claim_evidence,
     flat_group_validation,
     flat_context_validation,
     flat_prompt_provenance,
@@ -272,6 +275,103 @@ def test_flat_context_harness_is_publicly_selectable(monkeypatch) -> None:
         "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
     ]) == 0
     assert CONTEXT_V4_HARNESS_VERSION in calls[0]
+
+
+def test_v5_uses_molecule_scoped_record_ids_and_claim_schema() -> None:
+    messages, metadata = build_flat_context_request(
+        _flat_context_retrieval(),
+        task_id="bbb_martins",
+        task_prompt_profile="meaningful_cns_access_v1",
+        layout="level-grouped",
+        reranking="assay-transfer-contrastive",
+        query_prior=None,
+        prompt_version=CONTEXT_V5_PROMPT_VERSION,
+    )
+    record_ids = [
+        row["visible_id"] for row in metadata["reasoning_reference_index"]
+        if row["unit_kind"] == "record"
+    ]
+    assert record_ids == ["Record 1-1", "Record 2-1"]
+    assert metadata["card_alias_map"] == {
+        "Record 1-1": "uid-1", "Record 2-1": "uid-2",
+    }
+    assert "# Level L2" in messages[1]["content"]
+
+    validation = flat_context_validation(
+        "bbb_martins",
+        task_prompt_profile="meaningful_cns_access_v1",
+        prompt_version=CONTEXT_V5_PROMPT_VERSION,
+        reference_index=metadata["reasoning_reference_index"],
+    )
+    content = {
+        "claims": [{
+            "claim": "The direct evidence supports the decision.",
+            "molecule_ids": ["Molecule 1", "Molecule 2"],
+            "record_ids": ["Record 1-1", "Record 2-1"],
+            "evidence_role": "supportive",
+        }],
+        "final_prediction": "pass",
+    }
+    assert validation["content_validator"](content) == []
+    content["claims"].append({
+        "claim": "The same record cannot oppose the decision.",
+        "molecule_ids": [],
+        "record_ids": ["Record 1-1"],
+        "evidence_role": "contradictory",
+    })
+    assert validation["content_validator"](content) == [
+        "evidence_role_overlap:Record 1-1"
+    ]
+
+
+def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:
+    references = [
+        {"visible_id": f"Molecule {index}", "unit_kind": "molecule"}
+        for index in range(1, 13)
+    ] + [
+        {"visible_id": f"Record 1-{index}", "unit_kind": "record"}
+        for index in range(1, 13)
+    ]
+    validation = flat_context_validation(
+        "bbb_martins",
+        task_prompt_profile="meaningful_cns_access_v1",
+        prompt_version=CONTEXT_V5_PROMPT_VERSION,
+        reference_index=references,
+    )
+    content = {
+        "claims": [
+            {
+                "claim": "Many records support the decision.",
+                "molecule_ids": [],
+                "record_ids": [f"Record 1-{index}" for index in range(1, 13)],
+                "evidence_role": "supportive",
+            },
+            {
+                "claim": "A molecule-level signal is contradictory.",
+                "molecule_ids": ["Molecule 12"],
+                "record_ids": [],
+                "evidence_role": "contradictory",
+            },
+        ],
+        "final_prediction": "fail",
+    }
+    assert validation["content_validator"](content) == []
+    assert derive_flat_claim_evidence(content) == {
+        "supportive_molecule_ids": [],
+        "supportive_record_ids": [f"Record 1-{index}" for index in range(1, 13)],
+        "contradictory_molecule_ids": ["Molecule 12"],
+        "contradictory_record_ids": [],
+    }
+
+
+def test_v5_harness_is_publicly_selectable(monkeypatch) -> None:
+    calls = []
+    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
+    assert flat.run([
+        "--harness-version", CONTEXT_V5_HARNESS_VERSION,
+        "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
+    ]) == 0
+    assert CONTEXT_V5_HARNESS_VERSION in calls[0]
 
 
 @pytest.mark.parametrize(
@@ -537,6 +637,29 @@ def test_cache_matched_flat_adapter_groups_without_reselecting_or_leaking_pool()
     assert rows[1]["provenance"]["retrieval"]["ranking_method"] == "assay-transfer"
     assert "extra_details" not in json.dumps(rows)
     assert "record_pool" not in json.dumps(retrieval)
+
+
+def test_cached_query_identity_allows_missing_inchi_key() -> None:
+    molecule = {
+        "reference_molecule_id": "REF",
+        "ranking_method": "assay_transfer",
+        "transfer_likelihood": 0.8,
+        "l1_records": [{
+            "record_id": "r1", "reference_molecule_id": "REF",
+            "morgan_similarity": 0.7, "assay_rank": 1,
+            "ranking_method": "assay_transfer", "transfer_likelihood": 0.8,
+            "payload": _selected_payload("r1", "L1", "direct"),
+        }],
+    }
+
+    retrieval = cache_matched_flat_retrieval(
+        "q", "[*]CC", [molecule], {}, task="bbb_martins",
+        reranking="assay-transfer", query_audit={"L1": {}},
+        query_identity={"parent_smiles": "[*]CC", "parent_id": ""},
+    )
+
+    assert retrieval["query"]["canonical_smiles"] == "[*]CC"
+    assert retrieval["query"]["standard_inchi_key"] == ""
 
 
 def test_flat_v2_renders_complete_source_semantics_without_molecule_name() -> None:

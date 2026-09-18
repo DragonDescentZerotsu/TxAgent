@@ -1,19 +1,24 @@
 # Upstream level assignments keyed by acquisition UID
 
+The BBB and Oral files here are retained for provenance of existing manifests.
+The canonical mappings for the rebuilt V10 releases now live beside each
+library at `data/evidence_libraries/<task>/v10/level_mapping/`.
+
 This is the routing-reference import from main commit
-`00800a5b890440ac52e4e7689c4a157d0ff2a365` (2026-09-04).
+`26d44f121141f3738764c0b00dc09e185445341b` (2026-09-14).
 It does not merge main or change this branch's retrieval, gold labels, or published traces.
 
 The byte-exact upstream package is retained at
 `artifacts/chembl_tool/starling/current_level_records/`, including its original
-README and manifest. All nine Parquet hashes match that manifest. Paths and
+README and manifest. All Parquet hashes match that manifest. Paths and
 regeneration instructions in that original README describe the upstream pipeline.
 The package first appeared in `23ded557a94106a364542da6800e7fa9b3de87d9`;
 the imported tip includes the subsequent Skin revision.
 
 ## UID lookup
 
-This directory contains one Parquet per task with columns:
+This directory contains one Parquet per original task and a sharded Parquet
+dataset for each newly imported task, all with columns:
 `source_row_uid`, `canonical_record_id`, `source_group_id`, `family_key`, `level`.
 Each imported membership row has one verified acquisition UID, and each UID has
 exactly one level and family in this snapshot.
@@ -22,22 +27,28 @@ exactly one level and family in this snapshot.
 |---|---:|---|---:|
 | BBB | 498,556 | L1–L5 | 0 / 0 |
 | Oral bioavailability | 435,472 | L1–L6 | 0 / 0 |
-| Skin | 66,967 | L1–L3 | 0 / 0 |
+| Ames | 1,299,584 | L1–L5 | 0 / 0 |
+| DILI | 1,386,455 | L1–L7 | 0 / 0 |
+| Carcinogens | 3,151,140 | L1–L7 | 0 / 0 |
+| Skin | 66,964 | L1–L3 | 0 / 0 |
 
 ```python
 import pandas as pd
 
-reference = pd.read_parquet("data/artifacts/starling/source_uid_levels/bbb_martins.parquet")
+reference = pd.read_parquet(
+    "data/evidence_libraries/bbb_martins/v10/level_mapping/records.parquet"
+)
 uid_to_level = reference.set_index("source_row_uid")["level"]
 # For an existing dataframe containing source_row_uid:
 audited = records.merge(reference, on="source_row_uid", how="left", validate="many_to_one")
 ```
 
-The UID bridge uses exact frozen lineage:
+The current UID bridge uses exact frozen lineage. It validates the upstream
+record-ID convention, source-directory alias, and zero- or one-based row-number
+convention before resolving the permanent acquisition UID:
 
 `canonical_record_id + source_id + source_record_id`
-→ frozen Stage-03 `cleaned_record_id`
-→ UID ledger `legacy_cleaned_record_id`
+→ frozen canonical source directory and row number
 → permanent `source_row_uid`.
 
 Source IDs, source record IDs, and acquisition row numbers are checked together.

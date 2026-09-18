@@ -21,13 +21,16 @@ GROUP_RE = re.compile(
     r"\b((?:evidence\s+group|semantic\s+bucket)\s+[1-9][0-9]*)\b",
     re.IGNORECASE,
 )
-CARD_RE = re.compile(r"\b(C[0-9]{2,})\b", re.IGNORECASE)
+CARD_RE = re.compile(
+    r"\b(C[0-9]{2,}|Record\s+[1-9][0-9]*-[1-9][0-9]*)\b",
+    re.IGNORECASE,
+)
 HEADING_RE = re.compile(
     r"^(#{2,3})\s+(Molecule|Evidence group|Semantic bucket)\s+[1-9][0-9]*$"
 )
 REFERENCE_LINE_RE = re.compile(
     r"^(?:#{2,3}\s+(?:Molecule|Evidence group|Semantic bucket)\s+[1-9][0-9]*"
-    r"|Record\s+C[0-9]{2,})$"
+    r"|Record\s+(?:C[0-9]{2,}|[1-9][0-9]*-[1-9][0-9]*))$"
 )
 
 

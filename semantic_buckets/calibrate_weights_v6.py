@@ -13,6 +13,7 @@ import shutil
 import sqlite3
 import threading
 from typing import Any
+from urllib.parse import urlsplit
 
 from jinja2 import Environment, StrictUndefined
 import pandas as pd
@@ -513,6 +514,7 @@ def _queue(
     scores: Mapping[str, Mapping[str, Any]],
     provider_snapshot: Mapping[str, Any] | None = None,
     local_speculative: bool = False,
+    local_base_url: str = speculative.DEFAULT_BASE_URL,
 ) -> list[str]:
     request_ids = []
     for row in rows.itertuples(index=True):
@@ -521,19 +523,29 @@ def _queue(
             raise ValueError(f"{row.batch_id} has incomplete anchors: {sorted(missing)}")
         prompt = _render(row.task, row.level, candidates, anchors, payloads, priors, scores)
         request_id = core._request_id("weight_assignment", row.batch_id, prompt)
-        if connection.execute(
-            "SELECT 1 FROM requests WHERE request_id=?", (request_id,)
-        ).fetchone():
+        existing = connection.execute(
+            "SELECT status,validation_json FROM requests WHERE request_id=?", (request_id,)
+        ).fetchone()
+        if existing:
+            if local_speculative and existing["status"] != "complete":
+                validation = json.loads(existing["validation_json"])
+                route = urlsplit(local_base_url).netloc.replace(":", "_")
+                validation["selected_provider_route"] = f"{route}_speculative_first4"
+                connection.execute(
+                    "UPDATE requests SET validation_json=? WHERE request_id=?",
+                    (core._canonical_json(validation), request_id),
+                )
             request_ids.append(request_id)
             continue
         aliases = [f"Candidate {index}" for index in range(1, len(candidates) + 1)]
         validation = {"candidate_aliases": aliases, "candidate_bucket_ids": candidates,
                       "anchor_bucket_ids": anchors}
         if local_speculative:
+            route = urlsplit(local_base_url).netloc.replace(":", "_")
             validation.update(
                 requested_model=speculative.DEFAULT_MODEL,
                 allowed_served_models=[speculative.DEFAULT_MODEL],
-                selected_provider_route="dgx008_speculative_first4",
+                selected_provider_route=f"{route}_speculative_first4",
             )
         elif row.round > 0:
             if provider_snapshot is None:
@@ -629,8 +641,8 @@ def _all_payloads(
 
 def run(
     run_id: str, approved_hash: str, *, local_speculative: bool = False,
-    benchmark_path: Path | None = None, required_replicas: int = 4,
-    fanout: int = 16,
+    benchmark_path: Path | None = None, required_replicas: int = 4, fanout: int = 16,
+    speculative_base_url: str = speculative.DEFAULT_BASE_URL,
 ) -> dict[str, Any]:
     root = _run_root(run_id)
     manifest, old = _verify(root, approved_hash)
@@ -642,11 +654,15 @@ def run(
     if local_speculative and benchmark_path is None:
         raise ValueError("local speculative execution requires its benchmark")
     if local_speculative:
+        previous_endpoint = manifest.get("execution_override", {}).get("endpoint")
+        if previous_endpoint and previous_endpoint != speculative_base_url:
+            manifest.setdefault("execution_migrations", []).append({
+                "from_endpoint": previous_endpoint, "to_endpoint": speculative_base_url,
+                "reason": "resume after endpoint outage",
+            })
         manifest["execution_override"] = {
-            "endpoint": speculative.DEFAULT_BASE_URL,
-            "model": speculative.DEFAULT_MODEL,
-            "reasoning_effort": "high", "fanout": fanout,
-            "required_replicas": required_replicas,
+            "endpoint": speculative_base_url, "model": speculative.DEFAULT_MODEL,
+            "reasoning_effort": "high", "fanout": fanout, "required_replicas": required_replicas,
             "openrouter_responses_reused": False,
         }
     manifest["status"] = "running"
@@ -657,22 +673,21 @@ def run(
             snapshot = (provider_pool.load_ranked_pool(True)
                         if int(round_index) > 0 and not local_speculative else None)
             requests = _queue(connection, schedule[schedule["round"].eq(round_index)],
-                              payloads, priors, scores, snapshot, local_speculative)
+                              payloads, priors, scores, snapshot, local_speculative,
+                              speculative_base_url)
             if _has_pending(connection, requests):
                 if local_speculative:
                     receipt = asyncio.run(speculative.execute_pending(
                         connection, requests, benchmark_path, required=required_replicas,
                         fanout=fanout, maximum_requests=12,
                         require_endpoint_drain=False,
+                        base_url=speculative_base_url,
                     ))
                     manifest.setdefault("speculative_round_receipts", []).append(
-                        {"round": int(round_index), **receipt}
-                    )
+                        {"round": int(round_index), **receipt})
                 else:
                     _execute_openrouter_round(
-                        connection, requests, int(round_index), snapshot,
-                        pools, manifest, root,
-                    )
+                        connection, requests, int(round_index), snapshot, pools, manifest, root)
             _checkpoint(root, manifest, schedule, _completed(connection), int(round_index))
     except Exception:
         manifest["status"] = "incomplete"
@@ -831,6 +846,7 @@ def main() -> None:
     parser.add_argument("--speculative-benchmark-manifest", type=Path)
     parser.add_argument("--speculative-required-replicas", type=int, default=4)
     parser.add_argument("--speculative-fanout", type=int, default=16)
+    parser.add_argument("--speculative-base-url", default=speculative.DEFAULT_BASE_URL)
     args = parser.parse_args()
     if args.command == "prepare":
         if not args.v5_run_id:
@@ -848,6 +864,7 @@ def main() -> None:
             benchmark_path=args.speculative_benchmark_manifest,
             required_replicas=args.speculative_required_replicas,
             fanout=args.speculative_fanout,
+            speculative_base_url=args.speculative_base_url,
         )
     else:
         result = publish_candidate(args.run_id)

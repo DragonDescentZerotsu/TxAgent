@@ -60,9 +60,7 @@ its hash remain unchanged, and neither BBB test set contains an invalid SMILES.
 
 ## Reproduction
 
-The maintained entrypoints and complete protocol are indexed in
-[`baselines/minimol/README.md`](../../baselines/minimol/README.md). Results,
-diagnostics, commands, and artifact receipts are kept in
-[`STARLING_TABLE2_REPRODUCTION.md`](../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)
-so this data directory only documents the immutable source snapshot and its
+The maintained entrypoints and protocol are indexed in
+[`predict/baselines/minimol/README.md`](../../../../predict/baselines/minimol/README.md).
+This data directory documents the immutable source snapshot and its
 label/featurization contract.

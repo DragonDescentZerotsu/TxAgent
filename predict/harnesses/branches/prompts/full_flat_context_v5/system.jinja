@@ -1,0 +1,23 @@
+{{ system_role }}
+
+Task:
+- Endpoint: {{ endpoint_name }}
+- Label scope: {{ label_scope }}
+- Positive: {{ positive_prediction }}
+- Negative: {{ negative_prediction }}
+
+{% for instruction in task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if query_prior_visible %}Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it.
+{% endif %}
+
+Analogical Reasoning Instructions:
+- {{ ranking_guidance }}
+- Consider every evidence block, then return one or more concise claims using as many claims as needed to represent the experimental evidence that materially informs the decision.
+- Each claim may cite any number of molecules, records, or both. At least one identifier is required per claim.
+- `supportive` means evidence supporting your selected final prediction; `contradictory` means evidence supporting the alternative.
+- Use only the exact visible identifiers, such as `Molecule 1` and `Record 1-1`.
+- Do not use the same molecule or record under both evidence roles.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Return only `claims` and `final_prediction`; do not return a summary, confidence, evidence gaps, or separate supportive, contradictory, or prediction-basis inventories.

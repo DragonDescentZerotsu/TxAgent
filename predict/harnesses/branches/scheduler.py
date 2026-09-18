@@ -563,6 +563,8 @@ def _prepare_command(
         raise ValueError(f"Batch module does not export CONFIG: {command[2]}")
     args = _parse_args(config, command[3:])
     args.parallelism = max_workers
+    args.requested_parallelism = max_workers
+    args.endpoint_selection = None
     return prepare_batch(config, args)
 
 

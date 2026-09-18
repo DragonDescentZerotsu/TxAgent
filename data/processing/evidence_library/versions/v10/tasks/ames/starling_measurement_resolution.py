@@ -30,7 +30,7 @@ TASK_ASSET_ROOT = TASK_ROOT / "data_processing"
 TASK_PROMPT_ROOT = TASK_ROOT / "prompts"
 
 PROMPT_VERSION = "ames_measurement_resolution_prompt.v6"
-MAPPING_VERSION = "ames_measurement_resolution.v5"
+MAPPING_VERSION = "ames_measurement_resolution.v6_mixed_retry"
 MAX_MEASUREMENTS_PER_ROW = 1
 BATCH_SIZE = 10
 STRATIFY_BATCHES = True
@@ -46,7 +46,7 @@ DEFAULT_CANONICAL_RECORDS = DEFAULT_CLEANED_RECORDS
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 DEFAULT_MAPPING_PATH = (
     evidence_library_root("ames", "v10")
-    / "measurement_resolution_v5/measurement_resolution.parquet"
+    / "measurement_resolution_v6/measurement_resolution.parquet"
 )
 DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_GOLD_FIXTURE = (

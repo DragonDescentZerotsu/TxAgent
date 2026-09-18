@@ -44,7 +44,10 @@ from predict.utils.json import (
 from predict.harnesses.branches.inference import load_frozen_single_analysis
 from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
+    CONTEXT_PROMPT_VERSIONS,
+    CONTEXT_V5_PROMPT_VERSION,
     build_flat_context_request,
+    derive_flat_claim_evidence,
     flat_context_validation,
 )
 from predict.harnesses.branches.prompt import attach_external_condition
@@ -833,6 +836,7 @@ def _execute_flat_context_final(
         layout=str(state.prepared.args.flat_layout),
         reranking=str(state.prepared.args.flat_reranking),
         query_prior=query_prior,
+        prompt_version=str(state.prepared.args.flat_prompt_version),
     )
     request = {
         "schema_version": "joseph_flat_context_request.v1",
@@ -848,6 +852,8 @@ def _execute_flat_context_final(
         **flat_context_validation(
             _task_id(state.prepared),
             task_prompt_profile=str(state.prepared.args.task_prompt_profile),
+            prompt_version=str(state.prepared.args.flat_prompt_version),
+            reference_index=prompt_metadata["reasoning_reference_index"],
         ),
     )
     final_output = {
@@ -855,6 +861,13 @@ def _execute_flat_context_final(
         "llm": response,
         "prompt": prompt_metadata,
     }
+    if (
+        state.prepared.args.flat_prompt_version == CONTEXT_V5_PROMPT_VERSION
+        and final_output["status"] == "ok"
+    ):
+        final_output["claim_evidence"] = derive_flat_claim_evidence(
+            response["content"]
+        )
     final_path = state.run_dir / "final_reasoning_output.json"
     trace_path = state.run_dir / "trace_messages.jsonl"
     module = importlib.import_module(state.prepared.config.pipeline_module)
@@ -1021,7 +1034,7 @@ def _flat_one_call(state: StageState) -> bool:
 def _flat_one_call_args(args: Any) -> bool:
     return (
         str(getattr(args, "flat_prompt_version", ""))
-        == CONTEXT_V4_PROMPT_VERSION
+        in CONTEXT_PROMPT_VERSIONS
         and str(getattr(args, "experiment_mode", "")) == "full_flat"
     )
 

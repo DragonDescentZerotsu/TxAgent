@@ -1014,11 +1014,12 @@ def generate_assay_transfer_record_pruning(
         for row in candidate["target_rows"]
     }
     missing_frozen = sorted(frozen_prunes.keys() - current_candidate_ids)
-    if missing_frozen:
-        raise ValueError(
-            "frozen prior prunes are absent from current candidates: "
-            + ", ".join(missing_frozen[:5])
-        )
+    frozen_carryforward = _carry_forward_frozen_prunes(
+        missing_frozen,
+        frozen_prunes=frozen_prunes,
+        records_path=records_path,
+        task_id=task_id,
+    )
     overridden_chunks = []
     for bucket_id, review in chunk_reviews.items():
         changed = False
@@ -1054,6 +1055,7 @@ def generate_assay_transfer_record_pruning(
     for candidate in candidates:
         bucket_id = candidate["bucket_id"]
         decisions.extend(review_decisions(candidate, reviews[bucket_id]))
+    decisions.extend(frozen_carryforward)
     decisions.sort(key=lambda row: (row["pair_bucket_key"], row["canonical_record_id"]))
     selected_reviews = [
         chunk_reviews[candidate["bucket_id"]]
@@ -1180,6 +1182,7 @@ def generate_assay_transfer_record_pruning(
             "pruned_rows": len(pruned),
             "manual_ineligible_rows": len(manual_ineligibility),
             "frozen_prior_pruned_rows": len(frozen_prunes),
+            "frozen_prior_carried_forward_rows": len(frozen_carryforward),
             "frozen_prior_overridden_chunks": len(overridden_chunks),
         },
         "bucket_summaries": bucket_summaries,
@@ -1240,6 +1243,54 @@ def _load_frozen_prior_prunes(
         "pruned_rows": len(prunes),
         "policy": "prior_reviewed_prunes_are_immutable",
     }
+
+
+def _carry_forward_frozen_prunes(
+    record_ids: Sequence[str],
+    *,
+    frozen_prunes: Mapping[str, Mapping[str, str]],
+    records_path: Path,
+    task_id: str,
+) -> list[dict[str, Any]]:
+    """Retain prior prunes that no longer cross the current tail trigger."""
+    wanted = set(record_ids)
+    if not wanted:
+        return []
+    columns = [
+        "canonical_record_id",
+        "pair_bucket_key",
+        "finite_scalar_value",
+        "assay_transfer_eligible",
+    ]
+    current = {
+        str(row["canonical_record_id"]): row
+        for row in pq.read_table(records_path, columns=columns).to_pylist()
+        if str(row["canonical_record_id"]) in wanted
+    }
+    if set(current) != wanted:
+        raise ValueError("a frozen prior prune is absent from current Stage 3")
+    if any(not row["assay_transfer_eligible"] for row in current.values()):
+        raise ValueError("a frozen prior prune is no longer assay-transfer eligible")
+    output = []
+    for record_id in sorted(wanted):
+        row = current[record_id]
+        pair_key = str(row["pair_bucket_key"])
+        prior = frozen_prunes[record_id]
+        output.append(
+            {
+                "task_id": task_id,
+                "bucket_id": _sha256(task_id + "\0" + pair_key)[:24],
+                "pair_bucket_key": pair_key,
+                "canonical_record_id": record_id,
+                "finite_scalar_value": row["finite_scalar_value"],
+                "tail_geometry": "frozen_prior_carryforward",
+                "tail_trigger_reasons": ["frozen_prior_carryforward"],
+                "review_decision": prior["decision"],
+                "review_reason_code": prior["reason_code"],
+                "review_reason": prior["reason"],
+            }
+        )
+    return output
 
 
 def load_assay_transfer_record_pruning(

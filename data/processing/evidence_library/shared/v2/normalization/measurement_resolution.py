@@ -20,7 +20,11 @@ from data.processing.evidence_library.shared.v2.normalization.cleaning import (
 RESOLUTION_APPLY_VERSION = "starling_measurement_resolution_apply.v6"
 EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v2"
 GROUPED_EXACT_UNIT_MAPPING_VERSIONS = frozenset(
-    {EXACT_UNIT_MAPPING_VERSION, "starling_exact_measurement_units.v3"}
+    {
+        EXACT_UNIT_MAPPING_VERSION,
+        "starling_exact_measurement_units.v3",
+        "starling_exact_measurement_units.v4",
+    }
 )
 _LEGACY_EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"
 DEFAULT_EXPECTED_ROUTING_VERSION = "starling_measurement_routing.v5"

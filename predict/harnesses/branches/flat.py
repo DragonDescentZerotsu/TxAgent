@@ -56,22 +56,26 @@ TIANANG_PROMPT_VERSION = "tianang_flat_v1"
 JOSEPH_V1_PROMPT_VERSION = "joseph_flat_v1"
 JOSEPH_PROMPT_VERSION = "joseph_flat_v2"
 CONTEXT_V4_PROMPT_VERSION = "joseph_flat_context_v4_v1"
+CONTEXT_V5_PROMPT_VERSION = "full_flat_context_v5"
 JOSEPH_PROMPT_VERSIONS = (
     JOSEPH_V1_PROMPT_VERSION,
     JOSEPH_PROMPT_VERSION,
     CONTEXT_V4_PROMPT_VERSION,
+    CONTEXT_V5_PROMPT_VERSION,
 )
 # Backward-compatible default for direct prompt-library callers. The public
 # The unified branches CLI selects Joseph flat behavior below.
 PROMPT_VERSION = TIANANG_PROMPT_VERSION
 PUBLIC_HARNESS_VERSION = "joseph-flat-v2"
 CONTEXT_V4_HARNESS_VERSION = "joseph-flat-context-v4-v1"
+CONTEXT_V5_HARNESS_VERSION = "full-flat-context-v5"
 JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
 JOSEPH_HARNESS_PROMPTS = {
     JOSEPH_V1_HARNESS_VERSION: JOSEPH_V1_PROMPT_VERSION,
     PUBLIC_HARNESS_VERSION: JOSEPH_PROMPT_VERSION,
     CONTEXT_V4_HARNESS_VERSION: CONTEXT_V4_PROMPT_VERSION,
+    CONTEXT_V5_HARNESS_VERSION: CONTEXT_V5_PROMPT_VERSION,
 }
 JOSEPH_PROMPT_HARNESSES = {
     prompt: harness for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
@@ -90,6 +94,8 @@ CONTEXT_V4_VARIANTS = (
 )
 CONTEXT_V4_LAYOUTS = ("global", "level-grouped")
 CONTEXT_V4_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v1"
+CONTEXT_V5_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v2"
+CONTEXT_PROMPT_VERSIONS = {CONTEXT_V4_PROMPT_VERSION, CONTEXT_V5_PROMPT_VERSION}
 DEFAULT_QUERY_PRIOR_ROOT = Path(
     "outputs/paper/legacy/"
     "starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/"
@@ -115,6 +121,7 @@ PROMPT_VARIANTS = {
     JOSEPH_V1_PROMPT_VERSION: VARIANTS,
     JOSEPH_PROMPT_VERSION: VARIANTS,
     CONTEXT_V4_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    CONTEXT_V5_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
 }
 TASKS = {"bbb_martins": 5, "bioavailability_ma": 6}
 RECORD_POOLS = {
@@ -221,7 +228,7 @@ FLAT_V2_CARD_FIELDS = (
 
 
 def _source_semantic_prompt(version: str) -> bool:
-    return version in {JOSEPH_PROMPT_VERSION, CONTEXT_V4_PROMPT_VERSION}
+    return version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS}
 FLAT_V2_MOLECULE_SCORE_FIELDS = (
     "morgan_similarity",
     "transfer_likelihood",
@@ -254,6 +261,10 @@ def prompt_assets(version: str = PROMPT_VERSION) -> dict[str, Any]:
     provenance = json.loads(
         (directory / "provenance.json").read_text(encoding="utf-8")
     )
+    levels = {
+        path.stem: yaml.safe_load(path.read_text(encoding="utf-8"))
+        for path in sorted((directory / "levels").glob("L*.yaml"))
+    } if (directory / "levels").is_dir() else {}
     if not isinstance(tasks, dict) or not tasks:
         raise ValueError(f"Flat prompt tasks are invalid: {directory / 'tasks.yaml'}")
     if any(
@@ -273,6 +284,7 @@ def prompt_assets(version: str = PROMPT_VERSION) -> dict[str, Any]:
         "tasks": tasks,
         "modes": modes,
         "provenance": provenance,
+        "levels": levels,
     }
 
 
@@ -616,6 +628,7 @@ def build_flat_context_request(
     layout: str,
     reranking: str,
     query_prior: Mapping[str, Any] | None,
+    prompt_version: str = CONTEXT_V4_PROMPT_VERSION,
 ) -> tuple[list[dict[str, str]], dict[str, Any]]:
     """Render one all-level prediction request and its exact visible-ID index."""
     if layout not in CONTEXT_V4_LAYOUTS:
@@ -625,9 +638,20 @@ def build_flat_context_request(
     groups = retrieval.get("groups") or []
     if len(groups) != 1 or groups[0].get("group_id") != "Flat.all_evidence":
         raise ValueError("Flat context prediction requires one Flat.all_evidence group")
-    contract = _task_contract(task_id, task_prompt_profile, CONTEXT_V4_PROMPT_VERSION)
-    assets = prompt_assets(CONTEXT_V4_PROMPT_VERSION)
-    sections, aliases, references = _flat_context_sections(groups[0], layout=layout)
+    if prompt_version not in CONTEXT_PROMPT_VERSIONS:
+        raise ValueError(f"Unsupported flat context prompt: {prompt_version!r}")
+    contract = _task_contract(task_id, task_prompt_profile, prompt_version)
+    assets = prompt_assets(prompt_version)
+    sections, aliases, references = _flat_context_sections(
+        groups[0], layout=layout, prompt_version=prompt_version
+    )
+    for section in sections:
+        level = str(section.get("level") or "")
+        section["description"] = str(
+            ((assets.get("levels") or {}).get(level) or {}).get(task_id, {}).get(
+                "description", ""
+            )
+        )
     query = deepcopy(dict(retrieval.get("query") or {}))
     query.pop("fingerprint", None)
     payload = {
@@ -638,14 +662,14 @@ def build_flat_context_request(
         "required_json_schema": _flat_context_schema(contract),
     }
     system = _environment().get_template(
-        f"{CONTEXT_V4_PROMPT_VERSION}/system.jinja"
+        f"{prompt_version}/system.jinja"
     ).render(
         **contract,
         query_prior_visible=bool(query_prior),
         ranking_guidance=assets["modes"][reranking]["guidance"],
     )
     user = _environment().get_template(
-        f"{CONTEXT_V4_PROMPT_VERSION}/user.jinja"
+        f"{prompt_version}/user.jinja"
     ).render(**payload)
     return [
         {"role": "system", "content": system.strip()},
@@ -660,14 +684,70 @@ def build_flat_context_request(
 
 
 def flat_context_validation(
-    task_id: str, *, task_prompt_profile: str
+    task_id: str, *, task_prompt_profile: str,
+    prompt_version: str = CONTEXT_V4_PROMPT_VERSION,
+    reference_index: list[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Validate the shared two-field flat prediction."""
     contract = _task_contract(
-        task_id, task_prompt_profile, CONTEXT_V4_PROMPT_VERSION
+        task_id, task_prompt_profile, prompt_version
     )
     prediction_field = str(contract["prediction_field"])
-    expected_fields = {"summary", prediction_field}
+    expected_fields = set(contract["required_fields"])
+
+    visible = {
+        str(row["visible_id"]): str(row["unit_kind"])
+        for row in (reference_index or [])
+    }
+
+    def content_errors(content: Mapping[str, Any]) -> list[str]:
+        if set(content) != expected_fields:
+            return ["invalid_output_fields"]
+        if prompt_version != CONTEXT_V5_PROMPT_VERSION:
+            return []
+        errors: list[str] = []
+        claims = content.get("claims")
+        if not isinstance(claims, list) or not claims:
+            return ["claims_must_be_nonempty_array"]
+        identifiers_by_role = {"supportive": set(), "contradictory": set()}
+        for index, claim in enumerate(claims):
+            if not isinstance(claim, Mapping) or set(claim) != {
+                "claim", "molecule_ids", "record_ids", "evidence_role"
+            }:
+                errors.append(f"invalid_claim_fields:{index}")
+                continue
+            if not isinstance(claim["claim"], str) or not claim["claim"].strip():
+                errors.append(f"invalid_claim_text:{index}")
+            role = claim["evidence_role"]
+            if role not in identifiers_by_role:
+                errors.append(f"invalid_evidence_role:{index}")
+            cited: list[str] = []
+            for name, kind in (("molecule_ids", "molecule"), ("record_ids", "record")):
+                values = claim[name]
+                if not isinstance(values, list) or any(
+                    not isinstance(value, str) for value in values
+                ):
+                    errors.append(f"invalid_identifier_array:{index}:{name}")
+                    continue
+                if len(values) != len(set(values)):
+                    errors.append(f"duplicate_identifiers:{index}:{name}")
+                invalid = sorted(value for value in values if visible.get(value) != kind)
+                if invalid:
+                    errors.append(
+                        f"unknown_identifiers:{index}:{name}:{','.join(invalid)}"
+                    )
+                cited.extend(values)
+            if not cited:
+                errors.append(f"claim_without_evidence:{index}")
+            if role in identifiers_by_role:
+                identifiers_by_role[role].update(cited)
+        overlap = sorted(
+            identifiers_by_role["supportive"]
+            & identifiers_by_role["contradictory"]
+        )
+        if overlap:
+            errors.append(f"evidence_role_overlap:{','.join(overlap)}")
+        return errors
 
     return {
         "required_fields": tuple(contract["required_fields"]),
@@ -677,23 +757,41 @@ def flat_context_validation(
                 str(contract["negative_prediction"]),
             },
         },
-        "content_validator": lambda content: (
-            [] if set(content) == expected_fields else ["invalid_output_fields"]
-        ),
+        "content_validator": content_errors,
     }
+
+
+def derive_flat_claim_evidence(content: Mapping[str, Any]) -> dict[str, list[str]]:
+    """Derive diagnostic role inventories from a validated V5 response."""
+    output = {
+        "supportive_molecule_ids": [],
+        "supportive_record_ids": [],
+        "contradictory_molecule_ids": [],
+        "contradictory_record_ids": [],
+    }
+    for claim in content.get("claims") or []:
+        role = str(claim["evidence_role"])
+        for source, suffix in (("molecule_ids", "molecule_ids"), ("record_ids", "record_ids")):
+            target = f"{role}_{suffix}"
+            output[target].extend(
+                value for value in claim[source] if value not in output[target]
+            )
+    return output
 
 
 def _flat_context_schema(contract: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        "summary": "concise overall conclusion",
-        str(contract["prediction_field"]): (
-            f"{contract['positive_prediction']} | {contract['negative_prediction']}"
-        ),
-    }
+    schema = deepcopy(dict(contract.get("required_json_schema") or {}))
+    if "summary" in contract.get("required_fields", ()):
+        schema["summary"] = "concise overall conclusion"
+    schema[str(contract["prediction_field"])] = (
+        f"{contract['positive_prediction']} | {contract['negative_prediction']}"
+    )
+    return schema
 
 
 def _flat_context_sections(
-    group: Mapping[str, Any], *, layout: str
+    group: Mapping[str, Any], *, layout: str,
+    prompt_version: str = CONTEXT_V4_PROMPT_VERSION,
 ) -> tuple[list[dict[str, Any]], dict[str, str], list[dict[str, Any]]]:
     neighbors = list(group.get("neighbors") or [])
     levels = sorted({
@@ -721,10 +819,17 @@ def _flat_context_sections(
                 parent_id if section_level is None else f"{parent_id}@{section_level}"
             )
             cards = []
-            for row in rows:
+            molecule_scores: dict[str, Any] = {}
+            for record_number, row in enumerate(rows, 1):
                 provenance = dict(row.get("selection_provenance") or {})
                 card = deepcopy(dict(row.get("prompt_evidence") or {}))
-                alias = str(card.get("card_id") or "")
+                alias = (
+                    f"Record {molecule_number}-{record_number}"
+                    if prompt_version == CONTEXT_V5_PROMPT_VERSION
+                    else str(card.get("card_id") or "")
+                )
+                if prompt_version == CONTEXT_V5_PROMPT_VERSION:
+                    card["card_id"] = f"{molecule_number}-{record_number}"
                 stable_card_id = str(row.get("evidence_id") or "")
                 if not alias or alias in aliases or not stable_card_id:
                     raise ValueError(f"Missing or duplicate flat card alias: {alias!r}")
@@ -733,12 +838,22 @@ def _flat_context_sections(
                     level=str(provenance.get("level") or ""),
                     evidence_family=str(provenance.get("evidence_family") or ""),
                 )
-                for name in (
-                    "selected_condition", "morgan_similarity", "assay_transfer_score"
-                ):
+                for name in ("selected_condition", "morgan_similarity", "assay_transfer_score"):
                     if provenance.get(name) not in (None, ""):
                         target = "transfer_likelihood" if name == "assay_transfer_score" else name
-                        card[target] = provenance[name]
+                        level = str(provenance.get("level") or "")
+                        if prompt_version == CONTEXT_V5_PROMPT_VERSION and name == "morgan_similarity":
+                            _set_consistent(molecule_scores, target, provenance[name])
+                        elif (
+                            prompt_version == CONTEXT_V5_PROMPT_VERSION
+                            and name == "assay_transfer_score" and level == "L1"
+                        ):
+                            _set_consistent(molecule_scores, target, provenance[name])
+                        elif not (
+                            prompt_version == CONTEXT_V5_PROMPT_VERSION
+                            and name == "assay_transfer_score" and level == "L5"
+                        ):
+                            card[target] = provenance[name]
                 cards.append(card)
                 references.append({
                     "unit_kind": "record",
@@ -748,12 +863,16 @@ def _flat_context_sections(
                     "containing_unit_id": stable_molecule_id,
                     "first_visible_level": int(str(provenance.get("level") or "L0")[1:]),
                     "is_new": True,
-                    "prompt_heading": f"Record {alias}",
+                    "prompt_heading": (
+                        alias if prompt_version == CONTEXT_V5_PROMPT_VERSION
+                        else f"Record {alias}"
+                    ),
                 })
             molecule = {
                 "number": molecule_number,
                 "canonical_smiles": str(neighbor.get("canonical_smiles") or ""),
                 "evidence_cards": cards,
+                **molecule_scores,
             }
             if neighbor.get("molecule_description"):
                 molecule["molecule_description"] = neighbor["molecule_description"]
@@ -773,6 +892,7 @@ def _flat_context_sections(
             })
         sections.append({
             "heading": f"Level {section_level}" if section_level else "",
+            "level": section_level or "",
             "molecules": molecules,
         })
     return sections, aliases, references
@@ -870,7 +990,7 @@ def cache_matched_flat_retrieval(
     if query_identity:
         query_parent_smiles = str(query_identity.get("parent_smiles") or "")
         query_parent_id = str(query_identity.get("parent_id") or "")
-        if not query_parent_smiles or not query_parent_id:
+        if not query_parent_smiles:
             raise ValueError(f"Incomplete cached query identity: {query_id}")
     else:
         identity = normalize_molecule_identity(query_smiles)
@@ -917,7 +1037,7 @@ def cache_matched_flat_retrieval(
         }
         if selection_contract in {
             "ranked_level_retrieval.v2", "ranked_uid_retrieval.v1",
-            CONTEXT_V4_SELECTION_CONTRACT
+            CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT
         }:
             retrieval["neighbor_identity_policy"] = level_identity_policy[
                 retrieval["level"]
@@ -966,7 +1086,7 @@ def cache_matched_flat_retrieval(
                     level_identity_policy[str(payload["progressive_level"])]
                     if selection_contract in {
                         "ranked_level_retrieval.v2", "ranked_uid_retrieval.v1",
-                        CONTEXT_V4_SELECTION_CONTRACT
+                        CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT
                     }
                     else "scaffold_disjoint"
                 ),
@@ -977,7 +1097,7 @@ def cache_matched_flat_retrieval(
         if (
             selection_contract in {
                 "ranked_level_retrieval.v2", "ranked_uid_retrieval.v1",
-                CONTEXT_V4_SELECTION_CONTRACT
+                CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT
             }
             and neighbor["molecule_relation"]
             != level_identity_policy[str(payload["progressive_level"])]
@@ -1073,7 +1193,7 @@ def cache_matched_flat_retrieval(
                 "level_specific_disjoint"
                 if selection_contract in {
                     "ranked_level_retrieval.v2", "ranked_uid_retrieval.v1",
-                    CONTEXT_V4_SELECTION_CONTRACT
+                    CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT
                 }
                 else "scaffold_disjoint"
             ),
@@ -1081,7 +1201,7 @@ def cache_matched_flat_retrieval(
                 {"neighbor_identity_policy_by_level": level_identity_policy}
                 if selection_contract in {
                     "ranked_level_retrieval.v2", "ranked_uid_retrieval.v1",
-                    CONTEXT_V4_SELECTION_CONTRACT
+                    CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT
                 }
                 else {}
             ),
@@ -1298,6 +1418,11 @@ def _load_flat_context_candidates(
     load_candidates: Any,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Select cached UIDs, hydrate evidence rows, and compose the flat context."""
+    selection_contract = (
+        CONTEXT_V5_SELECTION_CONTRACT
+        if args.prompt_version == CONTEXT_V5_PROMPT_VERSION
+        else CONTEXT_V4_SELECTION_CONTRACT
+    )
     policy = load_cache_policy(
         args.assay_transfer_cache,
         args.task,
@@ -1312,7 +1437,13 @@ def _load_flat_context_candidates(
         policy=policy,
         molecule_limit=args.l1_molecules,
         l1_limit=args.l1_records_per_molecule,
-        later_limit={level: 100 for level in policy["stages"] if level != "L1"},
+        later_limit={
+            level: (
+                args.record_limits_by_level[level]
+                if args.prompt_version == CONTEXT_V5_PROMPT_VERSION else 100
+            )
+            for level in policy["stages"] if level != "L1"
+        },
         tie_seed=args.ranking_tie_seed,
         min_contrast=args.l1_min_contrast,
         morgan_primary_parent_width=args.morgan_primary_parent_width,
@@ -1337,6 +1468,11 @@ def _load_flat_context_candidates(
                 row for row in group["records"]
                 if str(row["record_id"]) not in l1_record_ids
             ][:limit]
+            if args.prompt_version == CONTEXT_V5_PROMPT_VERSION and len(records) != limit:
+                raise ValueError(
+                    f"Requested {limit} records but {query_id}/{level} has "
+                    f"{len(records)} after L1 exclusion"
+                )
             selected_molecules = len({
                 str(row["reference_molecule_id"]) for row in records
             })
@@ -1359,11 +1495,11 @@ def _load_flat_context_candidates(
     }
     active_levels = set(policy["stages"])
     return molecules, later, {
-        "selection_policy": CONTEXT_V4_SELECTION_CONTRACT,
+        "selection_policy": selection_contract,
         "inputs": dict(audit.get("inputs") or {}),
         "contract": {
             "policy": {
-                "selection_contract": CONTEXT_V4_SELECTION_CONTRACT,
+                "selection_contract": selection_contract,
                 "uid_retrieval": policy,
             },
             "molecule_limit": args.l1_molecules,
@@ -1465,7 +1601,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         str(records[index]["benchmark_row_id"]): str(records[index]["drug"])
         for index in indices
     }
-    policy = None if args.prompt_version == CONTEXT_V4_PROMPT_VERSION else load_cache_policy(
+    policy = None if args.prompt_version in CONTEXT_PROMPT_VERSIONS else load_cache_policy(
         args.assay_transfer_cache,
         args.task,
         args.evaluation_subset,
@@ -1502,7 +1638,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             "ranking_tie_seed": args.ranking_tie_seed,
             "max_level": args.max_level,
         }
-        if args.prompt_version == CONTEXT_V4_PROMPT_VERSION:
+        if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
             expected.update(
                 layout=args.layout,
                 query_prior=args.query_prior,
@@ -1527,7 +1663,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         if (existing.get("selector_code") or {}).get("sha256") != sha256_file(selector_path):
             mismatches["selector_code"] = "changed"
         selection_policy = existing.get("selection_audit", {}).get("selection_policy")
-        if selection_policy == CONTEXT_V4_SELECTION_CONTRACT:
+        if selection_policy in {CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT}:
             for name in ("ranked_uid_retrieval.py",):
                 reader_path = selector_path.with_name(name)
                 recorded = (existing.get("cache_reader_codes") or {}).get(name) or {}
@@ -1555,7 +1691,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             )
         return source_batch, existing
 
-    if args.prompt_version == CONTEXT_V4_PROMPT_VERSION:
+    if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         molecules, later, audit = _load_flat_context_candidates(
             args,
             queries,
@@ -1597,7 +1733,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             args.molecule_description_mode,
             args.molecule_description_cache_version,
         )
-        if args.prompt_version == CONTEXT_V4_PROMPT_VERSION
+        if args.prompt_version in CONTEXT_PROMPT_VERSIONS
         else ({}, {"mode": "none"})
     )
     description_missing: set[str] = set()
@@ -1642,7 +1778,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         "scaffold_overlap": audit["scaffold_overlap"],
         "parent_overlap": audit["parent_overlap"],
     }
-    if audit["selection_policy"] == CONTEXT_V4_SELECTION_CONTRACT:
+    if audit["selection_policy"] in {CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT}:
         compact_audit.update(
             query_identities=audit["query_identities"],
             l1_cache=audit["l1_cache"],
@@ -1722,7 +1858,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         "prompt_assets": prompt_asset_manifest(args.prompt_version),
         "selection_audit": compact_audit,
     }
-    if args.prompt_version == CONTEXT_V4_PROMPT_VERSION:
+    if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         molecule_description_receipt.update(
             missing_policy="omit",
             missing_selected_count=len(description_missing),
@@ -1741,7 +1877,7 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             molecule_name_visible=False,
             group_tools_enabled=False,
         )
-    if audit["selection_policy"] == CONTEXT_V4_SELECTION_CONTRACT:
+    if audit["selection_policy"] in {CONTEXT_V4_SELECTION_CONTRACT, CONTEXT_V5_SELECTION_CONTRACT}:
         reader_root = Path(__file__).resolve().parents[2] / "retrieval/assay_reranking"
         manifest["cache_reader_codes"] = {
             name: {
@@ -1846,6 +1982,7 @@ def run(argv: list[str] | None = None) -> int:
         choices=(
             PUBLIC_HARNESS_VERSION,
             CONTEXT_V4_HARNESS_VERSION,
+            CONTEXT_V5_HARNESS_VERSION,
             JOSEPH_V1_HARNESS_VERSION,
             LEGACY_HARNESS_VERSION,
         ),
@@ -1970,7 +2107,7 @@ def _joseph_main(argv: list[str]) -> int:
         parser.error("start, limit, and max-level must be non-negative")
     if args.reranking == JOINT_VARIANT and args.l1_molecules != 10:
         parser.error("joint L1 requires ten molecule slots: five per panel, no refill")
-    if args.prompt_version == CONTEXT_V4_PROMPT_VERSION:
+    if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         remaining_flags = {token.split("=", 1)[0] for token in remaining}
         if "--single-analysis-source-batch" in remaining_flags:
             parser.error("query-prior reuse is owned by --query-prior and --prior-root")
@@ -2003,7 +2140,7 @@ def _joseph_main(argv: list[str]) -> int:
     args.assay_transfer_cache = args.assay_transfer_cache.resolve()
     args.gold_context_mapping = args.gold_context_mapping.resolve()
     args.prior_root = args.prior_root.resolve()
-    if args.batch_root is None and args.prompt_version == CONTEXT_V4_PROMPT_VERSION:
+    if args.batch_root is None and args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         args.batch_root = (
             Path("outputs/paper/assay_transfer_harness/joseph")
             / "flat_context_v4"
@@ -2019,13 +2156,13 @@ def _joseph_main(argv: list[str]) -> int:
     args.batch_root = args.batch_root.resolve()
     args.batch_id = args.batch_id or time.strftime(
         f"k{args.l1_molecules}_m{args.l1_min_contrast}_%Y%m%d_%H%M%S"
-        if args.prompt_version == CONTEXT_V4_PROMPT_VERSION
+        if args.prompt_version in CONTEXT_PROMPT_VERSIONS
         else f"{args.harness_version.replace('-', '_')}_%Y%m%d_%H%M%S"
     )
 
     source_batch, manifest = _materialize_cache_matched_retrievals(args)
     prior_batch = None
-    if args.prompt_version == CONTEXT_V4_PROMPT_VERSION and args.query_prior == "cached":
+    if args.prompt_version in CONTEXT_PROMPT_VERSIONS and args.query_prior == "cached":
         prior_batch = args.prior_root / args.task / f"{args.task}__none"
         if not prior_batch.is_dir():
             parser.error(f"cached query-prior batch does not exist: {prior_batch}")
@@ -2038,11 +2175,11 @@ def _joseph_main(argv: list[str]) -> int:
         print(json.dumps({"retrieval_source": str(source_batch), "manifest": manifest}, indent=2))
         return 0
     if (
-        args.prompt_version == CONTEXT_V4_PROMPT_VERSION
+        args.prompt_version in CONTEXT_PROMPT_VERSIONS
         and "--max-tokens" not in {token.split("=", 1)[0] for token in remaining}
     ):
         parser.error(
-            "joseph-flat-context-v4-v1 requires an explicit reviewed --max-tokens"
+            f"{args.harness_version} requires an explicit reviewed --max-tokens"
         )
     forwarded = [
         *remaining,
@@ -2060,7 +2197,7 @@ def _joseph_main(argv: list[str]) -> int:
         "--neighbor-identity-policy", "scaffold_disjoint",
         "--min-similarity", "0",
     ]
-    if args.prompt_version in {JOSEPH_PROMPT_VERSION, CONTEXT_V4_PROMPT_VERSION} and "--disable-flat-tools" not in remaining:
+    if args.prompt_version in {JOSEPH_PROMPT_VERSION, *CONTEXT_PROMPT_VERSIONS} and "--disable-flat-tools" not in remaining:
         forwarded.append("--disable-flat-tools")
     if prior_batch is not None:
         forwarded.extend(["--single-analysis-source-batch", str(prior_batch)])

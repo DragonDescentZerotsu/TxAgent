@@ -30,12 +30,39 @@
       }
     },
     "skin_reaction": {
-      "root": "data/conditioned_benchmark/Skin_Reaction/scaffold",
+      "root": "data/gold_labels/Skin_Reaction/v1/scaffold",
       "target_definition": "skin sensitization/contact allergy",
       "split_counts": {
-        "train": 1997,
-        "valid": 246,
-        "test": 248
+        "train": 1941,
+        "valid": 239,
+        "test": 241
+      }
+    },
+    "ames": {
+      "root": "data/gold_labels/Ames/v1/scaffold",
+      "target_definition": "bacterial reverse mutation (Ames) under the reported condition",
+      "split_counts": {
+        "train": 1926,
+        "valid": 274,
+        "test": 274
+      }
+    },
+    "dili": {
+      "root": "data/gold_labels/DILI/v1/scaffold",
+      "target_definition": "reported clinically meaningful human DILI outcome under the stated exposure and population; a negative is not universal absence of DILI risk",
+      "split_counts": {
+        "train": 3220,
+        "valid": 402,
+        "test": 402
+      }
+    },
+    "carcinogens": {
+      "root": "data/gold_labels/Carcinogens/v1/scaffold",
+      "target_definition": "Starling source-consensus carcinogenicity within one of five reported organism groups; sex, strain, route, dose and duration pooled, with original record restrictions preserved; no universal exposure claim",
+      "split_counts": {
+        "train": 3754,
+        "valid": 469,
+        "test": 469
       }
     }
   }

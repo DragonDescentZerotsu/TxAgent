@@ -237,13 +237,27 @@ def _selection_args(
     reranking: str = flat.MORGAN_VARIANT,
     record_pool: str = "all",
     records_per_level: int = RECORDS_PER_LEVEL,
+    context_width: int | None = None,
+    min_contrast: int = 0,
+    context_v5: bool = False,
+    all_levels: bool = False,
 ) -> argparse.Namespace:
     input_jsonl = split_path(task, "valid").with_name(
         "valid_molecule_condition_labels.jsonl"
     ).resolve()
+    context_v4 = context_width is not None and not context_v5
+    context_prompt = context_v4 or context_v5
     return argparse.Namespace(
-        harness_version=flat.PUBLIC_HARNESS_VERSION,
-        prompt_version=flat.JOSEPH_PROMPT_VERSION,
+        harness_version=(
+            flat.CONTEXT_V5_HARNESS_VERSION if context_v5
+            else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
+            else flat.PUBLIC_HARNESS_VERSION
+        ),
+        prompt_version=(
+            flat.CONTEXT_V5_PROMPT_VERSION if context_v5
+            else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
+            else flat.JOSEPH_PROMPT_VERSION
+        ),
         task=task,
         reranking=reranking,
         assay_transfer_cache=DEFAULT_CACHE_BUNDLE.resolve(),
@@ -258,12 +272,27 @@ def _selection_args(
         l1_records_per_molecule=10,
         records_per_level=records_per_level,
         ranking_tie_seed=0,
-        max_level=0,
+        max_level=flat.TASKS[task] if all_levels else 1 if context_prompt else 0,
+        layout="level-grouped" if context_v5 else "global",
+        query_prior="cached",
+        prior_root=flat.DEFAULT_QUERY_PRIOR_ROOT.resolve(),
+        l1_min_contrast=min_contrast,
+        morgan_primary_parent_width=context_width or 100,
+        molecule_description_mode="none",
+        molecule_description_cache_version="v1",
+        record_limits_by_level={
+            f"L{level}": records_per_level
+            for level in range(2, flat.TASKS[task] + 1)
+        },
         indices=None,
         start=0,
         limit=limit,
         batch_root=(root / task).resolve(),
         batch_id=(
+            f"{task}__{'all_levels_' if all_levels else 'l1_'}k10_w{context_width}_m{min_contrast}"
+            if context_v5 else
+            f"{task}__k10_w{context_width}_m{min_contrast}"
+            if context_v4 else
             f"{task}__morgan_records10"
             if (
                 reranking == flat.MORGAN_VARIANT
@@ -294,14 +323,13 @@ def _batch_command(
         base_url, api_key_env = default.base_url, default.api_key_env
     task = args.task
     batch_id = args.batch_id
+    context_v4 = args.prompt_version in flat.CONTEXT_PROMPT_VERSIONS
     command = [
         sys.executable,
         "-m",
-        "predict.harnesses.branches",
-        "--organization",
-        "flat",
-        "--task",
-        task,
+        f"predict.harnesses.branches.tasks.{task}.contract",
+        "--experiment-mode",
+        "full_flat",
         "--input-jsonl",
         str(args.input_jsonl),
         "--batch-root",
@@ -313,7 +341,7 @@ def _batch_command(
         "--flat-selection-manifest",
         str(source / "manifest.json"),
         "--flat-prompt-version",
-        flat.JOSEPH_PROMPT_VERSION,
+        args.prompt_version,
         "--flat-reranking",
         args.reranking,
         "--retrieval-strategy",
@@ -323,8 +351,6 @@ def _batch_command(
         "--min-similarity",
         "0",
         "--disable-flat-tools",
-        "--single-analysis-source-batch",
-        str(_single_batch(task)),
         "--model",
         model,
         "--base-url",
@@ -351,6 +377,15 @@ def _batch_command(
         "--limit",
         str(args.limit),
     ]
+    if context_v4:
+        command.extend([
+            "--flat-layout", args.layout,
+            "--flat-query-prior", args.query_prior,
+            "--single-analysis-source-batch",
+            str(args.prior_root / task / f"{task}__none"),
+        ])
+    else:
+        command.extend(["--single-analysis-source-batch", str(_single_batch(task))])
     return BatchCommand(batch_id, command)
 
 
@@ -431,6 +466,16 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_CONDITIONS,
     )
     parser.add_argument("--records-per-level", type=int, default=RECORDS_PER_LEVEL)
+    parser.add_argument("--context-v4-grid", action="store_true")
+    parser.add_argument("--context-v5-grid", action="store_true")
+    parser.add_argument("--context-v5-all-level", action="store_true")
+    parser.add_argument(
+        "--morgan-primary-parent-widths", nargs="+", type=int,
+        choices=(15, 25, 50, 100), default=(15, 25, 50),
+    )
+    parser.add_argument(
+        "--l1-min-contrasts", nargs="+", type=int, default=(0, 1, 2),
+    )
     parser.add_argument("--provider-pool-config", type=Path, default=DEFAULT_PROVIDER_CONFIG)
     parser.add_argument("--trace-root", type=Path, default=Path("outputs/paper/live"))
     parser.add_argument(
@@ -444,6 +489,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--skip-pilots", action="store_true")
     args = parser.parse_args(raw_argv)
+    if sum((args.context_v4_grid, args.context_v5_grid, args.context_v5_all_level)) > 1:
+        parser.error("context matrix modes are mutually exclusive")
     if args.parallelism is not None and args.parallelism < 1:
         parser.error("--parallelism must be positive")
     if min(
@@ -455,6 +502,11 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("worker, record, token, and timeout values must be positive")
     if len(args.conditions) != len(set(args.conditions)):
         parser.error("--conditions cannot contain duplicates")
+    if len(args.morgan_primary_parent_widths) != len(set(args.morgan_primary_parent_widths)):
+        parser.error("--morgan-primary-parent-widths cannot contain duplicates")
+    if (len(args.l1_min_contrasts) != len(set(args.l1_min_contrasts))
+            or min(args.l1_min_contrasts) < 0):
+        parser.error("--l1-min-contrasts must be unique and non-negative")
     conditions = [tuple(value.split(":", 1)) for value in args.conditions]
     args.provider_pool_config = args.provider_pool_config.resolve()
     args.trace_root = args.trace_root.resolve()
@@ -482,8 +534,8 @@ def main(argv: list[str] | None = None) -> int:
                 "base_url": "",
                 "api_key_env": "",
                 "timeout_s": args.request_timeout_s,
-                "reasoning_effort": "",
-                "enable_thinking": False,
+                "reasoning_effort": "high",
+                "enable_thinking": True,
             }
             endpoint_receipts = []
         else:
@@ -492,7 +544,8 @@ def main(argv: list[str] | None = None) -> int:
                 args.request_timeout_s,
             )
         commands = []
-        single_receipts = [
+        context_matrix = args.context_v4_grid or args.context_v5_grid or args.context_v5_all_level
+        single_receipts = [] if context_matrix else [
             verify_single_reuse(
                 task,
                 split_path(task, "valid").with_name(
@@ -502,7 +555,24 @@ def main(argv: list[str] | None = None) -> int:
             for task in TASKS
         ]
         selection_receipts = []
-        for reranking, record_pool in conditions:
+        variants = (
+            [
+                ("assay-transfer-contrastive", "all", width, contrast, False)
+                for width in args.morgan_primary_parent_widths
+                for contrast in args.l1_min_contrasts
+            ] + [("assay-transfer-contrastive", "all", 25, 0, True)]
+            if args.context_v5_grid else
+            [
+                ("assay-transfer-contrastive", "all", width, contrast, False)
+                for width in args.morgan_primary_parent_widths
+                for contrast in args.l1_min_contrasts
+            ]
+            if args.context_v4_grid else
+            [("assay-transfer-contrastive", "all", 25, 0, True)]
+            if args.context_v5_all_level else
+            [(reranking, record_pool, None, 0, False) for reranking, record_pool in conditions]
+        )
+        for reranking, record_pool, width, contrast, all_levels in variants:
             for task in TASKS:
                 selection_args = _selection_args(
                     task,
@@ -511,6 +581,10 @@ def main(argv: list[str] | None = None) -> int:
                     reranking=reranking,
                     record_pool=record_pool,
                     records_per_level=args.records_per_level,
+                    context_width=width,
+                    min_contrast=contrast,
+                    context_v5=args.context_v5_grid or args.context_v5_all_level,
+                    all_levels=all_levels,
                 )
                 source, selection = flat._materialize_cache_matched_retrievals(
                     selection_args
@@ -520,6 +594,8 @@ def main(argv: list[str] | None = None) -> int:
                         "task": task,
                         "reranking": reranking,
                         "record_pool": record_pool,
+                        "morgan_primary_parent_width": width,
+                        "l1_min_contrast": contrast,
                         "path": str(source / "manifest.json"),
                         "sha256": sha256_file(source / "manifest.json"),
                         "selection_contract_sha256": selection[
@@ -559,7 +635,7 @@ def main(argv: list[str] | None = None) -> int:
                     command=command,
                     metadata={
                         "harness": "flat",
-                        "prompt_version": flat.JOSEPH_PROMPT_VERSION,
+                        "prompt_version": batch.args.flat_prompt_version,
                         "evaluation_subset": "valid",
                         "pilot_size": 3,
                         "output_root": str(batch.batch_dir),
@@ -581,16 +657,43 @@ def main(argv: list[str] | None = None) -> int:
             "status": "prepared" if args.prepare_only else "running",
             "tasks": list(TASKS),
             "evaluation_subset": "valid",
-            "harness_version": flat.PUBLIC_HARNESS_VERSION,
-            "prompt_version": flat.JOSEPH_PROMPT_VERSION,
+            "harness_version": (
+                flat.CONTEXT_V5_HARNESS_VERSION
+                if args.context_v5_grid or args.context_v5_all_level
+                else flat.CONTEXT_V4_HARNESS_VERSION
+                if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
+            ),
+            "prompt_version": (
+                flat.CONTEXT_V5_PROMPT_VERSION
+                if args.context_v5_grid or args.context_v5_all_level
+                else flat.CONTEXT_V4_PROMPT_VERSION
+                if args.context_v4_grid else flat.JOSEPH_PROMPT_VERSION
+            ),
             "conditions": [
                 {"reranking": reranking, "record_pool": record_pool}
                 for reranking, record_pool in conditions
             ],
             "records_per_level": args.records_per_level,
+            "context_v4_grid": args.context_v4_grid,
+            "context_v5_grid": args.context_v5_grid,
+            "context_v5_all_level": args.context_v5_all_level,
+            "morgan_primary_parent_widths": (
+                args.morgan_primary_parent_widths
+                if args.context_v4_grid or args.context_v5_grid
+                else [25] if args.context_v5_all_level else []
+            ),
+            "l1_min_contrasts": (
+                args.l1_min_contrasts
+                if args.context_v4_grid or args.context_v5_grid
+                else [0] if args.context_v5_all_level else []
+            ),
             "l1_molecules": 10,
             "l1_records_per_molecule": 10,
-            "max_level_by_task": {"bbb_martins": 5, "bioavailability_ma": 6},
+            "max_level_by_task": (
+                {task: 1 for task in TASKS}
+                if args.context_v4_grid else
+                {"bbb_martins": 5, "bioavailability_ma": 6}
+            ),
             "ranking_tie_seed": 0,
             "model": execution["model"],
             "parallelism": args.parallelism,

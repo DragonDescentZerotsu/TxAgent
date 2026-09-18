@@ -30,13 +30,8 @@ def test_matrix_builds_progressive_matched_record10_command(tmp_path: Path) -> N
     assert flat_matrix._selection_args(
         "bioavailability_ma", tmp_path, limit=0
     ).allow_frozen_l1_vote_scores is False
-    assert command[2:7] == [
-        "predict.harnesses.branches",
-        "--organization",
-        "flat",
-        "--task",
-        "bbb_martins",
-    ]
+    assert command[2] == "predict.harnesses.branches.tasks.bbb_martins.contract"
+    assert command[command.index("--experiment-mode") + 1] == "full_flat"
     for pair in (
         ("--flat-prompt-version", "joseph_flat_v2"),
         ("--flat-reranking", "morgan"),
@@ -85,3 +80,25 @@ def test_matrix_builds_assay_transfer_all_pool_command(tmp_path: Path) -> None:
     ):
         assert command[command.index(option) + 1] == value
     assert "--disable-thinking" in command
+
+
+def test_matrix_builds_l1_uid_context_command(tmp_path: Path) -> None:
+    args = flat_matrix._selection_args(
+        "bbb_martins", tmp_path, limit=0,
+        reranking="assay-transfer-contrastive", context_width=15,
+        min_contrast=2,
+    )
+    source = args.batch_root / args.batch_id / "cache_matched_retrieval"
+    command = flat_matrix._batch_command(args, source, max_tokens=65_536).command
+
+    assert args.batch_id == "bbb_martins__k10_w15_m2"
+    assert args.max_level == 1
+    assert command[command.index("--flat-prompt-version") + 1] == (
+        "joseph_flat_context_v4_v1"
+    )
+    assert command[command.index("--flat-reranking") + 1] == (
+        "assay-transfer-contrastive"
+    )
+    assert command[command.index("--flat-layout") + 1] == "global"
+    assert command[command.index("--flat-query-prior") + 1] == "cached"
+    assert command[command.index("--max-tokens") + 1] == "65536"

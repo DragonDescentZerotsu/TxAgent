@@ -56,7 +56,8 @@ def _manifest(path: Path, task: str, subset: str, level: str) -> dict[str, Any]:
 
 def _ranked_rows(
     manifest_path: Path, *, task: str, subset: str, level: str, method: str,
-    queries: Mapping[str, str], limit: int,
+    queries: Mapping[str, str], limit: int | None,
+    parent_morgan_width: int | None = None,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, tuple[str, str]], dict[str, Any]]:
     manifest = _manifest(manifest_path, task, subset, level)
     database = manifest_path.with_name(str(manifest["database"]))
@@ -77,20 +78,132 @@ def _ranked_rows(
             identities[str(query_id)] = (
                 str(registered["query_parent_id"]), str(registered["query_parent_smiles"])
             )
+            width_clause = (
+                " AND parent_morgan_rank<=?" if parent_morgan_width is not None else ""
+            )
+            sql = (
+                f"SELECT * FROM rankings WHERE benchmark_row_id=? AND {rank_column} IS NOT NULL"
+                f"{width_clause} ORDER BY {rank_column},item_id"
+            )
+            parameters: tuple[Any, ...] = (
+                (str(query_id), parent_morgan_width)
+                if parent_morgan_width is not None else (str(query_id),)
+            )
             rows = connection.execute(
-                f"SELECT * FROM rankings WHERE benchmark_row_id=? AND {rank_column} IS NOT NULL "
-                f"ORDER BY {rank_column},item_id LIMIT ?", (str(query_id), limit),
+                f"{sql} LIMIT ?", (*parameters, limit),
+            ).fetchall() if limit is not None else connection.execute(
+                sql, parameters,
             ).fetchall()
-            if len(rows) != limit:
+            if limit is not None and len(rows) != limit:
                 available = connection.execute(
                     f"SELECT COUNT(*) FROM rankings WHERE benchmark_row_id=? "
-                    f"AND {rank_column} IS NOT NULL", (str(query_id),),
+                    f"AND {rank_column} IS NOT NULL{width_clause}", parameters,
                 ).fetchone()[0]
                 raise ValueError(
                     f"Requested {limit} rows but {query_id}/{level}/{method} has {available}"
                 )
             output[str(query_id)] = [dict(row) for row in rows]
     return dict(output), identities, manifest
+
+
+def load_ranked_universe(
+    release_index: Path, *, task: str, subset: str, levels: list[str] | tuple[str, ...],
+    queries: Mapping[str, str],
+) -> tuple[dict[str, dict[str, list[dict[str, Any]]]], Path, dict[str, Any]]:
+    """Load every record in selected later-level Morgan universes.
+
+    The release index remains the authority for level manifests and the shared
+    V10 evidence projection. This reader deliberately does not hydrate the
+    records so callers can optimize over compact ranking rows first.
+    """
+    index_path = Path(release_index).resolve()
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    if (
+        index.get("schema_version") != "ranked_uid_task_release_index.v1"
+        or index.get("status") != "complete"
+        or index.get("task_id") != task
+        or index.get("pool") != "all"
+        or index.get("later_candidate_universe")
+        != "all_uids_under_morgan_top_100_parents"
+    ):
+        raise ValueError(f"Incompatible ranked UID task release index: {index_path}")
+    if not queries or not levels or len(set(levels)) != len(levels) or "L1" in levels:
+        raise ValueError("Queries and unique later levels are required")
+
+    try:
+        indexed_levels = index["splits"][subset]["levels"]
+    except KeyError as error:
+        raise ValueError(f"Subset is absent from ranked UID release: {subset}") from error
+
+    ranked: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    identities: dict[str, tuple[str, str]] | None = None
+    manifests: dict[str, dict[str, Any]] = {}
+    manifest_paths: dict[str, Path] = {}
+    for level in levels:
+        if level not in indexed_levels:
+            raise ValueError(f"Level is absent from ranked UID release: {level}")
+        entry = indexed_levels[level]
+        manifest_path = (index_path.parent / str(entry["manifest"])).resolve()
+        document = _manifest(manifest_path, task, subset, level)
+        if (
+            sha256_file(manifest_path) != entry["manifest_sha256"]
+            or document["content_id"] != entry["content_id"]
+            or index["neighbor_identity_policy_by_level"].get(level) != "parent_disjoint"
+        ):
+            raise ValueError(f"{level} cache differs from the task release index")
+        rows, current_identities, _ = _ranked_rows(
+            manifest_path, task=task, subset=subset, level=level, method="morgan",
+            queries=queries, limit=None,
+        )
+        for query_id, query_rows in rows.items():
+            counts = document["query_counts"][query_id]
+            if (
+                len(query_rows) != int(counts["candidate_records"])
+                or len({str(row["parent_id"]) for row in query_rows})
+                != int(counts["candidate_parents"])
+            ):
+                raise ValueError(f"{query_id}/{level} candidate universe is incomplete")
+        if identities is not None and current_identities != identities:
+            raise ValueError("Independent level caches disagree on query identity")
+        ranked[level] = rows
+        identities = current_identities
+        manifests[level] = document
+        manifest_paths[level] = manifest_path
+
+    evidence_entry = index["evidence"]
+    evidence_manifest_path = (index_path.parent / str(evidence_entry["manifest"])).resolve()
+    evidence_manifest = json.loads(evidence_manifest_path.read_text(encoding="utf-8"))
+    if (
+        evidence_manifest.get("schema_version") != "ranked_evidence_projection.v1"
+        or evidence_manifest.get("status") != "complete"
+        or evidence_manifest.get("task_id") != task
+        or evidence_manifest.get("content_id") != evidence_entry["content_id"]
+        or sha256_file(evidence_manifest_path) != evidence_entry["manifest_sha256"]
+    ):
+        raise ValueError("Evidence projection differs from the task release index")
+
+    return ranked, evidence_manifest_path, {
+        "release_index": str(index_path),
+        "release_index_sha256": sha256_file(index_path),
+        "profile": index.get("profile"),
+        "gold_release": index.get("gold_release"),
+        "parent_capacity": int(index["parent_capacity"]),
+        "level_manifests": {
+            level: {
+                "path": str(manifest_paths[level]),
+                "sha256": sha256_file(manifest_paths[level]),
+                "content_id": manifests[level]["content_id"],
+            }
+            for level in levels
+        },
+        "evidence_manifest": str(evidence_manifest_path),
+        "evidence_manifest_sha256": sha256_file(evidence_manifest_path),
+        "evidence_content_id": evidence_manifest["content_id"],
+        "query_identities": {
+            query_id: {"parent_id": value[0], "parent_smiles": value[1]}
+            for query_id, value in (identities or {}).items()
+        },
+    }
 
 
 def load_ranked_panels(
@@ -288,6 +401,10 @@ def load_candidates(
                 if level == "L1" and method == "assay_transfer_contrastive"
                 else molecule_limit if level == "L1" else limits[level]
             ),
+            parent_morgan_width=(
+                morgan_primary_parent_width
+                if level != "L1" and method == "assay_transfer" else None
+            ),
         )
         if identities is not None and current != identities:
             raise ValueError("Independent level caches disagree on query identity")
@@ -473,7 +590,11 @@ def load_candidates(
             "min_contrast": min_contrast if l1_selection == "assay_transfer_contrastive" else 0,
             "morgan_primary_parent_width": (
                 morgan_primary_parent_width
-                if l1_selection == "assay_transfer_contrastive" else None
+                if l1_selection == "assay_transfer_contrastive"
+                or any(
+                    level != "L1" and method == "assay_transfer"
+                    for level, method in stages.items()
+                ) else None
             ),
             "tie_seed": tie_seed,
             "cache_pool": cache_pool,
@@ -501,5 +622,5 @@ def load_candidates(
 
 __all__ = [
     "CAPACITY", "SCHEMA_VERSION", "hydrate_uids", "load_candidates",
-    "load_ranked_panels",
+    "load_ranked_panels", "load_ranked_universe",
 ]

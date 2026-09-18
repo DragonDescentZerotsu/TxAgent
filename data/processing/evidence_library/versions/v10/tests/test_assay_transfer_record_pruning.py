@@ -238,6 +238,38 @@ def test_generation_preserves_frozen_prior_prunes(
     assert manifest["validations"]["all_frozen_prior_prunes_preserved"] is True
 
 
+def test_frozen_prior_prune_survives_tail_candidate_drift(tmp_path: Path) -> None:
+    records_path = tmp_path / "records.parquet"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "canonical_record_id": "record-1",
+                    "pair_bucket_key": "pair-key",
+                    "finite_scalar_value": 1.0,
+                    "assay_transfer_eligible": True,
+                }
+            ]
+        ),
+        records_path,
+    )
+    decisions = pruning._carry_forward_frozen_prunes(
+        ["record-1"],
+        frozen_prunes={
+            "record-1": {
+                "decision": "prune_record",
+                "reason_code": "wrong_quantity_or_endpoint",
+                "reason": "Reviewed quantity mismatch.",
+            }
+        },
+        records_path=records_path,
+        task_id="skin_reaction",
+    )
+
+    assert decisions[0]["review_decision"] == "prune_record"
+    assert decisions[0]["tail_geometry"] == "frozen_prior_carryforward"
+
+
 def test_manual_ineligibility_is_identity_bound(tmp_path: Path) -> None:
     records_path = tmp_path / "records.parquet"
     mapping_path = tmp_path / "manual.json"
