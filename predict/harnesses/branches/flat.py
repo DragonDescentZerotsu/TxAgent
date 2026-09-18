@@ -665,6 +665,7 @@ def build_flat_context_request(
         f"{prompt_version}/system.jinja"
     ).render(
         **contract,
+        mode="morgan" if reranking.startswith("morgan") else reranking,
         query_prior_visible=bool(query_prior),
         ranking_guidance=assets["modes"][reranking]["guidance"],
     )

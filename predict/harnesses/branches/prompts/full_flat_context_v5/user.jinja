@@ -14,8 +14,13 @@ Efflux or transporter prior: {{ query_prior.get('efflux_or_transporter_prior', '
 Absorption prior: {{ query_prior.get('absorption_prior', '') }}
 Solubility or dissolution prior: {{ query_prior.get('solubility_or_dissolution_prior', '') }}
 Metabolism or clearance prior: {{ query_prior.get('metabolism_or_clearance_prior', '') }}
-{% endif %}Prior confidence: {{ query_prior.get('confidence', '') }}
-Assessment: {{ query_prior.get('reasoning_summary', '') }}{% endif %}
+{% endif %}Exact-molecule ChEMBL evidence assessment: {{ query_prior.get('exact_chembl_evidence_assessment', '') }}
+Prior confidence: {{ query_prior.get('confidence', '') }}
+Assessment: {{ query_prior.get('reasoning_summary', '') }}{% if query_prior.get('property_drivers') %}
+Property drivers:
+- {{ query_prior.property_drivers | join('\n- ') }}{% endif %}{% if query_prior.get('caveats') %}
+Prior caveats:
+- {{ query_prior.caveats | join('\n- ') }}{% endif %}{% endif %}
 
 # Experimental evidence
 {% for section in sections %}{% if section.heading %}
