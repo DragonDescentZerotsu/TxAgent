@@ -1,0 +1,12 @@
+{
+  "kind": "reviewed_smiles_uid_rebinding",
+  "review_asset_input_sha256": "2c141da3e4b0152cd04c7741be0df95167143f615298ee3c6c99413150ecb708",
+  "review_asset_output_sha256": "bb1b1753f13f892b25f44d9cfc84fad2d67b974aae82d1f5dddc16d382c87ba3",
+  "source_uid_migration_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "rows_by_source": {
+    "fa": 1745,
+    "fh": 1597,
+    "oral_exposure": 1368
+  },
+  "scientific_decisions_changed": 0
+}

@@ -1,0 +1,6 @@
+version: 16
+caches:
+  bbb_martins:
+    valid: ../cache/assay_reranking/archive/indirect_morgan_semantic_l2_l4_v3/bbb_martins/hybrid/valid/VERSION.json
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/indirect_morgan_semantic_l2_l4_v3/bioavailability_ma/hybrid/valid/VERSION.json

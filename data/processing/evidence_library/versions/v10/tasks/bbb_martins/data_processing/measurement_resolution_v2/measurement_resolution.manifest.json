@@ -1,0 +1,67 @@
+{
+  "api_base_url": "https://api.openai.com/v1",
+  "assignment_method_counts": {
+    "invalid_row_response:entry_without_a_unit:structural_retry": 20,
+    "manual_review_override:bbb_biotin_micromolar_0001": 1,
+    "model_single_pass": 107006,
+    "model_structural_retry": 2139
+  },
+  "base_mapping": {
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+    "reused_rows": 109153,
+    "sha256": "e736b74465ea9a6d1f376770121fb36d2ff2f5c1be12a6ee1dcc9b52724a5d71"
+  },
+  "cleaned_records_path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "b3fa77131042f148363135eb8794e9dee4f71460c07f23008efb19e3c1789f98",
+  "delta_inference": {
+    "model": "gpt-5.4-mini",
+    "rows": 13
+  },
+  "endpoint_profile": {
+    "path": "outputs/chembl_tool/tasks/bbb_martins/evidence_library/starling_normalized_v7/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "5b07c63154a4d8b346871b7a9b155d2ea217ffbdb5f4aa0bd546066a80e51f4c",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "generation_version": "measurement_resolution_generation.v6",
+  "inference": {
+    "max_completion_tokens": 65536,
+    "reasoning_mode": "server_default",
+    "temperature": 1.0
+  },
+  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/data_processing/measurement_resolution_v2/measurement_resolution.parquet",
+  "mapping_rows": 109166,
+  "mapping_sha256": "7ee69b221714325700c8736a96f24c77c9d9e2f4b4e73bb7508df385872c8377",
+  "mapping_version": "bbb_martins_measurement_resolution.v2",
+  "model": "mixed",
+  "models": [
+    "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "gpt-5.4-mini"
+  ],
+  "prompt": {
+    "batch_size": 10,
+    "prompt_version": "bbb_measurement_resolution_prompt.v11",
+    "rendered_sha256": {
+      "direct_bbb": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98",
+      "efflux_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "influx_transport": "a35b3aaa8764800d3546d799117335a15df9d6c6c87423f74a5298f6620a790c",
+      "passive_permeability": "5572cc9140c6388c709ff94cc197dc73014c1b64e20717572006551f92970b98"
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tools/chembl_tool/tasks/bbb_martins/measurement_resolution_templates/measurement_resolution_v5.jinja",
+    "template_sha256": "0c3d5db5dec30456d578371186fbc2c96bdca9ec3076fc038ac67c0ebd498b47"
+  },
+  "rejected_rows": 20,
+  "routing_version": "starling_measurement_routing.v4",
+  "status_counts": {
+    "ok": 52537,
+    "relative": 9495,
+    "unavailable": 27188,
+    "unsure": 19946
+  },
+  "task_id": "bbb_martins",
+  "validations": {
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

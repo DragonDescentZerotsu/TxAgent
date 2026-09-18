@@ -1,0 +1,5 @@
+root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,20480}
+final_calibration ::= "\nFINAL CALIBRATION\nDIRECT EVIDENCE BALANCE: " audit_line "TRANSFERABILITY CHECK: " audit_line "QUERY-SPECIFIC CHECK: " audit_line "THRESHOLD DECISION: " audit_line
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+

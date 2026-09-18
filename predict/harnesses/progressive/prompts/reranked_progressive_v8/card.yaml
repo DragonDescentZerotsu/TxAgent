@@ -1,0 +1,64 @@
+schema_version: progressive_molecule_card.v1
+card_order: selection_rank
+molecule:
+  fields:
+  - name: analog_id
+    source: analog_id
+    required: true
+  - name: canonical_smiles
+    source: canonical_smiles
+    required: true
+  - name: morgan_similarity
+    source: morgan_similarity
+  - name: transfer_likelihood
+    source: transfer_likelihood
+  - name: selected_condition
+    source: selected_condition
+  - name: first_seen_level
+    source: first_seen_level
+    required: true
+  - name: morgan_top5_rank
+    source: morgan_top5_rank
+  - name: assay_transfer_top5_rank
+    source: assay_transfer_top5_rank
+  - name: transfer_score_level
+    source: transfer_score_level
+  - name: morgan_score_levels
+    source: morgan_score_levels
+  tool_summaries_field: query_analog_tool_summaries
+  evidence_cards_field: evidence_cards
+evidence_card:
+  fields:
+  - name: card_id
+    source: card_id
+    required: true
+  - name: evidence_family
+    source: evidence_family
+  - name: assay_context
+    source: assay_context
+  - name: endpoint
+    source: endpoint
+  - name: reported_value
+    source: reported_value
+  - name: reported_unit
+    source: reported_unit
+  - name: species
+    source: species
+  - name: qualifying_conditions
+    source: qualifying_conditions
+  - name: experimental_details
+    source: experimental_details
+  - name: support_text
+    source: support_text
+  - name: transfer_likelihood
+    source: transfer_likelihood
+  - name: first_seen_level
+    source: first_seen_level
+    required: true
+  - name: new_this_level
+    source: new_this_level
+    required: true
+  - name: prior_use
+    source: prior_use
+  - name: retrieved_by
+    source: retrieved_by

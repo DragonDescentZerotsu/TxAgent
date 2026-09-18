@@ -1,0 +1,66 @@
+Extract at most one source-reported Ames outcome measurement per row. Return JSON only.
+
+Input is {"rows":[...]} with at most {{ batch_size }} rows. Each row has `id`,
+`canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return every input id
+once, in order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<nonempty complete measurement basis>"}]}]}
+
+Only `ok` carries exactly one measurement. Every other status carries `[]`.
+An `ok` result must always have a nonempty `unit`. Judge each row independently.
+
+`measurement_text` is the selected result field. The focal value must come from
+that field, and `support_text` must tie it to the named outcome. Other visible
+fields may identify the result or complete its unit, but may not donate another
+value. Never select a dose, concentration, duration, timepoint, sample size,
+identifier, p-value, control value, comparator value, calibration value, or
+cytotoxicity readout unless it is itself the named endpoint. Do not calculate,
+convert, average, or infer a value.
+
+Use `ok` for one finite absolute point with a complete physical unit,
+denominator, labeled count, or explicitly defined dimensionless metric. A
+dimensionless metric still requires a nonempty measurement basis. A source-defined
+ratio, fraction, percentage, correlation coefficient, partition constant, score,
+index, or count can be `ok` only when the visible source text uniquely defines
+what its coefficient measures.
+
+Ratios and percentages are not automatically relative. A ratio with explicitly
+named numerator and denominator, a source-defined partition ratio, or another
+self-contained named metric is `ok`. A coefficient defined against an
+experiment-specific control, treatment, genotype, baseline, or referent is
+`relative`, including fold change, percent change or inhibition, and percent of
+control. A comparison elsewhere in the row does not make an absolute focal-group
+result relative.
+
+Use `unsure` for a bound, range, conflicting or incomplete unit, several equally
+focal outcomes, or conflicting source statements. A single central point with
+SD, SE, or a confidence interval may remain `ok`. Use `unavailable` when the
+focal outcome is absent or qualitative, or when the only numbers are conditions
+or incidental statistics.
+
+{% if has_unit_column %}For `ok`, copy a nonempty complete `unit_text` verbatim,
+preserving symbols, capitalization, parentheses, analytes, scales, and
+denominators. If `unit_text` is empty, use only a uniquely selected exact
+contiguous physical unit or named metric span from the visible source text. If
+several spans could apply, or no complete basis is stated, return `unsure`.
+{% else %}This source has no separate unit column. Use only a complete unit or
+named metric that is one exact contiguous span in the visible source text. If no
+complete basis is stated, return `unsure`.{% endif %}
+
+Prefer the most specific source span: for example `(R)-PEG/(S)-PEG ratio` rather
+than bare `ratio`, and `Pearson correlation coefficient` rather than
+`dimensionless`. Do not paraphrase, expand abbreviations, change singular or
+plural, replace punctuation, use an endpoint name as the unit, or add explanatory
+words. Bare `frequency`, `rate`, `score`, `index`, `count`, or `ratio` is
+incomplete unless the source explicitly defines that complete metric. Never
+return an empty unit, `unitless`, or `dimensionless` for `ok`.
+
+Return the focal value as a finite plain decimal. Remove correctly grouped
+thousands separators. Keep a printed power-of-ten scale in the unit: coefficient
+`3.2` printed with `10^-6 events/cell` remains measurement `3.2`, unit
+`10^-6 events/cell`. Never apply or reverse the scale. A string presenting `vs`,
+`from ... to ...`, multiple semicolon-separated outcomes, or several equally
+focal values is not one absolute point.
+
+Additional fields and endpoint summaries identify the selected source outcome;
+they cannot supply a missing value, unit, denominator, scale, or metric definition.

@@ -1,0 +1,27 @@
+{
+  "version": "gold_level_mapping_alignment.v1",
+  "task": "bbb_martins",
+  "gold_release": "v1",
+  "validation_basis": "gold_voter_membership",
+  "original": {
+    "physical_voters": 7634,
+    "present": 7634,
+    "present_at_l1": 7634,
+    "missing": [],
+    "present_outside_l1": [],
+    "status": "pass"
+  },
+  "published": {
+    "physical_voters": 7634,
+    "present": 7634,
+    "present_at_l1": 7634,
+    "missing": [],
+    "present_outside_l1": [],
+    "status": "pass"
+  },
+  "reviewed_corrections": {
+    "add": 0,
+    "promote": 0
+  },
+  "unchanged_l3_plus": true
+}

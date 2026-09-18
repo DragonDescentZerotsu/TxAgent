@@ -20,10 +20,9 @@ import time
 from collections.abc import Iterable, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 BUILD_RUNTIME_VERSION = "starling_build_runtime.v2"
 BUILD_LOCK_FILENAME = ".build.lock"
@@ -91,7 +90,7 @@ def starling_build_session(
             "command": sys.argv[0],
             "hostname": socket.gethostname(),
             "pid": os.getpid(),
-            "started_at": datetime.now(timezone.utc).isoformat(),
+            "started_at": datetime.now(UTC).isoformat(),
         }
         handle.seek(0)
         handle.truncate()
@@ -151,14 +150,16 @@ class BuildTimings:
     started: float = field(default_factory=time.monotonic)
     phases: dict[str, float] = field(default_factory=dict)
 
-    def measure(self, name: str) -> "_MeasuredPhase":
+    def measure(self, name: str) -> _MeasuredPhase:
         return _MeasuredPhase(self, name)
 
     def manifest(self) -> dict[str, Any]:
         return {
             "elapsed_s": round(time.monotonic() - self.started, 3),
             "phases_s": {key: round(value, 3) for key, value in self.phases.items()},
-            "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
+            "peak_rss_mb": round(
+                resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1
+            ),
         }
 
 
@@ -172,9 +173,9 @@ class _MeasuredPhase:
         self.started = time.monotonic()
 
     def __exit__(self, *_: object) -> None:
-        self.timings.phases[self.name] = self.timings.phases.get(
-            self.name, 0.0
-        ) + (time.monotonic() - self.started)
+        self.timings.phases[self.name] = self.timings.phases.get(self.name, 0.0) + (
+            time.monotonic() - self.started
+        )
 
 
 def semantic_arguments(args: Any, digests: FileDigestCache) -> dict[str, Any]:
@@ -280,7 +281,9 @@ def build_cache_metadata(
         "semantic_arguments": semantic_arguments(args, digests),
         "inputs": inputs,
     }
-    encoded = json.dumps(key_payload, sort_keys=True, separators=(",", ":"), default=str)
+    encoded = json.dumps(
+        key_payload, sort_keys=True, separators=(",", ":"), default=str
+    )
     return {
         **key_payload,
         "content_key": hashlib.sha256(encoded.encode("utf-8")).hexdigest(),
@@ -300,7 +303,10 @@ def cache_metadata_matches(
 ) -> bool:
     if not metadata or metadata.get("version") != BUILD_RUNTIME_VERSION:
         return False
-    if metadata.get("task_id") != task_id or metadata.get("completed_stage") != completed_stage:
+    if (
+        metadata.get("task_id") != task_id
+        or metadata.get("completed_stage") != completed_stage
+    ):
         return False
     implementation = implementation_fingerprint(
         task_id,
@@ -330,10 +336,13 @@ def cache_metadata_matches(
             "inputs",
         )
     }
-    encoded = json.dumps(key_payload, sort_keys=True, separators=(",", ":"), default=str)
-    return metadata.get("content_key") == hashlib.sha256(
-        encoded.encode("utf-8")
-    ).hexdigest()
+    encoded = json.dumps(
+        key_payload, sort_keys=True, separators=(",", ":"), default=str
+    )
+    return (
+        metadata.get("content_key")
+        == hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    )
 
 
 def _path_digests(
@@ -532,7 +541,7 @@ def normalize_and_project_records_ordered(
                 chunks = pool.map(_normalize_and_project_range, bounds, chunksize=1)
         normalized = [record for chunk, _ in chunks for record in chunk]
         persisted = [record for _, chunk in chunks for record in chunk]
-        return normalized, persisted
+        return (normalized if retain_working else persisted), persisted
     finally:
         _NORMALIZE_RECORDS = None
         _NORMALIZE_HOOKS = None
@@ -540,13 +549,15 @@ def normalize_and_project_records_ordered(
         _NORMALIZE_POLICY = None
 
 
-_CLEAN_SOURCE_BATCHES: Sequence[
-    tuple[Any, Any, str, Mapping[str, str] | None]
-] | None = None
+_CLEAN_SOURCE_BATCHES: (
+    Sequence[tuple[Any, Any, str, Mapping[str, str] | None]] | None
+) = None
 
 
 def _clean_source_range(task: tuple[int, int, int]) -> list[dict[str, Any]]:
-    from data.processing.evidence_library.shared.v2.normalization.cleaning import clean_source_rows
+    from data.processing.evidence_library.shared.v2.normalization.cleaning import (
+        clean_source_rows,
+    )
 
     if _CLEAN_SOURCE_BATCHES is None:
         raise RuntimeError("cleaning worker was not initialized")

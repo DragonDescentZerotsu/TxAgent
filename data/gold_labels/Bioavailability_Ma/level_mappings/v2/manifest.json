@@ -1,0 +1,55 @@
+{
+  "version": "gold_original_level_mapping.v1",
+  "status": "complete",
+  "task": "bioavailability_ma",
+  "gold_release": "v2",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "builder": {
+    "path": "data/processing/evidence_library/publish_gold_level_mappings.py",
+    "sha256": "de7a480b56e04ea283a7a27d9a80458a6b69aee56673d41e4551626d506f3078"
+  },
+  "upstream": {
+    "path": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/source_uid_levels/bioavailability_ma.parquet",
+    "sha256": "c1d8b8f137303f9c222e2e4a0509fbcd4e48390e91459c6c757b945707731fd6",
+    "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b"
+  },
+  "inputs": {
+    "voter_membership": {
+      "path": "data/gold_labels/Bioavailability_Ma/v2/scaffold/voter_membership.parquet",
+      "sha256": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+      "physical_voters": 18926
+    },
+    "reviewed_corrections": {
+      "path": "data/gold_labels/Bioavailability_Ma/level_mappings/v1/reviewed_l1_corrections.json",
+      "sha256": "a1d07702262043c411920671cf8d55a1fe8a5d57b0260981e4e0c5c4c58bbc36",
+      "canonical_records_path": "data/evidence_libraries/bioavailability_ma/v10/02_canonicalized/records.parquet",
+      "canonical_records_sha256": "65734c0c47eb3e437ab89cd44c6bf8a26d4c35a4b30bef048425ad8cb26cb93d"
+    }
+  },
+  "outputs": {
+    "original_level_mapping": {
+      "kind": "parquet_file",
+      "path": "original_level_mapping.parquet",
+      "sha256": "c1d8b8f137303f9c222e2e4a0509fbcd4e48390e91459c6c757b945707731fd6",
+      "rows": 435472
+    },
+    "level_mapping": {
+      "kind": "parquet_file",
+      "path": "level_mapping.parquet",
+      "sha256": "68cca167253f03bfe980abbc3726025d02ac2812746f9820f223212ba3393fcc",
+      "rows": 435483,
+      "rows_by_level": {
+        "1": 20549,
+        "2": 152350,
+        "3": 104174,
+        "4": 73913,
+        "5": 23511,
+        "6": 60986
+      }
+    },
+    "alignment_report": {
+      "path": "alignment_report.json",
+      "sha256": "a517a6fe2c9d875e7abd7dc1d5a0ee0256a4a8666fb3a3da916492b3f380539f"
+    }
+  }
+}

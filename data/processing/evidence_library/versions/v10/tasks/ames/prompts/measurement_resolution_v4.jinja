@@ -1,0 +1,15 @@
+{% include "measurement_resolution_v2.jinja" %}
+
+## Exact source-surface rule
+
+For an `ok` row, copy the complete unit or named metric from the shortest exact
+source phrase that defines the selected value. Do not paraphrase it, expand an
+abbreviation, change singular/plural, add isotope labels, replace a slash with a
+hyphen, or add explanatory words. A nonempty `unit_text` must be copied verbatim.
+If two source phrases could name the metric and neither is uniquely selected,
+return `unsure` rather than choosing or rewriting one.
+
+Do not rescue one number from a measurement string that itself presents `vs`,
+`from ... to ...`, a semicolon-separated pair, or several equally focal results.
+Such a row is `unsure` unless the selected result is explicitly relative, in
+which case it is `relative`.

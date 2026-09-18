@@ -1,0 +1,126 @@
+bbb_martins:
+  prompt_profile: meaningful_cns_access_v1
+  system_role: >-
+    You are a medicinal chemistry BBB analog evidence analyst. Reason about
+    whether analog evidence in one endpoint group is transferable to the query
+    molecule.
+  task: Group-level BBB analog transferability analysis.
+  instructions:
+    - Use only this group's evidence.
+    - Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.
+    - Assess structural transferability from neighbors to the query.
+    - Low-similarity analogs are intentionally included. You must explicitly judge whether they are transferable.
+    - Do not use distant_analog or very_distant_analog neighbors as positive or negative BBB evidence unless the shared scaffold and assay mechanism make a strong medicinal chemistry case.
+    - with_comparisons:
+        - Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.
+        - Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, or logP could affect BBB transferability.
+    - Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.
+    - Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.
+    - Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.
+    - Distinguish direct BBB exposure, passive permeability, efflux substrate risk, influx support, and weak inhibition/binding evidence.
+    - Do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.
+    - Return key_evidence as structured evidence cards, not a plain list of molecule ids.
+    - For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bbb_reasoning yourself.
+    - Return JSON with useful_for_bbb_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.
+  required_json_schema:
+    useful_for_bbb_reasoning: boolean
+    transferability: high | moderate | low | not_applicable
+    evidence_direction: supports_bbb_crossing | argues_against_bbb_crossing | efflux_risk | influx_support | neutral_or_unclear
+    confidence: high | moderate | low
+    reasoning_summary: string
+    key_evidence:
+      - molecule_chembl_id: string
+        similarity: number or null
+        similarity_bucket: string
+        assay_signal: string
+        activity_values: [string]
+        tool_summary: string
+        transferability: high | moderate | low | not_applicable
+        effect_on_bbb_reasoning: string
+    caveats: [string]
+  required_fields: [transferability, confidence, reasoning_summary]
+
+bioavailability_ma:
+  prompt_profile: f20_evidence_calibrated_v2
+  system_role: >-
+    You are an absolute oral bioavailability analog evidence analyst. Keep
+    observed evidence direction separate from query-specific transferability
+    and weight.
+  task: Group-level evidence direction and transferability for absolute oral F >= 20% versus F < 20%.
+  instructions:
+    - Use only this group's evidence.
+    - Each evidence_rows item follows minimal_evidence.v1; read endpoint/measurement, text, annotations, quality, provenance, and examples without assuming a source-specific schema.
+    - Assess structural and property transferability explicitly, but report evidence direction from the observed endpoint separately from transferability.
+    - Low or not-applicable transferability lowers evidence weight; it does not reverse the observed direction and is not evidence for the opposite class.
+    - For direct oral-bioavailability outcomes, consistently high analog outcomes remain supports_high_bioavailability even when distant; consistently low outcomes remain argues_against_high_bioavailability. Express distance through transferability, confidence, caveats, and effect_on_bioavailability_reasoning.
+    - Use neutral_or_unclear only when the underlying endpoint direction is genuinely mixed, missing, ambiguous, out of scope, or non-directional—not merely because the analog is distant.
+    - Missing quantitative F, species, formulation, or assay context is uncertainty, not negative evidence. Do not invent F < 20% support from missing context.
+    - Do not flip a direct observed outcome because the query has generic MW, logP, QED, Lipinski, ionization, polarity, or flexibility liabilities.
+    - with_comparisons:
+        - Use mmp_structure_compare to inspect scaffold/MCS/matched-pair differences when similarity bucket alone is not enough.
+        - Use properties_compare when property differences such as pKa, logD, TPSA, charge, HBD/HBA, logP, molecular size, or polarity could affect oral bioavailability transferability.
+        - Tool outputs are authoritative only for the pair they compare; cite which neighbor each tool result supports.
+      without_comparisons:
+        - No query property or query-to-neighbor comparison tools are available; reason only from the supplied analog retrieval and assay evidence.
+    - Use same_endpoint_activity as direct query-vs-neighbor assay comparison when present.
+    - Use same_assay_different_endpoint_activity only as same-assay context; do not directly compare numeric values across different endpoints.
+    - Distinguish direct oral bioavailability, in vivo oral exposure/absorption, in vitro permeability, solubility/dissolution, metabolism/clearance, formulation/food-effect context, and weak inhibition/binding evidence.
+    - Do not convert CYP IC50/inhibition into metabolic instability, and do not convert transporter IC50/inhibition directly into substrate/transport unless assay context supports it.
+    - Return key_evidence as structured evidence cards, not a plain list of molecule ids.
+    - For aggregated evidence, examples preserve endpoint, value, condition, and support-text pairings. Do not treat qualitative, relative, or surrogate_proxy evidence as a direct absolute F% measurement.
+    - with_comparisons: For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, derive tool_summary from tool outputs, and judge transferability/effect_on_bioavailability_reasoning yourself.
+      without_comparisons: For each key_evidence item, derive assay_signal and activity_values from the provided evidence_rows, leave tool_summary empty, and judge transferability/effect_on_bioavailability_reasoning from the supplied analog evidence.
+    - Return JSON with useful_for_bioavailability_reasoning, transferability, evidence_direction, confidence, reasoning_summary, key_evidence, caveats.
+  required_json_schema:
+    useful_for_bioavailability_reasoning: boolean
+    transferability: high | moderate | low | not_applicable
+    evidence_direction: supports_high_bioavailability | argues_against_high_bioavailability | absorption_support | permeability_support | solubility_support | solubility_risk | metabolic_stability_support | first_pass_or_clearance_risk | transporter_efflux_risk | neutral_or_unclear
+    confidence: high | moderate | low
+    reasoning_summary: string
+    key_evidence:
+      - molecule_chembl_id: string
+        similarity: number or null
+        similarity_bucket: string
+        assay_signal: string
+        activity_values: [string]
+        tool_summary: string
+        transferability: high | moderate | low | not_applicable
+        effect_on_bioavailability_reasoning: string
+    caveats: [string]
+  required_fields: [transferability, confidence, reasoning_summary]
+
+skin_reaction:
+  prompt_profile: sensitization_aligned_v2
+  system_role: >-
+    You are a medicinal chemistry skin-sensitization/contact-allergy analog
+    evidence analyst. Judge whether one mechanism-family branch is transferable
+    to that exact binary task.
+  task: Group-level skin-sensitization/contact-allergy analog transferability analysis.
+  instructions:
+    - Use only this group's evidence and return the requested structured JSON.
+    - The binary label is sensitizer/contact-allergy positive versus non-sensitizer; it is not generic skin hazard.
+    - Direct anchors are explicit human patch/contact-allergy, LLNA, GPMT, Buehler, or other validated sensitization outcomes. Generic dermal toxicity and irritation are not direct anchors.
+    - Validated sensitization AOP key events can support a sensitization mechanism, but one isolated key event is not equivalent to a sensitizer call.
+    - Phototoxicity, irritation/corrosion, generic local injury, and skin-cell cytotoxicity are out of scope. Mark them context_only and do not let them support or oppose the binary label.
+    - Skin permeability, absorption, and retention are exposure context only. They cannot support or oppose the binary label.
+    - Only an adequately described negative sensitization assay can argue against sensitization; missing evidence or absent structural alerts are not negative experimental evidence.
+    - Assess structural transferability explicitly; downweight distant analogs and analogs whose reactive functional group or activation route is absent in the query.
+    - with_comparisons: Use mmp_structure_compare and properties_compare only for the query-neighbor pair they describe.
+    - Return key_evidence as source-backed evidence cards, not molecule-id votes.
+  required_json_schema:
+    label_scope: skin_sensitization_contact_allergy.v2
+    endpoint_scope: direct_sensitization | sensitization_aop | out_of_scope_other_skin_hazard | exposure_context | weak_context
+    useful_for_skin_sensitization_reasoning: boolean
+    transferability: high | moderate | low | not_applicable
+    sensitization_evidence_direction: supports_sensitizer | argues_against_sensitizer | context_only | neutral_or_unclear
+    confidence: high | moderate | low
+    reasoning_summary: string
+    key_evidence:
+      - molecule_chembl_id: string
+        similarity: number or null
+        assay_signal: string
+        tool_summary: string
+        transferability: high | moderate | low | not_applicable
+        effect_on_skin_sensitization_reasoning: string
+    caveats: [string]
+  required_fields: [transferability, confidence, reasoning_summary]

@@ -1,0 +1,5 @@
+# Cache locations only. Reranked Progressive v1 owns the three fixed stage policies.
+# A task path points to a complete mapping-compatible SQLite score cache.
+# Relative paths resolve against this file. Assay/joint modes fail if absent.
+version: 1
+score_caches: {}

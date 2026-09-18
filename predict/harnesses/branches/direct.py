@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from predict.harnesses.branches.batch import mode_main
 from predict.harnesses.branches.assay_transfer import (
     ASSAY_TRANSFER_DIVERSITY_NONE,
     ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
@@ -22,9 +21,9 @@ from predict.harnesses.branches.assay_transfer import (
 )
 from predict.harnesses.branches.retrieval import (
     BranchRetrievalConfig,
+    RetrievalReranker,
     retrieve_branches,
 )
-from predict.harnesses.branches.reranker import RetrievalReranker
 from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECTOR
 
 
@@ -66,9 +65,7 @@ def retrieve_direct_evidence(
     )
 
 
-def main(argv: list[str] | None = None) -> int:
-    return mode_main("direct", argv)
-
-
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(
+        "Use: python -m predict.harnesses.branches --organization direct ..."
+    )

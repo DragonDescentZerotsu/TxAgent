@@ -1,0 +1,18 @@
+This is one semantic bucket of L2 experimental evidence. Decide whether records
+from this bucket should ever be eligible as auxiliary evidence for a structurally
+related molecule when predicting {{ target }}.
+
+Exclude only when the bucket is intrinsically unusable for this prediction:
+the reference or target is undefined, the measurement is malformed or
+uninterpretable, it measures the wrong property or route, or it is not
+compound-specific experimental evidence. Do not exclude merely because the
+evidence is indirect, low-priority, from another species or assay model, or may
+transfer weakly. If uncertain, include it.
+
+The samples illustrate the shared bucket identity. Do not judge sample count,
+repetition, or unusually detailed examples.
+
+{{ compact_payload_json }}
+
+Return only:
+{"decision":"include|exclude","reason_code":"potentially_informative|undefined_reference_or_target|malformed_or_uninterpretable_measurement|wrong_property_or_route|non_compound_specific_or_nonexperimental|other_never_transferable","rationale":"brief scientific reason"}

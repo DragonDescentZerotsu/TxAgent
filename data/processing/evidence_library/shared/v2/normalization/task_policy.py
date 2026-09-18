@@ -135,6 +135,15 @@ class StarlingTaskPolicy:
         ]
         | None
     ) = None
+    # Optional deduplication after Stage-01 endpoint/measurement/unit
+    # canonicalization. It uses the same audited result contract as cleaning.
+    stage1_canonical_deduplicator: (
+        Callable[
+            [list[dict[str, Any]], argparse.Namespace],
+            "SourceValueCleaningResult",
+        ]
+        | None
+    ) = None
     add_cli_arguments: Callable[[argparse.ArgumentParser], None] | None = None
     validate_arguments: Callable[[argparse.ArgumentParser, argparse.Namespace], None] | None = None
     load_extra_source: (
@@ -152,6 +161,9 @@ class StarlingTaskPolicy:
     # are not necessarily exposed as CLI arguments.  The shared build cache
     # fingerprints these alongside implementation code.
     scientific_assets: tuple[Path, ...] = ()
+    # Optional UID sidecar whose membership defines the raw rows admitted to
+    # this build. Levels and families remain sidecar data for retrieval.
+    source_universe_mapping: Path | None = None
     # Frozen assay-transfer measurement policy. Canonical measurement/unit
     # fields are numerical training geometry, never retrieval presentation.
     assay_transfer_measurement_policy: Path | None = None
@@ -159,11 +171,11 @@ class StarlingTaskPolicy:
     # transform policy.  Opt-in tasks retain that evidence but prune the record
     # from assay-transfer calibration until the axis receives an exact decision.
     prune_unreviewed_assay_transfer_records: bool = False
-    # Stage 01 publishes the canonical endpoint and pre-LLM measurement route.
+    # Stage 01 publishes the canonical endpoint and measurement route.
     stage1_measurement_routing_enabled: bool = False
-    # Stage 02 consumes a frozen extraction and exact unit mapping.
+    # Finalized Stage 01 consumes a frozen extraction and exact unit mapping.
     measurement_resolution_enabled: bool = False
-    # Task-owned Stage-02 exact (endpoint, unit) decisions.  The shared loader
+    # Task-owned exact (endpoint, unit) decisions.  The shared loader
     # owns the schema and application; the task owns the scientific entries.
     exact_unit_mapping_path: Path | None = None
     # A task may declare that its deterministic Stage-01 accept rules produce a

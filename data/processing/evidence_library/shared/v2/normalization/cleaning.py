@@ -140,8 +140,13 @@ def clean_source_rows(
     """Return exactly one cleaned record for every supplied source row."""
     cleaned_records: list[dict[str, Any]] = []
     structure_cache: dict[tuple[str, str], tuple[str | None, str]] = {}
-    for source_row_number, raw_mapping in enumerate(rows, start=source_row_offset + 1):
+    for enumerated_row_number, raw_mapping in enumerate(
+        rows, start=source_row_offset + 1
+    ):
         raw_source = {str(key): value for key, value in dict(raw_mapping).items()}
+        source_row_number = int(
+            raw_source.pop("_source_row_number", enumerated_row_number)
+        )
         source_row_uid = clean_text(raw_source.get("source_row_uid"))
         if not source_row_uid or not re.fullmatch(r"sr_[0-9a-f]{32}", source_row_uid):
             raise ValueError(

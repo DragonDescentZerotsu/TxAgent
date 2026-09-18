@@ -1,0 +1,96 @@
+{
+  "gold_path": "tests/chembl_tool/common/measurement_resolution_quality/gold/ames.v10.jsonl",
+  "gold_corpus_version": "ames_measurement_resolution_gold.v1",
+  "gold_cases": 500,
+  "mapping_path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v1/gold_replays/gpt54mini_prompt_v2/measurement_resolution.parquet",
+  "evaluated_cases": 500,
+  "gold_coverage": 1.0,
+  "model_target_cases": 500,
+  "model_target_coverage": 1.0,
+  "status": {
+    "correct": 377,
+    "total": 500,
+    "accuracy": 0.754
+  },
+  "gold_ok_recovery": {
+    "correct": 104,
+    "total": 153,
+    "accuracy": 0.6797385620915033
+  },
+  "measurement": {
+    "correct": 100,
+    "total": 153,
+    "accuracy": 0.6535947712418301
+  },
+  "unit": {
+    "correct": 60,
+    "total": 153,
+    "accuracy": 0.39215686274509803
+  },
+  "measurement_and_unit": {
+    "correct": 56,
+    "total": 153,
+    "accuracy": 0.3660130718954248
+  },
+  "raw_measurement": {
+    "correct": 100,
+    "total": 153,
+    "accuracy": 0.6535947712418301
+  },
+  "raw_unit": {
+    "correct": 60,
+    "total": 153,
+    "accuracy": 0.39215686274509803
+  },
+  "raw_measurement_and_unit": {
+    "correct": 56,
+    "total": 153,
+    "accuracy": 0.3660130718954248
+  },
+  "measurement_given_ok_prediction": {
+    "correct": 100,
+    "total": 104,
+    "accuracy": 0.9615384615384616
+  },
+  "unit_given_ok_prediction": {
+    "correct": 60,
+    "total": 104,
+    "accuracy": 0.5769230769230769
+  },
+  "pair_given_ok_prediction": {
+    "correct": 56,
+    "total": 120,
+    "accuracy": 0.4666666666666667
+  },
+  "whole_record": {
+    "correct": 329,
+    "total": 500,
+    "accuracy": 0.658
+  },
+  "by_source": {
+    "fixed_mutation": {
+      "cases": 150,
+      "whole_record": {
+        "correct": 78,
+        "total": 150,
+        "accuracy": 0.52
+      }
+    },
+    "mutagenicity_mechanism": {
+      "cases": 150,
+      "whole_record": {
+        "correct": 80,
+        "total": 150,
+        "accuracy": 0.5333333333333333
+      }
+    },
+    "premutagenic_damage": {
+      "cases": 200,
+      "whole_record": {
+        "correct": 171,
+        "total": 200,
+        "accuracy": 0.855
+      }
+    }
+  }
+}

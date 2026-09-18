@@ -1,0 +1,26 @@
+For each pair, choose the measurement type more useful for predicting whether
+absolute oral bioavailability is at least 20% under the reported condition.
+
+Both candidates belong to the same progressive evidence level. Judge endpoint,
+assay design, biological system, route, and mechanism. Hold chemical similarity,
+assay-transfer reliability, evidence quality, and evidence quantity equal.
+
+Rules:
+- Judge measurement informativeness, not whether results are positive or negative.
+  Observed values and directions are withheld.
+- Source indicates provenance, not usefulness. Direct-sounding wording does not
+  automatically make a measurement direct F >= 20% evidence.
+- Up to five diverse samples clarify each bucket. Do not reward repetition,
+  sample count, or verbosity. Missing context remains unknown.
+- Evaluate each pair independently. Candidate order is irrelevant. Choose one
+  candidate even when the advantage is small; no ties.
+
+Each bucket is defined once below. Pairs reference those bucket IDs.
+
+{{ compact_payload_json }}
+
+Return only:
+{"items":[{"id":"<comparison ID>","winner_bucket_id":"<winning bucket ID>","reason":"<brief explanation>"}]}
+
+Return every comparison exactly once. Winners must be candidates in their
+respective pairs. Do not return scores or rankings.

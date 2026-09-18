@@ -1,0 +1,2 @@
+{"molecule_identity_key": "IRSCQMHQWWYFCW-UHFFFAOYSA-N", "condition_group": "no_reported_external_condition", "bemis_murcko_scaffold": "O=c1[nH]cnc2[nH]cnc12", "v1_split": "test", "v2_split": "train", "reason": "repaired_parent_now_matches_frozen_scaffold_in_another_split"}
+{"molecule_identity_key": "IRSCQMHQWWYFCW-UHFFFAOYSA-N", "condition_group": "prandial_state=fasted", "bemis_murcko_scaffold": "O=c1[nH]cnc2[nH]cnc12", "v1_split": "test", "v2_split": "train", "reason": "repaired_parent_now_matches_frozen_scaffold_in_another_split"}

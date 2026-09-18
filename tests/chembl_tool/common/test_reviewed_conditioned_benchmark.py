@@ -82,6 +82,45 @@ def test_external_votes_use_sixty_percent_and_reject_ties() -> None:
     assert rejected[0]["drop_reason"] == "parent_condition_label_tie"
 
 
+def test_preserved_majority_can_use_two_thirds_without_changing_votes() -> None:
+    _, votes = validate_review_ledger(
+        [_row("one", 1), _row("two", 1), _row("three", 0)]
+    )
+    key = ("PARENT", "disease=asthma")
+
+    accepted, rejected = aggregate_reviewed_votes(
+        votes,
+        agreement_threshold=0.70,
+        preserved_majorities={key: 1},
+        preserved_agreement_threshold=2 / 3,
+    )
+
+    assert not rejected
+    assert accepted[0]["label_counts"] == {"0": 1, "1": 2}
+    assert accepted[0]["agreement_fraction"] == 2 / 3
+    assert accepted[0]["agreement_threshold"] == 2 / 3
+    assert accepted[0]["label_decision"] == "accepted_preserved_record_majority"
+
+    accepted, rejected = aggregate_reviewed_votes(
+        votes,
+        agreement_threshold=0.70,
+        preserved_majorities={key: 0},
+        preserved_agreement_threshold=2 / 3,
+    )
+    assert not accepted
+    assert rejected[0]["drop_reason"] == "parent_condition_agreement_below_threshold"
+
+    _, tied_votes = validate_review_ledger([_row("tie-one", 1), _row("tie-zero", 0)])
+    accepted, rejected = aggregate_reviewed_votes(
+        tied_votes,
+        agreement_threshold=0.70,
+        preserved_majorities={key: 0},
+        preserved_agreement_threshold=2 / 3,
+    )
+    assert not accepted
+    assert rejected[0]["drop_reason"] == "parent_condition_label_tie"
+
+
 def test_task_semantic_group_exclusion_precedes_split_allocation() -> None:
     rows = [
         {

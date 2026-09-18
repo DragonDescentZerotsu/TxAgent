@@ -1,0 +1,319 @@
+{
+  "considered": 18984,
+  "accepted_physical_voters": 18933,
+  "rejected": 51,
+  "reason_counts": {
+    "nonhuman_or_unresolved_population": 33,
+    "numeric_value_out_of_percent_range": 3,
+    "missing_bioavailability_value": 2,
+    "relative_not_absolute_bioavailability": 13
+  },
+  "examples": [
+    {
+      "source_row_uid": "sr_2f7b63f669e64fa9a632848b90d77504",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_1",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_9841f83c13d343e1960c244d8d20fdc2",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_5",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_b9c01da4c2804105ac062bfc4a441df7",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_6",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_f68bcf72bc2143c38af931298eb31c65",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_8",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_204c128672734db3a898d5e02dd7cd1a",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_12",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_b12034a633f64060a9d399ea2509a611",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_6",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_55596a7553414f73a2a599842aecf20f",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_2",
+      "reason": "numeric_value_out_of_percent_range"
+    },
+    {
+      "source_row_uid": "sr_08b7e041af5c44939cd5810296ce4d76",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_13",
+      "reason": "numeric_value_out_of_percent_range"
+    },
+    {
+      "source_row_uid": "sr_a40aa9b777944f7a9e66adb210ceb02a",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_20",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_b19a01134fb3439f9d5dc9ad821b7746",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_73",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_aebe569924d5470f8d18f58cd43bed05",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_41",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_843d7b2a01654452b96eb78fdf628411",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_18",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_a4d2d65f15ac422497f08810a3c2f534",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_26",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_62aab99d54064df080d557e40dad301d",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_5",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_59465c0ce9404c1cafaf04b6ad7f5492",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_14",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_6da3932cbf664464b05fbedf0bd31008",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_20",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_2ec288cdde484e5788ba6617f7705ccb",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_6",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_5a3af3374c324f9baaf0c62536cc97ac",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_4",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_94a0eb14bacd4199bcfe9405b00fee9d",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_31",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_f642cd35f39041e8a786cb72d22b7342",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_17",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_b3405f2f7082410586ff25f735962f36",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_18",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_aec9c9ce24d4429885bd2c35146ef676",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_5",
+      "reason": "missing_bioavailability_value"
+    },
+    {
+      "source_row_uid": "sr_b7fa66ca32e143ba84e7d1032bf27c62",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_29",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_15e17bca2f96428c865f12c0126533f1",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_2",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_5b388302228e407b9e278d62ab23491d",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_19",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_dd75053353404055bb8ab5804d511601",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_20",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_0f3bfb97b336428f8b439708aa050cb5",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_2",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_bf3ddea839914185b067ec953614113d",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_1",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_44a0daa3c3814685b89b01d33316cb62",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_4",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_bc58dc7a391d44fb96e12942cc3ee367",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_12",
+      "reason": "numeric_value_out_of_percent_range"
+    },
+    {
+      "source_row_uid": "sr_a858c57f19fc4341a3705665d74f2166",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_20",
+      "reason": "missing_bioavailability_value"
+    },
+    {
+      "source_row_uid": "sr_4966d964afab417ea5c4778220874d58",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_5",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_5947d7fd6cb2462482813c1b228bd94e",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_22",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_af36209056934c61af80b6d101fa160e",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_1",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_24519acc998a4462865b60aae29e42b1",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_2",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_5ed77dd3a2814bb18744d942f2a55c9c",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_10",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_fe145b10a4814debbad9decd15d3720c",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_1",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_5489bd6fbf7d4bdeb9cb6108f20575af",
+      "source_id": "oral_exposure",
+      "source_record_id": "ext_3",
+      "reason": "nonhuman_or_unresolved_population"
+    },
+    {
+      "source_row_uid": "sr_f7bda4482f3b40edb7793239198fdb2e",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "4280",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_abe60400fdf9468f8cd6705063eeec65",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "12615",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_860da993113042398acbe0b822ff74ba",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "18981",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_09dc17b1ac1346d3b7082e4213d05eb7",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "18982",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_077070da9fe34408b35dfc76687773bb",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "22932",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_bf40871d796b467b959cc67e1ee40d4b",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "23448",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_5c79f0efbf1841ad8497db65890a82d5",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "33748",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_6afb9956e0da43e8a8c871edc7b65a1e",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "33749",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_f4a02a5ef9ff422c99fd0f3180642871",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "64590",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_7bcc1acf16a64702ad46639bdc708c6c",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "68303",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_2360374b879a4a9393bd3fd899298228",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "83900",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_605ee6d55e484a2d908198e80f2f8fba",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "85128",
+      "reason": "relative_not_absolute_bioavailability"
+    },
+    {
+      "source_row_uid": "sr_2d1894b9a698480cbf711e23f9a891f8",
+      "source_id": "hf_bioavailability",
+      "source_record_id": "110482",
+      "reason": "relative_not_absolute_bioavailability"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "version": "reranked_progressive_l1_simple_v2",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "parent": "reranked_progressive_v8",
+  "status": "pilot_candidate",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": false,
+    "tools": false,
+    "user_template": "user.jinja"
+  },
+  "changes": [
+    "Retain the readable L1-only prompt, task guidance, short card aliases, and response contract.",
+    "For assay transfer, hide query and evidence SMILES and use the cached assay-transfer score as the only applicability measure.",
+    "Require compact molecule-level evidence consolidation without query identification, structural claims, or remembered query facts."
+  ],
+  "historical_predictions_reused": false,
+  "parent_version": "reranked_progressive_l1_simple_v1",
+  "cloned_at": "2026-09-10T05:05:05-04:00",
+  "cloned_from_run": "bioavailability_ma/progressive_assay-transfer_assay-transfer-trained_records50/2026-09-10_03-36"
+}

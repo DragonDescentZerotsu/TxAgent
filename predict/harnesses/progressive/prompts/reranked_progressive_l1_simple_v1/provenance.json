@@ -1,0 +1,23 @@
+{
+  "version": "reranked_progressive_l1_simple_v1",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "parent": "reranked_progressive_v8",
+  "status": "unevaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": false,
+    "tools": false,
+    "user_template": "user.jinja"
+  },
+  "changes": [
+    "Use a readable L1-only prompt with numbered molecules and short evidence-card aliases.",
+    "Hide query priors, tool summaries, progressive protocol metadata, and internal identifiers.",
+    "Keep task-specific guidance and the validated reranked-progressive response contract."
+  ],
+  "historical_predictions_reused": false
+}

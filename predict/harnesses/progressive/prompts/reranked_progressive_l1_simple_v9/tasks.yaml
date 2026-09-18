@@ -1,0 +1,14 @@
+bbb_martins:
+  task: bbb_martins
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: bbb_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons via analogies, taking evidence from related molecules to support your prediction.
+  task_instructions:
+  - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient access.
+  - Meaningful access does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.
+  - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion, influx, or prodrug evidence.
+  - Do not treat one physicochemical liability or repeated records as independent proof of failure.
+  - Choose exactly one prediction and express mixed or weak evidence through confidence and evidence gaps.

@@ -1,0 +1,52 @@
+{
+  "version": "gold_v1_voter_contract.v1",
+  "status": "complete",
+  "task": "bbb_martins",
+  "policy": {
+    "gold_release": "v1",
+    "l1_visibility": "all physical members of published-card vote units",
+    "aggregation": "each vote_id contributes exactly once",
+    "physical_member_weight": "1 / physical_member_count",
+    "structure_identity": "frozen from the Gold-v1-compatible V10 Stage 1"
+  },
+  "counts": {
+    "gold_label_cards": 3843,
+    "vote_units": 7634,
+    "physical_members": 7634
+  },
+  "inputs": {
+    "voter_lineage": {
+      "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bbb_martins.voter_lineage.jsonl",
+      "sha256": "f581f5587bc678e216251af267e8c20bac9f77e09f1c025926dca36f8f2541f1"
+    },
+    "frozen_stage1_root": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/bbb_martins/v10",
+    "gold_split_files": {
+      "train": {
+        "path": "data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+        "sha256": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2"
+      },
+      "valid": {
+        "path": "data/gold_labels/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl",
+        "sha256": "8477a2bf858d8e7a6cd4cd7ae9cd686e4c975a5df50f35a35c5a192de8a486d1"
+      },
+      "test": {
+        "path": "data/gold_labels/BBB_Martins/v1/scaffold/test_molecule_condition_labels.jsonl",
+        "sha256": "d005e25667cabd1b35f02ff25094804bbad1b27a7f47505dfc32c9f98e94ce7f"
+      }
+    }
+  },
+  "outputs": {
+    "voter_membership": {
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/voter_membership.parquet",
+      "sha256": "47bfd46b90743a2f9a289b87791449b4c6231084e43baaa0a26ad6f119fe410c"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/vote_units.parquet",
+      "sha256": "6b4763b2131464a2392e45d5456036626ce9f59fba356b0f6920d3789cbc555d"
+    },
+    "gold_label_record_index": {
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "ee6258b933933987ea7ff0625484de214cc7f3fde0f7b91f97159cd5905f1312"
+    }
+  }
+}

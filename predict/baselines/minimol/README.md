@@ -71,7 +71,7 @@ and test labels remain excluded from epoch and threshold selection.
 The training audit is in
 [`HEAD_TRAINING_DIAGNOSTICS.md`](HEAD_TRAINING_DIAGNOSTICS.md). Canonical
 paper-facing data lineages and metrics remain in
-[`STARLING_BENCHMARK_RESULTS.md`](../../tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md).
+[`STARLING_BENCHMARK_RESULTS.md`](../../../tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md).
 
 The six-condition MiniMol-retrieval sensitivity completed with zero failures:
 
@@ -98,9 +98,9 @@ paper-facing retrieval setting.
 - `starling_table2_data.py`: released CSV schema, task settings, labels, and
   paper reference values.
 
-The immutable release snapshot is under `data/legacy/artifacts/starling_table2_v3/`; the full
-protocol, results, diagnostics, and artifact locations are in
-[`STARLING_TABLE2_REPRODUCTION.md`](STARLING_TABLE2_REPRODUCTION.md).
+The immutable release snapshot and its source contract are under
+`data/legacy/artifacts/starling_table2_v3/`. The reproduction entrypoints remain
+in this directory; the superseded standalone reproduction report was retired.
 
 This reproduction uses a different external release, task definitions, and
 splits. Its Table 2 metrics must not be added to the current TxAgent Starling

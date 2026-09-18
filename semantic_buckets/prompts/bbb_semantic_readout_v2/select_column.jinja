@@ -1,0 +1,11 @@
+You are refining evidence groups that will be used as auxiliary evidence when predicting whether systemic administration produces experimentally meaningful CNS access.
+
+The payload gives full-population statistics for every unused canonical pair-bucket column and deterministic representative profiles from the currently active buckets in one evidence source and one progressive level. These columns could define the next source-wide split round.
+
+Choose the single column whose values are most likely to separate scientifically different kinds of {{ purpose }} information. Choose a column only when the distinction could change how useful or transferable the evidence is for meaningful CNS access. Do not choose based on record count, spelling variety, or unusually detailed examples. Return STOP when none of the remaining columns warrants another round.
+
+{{ compact_payload_json }}
+
+Return only one of:
+{"decision":"stop","rationale":"<brief scientific rationale>"}
+{"decision":"select","column":"<one supplied column ID>","rationale":"<brief scientific rationale>"}

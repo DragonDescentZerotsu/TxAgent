@@ -1,0 +1,100 @@
+{
+  "prompt_version": "joseph_flat_v2",
+  "review_status": "reviewed rendered-message hashes for BBB and oral across all three modes",
+  "input_payload": {
+    "task": "replaced",
+    "query": {
+      "canonical_smiles": "CCO",
+      "prefetched_molecule_properties": "not visible in the flat group prompt"
+    },
+    "group": {
+      "group_id": "Flat.all_evidence",
+      "tier": "Flat",
+      "endpoint_group": "all_evidence"
+    },
+    "neighbors": [
+      {
+        "rank": 1,
+        "molecule_chembl_id": "REF1",
+        "canonical_smiles": "CCN",
+        "similarity": 0.7123,
+        "similarity_bucket": "moderate_analog",
+        "evidence_rows": [
+          {
+            "card_id": "C01",
+            "assay_context": "in vivo exposure study",
+            "endpoint": "reported outcome",
+            "reported_value": "25",
+            "reported_unit": "%",
+            "species": "human",
+            "experimental_details": {
+              "route": "oral"
+            },
+            "extra_details": {
+              "fed": false
+            },
+            "support_text": "A reported experimental outcome was 25%.",
+            "_molecule_scores": {
+              "morgan_similarity": 0.7123,
+              "transfer_likelihood": 0.8235,
+              "morgan_top5_rank": 1,
+              "assay_transfer_top5_rank": "not_selected_in_top5"
+            }
+          },
+          {
+            "card_id": "C02",
+            "endpoint": "mechanistic measurement",
+            "reported_value": "1.2",
+            "reported_unit": "uM",
+            "transfer_likelihood": 0.9346
+          }
+        ]
+      }
+    ],
+    "instructions": ["replaced"],
+    "required_json_schema": {"replaced": "string"}
+  },
+  "group_context": {
+    "group_id": "Flat.all_evidence",
+    "identity_blind": false,
+    "tools_prefetched": []
+  },
+  "cases": [
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "morgan",
+      "messages_sha256": "79b1549b1ee1b1801dede89f812a3bf40aec398c90809cd9c877476ec93aafad"
+    },
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "assay-transfer",
+      "messages_sha256": "6ab6749b60c0ad2854fcd09e4d5f6ab9aeba040be6a528e5257c7871a3a19890"
+    },
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "joint",
+      "messages_sha256": "60aeb19d729aeffb91f0af74a7c31357f73dd3aeca6c31beb444cda826d48244"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "morgan",
+      "messages_sha256": "31655c65657476b4ffe36d75750f5fa61c28ee56dd9133beb834794eea483ea8"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "assay-transfer",
+      "messages_sha256": "7d5e72b86a9e4c8456a554a22fc9fa1300306024f5390db4bca1187ef8c42c8c"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "joint",
+      "messages_sha256": "57a40f61e904e38d09ea6d5a0048aeadea745e14a6dd31f5faf1691f3293d185"
+    }
+  ]
+}

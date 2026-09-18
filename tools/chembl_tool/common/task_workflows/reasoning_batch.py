@@ -1,6 +1,6 @@
 """Compatibility imports for the canonical standard batch harness."""
 
-from predict.harnesses.branches import batch as _impl
+from predict.harnesses.branches import runner as _impl
 
 
 def __getattr__(name: str):

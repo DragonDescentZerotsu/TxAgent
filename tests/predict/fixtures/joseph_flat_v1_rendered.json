@@ -1,0 +1,85 @@
+{
+  "prompt_version": "joseph_flat_v1",
+  "review_status": "reviewed rendered-message hashes for BBB and oral across all three modes",
+  "input_payload": {
+    "task": "replaced",
+    "query": {"canonical_smiles": "CCO"},
+    "group": {
+      "group_id": "Flat.all_evidence",
+      "tier": "Flat",
+      "endpoint_group": "all_evidence"
+    },
+    "neighbors": [
+      {
+        "rank": 1,
+        "molecule_chembl_id": "REF1",
+        "canonical_smiles": "CCN",
+        "similarity": 0.72,
+        "similarity_bucket": "moderate_analog",
+        "similarity_metric": "Morgan",
+        "evidence_rows": [
+          {
+            "contract_version": "minimal_evidence.v1",
+            "provenance": {
+              "retrieval": {
+                "record_id": "r1",
+                "level": "L1",
+                "evidence_family": "direct",
+                "ranking_method": "joint",
+                "morgan_similarity": 0.72,
+                "assay_transfer_score": 0.91,
+                "morgan_panel_rank": 1,
+                "assay_transfer_panel_rank": "not_selected_in_top5"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "instructions": ["replaced"],
+    "required_json_schema": {"replaced": "string"}
+  },
+  "group_context": {
+    "group_id": "Flat.all_evidence",
+    "identity_blind": true,
+    "tools_prefetched": [{"tool_name": "properties_compare"}]
+  },
+  "cases": [
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "morgan",
+      "messages_sha256": "3fa43040eab51a669d0e5da9c0067390aecde3a384cdf3e5210297a89aebe08a"
+    },
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "assay-transfer",
+      "messages_sha256": "fdbed871646370c6bb6ee63d006bd734cd833077414117875b7a27203893cf4e"
+    },
+    {
+      "task_id": "bbb_martins",
+      "task_prompt_profile": "meaningful_cns_access_v1",
+      "reranking": "joint",
+      "messages_sha256": "cae46175552fdd6bb0dd271b334efbc1f59d0dfc2fc3d108517510c767fb7774"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "morgan",
+      "messages_sha256": "eb60dba0f63519e87a7a37a86c5d68815a2efd25a755aca34c492e9eff8e7e20"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "assay-transfer",
+      "messages_sha256": "6257c0b6513d4ee76c3fe61062de88198319e6df32b8675a1fa9b4d5a9e07695"
+    },
+    {
+      "task_id": "bioavailability_ma",
+      "task_prompt_profile": "f20_evidence_calibrated_v2",
+      "reranking": "joint",
+      "messages_sha256": "1ea94c52d8a3704879652bee148e6dfb0d32afa2261a76270e221b06d908f12d"
+    }
+  ]
+}

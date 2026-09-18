@@ -1,0 +1,48 @@
+{
+  "version": "skin_reaction_stage1_exact_deduplication.v1",
+  "authoritative_stage1_deduplication": true,
+  "base_policy_sha256": "3126102794c9e6174abbaec09cd9cbd4f60faf37b00f7fd009184765bc5dea99",
+  "base_fields": ["canonical_smiles", "pmid", "canonical_measurement_text", "canonical_unit_text"],
+  "empty_cross_source_intersection": "never_duplicate",
+  "tasks": {
+    "skin_reaction": {
+      "sources": {
+        "direct_skin_reaction": {
+          "scientific_fields": ["outcome_label", "reaction_type", "assay_or_test", "species_or_population", "dose_or_concentration", "positive_count", "total_tested"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["effect_metric", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "paragraph_idx"]
+          }
+        },
+        "sensitization_aop": {
+          "scientific_fields": ["assay_type", "aop_event", "endpoint_or_target", "result_label", "experimental_conditions", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["result_value", "result_unit", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": ["needs_more_context"]
+          }
+        },
+        "phototoxicity_irritation_local_damage": {
+          "scientific_fields": ["evidence_endpoint", "evidence_system", "assay_method", "result_label", "experimental_conditions", "light_conditions", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["observed_effect", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": ["needs_more_context"]
+          }
+        },
+        "skin_exposure": {
+          "scientific_fields": ["evidence_type", "study_design", "skin_source", "formulation_vehicle", "exposure_time", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["result_value", "result_unit", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": ["needs_more_context"]
+          }
+        }
+      }
+    }
+  }
+}

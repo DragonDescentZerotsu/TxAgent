@@ -1,0 +1,8 @@
+version: 17
+caches:
+  bbb_martins:
+    valid: ../cache/assay_reranking/archive/ranked_evidence_retrieval_parent_v1/bbb_martins/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/ranked_evidence_retrieval_parent_v1/bbb_martins/scaffold/test/VERSION.json
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/ranked_evidence_retrieval_parent_v1/bioavailability_ma/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/ranked_evidence_retrieval_parent_v1/bioavailability_ma/scaffold/test/VERSION.json

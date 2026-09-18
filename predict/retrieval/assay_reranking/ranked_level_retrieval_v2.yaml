@@ -1,0 +1,4 @@
+version: 18
+caches:
+  bbb_martins: ../cache/assay_reranking/active/ranked_level_retrieval_v2/bbb_martins/RELEASE_INDEX.json
+  bioavailability_ma: ../cache/assay_reranking/active/ranked_level_retrieval_v2/bioavailability_ma/RELEASE_INDEX.json

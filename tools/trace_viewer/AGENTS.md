@@ -1,5 +1,22 @@
 # Trace Viewer compatibility path
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -12,41 +29,29 @@ standard and progressive `predict_trace.v1` records under
 `predict/traces/runs/`. The command below remains supported through a thin
 wrapper. New viewer code belongs under `predict/traces/viewer/`.
 
-# Trace Viewer 运行与临时公网分享
+# Trace Viewer Running and Temporary Public Sharing
 
-本目录维护最终 paper trace viewer。Viewer 不是单文件离线页面；`viewer.html` 会从同一 HTTP
-根目录动态读取 condition、`predictions.jsonl`、sample trace 和 retrieval 文件。因此不要只上传
-`viewer.html` 到单文件 HTML pastebin，也不要把一个本地文件 URL 当作完整 viewer 分享。
+This directory maintains the final paper trace viewer. The viewer is not a single-file offline page; `viewer.html` dynamically reads condition, `predictions.jsonl`, sample trace, and retrieval files from the same HTTP root directory. Therefore, do not upload only `viewer.html` to a single-file HTML pastebin, and do not treat a local file URL as a complete viewer for sharing.
 
-Viewer 通过启动时生成的 `.trace_viewer_sources.tsv` 注册 benchmark dataset，并用
-`.trace_viewer_catalog.tsv` 注册已有 condition，避免公网页面逐目录扫描；缺少 catalog 时仍可回退为
-browser-side discovery。每个 dataset 内只注册四个正式 paper root：identity-blind、matched-prefetch、agentic deployment-visible 和
-deployment-visible parent-disjoint。Dataset path/label 不写死在 `viewer.html`；新增 benchmark 或 split
-时只需由启动脚本注册新的 trace root。Parent-disjoint sample 必须同时读取 manifest 与 `reuse.json`，
-明确展示 `neighbor_identity_policy`，并区分 retrieval 变化后的重跑与输入未变化时的 artifact reuse。
+The viewer registers benchmark datasets through the `.trace_viewer_sources.tsv` generated at startup and registers existing conditions with `.trace_viewer_catalog.tsv`, avoiding per-directory scanning on the public page; if the catalog is missing, it can still fall back to browser-side discovery. Within each dataset, only four official paper roots are registered: identity-blind, matched-prefetch, agentic deployment-visible, and deployment-visible parent-disjoint. Dataset path/label is not hardcoded in `viewer.html`; when adding a new benchmark or split, simply register a new trace root via the startup script. Parent-disjoint samples must read both the manifest and `reuse.json`, clearly display `neighbor_identity_policy`, and distinguish reruns after retrieval changes from artifact reuse when inputs are unchanged.
 
-Condition results 必须从当前 `predictions.jsonl` 通用计算样本数、accuracy、macro-F1、失败数和可用时的
-二分类混淆矩阵，不读取 task-specific prediction 字段，也不把不同 benchmark dataset 的样本合并。
+Condition results must be computed from the current `predictions.jsonl` for sample counts, accuracy, macro-F1, failure counts, and binary confusion matrix when available; do not read task-specific prediction fields, and do not merge samples from different benchmark datasets.
 
-## 展示名称与内部 ID
+## Display Names and Internal IDs
 
-Viewer 可以为 paper-facing mechanism family 提供简洁、可读的展示名称，但不得改写 trace 或 retrieval
-中的稳定 `group_id`。友好名称用于 stage、pill 和 retrieval group 标题；原始 ID 继续在 retrieval 标题 tag、
-group metadata 和 raw JSON 中展示，以保留 provenance、input hash 和 branch reuse 的可审计性。
+The viewer can provide concise, readable display names for paper-facing mechanism families, but must not rewrite stable `group_id` in traces or retrieval. Friendly names are used for stage, pill, and retrieval group titles; original IDs continue to be displayed in retrieval title tags, group metadata, and raw JSON to preserve auditability of provenance, input hash, and branch reuse.
 
-Bioavailability 的展示名称统一为 Direct oral bioavailability (F%)、Oral exposure proxies (AUC/Cmax)、
-Fa、Fg 和 Fh 的机制描述。不要把 `Observed` 前缀展示成一个额外 reasoning branch。
+Bioavailability display names are uniformly Direct oral bioavailability (F%), Oral exposure proxies (AUC/Cmax), and mechanism descriptions for Fa, Fg, and Fh. Do not display the `Observed` prefix as an additional reasoning branch.
 
-## 本地启动
+## Local Startup
 
-从仓库根目录运行：
+Run from the repository root:
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-默认会同时注册 Starling random test、Starling scaffold test 和历史 TDC test 三个结果根；不存在的根会
-被跳过。也可以在端口后显式传入任意数量的 trace root：
+By default, it registers three result roots: Starling random test, Starling scaffold test, and historical TDC test; non-existent roots are skipped. You can also explicitly pass any number of trace roots after the port:
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776 \
@@ -54,22 +59,19 @@ bash tools/trace_viewer/start_viewer.sh 8776 \
   outputs/paper/molecular_evidence_agent_starling_scaffold
 ```
 
-本地页面固定为：
+The local page is fixed at:
 
 ```text
 http://127.0.0.1:8776/.trace_viewer.html?v=paper-v2
 ```
 
-`start_viewer.sh` 会以前台进程运行；终端停在 `Serving HTTP ...` 并持续打印 GET 日志是正常状态，
-不是卡住。`GET /favicon.ico ... 404` 只是浏览器自动请求了未提供的图标，不影响 viewer。
+`start_viewer.sh` runs as a foreground process; the terminal staying at `Serving HTTP ...` and continuously printing GET logs is normal, not a hang. `GET /favicon.ico ... 404` is just the browser automatically requesting a missing icon and does not affect the viewer.
 
-## 在 node002 安装 cloudflared
+## Installing cloudflared on node002
 
-`node002` 是 Linux amd64，且 `$HOME/.local/bin` 已在 PATH 中。临时分享优先使用 Cloudflare
-官方 standalone binary，安装到用户目录，不需要 sudo，也不修改系统 package repository。
+`node002` is Linux amd64, and `$HOME/.local/bin` is already in PATH. For temporary sharing, prefer the Cloudflare official standalone binary, installed to the user directory, without sudo, and without modifying system package repositories.
 
-下面的命令会从 Cloudflare 官方 GitHub release API 读取当前 latest release，并用 release asset
-中公布的 SHA256 digest 校验后安装。不要在长期文档中写死某个历史版本号或 checksum。
+The following command reads the current latest release from the Cloudflare official GitHub release API and installs after verifying the SHA256 digest published in the release asset. Do not hardcode a historical version number or checksum in long-term documentation.
 
 ```bash
 (
@@ -98,48 +100,46 @@ hash -r
 cloudflared --version
 ```
 
-如果 standalone binary 已安装，后续可用 `cloudflared update` 检查更新。
+If the standalone binary is already installed, you can check for updates later with `cloudflared update`.
 
-## 创建 Quick Tunnel
+## Creating a Quick Tunnel
 
-保持本地 viewer 终端运行，另开一个终端执行：
+Keep the local viewer terminal running, and open another terminal to execute:
 
 ```bash
 cloudflared tunnel --url http://127.0.0.1:8776
 ```
 
-成功时日志会给出一个临时基础地址，例如：
+On success, the logs will provide a temporary base address, for example:
 
 ```text
 https://random-words.trycloudflare.com
 ```
 
-Cloudflare 只打印公网基础地址，不知道 viewer 的具体页面路径。对外分享的完整 URL 需要把
-本地 URL 中端口后的路径追加到公网基础地址：
+Cloudflare only prints the public base address and does not know the specific viewer page path. For the full URL to share, append the path after the port from the local URL to the public base address:
 
 ```text
 https://random-words.trycloudflare.com/.trace_viewer.html?v=paper-v2
 ```
 
-通用拼接规则：
+General concatenation rule:
 
 ```text
-公网基础地址 + /.trace_viewer.html?v=paper-v2
+public base address + /.trace_viewer.html?v=paper-v2
 ```
 
-两个前台进程都必须保持运行：
+Both foreground processes must remain running:
 
 ```text
-start_viewer.sh 负责提供 HTML 和 trace 文件。
-cloudflared 负责把本地 8776 映射到临时公网域名。
+start_viewer.sh serves HTML and trace files.
+cloudflared maps local 8776 to a temporary public domain.
 ```
 
-分享结束后，在两个终端分别按 `Ctrl-C`。Quick Tunnel 重启后通常会得到新的随机域名，不要把
-临时域名写进代码、文档或实验 manifest。
+After sharing ends, press `Ctrl-C` in both terminals. Quick Tunnel typically gets a new random domain after restart; do not write temporary domains into code, documentation, or experiment manifests.
 
-## 日志判断与故障处理
+## Log Diagnosis and Troubleshooting
 
-以下日志表示 tunnel 已正常建立：
+The following logs indicate the tunnel is established normally:
 
 ```text
 Your quick Tunnel has been created
@@ -147,29 +147,24 @@ Registered tunnel connection
 SUMMARY: Environment is healthy
 ```
 
-Quick Tunnel 不需要 `config.yml`，所以 `Cannot determine default configuration path` 是信息提示，
-不是失败。QUIC 的 UDP receive-buffer warning 也可以在已经出现 `Registered tunnel connection`
-且 connectivity pre-check 全部 PASS 时忽略。
+Quick Tunnel does not require `config.yml`, so `Cannot determine default configuration path` is informational, not a failure. QUIC's UDP receive-buffer warning can also be ignored if `Registered tunnel connection` has already appeared and connectivity pre-checks all PASS.
 
-如果 QUIC/UDP 无法建立，但 TCP/443 可用，改用 HTTP/2：
+If QUIC/UDP cannot establish but TCP/443 is available, switch to HTTP/2:
 
 ```bash
 cloudflared tunnel --protocol http2 --url http://127.0.0.1:8776
 ```
 
-分享前先验证本地页面；本地不通时，tunnel 也无法修复 origin：
+Before sharing, verify the local page; if local is not working, the tunnel cannot fix the origin:
 
 ```bash
 curl -I 'http://127.0.0.1:8776/.trace_viewer.html?v=paper-v2'
 ```
 
-## 安全边界
+## Security Boundaries
 
-Quick Tunnel 是公开、无鉴权、无 uptime guarantee 的临时开发入口。`start_viewer.sh` 只在临时 serving
-directory 中链接本次注册的 trace roots，不暴露仓库或整个 `outputs/paper/`；但任何拿到 URL 的人仍可能
-请求这些已注册 root 中的其它文件，而不仅是浏览器中当前打开的样本。因此：
+Quick Tunnel is a public, unauthenticated, no-uptime-guarantee temporary development entry point. `start_viewer.sh` only links the trace roots registered this time in the temporary serving directory, not exposing the repository or the entire `outputs/paper/`; however, anyone with the URL may still request other files in these registered roots, not just the currently open sample in the browser. Therefore:
 
-1. 只在确认 trace、prompt、SMILES、label、内部路径和 model/tool 返回内容可以分享时启动 tunnel。
-2. 不要用 Quick Tunnel 暴露 API key、`.env`、工具服务端口、LLM endpoint 或仓库根目录。
-3. 临时演示结束立即关闭两个进程；需要长期、固定域名或访问控制时改用 Cloudflare named tunnel
-   和 Access policy，而不是继续依赖匿名 Quick Tunnel。
+1. Only start the tunnel when you confirm that traces, prompts, SMILES, labels, internal paths, and model/tool return content can be shared.
+2. Do not use Quick Tunnel to expose API keys, `.env`, tool service ports, LLM endpoints, or the repository root.
+3. Immediately shut down both processes after the temporary demo ends; for long-term, fixed domains, or access control, use Cloudflare named tunnels and Access policies instead of relying on anonymous Quick Tunnel.

@@ -1,0 +1,10 @@
+condition_group,condition_scope,n_molecule_condition_rows,n_unique_parents,n_distinct_scaffolds,n_train,n_valid,n_test,n_y0,n_y1
+no_reported_external_condition,none_reported,3666,3666,2145,2937,365,364,975,2691
+barrier_state=disrupted,external,17,17,14,12,3,2,0,17
+co_treatment=cyclosporine,external,16,16,15,9,4,3,5,11
+disease=bacterial_meningitis,external,12,12,12,7,2,3,2,10
+disease=brain_tumor_or_glioma,external,37,37,30,23,6,8,7,30
+disease=cerebral_ischemia,external,10,10,10,8,1,1,2,8
+disease=meningitis_unspecified,external,55,55,45,35,13,7,7,48
+disease=pneumococcal_meningitis,external,10,10,9,7,1,2,1,9
+disease=tuberculous_meningitis,external,9,9,9,7,1,1,1,8

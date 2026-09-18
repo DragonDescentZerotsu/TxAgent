@@ -27,7 +27,7 @@ SOURCE_PAIR_FIELDS = {
     ),
     "efflux_transport": (
         "categorical_encoder_id",
-        "transporter_identifier",
+        "canonical_transporter_identifier",
         "canonical_evidence_type",
         "global_context",
         "global_species_context",

@@ -1,0 +1,6 @@
+condition_group,condition_scope,n_molecule_condition_rows,n_unique_parents,n_distinct_scaffolds,n_train,n_valid,n_test,n_y0,n_y1
+species=dog,external,134,134,43,100,14,20,40,94
+species=human,external,1570,1570,443,1195,187,188,337,1233
+species=monkey,external,69,69,36,43,13,13,28,41
+species=rabbit,external,59,59,24,54,1,4,12,47
+species=rodent,external,2860,2860,717,2362,254,244,697,2163

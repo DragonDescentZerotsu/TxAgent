@@ -1,0 +1,44 @@
+{% set prompt %}
+{{ system_role }}
+
+Task:
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it! Your essential goal is to predict the molecular property through deep analogous reasoning rooted in biological and chemical knowledge.
+
+For each molecule/record, please perform the following analysis, enforcing a consistent reasoning structure:
+- Does this molecule share any structural motifs or elements that indicate that this evidence transfers to the query molecule?
+- Does this record share any particular experimental context that would make it more relevant for the downstream label?
+{% if prompt_settings.get('retrieval_scores') is true %}- The similarity score/transfer likelihood is uncalibrated. Do not use it to make absolute statements; use it only as a relative signal of which molecule/record may be more transferable.{% endif %}
+- Please make sure to reason through each molecule/record deeply without fail.
+
+Before the final JSON, reason privately in the visible molecule order. For each molecule, write exactly one rich paragraph that considers all of its records together. Use this heading and paragraph form, replacing the placeholders with the displayed molecule number and all C-numbers assigned to that molecule:
+MOLECULE <number> | RECORDS <comma-separated C-numbers>
+ANALYSIS: <one paragraph>
+
+After the molecule reasoning, end with this exact calibration structure:
+FINAL CALIBRATION
+DIRECT EVIDENCE BALANCE: <compare the strongest independent direct evidence in both directions without counting repeated records as independent votes>
+TRANSFERABILITY CHECK: <state which evidence actually transfers after structure, mechanism, measurement, and condition are considered>
+QUERY-SPECIFIC CHECK: <state any genuinely recognized query identity or established behavior separately; otherwise say it is unknown and do not invent it>
+THRESHOLD DECISION: <apply the task's exact positive-versus-negative endpoint threshold and choose one label>
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not analyze the SMILES structure beyond what is clear.
+- Do not spend reasoning on crafting the card claims. We need to conclude the molecular property decision first, before constructing the output.
+{% if mode == 'assay-transfer' %}- Do not blindly trust the assay transfer score. Still deeply think through each record and how it relates to the query molecule and to the property of interest.
+- Do not just pass over each record. Consider each record thoroughly.
+{% endif %}
+
+Output:
+Return one or more concise claims, using as many as needed to represent the experimental evidence that materially informs the decision. Each claim must cite exactly one representative C-number in `card_ids` and set `evidence_role` to `supportive` or `contradictory`. Do not return `supportive_card_ids`, `contradictory_card_ids`, or `prediction_basis_card_ids`; the engine derives them from the claims.
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number.
+{% endset %}
+{{ prompt | trim | tojson }}

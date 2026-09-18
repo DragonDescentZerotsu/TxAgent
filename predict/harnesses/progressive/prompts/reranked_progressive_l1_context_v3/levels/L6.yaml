@@ -1,0 +1,6 @@
+{
+  "bioavailability_ma": {
+    "evidence_family": "hepatic_clearance_metabolic_stability",
+    "description": "Hepatic clearance and metabolic-stability evidence contributing to systemic availability."
+  }
+}

@@ -1,0 +1,49 @@
+Extract at most one continuous Ames outcome measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each row has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return exactly one result per input id, in input order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<complete source-supported unit>"}]}]}
+
+Only `ok` carries a measurement, and it carries exactly one. Every other status carries `[]`. Resolve rows independently.
+
+## Canonical endpoint context
+
+The deterministic blocks below summarize other rows for the canonical endpoints in this request. Use them only to understand how an endpoint is normally reported. They may clarify a unit convention or fixed denominator, but never override conflicting row text.
+
+{% if endpoint_profiles %}
+{% for profile in endpoint_profiles %}
+{{ profile }}
+
+{% endfor %}
+{% else %}
+No reliable deterministic endpoint summary is available for this request.
+{% endif %}
+
+## Select the outcome
+
+`measurement_text` is the cleaned primary result column. Use it to select the main numeric outcome for the canonical endpoint or explicitly named assay readout. `support_text` may show that same outcome in its source-printed form, identify the selected coefficient, complete its unit, or resolve what its denominator means. Do not replace the primary outcome with an incidental support number.
+
+Do not select an administered dose, assay concentration, exposure duration, timepoint, sample size, identifier, p-value, control value, comparator value, cytotoxicity observation, or another assay condition. A number is eligible only when it quantifies the row's canonical endpoint or explicitly named readout. Several equally selected outcomes, or an unresolved conflict about the selected value or unit, are `unsure`.
+
+Qualitative calls are handled outside this extraction. A positive, negative, detected, increased, or decreased statement without a selected numeric outcome is `unavailable`.
+
+## Choose the status
+
+Use `ok` for one finite point with a complete, source-supported unit or denominator. An endpoint-defined ratio, mutant frequency, induction factor, response percentage, count per plate or culture, or other named readout remains self-contained when its denominator is fixed by the source metric.
+
+Use `relative` when the selected numeric claim depends on an experiment-specific comparator and the endpoint or named readout does not define that comparison. Examples include a fold difference from a particular control, treatment, genotype, dose arm, or other compound. A qualitative comparison without a numeric coefficient is `unavailable`.
+
+Use `unsure` for a bound or range without a point, unresolved arithmetic, multiple equally selected values, an unresolved unit, or contradictory source statements. Use `unavailable` when the selected outcome is absent or nonnumeric.
+
+## Preserve the report
+
+Return a finite plain decimal with optional sign and decimal point. Remove valid thousands separators. Preserve the stated central point when it is accompanied by a spread or interval, but do not turn a bound or range into a point. Do not calculate, average, convert, round, infer a logarithmic base, or impose a plausibility cutoff.
+
+A power of ten printed with the selected value stays explicit in the unit: `3.2 x 10^-6` with `events/cell` becomes measurement `3.2` and unit `10^-6 events/cell`. When `measurement_text` contains the expanded equivalent but `support_text` explicitly prints the selected outcome as a coefficient times a power, copy the printed coefficient and keep the power in the unit. Keep an expanded decimal only when the source context itself reports that decimal without a printed equivalent. Never reverse or silently apply a printed scale.
+
+{% if has_unit_column %}A nonempty `unit_text` is authoritative. Copy it exactly unless the selected value explicitly supplies a missing scale or unit component. When it lists units for multiple reported values, retain only the unit component attached to the selected value. Use support only to complete a genuinely incomplete unit. An unresolved conflict is `unsure`.
+{% else %}Read the selected outcome's unit or fixed denominator from the measurement and support text. If neither supplies one, return `unsure` rather than inventing a unit.
+{% endif %}
+Use `%`, `ratio`, `fraction`, `fold`, or a count denominator only when the source explicitly prints or defines it. Do not use an endpoint name, assay name, species, tissue, dose, or condition as a unit.
+
+Additional fields provide context for the selected measurement. They are not alternative measurement columns and must not override conflicting primary text.

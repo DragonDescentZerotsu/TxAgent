@@ -1,6 +1,6 @@
 """Compatibility imports for the canonical prediction provider pool."""
 
-from predict.llm_engine import pool as _impl
+from predict.api_client import pool as _impl
 
 
 def __getattr__(name: str):

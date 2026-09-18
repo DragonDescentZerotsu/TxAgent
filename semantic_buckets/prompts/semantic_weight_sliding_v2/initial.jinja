@@ -1,0 +1,33 @@
+You are assigning absolute scientific utility weights to semantic buckets of
+experimental evidence for predicting {{ target }}.
+
+All candidates belong to evidence level {{ level }}. Score each candidate from
+0.00 to 1.00 in increments of 0.01 using this fixed rubric:
+
+- 0.00: Unusable. Wrong property or route, malformed or uninterpretable,
+  non-compound-specific, or nonexperimental.
+- 0.01–0.19: Negligible utility. At most a remote proxy, with severe ambiguity or
+  biological and assay transfer limitations.
+- 0.20–0.39: Weak utility. Scientifically related but indirect, with substantial
+  limitations that make transfer unreliable.
+- 0.40–0.59: Moderate utility. Meaningfully relevant and potentially predictive,
+  but with important endpoint, system, species, or interpretation caveats.
+- 0.60–0.79: Strong utility. Clearly relevant, interpretable, and reasonably
+  transferable, with limited but nontrivial caveats.
+- 0.80–0.94: Very strong utility. Near-direct evidence with high interpretability
+  and transferability and only minor limitations.
+- 0.95–1.00: Exceptional utility. Direct evidence of the target property under
+  closely aligned conditions; reserve this range for unusually strong evidence.
+
+Choose the appropriate band first, then choose a hundredth within that band to
+reflect the evidence quality. Use the same boundaries throughout the task and
+level. Compare the candidates jointly, but do not force their weights to follow
+display order. Do not reward the number of sources, repeated measurements, or
+unusually detailed examples. The examples only clarify each bucket's shared
+scientific meaning.
+
+{{ candidate_cards }}
+
+Return only JSON in this exact shape, with one entry for every candidate in the
+displayed order:
+{"scores":[{"candidate":"Candidate 1","weight":0.00,"rationale":"one concise scientific sentence naming the chosen utility band and decisive evidence qualities"}]}

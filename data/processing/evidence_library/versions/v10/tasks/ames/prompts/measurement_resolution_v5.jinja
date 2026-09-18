@@ -1,0 +1,8 @@
+{% include "measurement_resolution_v4.jinja" %}
+
+## Final precision check
+
+Before returning `ok`, verify that the unit is either the exact nonempty
+`unit_text` or one unambiguous complete metric stated by the source. If this
+check fails, return `unsure`. Keep the response concise; do not explain any
+row in the JSON output.

@@ -19,7 +19,7 @@ from predict.retrieval.assay_reranking.v9 import (
     default_cache_paths,
     model_profile,
 )
-from predict.harnesses.branches.assay_transfer_prompt import (
+from predict.harnesses.branches.prompt import (
     SCORED_NEIGHBORS_POLICY_NAME,
     prepare_assay_transfer_selected_neighbors,
     public_assay_transfer_records,
@@ -37,7 +37,7 @@ from predict.harnesses.branches.assay_transfer import (
     assay_transfer_selection_policy,
     validate_assay_transfer_records_per_molecule,
 )
-from predict.harnesses.branches.retrieval_cli import add_retrieval_strategy_args
+from predict.harnesses.branches.runner import add_retrieval_strategy_args
 from predict.llm_io.evidence import evidence_for_group_llm, evidence_for_llm
 from predict.harnesses.branches.reasoning.coverage import (
     NEIGHBOR_CONTEXT_PROFILES,
@@ -57,7 +57,7 @@ from predict.harnesses.branches.reasoning.final_evidence import (
     final_evidence_instructions,
     prepare_resumed_final_inputs,
 )
-from predict.harnesses.branches.reasoning.identity_blind import (
+from predict.harnesses.branches.visibility import (
     expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
     query_without_prefetched_tools,
@@ -69,19 +69,23 @@ from predict.harnesses.branches.analogous_flat_prompt import (
     reason_final as reason_analogous_flat_final,
     reason_group as reason_analogous_flat_group,
 )
+from predict.harnesses.branches.flat import (
+    flat_group_validation,
+    render_flat_group_messages,
+)
 from predict.utils.json import parse_json_content
 from predict.retrieval.policies import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
 )
 from predict.retrieval.policies import NEIGHBOR_IDENTITY_POLICIES
-from predict.llm_engine.client import OpenAICompatibleClient
-from predict.llm_engine.pool import load_env_file as _load_env
+from predict.api_client.client import OpenAICompatibleClient
+from predict.api_client.pool import load_env_file as _load_env
 from predict.tasks.prompt_profiles import (
     prompt_profile_from_manifest,
     require_matching_prompt_profiles,
 )
-from predict.harnesses.branches.payload import (
+from predict.harnesses.branches.prompt import (
     attach_external_condition,
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
@@ -92,7 +96,7 @@ from predict.harnesses.branches.artifacts import (
     read_jsonl_record as _read_jsonl_record,
     write_trace_jsonl,
 )
-from predict.harnesses.branches.reasoning.calls import (
+from predict.harnesses.branches.inference import (
     bound_group_prompt_payload,
     call_group_branch,
     call_single_molecule_branch,
@@ -103,13 +107,13 @@ from predict.llm_io.response import (
     structured_response_is_valid,
     validated_branch_content,
 )
-from predict.harnesses.branches.replay import load_retrieval_replay
-from predict.harnesses.branches.reuse import load_reusable_group_outputs
-from predict.harnesses.branches.tasks.skin_reaction.context import (
+from predict.harnesses.branches.artifacts import load_retrieval_replay
+from predict.harnesses.branches.artifacts import load_reusable_group_outputs
+from predict.harnesses.branches.tasks.skin_reaction.contract import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
 )
-from predict.harnesses.branches.tasks.skin_reaction.config import get_source_config
+from predict.harnesses.branches.tasks.skin_reaction.contract import get_source_config
 from predict.tasks.skin_reaction.prompts import (
     DEFAULT_SKIN_PROMPT_PROFILE,
     HISTORICAL_SKIN_PROMPT_PROFILE,
@@ -752,48 +756,68 @@ def _reason_one_group(
     group: dict[str, Any],
     *,
     prompt_profile: str = DEFAULT_SKIN_PROMPT_PROFILE,
+    flat_prompt_version: str = "",
+    retrieval_strategy: str = "",
 ) -> dict[str, Any]:
     profile = get_skin_prompt_profile(prompt_profile)
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                profile.group_system_role
-                + (
-                    "Use the harness-prefetched comparison results; do not call tools. "
-                    + ("Do not infer query identity. " if group.get("identity_blind") else "")
-                    if group.get("tools_prefetched")
-                    else (
-                        "No tools are available for this branch. "
+    payload = _group_prompt_payload(
+        query,
+        group,
+        prompt_profile=prompt_profile,
+        include_query_tool_guidance=(
+            bool(group.get("tools_prefetched")) or client.enable_group_tools
+        ),
+    )
+    if flat_prompt_version:
+        messages = render_flat_group_messages(
+            payload,
+            group=group,
+            task_id="skin_reaction",
+            task_prompt_profile=prompt_profile,
+            group_tools_enabled=client.enable_group_tools,
+            prompt_version=flat_prompt_version,
+            retrieval_strategy=retrieval_strategy,
+        )
+    else:
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    profile.group_system_role
+                    + (
+                        "Use the harness-prefetched comparison results; do not call tools. "
                         + ("Do not infer query identity. " if group.get("identity_blind") else "")
-                        if not client.enable_group_tools
-                        else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                        if group.get("tools_prefetched")
+                        else (
+                            "No tools are available for this branch. "
+                            + ("Do not infer query identity. " if group.get("identity_blind") else "")
+                            if not client.enable_group_tools
+                            else "You may call the provided molecule comparison tools when structural or property differences matter. "
+                        )
                     )
-                )
-                + "Return only valid JSON."
-            ),
-        },
-        {
-            "role": "user",
-            "content": json.dumps(
-                _group_prompt_payload(
-                    query,
-                    group,
-                    prompt_profile=prompt_profile,
-                    include_query_tool_guidance=(
-                        bool(group.get("tools_prefetched"))
-                        or client.enable_group_tools
-                    ),
+                    + "Return only valid JSON."
                 ),
-                ensure_ascii=False,
-            ),
-        },
-    ]
+            },
+            {
+                "role": "user",
+                "content": json.dumps(payload, ensure_ascii=False),
+            },
+        ]
+    validation = (
+        flat_group_validation(
+            "skin_reaction",
+            task_prompt_profile=prompt_profile,
+            prompt_version=flat_prompt_version,
+        )
+        if flat_prompt_version
+        else {}
+    )
     response = call_group_branch(
         client,
         messages,
         group=group,
         tools=GROUP_REASONING_TOOLS,
+        **validation,
     )
     return {
         "group_id": group["group_id"],

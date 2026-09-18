@@ -34,4 +34,4 @@ so existing results may be reused only after their input hashes match that
 receipt.
 
 The shared schema, split contract, and publication entrypoint are documented in
-[`../../common/starling/CONDITIONED_BENCHMARK.md`](../../common/starling/CONDITIONED_BENCHMARK.md).
+the [conditioned benchmark documentation](../../../../data/processing/gold_labels/README.md).

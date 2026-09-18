@@ -1,0 +1,14 @@
+{% include "measurement_resolution_v9.jinja" %}
+
+## Final exact-span gate
+
+When `unit_text` is empty, use `ok` only if the complete unit or named metric
+is one exact contiguous span in `support_text`. Copy that span without adding,
+deleting, reordering, or expanding words. Do not combine fragments from
+`specific_endpoint_name`, `endpoint_and_comparator`, or assay context. If no
+such exact support span completely names the measurement, return `unsure`.
+
+For example, copy `GSH/GSSG ratio` or `T-helper/T-suppressor ratio` when that
+exact phrase occurs in support. Do not add compartment or organ adjectives,
+parenthetical abbreviations, method names, or definitions of what a ratio or
+index means.

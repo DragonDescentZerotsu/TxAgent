@@ -43,6 +43,7 @@ class LabeledSourceRecord:
     label_method: str = ""
     raw_value: str = ""
     context: str = ""
+    source_row_uid: str = ""
 
 
 @dataclass(frozen=True)
@@ -171,6 +172,9 @@ def build_benchmark_dataset(
     agreement_threshold: float = 0.70,
     seed: int = 20260723,
     max_rejection_examples: int = 20,
+    voter_membership_path: str | Path | None = None,
+    voter_membership_stage1_sha256: str | None = None,
+    voter_membership_provenance: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Apply record-majority labels and write random/scaffold three-way splits."""
     if not 0.5 <= agreement_threshold <= 1.0:
@@ -333,6 +337,62 @@ def build_benchmark_dataset(
         }
         for row in molecule_rows
     ]
+    membership_manifest = None
+    if voter_membership_path is not None:
+        from data.processing.gold_labels.voter_membership import (
+            NO_REPORTED_CONDITION,
+            materialize_voter_membership,
+            write_voter_membership,
+        )
+
+        vote_groups = {
+            (identity_key, NO_REPORTED_CONDITION): [
+                {
+                    "source_row_uid": record.source_row_uid,
+                    "source_id": record.source_id,
+                    "source_record_id": record.source_record_id,
+                    "molecule_identity_key": identity_key,
+                    "condition_group": NO_REPORTED_CONDITION,
+                    "Y": record.label,
+                    "label_method": record.label_method,
+                }
+                for record, _ in items
+            ]
+            for identity_key, items in grouped.items()
+        }
+        scaffold_split = split_assignments["scaffold"]
+        published_aggregates = [
+            {
+                **row,
+                "condition_group": NO_REPORTED_CONDITION,
+                "condition_atoms": [],
+                "benchmark_row_id": _membership_row_id(
+                    task_name, row["molecule_identity_key"]
+                ),
+                "split": scaffold_split[row["molecule_identity_key"]],
+            }
+            for row in molecule_rows
+        ]
+        rejected_aggregates = [
+            {
+                **row,
+                "condition_group": NO_REPORTED_CONDITION,
+                "condition_atoms": [],
+            }
+            for row in rejected_parent_rows
+        ]
+        membership_rows = materialize_voter_membership(
+            task_name=task_name,
+            vote_groups=vote_groups,
+            published_aggregates=published_aggregates,
+            rejected_parent_aggregates=rejected_aggregates,
+        )
+        membership_manifest = write_voter_membership(
+            voter_membership_path,
+            membership_rows,
+            stage1_sha256=voter_membership_stage1_sha256,
+            provenance=voter_membership_provenance,
+        )
     _write_jsonl(output_path / "molecule_labels.jsonl", labeled_rows)
     _write_jsonl(output_path / "conflicting_molecules.jsonl", conflicting_rows)
     _write_jsonl(output_path / "rejected_parent_molecules.jsonl", rejected_parent_rows)
@@ -409,7 +469,13 @@ def build_benchmark_dataset(
                 output_path / "rejected_parent_molecules.jsonl"
             ),
             "source_rejection_examples": str(output_path / "source_rejection_examples.jsonl"),
+            "voter_membership": (
+                str(voter_membership_path)
+                if voter_membership_path is not None
+                else None
+            ),
         },
+        "voter_membership": membership_manifest,
     }
     (output_path / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2, default=str) + "\n",
@@ -417,6 +483,13 @@ def build_benchmark_dataset(
     )
     (output_path / "report_zh.md").write_text(_render_report(summary), encoding="utf-8")
     return summary
+
+
+def _membership_row_id(task_name: str, parent: str) -> str:
+    digest = hashlib.sha256(
+        f"{task_name}\0{parent}\0no_reported_external_condition".encode("utf-8")
+    ).hexdigest()[:20]
+    return f"NULL_{digest.upper()}"
 
 
 def calculate_test_size(

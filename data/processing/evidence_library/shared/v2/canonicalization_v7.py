@@ -97,6 +97,8 @@ _ROW_ONLY_INTERMEDIATES = frozenset(
 _STAGE1_DERIVED_FIELDS = frozenset(
     {
         "canonical_endpoint_name",
+        "canonical_measurement_text",
+        "canonical_unit_text",
         "measurement_resolution_route",
         "measurement_resolution_rule_id",
         "measurement_resolution_exact_measurement",

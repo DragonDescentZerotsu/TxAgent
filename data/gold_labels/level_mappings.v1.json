@@ -1,0 +1,235 @@
+{
+  "version": "gold_level_mappings_index.v1",
+  "status": "complete",
+  "gold_release": "v1",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "tasks": {
+    "ames": {
+      "kind": "parquet_dataset",
+      "path": "Ames/level_mappings/v1/level_mapping",
+      "rows": 1299584,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 12781373,
+          "sha256": "c0b7a6b485a45a2c6141d1debcac0633dbc4ead593412de0fe07c36b48b2b027"
+        },
+        {
+          "path": "part-00001.parquet",
+          "size_bytes": 12761608,
+          "sha256": "569a766f1829ac5b6ef32f0cf983d60adaee2c2b482f22de5cd8d13c19742166"
+        },
+        {
+          "path": "part-00002.parquet",
+          "size_bytes": 12769292,
+          "sha256": "1649e57c84b83b48cd2db769a30a0368babdbc0ec87c642a358370d788cfd07d"
+        },
+        {
+          "path": "part-00003.parquet",
+          "size_bytes": 12757314,
+          "sha256": "615771d41e56efcf5630b776932bf08143e28b34864a009f3dd44ad3bd579c29"
+        },
+        {
+          "path": "part-00004.parquet",
+          "size_bytes": 12792517,
+          "sha256": "44e354fd52119bc3064591866aacca03ff238216212785ea7f242edfbc6c4dd1"
+        },
+        {
+          "path": "part-00005.parquet",
+          "size_bytes": 2601131,
+          "sha256": "f7da6ee79e5e2199bfdfa75cd44daa1891a6c4be7bc5a03864e2b5842fb8ed0b"
+        }
+      ],
+      "rows_by_level": {
+        "1": 3333,
+        "2": 138569,
+        "3": 236310,
+        "4": 496881,
+        "5": 424491
+      },
+      "manifest": "Ames/level_mappings/v1/manifest.json",
+      "manifest_sha256": "a45f9a0d5a2836554c8587c5cf0b1d87fc050a010bcf5ccc6ce4aacd42d569ac"
+    },
+    "bbb_martins": {
+      "kind": "parquet_file",
+      "path": "BBB_Martins/level_mappings/v1/level_mapping.parquet",
+      "sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+      "rows": 498556,
+      "rows_by_level": {
+        "1": 8592,
+        "2": 268379,
+        "3": 14189,
+        "4": 163672,
+        "5": 43724
+      },
+      "manifest": "BBB_Martins/level_mappings/v1/manifest.json",
+      "manifest_sha256": "78a504c370f0ee276f0376d1a4b1d5658ea71b8bca7ee62a34ae3e8367f9822c"
+    },
+    "bioavailability_ma": {
+      "kind": "parquet_file",
+      "path": "Bioavailability_Ma/level_mappings/v1/level_mapping.parquet",
+      "sha256": "8b64bc08064dc004ceaa8fc862c4e62b7d9be476a4592fd55f465cdca314f17f",
+      "rows": 435485,
+      "rows_by_level": {
+        "1": 20564,
+        "2": 152337,
+        "3": 104174,
+        "4": 73913,
+        "5": 23511,
+        "6": 60986
+      },
+      "manifest": "Bioavailability_Ma/level_mappings/v1/manifest.json",
+      "manifest_sha256": "c09b2409bc3ec9865f4839df75c0c2ae7daeec8d3fad42be472b22b921d9b6b7"
+    },
+    "carcinogens": {
+      "kind": "parquet_dataset",
+      "path": "Carcinogens/level_mappings/v1/level_mapping",
+      "rows": 3151140,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 8255064,
+          "sha256": "82610fbc868959de63409c560c34235331454f6482b15553e5270368f1f874bf"
+        },
+        {
+          "path": "part-00001.parquet",
+          "size_bytes": 8250973,
+          "sha256": "7fde7b8ef99048bc3fd7a3c9080d066a692f0bd6e325ab246fcdf3084a7a20ba"
+        },
+        {
+          "path": "part-00002.parquet",
+          "size_bytes": 8237235,
+          "sha256": "47ecd0001339752b081c0479a1c72ddaa00b8eb077be9492c637098399f2a4b2"
+        },
+        {
+          "path": "part-00003.parquet",
+          "size_bytes": 8254298,
+          "sha256": "6a17a175796cd7cff7e726b99f03fa2cbd07aa8047fda94eae196ab9444963de"
+        },
+        {
+          "path": "part-00004.parquet",
+          "size_bytes": 8239648,
+          "sha256": "048cd41671bf55bab77128e53e207da7e9555966c1c404745a7deb634d41cd5b"
+        },
+        {
+          "path": "part-00005.parquet",
+          "size_bytes": 8254533,
+          "sha256": "bb22d02da98c12723bafc51d86a4db1115b182655b9c0f5c1e1c41ef424d4f3f"
+        },
+        {
+          "path": "part-00006.parquet",
+          "size_bytes": 8245877,
+          "sha256": "a736b16a19615ce28f1899fd3bf7fae2b7e7d54616f12d4e7a5b77b75ebe5fcd"
+        },
+        {
+          "path": "part-00007.parquet",
+          "size_bytes": 8253061,
+          "sha256": "71b3b7d48216cb9d4d72a201bcda80ee4deed72b8af0053ab936b2c0c59a46a7"
+        },
+        {
+          "path": "part-00008.parquet",
+          "size_bytes": 8240068,
+          "sha256": "dc184c3692a3a149ee25bf1ad35d8a7725f7b1730686ac45239897dd143c7e9d"
+        },
+        {
+          "path": "part-00009.parquet",
+          "size_bytes": 8241014,
+          "sha256": "6600600382cc5366af4cc6c0e34f08367cbb53d2e08a1baa3a253fac6128b7e1"
+        },
+        {
+          "path": "part-00010.parquet",
+          "size_bytes": 8238130,
+          "sha256": "a80ee68ae85fc0ce60634681c05cb21dae8961e4bd45181e55e563dc6d3d8839"
+        },
+        {
+          "path": "part-00011.parquet",
+          "size_bytes": 8254144,
+          "sha256": "3ad981d2c76b5ff1673b4d5c3f465d5ffa0126d3206e5682206ca18a3371218d"
+        },
+        {
+          "path": "part-00012.parquet",
+          "size_bytes": 5020569,
+          "sha256": "124d748fa5cc21a5ea3ab07d2c7bf0f1e896082ed86494a5a2ceb476e0281d8c"
+        }
+      ],
+      "rows_by_level": {
+        "1": 89617,
+        "2": 405813,
+        "3": 750569,
+        "4": 650547,
+        "5": 749469,
+        "6": 218187,
+        "7": 286938
+      },
+      "manifest": "Carcinogens/level_mappings/v1/manifest.json",
+      "manifest_sha256": "8648a8954c3952d9183e1bb2ce6149009de7cb21d7b3b9e76f994c31ceee6cfb"
+    },
+    "dili": {
+      "kind": "parquet_dataset",
+      "path": "DILI/level_mappings/v1/level_mapping",
+      "rows": 1386455,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 8278379,
+          "sha256": "29046a65288d20af6553fb3bafdd9920dd45adce8ed412a48afb21b05bbd5886"
+        },
+        {
+          "path": "part-00001.parquet",
+          "size_bytes": 8281795,
+          "sha256": "6b50de656edc974d6c826081faf9e5e037a89c8362ab6743cafe77ddd08fc795"
+        },
+        {
+          "path": "part-00002.parquet",
+          "size_bytes": 8276584,
+          "sha256": "c43ccbe09df2dc4a932be327c7c872e4ba42e1f4f95c4951771689d29f735890"
+        },
+        {
+          "path": "part-00003.parquet",
+          "size_bytes": 8274453,
+          "sha256": "78874d54ab660788d5a6c7c12e18566b2d5d4a13fd4738a0c770313f613b8f15"
+        },
+        {
+          "path": "part-00004.parquet",
+          "size_bytes": 8280507,
+          "sha256": "39f646f9b52052c26d1ce4afa4be079f9e75b5552122be6f3b83334ed27f4be2"
+        },
+        {
+          "path": "part-00005.parquet",
+          "size_bytes": 4564237,
+          "sha256": "8bc99c0bbc95d293f9f372934d89048459f1b251192be9c27661f3bf75b89059"
+        }
+      ],
+      "rows_by_level": {
+        "1": 108435,
+        "2": 166498,
+        "3": 141940,
+        "4": 75971,
+        "5": 294047,
+        "6": 196582,
+        "7": 402982
+      },
+      "manifest": "DILI/level_mappings/v1/manifest.json",
+      "manifest_sha256": "8501056bed8c069da1e215c1c0aa4e6adc22235bb75f8695e3f9b7753d8631f3"
+    },
+    "skin_reaction": {
+      "kind": "parquet_dataset",
+      "path": "Skin_Reaction/level_mappings/v1/level_mapping",
+      "rows": 66964,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "size_bytes": 3497669,
+          "sha256": "1bd3a033fcd60364691edb18b8f68d8da31cddcbea610b05b338b6282db026ca"
+        }
+      ],
+      "rows_by_level": {
+        "1": 42435,
+        "2": 12524,
+        "3": 12005
+      },
+      "manifest": "Skin_Reaction/level_mappings/v1/manifest.json",
+      "manifest_sha256": "bd86f7dc25b9670ef281f64d2c7bfee3be3260c77c982d0a020d451d66d1a297"
+    }
+  }
+}

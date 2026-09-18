@@ -181,8 +181,8 @@ def contribution(
     value = parse_point_measurement(decision.measurement_text).value
     if value is None:
         return None
-    # The router already proved this unit resolves with no unknown tokens and no
-    # scale factor, so canonicalization here is a spelling step, not a judgement.
+    # Canonicalize known spellings and preserve an unknown source unit verbatim.
+    # Acceptance itself does not depend on the endpoint/unit map.
     resolved = canonicalize_unit(decision.unit_text, task=task)
     canonical = resolved.canonical or str(decision.unit_text or "").strip()
     if not canonical or canonical == ENCODER_UNIT:

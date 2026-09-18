@@ -1,0 +1,15 @@
+root ::= query_and_task neighborhood {% for molecule in molecules %}molecule_{{ molecule.number }} {% endfor %}reflection final_judgment "</think>\n" answer
+query_and_task ::= "QUERY AND TASK\nANALYSIS: " query_reasoning
+neighborhood ::= "NEIGHBORHOOD\nANALYSIS: " neighborhood_reasoning
+{% for molecule in molecules %}molecule_{{ molecule.number }} ::= "MOLECULE {{ molecule.number }} | RECORDS {{ molecule.record_ids }}\nANALOG ASSESSMENT: " analog_reasoning "LOCAL CONTRIBUTION: " local_contribution "\nWEIGHT: " evidence_weight "\n"
+{% endfor %}reflection ::= "REFLECTION\nANALYSIS: " reflection_reasoning
+final_judgment ::= "FINAL JUDGMENT\nANALYSIS: " judgment_reasoning
+query_reasoning ::= free_char{1,10000} "\n"
+neighborhood_reasoning ::= free_char{1,10000} "\n"
+analog_reasoning ::= free_char{1,10000} "\n"
+reflection_reasoning ::= free_char{1,10000} "\n"
+judgment_reasoning ::= free_char{1,10000} "\n"
+local_contribution ::= "positive" | "negative" | "mixed" | "uninformative"
+evidence_weight ::= "high" | "moderate" | "low" | "negligible"
+free_char ::= [^<\x00-\x08\x0B\x0C\x0E-\x1F]
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+

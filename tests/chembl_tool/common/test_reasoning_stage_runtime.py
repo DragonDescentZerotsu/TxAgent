@@ -3,10 +3,14 @@ from types import SimpleNamespace
 
 import pytest
 
-from predict.harnesses.branches.batch import (
+from predict.harnesses.branches.runner import (
     BatchConfig,
     BatchItem,
     PreparedBatch,
+    _collect_result,
+)
+from predict.harnesses.branches.tasks.bioavailability_ma.contract import (
+    CONFIG as BIOAVAILABILITY_CONFIG,
 )
 from predict.harnesses.branches.runtime import (
     FINAL_STAGE,
@@ -161,6 +165,75 @@ def test_analog_stage_dag_omits_single_and_unlocks_final_after_groups(tmp_path):
     assert [(job.stage, job.group_id) for job in ready_stage_jobs(state)] == [
         (FINAL_STAGE, "")
     ]
+
+
+def test_flat_context_one_call_skips_single_and_group_stages(tmp_path):
+    prepared = _prepared(tmp_path)
+    prepared.args.experiment_mode = "full_flat"
+    prepared.args.flat_prompt_version = "joseph_flat_context_v4_v1"
+    prepared.args.flat_query_prior = "none"
+    run_dir = prepared.batch_run_root / "condition_idx00000"
+    run_dir.mkdir(parents=True)
+    (run_dir / "retrieval.json").write_text(
+        json.dumps({
+            "status": "ok",
+            "groups": [{
+                "group_id": "Flat.all_evidence",
+                "neighbors": [{"rank": 1}],
+            }],
+        }),
+        encoding="utf-8",
+    )
+    (run_dir / "manifest.json").write_text(
+        json.dumps({"n_groups_with_neighbors": 0}), encoding="utf-8"
+    )
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"status": "omitted", "reason": "query_prior_disabled"}),
+        encoding="utf-8",
+    )
+    (run_dir / "group_reasoning_outputs.jsonl").write_text("", encoding="utf-8")
+
+    state = load_stage_state(prepared, prepared.items[0])
+
+    assert state is not None
+    assert state.expected_group_ids == ()
+    assert [(job.stage, job.group_id) for job in ready_stage_jobs(state)] == [
+        (FINAL_STAGE, "")
+    ]
+
+
+def test_flat_context_common_prediction_maps_to_task_metrics(tmp_path):
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    (run_dir / "final_reasoning_output.json").write_text(
+        json.dumps({
+            "status": "ok",
+            "llm": {"content": {
+                "final_prediction": "pass",
+                "summary": "Threshold is more likely met.",
+                "confidence": "moderate",
+            }},
+        }),
+        encoding="utf-8",
+    )
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"status": "omitted"}), encoding="utf-8"
+    )
+    (run_dir / "group_reasoning_outputs.jsonl").write_text("", encoding="utf-8")
+    (run_dir / "manifest.json").write_text(
+        json.dumps({"flat_one_call": True, "flat_query_prior": "none"}),
+        encoding="utf-8",
+    )
+    item = BatchItem(0, {"drug": "CC", "Y": 1})
+    args = SimpleNamespace(label_field="Y", smiles_field="drug")
+
+    result = _collect_result(
+        BIOAVAILABILITY_CONFIG, args, item, "run", run_dir
+    )
+
+    assert result["bioavailability_prediction"] == "high"
+    assert result["pred_label"] == 1
+    assert result["final_summary"] == "Threshold is more likely met."
 
 
 def test_group_checkpoint_merge_replaces_only_matching_branch(tmp_path):

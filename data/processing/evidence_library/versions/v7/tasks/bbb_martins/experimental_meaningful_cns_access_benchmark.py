@@ -447,6 +447,7 @@ def _label_record(
     *,
     label_decider: Callable[..., tuple[int | None, str]] = label_record,
 ) -> LabelDecision:
+    index = int(row.get("source_index", index))
     label, method = label_decider(row, source_index=index)
     if label is None:
         return rejected(
@@ -465,8 +466,8 @@ def _label_record(
         LabeledSourceRecord(
             smiles=smiles,
             label=label,
-            source_id=SOURCE_DATASET,
-            source_record_id=f"row:{index}",
+            source_id=str(row.get("source_id") or SOURCE_DATASET),
+            source_record_id=str(row.get("source_record_id") or f"row:{index}"),
             pmid=str(row.get("pmid") or ""),
             label_method=method,
             raw_value=" | ".join(
@@ -484,6 +485,7 @@ def _label_record(
                 for value in (row.get("assay_model"), row.get("species"))
                 if value not in (None, "")
             ),
+            source_row_uid=str(row.get("source_row_uid") or ""),
         )
     )
 

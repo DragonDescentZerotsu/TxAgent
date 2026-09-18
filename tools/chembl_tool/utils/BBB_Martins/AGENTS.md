@@ -1,4 +1,21 @@
-# AGENTS.md: ChEMBL BBB Assay 筛查实现说明
+# AGENTS.md: ChEMBL BBB Assay Screening Implementation Notes
+
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
 
 ## Testing discipline
 
@@ -11,19 +28,19 @@ executable behavior, failure modes, schemas, rendering validity, and provenance.
 
 If you are on `node002`, default to the `vllm` conda environment when you need RDKit or the local project dependencies. conda is at: /data1/tianang/anaconda3/condabin/conda
 
-## 目标
+## Goal
 
-实现一个可复用脚本，从 ChEMBL SQLite/数据库中筛出能帮助判断分子是否能够通过 BBB 的 assay，并按证据强度分层排序。
+Implement a reusable script that screens assays from the ChEMBL SQLite/database to help determine whether a molecule can cross the BBB, and ranks them by evidence strength.
 
-当前状态说明：
+Current status notes:
 
 ```text
-本文件主要保留早期 assay screening 计划和规则说明。
-当前正式实现已经迁移到 tools/chembl_tool/tasks/bbb_martins/。
-第二阶段已经实现 molecule-level evidence library、neighbor retrieval 和 reasoning pipeline。
+This file mainly retains early assay screening plans and rule descriptions.
+The current official implementation has moved to tools/chembl_tool/tasks/bbb_martins/.
+Phase 2 has implemented molecule-level evidence library, neighbor retrieval, and reasoning pipeline.
 ```
 
-当前关键入口：
+Current key entry points:
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/screen_assays.py
@@ -34,17 +51,17 @@ tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
 tools/chembl_tool/tasks/bbb_martins/run_reasoning_pipeline.py
 ```
 
-当前 ChEMBL neighbor retrieval 的角色：
+Current role of ChEMBL neighbor retrieval:
 
 ```text
-不是 DeepSeek 可调用 tool。
-不是当前 FastAPI service tool。
-是 run_reasoning_pipeline.py 在 LLM 调用前执行的 evidence prefetch / context assembly。
-group-level DeepSeek 只能调用 mmp_structure_compare 和 properties_compare。
-single-molecule DeepSeek 只能调用 molecule_properties。
+Not a callable tool for DeepSeek.
+Not a current FastAPI service tool.
+It is evidence prefetch / context assembly executed by run_reasoning_pipeline.py before LLM calls.
+Group-level DeepSeek can only call mmp_structure_compare and properties_compare.
+Single-molecule DeepSeek can only call molecule_properties.
 ```
 
-`screen_assays.py` 的 raw screening 输出：
+Raw screening output for `screen_assays.py`:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.csv
@@ -52,7 +69,7 @@ outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_candidates.j
 outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_assay_report.md
 ```
 
-当前正式 BBB_Martins task 输出已经按 pipeline stage 归档：
+Current official BBB_Martins task outputs are archived by pipeline stage:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/assay_screening/v6/
@@ -61,11 +78,11 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/
 ```
 
-不要训练模型。只做 deterministic assay 检索、打分、分层、导出。
+Do not train models. Only perform deterministic assay retrieval, scoring, tiering, and export.
 
-## 输入
+## Input
 
-优先支持 ChEMBL SQLite，例如：
+Prefer ChEMBL SQLite, for example:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
@@ -75,13 +92,13 @@ python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
   --progress-every 10000
 ```
 
-如果当前项目已有 ChEMBL 访问工具，优先复用，不要重复造复杂 ORM。
+If the current project already has ChEMBL access tools, reuse them preferentially; do not reinvent complex ORMs.
 
 ---
 
-## 需要读取的 ChEMBL 表
+## ChEMBL tables to read
 
-至少使用：
+At minimum use:
 
 ```text
 assays
@@ -94,15 +111,15 @@ molecule_dictionary
 compound_structures
 ```
 
-建议额外使用：
+Additionally recommended:
 
 ```text
 docs
 ```
 
-`docs.title` / `docs.abstract` 只作为弱召回辅助，不能单独决定保留一个 assay。它们用于发现 BBB 论文中的 assay，但最终仍必须由 assay description、activity endpoint、cell model 或 target annotation 支撑。
+`docs.title` / `docs.abstract` are only weak recall aids and cannot alone decide to retain an assay. They are used to discover assays in BBB papers, but ultimately the assay description, activity endpoint, cell model, or target annotation must support retention.
 
-核心字段：
+Core fields:
 
 ```text
 assays.assay_id
@@ -150,13 +167,13 @@ docs.pubmed_id
 docs.doi
 ```
 
-字段不存在时要 graceful fallback，不要直接崩溃。
+Gracefully fall back when fields are missing; do not crash.
 
 ---
 
-## 输出字段
+## Output fields
 
-`bbb_assay_candidates.csv/jsonl` 至少包含：
+`bbb_assay_candidates.csv/jsonl` must include at least:
 
 ```text
 assay_chembl_id
@@ -194,9 +211,9 @@ Matches brain/plasma and the logBB endpoint, so it is direct brain-exposure evid
 
 ---
 
-## 文本标准化
+## Text normalization
 
-所有 keyword matching 前先标准化：
+Normalize before all keyword matching:
 
 ```python
 text = text.lower()
@@ -205,9 +222,9 @@ text = text.replace(",", " ")
 text = collapse_multiple_spaces(text)
 ```
 
-同时保留原始 description 用于输出。
+Also keep the original description for output.
 
-注意兼容这些写法：
+Be compatible with these spellings:
 
 ```text
 blood-brain barrier / blood brain barrier
@@ -220,17 +237,17 @@ brain/plasma / brain to plasma / brain:blood / brain blood
 CSF/plasma / CSF to plasma / cerebrospinal fluid plasma
 ```
 
-实现上优先用 token/phrase matching 或预编译正则，避免单字符或过短 token 造成误报。
+Prefer token/phrase matching or precompiled regexes to avoid false positives from single characters or overly short tokens.
 
 ---
 
-## 证据分层
+## Evidence tiering
 
-### Tier 1: 直接 BBB / brain exposure，最高优先级
+### Tier 1: Direct BBB / brain exposure, highest priority
 
-这一层表示分子已经有脑暴露、脑/血浆、脑/血、CSF 或 BBB 通过相关实验读数。
+This tier indicates the molecule already has brain exposure, brain/plasma, brain/blood, CSF, or BBB penetration-related experimental readings.
 
-关键词：
+Keywords:
 
 ```text
 blood brain barrier
@@ -267,7 +284,7 @@ csf to plasma
 cerebrospinal fluid plasma
 ```
 
-endpoint：
+Endpoints:
 
 ```text
 logbb
@@ -294,9 +311,9 @@ kin
 ps product
 ```
 
-基础分：`100`
+Base score: `100`
 
-注意：
+Note:
 
 ```text
 kp
@@ -305,15 +322,15 @@ kin
 csf
 ```
 
-这些短词不能单独触发 Tier 1。必须和 brain、BBB、CSF/plasma、perfusion、unbound brain 等上下文同时出现，或者标准 endpoint 是明确的 `K(p,uu,brain)` / `brain/plasma` / `logBB`。
+These short words must not trigger Tier 1 alone. They must co-occur with brain, BBB, CSF/plasma, perfusion, unbound brain, or similar context, or the standard endpoint must be an explicit `K(p,uu,brain)` / `brain/plasma` / `logBB`.
 
 ---
 
-### Tier 2: 被动通透 / barrier model permeability
+### Tier 2: Passive permeability / barrier model permeability
 
-这一层表示分子有 BBB 相关体外屏障模型、PAMPA-BBB、brain endothelial cell model、MDCK/Caco-2 permeability 或 Papp 证据。Caco-2 更偏肠吸收，但可以作为 general permeability/P-gp 辅助证据。
+This tier indicates the molecule has BBB-related in vitro barrier models, PAMPA-BBB, brain endothelial cell models, MDCK/Caco-2 permeability, or Papp evidence. Caco-2 is more intestinal absorption, but can serve as general permeability/P-gp auxiliary evidence.
 
-关键词：
+Keywords:
 
 ```text
 pampa bbb
@@ -345,7 +362,7 @@ apparent permeability
 permeability coefficient
 ```
 
-endpoint：
+Endpoints:
 
 ```text
 papp
@@ -357,9 +374,9 @@ caco-2 permeability
 efflux ratio
 ```
 
-基础分：`70`
+Base score: `70`
 
-注意：
+Note:
 
 ```text
 pampa
@@ -369,15 +386,15 @@ a b
 b a
 ```
 
-这些词不能单独触发 Tier 2。`pampa` 优先要求同时出现 BBB、PAMPA-BBB 或 parallel artificial membrane；`permeability` 必须和 Caco-2、MDCK、PAMPA、BBB、brain endothelial、transwell、Papp 或 efflux ratio 同时出现；`a b` / `b a` 只在 basolateral/apical 或 Papp 上下文中使用。
+These words must not trigger Tier 2 alone. `pampa` requires simultaneous BBB, PAMPA-BBB, or parallel artificial membrane; `permeability` must co-occur with Caco-2, MDCK, PAMPA, BBB, brain endothelial, transwell, Papp, or efflux ratio; `a b` / `b a` are used only in basolateral/apical or Papp contexts.
 
 ---
 
-### Tier 3: 主动外排 / efflux transporter
+### Tier 3: Active efflux / efflux transporter
 
-这一层表示分子可能是 BBB 外排转运体底物、抑制剂或存在 bidirectional transport / efflux ratio 证据。
+This tier indicates the molecule may be a BBB efflux transporter substrate, inhibitor, or have bidirectional transport / efflux ratio evidence.
 
-重点 transporter：
+Key transporters:
 
 ```text
 ABCB1, MDR1, P-gp, P glycoprotein, P-glycoprotein
@@ -388,7 +405,7 @@ ABCC4, MRP4
 ABCC5, MRP5
 ```
 
-关键词：
+Keywords:
 
 ```text
 p gp
@@ -426,7 +443,7 @@ ko143
 atpase
 ```
 
-endpoint：
+Endpoints:
 
 ```text
 efflux ratio
@@ -438,19 +455,19 @@ ic50
 ki
 ```
 
-基础分：`85`
+Base score: `85`
 
-注意：
+Note:
 
-`P-gp/BCRP substrate`、`bidirectional Papp`、`efflux ratio` 比单纯 inhibitor `IC50` 更重要。`transport`、`substrate`、`IC50`、`Ki` 不能单独触发 Tier 3；必须和 ABCB1/ABCG2/ABCC gene symbol、P-gp/BCRP/MRP target、efflux ratio、bidirectional assay 或典型 probe/inhibitor context 同时出现。
+`P-gp/BCRP substrate`, `bidirectional Papp`, `efflux ratio` are more important than mere inhibitor `IC50`. `transport`, `substrate`, `IC50`, `Ki` must not trigger Tier 3 alone; they must co-occur with ABCB1/ABCG2/ABCC gene symbols, P-gp/BCRP/MRP targets, efflux ratio, bidirectional assays, or typical probe/inhibitor context.
 
 ---
 
-### Tier 4: 主动摄取 / influx transporter
+### Tier 4: Active uptake / influx transporter
 
-这一层表示分子有可能借助 BBB 相关摄取转运体进入脑内。
+This tier indicates the molecule may enter the brain via BBB-related uptake transporters.
 
-重点 transporter：
+Key transporters:
 
 ```text
 SLC7A5, LAT1
@@ -461,7 +478,7 @@ SLC16A1, MCT1
 TFRC, transferrin receptor
 ```
 
-关键词：
+Keywords:
 
 ```text
 lat1
@@ -481,7 +498,7 @@ uptake
 transport
 ```
 
-endpoint：
+Endpoints:
 
 ```text
 uptake
@@ -489,17 +506,17 @@ transport
 substrate
 ```
 
-基础分：`55`
+Base score: `55`
 
-注意：
+Note:
 
-`uptake` 和 `transport` 是弱词，不能单独触发 Tier 4。必须同时命中 Tier 4 transporter target/gene/synonym，或 description 明确是 LAT1/GLUT1/OATP1A2/OAT3/MCT1/TFRC 相关 assay。
+`uptake` and `transport` are weak words and must not trigger Tier 4 alone. They must co-occur with a Tier 4 transporter target/gene/synonym, or the description must clearly be a LAT1/GLUT1/OATP1A2/OAT3/MCT1/TFRC-related assay.
 
 ---
 
-## 打分规则
+## Scoring rules
 
-对每个 assay 计算 `score`：
+For each assay, compute `score`:
 
 ```text
 score = tier_base_score
@@ -511,23 +528,23 @@ score = tier_base_score
       - negative_penalty
 ```
 
-建议规则：
+Suggested rules:
 
 ```text
-每个强关键词 +3，最多 +20
-命中关键 endpoint +15
-命中多个 Tier 1 direct endpoint +10
-命中 ABCB1/ABCG2 单蛋白 target +20
-命中 ABCC/SLC BBB-relevant transporter target +10
-命中 transporter substrate/efflux ratio/bidirectional Papp +20
+Each strong keyword +3, max +20
+Key endpoint hit +15
+Multiple Tier 1 direct endpoints +10
+ABCB1/ABCG2 single-protein target hit +20
+ABCC/SLC BBB-relevant transporter target hit +10
+Transporter substrate/efflux ratio/bidirectional Papp hit +20
 confidence_score >= 8 +10
 relationship_type == 'D' +5
 n_unique_molecules >= 20 +5
 n_unique_molecules >= 100 +10
-只命中弱词但上下文不足 -50
+Only weak words but insufficient context -50
 ```
 
-弱词包括：
+Weak words include:
 
 ```text
 kp
@@ -546,19 +563,19 @@ ic50
 ki
 ```
 
-弱词必须满足本文件各 Tier 中的上下文要求，否则不要作为保留依据。
+Weak words must satisfy the context requirements in each tier of this file; otherwise, do not use them as retention evidence.
 
-负向规则：
+Negative rules:
 
 ```text
-如果只命中 CNS receptor binding，而没有 BBB/permeability/transport 关键词，-80
-如果只命中 cytotoxicity/cell viability/tumor proliferation，-60
-如果只命中 generic kinase/receptor/enzyme inhibition，-60
-如果只命中 generic uptake，例如 thymidine/glucose/oxygen/tumor uptake，-60
-如果 activity 全部 invalid 或 data_validity_comment 严重异常，-30
+If only CNS receptor binding, without BBB/permeability/transport keywords, -80
+If only cytotoxicity/cell viability/tumor proliferation, -60
+If only generic kinase/receptor/enzyme inhibition, -60
+If only generic uptake, e.g., thymidine/glucose/oxygen/tumor uptake, -60
+If all activities are invalid or data_validity_comment is severely abnormal, -30
 ```
 
-负向关键词：
+Negative keywords:
 
 ```text
 cytotoxicity
@@ -580,50 +597,50 @@ oxygen uptake
 tumor uptake
 ```
 
-但如果同时命中 direct BBB、PAMPA-BBB、MDCK-MDR1、Caco-2 Papp、ABCB1、ABCG2 等强证据，不要因为出现 receptor/cell line 就直接丢弃。
+However, if strong evidence such as direct BBB, PAMPA-BBB, MDCK-MDR1, Caco-2 Papp, ABCB1, ABCG2 is also hit, do not discard solely because receptor/cell line appears.
 
 ---
 
-## 保留规则
+## Retention rules
 
-默认保留：
+Default retention:
 
 ```text
 score >= min_score
 ```
 
-并且至少满足之一：
+And at least one of:
 
 ```text
-命中 Tier 1 direct brain/BBB exposure 关键词或 endpoint
-命中 Tier 2 BBB-relevant permeability/cell model 关键词或 endpoint
-命中 Tier 3 efflux transporter target/关键词/endpoint
-命中 Tier 4 influx transporter target/关键词/endpoint
+Hit Tier 1 direct brain/BBB exposure keyword or endpoint
+Hit Tier 2 BBB-relevant permeability/cell model keyword or endpoint
+Hit Tier 3 efflux transporter target/keyword/endpoint
+Hit Tier 4 influx transporter target/keyword/endpoint
 ```
 
-对于 transporter target assay：
+For transporter target assays:
 
 ```text
-如果 target 是 ABCB1/ABCG2/ABCC/SLC 等单蛋白，优先要求 confidence_score >= 8 或 relationship_type == 'D'
-如果 confidence_score 低，但 description/endpoint 明确是 efflux ratio、substrate、bidirectional Papp，也可以保留
+If the target is a single protein such as ABCB1/ABCG2/ABCC/SLC, prefer requiring confidence_score >= 8 or relationship_type == 'D'
+If confidence_score is low, but description/endpoint clearly indicates efflux ratio, substrate, or bidirectional Papp, it can also be retained
 ```
 
-对于 cell-based assay：
+For cell-based assays:
 
 ```text
-Caco-2、MDCK、hCMEC/D3、bEnd.3、BMEC、BBMEC、RBEC 不要因为 confidence_score 低就丢弃
-但必须有 permeability、Papp、efflux ratio、transwell 或 BBB/barrier context
+Caco-2, MDCK, hCMEC/D3, bEnd.3, BMEC, BBMEC, RBEC should not be discarded solely because of low confidence_score
+But must have permeability, Papp, efflux ratio, transwell, or BBB/barrier context
 ```
 
 ---
 
-## 实现结构
+## Implementation structure
 
-当前 `tools/chembl_tool` 已经按可复用 Python 包结构实现。不要新增平级的 `tools/chembl_bbb/`，否则后续每个 ChEMBL 任务都会形成一套互相割裂的工具。
+Current `tools/chembl_tool` is already implemented as a reusable Python package structure. Do not add a new sibling `tools/chembl_bbb/`, otherwise each future ChEMBL task will form a set of fragmented tools.
 
-当前结构仍应保持：`common/` 放所有任务都能复用的 SQLite/schema/assay 聚合逻辑，`tasks/` 放具体任务。BBB_Martins 只是一个 task。
+Current structure should remain: `common/` holds reusable SQLite/schema/assay aggregation logic for all tasks, `tasks/` holds specific tasks. BBB_Martins is just a task.
 
-当前核心结构：
+Current core structure:
 
 ```text
 tools/chembl_tool/
@@ -662,37 +679,37 @@ tests/
         test_scoring.py
 ```
 
-目录职责：
+Directory responsibilities:
 
 ```text
-common/sqlite.py: 连接 SQLite、执行查询、流式读取、检查表是否存在
-common/schema.py: 字段存在性检查、graceful fallback、ChEMBL 版本/路径探测
-common/assay_loader.py: 读取并聚合 assay metadata、activity summary、target annotations、doc annotations
-common/text.py: 通用文本标准化、phrase/token matching helper
-common/export.py: CSV/JSONL 导出 helper
+common/sqlite.py: Connect to SQLite, execute queries, stream reads, check table existence
+common/schema.py: Field existence checks, graceful fallback, ChEMBL version/path detection
+common/assay_loader.py: Read and aggregate assay metadata, activity summaries, target annotations, doc annotations
+common/text.py: General text normalization, phrase/token matching helpers
+common/export.py: CSV/JSONL export helpers
 
-tasks/bbb_martins/rules.py: BBB_Martins 专属规则、Tier 定义、target gene 列表、弱词上下文规则
-tasks/bbb_martins/scoring.py: BBB_Martins 专属 match/score/keep 逻辑
-tasks/bbb_martins/report.py: BBB_Martins 报告
-tasks/bbb_martins/screen_assays.py: CLI 入口，只做参数解析、调用 common loader、调用 task scoring、导出结果
+tasks/bbb_martins/rules.py: BBB_Martins-specific rules, tier definitions, target gene lists, weak word context rules
+tasks/bbb_martins/scoring.py: BBB_Martins-specific match/score/keep logic
+tasks/bbb_martins/report.py: BBB_Martins reports
+tasks/bbb_martins/screen_assays.py: CLI entry point, only parameter parsing, calling common loader, calling task scoring, exporting results
 ```
 
-这样以后新增其他 ChEMBL 任务时，只需要新增：
+This way, when adding other ChEMBL tasks later, you only need to add:
 
 ```text
 tools/chembl_tool/tasks/<task_name>/
   __init__.py
-  screen_assays.py 或 run.py
+  screen_assays.py or run.py
   rules.py
   scoring.py
   report.py
 ```
 
-不要在新任务里复制 `assay_loader.py`、SQLite 连接、target synonym 聚合、文本标准化等通用逻辑。
+Do not copy `assay_loader.py`, SQLite connections, target synonym aggregation, text normalization, and other common logic into new tasks.
 
 ---
 
-## 主要函数
+## Main functions
 
 ### `common/sqlite.py`
 
@@ -710,11 +727,11 @@ require_any_columns(conn, table: str, candidates: list[str]) -> list[str]
 build_select_columns(conn, table: str, requested: dict[str, str | None]) -> list[str]
 ```
 
-字段不存在时在这里统一 graceful fallback，不要让 task 代码到处写 `PRAGMA table_info`。
+When fields do not exist, perform a unified graceful fallback here; do not scatter `PRAGMA table_info` throughout the task code.
 
 ### `common/assay_loader.py`
 
-负责读取并聚合 assay 信息：
+Responsible for reading and aggregating assay information:
 
 ```python
 load_assay_metadata(conn) -> DataFrame
@@ -724,14 +741,14 @@ load_doc_annotations(conn) -> DataFrame
 merge_assay_table(...) -> DataFrame
 ```
 
-每个 assay 聚合：
+For each assay aggregation:
 
 ```text
-standard_types: 去重列表
-n_activities: activity 数量
-n_unique_molecules: molregno 去重数量
-target_genes / target_synonyms: 去重列表
-doc_title / doc_abstract: 可选弱召回字段
+standard_types: deduplicated list
+n_activities: number of activities
+n_unique_molecules: count of distinct molregno
+target_genes / target_synonyms: deduplicated lists
+doc_title / doc_abstract: optional weak recall fields
 ```
 
 ### `common/text.py`
@@ -767,45 +784,45 @@ should_keep_assay(row, scored) -> bool
 
 ### `tasks/bbb_martins/report.py`
 
-生成 markdown 报告：
+Generate markdown report:
 
 ```text
-总 assay 数
-候选 assay 数
-各 tier 数量
+total assay count
+candidate assay count
+counts per tier
 Top 50 direct BBB assays
 Top 50 passive permeability assays
 Top 50 efflux assays
 Top 50 influx assays
-弱词命中但被过滤的示例
-负向规则过滤的示例
+examples of weak phrase hits that were filtered
+examples of negative rule filtering
 ```
 
 ### `tasks/bbb_martins/screen_assays.py`
 
-CLI 入口：
+CLI entry point:
 
 ```python
 main(argv: list[str] | None = None) -> int
 ```
 
-职责：
+Responsibilities:
 
 ```text
-解析参数
-连接 ChEMBL SQLite
-调用 common.assay_loader 构造 assay-level table
-调用 tasks.bbb_martins.scoring 打分和过滤
-导出 CSV/JSONL/report
-可选导出候选 assay 的 activity evidence
-按 `--progress-every` 输出扫描进度
+parse arguments
+connect to ChEMBL SQLite
+call common.assay_loader to construct assay-level table
+call tasks.bbb_martins.scoring for scoring and filtering
+export CSV/JSONL/report
+optionally export activity evidence for candidate assays
+output scan progress according to `--progress-every`
 ```
 
 ---
 
-## SQL 查询建议
+## SQL Query Recommendations
 
-不要一次性拉出所有 activity 明细用于最终表。先聚合：
+Do not pull all activity details at once for the final table. Aggregate first:
 
 ```sql
 SELECT
@@ -818,7 +835,7 @@ WHERE standard_type IS NOT NULL
 GROUP BY assay_id;
 ```
 
-assay metadata：
+Assay metadata:
 
 ```sql
 SELECT
@@ -843,9 +860,9 @@ FROM assays a
 LEFT JOIN target_dictionary td ON a.tid = td.tid;
 ```
 
-component/synonym 信息单独聚合后按 `tid` merge。gene symbol 必须优先来自 `component_synonyms.syn_type = 'GENE_SYMBOL'`，同义词可同时保留 `UNIPROT` / `GENE_SYMBOL_OTHER` 等。
+Component/synonym information should be aggregated separately and then merged according to `tid`. Gene symbols must preferentially come from `component_synonyms.syn_type = 'GENE_SYMBOL'`; synonyms can also retain `UNIPROT` / `GENE_SYMBOL_OTHER` etc.
 
-doc metadata 可选：
+Doc metadata is optional:
 
 ```sql
 SELECT
@@ -859,21 +876,21 @@ FROM docs;
 
 ---
 
-## 可选：导出 activity evidence
+## Optional: Export Activity Evidence
 
-增加参数：
+Add parameter:
 
 ```bash
 --export-activities
 ```
 
-如果开启，对候选 assay 额外导出：
+If enabled, additionally export for candidate assays:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/assay_screening/raw/bbb_activity_evidence.csv
 ```
 
-字段：
+Fields:
 
 ```text
 assay_chembl_id
@@ -888,17 +905,17 @@ data_validity_comment
 activity_comment
 ```
 
-只导出候选 assay 对应 activities，避免全库导出过大。
+Only export activities corresponding to candidate assays to avoid overly large full-database exports.
 
 ---
 
-## 当前实现：相似分子 evidence retrieval
+## Current Implementation: Similar Molecule Evidence Retrieval
 
-筛出 BBB-relevant assay 只是第一步。当前已经构建 molecule-level BBB evidence library，用于给定一个新分子时，检索有 BBB 相关实验读数的相似分子，并用这些 analog evidence 辅助判断 query 是否可能通过 BBB。
+Filtering out BBB-relevant assays is only the first step. A molecule-level BBB evidence library has already been built to retrieve similar molecules with BBB-related experimental readings for a given new molecule, and use these analog evidence to assist in determining whether the query might cross the BBB.
 
-### Evidence library
+### Evidence Library
 
-基于候选 assay 的 activity evidence，当前由 `build_evidence_library.py` 构建分子级证据表：
+Based on activity evidence from candidate assays, the molecule-level evidence table is currently constructed by `build_evidence_library.py`:
 
 ```text
 molecule_chembl_id
@@ -921,7 +938,7 @@ evidence_strength
 evidence_reason
 ```
 
-`evidence_direction` 用于区分证据含义：
+`evidence_direction` is used to distinguish evidence meaning:
 
 ```text
 supports_bbb_crossing
@@ -932,35 +949,35 @@ context_dependent
 unknown_direction
 ```
 
-不同 endpoint 不要简单混平均。`logBB`、`Kp,uu,brain`、brain/plasma、CSF/plasma、Papp、efflux ratio、transporter substrate/inhibition 的含义不同，需要分别解释后再聚合。
+Do not simply mix and average different endpoints. The meanings of `logBB`, `Kp,uu,brain`, brain/plasma, CSF/plasma, Papp, efflux ratio, transporter substrate/inhibition differ; they must be interpreted separately before aggregation.
 
-### Query-time retrieval
+### Query-time Retrieval
 
-给一个 query molecule 时：
+Given a query molecule:
 
 ```text
-1. 标准化 query molecule，生成 canonical SMILES / InChIKey / Morgan fingerprint
-2. 在 evidence library 中排除同一分子
-3. 用 Morgan fingerprint Tanimoto 检索非同一分子的相似邻居
-4. 按 similarity bucket、assay tier、endpoint type 聚合证据
-5. 输出 analog evidence summary，而不是直接给绝对判断
+1. Standardize the query molecule, generate canonical SMILES / InChIKey / Morgan fingerprint
+2. Exclude the same molecule from the evidence library
+3. Use Morgan fingerprint Tanimoto to retrieve similar neighbors that are not the same molecule
+4. Aggregate evidence by similarity bucket, assay tier, endpoint type
+5. Output analog evidence summary, not an absolute judgment directly
 ```
 
-必须避免直接 retrieve 到 query 的 ground truth：
+Must avoid directly retrieving the query's ground truth:
 
 ```text
-排除 same molecule
-排除 same full standard InChIKey
-排除 same InChIKey connectivity layer（InChIKey 第一段）
-排除 same canonical standardized SMILES
+exclude same molecule
+exclude same full standard InChIKey
+exclude same InChIKey connectivity layer (first segment of InChIKey)
+exclude same canonical standardized SMILES
 ```
 
-不要默认排除高相似 analog。只要不是同一个分子，`Tanimoto >= 0.95` 的邻居应保留，因为它们通常是最有价值的 analog evidence。
+Do not exclude high-similarity analogs by default. As long as it is not the same molecule, neighbors of `Tanimoto >= 0.95` should be retained because they are usually the most valuable analog evidence.
 
-建议相似度分层：
+Suggested similarity stratification:
 
 ```text
-very_close_analog: Tanimoto >= 0.95，保留并标记
+very_close_analog: Tanimoto >= 0.95, retain and mark
 close_analog: 0.80 <= Tanimoto < 0.95
 moderate_analog: 0.60 <= Tanimoto < 0.80
 weak_analog: 0.40 <= Tanimoto < 0.60
@@ -968,26 +985,26 @@ distant_analog: 0.20 <= Tanimoto < 0.40
 very_distant_analog: Tanimoto < 0.20
 ```
 
-不要用 `0.40` 作为默认硬截断。每个 group 可以返回 top 3 non-identical neighbors，即使相似度很低也保留并标记 similarity bucket。后续 group-level reasoning LLM 应判断这些 analog 是否 transferable。`distant_analog` 和 `very_distant_analog` 不能作为强正负证据，除非共享 scaffold 和 assay mechanism 有很强的药化理由。
+Do not use `0.40` as a default hard cutoff. Each group can return top 3 non-identical neighbors; even if similarity is very low, retain and mark the similarity bucket. The subsequent group-level reasoning LLM should judge whether these analogs are transferable. `distant_analog` and `very_distant_analog` cannot serve as strong positive or negative evidence unless there is a strong medicinal chemistry rationale for shared scaffold and assay mechanism.
 
-如果排除同一分子后没有可检索 BBB evidence 邻居，应明确返回：
+If after excluding the same molecule there are no retrievable BBB evidence neighbors, explicitly return:
 
 ```text
 no reliable analog evidence found
 ```
 
-不要在 evidence sparse 的情况下硬判定能否通过 BBB。
+Do not make a hard judgment on whether the BBB can be crossed when evidence is sparse.
 
-### 当前输出与入口
+### Current Output and Entry Points
 
-早期计划里的 `retrieve_analogs` CLI 没有采用。当前已实现入口是：
+The `retrieve_analogs` CLI from the early plan was not adopted. The currently implemented entry point is:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.retrieve_neighbors \
   --query-smiles "CCN(CC)..."
 ```
 
-端到端 reasoning 入口：
+End-to-end reasoning entry point:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
@@ -997,14 +1014,14 @@ python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --run-id <run_id>
 ```
 
-只重跑 final summary：
+Only rerun final summary:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>
 ```
 
-当前 reasoning run 输出：
+Current reasoning run outputs:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/retrieval.json
@@ -1017,29 +1034,29 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/runs/<run_id>/manifest.json
 
 ---
 
-## 测试要求
+## Testing Requirements
 
-必须有最小单元测试：
+Minimal unit tests are required:
 
 ```text
-P-gp、P gp、P glycoprotein、P-glycoprotein 能归一到 efflux
-Caco-2、Caco2 都能命中 passive permeability
-blood-brain barrier、blood brain barrier 都能命中 direct BBB
-K(p,uu,brain)、Kp,uu brain、Kpuu brain 都能命中 direct BBB
-MDCK-MDR1 同时命中 passive 和 efflux，但最终 tier 应偏 efflux/passive 高分
-只有 dopamine receptor binding 不应被保留为 BBB evidence
-ABCB1 target + substrate endpoint 应高分保留
-只有 generic permeability 不应保留
-glucose uptake 只有在 GLUT1/SLC2A1 target context 下才可作为 influx evidence
+P-gp, P gp, P glycoprotein, P-glycoprotein can be normalized to efflux
+Caco-2, Caco2 both can match passive permeability
+blood-brain barrier, blood brain barrier both can match direct BBB
+K(p,uu,brain), Kp,uu brain, Kpuu brain all can match direct BBB
+MDCK-MDR1 matches both passive and efflux, but the final tier should lean toward efflux/passive high score
+Only dopamine receptor binding should not be retained as BBB evidence
+ABCB1 target + substrate endpoint should be retained with high score
+Only generic permeability should not be retained
+glucose uptake can only serve as influx evidence in the context of GLUT1/SLC2A1 target
 ```
 
-测试不要依赖完整 ChEMBL 数据库，用小 DataFrame/mock SQLite 即可。
+Tests should not depend on the full ChEMBL database; small DataFrames or mock SQLite are sufficient.
 
 ---
 
-## 验收标准
+## Acceptance Criteria
 
-完成后应能：
+After completion, the following should be possible:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
@@ -1049,7 +1066,7 @@ python -m tools.chembl_tool.tasks.bbb_martins.screen_assays \
   --progress-every 10000
 ```
 
-成功生成：
+Successfully generate:
 
 ```text
 bbb_assay_candidates.csv
@@ -1057,7 +1074,7 @@ bbb_assay_candidates.jsonl
 bbb_assay_report.md
 ```
 
-报告中必须能看到以下类别的候选：
+The report must show candidates in the following categories:
 
 ```text
 Direct BBB / brain exposure
@@ -1066,12 +1083,12 @@ Efflux transporter / ABCB1 / ABCG2 / P-gp / BCRP / efflux ratio
 Influx transporter / LAT1 / GLUT1 / OATP / MCT1
 ```
 
-## 注意事项
+## Notes
 
-1. 不要把 CNS receptor binding 当作 BBB 通过证据。
-2. P-gp inhibitor 不等于 P-gp substrate，substrate/efflux ratio 权重更高。
-3. PAMPA-BBB 只能说明 passive permeability，不能说明没有 efflux。
-4. Caco-2 更偏肠吸收，但可作为 general permeability/P-gp 辅助证据。
-5. MDCK-MDR1、bidirectional Papp、efflux ratio 对 BBB reasoning 很有价值。
-6. 直接 brain/plasma、logBB、Kp,uu,brain、brain perfusion、CSF/plasma evidence 优先级最高。
-7. 所有规则放在可编辑配置或 `rules.py`，不要硬编码散落在脚本各处。
+1. Do not treat CNS receptor binding as evidence of BBB crossing.
+2. P-gp inhibitor is not equivalent to P-gp substrate; substrate/efflux ratio carries higher weight.
+3. PAMPA-BBB only indicates passive permeability, not the absence of efflux.
+4. Caco-2 leans more toward intestinal absorption but can serve as auxiliary evidence for general permeability/P-gp.
+5. MDCK-MDR1, bidirectional Papp, and efflux ratio are valuable for BBB reasoning.
+6. Direct brain/plasma, logBB, Kp,uu,brain, brain perfusion, and CSF/plasma evidence have the highest priority.
+7. All rules should be placed in editable configuration or `rules.py`, not hardcoded scattered throughout scripts.

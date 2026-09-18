@@ -1,0 +1,33 @@
+{
+  "version": "ames_source_snapshot.v1",
+  "archive": {
+    "name": "ames.tar.gz",
+    "sha256": "832416df4a7b314f721db310c24dc4a204bb7b51b3991273b383eea2739499b5"
+  },
+  "sources": {
+    "mutagenicity_outcomes": {
+      "directory": "ames_base",
+      "rows": 334211,
+      "parquet_sha256": "6d0d2c33ea9289b9a7fd9e483b9c48c2d1420a7b96e5b4cfe3e6eef11701f097",
+      "guidance_sha256": "5b8baf34289f61a5d4d65acd36b25399bf8fd7d18ec1af88f956bee9d4805b71"
+    },
+    "fixed_mutation": {
+      "directory": "ames_v1",
+      "rows": 91533,
+      "parquet_sha256": "d186598f169c486beab6836ad9f96f6f400542deac7259486c45ca0d7cc7cb91",
+      "guidance_sha256": "e6aa6338287b4f3b5fec21e672a326e9344fa439b8a229c3eeeea0ee29fe5596"
+    },
+    "premutagenic_damage": {
+      "directory": "ames_v2",
+      "rows": 504321,
+      "parquet_sha256": "b013ad9b276e337f0d4a207be769b92fe190bb921a23a964b4cfc80397eafa81",
+      "guidance_sha256": "ffd602f9b2759b49bf79f6162a01cc063b5cd262fb7e7acda94021498dd40b42"
+    },
+    "mutagenicity_mechanism": {
+      "directory": "ames_v3",
+      "rows": 580382,
+      "parquet_sha256": "f1ff2c08107c62e266e0b46cb8b88c77949b7cbcdff8cfa07c81fbdd2bbfa006",
+      "guidance_sha256": "ce3cf5ce27ba7dae5f9283983a40d648d50dbee37811d0765066f556da2b1a17"
+    }
+  }
+}

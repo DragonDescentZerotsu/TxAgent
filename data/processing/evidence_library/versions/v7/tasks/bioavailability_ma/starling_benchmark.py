@@ -125,10 +125,7 @@ def label_bioavailability_value(value: Any) -> tuple[int | None, str]:
     lowered = text.lower()
     if re.search(
         r"\b(?:fold|times|relative)\b|"
-        r"\b(?:increase(?:d|s)?|decrease(?:d|s)?|reduced|reduction|"
-        r"enhanced|enhancement|improved|improvement)\b|"
-        r"\b(?:compared\s+(?:with|to)|versus|vs\.?)\b|"
-        r"\d+(?:\.\d+)?\s*%\s+(?:higher|lower|greater|less)\b|"
+        r"\b(?:increase|increased|decrease|decreased)\s+by\b|"
         r"\b(?:higher|lower)\s+than\b",
         lowered,
     ):

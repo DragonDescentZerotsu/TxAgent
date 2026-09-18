@@ -14,25 +14,38 @@ from typing import Any
 
 from tools.chembl_tool.common.molecule_identity import normalize_molecule_identity
 from data.processing.gold_labels.benchmark_dataset import parse_numeric_interval
-from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
+from data.processing.evidence_library.shared.v2.normalization.source_value_cleaning import (
+    clean_source_values,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.canonical_source_v3 import (
     CANONICAL_SOURCE_DIR,
     CANONICAL_VERSION,
     DEDUP_AUDIT_PATH,
     DIRECT_CLAIMS_PATH,
     DIRECT_REJECTED_ROWS_PATH,
-    DIRECT_REPORT_TYPES,
     DIRECT_SOURCE_ROWS_PATH,
     HF_NONDIRECT_RECORDS_PATH,
     HF_SNAPSHOT_PATH,
-    HF_SOURCE_DATASET,
-    HF_SOURCE_REVISION,
     LOCAL_PARTITION_AUDIT_PATH,
-    LOCAL_PARTITION_DIRECT,
     MANIFEST_PATH,
-    RAW_LOCAL_SOURCE_PATH,
+    PRIOR_DIRECT_CLAIMS_PATH,
     RESIDUAL_MANIFEST_PATH,
     RESIDUAL_RECORDS_PATH,
     RESIDUAL_SOURCE_DIR,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.canonical_source import (
+    RAW_HF_SOURCE_PATH,
+    REVIEWED_NAME_SMILES_CONFLICTS_PATH,
+    REVIEWED_SOURCE_DROPS_PATH,
+    REVIEWED_SOURCE_REPAIRS_PATH,
+    SMILES_IDENTITY_AUDIT_PATH,
+)
+from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canonical_source import (
+    DIRECT_REPORT_TYPES,
+    HF_SOURCE_DATASET,
+    HF_SOURCE_REVISION,
+    LOCAL_PARTITION_DIRECT,
+    RAW_LOCAL_SOURCE_PATH,
     classify_local_record,
     local_classification_signals,
     local_value_percent,
@@ -41,71 +54,43 @@ from data.processing.evidence_library.versions.v7.tasks.bioavailability_ma.canon
 
 
 MATCH_VALUE_TOLERANCE_PERCENT = 1.0
-PAPER_DEDUP_VERSION = "bioavailability_paper_direct_claim_dedup.v1"
-PAPER_SUPPORT_JACCARD_MINIMUM = 0.10
-
-_CONTEXT_PATTERNS = {
-    "species": {
-        "human": r"\b(?:human|humans|subjects?|participants?|volunteers?|patients?|men|women|adults?|children|pediatric|paediatric)\b",
-        "rat": r"\b(?:rat|rats|rodent|rodents)\b",
-        "mouse": r"\b(?:mouse|mice)\b",
-        "dog": r"\b(?:dog|dogs|canine|beagles?)\b",
-        "pig": r"\b(?:pig|pigs|piglet|piglets|swine)\b",
-        "monkey": r"\b(?:monkey|monkeys|macaque|macaques|primate|primates)\b",
-        "alpaca": r"\b(?:alpaca|alpacas)\b",
-        "rabbit": r"\b(?:rabbit|rabbits)\b",
-        "chicken": r"\b(?:chicken|chickens|broiler|broilers)\b",
-    },
-    "formulation": {
-        "immediate_release": r"\b(?:immediate|instant)[ -]?release\b",
-        "extended_release": r"\b(?:slow|extended|sustained|controlled)[ -]?release\b|\bocas\b",
-        "tablet": r"\btablets?\b",
-        "capsule": r"\bcapsules?\b",
-        "solution": r"\bsolutions?\b",
-        "suspension": r"\bsuspensions?\b",
-        "injection": r"\b(?:injectable|injection)\b",
-    },
-    "cohort": {
-        "healthy": r"\bhealthy\b",
-        "patient": r"\bpatients?\b|\b(?:hiv|cancer|disease|infected)\b",
-        "pediatric": r"\b(?:children|pediatric|paediatric|adolescents?|infants?)\b",
-        "elderly": r"\b(?:elderly|older adults?)\b",
-    },
-    "phase": {
-        "phase_1": r"\bphase\s*(?:i|1)\b",
-        "phase_2": r"\bphase\s*(?:ii|2)\b",
-        "phase_3": r"\bphase\s*(?:iii|3)\b",
-        "phase_4": r"\bphase\s*(?:iv|4)\b",
-    },
-}
-_DOSE_PATTERN = re.compile(
-    r"\b\d+(?:\.\d+)?\s*(?:micrograms?|ug|µg|mcg|mg|g)(?:\s*/\s*kg)?\b",
-    flags=re.IGNORECASE,
-)
+PAPER_DEDUP_VERSION = "bioavailability_paper_direct_claim_dedup.v2"
+SOURCE_VALUE_AUDIT_FILENAME = "source_value_cleaning_audit.parquet"
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     import pandas as pd
-    from datasets import load_dataset
-    from huggingface_hub import HfApi
 
-    hf_dataset = load_dataset(args.hf_dataset, split="train", revision=args.hf_revision)
-    resolved_revision = HfApi().dataset_info(args.hf_dataset, revision=args.hf_revision).sha
-    hf_frame = hf_dataset.to_pandas()
-    hf_frame.insert(0, "source_index", range(len(hf_frame)))
+    hf_path = Path(args.hf_source)
+    hf_frame = pd.read_parquet(hf_path)
+    if "source_index" not in hf_frame:
+        hf_frame.insert(0, "source_index", range(len(hf_frame)))
     local_path = Path(args.local_source)
     local_frame = pd.read_parquet(local_path)
-    local_frame.insert(0, "source_index", range(len(local_frame)))
-
-    outputs = build_canonical_frames(
+    if "source_index" not in local_frame:
+        local_frame.insert(0, "source_index", range(len(local_frame)))
+    repaired_hf, repaired_local, cleaning = _apply_reviewed_source_edits(
         hf_frame,
         local_frame,
+        hf_source_path=hf_path,
+        local_source_path=local_path,
+    )
+    prior_claim_ids = _load_prior_claim_ids(Path(args.prior_direct_claims))
+
+    outputs = build_canonical_frames(
+        repaired_hf,
+        repaired_local,
         hf_dataset=args.hf_dataset,
-        hf_revision=resolved_revision,
+        hf_revision=args.hf_revision,
         local_source_path=local_path,
         value_tolerance_percent=args.match_value_tolerance_percent,
+        prior_claim_ids=prior_claim_ids,
     )
+    if outputs["stats"]["n_direct_source_rows_with_uid"] != outputs["stats"][
+        "n_direct_source_rows_before_dedup"
+    ]:
+        raise ValueError("canonical direct source rows require complete source_row_uid")
 
     canonical_dir = Path(args.canonical_dir)
     residual_dir = Path(args.residual_dir)
@@ -119,8 +104,11 @@ def main(argv: list[str] | None = None) -> int:
         "direct_rejected_rows": canonical_dir / DIRECT_REJECTED_ROWS_PATH.name,
         "dedup_audit": canonical_dir / DEDUP_AUDIT_PATH.name,
         "local_partition_audit": canonical_dir / LOCAL_PARTITION_AUDIT_PATH.name,
+        "source_value_cleaning_audit": canonical_dir / SOURCE_VALUE_AUDIT_FILENAME,
         "residual_records": residual_dir / RESIDUAL_RECORDS_PATH.name,
     }
+    # Preserve the immutable input snapshot; reviewed edits are recorded in the
+    # audit and appear only in the derived direct/nondirect/residual views.
     hf_frame.to_parquet(paths["hf_snapshot"], index=False)
     outputs["hf_nondirect_records"].to_parquet(
         paths["hf_nondirect_records"], index=False
@@ -130,6 +118,9 @@ def main(argv: list[str] | None = None) -> int:
     outputs["direct_rejected_rows"].to_parquet(paths["direct_rejected_rows"], index=False)
     outputs["dedup_audit"].to_parquet(paths["dedup_audit"], index=False)
     outputs["local_partition_audit"].to_parquet(paths["local_partition_audit"], index=False)
+    pd.DataFrame(cleaning.audit_rows).to_parquet(
+        paths["source_value_cleaning_audit"], index=False
+    )
     outputs["residual_records"].to_parquet(paths["residual_records"], index=False)
 
     stats = outputs["stats"]
@@ -137,9 +128,10 @@ def main(argv: list[str] | None = None) -> int:
         "contract_version": CANONICAL_VERSION,
         "hf_source": {
             "dataset": args.hf_dataset,
-            "requested_revision": args.hf_revision,
-            "resolved_revision": resolved_revision,
+            "revision": args.hf_revision,
             "split": "train",
+            "path": str(hf_path),
+            "sha256": _sha256_file(hf_path),
             "snapshot_path": str(paths["hf_snapshot"]),
         },
         "local_source": {
@@ -158,6 +150,12 @@ def main(argv: list[str] | None = None) -> int:
             "value_tolerance_percent": args.match_value_tolerance_percent,
             "same-source_rows_are_not_collapsed": True,
         },
+        "reviewed_source_edits": cleaning.manifest,
+        "claim_id_lineage": {
+            "prior_claims_path": str(args.prior_direct_claims),
+            "prior_claims_sha256": _sha256_file(Path(args.prior_direct_claims)),
+            **stats["claim_id_lineage"],
+        },
         "stats": stats,
         "paths": {key: str(value) for key, value in paths.items()},
     }
@@ -170,6 +168,7 @@ def main(argv: list[str] | None = None) -> int:
         "contract_version": CANONICAL_VERSION,
         "source_path": str(local_path),
         "source_sha256": _sha256_file(local_path),
+        "reviewed_source_edits": cleaning.manifest,
         "residual_records_path": str(paths["residual_records"]),
         "residual_records_sha256": _sha256_file(paths["residual_records"]),
         "partition_reconciliation": stats["local_partition_reconciliation"],
@@ -183,6 +182,105 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+def _apply_reviewed_source_edits(
+    hf_frame: Any,
+    local_frame: Any,
+    *,
+    hf_source_path: Path,
+    local_source_path: Path,
+) -> tuple[Any, Any, Any]:
+    """Apply the shared reviewed ledger to copied raw source frames."""
+    specs = {
+        "hf_bioavailability": {
+            "frame": hf_frame.copy(),
+            "path": hf_source_path,
+            "record_id": "source_index",
+            "measurement": "oral_bioavailability_value",
+            "unit": None,
+        },
+        "oral_exposure": {
+            "frame": local_frame.copy(),
+            "path": local_source_path,
+            "record_id": "extraction_id",
+            "measurement": "parameter_value",
+            "unit": "parameter_units",
+        },
+    }
+    carriers: list[dict[str, Any]] = []
+    for source_id, spec in specs.items():
+        frame = spec["frame"].astype(object).where(spec["frame"].notna(), None)
+        spec["frame"] = frame
+        if frame["source_index"].astype(int).tolist() != list(range(len(frame))):
+            raise ValueError(f"{source_id} source_index must be contiguous from zero")
+        source_sha256 = _sha256_file(spec["path"])
+        for source_index, row in enumerate(frame.to_dict(orient="records")):
+            carriers.append(
+                {
+                    "cleaned_record_id": f"{source_id}:{source_index}",
+                    "source_row_uid": str(row.get("source_row_uid") or ""),
+                    "source_id": source_id,
+                    "source_sha256": source_sha256,
+                    "source_row_number": source_index + 1,
+                    "source_record_id": _text(row.get(spec["record_id"])),
+                    "source_smiles": _raw_value(row.get("smiles")),
+                    "canonical_smiles": _raw_value(row.get("smiles")),
+                    "measurement_text": _raw_value(row.get(spec["measurement"])),
+                    "unit_text": (
+                        _raw_value(row.get(spec["unit"])) if spec["unit"] else None
+                    ),
+                    "pmid": _raw_value(row.get("pmid")),
+                    "support_text": _raw_value(row.get("support_text")),
+                }
+            )
+    result = clean_source_values(
+        carriers,
+        task_id="bioavailability_ma",
+        reviewed_repairs_path=REVIEWED_SOURCE_REPAIRS_PATH,
+        reviewed_drops_path=REVIEWED_SOURCE_DROPS_PATH,
+        smiles_identity_audit_path=SMILES_IDENTITY_AUDIT_PATH,
+        reviewed_smiles_conflicts_path=REVIEWED_NAME_SMILES_CONFLICTS_PATH,
+        source_ids=set(specs),
+    )
+    dropped: dict[str, set[int]] = defaultdict(set)
+    field_map = {
+        source_id: {
+            "measurement_text": spec["measurement"],
+            "unit_text": spec["unit"],
+            "smiles": "smiles",
+            "pmid": "pmid",
+        }
+        for source_id, spec in specs.items()
+    }
+    for audit in result.audit_rows:
+        source_id = str(audit["source_id"])
+        source_index = int(audit["source_row_number"]) - 1
+        if audit["field"] == "record":
+            dropped[source_id].add(source_index)
+            continue
+        column = field_map[source_id].get(str(audit["field"]))
+        if column is not None:
+            specs[source_id]["frame"].at[source_index, column] = audit["after"]
+    for source_id, indices in dropped.items():
+        specs[source_id]["frame"] = specs[source_id]["frame"].drop(index=sorted(indices))
+    return specs["hf_bioavailability"]["frame"], specs["oral_exposure"]["frame"], result
+
+
+def _load_prior_claim_ids(path: Path) -> dict[tuple[str, ...], str]:
+    import pandas as pd
+
+    frame = pd.read_parquet(path, columns=["canonical_claim_id", "source_record_ids"])
+    output: dict[tuple[str, ...], str] = {}
+    used_ids: set[str] = set()
+    for row in frame.to_dict(orient="records"):
+        members = tuple(sorted(str(value) for value in row["source_record_ids"]))
+        claim_id = str(row["canonical_claim_id"])
+        if not members or members in output or not claim_id or claim_id in used_ids:
+            raise ValueError("prior canonical claims must have unique member sets and IDs")
+        output[members] = claim_id
+        used_ids.add(claim_id)
+    return output
+
+
 def build_canonical_frames(
     hf_frame: Any,
     local_frame: Any,
@@ -191,6 +289,7 @@ def build_canonical_frames(
     hf_revision: str = HF_SOURCE_REVISION,
     local_source_path: str | Path = RAW_LOCAL_SOURCE_PATH,
     value_tolerance_percent: float = MATCH_VALUE_TOLERANCE_PERCENT,
+    prior_claim_ids: Mapping[tuple[str, ...], str] | None = None,
 ) -> dict[str, Any]:
     """Return inspectable derived frames without writing or mutating inputs."""
     import pandas as pd
@@ -247,6 +346,7 @@ def build_canonical_frames(
     claims, dedup_rows = _deduplicate_cross_source_claims(
         direct_rows,
         value_tolerance_percent=value_tolerance_percent,
+        prior_claim_ids=prior_claim_ids,
     )
     residual_frame = local_frame.iloc[residual_indices].copy()
     direct_rejected_frame = local_frame.iloc[direct_rejected_indices].copy()
@@ -299,8 +399,12 @@ def build_canonical_frames(
         "n_local_residual_rows": n_residual,
         "local_partition_counts": dict(sorted(partition_counts.items())),
         "n_direct_source_rows_before_dedup": len(direct_rows),
+        "n_direct_source_rows_with_uid": sum(
+            bool(_text(row.get("source_row_uid"))) for row in direct_rows
+        ),
         "n_cross_source_matches": len(dedup_rows),
         "n_canonical_direct_claims": len(claims),
+        "claim_id_lineage": _claim_id_lineage(claims, prior_claim_ids),
         "claim_source_origin_counts": dict(
             Counter("+".join(row["source_origins"]) for row in claims)
         ),
@@ -371,6 +475,7 @@ def _normalize_hf_rows(frame: Any, dataset: str, revision: str) -> tuple[list[di
                 "source_dataset": dataset,
                 "source_revision": revision,
                 "source_record_id": f"hf:{source_index}",
+                "source_row_uid": _text(row.get("source_row_uid")),
                 "source_index": source_index,
                 "pmid": _text(row.get("pmid")),
                 "molecule_name": _text(row.get("molecule_name")),
@@ -418,6 +523,7 @@ def _normalize_local_row(
         "source_dataset": str(source_path),
         "source_revision": source_revision,
         "source_record_id": f"local:{source_index}:{_text(row.get('extraction_id')) or 'row'}",
+        "source_row_uid": _text(row.get("source_row_uid")),
         "source_index": source_index,
         "pmid": _text(row.get("pmid")),
         "molecule_name": _text(row.get("global_identifier")),
@@ -446,6 +552,7 @@ def _deduplicate_cross_source_claims(
     source_rows: list[dict[str, Any]],
     *,
     value_tolerance_percent: float,
+    prior_claim_ids: Mapping[tuple[str, ...], str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     by_parent_pmid: dict[tuple[str, str], list[int]] = defaultdict(list)
     for index, row in enumerate(source_rows):
@@ -488,7 +595,9 @@ def _deduplicate_cross_source_claims(
             )
 
     reverse = {hf_index: local_index for local_index, hf_index in matched.items()}
+    prior_claim_ids = prior_claim_ids or {}
     claims: list[dict[str, Any]] = []
+    assigned_claim_ids: set[str] = set()
     for index, row in enumerate(source_rows):
         if index in matched:
             continue
@@ -497,15 +606,33 @@ def _deduplicate_cross_source_claims(
             merged_indices.append(reverse[index])
         merged_rows = [source_rows[item] for item in merged_indices]
         representative = dict(merged_rows[0])
-        source_record_ids = sorted(item["source_record_id"] for item in merged_rows)
-        claim_id = "BIOAVAIL_CLAIM_" + hashlib.sha256(
-            (CANONICAL_VERSION + "|" + "|".join(source_record_ids)).encode("utf-8")
-        ).hexdigest()[:20].upper()
+        members = sorted(
+            (
+                item["source_record_id"],
+                _text(item.get("source_row_uid")),
+            )
+            for item in merged_rows
+        )
+        source_record_ids = [source_record_id for source_record_id, _ in members]
+        source_row_uids = [source_row_uid for _, source_row_uid in members]
+        member_key = tuple(source_record_ids)
+        claim_id = prior_claim_ids.get(member_key) or (
+            "BIOAVAIL_CLAIM_"
+            + hashlib.sha256(
+                (CANONICAL_VERSION + "|" + "|".join(source_record_ids)).encode(
+                    "utf-8"
+                )
+            ).hexdigest()[:20].upper()
+        )
+        if claim_id in assigned_claim_ids:
+            raise ValueError(f"canonical claim ID collision: {claim_id}")
+        assigned_claim_ids.add(claim_id)
         representative.update(
             {
                 "canonical_claim_id": claim_id,
                 "source_origins": sorted({item["source_origin"] for item in merged_rows}),
                 "source_record_ids": source_record_ids,
+                "source_row_uids": source_row_uids,
                 "source_datasets": sorted({item["source_dataset"] for item in merged_rows}),
                 "n_source_records": len(merged_rows),
                 "cross_source_deduplicated": len(merged_rows) > 1,
@@ -516,13 +643,29 @@ def _deduplicate_cross_source_claims(
     return claims, audits
 
 
+def _claim_id_lineage(
+    claims: list[dict[str, Any]],
+    prior_claim_ids: Mapping[tuple[str, ...], str] | None,
+) -> dict[str, int]:
+    prior = prior_claim_ids or {}
+    current = {
+        tuple(sorted(str(value) for value in claim["source_record_ids"]))
+        for claim in claims
+    }
+    return {
+        "prior_claims": len(prior),
+        "reused_claim_ids": len(current & set(prior)),
+        "new_claim_ids": len(current - set(prior)),
+        "retired_claim_ids": len(set(prior) - current),
+    }
+
+
 def deduplicate_paper_direct_claims(
     source_rows: list[dict[str, Any]],
     *,
     value_tolerance_percent: float = MATCH_VALUE_TOLERANCE_PERCENT,
-    support_jaccard_minimum: float = PAPER_SUPPORT_JACCARD_MINIMUM,
 ) -> tuple[set[str], list[dict[str, Any]], dict[str, Any]]:
-    """Return guarded direct-claim representatives without changing canonical v2."""
+    """Collapse same-paper direct-F duplicates within and across sources."""
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in source_rows:
         grouped[(str(row["parent_identity_key"]), _text(row.get("pmid")))].append(row)
@@ -543,7 +686,6 @@ def deduplicate_paper_direct_claims(
                         member,
                         row,
                         tolerance=value_tolerance_percent,
-                        support_jaccard_minimum=support_jaccard_minimum,
                     )
                     for member in cluster
                 ]
@@ -571,7 +713,6 @@ def deduplicate_paper_direct_claims(
                     representative,
                     duplicate,
                     tolerance=value_tolerance_percent,
-                    support_jaccard_minimum=support_jaccard_minimum,
                 )
                 if match is None:
                     raise AssertionError("paper claim cluster lost complete-link compatibility")
@@ -602,9 +743,8 @@ def deduplicate_paper_direct_claims(
             row["retained_source_origin"] == row["discarded_source_origin"]
             for row in audit
         ),
-        "support_jaccard_minimum": support_jaccard_minimum,
         "value_tolerance_percent": value_tolerance_percent,
-        "ambiguous_pairs": "retained_separately",
+        "dedup_key": "same_parent_pmid_compatible_value",
     }
     return retained, audit, stats
 
@@ -689,7 +829,6 @@ def _paper_claim_match(
     right: Mapping[str, Any],
     *,
     tolerance: float,
-    support_jaccard_minimum: float,
 ) -> tuple[float, float, str] | None:
     left_value = _float_or_none(left.get("value_percent"))
     right_value = _float_or_none(right.get("value_percent"))
@@ -697,7 +836,7 @@ def _paper_claim_match(
     right_support = _normalized_text(right.get("support_text"))
     support_similarity = _token_jaccard(left_support, right_support)
     if left_value is None or right_value is None:
-        if left_support and left_support == right_support and not _context_conflict(left, right):
+        if left_support and left_support == right_support:
             return 0.0, 1.0, "identical_normalized_support_text"
         return None
     left_label = _claim_threshold_label(left)
@@ -708,11 +847,9 @@ def _paper_claim_match(
         _interval_distance(left_value, _float_or_none(right.get("value_lower_percent")), _float_or_none(right.get("value_upper_percent"))),
         _interval_distance(right_value, _float_or_none(left.get("value_lower_percent")), _float_or_none(left.get("value_upper_percent"))),
     )
-    if distance > tolerance or support_similarity < support_jaccard_minimum:
+    if distance > tolerance:
         return None
-    if _context_conflict(left, right):
-        return None
-    return distance, support_similarity, "numeric_guarded_support_and_context_match"
+    return distance, support_similarity, "numeric_parent_pmid_value_match"
 
 
 def _paper_representative_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
@@ -734,30 +871,6 @@ def _paper_representative_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
         -context,
         str(row.get("source_record_id")),
     )
-
-
-def _context_conflict(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool:
-    left_text = " ".join(_text(left.get(field)) for field in (
-        "support_text", "species_or_population", "oral_exposure_mode", "extra_details"
-    )).lower()
-    right_text = " ".join(_text(right.get(field)) for field in (
-        "support_text", "species_or_population", "oral_exposure_mode", "extra_details"
-    )).lower()
-    for patterns in _CONTEXT_PATTERNS.values():
-        left_values = {name for name, pattern in patterns.items() if re.search(pattern, left_text)}
-        right_values = {name for name, pattern in patterns.items() if re.search(pattern, right_text)}
-        if left_values and right_values and left_values.isdisjoint(right_values):
-            return True
-    left_doses = {_normalized_text(value) for value in _DOSE_PATTERN.findall(_text(left.get("dose")))}
-    right_doses = {_normalized_text(value) for value in _DOSE_PATTERN.findall(_text(right.get("dose")))}
-    if left_doses and right_doses and left_doses.isdisjoint(right_doses):
-        return True
-    for field in ("qualifying_conditions", "comparator"):
-        left_value = _normalized_text(left.get(field))
-        right_value = _normalized_text(right.get(field))
-        if left_value and right_value and _token_jaccard(left_value, right_value) < 0.10:
-            return True
-    return False
 
 
 def _token_jaccard(left: str, right: str) -> float:
@@ -895,6 +1008,12 @@ def _text(value: Any) -> str:
     return "" if text.lower() in {"nan", "none", "null"} else text
 
 
+def _raw_value(value: Any) -> Any:
+    if value is None or (isinstance(value, float) and math.isnan(value)):
+        return None
+    return value
+
+
 def _float_or_none(value: Any) -> float | None:
     try:
         parsed = float(value)
@@ -915,7 +1034,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--hf-dataset", default=HF_SOURCE_DATASET)
     parser.add_argument("--hf-revision", default=HF_SOURCE_REVISION)
+    parser.add_argument("--hf-source", default=str(RAW_HF_SOURCE_PATH))
     parser.add_argument("--local-source", default=str(RAW_LOCAL_SOURCE_PATH))
+    parser.add_argument("--prior-direct-claims", default=str(PRIOR_DIRECT_CLAIMS_PATH))
     parser.add_argument("--canonical-dir", default=str(CANONICAL_SOURCE_DIR))
     parser.add_argument("--residual-dir", default=str(RESIDUAL_SOURCE_DIR))
     parser.add_argument(

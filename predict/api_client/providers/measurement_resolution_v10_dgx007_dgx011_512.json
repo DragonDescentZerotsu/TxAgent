@@ -1,0 +1,35 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "dgx007_50001",
+      "base_url": "http://dgx007:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "request_extra_body": {
+        "chat_template_kwargs": {
+          "thinking": true,
+          "reasoning_effort": "low"
+        }
+      }
+    },
+    {
+      "name": "dgx011_50001",
+      "base_url": "http://dgx011:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "request_extra_body": {
+        "chat_template_kwargs": {
+          "thinking": true,
+          "reasoning_effort": "low"
+        }
+      }
+    }
+  ],
+  "failure_threshold": 3,
+  "cooldown_seconds": 60,
+  "max_failovers": 5,
+  "latency_ewma_alpha": 0.2
+}

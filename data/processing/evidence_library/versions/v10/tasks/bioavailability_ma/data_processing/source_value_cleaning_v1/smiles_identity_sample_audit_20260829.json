@@ -1,0 +1,3010 @@
+{
+  "audit_version": "bioavailability_ma_smiles_identity_sample_audit.v1",
+  "task_id": "bioavailability_ma",
+  "audit_date": "2026-08-29",
+  "read_only_repository": true,
+  "sampling": {
+    "seed_string": "20260829_smiles_audit_1000_v1",
+    "target_n": 333,
+    "exclusions": [
+      "all rows in the prior 100-row Bioavailability_Ma audit",
+      "all rows already present in source_value_cleaning_v1/smiles_identity_audit.jsonl"
+    ],
+    "source_allocation": {
+      "hf_bioavailability": 118,
+      "fa": 61,
+      "fg": 20,
+      "fh": 49,
+      "oral_exposure": 85
+    },
+    "allocation_rule": "proportional across eligible nonempty Stage-0 primary sources, with at least one row per source",
+    "ordering": "source order: hf_bioavailability, fa, fg, fh, oral_exposure; deterministic within-source seeded sample order preserved in /tmp/bio333_sample.jsonl",
+    "membership_sha256": "54823af7c4504bd2e9da246eea81738bade1c85432e8be482c198baa5788c372",
+    "recomputed_membership_serialization_sha256": "54823af7c4504bd2e9da246eea81738bade1c85432e8be482c198baa5788c372",
+    "sample_file_sha256": "3d0cbe939aca9b68a52109eada337d80106f09f7ebf2e2df8dc5b82be08494fb"
+  },
+  "runtime": {
+    "hostname": "dgx001",
+    "python": "3.11.14",
+    "pandas": "3.0.0",
+    "numpy": "2.2.6",
+    "pyarrow": "23.0.0",
+    "rdkit": "2025.09.4"
+  },
+  "classification_counts": {
+    "indeterminate": 60,
+    "high_confidence_match": 242,
+    "confirmed_mismatch_repairable": 13,
+    "missing_smiles_unrepairable_drop": 9,
+    "multi_compound_ambiguous": 5,
+    "missing_smiles_repairable": 3,
+    "confirmed_mismatch_unrepairable_drop": 1
+  },
+  "rates": {
+    "confirmed_mismatch": {
+      "numerator": 14,
+      "denominator": 333,
+      "proportion": 0.042042042042042045,
+      "wilson_95_ci": [
+        0.0252061649028356,
+        0.06932334738515099
+      ]
+    },
+    "all_repair_or_drop_candidates_including_missing_smiles": {
+      "numerator": 26,
+      "denominator": 333,
+      "proportion": 0.07807807807807808,
+      "wilson_95_ci": [
+        0.053837117406487486,
+        0.1119425316194936
+      ]
+    },
+    "resolved_rows_only_confirmed_mismatch": {
+      "numerator": 14,
+      "denominator": 321,
+      "proportion": 0.04361370716510903,
+      "wilson_95_ci": [
+        0.026154824735911634,
+        0.07186671148145267
+      ]
+    }
+  },
+  "classification_ledger": [
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 162007,
+      "source_record_id": "162006",
+      "sample_hash": "0000934598864f9301cf2c2af4d234ad3b42777c1e3e689c7105693439503b69",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 30684,
+      "source_record_id": "30683",
+      "sample_hash": "000178ec98c660903b84c68e1c42dcbf54efdc493ec6a4c216207e6d03ec5a01",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 57193,
+      "source_record_id": "57192",
+      "sample_hash": "00019d3e7edaef4000cecbf35e1f7969facdfa87f38736184198c08b89f0727d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 146261,
+      "source_record_id": "146260",
+      "sample_hash": "000202a387b19af995b40efb79fc82517626b6f53b654bd0524baf13d515103a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 111060,
+      "source_record_id": "111059",
+      "sample_hash": "00020cd454ed5120f50cc1cc8975881cf1be7af510c2ee2f40b411e5c73117ee",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 153748,
+      "source_record_id": "153747",
+      "sample_hash": "0002134ac7bb230577bde3088e2cbcbfc1c8dda92df487de7003218b96859db0",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 21143,
+      "source_record_id": "21142",
+      "sample_hash": "0002415916b8da814cc276fab7669b3b42905a3658fa3921625072506201242f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 55119,
+      "source_record_id": "55118",
+      "sample_hash": "0002896e937094f443093ccefc0ac0f65cea402a243b78f97ad5540b5a560667",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 113524,
+      "source_record_id": "113523",
+      "sample_hash": "0002e1ec04b731df9ec32f5edba6aff443834c6960349c5cfde2302ff763ba3f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 20634,
+      "source_record_id": "20633",
+      "sample_hash": "00033b5e7254ae32d4fe14232dcbd12e056b2a8cee2b0eafaaba6851f9796e4e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 44454,
+      "source_record_id": "44453",
+      "sample_hash": "00043d42c1c613fea6f10e724551899ace0effd349a29b247ef2a821616a8bcf",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 137720,
+      "source_record_id": "137719",
+      "sample_hash": "00047469afb12077a5f79e437b18e4bd8d408d0ecfdf768e733b7af861f65374",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 3577,
+      "source_record_id": "3576",
+      "sample_hash": "0004900e0eaf78f269ac616882cd6cadc0661c6ff38e9e5954af6877d247aff3",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 13200,
+      "source_record_id": "13199",
+      "sample_hash": "0004934a2ad07a0ec90f893fe6f72d6f1662302e993f1d50cc44b35000ffa385",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 9315,
+      "source_record_id": "9314",
+      "sample_hash": "0004aa78e77c65038bc456ea064638a4b14ff5da8afa0e1f3986c27fc89c01df",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 107957,
+      "source_record_id": "107956",
+      "sample_hash": "0004c6dd5b5911fe3fa22f746501c133f8d99413eceb027ccf56b178dc978e2b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 140151,
+      "source_record_id": "140150",
+      "sample_hash": "0005064639c8d6665b592e9b3bcd440e0a1d7ba84fdacc987f0d70bc691d57f8",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 60715,
+      "source_record_id": "60714",
+      "sample_hash": "000511e2daa7bed81139c4c2d15173c59ed6c4a820d1133fa718802226fa5ac3",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 49936,
+      "source_record_id": "49935",
+      "sample_hash": "0005a70eeead404bf61e63f3c0bcf6671bc5e201987dbe2cd314d28a30e9a275",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 51380,
+      "source_record_id": "51379",
+      "sample_hash": "00069cde4d6eef2a7cced3239af448b9ba333d4d4123231e87ae18974b23f8fb",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 49129,
+      "source_record_id": "49128",
+      "sample_hash": "00074ae87b7d9077e8ada1f098acdf72ac7d32260fc6b147b39bd9e71a5aa5e4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 21520,
+      "source_record_id": "21519",
+      "sample_hash": "000840f4242c139092b92fc8430779cb77a29803b55cb3074e0e449adbb65973",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 82608,
+      "source_record_id": "82607",
+      "sample_hash": "0008f22fca9a4ab42ef8b984db7348fcdb9b3ab04fd0d039747b1fad1f9dd0e2",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 39075,
+      "source_record_id": "39074",
+      "sample_hash": "00097a70c42742a138e27c67cf1dfa96b62506f1fe72482cb57f361d20d32e59",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 59408,
+      "source_record_id": "59407",
+      "sample_hash": "0009a6397c79799abcbab32feb3cd9f820541ba9bbe12b6eb188e7f3ac6cbefe",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 120405,
+      "source_record_id": "120404",
+      "sample_hash": "0009b143ef4ccc321f3ac42bb44007cc8ba297345453401921f85935e0bb2cb7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 86734,
+      "source_record_id": "86733",
+      "sample_hash": "0009fe4b360a90ea5af8aa43c655291561f4c3acdf3b673abe6a3323809474e9",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 118534,
+      "source_record_id": "118533",
+      "sample_hash": "000a042c9146bd85219c6dac24624a606fd1571636d2a1798e07a7f978257294",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 96774,
+      "source_record_id": "96773",
+      "sample_hash": "000a15d503b64f6504fbab62bb823b873eeed7516edea274b0b3dfaa79208d04",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 17629,
+      "source_record_id": "17628",
+      "sample_hash": "000a2c0f77810aed029226cb97e7d8318b30bf90ce9c740c0f7b6cd2a5cd1c83",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 262,
+      "source_record_id": "261",
+      "sample_hash": "000b189fefe29653c14d7715deae96ec74e29704d622faf2c694ec698040cf0e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 136991,
+      "source_record_id": "136990",
+      "sample_hash": "000b7c132ae701c808c644076edde0695fd39b4201c8ce6f7cc7a09821663959",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 62212,
+      "source_record_id": "62211",
+      "sample_hash": "000c37132bdab14940b2c042f1e1ed4f0d4cf55657247ce0d1e966a4fcb4559f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 133445,
+      "source_record_id": "133444",
+      "sample_hash": "000c8ca6fefa1db2e64a6b1663068ebb138292979eea6d33cb9171b373126602",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 122107,
+      "source_record_id": "122106",
+      "sample_hash": "000cbc336093acee1e6332afbfa746d56a5d31d7326596f33e439a776c2f227b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 11504,
+      "source_record_id": "11503",
+      "sample_hash": "000d1e0c05c395457ade3ec36d21c2bfa8f44a73b031a77f87bd4e8c613292e5",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 125144,
+      "source_record_id": "125143",
+      "sample_hash": "000ec6e6e43b9e59c80a0e3396c181e7087794a62422aefcbce78fcc10f9df79",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 146306,
+      "source_record_id": "146305",
+      "sample_hash": "0010bbca953981c61319004e5ecd97b6ed783303e2a59db8f2c63acc4aac6b96",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 107,
+      "source_record_id": "106",
+      "sample_hash": "0011250c9ceb1d4d4081da3c192c871bca2d4ed4cdc166e4f2a78b6432056996",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 29013,
+      "source_record_id": "29012",
+      "sample_hash": "00117487daecad2b9e68c986e78009ba3700f29dc6c266f1e096cefe9d2e3087",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 110380,
+      "source_record_id": "110379",
+      "sample_hash": "0011932d9b48d3619a4858d926f763818e37186d546b839353f9f5fc971623e0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 96255,
+      "source_record_id": "96254",
+      "sample_hash": "0011ab652b5bb33208520398cd623c3f89d04680ac3f94e610db76b1fc857e2b",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 92230,
+      "source_record_id": "92229",
+      "sample_hash": "0011e76f11ebd5cbe9423e83a267ebc26a9a71f07546db1764dacfeb4719498e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 73687,
+      "source_record_id": "73686",
+      "sample_hash": "00130f8e72e694117450c3eca3553d012b0f80b166c8506f7039b50fa037a21e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 117998,
+      "source_record_id": "117997",
+      "sample_hash": "0013bf8bad0b3cd59542d80e295b4c17fca64de0b88b98560fc687b6537c76ec",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 161372,
+      "source_record_id": "161371",
+      "sample_hash": "00147e975b44b2474da1ecc19be390dc7ad0bd93395ec5dd909cebb360ab5d5d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 18441,
+      "source_record_id": "18440",
+      "sample_hash": "0015a31515bf0c3c9a4aa7d8f1b38d220728fb745c104252f5f81e9be49e3568",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 6357,
+      "source_record_id": "6356",
+      "sample_hash": "0015d09c3d7f96337ca9de4164011b0556854fe639ac7bee0a6f2bb1a4dd89d3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 31457,
+      "source_record_id": "31456",
+      "sample_hash": "001700c8a0c09a655b8bc5e4de83a96999c39edb1d4cdb20d2f58c0df571bf96",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 104411,
+      "source_record_id": "104410",
+      "sample_hash": "00170aabac857a0b51e3d6800b314dda5b37cfb80ebe722373db91e47d546025",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 113686,
+      "source_record_id": "113685",
+      "sample_hash": "00173cab271501a695b1468a8482e12eab5cff6faa2b45ede65c006cd89d0470",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 59688,
+      "source_record_id": "59687",
+      "sample_hash": "0017c65ffb5b58e2a273089aa130a4c18bdfb5822bc0327c0d293efbeb324430",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 58573,
+      "source_record_id": "58572",
+      "sample_hash": "00188159e293b1c0c5a441fcebb7f4ea4bfbc5788f8c4e6fee375cc6070b74a2",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 116854,
+      "source_record_id": "116853",
+      "sample_hash": "0018c06b80b5db6cd96c0cb83a01358aec674651ad274af870d3b0753782f6ad",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 398,
+      "source_record_id": "397",
+      "sample_hash": "0018faaa96a09ea97ee5e60948f33b2ba5dec5891f8908405bfcc9561ffbe7b3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 44525,
+      "source_record_id": "44524",
+      "sample_hash": "001931ca3fbd003b9f21b25f7326f9d4c64a748145421e9a9cda0a3846db6732",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 43792,
+      "source_record_id": "43791",
+      "sample_hash": "001a401cecbf8f5eb9418946b5ed563715027a11ac647650d1f983d9ea007f97",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 155706,
+      "source_record_id": "155705",
+      "sample_hash": "001ac6c8a7c2f5995b25e6971e6a887544340c21f9dd02946e05f95aadfa640f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 109326,
+      "source_record_id": "109325",
+      "sample_hash": "001b33766b5931bcbf6998d3f98046d80475a7ea78261bbd77270d585f2c5ca7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 145961,
+      "source_record_id": "145960",
+      "sample_hash": "001b873a165fbd15cc20ea7fa72affe6891346405a01b9140700b48b9836d0fe",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 3390,
+      "source_record_id": "3389",
+      "sample_hash": "001bb44c310aa5b2190f6964db74a804ffa868fd32e82db71c13ed5c5b7a7c6d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 28071,
+      "source_record_id": "28070",
+      "sample_hash": "001ca352c49b3ead6653f0851de0cb8bcca0b0030e6c254344e9b156a6bfb3db",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 15588,
+      "source_record_id": "15587",
+      "sample_hash": "001d0b8da0255e61c28bb09900022cf52ca992ae74fd27115a8c7edcf1215de9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 126863,
+      "source_record_id": "126862",
+      "sample_hash": "001d6525953abc5939bfbc3c44133f02cda56a37b6f94bae7570bdd195592968",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 102198,
+      "source_record_id": "102197",
+      "sample_hash": "001d6d12055e681a887d8ad2c37075df83a9080c5a0004c4f970ae7e6a340587",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 49511,
+      "source_record_id": "49510",
+      "sample_hash": "001dbd65626b3ca4c8653e2c65e931e7f49e8abcde93e3c5912a40f953bb8d65",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 63923,
+      "source_record_id": "63922",
+      "sample_hash": "001dd3dfe2879c51f8fdbabe17ec4c04ba28ae763b6f85580ae83d4455ad2db6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 92765,
+      "source_record_id": "92764",
+      "sample_hash": "001e1cad3d484be4f235683eb2bbc1ef0f7224982dfec132bf55c47109985a59",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 23421,
+      "source_record_id": "23420",
+      "sample_hash": "001e59e3712997bd06887ad0f0ac676f358ea3d34b5a33305ec90df31deeb8a3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 51106,
+      "source_record_id": "51105",
+      "sample_hash": "001f120aa727803de5ea1e7e8f18caee023a67dac8b1cb792c11170ef6b5d99f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 118246,
+      "source_record_id": "118245",
+      "sample_hash": "001f77ce556e94cce9edd3639d6005f02a7f66370fed5c3ff9ca9bf008f85e91",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 30121,
+      "source_record_id": "30120",
+      "sample_hash": "001ffec5583044dd79293be629c1171d1dbd426c07063a53efc004c6b906d402",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 146842,
+      "source_record_id": "146841",
+      "sample_hash": "0020b4bf4e2aa42ddf5b3929f775935b8d4e27f64e99317e708b49e10899aa08",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 27256,
+      "source_record_id": "27255",
+      "sample_hash": "0020d1630d56211e043a1636f0957bac2c02be092b0acd00c5a44229a42d4ac7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 115511,
+      "source_record_id": "115510",
+      "sample_hash": "00214fc0ce47c72351d6cd8e0630840376d9b773cfbd46326c016f8284c2e095",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 91694,
+      "source_record_id": "91693",
+      "sample_hash": "0021788aa84bfc1eb75566f6f9d0151924b0efadccf8fa271f73ec34e6a93533",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 159542,
+      "source_record_id": "159541",
+      "sample_hash": "00220cf55ae1ea02128e6970585574b6678df406dccb60c4bf777cf9e843bb87",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 108120,
+      "source_record_id": "108119",
+      "sample_hash": "002316ad7b1303e27dd3b09d96946bf90e5389f2215adeb17f2e1e9976fd2340",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 132957,
+      "source_record_id": "132956",
+      "sample_hash": "002325be02f8c91d1005b74f9e688de357ce867a09f849270225c0d862dda70b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 11997,
+      "source_record_id": "11996",
+      "sample_hash": "002337a20273ed45557323e28092c58ff72fd7d031833563ad3ef27ed41e59f7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 155645,
+      "source_record_id": "155644",
+      "sample_hash": "002345d706accd0f9e6eb0b0d7dc2588b7d3ecb264c6e272c2b68d14ccbc7af1",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 93110,
+      "source_record_id": "93109",
+      "sample_hash": "0023fa4a4233368197fd86fb12089c39ed3b63627557166d9d058a440dd88c6e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 16060,
+      "source_record_id": "16059",
+      "sample_hash": "00240af717a92d2cb52f3a5a8d3c007a35b7225fa9ead366a1640458da9c6684",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 159676,
+      "source_record_id": "159675",
+      "sample_hash": "0024c50adee369e030853ad7f8d83b0800d91125bcccc3bda1ff078ae6f47b1a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 28314,
+      "source_record_id": "28313",
+      "sample_hash": "0024f82695ab6115c7c4e04bf8bc5cf25ae8e6e65d62a85f827ea9c19b417790",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 26092,
+      "source_record_id": "26091",
+      "sample_hash": "00254bb9241d969ce24e37e47fc0778b2409899e9df5fbff57535e6c140aa41e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 38508,
+      "source_record_id": "38507",
+      "sample_hash": "002583aeea9aad39836c43410a7665178a80c95cfc6c4a86d61efe9e953fa701",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 43982,
+      "source_record_id": "43981",
+      "sample_hash": "0025bd450c7ea5f9c05ef5acaec02ecf198a4b760ff2d6b4b734005f5b5241d0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 132952,
+      "source_record_id": "132951",
+      "sample_hash": "00278a3eef32f4fa3b4affdbadc6dee41349974ff47fd1432a530bac749988a2",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 148709,
+      "source_record_id": "148708",
+      "sample_hash": "0027e7c67d36ac7752f84f8cc7892203072c213b858630fe21b4dac84867f0f6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 40945,
+      "source_record_id": "40944",
+      "sample_hash": "00288b12d5f4d961cca12a0b18ec7944559f4cf911190771af2f2b18829c6820",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 150342,
+      "source_record_id": "150341",
+      "sample_hash": "0028cae970cb4af372aebeea58a8d23d152e259b19a64a00cf92a0a1a0f7f915",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 144047,
+      "source_record_id": "144046",
+      "sample_hash": "0028fce99fdf7d417d4a550e809427d973dcdf88fb2edee85cd5152d1045698a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 76136,
+      "source_record_id": "76135",
+      "sample_hash": "0029991af0b0d2bf75e9dd6d6da4cd76bd5db54b498b3fedbf72f24f45b65577",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 89712,
+      "source_record_id": "89711",
+      "sample_hash": "0029d72262c69d63126a4f072f920979381038fa6a7287404611f73e57e16b3d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 99122,
+      "source_record_id": "99121",
+      "sample_hash": "0029f6b0d3774f8e1a51e5fbfe1c67f40669359eeab2d4dea6251bcdc9fff462",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 5306,
+      "source_record_id": "5305",
+      "sample_hash": "002a70c263d3bf664ad096f6c9262eb6c15ede5c4f8d37b21b173b211015f359",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 68331,
+      "source_record_id": "68330",
+      "sample_hash": "002a85014d9278249321a894d2aaf813d13877bcddbe1a2ad092e73977c652f5",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 151515,
+      "source_record_id": "151514",
+      "sample_hash": "002a932495c5045a77ed7ac8365a1f0675e46b31253bee9ef57d1db7e47c5044",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 163057,
+      "source_record_id": "163056",
+      "sample_hash": "002ae9fc48152dad9e6b1fe04d92e15da1e37738157b5c7d7b5f58fe61da9da0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 1980,
+      "source_record_id": "1979",
+      "sample_hash": "002b39f9fa11454f42b936d494e6ce8565a4ecf4b6e22ec600a8c0100ee32f04",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 159058,
+      "source_record_id": "159057",
+      "sample_hash": "002bb4304afa3879492ab9758b0e081d4f15f18ffdc2423cd1c22d3d53d4bc11",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 83721,
+      "source_record_id": "83720",
+      "sample_hash": "002ca560301db87184149a0820589b80d62e5b706e4f2ce88c8a9a0277de6a61",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 2065,
+      "source_record_id": "2064",
+      "sample_hash": "002cfdda01617bb0d5f5fd66e489f1b456279dad4e195529e9615e240a4cbfcb",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 132261,
+      "source_record_id": "132260",
+      "sample_hash": "002d5bb12541af58e62eb50381f66e7f5e130b53e4816fe3ceb9e6d892dfe5e6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 135620,
+      "source_record_id": "135619",
+      "sample_hash": "002e2b642739479d00ac386ddde491f3f6e913e4df40d82f59a651f6cdfb4c3f",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 154249,
+      "source_record_id": "154248",
+      "sample_hash": "002e729e2a493b57ac75e0eba8a78df61958aaf68dbbebcd29cf30277980dc87",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 75878,
+      "source_record_id": "75877",
+      "sample_hash": "002ecdd1896863be5fbca5633816153f06bde0a519c57ddf0e88551a15b56c72",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 163741,
+      "source_record_id": "163740",
+      "sample_hash": "002f44b1ba3ed6e9745e57f117c600fd11c870872238659f3db895d3cd87e120",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 20646,
+      "source_record_id": "20645",
+      "sample_hash": "002fbf928aae73fe39e2fb64928265f8c804a02c1d35b0db6e736d646ae210f4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 155437,
+      "source_record_id": "155436",
+      "sample_hash": "002fcfd08b914056b9c82df38b63f82ceff5c075b1ec01999cb9ad1659e68b21",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 147478,
+      "source_record_id": "147477",
+      "sample_hash": "002fe9182977a24b46298be9353862e514cc329b52a1e0119da9da37e321680f",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 58459,
+      "source_record_id": "58458",
+      "sample_hash": "0030adf4e7ef257a5fe0c88026b701f03f2657b90fb213ffc6e8ba6a42df78de",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 21824,
+      "source_record_id": "21823",
+      "sample_hash": "0031135381c3777d13cd2ee147d99e260d060e33b2e72060c84c26e7083e0c55",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 140059,
+      "source_record_id": "140058",
+      "sample_hash": "00311da029a24ef39c8215f8d46dca5c98a272352076c8e192c81c267c2e9d30",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 101050,
+      "source_record_id": "101049",
+      "sample_hash": "00316bf526c6ff9fc8645ebd509de97ec894112b6850df40692aee3232ae0817",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 101986,
+      "source_record_id": "101985",
+      "sample_hash": "0031bc8455353ce4b9c387e33d79f7ecd990e06531ba4b7964d0779b44af7a49",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "hf_bioavailability",
+      "source_row_number": 121118,
+      "source_record_id": "121117",
+      "sample_hash": "003230a1beab9c68ab94c257c64c894244f2c9cbb9162c660b59a27d51c3efa7",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 68177,
+      "source_record_id": "ext_3",
+      "sample_hash": "0001793660c4c46f9cec933b189af3033a5d1946cccca768e49f7ceadf0e9f1a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 28707,
+      "source_record_id": "ext_22",
+      "sample_hash": "0002419abf945c148a3ea71493d2790c184f2c160cfe70ec8d34a62cfd2b0822",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 26983,
+      "source_record_id": "ext_15",
+      "sample_hash": "0002a83f247c406808de6582b7ac7764310e7bd6573c5c2176f3ed17cfcfbc01",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 4506,
+      "source_record_id": "ext_25",
+      "sample_hash": "0003791f37ed2243e0709ad3da6cbcd1d0a646945057c5ea16ef63f08db47c2f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 28015,
+      "source_record_id": "ext_20",
+      "sample_hash": "0004270355c868120e072e0a30e493c280dc0f4501bcb8d30a759c3e4d4b23f6",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 56327,
+      "source_record_id": "ext_1",
+      "sample_hash": "0004a627ada0f45ec4f7b00854af18497707e9fba40dc39e6098219101442460",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 17446,
+      "source_record_id": "ext_14",
+      "sample_hash": "000577f0ececf5dda5a04b91b57ef4cc4383a0111a2a1df02f2f63df83cd0a27",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 62754,
+      "source_record_id": "ext_22",
+      "sample_hash": "00058b1ab485baace2f6956e00b26746d18fec1ae6d693b8944fa7d36dbbf104",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 6159,
+      "source_record_id": "ext_40",
+      "sample_hash": "00071949a06989a7bc60a444d51050a6430f057bf580d8455a2258976e3e0a57",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 71724,
+      "source_record_id": "ext_18",
+      "sample_hash": "0007b74581f833a87309f09ae50cfa469f273ed1197c95e10df7a69e922c814b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 43061,
+      "source_record_id": "ext_17",
+      "sample_hash": "000854dff90ec57f0d5dcaf73ab46f629ef49deefe14e9a2636af021c59e9de6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 81415,
+      "source_record_id": "ext_9",
+      "sample_hash": "0009a18bb63f97ac9c67fef7b656946e8cd68c406c34e32ed2d7c169e47943f2",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 6071,
+      "source_record_id": "ext_60",
+      "sample_hash": "000b0a5e871bbda181f3d18f71c1d871e4acac83a9b172abaf541e371d8c30f9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 42537,
+      "source_record_id": "ext_37",
+      "sample_hash": "000be424721c7445d9538dcf445d627fe673e9832b4b6f5c2a88288a9241db36",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 23116,
+      "source_record_id": "ext_16",
+      "sample_hash": "000c17d8a6dd7c0aacbcc3cad20537811487501cddca9673a679a191742517db",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 17809,
+      "source_record_id": "ext_24",
+      "sample_hash": "000c2e8696e14231febd0f138dfcbe22feb60442f7f489a4ebfa205c0bac5aa3",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 20829,
+      "source_record_id": "ext_7",
+      "sample_hash": "000d25e134502b36e42a91073d8fb825a939be1967b8eadbee2452eb0497a613",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 33260,
+      "source_record_id": "ext_31",
+      "sample_hash": "000e084191fa2db495735670bffb4e7fa667425b03d9f46e01ecb4ca18dfdd5c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 62308,
+      "source_record_id": "ext_21",
+      "sample_hash": "00105ccf72023f426c28c269b22d08156e22205ed7f8dd6606054eea91a0f925",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 11707,
+      "source_record_id": "ext_40",
+      "sample_hash": "001144fc460f23354e2576f984cde8ea5bc8d6b167e84d0e17afcadc8dba636f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 30636,
+      "source_record_id": "ext_7",
+      "sample_hash": "00119da97716b584029b7e647c2bb6f72384fd0cccf1bd49c1a71775798e7167",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 17919,
+      "source_record_id": "ext_3",
+      "sample_hash": "0011c869837e363b8fe06ceee2300bea25243a14a2ed46182d944debb4c1a073",
+      "classification": "multi_compound_ambiguous"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 34116,
+      "source_record_id": "ext_21",
+      "sample_hash": "0011ce1caf5612704648bf57f1ce062be41a58cf2f5b38bb545db947bf47de85",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 74960,
+      "source_record_id": "ext_41",
+      "sample_hash": "00120e4943792ac4525af82235f8a7259be905fe31e00d1904eb4a6cea0560d3",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 12797,
+      "source_record_id": "ext_21",
+      "sample_hash": "0012930ec8641c61aaeed9ef47b35f4486058e6042ee41c5f1b3218b34eab05d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 62798,
+      "source_record_id": "ext_20",
+      "sample_hash": "0012cf7bd88e3fb16600290343caf63ac7410e3431f43bf328b22ac58715ac74",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 38905,
+      "source_record_id": "ext_4",
+      "sample_hash": "001539aa8d08aee5e64cfb8030bca0c0bc8514ae3eaa6bd8338efe8f5a38b8ba",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 36426,
+      "source_record_id": "ext_23",
+      "sample_hash": "001610166271b3bf375648481cc055be53a598071962b8eb71c7316b76276f0a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 5916,
+      "source_record_id": "ext_20",
+      "sample_hash": "001677e3f3f585589ffec511e2ea15f48e8285a83ebcaaf4514a4bb9296256e5",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 25974,
+      "source_record_id": "ext_25",
+      "sample_hash": "0016a69dc283e0dc770ebab38e938e83c9934866df254af3c32cbd1e9c217a4a",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 21815,
+      "source_record_id": "ext_29",
+      "sample_hash": "0016c77e0e9b492677628026c9f2e8ea290e6ce7f9da53c3c7a0e86db14a8076",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 40105,
+      "source_record_id": "ext_62",
+      "sample_hash": "001787cbff34ad907f43d21d052b85ab6e68d40fc5962513d5d97760bda0fde6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 43663,
+      "source_record_id": "ext_13",
+      "sample_hash": "0018f4dd5efdbae6fbe8d0cfbfa605c1f963a251d67638ff28834b167b3bfbef",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 74748,
+      "source_record_id": "ext_11",
+      "sample_hash": "00191244d04997d97e36c6aef0047e8c7f8cf94378ae4a2ed40494628e9f7f5e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 26347,
+      "source_record_id": "ext_16",
+      "sample_hash": "00195a77da1cf95f46513fff31452c7115494e218e4d35c7722556fd290ee2c0",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 32549,
+      "source_record_id": "ext_4",
+      "sample_hash": "001990f274d9a000b0fa91b7e8131699ea068aa0d545e9a43c8908f78ef0f3fa",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 14493,
+      "source_record_id": "ext_8",
+      "sample_hash": "0019c224022634db367166e8746db72cb7c38772b950f689f61bad43bbe7e767",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 44180,
+      "source_record_id": "ext_27",
+      "sample_hash": "001ab54d7684a1f1ed67b49c93e2bef9e1da5bc2d446ace982889da2690cf66c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 59541,
+      "source_record_id": "ext_3",
+      "sample_hash": "001b8dc624c7d57917eb4640658c0da19abe504205f0c3242d49e25a4fd19086",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 11614,
+      "source_record_id": "ext_21",
+      "sample_hash": "001c9c7cf2b0495b7fcf603113b0e0f781a40b85a6bcee04048c45d78f1fff7c",
+      "classification": "missing_smiles_repairable"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 12900,
+      "source_record_id": "ext_11",
+      "sample_hash": "001d9eb5f4c43e57f3fce7cb37ce27a197b0c3345809e13c77c190d9837875db",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 58065,
+      "source_record_id": "ext_19",
+      "sample_hash": "001e092ea8893a2614a3eb9209c031cdbb978e265aa8eacfb3f8569dfe14783a",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 75041,
+      "source_record_id": "ext_26",
+      "sample_hash": "00213f8dd427edf159b28cc0681880fa841ab73e7bb87408addb1d36ff8bdaad",
+      "classification": "multi_compound_ambiguous"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 25234,
+      "source_record_id": "ext_12",
+      "sample_hash": "0022127a01e54f338c30be27382fc5fca358235dda64913f77b236a199a1e7e1",
+      "classification": "confirmed_mismatch_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 40797,
+      "source_record_id": "ext_19",
+      "sample_hash": "00234c04856f6655a9f3da33d9a2565df25aeb56e93e586afabe2fbe2a5f6ae7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 28562,
+      "source_record_id": "ext_1",
+      "sample_hash": "0023afbc282c06252a86288a539001152c44997d700c0c37aadc5b4bc186975e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 46266,
+      "source_record_id": "ext_48",
+      "sample_hash": "0024932f23335c082baca1f9925c31c4556d3507aee32abdc4876e35b5b17e27",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 50438,
+      "source_record_id": "ext_25",
+      "sample_hash": "0025ecdefd2fb159adb0b3826053a2036d286c1b53f8d50bd49158c06073b897",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 5470,
+      "source_record_id": "ext_27",
+      "sample_hash": "00274d73997489c42ed08f8898abd8875053c25ad9d3fda2d1a1de521a1e8cd0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 35945,
+      "source_record_id": "ext_13",
+      "sample_hash": "00291f5d9020aff775734f9fbdf62ab38296a6594536b69b0bbea4d5935d38f9",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 45476,
+      "source_record_id": "ext_16",
+      "sample_hash": "0029cef57b6d69ac0d71e5904da8e9aa575a1a25b487a10545c06fbc2c6d7be8",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 57907,
+      "source_record_id": "ext_8",
+      "sample_hash": "002a0422c68300b9be373f3ba45b1f378980e3e5c389703c8361c56506a41581",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 23566,
+      "source_record_id": "ext_30",
+      "sample_hash": "002a70e092cab70737c30785cf9c6fe26d2cfec177e2793617c4fdc14b41abd4",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 4227,
+      "source_record_id": "ext_8",
+      "sample_hash": "002c6549c757a1f87a7811847aa5cbafa8aeb910fcb288c583cd8edef7e1addc",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 63059,
+      "source_record_id": "ext_3",
+      "sample_hash": "002fa8bef27131c4884a582c3fbe9e0cd0ad001c84b38bc43bf1275344e1e93d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 57691,
+      "source_record_id": "ext_13",
+      "sample_hash": "002fdfd6b46670a662323b206089b1fe7a0949d1958a97128c74cedf705e5b1f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 83038,
+      "source_record_id": "ext_5",
+      "sample_hash": "002ff53c84f28877514c2fd767ba4185f09f32692d41b725bedd63906605d72d",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 5401,
+      "source_record_id": "ext_9",
+      "sample_hash": "00303d2bf79ddf887312f1fad646f3e7c89a0db2f090818f100fd575d07ab471",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 36060,
+      "source_record_id": "ext_6",
+      "sample_hash": "003076f5cf9db76a346ccfef9dc73d8a7a163d353649105a9b034c92afa04e7b",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 17520,
+      "source_record_id": "ext_16",
+      "sample_hash": "00316015bdaab9c8a7f94aef93f85a7f1c6351ec9cdd4bbc5ca058dcc80ac767",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fa",
+      "source_row_number": 3871,
+      "source_record_id": "ext_7",
+      "sample_hash": "0032979ab1552966858ee03cf5920af4529ab0258bc0f831b86b92604a0103e5",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 9496,
+      "source_record_id": "ext_9",
+      "sample_hash": "000012f6ede19d92faa44bbbe7968e8be24bd32287580ed5cac9d4dd6d6c489e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 20241,
+      "source_record_id": "ext_8",
+      "sample_hash": "0004b79728eef987346069a88544974b020e0fbb5267a0370418762c3f5f2a22",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 11233,
+      "source_record_id": "ext_23",
+      "sample_hash": "00076163fd30b319ac08bb955836cd22251990805350caeb279d8ed0aa3e8f57",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 681,
+      "source_record_id": "ext_1",
+      "sample_hash": "0008973c39a26bd58cd5c9f02757b4fb9645002005cc27496c45dc736d436528",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 19078,
+      "source_record_id": "ext_17",
+      "sample_hash": "000a26e33b9f808637361c4842ccbacd7217050bd63d57b0ca1dd7f7ebd26744",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 15194,
+      "source_record_id": "ext_12",
+      "sample_hash": "001094a3dcd20ebb30f392aa0ee412985f5c2042d1a563ecc29b67bd51e0349e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 1638,
+      "source_record_id": "ext_14",
+      "sample_hash": "0011d16a5d3d3df11498a8921bc7965d3d05e7a0c7ef7fb868df98401eccbf33",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 12428,
+      "source_record_id": "ext_11",
+      "sample_hash": "0012bc6bad26e4fa5339ed9a35339c6abc0d56aa224d7edbf2741df2cc088b36",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 24278,
+      "source_record_id": "ext_10",
+      "sample_hash": "00137caef0ea213e6b2ae47b1860a7d12d1f342ebadc3cd8b934e4c072e4790c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 3968,
+      "source_record_id": "ext_18",
+      "sample_hash": "0013c219317192b02202c8023e4544fbf506152270427f5cc57ac9420615f4db",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 10887,
+      "source_record_id": "ext_11",
+      "sample_hash": "0014eac1a4d176dadc250f2a216d9fe84011f86a61ba246c408eec3fedafe46e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 9309,
+      "source_record_id": "ext_21",
+      "sample_hash": "0015e2c6ef906a124689ccbbceeb99d866336fbc2ffdb2e878c77cb7db5ffa15",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 2469,
+      "source_record_id": "ext_48",
+      "sample_hash": "001af0e9c653865a202ed4b78e7f96df8018f48c39c4fbef04b0983f9a953821",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 12905,
+      "source_record_id": "ext_39",
+      "sample_hash": "001ce158bcf06db43ae25eed3d0014c1e83c5218795d8d4a425a03a63df6e15f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 16497,
+      "source_record_id": "ext_25",
+      "sample_hash": "001def8df6b4b8081849281617ef3a7cfc8542ba054771714108cf04ffc449fa",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 6178,
+      "source_record_id": "ext_11",
+      "sample_hash": "0020675ad7a8a890a6e1b77437dba3f382f9bea3179c0b76909af5511231cdaa",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 16393,
+      "source_record_id": "ext_109",
+      "sample_hash": "0020f5b0ecbb6cf46631c6bbf14805648e538a1320032943246830acd14269b1",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 8948,
+      "source_record_id": "ext_24",
+      "sample_hash": "002640f2c55cafd4cccd520a73b25f3acba0a4b1f180a00bb84c825fd9240d94",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 19989,
+      "source_record_id": "ext_44",
+      "sample_hash": "0026cad4c5b9a4df9c13c6178ebd9f3116c6a9f597bde4e6d64293a981dbb4c5",
+      "classification": "missing_smiles_repairable"
+    },
+    {
+      "source_id": "fg",
+      "source_row_number": 26970,
+      "source_record_id": "ext_4",
+      "sample_hash": "00290c9c809d8737d9c67a6b9605993342bd8da992ad243b65b36d10c3e77cb3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 16657,
+      "source_record_id": "ext_26",
+      "sample_hash": "000062a2fbd4c1696ae6f44c6bbeed888baeecc081fb720dd51da822561c7591",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 2605,
+      "source_record_id": "ext_33",
+      "sample_hash": "000232a81f4cae8a6f141c76ff40351b4c658c9e17df5aac27331dcf8517eb63",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 53272,
+      "source_record_id": "ext_11",
+      "sample_hash": "0004027eba6f9874865e88dd2debe58a75d4245305833bc0cfcda3a05af5a7ec",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 58103,
+      "source_record_id": "ext_6",
+      "sample_hash": "00042a0573889e519be52ea77ba3788978f762e1e4b873b1c6aa2898ec6c37e9",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 34883,
+      "source_record_id": "ext_5",
+      "sample_hash": "00043c9fa48440cd9db12a805fca74a7713cc990c8ecf8493236293c4b6d084b",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 41223,
+      "source_record_id": "ext_8",
+      "sample_hash": "0005ccd0269902940cd1daf1a697ce90275eead7113a83b2d8c770371153233a",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 6789,
+      "source_record_id": "ext_10",
+      "sample_hash": "00070a2f61aff9b68fbf63eb51a5942ea68c2790ba0ca84423eeae0b8fb833d8",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 61075,
+      "source_record_id": "ext_28",
+      "sample_hash": "00079421f68c1ae7b436ec56edd426fbeb989f1354f7c12ba51b8969b71a8409",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 29804,
+      "source_record_id": "ext_5",
+      "sample_hash": "0007ee43f1217a2f200074b4ecf278ead6ed033abc012c7cf6229c513d2b8c0a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 66898,
+      "source_record_id": "ext_1",
+      "sample_hash": "00081a82577acc5fae4764feb33a0f7d59ac0f5b17977531855be00f3ed372e6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 14531,
+      "source_record_id": "ext_74",
+      "sample_hash": "000a2663c5134fce135a8855b89d119fdca21a602fb78552fd3935b4855b5626",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 33097,
+      "source_record_id": "ext_8",
+      "sample_hash": "000a2916714325095c53df61178ed353ecb02890d52cfd7cc97cefdef3e9687e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 12278,
+      "source_record_id": "ext_24",
+      "sample_hash": "000b76ddd848c36e3a18f028d983be608e3142253119d7641c2747659691269e",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 54192,
+      "source_record_id": "ext_17",
+      "sample_hash": "000bf7cf86dd425b0fbb304eb2b33c61dc0a370a95636d457d754de316dc2abe",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 66723,
+      "source_record_id": "ext_7",
+      "sample_hash": "000cfa7d5332869b36c6c095a74bfe8d6655cca7f5df72b00aff63a7ede23c87",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 59527,
+      "source_record_id": "ext_2",
+      "sample_hash": "000e7303dc16193b0ff43ec19e8f9e8b8524230533c8cff8d68caab7c9f05329",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 59416,
+      "source_record_id": "ext_9",
+      "sample_hash": "000ee97ea90d24cf7eabd5f342256440b0245dd76f6a1116f8bc3dd9fe37978d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 25306,
+      "source_record_id": "ext_38",
+      "sample_hash": "000f75338462bf4f18a201bbec14f02d3ef5c852b2ccc0f9062e72e11fd28258",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 13083,
+      "source_record_id": "ext_8",
+      "sample_hash": "00108463889e527f0b84f7d55961a82f91923e856dd8c93d2750d9a47686101a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 26574,
+      "source_record_id": "ext_20",
+      "sample_hash": "0010d141bb17603c0e428e037309ceb3e6017ed5976bcb984dcb326300b9db8d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 42447,
+      "source_record_id": "ext_1",
+      "sample_hash": "00114061a6b9650501d3f0453ac01883066ec41bff5c4a63e445f421bcee8dd4",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 36055,
+      "source_record_id": "ext_27",
+      "sample_hash": "0011f8e65b57ccd7ffbf199d4702442dc2b03762555daffb926df5ab8683c362",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 62619,
+      "source_record_id": "ext_8",
+      "sample_hash": "001287e71a7504034a0fbbd0ec6a7898bb1c79855db3a17ee69fe2a97a2d841d",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 54352,
+      "source_record_id": "ext_25",
+      "sample_hash": "00128b954ee99360f39e3dcd37ff41dd2284112c02fd6353ab6b7d25ea3171a7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 38546,
+      "source_record_id": "ext_8",
+      "sample_hash": "001306be1186337b46e4df4933e3d90b49918a3f1ddaa1b33ccc9296eef687c7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 16805,
+      "source_record_id": "ext_52",
+      "sample_hash": "00130b771fe194f36d55ffa0006351df4d734e9909f8ec4c4f4c29479b9dd97f",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 65820,
+      "source_record_id": "ext_56",
+      "sample_hash": "0013e2842a07b3ffddec6d63ca1a4ea5a6924242210d37b00945ce7475788576",
+      "classification": "multi_compound_ambiguous"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 62846,
+      "source_record_id": "ext_48",
+      "sample_hash": "00149846f46ddf9f02d830f470e065211d3e6e271c3cc465f4b6e9864f2d86f3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 25649,
+      "source_record_id": "ext_13",
+      "sample_hash": "00157f21b6910b9d96cb85fdf436e0aa92c1be740f0f81d6b93943e4eaf23e00",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 26118,
+      "source_record_id": "ext_26",
+      "sample_hash": "001590b23f0c8862194e2455d66378fa0b8d157f7ca57919ea2193487850ed0b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 55641,
+      "source_record_id": "ext_6",
+      "sample_hash": "0016d0691d54cd2e8e0b8fd0230787e05e2a4c9c3ee3345eb7693982d964e99c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 16291,
+      "source_record_id": "ext_17",
+      "sample_hash": "0017fed66014846164241bb7bd8822db591da609bf119c17c8dafdd575220e5e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 17898,
+      "source_record_id": "ext_6",
+      "sample_hash": "00194e1ba335dfc4d950f5a3f2274407ac13533c1b70ff409bb1c67ecc3a89b8",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 7608,
+      "source_record_id": "ext_71",
+      "sample_hash": "001ed47e751e77b0a6c524c5bdd86361afe1b0a1d537cfdbd004aac7f15136e4",
+      "classification": "multi_compound_ambiguous"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 66787,
+      "source_record_id": "ext_50",
+      "sample_hash": "00204d53ae5437f19a6faa8e50d595850287801ae1b233549d637eb1bcdd48cf",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 65489,
+      "source_record_id": "ext_31",
+      "sample_hash": "0020c1e0fc0ee76e3a546f1e34a2565b07b84836870481e554bbc13313fe7447",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 8757,
+      "source_record_id": "ext_27",
+      "sample_hash": "0020cf0bcec268f023cdfc8e9758a7f79a54d50fc88ebfbb857a88c9c2db11e4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 7383,
+      "source_record_id": "ext_15",
+      "sample_hash": "0020f8aa3308a938a086cd5ff3dd905ef4433817de1f409731a036dfa08448f0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 35614,
+      "source_record_id": "ext_21",
+      "sample_hash": "002166446381297d6079cea064ed02e3a8b0368429caf6a14a26dee6df287ba0",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 59010,
+      "source_record_id": "ext_28",
+      "sample_hash": "00232f5cd18e646f1e09f09e16f5fe17ef1de0a1233233f5afb06a17cb0fdb3b",
+      "classification": "missing_smiles_unrepairable_drop"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 27280,
+      "source_record_id": "ext_18",
+      "sample_hash": "0024e3ac503bc585d8eb7a1736c5eafafb9af43a31a59f3356159f47071f6d84",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 33205,
+      "source_record_id": "ext_6",
+      "sample_hash": "0025301d786c277530e6f53346cc3f4330caf19c2431d05aab5edb08be204fd4",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 36378,
+      "source_record_id": "ext_7",
+      "sample_hash": "002712f23fc115bf30529dfacb5806ee76dfe2cd872823ca61a670d9b6463874",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 62030,
+      "source_record_id": "ext_11",
+      "sample_hash": "0028344d508655969ff9e9a4b452f5c88ab323da34775f278fb0e07fe6455984",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 27274,
+      "source_record_id": "ext_11",
+      "sample_hash": "00290f172e3de2926479704ea1b4b4375a20f9503bf0406f7bd72d68b6a67c13",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 11413,
+      "source_record_id": "ext_8",
+      "sample_hash": "002a06fba0fc9cbe348f1428483efa3aca4171eea8834531076d6cc66042cfa2",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 53269,
+      "source_record_id": "ext_8",
+      "sample_hash": "002bc32f049246c6fae83b61e23134f569d999fadd9cc1c29e79fadb4c31ee66",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 34762,
+      "source_record_id": "ext_4",
+      "sample_hash": "002c022d2410db4e0356079e13a8c1228ae7ca44955990228283f71919d3dd7e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "fh",
+      "source_row_number": 44832,
+      "source_record_id": "ext_15",
+      "sample_hash": "002c12616873837e6febda347952175b5282cd2c0cd40f6eb560fe15a68e255b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 71358,
+      "source_record_id": "ext_25",
+      "sample_hash": "000058e73f8b3648c9de57a702624adcea0a9bfadbb77721822d6bb55cd02381",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 101111,
+      "source_record_id": "ext_38",
+      "sample_hash": "000135e508c5284dce61e144c03ae6813638ac41bdd8b87a4c90df562ca95096",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 60107,
+      "source_record_id": "ext_12",
+      "sample_hash": "00014e86928cc17ce7d4f835a8aa23e51696c1a25181cbd8513d20831a7acd66",
+      "classification": "multi_compound_ambiguous"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 103854,
+      "source_record_id": "ext_107",
+      "sample_hash": "0001fd8da7db920d5d6bb7bd36052149ac4ba29d79cc3b62b0d57a13fe85ec2c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 19248,
+      "source_record_id": "ext_13",
+      "sample_hash": "000239ced982cda4e3ccc660363661aaaaf3bb9f4283e17b1baaa3f6ac6007ca",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 10031,
+      "source_record_id": "ext_2",
+      "sample_hash": "00029cebf47dc0e58a0d3b79b838af72558a53964d66ba08064378cb22473b25",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 100830,
+      "source_record_id": "ext_4",
+      "sample_hash": "000379c653e8468de8c2ad3438d1de546dd9a6e55b5f2765cd54683610d5b4cc",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 49635,
+      "source_record_id": "ext_6",
+      "sample_hash": "0003ec22523d4915be6dd2cf3b2262d0c813c3fe735981f5d944d1bd6bb5fbf7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 102297,
+      "source_record_id": "ext_27",
+      "sample_hash": "0005c35002897e55aefe212fd48d9730593369db3c327e7090fa17e137f1a4e4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 116876,
+      "source_record_id": "ext_10",
+      "sample_hash": "0006a77fb0f9a3c78d644b30a3306a8a6e10a87bf094248a8b46992a50a3aad6",
+      "classification": "missing_smiles_repairable"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 25297,
+      "source_record_id": "ext_1",
+      "sample_hash": "0006d48c28adbc30df8bcec11e99d7825d82d94cb2fdef6806cea21d94ad0062",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 18150,
+      "source_record_id": "ext_78",
+      "sample_hash": "0006e46da226b033481a83bebbefcf7a532b9f983cd5354141f0009c82a3584b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 54754,
+      "source_record_id": "ext_4",
+      "sample_hash": "0007e7109911e9a9ee7a77a6a97a684915cca0eb9b8d199b4b703addd82ffa22",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 4369,
+      "source_record_id": "ext_56",
+      "sample_hash": "0009210be9da9d3ebb7e90ef5151a7c54fb52b0d6a29830b5ed910fe9598ecfb",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 94226,
+      "source_record_id": "ext_7",
+      "sample_hash": "00099356e4c966c9bf654c0290b5415d2ea9e813b32e2a61c75a84dc238d6cda",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 44261,
+      "source_record_id": "ext_36",
+      "sample_hash": "000b74dd9169561e96685d67860415d01209218950ee9e2b58335de1ab8abddb",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 28961,
+      "source_record_id": "ext_38",
+      "sample_hash": "000bf05a965965bdaa2150eac3250c64dee9a88134666471df1a016b2a2d7bef",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 79182,
+      "source_record_id": "ext_17",
+      "sample_hash": "000c0f8d2e404e018afe8a5afd1691025fcd4234abf04f201030da56ba472097",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 71425,
+      "source_record_id": "ext_12",
+      "sample_hash": "000e941c41007cb4da3dbd7c45b2a2168c2073deefb75ca84ec1789be1b6e894",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 90637,
+      "source_record_id": "ext_10",
+      "sample_hash": "000ea9ce8ac1ff87cf113f370f7043477b62184c9ed5552d0e6c548629a1412b",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 83299,
+      "source_record_id": "ext_3",
+      "sample_hash": "000fe985568fde3dfa8f9767e6b56a4cef5c7301fc542b60bde5a56964a0a8b2",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 75716,
+      "source_record_id": "ext_28",
+      "sample_hash": "0011511dea7c20356d8a7d6647f3f2b31907b27616777fb7798e0a2d228c32b4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 80906,
+      "source_record_id": "ext_31",
+      "sample_hash": "0011e74f1e28b0b6314fa77fc83b20f26f0d9c40ce3755461cdfefc9cace2282",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 10802,
+      "source_record_id": "ext_18",
+      "sample_hash": "00127b8a4338a8568dddaa2323a8b565b997992e8ab74c2ac12b4097041480b4",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 63325,
+      "source_record_id": "ext_29",
+      "sample_hash": "0012d2de05c747f096a02184dc47e158c194fd14c3ec837666f30f901787eb8c",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 40676,
+      "source_record_id": "ext_39",
+      "sample_hash": "0013b27ea296d5f990c2dfbefc042f10c62f9aad5c0dbf8a824e949afdd12080",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 41207,
+      "source_record_id": "ext_8",
+      "sample_hash": "0013d515e80408a123485404fd2224805819a3d0590c92980bd4ddad316c7db5",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 116229,
+      "source_record_id": "ext_76",
+      "sample_hash": "0015f3384768e053a81956c994a95b624433d05f94699572120521ec94bfad1e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 68520,
+      "source_record_id": "ext_37",
+      "sample_hash": "001666ffa46f3da340e0b7ed9d1607472171c7e003862460c28ae7e6fdf18db6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 33557,
+      "source_record_id": "ext_21",
+      "sample_hash": "00169967bde8eb356c3b52df2b7e9b05396b0ca3718bfcf165627db45c0d0569",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 13042,
+      "source_record_id": "ext_30",
+      "sample_hash": "0017447d9ebb8f0f70e21639d16a18ddadc381b152a040f973e2e370abef5cc9",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 60400,
+      "source_record_id": "ext_10",
+      "sample_hash": "0017b7c23567cea12df8adcafc0e3f0975298339f94be7bd871a302daed1eb66",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 1084,
+      "source_record_id": "ext_20",
+      "sample_hash": "001883b81bb597af44b6f6bb7a2e1bee4ef14787c61dc56607c288ff2ae075d5",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 105878,
+      "source_record_id": "ext_15",
+      "sample_hash": "001949d68497c2600c10161ca4ab8c35c3e04ccfde7288d8653740d0e1f73a63",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 18126,
+      "source_record_id": "ext_43",
+      "sample_hash": "001a55dabb567ca273b0a9e2f99ab4ee8af39b558afd72258ea9ecd7935268b3",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 72677,
+      "source_record_id": "ext_4",
+      "sample_hash": "001a74a169e00283c13dfbbdadcc0043c8ce2cfbebbdd3039803cb89e7a7f20b",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 32682,
+      "source_record_id": "ext_35",
+      "sample_hash": "001c4181baea7f8a35e60b2261256e685a45d860f3a15815481f7ddef40872bc",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 112589,
+      "source_record_id": "ext_16",
+      "sample_hash": "001c879b0d145a029905ed1ca4597dc70b4fe49a3548ce6ff0e90c9bdcb0ee52",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 94556,
+      "source_record_id": "ext_27",
+      "sample_hash": "001cb62c251159f969e00fecc6de52662b548a9f923dc57c1f27ed8fd0e90ecb",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 66136,
+      "source_record_id": "ext_5",
+      "sample_hash": "001cb81ce3aa68e20161ce5f4d7855c77926a489ebe8818c0c52a21870c358df",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 85329,
+      "source_record_id": "ext_25",
+      "sample_hash": "001d205f3750b84261b61b666bc20ce5f9e7a78d377746096d44bf5f5ed5836f",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 92767,
+      "source_record_id": "ext_20",
+      "sample_hash": "001e3d4566e0d609f6d4891f57a0ea369b680f2a56ce57f150b70c4b7880e926",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 112700,
+      "source_record_id": "ext_95",
+      "sample_hash": "001e789a5f95d46d811a88648b5853c53a4a5b67f454b153f92e0fd550c2d5a9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 110615,
+      "source_record_id": "ext_14",
+      "sample_hash": "001e9680dbc90ccd0ff725fe378e3e3fa3f58b58976deead57aa20153a556250",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 63069,
+      "source_record_id": "ext_45",
+      "sample_hash": "001f55139934195969ff86c05894ef5ba92a3412ce55dd8497e485fc4401d20a",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 116845,
+      "source_record_id": "ext_18",
+      "sample_hash": "001f914147051aa6ab9f1c70c438befb20f8d420fe0c0254ec50420fdce49143",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 116367,
+      "source_record_id": "ext_34",
+      "sample_hash": "001ff2def3253e9caac5e43429cb8299944208eb263c719f5de6320ee61aaa83",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 62166,
+      "source_record_id": "ext_6",
+      "sample_hash": "0020e856dd68a48625a1db632b7129f5c3146b02da98a03527f697de2d10cfc3",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 3288,
+      "source_record_id": "ext_8",
+      "sample_hash": "0021327abffdca1f3146df350badacebd67e4c6d4722a80425c6cd5800b02a23",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 31128,
+      "source_record_id": "ext_43",
+      "sample_hash": "0021f56f3aecdb3946404329a44cae98f85bbec8c39cb593fd2240a8e17bcf60",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 108333,
+      "source_record_id": "ext_2",
+      "sample_hash": "00220c39ba83af511eb97b6d6288009c0b768909d7bb55f7a58ed27cfaa5cef9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 71992,
+      "source_record_id": "ext_2",
+      "sample_hash": "00222c43dcc91a4658d8c1623e8ffd763d4cd87c1fefd192fd643eaec2deb9ca",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 33204,
+      "source_record_id": "ext_26",
+      "sample_hash": "002285adbd8820b6de17e144e5eff85b81d715c2c1dc339e06b5eb55df7dd001",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 17111,
+      "source_record_id": "ext_19",
+      "sample_hash": "00228763c9bbc0b2170485b04f74b68388e24c1e2fdb7d82eb3f8948a0b0b747",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 89749,
+      "source_record_id": "ext_25",
+      "sample_hash": "00229ee0f89916d23e446fc500e691a173065431eb072eca808c1e53d9b88c63",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 44828,
+      "source_record_id": "ext_3",
+      "sample_hash": "0022b2958d964b4981c3080850352453ffd11acf99c7ccbd5b6fd1c0af8e40d6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 5429,
+      "source_record_id": "ext_22",
+      "sample_hash": "0022b7862aee52ab84692c5ce435615c64bc1092153fdc57414a911caa9299cb",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 40807,
+      "source_record_id": "ext_45",
+      "sample_hash": "0024996489d84fa8edd96c083d2f12dd8dd6b36d668c5aa55485670efa8354fa",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 55501,
+      "source_record_id": "ext_10",
+      "sample_hash": "0024f4e04bb46c97a55925637119be2352e53dfc6667f100af3c53079e02213e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 19482,
+      "source_record_id": "ext_39",
+      "sample_hash": "00253cac672d0153e642c7aec9b4f40a358dff2f3de49ee5ff54262411fa942e",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 19821,
+      "source_record_id": "ext_10",
+      "sample_hash": "0025f0670d582c84f73d0d96b72edd1602e5e078ca469f1bd91de012e7872198",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 43183,
+      "source_record_id": "ext_55",
+      "sample_hash": "002753909b11a18ce0e7809b0fe2aaa767d82277f19d0a09a589e36a4a3a56b1",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 13501,
+      "source_record_id": "ext_37",
+      "sample_hash": "0027b2e70f77807a676225afa78e93edf64d26602f6c9b51413a112a8c7d63ad",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 83474,
+      "source_record_id": "ext_5",
+      "sample_hash": "0028192f1bc73a7b79d02716ace22743d95173453e2d1ea5d59a8a7750ca448a",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 74504,
+      "source_record_id": "ext_7",
+      "sample_hash": "0028702b8cd94c7cc4d0224d87b766f7f8640a65525db1dcbd62e6fec2ae5952",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 15752,
+      "source_record_id": "ext_32",
+      "sample_hash": "0028d9e2f3139e3c6ee222a14c6dbe08943248c9bd5dc627f07d88670279e862",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 18548,
+      "source_record_id": "ext_10",
+      "sample_hash": "002dc202e3eb4aaa6db0c077b708ba7382cb27c2ea9c56f5cb5a5003bf2c0c71",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 105493,
+      "source_record_id": "ext_3",
+      "sample_hash": "002df34c160bd6e7e821dd27b4c608437687c94c229388216209786258d8fe95",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 97970,
+      "source_record_id": "ext_1",
+      "sample_hash": "002e5367284b2c344a1902e475a25070ef9ba682e0103b7b6bcd520db70094e9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 82157,
+      "source_record_id": "ext_12",
+      "sample_hash": "002e959011c6dbf5cc1adad313878f24051d42a200f2327264202e37a3eb735d",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 63297,
+      "source_record_id": "ext_78",
+      "sample_hash": "003076af4c17836ffff497b86f635dea57c0fdcc89b844301d38519ac55cabd7",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 44546,
+      "source_record_id": "ext_20",
+      "sample_hash": "00314f4f30eee631f2261a0f4429050671493c9580be220ff45ddc08be3d590b",
+      "classification": "confirmed_mismatch_repairable"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 52017,
+      "source_record_id": "ext_1",
+      "sample_hash": "00319138ac1b82a2b2295d07ebb9d714133b3d74b13a8c939ebaa6504d992e72",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 77654,
+      "source_record_id": "ext_1",
+      "sample_hash": "00320b0334acdb9ca7c049abaa35bb426f98b01afe43ed169d282236d0d224d3",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 115938,
+      "source_record_id": "ext_1",
+      "sample_hash": "00338acd4d4dc40c0ea4adc0881b66c58cf18a8b5e3d4f3a9fa66f811704b23a",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 37609,
+      "source_record_id": "ext_15",
+      "sample_hash": "0033dcfb585bf850ed9e5248c437c32e639872a39f25f633aeeb1863f4d934f6",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 85608,
+      "source_record_id": "ext_10",
+      "sample_hash": "0033e3a29e6872d9f5498cc8f6a9c441a622f147e7b3abaa7cbd0c594a716b34",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 82954,
+      "source_record_id": "ext_12",
+      "sample_hash": "003456b3f43becf354c1d380f8ce3388bc3a150415c27f48330955516e6b9d26",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 64610,
+      "source_record_id": "ext_6",
+      "sample_hash": "0034c2f0c6bb187ede1831a1684b66064c1aab9a74215c5a743b7052dc4d0ea9",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 13316,
+      "source_record_id": "ext_57",
+      "sample_hash": "0034c87df0b97b9a043e958b82770b893402d68de6dd87748148ebd73ebce644",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 50964,
+      "source_record_id": "ext_9",
+      "sample_hash": "0034efdd2e6b100fe9f0a58c2bcd025c7369acdad186adc71f9808345bdab350",
+      "classification": "high_confidence_match"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 92447,
+      "source_record_id": "ext_57",
+      "sample_hash": "0035190ae2ea83c31a9dfc5adda7959a80560cf68ad1d9f0a4ba3e9d82f2f3e9",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 50404,
+      "source_record_id": "ext_10",
+      "sample_hash": "0036a35c36ce85e04dd161cd2cb9fca09551a2866ae66a622d4a069cb1a52ed0",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 25995,
+      "source_record_id": "ext_3",
+      "sample_hash": "0037bad670232e7f90422d2410879c8e737ae35b7afb5d891ea3017e234c3a0d",
+      "classification": "indeterminate"
+    },
+    {
+      "source_id": "oral_exposure",
+      "source_row_number": 89631,
+      "source_record_id": "ext_19",
+      "sample_hash": "0037f6ff14ce2faf51e5e121ed1439aab9304522fb405a3c7857be1b30ac6b0a",
+      "classification": "high_confidence_match"
+    }
+  ],
+  "candidate_rows": [
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 3577,
+      "source_record_id": "3576",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "0004900e0eaf78f269ac616882cd6cadc0661c6ff38e9e5954af6877d247aff3",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "COc1ccc(C=Cc2cc(OC)cc(OC)c2)cc1",
+      "support_text": "In mice and using a dose of 50 mg/kg, the oral bioavailability of resveratrol when loaded in Eudragit nanoparticles was calculated to be 39%.",
+      "pmid": "26027429",
+      "explicit_resolved_name": "resveratrol",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/26027429/",
+      "indexed_subject_role": "resveratrol is the indexed oral-bioavailability subject; Eudragit nanoparticles are the formulation",
+      "replacement_smiles": "C1=CC(=CC=C1/C=C/C2=CC(=CC(=C2)O)O)O",
+      "replacement_inchikey": "LUKBXSAWLPMMSZ-OWOJBTEDSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:445154",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/445154",
+      "evidence_note": "The source explicitly names resveratrol, whereas the stored structure is trimethoxystilbene. PubChem CID 445154 supplies the trans-resveratrol identity used as the replacement."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 145961,
+      "source_record_id": "145960",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "001b873a165fbd15cc20ea7fa72affe6891346405a01b9140700b48b9836d0fe",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "O=c1cc(-c2ccc(O)cc2)oc2cc(O)cc(O)c12.OC[C@@H](O)[C@@H](O)[C@H](O)[C@H](O)CO",
+      "support_text": "Apigenin-loaded W/O/W emulsions prepared by multilayer emulsion showed an oral bioavailability improvement of 4 times (AUC values).",
+      "pmid": "29115900",
+      "explicit_resolved_name": "apigenin",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/29115900/",
+      "indexed_subject_role": "apigenin is the indexed active; the W/O/W emulsion is its formulation",
+      "replacement_smiles": "C1=CC(=CC=C1C2=CC(=O)C3=C(C=C(C=C3O2)O)O)O",
+      "replacement_inchikey": "KZNIFHPLKGYRTM-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:5280443",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/5280443",
+      "evidence_note": "The source explicitly names apigenin, but the stored value contains apigenin plus an unrelated sorbitol component. PubChem CID 5280443 supplies the single-compound apigenin replacement."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 159542,
+      "source_record_id": "159541",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "00220cf55ae1ea02128e6970585574b6678df406dccb60c4bf777cf9e843bb87",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "NC1(C(=O)N[C@@H](CCO)c2ccc(Cl)cc2)CCN(c2ncnc3[nH]ccc23)CC1",
+      "support_text": "GSK2636771 is an orally bioavailable inhibitor that induces apoptosis in p110β expressing cells; in patients with advanced solid tumors, a dose of 400 mg/day was influential.",
+      "pmid": "33452624",
+      "explicit_resolved_name": "GSK2636771",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/33452624/",
+      "indexed_subject_role": "GSK2636771 is the indexed orally bioavailable inhibitor",
+      "replacement_smiles": "CC1=C(C=CC=C1C(F)(F)F)CN2C(=NC3=C(C=C(C=C32)N4CCOCC4)C(=O)O)C",
+      "replacement_inchikey": "XTKLTGBKIDQGQL-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:56949517",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/56949517",
+      "evidence_note": "The stored structure resolves to capivasertib rather than GSK2636771. PubChem CID 56949517 supplies GSK2636771."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 1980,
+      "source_record_id": "1979",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "002b39f9fa11454f42b936d494e6ce8565a4ecf4b6e22ec600a8c0100ee32f04",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "O=C(O)[C@H](O)Cc1ccc(O)c(O)c1",
+      "support_text": "The oral bioavailability of cryptotanshinone in rats was reported as 2.05%.",
+      "pmid": "18340563",
+      "explicit_resolved_name": "cryptotanshinone",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/18340563/",
+      "indexed_subject_role": "cryptotanshinone is the indexed oral-bioavailability subject",
+      "replacement_smiles": "C[C@H]1COC2=C1C(=O)C(=O)C3=C2C=CC4=C3CCCC4(C)C",
+      "replacement_inchikey": "GVKKJJOMQCNPGB-JTQLQIEISA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:160254",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/160254",
+      "evidence_note": "The source names cryptotanshinone, while the stored structure is danshensu. PubChem CID 160254 supplies cryptotanshinone."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 135620,
+      "source_record_id": "135619",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "002e2b642739479d00ac386ddde491f3f6e913e4df40d82f59a651f6cdfb4c3f",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "CCNC(=O)C[C@@H]1N=C(c2ccc(Cl)cc2)c2cc(OC)ccc2-n2c(C)nnc21",
+      "support_text": "Phase 1 evaluation in patients with relapsed or refractory lymphoma showed that CPI-0610 demonstrated good oral bioavailability and stability (t1/2 = 23 h).",
+      "pmid": "34458810",
+      "explicit_resolved_name": "CPI-0610 / pelabresib",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/34458810/",
+      "indexed_subject_role": "CPI-0610 is the indexed orally bioavailable investigational drug",
+      "replacement_smiles": "CC1=NOC2=C1C3=CC=CC=C3C(=N[C@H]2CC(=O)N)C4=CC=C(C=C4)Cl",
+      "replacement_inchikey": "GCWIQUVXWZWCLE-INIZCTEOSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:57389999",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/57389999",
+      "evidence_note": "The source names CPI-0610, but the stored structure is an unrelated compound. PubChem CID 57389999 identifies CPI-0610 (pelabresib)."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "hf_bioavailability",
+      "source_row_number": 101050,
+      "source_record_id": "101049",
+      "source_sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+      "sample_hash": "00316bf526c6ff9fc8645ebd509de97ec894112b6850df40692aee3232ae0817",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "Cn1c(N)nc2c3cccnc3ccc21",
+      "support_text": "Following oral administration of MeIQx, the amounts of labelled material excreted in urine and faeces are very similar to those following i.v. or i.p. dosing, suggesting that oral MeIQx is extensively bio-available.",
+      "pmid": "1683547",
+      "explicit_resolved_name": "MeIQx",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/1683547/",
+      "indexed_subject_role": "MeIQx is the indexed orally administered heterocyclic amine",
+      "replacement_smiles": "CC1=CN=C2C=CC3=C(C2=N1)N=C(N3C)N",
+      "replacement_inchikey": "DVCCCQNKIYNAKB-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:62275",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/62275",
+      "evidence_note": "The stored structure resolves to MeIQ, not MeIQx. PubChem CID 62275 supplies MeIQx."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 62308,
+      "source_record_id": "ext_21",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "00105ccf72023f426c28c269b22d08156e22205ed7f8dd6606054eea91a0f925",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "Cc1nc(-c2ccc(OCC(C)C)c(C#N)c2)sc1C(=O)O",
+      "support_text": "The pellet formulation released 88.76 % of fexofenadine in phosphate buffer pH 7.4 within 30 min.",
+      "pmid": "31346822",
+      "explicit_resolved_name": "fexofenadine",
+      "source_global_identifier": "SMILES:2870229",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/31346822/",
+      "indexed_subject_role": "fexofenadine is the indexed released drug; the pellet is the formulation",
+      "replacement_smiles": "CC(C)(C1=CC=C(C=C1)C(CCCN2CCC(CC2)C(C3=CC=CC=C3)(C4=CC=CC=C4)O)O)C(=O)O",
+      "replacement_inchikey": "RWTNPBWLLIMQHL-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:3348",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/3348",
+      "evidence_note": "The support text names fexofenadine, but the stored structure is febuxostat. PubChem CID 3348 supplies fexofenadine."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 23566,
+      "source_record_id": "ext_30",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "002a70e092cab70737c30785cf9c6fe26d2cfec177e2793617c4fdc14b41abd4",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "O=C(O)[C@H]1/C(=C/CO)O[C@@H]2CC(=O)N21",
+      "support_text": "Based on mass‑balance, the human permeability of amoxicillin for the 250 mg dose was reported as 1.23 × 10⁻⁴ cm/s and classified as high.",
+      "pmid": "28483422",
+      "explicit_resolved_name": "amoxicillin",
+      "source_global_identifier": "SMILES:3640303",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/28483422/",
+      "indexed_subject_role": "amoxicillin is the indexed permeability subject",
+      "replacement_smiles": "CC1([C@@H](N2[C@H](S1)[C@@H](C2=O)NC(=O)[C@@H](C3=CC=C(C=C3)O)N)C(=O)O)C",
+      "replacement_inchikey": "LSQZJLSUYDQPKJ-NJBDSQKTSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:33613",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/33613",
+      "evidence_note": "The support text names amoxicillin, while the stored structure is clavulanic acid. PubChem CID 33613 supplies amoxicillin."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 53272,
+      "source_record_id": "ext_11",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "0004027eba6f9874865e88dd2debe58a75d4245305833bc0cfcda3a05af5a7ec",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "CCC(=O)O.CCC[C@H](N)C(=O)O",
+      "support_text": "Table 2 lists the hepatic first‑pass bioavailability (Fh) for S‑VP as 0.130.",
+      "pmid": "18617604",
+      "explicit_resolved_name": "(S)-verapamil (S-VP)",
+      "source_global_identifier": "SMILES:946437",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/18617604/",
+      "indexed_subject_role": "S-VP is the indexed enantiomer for the hepatic first-pass measurement",
+      "replacement_smiles": "CC(C)[C@](CCCN(C)CCC1=CC(=C(C=C1)OC)OC)(C#N)C2=CC(=C(C=C2)OC)OC",
+      "replacement_inchikey": "SGTNSNPWRIOYBX-MHZLTWQESA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:92305",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/92305",
+      "evidence_note": "The support text identifies S-VP, whereas the stored value is a small amino-acid/propionate mixture unrelated to verapamil. PubChem CID 92305 supplies (S)-verapamil."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 53269,
+      "source_record_id": "ext_8",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "002bc32f049246c6fae83b61e23134f569d999fadd9cc1c29e79fadb4c31ee66",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "CCC(=O)O.CCC[C@@H](N)C(=O)O",
+      "support_text": "Table 2 reports that the hepatic blood clearance of R‑VP was 47.0 ml/min/kg.",
+      "pmid": "18617604",
+      "explicit_resolved_name": "(R)-verapamil (R-VP)",
+      "source_global_identifier": "SMILES:946436",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/18617604/",
+      "indexed_subject_role": "R-VP is the indexed enantiomer for the hepatic-clearance measurement",
+      "replacement_smiles": "CC(C)[C@@](CCCN(C)CCC1=CC(=C(C=C1)OC)OC)(C#N)C2=CC(=C(C=C2)OC)OC",
+      "replacement_inchikey": "SGTNSNPWRIOYBX-HHHXNRCGSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:65808",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/65808",
+      "evidence_note": "The support text identifies R-VP, whereas the stored value is a small amino-acid/propionate mixture unrelated to verapamil. PubChem CID 65808 supplies (R)-verapamil."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 12278,
+      "source_record_id": "ext_24",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "000b76ddd848c36e3a18f028d983be608e3142253119d7641c2747659691269e",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "O=C1c2ccccc2-c2n[nH]c3cccc1c23",
+      "support_text": "Recombinant UGT2B7 with 0.5 % crude BSA gave a CLint for AZT of 0.569 µl/min·mg.",
+      "pmid": "17237258",
+      "explicit_resolved_name": "AZT / zidovudine",
+      "source_global_identifier": "SMILES:3841576",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/17237258/",
+      "indexed_subject_role": "AZT is the indexed UGT2B7 substrate",
+      "replacement_smiles": "CC1=CN(C(=O)NC1=O)[C@H]2C[C@@H]([C@H](O2)CO)N=[N+]=[N-]",
+      "replacement_inchikey": "HBOMLICNUCNMMY-XLPZGREQSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:35370",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/35370",
+      "evidence_note": "The support text names AZT, but the stored fused aromatic heterocycle is unrelated. PubChem CID 35370 supplies zidovudine (AZT)."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "oral_exposure",
+      "source_row_number": 63069,
+      "source_record_id": "ext_45",
+      "source_sha256": "92cbbc2fc49c00617052a7cf6ce9b3f408e0ed1ed7ff9248b31c7c1987897796",
+      "sample_hash": "001f55139934195969ff86c05894ef5ba92a3412ce55dd8497e485fc4401d20a",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "O=c1cc(-c2ccccc2)oc2cc(O)c(O)c(O)c12",
+      "support_text": "The Cmax for Berberine nanocrystals after oral dosing to rats (n = 6) was 7993.59 ± 1257.51 ng/ml (mean ± SD).",
+      "pmid": "32104447",
+      "explicit_resolved_name": "berberine",
+      "source_global_identifier": "SMILES:4028577",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/32104447/",
+      "indexed_subject_role": "berberine is the indexed oral-exposure analyte; nanocrystals are the formulation",
+      "replacement_smiles": "COC1=C(C2=C[N+]3=C(C=C2C=C1)C4=CC5=C(C=C4CC3)OCO5)OC",
+      "replacement_inchikey": "YBHILYKTIRIUTE-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:2353",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/2353",
+      "evidence_note": "The support text names berberine, but the stored structure is baicalein. PubChem CID 2353 supplies berberine."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "oral_exposure",
+      "source_row_number": 44546,
+      "source_record_id": "ext_20",
+      "source_sha256": "92cbbc2fc49c00617052a7cf6ce9b3f408e0ed1ed7ff9248b31c7c1987897796",
+      "sample_hash": "00314f4f30eee631f2261a0f4429050671493c9580be220ff45ddc08be3d590b",
+      "classification": "confirmed_mismatch_repairable",
+      "stored_smiles": "CC(C)OC(=O)OCOP(=O)(CO[C@H](C)Cn1cnc2c(N)ncnc21)OCOC(=O)OC(C)C.Nc1nc(=O)n([C@@H]2CS[C@H](CO)O2)cc1F.O=C(O)/C=C/C(=O)O.O=C1Nc2ccc(Cl)cc2[C@@](C#CC2CC2)(C(F)(F)F)O1",
+      "support_text": "The mean AUC0‑last for emtricitabine (FTC) after the test treatment was 10,700 ng·h/mL with a %CV of 18.1.",
+      "pmid": "17667331",
+      "explicit_resolved_name": "emtricitabine (FTC)",
+      "source_global_identifier": "SMILES:708194",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/17667331/",
+      "indexed_subject_role": "emtricitabine is the indexed test-treatment PK analyte; coadministered antiretrovirals are not the subject of this row",
+      "replacement_smiles": "C1[C@H](O[C@H](S1)CO)N2C=C(C(=NC2=O)N)F",
+      "replacement_inchikey": "XQSPYNMVSIKCOC-NTSWFWBYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:60877",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/60877",
+      "evidence_note": "The support text reports FTC AUC, while the stored value is a four-component antiretroviral mixture. PubChem CID 60877 supplies the single-compound emtricitabine identity."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 11614,
+      "source_record_id": "ext_21",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "001c9c7cf2b0495b7fcf603113b0e0f781a40b85a6bcee04048c45d78f1fff7c",
+      "classification": "missing_smiles_repairable",
+      "stored_smiles": null,
+      "support_text": "In buffer at pH 7 the half‑life of nobilin was 1.8 h.",
+      "pmid": "25176605",
+      "explicit_resolved_name": "nobilin",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/25176605/",
+      "indexed_subject_role": "nobilin is the indexed stability subject",
+      "replacement_smiles": "C/C=C(\\C)/C(=O)O[C@H]1C/C(=C/C[C@@H](/C(=C\\[C@H]2[C@@H]1C(=C)C(=O)O2)/C)O)/C",
+      "replacement_inchikey": "QFINJHBXXJQKPB-UNYVMELBSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:102597438",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/102597438",
+      "evidence_note": "The row lacks SMILES but explicitly names nobilin. PubChem CID 102597438 supplies a defined nobilin structure."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fg",
+      "source_row_number": 19989,
+      "source_record_id": "ext_44",
+      "source_sha256": "d93a713eb1b9789cd909852b1cec0f69dfade62f730d2ee73d2d03fae1d1e0a3",
+      "sample_hash": "0026cad4c5b9a4df9c13c6178ebd9f3116c6a9f597bde4e6d64293a981dbb4c5",
+      "classification": "missing_smiles_repairable",
+      "stored_smiles": null,
+      "support_text": "Primaquine evaluated in buffer gave 66 % A‑B mass balance, A‑B Papp 29 ± 4.5 × 10⁻⁶ cm/s, 99 % B‑A mass balance, B‑A Papp 34 ± 1.5 × 10⁻⁶ cm/s and an efflux ratio of 1.2.",
+      "pmid": "31898492",
+      "explicit_resolved_name": "primaquine",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/31898492/",
+      "indexed_subject_role": "primaquine is the indexed bidirectional-permeability subject",
+      "replacement_smiles": "CC(CCCN)NC1=C2C(=CC(=C1)OC)C=CC=N2",
+      "replacement_inchikey": "INDBQLZJXZLFIT-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:4908",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/4908",
+      "evidence_note": "The row lacks SMILES but explicitly names primaquine. PubChem CID 4908 supplies primaquine."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "oral_exposure",
+      "source_row_number": 116876,
+      "source_record_id": "ext_10",
+      "source_sha256": "92cbbc2fc49c00617052a7cf6ce9b3f408e0ed1ed7ff9248b31c7c1987897796",
+      "sample_hash": "0006a77fb0f9a3c78d644b30a3306a8a6e10a87bf094248a8b46992a50a3aad6",
+      "classification": "missing_smiles_repairable",
+      "stored_smiles": null,
+      "support_text": "The enteric‑coated tablet reached its Tmax at 3.4 h (lag‑time ≈ 2 h) after the 250 mg oral dose.",
+      "pmid": "17208410",
+      "explicit_resolved_name": "valproic acid / divalproex sodium",
+      "source_global_identifier": "CHEBI:60654",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/17208410/",
+      "indexed_subject_role": "the indexed analyte is valproate from the enteric-coated divalproex formulation; adjacent records under the same PMID explicitly identify VPA/divalproex",
+      "replacement_smiles": "CCCC(CCC)C(=O)O",
+      "replacement_inchikey": "NIJJYAXOARWZEE-UHFFFAOYSA-N",
+      "replacement_evidence_source": "PubChem",
+      "replacement_evidence_identifier": "CID:3121",
+      "replacement_evidence_url": "https://pubchem.ncbi.nlm.nih.gov/compound/3121",
+      "evidence_note": "This row omits the drug name and SMILES, but its same-PMID record block identifies the 250 mg enteric-coated formulation as divalproex sodium/VPA and later rows store valproic acid. PubChem CID 3121 supplies valproic acid."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 25234,
+      "source_record_id": "ext_12",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "0022127a01e54f338c30be27382fc5fca358235dda64913f77b236a199a1e7e1",
+      "classification": "confirmed_mismatch_unrepairable_drop",
+      "stored_smiles": "CC(=O)N[C@H](CC(=O)O)C(=O)N[C@H](Cc1c[nH]c2ccccc12)C(=O)N[C@H](Cc1ccccc1)C(=O)N[C@H](CCCCN)C(=O)N[C@H](C)C(=O)N[C@H](Cc1ccccc1)C(=O)N[C@H](Cc1ccc(O)cc1)C(=O)N[C@H](CC(=O)O)C(=O)N[C@H](CCCCN)C(=O)N[C@@H](C(=O)N[C@H](C)C(=O)N[C@H](CCC(=O)O)C(=O)N[C@H](CCCCN)C(=O)N[C@H](Cc1ccccc1)C(=O)N[C@H](CCCCN)C(=O)N[C@H](CCC(=O)O)C(=O)N[C@H](C)C(=O)N[C@H](Cc1ccccc1)C(N)=O)C(C)C",
+      "support_text": "The rat large intestine effective permeability (Peff) of FD-4 in the control condition was reported as 0.36±0.05 ×10^5 cm/s.",
+      "pmid": "9657048",
+      "explicit_resolved_name": "FD-4 / fluorescein isothiocyanate-dextran 4 kDa",
+      "source_global_identifier": "SMILES:377343",
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/9657048/",
+      "indexed_subject_role": "FD-4 is the indexed intestinal-permeability probe",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The support text identifies FD-4, whereas the stored SMILES is an unrelated defined peptide. FD-4 is a heterogeneous approximately 4 kDa FITC-dextran preparation, so no single exact small-molecule replacement SMILES/InChIKey can be assigned without inventing a structure."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 17809,
+      "source_record_id": "ext_24",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "000c2e8696e14231febd0f138dfcbe22feb60442f7f489a4ebfa205c0bac5aa3",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "With the P‑gp inhibitor CSA, GSKA showed a Papp (A‑B) of 18.6 ×10⁻⁶ cm/s.",
+      "pmid": "32565354",
+      "explicit_resolved_name": "GSKA",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/32565354/",
+      "indexed_subject_role": "GSKA is the indexed P-gp permeability subject; CSA is the inhibitor condition",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The paper-local code GSKA has no structure in the row and no authoritative exact chemical identity was resolved. A replacement would require guessing."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 25974,
+      "source_record_id": "ext_25",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "0016a69dc283e0dc770ebab38e938e83c9934866df254af3c32cbd1e9c217a4a",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "Table 2 lists compound 25 with a Caco-2 permeability of 1.00 ×10⁻⁶ cm/s.",
+      "pmid": "16411277",
+      "explicit_resolved_name": "compound 25",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/16411277/",
+      "indexed_subject_role": "compound 25 is the indexed Caco-2 permeability subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The row provides only a paper-local compound number and no structure. No authoritative exact identity was resolved from the available provenance."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 26347,
+      "source_record_id": "ext_16",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "00195a77da1cf95f46513fff31452c7115494e218e4d35c7722556fd290ee2c0",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "Table 4 reports that MTB4 has a solubility of 3.91 mg/mL in simulated fasted state gastric fluid (FaSSGF).",
+      "pmid": "31460070",
+      "explicit_resolved_name": "MTB4",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/31460070/",
+      "indexed_subject_role": "MTB4 is the indexed solubility subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "MTB4 is a paper-local formulation or solid-form code without a resolvable exact parent structure in the row. No trustworthy single replacement was identified."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 58065,
+      "source_record_id": "ext_19",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "001e092ea8893a2614a3eb9209c031cdbb978e265aa8eacfb3f8569dfe14783a",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "L 14085 absorbed 64.3 % of the administered product within one hour in the in situ rat intestinal experiment.",
+      "pmid": "7077522",
+      "explicit_resolved_name": "L 14085",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/7077522/",
+      "indexed_subject_role": "L 14085 is the indexed intestinal-absorption subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The legacy code L 14085 is not accompanied by a structure, and no authoritative exact identity was resolved from the available provenance."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 35945,
+      "source_record_id": "ext_13",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "00291f5d9020aff775734f9fbdf62ab38296a6594536b69b0bbea4d5935d38f9",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "Table shows that Compound 13 has a solubility of 0.084 mg/mL in JP‑2 (pH 6.8) at 37 °C.",
+      "pmid": "7855049",
+      "explicit_resolved_name": "compound 13",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/7855049/",
+      "indexed_subject_role": "compound 13 is the indexed solubility subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The row provides only a paper-local compound number and no structure. No authoritative exact identity was resolved from the available provenance."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fa",
+      "source_row_number": 57907,
+      "source_record_id": "ext_8",
+      "source_sha256": "0e4fd1b455a2e2767e4db2e572ff2881dfe8262a436573cf9791ac5d6766d1da",
+      "sample_hash": "002a0422c68300b9be373f3ba45b1f378980e3e5c389703c8361c56506a41581",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "Table III reports for CEX EtAA a half‑life (t0.5) of 98 min for the hydrolysis reaction in phosphate buffer at pH 7.4 and 25 °C.",
+      "pmid": "6796278",
+      "explicit_resolved_name": "CEX EtAA",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/6796278/",
+      "indexed_subject_role": "CEX EtAA is the indexed hydrolysis subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "CEX EtAA is described only by a derivative abbreviation; the exact cephalexin enamine derivative structure is not specified sufficiently to assign a trustworthy SMILES/InChIKey."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 34883,
+      "source_record_id": "ext_5",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "00043c9fa48440cd9db12a805fca74a7713cc990c8ecf8493236293c4b6d084b",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "In the Stratford study, analog 341908 showed a 1.6‑fold improvement in % metabolized relative to lead 153186 when tested in rat liver microsomes.",
+      "pmid": "11579441",
+      "explicit_resolved_name": "analog 341908",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/11579441/",
+      "indexed_subject_role": "analog 341908 is the indexed microsomal-metabolism subject; lead 153186 is the comparator",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The row supplies only a paper-local analog number and no structure. No authoritative exact identity was resolved from the available provenance."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 54192,
+      "source_record_id": "ext_17",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "000bf7cf86dd425b0fbb304eb2b33c61dc0a370a95636d457d754de316dc2abe",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "Table p:119 reports rat hepatocyte intrinsic clearance for compound 57 as <4 µL/min/10^6 cells.",
+      "pmid": "33800801",
+      "explicit_resolved_name": "compound 57",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/33800801/",
+      "indexed_subject_role": "compound 57 is the indexed rat-hepatocyte clearance subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The row supplies only a paper-local compound number and no structure. No authoritative exact identity was resolved from the available provenance."
+    },
+    {
+      "candidate_ledger_version": "bioavailability_ma_smiles_identity_candidates.v1",
+      "task_id": "bioavailability_ma",
+      "source_id": "fh",
+      "source_row_number": 59010,
+      "source_record_id": "ext_28",
+      "source_sha256": "d4249a9d1c4184c7fb63eb800fa2806e7c33fc2c7a141f6518191576438cf16e",
+      "sample_hash": "00232f5cd18e646f1e09f09e16f5fe17ef1de0a1233233f5afb06a17cb0fdb3b",
+      "classification": "missing_smiles_unrepairable_drop",
+      "stored_smiles": null,
+      "support_text": "In rat liver microsomes, compound 1 showed an intrinsic clearance (CLINT) of 31 mL/min/kg.",
+      "pmid": "29894182",
+      "explicit_resolved_name": "compound 1",
+      "source_global_identifier": null,
+      "evidence_url": "https://pubmed.ncbi.nlm.nih.gov/29894182/",
+      "indexed_subject_role": "compound 1 is the indexed rat-liver-microsome clearance subject",
+      "replacement_smiles": null,
+      "replacement_inchikey": null,
+      "replacement_evidence_source": null,
+      "replacement_evidence_identifier": null,
+      "replacement_evidence_url": null,
+      "evidence_note": "The row supplies only a paper-local compound number and no structure. No authoritative exact identity was resolved from the available provenance."
+    }
+  ],
+  "candidate_file": {
+    "path": "/tmp/bio333_candidates.jsonl",
+    "sha256": "bbf0c4d11811b2c9ad6e6d1b001b9e37499d5d1e4dc3a5b74ff57a7503579e5e",
+    "rows": 26
+  }
+}

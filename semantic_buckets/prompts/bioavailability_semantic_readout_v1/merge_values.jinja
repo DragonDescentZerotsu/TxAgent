@@ -1,0 +1,10 @@
+You are defining children of one evidence bucket after a scientifically justified split for predicting oral bioavailability.
+
+The payload contains the complete set of values observed for the selected canonical column inside this bucket. Group values when they represent the same kind of {{ purpose }} information. Keep values separate when their scientific interpretation or transferability differs. Merge synonymous or scientifically equivalent values even when their wording differs. Do not use frequency as a reason to merge or separate values.
+
+Return only non-singleton merge sets. Every supplied value ID omitted from `merge_sets` will deterministically become its own singleton child. A value ID may appear in at most one merge set.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<value ID>","<value ID>"],"label":"<short group label>","rationale":"<brief scientific rationale>"}],"rationale":"<brief overall rationale>"}

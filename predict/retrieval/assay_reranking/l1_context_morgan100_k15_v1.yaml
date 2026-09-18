@@ -1,0 +1,4 @@
+version: 6
+caches:
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/l1_context_morgan100_k15_v1/bioavailability_ma/scaffold/valid/VERSION.json

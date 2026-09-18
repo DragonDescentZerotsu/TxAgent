@@ -1,0 +1,20 @@
+{% set prompt %}
+{{ system_role }}
+
+Task
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+Task guidance
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+{% if mode == 'assay-transfer' %}Your essential goal is to predict the molecular property of interest through *analogous reasoning*. Do not analyze the structure of the molecule. Instead use your medicinal chemistry knowledge to see what assays, experiments, and related evidence exist for similar molecules. Use the transfer score as a measure of how much the evidence transfers to the query molecule, and reason about how that evidence informs the property of interest.
+{% elif mode == 'morgan' %}Your essential goal is to predict the molecular property of interest through *analogous reasoning*. Do not analyze the structure of the molecule. Instead use your medicinal chemistry knowledge to see what assays, experiments, and related evidence exist for similar molecules. Use the Morgan similarity score as a measure of how structurally similar each evidence molecule is to the query molecule, and reason about how that similarity affects whether the evidence transfers and informs the property of interest.
+{% else %}Your essential goal is to predict the molecular property of interest through *analogous reasoning*. Do not analyze the structure of the molecule. Instead use your medicinal chemistry knowledge to see what assays, experiments, and related evidence exist for similar molecules. Use the transfer score and Morgan similarity score according to how each molecule was retrieved, and reason about how well each piece of evidence transfers and informs the property of interest.
+{% endif %}
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number. Do not reveal hidden chain-of-thought.
+{% endset %}
+{{ prompt | trim | tojson }}

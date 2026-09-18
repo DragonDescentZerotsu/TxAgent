@@ -52,6 +52,9 @@ class ConditionedBenchmarkConfig:
     )
     seed: int = 20260818
     split_targets: tuple[float, float, float] = (0.8, 0.1, 0.1)
+    frozen_voter_membership: Path | None = None
+    voter_membership_stage1_sha256: str | None = None
+    voter_membership_provenance: Mapping[str, Any] | None = None
 
 
 def build_reviewed_conditioned_benchmark(
@@ -181,6 +184,38 @@ def build_reviewed_conditioned_benchmark(
     write_jsonl_atomic(root / "rejected_parent_conditions.jsonl", rejected_units)
     write_jsonl_atomic(root / "group_gate_rejected_parent_conditions.jsonl", group_rejected)
 
+    membership_manifest = None
+    if config.frozen_voter_membership is not None:
+        import pyarrow.parquet as pq
+
+        from data.processing.gold_labels.voter_membership import (
+            materialize_voter_membership,
+            write_voter_membership,
+        )
+
+        external_membership = materialize_voter_membership(
+            task_name=config.task_name,
+            vote_groups=votes,
+            published_aggregates=external_rows,
+            rejected_parent_aggregates=rejected_units,
+            group_gate_rejected_aggregates=group_rejected,
+        )
+        frozen_membership = pq.read_table(
+            config.frozen_voter_membership
+        ).to_pylist()
+        membership_manifest = write_voter_membership(
+            root / "voter_membership.parquet",
+            [*frozen_membership, *external_membership],
+            stage1_sha256=config.voter_membership_stage1_sha256,
+            provenance={
+                **dict(config.voter_membership_provenance or {}),
+                "frozen_voter_membership": str(config.frozen_voter_membership),
+                "frozen_voter_membership_sha256": sha256_file(
+                    config.frozen_voter_membership
+                ),
+            },
+        )
+
     group_distribution = summarize_groups(combined)
     _write_csv(root / "group_distribution.csv", group_distribution)
     summary = _summary(
@@ -196,6 +231,12 @@ def build_reviewed_conditioned_benchmark(
         preallocation=preallocation,
         allocation_audit=allocation_audit,
         group_distribution=group_distribution,
+    )
+    summary["voter_membership"] = membership_manifest
+    summary["paths"]["voter_membership"] = (
+        str(root / "voter_membership.parquet")
+        if membership_manifest is not None
+        else None
     )
     write_json_atomic(root / "summary.json", summary)
     return summary
@@ -314,7 +355,17 @@ def aggregate_reviewed_votes(
     votes: Mapping[tuple[str, str], Sequence[Mapping[str, Any]]],
     *,
     agreement_threshold: float,
+    preserved_majorities: Mapping[tuple[str, str], int] | None = None,
+    preserved_agreement_threshold: float | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    if preserved_agreement_threshold is not None and not (
+        0.5 < preserved_agreement_threshold <= agreement_threshold
+    ):
+        raise ValueError(
+            "preserved_agreement_threshold must be above 0.5 and no greater "
+            "than agreement_threshold"
+        )
+    preserved_majorities = preserved_majorities or {}
     accepted: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
     for (parent, group), source_rows in sorted(votes.items()):
@@ -323,6 +374,15 @@ def aggregate_reviewed_votes(
         n0, n1 = counts.get(0, 0), counts.get(1, 0)
         majority = 1 if n1 > n0 else 0
         agreement = max(n0, n1) / len(rows)
+        preserved = (
+            n0 != n1
+            and preserved_agreement_threshold is not None
+            and preserved_majorities.get((parent, group)) == majority
+            and preserved_agreement_threshold <= agreement < agreement_threshold
+        )
+        effective_threshold = (
+            preserved_agreement_threshold if preserved else agreement_threshold
+        )
         base = {
             "drug": rows[0]["drug"],
             "molecule_identity_key": parent,
@@ -337,7 +397,7 @@ def aggregate_reviewed_votes(
             "majority_record_count": max(n0, n1),
             "minority_record_count": min(n0, n1),
             "agreement_fraction": agreement,
-            "agreement_threshold": agreement_threshold,
+            "agreement_threshold": effective_threshold,
             "vote_unit": "terminally_reviewed_source_record",
             "source_record_ids": _unique(row["source_record_id"] for row in rows),
             "source_pmids": _unique(row.get("pmid", "") for row in rows),
@@ -352,14 +412,22 @@ def aggregate_reviewed_votes(
         }
         if n0 == n1:
             rejected.append({**base, "drop_reason": "parent_condition_label_tie"})
-        elif agreement < agreement_threshold:
+        elif agreement < agreement_threshold and not preserved:
             rejected.append({**base, "drop_reason": "parent_condition_agreement_below_threshold"})
         else:
             accepted.append(
                 {
                     **base,
                     "Y": majority,
-                    "label_decision": "unanimous" if min(n0, n1) == 0 else "accepted_record_majority_60",
+                    "label_decision": (
+                        "unanimous"
+                        if min(n0, n1) == 0
+                        else (
+                            "accepted_preserved_record_majority"
+                            if preserved
+                            else "accepted_record_majority_60"
+                        )
+                    ),
                 }
             )
     return accepted, rejected

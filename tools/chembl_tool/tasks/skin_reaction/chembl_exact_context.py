@@ -1,7 +1,7 @@
-"""Compatibility import for predict.harnesses.branches.tasks.skin_reaction.context."""
+"""Compatibility import for predict.harnesses.branches.tasks.skin_reaction.contract."""
 
-from predict.harnesses.branches.tasks.skin_reaction.context import *  # noqa: F401,F403
-from predict.harnesses.branches.tasks.skin_reaction.context import __dict__ as _implementation
+from predict.harnesses.branches.tasks.skin_reaction.contract import *  # noqa: F401,F403
+from predict.harnesses.branches.tasks.skin_reaction.contract import __dict__ as _implementation
 
 
 def __getattr__(name: str):

@@ -1,0 +1,26 @@
+{
+  "version": "reranked_progressive_l1_simple_v6",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "parent": "reranked_progressive_v8",
+  "status": "pilot_candidate",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": false,
+    "tools": false,
+    "user_template": "user.jinja"
+  },
+  "changes": [
+    "Retain the v5 evidence-only assay-transfer decision procedure and provenance-conflict handling.",
+    "Classify each molecule once from its strongest condition-matched numeric evidence and emit JSON immediately.",
+    "Eliminate independent card-list selection by deriving every provenance array from exactly one cited card per claim."
+  ],
+  "historical_predictions_reused": false,
+  "parent_version": "reranked_progressive_l1_simple_v5",
+  "cloned_at": "2026-09-10T05:52:00-04:00",
+  "cloned_from_run": "bioavailability_ma/progressive_assay-transfer_assay-transfer-trained_records50/2026-09-10_05-43"
+}

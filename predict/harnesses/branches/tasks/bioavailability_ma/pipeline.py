@@ -19,7 +19,7 @@ from predict.retrieval.assay_reranking.v9 import (
     default_cache_paths as v9_default_cache_paths,
     model_profile as v9_model_profile,
 )
-from predict.harnesses.branches.assay_transfer_prompt import (
+from predict.harnesses.branches.prompt import (
     SCORED_NEIGHBORS_POLICY_NAME,
     prepare_assay_transfer_selected_neighbors,
     public_assay_transfer_score,
@@ -37,7 +37,7 @@ from predict.harnesses.branches.assay_transfer import (
     validate_assay_transfer_diversity,
     validate_assay_transfer_records_per_molecule,
 )
-from predict.harnesses.branches.retrieval_cli import add_retrieval_strategy_args
+from predict.harnesses.branches.runner import add_retrieval_strategy_args
 from predict.harnesses.branches.retrieval import (
     ASSAY_TRANSFER_TOOL_STRATEGY,
     EXPERIMENT_MODES,
@@ -65,7 +65,7 @@ from predict.harnesses.branches.reasoning.final_decision import (
     build_final_decision_prompt,
     final_decision_validation_errors,
 )
-from predict.harnesses.branches.reasoning.identity_blind import (
+from predict.harnesses.branches.visibility import (
     expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
     query_without_prefetched_tools,
@@ -77,19 +77,23 @@ from predict.harnesses.branches.analogous_flat_prompt import (
     reason_final as reason_analogous_flat_final,
     reason_group as reason_analogous_flat_group,
 )
+from predict.harnesses.branches.flat import (
+    flat_group_validation,
+    render_flat_group_messages,
+)
 from predict.utils.json import parse_json_content
 from predict.retrieval.policies import (
     NEIGHBOR_SELECTORS,
     SIMILARITY_SELECTOR,
 )
 from predict.retrieval.policies import NEIGHBOR_IDENTITY_POLICIES
-from predict.llm_engine.client import OpenAICompatibleClient
-from predict.llm_engine.pool import load_env_file as _load_env
+from predict.api_client.client import OpenAICompatibleClient
+from predict.api_client.pool import load_env_file as _load_env
 from predict.tasks.prompt_profiles import (
     prompt_profile_from_manifest,
     require_matching_prompt_profiles,
 )
-from predict.harnesses.branches.payload import (
+from predict.harnesses.branches.prompt import (
     attach_external_condition,
     clean_exact_match as _clean_exact_match,
     clean_shared_assay_context as _clean_shared_assay_context,
@@ -100,7 +104,7 @@ from predict.harnesses.branches.artifacts import (
     read_jsonl_record as _read_jsonl_record,
     write_trace_jsonl,
 )
-from predict.harnesses.branches.reasoning.calls import (
+from predict.harnesses.branches.inference import (
     bound_group_prompt_payload,
     call_group_branch,
     call_single_molecule_branch,
@@ -111,14 +115,14 @@ from predict.llm_io.response import (
     structured_response_is_valid,
     validated_branch_content,
 )
-from predict.harnesses.branches.replay import load_retrieval_replay
-from predict.harnesses.branches.reuse import load_reusable_group_outputs
-from predict.harnesses.branches.tasks.bioavailability_ma.context import (
+from predict.harnesses.branches.artifacts import load_retrieval_replay
+from predict.harnesses.branches.artifacts import load_reusable_group_outputs
+from predict.harnesses.branches.tasks.bioavailability_ma.contract import (
     DEFAULT_CHEMBL_SQLITE,
     enrich_retrieval_with_chembl_context,
 )
 from predict.tasks.bioavailability_ma.constants import BIOAVAILABILITY_HIGH_F_CUTOFF_PERCENT
-from predict.harnesses.branches.tasks.bioavailability_ma.config import (
+from predict.harnesses.branches.tasks.bioavailability_ma.contract import (
     get_source_config,
 )
 from predict.harnesses.branches.tasks.bioavailability_ma.group_prompt import (
@@ -980,9 +984,30 @@ def legacy_group_messages(
     group_tools_enabled: bool = True,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
     omit_query_tools: bool = False,
+    flat_prompt_version: str = "",
+    retrieval_strategy: str = "",
+    flat_reranking: str = "",
 ) -> list[dict[str, str]]:
     """Compile the legacy JSON group-branch [system, user] messages (no LLM needed)."""
     profile = get_bioavailability_prompt_profile(prompt_profile)
+    payload = _group_prompt_payload(
+        query,
+        group,
+        include_assay_transfer_score=include_assay_transfer_score,
+        prompt_profile=prompt_profile,
+        include_query_tool_guidance=not omit_query_tools,
+    )
+    if flat_prompt_version:
+        return render_flat_group_messages(
+            payload,
+            group=group,
+            task_id="bioavailability_ma",
+            task_prompt_profile=prompt_profile,
+            group_tools_enabled=group_tools_enabled,
+            prompt_version=flat_prompt_version,
+            retrieval_strategy=retrieval_strategy,
+            flat_reranking=flat_reranking,
+        )
     return [
         {
             "role": "system",
@@ -994,16 +1019,7 @@ def legacy_group_messages(
         },
         {
             "role": "user",
-            "content": json.dumps(
-                _group_prompt_payload(
-                    query,
-                    group,
-                    include_assay_transfer_score=include_assay_transfer_score,
-                    prompt_profile=prompt_profile,
-                    include_query_tool_guidance=not omit_query_tools,
-                ),
-                ensure_ascii=False,
-            ),
+            "content": json.dumps(payload, ensure_ascii=False),
         },
     ]
 
@@ -1017,9 +1033,12 @@ def _reason_one_group(
     prompt_format: str = "legacy",
     prompt_options: dict[str, Any] | None = None,
     prompt_profile: str = DEFAULT_BIOAVAILABILITY_PROMPT_PROFILE,
+    flat_prompt_version: str = "",
+    retrieval_strategy: str = "",
+    flat_reranking: str = "",
 ) -> dict[str, Any]:
     profile = get_bioavailability_prompt_profile(prompt_profile)
-    if prompt_format == "legacy":
+    if flat_prompt_version or prompt_format == "legacy":
         messages = legacy_group_messages(
             query,
             group,
@@ -1027,6 +1046,9 @@ def _reason_one_group(
             group_tools_enabled=client.enable_group_tools,
             prompt_profile=prompt_profile,
             omit_query_tools=bool((prompt_options or {}).get("omit_query_tools")),
+            flat_prompt_version=flat_prompt_version,
+            retrieval_strategy=retrieval_strategy,
+            flat_reranking=flat_reranking,
         )
     else:
         effective_prompt_options = {
@@ -1041,14 +1063,24 @@ def _reason_one_group(
             prompt_format=prompt_format,
             options=effective_prompt_options,
         )
+    validation = (
+        flat_group_validation(
+            "bioavailability_ma",
+            task_prompt_profile=prompt_profile,
+            prompt_version=flat_prompt_version,
+            group=group,
+        )
+        if flat_prompt_version
+        else group_output_validation(
+            str((prompt_options or {}).get("output_schema_profile", "legacy"))
+        )
+    )
     response = call_group_branch(
         client,
         messages,
         group=group,
         tools=GROUP_REASONING_TOOLS,
-        **group_output_validation(
-            str((prompt_options or {}).get("output_schema_profile", "legacy"))
-        ),
+        **validation,
     )
     return {
         "group_id": group["group_id"],

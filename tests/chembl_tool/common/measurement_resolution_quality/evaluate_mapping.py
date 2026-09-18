@@ -21,7 +21,6 @@ from data.processing.evidence_library.shared.v1.normalization.measurements impor
     parse_point_measurement,
 )
 
-
 HERE = Path(__file__).resolve().parent
 DEFAULT_GOLD = HERE / "gold/bbb_martins.v8.jsonl"
 
@@ -31,9 +30,7 @@ def _load_gold(path: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
     manifest, cases = rows[0], rows[1:]
     if manifest["cases"] != len(cases):
         raise ValueError(f"gold manifest count does not match {path}")
-    by_id = {
-        case["audit_case_id"].split(":", 1)[-1]: case for case in cases
-    }
+    by_id = {case["audit_case_id"].split(":", 1)[-1]: case for case in cases}
     if len(by_id) != len(cases):
         raise ValueError(f"duplicate audit_case_id in {path}")
     return manifest, by_id
@@ -43,7 +40,7 @@ def _pairs(row: dict[str, Any]) -> list[dict[str, str]]:
     value = row.get("measurements_json") or "[]"
     pairs = json.loads(value) if isinstance(value, str) else value
     if not isinstance(pairs, list):
-        raise ValueError("measurements_json must contain a list")
+        raise ValueError("measurements_json must contain a list")  # noqa: TRY004
     return pairs
 
 
@@ -80,7 +77,9 @@ def _canonical_pair(pair: dict[str, Any], *, task: str) -> tuple[float, str] | N
 def _pair_matches(
     predicted: dict[str, Any], gold: dict[str, Any], *, task: str
 ) -> tuple[bool, bool, bool]:
-    raw_measurement = _same_number(predicted.get("measurement"), gold.get("measurement"))
+    raw_measurement = _same_number(
+        predicted.get("measurement"), gold.get("measurement")
+    )
     raw_unit = _clean_unit(predicted.get("unit")) == _clean_unit(gold.get("unit"))
     predicted_canonical = _canonical_pair(predicted, task=task)
     gold_scalar = gold.get("expected_scalar")
@@ -95,6 +94,41 @@ def _pair_matches(
     return scalar_match, unit_match, scalar_match and unit_match
 
 
+def _pair_scores(
+    expected: dict[str, Any],
+    predicted_pairs: list[dict[str, str]],
+    answers: list[dict[str, Any]],
+    *,
+    task: str,
+) -> tuple[bool | None, ...]:
+    if expected["status"] != "ok":
+        return (None,) * 6
+    gold_pairs = expected["measurements"]
+    same_length = len(predicted_pairs) == len(gold_pairs)
+    raw_measurement = same_length and all(
+        _same_number(predicted["measurement"], gold["measurement"])
+        for predicted, gold in zip(predicted_pairs, gold_pairs)
+    )
+    raw_unit = same_length and all(
+        _clean_unit(predicted["unit"]) == _clean_unit(gold["unit"])
+        for predicted, gold in zip(predicted_pairs, gold_pairs)
+    )
+    answer_matches = []
+    for answer in answers:
+        answer_pairs = answer["measurements"]
+        if answer["status"] != "ok" or len(predicted_pairs) != len(answer_pairs):
+            continue
+        comparisons = [
+            _pair_matches(predicted, gold, task=task)
+            for predicted, gold in zip(predicted_pairs, answer_pairs)
+        ]
+        answer_matches.append(
+            tuple(all(item[index] for item in comparisons) for index in range(3))
+        )
+    accepted = tuple(any(item[index] for item in answer_matches) for index in range(3))
+    return (*accepted, raw_measurement, raw_unit, raw_measurement and raw_unit)
+
+
 def _score_case(
     case: dict[str, Any], prediction: dict[str, Any], *, task: str
 ) -> dict[str, Any]:
@@ -105,39 +139,14 @@ def _score_case(
     status_match = any(
         prediction.get("status") == answer["status"] for answer in answers
     )
-
-    measurement_match = unit_match = pair_match = None
-    raw_measurement_match = raw_unit_match = raw_pair_match = None
-    if expected["status"] == "ok":
-        same_length = len(predicted_pairs) == len(gold_pairs)
-        raw_measurement_match = same_length and all(
-            _same_number(predicted["measurement"], gold["measurement"])
-            for predicted, gold in zip(predicted_pairs, gold_pairs)
-        )
-        raw_unit_match = same_length and all(
-            _clean_unit(predicted["unit"]) == _clean_unit(gold["unit"])
-            for predicted, gold in zip(predicted_pairs, gold_pairs)
-        )
-        raw_pair_match = raw_measurement_match and raw_unit_match
-        answer_matches = []
-        for answer in answers:
-            answer_pairs = answer["measurements"]
-            if answer["status"] != "ok" or len(predicted_pairs) != len(answer_pairs):
-                continue
-            comparisons = [
-                _pair_matches(predicted, gold, task=task)
-                for predicted, gold in zip(predicted_pairs, answer_pairs)
-            ]
-            answer_matches.append(
-                (
-                    all(item[0] for item in comparisons),
-                    all(item[1] for item in comparisons),
-                    all(item[2] for item in comparisons),
-                )
-            )
-        measurement_match = any(item[0] for item in answer_matches)
-        unit_match = any(item[1] for item in answer_matches)
-        pair_match = any(item[2] for item in answer_matches)
+    (
+        measurement_match,
+        unit_match,
+        pair_match,
+        raw_measurement_match,
+        raw_unit_match,
+        raw_pair_match,
+    ) = _pair_scores(expected, predicted_pairs, answers, task=task)
 
     return {
         "cleaned_record_id": prediction["cleaned_record_id"],
@@ -156,9 +165,8 @@ def _score_case(
         "raw_measurement_match": raw_measurement_match,
         "raw_unit_match": raw_unit_match,
         "raw_pair_match": raw_pair_match,
-        "record_match": status_match and (
-            pair_match if expected["status"] == "ok" else not predicted_pairs
-        ),
+        "record_match": status_match
+        and (pair_match if expected["status"] == "ok" else not predicted_pairs),
         "ok_pair_correct": bool(
             prediction.get("status") == "ok"
             and expected["status"] == "ok"
@@ -175,6 +183,60 @@ def _accuracy(rows: list[dict[str, Any]], field: str) -> dict[str, Any]:
         "correct": correct,
         "total": len(applicable),
         "accuracy": correct / len(applicable) if applicable else None,
+    }
+
+
+def _quality_metrics(
+    *,
+    gold_manifest: dict[str, Any],
+    gold: dict[str, dict[str, Any]],
+    gold_path: Path,
+    mapping_path: Path,
+    scored: list[dict[str, Any]],
+) -> dict[str, Any]:
+    gold_ok = [row for row in scored if row["gold_status"] == "ok"]
+    recovered_ok = [row for row in gold_ok if row["predicted_status"] == "ok"]
+    model_target_cases = (gold_manifest.get("route_counts") or {}).get("extract")
+    return {
+        "gold_path": str(gold_path),
+        "gold_corpus_version": gold_manifest["corpus_version"],
+        "gold_cases": len(gold),
+        "mapping_path": str(mapping_path),
+        "evaluated_cases": len(scored),
+        "gold_coverage": len(scored) / len(gold),
+        "model_target_cases": model_target_cases,
+        "model_target_coverage": (
+            len(scored) / model_target_cases if model_target_cases else None
+        ),
+        "status": _accuracy(scored, "status_match"),
+        "gold_ok_recovery": {
+            "correct": len(recovered_ok),
+            "total": len(gold_ok),
+            "accuracy": len(recovered_ok) / len(gold_ok) if gold_ok else None,
+        },
+        "measurement": _accuracy(scored, "measurement_match"),
+        "unit": _accuracy(scored, "unit_match"),
+        "measurement_and_unit": _accuracy(scored, "pair_match"),
+        "raw_measurement": _accuracy(scored, "raw_measurement_match"),
+        "raw_unit": _accuracy(scored, "raw_unit_match"),
+        "raw_measurement_and_unit": _accuracy(scored, "raw_pair_match"),
+        "measurement_given_ok_prediction": _accuracy(recovered_ok, "measurement_match"),
+        "unit_given_ok_prediction": _accuracy(recovered_ok, "unit_match"),
+        "pair_given_ok_prediction": _accuracy(
+            [row for row in scored if row["predicted_status"] == "ok"],
+            "ok_pair_correct",
+        ),
+        "whole_record": _accuracy(scored, "record_match"),
+        "by_source": {
+            source: {
+                "cases": sum(row["source_id"] == source for row in scored),
+                "whole_record": _accuracy(
+                    [row for row in scored if row["source_id"] == source],
+                    "record_match",
+                ),
+            }
+            for source in sorted({row["source_id"] for row in scored})
+        },
     }
 
 
@@ -201,52 +263,13 @@ def evaluate(
         )
         for row in predictions
     ]
-    gold_ok = [row for row in scored if row["gold_status"] == "ok"]
-    recovered_ok = [row for row in gold_ok if row["predicted_status"] == "ok"]
-    model_target_cases = (gold_manifest.get("route_counts") or {}).get("extract")
-    metrics = {
-        "gold_path": str(gold_path),
-        "gold_corpus_version": gold_manifest["corpus_version"],
-        "gold_cases": len(gold),
-        "mapping_path": str(mapping_path),
-        "evaluated_cases": len(scored),
-        "gold_coverage": len(scored) / len(gold),
-        "model_target_cases": model_target_cases,
-        "model_target_coverage": (
-            len(scored) / model_target_cases if model_target_cases else None
-        ),
-        "status": _accuracy(scored, "status_match"),
-        "gold_ok_recovery": {
-            "correct": len(recovered_ok),
-            "total": len(gold_ok),
-            "accuracy": len(recovered_ok) / len(gold_ok) if gold_ok else None,
-        },
-        "measurement": _accuracy(scored, "measurement_match"),
-        "unit": _accuracy(scored, "unit_match"),
-        "measurement_and_unit": _accuracy(scored, "pair_match"),
-        "raw_measurement": _accuracy(scored, "raw_measurement_match"),
-        "raw_unit": _accuracy(scored, "raw_unit_match"),
-        "raw_measurement_and_unit": _accuracy(scored, "raw_pair_match"),
-        "measurement_given_ok_prediction": _accuracy(
-            recovered_ok, "measurement_match"
-        ),
-        "unit_given_ok_prediction": _accuracy(recovered_ok, "unit_match"),
-        "pair_given_ok_prediction": _accuracy(
-            [row for row in scored if row["predicted_status"] == "ok"],
-            "ok_pair_correct",
-        ),
-        "whole_record": _accuracy(scored, "record_match"),
-        "by_source": {
-            source: {
-                "cases": sum(row["source_id"] == source for row in scored),
-                "whole_record": _accuracy(
-                    [row for row in scored if row["source_id"] == source],
-                    "record_match",
-                ),
-            }
-            for source in sorted({row["source_id"] for row in scored})
-        },
-    }
+    metrics = _quality_metrics(
+        gold_manifest=gold_manifest,
+        gold=gold,
+        gold_path=gold_path,
+        mapping_path=mapping_path,
+        scored=scored,
+    )
     return metrics, scored
 
 
@@ -261,12 +284,14 @@ def main() -> int:
     output_dir = args.output_dir or args.mapping.parent
     output_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = output_dir / "quality_metrics.json"
-    rows_path = output_dir / "quality_rows.csv"
-    metrics_path.write_text(
-        json.dumps(metrics, ensure_ascii=False, indent=2) + "\n"
-    )
+    rows_path = output_dir / "quality_rows.tsv"
+    metrics_path.write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n")
     with rows_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]) if rows else [])
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(rows[0]) if rows else [],
+            delimiter="\t",
+        )
         if rows:
             writer.writeheader()
             writer.writerows(rows)

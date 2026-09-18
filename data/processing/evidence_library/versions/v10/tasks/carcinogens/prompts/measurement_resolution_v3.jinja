@@ -1,0 +1,14 @@
+{% include "measurement_resolution_v2.jinja" %}
+
+## Mandatory final comparison scan
+
+Immediately before returning `ok`, scan all of `measurement_text` again. If it
+contains `vs`, `versus`, `control`, `% inhibition`, `% of control`, or a fold
+increase/decrease, return `relative` with `[]`. This applies even when the
+string also contains one absolute-looking treated-group value or physical
+unit. An IC value explicitly paired with its percent-inhibition definition is
+also `relative` in this extraction contract.
+
+Treat every comma followed by exactly three digits as a thousands separator,
+including both the central point and its spread. Thus a source point printed
+as `1,825` has coefficient `1825`; never reinterpret it as `1.825`.

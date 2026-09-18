@@ -54,8 +54,27 @@ predict/traces/runs/*
 !predict/traces/runs/README.md
 predict/retrieval/cache/
 
+# Bulk scientific payloads are durable on /vast, not in Git. Existing files
+# already tracked upstream remain tracked; do not add new payloads here.
+/.tmp/
+/data/artifacts/
+/data/legacy/
+/data/caches/
+/semantic_buckets/history/
+/semantic_buckets/releases/
+/semantic_buckets/provenance/
+
 # Local source/review artifacts above the repository's 100 MB file limit.
 /ames.tar.gz
 /carcinogen_dili.tar.gz
 /data/artifacts/_shared/smiles/smiles_identity_audit_v2/name_extraction/full/row_extractions.parquet
 /data/artifacts/evidence_library_assets/skin_reaction/construction_assets/auxiliary_reconciliation_v2/provenance/provisional_cluster_mapping.json
+
+# Durable scientific payloads above GitHub's 100 MB per-file limit. Keep these
+# on /vast and commit their compact manifests, hashes, and validation receipts.
+/semantic_buckets/**/requests.sqlite3
+/data/raw/starling/main_universe_v1/*/records.parquet
+/data/caches/**/rankings.sqlite3
+/data/caches/**/records.parquet
+/data/legacy/artifacts/evidence_libraries/**/records.parquet
+/data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/**/records.parquet

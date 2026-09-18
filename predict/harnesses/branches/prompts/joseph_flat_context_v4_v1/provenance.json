@@ -1,0 +1,35 @@
+{
+  "version": "joseph_flat_context_v4_v1",
+  "parent": "reranked_progressive_l1_context_v4",
+  "status": "unevaluated",
+  "supports_tasks": ["bbb_martins", "bioavailability_ma"],
+  "layouts": ["global", "level-grouped"],
+  "query_prior_modes": ["cached", "none"],
+  "reasoning_reference_contracts": {
+    "global": {
+      "schema_version": "progressive_reasoning_references.v1",
+      "layout": "flat_global",
+      "required_mentions": false,
+      "matching": "case_insensitive_exact_visible_id"
+    },
+    "level-grouped": {
+      "schema_version": "progressive_reasoning_references.v1",
+      "layout": "flat_level_grouped",
+      "required_mentions": false,
+      "matching": "case_insensitive_exact_visible_id"
+    }
+  },
+  "molecule_metadata_contract": {
+    "schema_version": "quotient_molecule_metadata.v1",
+    "modes": ["none", "raw", "motif", "coarse"],
+    "query_visible": true,
+    "evidence_levels": [1, 2, 3, 4, 5, 6],
+    "missing_policy": "omit"
+  },
+  "scope": "one_call_all_level_flat_prediction",
+  "historical_predictions_reused": false,
+  "tasks": {
+    "bbb_martins": {"prompt_profile": "meaningful_cns_access_v1", "upstream_sources": {}},
+    "bioavailability_ma": {"prompt_profile": "f20_evidence_calibrated_v2", "upstream_sources": {}}
+  }
+}

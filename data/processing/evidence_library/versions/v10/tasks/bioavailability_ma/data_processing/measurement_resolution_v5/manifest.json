@@ -1,0 +1,50 @@
+{
+  "version": "bioavailability_ma_measurement_resolution.v5",
+  "migration": "validated_role_declaration_without_reinference",
+  "decision_mapping_version": "bioavailability_ma_measurement_resolution.v4",
+  "mapping_path": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
+  "mapping_sha256": "c92b5bdea9979e195d14b34d16cbe1ecf485db73dd6a682a3467b5fa30c51d47",
+  "predecessor_manifest_path": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.manifest.json",
+  "predecessor_manifest_sha256": "4fd9d0f79b7eaf2f8732faa093dccddc837c354d41ae76c15d74734e41712289",
+  "source_role_contract": {
+    "version": "stage1_source_roles.v1",
+    "sources": {
+      "oral_exposure": {
+        "endpoint": {"kind": "field", "value": "exposure_measure"},
+        "measurement": {"kind": "field", "value": "parameter_value"},
+        "unit": {"kind": "field", "value": "parameter_units"}
+      },
+      "fa": {
+        "endpoint": {"kind": "field", "value": "endpoint_category"},
+        "measurement": {"kind": "field", "value": "reported_value"},
+        "unit": {"kind": "field", "value": "reported_units"}
+      },
+      "fg": {
+        "endpoint": {"kind": "field", "value": "gut_wall_process"},
+        "measurement": {"kind": "field", "value": "measured_value"},
+        "unit": {
+          "kind": "exception",
+          "mode": "embedded_in_measurement",
+          "reason": "measured_value preserves its source unit inline"
+        }
+      },
+      "fh": {
+        "endpoint": {"kind": "field", "value": "metric_type"},
+        "measurement": {"kind": "field", "value": "reported_value"},
+        "unit": {"kind": "field", "value": "reported_units"}
+      },
+      "hf_bioavailability": {
+        "endpoint": {"kind": "constant", "value": "oral_bioavailability"},
+        "measurement": {
+          "kind": "field",
+          "value": "oral_bioavailability_value"
+        },
+        "unit": {
+          "kind": "exception",
+          "mode": "embedded_in_measurement",
+          "reason": "oral_bioavailability_value preserves its source unit inline"
+        }
+      }
+    }
+  }
+}

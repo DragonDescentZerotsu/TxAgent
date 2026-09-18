@@ -19,10 +19,9 @@ from predict.harnesses.branches.assay_transfer import (
     ASSAY_TRANSFER_RECORDS_PER_MOLECULE_DEFAULT,
     ASSAY_TRANSFER_SELECTION_SCORED_RECORD,
 )
-from predict.harnesses.branches.batch import mode_main
-from predict.harnesses.branches.reranker import RetrievalReranker
 from predict.harnesses.branches.retrieval import (
     BranchRetrievalConfig,
+    RetrievalReranker,
     retrieve_mechanism_evidence,
 )
 from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECTOR
@@ -65,9 +64,7 @@ def retrieve_full_evidence(
     )
 
 
-def main(argv: list[str] | None = None) -> int:
-    return mode_main("full_mechanism", argv)
-
-
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(
+        "Use: python -m predict.harnesses.branches --organization full ..."
+    )

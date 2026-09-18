@@ -1,0 +1,82 @@
+{
+  "audit_version": "ames_candidate_generalization_blind_sample.v3",
+  "blindness": {
+    "adjudicator_used_source_only_inputs": true,
+    "reviewers_did_not_see_candidates": true,
+    "reviewers_did_not_see_other_review": true,
+    "reviewers_saw_source_only": true
+  },
+  "created_date": "2026-09-08",
+  "inputs": {
+    "adjudication": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/adjudication.jsonl",
+      "sha256": "1e05bcad2ecd7630b4f05da2b117f1d3cf198ed7c34c024cf972f7dda73fbfba"
+    },
+    "audit_protocol": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/audit_protocol.md",
+      "sha256": "0b4ea8bac551d4fd8c845e30a3532a111c181083458ed125528593e5a4078e6d"
+    },
+    "reviewer_a": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/reviewer_a.jsonl",
+      "sha256": "b3c4386aa02abd0e57d67211bc88b737bfa0a49ca112cc41942f33e6ea804de9"
+    },
+    "reviewer_b": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/reviewer_b.jsonl",
+      "sha256": "3ab5a60a85b61927b02b75d45c5087f64b229780a7314b2957cb3fa63d9bbe5a"
+    },
+    "sample": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/sample_bundle/blind_cases.jsonl",
+      "sha256": "9dd0957b367dc4b845c31f885c443f05305deb6a35b141536e07640dc199b67b"
+    },
+    "sample_manifest": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/sample_bundle/sample_manifest.json",
+      "sha256": "0853f7fde8333e64fa9cdf1dbc5075af18ccadf0e0c0c68c5acae7e470556c4c"
+    },
+    "scorer": {
+      "path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/score_frozen_candidates.py",
+      "sha256": "3ac3f71d1072dd0a0eee3ca8c3cd2a9fc1df039d30734f191b09048b32ba18bf"
+    }
+  },
+  "output": {
+    "final_labels_path": "/tmp/ames_v10_candidate_blind_audit_v3_20260908/labels_bundle/final_labels.jsonl",
+    "final_labels_sha256": "a127db9bd7fdc49cdd8225688e272c5de52e4c7f030c74897740bb3fc80f03d2",
+    "rows": 90
+  },
+  "summary": {
+    "adjudicated_disagreements": 18,
+    "initial_exact_agreement_rate": 0.8,
+    "reason_counts": {
+      "absolute": 25,
+      "bound_or_range": 7,
+      "experiment_relative": 18,
+      "missing_unit": 23,
+      "multiple_or_conflict": 15,
+      "no_eligible_numeric": 2
+    },
+    "reviewer_ids": [
+      "ames-v3-source-reviewer-a-20260908",
+      "ames-v3-source-reviewer-b-20260908"
+    ],
+    "rows": 90,
+    "source_counts": {
+      "fixed_mutation": 30,
+      "mutagenicity_mechanism": 30,
+      "premutagenic_damage": 30
+    },
+    "status_counts": {
+      "ok": 25,
+      "relative": 18,
+      "unavailable": 2,
+      "unsure": 45
+    }
+  },
+  "validations": {
+    "all_disagreements_adjudicated": true,
+    "final_labels_match_adjudication": true,
+    "initial_agreement_computed": true,
+    "label_contract_valid": true,
+    "reviewer_ids_distinct": true,
+    "reviews_have_90_aligned_rows": true,
+    "source_only_evidence_valid": true
+  }
+}

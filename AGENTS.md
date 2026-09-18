@@ -1,5 +1,22 @@
 # TxAgent: resident molecular tools and evidence-retrieval reasoning
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -7,11 +24,86 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
+For prompt-only validation or prompt-surface comparisons, reuse an existing
+prepared retrieval artifact and call the renderers directly. Do not rerun cache
+materialization, whole-library scans, or cache integrity checks unless retrieval
+selection inputs or selection code changed, or the user explicitly requests it.
+
+An approved full-batch run must launch directly in uninterrupted throughput mode;
+it must never send or wait for pilot responses before starting the full batch. For
+the progressive matrix launcher, use `--execution-mode throughput` and do not pass
+`--pilot-queries` or `--continue-after-pilot` in a full-batch command. Pilot or
+canary inference is allowed only when explicitly requested as a separate run, with
+its own artifact root, and must never gate an approved full-batch run.
+
+Every newly launched LLM request must use `reasoning_effort=high`, never `max`.
+Do not launch a workflow whose request configuration cannot enforce this setting.
+Historical artifacts remain immutable; changing reasoning effort on resumed work
+requires a fresh run identity unless the request bytes are otherwise unchanged.
+The V10 measurement-resolution pipeline for AMES, DILI, Skin Reaction, and
+Carcinogens is the sole exception: its gold pilots and later full extraction use
+`reasoning_effort=low` under fresh run identities. All other requests remain high.
+
 ## Language convention
 
 Use English for user-facing communication and newly generated documentation,
 reports, plots, captions, and experiment conclusions. Keep code identifiers,
 commands, paths, model names, experiment IDs, and machine-readable fields unchanged.
+
+## Reranked Progressive v2
+
+"Run reranked progressive" means the current BBB/oral harness
+`python -m predict.harnesses.progressive --harness-version reranked-progressive-v2`.
+The CLI default is `reranked-progressive-v2`. The active cache has exactly two
+ranking modes; the default is `assay-transfer`.
+
+| Mode | L1 | L2-L4 | L5 | L6 (oral only) |
+|---|---|---|---|---|
+| `assay-transfer` | Top 10 assay-ranked context cards | Assay transfer | Morgan | Assay transfer |
+| `morgan` | Top 10 Morgan-ranked context cards | Morgan | Morgan | Morgan |
+
+Default shape: up to ten ordered records per L1 molecule; independently select
+up to 50 records per level from L2 onward, then group by normalized
+parent into existing/new molecule cards. Preserve per-record conditions, append-only
+evidence, scaffold-disjoint pools and no similarity floor. BBB ends at L5; oral at L6.
+Joint remains available only through an explicit archived legacy cache. Skin is
+not enabled for this version.
+
+The active BBB/Oral Gold-v1 retrieval contract is
+`ranked_uid_retrieval.v1`. Every task, split, and level owns an independent
+immutable SQLite cache. L1 is scaffold-disjoint and contains 100 context cards.
+L2 and later are parent-disjoint and contain every physical UID under the top
+100 Morgan-ranked parents. Each expanded UID universe carries dense Morgan and,
+where supported, assay-transfer ranks. The task `RELEASE_INDEX.json` locates the
+level caches and evidence-owned projection. Prompt preparation reads only that
+small index, selected manifests, indexed SQLite rows, and selected projection
+rows. It must not reread source or mapping Parquet, normalize molecules,
+recompute Morgan similarity, recheck disjointness, hash whole databases, or run
+integrity scans. Those are one-time publication checks. Flat and progressive
+use the same direct reader.
+
+The active contract supports only the `all` pool and native `morgan` and
+`assay-transfer` modes; joint and alternate pools are legacy-only. A caller may
+request a separate K for every later level. K must be positive and no greater
+than that query's expanded UID count; an oversized request fails before prompt
+rendering. Every level is selected independently, with no cross-level deduplication.
+The L1 cache resolves a selected `context_id` directly to its ordered physical
+`source_row_uid` members. The prompt exposes up to its explicit per-card record
+limit without representative-row collapse. Gold voter membership, not current
+parent normalization, defines the L1 card and nested records. Historical vote
+IDs are construction provenance only and never select a representative row. Parent
+normalization organizes L2+ display cards. Display adaptation is
+publication-time: semantic categories first, then a complete canonical
+measurement/unit pair, then a complete source pair, with source text/no-unit
+only for non-scalar records. Never mix a measurement and unit from different
+origins.
+
+`--score-cache-config` supplies only cache locations; it cannot override the version's
+stage rules. Assay/joint stages require complete task/mapping-compatible cached scores;
+never substitute a different cache or Morgan ranking on failure. Historical/custom
+profiles require `--legacy` and load `prompts/legacy/`. Keep prior results immutable;
+future behavior changes require a new version. See the active bundle README for
+commands. Put new tables and validation reports under the Joseph directory below.
 
 ## Rules
 
@@ -25,12 +117,155 @@ bucket pass/fail decisions `assay-transfer bucket eligibility`, never pruning. T
 whole-bucket field is `assay_transfer_bucket_eligible`; the historical sidecar
 field `bucket_eligible` is only a row-level compatibility alias.
 
+Pair-bucket identity is intrinsic evidence metadata only: source, canonical
+endpoint, canonical unit, and the source-specific canonical assay dimensions.
+Gold-label membership, benchmark condition/context, split, voter identity,
+parent assignment, and any hashes derived from them must never enter
+`pair_bucket_key` or `canonical_pair_fields_json`. Those fields remain separate
+record metadata for retrieval filtering, labeling, and audit.
+
+The active conditioned benchmark for BBB, Oral Bioavailability, and Skin is
+Gold v1. BBB and Oral V10 Stage 1 must protect every physical UID named by the
+published Gold-v1 voter contract: a protected row cannot be dropped, repaired to
+a different structure, or removed as an exact duplicate. For these two rebuilt
+tasks, L1 is exactly the physical membership of published Gold-v1 cards. Vote
+aggregation remains separate from visibility: each frozen `vote_id` contributes
+once, while every physical member is retained and can be shown to the reasoning
+model. In particular, Oral HF/local records coupled to one canonical claim
+remain separate L1 records but collectively contribute the single frozen
+Gold-v1 vote.
+
+Canonical-claim grouping belongs only to the Gold voting artifacts. Evidence-
+library records remain independent physical rows: do not attach
+`canonical_claim_id` to them, join them through a Gold claim, or use Gold claim
+membership for evidence-library deduplication. Gold may supply each physical
+voter's own frozen label and condition for L1 display, while vote aggregation
+stays exclusively in the Gold card and vote-unit mappings.
+
+Every V10 Stage-1 source must declare exactly one endpoint role (a raw field or
+an explicit constant), one raw measurement field, and one unit role (a raw
+field, an explicit constant, or a reviewed exception). The only reviewed unit
+exceptions for AMES, DILI, Carcinogens, and Skin Reaction are
+`unitless_categorical` and `embedded_in_measurement`; they must be source-local,
+reasoned, and recorded in both the extraction cache contract and mapping
+manifest. Do not infer undeclared roles while building Stage 1.
+
+### Evidence-library release gates
+
+Materialize the pinned source universe before applying Gold protection. Gold
+`voter_membership.parquet` supplies physical UID membership only: never use its
+historical structure fields as source authority or reconstruct protected rows
+from a prior evidence-library vote table. Protected UIDs retain the pinned source
+structure and survive repair and exact deduplication; reviewed structure repairs
+apply to nonprotected rows. A Gold card may legitimately contain multiple current
+parents, so never repair, merge, drop, or reassign rows merely to force one parent
+per card.
+
+For any release with assay-transfer calibration, final Stage 3 requires a
+hash-pinned record-pruning manifest. The required order is unpruned Stage 3 for
+candidate generation, reviewed record decisions, then a final Stage-3 rebuild
+that pins and applies those decisions. Missing or stale pruning is a hard failure,
+not an optional skip. Previously reviewed prunes are the immutable minimum for a
+successor refresh: new review may add exclusions, while a reversal requires a
+separate explicit reviewed successor decision. Pruned rows remain in canonical,
+Stage-3, level-mapping, and retrieval artifacts.
+
+After the final Stage-3 rebuild, regenerate the complete release-owned level map
+and its assay-transfer eligibility sidecar from that exact Stage-3 hash. Verify
+exact Stage-3 UID coverage and exact Gold-v1 physical-voter L1 membership, then
+refresh `data/evidence_libraries/level_mappings.v1.json` and immutable test pins.
+That global file is only a hash-pinned locator; it does not derive levels. Publish
+from a completed staging tree, archive the prior active tree, atomically install
+the successor, and update `CURRENT` only after all hashes and row invariants pass.
+Never publish build locks, incomplete markers, or working intermediates.
+
+Reviewed measurement/unit maps should be extended as immutable successors rather
+than rebuilt from scratch when their input contract remains compatible. Likewise,
+new semantic atoms or buckets belong in a separate immutable semantic generation;
+do not edit a selected semantic map, ranking, manifest, pair-record file, or live
+cache in place.
+
 Explain work concisely from the high-level result down to implementation details.
 For new implementations, describe the files being added or changed, how they
 connect, and the scope of the change. Prefer a small, coherent module over a
 sprawling pipeline, reuse existing libraries, and keep tests proportional.
 
 ### Artifact hygiene
+
+Raw assay-transfer harness runs for Joseph remain under
+`outputs/paper/assay_transfer_harness/joseph/`. Every derived analysis, including
+KNN, query-prior, oracle-union, and progressive-level comparisons, must be saved
+under `outputs/analysis/<domain>/<study-id>/`, never inside or beside a raw harness
+run. Every tabular or numeric result presented in a report must also be exported as
+a TSV in the same study directory. Keep the report, TSV tables, and compact
+provenance manifest together, and reference immutable input runs by path and hash.
+Existing inference runs and reusable caches retain their own locations.
+
+New Joseph progressive runs use a study/method/query-prior/run hierarchy under
+`outputs/paper/assay_transfer_harness/joseph/`, for example
+`contrastive/morgan/with_query_prior/k10_m3_YYYYMMDD_HHMM/`. The prior directory
+is exactly `with_query_prior` for cached query priors or `no_query_prior` when no
+prior is visible. Keep prompt, provider, task, cache, and hashes in the leaf
+`run.json`; do not encode them into another flat top-level directory name.
+Endpoint hosts, ports, and provider allocation never participate in a study,
+batch, or run name and remain only in execution receipts. A multi-method matrix
+splits into sibling method leaves and shares request/response reuse only through
+`_batches/<batch-id>/`. Live traces mirror the same
+study/method/query-prior/run identity under
+`outputs/paper/live/`. Superseded layouts and prompt experiments belong under
+`legacy/`; do not add compatibility symlinks.
+
+The canonical navigational views for organized Joseph runs are
+`outputs/paper/assay_transfer_harness/joseph/catalog.json` and
+`outputs/paper/assay_transfer_harness/joseph/results_ledger.tsv`. The catalog is
+the run-level index; the ledger is one row per run, task, and completed level and
+must retain prepared or incomplete runs with blank metrics. Generate both from
+leaf `run.json` and canonical metrics artifacts—never edit either view by hand.
+Refresh them atomically whenever an organized run is prepared, changes status,
+publishes diagnostics, or completes. A completed run is not fully published
+until both views include it and their recorded hashes validate. Before answering
+whether a run exists or reporting prior results, consult both views and verify
+the referenced immutable leaf artifacts. Do not reorganize old runs physically;
+use these catalog views to make historical layouts discoverable.
+
+Every completed progressive run, starting with v12 progressive-simple, must
+contain `visible_evidence.tsv`, `neighborhood_label_mix.per_query.tsv`,
+`neighborhood_label_mix.summary.tsv`,
+`reasoning_reference_coverage.per_query.tsv`,
+`reasoning_reference_coverage.summary.tsv`, `diagnostics_manifest.json`, and
+`report.md`. L1 label mix uses the frozen label of the exact molecule-condition
+context that admitted the visible molecule; never infer one unconditional label
+per parent. Reasoning coverage counts explicit visible identifiers such as
+`Molecule 1`, `Evidence group 1`, and `C01` in the private reasoning stream.
+Every new prompt family used by an organized run must declare an immutable
+`progressive_reasoning_references.v1` contract. Prompt rendering and diagnostics
+must consume the same deterministic reference index; molecule numbering is
+global across the prompt, evidence-group numbering is independent, and record
+aliases remain `Cxx`. Match identifiers case-insensitively. Repeated mentions
+count once for coverage and separately as occurrences. This is an observational
+measurement contract, not a requirement to mention every item: 0/K is a valid
+result and must not trigger retries or response rejection. A missing label,
+visible index, reasoning stream, or provenance receipt prevents completion.
+Every active prompt bundle must also be self-contained: keep every Jinja and YAML
+asset needed to render it inside its own version directory, and declare the
+deterministic reference contract there. `asset_parent_version` is lineage-only
+for historical bundles and is not allowed for new organized runs. Shared renderer
+and reference-matching code remains centralized and is hash-pinned in run manifests.
+Historical partial runs may emit the same diagnostics with an explicit partial
+manifest and `diagnostic_gaps.tsv`; missing stages stay outside measured coverage
+denominators and can never be promoted to complete.
+Diagnostic labels and joins are post-run only and must never enter prompt
+preparation or model-visible text. Preserve used prompt bundles; add a successor
+bundle rather than changing their rendered prompt or reference rules. The
+front-shelf v12, v13, and v14 successors are respectively
+`reranked_progressive_l1_simple_v12_references_v1`,
+`reranked_progressive_l1_simple_v13_references_v1`, and
+`reranked_progressive_l1_simple_v14_references_v1`.
+
+Human-authored documentation lives beside the code, data, prompt bundle, test,
+or experiment it governs. Scoped `AGENTS.md`, `CLAUDE.md`, skill instructions,
+executable prompt inputs, and reports stored with immutable artifacts remain
+beside the content they govern.
 
 Keep repository artifacts only when they are active build inputs or outputs,
 immutable scientific records, expensive reusable caches, or compact evidence needed
@@ -39,7 +274,8 @@ repeating external work, and document their scope and version.
 
 Do not commit or publish agent scratch plans, navigation dumps, request batches,
 review packets, raw progress logs, deterministic joins, duplicate exports, or
-superseded pilots. Put disposable scripts, checkpoints, and working files in `/tmp`.
+superseded pilots. Put only disposable, reconstructable scripts, checkpoints, and
+working files in `/tmp`.
 If durable navigation context is genuinely useful, write one small scoped Markdown
 index rather than preserving the working directory that produced it.
 
@@ -56,6 +292,91 @@ root before choosing paths or reporting validation. This checkout under
 starts here. Do not assume the node002-local `/data1/joseph/TxAgent` checkout exists
 or is synchronized on another host.
 
+### Recent failure-prevention checks
+
+Before launching a progressive batch, reopen the provider-pool JSON from disk and
+report the exact selected hosts, ports, per-endpoint `max_inflight`, aggregate
+capacity, model, and reasoning effort. For the current V10.4 BBB/oral run, the
+authorized pool is only `dgx011:50001` and `dgx014:50002`, at 512 requests per
+endpoint; do not include `dgx005`.
+
+The provider-pool `max_inflight` limit is local to one launcher, not a shared
+endpoint semaphore. Do not overlap two 512-per-endpoint launchers when the intent
+is a 512 total cap per endpoint. Before handing the same endpoints to a successor
+batch, verify both client receipts and live SGLang `/v1/loads` or scheduler
+metrics; client `inflight=0` alone does not establish that the server queue is
+drained.
+
+Do not silently accept the progressive matrix's 524,288-token default for these
+structured L1 prompts. Review token counts from the closest completed artifact
+and pass an explicit, justified `--max-tokens`; keep the required reasoning effort
+unchanged. In the first V10.4 width-25 launch, 165 requests remained active after
+all other work finished and began hitting the 3,600-second read timeout together,
+opening both provider circuits and invoking cross-endpoint failover. A timeout
+retry can duplicate expensive server work, so do not start a successor batch
+until both the client pool and live server load have drained. Any changed token or
+timeout setting requires a fresh run identity.
+
+On `epyc-1-6`, do not start the resident molecular tool service with the bare
+system `uvicorn`: `/usr/bin/python` lacks PyTorch. First verify the chosen runtime
+with imports for `torch`, RDKit, and the service app, then start Uvicorn through
+that same interpreter. A reachable port is not evidence that application startup
+completed; require a successful `/health` response.
+
+The legacy direct OpenAI-compatible pipeline still requires its configured API-key
+environment variable even when the target is an unauthenticated local endpoint.
+For direct DeepSeek requests to the local DGX services, explicitly set
+`DEEPSEEK_API_KEY=EMPTY` (or the endpoint's documented placeholder) and verify the
+rendered base URL before launch; an empty `api_key_env` in a separate provider-pool
+configuration does not satisfy the direct client's credential preflight.
+
+Cached query-prior reuse across gold releases is stable-identity based, never
+positional. If a historical manifest names a removed input path, bind it to an
+existing immutable input with a recorded hash. If the new release introduces a
+query, generate only that missing prior under a fresh run identity and expose it
+through a hash-pinned overlay; never mutate the historical cache or silently map
+the new row by index.
+
+Frozen V9 assay-transfer L1 caches and their original query priors use the V1
+gold-label release. Historical V9 matrices must pass `--gold-label-version v1`;
+never let the runner resolve `CURRENT` and rely on positional prior fallback.
+Before launch, verify every cached-prior query SMILES against the selected V1
+split and require complete 397-row BBB and 262-row Bioavailability coverage.
+
+V10.4 L1 Morgan similarity is molecule-condition-context specific. During L1
+cache construction, require a stable retrieval-parent rank for repeated parent
+rows, but retain and validate each context's own similarity instead of requiring
+one parent-wide similarity value.
+
+A progressive matrix resume compares frozen matrix inputs byte-for-byte. If the
+frozen invariant includes a live endpoint-preflight receipt, a prepare-only batch
+may reject a later execution attempt after endpoint state changes even when its
+scientific inputs are unchanged. Preserve the prepared batch, do not weaken or
+rewrite its invariant, and launch the approved full batch under a fresh run and
+batch identity after repeating preflight.
+
+Before publishing a new immutable cache profile, add its exact profile name to
+`ACTIVE_CACHE_PROFILES` and test that `cache_profile_root(profile)` resolves under
+`active/`. The generic builder routes every unregistered profile to `archive/`
+without treating that routing decision as a build error, so a successful build
+alone does not prove that the cache was published to the intended shelf.
+
+### Local staging and canonical publication
+
+Before a high-throughput run, inspect the hostname, resolved repository root,
+`df`, and `findmnt` for the exact candidate paths. `/vast/projects` is network NFS;
+high-churn active working and staging writes can bottleneck there. When capacity
+permits, a running job may keep reconstructable or resumable working state under
+node-local `/local`. `/local` is never the durable or canonical home: as soon as
+the writer finishes, copy or move the closed tree to `/vast`, validate the `/vast`
+copy, publish from there, and remove the local staging tree. Never report work as
+durable, complete, or published while its only copy is under `/local`. Do not use
+`/tmp` unless its capacity and backing filesystem have first been confirmed suitable.
+
+Never move or copy a tree with an active writer. If local working state must migrate
+before completion, stop its writers at a flushed boundary, copy it to staging on
+`/vast`, validate the copy, and only then resume from `/vast`.
+
 When actually running from `/data1/joseph/TxAgent` on `node002`, use
 `/data1/joseph/miniconda3/condabin/conda run -n txagent-glm`. Outside node002, use
 the environment available to the active checkout and report it exactly; do not
@@ -67,16 +388,31 @@ OpenAI credential for OpenRouter. The shared loader reads the sibling
 `therapeutic-tuning/distillation/.env`, resolves provider aliases, and fails closed
 on missing or mismatched credentials.
 
-## 当前目标
+Reusable OpenRouter route discovery, qualification, price filtering, and ranking
+must use `data/processing/openrouter_provider_pool.py`; task runners must not embed
+provider inventories. The default pool is DeepSeek V4 Flash 0731 only. Mixing in
+DeepSeek V4.1 Flash requires explicit opt-in and a recorded profile snapshot hash.
+Only model-provider routes with immutable gold qualification may receive work.
 
-本项目要构建一个可复用的分子证据检索与 reasoning 系统。BBB_Martins 是第一个概念验证任务；
-当前同一套 workflow 已扩展到 Bioavailability_Ma 和 Skin_Reaction。ClinTox 已完整迁移到
-`data/legacy/clintox/`，不再是 active task。整体流程是：给定一个 query molecule，
-先通过常驻 FastAPI 工具服务计算分子属性、结构差异和属性差异，再从 task-specific ChEMBL evidence
-library 中检索相似分子的实验读数，最后把工具输出和 assay evidence 交给 reasoning LLM，综合判断该
-task 的目标 label。
+BBB and Oral assay-transfer record-pruning review uses `gpt-5.4-mini` with
+`reasoning_effort=high`. Load the primary credential as `OPENAI_API_KEY_ONE`
+through `data/processing/llm_api.py` from the sibling
+`therapeutic-tuning/distillation/.env`; never read that file directly or copy its
+secret value into code, commands, manifests, or documentation. The external
+pruning quota refreshes daily at 8 PM America/New_York; inspect the current
+ledger before reporting usage, and do not replace an active non-exhausted epoch
+solely because the quota window refreshed.
 
-当前已实现的 ChEMBL reasoning tasks：
+## Current Objective
+
+This project aims to build a reusable molecular evidence retrieval and reasoning system. BBB_Martins is the first proof-of-concept task;
+currently the same workflow has been extended to Bioavailability_Ma and Skin_Reaction. ClinTox has been fully migrated to
+`data/legacy/clintox/` and is no longer an active task. The overall flow is: given a query molecule,
+first compute molecular properties, structural differences, and property differences through the resident FastAPI tool service, then retrieve experimental readings of similar molecules from the task-specific ChEMBL evidence
+library, and finally hand the tool outputs and assay evidence to the reasoning LLM to comprehensively judge the
+target label for that task.
+
+Currently implemented ChEMBL reasoning tasks:
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/
@@ -84,17 +420,17 @@ tools/chembl_tool/tasks/bioavailability_ma/
 tools/chembl_tool/tasks/skin_reaction/
 ```
 
-## 当前 Conditioned Benchmark（2026-08-28）
+## Current Conditioned Benchmark (2026-08-28)
 
-三个任务只有一个活跃评估入口：
+The three tasks have only one active evaluation entry point:
 
 ```text
 data/gold_labels/<Task>/v1/scaffold/
 ```
 
-不要在 runner、baseline 或结果图中直接引用历史的 molecule-only、`selected_vN`、BBB gold-vN 或
-ClinTox source-build 路径。它们只用于 source provenance；原路径与当前数据的逐 split hash/行级等价关系统一
-记录在 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。公共路径常量、发布入口和完整合同为：
+Do not directly reference historical molecule-only, `selected_vN`, BBB gold-vN, or
+ClinTox source-build paths in runners, baselines, or result plots. They are only used for source provenance; the per-split hash/row-level equivalence relationships between the original paths and the current data are uniformly recorded
+in `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`. The public path constants, publication entry points, and full contract are:
 
 ```text
 data/processing/gold_labels/conditioned_benchmark.py
@@ -102,38 +438,35 @@ data/processing/gold_labels/publish_conditioned_benchmark.py
 data/processing/gold_labels/README.md
 ```
 
-| task | train / valid / test | 当前 target |
+| task | train / valid / test | current target |
 |---|---:|---|
 | BBB_Martins | 3,053 / 397 / 393 | experimentally meaningful systemic CNS access |
 | Bioavailability_Ma | 1,958 / 262 / 269 | oral bioavailability under the reported condition |
 | Skin_Reaction | 1,997 / 246 / 248 | skin sensitization/contact allergy |
 
-所有 split 行使用统一的 molecule-condition schema。没有外部 condition 的行使用
-`no_reported_external_condition`，prompt renderer 对它不输出 condition 句子。三个 active task 的
-train/valid/test parent identity 和 Bemis-Murcko scaffold overlap 均为 0。
+All split rows use a unified molecule-condition schema. Rows without an external condition use
+`no_reported_external_condition`, and the prompt renderer outputs no condition sentence for them. The train/valid/test parent identity and Bemis-Murcko scaffold overlap for the three active tasks are all 0.
 
-BBB、Bioavailability 和 Skin 的当前 split 文件与已经完成评估的 conditioned cohort 字节级相同。已有 prediction 只能在 manifest input hash 与
-migration receipt 匹配时复用，不能仅凭旧目录名复用。
+The current split files for BBB, Bioavailability, and Skin are byte-identical to the conditioned cohorts that have already been evaluated. Existing predictions can only be reused when the manifest input hash matches the
+migration receipt; they cannot be reused based solely on the old directory name.
 
-Task-specific source voting 和 review 仍保留在各 task 模块中。BBB 的 direct gold 只接受系统给药后的实验性
-meaningful CNS access；Bioavailability 的 L1 只包含实际 voter rows；Skin direct 只接受 sensitization/contact-
-allergy final outcome。版本化 source/retrieval contracts 属于 provenance，不是第二套 gold。
+Task-specific source voting and review remain in each task module. BBB's direct gold only accepts experimentally meaningful CNS access after systemic administration; Bioavailability's L1 includes only actual voter rows; Skin direct only accepts sensitization/contact-allergy final outcomes. Versioned source/retrieval contracts are provenance, not a second set of gold.
 
-当前 Starling random/scaffold 的 frozen label 决策、formal GLM、MiniMol head、Morgan KNN、
-MiniMol embedding cosine KNN、MiniMol/cosine agent retrieval、blind 进度、Skin retrieval degradation、
-Tier 1+2 final-only 诊断和代码入口统一记录在：
+Current Starling random/scaffold frozen label decisions, formal GLM, MiniMol head, Morgan KNN,
+MiniMol embedding cosine KNN, MiniMol/cosine agent retrieval, blind progress, Skin retrieval degradation,
+Tier 1+2 final-only diagnostics, and code entry points are uniformly recorded in:
 
 ```text
 tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
 ```
 
-当前 paper-facing valid 默认 prompt profile 分别为 BBB `meaningful_cns_access_v1`、Bioavailability
-`f20_evidence_calibrated_v2` 和 Skin `sensitization_aligned_v2`。BBB v2/v3、BBB property-compatible selector、
-Skin negative-transfer v3、train-ratio prior 和 matched train-label agent 均为可复现但未 promotion 的 valid-only
-历史实验，不得作为默认 pipeline 或据此运行 formal test。当前版本、最佳 valid 条件和 artifact 索引以
-`tools/chembl_tool/paper_experiments/RESULTS.md` 顶部的 canonical snapshot 为准。
+The current paper-facing valid default prompt profiles are BBB `meaningful_cns_access_v1`, Bioavailability
+`f20_evidence_calibrated_v2`, and Skin `sensitization_aligned_v2`. BBB v2/v3, BBB property-compatible selector,
+Skin negative-transfer v3, train-ratio prior, and matched train-label agent are all reproducible but not promoted valid-only
+historical experiments; they must not be used as the default pipeline or to run formal tests based on them. The current version, best valid condition, and artifact index are based on the canonical snapshot at the top of
+`tools/chembl_tool/paper_experiments/RESULTS.md`.
 
-当前 Starling benchmark 的主要运行与汇总入口：
+Current Starling benchmark main run and summary entry points:
 
 ```text
 data/processing/gold_labels/build_conditioned_benchmark.py
@@ -174,78 +507,75 @@ predict/baselines/conditioned_knn.py
 predict/baselines/structure_knn/run.py
 ```
 
-Conditioned cumulative-family 的 Bioavailability nondirect context overlay 与 ClinTox source-native support
-bridge 分别由 `tasks/bioavailability_ma/build_nondirect_assay_context.py` 和
-`tasks/clintox/build_flat_assay_support_evidence.py` 构建；两者只生成版本化 source artifacts，不复制 reasoning
-runner。完整合同、当前 valid 进度和复现命令统一见 `ASSAY_LEVEL_RETRIEVAL.md`。
+The Bioavailability nondirect context overlay for the conditioned cumulative-family and the ClinTox source-native support
+bridge are built by `tasks/bioavailability_ma/build_nondirect_assay_context.py` and
+`tasks/clintox/build_flat_assay_support_evidence.py` respectively; both only generate versioned source artifacts and do not duplicate the reasoning
+runner. The full contract, current valid progress, and reproduction commands are uniformly documented in `ASSAY_LEVEL_RETRIEVAL.md`.
 
-`plot_starling_model_comparison.py` 是 GPT-OSS-20B、GPT-OSS-120B、train-label baselines 和后续
-ablation 的唯一 Starling 总图入口。新增完整 model/visibility summary 通过可重复的
-`--comparison-metrics` 追加；matched method experiment 继续通过可重复的 `--experiment-metrics` 追加。
-不得为单个新实验新增独立 overview/bar-chart 模块或正式小图。完整 comparison summary 必须与 reference
-使用相同 task/split/subset/sample count 和 baseline；experiment metrics 则必须按 task/split 提供一个与既有
-candidate condition 对齐的 anchor row，绘图器会校验 `n` 和 macro-F1 后隐藏重复 anchor，只绘制新增实验行。
+`plot_starling_model_comparison.py` is the sole Starling overview entry point for GPT-OSS-20B, GPT-OSS-120B, train-label baselines, and subsequent
+ablations. New complete model/visibility summaries are appended via the reproducible
+`--comparison-metrics`; matched method experiments continue to be appended via the reproducible `--experiment-metrics`.
+Do not add separate overview/bar-chart modules or formal subplots for individual new experiments. The complete comparison summary must use the same task/split/subset/sample counts and baselines as the reference; experiment metrics must provide an anchor row aligned with existing candidate conditions per task/split, and the plotter will validate `n` and macro-F1, then hide duplicate anchors and only plot new experiment rows.
 
-`router_oof/` 是与正式 valid/test matrix 隔离的 train-only KNN-vs-direct-agent 实验。它固定 scaffold-or-parent
-5-fold OOF、fold-specific heldout-parent filtered index、Morgan `k=3`、gpt-oss-120b
-`identity_blind + parent_disjoint` direct agent，并按 BBB/Bioavailability/Skin 分别训练 Logistic/HistGBDT；
-v1–v3.1 可部署 router 不得共享 task 参数，也不得把 train fold 加入 `starling_benchmark_matrix.py` 的 evaluation
-subset。唯一 shared 参数实验是已冻结、不可部署的 train-only transfer termination diagnosis。
-当前 v2 router 不把 fold-dependent absolute reference size 或确定性重复的 k=3 margin/entropy 作为输入；它在
-`knn_compact`、`query_knn`、`query_knn_evidence` 三个通用 profile 内做 nested train-only 选择，并分别校准
-`P(agent-only-correct)` 与 `P(KNN-only-correct)`，用二者之差作为 routing score。只有 nested OOF paired-bootstrap
-promotion gate 同时通过 macro-F1 improvement 和 accuracy guardrail 才部署，否则明确回退 KNN。v1 `router/`
-artifact 保留为 historical diagnosis；v2 写入 `router_v2/` 和 `router_features_v2.*`，不得覆盖或混表。
-v3 是独立 output-aware post-selector：只训练 KNN/agent disagreement rows，target 为 agent-only-correct 对
-KNN-only-correct；保留原始 query/KNN/evidence features，并以 nested OOF 比较 18-feature base、49-feature
-evidence 和 70-feature evidence+structured-trace profiles。两个 disagreement directions 使用独立 threshold，
-promotion gate 失败时严格 KNN fallback。v3 写入 `post_selector_features_v3.jsonl` 与 `post_selector_v3/`，
-不得覆盖 v1/v2；permutation/dropout stability 需要额外 calls，不能从既有 trace 伪造。
-v3.1 复用同一 frozen feature rows，但为两个 disagreement direction 分别选择 family/profile/threshold，并使用
-fold-heldout sigmoid-calibrated ensemble。每个 direction 必须至少 route 20 个 train rows 且 agent-win precision
-的 one-sided 95% Wilson lower bound > 0.5；overall train promotion 以 accuracy paired-bootstrap lower CI > 0
-为主 gate。它写入 `post_selector_v31/` 和 `post_selector_valid_result_v31.json`，不得覆盖 v3。Valid receipt 必须
-分别标明 train-only promotion 与 held-out valid evidence gate；valid 不改变已冻结 policy。
-v3.1 后续只允许两个已冻结的 train-only termination diagnostics：`post_selector_v31_learning_curve/` 固定
-direction specs 做 matched-size curve；`post_selector_v31_transfer/` 固定 task-balanced Logistic shared
-representation，并保留 task-specific calibration/threshold。当前 transfer gate 已失败，router 主方法线停止；
-不得继续根据 valid 搜索新的 shared family/profile，formal test 仍未运行。
-协议、命令与 gate 统一记录在 `tools/chembl_tool/paper_experiments/ROUTER_OOF_IMPLEMENTATION_PLAN.md`。
+`router_oof/` is a train-only KNN-vs-direct-agent experiment isolated from the formal valid/test matrix. It fixes scaffold-or-parent
+5-fold OOF, fold-specific heldout-parent filtered index, Morgan `k=3`, gpt-oss-120b
+`identity_blind + parent_disjoint` direct agent, and trains Logistic/HistGBDT separately for BBB/Bioavailability/Skin;
+v1–v3.1 deployable routers must not share task parameters, nor add train folds to the evaluation
+subset of `starling_benchmark_matrix.py`. The only shared-parameter experiment is the frozen, non-deployable train-only transfer termination diagnosis.
+The current v2 router does not take fold-dependent absolute reference size or deterministically repeated k=3 margin/entropy as input; it performs
+nested train-only selection within the three general profiles `knn_compact`, `query_knn`, `query_knn_evidence`, and calibrates
+`P(agent-only-correct)` and `P(KNN-only-correct)` separately, using the difference between the two as the routing score. Only when the nested OOF paired-bootstrap
+promotion gate passes both the macro-F1 improvement and accuracy guardrail is it deployed; otherwise it explicitly falls back to KNN. The v1 `router/`
+artifact is retained as historical diagnosis; v2 writes to `router_v2/` and `router_features_v2.*`, and must not overwrite or mix tables.
+v3 is an independent output-aware post-selector: it trains only on KNN/agent disagreement rows, with target being agent-only-correct vs.
+KNN-only-correct; it retains the original query/KNN/evidence features and compares 18-feature base, 49-feature
+evidence, and 70-feature evidence+structured-trace profiles via nested OOF. The two disagreement directions use independent thresholds,
+and strictly fall back to KNN when the promotion gate fails. v3 writes to `post_selector_features_v3.jsonl` and `post_selector_v3/`,
+and must not overwrite v1/v2; permutation/dropout stability requires additional calls and cannot be fabricated from existing traces.
+v3.1 reuses the same frozen feature rows, but selects family/profile/threshold separately for each disagreement direction, and uses a
+fold-heldout sigmoid-calibrated ensemble. Each direction must route at least 20 train rows and have a one-sided 95% Wilson lower bound for agent-win precision
+> 0.5; overall train promotion uses accuracy paired-bootstrap lower CI > 0 as the primary gate. It writes to `post_selector_v31/` and `post_selector_valid_result_v31.json`, and must not overwrite v3. The valid receipt must
+separately indicate the train-only promotion and the held-out valid evidence gate; valid does not change the frozen policy.
+After v3.1, only two frozen train-only termination diagnostics are allowed: `post_selector_v31_learning_curve/` fixes
+direction specs for matched-size curves; `post_selector_v31_transfer/` fixes a task-balanced Logistic shared
+representation, retaining task-specific calibration/threshold. The current transfer gate has failed, and the router main method line stops;
+no new shared family/profile may be searched based on valid, and the formal test has not yet run.
+Protocols, commands, and gates are uniformly recorded in `tools/chembl_tool/paper_experiments/ROUTER_OOF_IMPLEMENTATION_PLAN.md`.
 
-`watch_glm_tunnel_and_matrix.py` 是长 GLM matrix 的可恢复监控入口：检查 `/v1/models`、SSH tunnel 和唯一
-launcher，断线时停止当前 process group、重连后依靠 `--skip-existing` 恢复。完成计数必须通过 task prediction、
-single/final status、expected group count 和 group status 四层 gate；不能只数 final 文件。该入口不保存密码，
-Duo approval 仍由用户完成。
+`watch_glm_tunnel_and_matrix.py` is the resumable monitoring entry point for the long GLM matrix: check `/v1/models`, SSH tunnel, and the unique
+launcher; on disconnection, stop the current process group, and after reconnection rely on `--skip-existing` to resume. Completion counts must pass the four-layer gate of task prediction,
+single/final status, expected group count, and group status; do not count only final files. This entry point does not store passwords;
+Duo approval remains the user's responsibility.
 
-数据构建入口：
+Data construction entry point:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
   python -m data.processing.gold_labels.build_conditioned_benchmark
 ```
 
-当前 split 使用统一 condition-aware schema。label provenance、source review、parent identity 和冲突记录
-保存在同目录 audit artifacts。正式评估前必须针对 valid+test union 的 heldout detailed labels 重建
-train-only retrieval index；现有从 full Starling source 构建的 evidence index 不能直接用于当前 benchmark。
+The current split uses a unified condition-aware schema. Label provenance, source review, parent identity, and conflict records
+are stored in audit artifacts in the same directory. Before formal evaluation, the train-only retrieval index must be rebuilt against the heldout detailed labels of the valid+test union;
+the existing evidence index built from the full Starling source cannot be used directly for the current benchmark.
 
-旧 `data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` 及
-`data/gold_labels/legacy/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` 是既有 TDC 实验的历史输入，不再代表上述
-三个已迁移 task 的当前 benchmark；旧 ClinTox split 也不代表新的 parent-normalized reconstruction。
-ClinTox 当前严格 split 位于 `data/legacy/clintox/gold_labels/conditioned_benchmark/scaffold/`。历史结果和复现命令可以保留，
-但必须明确标注 historical lineage。
+The old `data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl` and
+`data/gold_labels/legacy/processed/{Bioavailability_Ma,ClinTox,Skin_Reaction}` are historical inputs for existing TDC experiments and no longer represent the current benchmark for the three
+migrated tasks above; the old ClinTox split also does not represent the new parent-normalized reconstruction.
+The current strict ClinTox split is located at `data/legacy/clintox/gold_labels/conditioned_benchmark/scaffold/`. Historical results and reproduction commands may be retained,
+but must be clearly marked as historical lineage.
 
-## 设计原则
+## Design Principles
 
-1. 不把 BBB 逻辑写成一次性脚本。BBB 是第一个 task，但工具服务、检索协议、LLM 输入输出格式应能支持后续更多任务。
-2. ChEMBL neighbor retrieval 是 pipeline 的 evidence prefetch / context assembly 步骤，不是当前暴露给 LLM 的 function tool，也不是当前 FastAPI service tool。后续 pKa、logD、solubility、toxicity、target affinity、PK property 等模型才按通用 tool contract 接入。
-3. 长初始化模型要常驻。慢启动模型和大索引应在服务启动时加载，通过 FastAPI endpoint 调用，避免每个 query 反复初始化。
-4. evidence retrieval 只提供证据，不直接替代 reasoning。retrieval payload 必须保留 assay 描述、activity 数值、endpoint 语义、similarity 和不确定性。
-5. 默认 production/group-level retrieval 单元仍优先是 molecule-level evidence：先找相似 molecule，再展开
-   assay/activity evidence。另有隔离的 Starling assay-level scaling experiment：先按冻结 biological relevance
-   选择 cumulative assay prefix、先删除 valid+test parents 的 direct-outcome rows，再从保留的 source records
-   检索 query-scaffold-disjoint molecules，并把相同 molecule 跨 assays 合并为一个 flat branch。该实验不得
-   改写 production family mapping；协议见
-   `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+1. Do not write BBB logic as a one-off script. BBB is the first task, but tool services, retrieval protocols, and LLM input/output formats should support more tasks later.
+2. ChEMBL neighbor retrieval is an evidence prefetch / context assembly step in the pipeline, not a function tool currently exposed to the LLM, nor a current FastAPI service tool. Later models for pKa, logD, solubility, toxicity, target affinity, PK properties, etc., will be integrated under a common tool contract.
+3. Long-initialization models should be resident. Slow-start models and large indexes should be loaded at service startup and called via FastAPI endpoints, avoiding repeated initialization per query.
+4. Evidence retrieval only provides evidence, not a substitute for reasoning. The retrieval payload must retain assay description, activity values, endpoint semantics, similarity, and uncertainty.
+5. The default production/group-level retrieval unit remains molecule-level evidence: first find similar molecules, then expand
+   assay/activity evidence. There is also an isolated Starling assay-level scaling experiment: first select a cumulative assay prefix based on frozen biological relevance,
+   delete direct-outcome rows for valid+test parents, then retrieve query-scaffold-disjoint molecules from the retained source records,
+   and merge identical molecules across assays into one flat branch. This experiment must not
+   modify the production family mapping; the protocol is in
+   `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`.
    Conditioned cumulative-family assay experiments use `assay_compact.raw_v3`:
    at most three representative record cards per assay×molecule with complete
    raw card fields and support text. They do not apply field-level truncation
@@ -267,56 +597,56 @@ ClinTox 当前严格 split 位于 `data/legacy/clintox/gold_labels/conditioned_b
    efflux/influx precedence violations before an index can be published.
    Its runner and artifacts must not replace the
    cumulative-family or geometric assay-prefix pipelines.
-6. LLM reasoning 分为并发证据分支和 final 汇总：single-molecule 分支判断理化性质先验；paper-facing
-   group-level 分支按少量、数据源无关的 mechanism family 判断 analog transferability；final-level 汇总所有
-   证据。细粒度 `Tier.endpoint_group` 只用于 source-local normalization、检索审计和 legacy native runner，
-   不得在新任务中一组对应一个并行 LLM branch。任务扩展规范见 `tools/chembl_tool/tasks/AGENTS.md`。
+6. LLM reasoning is divided into concurrent evidence branches and a final summary: the single-molecule branch judges physicochemical property priors; the paper-facing
+   group-level branch judges analog transferability by a small number of data-source-independent mechanism families; the final level summarizes all
+   evidence. Fine-grained `Tier.endpoint_group` is only used for source-local normalization, retrieval audit, and legacy native runner,
+   and must not be used as one parallel LLM branch per group in new tasks. Task extension specifications are in `tools/chembl_tool/tasks/AGENTS.md`.
 
-## 当前常驻工具服务
+## Current Resident Tool Services
 
-当前已经实现的通用工具服务入口：
+Currently implemented common tool service entry points:
 
 ```text
 tools/service/app.py
-  FastAPI app。注册工具并提供 /health、/tools、/tools/batch、/tools/{tool_name}/invoke、
-  /tools/invoke、/tools/{tool_name}。
+  FastAPI app. Registers tools and provides /health, /tools, /tools/batch, /tools/{tool_name}/invoke,
+  /tools/invoke, /tools/{tool_name}.
 
 tools/service/config.py
-  服务配置。读取 MolGpKa、bounded batch workers、persistent cache 和 native-thread budget；mmpdb 使用
-  当前 Python 环境中已安装的 mmpdblib，不需要源码路径环境变量。
+  Service configuration. Reads MolGpKa, bounded batch workers, persistent cache, and native-thread budget; mmpdb uses
+  the mmpdblib installed in the current Python environment, no source path environment variable needed.
 
 tools/service/registry.py
-  ToolRegistry。负责初始化工具、复用共享实例、统一 invoke/batch invoke、persistent cache 和 single-flight。
+  ToolRegistry. Responsible for initializing tools, reusing shared instances, unified invoke/batch invoke, persistent cache, and single-flight.
 
 tools/service/cache.py
-  版本化 SQLite/WAL persistent cache、进程内 LRU 和 single-flight 的公共实现。
+  Versioned SQLite/WAL persistent cache, in-process LRU, and single-flight common implementation.
 
 tools/service/runtime.py
-  限制 PyTorch/OpenMP/MKL/OpenBLAS/NumExpr native threads，防止 request-level 并发再嵌套线程膨胀。
+  Limits PyTorch/OpenMP/MKL/OpenBLAS/NumExpr native threads to prevent request-level concurrency from nesting thread explosion.
 
 tools/service/molgpka_predictor.py
-  ResidentMolGpKaPredictor；acid/base weights 每个 service process 只加载一次。
+  ResidentMolGpKaPredictor; acid/base weights are loaded only once per service process.
 
 tools/service/schemas.py
-  ToolRequest / ToolResponse / ToolError 等统一 schema。
+  Unified schemas such as ToolRequest / ToolResponse / ToolError.
 
 tools/service/errors.py
-  统一工具异常。
+  Unified tool exceptions.
 
 tools/service/tools/base.py
-  BaseTool 抽象。
+  BaseTool abstraction.
 
 tools/service/tools/rdkit_properties.py
-  molecule_properties v1。计算 RDKit descriptors、MolGpKa pKa/logD、AccFG 顶层 functional groups。
+  molecule_properties v1. Computes RDKit descriptors, MolGpKa pKa/logD, AccFG top-level functional groups.
 
 tools/service/tools/properties_compare.py
-  properties_compare v1。比较两个分子的 molecule_properties 输出，functional groups 除外。
+  properties_compare v1. Compares molecule_properties output of two molecules, excluding functional groups.
 
 tools/service/tools/mmp_structure_compare.py
-  mmp_structure_compare v1。只比较结构：Morgan Tanimoto、similarity bucket、mmpdb matched-pair transformation、MCS。
+  mmp_structure_compare v1. Compares structure only: Morgan Tanimoto, similarity bucket, mmpdb matched-pair transformation, MCS.
 ```
 
-当前相关测试入口：
+Current relevant test entry points:
 
 ```text
 tests/service/test_registry.py
@@ -326,25 +656,25 @@ tests/service/test_properties_compare.py
 tests/service/test_mmp_structure_compare.py
 ```
 
-单进程开发启动命令：
+Single-process development startup command:
 
 ```bash
 uvicorn tools.service.app:app --host 127.0.0.1 --port 8765
 ```
 
-node002 正式高吞吐启动、缓存、batch endpoint、线程预算和滚动切换规范统一维护在：
+node002 formal high-throughput startup, caching, batch endpoints, thread budget, and rolling switch specifications are maintained in:
 
 ```text
 tools/service/README.md
 ```
 
-正式 benchmark 使用 32 个 Uvicorn process workers、每进程 8 个 bounded batch workers、每次 native
-inference 1 thread，并将版本化 SQLite/WAL cache 放在 node-local `/local/tmp`。harness 将一个 sample 的固定
-tool bundle 通过 `/tools/batch` 一次提交；服务按 tool/input/version 做 persistent cache 和 single-flight
-去重。该层只消费统一 retrieval payload，不依赖 Morgan、MiniMol、coverage selector 或 future retriever
-的内部实现。不得在新的 retrieval 方法里复制 tool-prefetch/cache 逻辑。
+The formal benchmark uses 32 Uvicorn process workers, 8 bounded batch workers per process, 1 thread per native
+inference, and may stage the active versioned SQLite/WAL cache under node-local `/local/tmp`; after the writer closes, it must be copied to validated storage on `/vast` and removed locally. The harness submits a fixed tool bundle for one sample
+via `/tools/batch` at once; the service performs persistent cache and single-flight
+deduplication by tool/input/version. This layer only consumes the unified retrieval payload and does not depend on the internal implementations of Morgan, MiniMol, coverage selector, or future retrievers.
+Do not duplicate tool-prefetch/cache logic in new retrieval methods.
 
-当前服务层暂时只冻结三个通用工具：
+Currently, the service layer temporarily freezes only three general tools:
 
 ```text
 molecule_properties
@@ -352,17 +682,17 @@ properties_compare
 mmp_structure_compare
 ```
 
-之前规划里的 `rdkit_properties`、`ml_pka` 不再作为独立 service tool 暴露；它们已经合并进 `molecule_properties`。`chembl_neighbors` 当前也不是常驻 service tool，也不是 DeepSeek 可调用 tool。ChEMBL neighbor retrieval 仍由各 task 的 `retrieve_neighbors.py` / `run_reasoning_pipeline.py` 在调用 LLM 前预取并注入为 group evidence context；后续需要时再包装成 service tool 或 task endpoint。
+Previously planned `rdkit_properties` and `ml_pka` are no longer exposed as independent service tools; they have been merged into `molecule_properties`. `chembl_neighbors` is currently not a resident service tool, nor a DeepSeek-callable tool. ChEMBL neighbor retrieval is still prefetched and injected as group evidence context by each task's `retrieve_neighbors.py` / `run_reasoning_pipeline.py` before calling the LLM; it can be wrapped as a service tool or task endpoint later if needed.
 
-## LLM 可见输出约定
+## LLM-Visible Output Convention
 
-工具响应会保留结构化 JSON，供 workflow、debug、缓存和测试使用；最终展示给 LLM 的内容只使用：
+Tool responses retain structured JSON for workflow, debugging, caching, and testing; the final content shown to the LLM uses only:
 
 ```text
 ToolResponse.output.text
 ```
 
-不要把 `raw_features`、`comparisons`、`mcs`、`transformation`、`metadata` 等结构化字段整包塞进 LLM prompt。需要在 prompt 中区分工具时，可以加简短标题，例如：
+Do not stuff structured fields such as `raw_features`, `comparisons`, `mcs`, `transformation`, `metadata` into the LLM prompt as a whole. When needing to distinguish tools in the prompt, you can add short titles, for example:
 
 ```text
 [molecule_properties]
@@ -375,33 +705,32 @@ ToolResponse.output.text
 <output.text>
 ```
 
-所有工具面向 LLM 的文本中，数字最多保留两位小数。None / 缺失 / 不适用值应以自然语言说明，例如 `not applicable`，避免把 Python/JSON 内部表示直接暴露给 LLM。
+In all tool-facing LLM text, numbers are rounded to at most two decimal places. None / missing / not applicable values should be described in natural language, e.g., `not applicable`, avoiding exposing Python/JSON internal representations directly to the LLM.
 
-Evidence library 内部可以保留 `evidence_direction`、`evidence_strength`、`endpoint_group_reason`、
-`assay_reason` 等规则派生字段，方便 debug 和审计；这些字段不能发送给 reasoning LLM。所有 task 的
-group prompt 必须通过 `tools/chembl_tool/common/evidence_contract.py` 将 ChEMBL、Starling 或其它 source row
-转换为 `minimal_evidence.v1`。该 contract 只描述 source、molecule、group、endpoint/measurement、
-evidence/context text、可选 role/scope、quality/uncertainty 和 provenance，不包含 label vote、threshold
-policy 或 deterministic override。
+The evidence library may retain rule-derived fields such as `evidence_direction`, `evidence_strength`, `endpoint_group_reason`,
+`assay_reason` internally for debugging and auditing; these fields must not be sent to the reasoning LLM. All task
+group prompts must convert ChEMBL, Starling, or other source rows into `minimal_evidence.v1` via `tools/chembl_tool/common/evidence_contract.py`. This contract only describes source, molecule, group, endpoint/measurement,
+evidence/context text, optional role/scope, quality/uncertainty, and provenance; it does not include label votes, threshold
+policies, or deterministic overrides.
 
-## OpenAI-compatible / GLM-5.2 适配记录
+## OpenAI-compatible / GLM-5.2 Adaptation Record
 
-2026-08-01 起，paper/Starling GLM runner 默认通过本机 SSH tunnel 直连 dgx008 vLLM：
+Starting 2026-08-01, the paper/Starling GLM runner defaults to connecting directly to dgx008 vLLM via a local SSH tunnel:
 
 ```text
 base_url: http://127.0.0.1:50000/v1
 model: nvidia/GLM-5.2-NVFP4
-api key env: GLM_LOCAL_API_KEY (loopback vLLM 无鉴权时 runner 自动注入非敏感占位值)
+api key env: GLM_LOCAL_API_KEY (runner auto-injects a non-sensitive placeholder when loopback vLLM has no auth)
 reasoning_effort: "" (omit the API parameter; matches the historical LiteLLM runs)
 ```
 
-先建立 tunnel：
+First establish the tunnel:
 
 ```bash
 ssh -fNT parcc-glm
 ```
 
-旧 Penn LiteLLM 仍可显式作为 fallback：
+The old Penn LiteLLM can still be explicitly used as a fallback:
 
 ```bash
 --api-key-env GLM_API_KEY \
@@ -410,64 +739,105 @@ ssh -fNT parcc-glm
 --reasoning-effort ""
 ```
 
-`zai-org/GLM-5.2-FP8` 是旧 LiteLLM 请求别名；旧 response 和既有 trace 实际均报告
-`hosted_vllm/nvidia/GLM-5.2-NVFP4`。不要把旧/新路径描述成 FP8 与 NVFP4 两种模型的比较。
-正式 runner 继续沿用历史 `--disable-thinking --reasoning-effort ""`。这里的 `--disable-thinking` 只是不发送
-DeepSeek-style `thinking` 参数，空 `reasoning_effort` 使 client 完全省略该 API 参数；它不会关闭 GLM 自己的
-reasoning，provider 返回的 `reasoning_content` 或 `reasoning` 仍写入 trace。曾测得的 64/128/256/512
-并发高吞吐数字使用了 `reasoning_effort=none`，属于关闭 reasoning 的 endpoint ceiling 诊断，未被采纳为
-正式默认，也不能用于估算当前 reasoning-enabled agent pipeline 的加速比例。
+`zai-org/GLM-5.2-FP8` is the old LiteLLM request alias; old responses and existing traces actually report
+`hosted_vllm/nvidia/GLM-5.2-NVFP4`. Do not describe the old/new paths as a comparison between FP8 and NVFP4 models.
+The formal runner continues to use the historical `--disable-thinking --reasoning-effort ""`. Here, `--disable-thinking` simply does not send the DeepSeek-style `thinking` parameter; the empty `reasoning_effort` makes the client completely omit that API parameter; it does not disable GLM's own reasoning, and the provider-returned `reasoning_content` or `reasoning` is still written to the trace. The previously measured 64/128/256/512 concurrency high-throughput numbers used `reasoning_effort=none`, which is an endpoint ceiling diagnosis with reasoning disabled, not adopted as the formal default, and cannot be used to estimate the speedup ratio of the current reasoning-enabled agent pipeline.
 
-OpenAI-compatible response 可能把思考文本放在 `reasoning_content` 或 `reasoning`；共享 client 两者都接受。
+OpenAI-compatible responses may place thinking text in `reasoning_content` or `reasoning`; the shared client accepts both.
 
-### 当前 Conditioned Benchmark 正式运行默认
+### Current Conditioned Benchmark Formal Run Defaults
 
-四任务统一读取 `data/gold_labels/<Task>/v1/scaffold/`，并冻结为：
+The four tasks uniformly read `data/gold_labels/<Task>/v1/scaffold/` and freeze it as:
 
 ```text
 endpoint: http://127.0.0.1:50000/v1
 model: nvidia/GLM-5.2-NVFP4
-reasoning: --disable-thinking --reasoning-effort ""（与历史 GLM 设置一致，仍保存 reasoning）
+reasoning: --disable-thinking --reasoning-effort "" (consistent with historical GLM settings, still saves reasoning)
 visibility_mode: identity_blind
 neighbor_identity_policy: parent_disjoint
 run_operational_first: false
 endpoint_concurrency_budget: 512
 ```
 
-这里的 512 是单次正式 launcher 的全局 endpoint request budget，不是允许每一层并行各自再乘 512。
-Reasoning-enabled valid 压力运行已证明 512/384 对长 group prompt 不稳定，因此当前默认执行形状为
-全局 prompt pool 的 `--parallelism 128`，并且同一 endpoint 同时只启动一个 matrix launcher；任何多 split、
-多 task 或多 condition 外层 fan-out 都必须共享这 512 个 slots。512 只表示硬上限，不是推荐并发。
+Here, 512 is the global endpoint request budget for a single formal launcher, not allowing each layer to parallelize and multiply by 512 again.
+Reasoning-enabled valid stress runs have proven 512/384 unstable for long group prompts, so the current default execution shape is `--parallelism 128` for the global prompt pool. Independent output-root matrix launchers can use the same endpoint simultaneously;
+each launcher independently adheres to and records its own global budget and endpoint allocations, and states known aggregate load in status reports.
+Outer fan-out across multiple splits, tasks, or conditions within the same launcher must share that launcher's slots.
+512 only represents the single-launcher hard cap for this formal workflow, not a recommended concurrency.
 
-matrix 只使用一个跨 task/condition 的 ready queue；`--parallelism` 是全局 outstanding prompt 上限。
-single/group/final branch 共池，final 只在其依赖成功后入队；跨 condition 的 frozen single 依赖按 sample
-动态解锁。不得重新引入 condition lane、整批 phase barrier，或通过多个 launcher 绕过全局预算。
+The matrix uses only one cross-task/condition ready queue; `--parallelism` is the launcher's global outstanding prompt limit.
+single/group/final branches share the pool; final is enqueued only after its dependencies succeed; frozen single dependencies across conditions are dynamically unlocked per sample.
+Do not reintroduce condition lanes, whole-batch phase barriers, or split the same requested matrix into multiple launchers to bypass the matrix's budget; this does not restrict independent output-root matrices from sharing the endpoint concurrently.
 
-新正式矩阵直接从 held-out-filtered index 做 fresh `parent_disjoint` retrieval，不再依赖 operational artifact、
-same-parent diff 或 `reuse_plan.json`。`none` 仍必须运行，但其 identity policy 标记为不适用。新数据集先跑 valid
-做 pipeline/completeness 检查，冻结设置后再跑 test；不得根据 test 调并发以外的模型、prompt、threshold 或
-label policy。既有 operational、deployment-visible、matched-prefetch 和 reuse artifacts 都保留为 historical
-lineage，不删除，也不混入新 v4 主结果。
+Every approved multi-variant full batch must place all requested tasks, retrieval
+widths, prompt versions, query-prior modes, and other condition axes into that one
+matrix invocation and one rolling ready queue. Never serialize variants with a
+shell loop or start a separate matrix launcher for each version or width. Prepare
+conditions incrementally, enqueue each request as soon as its inputs are ready,
+and immediately backfill every free endpoint slot while any runnable request from
+any variant remains. A slow tail, preparation, validation, or finalization for one
+variant must not gate runnable work from another. If the matrix CLI cannot express
+a requested axis, extend the shared matrix first rather than approximating the run
+with separate launchers.
+Independent evidence-level ablations are variants under this rule: pass every
+requested level to one matrix invocation, never a shell loop of scalar levels.
 
-当前代码已经完成以下实现 gate；GPT-OSS-120B v2 valid 已完成。2026-08-10 已首次完成 Bioavailability
-full-flat/full-mechanism 及对应 Morgan KNN、MiniMol embedding KNN、MiniMol trained head 的 frozen
-scaffold-test。2026-08-13 的 BBB DeepSeek residual-adjudication valid gate 已失败，BBB 方法开发停止且
-formal test 不再列为待办；Skin formal test 与 GLM v2 valid/test 仍须等待独立 promotion/artifact gate：
+Multi-endpoint inference must degrade gracefully. Before launch, probe every
+configured endpoint for the exact model, use all compatible endpoints that are
+currently healthy, and set effective parallelism no higher than their combined
+capacity. An unavailable endpoint is recorded in the execution receipt but must
+not block or delay a run while at least one compatible endpoint is alive. Block
+only when no compatible endpoint is available. If an endpoint fails during a
+run, preserve completed responses and continue on the remaining pool; a recovered
+endpoint may rejoin at the next safe launcher or resume boundary. Endpoint
+availability may change execution capacity, never prompts, retrieval, condition
+identity, or run names.
 
-1. runner 默认改为 `identity_blind + parent_disjoint`，并允许该组合 fresh-run；
-2. parent-disjoint fresh-run 不要求 operational `reuse_plan.json`，且输出到独立
-   `runs_identity_blind_parent_disjoint/`；
-3. 默认 launcher 使用单一 128-slot global prompt pool，并阻止 `parallelism` 超过全局 512 budget；
-4. manifest 显式保存 endpoint、served model、reasoning、visibility、identity policy、effective concurrency、
-   evaluation subset 和 `operational_staging_used=false`；
-5. valid/test 分区、manifest 和 held-out index 使用同一 valid+test union；完整矩阵仍必须通过
-   `n_failed_runs=0`、identity leak=0、parent conflict=0 和 held-out overlap=0。
+All prediction full-batch launchers use the mutable candidate inventory
+`predict/api_client/providers/current_endpoints.json`. Update that one file when
+hosts or ports change; do not encode endpoint names in run IDs. Full inference
+requires an explicit `--parallelism`. The launcher records that requested budget,
+selects every healthy exact-model candidate concurrently, and records the lower
+effective budget when live capacity is smaller. Offline `--prepare-only` work does
+not probe endpoints. Throughput is the default; a pilot requires the explicit
+`--execution-mode live` choice and is never inserted into a full-batch run.
 
-GLM 对 tool choice 和长 structured output 的遵循可能不稳定。所有 task 统一通过
-`tools/chembl_tool/common/reasoning_validation.py` 检查必需 JSON 字段和允许值；当前默认最多 4 次总尝试，
-每次 validation error 和 attempt count 都必须进入 trace。
-该 validation 层不能修改有效 prediction，也不能实现 task-specific label policy。需要更长 final 输出时，
-显式提高 `--max-tokens`；不要用 postprocess 修补 benchmark label。
+The new formal matrix performs fresh `parent_disjoint` retrieval directly from the
+held-out-filtered index, no longer relying on operational artifacts,
+same-parent diff, or `reuse_plan.json`. `none` must still run, but its
+identity policy is marked as not applicable. New datasets first run valid for
+pipeline/completeness checks, then run test after freezing settings; do not
+adjust model, prompt, threshold, or label policy based on test except for
+concurrency. Existing operational, deployment-visible, matched-prefetch, and
+reuse artifacts are retained as historical lineage, not deleted, and not mixed
+into the new v4 main results.
+
+The current code has completed the following implementation gates; GPT-OSS-120B
+v2 valid is complete. On 2026-08-10, Bioavailability full-flat/full-mechanism
+and corresponding Morgan KNN, MiniMol embedding KNN, MiniMol trained head
+frozen scaffold-test were first completed. The 2026-08-13 BBB DeepSeek
+residual-adjudication valid gate failed; BBB method development stops and the
+formal test is no longer listed as a pending item; Skin formal test and GLM v2
+valid/test still must wait for independent promotion/artifact gates:
+
+1. runner defaults to `identity_blind + parent_disjoint` and allows fresh-run for that combination;
+2. parent-disjoint fresh-run does not require operational `reuse_plan.json` and
+   outputs to a separate `runs_identity_blind_parent_disjoint/`;
+3. default launcher uses a single 128-slot global prompt pool and prevents
+   `parallelism` from exceeding the global 512 budget;
+4. manifest explicitly saves endpoint, served model, reasoning, visibility,
+   identity policy, effective concurrency, evaluation subset, and `operational_staging_used=false`;
+5. valid/test partitions, manifest, and held-out index use the same valid+test
+   union; the full matrix must still pass `n_failed_runs=0`, identity leak=0,
+   parent conflict=0, and held-out overlap=0.
+
+GLM's adherence to tool choice and long structured output may be unstable. All
+tasks uniformly check required JSON fields and allowed values through
+`tools/chembl_tool/common/reasoning_validation.py`; currently the default is at most 4 total attempts, and each
+validation error and attempt count must be recorded in the trace. This
+validation layer cannot modify valid predictions or implement task-specific
+label policy. When longer final output is needed, explicitly increase
+`--max-tokens`; do not use postprocess to patch benchmark labels.
 
 ## Evidence-library release versioning
 
@@ -475,6 +845,16 @@ Evidence-library construction code is version-first and release-local. The
 canonical layout is:
 
 ```text
+semantic_buckets/
+  artifacts.py
+  prompts/
+  policies/
+  releases/<task>/<version>/
+  provenance/
+  history/
+  audits/
+  tests/
+
 data/processing/evidence_library/
   shared/v1/
   views.py
@@ -503,19 +883,22 @@ data/processing/gold_labels/
   publish_conditioned_benchmark.py
 ```
 
-`shared/v1/` is immutable construction code pinned by both V7 and V8. It contains
-only dependency-closed mechanics shared across releases; it does not own task
-policies, active prompts, mappings, pruning rules, or release-specific module
-resolution. Never change existing pinned behavior after a release uses it. An
-incompatible common change creates `shared/v2/`.
+`shared/v1/` is immutable construction code pinned by both V7 and V8. It
+contains only dependency-closed mechanics shared across releases; it does not
+own task policies, active prompts, mappings, pruning rules, or release-specific
+module resolution. Never change existing pinned behavior after a release uses
+it. An incompatible common change creates `shared/v2/`.
 
 Each `versions/vN/` root owns the small set of construction modules shared across
 tasks in that release. Do not add a second `versions/vN/shared/` layer. Heldout
-filtering, gold-label substitution, evidence catalogs, neighbor indices, and
-bucket-informativeness analysis are consumers of a completed library and stay at
-the unversioned `evidence_library/` root. Stable mechanics belong in the pinned
-cross-release package. Active policy, prompt selection, mappings, and pruning
-behavior remain release-local and may diverge independently.
+filtering, gold-label substitution, evidence catalogs, neighbor indices,
+bucket-informativeness analysis, and semantic/readout sidecars are consumers of
+a completed library and stay at the unversioned `evidence_library/` root.
+Semantic/readout code, prompts, policies, releases, provenance, history, and audits
+are colocated under the repository-top-level `semantic_buckets/` owner. Published
+payloads live under `semantic_buckets/releases/<task>/<version>/` and are selected
+by their manifest. Stable mechanics remain in that package; active policy and
+reviewed decisions are versioned separately and may diverge by release.
 
 Start a new release by copying the complete preceding release directory, then
 modify the copy. Never make a new release inherit implementation or assets from
@@ -526,34 +909,34 @@ the selected construction path and non-reconstructable scientific decisions.
 Prompt, mapping, and rule versions are component versions, not aliases for the
 library release number. Keep only the selected component generation in an active
 release. Compact lineage needed for a retired generation belongs under
-`data/legacy/evidence_library_construction/`; agent scratch and review-process
-intermediates remain outside the repository.
+`data/legacy/evidence_library_construction/`; agent scratch and review-process intermediates remain outside the
+repository.
 
 Published version directories are frozen. Do not retrofit a behavior change into
-an older version; create the next version instead. `data/evidence_libraries/<task>/<version>/`
-contains the corresponding built data, and each published task's `CURRENT` file
-selects the active release. Raw data and gold labels remain external inputs;
-scientific construction mappings and reviewed inputs belong to the release that
-consumes them.
+an older version; create the next version instead. `data/evidence_libraries/<task>/<version>/` contains the
+corresponding built data, and each published task's `CURRENT` file selects
+the active release. Raw data and gold labels remain external inputs; scientific
+construction mappings and reviewed inputs belong to the release that consumes
+them.
 
 Construction code must import canonical `shared/vN` or `versions/vN` packages
 directly. Do not create compatibility symlinks, forwarding modules, dynamic
-fallbacks, or construction modules under `tools/chembl_tool/`. The real
-task-specific reasoning and retrieval workflows under `tools/chembl_tool/tasks/`
-remain independent of construction-code ownership.
+fallbacks, or construction modules under `tools/chembl_tool/`. The real task-specific
+reasoning and retrieval workflows under `tools/chembl_tool/tasks/` remain independent of
+construction-code ownership.
 
-## ChEMBL task workflow 目录
+## ChEMBL task workflow directory
 
-具体任务放在：
+Specific tasks are placed in:
 
 ```text
 tools/chembl_tool/tasks/<task_name>/
 ```
 
-每个 task 目录只维护 task-specific 规则、scoring、endpoint assignment、默认路径、输出文件名和
-reasoning prompt / final schema。跨 task 共享的 workflow 不放在 `tasks/` 目录下，而是放在：
-
-```text
+Each task directory maintains only task-specific rules, scoring, endpoint
+assignment, default paths, output filenames, and reasoning prompt / final
+schema. Cross-task shared workflows are not placed under the `tasks/`
+directory, but under:```text
 tools/chembl_tool/common/task_workflows/
   screen_assays.py
   rescore_outputs.py
@@ -595,171 +978,204 @@ data/processing/evidence_library/heldout_index.py
 tools/chembl_tool/common/assay_retrieval.py
 ```
 
-这些公共 workflow 的职责：
+Responsibilities of these common workflows:
 
 ```text
 screen_assays.py
-  扫描 ChEMBL assays，调用 task-specific scoring.scored_row，导出 assay candidates、
-  activity evidence 和 report。
+  Scans ChEMBL assays, calls task-specific scoring.scored_row, exports assay
+  candidates, activity evidence, and report.
 
 rescore_outputs.py
-  对已有 candidate CSV 重打分，适合规则变严、重排 tier 或调整阈值；如果规则变宽，
-  需要重新跑 screen_assays.py。支持 `--only-filter-activities`，用于 candidate 已经确定、
-  只需要按现有 candidate 重新过滤 activity evidence 的场景。
+  Re-scores existing candidate CSVs, suitable for stricter rules, reordering
+  tiers, or adjusting thresholds; if rules are relaxed, re-run screen_assays.py.
+  Supports `--only-filter-activities` for scenarios where candidates are already determined
+  and only need to re-filter activity evidence based on existing candidates.
 
 summarize_outputs.py / assay_report.py
-  生成 health check 和 Markdown report。
+  Generate health checks and Markdown reports.
 
 evidence_library.py
-  从 assay candidates + activity evidence 构建 molecule-level evidence rows、RDKit fingerprint
-  和 neighbor index。task 只配置输入路径、输出文件名、index version 和 assign_endpoint_group。
-  支持 `--workers` 并行标准化 molecule / 构建 index，长任务进度会打印 elapsed、rate 和 ETA。
+  Builds molecule-level evidence rows, RDKit fingerprints, and neighbor index
+  from assay candidates + activity evidence. Task only configures input paths,
+  output filenames, index version, and assign_endpoint_group. Supports
+  `--workers` parallel standardization of molecules / index building; long
+  tasks print elapsed, rate, and ETA progress.
 
 distance_assay_manifest.py
-  E12 的通用 ChEMBL assay 扫描和冻结 manifest workflow。task-local classifier 只决定 family、scope、quality
-  和 mapping reason；公共实现负责 source manifest、纳入/排除审计、activity export 和 graph/config provenance。
+  E12's generic ChEMBL assay scanning and frozen manifest workflow. Task-local
+  classifier only decides family, scope, quality, and mapping reason; common
+  implementation handles source manifest, inclusion/exclusion audit, activity
+  export, and graph/config provenance.
 
 retrieve_neighbors.py
-  source-local / legacy native retrieval：对细粒度 Tier.endpoint_group 做 analog retrieval，包含 molecule
-  identity policy、Tanimoto ranking、similarity threshold、similarity bucket 和 JSONL batch retrieval CLI。
-  Paper-facing direct/flat/mechanism 视图由 experiment_retrieval.py 在其上按 mechanism family 组装。
+  Source-local / legacy native retrieval: performs analog retrieval for
+  fine-grained Tier.endpoint_group, including molecule identity policy, Tanimoto
+  ranking, similarity threshold, similarity bucket, and JSONL batch retrieval
+  CLI. Paper-facing direct/flat/mechanism views are assembled by
+  experiment_retrieval.py on top, organized by mechanism family.
 
 chembl_exact_context.py
-  可选 exact-query ChEMBL context 和 shared-assay enrichment。默认 benchmark 不开启，
-  避免 prospective evaluation 数据泄漏。
+  Optional exact-query ChEMBL context and shared-assay enrichment. Not enabled
+  by default in benchmarks to avoid prospective evaluation data leakage.
 
 reasoning_batch.py
-  多分子 batch 的参数、manifest、日志、结果采集和 predictions/metrics/report 公共实现。实际 prompt 调度
-  统一委托给 global prompt pool。支持 `--groups` 透传给 task pipeline，用于 targeted
-  group smoke test；支持 `--final-only-source-batch` 复用已有 single/group artifacts，
-  并用 `--final-only-groups` 在重新汇总 final 前严格裁剪可见 group（不能用 `--groups`
-  代替该过滤）；metrics 包含 positive-class precision/recall/F1、confusion matrix 和
-  prediction distribution。
+  Multi-molecule batch parameters, manifest, logs, result collection, and
+  predictions/metrics/report common implementation. Actual prompt scheduling is
+  uniformly delegated to the global prompt pool. Supports `--groups`
+  pass-through to task pipeline for targeted group smoke tests; supports
+  `--final-only-source-batch` reuse of existing single/group artifacts, and uses `--final-only-groups`
+  to strictly prune visible groups before re-summarizing final (cannot use
+  `--groups` instead of this filter); metrics include positive-class
+  precision/recall/F1, confusion matrix, and prediction distribution.
 
 global_prompt_pool.py / reasoning_stage_runtime.py
-  前者提供跨 task/condition 的唯一 ready queue 和全局 prompt 并发上限；后者提供 single/group/final stage
-  checkpoint、依赖解锁、原子 artifact 写入和断点恢复。成功 prerequisite 改写会使旧 final/trace 失效；final
-  只在 single 和精确 expected group set 全部成功后执行。五个现有 batch wrapper 都必须能接受公共
-  `--prepare-only` seed 命令；尚未迁移到共享 retrieval contract 的 DILI 只允许 native/operational/standard
-  默认组合，公共 parser 会拒绝伪装成 parent-disjoint 或 coverage ablation。
-  Pool 内部 sample key 必须使用绝对 batch directory 加 query index；`batch_id` 只在单个 batch root 内唯一，
-  不能作为跨 fold/跨 root 的全局 key。single dependency 的 source key 必须使用同一绝对目录合同。
+  The former provides a unique ready queue across tasks/conditions and a global
+  prompt concurrency limit; the latter provides single/group/final stage
+  checkpoints, dependency unlocking, atomic artifact writing, and breakpoint
+  recovery. Successful prerequisite rewrites invalidate old final/trace; final
+  executes only after single and exact expected group set all succeed. All five
+  existing batch wrappers must accept the common `--prepare-only` seed command;
+  DILI, not yet migrated to the shared retrieval contract, only allows
+  native/operational/standard default combinations; the common parser rejects
+  disguised parent-disjoint or coverage ablation. Pool internal sample keys must
+  use absolute batch directory plus query index; `batch_id` is only unique
+  within a single batch root and cannot serve as a global key across folds/roots.
+  Single dependency source keys must use the same absolute directory contract.
 
 evidence_contract.py
-  `minimal_evidence.v1` 的唯一 schema/normalizer。旧 ChEMBL-like row 可以在 prompt-time 动态转换，
-  新 source builder 应在建库时调用 `attach_minimal_evidence()`。该模块只描述 evidence，不预测 label。
+  The unique schema/normalizer for `minimal_evidence.v1`. Old ChEMBL-like rows can be
+  dynamically converted at prompt time; new source builders should call
+  `attach_minimal_evidence()` at library build time. This module only describes evidence, does
+  not predict labels.
 
 identity_blind.py
-  统一实现 identity redaction、harness-prefetched tool evidence 和 matched-prefetch tool replay。Paper task
-  runner 只能通过该模块选择 visibility/tool-execution contract，不能在 task 内复制脱敏或 replay 逻辑。
+  Uniformly implements identity redaction, harness-prefetched tool evidence, and
+  matched-prefetch tool replay. Paper task runners can only select
+  visibility/tool-execution contract through this module; cannot duplicate
+  redaction or replay logic within tasks.
 
 reasoning_calls.py / json_utils.py
-  共享 single/group branch 调用、冻结 single analysis 复用、group payload transport bound、JSON 提取以及
-  JSON/JSONL/trace 同目录原子发布工具。
-  Transport bound 只能确定性采样超大 evidence rows，不能改变 evidence source、label policy 或 inference setting。
+  Shared single/group branch calls, frozen single analysis reuse, group payload
+  transport bound, JSON extraction, and atomic publication tools for
+  JSON/JSONL/trace in the same directory. Transport bound can only
+  deterministically sample oversized evidence rows; cannot change evidence
+  source, label policy, or inference settings.
 
 reasoning_payload.py
-  五个 task pipeline 共用的 LLM query identity surface、exact-match/shared-assay 清洗、单条 JSONL 读取和显式
-  env-file 解析，以及 single/group/final trace 序列化。task 只绑定自身 prediction field，不得复制并逐 task
-  漂移这些 frozen 字段合同。
+  Shared LLM query identity surface for five task pipelines, exact-match/
+  shared-assay cleaning, single-line JSONL reading, explicit env-file parsing,
+  and single/group/final trace serialization. Tasks only bind their own
+  prediction fields; must not copy and drift these frozen field contracts per
+  task.
 
 molecule_identity.py / retrieval_policy.py
-  数据源和任务无关的 whole-record、RDKit fragment/molecular-parent 和 mixture-component 标准化及
-  neighbor exclusion policy。Operational 保留 same-parent evidence；parent_disjoint 额外排除并在既有
-  similarity threshold 内回填。这里的 parent 不是药理学 active moiety，也不推断 prodrug/metabolite 关系。
+  Data-source and task-agnostic whole-record, RDKit fragment/molecular-parent,
+  and mixture-component standardization and neighbor exclusion policy.
+  Operational retains same-parent evidence; parent_disjoint additionally excludes
+  and backfills within existing similarity thresholds. Here parent is not
+  pharmacological active moiety, nor does it infer prodrug/metabolite
+  relationships.
 
 neighbor_selection.py / coverage_reasoning.py
-  两个正交的可插拔 contract：前者只从已通过 similarity、identity 和 evidence gate 的候选中选择 neighbor；
-  后者只控制 LLM-visible analog-set context。`standard` context 是严格 no-op；`coverage_aware` 以匿名统计提供
-  query Morgan feature/atom-environment coverage、逐 neighbor marginal coverage 和 region size，不改变
-  retrieval.json、neighbor 集合、task JSON schema 或 tool-prefetch/cache。Coverage context 不暴露 SMILES、
-  fingerprint bit ID、元素标签或分子身份，且当前只支持 Morgan retrieval feature。Visible-only
-  `coverage_mmp_ledger` 是独立 opt-in profile：它复用常驻 `mmp_structure_compare` 的逐 neighbor MCS/MMP 文本，
-  再以 Morgan marginal feature 统计组织 rank-by-rank 的互补、冗余和未覆盖区域 ledger；不重复实现 MCS/MMP，
-  不修改 raw retrieval、neighbor set、task JSON schema 或默认 `standard` / `coverage_aware` 路径。Morgan feature
-  coverage 不能解释为 atom coverage；没有 matched-pair transformation 时具体 fragment 对应必须标为 unresolved。
+  Two orthogonal pluggable contracts: the former only selects neighbors from
+  candidates that have passed similarity, identity, and evidence gates; the
+  latter only controls LLM-visible analog-set context. `standard` context is
+  strictly a no-op; `coverage_aware` provides anonymous statistics of query Morgan
+  feature/atom-environment coverage, per-neighbor marginal coverage, and region
+  size, without changing retrieval.json, neighbor set, task JSON schema, or
+  tool-prefetch/cache. Coverage context does not expose SMILES, fingerprint bit
+  IDs, element labels, or molecular identity, and currently only supports Morgan
+  retrieval features. Visible-only `coverage_mmp_ledger` is an independent opt-in
+  profile: it reuses the resident `mmp_structure_compare` per-neighbor MCS/MMP text, then
+  organizes rank-by-rank complementarity, redundancy, and uncovered region
+  ledger with Morgan marginal feature statistics; does not reimplement MCS/MMP,
+  does not modify raw retrieval, neighbor set, task JSON schema, or default
+  `standard` / `coverage_aware` paths. Morgan feature coverage cannot be
+  interpreted as atom coverage; without matched-pair transformation, specific
+  fragment correspondences must be marked as unresolved.
 
 retrieval_ablation.py
-  计算 LLM-visible retrieval/group input hash，支持完整 sample 和独立 mechanism branch 的确定性复用，
-  并记录 provenance。该模块不能改变 evidence、阈值或 prediction。
+  Computes LLM-visible retrieval/group input hashes, supports deterministic
+  reuse of full samples and independent mechanism branches, and records
+  provenance. This module cannot change evidence, thresholds, or predictions.
 
 retrieval_replay.py
-  按冻结的 retrieval/tool artifacts 做 matched-prefetch replay，检查 sample coverage 和输入一致性；仅用于
-  visibility/tool-execution 控制，不替代 agentic deployment-visible 主实验。
+  Performs matched-prefetch replay based on frozen retrieval/tool artifacts,
+  checks sample coverage and input consistency; only for visibility/tool-
+  execution control, not a substitute for agentic deployment-visible main
+  experiments.
 
 experiment_retrieval.py
-  将 source-local endpoint groups 映射到 task 声明的 direct/mechanism families；确保 full_flat 与
-  full_mechanism 使用同一 evidence union，并只改变 reasoning organization。
-
-evidence_distance.py / distance_index.py / distance_retrieval.py
-  E12 独立代码线，已实现 D-root/C-family tree contract：每个 C family 恰有一个聚合 H1 child，每个 H1 至多
-  一个 optional H2 child。每个 C/H1/H2 tree node 独立最多取 3 个 neighbors，并共享同一 similarity threshold；
-  child 内多个 target/measurement families 共享 node budget。公共 builder/retrieval/audit 已能物化
-  D、D+C、D+C+H1、D+C+H1+H2 的 flat/mechanism views，并验证 base parity、nestedness、branch stability
-  和 node budget；这仍是与旧 paper matrix 隔离的 engineering line，尚未注册为 paper LLM condition。
-  graph hop validation 之外还必须执行 same-molecule causal continuity audit：若 assay molecule 只改变 system
-  state，而 downstream endpoint 实际作用于另一个未观测 substrate，则标为 `requires_query_role` 或
-  `context_only`，不得进入主 H1/H2。所有 future task 发布前必须完整声明 `FamilySelfRelevanceAudit` 并通过
-  `validate_self_relevance_audit(..., require_publishable=True)`；prompt 不能替代缺失的 substrate/target role。
-  这些模块不得注册进旧 `EXPERIMENT_MODES`，也不得改变旧 paper matrix 或旧 index。
+  Maps source-local endpoint groups to task-declared direct/mechanism families;
+  ensures full_flat and full_mechanism use the same evidence union, and only
+  changes reasoning organization.evidence_distance.py / distance_index.py / distance_retrieval.py
+  E12 independent code line, implements D-root/C-family tree contract: each C family has exactly one aggregate H1 child, each H1 has at most
+  one optional H2 child. Each C/H1/H2 tree node independently takes at most 3 neighbors and shares the same similarity threshold;
+  multiple target/measurement families within a child share the node budget. The public builder/retrieval/audit can materialize
+  D, D+C, D+C+H1, D+C+H1+H2 flat/mechanism views, and verify base parity, nestedness, branch stability,
+  and node budget; this remains an engineering line isolated from the old paper matrix, not yet registered as a paper LLM condition.
+  In addition to graph hop validation, a same-molecule causal continuity audit must be performed: if the assay molecule only changes the system
+  state, while the downstream endpoint actually acts on another unobserved substrate, mark it as `requires_query_role` or
+  `context_only`, and it must not enter the main H1/H2. All future task releases must fully declare `FamilySelfRelevanceAudit` and pass
+  `validate_self_relevance_audit(..., require_publishable=True)`; prompts cannot replace missing substrate/target roles.
+  These modules must not be registered into the old `EXPERIMENT_MODES`, nor change the old paper matrix or old index.
 
 scalar_knn.py
-  共享标量 KNN baseline 实现；当前用于 Bioavailability numeric direct-F 对照，必须和 LLM agent 条件分开报告。
+  Shared scalar KNN baseline implementation; currently used for Bioavailability numeric direct-F control, must be reported separately from LLM agent conditions.
 
 openai_reasoning_client.py
-  所有 task 共享的 OpenAI-compatible JSON completion、bounded tool-call loop、常驻工具服务调用和 trace
-  serialization。provider/model/base URL 由运行参数配置；task 文件不复制 client runtime。
+  Shared OpenAI-compatible JSON completion, bounded tool-call loop, resident tool service calls, and trace
+  serialization for all tasks. Provider/model/base URL are configured by runtime parameters; task files do not copy client runtime.
 
 reasoning_validation.py
-  为 single/group/final branch 提供通用必需字段、允许值和必需工具结果验证；single/group 从发送给模型的
-  `required_json_schema` 自动提取顶层 `a | b | c` 枚举并验证，非法近义值触发同设置 retry。当前默认最多
-  4 次总尝试。
-  不能在 response 有效时改写 prediction，也不能通过 retry 删除 evidence 或改变 inference setting。
+  Provides common required fields, allowed values, and required tool result validation for single/group/final branches; single/group automatically extract the top-level `required_json_schema` enum from the sent
+  `a | b | c` and validate it, with illegal near-synonym values triggering same-setting retry. Currently defaults to at most
+  4 total attempts.
+  Must not rewrite predictions when the response is valid, nor delete evidence or change inference settings through retry.
 
 final_decision_prior.py
-  提供显式 opt-in 的 final-stage decision profile。默认 `standard` 严格 no-op；
-  `train_ratio_tiebreak_v1` 只允许 BBB/Bio final-only valid 诊断在真正 evidence tie 时使用 frozen train majority，
-  并要求 `evidence_state`、boolean `prior_used` 和 prediction 通过 cross-field validation。已失败的 BBB
-  `direct_anchored_residual_v1` / `direct_override_recheck_v1` 只保留冻结 artifacts 和 no-go 结论；专用实现已删除，
-  不得启动 formal test。任何 profile 都不得变成 batch quota。
+  Provides an explicit opt-in final-stage decision profile. Default `standard` is strictly no-op;
+  `train_ratio_tiebreak_v1` only allows BBB/Bio final-only valid diagnostics to use frozen train majority on true evidence ties,
+  and requires `evidence_state`, boolean `prior_used`, and predictions to pass cross-field validation. Failed BBB
+  `direct_anchored_residual_v1` / `direct_override_recheck_v1` only retain frozen artifacts and no-go conclusions; dedicated implementations have been removed,
+  and formal tests must not be started. No profile may become a batch quota.
 
 prompt_profile.py
-  只负责 task prompt profile 的 manifest provenance、历史缺省映射和 branch-reuse 一致性 gate。具体 task
-  instructions/schema 继续放在各 task 的 `prompt_profiles.py`，不得把 task 语义塞进共享模块，也不得在 runner
-  中复制 profile 解析逻辑。
+  Only responsible for manifest provenance, historical default mapping, and branch-reuse consistency gate for task prompt profiles. Specific task
+  instructions/schema continue to reside in each task's `prompt_profiles.py`; task semantics must not be stuffed into shared modules, nor should profile parsing logic be duplicated in the runner.
 
 common/starling/evidence_library.py
-  profile-driven parquet ingestion。profile 只声明 SMILES、endpoint、value、unit、context、scope、role
-  和 group 映射；公共实现负责 canonicalization、缺失 SMILES 统计、molecule-level 聚合、representative
-  examples、provenance 和 neighbor-index 兼容 evidence row。
+  Profile-driven parquet ingestion. Profiles only declare SMILES, endpoint, value, unit, context, scope, role,
+  and group mappings; the public implementation handles canonicalization, missing SMILES statistics, molecule-level aggregation, representative
+  examples, provenance, and neighbor-index compatible evidence rows.
 
 common/starling/benchmark_dataset.py
-  Starling direct gold-label 构建公共引擎：source-row 决策、RDKit fragment-parent 聚合、70% record-majority、
-  random/scaffold train/valid/test split、audit artifact 和 summary。task-specific threshold、
-  population/scope/unit/free-text 规则只能由 task adapter 提供。
+  Starling direct gold-label construction public engine: source-row decisions, RDKit fragment-parent aggregation, 70% record-majority,
+  random/scaffold train/valid/test split, audit artifacts, and summary. Task-specific thresholds,
+  population/scope/unit/free-text rules can only be provided by task adapters.
 
 common/starling/build_benchmark_datasets.py
-  Historical TDC-compatible 三 task CLI；读取冻结 source revision/local parquet，生成
-  `data/gold_labels/legacy/processed_starling/<Task>/{random,scaffold}/` 及 task/root 汇总。BBB 新主线不使用该入口。
+  Historical TDC-compatible three-task CLI; reads frozen source revision/local parquet, generates
+  `data/gold_labels/legacy/processed_starling/<Task>/{random,scaffold}/` and task/root summaries. BBB new mainline does not use this entry.
 
 common/starling/build_record_supported_benchmark.py
-  从冻结 binary parents 构造 scaffold-only quality split；默认 `record_supported_v2`，同时向 BBB 新 builder
-  提供可配置 lineage/seed 的共享分配。lexicographic MILP 先最小化
-  held-out singleton 和 valid/test imbalance，再优化 label balance，最后才最大化第一版 valid 复用。输出只含
-  发生变化的 split/audit，根级 source rejection/conflict provenance 继续读取第一版目录，避免重复数据。
+  Constructs scaffold-only quality splits from frozen binary parents; default `record_supported_v2`, while providing configurable lineage/seed shared allocation to the BBB new builder.
+  Lexicographic MILP first minimizes
+  held-out singleton and valid/test imbalance, then optimizes label balance, and finally maximizes first-version valid reuse. Output contains only
+  changed split/audit; root-level source rejection/conflict provenance continues to read the first-version directory to avoid duplicate data.
 
 common/starling/publish_conditioned_benchmark.py / conditioned_benchmark.py
-  当前四任务唯一 publication/path 入口；source-specific builders 先写入 `data/.build/conditioned_benchmark_sources/`，
-  publisher 再统一 schema、paths、hash receipt。版本化 BBB build/migration scripts 只作 source QA provenance，
-  不得成为 runner input。
+  The only publication/path entry for the current four tasks; source-specific builders first write to `data/.build/conditioned_benchmark_sources/`,
+  then the publisher unifies schema, paths, and hash receipts. Versioned BBB build/migration scripts serve only as source QA provenance,
+  and must not become runner inputs.
 
 common/starling/heldout_index.py
-  从 full-source Starling evidence rows 中按 `rdkit_fragment_parent.v1` 删除 valid+test parents，重建
-  train/evaluation 隔离的 retrieval index，并写 source/exclusion SHA-256、排除数量和 zero-overlap audit。
-  构建时重算并校验 held-out parent key；无法解析 parent 的 source evidence row 保守排除。
+  Deletes valid+test parents from full-source Starling evidence rows according to `rdkit_fragment_parent.v1`, rebuilds
+  train/evaluation isolated retrieval index, and writes source/exclusion SHA-256, exclusion counts, and zero-overlap audit.
+  Recomputes and validates held-out parent keys during build; source evidence rows with unparseable parents are conservatively excluded.
 ```
 
-典型 task wrapper 文件：
+Typical task wrapper files:
 
 ```text
 screen_assays.py
@@ -773,12 +1189,12 @@ run_reasoning_pipeline.py
 run_reasoning_batch.py
 ```
 
-这些 wrapper 应该保持很薄，只配置 task-specific 参数；不要在多个 task 下复制公共实现。
+These wrappers should remain thin, only configuring task-specific parameters; do not duplicate public implementations across multiple tasks.
 
-通用命令模板：
+Common command templates:
 
 ```bash
-# 全量扫描 ChEMBL assays
+# Full scan of ChEMBL assays
 python -m tools.chembl_tool.tasks.<task_name>.screen_assays \
   --chembl-sqlite tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db \
   --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
@@ -786,48 +1202,48 @@ python -m tools.chembl_tool.tasks.<task_name>.screen_assays \
   --progress-every 10000 \
   --export-activities
 
-# 对已有候选重打分
+# Rescore existing candidates
 python -m tools.chembl_tool.tasks.<task_name>.rescore_outputs \
   --in-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
   --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version> \
   --min-score 40 \
   --filter-activities
 
-# candidate 已经确定时，只重新过滤 activity evidence
+# When candidates are already determined, only re-filter activity evidence
 python -m tools.chembl_tool.tasks.<task_name>.rescore_outputs \
   --in-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/raw \
   --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version> \
   --only-filter-activities
 
-# 生成 health check
+# Generate health check
 python -m tools.chembl_tool.tasks.<task_name>.summarize_outputs \
   --out-dir outputs/chembl_tool/tasks/<task_name>/assay_screening/<version>
 
-# 构建 evidence library 和 neighbor index
+# Build evidence library and neighbor index
 python -m tools.chembl_tool.tasks.<task_name>.build_evidence_library \
   --workers 128 \
   --progress-every 50000
 
-# 检索 analog neighbors
+# Retrieve analog neighbors
 python -m tools.chembl_tool.tasks.<task_name>.retrieve_neighbors \
   --query-smiles '<SMILES>' \
   --top-k-per-group 3 \
   --min-similarity 0.3
 
-# 批量 reasoning
+# Batch reasoning
 python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
   --input-jsonl <input.jsonl> \
   --parallelism 1 \
   --batch-id <batch_id>
 ```
 
-需要只跑少数 endpoint groups 做 debug / smoke 时，给 pipeline 或 batch 加：
+When only a few endpoint groups need to be run for debug/smoke, add to the pipeline or batch:
 
 ```bash
 --groups "Tier 3.some_endpoint_group" "Tier 4.another_endpoint_group"
 ```
 
-断点续跑统一使用：
+Resume from breakpoints uniformly using:
 
 ```bash
 python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
@@ -836,11 +1252,11 @@ python -m tools.chembl_tool.tasks.<task_name>.run_reasoning_batch \
   --skip-existing
 ```
 
-`--skip-existing` 会跳过已经存在
+`--skip-existing` will skip molecules that already have
 `reasoning/batches/<batch_id>/runs/<batch_id>_idxNNNNN/final_reasoning_output.json`
-的 molecule；已有 stdout/stderr log 不覆盖，没有 final 输出的 partial run 会重新运行。
+; existing stdout/stderr logs are not overwritten, and partial runs without final output will be re-run.
 
-输出目录统一为：
+Output directories are unified as:
 
 ```text
 outputs/chembl_tool/tasks/<task_name>/
@@ -851,53 +1267,53 @@ outputs/chembl_tool/tasks/<task_name>/
     batches/
 ```
 
-查看最终 paper trace：
+View final paper trace:
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-Viewer 默认注册 Starling random、Starling scaffold 和历史 TDC test。新 v4 dataset 默认扫描
-`runs_identity_blind_parent_disjoint/`；历史 dataset 继续扫描 identity-blind、matched-prefetch、
-deployment-visible 和 deployment-visible parent-disjoint 四个 legacy paper roots。页面按样本展示
-single-molecule、mechanism-family/flat/direct 和 final stages，并递归展示
-通用 JSON、工具调用、retrieval evidence 和 provenance。旧 task-specific reasoning output 不再支持；
-需要其它 dataset 时可在端口后显式追加 trace root。
+Viewer by default registers Starling random, Starling scaffold, and historical TDC test. New v4 datasets by default scan
+`runs_identity_blind_parent_disjoint/`; historical datasets continue to scan identity-blind, matched-prefetch,
+deployment-visible, and deployment-visible parent-disjoint four legacy paper roots. Pages display per-sample
+single-molecule, mechanism-family/flat/direct, and final stages, and recursively display
+common JSON, tool calls, retrieval evidence, and provenance. Old task-specific reasoning outputs are no longer supported;
+for other datasets, explicitly append trace root after the port.
 
-## Paper experiment split 与可视化入口
+## Paper experiment split and visualization entry
 
-冻结论文矩阵的详细操作规范位于 `tools/chembl_tool/paper_experiments/AGENTS.md`。默认不加
-`--split` 时使用 test 并写入 `outputs/paper/molecular_evidence_agent/`；validation 诊断重跑统一加
-`--split valid`，产物隔离写入 `outputs/paper/molecular_evidence_agent_valid/`。可复用入口包括：
+Detailed operational specifications for the frozen paper matrix are in `tools/chembl_tool/paper_experiments/AGENTS.md`. By default without
+`--split`, use test and write to `outputs/paper/molecular_evidence_agent/`; validation diagnostic reruns uniformly add
+`--split valid`, with artifacts isolated to `outputs/paper/molecular_evidence_agent_valid/`. Reusable entries include:
 
-这里的既有 `test` / `valid` 和 2026-07-23 frozen results 来自旧 TDC lineage，应作为历史结果保留；
-`--split test|valid` 目前不能解释为 Starling 的 `random|scaffold`。新 Starling 正式实验必须显式选择
-`data/gold_labels/legacy/processed_starling/<Task>/random/test.jsonl` 或 `scaffold/test.jsonl`，使用相应 train-only
-retrieval index，并写入与 TDC、另一种 Starling split 都隔离的新 output root/batch ID。完成输入接线、
-test-parent exclusion 和 zero-overlap audit 前，不得把现有 paper 指标改称 Starling 结果。
+The existing `test` / `valid` and 2026-07-23 frozen results come from the old TDC lineage and should be retained as historical results;
+`--split test|valid` currently cannot be interpreted as Starling's `random|scaffold`. New Starling formal experiments must explicitly choose
+`data/gold_labels/legacy/processed_starling/<Task>/random/test.jsonl` or `scaffold/test.jsonl`, use the corresponding train-only
+retrieval index, and write to a new output root/batch ID isolated from both TDC and the other Starling split. Before completing input wiring,
+test-parent exclusion, and zero-overlap audit, existing paper metrics must not be renamed as Starling results.
 
-Bioavailability `record_supported_v2`、Skin `record_supported_v2` 与 BBB
-`experimental_meaningful_cns_access_v3` 后续 paper-facing
-structural-analog 主结果默认使用
-`identity_blind + parent_disjoint` fresh-run；不再先跑 operational，也不要求 operational diff/reuse plan。
-旧 lineage 的 operational -> parent-disjoint 流程及 same-parent 暴露统计只作为 historical sensitivity
-artifact 保留。若将来需要 operational 对照，必须作为显式 opt-in ablation 使用独立 root，不能成为主矩阵依赖。
+Bioavailability `record_supported_v2`, Skin `record_supported_v2`, and BBB
+`experimental_meaningful_cns_access_v3` subsequent paper-facing
+structural-analog main results default to
+`identity_blind + parent_disjoint` fresh-run; no longer run operational first, nor require operational diff/reuse plans.
+The old lineage's operational -> parent-disjoint process and same-parent exposure statistics are retained only as historical sensitivity
+artifacts. If operational comparison is needed in the future, it must be an explicit opt-in ablation using a separate root, and must not become a main matrix dependency.
 
-新数据集的 Starling 主入口仍是
-`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`，正式默认必须解析为
-`--visibility-mode identity_blind --neighbor-identity-policy parent_disjoint`，输出到各 lineage root 的
-`runs_identity_blind_parent_disjoint/`。每个 split 必须覆盖完整 condition/sample 集并通过 failure、
-query-SMILES leak、visibility-contract、parent identity 和 held-out overlap audit。旧 `identity_blind + operational`
-结果仍是 historical supplemental control，不得冒充当前主结果。
+The Starling main entry for new datasets remains
+`tools.chembl_tool.paper_experiments.starling_benchmark_matrix`, and the formal default must resolve to
+`--visibility-mode identity_blind --neighbor-identity-policy parent_disjoint`, outputting to each lineage root's
+`runs_identity_blind_parent_disjoint/`. Each split must cover the full condition/sample set and pass failure,
+query-SMILES leak, visibility-contract, parent identity, and held-out overlap audits. Old `identity_blind + operational`
+results remain historical supplemental controls and must not be presented as current main results.
 
-2026-08-04 第一版 `record_agreement70_split811_v1` scaffold-valid 已完成 GLM、GPT-OSS-20B/120B 三套
-22-condition blind matrix；GLM 为
-6887/6887 严格成功，两个 GPT 各有一个不可修复 context-limit sample 并按预定 policy 计错。GPT 两套
-deployment-visible+parent-disjoint 补充矩阵也已完成；GLM visible 同合同矩阵同样达到 6887/6887 严格成功，
-并已加入 canonical blind+visible 总图。
-Random-valid GLM 仍有两个 Bioavailability ChEMBL full sample-condition 未通过严格 gate。完整路径、指标、
-failure policy 和 coverage context/MMP-ledger 结果见
-`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
+On 2026-08-04, the first version of `record_agreement70_split811_v1` scaffold-valid completed GLM, GPT-OSS-20B/120B three sets of
+22-condition blind matrix; GLM achieved
+6887/6887 strict success, and each of the two GPTs had one unfixable context-limit sample counted as error per the predetermined policy. GPT's two sets of
+deployment-visible+parent-disjoint supplementary matrices are also complete; GLM visible same-contract matrix also reached 6887/6887 strict success,
+and has been added to the canonical blind+visible overall figure.
+Random-valid GLM still has two Bioavailability ChEMBL full sample-conditions failing strict gates. Full paths, metrics,
+failure policy, and coverage context/MMP-ledger results are in
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`.
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent --split valid ...
@@ -920,22 +1336,22 @@ python -m tools.chembl_tool.paper_experiments.plot_coverage_performance \
   --data-split valid
 ```
 
-`summarize_parent_disjoint_results.py` 目前通过显式 `--operational-root`、`--parent-disjoint-root` 和
-`--output-dir` 切换 split，详细 valid 命令见 paper-experiments 目录文档。
+`summarize_parent_disjoint_results.py` currently switches splits via explicit `--operational-root`, `--parent-disjoint-root`, and
+`--output-dir`; detailed valid commands are in the paper-experiments directory documentation.
 
-2026-07-23 的 valid 矩阵已扩展完成：三套 visibility/tool-execution 制度各 26 个条件、2,713 个
-sample-condition 且 0 失败；prefetch audit 为 2,713/2,713；parent-disjoint 为 22 个条件、
-2,275 个 sample-condition 且 0 失败。Test 的 identity-blind 和 deployment-visible 各 26 个条件，
-matched-prefetch 仍为原 21 个条件。实测结果见 `tools/chembl_tool/paper_experiments/RESULTS.md`。
+The 2026-07-23 valid matrix has been extended: three visibility/tool-execution regimes each with 26 conditions, 2,713
+sample-conditions and 0 failures; prefetch audit is 2,713/2,713; parent-disjoint is 22 conditions,
+2,275 sample-conditions and 0 failures. Test identity-blind and deployment-visible each have 26 conditions,
+matched-prefetch remains the original 21 conditions. Measured results are in `tools/chembl_tool/paper_experiments/RESULTS.md`.
 
-旧 TDC performance overview 仍以 `plot_retrieval_claims_overview.py` 为唯一模板；当前 v4 的 model、visibility、
-baseline 和 matched ablation 总图统一由 `plot_starling_model_comparison.py` 生成。Coverage 与性能增幅的旧
-诊断图使用 `plot_coverage_performance.py`。所有入口复用 `paper_figure_style.py`，每个正式 figures 目录只
-保留 canonical SVG 和一份高分辨率 PNG，不保留 preview、QA 或一次性 overview。
+The old TDC performance overview still uses `plot_retrieval_claims_overview.py` as the only template; the current v4 model, visibility,
+baseline, and matched ablation overall figures are uniformly generated by `plot_starling_model_comparison.py`. Coverage and performance gain old
+diagnostic figures use `plot_coverage_performance.py`. All entries reuse `paper_figure_style.py`, and each formal figures directory only
+retains canonical SVG and one high-resolution PNG, without preview, QA, or one-off overviews.
 
-## MiniMol baseline（历史结果与当前 v4 scaffold-valid 边界）
+## MiniMol baseline (historical results and current v4 scaffold-valid boundary)
 
-MiniMol baseline 代码放在：
+MiniMol baseline code is in:
 
 ```text
 baselines/minimol/
@@ -945,85 +1361,85 @@ baselines/minimol/
   run_hparam_sweep.py
 ```
 
-`run_bioavailability_ma.py` 名字保留自第一次 Bioavailability_Ma 实验，但实际是通用 JSONL
-二分类 runner。输入 split 约定：
+`run_bioavailability_ma.py` name is retained from the first Bioavailability_Ma experiment, but it is actually a generic JSONL
+binary classifier runner. Input split convention:
 
 ```text
 train.jsonl / valid.jsonl / test.jsonl
-字段:
+fields:
   drug: SMILES
   Y: 0/1 label
 ```
 
-下面列出的旧命令、sweep 和指标使用历史 TDC 或 strict-conflict Starling split。当前 baseline 统一读取
-`data/gold_labels/<Task>/v1/scaffold/`，并按 condition-aware cohort 运行 MiniMol head、Morgan KNN
-和 MiniMol embedding KNN。历史 molecule-only baseline 不得与当前 cohort 混表。该诊断不读取或调参于
-test；正式 test 前仍须冻结所有设置。
+The old commands, sweeps, and metrics listed below use historical TDC or strict-conflict Starling splits. The current baseline uniformly reads
+`data/gold_labels/<Task>/v1/scaffold/`, and runs MiniMol head, Morgan KNN,
+and MiniMol embedding KNN per condition-aware cohort. Historical molecule-only baselines must not be mixed with current cohorts. This diagnostic does not read or tune on
+test; all settings must still be frozen before formal test.
 
-上一版 strict-conflict formal Starling baseline 使用 `--train-all`：
-不读取 `valid.jsonl`，每个
-ensemble member 在全部 `train.jsonl` 上训练固定 epoch，并用冻结的 `threshold=0.5` 评估 test。
-这种模式不得进行 test-selected early stopping 或 threshold tuning；输出中的 validation metrics 为 null。
-这些历史 random/scaffold 结果和 output roots 见
-`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`；下文单列的 sweep 数值仍全部是
-旧 TDC lineage。
+The previous strict-conflict formal Starling baseline uses `--train-all`:
+does not read `valid.jsonl`, each
+ensemble member trains fixed epochs on all `train.jsonl`, and evaluates test with frozen `threshold=0.5`.
+This mode must not perform test-selected early stopping or threshold tuning; validation metrics in output are null.
+These historical random/scaffold results and output roots are in
+`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`; the sweep values listed below are all still
+old TDC lineage.
 
-MiniMol embedding retrieval-only 对照复用上述正式 baseline 已保存、且与 split 逐行一致的
-`embeddings/{train,test}.pt`，L2 normalize 后按 cosine similarity 取同 split train 中的 top-3 molecules。
-它与 Morgan KNN 一样使用未加权多数票，score 为正类邻居比例；不训练新 head，也不需要重新占用 GPU。
-入口与输出分别为：
+MiniMol embedding retrieval-only control reuses the above formal baseline's saved, row-aligned
+`embeddings/{train,test}.pt`, L2 normalizes, then takes top-3 molecules from the same split train by cosine similarity.
+Like Morgan KNN, it uses unweighted majority vote, with score as the proportion of positive-class neighbors; no new head is trained, and no GPU reoccupation is needed.
+Entry and output are respectively:
 
 ```text
 baselines/minimol/run_embedding_knn.py
 outputs/baselines/minimol_embedding_knn_starling/<Task>/<random|scaffold>/
 ```
 
-MiniMol feature agent ablation 与上述 label-vote KNN 不同：它只把 agent pipeline 的 neighbor
-ranking 从 Morgan/Tanimoto 换成 L2-normalized MiniMol/cosine，保持 evidence source、top-k、GLM
-和 inference settings 不变。当前 v4 完整 random/scaffold fresh parent-disjoint -> paired summary
--> figure 的可恢复入口为：
+MiniMol feature agent ablation differs from the above label-vote KNN: it only replaces the agent pipeline's neighbor
+ranking from Morgan/Tanimoto with L2-normalized MiniMol/cosine, keeping evidence source, top-k, GLM,
+and inference settings unchanged. The current v4 full random/scaffold fresh parent-disjoint -> paired summary
+-> figure recoverable entry is:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
 ```
 
-MiniMol agent retrieval 是另一条独立实验线：它不从 gold train label 做 KNN vote，而是把 ChEMBL /
-Starling evidence index 的 Morgan/Tanimoto neighbor ranking 替换为 MiniMol v1 embedding cosine，
-然后把检索到的 evidence 送入冻结 GLM agent pipeline。它保持 source/group/top-k/数值 min-similarity、
-prompt/tool/model 和 fresh parent-disjoint contract 不变，并写入独立 output root。正式入口、feature
-store contract、checkpoint/cache parity、test-parent audit 和完整命令见
-`tools/chembl_tool/paper_experiments/AGENTS.md`；不得把这条 agent ablation 与
-`baselines/minimol/run_embedding_knn.py` 的 label-vote baseline 混为一项。
+MiniMol agent retrieval is another independent experimental line: it does not do KNN vote from gold train labels, but replaces the Morgan/Tanimoto neighbor ranking of the ChEMBL /
+Starling evidence index with MiniMol v1 embedding cosine,
+then feeds the retrieved evidence into a frozen GLM agent pipeline. It keeps source/group/top-k/numeric min-similarity,
+prompt/tool/model and fresh parent-disjoint contract unchanged, and writes to an independent output root. Official entry, feature
+store contract, checkpoint/cache parity, test-parent audit and full commands see
+`tools/chembl_tool/paper_experiments/AGENTS.md`; do not mix this agent ablation with
+the label-vote baseline of `baselines/minimol/run_embedding_knn.py` as one item.
 
-运行环境和实现注意事项：
+Runtime environment and implementation notes:
 
 ```text
 conda env: intern
-MiniMol 源码参考: /data1/tianang/Projects/minimol
+MiniMol source reference: /data1/tianang/Projects/minimol
 
-实际运行优先使用 intern 环境已安装的 minimol 包。源码目录中的
-minimol/ckpts/minimol_v1/state_dict.pth 当前是 Git LFS pointer，不是可直接 torch.load 的权重。
+For actual runs, prefer the minimol package already installed in the intern environment. The
+minimol/ckpts/minimol_v1/state_dict.pth in the source directory is currently a Git LFS pointer, not a directly torch.load-able weight.
 
-共享 `baselines/minimol/embedding_runtime.py` 做两个兼容 patch：
-  1. Graphium CPU/fake-graph featurization 默认 float16 会触发 scipy.sparse dtype 错误，
-     runner 在进程内强制用 float32 adjacency/pyg graph。
-  2. MiniMol checkpoint 早于 PyTorch 2.6 weights_only=True 默认值，初始化 MiniMol 时临时
-     以 weights_only=False 调用 torch.load。
+Share `baselines/minimol/embedding_runtime.py` for two compatibility patches:
+  1. Graphium CPU/fake-graph featurization defaults to float16, which triggers scipy.sparse dtype errors;
+     the runner forces float32 adjacency/pyg graph in-process.
+  2. MiniMol checkpoint predates PyTorch 2.6 weights_only=True default; when initializing MiniMol, temporarily
+     call torch.load with weights_only=False.
 
-MiniMol featurization 设置 featurization_n_jobs=1，避免 joblib 子进程丢失上述进程内 patch。
+MiniMol featurization sets featurization_n_jobs=1 to avoid joblib subprocesses losing the above in-process patches.
 ```
 
-评估口径：
+Evaluation criteria:
 
 ```text
-MiniMol embeddings + leaderboard-style TaskHead。
-每个 ensemble member 只用 train 训练，用 valid BCE loss 选 best epoch。
-默认 ensemble_size=5, epochs=25, threshold=0.5。
-accuracy / macro-F1 用 threshold=0.5；AUROC 用 probability score。
-valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed 0.5。
+MiniMol embeddings + leaderboard-style TaskHead.
+Each ensemble member is trained only on train, using valid BCE loss to select the best epoch.
+Default ensemble_size=5, epochs=25, threshold=0.5.
+accuracy / macro-F1 use threshold=0.5; AUROC uses probability score.
+valid-tuned threshold metrics are also written to metrics.json, but the main report uses fixed 0.5.
 ```
 
-单任务 baseline 命令模板：
+Single-task baseline command template:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
@@ -1031,7 +1447,7 @@ valid-tuned threshold 指标也会写入 metrics.json，但主报告使用 fixed
   --output-dir outputs/baselines/minimol/<task_name>
 ```
 
-BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
+BBB_Martins uses MiniMol original `SWEEP_RESULTS['bbb_martins']` hyperparameters:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
@@ -1042,8 +1458,8 @@ BBB_Martins 使用 MiniMol 原 `SWEEP_RESULTS['bbb_martins']` 超参：
   --lr 0.0001
 ```
 
-需要 GPU 状态或指定 GPU 时，必须在 sandbox 外运行；sandbox 内可能看不到 NVML / CUDA，
-导致 runner 退回 CPU。可靠做法是直接用 shell 显式绑定 GPU：
+When GPU status or a specific GPU is needed, it must be run outside the sandbox; NVML / CUDA may not be visible inside the sandbox,
+causing the runner to fall back to CPU. A reliable approach is to explicitly bind the GPU via shell:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n intern python -m baselines.minimol.run_bioavailability_ma \
@@ -1051,8 +1467,8 @@ env CUDA_VISIBLE_DEVICES=4 /data1/tianang/anaconda3/condabin/conda run -n intern
   --output-dir outputs/baselines/minimol/clintox
 ```
 
-ClinTox / Skin_Reaction 不在 MiniMol 原 `SWEEP_RESULTS` 表中。当前对这两个 task 的超参搜索使用
-MiniMol ADMET sweep 表里出现过的 11 个唯一 head 配置：
+ClinTox / Skin_Reaction are not in the MiniMol original `SWEEP_RESULTS` table. The current hyperparameter search for these two tasks uses
+the 11 unique head configurations that appear in the MiniMol ADMET sweep table:
 
 ```text
 (hidden_dim, depth, lr)
@@ -1069,8 +1485,8 @@ MiniMol ADMET sweep 表里出现过的 11 个唯一 head 配置：
 (2048, 4, 0.0005)
 ```
 
-GPU sweep 的可靠入口是直接 shell 脚本；它会复用已有 embedding cache，并用 `env CUDA_VISIBLE_DEVICES=<gpu>`
-直接启动每个训练 job：
+The reliable entry point for GPU sweep is a direct shell script; it reuses existing embedding cache and uses `env CUDA_VISIBLE_DEVICES=<gpu>`
+to launch each training job directly:
 
 ```bash
 baselines/minimol/run_direct_gpu_sweep.sh \
@@ -1088,10 +1504,10 @@ baselines/minimol/run_direct_gpu_sweep.sh \
   4,5,6,7
 ```
 
-`run_hparam_sweep.py` 是 stdlib Python launcher，但在当前环境里嵌套 `conda run` 时曾出现 CUDA
-不可见 / 退回 CPU 的情况；需要 GPU sweep 时优先用 `run_direct_gpu_sweep.sh`。
+`run_hparam_sweep.py` is a stdlib Python launcher, but in the current environment, nested `conda run` has shown CUDA
+invisibility / CPU fallback; when GPU sweep is needed, prefer `run_direct_gpu_sweep.sh`.
 
-当前 MiniMol baseline / sweep 结果：
+Current MiniMol baseline / sweep results:
 
 ```text
 Bioavailability_Ma, fixed h=512 d=3 lr=0.0003:
@@ -1127,11 +1543,11 @@ Skin_Reaction, 11-config GPU sweep selected by valid AUROC:
 
 ## ChEMBL assay activity transfer benchmark
 
-这个独立 benchmark 用来研究：在同一个 ChEMBL assay endpoint 中，只根据两个分子的结构相似度，
-能否判断 activity 是否可以从 neighbor transfer 到 query。第一版不调用 LLM，只建立
-Tanimoto threshold baseline，作为后续 DeepSeek / 其他 LLM assay-transfer 推理的最低对照。
+This independent benchmark is used to study: within the same ChEMBL assay endpoint, based only on the structural similarity of two molecules,
+can we determine whether activity can be transferred from neighbor to query. The first version does not call LLM, only establishes a
+Tanimoto threshold baseline, as the minimum control for subsequent DeepSeek / other LLM assay-transfer reasoning.
 
-代码入口：
+Code entry:
 
 ```text
 tools/chembl_tool/activity_transfer_benchmark/
@@ -1146,78 +1562,77 @@ tools/chembl_tool/activity_transfer_benchmark/
   run_task_assay_benchmark.py
 ```
 
-`run_benchmark.py` 的功能：
+Function of `run_benchmark.py`:
 
 ```text
-1. 从 tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db 读取 ChEMBL activities。
-2. 连续值主分析只使用 pchembl_value，筛选 standard_relation='='、standard_flag=1，
-   默认排除 data_validity_comment 非空和 potential_duplicate=1 的记录。
-3. 在同一个 assay_id + standard_type 内聚合同一 molecule 的重复 pChEMBL 均值。
-4. 从 tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz 读取 Morgan fingerprint。
-5. 在每个 assay endpoint 内采样 molecule pairs，计算 Tanimoto 和 |delta pChEMBL|。
-6. 标签规则：|delta pChEMBL| <= 0.5 为 similar；>= 1.0 为 different；中间为 ambiguous。
-7. 扫描 Tanimoto threshold，输出 accuracy、macro-F1、balanced accuracy、precision/recall。
-8. 计算 assay-specific enrichment：每个 assay endpoint 内先算随机 pair 背景率，
-   再比较各 similarity bucket 的 similar-rate lift、fold lift 和 median-delta reduction。
-9. 可选 dynamic range filter：按 molecule-level pChEMBL range 和 IQR 过滤低信息量 assay endpoint。
-10. 辅助分析保守处理 binary activity_comment，只映射明确 active / inactive 类 comment。
-11. 生成 TSV/GZ 数据、metrics、SVG 图表和中文 report。
+1. Read ChEMBL activities from tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db.
+2. The continuous-value main analysis only uses pchembl_value, filters standard_relation='=', standard_flag=1,
+   and by default excludes records with non-empty data_validity_comment and potential_duplicate=1.
+3. Aggregate duplicate pChEMBL means for the same molecule within the same assay_id + standard_type.
+4. Read Morgan fingerprints from tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz.
+5. Sample molecule pairs within each assay endpoint, compute Tanimoto and |delta pChEMBL|.
+6. Label rule: |delta pChEMBL| <= 0.5 is similar; >= 1.0 is different; in between is ambiguous.
+7. Scan Tanimoto threshold, output accuracy, macro-F1, balanced accuracy, precision/recall.
+8. Compute assay-specific enrichment: within each assay endpoint, first compute random pair background rate,
+   then compare similar-rate lift, fold lift, and median-delta reduction across similarity buckets.
+9. Optional dynamic range filter: filter low-information assay endpoints by molecule-level pChEMBL range and IQR.
+10. Auxiliary analysis conservatively handles binary activity_comment, mapping only clear active / inactive class comments.
+11. Generate TSV/GZ data, metrics, SVG charts, and Chinese report.
 ```
 
-`benchmark_mcs_runtime.py` 的功能：
+Function of `benchmark_mcs_runtime.py`:
 
 ```text
-从 continuous_pairs.tsv.gz 按 similarity bucket 抽样 pair，用 RDKit FindMCS 计算
-MCS atom coverage，并在多进程下估算全量 pair 的 MCS 计算耗时。worker 会把
-OMP_NUM_THREADS / MKL_NUM_THREADS / OPENBLAS_NUM_THREADS / RDKIT_NUM_THREADS 等设为 1，
-避免 RDKit 或底层库内部线程和外层进程并行互相争抢。长任务会向 stderr 输出进度：
-completed、rate、elapsed、ETA 和 timeout 数。
-全量 MCS 应使用 `--full-scan` 流式读取和写出结果，避免把全部 pair、task 和 result 都留在内存中。
-如果 RDKit FindMCS 在最后少数 pair 上不返回，进程可能卡在 tail pending futures；
-此时先终止卡住进程，保留 `.tmp`，再用 `--finalize-existing` 从已有结果生成 summary/report
-和 `missing_result_indices.tsv`。
+Sample pairs from continuous_pairs.tsv.gz by similarity bucket, use RDKit FindMCS to compute
+MCS atom coverage, and estimate the MCS computation time for the full set of pairs under multiprocessing. The worker will
+set OMP_NUM_THREADS / MKL_NUM_THREADS / OPENBLAS_NUM_THREADS / RDKIT_NUM_THREADS etc. to 1,
+to avoid contention between RDKit or underlying library internal threads and outer process parallelism. Long tasks will output progress to stderr:
+completed, rate, elapsed, ETA, and timeout count.
+Full MCS should use `--full-scan` for streaming reading and writing results, to avoid keeping all pairs, tasks, and results in memory.
+If RDKit FindMCS does not return on the last few pairs, the process may hang on tail pending futures;
+in that case, first terminate the stuck process, keep `.tmp`, then use `--finalize-existing` to generate summary/report from existing results
+and `missing_result_indices.tsv`.
 ```
 
-`analyze_mcs_results.py` 的功能：
+Function of `analyze_mcs_results.py`:
 
 ```text
-读取全量或 partial MCS TSV，排除 ambiguous label，扫描 mean MCS coverage threshold，
-并在同一批 observed pair 上重新扫描 Tanimoto threshold，输出 threshold metrics、
-MCS coverage bucket summary、Tanimoto x MCS heatmap、SVG 图表和中文报告。
+Read full or partial MCS TSV, exclude ambiguous labels, scan mean MCS coverage threshold,
+and rescan Tanimoto threshold on the same set of observed pairs, output threshold metrics,
+MCS coverage bucket summary, Tanimoto x MCS heatmap, SVG charts, and Chinese report.
 ```
 
-`build_llm_eval_set.py` 的功能：
+Function of `build_llm_eval_set.py`:
 
 ```text
-从 dynamic_v1 continuous_pairs.tsv.gz 中抽取 LLM 小规模评估集。默认读取已有 MCS full-scan
-partial 结果，只保留有 observed MCS 的 non-ambiguous pairs，并按 label x Tanimoto bucket
-分层抽样。默认输出 3,000 pairs，similar/different 各 1,500，每个 similarity bucket 各 500。
-输出 JSONL/TSV、summary.json 和中文 report，供 LLM benchmark 复用。
+Extract a small-scale LLM evaluation set from dynamic_v1 continuous_pairs.tsv.gz. By default, read existing MCS full-scan
+partial results, keep only non-ambiguous pairs with observed MCS, and stratify sample by label x Tanimoto bucket.
+Default output 3,000 pairs, similar/different each 1,500, each similarity bucket 500.
+Output JSONL/TSV, summary.json, and Chinese report, for reuse by LLM benchmark.
 ```
 
-`run_llm_benchmark.py` 的功能：
+Function of `run_llm_benchmark.py`:
 
 ```text
-用 OpenAI-compatible endpoint 跑 assay activity transfer LLM benchmark。默认模型为本地 vLLM
-host 的 gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint；默认输入
-dynamic_v1_llm_3k/eval_pairs.jsonl。prompt 隐藏 query pChEMBL，只暴露 reference molecule 的
-pChEMBL、assay context、Tanimoto、bucket 和 MCS coverage。可选调用当前 tool server 中的
-mmp_structure_compare / properties_compare；输出 per-sample run JSON、predictions.jsonl、
-metrics.json、中文 report、model-vs-baseline SVG 图和 trace_viewer 可读的 trace_messages.jsonl。
-当前也支持 HF prompt/completion/metadata 格式：completion A/B 映射为 similar/different，
-原始 metadata 保留在 input_record.hf_metadata，并按 similarity_bucket、assay_type 输出分组指标。
-默认 max-tool-rounds=3，断点续跑使用 --skip-existing。
+Run assay activity transfer LLM benchmark using OpenAI-compatible endpoint. Default model is local vLLM
+hosted gpt-oss-120b, can also run DeepSeek/OpenAI-compatible hosted endpoint; default input is
+dynamic_v1_llm_3k/eval_pairs.jsonl. The prompt hides query pChEMBL, only exposes reference molecule's
+pChEMBL, assay context, Tanimoto, bucket, and MCS coverage. Optionally call mmp_structure_compare / properties_compare in the current tool server; output per-sample run JSON, predictions.jsonl,
+metrics.json, Chinese report, model-vs-baseline SVG figure, and trace_messages.jsonl readable by trace_viewer.
+Currently also supports HF prompt/completion/metadata format: completion A/B maps to similar/different,
+original metadata retained in input_record.hf_metadata, and outputs grouped metrics by similarity_bucket, assay_type.
+Default max-tool-rounds=3, breakpoint resume uses --skip-existing.
 ```
 
-`plot_llm_run_comparison.py` 的功能：
+Function of `plot_llm_run_comparison.py`:
 
 ```text
-汇总两个 LLM run 与 full-valid baseline，输出 overall、similarity_bucket、assay_type 三层
-macro-F1 对比图、TSV 和 Markdown report。comparison 产物放在
-outputs/chembl_tool/activity_transfer_benchmark/comparisons/，不要放进 llm_runs/。
+Summarize two LLM runs and full-valid baseline, output overall, similarity_bucket, assay_type three-level
+macro-F1 comparison figures, TSV, and Markdown report. Comparison artifacts go under
+outputs/chembl_tool/activity_transfer_benchmark/comparisons/, do not put them in llm_runs/.
 ```
 
-MCS runtime 当前测试结果：
+Current MCS runtime test results:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/
@@ -1234,7 +1649,7 @@ timeout=2s, workers=128, chunksize=1:
 workers=256 did not materially improve over 128 in the sampled test, likely due to process scheduling
 and timeout-tail overhead. Prefer 128 workers first for full MCS runs.
 
-推荐全量命令：
+Recommended full command:
 
 python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --run-id dynamic_v1_mcs_full_t2_w128_stream \
@@ -1244,7 +1659,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --chunksize 1 \
   --progress-every 10000
 
-卡住后收尾命令：
+Cleanup command after hang:
 
 python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --run-id dynamic_v1_mcs_full_t2_w128_stream \
@@ -1252,13 +1667,13 @@ python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --workers 128 \
   --timeout-s 2
 
-MCS threshold 分析命令：
+MCS threshold analysis command:
 
 python -m tools.chembl_tool.activity_transfer_benchmark.analyze_mcs_results \
   --run-id dynamic_v1_mcs_t2_analysis
 ```
 
-当前 MCS full-scan partial 结果：
+Current MCS full-scan partial results:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/dynamic_v1_mcs_full_t2_w128_stream/
@@ -1267,11 +1682,11 @@ outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/dynamic_v1_mcs_full_
   summary.json
   report_zh.md
 
-完成 1,987,665 / 1,989,152 pairs，completion rate 99.9252%，missing 1,487。
-timeout=2s 的 observed timeout count 为 218,664，约 11.0%。
+Completed 1,987,665 / 1,989,152 pairs, completion rate 99.9252%, missing 1,487.
+timeout=2s observed timeout count is 218,664, about 11.0%.
 ```
 
-当前 MCS threshold 分析结果：
+Current MCS threshold analysis results:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mcs_analysis/dynamic_v1_mcs_t2_analysis/
@@ -1284,11 +1699,11 @@ best Tanimoto threshold on same subset: 0.48
 best Tanimoto macro-F1 on same subset: 0.5688
 best Tanimoto balanced accuracy on same subset: 0.5689
 
-结论：mean MCS coverage 有 activity-transfer 信号，但单独做全局 threshold 时没有超过
-Tanimoto。它更适合后续作为 LLM / learned classifier 的补充特征，而不是替代 Tanimoto。
+Conclusion: mean MCS coverage has activity-transfer signal, but as a standalone global threshold it does not exceed
+Tanimoto. It is more suitable as a supplementary feature for later LLM / learned classifier, not a replacement for Tanimoto.
 ```
 
-当前 3K LLM eval set：
+Current 3K LLM eval set:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/dynamic_v1_llm_3k/
@@ -1300,14 +1715,14 @@ outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/dynamic_v1_llm_3k/
 samples: 3,000
 assay endpoints: 2,463
 label counts: similar 1,500 / different 1,500
-similarity buckets: 每个 bucket 500 pairs
+similarity buckets: 500 pairs per bucket
 baseline on this intentionally balanced set:
   Tanimoto>=0.50 macro-F1 0.4977, balanced accuracy 0.5020
   Tanimoto>=0.48 macro-F1 0.4903, balanced accuracy 0.4963
   MCS>=0.70 macro-F1 0.4941, balanced accuracy 0.4963
 ```
 
-当前 gpt-oss-120b 3K LLM benchmark：
+Current gpt-oss-120b 3K LLM benchmark:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1_llm_3k_tools/
@@ -1341,13 +1756,13 @@ gray zone subset, Tanimoto 0.40-0.70:
   LLM macro-F1 0.5390
   Tanimoto>=0.50 macro-F1 0.4683
 
-结论：在这个刻意按 label 和 similarity bucket 平衡的 3K stress-test 上，
-gpt-oss-120b + tools 明显超过同集合里的简单 threshold baseline，但绝对性能仍然偏弱。
-这个 3K set 不是 full dynamic_v1 分布，不应直接和 full-data best Tanimoto macro-F1 ~0.569
-做一比一比较；它更适合作为 LLM 能否在困难样本上补充结构阈值的初版测试。
+Conclusion: on this deliberately label- and similarity-bucket-balanced 3K stress test,
+gpt-oss-120b + tools clearly exceeds the simple threshold baseline on the same set, but absolute performance is still weak.
+This 3K set is not the full dynamic_v1 distribution and should not be directly compared one-to-one with full-data best Tanimoto macro-F1 ~0.569;
+it is more suitable as an initial test of whether LLM can supplement structural thresholds on difficult samples.
 ```
 
-当前 DeepSeek-v4-pro 3K LLM benchmark：
+Current DeepSeek-v4-pro 3K LLM benchmark:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_runs/deepseek_v4_pro_dynamic_v1_llm_3k_tools_thinking/
@@ -1382,21 +1797,21 @@ gray zone subset, Tanimoto 0.40-0.70:
   LLM macro-F1 0.5090
   Tanimoto>=0.50 macro-F1 0.4683
 
-结论：DeepSeek-v4-pro 是当前 3K stress-test overall 指标最高的 LLM run，
-macro-F1 0.5378 高于 gpt-oss-120b no-thinking 的 0.5309 和 thinking 的 0.5253。
-但提升很小，并且主要来自更保守地预测 different；similar recall 偏低。
-在更关键的 Tanimoto 0.40-0.70 灰区，DeepSeek 低于两个 gpt-oss run。
-考虑 tool calls、token 和耗时，当前性价比不如本地 gpt-oss。
+Conclusion: DeepSeek-v4-pro is the LLM run with the highest overall metrics on the current 3K stress-test,
+macro-F1 0.5378 is higher than gpt-oss-120b no-thinking's 0.5309 and thinking's 0.5253.
+But the improvement is small and mainly comes from more conservative prediction of different; similar recall is low.
+In the more critical Tanimoto 0.40-0.70 gray zone, DeepSeek is lower than both gpt-oss runs.
+Considering tool calls, tokens, and time, the current cost-effectiveness is not as good as local gpt-oss.
 ```
 
-构建 3K eval set 命令：
+Command to build the 3K eval set:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_llm_eval_set \
   --run-id dynamic_v1_llm_3k
 ```
 
-运行本地 gpt-oss-120b LLM benchmark 命令：
+Command to run the local gpt-oss-120b LLM benchmark:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
@@ -1411,7 +1826,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
   --progress-every 100
 ```
 
-运行 DeepSeek-v4-pro thinking LLM benchmark / 断点续跑命令：
+Command to run the DeepSeek-v4-pro thinking LLM benchmark / resume from checkpoint:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
@@ -1430,7 +1845,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
   --progress-every 100
 ```
 
-典型全量 baseline 命令：
+Typical full baseline command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
@@ -1441,7 +1856,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
   --workers 32
 ```
 
-推荐 dynamic-range filtered 命令：
+Recommended dynamic-range filtered command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
@@ -1454,7 +1869,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
   --workers 32
 ```
 
-输出目录：
+Output directory:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/<run_id>/
@@ -1485,64 +1900,64 @@ outputs/chembl_tool/activity_transfer_benchmark/<run_id>/
     binary_delta_lift_similar_rate_by_bucket.svg
 ```
 
-当前完整结果：
+Current complete results:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_v1/
 outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_dynamic_v1/
 ```
 
-未过滤 v1 的连续值主分析包含约 40k assay-endpoints、约 198 万 sampled pairs。最佳单一
-Tanimoto threshold 约为 0.45，macro-F1 约 0.56。assay-specific enrichment 显示 close analog
-相对各自 assay 背景的 macro similar-rate lift 约为 +0.13，distant / very_distant 为负；
-结构相似度有弱到中等的 transfer 信号，但不应单独作为 activity transfer 判据。
+The unfiltered v1 continuous-value main analysis includes about 40k assay-endpoints and about 1.98 million sampled pairs. The best single
+Tanimoto threshold is about 0.45, with macro-F1 about 0.56. Assay-specific enrichment shows that close analogs
+have a macro similar-rate lift of about +0.13 relative to their respective assay background, while distant / very_distant are negative;
+structural similarity has a weak to moderate transfer signal, but should not be used alone as a criterion for activity transfer.
 
-dynamic_v1 使用 `pchembl_range >= 2.0` 且 `pchembl_iqr >= 0.75`，连续值主分析保留约 20k
-assay-endpoints、约 199 万 sampled pairs。相比未过滤 v1，similar/different 标签更平衡，
-median |delta pChEMBL| 更高，close analog 的 macro similar-rate lift 约为 +0.16；
-这个版本更适合作为后续 LLM assay-transfer benchmark 的主数据。
+dynamic_v1 uses `pchembl_range >= 2.0` and `pchembl_iqr >= 0.75`, the continuous-value main analysis retains about 20k
+assay-endpoints and about 1.99 million sampled pairs. Compared to unfiltered v1, similar/different labels are more balanced,
+median |delta pChEMBL| is higher, and the macro similar-rate lift for close analogs is about +0.16;
+this version is more suitable as the primary data for subsequent LLM assay-transfer benchmarks.
 
-## Task-specific native runner 记录
+## Task-specific native runner records
 
-从这里开始的 BBB、ClinTox、Skin_Reaction 代码入口、旧 task prompt/schema、DeepSeek 运行参数和阶段性结果，
-用于复现 `tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py` 的 native/legacy workflow。当前论文方法以
-`tools/chembl_tool/paper_experiments/`、各 task 的 `experiment_config.py` 和
-`tools/chembl_tool/tasks/AGENTS.md` 为准；两者冲突时，不得把旧 `Tier.endpoint_group` 分支、task-specific
-prediction policy 或历史“下一步”恢复到 paper runner。
+From here, the BBB, ClinTox, Skin_Reaction code entry points, old task prompt/schema, DeepSeek run parameters, and interim results
+are used to reproduce the native/legacy workflow of `tools/chembl_tool/tasks/<task>/run_reasoning_pipeline.py`. The current paper method is based on
+`tools/chembl_tool/paper_experiments/`, each task's `experiment_config.py`, and
+`tools/chembl_tool/tasks/AGENTS.md`; when there is a conflict, the old `Tier.endpoint_group` branch, task-specific
+prediction policy, or historical "next steps" must not be restored to the paper runner.
 
-## BBB 代码入口
+## BBB code entry points
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/endpoint_groups.py
-  BBB endpoint_group、evidence_direction、evidence_strength 的规则。
+  Rules for BBB endpoint_group, evidence_direction, evidence_strength.
 
 tools/chembl_tool/tasks/bbb_martins/build_evidence_library.py
-  BBB_Martins evidence library 构建入口。只保留 task 默认路径、输出文件名和 endpoint assignment
-  配置；公共构建逻辑在 tools/chembl_tool/common/task_workflows/evidence_library.py。
+  Entry point for building the BBB_Martins evidence library. Only the task default path, output file names, and endpoint assignment
+  configuration are retained; common build logic is in tools/chembl_tool/common/task_workflows/evidence_library.py.
 
 tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
-  BBB_Martins neighbor retrieval 入口。只保留默认 index 路径；公共检索逻辑在
-  tools/chembl_tool/common/task_workflows/retrieve_neighbors.py。
+  Entry point for BBB_Martins neighbor retrieval. Only the default index path is retained; common retrieval logic is in
+  tools/chembl_tool/common/task_workflows/retrieve_neighbors.py.
 
 tools/chembl_tool/tasks/bbb_martins/run_reasoning_pipeline.py
-  BBB_Martins reasoning pipeline 入口。负责 neighbor retrieval、single-molecule analysis、
-  group-level 并发 reasoning、final summary、trace 保存，以及 final-only rerun。
+  Entry point for the BBB_Martins reasoning pipeline. Handles neighbor retrieval, single-molecule analysis,
+  group-level concurrent reasoning, final summary, trace saving, and final-only rerun.
 
 tools/chembl_tool/tasks/bbb_martins/run_reasoning_batch.py
-  BBB_Martins 批量 reasoning 入口。按 query_index 调用单分子 pipeline，支持 molecule 级并行、
-  可选 trace 保存/合并、prediction report、accuracy 和 macro-F1 评估。
+  Entry point for BBB_Martins batch reasoning. Calls the single-molecule pipeline by query_index, supports molecule-level parallelism,
+  optional trace saving/merging, prediction report, accuracy, and macro-F1 evaluation.
 
 tools/trace_viewer/viewer.html
-  最终 paper trace 可视化页面。扫描 identity-blind/deployment-visible condition，查看单个样本的
-  single/group/final messages、reasoning、tool calls、retrieval evidence 和通用 JSON response。
-  不包含旧 task-specific structured field 适配。
+  Final paper trace visualization page. Scans identity-blind/deployment-visible conditions, views single-sample
+  single/group/final messages, reasoning, tool calls, retrieval evidence, and generic JSON response.
+  Does not include old task-specific structured field adaptation.
 
 tools/trace_viewer/start_viewer.sh
-  在临时、受限的 serving root 中注册 Starling random/scaffold 与历史 TDC paper trace；第一个参数是端口，
-  后续可选参数是要注册的 trace roots。
+  Registers Starling random/scaffold and historical TDC paper traces in a temporary, restricted serving root; the first argument is the port,
+  subsequent optional arguments are trace roots to register.
 
 tools/chembl_tool/tasks/bbb_martins/
-  其他 BBB evidence 清洗、打分、报告和输出汇总脚本。
+  Other BBB evidence cleaning, scoring, reporting, and output aggregation scripts.
 ```
 
 ## ClinTox legacy archive
@@ -1557,25 +1972,25 @@ data/legacy/clintox/
 Historical data paths remain read aliases, but no active builder, publisher, or
 reasoning runner may select ClinTox.
 
-## Skin_Reaction 代码入口
+## Skin_Reaction code entry points
 
-Skin_Reaction 的 task-specific 细节记录在：
+Skin_Reaction task-specific details are recorded in:
 
 ```text
 tools/chembl_tool/tasks/skin_reaction/AGENTS.md
 ```
 
-当前状态：
+Current status:
 
 ```text
-已完成 task wrapper、assay scoring、endpoint grouping、evidence library、neighbor retrieval、
-single/group/final reasoning pipeline 和 batch wrapper。
+Completed task wrapper, assay scoring, endpoint grouping, evidence library, neighbor retrieval,
+single/group/final reasoning pipeline, and batch wrapper.
 
-当前 label mapping:
+Current label mapping:
   Y=1 -> risk
   Y=0 -> no_risk
 
-当前 v1 benchmark batch:
+Current v1 benchmark batch:
   outputs/chembl_tool/tasks/skin_reaction/reasoning/batches/skin_reaction_calib_50_v1
   n=82, failed=0
   accuracy=0.682927, macro-F1=0.678140
@@ -1583,50 +1998,50 @@ single/group/final reasoning pipeline 和 batch wrapper。
   confusion matrix: TN=23 FP=12 FN=14 TP=33
 ```
 
-主要入口：
+Main entry points:
 
 ```text
 tools/chembl_tool/tasks/skin_reaction/constants.py
-  Skin_Reaction label 和 prediction mapping。
+  Skin_Reaction label and prediction mapping.
 
 tools/chembl_tool/tasks/skin_reaction/rules.py
-  skin sensitization、direct skin reaction、phototoxicity、irritation/corrosion、skin exposure
-  和 weak/context evidence 的筛选关键词与排除规则。
+  Screening keywords and exclusion rules for skin sensitization, direct skin reaction, phototoxicity, irritation/corrosion, skin exposure,
+  and weak/context evidence.
 
 tools/chembl_tool/tasks/skin_reaction/scoring.py
-  assay 保留/剔除和打分入口。screen_assays.py 和 rescore_outputs.py 都调用 scored_row()。
+  Assay retention/exclusion and scoring entry point. Both screen_assays.py and rescore_outputs.py call scored_row().
 
 tools/chembl_tool/tasks/skin_reaction/endpoint_groups.py
-  Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
+  Rules for Tier.endpoint_group, evidence_direction, evidence_strength, and endpoint assignment.
 
 tools/chembl_tool/tasks/skin_reaction/build_evidence_library.py
-  evidence library 构建入口。默认读取 assay_screening/v1，输出 molecule evidence、neighbor index 和 meta。
+  Entry point for building the evidence library. By default reads assay_screening/v1, outputs molecule evidence, neighbor index, and meta.
 
 tools/chembl_tool/tasks/skin_reaction/retrieve_neighbors.py
-  analog retrieval 入口。当前 benchmark 使用 top-k-per-group=3、min-similarity=0.35。
+  Analog retrieval entry point. The current benchmark uses top-k-per-group=3, min-similarity=0.35.
 
 tools/chembl_tool/tasks/skin_reaction/run_reasoning_pipeline.py
-  单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、group-level 并发 reasoning、
-  final summary、trace 保存，以及 final-only rerun。
+  Single-molecule reasoning pipeline: retrieval prefetch, single-molecule branch, group-level concurrent reasoning,
+  final summary, trace saving, and final-only rerun.
 
 tools/chembl_tool/tasks/skin_reaction/run_reasoning_batch.py
-  批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
-  runs 和 combined trace。
+  Batch reasoning wrapper. Reuses common reasoning_batch.py, outputs predictions, metrics, report, logs,
+  runs, and combined trace.
 ```
 
-## BBB evidence 分组标准
+## BBB evidence grouping criteria
 
-BBB 第二阶段不按每个 assay 单独检索。应按：
+In the second phase of BBB, retrieval is not performed per assay. Instead, it should be grouped by:
 
 ```text
 Tier -> endpoint_group
 ```
 
-组合生成 retrieval groups。
+Generate retrieval groups.
 
 ### Tier 1: direct BBB / brain exposure
 
-建议 endpoint groups：
+Suggested endpoint groups:
 
 ```text
 direct_brain_plasma
@@ -1660,7 +2075,7 @@ direct_brain_uptake_or_perfusion
 
 ### Tier 2: passive permeability / barrier model
 
-建议 endpoint groups：
+Suggested endpoint groups:
 
 ```text
 passive_papp
@@ -1691,9 +2106,9 @@ passive_transport_or_recovery
 
 ### Tier 3: efflux transporter
 
-Tier 3 必须拆分强弱证据，不能把 transporter inhibition 直接解释成 efflux substrate。
+Tier 3 must separate strong and weak evidence; transporter inhibition must not be directly interpreted as efflux substrate.
 
-建议 endpoint groups：
+Suggested endpoint groups:
 
 ```text
 efflux_functional_ratio_or_bidirectional
@@ -1733,9 +2148,9 @@ efflux_inhibition_or_binding
 
 ### Tier 4: influx transporter
 
-Tier 4 也必须区分 functional uptake 和普通 binding/inhibition。
+Tier 4 must also distinguish functional uptake from ordinary binding/inhibition.
 
-建议 endpoint groups：
+Suggested endpoint groups:
 
 ```text
 influx_functional_uptake_or_transport
@@ -1763,7 +2178,7 @@ influx_inhibition_or_binding
 
 ### Unknown / weak context
 
-下面 endpoint 只能作为 context-dependent evidence，不能单独强解释：
+The following endpoints can only be used as context-dependent evidence, not strong interpretation alone:
 
 ```text
 activity
@@ -1779,7 +2194,7 @@ rfu
 fluorescence
 ```
 
-如果这些 endpoint 出现在明确 assay context 中，可以被 endpoint group 规则提升；否则应标记为：
+If these endpoints appear in a clear assay context, they can be promoted by endpoint group rules; otherwise they should be marked as:
 
 ```text
 endpoint_group: context_dependent
@@ -1788,7 +2203,7 @@ evidence_strength: weak
 
 ## BBB evidence library
 
-应从当前 assay candidates 和 activity evidence 构建 molecule-level library。每一条 evidence 至少包含：
+A molecule-level library should be built from current assay candidates and activity evidence. Each evidence entry must include at least:
 
 ```text
 molecule_chembl_id
@@ -1815,7 +2230,7 @@ evidence_strength
 evidence_reason
 ```
 
-其中：
+Where:
 
 ```text
 evidence_direction:
@@ -1834,11 +2249,11 @@ evidence_strength:
   context_dependent
 ```
 
-`endpoint_group` 由 `assay_tier + standard_type + assay_description + target_genes` 共同决定。不能只看 `standard_type`，因为 `ratio`、`activity`、`inhibition` 等 endpoint 在不同 assay context 下含义不同。
+`endpoint_group` is jointly determined by `assay_tier + standard_type + assay_description + target_genes`. You must not look only at `standard_type`, because endpoints such as `ratio`, `activity`, `inhibition` have different meanings in different assay contexts.
 
-## Neighbor retrieval 设计
+## Neighbor retrieval design
 
-输入：
+Input:
 
 ```text
 query_smiles
@@ -1848,18 +2263,18 @@ groups: optional list[Tier.endpoint_group]
 exclude_exact: default true
 ```
 
-流程：
+Process:
 
 ```text
-1. 标准化 query molecule，生成 canonical SMILES、InChIKey、Morgan fingerprint。
-2. 按 evidence library 中的 Tier.endpoint_group 建立 group membership。
-3. 对每个 group 独立计算 query 与该 group molecule fingerprints 的 Tanimoto。
-4. 每个 group 返回 top 3 non-identical neighbors，默认过滤 Tanimoto < 0.3 的 very distant analog。
-5. 对同一 neighbor molecule 聚合其在该 group 下的所有 assay/activity evidence。
-6. 返回 group-level retrieval payload。
+1. Standardize the query molecule, generate canonical SMILES, InChIKey, Morgan fingerprint.
+2. Build group membership based on Tier.endpoint_group in the evidence library.
+3. For each group, independently compute Tanimoto between the query and the group's molecule fingerprints.
+4. Each group returns top 3 non-identical neighbors, by default filtering out very distant analogs with Tanimoto < 0.3.
+5. Aggregate all assay/activity evidence for the same neighbor molecule under that group.
+6. Return the group-level retrieval payload.
 ```
 
-同一分子排除标准：
+Same-molecule exclusion criteria:
 
 ```text
 same molecule_chembl_id
@@ -1868,7 +2283,7 @@ same InChIKey connectivity layer, i.e. the first block before "-"
 same canonical_smiles
 ```
 
-相似度 bucket：
+Similarity buckets:
 
 ```text
 very_close_analog: Tanimoto >= 0.95
@@ -1879,29 +2294,29 @@ distant_analog: 0.20 <= Tanimoto < 0.40
 very_distant_analog: Tanimoto < 0.20
 ```
 
-默认使用 `min_similarity=0.3` 过滤 very distant analog，减少 sparse group 中几乎不可迁移的 evidence。保留的低相似度 analog 仍应交给 group-level LLM 判断 transferability。LLM prompt 必须明确：`distant_analog` 和 `very_distant_analog` 不能作为正负证据，除非共享 scaffold 和 assay mechanism 有很强的药化理由。
+By default, `min_similarity=0.3` is used to filter very distant analogs, reducing evidence that is almost non-transferable in sparse groups. Retained low-similarity analogs should still be handed to the group-level LLM to judge transferability. The LLM prompt must clearly state: `distant_analog` and `very_distant_analog` cannot be used as positive or negative evidence unless there is a strong medicinal chemistry rationale from shared scaffold and assay mechanism.
 
-当前实现会用预计算 ChEMBL fingerprints：
+The current implementation uses precomputed ChEMBL fingerprints:
 
 ```text
 tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
 ```
 
-构建 BBB evidence molecule subset 的 fingerprint/group index。这个 subset 当前约 5 万个
-molecule，query-time 对每个 group 做 `BulkTanimotoSimilarity` 足够快。后续如需扩展为
-全 ChEMBL 背景邻居检索，可以在不改变 BBB MVP payload contract 的前提下新增背景索引。
+Build the fingerprint/group index for the BBB evidence molecule subset. This subset currently has about 50,000 molecules,
+and at query time doing `BulkTanimotoSimilarity` for each group is fast enough. If later expansion to full ChEMBL background neighbor retrieval is needed,
+a background index can be added without changing the BBB MVP payload contract.
 
 ### Query ChEMBL exact context / shared-assay enrichment
 
-当前实现保留一个可选的 evidence-rich 增强：
+The current implementation retains an optional evidence-rich enhancement:
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/chembl_exact_context.py
 ```
 
-它可以用 query full InChIKey 查 ChEMBL exact molecule，读取 ChEMBL compound properties、
-query molecule 的 BBB-relevant evidence rows，并在 retrieved neighbor assay 中查 query activity，
-生成两类 shared-assay context：
+It can use query full InChIKey to look up ChEMBL exact molecule, read ChEMBL compound properties,
+query molecule's BBB-relevant evidence rows, and query activity in retrieved neighbor assays,
+generating two types of shared-assay context:
 
 ```text
 same_endpoint_activity:
@@ -1911,25 +2326,25 @@ same_assay_different_endpoint_activity:
   same assay_chembl_id + different standard_type
 ```
 
-这类信息使用了 query molecule 的已知 ChEMBL 实验记录。为避免 prospective evaluation 中的数据泄漏，
-默认必须关闭，因此不会添加 `query_chembl_context` / `exact_query_chembl_context`，也不会把 query
-的 ChEMBL exact evidence 注入 single-molecule prompt、group prompt 或 batch 评估。只有显式传：
+This type of information uses the query molecule's known ChEMBL experimental records. To avoid data leakage in prospective evaluation,
+it must be disabled by default, so `query_chembl_context` / `exact_query_chembl_context` will not be added, and the query's
+ChEMBL exact evidence will not be injected into the single-molecule prompt, group prompt, or batch evaluation. Only when explicitly passed:
 
 ```bash
 --enable-chembl-exact-context
 ```
 
-才允许作为 retrospective / evidence-rich case study 使用。默认 benchmark、accuracy 和 macro-F1 报告
-都应保持该开关关闭。
+is it allowed for use as a retrospective / evidence-rich case study. Default benchmark, accuracy, and macro-F1 reports
+should keep this switch off.
 
-## LLM reasoning 流程
+## LLM reasoning flow
 
-BBB_Martins 的 legacy native runner 分为并发 evidence branches 和 final summary。当前 paper runner 会先把
-下面的 source-local groups 合并为 `experiment_config.py` 声明的 mechanism families。
+The legacy native runner for BBB_Martins is divided into concurrent evidence branches and a final summary. The current paper runner first merges the
+following source-local groups into the mechanism families declared by `experiment_config.py`.
 
 ### Group-level reasoning
 
-Legacy native runner 中每个 `Tier.endpoint_group` 独立执行：
+In the legacy native runner, each `Tier.endpoint_group` executes independently:
 
 ```text
 input:
@@ -1982,14 +2397,14 @@ output:
   caveats
 ```
 
-`key_evidence` 是当前格式。旧的 `key_neighbors` 不再使用。
+`key_evidence` is the current format. The old `key_neighbors` is no longer used.
 
-每个 group 的 DeepSeek 对话、reasoning、tool calls 和 tool messages 都保存到 trace。
-这些 group 没有严格依赖关系，可以并发执行。
+Each group's DeepSeek conversation, reasoning, tool calls, and tool messages are saved to the trace.
+These groups have no strict dependencies and can be executed concurrently.
 
 ### Single-molecule reasoning
 
-每个 query 还会并发执行一个单分子分析分支：
+Each query also concurrently runs a single-molecule analysis branch:
 
 ```text
 input:
@@ -2014,15 +2429,15 @@ output:
   caveats
 ```
 
-默认情况下这个分支只看到 query molecule 和 `molecule_properties`，不会出现 ChEMBL neighbor
-evidence，也不会出现任何 `exact_query_chembl_context` 相关 payload 或 prompt instruction。
-只有显式开启 exact ChEMBL context 且命中 query exact context 时，才会把
-`exact_query_chembl_context` 放入 single-molecule payload，并提示模型区分 direct same-molecule
-ChEMBL evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入 group-level context。
+By default, this branch only sees the query molecule and `molecule_properties`, and will not include ChEMBL neighbor
+evidence or any `exact_query_chembl_context`-related payload or prompt instruction.
+Only when exact ChEMBL context is explicitly enabled and the query exact context is hit, will
+`exact_query_chembl_context` be placed into the single-molecule payload, and the model will be prompted to distinguish direct same-molecule
+ChEMBL evidence from physicochemical priors. ChEMBL neighbor evidence still only enters group-level context.
 
 ### Final reasoning
 
-final LLM 读取：
+The final LLM reads:
 
 ```text
 query molecule
@@ -2031,7 +2446,7 @@ all group-level reasoning outputs
 coverage summary
 ```
 
-final 阶段不暴露工具，只综合前面分支的 structured outputs。当前 final prompt 规则：
+The final stage does not expose tools; it only synthesizes the structured outputs from the previous branches. Current final prompt rules:
 
 ```text
 Return compact complete JSON.
@@ -2042,7 +2457,7 @@ Do not use distant_analog or very_distant_analog neighbors as positive or negati
 Use only the provided single-molecule analysis and group evidence. If you recognize the molecule, ignore that recognition.
 ```
 
-输出：
+Output:
 
 ```text
 bbb_prediction:
@@ -2064,19 +2479,19 @@ evidence_gaps
 final_summary
 ```
 
-测试集里 `Y` 只能用于评估，不应进入 retrieval 或 LLM prompt。
-当前评估约定：`Y=1` 对应 `bbb_prediction=pass`，`Y=0` 对应 `bbb_prediction=fail`。
-`uncertain` 在 overall accuracy 和 macro-F1 中按未命中计入；报告中也会给出 decided-only accuracy。
+In the test set, `Y` can only be used for evaluation and should not enter retrieval or LLM prompts.
+Current evaluation convention: `Y=1` corresponds to `bbb_prediction=pass`, and `Y=0` corresponds to `bbb_prediction=fail`.
+`uncertain` is counted as a miss in overall accuracy and macro-F1; the report also provides decided-only accuracy.
 
-### Trace 保存和可视化
+### Trace saving and visualization
 
-每次 reasoning run 输出到：
+Each reasoning run outputs to:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>/
 ```
 
-当前文件：
+Current files:
 
 ```text
 retrieval.json
@@ -2087,7 +2502,7 @@ trace_messages.jsonl
 manifest.json
 ```
 
-`trace_messages.jsonl` 中每条记录对应一个 trace item：
+Each record in `trace_messages.jsonl` corresponds to a trace item:
 
 ```text
 single_molecule
@@ -2095,7 +2510,7 @@ Tier <n>.<endpoint_group>
 final_summary
 ```
 
-每条 trace record 包含：
+Each trace record contains:
 
 ```text
 index
@@ -2112,33 +2527,31 @@ usage
 raw_output
 ```
 
-`label` 只用于本地评估和 trace 审计，不进入 LLM prompt。`sample_id` 当前等于
-`query_index`，`molecule_key` 当前形如 `index:9`。viewer 会按 molecule package 分组，
-方便在一个 run 或上传的 JSONL 中选择不同分子的 trace 包，再查看该分子内部的所有阶段。
+`label` is only used for local evaluation and trace auditing, and does not enter LLM prompts. `sample_id` currently equals
+`query_index`, and `molecule_key` currently has the form `index:9`. The viewer groups by molecule package,
+making it easy to select trace packages for different molecules within a run or uploaded JSONL, then view all stages within that molecule.
 
-旧 task reasoning trace 已不再由 viewer 支持。最终论文 trace 统一启动：
+Old task reasoning traces are no longer supported by the viewer. The final paper trace is uniformly started with:
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-然后打开：
+Then open:
 
 ```text
 http://localhost:8776/.trace_viewer.html?v=paper-v2
 ```
 
-Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test；每个 dataset 只扫描 `runs`、
-`runs_deployment_visible_prefetched`、`runs_deployment_visible` 和
-`runs_deployment_visible_parent_disjoint` 中由正式 `predictions.jsonl` 引用的样本级 trace，不跨 dataset
-合并指标。对于 parent-disjoint 样本，viewer 还会读取 manifest 和 `reuse.json`，显示 identity policy，
-并区分 retrieval 变化后的重跑与 LLM-visible input 未变化时的 artifact reuse。旧 task reasoning 目录的
-保留和清理规则见 `tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`。
+The viewer by default registers Starling random, Starling scaffold, and historical TDC test; each dataset only scans sample-level traces referenced by the official `predictions.jsonl` in `runs`,
+`runs_deployment_visible_prefetched`, `runs_deployment_visible`, and
+`runs_deployment_visible_parent_disjoint`, and does not merge metrics across datasets. For parent-disjoint samples, the viewer also reads the manifest and `reuse.json`, displays the identity policy,
+and distinguishes reruns after retrieval changes from artifact reuse when LLM-visible input is unchanged. The retention and cleanup rules for old task reasoning directories are in `tools/chembl_tool/paper_experiments/TRACE_RETENTION.md`.
 
-常用 pipeline 命令：
+Common pipeline commands:
 
 ```bash
-# 历史 TDC native runner：完整运行一个 test_efflux 分子
+# Historical TDC native runner: run a complete test_efflux molecule
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --query-index 0 \
   --top-k-per-group 3 \
@@ -2150,14 +2563,14 @@ Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test
   --model deepseek-v4-pro \
   --run-id <run_id>
 
-# 只重跑已有 run 的 final summary
+# Only rerun the final summary of an existing run
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_pipeline \
   --resume-final-from-run-dir outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id> \
   --timeout-s 300 \
   --max-tokens 8192 \
   --model deepseek-v4-pro
 
-# 历史 TDC batch 复现；新 Starling benchmark 不得沿用这个 input path 或 full-source index
+# Historical TDC batch reproduction; new Starling benchmark must not reuse this input path or full-source index
 /data1/tianang/anaconda3/condabin/conda run -n vllm python -m tools.chembl_tool.tasks.bbb_martins.run_reasoning_batch \
   --input-jsonl data/gold_labels/legacy/processed/BBB_Martins/B3DB_cleaned/test/test_efflux.jsonl \
   --parallelism 1 \
@@ -2170,19 +2583,19 @@ Viewer 默认分别注册 Starling random、Starling scaffold 和历史 TDC test
   --batch-id <batch_id>
 ```
 
-默认会把每个单分子 run 的 stderr 进度实时打印到控制台，例如
-`[idx00003 stderr] [bbb_reasoning_pipeline] group done: ...`，同时完整保存到
-`outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/`。如果只想写日志文件、不想在控制台显示进度，可加
-`--no-stream-logs`。
+By default, the stderr progress of each single-molecule run is printed to the console in real time, e.g.,
+`[idx00003 stderr] [bbb_reasoning_pipeline] group done: ...`, while also being fully saved to
+`outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/`. If you only want to write log files and not display progress on the console, add
+`--no-stream-logs`.
 
-batch 断点续跑使用 `--skip-existing`。用同一个 `--batch-id` 重新运行时，脚本会检查
-`reasoning/batches/<batch_id>/runs/<batch_id>_idxNNNNN/final_reasoning_output.json`：
-存在则认为该 molecule 已完成并跳过，不覆盖已有 stdout/stderr log；不存在则重新运行该 molecule。
-因此中断后的 partial run 会自动补跑，已完成结果会进入新的 predictions、metrics、report 和
-batch `trace_messages.jsonl` 汇总。这个逻辑由 `tools/chembl_tool/common/task_workflows/reasoning_batch.py`
-统一实现，BBB_Martins、Bioavailability_Ma、ClinTox 和 Skin_Reaction 共用。
+Batch resume uses `--skip-existing`. When rerunning with the same `--batch-id`, the script checks
+`reasoning/batches/<batch_id>/runs/<batch_id>_idxNNNNN/final_reasoning_output.json`:
+if it exists, the molecule is considered complete and skipped, without overwriting existing stdout/stderr logs; if it does not exist, the molecule is rerun.
+Therefore, a partial run after interruption will automatically complete, and completed results will enter the new predictions, metrics, report, and
+batch `trace_messages.jsonl` summary. This logic is uniformly implemented by `tools/chembl_tool/common/task_workflows/reasoning_batch.py`,
+shared by BBB_Martins, Bioavailability_Ma, ClinTox, and Skin_Reaction.
 
-批量输出：
+Batch outputs:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/manifest.json
@@ -2194,7 +2607,7 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/logs/
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/
 ```
 
-batch 中每个 molecule 的独立 run 保留在 batch 目录内部：
+Each molecule's independent run within the batch is kept inside the batch directory:
 
 ```text
 outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_id>_idx00000/
@@ -2202,31 +2615,31 @@ outputs/chembl_tool/tasks/bbb_martins/reasoning/batches/<batch_id>/runs/<batch_i
 ...
 ```
 
-旧 task batch 可以生成合并 trace 供离线审计，但最终 paper runner 必须使用
-`--no-combine-traces`，只保留每个 molecule 自己的 trace。最终 viewer 固定启动为：
+Old task batches can generate merged traces for offline auditing, but the final paper runner must use
+`--no-combine-traces`, keeping only each molecule's own trace. The final viewer is fixed to start with:
 
 ```bash
 bash tools/trace_viewer/start_viewer.sh 8776
 ```
 
-Viewer 从 condition 的 `predictions.jsonl` 构建样本列表，再按需加载 per-run trace 和 retrieval。
-新增 task 时必须沿用通用 stage/message/tool/JSON contract；不要向 viewer 添加 task prediction、
-Tier、expert-policy 或 `key_evidence` effect 字段的专用适配。
+The viewer builds the sample list from the condition's `predictions.jsonl`, then loads per-run traces and retrieval as needed.
+When adding a new task, the common stage/message/tool/JSON contract must be followed; do not add task-specific adaptations for prediction,
+Tier, expert-policy, or `key_evidence` effect fields to the viewer.
 
-### LLM usage 与成本估算
+### LLM usage and cost estimation
 
-DeepSeek API response 会返回 token usage，但不会在每次 response 中直接返回美元费用。
-估算 batch 费用时用 trace 中保存的 usage 汇总 token，再乘以 DeepSeek 官方 pricing。
-价格会变，生产估算前必须先查官方页面：
+DeepSeek API responses return token usage, but do not directly return dollar costs in each response.
+To estimate batch costs, aggregate tokens from the usage saved in traces, then multiply by DeepSeek's official pricing.
+Prices change; before production estimation, you must check the official page:
 
 ```text
 https://api-docs.deepseek.com/quick_start/pricing/
 ```
 
-最终 paper viewer 只负责 trace 审计与可视化，不内置 provider-specific 价格或成本估算。
-需要估算旧 run 成本时，从 trace 的 usage 字段离线汇总 token，并使用运行当日的官方价格。
+The final paper viewer is only responsible for trace auditing and visualization, and does not include provider-specific pricing or cost estimation.
+To estimate the cost of an old run, aggregate tokens offline from the usage field of traces and use the official price on the day of the run.
 
-截至 2026-05-12，官方页面显示 `deepseek-v4-pro` 当前折扣价为：
+As of 2026-05-12, the official page shows the current discounted price for `deepseek-v4-pro` as:
 
 ```text
 input cache hit:  $0.003625 / 1M tokens
@@ -2234,7 +2647,7 @@ input cache miss: $0.435    / 1M tokens
 output:           $0.87     / 1M tokens
 ```
 
-折扣截至 2026-05-31 15:59 UTC；原价为：
+The discount is valid until 2026-05-31 15:59 UTC; the original prices are:
 
 ```text
 input cache hit:  $0.0145 / 1M tokens
@@ -2242,7 +2655,7 @@ input cache miss: $1.74   / 1M tokens
 output:           $3.48   / 1M tokens
 ```
 
-从一个 run 或 batch 的 `trace_messages.jsonl` 汇总 usage：
+Aggregate usage from the `trace_messages.jsonl` of a run or batch:
 
 ```bash
 jq -s 'reduce .[] as $r (
@@ -2257,15 +2670,15 @@ jq -s 'reduce .[] as $r (
 )' outputs/chembl_tool/tasks/<task_name>/reasoning/batches/<batch_id>/trace_messages.jsonl
 ```
 
-如果估算 standalone 单分子 run，把路径替换为：
+If estimating a standalone single-molecule run, replace the path with:
 
 ```text
 outputs/chembl_tool/tasks/<task_name>/reasoning/single_runs/<run_id>/trace_messages.jsonl
 ```
 
-其中 `output_tokens` 使用 usage 中的 `completion_tokens`。
+Where `output_tokens` uses the `completion_tokens` from usage.
 
-费用公式：
+Cost formula:
 
 ```text
 cost =
@@ -2274,7 +2687,7 @@ cost =
 + output_tokens     / 1,000,000 * output_price
 ```
 
-当前 BBB_Martins smoke 估算基线：
+Current BBB_Martins smoke estimation baseline:
 
 ```text
 single molecule example:
@@ -2294,22 +2707,22 @@ single molecule example:
   estimated discounted cost: ~$0.186 total, ~$0.062 / molecule
 ```
 
-这些只用于粗估。不同 molecule 的 endpoint group 覆盖、tool rounds、final prompt 长度会变化；
-全量预算应先抽样 3-10 个 molecule，按平均成本乘以 molecule 数量，并留出余量。
+These are only for rough estimation. Different molecules' endpoint group coverage, tool rounds, and final prompt length will vary;
+for a full budget, first sample 3-10 molecules, multiply the average cost by the number of molecules, and leave margin.
 
-## FastAPI 常驻服务标准
+## FastAPI resident service standard
 
-服务启动时初始化慢资源，后续每次 tool invoke 复用已加载对象：
+The service initializes slow resources at startup, and each subsequent tool invoke reuses the loaded objects:
 
 ```text
 RDKit standardization config
 MolGpKa import/model state
 AccFG import/state
 mmpdb Python package import
-后续其他慢启动 ML models 或大索引
+Other slow-start ML models or large indexes later
 ```
 
-当前 endpoint：
+Current endpoints:
 
 ```text
 GET /health
@@ -2319,9 +2732,9 @@ POST /tools/invoke
 POST /tools/{tool_name}
 ```
 
-其中 `/tools/{tool_name}/invoke` 是标准通用工具接口。`/tools/invoke` 和 `/tools/{tool_name}` 是兼容入口。`/tasks/bbb_martins/retrieve`、`/tasks/bbb_martins/reason`、`/tasks/bbb_martins/predict` 后续如果需要 task-level orchestration 再新增。
+Among them, `/tools/{tool_name}/invoke` is the standard general tool interface. `/tools/invoke` and `/tools/{tool_name}` are compatibility entry points. `/tasks/bbb_martins/retrieve`, `/tasks/bbb_martins/reason`, `/tasks/bbb_martins/predict` will be added later if task-level orchestration is needed.
 
-### 通用 ToolRequest
+### General ToolRequest
 
 ```json
 {
@@ -2336,7 +2749,7 @@ POST /tools/{tool_name}
 }
 ```
 
-### 通用 ToolResponse
+### General ToolResponse
 
 ```json
 {
@@ -2359,7 +2772,7 @@ POST /tools/{tool_name}
 }
 ```
 
-失败时：
+On failure:
 
 ```json
 {
@@ -2378,7 +2791,7 @@ POST /tools/{tool_name}
 
 ## Tool: molecule_properties v1
 
-输入：
+Input:
 
 ```json
 {
@@ -2386,17 +2799,17 @@ POST /tools/{tool_name}
 }
 ```
 
-职责：
+Responsibilities:
 
 ```text
-1. 标准化 query SMILES，返回 canonical_smiles 和 standard_inchi_key。
-2. 计算易解释 RDKit descriptors。
-3. 通过 MolGpKa 计算 acidic/basic pKa 和 logD。
-4. 通过 AccFG 识别最顶层 functional groups。
-5. 生成自然语言 output.text，作为 LLM 唯一直接消费的工具文本。
+1. Standardize the query SMILES, returning canonical_smiles and standard_inchi_key.
+2. Compute easily interpretable RDKit descriptors.
+3. Compute acidic/basic pKa and logD via MolGpKa.
+4. Identify the top-level functional groups via AccFG.
+5. Generate natural language output.text as the only tool text directly consumed by the LLM.
 ```
 
-主要输出字段：
+Main output fields:
 
 ```text
 output.text
@@ -2406,7 +2819,7 @@ output.functional_groups
 output.raw_features
 ```
 
-`properties` 至少覆盖：
+`properties` at least cover:
 
 ```text
 MolGpKa pKa/logD features
@@ -2425,7 +2838,7 @@ rule flags
 
 ## Tool: properties_compare v1
 
-输入：
+Input:
 
 ```json
 {
@@ -2436,16 +2849,16 @@ rule flags
 }
 ```
 
-职责：
+Responsibilities:
 
 ```text
-1. 复用 registry 中同一个 molecule_properties 工具实例，避免重复初始化 MolGpKa/AccFG。
-2. 比较 molecule_properties 中所有非 functional-group properties。
-3. delta 定义为 query_value - reference_value。
-4. 生成自然语言 output.text，说明哪些 properties 增加、降低或不适用。
+1. Reuse the same molecule_properties tool instance in the registry to avoid re-initializing MolGpKa/AccFG.
+2. Compare all non-functional-group properties in molecule_properties.
+3. Delta is defined as query_value - reference_value.
+4. Generate natural language output.text explaining which properties increased, decreased, or are not applicable.
 ```
 
-主要输出字段：
+Main output fields:
 
 ```text
 output.text
@@ -2454,11 +2867,11 @@ output.reference
 output.comparisons
 ```
 
-functional groups 不在此工具中比较。FG 信息只由 `molecule_properties` 单独返回。
+Functional groups are not compared in this tool. FG information is only returned separately by `molecule_properties`.
 
 ## Tool: mmp_structure_compare v1
 
-输入：
+Input:
 
 ```json
 {
@@ -2469,17 +2882,17 @@ functional groups 不在此工具中比较。FG 信息只由 `molecule_propertie
 }
 ```
 
-职责：
+Responsibilities:
 
 ```text
-1. 计算 Morgan fingerprint Tanimoto similarity。
-2. 按 similarity bucket 标记结构相似度。
-3. 调用 mmpdb 的 fragmentation / matched-pair 逻辑，描述可解释的 matched-pair transformation。
-4. 计算 RDKit MCS coverage，辅助判断共同骨架比例。
-5. 生成自然语言 output.text，作为 LLM 可读结构差异说明。
+1. Compute Morgan fingerprint Tanimoto similarity.
+2. Mark structural similarity by similarity bucket.
+3. Call mmpdb fragmentation / matched-pair logic to describe interpretable matched-pair transformations.
+4. Compute RDKit MCS coverage to help judge common scaffold proportion.
+5. Generate natural language output.text as an LLM-readable structural difference explanation.
 ```
 
-主要输出字段：
+Main output fields:
 
 ```text
 output.text
@@ -2490,9 +2903,9 @@ output.transformation
 output.mcs
 ```
 
-`mmp_structure_compare` 不返回 descriptor/property deltas。所有属性差异比较必须使用 `properties_compare`。
+`mmp_structure_compare` does not return descriptor/property deltas. All property difference comparisons must use `properties_compare`.
 
-结构 similarity bucket：
+Structural similarity buckets:
 
 ```text
 very_close_analog: Tanimoto >= 0.95
@@ -2503,64 +2916,63 @@ distant_analog: 0.20 <= Tanimoto < 0.40
 very_distant_analog: Tanimoto < 0.20
 ```
 
-## ChEMBL neighbor retrieval 状态
+## ChEMBL neighbor retrieval status
 
-`chembl_neighbors` 仍是 BBB_Martins reasoning 的重要 evidence retrieval 概念，但当前实现不是
-DeepSeek function tool，也没有作为 `tools/service/` 的已注册常驻工具暴露。当前代码入口是：
+`chembl_neighbors` remains an important evidence retrieval concept for BBB_Martins reasoning, but the current implementation is not a DeepSeek function tool, nor is it exposed as a registered resident tool of `tools/service/`. The current code entry point is:
 
 ```text
 tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
 ```
 
-Legacy native runner 的调用方式：
+Legacy native runner invocation:
 
 ```text
-run_reasoning_pipeline.py 在 LLM 调用前读取 BBB neighbor index，
-按 Tier.endpoint_group 预取每组 top 3 neighbors，
-清理内部派生字段后把 neighbors/evidence_rows 放进 group-level user prompt。
+run_reasoning_pipeline.py reads the BBB neighbor index before LLM calls,
+prefetches top 3 neighbors per group by Tier.endpoint_group,
+cleans internal derived fields, then puts neighbors/evidence_rows into the group-level user prompt.
 ```
 
-因此 group-level DeepSeek 看到 neighbor evidence，但不能主动调用 `chembl_neighbors`。它能调用的工具只有：
+Therefore, group-level DeepSeek sees neighbor evidence but cannot actively call `chembl_neighbors`. The only tools it can call are:
 
 ```text
 mmp_structure_compare
 properties_compare
 ```
 
-后续如果需要把 BBB evidence retrieval 也放进常驻服务，应复用现有 ToolRequest / ToolResponse contract，并把服务端启动时加载 BBB evidence library 和 fingerprint group index。不要复制服务框架。
+If BBB evidence retrieval is later placed into a resident service, reuse the existing ToolRequest / ToolResponse contract and load the BBB evidence library and fingerprint group index at server startup. Do not duplicate the service framework.
 
-## 并发策略
+## Concurrency strategy
 
-服务内部可并发执行：
+The service can execute concurrently:
 
 ```text
 molecule_properties
 properties_compare
 mmp_structure_compare
-ChEMBL neighbor retrieval / evidence prefetch for each group（pipeline 内部；后续可 service 化）
+ChEMBL neighbor retrieval / evidence prefetch for each group (pipeline internal; can be service-ized later)
 group-level LLM reasoning for each group
 ```
 
-Legacy native runner 与当前 paper runner 的并发边界：
+Concurrency boundaries between the legacy native runner and the current paper runner:
 
 ```text
-1. source-local retrieval/normalization 可以保持 endpoint-group 粒度。
-2. legacy native runner 的 group-level reasoning 粒度是 endpoint group；paper runner 必须按 mechanism family。
-3. final reasoning 必须等待所有启用的 mechanism-family/group reasoning 完成。
-4. 每个 query 要有 request_id/run_id，所有中间产物可追踪。
+1. Source-local retrieval/normalization can maintain endpoint-group granularity.
+2. The legacy native runner's group-level reasoning granularity is endpoint group; the paper runner must use mechanism family.
+3. Final reasoning must wait for all enabled mechanism-family/group reasoning to complete.
+4. Each query must have a request_id/run_id, and all intermediate artifacts must be traceable.
 ```
 
-## 实施计划
+## Implementation plan
 
-### Phase 0: 文档与接口冻结
+### Phase 0: Documentation and interface freeze
 
-状态：
+Status:
 
 ```text
-已完成，并在本文件中记录当前工具入口和 LLM 可见输出约定。
+Completed and recorded in this file with current tool entry points and LLM-visible output conventions.
 ```
 
-当前冻结的 service tool 名称：
+Currently frozen service tool names:
 
 ```text
 molecule_properties
@@ -2570,46 +2982,46 @@ mmp_structure_compare
 
 ### Phase 1: BBB evidence library
 
-状态：
+Status:
 
 ```text
-已实现核心入口：
+Core entry points implemented:
 tools/chembl_tool/tasks/bbb_martins/endpoint_groups.py
 tools/chembl_tool/tasks/bbb_martins/build_evidence_library.py
 ```
 
-目标保持不变：
+Goals remain unchanged:
 
 ```text
-能从 v6 assay/activity 输出生成 molecule-level evidence。
-每条 evidence 有 endpoint_group、evidence_direction、evidence_strength。
-测试覆盖 Tier.endpoint_group 映射规则。
+Can generate molecule-level evidence from v6 assay/activity output.
+Each evidence has endpoint_group, evidence_direction, evidence_strength.
+Tests cover Tier.endpoint_group mapping rules.
 ```
 
 ### Phase 2: BBB neighbor retrieval
 
-状态：
+Status:
 
 ```text
-已实现核心入口：
+Core entry point implemented:
 tools/chembl_tool/tasks/bbb_martins/retrieve_neighbors.py
 ```
 
-当前行为：
+Current behavior:
 
 ```text
-给定一个 SMILES，每个 Tier.endpoint_group 返回 top 3 non-identical neighbors。
-返回完整 assay description 和 activity rows。
-能批量处理 test_efflux.jsonl。
-默认使用 min_similarity=0.3 过滤 very distant analog；保留的低相似度 analog 继续标记 bucket。
+Given a SMILES, return top 3 non-identical neighbors per Tier.endpoint_group.
+Return full assay description and activity rows.
+Can batch process test_efflux.jsonl.
+Default min_similarity=0.3 filters very distant analogs; retained low-similarity analogs continue to be bucket-marked.
 ```
 
-### Phase 3: 常驻 FastAPI service
+### Phase 3: Resident FastAPI service
 
-状态：
+Status:
 
 ```text
-已实现：
+Implemented:
 tools/service/app.py
 tools/service/config.py
 tools/service/registry.py
@@ -2621,39 +3033,39 @@ tools/service/tools/properties_compare.py
 tools/service/tools/mmp_structure_compare.py
 ```
 
-当前验收：
+Current acceptance criteria:
 
 ```text
-服务启动时初始化 MolGpKa、AccFG、mmpdb 等慢资源。
-POST /tools/{tool_name}/invoke 可调用 molecule_properties、properties_compare、mmp_structure_compare。
-GET /tools 可列出工具 schema 和版本。
-所有工具 output.text 为 LLM 可见文本，数字最多保留两位小数。
+Initialize slow resources like MolGpKa, AccFG, mmpdb at service startup.
+POST /tools/{tool_name}/invoke can call molecule_properties, properties_compare, mmp_structure_compare.
+GET /tools can list tool schemas and versions.
+All tool output.text is LLM-visible text, with numbers rounded to at most two decimal places.
 ```
 
-注意：当前 `chembl_neighbors` 没有注册为 service tool，也不是 LLM 可调用 tool；它是 BBB pipeline 内部的 evidence prefetch/context assembly。DeepSeek 只接收预取后的 group evidence。后续如果需要 service 化，应新增 `tools/service/tools/chembl_neighbors.py`，但不要替换或复制现有通用工具框架。
+Note: `chembl_neighbors` is currently not registered as a service tool, nor is it an LLM-callable tool; it is an evidence prefetch/context assembly inside the BBB pipeline. DeepSeek only receives prefetched group evidence. If service-ization is needed later, add `tools/service/tools/chembl_neighbors.py`, but do not replace or duplicate the existing general tool framework.
 
 ### Phase 4: LLM reasoning payloads
 
-状态：
+Status:
 
 ```text
-已实现核心 orchestration：
+Core orchestration implemented:
 tools/chembl_tool/tasks/bbb_martins/run_reasoning_pipeline.py
 ```
 
-当前行为：
+Current behavior:
 
 ```text
-1. 从 test_efflux.jsonl 读取 query。
-2. 用 retrieve_neighbors.py 获取每个 Tier.endpoint_group 的 top 3 neighbors。
-3. 并发执行 single-molecule analysis，只暴露 molecule_properties。
-4. 并发执行每个 group-level analysis，只暴露 mmp_structure_compare 和 properties_compare。
-5. 等待所有 group 和 single 分支完成后执行 final summary，不暴露工具。
-6. 保存 retrieval、single、group、final、trace_messages 和 manifest。
-7. 支持 --resume-final-from-run-dir 复用已有 retrieval/single/group 输出，只重跑 final summary。
+1. Read queries from test_efflux.jsonl.
+2. Use retrieve_neighbors.py to get top 3 neighbors per Tier.endpoint_group.
+3. Concurrently execute single-molecule analysis, exposing only molecule_properties.
+4. Concurrently execute each group-level analysis, exposing only mmp_structure_compare and properties_compare.
+5. After all group and single branches complete, execute final summary without exposing tools.
+6. Save retrieval, single, group, final, trace_messages, and manifest.
+7. Support --resume-final-from-run-dir to reuse existing retrieval/single/group outputs and only rerun the final summary.
 ```
 
-当前 DeepSeek 调用约定：
+Current DeepSeek invocation conventions:
 
 ```text
 OpenAI SDK
@@ -2663,31 +3075,30 @@ thinking enabled
 reasoning_effort=high
 ```
 
-API key 默认从 `--env-file .env` 中读取 `DEEPSEEK_API_KEY`。`run_reasoning_pipeline.py`
-会让 `.env` 中的值覆盖当前 shell 已存在的同名环境变量；这是为了保证直接从 shell 跑 batch
-时仍以项目 `.env` 为准。若要临时切换 key，应显式传 `--api-key-env <ENV_NAME>`，并在 `.env`
-中配置对应变量。
+API key is read by default from `--env-file .env` as `DEEPSEEK_API_KEY`. `run_reasoning_pipeline.py`
+will cause the value in `.env` to override the same-named environment variable already present in the current shell; this ensures that when running batch directly from the shell,
+the project `.env` takes precedence. To temporarily switch keys, explicitly pass `--api-key-env <ENV_NAME>` and configure the corresponding variable in `.env`.
 
-当前 trace 验收：
+Current trace acceptance criteria:
 
 ```text
-完整保存 system/user/assistant/tool messages。
-保存 assistant reasoning_content。
-保存 assistant tool_calls。
-保存 ToolResponse.output.text 作为 tool message content。
-保存 molecule_key，方便 viewer 按分子 trace package 分组。
+Completely save system/user/assistant/tool messages.
+Save assistant reasoning_content.
+Save assistant tool_calls.
+Save ToolResponse.output.text as tool message content.
+Save molecule_key to allow viewer grouping by molecule trace package.
 ```
 
 ### Phase 5: BBB_Martins evaluation
 
-状态：
+Status:
 
 ```text
-已完成单分子端到端 smoke runs，输出目录：
+Single-molecule end-to-end smoke runs completed, output directory:
 outputs/chembl_tool/tasks/bbb_martins/reasoning/single_runs/<run_id>/
 ```
 
-已验证的示例：
+Verified examples:
 
 ```text
 query_index=0:
@@ -2703,25 +3114,25 @@ query_index=9:
   19 group outputs, 21 trace records, 57 key_evidence items
 ```
 
-后续 evaluation 工作：
+Subsequent evaluation work:
 
 ```text
-对 test_efflux.jsonl 批量运行 retrieval + reasoning。
-评估时只在最后对照 Y，不把 Y 传给工具或 LLM。
-报告 coverage、prediction accuracy、uncertain rate、典型成功/失败案例。
-batch trace 支持多个 molecule package，viewer 按 molecule_key 分组浏览。
+Batch run retrieval + reasoning on test_efflux.jsonl.
+During evaluation, only compare against Y at the end; do not pass Y to tools or LLM.
+Report coverage, prediction accuracy, uncertain rate, and typical success/failure cases.
+Batch trace supports multiple molecule packages; viewer groups by molecule_key for browsing.
 ```
 
-### Phase 6: 扩展到其他任务
+### Phase 6: Extension to other tasks
 
-新任务只新增：
+New tasks only add:
 
 ```text
 tools/<domain_tool>/tasks/<task_name>/
 tools/service/tasks/<task_name>.py
 ```
 
-对应输出统一放在：
+Corresponding outputs are uniformly placed in:
 
 ```text
 outputs/<domain_tool>/tasks/<task_name>/
@@ -2732,13 +3143,13 @@ outputs/<domain_tool>/tasks/<task_name>/
     batches/
 ```
 
-如果需要新模型或新索引，则新增：
+If a new model or index is needed, add:
 
 ```text
 tools/service/tools/<tool_name>.py
 ```
 
-不要复制已有服务框架、tool schema、request/response 标准。下面这些 task workflow helper 也不要复制：
+Do not duplicate existing service frameworks, tool schemas, or request/response standards. Do not duplicate the following task workflow helpers either:
 
 ```text
 tools/chembl_tool/common/task_workflows/screen_assays.py
@@ -2751,8 +3162,8 @@ tools/chembl_tool/common/task_workflows/chembl_exact_context.py
 tools/chembl_tool/common/task_workflows/reasoning_batch.py
 ```
 
-新 task 的 `run_reasoning_batch.py` 应作为薄 wrapper 调用
-`tools/chembl_tool/common/task_workflows/reasoning_batch.py`，只配置：
+The `run_reasoning_batch.py` of a new task should act as a thin wrapper calling
+`tools/chembl_tool/common/task_workflows/reasoning_batch.py`, configuring only:
 
 ```text
 default_input
@@ -2763,32 +3174,31 @@ prediction_field
 positive/negative label mapping
 ```
 
-task-specific pipeline、retrieval、prompt 和 final schema 可以继续放在各自 task 目录中；
-当这些部分也稳定到足够通用时，再抽取公共模块。
+Task-specific pipelines, retrieval, prompts, and final schemas can remain in their respective task directories; when these parts stabilize enough to be general, extract common modules.
 
-新增 task 必须把 task-specific 输出保留在通用 JSON response 内，并沿用统一
-stage/message/tool contract。Viewer 会递归展示这些 JSON，不应新增 task-specific 渲染分支。
+New tasks must keep task-specific outputs within the generic JSON response and follow the unified
+stage/message/tool contract. The viewer will recursively display these JSONs; do not add task-specific rendering branches.
 
-## 当前不做的事情
+## What is not done currently
 
 ```text
-不训练 BBB classifier。
-不把每个 assay 作为独立 retrieval group。
-不把 IC50/inhibition 直接解释成 substrate 或 transport。
-不把 test_efflux.jsonl 的 Y 暴露给 retrieval 或 LLM prompt。
-不在每次 query 时重新 import 或初始化 MolGpKa、AccFG、mmpdb、ML model 或大索引。
-不把 descriptor/property deltas 放进 mmp_structure_compare；属性差异统一走 properties_compare。
-不把工具结构化 JSON 整包展示给 LLM；LLM 默认只看 output.text。
-不为已安装的 mmpdb 增加源码路径环境变量。
+Do not train a BBB classifier.
+Do not treat each assay as an independent retrieval group.
+Do not interpret IC50/inhibition directly as substrate or transport.
+Do not expose the Y of test_efflux.jsonl to retrieval or LLM prompts.
+Do not re-import or re-initialize MolGpKa, AccFG, mmpdb, ML models, or large indexes on each query.
+Do not put descriptor/property deltas into mmp_structure_compare; property differences uniformly go through properties_compare.
+Do not show the entire structured JSON of tools to the LLM; the LLM only sees output.text by default.
+Do not add source path environment variables for the installed mmpdb.
 ```
 
-## 历史 BBB 阶段性下一步
+## Historical BBB phased next steps
 
-下面是早期 BBB 单分子 MVP 阶段留下的计划，已经被当前 paper experiment plan 取代，仅用于解释历史实现：
+The following is a plan left from the early BBB single-molecule MVP phase, now superseded by the current paper experiment plan, and is only used to explain historical implementation:
 
 ```text
-1. 批量评估 test_efflux.jsonl，形成 prediction/label 对照表和错误分析。
-2. 继续审计 final summary 的证据加权，必要时增加 explicit adjudication fields。
-3. 如果需要让其他系统复用 retrieval，再把 chembl_neighbors 包装为 service tool 或 task endpoint；当前 BBB pipeline 继续把它作为内部 evidence prefetch。
-4. 后续接入更多常驻 ML tools，例如更慢的 pKa/logD、solubility、PK 或 toxicity 模型。
+1. Batch evaluate test_efflux.jsonl to form a prediction/label comparison table and error analysis.
+2. Continue auditing evidence weighting in the final summary, adding explicit adjudication fields if necessary.
+3. If other systems need to reuse retrieval, wrap chembl_neighbors as a service tool or task endpoint; the current BBB pipeline continues to use it as internal evidence prefetch.
+4. Later integrate more resident ML tools, such as slower pKa/logD, solubility, PK, or toxicity models.
 ```

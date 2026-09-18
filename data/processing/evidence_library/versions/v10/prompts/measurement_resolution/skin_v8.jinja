@@ -1,0 +1,22 @@
+Extract at most one continuous Skin Reaction measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each row is a {{ source_kind }} and has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return exactly one result per id, in order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable",
+  "measurements":[{"measurement":"<plain decimal>","unit":"<unit as read>"}]}]}
+
+Only `ok` carries a measurement, and it carries exactly one. Every other status carries `[]`. Resolve rows independently.
+
+`measurement_text` selects the intended result. Use `support_text` only to verify that result, recover its explicitly linked unit, or resolve a named readout such as EC3 whose coefficient is omitted from `measurement_text`. Never substitute an incidental support-only number. Do not select a dose, test concentration, exposure time, timepoint, sample size, identifier, category number, p-value, comparator, control, or baseline unless `canonical_endpoint_name` says that quantity is the outcome.
+
+Return `ok` for one clear absolute or endpoint-defined result. Endpoint-defined results include sensitization incidence or subject count, LLNA stimulation index or EC3/pEC3, RFI/cMFI, KeratinoSens Imax, peptide or GSH depletion, a named expression fold change or ratio, erythema/edema/irritation score, and a skin-exposure fraction defined against applied dose or recovered material. A comparator elsewhere in support does not make a selected absolute point relative.
+
+Return `relative` only when the selected numeric result is expressed against an experiment-specific control, baseline, vehicle, treatment, formulation, or different compound that the endpoint or named readout does not define. With `missing_endpoint`, such a reference is never endpoint-defined. A qualitative comparison without a selected numeric result is `unavailable`.
+
+Return `unavailable` when the only number measures another outcome or an assay condition. Examples include EC3 under a stimulation-index endpoint, stimulation index under a broad sensitization endpoint, incidence under an erythema/edema-score endpoint, organ distribution or excretion under permeation/absorption, photobinding under penetration, and GHS category 1. Return `unsure` when the selected value or unit conflicts, is ambiguous, or is only a bound or range.
+
+The measurement must be one finite plain decimal coefficient. Remove approximation and spread (`8 +/- 1.5` becomes `8`) but never convert a bound, range, fraction, or category into a point. Do not calculate, round, rescale, or transform. Put a printed power-of-ten scale entirely in the unit: `3.16 x 10^-6 cm/s` becomes measurement `3.16`, unit `10^-6 cm/s`. Never invent a scale from typical values.
+
+{% if has_unit_column %}A nonempty complete `unit_text` is authoritative and must be copied without expansion (`%` remains `%`). Use support only to complete a genuinely incomplete unit fragment or resolve a conflict. If no unit is stated and the endpoint or named readout does not define it, return `unsure`.{% else %}This source has no separate unit column. Read the unit explicitly tied to the selected coefficient in `measurement_text` or `support_text`. If no unit is stated and the endpoint or named readout does not define it, return `unsure`.{% endif %}
+
+Use concise units as printed, excluding tissue, route, arm, timepoint, and other context. Named readouts may supply only these unambiguous units: stimulation index -> `SI`; RFI -> `RFI`; cMFI -> `cMFI`; Imax -> `fold`; pEC3 explicitly reported on a molar log scale -> `log M`; an explicit score -> `score`; an unlogged endpoint-defined ratio -> `ratio`; an explicit percentage -> `%`. An explicit unit conflict is `unsure`, not permission to replace the unit.

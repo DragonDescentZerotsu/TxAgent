@@ -1,0 +1,69 @@
+Extract at most one continuous Ames outcome measurement per source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each row has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return exactly one result per input id, in input order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<complete source-supported unit>"}]}]}
+
+Only `ok` carries a measurement, and it carries exactly one. Every other status carries `[]`. Resolve each row independently by applying the checklist below in order.
+
+## Endpoint context
+
+These deterministic summaries describe other rows. They may clarify a convention already supported by the current row. They cannot supply a missing value, unit, denominator, or scale, and they cannot override the current row.
+
+{% if endpoint_profiles %}
+{% for profile in endpoint_profiles %}
+{{ profile }}
+
+{% endfor %}
+{% else %}
+No deterministic endpoint summary is available.
+{% endif %}
+
+## 1. Identify the selected outcome
+
+`measurement_text` is the cleaned primary result column. Use it to select the main numeric outcome for `canonical_endpoint_name` or the explicitly named assay readout. `support_text` must tie that value to the outcome. It may show the same value in source-printed notation, distinguish a central point from its spread, and complete its unit.
+
+Return `unavailable` when the apparent number is only a dose, concentration, duration, timepoint, sample size or N, replicate count, identifier, m/z peak, p-value, control or comparator value, calibration value, detection limit, ED50 or other condition. Also return `unavailable` for a cell-viability, survival, clonogenic, IC50, EC50, or fluorescence cytotoxicity outcome, even when that outcome is used as indirect mechanistic evidence. A numeric primary value unsupported by the source context is `unavailable`.
+
+Return `unsure` when two or more focal outcomes, groups, tissues, doses, or timepoints are equally selected; when the value is a range or one-sided bound; or when the source statements conflict. Words such as `up to`, `at least`, `less than`, `more than`, `<`, and `>` mark bounds, not points. A central point followed by `±`, SD, SE, or a confidence interval remains one point. `Approximately`, `about`, and `~` also remain points.
+
+The primary value can remain uniquely selected when support also lists a control, comparator, dose, timepoint, sample size, p-value, spread, or other secondary statistic. In particular, an expanded decimal in `measurement_text` that matches exactly one source-printed coefficient times 10^n selects that coefficient even when support lists other conditions.
+
+Do not calculate a fraction from `2 of 12`, choose a midpoint, average values, subtract a control, derive a ratio, convert a unit, or infer an unstated value.
+
+## 2. Choose the status
+
+After the eligibility checks, use `ok` only for one finite point with a complete source-supported unit, denominator, scale, or explicitly defined dimensionless metric.
+
+Use `relative` when the selected coefficient itself is defined by an experiment-specific comparator: fold change versus a treatment or genotype, percent inhibition or reduction versus a control, percent of wild type, an odds ratio against a referent group, a treated/control value, or another normalized baseline. Return `relative` even when that comparative coefficient has a clear number and unit.
+
+An absolute focal-group count, frequency, or concentration does not become `relative` merely because support also reports a control. An explicitly defined self-contained metric is also `ok`: a correlation coefficient, pKa, log metric, named partition ratio, named numerator/denominator ratio such as `GSH/GSSG ratio`, or a named fraction whose numerator and denominator are part of the readout.
+
+Qualitative positive, negative, detected, increased, or decreased calls are handled elsewhere. Without a selected numeric outcome, return `unavailable`.
+
+## 3. Require and preserve the complete unit
+
+{% if has_unit_column %}A nonempty `unit_text` is authoritative. For one selected value, copy its unit text verbatim, preserving symbols, capitalization, parentheses, analyte names, and denominators. Do not shorten `% CPD loss` to `%`, change `percent` to `%`, or replace a named ratio with `ratio`. If `unit_text` lists units for multiple values, retain only the component attached to the selected value. A scale printed with the selected value may be prepended to that unit.
+{% else %}The measurement and support text must supply a complete unit, fixed denominator, printed scale, named event count, or explicitly defined dimensionless metric. Endpoint summaries cannot fill this requirement.
+{% endif %}
+
+A bare label such as `frequency`, `rate`, `MF`, `SCE`, `potency`, `coefficient`, `score`, `index`, `count`, `mean fluorescence`, `AUC`, `Olive tail moment`, or `elution rate` is not a complete unit. If the source does not state the missing denominator or scale and does not define a self-contained dimensionless metric, return `unsure`. Never invent `%`, `fold`, `ratio`, arbitrary units, cells scored, or a power of ten.
+
+When the source does define a self-contained metric, preserve its specific name. Write `GSH/GSSG ratio`, not `ratio`; `correlation coefficient r`, not `ratio`; and `aneuploidy/karyotype-heterogeneity score`, not `score`. When it explicitly reports a named event count, use the named event, such as `C-metaphases`, `point mutations`, or `micronuclei`, rather than the generic word `count`.
+
+A power of ten printed with the selected value stays explicit in the unit. For example, `3.2 x 10^-6 events/cell` becomes measurement `3.2` and unit `10^-6 events/cell`. If `measurement_text` contains the expanded equivalent and support prints the selected outcome as coefficient times a power, copy the printed coefficient and keep the power in the unit. Keep an expanded decimal only when the source context itself reports that decimal without a printed equivalent. Never apply or reverse the scale.
+
+Return a finite plain decimal with optional sign and decimal point. Remove valid thousands separators. Preserve the stated central point, but do not round or infer a logarithmic base.
+
+## Examples of the contract
+
+- `mutation frequency 4.5 x 10^-6` -> `ok`, measurement `4.5`, unit `10^-6 mutation frequency`.
+- `GSH/GSSG ratio was 0.62` -> `ok`, measurement `0.62`, unit `GSH/GSSG ratio`.
+- `C-metaphase count was 10.5 ± 0.5` -> `ok`, measurement `10.5`, unit `C-metaphases`.
+- `MF mean was 22.77` with no denominator or scale -> `unsure`.
+- `1.4-fold relative to the concurrent control` -> `relative` with no measurement.
+- `r = 0.39` for the named association -> `ok`, measurement `0.39`, unit `correlation coefficient r`.
+- `N = 36 mutations assessed`, `m/z 540.1772`, or an IC50 from cell viability -> `unavailable`.
+- `20.6 NG (66% IR)` when the endpoint subtype selects net grains per nucleus -> `ok`, measurement `20.6`, unit `net grains per nucleus`.
+
+Additional fields only identify the selected source outcome. They are not alternative measurement columns.

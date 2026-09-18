@@ -1,5 +1,22 @@
 # Bioavailability_Ma paper-path notes
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -7,18 +24,16 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
-本目录只保留可进入论文主方法的简洁 pipeline：通用 evidence contract、molecule-level retrieval、
-single/group/final LLM reasoning 和 task ontology。历史 Fa/Fg/Fh full expert policy、deterministic
-force/block/rescue、fallback calibration、postprocess 和 test-error-driven evolution 已从 `main` 删除。
+This directory only retains the concise pipeline that can enter the paper's main method: a universal evidence contract, molecule-level retrieval, single/group/final LLM reasoning, and task ontology. Historical Fa/Fg/Fh full expert policy, deterministic force/block/rescue, fallback calibration, postprocess, and test-error-driven evolution have been removed from `main`.
 
-旧实现的完整快照保存在：
+The complete snapshot of the old implementation is saved at:
 
 ```text
 branch: archive/bioavailability-full-expert-policy-20260710
 commit: 14803c2
 ```
 
-不要从该 archive 向 paper path 恢复 class-changing policy。
+Do not restore class-changing policy from that archive to the paper path.
 
 ## Task contract
 
@@ -32,65 +47,43 @@ label:
   Y=0 -> low, oral bioavailability F < 20%
 ```
 
-新的 Starling-held-out benchmark 由 `starling_benchmark.py` 构建：只接受可确认 human context 的
-direct oral F；百分数与明确 fraction 统一到 percent，跨 20% 的 range、relative comparison、
-非 human、population 不明或 `qualifying_conditions` 非空的记录都不进入 gold label。
-parent-level 0/1 冲突按 accepted source record 计算 70% agreement；同 PMID 多条 record 分别计票，
-精确 tie 或 agreement 低于 70% 才拒绝。
-这里的 benchmark label conversion 与下文禁止的 inference-time Starling label policy 是两回事；
-它不能进入 LLM prompt 或改变有效 prediction。
+The new Starling-held-out benchmark is built by `starling_benchmark.py`: only direct oral F with confirmable human context is accepted; percentages and explicit fractions are unified to percent; ranges crossing 20%, relative comparisons, non-human, unclear population, or records with non-empty `qualifying_conditions` do not enter the gold label. Parent-level 0/1 conflicts are computed as 70% agreement based on accepted source records; multiple records from the same PMID are counted separately, and only exact ties or agreement below 70% are rejected. This benchmark label conversion is distinct from the inference-time Starling label policy prohibited below; it must not enter the LLM prompt or change valid predictions.
 
-唯一活跃 condition-aware build 位于：
+The only active condition-aware build is located at:
 
 ```text
 data/gold_labels/Bioavailability_Ma/v1/scaffold/
 ```
 
-共有 2,489 个 molecule-condition rows；train/valid/test 为 1,958/262/269，其中 2,092 个 null-condition
-rows、397 个 reviewed external-condition rows。旧 molecule-only 和 selected-vN 名称只保留在 migration
-receipt，不是第二套 gold。公共合同见 `data/processing/gold_labels/README.md`。正式运行
-前必须按 scaffold valid+test union 的 heldout detailed labels 重建 retrieval index。
+There are 2,489 molecule-condition rows in total; train/valid/test are 1,958/262/269, of which 2,092 are null-condition rows and 397 are reviewed external-condition rows. The old molecule-only and selected-vN names are retained only in the migration receipt, not as a second set of gold. The public contract is in `data/processing/gold_labels/README.md`. Before formal runs, the retrieval index must be rebuilt using the heldout detailed labels from the scaffold valid+test union.
 
-Exact-query evidence 默认关闭。Neighbor retrieval 是 evidence prefetch，不是 LLM function tool。
+Exact-query evidence is disabled by default. Neighbor retrieval is evidence prefetch, not an LLM function tool.
 
 ## Versioned prompt contract
 
-Bio single/group/final prompt 使用独立的 task-local versioned profile：
+Bio single/group/final prompts use an independent task-local versioned profile:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/prompt_profiles.py
 
 legacy_bioavailability_v1
-  冻结 2026-08-09 之前的历史 prompt；仅用于精确复现旧实验。
+  Freezes historical prompts before 2026-08-09; used only for exact reproduction of old experiments.
 
 f20_evidence_calibrated_v2
-  当前默认。所有结论按 absolute oral F=20% 阈值校准；single 不把 QED/Lipinski/单个理化风险直接
-  解释为 F<20%；group 将 observed evidence direction 与 query-specific transferability 分开；final
-  不把 neutral/insufficient/low-transferability 当作 low evidence。
+  Current default. All conclusions are calibrated against the absolute oral F=20% threshold; single does not directly interpret QED/Lipinski/individual physicochemical risks as F<20%; group separates observed evidence direction from query-specific transferability; final does not treat neutral/insufficient/low-transferability as low evidence.
 ```
 
-新 run 的 manifest 必须保存 `task_prompt_profile` 和 `label_scope`。缺失该字段的历史 manifest 一律映射到
-`legacy_bioavailability_v1`；single/group/final-only artifact reuse 必须来自同一 prompt profile，禁止跨 profile
-混用。旧设置仍可显式重跑：
+New run manifests must save `task_prompt_profile` and `label_scope`. Historical manifests missing these fields are all mapped to `legacy_bioavailability_v1`; single/group/final-only artifact reuse must come from the same prompt profile, and cross-profile mixing is prohibited. Old settings can still be explicitly rerun:
 
 ```bash
 python -m tools.chembl_tool.tasks.bioavailability_ma.run_reasoning_batch \
   --bioavailability-prompt-profile legacy_bioavailability_v1 \
-  <其它冻结参数>
+  <other frozen parameters>
 ```
 
-`f20_evidence_calibrated_v2` 只改变 LLM task contract，不添加 deterministic override、batch quota、train-ratio
-prior、router 或 postprocess。2026-08-09 GPT-OSS-120B scaffold-valid 中，full-flat/full-mechanism macro-F1
-从 `0.6117/0.5869` 提高到 `0.7004/0.6844`，paired 95% CI 均高于 0；所有 condition 均 209/209、0 failed，
-对应 retrieval SHA mismatch=0。`none` macro-F1 降至 `0.4129` 且几乎全预测 high，因此该 profile 的结论是
-“修复 evidence adjudication”，不是一个可独立使用的 high prior。
+`f20_evidence_calibrated_v2` only changes the LLM task contract, without adding deterministic overrides, batch quotas, train-ratio priors, routers, or postprocess. In the 2026-08-09 GPT-OSS-120B scaffold-valid run, full-flat/full-mechanism macro-F1 improved from `0.6117/0.5869` to `0.7004/0.6844`, with paired 95% CIs all above 0; all conditions were 209/209, 0 failed, and retrieval SHA mismatch=0. `none` macro-F1 dropped to `0.4129` and almost all predictions were high, so the conclusion for that profile is "fix evidence adjudication," not an independently usable high prior.
 
-2026-08-10 在设置冻结后首次且只运行一次 scaffold-test 的 full-flat/full-mechanism 与三个 train-derived
-baseline。两种 agent macro-F1 为 `0.6663/0.6720`；Morgan KNN、MiniMol embedding KNN、MiniMol trained
-head 为 `0.6801/0.6484/0.7027`。五项均覆盖同一209条 test，两个 agent batch 均209/209成功、0 failed，
-所有 agent-minus-baseline paired-bootstrap macro-F1 95% CI 均跨0。该 test 不得回流选择 prompt、retriever
-或阈值；完整统计与 artifact 路径见
-`tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`。
+On 2026-08-10, after freezing the settings, the scaffold-test full-flat/full-mechanism and three train-derived baselines were run for the first and only time. The two agent macro-F1 values are `0.6663/0.6720`; Morgan KNN, MiniMol embedding KNN, and MiniMol trained head are `0.6801/0.6484/0.7027`. All five covered the same 209 test items, both agent batches were 209/209 successful with 0 failed, and all agent-minus-baseline paired-bootstrap macro-F1 95% CIs crossed 0. This test must not be used to retroactively select prompts, retrievers, or thresholds; full statistics and artifact paths are in `tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md`.
 
 ## Paper pipeline
 
@@ -105,35 +98,35 @@ source rows
   -> structured-output validation only
 ```
 
-允许的工程防护：
+Allowed engineering safeguards:
 
-- canonical SMILES 和 molecule-level aggregation；
-- exact-query exclusion；
-- source/provenance 保留；
-- single branch 的 `molecule_properties`；
-- group branch 的 `mmp_structure_compare` / `properties_compare`；
-- JSON schema validation 和有 trace 的 bounded retry（当前默认最多 4 次总尝试）；
-- trace、batch resume 和 metrics。
+- canonical SMILES and molecule-level aggregation;
+- exact-query exclusion;
+- source/provenance preservation;
+- `molecule_properties` for the single branch;
+- `mmp_structure_compare` / `properties_compare` for the group branch;
+- JSON schema validation and bounded retry with trace (current default max 4 total attempts);
+- trace, batch resume, and metrics.
 
-禁止添加：
+Prohibited additions:
 
-- `force_high` / `force_low`；
-- final prediction override；
-- 针对某个 test molecule 或 failure pattern 的 blocker/rescue；
-- Starling-specific label policy；
-- valid/test-selected postprocess；
-- 将内部 `evidence_direction` / `evidence_strength` 直接发送给 LLM。
+- `force_high` / `force_low`;
+- final prediction override;
+- blocker/rescue targeting a specific test molecule or failure pattern;
+- Starling-specific label policy;
+- valid/test-selected postprocess;
+- sending internal `evidence_direction` / `evidence_strength` directly to the LLM.
 
 ## Minimal evidence contract
 
-所有 ChEMBL、Starling 和未来 source row 在 LLM prompt 中统一使用：
+All ChEMBL, Starling, and future source rows uniformly use in the LLM prompt:
 
 ```text
 tools/chembl_tool/common/evidence_contract.py
 contract_version: minimal_evidence.v1
 ```
 
-Contract 包含：
+The contract includes:
 
 ```text
 source
@@ -147,21 +140,19 @@ provenance
 representative examples
 ```
 
-其中 `transferability=not_assessed` 是 retrieval-time 默认值；query-specific transferability 必须由
-group LLM 根据结构比较和 evidence context 判断。Contract 不包含 threshold vote 或 label recommendation。
+Among these, `transferability=not_assessed` is the retrieval-time default; query-specific transferability must be judged by the group LLM based on structural comparison and evidence context. The contract does not include threshold votes or label recommendations.
 
 ## Data sources
 
-Paper-facing source/group mapping 的唯一配置入口：
+The only configuration entry for paper-facing source/group mapping:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py
 ```
 
-它声明 ChEMBL/Starling 的 direct groups 和 5 个 mechanism families；不得在 runner 或 source adapter 中
-复制该 mapping。
+It declares ChEMBL/Starling direct groups and 5 mechanism families; this mapping must not be duplicated in runners or source adapters.
 
-ChEMBL evidence library：
+ChEMBL evidence library:
 
 ```text
 outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
@@ -169,7 +160,7 @@ outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/
   bioavailability_neighbor_index.pkl
 ```
 
-Starling task data：
+Starling task data:
 
 ```text
 data/raw/starling/bioavailability_ma/
@@ -189,39 +180,34 @@ data/raw/starling/bioavailability_ma/
   Fh/extractions.parquet
 ```
 
-统一 canonical source 构建入口：
+Unified canonical source build entry:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/build_canonical_starling_source.py
 ```
+The original HF snapshot and local parquet files are not modified in place. Local `bioavailability` rows are transferred to canonical direct only when explicit absolute wording or oral/IV anchors are present; relative and ambiguous rows without absolute anchors remain in residual. Cross HF/local near-equivalent claims with the same parent+PMID are deduplicated one-to-one and retain dual-source provenance. The gold builder and agent direct evidence must read the same `direct_claims.parquet` SHA-256.
 
-原始 HF snapshot 与 local parquet 不原地修改。Local `bioavailability` 行只有出现明确 absolute wording 或
-oral/IV anchor 才转入 canonical direct；relative 与没有 absolute anchor 的 ambiguous rows 留在 residual。
-跨 HF/local 的同 parent+PMID 近等值 claim 做一对一去重并保留双来源 provenance。Gold builder 与 agent
-direct evidence 必须读取同一个 `direct_claims.parquet` SHA-256。
-
-Starling factor builder：
+Starling factor builder:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/build_starling_factor_evidence_library.py
 ```
 
-Starling gold benchmark adapter：
+Starling gold benchmark adapter:
 
 ```text
 tools/chembl_tool/tasks/bioavailability_ma/starling_benchmark.py
 ```
 
-前者构建 inference-time evidence/index；后者只实现 direct human oral F 的 binary label adapter。
-二者不能互相替代。
+The former builds inference-time evidence/index; the latter only implements the binary label adapter for direct human oral F. They cannot substitute for each other.
 
-Starling factor builder 使用 shared profile ingestion：
+The Starling factor builder uses shared profile ingestion:
 
 ```text
 data/processing/evidence_library/evidence_library.py
 ```
 
-Task wrapper 只声明 column mapping 和 group/role：
+The task wrapper only declares column mapping and group/role:
 
 | Source | Group | Evidence role |
 |---|---|---|
@@ -232,29 +218,22 @@ Task wrapper 只声明 column mapping 和 group/role：
 | Fg parquet | `Fg.gut_wall_efflux_intestinal_metabolism` | `mechanistic_factor` |
 | Fh parquet | `Fh.hepatic_clearance_metabolic_stability` | `mechanistic_factor` |
 
-Fa/Fg/Fh 是 task ontology，不是 deterministic classifier。Final prediction 仍由 LLM 根据 group outputs
-综合得出。
+Fa/Fg/Fh are task ontology, not deterministic classifiers. The final prediction is still synthesized by the LLM from group outputs.
 
-Conditioned assay-family curve 不得丢弃 nondirect HF group。该 source 没有原生 assay-system 字段，使用
-`build_nondirect_assay_context.py` 根据 report type、粗粒度 population 和 oral exposure mode 构建版本化、
-bounded、可解释的 assay-context overlay；不得按 PMID、molecule 或单条 record 建 assay。修复后的 family
-catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage，完整路径和运行合同见
-`tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`。
+Conditioned assay-family curves must not discard the nondirect HF group. This source has no native assay-system field; use `build_nondirect_assay_context.py` to build a versioned, bounded, interpretable assay-context overlay based on report type, coarse-grained population, and oral exposure mode; do not build assays by PMID, molecule, or individual record. The repaired family catalog/index maintains an independent lineage from historical missing-nondirect artifacts; full paths and run contracts are in `tools/chembl_tool/paper_experiments/ASSAY_LEVEL_RETRIEVAL.md`.
 
 ## Source ingestion rules
 
-- Parquet column 差异通过 `StarlingSourceProfile` 配置解决，不为每个 parquet 写独立 parser。
-- 缺少 SMILES 或 RDKit 无法解析的 row 不进入结构 retrieval，并计入 source stats。
-- SMILES 在聚合前 canonicalize；同一 canonical molecule 跨 profile 使用相同 source molecule id。
-- 多条 source row 聚合成一个 molecule/group evidence row；代表性 examples 保留 endpoint、value、unit、
-  context 和 support text 的绑定。
-- PMID/DOI 可保留在 raw internal row 中，但不能进入 LLM-visible minimal evidence。
-- Direct numeric outcome 只有在 endpoint 单一、unit 一致时才生成 aggregate measurement；proxy/mechanism
-  evidence 保留 examples，不把异构数值混成一个 synthetic value。
+- Parquet column differences are resolved via `StarlingSourceProfile` configuration, not by writing a separate parser for each parquet.
+- Rows missing SMILES or that RDKit cannot parse do not enter structural retrieval and are counted in source stats.
+- SMILES are canonicalized before aggregation; the same canonical molecule uses the same source molecule id across profiles.
+- Multiple source rows are aggregated into one molecule/group evidence row; representative examples retain the binding of endpoint, value, unit, context, and support text.
+- PMID/DOI may be kept in raw internal rows but must not enter LLM-visible minimal evidence.
+- Direct numeric outcomes generate aggregate measurements only when the endpoint is single and units are consistent; proxy/mechanism evidence retains examples and does not mix heterogeneous values into a synthetic value.
 
 ## Commands
 
-构建 Starling index：
+Build Starling index:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -263,7 +242,7 @@ catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage，
   --workers 32
 ```
 
-用通用 pipeline 跑 Starling source：
+Run Starling source with the generic pipeline:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -277,19 +256,11 @@ catalog/index 与 historical missing-nondirect artifacts 保持独立 lineage，
   --batch-id bioavailability_ma_paper_starling_<date>
 ```
 
-正式 paper run 只使用上述 `outputs/paper/` index。`outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/`
-下的 task-level builder 默认目录只用于临时开发，不得把历史 index 复制或软链接到正式实验路径；运行前应检查
-meta 中 `index_version`、`canonical_contract_version`、canonical/residual SHA-256、`scope`、
-`evidence_content` 和五个稳定 group ID。
+Formal paper runs use only the above `outputs/paper/` index. The task-level builder default directory under `outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/` is for temporary development only; do not copy or symlink historical indexes into the formal experiment path. Before running, check the meta for `index_version`, `canonical_contract_version`, canonical/residual SHA-256, `scope`, `evidence_content`, and the five stable group IDs.
 
-2026-07-23 strict-hop availability census 见
-`outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`。C 之外的
-experimental pKa、LogD/LogP、PPB/Fu 可组成 H1 candidate union（59,049 parents；parent-disjoint >=1 coverage
-98.44%），但没有合格 H2。pKa/LogD/LogP 与 query `molecule_properties` tool 语义重叠；PPB/Fu 只支持
-hepatic clearance 而非 direct absolute F。它们只能作为独立 distance/relevance 设计候选，不得修改现有
-paper matrix。
+The 2026-07-23 strict-hop availability census is in `outputs/chembl_tool/tasks/bioavailability_ma/distance_expansion/analysis/hop_availability_census/`. Experimental pKa, LogD/LogP, PPB/Fu outside C can form an H1 candidate union (59,049 parents; parent-disjoint >=1 coverage 98.44%), but there is no qualified H2. pKa/LogD/LogP overlap semantically with the query `molecule_properties` tool; PPB/Fu only supports hepatic clearance, not direct absolute F. They can only be independent distance/relevance design candidates and must not modify the existing paper matrix.
 
-API key 只能通过环境变量或未提交的本地 env file 提供，不能写入代码、manifest、命令示例或 git。
+API keys must be provided only via environment variables or an uncommitted local env file; they must not be written into code, manifests, command examples, or git.
 
 ## Tests
 
@@ -299,18 +270,16 @@ API key 只能通过环境变量或未提交的本地 env file 提供，不能�
   tests/chembl_tool/tasks/bioavailability_ma -q
 ```
 
-至少覆盖：
+At least cover:
 
-- legacy ChEMBL row -> `minimal_evidence.v1`；
-- profile-driven parquet column mapping；
-- missing/invalid SMILES stats；
-- molecule-level aggregation和 exact-query exclusion；
-- direct/proxy role split；
-- JSON required-field/value/tool validation retry；
-- API key 不进入 tracked files。
+- legacy ChEMBL row -> `minimal_evidence.v1`;
+- profile-driven parquet column mapping;
+- missing/invalid SMILES stats;
+- molecule-level aggregation and exact-query exclusion;
+- direct/proxy role split;
+- JSON required-field/value/tool validation retry;
+- API key not entering tracked files.
 
 ## Evaluation boundary
 
-历史 Bioavailability test set 已在旧 expert-policy 迭代中被反复检查，不能作为论文的 untouched final
-test。Paper result 应使用新 holdout、重新冻结的 split 或外部 evaluation。Archive branch 的历史 metrics
-不能作为当前 simplified paper pipeline 的结果。
+The historical Bioavailability test set has been repeatedly inspected during old expert-policy iterations and cannot serve as the untouched final test for the paper. Paper results should use a new holdout, a re-frozen split, or external evaluation. Historical metrics from the archive branch cannot be presented as results of the current simplified paper pipeline.

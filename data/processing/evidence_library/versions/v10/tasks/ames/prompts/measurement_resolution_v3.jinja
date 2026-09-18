@@ -1,0 +1,33 @@
+Select one frozen AMES measurement candidate or one non-scalar reason for every row. Return JSON only.
+
+Input is {"rows":[...]} with at most {{ batch_size }} rows. Each row has `id`, source evidence fields, `candidate_set_sha256`, and `measurement_candidates_json`. The candidate JSON is a numbered list of exact, source-grounded pairs. You may select from it; you may not edit a value or unit and may not invent a pair.
+
+`candidate_generation_disposition` says whether the deterministic pass found a bounded candidate set. `ambiguous_multiple_values` or `ambiguous_candidate_cross_product` means that it deliberately emitted no partial list; normally choose `multiple_or_conflict` unless the source clearly requires an earlier reason. `no_source_grounded_candidate` means there was no complete pair, so use the precedence below to distinguish `missing_unit` from `no_eligible_numeric`.
+
+Return exactly one result per input id, in input order:
+
+```json
+{"rows":[{"id":"r1","reason":"absolute","candidate_id":"1","status":"ok","measurements":[{"measurement":"1","unit":"candidate_id"}]}]}
+```
+
+`measurement` in the response is the numeric candidate ID, not the scientific value. The compiler will restore the frozen pair. Apply this exact response table:
+
+| reason | candidate_id | status | measurements |
+|---|---|---|---|
+| `absolute` | selected positive-integer ID | `ok` | exactly that ID with unit `candidate_id` |
+| `experiment_relative` | null | `relative` | `[]` |
+| `missing_unit` | null | `unsure` | `[]` |
+| `bound_or_range` | null | `unsure` | `[]` |
+| `multiple_or_conflict` | null | `unsure` | `[]` |
+| `no_eligible_numeric` | null | `unavailable` | `[]` |
+
+Judge each row independently. Use the following precedence.
+
+1. Choose `no_eligible_numeric` when the primary number is absent, unsupported, or only a dose, concentration, time, sample size, identifier, m/z peak, control, calibration value, detection limit, ED50, IC50, EC50, cell viability, survival, clonogenic result, or cytotoxicity readout.
+2. Choose `bound_or_range` for a range or one-sided bound such as `up to`, `at least`, `<`, or `>`. A central point with ±, SD, SE, or confidence interval is still a point.
+3. Choose `multiple_or_conflict` when multiple focal groups, outcomes, tissues, doses, timepoints, or incompatible definitions are equally selected, or the source statements conflict. Secondary doses, controls, spreads, p-values, and sample sizes do not make a uniquely selected primary value multiple.
+4. Choose `missing_unit` when the selected point lacks a complete source-supported unit, denominator, scale, named event, or explicitly defined dimensionless metric. A bare `frequency`, `rate`, `count`, `score`, `index`, or `coefficient` is incomplete unless the row defines it.
+5. Choose `experiment_relative` when the selected result is defined only against an external treatment, genotype, control, wild type, or referent. Percent inhibition/reduction and ordinary fold change belong here.
+6. Otherwise choose `absolute` and the one candidate matching the selected outcome. Named ratios, fractions, correlations, pKa/log metrics, source-defined factors, and other self-contained readouts are absolute even when their numerator and denominator compare named quantities.
+
+`measurement_text` is the cleaned primary-result field. Use support and other fields only to identify its source meaning. Never calculate, convert, average, round, choose an incidental number, or use a candidate tied to a different value. The exact candidate evidence and rule are advisory; the current row remains authoritative.

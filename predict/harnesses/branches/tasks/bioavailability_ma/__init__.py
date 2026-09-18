@@ -1,1 +1,0 @@
-"""Bioavailability branch-harness adapter."""

@@ -1,0 +1,50 @@
+{
+  "version": "bioavailability_unit_review.v1",
+  "task": "bioavailability_ma",
+  "objective": "endpoint-independent source-unit and LLM-unit spelling reconciliation at identity scale",
+  "selected_inputs": {
+    "cleaned_records": "data/evidence_libraries/bioavailability_ma/v10/01_cleaned/records.parquet",
+    "measurement_resolution": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
+    "unit_vocabulary": "data/processing/evidence_library/versions/v10/unit_vocabulary.v1.json"
+  },
+  "inputs": {
+    "data/evidence_libraries/bioavailability_ma/v10/01_cleaned/records.parquet": {
+      "sha256": "ea09ac406fe085071e645a591f04a8f35c665950d72c5004b6c8196dfc87da56"
+    },
+    "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet": {
+      "sha256": "c92b5bdea9979e195d14b34d16cbe1ecf485db73dd6a682a3467b5fa30c51d47"
+    },
+    "data/processing/evidence_library/versions/v10/unit_vocabulary.v1.json": {
+      "sha256": "6954dae6e32b6c16c4dedaf40da264e7d807d9aac8e154f53080b8dd8aa4aeaf"
+    }
+  },
+  "review_sha256": "7f65a21fd50887cdce33b2bc7bf184d6566a03687a16856a963a0bb4789cb5e0",
+  "review_counts": {
+    "input_units": 5207,
+    "canonical_units": 2478,
+    "merge_alias": 2729,
+    "keep_distinct": 2478,
+    "source_raw_only_extension_units": 66
+  },
+  "review_round_counts": {
+    "1": 500,
+    "2": 500,
+    "3": 500,
+    "4": 500,
+    "5": 500,
+    "6": 500,
+    "7": 500,
+    "8": 500,
+    "9": 500,
+    "10": 500,
+    "11": 207
+  },
+  "contract": {
+    "canonical_endpoints": ["*"],
+    "scale": "1",
+    "domain": "any",
+    "exclusions": false,
+    "endpoint_specific_behavior": false,
+    "unusual_or_ambiguous_units": "preserve literally"
+  }
+}

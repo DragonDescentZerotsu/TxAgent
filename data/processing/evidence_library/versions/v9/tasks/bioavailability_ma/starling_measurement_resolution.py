@@ -1,19 +1,23 @@
-"""Bioavailability measurement-resolution configuration.
-
-The shared resolver operates on all five physical sources.  The initial gold
-corpus deliberately covers the four indirect sources (oral exposure, Fa, Fg,
-and Fh); direct HF records retain their existing source semantics but use the
-same routing contract when a complete mapping is generated later.
-"""
+"""Single-outcome measurement extraction across all five Oral Bio sources."""
 
 from __future__ import annotations
 
 import hashlib
 from pathlib import Path
+from collections.abc import Mapping
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from data.processing.evidence_library.versions.v9.measurement_routing import SourceRoutingRules
+from data.processing.evidence_library.versions.v9.measurement_routing import (
+    NO_DIGIT_RULE_ID,
+    RouteDecision,
+    SourceRoutingRules,
+    has_digit,
+)
+from data.processing.evidence_library.versions.v9.numeric_syntax import (
+    finite_point_text,
+)
 from data.processing.evidence_library.versions.v9.prompts import PROMPT_ROOT
 from data.processing.evidence_library.shared.v2.normalization.measurements import (
     canonicalize_endpoint,
@@ -25,27 +29,28 @@ from data.processing.evidence_library.versions.v9.tasks.bioavailability_ma.starl
 
 TASK_ROOT = Path(__file__).resolve().parent
 
-PROMPT_VERSION = "bioavailability_measurement_resolution_prompt.v3"
-MAPPING_VERSION = "bioavailability_ma_measurement_resolution.v3"
+PROMPT_VERSION = "bioavailability_measurement_resolution_prompt.v4"
+MAPPING_VERSION = "bioavailability_ma_measurement_resolution.v4"
+MAX_MEASUREMENTS_PER_ROW = 1
 BATCH_SIZE = 10
+STRATIFY_BATCHES = True
+ALLOW_REBATCH_UNATTEMPTED = True
+MAX_UNMETERED_ATTEMPTS_PER_ROW = 3
+REQUIRE_SOURCE_ROW_UID = True
 
 DEFAULT_CLEANED_RECORDS = Path(
-    "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-    "starling_normalized_v7/01_cleaned/records.parquet"
+    "data/evidence_libraries/bioavailability_ma/v9/01_cleaned/records.parquet"
 )
 DEFAULT_CANONICAL_RECORDS = Path(
-    "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/"
-    "starling_normalized_v7/01_cleaned/records.parquet"
+    "data/evidence_libraries/bioavailability_ma/v9/01_cleaned/records.parquet"
 )
 DEFAULT_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/measurement_resolution_v3/measurement_resolution.parquet"
+    TASK_ROOT / "data_processing/measurement_resolution_v4/measurement_resolution.parquet"
 )
-DEFAULT_BASE_MAPPING_PATH = (
-    TASK_ROOT / "data_processing/measurement_resolution_v2/measurement_resolution.parquet"
-)
+DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
 TEMPLATE_DIR = PROMPT_ROOT / "measurement_resolution"
-TEMPLATE_NAME = "bioavailability_v1.jinja"
+TEMPLATE_NAME = "bioavailability_v4.jinja"
 
 SOURCE_IDS = (
     "oral_exposure",
@@ -67,6 +72,7 @@ def source_routing_rules() -> dict[str, SourceRoutingRules]:
         source_id: SourceRoutingRules(
             source_id=source_id,
             unit_field="" if source_id in _EMBEDDED_UNIT_SOURCES else "unit_text",
+            require_positive_value=False,
         )
         for source_id in SOURCE_IDS
     }
@@ -78,6 +84,23 @@ def prompt_row_fields(source_id: str) -> tuple[str, ...]:
         fields.append("unit_text")
     fields.append("support_text")
     return tuple(fields)
+
+
+def route_measurement(record: Mapping[str, Any]) -> RouteDecision:
+    """Accept a finite point with any supplied separate unit."""
+    rules = source_routing_rules()[str(record.get("source_id") or "")]
+    point = finite_point_text(record.get("measurement_text"))
+    if point is None:
+        if has_digit(record.get("measurement_text")):
+            return RouteDecision("extract")
+        return RouteDecision("reject", NO_DIGIT_RULE_ID)
+    unit_value = record.get(rules.unit_field) if rules.unit_field else None
+    unit = "" if unit_value is None else str(unit_value).strip()
+    if unit:
+        return RouteDecision(
+            "accept", "finite_point_with_separate_unit.v1", point[0], unit
+        )
+    return RouteDecision("extract")
 
 
 def canonical_endpoint_name(source_id: str, endpoint_name: object) -> str:
@@ -108,7 +131,6 @@ def render_prompt(
         batch_size=batch_size,
         row_fields=list(prompt_row_fields(source_id)),
         has_unit_column=source_id not in _EMBEDDED_UNIT_SOURCES,
-        endpoint_profiles=endpoint_profiles,
     )
 
 
@@ -135,11 +157,13 @@ __all__ = [
     "DEFAULT_MAPPING_PATH",
     "DEFAULT_PROFILE_PATH",
     "MAPPING_VERSION",
+    "MAX_MEASUREMENTS_PER_ROW",
     "PROMPT_VERSION",
     "SOURCE_IDS",
     "canonical_endpoint_name",
     "prompt_manifest",
     "prompt_row_fields",
     "render_prompt",
+    "route_measurement",
     "source_routing_rules",
 ]

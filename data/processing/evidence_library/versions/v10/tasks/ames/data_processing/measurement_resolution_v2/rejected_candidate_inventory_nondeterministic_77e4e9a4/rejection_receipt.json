@@ -1,0 +1,14 @@
+{
+  "artifact_sha256": "77e4e9a4b93cd9a45ce38f0c5a2ff42e6f8c3d034124ae0407506d195dbb21ff",
+  "blind_v2_sample_created": false,
+  "full_comparison": {
+    "payload_differences": 33,
+    "python_hash_seed": 31337,
+    "rows": 122291,
+    "semantic_differences": 0
+  },
+  "generator_sha256_at_build": "1567fe9b59d4e17db91703af2d4d0b88fcb2e8b91f5e4e2fd5adc7810a32bc1c",
+  "reason": "cross_process_candidate_evidence_nondeterminism",
+  "replacement_generator_sha256": "68905aeba05c0040c71e11f00a92ccea944839b4efed2c4b76563ac31050d074",
+  "status": "rejected"
+}

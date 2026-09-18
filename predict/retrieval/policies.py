@@ -15,7 +15,7 @@ from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit.Chem.MolStandardize import rdMolStandardize
 
 
-IDENTITY_NORMALIZER_VERSION = "rdkit_fragment_parent.v1"
+IDENTITY_NORMALIZER_VERSION = "rdkit_fragment_parent.v2"
 FP_RADIUS = 2
 FP_BITS = 2048
 SIMILARITY_SELECTOR = "similarity"
@@ -117,6 +117,7 @@ def _normalize_molecule_identity(smiles: str) -> MoleculeIdentity:
         parent_inchi_key=parent_inchi_key,
         parent_connectivity_key=_connectivity_key(parent_inchi_key),
         component_parent_inchi_keys=component_keys,
+        status="ok" if parent is not None else "unresolved_parent",
     )
 
 
@@ -163,13 +164,18 @@ def _murcko_scaffold_smiles(molecule: Chem.Mol) -> str:
     )
 
 
-def _standardize_parent(mol: Chem.Mol) -> Chem.Mol | None:
+def _standardize_parent(mol: Chem.Mol, *, allow_charged_fallback: bool = True) -> Chem.Mol | None:
     try:
         clean = rdMolStandardize.Cleanup(mol)
         fragment_parent = rdMolStandardize.FragmentParent(clean)
-        uncharged = rdMolStandardize.Uncharger().uncharge(fragment_parent)
-        Chem.SanitizeMol(uncharged)
-        return uncharged
+        Chem.SanitizeMol(fragment_parent)
+        try:
+            uncharged = rdMolStandardize.Uncharger().uncharge(Chem.Mol(fragment_parent))
+            Chem.SanitizeMol(uncharged)
+            return uncharged
+        except Exception:
+            # Permanent hypervalent ions can be valid only in their charged form.
+            return fragment_parent if allow_charged_fallback else None
     except Exception:  # noqa: BLE001 - invalid standardization should remain auditable.
         return None
 
@@ -181,7 +187,8 @@ def _component_parent_keys(mol: Chem.Mol) -> list[str]:
     except Exception:  # noqa: BLE001 - malformed mixtures should remain unresolved, not abort retrieval.
         return keys
     for component in components:
-        parent = _standardize_parent(component)
+        # Do not introduce shared counterion matches for already-resolved salts.
+        parent = _standardize_parent(component, allow_charged_fallback=False)
         key = _inchi_key(parent)
         if key:
             keys.append(key)

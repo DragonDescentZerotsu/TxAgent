@@ -1,0 +1,107 @@
+{
+  "version": "bioavailability_prebuilt_mapping_registry.v1",
+  "task_id": "bioavailability_ma",
+  "sources": [
+    "oral_exposure",
+    "fa",
+    "fg",
+    "fh",
+    "hf_bioavailability"
+  ],
+  "mappings": {
+    "source_smiles": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh"],
+      "outputs": ["canonical_smiles"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/smiles/final_smiles_mapping_v2.parquet",
+      "sha256": "98ae43b6d9c61b77f0a95e4dce681010694b163a02e7a313667592d985496a0b"
+    },
+    "reviewed_source_repairs": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["measurement_text", "unit_text", "canonical_smiles", "pmid"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_repairs.v3.jsonl",
+      "sha256": "c980dde3537b7bd3ecaf2a34f32015e56c3b47c4f9de7934f0982eeacbf01576"
+    },
+    "reviewed_source_drops": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["record_inclusion"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_drops.jsonl",
+      "sha256": "eb70fefcc2345c4f43c96e34975eba13127ec74e6f5198b37d97df031b821775"
+    },
+    "reviewed_name_smiles_conflicts": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["canonical_smiles"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/source_value_cleaning_v1/reviewed_name_smiles_conflicts.v2.parquet",
+      "sha256": "bb1b1753f13f892b25f44d9cfc84fad2d67b974aae82d1f5dddc16d382c87ba3"
+    },
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "path": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
+      "sha256": "c92b5bdea9979e195d14b34d16cbe1ecf485db73dd6a682a3467b5fa30c51d47"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v8/bioavailability_unit_reconciliation.v1.json",
+      "sha256": "27672c54bc2bab0d30b181d562a5aa6eb5bd51809811c9ab53e05077c33031e0"
+    },
+    "endpoint_concepts": {
+      "stage": "02_canonicalized",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["canonical_endpoint_concept"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "generation_method": "legacy_exhaustive_hand_review",
+      "provenance_status": "grandfathered_without_two_stage_receipts",
+      "paths_by_source": {
+        "oral_exposure": {
+          "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v7/endpoint_concepts/oral_exposure.json",
+          "sha256": "50a0e3f8008834f7c74ee87847074e7740679e4684de5ef120b665e73a3e9cf7"
+        },
+        "fa": {
+          "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v7/endpoint_concepts/fa.json",
+          "sha256": "f6a4e6713272fe61de48655f4fc90bacf8a4968bacda73e7198f97f2e145d455"
+        },
+        "fg": {
+          "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v7/endpoint_concepts/fg.json",
+          "sha256": "ebc5854be0b57d8c8b0f9e9d51785fb6a5fbc3f90ef1920dfa34ecf5eeb2f4e1"
+        },
+        "fh": {
+          "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v7/endpoint_concepts/fh.json",
+          "sha256": "55b0832a5d6d50ac41fb4da85d006c4e4c3e0f914287a862afbb5e584f9810be"
+        },
+        "hf_bioavailability": {
+          "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v7/endpoint_concepts/hf_bioavailability.json",
+          "sha256": "ebca506ca784535b4835e1e625ff453cf590fd145b371890b0e7d54333c6eba4"
+        }
+      }
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["oral_exposure", "fa", "fg", "fh"],
+      "outputs_by_source": {
+        "oral_exposure": ["canonical_species_context", "canonical_biological_matrix"],
+        "fa": ["canonical_assay_context", "canonical_species_context"],
+        "fg": ["canonical_assay_context", "canonical_species_context"],
+        "fh": ["canonical_assay_context", "canonical_species_context"]
+      },
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+      "sha256": "423cb60a17ac10e152092afdce3d225b2e663835aa7e455acd2768a105d196f5"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
+      "outputs": ["canonical_reference_scope"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/reference_semantics_v3/reference_semantics.parquet",
+      "sha256": "6f4b78f75a17799af10fee8417a1bb8f85288b1d62ee4c65eafa31160cf72bde"
+    }
+  }
+}

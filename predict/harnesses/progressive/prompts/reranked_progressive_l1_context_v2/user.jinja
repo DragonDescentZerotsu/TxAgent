@@ -1,0 +1,47 @@
+{% if payload.query.get('canonical_smiles') %}Query molecule
+SMILES: {{ payload.query.canonical_smiles }}{% endif %}{% if payload.query.get('external_condition') %}
+
+Query condition
+Condition: {{ payload.query.external_condition }}{% endif %}{% if payload.get('query_prior') %}
+
+# Query-property prior
+This is a physicochemical prior.
+
+{% if payload.task_definition.task == 'bbb_martins' %}
+Passive BBB plausibility: {{ payload.query_prior.passive_bbb_plausibility }}
+Efflux or transporter prior: {{ payload.query_prior.efflux_or_transporter_prior }}
+{% elif payload.task_definition.task == 'bioavailability_ma' %}
+Oral bioavailability prior: {{ payload.query_prior.oral_bioavailability_prior }}
+Absorption prior: {{ payload.query_prior.absorption_prior }}
+Solubility or dissolution prior: {{ payload.query_prior.solubility_or_dissolution_prior }}
+Metabolism or clearance prior: {{ payload.query_prior.metabolism_or_clearance_prior }}
+{% endif %}
+Prior confidence: {{ payload.query_prior.confidence }}
+Assessment: {{ payload.query_prior.reasoning_summary }}
+{% if payload.query_prior.get('property_drivers') %}Property drivers:
+- {{ payload.query_prior.property_drivers | join('\n- ') }}{% endif %}
+{% if payload.query_prior.get('caveats') %}Prior caveats:
+- {{ payload.query_prior.caveats | join('\n- ') }}{% endif %}{%- endif %}
+
+# Experimental evidence
+{% for molecule in payload.active_evidence %}
+## Molecule {{ loop.index }}
+{% if molecule.get('canonical_smiles') %}SMILES: {{ molecule.canonical_smiles }}
+{% endif %}{% if molecule.get('selected_condition') %}Evidence condition: {{ molecule.selected_condition }}
+{% endif %}{% if molecule.get('transfer_likelihood') is not none %}Transfer liklihood: {{ molecule.transfer_likelihood }}
+{% endif %}{% if molecule.get('morgan_similarity') is not none %}Morgan similarity: {{ molecule.morgan_similarity }}
+{% endif %}
+{% for card in molecule.evidence_cards %}Record {{ card.card_id }}
+{% if card.get('endpoint') %}Endpoint: {{ card.endpoint }}
+{% endif %}{% if card.get('reported_value') is not none %}Result: {{ card.reported_value }}{% if card.get('reported_unit') %} {{ card.reported_unit }}{% endif %}
+{% endif %}{% if card.get('assay_context') %}Assay context: {{ card.assay_context }}
+{% endif %}{% if card.get('species') %}Species: {{ card.species }}
+{% endif %}{% if card.get('qualifying_conditions') %}Conditions: {{ card.qualifying_conditions | tojson }}
+{% endif %}{% if card.get('experimental_details') %}Experimental details:
+{% for name, value in card.experimental_details.items() %}  - {{ name }}: {{ value }}
+{% endfor %}{% endif %}{% if card.get('support_text') %}Reported evidence: {{ card.support_text }}
+{% endif %}
+{% endfor %}{% endfor %}
+
+# Required JSON shape
+{{ payload.required_json_schema | tojson(indent=2) }}

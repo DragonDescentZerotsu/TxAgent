@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import re
 from collections import Counter
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -28,11 +28,13 @@ from .cleaning import (
 )
 
 
-SOURCE_VALUE_CLEANING_VERSION = "starling_source_value_cleaning.v6"
+SOURCE_VALUE_CLEANING_VERSION = "starling_source_value_cleaning.v7"
 SUPPORT_TEXT_POLICY_VERSION = "support_text_immutable_after_ingestion.v1"
 ENCODED_SPACE_RULE = "percent_0020_space.v1"
 
-_ALLOWED_REPAIR_FIELDS = frozenset({"measurement_text", "unit_text", "smiles"})
+_ALLOWED_REPAIR_FIELDS = frozenset(
+    {"measurement_text", "unit_text", "smiles", "pmid"}
+)
 _SMILES_REPAIR_CLASSIFICATIONS = frozenset({"confirmed_mismatch", "missing_smiles"})
 _REPAIR_KEYS = frozenset(
     {
@@ -171,7 +173,11 @@ def load_reviewed_repairs(
 
 
 def load_reviewed_smiles_conflicts(
-    path: str | Path | None, *, task_id: str
+    path: str | Path | None,
+    *,
+    task_id: str,
+    source_ids: Collection[str] | None = None,
+    row_keys: Collection[tuple[str, int, str]] | None = None,
 ) -> tuple[dict[tuple[str, int, str], dict[str, Any]], Counter[str]]:
     """Load the frozen name/SMILES decisions for one task."""
     if path is None:
@@ -198,9 +204,21 @@ def load_reviewed_smiles_conflicts(
     decisions: Counter[str] = Counter()
     overrides: dict[tuple[str, int, str], dict[str, Any]] = {}
     candidate_ids: set[str] = set()
-    row_keys: set[tuple[str, int, str]] = set()
+    seen_row_keys: set[tuple[str, int, str]] = set()
+    selected_sources = set(source_ids) if source_ids is not None else None
+    selected_rows = set(row_keys) if row_keys is not None else None
     for row in pq.read_table(target, columns=sorted(required)).to_pylist():
         if str(row.get("task_id") or "") != task_id:
+            continue
+        source_id = str(row.get("source_id") or "")
+        key = (
+            source_id,
+            int(row.get("source_row_number") or 0),
+            str(row.get("source_record_id") or ""),
+        )
+        if selected_sources is not None and source_id not in selected_sources:
+            continue
+        if selected_rows is not None and key not in selected_rows:
             continue
         candidate_id = str(row.get("candidate_id") or "")
         decision = str(row.get("decision") or "")
@@ -211,15 +229,10 @@ def load_reviewed_smiles_conflicts(
         confidence = str(row.get("confidence") or "")
         if confidence not in {"high", "medium", "low"}:
             raise ValueError(f"{target} has invalid confidence for {candidate_id}")
-        key = (
-            str(row.get("source_id") or ""),
-            int(row.get("source_row_number") or 0),
-            str(row.get("source_record_id") or ""),
-        )
-        if key in row_keys:
+        if key in seen_row_keys:
             raise ValueError(f"{target} reviews one source row more than once")
         candidate_ids.add(candidate_id)
-        row_keys.add(key)
+        seen_row_keys.add(key)
         decisions[decision] += 1
         if decision == "reject":
             if row.get("override_smiles") is not None:
@@ -347,16 +360,61 @@ def clean_source_values(
     require_all_reviewed_drops: bool = True,
     require_all_reviewed_smiles_overrides: bool = True,
     require_scientific_scale_review: bool = False,
+    authoritative_source_values: bool = False,
+    allow_reviewed_source_hash_mismatch: bool = False,
+    protected_structure_uids: Collection[str] = (),
+    source_ids: Collection[str] | None = None,
+    reviewed_row_keys: Collection[tuple[str, int, str]] | None = None,
 ) -> SourceValueCleaningResult:
     """Return cleaned records and a complete field-level change audit."""
-    repairs = load_reviewed_repairs(reviewed_repairs_path, task_id=task_id)
-    smiles_audit = load_smiles_identity_audit(
+    selected_sources = set(source_ids) if source_ids is not None else None
+    selected_rows = set(reviewed_row_keys) if reviewed_row_keys is not None else None
+    registry_repairs = load_reviewed_repairs(reviewed_repairs_path, task_id=task_id)
+    registry_smiles_audit = load_smiles_identity_audit(
         smiles_identity_audit_path, task_id=task_id
     )
-    smiles_overrides, smiles_decisions = load_reviewed_smiles_conflicts(
-        reviewed_smiles_conflicts_path, task_id=task_id
+    _, registry_smiles_decisions = load_reviewed_smiles_conflicts(
+        reviewed_smiles_conflicts_path,
+        task_id=task_id,
     )
-    drops = load_reviewed_drops(reviewed_drops_path, task_id=task_id)
+    smiles_overrides, smiles_decisions = load_reviewed_smiles_conflicts(
+        reviewed_smiles_conflicts_path,
+        task_id=task_id,
+        source_ids=selected_sources,
+        row_keys=selected_rows,
+    )
+    registry_drops = load_reviewed_drops(reviewed_drops_path, task_id=task_id)
+
+    def in_scope(source_id: str, row_number: int, record_id: str) -> bool:
+        key = (source_id, row_number, record_id)
+        return (
+            (selected_sources is None or source_id in selected_sources)
+            and (selected_rows is None or key in selected_rows)
+        )
+
+    repairs = [
+        repair
+        for repair in registry_repairs
+        if in_scope(*repair.row_key)
+    ]
+    smiles_audit = {
+        audit_id: row
+        for audit_id, row in registry_smiles_audit.items()
+        if in_scope(
+            str(row.get("source_id") or ""),
+            int(row.get("source_row_number") or 0),
+            str(row.get("source_record_id") or ""),
+        )
+    }
+    drops = [
+        drop
+        for drop in registry_drops
+        if in_scope(
+            str(drop["source_id"]),
+            int(drop["source_row_number"]),
+            str(drop["source_record_id"]),
+        )
+    ]
     repairs_by_row = {repair.row_key: repair for repair in repairs}
     drops_by_row = {
         (
@@ -372,6 +430,11 @@ def clean_source_values(
     applied_repairs: set[str] = set()
     applied_drops: set[str] = set()
     applied_smiles_overrides: set[str] = set()
+    already_satisfied_repair_fields = 0
+    already_satisfied_smiles_overrides = 0
+    protected_structure_repairs_skipped = 0
+    protected_structure_overrides_skipped = 0
+    protected_uids = set(protected_structure_uids)
     output: list[dict[str, Any]] = []
     audit: list[dict[str, Any]] = []
     scale_candidates = 0
@@ -391,8 +454,13 @@ def clean_source_values(
             int(record.get("source_row_number") or 0),
             str(record.get("source_record_id") or ""),
         )
+        protected_structure = str(record.get("source_row_uid") or "") in protected_uids
         drop = drops_by_row.get(row_key)
         if drop is not None:
+            if protected_structure:
+                raise ValueError(
+                    f"reviewed drop {drop['drop_id']!r} targets a protected voter"
+                )
             audit_id = str(drop["evidence"].get("audit_id") or "")
             if audit_id:
                 entry = smiles_audit.get(audit_id)
@@ -407,7 +475,11 @@ def clean_source_values(
                         "SMILES identity audit entry"
                     )
             actual_sha = str(record.get("source_sha256") or "")
-            if actual_sha != drop["source_sha256"]:
+            if (
+                actual_sha != drop["source_sha256"]
+                and not authoritative_source_values
+                and not allow_reviewed_source_hash_mismatch
+            ):
                 raise ValueError(
                     f"reviewed drop {drop['drop_id']!r} source drift: "
                     f"expected {drop['source_sha256']}, found {actual_sha or '<missing>'}"
@@ -437,6 +509,9 @@ def clean_source_values(
         scale_candidates += scale_candidate
 
         repair = repairs_by_row.get(row_key)
+        if repair is not None and authoritative_source_values:
+            applied_repairs.add(repair.repair_id)
+            repair = None
         if repair is not None:
             if "smiles" in repair.after:
                 audit_id = str(repair.evidence.get("audit_id") or "")
@@ -465,28 +540,76 @@ def clean_source_values(
                         f"audit classification {entry['classification']!r}"
                     )
             actual_sha = str(record.get("source_sha256") or "")
-            if actual_sha != repair.source_sha256:
+            if (
+                actual_sha != repair.source_sha256
+                and not allow_reviewed_source_hash_mismatch
+            ):
                 raise ValueError(
                     f"reviewed repair {repair.repair_id!r} source drift: "
                     f"expected {repair.source_sha256}, found {actual_sha or '<missing>'}"
                 )
             for field, expected_before in repair.before.items():
+                if field == "smiles" and protected_structure:
+                    protected_structure_repairs_skipped += 1
+                    continue
                 actual_before = (
                     record.get("source_smiles", record.get("smiles"))
                     if field == "smiles"
                     else record.get(field)
                 )
+                if field == "smiles":
+                    actual_value, actual_status = resolve_structure_value(
+                        actual_before, structure_mode="direct"
+                    )
+                    reviewed_value, reviewed_status = resolve_structure_value(
+                        repair.after[field], structure_mode="direct"
+                    )
+                    already_satisfied = (
+                        actual_status == reviewed_status == "resolved"
+                        and actual_value == reviewed_value
+                    )
+                else:
+                    already_satisfied = actual_before == repair.after[field]
+                if already_satisfied:
+                    already_satisfied_repair_fields += 1
+                    continue
+                if (
+                    actual_before != expected_before
+                    and allow_reviewed_source_hash_mismatch
+                    and field != "smiles"
+                ):
+                    source_payload = json.loads(
+                        str(record.get("source_payload_json") or "{}")
+                    )
+                    if sum(value == expected_before for value in source_payload.values()) == 1:
+                        actual_before = expected_before
                 if actual_before != expected_before:
                     raise ValueError(
                         f"reviewed repair {repair.repair_id!r} precondition drift for "
                         f"{field}: expected {expected_before!r}, found {actual_before!r}"
                     )
             for field, after in repair.after.items():
+                if field == "smiles" and protected_structure:
+                    continue
+                before = (
+                    record.get("source_smiles", record.get("smiles"))
+                    if field == "smiles"
+                    else record.get(field)
+                )
                 if field == "smiles":
-                    before = record.get("source_smiles", record.get("smiles"))
+                    current, current_status = resolve_structure_value(
+                        before, structure_mode="direct"
+                    )
+                    reviewed, reviewed_status = resolve_structure_value(
+                        after, structure_mode="direct"
+                    )
+                    if current_status == reviewed_status == "resolved" and current == reviewed:
+                        continue
+                elif before == after:
+                    continue
+                if field == "smiles":
                     _apply_smiles_repair(record, str(after))
                 else:
-                    before = record.get(field)
                     record[field] = after
                 audit.append(
                     _audit_row(
@@ -501,13 +624,47 @@ def clean_source_values(
                 )
             applied_repairs.add(repair.repair_id)
         smiles_override = smiles_overrides.get(row_key)
+        if smiles_override is not None and authoritative_source_values:
+            candidate_id = str(smiles_override["candidate_id"])
+            applied_smiles_overrides.add(candidate_id)
+            smiles_override = None
+        if smiles_override is not None:
+            candidate_id = str(smiles_override["candidate_id"])
+            if protected_structure:
+                protected_structure_overrides_skipped += 1
+                applied_smiles_overrides.add(candidate_id)
+                smiles_override = None
         if smiles_override is not None:
             candidate_id = str(smiles_override["candidate_id"])
             actual_sha = str(record.get("source_sha256") or "")
-            if actual_sha != str(smiles_override["source_sha256"]):
+            if (
+                actual_sha != str(smiles_override["source_sha256"])
+                and not allow_reviewed_source_hash_mismatch
+            ):
                 raise ValueError(
                     f"reviewed SMILES override {candidate_id!r} source drift"
                 )
+            before = record.get("canonical_smiles")
+            expected_before = smiles_override.get("canonical_smiles")
+            expected_canonical, expected_status = resolve_structure_value(
+                expected_before, structure_mode="direct"
+            )
+            actual_canonical, actual_status = resolve_structure_value(
+                before, structure_mode="direct"
+            )
+            replacement = str(smiles_override["override_smiles"])
+            replacement_canonical, replacement_status = resolve_structure_value(
+                replacement, structure_mode="direct"
+            )
+            if (
+                actual_status == replacement_status == "resolved"
+                and actual_canonical == replacement_canonical
+            ):
+                already_satisfied_smiles_overrides += 1
+                applied_smiles_overrides.add(candidate_id)
+                smiles_override = None
+        if smiles_override is not None:
+            candidate_id = str(smiles_override["candidate_id"])
             before = record.get("canonical_smiles")
             expected_before = smiles_override.get("canonical_smiles")
             expected_canonical, expected_status = resolve_structure_value(
@@ -598,6 +755,8 @@ def clean_source_values(
     manifest = {
         "version": SOURCE_VALUE_CLEANING_VERSION,
         "task_id": task_id,
+        "source_ids": sorted(selected_sources) if selected_sources is not None else None,
+        "reviewed_row_scope_size": len(selected_rows) if selected_rows is not None else None,
         "n_input_records": len(records),
         "n_output_records": len(output),
         "n_dropped_records": len(applied_drops),
@@ -621,7 +780,13 @@ def clean_source_values(
             "path": str(registry_path) if registry_path else None,
             "sha256": file_sha256(registry_path) if registry_path else None,
             "n_declared": len(repairs),
+            "n_registry_declared": len(registry_repairs),
+            "n_out_of_scope": len(registry_repairs) - len(repairs),
             "n_applied": len(applied_repairs),
+            "n_already_satisfied_fields": already_satisfied_repair_fields,
+            "n_protected_structure_fields_skipped": (
+                protected_structure_repairs_skipped
+            ),
             "unapplied_repair_ids": unapplied,
             "all_required_repairs_applied": not unapplied,
         },
@@ -629,6 +794,8 @@ def clean_source_values(
             "path": str(drop_registry_path) if drop_registry_path else None,
             "sha256": file_sha256(drop_registry_path) if drop_registry_path else None,
             "n_declared": len(drops),
+            "n_registry_declared": len(registry_drops),
+            "n_out_of_scope": len(registry_drops) - len(drops),
             "n_applied": len(applied_drops),
             "unapplied_drop_ids": unapplied_drops,
             "all_required_drops_applied": not unapplied_drops,
@@ -637,6 +804,8 @@ def clean_source_values(
             "path": str(smiles_audit_path) if smiles_audit_path else None,
             "sha256": file_sha256(smiles_audit_path) if smiles_audit_path else None,
             "n_entries": len(smiles_audit),
+            "n_registry_entries": len(registry_smiles_audit),
+            "n_out_of_scope": len(registry_smiles_audit) - len(smiles_audit),
         },
         "reviewed_name_smiles_conflicts": {
             "path": str(smiles_conflicts_path) if smiles_conflicts_path else None,
@@ -644,6 +813,17 @@ def clean_source_values(
                 file_sha256(smiles_conflicts_path) if smiles_conflicts_path else None
             ),
             "decision_counts": dict(sorted(smiles_decisions.items())),
+            "registry_decision_counts": dict(
+                sorted(registry_smiles_decisions.items())
+            ),
+            "n_already_satisfied_overrides": already_satisfied_smiles_overrides,
+            "n_protected_structure_overrides_skipped": (
+                protected_structure_overrides_skipped
+            ),
+            "n_out_of_scope_decisions": (
+                sum(registry_smiles_decisions.values())
+                - sum(smiles_decisions.values())
+            ),
             "n_declared_overrides": (
                 smiles_decisions.get("override", 0)
                 + smiles_decisions.get("quarantined_override", 0)

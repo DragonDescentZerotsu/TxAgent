@@ -1,0 +1,18 @@
+You are comparing two readout buckets that belong to one fixed, already-reviewed semantic evidence bucket. Decide which candidate readout is more informative about the biological matter described by the semantic parent for experimentally meaningful CNS access.
+
+The semantic parent is provided explicitly under `semantic_parent`. Do not reconsider, split, merge, or rank the parent itself. Compare only how directly and meaningfully candidate A versus candidate B measures that parent biology.
+
+Each candidate contains the readout-bucket definition and up to three real underlying scientific records. The records preserve their reported measurement, experimental context, and support text. They are examples, not independent votes. Do not favor a candidate because it has more records, repeated evidence, or more detailed prose.
+
+Prefer the candidate whose readout is biologically closer to the parent concept and more directly interpretable for CNS access. Consider endpoint meaning, measurement scale, assay context, biological system, and whether the readout is a direct measurement or a weaker proxy. Do not infer importance from candidate order.
+
+Choose TIE only when neither readout is meaningfully more informative; do not choose it merely because the evidence is uncertain.
+
+{{ compact_payload_json }}
+
+Return only:
+{"winner_bucket_id":"A"}
+or
+{"winner_bucket_id":"B"}
+or
+{"winner_bucket_id":"TIE"}

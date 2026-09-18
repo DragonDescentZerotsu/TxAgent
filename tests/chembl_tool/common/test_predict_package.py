@@ -1,9 +1,10 @@
 import json
 from types import SimpleNamespace
 
-from predict.llm_engine.endpoints import litellm_endpoint, openrouter_endpoint, vllm_endpoint
+from predict.api_client.endpoints import litellm_endpoint, openrouter_endpoint, vllm_endpoint
 from predict.harnesses.branches import direct, flat, full
-from predict.harnesses.branches import batch
+from predict.harnesses.branches import runner
+from predict.harnesses.branches import __main__ as branches_cli
 from predict.harnesses.branches.retrieval import (
     retrieve_experiment_view as canonical_retrieve_experiment_view,
 )
@@ -41,26 +42,29 @@ def test_public_mode_harness_forces_existing_experiment_mode(monkeypatch):
     config = object()
     module = SimpleNamespace(CONFIG=config)
     captured = {}
-    monkeypatch.setattr(batch.importlib, "import_module", lambda name: module)
+    monkeypatch.setattr(runner.importlib, "import_module", lambda name: module)
     monkeypatch.setattr(
-        batch,
+        runner,
         "main",
         lambda selected_config, argv: captured.update(config=selected_config, argv=argv) or 0,
     )
-    assert batch.mode_main("full_flat", ["--task", "bbb_martins", "--limit", "1"]) == 0
+    assert runner.mode_main("full_flat", ["--task", "bbb_martins", "--limit", "1"]) == 0
     assert captured == {"config": config, "argv": ["--limit", "1", "--experiment-mode", "full_flat"]}
 
 
-def test_public_harnesses_declare_their_evidence_plan(monkeypatch):
+def test_public_harness_cli_selects_the_evidence_plan(monkeypatch):
     captured = []
 
     def record(mode, argv):
         captured.append((mode, argv))
         return 0
 
-    for module in (direct, flat, full):
-        monkeypatch.setattr(module, "mode_main", record)
-        assert module.main(["--task", "bbb_martins"]) == 0
+    monkeypatch.setattr(runner, "mode_main", record)
+    monkeypatch.setattr(flat, "run", lambda argv: record("full_flat", argv))
+    for organization in ("direct", "flat", "full"):
+        assert branches_cli.main(
+            ["--organization", organization, "--task", "bbb_martins"]
+        ) == 0
 
     assert captured == [
         ("direct", ["--task", "bbb_martins"]),

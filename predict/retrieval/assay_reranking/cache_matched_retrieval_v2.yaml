@@ -1,0 +1,8 @@
+version: 3
+caches:
+  bbb_martins:
+    valid: ../cache/assay_reranking/archive/cache_matched_retrieval_v2/bbb_martins/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/cache_matched_retrieval_v2/bbb_martins/scaffold/test/VERSION.json
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/cache_matched_retrieval_v2/bioavailability_ma/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/cache_matched_retrieval_v2/bioavailability_ma/scaffold/test/VERSION.json

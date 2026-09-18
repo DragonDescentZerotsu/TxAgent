@@ -1,0 +1,45 @@
+Extract at most one continuous measurement per oral-bioavailability source row. Return JSON only.
+
+Input is {"rows": [...]} with at most {{ batch_size }} rows. Each has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return {"rows": [...]} with exactly one result per id, in order:
+
+  {"id":"...", "status":"ok"|"relative"|"unsure"|"unavailable",
+   "measurements":[{"measurement":"<plain decimal>","unit":"<complete unit>"}]}
+
+Only `ok` carries a measurement, and it carries exactly one. All other statuses carry []. Resolve rows independently.
+
+## Select the intended outcome
+
+`measurement_text` is the cleaned primary measurement column. Extract its main intended outcome, using the endpoint and explicitly named metric to interpret it. A broad canonical category does not exclude a clearly named native readout. Support may validate or disambiguate the coefficient, recover its unit, establish its denominator, or complete an incomplete statement of the selected outcome. Do not replace the selected outcome with an incidental support-text number, even if that number is absolute and the selected claim is relative.
+
+Do not select doses, administered or assay concentrations, sampling times, sample sizes, identifiers, p-values, or incidental comparator values. A fitted Km, Ki, Vmax, CLint, half-life or Tmax explicitly selected as the outcome is not an input condition. A study arm, inhibitor, tissue or timepoint can describe the condition of an absolute measurement without making it relative.
+
+Keep one clearly selected outcome. Several equally selected outcomes are `unsure`, even if their units differ. Do not choose the first or the easiest value. A selected point is not ambiguous merely because support also reports other arms. Do not substitute a secondary resolved quantity for an unresolved primary outcome. Unresolved contradictions about the selected value or unit are `unsure`.
+
+## Decide the status
+
+Return `unavailable` when no numeric outcome is given. Qualitative comparisons ("higher than compound A", "several-fold higher") are `unavailable`, never `relative`; digits in compound names or conditions do not count. A numerical comparison expressed in words, such as "two thirds of the reference", is still a numeric comparison, but do not calculate it.
+
+`relative` means the selected numeric outcome is not self-contained: it depends on an experiment-specific comparator such as another compound, formulation, treatment, genotype, food condition or dose arm, rather than a consistently defined measurement denominator. "Twice molecule A's exposure" is relative. Apply this rule before bounds/ranges: "10–40-fold higher than molecule A" is also relative and carries no measurement. Merely naming an arbitrary comparison a ratio or fold change does not make it self-contained.
+
+Ratios and percentages are not automatically relative. Absolute oral bioavailability against IV dosing, fractions absorbed or escaping gut/liver metabolism, fraction metabolized, percent of dose released or remaining, directional efflux ratios, supersaturation ratios, and named accumulation/linearity ratios with a fixed repeated-dose/single-dose definition are self-contained readouts. A ratio between two formulations' bioavailabilities is relative; a reported bioavailability fraction for one formulation is not. A physical dose-normalized AUC or Cmax can be self-contained, but "dose-normalized" alone does not supply its missing physical unit. A reduction in metabolite formation after an inhibitor is a comparison, distinct from a source-defined fraction of total metabolism.
+
+For an otherwise self-contained outcome, return `unsure` if only a bound, range or arithmetic fraction is given, or if the selected point or its unit is unresolved. Otherwise return `ok` with one finite point and a supported complete unit. The words "absolute bioavailability" are not required. Oral bioavailability measured against IV is a standard-reference outcome, not an arbitrary relative comparison. A source-stated bioavailability coefficient may be read as a fraction when context supports that reading; unresolved scale or conflicting references remain `unsure`. A source report type of `relative_comparison` and an oral-formulation comparator support `relative`, not `ok`, even for a plain percentage such as 17.2%. Preserve the original source value; do not emit a scalar for relative.
+
+## Preserve value and unit
+
+Classify the selected number, not the surrounding comparison: "increased to X%" selects an attained value; "increased by X%" selects a relative change. A cited/reference compound's own outcome is extractable. Oral/IV exposure ratios (including dose-normalized ratios), hepatic/total clearance, and substrate-conversion fractions have defined denominators; do not reject them merely because an arm, treatment or reference is named. Multiple comparison coefficients remain `relative`; multiple equally selected raw outcomes remain `unsure`.
+
+`measurement` is a finite plain decimal: optional sign, digits and optional decimal point. Zero and negative values are allowed. Accept properly comma-grouped numbers: the first group has one to three digits and every group after a comma has exactly three; whitespace around commas is allowed. Remove valid grouping commas. Do not reinterpret malformed grouping as a decimal comma; support may resolve the same outcome by explicitly stating a valid number.
+
+Remove approximation around an explicit point and spread (`8 +/- 1.5` or `8 ± 1.5` -> `8`). A stated mean or point accompanied by a range or confidence interval remains a point; do not extract the spread or interval endpoints. Never turn a bound or range alone into a point: `>800` is `unsure`, not `800`. Do not compute, convert units, round or logarithmically transform. Do not impose plausibility cutoffs on a clearly reported finite value, including percentages outside 0–100.
+
+Put a printed power of ten in the unit, even when a separate unit column exists: `3.16 x 10^-6` with `cm/s` -> `3.16`, `10^-6 cm/s`; `4.2e-7 cm/s` -> `4.2`, `10^-7 cm/s`. Keep already expanded decimals unchanged. Never infer, reverse or drop a printed scale.
+
+A middle dot used as a decimal mark (`6·2`) means `6.2`, not a power of ten. Unit exponents such as `ml−1` mean inverse units, not a `10^-1` value scale. Preserve the physical or fraction/ratio unit after any genuine printed scale.
+
+{% if has_unit_column %}A nonempty complete `unit_text` is authoritative: copy it without expanding it from support (`%` stays `%`). Use measurement or support only to validate it or complete a genuinely incomplete fragment. Combine an explicitly printed scale with the unit, without applying it twice. Unresolved conflicts are `unsure`.
+{% else %}Read the selected outcome's complete unit from measurement or support. If neither states it and the named readout does not establish a dimensionless scale, return `unsure`.
+{% endif %}
+Do not append route, tissue, species or endpoint descriptions to units. Use `ratio` for a defined unlogged ratio, `fraction` for a defined fraction, and `%` for a printed percentage when no complete unit column already supplies the unit. Preserve the full physical or dose-normalized basis when stated. Never invent a common physical unit, use an endpoint name as a unit, or use `ratio` to conceal a missing unit. A printed power of ten supplements the unit; it does not replace the physical unit or dimensionless basis.
+
+Additional source fields are context, not alternative measurement columns. Use report type, comparator, assay/system, study conditions and mediator information to resolve what the selected number means. Never extract a dose or condition merely because it is in these fields. Metadata must not override conflicting source text; unresolved conflicts are unsure. A percentage unit alone never establishes whether the value is self-contained.

@@ -1,0 +1,6 @@
+version: 13
+caches:
+  bbb_martins:
+    valid: ../cache/assay_reranking/archive/l1_context_morgan_semantic_l2_v4/bbb_martins/scaffold/valid/VERSION.json
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/l1_context_morgan_semantic_l2_v4/bioavailability_ma/scaffold/valid/VERSION.json

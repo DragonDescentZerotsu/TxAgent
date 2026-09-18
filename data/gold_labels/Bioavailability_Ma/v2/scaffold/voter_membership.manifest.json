@@ -1,0 +1,119 @@
+{
+  "schema_version": "gold_voter_membership.v1",
+  "path": "voter_membership.parquet",
+  "sha256": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+  "stage1_sha256": "bbabe48bedb8e48d6381486cb04242dc969e99a3ec67dbfe25a57fbaf660a951",
+  "n_rows": 18928,
+  "n_vote_contexts": 2485,
+  "aggregate_status_counts": {
+    "parent_label_tie": 2,
+    "published": 18926
+  },
+  "provenance": {
+    "builder_version": "conditioned_benchmark_physical_voters.v2",
+    "condition_ledger_version": "physical_condition_review_ledger.v2",
+    "deduplication": {
+      "records_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/records.parquet",
+      "records_sha256": "bbabe48bedb8e48d6381486cb04242dc969e99a3ec67dbfe25a57fbaf660a951",
+      "records": 431006,
+      "duplicates_removed": 4597,
+      "deduplication_manifest": {
+        "authoritative_stage1_deduplication": true,
+        "base_fields": [
+          "canonical_smiles",
+          "pmid",
+          "canonical_measurement_text",
+          "canonical_unit_text"
+        ],
+        "comparison": {
+          "base": "literal_typed_equality",
+          "cross_source": "intersection_of_configured_scientific_field_names",
+          "incomplete_base": "never_duplicate",
+          "missingness": "exact",
+          "representative": "preferred_gold_v1_voter_then_lexicographically_smallest_source_row_uid",
+          "within_source": "all_configured_scientific_fields"
+        },
+        "deduplication_complete": true,
+        "duplicate_audit": {
+          "cleaning_version": "stage1_exact_deduplication.v2",
+          "count": 4597,
+          "discarded_source_row_uid_sha256": "dc877958cff6108c4841e3b28cb39cd1cc992a13eb5af4d6a7e93bc8b2b0bb8b",
+          "lineage_sha256": "a319ffcd7bb8a360856d7f8cb4d95ad8ce521bac829d3203338f5b1f701abe96",
+          "row_selector": {
+            "after": "dropped",
+            "field": "record"
+          }
+        },
+        "duplicate_scope_counts": {
+          "cross_source": 3059,
+          "within_source": 1538
+        },
+        "duplicates_removed": 4597,
+        "input_records": 435603,
+        "output_records": 431006,
+        "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+        "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
+        "preferred_voter_uids": {
+          "count": 19479,
+          "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bioavailability_ma.preferred_source_row_uids.json",
+          "present_in_input": 19479,
+          "sha256": "64bc2f1605d96105c6bf74923aa287cd8e939d0d7c2a1da0046aabec05698b98"
+        },
+        "retained_source_row_uid_count": 431006,
+        "retained_source_row_uid_sha256": "fb67de93d9663ba7b8339bf09612cce8dca831f9726c9812482ca3a55a7d0ccf",
+        "source_scientific_fields": {
+          "fa": [
+            "endpoint_category",
+            "assay_system",
+            "condition_medium",
+            "biological_context",
+            "formulation_or_solid_form",
+            "qualifying_conditions"
+          ],
+          "fg": [
+            "gut_wall_process",
+            "transporter_or_enzyme",
+            "substrate_status",
+            "assay_system",
+            "intestinal_site",
+            "qualifying_conditions"
+          ],
+          "fh": [
+            "metric_type",
+            "assay_system",
+            "species",
+            "molecular_form",
+            "enzyme_or_pathway",
+            "qualifying_conditions"
+          ],
+          "hf_bioavailability": [
+            "bioavailability_report_type",
+            "species_or_population",
+            "dose",
+            "oral_exposure_mode",
+            "qualifying_conditions",
+            "comparator"
+          ],
+          "oral_exposure": [
+            "exposure_measure",
+            "statistic_type",
+            "oral_dose",
+            "study_context",
+            "comparator_exposure",
+            "qualifying_conditions"
+          ]
+        },
+        "validations": {
+          "input_equals_retained_plus_duplicates": true,
+          "representatives_follow_gold_priority_then_uid": true,
+          "retained_source_row_uids_unique": true
+        },
+        "version": "stage1_exact_deduplication.v2"
+      },
+      "stage_manifest_sha256": "5f3ac830252f3087a111443cedd348f2de37613964932e33cf5472ce5ece7a15",
+      "source_value_cleaning_manifest_sha256": "050d224dce905dc4bdc5ea05d214d1e6dd9b620df316c896038fe16c2f8b2230",
+      "duplicate_audit_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/source_value_cleaning_audit.parquet",
+      "duplicate_audit_sha256": "e69e6c4f92f2f7779b2edf210d72bac60684d4b0e2ad9dce076d17a18f95bb6a"
+    }
+  }
+}

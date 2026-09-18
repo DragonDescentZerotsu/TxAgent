@@ -26,12 +26,12 @@ from data.processing.evidence_library.versions.v9.tasks.bioavailability_ma.starl
 )
 
 
-FG_SCALAR_RULE_VERSION = "bioavailability_fg_single_outcome_scalar_rules.v3"
-
-_NUMBER = (
-    r"[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?(?:[eE][-+]?\d+)?"
-    r"|[-+]?\.\d+(?:[eE][-+]?\d+)?"
+from data.processing.evidence_library.versions.v9.numeric_syntax import (
+    NUMBER as _NUMBER,
+    number_text,
 )
+
+FG_SCALAR_RULE_VERSION = "bioavailability_fg_single_outcome_scalar_rules.v3"
 _APPROX = r"(?:≈|~|about\s+|approx(?:imately)?\.?\s+|ca\.?\s+|estimated\s+)?"
 _POINT = rf"(?P<prefix>{_APPROX})(?P<value>{_NUMBER})"
 _VARIATION = rf"(?:\s*(?:±|\+/-)\s*(?P<variation>{_NUMBER}))?"
@@ -221,10 +221,11 @@ def _clean(value: Any) -> str:
 
 
 def _float(value: str | None) -> float | None:
+    value = number_text(value)
     if value is None:
         return None
     try:
-        parsed = float(value.replace(",", ""))
+        parsed = float(value)
     except (TypeError, ValueError):
         return None
     return parsed if math.isfinite(parsed) else None

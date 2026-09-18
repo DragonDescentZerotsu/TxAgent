@@ -14,7 +14,25 @@ review; they are never regenerated from model output.
 - `gold/bioavailability_ma.v4.jsonl`: 300 reviewed Bioavailability cases.
   Each case includes the
   source input, gold status, gold measurement coefficient, and gold unit.
+- `gold/bioavailability_ma.v9.jsonl`: 500 current V9 extraction cases, 100 per
+  source including HF. It retains 124 exact-input v4 reviews and adds 376
+  source-only Codex reviews, frozen before replay and excluding the pilot rows.
+  This is a balanced regression/development corpus, not an independently
+  human-adjudicated or population-weighted accuracy sample. Each row includes
+  its permanent source UID, complete input, answer and review rationale.
+- `gold/bioavailability_ma.v9.2.jsonl`: the same 500 inputs re-reviewed under
+  the single-self-contained-outcome contract, with external numeric comparisons
+  classified as `relative` before bounds/ranges. The adjacent `.changes.json`
+  preserves previous/revised answers and source-based rationales. All cases were
+  source-reviewed by Codex before the v4 replay, not independently adjudicated.
+  V9.1 and its original scores remain unchanged baseline evidence.
 - `gold/skin_reaction.v1.jsonl`: 300 reviewed Skin cases.
+- `gold/dili.v10.jsonl`: 1,192 source-reviewed DILI V10 cases across the five
+  numeric source layers. It contains all 1,052 reviewed model-extraction cases
+  and the complete 140-row deterministic-accept universe. Labels were decided
+  from source fields rather than model output; this is a development and
+  regression corpus, without independent human adjudication or population
+  weighting.
 - `test_gold_corpora.py`: structural and scientific invariants for the labels.
 - `evaluate_mapping.py`: offline scoring of a frozen extraction mapping. It
   reports status, measurement, unit, joint pair, whole-record, and per-source

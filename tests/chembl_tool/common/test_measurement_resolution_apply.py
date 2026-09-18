@@ -12,6 +12,9 @@ from data.processing.evidence_library.shared.v1.normalization.measurement_resolu
     apply_measurement_resolution,
     load_exact_unit_mapping,
 )
+from data.processing.evidence_library.shared.v2.normalization.measurement_resolution import (
+    apply_measurement_resolution as apply_measurement_resolution_v2,
+)
 from data.processing.evidence_library.versions.v7.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
 )
@@ -293,6 +296,45 @@ def test_a_partial_extraction_is_refused_unless_waived(tmp_path) -> None:
     assert records[1]["measurement_resolution_status"] == "not_extracted"
 
 
+def test_out_of_scope_mapping_rows_can_be_ignored_without_waiving_coverage(
+    tmp_path,
+) -> None:
+    mapping = _mapping(
+        tmp_path,
+        [
+            _resolution("rec-1", "ok", [{"measurement": "1", "unit": "%"}]),
+            _resolution("outside", "unavailable", []),
+        ],
+    )
+    records = [_row("rec-1", "1%")]
+
+    audit = apply_measurement_resolution_v2(
+        records,
+        mapping_path=mapping,
+        task="test_task",
+        unit_mapping_path=_units(
+            tmp_path, [_unit("permeability", "%", "%")]
+        ),
+        expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+        allow_out_of_scope_mapping_rows=True,
+    )
+
+    assert audit["ignored_out_of_scope_mapping_rows"] == 1
+    assert audit["extract_rows_without_a_resolution"] == 0
+
+    with pytest.raises(ValueError, match="no frozen resolution"):
+        apply_measurement_resolution_v2(
+            [_row("missing", "2%")],
+            mapping_path=mapping,
+            task="test_task",
+            unit_mapping_path=_units(
+                tmp_path, [_unit("permeability", "%", "%")]
+            ),
+            expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+            allow_out_of_scope_mapping_rows=True,
+        )
+
+
 def test_no_mapping_at_all_is_a_deliberate_source_only_build(tmp_path) -> None:
     records = [_row("rec-1", "45%")]
     audit = apply_measurement_resolution(records, mapping_path=None)
@@ -464,3 +506,24 @@ def test_reviewed_unit_exclusion_preserves_the_record_without_a_scalar(tmp_path)
     )
     assert records[0]["measurement_unit_mapping_status"] == "excluded"
     assert records[0]["resolved_scalar_value"] is None
+
+
+def test_v2_preflight_failure_preserves_input_bytes(tmp_path) -> None:
+    records = [_row("rec-1", "1%"), _row("rec-2", "2 odd")]
+    before = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
+    mapping = _mapping(
+        tmp_path,
+        [
+            _resolution("rec-1", "ok", [{"measurement": "1", "unit": "%"}]),
+            _resolution("rec-2", "ok", [{"measurement": "2", "unit": "odd"}]),
+        ],
+    )
+    with pytest.raises(ValueError, match="has no rule"):
+        apply_measurement_resolution_v2(
+            records,
+            mapping_path=mapping,
+            task="test_task",
+            unit_mapping_path=_units(tmp_path, [_unit("permeability", "%", "%")]),
+        )
+    after = json.dumps(records, sort_keys=True, separators=(",", ":")).encode()
+    assert after == before

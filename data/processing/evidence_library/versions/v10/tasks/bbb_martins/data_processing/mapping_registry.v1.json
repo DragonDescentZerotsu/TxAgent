@@ -1,0 +1,87 @@
+{
+  "version": "bbb_martins_prebuilt_mapping_registry.v1",
+  "task_id": "bbb_martins",
+  "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+  "mappings": {
+    "reviewed_source_repairs": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["measurement_text", "unit_text", "canonical_smiles", "pmid"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/source_value_cleaning_v1/reviewed_repairs.v2.jsonl",
+      "sha256": "dd69dde841b39db3c5f72a1a5b47880df3244e5f28b2583499bae61b5e2541f0"
+    },
+    "reviewed_source_drops": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["record_inclusion"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/source_value_cleaning_v1/reviewed_drops.jsonl",
+      "sha256": "13f8a8c42844089aef803cb30cbdf65d9a31380c82181989e9a2ee9758041a81"
+    },
+    "reviewed_name_smiles_conflicts": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_smiles"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/source_value_cleaning_v1/reviewed_name_smiles_conflicts.v6.parquet",
+      "sha256": "be79d58e9f76801819fd2b8a6e9a923edeb3fc778393240517f9004ba3da360a"
+    },
+    "direct_endpoint_names": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb"],
+      "outputs": ["canonical_endpoint_name"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/direct_endpoint_normalization_v1/approved/endpoint_mapping.json",
+      "sha256": "db90e7df2f4580b1800aaf889cb494699b992510e205c2e805e474723fb73b1b"
+    },
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "path": "data/artifacts/evidence_library_assets/bbb_martins/v10_percentage_delta/normalization/measurement_resolution.parquet",
+      "sha256": "220ec428161dc0594635d94cc4118c296e49244b7455caf6f4e515a96f37e2de"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v8/bbb_unit_reconciliation.v1.json",
+      "sha256": "9568db3c7abc10bcf37e04b3025188943ff62a701649809f49ac27c9ce21511c"
+    },
+    "endpoint_concepts": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_endpoint_concept"],
+      "depends_on_fields": ["canonical_endpoint_name"],
+      "generation_method": "legacy_exhaustive_hand_review",
+      "provenance_status": "grandfathered_without_two_stage_receipts",
+      "paths_by_source": {
+        "direct_bbb": {"path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v7/endpoint_concepts/direct_bbb.json", "sha256": "02dba0af5c9abfea886c3e5c5096e79a996f1e7788ce655c6240bbb5e646d0bf"},
+        "passive_permeability": {"path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v7/endpoint_concepts/passive_permeability.json", "sha256": "339f254c9612d26ffb01e2801bf8eca2dfa630ce20975dc851ebaaf05f23c2cb"},
+        "efflux_transport": {"path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v7/endpoint_concepts/efflux_transport.json", "sha256": "ba519ccc73604464fe35bec1454822b042669d5014b84dfe1c595199dd3f32df"},
+        "influx_transport": {"path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v7/endpoint_concepts/influx_transport.json", "sha256": "dd5cd23525b14312a764572787ed010bc57cfe915e35ad8ae05b2cedaef17667"}
+      }
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport"],
+      "outputs": ["global_context", "global_species_context"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/globally_reconciled_auxiliary_value_mapping.json",
+      "sha256": "15599b9e4cb42fd350453b38cb702ca678729a5f3d8c0300c7769bf73170e2dd"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_reference_scope"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/reference_semantics_v3/reference_semantics.parquet",
+      "sha256": "6165b57b9fe42b0a6b314343d7528854e5d32a3a84daaa9e584a8677df439e33"
+    },
+    "missing_endpoint_recovery": {
+      "stage": "02_canonicalized",
+      "sources": ["passive_permeability", "efflux_transport", "influx_transport"],
+      "outputs": ["canonical_endpoint_concept"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/missing_endpoint_recovery_v1/reviewed_endpoint_mapping.parquet",
+      "sha256": "b67525c66f62a3bf5b874b4f8ccfb48ed16194b7a80d69a9433ef7ae75a0b765"
+    }
+  }
+}

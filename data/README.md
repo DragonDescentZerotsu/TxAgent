@@ -7,7 +7,9 @@ evidence libraries, their construction code, and provenance artifacts.
 - `gold_labels/` contains active, versioned benchmark labels and retired label
   constructions under `gold_labels/legacy/`.
 - `evidence_libraries/` contains active, versioned built libraries.
-- `artifacts/` contains reviews, mappings, receipts, audits, and portable releases.
+- `caches/` contains active, reusable cross-cutting caches.
+- `artifacts/` contains compact audit records and receipts that are not required
+  build or runtime inputs.
 - `processing/` contains the code that constructs those products.
 - `legacy/` preserves retired lineages without making them active defaults.
 

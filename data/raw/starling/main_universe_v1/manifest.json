@@ -1,0 +1,65 @@
+{
+  "source_structure_policy": "upstream canonical_smiles is the V10 source seed",
+  "tasks": {
+    "ames": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 0,
+      "path": "ames/records.parquet",
+      "rows": 1299584,
+      "sha256": "113aeeaa33cabff48d3669cb8815685e0bed97f960b0ff5bf735ce9f30041226",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "7d4897234099be3daf50e2f2111b1c059ec9ea5eeaf3775219b333bb9e47764a"
+    },
+    "bbb_martins": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 7634,
+      "path": "bbb_martins/records.parquet",
+      "rows": 581708,
+      "sha256": "30239ac188e3e206f6c1e8d09f908a7dfdfe091cbbc5000c4633d0473b856d94",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "79d648e5e69826a581164a214718779042388c51ae176cb93ec19ff0a492c6c1"
+    },
+    "bioavailability_ma": {
+      "gold_voter_duplicates_rehydrated": 8,
+      "gold_voter_physical_uid_rows": 19479,
+      "path": "bioavailability_ma/records.parquet",
+      "rows": 463563,
+      "sha256": "2d142edb0414f8d5fea7d8277723f579d78e4d9f7bb1e33deca473109e49ecf4",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "b3c1bb6870c0c83b9134f658e8a08324b1221a409d9c47ec42d6b5a640364b60"
+    },
+    "carcinogens": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 0,
+      "path": "carcinogens/records.parquet",
+      "rows": 3270087,
+      "sha256": "25180c013edbd4d024d443209da3cdf38248ed68af8ff0f552c96a409762cddb",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "5d47270881487ce34d0941182406b99985f471af984ce6f73180ba09571cc05c"
+    },
+    "dili": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 0,
+      "path": "dili/records.parquet",
+      "rows": 1645109,
+      "sha256": "13aebfc54faef8d54df4fe9733ca3ec1e426aa6e7d8b15763e29310d30aeb910",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "1bf53367624fbf5940014b372801aaa887b417e878251a76053def8783c0b0cf"
+    },
+    "skin_reaction": {
+      "gold_voter_duplicates_rehydrated": 0,
+      "gold_voter_physical_uid_rows": 0,
+      "path": "skin_reaction/records.parquet",
+      "rows": 806599,
+      "sha256": "945c280074c88120f5865cf3d53fcf83e9960e02ccb10c91635a3dea13ca0bbb",
+      "uid_join": "permanent acquisition identity by source, physical row, and source record ID",
+      "upstream_records_sha256": "85b464d5ff7d89480b2cea4342d2f039515edf13d8840b33a254dd6db2f5df76"
+    }
+  },
+  "uid_ledger_manifest": "data/raw/starling/source_row_uid_ledger/manifest.json",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b",
+  "upstream_manifest": "artifacts/chembl_tool/starling/current_records/manifest.json",
+  "upstream_manifest_sha256": "c8184520ce6f842bfe65bf696f96928a2f5ce9272c80ab9e00c72ecdc1171a6a",
+  "version": "main_source_universe.v1"
+}

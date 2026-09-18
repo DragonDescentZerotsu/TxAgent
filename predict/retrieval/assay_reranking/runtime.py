@@ -19,13 +19,64 @@ SCORING_CONTRACT_VERSION = (
 COMPACT_CACHE_SCHEMA_VERSION = "txagent_assay_transfer_compact_cache.v1"
 REQUIRED_TRANSFORMERS_VERSION = "4.57.6"
 CACHE_ROOT = Path(__file__).resolve().parents[1] / "cache" / "assay_reranking"
-MODEL_ROLES = ("direct", "indirect", "all_records")
+ACTIVE_CACHE_ROOT = CACHE_ROOT / "active"
+ARCHIVE_CACHE_ROOT = CACHE_ROOT / "archive"
+DATA_ACTIVE_CACHE_ROOT = Path(__file__).resolve().parents[3] / "data" / "caches" / "assay_reranking" / "active"
+ACTIVE_CACHE_PROFILES = frozenset(
+    {
+        "cache_matched_retrieval_v3",
+        "cache_matched_retrieval_v3_l1_v10_3_v1",
+        "cache_matched_retrieval_v3_gold_v2_v1",
+        "cache_matched_retrieval_v3_l1_v10_4_v1",
+        "l1_context_morgan_semantic_l2_v1",
+        "l1_context_morgan25_v10_4_gold_v2_v1",
+        "l1_context_morgan50_v10_4_gold_v2_v1",
+        "l1_context_morgan100_v10_4_gold_v2_v1",
+        "l1_context_semantic_l2_v1",
+        "l1_context_semantic_weighted_l2_v1",
+        "recent_models_three_pools_morgan100_v2_gold_v1",
+        "v24_1_bbb_uid_levels_morgan75",
+        "v25_oral_uid_levels_morgan75",
+        "v25_oral_uid_levels_morgan75_l2",
+        "v25_oral_uid_levels_morgan75_l3",
+        "v10_3_direct_gold_morgan100_v1",
+        "v10_3_best_scaffold_morgan100_v1",
+        "v10_3_best_parent_morgan100_v1",
+        "ranked_level_retrieval_v2",
+        "ranked_level_retrieval_v3",
+        "v10_4_direct_gold_morgan100_v1",
+    }
+)
+
+
+def cache_profile_root(profile: str) -> Path:
+    """Return the explicit active or archived root for one cache profile."""
+    if profile == "ranked_level_retrieval_v3":
+        return DATA_ACTIVE_CACHE_ROOT / profile
+    parent = ACTIVE_CACHE_ROOT if profile in ACTIVE_CACHE_PROFILES else ARCHIVE_CACHE_ROOT
+    return parent / profile
+MODEL_ROLES = (
+    "direct", "direct_v10_3", "direct_v10_3_0_2", "direct_v10_4",
+    "indirect", "all_records",
+)
 MODEL_PROFILES = {
     "bbb_martins": {
         "direct": {
             "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
             "revision": "06b9900222e887597ca06f0015a09fa87b8eb509",
             "prompt_profile": "v9",
+        },
+        "direct_v10_3": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+            "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab",
+            "prompt_profile": "v10_3",
+            "checkpoint_step": 120,
+        },
+        "direct_v10_4": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bbb-martins-best",
+            "revision": "4c064f571a53234c5eb1c9d4c0e068bdd10860c1",
+            "prompt_profile": "v10_4",
+            "checkpoint_step": 70,
         },
         "indirect": {
             "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bbb-martins-numeric-best",
@@ -43,6 +94,24 @@ MODEL_PROFILES = {
             "model": "jiosephlee/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
             "revision": "6f3aefabc9a07b357066aaf7ca0f69ab63785240",
             "prompt_profile": "v9",
+        },
+        "direct_v10_3": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bioavailability-ma-best",
+            "revision": "e8837889f707d97f8aeb7e54e74fcf2c7c2968de",
+            "prompt_profile": "v10_3",
+            "checkpoint_step": 140,
+        },
+        "direct_v10_3_0_2": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+            "revision": "29cc74f02df160b1f153edb700da66d1c30ef4ed",
+            "prompt_profile": "v10_3_0_2",
+            "checkpoint_step": 160,
+        },
+        "direct_v10_4": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-4-bioavailability-ma-best",
+            "revision": "e3a5b31ce8c47b4aa950c974cf9c3eb80c67fcae",
+            "prompt_profile": "v10_4",
+            "checkpoint_step": 200,
         },
         "indirect": {
             "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-bioavailability-ma-numeric-best",

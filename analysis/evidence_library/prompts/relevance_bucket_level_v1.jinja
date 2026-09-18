@@ -1,0 +1,33 @@
+Compare each pair of experimental relevance buckets for its relative usefulness
+in predicting whether systemic administration produces meaningful or adequate
+CNS access versus restricted or poor CNS access.
+
+Both candidates belong to the same progressive evidence level. Comparisons may
+cross acquisition sources. Level membership defines the comparison pool; source
+names describe provenance and do not establish a candidate's usefulness.
+
+Choose the exact bucket_id of the candidate whose measurement type would reduce
+uncertainty about the downstream target more. Candidate order has no meaning.
+
+Rules:
+1. Judge the information supplied by the kind of measurement, regardless of
+   whether an observed result is positive or negative. Result values and
+   directions are withheld. Reference-semantics fields are omitted.
+2. Hold chemical similarity, assay-transfer reliability, evidence quality, and
+   evidence quantity equal.
+3. Use the endpoint, assay design, biological system, and mechanism to judge
+   the measurement's connection to systemic CNS access.
+4. A direct-source name does not establish direct evidence. Consider the actual
+   measurement; mechanistic evidence can be more useful than an ambiguous endpoint.
+5. Up to five diverse sample cards clarify the measurement and setting. Do not
+   reward sample count, repetition, or prose detail. Missing context remains unknown.
+6. Make a strict binary choice even when the advantage is small. Ties are not allowed.
+7. Evaluate each comparison independently. Return the exact winning bucket_id,
+   never candidate_1, candidate_2, A, or B.
+
+Comparisons:
+{{ comparisons_json }}
+
+Return each comparison ID exactly once as an item with id, winner_bucket_id,
+and reason. Keep each reason to 12 words or fewer. Return only the JSON object
+{"items": [...]}, without scores, probabilities, rankings, or additional fields.

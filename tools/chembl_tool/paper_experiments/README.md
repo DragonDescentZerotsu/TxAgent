@@ -19,12 +19,10 @@
   relevance-prefix retrieval、current/default direct-heldout-filtered + query-time `scaffold_disjoint` 与 historical
   reference-pool 合同、conditioned cumulative-family curve、无 summary 模型的 raw support cards、scaffold audit、
   single/evidence-equivalent reuse、英文五-panel scaling figure 和实测结果。
-- [ClinTox benchmark](../tasks/clintox/CLINTOX_BENCHMARK.md)：独立
+- [ClinTox benchmark](../../../data/legacy/clintox/code/task/CLINTOX_BENCHMARK.md)：独立
   AACT/FDA source-reconstructed lineage、retrieval hierarchy、v3 prompt、DeepSeek 结果和 no-promotion 结论。
-- [外部 Starling Table 2 MiniMol 复现](../../../baselines/minimol/STARLING_TABLE2_REPRODUCTION.md)：released
-  CSV、作者补充的 `n_extractions` weighted-BCE 复现、结果和不可与当前 gold 混表的 lineage 边界。
-- [MiniMol 入口索引](../../../baselines/minimol/README.md)：共享 head/embedding runtime、current TxAgent
-  baselines、冻结 GPT-OSS-120B top-5 sensitivity 和外部 Table 2 lineage。
+- [MiniMol 入口索引](../../../predict/baselines/minimol/README.md)：共享 head/embedding runtime、current TxAgent
+  baselines、冻结 GPT-OSS-120B top-5 sensitivity 和外部 Table 2 lineage/entrypoints。
 - [KNN-Agent Router OOF 计划](ROUTER_OOF_IMPLEMENTATION_PLAN.md)：按 task 独立训练的 train-only OOF
   数据隔离、特征、nested evaluation、运行 gate 和当前执行状态。
 - [Trace 保留策略](TRACE_RETENTION.md)：最终 trace 的唯一目录、清理边界和一致性约束。
@@ -760,10 +758,10 @@ python -m baselines.minimol.run_embedding_knn \
 
 MiniMol head 的 train-only scaffold CV 诊断入口为 `python -m baselines.minimol.run_train_cv`，完整合同、
 scheduler 修复、regularization sweep 和不替换 canonical baseline 的结论记录在
-`baselines/minimol/HEAD_TRAINING_DIAGNOSTICS.md`。该入口只读取 train embedding cache，不把 outer valid/test
+`predict/baselines/minimol/HEAD_TRAINING_DIAGNOSTICS.md`。该入口只读取 train embedding cache，不把 outer valid/test
 用于 epoch selection。
 
-MiniMol 入口总索引见 `baselines/minimol/README.md`。外部 Starling 论文 Table 2 的 released-CSV 复现使用
+MiniMol 入口总索引见 `predict/baselines/minimol/README.md`。外部 Starling 论文 Table 2 的 released-CSV 复现使用
 独立的 `run_starling_table2.py` 和 output root；其任务定义与 split 不属于本项目当前 gold，结果不进入本页
 v4 总账或 canonical figures。
 

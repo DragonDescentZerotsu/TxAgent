@@ -29,7 +29,7 @@ from typing import Any, Iterable, Mapping
 
 import yaml
 
-from predict.harnesses.progressive.prompt import render_progressive_messages
+from predict.harnesses.progressive.prompt import prompt_assets, render_progressive_messages
 
 
 PROGRESSIVE_PROTOCOL_VERSION = "conditioned_assay_progressive_visible.v8"
@@ -89,9 +89,13 @@ def _clean(value: Any) -> str:
 
 
 @lru_cache(maxsize=1)
-def molecule_card_contract() -> dict[str, Any]:
+def molecule_card_contract(
+    path: Path = MOLECULE_CARD_CONTRACT_PATH,
+) -> dict[str, Any]:
     """Load and validate the YAML that defines model-visible molecule cards."""
-    contract = yaml.safe_load(MOLECULE_CARD_CONTRACT_PATH.read_text(encoding="utf-8"))
+    from predict.harnesses.progressive.prompt import prompt_directory
+    active_path = prompt_directory('standard_v1') / 'card.yaml' if path == MOLECULE_CARD_CONTRACT_PATH else path
+    contract = yaml.safe_load(active_path.read_text(encoding="utf-8"))
     if not isinstance(contract, dict) or contract.get("schema_version") != "progressive_molecule_card.v1":
         raise ValueError("molecule_card.yaml has an unsupported schema_version")
     required_outputs = {
@@ -553,8 +557,9 @@ def render_active_evidence(
     current_level: int,
     prior_state: Mapping[str, Any] | None,
     card_id_to_alias: Mapping[str, str],
+    card_contract: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    contract = molecule_card_contract()
+    contract = dict(card_contract or molecule_card_contract())
     molecule_contract = contract["molecule"]
     card_fields = contract["evidence_card"]["fields"]
     prior_roles = _prior_card_roles(prior_state)
@@ -567,7 +572,12 @@ def render_active_evidence(
                 for result in analog["query_analog_tool_summaries"]
             ]
         cards = []
-        for card in sorted((analog.get("cards") or {}).values(), key=lambda row: str(row["card_id"])):
+        card_order = (
+            (lambda row: (int(row.get("_selection_rank") or 0), str(row["card_id"])))
+            if contract.get("card_order") == "selection_rank"
+            else (lambda row: str(row["card_id"]))
+        )
+        for card in sorted((analog.get("cards") or {}).values(), key=card_order):
             item = dict(card)
             stable_card_id = str(item["card_id"])
             item["card_id"] = card_id_to_alias[stable_card_id]
@@ -586,16 +596,24 @@ def build_progressive_messages(
     levels: list[Mapping[str, Any]],
     current_level: int,
     query_smiles: str,
+    query_molecule_description: str | None = None,
     condition_sentence: str,
     query_prior: Mapping[str, Any] | None,
     query_tool_summary: Mapping[str, Any] | None,
     active: Mapping[str, Mapping[str, Any]],
     prior_state: Mapping[str, Any] | None,
+    protocol_version: str = PROGRESSIVE_PROTOCOL_VERSION,
+    card_contract: Mapping[str, Any] | None = None,
+    prompt_template: str = "progressive.jinja",
+    prompt_version: str = "standard_v1",
+    protocol_details: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    card_contract = molecule_card_contract()["evidence_card"]
+    prompt_text = prompt_assets(prompt_version)["user_shared"]
+    molecule_contract = dict(card_contract or molecule_card_contract())
+    evidence_card_contract = molecule_contract["evidence_card"]
     card_output_by_source = {
         str(field["source"]): str(field["name"])
-        for field in card_contract["fields"]
+        for field in evidence_card_contract["fields"]
     }
     card_id_to_alias, _ = card_alias_maps(active)
     new_ids = sorted(
@@ -624,62 +642,66 @@ def build_progressive_messages(
         "new_evidence_assessment": [
             {
                 "family": "family name",
-                "applicability": "high | moderate | low | not_applicable",
-                "direction": "supportive | contradictory | neutral_or_unclear",
-                "decision_effect": "changed | strengthened | weakened | no_change",
+                "applicability": prompt_text['applicability'],
+                "direction": prompt_text['direction'],
+                "decision_effect": prompt_text['decision_effect'],
                 "card_ids": ["new card alias"],
             }
         ],
         "evidence_gaps": ["string"],
         "decision_summary": "concise string",
     }
+    if prompt_assets(prompt_version)["settings"].get("claim_provenance") in {
+        "derived_v1", "derived_v2"
+    }:
+        for field in (
+            "supportive_card_ids",
+            "contradictory_card_ids",
+            "prediction_basis_card_ids",
+        ):
+            schema.pop(field)
+        schema["claims"] = [
+            {
+                "claim": "concise source-grounded statement",
+                "card_ids": ["exactly one C-number"],
+                "evidence_role": "supportive | contradictory",
+            }
+        ]
     payload: dict[str, Any] = {
         "protocol": {
-            "version": PROGRESSIVE_PROTOCOL_VERSION,
+            "version": protocol_version,
             "mode": "initial decision" if is_initial else "progressive update",
             "architecture": (
-                "Evidence is append-only. Every selected raw card accumulated through the current level is shown. "
-                "Later levels add biologically more indirect families. All older cards remain visible so that a prior "
-                "decision can be corrected, but on an update start with the new cards and their effect on the prior "
-                "decision. Revisit only relevant older cards when new evidence conflicts with the prior reasoning or "
-                "with those cards; do not re-audit every older card by default."
+                prompt_text['architecture']
             ),
             "card_accounting": (
-                "Cards use short aliases that the workflow maps back to stable artifact IDs. "
+                prompt_text['card_accounting']
                 + (
-                    f"On an older card, {card_output_by_source['prior_use']} lists the roles it had in the previous "
-                    f"decision; an absent {card_output_by_source['prior_use']} means that it was not used. "
+                    prompt_text['card_accounting_2'].format(value_1=card_output_by_source['prior_use'], value_2=card_output_by_source['prior_use'])
                     if "prior_use" in card_output_by_source
                     else ""
                 )
-                + "List only cards that materially support or contradict the current decision. Unlisted visible cards "
-                "are deterministically recorded as not_used by the workflow. Repeated records are not independent votes."
+                + prompt_text['card_accounting_3']
             ),
             "claim_rule": (
-                "Every evidence-card claim must cite its card IDs."
+                prompt_text['claim_rule']
                 + (
-                    " A claim based only on query_prior may use an empty card_ids list, but must say explicitly "
-                    "that it is a query-property prior rather than experimental evidence."
+                    prompt_text['claim_rule_2']
                     if query_prior
                     else ""
                 )
             ),
             "update_rule": (
-                "Judge endpoint-to-task relevance, direction, species/condition compatibility, formulation or route "
-                "compatibility, and whether structural differences preserve the mechanism. Indirect evidence may "
-                "support, contradict, or leave the earlier prediction unchanged."
+                prompt_text['update_rule']
             ),
             "identity_rule": (
-                "Do not identify the query by name even if its structure is recognizable."
+                prompt_text['identity_rule']
             ),
             "flip_rule": (
-                "A flip is allowed only when new evidence is strong enough to overturn the prior decision; if you flip, "
-                "prediction_basis_card_ids must include at least one card from new_card_ids."
+                prompt_text['flip_rule']
             ),
             "output_control": (
-                "Use the minimum sufficient number of claims, evidence gaps, assessments, and card citations. Empty "
-                "lists are valid; do not fill arrays merely to appear complete or to approach a target count. Cite only "
-                "cards that materially affect the prediction, omit irrelevant cards, and do not repeat card text."
+                prompt_text['output_control']
             ),
         },
         "task_definition": {
@@ -694,7 +716,9 @@ def build_progressive_messages(
         },
         "level_context": {
             "current_level": current_level,
-            "current_family": level_plan[current_level - 1],
+            "current_family": next(
+                row for row in level_plan if int(row["level"]) == current_level
+            ),
             "full_level_plan": level_plan,
             "new_card_ids": new_ids,
         },
@@ -705,11 +729,14 @@ def build_progressive_messages(
             current_level=current_level,
             prior_state=prior_state,
             card_id_to_alias=card_id_to_alias,
+            card_contract=molecule_contract,
         ),
         "required_json_schema": schema,
     }
     if condition_sentence:
         payload["query"]["external_condition"] = condition_sentence
+    if query_molecule_description:
+        payload["query"]["molecule_description"] = query_molecule_description
     if query_tool_summary:
         payload["query"]["molecule_property_tool_summary"] = _compact_tool_summary(query_tool_summary)
     transfer_field = card_output_by_source.get("transfer_likelihood")
@@ -719,15 +746,21 @@ def build_progressive_messages(
         for card in (analog.get("cards") or {}).values()
     ):
         payload["protocol"]["transfer_likelihood_rule"] = (
-            f"{transfer_field} is the frozen V9 estimate that this training record's context transfers "
-            "to the query. It is neither the query label probability nor an independent endpoint vote."
+            prompt_text['progressive_messages'].format(transfer_field=transfer_field)
         )
     if prior_state is not None:
         payload["prior_state"] = render_prior_state(
             prior_state,
             card_id_to_alias=card_id_to_alias,
         )
-    return render_progressive_messages(system_role=contract.system_role, payload=payload)
+    if protocol_details:
+        payload["protocol"].update(dict(protocol_details))
+    return render_progressive_messages(
+        system_role=contract.system_role,
+        payload=payload,
+        template_name=prompt_template,
+        prompt_version=prompt_version,
+    )
 
 
 def progressive_state_errors(
@@ -737,6 +770,7 @@ def progressive_state_errors(
     visible_card_ids: set[str],
     new_card_ids: set[str],
     prior_state: Mapping[str, Any] | None,
+    max_claims: int | None = 8,
 ) -> list[str]:
     errors: list[str] = []
     partitions: dict[str, list[str]] = {}
@@ -788,8 +822,8 @@ def progressive_state_errors(
     if not isinstance(claims, list):
         errors.append("claims must be an array")
     else:
-        if len(claims) > 8:
-            errors.append("claims must contain at most 8 items")
+        if max_claims is not None and len(claims) > max_claims:
+            errors.append(f"claims must contain at most {max_claims} items")
         for claim in claims:
             refs = claim.get("card_ids") if isinstance(claim, Mapping) else None
             if (

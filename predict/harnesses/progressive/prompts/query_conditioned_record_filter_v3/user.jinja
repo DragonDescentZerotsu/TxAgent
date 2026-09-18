@@ -1,0 +1,26 @@
+# Task
+Endpoint: {{ task.endpoint_name }}
+Positive: {{ task.positive_prediction }}
+Negative: {{ task.negative_prediction }}
+Instructions:
+{% for instruction in task.task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if prepared.task == "bioavailability_ma" and prepared.level == 3 %}
+# PITFALLS
+- Oral AUC, Cmax, plasma concentrations, or time-course data alone do not establish absolute bioavailability or whether F is at least 20%.
+- Do not equate high or low systemic exposure with high or low absolute oral bioavailability. Exposure also depends on oral dose, formulation, clearance, sampling, and first-pass effects.
+- Prefer explicitly reported absolute F or a valid dose-normalized oral-versus-IV comparison. Otherwise treat L3 as indirect contextual evidence and preserve uncertainty.
+{% endif %}
+# Query molecule
+SMILES: {{ prepared.query_smiles }}{% if prepared.condition_sentence %}
+
+# Query condition
+Condition: {{ prepared.condition_sentence }}{% endif %}
+
+# Candidate experimental evidence
+{% for molecule in molecules %}
+## Molecule {{ loop.index }}
+SMILES: {{ molecule.smiles }}
+Morgan similarity: {{ molecule.morgan_similarity }}
+{% for record in molecule.records %}{{ record }}
+{% endfor %}{% endfor %}

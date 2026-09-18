@@ -1,5 +1,22 @@
 # Skin_Reaction task notes
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -7,32 +24,32 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
-本文件记录 Skin_Reaction 的 task-specific 语义、ChEMBL evidence ontology、assay screening 规则方向、
-endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、batch/resume、viewer 和输出目录规范仍以仓库根
-`AGENTS.md` 为准。
+This file documents Skin_Reaction task-specific semantics, ChEMBL evidence ontology, assay screening rule directions,
+endpoint group design, and reasoning constraints. General ChEMBL workflow, batch/resume, viewer, and output directory conventions are governed by the repository root
+`AGENTS.md`.
 
-当前 paper-facing Starling 路径只保留两个与 binary endpoint 对齐的 mechanism families：direct skin
-sensitization outcome 与 sensitisation AOP key events。Phototoxicity/irritation/local damage 和 skin exposure
-的 immutable raw acquisition 仍保留作历史审计，但不进入 current Starling reasoning view。ChEMBL 历史
-ontology 和 native runner 仍保留旧 Tier 说明用于复现，不得据此为每个细粒度 group 启动并行 reasoning。
+The current paper-facing Starling path retains only two mechanism families aligned with binary endpoints: direct skin
+sensitization outcome and sensitisation AOP key events. Phototoxicity/irritation/local damage and skin exposure
+immutable raw acquisition remain for historical audit but do not enter the current Starling reasoning view. ChEMBL historical
+ontology and native runner still retain old Tier descriptions for reproduction; do not launch parallel reasoning for each fine-grained group based on them.
 
-2026-07-23 strict-hop availability census 见
-`outputs/chembl_tool/tasks/skin_reaction/distance_expansion/analysis/hop_availability_census/`。GSK3B activity
-到 NRF2 state 的 graph/data gate 通过（7,950 parents；parent-disjoint >=1 coverage 34.15%），但直接药理性
-NRF2 regulation 不是 sensitizer-specific，必须保留 scope caveat。KEAP1-NRF2 PPI coverage 只有 2.44%，
-CUL3 H2 为 0；本 task 没有可用 strict H2。不得据此新增旧 paper condition。
+2026-07-23 strict-hop availability census is in
+`outputs/chembl_tool/tasks/skin_reaction/distance_expansion/analysis/hop_availability_census/`. The graph/data gate from GSK3B activity
+to NRF2 state passed (7,950 parents; parent-disjoint >=1 coverage 34.15%), but direct pharmacological
+NRF2 regulation is not sensitizer-specific and must retain a scope caveat. KEAP1-NRF2 PPI coverage is only 2.44%,
+CUL3 H2 is 0; this task has no usable strict H2. Do not add old paper conditions based on this.
 
-2026-07-22 已导入 Starling direct Skin_Reaction parquet，以及 sensitization AOP、phototoxicity/irritation/local
-damage 和 skin exposure 三个 mechanism-family acquisition。`build_starling_evidence_library.py` 通过公共 profile
-reader 将四类数据构建成一个 molecule-level index，供 Starling direct/full-flat/full-mechanism 三个论文条件共用。
+2026-07-22 imported Starling direct Skin_Reaction parquet, as well as three mechanism-family acquisitions: sensitization AOP, phototoxicity/irritation/local
+damage, and skin exposure. `build_starling_evidence_library.py` uses a public profile
+reader to build the four data types into a molecule-level index, shared by the three paper conditions Starling direct/full-flat/full-mechanism.
 
-## Task 定义
+## Task definition
 
-目标不是训练一个单纯的 QSAR skin-reaction classifier，而是构建可审计的 skin-reaction evidence retrieval
-和 reasoning workflow：给定 query molecule，从 ChEMBL 中检索与皮肤不良反应判断相关的相似分子实验读数，
-再由 reasoning LLM 判断这些 analog evidence 是否能 transfer 到 query molecule。
+The goal is not to train a simple QSAR skin-reaction classifier, but to build an auditable skin-reaction evidence retrieval
+and reasoning workflow: given a query molecule, retrieve similar molecule experimental readings relevant to skin adverse reaction judgment from ChEMBL,
+then have a reasoning LLM determine whether these analog evidences can transfer to the query molecule.
 
-当前唯一 condition-aware Starling gold benchmark：
+The current only condition-aware Starling gold benchmark:
 
 ```text
 data/gold_labels/Skin_Reaction/v1/scaffold/{train.jsonl,valid.jsonl,test.jsonl}
@@ -42,40 +59,40 @@ fields:
   Y: Skin_Reaction label
 ```
 
-当前 build 有 2,491 个 molecule-condition rows，train/valid/test 为 1,997/246/248；旧 molecule-only 和
-selected-vN 路径只是 migration provenance。冲突 parent 按 accepted source records 计算 70% agreement，
-同 PMID 多条 record 分别计票，精确 tie 拒绝。正式运行前必须按 scaffold valid+test union 的 heldout
-detailed labels 重建 train-only retrieval index。统一合同见
-`data/processing/gold_labels/README.md`。
+The current build has 2,491 molecule-condition rows, with train/valid/test at 1,997/246/248; the old molecule-only and
+selected-vN paths are only migration provenance. Conflicting parents are calculated with 70% agreement based on accepted source records,
+multiple records from the same PMID each count as votes, and exact ties are rejected. Before formal runs, the train-only retrieval index must be rebuilt from the heldout
+detailed labels of the scaffold valid+test union. The unified contract is in
+`data/processing/gold_labels/README.md`.
 
-当前二分类约定：
+Current binary classification convention:
 
 ```text
 Y=1 -> skin sensitizer / positive
 Y=0 -> non-sensitizer / negative
 ```
 
-原始 404-molecule task 来自 binary LLNA skin-sensitization 数据，不是任意 clinical dermatologic
-reaction。新的 Starling-held-out benchmark 因此只接受 sensitization 或 allergic contact
-dermatitis/contact allergy scope 的明确 positive/negative record；irritation、generic local damage、
-skin exposure 和 inconclusive 不转成 gold label。
+The original 404-molecule task comes from binary LLNA skin-sensitization data, not arbitrary clinical dermatologic
+reactions. The new Starling-held-out benchmark therefore only accepts explicit positive/negative records within the scope of sensitization or allergic contact
+dermatitis/contact allergy; irritation, generic local damage,
+skin exposure, and inconclusive results are not converted to gold labels.
 
-历史 `run_reasoning_pipeline.py` final prompt/schema 允许 phototoxicity 和 irritation/corrosion 成为
-`risk` 的主 evidence type；这与上述 sensitization-only gold scope 不一致，属于已确认的
-`legacy_skin_reaction_v1` prompt bug。2026-08-08 已在 `prompt_profiles.py` 实现版本化
-`sensitization_aligned_v2`，并将其设为新运行默认：single/group/final 都明确限定为 sensitization/contact
-allergy；phototoxicity、irritation/corrosion、generic local damage 和 exposure 只能作为 out-of-scope/context。
-Manifest 记录 `task_prompt_profile` 和 `label_scope`；复用 single/group/final branch 时必须 profile 一致。
-旧 manifest 缺少 profile 字段时固定解释为 legacy v1，历史结果和 final-evidence-surface replay 继续显式使用
-legacy v1。2026-08-09 已完成 aligned-v2 GPT-OSS-120B scaffold-valid 四条件：none/direct/full-flat/
-full-mechanism macro-F1 为 `0.5225/0.5725/0.5698/0.5423`，均 245/245 成功。scope-contaminated error 从
-legacy 的 23 降为 0，证明合同修复生效；但 full-mechanism 性能没有提升，fresh-run paired delta 也跨 0，
-不得把 scope 修复表述为性能方法。
+Historical `run_reasoning_pipeline.py` final prompt/schema allowed phototoxicity and irritation/corrosion to become
+`risk` main evidence types; this is inconsistent with the above sensitization-only gold scope and is a confirmed
+`legacy_skin_reaction_v1` prompt bug. On 2026-08-08, a versioned
+`sensitization_aligned_v2` was implemented in `prompt_profiles.py` and set as the default for new runs: single/group/final are all explicitly limited to sensitization/contact
+allergy; phototoxicity, irritation/corrosion, generic local damage, and exposure can only be out-of-scope/context.
+Manifest records `task_prompt_profile` and `label_scope`; when reusing single/group/final branches, profiles must be consistent.
+When old manifests lack a profile field, they are fixed to be interpreted as legacy v1; historical results and final-evidence-surface replay continue to explicitly use
+legacy v1. On 2026-08-09, the aligned-v2 GPT-OSS-120B scaffold-valid four conditions were completed: none/direct/full-flat/
+full-mechanism macro-F1 is `0.5225/0.5725/0.5698/0.5423`, all 245/245 successful. Scope-contaminated errors dropped from 23 in
+legacy to 0, proving the contract fix is effective; but full-mechanism performance did not improve, and the fresh-run paired delta also crosses 0,
+so the scope fix must not be presented as a performance method.
 
-同日对 frozen GPT-OSS-120B scaffold-valid `starling_full_mechanism` legacy traces 做了无模型调用 audit：
-90 个错误中仅 6 个有干净 gold-aligned Tier 1/2 signal 且 final 仍选错；84 个属于 upstream conflict、wrong
-direction 或 insufficient。23 个错误的 final 主证据类型越过 label scope，但只有 2 个同时是严格
-final-recoverable。机器可读结果和方法限制见：
+On the same day, a model-free audit was performed on frozen GPT-OSS-120B scaffold-valid `starling_full_mechanism` legacy traces:
+of 90 errors, only 6 had clean gold-aligned Tier 1/2 signals and the final still chose wrong; 84 were upstream conflicts, wrong
+direction, or insufficient. 23 erroneous finals had main evidence types crossing label scope, but only 2 were strictly
+final-recoverable. Machine-readable results and method limitations are in:
 
 ```text
 tools/chembl_tool/paper_experiments/audit_skin_reasoning_bottleneck.py
@@ -83,31 +100,31 @@ outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_o
 outputs/paper/skin_reaction_task_alignment_audit_record_supported_v2_valid_gpt_oss_120b_sensitization_aligned_v2/
 ```
 
-### Direct evidence scope parity（2026-08-09）
+### Direct evidence scope parity (2026-08-09)
 
-Gold builder 一直只接受 sensitization/contact-allergy records，但历史 Starling Tier-1 evidence profile 曾把
-photoallergy、irritation、urticaria 和其它 broad-skin records 聚合进同一 direct card。这是 source-to-agent
-scope mismatch，不能只靠 prompt 从已聚合 counts 和最多 6 条 examples 中稳定反解。
+The gold builder has always accepted only sensitization/contact-allergy records, but the historical Starling Tier-1 evidence profile aggregated
+photoallergy, irritation, urticaria, and other broad-skin records into the same direct card. This is a source-to-agent
+scope mismatch that cannot be stably reversed from aggregated counts and at most 6 examples by prompt alone.
 
-`build_starling_evidence_library.py` 的 historical v2 profile 使用 `sensitization_contact_allergy_v2`，直接复用
-`starling_benchmark.is_tdc_skin_sensitization_scope()`；历史行为通过显式
-`--source-profile broad_skin_reaction_v1` 保留。公共 `StarlingSourceProfile.record_filter` 负责通用 row-scope
-过滤并在 metadata 中记录 filter name/count。新 full-source direct profile 从 66,597 input rows 中过滤 5,049 条
-scope 外记录，保留 44,752 条可加载 records、3,275 个 direct molecules；旧 v1 artifact 不覆盖。
+`build_starling_evidence_library.py`'s historical v2 profile uses `sensitization_contact_allergy_v2`, directly reusing
+`starling_benchmark.is_tdc_skin_sensitization_scope()`; historical behavior is preserved through explicit
+`--source-profile broad_skin_reaction_v1`. The public `StarlingSourceProfile.record_filter` handles general row-scope
+filtering and records filter name/count in metadata. The new full-source direct profile filters 5,049 out-of-scope records from 66,597 input rows,
+retaining 44,752 loadable records and 3,275 direct molecules; the old v1 artifact is not covered.
 
-对全部 245 个 scaffold-valid query 的 deterministic retrieval audit 显示：37 个 top-3 neighbor identity list
-改变，41 个历史 retrieved neighbors 被移出 union，20 个 scoped neighbors 回填；由于 card text/counts 同步
-重建，203 个 LLM-visible direct contexts 改变。clean-index `sensitization_aligned_v2` direct fresh run 为
-245/245 成功，macro-F1 `0.5666`，相对历史 broad-index aligned-v2 direct 的 `0.5725` 为 `-0.0059`
-（paired-bootstrap 95% CI `[-0.0724,+0.0603]`；55 flips，28/27 old/new-only correct）。因此 scope parity 是
-数据合同修复，但不是 observed performance improvement。
+Deterministic retrieval audit on all 245 scaffold-valid queries shows: 37 top-3 neighbor identity lists
+changed, 41 historical retrieved neighbors were removed from the union, 20 scoped neighbors were backfilled; since card text/counts were rebuilt
+synchronously, 203 LLM-visible direct contexts changed. The clean-index `sensitization_aligned_v2` direct fresh run is
+245/245 successful, macro-F1 `0.5666`, with `0.5725` relative to historical broad-index aligned-v2 direct being `-0.0059`
+(paired-bootstrap 95% CI `[-0.0724,+0.0603]`; 55 flips, 28/27 old/new-only correct). Therefore scope parity is a
+data contract fix, not an observed performance improvement.
 
-clean-index traces 中，low/moderate-transferability negative direction 仍为 6 个 gold-aligned、13 个
-gold-opposed，因此运行了唯一版本化候选 `sensitization_negative_transfer_v3`：analog-only negative 只有在
-high transferability、充分暴露的 validated assay 和 records 一致时才能支持 no-risk。规则确实把 negative
-direction 从 25 降到 3，且剩余 3 个均 gold-aligned；但 macro-F1 降到 `0.5531`，Y=0 recall 从 `0.4658`
-降到 `0.3425`。相对 clean-index v2 delta 为 `-0.0135`（95% CI `[-0.0882,+0.0612]`）。该 profile 只保留为
-failed experimental lineage，不是默认，不扩展 full-flat/full-mechanism/test。
+In clean-index traces, low/moderate-transferability negative direction still has 6 gold-aligned and 13
+gold-opposed, so the only versioned candidate `sensitization_negative_transfer_v3` was run: analog-only negative can support no-risk only when
+high transferability, sufficiently exposed validated assays, and consistent records. The rule indeed reduced negative
+direction from 25 to 3, and the remaining 3 are all gold-aligned; but macro-F1 dropped to `0.5531`, Y=0 recall from `0.4658`
+to `0.3425`. The delta relative to clean-index v2 is `-0.0135` (95% CI `[-0.0882,+0.0612]`). This profile is retained only as a
+failed experimental lineage, not the default, and is not extended to full-flat/full-mechanism/test.
 
 ```text
 tools/chembl_tool/paper_experiments/audit_skin_direct_scope_retrieval.py
@@ -117,7 +134,7 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_val
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_supported_v2_valid_gpt_oss_120b_skin_direct_scope_v2_negative_transfer_v3/
 ```
 
-Scoped source/index 与 deterministic audit 的复现入口：
+Reproduction entry points for scoped source/index and deterministic audit:
 
 ```bash
 python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library \
@@ -132,10 +149,10 @@ python -m tools.chembl_tool.paper_experiments.build_starling_benchmark_indices \
 python -m tools.chembl_tool.paper_experiments.audit_skin_direct_scope_retrieval
 ```
 
-### Canonical direct/AOP partition（2026-08-13）
+### Canonical direct/AOP partition (2026-08-13)
 
-Current inference evidence 不再直接读取两个 acquisition parquet 后分别聚合，而是由版本化 canonical builder
-做互斥分区。Raw inputs 保持 immutable；每条 raw row 都写入 partition audit：
+Current inference evidence no longer directly reads the two acquisition parquets and aggregates separately; instead, a versioned canonical builder
+performs mutually exclusive partitioning. Raw inputs remain immutable; each raw row is written to the partition audit:
 
 ```text
 tools/chembl_tool/tasks/skin_reaction/canonical_starling_source.py
@@ -143,76 +160,75 @@ tools/chembl_tool/tasks/skin_reaction/build_canonical_starling_source.py
 data/artifacts/starling/skin_reaction/canonical_sources/canonical_sensitization_v3/
 ```
 
-合同为：validated LLNA/GPMT/Buehler/human patch/contact-allergy 等 final outcome 只进入 direct；MIE、KE2、
-KE3、KE4 experimental evidence 只进入 AOP；photo hazards、irritation/corrosion、prediction-only/in-silico、
-integrated/无法归类 endpoint 全部拒绝。AOP acquisition 中的 validated adverse-outcome rows 转入 canonical
-direct，而 raw source 和 gold benchmark 均不改写。Canonical full-source 有 54,596 direct records 和 11,434
-AOP records；AOP event 仅为 `MIE/KE2/KE3/KE4`，source-record direct/AOP overlap 为 0。全字段 scope audit 中
-photo、in-silico、integrated 以及 AOP irritation 命中均为 0；direct 中提及 irritation 的记录只在同时有明确
-sensitization/contact-allergy outcome anchor 时保留，irritation 本身不作为 label evidence。
+The contract is: validated LLNA/GPMT/Buehler/human patch/contact-allergy and other final outcomes only enter direct; MIE, KE2,
+KE3, KE4 experimental evidence only enter AOP; photo hazards, irritation/corrosion, prediction-only/in-silico,
+integrated/unclassifiable endpoints are all rejected. Validated adverse-outcome rows in the AOP acquisition are transferred to canonical
+direct, while raw sources and gold benchmarks are not rewritten. The canonical full-source has 54,596 direct records and 11,434
+AOP records; AOP events are only `MIE/KE2/KE3/KE4`, and source-record direct/AOP overlap is 0. In the full-field scope audit,
+photo, in-silico, integrated, and AOP irritation hits are all 0; records in direct that mention irritation are retained only when they also have an explicit
+sensitization/contact-allergy outcome anchor; irritation itself is not used as label evidence.
 
-对应 DeepSeek-v4-pro、MiniMol top-3、cosine >=0.3、scaffold-valid fresh run 均为 245/245、0 failure：direct
-macro-F1 `0.6410`，direct+AOP mechanism `0.6123`。Mechanism 相对 direct delta `-0.0287`，paired-bootstrap
-95% CI `[-0.0801,+0.0224]`；因此 canonical partition 是数据合同修复，不 promotion AOP mechanism 为默认
-性能条件。
+Corresponding DeepSeek-v4-pro, MiniMol top-3, cosine >=0.3, scaffold-valid fresh runs are all 245/245, 0 failures: direct
+macro-F1 `0.6410`, direct+AOP mechanism `0.6123`. Mechanism relative to direct delta `-0.0287`, paired-bootstrap
+95% CI `[-0.0801,+0.0224]`; therefore canonical partition is a data contract fix, not promoting AOP mechanism as the default
+performance condition.
 
-2026-08-14 E22 又测试了更严格的 outcome-calibrated multi-event causal cards：reference 必须有 direct outcome、
-MIE、至少一个 downstream KE，且方向一致。Heldout-filtered pool 只有 99 cards（89 positive、10 negative）。
-冻结的 64-query DeepSeek seed 合并回 245 条后 macro-F1 从 direct `0.6410` 降到 `0.6151`；10 flips 为
-2 beneficial/8 harmful。55/64 branch 被模型判为 low-transferability，48/64 neutral/unclear，证明“reference
-内部 causal 完整”仍不等于“对 query 可转移”。E22 不 promotion、不启动 BBB seed、不读取 Skin test；代码和
-trace diagnosis 见 `tools/chembl_tool/paper_experiments/skin_causal_panel_seed/` 与
-`outputs/paper/skin_causal_panel_seed_v1_scaffold_valid_deepseek_v4_pro/analysis/`。
+On 2026-08-14 E22 also tested stricter outcome-calibrated multi-event causal cards: reference must have direct outcome,
+MIE, at least one downstream KE, and consistent direction. The heldout-filtered pool has only 99 cards (89 positive, 10 negative).
+After merging the frozen 64-query DeepSeek seed back into 245 entries, macro-F1 dropped from direct `0.6410` to `0.6151`; 10 flips are
+2 beneficial/8 harmful. 55/64 branches were judged by the model as low-transferability, 48/64 neutral/unclear, proving that "causal completeness within reference"
+is not equivalent to "transferable to query". E22 is not promoted, BBB seed is not started, Skin test is not read; code and
+trace diagnosis are in `tools/chembl_tool/paper_experiments/skin_causal_panel_seed/` and
+`outputs/paper/skin_causal_panel_seed_v1_scaffold_valid_deepseek_v4_pro/analysis/`.
 
-### Paper-facing tier 的距离语义
+### Distance semantics of paper-facing tiers
 
-Skin 的 `Mechanism.tier_1` 至 `tier_4` 是逐步扩大的 evidence scope，不是像 oral bioavailability
-`F = Fa × Fg × Fh` 那样的层层因果分解：
+Skin's `Mechanism.tier_1` to `tier_4` are progressively expanding evidence scopes, not layer-by-layer causal decomposition like oral bioavailability
+`F = Fa × Fg × Fh`:
 
 ```text
 Tier 1:
-  direct sensitization/contact-allergy anchors；最接近当前 gold。
+  direct sensitization/contact-allergy anchors; closest to current gold.
 
 Tier 2:
-  sensitization AOP key events；与 gold 对齐，但单一 key event 不等于最终 clinical outcome。
+  sensitization AOP key events; aligned with gold, but a single key event is not equivalent to the final clinical outcome.
 
 Tier 3:
-  phototoxicity、irritation、corrosion、local skin damage；都是 skin hazard，
-  但不是当前 sensitization label 的组成机制。
+  phototoxicity, irritation, corrosion, local skin damage; all are skin hazards,
+  but not constituent mechanisms of the current sensitization label.
 
 Tier 4:
-  skin permeability、retention 和 exposure context；只改变 hazard 表现的 plausibility，
-  不能单独证明 sensitization。
+  skin permeability, retention, and exposure context; only change the plausibility of hazard manifestation,
+  cannot alone prove sensitization.
 ```
 
-因此从 direct 扩展到 full 并不是加入越来越完整的同一条 causal chain，而是加入越来越远、语义可能
-不完全对齐的 evidence。`experiment_config.py` 是 paper-facing source/group mapping 的代码真相。
+Therefore, expanding from direct to full is not adding increasingly complete parts of the same causal chain, but adding increasingly distant, possibly semantically
+misaligned evidence. `experiment_config.py` is the code truth for paper-facing source/group mapping.
 
 ### 2026-07-27 Starling retrieval degradation trace audit
 
-Deployment-visible parent-disjoint Starling 的 observed macro-F1：
+Observed macro-F1 for deployment-visible parent-disjoint Starling:
 
 | split | direct | full flat | full mechanism |
 |---|---:|---:|---:|
 | random | 0.643141 | 0.635255 | 0.629991 |
 | scaffold | 0.597332 | 0.592139 | 0.583574 |
 
-Full-flat 与 full-mechanism 的 LLM-visible evidence-row multiset 在 random/scaffold 均为 380/380
-逐 query exact matches；mechanism 没有获得额外 rows，只是把同一 union 拆成多个 branches 再做 final。
-Direct 到 mechanism 的 prediction flips 为：
+Full-flat and full-mechanism LLM-visible evidence-row multisets are exact matches per query at 380/380 for both random and scaffold; mechanism does not get extra rows, it only splits the same union into multiple branches before final.
+Prediction flips from direct to mechanism are:
 
 ```text
-random:   38 flips，17 corrected / 21 broken，net -4 correct
-scaffold: 29 flips，12 corrected / 17 broken，net -5 correct
+random:   38 flips, 17 corrected / 21 broken, net -4 correct
+scaffold: 29 flips, 12 corrected / 17 broken, net -5 correct
 ```
 
-Trace 中主要 failure modes 是：phototoxicity/irritation 被提升成 sensitization hazard、Tier 4 exposure
-support 被误当 risk、weak/distant AOP narrative 被 branch packaging 放大、broad mixed negatives 稀释
-较近 positive anchor，以及无 neighbor 时的 prompt-boundary instability。Starling random 的平均 logical
-tokens 从 direct 27.7k 增至 flat 77.4k、mechanism 96.1k；scaffold 为 26.9k、73.4k、91.6k。
-更多 tokens 表示更多 group calls/重复 synthesis，不等于更多 label-aligned information。
+Main failure modes in traces are: phototoxicity/irritation elevated to sensitization hazard, Tier 4 exposure
+support mistaken as risk, weak/distant AOP narrative amplified by branch packaging, broad mixed negatives diluting
+closer positive anchors, and prompt-boundary instability when no neighbors exist. Starling random average logical
+tokens increase from direct 27.7k to flat 77.4k and mechanism 96.1k; scaffold is 26.9k, 73.4k, 91.6k.
+More tokens mean more group calls/repeated synthesis, not more label-aligned information.
 
-完整量化和逐 flip trace：
+Full quantification and per-flip traces:
 
 ```text
 outputs/paper/skin_reaction_retrieval_diagnostic/agent_quant_summary.json
@@ -221,7 +237,7 @@ outputs/paper/skin_reaction_retrieval_diagnostic/agent_scaffold_flips.jsonl
 outputs/paper/skin_reaction_retrieval_diagnostic/report_trace_examples.csv
 ```
 
-当前 ChEMBL evidence 版本：
+Current ChEMBL evidence version:
 
 ```text
 assay screening raw:
@@ -238,7 +254,7 @@ evidence library:
   outputs/chembl_tool/tasks/skin_reaction/evidence_library/skin_reaction_neighbor_index.meta.json
 ```
 
-当前 v1 screening 状态：
+Current v1 screening status:
 
 ```text
 retained assays: 3,648
@@ -253,92 +269,92 @@ Tier 4 skin exposure modifiers: 62 assays
 Tier 5 weak/context background: 1,649 assays
 ```
 
-2026-07-12 的论文视图审计后，Tier 5 继续保留在 ChEMBL source library 中用于 endpoint/data-quality
-审计，但不再进入 paper-facing `full_flat` 或 `full_mechanism`，也不再创建独立 LLM reasoning branch。
-现有两套 82-sample mechanism run 中，Tier 5 各覆盖 42 个样本并产生 84 次 group call；identity-blind
-没有一次判为 useful，deployment-visible 只有一次判为 useful 且方向仍为 `neutral_or_unclear`，合计消耗
-约 816k tokens。它主要重复说明 generic cytotoxicity、efficacy 或 target binding 不能决定 Skin label，
-没有观察到强正向作用。
+After the paper-view audit on 2026-07-12, Tier 5 remains in the ChEMBL source library for endpoint/data-quality
+auditing, but no longer enters the paper-facing `full_flat` or `full_mechanism`, and no longer creates a separate LLM reasoning branch.
+In the existing two 82-sample mechanism runs, Tier 5 covers 42 samples each and produces 84 group calls; identity-blind
+never judged it useful, deployment-visible judged it useful only once and the direction was still `neutral_or_unclear`, consuming about
+816k tokens in total. It mainly repeats that generic cytotoxicity, efficacy, or target binding cannot determine the Skin label,
+with no strong positive effect observed.
 
-该删除只影响 reasoning view，不删除原始 Tier 5 evidence。有效 assay 的 concentration、vehicle、
-formulation、duration、light condition、skin model 等 context 必须继续随其所属 Tier 1-4 evidence row
-保留。2026-07-12 之前生成的 Skin full-mechanism exploratory runs 含 Tier 5，配置变更后的 run 必须使用
-新 batch ID，不能与旧 run 混合断点续跑。
+This deletion only affects the reasoning view; original Tier 5 evidence is not deleted. Context such as concentration, vehicle,
+formulation, duration, light condition, skin model, etc. for valid assays must continue to be retained with their respective Tier 1-4 evidence rows.
+Skin full-mechanism exploratory runs generated before 2026-07-12 include Tier 5; runs after the configuration change must use
+a new batch ID and cannot be mixed with old runs for checkpoint resume.
 
-## 当前代码入口和运行状态
+## Current code entry points and run status
 
-主要入口：
+Main entry points:
 
 ```text
 constants.py
-  label / prediction mapping。当前二分类约定：Y=1 -> risk，Y=0 -> no_risk。
+  label / prediction mapping. Current binary convention: Y=1 -> risk, Y=0 -> no_risk.
 
 rules.py
-  Skin_Reaction assay keyword、negative keyword、context/weak evidence family 配置。
+  Skin_Reaction assay keyword, negative keyword, context/weak evidence family configuration.
 
 scoring.py
-  assay screening / rescore 的保留、剔除和打分入口。
+  Entry point for assay screening / rescore retention, exclusion, and scoring.
 
 endpoint_groups.py
-  Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
+  Tier.endpoint_group, evidence_direction, evidence_strength, and endpoint assignment rules.
 
 experiment_config.py
-  Paper-facing direct、full_flat 和 4-family full_mechanism retrieval view；Tier 5 不进入 reasoning view。
+  Paper-facing direct, full_flat, and 4-family full_mechanism retrieval views; Tier 5 does not enter the reasoning view.
 
 screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py
-  thin wrappers，复用 common task workflow 生成候选 assay、activity evidence、health check 和 report。
+  Thin wrappers that reuse the common task workflow to generate candidate assays, activity evidence, health checks, and reports.
 
 build_evidence_library.py
-  从 v1 assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
+  Builds molecule-level evidence library and neighbor index from v1 assay candidates + activity evidence.
 
 build_starling_evidence_library.py
-  默认从 canonical direct/AOP parquet 构建 current 两-family evidence/index；历史 broad/scoped-v2 source
-  仍可通过显式 `--source-profile` 复现。默认构建会先验证 canonical manifest、partition reconciliation、
-  direct/AOP 零 overlap 和两个 parquet 的 SHA-256。Current 产物写入
-  `outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_canonical_v3/`。
-  heldout-parent filtered index 的默认目录名为 `skin_reaction_starling_sensitization_canonical_v3`；旧
-  `skin_reaction_starling_full` 只属于 historical source profile。
+  By default builds the current two-family evidence/index from canonical direct/AOP parquet; historical broad/scoped-v2 sources
+  can still be reproduced via explicit `--source-profile`. Default build first validates canonical manifest, partition reconciliation,
+  direct/AOP zero overlap, and SHA-256 of the two parquet files. Current artifacts are written to
+  `outputs/paper/molecular_evidence_agent/evidence/skin_reaction_starling_sensitization_canonical_v3/`.
+  The default directory name for the heldout-parent filtered index is `skin_reaction_starling_sensitization_canonical_v3`; the old
+  `skin_reaction_starling_full` belongs only to the historical source profile.
 
-  构建命令：
+  Build command:
   `python -m tools.chembl_tool.tasks.skin_reaction.build_starling_evidence_library --workers 32 --progress-every 10000`
 
 starling_benchmark.py
-  将 direct Skin_Reaction parquet 的 sensitization/contact-allergy records 转成可审计的
-  parent-level binary label；不把其它 skin mechanism families 当作 gold outcome。
+  Converts sensitization/contact-allergy records from the direct Skin_Reaction parquet into an auditable
+  parent-level binary label; does not treat other skin mechanism families as gold outcomes.
 
 retrieve_neighbors.py
-  旧 native runner 对每个 source-local Tier.endpoint_group 做 analog retrieval。历史 v1 benchmark 使用 top-k-per-group=3、
-  min-similarity=0.35；min-similarity=0 的排查显示 index/retrieval 正常，低覆盖主要来自
-  chemical-space similarity threshold。
+  Old native runner performs analog retrieval for each source-local Tier.endpoint_group. Historical v1 benchmark uses top-k-per-group=3,
+  min-similarity=0.35; investigation with min-similarity=0 shows index/retrieval is normal, low coverage mainly comes from
+  chemical-space similarity threshold.
 
 chembl_exact_context.py
-  exact-query ChEMBL context wrapper。benchmark 默认不开启，避免 retrospective leakage。
+  Exact-query ChEMBL context wrapper. Not enabled by default in benchmark to avoid retrospective leakage.
 
 run_reasoning_pipeline.py
-  旧 native 单分子 reasoning pipeline：retrieval prefetch、single-molecule branch、endpoint-group 并发 reasoning、
-  final summary、trace 保存，以及 --resume-final-from-run-dir final-only rerun。
+  Old native single-molecule reasoning pipeline: retrieval prefetch, single-molecule branch, endpoint-group concurrent reasoning,
+  final summary, trace saving, and --resume-final-from-run-dir final-only rerun.
 
 run_reasoning_batch.py
-  批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
-  runs 和 combined trace；支持 --skip-existing 断点续跑。
+  Batch reasoning wrapper. Reuses common reasoning_batch.py, outputs predictions, metrics, report, logs,
+  runs, and combined trace; supports --skip-existing checkpoint resume.
 ```
 
-## Starling Tier 1+2 final-only 诊断（2026-07-27）
+## Starling Tier 1+2 final-only diagnostics (2026-07-27)
 
-为检查较远的 Tier 3（phototoxicity/irritation/local damage）和 Tier 4（skin exposure）evidence 是否拖累
-sensitization gold label，已对 random/scaffold 的 deployment-visible parent-disjoint
-`starling_full_mechanism` 做 post-hoc scope ablation。该条件：
+To check whether distant Tier 3 (phototoxicity/irritation/local damage) and Tier 4 (skin exposure) evidence drags down the
+sensitization gold label, a post-hoc scope ablation was performed on the random/scaffold deployment-visible parent-disjoint
+`starling_full_mechanism`. The condition:
 
 ```text
-保留：冻结的 single-molecule output、Mechanism.tier_1、Mechanism.tier_2
-删除：Mechanism.tier_3、Mechanism.tier_4
-重跑：仅 final synthesis
-不变：query、retrieval policy、source artifacts、branch outputs、final prompt/schema、model/config
+Retain: frozen single-molecule output, Mechanism.tier_1, Mechanism.tier_2
+Delete: Mechanism.tier_3, Mechanism.tier_4
+Rerun: only final synthesis
+Unchanged: query, retrieval policy, source artifacts, branch outputs, final prompt/schema, model/config
 ```
 
-公共入口为 `reasoning_batch.py --final-only-source-batch ... --final-only-groups ...`。必须使用
-`--final-only-groups` 做 artifact 级过滤；普通 `--groups` 只控制 fresh pipeline 的 group reasoning，
-不能替代 resume-final 过滤。当前 batch：
+The public entry point is `reasoning_batch.py --final-only-source-batch ... --final-only-groups ...`. Must use
+`--final-only-groups` for artifact-level filtering; ordinary `--groups` only controls group reasoning for fresh pipelines,
+cannot replace resume-final filtering. Current batch:
 
 ```text
 random:
@@ -350,9 +366,9 @@ scaffold:
     skin_reaction/skin_reaction__starling_tier12_final_only/
 ```
 
-两套均为 380/380 successful、0 failure。逐样本检查确认 single output 与 source batch byte-identical，
-retained group outputs 与 source 中 Tier 1/2 子集完全相同，retrieval/group/trace 无 Tier 3/4 group 泄漏。
-结果：
+Both are 380/380 successful, 0 failures. Per-sample checks confirm single outputs are byte-identical to the source batch,
+retained group outputs are exactly the Tier 1/2 subset from the source, and retrieval/group/trace have no Tier 3/4 group leakage.
+Results:
 
 | split | condition | macro-F1 | accuracy | TN / FP / FN / TP |
 |---|---|---:|---:|---|
@@ -363,13 +379,13 @@ retained group outputs 与 source 中 Tier 1/2 子集完全相同，retrieval/gr
 | scaffold | Tier 1+2 final-only | 0.594785 | 0.626316 | 66 / 51 / 91 / 172 |
 | scaffold | full mechanism | 0.583574 | 0.621053 | 61 / 56 / 88 / 175 |
 
-相对 full mechanism，Tier 1+2 的 paired macro-F1 delta 为 random `+0.001013`
-（13 better / 13 worse；bootstrap 95% CI `[-0.026550, 0.028667]`）和 scaffold `+0.011211`
-（10 better / 8 worse；95% CI `[-0.009740, 0.033671]`）。它说明裁掉 Tier 3/4 在 scaffold 上有小幅
-point-estimate recovery，但两套区间均跨 0，且都没有超过 direct；该 test-driven post-hoc 结果只能作为
-failure diagnostic，不能当作新的预注册 primary condition。
+Relative to full mechanism, the paired macro-F1 delta for Tier 1+2 is random `+0.001013`
+(13 better / 13 worse; bootstrap 95% CI `[-0.026550, 0.028667]`) and scaffold `+0.011211`
+(10 better / 8 worse; 95% CI `[-0.009740, 0.033671]`). This indicates that cutting Tier 3/4 gives a small
+point-estimate recovery on scaffold, but both intervals cross 0 and neither exceeds direct; this test-driven post-hoc result can only serve as a
+failure diagnostic, not as a new pre-registered primary condition.
 
-历史 native v1 全量 test 结果（TDC lineage，不是当前 Starling split）：
+Historical native v1 full test results (TDC lineage, not the current Starling split):
 
 ```text
 batch:
@@ -399,13 +415,13 @@ metrics after idx00074 final-only rerun:
 
 ## Historical TRIM / DeepSeek properties-only baselines
 
-2026-06-29 跑了 3 个 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baseline，
-用于和当前 ChEMBL retrieval pipeline 做历史参考比较。它们不使用 TxAgent 当前
-`run_reasoning_pipeline.py`，也不使用 ChEMBL/Starling retrieval；prompt 来自
-`trim.reasoning.task_user_prompts.render_task_user_message`，tool mode 为 `properties`，
-唯一可见工具是 `get_mol_properties_and_fg`。数据 split 使用
-`/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/Skin_Reaction.jsonl`，
-与当前 Skin_Reaction test split 的 82 条样本口径一致。
+On 2026-06-29, 3 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baselines were run
+for historical reference comparison with the current ChEMBL retrieval pipeline. They do not use TxAgent's current
+`run_reasoning_pipeline.py`, nor ChEMBL/Starling retrieval; the prompt comes from
+`trim.reasoning.task_user_prompts.render_task_user_message`, tool mode is `properties`,
+the only visible tool is `get_mol_properties_and_fg`. The data split uses
+`/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/Skin_Reaction.jsonl`,
+consistent with the current Skin_Reaction test split of 82 samples.
 
 ```text
 identity allowed:
@@ -452,7 +468,7 @@ terpene autoxidation, squaric-acid-like dicarbonyl chemistry, and pyrazolone/pro
 The one useful memory-allowed flip was a nitroaromatic pro-hapten case.
 ```
 
-当前 v1 规则已主动排除：
+The current v1 rules actively exclude:
 
 ```text
 generic PubChem/Tox21 Nrf2 assays without HaCaT/keratinocyte/ARE-luc/sensitisation context
@@ -462,53 +478,53 @@ anti-inflammatory / dermatology efficacy in reconstructed human epidermis models
 permeation-enhancer assays where the tested molecule promotes another compound's transdermal permeation
 ```
 
-原始 task 定义已经按 source chain 确认为 binary LLNA skin sensitisation。Irritation、phototoxicity、
-local damage 和 skin exposure 仍只能作为 mechanistic/context evidence，不能被等同于 gold label。
+The original task definition has been confirmed by source chain as binary LLNA skin sensitisation. Irritation, phototoxicity,
+local damage, and skin exposure can only serve as mechanistic/context evidence and cannot be equated with the gold label.
 
-## Skin_Reaction source evidence 原则（legacy v1 ontology）
+## Skin_Reaction source evidence principles (legacy v1 ontology)
 
-以下分层解释 source library 收集了哪些皮肤相关证据，不定义当前 sensitization gold。ChEMBL 里有价值的
-source evidence 大致分成三条轴：
+The following layering explains what skin-related evidence the source library collects, not the current sensitization gold. Valuable
+source evidence in ChEMBL roughly falls into three axes:
 
 ```text
 hazard axis:
-  compound 是否能引发皮肤致敏、刺激、腐蚀、光毒性或局部细胞损伤。
+  whether the compound can cause skin sensitization, irritation, corrosion, phototoxicity, or local cell damage.
 
 mechanism axis:
-  是否命中皮肤致敏 AOP 中的关键事件，例如蛋白共价结合、角质细胞激活、树突状细胞激活。
+  whether it hits key events in the skin sensitization AOP, such as protein covalent binding, keratinocyte activation, dendritic cell activation.
 
 exposure axis:
-  compound 是否能进入、滞留或穿透皮肤，从而让 hazard 有机会表现出来。
+  whether the compound can enter, retain, or penetrate the skin, allowing the hazard to manifest.
 ```
 
-重要约束：
+Important constraints:
 
 ```text
-1. skin permeability / dermal absorption 不是 skin reaction hazard。
-   它只能增强或削弱 exposure plausibility，不能单独支持 Y=1。
+1. Skin permeability / dermal absorption is not a skin reaction hazard.
+   It can only enhance or weaken exposure plausibility and cannot alone support Y=1.
 
-2. general cytotoxicity 不是 skin reaction hazard。
-   非皮肤细胞系的 CC50 / GI50 / viability 只能作为 weak background，不应单独决定 positive。
+2. General cytotoxicity is not a skin reaction hazard.
+   CC50 / GI50 / viability in non-skin cell lines can only serve as weak background and should not alone determine positive.
 
-3. dermatology efficacy 不是 skin reaction hazard。
-   抗炎、抗菌、抗银屑病、抗痤疮、melanoma efficacy、skin whitening、wound healing 等治疗性 assay
-   不能当作 adverse skin reaction evidence。
+3. Dermatology efficacy is not a skin reaction hazard.
+   Therapeutic assays such as anti-inflammatory, antibacterial, anti-psoriasis, anti-acne, melanoma efficacy, skin whitening, wound healing
+   cannot be treated as adverse skin reaction evidence.
 
-4. target binding / enzyme inhibition 通常不是 skin reaction evidence。
-   除非 assay description 明确指向 skin sensitisation、irritation、phototoxicity、keratinocyte /
-   dendritic-cell activation、haptenation 或 dermal toxicity。
+4. Target binding / enzyme inhibition is usually not skin reaction evidence.
+   Unless the assay description explicitly points to skin sensitisation, irritation, phototoxicity, keratinocyte /
+   dendritic-cell activation, haptenation, or dermal toxicity.
 
-5. validated skin sensitisation AOP assays 的一致阳性 evidence 比单个弱 cytotoxicity assay 更重要。
-   DPRA/ADRA/kDPRA、KeratinoSens/LuSens/EpiSensA、h-CLAT/U-SENS/IL-8 Luc/GARDskin 对应不同
-   key event；多 key-event 一致时 evidence strength 应上调。
+5. Consistent positive evidence from validated skin sensitisation AOP assays is more important than a single weak cytotoxicity assay.
+   DPRA/ADRA/kDPRA, KeratinoSens/LuSens/EpiSensA, h-CLAT/U-SENS/IL-8 Luc/GARDskin correspond to different
+   key events; when multiple key events agree, evidence strength should be upgraded.
 ```
 
 ## Evidence families and endpoint groups
 
-Skin_Reaction 不应照搬 BBB / Bioavailability 的 tier 语义。这里的 `assay_tier` 应表示 skin-reaction
-reasoning 价值，而不是体内/体外距离的简单排序。
+Skin_Reaction should not copy the tier semantics of BBB / Bioavailability. Here `assay_tier` should represent skin-reaction
+reasoning value, not a simple ranking of in vivo/in vitro distance.
 
-建议初版分层：
+Suggested initial layering:
 
 ```text
 Tier 1: direct skin reaction anchors
@@ -520,7 +536,7 @@ Tier 5: weak or context-dependent background
 
 ### Tier 1: direct skin reaction anchors
 
-这些是最接近 Skin_Reaction label 的 evidence。命中时应优先保留。
+These are the evidence closest to the Skin_Reaction label. Prioritize retention when hit.
 
 Endpoint groups:
 
@@ -1096,7 +1112,7 @@ context_dependent
 Derived fields such as `endpoint_group_reason`, `evidence_direction`, and `evidence_strength` are for debug and audit. They
 should not be sent directly to the reasoning LLM as if they were raw evidence.
 
-## LLM payload rules 与已知 legacy mismatch
+## LLM payload rules and known legacy mismatch
 
 The LLM payload should include:
 
@@ -1130,8 +1146,7 @@ evidence_reason
 assay_reason
 ```
 
-当前 legacy group/final prompt 保留下面的宽 skin-reaction distinctions 以复现历史结果；其中第 3/4 类不得在
-current `sensitization_aligned_v2` 里直接支持 binary label：
+The current legacy group/final prompt retains the following broad skin-reaction distinctions to reproduce historical results; among them, categories 3/4 must not directly support the binary label in the current `sensitization_aligned_v2`:
 
 ```text
 1. Direct human/LLNA/validated skin reaction evidence can support or oppose final label.
@@ -1144,9 +1159,9 @@ current `sensitization_aligned_v2` 里直接支持 binary label：
 
 ## Reasoning schema expectations
 
-以下是 current `sensitization_aligned_v2` contract；不得用下方 legacy 字段解释新 run。
+The following is the current `sensitization_aligned_v2` contract; do not use the legacy fields below to interpret new runs.
 
-Single-molecule branch：
+Single-molecule branch:
 
 ```text
 label_scope: skin_sensitization_contact_allergy.v2
@@ -1158,7 +1173,7 @@ confidence
 reasoning_summary
 ```
 
-Group-level branch：
+Group-level branch:
 
 ```text
 label_scope: skin_sensitization_contact_allergy.v2
@@ -1172,7 +1187,7 @@ key_evidence[].effect_on_sensitization_reasoning
 caveats
 ```
 
-Final branch：
+Final branch:
 
 ```text
 label_scope: skin_sensitization_contact_allergy.v2
@@ -1189,9 +1204,9 @@ evidence_gaps
 final_summary
 ```
 
-下面只记录 `legacy_skin_reaction_v1` reproduction schema。
+Below only records the `legacy_skin_reaction_v1` reproduction schema.
 
-Legacy single-molecule branch：
+Legacy single-molecule branch:
 
 ```text
 reactive_or_haptenation_prior
@@ -1202,7 +1217,7 @@ irritation_or_corrosion_structural_prior
 physicochemical_exposure_prior
 ```
 
-Legacy group-level output：
+Legacy group-level output:
 
 ```text
 useful_for_skin_reaction_reasoning
@@ -1214,7 +1229,7 @@ key_evidence[].effect_on_skin_reaction_reasoning
 caveats
 ```
 
-Legacy final output：
+Legacy final output:
 
 ```text
 skin_reaction_prediction: risk | no_risk

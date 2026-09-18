@@ -1,0 +1,6 @@
+guidance: >-
+  L1 is the union of the top five Morgan and top five assay-transfer
+  molecule panels; For L2 and beyond, evidence is ranked by assay transferability to the query molecule,
+  which can surface records less-similar in structure but potentially more similar in activity; use the
+  score as a transferability estimate. L5 is Morgan-ranked, however, which uses structural similarity rather than assay transferability; use the score as a structural similarity estimate.
+

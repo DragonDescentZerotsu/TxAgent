@@ -1,0 +1,18 @@
+{
+  "schema_version": "progressive_prompt_cleanup.v1",
+  "cutoff": "2026-09-07T00:00:00-04:00",
+  "receipt_rule": "Retain bundles referenced by run receipts from 2026-09-07 through 2026-09-10; always retain the active bundle.",
+  "active_bundle": "reranked_progressive_v8",
+  "recent_receipt_versions": ["reranked_progressive_v8"],
+  "repository_commit_before_cleanup": "45663daaad7fd8392a0254bd78793a9e0a581a7a",
+  "removed_tree_hashes": {
+    "context_records": {"files": 25, "sha256": "32554bfbc4cf2caf3be22cbdea0532714294546aac39d45aaa1d2c075c77f0ce"},
+    "legacy": {"files": 372, "sha256": "ec9d403f7b20c3e7d72d82d5f4f1b550ede089e88b2878a75940baa6f7acd54c"},
+    "reranked_progressive_v2": {"files": 12, "sha256": "5f3d96b393c6d5de66581abc5277232b1c156a4fa9a71bf8853190b1065dd083"},
+    "reranked_progressive_v3": {"files": 18, "sha256": "cd6d1867ac4ea14d25c072fb7988236f378438f1444d1b16d0938d3ac92e777b"},
+    "reranked_progressive_v4": {"files": 12, "sha256": "03a09573de33bd4ed8b369c90102395ebe0882dfb7d06d47ae16b8093fd8de1a"},
+    "reranked_progressive_v5": {"files": 18, "sha256": "c20ebab9f342a3cb5d20e7bd3fb47fce9534bf34ae1bee5f36b0c7e8876e04a0"},
+    "reranked_progressive_v6": {"files": 18, "sha256": "1738e2200727fde6485d1977cee1c2aa014cc4cf7a980f49c0ce38fe35cf56da"},
+    "reranked_progressive_v7": {"files": 18, "sha256": "17372b99f3915a348dbc27915cd30a75c186626a95ec945783f35ec7513f1a87"}
+  }
+}

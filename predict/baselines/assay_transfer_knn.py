@@ -16,7 +16,7 @@ from typing import Any, Sequence
 import pyarrow.parquet as pq
 from sklearn.metrics import accuracy_score, f1_score
 
-from predict.retrieval.assay_reranking.runtime import CACHE_ROOT, file_sha256
+from predict.retrieval.assay_reranking.runtime import cache_profile_root, file_sha256
 from predict.retrieval.assay_reranking.v9 import (
     RANKING_SCHEMA_VERSION,
     model_profile,
@@ -27,7 +27,7 @@ from predict.utils.json import atomic_output_path, write_json_atomic, write_json
 
 TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 DEFAULT_WIDTHS = (25, 50, 75, 100, 200, 500)
-DEFAULT_CACHE_ROOT = CACHE_ROOT / "v9_direct_gold_morgan500"
+DEFAULT_CACHE_ROOT = cache_profile_root("v9_direct_gold_morgan500")
 
 
 def select_neighbors(

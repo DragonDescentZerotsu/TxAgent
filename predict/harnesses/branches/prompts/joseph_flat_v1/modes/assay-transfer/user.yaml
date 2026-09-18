@@ -1,0 +1,5 @@
+guidance: >-
+  Evidence is ranked by assay transferability to the query molecule,
+  which can surface records less-similar in structure but potentially more similar in activity; use the
+  score as a transferability estimate. Records at L1-L4 and oral L6 are ranked by assay transferability; L5 is
+  Morgan-ranked, however, which uses structural similarity rather than assay transferability; use the score as a structural similarity estimate.

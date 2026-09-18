@@ -1,0 +1,8 @@
+root ::= {% for molecule in molecules %}molecule_{{ molecule.number }} {% endfor %}global_synthesis "</think>\n" answer
+{% for molecule in molecules %}molecule_{{ molecule.number }} ::= "MOLECULE {{ molecule.number }} | RECORDS {{ molecule.record_ids }}\nTRANSFERABILITY: " transferability "\nEVIDENCE DIRECTION: " evidence_direction "\nRATIONALE: " molecule_rationale
+{% endfor %}transferability ::= "high" | "moderate" | "low" | "negligible"
+evidence_direction ::= "supports positive" | "supports negative" | "mixed" | "uninformative"
+molecule_rationale ::= [^<\r\n]{1,1200} "\n"
+global_synthesis ::= "GLOBAL SYNTHESIS\nEVIDENCE WEIGHTING: " global_paragraph "THRESHOLD CHECK: " global_paragraph "DECISION RATIONALE: " global_paragraph
+global_paragraph ::= [^<\r\n]{1,4000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+

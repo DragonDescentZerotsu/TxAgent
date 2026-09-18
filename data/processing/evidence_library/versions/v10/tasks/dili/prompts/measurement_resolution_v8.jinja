@@ -1,0 +1,41 @@
+Resolve at most one source-reported measurement from each DILI evidence row. Return JSON only and do not explain your work.
+
+Input is {"rows":[...]} with at most {{ batch_size }} rows from the same source. Each row contains `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return exactly one result per input id, in input order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<complete source-supported unit or named metric>"}]}]}
+
+Only `ok` carries one measurement. Every other status carries `[]`. Resolve rows independently. Use `ok` only when both the focal value and its complete unit or named metric are explicit in the row.
+
+## Focal value
+
+`measurement_text` is the cleaned projection of the selected result from `{{ measurement_field }}`{% if unit_field %}; `unit_text` projects `{{ unit_field }}`{% endif %}. The value must come from `measurement_text`. A bare number in `measurement_text` is intentional: use the other visible source fields to identify its measurement basis. Those fields may distinguish the selected value from uncertainty or comparators and state its unit or named metric, but may not donate a different value.
+
+`canonical_endpoint_name` is only an opaque batching identity. Do not interpret it, map it, or use it as evidence.
+
+Never select an administered dose or concentration, duration, timepoint, sample size, identifier, p-value, uncertainty, control value, comparator value, or another incidental number. Do not calculate, convert, average, or infer an unstated scale.
+
+## Status
+
+Use `ok` for one finite absolute point with a complete physical unit, denominator, labeled count, or named dimensionless metric. An absolute treated-group value remains `ok` when the row also describes its control, effect direction, or change. An analyte/housekeeper ratio and a biochemical ratio are absolute named metrics even when compared with a control.
+
+Use `relative` only when the selected number itself is a difference, fold change, percent change, percent inhibition, percent of control or vehicle, or another value defined relative to an experiment-specific referent. A comparison accompanying an absolute point does not make the point relative. Normalization that defines a named measurement such as `Marker/GAPDH expression ratio` is not an experiment-specific control comparison.
+
+Use `unsure` for a bound, range, unresolved or conflicting unit, several equally focal results, or conflicting source statements. A single central point with only SD, SE, or a confidence interval may still be `ok`. Use `unavailable` when the focal outcome is absent or qualitative, or when the only number is a selected condition.
+
+## Complete unit or named metric
+
+{% if has_unit_column %}When `unit_text` is nonempty, copy it exactly. A power-of-ten printed in `measurement_text` stays before it. When `unit_text` is empty, use another visible field only when it explicitly describes this selected result.
+{% else %}Use the complete unit or named metric explicitly tied to the selected result in `measurement_text` or another visible source field.
+{% endif %}
+
+Do not shorten or paraphrase a measurement basis. In particular:
+
+- Copy a complete physical unit and denominator. For a printed percentage, name what is counted: `% of viable cells`, `% of radioactivity`, or `percent of animals`; omit treatment, time, threshold, and comparator phrases from the unit.
+- Copy a complete named ratio, coefficient, index, grade, or score. Return `GSH/GSSG ratio` or `phagocytic index K`, never bare `ratio`, `index`, or `activity`.
+- For a normalized expression value, include the measured marker, normalizer, and scale, such as `Marker/GAPDH expression ratio`.
+- For a cell count, include the population label, such as `Marker+ macrophages`; never return only `cells`.
+- A generic outcome name such as `GSH level`, `signal intensity`, `fluorescence intensity`, or `activity` is not a unit unless the source states a complete scale.
+
+Return the focal value as a finite plain decimal with an optional sign. Remove valid thousands separators. Split scientific notation into its coefficient and printed scale: `5e-06 mol/L` becomes measurement `5` and unit `10^-6 mol/L`. Never apply or reverse the scale. Preserve source symbols such as `µ`.
+
+Before returning JSON, verify each `ok`: the value is the selected outcome in `measurement_text`; the value itself is absolute; the full unit or metric is supported by the same row; and the measurement is one plain decimal. Otherwise choose a non-ok status with `[]`.

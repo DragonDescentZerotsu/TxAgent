@@ -1,0 +1,14 @@
+{
+  "bbb_martins": {
+    "evidence_family": "direct_brain_exposure",
+    "description": "Direct measured brain or CNS exposure outcomes eligible for the BBB outcome layer."
+  },
+  "bioavailability_ma": {
+    "evidence_family": "direct_oral_bioavailability",
+    "description": "Direct absolute oral bioavailability outcomes; closest to the F >= 20% benchmark label."
+  },
+  "skin_reaction": {
+    "evidence_family": "direct_skin_sensitization",
+    "description": "Direct validated skin-sensitization or contact-allergy outcomes; closest to the conditioned benchmark label."
+  }
+}

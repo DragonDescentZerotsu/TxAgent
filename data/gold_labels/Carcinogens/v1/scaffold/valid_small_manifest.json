@@ -1,0 +1,43 @@
+{
+  "contract": "valid_small.scaffold_group_selection.v2",
+  "task": "carcinogens",
+  "selection": {
+    "method": "whole_scaffold_dynamic_program",
+    "objective_order": [
+      "minimum_absolute_row_count_error",
+      "maximum_distinct_parent_count",
+      "minimum_validation_label_ratio_error",
+      "stable_scaffold_hash_tie_break"
+    ],
+    "target_rows": 100,
+    "actual_rows": 100,
+    "row_count_error": 0,
+    "seed": 20260723
+  },
+  "source": {
+    "valid": "data/gold_labels/Carcinogens/v1/scaffold/valid.jsonl",
+    "valid_sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a",
+    "valid_molecule_condition_labels": "data/gold_labels/Carcinogens/v1/scaffold/valid_molecule_condition_labels.jsonl",
+    "valid_molecule_condition_labels_sha256": "1999f4ccd227998a5d9e2b37ec215411564ed82fa2f28ac196ee3adc3e9ae42e",
+    "rows": 469,
+    "label_counts": {
+      "0": 111,
+      "1": 358
+    }
+  },
+  "valid_small": {
+    "path": "data/gold_labels/Carcinogens/v1/scaffold/valid_small.jsonl",
+    "sha256": "533b2753d9496fe5bbe25b51587616fa5b48af683de97d1471cc3bdb92e181c2",
+    "molecule_condition_labels_path": "data/gold_labels/Carcinogens/v1/scaffold/valid_small_molecule_condition_labels.jsonl",
+    "molecule_condition_labels_sha256": "9edf4394e6b9103d584c8acf1c75cae080f2db00a8d44ffca9440e6819ca0e67",
+    "rows": 100,
+    "distinct_parents": 98,
+    "distinct_scaffolds": 88,
+    "label_counts": {
+      "0": 24,
+      "1": 76
+    },
+    "label_ratio_absolute_error": 0.0033262260127931986,
+    "scaffold_overlap_with_valid_remainder": 0
+  }
+}

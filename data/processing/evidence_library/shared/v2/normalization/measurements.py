@@ -586,6 +586,16 @@ def normalize_cleaned_records(
             )
         if exact_authoritative:
             mapped = exact_mapping_status == "mapped"
+            if mapped and (
+                cleaned.get("canonical_measurement_text")
+                != cleaned.get("resolved_measurement_text")
+                or cleaned.get("canonical_unit_text")
+                != cleaned.get("resolved_unit_text")
+            ):
+                raise ValueError(
+                    "Stage-02 canonicalization received a measurement/unit pair "
+                    "that differs from finalized Stage 01"
+                )
             unresolved_status = (
                 f"exact_unit_{exact_mapping_status}"
                 if resolution_status == "ok" and exact_mapping_status
@@ -595,8 +605,8 @@ def normalize_cleaned_records(
                 float(cleaned["resolved_scalar_value"]) if mapped else None
             )
             pair = MeasurementPair(
-                cleaned.get("resolved_measurement_text") if mapped else None,
-                cleaned.get("resolved_unit_text") if mapped else None,
+                cleaned.get("canonical_measurement_text") if mapped else None,
+                cleaned.get("canonical_unit_text") if mapped else None,
                 "exact_unit_mapping" if mapped else unresolved_status,
             )
             parsed = ParsedPoint(

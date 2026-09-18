@@ -1,0 +1,10 @@
+{
+  "bbb_martins": {
+    "evidence_family": "passive_permeability",
+    "description": "PAMPA or epithelial-cell permeability evidence, including predicted passive permeability readouts retained with their original uncertainty."
+  },
+  "bioavailability_ma": {
+    "evidence_family": "oral_auc_cmax_exposure",
+    "description": "Oral AUC or Cmax exposure evidence; indirect because exposure also depends on dose, formulation, clearance, and sampling."
+  }
+}

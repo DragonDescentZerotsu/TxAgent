@@ -263,12 +263,18 @@ def test_endpoint_concept_maps_cover_every_frozen_source_endpoint():
             )
 
     assert endpoint_concept("oral_exposure", "AUCINF") == "auc_0_infinity"
+    assert (
+        endpoint_concept("oral_exposure", "AUCINF", "aucinf")
+        == "auc_0_infinity"
+    )
     assert endpoint_concept("oral_exposure", "AUC0_∞") == "auc_0_infinity"
     assert endpoint_concept("fa", "dissolution_efficiency") == (
         "dissolution_efficiency"
     )
     with pytest.raises(ValueError, match="unreviewed endpoint concept"):
         endpoint_concept("oral_exposure", "new_unreviewed_auc")
+    with pytest.raises(ValueError, match="unreviewed endpoint concept"):
+        endpoint_concept("oral_exposure", "AUCINF", "wrong_stage1_name")
 
 
 def test_scientifically_related_endpoints_remain_distinct():

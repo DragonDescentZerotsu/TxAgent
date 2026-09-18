@@ -1,0 +1,52 @@
+{
+  "version": "gold_v1_voter_contract.v1",
+  "status": "complete",
+  "task": "bioavailability_ma",
+  "policy": {
+    "gold_release": "v1",
+    "l1_visibility": "all physical members of published-card vote units",
+    "aggregation": "each vote_id contributes exactly once",
+    "physical_member_weight": "1 / physical_member_count",
+    "structure_identity": "frozen from the Gold-v1-compatible V10 Stage 1"
+  },
+  "counts": {
+    "gold_label_cards": 2489,
+    "vote_units": 18853,
+    "physical_members": 19479
+  },
+  "inputs": {
+    "voter_lineage": {
+      "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bioavailability_ma.voter_lineage.jsonl",
+      "sha256": "2a5ad4a37f95a1d42fee3b9c37f1a4d92ea799656a0828e3ee9261560eb7ca26"
+    },
+    "frozen_stage1_root": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/bioavailability_ma/v10",
+    "gold_split_files": {
+      "train": {
+        "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
+        "sha256": "61d061b82ec80a6094527543bee6a7e540271a0f9d24ab7484d1439e53bfa097"
+      },
+      "valid": {
+        "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/valid_molecule_condition_labels.jsonl",
+        "sha256": "a04cf813c136b2b7d4363d7651738fee73a01def93c95f93ac059bc94383ea7d"
+      },
+      "test": {
+        "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/test_molecule_condition_labels.jsonl",
+        "sha256": "3e0b83798135f8d26f13b650a97238c966ff219bf329e39d595cbd2d79f7f52e"
+      }
+    }
+  },
+  "outputs": {
+    "voter_membership": {
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/voter_membership.parquet",
+      "sha256": "ebb432dc27c1f36e7c428a8d19daa3506e3abae8e0461f0d960be2124189628a"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/vote_units.parquet",
+      "sha256": "1ee7381340d15495413b5d607d13cf0bce6fbd3883a1773093bb87a45e0d3479"
+    },
+    "gold_label_record_index": {
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "1adc0b2c1bbe63ccbc4ae7d7f14a203a5649055612f03503beb84becedac0790"
+    }
+  }
+}

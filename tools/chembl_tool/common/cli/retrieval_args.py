@@ -1,7 +1,7 @@
-"""Compatibility import for predict.harnesses.branches.retrieval_cli."""
+"""Compatibility import for the canonical branch runner CLI arguments."""
 
-from predict.harnesses.branches.retrieval_cli import *  # noqa: F401,F403
-from predict.harnesses.branches.retrieval_cli import __dict__ as _implementation
+from predict.harnesses.branches.runner import *  # noqa: F401,F403
+from predict.harnesses.branches.runner import __dict__ as _implementation
 
 
 def __getattr__(name: str):

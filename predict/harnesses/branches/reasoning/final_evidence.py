@@ -14,7 +14,7 @@ import hashlib
 from typing import Any, Mapping
 
 from predict.llm_io.evidence import evidence_for_llm
-from predict.harnesses.branches.reasoning.identity_blind import (
+from predict.harnesses.branches.visibility import (
     prepare_identity_blind_final_retrieval,
     prepare_prefetched_final_retrieval,
     prepare_reasoning_retrieval,

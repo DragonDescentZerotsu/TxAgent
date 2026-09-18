@@ -15,7 +15,12 @@ TASK_DIRECTORIES = {
     "bbb_martins": "BBB_Martins",
     "bioavailability_ma": "Bioavailability_Ma",
     "skin_reaction": "Skin_Reaction",
+    "ames": "Ames",
+    "dili": "DILI",
+    "carcinogens": "Carcinogens",
 }
+
+SPLITS = frozenset({"train", "valid", "valid_small", "test"})
 
 
 def task_root(task: str) -> Path:
@@ -37,6 +42,6 @@ def task_root(task: str) -> Path:
 
 
 def split_path(task: str, split: str) -> Path:
-    if split not in {"train", "valid", "test"}:
+    if split not in SPLITS:
         raise ValueError(f"Unknown split {split!r}")
     return task_root(task) / f"{split}.jsonl"

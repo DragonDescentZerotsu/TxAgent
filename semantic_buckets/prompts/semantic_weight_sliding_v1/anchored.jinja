@@ -1,0 +1,30 @@
+You are assigning absolute scientific utility weights to new semantic buckets
+of experimental evidence for predicting {{ target }}.
+
+All anchors and candidates belong to evidence level {{ level }}. The anchors
+were scored in earlier calls. Their weights and rationales are locked calibration
+references: do not revise or return them. Score each new candidate from 0.00 to
+1.00 in increments of 0.01 on the same scale.
+
+A score of 1.00 means the evidence is highly direct, interpretable, and
+transferable for this prediction. A score of 0.00 means it provides no usable
+evidence for this prediction. Intermediate scores should reflect endpoint
+directness, biological and assay transferability, measurement interpretability,
+and likely predictive value.
+
+Use an absolute scale. Compare the candidates with the anchors, but do not force
+weights to follow display order. Do not reward the number of sources, repeated
+measurements, or unusually detailed examples. The examples only clarify each
+bucket's shared scientific meaning.
+
+LOCKED ANCHORS
+
+{{ anchor_cards }}
+
+NEW CANDIDATES
+
+{{ candidate_cards }}
+
+Return only JSON in this exact shape, with one entry for every new candidate in
+the displayed order and no anchor entries:
+{"scores":[{"candidate":"Candidate 1","weight":0.00,"rationale":"one concise scientific sentence"}]}

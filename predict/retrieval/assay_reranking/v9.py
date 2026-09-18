@@ -1,4 +1,4 @@
-"""Render V9 prompts and build the strict current-gold Morgan-100 cache."""
+"""Render direct-gold prompts and build strict Morgan candidate caches."""
 
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from rdkit import DataStructs
 
 from predict.retrieval.assay_reranking.runtime import (
-    CACHE_ROOT,
     CachedAssayReranker,
     PromptTask,
     SCORING_CONTRACT_VERSION,
@@ -23,6 +22,7 @@ from predict.retrieval.assay_reranking.runtime import (
     probability_from_logits,
     resolve_model_snapshot,
     score_prompt_batch,
+    cache_profile_root,
 )
 from predict.retrieval.policies import (
     decide_candidate,
@@ -38,6 +38,9 @@ RANKING_PROFILE_NAME = "v9_direct_gold_morgan100"
 TEMPLATE_PROFILE = "v9_context_conditioned"
 QUERY_CONTEXT_POLICY = "copy_gold_condition_context_value_hidden.v9"
 RANKING_SCHEMA_VERSION = "context_conditioned_gold_valid_ranking_cache.v2"
+DIRECT_LINEAGES = (
+    "v9", "v10_3", "v10_3_best", "v10_3_best_parent", "v10_4",
+)
 OLD_RANKING_ROOT = Path(
     "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/results/"
     "starling_benchmark/2026-08-31/context_conditioned_v1_gold_valid_top75_direct"
@@ -49,15 +52,26 @@ GOLD_TASK_NAMES = {
 }
 
 
-def model_profile(task_id: str) -> dict[str, Any]:
-    return load_model_profile(task_id, "direct")
+def model_profile(task_id: str, lineage: str = "v9") -> dict[str, Any]:
+    if lineage not in DIRECT_LINEAGES:
+        raise ValueError(f"Unknown direct-gold lineage: {lineage}")
+    if lineage in {"v10_3_best", "v10_3_best_parent"}:
+        role = {
+            "bbb_martins": "direct_v10_3",
+            "bioavailability_ma": "direct_v10_3_0_2",
+        }.get(task_id)
+        if role is None:
+            raise ValueError(f"No V10.3 best direct-gold model for {task_id}")
+    else:
+        role = "direct" if lineage == "v9" else f"direct_{lineage}"
+    return load_model_profile(task_id, role)
 
 
 def default_cache_paths(
     task_id: str, *, split: str = "scaffold", subset: str = "valid"
 ) -> dict[str, str]:
     model_profile(task_id)
-    root = CACHE_ROOT / PROFILE_NAME / task_id / split / subset
+    root = cache_profile_root(PROFILE_NAME) / task_id / split / subset
     return {
         "catalog": "",
         "candidate_manifest": str(root / "candidates.jsonl"),
@@ -72,12 +86,20 @@ def ranking_cache_dir(
     pool_size: int = 100,
     split: str = "scaffold",
     subset: str = "valid",
+    lineage: str = "v9",
 ) -> Path:
-    model_profile(task_id)
+    model_profile(task_id, lineage)
     if pool_size <= 0:
         raise ValueError("Morgan pool size must be positive")
-    profile = f"v9_direct_gold_morgan{pool_size}"
-    return CACHE_ROOT / profile / task_id / split / subset
+    if lineage == "v9":
+        profile = f"v9_direct_gold_morgan{pool_size}"
+    elif lineage == "v10_3_best":
+        profile = f"v10_3_best_scaffold_morgan{pool_size}_v1"
+    elif lineage == "v10_3_best_parent":
+        profile = f"v10_3_best_parent_morgan{pool_size}_v1"
+    else:
+        profile = f"{lineage}_direct_gold_morgan{pool_size}_v1"
+    return cache_profile_root(profile) / task_id / split / subset
 
 
 def verify_vendored_assets() -> dict[str, str]:
@@ -236,16 +258,95 @@ def _write_parquet(path: Path, rows: list[dict[str, Any]]) -> None:
     temporary.replace(path)
 
 
-def _gold_paths(task_id: str) -> tuple[Path, Path]:
+def _gold_paths(
+    task_id: str, subset: str = "valid", lineage: str = "v9",
+) -> tuple[Path, Path]:
     try:
         task_name = GOLD_TASK_NAMES[task_id]
     except KeyError as exc:
         raise ValueError(f"Unknown V9 direct task: {task_id}") from exc
-    root = Path("data/gold_labels") / task_name / "v1" / "scaffold"
+    release = "v2" if lineage == "v10_4" else "v1"
+    root = Path("data/gold_labels") / task_name / release / "scaffold"
     return (
         root / "train_molecule_condition_labels.jsonl",
-        root / "valid_molecule_condition_labels.jsonl",
+        root / f"{subset}_molecule_condition_labels.jsonl",
     )
+
+
+def reference_provenance(task_id: str, lineage: str = "v9") -> dict[str, Any]:
+    """Pin the frozen label adapter behind each official-gold lineage."""
+    if lineage == "v9":
+        return {}
+    model_profile(task_id, lineage)
+    modules = {
+        "bbb_martins": (
+            "bbb_experimental_meaningful_cns_access_gold.v2",
+            Path("data/processing/evidence_library/versions/v10/tasks/bbb_martins/"
+                 "experimental_meaningful_cns_access_benchmark.py"),
+        ),
+        "bioavailability_ma": (
+            "bioavailability_canonical_direct.v2",
+            Path("data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/"
+                 "starling_benchmark.py"),
+        ),
+    }
+    contract, adapter = modules[task_id]
+    release = "v2" if lineage == "v10_4" else "v1"
+    summary = (Path("data/gold_labels") / GOLD_TASK_NAMES[task_id]
+               / release / "scaffold/summary.json")
+    provenance = {
+        "candidate_source": "official_conditioned_gold_train_contexts",
+        "gold_release": release,
+        "label_contract": contract,
+        "label_adapter": {"path": str(adapter.resolve()), "sha256": file_sha256(adapter)},
+        "benchmark_summary": {"path": str(summary.resolve()), "sha256": file_sha256(summary)},
+        "upstream_prompt_sha256": verify_vendored_assets()["prompt.jinja"],
+    }
+    if lineage in {"v10_3_best", "v10_3_best_parent"} and task_id == "bioavailability_ma":
+        manifest = (
+            Path(__file__).resolve().parents[4] / "starling_assay_transfer"
+            / "assay_transfer/context_conditioned/artifacts/v10/hf/v10_3_0_2"
+            / "Bioavailability_Ma/mixed_continuous/manifest.json"
+        )
+        payload = json.loads(manifest.read_text(encoding="utf-8"))
+        expected = {
+            "direct": "frozen_v10.3",
+            "indirect": "canonical_first_atomic_pair.v10.3",
+        }
+        if payload.get("prompt_contract") != expected:
+            raise ValueError(f"Unexpected V10.3.0.2 prompt contract: {manifest}")
+        display = payload.get("measurement_display") or {}
+        if (display.get("policy"), display.get("fallback")) != (
+            "canonical_first", "atomic_measurement_unit_pair",
+        ):
+            raise ValueError(f"Unexpected V10.3.0.2 display contract: {manifest}")
+        provenance["upstream_release_manifest"] = {
+            "path": str(manifest), "sha256": file_sha256(manifest),
+        }
+        provenance["prompt_contract"] = expected
+        provenance["measurement_display"] = {
+            "policy": display["policy"], "fallback": display["fallback"],
+        }
+    if lineage == "v10_4":
+        manifest = (
+            Path(__file__).resolve().parents[4] / "starling_assay_transfer"
+            / "assay_transfer/context_conditioned/artifacts/v10/hf/v10_4"
+            / GOLD_TASK_NAMES[task_id] / "mixed_continuous/manifest.json"
+        )
+        payload = json.loads(manifest.read_text(encoding="utf-8"))
+        if payload.get("prompt_contract", {}).get("direct") != "v2_gold_parent_smiles":
+            raise ValueError(f"Unexpected V10.4 direct prompt contract: {manifest}")
+        provenance["upstream_release_manifest"] = {
+            "path": str(manifest), "sha256": file_sha256(manifest),
+        }
+        provenance["prompt_contract"] = "v2_gold_parent_smiles"
+    return provenance
+
+
+def _parent_smiles(row: Mapping[str, Any], lineage: str) -> str:
+    if lineage != "v10_4":
+        return str(row["drug"])
+    return str((row.get("molecule_identity") or {})["parent_smiles"])
 
 
 def _record_value(row: Mapping[str, Any]) -> float:
@@ -272,40 +373,64 @@ def _cache_key(prompt_hash: str, profile: Mapping[str, Any], renderer: Any) -> s
 
 
 def _current_candidates(
-    task_id: str, pool_size: int
+    task_id: str, pool_size: int, *, train_path: Path | None = None,
+    query_path: Path | None = None, lineage: str = "v9",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Build top-N distinct train parents, then expand their condition rows."""
     from rdkit import DataStructs
 
-    train_path, query_path = _gold_paths(task_id)
+    if (train_path is None) != (query_path is None):
+        raise ValueError("Explicit reference and query inputs must be supplied together")
+    if train_path is None:
+        train_path, query_path = _gold_paths(task_id, lineage=lineage)
     train_rows, query_rows = _read_jsonl(train_path), _read_jsonl(query_path)
-    renderer, profile = V9PromptRenderer(task_id), model_profile(task_id)
+    renderer, profile = V9PromptRenderer(task_id), model_profile(task_id, lineage)
     parent_rows: dict[str, list[tuple[int, dict[str, Any]]]] = {}
     parent_fps: dict[str, Any] = {}
     parent_first: dict[str, int] = {}
+    record_fps: dict[str, Any] = {}
     for index, row in enumerate(train_rows):
         parent = str(row["molecule_identity_key"])
-        canonical, _, fingerprint = standardize_smiles_and_fp(str(row["drug"]))
+        canonical, _, fingerprint = standardize_smiles_and_fp(_parent_smiles(row, lineage))
         if fingerprint is None:
             raise ValueError(f"Invalid training SMILES at row {index}")
         parent_rows.setdefault(parent, []).append((index, row))
         parent_fps.setdefault(parent, fingerprint)
         parent_first.setdefault(parent, index)
+        record_fps[str(row["benchmark_row_id"])] = fingerprint
 
-    parents = sorted(parent_rows, key=parent_first.__getitem__)
+    if lineage == "v10_4":
+        for rows in parent_rows.values():
+            rows.sort(key=lambda item: str(item[1]["benchmark_row_id"]))
+        parent_fps = {
+            parent: record_fps[str(rows[0][1]["benchmark_row_id"])]
+            for parent, rows in parent_rows.items()
+        }
+    parents = sorted(parent_rows) if lineage == "v10_4" else sorted(
+        parent_rows, key=parent_first.__getitem__
+    )
     fingerprints = [parent_fps[parent] for parent in parents]
     output: list[dict[str, Any]] = []
-    for query_index, query in enumerate(query_rows):
+    ordered_queries = (sorted(query_rows, key=lambda row: str(row["benchmark_row_id"]))
+                       if lineage == "v10_4" else query_rows)
+    for query_index, query in enumerate(ordered_queries):
         query_parent = str(query["molecule_identity_key"])
-        _, _, query_fp = standardize_smiles_and_fp(str(query["drug"]))
+        query_smiles = _parent_smiles(query, lineage)
+        _, _, query_fp = standardize_smiles_and_fp(query_smiles)
         if query_fp is None:
             raise ValueError(f"Invalid query SMILES at row {query_index}")
         similarities = DataStructs.BulkTanimotoSimilarity(query_fp, fingerprints)
         ranked = sorted(
             (
-                (float(similarity), parent_first[parent], parent)
+                (float(similarity), parent if lineage == "v10_4" else parent_first[parent], parent)
                 for similarity, parent in zip(similarities, parents)
                 if parent != query_parent
+                and not (
+                    lineage in {"v10_3_best", "v10_4"}
+                    and query.get("bemis_murcko_scaffold")
+                    and query.get("bemis_murcko_scaffold")
+                    == parent_rows[parent][0][1].get("bemis_murcko_scaffold")
+                )
             ),
             key=lambda item: (-item[0], item[1]),
         )[:pool_size]
@@ -316,15 +441,18 @@ def _current_candidates(
         for parent_rank, (similarity, _, parent) in enumerate(ranked):
             contexts = parent_rows[parent]
             for context_index, (_, known) in enumerate(contexts):
+                if lineage == "v10_4":
+                    known_fp = record_fps[str(known["benchmark_row_id"])]
+                    similarity = float(DataStructs.TanimotoSimilarity(query_fp, known_fp))
                 prompt = renderer.render(
                     {
-                        "smiles": known["drug"],
+                        "smiles": _parent_smiles(known, lineage),
                         "value": _record_value(known),
                         "condition_group": known.get("condition_group"),
                         "condition_atoms": known.get("condition_atoms") or [],
                     },
                     {
-                        "smiles": query["drug"],
+                        "smiles": query_smiles,
                         "condition_group": query.get("condition_group"),
                         "condition_atoms": query.get("condition_atoms") or [],
                     },
@@ -336,8 +464,8 @@ def _current_candidates(
                     "retrieval_record_id": str(known["benchmark_row_id"]),
                     "query_molecule_identity_key": query_parent,
                     "retrieval_molecule_identity_key": parent,
-                    "query_smiles": str(query["drug"]),
-                    "retrieval_smiles": str(known["drug"]),
+                    "query_smiles": query_smiles,
+                    "retrieval_smiles": _parent_smiles(known, lineage),
                     "query_condition_group": str(query.get("condition_group") or ""),
                     "retrieval_condition_group": str(known.get("condition_group") or ""),
                     "query_condition_scope": str(query.get("condition_scope") or ""),
@@ -370,16 +498,21 @@ def _current_candidates(
         "n_train_rows": len(train_rows),
         "n_train_parents": len(parent_rows),
         "n_queries": len(query_rows),
+        "gold_release": "v2" if lineage == "v10_4" else "v1",
+        "neighbor_identity_policy": (
+            "scaffold_disjoint" if lineage in {"v10_3_best", "v10_4"}
+            else "parent_disjoint"
+        ),
     }
 
 
 def _validated_reuse(
-    task_id: str, reuse_root: Path
+    task_id: str, reuse_root: Path, *, lineage: str = "v9", subset: str = "valid",
 ) -> tuple[dict[tuple[str, str, str], tuple[float, float]], dict[str, Any]]:
     import pyarrow.parquet as pq
 
     root = reuse_root / task_id
-    version_path = root / "scaffold" / "valid" / "VERSION.json"
+    version_path = root / "scaffold" / subset / "VERSION.json"
     if version_path.is_file():
         root = version_path.parent
         manifest_path = version_path
@@ -387,7 +520,7 @@ def _validated_reuse(
         manifest_path = root / "manifest.json"
     rankings_path = root / "rankings.parquet"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    profile = model_profile(task_id)
+    profile = model_profile(task_id, lineage)
     expected_models = (
         profile,
         {"id": profile["model"], "revision": profile["revision"]},
@@ -440,17 +573,29 @@ def _validated_reuse(
 
 
 def prepare_ranking_cache(
-    task_id: str, *, pool_size: int = 100, reuse_root: Path = OLD_RANKING_ROOT
+    task_id: str, *, pool_size: int = 100, reuse_root: Path | None = OLD_RANKING_ROOT,
+    root: Path | None = None, train_path: Path | None = None, query_path: Path | None = None,
+    lineage: str = "v9",
 ) -> dict[str, Any]:
     """Create the fresh candidate universe and seed only exact old scores."""
-    root = ranking_cache_dir(task_id, pool_size=pool_size)
+    if (train_path is not None or query_path is not None) and root is None:
+        raise ValueError("Custom cohorts require an isolated cache root")
+    root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
+    if lineage != "v9" and reuse_root == OLD_RANKING_ROOT:
+        reuse_root = None
     build_dir = root / ".build"
     if root.joinpath("VERSION.json").exists():
         raise FileExistsError(f"Finalized V9 cache already exists: {root}")
     if build_dir.exists() and any(build_dir.glob("scores-*.jsonl")):
         raise ValueError("Cannot replace candidates after scoring has started")
-    candidates, inputs = _current_candidates(task_id, pool_size)
-    reuse, reused_source = _validated_reuse(task_id, reuse_root)
+    candidates, inputs = _current_candidates(
+        task_id, pool_size, train_path=train_path, query_path=query_path, lineage=lineage
+    )
+    subset = root.name if root.name in {"valid", "test"} else "valid"
+    reuse, reused_source = (_validated_reuse(
+        task_id, reuse_root, lineage=lineage, subset=subset,
+    )
+                            if reuse_root is not None else ({}, {}))
     reused = 0
     for row in candidates:
         key = (row["query_record_id"], row["retrieval_record_id"], row["prompt_hash"])
@@ -464,8 +609,10 @@ def prepare_ranking_cache(
         "schema_version": RANKING_SCHEMA_VERSION,
         "status": "prepared",
         "task_id": task_id,
-        "model": model_profile(task_id),
+        "model_lineage": lineage,
+        "model": model_profile(task_id, lineage),
         "prompt_assets": verify_vendored_assets(),
+        "reference_provenance": reference_provenance(task_id, lineage),
         "scoring_contract_version": SCORING_CONTRACT_VERSION,
         "candidate_policy": (
             f"morgan_top{pool_size}_distinct_gold_train_parents_then_all_context_rows"
@@ -483,16 +630,22 @@ def prepare_ranking_cache(
 
 
 def _missing_tasks(
-    task_id: str, pool_size: int
+    task_id: str, pool_size: int, *, root: Path | None = None, lineage: str = "v9",
 ) -> tuple[list[PromptTask], dict[str, Any]]:
     import pyarrow.parquet as pq
 
-    root = ranking_cache_dir(task_id, pool_size=pool_size)
+    root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
     build = json.loads((root / ".build/BUILD.json").read_text(encoding="utf-8"))
     candidates_path = root / ".build/candidates.parquet"
     if build["candidates_sha256"] != file_sha256(candidates_path):
         raise ValueError("Prepared V9 candidates hash mismatch")
-    profile, renderer = model_profile(task_id), V9PromptRenderer(task_id)
+    stored_lineage = str(build.get("model_lineage") or "v9")
+    if stored_lineage != lineage:
+        raise ValueError(f"Prepared cache lineage differs: {stored_lineage} != {lineage}")
+    profile, renderer = model_profile(task_id, lineage), V9PromptRenderer(task_id)
+    if (build.get("model") != profile or build.get("prompt_assets") != verify_vendored_assets()
+            or build.get("reference_provenance", {}) != reference_provenance(task_id, lineage)):
+        raise ValueError("Prepared direct-gold cache provenance changed")
     by_key: dict[str, PromptTask] = {}
     for row in pq.read_table(candidates_path).to_pylist():
         if row["model_score"] is not None:
@@ -521,14 +674,17 @@ def score_ranking_cache(
     num_shards: int,
     batch_size: int = 64,
     device: int = 0,
+    root: Path | None = None,
+    lineage: str = "v9",
 ) -> dict[str, Any]:
     """Resume one deterministic GPU shard of missing prompt scores."""
     if not 0 <= shard_index < num_shards or batch_size <= 0:
         raise ValueError("Invalid shard or batch size")
-    tasks, build = _missing_tasks(task_id, pool_size)
+    root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
+    tasks, build = _missing_tasks(task_id, pool_size, root=root, lineage=lineage)
     shard = tasks[shard_index::num_shards]
     journal = (
-        ranking_cache_dir(task_id, pool_size=pool_size)
+        root
         / ".build"
         / f"scores-{shard_index:02d}-of-{num_shards:02d}.jsonl"
     )
@@ -569,13 +725,14 @@ def score_ranking_cache(
 
 
 def finalize_ranking_cache(
-    task_id: str, *, pool_size: int = 100, num_shards: int
+    task_id: str, *, pool_size: int = 100, num_shards: int, root: Path | None = None,
+    lineage: str = "v9",
 ) -> dict[str, Any]:
     """Merge complete journals, publish atomically, then remove build files."""
     import pyarrow.parquet as pq
 
-    root = ranking_cache_dir(task_id, pool_size=pool_size)
-    tasks_and_build = _missing_tasks(task_id, pool_size)
+    root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
+    tasks_and_build = _missing_tasks(task_id, pool_size, root=root, lineage=lineage)
     tasks, build = tasks_and_build
     scored: dict[str, tuple[float, float]] = {}
     for shard_index in range(num_shards):
@@ -595,7 +752,7 @@ def finalize_ranking_cache(
     for row in rows:
         if row["model_score"] is None:
             row["model_score"], row["prob_transfer"] = scored[row["cache_key"]]
-            row["score_origin"] = "fresh_v9_inference"
+            row["score_origin"] = f"fresh_{lineage}_inference"
     rows.sort(key=lambda row: (
         row["query_record_id"], -float(row["model_score"]),
         int(row["retrieval_parent_rank"]), int(row["retrieval_parent_context_index"]),
@@ -611,7 +768,9 @@ def finalize_ranking_cache(
         row.pop("cache_key")
     rankings_path = root / "rankings.parquet"
     _write_parquet(rankings_path, rows)
-    train_path, _ = _gold_paths(task_id)
+    train_path = Path(build['inputs']['train'])
+    if file_sha256(train_path) != build['inputs']['train_sha256']:
+        raise ValueError('Reference inputs changed during cache scoring')
     training_record_ids = sorted(
         str(row["benchmark_row_id"]) for row in _read_jsonl(train_path)
     )
@@ -624,7 +783,9 @@ def finalize_ranking_cache(
         "query_record_ids": sorted({row["query_record_id"] for row in rows}),
         "training_record_ids": training_record_ids,
         "retrieval_record_ids": sorted({row["retrieval_record_id"] for row in rows}),
-        "rankings": str(rankings_path.resolve()),
+        "rankings": (
+            str(rankings_path.resolve()) if lineage == "v9" else rankings_path.name
+        ),
         "rankings_sha256": file_sha256(rankings_path),
     }
     _write_json(root / "VERSION.json", version)
@@ -724,6 +885,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     prepare = subparsers.add_parser("prepare")
     prepare.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
     prepare.add_argument("--pool-size", type=int, default=100)
+    prepare.add_argument("--train-path", type=Path)
+    prepare.add_argument("--query-path", type=Path)
+    prepare.add_argument("--no-reuse", action="store_true")
     prepare.add_argument(
         "--reuse-root", "--old-root", dest="reuse_root", type=Path,
         default=OLD_RANKING_ROOT,
@@ -739,25 +903,44 @@ def main(argv: Sequence[str] | None = None) -> None:
     finalize.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
     finalize.add_argument("--pool-size", type=int, default=100)
     finalize.add_argument("--num-shards", type=int, required=True)
+    for command in (prepare, score, finalize):
+        command.add_argument("--cache-root", type=Path)
+        command.add_argument("--subset", choices=("valid", "test"), default="valid")
+        command.add_argument("--lineage", choices=DIRECT_LINEAGES, default="v9")
     download = subparsers.add_parser("download")
     download.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
+    download.add_argument("--lineage", choices=DIRECT_LINEAGES, default="v9")
     args = parser.parse_args(argv)
+    root = None if args.command == "download" else (
+        args.cache_root
+        or ranking_cache_dir(
+            args.task, pool_size=args.pool_size, subset=args.subset, lineage=args.lineage
+        )
+    )
     if args.command == "prepare":
+        train_path, query_path = args.train_path, args.query_path
+        if args.subset == "test" and train_path is None and query_path is None:
+            train_path, query_path = _gold_paths(args.task, "test", args.lineage)
         result = prepare_ranking_cache(
-            args.task, pool_size=args.pool_size, reuse_root=args.reuse_root
+            args.task, pool_size=args.pool_size, reuse_root=None if args.no_reuse else args.reuse_root,
+            root=root, train_path=train_path, query_path=query_path,
+            lineage=args.lineage,
         )
     elif args.command == "score":
         result = score_ranking_cache(
             args.task, pool_size=args.pool_size,
             shard_index=args.shard_index, num_shards=args.num_shards,
             batch_size=args.batch_size, device=args.device,
+            root=root,
+            lineage=args.lineage,
         )
     elif args.command == "finalize":
         result = finalize_ranking_cache(
-            args.task, pool_size=args.pool_size, num_shards=args.num_shards
+            args.task, pool_size=args.pool_size, num_shards=args.num_shards, root=root,
+            lineage=args.lineage,
         )
     else:
-        profile = model_profile(args.task)
+        profile = model_profile(args.task, args.lineage)
         result = {
             "task_id": args.task,
             "snapshot": resolve_model_snapshot(profile["model"], profile["revision"]),

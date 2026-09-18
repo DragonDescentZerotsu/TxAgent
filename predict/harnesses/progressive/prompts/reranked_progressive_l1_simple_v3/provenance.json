@@ -1,0 +1,26 @@
+{
+  "version": "reranked_progressive_l1_simple_v3",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "parent": "reranked_progressive_v8",
+  "status": "pilot_candidate",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": false,
+    "tools": false,
+    "user_template": "user.jinja"
+  },
+  "changes": [
+    "Retain the v2 evidence-only assay-transfer surface with query and evidence structures hidden.",
+    "Use an explicit molecule-level direction and condition-weighting decision procedure.",
+    "Bound reasoning and claims, and fail closed on inconsistent compound names within a molecule group."
+  ],
+  "historical_predictions_reused": false,
+  "parent_version": "reranked_progressive_l1_simple_v2",
+  "cloned_at": "2026-09-10T05:18:05-04:00",
+  "cloned_from_run": "bioavailability_ma/progressive_assay-transfer_assay-transfer-trained_records50/2026-09-10_05-07"
+}

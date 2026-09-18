@@ -1,1 +1,0 @@
-"""BBB branch-harness adapter."""

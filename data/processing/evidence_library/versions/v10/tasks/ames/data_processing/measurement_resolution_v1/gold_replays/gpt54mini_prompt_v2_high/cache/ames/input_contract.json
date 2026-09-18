@@ -1,0 +1,59 @@
+{
+  "task": "ames",
+  "records_sha256": "e93d82ae6798dad59de13ce8e9f4296a98bd65b47229aafde0359f69a9a49581",
+  "profile_sha256": "a0904d753a54b72a4ab0f8df669dd84ff67de817f43d958add6906144c58c4a4",
+  "prompt": {
+    "prompt_version": "ames_measurement_resolution_prompt.v2",
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v2.jinja",
+    "template_sha256": "da2c2a9873b5f44ea3cc892e55d72ed0e80f80028bd15fa4dd92dcce15dc44a6",
+    "batch_size": 20,
+    "maximum_measurements_per_row": 1,
+    "source_row_fields": {
+      "mutagenicity_outcomes": [
+        "endpoint_name",
+        "measurement_text",
+        "support_text",
+        "evidence_basis",
+        "test_system",
+        "metabolic_activation"
+      ],
+      "fixed_mutation": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_class",
+        "study_context",
+        "biological_test_system",
+        "result_call"
+      ],
+      "premutagenic_damage": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_class",
+        "endpoint_subtype",
+        "biological_system",
+        "result_status"
+      ],
+      "mutagenicity_mechanism": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "assay_method_and_endpoint",
+        "biological_system",
+        "mechanism_category",
+        "result_direction"
+      ]
+    },
+    "rendered_sha256": {
+      "mutagenicity_outcomes": "27edc18b72ec673d88c96d0483845e47766c904f8a82e46e1aa81935d5a78081",
+      "fixed_mutation": "d67b500770f4c3100a5e1f04c840b5036eacc3ea99fb6cc5d5c9da4319c166ee",
+      "premutagenic_damage": "6270bb116ded65f8e1ed3f8a64f7e97e7905d99f8e7b19f84e801819a1e3c66a",
+      "mutagenicity_mechanism": "1a05a01ff129426255501c9f4fb16971dfa076c7c159887df5904f4487cf9b56"
+    }
+  },
+  "mapping_version": "ames_measurement_resolution.v1"
+}

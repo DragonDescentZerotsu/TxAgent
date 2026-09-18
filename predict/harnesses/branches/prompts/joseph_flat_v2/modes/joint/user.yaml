@@ -1,0 +1,4 @@
+guidance: >-
+  L1 merges the top five Morgan and top five assay-transfer panels without refill;
+  its scores and panel ranks are molecule-scoped. Later assay-ranked evidence reports
+  transfer_likelihood per card, while L5 reports morgan_similarity at molecule scope.

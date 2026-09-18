@@ -1,0 +1,35 @@
+{
+  "version": "conditioned_benchmark_physical_voters.v2",
+  "v1_root": "data/gold_labels/Bioavailability_Ma/v1/scaffold",
+  "v1_hashes": {
+    "accepted_parent_conditions_before_group_gate.jsonl": "07515eed88ca41f62316fdc12c08b118f586630dd70a47ed5d841c259eeb3514",
+    "group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "heldout_molecule_condition_labels.jsonl": "6d68767bcf75aabffbdc1d4618a82931076c7a6c57cd2aeee2779f24434a9291",
+    "rejected_parent_conditions.jsonl": "f72638c3052b0c6da264ed78af27b65b789f2344b86c73aeb14dbf4e1bab87d5",
+    "source_condition_review.jsonl": "29e1206015e07b146043a00198ed294975732241fe32f7365c9f6ebeecf62242",
+    "test.jsonl": "bcd47446f78038c84b58dc3e79e7e658e3d659ca381da22435d5ec321194e248",
+    "test_molecule_condition_labels.jsonl": "3e0b83798135f8d26f13b650a97238c966ff219bf329e39d595cbd2d79f7f52e",
+    "train.jsonl": "7c2132a67bd7017c7133bccb1b414fdfb806626840c71d0be593041ad4213de5",
+    "train_molecule_condition_labels.jsonl": "61d061b82ec80a6094527543bee6a7e540271a0f9d24ab7484d1439e53bfa097",
+    "valid.jsonl": "562d1d8ab71f3e1556c4f65e49372ad4a411ff4b0de2bcacc5ee1620603fd112",
+    "valid_molecule_condition_labels.jsonl": "a04cf813c136b2b7d4363d7651738fee73a01def93c95f93ac059bc94383ea7d"
+  },
+  "artifacts": {
+    "train.jsonl": "7a4e170b414c24e44ea28d9cdca4d439e36fc8a95f2717f6679212dd69a05e48",
+    "valid.jsonl": "64935ac1a443cf5fc8069c3d2892ea4f2d64369f6527e11084f023cd0553115f",
+    "test.jsonl": "0644e8f8210730e5861b7beeb22695982d05a57d726ea23e58ed3f5abe2bd9fd",
+    "train_molecule_condition_labels.jsonl": "79a0312d5c5e111d92addb5ce6bffd8b8ed69f03c7a3adfef300a0f35594265f",
+    "valid_molecule_condition_labels.jsonl": "10b8af415ef38cb334e56188833e6bbccf0fcf7311a6f1235627686b91810cf6",
+    "test_molecule_condition_labels.jsonl": "c909b69093df61d5320738d98362782e1662a651ab581716b6062c7c935b2478",
+    "voter_membership.parquet": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+    "gold_label_record_index.parquet": "101c03120574c01ca70988a3af7e07fccf09fc04af20191ded86a8f78b1101ff",
+    "gold_label_record_index.manifest.json": "66edf93ff876060bb1117c1a767b76153636f6a1ae3d3484cd44d71f850dffa5",
+    "excluded_external_condition_reviews.jsonl": "ca9c503639666f60ba0a43ac05030ec82976ba0696ba3e2e092ccbfcd4cae73a",
+    "provenance/physical_voter_replay.parquet": "e956181f56b8d6ab58210cbe8c695dee1f0f62b621bdcb641271a03a8146bd4f",
+    "provenance/v1_v2_card_diff.jsonl": "247860360ea7f07f723cd61f2298ff517b57da19d940d7cc29b16efb8df9cdf6",
+    "provenance/v1_split_reallocations.jsonl": "dd46d7defb921d2b716b9a58f382b63d211f742208794205f7ff01852b268934",
+    "provenance/v1_lineage_label_rejections.jsonl": "40eb9a2cf064de1fe97a1abf44ffef9808b0719fbfe9d557a66ee97882e4cba1",
+    "provenance/source_rejection_audit.json": "901a1f4f0d525a8c1e463bad51c943b1f8ce4c757dd46df8fdf9d249391c8cf0",
+    "summary.json": "e706f354678ce3a24f6f35b4bb0da5d49f2245502df81105beb2cfda81ef4d8e"
+  }
+}

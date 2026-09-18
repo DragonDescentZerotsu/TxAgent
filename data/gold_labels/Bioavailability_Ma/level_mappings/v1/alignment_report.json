@@ -1,0 +1,55 @@
+{
+  "version": "gold_level_mapping_alignment.v1",
+  "task": "bioavailability_ma",
+  "gold_release": "v1",
+  "validation_basis": "gold_voter_membership",
+  "original": {
+    "physical_voters": 19479,
+    "present": 19466,
+    "present_at_l1": 19453,
+    "missing": [
+      "sr_220a8bf021d34b0b8ff6b377060b7bc5",
+      "sr_2943b9d66313471895e763820d3b222e",
+      "sr_2e4df73faa054e9c9f77bcb647357224",
+      "sr_3c72a9a93eb547e69b3761e97c8f7684",
+      "sr_6aa6de14be0b45d5bc4939b4556d0335",
+      "sr_92a6ca8c276e48b4ab1b57b5c97fd66b",
+      "sr_979d1667a74249e8a7f1cb151ca7006d",
+      "sr_b9279fdba83a4e4cb92ec6ff0ac590a5",
+      "sr_d2c9c3f4d91840f085acbfc00772b503",
+      "sr_df3d60340a024f8086c96805455b4182",
+      "sr_e01ed59192234967b3b41c98981d8df4",
+      "sr_e12e116557e94a70ab3d37a90e0e3c3e",
+      "sr_e80e03b39e2c412d9607639619e246c0"
+    ],
+    "present_outside_l1": [
+      "sr_077070da9fe34408b35dfc76687773bb",
+      "sr_09dc17b1ac1346d3b7082e4213d05eb7",
+      "sr_2360374b879a4a9393bd3fd899298228",
+      "sr_2d1894b9a698480cbf711e23f9a891f8",
+      "sr_5c79f0efbf1841ad8497db65890a82d5",
+      "sr_605ee6d55e484a2d908198e80f2f8fba",
+      "sr_6afb9956e0da43e8a8c871edc7b65a1e",
+      "sr_7bcc1acf16a64702ad46639bdc708c6c",
+      "sr_860da993113042398acbe0b822ff74ba",
+      "sr_abe60400fdf9468f8cd6705063eeec65",
+      "sr_bf40871d796b467b959cc67e1ee40d4b",
+      "sr_f4a02a5ef9ff422c99fd0f3180642871",
+      "sr_f7bda4482f3b40edb7793239198fdb2e"
+    ],
+    "status": "fail"
+  },
+  "published": {
+    "physical_voters": 19479,
+    "present": 19479,
+    "present_at_l1": 19479,
+    "missing": [],
+    "present_outside_l1": [],
+    "status": "pass"
+  },
+  "reviewed_corrections": {
+    "promote": 13,
+    "add": 13
+  },
+  "unchanged_l3_plus": true
+}

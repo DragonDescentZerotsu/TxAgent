@@ -1,0 +1,21 @@
+{
+  "version": "ranking_weight_eligibility_audit.v2",
+  "status": "complete",
+  "policy": "policies/semantic_weighted_top10_v2.json",
+  "policy_sha256": "99a95837da887bfc1b23f96f2426dc7e2ba5b1baea835ff3ca77a672e2d5200b",
+  "top10_rows": 90,
+  "incremental_bucket_decisions": 122,
+  "bbb_l5_non_assay_transfer_atoms": 7,
+  "outputs": {
+    "bbb_l5_non_assay_transfer.tsv": "ca37dcbd8c25e918f12440a9a1b05d549d164bf0e7fb1da01646919d2752c6ad",
+    "implementation_log.md": "eec45aa9636a798d48fbc9a65d6d5de2ea31d2515712182769ab8f5d47279311",
+    "incremental_bucket_decisions.tsv": "ae08974c7b67d48db867416a2a242814150b01eb8ed95d4697dabc49c0f99c14",
+    "rank_weight_correlations.tsv": "c5a087efe1ebbc87791296c3cb114cbbdfa4e49d73687cbae27949d00b832096",
+    "rendered_requests/bbb_martins_eligibility.json": "62886cd23a6bc96a780d6855d137548554e40e65353faf598bd605561bfb9a11",
+    "rendered_requests/bbb_martins_ranking.json": "ce7fcd2d3c0a301ba77cfc611444493d7acd4621bf589abfaeaf5c4aeccbd032",
+    "rendered_requests/bioavailability_ma_eligibility.json": "f1f90f7d1f89eca0fb6f7d320f598d4db81343b38c61a805d0810e5ee26ad982",
+    "rendered_requests/bioavailability_ma_ranking.json": "272539607d3c0a70f6283a8a0cc1ddac1c37e26ee6e5d4d67d667b2b353fc795",
+    "report.md": "a06af770d51b25ffd8d1bac81eaf624fcb9317bce8335fd6f218b79dafeb4c56",
+    "top10_policy.tsv": "49a2978898df351f38e099107777ccbf778b0430cec7d8b8757f4bbb84662ec8"
+  }
+}

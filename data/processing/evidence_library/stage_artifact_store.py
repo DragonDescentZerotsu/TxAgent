@@ -51,7 +51,9 @@ def package_stages(
         target.mkdir(parents=True, exist_ok=True)
         for old in target.glob("stage.tar.zst.part-*"):
             old.unlink()
-        with tempfile.TemporaryDirectory(prefix=f"{stage}-package-") as name:
+        with tempfile.TemporaryDirectory(
+            prefix=f"{stage}-package-", dir=source_root.parent
+        ) as name:
             temporary = Path(name)
             tar_path = temporary / "stage.tar"
             zst_path = temporary / "stage.tar.zst"
@@ -116,7 +118,10 @@ def restore_stages(
                 raise FileExistsError(f"refusing to overwrite non-empty stage: {destination}")
             shutil.rmtree(destination)
         destination.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix=f"{stage}-restore-") as name:
+        destination_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(
+            prefix=f"{stage}-restore-", dir=destination_root.parent
+        ) as name:
             temporary = Path(name)
             zst_path = temporary / "stage.tar.zst"
             tar_path = temporary / "stage.tar"

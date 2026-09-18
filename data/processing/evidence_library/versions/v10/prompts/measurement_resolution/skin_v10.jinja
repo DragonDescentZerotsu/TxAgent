@@ -1,0 +1,14 @@
+{% include "skin_v9.jinja" %}
+
+## Embedded-unit and non-point guard
+
+For a direct-source percentage such as `5.6% positive patch-test reactions`,
+the complete unit is `% positive patch-test reactions`. Copy the exact suffix;
+bare `%` is incomplete whenever the visible text names the population, response,
+frequency, prevalence, positivity, or score. Do not paraphrase or shorten that
+suffix. For a source with nonempty `unit_text`, copy it verbatim.
+
+An explicit `<`, `>`, `up to`, `at least`, range, `vs`, or fold comparison is
+not an absolute point. Return `unsure` for a bound or range and `relative` for a
+coefficient defined against a referent. Never rescue one component from a
+multi-value or comparison string.

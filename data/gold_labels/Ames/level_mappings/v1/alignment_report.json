@@ -1,0 +1,31 @@
+{
+  "version": "gold_level_mapping_alignment.v1",
+  "task": "ames",
+  "gold_release": "v1",
+  "validation_basis": {
+    "basis": "accepted_record_votes_exact_source_record_id_match",
+    "path": "data/gold_labels/Ames/v1/scaffold/accepted_record_votes.jsonl",
+    "sha256": "586d9895e6b6c9045227a355c3c6ef52731c1ef7d37ad69e98b578dde28201de",
+    "physical_voters": 3333,
+    "status": "pass"
+  },
+  "original": {
+    "basis": "accepted_record_votes_exact_source_record_id_match",
+    "path": "data/gold_labels/Ames/v1/scaffold/accepted_record_votes.jsonl",
+    "sha256": "586d9895e6b6c9045227a355c3c6ef52731c1ef7d37ad69e98b578dde28201de",
+    "physical_voters": 3333,
+    "status": "pass"
+  },
+  "published": {
+    "basis": "accepted_record_votes_exact_source_record_id_match",
+    "path": "data/gold_labels/Ames/v1/scaffold/accepted_record_votes.jsonl",
+    "sha256": "586d9895e6b6c9045227a355c3c6ef52731c1ef7d37ad69e98b578dde28201de",
+    "physical_voters": 3333,
+    "status": "pass"
+  },
+  "reviewed_corrections": {
+    "add": 0,
+    "promote": 0
+  },
+  "unchanged_l3_plus": true
+}

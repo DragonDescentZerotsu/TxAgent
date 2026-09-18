@@ -1,0 +1,15 @@
+{% include "skin_v10.jinja" %}
+
+## Final Skin source-role check
+
+Return `unavailable` when the selected number is an exposure concentration
+such as ppm and support reports only a qualitative reaction outcome; when it
+is a GHS or other category code; or when support identifies the number as a
+predicted, interpolated, or regression-derived potency such as SD50 rather
+than the named observed endpoint. Also return `unavailable` when the endpoint
+names stimulation index but support identifies the selected percentage as an
+EC3 concentration.
+
+A pEC50 coefficient paired with `log M` rather than an explicit self-contained
+pEC50 unit is `unsure`. Normalize a printed power scale by omitting the
+multiplication sign: source unit `×10^-3 inches` becomes `10^-3 inches`.

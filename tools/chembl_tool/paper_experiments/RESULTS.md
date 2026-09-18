@@ -14,10 +14,10 @@ formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind �
 和新增入口统一见
 `STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
 
-外部 Starling 论文 released CSV 的 Table 2 MiniMol 复现另见
-`baselines/minimol/STARLING_TABLE2_REPRODUCTION.md`。该 release 的任务定义和 split 也不属于下方 current
-gold；其中根据作者补充说明完成的 `n_extractions` weighted-BCE 结果也不得并入 canonical snapshot 或
-统一 Starling 图。
+外部 Starling 论文 released CSV 的 Table 2 MiniMol 复现代码保留在
+`predict/baselines/minimol/`，immutable source contract 保留在
+`data/legacy/artifacts/starling_table2_v3/`。该 release 的任务定义和 split 也不属于下方 current gold，
+其结果不得并入 canonical snapshot 或统一 Starling 图。
 
 2026-08-13 另完成一组 DeepSeek-V4-Pro scaffold-test **post-selection reference-pool sensitivity**：test parent
 始终排除，但 agent/KNN reference 允许 train+valid。BBB/Bio/Skin 的最佳 agent macro-F1 分别为 direct
@@ -67,7 +67,7 @@ train-only scaffold CV/OOF 冻结，KNN 固定 `k=3`：
 | ClinTox | **0.6520** | 0.5744 | 0.5744 | **0.6520** | **0.6520** |
 
 BBB 表中使用与 progressive 397-row cohort 完全匹配的 baselines。完整 protocol、OOF thresholds、subgroup
-diagnosis 和 artifact roots 见 `baselines/minimol/README.md`。
+diagnosis 和 artifact roots 见 `predict/baselines/minimol/README.md`。
 
 ## E23 collapsed-assay Morgan neighbor validation (2026-08-27)
 
@@ -291,7 +291,7 @@ outputs/paper/collapsed_assay_filtered_observed_weighting_support10_v7/
 同一轮代码整理登记了已完成的 GPT-OSS-120B MiniMol `top_k=5, min_similarity=0` valid sensitivity：
 BBB/Bio/Skin 的 Starling direct macro-F1 为 `0.652832/0.594314/0.599776`，full-flat 为
 `0.690073/0.623542/0.612770`；六个 batch 全部完整、0 failure。该冻结 launcher 只做逐 task 串行编排，
-执行仍委托 `starling_benchmark_matrix.py`，入口见 `baselines/minimol/README.md`。
+执行仍委托 `starling_benchmark_matrix.py`，入口见 `predict/baselines/minimol/README.md`。
 
 ## ClinTox `clinical_trial_failure_v1` 独立快照（2026-08-16）
 

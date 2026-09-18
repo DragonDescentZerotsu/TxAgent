@@ -12,7 +12,7 @@ import sqlite3
 from collections import Counter, defaultdict
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 import pyarrow.parquet as pq
@@ -21,7 +21,6 @@ from rdkit import DataStructs
 
 from predict.retrieval.assay_reranking.runtime import (
     BACKBONE_DTYPE,
-    CACHE_ROOT,
     COMPACT_CACHE_SCHEMA_VERSION,
     LOGIT_EXTRACTION_DTYPE,
     SCORING_CONTRACT_VERSION,
@@ -31,6 +30,7 @@ from predict.retrieval.assay_reranking.runtime import (
     model_profile,
     resolve_model_snapshot,
     score_prompt_batch,
+    cache_profile_root,
 )
 from predict.retrieval.assay_reranking.v19_1 import (
     ASSET_ROOT,
@@ -121,6 +121,27 @@ CACHE_PROFILES = (
     LUNA_RELEVANCE_CACHE_PROFILE,
 )
 POPCOUNT = np.asarray([value.bit_count() for value in range(256)], dtype=np.uint8)
+
+
+def _take_unseen_ranked_rows(
+    rows: Sequence[Sequence[Any]],
+    *,
+    seen_record_ids: set[str],
+    record_id_index: int,
+    limit: int,
+) -> tuple[list[Sequence[Any]], int]:
+    selected = []
+    excluded = 0
+    for row in rows:
+        record_id = str(row[record_id_index])
+        if record_id in seen_record_ids:
+            excluded += 1
+            continue
+        selected.append(row)
+        seen_record_ids.add(record_id)
+        if len(selected) == limit:
+            break
+    return selected, excluded
 
 
 @lru_cache(maxsize=500_000)
@@ -271,10 +292,9 @@ def _paths(
 ) -> dict[str, Path]:
     config = _config(task_id, cache_profile)
     profile = str(config["cache_profile"])
-    output_root = CACHE_ROOT / profile / task_id / "scaffold/valid"
+    output_root = cache_profile_root(profile) / task_id / "scaffold/valid"
     v19_root = (
-        CACHE_ROOT
-        / str(TASK_CONFIGS[task_id]["cache_profile"])
+        cache_profile_root(str(TASK_CONFIGS[task_id]["cache_profile"]))
         / task_id
         / "scaffold/valid"
     )
@@ -304,15 +324,15 @@ def _paths(
         "version": output_root / "VERSION.json",
         "journals": output_root / ".scores",
         "relevance_manifest": Path(
-            f"data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/"
+            f"outputs/analysis/evidence_library/relevance_bucket_luna_v7_progressive_v1/"
             f"{task_id}/manifest.json"
         ),
         "relevance_rankings": Path(
-            f"data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/"
+            f"outputs/analysis/evidence_library/relevance_bucket_luna_v7_progressive_v1/"
             f"{task_id}/relevance_bucket_rankings.parquet"
         ),
         "relevance_pair_map": Path(
-            f"data/artifacts/evidence_library_assets/relevance_bucket_luna_v7_progressive_v1/"
+            f"outputs/analysis/evidence_library/relevance_bucket_luna_v7_progressive_v1/"
             f"{task_id}/pair_bucket_relevance_map.parquet"
         ),
     }
@@ -328,6 +348,7 @@ def load_top_ranked_records(
     workers: int = 8,
     ranking: str = "assay_transfer",
     tie_seed: int = 0,
+    exclude_record_ids_by_query: Mapping[str, Iterable[str]] | None = None,
 ) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, Any]]:
     """Read the highest-scored Stage 3 records from one finalized cache.
 
@@ -423,7 +444,6 @@ def load_top_ranked_records(
         JOIN scores AS s USING(score_key)
         WHERE q.query_smiles = ? AND g.group_id = ?
         ORDER BY s.transfer_probability DESC, r.external_record_id
-        LIMIT ?
     """
 
     assignment_table = (
@@ -439,8 +459,19 @@ def load_top_ranked_records(
         WHERE q.query_smiles = ? AND g.group_id = ?
     """
 
-    def load_one(item: tuple[str, str]) -> tuple[str, dict[str, dict[str, Any]]]:
+    def load_one(
+        item: tuple[str, str],
+    ) -> tuple[str, dict[str, dict[str, Any]], int]:
         query_id, parent_smiles = item
+        seen_record_ids = (
+            {
+                str(record_id)
+                for record_id in exclude_record_ids_by_query.get(query_id, ())
+            }
+            if exclude_record_ids_by_query is not None
+            else None
+        )
+        n_excluded = 0
         connection = sqlite3.connect(
             f"file:{paths['cache'].resolve()}?mode=ro", uri=True
         )
@@ -450,7 +481,7 @@ def load_top_ranked_records(
                 level_limit = limits[level]
                 if ranking == "assay_transfer":
                     rows = connection.execute(
-                        assay_transfer_sql, (parent_smiles, level, level_limit)
+                        assay_transfer_sql, (parent_smiles, level)
                     ).fetchall()
                     available_count = int(rows[0][4]) if rows else 0
                 else:
@@ -488,11 +519,21 @@ def load_top_ranked_records(
                         )
                     candidates.sort(key=lambda row: row[:3])
                     available_count = len(candidates)
-                    rows = candidates[:level_limit]
+                    rows = candidates
+                if seen_record_ids is None:
+                    rows = rows[:level_limit]
+                else:
+                    rows, excluded = _take_unseen_ranked_rows(
+                        rows,
+                        seen_record_ids=seen_record_ids,
+                        record_id_index=0 if ranking == "assay_transfer" else 2,
+                        limit=level_limit,
+                    )
+                    n_excluded += excluded
                 if len(rows) != level_limit:
                     raise ValueError(
                         f"{task_id} query {query_id} has {len(rows)} {level} records; "
-                        f"exactly {level_limit} are required"
+                        f"exactly {level_limit} unseen records are required"
                     )
                 records = []
                 for row in rows:
@@ -522,23 +563,25 @@ def load_top_ranked_records(
                     "available_record_count": available_count,
                     "records": records,
                 }
-            return query_id, result
+            return query_id, result, n_excluded
         finally:
             connection.close()
 
     unique_queries = dict.fromkeys(normalized_queries.values())
     work_items = (
         list(normalized_queries.items())
-        if ranking == "morgan"
+        if ranking == "morgan" or exclude_record_ids_by_query is not None
         else [(smiles, smiles) for smiles in unique_queries]
     )
     loaded: dict[str, dict[str, dict[str, Any]]] = {}
+    excluded_count = 0
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=min(workers, len(work_items))
     ) as pool:
-        for key, result in pool.map(load_one, work_items):
+        for key, result, n_excluded in pool.map(load_one, work_items):
             loaded[key] = result
-    selected = loaded if ranking == "morgan" else {
+            excluded_count += n_excluded
+    selected = loaded if ranking == "morgan" or exclude_record_ids_by_query is not None else {
         query_id: loaded[parent_smiles]
         for query_id, parent_smiles in normalized_queries.items()
     }
@@ -566,6 +609,12 @@ def load_top_ranked_records(
         "ranking": ranking,
         "ranking_tie_seed": tie_seed if ranking == "morgan" else None,
         "assay_transfer_scores_used": ranking == "assay_transfer",
+        "excluded_previously_visible_record_count": excluded_count,
+        "physical_record_deduplication": (
+            "exclude previously visible records, then take the next ranked records"
+            if exclude_record_ids_by_query is not None
+            else None
+        ),
         "morgan_fingerprint": (
             {"radius": 2, "bits": 2048, "similarity": "Tanimoto"}
             if ranking == "morgan"
@@ -960,6 +1009,10 @@ def _record_payload(
         },
         "source_fields": source_fields,
         **source_fields,
+        **({field: row.get(field) for field in (
+            "canonical_measurement_scale_id", "canonical_category_id", "finite_scalar_value",
+            "canonical_measurement_text", "canonical_unit_text", "canonical_transporter_identifier",
+        )} if task_id == "bbb_martins" else {}),
     }
 
 
@@ -1460,8 +1513,8 @@ def prepare(
                 None
                 if cache_profile == V21_CACHE_PROFILE
                 else str(
-                    CACHE_ROOT
-                    / f"v9_direct_gold_morgan100/{task_id}/scaffold/valid/rankings.parquet"
+                    cache_profile_root("v9_direct_gold_morgan100")
+                    / f"{task_id}/scaffold/valid/rankings.parquet"
                 )
             ),
             "l1_morgan_width": pool_size,

@@ -1,0 +1,52 @@
+{
+  "version": "skin_reaction_prebuilt_mapping_registry.v1",
+  "task_id": "skin_reaction",
+  "sources": [
+    "direct_skin_reaction",
+    "sensitization_aop",
+    "phototoxicity_irritation_local_damage",
+    "skin_exposure"
+  ],
+  "mappings": {
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["direct_skin_reaction", "sensitization_aop", "phototoxicity_irritation_local_damage", "skin_exposure"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/measurement_resolution/measurement_resolution.parquet",
+      "sha256": "24c0a4a68b6d7da7efa1f3abc2d98a77d97e96d50cf577365841e64015330aff"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["direct_skin_reaction", "sensitization_aop", "phototoxicity_irritation_local_damage", "skin_exposure"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/unit_reconciliation/exact_measurement_unit_map.json",
+      "sha256": "0c4d71151683c98407afce9338aaa8ea55afb81c553d48904835676bf110d7b1"
+    },
+    "endpoint_concepts": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_skin_reaction", "sensitization_aop", "phototoxicity_irritation_local_damage", "skin_exposure"],
+      "outputs": ["canonical_endpoint_concept"],
+      "paths_by_source": {
+        "direct_skin_reaction": {"path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/endpoint_concepts/direct_skin_reaction.json", "sha256": "cc438fa443975654c1aeace377bbb2df6d1e37738b22bc5055004982637374a8"},
+        "sensitization_aop": {"path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/endpoint_concepts/sensitization_aop.json", "sha256": "79587a45c2140a759b541d521d2cb9c62e202635df0868c4eacf23795b38bc40"},
+        "phototoxicity_irritation_local_damage": {"path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/endpoint_concepts/phototoxicity_irritation_local_damage.json", "sha256": "42bc0f0ca9123d5e07f8058350449b4009e916ce2ba382e39fe2b5a0083ed525"},
+        "skin_exposure": {"path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/endpoint_concepts/skin_exposure.json", "sha256": "f4bb49af4022cf03a913740252d7b894069b1d36f5bdd36353c57990dd2e8f17"}
+      }
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_skin_reaction", "sensitization_aop", "phototoxicity_irritation_local_damage", "skin_exposure"],
+      "outputs": ["global_context", "global_species_context", "global_severity_grade", "global_endpoint_context"],
+      "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/auxiliary_context/mapping.json",
+      "sha256": "28ccfb3986e2d32dbd71c7dee04814734b8b40850fd146bcda4e1d56ae97c1ac"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": ["direct_skin_reaction", "sensitization_aop", "phototoxicity_irritation_local_damage", "skin_exposure"],
+      "outputs": ["canonical_reference_scope"],
+      "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/reference_semantics/reference_semantics.parquet",
+      "sha256": "617bca163e6350e94f1a292bcf502f614e6ff8075b678c0afddb32cabcf76ca2"
+    }
+  }
+}

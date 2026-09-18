@@ -1,0 +1,35 @@
+{
+  "version": "conditioned_benchmark_physical_voters.v2",
+  "v1_root": "data/gold_labels/BBB_Martins/v1/scaffold",
+  "v1_hashes": {
+    "accepted_parent_conditions_before_group_gate.jsonl": "1778de9f21967ac43f9e94d37e1a9e0bee45f274724d3b0018700107bc61170e",
+    "group_gate_rejected_parent_conditions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "heldout_molecule_condition_labels.jsonl": "5ef7a3043c002a420f8f772c86836bf6c1c26a9823d1c8d613fb3221ddf7a443",
+    "rejected_parent_conditions.jsonl": "03c82d08a855f02c65c4b05eb55b9d9af1fe3f744601755477f3314f9b51c527",
+    "source_condition_review.jsonl": "f56eb2ee0dc477005d9d17c03c10a6a48734f394bcf3ca8ddf8193729b5b9935",
+    "test.jsonl": "ba340d019c4f49a4708e93ffc4388771efc8d11dbb3158bf7c06a311cf290088",
+    "test_molecule_condition_labels.jsonl": "d005e25667cabd1b35f02ff25094804bbad1b27a7f47505dfc32c9f98e94ce7f",
+    "train.jsonl": "f1a00fcf943303d73b0ba4eec04b88fc53bf68847a3849869b11be319489ff43",
+    "train_molecule_condition_labels.jsonl": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2",
+    "valid.jsonl": "acef8e37518581e166b16454681607ab50d9b45e63b4494f4a803902dacae187",
+    "valid_molecule_condition_labels.jsonl": "8477a2bf858d8e7a6cd4cd7ae9cd686e4c975a5df50f35a35c5a192de8a486d1"
+  },
+  "artifacts": {
+    "train.jsonl": "063ec0d7f3999ceb59789608b71e8e3c8b2460c1688546b3cc5f0bc60a790e24",
+    "valid.jsonl": "a694036806092e54005e7959d398232a70bdaf59c9dc93519697711b3e74eeac",
+    "test.jsonl": "3ab5825eec39e9d809fd17b56191280fe2c183a7e40840d61ee60260f946242c",
+    "train_molecule_condition_labels.jsonl": "b468c5df80807b22cf9b9cc7709905604019d851bdca1946f54a4ebe9140f181",
+    "valid_molecule_condition_labels.jsonl": "01b97cb30bcecf9ab2ce9eb312d3cd75e8dbac372043410bf2caf95731233644",
+    "test_molecule_condition_labels.jsonl": "af122139050c31dd783fa0d090165d83ca7bbfb722c2501cbd2d7d4154be52d6",
+    "voter_membership.parquet": "27363c47567bd3e1d88c40ef4eca44e22826f6e31ce432130b09cc1246d1d1b0",
+    "gold_label_record_index.parquet": "9d1c39e5ad6c19d4fc1de4a4f2ad810476872754ab5b5a740bfe0a820bfeea53",
+    "gold_label_record_index.manifest.json": "18bcbe1e5d7cd155fb8e397f47ce6671b378c97e9d4e9b21ae31a64d5fb143ac",
+    "excluded_external_condition_reviews.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provenance/physical_voter_replay.parquet": "0a28cc89db55f8bcd63fd842bb9a8f09791c695cee95850fab86984b57e26221",
+    "provenance/v1_v2_card_diff.jsonl": "d819e7cdb3c728e39ac60288d376cffa8044bcced3eef3b438fa1e739b7809fa",
+    "provenance/v1_split_reallocations.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provenance/v1_lineage_label_rejections.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "provenance/source_rejection_audit.json": "1ab9c5969d7933cdf9d2dfa13af76326be7017aa077801c1269c2328a985f552",
+    "summary.json": "659dcc53407f827b2da4b3a39a6bd6b01bb04d776b1b437c215691eee4acedc2"
+  }
+}

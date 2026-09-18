@@ -1,6 +1,12 @@
 import concurrent.futures
+import io
+import json
 import threading
 import time
+
+import pytest
+
+from predict.api_client import pool as provider_pool
 
 from tools.chembl_tool.common.openai_provider_pool import (
     OpenAIProviderPool,
@@ -21,7 +27,7 @@ class _BlockingClient:
         return {"content": {"ok": True}, "model": self.name, "id": self.name}
 
 
-def _spec(name, capacity):
+def _spec(name, capacity, *, priority=0):
     return ProviderSpec(
         name=name,
         base_url=f"http://{name}/v1",
@@ -29,6 +35,7 @@ def _spec(name, capacity):
         api_key_env="",
         max_inflight=capacity,
         initial_latency_s=1,
+        priority=priority,
     )
 
 
@@ -66,7 +73,7 @@ def test_pool_fails_over_and_opens_transport_failure_circuit():
             return {"content": {"ok": True}, "model": "same-model", "id": "ok"}
 
     config = ProviderPoolConfig(
-        providers=(_spec("a", 1), _spec("b", 1)),
+        providers=(_spec("a", 1), _spec("b", 1, priority=1)),
         failure_threshold=1,
         cooldown_seconds=30,
         max_failovers=1,
@@ -89,6 +96,29 @@ def test_pool_fails_over_and_opens_transport_failure_circuit():
     assert providers["b"]["completed"] == 1
 
 
+def test_lower_priority_provider_is_fallback_only():
+    started = []
+    release = threading.Event()
+    config = ProviderPoolConfig(
+        providers=(_spec("primary", 1), _spec("fallback", 1, priority=1))
+    )
+    pool = OpenAIProviderPool(
+        config,
+        client_factory=lambda spec: _BlockingClient(spec.name, started, release),
+    )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        futures = [executor.submit(pool.chat_json, []) for _ in range(2)]
+        deadline = time.monotonic() + 1
+        while not started and time.monotonic() < deadline:
+            time.sleep(0.01)
+        time.sleep(0.05)
+        assert started == ["primary"]
+        release.set()
+        assert all(future.result()["content"]["ok"] for future in futures)
+    assert started == ["primary", "primary"]
+
+
 def test_public_config_contains_only_credential_env_name():
     config = ProviderPoolConfig(providers=(_spec("a", 2),))
 
@@ -96,3 +126,77 @@ def test_public_config_contains_only_credential_env_name():
 
     assert public["providers"][0]["api_key_env"] == ""
     assert "api_key" not in public["providers"][0]
+
+
+def test_pool_forwards_per_call_token_ceiling():
+    observed = []
+
+    class RecordingClient:
+        def chat_json(self, messages, *, max_tokens=None):
+            observed.append(max_tokens)
+            return {"content": {"ok": True}, "model": "same-model", "id": "ok"}
+
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(_spec("a", 1),)),
+        client_factory=lambda spec: RecordingClient(),
+    )
+
+    pool.chat_json([], max_tokens=65_536)
+
+    assert observed == [65_536]
+
+
+def test_pool_records_upstream_provider_when_returned():
+    class RecordingClient:
+        def chat_json(self, messages, *, max_tokens=None):
+            return {
+                "content": {"ok": True},
+                "model": "same-model",
+                "id": "ok",
+                "provider": "Baidu",
+            }
+
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(_spec("openrouter", 1),)),
+        client_factory=lambda spec: RecordingClient(),
+    )
+
+    response = pool.chat_json([])
+
+    assert response["execution_provider"]["upstream_provider"] == "Baidu"
+
+
+def test_endpoint_selection_skips_dead_and_wrong_model_candidates(monkeypatch):
+    config = ProviderPoolConfig(
+        providers=(_spec("healthy", 2), _spec("wrong", 2), _spec("dead", 2))
+    )
+
+    def fake_open(url, timeout):
+        if "dead" in url:
+            raise TimeoutError("offline")
+        model = "different-model" if "wrong" in url else "same-model"
+        return io.BytesIO(json.dumps({"data": [{"id": model}]}).encode())
+
+    monkeypatch.setattr(provider_pool, "urlopen", fake_open)
+    selection = provider_pool.select_healthy_providers(config, 5)
+
+    assert [spec.name for spec in selection.config.providers] == ["healthy"]
+    assert selection.requested_parallelism == 5
+    assert selection.effective_parallelism == 2
+    assert [row["status"] for row in selection.checks] == [
+        "healthy",
+        "model_mismatch",
+        "unavailable",
+    ]
+
+
+def test_endpoint_selection_fails_only_when_none_are_compatible(monkeypatch):
+    config = ProviderPoolConfig(providers=(_spec("dead", 1),))
+    monkeypatch.setattr(
+        provider_pool,
+        "urlopen",
+        lambda *args, **kwargs: (_ for _ in ()).throw(TimeoutError("offline")),
+    )
+
+    with pytest.raises(ValueError, match="no healthy exact-model provider"):
+        provider_pool.select_healthy_providers(config, 1)

@@ -1,0 +1,4 @@
+guidance: >-
+  Evidence is ranked by assay transferability to the query molecule,
+  which can surface records less-similar in structure but potentially more similar in activity; use the
+  score as a transferability estimate.

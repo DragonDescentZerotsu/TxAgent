@@ -1,0 +1,12 @@
+# Ranking is independent of the shared reasoning prompt and biological level mapping.
+version: 1
+stages:
+  L1: joint
+  L2: morgan
+  L3: morgan
+  L4: morgan
+  L5: morgan
+  L6: morgan  # Oral only; ignored for BBB or a shorter --max-level.
+# Supply complete mapping-compatible SQLite caches for any assay-transfer/joint stage.
+# Paths may be absolute or relative to this YAML file. Missing caches fail preparation.
+score_caches: {}

@@ -1,0 +1,60 @@
+{
+  "assignment_method_counts": {
+    "ambiguous_process_termination": 660,
+    "bbb_no_call_approved_physical_scalar.v1": 13952,
+    "bbb_no_call_explicit_tissue_fluid_ratio.v1": 10555,
+    "bbb_no_call_fold_change_ineligible.v1": 4590,
+    "discarded_semantic_override": 62,
+    "gpt_5_4_mini_single_pass": 3345,
+    "gpt_5_4_mini_single_pass:labels_only": 61526,
+    "gpt_5_4_mini_single_pass:normalized_evidence_field": 8281,
+    "gpt_5_4_mini_single_pass:normalized_evidence_field:rerouted_exact_evidence_quote": 25,
+    "gpt_5_4_mini_single_pass:rerouted_exact_evidence_quote": 10,
+    "invalid_row_response": 813,
+    "invalid_row_response:absolute_basis_mismatch": 194,
+    "invalid_row_response:endpoint_ratio_basis_mismatch": 492,
+    "invalid_row_response:invalid_evidence_field_or_quote": 50,
+    "invalid_row_response:missing_or_mismatched_id": 59,
+    "invalid_row_response:nonverbatim_evidence_quote": 104,
+    "invalid_row_response:standard_control_basis_mismatch": 147,
+    "invalid_row_response:unsupported_basis": 12,
+    "invalid_row_response:unsupported_scope": 2,
+    "safe_gate_conflict:bbb_no_call_approved_physical_scalar.v1": 39,
+    "safe_gate_conflict:bbb_no_call_explicit_tissue_fluid_ratio.v1": 360
+  },
+  "base_mapping_path": "data/processing/evidence_library/versions/v8/tasks/bbb_martins/data_processing/reference_semantics_v3/reference_semantics.parquet",
+  "base_mapping_rows": 101366,
+  "base_mapping_sha256": "6165b57b9fe42b0a6b314343d7528854e5d32a3a84daaa9e584a8677df439e33",
+  "credential_envs": [
+    "OPENAI_API_KEY"
+  ],
+  "generation_version": "reference_semantics_generation.v3",
+  "inference_endpoint_counts": {
+    "https://api.openai.com/v1": 3912
+  },
+  "inference_model_counts": {
+    "gpt-5.4-mini": 3912
+  },
+  "input_path": "data/evidence_libraries/bbb_martins/v8/02_canonicalized/records.parquet",
+  "input_sha256": "1a344edfe28ea6e0550f62411f9a82ee2a9c94f128bd3c4b9ad48767b0ab2938",
+  "mapping_path": "data/processing/evidence_library/versions/v8/tasks/bbb_martins/data_processing/reference_semantics_v4/reference_semantics.parquet",
+  "mapping_rows": 105278,
+  "mapping_sha256": "da6ba24644a71218a6520ca900606c2f71df41c38dc79179004bda6a38739771",
+  "prompt_sha256": "5ba13a477366556e5b0133f30bfdfc023a4d7def52a5596e78e89d681df11668",
+  "prompt_version": "bbb_reference_semantics_prompt.v2",
+  "safe_gate_conflicts": 399,
+  "scope_counts": {
+    "absolute": 55256,
+    "comparator_relative": 9280,
+    "endpoint_defined_ratio": 32580,
+    "standardized_control_ratio": 608,
+    "unknown": 7554
+  },
+  "supplement_mapping_rows": 3912,
+  "task_id": "bbb_martins",
+  "validations": {
+    "each_row_submitted_at_most_once": true,
+    "one_mapping_per_candidate": true,
+    "unique_cleaned_record_ids": true
+  }
+}

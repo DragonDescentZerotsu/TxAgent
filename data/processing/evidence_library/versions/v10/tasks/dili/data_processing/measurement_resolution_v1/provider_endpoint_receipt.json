@@ -1,0 +1,227 @@
+{
+  "checked_at_utc": "2026-09-08T23:31:46.007658Z",
+  "gold_gate": {
+    "evaluated_model_rows": 1052,
+    "gold_ok_recovery": {
+      "accuracy": 0.5880597014925373,
+      "correct": 197,
+      "total": 335
+    },
+    "gold_path": "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.jsonl",
+    "gold_sha256": "d49c0d69e0b5cb83cdc56cd52b0b6b6b10247860ba207bf1faad88f6992fe880",
+    "measurement_given_ok_prediction": {
+      "accuracy": 1.0,
+      "correct": 197,
+      "total": 197
+    },
+    "minimum_pair_precision": 0.98,
+    "model_target_coverage": 1.0,
+    "pair_given_ok_prediction": {
+      "accuracy": 0.9898477157360406,
+      "correct": 195,
+      "total": 197
+    },
+    "passed": true,
+    "quality_path": "data/artifacts/evidence_library_assets/dili/v10_measurement_resolution_v1/dgx027_deepseek_gold_v10_prompt_v8_guard_v13_temp0_route_v5/quality/quality_metrics.json",
+    "quality_sha256": "787a8e5e889163d1b5fbc91182abee77c9c464a41b6f30cb4f50e9258dc9783b",
+    "replay_manifest_path": "data/artifacts/evidence_library_assets/dili/v10_measurement_resolution_v1/dgx027_deepseek_gold_v10_prompt_v8_guard_v13_temp0_route_v5/measurement_resolution.manifest.json",
+    "replay_manifest_sha256": "058e13a580089a75439cdff261d11d231d3262388522132b91df268c0fe39250",
+    "replay_mapping_path": "data/artifacts/evidence_library_assets/dili/v10_measurement_resolution_v1/dgx027_deepseek_gold_v10_prompt_v8_guard_v13_temp0_route_v5/measurement_resolution.parquet",
+    "replay_mapping_sha256": "f9221d7c125cd983057c4747ce627526c16349d0c04d114be2c995dc9b31351c",
+    "source_semantic_wrong_accept_count": 0,
+    "source_semantic_wrong_accept_ids": [],
+    "status": {
+      "accuracy": 0.7642585551330798,
+      "correct": 804,
+      "total": 1052
+    },
+    "strict_mismatch_ids": [
+      "bc4e763f8dbe079aa8b80d389e2216827894985e49a3727b0c8856ec028b127b",
+      "f9333e01df7f6537df583ee23ebe37c59630e8c42f5a9fe04bb1758f6f2f19a9"
+    ],
+    "strict_mismatch_interpretation": "source-supported descriptive unit expansions; canonicalization deferred",
+    "whole_record": {
+      "accuracy": 0.7623574144486692,
+      "correct": 802,
+      "total": 1052
+    }
+  },
+  "host": "epyc-4-10",
+  "inference_contract": {
+    "baidu_used": false,
+    "base_url": "http://dgx027:50001/v1",
+    "batch_size": 20,
+    "credential_env": "",
+    "endpoint_health_status": 200,
+    "max_completion_tokens": 8192,
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "openrouter_used": false,
+    "parcc_litellm_used": false,
+    "provider": "local",
+    "reasoning_effort": "none",
+    "returned_model_exact": true,
+    "served_models": [
+      "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "temperature": 0.0,
+    "workers": 512
+  },
+  "live_checks": {
+    "health": {
+      "http_status": 200,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "model_info": {
+      "architectures": [
+        "DeepseekV4ForCausalLM"
+      ],
+      "http_status": 200,
+      "model_path": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "model_type": "deepseek_v4",
+      "served_model_name": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "sha256": "18c2c880c99152cde47832d3467ee2301e77fc46c34bc23a74a22732b8d46c91"
+    },
+    "models": {
+      "http_status": 200,
+      "ids": [
+        "deepseek-ai/DeepSeek-V4-Flash-0731"
+      ],
+      "sha256": "6b18476cd50bd241b273bff185e423592d967e0ec5de99e7adfc6c0f14937d15"
+    }
+  },
+  "mapping": {
+    "assignment_method_counts": {
+      "model_guarded_unsure": 100612,
+      "model_single_pass": 376404,
+      "model_structural_retry": 1453
+    },
+    "guard_reason_counts": {
+      "ambiguous_named_metric_basis": 137,
+      "bound_not_point": 2609,
+      "comparison_defined_count": 1278,
+      "conflicting_focal_statement": 31,
+      "control_or_comparator_not_outcome": 7359,
+      "different_qualitative_focal_outcome": 1012,
+      "dose_or_concentration_not_outcome": 22351,
+      "incomplete_named_metric": 1195,
+      "measurement_not_exact_source_point": 601,
+      "missing_printed_scientific_scale": 11,
+      "multiple_or_missing_point_candidates": 16290,
+      "percent_unit_contains_context": 1,
+      "relative_value": 14100,
+      "unit_contains_additional_result": 98,
+      "unit_contains_comparator_context": 564,
+      "unit_contains_context_clause": 1749,
+      "unit_contains_time_context": 2232,
+      "unit_contains_uncertainty": 155,
+      "unit_not_exact_declared_unit": 608,
+      "unit_not_exact_measurement_text": 2242,
+      "unit_not_tied_to_selected_value": 6443,
+      "unqualified_percent_unit": 9780,
+      "unsupported_literal_unit": 4770,
+      "unsupported_or_uncertain_unit": 2522,
+      "unsupported_percent_scale": 2474
+    },
+    "manifest_path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.manifest.json",
+    "manifest_sha256": "b15b8ae281e07d3f01d0a216c12308ed8b22ee80d3318f46d09b6fa53f929454",
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+    "rows": 478469,
+    "sha256": "d8d979c6415b4385a64e3346da00a64b91b7e0a001d779782dd1e43e27d3c1af",
+    "status_counts": {
+      "ok": 55887,
+      "relative": 123085,
+      "unavailable": 178089,
+      "unsure": 121408
+    }
+  },
+  "publication": {
+    "current_updated": false,
+    "evidence_library_published": false,
+    "stage2_implemented": false
+  },
+  "python": {
+    "executable": "/usr/bin/python",
+    "version": "3.12.3"
+  },
+  "receipt_version": "dili_v10_stage1_measurement_resolution.v1",
+  "release": "v10",
+  "response_cache": {
+    "bytes": 465697095,
+    "cache_version": "reference_semantics_single_submission_cache.v1",
+    "event_status_counts": {
+      "api_response": 24054,
+      "id_transport": 23961,
+      "submitted": 23961,
+      "terminal": 23961
+    },
+    "input_contract_path": "outputs/chembl_tool/measurement_resolution_generation/dili_v10_dgx027_deepseek_full_v1_prompt_v8_guard_v13_temp0_route_v5/dili/input_contract.json",
+    "input_contract_sha256": "9b9df1b88c88dc3c92240b33647e5785128f3934040902d35ce1ce435b80a0e5",
+    "path": "outputs/chembl_tool/measurement_resolution_generation/dili_v10_dgx027_deepseek_full_v1_prompt_v8_guard_v13_temp0_route_v5/dili/requests.jsonl",
+    "retained": true,
+    "sha256": "25e61d17b2c375f37098cc7bb4e8af695c8a2912abd302aff236a707eeb1581d",
+    "technical_retry_event_counts": {
+      "resubmitted_row_occurrences": 20,
+      "retryable_assignment_occurrences": 20,
+      "unterminated_submission_events": 0
+    },
+    "terminal_response_status_counts": {
+      "api_failure": 1,
+      "valid": 23866,
+      "valid_after_structural_retry": 94
+    }
+  },
+  "routing": {
+    "counts": {
+      "accept": 140,
+      "extract": 478469,
+      "reject": 1149057
+    },
+    "deterministic_accept_rule_counts": {
+      "dili_v5_exact_ec50_pair.v1": 92,
+      "dili_v5_exact_ic50_pair.v1": 47,
+      "dili_v5_exact_mec_pair.v1": 1
+    },
+    "extraction_source_counts": {
+      "dili_v1": 147614,
+      "dili_v2": 186634,
+      "dili_v3": 27583,
+      "dili_v4": 39125,
+      "dili_v5": 77513
+    },
+    "version": "dili_schema_numeric_routing.v5"
+  },
+  "scope": "stage1_only",
+  "selected_endpoint": {
+    "base_url": "http://dgx027:50001/v1",
+    "credential_env": "",
+    "host": "dgx027",
+    "max_concurrency": 512,
+    "provider": "local",
+    "requested_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "returned_model": "deepseek-ai/DeepSeek-V4-Flash-0731"
+  },
+  "source_and_clean": {
+    "clean_manifest_path": "data/evidence_libraries/dili/v10/01_cleaned/manifest.json",
+    "clean_manifest_sha256": "e99d516b20ea4ae217c7c32c84e2edde6a4f4c16537bc93dac8eb8a662405815",
+    "cleaned_rows": 1627666,
+    "endpoint_profile_path": "data/evidence_libraries/dili/v10/01_cleaned/endpoint_unit_profile.json",
+    "endpoint_profile_sha256": "4f11b032bcbfc20d2eba7a03bac059c62f9f5b912f3e6019dbcc7435918812ec",
+    "raw_rows": 1645109,
+    "records_path": "data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
+    "records_sha256": "19f37826dc53bde935e852f1698f3dbfeabc65181e599fa20c2c481fc1d7b72c",
+    "release_manifest_path": "data/evidence_libraries/dili/v10/manifest.json",
+    "release_manifest_sha256": "8c73f6e1e08cc2ac74d7968a81f8bef0f2dc9e620fa7b219019858410fa0b4ac",
+    "stage1_incomplete_marker_retained": true,
+    "structure_rejections": 17443
+  },
+  "task_id": "dili",
+  "temperature_note": "Temperature zero freezes the request setting; distributed endpoint responses are not bitwise deterministic across independent replays.",
+  "validations": {
+    "exact_candidate_id_set": true,
+    "no_terminal_failures": true,
+    "only_ok_has_one_measurement": true,
+    "raw_endpoint_identity_only": true,
+    "source_row_uid_and_source_id_match": true,
+    "unique_mapping_ids": true
+  }
+}

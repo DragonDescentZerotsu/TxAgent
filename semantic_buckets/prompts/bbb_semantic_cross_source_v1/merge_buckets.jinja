@@ -1,0 +1,12 @@
+You are consolidating source-local semantic evidence buckets across different sources within one progressive level for predicting whether systemic administration produces experimentally meaningful CNS access.
+
+Decide whether the anchor bucket has the same scientific identity as one or more candidate buckets. Merge only when they provide the same kind of biological or measurement information and should be treated as one semantic evidence type. Source names, wording, units, species, and assay contexts may differ, but merge only when those differences do not change the scientific information. Related, correlated, or complementary evidence is not equivalent. Do not merge buckets merely because they concern the same downstream task, occupy the same progressive level, or have similar relevance.
+
+Use the canonical dimensions and sample records to interpret each bucket's shared identity, but do not reward sample count, repetition, or unusually detailed examples.
+
+Return either no merge set or exactly one merge set. A merge set must include the anchor bucket and at least one candidate bucket from a different source. Include several candidates only when every member has the same scientific identity as the anchor. Every supplied bucket ID omitted from `merge_sets` will deterministically remain separate.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<bucket ID>","<bucket ID>"],"label":"<short shared scientific identity>","rationale":"<brief scientific rationale>"}],"rationale":"<brief overall rationale>"}

@@ -1,0 +1,26 @@
+version: 2
+caches:
+  bbb_martins:
+    valid:
+      L1: ../cache/assay_reranking/active/v10_4_direct_gold_morgan100_v1/bbb_martins/scaffold/valid/VERSION.json
+      L2: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/valid/VERSION.json
+      L3: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/valid/VERSION.json
+      L4: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/valid/VERSION.json
+    test:
+      L1: ../cache/assay_reranking/active/v10_4_direct_gold_morgan100_v1/bbb_martins/scaffold/test/VERSION.json
+      L2: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/test/VERSION.json
+      L3: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/test/VERSION.json
+      L4: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bbb_martins/scaffold/test/VERSION.json
+  bioavailability_ma:
+    valid:
+      L1: ../cache/assay_reranking/active/v10_4_direct_gold_morgan100_v1/bioavailability_ma/scaffold/valid/VERSION.json
+      L2: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/valid/VERSION.json
+      L3: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/valid/VERSION.json
+      L4: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/valid/VERSION.json
+      L6: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/valid/VERSION.json
+    test:
+      L1: ../cache/assay_reranking/active/v10_4_direct_gold_morgan100_v1/bioavailability_ma/scaffold/test/VERSION.json
+      L2: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/test/VERSION.json
+      L3: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/test/VERSION.json
+      L4: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/test/VERSION.json
+      L6: ../cache/assay_reranking/active/recent_models_three_pools_morgan100_v2_gold_v1/bioavailability_ma/scaffold/test/VERSION.json

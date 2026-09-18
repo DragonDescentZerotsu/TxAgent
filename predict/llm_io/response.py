@@ -32,6 +32,7 @@ def call_with_json_validation(
     content_validator: ContentValidator | None = None,
     branch_name: str = "reasoning",
     max_attempts: int = 4,
+    private_reasoning_prefix: bool = False,
 ) -> dict[str, Any]:
     """Call until the JSON contract is valid or the bounded attempts are used."""
     if max_attempts < 1:
@@ -54,7 +55,10 @@ def call_with_json_validation(
                     envelope=final_recovery,
                 )
                 recovery_instruction = (
-                    " Start the response immediately with `{`. Do not emit repeated punctuation or extended "
+                    " Restart the required private-reasoning sequence from MOLECULE 1, complete GLOBAL "
+                    "SYNTHESIS, and then emit one complete JSON object under about 1,200 words."
+                    if private_reasoning_prefix
+                    else " Start the response immediately with `{`. Do not emit repeated punctuation or extended "
                     "internal reasoning; keep the complete JSON under about 1,200 words and use short sentences "
                     "for every field."
                 )

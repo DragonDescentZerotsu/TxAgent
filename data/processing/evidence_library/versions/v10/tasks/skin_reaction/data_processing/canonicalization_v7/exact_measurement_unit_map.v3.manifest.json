@@ -1,0 +1,50 @@
+{
+  "version": "skin_reaction_unit_reconciliation.v1",
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/skin_reaction/data_processing/canonicalization_v7/exact_measurement_unit_map.v3.json",
+    "sha256": "280811fb71cbe80d9670aaa68bd61470af2c311e3b493756eb2452143b8df0e9"
+  },
+  "scope": "all_v10_source_units_noncanonical_exact_units_and_llm_ok_units",
+  "inputs": {
+    "base_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/skin_reaction/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
+      "sha256": "0475302f49c8094842cf45ebe7131bebcf1b077632d18274a9eb23ab34354f02"
+    },
+    "cleaned_records": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v10/01_cleaned/records.parquet",
+      "sha256": "c5a02b38218e12dc5a81e5e61f1e8b2ef8d7789d656c45b464c720638bdedaaf"
+    },
+    "measurement_resolution": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v10/measurement_resolution_v8/measurement_resolution.parquet",
+      "sha256": "dfe27d24abe51fe79c329cd205aed9eedae8e615227ef91c6e0b6f2f4360fca7"
+    }
+  },
+  "inventory_counts": {
+    "endpoint_unit_pairs": 1219,
+    "llm_ok_occurrences": 6962,
+    "source_exact_occurrences": 23402,
+    "source_occurrences": 6687,
+    "unique_units": 493
+  },
+  "decision_counts": {
+    "reused_unambiguous_v2_decision": 27,
+    "reviewed_exact_alias": 23,
+    "reviewed_explicit_denominator": 12,
+    "reviewed_identity_preservation": 73,
+    "reviewed_non_unit_phrase": 1,
+    "reviewed_percent_semantics": 12
+  },
+  "decision_occurrence_counts": {
+    "reused_unambiguous_v2_decision": 88,
+    "reviewed_exact_alias": 87,
+    "reviewed_explicit_denominator": 16,
+    "reviewed_identity_preservation": 164,
+    "reviewed_non_unit_phrase": 1,
+    "reviewed_percent_semantics": 47
+  },
+  "validations": {
+    "coefficient_changes_only_for_explicit_denominators": true,
+    "complete_required_unit_coverage": true,
+    "legacy_decisions_preserved": true
+  }
+}

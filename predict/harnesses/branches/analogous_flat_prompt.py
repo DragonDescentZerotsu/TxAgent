@@ -9,11 +9,11 @@ from typing import Any, Mapping
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from predict.harnesses.branches.assay_transfer_prompt import (
+from predict.harnesses.branches.prompt import (
     public_assay_transfer_families,
 )
 from predict.llm_io.evidence import evidence_for_llm
-from predict.harnesses.branches.reasoning.calls import call_group_branch
+from predict.harnesses.branches.inference import call_group_branch
 from predict.llm_io.response import (
     call_with_json_validation,
     structured_response_is_valid,

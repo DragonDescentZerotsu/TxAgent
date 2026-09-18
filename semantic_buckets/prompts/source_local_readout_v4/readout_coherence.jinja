@@ -1,0 +1,19 @@
+You are deciding whether one evidence bucket represents a single coherent experimental readout.
+
+A coherent readout is a set of observations that measure the same quantity or outcome with the same scientific interpretation. Ask this counterfactual question: if the same compound were evaluated under both variants, would they be different dependent variables or measurement interpretations, rather than the same readout under different conditions? Split only in the former case.
+
+Consider only the supplied scientific dimensions, such as endpoint, unit or scale, measured target or mechanism, assay system, species, matrix, and dose, and only when they change what was actually measured. Merge synonymous labels, convertible units, and context-only differences. Ignore downstream predictive usefulness, record count, repetition, and wording differences.
+
+Units are equivalent only when conversion changes a constant scale factor and requires no missing normalization quantity; for example, a per-kilogram denominator is not equivalent to an unnormalized value. Keep assay platforms or systems separate when they change the physical or biological interpretation of the measurement, such as PAMPA versus a cell monolayer, in vitro versus in vivo, or a perfused organ versus a whole animal. Species, dose, formulation, and timing are experimental conditions: never select one of those columns solely because its values differ, and never use those differences alone to define separate readouts.
+
+The canonical dimension inventories are complete. The payload also includes up to twelve deterministically stratified sample records from different pair buckets; use them only to interpret those complete inventories, without rewarding sample count, repetition, or unusually detailed examples.
+
+If the bucket is coherent, return COHERENT. If it contains more than one intrinsic readout, return SPLIT and select the single supplied unused canonical column that best separates those readouts.
+
+{{ compact_payload_json }}
+
+Return only one of:
+{"decision":"coherent","rationale":"<brief intrinsic readout rationale>"}
+{"decision":"split","column":"<one supplied column ID>","rationale":"<brief intrinsic readout rationale>"}
+
+Write the rationale in English.

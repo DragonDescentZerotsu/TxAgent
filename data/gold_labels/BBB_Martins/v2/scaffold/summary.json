@@ -1,0 +1,419 @@
+{
+  "task": "BBB_Martins",
+  "version": "conditioned_benchmark_physical_voters.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v2",
+  "stage1": {
+    "records_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bbb_martins/v10/01_cleaned/records.parquet",
+    "records_sha256": "32b9080cd549fe7cbead5c0cae3f18b52211115c759fe7b3c3ffd6edfc530c1f",
+    "records": 496092,
+    "duplicates_removed": 2506,
+    "deduplication_manifest": {
+      "authoritative_stage1_deduplication": true,
+      "base_fields": [
+        "canonical_smiles",
+        "pmid",
+        "canonical_measurement_text",
+        "canonical_unit_text"
+      ],
+      "comparison": {
+        "base": "literal_typed_equality",
+        "cross_source": "intersection_of_configured_scientific_field_names",
+        "incomplete_base": "never_duplicate",
+        "missingness": "exact",
+        "representative": "preferred_gold_v1_voter_then_lexicographically_smallest_source_row_uid",
+        "within_source": "all_configured_scientific_fields"
+      },
+      "deduplication_complete": true,
+      "duplicate_audit": {
+        "cleaning_version": "stage1_exact_deduplication.v2",
+        "count": 2506,
+        "discarded_source_row_uid_sha256": "46bbe8cfa87c3988a8096086a7df237fabe487e0bc4ddefb1da2bedb35b44567",
+        "lineage_sha256": "b40c12353164a7bdfeeb414b605ae3becfc490e71809e6feef49010ec820cd4c",
+        "row_selector": {
+          "after": "dropped",
+          "field": "record"
+        }
+      },
+      "duplicate_scope_counts": {
+        "cross_source": 2212,
+        "within_source": 294
+      },
+      "duplicates_removed": 2506,
+      "input_records": 498598,
+      "output_records": 496092,
+      "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+      "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
+      "preferred_voter_uids": {
+        "count": 7634,
+        "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bbb_martins.preferred_source_row_uids.json",
+        "present_in_input": 7634,
+        "sha256": "d5c0c710d15fd45a933707f6a3d531b2271bf013ef6b3e6fab1f127d431390a1"
+      },
+      "retained_source_row_uid_count": 496092,
+      "retained_source_row_uid_sha256": "3341de8c84bc9b9a3fb70a38ce0efca4e93c40cc713df5a351910a9c19aef9ca",
+      "source_scientific_fields": {
+        "direct_bbb": [
+          "bbb_permeability_label",
+          "bbb_transport_label",
+          "quant_metric",
+          "assay_model",
+          "species",
+          "qualifying_conditions"
+        ],
+        "efflux_transport": [
+          "transporter_identifier",
+          "evidence_type",
+          "interaction_conclusion",
+          "assay_system",
+          "quantitative_metric",
+          "perturbation",
+          "qualifying_conditions"
+        ],
+        "influx_transport": [
+          "mediator_name",
+          "mediator_identifier",
+          "transport_mechanism",
+          "transport_endpoint",
+          "evidence_basis",
+          "assay_model",
+          "qualifying_conditions"
+        ],
+        "passive_permeability": [
+          "assay_type",
+          "biological_system",
+          "metric_name",
+          "metric_uncertainty",
+          "passive_bbb_interpretation",
+          "qualifying_conditions"
+        ]
+      },
+      "validations": {
+        "input_equals_retained_plus_duplicates": true,
+        "representatives_follow_gold_priority_then_uid": true,
+        "retained_source_row_uids_unique": true
+      },
+      "version": "stage1_exact_deduplication.v2"
+    },
+    "stage_manifest_sha256": "12ef3c78841f3fbc23c7320ca4eef494b418bfc44913f557bd30657430e2bde5",
+    "source_value_cleaning_manifest_sha256": "612d491fc395527feae3f9eb296389453411f719928e34242d176d3de37668d8",
+    "duplicate_audit_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bbb_martins/v10/01_cleaned/source_value_cleaning_audit.parquet",
+    "duplicate_audit_sha256": "911a8aa563472452a814cc9b61898793a55ca636b4c47a1e123926e27b8e8927"
+  },
+  "condition_ledger": {
+    "version": "physical_condition_review_ledger.v2",
+    "rows": 7632,
+    "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_condition_ledgers/bbb_martins.physical_condition_reviews.jsonl",
+    "sha256": "12c1048eb572a656cf90f2511a3f3c706159bdad68de08282f7636d3436f9f58"
+  },
+  "v1_voter_lineage": {
+    "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bbb_martins.voter_lineage.jsonl",
+    "sha256": "f581f5587bc678e216251af267e8c20bac9f77e09f1c025926dca36f8f2541f1",
+    "physical_members_before_dedup": 7634,
+    "exact_duplicates_removed": 2,
+    "surviving_physical_members": 7632,
+    "label_ineligible_members_dropped": 0,
+    "label_rejection_reason_counts": {}
+  },
+  "accepted_physical_source_rows": 7632,
+  "excluded_external_condition_rows": 0,
+  "physical_voters": 7632,
+  "agreement_policy": {
+    "null_condition_threshold": 0.7,
+    "v1_migration_preservation_threshold": 0.6666666666666666,
+    "v1_migration_preservation_rule": "existing v1 null-condition context with unchanged majority label",
+    "external_condition_threshold": 0.6,
+    "exact_ties_rejected": true
+  },
+  "published_cards": 3832,
+  "rejected_parent_conditions": 1,
+  "group_gate_rejected_parent_conditions": 0,
+  "group_gate": {
+    "minimum_accepted_parents": 3,
+    "minimum_distinct_scaffolds": 3,
+    "allowed_condition_groups": [
+      "barrier_state=disrupted",
+      "co_treatment=cyclosporine",
+      "disease=bacterial_meningitis",
+      "disease=brain_tumor_or_glioma",
+      "disease=cerebral_ischemia",
+      "disease=meningitis_unspecified",
+      "disease=pneumococcal_meningitis",
+      "disease=tuberculous_meningitis"
+    ],
+    "support": {
+      "barrier_state=disrupted": {
+        "accepted_parents": 17,
+        "distinct_scaffolds": 14,
+        "label_counts": {
+          "1": 17
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "co_treatment=cyclosporine": {
+        "accepted_parents": 16,
+        "distinct_scaffolds": 15,
+        "label_counts": {
+          "1": 11,
+          "0": 5
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=bacterial_meningitis": {
+        "accepted_parents": 12,
+        "distinct_scaffolds": 12,
+        "label_counts": {
+          "1": 10,
+          "0": 2
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=brain_tumor_or_glioma": {
+        "accepted_parents": 37,
+        "distinct_scaffolds": 30,
+        "label_counts": {
+          "1": 30,
+          "0": 7
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=cerebral_ischemia": {
+        "accepted_parents": 10,
+        "distinct_scaffolds": 10,
+        "label_counts": {
+          "1": 8,
+          "0": 2
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=meningitis_unspecified": {
+        "accepted_parents": 55,
+        "distinct_scaffolds": 45,
+        "label_counts": {
+          "1": 48,
+          "0": 7
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=pneumococcal_meningitis": {
+        "accepted_parents": 10,
+        "distinct_scaffolds": 9,
+        "label_counts": {
+          "1": 9,
+          "0": 1
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=tuberculous_meningitis": {
+        "accepted_parents": 9,
+        "distinct_scaffolds": 9,
+        "label_counts": {
+          "1": 8,
+          "0": 1
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      }
+    },
+    "allocation": {
+      "method": "frozen_parent_scaffold_plus_milp_group_coverage",
+      "seed": 20260818,
+      "n_candidate_groups": 8,
+      "n_selected_groups": 8,
+      "selected_groups": [
+        "barrier_state=disrupted",
+        "co_treatment=cyclosporine",
+        "disease=bacterial_meningitis",
+        "disease=brain_tumor_or_glioma",
+        "disease=cerebral_ischemia",
+        "disease=meningitis_unspecified",
+        "disease=pneumococcal_meningitis",
+        "disease=tuberculous_meningitis"
+      ],
+      "n_novel_scaffolds": 1,
+      "group_split_counts": {
+        "barrier_state=disrupted": {
+          "train": 12,
+          "valid": 3,
+          "test": 2
+        },
+        "co_treatment=cyclosporine": {
+          "train": 9,
+          "valid": 4,
+          "test": 3
+        },
+        "disease=bacterial_meningitis": {
+          "train": 7,
+          "valid": 2,
+          "test": 3
+        },
+        "disease=brain_tumor_or_glioma": {
+          "train": 23,
+          "valid": 6,
+          "test": 8
+        },
+        "disease=cerebral_ischemia": {
+          "train": 8,
+          "valid": 1,
+          "test": 1
+        },
+        "disease=meningitis_unspecified": {
+          "train": 35,
+          "valid": 13,
+          "test": 7
+        },
+        "disease=pneumococcal_meningitis": {
+          "train": 7,
+          "valid": 1,
+          "test": 2
+        },
+        "disease=tuberculous_meningitis": {
+          "train": 7,
+          "valid": 1,
+          "test": 1
+        }
+      },
+      "group_exclusion_reasons": {}
+    }
+  },
+  "split_counts": {
+    "train": 3045,
+    "valid": 396,
+    "test": 391
+  },
+  "diff_counts": {
+    "unchanged": 3739,
+    "updated": 56,
+    "removed": 48,
+    "added": 37
+  },
+  "v1_split_reallocations": 0,
+  "voter_membership": {
+    "schema_version": "gold_voter_membership.v1",
+    "path": "voter_membership.parquet",
+    "sha256": "27363c47567bd3e1d88c40ef4eca44e22826f6e31ce432130b09cc1246d1d1b0",
+    "stage1_sha256": "32b9080cd549fe7cbead5c0cae3f18b52211115c759fe7b3c3ffd6edfc530c1f",
+    "n_rows": 7632,
+    "n_vote_contexts": 3833,
+    "aggregate_status_counts": {
+      "parent_label_tie": 2,
+      "published": 7630
+    },
+    "provenance": {
+      "builder_version": "conditioned_benchmark_physical_voters.v2",
+      "condition_ledger_version": "physical_condition_review_ledger.v2",
+      "deduplication": {
+        "records_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bbb_martins/v10/01_cleaned/records.parquet",
+        "records_sha256": "32b9080cd549fe7cbead5c0cae3f18b52211115c759fe7b3c3ffd6edfc530c1f",
+        "records": 496092,
+        "duplicates_removed": 2506,
+        "deduplication_manifest": {
+          "authoritative_stage1_deduplication": true,
+          "base_fields": [
+            "canonical_smiles",
+            "pmid",
+            "canonical_measurement_text",
+            "canonical_unit_text"
+          ],
+          "comparison": {
+            "base": "literal_typed_equality",
+            "cross_source": "intersection_of_configured_scientific_field_names",
+            "incomplete_base": "never_duplicate",
+            "missingness": "exact",
+            "representative": "preferred_gold_v1_voter_then_lexicographically_smallest_source_row_uid",
+            "within_source": "all_configured_scientific_fields"
+          },
+          "deduplication_complete": true,
+          "duplicate_audit": {
+            "cleaning_version": "stage1_exact_deduplication.v2",
+            "count": 2506,
+            "discarded_source_row_uid_sha256": "46bbe8cfa87c3988a8096086a7df237fabe487e0bc4ddefb1da2bedb35b44567",
+            "lineage_sha256": "b40c12353164a7bdfeeb414b605ae3becfc490e71809e6feef49010ec820cd4c",
+            "row_selector": {
+              "after": "dropped",
+              "field": "record"
+            }
+          },
+          "duplicate_scope_counts": {
+            "cross_source": 2212,
+            "within_source": 294
+          },
+          "duplicates_removed": 2506,
+          "input_records": 498598,
+          "output_records": 496092,
+          "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+          "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
+          "preferred_voter_uids": {
+            "count": 7634,
+            "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bbb_martins.preferred_source_row_uids.json",
+            "present_in_input": 7634,
+            "sha256": "d5c0c710d15fd45a933707f6a3d531b2271bf013ef6b3e6fab1f127d431390a1"
+          },
+          "retained_source_row_uid_count": 496092,
+          "retained_source_row_uid_sha256": "3341de8c84bc9b9a3fb70a38ce0efca4e93c40cc713df5a351910a9c19aef9ca",
+          "source_scientific_fields": {
+            "direct_bbb": [
+              "bbb_permeability_label",
+              "bbb_transport_label",
+              "quant_metric",
+              "assay_model",
+              "species",
+              "qualifying_conditions"
+            ],
+            "efflux_transport": [
+              "transporter_identifier",
+              "evidence_type",
+              "interaction_conclusion",
+              "assay_system",
+              "quantitative_metric",
+              "perturbation",
+              "qualifying_conditions"
+            ],
+            "influx_transport": [
+              "mediator_name",
+              "mediator_identifier",
+              "transport_mechanism",
+              "transport_endpoint",
+              "evidence_basis",
+              "assay_model",
+              "qualifying_conditions"
+            ],
+            "passive_permeability": [
+              "assay_type",
+              "biological_system",
+              "metric_name",
+              "metric_uncertainty",
+              "passive_bbb_interpretation",
+              "qualifying_conditions"
+            ]
+          },
+          "validations": {
+            "input_equals_retained_plus_duplicates": true,
+            "representatives_follow_gold_priority_then_uid": true,
+            "retained_source_row_uids_unique": true
+          },
+          "version": "stage1_exact_deduplication.v2"
+        },
+        "stage_manifest_sha256": "12ef3c78841f3fbc23c7320ca4eef494b418bfc44913f557bd30657430e2bde5",
+        "source_value_cleaning_manifest_sha256": "612d491fc395527feae3f9eb296389453411f719928e34242d176d3de37668d8",
+        "duplicate_audit_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bbb_martins/v10/01_cleaned/source_value_cleaning_audit.parquet",
+        "duplicate_audit_sha256": "911a8aa563472452a814cc9b61898793a55ca636b4c47a1e123926e27b8e8927"
+      }
+    }
+  },
+  "gold_label_record_index": {
+    "schema_version": "gold_label_record_index.v1",
+    "path": "gold_label_record_index.parquet",
+    "sha256": "9d1c39e5ad6c19d4fc1de4a4f2ad810476872754ab5b5a740bfe0a820bfeea53",
+    "voter_membership_sha256": "27363c47567bd3e1d88c40ef4eca44e22826f6e31ce432130b09cc1246d1d1b0",
+    "n_gold_labels": 3832,
+    "n_physical_voters": 7630,
+    "edge_view": "voter_membership.parquet where aggregate_status == published"
+  }
+}

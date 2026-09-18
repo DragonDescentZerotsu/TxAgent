@@ -1,5 +1,5 @@
 {
-  "artifact_version": "bioavailability_ma.direct_hf_complete_source.v1",
+  "artifact_version": "bioavailability_ma.direct_hf_complete_source.v2",
   "dataset": "starling-labs/Oral_Bioavailability",
   "revision": "01bbe3ee9cdd3dc081c39973529c9da0c814d465",
   "split": "train",
@@ -7,8 +7,8 @@
   "source_index_contract": "unique contiguous integers 0..163814",
   "records_parquet": {
     "path": "records.parquet",
-    "sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
-    "bytes": 12693204,
+    "sha256": "09ba9a0a0df04b8a87d95819c564fd93c1f2d6f0491b5dc7854c6a707ecd68fb",
+    "bytes": 17751026,
     "compression": "Parquet Zstandard level 9"
   },
   "schema": [
@@ -24,8 +24,15 @@
     "oral_exposure_mode",
     "qualifying_conditions",
     "comparator",
-    "extra_details"
+    "extra_details",
+    "source_row_uid"
   ],
+  "lineage": {
+    "content_input_sha256": "430267dad8645f6e8ee140e98f24e318c197435cb72ae3b318ebab65ef929d1d",
+    "source_row_uid_ledger": "data/raw/starling/source_row_uid_ledger/manifest.json",
+    "source_row_uid_ledger_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f73fa5b66bfce9dd843f83025a27",
+    "change": "added deterministic source_row_uid without changing source content columns"
+  },
   "semantics": {
     "complete_source": true,
     "historical_kept_dropped_partition": false,

@@ -1,0 +1,33 @@
+{
+  "version": "reranked_progressive_v8",
+  "upstream_commit": "e56a79f371d1029201eff29e348d30e7beb94d5c",
+  "level_description_precedence": "endpoint description, then level description, as in upstream _levels",
+  "upstream_source_sha256": {
+    "tools/chembl_tool/tasks/bbb_martins/experiment_config.py": "71c1ce9ae10b174de952f640824604f08ab2ebbe4244baf57277f5e86f09b19b",
+    "tools/chembl_tool/tasks/bioavailability_ma/experiment_config.py": "2d01907de67d76a4be83ca395918aa17846bf71e231e0097ee518f046912c2fc"
+  },
+  "membership_verification": {
+    "bbb_martins": {
+      "upstream_source_membership_sha256": "7dfdc18788470234d6b3b1f0f3dfb5704c452920d645615ad3ae6a067100ce59",
+      "local_uid_mapping_sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+      "same_membership": true
+    },
+    "bioavailability_ma": {
+      "upstream_source_membership_sha256": "1927cc726a58ec1a16677b5975a24216670b48d23bc8cb6c9d558dfdee5b6c28",
+      "local_uid_mapping_sha256": "c1d8b8f137303f9c222e2e4a0509fbcd4e48390e91459c6c757b945707731fd6",
+      "same_membership": true
+    }
+  },
+  "parent": "reranked_progressive_v7",
+  "status": "unevaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "changes": [
+    "Restore full_level_plan in the model-visible payload.",
+    "Omit evidence_family from model-visible records while preserving internal family assignment and first_seen_level.",
+    "Revise assay-transfer mode guidance to describe potentially more informative records from less-similar structures."
+  ],
+  "historical_predictions_reused": false
+}

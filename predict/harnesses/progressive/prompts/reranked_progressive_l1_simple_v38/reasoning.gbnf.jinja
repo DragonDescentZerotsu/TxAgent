@@ -1,0 +1,29 @@
+{% if task == "bbb_martins" %}root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,18432}
+final_calibration ::= "\nFINAL CALIBRATION\n" (pass_majority | fail_majority)
+pass_majority ::= "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: " bbb_verdict "\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: pass\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: pass\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line
+fail_majority ::= "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: " bbb_verdict "\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: fail\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: fail\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line
+bbb_verdict ::= "pass" | "fail"
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- elif task == "bioavailability_ma" %}root ::= high_hhh | high_hlh | high_lhh | low_lll | low_lhl | low_hll
+high_hhh ::= direct_high transfer_high counterfactual_high final_high_hhh "</think>\n" answer
+high_hlh ::= direct_high transfer_low counterfactual_high final_high_hlh "</think>\n" answer
+high_lhh ::= direct_low transfer_high counterfactual_high final_high_lhh "</think>\n" answer
+low_lll ::= direct_low transfer_low counterfactual_low final_low_lll "</think>\n" answer
+low_lhl ::= direct_low transfer_high counterfactual_low final_low_lhl "</think>\n" answer
+low_hll ::= direct_high transfer_low counterfactual_low final_low_hll "</think>\n" answer
+direct_high ::= "DIRECT-RECORD ANALYSIS: " analysis_line "DIRECT-RECORD VERDICT: high\n"
+direct_low ::= "DIRECT-RECORD ANALYSIS: " analysis_line "DIRECT-RECORD VERDICT: low\n"
+transfer_high ::= "TRANSFER-TO-QUERY ANALYSIS: " analysis_line "TRANSFER-TO-QUERY VERDICT: high\n"
+transfer_low ::= "TRANSFER-TO-QUERY ANALYSIS: " analysis_line "TRANSFER-TO-QUERY VERDICT: low\n"
+counterfactual_high ::= "QUERY-COUNTERFACTUAL ANALYSIS: " analysis_line "QUERY-COUNTERFACTUAL VERDICT: high\n"
+counterfactual_low ::= "QUERY-COUNTERFACTUAL ANALYSIS: " analysis_line "QUERY-COUNTERFACTUAL VERDICT: low\n"
+analysis_line ::= [^<\r\n]{1,6000} "\n"
+final_high_hhh ::= "FINAL CALIBRATION\nVOTE PATTERN: high,high,high\nTHRESHOLD DECISION: high\nDECISION RATIONALE: " audit_line
+final_high_hlh ::= "FINAL CALIBRATION\nVOTE PATTERN: high,low,high\nTHRESHOLD DECISION: high\nDECISION RATIONALE: " audit_line
+final_high_lhh ::= "FINAL CALIBRATION\nVOTE PATTERN: low,high,high\nTHRESHOLD DECISION: high\nDECISION RATIONALE: " audit_line
+final_low_lll ::= "FINAL CALIBRATION\nVOTE PATTERN: low,low,low\nTHRESHOLD DECISION: low\nDECISION RATIONALE: " audit_line
+final_low_lhl ::= "FINAL CALIBRATION\nVOTE PATTERN: low,high,low\nTHRESHOLD DECISION: low\nDECISION RATIONALE: " audit_line
+final_low_hll ::= "FINAL CALIBRATION\nVOTE PATTERN: high,low,low\nTHRESHOLD DECISION: low\nDECISION RATIONALE: " audit_line
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- else %}{{ unsupported_progressive_task }}{% endif %}

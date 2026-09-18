@@ -1,0 +1,194 @@
+{
+  "task": "Carcinogens",
+  "contract": "conditioned_benchmark.v1",
+  "protocol_version": "fresh_conditioned_benchmark.v2",
+  "seed": 20260807,
+  "swap_evaluation_splits": false,
+  "source_votes_sha256": "95b53626153dbc2f9e8095a3055c0efca278b5f5ce31b037bfbc65179cb4f4b1",
+  "source_artifacts": [
+    {
+      "path": "data/starling_data/carcinogens/raw_v1/compressed/carcinogens_base.parquet",
+      "sha256": "1d50bb6f4223b536c9b6ee76f72bc0b2440aa989896a7abfb32fd4c50577ec4c"
+    },
+    {
+      "path": "data/starling_data/new_tasks_gold_audit/targeted_review_v2/carcinogens_source_labels.parquet",
+      "sha256": "d23b2e9a2ad8774653b341a03e84f53b57d6dee69a32ec617cd75f83b5343e70"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/record_conditions.parquet",
+      "sha256": "45e17198692c8bb56e14db9881743d8bbb89d3d9deac69502842f24bb207cbba"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/identity_ledger.parquet",
+      "sha256": "0f255fd484d4a8713569f0bd4ae0edd38e1e0aac702ba98c2e6046eb5890e22e"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/name_identity_evidence.jsonl",
+      "sha256": "a9281ef73f7e28bbb0f7cacce3edf7192cc740c00bdce89381e4375e5994a8a5"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/build_policy.json",
+      "sha256": "97839f3d459706e63b44ca4797abf198be8669226793f3cab61845ec093eb506"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/source_votes.jsonl",
+      "sha256": "e293ee49ff1a235f05593714add026f6f935584eda4dfee5ad3e9594888b2dc0"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/source_identity_holds.jsonl",
+      "sha256": "c9ce12e445e3f6c6c57b774b4473e09b4a192ec3df1fa9ef74f45f62d0e6a470"
+    },
+    {
+      "path": "data/starling_data/carcinogens/gold_v4/source_identity_clearances.jsonl",
+      "sha256": "5e2f06014e1f5d5a48d840b129345801b6a13fba261d00495a524f182940807f"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/build_reviewed_starling.py",
+      "sha256": "355480f0800046905f88d8afd474934ea8e24291cbd76b38061187eb790e34a9"
+    },
+    {
+      "path": "/data1/tianang/Projects/TxAgent/tools/chembl_tool/tasks/carcinogens/reviewed_conditions.py",
+      "sha256": "27caeeb1411950dbc486a5afe23351ba0c98ab2e2a805edd20b8d156385fb34b"
+    }
+  ],
+  "n_source_records": 89617,
+  "n_accepted_parent_conditions": 4692,
+  "n_rejected_parent_conditions": 260,
+  "label_policy": {
+    "agreement_threshold_by_condition_scope": {
+      "none_reported": 0.7,
+      "external": 0.6
+    },
+    "ties": "excluded",
+    "vote_unit": "task_accepted_source_record",
+    "review_policy": "caller-supplied label_method and reviewer retained verbatim; no manual review inferred"
+  },
+  "group_gate": {
+    "species=dog": {
+      "n_parents": 134,
+      "n_nonempty_scaffolds": 42,
+      "eligible": true
+    },
+    "species=human": {
+      "n_parents": 1570,
+      "n_nonempty_scaffolds": 442,
+      "eligible": true
+    },
+    "species=monkey": {
+      "n_parents": 69,
+      "n_nonempty_scaffolds": 35,
+      "eligible": true
+    },
+    "species=rabbit": {
+      "n_parents": 59,
+      "n_nonempty_scaffolds": 23,
+      "eligible": true
+    },
+    "species=rodent": {
+      "n_parents": 2860,
+      "n_nonempty_scaffolds": 716,
+      "eligible": true
+    }
+  },
+  "optimization": {
+    "record_support_objective_enabled": true,
+    "empty_scaffold_heldout_eligible": false,
+    "minimum_singletons_in_heldout": 164,
+    "minimum_singleton_imbalance": 0,
+    "minimum_label_deviation": 0,
+    "desired_positive_count_per_eval_split": 358,
+    "maximum_prior_valid_reuse": 0,
+    "n_scaffold_groups": 860,
+    "n_candidate_scaffold_groups": 858,
+    "n_empty_scaffold_parents": 885,
+    "required_condition_groups": [
+      "species=dog",
+      "species=human",
+      "species=monkey",
+      "species=rabbit",
+      "species=rodent"
+    ],
+    "n_empty_scaffold_rows": 1252
+  },
+  "target_eval_rows": 469,
+  "nominal_target_eval_rows": 469,
+  "target_size_policy": "minimum_feasible_equal_eval_size",
+  "target_expansion_reason": null,
+  "group_distribution": [
+    {
+      "condition_group": "species=dog",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 134,
+      "n_unique_parents": 134,
+      "n_distinct_scaffolds": 43,
+      "n_train": 100,
+      "n_valid": 14,
+      "n_test": 20,
+      "n_y0": 40,
+      "n_y1": 94
+    },
+    {
+      "condition_group": "species=human",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 1570,
+      "n_unique_parents": 1570,
+      "n_distinct_scaffolds": 443,
+      "n_train": 1195,
+      "n_valid": 187,
+      "n_test": 188,
+      "n_y0": 337,
+      "n_y1": 1233
+    },
+    {
+      "condition_group": "species=monkey",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 69,
+      "n_unique_parents": 69,
+      "n_distinct_scaffolds": 36,
+      "n_train": 43,
+      "n_valid": 13,
+      "n_test": 13,
+      "n_y0": 28,
+      "n_y1": 41
+    },
+    {
+      "condition_group": "species=rabbit",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 59,
+      "n_unique_parents": 59,
+      "n_distinct_scaffolds": 24,
+      "n_train": 54,
+      "n_valid": 1,
+      "n_test": 4,
+      "n_y0": 12,
+      "n_y1": 47
+    },
+    {
+      "condition_group": "species=rodent",
+      "condition_scope": "external",
+      "n_molecule_condition_rows": 2860,
+      "n_unique_parents": 2860,
+      "n_distinct_scaffolds": 717,
+      "n_train": 2362,
+      "n_valid": 254,
+      "n_test": 244,
+      "n_y0": 697,
+      "n_y1": 2163
+    }
+  ],
+  "splits": {
+    "train": {
+      "n": 3754,
+      "n_parents": 2841
+    },
+    "valid": {
+      "n": 469,
+      "n_parents": 319
+    },
+    "test": {
+      "n": 469,
+      "n_parents": 324
+    }
+  },
+  "split_integrity_validated": true
+}

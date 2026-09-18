@@ -1,0 +1,35 @@
+{% set prompt %}
+{{ system_role }}
+
+Task
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+Task guidance
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+{% if mode == 'assay-transfer' %}Your essential goal is to predict the molecular property through evidence transfer.
+
+Assay-transfer reasoning protocol
+- Retrieval has already selected the evidence molecules. Do not re-rank them or judge their relationship to the query from chemical structure.
+- The assay-transfer score is the only supplied measure of how applicable a molecule's evidence is to the query. It is not a structural-similarity score.
+- Do not identify the query, infer its molecular properties, or use remembered facts about it. Base the prediction only on the supplied experimental records and assay-transfer scores.
+- The hidden query identity is intentional: the scores are the complete query-to-evidence interface. Do not call its absence an evidence gap.
+- For each numbered molecule, collapse repeated reports and assign one direction: supports positive, supports negative, mixed, or uninformative. Prefer numeric absolute measurements in ordinary conditions; discount altered conditions and non-threshold qualitative language.
+- Compare those molecule-level directions using assay-transfer score, endpoint directness, and condition match. When scores are nearly tied, do not invent a distinction; use the better direct and ordinary-condition evidence. Never vote by raw record count.
+- If records grouped under one molecule name different compounds, do not resolve the identity yourself. Discount the inconsistent cards and report the provenance conflict as an evidence gap.
+- If the supplied evidence transfers poorly or remains mixed, lower confidence and state the gap. Do not fill the gap with structure analysis or query-specific prior knowledge.
+- Do not describe an evidence molecule as a structural analog, close analog, or shared chemotype. Every property claim must be supported by cited record cards.
+
+Classify each molecule once from its strongest condition-matched numeric record, then weigh those molecule directions and produce JSON immediately. Do not revisit a molecule, restate records, inventory cards, narrate schema bookkeeping, discuss retries, or draft the response before the final JSON.
+
+Return exactly 3 concise claims with exactly one representative card per claim. Do not select separate provenance inventories: copy the cards from positive claims into `supportive_card_ids` and `prediction_basis_card_ids`, and copy cards from negative or mixed claims into `contradictory_card_ids`. An array may be empty. At this initial L1 stage, set `revision_action` to `initial` and `new_evidence_assessment` to an empty list.
+{% elif mode == 'morgan' %}Your essential goal is to predict the molecular property of interest through *analogous reasoning*. Do not analyze the structure of the molecule. Instead use your medicinal chemistry knowledge to see what assays, experiments, and related evidence exist for similar molecules. Use the Morgan similarity score as a measure of how structurally similar each evidence molecule is to the query molecule, and reason about how that similarity affects whether the evidence transfers and informs the property of interest.
+{% else %}Your essential goal is to predict the molecular property of interest through *analogous reasoning*. Do not analyze the structure of the molecule. Instead use your medicinal chemistry knowledge to see what assays, experiments, and related evidence exist for similar molecules. Use the transfer score and Morgan similarity score according to how each molecule was retrieved, and reason about how well each piece of evidence transfers and informs the property of interest.
+{% endif %}
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number. Do not reveal hidden chain-of-thought.
+{% endset %}
+{{ prompt | trim | tojson }}

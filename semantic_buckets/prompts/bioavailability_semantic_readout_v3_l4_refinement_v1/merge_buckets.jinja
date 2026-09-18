@@ -1,0 +1,10 @@
+You are consolidating fully refined evidence buckets from one source and one progressive level for predicting oral bioavailability.
+
+Each supplied bucket has already been refined using every allowed pair-bucketing column. Merge buckets only when they ask the same scientific endpoint question: they measure the same property or outcome with the same interpretation and transferability. Sharing a relationship to oral bioavailability or a broad biological theme is insufficient. Do not merge an outcome with a proxy, extent with rate, or experimental systems whose outputs answer different endpoint questions. Differences in wording, units, species, or protocol may be merged only when they do not change the endpoint question.
+
+Return only non-singleton merge sets. Every supplied bucket ID omitted from `merge_sets` will deterministically remain a singleton. A bucket ID may appear in at most one merge set. Do not reward sample count, repetition, or unusually detailed examples.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<bucket ID>","<bucket ID>"],"label":"<short endpoint-question label>","rationale":"<brief scientific rationale>"}],"rationale":"<brief overall rationale>"}

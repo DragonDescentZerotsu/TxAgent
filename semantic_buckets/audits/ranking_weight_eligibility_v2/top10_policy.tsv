@@ -1,0 +1,91 @@
+task	level	policy_rank	semantic_bucket_id	expert_weight	weight_rationale	bradley_terry_score	level_rank	level_percentile	comparison_count	decision	reason_code	retrieval_eligible	record_count
+bbb_martins	L2	1	sb_61c9158e18d5c78ce8a4	1.0	direct microdialysis and Kp,uu	4.822595017489709	1	100.0	25	include	potentially_informative	True	7
+bbb_martins	L2	2	sb_49439afa3a8c3570f03e	0.9	direct unbound ISF ratios	4.762604960966792	2	99.98827804477787	25	include	potentially_informative	True	3
+bbb_martins	L2	3	sb_129889594c87c626b706	0.9	broad in-vivo Kp,uu	4.7006654685511675	3	99.97655608955574	25	include	potentially_informative	True	56
+bbb_martins	L2	4	sb_2a06eaa30230dd94e139	0.8	dialysate to plasma ratio	4.644628891413595	4	99.9648341343336	25	include	potentially_informative	True	1
+bbb_martins	L2	5	sb_735b218b06aa76a68458	0.8	unbound brain and plasma AUC	4.619525416178072	5	99.95311217911147	25	include	potentially_informative	True	6
+bbb_martins	L2	6	sb_4383ed18af66ac25ce0c	0.9	unbound brain to plasma ratio	4.619444351258972	6	99.94139022388934	25	include	potentially_informative	True	1
+bbb_martins	L2	7	sb_0f776b66c83fc279aa82	0.7	mixed CSF and ECF ratios	4.61438934399368	7	99.92966826866721	25	include	potentially_informative	True	18
+bbb_martins	L2	8	sb_3480e0966dbc889f5337	0.9	direct Kp,uu variants	4.595588073415466	8	99.91794631344509	25	include	potentially_informative	True	25
+bbb_martins	L2	9	sb_40be54f667b599d33c90	1.0	direct Kp,uu including human microdialysis	4.567376894131426	9	99.90622435822296	25	include	potentially_informative	True	11
+bbb_martins	L2	10	sb_3b289f561fc74a839261	0.9	direct infusion Kp,uu	4.544646842369622	10	99.89450240300081	25	include	potentially_informative	True	2
+bbb_martins	L3	1	sb_82895ee772c3cdff9a0b	1.0	human brain to unbound plasma AUC	4.513544824852686	1	100.0	25	include	potentially_informative	True	1
+bbb_martins	L3	2	sb_be078465033097da47c4	0.7	human brain and CSF ratios	4.4513676821909645	2	99.80916030534351	25	include	potentially_informative	True	7
+bbb_martins	L3	3	sb_48304100d155318bde89	0.0	barrier-state tracer permeability rather than compound access	4.320538186314305	3	99.61832061068702	25	include	potentially_informative	False	24
+bbb_martins	L3	4	sb_9e4dce2e6ce04be4ff86	0.7	brain and plasma ratios	4.239619502195661	4	99.42748091603053	25	include	potentially_informative	True	3
+bbb_martins	L3	5	sb_6fa2c4ce5093a563da6e	0.6	human CSF exposure	4.19885383931719	5	99.23664122137404	25	include	potentially_informative	True	6
+bbb_martins	L3	6	sb_612fb03b4233dc7e4d2e	0.5	in-situ permeability clearance	4.1284369132387795	6	99.04580152671755	25	include	potentially_informative	True	58
+bbb_martins	L3	7	sb_289569a4e4dffd9721ff	0.8	mixed direct brain and plasma ratios	4.116450040485838	7	98.85496183206106	25	include	potentially_informative	True	33
+bbb_martins	L3	8	sb_1abf89b629769c6e06b3	0.7	mixed brain and CSF ratios	4.0943727155399285	8	98.66412213740458	25	include	potentially_informative	True	12
+bbb_martins	L3	9	sb_85bf697168372633960d	0.5	human CSF permeability	4.055576368002477	9	98.47328244274809	25	include	potentially_informative	True	4
+bbb_martins	L3	10	sb_b023e0483e84a4193008	0.8	microdialysis brain ECF ratios	3.97516259594881	10	98.2824427480916	25	include	potentially_informative	True	2
+bbb_martins	L4	1	sb_592d750c5e58282254be	0.8	brain ECF concentration and AUC	4.939226775863183	1	100.0	25	include	potentially_informative	True	2
+bbb_martins	L4	2	sb_0f8a563201a74260eb12	0.6	CSF exposure	4.8655929977527865	2	99.975442043222	25	include	potentially_informative	True	9
+bbb_martins	L4	3	sb_2c49fe9146df3574275f	1.0	unbound brain exposure	4.83962776709064	3	99.950884086444	25	include	potentially_informative	True	1
+bbb_martins	L4	4	sb_f3125dfe558264855a21	1.0	hippocampal Kp,uu	4.8020414405622125	4	99.92632612966601	25	include	potentially_informative	True	2
+bbb_martins	L4	5	sb_1f5dba8db75a3bd2fc9b	0.7	direct binary in-vivo Kp,uu	4.801385494618712	5	99.90176817288801	25	include	potentially_informative	True	5
+bbb_martins	L4	6	sb_471a1733b41b9a54180a	0.8	brain ECF concentration	4.784702904465456	6	99.87721021611002	25	include	potentially_informative	True	2
+bbb_martins	L4	7	sb_b680832a9de4a6900baa	0.9	unbound ECF and plasma ratios	4.75829010886953	7	99.85265225933202	25	include	potentially_informative	True	3
+bbb_martins	L4	8	sb_b48ef9f8e6df930378ca	0.6	mixed knockout and binary evidence	4.722013267997485	8	99.82809430255402	25	include	potentially_informative	True	13
+bbb_martins	L4	9	sb_b19e7b59fda4bae20c50	0.7	brain supernatant to plasma AUC	4.711895239176734	9	99.80353634577604	25	include	potentially_informative	True	2
+bbb_martins	L4	10	sb_caa4cb6f8e0ba45b96d1	0.8	Kp,uu with some knockout context	4.704350855845048	10	99.77897838899804	25	include	potentially_informative	True	6
+bbb_martins	L5	1	sb_2b79237828fc43f3d42a	1.0	unbound brain to blood ratios	4.5068581523720725	1	100.0	25				2
+bbb_martins	L5	2	sb_a0a38b5dbeb3d7d4849d	0.9	direct Kp,uu	4.226427974310444	2	99.64539007092199	25				3
+bbb_martins	L5	3	sb_839694fdb383cfc9eefd	0.9	brain ECF Kp,uu	4.135381917880189	3	99.29078014184397	25				3
+bbb_martins	L5	4	sb_1429e69e4e9d8ab69ce6	0.9	direct brain ISF ratios	4.128774117804256	4	98.93617021276596	25				4
+bbb_martins	L5	5	sb_d01ed8ad0fafde2d4c98	0.9	broad direct Kp,uu	4.1053388095536825	5	98.58156028368795	25				54
+bbb_martins	L5	6	sb_403ab51c8ae6d42e546a	0.4	binary influx kinetics	3.9790102829085883	6	98.22695035460993	25				12
+bbb_martins	L5	7	sb_2e69887d00496c4fb16b	0.7	human plasma to brain ratios	3.881663985901271	7	97.87234042553192	25				2
+bbb_martins	L5	8	sb_4dad0d603522a875557b	0.5	quantitative influx kinetics	3.869652207754944	8	97.51773049645391	25				39
+bbb_martins	L5	9	sb_b3a662dd759964b11780	0.9	direct microdialysis Kp,uu	3.6582838041853676	9	97.16312056737588	25				1
+bbb_martins	L5	10	sb_4a14be0f24af8b663836	0.3	mixed binary permeability outcomes	3.6006214002261157	10	96.80851063829788	25				19
+bioavailability_ma	L2	1	sb_0dbce13dee64032b7f36	0.5	apparent nondirect oral bioavailability	4.084178151053576	1	100.0	25	include	potentially_informative	True	1117
+bioavailability_ma	L2	2	sb_0a468f7e42ac702dff15	0.5	undefined reference	3.9696487286091124	2	99.24242424242425	25	include	potentially_informative	True	1700
+bioavailability_ma	L2	3	sb_44b6c9e5770cd98c32c8	0.0	undefined comparator; excluded	3.892166575547289	3	98.48484848484848	25	exclude	undefined_reference_or_target	False	1
+bioavailability_ma	L2	4	sb_d7c391df37420224640e	1.0	direct oral bioavailability	3.8691941840428163	4	97.72727272727273	25	include	potentially_informative	True	91692
+bioavailability_ma	L2	5	sb_fe8208852add33d8c861	0.4	undefined reference despite dose context	3.8493762553511406	5	96.96969696969697	25	include	potentially_informative	True	338
+bioavailability_ma	L2	6	sb_ac7b7378e8259f400f09	0.5	undefined reference	3.735565648705912	6	96.21212121212122	25	exclude	undefined_reference_or_target	True	679
+bioavailability_ma	L2	7	sb_570d32ad0207e597c641	0.0	malformed bioavailability unit	3.7063852870696907	7	95.45454545454545	25	include	potentially_informative	False	1
+bioavailability_ma	L2	8	sb_8d8b75f2f1e3b4b8d657	0.5	direct but AUC-like bioavailability	3.603651492715051	8	94.6969696969697	25	include	potentially_informative	True	146
+bioavailability_ma	L2	9	sb_4a2d9b1777901d13de82	0.2	mass unit is not bioavailability	3.457118417852863	9	93.93939393939394	25	include	potentially_informative	True	3
+bioavailability_ma	L2	10	sb_b7e9fda4dcc45e78d132	0.9	undefined reference	3.435463042827887	10	93.18181818181819	25	include	potentially_informative	True	754
+bioavailability_ma	L3	1	sb_4cb72a32e7fbeb454c3c	1.0	human oral to IV exposure	4.959163212367061	1	100.0	25	include	potentially_informative	True	1
+bioavailability_ma	L3	2	sb_f5c2b2ce5a3e98cf363e	0.8	human oral to IV exposure with incomplete matrix	4.794569391805296	2	99.97505612372163	25	include	potentially_informative	True	13
+bioavailability_ma	L3	3	sb_2c8f6758bf31d004630f	1.0	human oral to IV exposure	4.778235628495111	3	99.95011224744326	25	include	potentially_informative	True	2
+bioavailability_ma	L3	4	sb_10ca17a0e89770b22b9d	0.4	oral AUC without IV reference	4.646979533046882	4	99.92516837116487	25	include	potentially_informative	True	186
+bioavailability_ma	L3	5	sb_b07d11deb985ae412729	0.9	oral to IV exposure	4.639280393270931	5	99.9002244948865	25	include	potentially_informative	True	7
+bioavailability_ma	L3	6	sb_79023b541f82fb4e7bef	0.2	weakly specified oral AUC	4.62575618470043	6	99.87528061860813	25	include	potentially_informative	True	5
+bioavailability_ma	L3	7	sb_5b7ba4aa722dd640ba6e	0.8	whole-blood oral to IV ratio	4.624773603208197	7	99.85033674232976	25	include	potentially_informative	True	4
+bioavailability_ma	L3	8	sb_8fc8ed202231149f3f53	0.9	mouse oral to IV ratio	4.62264341272478	8	99.82539286605139	25	include	potentially_informative	True	2
+bioavailability_ma	L3	9	sb_0a780d706dc03ca5b201	0.8	rat oral to IV comparison	4.614154750121816	9	99.80044898977302	25	include	potentially_informative	True	1
+bioavailability_ma	L3	10	sb_0819b504bb9a13f114da	0.4	human oral AUC without IV reference	4.611911781676831	10	99.77550511349463	25	include	potentially_informative	True	4
+bioavailability_ma	L4	1	sb_0e7f409c4584e42760cd	0.7	intestinal absorption with animal dominance	4.882581568544396	1	100.0	25	include	potentially_informative	True	420
+bioavailability_ma	L4	2	sb_04655a05a748d0fc7ebc	1.0	human fraction absorbed	4.728554124359068	2	99.93943064809207	25	include	potentially_informative	True	10
+bioavailability_ma	L4	3	sb_f5801a3dc2a95c4d5b54	0.6	human intestinal permeability proxy	4.593451674018995	3	99.87886129618413	25	include	potentially_informative	True	12
+bioavailability_ma	L4	4	sb_284555eb7e9bb645aa65	0.8	mixed fraction absorbed	4.583987499150844	4	99.8182919442762	25	include	potentially_informative	True	119
+bioavailability_ma	L4	5	sb_81c41dda24e6b3272e5c	0.9	mostly human fraction absorbed	4.573669565552926	5	99.75772259236827	25	include	potentially_informative	True	560
+bioavailability_ma	L4	6	sb_3fcc3d6467f4277693dd	1.0	high-quality human fraction absorbed	4.572830719159549	6	99.69715324046032	25	include	potentially_informative	True	60
+bioavailability_ma	L4	7	sb_62ec18a43a63d0a09af1	0.8	mostly human fraction absorbed	4.557072343127625	7	99.6365838885524	25	include	potentially_informative	True	329
+bioavailability_ma	L4	8	sb_343505adfde23d905922	1.0	human ileostomy and isotope absorption	4.518077008090334	8	99.57601453664446	25	include	potentially_informative	True	24
+bioavailability_ma	L4	9	sb_73452131f0091f60173b	1.0	human mass-balance fraction absorbed	4.507976664257602	9	99.51544518473652	25	include	potentially_informative	True	41
+bioavailability_ma	L4	10	sb_031e48f6da172308a99e	0.8	mixed in-vivo fraction absorbed	4.499066638476486	10	99.45487583282859	25	include	potentially_informative	True	42
+bioavailability_ma	L5	1	sb_577ef2cdd4298115c740	0.6	binary gut-wall substrate evidence	4.681541287819275	1	100.0	25				16
+bioavailability_ma	L5	2	sb_93987ab09f10c853b939	1.0	quantitative gut-wall extraction	4.428748178688154	2	99.85974754558205	25				32
+bioavailability_ma	L5	3	sb_28a1aa1a012ccad8d724	0.0	permeability is not gut-wall extraction	4.397963500922407	3	99.71949509116409	25				2
+bioavailability_ma	L5	4	sb_463a5f6ced18c66e5bd1	0.5	intestinal metabolism proxy	4.384572285736282	4	99.57924263674614	25				29
+bioavailability_ma	L5	5	sb_8eaf74bd35aaafd4d0a3	0.6	gut-wall exposure change	4.326129355730756	5	99.4389901823282	25				6
+bioavailability_ma	L5	6	sb_c911dd9f8db13df131ce	0.8	quantitative in-vivo gut-wall evidence	4.312019662270691	6	99.29873772791024	25				136
+bioavailability_ma	L5	7	sb_7f7299d7e1997b0d29f9	0.4	ABCB1 proxy	4.239870752337833	7	99.15848527349229	25				24
+bioavailability_ma	L5	8	sb_158f4dcaa190fc7b8a4c	0.4	mixed ABCB1 proxy	4.10894770614162	8	99.01823281907433	25				435
+bioavailability_ma	L5	9	sb_7201a33d44011b811fe5	0.8	combined human gut-wall evidence	4.101694930823795	9	98.87798036465638	25				10
+bioavailability_ma	L5	10	sb_bf671f9e0abb0baefac5	0.8	clinical combined gut-wall evidence	4.023532214964712	10	98.73772791023843	25				1
+bioavailability_ma	L6	1	sb_c881693d9ae575aa4f2c	0.8	broad hepatic extraction	4.446196782819484	1	100.0	25				1325
+bioavailability_ma	L6	2	sb_ffb26718203bf9d87449	0.6	mixed clearance and first pass	4.268992520540851	2	99.08256880733946	25				752
+bioavailability_ma	L6	3	sb_7c8b19dbd8b504c9d5cb	1.0	explicit hepatic first pass	4.149783966025613	3	98.1651376146789	25				126
+bioavailability_ma	L6	4	sb_862d3018efb1b34a8998	0.9	mostly human extraction ratio	3.8219652135683173	4	97.24770642201835	25				222
+bioavailability_ma	L6	5	sb_4bbcfa5e4dbc09abe25c	0.8	mixed extraction and first pass	3.7766482105054417	5	96.3302752293578	25				506
+bioavailability_ma	L6	6	sb_c54f68402a150afd76ad	0.8	IV-derived extraction	3.645305480489295	6	95.41284403669725	25				135
+bioavailability_ma	L6	7	sb_143baf417b3e9c52da11	0.5	hepatic clearance proxy	3.5587481624737123	7	94.4954128440367	25				242
+bioavailability_ma	L6	8	sb_cedc40986c41adf83c63	0.9	in-vivo first pass	3.4574210187451704	8	93.57798165137615	25				74
+bioavailability_ma	L6	9	sb_9a519fd371cb9a24467e	1.0	in-vivo extraction ratio	3.2152335193570405	9	92.66055045871559	25				133
+bioavailability_ma	L6	10	sb_a3fb444fa8915d3bad9a	0.6	ex-vivo or modeled extraction	2.9696646688699824	10	91.74311926605505	25				57

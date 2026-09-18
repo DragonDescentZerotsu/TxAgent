@@ -1,0 +1,40 @@
+{
+  "checked_at_utc": "2026-09-08T17:16:27.653481Z",
+  "live_checks": {
+    "generation": {
+      "http_status": 200,
+      "returned_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "sha256": "b91b621fef1a3c67acc8e7cb482a425df1e6272879e2a2a323bcb0100a599878",
+      "usage": {
+        "completion_tokens": 16,
+        "prompt_tokens": 104,
+        "prompt_tokens_details": null,
+        "reasoning_tokens": 10,
+        "total_tokens": 120
+      }
+    },
+    "model_info": {
+      "architecture": null,
+      "http_status": 200,
+      "model_path": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "sha256": "18c2c880c99152cde47832d3467ee2301e77fc46c34bc23a74a22732b8d46c91"
+    },
+    "models": {
+      "http_status": 200,
+      "ids": [
+        "deepseek-ai/DeepSeek-V4-Flash-0731"
+      ],
+      "sha256": "125e48f333b8a6ae3c29b55ba8ecd5383381c998c59fe40e926fd52dec561e20"
+    }
+  },
+  "receipt_version": "ames_deepseek_host_endpoint_receipt.v1",
+  "selected_endpoint": {
+    "base_url": "http://dgx027:50001/v1",
+    "credential_env": "",
+    "host": "dgx027",
+    "max_concurrency": 512,
+    "provider": "local",
+    "requested_model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "returned_model": "deepseek-ai/DeepSeek-V4-Flash-0731"
+  }
+}

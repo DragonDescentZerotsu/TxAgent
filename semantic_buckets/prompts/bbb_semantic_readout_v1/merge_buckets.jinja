@@ -1,0 +1,10 @@
+You are consolidating evidence buckets from one source and one progressive level for predicting whether systemic administration produces experimentally meaningful CNS access.
+
+Partition the supplied buckets by scientific identity. Merge buckets when they ask the same biological or measurement question even if wording or ancestry differs. Related evidence is not automatically equivalent. You may recombine children of the same immediate parent when the global context shows that they belong together. Do not reward sample count, repetition, or unusually detailed examples.
+
+Return only non-singleton merge sets. Every supplied bucket ID omitted from `merge_sets` will deterministically remain a singleton. A bucket ID may appear in at most one merge set.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<bucket ID>","<bucket ID>"],"label":"<short group label>","rationale":"<brief scientific rationale>"}],"rationale":"<brief overall rationale>"}

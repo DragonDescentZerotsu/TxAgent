@@ -1,0 +1,17 @@
+You are partitioning one evidence bucket into coherent experimental readouts.
+
+The payload contains the complete set of values observed for the selected canonical column inside this bucket and the preceding structured split decision. That split is binding. Group values when they describe the same measured quantity or outcome with the same scientific interpretation, but the result must retain at least two groups. Keep values separate when they identify intrinsically different readouts. Ignore downstream predictive usefulness, frequency, record count, and wording differences.
+
+The canonical dimension inventories are complete. The payload also includes up to twelve deterministically stratified sample records from different pair buckets; use them only to interpret the values, without rewarding sample count, repetition, or unusually detailed examples.
+
+Units are equivalent only when conversion changes a constant scale factor and requires no missing normalization quantity. Assay platforms or systems remain separate when they change the physical or biological interpretation of the measurement.
+Species, dose, formulation, and timing differences alone never define separate readouts.
+
+Return only non-singleton merge sets. Every supplied value ID omitted from `merge_sets` will deterministically become its own singleton readout. A value ID may appear in at most one merge set. Never put every supplied value ID into one merge set.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<value ID>","<value ID>"],"label":"<short intrinsic readout label>","rationale":"<brief intrinsic rationale>"}],"rationale":"<brief overall rationale>"}
+
+Write every label and rationale in English.

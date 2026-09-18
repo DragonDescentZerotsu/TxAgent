@@ -1,0 +1,40 @@
+{
+  "version": "joseph_flat_v2",
+  "parent": "joseph_flat_v1",
+  "upstream_commit": "e56a79f371d1029201eff29e348d30e7beb94d5c",
+  "status": "unevaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "scope": "group_prompt_and_source_contract_complete_cache_matched_presentation",
+  "selection_contract": "cache_matched_retrieval.v1",
+  "evidence_projection": "source_contract_complete_semantics.v1",
+  "extra_details_policy": "raw_nonempty_visible",
+  "molecule_name_visible": false,
+  "group_tools_enabled": false,
+  "historical_predictions_reused": false,
+  "changes": [
+    "Replace minimal_evidence.v1 with compact source-contract-complete evidence cards.",
+    "Expose raw nonempty extra_details while omitting evidence-molecule name fields and extraction metadata.",
+    "Remove group comparison tools and their prompt instructions while retaining the single-molecule properties branch.",
+    "Scope Morgan and L1 transfer scores to molecules and later assay-transfer scores to records.",
+    "Replace copied key_evidence objects with claims that cite stable card IDs."
+  ],
+  "tasks": {
+    "bbb_martins": {
+      "prompt_profile": "meaningful_cns_access_v1",
+      "upstream_sources": {
+        "tools/chembl_tool/tasks/bbb_martins/prompt_profiles.py": "b1fdaa367b1181eaa90245f9ff61bdb72fa20659c5570a555fc88df323ab3e7a",
+        "tools/chembl_tool/tasks/bbb_martins/run_reasoning_pipeline.py": "9c0d5e8f601f1958cda140ddaab1abb856b4e48dae86435d703f1d7d9a615806"
+      }
+    },
+    "bioavailability_ma": {
+      "prompt_profile": "f20_evidence_calibrated_v2",
+      "upstream_sources": {
+        "tools/chembl_tool/tasks/bioavailability_ma/prompt_profiles.py": "59f64784169fbbe51b17b2af803b491f9ea390c7519b36d9089b6e86405e05e1",
+        "tools/chembl_tool/tasks/bioavailability_ma/run_reasoning_pipeline.py": "6248e530d4db0652556069ad24be345a1fa3673b86422f323b6b6e34031ce351"
+      }
+    }
+  }
+}

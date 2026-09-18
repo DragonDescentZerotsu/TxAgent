@@ -1,5 +1,22 @@
 # ChEMBL Activity Transfer Benchmark
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -7,33 +24,32 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
-## 目标
+## Goals
 
-这个 benchmark 研究：在同一个 ChEMBL assay endpoint 内，已知 reference molecule 的
-pChEMBL activity 时，能否只根据 query/reference 的结构和 assay context 判断 activity 是否可迁移。
+This benchmark studies: within the same ChEMBL assay endpoint, given the pChEMBL activity of a known reference molecule, can the activity transferability be determined solely from the query/reference structures and assay context.
 
-当前标签规则：
+Current label rules:
 
 ```text
 similar:   |delta pChEMBL| <= 0.5
 different: |delta pChEMBL| >= 1.0
-ambiguous: 中间区间，只用于数据分析，不进入二分类评估
+ambiguous: intermediate range, used only for data analysis, not in binary classification evaluation
 ```
 
-主数据源：
+Main data sources:
 
 ```text
 tools/chembl_tool/chembl_data/chembl_36_sqlite/chembl_36.db
 tools/chembl_tool/chembl_data/chembl_36_fps/chembl_36.fps.gz
 ```
 
-主输出根目录：
+Main output root directory:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/
 ```
 
-## 代码入口
+## Code entry points
 
 ```text
 tools/chembl_tool/activity_transfer_benchmark/
@@ -60,168 +76,166 @@ tools/chembl_tool/activity_transfer_benchmark/
   plot_llm_multi_run_comparison.py
 ```
 
-脚本职责：
+Script responsibilities:
 
 ```text
 run_benchmark.py
-  从 ChEMBL 读取 assay activity，构建同 assay endpoint 内的 molecule pairs。
-  连续值主分析使用 pchembl_value，计算 Tanimoto、|delta pChEMBL|、标签、threshold metrics、
+  Read assay activity from ChEMBL, build molecule pairs within the same assay endpoint.
+  Continuous-value main analysis uses pchembl_value, computing Tanimoto, |delta pChEMBL|, labels, threshold metrics,
   assay-specific enrichment, binary-comment auxiliary analysis, and TSV/GZ, SVG, and English report outputs.
 
 run_task_assay_benchmark.py
-  从 data/gold_labels/legacy/processed 四个任务 pipeline 的 assay evidence 出发，构建 task-scoped transfer benchmark。
-  支持 raw_robust_z、log_raw_robust_z、pchembl_delta 三套标签；raw/log raw 标签会做单位归一化和 assay 内 robust sigma。
+  Build task-scoped transfer benchmark from assay evidence of the four task pipelines in data/gold_labels/legacy/processed.
+  Supports three label sets: raw_robust_z, log_raw_robust_z, pchembl_delta; raw/log raw labels undergo unit normalization and within-assay robust sigma.
 
 benchmark_mcs_runtime.py
-  对已有 continuous_pairs 计算 RDKit FindMCS mean atom coverage。
-  支持 sampled runtime benchmark、full-scan 流式计算、timeout、进度输出和 finalize-existing 收尾。
+  Compute RDKit FindMCS mean atom coverage for existing continuous_pairs.
+  Supports sampled runtime benchmark, full-scan streaming computation, timeout, progress output, and finalize-existing completion.
 
 analyze_mcs_results.py
-  读取 MCS 结果，扫描 mean MCS coverage threshold，并在同一 observed subset 上重扫 Tanimoto。
+  Read MCS results, scan mean MCS coverage thresholds, and rescan Tanimoto on the same observed subset.
   Output MCS/Tanimoto comparison metrics, bucket summaries, heatmaps, SVG figures, and an English report.
 
 build_llm_eval_set.py
-  从 dynamic_v1 pairs 中构建 LLM 小评估集。默认 3,000 pairs，按 label x Tanimoto bucket 分层平衡，
-  并只保留有 observed MCS 的 non-ambiguous pairs。
+  Build a small LLM evaluation set from dynamic_v1 pairs. Default 3,000 pairs, stratified balanced by label x Tanimoto bucket,
+  and keep only non-ambiguous pairs with observed MCS.
 
 build_task_llm_eval_set.py
-  从 task-scoped pairs 中构建小规模 LLM 评估集。默认 3,000 pairs，先按 task 平衡，再按 label 和
-  Tanimoto bucket 分层，并限制每个 assay endpoint 的样本数。
+  Build a small-scale LLM evaluation set from task-scoped pairs. Default 3,000 pairs, first balanced by task, then stratified by label and
+  Tanimoto bucket, and limit the number of samples per assay endpoint.
 
 build_dynamic_v1_mlp_splits.py
-  将 chembl36_activity_transfer_dynamic_v1 的 continuous_pairs.tsv.gz 转换成 HF prompt/completion/
-  metadata JSONL split，供 prepare_hf_mlp_features.py 和 train_hf_mlp_baseline.py 复用。
-  默认 endpoint-disjoint split；也支持更严格的 pChEMBL delta 标签阈值。这个脚本仍是 pChEMBL
-  endpoint benchmark，不用于 raw `% inhibition` 单 endpoint 版本。
+  Convert continuous_pairs.tsv.gz of chembl36_activity_transfer_dynamic_v1 into HF prompt/completion/
+  metadata JSONL splits for reuse by prepare_hf_mlp_features.py and train_hf_mlp_baseline.py.
+  Default endpoint-disjoint split; also supports stricter pChEMBL delta label thresholds. This script remains a pChEMBL
+  endpoint benchmark and is not used for the raw `% inhibition` single-endpoint version.
 
 build_oral_bioavailability_transfer_dataset.py
-  从 HuggingFace `starling-labs/Oral_Bioavailability` 构建 clean oral bioavailability evidence。
-  默认保留 absolute；当前主版本保留 absolute、unspecified、systemic_availability，只要
-  oral_bioavailability_value 能安全解析成 numeric F%。输出 line-level clean rows、dropped rows、
-  aggregate molecule records、pair candidates、eval pairs、HF prompt/completion JSONL 和 value 分布图。
+  Build clean oral bioavailability evidence from HuggingFace `starling-labs/Oral_Bioavailability`.
+  Default keeps absolute; current main version keeps absolute, unspecified, systemic_availability, as long as
+  oral_bioavailability_value can be safely parsed into numeric F%. Outputs line-level clean rows, dropped rows,
+  aggregate molecule records, pair candidates, eval pairs, HF prompt/completion JSONL, and value distribution plots.
 
 build_oral_bioavailability_pair_splits.py
-  从 oral bioavailability aggregate_molecules.jsonl 构建大规模 HF prompt/completion transfer split。
-  支持 unordered_pair_random 和 molecule_disjoint；molecule_disjoint 会按 canonical SMILES 全局分配
-  split，并只写 split 内部 pair，保证同一个 molecule 不跨 train/validation/test。
+  Build large-scale HF prompt/completion transfer splits from oral bioavailability aggregate_molecules.jsonl.
+  Supports unordered_pair_random and molecule_disjoint; molecule_disjoint globally assigns splits by canonical SMILES
+  and only writes pairs within the same split, ensuring the same molecule does not cross train/validation/test.
 
 export_oral_bioavailability_hf_upload.py
-  将 Oral_Bioavailability transfer/direction molecule-disjoint split 包装成 Hugging Face dataset repo
-  目录。只读取现有 split，不修改本地训练/评估用原始 JSONL。输出 data/{train,validation,test}.jsonl.gz、
-  README.md、export_summary.json 和 source_summary.json。导出时统一 metadata 字段，例如
-  completion_a_label、completion_b_label、label_text、benchmark_version、source_dataset 和 split_mode。
+  Wrap the Oral_Bioavailability transfer/direction molecule-disjoint split into a Hugging Face dataset repo
+  directory. Only reads existing splits, does not modify local training/evaluation raw JSONL. Outputs data/{train,validation,test}.jsonl.gz,
+  README.md, export_summary.json, and source_summary.json. Unifies metadata fields during export, e.g.,
+  completion_a_label, completion_b_label, label_text, benchmark_version, source_dataset, and split_mode.
 
 export_oral_bioavailability_clean_hf_upload.py
-  将 Oral_Bioavailability clean numeric data 包装成 Hugging Face dataset repo 目录。只读取
-  absolute_unspecified_systemic_broad_condition_full_text_v1，不修改本地 clean/pair/prompt 数据。
-  输出 data/aggregate_molecules.jsonl.gz、data/molecule_records.jsonl.gz、README.md、export_summary.json、
-  source_summary.json、source_report_zh.md 和 value_distribution figure。README 中明确 upstream
-  starling-labs/Oral_Bioavailability 未在 HF metadata 中检测到显式 license 字段。
+  Wrap Oral_Bioavailability clean numeric data into a Hugging Face dataset repo directory. Only reads
+  absolute_unspecified_systemic_broad_condition_full_text_v1, does not modify local clean/pair/prompt data.
+  Outputs data/aggregate_molecules.jsonl.gz, data/molecule_records.jsonl.gz, README.md, export_summary.json,
+  source_summary.json, source_report_zh.md, and value_distribution figure. README explicitly states that upstream
+  starling-labs/Oral_Bioavailability has no explicit license field detected in HF metadata.
 
 build_single_endpoint_raw_transfer_splits.py
-  面向没有 pChEMBL 的单个 assay endpoint 构建 raw-value transfer JSONL。当前默认 endpoint 是
-  CHEMBL4513218 / inhibition；标签按 raw standard_value 的 endpoint sample std 定义：
-  similar <= 0.5 std，different >= 1.5 std，中间 ambiguous 排除。支持 full_range 和
-  no_lt_minus_100 两个 value version，支持 molecule_disjoint split，并在 sampled 200k 版本中
-  计算 Tanimoto / similarity_bucket metadata。
+  Build raw-value transfer JSONL for a single assay endpoint without pChEMBL. Current default endpoint is
+  CHEMBL4513218 / inhibition; labels are defined by endpoint sample std of raw standard_value:
+  similar <= 0.5 std, different >= 1.5 std, intermediate ambiguous excluded. Supports full_range and
+  no_lt_minus_100 value versions, supports molecule_disjoint split, and computes Tanimoto / similarity_bucket metadata in the sampled 200k version.
 
 build_single_endpoint_exhaustive_raw_pairs.py
-  为 CHEMBL4513218 / inhibition 生成 split 内部 exhaustive non-ambiguous raw-value pairs。
-  输出是 compact TSV.GZ shards，不是 prompt/completion JSONL；保留 molecule-disjoint split，
-  只写同一 split 内部 pair，避免 train/validation/test molecule 混用。为节省时间和空间，
-  compact shards 不包含 Tanimoto。
+  Generate split-internal exhaustive non-ambiguous raw-value pairs for CHEMBL4513218 / inhibition.
+  Output is compact TSV.GZ shards, not prompt/completion JSONL; preserves molecule-disjoint split,
+  only writes pairs within the same split to avoid train/validation/test molecule mixing. To save time and space,
+  compact shards do not include Tanimoto.
 
 sample_exhaustive_compact_pairs_to_jsonl.py
-  从 build_single_endpoint_exhaustive_raw_pairs.py 的 compact shards 流式采样 HF prompt/completion
-  JSONL。默认采样 20,000,000 pairs，按 7:1:2 输出 train/validation/test。采样是 split 内部、
-  无放回、按源 shard 顺序 exact sequential sampling；metadata 保留 activity_a/activity_b/delta，
-  但 prompt 不暴露 raw activity，当前 MLP feature pipeline 也不使用 metadata activity。
+  Stream-sample HF prompt/completion JSONL from the compact shards of build_single_endpoint_exhaustive_raw_pairs.py.
+  Default samples 20,000,000 pairs, outputting train/validation/test at 7:1:2. Sampling is split-internal,
+  without replacement, exact sequential sampling by source shard order; metadata retains activity_a/activity_b/delta,
+  but the prompt does not expose raw activity, and the current MLP feature pipeline does not use metadata activity.
 
 materialize_hf_valid_split.py
-  将 HF prompt/completion/metadata 数据集的 validation split 落盘到
-  outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/<dataset>/。
-  默认用于 proper_assay_transfer 两个 dataset，limit=20000；实际 full validation 为 19,986 行。
-  不默认下载 train/test 全量 split；summary.json 记录 label、bucket、
-  assay_type 和 weighted_tanimoto 分布。
+  Materialize the validation split of the HF prompt/completion/metadata dataset to
+  outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/<dataset>/.
+  Default for proper_assay_transfer two datasets, limit=20000; actual full validation is 19,986 rows.
+  Does not download full train/test splits by default; summary.json records label, bucket,
+  assay_type, and weighted_tanimoto distributions.
 
 prepare_hf_mlp_features.py
-  为 trained MLP baseline 准备 HF assay-transfer 特征缓存。输入 HF prompt/completion/metadata
-  JSONL，解析 endpoint 完整描述和 Molecule A/B SMILES；endpoint 用 Qwen3-Embedding-8B
-  计算 semantic embedding；molecule 默认用 RDKit 计算 Morgan fingerprint 和全量 RDKit descriptors，
-  也支持 `--molecule-feature-backend molformer` 用 HuggingFace
-  `ibm-research/MoLFormer-XL-both-10pct` 的 `AutoModel(...).pooler_output` 替换 RDKit feature；
-  输出 clean_splits、endpoints/molecules metadata、endpoint_embeddings.npy、molecule_features.npz
-  和 row_indices/*.npz。实现使用 streaming 清洗 train JSONL，避免 1200 万行 full train 一次性驻留内存；
-  RDKit worker 会将 OMP/MKL/OPENBLAS/RDKIT 线程设为 1，防止外层多进程和内部线程互相争抢。
-  MolFormer 使用 `--molformer-devices auto` 时会把所有可见 CUDA GPU 都作为 worker 使用，即使单 GPU
-  也通过 spawn 子进程隔离 RDKit 和 MolFormer runtime；当前 vllm env 的 transformers 需要脚本内
-  compatibility shim、rotary cache rebuild 和 grad-enabled forward 后立即 detach，manifest 会记录
-  molformer model、dtype、max_length、random_seed 和 resolved_devices。当前环境下 MolFormer
-  remote code 的 rotary `inv_freq` 是 non-persistent buffer，加载后可能是未初始化/非有限值；
-  脚本会先重建 `inv_freq`，再重建 cos/sin cache，并强制 feature_map eval deterministic。这个修复后
-  多 seed 小样本和 256 molecule 抽样的官方 `pooler_output` 均为 finite。每个 MolFormer worker 会把分配到的 physical GPU
-  remap 成进程内 `cuda:0`；这是为了避免直接使用 `cuda:6` 等非零 device id 时的 NaN，同时仍然
-  并行使用所有 visible GPUs。如果 `pooler_output` 非有限，脚本会使用最深的 finite hidden_state
-  做 masked mean pooling，并记录 `molformer_hidden_state_fallback` / `molformer_hidden_fallback_done`。
-  支持 --test-jsonl 从头构建 train/validation/test 统一 cache；尚未实现对已有 cache 的
-  incremental append mode。GPU embedding 必须在 sandbox 外运行；sandbox 内可能 CUDA 不可见。
+  Prepare HF assay-transfer feature cache for trained MLP baseline. Input HF prompt/completion/metadata
+  JSONL, parse endpoint full description and Molecule A/B SMILES; endpoint uses Qwen3-Embedding-8B
+  to compute semantic embedding; molecule defaults to RDKit Morgan fingerprint and full RDKit descriptors,
+  also supports `--molecule-feature-backend molformer` using HuggingFace
+  `ibm-research/MoLFormer-XL-both-10pct`'s `AutoModel(...).pooler_output` to replace RDKit features;
+  output clean_splits, endpoints/molecules metadata, endpoint_embeddings.npy, molecule_features.npz
+  and row_indices/*.npz. Implementation uses streaming to clean train JSONL, avoiding 12 million rows of full train residing in memory at once;
+  RDKit worker sets OMP/MKL/OPENBLAS/RDKIT threads to 1, preventing contention between outer multiprocessing and internal threads.
+  MolFormer uses `--molformer-devices auto` and treats all visible CUDA GPUs as workers, even single GPU
+  uses spawn subprocess to isolate RDKit and MolFormer runtime; current vllm env's transformers requires script-internal
+  compatibility shim, rotary cache rebuild, and detach immediately after grad-enabled forward; manifest records
+  molformer model, dtype, max_length, random_seed, and resolved_devices. In current environment, MolFormer
+  remote code's rotary `inv_freq` is non-persistent buffer, may be uninitialized/non-finite after loading;
+  script first rebuilds `inv_freq`, then rebuilds cos/sin cache, and forces feature_map eval deterministic. After this fix,
+  multi-seed small samples and 256-molecule sampling official `pooler_output` are all finite. Each MolFormer worker remaps assigned physical GPU
+  to in-process `cuda:0`; this avoids NaN when directly using non-zero device IDs like `cuda:6`, while still
+  using all visible GPUs in parallel. If `pooler_output` is non-finite, script uses deepest finite hidden_state
+  for masked mean pooling, and records `molformer_hidden_state_fallback` / `molformer_hidden_fallback_done`.
+  Supports --test-jsonl building train/validation/test unified cache from scratch; incremental append mode for existing cache
+  not yet implemented. GPU embedding must run outside sandbox; CUDA may not be visible inside sandbox.
 
 train_hf_mlp_baseline.py
-  读取 prepare_hf_mlp_features.py 的 preprocessed cache，训练 Qwen endpoint embedding +
-  molecule feature 的 Lightning MLP baseline。模型使用 endpoint tower、molecule/pair tower
-  和 fusion head；RDKit backend 输入包括 endpoint embedding、Mol A/B Morgan fingerprint、
-  fingerprint XOR、Mol A/B standardized descriptors 和 descriptor absolute difference；
-  MolFormer backend 输入包括 Mol A embedding、Mol B embedding 和 absolute embedding difference。
-  训练支持 A100 bf16-mixed、
-  DDP 多 GPU、W&B 记录、Lightning 进度条、定期 full validation、按 similarity_bucket/assay_type/
-  eval_subset 的分组指标、predictions.jsonl/metrics.json/report_zh.md 输出，以及 best/final/last
-  checkpoint 保存。full validation callback 在 DDP 下会用 barrier 同步所有 rank；best/final checkpoint
-  是 rank0-only 的 torch state_dict checkpoint，last.ckpt 由 Lightning ModelCheckpoint 保存。
+  Reads preprocessed cache from prepare_hf_mlp_features.py, trains Lightning MLP baseline with Qwen endpoint embedding +
+  molecule features. Model uses endpoint tower, molecule/pair tower, and fusion head; RDKit backend inputs include endpoint embedding, Mol A/B Morgan fingerprint,
+  fingerprint XOR, Mol A/B standardized descriptors, and descriptor absolute difference;
+  MolFormer backend inputs include Mol A embedding, Mol B embedding, and absolute embedding difference.
+  Training supports A100 bf16-mixed,
+  DDP multi-GPU, W&B logging, Lightning progress bar, periodic full validation, grouped metrics by similarity_bucket/assay_type/
+  eval_subset, predictions.jsonl/metrics.json/report_zh.md outputs, and best/final/last
+  checkpoint saving. Full validation callback uses barrier to sync all ranks under DDP; best/final checkpoint
+  are rank0-only torch state_dict checkpoints, last.ckpt saved by Lightning ModelCheckpoint.
 
 run_llm_benchmark.py
-  用 OpenAI-compatible endpoint 跑 LLM activity-transfer 判断。
-  默认支持本地 vLLM gpt-oss-120b，也可跑 DeepSeek/OpenAI-compatible hosted endpoint。
-  可选调用 tool server 的 mmp_structure_compare 和 properties_compare。
-  支持原 dynamic_v1/task-assay JSONL，也支持 HF prompt/completion/metadata 格式：
-  completion A/B 映射为 similar/different，metadata 原样保留到 input_record.hf_metadata。
-  HF metadata 中的 similarity_bucket、assay_type 会进入 metrics/report 的分组指标。
-  --model 可直接传本地 vLLM 暴露的模型名，例如 gpt-oss-120b、qwen3-4b、qwen3-8b。
-  默认 --output-mode json；小模型可用 --output-mode choice，让模型只输出 A/B，
-  choice 模式未显式传 --max-tokens 时默认 max_tokens=1，且不会追加 JSON 输出指令。
-  reasoning 默认不强制开启；--enable-thinking 会按模型名对 Qwen 发送 chat_template_kwargs enable_thinking=true，
-  对非 Qwen 发送 thinking enabled；--disable-thinking 会对 Qwen/vLLM 发送 enable_thinking=false。
-  默认 max-tool-rounds=3；使用 --skip-existing 断点续跑。
-  progress 输出包含 completed/total、elapsed、ETA、rate、macro-F1 和 failed。
-  输出 per-sample JSON、predictions、metrics、report、SVG 和 trace_messages.jsonl；当输入含 task_name 时，
-  metrics/report 会额外输出 per-task performance；当输入含 HF metadata 时，会额外输出 per-assay_type
-  per-similarity_bucket 和 per-eval_subset performance。
-  trace_messages.jsonl 使用 tools/trace_viewer/viewer.html 可识别的格式，
-  每个 sample 一行，并把 reasoning_content 放进 assistant message 的 reasoning 字段供 viewer 展示。
+  Runs LLM activity-transfer judgment with OpenAI-compatible endpoint.
+  Default supports local vLLM gpt-oss-120b, also can run DeepSeek/OpenAI-compatible hosted endpoint.
+  Optionally calls tool server's mmp_structure_compare and properties_compare.
+  Supports original dynamic_v1/task-assay JSONL, also HF prompt/completion/metadata format:
+  completion A/B maps to similar/different, metadata preserved as-is in input_record.hf_metadata.
+  similarity_bucket, assay_type in HF metadata enter grouped metrics/report.
+  --model can directly pass local vLLM exposed model name, e.g., gpt-oss-120b, qwen3-4b, qwen3-8b.
+  Default --output-mode json; small models can use --output-mode choice, letting model output only A/B,
+  choice mode defaults max_tokens=1 when --max-tokens not explicitly passed, and does not append JSON output instruction.
+  reasoning not forced by default; --enable-thinking sends chat_template_kwargs enable_thinking=true to Qwen by model name,
+  sends thinking enabled to non-Qwen; --disable-thinking sends enable_thinking=false to Qwen/vLLM.
+  Default max-tool-rounds=3; use --skip-existing for resume from breakpoint.
+  progress output includes completed/total, elapsed, ETA, rate, macro-F1, and failed.
+  Outputs per-sample JSON, predictions, metrics, report, SVG, and trace_messages.jsonl; when input contains task_name,
+  metrics/report additionally output per-task performance; when input contains HF metadata, additionally output per-assay_type
+  per-similarity_bucket and per-eval_subset performance.
+  trace_messages.jsonl uses format recognizable by tools/trace_viewer/viewer.html,
+  one line per sample, and puts reasoning_content into assistant message's reasoning field for viewer display.
 
 run_qwen3_4b_valid20k_four_settings.sh
-  顺序跑 qwen3-4b proper valid20k 四个标准 setting：no-props choice/no-thinking、
-  no-props json/thinking、props choice/no-thinking、props json/thinking；每步都用
-  --skip-existing 支持断点续跑，最后调用 plot_llm_multi_run_comparison.py 生成 qwen3-4b comparison。
-  可用环境变量覆盖 PYTHON_BIN、MODEL、BASE_URL、API_KEY、PARALLELISM、TIMEOUT_S、
-  PROGRESS_EVERY、MAX_TOKENS_THINK、OUT_ROOT、COMPARISON_DIR。
+  Sequentially runs qwen3-4b proper valid20k four standard settings: no-props choice/no-thinking,
+  no-props json/thinking, props choice/no-thinking, props json/thinking; each step uses
+  --skip-existing for resume, finally calls plot_llm_multi_run_comparison.py to generate qwen3-4b comparison.
+  Environment variables can override PYTHON_BIN, MODEL, BASE_URL, API_KEY, PARALLELISM, TIMEOUT_S,
+  PROGRESS_EVERY, MAX_TOKENS_THINK, OUT_ROOT, COMPARISON_DIR.
 
 plot_llm_run_comparison.py
-  对两个 LLM run 和 full-valid baseline 做汇总可视化。
-  默认比较 HF assay-mol-disjoint no-tanimoto valid10k 上的 gpt-oss-120b 与 DeepSeek-v4-pro，
-  输出 overall、similarity_bucket、assay_type 三层 macro-F1 对比图和 TSV/report。
-  还输出 true-label subset recall：true similar recall 用于看 positive transfer / scaffold-hop，
-  true different recall 用于看 negative transfer / activity-cliff；label-specific 图的 x-axis
-  用 S=<true similar count>、D=<true different count> 标出每组 full-valid 样本量。
+  Creates summary visualization for two LLM runs and full-valid baseline.
+  Default compares gpt-oss-120b with DeepSeek-v4-pro on HF assay-mol-disjoint no-tanimoto valid10k,
+  outputs overall, similarity_bucket, assay_type three-layer macro-F1 comparison plots and TSV/report.
+  Also outputs true-label subset recall: true similar recall for positive transfer / scaffold-hop,
+  true different recall for negative transfer / activity-cliff; label-specific plots' x-axis
+  uses S=<true similar count>, D=<true different count> to mark each group's full-valid sample size.
 
 plot_llm_multi_run_comparison.py
-  plot_llm_run_comparison.py 的通用多 run 版本。用重复的 --run label=path 传入任意多个
-  llm_runs，和 full-valid baseline 一起输出同样格式的 dashboard、overall、similarity_bucket、
-  assay_type、eval_subset、label-specific recall 图、TSV 和 report。读取旧 run 时如果 metrics.json
-  缺 per_eval_subset，会从 predictions.jsonl 重新计算。后续新模型/新 prompt setting 优先用这个入口；
-  旧的 two-run 脚本暂时保留用于一键复现 valid10k gpt-oss/DeepSeek 图。
+  General multi-run version of plot_llm_run_comparison.py. Uses repeated --run label=path to pass any number of
+  llm_runs, and with full-valid baseline outputs same format dashboard, overall, similarity_bucket,
+  assay_type, eval_subset, label-specific recall plots, TSV, and report. When reading old runs, if metrics.json
+  lacks per_eval_subset, recomputes from predictions.jsonl. Prefer this entry for new models/new prompt settings;
+  old two-run script kept temporarily for one-click reproduction of valid10k gpt-oss/DeepSeek plots.
 ```
 
-## 输出组织约定
+## Output organization conventions
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/
@@ -273,25 +287,25 @@ outputs/chembl_tool/activity_transfer_benchmark/
       label_recall_by_eval_subset.*
 ```
 
-说明：
+Notes:
 
 ```text
-smoke/debug 结果不作为长期产物保留；正式 run、输入数据和 comparison 分开存放。
-HF valid10k 的原始 metadata 必须保留，后续分析会用到 similarity_bucket、assay_type、
-weighted_tanimoto 等字段。
+smoke/debug results are not kept as long-term artifacts; formal runs, input data, and comparisons are stored separately.
+HF valid10k raw metadata must be preserved; later analysis uses similarity_bucket, assay_type,
+weighted_tanimoto, and other fields.
 ```
 
-## 版本索引
+## Version index
 
 ### chembl36_activity_transfer_v1
 
-第一版完整 Tanimoto baseline，未做 dynamic-range filter。
+First full Tanimoto baseline, no dynamic-range filter.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_v1/
 ```
 
-核心设置：
+Core settings:
 
 ```text
 max-total-pairs: 2,000,000
@@ -299,24 +313,24 @@ max-pairs-per-assay: 5,000
 binary-max-total-pairs: 500,000
 ```
 
-当前结论：
+Current conclusions:
 
 ```text
-连续值主分析约 40k assay endpoints、约 198 万 sampled pairs。
-最佳单一 Tanimoto threshold 约 0.45，macro-F1 约 0.56。
-assay-specific enrichment 显示 close analog 相对 assay 背景有正 lift，
-但结构相似度本身不足以作为可靠 transfer 判据。
+Continuous-value main analysis about 40k assay endpoints, about 1.98 million sampled pairs.
+Best single Tanimoto threshold about 0.45, macro-F1 about 0.56.
+Assay-specific enrichment shows close analogs have positive lift over assay background,
+but structural similarity alone is insufficient as a reliable transfer criterion.
 ```
 
 ### chembl36_activity_transfer_dynamic_v1
 
-当前主 baseline 版本。过滤低动态范围 assay endpoint，降低“所有 pair 都 similar”的假信号。
+Current main baseline version. Filters low dynamic-range assay endpoints to reduce false signal where all pairs are similar.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/chembl36_activity_transfer_dynamic_v1/
 ```
 
-核心设置：
+Core settings:
 
 ```text
 min-pchembl-range: 2.0
@@ -325,24 +339,24 @@ max-total-pairs: 2,000,000
 max-pairs-per-assay: 5,000
 ```
 
-当前结论：
+Current conclusions:
 
 ```text
-连续值主分析约 20k assay endpoints、约 199 万 sampled pairs。
-similar/different 标签比未过滤 v1 更平衡，median |delta pChEMBL| 更高。
-best Tanimoto threshold 约 0.50，macro-F1 / balanced accuracy 约 0.57。
-这是后续 MCS 和 LLM benchmark 的主数据版本。
+Continuous-value main analysis about 20k assay endpoints, about 1.99 million sampled pairs.
+similar/different labels more balanced than unfiltered v1, median |delta pChEMBL| higher.
+Best Tanimoto threshold about 0.50, macro-F1 / balanced accuracy about 0.57.
+This is the main data version for subsequent MCS and LLM benchmarks.
 ```
 
 ### dynamic_v1_mcs_full_t2_w128_stream
 
-dynamic_v1 的全量 MCS 计算结果，timeout=2s，workers=128。
+Full MCS computation results for dynamic_v1, timeout=2s, workers=128.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mcs_runtime/dynamic_v1_mcs_full_t2_w128_stream/
 ```
 
-当前状态：
+Current status:
 
 ```text
 total pairs: 1,989,152
@@ -352,23 +366,23 @@ missing: 1,487
 observed timeout: 218,664, about 11.0%
 ```
 
-说明：
+Notes:
 
 ```text
-full-scan 在 tail pending futures 阶段可能卡住。
-遇到卡住时终止进程，保留 mcs_sample_results.tsv.tmp，
-再用 --finalize-existing 生成 summary/report/missing_result_indices.tsv。
+full-scan may hang during tail pending futures phase.
+If stuck, terminate process, keep mcs_sample_results.tsv.tmp,
+then use --finalize-existing to generate summary/report/missing_result_indices.tsv.
 ```
 
 ### dynamic_v1_mcs_t2_analysis
 
-MCS threshold 分析版本。
+MCS threshold analysis version.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mcs_analysis/dynamic_v1_mcs_t2_analysis/
 ```
 
-当前结论：
+Current conclusions:
 
 ```text
 non-ambiguous usable pairs: 1,500,676
@@ -379,31 +393,31 @@ same subset best Tanimoto threshold: 0.48
 same subset best Tanimoto macro-F1: 0.5688
 ```
 
-解释：
+Interpretation:
 
 ```text
-MCS coverage 有 activity-transfer 信号，但单独全局 threshold 没有超过 Tanimoto。
-它更适合作为 LLM / learned classifier 的补充特征。
+MCS coverage has activity-transfer signal, but a single global threshold does not exceed Tanimoto.
+It is better suited as a supplementary feature for LLM / learned classifiers.
 ```
 
 ### dynamic_v1_llm_3k
 
-LLM 小评估集。它是分层平衡 stress-test，不是 full dynamic_v1 的自然分布。
+Small LLM evaluation set. It is a stratified balanced stress-test, not the natural distribution of full dynamic_v1.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/dynamic_v1_llm_3k/
 ```
 
-构成：
+Composition:
 
 ```text
 samples: 3,000
 assay endpoints: 2,463
 labels: similar 1,500 / different 1,500
-similarity buckets: 6 buckets，每个 500 pairs
+similarity buckets: 6 buckets, each 500 pairs
 ```
 
-同集合 baseline：
+Same-set baselines:
 
 ```text
 Tanimoto>=0.50 macro-F1 0.4977, balanced accuracy 0.5020
@@ -413,8 +427,8 @@ MCS>=0.70      macro-F1 0.4941, balanced accuracy 0.4963
 
 ### task_assay_raw_robust_z_llm_3k
 
-当前推荐的 task-scoped LLM 小评估集，用于比较四个 data/gold_labels/legacy/processed task 的 pipeline 表现和
-同 task assay 上的 transfer performance。
+Currently recommended task-scoped LLM small evaluation set, used to compare pipeline performance across four data/gold_labels/legacy/processed tasks and
+transfer performance on same-task assays.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/task_assay_raw_robust_z_llm_3k/
@@ -424,7 +438,7 @@ outputs/chembl_tool/activity_transfer_benchmark/llm_eval_sets/task_assay_raw_rob
   report_zh.md
 ```
 
-构建命令：
+Build command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_task_llm_eval_set \
@@ -434,7 +448,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.build_task_llm_eval_set 
   --max-per-endpoint 6
 ```
 
-构成：
+Composition:
 
 ```text
 samples: 3,000
@@ -444,7 +458,7 @@ tasks: bbb_martins 750 / bioavailability_ma 750 / clintox 750 / skin_reaction 75
 each task label split: similar 375 / different 375
 ```
 
-同集合 baseline：
+Same-set baselines:
 
 ```text
 Tanimoto>=0.50 macro-F1 0.4991, balanced accuracy 0.5043
@@ -459,7 +473,7 @@ skin_reaction 0.4881
 
 ### HF jiosephlee valid10k
 
-旧的四个 chembl-mol12 dataset 只 materialize validation 10k split；不要默认下载全量 split。
+Old four chembl-mol12 datasets only materialize validation 10k split; do not download full split by default.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/
@@ -471,7 +485,7 @@ outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid10k/
 
 ### HF jiosephlee valid20k proper assay transfer
 
-两个 proper_assay_transfer dataset 已 materialize 完整 validation split；实际每个 split 为 19,986 行。
+Two proper_assay_transfer datasets have materialized full validation split; each split is actually 19,986 rows.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/
@@ -479,11 +493,11 @@ outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_valid20k/
   proper_assay_transfer_no_tanimoto/
 ```
 
-两者 schema 仍是 prompt/completion/metadata，可直接输入 run_llm_benchmark.py。
-`proper_assay_transfer_no_prop_no_tanimoto` 不含 properties / Tanimoto；
-`proper_assay_transfer_no_tanimoto` 含 molecule properties，但不含 Tanimoto。
+Both schemas are still prompt/completion/metadata, directly usable as input to run_llm_benchmark.py.
+`proper_assay_transfer_no_prop_no_tanimoto` does not contain properties / Tanimoto;
+`proper_assay_transfer_no_tanimoto` contains molecule properties, but no Tanimoto.
 
-当前 full-validation baseline：
+Current full-validation baselines:
 
 ```text
 rows: 19,986
@@ -492,7 +506,7 @@ Tanimoto>=0.50 macro-F1: 0.5335
 Bucket-majority macro-F1: 0.4799
 ```
 
-当前 qwen3-8b full-validation runs（排除 1-sample smoke；两个旧的误导性 properties/json run 已删除）：
+Current qwen3-8b full-validation runs (excluding 1-sample smoke; two old misleading properties/json runs deleted):
 
 ```text
 llm_runs/qwen3_8b_proper_no_prop_no_tanimoto_valid20k_choice_no_thinking/
@@ -508,7 +522,7 @@ llm_runs/qwen3_8b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
   properties, fixed json/thinking trace, macro-F1 0.5349
 ```
 
-当前 qwen3-8b valid20k comparison：
+Current qwen3-8b valid20k comparison:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/qwen3_8b_proper_valid20k/
@@ -522,7 +536,7 @@ outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid2
     label_recall_by_eval_subset.*
 ```
 
-当前 qwen3-4b full-validation runs：
+Current qwen3-4b full-validation runs:
 
 ```text
 llm_runs/qwen3_4b_proper_no_prop_no_tanimoto_valid20k_choice_no_thinking/
@@ -538,7 +552,7 @@ llm_runs/qwen3_4b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
   properties, json/thinking trace, macro-F1 0.5236
 ```
 
-当前 qwen3-4b valid20k comparison：
+Current qwen3-4b valid20k comparison:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/qwen3_4b_proper_valid20k/
@@ -552,7 +566,7 @@ outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid2
     label_recall_by_eval_subset.*
 ```
 
-当前 gpt-oss-120b valid20k run：
+Current gpt-oss-120b valid20k run:
 
 ```text
 llm_runs/gpt_oss_120b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
@@ -560,7 +574,7 @@ llm_runs/gpt_oss_120b_proper_no_tanimoto_valid20k_json_with_thinking_trace/
   reasoning_content present in sampled run JSON and trace_messages.jsonl.
 ```
 
-当前 gpt-oss-120b valid20k comparison：
+Current gpt-oss-120b valid20k comparison:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid20k/gpt_oss_120b_proper_valid20k/
@@ -575,10 +589,9 @@ outputs/chembl_tool/activity_transfer_benchmark/comparisons/hf_jiosephlee_valid2
 
 ### HF proper assay-transfer MLP baseline preprocessing
 
-当前已为 `jiosephlee/proper_assay_transfer_no_prop_no_tanimoto` 建立 trained MLP baseline 的
-train/validation 特征缓存。这个缓存只包含 train 和 validation；test split 尚未 append。
+Currently, the train/validation feature cache for the trained MLP baseline has been built for `jiosephlee/proper_assay_transfer_no_prop_no_tanimoto`. This cache contains only train and validation; the test split has not been appended yet.
 
-本地 full train 已 materialize：
+The local full train has been materialized:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/hf_jiosephlee_train/proper_assay_transfer_no_prop_no_tanimoto/
@@ -589,13 +602,13 @@ rows: 12,327,157
 labels: A/similar 6,957,330; B/different 5,369,827
 ```
 
-Qwen3-Embedding-8B 已下载到：
+Qwen3-Embedding-8B has been downloaded to:
 
 ```text
 /data1/tianang/cache/hub/models--Qwen--Qwen3-Embedding-8B/snapshots/1d8ad4ca9b3dd8059ad90a75d4983776a23d44af
 ```
 
-正式 preprocessed cache：
+The official preprocessed cache:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/preprocessed/
@@ -612,7 +625,7 @@ outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rd
   manifest.json
 ```
 
-当前 full cache 统计：
+Current full cache statistics:
 
 ```text
 train rows: 12,327,157
@@ -632,7 +645,7 @@ row_indices/validation.npz labels:
   different 9,093; similar 10,893
 ```
 
-正式构建命令模板：
+Official build command template:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
@@ -652,31 +665,28 @@ env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
     --progress-every 50000
 ```
 
-运行说明：
+Run instructions:
 
 ```text
-1. `clean_records` 阶段只做 JSONL streaming 解析和 clean split 写出，不使用 GPU。
-2. `endpoint_embedding_start` 后才会加载 Qwen3-Embedding-8B 并使用 GPU。
-3. `rdkit_features` 阶段使用 CPU 多进程计算 Morgan fingerprint 和 RDKit descriptors。
-4. `TOKENIZERS_PARALLELISM=false` 是为了避免 tokenizer 内部线程和多进程/GPU worker 抢 CPU；
-   不影响 GPU 并行。
-5. sentence-transformers 的 `encode_multi_process` deprecation warning 和 multiprocessing
-   resource_tracker semaphore warning 不影响已写出的 cache；以 manifest、array shape 和 row count
-   为准。
+1. The `clean_records` stage only performs JSONL streaming parsing and clean split writing, without using GPU.
+2. Only after `endpoint_embedding_start` will Qwen3-Embedding-8B be loaded and GPU used.
+3. The `rdkit_features` stage uses CPU multi-process to compute Morgan fingerprints and RDKit descriptors.
+4. `TOKENIZERS_PARALLELISM=false` is to prevent tokenizer internal threads and multi-process/GPU workers from competing for CPU; it does not affect GPU parallelism.
+5. The sentence-transformers `encode_multi_process` deprecation warning and multiprocessing resource_tracker semaphore warning do not affect the written cache; rely on manifest, array shapes, and row counts.
 ```
 
-后续需要给 test split 加特征时，优先实现 incremental append mode：
+When adding features for the test split later, prioritize implementing incremental append mode:
 
 ```text
-输入现有 preprocessed/ + test JSONL；
-只解析 test；
-只补算 missing endpoint embeddings 和 missing molecule RDKit features；
-重写 endpoints/molecules/feature arrays；
-新增 row_indices/test.npz；
-不重算已有 154,370 endpoints 和 1,337,289 molecules。
+Input existing preprocessed/ + test JSONL;
+Only parse test;
+Only compute missing endpoint embeddings and missing molecule RDKit features;
+Rewrite endpoints/molecules/feature arrays;
+Add row_indices/test.npz;
+Do not recompute existing 154,370 endpoints and 1,337,289 molecules.
 ```
 
-MLP 训练入口：
+MLP training entry point:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
@@ -700,7 +710,7 @@ env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
     --wandb-mode online
 ```
 
-训练输出目录：
+Training output directory:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rdkit_v1/runs/<run_id>/
@@ -718,32 +728,27 @@ outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/qwen3_embedding_rd
     last.ckpt
 ```
 
-训练实现注意事项：
+Training implementation notes:
 
 ```text
-1. endpoint embedding 已经 L2-normalized，训练时用 LayerNorm，不额外 z-score。
-2. Morgan fingerprint 是 uint8 0/1，训练 collate 时转 float；不输入 Tanimoto scalar。
-3. RDKit descriptors 用 train molecule set 计算 mean/std，NaN/inf 填 0，z-score 后 clip 到 [-10, 10]。
-4. validation full metrics 复用 run_llm_benchmark.compute_metrics 的字段形状，`llm` key 表示 MLP prediction。
-5. W&B 会记录 overall macro-F1/accuracy/recall，以及 similarity_bucket、assay_type、eval_subset
-   下的 macro-F1 和 label-specific recall。
-6. 当前推荐命令的 `--max-steps 5000` 在 8 GPU、per-GPU batch size 4096 下约等于 13.3 epochs；
-   Lightning 进度条中的 `Epoch N/-2` 是 max_steps 模式下的显示占位，训练停止条件看 global_step。
-7. full validation 在 rank0 上生成 metrics/report/predictions 并更新 best checkpoint；其他 DDP rank
-   会在 barrier 等待，避免 validation 后继续训练时出现 NCCL allreduce timeout。
+1. Endpoint embeddings are already L2-normalized; use LayerNorm during training, no additional z-score.
+2. Morgan fingerprints are uint8 0/1; convert to float in the training collate; do not input Tanimoto scalar.
+3. RDKit descriptors use train molecule set to compute mean/std; NaN/inf filled with 0; z-score then clip to [-10, 10].
+4. Validation full metrics reuse the field shape of run_llm_benchmark.compute_metrics; the `llm` key represents MLP prediction.
+5. W&B will log overall macro-F1/accuracy/recall, as well as macro-F1 and label-specific recall under similarity_bucket, assay_type, and eval_subset.
+6. The current recommended command's `--max-steps 5000` is approximately 13.3 epochs with 8 GPUs and per-GPU batch size 4096; the `Epoch N/-2` in the Lightning progress bar is a display placeholder in max_steps mode; the training stop condition is based on global_step.
+7. Full validation generates metrics/report/predictions on rank0 and updates the best checkpoint; other DDP ranks wait at the barrier to avoid NCCL allreduce timeout when continuing training after validation.
 ```
 
 ### dynamic_v1 endpoint-disjoint MLP train-eval v1
 
-用途：
+Purpose:
 
 ```text
-把 chembl36_activity_transfer_dynamic_v1 的 pChEMBL-delta non-ambiguous pairs
-转换成 HF prompt/completion/metadata 兼容格式，复用 Qwen endpoint embedding +
-RDKit molecule feature 的 MLP baseline，评估 trained classifier 是否超过 Tanimoto threshold。
+Convert the pChEMBL-delta non-ambiguous pairs of chembl36_activity_transfer_dynamic_v1 into HF prompt/completion/metadata compatible format, reuse the Qwen endpoint embedding + RDKit molecule feature MLP baseline, and evaluate whether the trained classifier exceeds the Tanimoto threshold.
 ```
 
-数据与 split：
+Data and split:
 
 ```text
 source pairs:
@@ -765,7 +770,7 @@ counts:
   validation/test indexed rows: all rows
 ```
 
-构建 split：
+Build split:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_splits \
@@ -773,7 +778,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_spl
   --progress-every 500000
 ```
 
-特征 cache：
+Feature cache:
 
 ```text
 output:
@@ -789,7 +794,7 @@ descriptor handling:
   abs(descriptor) > 1e12 is stored as NaN; prevents RDKit Ipc outliers from overflowing train mean/std.
 ```
 
-特征构建命令：
+Feature build command:
 
 ```bash
 env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RDKIT_NUM_THREADS=1 \
@@ -805,7 +810,7 @@ env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 RDKIT_NUM_THREADS
     --rdkit-workers 200
 ```
 
-训练与结果：
+Training and results:
 
 ```text
 run:
@@ -828,14 +833,14 @@ notes:
 
 ### dynamic_v1 strict pChEMBL split candidate
 
-用途：
+Purpose:
 
 ```text
-更干净标签版 activity-transfer data，用于判断原 0.5/1.0 pChEMBL delta 标签是否过噪。
-只重定义 label/split data，尚未训练 MLP。
+A cleaner label version of activity-transfer data, used to determine whether the original 0.5/1.0 pChEMBL delta labels are too noisy.
+Only redefines label/split data; MLP has not been trained yet.
 ```
 
-配置与输出：
+Configuration and output:
 
 ```text
 source:
@@ -859,7 +864,7 @@ same-set Tanimoto baseline:
   test Tanimoto>=0.50 macro-F1 0.5906
 ```
 
-构建命令：
+Build command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_splits \
@@ -871,15 +876,14 @@ python -m tools.chembl_tool.activity_transfer_benchmark.build_dynamic_v1_mlp_spl
 
 ### CHEMBL4513218 / inhibition raw-value single endpoint
 
-用途：
+Purpose:
 
 ```text
-研究没有 pChEMBL 的大规模 publication assay endpoint 是否能构造 raw-value activity-transfer benchmark。
-该 endpoint 是 CHEMBL4513218 / inhibition，standard_units 为 %，来自 DOI 10.1021/acsinfecdis.9b00482，
-assay 描述为 P. berghei liver stage luciferase screen at 10uM。
+Investigate whether a large-scale publication assay endpoint without pChEMBL can construct a raw-value activity-transfer benchmark.
+This endpoint is CHEMBL4513218 / inhibition, standard_units is %, from DOI 10.1021/acsinfecdis.9b00482, assay description is P. berghei liver stage luciferase screen at 10uM.
 ```
 
-重要数据事实：
+Important data facts:
 
 ```text
 pChEMBL rows: 0
@@ -913,7 +917,7 @@ outputs/chembl_tool/activity_transfer_benchmark/single_endpoint_raw_transfer/
     summary.json
 ```
 
-200k 构建命令：
+200k build command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_single_endpoint_raw_transfer_splits \
@@ -922,7 +926,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.build_single_endpoint_ra
   --versions full_range,no_lt_minus_100
 ```
 
-200k full_range 结果：
+200k full_range results:
 
 ```text
 MLP best test:
@@ -968,7 +972,7 @@ test:
 total non-ambiguous pairs: 710,305,504
 ```
 
-Exhaustive compact 命令：
+Exhaustive compact command:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_single_endpoint_exhaustive_raw_pairs \
@@ -1071,7 +1075,7 @@ transfers to Molecule B. If that version still performs near macro-F1 0.55, then
 signal is likely genuinely weak.
 ```
 
-旧 valid10k 已完成 full LLM run 的 setting：
+Old valid10k completed full LLM run settings:
 
 ```text
 input:
@@ -1083,7 +1087,7 @@ comparison:
   comparisons/hf_jiosephlee_valid10k/chembl-mol12-stdsep-assay-mol-disjoint-no-props-no-tanimoto/
 ```
 
-当前 overall macro-F1：
+Current overall macro-F1:
 
 ```text
 gpt-oss-120b:     0.5365
@@ -1092,7 +1096,7 @@ Tanimoto >= 0.5:  0.5364
 Bucket majority:  0.3606
 ```
 
-LLM 运行示例：
+LLM run example:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
@@ -1109,7 +1113,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
 
 ### gpt_oss_120b_dynamic_v1_llm_3k_tools
 
-本地 vLLM gpt-oss-120b + tool server 的第一版 3K LLM benchmark。
+First version of the 3K LLM benchmark with local vLLM gpt-oss-120b + tool server.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1_llm_3k_tools/
@@ -1121,7 +1125,7 @@ outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1
   runs/
 ```
 
-运行设置：
+Run settings:
 
 ```text
 model: gpt-oss-120b
@@ -1132,7 +1136,7 @@ parallelism: 16
 max tool rounds: 1
 ```
 
-结果：
+Results:
 
 ```text
 n: 3,000
@@ -1150,7 +1154,7 @@ same-set Tanimoto>=0.50 macro-F1: 0.4977
 same-set MCS>=0.70 macro-F1: 0.4941
 ```
 
-灰区结果：
+Gray-zone results:
 
 ```text
 Tanimoto 0.40-0.70 subset n=818
@@ -1158,18 +1162,19 @@ LLM macro-F1: 0.5390
 Tanimoto>=0.50 macro-F1: 0.4683
 ```
 
-解释：
+Interpretation:
 
 ```text
-gpt-oss-120b + tools 在 3K balanced stress-test 上超过简单 threshold baseline，
-但绝对性能仍弱。该结果不能直接和 full dynamic_v1 自然分布上的 best Tanimoto macro-F1 ~0.57
-一比一比较。
-benchmark_explanation.html 是面向阅读的 HTML 报告，记录数据构建、方法对比、prompt、工具调用率和一个带 tool call 的可见 trace 示例。
+gpt-oss-120b + tools exceeds the simple threshold baseline on the 3K balanced stress test,
+but absolute performance is still weak. This result cannot be directly compared one-to-one
+with the best Tanimoto macro-F1 ~0.57 on the full dynamic_v1 natural distribution.
+benchmark_explanation.html is a reader-oriented HTML report documenting data construction, method comparison,
+prompt, tool call rate, and a visible trace example with tool calls.
 ```
 
 ### gpt_oss_120b_dynamic_v1_llm_3k_tools_thinking
 
-本地 vLLM gpt-oss-120b + tool server + `--enable-thinking` 的 3K LLM benchmark。
+3K LLM benchmark with local vLLM gpt-oss-120b + tool server + `--enable-thinking`.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1_llm_3k_tools_thinking/
@@ -1182,7 +1187,7 @@ outputs/chembl_tool/activity_transfer_benchmark/llm_runs/gpt_oss_120b_dynamic_v1
   runs/
 ```
 
-运行设置：
+Run settings:
 
 ```text
 model: gpt-oss-120b
@@ -1195,7 +1200,7 @@ max tokens: 4096
 thinking: enabled
 ```
 
-结果：
+Results:
 
 ```text
 n: 3,000
@@ -1215,7 +1220,7 @@ same-set Tanimoto>=0.50 macro-F1: 0.4977
 same-set MCS>=0.70 macro-F1: 0.4941
 ```
 
-灰区结果：
+Gray-zone results:
 
 ```text
 Tanimoto 0.40-0.70 subset n=818
@@ -1223,19 +1228,19 @@ LLM macro-F1: 0.5301
 Tanimoto>=0.50 macro-F1: 0.4683
 ```
 
-解释：
+Interpretation:
 
 ```text
-thinking 版本保存了 reasoning_content 和 reasoning_summary，适合 trace 审计；
-但分类性能低于非 thinking 版本：macro-F1 0.5253 vs 0.5309。
-benchmark_explanation.html 已更新为 thinking run 的结果，并包含 sample_00107 的 reasoning/tool trace 示例；
-该样本是 very_close analog 但真实 different，LLM 判断正确。
-error_analysis_zh.md 记录 thinking run 的错误分层、典型 FP/FN、失败原因和后续改进建议。
+The thinking version saves reasoning_content and reasoning_summary, suitable for trace auditing;
+but classification performance is lower than the non-thinking version: macro-F1 0.5253 vs 0.5309.
+benchmark_explanation.html has been updated to the thinking run results and includes a reasoning/tool trace example
+for sample_00107; that sample is a very_close analog but truly different, and the LLM judged correctly.
+error_analysis_zh.md records the thinking run's error stratification, typical FP/FN, failure reasons, and future improvement suggestions.
 ```
 
 ### deepseek_v4_pro_dynamic_v1_llm_3k_tools_thinking
 
-DeepSeek-v4-pro + tool server + thinking 的 3K LLM benchmark。
+DeepSeek-v4-pro + tool server + thinking 3K LLM benchmark.
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/llm_runs/deepseek_v4_pro_dynamic_v1_llm_3k_tools_thinking/
@@ -1246,7 +1251,7 @@ outputs/chembl_tool/activity_transfer_benchmark/llm_runs/deepseek_v4_pro_dynamic
   runs/
 ```
 
-运行设置：
+Run settings:
 
 ```text
 model: deepseek-v4-pro
@@ -1259,7 +1264,7 @@ max tokens: 20,480
 thinking: enabled
 ```
 
-结果：
+Results:
 
 ```text
 n: 3,000
@@ -1282,7 +1287,7 @@ same-success-subset Tanimoto>=0.50 macro-F1: 0.4981
 same-success-subset MCS>=0.70 macro-F1: 0.4941
 ```
 
-灰区结果：
+Gray-zone results:
 
 ```text
 Tanimoto 0.40-0.70 subset n=818
@@ -1290,22 +1295,22 @@ LLM macro-F1: 0.5090
 Tanimoto>=0.50 macro-F1: 0.4683
 ```
 
-解释：
+Interpretation:
 
 ```text
-DeepSeek-v4-pro 在整体 3K stress-test 上是当前最高的 LLM run：
-macro-F1 0.5378，高于 gpt-oss-120b no-thinking 的 0.5309 和 thinking 的 0.5253。
-但提升幅度小，且主要来自更保守地预测 different；similar recall 明显偏低。
-在 Tanimoto 0.40-0.70 的灰区，DeepSeek macro-F1 0.5090，低于两个 gpt-oss run。
-因此它是 overall 最好，但不是 gray-zone 最好；考虑 tool calls、token 和 wall time 后，
-当前性价比不如本地 gpt-oss。
+DeepSeek-v4-pro is currently the highest LLM run on the overall 3K stress test:
+macro-F1 0.5378, higher than gpt-oss-120b no-thinking 0.5309 and thinking 0.5253.
+But the improvement is small and mainly comes from more conservative prediction of different; similar recall is notably low.
+In the Tanimoto 0.40-0.70 gray zone, DeepSeek macro-F1 0.5090 is lower than both gpt-oss runs.
+Therefore it is best overall but not best in the gray zone; considering tool calls, tokens, and wall time,
+current cost-effectiveness is lower than local gpt-oss.
 ```
 
 ### starling-labs Oral_Bioavailability transfer dataset
 
-非 ChEMBL/Joseph Lee 来源的 oral bioavailability transfer benchmark。
+Oral bioavailability transfer benchmark not from ChEMBL/Joseph Lee sources.
 
-源数据：
+Source data:
 
 ```text
 HuggingFace: starling-labs/Oral_Bioavailability
@@ -1317,31 +1322,31 @@ columns:
   oral_exposure_mode, qualifying_conditions, comparator, extra_details, smiles
 ```
 
-清洗规则：
+Cleaning rules:
 
 ```text
-主版本保留 report types:
+Main version retains report types:
   absolute, unspecified, systemic_availability
-丢弃:
-  relative_comparison、不能安全解析成 numeric explicit value 的行、RDKit invalid SMILES、
-  默认 0-1000% 范围外值。
+Discard:
+  relative_comparison, rows that cannot be safely parsed into numeric explicit values, RDKit invalid SMILES,
+  values outside the default 0-1000% range.
 value parser:
-  about/~approximately: 取主 numeric value
-  per cent/percent: 统一成 %
-  mean/average/median: 优先取对应值
-  x ± y: 取 x
-  x to y / x-y range: 取 midpoint
-  无 % 且 0<=value<=1.5: 按 fraction 转成 percent
-  AUC-only、fold/higher/lower/comparable 等 relative 描述: 丢弃
+  about/~approximately: take the main numeric value
+  per cent/percent: normalize to %
+  mean/average/median: prefer the corresponding value
+  x ± y: take x
+  x to y / x-y range: take midpoint
+  no % and 0<=value<=1.5: convert as fraction to percent
+  AUC-only, fold/higher/lower/comparable and other relative descriptions: discard
 condition_text:
-  写入所有实验条件字段和值；空值写 not specified。
-  字段包括 species_or_population, dose, oral_exposure_mode,
-  qualifying_conditions, comparator, extra_details。
+  write all experimental condition fields and values; empty values write not specified.
+  Fields include species_or_population, dose, oral_exposure_mode,
+  qualifying_conditions, comparator, extra_details.
 metadata:
-  原始 source row 完整保存，方便后续重清洗。
+  original source row fully saved for later re-cleaning.
 ```
 
-clean evidence 主输出：
+Clean evidence main output:
 
 ```text
 outputs/chembl_tool/activity_transfer_benchmark/oral_bioavailability_hf/
@@ -1361,7 +1366,7 @@ unique condition groups: 37,883
 value median/mean/max: 42.0 / 46.1 / 942.0 %
 ```
 
-构建 clean evidence：
+Build clean evidence:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -1370,7 +1375,7 @@ value median/mean/max: 42.0 / 46.1 / 942.0 %
   --allowed-report-types absolute,unspecified,systemic_availability
 ```
 
-pair label：
+Pair label:
 
 ```text
 similar:   |delta oral bioavailability percentage points| <= 10
@@ -1379,17 +1384,17 @@ ambiguous: excluded
 Pairs are generated within the same condition_key.
 ```
 
-condition_key 注意事项：
+condition_key notes:
 
 ```text
-主版本使用 broad_condition:
+Main version uses broad_condition:
   species_or_population | oral_exposure_mode | qualifying_conditions | comparator
-dose 和 extra_details 不进 key，但一定保留在 condition_text/prompt/metadata。
+dose and extra_details are not in the key, but are always retained in condition_text/prompt/metadata.
 ```
 
 #### Oral Bioavailability MLP: non-molecule-disjoint diagnostic
 
-先做过 directed max / unordered-pair split 版本，结果很高但不代表 molecule 泛化。
+Earlier versions with directed max / unordered-pair split were done, results were high but do not represent molecule generalization.
 
 ```text
 split:
@@ -1398,7 +1403,7 @@ split:
 rows:
   train 3,391,750; validation 484,534; test 969,068
 rule:
-  同一个 unordered pair 的 A->B/B->A 保持同 split，但 molecule 可跨 split。
+  A->B/B->A of the same unordered pair stay in the same split, but molecules can cross splits.
 preprocessed:
   outputs/chembl_tool/activity_transfer_benchmark/mlp_baselines/
     oral_bioavailability_hf_directed_max_qwen3_embedding_rdkit_v2_same_unordered_split/preprocessed/
@@ -1411,14 +1416,14 @@ best validation:
 best test:
   macro-F1 0.9821, accuracy 0.9854
 interpretation:
-  这是 leakage-prone diagnostic，不作为 prospective 泛化结果。
+  This is a leakage-prone diagnostic, not a prospective generalization result.
 ```
 
 #### Oral Bioavailability MLP: molecule-disjoint main result
 
-严格 molecule-disjoint 版本：按 canonical SMILES 全局分配 split，同一个 SMILES 不跨 split；
-只写 split 内部 pair。为了让 pair 数接近 7:1:2，用 molecule split ratio 约
-0.522774/0.197629/0.279597，因为同 split pair 数近似随 molecule fraction 平方缩放。
+Strict molecule-disjoint version: assign splits globally by canonical SMILES, the same SMILES does not cross splits;
+only write pairs within a split. To make pair counts close to 7:1:2, use molecule split ratio approximately
+0.522774/0.197629/0.279597, because within-split pair counts scale roughly with the square of molecule fraction.
 
 ```text
 split:
@@ -1452,11 +1457,11 @@ best test:
   macro-F1 0.5528, accuracy 0.6700, balanced accuracy 0.5516
   similar recall 0.2812, different recall 0.8220
 conclusion:
-  Strict molecule-disjoint 泛化很弱，明显低于 non-molecule-disjoint 的约 0.98 macro-F1。
-  该结果说明前者的高分主要来自 molecule/pair overlap；后续报告应使用 molecule-disjoint 版本。
+  Strict molecule-disjoint generalization is weak, significantly lower than the non-molecule-disjoint macro-F1 of about 0.98.
+  This result indicates that the high score of the former mainly comes from molecule/pair overlap; subsequent reports should use the molecule-disjoint version.
 ```
 
-构建 molecule-disjoint split：
+Build molecule-disjoint split:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -1467,7 +1472,7 @@ conclusion:
   --target-pairs 30000000
 ```
 
-预处理：
+Preprocessing:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 \
@@ -1483,7 +1488,7 @@ env CUDA_VISIBLE_DEVICES=4 \
   --rdkit-workers 128
 ```
 
-训练：
+Training:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 \
@@ -1509,10 +1514,10 @@ env CUDA_VISIBLE_DEVICES=4 \
 
 #### Oral Bioavailability MLP: molecule-disjoint higher/lower ordered result
 
-有向 ordered 版本不再判断 transfer similar/different，而是判断 Molecule B/query 的 F% 是否高于
-Molecule A/reference。每个可用 unordered pair 写两个方向：A->B 和 B->A；因此只要两者 F%
-不完全相等，就会成对贡献 `query_higher` 和 `query_lower`。`completion A=query_higher`，
-`completion B=query_lower`，训练中正类概率表示 `query_higher`。
+The directed ordered version no longer judges transfer similar/different, but instead judges whether Molecule B/query's F% is higher than
+Molecule A/reference. Each available unordered pair writes two directions: A->B and B->A; therefore, as long as the two F%
+values are not exactly equal, they contribute a pair of `query_higher` and `query_lower`. `completion A=query_higher`,
+`completion B=query_lower`, during training the positive class probability represents `query_higher`.
 
 ```text
 split:
@@ -1627,24 +1632,24 @@ note:
 LLM benchmark support:
 
 ```text
-run_llm_benchmark.py 支持该 ordered HF prompt/completion 格式。它会从 metadata 读取：
+run_llm_benchmark.py supports this ordered HF prompt/completion format. It reads from metadata:
   completion_a_label=query_higher
   completion_b_label=query_lower
-然后自动切换到 ordered prompt/schema：
+then automatically switches to the ordered prompt/schema:
   predicted_direction: query_higher or query_lower
-而不是旧 transfer benchmark 的 predicted_transferability=similar/different。
+instead of the old transfer benchmark's predicted_transferability=similar/different.
 
-Tool calling 仍复用同一个 OpenAI-compatible runner，允许 LLM 调用：
+Tool calling still reuses the same OpenAI-compatible runner, allowing the LLM to call:
   mmp_structure_compare
   properties_compare
-工具服务入口仍是 http://127.0.0.1:8765。
+The tool service entry point remains http://127.0.0.1:8765.
 
-注意：
-  对 higher/lower ordered task，不再使用 Tanimoto>=0.50 作为 meaningful baseline；
-  report 中主要看 LLM 和 bucket-majority 等可用 baseline。
+Note:
+  For the higher/lower ordered task, Tanimoto>=0.50 is no longer used as a meaningful baseline;
+  the report mainly looks at the LLM and bucket-majority and other available baselines.
 ```
 
-构建 ordered molecule-disjoint split：
+Build ordered molecule-disjoint split:
 
 ```bash
 /data1/tianang/anaconda3/condabin/conda run -n vllm \
@@ -1656,7 +1661,7 @@ Tool calling 仍复用同一个 OpenAI-compatible runner，允许 LLM 调用：
   --target-pairs 30000000
 ```
 
-预处理时必须显式传入 ordered label mapping：
+During preprocessing, the ordered label mapping must be explicitly passed:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 \
@@ -1674,7 +1679,7 @@ env CUDA_VISIBLE_DEVICES=4 \
   --completion-b-label query_lower
 ```
 
-ordered MLP 训练 / W&B 入口：
+Ordered MLP training / W&B entry point:
 
 ```bash
 env CUDA_VISIBLE_DEVICES=4 \
@@ -1847,9 +1852,9 @@ hf upload Kiria-Nozan/Starling-bioavailability-direction \
   --commit-message "Add molecule-disjoint oral bioavailability direction benchmark"
 ```
 
-## 常用命令
+## Common Commands
 
-全量 baseline：
+Full baseline:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
@@ -1862,7 +1867,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_benchmark \
   --workers 32
 ```
 
-MCS full-scan：
+MCS full-scan:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
@@ -1874,7 +1879,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --progress-every 10000
 ```
 
-MCS 卡住后收尾：
+MCS stuck cleanup:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
@@ -1884,21 +1889,21 @@ python -m tools.chembl_tool.activity_transfer_benchmark.benchmark_mcs_runtime \
   --timeout-s 2
 ```
 
-MCS threshold 分析：
+MCS threshold analysis:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.analyze_mcs_results \
   --run-id dynamic_v1_mcs_t2_analysis
 ```
 
-构建 3K LLM eval set：
+Build 3K LLM eval set:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.build_llm_eval_set \
   --run-id dynamic_v1_llm_3k
 ```
 
-构建 task-scoped assay transfer benchmark：
+Build task-scoped assay transfer benchmark:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_task_assay_benchmark \
@@ -1909,24 +1914,24 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_task_assay_benchmark
   --progress-every-endpoints 250
 ```
 
-说明：
+Notes:
 
 ```text
 run_task_assay_benchmark.py
-  只使用四个 task pipeline 已筛出的 assay/activity evidence：
-  BBB_Martins v6、Bioavailability_Ma v4、ClinTox v6、Skin_Reaction v1。
-  默认输出三套 label mode：
-    raw_robust_z:     在同 task + assay + endpoint + normalized units 内，用 raw standard_value 的 robust sigma 标注。
-    log_raw_robust_z: 同上，但用 log10(raw standard_value)，更适合 IC50/EC50/Ki 等数量级型 endpoint。
-    pchembl_delta:    兼容旧规则，|delta pChEMBL| <= 0.5 为 similar，>= 1.0 为 different。
-  单位归一化会把 nM/uM/mM/M 统一到 nM，把常见通透率单位统一到 cm/s，
-  并把常见 clearance 单位统一到 mL/min 系列；无法安全跨分子量换算的单位
-  （如 ug/mL）保留为独立 normalized unit，避免混合 endpoint。
-  raw/log robust sigma 使用 IQR/1.349，IQR 为 0 时 fallback 到 MAD*1.4826；
-  sigma 仍为 0 的 endpoint 不进入 raw/log label mode。
+  Only uses assay/activity evidence already filtered by the four task pipelines:
+  BBB_Martins v6, Bioavailability_Ma v4, ClinTox v6, Skin_Reaction v1.
+  Default output includes three label modes:
+    raw_robust_z:     Within the same task + assay + endpoint + normalized units, label using robust sigma of raw standard_value.
+    log_raw_robust_z: Same as above, but using log10(raw standard_value), more suitable for magnitude-type endpoints like IC50/EC50/Ki.
+    pchembl_delta:    Compatible with old rules, |delta pChEMBL| <= 0.5 is similar, >= 1.0 is different.
+  Unit normalization unifies nM/uM/mM/M to nM, common permeability units to cm/s,
+  and common clearance units to mL/min series; units that cannot be safely converted across molecular weights
+  (e.g., ug/mL) are kept as separate normalized units to avoid mixing endpoints.
+  raw/log robust sigma uses IQR/1.349, with fallback to MAD*1.4826 when IQR is 0;
+  endpoints with sigma still 0 are excluded from raw/log label modes.
 ```
 
-运行本地 gpt-oss-120b LLM benchmark：
+Run local gpt-oss-120b LLM benchmark:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
@@ -1941,7 +1946,7 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
   --progress-every 100
 ```
 
-运行 DeepSeek-v4-pro thinking LLM benchmark / 断点续跑：
+Run DeepSeek-v4-pro thinking LLM benchmark / resume from checkpoint:
 
 ```bash
 python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
@@ -1960,16 +1965,13 @@ python -m tools.chembl_tool.activity_transfer_benchmark.run_llm_benchmark \
   --progress-every 100
 ```
 
-## 历史 3K benchmark 后续计划
+## Historical 3K Benchmark Follow-up Plan
 
-下面是最初完成 `dynamic_v1_llm_3k` 时记录的消融清单，不再代表当前项目优先级。第 4 项 learned
-classifier 已由本文件前面的 endpoint-disjoint、HF proper-assay-transfer 和 Oral Bioavailability MLP
-实验实质完成；不得因为这份旧清单再次把它登记为“尚未开始”。其余三项只有在重新进入该 3K
-stress-test 研究问题时才执行，当前优先级以论文执行计划为准。
+The following is the ablation checklist recorded when `dynamic_v1_llm_3k` was initially completed, and no longer represents current project priorities. Item 4, learned classifier, has been substantially completed by the endpoint-disjoint, HF proper-assay-transfer, and Oral Bioavailability MLP experiments described earlier in this file; it must not be re-registered as "not yet started" because of this old list. The remaining three items are only to be executed if re-entering that 3K stress-test research question; current priorities follow the paper execution plan.
 
 ```text
-1. no-tools ablation：同一个 3K set，不允许工具调用。
-2. no-MCS-in-prompt ablation：保留 Tanimoto 和 assay context，移除 MCS coverage。
-3. full-distribution eval：从 dynamic_v1 自然分布抽样，和 full-data Tanimoto threshold 更公平比较。
-4. learned classifier：已由后续 MLP 系列实验取代并完成，不再是待办项。
+1. no-tools ablation: same 3K set, no tool calls allowed.
+2. no-MCS-in-prompt ablation: keep Tanimoto and assay context, remove MCS coverage.
+3. full-distribution eval: sample from dynamic_v1 natural distribution, fairer comparison with full-data Tanimoto threshold.
+4. learned classifier: already superseded and completed by subsequent MLP series experiments, no longer a to-do item.
 ```

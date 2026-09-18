@@ -1,0 +1,128 @@
+{
+  "candidate_count_distribution": {
+    "0": 49232,
+    "1": 33484,
+    "2": 24182,
+    "3": 10162,
+    "4": 4068,
+    "5": 469,
+    "6": 437,
+    "7": 47,
+    "8": 98,
+    "9": 48,
+    "10": 9,
+    "11": 3,
+    "12": 30,
+    "13": 1,
+    "14": 1,
+    "15": 9,
+    "16": 6,
+    "20": 5
+  },
+  "candidate_generator_version": "ames_measurement_candidates.v1",
+  "candidate_identity_sha256": "10a01beb6badd2d453dfe4334dc42a3dd23a455a092ee6177a5b9a7e2afd02cc",
+  "candidate_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v2/measurement_candidates.parquet",
+  "candidate_rows": 122291,
+  "candidate_rows_sha256": "e6bb256201882425f03e52b25fe322f48f221b1f8185a84aaed5a16c7e4cc45c",
+  "candidate_schema": "assay_method_and_endpoint: string\nassay_version: string\nbiological_system: string\nbiological_test_system: string\ncandidate_contract_version: string\ncandidate_count: int64\ncandidate_generation_disposition: string\ncandidate_generator_version: string\ncandidate_set_sha256: string\ncanonical_endpoint_name: string\ncleaned_record_id: string\nendpoint_class: string\nendpoint_name: string\nendpoint_subtype: string\nevidence_basis: null\nexposure_and_mechanistic_conditions: string\nmeasurement_candidates_json: string\nmeasurement_resolution_route: string\nmeasurement_text: string\nmechanism_category: string\nmetabolic_activation: null\nresult_call: string\nresult_direction: string\nresult_status: string\nsource_id: string\nsource_row_uid: string\nstudy_context: string\nsupport_text: string\ntest_system: null\nunit_text: string",
+  "candidate_sha256": "77e4e9a4b93cd9a45ce38f0c5a2ff42e6f8c3d034124ae0407506d195dbb21ff",
+  "development_gold_validation": {
+    "by_source": {
+      "fixed_mutation": {
+        "coverage": 0.9642857142857143,
+        "hits": 54,
+        "total": 56
+      },
+      "mutagenicity_mechanism": {
+        "coverage": 0.9344262295081968,
+        "hits": 57,
+        "total": 61
+      },
+      "premutagenic_damage": {
+        "coverage": 0.9722222222222222,
+        "hits": 35,
+        "total": 36
+      }
+    },
+    "cases": 500,
+    "construction_input": true,
+    "independent_generalization_evidence": false,
+    "ok_cases": 153,
+    "pair_hits": 146,
+    "pair_misses": [
+      "02bab097f97b1bd107634f7a0a018688abd88a9632f229ad9176af5cab5fc4d2",
+      "fef48a6d90e47dce8a23121368449760d60fe50e59220087959d5c63519f4acb",
+      "253a631bb169d89b763ec8c005b50208c028f9a8f4a84a0b615987bffeac0c3f",
+      "3322deda6a554c32911aa3b6bf033340472f6d8e06a98a42f34448fbfd6568b2",
+      "64f20a24d94a166154bebb247526dfe35a363dfd1932363470e7dd0f8355117d",
+      "f2dba11cb8fce5b2ef08293c907fc15f2f94ec29bfef215f507e1ee07dd78537",
+      "61fee0b4a8fb19855ca190ab3daec755ab1498358c748d68add3473beca0cd79"
+    ],
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/tests/chembl_tool/common/measurement_resolution_quality/gold/ames.v10.jsonl",
+    "sha256": "14ced688f4e4bfb31df915eff79543acfc78c047df552efe280d9f7541d6be1d"
+  },
+  "disposition_counts": {
+    "ambiguous_multiple_values": 4178,
+    "candidates": 73059,
+    "no_source_grounded_candidate": 45054
+  },
+  "implementation": {
+    "compiler_contract": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_candidate_resolution.py",
+      "sha256": "9fbe79e786ee886427fd24080bd040ab008174ca48ffaf9c0707fff4dc380209"
+    },
+    "generator": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_candidates.py",
+      "sha256": "1567fe9b59d4e17db91703af2d4d0b88fcb2e8b91f5e4e2fd5adc7810a32bc1c"
+    },
+    "source_fields": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/starling_measurement_resolution.py",
+      "sha256": "78be43587a326c86bfd14d23ad9e9346f263a1d01f579c5ac1c8ec650a563973"
+    },
+    "writer": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/build_measurement_candidates.py",
+      "sha256": "6a6450b77ee68b3268d216d1ff3709c4e2f5add176f48146ef4d3434d80b5a5f"
+    }
+  },
+  "inventory_version": "ames_measurement_candidates.v1",
+  "maximum_candidate_field_bytes": 1024,
+  "maximum_candidate_json_bytes": 65536,
+  "maximum_candidates": 40,
+  "maximum_observed_candidate_field_bytes": 146,
+  "maximum_observed_candidate_json_bytes": 7719,
+  "maximum_observed_candidates": 20,
+  "source_counts": {
+    "fixed_mutation": 818,
+    "mutagenicity_mechanism": 5016,
+    "premutagenic_damage": 116457
+  },
+  "stage1": {
+    "endpoint_profile": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/ames/v10/01_cleaned/endpoint_unit_profile.json",
+      "sha256": "a0904d753a54b72a4ab0f8df669dd84ff67de817f43d958add6906144c58c4a4"
+    },
+    "expected_extract_rows": 122291,
+    "manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/ames/v10/01_cleaned/manifest.json",
+      "sha256": "73a1a7f4e9b6994f49ab34e603ed48b610669b999a2a8659e953a9905ddbdd0f"
+    },
+    "records": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
+      "sha256": "e93d82ae6798dad59de13ce8e9f4296a98bd65b47229aafde0359f69a9a49581"
+    }
+  },
+  "validations": {
+    "candidate_cap_respected": true,
+    "candidate_field_byte_bound_respected": true,
+    "candidate_json_byte_bound_respected": true,
+    "candidate_sets_hash_valid": true,
+    "candidate_sets_not_truncated": true,
+    "complete_canonical_endpoints": true,
+    "exact_stage1_extract_coverage": true,
+    "known_sources": true,
+    "nonempty_identity_fields": true,
+    "unique_cleaned_record_ids": true,
+    "unique_source_row_uids": true
+  },
+  "zero_candidate_rows": 49232
+}

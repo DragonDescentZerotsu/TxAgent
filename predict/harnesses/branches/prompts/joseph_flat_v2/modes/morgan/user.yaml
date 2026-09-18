@@ -1,0 +1,3 @@
+guidance: >-
+  Molecules were ranked by Morgan fingerprint similarity. Use each molecule's
+  morgan_similarity as a structural-relevance estimate, not as a task-label probability.

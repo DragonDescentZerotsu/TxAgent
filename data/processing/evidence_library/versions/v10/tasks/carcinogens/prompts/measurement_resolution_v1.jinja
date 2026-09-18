@@ -1,0 +1,17 @@
+Resolve at most one source-reported Carcinogens measurement per row. Return JSON only.
+
+Input is {"rows":[...]} with at most {{ batch_size }} rows from one source. Each row has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return every input id once, in order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<complete source-supported unit or named metric>"}]}]}
+
+Only `ok` carries exactly one measurement. Other statuses carry `[]`. Judge rows independently.
+
+`measurement_text` is the selected result field. Its focal value must come from that field. Other visible fields may identify its meaning or explicitly complete its unit, but may not donate another value. Never select a dose, concentration, duration, timepoint, sample size, identifier, p-value, uncertainty, control, comparator, or detection limit unless that quantity is itself the named endpoint. Do not calculate, convert, average, or infer a value.
+
+Use `ok` for one finite absolute point with a complete physical unit, denominator, labeled count, or source-defined dimensionless metric. Use `relative` when the selected coefficient is defined against an experiment-specific control, treatment, vehicle, genotype, baseline, or referent. Use `unsure` for bounds, ranges, missing or conflicting units, multiple equally focal outcomes, or conflicting source statements. Use `unavailable` when the focal outcome is qualitative or absent, or the only numbers are conditions or incidental statistics.
+
+An absolute treated-group readout remains `ok` when a control is also described. A named ratio or fraction is absolute only when its numerator and denominator define the endpoint rather than an experimental comparator. A central point with SD, SE, or a confidence interval may remain one point.
+
+{% if has_unit_column %}Copy a complete nonempty `unit_text` exactly when it belongs to the selected point. If it lists several values or units, or describes only a dose or condition, do not use it as the outcome unit.{% else %}This source has no separate unit column; use only a unit or named metric explicitly tied to the selected coefficient in the visible source text.{% endif %}
+
+Return a finite plain decimal coefficient. Remove valid thousands separators. Put a printed power-of-ten scale in the unit, for example `3.2 x 10^-6 events/cell` becomes measurement `3.2`, unit `10^-6 events/cell`. Never apply or reverse the scale. Never return a range, bound, category, or comparison as a point.

@@ -1,0 +1,31 @@
+{
+  "schema_version": "skin_semantic_gold_migration.v1",
+  "effective_date": "2026-09-03",
+  "reference_git_commit": "23ded557a94106a364542da6800e7fa9b3de87d9",
+  "gold_eligibility_contract": "skin_gold_record_eligibility.v2",
+  "change": "Exclude prediction-only, photo-hazard, irritation-only, integrated/defined-approach, and mechanistic AOP records from final-outcome gold voting.",
+  "source_record_counts": {
+    "old_labeled_before_structure_normalization": 61367,
+    "new_labeled_before_structure_normalization": 60046,
+    "new_rejected_prediction_only": 21,
+    "new_rejected_photo_hazard": 619,
+    "new_rejected_irritation_only": 31,
+    "new_rejected_integrated_or_defined_approach": 6,
+    "new_rejected_mechanistic_aop": 654
+  },
+  "parent_label_comparison": {
+    "old_binary_parents": 2456,
+    "new_binary_parents": 2422,
+    "surviving_parents": 2394,
+    "removed_parents": 62,
+    "newly_recovered_parents": 28,
+    "label_flips_among_surviving_parents": 0,
+    "old_label_counts": {"0": 750, "1": 1706},
+    "new_label_counts": {"0": 736, "1": 1686}
+  },
+  "molecule_labels_sha256": {
+    "old": "b90cf46303d36cfd53c0affb405c58cdf97db17ecb98a27bd1f4c6ae0f80eb00",
+    "new": "cbede4e6dee7caeafb28d4c84ff417722d925999697b94c457edf451b8234aed"
+  },
+  "reuse_decision": "All pre-v3 Skin predictions and trained baselines are stale because benchmark membership, split assignments, and retrieval levels changed."
+}

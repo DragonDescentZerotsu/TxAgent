@@ -1,0 +1,39 @@
+{
+  "version": "v10.level_mapping_compatibility.v3",
+  "reason": "level_mapping_compatibility",
+  "decision": "All retained BBB and Oral source UIDs now have explicit reviewed level membership; no structure reversion or record exclusion remains active.",
+  "tasks": {
+    "bbb_martins": {
+      "mapping": "data/evidence_libraries/bbb_martins/v10/level_mapping/records.parquet",
+      "mapping_sha256": "afa436cf9ce8b7fe9ae6e9339953271c4de6c77f66e1c3bf423790e5e553949c",
+      "previous_stage1_sha256": "daacf8629ae9c95fceace0fb7551dbb1f05b4f005f0a3593cbe5b757e7914724",
+      "previous_stage1_path": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/bbb_martins/v10/01_cleaned/records.parquet",
+      "structure_reversions": {},
+      "excluded_records": []
+    },
+    "bioavailability_ma": {
+      "mapping": "data/evidence_libraries/bioavailability_ma/v10/level_mapping/records.parquet",
+      "mapping_sha256": "ee476fd705856ef0b81c259281d7b093df7fe146b77391f493a10ce6f6b9b72c",
+      "previous_stage1_sha256": "ea09ac406fe085071e645a591f04a8f35c665950d72c5004b6c8196dfc87da56",
+      "previous_stage1_path": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/bioavailability_ma/v10/01_cleaned/records.parquet",
+      "structure_reversions": {},
+      "excluded_records": []
+    },
+    "ames": {
+      "mapping": "data/gold_labels/Ames/level_mappings/v1/level_mapping",
+      "scope_mode": "exact_mapped_uid_subset"
+    },
+    "dili": {
+      "mapping": "data/gold_labels/DILI/level_mappings/v1/level_mapping",
+      "scope_mode": "exact_mapped_uid_subset"
+    },
+    "carcinogens": {
+      "mapping": "data/gold_labels/Carcinogens/level_mappings/v1/level_mapping",
+      "scope_mode": "exact_mapped_uid_subset"
+    },
+    "skin_reaction": {
+      "mapping": "data/gold_labels/Skin_Reaction/level_mappings/v1/level_mapping",
+      "scope_mode": "exact_mapped_uid_subset"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "active_epoch": "ames-v10-gold-gpt-v1",
+  "epochs": {
+    "ames-v10-gold-gpt-v1": {
+      "conservative_unreported_tokens": 0,
+      "input_tokens": 620150,
+      "max_tokens": 10000000,
+      "output_tokens": 392675,
+      "requests_completed": 108,
+      "reservations": {},
+      "status": "active"
+    }
+  },
+  "ledger_version": "reference_semantics_openai_token_ledger.v1"
+}

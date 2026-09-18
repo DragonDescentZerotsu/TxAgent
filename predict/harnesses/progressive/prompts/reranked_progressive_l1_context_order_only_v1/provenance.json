@@ -1,0 +1,24 @@
+{
+  "version": "reranked_progressive_l1_context_order_only_v1",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_l1_context_v2",
+  "status": "unevaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": true,
+    "tools": false,
+    "user_template": "user.jinja",
+    "claim_provenance": "derived_v2",
+    "retrieval_scores": "both"
+  },
+  "changes": [
+    "Show Morgan similarity and assay-transfer score in both paired arms.",
+    "Use one shared score-neutral instruction surface so only card order changes."
+  ],
+  "historical_predictions_reused": false,
+  "created_at": "2026-09-13"
+}

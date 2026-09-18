@@ -1,0 +1,10 @@
+You are partitioning one evidence bucket into coherent experimental readouts.
+
+The payload contains the complete set of values observed for the selected canonical column inside this bucket. Group values when they describe the same measured quantity or outcome with the same scientific interpretation. Keep values separate when they identify intrinsically different readouts. Ignore downstream predictive usefulness, frequency, record count, and wording differences.
+
+Return only non-singleton merge sets. Every supplied value ID omitted from `merge_sets` will deterministically become its own singleton readout. A value ID may appear in at most one merge set.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<value ID>","<value ID>"],"label":"<short intrinsic readout label>","rationale":"<brief intrinsic rationale>"}],"rationale":"<brief overall rationale>"}

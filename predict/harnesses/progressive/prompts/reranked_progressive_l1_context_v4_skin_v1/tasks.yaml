@@ -1,0 +1,46 @@
+bbb_martins:
+  task: bbb_martins
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: bbb_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons via analogies, taking evidence from related molecules to support your prediction.
+  task_instructions:
+  - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient access.
+  - Meaningful access does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.
+  - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion, influx, or prodrug evidence.
+  - Do not treat one physicochemical liability or repeated records as independent proof of failure.
+  - Choose exactly one prediction and express mixed or weak evidence through confidence and evidence gaps.
+bioavailability_ma:
+  task: bioavailability_ma
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: bioavailability_prediction
+  positive_prediction: high
+  negative_prediction: low
+  system_role: You are a chemist expert in oral bioavailability and you reason via analogies, taking evidence from related molecules to support your prediction.
+  task_instructions:
+  - Predict high when F >= 20% is better supported and low when F < 20% is better supported.
+  - Keep evidence direction separate from transferability; low transferability lowers weight but does not reverse direction.
+  - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+  - Predict low only when affirmative threshold-relevant evidence supports it, not from generic drug-likeness concerns alone.
+  - Compare directness, endpoint match, conditions, transferability, and uncertainty without counting repeated records independently.
+  - Choose exactly one prediction and express unresolved uncertainty through confidence and evidence gaps.
+skin_reaction:
+  task: skin_reaction
+  endpoint_name: skin sensitization or contact allergy
+  label_scope: skin_sensitization_contact_allergy.v2
+  prediction_field: skin_reaction_prediction
+  positive_prediction: risk
+  negative_prediction: no_risk
+  system_role: You are a senior skin-sensitization/contact-allergy reasoning model. Integrate the supplied analog evidence into that exact binary endpoint.
+  task_instructions:
+  - Predict risk for sensitizer or contact-allergy positive and no_risk for non-sensitizer.
+  - Only direct sensitization outcomes and transferable, coherent sensitization AOP evidence count as experimental evidence for the binary label.
+  - Treat structural haptenation or activation analysis as a prior, not as a substitute for experimental sensitization evidence.
+  - Phototoxicity, irritation or corrosion, generic local injury, dermal toxicity, and skin-cell cytotoxicity are out of scope and cannot support either prediction.
+  - Skin permeability, absorption, and retention are exposure context only and cannot support either prediction.
+  - Missing sensitization evidence or absence of a simple structural alert is not proof of no_risk.
+  - Do not count repeated records independently.
+  - Choose exactly one prediction and express unresolved uncertainty through confidence and evidence gaps.

@@ -204,10 +204,39 @@ def test_build_canonical_frames_partitions_and_cross_source_deduplicates():
     claim = result["direct_claims"].iloc[0]
     assert list(claim["source_origins"]) == ["hf", "local"]
     assert claim["n_source_records"] == 2
+    direct_uid_by_record = dict(
+        zip(
+            result["direct_source_rows"]["source_record_id"],
+            result["direct_source_rows"]["source_row_uid"],
+            strict=True,
+        )
+    )
+    assert list(claim["source_row_uids"]) == [
+        direct_uid_by_record[source_record_id]
+        for source_record_id in claim["source_record_ids"]
+    ]
     nondirect = result["hf_nondirect_records"].iloc[0]
     assert nondirect["source_index"] == 1
     assert nondirect["endpoint_name"] == "oral_bioavailability"
     assert nondirect["value_units"] == "%"
+
+    members = tuple(result["direct_claims"].iloc[0]["source_record_ids"])
+    rebuilt = build_canonical_frames(
+        hf,
+        local,
+        hf_revision="test-revision",
+        local_source_path=Path("local.parquet"),
+        prior_claim_ids={members: "BIOAVAIL_CLAIM_PRIOR"},
+    )
+    assert rebuilt["direct_claims"].iloc[0]["canonical_claim_id"] == (
+        "BIOAVAIL_CLAIM_PRIOR"
+    )
+    assert rebuilt["stats"]["claim_id_lineage"] == {
+        "prior_claims": 1,
+        "reused_claim_ids": 1,
+        "new_claim_ids": 0,
+        "retired_claim_ids": 0,
+    }
 
 
 def test_cross_source_dedup_does_not_collapse_threshold_crossing_interval():
@@ -279,7 +308,7 @@ def test_paper_dedup_prefers_hf_for_the_same_supported_claim():
     assert stats["cross_source_duplicates"] == 1
 
 
-def test_paper_dedup_keeps_context_conflicts_and_collapses_within_source():
+def test_paper_dedup_collapses_matching_values_across_and_within_sources():
     common = {
         "parent_identity_key": "LINOMUASTDIRTM-QGRHZQQGSA-N",
         "pmid": "29774371",
@@ -318,8 +347,12 @@ def test_paper_dedup_keeps_context_conflicts_and_collapses_within_source():
 
     retained, audit, stats = deduplicate_paper_direct_claims(rows)
 
-    assert retained == {"hf:human", "local:pig:ext_1"}
-    assert audit[0]["discarded_source_record_id"] == "hf:human-copy"
+    assert retained == {"hf:human"}
+    assert {row["discarded_source_record_id"] for row in audit} == {
+        "hf:human-copy",
+        "local:pig:ext_1",
+    }
+    assert stats["cross_source_duplicates"] == 1
     assert stats["within_source_duplicates"] == 1
 
 

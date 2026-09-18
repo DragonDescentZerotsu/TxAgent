@@ -92,6 +92,14 @@ def test_result_completion_requires_the_exact_expected_group_ids():
     )
 
 
+def test_full_batch_defaults_to_throughput_and_requires_a_parallelism_choice():
+    args = _parse_args(BBB_CONFIG, [])
+
+    assert args.execution_mode == "throughput"
+    assert args.parallelism is None
+    assert args.provider_pool_config.endswith("/providers/current_endpoints.json")
+
+
 @pytest.mark.parametrize(
     "selector_flag",
     ("--neighbor-selector", "--morgan-neighbor-selector"),

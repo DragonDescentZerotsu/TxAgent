@@ -14,6 +14,10 @@ import re
 from typing import Any
 
 from data.processing.paths import ARTIFACTS_ROOT, raw_starling_task_root
+from data.processing.evidence_library.versions.v9.numeric_syntax import (
+    UNSIGNED_NUMBER as _ATOMIC_NUMBER,
+    number_text,
+)
 
 HF_SOURCE_DATASET = "starling-labs/Oral_Bioavailability"
 HF_SOURCE_REVISION = "01bbe3ee9cdd3dc081c39973529c9da0c814d465"
@@ -92,10 +96,6 @@ _DIRECTION_OR_COMPARISON = re.compile(
     re.IGNORECASE,
 )
 _SIGNED_POINT = re.compile(r"(?:^|[\s:(])[-+]\s*(?=\d)")
-_ATOMIC_NUMBER = (
-    r"(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d*)?(?:[eE][-+]?\d+)?"
-    r"|\.\d+(?:[eE][-+]?\d+)?"
-)
 _ATOMIC_APPROX = r"(?P<prefix>≈|~|about\s+|approximately\s+|approximate\s+)?"
 _ATOMIC_POINT = (
     rf"{_ATOMIC_APPROX}(?P<value>{_ATOMIC_NUMBER})"
@@ -264,7 +264,7 @@ def _resolved_measurement(match: re.Match[str], unit: str) -> dict[str, Any]:
         measurement += f" ± {variation}"
     return {
         "measurement_text": measurement,
-        "numeric_value": float(value.replace(",", "")),
+        "numeric_value": float(number_text(value)),
         "value_units": unit,
         "measurement_unit_extraction_status": "explicit_atomic_scalar_unit",
     }
@@ -289,6 +289,9 @@ def _text(value: Any) -> str:
 
 
 def _float_or_none(value: Any) -> float | None:
+    value = number_text(value)
+    if value is None:
+        return None
     try:
         parsed = float(value)
     except (TypeError, ValueError):

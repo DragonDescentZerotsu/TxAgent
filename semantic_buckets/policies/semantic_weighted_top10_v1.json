@@ -1,0 +1,72 @@
+{
+  "version": "semantic_weighted_top10.v1",
+  "selection": {
+    "record_limit": 12,
+    "per_bucket_limit": 8,
+    "utility": "expert_weight_times_morgan_similarity",
+    "rank_limit": 10
+  },
+  "tasks": {
+    "bbb_martins": {
+      "ranking_path": "semantic_buckets/history/pre_gold_v2/bbb_martins/v10/semantic_buckets/generations/bbb_semantic_readout_v10_v3/degree25_rankings/semantic_bucket_rankings.parquet",
+      "ranking_sha256": "3cef12cfe4329e7c8c2ec9891fe39081fbf8bd1074b6e5634c0fcb257b48fc5b",
+      "record_ranking_path": "semantic_buckets/history/pre_gold_v2/bbb_martins/v10/semantic_buckets/generations/bbb_semantic_readout_v10_v3/degree25_rankings/record_relevance_rankings.parquet",
+      "record_ranking_sha256": "51cc50eeb298fadf93b6386ec6f036c8e861c707353cb549deaf9d3834bc73e0",
+      "levels": {
+        "L2": {
+          "bucket_ids": ["sb_61c9158e18d5c78ce8a4", "sb_49439afa3a8c3570f03e", "sb_129889594c87c626b706", "sb_2a06eaa30230dd94e139", "sb_735b218b06aa76a68458", "sb_4383ed18af66ac25ce0c", "sb_0f776b66c83fc279aa82", "sb_3480e0966dbc889f5337", "sb_40be54f667b599d33c90", "sb_3b289f561fc74a839261"],
+          "weights": [1.0, 0.9, 0.9, 0.8, 0.8, 0.9, 0.7, 0.9, 1.0, 0.9],
+          "rationales": ["direct microdialysis and Kp,uu", "direct unbound ISF ratios", "broad in-vivo Kp,uu", "dialysate to plasma ratio", "unbound brain and plasma AUC", "unbound brain to plasma ratio", "mixed CSF and ECF ratios", "direct Kp,uu variants", "direct Kp,uu including human microdialysis", "direct infusion Kp,uu"]
+        },
+        "L3": {
+          "bucket_ids": ["sb_82895ee772c3cdff9a0b", "sb_be078465033097da47c4", "sb_48304100d155318bde89", "sb_9e4dce2e6ce04be4ff86", "sb_6fa2c4ce5093a563da6e", "sb_612fb03b4233dc7e4d2e", "sb_289569a4e4dffd9721ff", "sb_1abf89b629769c6e06b3", "sb_85bf697168372633960d", "sb_b023e0483e84a4193008"],
+          "weights": [1.0, 0.7, 0.0, 0.7, 0.6, 0.5, 0.8, 0.7, 0.5, 0.8],
+          "rationales": ["human brain to unbound plasma AUC", "human brain and CSF ratios", "barrier-state tracer permeability rather than compound access", "brain and plasma ratios", "human CSF exposure", "in-situ permeability clearance", "mixed direct brain and plasma ratios", "mixed brain and CSF ratios", "human CSF permeability", "microdialysis brain ECF ratios"]
+        },
+        "L4": {
+          "bucket_ids": ["sb_592d750c5e58282254be", "sb_0f8a563201a74260eb12", "sb_2c49fe9146df3574275f", "sb_f3125dfe558264855a21", "sb_471a1733b41b9a54180a", "sb_b680832a9de4a6900baa", "sb_b48ef9f8e6df930378ca", "sb_b19e7b59fda4bae20c50", "sb_caa4cb6f8e0ba45b96d1", "sb_69e4cc93fca17a146cbc"],
+          "weights": [0.8, 0.6, 1.0, 1.0, 0.8, 0.9, 0.6, 0.7, 0.8, 0.9],
+          "rationales": ["brain ECF concentration and AUC", "CSF exposure", "unbound brain exposure", "hippocampal Kp,uu", "brain ECF concentration", "unbound ECF and plasma ratios", "mixed knockout and binary evidence", "brain supernatant to plasma AUC", "Kp,uu with some knockout context", "broad direct Kp,uu"]
+        },
+        "L5": {
+          "bucket_ids": ["sb_2b79237828fc43f3d42a", "sb_a0a38b5dbeb3d7d4849d", "sb_839694fdb383cfc9eefd", "sb_1429e69e4e9d8ab69ce6", "sb_d01ed8ad0fafde2d4c98", "sb_403ab51c8ae6d42e546a", "sb_2e69887d00496c4fb16b", "sb_4dad0d603522a875557b", "sb_b3a662dd759964b11780", "sb_4a14be0f24af8b663836"],
+          "weights": [1.0, 0.9, 0.9, 0.9, 0.9, 0.4, 0.7, 0.5, 0.9, 0.3],
+          "rationales": ["unbound brain to blood ratios", "direct Kp,uu", "brain ECF Kp,uu", "direct brain ISF ratios", "broad direct Kp,uu", "binary influx kinetics", "human plasma to brain ratios", "quantitative influx kinetics", "direct microdialysis Kp,uu", "mixed binary permeability outcomes"]
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "ranking_path": "semantic_buckets/history/pre_gold_v2/bioavailability_ma/v10/semantic_buckets/generations/bioavailability_semantic_readout_v10_v3_l4_refinement_v1/degree25_rankings/semantic_bucket_rankings.parquet",
+      "ranking_sha256": "ae773f15f629a1489eeb072d026650dbdc3dc492b8b10d404c688006da930a54",
+      "record_ranking_path": "semantic_buckets/history/pre_gold_v2/bioavailability_ma/v10/semantic_buckets/generations/bioavailability_semantic_readout_v10_v3_l4_refinement_v1/degree25_rankings/record_relevance_rankings.parquet",
+      "record_ranking_sha256": "e0c78989a61a4f9b87af47f96e9ae36c5e1bc004c1e855589c5416f396c9596a",
+      "levels": {
+        "L2": {
+          "bucket_ids": ["sb_0dbce13dee64032b7f36", "sb_0a468f7e42ac702dff15", "sb_d7c391df37420224640e", "sb_fe8208852add33d8c861", "sb_ac7b7378e8259f400f09", "sb_570d32ad0207e597c641", "sb_8d8b75f2f1e3b4b8d657", "sb_4a2d9b1777901d13de82", "sb_b7e9fda4dcc45e78d132", "sb_27c9af47ecd6ca8182aa"],
+          "weights": [0.5, 0.5, 1.0, 0.4, 0.5, 0.0, 0.5, 0.2, 0.9, 0.9],
+          "rationales": ["apparent nondirect oral bioavailability", "undefined reference", "direct oral bioavailability", "undefined reference despite dose context", "undefined reference", "malformed bioavailability unit", "direct but AUC-like bioavailability", "mass unit is not bioavailability", "undefined reference", "undefined reference"]
+        },
+        "L3": {
+          "bucket_ids": ["sb_4cb72a32e7fbeb454c3c", "sb_f5c2b2ce5a3e98cf363e", "sb_2c8f6758bf31d004630f", "sb_10ca17a0e89770b22b9d", "sb_b07d11deb985ae412729", "sb_79023b541f82fb4e7bef", "sb_5b7ba4aa722dd640ba6e", "sb_8fc8ed202231149f3f53", "sb_0a780d706dc03ca5b201", "sb_0819b504bb9a13f114da"],
+          "weights": [1.0, 0.8, 1.0, 0.4, 0.9, 0.2, 0.8, 0.9, 0.8, 0.4],
+          "rationales": ["human oral to IV exposure", "human oral to IV exposure with incomplete matrix", "human oral to IV exposure", "oral AUC without IV reference", "oral to IV exposure", "weakly specified oral AUC", "whole-blood oral to IV ratio", "mouse oral to IV ratio", "rat oral to IV comparison", "human oral AUC without IV reference"]
+        },
+        "L4": {
+          "bucket_ids": ["sb_0e7f409c4584e42760cd", "sb_04655a05a748d0fc7ebc", "sb_f5801a3dc2a95c4d5b54", "sb_284555eb7e9bb645aa65", "sb_81c41dda24e6b3272e5c", "sb_3fcc3d6467f4277693dd", "sb_62ec18a43a63d0a09af1", "sb_343505adfde23d905922", "sb_73452131f0091f60173b", "sb_031e48f6da172308a99e"],
+          "weights": [0.7, 1.0, 0.6, 0.8, 0.9, 1.0, 0.8, 1.0, 1.0, 0.8],
+          "rationales": ["intestinal absorption with animal dominance", "human fraction absorbed", "human intestinal permeability proxy", "mixed fraction absorbed", "mostly human fraction absorbed", "high-quality human fraction absorbed", "mostly human fraction absorbed", "human ileostomy and isotope absorption", "human mass-balance fraction absorbed", "mixed in-vivo fraction absorbed"]
+        },
+        "L5": {
+          "bucket_ids": ["sb_577ef2cdd4298115c740", "sb_93987ab09f10c853b939", "sb_28a1aa1a012ccad8d724", "sb_463a5f6ced18c66e5bd1", "sb_8eaf74bd35aaafd4d0a3", "sb_c911dd9f8db13df131ce", "sb_7f7299d7e1997b0d29f9", "sb_158f4dcaa190fc7b8a4c", "sb_7201a33d44011b811fe5", "sb_bf671f9e0abb0baefac5"],
+          "weights": [0.6, 1.0, 0.0, 0.5, 0.6, 0.8, 0.4, 0.4, 0.8, 0.8],
+          "rationales": ["binary gut-wall substrate evidence", "quantitative gut-wall extraction", "permeability is not gut-wall extraction", "intestinal metabolism proxy", "gut-wall exposure change", "quantitative in-vivo gut-wall evidence", "ABCB1 proxy", "mixed ABCB1 proxy", "combined human gut-wall evidence", "clinical combined gut-wall evidence"]
+        },
+        "L6": {
+          "bucket_ids": ["sb_c881693d9ae575aa4f2c", "sb_ffb26718203bf9d87449", "sb_7c8b19dbd8b504c9d5cb", "sb_862d3018efb1b34a8998", "sb_4bbcfa5e4dbc09abe25c", "sb_c54f68402a150afd76ad", "sb_143baf417b3e9c52da11", "sb_cedc40986c41adf83c63", "sb_9a519fd371cb9a24467e", "sb_a3fb444fa8915d3bad9a"],
+          "weights": [0.8, 0.6, 1.0, 0.9, 0.8, 0.8, 0.5, 0.9, 1.0, 0.6],
+          "rationales": ["broad hepatic extraction", "mixed clearance and first pass", "explicit hepatic first pass", "mostly human extraction ratio", "mixed extraction and first pass", "IV-derived extraction", "hepatic clearance proxy", "in-vivo first pass", "in-vivo extraction ratio", "ex-vivo or modeled extraction"]
+        }
+      }
+    }
+  }
+}

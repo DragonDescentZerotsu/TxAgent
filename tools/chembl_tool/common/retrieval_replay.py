@@ -1,7 +1,7 @@
-"""Compatibility import for predict.harnesses.branches.replay."""
+"""Compatibility import for canonical branch artifact replay."""
 
-from predict.harnesses.branches.replay import *  # noqa: F401,F403
-from predict.harnesses.branches.replay import __dict__ as _implementation
+from predict.harnesses.branches.artifacts import *  # noqa: F401,F403
+from predict.harnesses.branches.artifacts import __dict__ as _implementation
 
 
 def __getattr__(name: str):

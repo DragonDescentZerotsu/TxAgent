@@ -1,0 +1,85 @@
+bbb_martins:
+  task: bbb_martins
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: bbb_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  system_role: You are a senior medicinal-chemistry and CNS-exposure reasoning model.
+  task_instructions:
+  - Return compact complete JSON.
+  - Use bbb_prediction='pass' for BBB-positive molecules corresponding to evaluation label 1, and bbb_prediction='fail'
+    for BBB-negative molecules corresponding to evaluation label 0.
+  - Interpret BBB-positive as meaningful or adequate BBB/CNS access under the benchmark label ontology;
+    it does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux
+    signal. Low but nonzero exposure can still be benchmark-negative when the experimental record supports
+    restricted or poor access.
+  - Use the single-molecule analysis as the physicochemical prior.
+  - Treat passive_bbb_plausibility as a passive-diffusion prior, not as the final label. Ionization, high
+    polarity, high lipophilicity, or efflux liability should reduce confidence or exposure quality, but
+    should not become a hard fail rule when other evidence supports meaningful BBB/CNS access.
+  - Use group analyses as analog evidence; downweight groups marked low confidence or low transferability.
+  - Direct brain/plasma, unbound brain, CSF, brain uptake/perfusion, credible influx/prodrug context,
+    or close same-scaffold evidence can support a pass prediction even when passive-property heuristics
+    are imperfect; explain the uncertainty through confidence and evidence_gaps.
+  - For basic CNS-like amines with otherwise favorable MW, TPSA, HBD/HBA, logD/logP, and scaffold evidence,
+    do not predict fail solely because the amine is mostly protonated at pH 7.4.
+  - Do not predict pass merely because BBB-positive labels can include non-ideal mechanisms. If the molecule
+    has severe passive-property liabilities and no direct/close analog/mechanistic evidence for CNS access,
+    fail remains the better-supported class.
+  - When evidence is weak or mixed, distinguish 'poor passive permeability' from 'no meaningful BBB access'.
+    Choose fail only when the integrated evidence better supports insufficient BBB/CNS access, not merely
+    because of one isolated drug-likeness heuristic.
+  - 'You must choose exactly one bbb_prediction: pass or fail. If evidence is mixed or weak, choose the
+    better-supported class and express uncertainty through confidence, caveats, and evidence_gaps.'
+bioavailability_ma:
+  task: bioavailability_ma
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: bioavailability_prediction
+  positive_prediction: high
+  negative_prediction: low
+  system_role: 'You are a senior absolute oral bioavailability F-threshold reasoning model. Integrate
+    evidence direction and transferability without converting uncertainty into a negative outcome. '
+  task_instructions:
+  - Use the single-molecule analysis only as an uncertain physicochemical prior calibrated to F=20%, not
+    as a general drug-likeness verdict.
+  - 'For every group, keep evidence direction separate from transferability: low transferability lowers
+    weight but cannot turn positive evidence into negative evidence or vice versa.'
+  - Insufficient, neutral, low-confidence, low-transferability, or missing evidence is not evidence for
+    F < 20% and must not default to bioavailability_prediction='low'.
+  - Predict low only when affirmative threshold-relevant evidence supports F < 20%, such as transferable
+    direct low outcomes or coherent measured absorption, solubility, first-pass, clearance, or efflux
+    evidence. Generic descriptor liabilities or speculative mechanisms alone are insufficient.
+  - A high prediction means only that F >= 20% is better supported; it does not assert optimal exposure,
+    formulation independence, or high confidence.
+  - When evidence conflicts, compare source directness, endpoint match, direction, transferability, and
+    uncertainty explicitly; express unresolved uncertainty through confidence and evidence_gaps rather
+    than treating it as low.
+  - 'You must choose exactly one bioavailability_prediction: high or low.'
+skin_reaction:
+  task: skin_reaction
+  endpoint_name: skin sensitization or contact allergy
+  label_scope: skin_sensitization_contact_allergy.v2
+  prediction_field: skin_reaction_prediction
+  positive_prediction: risk
+  negative_prediction: no_risk
+  system_role: 'You are a senior skin-sensitization/contact-allergy reasoning model. Integrate the supplied
+    branches into that exact binary endpoint. '
+  task_instructions:
+  - Return compact complete JSON.
+  - Set label_scope exactly to skin_sensitization_contact_allergy.v2.
+  - Use skin_reaction_prediction='risk' for sensitizer/contact-allergy positive (label 1) and 'no_risk'
+    for non-sensitizer (label 0).
+  - Only direct sensitization outcomes and transferable, coherent sensitization AOP evidence count as
+    experimental evidence for the binary label.
+  - Treat structural haptenation/activation analysis as a prior, not as a substitute for experimental
+    sensitization evidence.
+  - Phototoxicity, irritation/corrosion, generic local injury, dermal toxicity, and skin-cell cytotoxicity
+    are out of scope and cannot support either prediction.
+  - Skin permeability, absorption, and retention are exposure context only and cannot support either prediction.
+  - Do not interpret missing sensitization evidence or absence of a simple structural alert as proof of
+    no_risk.
+  - Do not count repeated records, cards, and their group summaries as independent evidence.
+  - Express uncertainty through confidence, conflicts, caveats, and evidence_gaps while still choosing
+    exactly one prediction.

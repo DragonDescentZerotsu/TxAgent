@@ -18,7 +18,7 @@ consumed by the stage runtime.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, Protocol
 
 from predict.harnesses.branches.assay_transfer import (
     ASSAY_TRANSFER_DIVERSITY_NONE,
@@ -45,7 +45,6 @@ from predict.retrieval.policies import (
     decide_candidate,
     policy_metadata,
 )
-from predict.harnesses.branches.reranker import RetrievalReranker
 from predict.retrieval.features import (
     retrieval_feature_metadata,
     similarity_bucket_for_index,
@@ -65,6 +64,22 @@ EXPERIMENT_MODES = {"none", "direct", "full_flat", "full_mechanism", "native"}
 MORGAN_FINGERPRINT_STRATEGY = "morgan_fingerprint"
 ASSAY_TRANSFER_TOOL_STRATEGY = "assay_transfer_tool"
 RETRIEVAL_STRATEGIES = (MORGAN_FINGERPRINT_STRATEGY, ASSAY_TRANSFER_TOOL_STRATEGY)
+
+
+class RetrievalReranker(Protocol):
+    """Optional record or molecule reranking applied after identity filtering."""
+
+    name: str
+
+    def rerank(
+        self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]: ...
+
+    def rerank_records(
+        self, *, query_smiles: str, group_id: str, candidates: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]: ...
+
+    def provenance(self) -> dict[str, Any]: ...
 
 
 @dataclass(frozen=True)

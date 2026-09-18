@@ -15,6 +15,7 @@ evidence.
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 import importlib
 import json
@@ -24,7 +25,7 @@ import threading
 import time
 from typing import Any
 
-from predict.harnesses.branches.reasoning.identity_blind import (
+from predict.harnesses.branches.visibility import (
     expose_neighbor_smiles_only,
     prepare_reasoning_retrieval,
     query_without_prefetched_tools,
@@ -32,7 +33,7 @@ from predict.harnesses.branches.reasoning.identity_blind import (
 )
 from predict.harnesses.branches.reasoning.final_evidence import SUMMARY_ONLY
 from predict.harnesses.branches.reasoning.final_decision import STANDARD_FINAL_DECISION
-from predict.llm_engine.client import OpenAICompatibleClient
+from predict.api_client.client import OpenAICompatibleClient
 from predict.tools.client import ToolServiceClient
 from predict.traces.io import write_trace
 from predict.utils.json import (
@@ -40,16 +41,26 @@ from predict.utils.json import (
     write_json_atomic as _write_json_atomic,
     write_jsonl_atomic as _write_jsonl_atomic,
 )
-from predict.harnesses.branches.reasoning.calls import load_frozen_single_analysis
+from predict.harnesses.branches.inference import load_frozen_single_analysis
+from predict.harnesses.branches.flat import (
+    CONTEXT_V4_PROMPT_VERSION,
+    build_flat_context_request,
+    flat_context_validation,
+)
+from predict.harnesses.branches.prompt import attach_external_condition
 from predict.harnesses.branches.analogous_flat_prompt import (
     PROMPT_IDENTITY_VIEW,
     prompt_provenance as analogous_flat_prompt_provenance,
     reason_final as reason_analogous_flat_final,
     reason_group as reason_analogous_flat_group,
 )
-from predict.llm_io.response import validated_branch_content
-from predict.harnesses.branches.reuse import load_reusable_group_outputs
-from predict.harnesses.branches.batch import (
+from predict.llm_io.response import (
+    call_with_json_validation,
+    structured_response_is_valid,
+    validated_branch_content,
+)
+from predict.harnesses.branches.artifacts import load_reusable_group_outputs
+from predict.harnesses.branches.runner import (
     BatchItem,
     PreparedBatch,
     _collect_result,
@@ -169,6 +180,7 @@ def _clear_previous_run_artifacts(run_dir: Path) -> None:
         "group_reasoning_outputs.jsonl",
         "group_reasoning_outputs_raw.jsonl",
         "final_reasoning_output.json",
+        "request.json",
         "trace_messages.jsonl",
         "manifest.json",
         "reuse.json",
@@ -195,7 +207,7 @@ def load_stage_state(
         return None
     if retrieval.get("status") != "ok":
         return None
-    expected_group_ids = [
+    expected_group_ids = [] if _flat_one_call_args(prepared.args) else [
         str(group.get("group_id") or "")
         for group in retrieval.get("groups") or []
         if group.get("neighbors") and str(group.get("group_id") or "")
@@ -250,13 +262,16 @@ def _single_stage_dependency_ready(state: StageState) -> bool:
     return (source_dir / "single_molecule_reasoning_output.json").exists()
 
 
-def execute_stage(job: StageJob) -> dict[str, Any]:
+def execute_stage(
+    job: StageJob,
+    stage_client: Any | None = None,
+) -> dict[str, Any]:
     if job.stage == SINGLE_STAGE:
         return _execute_single(job.state)
     if job.stage == GROUP_STAGE:
-        return _execute_group(job.state, job.group_id)
+        return _execute_group(job.state, job.group_id, stage_client)
     if job.stage == FINAL_STAGE:
-        return _execute_final(job.state)
+        return _execute_final(job.state, stage_client)
     raise ValueError(f"Unknown reasoning stage: {job.stage}")
 
 
@@ -297,7 +312,10 @@ def _initialize_run_manifest(
     analogous_reasoning_only = bool(
         getattr(args, "analogous_reasoning_only", False)
     )
-    groups = [group for group in retrieval.get("groups") or [] if group.get("neighbors")]
+    flat_one_call = _flat_one_call_args(args)
+    groups = [] if flat_one_call else [
+        group for group in retrieval.get("groups") or [] if group.get("neighbors")
+    ]
     if args.max_groups:
         groups = groups[: args.max_groups]
     raw_group_path = run_dir / "group_reasoning_outputs_raw.jsonl"
@@ -318,6 +336,28 @@ def _initialize_run_manifest(
             STANDARD_FINAL_DECISION,
         ),
         "task_prompt_profile": getattr(args, "task_prompt_profile", ""),
+        "flat_prompt_version": getattr(args, "flat_prompt_version", ""),
+        "harness_version": prepared.manifest.get("harness_version", ""),
+        "flat_reranking": prepared.manifest.get("flat_reranking", ""),
+        "evaluation_subset": prepared.manifest.get("evaluation_subset", ""),
+        "record_pool": prepared.manifest.get("record_pool", ""),
+        "cache_pool": prepared.manifest.get("cache_pool", ""),
+        "evidence_projection": prepared.manifest.get("evidence_projection", ""),
+        "extra_details_policy": prepared.manifest.get("extra_details_policy", ""),
+        "molecule_name_visible": prepared.manifest.get("molecule_name_visible", ""),
+        "allow_frozen_l1_vote_scores": prepared.manifest.get(
+            "allow_frozen_l1_vote_scores", False
+        ),
+        "flat_selection_contract_sha256": prepared.manifest.get(
+            "flat_selection_contract_sha256", ""
+        ),
+        "flat_selection_manifest": prepared.manifest.get(
+            "flat_selection_manifest", {}
+        ),
+        "group_prompt_version": prepared.manifest.get("group_prompt_version", ""),
+        "group_prompt_provenance": prepared.manifest.get(
+            "group_prompt_provenance", {}
+        ),
         "retrieval_replay_source_run_dir": _configured_source_run_dir(
             args.retrieval_replay_source_batch,
             item.index,
@@ -329,17 +369,31 @@ def _initialize_run_manifest(
         "identity_blind": args.identity_blind,
         "disable_flat_tools": bool(getattr(args, "disable_flat_tools", False)),
         "analogous_reasoning_only": analogous_reasoning_only,
+        "flat_one_call": flat_one_call,
+        "flat_layout": getattr(args, "flat_layout", ""),
+        "flat_query_prior": getattr(args, "flat_query_prior", ""),
         "single_branch_execution": (
-            "omitted" if analogous_reasoning_only else "executed_or_reused"
+            "omitted"
+            if analogous_reasoning_only
+            or flat_one_call and args.flat_query_prior == "none"
+            else "reused"
+            if flat_one_call
+            else "executed_or_reused"
         ),
         "single_branch_omission_reason": (
-            "analogous_reasoning_only" if analogous_reasoning_only else ""
+            "analogous_reasoning_only"
+            if analogous_reasoning_only
+            else "query_prior_disabled"
+            if flat_one_call and args.flat_query_prior == "none"
+            else ""
         ),
         "query_tool_execution": (
-            "omitted" if analogous_reasoning_only else "enabled"
+            "omitted" if analogous_reasoning_only or flat_one_call else "enabled"
         ),
         "group_query_tool_instruction_policy": (
-            "omitted.v1" if analogous_reasoning_only else "standard.v1"
+            "omitted.v1"
+            if analogous_reasoning_only or getattr(args, "disable_flat_tools", False)
+            else "standard.v1"
         ),
         "final_prompt_provenance": (
             prepared.config.final_prompt_provenance(
@@ -360,7 +414,7 @@ def _initialize_run_manifest(
         ),
         "harness_prefetch_tools": (
             False
-            if analogous_reasoning_only
+            if analogous_reasoning_only or flat_one_call
             else args.identity_blind or args.harness_prefetch_tools
         ),
         "neighbor_index": args.index if args.experiment_mode != "none" else "",
@@ -378,7 +432,7 @@ def _initialize_run_manifest(
         ),
         "tool_execution_mode": (
             "omitted"
-            if analogous_reasoning_only
+            if analogous_reasoning_only or flat_one_call
             else "harness_prefetch_query_only"
             if getattr(args, "disable_flat_tools", False)
             else "harness_prefetch"
@@ -444,13 +498,17 @@ def _initialize_run_manifest(
             }
         )
     _write_json_atomic(run_dir / "manifest.json", manifest)
-    if analogous_reasoning_only:
+    if analogous_reasoning_only or flat_one_call and args.flat_query_prior == "none":
         _write_json_atomic(
             run_dir / "single_molecule_reasoning_output.json",
             {
                 "analysis_id": "single_molecule",
                 "status": "omitted",
-                "reason": "analogous_reasoning_only",
+                "reason": (
+                    "analogous_reasoning_only"
+                    if analogous_reasoning_only
+                    else "query_prior_disabled"
+                ),
             },
         )
     if not groups:
@@ -564,7 +622,11 @@ def _execute_single(state: StageState) -> dict[str, Any]:
     return output
 
 
-def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
+def _execute_group(
+    state: StageState,
+    group_id: str,
+    stage_client: Any | None = None,
+) -> dict[str, Any]:
     context = _stage_context(state)
     module = context["module"]
     group = next(
@@ -577,9 +639,15 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
     )
     if group is None or not group.get("neighbors"):
         raise ValueError(f"Reasoning group is not available: {group_id}")
-    client = _make_client(state)
+    client = stage_client or _make_client(state)
     group_kwargs: dict[str, Any] = {}
-    if (
+    if _versioned_flat(state):
+        group_kwargs = {
+            "flat_prompt_version": state.prepared.args.flat_prompt_version,
+            "retrieval_strategy": state.prepared.args.retrieval_strategy,
+            "flat_reranking": getattr(state.prepared.args, "flat_reranking", ""),
+        }
+    elif (
         state.prepared.config.supports_analogous_reasoning_only
         and not _analogous_flat(state)
     ):
@@ -660,16 +728,21 @@ def _execute_group(state: StageState, group_id: str) -> dict[str, Any]:
     return canonical_output
 
 
-def _execute_final(state: StageState) -> dict[str, Any]:
+def _execute_final(
+    state: StageState,
+    stage_client: Any | None = None,
+) -> dict[str, Any]:
     if not _earlier_stages_ready(state):
         raise RuntimeError(f"Final dependencies are incomplete: {state.run_id}")
+    if _flat_one_call(state):
+        return _execute_flat_context_final(state, stage_client)
     context = _stage_context(state)
     module = context["module"]
     single_output = _read_json(
         state.run_dir / "single_molecule_reasoning_output.json"
     )
     group_outputs = _canonical_group_outputs(state)
-    client = _make_client(state)
+    client = stage_client or _make_client(state)
     final_surface = getattr(
         state.prepared.args,
         "final_evidence_surface",
@@ -739,6 +812,73 @@ def _execute_final(state: StageState) -> dict[str, Any]:
     return final_output
 
 
+def _execute_flat_context_final(
+    state: StageState,
+    stage_client: Any | None,
+) -> dict[str, Any]:
+    """Issue the context-v4 flat harness's sole model request."""
+    retrieval = attach_external_condition(deepcopy(state.retrieval), state.item.record)
+    single_output = _read_json(
+        state.run_dir / "single_molecule_reasoning_output.json"
+    )
+    query_prior = (
+        validated_branch_content(single_output)
+        if state.prepared.args.flat_query_prior == "cached"
+        else {}
+    )
+    messages, prompt_metadata = build_flat_context_request(
+        retrieval,
+        task_id=_task_id(state.prepared),
+        task_prompt_profile=str(state.prepared.args.task_prompt_profile),
+        layout=str(state.prepared.args.flat_layout),
+        reranking=str(state.prepared.args.flat_reranking),
+        query_prior=query_prior,
+    )
+    request = {
+        "schema_version": "joseph_flat_context_request.v1",
+        "messages": messages,
+        "message_char_count": sum(len(message["content"]) for message in messages),
+        **prompt_metadata,
+    }
+    _write_json_atomic(state.run_dir / "request.json", request)
+    response = call_with_json_validation(
+        (stage_client or _make_client(state)).chat_json,
+        messages,
+        branch_name="flat-context-final",
+        **flat_context_validation(
+            _task_id(state.prepared),
+            task_prompt_profile=str(state.prepared.args.task_prompt_profile),
+        ),
+    )
+    final_output = {
+        "status": "ok" if structured_response_is_valid(response) else "error",
+        "llm": response,
+        "prompt": prompt_metadata,
+    }
+    final_path = state.run_dir / "final_reasoning_output.json"
+    trace_path = state.run_dir / "trace_messages.jsonl"
+    module = importlib.import_module(state.prepared.config.pipeline_module)
+    with _exclusive_run_lock(state.run_dir):
+        with atomic_output_path(final_path) as final_temp:
+            _write_json(final_temp, final_output)
+            if state.prepared.args.save_trace:
+                with atomic_output_path(trace_path) as trace_temp:
+                    module._write_trace_jsonl(
+                        trace_temp,
+                        query_record=state.item.record,
+                        query_index=state.item.index,
+                        smiles=str(state.item.record.get(state.prepared.args.smiles_field) or ""),
+                        single_output=single_output,
+                        group_outputs=[],
+                        final_output=final_output,
+                    )
+            else:
+                trace_path.unlink(missing_ok=True)
+        _record_stage_event(state, FINAL_STAGE, final_output.get("status", "error"))
+    _write_stage_trace(state, FINAL_STAGE, final_output, final_path)
+    return final_output
+
+
 def _task_prompt_kwargs(state: StageState) -> dict[str, str]:
     if not state.prepared.config.prompt_profile_option:
         return {}
@@ -790,12 +930,19 @@ def _stage_context(state: StageState) -> dict[str, Any]:
 
 
 def _make_client(state: StageState) -> OpenAICompatibleClient:
+    from data.processing.llm_api import openai_compatible_client
+
     args = state.prepared.args
-    api_key = os.getenv(args.api_key_env)
-    if not api_key:
-        raise RuntimeError(f"Missing API key env var: {args.api_key_env}")
+    transport, _ = openai_compatible_client(
+        base_url=args.base_url,
+        env_file=args.env_file,
+        credential_env=args.api_key_env or None,
+        max_connections=1,
+        timeout_s=args.timeout_s,
+        max_retries=getattr(args, "transport_max_retries", 0),
+    )
     return OpenAICompatibleClient(
-        api_key=api_key,
+        api_key="loaded-by-shared-client",
         base_url=args.base_url,
         model=args.model,
         timeout_s=args.timeout_s,
@@ -810,6 +957,8 @@ def _make_client(state: StageState) -> OpenAICompatibleClient:
         max_tool_rounds=args.max_tool_rounds,
         reasoning_effort=args.reasoning_effort,
         enable_thinking=args.enable_thinking,
+        transport_max_retries=getattr(args, "transport_max_retries", 0),
+        openai_client=transport,
     )
 
 
@@ -856,11 +1005,25 @@ def _earlier_stages_ready(state: StageState) -> bool:
 
 
 def _expected_single_status(state: StageState) -> str:
+    if _flat_one_call(state) and state.prepared.args.flat_query_prior == "none":
+        return "omitted"
     return "omitted" if _analogous_reasoning_only(state) else "ok"
 
 
 def _analogous_reasoning_only(state: StageState) -> bool:
     return bool(getattr(state.prepared.args, "analogous_reasoning_only", False))
+
+
+def _flat_one_call(state: StageState) -> bool:
+    return _flat_one_call_args(state.prepared.args)
+
+
+def _flat_one_call_args(args: Any) -> bool:
+    return (
+        str(getattr(args, "flat_prompt_version", ""))
+        == CONTEXT_V4_PROMPT_VERSION
+        and str(getattr(args, "experiment_mode", "")) == "full_flat"
+    )
 
 
 def _analogous_flat(state: StageState) -> bool:
@@ -869,6 +1032,16 @@ def _analogous_flat(state: StageState) -> bool:
 
 def _analogous_flat_args(args: Any) -> bool:
     return bool(getattr(args, "analogous_reasoning_only", False)) and str(
+        getattr(args, "experiment_mode", "")
+    ) == "full_flat"
+
+
+def _versioned_flat(state: StageState) -> bool:
+    return _versioned_flat_args(state.prepared.args)
+
+
+def _versioned_flat_args(args: Any) -> bool:
+    return bool(getattr(args, "flat_prompt_version", "")) and str(
         getattr(args, "experiment_mode", "")
     ) == "full_flat"
 
@@ -886,7 +1059,7 @@ def _write_stage_trace(
     mode = str(getattr(state.prepared.args, "experiment_mode", "native"))
     harness = {"full_flat": "flat", "full_mechanism": "full"}.get(mode, mode)
     write_trace(
-        trace_root=getattr(state.prepared.args, "trace_root", "predict/traces/runs"),
+        trace_root=getattr(state.prepared.args, "trace_root", "outputs/paper/live"),
         experiment_id=state.prepared.batch_id,
         task=_task_id(state.prepared),
         harness=harness,
@@ -894,6 +1067,8 @@ def _write_stage_trace(
         stage=stage,
         checkpoint_path=checkpoint_path,
         output=output,
+        run_id=getattr(state.prepared.args, "live_run_id", ""),
+        method=getattr(state.prepared.args, "live_method", harness),
     )
 
 

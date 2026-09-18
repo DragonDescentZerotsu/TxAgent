@@ -1,0 +1,45 @@
+# Task
+Endpoint: {{ task.endpoint_name }}
+Positive: {{ task.positive_prediction }}
+Negative: {{ task.negative_prediction }}
+Instructions:
+{% for instruction in task.task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if prepared.task in ["bbb_martins", "bioavailability_ma"] and prepared.level in [2, 3, 4] %}
+# PITFALLS
+- Level membership marks a broad evidence family, not equal relevance. Prefer records whose measured quantity has a clear causal link to the target endpoint.
+- Transferability requires compatible endpoint definitions, assay systems, units, species, routes, doses, formulations, and sampling contexts. A mismatch lowers weight rather than reversing evidence direction.
+- Prefer quantitative, controlled, independent measurements. Repeated reports of the same experiment or mechanism do not provide independent support.
+{% if prepared.task == "bbb_martins" and prepared.level == 2 %}
+- Functional or pharmacodynamic observations lie downstream of both CNS access and target biology. They imply access only when a central mechanism and adequate systemic exposure are supported.
+- Absence of a central effect does not identify failed access because potency, target engagement, or systemic exposure may instead be limiting.
+{% elif prepared.task == "bbb_martins" and prepared.level == 3 %}
+- Passive-permeability assays isolate membrane crossing; in-vivo CNS access additionally depends on active influx and efflux, binding, metabolism, and systemic exposure.
+- Interpret permeability values against assay-specific controls rather than as portable universal thresholds.
+{% elif prepared.task == "bbb_martins" and prepared.level == 4 %}
+- Transporter substrate evidence concerns movement of the molecule. Transporter inhibition or modulation is a different causal claim and is not evidence that the molecule is a substrate.
+- Efflux is only one determinant of net CNS exposure. Prefer controlled bidirectional or perturbation evidence, and do not infer overall access from one transporter result.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 2 %}
+- Absolute oral F is estimated from dose-normalized oral-versus-intravenous systemic exposure under comparable pharmacokinetics. Relative bioavailability, fraction absorbed, and qualitative assessments measure different quantities.
+- A numerical estimate transfers only when the species, dosing, formulation, and first-pass context support comparison to the query.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 3 %}
+- Under linear pharmacokinetics, oral AUC reflects F times dose divided by clearance; Cmax and the time course also depend on absorption rate and distribution. Without an intravenous or clearance anchor, they do not identify absolute F.
+- Exposure changes under a particular formulation, dose, or interaction are conditional effects and should not be treated as the query's baseline F.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 4 %}
+- Solubility, dissolution, permeability, and fraction absorbed describe determinants or extent of absorption, whereas absolute F = Fa × Fg × Fh. They do not identify intestinal or hepatic first-pass escape.
+- A formulation or assay intervention estimates a conditional effect, not intrinsic baseline absorption. Transfer it only when the intervention and conditions match the query setting.
+{% endif %}
+{% endif %}
+# Query molecule
+SMILES: {{ prepared.query_smiles }}{% if prepared.condition_sentence %}
+
+# Query condition
+Condition: {{ prepared.condition_sentence }}{% endif %}
+
+# Candidate experimental evidence
+{% for molecule in molecules %}
+## Molecule {{ loop.index }}
+SMILES: {{ molecule.smiles }}
+Morgan similarity: {{ molecule.morgan_similarity }}
+{% for record in molecule.records %}{{ record }}
+{% endfor %}{% endfor %}

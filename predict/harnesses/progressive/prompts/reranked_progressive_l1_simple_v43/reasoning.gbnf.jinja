@@ -1,0 +1,12 @@
+{% if task == "bbb_martins" %}root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,18432}
+final_calibration ::= "\nFINAL CALIBRATION\n" (pass_majority | fail_majority)
+pass_majority ::= "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: " bbb_verdict "\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: pass\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: pass\nTHRESHOLD DECISION: pass\nDECISION RATIONALE: " audit_line
+fail_majority ::= "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: " bbb_verdict "\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: fail\nTRANSFER-TO-QUERY VERDICT: pass\nQUERY-SPECIFIC VERDICT: fail\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line | "DIRECT RECORD VERDICT: pass\nTRANSFER-TO-QUERY VERDICT: fail\nQUERY-SPECIFIC VERDICT: fail\nTHRESHOLD DECISION: fail\nDECISION RATIONALE: " audit_line
+bbb_verdict ::= "pass" | "fail"
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- elif task == "bioavailability_ma" %}root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,24576}
+final_calibration ::= "\nFINAL CALIBRATION\nDIRECT EVIDENCE BALANCE: " audit_line "TRANSFERABILITY CHECK: " audit_line "QUERY-SPECIFIC CHECK: " audit_line "THRESHOLD DECISION: " audit_line
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- else %}{{ unsupported_progressive_task }}{% endif %}

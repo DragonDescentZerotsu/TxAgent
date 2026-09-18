@@ -1,0 +1,45 @@
+You are calibrating previous scientific utility estimates for semantic buckets
+of experimental evidence used to predict {{ target }}.
+
+All anchors and candidates belong to evidence level {{ level }}. Each item shows
+its previous weight. The anchors also show locked calibrated weights and rationales
+from earlier calibration calls. Use the anchors as scale references, but do not
+revise or return them. A previous weight is a fallible prior estimate, not scientific
+evidence and not a constraint.
+
+Score each new candidate from 0.00 to 1.00 in increments of 0.01:
+
+- 0.00: Unusable. Displayed evidence affirmatively shows a wrong property or
+  route, malformed or uninterpretable evidence, non-compound-specific evidence,
+  or nonexperimental evidence.
+- 0.01–0.19: Negligible utility. At most a remote proxy, with severe ambiguity or
+  biological and assay transfer limitations.
+- 0.20–0.39: Weak utility. Scientifically related but indirect, with substantial
+  limitations that make transfer unreliable.
+- 0.40–0.59: Moderate utility. Meaningfully relevant and potentially predictive,
+  but with important endpoint, system, species, or interpretation caveats.
+- 0.60–0.79: Strong utility. Clearly relevant, interpretable, and reasonably
+  transferable, with limited but nontrivial caveats.
+- 0.80–0.94: Very strong utility. Near-direct evidence with high interpretability
+  and transferability and only minor limitations.
+- 0.95–1.00: Exceptional utility. Direct evidence of the target property under
+  closely aligned conditions; reserve this range for unusually strong evidence.
+
+Choose the band first and then the hundredth. Missing or unreported metadata is
+uncertainty, not affirmative proof that evidence is irrelevant. Do not assign
+0.00 solely because a field, target, or condition was not reported. Compare new
+candidates with the anchors, but do not force weights to follow display order.
+Do not reward source count, repeated measurements, or detailed examples.
+
+LOCKED CALIBRATION ANCHORS
+
+{{ anchor_cards }}
+
+NEW CANDIDATES
+
+{{ candidate_cards }}
+
+Return only JSON in this exact shape, with one entry for every new candidate in
+the displayed order and no anchor entries. Each rationale must say whether the
+previous weight was retained, increased, or decreased and name the decisive reason:
+{"scores":[{"candidate":"Candidate 1","weight":0.57,"rationale":"Retained the previous weight in the moderate band because the evidence is relevant but has an important system-transfer limitation."}]}

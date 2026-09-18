@@ -38,6 +38,10 @@ trap 'exit 143' TERM
 
 mkdir -p "$SERVE_ROOT/datasets"
 ln -s "$SCRIPT_DIR/viewer.html" "$SERVE_ROOT/.trace_viewer.html"
+ln -s "$SCRIPT_DIR/live.html" "$SERVE_ROOT/.live_trace_viewer.html"
+if [[ -d "$REPO_ROOT/outputs/paper/live" ]]; then
+  ln -s "$REPO_ROOT/outputs/paper/live" "$SERVE_ROOT/live-data"
+fi
 : > "$SERVE_ROOT/.trace_viewer_sources.tsv"
 : > "$SERVE_ROOT/.trace_viewer_catalog.tsv"
 
@@ -45,7 +49,7 @@ CENTRAL_DATASET="$SERVE_ROOT/central_traces"
 central_count="$(
   cd "$REPO_ROOT"
   python3 -m predict.traces.viewer.build_dataset \
-    --trace-root "${PREDICT_TRACE_ROOT:-predict/traces/runs}" \
+    --trace-root "${PREDICT_TRACE_ROOT:-outputs/paper/live}" \
     --output-root "$CENTRAL_DATASET"
 )"
 if (( central_count > 0 )); then
@@ -115,6 +119,7 @@ catalog_count="$(wc -l < "$SERVE_ROOT/.trace_viewer_catalog.tsv")"
 echo "Registered conditions: $catalog_count"
 echo "Serving curated trace datasets from: $SERVE_ROOT"
 echo "Open: http://127.0.0.1:$PORT/.trace_viewer.html?v=paper-v2"
+echo "Live: http://127.0.0.1:$PORT/.live_trace_viewer.html?data=live-data"
 
 cd "$SERVE_ROOT"
 python3 -m http.server "$PORT" --bind 127.0.0.1 &

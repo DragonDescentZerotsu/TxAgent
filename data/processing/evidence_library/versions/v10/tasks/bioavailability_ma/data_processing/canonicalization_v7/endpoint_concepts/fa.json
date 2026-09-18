@@ -1,0 +1,210 @@
+{
+  "version": "bioavailability_endpoint_concepts.v1",
+  "source_id": "fa",
+  "input_field": "endpoint_name",
+  "output_field": "canonical_endpoint_concept",
+  "inventory": {
+    "count": 33,
+    "sha256": "43d72d3407ede660852220ff1e986c9815773e0a1333957c5b54c248036edbd4"
+  },
+  "mappings": [
+    {
+      "endpoint_name": "absorption",
+      "canonical_endpoint_name": "absorption",
+      "canonical_endpoint_concept": "absorption",
+      "review_reason": "Generic absorption claim with no narrower anatomical or assay identity; preserve fail-closed."
+    },
+    {
+      "endpoint_name": "accumulated_mass",
+      "canonical_endpoint_name": "accumulated_mass",
+      "canonical_endpoint_concept": "accumulated_mass",
+      "review_reason": "Mass accumulated in a dissolution-permeation device is distinct from a dissolution fraction or permeability coefficient."
+    },
+    {
+      "endpoint_name": "caco2_mdck_p permeability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed spacing corruption of the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "caco2_mdck_pampa_perability",
+      "canonical_endpoint_name": "caco2_mdck_pampa_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_pampa_permeability",
+      "review_reason": "Reviewed spelling corruption of the source Caco-2/MDCK/PAMPA permeability umbrella."
+    },
+    {
+      "endpoint_name": "caco2_mdck_pampa_permeability",
+      "canonical_endpoint_name": "caco2_mdck_pampa_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_pampa_permeability",
+      "review_reason": "Source umbrella includes cellular and artificial-membrane permeability assays; assay context remains a separate bucket dimension."
+    },
+    {
+      "endpoint_name": "caco2_mdck_pampa_permeibility",
+      "canonical_endpoint_name": "caco2_mdck_pampa_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_pampa_permeability",
+      "review_reason": "Reviewed spelling corruption of the source Caco-2/MDCK/PAMPA permeability umbrella."
+    },
+    {
+      "endpoint_name": "caco2_mdck_pampа_permeability",
+      "canonical_endpoint_name": "caco2_mdck_pampa_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_pampa_permeability",
+      "review_reason": "Cyrillic-a corruption of the source Caco-2/MDCK/PAMPA permeability umbrella."
+    },
+    {
+      "endpoint_name": "caco2_mdck_pemiability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed spelling corruption of the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Preserve cellular Caco-2/MDCK permeability separately from the broader source label that can include PAMPA."
+    },
+    {
+      "endpoint_name": "caco2_mdck_permiability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed spelling corruption of the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "caco2_mdck_perva_permeability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed token corruption of the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "caco2_mdck_poraineability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed spelling corruption of the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "caco2_mdck_ppera_permeability",
+      "canonical_endpoint_name": "caco2_mdck_permeability",
+      "canonical_endpoint_concept": "caco2_mdck_permeability",
+      "review_reason": "Reviewed token duplication in the cellular Caco-2/MDCK permeability endpoint."
+    },
+    {
+      "endpoint_name": "disappearance_rate",
+      "canonical_endpoint_name": "disappearance_rate",
+      "canonical_endpoint_concept": "disappearance_rate",
+      "review_reason": "Luminal disappearance is an absorption proxy, not the same measured endpoint as absorbed fraction or absorption rate."
+    },
+    {
+      "endpoint_name": "dissolution",
+      "canonical_endpoint_name": "dissolution",
+      "canonical_endpoint_concept": "dissolution",
+      "review_reason": "General dissolution rate or extent endpoint."
+    },
+    {
+      "endpoint_name": "dissolution_efficiency",
+      "canonical_endpoint_name": "dissolution_efficiency",
+      "canonical_endpoint_concept": "dissolution_efficiency",
+      "review_reason": "Dissolution efficiency is a curve-integrated percentage and remains distinct from a point fraction dissolved."
+    },
+    {
+      "endpoint_name": "fraction_absorbed",
+      "canonical_endpoint_name": "fraction_absorbed",
+      "canonical_endpoint_concept": "fraction_absorbed",
+      "review_reason": "Absorbed fraction is an extent endpoint and remains distinct from absorption rates and qualitative regional absorption."
+    },
+    {
+      "endpoint_name": "fraction_dissolved",
+      "canonical_endpoint_name": "fraction_dissolved",
+      "canonical_endpoint_concept": "fraction_dissolved",
+      "review_reason": "Fraction dissolved is a point extent measurement and remains distinct from curve-integrated dissolution efficiency."
+    },
+    {
+      "endpoint_name": "gastric_absorption",
+      "canonical_endpoint_name": "gastric_absorption",
+      "canonical_endpoint_concept": "gastric_absorption",
+      "review_reason": "Gastric absorption is anatomically distinct from intestinal absorption."
+    },
+    {
+      "endpoint_name": "gi_stability",
+      "canonical_endpoint_name": "gi_stability",
+      "canonical_endpoint_concept": "gi_stability",
+      "review_reason": "Chemical or formulation stability in gastrointestinal conditions is distinct from dissolution and absorption."
+    },
+    {
+      "endpoint_name": "human_intestinal_absorption",
+      "canonical_endpoint_name": "human_intestinal_absorption",
+      "canonical_endpoint_concept": "human_intestinal_absorption",
+      "review_reason": "Preserve the explicit human endpoint because its label supplies population semantics for rows with missing species context."
+    },
+    {
+      "endpoint_name": "intest inal_absorption",
+      "canonical_endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_concept": "intestinal_absorption",
+      "review_reason": "Reviewed embedded-space corruption of intestinal absorption."
+    },
+    {
+      "endpoint_name": "intest inal_effective_permeability",
+      "canonical_endpoint_name": "intestinal_effective_permeability",
+      "canonical_endpoint_concept": "intestinal_effective_permeability",
+      "review_reason": "Reviewed embedded-space corruption of intestinal effective permeability."
+    },
+    {
+      "endpoint_name": "intestina l_absorption",
+      "canonical_endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_concept": "intestinal_absorption",
+      "review_reason": "Reviewed embedded-space corruption of intestinal absorption."
+    },
+    {
+      "endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_name": "intestinal_absorption",
+      "canonical_endpoint_concept": "intestinal_absorption",
+      "review_reason": "General intestinal absorption includes rates, extents, and qualitative observations under source-specific context."
+    },
+    {
+      "endpoint_name": "intestinal_effective_permeability",
+      "canonical_endpoint_name": "intestinal_effective_permeability",
+      "canonical_endpoint_concept": "intestinal_effective_permeability",
+      "review_reason": "Effective intestinal permeability is a defined transport measurement and remains separate from generic barrier permeability."
+    },
+    {
+      "endpoint_name": "intestinal_permeability",
+      "canonical_endpoint_name": "intestinal_permeability",
+      "canonical_endpoint_concept": "intestinal_permeability",
+      "review_reason": "Rows mix epithelial-barrier and generic permeation claims, so they cannot safely merge with effective permeability."
+    },
+    {
+      "endpoint_name": "intestinaleffective_permeability",
+      "canonical_endpoint_name": "intestinal_effective_permeability",
+      "canonical_endpoint_concept": "intestinal_effective_permeability",
+      "review_reason": "Reviewed missing-separator corruption of intestinal effective permeability."
+    },
+    {
+      "endpoint_name": "intestina­l_effective_permeability",
+      "canonical_endpoint_name": "intestinal_effective_permeability",
+      "canonical_endpoint_concept": "intestinal_effective_permeability",
+      "review_reason": "Soft-hyphen corruption of intestinal effective permeability."
+    },
+    {
+      "endpoint_name": "intrinsic_dissolution_rate",
+      "canonical_endpoint_name": "intrinsic_dissolution_rate",
+      "canonical_endpoint_concept": "intrinsic_dissolution_rate",
+      "review_reason": "Intrinsic dissolution rate is a mass-per-area-per-time measurement and remains a separate endpoint concept."
+    },
+    {
+      "endpoint_name": "permeability",
+      "canonical_endpoint_name": "permeability",
+      "canonical_endpoint_concept": "permeability",
+      "review_reason": "Generic qualitative permeability lacks a reliable cellular, artificial-membrane, or intestinal assay identity; preserve fail-closed."
+    },
+    {
+      "endpoint_name": "solubidity",
+      "canonical_endpoint_name": "solubility",
+      "canonical_endpoint_concept": "solubility",
+      "review_reason": "Reviewed spelling corruption of solubility."
+    },
+    {
+      "endpoint_name": "solubility",
+      "canonical_endpoint_name": "solubility",
+      "canonical_endpoint_concept": "solubility",
+      "review_reason": "Solubility endpoint; medium and assay context remain separate bucket dimensions."
+    }
+  ]
+}

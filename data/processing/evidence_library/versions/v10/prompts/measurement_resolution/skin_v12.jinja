@@ -1,0 +1,44 @@
+Resolve at most one source-reported Skin Reaction measurement per row. Return JSON only.
+
+Input is {"rows":[...]} with at most {{ batch_size }} rows. Each row is a {{ source_kind }} and has `id`, `canonical_endpoint_name`, and {{ row_fields | join(", ") }}. Return every input id once, in order:
+
+  {"rows":[{"id":"...","status":"ok"|"relative"|"unsure"|"unavailable","measurements":[{"measurement":"<plain decimal>","unit":"<complete source-supported unit or named metric>"}]}]}
+
+Only `ok` carries exactly one measurement. Every other status carries `[]`. Judge rows independently.
+
+`measurement_text` is the selected result field. The focal coefficient must come from that field. `support_text` may verify its meaning, identify a central point rather than its spread, or explicitly complete its unit; it may not donate another value. Never select a dose, concentration, duration, timepoint, sample size, identifier, category code, p-value, control, comparator, or baseline unless that quantity is the named endpoint. Do not calculate, convert, average, or infer a value.
+
+Use `ok` for one finite absolute or endpoint-defined point with a complete physical unit, denominator, labeled count, or named metric. Endpoint-defined readouts include sensitization incidence, LLNA stimulation index or EC3/pEC3, RFI/cMFI, KeratinoSens Imax, peptide or GSH depletion, and explicit erythema, edema, irritation, or reaction scores.
+
+Use `relative` only when the selected coefficient is defined against an experiment-specific control, vehicle, baseline, treatment, formulation, genotype, or other compound. A comparison elsewhere in support does not make an absolute focal-group result relative. Use `unsure` for a bound, range, missing or conflicting unit, several equally focal results, or conflicting source statements. Use `unavailable` when the focal outcome is absent or qualitative, or the only number belongs to another endpoint or an assay condition.
+
+{% if has_unit_column %}Copy a complete nonempty `unit_text` exactly when it belongs to the selected point. Do not expand `%`, shorten a named metric, or use a dose unit as the result unit.{% else %}This source has no separate unit column. Use only a unit or named metric explicitly tied to the selected coefficient in the visible text.{% endif %}
+
+Return one finite plain decimal coefficient. Remove valid thousands separators. A central point with SD, SE, or a confidence interval remains one point. Put a printed power-of-ten scale in the unit: `3.16 x 10^-6 cm/s` becomes measurement `3.16`, unit `10^-6 cm/s`. Never apply or reverse that scale, and never convert a bound, range, fraction, or category into a point.
+
+## Embedded-unit and non-point guard
+
+For a direct-source percentage such as `5.6% positive patch-test reactions`,
+the complete unit is `% positive patch-test reactions`. Copy the exact suffix;
+bare `%` is incomplete whenever the visible text names the population, response,
+frequency, prevalence, positivity, or score. Do not paraphrase or shorten that
+suffix. For a source with nonempty `unit_text`, copy it verbatim.
+
+An explicit `<`, `>`, `up to`, `at least`, range, `vs`, or fold comparison is
+not an absolute point. Return `unsure` for a bound or range and `relative` for a
+coefficient defined against a referent. Never rescue one component from a
+multi-value or comparison string.
+
+## Final Skin source-role check
+
+Return `unavailable` when the selected number is an exposure concentration
+such as ppm and support reports only a qualitative reaction outcome; when it
+is a GHS or other category code; or when support identifies the number as a
+predicted, interpolated, or regression-derived potency such as SD50 rather
+than the named observed endpoint. Also return `unavailable` when the endpoint
+names stimulation index but support identifies the selected percentage as an
+EC3 concentration.
+
+A pEC50 coefficient paired with `log M` rather than an explicit self-contained
+pEC50 unit is `unsure`. Normalize a printed power scale by omitting the
+multiplication sign: source unit `×10^-3 inches` becomes `10^-3 inches`.

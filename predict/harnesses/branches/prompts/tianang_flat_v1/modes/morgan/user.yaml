@@ -1,0 +1,3 @@
+guidance: >-
+  Neighbors are ranked by Morgan fingerprint similarity to the query;
+  the similarity score estimates relevance of the evidence to the query, based on structural information.

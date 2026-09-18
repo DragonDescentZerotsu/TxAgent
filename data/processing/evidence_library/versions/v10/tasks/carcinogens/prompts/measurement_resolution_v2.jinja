@@ -1,0 +1,12 @@
+{% include "measurement_resolution_v1.jinja" %}
+
+## Comparison and exact-copy guard
+
+If `measurement_text` presents a treated/control comparison, `vs`, `from ...
+to ...`, percent change or inhibition, fold change, or a value defined relative
+to another experimental group, return `relative` with `[]`. Do not extract one
+absolute-looking component from that comparative string.
+
+For `ok`, copy nonempty `unit_text` exactly, including every parenthetical and
+qualifier. Never shorten it. Commas matching groups of three digits are
+thousands separators, not decimal marks: `1,825` becomes `1825`, never `1.825`.

@@ -1,7 +1,33 @@
+import pytest
+from rdkit import Chem
+from predict.retrieval import policies
+
 from tools.chembl_tool.common.molecule_identity import (
     bemis_murcko_scaffold,
     normalize_molecule_identity,
 )
+
+
+@pytest.mark.parametrize("smiles", ["F[P-](F)(F)(F)(F)F", "F[P-](F)(F)(F)(F)F.[K+]", "F[As-](F)(F)(F)(F)F"])
+def test_valid_permanent_ions_keep_charged_parent(smiles):
+    identity = normalize_molecule_identity(smiles)
+    assert identity.status == "ok" and identity.parent_inchi_key
+    parent = Chem.MolFromSmiles(identity.parent_smiles)
+    assert parent is not None and Chem.GetFormalCharge(parent) == -1
+    assert parent.GetNumAtoms() == 7
+    assert Chem.MolToSmiles(Chem.MolFromSmiles(identity.parent_smiles)) == identity.parent_smiles
+
+
+def test_failed_parent_construction_is_not_marked_ok(monkeypatch):
+    monkeypatch.setattr(policies, "_standardize_parent", lambda mol, **kwargs: None)
+    identity = policies._normalize_molecule_identity("CCO")
+    assert identity.status == "unresolved_parent" and not identity.parent_smiles
+
+
+def test_parent_fallback_does_not_add_shared_counterion_identity():
+    salt = normalize_molecule_identity("C[N+](C)(C)C.F[P-](F)(F)(F)(F)F")
+    ion = normalize_molecule_identity("F[P-](F)(F)(F)(F)F")
+    assert ion.parent_inchi_key not in salt.component_parent_inchi_keys
 from tools.chembl_tool.common.retrieval_policy import (
     MoleculeRelation,
     classify_molecule_relation,

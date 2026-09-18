@@ -1,0 +1,19 @@
+{
+  "query_smiles": "CCN",
+  "record": {
+    "canonical_smiles": "CCO",
+    "record_id": "fixture-record",
+    "source_fields": {
+      "assay_system": "Caco-2 monolayer",
+      "confidence": 0.99,
+      "endpoint_name": "caco2_mdck_pampa_permeability",
+      "extra_details": "measured for 60 minutes",
+      "measurement_text": "12.3",
+      "pmid": "12345678",
+      "smiles": "CCO",
+      "support_text": "The reported permeability was 12.3 cm/s.",
+      "unit_text": "cm/s"
+    }
+  },
+  "expected_prompt": "You are comparing two experiments selected from similar assays.\nThe experimental details may differ.\n\nExperiment A (known measurement)\n<SMILES>CCO</SMILES>\n- Assay system: Caco-2 monolayer\n- Endpoint: caco2_mdck_pampa_permeability\n- Extra details: measured for 60 minutes\n- Known source measurement: 12.3\n- Supporting evidence: The reported permeability was 12.3 cm/s.\n- Source unit: cm/s\n\nExperiment B (query measurement hidden)\n<SMILES>CCN</SMILES>\n- Assay system: Caco-2 monolayer\n- Endpoint: caco2_mdck_pampa_permeability\n- Source unit: cm/s\n\nWould Molecule B's measured value be similar to Molecule A's known measured value even after accounting for molecular and experimental differences?\n(A) Yes\n(B) No\nAnswer:"
+}

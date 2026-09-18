@@ -1,0 +1,20 @@
+{
+  "version": "semantic_buckets.relocation.v1",
+  "status": "complete",
+  "date": "2026-09-16",
+  "moves": [
+    {"from": "data/processing/evidence_library/semantic_buckets", "to": "semantic_buckets"},
+    {"from": "data/evidence_libraries/bbb_martins/v10/semantic_buckets", "to": "semantic_buckets/releases/bbb_martins/v10"},
+    {"from": "data/evidence_libraries/bioavailability_ma/v10/semantic_buckets", "to": "semantic_buckets/releases/bioavailability_ma/v10"},
+    {"from": "data/legacy/artifacts/evidence_libraries/v10_before_gold_v2_20260916/<task>/v10/semantic_buckets", "to": "semantic_buckets/history/pre_gold_v2/<task>/v10/semantic_buckets"},
+    {"from": "/local/txagent_gold_v1_semantic_audit_20260916", "to": "semantic_buckets/provenance/incremental_review_20260916"}
+  ],
+  "selected_ranking_sha256": {
+    "bbb_martins": "c0c1f41cf806324341091363652644cd3c7b3fee508dd035455e385ab3aca2a2",
+    "bioavailability_ma": "7acd54ca968dc4f9f982e6b76ca1955d86a6665b86853b18087916988b3ec415"
+  },
+  "selected_record_ranking_sha256": {
+    "bbb_martins": "f61b7b693191f352faf4778579d7578447c91f66c67f6086a7f3341788c1650e",
+    "bioavailability_ma": "049f3be948165361b17d53bd4c06b3d4c3f66b7e34ed6156a5e21207de3d9856"
+  }
+}

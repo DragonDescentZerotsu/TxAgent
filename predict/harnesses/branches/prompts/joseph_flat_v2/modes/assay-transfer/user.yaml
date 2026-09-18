@@ -1,0 +1,4 @@
+guidance: >-
+  Assay-transfer ranking estimates how well selected assay evidence transfers to
+  the query. L1 transfer_likelihood is molecule-scoped; later transfer_likelihood
+  values are card-scoped. L5 is Morgan-ranked and reports morgan_similarity at molecule scope.

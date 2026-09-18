@@ -58,7 +58,7 @@ skip、跨 prefix single reuse、evidence-equivalent carry-forward 和 stage che
 
 该 valid-only sensitivity 不替代默认 top-3/0.3 设置。维护入口为
 `run_minimol_valid_matrix_gpt_oss_120b.py`，共享 runtime 和 artifact root 见
-`baselines/minimol/README.md`。
+`predict/baselines/minimol/README.md`。
 
 ## OpenRouter DeepSeek-V4-Flash 对照（2026-08-14，scaffold-valid）
 
@@ -1946,11 +1946,10 @@ generic final-only group filtering:
 `--reference-splits train valid`；matrix 会核验 base-index metadata 确实只排除了 test。Valid evaluation、
 valid-only/重复 split 或声明与实际 index 不一致都会在模型调用前拒绝。
 
-MiniMol 代码入口总索引为 `baselines/minimol/README.md`。另有
-`baselines/minimol/run_starling_table2.py` 用于外部 Starling 论文 released CSV 的 Table 2 复现，结果见
-`baselines/minimol/STARLING_TABLE2_REPRODUCTION.md`；其中包含作者补充的 `n_extractions` weighted-BCE
-matched 结果。该 release 的任务定义和 split 与当前 gold 不同，因此不纳入本结果总账、上方 canonical
-snapshot 或统一绘图入口。
+MiniMol 代码入口总索引为 `predict/baselines/minimol/README.md`。
+`baselines/minimol/run_starling_table2.py` 用于外部 Starling 论文 released CSV 的 Table 2 复现，
+immutable source contract 保留在 `data/legacy/artifacts/starling_table2_v3/`。该 release 的任务定义和 split
+与当前 gold 不同，因此不纳入本结果总账、上方 canonical snapshot 或统一绘图入口。
 
 ### 2026-08-02 至 2026-08-04 入口与 artifact contract 更新
 

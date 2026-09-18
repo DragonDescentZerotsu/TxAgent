@@ -1,0 +1,11 @@
+{
+  "version": "carcinogens_source_snapshot.v1",
+  "sources": {
+    "carcinogens_base": {"directory": "carcinogens_base", "rows": 354386, "parquet_sha256": "a27a9a1b1a91b04443313099639646c4aa4a9c21ee1cc6817c8cd298971e0ac9", "guidance_sha256": "a82bd065142a955e9c31a30c2ff9e8b9617f5b1fcb9776452fcdd2e9cdbe78a5"},
+    "carcinogens_v1": {"directory": "carcinogens_v1", "rows": 911078, "parquet_sha256": "0f9541956d6ffb98e27cf7c30a52a8157b87247cca4dfbb212b00d430664ddcd", "guidance_sha256": "f16d96055dd7b9c835c27579ad3b96b8a5c1f8216fd800b15f7bcabc9d16cb52"},
+    "carcinogens_v2": {"directory": "carcinogens_v2", "rows": 677230, "parquet_sha256": "926b8cdbb4ace8367259a12db87239d5596ad4209e4ea9926601ff6c9382c7f7", "guidance_sha256": "9fd01eff70cef46d8adac5532c03035bce5c04297350238c1d77ae04f503b9ef"},
+    "carcinogens_v3": {"directory": "carcinogens_v3", "rows": 791726, "parquet_sha256": "524aebc8d28e116bf15ff2b27ad12257a3ec8706f4bdf75db969385e7c00c40c", "guidance_sha256": "769a473e795f5cab5e3d1002d479240d8e8d6767c0a40028a3c3c89ee31c8a03"},
+    "carcinogens_v4": {"directory": "carcinogens_v4", "rows": 211843, "parquet_sha256": "071f36d99f4042697b6f821bc336e09c71e3dae231d619a7c1a8d96cd8c29b80", "guidance_sha256": "051e2e2f8d36091538d5a3efc28a6231f29ffb7b8e2db7e4ad5a5f30a230ddd9"},
+    "carcinogens_v5": {"directory": "carcinogens_v5", "rows": 323824, "parquet_sha256": "157f8efe01a537eb586d1247c04941e779905bb7af31e5a28d1d96a191d61026", "guidance_sha256": "906eb148ababbbca5d6127d8c7881c03b43e129732ae21a0160018726eb66459"}
+  }
+}

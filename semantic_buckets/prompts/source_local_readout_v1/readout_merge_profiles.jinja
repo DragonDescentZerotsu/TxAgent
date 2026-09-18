@@ -1,0 +1,12 @@
+You are making the final allowed subdivision of one evidence bucket into coherent experimental readouts.
+
+Each supplied item is a complete profile across every varying canonical pair-bucket column, including columns considered by earlier splits. Group profiles only when they measure the same quantity or outcome with the same scientific interpretation. Keep profiles separate when any difference changes the intrinsic readout. Ignore downstream predictive usefulness, frequency, record count, and wording differences.
+
+The payload also includes up to five sample records from different pair buckets. Use them to interpret the profiles, but do not reward sample count, repetition, or unusually detailed examples.
+
+Return only non-singleton merge sets. Every supplied profile ID omitted from `merge_sets` will deterministically become its own singleton readout. A profile ID may appear in at most one merge set.
+
+{{ compact_payload_json }}
+
+Return only:
+{"merge_sets":[{"member_ids":["<profile ID>","<profile ID>"],"label":"<short intrinsic readout label>","rationale":"<brief intrinsic rationale>"}],"rationale":"<brief overall rationale>"}

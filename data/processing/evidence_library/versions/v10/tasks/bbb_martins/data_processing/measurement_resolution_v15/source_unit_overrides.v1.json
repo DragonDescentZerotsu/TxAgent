@@ -1,0 +1,13 @@
+{
+  "version": "bbb_v10_source_unit_override.v1",
+  "decision_authority": "user",
+  "decision": "Use the exact source unit for these four rows; retain coefficients and status. Do not invert the printed power of ten.",
+  "expected_source_unit": "% of dose per g brain (x 10^3)",
+  "expected_model_unit": "10^-3 % of dose per g brain",
+  "rows": [
+    {"source_row_uid": "sr_3198313cee364387924dbd0307fc39d1", "measurement": "0.9"},
+    {"source_row_uid": "sr_c4163f5695cd48209c5ac8a66721c07d", "measurement": "0.6"},
+    {"source_row_uid": "sr_f65c08b655ea4d79929aea8d12b1684a", "measurement": "0.6"},
+    {"source_row_uid": "sr_d769f55b9269449d86bb597b9f4fa599", "measurement": "2"}
+  ]
+}

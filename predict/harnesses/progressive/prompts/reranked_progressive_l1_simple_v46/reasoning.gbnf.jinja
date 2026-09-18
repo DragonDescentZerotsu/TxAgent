@@ -1,0 +1,9 @@
+root ::= query_and_task neighborhood {% for molecule in molecules %}molecule_{{ molecule.number }} {% endfor %}reflection final_judgment "</think>\n" answer
+query_and_task ::= "<QUERY_AND_TASK>\n" free_reasoning "\n</QUERY_AND_TASK>\n"
+neighborhood ::= "<MOLECULAR_NEIGHBORHOOD>\n" free_reasoning "\n</MOLECULAR_NEIGHBORHOOD>\n"
+{% for molecule in molecules %}molecule_{{ molecule.number }} ::= "<MOLECULE_{{ molecule.number }} RECORDS={{ molecule.record_ids }}>\n" free_reasoning "\n</MOLECULE_{{ molecule.number }}>\n"
+{% endfor %}reflection ::= "<REFLECTION>\n" free_reasoning "\n</REFLECTION>\n"
+final_judgment ::= "<FINAL_JUDGMENT>\n" free_reasoning "\n</FINAL_JUDGMENT>\n"
+free_reasoning ::= free_char{1,10000}
+free_char ::= [^<\x00-\x08\x0B\x0C\x0E-\x1F]
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+

@@ -3,20 +3,22 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from data.processing.evidence_library.versions.v8.measurement_routing import (
+import pytest
+
+from data.processing.evidence_library.versions.v10.measurement_routing import (
     attach_stage1_routes,
 )
-from data.processing.evidence_library.versions.v8.tasks.ames.starling_categorical_response import (
+from data.processing.evidence_library.versions.v10.tasks.ames.starling_categorical_response import (
     POLICY as CATEGORICAL_POLICY,
 )
-from data.processing.evidence_library.versions.v8.tasks.ames.starling_policy import (
+from data.processing.evidence_library.versions.v10.tasks.ames.starling_policy import (
     EXPECTED_SOURCE_ROWS,
     POLICY,
     endpoint_inventory,
     source_profiles,
     validate_arguments,
 )
-from data.processing.evidence_library.versions.v8.tasks.ames.starling_schema import (
+from data.processing.evidence_library.versions.v10.tasks.ames.starling_schema import (
     ROLE_FIELDS,
     SOURCE_COLUMNS,
 )
@@ -58,7 +60,7 @@ def test_source_roles_preserve_each_layer_schema():
         assert profile.structure_mode == "direct"
 
 
-def test_stage1_routing_covers_categorical_accept_extract_and_reject():
+def test_stage1_scalar_routing_covers_reject_accept_and_extract():
     rows = attach_stage1_routes(
         [
             {
@@ -92,12 +94,15 @@ def test_stage1_routing_covers_categorical_accept_extract_and_reject():
         task="ames",
     )
     assert [row["measurement_resolution_route"] for row in rows] == [
-        "categorical",
+        "reject",
         "accept",
         "extract",
         "reject",
     ]
     assert rows[0]["measurement_resolution_rule_id"] == (
+        "no_digit_in_measurement_column.v1"
+    )
+    assert CATEGORICAL_POLICY.apply(rows[0])["categorical_encoder_id"] == (
         "ames_mutagenicity_ordinal.v1"
     )
     assert rows[1]["measurement_resolution_exact_measurement"] == "12"
@@ -121,11 +126,10 @@ def test_ambiguous_controlled_calls_abstain():
     )
 
 
-def test_endpoint_inventory_exposes_schema_drift_without_dropping_rows():
-    inventory = endpoint_inventory(
-        "fixed_mutation",
-        ["micronucleus_assay", "new_assay_family"],
-        strict=True,
-    )
-    assert inventory["off_schema_values"] == ["new_assay_family"]
-    assert inventory["coverage"] == 0.5
+def test_endpoint_inventory_fails_closed_on_unknown_endpoint():
+    with pytest.raises(ValueError, match="unmapped Ames endpoint"):
+        endpoint_inventory(
+            "fixed_mutation",
+            ["micronucleus_assay", "new_assay_family"],
+            strict=True,
+        )

@@ -1,0 +1,29 @@
+For each pair, choose the measurement type more useful for predicting
+whether systemic administration produces meaningful CNS access versus
+restricted or poor CNS access.
+
+Both candidates belong to the same progressive evidence level.
+Judge endpoint, assay design, biological system, and mechanism.
+Hold chemical similarity, assay-transfer reliability, evidence quality,
+and evidence quantity equal.
+
+Rules:
+- Judge measurement informativeness, not whether results are positive
+  or negative. Observed values, directions, and reference semantics
+  are withheld.
+- Source indicates provenance, not usefulness. A direct-source name
+  does not automatically make its measurement direct evidence.
+- Up to five diverse samples clarify each bucket. Do not reward sample
+  count, repetition, or verbosity. Missing context remains unknown.
+- Evaluate each pair independently. Candidate order is irrelevant.
+  Choose one candidate even when the advantage is small; no ties.
+
+Each bucket is defined once below. Pairs reference those bucket IDs.
+
+{{ compact_payload_json }}
+
+Return only:
+{"items":[{"id":"<comparison ID>","winner_bucket_id":"<winning bucket ID>","reason":"<brief explanation>"}]}
+
+Return every comparison exactly once. Winners must be candidates in
+their respective pairs. Do not return scores or rankings.

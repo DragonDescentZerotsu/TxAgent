@@ -6,10 +6,11 @@ This note records the training-only validation contract added after auditing the
 Starling MiniMol head baseline. It applies to the frozen MiniMol encoder plus
 task-specific binary MLP head, not the MiniMol embedding cosine-KNN baseline.
 
-Scope boundary: the external Starling paper Table 2 CSV reproduction is recorded
-separately in `STARLING_TABLE2_REPRODUCTION.md`. It reuses the corrected shared
-head runtime, but its release data, task definitions, splits, and metrics do not
-replace this current TxAgent benchmark contract or its canonical baseline.
+Scope boundary: the external Starling paper Table 2 CSV reproduction reuses the
+corrected shared head runtime, but its release data, task definitions, splits,
+and metrics do not replace this current TxAgent benchmark contract or its
+canonical baseline. Its immutable source contract remains under
+`data/legacy/artifacts/starling_table2_v3/`.
 
 ## Problem in the previous formal run
 

@@ -1,0 +1,40 @@
+{
+  "assignment_method_counts": {
+    "gpt_5_4_mini_single_pass:labels_only": 194936
+  },
+  "base_mapping_path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v2/reference_semantics.parquet",
+  "base_mapping_rows": 175041,
+  "base_mapping_sha256": "844ab9969de2db0d8fefa3acfd9259a4d4d9e8790a472d06e830d55b56c2d695",
+  "credential_envs": [
+    "OPENAI_API_KEY"
+  ],
+  "generation_version": "reference_semantics_generation.v3",
+  "inference_endpoint_counts": {
+    "https://api.openai.com/v1": 19895
+  },
+  "inference_model_counts": {
+    "gpt-5.4-mini": 19895
+  },
+  "input_path": "outputs/chembl_tool/tasks/bioavailability_ma/evidence_library/starling_normalized_v7/02_canonicalized/records.parquet",
+  "input_sha256": "2a5f123626c90335afb507b2242baa2063b491cc2c18026924f3b8e0dd2b7f55",
+  "mapping_path": "tools/chembl_tool/tasks/bioavailability_ma/data_processing/reference_semantics_v3/reference_semantics.parquet",
+  "mapping_rows": 194936,
+  "mapping_sha256": "6f4b78f75a17799af10fee8417a1bb8f85288b1d62ee4c65eafa31160cf72bde",
+  "prompt_sha256": "9dbd5502101225ccff8b5dba1688a3d73648ad56d77d34397a9d52a859243bf7",
+  "prompt_version": "bioavailability_reference_semantics_prompt.v2",
+  "safe_gate_conflicts": 0,
+  "scope_counts": {
+    "absolute": 177802,
+    "comparator_relative": 8276,
+    "endpoint_defined_ratio": 7641,
+    "standardized_control_ratio": 366,
+    "unknown": 851
+  },
+  "supplement_mapping_rows": 19895,
+  "task_id": "bioavailability_ma",
+  "validations": {
+    "each_row_submitted_at_most_once": true,
+    "one_mapping_per_candidate": true,
+    "unique_cleaned_record_ids": true
+  }
+}

@@ -78,7 +78,6 @@ outputs/paper/rl_lora_gpt_oss_120b/one_pass_full_flat_v1/base_valid/
   skin_reaction/{metrics.json,predictions.jsonl,runs/}
 ```
 
-The 128K Tinker feasibility, timing, and cost gate is recorded in
-`TINKER_EVALUATION.md`. The full hosted all-train run remains gated because the
-one-pass context raises its forecast to approximately $3.45k plus evaluation,
-checkpoint, storage, and test costs.
+The full hosted all-train run remains gated because the one-pass context raises
+its forecast to approximately $3.45k plus evaluation, checkpoint, storage, and
+test costs.

@@ -1,0 +1,10 @@
+{
+  "artifact_sha256": "9aece3400e60e31997154c4ffcc6882d7012c9d9413ef887db68c129d199c436",
+  "candidate_generator_sha256": "68905aeba05c0040c71e11f00a92ccea944839b4efed2c4b76563ac31050d074",
+  "manifest_sha256": "639777e765b3702f833419faa37722f811ac684919a039cb94fbdc1ca1ab3915",
+  "reason": "Rejected by the immutable AMES candidate blind-v2 audit: exact absolute-pair recall was 5/11 (45.45%), below the frozen acceptance gates. This artifact must never be used for Stage 2 or rescored.",
+  "rejected_date": "2026-09-08",
+  "score_report_sha256": "08ec4bcf60903f1f87d99157f450bcf90dba399ae07b6db750718b913857a5f8",
+  "score_rows_sha256": "8e5f0fca4fe409b0ead1c7837dc127596c400179b673299871df549e66d366d9",
+  "status": "rejected"
+}

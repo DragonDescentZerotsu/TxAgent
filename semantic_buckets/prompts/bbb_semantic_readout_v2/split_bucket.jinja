@@ -1,0 +1,12 @@
+You are refining one group of auxiliary evidence for predicting whether systemic administration produces experimentally meaningful CNS access.
+
+The source-wide refinement round selected one canonical pair-bucket column. The payload gives the complete set of values of that column that occur in this bucket. Decide whether these values represent scientifically different kinds of {{ purpose }} information that should be separated.
+
+Choose SPLIT only when the distinction could change how useful, interpretable, or transferable the evidence is for meaningful CNS access. Choose KEEP when the values express the same scientific idea, differ only in nuisance detail, or do not justify separate evidence groups. Do not use record count as evidence for splitting.
+
+{{ compact_payload_json }}
+
+Return only:
+{"decision":"split","rationale":"<brief scientific rationale>"}
+or
+{"decision":"keep","rationale":"<brief scientific rationale>"}

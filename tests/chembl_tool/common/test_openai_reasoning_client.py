@@ -91,6 +91,18 @@ def test_chat_json_accepts_vllm_reasoning_field():
     assert result["messages"][-1]["reasoning"] == "provider reasoning"
 
 
+def test_chat_json_uses_per_call_token_ceiling():
+    client = _client()
+    observed = []
+    client._create_completion = lambda *args, **kwargs: (
+        observed.append(kwargs["max_tokens"]) or _response("{}")
+    )
+
+    client.chat_json([{"role": "user", "content": "analyze"}], max_tokens=65_536)
+
+    assert observed == [65_536]
+
+
 def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinking():
     client = _client()
     client.temperature = 0.0

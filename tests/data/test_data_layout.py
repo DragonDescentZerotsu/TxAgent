@@ -32,7 +32,6 @@ def test_data_root_contains_only_canonical_categories() -> None:
         if not path.name.startswith(".") and path.name != "__pycache__"
     }
     assert names == {
-        "README.md",
         "__init__.py",
         "artifacts",
         "evidence_libraries",

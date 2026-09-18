@@ -1,0 +1,47 @@
+{% set prompt %}
+{{ system_role }}
+
+Task:
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it! Your essential goal is to predict the molecular property through deep analogous reasoning rooted in biological and chemical knowledge.
+
+Screen every visible molecule in order before integrating the evidence. For each molecule:
+- Judge whether its structural motifs and mechanism make its records transferable to the query.
+- Judge whether the experimental context measures the requested endpoint under a relevant condition.
+{% if prompt_settings.get('retrieval_scores') is true %}- Treat the similarity score or transfer likelihood as an uncalibrated relative ranking signal, never as an absolute probability or a substitute for chemical and experimental reasoning.{% endif %}
+- Treat repeated records from one molecule as one analogue, not as independent votes.
+- Mark weak or irrelevant analogues as such; the requirement to screen a molecule does not give it decision weight.
+
+Use this compact private-reasoning block for each displayed molecule and include all of its displayed C-numbers in the heading:
+MOLECULE <number> | RECORDS <comma-separated C-numbers>
+TRANSFERABILITY: <high, moderate, low, or negligible>
+EVIDENCE DIRECTION: <supports positive, supports negative, mixed, or uninformative>
+RATIONALE: <one compact paragraph explaining the transferable structure, mechanism, measurement, and condition>
+
+After all molecule screens, integrate only the evidence that survives the transferability check:
+GLOBAL SYNTHESIS
+EVIDENCE WEIGHTING: <compare the strongest independent evidence in both directions and explicitly discount weak, redundant, or context-mismatched records>
+THRESHOLD CHECK: <apply the task's exact positive-versus-negative endpoint threshold and reported query condition>
+DECISION RATIONALE: <choose one label from the weighted evidence; use confidence and evidence gaps for residual uncertainty>
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not analyze the SMILES structure beyond what is clear.
+- Do not count the number of displayed records as votes.
+- Do not let a generic physicochemical intuition override more transferable direct experimental evidence.
+- Do not spend reasoning on crafting the card claims. Conclude the molecular property decision first.
+{% if mode == 'assay-transfer' %}- Do not blindly trust the assay-transfer score. Decide what actually transfers from each record to the query and requested endpoint.
+{% endif %}
+
+Output:
+Return one or more concise claims, using as many as needed to represent the experimental evidence that materially informs the decision. Each claim must cite exactly one representative C-number in `card_ids` and set `evidence_role` to `supportive` or `contradictory`. Do not return `supportive_card_ids`, `contradictory_card_ids`, or `prediction_basis_card_ids`; the engine derives them from the claims.
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number.
+{% endset %}
+{{ prompt | trim | tojson }}

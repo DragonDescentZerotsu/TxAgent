@@ -1,4 +1,21 @@
-# 论文实验操作约定
+# Paper Experiment Operations Conventions
+
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
 
 ## Testing discipline
 
@@ -7,66 +24,50 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
-该目录负责维护冻结的、面向论文的分子证据 agent 实验矩阵。orchestration 必须保持通用。任务特定的 endpoint 映射只能放在 `tools/chembl_tool/tasks/<task>/experiment_config.py` 中。
+This directory maintains the frozen, paper-oriented molecular evidence agent experiment matrix. Orchestration must remain generic. Task-specific endpoint mappings can only be placed in `tools/chembl_tool/tasks/<task>/experiment_config.py`.
 
-## 文档职责
+## Documentation Responsibilities
 
 ```text
 ICLR_2027_EXECUTION_PLAN.md
-  面向投稿的项目级执行总计划。记录贡献、实验编号、依赖、资源、缺口、验收标准、时间表和投稿 gate。
+  Project-level master execution plan for submission. Records contributions, experiment numbers, dependencies, resources, gaps, acceptance criteria, timeline, and submission gates.
 
 EXPERIMENT_PLAN.md
-  当前冻结实验矩阵的研究问题、运行参数和统计协议。不得用项目管理状态覆盖协议内容。
+  Research questions, run parameters, and statistical protocols for the current frozen experiment matrix. Do not overwrite protocol content with project management status.
 
 VISIBILITY_ANALYSIS.md
-  Identity-blind 与 deployment-visible 的集中结果解释，包括上升、下降、identity audit、metric caveat
-  和尚未完成的因果验证。
+  Centralized interpretation of identity-blind and deployment-visible results, including rises, falls, identity audit, metric caveats, and causal validation not yet completed.
 
 RESULTS.md
-  已实际测得的结果和统计结论。不能写入尚未运行的预期结果。
+  Actually measured results and statistical conclusions. Do not write expected results that have not yet been run.
 
 STARLING_BENCHMARK_RESULTS.md
-  当前 Starling random/scaffold lineage 的集中总账：frozen split/label 决策、formal pipeline、
-  MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、identity-blind 进度、
-  Skin retrieval degradation、Tier 1+2 post-hoc 和所有入口。
-  它与主要记录旧 TDC test/valid matrix 的 RESULTS.md 分开，不能跨 lineage 混表。
+  Central ledger for the current Starling random/scaffold lineage: frozen split/label decisions, formal pipeline, MiniMol head, Morgan KNN, MiniMol embedding cosine KNN, identity-blind progress, Skin retrieval degradation, Tier 1+2 post-hoc, and all entries. It is separate from RESULTS.md, which primarily records the old TDC test/valid matrix, and must not mix tables across lineages.
 
 PIPELINE.md
-  通用 pipeline、数据流、可见性制度和 task mechanism families。
+  Generic pipeline, data flow, visibility discipline, and task mechanism families.
 
 DISTANCE_EXPANSION_DESIGN.md
-  E12 的 D-root/C-family/H1/H2 tree 定义、flat 主曲线、tree-node mechanism supplementary、
-  顺序 branch reuse、独立代码路径、资源控制、artifact contract 和回归 gate。
+  E12's D-root/C-family/H1/H2 tree definitions, flat principal curves, tree-node mechanism supplementary, sequential branch reuse, independent code paths, resource control, artifact contract, and regression gates.
 
 ASSAY_LEVEL_RETRIEVAL.md
-  与 group-level 平行的 Starling context-assay ranking/prefix 实验；集中记录 train-only historical 与
-  historical direct-filtered/parent-disjoint、current direct-filtered/scaffold-disjoint 合同、泄漏审计、
-  调用复用策略、运行入口和结果状态。
+  Starling context-assay ranking/prefix experiments parallel to group-level; centrally records train-only historical and historical direct-filtered/parent-disjoint, current direct-filtered/scaffold-disjoint contracts, leakage audits, call reuse strategies, run entries, and result status.
 
 FINAL_EVIDENCE_SURFACE_EXPERIMENT.md
-  E13 固定 retrieval/single/group 的 final-only surface 诊断、复现命令、metadata census 和 no-go 结论。
-  Card surface 仅为可复现实验插件，不进入默认 prompt 或 formal test。
+  E13 fixed retrieval/single/group final-only surface diagnostics, reproduction commands, metadata census, and no-go conclusions. Card surface is only a reproducible experiment plugin, not part of the default prompt or formal test.
 
 run_train_ratio_prior_experiment.py / train_ratio_prior_analysis.py
-  E14 的 final-only orchestration 与离线 paired/trigger/provenance audit。只运行 BBB/Bio current full-flat valid；
-  frozen source 与 train prior 不匹配时必须失败，未通过 promotion gate 时不得运行 test 或升级默认 prompt。
+  E14's final-only orchestration and offline paired/trigger/provenance audit. Only run BBB/Bio current full-flat valid; must fail if frozen source and train prior do not match; must not run test or upgrade default prompt if promotion gate is not passed.
 
 TRACE_RETENTION.md
-  最终论文 trace 的唯一目录、保留单位、清理边界和 viewer 约束。
+  The only directory for final paper traces, retention units, cleanup boundaries, and viewer constraints.
 ```
 
-新增实验或得到新结果时：先在执行总计划更新对应 E 编号状态，再运行生成器更新机器可读统计和
-`analysis/report.md`，然后根据生成产物把已测结果同步到 `RESULTS.md`，最后更新
-`VISIBILITY_ANALYSIS.md` 等解释文档。当前生成器不会自动改写 `RESULTS.md`；不得只在聊天中保留结论。
+When adding a new experiment or obtaining new results: first update the corresponding E-number status in the master execution plan, then run the generator to update machine-readable statistics and `analysis/report.md`, then sync measured results to `RESULTS.md` based on generated artifacts, and finally update interpretation documents such as `VISIBILITY_ANALYSIS.md`. The current generator does not automatically rewrite `RESULTS.md`; do not keep conclusions only in chat.
 
-## 当前 scaffold benchmark 合同（2026-08-28）
+## Current Scaffold Benchmark Contract (2026-08-28)
 
-所有 current experiments 只读取 `data/gold_labels/<Task>/v1/scaffold/`。BBB/Bioavailability/
-Skin train/valid/test 分别为 3,053/397/393、1,958/262/269、1,997/246/248。
-三个 active task 的 parent identity 和 scaffold pairwise overlap 都是 0。旧 molecule-only、gold-vN、selected-vN 和
-ClinTox source-build paths 只作 migration provenance，不能作为新的 runner default。公共路径必须从
-`common/starling/conditioned_benchmark.py` 导入；完整合同和 hash audit 见
-`common/starling/CONDITIONED_BENCHMARK.md` 与 `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`。
+All current experiments only read `data/gold_labels/<Task>/v1/scaffold/`. BBB/Bioavailability/Skin train/valid/test are 3,053/397/393, 1,958/262/269, 1,997/246/248 respectively. Parent identity and scaffold pairwise overlap for the three active tasks are all 0. Old molecule-only, gold-vN, selected-vN, and ClinTox source-build paths are only for migration provenance and cannot be new runner defaults. Public paths must be imported from `common/starling/conditioned_benchmark.py`; full contract and hash audit are in `common/starling/CONDITIONED_BENCHMARK.md` and `data/artifacts/gold_labels/conditioned_benchmark/migration_receipt.json`.
 
 ```text
 builder:
@@ -99,24 +100,15 @@ current diagnostic audits:
   tools/chembl_tool/paper_experiments/audit_starling_trace_failure_causes.py
 ```
 
-旧 BBB molecule-only builds 和 selected conditioned candidates 只作为当前 cohort 的 migration/source
-provenance；它们不再是 promotion 候选或 runner input。source-family purity、五层结果和唯一重画命令统一记录
-在 `STARLING_BENCHMARK_PROTOCOL.md` 与 `ASSAY_LEVEL_RETRIEVAL.md`。
+Old BBB molecule-only builds and selected conditioned candidates are only migration/source provenance for the current cohort; they are no longer promotion candidates or runner inputs. Source-family purity, five-layer results, and unique redraw commands are uniformly recorded in `STARLING_BENCHMARK_PROTOCOL.md` and `ASSAY_LEVEL_RETRIEVAL.md`.
 
-`build_starling_benchmark_indices.py` 和 `starling_benchmark_matrix.py` 对非默认 lineage 必须显式传
-`--benchmark-data-root`、`--benchmark-lineage` 和 `--canonical-paper-root`；model/visibility 仍用独立
-`--output-root`。历史 artifact 只允许按 molecule key 复用；target retrieval 必须重新物化，single 需要
-完全一致的 model/reasoning/visibility 合同，group 还需相同 LLM-visible group input，final 只在完整
-`retrieval_prompt_hash` 相同且全部 expected groups 已复用时复制。复用审计写入 target root 的
-`reuse_audit/`，不得按 query index 直接搬运。
+`build_starling_benchmark_indices.py` and `starling_benchmark_matrix.py` must explicitly pass `--benchmark-data-root`, `--benchmark-lineage`, and `--canonical-paper-root` for non-default lineages; model/visibility still use independent `--output-root`. Historical artifacts may only be reused by molecule key; target retrieval must be re-materialized, single requires exactly the same model/reasoning/visibility contract, group also requires the same LLM-visible group input, and final is only copied when the full `retrieval_prompt_hash` is identical and all expected groups have been reused. Reuse audits are written to the target root's `reuse_audit/`, and must not be directly moved by query index.
 
-第一版 `record_agreement70_split811_v1` 正式结果保留为 historical comparison。曾生成的 exploratory
-`record_supported_v1` 数据、indices、agent runs 和 baselines 已删除；不得在文档或汇总中恢复引用。
+First-version `record_agreement70_split811_v1` formal results are retained as historical comparison. Previously generated exploratory `record_supported_v1` data, indices, agent runs, and baselines have been deleted; do not restore references in documents or summaries.
 
-## 第一版新数据集默认运行合同（2026-08-01 冻结）
+## First-Version New Dataset Default Run Contract (frozen 2026-08-01)
 
-本节记录第一版相对旧 TDC/strict-conflict lineage 的默认描述。对
-`record_agreement70_split811_v1`，正式默认是：
+This section records the default description of the first version relative to the old TDC/strict-conflict lineage. For `record_agreement70_split811_v1`, the formal default is:
 
 ```text
 base_url: keys.py:LITELLM_BASE_URL
@@ -130,48 +122,20 @@ endpoint_concurrency_budget: 512
 default launcher shape: one global prompt pool with --parallelism 128
 ```
 
-`identity_blind + parent_disjoint` 是新主矩阵，不再是补充控制。它直接从 valid+test-heldout-filtered index
-fresh retrieval，并由 harness 预取脱敏工具证据；operational 不再预跑，`reuse_plan.json` 不再是主矩阵输入。
-既有 deployment-visible、operational、matched-prefetch 和 reuse 结果全部保留为 historical lineage。
+`identity_blind + parent_disjoint` is the new main matrix, no longer a supplementary control. It directly retrieves fresh from the valid+test-heldout-filtered index, and the harness prefetches desensitized tool evidence; operational is no longer pre-run, and `reuse_plan.json` is no longer a main matrix input. Existing deployment-visible, operational, matched-prefetch, and reuse results are all retained as historical lineage.
 
-512 是同一 endpoint 的全局 outstanding-request budget。首次 512 并发 valid 压力运行在 500 个 BBB
-query-only samples 中出现 1 个 transport timeout；随后 384 并发 BBB ChEMBL full-flat 又有 193/500
-失败，其中 190 个是 group request timeout。因此当前默认降为 128，以适配 reasoning-enabled
-长 group prompt 的实际吞吐；512 仅保留为 endpoint ceiling，不再是 agent launcher 默认值。
-默认只允许一个 matrix launcher 占用预算；不得再并行
-启动多个 split/task launcher，也不得通过静态 condition lanes 绕过 global pool。第一轮 valid 运行若出现
-429、连接/超时错误、服务队列持续增长或 structured-output failure rate 上升，
-再下调并发；不得因为并发调整而改变 prompt、reasoning、temperature、max tokens 或 validation policy。
+512 is the global outstanding-request budget for the same endpoint. The first 512-concurrency valid stress run had 1 transport timeout in 500 BBB query-only samples; subsequently, 384-concurrency BBB ChEMBL full-flat had 193/500 failures, of which 190 were group request timeouts. Therefore, the current default is reduced to 128 to match the actual throughput of reasoning-enabled long group prompts; 512 is retained only as the endpoint ceiling, no longer the agent launcher default.
+By default, only one matrix launcher is allowed to occupy the budget; do not launch multiple split/task launchers in parallel, and do not bypass the global pool via static condition lanes. If the first valid run shows 429, connection/timeout errors, continuously growing service queue, or rising structured-output failure rate, reduce concurrency further; do not change prompt, reasoning, temperature, max tokens, or validation policy due to concurrency adjustments.
 
-matrix 唯一调度器是通用全局 prompt pool。它不按 task 或 condition 预留
-并发槽，而是在同一个 `--parallelism` 上限下混合调度所有 ready single/group/final branch；final 只有在该
-sample-condition 的 single 和全部 expected group 均为 `status=ok` 后才进入 ready queue。首次没有可恢复
-stage artifact 的 sample 必须通过 task pipeline 的 `--prepare-only` 只生成 retrieval seed，不得在 seed job
-发出 LLM 请求；parent scheduler 随后写兼容 manifest，并从第一条 single/group prompt 起进入共享 pool。
-跨 condition 的 frozen-single 依赖按 query index 动态解锁，不得保留整批 `none` phase barrier。
-`--max-stage-requeues N` 控制 validation 内置尝试耗尽后的即时 stage 重排队次数。
+The matrix's sole scheduler is the generic global prompt pool. It does not reserve concurrency slots per task or condition, but mixes all ready single/group/final branches under the same `--parallelism` limit; final only enters the ready queue after the single and all expected groups for that sample-condition are `status=ok`. Samples without a recoverable stage artifact must first generate only a retrieval seed via the task pipeline's `--prepare-only`, and must not issue LLM requests in the seed job; the parent scheduler then writes a compatible manifest and enters the shared pool from the first single/group prompt. Cross-condition frozen-single dependencies are dynamically unlocked by query index, and no batch `none` phase barrier is retained. `--max-stage-requeues N` controls the number of immediate stage requeues after built-in validation attempts are exhausted.
 
-该 scheduler 必须保持既有 artifact contract：canonical `retrieval.json`、single/group/final output、
-`trace_messages.jsonl`、batch predictions/metrics/report 的路径和 schema 不变；只允许增加 manifest 中的
-`scheduler`/`stage_pool` provenance 和 `.run.lock`。每个成功 stage 必须原子落盘，重启后
-只从缺失或失败 stage 恢复；任何 prerequisite branch 改写时必须先使旧 final/trace 失效，再动态重建 final。
-final trace 仍调用 task 原有 `_write_trace_jsonl()` 生成。同一 root 同时只能有一个 matrix launcher。
+This scheduler must maintain the existing artifact contract: canonical `retrieval.json`, single/group/final output, `trace_messages.jsonl`, batch predictions/metrics/report paths and schemas unchanged; only allow adding `scheduler`/`stage_pool` provenance and `.run.lock` in the manifest. Each successful stage must be atomically written; after restart, only recover from missing or failed stages; when any prerequisite branch is rewritten, first invalidate the old final/trace, then dynamically rebuild the final. Final traces still call the task's original `_write_trace_jsonl()` generator. Only one matrix launcher can run on the same root at a time.
 
-Harness-prefetched molecular tools 统一通过 `ToolServiceClient.invoke_many()` 将每个 sample 的 query
-properties 和全部 neighbor pair comparisons 作为一个 batch 提交。tool service 的 persistent cache key
-只依赖 tool contract/input/version，与 Morgan、MiniMol、coverage-based 或 future retrieval feature 无关；
-因此替换 retrieval 方法只会产生新的 neighbor pairs，不得增加另一套 task/retriever-specific tool
-materializer。node002 正式服务拓扑和验证入口见 `tools/service/README.md`。
+Harness-prefetched molecular tools uniformly submit each sample's query properties and all neighbor pair comparisons as a single batch via `ToolServiceClient.invoke_many()`. The tool service's persistent cache key depends only on tool contract/input/version, not on Morgan, MiniMol, coverage-based, or future retrieval features; therefore, replacing retrieval methods only produces new neighbor pairs and does not add another task/retriever-specific tool materializer. The node002 formal service topology and validation entry are in `tools/service/README.md`.
 
-runner 已实现该目标合同：Starling v4 CLI 默认先跑 `valid`，使用
-`identity_blind + parent_disjoint`、`parallelism=128` 的单一 global prompt pool，并且 fresh 主矩阵
-不读 operational reuse plan。`valid` 产物写入 lineage 同名 `_valid` root，与正式 test root 隔离。
-超过 512 的 `parallelism` 会在 launcher 启动前拒绝。旧 generic runner 的
-deployment-visible/operational 路径仅保留用于 historical ablation。
+The runner has implemented this target contract: the Starling v4 CLI first runs `valid` by default, uses a single global prompt pool of `identity_blind + parent_disjoint` and `parallelism=128`, and the fresh main matrix does not read operational reuse plans. `valid` artifacts are written to the lineage-named `_valid` root, isolated from the formal test root. `parallelism` exceeding 512 is rejected before launcher startup. The old generic runner's deployment-visible/operational paths are retained only for historical ablation.
 
-非默认模型对照必须给 `starling_benchmark_matrix.py` 传显式 `--output-root`，并在目录名中包含模型标识；
-该参数只隔离 run/manifest 产物，canonical split-specific held-out evidence index 仍从原 Starling lineage root
-读取。不同模型不得复用或覆盖彼此的 `runs_identity_blind_parent_disjoint/`。例如：
+Non-default model comparisons must pass explicit `--output-root` to `starling_benchmark_matrix.py` and include the model identifier in the directory name; this parameter only isolates run/manifest artifacts, while the canonical split-specific held-out evidence index is still read from the original Starling lineage root. Different models must not reuse or overwrite each other's `runs_identity_blind_parent_disjoint/`. For example:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
@@ -181,14 +145,11 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --output-root outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1_valid_gpt_oss_20b
 ```
 
-## Benchmark input lineage 与 Starling 迁移边界
+## Benchmark Input Lineage and Starling Migration Boundary
 
-当前 frozen `test` / `valid` matrix、`RESULTS.md` 和
-`outputs/paper/molecular_evidence_agent{,_valid}/` 均来自迁移前的 TDC task splits。它们是可复现的
-历史结果，不应删除；但不得改称 Starling benchmark。现有 CLI 的 `--split test|valid` 仍是旧数据选择器，
-不能重载为 Starling 的 `random|scaffold`。
+Current frozen `test` / `valid` matrix, `RESULTS.md`, and `outputs/paper/molecular_evidence_agent{,_valid}/` all come from pre-migration TDC task splits. They are reproducible historical results and should not be deleted; but they must not be renamed as Starling benchmarks. The existing CLI's `--split test|valid` is still the old data selector and cannot be overloaded as Starling's `random|scaffold`.
 
-新的 Starling direct gold benchmark 由以下公共入口构建：
+The new Starling direct gold benchmark is built from the following public entries:
 
 ```text
 tools/chembl_tool/paper_experiments/STARLING_BENCHMARK_RESULTS.md
@@ -206,38 +167,18 @@ data/gold_labels/legacy/processed_starling/<Task>/random/{train,valid,test}.json
 data/gold_labels/legacy/processed_starling/<Task>/scaffold/{train,valid,test}.jsonl
 ```
 
-`plot_starling_model_comparison.py` 是当前 Starling model/baseline/ablation 的唯一正式总图。后续完整
-model/visibility summary 用可重复的 `--comparison-metrics` 传入；matched method 实验用可重复的
-`--experiment-metrics` 传入。两类实验都不得新增一次性 overview 图，继续输出到
-`starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.{svg,png}`。
-每个 comparison summary 必须与 reference 使用相同 task/split/subset/sample count 和 baseline。每个
-experiment TSV 的每个 task/split 必须有且仅有一个 `comparison_role=anchor`（兼容历史
-`method=morgan_standard`），可用 `base_method` 指向总图 candidate metrics 中的既有 condition；anchor 的
-`base_model_label` 可进一步指向任一已通过 `--comparison-metrics` 加载的 model/visibility series，未提供时
-仍默认主 candidate。Anchor 的 sample count、evaluation subset 和 macro-F1 必须完全对齐，且不会重复画出。新增方法行可用
-`plot_label` 提供短标签；没有时使用 `method_label`。
+`plot_starling_model_comparison.py` is the only formal master chart for current Starling model/baseline/ablation. Subsequent full model/visibility summaries use reproducible `--comparison-metrics`; matched method experiments use reproducible `--experiment-metrics`. Both types of experiments must not add one-off overview charts and continue outputting to `starling_benchmark_results_scaffold_valid_gpt_oss_20b_vs_120b/figures/starling_model_comparison.{svg,png}`.
+Each comparison summary must use the same task/split/subset/sample count and baseline as the reference. Each experiment TSV must have exactly one `comparison_role=anchor` per task/split (compatible with historical `method=morgan_standard`), and can use `base_method` to point to an existing condition in the master chart's candidate metrics; the anchor's `base_model_label` can further point to any model/visibility series loaded via `--comparison-metrics`, defaulting to the main candidate if not provided. The anchor's sample count, evaluation subset, and macro-F1 must be fully aligned and not duplicated. New method rows can use `plot_label` for short labels; if absent, use `method_label`.
 
-将它接入 paper runner 时必须满足：
+When integrating into the paper runner, the following must be satisfied:
 
-1. matrix manifest 顶层显式记录 `benchmark_source=starling` 和 `random|scaffold`；每个 experiment
-   记录 task、`input_jsonl_sha256` 和 task provenance reference；top-level `benchmark_provenance`
-   保存 protocol、identity normalizer、seed、source revision/metadata、parent agreement policy，以及 task/split
-   summary、valid/test inputs、各自 label audit 和 valid+test union `heldout_molecule_labels.jsonl` 的 SHA-256；
-2. random 与 scaffold 分别使用对应 `heldout_molecule_labels.jsonl` 构建 direct-source-filtered evidence view，
-   不能复用未执行该 exclusion 的旧 index；mechanism records 保留并在 query time 使用 `parent_disjoint`；
-3. 在运行 LLM 前审计 valid+test parent identity union 与 direct gold source 为零重叠、非 direct mechanism
-   overlap 的保留数量和 runtime same-parent exclusion；scaffold split 还需保留 train/valid/test scaffold
-   两两零重叠的 builder audit；
-4. 两种 Starling split 使用不同 output root/batch ID，且都与旧 TDC test/valid root 隔离；
-5. 汇总器和图表必须按 benchmark lineage 分区，不得把 TDC、Starling-random 和
-   Starling-scaffold sample-condition 合并成一个指标。
+1. The matrix manifest top level explicitly records `benchmark_source=starling` and `random|scaffold`; each experiment records task, `input_jsonl_sha256`, and task provenance reference; top-level `benchmark_provenance` stores protocol, identity normalizer, seed, source revision/metadata, parent agreement policy, and SHA-256 of task/split summary, valid/test inputs, respective label audits, and valid+test union `heldout_molecule_labels.jsonl`;
+2. Random and scaffold splits use corresponding `heldout_molecule_labels.jsonl` to build direct-source-filtered evidence views, and must not reuse old indices that did not perform this exclusion; mechanism records are retained and used at query time via `parent_disjoint`;
+3. Before running LLM, audit that the valid+test parent identity union and direct gold source have zero overlap, retain counts of non-direct mechanism overlaps, and runtime same-parent exclusion; scaffold splits also require a builder audit preserving zero pairwise overlap among train/valid/test scaffolds;
+4. The two Starling splits use different output roots/batch IDs and are isolated from the old TDC test/valid root;
+5. Summarizers and charts must partition by benchmark lineage and must not merge TDC, Starling-random, and Starling-scaffold sample-conditions into one metric.
 
-Reference pools have two valid contracts. `train` is the default and excludes
-valid and test parents using `heldout_molecule_labels.jsonl`. `train_valid` is
-only a post-selection test sensitivity and excludes test parents using
-`test_molecule_labels.jsonl`. `--heldout-subsets`, the MiniMol feature builder,
-and `--reference-pool` must agree; the matrix verifies the recorded held-out
-scope before model calls.
+Reference pools have two valid contracts. `train` is the default and excludes valid and test parents using `heldout_molecule_labels.jsonl`. `train_valid` is only a post-selection test sensitivity and excludes test parents using `test_molecule_labels.jsonl`. `--heldout-subsets`, the MiniMol feature builder, and `--reference-pool` must agree; the matrix verifies the recorded held-out scope before model calls.
 
 For v7 evidence, `--heldout-filter-mode direct_source_only` removes evaluation
 parents only from the task-declared direct gold source and retains mechanism
@@ -255,21 +196,20 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_spli
 
 ### MiniMol feature agent retrieval
 
-MiniMol agent retrieval 是与 Morgan/Tanimoto formal pipeline 配对的 feature ablation：evidence source、
-paper-facing group mapping、`top_k=3`、数值 `min_similarity=0.3`、GLM/prompt/tool 设置和
-`identity_blind + parent_disjoint` fresh-run 合同全部不变，只把 candidate ranking 改为 MiniMol v1 embedding
-L2-normalized cosine。Cosine 不能使用 Morgan 的结构相似性 bucket 文案，也不能使用
-`query_feature_coverage` 这个 Morgan-bit selector。
+MiniMol agent retrieval is a feature ablation paired with the Morgan/Tanimoto formal pipeline: evidence source,
+paper-facing group mapping, `top_k=3`, numeric `min_similarity=0.3`, GLM/prompt/tool settings, and
+`identity_blind + parent_disjoint` fresh-run contract all remain unchanged, only candidate ranking is switched to MiniMol v1 embedding
+L2-normalized cosine. Cosine cannot use Morgan's structural similarity bucket wording, nor can it use
+`query_feature_coverage`, the Morgan-bit selector.
 
-MiniMol 模型不能在每个 reasoning worker 内即时加载。先对 random/scaffold 的 13 个实际 base index 和
-六套 test query 构建共享 registry、按 index 顺序物化 candidate store，再生成轻量 descriptor。Builder
-必须记录 checkpoint/config SHA-256，并通过 candidate row order、query coverage、formal MiniMol
-`test.pt` cosine parity 和 Starling test-parent exclusion gate：
+The MiniMol model cannot be loaded on the fly within each reasoning worker. First build a shared registry for the 13 actual base indexes of random/scaffold and six test query sets, materialize the candidate store in index order, then generate lightweight descriptors. The builder
+must record checkpoint/config SHA-256 and pass the candidate row order, query coverage, formal MiniMol
+`test.pt` cosine parity, and Starling test-parent exclusion gate:
 
-若 legacy evidence candidate 的 whole-record SMILES 可用于旧 index/fingerprint、但 Graphium 无法图化，
-builder 只能对该 candidate 使用 `minimol_parseable_parent_or_fragment.v1` fallback，并逐条保存
-registry row、原始 SMILES、实际 embedded SMILES 和原因；不得静默丢 row或填充伪向量。Gold test query
-不允许 fallback，仍必须与 formal MiniMol cache 逐条通过 cosine parity。
+If a legacy evidence candidate's whole-record SMILES can be used for the old index/fingerprint but Graphium cannot graph it,
+the builder may only use the `minimol_parseable_parent_or_fragment.v1` fallback for that candidate, and must save each
+registry row, original SMILES, actual embedded SMILES, and reason; it must not silently drop rows or fill in fake vectors. Gold test queries
+are not allowed to fall back and must still pass cosine parity with the formal MiniMol cache item by item.
 
 ```bash
 env CUDA_VISIBLE_DEVICES=0 /data1/joseph/miniconda3/condabin/conda run -n txagent-glm python \
@@ -277,7 +217,7 @@ env CUDA_VISIBLE_DEVICES=0 /data1/joseph/miniconda3/condabin/conda run -n txagen
   --splits random scaffold
 ```
 
-产物与 Morgan index、Morgan agent runs 隔离：
+Artifacts are isolated from the Morgan index and Morgan agent runs:
 
 ```text
 outputs/paper/minimol_retrieval_features_v7_record_agreement70_split811_v1/
@@ -286,9 +226,8 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_minimol_retrieval/
 outputs/paper/minimol_retrieval_agent_results/
 ```
 
-新 v4 每个 split 直接跑完整 `identity_blind + parent_disjoint` 条件。Query-only `none` 同轮 fresh-run，
-其 identity policy 在 manifest 中标为不适用；retrieval conditions 不从 Morgan 或 operational artifacts
-复用 group/final output：
+The new v4 runs the full `identity_blind + parent_disjoint` condition directly for each split. Query-only `none` is a same-round fresh run,
+and its identity policy is marked as not applicable in the manifest; retrieval conditions do not reuse group/final output from Morgan or operational artifacts:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
@@ -303,26 +242,26 @@ python -m tools.chembl_tool.paper_experiments.summarize_minimol_retrieval_agent
 python -m tools.chembl_tool.paper_experiments.plot_minimol_retrieval_agent \
   --png-output outputs/paper/minimol_retrieval_agent_results/figures/minimol_vs_morgan_agent_retrieval_highres.png
 
-# matched parent-disjoint MiniMol agent 与 Morgan agent / supervised baselines 同图比较
+# Compare matched parent-disjoint MiniMol agent with Morgan agent / supervised baselines in the same figure
 python -m tools.chembl_tool.paper_experiments.plot_starling_with_minimol_agent \
   --png-output outputs/paper/minimol_retrieval_agent_results/figures/starling_benchmark_with_minimol_agent_highres.png
 ```
 
-代码迁移完成后，长矩阵仍由单一可恢复入口串联；该入口应直接调用 fresh parent-disjoint matrix、
-summarizer 和 plotter，不再调用 operational matrix 或 parent-disjoint materializer，也不定义第二套实验逻辑：
+After code migration is complete, the long matrix is still chained by a single resumable entry point; that entry point should directly call the fresh parent-disjoint matrix,
+summarizer, and plotter, and must not call the operational matrix or parent-disjoint materializer, nor define a second set of experiment logic:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.run_minimol_retrieval_agent_experiment
 ```
 
-`--limit 1` 只用于首个 end-to-end smoke；正式汇总必须覆盖 random/scaffold 全部 38 个 retrieval
-condition 且 Morgan/MiniMol 均为零 failed sample。该 ablation 使用独立配对汇总，不能把
-MiniMol/cosine agent row 冒充或覆盖 canonical Morgan agent row。
+`--limit 1` is only for the first end-to-end smoke; the formal summary must cover all 38 retrieval conditions across random/scaffold
+and both Morgan/MiniMol must have zero failed samples. This ablation uses an independent paired summary and must not
+pass off or overwrite MiniMol/cosine agent rows as canonical Morgan agent rows.
 
-正式 Starling performance bar chart 从合并后的 `metrics.tsv` 读取 random/scaffold、三个 task、
-parent-disjoint pipeline 条件、lineage-frozen MiniMol head baseline、Morgan fingerprint KNN 和 MiniMol
-embedding cosine KNN。两种 KNN 都只从同 split 的 `train.jsonl` 检索，固定 `k=3`，按未加权多数票预测，
-并用正类邻居比例计算 AUROC。图中主指标为 macro-F1，输出只保留 canonical SVG 和一份高分辨率 PNG：
+The formal Starling performance bar chart reads random/scaffold, three tasks,
+parent-disjoint pipeline conditions, lineage-frozen MiniMol head baseline, Morgan fingerprint KNN, and MiniMol
+embedding cosine KNN from the merged `metrics.tsv`. Both KNNs retrieve only from the same split's `train.jsonl`, fix `k=3`, predict by unweighted majority vote,
+and compute AUROC using the positive-class neighbor proportion. The main metric in the figure is macro-F1, and the output keeps only the canonical SVG and one high-resolution PNG:
 
 ```bash
 python -m baselines.structure_knn.run \
@@ -342,12 +281,12 @@ python -m tools.chembl_tool.paper_experiments.plot_starling_benchmark_overview \
   --png-output outputs/paper/starling_benchmark_results/figures/starling_benchmark_overview_highres.png
 ```
 
-Coverage-selector KNN 是 retrieval selector 的诊断实验，不替代上述正式、全 test 的 Morgan KNN baseline。
-其 matched strict-threshold 口径固定 `k=3`、`min_similarity=0.3`，分别运行 `similarity` 和
-`query_feature_coverage`；不足 3 个合格 train neighbors 的 query 必须以
-`status=insufficient_neighbors` 保留在 predictions 中并排除出 supported-cohort metrics，不得用低于阈值的
-neighbors 回填，也不得用 class prior 猜测。结果必须同时报告 `n_evaluated` / `evaluation_coverage`，
-尤其 Bioavailability 和 scaffold split 的 supported cohort 可能只覆盖少数 test samples：
+The coverage-selector KNN is a diagnostic experiment for the retrieval selector and does not replace the above formal, full-test Morgan KNN baseline.
+Its matched strict-threshold setting fixes `k=3` and `min_similarity=0.3`, and runs `similarity` and
+`query_feature_coverage` respectively; queries with fewer than 3 qualified train neighbors must be
+kept in predictions with `status=insufficient_neighbors` and excluded from supported-cohort metrics; they must not be backfilled with below-threshold
+neighbors or guessed with class prior. Results must report both `n_evaluated` / `evaluation_coverage`,
+especially since the supported cohort for Bioavailability and scaffold split may cover only a few test samples:
 
 ```bash
 python -m baselines.structure_knn.run \
@@ -360,10 +299,10 @@ python -m baselines.structure_knn.run \
 
 ### Coverage-selector matched LLM ablation
 
-Coverage-selector LLM ablation 固定 Starling full evidence、`full_mechanism`、deployment-visible、
-`parent_disjoint`、`top_k_per_group=3`、`min_similarity=0.30` 和同一 GLM/prompt，只比较 Morgan similarity
-与 `query_feature_coverage` selector。六个 task/split 条件统一由一套 canonical 汇总和绘图入口处理；早期
-BBB scaffold pilot artifact 仍可作为其中一行输入，但不再维护独立 pilot 汇总器或独立 overview 绘图代码：
+The coverage-selector LLM ablation fixes Starling full evidence, `full_mechanism`, deployment-visible,
+`parent_disjoint`, `top_k_per_group=3`, `min_similarity=0.30`, and the same GLM/prompt, and only compares Morgan similarity
+with the `query_feature_coverage` selector. All six task/split conditions are uniformly handled by one canonical summary and plotting entry; the early
+BBB scaffold pilot artifact can still be used as one row input, but a separate pilot summarizer or separate overview plotting code is no longer maintained:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_coverage_selector_llm_matrix
@@ -372,44 +311,44 @@ python -m tools.chembl_tool.paper_experiments.plot_coverage_selector_llm_matrix 
   --png-output outputs/paper/coverage_selector_llm/analysis/figures/coverage_selector_llm_matrix_highres.png
 ```
 
-`summarize_coverage_selector_llm_matrix.py` 是全样本配对指标、McNemar 和 paired-bootstrap 的唯一入口；
-`analyze_coverage_selector_retrieval_changes.py` 进一步审计 neighbor set/rank/top-1 变化、Morgan feature
-coverage、neighbor redundancy、group reasoning content 和相同 final input 下的模型波动。两者共享同一
-condition/path resolver，新增 split 或迁移 artifact 路径时不得复制 special case。
+`summarize_coverage_selector_llm_matrix.py` is the only entry point for full-sample paired metrics, McNemar, and paired-bootstrap;
+`analyze_coverage_selector_retrieval_changes.py` further audits neighbor set/rank/top-1 changes, Morgan feature
+coverage, neighbor redundancy, group reasoning content, and model fluctuation under the same final input. Both share the same
+condition/path resolver, and no special cases may be duplicated when adding splits or migrating artifact paths.
 
-Coverage-aware reasoning context 是与 selector 正交的 opt-in ablation：
-`--neighbor-context-profile standard|coverage_aware|coverage_mmp_ledger` 只改变 group branch 的附加输入，
-不改变 neighbor set、raw retrieval、task schema 或 final prompt。`coverage_aware` 提供匿名 Morgan feature /
-query atom-environment marginal coverage；visible-only `coverage_mmp_ledger` 复用常驻
-`mmp_structure_compare` 的逐 neighbor MCS/MMP 文本，并用 Morgan marginal feature 统计组织集合级 ledger。
-后者禁止用于 `identity_blind`，不得把 Morgan feature coverage 描述成 atom coverage；没有 matched-pair
-transformation 时具体 fragment 对应必须保持 unresolved。
-非默认 selector/profile 必须写入显式独立 `--output-root`；group artifact reuse 还必须 profile 一致。
-2026-08-03 GPT-OSS-120B scaffold-valid、blind+parent-disjoint matched run 的三 task point estimates 为
-BBB `+0.0143` macro-F1、Bioavailability `+0.0022`、Skin `-0.0285`，三项 interval 均跨零，结论为
-mixed / no-go for promotion，不进入 test。相对原始 Morgan-standard，coverage-aware 在 BBB 上为
-`+0.0356` macro-F1 且 interval 不跨零，但 Bioavailability/Skin 不一致，所以只能视为 task-specific signal。
-完整合同审计位于下面的 analysis root；正式图只追加到前述
-`starling_model_comparison.{svg,png}` 总图，不在该 analysis root 保留单实验 figure：
+Coverage-aware reasoning context is an opt-in ablation orthogonal to the selector:
+`--neighbor-context-profile standard|coverage_aware|coverage_mmp_ledger` only changes the additional input to the group branch,
+and does not change the neighbor set, raw retrieval, task schema, or final prompt. `coverage_aware` provides anonymous Morgan feature /
+query atom-environment marginal coverage; visible-only `coverage_mmp_ledger` reuses the resident
+`mmp_structure_compare` per-neighbor MCS/MMP text and uses Morgan marginal feature statistics to organize a set-level ledger.
+The latter is prohibited for `identity_blind`; Morgan feature coverage must not be described as atom coverage; without a matched-pair
+transformation, specific fragment correspondence must remain unresolved.
+Non-default selectors/profiles must be written to an explicit independent `--output-root`; group artifact reuse must also be profile-consistent.
+The 2026-08-03 GPT-OSS-120B scaffold-valid, blind+parent-disjoint matched run's three-task point estimates are
+BBB `+0.0143` macro-F1, Bioavailability `+0.0022`, Skin `-0.0285`, and all three intervals cross zero, so the conclusion is
+mixed / no-go for promotion and does not enter test. Relative to the original Morgan-standard, coverage-aware on BBB is
+`+0.0356` macro-F1 with an interval that does not cross zero, but Bioavailability/Skin are inconsistent, so it can only be treated as a task-specific signal.
+The full contract audit is located in the analysis root below; formal figures are only appended to the aforementioned
+`starling_model_comparison.{svg,png}` master figure, and no single-experiment figures are kept in that analysis root:
 
 ```text
 outputs/paper/coverage_reasoning_context_gpt_oss_120b_scaffold_valid/analysis/
 ```
 
-新 v4 正式运行顺序是 valid `identity_blind + parent_disjoint` fresh-run、valid audit、设置冻结、test
-fresh-run、test audit 和汇总。`parent_disjoint_ablation.py` 仅用于旧 operational lineage 或显式 opt-in
-sensitivity，不参与默认路径。在完整矩阵、failure/leak/identity/held-out audit 和汇总完成前，
-`RESULTS.md` 中不存在正式 v4 Starling rerun 结果。
+The new v4 formal run order is valid `identity_blind + parent_disjoint` fresh-run, valid audit, setting freeze, test
+fresh-run, test audit, and summary. `parent_disjoint_ablation.py` is only for the old operational lineage or explicit opt-in
+sensitivity and does not participate in the default path. Until the full matrix, failure/leak/identity/held-out audit, and summary are complete,
+no formal v4 Starling rerun results exist in `RESULTS.md`.
 
-### Starling identity-blind parent-disjoint 主矩阵
+### Starling identity-blind parent-disjoint main matrix
 
-Starling random/scaffold 的新 v4 主矩阵使用同一个 `starling_benchmark_matrix.py`，默认选择
-`identity_blind + parent_disjoint`。该制度隐藏 query/neighbor 的结构、名称和 source ID，由 harness 预先计算
-properties/comparison tool text，再把脱敏后的 evidence 和 branch output 交给 LLM。当前主张只针对这一冻结
-blind contract；不得把它解释为 deployment-visible agentic 性能。若以后需要可见性比较，另开显式
-deployment-visible-prefetched/agentic ablation，不得让它阻塞主矩阵。
+The new v4 main matrix for Starling random/scaffold uses the same `starling_benchmark_matrix.py` and defaults to
+`identity_blind + parent_disjoint`. This regime hides the structure, name, and source ID of query/neighbor, and the harness precomputes
+properties/comparison tool text before handing the desensitized evidence and branch output to the LLM. The current claim applies only to this frozen
+blind contract; it must not be interpreted as deployment-visible agentic performance. If a visibility comparison is needed later, open an explicit
+deployment-visible-prefetched/agentic ablation and do not let it block the main matrix.
 
-正式入口：
+Formal entry point:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
@@ -425,18 +364,18 @@ python -m tools.chembl_tool.paper_experiments.starling_benchmark_matrix \
   --parallelism 128
 ```
 
-可用 `--experiments <condition...>` 按 task/condition 选择队列，但默认顺序运行，不能在多个 launcher 中
-各自占用 512 并发。batch runner 内置 `--skip-existing`，所以相同命令也是唯一 resume/failed-sample repair
-入口。选择性运行时，matrix manifest 使用 selection-specific 文件名和原子替换，不能让多个 launcher
-共享写一个 manifest。只需重建/检查完整
-canonical manifest 而不启动 condition 时，在上述命令加 `--manifest-only`。产物固定写入：
+`--experiments <condition...>` can be used to select queues by task/condition, but the default order runs sequentially and must not let multiple launchers
+each occupy 512 concurrency. The batch runner has built-in `--skip-existing`, so the same command is also the only resume/failed-sample repair
+entry point. For selective runs, the matrix manifest uses selection-specific filenames and atomic replacement, and multiple launchers must not
+share writes to one manifest. To only rebuild/check the full
+canonical manifest without starting conditions, add `--manifest-only` to the above command. Artifacts are fixed to write to:
 
 ```text
 outputs/paper/molecular_evidence_agent_starling_random_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/runs_identity_blind_parent_disjoint/
 ```
 
-两套 split 分别汇总；blind parent-disjoint 未完整通过 gate 前不能进入主 bar chart：
+The two splits are summarized separately; blind parent-disjoint must not enter the main bar chart until it fully passes the gate:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark \
@@ -450,109 +389,108 @@ python -m tools.chembl_tool.paper_experiments.summarize_starling_benchmark \
   --output-dir <model-and-subset-specific-summary-root>
 ```
 
-`summarize_results.py` 只扫描旧 TDC `experiments_for_split(test|valid)` 和 legacy visibility roots；不得对 v4
-root 使用它。旧命令生成的空 `analysis_identity_blind_parent_disjoint/report.md` 不是 canonical v4 结果。
-显式 v4/valid summary 不会隐式加载 historical test baselines；需要 baseline 时必须传入同 lineage/subset roots。
+`summarize_results.py` only scans old TDC `experiments_for_split(test|valid)` and legacy visibility roots; it must not be used on v4
+roots. Empty `analysis_identity_blind_parent_disjoint/report.md` generated by old commands are not canonical v4 results.
+An explicit v4/valid summary does not implicitly load historical test baselines; when baselines are needed, the same lineage/subset roots must be passed.
 
-Historical combined v4 每个 split 恰有 22 个 identity-blind condition；随后 BBB experimental-v2 与
-Bio/Skin record-v2 拆分，必须改为按 `lineage × task × declared conditions` 校验 expected set。所有该代
-run 仍同时审计 `n_failed`、`query_smiles_trace_leaks=0`、`visibility_contract_satisfied=true`、retained parent
-conflict=0 和 held-out overlap=0。正式 test 的默认完成 gate 仍是 `n_failed=0`。若遇到经过重试仍可确定为 non-retryable 的单样本
-失败，valid 诊断可以保留失败 trace，并用汇总器的 `count_as_incorrect_opposite_label` policy 计入分母；报告
-必须显式写出失败数、原因和 policy，且不能把它称为通过 zero-failure gate。
-`summarize_starling_benchmark.py` 的 v4 汇总必须读取这套 blind parent-disjoint 主 pipeline、对应 lineage
-冻结的 MiniMol head、正式全 test Morgan KNN 和 MiniMol embedding cosine KNN。
+Historical combined v4 has exactly 22 identity-blind conditions per split; after the subsequent BBB experimental-v2 and
+Bio/Skin record-v2 split, the expected set must be validated by `lineage × task × declared conditions`. All runs of this generation
+still audit `n_failed`, `query_smiles_trace_leaks=0`, `visibility_contract_satisfied=true`, retained parent
+conflict=0, and held-out overlap=0. The default completion gate for formal test is still `n_failed=0`. If a single-sample
+failure is confirmed non-retryable after retries, the valid diagnosis may keep the failure trace and use the summarizer's `count_as_incorrect_opposite_label` policy to include it in the denominator; the report
+must explicitly state the failure count, reason, and policy, and must not call it passing the zero-failure gate.
+The v4 summary of `summarize_starling_benchmark.py` must read this blind parent-disjoint main pipeline, the corresponding lineage-frozen
+MiniMol head, the formal full-test Morgan KNN, and the MiniMol embedding cosine KNN.
 
-2026-07-27 的 random/scaffold 各 22-condition blind artifact 属于上一版 strict-conflict split，曾分别残留
-9/5 个 failed sample-condition；它只保留作 historical repair lineage，不能冒充当前 benchmark。第一版
-`record_agreement70_split811_v1` 的 valid 结果已冻结为 historical comparison；当前
-Bio/Skin `record_supported_v2` 与 BBB `experimental_meaningful_cns_access_v2` 的逐条件状态记录在
-`STARLING_BENCHMARK_RESULTS.md`。各 task 在完整 valid gate 通过前不得启动或解释 test；Bio 已在 gate
-通过并冻结设置后于2026-08-10完成一次 selected-condition formal scaffold-test，不能再用该 test 调参。
+The 2026-07-27 random/scaffold 22-condition blind artifacts belong to the previous strict-conflict split and had 9/5
+failed sample-conditions remaining respectively; they are kept only as a historical repair lineage and must not be presented as the current benchmark. The first version of
+`record_agreement70_split811_v1` valid results are frozen as historical comparison; the current per-condition status of
+Bio/Skin `record_supported_v2` and BBB `experimental_meaningful_cns_access_v2` is recorded in
+`STARLING_BENCHMARK_RESULTS.md`. Test must not be started or interpreted for any task until the full valid gate passes; Bio has already
+completed one selected-condition formal scaffold-test on 2026-08-10 after passing the gate and freezing settings, and that test must not be used for tuning.
 
-## 代码与命令入口
+## Code and command entry points
 
 ```text
 molecular_evidence_agent.py
-  冻结实验矩阵与统一运行入口；负责 visibility mode、neighbor identity policy、结果 root 和跨条件复用参数。
+  Frozen experiment matrix and unified run entry point; responsible for visibility mode, neighbor identity policy, result root, and cross-condition reuse parameters.
 
 router_oof/
-  train-only KNN-vs-direct-agent router 的独立模块。v1–v3.1 可部署版本按 task 分别训练，不共享参数；使用
+  Standalone module for train-only KNN-vs-direct-agent router. v1–v3.1 deployable versions are trained per task, do not share parameters; use
   scaffold-or-parent
-  5-fold OOF、fold-specific parent-filtered index、gpt-oss-120b identity-blind parent-disjoint direct agent、
-  固定 pre-decision features 和 nested OOF Logistic/HistGBDT 评估。v2 删除 fold-dependent reference-size
-  与确定性重复 features，使用双风险 score 和 paired-bootstrap promotion gate；v1 `router/` 与 v2
-  `router_v2/` 必须保留独立 lineage。v3 `post_selector_v3/` 只在 disagreement rows 学 agent-win probability，
-  用 nested OOF 比较 output/query/KNN、完整 evidence、evidence+structured-trace 三档 profile，并按两个输出
-  方向分别冻结 threshold；train gate 失败时部署严格回退 KNN。不得把 train fold 塞进正式
-  `starling_benchmark_matrix.py` 的 valid/test 枚举。v3.1 `post_selector_v31/` 为两个方向分别选择并校准
-  fold ensemble，以最低 route count、Wilson precision lower bound 和 accuracy-first paired-bootstrap gate 控制
-  风险；valid 只报告独立 evidence gate，不允许回调 frozen policy。后续 matched-size curve 固定 direction
-  specs；唯一不可部署的 shared-transfer termination diagnosis 固定 task-balanced Logistic、完整 generic profile
-  和 task-specific calibration，并执行 cross-task identity/scaffold exclusion。它仍以 agent-win 为监督，不是
-  counterfactual evidence utility。当前 transfer continuation gate 已失败，禁止继续 valid-informed router
-  family/profile sweep，也不启动 router formal test。协议与 gate 见
-  `ROUTER_OOF_IMPLEMENTATION_PLAN.md`。
+  5-fold OOF, fold-specific parent-filtered index, gpt-oss-120b identity-blind parent-disjoint direct agent,
+  fixed pre-decision features and nested OOF Logistic/HistGBDT evaluation. v2 removes fold-dependent reference-size
+  and deterministic duplicate features, uses dual-risk score and paired-bootstrap promotion gate; v1 `router/` and v2
+  `router_v2/` must retain independent lineage. v3 `post_selector_v3/` only learns agent-win probability on disagreement rows,
+  uses nested OOF to compare output/query/KNN, full evidence, evidence+structured-trace three profile tiers, and freezes thresholds separately for the two output
+  directions; if the train gate fails, deploy strict fallback to KNN. Do not put train folds into the formal
+  `starling_benchmark_matrix.py` valid/test enumeration. v3.1 `post_selector_v31/` selects and calibrates a
+  fold ensemble for each direction, controlling risk with minimum route count, Wilson precision lower bound, and accuracy-first paired-bootstrap gate;
+  valid only reports independent evidence gate, no callback to frozen policy. Subsequent matched-size curve fixes direction
+  specs; the only non-deployable shared-transfer termination diagnosis fixes task-balanced Logistic, full generic profile,
+  and task-specific calibration, and performs cross-task identity/scaffold exclusion. It still uses agent-win as supervision, not
+  counterfactual evidence utility. The current transfer continuation gate has failed; do not continue valid-informed router
+  family/profile sweep, and do not start router formal test. Protocol and gates are in
+  `ROUTER_OOF_IMPLEMENTATION_PLAN.md`.
 
 summarize_results.py
-  仅汇总旧 TDC identity-blind、matched-prefetch 和 agentic operational 条件，生成 coverage、token、
-  visibility audit、paired bootstrap、McNemar/Holm 和 `analysis/report.md`；不读取 v4 run roots。
+  Only summarizes old TDC identity-blind, matched-prefetch, and agentic operational conditions, generating coverage, token,
+  visibility audit, paired bootstrap, McNemar/Holm, and `analysis/report.md`; does not read v4 run roots.
 
 summarize_starling_benchmark.py
-  汇总 v4 model/split/subset-specific pipeline 和显式 lineage-matched baselines；对失败样本使用记录的
-  failure-inclusive policy，并禁止 valid summary 静默回退到 historical test baselines。
+  Summarizes v4 model/split/subset-specific pipeline and explicit lineage-matched baselines; uses recorded
+  failure-inclusive policy for failed samples, and prohibits valid summary from silently falling back to historical test baselines.
 
 paired_binary_predictions.py
-  离线 audit 的共享二分类配对统计入口：统一 macro-F1 delta、paired bootstrap、prediction flips 和 exact
-  McNemar。新的确定性诊断不得各自复制这套基础统计；需要不同假设方向的 permutation test 时再保留独立实现。
+  Shared binary paired statistics entry for offline audit: unified macro-F1 delta, paired bootstrap, prediction flips, and exact
+  McNemar. New deterministic diagnostics must not each duplicate this base statistics; keep independent implementations only when a permutation test with a different hypothesis direction is needed.
 
 watch_glm_tunnel_and_matrix.py
-  监控 GLM endpoint、SSH tunnel 和唯一 resumable matrix；严格完成计数要求 task prediction、single/final
-  status、expected group 数和 group status 全部有效。支持透传 `--timeout-s`，但不保存或重放密码。
+  Monitors GLM endpoint, SSH tunnel, and the only resumable matrix; strict completion count requires task prediction, single/final
+  status, expected group count, and group status all valid. Supports passing through `--timeout-s`, but does not save or replay passwords.
 
 analyze_coverage_performance.py
-  只读取 deployment-visible 的 predictions，快速生成 coverage/class-conditional coverage、相对同任务
-  none 的 paired macro-F1 增幅、10,000 次 bootstrap、机器可读 TSV/JSON 和报告段落。
+  Only reads deployment-visible predictions, quickly generates coverage/class-conditional coverage, paired macro-F1 improvement relative to same-task
+  none, 10,000 bootstrap, machine-readable TSV/JSON, and report paragraphs.
 
 audit_prefetch_contract.py
-  逐 condition、逐样本验证 matched-prefetch 是否完整 replay identity-blind 的 retrieval 和工具输出。
+  Verifies per condition and per sample whether matched-prefetch fully replays identity-blind retrieval and tool outputs.
 
 parent_disjoint_ablation.py
-  历史/显式 sensitivity 工具：审计 operational retrieval 的 same-parent overlap，生成选择性重跑/整条复用/family-branch 复用计划；
-  加 `--materialize` 后只物化输入未变化的整条 reuse artifact 和 reuse plan。输入变化的样本仍由统一 matrix
-  runner 以 `--neighbor-identity-policy parent_disjoint` 执行。
+  Historical/explicit sensitivity tool: audits same-parent overlap in operational retrieval, generates selective rerun/whole-reuse/family-branch reuse plans;
+  with `--materialize`, only materializes whole-reuse artifacts and reuse plans for inputs that have not changed. Samples with changed inputs are still executed by the unified matrix
+  runner with `--neighbor-identity-policy parent_disjoint`.
 
 summarize_parent_disjoint_results.py
-  在指定 split 的完整样本上配对比较 operational 与 parent-disjoint，并审计 identity policy、threshold 和
-  reuse provenance。当前入口通过显式 `--operational-root`、`--parent-disjoint-root`、`--output-dir`
-  复用于 test/valid。
+  Paired comparison of operational vs parent-disjoint on the full samples of the specified split, and audits identity policy, threshold, and
+  reuse provenance. The current entry is reused for test/valid via explicit `--operational-root`, `--parent-disjoint-root`, `--output-dir`.
 
 plot_retrieval_claims_overview.py
-  从已生成的 analysis TSV 绘制统一横向 grouped-bar chart；它不重新计算指标。
-  `--data-split {test,valid}` 控制 split 文案与结论，`--analysis-dir` / `--output` 用于分区产物。
+  Draws unified horizontal grouped-bar chart from generated analysis TSV; it does not recompute metrics.
+  `--data-split {test,valid}` controls split text and conclusions, `--analysis-dir` / `--output` are for partitioned artifacts.
 
 plot_coverage_performance.py
-  从 `coverage_performance.tsv` 绘制 overall/class-conditional coverage 与 paired macro-F1 增幅；
-  只负责展示，不在图内重算指标。当前代码默认输出历史 deployment-visible agentic 的 canonical SVG；
-  v4 汇总接线前不能拿它冒充 blind 主结果。
+  Draws overall/class-conditional coverage and paired macro-F1 improvement from `coverage_performance.tsv`;
+  only for display, does not recompute metrics in the figure. Current code defaults to outputting historical deployment-visible agentic canonical SVG;
+  before v4 summary wiring, it must not be used to impersonate blind main results.
 
 paper_figure_style.py
-  论文 SVG 共用的颜色、字体、基础绘图 primitive、纵向数值网格、标准 metrics-to-SVG CLI 和唯一
-  ImageMagick PNG export helper；新增 figure 不复制视觉常量、网格、标准 CLI 或 `export_png` 实现。
+  Shared colors, fonts, basic drawing primitives, vertical numeric grid, standard metrics-to-SVG CLI, and the only
+  ImageMagick PNG export helper for paper SVG; new figures must not duplicate visual constants, grid, standard CLI, or `export_png` implementation.
 
 summarize_coverage_selector_llm_matrix.py
-  汇总六个 Starling task/split 的 Morgan-vs-coverage matched LLM 指标、配对 outcome、McNemar 和
-  macro-F1 bootstrap；同时集中维护 control/coverage artifact 路径。
+  Summarizes Morgan-vs-coverage matched LLM metrics, paired outcomes, McNemar, and
+  macro-F1 bootstrap for six Starling task/split; also centrally maintains control/coverage artifact paths.
 
 analyze_coverage_selector_retrieval_changes.py
-  在同一配对矩阵上审计 query/group/slot 级 neighbor replacement、top-1/reorder、结构 coverage、
-  neighbor redundancy、group reasoning 变化和相同 final input 下的 prediction 波动。
+  On the same paired matrix, audits query/group/slot-level neighbor replacement, top-1/reorder, structural coverage,
+  neighbor redundancy, group reasoning changes, and prediction fluctuations under identical final input.
 
 plot_coverage_selector_llm_matrix.py
-  只读取 canonical `metrics.tsv` 绘制六条件 accuracy/macro-F1 matched bar chart，不重算指标。
+  Only reads canonical `metrics.tsv` to draw six-condition accuracy/macro-F1 matched bar chart, does not recompute metrics.
 ```
 
-常用审计顺序：
+Common audit order:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_results
@@ -563,7 +501,7 @@ python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview
 python -m tools.chembl_tool.paper_experiments.plot_coverage_performance
 ```
 
-Valid 诊断重跑的对应顺序：
+Corresponding order for valid diagnostic reruns:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.summarize_results --split valid
@@ -579,8 +517,8 @@ python -m tools.chembl_tool.paper_experiments.plot_retrieval_claims_overview \
   --data-split valid
 ```
 
-对应回归测试集中在 `tests/chembl_tool/common/`：identity/policy、retrieval view、replay/hash reuse、prefetch
-contract、paper matrix/result summary、parent-disjoint summary 和 viewer root 都必须随相关入口一起运行。
+Corresponding regression tests are centralized in `tests/chembl_tool/common/`: identity/policy, retrieval view, replay/hash reuse, prefetch
+contract, paper matrix/result summary, parent-disjoint summary, and viewer root must all run with the relevant entry points.
 
 ## Language convention
 
@@ -590,26 +528,26 @@ contract、paper matrix/result summary、parent-disjoint summary 和 viewer root
 - When modifying a report generator, ensure regenerated user-visible reports are produced in English; do not
   rely on manually translating generated artifacts afterward.
 
-新 v4 论文主结果表使用 identity-blind 制度；以下 deployment-visible 定义仅用于历史结果或显式 ablation：
+The new v4 paper main results table uses identity-blind regime; the following deployment-visible definitions are only for historical results or explicit ablation:
 
 ```text
 identity_blind:
-  query/neighbor 的结构、名称和 source ID 对 LLM 隐藏；
-  harness 预取 properties/comparison tool text；
-  与 parent-disjoint retrieval 配对，作为 v4 none/direct/full_flat/full_mechanism 和 source comparison 主制度。
+  query/neighbor structure, name, and source ID are hidden from the LLM;
+  harness prefetches properties/comparison tool text;
+  paired with parent-disjoint retrieval, as the main regime for v4 none/direct/full_flat/full_mechanism and source comparison.
 
 deployment_visible:
-  query 只暴露结构，不暴露名称；
-  retrieved molecule 暴露结构，并在数据源提供时暴露 source name/source ID；
-  LLM 自主决定是否调用比较工具；
-  只作为显式 deployment ablation，不是 v4 默认。
+  query exposes only structure, not name;
+  retrieved molecule exposes structure, and source name/source ID when provided by the data source;
+  LLM autonomously decides whether to call comparison tools;
+  only as explicit deployment ablation, not v4 default.
 
 deployment_visible_prefetched:
-  只作为 visibility/tool-execution 补充控制；
-  不进入 v4 主结果表；既有 parity audit 和结果保留用于 provenance/appendix。
+  Only as a supplementary control for visibility/tool-execution;
+  does not enter v4 main results table; existing parity audit and results are retained for provenance/appendix.
 ```
 
-主实验和补充控制共享以下基础条件：
+Main experiments and supplementary controls share the following base conditions:
 
 ```text
 default endpoint: keys.py:LITELLM_BASE_URL (PARCC LiteLLM)
@@ -628,13 +566,13 @@ endpoint_concurrency_budget: 512
 default_launcher_shape: one global prompt pool with parallelism=128, one launcher at a time
 ```
 
-所有 paper-facing structural-analog retrieval 主结果默认使用 `parent_disjoint`：标准化 query/source parent、
-排除相同 parent，再用仍高于原 similarity threshold 的后续候选补足 top-k。新 v4 直接 fresh-run，
-不需要 operational staging、diff、整条 run reuse 或 branch reuse。这里的 parent 是 RDKit FragmentParent
-标准化结果，不是 active moiety，也不推断 prodrug 或代谢物关系。Operational 只能显式 opt in 到独立 root，
-用于 deployment sensitivity；不得成为新 retrieval condition 的依赖。
+All paper-facing structural-analog retrieval main results default to `parent_disjoint`: standardized query/source parent,
+exclude same parent, then fill top-k with subsequent candidates still above the original similarity threshold. New v4 directly fresh-runs,
+no operational staging, diff, whole-run reuse, or branch reuse needed. Here parent is the RDKit FragmentParent
+standardization result, not active moiety, and does not infer prodrug or metabolite relationships. Operational can only explicitly opt in to a separate root,
+for deployment sensitivity; must not become a dependency of new retrieval conditions.
 
-Parent-disjoint 产物统一放在：
+Parent-disjoint artifacts are uniformly placed in:
 
 ```text
 # test
@@ -646,7 +584,7 @@ outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_spli
 outputs/paper/molecular_evidence_agent_starling_scaffold_record_agreement70_split811_v1/analysis_identity_blind_parent_disjoint/
 ```
 
-新 v4 直接运行完整 fresh matrix；`none` 同轮运行但 identity policy 为不适用：
+New v4 directly runs the full fresh matrix; `none` runs in the same round but identity policy is not applicable:
 
 ```bash
 python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
@@ -655,31 +593,31 @@ python -m tools.chembl_tool.paper_experiments.molecular_evidence_agent \
   --parallelism 128
 ```
 
-最终汇总直接审计 fresh retrieval：所有条件完成、`n_failed_runs == 0`、parent-policy conflict 为 0、
-held-out overlap 为 0、低于 threshold 的补位为 0、identity leak 为 0。旧
-`summarize_parent_disjoint_results.py` 的 operational/parent 配对输出只属于历史 sensitivity analysis。
+Final summary directly audits fresh retrieval: all conditions complete, `n_failed_runs == 0`, parent-policy conflict is 0,
+held-out overlap is 0, below-threshold fill is 0, identity leak is 0. Old
+`summarize_parent_disjoint_results.py` operational/parent paired outputs are only for historical sensitivity analysis.
 
-`full_flat` 和 `full_mechanism` 必须来自同一组选定的数据源证据。两者唯一预期差异是：前者将证据集合放在一个 group 中，后者按任务机制拆分证据。
+`full_flat` and `full_mechanism` must come from the same set of selected data source evidence. The only expected difference between them is: the former puts the evidence set in one group, the latter splits evidence by task mechanism.
 
-E12 distance expansion 同时运行 flat primary 和 mechanism supplementary。Mechanism 顺序固定为
-`D+C -> D+C+H1 -> D+C+H1+H2`，但内部是 C-family tree 而非平行 D/C/H1/H2 groups：D 为 root，每个当前
-C mechanism family 恰有一个聚合 H1 child，每个 H1 至多有一个 optional H2 child。H1 condition 复用 hash
-未变化的 D/C family branches，只运行各 C family 的 H1 child 后重跑 final；H2 condition 必须以前一个 H1
-condition 为 `--group-analysis-source-batch`，复用 D/C/H1，只运行 available H2 children 后
-再次重跑 final。加入 H2 后 H1 的 group ID、neighbors、evidence serialization 和 branch hash 必须不变；
-flat/mechanism 同 prefix 的 evidence-row multiset 必须完全一致。
+E12 distance expansion runs both flat primary and mechanism supplementary. Mechanism order is fixed as
+`D+C -> D+C+H1 -> D+C+H1+H2`, but internally it is a C-family tree rather than parallel D/C/H1/H2 groups: D is the root, each current
+C mechanism family has exactly one aggregate H1 child, each H1 has at most one optional H2 child. H1 condition reuses hash
+unchanged D/C family branches, only runs each C family's H1 child then reruns final; H2 condition must use the previous H1
+condition as `--group-analysis-source-batch`, reuses D/C/H1, only runs available H2 children then
+reruns final again. After adding H2, H1's group ID, neighbors, evidence serialization, and branch hash must remain unchanged;
+flat/mechanism same-prefix evidence-row multiset must be exactly identical.
 
-每个 C/H1/H2 tree node 独立最多检索 3 个 unique molecular neighbors，并使用同一 similarity threshold 与 identity
-policy。聚合 H1/H2 node 内的不同 target/measurement families 共享 node 的 top-3，不能按 target 各取 3 个。
-每个 extension measurement family 必须唯一归属一个 C parent；H2 到任意 D/C measured node 存在一跳捷径时，
-validation 必须失败并将其重分到相应 H1 或排除。
+Each C/H1/H2 tree node independently retrieves at most 3 unique molecular neighbors, using the same similarity threshold and identity
+policy. Different target/measurement families within an aggregate H1/H2 node share the node's top-3, cannot take 3 per target.
+Each extension measurement family must uniquely belong to one C parent; if H2 has a one-hop shortcut to any D/C measured node,
+validation must fail and reassign it to the corresponding H1 or exclude it.
 
-E12 是全程 ChEMBL-only，而不是仅 H1/H2 使用 ChEMBL：D/C 来自当前 ChEMBL direct/full evidence，H1/H2
-来自同一冻结 ChEMBL release。禁止 `Starling D/C + ChEMBL H1/H2` 及其它跨 source prefix；distance audit 必须
-验证所有层共享同一 ChEMBL source manifest、标准化版本、quality gate 和 provenance contract。Starling 只用于
-独立的 E2/RQ2 matched-scope source comparison。
+E12 is ChEMBL-only throughout, not just H1/H2 using ChEMBL: D/C comes from current ChEMBL direct/full evidence, H1/H2
+comes from the same frozen ChEMBL release. Prohibit `Starling D/C + ChEMBL H1/H2` and other cross-source prefixes; distance audit must
+verify all layers share the same ChEMBL source manifest, standardized version, quality gate, and provenance contract. Starling is only used for
+independent E2/RQ2 matched-scope source comparison.
 
-以下 BBB v2 命令与产物只保留为 historical retrieval prototype，不是当前 tree ontology 的可运行入口：
+The following BBB v2 commands and artifacts are retained only as historical retrieval prototype, not as runnable entry points for the current tree ontology:
 
 ```bash
 python -m tools.chembl_tool.tasks.bbb_martins.build_distance_assay_manifest \
@@ -697,23 +635,23 @@ python -m tools.chembl_tool.paper_experiments.audit_distance_expansion
 python -m tools.chembl_tool.paper_experiments.materialize_distance_retrieval
 ```
 
-BBB v2 通过 D/C measured-state census 排除了 node overlap，但随后发现 MMP-3 可直接影响 tight-junction integrity，
-所以其 shortest path 为 1，原 `H2 MMP-3` mapping 无效。v2 的 392-query audit 和 coverage 只说明旧 prototype 的
-retrieval 工程性质，不能送入 E12 LLM，也不能作为新 tree ontology 的 coverage/performance。下一版必须重建为：
-每个 BBB C family 一个 H1 aggregate child，MMP-9/MMP-3 同属 passive/barrier H1；其它 C families 也分别建立
-唯一 H1，H2 只在无全局一跳 shortcut 时建立。独立 E12 tree runner、LLM macro-F1 curve 和 mechanism execution
-尚未完成。
+BBB v2 excluded node overlap via D/C measured-state census, but later found MMP-3 can directly affect tight-junction integrity,
+so its shortest path is 1, making the original `H2 MMP-3` mapping invalid. v2's 392-query audit and coverage only indicate the old prototype's
+retrieval engineering nature, cannot be fed into E12 LLM, nor serve as coverage/performance for the new tree ontology. The next version must be rebuilt as:
+each BBB C family has one H1 aggregate child, MMP-9/MMP-3 belong to the same passive/barrier H1; other C families also each establish a unique
+H1, H2 only when there is no global one-hop shortcut. Independent E12 tree runner, LLM macro-F1 curve, and mechanism execution
+are not yet complete.
 
-2026-07-21 新增 same-molecule causal continuity gate。node-to-node path 正确仍不足以发布：必须证明 inference
-没有从 assay molecule A 切换到另一个未观测的 substrate B。BBB v3 审计中 MMP-9/MMP-3 保持同一 barrier
-perturbagen，暂时通过但保留强 scope 条件；NRF2/KEAP1-NRF2 需要 query 自身是 induced ABC transporter
-substrate，HIF-1/PHD2 需要 query 自身是 GLUT1 substrate，当前 retrieval contract 均未提供这些角色。因此 v3
-manifest/index/replay 只保留为 engineering artifact，不能启动正式 E12 LLM。所有未来 task 发布前必须有完整
-`FamilySelfRelevanceAudit`，并通过
-`validate_self_relevance_audit(config, audits, require_publishable=True)`；prompt 不能代替缺失角色证据。
-BBB 详细记录见 `tools/chembl_tool/tasks/bbb_martins/DISTANCE_SELF_RELEVANCE_AUDIT.md`。
+2026-07-21 added same-molecule causal continuity gate. Correct node-to-node path is still insufficient for release: must prove inference
+did not switch from assay molecule A to another unobserved substrate B. In BBB v3 audit, MMP-9/MMP-3 maintain the same barrier
+perturbagen, temporarily pass but retain strong scope conditions; NRF2/KEAP1-NRF2 requires the query itself to be an induced ABC transporter
+substrate, HIF-1/PHD2 requires the query itself to be a GLUT1 substrate, and the current retrieval contract does not provide these roles. Therefore v3
+manifest/index/replay are retained only as engineering artifacts, cannot start formal E12 LLM. All future task releases must have complete
+`FamilySelfRelevanceAudit`, and pass
+`validate_self_relevance_audit(config, audits, require_publishable=True)`; prompts cannot replace missing role evidence.
+BBB detailed records are in `tools/chembl_tool/tasks/bbb_martins/DISTANCE_SELF_RELEVANCE_AUDIT.md`.
 
-每个任务必须先运行 `none` 条件。所有包含检索的条件都必须使用 `--single-analysis-source-batch`，以复用该条件中冻结的 single-molecule 分支。不得为每个消融条件独立重新生成先验。
+Each task must first run the `none` condition. All conditions that include retrieval must use `--single-analysis-source-batch`, to reuse the frozen single-molecule branch in that condition. Do not independently regenerate priors for each ablation condition.
 
 Never write an API-key value to code, persisted commands, manifests, reports, or traces. The default top-level
 paper launchers load `LITELLM_BASE_URL` and `LITELLM_API_KEY` from the ignored root `keys.py`, inject only the key
@@ -723,66 +661,66 @@ Explicit loopback vLLM runs retain the non-sensitive `GLM_LOCAL_API_KEY` placeho
 must not be presented as FP8-versus-NVFP4 model comparisons. `watch_glm_tunnel_and_matrix.py` remains specific
 to the explicit loopback SSH-tunnel route and is not the default LiteLLM launcher.
 
-OpenAI SDK 的传输层 retry 上限明确固定为 2，与 baseline run 一致。结构化 JSON 验证在记录的调用路径中最多允许 4 次总尝试。最后两次尝试只重新序列化相同的 JSON evidence，以避开 provider 的确定性退化；不得删除证据或改变 inference setting。single、group 或 final 分支不完整的 run 会被 batch 完整性约束排除，并通过 batch `--skip-existing` 显式重跑。
+The OpenAI SDK transport-layer retry limit is explicitly fixed at 2, consistent with the baseline run. Structured JSON validation allows at most 4 total attempts in the recorded call path. The last two attempts only re-serialize the same JSON evidence to avoid provider deterministic degradation; must not drop evidence or change inference settings. Runs with incomplete single, group, or final branches are excluded by the batch completeness constraint and explicitly re-run via batch `--skip-existing`.
 
-Group prompt 还具有 provider 传输保护。清理后不超过 750 KB 的 payload 保持不变。超过该阈值时，每个超限 neighbor 最多保留 100 条按确定性等间距采样的 evidence row；prompt 必须记录原始行数、保留行数、原始字节数、阈值和采样方法。该机制在不引入数据源或任务专用规则的情况下避免 endpoint 层 HTTP 413 失败。
+The group prompt also has provider transport protection. Payloads that after cleanup do not exceed 750 KB remain unchanged. Above that threshold, each over-limit neighbor retains at most 100 evidence rows sampled at deterministic equal intervals; the prompt must record the original row count, retained row count, original byte count, threshold, and sampling method. This mechanism avoids endpoint-layer HTTP 413 failures without introducing data-source or task-specific rules.
 
-报告一个 run 之前：
+Before reporting a run:
 
-1. 必须满足 `n_failed_runs == 0`；否则使用 `--skip-existing` 重跑失败样本。
-2. 必须满足 `summarize_results.py` 输出的 `query_smiles_trace_leaks == 0`。
-3. v4 主实验 `identity_blind` 必须通过身份盲化 preflight，并使用脱敏后的 group 输出进行 final synthesis；
-   `group_reasoning_outputs_raw.jsonl` 仅用于审计，绝不能作为 final 输入。同时逐 retrieval 审计
-   parent conflict=0、held-out overlap=0 和 threshold violation=0。
-4. `deployment_visible` / `deployment_visible_prefetched` 只在显式 visibility ablation 中运行。Prefetched
-   条件必须逐 query replay 对应 `identity_blind` run 的冻结 `retrieval.json` 和 prefetched tool outputs，
-   不能按当前 task config 重新检索或重新执行可能非确定的 MCS。历史 matched-prefetch coverage gate
-   仍保留用于旧 lineage；它不阻塞新 v4 blind 主矩阵。
-5. 报告性能时必须同时报告 retrieval coverage；缺少 neighbor 是数据源/索引的真实属性，不得静默删除相应样本。
-6. 使用共享汇总程序生成制度内和跨制度的配对测试集比较、bootstrap 区间和精确 McNemar 检验。
-7. 标量 KNN 结果必须与 LLM agent 条件分开报告；它是数值型 direct-F 对照，且不属于任何 LLM 可见性制度。
+1. Must satisfy `n_failed_runs == 0`; otherwise use `--skip-existing` to re-run failed samples.
+2. Must satisfy the `query_smiles_trace_leaks == 0` output of `summarize_results.py`.
+3. The v4 main experiment `identity_blind` must pass the identity-blinding preflight and use the de-identified group output for final synthesis;
+   `group_reasoning_outputs_raw.jsonl` is for audit only and must never be used as final input. Also audit per retrieval
+   parent conflict=0, held-out overlap=0, and threshold violation=0.
+4. `deployment_visible` / `deployment_visible_prefetched` run only in explicit visibility ablations. Prefetched
+   conditions must replay per query the frozen `retrieval.json` and prefetched tool outputs of the corresponding `identity_blind` run,
+   and must not re-retrieve or re-execute potentially non-deterministic MCS according to the current task config. The historical matched-prefetch coverage gate
+   remains for old lineage; it does not block the new v4 blind main matrix.
+5. When reporting performance, must also report retrieval coverage; missing neighbors are a real property of the data source/index and must not silently drop corresponding samples.
+6. Use the shared summarizer to generate within- and cross-regime paired test set comparisons, bootstrap intervals, and exact McNemar tests.
+7. Scalar KNN results must be reported separately from LLM agent conditions; it is a numerical direct-F control and does not belong to any LLM visibility regime.
 
-旧 lineage 的运行输出位于 `outputs/paper/molecular_evidence_agent/`：`runs_deployment_visible/`、`runs/`
-和 `runs_deployment_visible_prefetched/` 分别是历史 agentic、blind 和 matched-prefetch artifacts。
-新 v4 主输出位于各 record-agreement lineage root 的 `runs_identity_blind_parent_disjoint/`。
-这些都是可复现产物，不是源代码。
+Old lineage run outputs are in `outputs/paper/molecular_evidence_agent/`: `runs_deployment_visible/`, `runs/`,
+and `runs_deployment_visible_prefetched/` are the historical agentic, blind, and matched-prefetch artifacts, respectively.
+New v4 main outputs are in `runs_identity_blind_parent_disjoint/` of each record-agreement lineage root.
+These are reproducible artifacts, not source code.
 
-## 可视化与产物清理
+## Visualization and artifact cleanup
 
-论文 performance 可视化统一使用 `plot_retrieval_claims_overview.py` 的横向 grouped-bar 设计。
-后续 test/valid 或新 split 的性能图应扩展这一入口，不再并行保留另一套 overview 绘图代码。
-每个 split 的 `analysis/figures/` 只保留两个正式产物：
+The paper performance visualizations uniformly use the horizontal grouped-bar design of `plot_retrieval_claims_overview.py`.
+Subsequent test/valid or new split performance plots should extend this entry point and not keep a separate overview plotting code in parallel.
+Each split's `analysis/figures/` retains only two official artifacts:
 
 ```text
 retrieval_claims_overview.svg
 retrieval_claims_overview_highres.png
 ```
 
-`preview`、`qa`、`pre_parent_disjoint` 和已被这张图取代的其它 overview 文件不得留在正式
-figures 目录。SVG 是可复现源图；`--png-output` 通过 ImageMagick 导出便于查看的
-唯一 raster 版本。
+`preview`, `qa`, `pre_parent_disjoint`, and other overview files replaced by this figure must not remain in the official
+figures directory. The SVG is the reproducible source figure; `--png-output` is the only
+raster version exported via ImageMagick for viewing convenience.
 
-## Valid 诊断矩阵记录
+## Valid diagnostic matrix record
 
-2026-07-22 至 2026-07-23 已将 valid 的 Identity-blind、matched-prefetch 和 deployment-visible
-扩展到各 26 个条件，每套 2,713 个 sample-condition，失败均为 0；prefetch audit 为
-2,713/2,713，无 missing、extra 或 mismatch。Parent-disjoint 的 22 个检索条件共 2,275 个
-sample-condition，失败为 0，最终 neighbor identity conflict 和低于 threshold 的补位均为 0。
-Bioavailability scalar KNN 在 valid 上的 macro-F1 为 0.6621。详细数值与
-解释必须同步查阅 `RESULTS.md` 和 `outputs/paper/molecular_evidence_agent_valid/analysis/`。
+From 2026-07-22 to 2026-07-23, the valid Identity-blind, matched-prefetch, and deployment-visible
+conditions were extended to 26 conditions each, with 2,713 sample-conditions per set, all with zero failures; the prefetch audit was
+2,713/2,713, with no missing, extra, or mismatch. The parent-disjoint 22 retrieval conditions totaled 2,275
+sample-conditions, with zero failures, and final neighbor identity conflicts and below-threshold fill-ins were both zero.
+The Bioavailability scalar KNN macro-F1 on valid was 0.6621. Detailed values and
+interpretations must be consulted in `RESULTS.md` and `outputs/paper/molecular_evidence_agent_valid/analysis/`.
 
-Skin Reaction valid visibility trace 的规范化分析写在
-`SKIN_REACTION_VISIBILITY_TRACE_AUDIT.md`；可分享的双语静态报告及其 artifact/source/config 位于
-`reports/skin_reaction_visibility_trace_casebook/`。Portable report 的语言按钮必须通过通用
-`inject_portable_report_language_toggle.py` 注入，report-specific 文案放在 `language_config.json`，
-不得再把专用 title、description 或两语言逻辑复制进一次性脚本。
+The normalized analysis of the Skin Reaction valid visibility trace is in
+`SKIN_REACTION_VISIBILITY_TRACE_AUDIT.md`; the shareable bilingual static report and its artifact/source/config are in
+`reports/skin_reaction_visibility_trace_casebook/`. The language buttons of the portable report must be injected via the generic
+`inject_portable_report_language_toggle.py`, with report-specific copy in `language_config.json`,
+and must not copy dedicated titles, descriptions, or two-language logic into one-off scripts.
 
-Paper runner 必须保存每个样本自己的 `trace_messages.jsonl`，并传 `--no-combine-traces`，避免再生成
-condition-level 的重复大文件。最终 trace viewer 默认注册 Starling random/scaffold 与历史 TDC test；
-新 v4 dataset 服务 `runs_identity_blind_parent_disjoint/`，历史 dataset 继续服务四个 legacy roots：
-`runs/`、`runs_deployment_visible_prefetched/`、`runs_deployment_visible/` 和
-`runs_deployment_visible_parent_disjoint/`，通过 `predictions.jsonl` 定位
-per-run trace，且不得跨 dataset 合并指标。不得重新加入旧 task、Tier、expert policy 或 task-specific
-prediction 字段的硬编码适配。Parent-disjoint 仍必须通过 `analysis/parent_disjoint_ablation/` 的汇总产物
-审计；viewer 还必须从 manifest 和 `reuse.json` 明确显示 `parent_disjoint` policy，以及 sample 是因
-retrieval 变化而重跑，还是因 LLM-visible input hash 未变化而复用。
+Paper runners must save each sample's own `trace_messages.jsonl` and pass `--no-combine-traces`, avoiding regenerating
+condition-level duplicate large files. The final trace viewer by default registers Starling random/scaffold and historical TDC test;
+the new v4 dataset service serves `runs_identity_blind_parent_disjoint/`, and the historical dataset continues to serve four legacy roots:
+`runs/`, `runs_deployment_visible_prefetched/`, `runs_deployment_visible/`, and
+`runs_deployment_visible_parent_disjoint/`, locating per-run traces via `predictions.jsonl`,
+and must not merge metrics across datasets. Must not re-add hardcoded adaptations for old tasks, Tiers, expert policies, or task-specific
+prediction fields. Parent-disjoint must still be audited via the summary artifacts of `analysis/parent_disjoint_ablation/`;
+the viewer must also clearly display the `parent_disjoint` policy from the manifest and `reuse.json`, and whether a sample was re-run due to
+retrieval changes or reused because the LLM-visible input hash did not change.

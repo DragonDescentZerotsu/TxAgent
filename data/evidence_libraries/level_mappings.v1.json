@@ -1,0 +1,39 @@
+{
+  "version": "evidence_library_level_mappings_index.v1",
+  "status": "complete",
+  "gold_release": "v1",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "tasks": {
+    "bbb_martins": {
+      "kind": "parquet_file",
+      "path": "bbb_martins/v10/level_mapping/records.parquet",
+      "sha256": "6a0730e4704f02cb1dd54159b9318fcde4c3d777fffe0343ffc3ee59f308b766",
+      "rows": 496148,
+      "rows_by_level": {
+        "1": 7634,
+        "2": 269123,
+        "3": 13169,
+        "4": 162504,
+        "5": 43718
+      },
+      "manifest": "bbb_martins/v10/level_mapping/manifest.json",
+      "manifest_sha256": "49e05ab684e8927149713804539fd3bf9c32a601065d5a097d877411ade21fdc"
+    },
+    "bioavailability_ma": {
+      "kind": "parquet_file",
+      "path": "bioavailability_ma/v10/level_mapping/records.parquet",
+      "sha256": "86cd88de820420febc7c17b7f4f791ddbc4e9acc8f24a50a9511726d2f664f3b",
+      "rows": 431440,
+      "rows_by_level": {
+        "1": 19479,
+        "2": 150739,
+        "3": 103980,
+        "4": 73537,
+        "5": 23474,
+        "6": 60231
+      },
+      "manifest": "bioavailability_ma/v10/level_mapping/manifest.json",
+      "manifest_sha256": "cb986638d9493ec55e56bdc333a3a39265ed2a5040bd6b04fdf695a69a4c0ac4"
+    }
+  }
+}

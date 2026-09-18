@@ -5,8 +5,8 @@ deterministic scalar rejections are settled before this offline pass; only the
 remaining ``extract`` rows reach the model. Responses are
 cached before submission, structurally invalid batches are retried once, and no
 mapping publishes until every candidate has a terminal result. Paid endpoints may
-use the inherited token ledger; unmetered compatible endpoints use
-``--no-token-ledger``.
+use the inherited token ledger; uncapped compatible endpoints use
+``--no-token-ledger`` while retaining API usage in the response cache.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ import hashlib
 import importlib
 import json
 import random
+import sys
 import time
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from decimal import Decimal, InvalidOperation
@@ -28,6 +29,7 @@ import pyarrow.parquet as pq
 from data.processing.llm_api import DEFAULT_ENV_FILE, openai_compatible_client
 from data.processing.evidence_library.versions.v9.build_reference_semantics_mapping import (
     BUDGET_EXHAUSTED_EXIT_CODE,
+    CACHE_VERSION,
     DISTILLATION_ROOT,
     RequestBatch,
     SubmissionCache,
@@ -66,6 +68,7 @@ SAMPLE_SEED = 20260820
 STATUSES = ("ok", "unsure", "relative", "unavailable")
 MAX_COMPLETION_TOKENS = 65_536
 OPENROUTER_RETRY_DELAYS_S = (1, 2, 4, 8, 16) + (30,) * 20
+CREDENTIAL_UNAVAILABLE_EXIT_CODE = 76
 
 #: Row-local columns shown to the model. Endpoint context is supplied separately
 #: from deterministically parsed rows and never changes this row payload.
@@ -168,6 +171,7 @@ def candidate_rows(
     available = set(pq.read_schema(records_path).names)
     wanted = {
         "cleaned_record_id",
+        "source_row_uid",
         "source_id",
         "canonical_endpoint_name",
         "measurement_resolution_route",
@@ -212,11 +216,14 @@ def candidate_rows(
             record_id = str(record.get("cleaned_record_id") or "")
             if not record_id:
                 raise ValueError("extraction candidate lacks cleaned_record_id")
+            if getattr(config, "REQUIRE_SOURCE_ROW_UID", False) and not record.get("source_row_uid"):
+                raise ValueError(f"extraction candidate lacks source_row_uid: {record_id}")
             if only_ids is not None and record_id not in only_ids:
                 continue
             record_resolver = getattr(config.module, "canonical_endpoint_record", None)
             payload = {
                 "id": record_id,
+                "source_row_uid": record.get("source_row_uid"),
                 "source_id": row_source,
                 "canonical_endpoint_name": (
                     str(record["canonical_endpoint_name"])
@@ -390,7 +397,8 @@ def plan_batches(
                 ).encode("utf-8")
             ).hexdigest()[:24]
             payload = tuple(
-                {key: row[key] for key in row if key != "source_id"} for row in chunk
+                {key: row[key] for key in row if key not in {"source_id", "source_row_uid"}}
+                for row in chunk
             )
             batches.append(
                 RequestBatch(
@@ -591,7 +599,7 @@ def distillation_client() -> tuple[Any, str]:
     )
 
 
-def openai_compatible_llm(client: Any) -> Any:
+def openai_compatible_llm(client: Any, *, provider_only: str | None = None, cache: Any = None) -> Any:
     """Adapt an OpenAI Chat Completions client to the frozen runner contract."""
 
     def call(
@@ -601,6 +609,7 @@ def openai_compatible_llm(client: Any) -> Any:
         max_tokens: int,
         temperature: float,
         reasoning_effort: str = "",
+        request_id: str = "",
         **_: Any,
     ) -> dict[str, Any]:
         request: dict[str, Any] = dict(
@@ -622,6 +631,10 @@ def openai_compatible_llm(client: Any) -> Any:
             request.update(max_tokens=max_tokens, temperature=temperature)
         if "openrouter.ai" in str(getattr(client, "base_url", "")):
             request["extra_body"] = {"provider": {"require_parameters": True}}
+            if provider_only:
+                request["extra_body"]["provider"].update(
+                    only=[provider_only], allow_fallbacks=False
+                )
         is_openrouter = "openrouter.ai" in str(getattr(client, "base_url", ""))
         for attempt in range(len(OPENROUTER_RETRY_DELAYS_S) + 1):
             response = client.chat.completions.create(**request)
@@ -641,10 +654,29 @@ def openai_compatible_llm(client: Any) -> Any:
             )
         message = response.choices[0].message
         usage = response.usage.model_dump() if response.usage is not None else None
+        metadata = {
+            "api_response_id": response.id,
+            "returned_model": response.model,
+            "served_provider": getattr(response, "provider", None),
+            "requested_provider": provider_only,
+        }
+        if cache is not None:
+            cache._append({
+                "cache_version": CACHE_VERSION,
+                "status": "api_response", "request_id": request_id,
+                **metadata, "response": response.model_dump(),
+            })
+        if provider_only == "baidu/fp8" and str(metadata["served_provider"]).lower() not in {
+            "baidu", "baidu qianfan",
+        }:
+            raise ValueError(f"Baidu provider not verified: {metadata['served_provider']!r}")
+        if provider_only and response.model != model:
+            raise ValueError(f"requested model {model!r}, received {response.model!r}")
         return {
             "content": message.content or "",
             "reasoning": getattr(message, "reasoning_content", None),
             "usage": usage,
+            "api_metadata": metadata,
         }
 
     return call
@@ -674,9 +706,18 @@ def query_batch(
                 verbose=False,
                 reasoning_effort=reasoning_effort,
                 max_retries=1,
+                request_id=batch.request_id,
             )
         except Exception as error:
             method = "api_failure_after_structural_retry" if attempt else "api_failure"
+            body = getattr(error, "body", None)
+            if isinstance(body, dict):
+                detail = body.get("error", body)
+                if isinstance(detail, dict) and (
+                    detail.get("code") in {"credit_balance_exhausted", "insufficient_quota"}
+                    or detail.get("type") == "insufficient_quota"
+                ):
+                    method = "api_failure_quota_exhausted"
             rows = [_blank(row, method=method) for row in batch.rows]
             failure = json.dumps(
                 {"reason": method, "error_type": type(error).__name__, "error": str(error)},
@@ -684,7 +725,7 @@ def query_batch(
             )
             for row in rows:
                 row["rejected_response_json"] = failure
-            return rows, None, method
+            return rows, (usage if attempt == 0 and method == "api_failure_quota_exhausted" else None), method
         reported = result.get("usage") if isinstance(result, dict) else None
         if isinstance(reported, dict):
             usage["input_tokens"] += int(
@@ -733,6 +774,7 @@ def query_batch(
                 task=task,
                 max_measurements=max_measurements,
             )
+            assignment.update(result.get("api_metadata") or {})
             if reason is not None:
                 assignment["rejected_response_json"] = json.dumps(
                     {"reason": reason, "returned": returned},
@@ -844,6 +886,7 @@ def materialize(
         rows.append(
             {
                 **assignment,
+                "source_row_uid": candidate.get("source_row_uid"),
                 "inference_source": "base_mapping" if from_base else "delta_inference",
                 "inference_model": (
                     base_model
@@ -869,6 +912,21 @@ def materialize(
     )
     delta_rows = [row for row in rows if row["inference_source"] == "delta_inference"]
     delta_models = sorted({str(row["inference_model"]) for row in delta_rows})
+    usage_by_model: dict[str, dict[str, Any]] = {}
+    for event in cache.events:
+        if event.get("status") != "api_response":
+            continue
+        response = event["response"]
+        usage = response.get("usage") or {}
+        totals = usage_by_model.setdefault(str(event["returned_model"]), {
+            "input_tokens": 0, "output_tokens": 0, "reported_cost": 0.0,
+            "responses": 0, "responses_without_usage": 0,
+        })
+        totals["input_tokens"] += int(usage.get("prompt_tokens") or 0)
+        totals["output_tokens"] += int(usage.get("completion_tokens") or 0)
+        totals["reported_cost"] += float(usage.get("cost") or 0)
+        totals["responses"] += 1
+        totals["responses_without_usage"] += not bool(usage)
 
     table = pa.Table.from_pylist(rows)
     mapping_path.parent.mkdir(parents=True, exist_ok=True)
@@ -891,6 +949,9 @@ def materialize(
         ),
         "api_base_urls": inference_base_urls,
         "inference_model_counts": _counter(row["inference_model"] for row in rows),
+        "api_usage_by_returned_model": usage_by_model,
+        "served_provider_counts": _counter(row.get("served_provider") for row in rows),
+        "credential_counts": _counter(row["inference_credential_env"] for row in rows),
         "inference_base_url_counts": _counter(
             row["inference_base_url"] for row in rows if row["inference_base_url"]
         ),
@@ -1097,9 +1158,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--no-token-ledger",
         action="store_true",
-        help="disable token accounting for an unmetered compatible endpoint",
+        help="disable the token cap; API responses and usage remain cached",
     )
     parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument("--two-key-baidu-run", action="store_true")
+    parser.add_argument("--provider-only", default=None)
+    parser.add_argument("--retry-failed", action="store_true")
+    parser.add_argument("--defer-publication", action="store_true")
+    parser.add_argument("--require-complete", action="store_true")
     parser.add_argument("--model", default=MODEL)
     parser.add_argument(
         "--base-url",
@@ -1134,6 +1200,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.two_key_baidu_run:
+        return run_two_key_baidu(list(sys.argv[1:] if argv is None else argv), args)
     config = TaskConfig(args.task, args.config_module)
     if args.source is not None and args.source not in config.SOURCE_IDS:
         raise SystemExit(f"unknown --source {args.source!r}")
@@ -1245,10 +1313,25 @@ def main(argv: list[str] | None = None) -> int:
         "outputs/chembl_tool/measurement_resolution_generation"
     )
     cache_path = cache_dir / config.task_id / "requests.jsonl"
+    contract_path = cache_path.parent / "input_contract.json"
+    contract = {
+        "task": config.task_id, "records_sha256": file_sha256(records_path),
+        "profile_sha256": profile_digest, "prompt": prompt_manifest,
+        "mapping_version": config.MAPPING_VERSION,
+    }
+    if contract_path.exists():
+        if json.loads(contract_path.read_text()) != contract:
+            raise ValueError("extraction cache input/prompt contract mismatch")
+    elif cache_path.exists():
+        if args.two_key_baidu_run or args.require_complete:
+            raise ValueError("existing extraction cache lacks an input contract")
+    else:
+        contract_path.parent.mkdir(parents=True, exist_ok=True)
+        contract_path.write_text(json.dumps(contract, indent=2) + "\n")
     cache = SubmissionCache(cache_path)
-    if args.no_token_ledger and getattr(
+    if args.retry_failed or (args.no_token_ledger and getattr(
         config.module, "RETRY_TERMINAL_FAILURES_ON_UNMETERED", False
-    ):
+    )):
         retry_ids = retryable_assignment_ids(
             cache,
             retry_model=args.model,
@@ -1257,7 +1340,7 @@ def main(argv: list[str] | None = None) -> int:
             ),
         )
         cache.allow_retry(retry_ids)
-        print(f"terminal failed rows released for fallback retry: {len(retry_ids):,}")
+        print(f"failed rows released for fallback retry: {len(retry_ids):,}")
     ledger = (
         None
         if args.no_token_ledger
@@ -1271,6 +1354,9 @@ def main(argv: list[str] | None = None) -> int:
             max_tokens=args.budget_max_tokens,
         )
     )
+    if ledger is not None and ledger.state.get("status") == "credential_unavailable":
+        print("credential previously reported no API credits; skipping this phase")
+        return CREDENTIAL_UNAVAILABLE_EXIT_CODE
     batches = (
         plan_batches(
             delta_candidates,
@@ -1295,7 +1381,9 @@ def main(argv: list[str] | None = None) -> int:
             max_connections=args.workers,
             timeout_s=args.request_timeout_s,
         )
-        llm = openai_compatible_llm(client)
+        # The runner owns every retry so all possible generations are reserved.
+        client = client.with_options(max_retries=0)
+        llm = openai_compatible_llm(client, provider_only=args.provider_only, cache=cache)
         model = args.model
         api_base_url = args.base_url
     else:
@@ -1308,6 +1396,8 @@ def main(argv: list[str] | None = None) -> int:
     in_flight: dict[Any, RequestBatch] = {}
     next_batch: RequestBatch | None = None
     finished = exhausted = False
+    credential_unavailable = False
+    completed_batches = 0
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
         while True:
             while len(in_flight) < args.workers and not finished:
@@ -1323,7 +1413,7 @@ def main(argv: list[str] | None = None) -> int:
                     break
                 cache.submit(
                     next_batch,
-                    epoch=ledger.epoch if ledger is not None else "unmetered",
+                    epoch=ledger.epoch if ledger is not None else "uncapped_usage_in_cache",
                     credential_env=selected_credential_env,
                     model=model,
                     base_url=api_base_url,
@@ -1360,6 +1450,23 @@ def main(argv: list[str] | None = None) -> int:
                 cache.terminal(
                     batch, assignments=rows, usage=usage, response_status=status
                 )
+                if status == "api_failure_quota_exhausted":
+                    credential_unavailable = finished = True
+                    next_batch = None
+                completed_batches += 1
+                if completed_batches % 25 == 0:
+                    print(
+                        f"completed {completed_batches:,}/{len(batches):,} batches; "
+                        f"cached rows={len(cache.assignments):,}; "
+                        f"charged tokens={ledger.spent() if ledger is not None else 'uncapped; see cache'}",
+                        flush=True,
+                    )
+    if credential_unavailable:
+        if ledger is not None:
+            ledger.state["status"] = "credential_unavailable"
+            ledger._write()
+        print("credential has no API credits; checkpointed for the next phase", flush=True)
+        return CREDENTIAL_UNAVAILABLE_EXIT_CODE
     if exhausted:
         assert ledger is not None
         ledger.mark_exhausted()
@@ -1370,6 +1477,11 @@ def main(argv: list[str] | None = None) -> int:
         return BUDGET_EXHAUSTED_EXIT_CODE
 
     cache = SubmissionCache(cache_path)
+    if args.defer_publication:
+        return 0
+    if args.require_complete and retryable_assignment_ids(cache):
+        print(f"unresolved technical failures: {len(retryable_assignment_ids(cache)):,}; nothing published")
+        return 3
     manifest = materialize(
         candidates,
         cache,
@@ -1388,6 +1500,37 @@ def main(argv: list[str] | None = None) -> int:
     print(f"rejected rows: {manifest['rejected_rows']:,}")
     print(f"wrote {mapping_path}")
     return 0
+
+
+def run_two_key_baidu(argv: list[str], args: argparse.Namespace) -> int:
+    """Resume two capped OpenAI phases, then finish only unresolved rows on Baidu."""
+    if args.task != "bioavailability_ma" or args.cache_dir is None or not args.budget_epoch:
+        raise ValueError("two-key schedule requires Oral Bio, --cache-dir and --budget-epoch")
+    if args.no_token_ledger or args.base_mapping or args.provider_only or args.retry_failed:
+        raise ValueError("the two-key schedule owns budgets, fresh mappings and fallback routing")
+    common = [value for value in argv if value != "--two-key-baidu-run"]
+    common += ["--require-complete", "--workers", "8"]
+    for index, credential in enumerate(("OPENAI_API_KEY", "OPENAI_API_KEY_TWO"), 1):
+        result = main(common + [
+            "--model", "gpt-5.4-mini", "--base-url", "https://api.openai.com/v1",
+            "--provider", "openai", "--api-key-env", credential,
+            "--token-ledger", str(args.cache_dir / f"gpt_key_{index}_ledger.json"),
+            "--budget-max-tokens", "10000000", "--defer-publication",
+        ])
+        if result == 0:
+            break
+        if result not in {BUDGET_EXHAUSTED_EXIT_CODE, CREDENTIAL_UNAVAILABLE_EXIT_CODE}:
+            return result
+    for _ in range(3):
+        result = main(common + [
+            "--model", "deepseek/deepseek-v4-flash-0731",
+            "--base-url", "https://openrouter.ai/api/v1", "--provider", "openrouter",
+            "--api-key-env", "OPEN_ROUTER_KEY", "--provider-only", "baidu/fp8",
+            "--no-token-ledger", "--retry-failed",
+        ])
+        if result != 3:
+            return result
+    return 3
 
 
 if __name__ == "__main__":

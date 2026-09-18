@@ -1,0 +1,208 @@
+{
+  "api_base_url": "http://dgx027:50001/v1",
+  "api_base_urls": [
+    "http://dgx027:50001/v1"
+  ],
+  "api_usage_by_returned_model": {
+    "deepseek-ai/DeepSeek-V4-Flash-0731": {
+      "input_tokens": 114113461,
+      "output_tokens": 15093881,
+      "reported_cost": 0.0,
+      "responses": 24054,
+      "responses_without_usage": 0
+    }
+  },
+  "assignment_guard": {
+    "guarded_rows": 100612,
+    "reason_counts": {
+      "ambiguous_named_metric_basis": 137,
+      "bound_not_point": 2609,
+      "comparison_defined_count": 1278,
+      "conflicting_focal_statement": 31,
+      "control_or_comparator_not_outcome": 7359,
+      "different_qualitative_focal_outcome": 1012,
+      "dose_or_concentration_not_outcome": 22351,
+      "incomplete_named_metric": 1195,
+      "measurement_not_exact_source_point": 601,
+      "missing_printed_scientific_scale": 11,
+      "multiple_or_missing_point_candidates": 16290,
+      "percent_unit_contains_context": 1,
+      "relative_value": 14100,
+      "unit_contains_additional_result": 98,
+      "unit_contains_comparator_context": 564,
+      "unit_contains_context_clause": 1749,
+      "unit_contains_time_context": 2232,
+      "unit_contains_uncertainty": 155,
+      "unit_not_exact_declared_unit": 608,
+      "unit_not_exact_measurement_text": 2242,
+      "unit_not_tied_to_selected_value": 6443,
+      "unqualified_percent_unit": 9780,
+      "unsupported_literal_unit": 4770,
+      "unsupported_or_uncertain_unit": 2522,
+      "unsupported_percent_scale": 2474
+    },
+    "version": "dili_measurement_assignment_guard.v13"
+  },
+  "assignment_method_counts": {
+    "model_guarded_unsure": 100612,
+    "model_single_pass": 376404,
+    "model_structural_retry": 1453
+  },
+  "base_mapping": null,
+  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "19f37826dc53bde935e852f1698f3dbfeabc65181e599fa20c2c481fc1d7b72c",
+  "credential_counts": {
+    "": 478469
+  },
+  "delta_inference": {
+    "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+    "models": [
+      "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "rows": 478469
+  },
+  "endpoint_profile": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/dili/v10/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "4f11b032bcbfc20d2eba7a03bac059c62f9f5b912f3e6019dbcc7435918812ec",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "exact_unit_coverage": null,
+  "generation_version": "measurement_resolution_generation.v8",
+  "inference": {
+    "max_completion_tokens": 8192,
+    "reasoning_mode": "none",
+    "temperature": 0.0
+  },
+  "inference_base_url_counts": {
+    "http://dgx027:50001/v1": 478469
+  },
+  "inference_model_counts": {
+    "deepseek-ai/DeepSeek-V4-Flash-0731": 478469
+  },
+  "mapping_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet",
+  "mapping_rows": 478469,
+  "mapping_sha256": "d8d979c6415b4385a64e3346da00a64b91b7e0a001d779782dd1e43e27d3c1af",
+  "mapping_version": "dili_measurement_resolution.v1",
+  "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+  "models": [
+    "deepseek-ai/DeepSeek-V4-Flash-0731"
+  ],
+  "prompt": {
+    "batch_size": 20,
+    "candidate_routing_version": "dili_schema_numeric_routing.v5",
+    "canonical_endpoint_name_role": "identity_batching_only",
+    "endpoint_profiles_visible": false,
+    "generation_reasoning_effort": "none",
+    "generation_temperature": 0.0,
+    "maximum_measurements_per_row": 1,
+    "post_generation_assignment_guard": {
+      "module_path": "data/processing/evidence_library/versions/v10/tasks/dili/starling_measurement_resolution.py",
+      "module_sha256": "b7cab4ec08a742c19a5454f994ca7f72788ed9f86374ceda45c9ff622df61632",
+      "version": "dili_measurement_assignment_guard.v13"
+    },
+    "prompt_version": "dili_measurement_resolution_prompt.v8",
+    "rendered_sha256": {
+      "dili_base": "db1ff1a60921a3f91f5e23f2d25604e69adba7396f6a3e5ef0888c5d6af216c5",
+      "dili_v1": "4fa91be3fb5a6f46ee8f4122b0bc387df98a45df9b6512563814233d5dfdfbc8",
+      "dili_v2": "f4d966e960c17d9469613a0a97cf24027a14b173b2f6a8c7671b9d8109695311",
+      "dili_v3": "9b2fa5da3221cab103dd8ed678d68fc3f148044bba3a207dc732acd46c5dc313",
+      "dili_v4": "8b3b61f496892fc577d613f12c6aea9a209dc30a64c92f9c925b3676814cb01b",
+      "dili_v5": "3a7a99a548a59d0bdda72c3589d5d3958680b75db3089a096c599d9bb7f0aab1"
+    },
+    "source_measurement_fields": {
+      "dili_base": {
+        "measurement_field": "causal_status",
+        "unit_field": null
+      },
+      "dili_v1": {
+        "measurement_field": "result_value",
+        "unit_field": "result_unit"
+      },
+      "dili_v2": {
+        "measurement_field": "reported_result",
+        "unit_field": null
+      },
+      "dili_v3": {
+        "measurement_field": "result_value",
+        "unit_field": "result_unit"
+      },
+      "dili_v4": {
+        "measurement_field": "result_value",
+        "unit_field": "result_unit"
+      },
+      "dili_v5": {
+        "measurement_field": "quantitative_value",
+        "unit_field": "quantitative_unit"
+      }
+    },
+    "source_row_fields": {
+      "dili_base": [
+        "endpoint_name",
+        "measurement_text",
+        "support_text"
+      ],
+      "dili_v1": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "assay_and_readout"
+      ],
+      "dili_v2": [
+        "endpoint_name",
+        "measurement_text",
+        "support_text",
+        "assay_detail"
+      ],
+      "dili_v3": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_metric",
+        "target_or_process",
+        "probe_or_analyte",
+        "effect_direction"
+      ],
+      "dili_v4": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_and_comparator",
+        "analytical_platform_and_normalization",
+        "effect_direction"
+      ],
+      "dili_v5": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "specific_endpoint_name",
+        "quantitative_measure_type",
+        "assay_and_platform",
+        "effect_direction"
+      ]
+    },
+    "template_path": "data/processing/evidence_library/versions/v10/tasks/dili/prompts/measurement_resolution_v8.jinja",
+    "template_sha256": "7cfa802c00dc7f428208816e4e8507da67c466729e95615110cc83a733738671"
+  },
+  "rejected_rows": 0,
+  "routing_version": "starling_measurement_routing.v7",
+  "served_provider_counts": {
+    "None": 478469
+  },
+  "status_counts": {
+    "ok": 55887,
+    "relative": 123085,
+    "unavailable": 178089,
+    "unsure": 121408
+  },
+  "task_id": "dili",
+  "validations": {
+    "maximum_measurements_per_row": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

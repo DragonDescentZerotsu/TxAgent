@@ -1,0 +1,128 @@
+{
+  "api_base_url": "https://api.openai.com/v1",
+  "api_base_urls": [
+    "https://api.openai.com/v1"
+  ],
+  "api_usage_by_returned_model": {
+    "gpt-5.4-mini-2026-03-17": {
+      "input_tokens": 164147,
+      "output_tokens": 29478,
+      "reported_cost": 0.0,
+      "responses": 36,
+      "responses_without_usage": 0
+    }
+  },
+  "assignment_method_counts": {
+    "model_single_pass": 500
+  },
+  "base_mapping": null,
+  "cleaned_records_path": "data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "e93d82ae6798dad59de13ce8e9f4296a98bd65b47229aafde0359f69a9a49581",
+  "credential_counts": {
+    "OPENAI_API_KEY_ONE": 500
+  },
+  "delta_inference": {
+    "model": "gpt-5.4-mini-2026-03-17",
+    "models": [
+      "gpt-5.4-mini-2026-03-17"
+    ],
+    "rows": 500
+  },
+  "endpoint_profile": {
+    "path": "data/evidence_libraries/ames/v10/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "a0904d753a54b72a4ab0f8df669dd84ff67de817f43d958add6906144c58c4a4",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "exact_unit_coverage": null,
+  "generation_version": "measurement_resolution_generation.v8",
+  "inference": {
+    "max_completion_tokens": 8192,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "inference_base_url_counts": {
+    "https://api.openai.com/v1": 500
+  },
+  "inference_model_counts": {
+    "gpt-5.4-mini-2026-03-17": 500
+  },
+  "mapping_path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/measurement_resolution_v1/gold_replays/gpt54mini_prompt_v1/measurement_resolution.parquet",
+  "mapping_rows": 500,
+  "mapping_sha256": "30d5ae46763f1a399ab46119dae32c5bdd67f2842f51eb382edf737fb6079eec",
+  "mapping_version": "ames_measurement_resolution.v1",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "models": [
+    "gpt-5.4-mini-2026-03-17"
+  ],
+  "prompt": {
+    "batch_size": 20,
+    "maximum_measurements_per_row": 1,
+    "prompt_version": "ames_measurement_resolution_prompt.v1",
+    "rendered_sha256": {
+      "fixed_mutation": "f6d2aa7fa847ef348c2d2904c3f51f1865de0ccb9a5080664731d97501cce24e",
+      "mutagenicity_mechanism": "5b27ac415ea50a09dfd2ca44348526826041c65ec4acb14a54ce15ac752f5f0b",
+      "mutagenicity_outcomes": "517061a9732af397e050988a82b0b31072fd498d15ce7945a23bcb7a118d669b",
+      "premutagenic_damage": "b0963d258fac722689063f9342eec5077df305039d1dc88d3c0f1b6fb7a54fa8"
+    },
+    "source_row_fields": {
+      "fixed_mutation": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_class",
+        "study_context",
+        "biological_test_system",
+        "result_call"
+      ],
+      "mutagenicity_mechanism": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "assay_method_and_endpoint",
+        "biological_system",
+        "mechanism_category",
+        "result_direction"
+      ],
+      "mutagenicity_outcomes": [
+        "endpoint_name",
+        "measurement_text",
+        "support_text",
+        "evidence_basis",
+        "test_system",
+        "metabolic_activation"
+      ],
+      "premutagenic_damage": [
+        "endpoint_name",
+        "measurement_text",
+        "unit_text",
+        "support_text",
+        "endpoint_class",
+        "endpoint_subtype",
+        "biological_system",
+        "result_status"
+      ]
+    },
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/prompts/measurement_resolution_v1.jinja",
+    "template_sha256": "7ddb360fd36a494e9646396c24d9304108922f202c22730fb941f515be25491d"
+  },
+  "rejected_rows": 0,
+  "routing_version": "starling_measurement_routing.v7",
+  "served_provider_counts": {
+    "None": 500
+  },
+  "status_counts": {
+    "ok": 210,
+    "relative": 71,
+    "unavailable": 57,
+    "unsure": 162
+  },
+  "task_id": "ames",
+  "validations": {
+    "maximum_measurements_per_row": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

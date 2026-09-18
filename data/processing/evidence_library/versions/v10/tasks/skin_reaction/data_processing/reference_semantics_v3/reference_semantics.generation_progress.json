@@ -1,0 +1,18 @@
+{
+  "attempted_rows": 148648,
+  "base_url": "https://openrouter.ai/api/v1",
+  "batch_size": 50,
+  "budget_epoch": "bio-skin-reference-v3-openrouter-20260831",
+  "budget_max_tokens": 20000000,
+  "budget_spent_tokens": 13883939,
+  "candidate_rows": 148648,
+  "completed": true,
+  "generation_version": "reference_semantics_generation.v3",
+  "model": "openai/gpt-5.6-luna",
+  "no_call_rows": 0,
+  "prompt_version": "skin_reaction_reference_semantics_prompt.v2",
+  "reasoning_effort": "low",
+  "task_id": "skin_reaction",
+  "terminal_rows": 148648,
+  "unattempted_api_rows": 0
+}

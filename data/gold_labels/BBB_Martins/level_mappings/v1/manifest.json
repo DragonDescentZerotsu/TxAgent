@@ -1,0 +1,48 @@
+{
+  "version": "gold_original_level_mapping.v1",
+  "status": "complete",
+  "task": "bbb_martins",
+  "gold_release": "v1",
+  "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
+  "builder": {
+    "path": "data/processing/evidence_library/publish_gold_level_mappings.py",
+    "sha256": "de7a480b56e04ea283a7a27d9a80458a6b69aee56673d41e4551626d506f3078"
+  },
+  "upstream": {
+    "path": "data/legacy/artifacts/evidence_libraries/v10_before_level_mapping_compatibility_20260908/source_uid_levels/bbb_martins.parquet",
+    "sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+    "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b"
+  },
+  "inputs": {
+    "voter_membership": {
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/voter_membership.parquet",
+      "sha256": "47bfd46b90743a2f9a289b87791449b4c6231084e43baaa0a26ad6f119fe410c",
+      "physical_voters": 7634
+    }
+  },
+  "outputs": {
+    "original_level_mapping": {
+      "kind": "parquet_file",
+      "path": "original_level_mapping.parquet",
+      "sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+      "rows": 498556
+    },
+    "level_mapping": {
+      "kind": "parquet_file",
+      "path": "level_mapping.parquet",
+      "sha256": "d30ac0c3d335e213812fc684dd8c1154eacd5edb78c0f9d09629994c93852159",
+      "rows": 498556,
+      "rows_by_level": {
+        "1": 8592,
+        "2": 268379,
+        "3": 14189,
+        "4": 163672,
+        "5": 43724
+      }
+    },
+    "alignment_report": {
+      "path": "alignment_report.json",
+      "sha256": "0d440faa386e26f882e60e7190b1632b479c7d01eb6aa09b7552b6096b14da43"
+    }
+  }
+}

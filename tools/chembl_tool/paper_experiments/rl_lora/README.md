@@ -72,10 +72,7 @@ and logging destination. The config-specific map is in
 - `AGENTS.md`: non-negotiable lineage, privacy, and backend-sharing rules.
 - `ONE_PASS_IMPLEMENTATION_PLAN.md`: one-pass scientific design and gates.
 - `ONE_PASS_REASONING.md`: current code ownership and runnable lifecycle.
-- `REFACTOR_STATUS.md`: organized scope, remaining RL debt, and dirty-worktree split.
-- `IMPLEMENTATION_PLAN.md`: historical E17 final-only plan.
 - `LOCAL_NEMO_RUNBOOK.md`: pinned local runtime, patches, and receipts.
-- `TINKER_EVALUATION.md`: hosted evaluation and cost receipts.
 - `VISIBLE_ONE_PASS_VALID_RESULTS.md`: visible-prefetched base-valid/RL receipts.
 
 Large checkpoints, Ray state, generated worker environments, and caches stay

@@ -87,6 +87,10 @@ from data.processing.evidence_library.versions.v9.tasks.bbb_martins.starling_sou
     source_column_contract_manifest,
     source_fields_from_record,
 )
+from data.processing.evidence_library.versions.v9.tasks.bbb_martins.transporter_identifiers import (
+    TRANSPORTER_IDENTIFIER_VERSION,
+    transporter_identifier_fields,
+)
 from data.processing.evidence_library.versions.v9.tasks.bbb_martins.starling_schema import (
     RECORD_CONTRACT,
     SOURCE_ENDPOINT_PRODUCER_IDS,
@@ -166,13 +170,17 @@ def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace
         )
         return canonicalize_endpoint(decision.spacing_and_spelling_endpoint)
 
+    routed_records = attach_stage1_routes(
+        result.records,
+        task=TASK_ID,
+        endpoint_resolver=resolve_endpoint,
+    )
     return replace(
         result,
-        records=attach_stage1_routes(
-            result.records,
-            task=TASK_ID,
-            endpoint_resolver=resolve_endpoint,
-        ),
+        records=[
+            {**record, **transporter_identifier_fields(record)}
+            for record in routed_records
+        ],
         input_paths=(
             *result.input_paths,
             *((endpoint_mapping,) if endpoint_mapping.is_file() else ()),
@@ -460,6 +468,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
         "endpoint_normalization_version": ENDPOINT_NORMALIZATION_VERSION,
+        "transporter_identifier_version": TRANSPORTER_IDENTIFIER_VERSION,
         "measurement_semantics_policy_version": semantics.policy_version,
         "measurement_semantics_policy_sha256": semantics.sha256,
     }
@@ -491,6 +500,7 @@ def _enrich_record(
 ) -> dict[str, Any]:
     source_projection = llm_source_projection(record)
     auxiliary = attacher.attach(record)
+    transporter = transporter_identifier_fields(record)
     exact = str(record.get("measurement_resolution_status") or "") in {
         "ok",
         "relative",
@@ -581,6 +591,7 @@ def _enrich_record(
     enriched = {
         **record,
         **auxiliary,
+        **transporter,
         **encoded,
         **endpoint_fields,
         "canonical_endpoint_concept": reviewed_endpoint_concept,
@@ -666,6 +677,8 @@ def _enrich_record(
         }
     else:
         validity = enrich_bbb_validity(enriched)
+    if transporter["transporter_identifier_mapping_status"] == "unresolved_source_identifier":
+        validity["assay_transfer_ineligibility_reason"] = "unresolved_transporter_identifier"
     reference = reference_attacher.attach(
         {
             **record,
@@ -690,6 +703,7 @@ def _enrich_record(
             source_projection["source_fields"], ensure_ascii=False, sort_keys=True
         ),
         **auxiliary,
+        **transporter,
         **endpoint_fields,
         "canonical_endpoint_concept": reviewed_endpoint_concept,
         **unit_fields,

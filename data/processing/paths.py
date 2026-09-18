@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_ROOT = REPO_ROOT / "data"
 RAW_ROOT = DATA_ROOT / "raw"
@@ -19,16 +18,22 @@ _TASK_NAMES = {
     "Bioavailability_Ma": "bioavailability_ma",
     "Skin_Reaction": "skin_reaction",
     "Ames": "ames",
+    "DILI": "dili",
+    "Carcinogens": "carcinogens",
     "bbb_martins": "bbb_martins",
     "bioavailability_ma": "bioavailability_ma",
     "skin_reaction": "skin_reaction",
     "ames": "ames",
+    "dili": "dili",
+    "carcinogens": "carcinogens",
 }
 KNOWN_RELEASES = {
-    "bbb_martins": ("v7", "v8", "v9"),
-    "bioavailability_ma": ("v7", "v8", "v9"),
-    "skin_reaction": ("v7", "v8", "v9"),
-    "ames": ("v8", "v9"),
+    "bbb_martins": ("v7", "v8", "v9", "v10"),
+    "bioavailability_ma": ("v7", "v8", "v9", "v10"),
+    "skin_reaction": ("v7", "v8", "v9", "v10"),
+    "ames": ("v8", "v9", "v10"),
+    "dili": ("v10",),
+    "carcinogens": ("v10",),
 }
 
 

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Live prediction traces</title>
+<style>
+:root{--ink:#17202a;--muted:#667085;--line:#d9e0e7;--bg:#f4f6f8;--nav:#17212b;--blue:#1769aa;--soft:#f7f9fb;--green:#087a55}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,sans-serif}header{position:sticky;top:0;z-index:2;background:var(--nav);color:white;padding:14px 18px}h1{margin:0 0 12px;font-size:19px}.controls{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr)) auto;gap:9px}label{display:grid;gap:4px;color:#cbd5e1;font-size:11px;font-weight:700}select,button{min-height:36px;border-radius:5px;padding:6px 9px}select{color:white;background:#263442;border:1px solid #526171}button{align-self:end;border:0;background:var(--blue);color:white;font-weight:700}main{max-width:1500px;margin:auto;padding:14px}.status,.panel,.review-controls{background:white;border:1px solid var(--line);border-radius:6px}.status{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);margin-bottom:12px}.review-controls{display:none;grid-template-columns:repeat(4,minmax(150px,1fr));gap:9px;margin-bottom:12px;padding:10px}.review-controls.active{display:grid}.review-controls label{color:var(--muted)}.review-controls select{color:var(--ink);background:white;border-color:var(--line)}.metric{background:white;padding:10px}.key{color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:800}.value{margin-top:4px;font:13px ui-monospace,monospace;overflow-wrap:anywhere}.layout{display:grid;grid-template-columns:310px 1fr;gap:12px}.panel h2{font-size:13px;margin:0;padding:10px;border-bottom:1px solid var(--line)}#samples{padding:8px;display:grid;gap:6px}.review-group{margin:6px 2px 1px;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.sample{width:100%;text-align:left;color:var(--ink);background:white;border:1px solid var(--line)}.sample.active{border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}.sample-meta{display:block;margin-top:3px;color:var(--muted);font:11px ui-monospace,monospace}#detail{padding:10px;min-width:0}.classification{padding:12px;background:#fffaf0;border-top:1px solid #ead7ad}.classification p{line-height:1.5}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:3px 20px;margin-top:12px}.explanation{margin-top:4px;font-size:14px;line-height:1.55}.stage,.section{border:1px solid var(--line);border-radius:5px;margin-bottom:10px}.stage>summary,.section>summary{cursor:pointer;padding:10px;background:var(--soft);font-weight:750}.section{margin:10px}.block{padding:12px;border-top:1px solid var(--line)}pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 ui-monospace,monospace}.hint{color:var(--muted);font-size:12px}.bad{color:#b42318}.good{color:var(--green)}.summary{display:grid;grid-template-columns:160px 130px 1fr;gap:10px;padding:12px;background:#f2fbf7;border-top:1px solid #b7e3d1}.summary strong{display:block;margin-top:3px;font-size:16px}.heading{margin:18px 0 7px;font-size:15px}.claim{padding:10px;margin:7px 0;background:var(--soft);border-left:3px solid var(--blue);line-height:1.45}.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.chip{padding:2px 6px;border-radius:10px;background:#e7eef5;color:#344054;font:11px ui-monospace,monospace}.clean-list{margin:6px 0;padding-left:20px}.clean-list li{margin:5px 0;line-height:1.45}.prompt{padding:12px;line-height:1.5}.prompt h3{margin:20px 0 7px;padding-bottom:4px;border-bottom:1px solid var(--line);font-size:16px}.prompt h4{margin:16px 0 5px;color:var(--blue);font-size:14px}.prompt p{margin:5px 0}.prompt .bullet{margin:4px 0 4px 18px}.field{display:grid;grid-template-columns:145px 1fr;gap:8px;padding:4px 0}.field b{color:var(--muted);font-size:12px}.mono{font-family:ui-monospace,monospace;overflow-wrap:anywhere}.meta{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px solid var(--line)}@media(max-width:800px){.controls,.status,.layout,.summary,.field,.review-controls,.detail-grid{grid-template-columns:1fr}.layout{display:block}.panel{margin-bottom:12px}}
+</style>
+</head>
+<body>
+<header><h1>Live prediction traces</h1><div class="controls">
+<label>Dataset<select id="dataset"></select></label>
+<label>Method<select id="method"></select></label>
+<label>Date and time<select id="run"></select></label>
+<button id="refresh">Refresh</button>
+</div></header>
+<main><section id="status" class="status"></section>
+<section id="reviewControls" class="review-controls">
+<label>Primary classification<select id="primary"><option value="">All</option></select></label>
+<label>Flip direction<select id="direction"><option value="">All</option></select></label>
+<label>Identity recognition<select id="identity"><option value="">All</option></select></label>
+<label>External knowledge<select id="knowledge"><option value="">All</option></select></label>
+</section><div class="layout">
+<aside class="panel"><h2 id="samplesTitle">Pilot samples</h2><div id="samples"></div></aside>
+<section class="panel"><h2>Prompt and reasoning chain</h2><div id="detail" class="hint">Select a sample.</div></section>
+</div></main>
+<script>
+const qs=new URLSearchParams(location.search);
+const DATA=(qs.get('data')||'https://raw.githubusercontent.com/jiosephlee/jiosephlee.github.io/live-traces/traces-data').replace(/\/$/,'');
+const $=id=>document.getElementById(id), els={dataset:$('dataset'),method:$('method'),run:$('run'),refresh:$('refresh'),status:$('status'),reviewControls:$('reviewControls'),primary:$('primary'),direction:$('direction'),identity:$('identity'),knowledge:$('knowledge'),samplesTitle:$('samplesTitle'),samples:$('samples'),detail:$('detail')};
+let catalog=[],current=null,selected='';
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function json(path){const r=await fetch(`${DATA}/${path}?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error(`${r.status} ${path}`);return r.json()}
+function options(values,selected){return values.map(v=>`<option value="${esc(v)}"${v===selected?' selected':''}>${esc(v)}</option>`).join('')}
+const classificationLabel=value=>String(value||'unclassified').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+function reviewAnnotations(){return current?.review?.samples||{}}
+function configureReview(){
+  const annotations=Object.values(reviewAnnotations()),active=annotations.length>0;
+  els.reviewControls.classList.toggle('active',active);
+  els.samplesTitle.textContent=active?'Classified traces':'Pilot samples';
+  for(const [element,key] of [[els.primary,'primary_driver'],[els.direction,'flip_direction'],[els.identity,'identity_recognition'],[els.knowledge,'external_knowledge_role']]){
+    const selected=element.value;
+    const values=[...new Set(annotations.map(row=>row[key]).filter(Boolean))].sort();
+    element.innerHTML='<option value="">All</option>'+values.map(value=>`<option value="${esc(value)}">${esc(classificationLabel(value))}</option>`).join('');
+    if(values.includes(selected))element.value=selected;
+  }
+}
+function filteredSamples(){
+  const annotations=reviewAnnotations();
+  return Object.keys(current.samples||{}).sort().filter(id=>{
+    const row=annotations[id]||{};
+    return (!els.primary.value||row.primary_driver===els.primary.value)
+      &&(!els.direction.value||row.flip_direction===els.direction.value)
+      &&(!els.identity.value||row.identity_recognition===els.identity.value)
+      &&(!els.knowledge.value||row.external_knowledge_role===els.knowledge.value);
+  });
+}
+function chips(values){
+  return values?.length
+    ? `<div class="chips">${values.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>`
+    : '';
+}
+function requestMessages(row){
+  return `<div class="block"><pre>${esc(row.input_prompt||'')}</pre></div>`;
+}
+function structuredOutput(llm){
+  const output=llm?.content;
+  if(!output||typeof output!=='object'||Array.isArray(output))return `<pre>${esc(typeof output==='string'?output:JSON.stringify(output??{},null,2))}</pre>`;
+  const predictionKey=Object.keys(output).find(x=>x.endsWith('_prediction'))||'prediction';
+  const claims=Array.isArray(output.claims)?output.claims:[];
+  const gaps=Array.isArray(output.evidence_gaps)?output.evidence_gaps:[];
+  const hidden=new Set([predictionKey,'confidence','decision_summary','claims','evidence_gaps']);
+  const rest=Object.fromEntries(Object.entries(output).filter(([key])=>!hidden.has(key)));
+  return `<div class="summary"><div><span class="key">Prediction</span><strong>${esc(output[predictionKey]??'not reported')}</strong></div><div><span class="key">Confidence</span><strong>${esc(output.confidence??'not reported')}</strong></div><div><span class="key">Decision summary</span><strong>${esc(output.decision_summary??'')}</strong></div></div>`
+    +(claims.length?`<div class="block"><h3 class="heading">Evidence claims</h3>${claims.map((claim,i)=>`<div class="claim"><b>${i+1}.</b> ${esc(claim.claim??claim)}${chips(claim.card_ids)}</div>`).join('')}</div>`:'')
+    +(gaps.length?`<div class="block"><h3 class="heading">Evidence gaps</h3><ul class="clean-list">${gaps.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'')
+    +(Object.keys(rest).length?`<details class="section"><summary>Supporting structured fields</summary><div class="block"><pre>${esc(JSON.stringify(rest,null,2))}</pre></div></details>`:'');
+}
+function response(row){
+  const llm=row.llm||{},validation=llm.structured_output_validation||{},usage=llm.usage||{};
+  return `<div class="meta"><span class="chip">model: ${esc(llm.model||'unknown')}</span><span class="chip ${validation.valid===false?'bad':'good'}">validation: ${validation.valid===false?'failed':'valid'}</span><span class="chip">attempts: ${esc(validation.attempt_count??1)}</span><span class="chip">prompt tokens: ${esc(usage.prompt_tokens??'—')}</span><span class="chip">completion tokens: ${esc(usage.completion_tokens??'—')}</span></div>`
+    +structuredOutput(llm)
+    +`<details class="section"><summary>Raw response and audit metadata</summary><div class="block"><pre>${esc(JSON.stringify(llm,null,2))}</pre></div></details>`;
+}
+function populate(){const d=els.dataset.value||catalog[0]?.dataset||'';els.dataset.innerHTML=options([...new Set(catalog.map(x=>x.dataset))],d);const methods=[...new Set(catalog.filter(x=>x.dataset===els.dataset.value).map(x=>x.method))];const m=methods.includes(els.method.value)?els.method.value:methods[0];els.method.innerHTML=options(methods,m);const runs=catalog.filter(x=>x.dataset===els.dataset.value&&x.method===els.method.value).sort((a,b)=>b.run_id.localeCompare(a.run_id));const id=runs.some(x=>x.run_id===els.run.value)?els.run.value:runs[0]?.run_id;els.run.innerHTML=options(runs.map(x=>x.run_id),id)}
+async function load(){try{const old=current;catalog=(await json('catalog.json')).runs||[];populate();const row=catalog.find(x=>x.dataset===els.dataset.value&&x.method===els.method.value&&x.run_id===els.run.value);if(!row)return;current=await json(`${row.path}/run.json`);configureReview();render();if(old?.updated_at!==current.updated_at&&selected)await sample(selected)}catch(e){els.detail.innerHTML=`<p class="bad">${esc(e.message)}</p>`}}
+function metric(k,v){return `<div class="metric"><div class="key">${esc(k)}</div><div class="value">${esc(v)}</div></div>`}
+function render(){
+  els.status.innerHTML=metric('status',current.status)+metric('dataset',current.dataset)+metric('method',current.method)+metric('updated',current.updated_at);
+  const names=filteredSamples(),annotations=reviewAnnotations(),isReview=Object.keys(annotations).length>0,grouped=new Map();
+  for(const id of names){const group=annotations[id]?.primary_driver||'';if(!grouped.has(group))grouped.set(group,[]);grouped.get(group).push(id)}
+  if(selected&&!names.includes(selected))selected='';
+  els.samples.innerHTML=names.length?[...grouped].sort(([a],[b])=>classificationLabel(a).localeCompare(classificationLabel(b))).map(([group,ids])=>(group?`<div class="review-group">${esc(classificationLabel(group))} · ${ids.length}</div>`:'')+ids.map(id=>{const row=annotations[id]||{};const content=isReview?`<strong>${esc(id)}</strong><span class="sample-meta">${esc(row.flip_direction||'')} · gold ${esc(row.gold??'')} · kNN ${esc(row.knn_prediction??'')} → LLM ${esc(row.llm_prediction??'')}</span>`:`${esc(id)}<br><span class="hint">${(current.samples[id]||[]).length} stages</span>`;return `<button class="sample${id===selected?' active':''}" data-id="${esc(id)}">${content}</button>`}).join('')).join(''):'<p class="hint">No traces match these filters.</p>';
+  els.samples.querySelectorAll('button').forEach(b=>b.onclick=()=>sample(b.dataset.id));
+  if(!selected&&names.length)sample(names[0]);
+}
+function classification(id){
+  const row=reviewAnnotations()[id];
+  if(!row)return '';
+  const legacy=['scaffold_family_reasoning','local_transformation_reasoning','functional_group_reasoning','physicochemical_reasoning','condition_formulation_reasoning','record_conflict_quality_reasoning'].filter(key=>row[key]).map(key=>key.replace('_reasoning','').replace('condition_formulation','condition_matching').replace('functional_group','functional_group_analysis'));
+  const reasoningTags=Array.isArray(row.reasoning_tags)?row.reasoning_tags:(typeof row.reasoning_tags==='string'?row.reasoning_tags.split(';').filter(Boolean):legacy);
+  const details=[['Flip direction',row.flip_direction],['Identity recognition',classificationLabel(row.identity_recognition)],['External knowledge',classificationLabel(row.external_knowledge_role)],['Review confidence',classificationLabel(row.classification_confidence)],['ADME mechanisms',String(row.adme_mechanisms||'').split(';').map(classificationLabel).join(', ')]];
+  return `<section class="section"><h2>Reasoning classification</h2><div class="summary"><div><span class="key">Primary driver</span><strong>${esc(classificationLabel(row.primary_driver))}</strong></div><div><span class="key">kNN votes</span><strong>${esc(row.knn_votes||'')}</strong></div><div><span class="key">What happened</span><div class="explanation">${esc(row.detailed_explanation||row.concise_rationale||'')}</div></div></div><div class="classification"><div class="key">Applicable reasoning tags</div>${chips(reasoningTags.map(classificationLabel))}<p class="hint">The primary driver is the single grouping label. Reasoning tags are nonexclusive and record other arguments that materially contributed.</p><div class="detail-grid">${details.filter(([,value])=>value).map(([label,value])=>`<div class="field"><b>${esc(label)}</b><span>${esc(value)}</span></div>`).join('')}</div>${row.external_knowledge_note?`<p><b>Knowledge provenance:</b> ${esc(row.external_knowledge_note)}</p>`:''}</div></section>`;
+}
+async function sample(id){selected=id;render();const stages=current.samples[id]||[];const rows=await Promise.all(stages.map(stage=>json(`${current.path}/samples/${id}/${stage}.json`)));const hint=current.review?`<p class="hint">Curated review set · ${esc(current.review.title||'classified traces')}</p>`:`<p class="hint">Cancel: <code>python -m predict.live cancel ${esc(current.path)}</code> · Continue: <code>python -m predict.live continue ${esc(current.path)}</code></p>`;els.detail.innerHTML=classification(id)+hint+rows.map((row,i)=>{const llm=row.llm||{};return `<details class="stage"${i===rows.length-1?' open':''}><summary>${esc(row.stage)}</summary><details class="section"><summary>input</summary>${requestMessages(row)}</details><details class="section" open><summary>reasoning</summary><div class="block"><pre>${esc(llm.reasoning_content||llm.reasoning||'No separate reasoning text was returned.')}</pre></div></details><details class="section"><summary>final_summary</summary>${response(row)}</details></details>`}).join('')}
+els.dataset.onchange=()=>{els.method.value='';els.run.value='';selected='';populate();load()};els.method.onchange=()=>{els.run.value='';selected='';populate();load()};els.run.onchange=()=>{selected='';load()};for(const element of [els.primary,els.direction,els.identity,els.knowledge])element.onchange=()=>{selected='';render()};els.refresh.onclick=load;load();setInterval(load,5000);
+</script>
+</body></html>

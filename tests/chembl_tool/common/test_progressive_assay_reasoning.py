@@ -2,10 +2,10 @@ import json
 
 import pytest
 
-import predict.llm_engine.client as client_module
+import predict.api_client.client as client_module
 import predict.harnesses.progressive.runner as runner
 import predict.harnesses.progressive.state as progressive_state
-from predict.llm_engine.client import OpenAICompatibleClient
+from predict.api_client.client import OpenAICompatibleClient
 from predict.harnesses.progressive.state import (
     ProgressiveTaskContract,
     append_evidence,

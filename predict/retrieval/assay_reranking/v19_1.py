@@ -12,8 +12,8 @@ from typing import Any, Mapping
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from predict.retrieval.assay_reranking.runtime import (
-    CACHE_ROOT,
     CachedAssayReranker,
+    cache_profile_root,
     file_sha256,
     model_profile as load_model_profile,
 )
@@ -56,7 +56,7 @@ def default_cache_paths(
     task_id: str, *, split: str = "scaffold", subset: str = "valid"
 ) -> dict[str, str]:
     model_profile(task_id)
-    root = CACHE_ROOT / PROFILE_NAME / task_id / split / subset
+    root = cache_profile_root(PROFILE_NAME) / task_id / split / subset
     return {
         "catalog": "",
         "candidate_manifest": "",

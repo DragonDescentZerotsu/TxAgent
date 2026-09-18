@@ -1,0 +1,689 @@
+{
+  "schema_version": "skin_reaction_measurement_semantics_proposal.schema.v1",
+  "proposal_version": "skin_reaction.skin_exposure_measurement_semantics.proposal.v1",
+  "status": "proposal_only_not_runtime_policy",
+  "source": {
+    "source_id": "skin_exposure",
+    "path": "data/starling_data/skin_reaction/skin_exposure/extractions.parquet",
+    "sha256": "e2ba14d68a2235e984b3ee84b05e7aeb03920a46a4cd34122280385267399e15",
+    "record_count": 311834
+  },
+  "review_basis": {
+    "method": "programmatic_full_record_audit_with_representative_manual_inspection",
+    "network_or_api_calls": false,
+    "human_approval_claimed": false,
+    "input_fields": [
+      "result_value",
+      "result_unit",
+      "support_text",
+      "study_design",
+      "skin_source",
+      "formulation_vehicle",
+      "exposure_time",
+      "qualifying_conditions",
+      "extra_details"
+    ],
+    "note": "Matched counts describe deterministic selectors on the pinned source and existing v6 canonical view; they are not publication approval."
+  },
+  "selector_contract": {
+    "text_fields": ["support_text", "extra_details"],
+    "text_matching": "casefolded Python regular-expression search",
+    "unit_matching": "cleaned source unit unless selector explicitly names existing_canonical_unit",
+    "unknown_or_multiple_rule_policy": "fail_closed",
+    "count_drift_policy": "fail_closed",
+    "priority_order": "descending",
+    "endpoint_field": "endpoint_name"
+  },
+  "expected_audit_totals": {
+    "targeted_records": 3804,
+    "proposed_canonicalization_records": 3162,
+    "evidence_only_records": 642,
+    "rules": 32,
+    "every_targeted_record_matches_exactly_one_rule": true
+  },
+  "rules": [
+    {
+      "rule_id": "skin.exposure.flux.compact_areic_time_ug.v1",
+      "priority": 1000,
+      "matched_record_count": 926,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["µg/cm"],
+        "raw_unit_regex": "^(?:µg|ug)/(?:\\()?cm(?:\\^?2|²)(?:[.·∙•-]?)(?:h|hr|hour|min|day|s)(?:\\^-?1)?(?:\\))?(?:\\s*[×x]\\s*10(?:\\^?-?\\d+))?$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse corrected area-and-time denominator, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.compact_areic_time_mg.v1",
+      "priority": 999,
+      "matched_record_count": 238,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["mg/cm"],
+        "raw_unit_regex": "^mg/(?:\\()?cm(?:\\^?2|²)(?:[.·∙•-]?)(?:h|hr|hour|min|day|s)(?:\\^-?1)?(?:\\))?(?:\\s*[×x]\\s*10(?:\\^?-?\\d+))?$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse corrected area-and-time denominator, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.dotted_inverse_areic_time.v1",
+      "priority": 998,
+      "matched_record_count": 236,
+      "review_basis": "full-source unit inventory plus representative support-text inspection",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["cm·µg"],
+        "raw_unit_regex": "^(?:µg|ug)[.·]cm(?:\\^-?2|-2)[.·](?:h|hr|hour|min)(?:\\^-?1|-1)$"
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "interpret explicit inverse area and inverse time, then convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.water_mass_areic_rate.v1",
+      "priority": 997,
+      "matched_record_count": 10,
+      "review_basis": "all ten matching records inspected as one source-table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "raw_unit_exact": ["mg H2O h^-1 cm^-2"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "mg/cm^2/h",
+        "canonical_basis": "water mass per area per time",
+        "quantity_kind": "areic_water_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity",
+        "provenance_note": "retain H2O analyte qualifier outside the unit key"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.total_mass_rate.v1",
+      "priority": 850,
+      "matched_record_count": 433,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["µg/h"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "µg/h",
+        "canonical_basis": "total mass per time without an area denominator",
+        "quantity_kind": "total_mass_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after ordinary prefix and time conversion"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.volumetric_areic_rate.v1",
+      "priority": 849,
+      "matched_record_count": 258,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["µL/cm^2·h", "µL/cm^2/h", "µL/cm^2·min"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "µL/cm^2/h",
+        "canonical_basis": "volume per area per time",
+        "quantity_kind": "volumetric_areic_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert minute-based values and variation to hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.dose_fraction_rate.v1",
+      "priority": 848,
+      "matched_record_count": 574,
+      "review_basis": "full-source endpoint-unit census and representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["%/h", "% dose/h", "% dose h^-1", "%D/min", "%/min"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_text": "% of applied dose/h",
+        "canonical_basis": "percent of applied dose per hour",
+        "quantity_kind": "dose_fraction_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert minute-based values and variation to hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.flux.missing_time_basis.v1",
+      "priority": 700,
+      "matched_record_count": 154,
+      "review_basis": "full-source census; 147 records call the value flux but do not license a time denominator and seven remain semantically unresolved",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["flux"],
+        "existing_canonical_unit_exact": ["µg/cm^2", "mg/cm^2", "ng/cm^2"],
+        "raw_unit_not_exact": ["mg H2O h^-1 cm^-2"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "canonical_endpoint_name": "flux",
+        "quantity_kind": "areic_amount_with_missing_flux_time_basis",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "missing_flux_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.diffusion_coefficient.v1",
+      "priority": 990,
+      "matched_record_count": 207,
+      "review_basis": "full-source semantic text census plus representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["cm^2/h", "cm^2/s", "cm^2/min", "m^2/s"],
+        "text_regex_any": ["diffusion coefficient", "diffusion constant", "diffusiv", "\\bDapp\\b", "\\bDws\\b", "\\bDed\\b", "self-diffusion"],
+        "support_text_regex_none": ["permeability coefficient", "permeability constant", "\\bKp\\b", "\\bPc\\b"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_coefficient",
+        "canonical_unit_kind": "diffusivity",
+        "canonical_basis": "cm^2/s",
+        "quantity_kind": "diffusion_coefficient",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert compatible area-per-time values and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.area_time_unresolved.v1",
+      "priority": 600,
+      "matched_record_count": 304,
+      "review_basis": "full-source remainder after the explicit diffusion selector",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["cm^2/h", "cm^2/s", "cm^2/min", "m^2/s"],
+        "exclude_rule_ids": ["skin.exposure.permeability.diffusion_coefficient.v1"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_permeability_area_time",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_area_time_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.d_over_l2.v1",
+      "priority": 989,
+      "matched_record_count": 10,
+      "review_basis": "all matching D/L2 records inspected as two source families",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["/h", "/min", "/s"],
+        "text_regex_any": ["D/L2", "D/L²"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_parameter_d_over_l2",
+        "canonical_unit_text": "/s",
+        "canonical_basis": "inverse time",
+        "quantity_kind": "diffusion_rate_parameter",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert inverse-hour or inverse-minute values and variation to inverse seconds"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.log_kp.v1",
+      "priority": 988,
+      "matched_record_count": 5,
+      "review_basis": "all matching log-Kp records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["/h", "/min", "/s"],
+        "text_regex_any": ["log\\s*Kp", "log permeability"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "log_permeability_coefficient",
+        "canonical_unit_text": "log10(h^-1)",
+        "canonical_basis": "base-10 logarithm of an inverse-hour coefficient",
+        "quantity_kind": "log_rate_coefficient",
+        "numeric_domain": "finite_signed",
+        "value_transform": "identity; restore the log transform to the unit semantics"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.dermatokinetic_rate_constant.v1",
+      "priority": 987,
+      "matched_record_count": 73,
+      "review_basis": "full-source semantic text census plus representative records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["/h", "/min", "/s"],
+        "text_regex_any": ["rate constant", "dermatokinetic"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "dermatokinetic_permeation_rate_constant",
+        "canonical_unit_text": "/h",
+        "canonical_basis": "inverse time",
+        "quantity_kind": "permeation_rate_constant",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert inverse-minute or inverse-second values and variation to inverse hours"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.inverse_time_unresolved.v1",
+      "priority": 590,
+      "matched_record_count": 25,
+      "review_basis": "full-source remainder after D/L2, log-Kp, and explicit rate-constant selectors",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["/h", "/min", "/s"],
+        "exclude_rule_ids": [
+          "skin.exposure.permeability.d_over_l2.v1",
+          "skin.exposure.permeability.log_kp.v1",
+          "skin.exposure.permeability.dermatokinetic_rate_constant.v1"
+        ]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_kp_rate",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "ambiguous_kp_rate_semantics"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.volume_areic_time.v1",
+      "priority": 986,
+      "matched_record_count": 62,
+      "review_basis": "full-source dimensional census and representative coefficient records",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["µL/cm^2·h", "mL/cm^2·h"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "permeability_coefficient",
+        "canonical_unit_text": "cm/h",
+        "canonical_basis": "length per time",
+        "quantity_kind": "linear_permeability",
+        "numeric_domain": "nonnegative",
+        "value_transform": "µL/cm^2/h multiplied by 0.001; mL/cm^2/h multiplied by 1; apply same factor to variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.water_vapor_rate.v1",
+      "priority": 985,
+      "matched_record_count": 25,
+      "review_basis": "all matching records inspected as one source-table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["g/h·m^2"],
+        "text_regex_any": ["skin permeability", "\\bPSC\\b", "\\bPdry\\b"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "water_vapor_permeability_rate",
+        "canonical_unit_text": "g/m^2/h",
+        "canonical_basis": "water mass per area per time",
+        "quantity_kind": "water_vapor_permeability_rate",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after factor reordering"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.explicit_flux.v1",
+      "priority": 984,
+      "matched_record_count": 5,
+      "review_basis": "all five matching explicit J/Jmax/flux records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["µg/cm^2·h", "mg/cm^2·h"],
+        "text_regex_any": ["\\bJmax\\b", "\\bJss\\b", "\\bflux\\b"],
+        "text_regex_none": ["permeability", "co-efficient", "coefficient", "\\bKp\\b"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux",
+        "canonical_unit_kind": "flux",
+        "canonical_basis": "µg/cm^2/h",
+        "quantity_kind": "areic_mass_flux",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert value and variation to canonical basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.mass_flux_unresolved.v1",
+      "priority": 580,
+      "matched_record_count": 69,
+      "review_basis": "full-source remainder after the explicit-flux selector",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["µg/cm^2·h", "mg/cm^2·h"],
+        "exclude_rule_ids": ["skin.exposure.permeability.explicit_flux.v1"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_mass_flux",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_mass_flux_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.areic_amount_unresolved.v1",
+      "priority": 570,
+      "matched_record_count": 23,
+      "review_basis": "all three source-paper families inspected; source labels conflict with missing time dimensions",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["mg/cm^2", "µg/cm^2"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_areic_amount",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_missing_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.compact_diffusivity_singleton.v1",
+      "priority": 983,
+      "matched_record_count": 1,
+      "review_basis": "single exact source row inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "source_row_numbers": [121212],
+        "raw_unit_exact": ["cm^2s^-1"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "diffusion_coefficient",
+        "canonical_unit_text": "cm^2/s",
+        "canonical_basis": "area per time",
+        "quantity_kind": "diffusion_coefficient",
+        "numeric_domain": "nonnegative",
+        "value_transform": "parse compact adjacent area and inverse-time factors"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.inverse_area_time_unresolved.v1",
+      "priority": 560,
+      "matched_record_count": 26,
+      "review_basis": "full-source compact-unit census excluding the explicit diffusivity singleton",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["cm"],
+        "raw_unit_regex": "^cm(?:\\^-?2|-2)[.·]?(?:h|hr)(?:\\^-?1|-1)$"
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_coefficient_inverse_area_time",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_inverse_area_time_conflict"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.permeability.length_missing_time.v1",
+      "priority": 550,
+      "matched_record_count": 9,
+      "review_basis": "all nine matching rows inspected as one table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["permeability_coefficient"],
+        "existing_canonical_unit_exact": ["cm"],
+        "raw_unit_exact": ["cm×10^-3"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "linear_permeability_with_missing_time_basis",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "coefficient_missing_time_basis"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.dermal_lethal_time.v1",
+      "priority": 980,
+      "matched_record_count": 29,
+      "review_basis": "all matching records inspected as one PMID/table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "pmid_exact": ["5140424"],
+        "text_regex_any": ["\\bLt50\\b", "median lethal time"]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "canonical_endpoint_name": "dermal_exposure_lethal_time",
+        "canonical_unit_text": "min",
+        "quantity_kind": "toxicodynamic_time_to_event",
+        "numeric_domain": "nonnegative",
+        "exclusion_reason": "toxicodynamic_proxy_not_penetration_measurement"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.lag_time_difference.v1",
+      "priority": 979,
+      "matched_record_count": 8,
+      "review_basis": "all eight matching lag-time-difference rows inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "existing_canonical_unit_exact": ["min", "h"],
+        "text_regex_any": ["lag[- ]?time", "\\btlag\\b"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "lag_time_difference",
+        "canonical_unit_text": "h",
+        "canonical_basis": "signed duration difference",
+        "quantity_kind": "duration_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "convert minutes to hours while preserving sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.time_to_peak_difference.v1",
+      "priority": 978,
+      "matched_record_count": 10,
+      "review_basis": "all ten peak-time or acceleration rows inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "existing_canonical_unit_exact": ["min", "h"],
+        "text_regex_any": ["peak", "accelerat"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "penetration_time_to_peak_difference",
+        "canonical_unit_text": "h",
+        "canonical_basis": "signed duration difference",
+        "quantity_kind": "duration_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "convert minutes to hours while preserving sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.other_time_unresolved.v1",
+      "priority": 540,
+      "matched_record_count": 2,
+      "review_basis": "both unmatched time rows inspected individually",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "source_row_numbers": [125426, 136649]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "heterogeneous_secondary_timing",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "heterogeneous_secondary_timing"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.flux_difference.v1",
+      "priority": 977,
+      "matched_record_count": 59,
+      "review_basis": "all flux-compatible rows checked by semantic cue; representative positive and negative records inspected",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "existing_canonical_unit_exact": ["nmol/cm^2·h", "µg/h", "µg/cm^2·h", "µmol/cm^2·h", "g/h·m^2", "µg/(cm^2·h)", "µg/cm^2·min"],
+        "text_regex_any": ["difference", "increase", "decrease", "enhancement", "elevation", "relative", "compared", "versus", "\\bvs\\.?\\b", "net benefit", "larger", "smaller"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "flux_difference",
+        "canonical_unit_kind": "flux_or_rate_difference",
+        "canonical_basis": "preserve each compatible physical unit family",
+        "quantity_kind": "signed_flux_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "ordinary compatible-unit conversion only; preserve sign and variation"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.partition_length.v1",
+      "priority": 976,
+      "matched_record_count": 9,
+      "review_basis": "all nine records inspected as one fitted-model family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "existing_canonical_unit_exact": ["cm"],
+        "text_regex_any": ["partition parameter K'"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "partition_length_parameter",
+        "canonical_unit_text": "cm",
+        "canonical_basis": "fitted partition-length parameter",
+        "quantity_kind": "partition_length_parameter",
+        "numeric_domain": "nonnegative",
+        "value_transform": "identity after explicit scientific-notation folding"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.penetration_depth.v1",
+      "priority": 975,
+      "matched_record_count": 5,
+      "review_basis": "five exact depth records inspected individually",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "source_row_numbers": [45160, 45161, 113494, 290886, 293398]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "penetration_depth",
+        "canonical_unit_text": "µm",
+        "canonical_basis": "length",
+        "quantity_kind": "penetration_depth",
+        "numeric_domain": "nonnegative",
+        "value_transform": "convert compatible length units to micrometres"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.depth_unit_ambiguous.v1",
+      "priority": 530,
+      "matched_record_count": 1,
+      "review_basis": "single exact row inspected; source text says 160 µM while describing depth",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "source_row_numbers": [175041]
+      },
+      "action": {
+        "decision": "evidence_only",
+        "quantity_kind": "ambiguous_depth_measurement",
+        "numeric_domain": "unreviewed",
+        "exclusion_reason": "molar_vs_micrometre_ambiguity"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.relative_penetration.permeability_difference.v1",
+      "priority": 974,
+      "matched_record_count": 5,
+      "review_basis": "all five records inspected as one permeability-difference table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["relative_penetration"],
+        "existing_canonical_unit_exact": ["cm/s"],
+        "text_regex_any": ["difference", "comparison", "compared", "versus"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "permeability_coefficient_difference",
+        "canonical_unit_text": "cm/s",
+        "canonical_basis": "signed linear-permeability difference",
+        "quantity_kind": "permeability_difference",
+        "numeric_domain": "finite_signed",
+        "value_transform": "identity"
+      }
+    },
+    {
+      "rule_id": "skin.exposure.lag_time.relative_percent.v1",
+      "priority": 973,
+      "matched_record_count": 3,
+      "review_basis": "all three records inspected as one relative-lag-time table family",
+      "selector": {
+        "source_id": "skin_exposure",
+        "endpoint_exact": ["lag_time"],
+        "existing_canonical_unit_exact": ["%"],
+        "text_regex_any": ["%λ", "percent of lag-time", "relative to.*control"]
+      },
+      "action": {
+        "decision": "proposed_canonicalization",
+        "canonical_endpoint_name": "relative_lag_time",
+        "canonical_unit_text": "% of control",
+        "canonical_basis": "lag time relative to control",
+        "quantity_kind": "relative_lag_time",
+        "numeric_domain": "nonnegative_unbounded",
+        "value_transform": "identity"
+      }
+    }
+  ]
+}

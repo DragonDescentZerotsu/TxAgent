@@ -1,0 +1,116 @@
+{
+  "version": "stage1_exact_deduplication.v3",
+  "authoritative_stage1_deduplication": true,
+  "base_fields": ["canonical_smiles", "pmid", "canonical_measurement_text", "canonical_unit_text"],
+  "comparison": {
+    "base": "literal_typed_equality",
+    "incomplete_base": "never_duplicate",
+    "within_source": "all_configured_scientific_fields",
+    "cross_source": "intersection_of_configured_scientific_field_names",
+    "missingness": "exact",
+    "representative": "retain_all_protected_gold_v1_voters_else_lexicographically_smallest_source_row_uid"
+  },
+  "common_record_fields": {
+    "provenance": ["source_id", "source_name", "source_path", "source_revision", "source_row_number", "source_record_id", "source_row_uid", "source_sha256", "source_index", "cleaned_record_id", "molecule_id"],
+    "generated_or_processing": [
+      "endpoint_name", "measurement_text", "unit_text", "embedded_unit", "source_smiles", "structure_status", "molecule_name",
+      "canonical_endpoint_name", "measurement_resolution_route", "measurement_resolution_rule_id", "measurement_resolution_exact_measurement",
+      "measurement_resolution_exact_unit", "measurement_resolution_exact_unit_is_canonical", "measurement_routing_version",
+      "measurement_resolution_parent_cleaned_record_id", "measurement_resolution_entry_index", "measurement_resolution_quantity_count",
+      "measurement_resolution_origin", "measurement_resolution_status", "measurement_resolution_active", "measurement_resolution_entries_json",
+      "pre_resolution_measurement_text", "pre_resolution_unit_text", "measurement_resolution_input_measurement", "measurement_resolution_input_unit",
+      "measurement_unit_mapping_action", "measurement_unit_mapping_scale", "measurement_unit_mapping_rule_source", "measurement_numeric_domain",
+      "resolved_measurement_text", "resolved_unit_text", "resolved_scalar_value", "measurement_unit_mapping_status", "measurement_numeric_domain_status",
+      "cleaning_version", "confidence", "deduplication_context_id", "source_payload_json", "evidence_context_json", "normalized_transporter_identifier",
+      "transporter_identifier_mapping_status", "transporter_identifier_policy_version"
+    ]
+  },
+  "tasks": {
+    "bbb_martins": {
+      "sources": {
+        "direct_bbb": {
+          "scientific_fields": ["bbb_permeability_label", "bbb_transport_label", "quant_metric", "assay_model", "species", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "quant_value", "quant_units", "smiles"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["source_index"]
+          }
+        },
+        "passive_permeability": {
+          "scientific_fields": ["assay_type", "biological_system", "metric_name", "metric_uncertainty", "passive_bbb_interpretation", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "metric_value", "metric_units", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["paragraph_idx", "global_identifier", "extraction_id"],
+            "processing": ["needs_more_context"]
+          }
+        },
+        "efflux_transport": {
+          "scientific_fields": ["transporter_identifier", "evidence_type", "interaction_conclusion", "assay_system", "quantitative_metric", "perturbation", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "quantitative_value", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["paragraph_idx", "global_identifier", "extraction_id"],
+            "processing": ["needs_more_context"]
+          }
+        },
+        "influx_transport": {
+          "scientific_fields": ["mediator_name", "mediator_identifier", "transport_mechanism", "transport_endpoint", "evidence_basis", "assay_model", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "reported_result", "SMILES"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["paragraph_idx", "global_identifier", "extraction_id"],
+            "processing": ["needs_more_context"]
+          }
+        }
+      }
+    },
+    "bioavailability_ma": {
+      "sources": {
+        "oral_exposure": {
+          "scientific_fields": ["exposure_measure", "statistic_type", "oral_dose", "study_context", "comparator_exposure", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "parameter_value", "parameter_units", "smiles"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": []
+          }
+        },
+        "fa": {
+          "scientific_fields": ["endpoint_category", "assay_system", "condition_medium", "biological_context", "formulation_or_solid_form", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "reported_value", "reported_units", "smiles"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": []
+          }
+        },
+        "fg": {
+          "scientific_fields": ["gut_wall_process", "transporter_or_enzyme", "substrate_status", "assay_system", "intestinal_site", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "measured_value", "smiles", "molecule_name"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": []
+          }
+        },
+        "fh": {
+          "scientific_fields": ["metric_type", "assay_system", "species", "molecular_form", "enzyme_or_pathway", "qualifying_conditions"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "reported_value", "reported_units", "smiles"],
+            "prose": ["support_text", "extra_details"],
+            "provenance": ["extraction_id", "global_identifier", "paragraph_idx"],
+            "processing": []
+          }
+        },
+        "hf_bioavailability": {
+          "scientific_fields": ["bioavailability_report_type", "species_or_population", "dose", "oral_exposure_mode", "qualifying_conditions", "comparator"],
+          "ignored_source_fields": {
+            "canonicalized_base_inputs": ["pmid", "oral_bioavailability_value", "smiles", "molecule_name"],
+            "prose": ["support_text", "extra_details"]
+          }
+        }
+      }
+    }
+  }
+}

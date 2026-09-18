@@ -1,0 +1,44 @@
+{% set prompt %}
+{{ system_role }}
+
+Task:
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it! Your essential goal is to predict the molecular property through deep analogous reasoning rooted in biological and chemical knowledge.
+
+Analogical Reasoning Instructions:
+{% if prompt_settings.get('retrieval_scores') is false %}- Retrieval scores and panel ranks are not available. Reason from the experimental records and the chemistry or biology that can be supported from the visible context.
+- Compare the directness, consistency, conditions, and mechanistic relevance of the records before reaching a conclusion.
+{% elif mode == 'assay-transfer' %}- The assay-transfer score is the supplied measure of how applicable a molecule's evidence is to the query. It is not a structural-similarity score.
+{% elif mode == 'morgan' %}- Use the Morgan similarity score to judge how strongly each evidence molecule's experimental results transfer to the query, along with your own chemistry knowledge.
+{% else %}- Use both the assay-transfer and Morgan evidence panels. Panel ranks identify why a molecule entered the union; scores and chemistry determine how strongly its records transfer.
+{% endif %}{% if prompt_settings.get('retrieval_scores') is not false %}- Since we have scores for how much each piece of evidence transfers to the query, focus your reasoning on how that evidence informs the property of interest given its transferability.
+- At the end, take the properties that transfer and come to a weighted conclusion based on all the evidence for the query molecule.
+{% endif %}
+Example of Reasoning:
+{% if prompt_settings.get('retrieval_scores') is false %}The most direct analogue record reports restricted brain exposure after systemic administration, so it is the strongest experimental anchor. Several other records independently support the same direction under relevant conditions. More indirect observations should receive less weight, and repeated measurements from one molecule should not be counted as independent molecules. Taken together, the consistent direct outcomes support restricted CNS access despite any favorable general physicochemical intuition.
+{% else %}The highest-transfer analogue (0.8157) shows only 24% brain penetration relative to plasma in rat, making it the strongest individual anchor because it combines the highest transfer score with a direct systemic brain-penetration measurement. Its structure contains an ionizable piperidine and several polar functionalities but is not an obvious extreme BBB non-penetrant. The experimental result therefore outweighs any more favorable physicochemical intuition: whatever mechanism limits its CNS exposure is real. Because the transfer score is high and the query shares relevant ionization and heteroatom features, that measured phenotype has strong implications for the query.
+
+The next three analogues have closely matched transfer scores (0.7874, 0.7855, and 0.7800) and independently support the same direction. One is relatively lipophilic and contains a tertiary amine yet shows minimal CSF exposure after intravenous dosing; another combines aromatic hydrophobicity with a basic amine but exhibits very low brain uptake that increases markedly after ABC-transporter inhibition; the third has substantial aromatic surface yet gives CSF concentrations below 5% of plasma in humans. These direct experiments should take precedence over simple structure-based expectations. Their similar transfer scores give them nearly comparable relevance, while shared BBB-relevant features provide a chemical basis for transferring the observed poor exposure and efflux liability to the query.
+
+The pattern continues at 0.7708 and 0.7603, where biodistribution and brain-to-blood measurements again show poor CNS exposure. Both molecules retain substantial hydrophobic/aromatic character, demonstrating experimentally that lipophilicity alone does not ensure brain penetration when other liabilities such as ionization, polarity, size, or transporter recognition intervene. Their lower transfer scores appropriately reduce their individual weight, but their agreement with the higher-scoring analogues strengthens the overall transfer: the scores determine how strongly each measured phenotype applies, while structural chemistry explains why that phenotype is plausible for the query.
+{% endif %}
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not analyze the SMILES structure beyond what is clear.
+- Do not spend reasoning on crafting the card claims. We need to conclude the molecular property decision first, before constructing the output.
+{% if mode == 'assay-transfer' %}- Do not blindly trust the assay transfer score. Still deeply think through each record and how it relates to the query molecule and to the property of interest.
+- Do not just pass over each record. Consider each record thoroughly.
+{% endif %}
+
+Output:
+Return one or more concise claims, using as many as needed to represent the experimental evidence that materially informs the decision. Each claim must cite exactly one representative C-number in `card_ids` and set `evidence_role` to `supportive` or `contradictory`. Do not return `supportive_card_ids`, `contradictory_card_ids`, or `prediction_basis_card_ids`; the engine derives them from the claims.
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number.
+{% endset %}
+{{ prompt | trim | tojson }}

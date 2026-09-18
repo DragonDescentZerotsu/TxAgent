@@ -1,14 +1,12 @@
-"""Run either progressive evidence profile through one resumable LLM loop.
+"""Run cache-matched Reranked Progressive v2 through one resumable LLM loop.
 
-``standard`` progressively reveals mechanism-family molecule cards and their
-analog-comparison tools. ``context_records`` selects contexts and later records
-with either frozen assay-transfer ranks or Morgan similarity; it never invokes
-per-analog tools. Both profiles keep
-earlier evidence visible, carry forward a structured reasoning state, and
-checkpoint every query level.
+The default shared prompt uses --reranking assay-transfer, joint, or morgan.
+L1 selects molecule cards; later stages independently select records before
+merging into append-only molecule cards. Cache configuration supplies scores,
+not stage policy. Preparation assembles evidence/tools; the shared model pool
+executes dependent levels and checkpoints each query. No cache builder runs here.
 
-The historical cumulative-family and geometric assay-prefix launchers remain
-unchanged.
+Historical library-level helpers remain for archived artifact inspection, not CLI dispatch.
 """
 
 from __future__ import annotations
@@ -19,10 +17,10 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import json
-import os
 from pathlib import Path
 import pickle
 import shutil
+import sys
 from functools import lru_cache
 from typing import Any, Mapping
 
@@ -33,14 +31,19 @@ from predict.harnesses.progressive.retrieval import (
     build_family_molecule_prefix_view,
     retrieve_family_molecule_prefixes,
 )
-from predict.harnesses.progressive.context_records import profile as context_records
+from predict.harnesses.progressive import _records as context_records
 from predict.retrieval.retrieve import load_index
-from predict.retrieval.assay_reranking.runtime import CACHE_ROOT
+from predict.retrieval.assay_reranking.runtime import cache_profile_root
+from predict.retrieval.assay_reranking.runtime import ARCHIVE_CACHE_ROOT
 from predict.retrieval.assay_reranking.progressive_levels import (
     LUNA_RELEVANCE_CACHE_PROFILE,
     V21_CACHE_PROFILE,
     load_top_ranked_records,
     load_v21_molecule_card_records,
+)
+from predict.retrieval.assay_reranking.v24_1_levels import (
+    PROFILE as V24_1_LEVEL_CACHE_PROFILE,
+    load_top_ranked_records as load_v24_1_level_records,
 )
 from predict.retrieval.assay_reranking.v9 import (
     RANKING_PROFILE_NAME,
@@ -54,14 +57,15 @@ from predict.utils.json import (
     write_json_atomic,
     write_jsonl_atomic,
 )
-from predict.llm_engine.client import OpenAICompatibleClient
-from predict.llm_engine.pool import (
+from predict.api_client.pool import (
+    DEFAULT_PROVIDER_POOL_CONFIG,
     OpenAIProviderPool,
     ProviderPoolConfig,
-    ProviderPoolExhausted,
     ProviderSpec,
-    load_env_file,
+    build_provider_pool,
     load_provider_pool_config,
+    preflight_sglang_tokenized_completion,
+    select_healthy_providers,
 )
 from predict.harnesses.progressive.state import (
     MOLECULE_CARD_CONTRACT_PATH,
@@ -69,43 +73,37 @@ from predict.harnesses.progressive.state import (
     ProgressiveTaskContract,
     append_evidence,
     attach_analog_tool_summaries,
-    build_progressive_messages,
     card_alias_maps,
     card_ids,
     extract_cumulative_evidence,
     molecule_card_contract,
-    progressive_state_errors,
-    restore_card_ids,
     select_initial_evidence,
     select_progressive_delta,
     stable_analog_id,
-    state_from_content,
 )
 from predict.tools.client import ToolServiceClient
 from predict.tools.prefetch import invoke_with_retry
 from predict.traces.io import DEFAULT_TRACE_ROOT, write_trace
 from predict.llm_io.query import external_condition_sentence
-from predict.llm_io.response import (
-    call_with_json_validation,
-    structured_response_is_valid,
-)
-from data.processing.gold_labels.conditioned_benchmark import split_path
+from predict.llm_io.response import structured_response_is_valid
+from data.processing.gold_labels.conditioned_benchmark import TASK_DIRECTORIES, split_path
+from data.processing.llm_api import DEFAULT_ENV_FILE
 from predict.harnesses.progressive.tasks import bbb_martins as bbb_config
 from predict.harnesses.progressive.tasks import bioavailability_ma as bio_config
 from predict.harnesses.progressive.tasks import skin_reaction as skin_config
 
 
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
-BASE_URL = "http://epyc-3-6:50000/v1"
+BASE_URL = "https://litellm.parcc.upenn.edu/v1"
 DEFAULT_OUTPUT_ROOT = Path(
     "outputs/paper/starling_conditioned_assay_progressive_visible_v10_bio_legacy_gold_vote_pure_v1/"
     "scaffold_valid_deepseek_v4_flash_0731"
 )
 DEFAULT_SINGLE_CACHE_ROOT = Path(
-    "outputs/paper/starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/"
+    "outputs/paper/legacy/starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/"
     "runs_deployment_visible_parent_disjoint"
 )
-DEFAULT_V9_RANKING_ROOT = CACHE_ROOT / RANKING_PROFILE_NAME
+DEFAULT_V9_RANKING_ROOT = cache_profile_root(RANKING_PROFILE_NAME)
 CONTEXT_L2_REUSE_ROOTS = {
     "bbb_martins": Path(
         "outputs/paper/assay_transfer_harness/starling_context_record_progressive_v4/"
@@ -124,6 +122,66 @@ TASK_NAMES = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 REFERENCE_POOL = "direct_only_heldout_filtered"
 IDENTITY_POLICY = "scaffold_disjoint"
 MAX_ENDPOINT_CONCURRENCY_BUDGET = 512
+MOLECULE_DESCRIPTION_PATH = Path(
+    "/vast/projects/myatskar/design-documents/canonical_smiles_quotient.parquet"
+)
+MOLECULE_DESCRIPTION_SHA256 = (
+    "abd6f6d31ee74d854fd42330e816516c39a5ca63c67df56965cc8ec44468f183"
+)
+MOLECULE_DESCRIPTION_ARTIFACTS = {
+    "v1": {
+        "path": MOLECULE_DESCRIPTION_PATH,
+        "sha256": MOLECULE_DESCRIPTION_SHA256,
+    },
+    "v2": {
+        "path": Path(
+            "/vast/projects/myatskar/design-documents/"
+            "canonical_smiles_quotient_v2.parquet"
+        ),
+        "sha256": (
+            "3e1ca4ece0f137b492c4d6c60713cf9771fbab7871a11b4c6c126df674b0abb7"
+        ),
+    },
+}
+MOLECULE_DESCRIPTION_COLUMNS = {
+    "raw": "description_raw",
+    "motif": "description_motif",
+    "coarse": "description_coarse",
+}
+MOLECULE_DESCRIPTION_PROMPTS = {
+    "reranked-progressive-l1-context-v1": (
+        "reranked_progressive_l1_context_v3",
+        "reranked_progressive_l1_context_v4",
+    ),
+    "reranked-progressive-l1-context-l2-v1": (
+        "reranked_progressive_l1_context_l2_semantic_molecule_metadata_v1",
+    ),
+    "reranked-progressive-l1-context-l2-weighted-v1": (
+        "reranked_progressive_l1_context_l2_weighted_molecule_metadata_v1",
+    ),
+}
+SQLITE_SELECTION_CONTRACTS = frozenset({
+    "cache_matched_retrieval.v2",
+    "cache_matched_retrieval.v3",
+    "ranked_evidence_retrieval.v1",
+    "ranked_level_retrieval.v2",
+    "ranked_uid_retrieval.v1",
+    "semantic_bucket_reranking.v1",
+    "l1_context_retrieval.v1",
+    "l1_context_retrieval.v2",
+    "l1_context_semantic_l2.v1",
+    "l1_context_semantic_weighted_l2.v1",
+    "l1_context_morgan_semantic_l2.v1",
+    "l1_context_morgan_semantic_l2.v2",
+    "l1_context_morgan_semantic_l2.v3",
+    "l1_context_morgan_semantic_l2.v4",
+    "indirect_morgan_semantic_l2_l4.v1",
+    "indirect_morgan_semantic_l2_l4.v2",
+    "indirect_morgan_semantic_l2_l4.v3",
+})
+INDIRECT_ONLY_HARNESS = "reranked-progressive-indirect-only-v1"
+INDIRECT_FILTER_HARNESS = "reranked-progressive-indirect-only-v2"
+INDIRECT_HARNESSES = frozenset({INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS})
 COMPLETE_LEVEL_STATUSES = {"ok", "carried_forward", "reused_none", "reused"}
 
 _MODEL_IDENTITY_ALIASES = {
@@ -143,6 +201,7 @@ def _model_identity(model: str) -> str:
 _RESUME_INVARIANT_FIELDS = (
     "experiment",
     "profile",
+    "evaluation_subset",
     "tasks",
     "visibility_mode",
     "reference_pool",
@@ -152,7 +211,9 @@ _RESUME_INVARIANT_FIELDS = (
     "prompt_profile",
     "prompt_template",
     "molecule_card_contract",
+    "molecule_description",
     "max_tokens",
+    "timeout_s",
     "temperature",
     "thinking",
     "reasoning_effort",
@@ -192,6 +253,15 @@ def _execution_provider_from_spec(
 def _merge_resume_manifest(
     previous: Mapping[str, Any], current: Mapping[str, Any]
 ) -> dict[str, Any]:
+    if previous.get('prompt_assets') is not None and previous['prompt_assets'] != current.get('prompt_assets'):
+        raise ValueError('cannot resume progressive run with changed prompt_assets')
+    if previous.get('prompt_assets') is None:
+        for assets in (current.get('prompt_assets') or {}).values():
+            provenance = _read_json(Path(assets['directory']) / 'provenance.json')
+            if assets['files_sha256'] != provenance.get('migration_files_sha256'):
+                raise ValueError('cannot resume a legacy run with prompt assets changed after migration')
+            if assets['assembly_files_sha256'] != provenance.get('migration_assembly_files_sha256'):
+                raise ValueError('cannot resume a legacy run with prompt assembly changed after migration')
     for field in _RESUME_INVARIANT_FIELDS:
         if previous.get(field) != current.get(field):
             raise ValueError(f"cannot resume progressive run with changed {field}")
@@ -323,11 +393,166 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _load_molecule_descriptions(
+    mode: str,
+    *,
+    path: Path = MOLECULE_DESCRIPTION_PATH,
+    expected_sha256: str = MOLECULE_DESCRIPTION_SHA256,
+) -> dict[str, Any] | None:
+    """Load one exact Quotient text surface; selected-row coverage is checked later."""
+    if mode == "none":
+        return None
+    try:
+        column = MOLECULE_DESCRIPTION_COLUMNS[mode]
+    except KeyError as exc:
+        raise ValueError(f"unsupported molecule description mode: {mode}") from exc
+    path = path.resolve()
+    actual_sha256 = sha256_file(path)
+    if actual_sha256 != expected_sha256:
+        raise ValueError(f"molecule description Parquet hash mismatch: {path}")
+    schema = pq.ParquetFile(path).schema_arrow
+    expected_columns = [
+        "canonical_smiles",
+        "description_raw",
+        "description_motif",
+        "description_coarse",
+        "error",
+    ]
+    if schema.names != expected_columns or any(
+        str(field.type) not in {"string", "large_string"} for field in schema
+    ):
+        raise ValueError(f"molecule description Parquet has an incompatible schema: {path}")
+    entries: dict[str, dict[str, str | None]] = {}
+    for row in pq.read_table(path, columns=["canonical_smiles", column, "error"]).to_pylist():
+        smiles = row["canonical_smiles"]
+        if not isinstance(smiles, str) or not smiles or smiles in entries:
+            raise ValueError("molecule description Parquet has blank or duplicate SMILES")
+        entries[smiles] = {
+            "description": row[column],
+            "error": row["error"],
+        }
+    return {
+        "mode": mode,
+        "column": column,
+        "path": str(path),
+        "sha256": actual_sha256,
+        "row_count": len(entries),
+        "entries": entries,
+    }
+
+
+def _validate_molecule_description_coverage(
+    cache: Mapping[str, Any],
+    *,
+    records_by_task: Mapping[str, list[Mapping[str, Any]]],
+    indices_by_task: Mapping[str, list[int]],
+    contexts_by_task: Mapping[str, Mapping[str, list[Mapping[str, Any]]]],
+    later_by_task: Mapping[str, Mapping[str, Mapping[str, Mapping[str, Any]]]],
+    receipt_path: Path,
+    missing_policy: str = "error",
+) -> dict[str, str]:
+    """Audit selected-row coverage, failing only for strict prompt contracts."""
+    if missing_policy not in {"error", "omit"}:
+        raise ValueError(f"unsupported molecule description missing policy: {missing_policy}")
+    references: dict[str, list[dict[str, Any]]] = {}
+    counts_by_task: dict[str, dict[str, int]] = {}
+    for task, indices in indices_by_task.items():
+        task_queries: set[str] = set()
+        task_evidence: set[str] = set()
+        for index in indices:
+            record = records_by_task[task][index]
+            query_id = str(record["benchmark_row_id"])
+            query_smiles = str(record.get("drug") or "")
+            references.setdefault(query_smiles, []).append(
+                {"task": task, "query_index": index, "benchmark_row_id": query_id,
+                 "role": "query"}
+            )
+            task_queries.add(query_smiles)
+            for context in contexts_by_task[task][query_id]:
+                smiles = str(context.get("canonical_smiles") or "")
+                references.setdefault(smiles, []).append(
+                    {"task": task, "query_index": index, "benchmark_row_id": query_id,
+                     "role": "L1"}
+                )
+                task_evidence.add(smiles)
+            for level_name, selection in later_by_task[task][query_id].items():
+                for row in selection.get("records") or []:
+                    payload = row.get("payload") or {}
+                    smiles = str(
+                        payload.get("canonical_smiles")
+                        or row.get("reference_parent_smiles")
+                        or ""
+                    )
+                    references.setdefault(smiles, []).append(
+                        {"task": task, "query_index": index, "benchmark_row_id": query_id,
+                         "role": level_name}
+                    )
+                    task_evidence.add(smiles)
+        counts_by_task[task] = {
+            "queries": len(indices),
+            "unique_query_molecules": len(task_queries),
+            "unique_evidence_molecules": len(task_evidence),
+        }
+
+    entries = cache["entries"]
+    invalid = []
+    values: dict[str, str] = {}
+    for smiles, refs in references.items():
+        entry = entries.get(smiles)
+        reason = None
+        if entry is None:
+            reason = "missing"
+        elif isinstance(entry.get("error"), str) and entry["error"].strip():
+            reason = "error"
+        elif not isinstance(entry.get("description"), str) or not entry["description"].strip():
+            reason = "blank_description"
+        else:
+            values[smiles] = entry["description"]
+        if reason:
+            invalid.append({
+                "canonical_smiles": smiles,
+                "reason": reason,
+                "error": entry.get("error") if entry else None,
+                "references": refs,
+            })
+    status = "failed" if invalid and missing_policy == "error" else (
+        "ok_with_omissions" if invalid else "ok"
+    )
+    receipt = {
+        "schema_version": "quotient_molecule_metadata_preflight.v1",
+        "status": status,
+        "missing_policy": missing_policy,
+        "mode": cache["mode"],
+        **(
+            {"cache_version": cache["cache_version"]}
+            if cache.get("cache_version") else {}
+        ),
+        "column": cache["column"],
+        "path": cache["path"],
+        "sha256": cache["sha256"],
+        "parquet_rows": cache["row_count"],
+        "selected_unique_molecules": len(references),
+        "valid_unique_molecules": len(values),
+        "counts_by_task": counts_by_task,
+        "invalid": invalid,
+        "checked_at": _now(),
+    }
+    write_json_atomic(receipt_path, receipt)
+    if invalid and missing_policy == "error":
+        raise ValueError(
+            f"molecule description preflight failed for {len(invalid)} selected molecules; "
+            f"see {receipt_path}"
+        )
+    return values
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
+    from predict.harnesses.progressive.prompt import prompt_assets
+    descriptions = prompt_assets('standard_v1')['level_descriptions'][task]
     manifest = _read_json(PROGRESSIVE_TASKS[task].family_manifest)
     levels = [dict(row) for row in manifest.get("levels") or []]
     if not levels and task in V7_PROGRESSIVE_GROUPS:
@@ -340,14 +565,12 @@ def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
     for row in levels:
         level = int(row["level"])
         endpoint = str(row.get("endpoint_group") or "")
-        endpoint_descriptions = getattr(
-            TASK_CONFIGS[task], "PROGRESSIVE_ASSAY_ENDPOINT_DESCRIPTIONS", {}
-        )
+        endpoint_descriptions = descriptions['by_endpoint']
         row["description"] = (
-            BBB_V7_LEVEL_DESCRIPTIONS.get(level)
+            descriptions['v7_index'].get(level)
             if task == "bbb_martins" and PROGRESSIVE_TASKS[task].index.is_dir()
             else endpoint_descriptions.get(endpoint)
-            or TASK_CONFIGS[task].PROGRESSIVE_ASSAY_LEVEL_DESCRIPTIONS[level]
+            or descriptions['by_level'][level]
         )
     if [int(row["level"]) for row in levels] != list(range(1, len(levels) + 1)):
         raise ValueError(f"{task} has a non-contiguous family-level catalog")
@@ -357,6 +580,17 @@ def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
 def _run_levels(args: argparse.Namespace, task: str) -> list[dict[str, Any]]:
     """Dispatch only the level catalog; each profile owns its level meaning."""
     if args.profile == "context_records":
+        if getattr(args, 'retrieval_policy', None):
+            levels = context_records.tianang_aligned_levels(task, args.max_level,
+                prompt_version=args.assay_transfer_prompt_version)
+            selected = set(args.retrieval_policies[task]['stages'])
+            return [row for row in levels if f"L{row['level']}" in selected]
+        if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+            return context_records.tianang_aligned_levels(
+                task,
+                args.max_level or 4,
+                prompt_version=_context_prompt_version(args, task),
+            )
         return context_records.levels(
             args.max_level,
             task=task,
@@ -369,10 +603,15 @@ def _record_cache_enabled(args: argparse.Namespace) -> bool:
     return (
         args.context_record_l3_l5
         or args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+        or args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
     )
 
 
 def _record_level_names(args: argparse.Namespace, task: str) -> tuple[str, ...]:
+    if getattr(args, 'retrieval_policy', None):
+        return tuple(k for k in args.retrieval_policies[task]['stages'] if k != 'L1')
+    if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+        return ("L2", "L3", "L4")
     if (
         args.assay_transfer_cache_profile == V21_CACHE_PROFILE
         and args.v21_selection_mode == "record_only"
@@ -399,10 +638,34 @@ def _indirect_record_limits(
         and task == "bbb_martins"
     ):
         limits[levels[-1]] = 25
+    for level, value in getattr(args, "level_record_limits", {}).items():
+        if level in limits:
+            limits[level] = value
     return limits
 
 
+def _level_record_limit(value: str) -> tuple[str, int]:
+    level, separator, raw_limit = value.partition("=")
+    if not separator or level not in {"L2", "L3", "L4", "L5", "L6"}:
+        raise argparse.ArgumentTypeError(
+            "level record limits must use LEVEL=K for L2 through L6"
+        )
+    try:
+        limit = int(raw_limit)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("level record limits must be integers") from exc
+    if limit < 1:
+        raise argparse.ArgumentTypeError("level record limits must be positive")
+    return level, limit
+
+
 def _run_protocol(args: argparse.Namespace) -> str:
+    if (
+        args.profile == "context_records"
+        and args.assay_transfer_prompt_version != "task_best"
+        and context_records.is_tianang_aligned(args.assay_transfer_prompt_version)
+    ):
+        return context_records.TIANANG_ALIGNED_PROTOCOL_VERSION
     return (
         (
             context_records.INDIRECT_PROTOCOL_VERSION
@@ -420,6 +683,10 @@ def _context_prompt_version(args: argparse.Namespace, task: str) -> str:
         args.assay_transfer_prompt_version,
         ranking=args.context_ranking,
     )
+
+
+def _is_tianang_aligned(args: argparse.Namespace, task: str) -> bool:
+    return context_records.is_tianang_aligned(_context_prompt_version(args, task))
 
 
 def _validate_context_l2_reuse_source(
@@ -517,7 +784,7 @@ def _reuse_context_l1_l2_outputs(
     """Copy frozen L1/L2 states only after their visible prompts match."""
     source_query_dir = _query_dir(source_root, task, query_index)
     prior_state: Mapping[str, Any] | None = None
-    contract = _task_contract(task)
+    contract = _task_contract(task, prompt_version)
     for level in (1, 2):
         level_dir = query_dir / "levels" / f"level_{level}"
         source_level_dir = source_query_dir / "levels" / f"level_{level}"
@@ -667,9 +934,31 @@ def _configure_v7_paths(args: argparse.Namespace) -> None:
         )
 
 
-def _task_contract(task: str) -> ProgressiveTaskContract:
+def _configure_evaluation_subset(args: argparse.Namespace) -> None:
+    for task in args.tasks:
+        spec = PROGRESSIVE_TASKS[task]
+        input_jsonl = (
+            split_path(task, args.evaluation_subset)
+            if args.gold_label_version == "current"
+            else Path(args.benchmark_data_root)
+            / TASK_DIRECTORIES[task]
+            / args.gold_label_version
+            / "scaffold"
+            / f"{args.evaluation_subset}.jsonl"
+        )
+        if not input_jsonl.is_file():
+            raise FileNotFoundError(input_jsonl)
+        PROGRESSIVE_TASKS[task] = ProgressiveTaskSpec(
+            input_jsonl, spec.index, spec.family_manifest
+        )
+
+
+def _task_contract(task: str, prompt_version: str = 'standard_v1') -> ProgressiveTaskContract:
     try:
-        return TASK_CONFIGS[task].get_progressive_task_contract()
+        from predict.harnesses.progressive.prompt import prompt_assets
+        values = dict(prompt_assets(prompt_version)['tasks'][task])
+        values['task_instructions'] = tuple(values['task_instructions'])
+        return ProgressiveTaskContract(**values)
     except KeyError as exc:
         raise ValueError(f"unsupported progressive task: {task}") from exc
 
@@ -694,6 +983,9 @@ def _write_level_trace(
         stage=f"level_{level:02d}",
         checkpoint_path=output_path,
         output=output,
+        run_id=(getattr(args, "live_run_ids", {}) or {}).get(prepared_query.task, ""),
+        method=getattr(args, "live_method", "progressive"),
+        run_dir=(getattr(args, "live_run_dirs", {}) or {}).get(prepared_query.task),
     )
 
 
@@ -720,10 +1012,47 @@ def _stable_query_key(record: Mapping[str, Any]) -> tuple[str, str]:
     return parent, condition
 
 
+@dataclass(frozen=True)
+class _QueryPriorSource:
+    run_dir: str
+    source_index: int
+
+
 @lru_cache(maxsize=None)
-def _single_source_index(task: str, single_root_text: str) -> dict[tuple[str, str], int]:
+def _single_source_index(
+    task: str, single_root_text: str
+) -> dict[tuple[str, str], _QueryPriorSource]:
     single_root = Path(single_root_text)
-    manifest = _read_json(_single_batch_dir(task, single_root) / "manifest.json")
+    batch_dir = _single_batch_dir(task, single_root)
+    manifest_path = batch_dir / "manifest.json"
+    manifest = _read_json(manifest_path)
+    if manifest.get("schema_version") == "progressive_query_prior_overlay.v1":
+        base_root = Path(str(manifest["base_root"]))
+        base_manifest_path = _single_batch_dir(task, base_root) / "manifest.json"
+        if sha256_file(base_manifest_path) != manifest.get("base_manifest_sha256"):
+            raise ValueError(f"{task} query-prior base manifest hash mismatch")
+        input_path = Path(str(manifest["base_input_jsonl"]))
+        if sha256_file(input_path) != manifest.get("base_input_sha256"):
+            raise ValueError(f"{task} query-prior base input hash mismatch")
+        records = read_jsonl(input_path)
+        mapping = {
+            _stable_query_key(record): _QueryPriorSource(
+                str(_source_run_dir(task, index, base_root)), index
+            )
+            for index, record in enumerate(records)
+        }
+        if len(mapping) != len(records):
+            raise ValueError(f"duplicate reusable single identity in {input_path}")
+        for override in manifest.get("overrides") or []:
+            key = (str(override["molecule_identity_key"]), str(override["condition_group"]))
+            if key in mapping:
+                raise ValueError(f"duplicate query-prior overlay identity: {key}")
+            run_dir = Path(str(override["run_dir"]))
+            for name, expected in (override.get("files_sha256") or {}).items():
+                if sha256_file(run_dir / name) != expected:
+                    raise ValueError(f"{task} query-prior override hash mismatch: {name}")
+            mapping[key] = _QueryPriorSource(str(run_dir), int(override["source_index"]))
+        return mapping
     input_path = Path(str(manifest.get("input_jsonl") or ""))
     if input_path.is_file():
         records = read_jsonl(input_path)
@@ -744,12 +1073,14 @@ def _single_source_index(task: str, single_root_text: str) -> dict[tuple[str, st
                 )
     if len(records) != int(manifest.get("n_items") or -1):
         raise ValueError(f"reusable single input count disagrees with manifest: {input_path}")
-    mapping: dict[tuple[str, str], int] = {}
+    mapping: dict[tuple[str, str], _QueryPriorSource] = {}
     for index, record in enumerate(records):
         key = _stable_query_key(record)
         if key in mapping:
             raise ValueError(f"duplicate reusable single identity: {key}")
-        mapping[key] = index
+        mapping[key] = _QueryPriorSource(
+            str(_source_run_dir(task, index, single_root)), index
+        )
     return mapping
 
 
@@ -917,10 +1248,10 @@ def _load_reused_query_prior(
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], int]:
     key = _stable_query_key(record)
     try:
-        source_index = _single_source_index(task, str(single_root))[key]
+        source = _single_source_index(task, str(single_root))[key]
     except KeyError as exc:
         raise ValueError(f"no reusable single branch for stable query identity: {key}") from exc
-    run_dir = _source_run_dir(task, source_index, single_root)
+    run_dir = Path(source.run_dir)
     single = _read_json(run_dir / "single_molecule_reasoning_output.json")
     none_final = _read_json(run_dir / "final_reasoning_output.json")
     if single.get("status") != "ok" or none_final.get("status") != "ok":
@@ -934,7 +1265,7 @@ def _load_reused_query_prior(
         dict(single_llm.get("content") or {}),
         dict(query_tool_summary),
         none_final,
-        source_index,
+        source.source_index,
     )
 
 
@@ -1030,7 +1361,7 @@ def _prepare_query(
             return PreparedQuery(task, query_index, query_dir)
 
     query_smiles = str(record.get("drug") or "")
-    if query_prior_mode == "fresh":
+    if query_prior_mode in {"fresh", "cached"}:
         query_prior, query_tool_summary, none_final, single_source_index = _load_reused_query_prior(
             task, record, single_root
         )
@@ -1235,14 +1566,35 @@ def _prepare_context_record_query(
     cache_profile: str = "v19_1",
     record_levels: tuple[str, ...] | None = None,
     v21_selection_mode: str = "record_only",
+    prefetch_tools: bool = True,
+    tool_service_url: str = "http://127.0.0.1:8765",
+    timeout_s: int = 120,
+    retrieval_policy: Mapping[str, Any] | None = None,
+    molecule_description: Mapping[str, Any] | None = None,
+    candidate_output: bool = False,
 ) -> PreparedQuery:
     """Write context snapshots and optional cache-backed later-level bundles."""
+    if retrieval_policy:
+        cache_profile = 'per_stage_policy'
     query_dir = _query_dir(output_root, task, query_index)
     complete_path = query_dir / "prepared_manifest.json"
+    aligned = context_records.is_tianang_aligned(prompt_version)
+    mapped_selection = prompt_version.startswith('reranked_progressive_') or prompt_version.startswith(("tianang_aligned_relevance_", "tianang_aligned_mapped_", "tianang_aligned_ranked_"))
     protocol = (
-        context_records.INDIRECT_PROTOCOL_VERSION
+        context_records.TIANANG_ALIGNED_PROTOCOL_VERSION
+        if aligned
+        else context_records.INDIRECT_PROTOCOL_VERSION
         if indirect_records is not None
         else context_records.PROTOCOL_VERSION
+    )
+    molecule_description_identity = (
+        {
+            key: molecule_description[key]
+            for key in ("mode", "column", "path", "sha256", "missing_policy")
+            if key in molecule_description
+        }
+        if molecule_description is not None
+        else {"mode": "none"}
     )
     if complete_path.is_file():
         manifest = _read_json(complete_path)
@@ -1253,10 +1605,14 @@ def _prepare_context_record_query(
             and manifest.get("profile") == "context_records"
             and manifest.get("prompt_version") == prompt_version
             and manifest.get("context_ranking") == context_ranking
+            and manifest.get('retrieval_policy') == retrieval_policy
+            and manifest.get("molecule_description") == molecule_description_identity
+            and bool(manifest.get("candidate_output")) is candidate_output
+            and bool(manifest.get("tool_prefetch_complete")) is prefetch_tools
             and manifest.get("assay_transfer_cache_profile", "v19_1")
             == cache_profile
             and manifest.get("v21_selection_mode", "record_only")
-            == v21_selection_mode
+            == (v21_selection_mode if cache_profile == V21_CACHE_PROFILE else None)
             and manifest.get("ranking_tie_seed") == ranking_tie_seed
             and manifest.get("context_limit", context_records.CONTEXT_LIMIT)
             == context_limit
@@ -1292,7 +1648,7 @@ def _prepare_context_record_query(
         ):
             return PreparedQuery(task, query_index, query_dir)
 
-    if query_prior_mode == "fresh":
+    if query_prior_mode in {"fresh", "cached"}:
         query_prior, query_tool_summary, none_final, single_source_index = (
             _load_reused_query_prior(task, record, single_root)
         )
@@ -1300,16 +1656,46 @@ def _prepare_context_record_query(
         query_prior, query_tool_summary, none_final, single_source_index = {}, {}, {}, None
 
     query_smiles = str(record.get("drug") or "")
-    condition_sentence = external_condition_sentence(dict(record))
-    snapshots = context_records.snapshots(
-        contexts,
-        task=task,
-        indirect_records=indirect_records,
-        indirect_record_limit=indirect_record_limits or indirect_record_limit,
-        prompt_version=prompt_version,
-        record_levels=record_levels,
-        transfer_model="V21" if cache_profile == V21_CACHE_PROFILE else "V19.1",
+    molecule_descriptions = (
+        molecule_description["values"] if molecule_description is not None else None
     )
+    query_molecule_description = (
+        molecule_descriptions.get(query_smiles)
+        if molecule_descriptions is not None
+        else None
+    )
+    condition_sentence = external_condition_sentence(dict(record))
+    if aligned:
+        snapshots = context_records.stage_ranked_snapshots(
+            contexts, task=task, records_by_level=indirect_records or {}, prompt_version=prompt_version,
+            molecule_descriptions=molecule_descriptions,
+        ) if retrieval_policy else context_records.tianang_aligned_snapshots(
+            contexts,
+            task=task,
+            indirect_records=indirect_records or {},
+            indirect_record_limit=indirect_record_limits or indirect_record_limit,
+            prompt_version=prompt_version,
+            record_levels=() if indirect_records is None else record_levels,
+        )
+        analog_tools, tool_failures = _prefetch_analog_tools(
+            query_smiles=query_smiles,
+            analogs=snapshots[max(snapshots)],
+            tool_service_url=tool_service_url,
+            timeout_s=timeout_s,
+        ) if prefetch_tools else ({}, [])
+        for snapshot in snapshots.values():
+            attach_analog_tool_summaries(snapshot, analog_tools)
+    else:
+        snapshots = context_records.snapshots(
+            contexts,
+            task=task,
+            indirect_records=indirect_records,
+            indirect_record_limit=indirect_record_limits or indirect_record_limit,
+            prompt_version=prompt_version,
+            record_levels=record_levels,
+            transfer_model="V21" if cache_profile == V21_CACHE_PROFILE else "V19.1",
+        )
+        tool_failures = []
     previous_ids: set[str] = set()
     for level_row in levels:
         level = int(level_row["level"])
@@ -1322,12 +1708,22 @@ def _prepare_context_record_query(
         current_ids = card_ids(snapshot)
         new_ids = current_ids - previous_ids
         write_json_atomic(
-            query_dir / "levels" / f"level_{level}" / "prepared.json",
+            query_dir / "levels" / f"level_{level}" / (
+                "candidate_prepared.json" if candidate_output else "prepared.json"
+            ),
             {
                 "protocol": protocol,
                 "profile": "context_records",
                 "query_prior_mode": query_prior_mode,
                 "l1_source": (
+                    "none_indirect_only"
+                    if retrieval_policy and 'L1' not in retrieval_policy['stages'] else
+                    "frozen_v9_gold_train_parents_with_mapped_v10_l1_records"
+                    if prompt_version.startswith('reranked_progressive_') else
+                    "v9_gold_train_ranked_contexts_without_associated_l2"
+                    if cache_profile == V24_1_LEVEL_CACHE_PROFILE else
+                    "configured_level_membership_after_heldout_parent_exclusion"
+                    if mapped_selection else
                     "v21_ranked_stage3_record_molecules"
                     if cache_profile == V21_CACHE_PROFILE
                     and v21_selection_mode == "molecule_cards"
@@ -1343,14 +1739,34 @@ def _prepare_context_record_query(
                 "condition_group": record.get("condition_group"),
                 "reused_single_source_index": single_source_index,
                 "query_smiles": query_smiles,
+                "query_molecule_description": query_molecule_description,
+                "molecule_description": molecule_description_identity,
                 "condition_sentence": condition_sentence,
                 "query_prior": query_prior,
                 "query_tool_summary": query_tool_summary,
                 "reused_none_final": none_final,
                 "level": level,
                 "level_definition": level_row,
+                **({'retrieval_policy': retrieval_policy} if retrieval_policy else {}),
                 "retrieval_audit": {
                     "candidate_source": (
+                        ('exact_finalized_indirect_only_cache_assignments'
+                         if retrieval_policy and 'L1' not in retrieval_policy['stages'] else
+                         'frozen_v9_gold_train_top100_parents_with_v10_l1_records' if level == 1 else
+                         'full_mapped_v10_morgan_pool' if level == 5 else
+                         'exact_finalized_cache_assignments')
+                        if prompt_version.startswith('reranked_progressive_') else
+                        (
+                            "v9_gold_train_morgan_top100_contexts"
+                            if level == 1
+                            else f"v10_uid_mapped_L{level}_morgan_top75_"
+                            "then_level_specific_v24_1_assay_transfer_ranking"
+                        )
+                        if cache_profile == V24_1_LEVEL_CACHE_PROFILE else
+                        "level_specific_pool_then_configured_stage_ranking"
+                        if retrieval_policy else
+                        "mapping_specific_morgan_pool_then_relevance_bucket_selection"
+                        if mapped_selection else
                         f"{cache_profile}_stage3_top{context_limit}_molecules_with_v21_ranked_records"
                         if cache_profile == V21_CACHE_PROFILE
                         and v21_selection_mode == "molecule_cards"
@@ -1384,7 +1800,7 @@ def _prepare_context_record_query(
                 "selection_audit": {
                     "context_limit": context_limit,
                     "record_limit_per_context_level": record_limit,
-                    "l2_record_limit_per_context": l2_record_limit,
+                    "l2_record_limit_per_context": None if retrieval_policy else l2_record_limit,
                     "indirect_record_limit_per_level": (
                         indirect_record_limit
                         if indirect_records is not None
@@ -1394,9 +1810,19 @@ def _prepare_context_record_query(
                         level_record_limit if indirect_records is not None else None
                     ),
                     "deterministic_sampling": True,
-                    "ranking": context_ranking,
+                    "ranking": retrieval_policy['stages'][f'L{level}'] if retrieval_policy else context_ranking,
                     "ranking_tie_seed": (
-                        ranking_tie_seed if context_ranking == "morgan" else None
+                        ranking_tie_seed if retrieval_policy or context_ranking == "morgan" else None
+                    ),
+                    "matched_control_record_ids": (
+                        (indirect_records or {}).get(f"L{level}", {}).get(
+                            "matched_control_record_ids", []
+                        )
+                    ),
+                    "original_semantic_record_ids": (
+                        (indirect_records or {}).get(f"L{level}", {}).get(
+                            "original_semantic_record_ids", []
+                        )
                     ),
                 },
                 "active_evidence": snapshot,
@@ -1404,11 +1830,13 @@ def _prepare_context_record_query(
                 "n_active_molecules": len(snapshot),
                 "n_active_cards": len(current_ids),
                 "should_call_model": bool(new_ids),
-                # The profile intentionally disables per-analog tools. The reused
-                # query property prior is complete, so inference may proceed.
-                "tool_prefetch_complete": True,
-                "analog_tool_policy": "disabled_by_context_records_profile",
-                "tool_prefetch_failures": [],
+                "tool_prefetch_complete": prefetch_tools,
+                "analog_tool_policy": (
+                    "tianang_mmp_structure_compare_plus_properties_compare"
+                    if aligned
+                    else "disabled_by_context_records_profile"
+                ),
+                "tool_prefetch_failures": tool_failures,
             },
         )
         previous_ids = current_ids
@@ -1423,7 +1851,6 @@ def _prepare_context_record_query(
             record_limit=record_limit,
             l2_record_limit=l2_record_limit,
         )
-
     write_json_atomic(
         complete_path,
         {
@@ -1431,7 +1858,10 @@ def _prepare_context_record_query(
             "protocol": protocol,
             "profile": "context_records",
             "prompt_version": prompt_version,
+            "molecule_description": molecule_description_identity,
+            "candidate_output": candidate_output,
             "context_ranking": context_ranking,
+            **({'retrieval_policy': retrieval_policy} if retrieval_policy else {}),
             "assay_transfer_cache_profile": cache_profile,
             "v21_selection_mode": (
                 v21_selection_mode
@@ -1460,8 +1890,12 @@ def _prepare_context_record_query(
             "task": task,
             "query_index": query_index,
             "n_levels": len(levels),
-            "tool_prefetch_complete": True,
-            "analog_tool_policy": "disabled_by_context_records_profile",
+            "tool_prefetch_complete": prefetch_tools,
+            "analog_tool_policy": (
+                "tianang_mmp_structure_compare_plus_properties_compare"
+                if aligned
+                else "disabled_by_context_records_profile"
+            ),
             "prepared_at": _now(),
         },
     )
@@ -1496,17 +1930,18 @@ def _resolve_provider_pool_config(args: argparse.Namespace) -> ProviderPoolConfi
     if config_path:
         config = load_provider_pool_config(config_path)
     else:
+        providers = [
+            ProviderSpec(
+                name="primary",
+                base_url=args.base_url.rstrip("/"),
+                model=args.model,
+                api_key_env=args.api_key_env,
+                max_inflight=args.parallelism,
+            )
+        ]
         config = ProviderPoolConfig(
-            providers=(
-                ProviderSpec(
-                    name="single",
-                    base_url=args.base_url.rstrip("/"),
-                    model=args.model,
-                    api_key_env=args.api_key_env,
-                    max_inflight=args.parallelism,
-                ),
-            ),
-            max_failovers=0,
+            providers=tuple(providers),
+            max_failovers=int(len(providers) > 1),
         )
     expected_identity = _model_identity(args.model)
     for spec in config.providers:
@@ -1515,10 +1950,6 @@ def _resolve_provider_pool_config(args: argparse.Namespace) -> ProviderPoolConfi
                 f"provider {spec.name!r} model {spec.model!r} does not match "
                 f"run model identity {expected_identity!r}"
             )
-        if config_path and spec.api_key_env and not os.getenv(spec.api_key_env):
-            raise ValueError(
-                f"provider {spec.name!r} is missing API key env {spec.api_key_env!r}"
-            )
     return config
 
 
@@ -1526,243 +1957,45 @@ def _make_client(
     args: argparse.Namespace,
     provider_config: ProviderPoolConfig,
 ) -> OpenAIProviderPool:
-    def client_factory(spec: ProviderSpec) -> OpenAICompatibleClient:
-        return OpenAICompatibleClient(
-            api_key=os.getenv(spec.api_key_env) or "local-no-auth",
-            base_url=spec.base_url,
-            model=spec.model,
-            timeout_s=spec.timeout_s or args.timeout_s,
-            max_tokens=args.max_tokens,
-            temperature=0.0,
-            tool_service_url=args.tool_service_url,
-            enable_group_tools=False,
-            max_tool_rounds=0,
-            reasoning_effort="",
-            enable_thinking=False,
-            transport_max_retries=args.transport_max_retries,
-            request_extra_body=spec.request_extra_body,
-        )
-
-    return OpenAIProviderPool(provider_config, client_factory=client_factory)
+    return build_provider_pool(
+        provider_config,
+        env_file=args.env_file,
+        timeout_s=args.timeout_s,
+        max_tokens=args.max_tokens,
+        temperature=0.0,
+        tool_service_url=args.tool_service_url,
+        enable_group_tools=False,
+        max_tool_rounds=0,
+        reasoning_effort="",
+        enable_thinking=False,
+        transport_max_retries=args.transport_max_retries,
+    )
 
 
-def _run_query(
-    args: argparse.Namespace,
-    prepared_query: PreparedQuery,
-    client: OpenAIProviderPool,
-) -> dict[str, Any]:
-    task = prepared_query.task
-    contract = _task_contract(task)
-    levels = _run_levels(args, task)
-    prior_state: dict[str, Any] | None = None
-    n_calls = 0
-    for level_row in levels:
-        level = int(level_row["level"])
-        level_dir = prepared_query.query_dir / "levels" / f"level_{level}"
-        output_path = level_dir / "output.json"
-        if output_path.is_file():
-            existing = _read_json(output_path)
-            if existing.get("status") in COMPLETE_LEVEL_STATUSES:
-                _write_level_trace(args, prepared_query, level, output_path, existing)
-                prior_state = dict(existing["state"])
-                n_calls += int(existing.get("model_called") is True)
-                continue
-        prepared = _read_json(level_dir / "prepared.json")
-        if not prepared.get("tool_prefetch_complete"):
-            raise ValueError(
-                f"formal inference requires visible tool prefetch: {level_dir}"
-            )
-        if not prepared.get("should_call_model"):
-            if prior_state is None:
-                if args.query_prior == "none":
-                    raise ValueError(f"standalone L1 has no visible evidence: {level_dir}")
-                state = _none_state(
-                    contract=contract,
-                    level=level,
-                    none_final=prepared["reused_none_final"],
-                )
-                status = "reused_none"
-            else:
-                state = {**prior_state, "level": level, "revision_action": "keep"}
-                status = "carried_forward"
-            write_json_atomic(
-                output_path,
-                {
-                    "status": status,
-                    "model_called": False,
-                    "state": state,
-                    "created_at": _now(),
-                },
-            )
-            prior_state = state
-            continue
+def query_steps(args, prepared_query, client):
+    """Compatibility wrapper; inference.py owns progressive model execution."""
+    if (args.harness_version == INDIRECT_FILTER_HARNESS
+            and args.reranking == "morgan-parent-llm-semantic"):
+        from predict.harnesses.progressive.record_filter import query_steps as filter_steps
 
-        active = prepared["active_evidence"]
-        card_id_to_alias, alias_to_card_id = card_alias_maps(active)
-        if args.profile == "context_records":
-            record_limits = _indirect_record_limits(args, task)
-            prompt_record_limits: int | Mapping[str, int] = (
-                next(iter(record_limits.values()))
-                if len(set(record_limits.values())) == 1
-                else record_limits
-            )
-            messages = context_records.build_messages(
-                contract=contract,
-                current_level=level,
-                query_smiles=prepared["query_smiles"],
-                condition_sentence=prepared["condition_sentence"],
-                query_prior=prepared["query_prior"] or None,
-                query_tool_summary=prepared.get("query_tool_summary") or {},
-                active=active,
-                prior_state=prior_state,
-                prompt_version=_context_prompt_version(args, task),
-                record_limit=args.record_limit_per_context_level,
-                l2_record_limit=args.l2_record_limit_per_context,
-                indirect_record_limit=prompt_record_limits,
-                include_indirect=_record_cache_enabled(args),
-            )
-        else:
-            messages = build_progressive_messages(
-                contract=contract,
-                levels=levels,
-                current_level=level,
-                query_smiles=prepared["query_smiles"],
-                condition_sentence=prepared["condition_sentence"],
-                query_prior=prepared["query_prior"] or None,
-                query_tool_summary=prepared.get("query_tool_summary") or {},
-                active=active,
-                prior_state=prior_state,
-            )
-        write_json_atomic(
-            level_dir / "request.json",
-            {
-                "messages": messages,
-                "prompt_characters": sum(len(str(row.get("content") or "")) for row in messages),
-                "prompt_utf8_bytes": sum(len(str(row.get("content") or "").encode("utf-8")) for row in messages),
-                "card_alias_map": alias_to_card_id,
-            },
-        )
-        visible_aliases = set(alias_to_card_id)
-        new_aliases = {
-            card_id_to_alias[card_id]
-            for card_id in map(str, prepared.get("new_card_ids") or [])
-        }
-        execution_provider_attempts: list[dict[str, Any]] = []
+        return (yield from filter_steps(args, prepared_query, client))
+    from predict.harnesses.progressive.inference import query_steps as engine_steps
 
-        def routed_chat_json(call_messages: list[dict[str, Any]]) -> dict[str, Any]:
-            routed_response = client.chat_json(call_messages)
-            execution_provider_attempts.extend(
-                routed_response.get("execution_provider_attempts") or []
-            )
-            return routed_response
-
-        response = call_with_json_validation(
-            routed_chat_json,
-            messages,
-            required_fields=(
-                contract.prediction_field,
-                "confidence",
-                "revision_action",
-                "supportive_card_ids",
-                "contradictory_card_ids",
-                "prediction_basis_card_ids",
-                "claims",
-                "new_evidence_assessment",
-                "evidence_gaps",
-                "decision_summary",
-            ),
-            allowed_values={
-                contract.prediction_field: contract.prediction_values,
-                "confidence": {"high", "moderate", "low"},
-                "revision_action": (
-                    {"initial"}
-                    if prior_state is None
-                    else {"keep", "strengthen", "weaken", "flip"}
-                ),
-            },
-            content_validator=lambda content: progressive_state_errors(
-                content,
-                contract=contract,
-                visible_card_ids=visible_aliases,
-                new_card_ids=new_aliases,
-                prior_state=prior_state,
-            ),
-            branch_name=f"{task} progressive level {level}",
-            max_attempts=4,
-        )
-        response["execution_provider_attempts"] = execution_provider_attempts
-        n_calls += int((response.get("structured_output_validation") or {}).get("attempt_count") or 1)
-        if not structured_response_is_valid(response):
-            output = {
-                "status": "error",
-                "model_called": True,
-                "llm": response,
-                "card_alias_map": alias_to_card_id,
-                "created_at": _now(),
-            }
-            write_json_atomic(
-                output_path,
-                output,
-            )
-            _write_level_trace(args, prepared_query, level, output_path, output)
-            return {"task": task, "index": prepared_query.index, "status": "error", "level": level}
-        restored_content = restore_card_ids(
-            response["content"],
-            alias_to_card_id=alias_to_card_id,
-        )
-        state = state_from_content(
-            restored_content,
-            contract=contract,
-            level=level,
-            visible_card_ids=set(alias_to_card_id.values()),
-        )
-        output = {
-            "status": "ok",
-            "model_called": True,
-            "state": state,
-            "llm": response,
-            "card_alias_map": alias_to_card_id,
-            "created_at": _now(),
-        }
-        write_json_atomic(output_path, output)
-        _write_level_trace(args, prepared_query, level, output_path, output)
-        prior_state = state
-    return {
-        "task": task,
-        "index": prepared_query.index,
-        "status": "ok",
-        "n_model_attempts": n_calls,
-    }
+    return (yield from engine_steps(args, prepared_query, client))
 
 
-def _run_query_safe(
-    args: argparse.Namespace,
-    prepared_query: PreparedQuery,
-    client: OpenAIProviderPool,
-) -> dict[str, Any]:
-    """Keep one transport/provider failure from terminating unrelated queries."""
-    try:
-        result = _run_query(args, prepared_query, client)
-        error_path = prepared_query.query_dir / "run_error.json"
-        if result.get("status") == "ok" and error_path.is_file():
-            write_json_atomic(
-                error_path,
-                {"status": "resolved", "resolved_at": _now()},
-            )
-        return result
-    except Exception as exc:  # noqa: BLE001 - persisted for resumable batch audit
-        error = {
-            "task": prepared_query.task,
-            "index": prepared_query.index,
-            "status": "error",
-            "error_type": type(exc).__name__,
-            "error": str(exc),
-            "failed_at": _now(),
-        }
-        if isinstance(exc, ProviderPoolExhausted):
-            error["execution_provider_attempts"] = exc.attempts
-        write_json_atomic(prepared_query.query_dir / "run_error.json", error)
-        return error
+def _run_query(args, prepared_query, client):
+    """Compatibility wrapper for historical experiment launchers."""
+    from predict.harnesses.progressive.inference import run_query
+
+    return run_query(args, prepared_query, client)
+
+
+def _run_query_safe(args, prepared_query, client):
+    """Compatibility wrapper for historical experiment launchers."""
+    from predict.harnesses.progressive.inference import run_query_safe
+
+    return run_query_safe(args, prepared_query, client)
 
 
 def _prediction_to_label(contract: ProgressiveTaskContract, prediction: Any) -> int | None:
@@ -1823,9 +2056,10 @@ def _summarize_task(
     query_prior_mode: str,
     profile: str = "standard",
     context_record_l3_l5: bool = False,
+    prompt_version: str | None = None,
 ) -> None:
-    contract = _task_contract(task)
-    if query_prior_mode == "fresh":
+    contract = _task_contract(task, prompt_version or 'standard_v1')
+    if query_prior_mode in {"fresh", "cached"}:
         none_predictions = []
         for query_index in indices:
             prepared_path = (
@@ -1861,6 +2095,8 @@ def _summarize_task(
         )
 
     level_rows = (
+        context_records.tianang_aligned_levels(task, max_level, prompt_version=prompt_version)
+        if prompt_version and context_records.prompt_profile(prompt_version).get('stage_ranked') else
         context_records.levels(
             max_level,
             task=task,
@@ -1963,12 +2199,16 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
                     raise ValueError(
                         f"{task} index has wrong {field}: {manifest.get(field)!r}"
                     )
-        if args.query_prior == "fresh":
+        if args.query_prior in {"fresh", "cached"}:
             batch_dir = _single_batch_dir(task, Path(args.single_source_root))
-            if not (batch_dir / "runs").is_dir():
-                raise FileNotFoundError(batch_dir / "runs")
             single_manifest_path = batch_dir / "manifest.json"
             single_manifest = _read_json(single_manifest_path)
+            if (
+                single_manifest.get("schema_version")
+                != "progressive_query_prior_overlay.v1"
+                and not (batch_dir / "runs").is_dir()
+            ):
+                raise FileNotFoundError(batch_dir / "runs")
             reusable_model = str(single_manifest.get("model") or "")
             if _model_identity(reusable_model) != _model_identity(args.model):
                 raise ValueError(
@@ -1996,10 +2236,41 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
     return records_by_task
 
 
-def run(args: argparse.Namespace) -> int:
+def run(args: argparse.Namespace, *, prepared_callback=None,
+        prepared_query_callback=None, candidate_loader=None) -> int:
     provider_config = _resolve_provider_pool_config(args)
-    if sum(spec.max_inflight for spec in provider_config.providers) > args.endpoint_concurrency_budget:
+    endpoint_selection = None
+    if args.prepare_only:
+        args.requested_parallelism = args.parallelism
+        args.parallelism = args.parallelism or 1
+    else:
+        if args.parallelism is None:
+            raise ValueError("full-batch inference requires explicit --parallelism")
+        args.requested_parallelism = args.parallelism
+        endpoint_selection = select_healthy_providers(
+            provider_config, args.requested_parallelism
+        )
+        provider_config = endpoint_selection.config
+        args.parallelism = endpoint_selection.effective_parallelism
+    if not args.prepare_only and args.parallelism > args.endpoint_concurrency_budget:
         raise ValueError("provider pool capacity exceeds the configured endpoint budget")
+    endpoint_preflight = None
+    if not args.prepare_only:
+        from predict.harnesses.progressive.prompt import prompt_assets
+
+        endpoint_preflight = {
+            "models": endpoint_selection.public_dict(),
+            "tokenized_reasoning": (
+                preflight_sglang_tokenized_completion(provider_config)
+                if any(
+                    prompt_assets(_context_prompt_version(args, task))["settings"].get(
+                        "reasoning_transport"
+                    )
+                    for task in args.tasks
+                )
+                else None
+            ),
+        }
     records_by_task = _validate_inputs(args)
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -2032,6 +2303,64 @@ def run(args: argparse.Namespace) -> int:
                 )
                 for index in indices_by_task[task]
             }
+            if getattr(args, 'harness_version', None) in {
+                    'reranked-progressive-v2', 'reranked-progressive-v3',
+                    'reranked-progressive-v4', 'reranked-progressive-l1-context-v1',
+                    'reranked-progressive-l1-context-l2-v1',
+                    'reranked-progressive-l1-context-l2-weighted-v1',
+                    'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+                    *INDIRECT_HARNESSES}:
+                from predict.harnesses.progressive.retrieval_cache import load_candidates
+                molecules, later, audit = (candidate_loader or load_candidates)(selected_queries, task=task,
+                    subset=args.evaluation_subset, library=args.evidence_libraries[task],
+                    mapper=args.level_mapper, policy=args.retrieval_policies[task],
+                    gold_context_mapping=args.gold_context_mapping if task == 'bbb_martins' else None,
+                    allow_frozen_l1_vote_scores=args.allow_frozen_l1_vote_scores,
+                    cache_pool=args.cache_pool,
+                    molecule_limit=args.context_limit, l1_limit=args.record_limit_per_context_level,
+                    later_limit=(
+                        args.l2_records_per_molecule
+                        if args.harness_version == 'reranked-progressive-l1-context-l2-morgan-bucket-v1'
+                        else _indirect_record_limits(args, task)
+                        if args.retrieval_policies[task].get('selection_contract')
+                        in {'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'}
+                        else args.indirect_record_limit_per_level
+                    ),
+                    tie_seed=args.ranking_tie_seed,
+                    joint_panel_sizes=args.joint_panel_sizes,
+                    **({'min_contrast': args.l1_min_contrast}
+                       if args.harness_version == 'reranked-progressive-l1-context-v1'
+                       else {}))
+                context_candidates_by_task[task] = molecules
+                indirect_candidates_by_task[task] = later
+                ranking_audits[task] = indirect_ranking_audits[task] = audit
+                continue
+            if args.level_mapping != "local":
+                from predict.harnesses.progressive.level_selection import load_mapped_candidates, IMPORTED
+                ranked_molecules, indirect, audit = load_mapped_candidates(
+                    selected_queries,
+                    mapping=IMPORTED if args.level_mapping == "tianang" else Path(args.level_mapping),
+                    ranking_root=Path(args.relevance_ranking_root),
+                    v7_root=Path(args.v7_root), molecule_limit=args.context_limit,
+                    l1_limit=args.record_limit_per_context_level,
+                    l2_limit=args.l2_record_limit_per_context,
+                    later_limit=args.indirect_record_limit_per_level,
+                    tie_seed=args.ranking_tie_seed, ranking=args.context_ranking,
+                    score_cache=args.level_score_cache,
+                    task=task, sampler=args.record_sampler,
+                    retrieval_policy=getattr(args, 'retrieval_policies', {}).get(task),
+                )
+                for molecules in ranked_molecules.values():
+                    for molecule in molecules:
+                        molecule["level_mapping"] = args.level_mapping
+                context_candidates_by_task[task] = ranked_molecules if getattr(args, 'retrieval_policy', None) else {
+                    query_id: context_records.v21_molecule_contexts(query_id, rows)
+                    for query_id, rows in ranked_molecules.items()
+                }
+                indirect_candidates_by_task[task] = indirect
+                ranking_audits[task] = audit
+                indirect_ranking_audits[task] = audit
+                continue
             if (
                 args.assay_transfer_cache_profile == V21_CACHE_PROFILE
                 and args.v21_selection_mode == "record_only"
@@ -2066,20 +2395,61 @@ def run(args: argparse.Namespace) -> int:
                     context_limit=args.context_limit,
                     ranking=args.context_ranking,
                     tie_seed=args.ranking_tie_seed,
+                    distinct_molecules=_is_tianang_aligned(args, task),
+                    cache_dir=(
+                        Path(args.v9_ranking_root)
+                        / task
+                        / "scaffold"
+                        / args.evaluation_subset
+                        if args.evaluation_subset == "test"
+                        else None
+                    ),
+                    reference_path=(
+                        _benchmark_scaffold_root(
+                            Path(args.benchmark_data_root), task
+                        )
+                        / "train_molecule_condition_labels.jsonl"
+                        if args.evaluation_subset == "test"
+                        else None
+                    ),
                 )
+                if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+                    for contexts in candidates.values():
+                        for context in contexts:
+                            context["l2_cards"] = []
+                            context["available_l2"] = 0
                 context_candidates_by_task[task] = candidates
                 ranking_audits[task] = audit
             if _record_cache_enabled(args):
-                indirect, indirect_audit = load_top_ranked_records(
-                    task,
-                    selected_queries,
-                    cache_profile=args.assay_transfer_cache_profile,
-                    levels=_record_level_names(args, task),
-                    limit=_indirect_record_limits(args, task),
-                    workers=args.preparation_workers,
-                    ranking=args.context_ranking,
-                    tie_seed=args.ranking_tie_seed,
+                exclusions = (
+                    {
+                        query_id: context_records.selected_physical_record_ids(contexts)
+                        for query_id, contexts in context_candidates_by_task[task].items()
+                    }
+                    if _is_tianang_aligned(args, task)
+                    else None
                 )
+                if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+                    indirect, indirect_audit = load_v24_1_level_records(
+                        selected_queries,
+                        subset=args.evaluation_subset,
+                        levels=_record_level_names(args, task),
+                        limit=_indirect_record_limits(args, task),
+                        workers=args.preparation_workers,
+                        exclude_record_ids_by_query=exclusions,
+                    )
+                else:
+                    indirect, indirect_audit = load_top_ranked_records(
+                        task,
+                        selected_queries,
+                        cache_profile=args.assay_transfer_cache_profile,
+                        levels=_record_level_names(args, task),
+                        limit=_indirect_record_limits(args, task),
+                        workers=args.preparation_workers,
+                        ranking=args.context_ranking,
+                        tie_seed=args.ranking_tie_seed,
+                        exclude_record_ids_by_query=exclusions,
+                    )
                 indirect_candidates_by_task[task] = indirect
                 indirect_ranking_audits[task] = indirect_audit
                 if (
@@ -2099,6 +2469,41 @@ def run(args: argparse.Namespace) -> int:
             )
             gold_candidates_by_task[task] = candidates
             ranking_audits[task] = audit
+    description_artifact = MOLECULE_DESCRIPTION_ARTIFACTS[
+        args.molecule_description_cache_version
+    ]
+    molecule_description = _load_molecule_descriptions(
+        args.molecule_description_mode,
+        path=description_artifact["path"],
+        expected_sha256=description_artifact["sha256"],
+    )
+    molecule_description_identity: dict[str, Any] = {"mode": "none"}
+    if molecule_description is not None:
+        molecule_description = {
+            **molecule_description,
+            "cache_version": args.molecule_description_cache_version,
+        }
+        values = _validate_molecule_description_coverage(
+            molecule_description,
+            records_by_task=records_by_task,
+            indices_by_task=indices_by_task,
+            contexts_by_task=context_candidates_by_task,
+            later_by_task=indirect_candidates_by_task,
+            receipt_path=output_root / "molecule_description_preflight.json",
+            missing_policy=args.molecule_description_missing_policy,
+        )
+        molecule_description = {
+            **molecule_description,
+            "missing_policy": args.molecule_description_missing_policy,
+            "values": values,
+        }
+        molecule_description_identity = {
+            key: molecule_description[key]
+            for key in (
+                "mode", "cache_version", "column", "path", "sha256",
+                "missing_policy",
+            )
+        }
     inputs = {}
     for task in args.tasks:
         spec = PROGRESSIVE_TASKS[task]
@@ -2110,7 +2515,7 @@ def run(args: argparse.Namespace) -> int:
                     _single_batch_dir(task, Path(args.single_source_root))
                     / "manifest.json"
                 )
-                if args.query_prior == "fresh"
+                if args.query_prior in {"fresh", "cached"}
                 else None
             ),
             "levels": _run_levels(args, task),
@@ -2160,7 +2565,11 @@ def run(args: argparse.Namespace) -> int:
             }
         else:
             prompt_version = args.assay_transfer_prompt_version
-            contract_payload = context_records.card_contract(prompt_version)
+            contract_payload = (
+                context_records.tianang_aligned_card_contract(prompt_version)
+                if context_records.is_tianang_aligned(prompt_version)
+                else context_records.card_contract(prompt_version)
+            )
             card_contract_manifest = {
                 "path": str(context_records.prompt_profile(prompt_version)["card"]),
                 "schema_version": contract_payload["schema_version"],
@@ -2172,7 +2581,9 @@ def run(args: argparse.Namespace) -> int:
                     ).encode("utf-8")
                 ).hexdigest(),
             }
-        if _record_cache_enabled(args):
+        if _record_cache_enabled(args) and not context_records.is_tianang_aligned(
+            prompt_version
+        ):
             card_contract_manifest["level_record_bundle_by_task"] = {
                 task: {
                     "path": str(context_records.LEVEL_RECORD_BUNDLE_PATH),
@@ -2207,7 +2618,7 @@ def run(args: argparse.Namespace) -> int:
     manifest = {
         "experiment": _run_protocol(args),
         "profile": args.profile,
-        "evaluation_subset": "valid",
+        "evaluation_subset": args.evaluation_subset,
         "tasks": args.tasks,
         "visibility_mode": "deployment_visible_prefetched",
         "reference_pool": (
@@ -2255,7 +2666,7 @@ def run(args: argparse.Namespace) -> int:
         "condition_policy": "natural-language sentence for non-null group; omit null group",
         "query_prior_mode": args.query_prior,
         "single_reuse_root": (
-            str(Path(args.single_source_root)) if args.query_prior == "fresh" else None
+            str(Path(args.single_source_root)) if args.query_prior in {"fresh", "cached"} else None
         ),
         "l1_source": args.l1_source,
         "l1_ranking": args.l1_ranking,
@@ -2264,21 +2675,42 @@ def run(args: argparse.Namespace) -> int:
         "model_identity": _model_identity(args.model),
         "base_url": args.base_url,
         "parallelism": args.parallelism,
+        "requested_parallelism": args.requested_parallelism,
         "endpoint_concurrency_budget": args.endpoint_concurrency_budget,
         "max_tokens": args.max_tokens,
+        "timeout_s": args.timeout_s,
         "temperature": 0.0,
         "thinking": "provider_default",
         "reasoning_effort": "omitted",
         "transport_max_retries": args.transport_max_retries,
         "tool_prefetch_complete": (
-            True if args.profile == "context_records" else not args.skip_tool_prefetch
+            not args.skip_tool_prefetch
         ),
         "evaluation_indices_by_task": indices_by_task,
         "inputs": inputs,
         "l2_reuse": l2_reuse_audits or None,
         "started_at": _now(),
         "provider_routing": provider_config.public_dict(),
+        "provider_candidate_inventory": (
+            {
+                "path": str(Path(args.provider_pool_config).resolve()),
+                "sha256": sha256_file(Path(args.provider_pool_config)),
+            }
+            if args.provider_pool_config
+            else {"path": None, "source": "single_endpoint_cli"}
+        ),
+        "endpoint_preflight": endpoint_preflight,
+        "molecule_description": molecule_description_identity,
     }
+    from predict.harnesses.progressive.prompt import prompt_asset_manifest
+    manifest['prompt_assets'] = {
+        task: prompt_asset_manifest(_context_prompt_version(args, task) if args.profile == 'context_records' else 'standard_v1')
+        for task in args.tasks
+    }
+    if args.harness_version == INDIRECT_FILTER_HARNESS:
+        from predict.harnesses.progressive.record_filter import asset_manifest
+
+        manifest['record_filter_assets'] = asset_manifest()
     if args.profile == "context_records":
         prompt_manifests = {}
         for task in args.tasks:
@@ -2320,6 +2752,20 @@ def run(args: argparse.Namespace) -> int:
             ),
             "append_only": True,
         }
+        if all(_is_tianang_aligned(args, task) for task in args.tasks):
+            context_selection = {
+                "molecules": (
+                    f"top {args.context_limit} distinct molecules by {args.context_ranking}"
+                ),
+                "molecule_limit": args.context_limit,
+                "level_1": (
+                    f"up to {args.record_limit_per_context_level} current-gold records per molecule"
+                ),
+                "level_2": (
+                    f"append up to {args.l2_record_limit_per_context} associated records per molecule"
+                ),
+                "append_only": True,
+            }
         if args.assay_transfer_cache_profile == V21_CACHE_PROFILE:
             if args.v21_selection_mode == "record_only":
                 context_selection = {
@@ -2349,6 +2795,21 @@ def run(args: argparse.Namespace) -> int:
                     ),
                     "append_only": True,
                 }
+        if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+            context_selection = {
+                "L1": (
+                    f"top {args.context_limit} V9 gold-train contexts; retain only "
+                    f"their first {args.record_limit_per_context_level} direct records"
+                ),
+                "L2_L4": (
+                    "independent V10 source_row_uid level membership, Morgan top-75 "
+                    "scaffold-disjoint parent pools, and level-specific V24.1 ranking"
+                ),
+                "record_limits_by_level": _indirect_record_limits(
+                    args, "bbb_martins"
+                ),
+                "append_only": True,
+            }
         if args.l2_record_limit_per_context != args.record_limit_per_context_level:
             context_selection["l2_record_limit_per_context"] = (
                 args.l2_record_limit_per_context
@@ -2362,10 +2823,24 @@ def run(args: argparse.Namespace) -> int:
                 args.indirect_record_limit_per_level
             )
         if _record_cache_enabled(args):
+            if all(_is_tianang_aligned(args, task) for task in args.tasks):
+                context_selection.update(
+                    later_levels="select globally ranked records before grouping them under molecule cards",
+                    later_record_limits_by_task={
+                        task: _indirect_record_limits(args, task)
+                        for task in args.tasks
+                    },
+                    molecule_quota_after_l2=None,
+                )
             context_selection["later_levels_by_task"] = {
                 task: {
                     level: (
-                        "append one bundle containing the top "
+                        (
+                            "append the top unseen records under molecule cards: "
+                            if all(_is_tianang_aligned(args, item) for item in args.tasks)
+                            else "append one bundle containing the top "
+                        )
+                        +
                         f"{_indirect_record_limits(args, task)[level]} "
                         + (
                             "Morgan-ranked records from Luna's top-quartile "
@@ -2386,11 +2861,28 @@ def run(args: argparse.Namespace) -> int:
                 }
                 for task in args.tasks
             }
+        if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE:
+            context_selection["later_levels_by_task"] = {
+                "bbb_martins": {
+                    level: (
+                        "append the top unseen V10 records assigned by source_row_uid "
+                        f"to {level}, after Morgan top-75 prefiltering and the pinned "
+                        f"{level} V24.1 reranker"
+                    )
+                    for level in _record_level_names(args, "bbb_martins")
+                }
+            }
         manifest.update(
             {
-                "visibility_mode": "identity_blind_context_records",
+                "visibility_mode": (
+                    "identity_blind_tianang_aligned_molecule_cards"
+                    if all(_is_tianang_aligned(args, task) for task in args.tasks)
+                    else "identity_blind_context_records"
+                ),
                 "reference_pool": (
-                    "normalized_v7_stage3_l1_l5_records"
+                    "v9_gold_train_l1_plus_v10_uid_mapped_l2_l4_records"
+                    if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
+                    else "normalized_v7_stage3_l1_l5_records"
                     if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
                     else "current_conditioned_gold_contexts_plus_luna_"
                     "top_quartile_non_direct_v7_records"
@@ -2399,8 +2891,12 @@ def run(args: argparse.Namespace) -> int:
                     else "current_conditioned_gold_contexts_plus_v7_gold_source_domain_rows"
                 ),
                 "neighbor_identity_policy": (
-                    "scaffold_disjoint"
+                    "scaffold_disjoint_and_parent_disjoint"
+                    if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
+                    else "scaffold_disjoint"
                     if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                    else "scaffold_disjoint_and_parent_disjoint"
+                    if all(_is_tianang_aligned(args, task) for task in args.tasks)
                     else "gold_split_parent_disjoint"
                 ),
                 "min_similarity": None,
@@ -2411,12 +2907,21 @@ def run(args: argparse.Namespace) -> int:
                         and args.v21_selection_mode == "record_only"
                         else "v21_ranked_molecule_then_individual_stage3_record"
                         if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
+                        else "distinct_molecule_then_individual_stage3_record"
+                        if all(_is_tianang_aligned(args, task) for task in args.tasks)
+                        and _record_cache_enabled(args)
+                        else "distinct_molecule"
+                        if all(_is_tianang_aligned(args, task) for task in args.tasks)
                         else "parent_condition_context_then_individual_stage3_record"
                         if args.context_record_l3_l5
                         else "parent_condition_context"
                     ),
                     "scope": (
-                        "V21-ranked Stage 3 Morgan-top-75 molecules with V21-ranked records within L1/L2 cards, then independent L3-L5 records"
+                        "V9 gold-train L1 contexts without associated L2; independent "
+                        "V10 UID-mapped L2-L4 Morgan-top-75 pools ranked by each level's "
+                        "pinned V24.1 checkpoint"
+                        if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
+                        else "V21-ranked Stage 3 Morgan-top-75 molecules with V21-ranked records within L1/L2 cards, then independent L3-L5 records"
                         if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
                         and args.v21_selection_mode == "molecule_cards"
                         else "independent Stage 3 Morgan-top-75 V21 rankings for L1-L5"
@@ -2426,8 +2931,13 @@ def run(args: argparse.Namespace) -> int:
                         "Morgan-top-75 candidate generation"
                         if args.assay_transfer_cache_profile
                         == LUNA_RELEVANCE_CACHE_PROFILE
-                        else
-                        "exact V9 Morgan-top-100 assignments for L1/L2; task-configured "
+                        else f"top {args.context_limit} distinct molecules by "
+                        f"V9 {args.context_ranking} rank from the exact Morgan-top-100 "
+                        "candidate pool; task-configured Stage 3 Morgan-top-75 "
+                        "scaffold-disjoint assignments for later levels"
+                        if all(_is_tianang_aligned(args, task) for task in args.tasks)
+                        and _record_cache_enabled(args)
+                        else "exact V9 Morgan-top-100 assignments for L1/L2; task-configured "
                         "Stage 3 Morgan-top-75 scaffold-disjoint assignments for later levels"
                         if args.context_ranking == "morgan"
                         else f"V9 ranks 0-{args.context_limit - 1} for L1/L2; task-configured independent Stage 3 "
@@ -2435,10 +2945,20 @@ def run(args: argparse.Namespace) -> int:
                         if args.context_record_l3_l5
                         else "exact V9 Morgan-top-100 assignments for L1/L2"
                         if args.context_ranking == "morgan"
+                        else f"top {args.context_limit} distinct molecules by V9 "
+                        "assay-transfer rank from the full Morgan top-100 candidate pool"
+                        if all(_is_tianang_aligned(args, task) for task in args.tasks)
                         else "V9 ranks 0-9 from the full Morgan top-100 candidate pool"
                     ),
                     "ranking": (
                         {
+                            "L1": "V9 assay-transfer",
+                            "L2": "V24.1 L2 assay-transfer",
+                            "L3": "V24.1 L3 assay-transfer",
+                            "L4": "V24.1 L4 assay-transfer",
+                        }
+                        if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
+                        else {
                             "L1_L2": args.context_ranking,
                             "later_levels": args.context_ranking,
                         }
@@ -2455,6 +2975,22 @@ def run(args: argparse.Namespace) -> int:
                     "morgan_fingerprint": (
                         {"radius": 2, "bits": 2048, "similarity": "Tanimoto"}
                         if args.context_ranking == "morgan"
+                        or args.assay_transfer_cache_profile
+                        == V24_1_LEVEL_CACHE_PROFILE
+                        else None
+                    ),
+                    "similarity_floor": None,
+                    "tie_break": (
+                        "seeded_immutable_row_identity"
+                        if args.context_ranking == "morgan"
+                        else "external_record_id"
+                    ),
+                    "selection_before_molecule_grouping": all(
+                        _is_tianang_aligned(args, task) for task in args.tasks
+                    ),
+                    "physical_record_deduplication": (
+                        "exclude already-visible physical record IDs, then take the next ranked records"
+                        if all(_is_tianang_aligned(args, task) for task in args.tasks)
                         else None
                     ),
                 },
@@ -2468,7 +3004,9 @@ def run(args: argparse.Namespace) -> int:
                 "prompt_profile": prompt_profile_manifest,
                 "prompt_template": prompt_template_manifest,
                 "l1_source": (
-                    "v21_ranked_stage3_direct_record_molecules"
+                    "v9_gold_train_ranked_contexts_without_associated_l2"
+                    if args.assay_transfer_cache_profile == V24_1_LEVEL_CACHE_PROFILE
+                    else "v21_ranked_stage3_direct_record_molecules"
                     if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
                     and args.v21_selection_mode == "molecule_cards"
                     else "v21_independently_ranked_stage3_direct_records"
@@ -2477,7 +3015,11 @@ def run(args: argparse.Namespace) -> int:
                 ),
                 "l1_ranking": args.context_ranking,
                 "max_level": args.max_level,
-                "analog_tool_policy": "disabled_by_context_records_profile",
+                "analog_tool_policy": (
+                    "tianang_mmp_structure_compare_plus_properties_compare"
+                    if all(_is_tianang_aligned(args, task) for task in args.tasks)
+                    else "disabled_by_context_records_profile"
+                ),
             }
         )
     manifest["execution_providers"] = [
@@ -2487,13 +3029,268 @@ def run(args: argparse.Namespace) -> int:
         )
         for spec in provider_config.providers
     ]
+    if args.level_mapping != "local":
+        manifest.update(
+            level_mapping=args.level_mapping,
+            record_sampler=args.record_sampler,
+            l1_source="configured_level_membership_after_heldout_parent_exclusion",
+            reference_pool="normalized_v7_with_explicit_level_membership",
+            min_similarity=0.0,
+            candidate_generation={"unit": "molecule", "pool_size_per_level": 75,
+                                  "ranking": "morgan", "neighbor_identity_policy": "scaffold_disjoint"},
+            selection={"L1": "mapped L1 molecules and records",
+                       "L2": ("two records per relevance bucket per pass within selected molecules"
+                              if args.record_sampler == "relevance"
+                              else "Morgan-ranked records from percentile-20 "
+                              "relevance-eligible buckets within selected molecules"
+                              if args.record_sampler == "relevance_filter"
+                              else "deterministic record sample within selected molecules"),
+                       "later_levels": ("five records per ranked relevance bucket, continuing until the record cap or exhaustion"
+                                        if args.record_sampler == "relevance"
+                                        else "top Morgan-ranked records from percentile-20 "
+                                        "relevance-eligible buckets in the level-specific top-75 molecule pool"
+                                        if args.record_sampler == "relevance_filter"
+                                        else "top Morgan-ranked records from the level-specific top-75 molecule pool"),
+                       "record_ranking": args.context_ranking, "append_only": True},
+        )
+    if getattr(args, 'retrieval_policy', None):
+        manifest.update(retrieval_policy=args.retrieval_policies, min_similarity=None,
+            assay_transfer_cache_profile=None,
+            candidate_generation={
+                'unit': 'L1_molecules_then_independent_L2_plus_records',
+                'pool_size_by_level': {'L1': 100, 'cached_later_levels': 75, 'L5': None},
+                'ranking_by_task': {task: policy['stages'] for task, policy in args.retrieval_policies.items()},
+                'neighbor_identity_policy': 'scaffold_disjoint_and_parent_disjoint',
+                'similarity_floor': None,
+                'morgan_fingerprint': {'radius': 2, 'bits': 2048, 'similarity': 'Tanimoto'},
+                'structure_score_visible': True,
+                'assay_transfer_scores_used': any(
+                    method in {
+                        'assay_transfer', 'assay_transfer_within_morgan',
+                        'assay_transfer_contrastive', 'joint'
+                    }
+                    for policy in args.retrieval_policies.values() for method in policy['stages'].values()),
+                'ranking_tie_seed': args.ranking_tie_seed,
+                'tie_break': 'seeded_immutable_row_identity',
+                'physical_record_deduplication': 'exclude already-visible physical record IDs before applying caps',
+            },
+            selection={'L1': 'configured molecule ranking; deterministic records within molecule',
+                       'molecule_limit': args.context_limit,
+                       'l1_record_limit_per_molecule': args.record_limit_per_context_level,
+                       'joint_panels': ({'order': ['assay_transfer', 'morgan'],
+                                         'sizes': {'assay_transfer': 3, 'morgan': 7},
+                                         'rank_fields': ['assay_transfer_panel_rank',
+                                                         'morgan_panel_rank']}
+                                        if args.joint_panel_sizes else
+                                        {'order': ['morgan', 'assay_transfer'],
+                                         'sizes': {'morgan': 5, 'assay_transfer': 5},
+                                         'rank_fields': ['morgan_top5_rank',
+                                                         'assay_transfer_top5_rank']}),
+                       'joint_overlap_refill': False,
+                       'L2_and_later': 'independent top records per level, then merge by parent with per-record conditions',
+                       'later_record_limits_by_task': {task: _indirect_record_limits(args, task) for task in args.tasks},
+                       'record_ranking': 'per_level_yaml', 'append_only': True})
+        if getattr(args, 'harness_version', None):
+            manifest.update(harness_version=args.harness_version, reranking=args.reranking,
+                            prompt_mode=('morgan' if args.reranking in {
+                                'semantic-lap', 'semantic-weighted',
+                                'morgan-parent-control', 'morgan-parent-semantic',
+                                'morgan-parent-llm-semantic'
+                            }
+                                         else args.reranking))
+            manifest['selection']['record_ranking'] = 'versioned_reranking_mode'
+            if args.harness_version == 'reranked-progressive-l1-context-l2-v1':
+                manifest['selection'].update(
+                    L2_and_later=(
+                        'global top-12 Morgan records grouped by parent molecule'
+                        if args.reranking == 'morgan'
+                        else 'semantic-rank laps with three Morgan-ranked records per bucket'
+                    ),
+                    semantic_metadata_visible=False,
+                )
+            if args.harness_version == 'reranked-progressive-l1-context-l2-weighted-v1':
+                manifest['selection'].update(
+                    L2_and_later=(
+                        'global top-12 Morgan records grouped by parent molecule'
+                        if args.reranking == 'morgan'
+                        else 'global top-10 semantic buckets ranked by expert weight times Morgan similarity'
+                    ),
+                    semantic_metadata_visible=False,
+                )
+            if args.harness_version == 'reranked-progressive-l1-context-l2-morgan-bucket-v1':
+                semantic = args.reranking == 'morgan-parent-semantic'
+                manifest['selection'].update(
+                    L2_and_later=(
+                        'same independent Morgan top-10 parents; up to 10 eligible records '
+                        'per parent ordered by semantic bucket rank'
+                        if semantic else
+                        'same independent Morgan top-10 parents; up to 10 eligible records '
+                        'per parent in deterministic control order'
+                    ),
+                    l2_molecule_limit=args.l2_molecules,
+                    l2_record_limit_per_molecule=args.l2_records_per_molecule,
+                    semantic_metadata_visible=False,
+                    zero_weight_buckets_visible=False,
+                )
+            if args.harness_version in INDIRECT_HARNESSES:
+                filtered = (
+                    args.harness_version == INDIRECT_FILTER_HARNESS
+                    and args.reranking == 'morgan-parent-llm-semantic'
+                )
+                manifest['selection'].update(
+                    L1='none',
+                    L2_and_later='one independent indirect level only',
+                    selected_level=f'L{args.indirect_level}',
+                    total_record_limit=("llm_selected_10_to_25" if filtered else 25),
+                    semantic_candidate_record_limit=(100 if filtered else None),
+                    parent_limit='adaptive_minimal_prefix_up_to_100',
+                    record_limit_per_parent=10,
+                    semantic_record_limit_per_parent_bucket=None,
+                    semantic_metadata_visible=False,
+                    query_prior_visible=False,
+                )
+    if getattr(args, 'harness_version', None) in {
+            'reranked-progressive-v2', 'reranked-progressive-v3',
+            'reranked-progressive-v4', 'reranked-progressive-l1-context-v1',
+            'reranked-progressive-l1-context-l2-v1',
+            'reranked-progressive-l1-context-l2-weighted-v1',
+            'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+            *INDIRECT_HARNESSES}:
+        cache_contracts = {
+            audit['selection_policy'] for audit in ranking_audits.values()
+        }
+        reference_pool_version = (
+            'semantic_bucket_v1'
+            if cache_contracts == {'semantic_bucket_reranking.v1'}
+            else 'context_semantic_l2_v1'
+            if cache_contracts == {'l1_context_semantic_l2.v1'}
+            else 'context_semantic_weighted_l2_v1'
+            if cache_contracts == {'l1_context_semantic_weighted_l2.v1'}
+            else 'context_morgan_semantic_l2_v1'
+            if cache_contracts == {'l1_context_morgan_semantic_l2.v1'}
+            else 'context_morgan_semantic_l2_v2'
+            if cache_contracts == {'l1_context_morgan_semantic_l2.v2'}
+            else 'context_morgan_semantic_l2_v3'
+            if cache_contracts == {'l1_context_morgan_semantic_l2.v3'}
+            else 'context_morgan_semantic_l2_v4'
+            if cache_contracts == {'l1_context_morgan_semantic_l2.v4'}
+            else 'indirect_morgan_semantic_l2_l4_v1'
+            if cache_contracts == {'indirect_morgan_semantic_l2_l4.v1'}
+            else 'indirect_morgan_semantic_l2_l4_v2'
+            if cache_contracts == {'indirect_morgan_semantic_l2_l4.v2'}
+            else 'indirect_morgan_semantic_l2_l4_v3'
+            if cache_contracts == {'indirect_morgan_semantic_l2_l4.v3'}
+            else 'ranked_level' if cache_contracts <= {
+                'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
+            }
+            else 'ranked_v1' if cache_contracts == {'ranked_evidence_retrieval.v1'}
+            else 'v3' if cache_contracts == {'cache_matched_retrieval.v3'} else 'v2'
+        )
+        manifest.update(reference_pool=f'cache_matched_v10_with_gold_train_l1.{reference_pool_version}',
+            l1_source='frozen_v9_gold_train_parents_with_mapped_v10_l1_records',
+            evidence_libraries={task: str(path.resolve()) for task, path in args.evidence_libraries.items()},
+            level_mapper=str(args.level_mapper.resolve()), record_pool=args.record_pool,
+            cache_pool=args.cache_pool)
+        if args.harness_version in {
+            'reranked-progressive-l1-context-v1',
+            'reranked-progressive-l1-context-l2-v1',
+            'reranked-progressive-l1-context-l2-weighted-v1',
+            'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+        }:
+            primary_widths = {
+                audit['contract']['morgan_primary_parent_width']
+                for audit in ranking_audits.values()
+            }
+            fallback_widths = {
+                audit['contract']['morgan_fallback_parent_width']
+                for audit in ranking_audits.values()
+            }
+            if len(primary_widths) != 1 or len(fallback_widths) != 1:
+                raise ValueError('L1 context tasks use different Morgan candidate widths')
+            manifest.update(
+                reference_pool='gold_train_condition_contexts_from_morgan100_v9',
+                l1_source='exact_gold_voter_records_by_parent_condition_context',
+            )
+            manifest['candidate_generation'].update(
+                unit='parent_condition_context',
+                morgan_primary_parent_width=primary_widths.pop(),
+                morgan_fallback_parent_width=fallback_widths.pop(),
+                query_target_stored=False,
+            )
+            manifest['selection'].update(
+                context_limit=args.context_limit,
+                min_examples_per_binary_label=(
+                    args.l1_min_contrast
+                    if args.reranking in {
+                        'morgan-contrastive', 'assay-transfer-contrastive'
+                    } else None
+                ),
+                balance_unit='parent_condition_context',
+                records='exact context voters, deterministic cap',
+            )
+        if args.harness_version in INDIRECT_HARNESSES:
+            manifest.update(
+                reference_pool='all_records_morgan100_indirect_only',
+                l1_source='none',
+            )
+            manifest['candidate_generation'].update(
+                unit='indirect_parent_molecule_records',
+                query_target_stored=False,
+            )
+        manifest['candidate_generation'].pop('pool_size_by_level', None)
+        if all(audit['selection_policy'] in SQLITE_SELECTION_CONTRACTS
+               for audit in ranking_audits.values()):
+            manifest['candidate_generation'].update(
+                cache_capacities_by_task={
+                    task: ranking_audits[task]['cache_capacities'] for task in args.tasks
+                },
+            )
+            content_ids = {
+                task: ranking_audits[task].get('cache_content_ids')
+                for task in args.tasks
+            }
+            if all(content_ids.values()):
+                manifest['candidate_generation']['cache_content_ids_by_task'] = content_ids
+            else:
+                manifest['candidate_generation']['cache_content_id_by_task'] = {
+                    task: ranking_audits[task]['cache_content_id'] for task in args.tasks
+                }
+        else:
+            manifest['candidate_generation']['pool_size_by_task'] = {
+                task: {level: (ranking_audits[task]['l1_pool_size'] if level == 'L1' else None if level == 'L5'
+                              else ranking_audits[task]['cache_versions'][policy['cache_manifests'][level]]['morgan_pool_size'])
+                       for level in policy['stages']}
+                for task, policy in args.retrieval_policies.items()}
+    manifest["versions"] = {
+        "harness": getattr(args, "harness_version", _run_protocol(args)),
+        "prompt_bundle": getattr(args, "assay_transfer_prompt_version", "standard_v1"),
+        "retrieval_selection_schema_by_task": {
+            task: ranking_audits[task].get("selection_policy")
+            for task in args.tasks
+            if task in ranking_audits
+        },
+        "retrieval_bundle_manifest": str(getattr(args, "assay_transfer_cache", "")),
+        "evidence_release_by_task": {
+            task: Path(path).name for task, path in getattr(args, "evidence_libraries", {}).items()
+        },
+    }
     manifest_path = output_root / "experiment_manifest.json"
     if manifest_path.is_file():
         previous = _read_json(manifest_path)
         manifest = _merge_resume_manifest(previous, manifest)
     write_json_atomic(manifest_path, manifest)
 
-    prepared_queries: list[PreparedQuery] = []
+    pilot_only = (
+        not args.prepare_only
+        and args.execution_mode == "live"
+        and bool(getattr(args, "live_run_dirs", {}))
+        and not getattr(args, "continue_after_pilot", False)
+    )
+    pilot_indices_by_task = {
+        task: indices_by_task[task][:3] for task in args.tasks
+    }
+    levels_by_task: dict[str, list[dict[str, Any]]] = {}
+    indexes_by_task: dict[str, Any] = {}
     for task in args.tasks:
         levels = _run_levels(args, task)
         index = None
@@ -2506,102 +3303,265 @@ def run(args: argparse.Namespace) -> int:
                 _load_progressive_index(task),
                 levels=[int(row["level"]) for row in levels],
             )
+        levels_by_task[task] = levels
+        indexes_by_task[task] = index
+
+    def prepare_one(task: str, query_index: int) -> PreparedQuery:
         records = records_by_task[task]
-        indices = indices_by_task[task]
-        with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.preparation_workers, len(indices))) as pool:
-            if args.profile == "context_records":
-                futures = {
-                    pool.submit(
-                        _prepare_context_record_query,
-                        task=task,
-                        query_index=query_index,
-                        record=records[query_index],
-                        contexts=context_candidates_by_task[task][
-                            str(records[query_index]["benchmark_row_id"])
-                        ],
-                        levels=levels,
-                        output_root=output_root,
-                        single_root=Path(args.single_source_root),
-                        query_prior_mode=args.query_prior,
-                        record_limit=args.record_limit_per_context_level,
-                        l2_record_limit=args.l2_record_limit_per_context,
-                        indirect_record_limit=args.indirect_record_limit_per_level,
-                        context_limit=args.context_limit,
-                        indirect_record_limits=_indirect_record_limits(args, task),
-                        indirect_records=(
-                            indirect_candidates_by_task[task][
-                                str(records[query_index]["benchmark_row_id"])
-                            ]
-                            if _record_cache_enabled(args)
-                            else None
-                        ),
-                        l2_reuse_root=(
-                            CONTEXT_L2_REUSE_ROOTS[task]
-                            if args.reuse_context_l2
-                            else None
-                        ),
-                        prompt_version=_context_prompt_version(args, task),
-                        context_ranking=args.context_ranking,
-                        ranking_tie_seed=args.ranking_tie_seed,
-                        cache_profile=args.assay_transfer_cache_profile,
-                        record_levels=(
-                            _record_level_names(args, task)
-                            if args.assay_transfer_cache_profile == V21_CACHE_PROFILE
-                            else None
-                        ),
-                        v21_selection_mode=args.v21_selection_mode,
-                    ): query_index
-                    for query_index in indices
-                }
-            else:
-                futures = {
-                    pool.submit(
-                        _prepare_query,
-                        task=task,
-                        query_index=query_index,
-                        record=records[query_index],
-                        index=index,
-                        levels=levels,
-                        gold_l1_candidates=(
-                            gold_candidates_by_task[task][str(records[query_index]["benchmark_row_id"])]
-                            if args.l1_source == "gold_train"
-                            else None
-                        ),
-                        output_root=output_root,
-                        single_root=Path(args.single_source_root),
-                        query_prior_mode=args.query_prior,
-                        l1_source=args.l1_source,
-                        l1_ranking=args.l1_ranking,
-                        tool_service_url=args.tool_service_url,
-                        timeout_s=args.timeout_s,
-                        prefetch_tools=not args.skip_tool_prefetch,
-                    ): query_index
-                    for query_index in indices
-                }
-            for completed, future in enumerate(concurrent.futures.as_completed(futures), start=1):
-                prepared_queries.append(future.result())
+        record = records[query_index]
+        if args.profile == "context_records":
+            prepared = _prepare_context_record_query(
+                task=task,
+                query_index=query_index,
+                record=record,
+                contexts=context_candidates_by_task[task][str(record["benchmark_row_id"])],
+                levels=levels_by_task[task],
+                output_root=output_root,
+                single_root=Path(args.single_source_root),
+                query_prior_mode=args.query_prior,
+                record_limit=args.record_limit_per_context_level,
+                l2_record_limit=args.l2_record_limit_per_context,
+                indirect_record_limit=args.indirect_record_limit_per_level,
+                context_limit=args.context_limit,
+                indirect_record_limits=_indirect_record_limits(args, task),
+                indirect_records=(
+                    indirect_candidates_by_task[task][str(record["benchmark_row_id"])]
+                    if _record_cache_enabled(args)
+                    else None
+                ),
+                l2_reuse_root=(
+                    CONTEXT_L2_REUSE_ROOTS[task] if args.reuse_context_l2 else None
+                ),
+                prompt_version=_context_prompt_version(args, task),
+                context_ranking=args.context_ranking,
+                ranking_tie_seed=args.ranking_tie_seed,
+                cache_profile=args.assay_transfer_cache_profile,
+                record_levels=(
+                    _record_level_names(args, task)
+                    if args.assay_transfer_cache_profile
+                    in {V21_CACHE_PROFILE, V24_1_LEVEL_CACHE_PROFILE}
+                    else None
+                ),
+                v21_selection_mode=args.v21_selection_mode,
+                prefetch_tools=not args.skip_tool_prefetch,
+                tool_service_url=args.tool_service_url,
+                timeout_s=args.timeout_s,
+                retrieval_policy=(
+                    dict(
+                        args.retrieval_policies[task],
+                        selection_inputs_sha256=hashlib.sha256(
+                            json.dumps(
+                                ranking_audits[task]["contract"], sort_keys=True
+                            ).encode()
+                        ).hexdigest(),
+                    )
+                    if getattr(args, "retrieval_policy", None)
+                    else None
+                ),
+                molecule_description=molecule_description,
+                candidate_output=(
+                    args.harness_version == INDIRECT_FILTER_HARNESS
+                    and args.reranking == 'morgan-parent-llm-semantic'
+                ),
+            )
+            return prepared
+        return _prepare_query(
+            task=task,
+            query_index=query_index,
+            record=record,
+            index=indexes_by_task[task],
+            levels=levels_by_task[task],
+            gold_l1_candidates=(
+                gold_candidates_by_task[task][str(record["benchmark_row_id"])]
+                if args.l1_source == "gold_train"
+                else None
+            ),
+            output_root=output_root,
+            single_root=Path(args.single_source_root),
+            query_prior_mode=args.query_prior,
+            l1_source=args.l1_source,
+            l1_ranking=args.l1_ranking,
+            tool_service_url=args.tool_service_url,
+            timeout_s=args.timeout_s,
+            prefetch_tools=not args.skip_tool_prefetch,
+        )
+
+    def submit_preparations(pool, selected_by_task):
+        return {
+            pool.submit(prepare_one, task, query_index): (task, query_index)
+            for task, selected in selected_by_task.items()
+            for query_index in selected
+        }
+
+    def collect_preparations(
+        futures, *, phase: str, on_prepared=None
+    ) -> list[PreparedQuery]:
+        totals = {
+            task: sum(queued_task == task for queued_task, _ in futures.values())
+            for task in args.tasks
+        }
+        completed_by_task = {task: 0 for task in args.tasks}
+        prepared = []
+        for future in concurrent.futures.as_completed(futures):
+            task, _ = futures[future]
+            query = future.result()
+            prepared.append(query)
+            if on_prepared is not None:
+                on_prepared(query)
+            completed_by_task[task] += 1
+            completed = completed_by_task[task]
+            if completed % 10 == 0 or completed == totals[task]:
+                print(
+                    f"[{task}] prepared {completed}/{totals[task]} ({phase})",
+                    flush=True,
+                )
+        return prepared
+
+    def run_inference(inference_queries, client) -> int:
+        failed = 0
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=min(args.parallelism, len(inference_queries))
+        ) as pool:
+            futures = [
+                pool.submit(_run_query_safe, args, prepared, client)
+                for prepared in inference_queries
+            ]
+            for completed, future in enumerate(
+                concurrent.futures.as_completed(futures), start=1
+            ):
+                result = future.result()
+                failed += int(result.get("status") != "ok")
                 if completed % 10 == 0 or completed == len(futures):
-                    print(f"[{task}] prepared {completed}/{len(futures)}", flush=True)
+                    print(
+                        f"[inference] completed {completed}/{len(futures)} "
+                        f"failed={failed}",
+                        flush=True,
+                    )
+        return failed
+
+    prepared_queries: list[PreparedQuery] = []
+    failed = 0
+    client = None
+    inference_pool = None
+    inference_futures = []
+    preparation_total = sum(len(indices) for indices in indices_by_task.values())
+    initial_indices = pilot_indices_by_task if pilot_only else indices_by_task
+    remaining_indices = {
+        task: indices_by_task[task][len(initial_indices[task]):]
+        for task in args.tasks
+    }
+    if not args.prepare_only and not pilot_only:
+        client = _make_client(args, provider_config)
+        inference_pool = concurrent.futures.ThreadPoolExecutor(
+            max_workers=args.parallelism
+        )
+
+    def on_prepared(query):
+        if prepared_query_callback is not None:
+            prepared_query_callback(query)
+        if inference_pool is not None:
+            inference_futures.append(
+                inference_pool.submit(_run_query_safe, args, query, client)
+            )
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=min(args.preparation_workers, preparation_total)
+        ) as preparation_pool:
+            initial_futures = submit_preparations(preparation_pool, initial_indices)
+            prepared_queries.extend(
+                collect_preparations(
+                    initial_futures,
+                    phase="pilot" if pilot_only else "full",
+                    on_prepared=on_prepared,
+                )
+            )
+            remaining_futures = (
+                submit_preparations(preparation_pool, remaining_indices)
+                if pilot_only
+                else {}
+            )
+            if pilot_only:
+                from predict.live import update_run
+
+                for task, run_dir in args.live_run_dirs.items():
+                    update_run(
+                        run_dir,
+                        status="pilot_running_preparing_remaining",
+                        prepared_pilot_at=_now(),
+                        preparation_completed=len(initial_indices[task]),
+                        preparation_total=len(indices_by_task[task]),
+                    )
+                client = _make_client(args, provider_config)
+                pilot_queries = sorted(prepared_queries, key=lambda row: row.index)
+                failed = run_inference(pilot_queries, client)
+                interim_status = "pilot_failed" if failed else "pilot_complete_preparing_remaining"
+                for task, run_dir in args.live_run_dirs.items():
+                    update_run(
+                        run_dir,
+                        status=interim_status,
+                        pilot_completed_at=_now(),
+                        pilot_indices=pilot_indices_by_task[task],
+                    )
+                prepared_queries.extend(
+                    collect_preparations(remaining_futures, phase="remaining")
+                )
+        if inference_pool is not None:
+            for completed, future in enumerate(
+                concurrent.futures.as_completed(inference_futures), start=1
+            ):
+                failed += int(future.result().get("status") != "ok")
+                if completed % 10 == 0 or completed == len(inference_futures):
+                    print(
+                        f"[inference] completed {completed}/{len(inference_futures)} "
+                        f"failed={failed}",
+                        flush=True,
+                    )
+    finally:
+        if inference_pool is not None:
+            inference_pool.shutdown(wait=True)
 
     prepared_queries.sort(key=lambda row: row.index)
-    manifest["query_scheduling"] = "interleaved_by_query_index_across_tasks"
+    manifest["query_scheduling"] = (
+        "live_pilot_first_with_background_preparation"
+        if pilot_only
+        else "interleaved_by_query_index_across_tasks"
+    )
     manifest["prepared_at"] = _now()
     write_json_atomic(manifest_path, manifest)
+    if prepared_callback is not None:
+        prepared_callback(prepared_queries, records_by_task, indices_by_task)
     if args.prepare_only:
+        for run_dir in (getattr(args, "live_run_dirs", {}) or {}).values():
+            from predict.live import update_run
+
+            update_run(run_dir, status="prepared")
         return 0
 
-    client = _make_client(args, provider_config)
-    failed = 0
-    with concurrent.futures.ThreadPoolExecutor(max_workers=min(args.parallelism, len(prepared_queries))) as pool:
-        futures = [
-            pool.submit(_run_query_safe, args, prepared, client)
-            for prepared in prepared_queries
-        ]
-        for completed, future in enumerate(concurrent.futures.as_completed(futures), start=1):
-            result = future.result()
-            failed += int(result.get("status") != "ok")
-            if completed % 10 == 0 or completed == len(futures):
-                print(f"[inference] completed {completed}/{len(futures)} failed={failed}", flush=True)
+    if not pilot_only and inference_pool is None:
+        client = _make_client(args, provider_config)
+        failed = run_inference(prepared_queries, client)
+
+    pilot_query_count = sum(len(indices) for indices in pilot_indices_by_task.values())
+    if pilot_only and pilot_query_count < len(prepared_queries):
+        from predict.live import update_run
+
+        status = "pilot_failed" if failed else "awaiting_review"
+        for task, run_dir in args.live_run_dirs.items():
+            update_run(
+                run_dir,
+                status=status,
+                pilot_completed_at=_now(),
+                pilot_indices=pilot_indices_by_task[task],
+                preparation_completed=len(indices_by_task[task]),
+                preparation_total=len(indices_by_task[task]),
+                preparation_completed_at=_now(),
+            )
+        manifest["status"] = status
+        manifest["pilot_indices_by_task"] = pilot_indices_by_task
+        manifest["provider_pool_final_snapshot"] = client.snapshot()
+        write_json_atomic(manifest_path, manifest)
+        return 1 if failed else 0
 
     for task in args.tasks:
         records = records_by_task[task]
@@ -2614,355 +3574,587 @@ def run(args: argparse.Namespace) -> int:
             query_prior_mode=args.query_prior,
             profile=args.profile,
             context_record_l3_l5=_record_cache_enabled(args),
+            prompt_version=(args.assay_transfer_prompt_version if getattr(args, 'retrieval_policy', None) else None),
         )
+    diagnostic_error = None
+    if not failed:
+        try:
+            from predict.harnesses.progressive.diagnostics import build_run_diagnostics
+
+            build_run_diagnostics(output_root)
+        except Exception as exc:
+            diagnostic_error = str(exc)
     manifest["finished_at"] = _now()
     manifest["n_failed_queries"] = failed
+    manifest["diagnostic_error"] = diagnostic_error
+    manifest["status"] = "complete" if not failed and diagnostic_error is None else "incomplete"
     manifest["provider_pool_final_snapshot"] = client.snapshot()
     write_json_atomic(manifest_path, manifest)
-    return 1 if failed else 0
+    if getattr(args, "live_run_dirs", {}):
+        from predict.live import update_run
+
+        for run_dir in args.live_run_dirs.values():
+            update_run(
+                run_dir,
+                status="failed" if failed or diagnostic_error else "complete",
+                finished_at=_now(),
+            )
+    return 1 if failed or diagnostic_error else 0
+
+
+def _configure_indirect_only_args(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+    from predict.harnesses.progressive.retrieval_cache import (
+        DEFAULT_CACHE_BUNDLE,
+        INDIRECT_MORGAN_SEMANTIC_CACHE_BUNDLE,
+        INDIRECT_MORGAN_SEMANTIC_V2_CACHE_BUNDLE,
+        INDIRECT_MORGAN_SEMANTIC_V3_CACHE_BUNDLE,
+    )
+
+    if args.reranking not in {
+            'morgan-parent-control', 'morgan-parent-semantic',
+            'morgan-parent-llm-semantic'}:
+        parser.error('The indirect-only harness requires a matched Morgan-parent arm')
+    if args.indirect_level not in {2, 3, 4}:
+        parser.error('The indirect-only harness requires --indirect-level 2, 3, or 4')
+    if args.max_level not in {0, args.indirect_level}:
+        parser.error('--max-level must be omitted or match --indirect-level')
+    if args.l1_contexts is not None:
+        parser.error('The indirect-only harness cannot accept L1 contexts')
+    if args.molecule_description_mode != 'none':
+        parser.error('The indirect-only harness does not expose molecule descriptions')
+    expected_prompt = 'reranked_progressive_l1_context_v4_no_query_prior'
+    if args.prompt_version == 'reranked_progressive_v8':
+        args.prompt_version = expected_prompt
+    elif args.prompt_version != expected_prompt:
+        parser.error(f'The indirect-only harness requires {expected_prompt}')
+    if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+        args.assay_transfer_cache = (
+            INDIRECT_MORGAN_SEMANTIC_V3_CACHE_BUNDLE
+            if args.harness_version == INDIRECT_FILTER_HARNESS
+            else INDIRECT_MORGAN_SEMANTIC_CACHE_BUNDLE
+        )
+    args.max_level = args.indirect_level
+    args.context_limit = 100
+    args.l1_min_contrast = 0
+    args.indirect_record_limit_per_level = (
+        100 if args.harness_version == INDIRECT_FILTER_HARNESS
+        and args.reranking == "morgan-parent-llm-semantic" else 25
+    )
+    args.query_prior = 'none'
+    args.record_pool = args.cache_pool = 'all'
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    from predict.harnesses.progressive.retrieval_cache import (
+        DEFAULT_CACHE_BUNDLE,
+        DEFAULT_GOLD_CONTEXT_MAPPING,
+        L1_CONTEXT_CACHE_BUNDLE,
+        SEMANTIC_BUCKET_CACHE_BUNDLE,
+        load_cache_policy,
+    )
+    from predict.harnesses.progressive.level_selection import IMPORTED, TASKS
+    from predict.harnesses.progressive.prompt import split_prompt_version
+
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    explicit_prompt_version = any(
+        value == "--prompt-version" or value.startswith("--prompt-version=")
+        for value in raw_argv
+    )
+    parser = argparse.ArgumentParser(description="Cache-matched Reranked Progressive", allow_abbrev=False)
+    parser.add_argument(
+        '--harness-version',
+        choices=('reranked-progressive-v2', 'reranked-progressive-v3',
+                 'reranked-progressive-v4', 'reranked-progressive-l1-context-v1',
+                 'reranked-progressive-l1-context-l2-v1',
+                 'reranked-progressive-l1-context-l2-weighted-v1',
+                 'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+                 INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS),
+        default='reranked-progressive-v2',
+    )
+    parser.add_argument('--reranking', choices=(
+        'joint', 'morgan', 'morgan-contrastive', 'assay-transfer',
+        'assay-transfer-within-morgan', 'assay-transfer-contrastive',
+        'semantic-lap',
+        'semantic-weighted',
+        'morgan-parent-control',
+        'morgan-parent-semantic',
+        'morgan-parent-llm-semantic',
+    ), default='assay-transfer',
+                        help='Joint changes L1 only; assay-transfer always uses Morgan at L5.')
+    parser.add_argument('--tasks', nargs='+', choices=tuple(TASKS), default=['bioavailability_ma'])
+    parser.add_argument('--evidence-library', action='append', default=[], metavar='TASK=PATH',
+                        help='Repeatable task library directory; defaults to data/evidence_libraries/<task>/v10.')
+    parser.add_argument('--level-mapper', type=Path, default=IMPORTED, help='Source-UID level mapping manifest.')
+    parser.add_argument('--gold-context-mapping', type=Path, default=DEFAULT_GOLD_CONTEXT_MAPPING,
+                        help='Verified BBB training-context membership manifest; other tasks are unchanged.')
+    parser.add_argument('--allow-frozen-l1-vote-scores', action='store_true',
+                        help='Accept frozen BBB V9 scores when only mapped vote percentages changed; audit the approximation.')
+    parser.add_argument('--assay-transfer-cache', type=Path, default=DEFAULT_CACHE_BUNDLE,
+                        help='Task/split/level cache-manifest YAML; required for matched Morgan pools too.')
+    record_pools = {'assay-transfer-trained': 'tool-accepted',
+                    'all_transfer_eligible': 'tool-compatible', 'all': 'all'}
+    parser.add_argument('--record_pool', '-record_pool', choices=tuple(record_pools),
+                        default='all',
+                        help='Cached later-level record view: training/calibration buckets, finite-scalar records, or all records. L1 and Morgan L5 are unchanged; parent count comes from the cache manifest.')
+    parser.add_argument('--l1-molecules', dest='context_limit', type=int, default=10)
+    parser.add_argument('--l1-contexts', type=int, default=None,
+                        help='Number of parent-condition L1 cards for the L1-context harness.')
+    parser.add_argument('--l1-min-contrast', type=int, default=3,
+                        help='Minimum examples of each binary label in contrastive L1.')
+    parser.add_argument('--l1-records-per-molecule', dest='record_limit_per_context_level', type=int, default=10)
+    parser.add_argument('--records-per-level', dest='indirect_record_limit_per_level', type=int, default=50)
+    parser.add_argument(
+        '--level-record-limit', action='append', type=_level_record_limit, default=[],
+        metavar='LEVEL=K',
+        help='Override --records-per-level for one later level; repeat as needed.',
+    )
+    parser.add_argument('--l2-molecules', type=int, default=10)
+    parser.add_argument('--l2-records-per-molecule', type=int, default=10)
+    parser.add_argument('--ranking-tie-seed', type=int, default=0)
+    parser.add_argument('--query-prior', choices=('cached', 'none'), default='cached')
+    parser.add_argument('--prior-root', dest='single_source_root', default=str(DEFAULT_SINGLE_CACHE_ROOT))
+    parser.add_argument('--evaluation-subset', choices=('valid', 'test'), default='valid')
+    parser.add_argument(
+        '--gold-label-version', choices=('current', 'v1'), default='current',
+        help='Use CURRENT gold labels unless an immutable historical V1 cache is selected.',
+    )
+    parser.add_argument('--max-level', type=int, default=0, help='0 runs all task levels.')
+    parser.add_argument('--indirect-level', type=int, choices=(2, 3, 4))
+    parser.add_argument('--limit', type=int, default=0)
+    parser.add_argument('--indices', nargs='*', type=int)
+    parser.add_argument('--output-root')
+    parser.add_argument('--trace-root', default=str(DEFAULT_TRACE_ROOT))
+    parser.add_argument('--execution-mode', choices=('live', 'throughput'), default='throughput',
+                        help='Live publishes three samples then pauses; throughput runs all samples privately.')
+    parser.add_argument('--prompt-version', default='reranked_progressive_v8',
+                        help='Immutable prompt bundle directory name.')
+    parser.add_argument(
+        '--molecule-description-mode',
+        choices=('none', *MOLECULE_DESCRIPTION_COLUMNS),
+        default='none',
+        help='Add hash-pinned cached Quotient metadata to supported prompt levels.',
+    )
+    parser.add_argument(
+        '--molecule-description-cache-version',
+        choices=tuple(MOLECULE_DESCRIPTION_ARTIFACTS),
+        default='v1',
+        help='Select the immutable Quotient description artifact.',
+    )
+    parser.add_argument('--continue-after-pilot', action='store_true',
+                        help='Resume past the three-sample review gate.')
+    parser.add_argument('--legacy', action='store_true',
+                        help='Allow an explicitly selected archived retrieval cache.')
+    parser.add_argument('--live-run-id', default='', help=argparse.SUPPRESS)
+    parser.add_argument('--prepare-only', action='store_true')
+    parser.add_argument('--skip-tool-prefetch', action='store_true',
+                        help='Skip tools for offline preparation or a prompt that declares tools disabled.')
+    parser.add_argument('--model', default=MODEL)
+    parser.add_argument('--base-url', default=BASE_URL)
+    parser.add_argument('--api-key-env', default='LITE_LLM_KEY')
+    parser.add_argument('--provider-pool-config', default=str(DEFAULT_PROVIDER_POOL_CONFIG),
+                        help='Mutable candidate endpoint JSON; healthy exact-model endpoints are selected at launch.')
+    parser.add_argument('--env-file', default=str(DEFAULT_ENV_FILE))
+    parser.add_argument('--tool-service-url', default='http://127.0.0.1:8765')
+    parser.add_argument('--parallelism', type=int, default=None,
+                        help='Required global outstanding-request budget for inference.')
+    parser.add_argument('--endpoint-concurrency-budget', type=int, default=512)
+    parser.add_argument('--preparation-workers', type=int, default=32)
+    parser.add_argument('--max-tokens', type=int, default=262144)
+    parser.add_argument('--timeout-s', type=int, default=900)
+    parser.add_argument('--transport-max-retries', type=int, default=0)
+    args = parser.parse_args(raw_argv)
+    if len({level for level, _ in args.level_record_limit}) != len(args.level_record_limit):
+        parser.error('--level-record-limit may specify each level only once')
+    args.level_record_limits = dict(args.level_record_limit)
+    args.cache_pool = record_pools[args.record_pool]
+    args.joint_panel_sizes = (3, 7) if args.harness_version == 'reranked-progressive-v4' else None
+    if args.harness_version == 'reranked-progressive-l1-context-v1':
+        from predict.harnesses.progressive.prompt import split_prompt_version
+
+        if args.reranking not in {
+            'morgan', 'morgan-contrastive', 'assay-transfer',
+            'assay-transfer-within-morgan',
+            'assay-transfer-contrastive'
+        }:
+            parser.error('The L1-context harness supports Morgan and assay-transfer modes only')
+        if args.l1_contexts is not None:
+            if args.context_limit != 10:
+                parser.error('Use --l1-contexts, not --l1-molecules, for the L1-context harness')
+            args.context_limit = args.l1_contexts
+        if args.max_level not in {0, 1}:
+            parser.error('The L1-context harness requires --max-level 1')
+        args.max_level = 1
+        l1_context_prompts = {
+            'reranked_progressive_l1_context_v1',
+            'reranked_progressive_l1_context_v2',
+            'reranked_progressive_l1_context_v3',
+            'reranked_progressive_l1_context_v4',
+            'reranked_progressive_l1_context_order_only_v1',
+            'reranked_progressive_l1_context_v2_references_v1',
+            'reranked_progressive_l1_context_order_only_v1_references_v1',
+        }
+        if args.prompt_version == 'reranked_progressive_v8':
+            args.prompt_version = 'reranked_progressive_l1_context_v2'
+        elif split_prompt_version(args.prompt_version)[0] not in l1_context_prompts:
+            parser.error('The L1-context harness requires an L1-context prompt bundle')
+        if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+            args.assay_transfer_cache = L1_CONTEXT_CACHE_BUNDLE
+    elif args.harness_version == 'reranked-progressive-l1-context-l2-v1':
+        from predict.harnesses.progressive.prompt import split_prompt_version
+        from predict.harnesses.progressive.retrieval_cache import CONTEXT_L2_CACHE_BUNDLE
+
+        if args.reranking not in {'morgan', 'semantic-lap'}:
+            parser.error('The context-L2 harness supports Morgan and semantic-lap only')
+        if args.l1_contexts is not None:
+            if args.context_limit != 10:
+                parser.error('Use --l1-contexts, not --l1-molecules, for the context-L2 harness')
+            args.context_limit = args.l1_contexts
+        if args.context_limit != 10 or args.record_limit_per_context_level != 10:
+            parser.error('The context-L2 harness fixes L1 at 10 contexts and 10 records per context')
+        if args.max_level not in {0, 2}:
+            parser.error('The context-L2 harness requires --max-level 2')
+        args.max_level = 2
+        args.indirect_record_limit_per_level = 12
+        args.record_pool = args.cache_pool = 'all'
+        prompts = {
+            'reranked_progressive_l1_context_l2_semantic_v1',
+            'reranked_progressive_l1_context_l2_semantic_v1_references_v1',
+            *MOLECULE_DESCRIPTION_PROMPTS[args.harness_version],
+        }
+        if args.prompt_version == 'reranked_progressive_v8':
+            args.prompt_version = 'reranked_progressive_l1_context_l2_semantic_v1'
+        elif split_prompt_version(args.prompt_version)[0] not in prompts:
+            parser.error('The context-L2 harness requires its versioned L1/L2 prompt')
+        if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+            args.assay_transfer_cache = CONTEXT_L2_CACHE_BUNDLE
+    elif args.harness_version == 'reranked-progressive-l1-context-l2-weighted-v1':
+        from predict.harnesses.progressive.prompt import split_prompt_version
+        from predict.harnesses.progressive.retrieval_cache import (
+            CONTEXT_L2_WEIGHTED_CACHE_BUNDLE,
+        )
+
+        if args.reranking not in {'morgan', 'semantic-weighted'}:
+            parser.error('The weighted context-L2 harness supports Morgan and semantic-weighted only')
+        if args.l1_contexts is not None:
+            if args.context_limit != 10:
+                parser.error('Use --l1-contexts, not --l1-molecules, for the weighted context-L2 harness')
+            args.context_limit = args.l1_contexts
+        if args.context_limit != 10 or args.record_limit_per_context_level != 10:
+            parser.error('The weighted context-L2 harness fixes L1 at 10 contexts and 10 records per context')
+        if args.max_level not in {0, 2}:
+            parser.error('The weighted context-L2 harness requires --max-level 2')
+        args.max_level = 2
+        args.indirect_record_limit_per_level = 12
+        args.record_pool = args.cache_pool = 'all'
+        prompts = {
+            'reranked_progressive_l1_context_l2_weighted_v1',
+            'reranked_progressive_l1_context_l2_weighted_v1_references_v1',
+            *MOLECULE_DESCRIPTION_PROMPTS[args.harness_version],
+        }
+        if args.prompt_version == 'reranked_progressive_v8':
+            args.prompt_version = 'reranked_progressive_l1_context_l2_weighted_v1'
+        elif split_prompt_version(args.prompt_version)[0] not in prompts:
+            parser.error('The weighted context-L2 harness requires its versioned nested L1/L2 prompt')
+        if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+            args.assay_transfer_cache = CONTEXT_L2_WEIGHTED_CACHE_BUNDLE
+    elif args.harness_version == 'reranked-progressive-l1-context-l2-morgan-bucket-v1':
+        from predict.harnesses.progressive.prompt import split_prompt_version
+        from predict.harnesses.progressive.retrieval_cache import (
+            CONTEXT_L2_MORGAN_SEMANTIC_CACHE_BUNDLE,
+        )
+
+        if args.reranking not in {'morgan-parent-control', 'morgan-parent-semantic'}:
+            parser.error('The molecule-first L2 harness requires a matched parent mode')
+        if (args.context_limit, args.record_limit_per_context_level,
+                args.l2_molecules, args.l2_records_per_molecule) != (10, 10, 10, 10):
+            parser.error('The molecule-first L2 harness fixes L1 and L2 shapes at 10 by 10')
+        if args.l1_contexts is not None or args.max_level not in {0, 2}:
+            parser.error('The molecule-first L2 harness requires --max-level 2')
+        args.max_level = 2
+        args.indirect_record_limit_per_level = 100
+        args.record_pool = args.cache_pool = 'all'
+        prompt = 'reranked_progressive_l1_context_l2_morgan_bucket_v1'
+        if args.prompt_version == 'reranked_progressive_v8':
+            args.prompt_version = prompt
+        elif split_prompt_version(args.prompt_version)[0] != prompt:
+            parser.error('The molecule-first L2 harness requires its versioned prompt')
+        if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+            args.assay_transfer_cache = CONTEXT_L2_MORGAN_SEMANTIC_CACHE_BUNDLE
+    elif args.harness_version in INDIRECT_HARNESSES:
+        _configure_indirect_only_args(args, parser)
+    elif args.reranking in {
+        'morgan-contrastive', 'assay-transfer-within-morgan',
+        'assay-transfer-contrastive'
+    }:
+        parser.error(f'{args.reranking} requires reranked-progressive-l1-context-v1')
+    if args.harness_version == 'reranked-progressive-v3':
+        if args.reranking == 'joint':
+            parser.error('Reranked Progressive v3 supports morgan or assay-transfer only')
+        if args.record_pool != 'all':
+            parser.error('Reranked Progressive v3 requires --record_pool all')
+        if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
+            args.assay_transfer_cache = SEMANTIC_BUCKET_CACHE_BUNDLE
+    if args.harness_version == 'reranked-progressive-v4' and args.reranking != 'joint':
+        parser.error('Reranked Progressive v4 is the fixed assay-transfer 3 + Morgan 7 joint L1')
+    if args.evaluation_subset != 'valid' and not args.prepare_only:
+        parser.error('Formal-test inference requires an explicitly approved run; use --prepare-only to render it.')
+    if not 1 <= args.endpoint_concurrency_budget <= MAX_ENDPOINT_CONCURRENCY_BUDGET:
+        parser.error('--endpoint-concurrency-budget must be between 1 and 512')
+    if (args.parallelism is not None
+            and not 1 <= args.parallelism <= args.endpoint_concurrency_budget):
+        parser.error('--parallelism must be positive and within the endpoint budget')
+    if min(args.preparation_workers, args.max_tokens, args.timeout_s,
+           args.record_limit_per_context_level, args.indirect_record_limit_per_level) < 1:
+        parser.error('Worker, token, timeout, and record limits must be positive')
+    if min(args.transport_max_retries, args.limit, args.max_level) < 0:
+        parser.error('Retries, limit, and max-level must be non-negative')
+    if args.context_limit < 1:
+        parser.error('--l1-molecules must be positive and fit the selected cache pool')
+    if args.l1_min_contrast < 0:
+        parser.error('--l1-min-contrast must be non-negative')
+    if (args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}
+            and args.l1_min_contrast
+            and args.context_limit < 2 * args.l1_min_contrast):
+        parser.error('Contrastive L1 requires --l1-contexts K >= 2*M')
+    if args.reranking == 'joint' and args.context_limit != 10:
+        parser.error('Joint L1 requires --l1-molecules 10: five per method, no refill')
+    if args.molecule_description_mode != 'none':
+        allowed_prompts = MOLECULE_DESCRIPTION_PROMPTS.get(args.harness_version)
+        if allowed_prompts is None:
+            parser.error(
+                '--molecule-description-mode is unsupported by this harness'
+            )
+        if (
+            not explicit_prompt_version
+            or split_prompt_version(args.prompt_version)[0] not in allowed_prompts
+        ):
+            parser.error(
+                '--molecule-description-mode requires an explicit supported prompt version'
+            )
+    args.tasks = list(dict.fromkeys(args.tasks))
+    args.evidence_libraries = {task: Path('data/evidence_libraries') / task / 'v10' for task in args.tasks}
+    overrides = set()
+    for value in args.evidence_library:
+        task, separator, path = value.partition('=')
+        if not separator or task not in args.tasks or not path.strip() or task in overrides:
+            parser.error('--evidence-library requires one TASK=PATH per selected task')
+        args.evidence_libraries[task] = Path(path)
+        overrides.add(task)
+    try:
+        args.retrieval_policies = {task: load_cache_policy(args.assay_transfer_cache, task,
+            args.evaluation_subset, args.reranking, args.max_level) for task in args.tasks}
+    except (ValueError, OSError, KeyError) as exc:
+        parser.error(str(exc))
+    uses_ranked_level_cache = any(
+        policy.get('selection_contract') in {
+            'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
+        }
+        for policy in args.retrieval_policies.values()
+    )
+    if uses_ranked_level_cache:
+        if args.record_pool != 'all':
+            parser.error('ranked_level_retrieval.v2 requires --record_pool all')
+        if args.reranking not in {'morgan', 'assay-transfer'}:
+            parser.error('ranked_level_retrieval.v2 supports morgan or assay-transfer only')
+        uses_v2 = any(
+            policy.get('selection_contract') == 'ranked_level_retrieval.v2'
+            for policy in args.retrieval_policies.values()
+        )
+        oversized = {
+            level: limit for level, limit in args.level_record_limits.items()
+            if limit > 100
+        }
+        if uses_v2 and (args.indirect_record_limit_per_level > 100 or oversized):
+            parser.error('ranked_level_retrieval.v2 record requests cannot exceed 100')
+    if args.harness_version == 'reranked-progressive-v4' and any(
+            policy.get('selection_contract') not in {
+                'cache_matched_retrieval.v3', 'ranked_evidence_retrieval.v1'
+            } for policy in args.retrieval_policies.values()):
+        parser.error('Reranked Progressive v4 requires a pooled L5 indexed cache')
+    if args.harness_version == 'reranked-progressive-l1-context-v1' and any(
+            policy.get('selection_contract') not in {
+                'l1_context_retrieval.v1', 'l1_context_retrieval.v2'
+            }
+            for policy in args.retrieval_policies.values()):
+        parser.error('The L1-context harness requires an L1 context cache')
+    if args.harness_version == 'reranked-progressive-l1-context-l2-v1' and any(
+            policy.get('selection_contract') != 'l1_context_semantic_l2.v1'
+            for policy in args.retrieval_policies.values()):
+        parser.error('The context-L2 harness requires its combined cache')
+    if args.harness_version == 'reranked-progressive-l1-context-l2-weighted-v1' and any(
+            policy.get('selection_contract') != 'l1_context_semantic_weighted_l2.v1'
+            for policy in args.retrieval_policies.values()):
+        parser.error('The weighted context-L2 harness requires its combined cache')
+    if args.harness_version == 'reranked-progressive-l1-context-l2-morgan-bucket-v1' and any(
+            policy.get('selection_contract') != 'l1_context_morgan_semantic_l2.v1'
+            for policy in args.retrieval_policies.values()):
+        parser.error('The molecule-first L2 harness requires its combined cache')
+    if args.harness_version in INDIRECT_HARNESSES and any(
+            policy.get('selection_contract') != (
+                'indirect_morgan_semantic_l2_l4.v3'
+                if args.harness_version == INDIRECT_FILTER_HARNESS
+                else 'indirect_morgan_semantic_l2_l4.v1'
+            )
+            for policy in args.retrieval_policies.values()):
+        parser.error('The indirect-only harness requires its L2-L4 cache')
+    archived_root = ARCHIVE_CACHE_ROOT.resolve()
+    archived_manifests = []
+    for policy in args.retrieval_policies.values():
+        paths = [policy.get('cache_manifest'), policy.get('cache_index')]
+        paths.extend((policy.get('cache_manifests') or {}).values())
+        archived_manifests.extend(Path(path).resolve() for path in paths if path)
+    uses_archive = any(path.is_relative_to(archived_root) for path in archived_manifests)
+    l1_context_harness = args.harness_version in {
+        'reranked-progressive-l1-context-v1',
+        'reranked-progressive-l1-context-l2-v1',
+        'reranked-progressive-l1-context-l2-weighted-v1',
+        'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+    }
+    approved_archive_harness = l1_context_harness or args.harness_version in INDIRECT_HARNESSES
+    if uses_archive and not args.legacy and not approved_archive_harness:
+        parser.error('archived retrieval caches require --legacy')
+    if args.legacy and (not uses_archive or approved_archive_harness):
+        parser.error('--legacy requires an archived retrieval cache')
+    output_version = (
+        'semantic_bucket_reranking_v1'
+        if args.harness_version == 'reranked-progressive-v3'
+        else args.prompt_version
+    )
+    output_name = f'{output_version}_{args.reranking.replace("-", "_")}'
+    if args.molecule_description_mode != 'none':
+        output_name += f'_molecule_description_{args.molecule_description_mode}'
+        if args.molecule_description_cache_version != 'v1':
+            output_name += f'_cache_{args.molecule_description_cache_version}'
+    if l1_context_harness:
+        output_name += f'_k{args.context_limit}'
+        if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:
+            output_name += f'_m{args.l1_min_contrast}'
+        output_name += f'_{Path(args.assay_transfer_cache).stem}'
+    args.output_root = args.output_root or str(
+        Path('outputs/paper/assay_transfer_harness/joseph') / output_name
+    )
+    # These are internal adapter settings, not historical CLI aliases.
+    args.profile = 'context_records'
+    try:
+        from predict.harnesses.progressive.prompt import prompt_assets
+
+        prompt_settings = prompt_assets(args.prompt_version)['settings']
+    except (OSError, ValueError, KeyError) as exc:
+        parser.error(str(exc))
+    metadata_contract = prompt_settings.get('molecule_metadata_contract')
+    if args.molecule_description_mode != 'none' and (
+        not metadata_contract
+        or args.molecule_description_mode not in metadata_contract.get('modes', ())
+    ):
+        parser.error('The selected prompt does not support this molecule description mode')
+    args.molecule_description_missing_policy = (
+        metadata_contract['missing_policy']
+        if args.molecule_description_mode != 'none'
+        else None
+    )
+    if args.skip_tool_prefetch and not (
+        args.prepare_only or prompt_settings.get('tools') is False
+    ):
+        parser.error('--skip-tool-prefetch requires --prepare-only or a no-tool prompt')
+    if prompt_settings.get('tools') is False and not args.skip_tool_prefetch:
+        parser.error('This prompt requires --skip-tool-prefetch')
+    if prompt_settings.get('query_prior') is False and args.query_prior != 'none':
+        parser.error('This prompt requires --query-prior none')
+    if prompt_settings.get('query_prior') is True and args.query_prior != 'cached':
+        parser.error('This prompt requires --query-prior cached')
+    if (prompt_settings.get('max_level') and args.max_level != prompt_settings['max_level']
+            and args.harness_version not in INDIRECT_HARNESSES):
+        parser.error(f"This prompt requires --max-level {prompt_settings['max_level']}")
+    args.assay_transfer_prompt_version = args.prompt_version
+    args.retrieval_policy = args.assay_transfer_cache
+    args.level_mapping = str(args.level_mapper)
+    stages = args.retrieval_policies[args.tasks[0]]['stages']
+    args.context_ranking = stages.get('L1', next(iter(stages.values())))
+    args.record_sampler = 'plain'
+    args.context_record_l3_l5 = True
+    args.assay_transfer_cache_profile = 'cache_matched_v2'
+    args.l2_record_limit_per_context = args.record_limit_per_context_level
+    args.indirect_final_level_record_limit = 0
+    args.reuse_context_l2 = False
+    args.v21_selection_mode = 'molecule_cards'
+    args.l1_source = 'gold_train'
+    args.l1_ranking = 'v9'
+    args.gold_l1_min_similarity = 0.0
+    args.benchmark_data_root = 'data/gold_labels'
+    args.v9_ranking_root = str(DEFAULT_V9_RANKING_ROOT)
+    args.v7_root = str(context_records.V7_ROOT)
+    _configure_evaluation_subset(args)
+    return args
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--profile",
-        choices=("standard", "context_records"),
-        default="standard",
-        help="Select the established molecule-card profile or the raw context-record L1/L2 profile.",
+    from predict.live import PILOT_SIZE, create_run, update_run
+
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    args = parse_args(raw_argv)
+    if not args.prepare_only and args.parallelism is None:
+        raise SystemExit("full-batch inference requires explicit --parallelism")
+    args.live_method = (
+        f"progressive_{args.reranking}_{args.record_pool}_records"
+        f"{args.indirect_record_limit_per_level}"
     )
-    parser.add_argument(
-        "--assay-transfer-prompt-version",
-        choices=("task_best", *context_records.PROMPT_PROFILES),
-        default="v1",
-        help=(
-            "Prompt/card contract for --profile context_records. V1 reproduces the "
-            "first run; task_best selects BBB V4, Bioavailability V3, and Skin V6."
-        ),
-    )
-    parser.add_argument(
-        "--context-ranking",
-        choices=("assay_transfer", "morgan"),
-        default="assay_transfer",
-        help="Rank context-record candidates with the frozen assay-transfer scores or Morgan similarity.",
-    )
-    parser.add_argument(
-        "--assay-transfer-cache-profile",
-        choices=("v19_1", V21_CACHE_PROFILE, LUNA_RELEVANCE_CACHE_PROFILE),
-        default="v19_1",
-        help=(
-            "Use the established V19.1 cache, the opt-in V21 BBB raw-record "
-            "cache, or the Luna relevance-top-quartile V19.1 cache."
-        ),
-    )
-    parser.add_argument(
-        "--v21-selection-mode",
-        choices=("record_only", "molecule_cards"),
-        default="record_only",
-        help=(
-            "For the BBB V21 cache, rank independent records at every level or "
-            "group V21-ranked L1/L2 records into molecule cards before appending "
-            "record-level L3-L5 evidence."
-        ),
-    )
-    parser.add_argument(
-        "--ranking-tie-seed",
-        type=int,
-        default=0,
-        help="Seed for reproducible random ordering within equal Morgan similarities.",
-    )
-    parser.add_argument(
-        "--context-record-l3-l5",
-        action="store_true",
-        help=(
-            "After context-record L1/L2, append V19.1 Stage 3 record bundles "
-            "at each task-configured later level."
-        ),
-    )
-    parser.add_argument(
-        "--reuse-context-l2",
-        action="store_true",
-        help=(
-            "Reuse verified frozen task-best L1/L2 outputs, "
-            "then begin new inference at L3."
-        ),
-    )
-    parser.add_argument(
-        "--tasks",
-        nargs="+",
-        choices=TASK_NAMES,
-        default=["bioavailability_ma"],
-        help=(
-            "Tasks to run. The default is the task matching the current v10 output root; "
-            "other tasks should use an explicit task and output root."
-        ),
-    )
-    parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
-    parser.add_argument("--trace-root", default=str(DEFAULT_TRACE_ROOT))
-    parser.add_argument(
-        "--benchmark-data-root",
-        default="data/gold_labels",
-        help="Canonical root containing versioned <Task> gold-label releases.",
-    )
-    parser.add_argument(
-        "--evidence-root",
-        default="",
-        help=(
-            "Optional paper evidence directory containing bbb_starling_v7 and "
-            "bioavailability_starling_v7 and skin_reaction_starling_v7 compact indices."
-        ),
-    )
-    parser.add_argument(
-        "--l1-source",
-        choices=("normalized_v7", "gold_train"),
-        default="normalized_v7",
-        help="Use the full normalized-v7 direct family or the matched conditioned gold-training L1 pool.",
-    )
-    parser.add_argument(
-        "--l1-ranking",
-        choices=("morgan", "v9"),
-        default="morgan",
-        help="Rank the matched gold L1 candidates by Morgan parent rank or frozen V9 transfer score.",
-    )
-    parser.add_argument("--v9-ranking-root", default=str(DEFAULT_V9_RANKING_ROOT))
-    parser.add_argument(
-        "--v7-root",
-        default=str(context_records.V7_ROOT),
-        help="Root containing <task>/v7/03_pair_buckets for the context-record profile.",
-    )
-    parser.add_argument(
-        "--gold-l1-min-similarity",
-        type=float,
-        default=0.0,
-        help="Minimum Morgan similarity for matched gold-training L1 candidates.",
-    )
-    parser.add_argument(
-        "--context-limit",
-        type=int,
-        default=context_records.CONTEXT_LIMIT,
-        help="Number of V9 parent-condition contexts retained at L1 and L2.",
-    )
-    parser.add_argument(
-        "--record-limit-per-context-level",
-        type=int,
-        default=context_records.RECORD_LIMIT,
-        help="Maximum raw L1 records shown per context.",
-    )
-    parser.add_argument(
-        "--l2-record-limit-per-context",
-        type=int,
-        default=0,
-        help="New L2 records per context; 0 uses the L1 record limit.",
-    )
-    parser.add_argument(
-        "--indirect-record-limit-per-level",
-        type=int,
-        default=context_records.INDIRECT_RECORD_LIMIT,
-        help="Maximum independently ranked Stage 3 records appended at each level from L3 onward.",
-    )
-    parser.add_argument(
-        "--indirect-final-level-record-limit",
-        type=int,
-        default=0,
-        help="Optional record cap for only the task's final indirect level; 0 uses the common cap.",
-    )
-    parser.add_argument(
-        "--query-prior",
-        choices=("fresh", "none"),
-        default="fresh",
-        help="Reuse a freshly generated same-checkpoint main-scaffold prior, or run standalone L1.",
-    )
-    parser.add_argument(
-        "--max-level",
-        type=int,
-        default=0,
-        help="Stop after this progressive level; 0 runs every configured level.",
-    )
-    parser.add_argument("--single-source-root", default=str(DEFAULT_SINGLE_CACHE_ROOT))
-    parser.add_argument("--model", default=MODEL)
-    parser.add_argument("--base-url", default=BASE_URL)
-    parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY")
-    parser.add_argument(
-        "--provider-pool-config",
-        default="",
-        help=(
-            "JSON provider-pool config. Each provider supplies its own base URL, "
-            "model alias, API-key env name, and max in-flight budget."
-        ),
-    )
-    parser.add_argument(
-        "--env-file",
-        default=".env",
-        help="Optional KEY=VALUE file used to resolve provider API-key env names.",
-    )
-    parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
-    parser.add_argument("--parallelism", type=int, default=128)
-    parser.add_argument(
-        "--endpoint-concurrency-budget",
-        type=int,
-        default=512,
-        help="Explicit endpoint-wide in-flight ceiling shared by the whole run.",
-    )
-    parser.add_argument("--preparation-workers", type=int, default=32)
-    parser.add_argument("--max-tokens", type=int, default=20_480)
-    parser.add_argument("--timeout-s", type=int, default=900)
-    parser.add_argument(
-        "--transport-max-retries",
-        type=int,
-        default=0,
-        help=(
-            "HTTP transport retries inside one level call. Default 0 avoids duplicate long "
-            "generations; resume retries the missing checkpoint explicitly."
-        ),
-    )
-    parser.add_argument("--limit", type=int, default=0)
-    parser.add_argument("--indices", nargs="*", default=None)
-    parser.add_argument("--prepare-only", action="store_true")
-    parser.add_argument(
-        "--skip-tool-prefetch",
-        action="store_true",
-        help="Diagnostic preparation only; formal inference requires visible prefetched tools.",
-    )
-    args = parser.parse_args(argv)
-    _configure_v7_paths(args)
-    load_env_file(args.env_file)
-    if not 1 <= args.endpoint_concurrency_budget <= MAX_ENDPOINT_CONCURRENCY_BUDGET:
-        parser.error(f"--endpoint-concurrency-budget must be between 1 and {MAX_ENDPOINT_CONCURRENCY_BUDGET}")
-    if args.parallelism < 1 or args.parallelism > args.endpoint_concurrency_budget:
-        parser.error("--parallelism must be positive and not exceed --endpoint-concurrency-budget")
-    if args.preparation_workers < 1:
-        parser.error("--preparation-workers must be positive")
-    if args.transport_max_retries < 0:
-        parser.error("--transport-max-retries must be non-negative")
-    if args.max_level < 0:
-        parser.error("--max-level must be non-negative")
-    if not 1 <= args.context_limit <= 100:
-        parser.error("--context-limit must be between 1 and 100")
-    if args.record_limit_per_context_level < 1:
-        parser.error("--record-limit-per-context-level must be positive")
-    if args.l2_record_limit_per_context < 0:
-        parser.error("--l2-record-limit-per-context must be non-negative")
-    if args.l2_record_limit_per_context == 0:
-        args.l2_record_limit_per_context = args.record_limit_per_context_level
-    if args.indirect_record_limit_per_level < 1:
-        parser.error("--indirect-record-limit-per-level must be positive")
-    if args.indirect_final_level_record_limit < 0:
-        parser.error("--indirect-final-level-record-limit must be non-negative")
-    if not 0 <= args.gold_l1_min_similarity <= 1:
-        parser.error("--gold-l1-min-similarity must be between 0 and 1")
-    if args.profile == "context_records":
-        if args.assay_transfer_cache_profile == V21_CACHE_PROFILE:
-            if args.tasks != ["bbb_martins"]:
-                parser.error("the V21 L1-L5 cache profile only supports --tasks bbb_martins")
-            if args.context_ranking != "assay_transfer":
-                parser.error(
-                    "the V21 L1-L5 cache profile requires "
-                    "--context-ranking assay_transfer"
-                )
-            if args.context_record_l3_l5:
-                parser.error(
-                    "the V21 cache profile supplies its configured record levels "
-                    "without --context-record-l3-l5"
-                )
-            if args.reuse_context_l2:
-                parser.error("the V21 L1-L5 cache profile cannot reuse V9 L1/L2 outputs")
-        if args.assay_transfer_cache_profile == LUNA_RELEVANCE_CACHE_PROFILE:
-            unsupported = set(args.tasks) - {"bbb_martins", "skin_reaction"}
-            if unsupported:
-                parser.error(
-                    "the Luna relevance cache only supports BBB and Skin"
-                )
-            if not args.context_record_l3_l5:
-                parser.error(
-                    "the Luna relevance cache requires --context-record-l3-l5"
-                )
-        if args.assay_transfer_prompt_version != "task_best":
-            prompt_ranking = str(
-                context_records.prompt_profile(
-                    args.assay_transfer_prompt_version
-                ).get("ranking")
-                or "assay_transfer"
-            )
-            if prompt_ranking != args.context_ranking:
-                parser.error(
-                    "--assay-transfer-prompt-version does not match --context-ranking"
-                )
-        if args.reuse_context_l2 and not args.context_record_l3_l5:
-            parser.error("--reuse-context-l2 requires --context-record-l3-l5")
-        if args.reuse_context_l2 and (
-            args.context_limit != context_records.CONTEXT_LIMIT
-            or
-            args.record_limit_per_context_level != 10
-            or args.l2_record_limit_per_context != 10
-        ):
-            parser.error("--reuse-context-l2 requires the frozen L1/L2 record caps of 10")
-        if args.indirect_final_level_record_limit and not _record_cache_enabled(args):
-            parser.error(
-                "--indirect-final-level-record-limit requires --context-record-l3-l5"
-            )
-        if _record_cache_enabled(args):
-            supported = set(
-                context_records.level_record_bundle_contract()["task_levels"]
-            )
-            unsupported = set(args.tasks) - supported
-            if unsupported:
-                parser.error(
-                    "cache-backed later levels are unsupported for "
-                    + ", ".join(sorted(unsupported))
-                )
-            too_high = {
-                task: _record_level_names(args, task)[-1]
-                for task in args.tasks
-                if args.max_level
-                > int(_record_level_names(args, task)[-1][1:])
-            }
-            if too_high:
-                parser.error(
-                    "--max-level exceeds configured cache levels: "
-                    + ", ".join(
-                        f"{task} ends at {level}"
-                        for task, level in too_high.items()
-                    )
-                )
-        elif args.max_level > 2:
-            parser.error(
-                "--profile context_records has only L1/L2 unless "
-                "--context-record-l3-l5 is set"
-            )
-        if args.assay_transfer_prompt_version == "task_best":
-            unsupported = set(args.tasks) - set(
-                context_records.TASK_BEST_PROMPT_VERSIONS
-            )
-            if unsupported:
-                parser.error(
-                    "--assay-transfer-prompt-version task_best is unsupported for "
-                    + ", ".join(sorted(unsupported))
-                )
-        if args.query_prior != "fresh":
-            parser.error("--profile context_records currently requires --query-prior fresh")
-        if args.skip_tool_prefetch:
-            parser.error("context_records disables analog tools internally; do not use --skip-tool-prefetch")
-    else:
-        if args.assay_transfer_cache_profile != "v19_1":
-            parser.error("--assay-transfer-cache-profile requires --profile context_records")
-        if args.context_ranking != "assay_transfer" or args.ranking_tie_seed != 0:
-            parser.error("--context-ranking and --ranking-tie-seed require --profile context_records")
-        if args.reuse_context_l2:
-            parser.error("--reuse-context-l2 requires --profile context_records")
-        if args.context_record_l3_l5:
-            parser.error("--context-record-l3-l5 requires --profile context_records")
-        if args.assay_transfer_prompt_version != "v1":
-            parser.error("--assay-transfer-prompt-version applies only to --profile context_records")
-        if args.l1_source == "gold_train":
-            if not args.evidence_root:
-                parser.error("--l1-source gold_train requires --evidence-root")
-            if args.max_level < 1:
-                parser.error("--l1-source gold_train requires an explicit positive --max-level")
-        elif args.l1_ranking != "morgan":
-            parser.error("--l1-ranking v9 requires --l1-source gold_train")
-        elif args.gold_l1_min_similarity:
-            parser.error("--gold-l1-min-similarity requires --l1-source gold_train")
-    if args.skip_tool_prefetch and not args.prepare_only:
-        parser.error("--skip-tool-prefetch is allowed only with --prepare-only")
+    if args.harness_version in {
+        'reranked-progressive-l1-context-v1',
+        'reranked-progressive-l1-context-l2-v1',
+        'reranked-progressive-l1-context-l2-weighted-v1',
+        'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+    }:
+        args.live_method += f'_k{args.context_limit}'
+        if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:
+            args.live_method += f'_m{args.l1_min_contrast}'
+    if args.molecule_description_mode != 'none':
+        args.live_method += f'_quotient_{args.molecule_description_mode}'
+        if args.molecule_description_cache_version != 'v1':
+            args.live_method += f'_cache_{args.molecule_description_cache_version}'
+    command = [sys.executable, "-m", "predict.harnesses.progressive", *raw_argv]
+    command.extend(["--output-root", args.output_root, "--prompt-version", args.prompt_version])
+    args.live_run_dirs = {}
+    args.live_run_ids = {}
+    for task in args.tasks:
+        description_artifact = MOLECULE_DESCRIPTION_ARTIFACTS[
+            args.molecule_description_cache_version
+        ]
+        run_dir = create_run(
+            root=args.trace_root,
+            dataset=task,
+            method=args.live_method,
+            command=command,
+            requested_id=args.live_run_id,
+            execution_mode=args.execution_mode,
+            metadata={
+                "harness": "progressive",
+                "harness_version": args.harness_version,
+                "prompt_version": args.prompt_version,
+                "molecule_description_mode": args.molecule_description_mode,
+                "molecule_description": (
+                    {
+                        "mode": args.molecule_description_mode,
+                        "cache_version": args.molecule_description_cache_version,
+                        "column": MOLECULE_DESCRIPTION_COLUMNS[args.molecule_description_mode],
+                        "path": str(description_artifact["path"].resolve()),
+                        "sha256": description_artifact["sha256"],
+                        "missing_policy": args.molecule_description_missing_policy,
+                    }
+                    if args.molecule_description_mode != "none"
+                    else {"mode": "none"}
+                ),
+                "retrieval_cache_bundle": str(args.assay_transfer_cache),
+                "evaluation_subset": args.evaluation_subset,
+                "pilot_size": PILOT_SIZE,
+                "output_root": args.output_root,
+            },
+        )
+        args.live_run_dirs[task] = run_dir
+        args.live_run_ids[task] = run_dir.name
+        update_run(
+            run_dir,
+            resume_command=[*command, "--live-run-id", run_dir.name],
+        )
     return run(args)
 
 

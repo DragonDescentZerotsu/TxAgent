@@ -1,0 +1,11 @@
+{% include "measurement_resolution_v8.jinja" %}
+
+## Exact source-surface rule
+
+For `ok`, return the shortest exact source phrase that completely names the
+selected unit or metric. Do not add words such as `number of`, `content`,
+`cytosolic`, a parenthetical abbreviation, or a scale explanation unless those
+words are part of the source phrase tied to the selected value. Do not reorder
+words, expand abbreviations, or replace punctuation. When `unit_text` is
+nonempty, copy it verbatim. If an exact complete source span cannot be selected,
+use `unsure` rather than a scientifically similar paraphrase.

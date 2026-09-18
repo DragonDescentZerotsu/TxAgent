@@ -204,7 +204,6 @@ class MoleculePropertiesTool(BaseTool):
 
             self._pka_predictor = ResidentMolGpKa(
                 uncharged=True,
-                max_concurrency=settings.batch_workers,
             )
             if settings.prewarm_molgpka:
                 self._predict_pka("CC(=O)O")

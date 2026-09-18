@@ -1,0 +1,42 @@
+{
+  "version": "query_conditioned_record_filter_v2",
+  "parent": "query_conditioned_record_filter_v1",
+  "status": "unevaluated_validation_only",
+  "supports_tasks": ["bbb_martins", "bioavailability_ma"],
+  "candidate_count": 100,
+  "selected_count_min": 10,
+  "selected_count_max": 25,
+  "candidate_order": "frozen_semantic_order",
+  "presentation": "v4_aligned_molecule_groups_with_json_records",
+  "task_definition_source": "reranked_progressive_l1_context_v4_no_query_prior",
+  "visible_query_fields": ["query_smiles", "condition", "task_description"],
+  "visible_record_fields": [
+    "record_id",
+    "endpoint",
+    "reported_value",
+    "reported_unit",
+    "assay_context",
+    "species",
+    "qualifying_conditions",
+    "experimental_details",
+    "support_text"
+  ],
+  "hidden_fields": [
+    "task",
+    "label_scope",
+    "first_seen_level",
+    "measurement_kind",
+    "source_id",
+    "source_values",
+    "evidence_family",
+    "reference_smiles",
+    "canonical_record_id",
+    "semantic_bucket_id",
+    "semantic_rank",
+    "selection_rank",
+    "gold_label",
+    "query_prior",
+    "molecule_description"
+  ],
+  "created_at": "2026-09-15"
+}

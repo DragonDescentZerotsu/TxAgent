@@ -1,0 +1,20 @@
+{
+  "version": "reranked_progressive_l1_context_v1",
+  "parent": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "status": "unevaluated_validation_only",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1
+  },
+  "changes": [
+    "L1 cards are distinct parent-condition contexts selected from Morgan-top-25 parents.",
+    "The contrastive mode guarantees at least three examples of each hidden training label in ten cards, using Morgan ranks 26-100 only when the top-25 pool cannot satisfy the constraint.",
+    "Repeated parent structures remain separate cards and expose only records that voted for the exact displayed condition."
+  ],
+  "historical_predictions_reused": false
+}

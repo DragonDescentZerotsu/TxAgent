@@ -1,0 +1,420 @@
+{
+  "task": "Bioavailability_Ma",
+  "version": "conditioned_benchmark_physical_voters.v2",
+  "identity_normalizer_version": "rdkit_fragment_parent.v2",
+  "stage1": {
+    "records_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/records.parquet",
+    "records_sha256": "bbabe48bedb8e48d6381486cb04242dc969e99a3ec67dbfe25a57fbaf660a951",
+    "records": 431006,
+    "duplicates_removed": 4597,
+    "deduplication_manifest": {
+      "authoritative_stage1_deduplication": true,
+      "base_fields": [
+        "canonical_smiles",
+        "pmid",
+        "canonical_measurement_text",
+        "canonical_unit_text"
+      ],
+      "comparison": {
+        "base": "literal_typed_equality",
+        "cross_source": "intersection_of_configured_scientific_field_names",
+        "incomplete_base": "never_duplicate",
+        "missingness": "exact",
+        "representative": "preferred_gold_v1_voter_then_lexicographically_smallest_source_row_uid",
+        "within_source": "all_configured_scientific_fields"
+      },
+      "deduplication_complete": true,
+      "duplicate_audit": {
+        "cleaning_version": "stage1_exact_deduplication.v2",
+        "count": 4597,
+        "discarded_source_row_uid_sha256": "dc877958cff6108c4841e3b28cb39cd1cc992a13eb5af4d6a7e93bc8b2b0bb8b",
+        "lineage_sha256": "a319ffcd7bb8a360856d7f8cb4d95ad8ce521bac829d3203338f5b1f701abe96",
+        "row_selector": {
+          "after": "dropped",
+          "field": "record"
+        }
+      },
+      "duplicate_scope_counts": {
+        "cross_source": 3059,
+        "within_source": 1538
+      },
+      "duplicates_removed": 4597,
+      "input_records": 435603,
+      "output_records": 431006,
+      "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+      "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
+      "preferred_voter_uids": {
+        "count": 19479,
+        "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bioavailability_ma.preferred_source_row_uids.json",
+        "present_in_input": 19479,
+        "sha256": "64bc2f1605d96105c6bf74923aa287cd8e939d0d7c2a1da0046aabec05698b98"
+      },
+      "retained_source_row_uid_count": 431006,
+      "retained_source_row_uid_sha256": "fb67de93d9663ba7b8339bf09612cce8dca831f9726c9812482ca3a55a7d0ccf",
+      "source_scientific_fields": {
+        "fa": [
+          "endpoint_category",
+          "assay_system",
+          "condition_medium",
+          "biological_context",
+          "formulation_or_solid_form",
+          "qualifying_conditions"
+        ],
+        "fg": [
+          "gut_wall_process",
+          "transporter_or_enzyme",
+          "substrate_status",
+          "assay_system",
+          "intestinal_site",
+          "qualifying_conditions"
+        ],
+        "fh": [
+          "metric_type",
+          "assay_system",
+          "species",
+          "molecular_form",
+          "enzyme_or_pathway",
+          "qualifying_conditions"
+        ],
+        "hf_bioavailability": [
+          "bioavailability_report_type",
+          "species_or_population",
+          "dose",
+          "oral_exposure_mode",
+          "qualifying_conditions",
+          "comparator"
+        ],
+        "oral_exposure": [
+          "exposure_measure",
+          "statistic_type",
+          "oral_dose",
+          "study_context",
+          "comparator_exposure",
+          "qualifying_conditions"
+        ]
+      },
+      "validations": {
+        "input_equals_retained_plus_duplicates": true,
+        "representatives_follow_gold_priority_then_uid": true,
+        "retained_source_row_uids_unique": true
+      },
+      "version": "stage1_exact_deduplication.v2"
+    },
+    "stage_manifest_sha256": "5f3ac830252f3087a111443cedd348f2de37613964932e33cf5472ce5ece7a15",
+    "source_value_cleaning_manifest_sha256": "050d224dce905dc4bdc5ea05d214d1e6dd9b620df316c896038fe16c2f8b2230",
+    "duplicate_audit_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/source_value_cleaning_audit.parquet",
+    "duplicate_audit_sha256": "e69e6c4f92f2f7779b2edf210d72bac60684d4b0e2ad9dce076d17a18f95bb6a"
+  },
+  "condition_ledger": {
+    "version": "physical_condition_review_ledger.v2",
+    "rows": 18933,
+    "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_condition_ledgers/bioavailability_ma.physical_condition_reviews.jsonl",
+    "sha256": "9fc74dd0a9f6f11bf8b7aabb96427a96343696640b87293da325a36644d3a901"
+  },
+  "v1_voter_lineage": {
+    "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bioavailability_ma.voter_lineage.jsonl",
+    "sha256": "2a5ad4a37f95a1d42fee3b9c37f1a4d92ea799656a0828e3ee9261560eb7ca26",
+    "physical_members_before_dedup": 19479,
+    "exact_duplicates_removed": 495,
+    "surviving_physical_members": 18933,
+    "label_ineligible_members_dropped": 51,
+    "label_rejection_reason_counts": {
+      "missing_bioavailability_value": 2,
+      "nonhuman_or_unresolved_population": 33,
+      "numeric_value_out_of_percent_range": 3,
+      "relative_not_absolute_bioavailability": 13
+    }
+  },
+  "accepted_physical_source_rows": 18933,
+  "excluded_external_condition_rows": 5,
+  "physical_voters": 18928,
+  "agreement_policy": {
+    "null_condition_threshold": 0.7,
+    "v1_migration_preservation_threshold": 0.6666666666666666,
+    "v1_migration_preservation_rule": "existing v1 null-condition context with unchanged majority label",
+    "external_condition_threshold": 0.6,
+    "exact_ties_rejected": true
+  },
+  "published_cards": 2484,
+  "rejected_parent_conditions": 1,
+  "group_gate_rejected_parent_conditions": 0,
+  "group_gate": {
+    "minimum_accepted_parents": 3,
+    "minimum_distinct_scaffolds": 3,
+    "allowed_condition_groups": [
+      "co_treatment=rifampin",
+      "disease=cirrhosis",
+      "disease=cystic_fibrosis",
+      "prandial_state=fasted",
+      "prandial_state=fed_high_fat",
+      "prandial_state=fed_unspecified",
+      "release_profile=modified_release"
+    ],
+    "support": {
+      "co_treatment=rifampin": {
+        "accepted_parents": 15,
+        "distinct_scaffolds": 11,
+        "label_counts": {
+          "0": 9,
+          "1": 6
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=cirrhosis": {
+        "accepted_parents": 38,
+        "distinct_scaffolds": 32,
+        "label_counts": {
+          "1": 37,
+          "0": 1
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "disease=cystic_fibrosis": {
+        "accepted_parents": 14,
+        "distinct_scaffolds": 14,
+        "label_counts": {
+          "1": 10,
+          "0": 4
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "prandial_state=fasted": {
+        "accepted_parents": 213,
+        "distinct_scaffolds": 169,
+        "label_counts": {
+          "1": 165,
+          "0": 48
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "prandial_state=fed_high_fat": {
+        "accepted_parents": 9,
+        "distinct_scaffolds": 9,
+        "label_counts": {
+          "1": 6,
+          "0": 3
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "prandial_state=fed_unspecified": {
+        "accepted_parents": 78,
+        "distinct_scaffolds": 66,
+        "label_counts": {
+          "1": 57,
+          "0": 21
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      },
+      "release_profile=modified_release": {
+        "accepted_parents": 29,
+        "distinct_scaffolds": 21,
+        "label_counts": {
+          "1": 24,
+          "0": 5
+        },
+        "preallocation_eligible": true,
+        "preallocation_exclusion_reasons": []
+      }
+    },
+    "allocation": {
+      "method": "frozen_parent_scaffold_plus_milp_group_coverage",
+      "seed": 20260818,
+      "n_candidate_groups": 7,
+      "n_selected_groups": 7,
+      "selected_groups": [
+        "co_treatment=rifampin",
+        "disease=cirrhosis",
+        "disease=cystic_fibrosis",
+        "prandial_state=fasted",
+        "prandial_state=fed_high_fat",
+        "prandial_state=fed_unspecified",
+        "release_profile=modified_release"
+      ],
+      "n_novel_scaffolds": 0,
+      "group_split_counts": {
+        "co_treatment=rifampin": {
+          "train": 8,
+          "valid": 3,
+          "test": 4
+        },
+        "disease=cirrhosis": {
+          "train": 30,
+          "valid": 4,
+          "test": 4
+        },
+        "disease=cystic_fibrosis": {
+          "train": 9,
+          "valid": 1,
+          "test": 4
+        },
+        "prandial_state=fasted": {
+          "train": 155,
+          "valid": 28,
+          "test": 30
+        },
+        "prandial_state=fed_high_fat": {
+          "train": 6,
+          "valid": 1,
+          "test": 2
+        },
+        "prandial_state=fed_unspecified": {
+          "train": 49,
+          "valid": 14,
+          "test": 15
+        },
+        "release_profile=modified_release": {
+          "train": 26,
+          "valid": 2,
+          "test": 1
+        }
+      },
+      "group_exclusion_reasons": {}
+    }
+  },
+  "split_counts": {
+    "train": 1955,
+    "valid": 262,
+    "test": 267
+  },
+  "diff_counts": {
+    "unchanged": 2292,
+    "removed": 7,
+    "updated": 190,
+    "added": 2
+  },
+  "v1_split_reallocations": 2,
+  "voter_membership": {
+    "schema_version": "gold_voter_membership.v1",
+    "path": "voter_membership.parquet",
+    "sha256": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+    "stage1_sha256": "bbabe48bedb8e48d6381486cb04242dc969e99a3ec67dbfe25a57fbaf660a951",
+    "n_rows": 18928,
+    "n_vote_contexts": 2485,
+    "aggregate_status_counts": {
+      "parent_label_tie": 2,
+      "published": 18926
+    },
+    "provenance": {
+      "builder_version": "conditioned_benchmark_physical_voters.v2",
+      "condition_ledger_version": "physical_condition_review_ledger.v2",
+      "deduplication": {
+        "records_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/records.parquet",
+        "records_sha256": "bbabe48bedb8e48d6381486cb04242dc969e99a3ec67dbfe25a57fbaf660a951",
+        "records": 431006,
+        "duplicates_removed": 4597,
+        "deduplication_manifest": {
+          "authoritative_stage1_deduplication": true,
+          "base_fields": [
+            "canonical_smiles",
+            "pmid",
+            "canonical_measurement_text",
+            "canonical_unit_text"
+          ],
+          "comparison": {
+            "base": "literal_typed_equality",
+            "cross_source": "intersection_of_configured_scientific_field_names",
+            "incomplete_base": "never_duplicate",
+            "missingness": "exact",
+            "representative": "preferred_gold_v1_voter_then_lexicographically_smallest_source_row_uid",
+            "within_source": "all_configured_scientific_fields"
+          },
+          "deduplication_complete": true,
+          "duplicate_audit": {
+            "cleaning_version": "stage1_exact_deduplication.v2",
+            "count": 4597,
+            "discarded_source_row_uid_sha256": "dc877958cff6108c4841e3b28cb39cd1cc992a13eb5af4d6a7e93bc8b2b0bb8b",
+            "lineage_sha256": "a319ffcd7bb8a360856d7f8cb4d95ad8ce521bac829d3203338f5b1f701abe96",
+            "row_selector": {
+              "after": "dropped",
+              "field": "record"
+            }
+          },
+          "duplicate_scope_counts": {
+            "cross_source": 3059,
+            "within_source": 1538
+          },
+          "duplicates_removed": 4597,
+          "input_records": 435603,
+          "output_records": 431006,
+          "policy_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/stage1_exact_deduplication.v2.json",
+          "policy_sha256": "994f0cb80ce4cff6544e850288da9d4e06c28e8364f57a126d9e033c3aea482d",
+          "preferred_voter_uids": {
+            "count": 19479,
+            "path": "data/artifacts/gold_labels/conditioned_benchmark/v2_voter_lineage/bioavailability_ma.preferred_source_row_uids.json",
+            "present_in_input": 19479,
+            "sha256": "64bc2f1605d96105c6bf74923aa287cd8e939d0d7c2a1da0046aabec05698b98"
+          },
+          "retained_source_row_uid_count": 431006,
+          "retained_source_row_uid_sha256": "fb67de93d9663ba7b8339bf09612cce8dca831f9726c9812482ca3a55a7d0ccf",
+          "source_scientific_fields": {
+            "fa": [
+              "endpoint_category",
+              "assay_system",
+              "condition_medium",
+              "biological_context",
+              "formulation_or_solid_form",
+              "qualifying_conditions"
+            ],
+            "fg": [
+              "gut_wall_process",
+              "transporter_or_enzyme",
+              "substrate_status",
+              "assay_system",
+              "intestinal_site",
+              "qualifying_conditions"
+            ],
+            "fh": [
+              "metric_type",
+              "assay_system",
+              "species",
+              "molecular_form",
+              "enzyme_or_pathway",
+              "qualifying_conditions"
+            ],
+            "hf_bioavailability": [
+              "bioavailability_report_type",
+              "species_or_population",
+              "dose",
+              "oral_exposure_mode",
+              "qualifying_conditions",
+              "comparator"
+            ],
+            "oral_exposure": [
+              "exposure_measure",
+              "statistic_type",
+              "oral_dose",
+              "study_context",
+              "comparator_exposure",
+              "qualifying_conditions"
+            ]
+          },
+          "validations": {
+            "input_equals_retained_plus_duplicates": true,
+            "representatives_follow_gold_priority_then_uid": true,
+            "retained_source_row_uids_unique": true
+          },
+          "version": "stage1_exact_deduplication.v2"
+        },
+        "stage_manifest_sha256": "5f3ac830252f3087a111443cedd348f2de37613964932e33cf5472ce5ece7a15",
+        "source_value_cleaning_manifest_sha256": "050d224dce905dc4bdc5ea05d214d1e6dd9b620df316c896038fe16c2f8b2230",
+        "duplicate_audit_path": "data/artifacts/gold_labels/conditioned_benchmark/v2_stage1/bioavailability_ma/v10/01_cleaned/source_value_cleaning_audit.parquet",
+        "duplicate_audit_sha256": "e69e6c4f92f2f7779b2edf210d72bac60684d4b0e2ad9dce076d17a18f95bb6a"
+      }
+    }
+  },
+  "gold_label_record_index": {
+    "schema_version": "gold_label_record_index.v1",
+    "path": "gold_label_record_index.parquet",
+    "sha256": "101c03120574c01ca70988a3af7e07fccf09fc04af20191ded86a8f78b1101ff",
+    "voter_membership_sha256": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+    "n_gold_labels": 2484,
+    "n_physical_voters": 18926,
+    "edge_view": "voter_membership.parquet where aggregate_status == published"
+  }
+}

@@ -1,7 +1,7 @@
-"""Compatibility import for predict.harnesses.branches.reasoning.identity_blind."""
+"""Compatibility import for predict.harnesses.branches.visibility."""
 
-from predict.harnesses.branches.reasoning.identity_blind import *  # noqa: F401,F403
-from predict.harnesses.branches.reasoning.identity_blind import __dict__ as _implementation
+from predict.harnesses.branches.visibility import *  # noqa: F401,F403
+from predict.harnesses.branches.visibility import __dict__ as _implementation
 
 
 def __getattr__(name: str):

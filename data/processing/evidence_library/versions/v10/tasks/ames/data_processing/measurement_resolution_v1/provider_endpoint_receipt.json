@@ -1,0 +1,25 @@
+{
+  "receipt_version": "ames_deepseek_endpoint_receipt.v1",
+  "checked_at_utc": "2026-09-08T06:43:44Z",
+  "inventory_url": "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4-flash-0731/endpoints",
+  "selection_policy": "cheapest active non-Baidu endpoint supporting every required request parameter",
+  "selected_endpoint": {
+    "model": "deepseek/deepseek-v4-flash-0731",
+    "provider_tag": "open-inference/fp8",
+    "served_provider": "OpenInference",
+    "base_url": "https://openrouter.ai/api/v1",
+    "allow_fallbacks": false,
+    "require_parameters": true,
+    "is_baidu": false,
+    "status": 0,
+    "quantization": "fp8",
+    "prompt_price_per_token": "0.00000005",
+    "completion_price_per_token": "0.00000016",
+    "supported_parameters": [
+      "max_tokens",
+      "reasoning_effort",
+      "response_format",
+      "structured_outputs"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "version": "dili_source_snapshot.v1",
+  "sources": {
+    "dili_base": {
+      "directory": "dili_base",
+      "rows": 189172,
+      "parquet_sha256": "0258817d39a87bf8c95430d959141c89b86aeb512bc4b4c03686c65cd187423c",
+      "guidance_sha256": "a724600693b0da0c1047e12965879bf3c97f5875b23cece7730bb5121b404ff6"
+    },
+    "dili_v1": {
+      "directory": "dili_v1",
+      "rows": 277550,
+      "parquet_sha256": "b0138a14eb80b42a38a9219a13a6223d2f28bd8675643d82d7d9ea755226c008",
+      "guidance_sha256": "502ef83e780870e35bfdfa7dc8ca68e999d5ac13989a424bed8a7fb66f371520"
+    },
+    "dili_v2": {
+      "directory": "dili_v2",
+      "rows": 297544,
+      "parquet_sha256": "7cdc22603dbd49c0f11654bc432d2a448a725e1b35bfc012409032611c6adb28",
+      "guidance_sha256": "9f5dd7d6b9cbfc61bb3d1274dd35418d4e258fd9e5b06059b54461a8277c8945"
+    },
+    "dili_v3": {
+      "directory": "dili_v3",
+      "rows": 77201,
+      "parquet_sha256": "316320145796bb761496ba5a24515325c6e99ee42c94f4c934d1277dcdea8082",
+      "guidance_sha256": "54f6a2feb7d385a3a72432cea6160b31b0a62a6dac53e2f6ec6009e9fd92233f"
+    },
+    "dili_v4": {
+      "directory": "dili_v4",
+      "rows": 278638,
+      "parquet_sha256": "094893cd25bf10c0714d962127cf6e5470d959004eb123bb2b988ffe54f1761f",
+      "guidance_sha256": "a4fba5710f859681c6584391797010e0dd2a4c0a2545757ff187c92756813468"
+    },
+    "dili_v5": {
+      "directory": "dili_v5",
+      "rows": 525004,
+      "parquet_sha256": "6ece09f29cfd9992edc9760bee11ec7b24f3877435bc49b95ae56f51dc9ce366",
+      "guidance_sha256": "e6c664663dfe2faf4b02ab6207926bc8974eb9391baa99696ca680aef2d1ffc9"
+    }
+  }
+}

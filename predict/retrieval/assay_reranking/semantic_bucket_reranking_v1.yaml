@@ -1,0 +1,8 @@
+version: 5
+caches:
+  bbb_martins:
+    valid: ../cache/assay_reranking/archive/semantic_bucket_reranking_v1/bbb_martins/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/semantic_bucket_reranking_v1/bbb_martins/scaffold/test/VERSION.json
+  bioavailability_ma:
+    valid: ../cache/assay_reranking/archive/semantic_bucket_reranking_v1/bioavailability_ma/scaffold/valid/VERSION.json
+    test: ../cache/assay_reranking/archive/semantic_bucket_reranking_v1/bioavailability_ma/scaffold/test/VERSION.json

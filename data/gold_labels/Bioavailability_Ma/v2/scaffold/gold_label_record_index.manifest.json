@@ -1,0 +1,9 @@
+{
+  "schema_version": "gold_label_record_index.v1",
+  "path": "gold_label_record_index.parquet",
+  "sha256": "101c03120574c01ca70988a3af7e07fccf09fc04af20191ded86a8f78b1101ff",
+  "voter_membership_sha256": "53b43f1d5ef81b71baed3253dd9a31e76b7c0109fbb4327c5d812d1dc7d0d4b6",
+  "n_gold_labels": 2484,
+  "n_physical_voters": 18926,
+  "edge_view": "voter_membership.parquet where aggregate_status == published"
+}

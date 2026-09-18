@@ -1,0 +1,111 @@
+{
+  "api_base_url": "mixed",
+  "api_base_urls": [
+    "https://api.openai.com/v1",
+    "https://openrouter.ai/api/v1"
+  ],
+  "assignment_method_counts": {
+    "invalid_row_response:id_mismatch:structural_retry": 1,
+    "model_single_pass": 90003,
+    "model_structural_retry": 5163,
+    "unsupported_exact_unit": 2645
+  },
+  "base_mapping": null,
+  "cleaned_records_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v9/01_cleaned/records.parquet",
+  "cleaned_records_sha256": "2a200b355d6e4fd3c14b7f034bcb9fdc264548a0c6918905ac16c61c765cac68",
+  "delta_inference": {
+    "model": "mixed",
+    "models": [
+      "gpt-5.4-mini",
+      "openai/gpt-5.6-luna"
+    ],
+    "rows": 97812
+  },
+  "endpoint_profile": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/skin_reaction/v9/01_cleaned/endpoint_unit_profile.json",
+    "sha256": "303df9d1de9cd8d2dadb2ba756a1109d186a4266f029c78515ffcbeb601512cf",
+    "version": "starling_endpoint_unit_profile.v2"
+  },
+  "exact_unit_coverage": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/skin_reaction/data_processing/canonicalization_v7/exact_measurement_unit_map.v2.json",
+    "sha256": "0475302f49c8094842cf45ebe7131bebcf1b077632d18274a9eb23ab34354f02",
+    "unsupported_ok_rows_demoted": 2645
+  },
+  "generation_version": "measurement_resolution_generation.v8",
+  "inference": {
+    "max_completion_tokens": 8192,
+    "reasoning_mode": "low",
+    "temperature": 1.0
+  },
+  "inference_base_url_counts": {
+    "https://api.openai.com/v1": 49841,
+    "https://openrouter.ai/api/v1": 47971
+  },
+  "inference_model_counts": {
+    "gpt-5.4-mini": 49841,
+    "openai/gpt-5.6-luna": 47971
+  },
+  "mapping_path": "data/processing/evidence_library/versions/v10/tasks/skin_reaction/data_processing/measurement_resolution_v4/measurement_resolution.parquet",
+  "mapping_rows": 97812,
+  "mapping_sha256": "668428212c0e7eefd99b5c2b6fe4b8435b8a6c2556561ac16a0a8bfe566d07fb",
+  "mapping_version": "skin_reaction_measurement_resolution.v4",
+  "model": "mixed",
+  "models": [
+    "gpt-5.4-mini",
+    "openai/gpt-5.6-luna"
+  ],
+  "prompt": {
+    "batch_size": 20,
+    "maximum_measurements_per_row": 1,
+    "prompt_version": "skin_reaction_measurement_resolution_prompt.v8",
+    "rendered_sha256": {
+      "direct_skin_reaction": "6f6f64e038fc126876b03feec06fd97835b1b005b1ded63c038adfcf278d1ac1",
+      "phototoxicity_irritation_local_damage": "a8e254153484ad43f93b5d4a942b52028087d105be7bd300da94f881db5b6b27",
+      "sensitization_aop": "7d1e3c8f22c802802a723265b335a767621afd456e3a65746da3bfb9f249d932",
+      "skin_exposure": "b979816d7ca19c91a75c55360cc4227956f8729e016fb2c9051070c32c050923"
+    },
+    "routing_rule_policy_version": "skin_reaction_measurement_resolution_rules.v1",
+    "source_measurement_fields": {
+      "direct_skin_reaction": {
+        "measurement_field": "measurement_text",
+        "unit_field": null
+      },
+      "phototoxicity_irritation_local_damage": {
+        "measurement_field": "measurement_text",
+        "unit_field": null
+      },
+      "sensitization_aop": {
+        "measurement_field": "measurement_text",
+        "unit_field": "unit_text"
+      },
+      "skin_exposure": {
+        "measurement_field": "measurement_text",
+        "unit_field": "unit_text"
+      }
+    },
+    "stratified_batch_order": true,
+    "template_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/prompts/measurement_resolution/skin_v8.jinja",
+    "template_sha256": "fbbd22f7cc50b914fe66d369e69283a5d1c822876c13d945b359d674d2753081",
+    "unit_vocabulary": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/unit_vocabulary.v1.json",
+      "sha256": "6954dae6e32b6c16c4dedaf40da264e7d807d9aac8e154f53080b8dd8aa4aeaf",
+      "units": 12721,
+      "version": "observed_source_units.v1"
+    }
+  },
+  "rejected_rows": 2646,
+  "routing_version": "starling_measurement_routing.v7",
+  "status_counts": {
+    "ok": 42931,
+    "relative": 8767,
+    "unavailable": 36137,
+    "unsure": 9977
+  },
+  "task_id": "skin_reaction",
+  "validations": {
+    "maximum_measurements_per_row": true,
+    "one_row_per_candidate": true,
+    "only_ok_carries_measurements": true,
+    "unique_cleaned_record_ids": true
+  }
+}

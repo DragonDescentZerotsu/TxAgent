@@ -1,5 +1,22 @@
 # DILI task notes
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -7,23 +24,24 @@ implementation literals into the test. Prompt wording is validated with reviewed
 input/output fixtures or a real pilot/evaluation. Automated tests should cover
 executable behavior, failure modes, schemas, rendering validity, and provenance.
 
-本文件记录 DILI 的 task-specific 语义、机制驱动的 evidence ontology、assay screening 方向、
-endpoint group 设计和 reasoning 约束。通用 ChEMBL workflow、tool service、batch/resume、
-trace viewer、输出目录和成本规范仍以仓库根 `AGENTS.md` 为准。
+This document records DILI task-specific semantics, mechanism-driven evidence ontology, assay screening direction,
+endpoint group design, and reasoning constraints. General ChEMBL workflow, tool service, batch/resume,
+trace viewer, output directory, and cost specifications still follow the repository root `AGENTS.md`.
 
-DILI 当前不在四任务、21-condition 的 paper matrix 中，也还没有 `experiment_config.py`。本文件的大部分运行
-说明用于复现 2026-06 的 native endpoint-group runner。若将 DILI 纳入当前论文框架，必须先把细粒度 groups
-映射到少量、数据源无关的 mechanism families，再由通用 paper runner 做 family-level reasoning；不得直接
-把旧 endpoint groups 一一升级成论文分支。
+DILI is not currently in the four-task, 21-condition paper matrix, and does not yet have `experiment_config.py`. Most of the
+operational notes in this document are for reproducing the 2026-06 native endpoint-group runner. If DILI is to be
+included in the current paper framework, the fine-grained groups must first be mapped to a small number of
+data-source-independent mechanism families, and then the general paper runner performs family-level reasoning; do not
+directly upgrade the old endpoint groups one by one into paper branches.
 
-## Task 定义
+## Task definition
 
-目标不是训练一个普通 hepatotoxicity QSAR classifier，而是构建可审计的 DILI evidence retrieval
-和 reasoning workflow：给定 query molecule，从 ChEMBL 或后续 Starling evidence source 中检索
-与 DILI 机制相关的相似分子实验读数，再由 reasoning LLM 判断这些 analog evidence 是否能 transfer
-到 query molecule。
+The goal is not to train an ordinary hepatotoxicity QSAR classifier, but to build an auditable DILI evidence retrieval
+and reasoning workflow: given a query molecule, retrieve similar-molecule experimental readings related to DILI
+mechanisms from ChEMBL or a later Starling evidence source, and then have a reasoning LLM determine whether these
+analog evidence can transfer to the query molecule.
 
-当前计划适配 TDC DILI 二分类数据：
+The current plan adapts the TDC DILI binary classification data:
 
 ```text
 data/gold_labels/legacy/processed/DILI/train.jsonl
@@ -35,87 +53,87 @@ fields:
   Y: DILI label
 ```
 
-评估约定：
+Evaluation convention:
 
 ```text
 Y=1 -> dili_prediction=dili_risk
 Y=0 -> dili_prediction=no_dili_risk
-final summary 必须在 dili_risk/no_dili_risk 中二选一；不要输出 uncertain prediction
+final summary must choose one of dili_risk/no_dili_risk; do not output uncertain prediction
 ```
 
-TDC DILI / LTKB / DILIrank 类型标签是 human DILI concern 的 drug-level label，不等同于任意
-体外 hepatocyte toxicity、任意 CYP/transporter inhibition 或 generic cytotoxicity。Reasoning 时应
-把直接人类 DILI evidence、体内肝损伤 phenotype、关键机制 liability 和弱 proxy 严格分开。
+TDC DILI / LTKB / DILIrank type labels are drug-level labels of human DILI concern, not equivalent to any
+in vitro hepatocyte toxicity, any CYP/transporter inhibition, or generic cytotoxicity. When reasoning, strictly
+separate direct human DILI evidence, in vivo liver injury phenotypes, key mechanism liabilities, and weak proxies.
 
-## Legacy native runner 边界
+## Legacy native runner boundaries
 
 ```text
-ChEMBL neighbor retrieval 不是 DeepSeek 可调用 tool。
-ChEMBL neighbor retrieval 也不是当前 FastAPI service tool。
-它是 run_reasoning_pipeline.py 内部的 evidence prefetch / context assembly 步骤。
+ChEMBL neighbor retrieval is not a DeepSeek-callable tool.
+ChEMBL neighbor retrieval is also not a current FastAPI service tool.
+It is an evidence prefetch / context assembly step inside run_reasoning_pipeline.py.
 
-DeepSeek group-level analysis 可调用的工具只有：
+The only tools callable by DeepSeek group-level analysis are:
   mmp_structure_compare
   properties_compare
 
-DeepSeek single-molecule analysis 可调用的工具只有：
+The only tools callable by DeepSeek single-molecule analysis are:
   molecule_properties
 ```
 
-DILI pipeline 应复用现有 general task workflow 的工程结构，但 DILI 的 evidence tier、endpoint
-group、prompt 和 final decision rule 必须是 DILI-specific。不要从 ClinTox 的 broad safety ontology
-继承 hERG、neurotoxicity、renal toxicity、genotoxicity 等非肝脏安全分支；这些最多作为排除或背景
-context，不能进入 DILI 主 evidence tier。
+The DILI pipeline should reuse the engineering structure of the existing general task workflow, but DILI's evidence
+tier, endpoint group, prompt, and final decision rule must be DILI-specific. Do not inherit non-liver safety branches
+such as hERG, neurotoxicity, renal toxicity, or genotoxicity from ClinTox's broad safety ontology; these may at most
+serve as exclusion or background context and must not enter the DILI main evidence tier.
 
-## Task-specific 文件规划
+## Task-specific file planning
 
-后续新建代码时建议保持与 BBB_Martins / Skin_Reaction 类似的薄 wrapper 结构：
+When creating new code later, it is recommended to maintain a thin wrapper structure similar to BBB_Martins / Skin_Reaction:
 
 ```text
 constants.py
-  label / prediction mapping。建议：Y=1 -> dili_risk，Y=0 -> no_dili_risk。
+  label / prediction mapping. Recommended: Y=1 -> dili_risk, Y=0 -> no_dili_risk.
 
 rules.py
-  DILI assay keyword、negative keyword、mechanism family 和 weak/context 配置。
+  DILI assay keyword, negative keyword, mechanism family, and weak/context configuration.
 
 scoring.py
-  assay screening / rescore 的保留、剔除和打分入口。
+  Entry points for assay screening / rescoring retention, exclusion, and scoring.
 
 endpoint_groups.py
-  DILI Tier.endpoint_group、evidence_direction、evidence_strength 和 endpoint assignment 规则。
+  DILI Tier.endpoint_group, evidence_direction, evidence_strength, and endpoint assignment rules.
 
 screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py
-  thin wrappers，复用 common task workflow 生成候选 assay、activity evidence、health check 和 report。
+  Thin wrappers that reuse the common task workflow to generate candidate assays, activity evidence, health checks, and reports.
 
 build_evidence_library.py
-  从 DILI assay candidates + activity evidence 构建 molecule-level evidence library 和 neighbor index。
+  Builds a molecule-level evidence library and neighbor index from DILI assay candidates + activity evidence.
 
 retrieve_neighbors.py
-  旧 native runner 对每个 source-local Tier.endpoint_group 做 analog retrieval。
+  The old native runner performs analog retrieval for each source-local Tier.endpoint_group.
 
 chembl_exact_context.py
-  exact-query ChEMBL context wrapper。benchmark 默认不开启，避免 retrospective leakage。
+  Exact-query ChEMBL context wrapper. Not enabled by default in benchmarks to avoid retrospective leakage.
 
 run_reasoning_pipeline.py
-  旧 DILI-specific retrieval prefetch、single-molecule branch、endpoint-group 并发 reasoning、final summary、
-  trace 保存和 --resume-final-from-run-dir final-only rerun。
+  Old DILI-specific retrieval prefetch, single-molecule branch, endpoint-group concurrent reasoning, final summary,
+  trace saving, and --resume-final-from-run-dir final-only rerun.
 
 run_reasoning_batch.py
-  批量 reasoning wrapper。复用 common reasoning_batch.py，输出 predictions、metrics、report、logs、
-  runs 和 combined trace；支持 --skip-existing 断点续跑。当前已接入公共 global prompt stage pool，但旧
-  DILI pipeline 尚未迁移到共享 experiment retrieval/identity/context contract，因此 batch 只允许默认
-  `native + operational + similarity + standard`；公共 parser 会拒绝 parent-disjoint、coverage 或 branch-reuse
-  参数，避免 manifest 声明超出实际 retrieval 能力。
+  Batch reasoning wrapper. Reuses common reasoning_batch.py, outputs predictions, metrics, report, logs,
+  runs, and combined trace; supports --skip-existing checkpoint resume. Currently integrated with the public global
+  prompt stage pool, but the old DILI pipeline has not yet migrated to the shared experiment retrieval/identity/context
+  contract, so batch only allows the default `native + operational + similarity + standard`; the public parser rejects parent-disjoint, coverage, or
+  branch-reuse parameters to avoid manifest declarations exceeding actual retrieval capability.
 ```
 
-不要在 wrapper 中新增业务规则；DILI assay 保留/剔除逻辑应只放在 `rules.py` 和 `scoring.py`，
-endpoint-group 语义应只放在 `endpoint_groups.py`，prompt/schema 语义应只放在
-`run_reasoning_pipeline.py`。
+Do not add new business rules in the wrappers; DILI assay retention/exclusion logic should be placed only in
+`rules.py` and `scoring.py`, endpoint-group semantics only in `endpoint_groups.py`, and prompt/schema semantics only in
+`run_reasoning_pipeline.py`.
 
-## 当前实现状态
+## Current implementation status
 
-2026-06-29 已创建 DILI task v0 的可执行 screening / retrieval skeleton；2026-06-30 已完成 full
-screening、全量分布审核、evidence 校准和 DILI-specific reasoning pipeline/schema：
+On 2026-06-29, an executable screening / retrieval skeleton for DILI task v0 was created; on 2026-06-30, full
+screening, full distribution review, evidence calibration, and the DILI-specific reasoning pipeline/schema were completed:
 
 ```text
 tools/chembl_tool/tasks/dili/
@@ -136,10 +154,10 @@ tools/chembl_tool/tasks/dili/
   run_reasoning_pipeline.py
 ```
 
-当前实现边界：
+Current implementation boundaries:
 
 ```text
-rules.py / scoring.py / endpoint_groups.py 已实现 DILI v0 ontology：
+rules.py / scoring.py / endpoint_groups.py already implement the DILI v0 ontology:
   Tier 1 direct human/clinical DILI
   Tier 2 in vivo liver injury
   Tier 3 cholestasis/hepatobiliary transporter
@@ -147,24 +165,24 @@ rules.py / scoring.py / endpoint_groups.py 已实现 DILI v0 ontology：
   Tier 5 reactive metabolite/bioactivation/immune-idiosyncratic
   Tier 6 hepatic cell injury/exposure-property modifiers
 
-screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py 已接入 common workflow。
-build_evidence_library.py / retrieve_neighbors.py / chembl_exact_context.py 已接入 common retrieval/index workflow。
-run_reasoning_batch.py 已配置 dili_prediction label mapping。
-run_reasoning_pipeline.py 已实现 DILI-specific prompt/schema、single-molecule branch、group branch、
-final branch、tool orchestration、trace 输出和 final-only resume。
-tools/trace_viewer/viewer.html 已适配 dili_prediction、useful_for_dili_reasoning、
-effect_on_dili_reasoning 和 DILI-specific assessment fields。
+screen_assays.py / rescore_outputs.py / summarize_outputs.py / report.py are integrated with the common workflow.
+build_evidence_library.py / retrieve_neighbors.py / chembl_exact_context.py are integrated with the common retrieval/index workflow.
+run_reasoning_batch.py is configured with the dili_prediction label mapping.
+run_reasoning_pipeline.py implements the DILI-specific prompt/schema, single-molecule branch, group branch,
+final branch, tool orchestration, trace output, and final-only resume.
+tools/trace_viewer/viewer.html has been adapted for dili_prediction, useful_for_dili_reasoning,
+effect_on_dili_reasoning, and DILI-specific assessment fields.
 ```
 
 ## Historical TRIM / DeepSeek properties-only baselines
 
-2026-06-29 跑了 3 个 Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baseline，
-用于和当前 DILI-specific ChEMBL retrieval pipeline 做历史参考比较。它们不使用 TxAgent 当前
-`run_reasoning_pipeline.py`，也不使用 ChEMBL/Starling retrieval；prompt 来自
-`trim.reasoning.task_user_prompts.render_task_user_message`，tool mode 为 `properties`，
-唯一可见工具是 `get_mol_properties_and_fg`。数据 split 使用
+On 2026-06-29, three Intern-S1/TRIM no-retrieval properties-only DeepSeek-v4-pro baselines were run
+as historical reference comparisons against the current DILI-specific ChEMBL retrieval pipeline. They do not use the
+current TxAgent `run_reasoning_pipeline.py`, nor ChEMBL/Starling retrieval; the prompt comes from
+`trim.reasoning.task_user_prompts.render_task_user_message`, tool mode is `properties`,
+the only visible tool is `get_mol_properties_and_fg`. The data split uses
 `/data1/tianang/Projects/Intern-S1/DataPrepare/TDC_no_conflict_labels_salt_removed/test/DILI.jsonl`
-的 96 条样本。
+with 96 samples.
 
 ```text
 identity allowed:
@@ -207,7 +225,7 @@ identity-allowed score may include molecule/class recognition from SMILES and sh
 separately from strict no-identity settings.
 ```
 
-当前测试：
+Current tests:
 
 ```text
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 \
@@ -217,8 +235,8 @@ result:
   56 passed
 ```
 
-`vllm` 环境中的 pytest 插件自动扫描在当前机器上可能卡在 conda dist-info entry point 读取；跑 DILI
-单元测试时使用 `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`。这不是 DILI 代码问题。
+In the `vllm` environment, pytest plugin auto-scanning may hang on conda dist-info entry point reading on the
+current machine; use `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` when running DILI unit tests. This is not a DILI code issue.
 
 2026-06-30 additional verification:
 
@@ -236,7 +254,7 @@ result:
   ok
 ```
 
-2026-06-29 smoke screening / evidence QA 当前校准状态：
+2026-06-29 smoke screening / evidence QA current calibration status:
 
 ```text
 clean smoke version:
@@ -522,25 +540,25 @@ The scheduler checks tool service health at 127.0.0.1:8765 before starting; if i
 uvicorn tools.service.app:app on that port and waits for health before running the batch.
 ```
 
-下一步工作流：
+Next workflow steps:
 
 ```text
-1. 若要做模型评估，直接用 v7_full evidence library 跑 run_reasoning_batch.py。
-2. Benchmark 默认不要开启 --enable-chembl-exact-context，避免 same-molecule ChEMBL evidence 泄漏。
-3. 下一轮建议从 6-sample smoke 扩到 20-sample balanced smoke，重点看 false positive/false negative traces。
-4. 如果 GLM-5.2 跑 DILI，沿用根 AGENTS.md 的 --disable-thinking / reasoning_effort="" 兼容参数。
-5. Starling acquisition 以冻结后的 DILI mechanism family 为 task/prompt 粒度；endpoint subtype、species、
-   dose 和 assay context 作为 family 内 schema 字段。旧 Tier.endpoint_group 只做接入审计，不逐组运行 Starling。
+1. For model evaluation, directly run run_reasoning_batch.py with the v7_full evidence library.
+2. By default, do not enable --enable-chembl-exact-context in benchmarks to avoid same-molecule ChEMBL evidence leakage.
+3. Next round, expand from a 6-sample smoke test to a 20-sample balanced smoke test, focusing on false positive/false negative traces.
+4. If running DILI with GLM-5.2, follow the --disable-thinking / reasoning_effort="" compatibility parameters in the root AGENTS.md.
+5. Starling acquisition uses the frozen DILI mechanism family as the task/prompt granularity; endpoint subtype, species,
+   dose, and assay context are schema fields within the family. The old Tier.endpoint_group is only used for access audit, not for running Starling per group.
 ```
 
-## DILI evidence 总原则
+## General principles for DILI evidence
 
-DILI 是 clinical phenotype，不是单一机制。一个药物可能通过胆汁酸转运干扰、线粒体损伤、
-反应性代谢物、氧化/ER stress、免疫介导反应、肝细胞死亡、肝暴露/剂量等多条链条导致 DILI。
-因此 evidence tier 应按“与 DILI label 的距离 + 机制可解释性 + 后续 Starling 可单独构建数据”的
-原则设计，而不是按 ChEMBL 关键词随意细分。
+DILI is a clinical phenotype, not a single mechanism. A drug may cause DILI through multiple pathways such as bile acid transporter interference, mitochondrial damage,
+reactive metabolites, oxidative/ER stress, immune-mediated reactions, hepatocyte death, and hepatic exposure/dose.
+Therefore, evidence tiers should be designed based on "distance from the DILI label + mechanistic interpretability + ability to independently construct data for subsequent Starling,"
+rather than arbitrarily subdivided by ChEMBL keywords.
 
-初版 DILI tier 应保持少量、可运行、可解释：
+The initial DILI tiers should be few, runnable, and interpretable:
 
 ```text
 Tier 1: direct human or clinical DILI anchors
@@ -551,29 +569,29 @@ Tier 5: reactive metabolite, bioactivation and immune/idiosyncratic liability
 Tier 6: hepatic cell injury models and exposure/property modifiers
 ```
 
-这些 tier 可以先归并为未来 Starling acquisition 的 mechanism families。原则上每个 family 对应一个
-Starling task；不要把 mechanism 切得过细，例如不要把
-BSEP、MRP2、NTCP、MDR3 各自拆成单独 tier；它们属于同一条 cholestasis / hepatobiliary transporter
-机制轴。也不要把 ROS、ATP、MMP、ER stress 全拆成单独 tier；它们属于 organelle stress 机制轴。
+These tiers can be consolidated into mechanism families for future Starling acquisition. In principle, each family corresponds to one
+Starling task; do not over-split mechanisms, for example, do not split
+BSEP, MRP2, NTCP, MDR3 into separate tiers; they belong to the same cholestasis / hepatobiliary transporter
+mechanism axis. Also, do not split ROS, ATP, MMP, ER stress into separate tiers; they belong to the organelle stress mechanism axis.
 
-重要约束：
+Important constraints:
 
 ```text
-1. Tier 1 始终是最直接的 DILI 测量或 human/clinical liver safety outcome。
-2. Tier 2 是 organism-level liver injury phenotype，比体外 proxy 更强，但仍需 species、route、
-   dose、duration 和 exposure context。
-3. Tier 3-5 是关键机制 liability。它们可以强烈支持 DILI risk，但单一弱阳性通常不能替代直接 DILI
-   phenotype。
-4. Tier 6 是有用的 supporting evidence，不应单独把 query 判为 dili_risk，除非与更高 tier 或多个机制
-   分支一致。
-5. Exact-query ChEMBL context 默认关闭；benchmark 不应把 query molecule 的同分子已知 ChEMBL
-   liver evidence 直接注入 prompt。
-6. ChEMBL 当前只是 Starling 之前的替代 evidence source。Ontology 不应被 ChEMBL 现有 assay 丰度牵着走。
+1. Tier 1 is always the most direct DILI measurement or human/clinical liver safety outcome.
+2. Tier 2 is organism-level liver injury phenotype, stronger than in vitro proxies, but still requires species, route,
+   dose, duration, and exposure context.
+3. Tiers 3-5 are key mechanistic liabilities. They can strongly support DILI risk, but a single weak positive usually cannot replace a direct DILI
+   phenotype.
+4. Tier 6 is useful supporting evidence and should not alone classify a query as dili_risk unless consistent with higher tiers or multiple mechanistic
+   branches.
+5. Exact-query ChEMBL context is disabled by default; benchmarks should not directly inject known ChEMBL liver evidence for the query molecule
+   into the prompt.
+6. ChEMBL is currently only a substitute evidence source before Starling. The ontology should not be driven by the abundance of existing ChEMBL assays.
 ```
 
-## Evidence library 字段
+## Evidence library fields
 
-DILI evidence library 每一条 activity evidence 至少保留：
+Each activity evidence in the DILI evidence library must retain at least:
 
 ```text
 molecule_chembl_id
@@ -600,11 +618,11 @@ evidence_strength
 evidence_reason
 ```
 
-内部可以保留 `evidence_direction`、`evidence_strength`、`endpoint_group_reason`、`assay_reason`
-方便 debug 和审计；LLM payload 中的 activity evidence row 只包含原始 ChEMBL assay/activity 字段和
-必要 metadata。不要把内部规则派生字段整包送给 reasoning LLM。
+Internally, `evidence_direction`, `evidence_strength`, `endpoint_group_reason`, `assay_reason` can be retained
+for debugging and auditing; the activity evidence row in the LLM payload contains only the original ChEMBL assay/activity fields and
+necessary metadata. Do not send the entire package of internally derived rule fields to the reasoning LLM.
 
-建议 `evidence_direction`：
+Suggested `evidence_direction`:
 
 ```text
 supports_dili_risk
@@ -621,7 +639,7 @@ neutral_or_unclear
 context_dependent
 ```
 
-建议 `evidence_strength`：
+Suggested `evidence_strength`:
 
 ```text
 strong
@@ -630,7 +648,7 @@ weak
 context
 ```
 
-强弱不是 assay score 的同义词。它表示该 evidence type 对 DILI label 的解释距离：
+Strength is not synonymous with assay score. It indicates the explanatory distance of that evidence type to the DILI label:
 
 ```text
 strong:
@@ -653,15 +671,14 @@ context:
   species or cell model is not clear enough.
 ```
 
-## Evidence 类型解释
+## Evidence type interpretation
 
-DILI 的 evidence tier 不应照搬 BBB / Bioavailability / ClinTox。这里按 DILI label 距离和机制轴拆分。
-Tier 1 是最直接的测量结果；Tier 2-6 是从体内 phenotype 到机制 proxy 的逐步降权证据。
+DILI evidence tiers should not copy BBB / Bioavailability / ClinTox. Here, they are split by distance to the DILI label and mechanism axis.
+Tier 1 is the most direct measurement; Tiers 2-6 are progressively down-weighted evidence from in vivo phenotype to mechanistic proxy.
 
 ### Tier 1: direct human or clinical DILI anchors
 
-最接近 TDC DILI label。优先保留明确发生在人类、临床研究、上市后、药品标签或 human case 语境中的
-drug-induced liver injury evidence。
+Closest to the TDC DILI label. Prioritize retaining drug-induced liver injury evidence that clearly occurs in humans, clinical studies, postmarketing, drug labels, or human case contexts.
 
 Endpoint groups:
 
@@ -704,32 +721,31 @@ human_liver_laboratory_signal
   mixed liver injury pattern
 ```
 
-强解释条件：
+Strong interpretation conditions:
 
 ```text
-1. assay description、source 或 metadata 明确是 human / clinical / patient / volunteer / trial /
-   postmarketing / FDA label / LiverTox-like context。
-2. endpoint 是 DILI、hepatotoxicity、liver failure、jaundice、Hy's-law-like lab pattern、
-   liver enzyme elevation with bilirubin, or liver-related discontinuation/withdrawal/warning。
-3. activity row 能看出方向，例如 "positive", "elevated", "injury", "hepatotoxic", "withdrawn",
-   "not tolerated", "liver failure", "acute liver failure"。
+1. The assay description, source, or metadata clearly indicates human / clinical / patient / volunteer / trial /
+   postmarketing / FDA label / LiverTox-like context.
+2. The endpoint is DILI, hepatotoxicity, liver failure, jaundice, Hy's-law-like lab pattern,
+   liver enzyme elevation with bilirubin, or liver-related discontinuation/withdrawal/warning.
+3. The activity row shows direction, e.g., "positive", "elevated", "injury", "hepatotoxic", "withdrawn",
+   "not tolerated", "liver failure", "acute liver failure".
 ```
 
-弱解释或剔除条件：
+Weak interpretation or exclusion conditions:
 
 ```text
-1. 只有 routine mild ALT/AST monitoring，不伴随 bilirubin、症状、剂量中断或严重 outcome 时，通常是
-   monitoring evidence，不等于 positive DILI label。
-2. Oncology / antiviral / anti-infective efficacy trial 中的 liver lab abnormality 要区分疾病背景、
-   联合用药和高剂量治疗语境。
-3. "no liver injury", "no ALT elevation", "well tolerated" 只有在 dose/exposure 和 duration 明确时
-   才可作为反向证据。
+1. Routine mild ALT/AST monitoring without bilirubin, symptoms, dose interruption, or severe outcome is usually
+   monitoring evidence, not equivalent to a positive DILI label.
+2. Liver lab abnormalities in oncology / antiviral / anti-infective efficacy trials must be distinguished by disease context,
+   combination therapy, and high-dose treatment context.
+3. "no liver injury", "no ALT elevation", "well tolerated" can only serve as counter-evidence when dose/exposure and duration are clear.
 ```
 
 ### Tier 2: in vivo liver injury phenotype and clinical pathology
 
-动物或非临床 in vivo liver injury phenotype。比多数体外 assay 更接近 human DILI，但 transferability
-依赖 species、route、dose、duration、metabolite coverage 和 exposure margin。
+Animal or non-clinical in vivo liver injury phenotype. Closer to human DILI than most in vitro assays, but transferability
+depends on species, route, dose, duration, metabolite coverage, and exposure margin.
 
 Endpoint groups:
 
@@ -768,26 +784,26 @@ in_vivo_hepatotoxic_dose_or_margin
   toxicokinetic exposure margin for liver finding
 ```
 
-解释规则：
+Interpretation rules:
 
 ```text
 histopathology:
-  liver tissue injury 是 strong/moderate evidence，尤其是 necrosis、bile duct injury、inflammation
-  或 repeated-dose finding。
+  Liver tissue injury is strong/moderate evidence, especially necrosis, bile duct injury, inflammation,
+  or repeated-dose findings.
 
 clinical chemistry:
-  ALT/AST/ALP/bilirubin/bile acids 在 in vivo context 中是 liver injury phenotype，但需要看 fold
-  change、dose、duration 和 reversibility。
+  ALT/AST/ALP/bilirubin/bile acids in an in vivo context are liver injury phenotypes, but fold change,
+  dose, duration, and reversibility must be considered.
 
 NOAEL/LOAEL/MTD:
-  只有明确 liver finding 或 liver clinical chemistry 时才纳入 DILI reasoning；generic MTD/NOAEL
-  没有 liver context 时不保留到 DILI 主 tier。
+  Only include in DILI reasoning when there is a clear liver finding or liver clinical chemistry; generic MTD/NOAEL
+  without liver context is not retained in the main DILI tiers.
 ```
 
 ### Tier 3: cholestasis and hepatobiliary transporter liability
 
-胆汁酸稳态和肝胆转运体是 DILI 中最清晰、最可 assay 化的机制轴之一。该 tier 覆盖 BSEP、MRP2、
-MDR3、NTCP、OATP 等 hepatobiliary transporter 和 bile acid accumulation / cholestasis phenotype。
+Bile acid homeostasis and hepatobiliary transporters are among the clearest and most assayable mechanistic axes in DILI. This tier covers BSEP, MRP2,
+MDR3, NTCP, OATP and other hepatobiliary transporters, as well as bile acid accumulation / cholestasis phenotypes.
 
 Endpoint groups:
 
@@ -822,25 +838,25 @@ cholestasis_or_bile_acid_accumulation
   bile canalicular network
 ```
 
-解释规则：
+Interpretation rules:
 
 ```text
 BSEP/ABCB11 inhibition:
-  是 cholestatic DILI risk 的核心机制 evidence。强度取决于 potency、assay system、free exposure
-  margin、bile acid accumulation 和是否伴随 mitochondrial/hepatocyte injury。
+  Is core mechanistic evidence for cholestatic DILI risk. Strength depends on potency, assay system, free exposure
+  margin, bile acid accumulation, and whether mitochondrial/hepatocyte injury is present.
 
 MRP2/MDR3/NTCP/OATP:
-  支持 hepatobiliary disposition / bile acid handling context。单一 transporter inhibition 通常
-  moderate/weak，除非与 cholestasis phenotype 或多 transporter liability 一致。
+  Support hepatobiliary disposition / bile acid handling context. Single transporter inhibition is usually
+  moderate/weak unless consistent with a cholestasis phenotype or multi-transporter liability.
 
 cholestasis phenotype:
-  如果是 human 或 in vivo cholestatic injury，应优先按 Tier 1 或 Tier 2 解释；Tier 3 保留机制维度。
+  If it is human or in vivo cholestatic injury, prioritize interpretation as Tier 1 or Tier 2; Tier 3 retains the mechanistic dimension.
 ```
 
 ### Tier 4: mitochondrial, oxidative and organelle stress
 
-线粒体功能损伤、ATP depletion、氧化 stress、ER stress 和 lysosomal/phospholipidosis 等 organelle
-stress 是 DILI 的重要机制轴。该 tier 合并这些相互交织的 stress pathways，避免为 Starling 过度拆分。
+Mitochondrial dysfunction, ATP depletion, oxidative stress, ER stress, and lysosomal/phospholipidosis and other organelle
+stress are important mechanistic axes in DILI. This tier merges these intertwined stress pathways to avoid over-splitting for Starling.
 
 Endpoint groups:
 
@@ -882,26 +898,26 @@ er_lysosomal_lipid_stress
   fatty liver
 ```
 
-解释规则：
+Interpretation rules:
 
 ```text
 mitochondrial assays:
-  Hepatic or metabolically competent cell context 中的 MMP/OCR/ATP readout 是 moderate/strong
-  mechanistic evidence。Generic non-hepatic mitochondrial readout 通常降为 weak/context。
+  MMP/OCR/ATP readouts in hepatic or metabolically competent cell contexts are moderate/strong mechanistic evidence.
+  Generic non-hepatic mitochondrial readouts are usually downgraded to weak/context.
 
 oxidative stress:
-  ROS/GSH/Nrf2 是 DILI 相关 stress evidence，但单个 reporter assay 不等于 DILI。
+  ROS/GSH/Nrf2 are DILI-related stress evidence, but a single reporter assay does not equal DILI.
 
 phospholipidosis/steatosis:
-  对 cationic amphiphilic or lipid-disposition liability 有用，通常 moderate/weak，除非与 liver
-  phenotype 或 hepatocyte injury 一致。
+  Useful for cationic amphiphilic or lipid-disposition liability, usually moderate/weak unless consistent with liver
+  phenotype or hepatocyte injury.
 ```
 
 ### Tier 5: reactive metabolite, bioactivation and immune/idiosyncratic liability
 
-许多 idiosyncratic DILI 与 bioactivation、反应性代谢物、covalent binding、GSH adduct、drug-protein
-adduct、危险信号和 adaptive immune response 有关。该 tier 把 bioactivation 和 immune/idiosyncratic
-context 合并，因为它们在 evidence retrieval 中常常共同出现，且单独拆分会显著增加 Starling 分支数。
+Many idiosyncratic DILI cases are associated with bioactivation, reactive metabolites, covalent binding, GSH adducts, drug-protein
+adducts, danger signals, and adaptive immune responses. This tier merges bioactivation and immune/idiosyncratic
+contexts because they often co-occur in evidence retrieval, and splitting them would significantly increase the number of Starling branches.
 
 Endpoint groups:
 
@@ -940,7 +956,7 @@ immune_or_idiosyncratic_context
   adaptive immune response
 ```
 
-解释规则：
+Interpretation rules:
 
 ```text
 reactive metabolite:
@@ -958,9 +974,9 @@ immune/idiosyncratic:
 
 ### Tier 6: hepatic cell injury models and exposure/property modifiers
 
-该 tier 覆盖较接近 liver biology 但仍偏 proxy 的 evidence：hepatocyte/HepaRG/HepG2/3D spheroid injury、
-high-content hepatotoxicity、transcriptomic liver stress，以及会改变 DILI plausibility 的 dose/exposure/
-property context。它是 useful supporting evidence，不应单独替代 Tier 1-5。
+This tier covers evidence that is closer to liver biology but still proxy: hepatocyte/HepaRG/HepG2/3D spheroid injury,
+high-content hepatotoxicity, transcriptomic liver stress, and dose/exposure/
+property context that modifies DILI plausibility. It is useful supporting evidence and should not replace Tier 1-5 alone.
 
 Endpoint groups:
 
@@ -1000,25 +1016,25 @@ exposure_dose_or_property_context
   CYP substrate with high exposure
 ```
 
-解释规则：
+Interpretation rules:
 
 ```text
 hepatocyte viability:
-  Liver-cell context 比 generic cytotoxicity 更 relevant，但仍需 concentration、time、metabolic competence
-  和 assay specificity。High-concentration nonspecific cytotoxicity 通常弱。
+  Liver-cell context is more relevant than generic cytotoxicity, but still requires concentration, time, metabolic competence,
+  and assay specificity. High-concentration nonspecific cytotoxicity is usually weak.
 
 omics / HCS:
-  机制覆盖更广，可作为 strong supporting evidence when liver-specific and replicated，但仍需避免把任何
-  stress signature 自动等同于 clinical DILI。
+  Broader mechanistic coverage can serve as strong supporting evidence when liver-specific and replicated, but avoid automatically
+  equating any stress signature with clinical DILI.
 
 exposure/property:
-  高 dose + 高 lipophilicity、强肝代谢、cationic amphiphilicity 等可提高 DILI plausibility。它们是 prior
-  或 modifier，不是 direct evidence。
+  High dose + high lipophilicity, strong hepatic metabolism, cationic amphiphilicity, etc., can increase DILI plausibility. They are priors
+  or modifiers, not direct evidence.
 ```
 
 ### Weak / excluded context
 
-下面 evidence 不进入 DILI 主 tier，除非 assay description 明确给出 liver/DILI context：
+The following evidence does not enter the DILI main tier unless the assay description explicitly provides liver/DILI context:
 
 ```text
 generic cytotoxicity in non-hepatic cancer cell lines
@@ -1033,20 +1049,20 @@ general oxidative-stress reporter without hepatic cell or DILI context
 drug-drug interaction liability without liver injury or hepatic exposure link
 ```
 
-这些行可以在 debug report 中保留为 excluded / context-dependent，但不应送入 DILI reasoning prompt 作为
-positive evidence。
+These lines can be retained as excluded / context-dependent in the debug report, but should not be fed into the DILI reasoning prompt as
+positive evidence.
 
-## Endpoint Group 标准
+## Endpoint Group Standards
 
-第二阶段不按每个 assay 单独检索。应按：
+In the second phase, do not retrieve per assay individually. Instead, use:
 
 ```text
 Tier -> endpoint_group
 ```
 
-组合生成 retrieval groups。初版 endpoint group 数量要克制，便于后续 Starling 每 tier 单独跑。
+Combinations generate retrieval groups. The initial number of endpoint groups should be restrained to facilitate subsequent Starling runs per tier.
 
-建议初版分组：
+Suggested initial grouping:
 
 ```text
 Tier 1.human_dili_or_hepatotoxicity
@@ -1074,47 +1090,47 @@ Tier 6.liver_omics_or_stress_signature
 Tier 6.exposure_dose_or_property_context
 ```
 
-如果 Starling 运行成本需要进一步压缩，默认 Starling acquisition 可以按 tier 合并，不按 endpoint_group
-拆开跑；endpoint_group 只作为 retrieval/ranking 和 prompt 内部结构。
+If Starling runtime costs need further reduction, the default Starling acquisition can be merged by tier, not split by endpoint_group;
+endpoint_group serves only as retrieval/ranking and prompt internal structure.
 
-## Assay screening 规则方向
+## Assay screening rule directions
 
-优先保留：
-
-```text
-1. 明确 human/clinical/postmarketing/labeled DILI 或 liver adverse event。
-2. 明确 in vivo liver pathology、liver clinical chemistry 或 liver toxic dose/margin。
-3. BSEP/bile acid/hepatobiliary transporter functional readout。
-4. Hepatic mitochondrial/OCR/MMP/ATP/ROS/GSH/ER stress assay。
-5. Reactive metabolite/GSH/covalent binding/bioactivation with liver context。
-6. Hepatocyte/HepaRG/HepG2/3D liver model/high-content liver toxicity。
-7. Dose/lipophilicity/hepatic metabolism/exposure context only as modifier evidence。
-```
-
-主动剔除：
+Prioritize retaining:
 
 ```text
-1. 只有 liver cancer efficacy、hepatocellular carcinoma anti-proliferation 或 antiviral efficacy。
-2. 只有 generic target inhibition/binding，没有 liver injury, bile acid, bioactivation or hepatic exposure context。
-3. 只有 CYP inhibition IC50，没有 substrate/bioactivation/exposure 或 liver injury context。
-4. 只有 generic cytotoxicity in non-hepatic cell lines。
-5. 心毒、肾毒、神经毒、genotox、skin reaction 等非肝脏 safety evidence。
-6. disease biology assay，例如 fibrosis/inflammation target activity，除非 readout 是 compound-induced
-   liver injury/toxicity。
+1. Explicit human/clinical/postmarketing/labeled DILI or liver adverse event.
+2. Explicit in vivo liver pathology, liver clinical chemistry, or liver toxic dose/margin.
+3. BSEP/bile acid/hepatobiliary transporter functional readout.
+4. Hepatic mitochondrial/OCR/MMP/ATP/ROS/GSH/ER stress assay.
+5. Reactive metabolite/GSH/covalent binding/bioactivation with liver context.
+6. Hepatocyte/HepaRG/HepG2/3D liver model/high-content liver toxicity.
+7. Dose/lipophilicity/hepatic metabolism/exposure context only as modifier evidence.
 ```
 
-## Legacy native reasoning pipeline 约束
+Actively exclude:
 
 ```text
-1. 读取 DILI test JSONL 的 query molecule。
-2. 调用 retrieve_neighbors.py 预取每个 source-local Tier.endpoint_group 的 ChEMBL neighbor evidence。
-3. 并发执行 single-molecule analysis；该历史 runner 中 DeepSeek 只可调用 molecule_properties。
-4. 并发执行 endpoint-group analysis；该历史 runner 中 DeepSeek 只可调用 mmp_structure_compare 和 properties_compare。
-5. final summary 读取 single + all group outputs，不暴露任何 tool。
-6. 保存 retrieval/single/group/final/trace/manifest。
+1. Only liver cancer efficacy, hepatocellular carcinoma anti-proliferation, or antiviral efficacy.
+2. Only generic target inhibition/binding, without liver injury, bile acid, bioactivation, or hepatic exposure context.
+3. Only CYP inhibition IC50, without substrate/bioactivation/exposure or liver injury context.
+4. Only generic cytotoxicity in non-hepatic cell lines.
+5. Cardiac, renal, neuro, genotox, skin reaction, or other non-liver safety evidence.
+6. Disease biology assays, such as fibrosis/inflammation target activity, unless the readout is compound-induced
+   liver injury/toxicity.
 ```
 
-Single-molecule analysis 只能作为 DILI plausibility prior，不应直接决定 label。应关注：
+## Legacy native reasoning pipeline constraints
+
+```text
+1. Read the query molecule from the DILI test JSONL.
+2. Call retrieve_neighbors.py to prefetch ChEMBL neighbor evidence for each source-local Tier.endpoint_group.
+3. Concurrently execute single-molecule analysis; in this historical runner, DeepSeek can only call molecule_properties.
+4. Concurrently execute endpoint-group analysis; in this historical runner, DeepSeek can only call mmp_structure_compare and properties_compare.
+5. Final summary reads single + all group outputs, without exposing any tool.
+6. Save retrieval/single/group/final/trace/manifest.
+```
+
+Single-molecule analysis should only serve as a DILI plausibility prior and should not directly determine the label. Focus on:
 
 ```text
 logP/logD and lipophilicity
@@ -1126,17 +1142,17 @@ high dose / exposure proxy if available
 functional groups associated with mitochondrial or phospholipidosis risk
 ```
 
-Group-level prompt 必须要求模型：
+Group-level prompts must require the model to:
 
 ```text
-1. 只分析当前 Tier.endpoint_group。
-2. 判断 analog evidence 到 query 的 structural/property transferability。
-3. 区分 direct DILI phenotype、in vivo liver injury、mechanistic liability 和 weak proxy。
-4. 不把 distant_analog 或 very_distant_analog 作为主要正负证据，除非 scaffold/mechanism 很清楚。
-5. 对每条 key_evidence 输出 effect_on_dili_reasoning。
+1. Only analyze the current Tier.endpoint_group.
+2. Judge the structural/property transferability of analog evidence to the query.
+3. Distinguish direct DILI phenotype, in vivo liver injury, mechanistic liability, and weak proxy.
+4. Not use distant_analog or very_distant_analog as primary positive or negative evidence unless scaffold/mechanism is clear.
+5. Output effect_on_dili_reasoning for each key_evidence.
 ```
 
-建议 group output schema：
+Suggested group output schema:
 
 ```text
 useful_for_dili_reasoning
@@ -1148,7 +1164,7 @@ key_evidence
 caveats
 ```
 
-`key_evidence` 使用当前统一格式，不要使用旧的 `key_neighbors`：
+`key_evidence` Use the current unified format, not the old `key_neighbors`:
 
 ```text
 key_evidence:
@@ -1162,10 +1178,10 @@ key_evidence:
     effect_on_dili_reasoning
 ```
 
-新增 `effect_on_dili_reasoning` 后，必须同步检查 `tools/trace_viewer/viewer.html` 的 key evidence
-渲染逻辑；否则 trace 原始 JSON 有值但 viewer 可能显示为空。
+After adding `effect_on_dili_reasoning`, you must synchronously check the key evidence
+rendering logic of `tools/trace_viewer/viewer.html`; otherwise, the trace raw JSON may have values but the viewer may display empty.
 
-Final prompt 必须围绕 DILI，而不是 broad clinical toxicity：
+The final prompt must focus on DILI, not broad clinical toxicity:
 
 ```text
 dili_prediction:
@@ -1204,8 +1220,8 @@ Final decision rules:
 
 ## Exact ChEMBL context
 
-`chembl_exact_context.py` 是可选 evidence-rich 增强。它会用 query full InChIKey 查 ChEMBL exact molecule，
-并在 retrieved neighbor 涉及的 assay 中查 query activity，生成：
+`chembl_exact_context.py` is an optional evidence-rich enhancement. It uses the query full InChIKey to look up the ChEMBL exact molecule,
+and queries query activity in assays involved in retrieved neighbors, generating:
 
 ```text
 same_endpoint_activity:
@@ -1215,19 +1231,18 @@ same_assay_different_endpoint_activity:
   same assay_chembl_id + different standard_type
 ```
 
-这会使用 query molecule 的已知 ChEMBL 实验记录，可能造成 prospective benchmark 的数据泄漏。因此默认关闭；
-只有显式传 `--enable-chembl-exact-context` 时才用于 retrospective / evidence-rich case study。默认批量评估
-不要开启。
+This uses the query molecule's known ChEMBL experimental records, which may cause data leakage in prospective benchmarks. Therefore, it is disabled by default;
+only use it for retrospective / evidence-rich case studies when explicitly passed `--enable-chembl-exact-context`. Do not enable it in default batch evaluations.
 
-默认 single-molecule prompt 不包含任何 ChEMBL 相关 payload 或 instruction。只有开启 exact context 且命中
-query exact context 时，single-molecule payload 才包含 `exact_query_chembl_context`，并提示模型区分
-direct same-molecule ChEMBL DILI evidence 和 physicochemical prior。ChEMBL neighbor evidence 仍只进入
-group-level context。
+The default single-molecule prompt does not include any ChEMBL-related payload or instruction. Only when exact context is enabled and query exact context is hit,
+the single-molecule payload includes `exact_query_chembl_context`, and prompts the model to distinguish
+direct same-molecule ChEMBL DILI evidence from physicochemical priors. ChEMBL neighbor evidence still only enters
+group-level context.
 
-## 参考资料
+## References
 
-本 ontology 参考了 DILI clinical guidance、FDA LTKB/DILIrank 和机制综述。后续如修改 tier，应优先复核
-这些资料以及更新的 regulatory / hepatotoxicity review。
+This ontology references DILI clinical guidance, FDA LTKB/DILIrank, and mechanistic reviews. If tiers are modified later, prioritize reviewing
+those materials and updated regulatory / hepatotoxicity reviews.
 
 ```text
 TDC Toxicity / DILI task:

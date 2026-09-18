@@ -1,0 +1,20 @@
+# Task
+Endpoint: {{ task.endpoint_name }}
+Positive: {{ task.positive_prediction }}
+Negative: {{ task.negative_prediction }}
+Instructions:
+{% for instruction in task.task_instructions %}- {{ instruction }}
+{% endfor %}
+# Query molecule
+SMILES: {{ prepared.query_smiles }}{% if prepared.condition_sentence %}
+
+# Query condition
+Condition: {{ prepared.condition_sentence }}{% endif %}
+
+# Candidate experimental evidence
+{% for molecule in molecules %}
+## Molecule {{ loop.index }}
+SMILES: {{ molecule.smiles }}
+Morgan similarity: {{ molecule.morgan_similarity }}
+{% for record in molecule.records %}{{ record }}
+{% endfor %}{% endfor %}

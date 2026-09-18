@@ -1,118 +1,127 @@
-# Progressive harness
+# Progressive prediction
 
-The progressive harness has two explicit presentation profiles. They share the
-append-only response state, JSON validation, model transport, checkpoints,
-summaries, and trace writer. They do not share retrieval or card semantics.
+> Historical runtime guide retained for reference. The current harness contract
+> in the repository `AGENTS.md` overrides the versions and defaults below.
 
-## Standard profile
+The active progressive path has three runtime boundaries:
 
-`runner.py --profile standard` is the established molecule-card experiment.
-`retrieval.py`, `state.py`, `molecule_card.yaml`, and `progressive.jinja` own its
-cumulative mechanism-family retrieval, bounded molecule/card deltas, analog
-comparison tools, and prompt.
+```text
+immutable SQLite cache -> exact prompt messages -> validated model state
+retrieval_cache.py         prompt.py                inference.py
+```
 
-## Context-record profile
+- `retrieval_cache.py` opens the task/split cache and performs indexed reads of
+  rows that were selected in advance. It does not read source Parquet, rebuild
+  mappings, normalize molecules, recompute Morgan similarity, or run database
+  publication checks.
+- `prompt.py` turns prepared rows plus the preceding level state into the exact
+  system and user messages. `_records.py` is its private record-to-card assembly
+  implementation; it is not another cache or execution path.
+- `grammar.py` renders the optional version-owned GBNF template without moving
+  grammar assets out of their prompt bundles.
+- `inference.py` sends those messages through `predict.api_client`, validates the
+  returned JSON, checkpoints the state, and then unlocks the next level.
 
-`runner.py --profile context_records` runs the two-level raw-record experiment
-owned by `context_records/`:
+`runner.py` is the command and run-artifact coordinator around those boundaries.
+It selects queries, prepares directories and manifests, schedules independent
+queries, and supports resume. It does not implement an alternative retrieval or
+model client. The optional matrix coordinator lives in `matrix.py`; scientific
+interpretation of completed runs belongs under `analysis/`.
 
-1. The current `data/gold_labels/<Task>/CURRENT` release defines train and valid.
-2. The frozen V9 cache selects exact ranks 0-9 from the full Morgan top-100
-   training-context pool for each valid query. No structure-score threshold is
-   applied and no structure score is shown to the model.
-3. L1 maps each selected gold context's immutable provenance back to physical
-   normalized V7 rows and samples a bounded number of records deterministically.
-4. L2 appends the same bounded number of other V7 records from the task's gold
-   source domain with the same normalized parent and exact `condition_group`.
-5. The query property prior is reused. Query-to-reference comparison tools are
-   disabled, so the prompt contains no per-reference structure score or
-   structure-distance label.
+## Active contract
 
-The profile has two explicitly versioned front ends:
+```bash
+python -m predict.harnesses.progressive \
+  --harness-version reranked-progressive-v2 \
+  --reranking assay-transfer
+```
 
-- `context_records/card_v1.yaml` and `prompt_v1.jinja` reproduce
-  `progressive.assay_transfer.v1`.
-- `context_records/card_v2.yaml` and `prompt_v2.jinja` define
-  `progressive.assay_transfer.v2`: source-native record values only, plus
-  task-specific direct-versus-indirect guidance for BBB, oral bioavailability,
-  and skin sensitization.
-- `context_records/prompt_v3.jinja` keeps the V2 source-native card contract and
-  task guidance, but restores V1-style calibration of `transfer_likelihood` as
-  one relevance signal rather than the primary transfer weight.
-- `context_records/card_v4.yaml` and `prompt_v4.jinja` keep V3 retrieval and
-  reasoning while showing normalized V7 record fields without source-native or
-  resolved-value fallback. Verbatim `support_text` remains visible because it
-  has no canonical replacement.
-- The cumulative V4 ablation starts from V1: V4.1 adds only V4's relaxed
-  transfer-score instruction, V4.2 adds the detailed task guidance while
-  retaining V1's compact card, and V4.3 switches to V4's 29-field canonical
-  card. These variants isolate one model-visible change at a time.
-- V5 introduces a symmetric context-level decision procedure with V1's compact
-  card. V6 uses the identical prompt with V4's canonical card, isolating the
-  effect of record representation.
-- V7 combines V2/V3's source-native card with V1's concise prompt. It tests the
-  remaining card/prompt combination without adding new reasoning instructions.
-- V8 uses a bioavailability-focused hybrid card with V3-style reasoning. V8.1
-  adds only an explicit parent-condition aggregation and prior tie-break rule;
-  V8.2 keeps that prompt and restores the richer source-native V2 card to
-  isolate the card surface.
+`--reranking` is one of `assay-transfer`, `joint`, or `morgan`. All modes use the
+active `prompts/reranked_progressive_v8/` assets and the same cache reader.
+Assay-transfer and Morgan are native cached rankings. Joint reconstructs L1 from
+the top five of each native ranking, merges overlaps, and does not refill.
 
-The YAML controls the ordered JSON fields shown for every context and record;
-blank optional fields are omitted. The Jinja file controls the system prompt.
-Select them with
-`--assay-transfer-prompt-version v1|v2|v3|v4|v4.1|v4.2|v4.3|v5|v6|v7|v8|v8.1|v8.2`.
-Each run manifest
-pins the profile name, card-contract hash, and prompt-template hash.
-`--record-limit-per-context-level` controls the L1 per-context bound (default
-10). `--l2-record-limit-per-context` controls newly appended L2 records and
-defaults to the L1 cap. `--indirect-record-limit-per-level` controls the new
-records appended at each L3+ family (default 50). Sampling is nested: a smaller
-cap is the exact prefix of a larger cap.
-`context_records/profile.py` owns provenance mapping, sampling, card projection,
-and prompt assembly. The runner only orchestrates those operations.
+The versioned asymmetric joint experiment uses
+`--harness-version reranked-progressive-v4 --reranking joint`. It reconstructs
+L1 from the top three assay-transfer molecules followed by the top seven Morgan
+molecules, merges overlaps without refill, and reads only the same immutable v3
+cache. This does not change the historical v2 5+5 contract.
 
-`retrieval_source_id` is not used to select or classify either level. In
-particular, `direct_vote`, `direct_residual`, and `indirect` are V7 audit labels,
-not definitions of current gold membership. This matters because active-gold
-constituents can cross those V7 labels after later source-policy or structure
-normalization changes.
+Prompt bundle `reranked_progressive_l1_simple_v13` supports the composable
+`_no_scores` modifier. Combining
+`_no_scores_no_smiles_no_query_smiles` produces the records-only ablation while
+leaving experimental measurements intact; `_no_query_prior` remains independently
+composable.
 
-Task source provenance is resolved as follows:
+The cache location is supplied by `--assay-transfer-cache`; it cannot change the
+version's stage rules. The default is validation-only. Historical prompt bundles
+were removed from the active checkout after the run-receipt audit recorded in
+`prompts/migration_receipt.json`. Use their pinned historical checkout for exact
+reproduction.
 
-- BBB source row IDs resolve by immutable source index.
-- Bioavailability canonical claim IDs expand to their physical HF/local source
-  rows through the hash-checked canonical direct-claim artifact.
-- Skin external reviewed rows resolve by source-local row index. Frozen
-  molecule-only rows resolve by source record ID plus PMID; when an aggregate
-  gold row makes that pair non-unique, the most specific gold provenance group
-  is used and parent identity breaks remaining ties.
+## Live review and throughput
 
-The internal preparation artifact keeps hashes and record counts for auditing.
-The model sees only the fields projected by the YAML contract. Gold labels,
-vote fractions, V7 source-policy tags, provenance IDs, and selection metadata
-never enter the prompt.
+Live is the default. It writes traces immediately under
+`outputs/paper/live/<study>/<method>/<run>/<task>/<condition>/`, publishes the first
+three samples, and pauses at `awaiting_review`. The three pilot prompts are
+prepared first; their inference runs while the remaining prompts are prepared
+in the background. Non-pilot inference stays behind the review gate:
 
-The optional cache-backed continuation appends independently ranked V19.1 Stage
-3 records per configured family (50 by default). BBB continues through L5;
-Bioavailability ends at L6 with hepatic-clearance/metabolic-stability evidence;
-Skin uses L3 sensitization-AOP evidence and ends at L4 with the distinct
-phototoxicity/irritation/local-damage family. Skin can reuse its frozen V6 L1/L2
-states when the original 10/10 caps are selected.
+```bash
+python -m predict.live list
+python -m predict.live show RUN_ID
+python -m predict.live continue RUN_ID
+python -m predict.live cancel RUN_ID
+```
 
-## Historical BBB L1-L5 mapping
+For an uninterrupted private run, add `--execution-mode throughput`. It skips the
+pilot gate, executes the complete prompt pool, and keeps viewer data private until:
 
-The historical source-purity-v5 levels are an audit lineage, not the
-context-record profile. Exact source-identity mapping from current V7 rows to
-that old catalog produced:
+```bash
+python -m predict.live promote RUN_ID
+```
 
-| current V7 audit tag | historical L1 | L2 | L3 | L4 | L5 |
-|---|---:|---:|---:|---:|---:|
-| `direct_vote` | 8,536 | 5 | 0 | 0 | 0 |
-| `direct_residual` | 5,478 | 254,134 | 11,014 | 20,109 | 3,552 |
+To edit a prompt without mutating a versioned bundle, clone and relaunch it:
 
-Those residual rows appear across all historical levels because the old levels
-were assigned by the source-purity-v5 family catalog, whereas V7's later
-`retrieval_source_id` was assigned by a different direct-voting policy. The two
-columns answer different questions. Do not reconstruct historical L1/L2 by
-splitting on the V7 audit tag, and do not use the historical mapping to define
-the new context-record levels.
+```bash
+python -m predict.live clone-prompt RUN_ID --to reranked_progressive_v9_candidate
+# edit the cloned assets
+python -m predict.live relaunch RUN_ID --prompt-version reranked_progressive_v9_candidate
+```
+
+The clone records `reranked_progressive_v8` as its runtime parent, so it reuses
+the active assembly behavior while receiving independent asset hashes and output
+paths.
+
+## Experiment matrices
+
+The progressive sweep is explicitly launched with:
+
+```bash
+python -m predict.harnesses.progressive.matrix --help
+```
+
+Its detailed resume and receipt contract is in
+`predict/harnesses/progressive/MATRIX.md`. The flat comparison
+launcher is `python -m predict.harnesses.branches.matrix`.
+
+Run leaves are organized under
+`outputs/paper/assay_transfer_harness/joseph/<study>/<method>/`. For example,
+contrastive Morgan K=10, M=3 is
+`contrastive/morgan/k10_m3_<date>/`; assay-transfer is a sibling method, not a
+condition buried inside the Morgan directory. Shared matrix calls live only in
+`_batches/<batch-id>/`.
+
+`diagnostics.py` is the post-run measurement boundary. It indexes the exact
+visible `Molecule N`, `Evidence group N`, and `Cxx` identifiers, measures their
+explicit occurrence in `llm.reasoning_content`, and calculates L1 label mix from
+the selected condition-context labels. These labels are internal provenance and
+are never rendered into the prompt.
+
+New organized runs use a `*_references_v1` successor bundle. Its immutable
+`progressive_reasoning_references.v1` contract makes the renderer save the exact
+case-insensitive identifier index used by `progressive_run_diagnostics.v2`.
+Molecule numbers are unique across the whole prompt, evidence-group numbers use
+their own sequence, and cards keep stable `Cxx` aliases. This only measures what
+the model mentions: no mention is required, 0/K is valid, and diagnostics do not
+change validation, retry, grammar, or prediction behavior.

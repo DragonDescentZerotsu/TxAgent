@@ -1,0 +1,25 @@
+{
+  "version": "gold_level_mapping_alignment.v1",
+  "task": "carcinogens",
+  "gold_release": "v1",
+  "validation_basis": {
+    "basis": "pinned_tianang_l1_contract",
+    "physical_voters": 89617,
+    "status": "pass"
+  },
+  "original": {
+    "basis": "pinned_tianang_l1_contract",
+    "physical_voters": 89617,
+    "status": "pass"
+  },
+  "published": {
+    "basis": "pinned_tianang_l1_contract",
+    "physical_voters": 89617,
+    "status": "pass"
+  },
+  "reviewed_corrections": {
+    "add": 0,
+    "promote": 0
+  },
+  "unchanged_l3_plus": true
+}

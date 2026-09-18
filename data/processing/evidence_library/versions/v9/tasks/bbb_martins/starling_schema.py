@@ -53,6 +53,9 @@ from data.processing.evidence_library.versions.v9.tasks.bbb_martins.starling_ref
 from data.processing.evidence_library.versions.v9.tasks.bbb_martins.starling_spacing_and_spelling import (
     ENDPOINT_CONCEPT_VERSION,
 )
+from data.processing.evidence_library.versions.v9.tasks.bbb_martins.transporter_identifiers import (
+    TRANSPORTER_IDENTIFIER_VERSION,
+)
 
 
 TASK_ID = "bbb_martins"
@@ -389,11 +392,13 @@ SOURCES = {
                 ("evidence_type",),
                 "canonical_evidence_type",
             ),
-            _rule(
+            CanonicalDimensionSpec(
                 "canonical_transporter_identifier",
                 "transporter_identifier",
                 ("transporter_identifier",),
-                "transporter_identifier",
+                "deterministic_rule",
+                TRANSPORTER_IDENTIFIER_VERSION,
+                legacy_value_field="normalized_transporter_identifier",
             ),
             _mapped(
                 "canonical_assay_context",

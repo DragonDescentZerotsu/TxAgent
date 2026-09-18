@@ -10,5 +10,6 @@ tools/chembl_tool/tasks/clintox/data_processing/source_delta_v2/manual_audit.tsv
 data/raw/**/*.parquet -diff
 data/artifacts/evidence_library/**/*.parquet -diff
 data/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
+data/artifacts/evidence_library_compressed/**/stage.tar.zst.part-* -diff
 data/legacy/artifacts/evidence_libraries/**/stage.tar.zst.part-* -diff
 data/legacy/clintox/artifacts/**/*.part-* -diff

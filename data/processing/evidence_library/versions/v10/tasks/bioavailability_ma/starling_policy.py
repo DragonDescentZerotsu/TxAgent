@@ -1,0 +1,895 @@
+"""Bioavailability_Ma plug-in for the shared normalized-Starling builder.
+
+This module only wires this task's existing policy modules into the
+:class:`StarlingTaskPolicy` contract.  It contains no normalization logic of
+its own; every rule still lives in the module that owns it.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from dataclasses import replace
+from functools import partial
+from pathlib import Path
+from typing import Any
+
+from data.processing.paths import (
+    ARTIFACTS_ROOT,
+    evidence_library_root,
+    raw_starling_task_root,
+)
+from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
+from data.processing.evidence_library.shared.v2.normalization.measurements import (
+    normalize_measurement_and_unit,
+    parse_point_measurement,
+)
+from data.processing.evidence_library.shared.v2.normalization.task_policy import (
+    ExtraSourceBatch,
+    NormalizationHooks,
+    SmilesMappingSpec,
+    StageDocuments,
+    StarlingTaskPolicy,
+)
+from data.processing.evidence_library.shared.v2.normalization.source_value_cleaning import (
+    clean_source_values,
+)
+from data.processing.evidence_library.versions.v10.stage1_exact_deduplication import (
+    POLICY_PATH as STAGE1_DEDUPLICATION_POLICY,
+    deduplicate_stage1_exact_records,
+    load_voter_protection,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.mapping_registry import (
+    REGISTRY_PATH as MAPPING_REGISTRY_PATH,
+    mapping_path,
+    mapping_registry,
+    validate_mapping_hashes,
+)
+from data.processing.evidence_library.versions.v10.measurement_routing import (
+    attach_stage1_routes,
+)
+from data.processing.evidence_library.shared.v2.reference_semantics import (
+    ReferenceSemanticsAttacher,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_categorical_response import (
+    CATEGORICAL_RESPONSE_VERSION,
+    FG_TARGET_ALIAS_VERSION,
+    MEASUREMENT_SCALES,
+    POLICY as CATEGORICAL_RESPONSE_POLICY,
+    canonical_fg_target_id,
+    encode_fg_substrate_status,
+    encoding_policy_manifest,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.canonical_source import (
+    DIRECT_MEASUREMENT_EXTRACTION_VERSION,
+    DIRECT_REPORT_TYPES,
+    NONDIRECT_MEASUREMENT_EXTRACTION_VERSION,
+    direct_measurement_fields,
+    nondirect_measurement_fields,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_schema import (
+    FG_SUBSTRATE_ENDPOINT_PRODUCER_ID,
+    RECORD_CONTRACT,
+    SOURCE_ENDPOINT_PRODUCER_IDS,
+    SOURCE_EXTRACTION_PAIR_PRODUCER_IDS,
+    SOURCE_PAIR_PRODUCER_IDS,
+    SOURCE_RULE_PAIR_PRODUCER_IDS,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_auxiliary_metadata import (
+    AUXILIARY_ATTACHMENT_VERSION,
+    DEFAULT_MAPPING_PATH,
+    AuxiliaryMetadataAttacher,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_compact_artifacts import (
+    COMPACT_PROFILE,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_contextual_unit_reconciliation import (
+    contextual_canonical_record_fields,
+    contextual_standardization_of_unit,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_fg_scalar_rules import (
+    FG_SCALAR_RULE_VERSION,
+    fg_scalar_rule_provenance,
+    resolve_fg_measurement_pair,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_normalization_policy import (
+    ENDPOINT_POLICY_VERSION,
+    endpoint_specific_standardization_of_unit,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_measurement_resolution import (
+    MAPPING_PROVENANCE_PATH,
+    validate_mapping_provenance,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_normalization_sources import (
+    DEFAULT_HF_BIOAVAILABILITY_PARQUET,
+    EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS,
+    EXPECTED_SOURCE_ROWS,
+    hf_bioavailability_profile,
+    load_hf_bioavailability_rows,
+    source_profiles,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_record_canonicalization import (
+    DIRECT_EVIDENCE_SCOPE,
+    EVIDENCE_SCOPE_VERSION,
+    NORMALIZATION_DOMAIN_RULES_VERSION,
+    NONDIRECT_EVIDENCE_SCOPE,
+    ORAL_DOSE_NORMALIZATION_VERSION,
+    REPORT_TYPE_NORMALIZATION_VERSION,
+    bioavailability_evidence_scope,
+    canonical_oral_dose,
+    enrich_bioavailability_validity,
+    normalize_bioavailability_report_type,
+    validity_policy_manifest,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_source_column_contracts import (
+    SOURCE_COLUMNS,
+    SOURCE_COLUMN_CONTRACT_VERSION,
+    llm_source_projection,
+    source_column_contract_manifest,
+    source_fields_from_record,
+)
+from data.processing.evidence_library.versions.v10.tasks.bioavailability_ma.starling_spacing_and_spelling import (
+    ENDPOINT_CONCEPT_PATHS,
+    ENDPOINT_CONCEPT_VERSION,
+    SPACING_AND_SPELLING_VERSION,
+    endpoint_concept,
+    family_assignment,
+    spacing_and_spelling_decision,
+    validate_endpoint_inventory,
+)
+
+
+TASK_ID = "bioavailability_ma"
+DATASET_NAME = "starling-labs/Bioavailability_Ma"
+UNIT_RECONCILIATION_VERSION = "bioavailability_unit_reconciliation.v1"
+EXACT_UNIT_MAPPING = mapping_path("exact_measurement_units")
+DEFAULT_STARLING_DATA_DIR = str(raw_starling_task_root(TASK_ID))
+DEFAULT_SMILES_MAPPING = str(mapping_path("source_smiles"))
+EXPECTED_SMILES_MAPPING_SHA256 = mapping_registry()["mappings"]["source_smiles"][
+    "sha256"
+]
+DEFAULT_OUT_DIR = str(evidence_library_root(TASK_ID, "v10"))
+DEFAULT_V65_ELIGIBLE_RECORDS = (
+    "/data1/joseph/starling_assay_transfer/datasets/eligible/"
+    "assay_transfer_soft_evidence_v6_5/records.parquet"
+)
+DEFAULT_BENCHMARK_SPLIT_ROOT = "data/gold_labels/legacy/processed_starling/Bioavailability_Ma"
+HF_SOURCE_CLASSIFICATION_VERSION = "bioavailability_hf_evidence_scope.v1"
+HF_DIRECT_EXPLICIT_UNIT_VERSION = "hf_direct_explicit_unit.v3"
+DEFAULT_SOURCE_VALUE_REPAIRS = mapping_path("reviewed_source_repairs")
+DEFAULT_REVIEWED_SOURCE_DROPS = mapping_path("reviewed_source_drops")
+DEFAULT_SMILES_IDENTITY_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_audit.v2.jsonl"
+)
+DEFAULT_SMILES_SAMPLE_AUDIT = (
+    Path(__file__).resolve().parent
+    / "data_processing/source_value_cleaning_v1/smiles_identity_sample_audit_20260829.json"
+)
+DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS = mapping_path(
+    "reviewed_name_smiles_conflicts"
+)
+
+
+def _clean_source_values(records: list[dict[str, Any]], args: argparse.Namespace):
+    authoritative = bool(args.authoritative_source_root)
+    protected = load_voter_protection(args, TASK_ID)[0] if authoritative else {}
+    reviewed_rows = (
+        {
+            (
+                str(row.get("source_id") or ""),
+                int(row.get("source_row_number") or 0),
+                str(row.get("source_record_id") or ""),
+            )
+            for row in records
+        }
+        if authoritative
+        else None
+    )
+    require_all = (
+        _include_hf_bioavailability(args)
+        and not _max_hf_rows(args)
+        and not int(getattr(args, "max_rows_per_source", 0) or 0)
+    )
+    result = clean_source_values(
+        records,
+        task_id=TASK_ID,
+        reviewed_repairs_path=DEFAULT_SOURCE_VALUE_REPAIRS,
+        reviewed_drops_path=DEFAULT_REVIEWED_SOURCE_DROPS,
+        smiles_identity_audit_path=DEFAULT_SMILES_IDENTITY_AUDIT,
+        reviewed_smiles_conflicts_path=DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        require_all_reviewed_repairs=require_all,
+        require_all_reviewed_drops=require_all,
+        require_all_reviewed_smiles_overrides=require_all,
+        allow_reviewed_source_hash_mismatch=authoritative,
+        protected_structure_uids=protected,
+        reviewed_row_keys=reviewed_rows,
+    )
+    return replace(
+        result,
+        records=attach_stage1_routes(result.records, task=TASK_ID),
+    )
+
+
+def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--stage1-preferred-voter-uids",
+        default="",
+        help="Legacy gold-v1 physical-voter UID set.",
+    )
+    parser.add_argument(
+        "--stage1-protected-voter-contract",
+        default="data/gold_labels/Bioavailability_Ma/v1/scaffold/voter_membership.parquet",
+        help="Frozen Gold-v1 physical-voter identity and vote-membership contract.",
+    )
+    parser.add_argument("--smiles-mapping", default=DEFAULT_SMILES_MAPPING)
+    parser.add_argument("--auxiliary-mapping", default=str(DEFAULT_MAPPING_PATH))
+    parser.add_argument("--allow-unpinned-smiles-mapping", action="store_true")
+    parser.add_argument(
+        "--hf-source-parquet",
+        "--direct-source-parquet",
+        dest="hf_source_parquet",
+        default=str(DEFAULT_HF_BIOAVAILABILITY_PARQUET),
+    )
+    parser.add_argument(
+        "--include-hf-bioavailability",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
+    parser.add_argument(
+        "--include-direct-hf",
+        dest="include_hf_bioavailability",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--no-include-direct-hf",
+        dest="include_hf_bioavailability",
+        action="store_false",
+        default=argparse.SUPPRESS,
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        "--max-hf-rows", "--max-direct-rows", dest="max_hf_rows", type=int, default=0
+    )
+    parser.add_argument(
+        "--v65-reconciliation",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument("--v65-eligible-records", default=DEFAULT_V65_ELIGIBLE_RECORDS)
+    parser.add_argument(
+        "--reference-semantics-mapping",
+        default=str(DEFAULT_REFERENCE_SEMANTICS_MAPPING),
+    )
+    parser.add_argument(
+        "--allow-missing-reference-semantics",
+        action="store_true",
+        help="Allow an explicitly incomplete pre-generation smoke build.",
+    )
+
+
+def validate_arguments(
+    parser: argparse.ArgumentParser, args: argparse.Namespace
+) -> None:
+    validate_mapping_hashes()
+    if args.through_stage not in {"source", "clean"}:
+        try:
+            validate_mapping_provenance(args.measurement_resolution_mapping)
+        except ValueError as error:
+            parser.error(str(error))
+    if args.v65_reconciliation:
+        parser.error(
+            "v6.5 reconciliation is outside the source-aware pair-bucket sidecar contract"
+        )
+    if _max_hf_rows(args) and args.strict_endpoint_inventory:
+        parser.error("bounded source runs require --no-strict-endpoint-inventory")
+    reference_mapping = Path(args.reference_semantics_mapping)
+    if (
+        args.through_stage not in {"source", "clean"}
+        and not reference_mapping.exists()
+        and not args.allow_missing_reference_semantics
+    ):
+        parser.error(
+            f"reference-semantics mapping not found: {reference_mapping}; build it "
+            "with common.starling.build_reference_semantics_mapping"
+        )
+
+
+def _include_hf_bioavailability(args: argparse.Namespace) -> bool:
+    return bool(
+        getattr(
+            args,
+            "include_hf_bioavailability",
+            getattr(args, "include_direct_hf", True),
+        )
+    )
+
+
+def _max_hf_rows(args: argparse.Namespace) -> int:
+    return int(
+        getattr(args, "max_hf_rows", getattr(args, "max_direct_rows", 0)) or 0
+    )
+
+
+def _hf_source_parquet(args: argparse.Namespace) -> Path:
+    return Path(
+        getattr(
+            args,
+            "hf_source_parquet",
+            getattr(args, "direct_source_parquet", DEFAULT_HF_BIOAVAILABILITY_PARQUET),
+        )
+    )
+
+
+def smiles_mapping(args: argparse.Namespace) -> SmilesMappingSpec:
+    return SmilesMappingSpec(
+        path=Path(args.smiles_mapping),
+        expected_sha256=EXPECTED_SMILES_MAPPING_SHA256,
+        allow_unpinned=args.allow_unpinned_smiles_mapping,
+    )
+
+
+def endpoint_inventory(
+    source_id: str, endpoints: list[str], *, strict: bool
+) -> dict[str, Any]:
+    if strict:
+        return validate_endpoint_inventory(source_id, endpoints)
+    unique = sorted(set(endpoints))
+    registry = [
+        spacing_and_spelling_decision(source_id, endpoint).to_dict()
+        for endpoint in unique
+    ]
+    return {
+        "source_id": source_id,
+        "count": len(unique),
+        "n_reviewed_corrections": sum(
+            item["status"] == "reviewed_correction" for item in registry
+        ),
+        "coverage": 1.0,
+        "strict_frozen_validation": False,
+        "endpoints": registry,
+    }
+
+
+def load_extra_source(
+    args: argparse.Namespace,
+) -> ExtraSourceBatch | None:
+    """Load the complete HF snapshot as one physical evidence source."""
+    if not _include_hf_bioavailability(args):
+        return None
+    records_path = _hf_source_parquet(args)
+    source_hash = file_sha256(records_path)
+    rows = load_hf_bioavailability_rows(
+        records_path, max_rows=_max_hf_rows(args)
+    )
+    scope_counts = {DIRECT_EVIDENCE_SCOPE: 0, NONDIRECT_EVIDENCE_SCOPE: 0}
+    for row in rows:
+        scope_counts[
+            bioavailability_evidence_scope(
+                row.get("bioavailability_report_type")
+            )
+        ] += 1
+    if not _max_hf_rows(args) and len(rows) != EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS:
+        raise ValueError(
+            "raw HF evidence source drift: "
+            f"rows={len(rows):,}/{EXPECTED_RAW_HF_BIOAVAILABILITY_ROWS:,}"
+        )
+    if not _max_hf_rows(args) and scope_counts != {
+        DIRECT_EVIDENCE_SCOPE: 112_245,
+        NONDIRECT_EVIDENCE_SCOPE: 51_570,
+    }:
+        raise ValueError(f"raw HF evidence-scope drift: {scope_counts}")
+    classification = {
+        "version": HF_SOURCE_CLASSIFICATION_VERSION,
+        "raw_source_rows": len(rows),
+        "scope_counts": dict(sorted(scope_counts.items())),
+        "reconciles": sum(scope_counts.values()) == len(rows),
+        "direct_report_types": sorted(DIRECT_REPORT_TYPES),
+    }
+    return ExtraSourceBatch(
+        source_id="hf_bioavailability",
+        profile=hf_bioavailability_profile(records_path),
+        rows=rows,
+        source_path=records_path,
+        source_sha256=source_hash,
+        endpoint_names=["oral_bioavailability"] if rows else [],
+        inventory_key="hf_bioavailability",
+        inventory_entry={
+            "records_parquet": str(records_path),
+            "records_sha256": source_hash,
+            "source_rows": len(rows),
+            "historical_partition_dependency": False,
+            "row_classification": classification,
+        },
+    )
+
+
+def _resolve_source_measurement_pair(
+    record: dict[str, Any],
+    canonical_endpoint: str,
+    baseline_pair: Any,
+):
+    source_id = str(record.get("source_id") or "")
+    if source_id == "hf_bioavailability":
+        measurement_text = str(record.get("measurement_text") or "").strip()
+        scope = bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        if scope == NONDIRECT_EVIDENCE_SCOPE:
+            extracted = nondirect_measurement_fields(measurement_text)
+            pair = normalize_measurement_and_unit(
+                extracted["measurement_text"],
+                extracted["value_units"],
+                task=TASK_ID,
+            )
+            return endpoint_specific_standardization_of_unit(
+                canonical_endpoint, pair
+            )
+        extracted = direct_measurement_fields(measurement_text)
+        pair = normalize_measurement_and_unit(
+            extracted["measurement_text"],
+            extracted["value_units"],
+            task=TASK_ID,
+        )
+        return endpoint_specific_standardization_of_unit(
+            canonical_endpoint, pair
+        )
+    return resolve_fg_measurement_pair(record, canonical_endpoint, baseline_pair)
+
+
+def _is_hf_direct_scope_unitless_numeric_abstention(record: dict[str, Any]) -> bool:
+    if (
+        str(record.get("source_id") or "") != "hf_bioavailability"
+        or bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        != DIRECT_EVIDENCE_SCOPE
+        or record.get("direct_measurement_unit_extraction_status")
+        != "no_explicit_unit"
+    ):
+        return False
+    source_point = parse_point_measurement(record.get("measurement_text"))
+    return source_point.value is not None
+
+
+def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
+    attacher = AuxiliaryMetadataAttacher(args.auxiliary_mapping)
+    reference_attacher = ReferenceSemanticsAttacher(
+        replace(
+            REFERENCE_SEMANTICS_CONFIG,
+            mapping_path=Path(args.reference_semantics_mapping),
+        ),
+        allow_missing=args.allow_missing_reference_semantics,
+        fail_closed_unmapped=True,
+    )
+    return NormalizationHooks(
+        endpoint_normalizer=spacing_and_spelling_decision,
+        endpoint_standardizer=endpoint_specific_standardization_of_unit,
+        source_measurement_resolver=_resolve_source_measurement_pair,
+        family_resolver=family_assignment,
+        contextual_standardizer=contextual_standardization_of_unit,
+        record_enricher=lambda record: _enrich_record(
+            record, attacher, reference_attacher
+        ),
+        assay_transfer_revalidator=lambda record: _revalidate_assay_transfer_record(
+            record, reference_attacher
+        ),
+        # stage_documents needs the same instance to write its coverage audit.
+        run_state={"auxiliary": attacher, "reference": reference_attacher},
+    )
+
+
+def _revalidate_assay_transfer_record(
+    record: dict[str, Any], reference_attacher: ReferenceSemanticsAttacher
+) -> dict[str, Any]:
+    validity = enrich_bioavailability_validity(record)
+    reference = reference_attacher.attach_post_scale_fail_closed(
+        {**record, **validity}
+    )
+    return {**validity, **reference}
+
+
+def attach_source_columns(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Columnize the raw source contract before removing duplicate JSON."""
+    for row in rows:
+        for field, value in source_fields_from_record(row).items():
+            row.setdefault(field, value)
+    return rows
+
+
+def stage_documents(
+    *,
+    args: argparse.Namespace,
+    hooks: NormalizationHooks,
+    normalized: list[dict[str, Any]],
+    persisted: list[dict[str, Any]],
+    unit_policy_manifest: dict[str, Any],
+) -> StageDocuments:
+    del args
+    attacher: AuxiliaryMetadataAttacher = hooks.run_state["auxiliary"]
+    reference_attacher: ReferenceSemanticsAttacher = hooks.run_state["reference"]
+    reference_coverage = reference_attacher.coverage_audit(normalized)
+    return StageDocuments(
+        validity_policy={
+            **validity_policy_manifest(),
+            "categorical_response": encoding_policy_manifest(),
+        },
+        auxiliary_mapping_manifest={
+            **attacher.manifest(),
+            "coverage": attacher.coverage_audit(normalized),
+        },
+        source_column_contract=source_column_contract_manifest(
+            sorted({column for row in persisted for column in row})
+        ),
+        validations={
+            "one_to_one_measurement_inputs_to_normalized_ids": True,
+            "endpoint_orthography_provenance": True,
+            "canonical_endpoint_present": True,
+            "policy_independent_validity_present": True,
+            "globally_reconciled_auxiliary_coverage": True,
+            "contextual_unit_policy_loaded": True,
+            "contextual_unit_policy_version": unit_policy_manifest["policy_version"],
+            "categorical_response_loaded": True,
+            "categorical_encoders_declared": all(
+                str(row.get("categorical_encoder_id") or "")
+                in MEASUREMENT_SCALES
+                for row in normalized
+                if row.get("categorical_encoder_id")
+            ),
+            "heuristic_auxiliary_fields_absent": all(
+                not any(
+                    field in row
+                    for field in (
+                        "canonical_dose_key",
+                        "canonical_assay_system",
+                        "canonical_species",
+                    )
+                )
+                for row in normalized
+            ),
+            "source_column_contract_complete": True,
+            "llm_source_projection_fail_closed": True,
+            "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+            "reference_semantics_assignment_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_assigned"]
+            ),
+        },
+        reference_semantics_manifest={
+            **reference_attacher.manifest(),
+            "coverage": reference_coverage,
+        },
+    )
+
+
+def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
+    versions: dict[str, Any] = {
+        "fg_scalar_rule_version": FG_SCALAR_RULE_VERSION,
+        "auxiliary_attachment_version": AUXILIARY_ATTACHMENT_VERSION,
+        "spacing_and_spelling_version": SPACING_AND_SPELLING_VERSION,
+        "endpoint_concept_version": ENDPOINT_CONCEPT_VERSION,
+        "endpoint_policy_version": ENDPOINT_POLICY_VERSION,
+        "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+        "normalization_domain_rules_version": NORMALIZATION_DOMAIN_RULES_VERSION,
+        "oral_dose_normalization_version": ORAL_DOSE_NORMALIZATION_VERSION,
+        "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
+        "fg_target_alias_version": FG_TARGET_ALIAS_VERSION,
+        "hf_source_classification_version": HF_SOURCE_CLASSIFICATION_VERSION,
+        "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        "nondirect_measurement_extraction_version": (
+            NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
+        ),
+        "direct_measurement_extraction_version": (
+            DIRECT_MEASUREMENT_EXTRACTION_VERSION
+        ),
+        "hf_direct_explicit_unit_version": HF_DIRECT_EXPLICIT_UNIT_VERSION,
+        "unit_reconciliation_version": UNIT_RECONCILIATION_VERSION,
+        "prebuilt_mapping_registry": {
+            "version": mapping_registry()["version"],
+            "path": str(MAPPING_REGISTRY_PATH),
+        },
+        "v65_reconciliation": {"status": "not_performed", "matching_performed": False},
+    }
+    if complete:
+        versions["source_column_contract_version"] = SOURCE_COLUMN_CONTRACT_VERSION
+        versions["v65_reconciliation_version"] = None
+    return versions
+
+
+def census_extras(records: list[dict[str, Any]]) -> dict[str, Any]:
+    encoded: dict[str, int] = {}
+    finite_by_source = {source: 0 for source in EXPECTED_SOURCE_ROWS}
+    for record in records:
+        if record.get("finite_scalar_value") is None:
+            continue
+        source_id = str(record.get("source_id") or "")
+        finite_by_source[source_id] = finite_by_source.get(source_id, 0) + 1
+        encoder_id = str(record.get("categorical_encoder_id") or "")
+        if encoder_id:
+            encoded[encoder_id] = encoded.get(encoder_id, 0) + 1
+    return {
+        "n_fg_finite_scalars": sum(
+            record.get("source_id") == "fg"
+            and record.get("finite_scalar_value") is not None
+            and not record.get("categorical_encoder_id")
+            for record in records
+        ),
+        "n_finite_scalars_by_source": dict(sorted(finite_by_source.items())),
+        "n_categorically_encoded_by_encoder": dict(sorted(encoded.items())),
+        "n_hf_direct_unitless_numeric_abstentions": sum(
+            _is_hf_direct_scope_unitless_numeric_abstention(record)
+            for record in records
+        ),
+    }
+
+
+def _enrich_record(
+    record: dict[str, Any],
+    auxiliary_attacher: AuxiliaryMetadataAttacher,
+    reference_attacher: ReferenceSemanticsAttacher,
+) -> dict[str, Any]:
+    exact = str(record.get("measurement_resolution_status") or "") in {
+        "ok",
+        "relative",
+        "unsure",
+        "unavailable",
+    }
+    resolution_route = str(record.get("measurement_resolution_route") or "")
+    routed = exact or (
+        bool(record.get("measurement_resolution_active")) and bool(resolution_route)
+    )
+    provenance = (
+        {
+            "source_scalar_rule_version": None,
+            "source_scalar_rule_id": None,
+            "source_scalar_rule_reason": None,
+            "scalar_semantic_label": None,
+        }
+        if exact or routed
+        else fg_scalar_rule_provenance(record)
+    )
+    measurement_extraction: dict[str, Any] = {}
+    if not routed and str(record.get("source_id") or "") == "hf_bioavailability":
+        scope = bioavailability_evidence_scope(
+            record.get("bioavailability_report_type")
+        )
+        if scope == NONDIRECT_EVIDENCE_SCOPE:
+            extracted = nondirect_measurement_fields(record.get("measurement_text"))
+            measurement_extraction = {
+                "nondirect_measurement_extraction_version": (
+                    NONDIRECT_MEASUREMENT_EXTRACTION_VERSION
+                ),
+                "nondirect_measurement_unit_extraction_status": extracted[
+                    "measurement_unit_extraction_status"
+                ],
+            }
+        else:
+            extracted = direct_measurement_fields(record.get("measurement_text"))
+            measurement_extraction = {
+                "direct_measurement_extraction_version": (
+                    DIRECT_MEASUREMENT_EXTRACTION_VERSION
+                ),
+                "direct_measurement_unit_extraction_status": extracted[
+                    "measurement_unit_extraction_status"
+                ],
+            }
+    enriched = {**record, **provenance, **measurement_extraction}
+    source_projection = llm_source_projection(enriched)
+    auxiliary = auxiliary_attacher.attach(enriched)
+    with_auxiliary = {**enriched, **auxiliary}
+    contextual_fields = {} if routed else contextual_canonical_record_fields(with_auxiliary)
+    canonical = {**with_auxiliary, **contextual_fields}
+    encoded = CATEGORICAL_RESPONSE_POLICY.apply(canonical)
+    source_id = str(record.get("source_id") or "")
+    reviewed_endpoint_concept = endpoint_concept(
+        source_id,
+        str(record.get("endpoint_name") or ""),
+        str(record.get("canonical_endpoint_name") or ""),
+    )
+    primary_endpoint = str(canonical.get("canonical_endpoint") or "").casefold()
+    endpoint_missing = primary_endpoint in {
+        "",
+        "missing_endpoint",
+        "unknown",
+        "__unknown__",
+        "__unknown_endpoint__",
+    }
+    structured_fg_endpoint = (
+        encode_fg_substrate_status(canonical)
+        if (encoded or not routed)
+        and source_id == "fg"
+        and endpoint_missing
+        else None
+    )
+    measurement_target_id = (
+        canonical_fg_target_id(canonical.get("transporter_or_enzyme"))
+        if source_id == "fg" and (encoded or structured_fg_endpoint is not None)
+        else None
+    )
+    if source_id == "fg" and encoded and measurement_target_id is None:
+        raise ValueError("encoded Fg substrate status lacks a canonical target")
+    producer_id = str(encoded.get("categorical_encoder_id") or "")
+    producer_fields = {
+        "canonical_endpoint_producer_id": (
+            FG_SUBSTRATE_ENDPOINT_PRODUCER_ID
+            if structured_fg_endpoint is not None and measurement_target_id
+            else SOURCE_ENDPOINT_PRODUCER_IDS[source_id]
+        ),
+        "canonical_pair_producer_id": (
+            producer_id
+            or (
+                SOURCE_EXTRACTION_PAIR_PRODUCER_IDS[source_id]
+                if routed and resolution_route == "extract"
+                else SOURCE_RULE_PAIR_PRODUCER_IDS[source_id]
+                if routed and resolution_route == "accept"
+                else SOURCE_PAIR_PRODUCER_IDS[source_id]
+            )
+        ),
+    }
+    encoded_record = {
+        **canonical,
+        **encoded,
+        **(
+            {"canonical_endpoint": "fg_substrate_outcome"}
+            if structured_fg_endpoint is not None and measurement_target_id
+            else {}
+        ),
+        "canonical_measurement_target_id": measurement_target_id,
+        **producer_fields,
+    }
+    if exact:
+        report_type = normalize_bioavailability_report_type(
+            record.get("bioavailability_report_type")
+        )
+        evidence_scope = (
+            bioavailability_evidence_scope(report_type)
+            if source_id == "hf_bioavailability"
+            else None
+        )
+        mapped = record.get("measurement_unit_mapping_status") == "mapped"
+        validity = {
+            "canonical_bioavailability_report_type": report_type,
+            "canonical_bioavailability_evidence_scope": evidence_scope,
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid"
+                if mapped or encoded
+                else "exact_measurement_excluded"
+            ),
+            "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+            "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        }
+    elif routed:
+        report_type = normalize_bioavailability_report_type(
+            record.get("bioavailability_report_type")
+        )
+        evidence_scope = (
+            bioavailability_evidence_scope(report_type)
+            if source_id == "hf_bioavailability"
+            else None
+        )
+        validity = {
+            "canonical_bioavailability_report_type": report_type,
+            "canonical_bioavailability_evidence_scope": evidence_scope,
+            "normalization_validity_status": (
+                "unresolved_structure"
+                if str(record.get("structure_status") or "") != "resolved"
+                or not record.get("canonical_smiles")
+                else "valid" if encoded else "non_scalar_measurement"
+            ),
+            "report_type_normalization_version": REPORT_TYPE_NORMALIZATION_VERSION,
+            "bioavailability_evidence_scope_version": EVIDENCE_SCOPE_VERSION,
+        }
+    else:
+        validity = enrich_bioavailability_validity(encoded_record)
+    reference = reference_attacher.attach(
+        {**encoded_record, **validity}
+    )
+    oral_dose = (
+        canonical_oral_dose(record.get("oral_dose"))
+        if source_id == "oral_exposure"
+        else {}
+    )
+    return {
+        **provenance,
+        **measurement_extraction,
+        "source_column_contract_version": SOURCE_COLUMN_CONTRACT_VERSION,
+        "llm_source_contract_json": json.dumps(
+            {
+                key: value
+                for key, value in source_projection.items()
+                if key != "source_fields"
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+        "llm_source_fields_json": json.dumps(
+            source_projection["source_fields"],
+            ensure_ascii=False,
+            sort_keys=True,
+        ),
+        **auxiliary,
+        **contextual_fields,
+        **encoded,
+        "canonical_endpoint_concept": reviewed_endpoint_concept,
+        **(
+            {"canonical_endpoint": "fg_substrate_outcome"}
+            if structured_fg_endpoint is not None and measurement_target_id
+            else {}
+        ),
+        "canonical_measurement_target_id": measurement_target_id,
+        **producer_fields,
+        **oral_dose,
+        **validity,
+        **reference,
+    }
+
+
+POLICY = StarlingTaskPolicy(
+    task_id=TASK_ID,
+    dataset_name=DATASET_NAME,
+    default_data_dir=DEFAULT_STARLING_DATA_DIR,
+    default_out_dir=DEFAULT_OUT_DIR,
+    compact=COMPACT_PROFILE,
+    expected_source_rows=EXPECTED_SOURCE_ROWS,
+    record_contract=RECORD_CONTRACT,
+    source_value_cleaner=_clean_source_values,
+    stage1_canonical_deduplicator=partial(
+        deduplicate_stage1_exact_records,
+        task_id=TASK_ID,
+        source_columns=SOURCE_COLUMNS,
+    ),
+    source_profiles=source_profiles,
+    endpoint_inventory=endpoint_inventory,
+    family_resolver=family_assignment,
+    build_hooks=build_hooks,
+    attach_source_columns=attach_source_columns,
+    stage_documents=stage_documents,
+    manifest_versions=manifest_versions,
+    add_cli_arguments=add_cli_arguments,
+    validate_arguments=validate_arguments,
+    load_extra_source=load_extra_source,
+    census_extras=census_extras,
+    smiles_mapping=smiles_mapping,
+    scientific_assets=(
+        STAGE1_DEDUPLICATION_POLICY,
+        MAPPING_REGISTRY_PATH,
+        MAPPING_PROVENANCE_PATH,
+        DEFAULT_SOURCE_VALUE_REPAIRS,
+        DEFAULT_REVIEWED_SOURCE_DROPS,
+        DEFAULT_SMILES_IDENTITY_AUDIT,
+        DEFAULT_REVIEWED_NAME_SMILES_CONFLICTS,
+        DEFAULT_SMILES_SAMPLE_AUDIT,
+        *ENDPOINT_CONCEPT_PATHS,
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+        EXACT_UNIT_MAPPING,
+    ),
+    # Match BBB V10: numerical geometry belongs to assay-transfer construction.
+    assay_transfer_measurement_policy=None,
+    reference_semantics_enabled=True,
+    measurement_resolution_enabled=True,
+    exact_unit_mapping_path=EXACT_UNIT_MAPPING,
+    endpoint_identity_required_sources=("oral_exposure", "fa", "fg", "fh"),
+    family_resolver_input_fields=(
+        "canonical_bioavailability_evidence_scope",
+        "canonical_paper_direct_scope",
+        "bioavailability_report_type",
+    ),
+)
+
+
+__all__ = [
+    "EXACT_UNIT_MAPPING",
+    "POLICY",
+    "TASK_ID",
+    "UNIT_RECONCILIATION_VERSION",
+]

@@ -1,0 +1,17 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "dgx027",
+      "base_url": "http://dgx027:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 128,
+      "request_extra_body": {"chat_template_kwargs": {"thinking": true, "reasoning_effort": "max"}}
+    }
+  ],
+  "failure_threshold": 3,
+  "cooldown_seconds": 60,
+  "max_failovers": 0,
+  "latency_ewma_alpha": 0.2
+}

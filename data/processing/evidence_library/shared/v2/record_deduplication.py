@@ -19,7 +19,7 @@ import pyarrow.parquet as pq
 from data.processing.evidence_library.shared.v2.normalization.cleaning import file_sha256
 
 
-DEDUPLICATION_VERSION = "starling_record_deduplication.v4"
+DEDUPLICATION_VERSION = "starling_record_deduplication.v6"
 RECORDS_FILENAME = "records.parquet"
 PAIR_BUCKET_RECORDS_FILENAME = "pair_bucket_records.parquet"
 DIRECT_MAPPING_FILENAME = "direct_record_mapping.parquet"
@@ -60,6 +60,9 @@ _CONTEXT_FIELDS = (
 _CANDIDATE_FIELDS = frozenset(
     {
         "canonical_record_id",
+        "canonical_claim_id",
+        "canonical_claim_parent_identity_key",
+        "canonical_claim_representative",
         "source_row_uid",
         "source_id",
         "source_smiles",
@@ -103,8 +106,9 @@ def build_deduplicated_record_stage(
     direct_mapping_builder: (
         Callable[[Sequence[Mapping[str, Any]]], list[dict[str, Any]]] | None
     ) = None,
+    collapse_duplicates: bool = True,
 ) -> dict[str, Any]:
-    """Remove row duplicates once while retaining complete audit lineage."""
+    """Publish aligned records, optionally applying the legacy late deduplicator."""
     source_path = Path(records_path)
     sidecar_path = Path(pair_bucket_records_path)
     target = Path(out_dir)
@@ -119,7 +123,7 @@ def build_deduplicated_record_stage(
         sidecar_path=sidecar_path,
         direct_mapping_builder=direct_mapping_builder,
     )
-    duplicate_counts = _deduplicate(connection)
+    duplicate_counts = _deduplicate(connection) if collapse_duplicates else Counter()
     output_records = _write_retained_records(
         connection,
         records_path=source_path,
@@ -171,13 +175,19 @@ def build_deduplicated_record_stage(
         "version": DEDUPLICATION_VERSION,
         "task_id": task_id,
         "contract": {
+            "mode": (
+                "legacy_late_deduplication"
+                if collapse_duplicates
+                else "authoritative_stage1_passthrough"
+            ),
             "within_source": "exact_semantic_row",
             "cross_source": "equal_measurement_context_and_supported_claim",
             "paper_support_token_jaccard_minimum": SUPPORT_JACCARD_MINIMUM,
             "direct_partitions_kept_separate": True,
             "conflicting_direct_labels_merge": False,
-            "direct_mapping_grain": "normalized_row_with_physical_vote_unit_id",
-            "direct_pair_bucket": "stage04_pair_bucket_plus_reviewed_condition_group",
+            "direct_mapping_grain": "normalized_row_with_optional_canonical_claim_id",
+            "direct_pair_bucket": "intrinsic_stage03_pair_bucket",
+            "row_deletion_performed": collapse_duplicates,
         },
         "inputs": {
             "records": {"path": str(source_path), "sha256": file_sha256(source_path)},
@@ -283,8 +293,6 @@ def _index_candidates(
         mappings = direct_mapping_builder(records) if direct_mapping_builder else []
         mapping_by_id = _unique_by_id(mappings)
         for mapping in mappings:
-            if "canonical_claim_id" in mapping:
-                raise ValueError("direct mapping must not persist canonical_claim_id")
             mapping = {
                 **mapping,
                 "source_row_uid": str(
@@ -372,6 +380,7 @@ def _deduplicate(connection: sqlite3.Connection) -> Counter[str]:
                         discarded.get("direct_vote_unit_id")
                     ),
                     "discarded_direct_vote_label": discarded.get("direct_vote_label"),
+                    "canonical_claim_id": _text(discarded.get("canonical_claim_id")),
                     "duplicate_scope": scope,
                     "support_token_jaccard": match[0],
                     "measurement_signature": _json_dump(
@@ -544,11 +553,6 @@ def _decorate(
     else:
         condition_group = str(mapping["condition_group"])
         condition_status = str(mapping["condition_key_status"])
-        condition_identity = (
-            condition_group
-            if condition_status in TRUSTED_DIRECT_CONDITION_STATUSES
-            else f"untrusted:{record['canonical_record_id']}"
-        )
         output.update(
             {
                 "retrieval_source_id": mapping["retrieval_source_id"],
@@ -563,29 +567,16 @@ def _decorate(
                 "direct_residual_endpoint_name": mapping.get(
                     "direct_residual_endpoint_name"
                 ),
+                "canonical_claim_id": mapping.get("canonical_claim_id"),
+                "canonical_claim_parent_identity_key": mapping.get(
+                    "canonical_claim_parent_identity_key"
+                ),
+                "canonical_claim_representative": mapping.get(
+                    "canonical_claim_representative"
+                ),
             }
         )
         base_pair_key = _text(output.get("pair_bucket_key"))
-        if base_pair_key:
-            try:
-                base_identity = json.loads(base_pair_key)
-            except json.JSONDecodeError:
-                base_identity = base_pair_key
-            try:
-                pair_fields = json.loads(
-                    str(output.get("canonical_pair_fields_json") or "{}")
-                )
-            except json.JSONDecodeError as error:
-                raise ValueError("direct pair-bucket fields are not valid JSON") from error
-            if not isinstance(pair_fields, dict):
-                raise ValueError("direct pair-bucket fields must be a JSON object")
-            pair_fields["canonical_direct_condition_group"] = condition_group
-            output["pair_bucket_key"] = _json_dump(
-                [*base_identity, condition_identity]
-                if isinstance(base_identity, list)
-                else [base_identity, condition_identity]
-            )
-            output["canonical_pair_fields_json"] = _json_dump(pair_fields)
         if not base_pair_key:
             output["retrieval_eligible"] = False
             output["organization_status"] = "missing_pair_bucket"
@@ -625,6 +616,8 @@ def _unique_by_id(rows: Sequence[Mapping[str, Any]]) -> dict[str, dict[str, Any]
 
 
 def _dedup_key(record: Mapping[str, Any]) -> tuple[Any, ...]:
+    if claim_id := _text(record.get("canonical_claim_id")):
+        return "canonical_direct_claim", claim_id
     support = _normalized_text(record.get("support_text"))
     paper = _paper_id(record)
     return (
@@ -681,6 +674,23 @@ def _measurement_signature(record: Mapping[str, Any]) -> tuple[Any, ...]:
 def _dedup_match(
     left: Mapping[str, Any], right: Mapping[str, Any]
 ) -> tuple[float, str] | None:
+    left_claim = _text(left.get("canonical_claim_id"))
+    right_claim = _text(right.get("canonical_claim_id"))
+    if left_claim and left_claim == right_claim:
+        left_parent = _text(left.get("canonical_claim_parent_identity_key"))
+        right_parent = _text(right.get("canonical_claim_parent_identity_key"))
+        compatible = (
+            left_parent
+            and left_parent == right_parent
+            and left.get("retrieval_source_id") == right.get("retrieval_source_id")
+            and left.get("direct_vote_label") == right.get("direct_vote_label")
+            and left.get("condition_group") == right.get("condition_group")
+        )
+        if not compatible:
+            raise ValueError(
+                f"canonical direct claim members disagree: {left_claim}"
+            )
+        return 1.0, "same_canonical_direct_claim"
     if not _text(left.get("canonical_smiles")) or not _text(right.get("canonical_smiles")):
         return None
     if _context_conflict(left, right):
@@ -742,7 +752,12 @@ def _context_conflict(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool
 def _representative_key(record: Mapping[str, Any]) -> tuple[Any, ...]:
     coverage = sum(bool(_text(record.get(field))) for field in _CONTEXT_FIELDS)
     support_length = len(_normalized_text(record.get("support_text")))
-    return -coverage, -support_length, str(record["canonical_record_id"])
+    return (
+        not bool(record.get("canonical_claim_representative")),
+        -coverage,
+        -support_length,
+        str(record["canonical_record_id"]),
+    )
 
 
 def _paper_id(record: Mapping[str, Any]) -> str:

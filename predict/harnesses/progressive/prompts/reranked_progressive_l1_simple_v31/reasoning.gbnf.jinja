@@ -1,0 +1,16 @@
+{% if task == "bbb_martins" %}root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,18432}
+final_calibration ::= "\nFINAL CALIBRATION\nDIRECT RECORD EVIDENCE: " evidence_direction "\nMOST TRANSFERABLE RECORDS: " audit_line "TRANSFERABILITY: " transferability "\nQUERY-SPECIFIC CNS LIABILITIES: " audit_line "OPPOSITE-LABEL COUNTERFACTUAL: " audit_line "THRESHOLD DECISION: " threshold_decision "\nDECISION RATIONALE: " audit_line
+evidence_direction ::= "supports pass" | "supports fail" | "mixed" | "absent"
+transferability ::= "high" | "moderate" | "low"
+threshold_decision ::= "pass" | "fail"
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- elif task == "bioavailability_ma" %}root ::= reasoning final_calibration "</think>\n" answer
+reasoning ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]{1,20480}
+final_calibration ::= "\nFINAL CALIBRATION\nCLOSEST TRANSFERABLE DIRECT OUTCOME: " oral_direction "\nHIGH GATE (met only when that outcome supports F >= 20% and query liabilities do not override it): " gate_status "\nQUERY-LIABILITY OVERRIDE: " liability_override "\nOPPOSITE-LABEL COUNTERFACTUAL: " audit_line "THRESHOLD DECISION: " threshold_decision "\nDECISION RATIONALE: " audit_line
+oral_direction ::= "high" | "low" | "mixed" | "absent"
+gate_status ::= "met" | "not met"
+liability_override ::= "toward high" | "toward low" | "none"
+threshold_decision ::= "high" | "low"
+audit_line ::= [^<\r\n]{1,3000} "\n"
+answer ::= [^\x00-\x08\x0B\x0C\x0E-\x1F]+{%- else %}{{ unsupported_progressive_task }}{% endif %}

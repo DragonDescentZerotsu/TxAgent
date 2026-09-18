@@ -1,0 +1,48 @@
+# Task
+Endpoint: {{ task.endpoint_name }}
+Positive: {{ task.positive_prediction }}
+Negative: {{ task.negative_prediction }}
+Instructions:
+{% for instruction in task.task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if prepared.task in ["bbb_martins", "bioavailability_ma"] and prepared.level in [2, 3, 4] %}
+# PITFALLS
+{% if prepared.task == "bbb_martins" and prepared.level == 2 %}
+- CNS efficacy, behavior, biomarkers, or adverse effects are access proxies, not direct BBB measurements. Peripheral mechanisms can mimic central activity, while no effect can reflect insufficient potency or exposure.
+- Prefer evidence tied to a central target or compartment with interpretable systemic dose, exposure, and timing; downgrade nonspecific symptoms or disease efficacy.
+- Route, species, prodrugs, and active metabolites can dominate the observation; do not transfer their effect to the parent query without support.
+{% elif prepared.task == "bbb_martins" and prepared.level == 3 %}
+- PAMPA, epithelial-cell, and predicted permeability are assay-specific proxies for passive entry, not measurements of in-vivo brain exposure.
+- Do not compare raw Pe or Papp values across different units, pH, concentrations, membranes, or controls; prefer quantitative measurements with assay calibration.
+- Passive permeability omits efflux, influx, binding, metabolism, and formulation. A high value does not ensure CNS access, and a low value does not prove failure.
+{% elif prepared.task == "bbb_martins" and prepared.level == 4 %}
+- Keep transporter substrate, non-substrate, inhibitor, inducer, and directional-permeability evidence distinct; inhibition potency does not show that the molecule is transported.
+- Efflux ratios depend on cell line, transporter expression, concentration, recovery, and controls; prefer bidirectional assays with inhibitor or knockout confirmation.
+- A result for one transporter cannot establish overall BBB access; species differences, other transporters, passive permeability, and unbound exposure still matter.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 2 %}
+- This level is nondirect: wording such as bioavailability, relative F, estimated F, intraperitoneal comparisons, or qualitative "poor" does not by itself establish absolute oral F.
+- Distinguish fraction absorbed (Fa) from absolute F; Fa omits intestinal and hepatic first-pass loss.
+- Prefer valid dose-normalized oral-versus-IV comparisons in the same species and study with clearly specified formulations; otherwise preserve uncertainty around the 20% threshold.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 3 %}
+- Oral AUC, Cmax, plasma concentrations, or time-course data alone do not establish absolute bioavailability or whether F is at least 20%.
+- Do not equate high or low systemic exposure with high or low absolute oral bioavailability. Exposure also depends on oral dose, formulation, clearance, sampling, and first-pass effects.
+- Prefer explicitly reported absolute F or a valid dose-normalized oral-versus-IV comparison. Otherwise treat L3 as indirect contextual evidence and preserve uncertainty.
+{% elif prepared.task == "bioavailability_ma" and prepared.level == 4 %}
+- Solubility, dissolution, permeability, and fraction absorbed constrain absorption but omit intestinal and hepatic first-pass loss; they cannot alone establish absolute F.
+- Do not transfer formulation-enhanced results from micelles, nanoparticles, surfactants, food, or special pH conditions to an unformulated query.
+- Compare values only across compatible assays, units, conditions, and species. Human fraction absorbed is stronger than in-vitro uptake, but neither is automatically absolute F.
+{% endif %}
+{% endif %}
+# Query molecule
+SMILES: {{ prepared.query_smiles }}{% if prepared.condition_sentence %}
+
+# Query condition
+Condition: {{ prepared.condition_sentence }}{% endif %}
+
+# Candidate experimental evidence
+{% for molecule in molecules %}
+## Molecule {{ loop.index }}
+SMILES: {{ molecule.smiles }}
+Morgan similarity: {{ molecule.morgan_similarity }}
+{% for record in molecule.records %}{{ record }}
+{% endfor %}{% endfor %}

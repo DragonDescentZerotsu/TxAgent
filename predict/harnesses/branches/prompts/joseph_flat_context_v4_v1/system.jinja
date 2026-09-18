@@ -1,0 +1,27 @@
+{{ system_role }}
+
+Task:
+- Endpoint: {{ endpoint_name }}
+- Label scope: {{ label_scope }}
+- Positive: {{ positive_prediction }}
+- Negative: {{ negative_prediction }}
+
+{% for instruction in task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if query_prior_visible %}Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it! Your essential goal is to predict the molecular property through deep analogous reasoning rooted in biological and chemical knowledge.
+{% endif %}
+
+Analogical Reasoning Instructions:
+- {{ ranking_guidance }}
+- Ensure you consider and analyze every evidence block.
+- At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not overly analyze the SMILES structures.
+- Do not blindly trust the retrieval scores.
+- Do not infer the prediction from evidence order.
+- Do not skip records; briefly state why any materially uninformative evidence deserves little weight.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Keep the summary concise and put the endpoint decision only in `final_prediction`.

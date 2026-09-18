@@ -1,5 +1,30 @@
 # Prediction package rules
 
+## Active data ownership
+
+Active data lives with its semantic owner: gold-bound data under
+`data/gold_labels/<Task>/<version>/`, evidence data under its task/release, and
+shared reusable caches under `data/caches/`. `data/artifacts/` is audit-only and
+must not be a required build or runtime input; complete retired products belong
+under `data/legacy/`. Do not add compatibility symlinks.
+
+The evidence-library pipeline owns scientific level assignment. Preserved
+gold-version mappings live under `data/gold_labels/<Task>/level_mappings/<version>/`.
+BBB and Bioavailability runtime consumers use the active release-owned
+`data/evidence_libraries/<task>/<release>/level_mapping/`; Ames, DILI,
+Carcinogens, and Skin keep their gold-owned mappings until reviewed replacements.
+Voter membership may validate L1 coverage but must never derive or rewrite levels.
+Corrections and publication belong to the evidence-library pipeline and must use
+reviewed UID decisions with pinned input hashes.
+
+Node-local `/local` may hold active working or staging state, including a running
+job's reconstructable or resumable work, but it is never durable or canonical.
+When the writer finishes, copy or move the closed tree to `/vast`, validate and
+publish the `/vast` copy, then remove local staging. Never report work as durable,
+complete, or published while it exists only under `/local`. If migration is needed
+before completion, stop at a flushed boundary before copying and resume only after
+the `/vast` copy validates.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy
@@ -42,7 +67,7 @@ scheduling, checkpoints, and traces.
   compact artifacts; and `features.py` owns retrieval feature backends.
 - `llm_io/` contains only model-visible evidence/query contracts and
   response-validation used by both universes.
-- `llm_engine/` owns OpenAI-compatible transport and endpoint profiles.
+- `api_client/` owns OpenAI-compatible transport and endpoint profiles.
 - `tools/`, `traces/`, and `utils/` contain the narrowly named runtime support
   indicated by their package names.
 

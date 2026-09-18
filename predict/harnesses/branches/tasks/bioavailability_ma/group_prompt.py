@@ -27,7 +27,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from predict.llm_io.evidence import evidence_for_llm
 from predict.llm_io.response import validated_branch_content
-from predict.harnesses.branches.assay_transfer_prompt import (
+from predict.harnesses.branches.prompt import (
     public_assay_transfer_families,
     public_assay_transfer_score,
 )

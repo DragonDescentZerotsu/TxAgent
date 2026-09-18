@@ -1,0 +1,52 @@
+{
+  "version": "reranked_progressive_l1_simple_v17",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_l1_simple_v14",
+  "parent": "reranked_progressive_l1_simple_v16",
+  "status": "unevaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": true,
+    "retrieval_scores": true,
+    "tools": false,
+    "user_template": "user.jinja",
+    "claim_provenance": "derived_v2",
+    "reasoning_transport": "sglang_tokenized_completion.v1",
+    "reasoning_grammar_template": "reasoning.gbnf.jinja",
+    "prompt_modifiers": {
+      "no_scores": {
+        "hide_retrieval_scores": true,
+        "runtime": {
+          "retrieval_scores": false
+        },
+        "instruction": "Retrieval scores and panel ranks are intentionally omitted in this ablation. Use the experimental records themselves; do not infer an unreported numerical weight from their ordering."
+      },
+      "no_smiles": {
+        "hide_evidence_smiles": true,
+        "instruction": "Evidence-molecule SMILES are intentionally omitted in this ablation. Use the available experimental records and retrieval metadata; do not treat the omitted structures themselves as missing experimental evidence."
+      },
+      "no_query_smiles": {
+        "hide_query_smiles": true,
+        "instruction": "The query SMILES is intentionally omitted in this ablation. Do not identify the query or reconstruct its structure from the remaining context. Absence of direct experimental measurements for the query remains a valid evidence gap."
+      },
+      "no_query_prior": {
+        "hide_query_prior": true,
+        "runtime": {
+          "query_prior": false
+        },
+        "instruction": "No query-property prior is supplied in this ablation. Treat earlier references to a supplied prior as inapplicable and base the prediction on the remaining visible query and evidence information and experimental records."
+      }
+    }
+  },
+  "changes": [
+    "Replace rich equal-form molecule paragraphs with a compact transferability and evidence-direction screen for every visible molecule and its records.",
+    "Require global evidence-weighting, endpoint-threshold, and decision-rationale sections after the molecule screens.",
+    "Keep retrieval, task contracts, final JSON schema, and no-query-prior visibility unchanged."
+  ],
+  "historical_predictions_reused": false,
+  "created_at": "2026-09-12T03:00:00-04:00"
+}

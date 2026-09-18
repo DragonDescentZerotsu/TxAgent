@@ -1,0 +1,27 @@
+{
+  "version": "reranked_progressive_l1_simple_v8",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "asset_parent_version": "reranked_progressive_v8",
+  "parent": "reranked_progressive_v8",
+  "status": "pilot_candidate",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma"
+  ],
+  "runtime": {
+    "max_level": 1,
+    "query_prior": false,
+    "tools": false,
+    "user_template": "user.jinja",
+    "claim_provenance": "derived_v1"
+  },
+  "changes": [
+    "Retain the v7 claim-level provenance contract and derived state arrays.",
+    "Make evidence-direction rules task-specific so BBB accepts direct qualitative CNS-access evidence while oral bioavailability remains threshold-numeric.",
+    "Hide query and evidence SMILES in every ranking mode so assay-transfer versus Morgan changes only retrieval, score semantics, and instructions."
+  ],
+  "historical_predictions_reused": false,
+  "parent_version": "reranked_progressive_l1_simple_v7",
+  "cloned_at": "2026-09-10T10:31:55-04:00",
+  "cloned_from_run": "bioavailability_ma/progressive_assay-transfer_assay-transfer-trained_records50/2026-09-10_06-46"
+}

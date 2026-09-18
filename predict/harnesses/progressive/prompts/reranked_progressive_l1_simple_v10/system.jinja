@@ -1,0 +1,36 @@
+{% set prompt %}
+{{ system_role }}
+
+Task:
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it!
+
+Your essential goal is to predict the molecular property through analogous reasoning.
+
+Analous Reasoning Instructions:
+{% if mode == 'assay-transfer' %}- The assay-transfer score is the supplied measure of how applicable a molecule's evidence is to the query. It is not a structural-similarity score.
+{% elif mode == 'morgan' %}- Use the Morgan similarity score to judge how strongly each evidence molecule's experimental results transfer to the query, along with your own chemistry knowledge.
+{% else %}- Use the transfer score to judge how strongly each evidence molecule's experimental results transfer to the query, along with your own chemistry knowledge.
+{% endif %}
+- Since we have a scores for how much each evidence transfers to the query, your main reasoning should be focused on how that evidence informs that property of interest given its transferrability.
+
+Example:
+
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not analyze the SMILES structure beyond what is obvious.
+- Do not override the transfer score of the evidence unless you have very strong reasons to.
+
+Output:
+For each experimental-evidence, create one representative card per claim. Set each claim's `evidence_role` to `supportive` when it supports your prediction or `contradictory` when it argues against it.
+
+Return exactly one valid JSON object matching the requested schema. Keep claims and the decision summary concise. Cite records by their short C-number.
+{% endset %}
+{{ prompt | trim | tojson }}

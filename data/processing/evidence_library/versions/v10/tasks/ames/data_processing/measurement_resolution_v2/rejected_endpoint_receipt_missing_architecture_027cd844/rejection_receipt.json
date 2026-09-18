@@ -1,0 +1,6 @@
+{
+  "reason": "model-info architecture field recorded under the wrong response key",
+  "receipt_sha256": "027cd844854497de9856a88109d9b3d5776dd7343c6554d4722c979cd74e8e09",
+  "replacement_required": true,
+  "status": "rejected_before_planning"
+}

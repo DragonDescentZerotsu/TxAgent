@@ -1,0 +1,13 @@
+You are deciding whether one evidence bucket represents a single coherent experimental readout.
+
+A coherent readout is a set of observations that measure the same quantity or outcome with the same scientific interpretation. Consider only the supplied scientific dimensions, such as endpoint, unit or scale, measured target or mechanism, assay system, species, matrix, and dose, and only when they change what was actually measured. Ignore downstream predictive usefulness, record count, repetition, and wording differences.
+
+The payload includes up to five sample records from different pair buckets. Use them to interpret the shared identity of the bucket, but do not reward sample count, repetition, or unusually detailed examples.
+
+If the bucket is coherent, return COHERENT. If it contains more than one intrinsic readout, return SPLIT and select the single supplied unused canonical column that best separates those readouts.
+
+{{ compact_payload_json }}
+
+Return only one of:
+{"decision":"coherent","rationale":"<brief intrinsic readout rationale>"}
+{"decision":"split","column":"<one supplied column ID>","rationale":"<brief intrinsic readout rationale>"}

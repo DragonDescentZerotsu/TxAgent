@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 from tools.chembl_tool.common.task_workflows import global_prompt_pool as pool
 from predict.harnesses.branches import runtime as stages
-from predict.harnesses.branches.batch import (
+from predict.harnesses.branches.runner import (
     BatchConfig,
     BatchItem,
     PreparedBatch,
@@ -283,6 +283,52 @@ def test_global_pool_enqueues_final_when_group_dependency_completes(
     assert failed == []
     assert executed == [("group", "Mechanism.a"), ("final", "")]
     assert finalized == [{"query_index": 0, "status": "ok"}]
+
+
+def test_global_pool_passes_one_shared_client_to_every_stage(monkeypatch, tmp_path):
+    prepared = PreparedBatch(
+        config=_config(),
+        args=SimpleNamespace(skip_existing=True, final_only_source_batch=""),
+        batch_id="condition",
+        batch_dir=tmp_path / "condition",
+        logs_dir=tmp_path / "condition" / "logs",
+        batch_run_root=tmp_path / "condition" / "runs",
+        items=[BatchItem(0, {"drug": "CC", "Y": 1})],
+        manifest={},
+    )
+    state = pool.StageState(
+        prepared=prepared,
+        item=prepared.items[0],
+        run_id="condition_idx00000",
+        run_dir=prepared.batch_run_root / "condition_idx00000",
+        retrieval={},
+        expected_group_ids=(),
+    )
+    shared_client = object()
+    seen = []
+    monkeypatch.setattr(pool, "collect_completed_item", lambda *args: None)
+    monkeypatch.setattr(pool, "load_stage_state", lambda *args: state)
+    monkeypatch.setattr(
+        pool, "ready_stage_jobs", lambda current: [pool.StageJob(current, "final")]
+    )
+    monkeypatch.setattr(
+        pool,
+        "execute_stage",
+        lambda job, client: seen.append((job.stage, client)) or {"status": "ok"},
+    )
+    monkeypatch.setattr(
+        pool,
+        "collect_stage_result",
+        lambda current: {"query_index": current.item.index, "status": "ok"},
+    )
+    monkeypatch.setattr(pool, "finalize_batch", lambda *args: 0)
+
+    failed = pool.run_prepared_prompt_pool(
+        {"condition": prepared}, max_workers=2, stage_client=shared_client
+    )
+
+    assert failed == []
+    assert seen == [("final", shared_client)]
 
 
 def test_fresh_pool_item_runs_retrieval_only_before_prompt_stages(
