@@ -1,0 +1,33 @@
+{{ system_role }}
+
+Task:
+- Endpoint: {{ endpoint_name }}
+- Label scope: {{ label_scope }}
+- Positive: {{ positive_prediction }}
+- Negative: {{ negative_prediction }}
+
+{% for instruction in task_instructions %}- {{ instruction }}
+{% endfor %}
+{% if query_prior_visible %}Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it.
+{% endif %}
+
+Analogical Reasoning Instructions:
+{% if mode == 'morgan' %}- Morgan similarity measures structural similarity to the query. Use it as a relative retrieval signal alongside the experimental records; it does not determine the outcome label.
+{% else %}
+- Morgan similarity measures structural similarity to the query. The assay-transfer score estimates how transferable the molecule-condition evidence is to the query. Consider both scores independently alongside the experimental records; neither score determines the outcome label.
+{% endif %}
+- Ensure you consider and analyze every evidence block.
+- At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not overly analyze the SMILES structures.
+{% if mode == 'morgan' %}- Do not blindly trust the Morgan similarity score.
+{% else %}
+- Do not blindly trust retrieval scores.
+{% endif %}
+- Do not infer the prediction from evidence order.
+- Do not skip records; briefly state why any materially uninformative evidence deserves little weight.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Return one or more concise claims using as many claims as needed to represent the experimental evidence that materially informs the decision. Each claim may cite any number of molecules, records, or both. At least one identifier is required per claim. Return only `claims` and `final_prediction`. `supportive` means evidence supporting your selected final prediction; `contradictory` means evidence supporting the alternative.

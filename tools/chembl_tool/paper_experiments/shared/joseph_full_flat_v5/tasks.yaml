@@ -1,0 +1,244 @@
+bbb_martins:
+  prompt_profile: meaningful_cns_access_v1
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons
+    via analogies, taking evidence from related molecules to support your prediction.
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+  task_instructions:
+  - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient
+    access.
+  - Meaningful access does not require ideal passive diffusion, high unbound brain
+    exposure, or absence of every efflux signal.
+  - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion,
+    influx, or prodrug evidence.
+  - Do not treat one physicochemical liability or repeated records as independent
+    proof of failure.
+bioavailability_ma:
+  prompt_profile: f20_evidence_calibrated_v2
+  system_role: You are a chemist expert in oral bioavailability and you reason via
+    analogies, taking evidence from related molecules to support your prediction.
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+  task_instructions:
+  - Predict pass when F >= 20% is better supported and fail when F < 20% is better
+    supported.
+  - Keep evidence direction separate from transferability; low transferability lowers
+    weight but does not reverse direction.
+  - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+  - Predict fail only when affirmative threshold-relevant evidence supports it, not
+    from generic drug-likeness concerns alone.
+  - Compare directness, endpoint match, conditions, transferability, and uncertainty
+    without counting repeated records independently.
+skin_reaction:
+  prompt_profile: skin_sensitization_contact_allergy.v2
+  system_role: 'You are a senior skin-sensitization/contact-allergy reasoning model.
+    Integrate the supplied branches into that exact binary endpoint. '
+  endpoint_name: skin sensitization or contact allergy
+  label_scope: skin_sensitization_contact_allergy.v2
+  task_instructions:
+  - Predict pass for risk and fail for no_risk under the task definition.
+  - Only direct sensitization outcomes and transferable, coherent sensitization AOP
+    evidence count as experimental evidence for the binary label.
+  - Treat structural haptenation/activation analysis as a prior, not as a substitute
+    for experimental sensitization evidence.
+  - Phototoxicity, irritation/corrosion, generic local injury, dermal toxicity, and
+    skin-cell cytotoxicity are out of scope and cannot support either prediction.
+  - Skin permeability, absorption, and retention are exposure context only and cannot
+    support either prediction.
+  - Do not interpret missing sensitization evidence or absence of a simple structural
+    alert as proof of no_risk.
+  - Do not count repeated records and cards as independent evidence.
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+ames:
+  prompt_profile: ames_bacterial_reverse_mutation.v1
+  system_role: Assess condition-specific bacterial reverse-mutation evidence.
+  endpoint_name: bacterial reverse mutation under the exact reported strain panel
+    and metabolic activation condition
+  label_scope: ames_bacterial_reverse_mutation.v1
+  task_instructions:
+  - Predict pass for positive and fail for negative under the task definition.
+  - Predict the bacterial reverse-mutation result only under the query's exact reported
+    strain panel and metabolic activation condition; do not invent missing strains
+    or activation conditions.
+  - A negative result for one strain or a limited panel must not imply a global negative
+    across other strains or activation conditions.
+  - A panel-positive label means at least one reported positive response within that
+    exact panel. both_reported is one pooled activation summary; it does not assert
+    the same result in each activation arm.
+  - Other genetic-damage endpoints, DNA damage and genotoxicity mechanisms may support,
+    contradict, or inform an Ames prediction when the evidence is sufficiently strong
+    and transferable to the query's structure, strain panel and activation condition.
+    New direct Ames data are not required. Explain the mechanistic link and its limitations;
+    distinguish the resulting prediction from a measured Ames outcome.
+  - Nonvoter bacterial outcomes retain their source qualifications; their family membership
+    does not establish a gold-voting result.
+  - Predictions, missing context and mixed or equivocal directions remain qualified
+    evidence at their endpoint family. Do not treat predictions as measured outcomes
+    or invent missing experimental details.
+  - Assay application, protocol and analytical records may describe what was tested
+    without reporting an effect; do not infer an outcome from assay presence alone.
+    Broad redox or cytogenetic context may have low transferability to the requested
+    bacterial condition.
+  - 'Respect the reported molecule role: a modifier/protectant, measured lesion, metabolite,
+    probe or comparator is not automatically the agent whose own mutagenicity was
+    tested. Preserve the affected molecule and co-treatment context when judging relevance
+    to the query.'
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+dili:
+  prompt_profile: dili_conditioned_or_source_molecule_outcome.v1
+  system_role: Assess human drug-induced liver injury using molecular evidence.
+  endpoint_name: clinically meaningful human drug-induced liver injury
+  label_scope: dili_conditioned_or_source_molecule_outcome.v1
+  task_instructions:
+  - Predict pass for dili_risk and fail for no_dili_risk under the task definition.
+  - Predict clinically meaningful human drug-induced liver injury under the query's
+    reported exposure and population when these are supplied.
+  - When the query has no reported external condition, assess the molecule-level DILI
+    endpoint without inventing a dose, route, population or duration. Missing conditions
+    do not imply a universal claim across all exposure settings.
+  - Separate observed human DILI from animal liver injury, hepatocyte toxicity, generic
+    cytotoxicity, mechanistic liabilities and model predictions. Those endpoints are
+    not interchangeable measurements.
+  - Evidence from hepatic cell function, bile-acid transport, bioactivation, mitochondria,
+    immune interactions and cellular stress may change the prediction when the mechanistic
+    link and structural transferability are strong. Explain their limitations; new
+    direct outcome evidence is not required for a justified prediction.
+  - Preserve the tested molecule's role and co-exposure context. A protectant, modifier,
+    metabolite or probe is not automatically the substance causing the reported injury.
+  - A negative clinical observation applies to its reported population and exposure;
+    absence of published reports or an isolated negative mechanism assay does not
+    establish absence of DILI risk.
+  - Keep mixed outcomes, predictions, missing context and uncertainty explicit. Family
+    placement does not establish a new experiment or independent evidence support.
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory
+carcinogens:
+  prompt_profile: carcinogens_starling_only_five_organism_groups.v1
+  system_role: Assess chemical carcinogenic hazard using molecular evidence.
+  endpoint_name: source-supported carcinogenicity in the reported organism group
+  label_scope: carcinogens_starling_only_five_organism_groups.v1
+  task_instructions:
+  - Predict pass for positive and fail for negative under the task definition.
+  - Predict source-supported carcinogenicity in the query's reported organism group.
+    Rodent pools rats, mice and other explicitly identified rodents; human, dog, monkey
+    and rabbit remain separate.
+  - 'The benchmark pools sex, strain, route, dose and duration within each organism
+    group. Source records retain these restrictions: a pooled label is not a claim
+    about every exposure or every member of the group. Use the balance of relevant
+    evidence and explain transfer limitations.'
+  - When the query has no reported external condition, assess the molecule-level carcinogenicity
+    endpoint without inventing a species, dose, route or duration. Do not silently
+    turn an unspecified molecule-level label into a human-only cancer conclusion.
+  - Separate observed tumor or epidemiological outcomes from cell transformation,
+    genotoxicity, DNA damage, molecular mechanisms and model predictions; these are
+    not interchangeable measurements.
+  - Transformation, DNA damage and repair, reactive metabolism, oxidative injury,
+    epigenetic changes, disrupted growth restraint and regenerative or receptor-mediated
+    proliferation may change the prediction when transferable. Explain the mechanistic
+    link and limitations; new direct tumor data are not required for a prediction.
+  - A negative result at one tumor site, for malignant tumors alone, or for one mechanistic
+    assay does not establish an overall negative carcinogenicity outcome. Preserve
+    species and exposure limitations of both positive and negative observations.
+  - Distinguish a carcinogenic test agent from a protectant, treatment, initiator,
+    promoter, co-carcinogen, metabolite or probe. Anticancer efficacy and killing
+    tumor cells are not proof of carcinogenicity.
+  - Preserve prediction status, conflicting outcomes and missing context. Family placement
+    does not create an independent study or establish that a mechanism caused a measured
+    tumor outcome.
+  - 'The indexed neighbor is distinct from the query. Bind each observation to the
+    actually tested molecule or material and its role. A mixed passage may describe
+    several agents, including the query: distinguish those observations explicitly.
+    Similarity or a shared scaffold does not make an analog experiment query-specific.
+    Explain whether the structural features responsible for the effect are retained
+    in the query, for both positive and negative transfer. Do not guess the query
+    name from its structure.'
+  - Predict source-supported carcinogenicity in the reported organism group using
+    the task definition. Distinguish observations, source assertions, predictions
+    and mechanistic inferences. Transferable mechanisms may support a prediction without
+    new direct tumor data; do not describe a hypothesis as an observed tumor outcome.
+  - 'State what was compared: test agent alone, challenge plus modifier, or a mixture/material.
+    No reduction of challenge-induced damage means no detected protection, not absence
+    of damage. Inhibiting one stimulated proliferation pathway does not establish
+    an overall negative; short-term normal proliferation does not itself establish
+    tumor promotion. Assess scoped positive and negative findings symmetrically without
+    requiring universal safety.'
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields:
+  - claims
+  - final_prediction
+  required_json_schema:
+    claims:
+    - claim: concise evidence-grounded statement
+      molecule_ids:
+      - Molecule N
+      record_ids:
+      - Record N-N
+      evidence_role: supportive | contradictory

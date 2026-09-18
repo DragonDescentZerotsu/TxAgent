@@ -1,0 +1,43 @@
+Query molecule
+SMILES: {{ query.canonical_smiles }}{% if query.get('molecule_description') %}
+Description: {{ query.molecule_description }}{% endif %}{% if query.get('external_condition') %}
+
+Query condition
+Condition: {{ query.external_condition }}{% endif %}{% if query_prior %}
+
+# Query-property prior
+This is a physicochemical prior.
+
+{% for name, value in query_prior.items() if name != 'exact_chembl_evidence_assessment' %}{{ name | replace('_', ' ') }}: {{ value | tojson }}
+{% endfor %}{% endif %}
+
+# Experimental evidence
+{% for section in sections %}{% if section.heading %}
+# {{ section.heading }}{% if section.description %}
+{{ section.description }}{% endif %}
+{% endif %}{% for molecule in section.molecules %}
+## Molecule {{ molecule.number }}
+SMILES: {{ molecule.canonical_smiles }}{% if molecule.get('molecule_description') %}
+Description: {{ molecule.molecule_description }}{% endif %}{% if molecule.get('morgan_similarity') is not none %}
+Morgan similarity: {{ molecule.morgan_similarity }}{% endif %}{% if molecule.get('transfer_likelihood') is not none %}
+Transfer likelihood: {{ molecule.transfer_likelihood }}{% endif %}
+{% for card in molecule.evidence_cards %}
+Record {{ card.card_id }}
+Level: {{ card.level }}
+Evidence family: {{ card.evidence_family }}{% if card.get('selected_condition') %}
+Evidence condition: {{ card.selected_condition }}{% endif %}{% if card.get('transfer_likelihood') is not none %}
+Transfer likelihood: {{ card.transfer_likelihood }}{% endif %}{% if card.get('endpoint') %}
+Endpoint: {{ card.endpoint }}{% endif %}{% if card.get('reported_value') is not none %}
+Result: {{ card.reported_value }}{% if card.get('reported_unit') %} {{ card.reported_unit }}{% endif %}{% endif %}{% if card.get('assay_context') %}
+Assay context: {{ card.assay_context }}{% endif %}{% if card.get('species') %}
+Species: {{ card.species }}{% endif %}{% if card.get('qualifying_conditions') %}
+Conditions: {{ card.qualifying_conditions | tojson }}{% endif %}{% if card.get('experimental_details') %}
+Experimental details:
+{% for name, value in card.experimental_details.items() %}  - {{ name }}: {{ value }}
+{% endfor %}{% endif %}{% if card.get('extra_details') %}
+Additional details: {{ card.extra_details | tojson }}{% endif %}{% if card.get('support_text') %}
+Reported evidence: {{ card.support_text }}{% endif %}
+{% endfor %}{% endfor %}{% endfor %}
+
+# Required JSON shape
+{{ required_json_schema | tojson(indent=2) }}

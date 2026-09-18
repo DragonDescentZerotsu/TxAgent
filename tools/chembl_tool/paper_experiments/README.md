@@ -12,6 +12,13 @@ DILI 新版 prompt-v5 源修复 replay 与历史 retrieval-review v5 分开登�
 `current_conditioned_results.json` 的对应 suite 读取。旧混合标签、旧 gold 和清理中间轮次
 只作历史参考。源整合本身不产生模型结果；另行登记的 targeted replay 保留实际输入、请求和复用凭据。
 
+## Shared prompts and plotting points
+
+[Joseph handoff](shared/README.md) contains six-task full-flat v5 prompt assets,
+small verified validation/test CSV tables, and the canonical plotter command.
+The portable CSV mode needs no private inference traces. Add results by extending
+the CSV and its `curve_settings` metadata.
+
 ## Paper scope
 
 The retained paper matrix has six result families and two visibility controls:

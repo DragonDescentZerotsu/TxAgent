@@ -2448,7 +2448,7 @@ def plot_conditioned_progressive_configuration_comparison(
          "Whiskers show ±1 sample SD across repeated runs (not a confidence interval). Single-run curves have no estimated uncertainty interval."
          if cross_model and performance_only else
          "Each level uses identical cumulative evidence and tools; full-flat reasons independently, "
-         f"progressive carries prior state.\nNone is shared. "
+         "progressive carries prior state.\nNone is shared. "
          + (f"Right-side baselines use the same {evaluation_subset} cohort; KNN references are train-only.\n"
             if has_baselines else "Matched baselines have not been included.\n")
          + ("SD describes run-to-run variation with frozen inputs, not a confidence interval. None and baselines are single fixed references."
@@ -2888,8 +2888,157 @@ def plot_assay_retrieval_curves(
     plt.close(fig)
 
 
+def plot_baseline_curves_csv(points: Path, metadata: Path, analysis_dir: Path, *,
+                            output_stem: str, macro_f1_limits=None) -> dict[str, str]:
+    """Portable verified-score input; no private prediction directories required."""
+    with points.open(newline='') as handle:
+        rows = list(csv.DictReader(handle))
+    seen = set()
+    for row in rows:
+        key = (row['task'], row['method'])
+        if key in seen:
+            raise ValueError(f'duplicate task/method: {key}')
+        seen.add(key)
+        row['n'] = int(row['n'])
+        for metric in ('macro_f1', 'accuracy'):
+            row[metric] = float(row[metric])
+            if not math.isfinite(row[metric]) or not 0 <= row[metric] <= 1:
+                raise ValueError(f'invalid {metric}: {key}')
+    receipt = json.loads(metadata.read_text())
+    receipt['point_source'] = {'path': str(points), 'sha256': sha256_file(points)}
+    return plot_baseline_curve_points(rows, receipt, analysis_dir,
+        output_stem=output_stem, macro_f1_limits=macro_f1_limits)
+
+
+
+def plot_baseline_curve_points(rows, receipt, analysis_dir, *, output_stem, macro_f1_limits=None):
+    """Shared renderer for full trace audits and portable CSV handoffs."""
+    tasks = list(receipt["conditions"])
+    series = list((
+        ("Neighbor-fill", ("none", "direct_fill", "both_fill"), "#0072B2", "o", "-"),
+        ("Molecule-cap", ("none", "direct_cap", "both_cap"), "#D55E00", "s", "-"),
+        ("Group-balanced", ("none", "direct_cap", "both_group"), "#009E73", "^", "--"),
+    ))
+    if receipt.get('curve_settings'):
+        colors = ('#0072B2', '#D55E00', '#009E73', '#CC79A7', '#E69F00', '#56B4E9')
+        series = [(name, methods, colors[i % len(colors)], ('o', 's', '^', 'D')[i % 4], '-' if i != 2 else '--')
+                  for i, (name, methods) in enumerate(receipt['curve_settings'].items())]
+        if any(len(methods) != 3 for _, methods, *_ in series):
+            raise ValueError('each curve must contain None, Direct and Indirect method IDs')
+    scores = {(row["task"], row["method"]): row["macro_f1"] for row in rows}
+    required = {method for _, methods, *_ in series for method in methods} | {m for m, _, _ in CONDITIONED_BASELINES}
+    for task in tasks:
+        if required - {r['method'] for r in rows if r['task'] == task}:
+            raise ValueError(f'missing curve or ML baseline points for {task}')
+        if any(r['n'] != receipt['conditions'][task]['n'] for r in rows if r['task'] == task):
+            raise ValueError(f'mixed cohort sizes for {task}')
+    values = list(scores.values())
+    limits = macro_f1_limits or (
+        max(0, math.floor((min(values) - 0.025) * 20) / 20),
+        min(1, math.ceil((max(values) + 0.025) * 20) / 20),
+    )
+    if not (0 <= limits[0] <= min(values) <= max(values) <= limits[1] <= 1):
+        raise ValueError("Macro-F1 limits must contain every plotted value within [0, 1]")
+    columns = min(3, len(tasks))
+    grid_rows = math.ceil(len(tasks) / columns)
+    fig, axes = plt.subplots(
+        grid_rows, columns, figsize=(6.2 * columns, 3.6 * grid_rows + 1.6),
+        sharey=True, squeeze=False,
+    )
+    baseline_x = [3.15 + 0.62 * i for i in range(len(CONDITIONED_BASELINES))]
+    for ax, task in zip(axes.flat, tasks):
+        ax.axvspan(2.65, baseline_x[-1] + 0.4, color="#F4F4F4", zorder=0)
+        ax.axvline(2.65, color="#BBBBBB", linewidth=0.8)
+        for label, methods, color, marker, linestyle in series:
+            ax.plot(
+                [0, 1, 2], [scores[task, method] for method in methods],
+                color=color, marker=marker, linestyle=linestyle, linewidth=2,
+                markersize=6, markerfacecolor="white" if linestyle == "--" else color,
+                label=label, zorder=3,
+            )
+        none_methods = {methods[0] for _, methods, *_ in series}
+        if len(none_methods) == 1:
+            ax.plot(0, scores[task, next(iter(none_methods))], "o", color="#444444", markersize=6, zorder=4)
+        for x, (method, _, _) in zip(baseline_x, CONDITIONED_BASELINES):
+            marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
+            ax.plot(x, scores[task, method], marker=marker, linestyle="none",
+                    markerfacecolor=face, markeredgecolor=edge, markersize=7, zorder=3)
+        ax.set_title(
+            f"{CONDITIONED_TASK_SPECS[task][0]}  ·  n = {receipt['conditions'][task]['n']}",
+            loc="left", fontsize=12, fontweight="bold", pad=22,
+        )
+        ax.text(1, 1.025, "LLM evidence", transform=ax.get_xaxis_transform(),
+                ha="center", fontsize=9, color="#666666")
+        ax.text(sum(baseline_x) / len(baseline_x), 1.025, "ML baselines",
+                transform=ax.get_xaxis_transform(), ha="center", fontsize=9, color="#666666")
+        ax.set_xticks([0, 1, 2] + baseline_x)
+        ax.set_xticklabels(
+            ["None", "Direct", "Direct +\nIndirect"]
+            + [CONDITIONED_BASELINE_TICKS[method] for method, _, _ in CONDITIONED_BASELINES],
+            fontsize=8,
+        )
+        ax.set_xlim(-0.3, baseline_x[-1] + 0.4)
+        ax.set_ylim(*limits)
+        ax.grid(axis="y", color="#E0E0E0", linewidth=0.7)
+        ax.set_axisbelow(True)
+        ax.spines[["top", "right"]].set_visible(False)
+    for ax in list(axes.flat)[len(tasks):]:
+        ax.set_visible(False)
+    for ax in axes[:, 0]:
+        ax.set_ylabel("Macro-F1", fontsize=11)
+    handles = [Line2D([0], [0], color=color, marker=marker, linestyle=style,
+                      label=label, markerfacecolor="white" if style == "--" else color)
+               for label, _, color, marker, style in series]
+    for method, label, _ in CONDITIONED_BASELINES:
+        marker, face, edge = CONDITIONED_BASELINE_STYLES[method]
+        handles.append(Line2D([0], [0], marker=marker, linestyle="none",
+                              markerfacecolor=face, markeredgecolor=edge, label=label))
+    fig.suptitle("None → Direct → Direct + Indirect", x=0.055, y=0.985,
+                 ha="left", fontsize=19, fontweight="bold")
+    subset_label = 'validation' if receipt['evaluation_subset'] == 'valid' else receipt['evaluation_subset']
+    visibility_label = ('identity visible' if receipt['visibility_mode'] == 'deployment_visible_prefetched'
+                        else 'identity blind')
+    similarity_label = ('no similarity cutoff' if receipt['min_similarity'] == 0
+                        else f"similarity ≥ {receipt['min_similarity']:g}")
+    fig.text(0.055, 0.943,
+             f"{receipt['split_scheme'].title()} {subset_label} · {similarity_label} · {visibility_label} · "
+             f"direct budget {receipt['direct_budget']} + indirect budget {receipt['indirect_budget']} records · "
+             "shared Macro-F1 scale", fontsize=10, color="#555555")
+    fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.018),
+               ncol=4, frameon=False, fontsize=9)
+    fig.text(0.055, 0.12,
+             "Each point is an independent full-flat setting. Curves use the None/Direct references specified in their metadata.\n"
+             f"Right-side ML baselines use the same {subset_label} rows. One run per setting; no uncertainty intervals. "
+             f"Recorded tool failures: {receipt['tool_failures']}.",
+             fontsize=9, color="#555555", linespacing=1.5)
+    fig.subplots_adjust(left=0.055, right=0.99, top=0.86, bottom=0.23,
+                        hspace=0.55, wspace=0.14)
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    paths = {}
+    for extension in ("png", "pdf", "svg"):
+        path = analysis_dir / f"{output_stem}.{extension}"
+        fig.savefig(path, dpi=200, facecolor="white")
+        paths[extension] = str(path)
+    plt.close(fig)
+    csv_path = analysis_dir / f"{output_stem}.csv"
+    with csv_path.open('w', newline='') as handle:
+        writer = csv.DictWriter(handle, fieldnames=['task', 'method', 'family', 'n', 'macro_f1', 'accuracy'])
+        writer.writeheader()
+        writer.writerows(rows)
+    paths['csv'] = str(csv_path)
+    receipt.update({"curve_settings": {label: methods for label, methods, *_ in series},
+                    "macro_f1_limits": limits, "scores": rows, "outputs": paths})
+    receipt_path = analysis_dir / f"{output_stem}_receipt.json"
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
+    return {**paths, "receipt": str(receipt_path)}
+
+
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--baseline-curves-csv', type=Path, help='Portable task/method score CSV.')
+    parser.add_argument('--baseline-curves-metadata', type=Path, help='Cohort/context metadata and optional curve_settings.')
     parser.add_argument(
         "--output-root",
         default=(
@@ -3049,6 +3198,13 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     output_root = Path(args.output_root)
     analysis_dir = Path(args.analysis_dir) if args.analysis_dir else output_root / "analysis"
+    if args.baseline_curves_csv:
+        if not args.baseline_curves_metadata:
+            raise ValueError('--baseline-curves-csv requires --baseline-curves-metadata')
+        paths = plot_baseline_curves_csv(args.baseline_curves_csv, args.baseline_curves_metadata, analysis_dir,
+            output_stem=args.output_stem, macro_f1_limits=tuple(args.macro_f1_limits) if args.macro_f1_limits else None)
+        print(json.dumps(paths, indent=2))
+        return 0
     if args.conditioned_progressive_config_comparison:
         configuration_roots = _parse_configuration_task_path_overrides(
             args.conditioned_progressive_config_task_root

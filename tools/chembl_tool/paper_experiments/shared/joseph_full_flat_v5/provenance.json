@@ -1,0 +1,58 @@
+{
+  "version": "joseph_full_flat_v5_adapted.v1",
+  "upstream_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
+  "status": "offline_validated_not_evaluated",
+  "supports_tasks": [
+    "bbb_martins",
+    "bioavailability_ma",
+    "skin_reaction",
+    "ames",
+    "dili",
+    "carcinogens"
+  ],
+  "label_mapping": {
+    "bbb_martins": {
+      "local_field": "bbb_prediction",
+      "pass": "pass",
+      "fail": "fail"
+    },
+    "bioavailability_ma": {
+      "local_field": "bioavailability_prediction",
+      "pass": "high",
+      "fail": "low"
+    },
+    "skin_reaction": {
+      "local_field": "skin_reaction_prediction",
+      "pass": "risk",
+      "fail": "no_risk"
+    },
+    "ames": {
+      "local_field": "ames_prediction",
+      "pass": "positive",
+      "fail": "negative"
+    },
+    "dili": {
+      "local_field": "dili_prediction",
+      "pass": "dili_risk",
+      "fail": "no_dili_risk"
+    },
+    "carcinogens": {
+      "local_field": "carcinogenicity_prediction",
+      "pass": "positive",
+      "fail": "negative"
+    }
+  },
+  "files": {
+    "system.jinja": "cc8c69665b49b8a1e35ddd5a3358439acd55a644d62adaab8d46a71e02a062d3",
+    "user.jinja": "c68a84b2ca55738e6618a73e0dc1d6c285efe46743a5e278b73716341c7127b6",
+    "tasks.yaml": "2b9f25f223c6d192aee53dbe86fb494e68b2ff4d0985466bc59837e55ad72168"
+  },
+  "task_contract_sha256": {
+    "bbb_martins": "6b269936725d993f112ec0406d515dceb687624705dd54eb4ee3fe09fd2394d9",
+    "bioavailability_ma": "c1e4ef5ab1951d5f68bc7fa712924bad810215fd0dbe19706f3a5bb8bee07932",
+    "skin_reaction": "c5eda88c8e6e611457ad3f050ffc63e025c739a3ec190aff71cfb034d6cfcb48",
+    "ames": "ca0b0fb1de292051a7ed18486e88ac56f43b787615136720017f32fc036f8477",
+    "dili": "9bcc70608674ce5a7e6b5e2678e84675dbace96c1f34ebfded93bf4df8b1e5d0",
+    "carcinogens": "efa3a0f20a40de368262ded9bf12cb8479507421f68fc6e768d965a7c37e94ae"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "conditions": {
+    "bbb_martins": {
+      "n": 393
+    },
+    "bioavailability_ma": {
+      "n": 269
+    },
+    "skin_reaction": {
+      "n": 241
+    },
+    "ames": {
+      "n": 274
+    },
+    "dili": {
+      "n": 402
+    },
+    "carcinogens": {
+      "n": 469
+    }
+  },
+  "split_scheme": "scaffold",
+  "evaluation_subset": "test",
+  "visibility_mode": "deployment_visible_prefetched",
+  "direct_budget": 50,
+  "indirect_budget": 50,
+  "min_similarity": 0.0,
+  "tool_failures": 156,
+  "curve_settings": {
+    "Neighbor-fill": [
+      "none",
+      "direct_fill",
+      "both_fill"
+    ],
+    "Molecule-cap": [
+      "none",
+      "direct_cap",
+      "both_cap"
+    ],
+    "Group-balanced": [
+      "none",
+      "direct_cap",
+      "both_group"
+    ]
+  },
+  "macro_f1_limits": [
+    0.45,
+    0.8
+  ],
+  "prompt_version": "budgeted_reasoning.v1",
+  "raw_tools_visible": true,
+  "source_csv_sha256": "5b2ae22d11201d3ac843c06e59d2387da0735959f1281ed38588c728b8971993",
+  "note": "Completed historical tool-visible baselines; not the new Joseph-aligned scaling experiment.",
+  "published_csv_sha256": "40f54b3e37e885477fe26b46f80516ba568a93b4980cc6a7d478917a70f56dae"
+}
