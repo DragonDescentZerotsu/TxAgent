@@ -1,0 +1,93 @@
+{
+  "artifact_version": "parent_pair_bucket_canonical_measurements.v1",
+  "created_at_utc": "2026-09-19T03:29:14.470247+00:00",
+  "scope": "audit_only",
+  "selection": {
+    "bucket_identifier": "pair_bucket_key",
+    "duplicate_measurements": "preserved",
+    "measurement_input_field": "canonical_measurement_text",
+    "measurement_order": "stage3_record_order",
+    "minimum_unique_parent_smiles_per_bucket": 10,
+    "null_measurements": "dropped",
+    "output_row_order": [
+      "parent_smiles",
+      "pair_bucket_key"
+    ],
+    "record_filter": "assay_transfer_eligible == true",
+    "structure_input_field": "canonical_smiles",
+    "structure_output": "normalize_molecule_identity(...).parent_smiles"
+  },
+  "status": "complete",
+  "tasks": {
+    "bbb_martins": {
+      "input": {
+        "current_path": "data/evidence_libraries/bbb_martins/CURRENT",
+        "current_value": "v10",
+        "records_path": "data/evidence_libraries/bbb_martins/v10/03_pair_buckets/records.parquet",
+        "records_sha256": "08a3fd5aced8f3f9a81fe12e8359bf0abdd929716fa7442e85fbc99712019554",
+        "stage3_manifest_path": "data/evidence_libraries/bbb_martins/v10/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "a5a5154e3c2d1f8b2fe4e25d10d5bac1d2ef4b25b7bcab764c00c3f78bc2204e"
+      },
+      "output": {
+        "distinct_input_structures": 31601,
+        "eligible_input_records": 316639,
+        "measurement_list_elements": 214182,
+        "output_rows": 74317,
+        "path": "bbb_martins_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 1765,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "c2ce2bf32990ae189a50f5130119f6696ddd9e926a2d67d03f492b93e1f5e697"
+      }
+    },
+    "bioavailability_ma": {
+      "input": {
+        "current_path": "data/evidence_libraries/bioavailability_ma/CURRENT",
+        "current_value": "v10",
+        "records_path": "data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/records.parquet",
+        "records_sha256": "ee80a43f185fdafbea599efbae147df17c579f3040498626f4c91c78c2b8f334",
+        "stage3_manifest_path": "data/evidence_libraries/bioavailability_ma/v10/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "c995aa353031ec90ef3f43e053dc51ac248153ff7e462a8e4e71c66f072c9103"
+      },
+      "output": {
+        "distinct_input_structures": 16929,
+        "eligible_input_records": 215306,
+        "measurement_list_elements": 140779,
+        "output_rows": 55901,
+        "path": "bioavailability_ma_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 1226,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "153fba36dc31d02d66728c6a109ffd9bc734f92afa06358194f52ae6a8de1d48"
+      }
+    }
+  },
+  "validations": {
+    "bbb_martins": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_is_v10": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    },
+    "bioavailability_ma": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_is_v10": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    }
+  }
+}
