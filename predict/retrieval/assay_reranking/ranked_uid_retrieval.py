@@ -298,6 +298,7 @@ def _payload(row: Mapping[str, Any], ranked: Mapping[str, Any], method: str) -> 
 def _select_assay_contrastive(
     rows: list[dict[str, Any]], contexts: Mapping[str, Mapping[str, Any]], *,
     molecule_limit: int, primary_width: int, min_contrast: int,
+    context_scores: Sequence[Mapping[str, Any]] = (),
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Rank assay scores inside a Morgan pool, widening only for label balance."""
     if primary_width not in CONTRAST_WIDTHS or min_contrast < 0:
@@ -316,8 +317,29 @@ def _select_assay_contrastive(
         raise ValueError(f"Morgan top-{primary_width} has fewer than K candidates")
     assay_key = lambda row: (int(row["assay_rank"]), str(row["item_id"]))
     selected = sorted(primary, key=assay_key)[:molecule_limit]
-    selected_ids = {str(row["item_id"]) for row in selected}
     counts = Counter(label(row) for row in selected)
+    base_by_parent = {
+        str(row.get("parent_id", row["item_id"])): row for row in rows
+    }
+    alternatives = []
+    for score in context_scores:
+        base = base_by_parent.get(str(score["parent_id"]))
+        if base is None:
+            continue
+        alternative = dict(base)
+        alternative.update({
+            "assay_context_id": str(score["context_id"]),
+            "assay_transfer_score": float(score["assay_transfer_score"]),
+            "assay_rank": int(score["assay_rank"]),
+            "assay_member_count": int(score["member_count"]),
+            "score_key": str(score["score_key"]),
+        })
+        alternatives.append(alternative)
+    candidates_by_score = alternatives or rows
+    score_key = lambda row: (
+        -float(row["assay_transfer_score"]), str(row["assay_context_id"])
+    )
+    candidate_key = score_key if alternatives else assay_key
     replacements = []
     fallback_widths = [width for width in CONTRAST_WIDTHS if width >= primary_width]
     for missing_label in (0, 1):
@@ -326,28 +348,36 @@ def _select_assay_contrastive(
             effective_width = None
             for width in fallback_widths:
                 candidates = [
-                    row for row in rows
-                    if str(row["item_id"]) not in selected_ids
-                    and int(row["morgan_rank"]) <= width
+                    row for row in candidates_by_score
+                    if int(row["morgan_rank"]) <= width
                     and label(row) == missing_label
+                    and not any(
+                        str(current["item_id"]) == str(row["item_id"])
+                        and str(current["assay_context_id"]) == str(row["assay_context_id"])
+                        for current in selected
+                    )
                 ]
                 if candidates:
-                    added = min(candidates, key=assay_key)
+                    added = min(candidates, key=candidate_key)
                     effective_width = width
                     break
             if added is None:
                 raise ValueError("Morgan top-100 cannot satisfy the requested label contrast")
-            removable = [
-                row for row in selected
-                if label(row) != missing_label and counts[label(row)] > min_contrast
-            ]
-            if not removable:
+            removed = next(
+                (row for row in selected if str(row["item_id"]) == str(added["item_id"])),
+                None,
+            )
+            if removed is None:
+                removable = [
+                    row for row in selected
+                    if label(row) != missing_label and counts[label(row)] > min_contrast
+                ]
+                if not removable:
+                    raise ValueError("Cannot satisfy the requested binary label balance")
+                removed = max(removable, key=candidate_key)
+            elif counts[label(removed)] <= min_contrast:
                 raise ValueError("Cannot satisfy the requested binary label balance")
-            removed = max(removable, key=assay_key)
-            selected.remove(removed)
-            selected.append(added)
-            selected_ids.remove(str(removed["item_id"]))
-            selected_ids.add(str(added["item_id"]))
+            selected[selected.index(removed)] = added
             counts[label(removed)] -= 1
             counts[missing_label] += 1
             replacements.append({
@@ -358,7 +388,7 @@ def _select_assay_contrastive(
                 "removed_context_id": str(removed["assay_context_id"]),
                 "removed_label": label(removed),
             })
-    selected.sort(key=assay_key)
+    selected.sort(key=candidate_key)
     return selected, {
         "morgan_primary_parent_width": primary_width,
         "morgan_fallback_parent_width": CAPACITY,
@@ -525,6 +555,24 @@ def load_candidates(
     }
     contrast_audits: dict[str, Any] = {}
     with _open(l1_database) as connection:
+        context_scores: dict[str, list[dict[str, Any]]] = {}
+        if (
+            l1_selection == "assay_transfer_contrastive"
+            and l1_document.get("l1_context_score_contract") == "l1_context_scores.v1"
+        ):
+            for query_id, rows in ranked["L1"].items():
+                parents = {str(row["parent_id"]) for row in rows}
+                placeholders = ",".join("?" for _ in parents)
+                context_scores[query_id] = [
+                    dict(row) for row in connection.execute(
+                        "SELECT * FROM context_scores WHERE benchmark_row_id=? "
+                        f"AND parent_id IN ({placeholders}) ORDER BY assay_rank,context_id",
+                        (query_id, *sorted(parents)),
+                    )
+                ]
+                candidate_contexts.update(
+                    str(row["context_id"]) for row in context_scores[query_id]
+                )
         placeholders = ",".join("?" for _ in candidate_contexts)
         contexts = {
             str(row["context_id"]): dict(row)
@@ -544,6 +592,7 @@ def load_candidates(
                         molecule_limit=molecule_limit,
                         primary_width=morgan_primary_parent_width,
                         min_contrast=min_contrast,
+                        context_scores=context_scores.get(query_id, ()),
                     )
                 )
         chosen_contexts = {

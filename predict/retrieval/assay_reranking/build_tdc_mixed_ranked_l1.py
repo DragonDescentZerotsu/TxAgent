@@ -40,7 +40,7 @@ from .score_tdc_ranked_retrieval import _prompt_task
 from .v9 import V9PromptRenderer, model_profile, reference_provenance
 
 
-PROFILE = "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v1"
+PROFILE = "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v2"
 TASKS = ("bbb_martins", "bioavailability_ma")
 SUBSETS = ("valid", "test")
 LINEAGE = "v10_3_best"
@@ -291,22 +291,51 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
         manifest = _json(manifest_path)
         database = level / manifest["database"]
         with sqlite3.connect(database) as connection:
+            connection.executescript("""
+                CREATE TABLE context_scores(
+                    benchmark_row_id TEXT NOT NULL,parent_id TEXT NOT NULL,
+                    context_id TEXT NOT NULL,assay_transfer_score REAL NOT NULL,
+                    assay_rank INTEGER NOT NULL,member_count INTEGER NOT NULL,
+                    score_key TEXT NOT NULL,
+                    PRIMARY KEY(benchmark_row_id,context_id)
+                ) WITHOUT ROWID;
+                CREATE INDEX context_scores_query_parent
+                ON context_scores(benchmark_row_id,parent_id);
+            """)
             queries = [row[0] for row in connection.execute("SELECT benchmark_row_id FROM queries")]
+            context_score_rows = []
             for query_id in queries:
                 updates = []
+                all_contexts = []
                 for parent_id, in connection.execute("SELECT parent_id FROM rankings WHERE benchmark_row_id=?", (query_id,)):
+                    parent_contexts = by_split_query_parent[(subset, query_id, parent_id)]
                     chosen = min(
-                        by_split_query_parent[(subset, query_id, parent_id)],
+                        parent_contexts,
                         key=lambda row: (-row["score"], row["context_id"]),
                     )
-                    members = connection.execute(
-                        "SELECT COUNT(*) FROM context_records WHERE context_id=?", (chosen["context_id"],)
-                    ).fetchone()[0]
-                    updates.append((chosen["score"], chosen["context_id"], members, chosen["score_key"], query_id, parent_id))
+                    members = {
+                        row["context_id"]: connection.execute(
+                            "SELECT COUNT(*) FROM context_records WHERE context_id=?",
+                            (row["context_id"],),
+                        ).fetchone()[0]
+                        for row in parent_contexts
+                    }
+                    all_contexts.extend((row, members[row["context_id"]]) for row in parent_contexts)
+                    updates.append((
+                        chosen["score"], chosen["context_id"], members[chosen["context_id"]],
+                        chosen["score_key"], query_id, parent_id,
+                    ))
                 connection.executemany(
                     "UPDATE rankings SET assay_transfer_score=?,assay_context_id=?,assay_member_count=?,score_key=? WHERE benchmark_row_id=? AND parent_id=?",
                     updates,
                 )
+                for rank, (row, members) in enumerate(
+                    sorted(all_contexts, key=lambda value: (-value[0]["score"], value[0]["context_id"])), 1
+                ):
+                    context_score_rows.append((
+                        query_id, row["parent_id"], row["context_id"], row["score"],
+                        rank, members, row["score_key"],
+                    ))
                 ordered = connection.execute(
                     "SELECT item_id FROM rankings WHERE benchmark_row_id=? ORDER BY assay_transfer_score DESC,item_id", (query_id,)
                 ).fetchall()
@@ -314,6 +343,13 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
                     "UPDATE rankings SET assay_rank=? WHERE benchmark_row_id=? AND item_id=?",
                     [(rank, query_id, item_id) for rank, (item_id,) in enumerate(ordered, 1)],
                 )
+            connection.executemany("INSERT INTO context_scores VALUES (?,?,?,?,?,?,?)", context_score_rows)
+            context_score_digest = hashlib.sha256()
+            for row in connection.execute(
+                "SELECT * FROM context_scores ORDER BY benchmark_row_id,assay_rank,context_id"
+            ):
+                context_score_digest.update(json.dumps(row, separators=(",", ":")).encode())
+                context_score_digest.update(b"\n")
             counts = dict(manifest["query_counts"])
             for query_id in queries:
                 counts[query_id]["assay_candidate_records"] = connection.execute(
@@ -325,6 +361,9 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
                 "scoring_contract_version": SCORING_CONTRACT_VERSION,
                 "backbone_dtype": BACKBONE_DTYPE, "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
                 "reference_provenance": reference_provenance(task, LINEAGE),
+                "l1_context_score_contract": "l1_context_scores.v1",
+                "context_score_rows": len(context_score_rows),
+                "context_score_rows_sha256": context_score_digest.hexdigest(),
             })
             final = _write_complete(connection, database, task=task, subset=subset, level="L1", identity=identity, target=level)
         index_splits[subset] = {"levels": {"L1": {
@@ -369,9 +408,34 @@ def validate(task: str, output_root: Path) -> dict[str, Any]:
             dense = connection.execute(
                 "SELECT COUNT(*) FROM (SELECT benchmark_row_id FROM rankings GROUP BY benchmark_row_id HAVING COUNT(*)=100 AND MIN(assay_rank)=1 AND MAX(assay_rank)=100 AND COUNT(DISTINCT assay_rank)=100)"
             ).fetchone()[0]
-            if bad or dense != queries:
+            context_bad = connection.execute(
+                "SELECT COUNT(*) FROM context_scores s LEFT JOIN contexts c USING(context_id) "
+                "WHERE c.context_id IS NULL OR c.parent_id!=s.parent_id OR "
+                "s.assay_transfer_score NOT BETWEEN 0 AND 1 OR s.assay_rank<1 OR "
+                "s.member_count!=(SELECT COUNT(*) FROM context_records r WHERE r.context_id=s.context_id)"
+            ).fetchone()[0]
+            context_score_rows = connection.execute("SELECT COUNT(*) FROM context_scores").fetchone()[0]
+            context_score_digest = hashlib.sha256()
+            for row in connection.execute(
+                "SELECT * FROM context_scores ORDER BY benchmark_row_id,assay_rank,context_id"
+            ):
+                context_score_digest.update(json.dumps(row, separators=(",", ":")).encode())
+                context_score_digest.update(b"\n")
+            context_queries = connection.execute(
+                "SELECT COUNT(*) FROM (SELECT benchmark_row_id FROM context_scores GROUP BY benchmark_row_id "
+                "HAVING MIN(assay_rank)=1 AND MAX(assay_rank)=COUNT(*) AND COUNT(DISTINCT assay_rank)=COUNT(*))"
+            ).fetchone()[0]
+            if (
+                manifest.get("l1_context_score_contract") != "l1_context_scores.v1"
+                or context_score_rows != manifest.get("context_score_rows")
+                or context_score_digest.hexdigest() != manifest.get("context_score_rows_sha256")
+                or bad or dense != queries or context_bad or context_queries != queries
+            ):
                 raise ValueError(f"Mixed L1 ranks are incomplete: {task}/{subset}")
-        report["splits"][subset] = {"queries": queries, "ranking_rows": manifest["stored_rows"]}
+        report["splits"][subset] = {
+            "queries": queries, "ranking_rows": manifest["stored_rows"],
+            "context_score_rows": manifest["context_score_rows"],
+        }
     report["content_id"] = _digest(report)
     return report
 

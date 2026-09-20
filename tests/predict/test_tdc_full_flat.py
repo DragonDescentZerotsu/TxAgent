@@ -6,6 +6,7 @@ from pathlib import Path
 from predict.harnesses.branches import flat, matrix, runtime
 from predict.retrieval.assay_reranking import build_tdc_indirect_ranked_retrieval
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import _payload
+from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.tasks.prompt_profiles import require_matching_prompt_profiles
 from predict.utils.json import sha256_file
 
@@ -20,6 +21,12 @@ def test_tdc_matrix_uses_tdc_split() -> None:
         "data/gold_labels/TDC/BBB_Martins/v1/scaffold/valid_molecule_condition_labels.jsonl"
     ).resolve()
     assert args.prompt_version == flat.CONTEXT_V5_PROMPT_VERSION
+
+
+def test_mixed_context_score_cache_is_active() -> None:
+    assert "data/caches/assay_reranking/active" in str(cache_profile_root(
+        "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v2"
+    ))
 
 
 def test_tdc_indirect_wrapper_selects_tdc_queries(monkeypatch) -> None:

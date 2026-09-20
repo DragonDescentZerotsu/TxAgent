@@ -252,6 +252,37 @@ def test_contrastive_selection_widens_only_for_missing_label() -> None:
     assert audit["replacements"][0]["effective_parent_width"] == 25
 
 
+def test_contrastive_selection_uses_scored_alternate_context() -> None:
+    rows = [
+        {
+            "item_id": f"p{rank}", "parent_id": f"p{rank}",
+            "morgan_rank": rank, "assay_rank": rank,
+            "assay_transfer_score": 1 - rank / 1000,
+            "assay_context_id": f"positive-{rank}",
+            "assay_member_count": 1, "score_key": f"positive-key-{rank}",
+        }
+        for rank in range(1, 101)
+    ]
+    contexts = {
+        **{f"positive-{rank}": {"gold_label": 1} for rank in range(1, 101)},
+        "negative-11": {"gold_label": 0},
+    }
+    selected, audit = _select_assay_contrastive(
+        rows, contexts, molecule_limit=10, primary_width=25, min_contrast=1,
+        context_scores=[{
+            "parent_id": "p11", "context_id": "negative-11",
+            "assay_transfer_score": 0.25, "assay_rank": 101,
+            "member_count": 2, "score_key": "negative-key-11",
+        }],
+    )
+
+    negative = next(row for row in selected if row["assay_context_id"] == "negative-11")
+    assert negative["item_id"] == "p11"
+    assert negative["assay_member_count"] == 2
+    assert len({row["item_id"] for row in selected}) == 10
+    assert audit["selected_label_counts"] == {"0": 1, "1": 9}
+
+
 def test_l1_only_policy_does_not_open_later_manifest(tmp_path: Path) -> None:
     policy, later_manifest = _release(tmp_path)
     policy["stages"] = {"L1": "assay_transfer"}
