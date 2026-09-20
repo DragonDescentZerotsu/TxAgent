@@ -1,0 +1,4 @@
+version: 19
+caches:
+  bbb_martins: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1/bbb_martins/RELEASE_INDEX.json
+  bioavailability_ma: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1/bioavailability_ma/RELEASE_INDEX.json

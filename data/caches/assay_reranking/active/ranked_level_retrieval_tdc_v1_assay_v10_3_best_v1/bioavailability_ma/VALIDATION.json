@@ -1,0 +1,17 @@
+{
+  "profile": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
+  "splits": {
+    "test": {
+      "database_sha256": "608fd7cd87704392b6c7a84d386e9356c62220da8deae051535748744c94127a",
+      "query_count": 128,
+      "ranking_rows": 12800
+    },
+    "valid": {
+      "database_sha256": "3107320e1d3fbd5e7fa135bcb0f9655e524222ba798da9f87f3ec0df376c49dc",
+      "query_count": 64,
+      "ranking_rows": 6400
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

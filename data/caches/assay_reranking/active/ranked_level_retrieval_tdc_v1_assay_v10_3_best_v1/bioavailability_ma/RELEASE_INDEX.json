@@ -1,0 +1,60 @@
+{
+  "assay_transfer_status": "complete",
+  "evidence": {
+    "content_id": "cd5e3e8a3010adf0fefa25e3a0b374dd7e41a913e116812c3177ae3d9fc1b249",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "record_count": 448
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "model": {
+    "checkpoint_step": 160,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-0-2-bioavailability-ma-BEST",
+    "prompt_profile": "v10_3_0_2",
+    "revision": "29cc74f02df160b1f153edb700da66d1c30ef4ed"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "7fa15eb9842ed77ff4ca7c227c4a0e70b85eaad8d45cdca3b45a9e954efe57a7",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "38098c143c74f7cec09ef0358a151600c11442e2f31081364eee6e3b919d7d48"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "021713fb319a5bf0dbf88e82c1b8959a0a2f0b84f8ef5abbcd9601e994579e66",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "45229104d6b0f8899d984b14d906cde557a9a9d0cd9696facb489a85bb80dc55"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

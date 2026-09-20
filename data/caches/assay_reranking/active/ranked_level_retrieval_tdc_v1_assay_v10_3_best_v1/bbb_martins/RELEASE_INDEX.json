@@ -1,0 +1,60 @@
+{
+  "assay_transfer_status": "complete",
+  "evidence": {
+    "content_id": "38ca18120c3030ad07e14d627640bbdab13c3be3c5bb7b9e3359ee14690d564d",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "69a16a01cb8f2560f5ffe6bccc534355fce14ce471486605e32c8fa62fa60f24",
+    "record_count": 1223
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "model": {
+    "checkpoint_step": 120,
+    "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-bbb-martins-best",
+    "prompt_profile": "v10_3",
+    "revision": "7678f7a1c43932f7612cfd49a8f4872d6e2f4cab"
+  },
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "scoring_contract_version": "assay_transfer_chat_first_divergent_token_bf16_backbone_fp32_head.v2",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "754901284f43b6984dac49739597a9c2d4a11d425c266dc0743ae76543816132",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "e14295640e161664bc39c3846b5c4f8d4264ba367b8331a7df2995b0e399499c"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "af1c37a53091106aee600a68a0a7b36bcec5548cc959b081fcdef8ce7a2892e2",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "ef5a4d951f7e788205a8cd0c0f1053a4f6bb6e85036beef340e1bb6ad4e4e004"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

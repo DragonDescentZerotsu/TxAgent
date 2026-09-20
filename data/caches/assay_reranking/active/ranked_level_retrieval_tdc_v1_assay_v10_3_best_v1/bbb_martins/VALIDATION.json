@@ -1,0 +1,17 @@
+{
+  "profile": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
+  "splits": {
+    "test": {
+      "database_sha256": "da509d195be88c30b9e25efe3fa8e8bdbbd17c3eccd11cc5af3daf61b774f340",
+      "query_count": 530,
+      "ranking_rows": 53000
+    },
+    "valid": {
+      "database_sha256": "28dcc4ee7fb93e53911f1de4bca38b64c2ffb5e6c496bf2a0a4697b26f17ed93",
+      "query_count": 197,
+      "ranking_rows": 19700
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}
