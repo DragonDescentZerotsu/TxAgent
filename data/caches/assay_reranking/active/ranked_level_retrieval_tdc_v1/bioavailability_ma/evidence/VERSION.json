@@ -1,0 +1,12 @@
+{
+  "content_id": "cd5e3e8a3010adf0fefa25e3a0b374dd7e41a913e116812c3177ae3d9fc1b249",
+  "input_sha256": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571",
+  "record_count": 448,
+  "records": "records.parquet",
+  "records_sha256": "a1d9bb7c59e8357985fcaafb342d1b0aa3721bcc0975fdcdacc482a926b13eca",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_source_record_id",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

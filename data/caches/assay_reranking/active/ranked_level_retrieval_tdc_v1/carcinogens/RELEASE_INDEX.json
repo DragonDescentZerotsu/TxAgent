@@ -1,0 +1,52 @@
+{
+  "assay_transfer_status": "not_computed",
+  "evidence": {
+    "content_id": "0d8c69ae7fdbe72d37f621019769ca2b9de3e86a594717bdcf067779ccdd56c2",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "2a7080b88f6c8ab79f47aa77249d835e08842fdbc6d7319569196768f790a199",
+    "record_count": 193
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "896792bd43daaa651ebc8ef7ed944544254816b276c95d5417a4d3ff0f268054",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "d016e636dc18f730b06ba0344bcee7cb1d608d70e83a707a95fb14fe117b39cd"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "85e87de53a8382f55cf7699feb03f58c7daa75cd89dc0dd7225567f9a663d6be",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "8cf4b96d3b00371890774149b30f0e0a5d0629d25fa0bf6cb93331ea0cbb341d"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

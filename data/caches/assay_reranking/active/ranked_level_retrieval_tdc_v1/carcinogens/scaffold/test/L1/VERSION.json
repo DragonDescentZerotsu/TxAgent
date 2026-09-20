@@ -1,0 +1,316 @@
+{
+  "assay_transfer_status": "not_computed",
+  "capacity": 100,
+  "content_id": "896792bd43daaa651ebc8ef7ed944544254816b276c95d5417a4d3ff0f268054",
+  "database": "rankings.sqlite3",
+  "database_sha256": "6866485a27c1638a10538bf75c546c4f3b7fd8e203e0922ce52c6a5079f38b01",
+  "inputs": {
+    "evidence_manifest_sha256": "2a7080b88f6c8ab79f47aa77249d835e08842fdbc6d7319569196768f790a199",
+    "query_sha256": "93594aa28bce125bac9199c2b93739b37baac046ae87fa155deaf98a2a06c444",
+    "train_sha256": "2b7bfb7388c17d26af45386cf9c751bd65cfe3b409aff3707a95359f4c7402a3"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L1",
+  "model": null,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "pool": "fixed",
+  "query_count": 56,
+  "query_counts": {
+    "TDC_CARCINOGENS_0835A5365F0C49692621": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_0A0ECB2159AB1B7B3147": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_20A7DD8CB02821B58ADA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_24011916865EB01B68B3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_290025A3CFCE9B28FA1D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_336DE5241B96FC6FFDAE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_370F7E36B38748A528AA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_38C1073720E6A010B158": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_424E41F615E18BBD5BF6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_43C5386A6DE69D9A3A50": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_4836D3E05E2FA257532C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_4B73ACA3E788EB796769": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_4BDC3292FFC3F4A24993": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_4CE14EA0D07AC42AD4A3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_4F9457E5EA87A88D501B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_51C22D7894AF9971AFDB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_5C792D7AB77E130F7A71": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_5EAA9CE0164F8B75F29F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_65F7495BFFD2941029AC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_730876704B9911787A01": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_7410E3300C87297BC267": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_7E2E3862B59E757AF50A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_81548DE9789CE2460BD0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_824D96DD9DA6BF8330DF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_83BD3D84C64FA4504156": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_86C5F47590F43BD24857": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_8E0CC58B761B741DFE79": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_8F611C1C0852B04AABEA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_903D6099284028E4BF38": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_91F5BC1D64039C52787A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_91F74AE1722982E8194B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_9F25D50905CE7D412E53": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_A206921AB69912DE8241": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_A7F3D4311BC4FBA0487E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_A9BA0DB1614A2601F2AC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_AD51054A5EAA30859BE7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_AEF83B13B4290A478479": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_BA5A43D2DEB20257280C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_C727704E03744B6FE660": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_C8C72777DECA29717610": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_CAA2A8E05A09A8D2F111": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_CD2A4FD8FAF490019E79": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_CEE4E54F8E3900B663DD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_D03A139984D51BA6C32D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_D7E1B3B0229A8D8C9F50": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_DCB723BD721224538BA0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_DDB0449A7D16C048CD73": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_DE52BEDAAD11BDCDDD31": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_E49FF7C1E0F0FB7F6947": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_E624253CAF6F5253FC30": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_E6CFBC7BB3D5E2A7423D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_E89251D18A9E8DBEBE42": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_E9EC4266485A8D0E293C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_EF3871E162B3D7E2CAA1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_FAC497D25E0B8ACD6E58": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_CARCINOGENS_FB7C3ADEDE955CC20749": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    }
+  },
+  "ranking_rows_sha256": "3f745645bb2ed59e7ae893824654761b1a588201746b0bb05384240bf9571574",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 5600,
+  "subset": "test",
+  "task_id": "carcinogens"
+}

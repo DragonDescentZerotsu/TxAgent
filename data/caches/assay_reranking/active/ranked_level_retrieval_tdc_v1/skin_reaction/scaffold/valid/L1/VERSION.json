@@ -1,0 +1,236 @@
+{
+  "assay_transfer_status": "not_computed",
+  "capacity": 100,
+  "content_id": "92806fdcf0f6eadf6117947b19a245caeecc50d886233eb05ae3a812a6802b8b",
+  "database": "rankings.sqlite3",
+  "database_sha256": "c06fc081fd85c441f031cfd40ccbfa67f97c617e479de614de60de911886ab4c",
+  "inputs": {
+    "evidence_manifest_sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de",
+    "query_sha256": "96a23fd1b662f035e8f16b2e4168e9ee10338f5b1fbf8cde5a7023d3ab7a8060",
+    "train_sha256": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L1",
+  "model": null,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "pool": "fixed",
+  "query_count": 40,
+  "query_counts": {
+    "TDC_SKIN_REACTION_03AC171C8270808CEAB3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_06FD23EC409F4AD6F7A0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_1793A5E474C7E254AFDD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_1D3075F08B4B5034382C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_1F4BC08C7A0FB7050935": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_215DFB4F99C5FF67408E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_34C8F4AE053F8F061972": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_380CD7C8D04DB8294EBE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_4C3FAF5DE6ECE850A781": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_54E3D7BBF16FBAFE0A1A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_569509D1E83F0FE5FBBC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_574CCEC631DACA5D7019": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_5B19796D7F491EC1D3EC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_64C3924492A4A216E9E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_72F7D65896E26DFFFF6D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_73F41BE81CA8534D2E46": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_7CCF94AE00169BC048A1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_8D70D5933F9F447DBCF8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_8FD50CC5E6044FE92CA4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_98C7873FD0EBF34FAC24": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_997C5C95D2C54E761A0C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_99FA1122F635BC75F571": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_9E6379B445F764CF65EA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_A3B08CD476753422BCE8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_A5C4A830729C8B677640": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_A68EE86232065B3C8E21": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_C5C455422D68DB186637": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_C8B6D049C1A81C31FB12": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_D0A7A4014C74C0DEC5BB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_D1222FFFC9ECB2E86BC1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_DDFC2F98D347B4358EDC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_DF6E2E8DB0598A798F63": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_E22764D666C3B1D5BFCF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_E2A2D1EFA7597051BB42": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_ED38AD551C3DDBC585DD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_F05B413D0A1F77ECA331": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_F142FC5045D08814ABD1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_F1A1C5FE8E4FB25019E6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_F506D672F8124741E7D3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_SKIN_REACTION_F6B57D9FE4FE27D83BD2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    }
+  },
+  "ranking_rows_sha256": "bd95350344595ef51323393754ec9afa04c04d320b5f7c1265b7fa2c8c4b0329",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 4000,
+  "subset": "valid",
+  "task_id": "skin_reaction"
+}

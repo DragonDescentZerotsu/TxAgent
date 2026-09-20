@@ -1,0 +1,52 @@
+{
+  "assay_transfer_status": "not_computed",
+  "evidence": {
+    "content_id": "f11b5643971e9ff040f9184fc8a1478d04a9b4268f5d688e728854d68c5627d4",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "876369f9388d875da160a811c4eeece63a8f6d28a0385143f6127c945fd47d26",
+    "record_count": 5094
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "bdf45f4ab86022b15ced4ed3d8e64ecb649cb20ff2544fd6e38d1f6ba3726fb7",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "91dc8e5a4c7d74a5f43e753c22d6fb16e9b88f4a75fc7c2ba56fa37ffc09d5c7"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "7add98db4b34a1c149c9d6e5627a24216b239e1a65ce65c1357165de9f052e4a",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "401cdcd1893d801da27a8f428acd70637befce0329f6fdea736a6d5eb6df9126"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

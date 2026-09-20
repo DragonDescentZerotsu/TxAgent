@@ -552,7 +552,10 @@ def load_candidates(
                 "canonical_smiles": str(row["parent_smiles"]),
                 "morgan_similarity": float(row["morgan_similarity"]),
                 "morgan_rank": int(row["morgan_rank"]),
-                "assay_rank": int(row["assay_rank"]),
+                "assay_rank": (
+                    int(row["assay_rank"])
+                    if row["assay_rank"] is not None else None
+                ),
                 "selection_rank": selection_rank,
                 "available_l1": member_count,
                 "available_l2": 0,
@@ -566,7 +569,10 @@ def load_candidates(
                 "_diagnostic_parent_id": str(row["parent_id"]),
                 "gold_context_ids": {
                     "morgan": str(row["morgan_context_id"]),
-                    "assay_transfer": str(row["assay_context_id"]),
+                    "assay_transfer": (
+                        str(row["assay_context_id"])
+                        if row["assay_context_id"] is not None else None
+                    ),
                 },
             }
             if method == "assay_transfer":

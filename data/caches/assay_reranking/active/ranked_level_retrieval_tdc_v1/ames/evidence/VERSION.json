@@ -1,0 +1,12 @@
+{
+  "content_id": "f11b5643971e9ff040f9184fc8a1478d04a9b4268f5d688e728854d68c5627d4",
+  "input_sha256": "930fd3305f48b567a41b3f00cb3a2af4fb575e4381e171aca0107bcc4bc63b07",
+  "record_count": 5094,
+  "records": "records.parquet",
+  "records_sha256": "36441e6b4f72a37da855e362c78c1c2d72499c732566183e9ca9b43479538c34",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_source_record_id",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Ames/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "ames"
+}

@@ -1,0 +1,12 @@
+{
+  "content_id": "87788388ba4192629ea1275a0a497ffe79e0478127192b6b62c08703dbb9bb4c",
+  "input_sha256": "2102f6288d63ede7e23fa6f5f294ab6f912c6a3b25bba781eee9b6e72965c823",
+  "record_count": 282,
+  "records": "records.parquet",
+  "records_sha256": "43ad22d20944fbc25f7054947cf4617337a25ecd1d97c55b7ba36873ae2cd156",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_source_record_id",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Skin_Reaction/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "skin_reaction"
+}

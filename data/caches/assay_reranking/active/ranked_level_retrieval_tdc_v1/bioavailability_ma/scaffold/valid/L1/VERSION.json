@@ -1,0 +1,356 @@
+{
+  "assay_transfer_status": "not_computed",
+  "capacity": 100,
+  "content_id": "5ae2cf2c4de873846e03cd729a93f688e85dd80764a77ecffbf62d845bff4358",
+  "database": "rankings.sqlite3",
+  "database_sha256": "f7f72d405830908f126d0698dcf2f6547853339c0907230731cfeb68343d5e2a",
+  "inputs": {
+    "evidence_manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "query_sha256": "13471f87625d0e15c8acae9055810f87df9f066185d9f57bb0b6bf0e2bf99467",
+    "train_sha256": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571"
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "level": "L1",
+  "model": null,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "pool": "fixed",
+  "query_count": 64,
+  "query_counts": {
+    "TDC_BIOAVAILABILITY_MA_034761A1428414882822": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_036712D518E4AA03585C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_0799BA84B8771885991D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_08EC4F88AAB0DA37BE11": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_0E5F4408EAD4CF918652": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_14E1C9EE3C559A6D08A0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_1C756864575ADC4B46AA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_27712031058DBE72D5E4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_2B0E55F135F5BD028D15": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_338440A6B9F93ED89338": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_34AE976233E133554E4C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_352070949C6D5253CC66": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_37F7B035CEBA6D7AFB89": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_46256E65FECC483070D3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_47BDC4E88987AA840548": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_48C32EFC2EBA0D415FAA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_547E9ECF7395ACC90B44": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_592BC81C42E92C15189B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_5A093CF535C5A38FB3CF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_5C5F21869B56798C1C71": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_5FFAEC5277ECA51C7E2E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_652D9BAEF74BB0595034": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_683BA5DF3CF32E9F679B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_7028399EDB1557DDF0E5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_723A0D85EF190CAA24B2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_7B07B290D0109BC39273": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_7DC7B3C20F3EDBE9DEC1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_7F0743B559EE39180031": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_8090F8948D6BBAE07DE3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_83E083E7105637B32D0A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_84DCB0109D9495755621": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_8AA7042D9CFEF7D16DA7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_95761ADFC01293B164E3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_978D8BC14D3E0FABD811": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A142E103A2D6FE71D9F5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A43F2BD2ECC12C10B4B0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A463F41D245DDCC4D86B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A5E65EE6DEC74323785F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A68645C140EE57F5C348": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A74CA01A7D11A1311B44": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_A9C890B84052FF632C96": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_AEDFA9E7950A0BBF3A4C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_AF05D7393617B4ACEF0B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_B29B77E8E67121F112C8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_BC30E498B496792791C3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_BF428C9805E075D249C1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_BF93D38C47F3CE8A64CD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_C4A9C9521BC5E04200B1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_CA7AFDA760996435B331": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_CEDE507CEC37DCE9DE8B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_D69F680A8952F211FEA0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_D8004DD87429DBF94B09": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_DD23E02E72D4A70E1104": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_E19D38B6425A6AAA73CB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_E2D8E7AC96AC461D0F99": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_E327060569610665B2EB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_E7AA234B1299B072A95A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_EC9F67E8E1794BA8DCD1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_F05881373C85D44AFB9B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_F16A418E0AAB1BE331D2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_F419EBB787927E82B374": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_F46923E7837172CF2CD6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_F91E46B3476B0B05FA5F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    },
+    "TDC_BIOAVAILABILITY_MA_FA44DA4D598B3D7910E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 100
+    }
+  },
+  "ranking_rows_sha256": "6077ec48f979435800dd2d5103ecadd1e2b52a310f46817721848a668d89f3ff",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 6400,
+  "subset": "valid",
+  "task_id": "bioavailability_ma"
+}

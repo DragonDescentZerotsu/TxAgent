@@ -44,6 +44,7 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "v10_3_best_parent_morgan100_v1",
         "ranked_level_retrieval_v2",
         "ranked_level_retrieval_v3",
+        "ranked_level_retrieval_tdc_v1",
         "tdc_mixed_l1_v1",
         "v10_4_direct_gold_morgan100_v1",
     }
@@ -52,7 +53,11 @@ ACTIVE_CACHE_PROFILES = frozenset(
 
 def cache_profile_root(profile: str) -> Path:
     """Return the explicit active or archived root for one cache profile."""
-    if profile in {"ranked_level_retrieval_v3", "tdc_mixed_l1_v1"}:
+    if profile in {
+        "ranked_level_retrieval_v3",
+        "ranked_level_retrieval_tdc_v1",
+        "tdc_mixed_l1_v1",
+    }:
         return DATA_ACTIVE_CACHE_ROOT / profile
     parent = ACTIVE_CACHE_ROOT if profile in ACTIVE_CACHE_PROFILES else ARCHIVE_CACHE_ROOT
     return parent / profile

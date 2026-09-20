@@ -1,0 +1,22 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "bbe0e71dcb246893958bf0c2331e1e80c7b97bc6704bd01006b56dd4b36467b7",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "content_id": "e64f03b6c84808b85669016964150e3a177b3fe63c5f41205edb63f17cf243bb",
+      "queries": 128,
+      "stored_rows": 12800
+    },
+    "valid": {
+      "content_id": "5ae2cf2c4de873846e03cd729a93f688e85dd80764a77ecffbf62d845bff4358",
+      "queries": 64,
+      "stored_rows": 6400
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

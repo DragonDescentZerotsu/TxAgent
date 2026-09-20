@@ -1,0 +1,22 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "761282d7ba7762ec65d46827be338f4c3e42487ce426990cb48350c2e76b9222",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "content_id": "896792bd43daaa651ebc8ef7ed944544254816b276c95d5417a4d3ff0f268054",
+      "queries": 56,
+      "stored_rows": 5600
+    },
+    "valid": {
+      "content_id": "85e87de53a8382f55cf7699feb03f58c7daa75cd89dc0dd7225567f9a663d6be",
+      "queries": 27,
+      "stored_rows": 2700
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

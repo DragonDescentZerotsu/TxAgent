@@ -1,0 +1,52 @@
+{
+  "assay_transfer_status": "not_computed",
+  "evidence": {
+    "content_id": "cd5e3e8a3010adf0fefa25e3a0b374dd7e41a913e116812c3177ae3d9fc1b249",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9",
+    "record_count": 448
+  },
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "e64f03b6c84808b85669016964150e3a177b3fe63c5f41205edb63f17cf243bb",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "a93c286ab8ae2751b25f453653ec1995003d00a9623bafcb490cc384c0f27ea5"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "5ae2cf2c4de873846e03cd729a93f688e85dd80764a77ecffbf62d845bff4358",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "1abdcc0328b46e33b65884d7ff62280c07f7abdc40cbd0de3fbd7c4a8e6209fc"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bioavailability_ma"
+}

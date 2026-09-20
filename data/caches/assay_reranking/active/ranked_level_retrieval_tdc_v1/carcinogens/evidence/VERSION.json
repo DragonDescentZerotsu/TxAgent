@@ -1,0 +1,12 @@
+{
+  "content_id": "0d8c69ae7fdbe72d37f621019769ca2b9de3e86a594717bdcf067779ccdd56c2",
+  "input_sha256": "2b7bfb7388c17d26af45386cf9c751bd65cfe3b409aff3707a95359f4c7402a3",
+  "record_count": 193,
+  "records": "records.parquet",
+  "records_sha256": "98b69476f1872de70a62109075cceb618b3631ffd273a8211596adebceed77d1",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "tdc_source_record_id",
+  "source_path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/gold_labels/TDC/Carcinogens/v1/scaffold/train_molecule_condition_labels.jsonl",
+  "status": "complete",
+  "task_id": "carcinogens"
+}
