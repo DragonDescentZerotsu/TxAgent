@@ -473,6 +473,7 @@ def prepare_batch(config: BatchConfig, args: argparse.Namespace) -> PreparedBatc
     manifest = {
         "batch_id": batch_id,
         "input_jsonl": args.input_jsonl,
+        "input_jsonl_sha256": sha256_file(Path(args.input_jsonl)),
         "smiles_field": args.smiles_field,
         "label_field": args.label_field,
         "n_items": len(items),

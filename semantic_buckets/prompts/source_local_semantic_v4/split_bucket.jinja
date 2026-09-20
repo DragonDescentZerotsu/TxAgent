@@ -1,0 +1,34 @@
+# Decide whether one semantic parent should split
+
+You are refining one source-local evidence group for **{{ payload.task }}**.
+
+- Evidence level: `{{ payload.level }}`
+- Evidence source: `{{ payload.source_id }}`
+- Semantic parent: `{{ payload.bucket_id }}`
+- Selected column: `{{ payload.column }}` — {{ payload.column_description }}
+
+Choose `split` only when the observed values represent scientifically different evidence whose meaning, interpretation, or transferability differs. Choose `keep` when the values are synonymous, nuisance variants, or do not justify separate evidence groups. Ignore units, species, molecule identity, labels, benchmark context, retrieval rank, frequency, and record count.
+
+## Current semantic identity
+
+{% for column, values in payload.current_bucket_identity | dictsort -%}
+- **{{ column }}:** {% for value in values %}`{{ value }}`{% if not loop.last %}, {% endif %}{% endfor %}
+{% endfor %}
+
+## Complete observed values
+
+{% for item in payload["values"] -%}
+- `{{ item.value_id }}`: `{{ item.value }}`
+{% endfor %}
+
+Return only one JSON object:
+
+```json
+{"decision":"split","rationale":"brief scientific rationale"}
+```
+
+or
+
+```json
+{"decision":"keep","rationale":"brief scientific rationale"}
+```

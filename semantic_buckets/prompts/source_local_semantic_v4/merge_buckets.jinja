@@ -1,0 +1,26 @@
+# Reconcile candidate semantic buckets
+
+You are consolidating source-local evidence buckets for **{{ payload.task }}**.
+
+- Evidence level: `{{ payload.level }}`
+- Evidence source: `{{ payload.source_id }}`
+
+Merge bucket IDs only when they ask the same scientific question and have equivalent semantic identities, even if wording or split ancestry differs. Related evidence is not automatically equivalent. Ignore units, species, molecule identity, labels, benchmark context, retrieval rank, frequency, and record count.
+
+Every omitted bucket ID deterministically remains a singleton. Return only non-singleton merge sets; a bucket ID may occur in at most one set.
+
+## Candidate buckets
+
+{% for bucket in payload.buckets -%}
+### `{{ bucket.bucket_id }}`
+
+{% for column, values in bucket.canonical_dimensions | dictsort -%}
+- **{{ column }}:** {% for value in values %}`{{ value }}`{% if not loop.last %}, {% endif %}{% endfor %}
+{% endfor %}
+{% endfor %}
+
+Return only one JSON object:
+
+```json
+{"merge_sets":[{"member_ids":["bucket ID","bucket ID"],"label":"short semantic label","rationale":"brief scientific rationale"}],"rationale":"brief overall rationale"}
+```

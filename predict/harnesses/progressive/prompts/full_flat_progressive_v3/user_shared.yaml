@@ -1,0 +1,14 @@
+applicability: high | moderate | low | not_applicable
+direction: supportive | contradictory | neutral_or_unclear
+decision_effect: changed | strengthened | weakened | no_change
+architecture: Evidence is append-only and remains visible through the current reasoning phase.
+card_accounting: Cards use short aliases that the workflow maps back to stable artifact IDs.
+card_accounting_2: ' On an older card, {value_1} lists its previous roles; an absent {value_2} means it was not used.'
+card_accounting_3: Repeated records are not independent votes.
+claim_rule: Every experimental-evidence claim must cite visible molecule or record identifiers.
+claim_rule_2: A query-prior statement must identify itself as a physicochemical prior rather than experimental evidence.
+update_rule: Judge endpoint-to-task relevance, direction, species/condition compatibility, formulation or route compatibility, and whether structural differences preserve the mechanism. Indirect evidence may support, contradict, or leave the earlier prediction unchanged.
+identity_rule: Do not identify the query by name even if its structure is recognizable.
+flip_rule: A flip requires strong new indirect evidence and an indirect citation.
+output_control: Use the minimum sufficient number of claims, evidence gaps, assessments, and citations. Empty lists are valid; do not fill arrays merely to appear complete or to approach a target count. Cite only evidence that materially affects the prediction, omit irrelevant evidence, and do not repeat record text.
+progressive_messages: L1 molecule-level transfer scores describe the scored gold context; later transfer scores apply to individual records, not other records on the same molecule. Transferability estimates how well the reference assay evidence transfers to the query molecule; it is not the query label probability.

@@ -238,7 +238,7 @@ def test_generation_preserves_frozen_prior_prunes(
     assert manifest["validations"]["all_frozen_prior_prunes_preserved"] is True
 
 
-def test_frozen_prior_prune_survives_tail_candidate_drift(tmp_path: Path) -> None:
+def test_frozen_prior_prune_survives_tail_candidate_and_eligibility_drift(tmp_path: Path) -> None:
     records_path = tmp_path / "records.parquet"
     pq.write_table(
         pa.Table.from_pylist(
@@ -247,7 +247,7 @@ def test_frozen_prior_prune_survives_tail_candidate_drift(tmp_path: Path) -> Non
                     "canonical_record_id": "record-1",
                     "pair_bucket_key": "pair-key",
                     "finite_scalar_value": 1.0,
-                    "assay_transfer_eligible": True,
+                    "assay_transfer_eligible": False,
                 }
             ]
         ),

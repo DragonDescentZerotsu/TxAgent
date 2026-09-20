@@ -20,6 +20,11 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v10.tasks.carcinogens.mapping_registry import (
+    REGISTRY_PATH,
+    mapping_path,
+    validate_mapping_hashes,
+)
 from data.processing.gold_labels.level_mappings import level_mapping_path
 from data.processing.paths import evidence_library_root, raw_starling_task_root
 
@@ -167,6 +172,7 @@ def unavailable(*args, **kwargs):
 
 
 def validate_arguments(parser: argparse.ArgumentParser, args):
+    validate_mapping_hashes()
     if args.through_stage not in {"source", "clean"}:
         parser.error("Carcinogens v10 currently implements only source and clean stages")
 
@@ -194,6 +200,9 @@ POLICY = StarlingTaskPolicy(
             Path(DEFAULT_DATA_DIR, spec["directory"], "extraction_guidance.json")
             for spec in SPECS.values()
         ),
+        REGISTRY_PATH,
+        mapping_path("measurement_resolution"),
+        mapping_path("exact_measurement_units"),
     ),
     source_universe_mapping=level_mapping_path("carcinogens", "v1"),
 )

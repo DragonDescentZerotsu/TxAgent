@@ -1499,9 +1499,15 @@ def stage_score_view(
             projected.pop('assay_transfer_panel_rank', None)
         for card in projected.get('cards', {}).values():
             level = int(card['first_seen_level'])
-            allowed = ({'joint', 'morgan', 'assay_transfer'}
-                       if level == 1 and l1_method == 'joint'
-                       else {policy[f'L{level}']})
+            allowed = (
+                {'joint', 'morgan', 'assay_transfer'}
+                if level == 1 and l1_method == 'joint'
+                else {'morgan', 'morgan_contrastive'}
+                if level == 1 and l1_method == 'morgan_contrastive'
+                else {'assay_transfer', 'assay_transfer_contrastive'}
+                if level == 1 and l1_method == 'assay_transfer_contrastive'
+                else {policy[f'L{level}']}
+            )
             if card.get('retrieved_by') not in allowed:
                 raise ValueError('Evidence record disagrees with stage retrieval policy')
             if (sampling_only or level == 1
@@ -1586,7 +1592,14 @@ def build_tianang_aligned_messages(
     visible_max_level = max(int(row["level"]) for row in levels)
     stage_ranked = prompt_profile(prompt_version).get('stage_ranked')
     if stage_ranked:
-        expected_levels = [f"L{row['level']}" for row in levels]
+        expected_levels = (
+            list(assets['levels'][contract.task])
+            if str(assets['settings'].get('output_contract', '')).startswith(
+                'full_flat_progressive.'
+            )
+            and current_level > 1
+            else [f"L{row['level']}" for row in levels]
+        )
         if not retrieval_policy or list(retrieval_policy) != expected_levels:
             raise ValueError('Stage-ranked rendering requires the complete ordered retrieval policy')
         for level, method in retrieval_policy.items():

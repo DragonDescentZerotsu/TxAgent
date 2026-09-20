@@ -1,5 +1,5 @@
 {
-  "version": "bbb_martins_prebuilt_mapping_registry.v1",
+  "version": "bbb_martins_prebuilt_mapping_registry.v2",
   "task_id": "bbb_martins",
   "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
   "mappings": {
@@ -36,8 +36,8 @@
       "sources": ["direct_bbb", "passive_permeability", "efflux_transport", "influx_transport"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_fields": ["canonical_endpoint_name"],
-      "path": "data/artifacts/evidence_library_assets/bbb_martins/v10_percentage_delta/normalization/measurement_resolution.parquet",
-      "sha256": "220ec428161dc0594635d94cc4118c296e49244b7455caf6f4e515a96f37e2de"
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v10/main_universe_v1/measurement_resolution.parquet",
+      "sha256": "74196a0cd1483e501f47a4124c2b763a0031060426a1cdf832b735b76bad5bf2"
     },
     "exact_measurement_units": {
       "stage": "01_cleaned",
@@ -45,8 +45,12 @@
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_fields": ["canonical_endpoint_name"],
       "depends_on_mappings": ["measurement_resolution"],
-      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v8/bbb_unit_reconciliation.v1.json",
-      "sha256": "9568db3c7abc10bcf37e04b3025188943ff62a701649809f49ac27c9ce21511c"
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v10/main_universe_v1/exact_measurement_unit_map.json",
+      "review_manifest": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v10/main_universe_v1/exact_measurement_units.reviewed.json",
+        "sha256": "0cec1307fbaeaee64b0e2d905dff8cb565766d7e6c25845482d7fca2e235adc4"
+      },
+      "sha256": "a8eb487aa45fb5fa7e421bd411ecaf1be992b13a26fef5b25258a008a8f375b0"
     },
     "endpoint_concepts": {
       "stage": "02_canonicalized",
@@ -82,6 +86,16 @@
       "outputs": ["canonical_endpoint_concept"],
       "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/missing_endpoint_recovery_v1/reviewed_endpoint_mapping.parquet",
       "sha256": "b67525c66f62a3bf5b874b4f8ccfb48ed16194b7a80d69a9433ef7ae75a0b765"
+    }
+  },
+  "reference_mappings": {
+    "measurement_resolution_before_main_universe": {
+      "path": "data/artifacts/evidence_library_assets/bbb_martins/v10_percentage_delta/normalization/measurement_resolution.parquet",
+      "sha256": "220ec428161dc0594635d94cc4118c296e49244b7455caf6f4e515a96f37e2de"
+    },
+    "exact_measurement_units_before_main_universe": {
+      "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v8/bbb_unit_reconciliation.v1.json",
+      "sha256": "9568db3c7abc10bcf37e04b3025188943ff62a701649809f49ac27c9ce21511c"
     }
   }
 }

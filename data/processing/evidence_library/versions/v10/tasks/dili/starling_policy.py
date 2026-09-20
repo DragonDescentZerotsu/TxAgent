@@ -27,6 +27,11 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v10.tasks.dili.mapping_registry import (
+    REGISTRY_PATH,
+    mapping_path,
+    validate_mapping_hashes,
+)
 from data.processing.evidence_library.versions.v10.tasks.dili.starling_schema import (
     BASE_SOURCE_GROUP,
     RAW_SOURCE_COLUMNS,
@@ -195,6 +200,7 @@ def _stage2_unavailable(*args: Any, **kwargs: Any) -> Any:
 def validate_arguments(
     parser: argparse.ArgumentParser, args: argparse.Namespace
 ) -> None:
+    validate_mapping_hashes()
     if args.through_stage not in {"source", "clean"}:
         parser.error("DILI V10 currently implements only source and clean stages")
 
@@ -256,6 +262,9 @@ POLICY = StarlingTaskPolicy(
         *TASK_IMPLEMENTATION_PATHS,
         SOURCE_MANIFEST_PATH,
         *DEFAULT_GUIDANCE_PATHS,
+        REGISTRY_PATH,
+        mapping_path("measurement_resolution"),
+        mapping_path("exact_measurement_units"),
     ),
     source_universe_mapping=level_mapping_path("dili", "v1"),
     stage1_measurement_routing_enabled=True,

@@ -19,8 +19,12 @@ def test_record_loader_resolves_manifest_and_filters_eligible_rows(
         "semantic_bucket_rankings": "selected/bucket_rankings.parquet",
         "record_relevance_rankings": "selected/record_rankings.parquet",
         "retrieval_eligibility": "selected/eligibility.parquet",
+        "semantic_bucket_weights": "selected/weights.parquet",
     }
     (root / "selected").mkdir(parents=True)
+    current = tmp_path / "data/evidence_libraries/bbb_martins/CURRENT"
+    current.parent.mkdir(parents=True)
+    current.write_text("v10\n", encoding="utf-8")
     for key, relative in selected.items():
         path = root / relative
         if path.suffix == ".json":
@@ -64,8 +68,10 @@ def test_record_loader_resolves_manifest_and_filters_eligible_rows(
         encoding="utf-8",
     )
     monkeypatch.setattr(artifacts, "RELEASE_ROOT", release_root)
+    monkeypatch.setattr(artifacts, "REPOSITORY_ROOT", tmp_path)
 
     result = artifacts.load_record_bucket_map("bbb", eligible_only=True)
+    resolved = artifacts.resolve_semantic_bucket_artifacts("bbb")
 
     assert result[["canonical_record_id", "semantic_bucket_id", "readout_bucket_id"]].to_dict(
         "records"
@@ -76,6 +82,18 @@ def test_record_loader_resolves_manifest_and_filters_eligible_rows(
             "readout_bucket_id": "readout-1",
         }
     ]
+    assert resolved.semantic_bucket_weights == root / "selected/weights.parquet"
+
+
+def test_current_pointer_is_owned_by_evidence_library(tmp_path, monkeypatch) -> None:
+    release_root = tmp_path / "releases"
+    current = tmp_path / "data/evidence_libraries/bbb_martins/CURRENT"
+    current.parent.mkdir(parents=True)
+    current.write_text("v10_main_universe_v1\n", encoding="utf-8")
+    monkeypatch.setattr(artifacts, "RELEASE_ROOT", release_root)
+    monkeypatch.setattr(artifacts, "REPOSITORY_ROOT", tmp_path)
+
+    assert artifacts.resolve_release("bbb", "CURRENT") == "v10_main_universe_v1"
 
 
 def test_refresh_upstream_preserves_reviewed_release(tmp_path, monkeypatch) -> None:

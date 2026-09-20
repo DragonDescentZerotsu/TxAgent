@@ -1,0 +1,25 @@
+{
+  "mapping": {
+    "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v4/unit_reconciliation/exact_measurement_unit_map.json",
+    "sha256": "01e11517d5d28b2d346331b631e2ff138c98a6fbc8af7a4a9586ff8854910a8e"
+  },
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "review_completion": {
+    "canonical_merge_review_sha256": "3a1f96335a013fa1c57d74217318a1de50e6ebb48f902a85e78f558d3f38ae94",
+    "review_manifest_sha256": "fa13c192d269dc3c95679b185c573fbcece31d94bd9c6700a4197ec054fedfbc",
+    "reviewed_canonical_labels": 3359,
+    "reviewed_input_units": 6322
+  },
+  "source_manifest": {
+    "path": "data/caches/evidence_library/skin_reaction/v10_main_universe_v4/unit_reconciliation/exact_measurement_unit_map.manifest.json",
+    "sha256": "94702965b391d9eed870e080cede760535dc5d12c9913a285dbb970d801434d9"
+  },
+  "task_id": "skin_reaction",
+  "validations": {
+    "complete_input_coverage": true,
+    "review_receipts_hash_pinned": true,
+    "wildcard_endpoint_only": true
+  },
+  "version": "reviewed_canonical_mapping_receipt.v1"
+}

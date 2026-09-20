@@ -37,12 +37,9 @@ def similarity_view(active, *, hidden=False, precision=2):
                 raise ValueError("numeric view requires a valid frozen Morgan similarity")
             molecule["morgan_similarity"] = round(float(numeric), precision)
         for card in molecule.get("cards", {}).values():
-            if not hidden and molecule.get("group_kind") in {
-                "parent_molecule", "semantic_bucket"
-            }:
-                card["morgan_similarity"] = round(float(card["morgan_similarity"]), precision)
-            else:
-                card.pop("morgan_similarity", None)
+            # Similarity is parent-scoped. Records grouped under that parent may
+            # come from non-Morgan levels and need not carry a duplicate score.
+            card.pop("morgan_similarity", None)
     return view
 
 

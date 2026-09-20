@@ -25,6 +25,9 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
 )
 from data.processing.evidence_library.versions.v10.numeric_syntax import number_text
 from data.processing.paths import REPO_ROOT, evidence_library_root
+from data.processing.evidence_library.versions.v10.tasks.dili.mapping_registry import (
+    mapping_path,
+)
 
 
 TASK_ROOT = Path(__file__).resolve().parent
@@ -73,6 +76,8 @@ DEFAULT_MAPPING_PATH = (
     / "measurement_resolution_v4/measurement_resolution.parquet"
 )
 DEFAULT_BASE_MAPPING_PATH = None
+EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
     / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.1.jsonl"
@@ -110,6 +115,7 @@ _CONTEXT_FIELDS = {
         "effect_direction",
     ),
 }
+UNIT_RECONCILIATION_CONTEXT_FIELDS = _CONTEXT_FIELDS
 
 _MEASUREMENT_BASIS_FIELDS = {
     "dili_base": (),
@@ -2762,6 +2768,7 @@ __all__ = [
     "SOURCE_IDS",
     "SOURCE_MEASUREMENT_FIELDS",
     "STRATIFY_BATCHES",
+    "UNIT_RECONCILIATION_CONTEXT_FIELDS",
     "TEMPERATURE",
     "canonical_endpoint_name",
     "canonical_endpoint_record",

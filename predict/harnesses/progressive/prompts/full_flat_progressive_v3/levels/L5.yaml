@@ -1,0 +1,2 @@
+bbb_martins: {evidence_family: influx_transport, description: Influx or uptake-transporter evidence dependent on transporter and assay context.}
+bioavailability_ma: {evidence_family: gut_wall_efflux_intestinal_metabolism, description: Gut-wall efflux and intestinal metabolism evidence contributing to presystemic loss.}

@@ -135,7 +135,11 @@ def prompt_assets(version: str) -> dict[str, Any]:
                 context_levels.setdefault(task, []).append(context_level)
             if definition:
                 levels.setdefault(task, {})[path.stem] = definition
-    if version.startswith('tianang_aligned') or version.startswith('reranked_progressive_'):
+    if (
+        version.startswith('tianang_aligned')
+        or version.startswith('reranked_progressive_')
+        or str(settings.get('output_contract', '')).startswith('full_flat_progressive.')
+    ):
         card['task_levels'] = levels
     bundle_path = prompt_asset_path(version, 'bundle.yaml')
     bundle = yaml.safe_load(bundle_path.read_text()) if bundle_path.exists() else None

@@ -1,0 +1,29 @@
+bbb_martins:
+  task: bbb_martins
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons via analogies, taking evidence from related molecules to support your prediction.
+  task_instructions:
+  - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient access.
+  - Meaningful access does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.
+  - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion, influx, or prodrug evidence.
+  - Do not treat one physicochemical liability or repeated records as independent proof of failure.
+  - Choose exactly one final prediction.
+bioavailability_ma:
+  task: bioavailability_ma
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: final_prediction
+  positive_prediction: high
+  negative_prediction: low
+  system_role: You are a chemist expert in oral bioavailability and you reason via analogies, taking evidence from related molecules to support your prediction.
+  task_instructions:
+  - Predict high when F >= 20% is better supported and low when F < 20% is better supported.
+  - Keep evidence direction separate from transferability; low transferability lowers weight but does not reverse direction.
+  - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+  - Predict low only when affirmative threshold-relevant evidence supports it, not from generic drug-likeness concerns alone.
+  - Compare directness, endpoint match, conditions, transferability, and uncertainty without counting repeated records independently.
+  - Choose exactly one final prediction.

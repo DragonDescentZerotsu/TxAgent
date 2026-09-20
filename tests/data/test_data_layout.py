@@ -14,14 +14,19 @@ from data.processing.gold_labels.conditioned_benchmark import split_path
 
 
 def test_active_release_paths_are_explicit_and_fail_closed() -> None:
-    assert evidence_library_root("bbb_martins").name == "v8"
+    assert evidence_library_root("bbb_martins").name == "v10"
+    assert evidence_library_root("bioavailability_ma").name == "v10"
+    assert evidence_library_root("skin_reaction").name == "v10_main_universe_v5"
+    assert (
+        evidence_library_root("skin_reaction", "v10_main_universe_v5").name
+        == "v10_main_universe_v5"
+    )
     assert evidence_library_root("bbb_martins", "v7").name == "v7"
     assert evidence_library_root("ames", "v8").name == "v8"
     assert split_path("bbb_martins", "train").is_file()
     with pytest.raises(ValueError, match="unsupported active data task"):
         evidence_library_root("clintox")
-    with pytest.raises(FileNotFoundError, match="pointer is absent"):
-        evidence_library_root("ames")
+    assert evidence_library_root("ames").name == "v9"
 
 
 def test_data_root_contains_only_canonical_categories() -> None:
@@ -33,7 +38,9 @@ def test_data_root_contains_only_canonical_categories() -> None:
     }
     assert names == {
         "__init__.py",
+        "README.md",
         "artifacts",
+        "caches",
         "evidence_libraries",
         "gold_labels",
         "legacy",
@@ -89,7 +96,7 @@ def test_historical_library_aliases_are_read_only() -> None:
         assert_canonical_library_output(old)
 
 
-def test_bbb_v8_release_profile_targets_the_incomplete_successor() -> None:
+def test_bbb_v8_release_profile_targets_the_published_release() -> None:
     assert PROFILE.local_root == evidence_library_root("bbb_martins", "v8")
     assert PROFILE.stages == (
         "00_source",
@@ -99,6 +106,7 @@ def test_bbb_v8_release_profile_targets_the_incomplete_successor() -> None:
         "audits",
     )
     assert not (PROFILE.tracked_root / "manifest.json").exists()
-    assert (PROFILE.local_root / ".build-incomplete.json").is_file()
+    assert (PROFILE.local_root / "manifest.json").is_file()
+    assert not (PROFILE.local_root / ".build-incomplete.json").exists()
     assert not list(PROFILE.tracked_root.parent.parent.rglob("release_receipt.json"))
     assert not (PROFILE.tracked_root.parent / "v7").exists()

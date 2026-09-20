@@ -31,6 +31,11 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v10.tasks.ames.mapping_registry import (
+    REGISTRY_PATH,
+    mapping_path,
+    validate_mapping_hashes,
+)
 from data.processing.evidence_library.versions.v10.tasks.ames.data_processing.build_exact_unit_review import (
     validate_review_completion,
 )
@@ -616,6 +621,7 @@ def _stage2_validations(
 def validate_arguments(
     parser: argparse.ArgumentParser, args: argparse.Namespace
 ) -> None:
+    validate_mapping_hashes()
     if args.through_stage in {"source", "clean"}:
         return
     supplied_mapping = getattr(args, "measurement_resolution_mapping", None)
@@ -630,22 +636,11 @@ def validate_arguments(
         _validate_stage2_assets(mapping_path)
     except (OSError, TypeError, ValueError) as error:
         parser.error(f"AMES V10 Stage 2 assets are not accepted: {error}")
-    if not POLICY.measurement_resolution_enabled:
-        parser.error(
-            "AMES V10 Stage 2 remains disabled pending explicit asset acceptance"
-        )
-
-
-def _validate_stage2_assets(mapping_path: Path) -> None:
-    validate_mapping_provenance(mapping_path)
-    decisions = load_reviewed_unit_decisions(REVIEWED_UNIT_DECISIONS_PATH)
-    _validate_durable_review_lineage(decisions)
-    _validate_exact_unit_input_lineage(decisions, mapping_path)
-    expected_mapping = compile_exact_unit_mapping(REVIEWED_UNIT_DECISIONS_PATH)
-    actual_mapping = json.loads(EXACT_UNIT_MAPPING_PATH.read_text(encoding="utf-8"))
-    if actual_mapping != expected_mapping:
-        raise ValueError("compiled exact-unit map differs from reviewed decisions")
-    validate_review_completion(REVIEWED_UNIT_DECISIONS_PATH)
+def _validate_stage2_assets(resolution_path: Path) -> None:
+    validate_mapping_provenance(resolution_path)
+    validate_mapping_hashes()
+    if resolution_path.resolve() != mapping_path("measurement_resolution").resolve():
+        raise ValueError("measurement extraction is not the registry-selected mapping")
 
 
 def _validate_durable_review_lineage(decisions: dict[str, Any]) -> None:
@@ -741,9 +736,14 @@ POLICY = StarlingTaskPolicy(
         SOURCE_MANIFEST_PATH,
         *DEFAULT_GUIDANCE_PATHS,
         DEFAULT_ENDPOINT_MAPPING,
+        REGISTRY_PATH,
+        mapping_path("measurement_resolution"),
+        mapping_path("exact_measurement_units"),
     ),
     source_universe_mapping=level_mapping_path("ames", "v1"),
     stage1_measurement_routing_enabled=True,
+    measurement_resolution_enabled=True,
+    exact_unit_mapping_path=mapping_path("exact_measurement_units"),
 )
 
 

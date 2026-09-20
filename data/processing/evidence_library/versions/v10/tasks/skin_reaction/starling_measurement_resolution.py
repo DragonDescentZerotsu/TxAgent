@@ -40,7 +40,7 @@ TEMPLATE_PATH = PROMPT_ROOT / "measurement_resolution/skin_v12.jinja"
 
 PROMPT_VERSION = "skin_reaction_measurement_resolution_prompt.v12"
 MAPPING_VERSION = "skin_reaction_measurement_resolution.v8"
-EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v3"
+EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v5"
 MAX_MEASUREMENTS_PER_ROW = 1
 BATCH_SIZE = 20
 ALLOW_REBATCH_UNATTEMPTED = True
@@ -81,7 +81,7 @@ ROUTING_EXACT_UNIT_MAPPING_PATH = (
 )
 EXACT_UNIT_MAPPING_PATH = (
     REPO_ROOT
-    / "data/caches/evidence_library/skin_reaction/v10_main_universe_v2"
+    / "data/caches/evidence_library/skin_reaction/v10_main_universe_v4"
     / "unit_reconciliation/exact_measurement_unit_map.json"
 )
 RULE_POLICY_VERSION = "skin_reaction_measurement_resolution_rules.v1"

@@ -1,4 +1,4 @@
-"""Publish validation-only assay-ranked condition-context caches."""
+"""Publish split-specific assay-ranked condition-context caches."""
 from __future__ import annotations
 
 import argparse
@@ -117,8 +117,11 @@ def _schema(connection: sqlite3.Connection) -> None:
     )
 
 
-def _inputs(task: str, lineage: str) -> dict[str, Path]:
-    ranking = (V9_ROOT if lineage == "v9" else V10_4_ROOT) / task / "scaffold/valid/VERSION.json"
+def _inputs(task: str, lineage: str, subset: str) -> dict[str, Path]:
+    ranking = (
+        (V9_ROOT if lineage == "v9" else V10_4_ROOT)
+        / task / "scaffold" / subset / "VERSION.json"
+    )
     if lineage == "v9":
         gold_root = split_path(task, "train").parent
     else:
@@ -127,7 +130,7 @@ def _inputs(task: str, lineage: str) -> dict[str, Path]:
         "ranking_version": ranking,
         "rankings": ranking.with_name("rankings.parquet"),
         "train_gold": gold_root / "train_molecule_condition_labels.jsonl",
-        "valid_gold": gold_root / "valid_molecule_condition_labels.jsonl",
+        "query_gold": gold_root / f"{subset}_molecule_condition_labels.jsonl",
         **({
             "voter_membership": gold_root / "voter_membership.parquet",
             "voter_membership_manifest": gold_root / "voter_membership.manifest.json",
@@ -278,7 +281,7 @@ def _context_by_uid(
 
 
 def _source_catalog(
-    task: str, paths: dict[str, Path], lineage: str,
+    task: str, paths: dict[str, Path], lineage: str, subset: str,
 ) -> tuple[dict[str, Any], dict[str, Path]]:
     from predict.retrieval.assay_reranking import three_pools
 
@@ -367,12 +370,12 @@ def _source_catalog(
     missing = active - set(records_by_context)
     if missing:
         raise ValueError(f"Active training contexts lack exact voters: {sorted(missing)[:10]}")
-    valid_rows = read_jsonl(paths["valid_gold"])
+    query_rows = read_jsonl(paths["query_gold"])
     queries = {}
-    for query_id, row in enumerate(valid_rows, 1):
+    for query_id, row in enumerate(query_rows, 1):
         identity = normalize_molecule_identity(str(row["drug"]))
         if identity.status != "ok" or not identity.parent_smiles:
-            raise ValueError(f"Invalid validation query parent: {row['benchmark_row_id']}")
+            raise ValueError(f"Invalid {subset} query parent: {row['benchmark_row_id']}")
         benchmark_row_id = str(row["benchmark_row_id"])
         queries[benchmark_row_id] = {
             "query_id": query_id,
@@ -405,6 +408,63 @@ def _source_catalog(
     }, provenance
 
 
+def _frozen_source_catalog(
+    task: str, paths: dict[str, Path], source_manifest: Path, subset: str,
+) -> tuple[dict[str, Any], dict[str, Path]]:
+    """Reuse the immutable context payload while adapting a new query split."""
+    manifest = json.loads(source_manifest.read_text(encoding="utf-8"))
+    if (
+        manifest.get("schema_version") != SCHEMA_VERSION
+        or manifest.get("status") != "complete"
+        or manifest.get("task_id") != task
+        or manifest.get("subset") != "valid"
+    ):
+        raise ValueError(f"Incompatible frozen context cache: {source_manifest}")
+    database = source_manifest.with_name(str(manifest["database"]))
+    gold_rows = read_jsonl(paths["train_gold"])
+    gold = {str(row["benchmark_row_id"]): row for row in gold_rows}
+    records_by_context: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
+        metadata = dict(connection.execute("SELECT key,value FROM metadata"))
+        if metadata.get("content_id") != manifest.get("content_id"):
+            raise ValueError("Frozen context database and manifest identity differ")
+        for context_id, record_id, payload in connection.execute(
+            """SELECT g.external_context_id,r.external_record_id,r.payload
+               FROM gold_contexts AS g
+               JOIN context_records AS cr USING(context_key)
+               JOIN records AS r USING(record_key)
+               ORDER BY g.external_context_id,cr.within_context_rank"""
+        ):
+            records_by_context[str(context_id)].append((str(record_id), str(payload)))
+    if not records_by_context or not set(records_by_context) <= set(gold):
+        raise ValueError("Frozen context payload differs from the V1 training ledger")
+    queries = {}
+    for query_id, row in enumerate(read_jsonl(paths["query_gold"]), 1):
+        identity = normalize_molecule_identity(str(row["drug"]))
+        if identity.status != "ok" or not identity.parent_smiles:
+            raise ValueError(f"Invalid {subset} query parent: {row['benchmark_row_id']}")
+        queries[str(row["benchmark_row_id"])] = {
+            "query_id": query_id,
+            "drug": str(row["drug"]),
+            "query_parent_id": identity.parent_inchi_key or identity.parent_smiles,
+            "query_parent_smiles": identity.parent_smiles,
+        }
+    return {
+        "gold": gold,
+        "records_by_context": dict(records_by_context),
+        "retired_contexts": set(gold) - set(records_by_context),
+        "queries": queries,
+        "source_audit": {
+            "frozen_context_content_id": manifest["content_id"],
+            "active_contexts": len(records_by_context),
+            "exact_voter_records": sum(map(len, records_by_context.values())),
+        },
+    }, {
+        "frozen_context_manifest": source_manifest,
+        "frozen_context_database": database,
+    }
+
+
 def _candidate_rows(
     task: str, paths: dict[str, Path], catalog: dict[str, Any], *,
     primary_width: int, context_capacity: int, lineage: str,
@@ -434,7 +494,7 @@ def _candidate_rows(
     ranking_rows = pq.read_table(paths["rankings"], columns=columns).to_pylist()
     query_rows = catalog["queries"]
     if {str(row["query_record_id"]) for row in ranking_rows} != set(query_rows):
-        raise ValueError(f"{lineage} queries differ from the selected valid ledger: {task}")
+        raise ValueError(f"{lineage} queries differ from the selected query ledger: {task}")
     by_query: dict[str, list[dict[str, Any]]] = defaultdict(list)
     discarded = Counter()
     for row in ranking_rows:
@@ -537,23 +597,29 @@ def _candidate_rows(
 
 def build(
     task: str, *, primary_width: int = 25, context_capacity: int = 10,
-    root: Path | None = None, lineage: str = "v9",
+    root: Path | None = None, lineage: str = "v9", subset: str = "valid",
+    frozen_context_manifest: Path | None = None,
 ) -> Path:
-    """Build one immutable task/valid cache and return its VERSION path."""
+    """Build one immutable task/subset cache and return its VERSION path."""
     if task not in TASKS:
         raise ValueError(f"Unsupported task: {task}")
     if lineage not in LINEAGES:
         raise ValueError(f"Unsupported direct-gold lineage: {lineage}")
+    if subset not in {"valid", "test"}:
+        raise ValueError(f"Unsupported query subset: {subset}")
     if primary_width not in {10, 15, 25, 50, 100}:
         raise ValueError("Morgan primary width must be 10, 15, 25, 50, or 100")
     if not 1 <= context_capacity <= primary_width:
         raise ValueError("Context capacity must be positive and fit the primary width")
     root = root or _profile_root(primary_width, lineage)
-    destination = root / task / "scaffold/valid"
+    destination = root / task / "scaffold" / subset
     if destination.exists():
         raise FileExistsError(f"Refusing to overwrite immutable cache: {destination}")
-    paths = _inputs(task, lineage)
-    catalog, extra_inputs = _source_catalog(task, paths, lineage)
+    paths = _inputs(task, lineage, subset)
+    catalog, extra_inputs = (
+        _frozen_source_catalog(task, paths, frozen_context_manifest, subset)
+        if frozen_context_manifest else _source_catalog(task, paths, lineage, subset)
+    )
     candidates, build_audit = _candidate_rows(
         task, paths, catalog, primary_width=primary_width,
         context_capacity=context_capacity, lineage=lineage,
@@ -651,7 +717,7 @@ def build(
         os.chmod(database, 0o444)
         manifest = {
             "schema_version": SCHEMA_VERSION, "status": "complete", "task_id": task,
-            "subset": "valid", "database": database.name, "content_id": content_id,
+            "subset": subset, "database": database.name, "content_id": content_id,
             "model_lineage": lineage,
             "gold_release": "v2" if lineage == "v10_4" else "v1",
             "tie_seed": 0, "morgan_primary_parent_width": primary_width,
@@ -695,7 +761,7 @@ def build(
 
 def write_reports(
     manifests: dict[str, Path], *, primary_width: int = 25, output: Path | None = None,
-    lineage: str = "v9",
+    lineage: str = "v9", subset: str = "valid",
 ) -> None:
     output = output or _analysis_root(primary_width, lineage)
     if output.exists():
@@ -723,7 +789,7 @@ def write_reports(
                     "inputs": {},
                 }
                 molecules, _, audit = load_candidates(
-                    queries, task=task, subset="valid", policy=policy,
+                    queries, task=task, subset=subset, policy=policy,
                     molecule_limit=int(manifest["capacities"]["l1_contexts"]),
                     l1_limit=10, min_contrast=minimum,
                 )
@@ -793,20 +859,26 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--context-capacity", type=int, default=10)
     parser.add_argument("--lineage", choices=LINEAGES, default="v9")
+    parser.add_argument("--subset", choices=("valid", "test"), default="valid")
     parser.add_argument("--root", type=Path)
     parser.add_argument("--analysis-output", type=Path)
+    parser.add_argument("--frozen-context-root", type=Path)
     args = parser.parse_args(argv)
     manifests = {
         task: build(
             task, primary_width=args.morgan_primary_parent_width,
             context_capacity=args.context_capacity, root=args.root,
-            lineage=args.lineage,
+            lineage=args.lineage, subset=args.subset,
+            frozen_context_manifest=(
+                args.frozen_context_root / task / "scaffold/valid/VERSION.json"
+                if args.frozen_context_root else None
+            ),
         )
         for task in dict.fromkeys(args.tasks)
     }
     write_reports(
         manifests,
-        primary_width=args.morgan_primary_parent_width,
+        primary_width=args.morgan_primary_parent_width, subset=args.subset,
         output=args.analysis_output, lineage=args.lineage,
     )
     return 0

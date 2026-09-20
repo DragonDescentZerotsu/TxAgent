@@ -1,0 +1,30 @@
+# Reconcile selected values into semantic children
+
+You are defining children of one source-local semantic parent for **{{ payload.task }}**.
+
+- Evidence level: `{{ payload.level }}`
+- Evidence source: `{{ payload.source_id }}`
+- Semantic parent: `{{ payload.bucket_id }}`
+- Selected column: `{{ payload.column }}` — {{ payload.column_description }}
+
+Merge value IDs only when their values are synonymous or scientifically equivalent for the selected semantic dimension. Keep scientifically distinct meanings separate. Ignore units, species, molecule identity, labels, benchmark context, retrieval rank, frequency, and record count.
+
+Every omitted value ID deterministically becomes a singleton child. Return only non-singleton merge sets; a value ID may occur in at most one set.
+
+## Current semantic identity
+
+{% for column, values in payload.current_bucket_identity | dictsort -%}
+- **{{ column }}:** {% for value in values %}`{{ value }}`{% if not loop.last %}, {% endif %}{% endfor %}
+{% endfor %}
+
+## Complete observed values
+
+{% for item in payload["values"] -%}
+- `{{ item.value_id }}`: `{{ item.value }}`
+{% endfor %}
+
+Return only one JSON object:
+
+```json
+{"merge_sets":[{"member_ids":["value ID","value ID"],"label":"short semantic label","rationale":"brief scientific rationale"}],"rationale":"brief overall rationale"}
+```

@@ -718,6 +718,10 @@ def test_active_default_and_retired_cli_boundary(tmp_path):
             runner.parse_args(options)
     prepared_test = runner.parse_args(['--evaluation-subset','test','--prepare-only'])
     assert prepared_test.evaluation_subset == 'test'
+    approved_test = runner.parse_args([
+        '--evaluation-subset', 'test', '--allow-test-inference', '--parallelism', '1',
+    ])
+    assert approved_test.evaluation_subset == 'test'
     custom = policy_file(tmp_path, {'L1':'morgan'})
     with pytest.raises(SystemExit):
         runner.parse_args(['--score-cache-config',str(custom)])

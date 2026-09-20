@@ -215,6 +215,33 @@ def test_reviewed_log_transform_is_the_final_canonical_tuple():
     ]
 
 
+def test_compact_null_absolute_tuple_uses_canonical_scalar() -> None:
+    working, projected = _rows(value=0.5, unit="fraction")
+    _, persisted = finalize_assay_transfer_measurement(
+        working,
+        projected,
+        record_contract=_contract(),
+        policy=_policy(
+            json.dumps(
+                ["source", "endpoint", "fraction", "context"],
+                separators=(",", ":"),
+            )
+        ),
+    )
+    persisted.update(
+        {
+            "is_absolute_and_continuous": None,
+            "absolute_and_continuous_value": None,
+        }
+    )
+
+    assert validate_final_assay_transfer_measurements([persisted]) == []
+    persisted["absolute_and_continuous_value"] = 0.25
+    assert validate_final_assay_transfer_measurements([persisted]) == [
+        "record-1: absolute continuous scalar mismatch"
+    ]
+
+
 def test_v2_axis_policy_applies_across_pair_bucket_contexts():
     working, projected = _rows(value=100.0, unit="ng/mL")
     projected["canonical_reference_scope"] = "absolute"

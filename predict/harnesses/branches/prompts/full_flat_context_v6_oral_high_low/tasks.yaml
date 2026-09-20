@@ -1,0 +1,41 @@
+bbb_martins:
+  prompt_profile: meaningful_cns_access_v1
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons via analogies, taking evidence from related molecules to support your prediction.
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields: [claims, final_prediction]
+  required_json_schema:
+    claims:
+      - claim: concise evidence-grounded statement
+        molecule_ids: [Molecule N]
+        record_ids: [Record N-N]
+        evidence_role: supportive | contradictory
+  task_instructions:
+    - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient access.
+    - Meaningful access does not require ideal passive diffusion, high unbound brain exposure, or absence of every efflux signal.
+    - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion, influx, or prodrug evidence.
+    - Do not treat one physicochemical liability or repeated records as independent proof of failure.
+bioavailability_ma:
+  prompt_profile: f20_evidence_calibrated_v2
+  system_role: You are a chemist expert in oral bioavailability and you reason via analogies, taking evidence from related molecules to support your prediction.
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: final_prediction
+  positive_prediction: high
+  negative_prediction: low
+  required_fields: [claims, final_prediction]
+  required_json_schema:
+    claims:
+      - claim: concise evidence-grounded statement
+        molecule_ids: [Molecule N]
+        record_ids: [Record N-N]
+        evidence_role: supportive | contradictory
+  task_instructions:
+    - Predict high when F >= 20% is better supported and low when F < 20% is better supported.
+    - Keep evidence direction separate from transferability; low transferability lowers weight but does not reverse direction.
+    - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+    - Predict low only when affirmative threshold-relevant evidence supports it, not from generic drug-likeness concerns alone.
+    - Compare directness, endpoint match, conditions, transferability, and uncertainty without counting repeated records independently.

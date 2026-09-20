@@ -1,6 +1,7 @@
 """Exercise matrix sharing, dependencies, retry limits and resumed responses."""
 
 import csv
+from dataclasses import replace
 import threading
 import time
 import json
@@ -47,6 +48,11 @@ class FakeEndpoint:
 def test_full_matrix_requires_explicit_parallelism(tmp_path):
     with pytest.raises(SystemExit, match='2'):
         matrix.main(['--output-root', str(tmp_path / 'matrix')])
+    with pytest.raises(SystemExit):
+        matrix.main([
+            '--output-root', str(tmp_path / 'test-matrix'),
+            '--evaluation-subset', 'test', '--parallelism', '1',
+        ])
 
 
 class FakePool:
@@ -326,6 +332,77 @@ def test_deepseek_pool_allocates_all_endpoint_slots():
         ("dgx015_50001", 256),
         ("dgx018_50001", 256),
     ]
+
+
+def test_matrix_tops_up_endpoint_load_after_preparation(tmp_path, monkeypatch):
+    from predict.harnesses.progressive import diagnostics
+
+    monkeypatch.setenv('TXAGENT_LIVE_PUBLISH', '0')
+    pool = FakePool()
+    client = AttemptClient(pool)
+    monkeypatch.setattr(matrix, 'provider_client', lambda *args: client)
+    def select_available(config, requested):
+        active = replace(config, providers=config.providers[:-1])
+        return ProviderSelection(
+            config=active,
+            requested_parallelism=requested,
+            effective_parallelism=matrix.primary_capacity(active),
+            checks=tuple(
+                {'provider': provider.name,
+                 'status': 'healthy' if provider in active.providers else 'unavailable'}
+                for provider in config.providers
+            ),
+        )
+
+    monkeypatch.setattr(matrix, 'select_healthy_providers', select_available)
+    observed = [510, 511, 512]
+    monkeypatch.setattr(matrix, 'sample_provider_loads', lambda config, **kwargs: [
+        {'provider': provider.name, 'total': total}
+        for provider, total in zip(config.providers, observed)
+    ])
+    monkeypatch.setattr(matrix, 'summarize', lambda *args: None)
+    monkeypatch.setattr(diagnostics, 'build_run_diagnostics', lambda *args: None)
+    monkeypatch.setattr(
+        runner, 'query_steps',
+        lambda args, query, active_client: chain(active_client, 'prepared', []),
+    )
+
+    def prepare(args, prepared_callback, candidate_loader, **kwargs):
+        assert kwargs.get('prepared_query_callback') is None
+        query_dir = Path(args.output_root) / 'query'
+        query_dir.mkdir(parents=True)
+        query = runner.PreparedQuery('bbb_martins', 0, query_dir)
+        prepared_callback([query], {'bbb_martins': []}, {'bbb_martins': []})
+
+    monkeypatch.setattr(runner, 'run', prepare)
+    output = tmp_path / 'matrix'
+    assert matrix.main([
+        '--output-root', str(output), '--tasks', 'bbb_martins',
+        '--harness-version', 'reranked-progressive-l1-context-v1',
+        '--reranking-modes', 'assay-transfer-contrastive',
+        '--record-pools', 'assay-transfer-trained', '--records-per-level', '50',
+        '--l1-molecules', '10', '--l1-min-contrasts', '0',
+        '--query-prior-modes', 'none', '--prompt-version',
+        'reranked_progressive_l1_context_v3', '--max-level', '1',
+        '--assay-transfer-cache',
+        'predict/retrieval/assay_reranking/l1_context_morgan25_v2.yaml',
+        '--provider-pool-config',
+        'predict/api_client/providers/full_flat_progressive_v2_four_endpoint_512_high.json',
+        '--target-total-load-per-endpoint', '512',
+        '--execution-mode', 'throughput',
+        '--trace-root', str(tmp_path / 'traces'),
+    ]) == 0
+    receipt = json.loads((output / 'matrix.json').read_text())
+    assert receipt['parallelism'] == 3
+    assert [row['launcher_slots'] for row in receipt['top_up_allocations']] == [
+        2, 1, 0,
+    ]
+    assert (
+        receipt['endpoint_preflight']['models']['checks'][-1]['status']
+        == 'unavailable'
+    )
+    assert len(receipt['provider_pool']['providers']) == 2
+    assert len(pool.calls) == 1
 
 
 def test_matrix_expands_l1_molecule_counts(tmp_path, monkeypatch):

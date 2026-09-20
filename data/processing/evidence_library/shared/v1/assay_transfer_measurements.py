@@ -376,9 +376,13 @@ def validate_final_assay_transfer_measurements(
         if kind == "continuous" and not _same_optional_number(scalar, parsed_value):
             errors.append(f"{record_id}: canonical text/scalar mismatch")
             continue
+        # Compact v7 rows retain nullable schema placeholders for these
+        # working-only fields.  Only validate the redundant tuple when it was
+        # actually persisted; the canonical text/scalar checks above remain
+        # authoritative when both values are null.
         has_absolute_tuple = (
-            "is_absolute_and_continuous" in record
-            or "absolute_and_continuous_value" in record
+            record.get("is_absolute_and_continuous") is not None
+            or record.get("absolute_and_continuous_value") is not None
         )
         if kind == "continuous" and has_absolute_tuple and (
             not record.get("is_absolute_and_continuous")

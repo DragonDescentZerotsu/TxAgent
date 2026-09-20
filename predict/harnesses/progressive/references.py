@@ -119,6 +119,60 @@ def build_reference_index(
                 "prompt_heading": f"Record {alias}",
             })
 
+    if layout in {"flat_global", "flat_level_grouped"}:
+        if layout == "flat_global":
+            level_groups = [(0, ordered)]
+        else:
+            visible_levels = sorted({
+                int(card.get("first_seen_level") or 0)
+                for _, analog in ordered
+                for card in (analog.get("cards") or {}).values()
+            })
+            level_groups = [(level, ordered) for level in visible_levels]
+        for level, analogs in level_groups:
+            for analog_id, analog in analogs:
+                cards = (
+                    sorted(
+                        (
+                            (str(card_id), card)
+                            for card_id, card in (analog.get("cards") or {}).items()
+                        ),
+                        key=lambda item: (
+                            int(item[1].get("first_seen_level") or 0), item[0]
+                        ),
+                    )
+                    if level == 0
+                    else cards_at(analog, level)
+                )
+                if not cards:
+                    continue
+                molecule_number += 1
+                first_level = min(
+                    int(card.get("first_seen_level") or current_level)
+                    for _, card in cards
+                )
+                stable_id = (
+                    str(analog_id)
+                    if level == 0 else f"{analog_id}@L{level}"
+                )
+                add_unit(
+                    kind=(
+                        "context_conditioned_molecule"
+                        if first_level == 1 and analog.get("group_kind") == "l1_context"
+                        else "molecule"
+                    ),
+                    visible_id=f"Molecule {molecule_number}",
+                    stable_id=stable_id,
+                    analog_id=str(analog_id),
+                    level=first_level,
+                    heading=f"## Molecule {molecule_number}",
+                )
+                add_records(cards, containing_unit_id=stable_id)
+        if current_level > 1:
+            for row in rows:
+                row["is_new"] = int(row["first_visible_level"]) > 1
+        return rows
+
     # L1-layout prompts can also render one isolated later level as the initial evidence.
     l1_level = 1
     if layout == "l1" and not any(cards_at(analog, 1) for _, analog in ordered):

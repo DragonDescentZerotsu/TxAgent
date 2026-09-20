@@ -1,0 +1,26 @@
+{
+  "version": "full_flat_progressive_v2",
+  "runtime_parent_version": "reranked_progressive_v8",
+  "parent": "full_flat_progressive_v1",
+  "self_contained": true,
+  "status": "unevaluated",
+  "supports_tasks": ["bbb_martins", "bioavailability_ma"],
+  "runtime": {
+    "query_prior": true,
+    "tools": false,
+    "user_template": "user.jinja",
+    "output_contract": "full_flat_progressive.v1",
+    "retrieval_scores": "mode_specific",
+    "reasoning_reference_contract": {
+      "schema_version": "progressive_reasoning_references.v1",
+      "layout": "flat_global",
+      "required_mentions": false,
+      "matching": "case_insensitive_exact_visible_id"
+    }
+  },
+  "changes": [
+    "Restore pass and fail prediction language for oral bioavailability while retaining the v1 scaffold, evidence rendering, and output schema."
+  ],
+  "historical_predictions_reused": false,
+  "created_at": "2026-09-18"
+}

@@ -1,0 +1,46 @@
+{
+  "version": "semantic_weight_incremental_manual.v1",
+  "assignment_method": "manual_scientific_rubric_review",
+  "rubric": "semantic_weight_calibration.v6",
+  "tasks": {
+    "bbb_martins": {
+      "semantic_bucket_rankings_sha256": "603347d78ca226a81d5cd444f5e62b2a53c992155601d2a36b6560f9b2a7e07d",
+      "weights": [
+        {"level": "L2", "semantic_bucket_id": "sb_132f790aca03a6df82e4", "weight": 0.72, "rationale": "Strong direct blood-to-brain transfer fractions, with incomplete experimental context."},
+        {"level": "L2", "semantic_bucket_id": "sb_1a3849aa797789c50aee", "weight": 0.55, "rationale": "Moderate CSF-to-plasma evidence because CSF is a useful but imperfect brain-exposure surrogate."},
+        {"level": "L2", "semantic_bucket_id": "sb_3a9c8c4617975144c042", "weight": 0.64, "rationale": "Strong human CSF concentration evidence limited by the absence of a systemic comparator."},
+        {"level": "L2", "semantic_bucket_id": "sb_1f3a31c70c814dee9379", "weight": 0.55, "rationale": "Moderate directly named BBB transport percentages with missing system and species context."},
+        {"level": "L2", "semantic_bucket_id": "sb_079888915a250fc673fd", "weight": 0.42, "rationale": "Moderate quantitative blood-to-brain transfer evidence with a substantial skate-to-human limitation."},
+        {"level": "L2", "semantic_bucket_id": "sb_3ac5fc793dbea82ed842", "weight": 0.40, "rationale": "Moderate rat intravenous organ distribution evidence that is indirect for CNS access."},
+        {"level": "L2", "semantic_bucket_id": "sb_910e4ae5bb71a95709c4", "weight": 0.55, "rationale": "Moderate rat brain-perfusion transport kinetics that do not directly measure net exposure."},
+        {"level": "L2", "semantic_bucket_id": "sb_26862f1e229919929cd6", "weight": 0.25, "rationale": "Weak utility because the kinetic endpoint lacks assay, species, and interpretive context."},
+        {"level": "L2", "semantic_bucket_id": "sb_a7cb3a3c8fdd8bd0ffd2", "weight": 0.45, "rationale": "Moderate mouse BBB transport affinity evidence that is indirect for systemic CNS access."},
+        {"level": "L2", "semantic_bucket_id": "sb_f7cc14eebe65941f3528", "weight": 0.45, "rationale": "Moderate rat-perfusion affinity evidence that is indirect for net exposure."},
+        {"level": "L2", "semantic_bucket_id": "sb_9b08388a56dd64d7517d", "weight": 0.50, "rationale": "Moderate human cerebral concentration evidence without systemic normalization."},
+        {"level": "L2", "semantic_bucket_id": "sb_f75cb08f0f08625b4f59", "weight": 0.28, "rationale": "Weak in-vitro glucose distribution proxy with limited compound transferability."},
+        {"level": "L2", "semantic_bucket_id": "sb_b0329388d9236eb411d2", "weight": 0.00, "rationale": "Unusable because the displayed LogBB values are in-silico predictions rather than experiments."},
+        {"level": "L3", "semantic_bucket_id": "sb_89b61587a9e322de6338", "weight": 0.42, "rationale": "Moderate MDCK apparent-permeability proxy with cellular-system limitations."},
+        {"level": "L3", "semantic_bucket_id": "sb_24dcb13b568222427981", "weight": 0.48, "rationale": "Moderate PAMPA-BBB passive permeability evidence that omits active transport."},
+        {"level": "L4", "semantic_bucket_id": "sb_1cc5b268519a229805bc", "weight": 0.65, "rationale": "Strong human extraction-ratio evidence with limited assay context."},
+        {"level": "L4", "semantic_bucket_id": "sb_91066325d7725a618881", "weight": 0.65, "rationale": "Strong P-gp effect evidence spanning in-situ and in-vivo systems."},
+        {"level": "L4", "semantic_bucket_id": "sb_4d9faef2752e18aa2727", "weight": 0.45, "rationale": "Moderate bidirectional transport evidence weakened by a mixed yeast-transporter context."},
+        {"level": "L4", "semantic_bucket_id": "sb_903574659057bfc42ad8", "weight": 0.78, "rationale": "Strong mouse P-gp knockout evidence based on a brain-exposure fold change."},
+        {"level": "L4", "semantic_bucket_id": "sb_c55cc421a78d62d45a14", "weight": 0.50, "rationale": "Moderate Papp-ratio evidence from a P-gp assay with free-text interpretation."},
+        {"level": "L4", "semantic_bucket_id": "sb_e249f5057c400325e8ed", "weight": 0.68, "rationale": "Strong in-vivo rat CSF-to-free-plasma evidence with a CSF surrogate limitation."},
+        {"level": "L4", "semantic_bucket_id": "sb_a4608701124385bdd05b", "weight": 0.58, "rationale": "Moderate-to-strong ABCC4 inhibition evidence from an iPSC-BMEC transport model."},
+        {"level": "L4", "semantic_bucket_id": "sb_f26a7cb9fdc9f751c5ac", "weight": 0.36, "rationale": "Weak qualitative P-gp mutagenesis evidence that is indirect for CNS exposure."},
+        {"level": "L4", "semantic_bucket_id": "sb_13228902500c2bcd6b16", "weight": 0.00, "rationale": "Unusable because the human-BBB context conflicts with an Entamoeba transporter identity."},
+        {"level": "L5", "semantic_bucket_id": "sb_d58535f6e2d9debbd3ab", "weight": 0.58, "rationale": "Moderate-to-strong qualitative carrier-mediated blood-to-brain transport evidence."},
+        {"level": "L5", "semantic_bucket_id": "sb_3754aa82ea448523a0f7", "weight": 0.55, "rationale": "Moderate OATP1A2 substrate evidence that is mechanistic rather than net brain exposure."},
+        {"level": "L5", "semantic_bucket_id": "sb_9922163b1ab5988fe320", "weight": 0.42, "rationale": "Moderate brain-endothelial uptake proxy with mixed mechanisms and systems."}
+      ]
+    },
+    "bioavailability_ma": {
+      "semantic_bucket_rankings_sha256": "75e80962b278b81b6ea05db4b52bf4f4b8bd58566f7fd47666c230070b6d59e5",
+      "weights": [
+        {"level": "L2", "semantic_bucket_id": "sb_2350854a8627d081730a", "weight": 0.45, "rationale": "Moderate nondirect oral-bioavailability evidence with unspecified free-text reporting."},
+        {"level": "L6", "semantic_bucket_id": "sb_d904cff5a2fef0899da7", "weight": 0.68, "rationale": "Strong hepatic extraction-ratio evidence with a guinea-pig-to-human limitation."}
+      ]
+    }
+  }
+}

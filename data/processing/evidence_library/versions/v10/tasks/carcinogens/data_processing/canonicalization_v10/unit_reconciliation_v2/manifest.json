@@ -1,0 +1,47 @@
+{
+  "agent_review_decisions": {
+    "accepted_aliases": 4833,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/agent_review.decisions.jsonl",
+    "sha256": "8c26c7a683969210eb122d9372d29f3a33ca9cace34ca9522b62e1a9943401b4"
+  },
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "canonical_unit_count": 320224,
+  "entry_count": 326038,
+  "lineage": {
+    "legacy_lexical_batching": true,
+    "single_pass_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/manifest.json",
+      "sha256": "45909eb388a4ef2b907fcc9c1a720e0fe45ce60ddfd15107922a593bb160e321"
+    },
+    "single_pass_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/pass_a/mapping.jsonl",
+      "sha256": "5ed26d92fc033dc0012d5ddac2c10ef7f5145e4fc577a84dd5ac89137ab6ec0a"
+    },
+    "universe": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.jsonl",
+      "sha256": "67bea373db1f2a6c1ed02a874f34c7460bf586f47d0c1a4f9c8ceb11175d3c8b"
+    },
+    "universe_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_gpt_primary_v4/carcinogens/universe.manifest.json",
+      "sha256": "132605876e8d77812a783b407bd9c4a3f4970e13e702e3935c1301a4ee9c1855"
+    }
+  },
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
+  },
+  "review_completion": {
+    "packet_manifest_sha256": "da8862dcafa3889a194c518e263c9dcf92eb662567c4aed3f991fca7b02bf23c",
+    "packets_sha256": "51a3517bc5d451df60f5801bb8fa7fea0fd16e8099b1d3f21dd898ec9f90b1cf",
+    "reviewed_packets": 1626,
+    "reviewer_id": "codex-carcinogens-v1",
+    "sha256": "a8e29823aab99ece7781da5a1c37fbd5e4156d93c7bd456a26cbc28dcb40180c"
+  },
+  "task": "carcinogens",
+  "version": "starling_canonical_reconciliation_single_pass.v1"
+}

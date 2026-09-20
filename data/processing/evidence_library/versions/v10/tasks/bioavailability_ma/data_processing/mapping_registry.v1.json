@@ -1,5 +1,5 @@
 {
-  "version": "bioavailability_prebuilt_mapping_registry.v1",
+  "version": "bioavailability_prebuilt_mapping_registry.v2",
   "task_id": "bioavailability_ma",
   "sources": [
     "oral_exposure",
@@ -42,8 +42,8 @@
       "sources": ["oral_exposure", "fa", "fg", "fh", "hf_bioavailability"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_fields": ["canonical_endpoint_name"],
-      "path": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
-      "sha256": "c92b5bdea9979e195d14b34d16cbe1ecf485db73dd6a682a3467b5fa30c51d47"
+      "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/canonicalization_v10/main_universe_v1/measurement_resolution.parquet",
+      "sha256": "f7412f4e287ac51f6b7b47d4e4bd29e4581e1813cec948673a6dbf43dbc7980e"
     },
     "exact_measurement_units": {
       "stage": "01_cleaned",
@@ -102,6 +102,12 @@
       "outputs": ["canonical_reference_scope"],
       "path": "data/processing/evidence_library/versions/v10/tasks/bioavailability_ma/data_processing/reference_semantics_v3/reference_semantics.parquet",
       "sha256": "6f4b78f75a17799af10fee8417a1bb8f85288b1d62ee4c65eafa31160cf72bde"
+    }
+  },
+  "reference_mappings": {
+    "measurement_resolution_before_main_universe": {
+      "path": "data/artifacts/evidence_library_assets/bioavailability_ma/v10_percentage_delta/single_measurement_repair/measurement_resolution.parquet",
+      "sha256": "c92b5bdea9979e195d14b34d16cbe1ecf485db73dd6a682a3467b5fa30c51d47"
     }
   }
 }

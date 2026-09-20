@@ -35,6 +35,7 @@ class SemanticBucketArtifacts:
     semantic_bucket_rankings: Path
     record_relevance_rankings: Path
     retrieval_eligibility: Path | None
+    semantic_bucket_weights: Path | None
 
 
 def normalize_task(task: str) -> str:
@@ -50,8 +51,8 @@ def resolve_release(task: str, release: str = "v10") -> str:
         return release
     current = REPOSITORY_ROOT / "data" / "evidence_libraries" / task / "CURRENT"
     selected = current.read_text(encoding="utf-8").strip()
-    if not selected:
-        raise ValueError(f"empty evidence-library CURRENT pointer: {current}")
+    if not selected or "/" in selected or "\\" in selected:
+        raise ValueError(f"invalid evidence-library CURRENT pointer: {current}")
     return selected
 
 
@@ -81,7 +82,7 @@ def _selected_path(root: Path, selected: dict[str, Any], key: str) -> Path:
 
 
 def resolve_semantic_bucket_artifacts(
-    task: str, release: str = "v10"
+    task: str, release: str = "CURRENT"
 ) -> SemanticBucketArtifacts:
     """Resolve the reviewed artifact selection recorded by a release manifest."""
 
@@ -101,6 +102,8 @@ def resolve_semantic_bucket_artifacts(
     eligibility_path = (
         _selected_path(root, selected, "retrieval_eligibility") if eligibility else None
     )
+    weights = selected.get("semantic_bucket_weights")
+    weights_path = _selected_path(root, selected, "semantic_bucket_weights") if weights else None
     return SemanticBucketArtifacts(
         task=task,
         release=release,
@@ -113,12 +116,13 @@ def resolve_semantic_bucket_artifacts(
         semantic_bucket_rankings=_selected_path(root, selected, "semantic_bucket_rankings"),
         record_relevance_rankings=_selected_path(root, selected, "record_relevance_rankings"),
         retrieval_eligibility=eligibility_path,
+        semantic_bucket_weights=weights_path,
     )
 
 
 def load_record_bucket_map(
     task: str,
-    release: str = "v10",
+    release: str = "CURRENT",
     *,
     eligible_only: bool = False,
 ) -> pd.DataFrame:

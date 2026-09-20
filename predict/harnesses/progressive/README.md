@@ -59,6 +59,42 @@ were removed from the active checkout after the run-receipt audit recorded in
 `prompts/migration_receipt.json`. Use their pinned historical checkout for exact
 reproduction.
 
+## Formal-test query priors
+
+Build the BBB and Oral test priors together so both tasks share one provider
+queue and the per-endpoint limits remain launcher-global:
+
+```bash
+python -m predict.harnesses.progressive.query_priors \
+  --tool-service-url http://<tool-service-host>:8765 \
+  --wait-for-drain-seconds 86400
+```
+
+The command reads the active Gold-v1 test splits (393 BBB and 269 Oral), checks
+that the current no-retrieval prompts are byte-equivalent to the saved validation
+payload contract, requires all four configured DeepSeek endpoints to be drained,
+and then launches directly in throughput mode. Every request uses thinking with
+`reasoning_effort=high`. The completed root manifest pins the input, provider,
+prompt-payload, batch-manifest, and reasoning-output hashes.
+
+Use `--allow-active-endpoints` only with explicit authorization to overlap
+recorded endpoint traffic; the root manifest records that override and the
+six-sample pre-launch load window.
+
+Formal-test prediction remains fail-closed. Both the single runner and the
+matrix require `--evaluation-subset test --allow-test-inference`; cached test
+priors are accepted only when their batch manifest pins the exact selected test
+split hash.
+
+## Full-flat chaining
+
+`--reasoning-phase indirect-update` is a per-query chain. With
+`--l1-prior-run`, each verified finished L1 output is reused by stable query
+identity; missing or incomplete L1 outputs are rerun and immediately feed that
+query's indirect call. Without `--l1-prior-run`, every query runs L1 and then
+indirect reasoning in the same chain. Use `--require-complete-l1-prior` only
+when partial reuse should be rejected.
+
 ## Live review and throughput
 
 Live is the default. It writes traces immediately under

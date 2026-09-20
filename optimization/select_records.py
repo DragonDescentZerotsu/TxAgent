@@ -1,476 +1,597 @@
-"""Select V10 evidence records with Morgan relevance and parent diminishing returns."""
+"""Optimize ordered evidence-record panels for the full-flat V5 harness."""
+
 from __future__ import annotations
 
 import argparse
 import csv
-from collections import Counter
-from functools import lru_cache
-import importlib.metadata
 import json
 import math
-from pathlib import Path
 import platform
-from typing import Any, Mapping, Sequence
+from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
+import pyarrow.parquet as pq
 from apricot import CustomSelection
+from rdkit import Chem, DataStructs, rdBase
+from rdkit.Chem import rdFingerprintGenerator
 
-from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
-    hydrate_uids,
-    load_ranked_universe,
-)
-from predict.utils.json import atomic_output_path, sha256_file, write_json_atomic
+from predict.retrieval.assay_reranking.ranked_uid_retrieval import load_ranked_universe
+from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
+from semantic_buckets.artifacts import resolve_semantic_bucket_artifacts
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-OBJECTIVE_VERSION = "morgan_assay_feature_diversity.v1"
-FINGERPRINT_BITS = 2048
-FINGERPRINT_CHUNK_BITS = 32
-TASKS = {
-    "bbb_martins": {
-        "gold_task": "BBB_Martins",
-        "levels": ("L2", "L3", "L4", "L5"),
-    },
-    "bioavailability_ma": {
-        "gold_task": "Bioavailability_Ma",
-        "levels": ("L2", "L3", "L4", "L5", "L6"),
-    },
+OBJECTIVE_VERSION = "morgan_assay_feature_semantic.v1"
+GATED_OBJECTIVE_VERSION = "morgan_assay_gated_feature_semantic.v1"
+NORMALIZED_GATED_OBJECTIVE_VERSION = "morgan_normalized_gated_feature_semantic.v1"
+UID_MANIFEST_SCHEMA = "flat_preselected_uids.v1"
+SEMANTIC_RELEASE = "v10_main_universe_v1"
+TASK_LEVELS = {
+    "bbb_martins": ("L2", "L3", "L4", "L5"),
+    "bioavailability_ma": ("L2", "L3", "L4", "L5", "L6"),
+}
+GOLD_TASKS = {
+    "bbb_martins": "BBB_Martins",
+    "bioavailability_ma": "Bioavailability_Ma",
 }
 
 
-def _covered_bit_count(matrix: np.ndarray) -> int:
-    if matrix.shape[0] == 0:
-        return 0
-    covered = np.bitwise_or.reduce(matrix[:, 3:].astype(np.uint32), axis=0)
-    return sum(int(chunk).bit_count() for chunk in covered)
+@dataclass(frozen=True)
+class Profile:
+    name: str
+    assay_lambda: float = 0.0
+    molecular_lambda: float = 0.0
+    semantic_relevance_lambda: float = 0.0
+    semantic_diversity_lambda: float = 0.0
+    gated_assay_lambda: float = 0.0
+
+    def lambdas(self) -> dict[str, float]:
+        return {
+            "assay": self.assay_lambda,
+            "assay_gated": self.gated_assay_lambda,
+            "molecular_coverage": self.molecular_lambda,
+            "semantic_relevance": self.semantic_relevance_lambda,
+            "semantic_coverage": self.semantic_diversity_lambda,
+        }
 
 
-def _objective(
-    matrix: np.ndarray, *, k: int, parent_lambda: float, assay_lambda: float,
-    diversity_lambda: float, fingerprint_universe_bits: int,
-) -> float:
-    if matrix.size == 0:
-        return 0.0
-    parent_counts = np.bincount(matrix[:, 2].astype(np.int64))
-    return float(
-        matrix[:, 0].sum() / k
-        + assay_lambda * matrix[:, 1].sum() / k
-        + parent_lambda * np.sqrt(parent_counts).sum() / k
-        + diversity_lambda * _covered_bit_count(matrix) / fingerprint_universe_bits
-    )
+def _profiles() -> dict[str, Profile]:
+    profiles = {"baseline": Profile("baseline")}
+    fields = {
+        "assay": "assay_lambda",
+        "molecular": "molecular_lambda",
+        "semantic_rel": "semantic_relevance_lambda",
+        "semantic_div": "semantic_diversity_lambda",
+    }
+    for prefix, field in fields.items():
+        for suffix, value in (("025", 0.25), ("05", 0.5), ("10", 1.0)):
+            profiles[f"{prefix}_{suffix}"] = Profile(
+                f"{prefix}_{suffix}", **{field: value}
+            )
+    for suffix, value in (("025", 0.25), ("05", 0.5), ("10", 1.0)):
+        profiles[f"balanced_{suffix}"] = Profile(
+            f"balanced_{suffix}", value, value, value, value
+        )
+    return profiles
+
+
+PROFILES = _profiles()
+_MORGAN = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+
+
+def _finite_unit(value: Any, name: str) -> float:
+    number = float(value)
+    if not math.isfinite(number) or not 0.0 <= number <= 1.0:
+        raise ValueError(f"{name} must be finite and within [0, 1]")
+    return number
 
 
 @lru_cache(maxsize=None)
-def _fingerprint_chunks(smiles: str) -> tuple[int, ...]:
-    from rdkit import Chem
-    from rdkit.Chem import rdFingerprintGenerator
-
+def _fingerprint(smiles: str) -> DataStructs.ExplicitBitVect:
     molecule = Chem.MolFromSmiles(smiles)
     if molecule is None:
-        raise ValueError(f"Cannot fingerprint parent SMILES: {smiles}")
-    fingerprint = rdFingerprintGenerator.GetMorganGenerator(
-        radius=2, fpSize=FINGERPRINT_BITS,
-    ).GetFingerprint(molecule)
-    chunks = [0] * (FINGERPRINT_BITS // FINGERPRINT_CHUNK_BITS)
-    for bit in fingerprint.GetOnBits():
-        chunks[bit // FINGERPRINT_CHUNK_BITS] |= 1 << (bit % FINGERPRINT_CHUNK_BITS)
-    return tuple(chunks)
+        raise ValueError(f"Invalid cached parent SMILES: {smiles!r}")
+    return _MORGAN.GetFingerprint(molecule)
+
+
+def _feature_coverage(selected: Iterable[Iterable[int]], universe: Iterable[int]) -> float:
+    universe_bits = frozenset(universe)
+    if not universe_bits:
+        return 0.0
+    covered: set[int] = set()
+    for bits in selected:
+        covered.update(bits)
+    return len(covered) / len(universe_bits)
+
+
+def _greedy_coverage_ceiling(
+    fingerprint_bits: Sequence[frozenset[int]], universe_bits: frozenset[int], k: int
+) -> float:
+    """Return the deterministic K-item greedy ceiling used to rescale coverage."""
+    remaining = list(dict.fromkeys(fingerprint_bits))
+    covered: set[int] = set()
+    for _ in range(min(k, len(remaining))):
+        best = max(range(len(remaining)), key=lambda index: len(remaining[index] - covered))
+        covered.update(remaining.pop(best))
+    return len(covered) / len(universe_bits) if universe_bits else 0.0
+
+
+def _objective_components(
+    indices: Sequence[int],
+    *,
+    candidates: Sequence[Mapping[str, Any]],
+    fingerprints: Sequence[DataStructs.ExplicitBitVect],
+    fingerprint_bits: Sequence[frozenset[int]],
+    universe_feature_bits: frozenset[int],
+    k: int,
+    assay_available: bool,
+    include_pairwise_diagnostic: bool = True,
+) -> dict[str, float]:
+    if not indices:
+        return {
+            "morgan": 0.0,
+            "assay": 0.0,
+            "assay_gated": 0.0,
+            "molecular_coverage": 0.0,
+            "molecular_diversity": 0.0,
+            "semantic_relevance": 0.0,
+            "semantic_coverage": 0.0,
+            "semantic_diversity": 0.0,
+        }
+    rows = [candidates[index] for index in indices]
+    pair_sum = (
+        sum(
+            1.0 - DataStructs.TanimotoSimilarity(fingerprints[left], fingerprints[right])
+            for position, left in enumerate(indices)
+            for right in indices[position + 1 :]
+        )
+        if include_pairwise_diagnostic else 0.0
+    )
+    pair_denominator = k * (k - 1) / 2
+    unique_buckets = len({str(row["semantic_bucket_id"]) for row in rows})
+    return {
+        "morgan": sum(float(row["morgan_similarity"]) for row in rows) / k,
+        "assay": (
+            sum(float(row["assay_transfer_score"]) for row in rows) / k
+            if assay_available else 0.0
+        ),
+        "assay_gated": (
+            sum(
+                float(row["morgan_similarity"]) * float(row["assay_transfer_score"])
+                for row in rows
+            ) / k
+            if assay_available else 0.0
+        ),
+        "molecular_coverage": _feature_coverage(
+            (fingerprint_bits[index] for index in indices),
+            universe_feature_bits,
+        ),
+        "molecular_diversity": pair_sum / pair_denominator if pair_denominator else 0.0,
+        "semantic_relevance": sum(float(row["semantic_weight"]) for row in rows) / k,
+        "semantic_coverage": unique_buckets / k,
+        "semantic_diversity": (
+            (unique_buckets - 1) / (k - 1) if k > 1 else 1.0
+        ),
+    }
 
 
 def select_records(
-    candidates: Sequence[Mapping[str, Any]], *, k: int, parent_lambda: float,
-    assay_lambda: float = 0.0, diversity_lambda: float = 0.0,
+    candidates: Sequence[Mapping[str, Any]],
+    *,
+    k: int = 10,
+    assay_lambda: float = 0.0,
+    gated_assay_lambda: float = 0.0,
+    molecular_lambda: float = 0.0,
+    semantic_relevance_lambda: float = 0.0,
+    semantic_diversity_lambda: float = 0.0,
+    normalized_gated_objective: bool = False,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Greedily select exactly K records under the versioned objective."""
-    if k < 1 or len(candidates) < k:
-        raise ValueError(f"K must be positive and no larger than {len(candidates)}")
-    lambdas = (parent_lambda, assay_lambda, diversity_lambda)
-    if any(not math.isfinite(value) or value < 0 for value in lambdas):
-        raise ValueError("Objective lambdas must be finite and nonnegative")
+    """Greedily select exactly K UIDs without constructing an N-by-N matrix."""
+    lambdas = {
+        "assay": float(assay_lambda),
+        "assay_gated": float(gated_assay_lambda),
+        "molecular_coverage": float(molecular_lambda),
+        "semantic_relevance": float(semantic_relevance_lambda),
+        "semantic_coverage": float(semantic_diversity_lambda),
+    }
+    if k < 1 or k > len(candidates):
+        raise ValueError("K must be positive and no greater than the candidate count")
+    if any(not math.isfinite(value) or value < 0 for value in lambdas.values()):
+        raise ValueError("Objective lambdas must be finite and non-negative")
+    if normalized_gated_objective and assay_lambda:
+        raise ValueError("The normalized gated objective does not use additive assay")
 
-    ordered = sorted(
-        (dict(row) for row in candidates),
-        key=lambda row: (int(row["morgan_rank"]), str(row["item_id"])),
-    )
-    if len({str(row["item_id"]) for row in ordered}) != len(ordered):
-        raise ValueError("Candidate item IDs must be unique")
-
-    parent_similarities: dict[str, float] = {}
-    parent_smiles: dict[str, str] = {}
-    parent_codes: dict[str, int] = {}
-    assay_available: list[bool] = []
-    features = []
-    for row in ordered:
+    rows = [dict(row) for row in candidates]
+    item_ids = [str(row["item_id"]) for row in rows]
+    if len(item_ids) != len(set(item_ids)):
+        raise ValueError("Candidate source_row_uid values must be unique")
+    parent_similarity: dict[str, float] = {}
+    parent_fingerprints: dict[str, DataStructs.ExplicitBitVect] = {}
+    fingerprints = []
+    assay_present = []
+    for row in rows:
+        similarity = _finite_unit(row["morgan_similarity"], "Morgan similarity")
+        weight = _finite_unit(row["semantic_weight"], "semantic weight")
+        row["morgan_similarity"], row["semantic_weight"] = similarity, weight
         parent_id = str(row["parent_id"])
-        smiles = str(row["parent_smiles"])
-        similarity = float(row["morgan_similarity"])
-        if not math.isfinite(similarity) or not 0 <= similarity <= 1:
-            raise ValueError(f"Invalid Morgan similarity for {row['item_id']}")
-        prior = parent_similarities.setdefault(parent_id, similarity)
-        if not math.isclose(prior, similarity, rel_tol=0, abs_tol=1e-12):
+        if parent_id in parent_similarity and not math.isclose(
+            parent_similarity[parent_id], similarity, abs_tol=1e-12
+        ):
             raise ValueError(f"Morgan similarity varies within parent {parent_id}")
-        prior_smiles = parent_smiles.setdefault(parent_id, smiles)
-        if prior_smiles != smiles:
-            raise ValueError(f"Parent SMILES varies within parent {parent_id}")
-        raw_assay = row.get("assay_transfer_score")
-        assay_available.append(raw_assay is not None)
-        assay_score = 0.0 if raw_assay is None else float(raw_assay)
-        if not math.isfinite(assay_score) or not 0 <= assay_score <= 1:
-            raise ValueError(f"Invalid assay-transfer score for {row['item_id']}")
-        parent_codes.setdefault(parent_id, len(parent_codes))
-        features.append((
-            similarity, assay_score, parent_codes[parent_id], *_fingerprint_chunks(smiles),
-        ))
-
-    if any(assay_available) and not all(assay_available):
+        parent_similarity[parent_id] = similarity
+        if parent_id not in parent_fingerprints:
+            parent_fingerprints[parent_id] = _fingerprint(str(row["parent_smiles"]))
+        fingerprints.append(parent_fingerprints[parent_id])
+        present = row.get("assay_transfer_score") is not None
+        assay_present.append(present)
+        if present:
+            row["assay_transfer_score"] = _finite_unit(
+                row["assay_transfer_score"], "assay-transfer score"
+            )
+        if not str(row.get("semantic_bucket_id") or ""):
+            raise ValueError("Every candidate requires a semantic bucket")
+    if any(assay_present) and not all(assay_present):
         raise ValueError("Assay-transfer scores must be complete or absent for a level")
-    has_assay_scores = all(assay_available)
-    if assay_lambda > 0 and not has_assay_scores:
-        raise ValueError("Positive assay_lambda requires complete assay-transfer scores")
+    assay_available = all(assay_present)
+    effective_lambdas = {
+        **lambdas,
+        "assay": lambdas["assay"] if assay_available else 0.0,
+        "assay_gated": lambdas["assay_gated"] if assay_available else 0.0,
+    }
+    fingerprint_bits = [frozenset(fingerprint.GetOnBits()) for fingerprint in fingerprints]
+    universe_feature_bits = frozenset(
+        bit for bits in fingerprint_bits for bit in bits
+    )
+    coverage_ceiling = (
+        _greedy_coverage_ceiling(fingerprint_bits, universe_feature_bits, k)
+        if normalized_gated_objective else 1.0
+    )
+    morgan_scores = [float(row["morgan_similarity"]) for row in rows]
+    assay_scores = [
+        float(row["assay_transfer_score"]) if assay_available else 0.0 for row in rows
+    ]
+    semantic_weights = [float(row["semantic_weight"]) for row in rows]
+    semantic_buckets = [str(row["semantic_bucket_id"]) for row in rows]
 
-    matrix = np.asarray(features, dtype=np.float64)
-    fingerprint_universe_bits = _covered_bit_count(matrix)
-    if fingerprint_universe_bits == 0:
-        raise ValueError("Candidate universe has no Morgan fingerprint bits")
-    selector = CustomSelection(
-        n_samples=k,
-        function=_objective,
-        function_kwds={
-            "k": k,
-            "parent_lambda": parent_lambda,
-            "assay_lambda": assay_lambda,
-            "diversity_lambda": diversity_lambda,
-            "fingerprint_universe_bits": fingerprint_universe_bits,
-        },
-        optimizer="naive",
-        n_jobs=1,
-    ).fit(matrix)
-    selected = [ordered[int(index)] for index in selector.ranking]
-    if not any(lambdas) and [row["item_id"] for row in selected] != [
-        row["item_id"] for row in ordered[:k]
-    ]:
-        raise RuntimeError("Pure Morgan selection differs from the frozen Morgan order")
+    def objective(subset: np.ndarray) -> float:
+        indices = [int(value) for value in np.asarray(subset)[:, 0]]
+        morgan = sum(morgan_scores[index] for index in indices) / k
+        assay_gated = sum(
+            morgan_scores[index] * assay_scores[index] for index in indices
+        ) / k
+        if normalized_gated_objective:
+            alpha = effective_lambdas["assay_gated"]
+            score = (morgan + alpha * assay_gated) / (1 + alpha)
+        else:
+            score = morgan
+            score += effective_lambdas["assay"] * (
+                sum(assay_scores[index] for index in indices) / k
+            )
+            score += effective_lambdas["assay_gated"] * assay_gated
+        coverage = _feature_coverage(
+            (fingerprint_bits[index] for index in indices), universe_feature_bits
+        )
+        if normalized_gated_objective and coverage_ceiling:
+            coverage = min(1.0, coverage / coverage_ceiling)
+        score += effective_lambdas["molecular_coverage"] * coverage
+        score += effective_lambdas["semantic_relevance"] * (
+            sum(semantic_weights[index] for index in indices) / k
+        )
+        score += effective_lambdas["semantic_coverage"] * (
+            len({semantic_buckets[index] for index in indices}) / k
+        )
+        return score
 
-    final_counts = Counter(str(row["parent_id"]) for row in selected)
-    running_counts: Counter[str] = Counter()
-    result = []
-    for rank, (row, gain) in enumerate(zip(selected, selector.gains), start=1):
-        parent_id = str(row["parent_id"])
-        running_counts[parent_id] += 1
-        result.append({
-            **row,
-            "selection_rank": rank,
+    selector = CustomSelection(k, objective, optimizer="lazy", n_jobs=1)
+    selector.fit(np.arange(len(rows), dtype=np.float64).reshape(-1, 1))
+    ranking = [int(index) for index in selector.ranking]
+    selected = []
+    for selection_rank, (index, gain) in enumerate(zip(ranking, selector.gains), start=1):
+        selected.append({
+            **rows[index],
+            "selection_rank": selection_rank,
             "marginal_gain": float(gain),
-            "parent_count_after_selection": running_counts[parent_id],
-            "records_from_parent": final_counts[parent_id],
         })
-
-    similarity_sum = sum(float(row["morgan_similarity"]) for row in selected)
-    assay_sum = (
-        sum(float(row["assay_transfer_score"]) for row in selected)
-        if has_assay_scores else None
+    components = _objective_components(
+        ranking,
+        candidates=rows,
+        fingerprints=fingerprints,
+        fingerprint_bits=fingerprint_bits,
+        universe_feature_bits=universe_feature_bits,
+        k=k,
+        assay_available=assay_available,
     )
-    parent_reward = sum(math.sqrt(count) for count in final_counts.values())
-    selected_matrix = matrix[np.asarray(selector.ranking, dtype=np.int64)]
-    fingerprint_bits_covered = _covered_bit_count(selected_matrix)
-    fingerprint_coverage = fingerprint_bits_covered / fingerprint_universe_bits
-    objective = (
-        similarity_sum / k
-        + assay_lambda * (assay_sum or 0.0) / k
-        + parent_lambda * parent_reward / k
-        + diversity_lambda * fingerprint_coverage
+    normalized_coverage = (
+        min(1.0, components["molecular_coverage"] / coverage_ceiling)
+        if normalized_gated_objective and coverage_ceiling
+        else components["molecular_coverage"]
     )
-    if not math.isclose(objective, float(np.sum(selector.gains)), abs_tol=1e-10):
-        raise RuntimeError("Apricot gains do not reproduce the objective")
-    return result, {
-        "candidate_records": len(ordered),
-        "candidate_parents": len(parent_codes),
+    alpha = effective_lambdas["assay_gated"]
+    normalized_relevance = (
+        (components["morgan"] + alpha * components["assay_gated"]) / (1 + alpha)
+        if normalized_gated_objective else components["morgan"]
+    )
+    objective_score = (
+        normalized_relevance
+        + effective_lambdas["molecular_coverage"] * normalized_coverage
+        + effective_lambdas["semantic_relevance"] * components["semantic_relevance"]
+        + effective_lambdas["semantic_coverage"] * components["semantic_coverage"]
+        if normalized_gated_objective else
+        components["morgan"] + sum(
+            effective_lambdas[name] * components[name] for name in effective_lambdas
+        )
+    )
+    return selected, {
+        **components,
+        "normalized_relevance": normalized_relevance,
+        "molecular_coverage_ceiling": coverage_ceiling,
+        "molecular_coverage_normalized": normalized_coverage,
+        "objective_score": objective_score,
+        "assay_available": assay_available,
+        "assay_lambda_effective": effective_lambdas["assay"],
+        "gated_assay_lambda_effective": effective_lambdas["assay_gated"],
+        "candidate_records": len(rows),
         "selected_records": k,
-        "distinct_selected_parents": len(final_counts),
-        "max_records_one_parent": max(final_counts.values()),
-        "similarity_sum": similarity_sum,
-        "similarity_mean": similarity_sum / k,
-        "assay_available": has_assay_scores,
-        "assay_score_sum": assay_sum,
-        "assay_score_mean": assay_sum / k if assay_sum is not None else None,
-        "parent_reward_sum": parent_reward,
-        "fingerprint_bits_covered": fingerprint_bits_covered,
-        "fingerprint_universe_bits": fingerprint_universe_bits,
-        "fingerprint_coverage": fingerprint_coverage,
-        "objective_score": objective,
+        "distinct_selected_parents": len({str(row["parent_id"]) for row in selected}),
+        "distinct_selected_semantic_buckets": len({
+            str(row["semantic_bucket_id"]) for row in selected
+        }),
     }
 
 
-def _read_query(path: Path, *, query_index: int, benchmark_row_id: str | None) -> dict[str, str]:
-    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
-    if benchmark_row_id is not None:
-        matches = [row for row in rows if str(row.get("benchmark_row_id")) == benchmark_row_id]
-        if len(matches) != 1:
-            raise ValueError(f"Expected one gold row for {benchmark_row_id}, found {len(matches)}")
-        row = matches[0]
-    else:
-        if not 0 <= query_index < len(rows):
-            raise ValueError(f"query-index must be between 0 and {len(rows) - 1}")
-        row = rows[query_index]
-    return {
-        "benchmark_row_id": str(row["benchmark_row_id"]),
-        "drug": str(row["drug"]),
+def _semantic_rows(task: str) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, Any]]:
+    artifacts = resolve_semantic_bucket_artifacts(task, SEMANTIC_RELEASE)
+    weighting_manifest_path = artifacts.record_relevance_rankings.parent / "manifest.json"
+    weighting_manifest = json.loads(weighting_manifest_path.read_text(encoding="utf-8"))
+    filename = artifacts.record_relevance_rankings.name
+    if (
+        weighting_manifest.get("status") != "complete_reviewed"
+        or weighting_manifest.get("task") != task
+        or weighting_manifest.get("files", {}).get(filename)
+        != sha256_file(artifacts.record_relevance_rankings)
+    ):
+        raise ValueError(f"Semantic weighting manifest is incompatible: {weighting_manifest_path}")
+    table = pq.read_table(
+        artifacts.record_relevance_rankings,
+        columns=["source_row_uid", "level", "semantic_bucket_id", "weight"],
+    )
+    rows: dict[tuple[str, str], dict[str, Any]] = {}
+    for row in table.to_pylist():
+        key = (str(row["source_row_uid"]), str(row["level"]))
+        if key in rows:
+            raise ValueError(f"Semantic rankings repeat a record-level assignment: {key}")
+        rows[key] = {
+            "semantic_bucket_id": str(row["semantic_bucket_id"]),
+            "semantic_weight": _finite_unit(row["weight"], "semantic weight"),
+        }
+    return rows, {
+        "release": SEMANTIC_RELEASE,
+        "release_manifest": str(artifacts.manifest),
+        "release_manifest_sha256": sha256_file(artifacts.manifest),
+        "weighting_manifest": str(weighting_manifest_path),
+        "record_relevance_rankings": str(artifacts.record_relevance_rankings),
+        "record_relevance_rankings_sha256": sha256_file(artifacts.record_relevance_rankings),
     }
 
 
-def _write_tsv(path: Path, rows: list[dict[str, Any]], fields: list[str]) -> None:
-    with atomic_output_path(path) as temporary:
-        with temporary.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t", lineterminator="\n")
-            writer.writeheader()
-            writer.writerows({field: row.get(field, "") for field in fields} for row in rows)
+def _attach_semantics(
+    candidates: Sequence[Mapping[str, Any]],
+    *,
+    level: str,
+    semantics: Mapping[tuple[str, str], Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    output = []
+    missing = []
+    for candidate in candidates:
+        uid = str(candidate["item_id"])
+        semantic = semantics.get((uid, level))
+        if semantic is None:
+            missing.append(uid)
+        else:
+            output.append({**candidate, **semantic})
+    if missing:
+        raise ValueError(f"Semantic rankings omit {level} candidate UIDs: {missing[:5]}")
+    return output
 
 
-def _package_version(name: str) -> str:
-    try:
-        return importlib.metadata.version(name)
-    except importlib.metadata.PackageNotFoundError:
-        return "unavailable"
+def _write_tsv(path: Path, rows: Iterable[Mapping[str, Any]], fields: Sequence[str]) -> int:
+    count = 0
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(fields), delimiter="\t", extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+            count += 1
+    return count
 
 
-def run(args: argparse.Namespace) -> Path:
-    config = TASKS[args.task]
-    gold_path = (
-        args.gold_query_file.resolve()
-        if args.gold_query_file
-        else REPO_ROOT / "data" / "gold_labels" / config["gold_task"] / "v1" /
-        "scaffold" / "valid_small.jsonl"
-    )
-    release_index = (
-        args.release_index.resolve()
-        if args.release_index
-        else REPO_ROOT / "data" / "caches" / "assay_reranking" / "active" /
-        "ranked_level_retrieval_v3" / args.task / "RELEASE_INDEX.json"
-    )
-    query = _read_query(
-        gold_path, query_index=args.query_index, benchmark_row_id=args.benchmark_row_id,
-    )
-    query_id = query["benchmark_row_id"]
-    levels = tuple(config["levels"])
-    ranked, evidence_manifest, cache_audit = load_ranked_universe(
-        release_index,
-        task=args.task,
-        subset="valid",
-        levels=levels,
-        queries={query_id: query["drug"]},
-    )
+def _default_query_path(task: str) -> Path:
+    return Path("data/gold_labels") / GOLD_TASKS[task] / "v1/scaffold/valid_small.jsonl"
 
-    selected_by_run: list[
-        tuple[str, float, float, float, list[dict[str, Any]], dict[str, Any]]
-    ] = []
-    selected_uids: set[str] = set()
-    assay_unavailable_levels = []
-    for level in levels:
-        candidates = ranked[level][query_id]
-        has_assay_scores = all(row.get("assay_transfer_score") is not None for row in candidates)
-        assay_lambdas = args.assay_lambdas if has_assay_scores else [0.0]
-        if not has_assay_scores:
-            assay_unavailable_levels.append(level)
-        for parent_lambda in args.parent_lambdas:
-            for assay_lambda in assay_lambdas:
-                for diversity_lambda in args.diversity_lambdas:
-                    selected, summary = select_records(
-                        candidates,
-                        k=args.k,
-                        parent_lambda=parent_lambda,
-                        assay_lambda=assay_lambda,
-                        diversity_lambda=diversity_lambda,
-                    )
-                    selected_by_run.append((
-                        level, parent_lambda, assay_lambda, diversity_lambda,
-                        selected, summary,
-                    ))
-                    selected_uids.update(str(row["item_id"]) for row in selected)
 
-    hydrated = hydrate_uids(evidence_manifest, selected_uids)
-    selection_rows: list[dict[str, Any]] = []
-    summary_rows: list[dict[str, Any]] = []
-    for (
-        level, parent_lambda, assay_lambda, diversity_lambda, selected, summary,
-    ) in selected_by_run:
-        for row in selected:
-            evidence = hydrated[str(row["item_id"])]
-            payload = json.loads(str(evidence["payload"]))
-            source_fields = payload.get("source_fields") or {}
-            selection_rows.append({
-                "task_id": args.task,
+def _default_release_index(task: str) -> Path:
+    return Path("data/caches/assay_reranking/active/ranked_level_retrieval_v3") / task / "RELEASE_INDEX.json"
+
+
+def _profile_output(
+    *,
+    profile: Profile,
+    task: str,
+    output_root: Path,
+    queries: Mapping[str, str],
+    levels: Sequence[str],
+    k: int,
+    universes: Mapping[str, Mapping[str, Sequence[Mapping[str, Any]]]],
+    release_index: Path,
+    cache_audit: Mapping[str, Any],
+    semantic_audit: Mapping[str, Any],
+    query_path: Path,
+) -> Path:
+    output = output_root / profile.name / task
+    output.mkdir(parents=True, exist_ok=False)
+    selected_rows, diagnostic_rows = [], []
+    for query_id in queries:
+        for level in levels:
+            selected, summary = select_records(
+                universes[level][query_id], k=k,
+                assay_lambda=profile.assay_lambda,
+                gated_assay_lambda=profile.gated_assay_lambda,
+                molecular_lambda=profile.molecular_lambda,
+                semantic_relevance_lambda=profile.semantic_relevance_lambda,
+                semantic_diversity_lambda=profile.semantic_diversity_lambda,
+            )
+            selected_rows.extend({
                 "benchmark_row_id": query_id,
                 "level": level,
-                "parent_lambda": parent_lambda,
-                "assay_lambda": assay_lambda,
-                "diversity_lambda": diversity_lambda,
                 "selection_rank": row["selection_rank"],
                 "source_row_uid": row["item_id"],
-                "external_record_id": evidence["external_record_id"],
-                "parent_id": row["parent_id"],
-                "parent_smiles": row["parent_smiles"],
-                "parent_morgan_rank": row["parent_morgan_rank"],
-                "within_parent_rank": row["within_parent_rank"],
-                "morgan_rank": row["morgan_rank"],
-                "morgan_similarity": row["morgan_similarity"],
-                "assay_transfer_score": row["assay_transfer_score"],
-                "marginal_gain": row["marginal_gain"],
-                "parent_count_after_selection": row["parent_count_after_selection"],
-                "records_from_parent": row["records_from_parent"],
-                "family_key": payload.get("family_key", ""),
-                "endpoint_name": source_fields.get("endpoint_name", ""),
-                "measurement_text": payload.get("display_measurement_text", ""),
-                "unit_text": payload.get("display_unit_text", ""),
-                "support_text": source_fields.get("support_text", ""),
-                "payload_json": json.dumps(payload, ensure_ascii=False, sort_keys=True),
+            } for row in selected)
+            diagnostic_rows.append({
+                "benchmark_row_id": query_id,
+                "level": level,
+                **summary,
             })
-        summary_rows.append({
-            "task_id": args.task,
-            "benchmark_row_id": query_id,
-            "level": level,
-            "parent_lambda": parent_lambda,
-            "assay_lambda": assay_lambda,
-            "diversity_lambda": diversity_lambda,
-            **summary,
-        })
 
-    output_root = args.output_root.resolve() / args.task / query_id
-    output_root.mkdir(parents=True, exist_ok=True)
-    selection_path = output_root / "selections.tsv"
-    summary_path = output_root / "summary.tsv"
-    report_path = output_root / "report.md"
-    manifest_path = output_root / "manifest.json"
-    _write_tsv(selection_path, selection_rows, [
-        "task_id", "benchmark_row_id", "level", "parent_lambda", "assay_lambda",
-        "diversity_lambda", "selection_rank",
-        "source_row_uid", "external_record_id", "parent_id", "parent_smiles",
-        "parent_morgan_rank", "within_parent_rank", "morgan_rank", "morgan_similarity",
-        "assay_transfer_score", "marginal_gain", "parent_count_after_selection",
-        "records_from_parent",
-        "family_key", "endpoint_name", "measurement_text", "unit_text", "support_text",
-        "payload_json",
-    ])
-    _write_tsv(summary_path, summary_rows, [
-        "task_id", "benchmark_row_id", "level", "parent_lambda", "assay_lambda",
-        "diversity_lambda", "candidate_records", "candidate_parents", "selected_records",
-        "distinct_selected_parents",
-        "max_records_one_parent", "similarity_sum", "similarity_mean",
-        "assay_available", "assay_score_sum", "assay_score_mean", "parent_reward_sum",
-        "fingerprint_bits_covered", "fingerprint_universe_bits", "fingerprint_coverage",
+    selected_path = output / "selected_uids.tsv"
+    selected_count = _write_tsv(
+        selected_path, selected_rows,
+        ("benchmark_row_id", "level", "selection_rank", "source_row_uid"),
+    )
+    diagnostic_fields = (
+        "benchmark_row_id", "level", "candidate_records", "selected_records",
+        "distinct_selected_parents", "distinct_selected_semantic_buckets",
+        "assay_available", "assay_lambda_effective", "gated_assay_lambda_effective",
+        "morgan", "assay", "assay_gated",
+        "molecular_coverage", "molecular_diversity", "semantic_relevance",
+        "semantic_coverage", "semantic_diversity",
         "objective_score",
-    ])
-
-    report_lines = [
-        f"# Morgan, assay-transfer, and feature-diversity selection: {args.task}",
-        "",
-        f"Query: `{query_id}`",
-        "",
-        f"SMILES: `{query['drug']}`",
-        "",
-        f"Objective: `{OBJECTIVE_VERSION}` with K={args.k}. Gold labels were not used by selection.",
-        "",
-        "Diversity is Morgan fingerprint-bit coverage over the candidate universe; no pairwise similarity matrix is constructed.",
-        "",
-        f"Assay-unavailable levels: `{', '.join(assay_unavailable_levels)}`.",
-        "",
-        "| level | parent lambda | assay lambda | diversity lambda | parents | max/parent | similarity mean | assay mean | FP coverage | objective |",
-        "|:---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    for row in summary_rows:
-        assay_mean = (
-            f"{row['assay_score_mean']:.6f}"
-            if row["assay_score_mean"] is not None else "—"
-        )
-        report_lines.append(
-            f"| {row['level']} | {row['parent_lambda']:.3g} | {row['assay_lambda']:.3g} | "
-            f"{row['diversity_lambda']:.3g} | {row['distinct_selected_parents']} | "
-            f"{row['max_records_one_parent']} | {row['similarity_mean']:.6f} | "
-            f"{assay_mean} | {row['fingerprint_coverage']:.6f} | "
-            f"{row['objective_score']:.6f} |"
-        )
-    report_lines.extend([
-        "",
-        "All selected physical records and the complete numeric summary are in "
-        "`selections.tsv` and `summary.tsv`.",
-        "",
-    ])
-    with atomic_output_path(report_path) as temporary:
-        temporary.write_text("\n".join(report_lines), encoding="utf-8")
-
-    write_json_atomic(manifest_path, {
-        "schema_version": "record_selection_study.v1",
+    )
+    diagnostics_path = output / "selection_diagnostics.tsv"
+    _write_tsv(diagnostics_path, diagnostic_rows, diagnostic_fields)
+    summary_rows = []
+    for level in levels:
+        local = [row for row in diagnostic_rows if row["level"] == level]
+        summary_rows.append({
+            "level": level,
+            "queries": len(local),
+            **{
+                f"mean_{field}": sum(float(row[field]) for row in local) / len(local)
+                for field in (
+                    "morgan", "assay", "assay_gated", "molecular_coverage", "molecular_diversity",
+                    "semantic_relevance", "semantic_coverage",
+                    "semantic_diversity", "objective_score",
+                )
+            },
+        })
+    summary_path = output / "summary.tsv"
+    _write_tsv(summary_path, summary_rows, tuple(summary_rows[0]))
+    report_path = output / "report.md"
+    report_path.write_text(
+        "\n".join([
+            f"# Record selection: {profile.name}", "",
+            f"- Task: `{task}`",
+            f"- Queries: {len(queries)}",
+            f"- Levels: {', '.join(levels)}",
+            f"- Records per query and level: {k}",
+            f"- Lambdas: `{json.dumps(profile.lambdas(), sort_keys=True)}`",
+            "- Molecular feature coverage is optimized; mean pairwise Morgan distance is diagnostic only.",
+            "- Semantic bucket coverage is optimized; fixed-K normalized semantic diversity is also reported.",
+            "- Assay contribution is zero only on levels whose frozen cache has no assay-transfer scores.",
+            "",
+        ]),
+        encoding="utf-8",
+    )
+    manifest = {
+        "schema_version": UID_MANIFEST_SCHEMA,
         "status": "complete",
+        "task_id": task,
+        "subset": "valid",
+        "profile": profile.name,
+        "benchmark_row_ids": list(queries),
+        "k_per_level": {level: k for level in levels},
+        "release_index": str(release_index),
+        "release_index_sha256": sha256_file(release_index),
         "objective": {
             "version": OBJECTIVE_VERSION,
-            "formula": (
-                "mean_morgan_similarity + assay_lambda * mean_assay_transfer_score + "
-                "parent_lambda * sum_sqrt_parent_counts / K + diversity_lambda * "
-                "selected_fingerprint_union_bits / candidate_fingerprint_union_bits"
-            ),
-            "k_per_level": args.k,
-            "parent_lambdas": args.parent_lambdas,
-            "assay_lambdas": args.assay_lambdas,
-            "diversity_lambdas": args.diversity_lambdas,
-            "assay_unavailable_levels": assay_unavailable_levels,
-            "fingerprint": {
-                "radius": 2,
-                "bits": FINGERPRINT_BITS,
-                "diversity": "selected_union_bits / candidate_universe_union_bits",
-                "pairwise_similarity": False,
-            },
-            "optimizer": "apricot.CustomSelection:naive",
+            "formula": "M + lambda_a*A + lambda_mc*Cmol + lambda_sr*Srel + lambda_sd*Csem",
+            "lambdas": profile.lambdas(),
+            "optimizer": "apricot.CustomSelection:lazy",
         },
-        "task_id": args.task,
-        "subset": "valid_small",
-        "cache_subset": "valid",
-        "query": query,
-        "levels": list(levels),
         "inputs": {
-            "gold_query_file": str(gold_path),
-            "gold_query_file_sha256": sha256_file(gold_path),
-            **cache_audit,
+            "queries": str(query_path),
+            "queries_sha256": sha256_file(query_path),
+            "cache": {key: value for key, value in cache_audit.items() if key != "query_identities"},
+            "semantics": dict(semantic_audit),
         },
-        "environment": {
-            "python": platform.python_version(),
-            "apricot-select": _package_version("apricot-select"),
-            "numpy": _package_version("numpy"),
-            "pyarrow": _package_version("pyarrow"),
-            "rdkit": _package_version("rdkit"),
+        "records": {
+            "path": selected_path.name,
+            "sha256": sha256_file(selected_path),
+            "row_count": selected_count,
         },
         "outputs": {
             path.name: sha256_file(path)
-            for path in (selection_path, summary_path, report_path)
+            for path in (diagnostics_path, summary_path, report_path)
         },
-    })
-    return output_root
+        "environment": {
+            "python": platform.python_version(),
+            "rdkit": rdBase.rdkitVersion,
+        },
+    }
+    write_json_atomic(output / "manifest.json", manifest)
+    return output
 
 
-def parser() -> argparse.ArgumentParser:
-    result = argparse.ArgumentParser(description=__doc__)
-    result.add_argument("--task", required=True, choices=sorted(TASKS))
-    query = result.add_mutually_exclusive_group()
-    query.add_argument("--query-index", type=int, default=0)
-    query.add_argument("--benchmark-row-id")
-    result.add_argument("--k", type=int, default=10)
-    result.add_argument("--parent-lambdas", type=float, nargs="+", default=[0.0, 0.05, 0.15])
-    result.add_argument("--assay-lambdas", type=float, nargs="+", default=[0.0, 0.25])
-    result.add_argument(
-        "--diversity-lambdas", type=float, nargs="+", default=[0.0, 0.25, 1.0],
-    )
-    result.add_argument("--gold-query-file", type=Path)
-    result.add_argument("--release-index", type=Path)
-    result.add_argument(
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--task", required=True, choices=tuple(TASK_LEVELS))
+    parser.add_argument("--profiles", nargs="+", choices=("all", *PROFILES), default=["baseline"])
+    parser.add_argument("--k", type=int, default=10)
+    parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--query-jsonl", type=Path)
+    parser.add_argument("--release-index", type=Path)
+    parser.add_argument(
         "--output-root", type=Path,
-        default=REPO_ROOT / "outputs" / "analysis" / "record_selection" /
-        "morgan_assay_feature_diversity_v1",
+        default=Path("outputs/analysis/record_selection") / OBJECTIVE_VERSION,
     )
-    return result
+    args = parser.parse_args(argv)
+    if args.k < 1 or args.limit < 0:
+        parser.error("--k must be positive and --limit must be non-negative")
+    if "all" in args.profiles and len(args.profiles) != 1:
+        parser.error("--profiles all cannot be combined with named profiles")
 
-
-def main() -> None:
-    output = run(parser().parse_args())
-    print(output)
+    query_path = (args.query_jsonl or _default_query_path(args.task)).resolve()
+    release_index = (args.release_index or _default_release_index(args.task)).resolve()
+    query_rows = read_jsonl(query_path)
+    if args.limit:
+        query_rows = query_rows[: args.limit]
+    queries = {str(row["benchmark_row_id"]): str(row["drug"]) for row in query_rows}
+    if not queries or len(queries) != len(query_rows):
+        raise ValueError("Queries require unique benchmark_row_id and drug fields")
+    levels = TASK_LEVELS[args.task]
+    ranked, _, cache_audit = load_ranked_universe(
+        release_index, task=args.task, subset="valid", levels=levels, queries=queries
+    )
+    semantics, semantic_audit = _semantic_rows(args.task)
+    universes = {
+        level: {
+            query_id: _attach_semantics(rows, level=level, semantics=semantics)
+            for query_id, rows in by_query.items()
+        }
+        for level, by_query in ranked.items()
+    }
+    selected_profiles = list(PROFILES) if args.profiles == ["all"] else args.profiles
+    for name in selected_profiles:
+        output = _profile_output(
+            profile=PROFILES[name], task=args.task, output_root=args.output_root.resolve(),
+            queries=queries, levels=levels, k=args.k, universes=universes,
+            release_index=release_index, cache_audit=cache_audit,
+            semantic_audit=semantic_audit, query_path=query_path,
+        )
+        print(output)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

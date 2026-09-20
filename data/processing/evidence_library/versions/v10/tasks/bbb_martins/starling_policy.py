@@ -10,6 +10,7 @@ from typing import Any
 from data.processing.paths import evidence_library_root
 from data.processing.evidence_library.versions.v10.tasks.bbb_martins.mapping_registry import (
     REGISTRY_PATH as MAPPING_REGISTRY_PATH,
+    mapping_path,
     mapping_registry,
     validate_mapping_hashes,
 )
@@ -37,10 +38,7 @@ from data.processing.evidence_library.versions.v10.unit_vocabulary import (
 
 
 DEFAULT_OUT_DIR = str(evidence_library_root("bbb_martins", "v10"))
-BASE_EXACT_UNIT_MAPPING = (
-    Path(__file__).resolve().parent
-    / "data_processing/canonicalization_v8/bbb_unit_reconciliation.v1.json"
-)
+BASE_EXACT_UNIT_MAPPING = mapping_path("exact_measurement_units")
 MANUAL_ASSAY_TRANSFER_INELIGIBILITY_PATH = (
     Path(__file__).resolve().parent
     / "data_processing/assay_transfer_manual_ineligibility.v1.json"
@@ -116,8 +114,10 @@ POLICY = replace(
         path
         for path in V7_POLICY.scientific_assets
         if "assay_transfer_measurements_v2/policy.json" not in str(path)
+        and "canonicalization_v8/bbb_unit_reconciliation.v1.json" not in str(path)
     ) + (
         MAPPING_REGISTRY_PATH,
+        BASE_EXACT_UNIT_MAPPING,
         DEFAULT_VOCABULARY_PATH,
         DEFAULT_MISSING_ENDPOINT_MAPPING,
     ),

@@ -214,7 +214,15 @@ def build_subset(
     published_prior_mapping_path: Path | None = None,
     published_cleaning_audit_path: Path | None = None,
 ) -> None:
-    records = pd.read_parquet(records_path)[["source_row_uid", "canonical_record_id"]]
+    eligibility_columns = [
+        "source_row_uid",
+        "canonical_record_id",
+        "pair_bucket_key",
+        "measurement_kind",
+        "assay_transfer_eligible",
+        "assay_transfer_ineligibility_reason",
+    ]
+    records = pd.read_parquet(records_path)[eligibility_columns]
     prior = pd.read_parquet(prior_path)[["source_row_uid", "level"]]
     records["source_row_uid"] = records.source_row_uid.astype(str)
     prior["source_row_uid"] = prior.source_row_uid.astype(str)
@@ -276,6 +284,17 @@ def build_subset(
     mapped = records.merge(prior, on="source_row_uid", validate="one_to_one")
     mapped["level"] = mapped.level.astype("int64")
     mapped = mapped.sort_values("source_row_uid").reset_index(drop=True)
+    eligibility = mapped[[*eligibility_columns, "level"]].copy()
+    eligibility["assay_transfer_eligible"] = eligibility[
+        "assay_transfer_eligible"
+    ].astype(bool)
+    missing_reason = eligibility.assay_transfer_ineligibility_reason.fillna("").eq("")
+    if not missing_reason.eq(eligibility.assay_transfer_eligible).all():
+        raise ValueError("assay-transfer eligibility and reason fields disagree")
+    if eligibility.pair_bucket_key.fillna("").eq("").any():
+        raise ValueError("assay-transfer eligibility row lacks pair_bucket_key")
+    eligibility = eligibility.sort_values("source_row_uid").reset_index(drop=True)
+    mapped = mapped[["source_row_uid", "canonical_record_id", "level"]]
     inputs = {
         "stage3_records": {
             "path": str(published_records_path or records_path),
@@ -311,6 +330,7 @@ def build_subset(
                 "duplicate_lineage_preserves_level": True,
             },
         },
+        eligibility=eligibility,
         published_output_root=published_output_root,
     )
 

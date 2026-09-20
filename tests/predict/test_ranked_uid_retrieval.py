@@ -6,6 +6,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
+from predict.retrieval.assay_reranking import cache_matched
+from predict.retrieval.assay_reranking import ranked_uid_retrieval
 from predict.retrieval.assay_reranking.build_ranked_uid_retrieval import finalize_level
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
     _select_assay_contrastive,
@@ -14,6 +16,24 @@ from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
     load_ranked_universe,
 )
 from predict.utils.json import sha256_file
+
+
+def test_cache_matched_wrapper_forwards_preselected_uids(monkeypatch) -> None:
+    sentinel = {"q": {"L2": ["uid"]}}
+    observed = {}
+
+    def fake_load(*args, **kwargs):
+        observed.update(kwargs)
+        return {}, {}, {}
+
+    monkeypatch.setattr(ranked_uid_retrieval, "load_candidates", fake_load)
+    cache_matched.load_candidates(
+        {"q": "CC"}, task="bbb_martins", subset="valid",
+        policy={"selection_contract": "ranked_uid_retrieval.v1"},
+        preselected_uids=sentinel,
+    )
+
+    assert observed["preselected_uids"] is sentinel
 
 
 def _ranking(root: Path, level: str, rows: list[tuple], *, contexts: bool = False) -> Path:
@@ -165,6 +185,34 @@ def test_expanded_parent_universe_selects_records_then_hydrates_once(tmp_path: P
     assert audit["neighbor_identity_policy_by_level"]["L2"] == "parent_disjoint"
     assert audit["cache_capacities"] == {"L1": 100, "L2": 5}
     assert audit["cache_content_ids"] == {"L1": "L1", "L2": "L2"}
+
+
+def test_preselected_uids_preserve_order_and_use_authoritative_payloads(tmp_path: Path) -> None:
+    policy, _ = _release(tmp_path)
+
+    _, later, audit = load_candidates(
+        {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=1, l1_limit=10, later_limit={"L2": 2}, cache_pool="all",
+        preselected_uids={"q1": {"L2": ["u6", "u3"]}},
+    )
+
+    records = later["q1"]["L2"]["records"]
+    assert [row["record_id"] for row in records] == ["r6", "r3"]
+    assert [row["payload"]["source_canonical_smiles"] for row in records] == [
+        "physical-6", "physical-3",
+    ]
+    assert audit["contract"]["later_selection"] == "preselected_uid_order"
+
+
+def test_preselected_uids_fail_when_not_in_query_level_universe(tmp_path: Path) -> None:
+    policy, _ = _release(tmp_path)
+
+    with pytest.raises(ValueError, match="absent from q1/L2"):
+        load_candidates(
+            {"q1": "CCC"}, task="bbb_martins", subset="valid", policy=policy,
+            molecule_limit=1, l1_limit=10, later_limit={"L2": 2}, cache_pool="all",
+            preselected_uids={"q1": {"L2": ["u3", "u99"]}},
+        )
 
 
 def test_assay_records_are_reranked_inside_morgan_parent_width(tmp_path: Path) -> None:

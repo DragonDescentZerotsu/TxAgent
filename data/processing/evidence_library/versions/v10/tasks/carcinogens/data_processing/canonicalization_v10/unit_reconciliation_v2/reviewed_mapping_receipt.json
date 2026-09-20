@@ -1,0 +1,19 @@
+{
+  "version": "reviewed_canonical_mapping_receipt.v1",
+  "task_id": "carcinogens",
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
+  },
+  "review_completion": {
+    "reviewer_id": "codex-carcinogens-v1",
+    "reviewed_packets": 1626,
+    "source_manifest_sha256": "3dbd7118e1ccdfa9e51f5de923a17602fc4c4d242a6c09d6799ea62a9b9a5552"
+  },
+  "validations": {
+    "mapping_hash_matches_reviewed_consolidation": true,
+    "review_completion_hash_pinned": true
+  }
+}

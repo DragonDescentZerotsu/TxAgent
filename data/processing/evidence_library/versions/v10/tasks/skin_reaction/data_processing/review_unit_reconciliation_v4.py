@@ -36,16 +36,18 @@ from data.processing.llm_api import openai_compatible_client
 from tools.chembl_tool.common.units import canonicalize_unit
 
 TASK = "skin_reaction"
-INVENTORY_VERSION = "skin_reaction_unit_inventory.v2"
-REVIEW_VERSION = "skin_reaction_two_pass_unit_review.v1"
-MAPPING_VERSION = "starling_exact_measurement_units.v4"
+INVENTORY_VERSION = "skin_reaction_unit_inventory.v4"
+REVIEW_VERSION = "skin_reaction_two_pass_unit_review.v3"
+MAPPING_VERSION = "starling_exact_measurement_units.v5"
 CACHE_VERSION = "skin_reaction_two_pass_unit_review_cache.v1"
-RECEIPT_VERSION = "skin_reaction_two_pass_unit_review_run.v1"
+RECEIPT_VERSION = "skin_reaction_two_pass_unit_review_run.v3"
+MERGE_REVIEW_VERSION = "skin_reaction_unit_v5_subagent_review.v2"
+RAW_REPLAY_REQUIRED_UNITS = ("penetration index in epidermis",)
 
 REPO_ROOT = Path(__file__).resolve().parents[8]
 DEFAULT_CLEANED_RECORDS = (
     REPO_ROOT
-    / "data/evidence_libraries/skin_reaction/v10_main_universe_v2/01_cleaned/records.parquet"
+    / "data/evidence_libraries/skin_reaction/v10_main_universe_v3/01_cleaned/records.parquet"
 )
 DEFAULT_RESOLUTION = (
     REPO_ROOT
@@ -53,18 +55,19 @@ DEFAULT_RESOLUTION = (
 )
 DEFAULT_PRIOR_MAPPING = (
     REPO_ROOT
-    / "data/caches/evidence_library/skin_reaction/v10_main_universe_v2/unit_reconciliation/exact_measurement_unit_map.json"
+    / "data/caches/evidence_library/skin_reaction/v10_main_universe_v3/unit_reconciliation/exact_measurement_unit_map.json"
 )
 BASE_URL = "http://dgx020:50002/v1"
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 FALLBACK_BASE_URL = "https://api.openai.com/v1"
 FALLBACK_MODEL = "gpt-5.4-mini"
-FALLBACK_CREDENTIAL_ENV = "OPENAI_API_KEY_ONE"
+FALLBACK_CREDENTIAL_ENV = "OPENAI_API_KEY_TWO"
 PACKET_SIZE = 50
 MAX_CONCURRENCY = 32
 MAX_TOKENS = 524_288
 FALLBACK_MAX_TOKENS = 128_000
 REQUEST_TIMEOUT_S = 28_800
+MAX_ATTEMPTS = 7
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 CLUSTER_RANDOM_SEED = 20260801
 _CACHE_LOCK = threading.Lock()
@@ -93,7 +96,14 @@ _RESOLUTION_COLUMNS = (
 _ORDINAL = re.compile(r"\b(?:index|score|grade|rating|scale)\b", re.IGNORECASE)
 _DENOMINATORS = (
     re.compile(r"\bout of\s+(\d+(?:\.0+)?)\b", re.IGNORECASE),
-    re.compile(r"/(\d+)\s*$", re.IGNORECASE),
+    re.compile(
+        r"/(\d+)(?:\s+(?:mice|rats|animals|subjects|patients|people|volunteers|tests|guinea\s+pigs))?\s*$",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:proportion|fraction|ratio)\s*\(\s*1\s*/\s*(\d+)\s*\)\s*$",
+        re.IGNORECASE,
+    ),
     re.compile(
         r"\bper\s+(\d+)\s+(?:mice|rats|animals|subjects|patients|people|volunteers|guinea\s+pigs)\b",
         re.IGNORECASE,
@@ -240,7 +250,9 @@ def build_inventory(
     required, counts = _required_units(
         cleaned_path, resolution_path, allow_out_of_scope_resolution=True
     )
-    active_units = {unit for _, unit in required}
+    active_units = {unit for _, unit in required} | set(RAW_REPLAY_REQUIRED_UNITS)
+    counts["raw_replay_required_units"] = len(RAW_REPLAY_REQUIRED_UNITS)
+    counts["unique_units"] = len(active_units)
     resolution = _resolution_rows(resolution_path)
     prior = _prior_decisions(prior_mapping_path)
     groups: dict[str, dict[str, Any]] = {
@@ -251,6 +263,8 @@ def build_inventory(
         }
         for unit in active_units
     }
+    for unit in RAW_REPLAY_REQUIRED_UNITS:
+        groups[unit]["origin_counts"]["raw_replay"] = 1
     seen_resolution: set[str] = set()
     for batch in pq.ParquetFile(cleaned_path).iter_batches(columns=_CLEANED_COLUMNS):
         for row in batch.to_pylist():
@@ -309,7 +323,7 @@ def build_inventory(
     return {
         "version": INVENTORY_VERSION,
         "task": TASK,
-        "scope": "active_v2_source_exact_and_successful_llm_units",
+        "scope": "active_v3_source_exact_successful_llm_and_raw_replay_units",
         "inputs": {
             "cleaned_records": {"path": str(cleaned_path.resolve()), "sha256": file_sha256(cleaned_path)},
             "measurement_resolution": {"path": str(resolution_path.resolve()), "sha256": file_sha256(resolution_path)},
@@ -330,7 +344,7 @@ def write_inventory(output_dir: Path) -> dict[str, Any]:
     inventory_path.write_text(_json_text(inventory, pretty=True), encoding="utf-8")
     item_count = len(inventory["items"])
     manifest = {
-        "version": "skin_reaction_unit_review_packets.v2",
+        "version": "skin_reaction_unit_review_packets.v3",
         "task": TASK,
         "inventory": {"path": str(inventory_path.resolve()), "sha256": file_sha256(inventory_path)},
         "inputs": inventory["inputs"],
@@ -344,7 +358,7 @@ def write_inventory(output_dir: Path) -> dict[str, Any]:
 
 def load_inventory(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     manifest = json.loads(path.read_text(encoding="utf-8"))
-    if manifest.get("version") != "skin_reaction_unit_review_packets.v2":
+    if manifest.get("version") != "skin_reaction_unit_review_packets.v3":
         raise ValueError("unsupported Skin unit inventory manifest")
     reference = manifest["inventory"]
     inventory_path = Path(reference["path"])
@@ -389,6 +403,10 @@ def _ratio_denominator(value: str) -> int | None:
 
 
 def _validate_alias(source: str, target: str) -> None:
+    # Skin_Exposure writes "KG" for German Koerpergewicht; its raw support
+    # text consistently spells this dose denominator out as body weight.
+    if source.casefold() == "mg/kg kg":
+        source = "mg/kg body weight"
     denominator = _ratio_denominator(source)
     if denominator is not None:
         expected = _ratio_qualifier(source) + " fraction"
@@ -608,6 +626,28 @@ def _append_cache(path: Path, event: Mapping[str, Any]) -> None:
             os.fsync(stream.fileno())
 
 
+def _resume_attempt(
+    cache_path: Path, manifest_sha256: str, phase: str, packet_id: str
+) -> tuple[int, str]:
+    next_attempt, feedback = 1, ""
+    if not cache_path.exists():
+        return next_attempt, feedback
+    for line in cache_path.read_text(encoding="utf-8").splitlines():
+        event = json.loads(line)
+        if (
+            event.get("inventory_manifest_sha256") == manifest_sha256
+            and event.get("phase") == phase
+            and event.get("packet_id") == packet_id
+            and event.get("status") == "rejected"
+            and int(event.get("attempt", 0)) >= next_attempt
+        ):
+            next_attempt = int(event["attempt"]) + 1
+            reason = str(event.get("reason", ""))
+            if "RateLimitError:" not in reason:
+                feedback = reason
+    return next_attempt, feedback
+
+
 def _call_packet(
     client: Any,
     fallback_client: Any,
@@ -621,9 +661,11 @@ def _call_packet(
     cached_event = cached.get((phase, packet_id))
     if cached_event is not None:
         return _parse_decisions(cached_event["response"], items, phase)
-    feedback = ""
-    for attempt in range(1, 4):
-        use_fallback = attempt == 3
+    attempt_start, feedback = _resume_attempt(
+        cache_path, manifest_sha256, phase, packet_id
+    )
+    for attempt in range(attempt_start, MAX_ATTEMPTS + 1):
+        use_fallback = attempt >= 3
         requested_model = FALLBACK_MODEL if use_fallback else MODEL
         request = _request(
             phase, packet_id, items, feedback, model=requested_model
@@ -667,7 +709,9 @@ def _call_packet(
         _append_cache(cache_path, event)
         if status == "accepted":
             return decisions
-    raise RuntimeError(f"Skin unit packet failed after three attempts: {phase}/{packet_id}: {feedback}")
+    raise RuntimeError(
+        f"Skin unit packet failed after {MAX_ATTEMPTS} attempts: {phase}/{packet_id}: {feedback}"
+    )
 
 
 def _packets(items: Sequence[Mapping[str, Any]], prefix: str) -> list[tuple[str, list[Mapping[str, Any]]]]:
@@ -943,7 +987,73 @@ def run_review(manifest_path: Path, cache_path: Path, output_path: Path) -> dict
     return receipt["counts"]
 
 
-def build_mapping(manifest_path: Path, review_path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+def _load_canonical_merge_review(
+    path: Path, canonical_units: set[str]
+) -> tuple[dict[str, str], dict[str, Any]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("version") != MERGE_REVIEW_VERSION or payload.get("task") != TASK:
+        raise ValueError("unsupported Skin canonical-unit merge review")
+    required_validations = {
+        "all_3359_labels_reviewed",
+        "no_endpoint_specific_decisions",
+        "no_source_in_multiple_merge_decisions",
+        "targets_are_existing_reviewed_labels",
+        "second_global_pass_complete",
+        "merge_decisions_do_not_change_scale",
+        "post_review_denominator_guard_complete",
+    }
+    validations = payload.get("validations", {})
+    if any(validations.get(name) is not True for name in required_validations):
+        raise ValueError("Skin canonical-unit merge review is not fully validated")
+    counts = payload.get("result_counts", {})
+    if counts.get("canonical_labels_before") != len(canonical_units):
+        raise ValueError("Skin canonical-unit merge review has stale label coverage")
+
+    aliases: dict[str, str] = {}
+    accepted = payload.get("accepted_merges", [])
+    for decision in accepted:
+        sources = decision.get("source_canonical_units")
+        target = decision.get("target_canonical_unit")
+        rationale = str(decision.get("rationale", "")).strip()
+        if not isinstance(sources, list) or len(sources) < 2 or not rationale:
+            raise ValueError("invalid Skin canonical-unit merge decision")
+        if target not in sources or target not in canonical_units:
+            raise ValueError("Skin canonical-unit merge target is not an existing label")
+        for source in sources:
+            if source not in canonical_units:
+                raise ValueError(f"Skin canonical-unit merge source is stale: {source!r}")
+            if source in aliases:
+                raise ValueError(f"duplicate Skin canonical-unit merge source: {source!r}")
+            _validate_alias(source, target)
+            aliases[source] = target
+
+    after = {aliases.get(unit, unit) for unit in canonical_units}
+    expected_sources = counts.get("source_labels_in_decisions")
+    expected_after = counts.get("canonical_labels_after_reviewed_merges")
+    expected_reduction = counts.get("canonical_label_reduction")
+    if expected_sources != len(aliases) or expected_after != len(after):
+        raise ValueError("Skin canonical-unit merge counts do not match decisions")
+    if expected_reduction != len(canonical_units) - len(after):
+        raise ValueError("Skin canonical-unit merge reduction is inconsistent")
+    if payload.get("second_global_pass", {}).get("status") != "complete":
+        raise ValueError("Skin canonical-unit second global pass is incomplete")
+    reference = {
+        "path": str(path.resolve()),
+        "sha256": file_sha256(path),
+        "version": MERGE_REVIEW_VERSION,
+        "reviewer_provenance": payload.get("reviewer_provenance", {}),
+        "result_counts": counts,
+        "reviewed_cluster_counts": payload.get("reviewed_cluster_counts", {}),
+        "second_global_pass": payload.get("second_global_pass", {}),
+    }
+    return aliases, reference
+
+
+def build_mapping(
+    manifest_path: Path,
+    review_path: Path,
+    canonical_merges_path: Path | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     _, inventory = load_inventory(manifest_path)
     receipt_path = review_path.with_suffix(".manifest.json")
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
@@ -953,22 +1063,45 @@ def build_mapping(manifest_path: Path, review_path: Path) -> tuple[dict[str, Any
     expected = {item["item_id"]: item for item in inventory["items"]}
     if len(rows) != len(expected) or {row.get("item_id") for row in rows} != set(expected):
         raise ValueError("Skin two-pass review is incomplete")
+    reviewed_units = {
+        row["canonical_unit"] for row in rows if row.get("action") == "map"
+    }
+    aliases: dict[str, str] = {}
+    merge_review: dict[str, Any] | None = None
+    if canonical_merges_path is not None:
+        aliases, merge_review = _load_canonical_merge_review(
+            canonical_merges_path, reviewed_units
+        )
     entries = []
+    guarded_scale_repairs = 0
+    guarded_canonical_repairs = 0
     for row in rows:
         item = expected[row["item_id"]]
         if row["input_unit"] != item["input_unit"]:
             raise ValueError(f"Skin unit review identity mismatch: {row['item_id']}")
+        reviewed_canonical = row.get("canonical_unit", "")
+        canonical = reviewed_canonical
+        scale = row.get("scale", "")
+        if row["action"] == "map":
+            scale = _validate_scale(row["input_unit"], scale)
+            denominator = _ratio_denominator(row["input_unit"])
+            if denominator is not None:
+                canonical = _ratio_qualifier(row["input_unit"]) + " fraction"
+            _validate_alias(row["input_unit"], canonical)
+            guarded_scale_repairs += scale != row["scale"]
+            guarded_canonical_repairs += canonical != reviewed_canonical
+            canonical = aliases.get(canonical, canonical)
         entry = {
             "task": TASK,
             "canonical_endpoints": ["*"],
             "input_unit": row["input_unit"],
             "action": row["action"],
-            "domain": "nonnegative" if row.get("canonical_unit", "").endswith("fraction") else "any",
-            "review_basis": "deepseek_two_pass_global_reconciliation",
+            "domain": "nonnegative" if canonical.endswith("fraction") else "any",
+            "review_basis": "two_pass_global_reconciliation_with_reviewed_v5_repairs",
             "review_item_id": row["item_id"],
         }
         if row["action"] == "map":
-            entry.update(canonical_unit=row["canonical_unit"], scale=row["scale"])
+            entry.update(canonical_unit=canonical, scale=scale)
         entries.append(entry)
     entries.sort(key=lambda row: (row["input_unit"].casefold(), row["input_unit"]))
     contract = {
@@ -982,40 +1115,68 @@ def build_mapping(manifest_path: Path, review_path: Path) -> tuple[dict[str, Any
             "receipt": {"path": str(receipt_path.resolve()), "sha256": file_sha256(receipt_path)},
             "route": receipt["route"],
         },
+        "canonical_merge_review": merge_review,
         "counts": {**inventory["counts"], **receipt["counts"]},
         "validations": {
             "complete_active_unit_coverage": True,
             "wildcard_endpoint_only": True,
+            "no_predecessor_entries": True,
             "two_complete_review_passes": True,
             "non_ratio_scale_is_one": True,
             "frozen_input_hashes_verified": True,
+            "canonical_merge_review_applied": canonical_merges_path is not None,
         },
     }
+    canonical_after = {
+        entry["canonical_unit"] for entry in entries if entry["action"] == "map"
+    }
+    merged_review_units = {aliases.get(unit, unit) for unit in reviewed_units}
+    contract["counts"].update(
+        canonical_units_before_reviewed_merge=len(reviewed_units),
+        canonical_units_after_reviewed_merge=len(merged_review_units),
+        reviewed_canonical_unit_merge_reduction=(
+            len(reviewed_units) - len(merged_review_units)
+        ),
+        mapping_guard_scale_repairs=guarded_scale_repairs,
+        mapping_guard_canonical_repairs=guarded_canonical_repairs,
+        canonical_units_final=len(canonical_after),
+    )
     payload = {"version": MAPPING_VERSION, "entries": entries, "skin_v10_unit_review": contract}
     report = {
-        "version": "skin_reaction_unit_reconciliation_manifest.v4",
+        "version": "skin_reaction_unit_reconciliation_manifest.v5",
         "task": TASK,
         "mapping_version": MAPPING_VERSION,
         "counts": contract["counts"],
         "inputs": contract["inputs"],
         "review": contract["review"],
+        "canonical_merge_review": merge_review,
         "validations": contract["validations"],
     }
     return payload, report
 
 
-def write_mapping(manifest_path: Path, review_path: Path, output_path: Path) -> dict[str, Any]:
+def write_mapping(
+    manifest_path: Path,
+    review_path: Path,
+    output_path: Path,
+    canonical_merges_path: Path | None = None,
+) -> dict[str, Any]:
     report_path = output_path.with_suffix(".manifest.json")
     if output_path.exists() or report_path.exists():
         raise FileExistsError(f"refusing to replace Skin unit map: {output_path}")
-    payload, report = build_mapping(manifest_path, review_path)
+    payload, report = build_mapping(
+        manifest_path, review_path, canonical_merges_path=canonical_merges_path
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = output_path.with_suffix(output_path.suffix + ".tmp")
     report_temporary = report_path.with_suffix(report_path.suffix + ".tmp")
     temporary.write_text(_json_text(payload, pretty=True), encoding="utf-8")
     mapping = load_exact_unit_mapping(temporary)
-    if len(mapping) != len(payload["entries"]):
-        raise ValueError("Skin v4 wildcard map expansion changed entry count")
+    expected_rule_count = sum(
+        len(entry["canonical_endpoints"]) for entry in payload["entries"]
+    )
+    if len(mapping) != expected_rule_count:
+        raise ValueError("Skin v5 map expansion changed rule count")
     report["mapping"] = {"path": str(output_path.resolve()), "sha256": file_sha256(temporary)}
     report_temporary.write_text(_json_text(report, pretty=True), encoding="utf-8")
     os.replace(temporary, output_path)
@@ -1035,6 +1196,7 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     consolidate = commands.add_parser("consolidate")
     consolidate.add_argument("--inventory-manifest", type=Path, required=True)
     consolidate.add_argument("--reviews", type=Path, required=True)
+    consolidate.add_argument("--canonical-merges", type=Path)
     consolidate.add_argument("--output", type=Path, required=True)
     return parser.parse_args(argv)
 
@@ -1047,7 +1209,12 @@ def main(argv: Iterable[str] | None = None) -> int:
     elif args.command == "review":
         output = run_review(args.inventory_manifest, args.cache, args.output)
     else:
-        output = write_mapping(args.inventory_manifest, args.reviews, args.output)["counts"]
+        output = write_mapping(
+            args.inventory_manifest,
+            args.reviews,
+            args.output,
+            canonical_merges_path=args.canonical_merges,
+        )["counts"]
     print(json.dumps(output, sort_keys=True))
     return 0
 

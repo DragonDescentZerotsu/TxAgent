@@ -1,0 +1,27 @@
+{
+  "version": "carcinogens_prebuilt_mapping_registry.v1",
+  "task_id": "carcinogens",
+  "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
+  "mappings": {
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "path": "data/evidence_libraries/carcinogens/v10/measurement_resolution_v4/measurement_resolution.parquet",
+      "sha256": "b0117ef2df9be8e18f6a936bb7a442f2e7f4c1ead4fa86aa9785ad6743ffbf1e"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "review_manifest": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
+        "sha256": "fa46e4dff35049dad8281170a73b18ee96b06c5676e3d5c818beb300d2c51005"
+      },
+      "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
+    }
+  },
+  "not_applicable_mappings": ["auxiliary_context"]
+}

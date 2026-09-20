@@ -1,0 +1,19 @@
+{
+  "version": "reviewed_canonical_mapping_receipt.v1",
+  "task_id": "dili",
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "62f8dca41244934f1c55787adc0eae2fbbb99ce1e88827a75b6002a6ca30058b"
+  },
+  "review_completion": {
+    "reviewer_id": "codex-dili-v1",
+    "reviewed_packets": 83,
+    "source_manifest_sha256": "6e2842082a968f398207c175089d2441a51087637490054f8c25ac871021d014"
+  },
+  "validations": {
+    "mapping_hash_matches_reviewed_consolidation": true,
+    "review_completion_hash_pinned": true
+  }
+}

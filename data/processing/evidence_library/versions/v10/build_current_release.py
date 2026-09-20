@@ -40,14 +40,52 @@ from data.processing.evidence_library.versions.v10.task_registry import (
 TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 
 
+def _validate_existing_mappings(task_id: str) -> dict[str, Any]:
+    module = import_task_module(task_id, "mapping_registry")
+    module.validate_mapping_hashes()
+    registry = module.mapping_registry()
+    return {
+        "mode": "existing",
+        "registry_version": registry["version"],
+        "registry_path": str(module.REGISTRY_PATH),
+        "registry_sha256": file_sha256(module.REGISTRY_PATH),
+        "mappings": {
+            mapping_id: {
+                "path": entry.get("path"),
+                "sha256": entry.get("sha256"),
+            }
+            for mapping_id, entry in registry["mappings"].items()
+            if entry.get("path")
+        },
+    }
+
+
+def _require_selected_mapping_args(task_id: str, args: argparse.Namespace) -> None:
+    module = import_task_module(task_id, "mapping_registry")
+    for mapping_id, argument in {
+        "measurement_resolution": "measurement_resolution_mapping",
+        "exact_measurement_units": "exact_unit_mapping",
+        "auxiliary_context": "auxiliary_mapping",
+    }.items():
+        if mapping_id not in module.mapping_registry()["mappings"]:
+            continue
+        selected = module.mapping_path(mapping_id)
+        supplied = Path(str(getattr(args, argument, "") or ""))
+        if supplied.resolve() != selected.resolve():
+            raise ValueError(
+                f"--use_existing requires the registry-selected {mapping_id}: "
+                f"{selected}"
+            )
+
+
 def build_current_release(
     *,
     task_id: str,
     normalized_root: str | Path | None = None,
     workers: int = 1,
-    validation_level: str = "strict",
+    validation_level: str = "full",
     cache_mode: str = "auto",
-    review_api_key_env: str = "OPENAI_API_KEY",
+    review_api_key_env: str = "OPENAI_API_KEY_ONE",
     review_base_url: str = DEFAULT_BASE_URL,
     review_model: str = DEFAULT_MODEL,
     review_workers: int | None = None,
@@ -58,13 +96,22 @@ def build_current_release(
     frozen_prior_pruning_manifest: str | Path | None = None,
     published_pruning_input_root: str | Path | None = None,
     from_stage: str = "source",
+    use_existing: bool = True,
     record_argv: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Run Stage 2, record pruning, and final Stage 3."""
     if task_id not in TASKS:
         raise ValueError(f"unsupported current Starling task: {task_id}")
+    if validation_level != "full":
+        raise ValueError("completed releases require validation_level='full'")
     if from_stage not in {"source", "normalize"}:
         raise ValueError("current release must start from source or a prepared clean stage")
+    if not use_existing:
+        raise ValueError(
+            "release builds consume reviewed maps; regenerate maps first with "
+            "canonical_reconciliation.py"
+        )
+    canonicalization = _validate_existing_mappings(task_id)
     policy = load_task_policy(task_id)
     root = Path(normalized_root or policy.default_out_dir)
     assert_unpublished_build_root(root)
@@ -89,6 +136,7 @@ def build_current_release(
         "normalize",
         True,
     )
+    _require_selected_mapping_args(task_id, stage2_args)
 
     with starling_build_session(root, complete=True):
         if run_with_args(policy, stage2_args):
@@ -121,7 +169,9 @@ def build_current_release(
             cache_mode="off",
             apply_record_pruning=True,
         )
-        return _validate_release(task_id, root)
+        result = _validate_release(task_id, root)
+        result["canonicalization"] = canonicalization
+        return result
 
 
 def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
@@ -140,6 +190,14 @@ def _validate_release(task_id: str, root: Path) -> dict[str, Any]:
     stage3_sha = file_sha256(stage3_records)
     if canonical_manifest.get("output", {}).get("sha256") != canonical_sha:
         raise ValueError("Stage 2 records differ from their manifest")
+    validations = canonical_manifest.get("validations") or {}
+    if validations.get("measurement_unit_pair_validation") != "passed":
+        raise ValueError("Stage 2 measurement/unit pair validation did not pass")
+    if validations.get("final_assay_transfer_measurement_validation") not in {
+        "passed",
+        "not_applicable",
+    }:
+        raise ValueError("Stage 2 final assay-transfer measurement validation did not pass")
     if (
         pruning_manifest.get("task_id") != task_id
         or pruning_manifest.get("inputs", {}).get("canonical_records", {}).get("sha256")
@@ -187,10 +245,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--normalized-root", type=Path)
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument(
-        "--validation-level", choices=("strict", "full"), default="strict"
+        "--validation-level", choices=("full",), default="full"
     )
     parser.add_argument("--cache-mode", choices=("auto", "off"), default="auto")
-    parser.add_argument("--review-api-key-env", default="OPENAI_API_KEY")
+    parser.add_argument("--review-api-key-env", default="OPENAI_API_KEY_ONE")
     parser.add_argument(
         "--review-base-url", default=os.environ.get("OPENAI_BASE_URL", DEFAULT_BASE_URL)
     )
@@ -203,6 +261,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--frozen-prior-pruning-manifest", type=Path)
     parser.add_argument("--published-pruning-input-root", type=Path)
     parser.add_argument("--from-stage", choices=("source", "normalize"), default="source")
+    parser.add_argument(
+        "--use_existing",
+        "--use-existing",
+        action="store_true",
+        default=True,
+        help="Validate and apply the task registry's existing reviewed maps (default).",
+    )
     args, record_argv = parser.parse_known_args(argv)
     try:
         result = build_current_release(
@@ -222,6 +287,7 @@ def main(argv: list[str] | None = None) -> int:
             frozen_prior_pruning_manifest=args.frozen_prior_pruning_manifest,
             published_pruning_input_root=args.published_pruning_input_root,
             from_stage=args.from_stage,
+            use_existing=args.use_existing,
             record_argv=record_argv,
         )
     except RecordPruningBudgetExhausted as error:

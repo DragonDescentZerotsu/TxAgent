@@ -182,6 +182,12 @@ SQLITE_SELECTION_CONTRACTS = frozenset({
 INDIRECT_ONLY_HARNESS = "reranked-progressive-indirect-only-v1"
 INDIRECT_FILTER_HARNESS = "reranked-progressive-indirect-only-v2"
 INDIRECT_HARNESSES = frozenset({INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS})
+FULL_FLAT_PROGRESSIVE_HARNESS = "full-flat-progressive-v1"
+FULL_FLAT_PROGRESSIVE_HARNESSES = {
+    FULL_FLAT_PROGRESSIVE_HARNESS: "full_flat_progressive_v1",
+    "full-flat-progressive-v2": "full_flat_progressive_v2",
+    "full-flat-progressive-v3": "full_flat_progressive_v3",
+}
 COMPLETE_LEVEL_STATUSES = {"ok", "carried_forward", "reused_none", "reused"}
 
 _MODEL_IDENTITY_ALIASES = {
@@ -221,6 +227,8 @@ _RESUME_INVARIANT_FIELDS = (
     "evaluation_indices_by_task",
     "inputs",
     "l2_reuse",
+    "reasoning_phase",
+    "l1_prior_run",
 )
 
 
@@ -579,6 +587,11 @@ def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
 
 def _run_levels(args: argparse.Namespace, task: str) -> list[dict[str, Any]]:
     """Dispatch only the level catalog; each profile owns its level meaning."""
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+        levels = context_records.tianang_aligned_levels(
+            task, prompt_version=_context_prompt_version(args, task)
+        )
+        return levels[:1] if args.reasoning_phase == "l1" else [levels[0], levels[-1]]
     if args.profile == "context_records":
         if getattr(args, 'retrieval_policy', None):
             levels = context_records.tianang_aligned_levels(task, args.max_level,
@@ -858,6 +871,158 @@ def _reuse_context_l1_l2_outputs(
         if source_request_path.is_file():
             shutil.copy2(source_request_path, level_dir / "request.json")
         prior_state = source_output["state"]
+
+
+def _reuse_full_flat_l1_output(
+    *, query_dir: Path, source_query_dir: Path,
+) -> None:
+    """Reuse one stable-identity L1 result after its visible inputs match."""
+    level_dir = query_dir / "levels" / "level_1"
+    source_level_dir = source_query_dir / "levels" / "level_1"
+    prepared = _read_json(level_dir / "prepared.json")
+    source_prepared = _read_json(source_level_dir / "prepared.json")
+    fields = (
+        "task", "benchmark_row_id", "molecule_identity_key", "condition_group",
+        "query_smiles", "condition_sentence", "query_prior", "active_evidence",
+    )
+    for field in fields:
+        if prepared.get(field) != source_prepared.get(field):
+            raise ValueError(
+                f"full-flat L1 reuse differs for {prepared.get('benchmark_row_id')}: {field}"
+            )
+    source_output_path = source_level_dir / "output.json"
+    source_request_path = source_level_dir / "request.json"
+    source_output = _read_json(source_output_path)
+    if (
+        source_output.get("status") not in COMPLETE_LEVEL_STATUSES
+        or not isinstance(source_output.get("state"), Mapping)
+        or not source_request_path.is_file()
+    ):
+        raise ValueError(f"full-flat L1 source is incomplete: {source_level_dir}")
+    reused = dict(source_output)
+    reused.update({
+        "status": "reused",
+        "model_called": False,
+        "source_model_called": source_output.get("model_called") is True,
+        "reused_from": str(source_output_path),
+        "reused_output_sha256": sha256_file(source_output_path),
+        "reused_at": _now(),
+    })
+    write_json_atomic(level_dir / "output.json", reused)
+    shutil.copy2(source_request_path, level_dir / "request.json")
+
+
+def _validate_full_flat_l1_source(
+    args: argparse.Namespace,
+    records_by_task: Mapping[str, list[Mapping[str, Any]]],
+    indices_by_task: Mapping[str, list[int]],
+) -> tuple[dict[str, dict[str, Path]], dict[str, Any]]:
+    root = Path(args.l1_prior_run).resolve()
+    manifest_path = root / "experiment_manifest.json"
+    manifest = _read_json(manifest_path)
+    source_status = manifest.get("status")
+    if source_status is None and (root / "run.json").is_file():
+        source_status = _read_json(root / "run.json").get("status")
+    source_harness = manifest.get("harness_version")
+    source_prompt = manifest.get("prompt_profile")
+    same_prompt_contract = (
+        source_harness == args.harness_version
+        and source_prompt == args.prompt_version
+    )
+    metadata_only_successor = (
+        source_harness == "full-flat-progressive-v2"
+        and source_prompt == "full_flat_progressive_v2"
+        and args.harness_version == "full-flat-progressive-v3"
+        and args.prompt_version == "full_flat_progressive_v3"
+    )
+    if (
+        not (same_prompt_contract or metadata_only_successor)
+        or manifest.get("reasoning_phase") != "l1"
+        or _model_identity(str(manifest.get("model") or "")) != _model_identity(args.model)
+    ):
+        raise ValueError(f"incompatible full-flat L1 prior run: {root}")
+    from predict.harnesses.progressive.prompt import prompt_asset_manifest
+
+    current_prompt = prompt_asset_manifest(args.prompt_version)
+    source_prompts = manifest.get("prompt_assets") or {}
+    def compatible_prompt(source: Mapping[str, Any]) -> bool:
+        if same_prompt_contract:
+            return source.get("sha256") == current_prompt["sha256"]
+        source_files = dict(source.get("files_sha256") or {})
+        current_files = dict(current_prompt.get("files_sha256") or {})
+        source_files.pop("provenance.json", None)
+        current_files.pop("provenance.json", None)
+        return source_files == current_files
+
+    if any(not compatible_prompt(source_prompts.get(task) or {}) for task in args.tasks):
+        raise ValueError(f"full-flat L1 prompt assets differ from the current bundle: {root}")
+    sources: dict[str, dict[str, Path]] = {}
+    counts: dict[str, int] = {}
+    missing_counts: dict[str, int] = {}
+    incomplete_counts: dict[str, int] = {}
+    for task in args.tasks:
+        expected_input_sha256 = sha256_file(PROGRESSIVE_TASKS[task].input_jsonl)
+        if (manifest.get("inputs", {}).get(task) or {}).get(
+            "input_sha256"
+        ) != expected_input_sha256:
+            raise ValueError(f"{task} L1 prior input hash differs: {root}")
+        expected = {
+            str(records_by_task[task][index]["benchmark_row_id"])
+            for index in indices_by_task[task]
+        }
+        discovered: dict[str, Path] = {}
+        for prepared_path in sorted(
+            (root / task / "queries").glob("query_idx*/levels/level_1/prepared.json")
+        ):
+            prepared = _read_json(prepared_path)
+            query_id = str(prepared.get("benchmark_row_id") or "")
+            if not query_id or query_id in discovered:
+                raise ValueError(f"duplicate or blank L1 prior identity in {root}: {query_id!r}")
+            discovered[query_id] = prepared_path.parents[2]
+        extra = set(discovered) - expected
+        if extra:
+            raise ValueError(
+                f"{task} L1 prior contains {len(extra)} unexpected query identities"
+            )
+        task_sources: dict[str, Path] = {}
+        incomplete = 0
+        for query_id, source_query_dir in discovered.items():
+            level_dir = source_query_dir / "levels/level_1"
+            output_path = level_dir / "output.json"
+            request_path = level_dir / "request.json"
+            if not output_path.is_file() or not request_path.is_file():
+                incomplete += 1
+                continue
+            output = _read_json(output_path)
+            if (
+                output.get("status") not in COMPLETE_LEVEL_STATUSES
+                or not isinstance(output.get("state"), Mapping)
+            ):
+                incomplete += 1
+                continue
+            task_sources[query_id] = source_query_dir
+        missing = len(expected - set(discovered))
+        if args.require_complete_l1_prior and (
+            source_status != "complete" or missing or incomplete
+        ):
+            raise ValueError(
+                f"{task} L1 prior is not complete: status={source_status!r}, "
+                f"missing={missing}, incomplete={incomplete}"
+            )
+        sources[task] = task_sources
+        counts[task] = len(task_sources)
+        missing_counts[task] = missing
+        incomplete_counts[task] = incomplete
+    return sources, {
+        "path": str(root),
+        "experiment_manifest_sha256": sha256_file(manifest_path),
+        "source_status": source_status,
+        "prompt_assets_sha256": current_prompt["sha256"],
+        "reused_counts_by_task": counts,
+        "missing_counts_by_task": missing_counts,
+        "incomplete_counts_by_task": incomplete_counts,
+        "require_complete": args.require_complete_l1_prior,
+    }
 
 
 def _load_progressive_index(task: str) -> dict[str, Any]:
@@ -1572,6 +1737,7 @@ def _prepare_context_record_query(
     retrieval_policy: Mapping[str, Any] | None = None,
     molecule_description: Mapping[str, Any] | None = None,
     candidate_output: bool = False,
+    l1_prior_source: Path | None = None,
 ) -> PreparedQuery:
     """Write context snapshots and optional cache-backed later-level bundles."""
     if retrieval_policy:
@@ -1633,6 +1799,8 @@ def _prepare_context_record_query(
             )
             and manifest.get("l2_reuse_root")
             == (str(l2_reuse_root) if l2_reuse_root is not None else None)
+            and manifest.get("l1_prior_source")
+            == (str(l1_prior_source) if l1_prior_source is not None else None)
             and (
                 l2_reuse_root is None
                 or all(
@@ -1851,6 +2019,10 @@ def _prepare_context_record_query(
             record_limit=record_limit,
             l2_record_limit=l2_record_limit,
         )
+    if l1_prior_source is not None:
+        _reuse_full_flat_l1_output(
+            query_dir=query_dir, source_query_dir=l1_prior_source
+        )
     write_json_atomic(
         complete_path,
         {
@@ -1886,6 +2058,9 @@ def _prepare_context_record_query(
             ),
             "l2_reuse_root": (
                 str(l2_reuse_root) if l2_reuse_root is not None else None
+            ),
+            "l1_prior_source": (
+                str(l1_prior_source) if l1_prior_source is not None else None
             ),
             "task": task,
             "query_index": query_index,
@@ -2057,6 +2232,7 @@ def _summarize_task(
     profile: str = "standard",
     context_record_l3_l5: bool = False,
     prompt_version: str | None = None,
+    levels_override: list[dict[str, Any]] | None = None,
 ) -> None:
     contract = _task_contract(task, prompt_version or 'standard_v1')
     if query_prior_mode in {"fresh", "cached"}:
@@ -2094,7 +2270,7 @@ def _summarize_task(
             metric_fields={"level": 0, "family": "none", "reuse": "stable parent-condition identity"},
         )
 
-    level_rows = (
+    level_rows = levels_override or (
         context_records.tianang_aligned_levels(task, max_level, prompt_version=prompt_version)
         if prompt_version and context_records.prompt_profile(prompt_version).get('stage_ranked') else
         context_records.levels(
@@ -2225,6 +2401,14 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
                         f"{task} reusable single batch has wrong {field}: "
                         f"{single_manifest.get(field)!r}"
                     )
+            if (
+                args.evaluation_subset == "test"
+                and single_manifest.get("input_jsonl_sha256")
+                != sha256_file(spec.input_jsonl)
+            ):
+                raise ValueError(
+                    f"{task} test query-prior input hash differs from the selected gold split"
+                )
             current_keys = {_stable_query_key(row) for row in read_jsonl(spec.input_jsonl)}
             reusable_keys = set(_single_source_index(task, str(Path(args.single_source_root))))
             missing_keys = current_keys - reusable_keys
@@ -2239,6 +2423,19 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
 def run(args: argparse.Namespace, *, prepared_callback=None,
         prepared_query_callback=None, candidate_loader=None) -> int:
     provider_config = _resolve_provider_pool_config(args)
+    reasoning_efforts = {
+        str((provider.request_extra_body or {}).get("chat_template_kwargs", {}).get(
+            "reasoning_effort"
+        ) or "")
+        for provider in provider_config.providers
+    }
+    if not args.prepare_only and reasoning_efforts != {"high"}:
+        raise ValueError("progressive inference requires reasoning_effort=high on every provider")
+    if not args.prepare_only and any(
+        provider.max_inflight > args.endpoint_concurrency_budget
+        for provider in provider_config.providers
+    ):
+        raise ValueError("provider max_inflight exceeds the per-endpoint concurrency budget")
     endpoint_selection = None
     if args.prepare_only:
         args.requested_parallelism = args.parallelism
@@ -2252,8 +2449,6 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         )
         provider_config = endpoint_selection.config
         args.parallelism = endpoint_selection.effective_parallelism
-    if not args.prepare_only and args.parallelism > args.endpoint_concurrency_budget:
-        raise ValueError("provider pool capacity exceeds the configured endpoint budget")
     endpoint_preflight = None
     if not args.prepare_only:
         from predict.harnesses.progressive.prompt import prompt_assets
@@ -2278,6 +2473,16 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         task: _selected_indices(args, len(records_by_task[task]))
         for task in args.tasks
     }
+    args.full_flat_l1_sources = {}
+    full_flat_l1_audit = None
+    if (
+        args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES
+        and args.reasoning_phase == "indirect-update"
+        and args.l1_prior_run is not None
+    ):
+        args.full_flat_l1_sources, full_flat_l1_audit = _validate_full_flat_l1_source(
+            args, records_by_task, indices_by_task
+        )
     l2_reuse_audits = {
         task: _validate_context_l2_reuse_source(
             args,
@@ -2309,7 +2514,7 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                     'reranked-progressive-l1-context-l2-v1',
                     'reranked-progressive-l1-context-l2-weighted-v1',
                     'reranked-progressive-l1-context-l2-morgan-bucket-v1',
-                    *INDIRECT_HARNESSES}:
+                    *INDIRECT_HARNESSES, *FULL_FLAT_PROGRESSIVE_HARNESSES}:
                 from predict.harnesses.progressive.retrieval_cache import load_candidates
                 molecules, later, audit = (candidate_loader or load_candidates)(selected_queries, task=task,
                     subset=args.evaluation_subset, library=args.evidence_libraries[task],
@@ -2328,9 +2533,17 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                     ),
                     tie_seed=args.ranking_tie_seed,
                     joint_panel_sizes=args.joint_panel_sizes,
-                    **({'min_contrast': args.l1_min_contrast}
-                       if args.harness_version == 'reranked-progressive-l1-context-v1'
-                       else {}))
+                    **(
+                        {
+                            'min_contrast': args.l1_min_contrast,
+                            'morgan_primary_parent_width': args.morgan_primary_parent_width,
+                        }
+                        if args.harness_version in {
+                            'reranked-progressive-l1-context-v1',
+                            *FULL_FLAT_PROGRESSIVE_HARNESSES,
+                        }
+                        else {}
+                    ))
                 context_candidates_by_task[task] = molecules
                 indirect_candidates_by_task[task] = later
                 ranking_audits[task] = indirect_ranking_audits[task] = audit
@@ -2681,7 +2894,9 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         "timeout_s": args.timeout_s,
         "temperature": 0.0,
         "thinking": "provider_default",
-        "reasoning_effort": "omitted",
+        "reasoning_effort": (
+            "high" if reasoning_efforts == {"high"} else "not_executed"
+        ),
         "transport_max_retries": args.transport_max_retries,
         "tool_prefetch_complete": (
             not args.skip_tool_prefetch
@@ -2707,6 +2922,24 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         task: prompt_asset_manifest(_context_prompt_version(args, task) if args.profile == 'context_records' else 'standard_v1')
         for task in args.tasks
     }
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+        manifest.update(
+            reasoning_phase=args.reasoning_phase,
+            l1_prior_run=full_flat_l1_audit,
+            reasoning_calls_per_query=(
+                {"reused_l1": 1, "fresh_l1": 2}
+                if args.reasoning_phase == "indirect-update"
+                else 1
+            ),
+            consumed_scientific_levels={
+                task: (
+                    [int(name[1:]) for name in args.retrieval_policies[task]["stages"]]
+                    if args.reasoning_phase == "indirect-update"
+                    else [1]
+                )
+                for task in args.tasks
+            },
+        )
     if args.harness_version == INDIRECT_FILTER_HARNESS:
         from predict.harnesses.progressive.record_filter import asset_manifest
 
@@ -3155,7 +3388,7 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             'reranked-progressive-l1-context-l2-v1',
             'reranked-progressive-l1-context-l2-weighted-v1',
             'reranked-progressive-l1-context-l2-morgan-bucket-v1',
-            *INDIRECT_HARNESSES}:
+            *INDIRECT_HARNESSES, *FULL_FLAT_PROGRESSIVE_HARNESSES}:
         cache_contracts = {
             audit['selection_policy'] for audit in ranking_audits.values()
         }
@@ -3196,13 +3429,14 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             'reranked-progressive-l1-context-l2-v1',
             'reranked-progressive-l1-context-l2-weighted-v1',
             'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+            *FULL_FLAT_PROGRESSIVE_HARNESSES,
         }:
             primary_widths = {
                 audit['contract']['morgan_primary_parent_width']
                 for audit in ranking_audits.values()
             }
             fallback_widths = {
-                audit['contract']['morgan_fallback_parent_width']
+                audit['contract'].get('morgan_fallback_parent_width')
                 for audit in ranking_audits.values()
             }
             if len(primary_widths) != 1 or len(fallback_widths) != 1:
@@ -3214,7 +3448,11 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             manifest['candidate_generation'].update(
                 unit='parent_condition_context',
                 morgan_primary_parent_width=primary_widths.pop(),
-                morgan_fallback_parent_width=fallback_widths.pop(),
+                morgan_fallback_parent_width=(
+                    fallback_widths.pop()
+                    if fallback_widths != {None}
+                    else None
+                ),
                 query_target_stored=False,
             )
             manifest['selection'].update(
@@ -3362,6 +3600,12 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                 candidate_output=(
                     args.harness_version == INDIRECT_FILTER_HARNESS
                     and args.reranking == 'morgan-parent-llm-semantic'
+                ),
+                l1_prior_source=(
+                    args.full_flat_l1_sources.get(task, {}).get(
+                        str(record["benchmark_row_id"])
+                    )
+                    if args.full_flat_l1_sources else None
                 ),
             )
             return prepared
@@ -3575,6 +3819,10 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             profile=args.profile,
             context_record_l3_l5=_record_cache_enabled(args),
             prompt_version=(args.assay_transfer_prompt_version if getattr(args, 'retrieval_policy', None) else None),
+            levels_override=(
+                _run_levels(args, task)
+                if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES else None
+            ),
         )
     diagnostic_error = None
     if not failed:
@@ -3668,7 +3916,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                  'reranked-progressive-l1-context-l2-v1',
                  'reranked-progressive-l1-context-l2-weighted-v1',
                  'reranked-progressive-l1-context-l2-morgan-bucket-v1',
-                 INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS),
+                 INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS,
+                 *FULL_FLAT_PROGRESSIVE_HARNESSES),
         default='reranked-progressive-v2',
     )
     parser.add_argument('--reranking', choices=(
@@ -3701,6 +3950,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                         help='Number of parent-condition L1 cards for the L1-context harness.')
     parser.add_argument('--l1-min-contrast', type=int, default=3,
                         help='Minimum examples of each binary label in contrastive L1.')
+    parser.add_argument('--morgan-primary-parent-width', type=int, default=100)
     parser.add_argument('--l1-records-per-molecule', dest='record_limit_per_context_level', type=int, default=10)
     parser.add_argument('--records-per-level', dest='indirect_record_limit_per_level', type=int, default=50)
     parser.add_argument(
@@ -3715,10 +3965,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument('--prior-root', dest='single_source_root', default=str(DEFAULT_SINGLE_CACHE_ROOT))
     parser.add_argument('--evaluation-subset', choices=('valid', 'test'), default='valid')
     parser.add_argument(
+        '--allow-test-inference', action='store_true',
+        help='Explicitly authorize non-prepare-only inference on the formal test split.',
+    )
+    parser.add_argument(
         '--gold-label-version', choices=('current', 'v1'), default='current',
         help='Use CURRENT gold labels unless an immutable historical V1 cache is selected.',
     )
     parser.add_argument('--max-level', type=int, default=0, help='0 runs all task levels.')
+    parser.add_argument(
+        '--reasoning-phase', choices=('l1', 'indirect-update'), default=None,
+        help='Two-call full-flat progressive phase.',
+    )
+    parser.add_argument('--l1-prior-run', type=Path)
+    parser.add_argument(
+        '--require-complete-l1-prior', action='store_true',
+        help=(
+            'Require a completed, full-coverage L1 source. By default an indirect '
+            'run reuses finished L1 queries and immediately reruns missing ones.'
+        ),
+    )
     parser.add_argument('--indirect-level', type=int, choices=(2, 3, 4))
     parser.add_argument('--limit', type=int, default=0)
     parser.add_argument('--indices', nargs='*', type=int)
@@ -3768,7 +4034,42 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args.level_record_limits = dict(args.level_record_limit)
     args.cache_pool = record_pools[args.record_pool]
     args.joint_panel_sizes = (3, 7) if args.harness_version == 'reranked-progressive-v4' else None
-    if args.harness_version == 'reranked-progressive-l1-context-v1':
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+        if args.reasoning_phase is None:
+            parser.error('full-flat-progressive requires --reasoning-phase')
+        if args.reasoning_phase == 'l1' and args.l1_prior_run is not None:
+            parser.error('L1 does not accept --l1-prior-run')
+        if args.reasoning_phase == 'l1' and args.require_complete_l1_prior:
+            parser.error('L1 does not accept --require-complete-l1-prior')
+        if args.require_complete_l1_prior and args.l1_prior_run is None:
+            parser.error('--require-complete-l1-prior requires --l1-prior-run')
+        if args.reranking != 'assay-transfer-contrastive':
+            parser.error('full-flat-progressive fixes assay-transfer-contrastive retrieval')
+        if args.molecule_description_mode != 'none':
+            parser.error('full-flat-progressive does not expose molecule descriptions')
+        args.prompt_version = FULL_FLAT_PROGRESSIVE_HARNESSES[args.harness_version]
+        args.context_limit = 10
+        if args.harness_version == FULL_FLAT_PROGRESSIVE_HARNESS:
+            args.l1_min_contrast = 1
+        args.morgan_primary_parent_width = 25
+        args.record_limit_per_context_level = 10
+        args.indirect_record_limit_per_level = 10
+        args.query_prior = 'cached'
+        args.record_pool = args.cache_pool = 'all'
+        args.max_level = 1 if args.reasoning_phase == 'l1' else 0
+        args.skip_tool_prefetch = True
+        if args.l1_prior_run is not None:
+            args.l1_prior_run = args.l1_prior_run.resolve()
+    elif (
+        args.reasoning_phase is not None
+        or args.l1_prior_run is not None
+        or args.require_complete_l1_prior
+    ):
+        parser.error(
+            '--reasoning-phase, --l1-prior-run, and --require-complete-l1-prior '
+            'require full-flat-progressive'
+        )
+    elif args.harness_version == 'reranked-progressive-l1-context-v1':
         from predict.harnesses.progressive.prompt import split_prompt_version
 
         if args.reranking not in {
@@ -3896,8 +4197,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             args.assay_transfer_cache = SEMANTIC_BUCKET_CACHE_BUNDLE
     if args.harness_version == 'reranked-progressive-v4' and args.reranking != 'joint':
         parser.error('Reranked Progressive v4 is the fixed assay-transfer 3 + Morgan 7 joint L1')
-    if args.evaluation_subset != 'valid' and not args.prepare_only:
-        parser.error('Formal-test inference requires an explicitly approved run; use --prepare-only to render it.')
+    if (
+        args.evaluation_subset == 'test'
+        and not args.prepare_only
+        and not args.allow_test_inference
+    ):
+        parser.error(
+            'Formal-test inference requires --allow-test-inference; '
+            'use --prepare-only to render it without inference.'
+        )
     if not 1 <= args.endpoint_concurrency_budget <= MAX_ENDPOINT_CONCURRENCY_BUDGET:
         parser.error('--endpoint-concurrency-budget must be between 1 and 512')
     if (args.parallelism is not None
@@ -3954,7 +4262,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     if uses_ranked_level_cache:
         if args.record_pool != 'all':
             parser.error('ranked_level_retrieval.v2 requires --record_pool all')
-        if args.reranking not in {'morgan', 'assay-transfer'}:
+        if (
+            args.reranking not in {'morgan', 'assay-transfer'}
+            and args.harness_version not in FULL_FLAT_PROGRESSIVE_HARNESSES
+        ):
             parser.error('ranked_level_retrieval.v2 supports morgan or assay-transfer only')
         uses_v2 = any(
             policy.get('selection_contract') == 'ranked_level_retrieval.v2'
@@ -3977,6 +4288,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             }
             for policy in args.retrieval_policies.values()):
         parser.error('The L1-context harness requires an L1 context cache')
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES and any(
+            policy.get('selection_contract') != 'ranked_uid_retrieval.v1'
+            for policy in args.retrieval_policies.values()):
+        parser.error('full-flat-progressive requires ranked_uid_retrieval.v1')
     if args.harness_version == 'reranked-progressive-l1-context-l2-v1' and any(
             policy.get('selection_contract') != 'l1_context_semantic_l2.v1'
             for policy in args.retrieval_policies.values()):
@@ -4009,6 +4324,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         'reranked-progressive-l1-context-l2-v1',
         'reranked-progressive-l1-context-l2-weighted-v1',
         'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+        *FULL_FLAT_PROGRESSIVE_HARNESSES,
     }
     approved_archive_harness = l1_context_harness or args.harness_version in INDIRECT_HARNESSES
     if uses_archive and not args.legacy and not approved_archive_harness:
@@ -4030,6 +4346,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:
             output_name += f'_m{args.l1_min_contrast}'
         output_name += f'_{Path(args.assay_transfer_cache).stem}'
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+        output_name += f'_{args.reasoning_phase}'
     args.output_root = args.output_root or str(
         Path('outputs/paper/assay_transfer_harness/joseph') / output_name
     )
@@ -4103,10 +4421,13 @@ def main(argv: list[str] | None = None) -> int:
         'reranked-progressive-l1-context-l2-v1',
         'reranked-progressive-l1-context-l2-weighted-v1',
         'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+        *FULL_FLAT_PROGRESSIVE_HARNESSES,
     }:
         args.live_method += f'_k{args.context_limit}'
         if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:
             args.live_method += f'_m{args.l1_min_contrast}'
+    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+        args.live_method += f'_{args.reasoning_phase}'
     if args.molecule_description_mode != 'none':
         args.live_method += f'_quotient_{args.molecule_description_mode}'
         if args.molecule_description_cache_version != 'v1':

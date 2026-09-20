@@ -519,7 +519,7 @@ def _map_card_references(
         return rows
     mapped: dict[str, Any] = {}
     for key, value in rows.items():
-        if key.endswith("card_ids") and isinstance(value, list):
+        if (key.endswith("card_ids") or key.endswith("record_ids")) and isinstance(value, list):
             mapped[key] = [card_id_map[str(card_id)] for card_id in value]
         else:
             mapped[key] = _map_card_references(value, card_id_map=card_id_map)
@@ -631,6 +631,10 @@ def build_progressive_messages(
         }
         for row in levels
     ]
+    settings = prompt_assets(prompt_version)["settings"]
+    full_flat = str(settings.get("output_contract", "")).startswith(
+        "full_flat_progressive."
+    )
     schema = {
         contract.prediction_field: f"{contract.positive_prediction} | {contract.negative_prediction}",
         "confidence": "high | moderate | low",
@@ -651,7 +655,7 @@ def build_progressive_messages(
         "evidence_gaps": ["string"],
         "decision_summary": "concise string",
     }
-    if prompt_assets(prompt_version)["settings"].get("claim_provenance") in {
+    if settings.get("claim_provenance") in {
         "derived_v1", "derived_v2"
     }:
         for field in (
@@ -667,6 +671,46 @@ def build_progressive_messages(
                 "evidence_role": "supportive | contradictory",
             }
         ]
+    if full_flat:
+        schema = {
+            "claims": [
+                {
+                    "claim": "concise evidence-grounded statement",
+                    "molecule_ids": ["Molecule N"],
+                    "record_ids": ["Cxx"],
+                    "evidence_role": "supportive | contradictory",
+                }
+            ],
+            "summary": "concise overall conclusion",
+            contract.prediction_field: (
+                f"{contract.positive_prediction} | {contract.negative_prediction}"
+            ),
+        }
+        if is_initial:
+            schema.update(
+                confidence="high | moderate | low",
+                evidence_gaps=["important unresolved evidence gap"],
+            )
+        else:
+            schema.update(
+                revision_action="keep | strengthen | weaken | flip",
+                new_evidence_assessment=[
+                    {
+                        "molecule_ids": ["Molecule N"],
+                        "record_ids": ["Cxx"],
+                        "applicability": "high | moderate | low | not_applicable",
+                        "direction": "supportive | contradictory | neutral_or_unclear",
+                        "decision_effect": "changed | strengthened | weakened | no_change",
+                    }
+                ],
+            )
+    visible_evidence = render_active_evidence(
+        active,
+        current_level=current_level,
+        prior_state=prior_state,
+        card_id_to_alias=card_id_to_alias,
+        card_contract=molecule_contract,
+    )
     payload: dict[str, Any] = {
         "protocol": {
             "version": protocol_version,
@@ -724,15 +768,58 @@ def build_progressive_messages(
         },
         "query": {"canonical_smiles": query_smiles},
         **({"query_prior": dict(query_prior)} if query_prior else {}),
-        "active_evidence": render_active_evidence(
-            active,
-            current_level=current_level,
-            prior_state=prior_state,
-            card_id_to_alias=card_id_to_alias,
-            card_contract=molecule_contract,
-        ),
+        "active_evidence": visible_evidence,
         "required_json_schema": schema,
     }
+    if full_flat:
+        molecule_number = 0
+        if prior_state is not None:
+            molecules = []
+            for molecule in visible_evidence:
+                cards = [dict(card) for card in molecule.get("evidence_cards") or []]
+                if not cards:
+                    continue
+                molecule_number += 1
+                public = {
+                    key: value
+                    for key, value in molecule.items()
+                    if key not in {"analog_id", "evidence_cards", "first_seen_level"}
+                }
+                public.update(number=molecule_number, evidence_cards=cards)
+                molecules.append(public)
+            payload["flat_molecules"] = molecules
+        else:
+            sections = []
+            task_levels = prompt_assets(prompt_version)["levels"][contract.task]
+            for level_name, definition in task_levels.items():
+                level = int(level_name[1:])
+                if level > current_level:
+                    continue
+                molecules = []
+                for molecule in visible_evidence:
+                    cards = [
+                        dict(card)
+                        for card in molecule.get("evidence_cards") or []
+                        if int(card.get("first_seen_level") or 0) == level
+                    ]
+                    if not cards:
+                        continue
+                    molecule_number += 1
+                    public = {
+                        key: value
+                        for key, value in molecule.items()
+                        if key not in {"analog_id", "evidence_cards", "first_seen_level"}
+                    }
+                    public.update(number=molecule_number, evidence_cards=cards)
+                    molecules.append(public)
+                if molecules:
+                    sections.append({
+                        "level": level_name,
+                        "family": definition["evidence_family"],
+                        "description": definition["description"],
+                        "molecules": molecules,
+                    })
+            payload["level_sections"] = sections
     if condition_sentence:
         payload["query"]["external_condition"] = condition_sentence
     if query_molecule_description:
@@ -749,9 +836,19 @@ def build_progressive_messages(
             prompt_text['progressive_messages'].format(transfer_field=transfer_field)
         )
     if prior_state is not None:
-        payload["prior_state"] = render_prior_state(
-            prior_state,
-            card_id_to_alias=card_id_to_alias,
+        payload["prior_state"] = (
+            {
+                key: prior_state.get(key)
+                for key in (
+                    "claims", "summary", contract.prediction_field,
+                    "confidence", "evidence_gaps",
+                )
+            }
+            if full_flat
+            else render_prior_state(
+                prior_state,
+                card_id_to_alias=card_id_to_alias,
+            )
         )
     if protocol_details:
         payload["protocol"].update(dict(protocol_details))

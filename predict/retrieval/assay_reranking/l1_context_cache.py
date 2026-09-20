@@ -332,10 +332,15 @@ def _records(
 
 def load_candidates(
     queries: Mapping[str, str], *, task: str, subset: str, policy: Mapping[str, Any],
-    molecule_limit: int = 10, l1_limit: int = 10, later_limit: int = 50,
+    molecule_limit: int = 10, l1_limit: int = 10,
+    later_limit: int | Mapping[str, int] = 50,
     tie_seed: int = 0, min_contrast: int = 3, cache_pool: str = "all", **_: Any,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Return one card per gold parent-condition context using indexed reads only."""
+    later_limit = (
+        int(later_limit.get("L2", 1))
+        if isinstance(later_limit, Mapping) else later_limit
+    )
     if not queries or min(molecule_limit, l1_limit, later_limit) < 1:
         raise ValueError("Queries and positive shape limits are required")
     database, manifest = _manifest(policy, task, subset)
@@ -537,6 +542,7 @@ def load_candidates(
         "query_identities": identities,
         "query_audits": audits,
         "neighbor_identity_policy": "scaffold_disjoint",
+        "neighbor_identity_policy_by_level": {"L1": "scaffold_disjoint"},
         "similarity_floor": None,
         "scaffold_overlap": 0,
         "parent_overlap": 0,

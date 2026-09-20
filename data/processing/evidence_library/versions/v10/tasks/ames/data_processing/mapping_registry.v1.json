@@ -1,0 +1,27 @@
+{
+  "version": "ames_prebuilt_mapping_registry.v1",
+  "task_id": "ames",
+  "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
+  "mappings": {
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "path": "data/evidence_libraries/ames/v10/measurement_resolution_v6/measurement_resolution.parquet",
+      "sha256": "f5aea1e2973cd25d5b3ca5f692a12384833f2af35198ea4531170084fef38e80"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "review_manifest": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
+        "sha256": "bea68dd953bd729f8fb63c1e136d49ccc02fd663aa176e20b1b06a6981fec98b"
+      },
+      "sha256": "8559f83ee8c3550a069e21da5ed003889bcbc3fece9ad68319ecd230820600f0"
+    }
+  },
+  "not_applicable_mappings": ["auxiliary_context"]
+}

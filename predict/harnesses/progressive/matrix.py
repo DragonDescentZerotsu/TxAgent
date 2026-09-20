@@ -27,6 +27,10 @@ import time
 import traceback
 
 from data.processing.llm_api import DEFAULT_ENV_FILE
+from predict.harnesses.branches.matrix import (
+    sample_provider_loads,
+    top_up_provider_config,
+)
 from predict.harnesses.progressive import runner
 from predict.harnesses.progressive.retrieval_cache import (
     DEFAULT_CACHE_BUNDLE,
@@ -130,7 +134,11 @@ def _condition_root(
     width = f"_w{retrieval_width}" if retrieval_width is not None else ""
     name = (
         f"l{indirect_level}_v1_{suffix}"
-        if indirect_level else f"k{k}_m{minimum}{width}_{suffix}"
+        if indirect_level else (
+            f"k{k}_m{minimum}{width}_{options.reasoning_phase}_{suffix}"
+            if options.harness_version in runner.FULL_FLAT_PROGRESSIVE_HARNESSES
+            else f"k{k}_m{minimum}{width}_{suffix}"
+        )
     )
     path = parent / name
     serial = 1
@@ -185,17 +193,24 @@ def _validate_staged_run(path: Path) -> dict:
     missing = sorted(name for name in required if not (path / name).is_file())
     if missing:
         raise ValueError(f"Staged run is missing required diagnostics: {missing}")
-    expected = sum(
-        len(indices)
-        for indices in experiment["evaluation_indices_by_task"].values()
-    )
-    output_level = int(run.get("indirect_level") or 1)
-    outputs = list(path.glob(
-        f"*/queries/query_idx*/levels/level_{output_level}/output.json"
-    ))
+    outputs = []
+    expected = 0
+    output_levels = {}
+    for task, indices in experiment["evaluation_indices_by_task"].items():
+        output_level = (
+            {"bbb_martins": 5, "bioavailability_ma": 6}[task]
+            if run.get("reasoning_phase") == "indirect-update"
+            else int(run.get("indirect_level") or 1)
+        )
+        output_levels[task] = output_level
+        expected += len(indices)
+        outputs.extend((path / task / "queries").glob(
+            f"query_idx*/levels/level_{output_level}/output.json"
+        ))
     if len(outputs) != expected:
         raise ValueError(
-            f"Staged run has {len(outputs)} of {expected} L{output_level} outputs: {path}"
+            f"Staged run has {len(outputs)} of {expected} terminal outputs "
+            f"at {output_levels}: {path}"
         )
     incomplete = [
         output for output in outputs
@@ -204,15 +219,22 @@ def _validate_staged_run(path: Path) -> dict:
     ]
     if incomplete:
         raise ValueError(
-            f"Staged run has incomplete L{output_level} outputs: {incomplete[0]}"
+            f"Staged run has incomplete terminal outputs: {incomplete[0]}"
         )
-    return {
+    receipt = {
         "run_json_sha256": sha256_file(path / "run.json"),
         "diagnostics_manifest_sha256": sha256_file(
             path / "diagnostics_manifest.json"
         ),
-        f"l{output_level}_outputs": len(outputs),
+        "terminal_outputs": len(outputs),
+        "output_levels_by_task": output_levels,
     }
+    for level in set(output_levels.values()):
+        receipt[f"l{level}_outputs"] = sum(
+            1 for output in outputs
+            if output.parent.name == f"level_{level}"
+        )
+    return receipt
 
 
 def _validate_staged_live_run(path: Path) -> dict:
@@ -679,7 +701,8 @@ def main(argv=None):
                                  'reranked-progressive-l1-context-l2-weighted-v1',
                                  'reranked-progressive-l1-context-l2-morgan-bucket-v1',
                                  'reranked-progressive-indirect-only-v1',
-                                 'reranked-progressive-indirect-only-v2'),
+                                 'reranked-progressive-indirect-only-v2',
+                                 *runner.FULL_FLAT_PROGRESSIVE_HARNESSES),
                         default='reranked-progressive-v2')
     parser.add_argument('--record-pools', nargs='+', choices=('all','assay-transfer-trained'),
                         default=['all'])
@@ -716,6 +739,11 @@ def main(argv=None):
     parser.add_argument(
         '--gold-label-version', choices=('current', 'v1'), default='current',
     )
+    parser.add_argument('--evaluation-subset', choices=('valid', 'test'), default='valid')
+    parser.add_argument(
+        '--allow-test-inference', action='store_true',
+        help='Explicitly authorize non-prepare-only inference on the formal test split.',
+    )
     parser.add_argument('--replicates', type=int, default=1,
                         help='Independent samples of every selected condition in one queue.')
     parser.add_argument(
@@ -727,8 +755,17 @@ def main(argv=None):
         '--max-inflight-per-endpoint', type=int,
         help='Cap each selected provider before allocating the global request pool.',
     )
+    parser.add_argument('--target-total-load-per-endpoint', type=int)
+    parser.add_argument('--load-samples', type=int, default=6)
+    parser.add_argument('--load-sample-interval-s', type=float, default=1.0)
     parser.add_argument('--prior-root', type=Path, default=runner.DEFAULT_SINGLE_CACHE_ROOT)
     parser.add_argument('--max-level', type=int, default=0)
+    parser.add_argument('--reasoning-phase', choices=('l1', 'indirect-update'))
+    parser.add_argument('--l1-prior-run', type=Path)
+    parser.add_argument(
+        '--require-complete-l1-prior', action='store_true',
+        help='Disable default partial L1 reuse for a full-flat indirect run.',
+    )
     indirect_group = parser.add_mutually_exclusive_group()
     indirect_group.add_argument('--indirect-level', type=int, choices=(2, 3, 4))
     indirect_group.add_argument('--indirect-levels', nargs='+', type=int, choices=(2, 3, 4))
@@ -752,6 +789,18 @@ def main(argv=None):
     parser.add_argument('--rolling-from', type=Path,
                         help='Resume prepared conditions with a bounded producer, without a pilot')
     options = parser.parse_args(raw_argv)
+    if options.target_total_load_per_endpoint is not None and options.parallelism is not None:
+        parser.error('top-up allocation derives parallelism; do not also pass --parallelism')
+    if options.target_total_load_per_endpoint is not None and options.prepare_only:
+        parser.error('top-up allocation is an immediate pre-launch operation')
+    if options.load_samples < 1 or options.load_sample_interval_s < 0:
+        parser.error('load samples must be positive and sample interval non-negative')
+    if (
+        options.evaluation_subset == 'test'
+        and not options.prepare_only
+        and not options.allow_test_inference
+    ):
+        parser.error('Formal-test inference requires --allow-test-inference')
     if options.variant:
         conflicting = {
             '--reranking-modes', '--assay-transfer-cache',
@@ -797,6 +846,28 @@ def main(argv=None):
     molecule_l2_v1 = options.harness_version == 'reranked-progressive-l1-context-l2-morgan-bucket-v1'
     molecule_l2 = molecule_l2_v1
     indirect_only = options.harness_version in runner.INDIRECT_HARNESSES
+    full_flat = options.harness_version in runner.FULL_FLAT_PROGRESSIVE_HARNESSES
+    full_flat_contrasts = (
+        [1] if options.harness_version == runner.FULL_FLAT_PROGRESSIVE_HARNESS
+        else [1]
+    )
+    if full_flat:
+        options.prompt_version = runner.FULL_FLAT_PROGRESSIVE_HARNESSES[
+            options.harness_version
+        ]
+        if options.reasoning_phase is None:
+            parser.error('full-flat-progressive-v1 requires --reasoning-phase')
+        if options.reasoning_phase == 'l1' and options.l1_prior_run is not None:
+            parser.error('L1 does not accept --l1-prior-run')
+        if options.reasoning_phase == 'l1' and options.require_complete_l1_prior:
+            parser.error('L1 does not accept --require-complete-l1-prior')
+        if options.require_complete_l1_prior and options.l1_prior_run is None:
+            parser.error('--require-complete-l1-prior requires --l1-prior-run')
+        options.l1_prior_run = (
+            options.l1_prior_run.resolve() if options.l1_prior_run else None
+        )
+    elif options.require_complete_l1_prior:
+        parser.error('--require-complete-l1-prior requires full-flat-progressive')
     if molecule_l2_v1:
         options.records_per_level = [options.l2_molecules * options.l2_records_per_molecule]
     if options.study and (
@@ -845,17 +916,21 @@ def main(argv=None):
     if len(models) != 1:
         parser.error('--provider-pool-config must use one exact model across endpoints')
     options.model = next(iter(models))
-    if indirect_only and any(
+    if not options.prepare_only and any(
         (provider.request_extra_body or {}).get('chat_template_kwargs', {}).get(
             'reasoning_effort'
         ) != 'high'
         for provider in options.provider_config.providers
     ):
-        parser.error('Indirect-only inference requires reasoning_effort=high on every provider')
+        parser.error('Inference requires reasoning_effort=high on every provider')
     options.requested_parallelism = options.parallelism
     options.endpoint_selection = None
+    options.load_receipt = []
+    options.top_up_allocations = []
     if options.prepare_only:
         options.parallelism = options.parallelism or 1
+    elif options.target_total_load_per_endpoint is not None:
+        options.parallelism = primary_capacity(options.provider_config)
     else:
         if options.parallelism is None:
             parser.error('full-batch inference requires explicit --parallelism')
@@ -899,6 +974,23 @@ def main(argv=None):
             or options.max_level not in {0, 1}):
         parser.error(
             'L1 context matrix requires supported context modes and max level 1'
+        )
+    if full_flat and (
+        options.reranking_modes != ['assay-transfer-contrastive']
+        or options.record_pools != ['all']
+        or options.records_per_level != [10]
+        or options.l1_molecules != [10]
+        or options.l1_min_contrasts != full_flat_contrasts
+        or options.query_prior_modes != ['cached']
+        or options.molecule_description_modes != ['none']
+        or options.max_tokens != 131_072
+        or options.execution_mode != 'throughput'
+        or options.continue_after_pilot
+    ):
+        parser.error(
+            'Full-flat progressive requires assay-transfer-contrastive, all/10, '
+            f'K=10, M={full_flat_contrasts}, cached prior, no descriptions, '
+            '131072 tokens, and throughput'
         )
     if options.harness_version == 'reranked-progressive-l1-context-l2-v1' and (
             set(options.reranking_modes) != {'morgan', 'semantic-lap'}
@@ -969,7 +1061,9 @@ def main(argv=None):
             'reranked-progressive-l1-context-l2-weighted-v1',
             'reranked-progressive-l1-context-l2-morgan-bucket-v1',
             *runner.INDIRECT_HARNESSES}
-            and options.l1_min_contrasts != [3]):
+            and options.l1_min_contrasts != (
+                full_flat_contrasts if full_flat else [3]
+            )):
         parser.error('--l1-min-contrasts applies only to the L1 context matrix')
     nonempty_description_modes = [
         mode for mode in options.molecule_description_modes if mode != 'none'
@@ -1173,6 +1267,8 @@ def run_rolling(options, root):
                                 '--assay-transfer-cache',str(options.assay_transfer_cache),
                                 '--l1-molecules','10','--l1-records-per-molecule','10',
                                 '--query-prior','cached','--allow-frozen-l1-vote-scores',
+                                '--evaluation-subset', options.evaluation_subset,
+                                *(['--allow-test-inference'] if options.allow_test_inference else []),
                                 '--prepare-only','--output-root',str(path),'--limit',str(options.limit),
                                 '--max-tokens',str(options.max_tokens),
                                 '--base-url',options.provider_config.providers[0].base_url,
@@ -1194,7 +1290,7 @@ def run_rolling(options, root):
                                     'harness_version': args.harness_version,
                                     'prompt_version': args.assay_transfer_prompt_version,
                                     'retrieval_cache_bundle': str(options.assay_transfer_cache),
-                                    'evaluation_subset': 'valid',
+                                    'evaluation_subset': options.evaluation_subset,
                                     'pilot_size': PILOT_SIZE,
                                     'matrix_output_root': str(root),
                                 },
@@ -1297,6 +1393,7 @@ def run_matrix(options, root):
     molecule_l2_v1 = options.harness_version == (
         'reranked-progressive-l1-context-l2-morgan-bucket-v1')
     molecule_l2 = molecule_l2_v1
+    full_flat = options.harness_version in runner.FULL_FLAT_PROGRESSIVE_HARNESSES
     all_prompt_versions = list(dict.fromkeys(
         version
         for row in options.variant or [{'prompt_versions': options.prompt_versions}]
@@ -1330,11 +1427,13 @@ def run_matrix(options, root):
     reuse_sources, reuse_receipts = _reuse_inference_sources(
         options.reuse_inference_from, settings
     )
+    endpoint_selection = (
+        options.endpoint_selection.public_dict()
+        if options.endpoint_selection is not None else None
+    )
     endpoint_preflight = {
         'models': (
-            options.endpoint_selection.public_dict()
-            if options.endpoint_selection is not None
-            else None
+            endpoint_selection
         ),
         'tokenized_reasoning': (
             preflight_sglang_tokenized_completion(options.provider_config)
@@ -1360,8 +1459,12 @@ def run_matrix(options, root):
         )
         cache_version = json.loads(cache_document_path.read_text())
         retrieval_width = (
-            cache_version.get('morgan_primary_parent_width')
-            or cache_version.get('capacity')
+            25
+            if full_flat
+            else (
+                cache_version.get('morgan_primary_parent_width')
+                or cache_version.get('capacity')
+            )
         )
         if len(options.assay_transfer_caches) > 1 and not isinstance(retrieval_width, int):
             raise ValueError(
@@ -1414,6 +1517,8 @@ def run_matrix(options, root):
             for row in options.variant or []
         ],
         max_level=options.max_level,
+        reasoning_phase=options.reasoning_phase,
+        l1_prior_run=str(options.l1_prior_run) if options.l1_prior_run else None,
         gold_label_version=options.gold_label_version,
         prior_root=str(options.prior_root),
         assay_transfer_cache=(
@@ -1437,6 +1542,9 @@ def run_matrix(options, root):
         parallelism=options.parallelism,
         requested_parallelism=options.requested_parallelism,
         max_inflight_per_endpoint=options.max_inflight_per_endpoint,
+        target_total_load_per_endpoint=options.target_total_load_per_endpoint,
+        load_samples=options.load_receipt,
+        top_up_allocations=options.top_up_allocations,
         execution_mode=options.execution_mode,
         publish_review_traces=options.publish_review_traces,
         l1_molecules=options.l1_molecules,
@@ -1450,14 +1558,18 @@ def run_matrix(options, root):
         indirect_levels=options.indirect_levels,
         endpoint_preflight=endpoint_preflight,
         inference_reuse_sources=reuse_receipts,
-        subset='valid', final_levels={task: options.max_level or {'bbb_martins':5,'bioavailability_ma':6}[task]
+        subset=options.evaluation_subset, final_levels={task: options.max_level or {'bbb_martins':5,'bioavailability_ma':6}[task]
                                      for task in options.tasks})
     manifest = root/'matrix.json'
     if manifest.exists() and canonical_json_bytes(json.loads(manifest.read_text())) != canonical_json_bytes(invariant):
         raise ValueError('Matrix resume inputs changed')
     write_json_atomic(manifest, invariant)
     prepared, conditions, selections, run_receipts = [], [], {}, []
-    streaming = options.execution_mode == 'throughput' and not options.prepare_only
+    streaming = (
+        options.execution_mode == 'throughput'
+        and not options.prepare_only
+        and options.target_total_load_per_endpoint is None
+    )
     incoming = queue.Queue(maxsize=128) if streaming else None
     streamed_results, streaming_errors = [], []
     client = None
@@ -1510,10 +1622,11 @@ def run_matrix(options, root):
         audit['contract']['later_limit'] = cap
         for qid, levels in later.items():
             for level, entry in levels.items():
-                entry['records'] = entry['records'][:cap]
+                level_cap = cap[level] if isinstance(cap, dict) else cap
+                entry['records'] = entry['records'][:level_cap]
                 entry.update(selected_records=len(entry['records']),
                     selected_molecules=len({r['reference_molecule_id'] for r in entry['records']}),
-                    shortfall=max(0,cap-len(entry['records'])))
+                    shortfall=max(0,level_cap-len(entry['records'])))
                 audit['query_audits'][qid][level].update({k:entry[k] for k in
                     ('selected_records','selected_molecules','shortfall')})
         return molecules, later, audit
@@ -1625,11 +1738,25 @@ def run_matrix(options, root):
                                 '--l1-min-contrast', str(min_contrast),
                                 '--query-prior', prior, '--prior-root', str(options.prior_root),
                                 '--gold-label-version', options.gold_label_version,
+                                '--evaluation-subset', options.evaluation_subset,
+                                *(['--allow-test-inference'] if options.allow_test_inference else []),
                                 '--prompt-version', prompt_version,
                                 '--molecule-description-mode', molecule_description_mode,
                                 '--molecule-description-cache-version',
                                 options.molecule_description_cache_version,
                                 '--max-level', str(indirect_level or options.max_level),
+                                *(
+                                    ['--reasoning-phase', options.reasoning_phase]
+                                    if full_flat else []
+                                ),
+                                *(
+                                    ['--l1-prior-run', str(options.l1_prior_run)]
+                                    if options.l1_prior_run else []
+                                ),
+                                *(
+                                    ['--require-complete-l1-prior']
+                                    if options.require_complete_l1_prior else []
+                                ),
                                 *(
                                     ['--indirect-level', str(indirect_level)]
                                     if indirect_level else []
@@ -1677,6 +1804,11 @@ def run_matrix(options, root):
                                 'l1_molecules': l1_molecules,
                                 'l1_min_contrast': min_contrast,
                                 'indirect_level': indirect_level,
+                                'reasoning_phase': options.reasoning_phase,
+                                'l1_prior_run': (
+                                    str(options.l1_prior_run)
+                                    if options.l1_prior_run else None
+                                ),
                                 'query_prior': prior,
                                 'molecule_description_mode': molecule_description_mode,
                                 'molecule_description': _molecule_description_identity(
@@ -1693,7 +1825,7 @@ def run_matrix(options, root):
                                 'support_mode': 'runnable',
                                 'metric_status': 'pending',
                                 'tasks': condition_tasks,
-                                'evaluation_subset': 'valid',
+                                'evaluation_subset': options.evaluation_subset,
                                 'gold_label_version': options.gold_label_version,
                                 'retrieval_cache_bundle': str(cache_path),
                                 'batch_root': str(
@@ -1745,7 +1877,7 @@ def run_matrix(options, root):
                                         'prompt_version': args.assay_transfer_prompt_version,
                                         'retrieval_cache_bundle': str(cache_path),
                                         'morgan_primary_parent_width': retrieval_width,
-                                        'evaluation_subset': 'valid',
+                                        'evaluation_subset': options.evaluation_subset,
                                         'l1_molecules': l1_molecules,
                                         'l1_min_contrast': min_contrast,
                                         'indirect_level': indirect_level,
@@ -1830,6 +1962,66 @@ def run_matrix(options, root):
         for args, _, _ in conditions:
             _update_raw_run(args, 'prepared')
         return 0
+    if options.target_total_load_per_endpoint is not None:
+        candidate_failovers = options.provider_config.max_failovers
+        selection = select_healthy_providers(
+            options.provider_config, primary_capacity(options.provider_config),
+        )
+        options.provider_config = replace(
+            selection.config, max_failovers=candidate_failovers,
+        )
+        model_checks = list(selection.checks)
+        options.load_receipt = sample_provider_loads(
+            options.provider_config,
+            samples=options.load_samples,
+            interval_s=options.load_sample_interval_s,
+        )
+        options.provider_config, options.top_up_allocations = top_up_provider_config(
+            options.provider_config,
+            options.load_receipt,
+            target_total=options.target_total_load_per_endpoint,
+        )
+        options.parallelism = primary_capacity(options.provider_config)
+        options.requested_parallelism = options.parallelism
+        options.endpoint_selection = {
+            'checks': model_checks,
+            'mode': 'top_up_to_total_running_plus_waiting',
+            'load_samples': options.load_receipt,
+            'allocations': options.top_up_allocations,
+        }
+        endpoint_preflight['models'] = options.endpoint_selection
+        endpoint_preflight['tokenized_reasoning'] = (
+            preflight_sglang_tokenized_completion(options.provider_config)
+            if reasoning_transport else None
+        )
+        invariant.update(
+            provider_pool=options.provider_config.public_dict(),
+            parallelism=options.parallelism,
+            requested_parallelism=options.requested_parallelism,
+            endpoint_preflight=endpoint_preflight,
+            load_samples=options.load_receipt,
+            top_up_allocations=options.top_up_allocations,
+        )
+        write_json_atomic(manifest, invariant)
+        for args, _, _ in conditions:
+            receipt_path = Path(args.output_root) / 'matrix_execution.json'
+            receipt = json.loads(receipt_path.read_text())
+            receipt.update(
+                parallelism=options.parallelism,
+                target_total_load_per_endpoint=(
+                    options.target_total_load_per_endpoint
+                ),
+                endpoint_allocations={
+                    provider.name: slots
+                    for provider, slots in endpoint_allocations(
+                        options.parallelism, options.provider_config
+                    )
+                },
+                load_samples=options.load_receipt,
+                top_up_allocations=options.top_up_allocations,
+                endpoint_preflight=endpoint_preflight,
+            )
+            write_json_atomic(receipt_path, receipt)
     if streaming:
         incoming.put(None)
         consumer.join()
@@ -1922,7 +2114,8 @@ def summarize(conditions, root):
                 output_root=Path(args.output_root), max_level=args.max_level,
                 query_prior_mode=args.query_prior,
                 profile='context_records', context_record_l3_l5=True,
-                prompt_version=args.assay_transfer_prompt_version)
+                prompt_version=args.assay_transfer_prompt_version,
+                levels_override=runner._run_levels(args, task))
             row = dict(task=task, mode=args.reranking, pool=args.record_pool,
                        records_per_level=args.indirect_record_limit_per_level,
                        l1_molecules=args.context_limit,

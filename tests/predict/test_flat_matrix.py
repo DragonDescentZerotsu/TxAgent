@@ -1,8 +1,11 @@
 """Validate the fixed two-task Morgan-flat matrix contract."""
 
+import json
 from pathlib import Path
 
 from predict.harnesses.branches import matrix as flat_matrix
+from predict.api_client.pool import ProviderPoolConfig
+from predict.utils.json import sha256_file
 
 
 def test_matrix_splits_full_capacity_evenly() -> None:
@@ -44,6 +47,41 @@ def test_matrix_builds_progressive_matched_record10_command(tmp_path: Path) -> N
     assert "--disable-flat-tools" in command
     assert "--enable-thinking" in command
     assert "--skip-existing" in command
+
+
+def test_matrix_wires_test_split_and_explicit_prior_root(tmp_path: Path) -> None:
+    prior_root = tmp_path / "test_priors"
+    args = flat_matrix._selection_args(
+        "bbb_martins",
+        tmp_path,
+        limit=0,
+        context_width=25,
+        context_v5=True,
+        all_levels=True,
+        evaluation_subset="test",
+        prior_root=prior_root,
+    )
+    source = args.batch_root / args.batch_id / "cache_matched_retrieval"
+    command = flat_matrix._batch_command(args, source).command
+
+    assert args.evaluation_subset == "test"
+    assert args.input_jsonl.name == "test_molecule_condition_labels.jsonl"
+    assert command[command.index("--input-jsonl") + 1] == str(args.input_jsonl)
+    assert command[command.index("--single-analysis-source-batch") + 1] == str(
+        prior_root.resolve() / "bbb_martins" / "bbb_martins__none"
+    )
+
+
+def test_matrix_wires_explicit_cache_bundle(tmp_path: Path) -> None:
+    cache = tmp_path / "v9.yaml"
+    args = flat_matrix._selection_args(
+        "bbb_martins", tmp_path, limit=0, context_width=25, context_v5=True,
+        min_contrast=1, assay_transfer_cache=cache,
+    )
+
+    assert args.assay_transfer_cache == cache.resolve()
+    assert args.max_level == 1
+    assert args.l1_min_contrast == 1
 
 
 def test_matrix_builds_assay_transfer_all_pool_command(tmp_path: Path) -> None:
@@ -102,3 +140,95 @@ def test_matrix_builds_l1_uid_context_command(tmp_path: Path) -> None:
     assert command[command.index("--flat-layout") + 1] == "global"
     assert command[command.index("--flat-query-prior") + 1] == "cached"
     assert command[command.index("--max-tokens") + 1] == "65536"
+
+
+def test_preselected_command_forwards_exact_indices(tmp_path: Path) -> None:
+    args = flat_matrix._selection_args(
+        "bbb_martins", tmp_path, limit=0,
+        context_width=25, context_v5=True, all_levels=True,
+    )
+    args.indices = ["3", "8"]
+    command = flat_matrix._batch_command(
+        args, tmp_path / "source", max_tokens=65_536,
+    ).command
+
+    index = command.index("--indices")
+    assert command[index + 1:index + 3] == ["3", "8"]
+    assert "--start" not in command
+    assert "--limit" not in command
+
+
+def test_preselected_grid_uses_oral_high_low_v6_bundle(tmp_path: Path) -> None:
+    args = flat_matrix._selection_args(
+        "bioavailability_ma", tmp_path, limit=0,
+        context_width=25, context_v6=True, all_levels=True,
+    )
+
+    assert args.harness_version == flat_matrix.flat.CONTEXT_V6_HARNESS_VERSION
+    assert args.prompt_version == flat_matrix.flat.CONTEXT_V6_PROMPT_VERSION
+    assert args.max_level == 6
+    assert args.morgan_primary_parent_width == 25
+    assert args.l1_min_contrast == 0
+
+
+def test_preselected_grid_can_use_v5_bundle(tmp_path: Path) -> None:
+    args = flat_matrix._selection_args(
+        "bioavailability_ma", tmp_path, limit=0,
+        context_width=25, context_v5=True, all_levels=True,
+    )
+
+    assert args.harness_version == flat_matrix.flat.CONTEXT_V5_HARNESS_VERSION
+    assert args.prompt_version == flat_matrix.flat.CONTEXT_V5_PROMPT_VERSION
+    assert args.layout == "level-grouped"
+    assert args.max_level == 6
+    assert args.morgan_primary_parent_width == 25
+    assert args.l1_min_contrast == 0
+
+
+def test_preselected_grid_accepts_explicit_profile_subset(tmp_path: Path) -> None:
+    task_manifests = {}
+    for task in flat_matrix.TASKS:
+        path = tmp_path / f"{task}.json"
+        path.write_text("{}\n", encoding="utf-8")
+        task_manifests[task] = {"path": path.name, "sha256": sha256_file(path)}
+    screen = tmp_path / "screen.json"
+    screen.write_text(json.dumps({
+        "schema_version": flat_matrix.GRID_SCREEN_SCHEMA,
+        "status": "complete",
+        "selected_profiles": [{
+            "name": "top_profile",
+            "task_manifests": task_manifests,
+        }],
+    }), encoding="utf-8")
+
+    profiles = flat_matrix.load_preselected_grid(screen)
+
+    assert [profile["name"] for profile in profiles] == ["top_profile"]
+
+
+def test_top_up_uses_largest_observed_load_and_preserves_no_failover() -> None:
+    config = ProviderPoolConfig.from_mapping({
+        "version": "openai_provider_pool.v1",
+        "providers": [
+            {"name": "a", "base_url": "http://a/v1", "model": "m", "max_inflight": 512},
+            {"name": "b", "base_url": "http://b/v1", "model": "m", "max_inflight": 512},
+        ],
+        "max_failovers": 0,
+    })
+    samples = [
+        {"provider": "a", "total": 100},
+        {"provider": "a", "total": 120},
+        {"provider": "b", "total": 512},
+    ]
+
+    active, allocations = flat_matrix.top_up_provider_config(
+        config, samples, target_total=512,
+    )
+
+    assert [(row["provider"], row["launcher_slots"]) for row in allocations] == [
+        ("a", 392), ("b", 0),
+    ]
+    assert [(provider.name, provider.max_inflight) for provider in active.providers] == [
+        ("a", 392),
+    ]
+    assert active.max_failovers == 0

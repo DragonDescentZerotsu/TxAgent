@@ -19,7 +19,9 @@ import json
 import os
 from pathlib import Path
 import sys
+import time
 from typing import Any
+from urllib.request import urlopen
 
 from data.processing.gold_labels.conditioned_benchmark import split_path
 from data.processing.llm_api import (
@@ -47,6 +49,7 @@ from predict.api_client.pool import (
     ProviderPoolConfig,
     build_provider_pool,
     load_provider_pool_config,
+    preflight_provider_models,
     primary_capacity,
     select_healthy_providers,
 )
@@ -63,6 +66,7 @@ DEFAULT_PROVIDER_CONFIG = DEFAULT_PROVIDER_POOL_CONFIG
 TASKS = ("bbb_martins", "bioavailability_ma")
 RECORDS_PER_LEVEL = 10
 MAX_TOKENS = 262_144
+GRID_SCREEN_SCHEMA = "record_selection_lambda_screen.v1"
 DEFAULT_CONDITIONS = ("morgan:all",)
 CONDITION_CHOICES = tuple(
     f"{mode}:{pool}" for mode in flat.VARIANTS for pool in flat.RECORD_POOLS
@@ -103,6 +107,95 @@ def endpoint_allocations(
         for index, spec in enumerate(providers)
         if allocations[index]
     ]
+
+
+def sample_provider_loads(
+    config: ProviderPoolConfig,
+    *,
+    samples: int,
+    interval_s: float,
+) -> list[dict[str, Any]]:
+    """Sample current SGLang running plus waiting work on every endpoint."""
+    if samples < 1 or interval_s < 0:
+        raise ValueError("load samples must be positive and interval non-negative")
+    receipts = []
+    for sample_index in range(samples):
+        observed_at = time.time()
+        for provider in config.providers:
+            with urlopen(provider.base_url.rstrip("/") + "/loads", timeout=10) as response:
+                payload = json.load(response)
+            loads = payload.get("loads") or []
+            running = sum(int(row.get("num_running_reqs", 0)) for row in loads)
+            waiting = sum(int(row.get("num_waiting_reqs", 0)) for row in loads)
+            receipts.append({
+                "sample": sample_index + 1,
+                "observed_at_unix": observed_at,
+                "provider": provider.name,
+                "base_url": provider.base_url,
+                "running": running,
+                "waiting": waiting,
+                "total": running + waiting,
+            })
+        if sample_index + 1 < samples:
+            time.sleep(interval_s)
+    return receipts
+
+
+def top_up_provider_config(
+    config: ProviderPoolConfig,
+    load_samples: list[dict[str, Any]],
+    *,
+    target_total: int,
+) -> tuple[ProviderPoolConfig, list[dict[str, Any]]]:
+    """Cap this launcher so observed server work plus new work is at most target."""
+    if target_total < 1:
+        raise ValueError("target endpoint load must be positive")
+    allocations = []
+    active = []
+    for provider in config.providers:
+        if target_total > provider.max_inflight:
+            raise ValueError(
+                f"target {target_total} exceeds configured cap {provider.max_inflight} "
+                f"for {provider.name}"
+            )
+        observations = [
+            int(row["total"]) for row in load_samples if row["provider"] == provider.name
+        ]
+        if not observations:
+            raise ValueError(f"No load samples recorded for {provider.name}")
+        largest = max(observations)
+        slots = max(0, target_total - largest)
+        allocations.append({
+            "provider": provider.name,
+            "base_url": provider.base_url,
+            "target_total": target_total,
+            "largest_observed_running_plus_waiting": largest,
+            "launcher_slots": slots,
+        })
+        if slots:
+            active.append(replace(provider, max_inflight=slots))
+    if not active:
+        raise ValueError("Every endpoint is already at or above the requested total load")
+    return replace(config, providers=tuple(active)), allocations
+
+
+def load_preselected_grid(path: Path) -> list[dict[str, Any]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != GRID_SCREEN_SCHEMA or payload.get("status") != "complete":
+        raise ValueError(f"Invalid completed lambda screen manifest: {path}")
+    profiles = payload.get("selected_profiles") or []
+    if not profiles or len({row.get("name") for row in profiles}) != len(profiles):
+        raise ValueError("Lambda screen must contain one or more unique profiles")
+    for profile in profiles:
+        for task in TASKS:
+            entry = (profile.get("task_manifests") or {}).get(task) or {}
+            manifest_path = Path(str(entry.get("path") or ""))
+            if not manifest_path.is_absolute():
+                manifest_path = path.parent / manifest_path
+            if not manifest_path.is_file() or sha256_file(manifest_path) != entry.get("sha256"):
+                raise ValueError(f"Selected UID manifest mismatch for {profile.get('name')} {task}")
+            entry["path"] = str(manifest_path.resolve())
+    return profiles
 
 
 def provider_client(
@@ -240,29 +333,37 @@ def _selection_args(
     context_width: int | None = None,
     min_contrast: int = 0,
     context_v5: bool = False,
+    context_v6: bool = False,
     all_levels: bool = False,
+    flat_preselected_uids: Path | None = None,
+    batch_id: str | None = None,
+    evaluation_subset: str = "valid",
+    prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
+    assay_transfer_cache: Path = DEFAULT_CACHE_BUNDLE,
 ) -> argparse.Namespace:
-    input_jsonl = split_path(task, "valid").with_name(
-        "valid_molecule_condition_labels.jsonl"
+    input_jsonl = split_path(task, evaluation_subset).with_name(
+        f"{evaluation_subset}_molecule_condition_labels.jsonl"
     ).resolve()
-    context_v4 = context_width is not None and not context_v5
-    context_prompt = context_v4 or context_v5
+    context_v4 = context_width is not None and not context_v5 and not context_v6
+    context_prompt = context_v4 or context_v5 or context_v6
     return argparse.Namespace(
         harness_version=(
-            flat.CONTEXT_V5_HARNESS_VERSION if context_v5
+            flat.CONTEXT_V6_HARNESS_VERSION if context_v6
+            else flat.CONTEXT_V5_HARNESS_VERSION if context_v5
             else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
             else flat.PUBLIC_HARNESS_VERSION
         ),
         prompt_version=(
-            flat.CONTEXT_V5_PROMPT_VERSION if context_v5
+            flat.CONTEXT_V6_PROMPT_VERSION if context_v6
+            else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
             else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
             else flat.JOSEPH_PROMPT_VERSION
         ),
         task=task,
         reranking=reranking,
-        assay_transfer_cache=DEFAULT_CACHE_BUNDLE.resolve(),
+        assay_transfer_cache=assay_transfer_cache.resolve(),
         record_pool=record_pool,
-        evaluation_subset="valid",
+        evaluation_subset=evaluation_subset,
         input_jsonl=input_jsonl,
         evidence_library=(Path("data/evidence_libraries") / task / "v10").resolve(),
         level_mapper=Path("data/evidence_libraries/level_mappings.v1.json").resolve(),
@@ -275,11 +376,12 @@ def _selection_args(
         max_level=flat.TASKS[task] if all_levels else 1 if context_prompt else 0,
         layout="level-grouped" if context_v5 else "global",
         query_prior="cached",
-        prior_root=flat.DEFAULT_QUERY_PRIOR_ROOT.resolve(),
+        prior_root=prior_root.resolve(),
         l1_min_contrast=min_contrast,
         morgan_primary_parent_width=context_width or 100,
         molecule_description_mode="none",
         molecule_description_cache_version="v1",
+        flat_preselected_uids=flat_preselected_uids,
         record_limits_by_level={
             f"L{level}": records_per_level
             for level in range(2, flat.TASKS[task] + 1)
@@ -288,7 +390,7 @@ def _selection_args(
         start=0,
         limit=limit,
         batch_root=(root / task).resolve(),
-        batch_id=(
+        batch_id=batch_id or (
             f"{task}__{'all_levels_' if all_levels else 'l1_'}k10_w{context_width}_m{min_contrast}"
             if context_v5 else
             f"{task}__k10_w{context_width}_m{min_contrast}"
@@ -372,11 +474,11 @@ def _batch_command(
         str(trace_root),
         "--execution-mode",
         execution_mode,
-        "--start",
-        "0",
-        "--limit",
-        str(args.limit),
     ]
+    if args.indices:
+        command.extend(["--indices", *args.indices])
+    else:
+        command.extend(["--start", "0", "--limit", str(args.limit)])
     if context_v4:
         command.extend([
             "--flat-layout", args.layout,
@@ -468,7 +570,30 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--records-per-level", type=int, default=RECORDS_PER_LEVEL)
     parser.add_argument("--context-v4-grid", action="store_true")
     parser.add_argument("--context-v5-grid", action="store_true")
+    parser.add_argument("--context-v5-l1", action="store_true")
     parser.add_argument("--context-v5-all-level", action="store_true")
+    parser.add_argument("--preselected-grid-manifest", type=Path)
+    parser.add_argument(
+        "--evaluation-subset", choices=("valid", "test")
+    )
+    parser.add_argument(
+        "--evaluation-subsets", nargs="+", choices=("valid", "test")
+    )
+    parser.add_argument(
+        "--prior-root", type=Path, default=flat.DEFAULT_QUERY_PRIOR_ROOT
+    )
+    parser.add_argument(
+        "--prior-root-by-subset", action="append", default=[], metavar="SUBSET=PATH"
+    )
+    parser.add_argument(
+        "--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE
+    )
+    parser.add_argument(
+        "--preselected-harness-version",
+        choices=(flat.CONTEXT_V5_HARNESS_VERSION, flat.CONTEXT_V6_HARNESS_VERSION),
+        default=flat.CONTEXT_V6_HARNESS_VERSION,
+    )
+    parser.add_argument("--grid-run-id", default="")
     parser.add_argument(
         "--morgan-primary-parent-widths", nargs="+", type=int,
         choices=(15, 25, 50, 100), default=(15, 25, 50),
@@ -485,12 +610,29 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--live-run-id", default="", help=argparse.SUPPRESS)
     parser.add_argument("--request-timeout-s", type=int, default=900)
     parser.add_argument("--max-tokens", type=int, default=MAX_TOKENS)
+    parser.add_argument("--target-total-load-per-endpoint", type=int)
+    parser.add_argument("--load-samples", type=int, default=6)
+    parser.add_argument("--load-sample-interval-s", type=float, default=1.0)
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--skip-pilots", action="store_true")
     args = parser.parse_args(raw_argv)
-    if sum((args.context_v4_grid, args.context_v5_grid, args.context_v5_all_level)) > 1:
+    if sum((
+        args.context_v4_grid, args.context_v5_grid, args.context_v5_l1,
+        args.context_v5_all_level,
+        args.preselected_grid_manifest is not None,
+    )) > 1:
         parser.error("context matrix modes are mutually exclusive")
+    if args.evaluation_subset and args.evaluation_subsets:
+        parser.error("use either --evaluation-subset or --evaluation-subsets")
+    if args.preselected_grid_manifest and (
+        args.records_per_level != 10
+        or args.morgan_primary_parent_widths != (15, 25, 50)
+        or args.l1_min_contrasts != (0, 1, 2)
+    ):
+        parser.error("the preselected grid has fixed K10/W25/M0 settings")
+    if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
+        parser.error("--preselected-harness-version requires --preselected-grid-manifest")
     if args.parallelism is not None and args.parallelism < 1:
         parser.error("--parallelism must be positive")
     if min(
@@ -500,8 +642,17 @@ def main(argv: list[str] | None = None) -> int:
         args.max_tokens,
     ) < 1 or args.limit < 0:
         parser.error("worker, record, token, and timeout values must be positive")
+    if args.load_samples < 1 or args.load_sample_interval_s < 0:
+        parser.error("load samples must be positive and sample interval non-negative")
+    if args.target_total_load_per_endpoint is not None and args.parallelism is not None:
+        parser.error("top-up allocation derives parallelism; do not also pass --parallelism")
+    if args.target_total_load_per_endpoint is not None and args.prepare_only:
+        parser.error("top-up allocation is an immediate pre-launch operation")
     if len(args.conditions) != len(set(args.conditions)):
         parser.error("--conditions cannot contain duplicates")
+    evaluation_subsets = tuple(args.evaluation_subsets or (args.evaluation_subset or "valid",))
+    if len(evaluation_subsets) != len(set(evaluation_subsets)):
+        parser.error("evaluation subsets cannot contain duplicates")
     if len(args.morgan_primary_parent_widths) != len(set(args.morgan_primary_parent_widths)):
         parser.error("--morgan-primary-parent-widths cannot contain duplicates")
     if (len(args.l1_min_contrasts) != len(set(args.l1_min_contrasts))
@@ -510,19 +661,37 @@ def main(argv: list[str] | None = None) -> int:
     conditions = [tuple(value.split(":", 1)) for value in args.conditions]
     args.provider_pool_config = args.provider_pool_config.resolve()
     args.trace_root = args.trace_root.resolve()
+    args.prior_root = args.prior_root.resolve()
+    args.assay_transfer_cache = args.assay_transfer_cache.resolve()
+    prior_roots = {subset: args.prior_root for subset in evaluation_subsets}
+    for value in args.prior_root_by_subset:
+        subset, separator, path = value.partition("=")
+        if not separator or subset not in {"valid", "test"} or not path:
+            parser.error("--prior-root-by-subset must be valid=PATH or test=PATH")
+        prior_roots[subset] = Path(path).resolve()
+    if args.preselected_grid_manifest:
+        args.preselected_grid_manifest = args.preselected_grid_manifest.resolve()
     candidate_config = load_provider_pool_config(args.provider_pool_config)
     args.requested_parallelism = args.parallelism
     args.endpoint_selection = None
+    args.load_receipt = []
+    args.top_up_allocations = []
+    late_top_up = False
     if args.prepare_only:
         args.parallelism = args.parallelism or 1
         provider_config = candidate_config
     else:
-        if args.parallelism is None:
+        if args.target_total_load_per_endpoint is not None:
+            late_top_up = True
+            provider_config = candidate_config
+            args.parallelism = args.preparation_workers
+        elif args.parallelism is None:
             parser.error("full-batch inference requires explicit --parallelism")
-        selection = select_healthy_providers(candidate_config, args.parallelism)
-        args.endpoint_selection = selection.public_dict()
-        args.parallelism = selection.effective_parallelism
-        provider_config = selection.config
+        else:
+            selection = select_healthy_providers(candidate_config, args.parallelism)
+            args.endpoint_selection = selection.public_dict()
+            args.parallelism = selection.effective_parallelism
+            provider_config = selection.config
 
     root = args.output_root.resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -544,7 +713,11 @@ def main(argv: list[str] | None = None) -> int:
                 args.request_timeout_s,
             )
         commands = []
-        context_matrix = args.context_v4_grid or args.context_v5_grid or args.context_v5_all_level
+        context_matrix = (
+            args.context_v4_grid or args.context_v5_grid
+            or args.context_v5_l1 or args.context_v5_all_level
+            or args.preselected_grid_manifest
+        )
         single_receipts = [] if context_matrix else [
             verify_single_reuse(
                 task,
@@ -568,58 +741,163 @@ def main(argv: list[str] | None = None) -> int:
                 for contrast in args.l1_min_contrasts
             ]
             if args.context_v4_grid else
+            [("assay-transfer-contrastive", "all", 25, 1, False)]
+            if args.context_v5_l1 else
             [("assay-transfer-contrastive", "all", 25, 0, True)]
             if args.context_v5_all_level else
             [(reranking, record_pool, None, 0, False) for reranking, record_pool in conditions]
         )
-        for reranking, record_pool, width, contrast, all_levels in variants:
-            for task in TASKS:
-                selection_args = _selection_args(
-                    task,
-                    root,
-                    limit=args.limit,
-                    reranking=reranking,
-                    record_pool=record_pool,
-                    records_per_level=args.records_per_level,
-                    context_width=width,
-                    min_contrast=contrast,
-                    context_v5=args.context_v5_grid or args.context_v5_all_level,
-                    all_levels=all_levels,
+        grid_profiles = (
+            load_preselected_grid(args.preselected_grid_manifest)
+            if args.preselected_grid_manifest else []
+        )
+        preselected_v5 = bool(
+            grid_profiles
+            and args.preselected_harness_version == flat.CONTEXT_V5_HARNESS_VERSION
+        )
+        preselected_v6 = bool(
+            grid_profiles
+            and args.preselected_harness_version == flat.CONTEXT_V6_HARNESS_VERSION
+        )
+        grid_run_id = args.grid_run_id or time.strftime("k10_m0_%Y%m%d_%H%M%S")
+        work = (
+            [
+                {
+                    "profile": profile["name"],
+                    "task": task,
+                    "subset": subset,
+                    "manifest": Path(profile["task_manifests"][task]["path"]).resolve(),
+                    "root": (
+                        root / profile["name"] / "with_query_prior" / grid_run_id
+                        / subset if len(evaluation_subsets) > 1
+                        else root / profile["name"] / "with_query_prior" / grid_run_id
+                    ),
+                }
+                for profile in grid_profiles
+                for subset in evaluation_subsets
+                for task in TASKS
+            ]
+            if grid_profiles else
+            [
+                {
+                    "profile": "", "task": task, "subset": subset, "manifest": None,
+                    "root": root / subset if len(evaluation_subsets) > 1 else root,
+                    "variant": (reranking, record_pool, width, contrast, all_levels),
+                }
+                for reranking, record_pool, width, contrast, all_levels in variants
+                for subset in evaluation_subsets
+                for task in TASKS
+            ]
+        )
+        for item in work:
+            task = item["task"]
+            subset = item["subset"]
+            if item["profile"]:
+                reranking, record_pool, width, contrast, all_levels = (
+                    "assay-transfer-contrastive", "all", 25, 0, True
                 )
-                source, selection = flat._materialize_cache_matched_retrievals(
-                    selection_args
+            else:
+                reranking, record_pool, width, contrast, all_levels = item["variant"]
+            selection_args = _selection_args(
+                task,
+                item["root"],
+                limit=args.limit,
+                reranking=reranking,
+                record_pool=record_pool,
+                records_per_level=args.records_per_level,
+                context_width=width,
+                min_contrast=contrast,
+                context_v5=(
+                    args.context_v5_grid or args.context_v5_l1
+                    or args.context_v5_all_level or preselected_v5
+                ),
+                context_v6=preselected_v6,
+                all_levels=all_levels,
+                flat_preselected_uids=item["manifest"],
+                evaluation_subset=subset,
+                prior_root=prior_roots[subset],
+                assay_transfer_cache=args.assay_transfer_cache,
+                batch_id=(
+                    f"{task}__{item['profile']}" if item["profile"] else None
+                ),
+            )
+            if len(evaluation_subsets) > 1:
+                prefix = f"{task}__"
+                selection_args.batch_id = (
+                    f"{prefix}{subset}__{selection_args.batch_id.removeprefix(prefix)}"
                 )
-                selection_receipts.append(
-                    {
-                        "task": task,
-                        "reranking": reranking,
-                        "record_pool": record_pool,
-                        "morgan_primary_parent_width": width,
-                        "l1_min_contrast": contrast,
-                        "path": str(source / "manifest.json"),
-                        "sha256": sha256_file(source / "manifest.json"),
-                        "selection_contract_sha256": selection[
-                            "selection_contract_sha256"
-                        ],
-                    }
+            source, selection = flat._materialize_cache_matched_retrievals(
+                selection_args
+            )
+            selection_receipts.append(
+                {
+                    "task": task,
+                    "evaluation_subset": subset,
+                    "reranking": reranking,
+                    "record_pool": record_pool,
+                    "morgan_primary_parent_width": width,
+                    "l1_min_contrast": contrast,
+                    "profile": item["profile"],
+                    "preselected_uids": str(item["manifest"] or ""),
+                    "path": str(source / "manifest.json"),
+                    "sha256": sha256_file(source / "manifest.json"),
+                    "selection_contract_sha256": selection[
+                        "selection_contract_sha256"
+                    ],
+                }
+            )
+            commands.append(
+                _batch_command(
+                    selection_args,
+                    source,
+                    trace_root=args.trace_root,
+                    execution_mode=args.execution_mode,
+                    max_tokens=args.max_tokens,
+                    **execution,
                 )
-                commands.append(
-                    _batch_command(
-                        selection_args,
-                        source,
-                        trace_root=args.trace_root,
-                        execution_mode=args.execution_mode,
-                        max_tokens=args.max_tokens,
-                        **execution,
-                    )
-                )
+            )
 
         prepared = prepare_batch_commands(
             commands,
-            max_workers=args.parallelism,
+            max_workers=args.preparation_workers,
             max_stage_requeues=0,
         )
+        if late_top_up:
+            candidate_failovers = candidate_config.max_failovers
+            selection = select_healthy_providers(
+                candidate_config, primary_capacity(candidate_config),
+            )
+            candidate_config = replace(
+                selection.config, max_failovers=candidate_failovers,
+            )
+            model_checks = list(selection.checks)
+            args.load_receipt = sample_provider_loads(
+                candidate_config,
+                samples=args.load_samples,
+                interval_s=args.load_sample_interval_s,
+            )
+            provider_config, args.top_up_allocations = top_up_provider_config(
+                candidate_config,
+                args.load_receipt,
+                target_total=args.target_total_load_per_endpoint,
+            )
+            args.parallelism = primary_capacity(provider_config)
+            args.requested_parallelism = args.parallelism
+            args.endpoint_selection = {
+                "checks": model_checks,
+                "mode": "top_up_to_total_running_plus_waiting",
+                "load_samples": args.load_receipt,
+                "allocations": args.top_up_allocations,
+            }
+            execution, endpoint_receipts = _provider_execution(
+                provider_config, args.request_timeout_s,
+            )
         live_runs = {}
+        subset_by_batch = {
+            command.experiment_name: command.experiment_name.split("__", 2)[1]
+            if len(evaluation_subsets) > 1 else evaluation_subsets[0]
+            for command in commands
+        }
         if not args.prepare_only:
             from predict.live import create_run, update_run
 
@@ -636,7 +914,7 @@ def main(argv: list[str] | None = None) -> int:
                     metadata={
                         "harness": "flat",
                         "prompt_version": batch.args.flat_prompt_version,
-                        "evaluation_subset": "valid",
+                        "evaluation_subset": subset_by_batch[batch_id],
                         "pilot_size": 3,
                         "output_root": str(batch.batch_dir),
                         "matrix_output_root": str(root),
@@ -656,16 +934,19 @@ def main(argv: list[str] | None = None) -> int:
             "version": MATRIX_VERSION,
             "status": "prepared" if args.prepare_only else "running",
             "tasks": list(TASKS),
-            "evaluation_subset": "valid",
+            "evaluation_subsets": list(evaluation_subsets),
             "harness_version": (
-                flat.CONTEXT_V5_HARNESS_VERSION
-                if args.context_v5_grid or args.context_v5_all_level
+                args.preselected_harness_version if args.preselected_grid_manifest
+                else flat.CONTEXT_V5_HARNESS_VERSION
+                if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
                 else flat.CONTEXT_V4_HARNESS_VERSION
                 if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
             ),
             "prompt_version": (
-                flat.CONTEXT_V5_PROMPT_VERSION
-                if args.context_v5_grid or args.context_v5_all_level
+                flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
+                if args.preselected_grid_manifest
+                else flat.CONTEXT_V5_PROMPT_VERSION
+                if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
                 else flat.CONTEXT_V4_PROMPT_VERSION
                 if args.context_v4_grid else flat.JOSEPH_PROMPT_VERSION
             ),
@@ -676,22 +957,32 @@ def main(argv: list[str] | None = None) -> int:
             "records_per_level": args.records_per_level,
             "context_v4_grid": args.context_v4_grid,
             "context_v5_grid": args.context_v5_grid,
+            "context_v5_l1": args.context_v5_l1,
             "context_v5_all_level": args.context_v5_all_level,
+            "preselected_grid_manifest": (
+                {
+                    "path": str(args.preselected_grid_manifest),
+                    "sha256": sha256_file(args.preselected_grid_manifest),
+                    "profiles": len(grid_profiles),
+                    "run_id": grid_run_id,
+                }
+                if args.preselected_grid_manifest else None
+            ),
             "morgan_primary_parent_widths": (
-                args.morgan_primary_parent_widths
+                [25] if args.context_v5_l1 else args.morgan_primary_parent_widths
                 if args.context_v4_grid or args.context_v5_grid
-                else [25] if args.context_v5_all_level else []
+                else [25] if args.context_v5_all_level or args.preselected_grid_manifest else []
             ),
             "l1_min_contrasts": (
-                args.l1_min_contrasts
+                [1] if args.context_v5_l1 else args.l1_min_contrasts
                 if args.context_v4_grid or args.context_v5_grid
-                else [0] if args.context_v5_all_level else []
+                else [0] if args.context_v5_all_level or args.preselected_grid_manifest else []
             ),
             "l1_molecules": 10,
             "l1_records_per_molecule": 10,
             "max_level_by_task": (
                 {task: 1 for task in TASKS}
-                if args.context_v4_grid else
+                if args.context_v4_grid or args.context_v5_l1 else
                 {"bbb_martins": 5, "bioavailability_ma": 6}
             ),
             "ranking_tie_seed": 0,
@@ -706,12 +997,19 @@ def main(argv: list[str] | None = None) -> int:
                 ).public_dict(),
                 "selection": args.endpoint_selection,
             },
+            "assay_transfer_cache": {
+                "path": str(args.assay_transfer_cache),
+                "sha256": sha256_file(args.assay_transfer_cache),
+            },
+            "prior_roots": {subset: str(path) for subset, path in prior_roots.items()},
             "endpoint_allocations": dict(
                 endpoint_allocations(
                     args.parallelism, args.provider_pool_config,
                     config=provider_config,
                 )
             ) if not args.prepare_only else {},
+            "load_samples": args.load_receipt,
+            "top_up_allocations": args.top_up_allocations,
             "max_tokens": args.max_tokens,
             "temperature": 0.0,
             "reasoning_effort": execution["reasoning_effort"],

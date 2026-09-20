@@ -22,7 +22,12 @@ from predict.retrieval.policies import normalize_molecule_identity, standardize_
 from predict.utils.json import read_jsonl, sha256_file
 
 from . import runtime, three_pools
-from .build_ranked_retrieval import GOLD_NAMES, _clean, _digest, _display_fields, _source_fields
+from .build_ranked_retrieval import (
+    GOLD_NAMES as BASE_GOLD_NAMES,
+    _clean,
+    _digest,
+    _display_fields,
+)
 from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 
 
@@ -30,16 +35,43 @@ PROFILE = "ranked_level_retrieval_v3"
 TASK_LEVELS = {
     "bbb_martins": ("L1", "L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L1", "L2", "L3", "L4", "L5", "L6"),
+    "skin_reaction": ("L2", "L3"),
 }
 REPO_ROOT = Path(__file__).resolve().parents[3]
+GOLD_NAMES = {**BASE_GOLD_NAMES, "skin_reaction": "Skin_Reaction"}
 DEFAULT_OUTPUT = runtime.cache_profile_root(PROFILE)
 L1_ROOT = runtime.cache_profile_root("v10_3_best_scaffold_morgan100_v1")
 REUSE_ROOT = runtime.cache_profile_root("recent_models_three_pools_morgan100_v2_gold_v1")
 
 
 def _evidence_paths(task: str) -> tuple[Path, Path, Path, Path]:
-    module = three_pools.MODULES[task]
-    return module.STAGE3, module.LEVEL_MAPPING, module.LEVEL_MANIFEST, module.SOURCE_CONTRACT
+    module = three_pools.MODULES.get(task)
+    if module is not None:
+        return module.STAGE3, module.LEVEL_MAPPING, module.LEVEL_MANIFEST, module.SOURCE_CONTRACT
+    release = REPO_ROOT / "data/evidence_libraries/skin_reaction/v10_main_universe_v5"
+    return (
+        release / "03_pair_buckets/records.parquet",
+        release / "level_mapping/records.parquet",
+        release / "level_mapping/manifest.json",
+        release / "02_canonicalized/source_contract.json",
+    )
+
+
+def _source_fields(task: str) -> tuple[dict[str, list[str]], set[str]]:
+    contract = json.loads(_evidence_paths(task)[3].read_text(encoding="utf-8"))
+    fields = {
+        source: [
+            name for name, value in spec["normalized_artifact_columns"].items()
+            if value.get("source_or_simply_cleaned") is True
+        ]
+        for source, spec in contract["sources"].items()
+    }
+    return fields, set().union(*map(set, fields.values()))
+
+
+def _model_spec(task: str, level: str) -> dict[str, Any] | None:
+    module = three_pools.MODULES.get(task)
+    return None if module is None else module.MODELS.get(level)
 
 
 def build_evidence(task: str, output: Path) -> dict[str, Any]:
@@ -48,16 +80,21 @@ def build_evidence(task: str, output: Path) -> dict[str, Any]:
         raise FileExistsError(f"Refusing to replace evidence projection: {output}")
     stage3, mapping_path, level_manifest, source_contract = _evidence_paths(task)
     fields, source_union = _source_fields(task)
-    mapping_rows = pq.read_table(
-        mapping_path, columns=["source_row_uid", "canonical_record_id", "level", "family_key"]
-    ).to_pylist()
+    mapping_columns = ["source_row_uid", "canonical_record_id", "level"]
+    if "family_key" in pq.read_schema(mapping_path).names:
+        mapping_columns.append("family_key")
+    mapping_rows = pq.read_table(mapping_path, columns=mapping_columns).to_pylist()
+    scoped_rows = [
+        row for row in mapping_rows if f"L{int(row['level'])}" in TASK_LEVELS[task]
+    ]
     mapping = {
         str(row["source_row_uid"]): (
-            f"L{int(row['level'])}", str(row["family_key"]), str(row["canonical_record_id"])
+            f"L{int(row['level'])}", str(row.get("family_key") or ""),
+            str(row["canonical_record_id"]),
         )
-        for row in mapping_rows
+        for row in scoped_rows
     }
-    if len(mapping) != len(mapping_rows):
+    if len(mapping) != len(scoped_rows):
         raise ValueError("Duplicate current V10 level-mapping UID")
     core = {
         "source_row_uid", "canonical_record_id", "canonical_smiles", "source_id",
@@ -96,7 +133,9 @@ def build_evidence(task: str, output: Path) -> dict[str, Any]:
             for raw in batch.to_pylist():
                 uid = str(raw["source_row_uid"])
                 mapped = mapping.get(uid)
-                if mapped is None or uid in seen:
+                if mapped is None:
+                    continue
+                if uid in seen:
                     raise ValueError(f"Current V10 evidence identity mismatch: {uid}")
                 level, family, record_id = mapped
                 if str(raw["canonical_record_id"]) != record_id:
@@ -523,7 +562,8 @@ def prepare_level(
         np.frombuffer(DataStructs.BitVectToBinaryText(fp), dtype=np.uint8) for fp in fps
     ])
     popcount = three_pools.bbb.POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
-    renderer = three_pools.Renderer(task) if level in three_pools.MODULES[task].MODELS else None
+    model_spec = _model_spec(task, level)
+    renderer = three_pools.Renderer(task) if model_spec is not None else None
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary:
@@ -602,7 +642,7 @@ def prepare_level(
                 }
                 for query_id, *_ in queries
             },
-            "model": None if renderer is None else three_pools.MODULES[task].MODELS[level],
+            "model": model_spec,
             "inputs": {
                 "query_sha256": sha256_file(query_path),
                 "evidence_manifest_sha256": sha256_file(evidence_manifest),
@@ -671,7 +711,9 @@ def score_level(
     done = read_jsonl(journal) if journal.exists() else []
     if [row["score_key"] for row in done] != [row[0] for row in rows[:len(done)]]:
         raise ValueError("Score journal is not the exact completed shard prefix")
-    spec = three_pools.MODULES[task].MODELS[level]
+    spec = _model_spec(task, level)
+    if spec is None:
+        raise ValueError(f"No assay-transfer model is configured for {task}/{level}")
     renderer = three_pools.Renderer(task)
     snapshot = runtime.resolve_model_snapshot(spec["model"], spec["revision"], local_files_only=True)
     model, tokenizer = runtime.load_model(snapshot, device=device)
@@ -800,6 +842,11 @@ def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[s
         "pool": "all",
         "parent_capacity": CAPACITY,
         "levels_independent": True,
+        "ranking_modes": (
+            ["morgan"]
+            if all(_model_spec(task, level) is None for level in TASK_LEVELS[task])
+            else ["morgan", "assay-transfer"]
+        ),
         "later_candidate_universe": "all_uids_under_morgan_top_100_parents",
         "neighbor_identity_policy_by_level": {
             level: "scaffold_disjoint" if level == "L1" else "parent_disjoint"
@@ -874,10 +921,14 @@ def validate_release(
     if len(evidence_uids) != evidence["record_count"]:
         raise ValueError("Evidence projection UID count changed")
     gold_root = REPO_ROOT / "data/gold_labels" / GOLD_NAMES[task] / "v1/scaffold"
-    gold_member_rows = pq.read_table(
-        gold_root / "voter_membership.parquet",
-        columns=["benchmark_row_id", "source_row_uid", "vote_id", "physical_member_index"],
-    ).to_pylist()
+    gold_member_rows = (
+        pq.read_table(
+            gold_root / "voter_membership.parquet",
+            columns=["benchmark_row_id", "source_row_uid", "vote_id", "physical_member_index"],
+        ).to_pylist()
+        if "L1" in TASK_LEVELS[task]
+        else []
+    )
     gold_members: dict[str, list[tuple[str, int, str]]] = defaultdict(list)
     for row in gold_member_rows:
         gold_members[str(row["benchmark_row_id"])].append((
@@ -888,12 +939,16 @@ def validate_release(
         context_id: [row[2] for row in sorted(rows)]
         for context_id, rows in gold_members.items()
     }
-    gold_contexts = {
-        str(row["benchmark_row_id"]): (
-            str(row["molecule_identity_key"]), str(row["condition_group"]), int(row["Y"])
-        )
-        for row in read_jsonl(gold_root / "train_molecule_condition_labels.jsonl")
-    }
+    gold_contexts = (
+        {
+            str(row["benchmark_row_id"]): (
+                str(row["molecule_identity_key"]), str(row["condition_group"]), int(row["Y"])
+            )
+            for row in read_jsonl(gold_root / "train_molecule_condition_labels.jsonl")
+        }
+        if "L1" in TASK_LEVELS[task]
+        else {}
+    )
 
     report: dict[str, Any] = {}
     evidence_hash = sha256_file(evidence_manifest)
@@ -919,7 +974,7 @@ def validate_release(
             }
             if any(manifest.get(key) != value for key, value in required.items()):
                 raise ValueError(f"Incompatible level manifest: {task}/{subset}/{level}")
-            expected_model = three_pools.MODULES[task].MODELS.get(level)
+            expected_model = _model_spec(task, level)
             if manifest.get("model") != expected_model:
                 raise ValueError(f"Level model provenance changed: {task}/{subset}/{level}")
             if (
@@ -1050,9 +1105,9 @@ def validate_release(
                             raise ValueError(f"Ranked UID missing from evidence: {query_id}/{level}")
                         assay_ranks = [row["assay_rank"] for row in rows]
                         scores = [row["assay_transfer_score"] for row in rows]
-                        if level == "L5":
+                        if expected_model is None:
                             if any(value is not None for value in (*assay_ranks, *scores)):
-                                raise ValueError(f"Morgan-only L5 has assay values: {query_id}")
+                                raise ValueError(f"Morgan-only level has assay values: {query_id}/{level}")
                         elif (
                             sorted(int(value) for value in assay_ranks if value is not None)
                             != list(range(1, count + 1))

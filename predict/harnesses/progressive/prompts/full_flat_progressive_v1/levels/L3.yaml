@@ -1,0 +1,2 @@
+bbb_martins: {evidence_family: passive_permeability, description: PAMPA or epithelial-cell permeability evidence retained with its original uncertainty.}
+bioavailability_ma: {evidence_family: oral_auc_cmax_exposure, description: Oral AUC or Cmax evidence whose interpretation also depends on dose, formulation, clearance, and sampling.}

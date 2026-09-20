@@ -1,0 +1,4 @@
+bbb_martins:
+  description: Influx or uptake-transporter evidence dependent on transporter and assay context.
+bioavailability_ma:
+  description: Gut-wall efflux and intestinal metabolism evidence contributing to presystemic loss.

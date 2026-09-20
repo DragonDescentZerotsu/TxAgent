@@ -24,6 +24,7 @@ GROUPED_EXACT_UNIT_MAPPING_VERSIONS = frozenset(
         EXACT_UNIT_MAPPING_VERSION,
         "starling_exact_measurement_units.v3",
         "starling_exact_measurement_units.v4",
+        "starling_exact_measurement_units.v5",
     }
 )
 _LEGACY_EXACT_UNIT_MAPPING_VERSION = "starling_exact_measurement_units.v1"

@@ -1,0 +1,47 @@
+{
+  "agent_review_decisions": {
+    "accepted_aliases": 651,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/agent_review.decisions.jsonl",
+    "sha256": "8e38359585bd29f7a4a8e7209863c1c3c522c32b71ece7394156a784c26748ed"
+  },
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "canonical_unit_count": 15910,
+  "entry_count": 17187,
+  "lineage": {
+    "legacy_lexical_batching": true,
+    "single_pass_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/dili/pass_a/manifest.json",
+      "sha256": "30e03df9d0308249828c235446f134fcde707a5b62f3b46015497978118e24e7"
+    },
+    "single_pass_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/dili/pass_a/mapping.jsonl",
+      "sha256": "787b811c8b9e66ef273dd89b43d6b0592c4f01b11b5f712d65f738944d4e3549"
+    },
+    "universe": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/dili/universe.jsonl",
+      "sha256": "bbc05d6f8054709abbaddf69458a430a1886126eab51046a70f14f052a9b48b3"
+    },
+    "universe_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/dili/universe.manifest.json",
+      "sha256": "48f330260f6d0fe40b9a3bc18af1e5dfe272bc442cc1020d67b50038d9bdfbdb"
+    }
+  },
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "62f8dca41244934f1c55787adc0eae2fbbb99ce1e88827a75b6002a6ca30058b"
+  },
+  "review_completion": {
+    "packet_manifest_sha256": "07256ef1b664a26f2810a4ece295117ef3a1a8079d1e53230f00b7e128db610b",
+    "packets_sha256": "a8df57152b6edf1aa1cf8e8587791ffe07504ede57f09f1dddb861faf93224d6",
+    "reviewed_packets": 83,
+    "reviewer_id": "codex-dili-v1",
+    "sha256": "d58a0f3788c09d9b57b0ca245440a0ef1eea7764fb063979134f2847445663ed"
+  },
+  "task": "dili",
+  "version": "starling_canonical_reconciliation_single_pass.v1"
+}

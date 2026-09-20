@@ -1,0 +1,21 @@
+{
+  "version": "reviewed_canonical_mapping_receipt.v1",
+  "task_id": "bbb_martins",
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/bbb_martins/data_processing/canonicalization_v10/main_universe_v1/exact_measurement_unit_map.json",
+    "sha256": "a8eb487aa45fb5fa7e421bd411ecaf1be992b13a26fef5b25258a008a8f375b0"
+  },
+  "review_completion": {
+    "method": "reviewed_v8_map_plus_reviewed_case_only_alias",
+    "base_mapping_sha256": "9568db3c7abc10bcf37e04b3025188943ff62a701649809f49ac27c9ce21511c",
+    "added_entries": 1,
+    "reviewed_input_units": 5485
+  },
+  "validations": {
+    "complete_published_pair_coverage": true,
+    "mapping_bytes_match_published_release": true,
+    "successor_delta_is_reviewed": true
+  }
+}

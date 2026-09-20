@@ -14,14 +14,14 @@ ROOT = Path("data")
 EXPECTED = {
     "bbb_martins": {
         "public_task": "BBB_Martins",
-        "sha256": "6a0730e4704f02cb1dd54159b9318fcde4c3d777fffe0343ffc3ee59f308b766",
-        "rows": 496_148,
+        "sha256": "51c3a59524e8b69e9783164814d1529d08335b8abcfdcc3eb3113dd9e9451d0b",
+        "rows": 496_135,
         "l1_rows": 7_634,
     },
     "bioavailability_ma": {
         "public_task": "Bioavailability_Ma",
-        "sha256": "86cd88de820420febc7c17b7f4f791ddbc4e9acc8f24a50a9511726d2f664f3b",
-        "rows": 431_440,
+        "sha256": "53bb5b26862d24e0928497dabfd9df8b0b3b5c108e990dc71d2c23d14dc06b7c",
+        "rows": 431_457,
         "l1_rows": 19_479,
     },
 }
@@ -32,13 +32,16 @@ def digest(path: Path) -> str:
 
 
 @pytest.mark.parametrize("task", EXPECTED)
-def test_v10_mapping_exactly_covers_stage3_and_gold_v1_voters(task):
+def test_current_mapping_exactly_covers_stage3_and_gold_v1_voters(task):
     expected = EXPECTED[task]
-    manifest_path, mapping_path, receipt = evidence_level_mapping_release(task, "v10")
+    manifest_path, mapping_path, receipt = evidence_level_mapping_release(
+        task, "v10_main_universe_v2"
+    )
     manifest = json.loads(manifest_path.read_text())
 
     assert mapping_path == (
-        ROOT / f"evidence_libraries/{task}/v10/level_mapping/records.parquet"
+        ROOT
+        / f"evidence_libraries/{task}/v10_main_universe_v2/level_mapping/records.parquet"
     ).resolve()
     assert digest(mapping_path) == receipt["sha256"] == expected["sha256"]
     assert pq.read_metadata(mapping_path).num_rows == receipt["rows"] == expected["rows"]
@@ -71,7 +74,9 @@ def test_runtime_index_points_to_release_owned_mappings_and_manifests():
     assert set(index["tasks"]) == set(EXPECTED)
 
     for task, indexed in index["tasks"].items():
-        manifest_path, mapping_path, receipt = evidence_level_mapping_release(task, "v10")
+        manifest_path, mapping_path, receipt = evidence_level_mapping_release(
+            task, "v10_main_universe_v2"
+        )
         assert mapping_path == (index_path.parent / indexed["path"]).resolve()
         assert manifest_path == (index_path.parent / indexed["manifest"]).resolve()
         assert digest(mapping_path) == indexed["sha256"] == receipt["sha256"]

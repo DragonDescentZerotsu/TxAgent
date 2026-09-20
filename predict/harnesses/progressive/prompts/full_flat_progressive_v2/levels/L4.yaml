@@ -1,0 +1,2 @@
+bbb_martins: {evidence_family: efflux_transport, description: Efflux-transporter evidence with substrate, inhibition, and directional permeability readouts kept distinct.}
+bioavailability_ma: {evidence_family: absorption_solubility_permeability, description: Absorption, solubility, dissolution, or permeability evidence contributing to the absorbed fraction.}

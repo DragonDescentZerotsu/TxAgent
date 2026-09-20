@@ -1269,8 +1269,6 @@ def _carry_forward_frozen_prunes(
     }
     if set(current) != wanted:
         raise ValueError("a frozen prior prune is absent from current Stage 3")
-    if any(not row["assay_transfer_eligible"] for row in current.values()):
-        raise ValueError("a frozen prior prune is no longer assay-transfer eligible")
     output = []
     for record_id in sorted(wanted):
         row = current[record_id]

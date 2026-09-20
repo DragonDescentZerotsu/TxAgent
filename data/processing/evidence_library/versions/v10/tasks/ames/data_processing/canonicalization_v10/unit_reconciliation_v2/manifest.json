@@ -1,0 +1,47 @@
+{
+  "agent_review_decisions": {
+    "accepted_aliases": 1878,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/agent_review.decisions.jsonl",
+    "sha256": "07d3036f101da4784a23453a32c07c0ccb4a451ae6941a3bccf5f14a31992c75"
+  },
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "canonical_unit_count": 67362,
+  "entry_count": 69818,
+  "lineage": {
+    "legacy_lexical_batching": true,
+    "single_pass_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/ames/pass_a/manifest.json",
+      "sha256": "27b8b113ccee9f01bb2e5ed9b0635d63225ff91f8ba3f2873c6b38997826e89e"
+    },
+    "single_pass_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/ames/pass_a/mapping.jsonl",
+      "sha256": "5cc59d6e8b61864ff7e607bbb899340ce6970cb948b52201058de6a64ca8f38a"
+    },
+    "universe": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/ames/universe.jsonl",
+      "sha256": "d71110bbb4a6e2988ce5370d54240d83c15c10da577107bb1b21f1ef705cf4c4"
+    },
+    "universe_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/20260918_two_pass_v1/ames/universe.manifest.json",
+      "sha256": "c3f1a528a27e552b41dd865777be256c0cd145e1d75668902cdadb3234127524"
+    }
+  },
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "8559f83ee8c3550a069e21da5ed003889bcbc3fece9ad68319ecd230820600f0"
+  },
+  "review_completion": {
+    "packet_manifest_sha256": "2dd0c48f559b1ad49b369495ed5618aafc60c0bc332d13493cf682537e021472",
+    "packets_sha256": "5b1f736d646560644272000fa092bb1a1cdcafaa53447bd3c395deba53cf413a",
+    "reviewed_packets": 347,
+    "reviewer_id": "codex-ames-v1",
+    "sha256": "5acf2e2e0328599cbce73c4b8b6bd9932624b09f9816aa5487e83711daaa36c1"
+  },
+  "task": "ames",
+  "version": "starling_canonical_reconciliation_single_pass.v1"
+}

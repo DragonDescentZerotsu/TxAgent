@@ -81,7 +81,8 @@ Condition: {{ payload.query.external_condition }}{% endif %}
 ### Molecule {{ labels.molecule }}
 SMILES: {{ parent.grouper }}
 {% if parent.list[0].get('reference_molecule_description') and parent.grouper not in labels.described %}{% set labels.described = labels.described + [parent.grouper] %}Cached molecule structure description: {{ parent.list[0].reference_molecule_description }}
-{% endif %}Morgan similarity: {{ parent.list[0].morgan_similarity }}
+{% endif %}{% if parent.list[0].get('morgan_similarity') is not none %}Morgan similarity: {{ parent.list[0].morgan_similarity }}
+{% endif %}
 {% for card in parent.list %}Record {{ card.card_id }}
 {% if card.get('endpoint') %}Endpoint: {{ card.endpoint }}
 {% endif %}{% if card.get('reported_value') is not none %}Result: {{ card.reported_value }}{% if card.get('reported_unit') %} {{ card.reported_unit }}{% endif %}

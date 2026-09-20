@@ -1,11 +1,13 @@
 # Semantic-bucket ownership
 
 This directory owns all semantic-bucket code, prompts, policies, artifacts,
-provenance, history, audits, and tests for BBB and Oral.
+provenance, history, audits, and tests for BBB, Oral, and Skin.
 
 ## Invariants
 
 - Resolve active artifacts through `artifacts.py` and each release manifest.
+- The evidence-library `CURRENT` pointer owns the active semantic-bucket release;
+  do not add a second semantic-release pointer.
 - Resolve current BBB/Oral levels from the active evidence-library release;
   gold-owned mappings are retained only for explicit version-specific workflows.
 - A semantic bucket combines pair buckets only within one evidence level.
@@ -36,6 +38,25 @@ provenance, history, audits, and tests for BBB and Oral.
   The current V6 shard uses DGX008 Flash for seed and anchored requests with high
   reasoning, fixed fanout 16, and the first four schema-valid responses. It must
   not reuse earlier OpenRouter Pro seed rows.
+- BBB and Oral accept their completed V5/V6 rankings and must not be rerun merely
+  to conform to a successor workflow. For future tasks, define the scoring world
+  independently for each task-level as the L2+ union of physical UIDs under the
+  Morgan-top-100 parents across valid and test queries. Never mix levels in one
+  prompt, ordering, or anchor chain. Pass one uses deterministic independent
+  batches of 12 with no prior weights or anchors; every batch may run concurrently,
+  with at most 128 logical scoring calls per endpoint. Pass two sorts each
+  task-level by its pass-one score, jointly rescores the first 12, carries items
+  8-12 as five anchors, then scores batches of seven while carrying the previous
+  batch's final two items. Task-level chains advance independently. Both passes
+  use high reasoning, Flash-0731, fixed fanout 16, and the first four schema-valid
+  responses; average with half-up hundredth rounding, retain standard deviation
+  and range, and use the full-vector closest replica for rationales. Pass-two
+  weights are final, while pass one remains immutable ordering and audit evidence.
+  Record endpoint identities only in execution provenance.
+- Skin uses its reviewed semantic families directly as the scoring unit. Do not
+  insert a semantic-to-readout splitting stage into the Skin weight workflow.
+  Rank only families present in the frozen Morgan-top-100 retrieval world and
+  retain uncovered reviewed families as an explicit audit table.
 - Do not add compatibility symlinks or duplicate canonical releases.
 - Keep every newly written or materially refactored function at or below 60 lines.
 

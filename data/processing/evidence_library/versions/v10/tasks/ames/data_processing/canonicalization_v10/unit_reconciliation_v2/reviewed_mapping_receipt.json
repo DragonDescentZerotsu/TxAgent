@@ -1,0 +1,19 @@
+{
+  "version": "reviewed_canonical_mapping_receipt.v1",
+  "task_id": "ames",
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "8559f83ee8c3550a069e21da5ed003889bcbc3fece9ad68319ecd230820600f0"
+  },
+  "review_completion": {
+    "reviewer_id": "codex-ames-v1",
+    "reviewed_packets": 347,
+    "source_manifest_sha256": "8cc21c4c64d2833bada31e59b4017af5e87f6f7ac8716a740a963b092050d032"
+  },
+  "validations": {
+    "mapping_hash_matches_reviewed_consolidation": true,
+    "review_completion_hash_pinned": true
+  }
+}

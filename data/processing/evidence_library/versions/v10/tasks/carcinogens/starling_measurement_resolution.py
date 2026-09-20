@@ -19,6 +19,9 @@ from data.processing.evidence_library.versions.v10.measurement_routing import (
 )
 from data.processing.evidence_library.versions.v10.numeric_syntax import finite_point_text
 from data.processing.paths import REPO_ROOT, evidence_library_root
+from data.processing.evidence_library.versions.v10.tasks.carcinogens.mapping_registry import (
+    mapping_path,
+)
 
 
 TASK_ID = "carcinogens"
@@ -47,6 +50,8 @@ DEFAULT_MAPPING_PATH = (
     / "measurement_resolution_v4/measurement_resolution.parquet"
 )
 DEFAULT_BASE_MAPPING_PATH = None
+EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
     / "tests/chembl_tool/common/measurement_resolution_quality/gold/carcinogens.v10.jsonl"
@@ -99,6 +104,7 @@ _CONTEXT_FIELDS = {
         "interpretation_conditions",
     ),
 }
+UNIT_RECONCILIATION_CONTEXT_FIELDS = _CONTEXT_FIELDS
 
 
 def source_routing_rules() -> dict[str, SourceRoutingRules]:
@@ -225,6 +231,7 @@ __all__ = [
     "REQUIRE_SOURCE_ROW_UID",
     "SOURCE_IDS",
     "STRATIFY_BATCHES",
+    "UNIT_RECONCILIATION_CONTEXT_FIELDS",
     "canonical_endpoint_name",
     "prompt_manifest",
     "prompt_row_fields",

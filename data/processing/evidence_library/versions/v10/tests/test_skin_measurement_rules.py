@@ -38,9 +38,10 @@ def test_skin_expanded_exact_units_use_a_successor_mapping() -> None:
     )
     legacy = load_exact_unit_mapping(legacy_path)
     current = load_exact_unit_mapping(EXACT_UNIT_MAPPING_PATH)
-    key = ("skin_reaction", "adaptive tolerance", "%")
-    assert key not in legacy
-    assert key in current
+    legacy_key = ("skin_reaction", "adaptive tolerance", "%")
+    wildcard_key = ("skin_reaction", "*", "%")
+    assert legacy_key not in legacy
+    assert wildcard_key in current
     assert json.loads(EXACT_UNIT_MAPPING_PATH.read_text())["version"] == EXACT_UNIT_MAPPING_VERSION
 
 

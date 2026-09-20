@@ -1,0 +1,4 @@
+bbb_martins:
+  description: Direct measured brain or CNS exposure outcomes eligible for the BBB outcome layer.
+bioavailability_ma:
+  description: Direct absolute oral bioavailability outcomes; closest to the F >= 20% benchmark label.

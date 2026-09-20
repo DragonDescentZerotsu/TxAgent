@@ -1,0 +1,34 @@
+{% set prompt %}
+{{ system_role }}
+
+Task:
+- Endpoint: {{ task_definition.endpoint }}
+- Label scope: {{ task_definition.label_scope }}
+- Positive: {{ task_definition.prediction_values | first }}
+- Negative: {{ task_definition.prediction_values | last }}
+
+{% for instruction in task_definition.instructions %}- {{ instruction }}
+{% endfor %}
+Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it.
+
+Analogical reasoning instructions:
+- Morgan similarity measures structural similarity to the query. The assay-transfer score estimates how transferable the evidence is to the query. Consider both independently alongside the experimental records; neither score determines the outcome label.
+- Ensure you consider and analyze every evidence block.
+- At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.
+{% if current_level != 1 %}- The L1 output is supplied as a prior. Evaluate the new indirect records and revise the L1 decision only when they warrant it. A changed prediction requires `revision_action` to be `flip` and must cite at least one indirect molecule or record.
+{% endif %}
+
+Pitfalls to avoid:
+- Do not narrate schema bookkeeping.
+- Do not overly analyze the SMILES structures.
+{% if mode == 'morgan' %}- Do not blindly trust the Morgan similarity score.
+{% else %}
+- Do not blindly trust either retrieval score.
+{% endif %}
+- Do not infer the prediction from evidence order.
+- Do not skip records; briefly state why any materially uninformative evidence deserves little weight.
+
+Output:
+Return exactly one valid JSON object matching the requested schema. Use as many claims as needed to represent the experimental evidence that materially informs the decision. Every claim may cite any number of `Molecule N` identifiers, C-number records, or both, but must cite at least one visible identifier. Set `evidence_role` to `supportive` when the cited evidence supports the selected final prediction and `contradictory` when it supports the alternative. Do not return supportive ID lists, contradictory ID lists, or prediction-basis ID lists; the engine derives provenance from the claims.
+{% endset %}
+{{ prompt | trim | tojson }}

@@ -179,6 +179,18 @@ def test_active_context_v2_m0_stays_inside_compacted_top10(tmp_path):
     assert audit["selection_policy"] in runner.SQLITE_SELECTION_CONTRACTS
 
 
+def test_l1_only_accepts_per_level_limit_mapping(tmp_path):
+    policy = _fixture(tmp_path, labels=[1, 1, 1, 0, 0, 0])
+
+    molecules, later, _ = load_candidates(
+        {"q": "CCO"}, task="bbb_martins", subset="valid", policy=policy,
+        molecule_limit=3, l1_limit=1, later_limit={}, min_contrast=1,
+    )
+
+    assert len(molecules["q"]) == 3
+    assert later == {"q": {}}
+
+
 def test_active_context_v2_uses_wider_pool_only_for_label_balance(tmp_path):
     policy = _fixture(
         tmp_path,

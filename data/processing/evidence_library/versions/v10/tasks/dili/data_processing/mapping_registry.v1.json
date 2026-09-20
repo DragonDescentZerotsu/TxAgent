@@ -1,0 +1,27 @@
+{
+  "version": "dili_prebuilt_mapping_registry.v1",
+  "task_id": "dili",
+  "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
+  "mappings": {
+    "measurement_resolution": {
+      "stage": "01_cleaned",
+      "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "path": "data/evidence_libraries/dili/v10/measurement_resolution_v4/measurement_resolution.parquet",
+      "sha256": "a9b51ff6c7d5fb2bfb01680667adddb225da5e15f0324161e65902a1c81f1d1d"
+    },
+    "exact_measurement_units": {
+      "stage": "01_cleaned",
+      "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
+      "outputs": ["canonical_measurement_text", "canonical_unit_text"],
+      "depends_on_mappings": ["measurement_resolution"],
+      "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "review_manifest": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
+        "sha256": "5dc2fe23472c67874ec77ca111fcc9be8dde6706fc60edc45f4f93ef18c498c8"
+      },
+      "sha256": "62f8dca41244934f1c55787adc0eae2fbbb99ce1e88827a75b6002a6ca30058b"
+    }
+  },
+  "not_applicable_mappings": ["auxiliary_context"]
+}

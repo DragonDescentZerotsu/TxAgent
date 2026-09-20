@@ -763,11 +763,15 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                     molecule_limit=10, l1_limit=10, later_limit=50, tie_seed=0,
                     gold_context_mapping=None, allow_frozen_l1_vote_scores=False,
                     cache_pool='tool-accepted', joint_panel_sizes=None,
-                    min_contrast=3, morgan_primary_parent_width=100):
+                    min_contrast=3, morgan_primary_parent_width=100,
+                    preselected_uids=None):
     """Load a complete v2 cache directly, or explicitly replay a legacy bundle."""
     if policy.get('selection_contract') in {
         'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
     }:
+        if (preselected_uids is not None
+                and policy['selection_contract'] != 'ranked_uid_retrieval.v1'):
+            raise ValueError('Preselected UIDs require ranked_uid_retrieval.v1')
         if policy['selection_contract'] == 'ranked_uid_retrieval.v1':
             from .ranked_uid_retrieval import load_candidates as load_level_candidates
         else:
@@ -778,7 +782,14 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
             later_limit=later_limit, tie_seed=tie_seed, cache_pool=cache_pool,
             min_contrast=min_contrast,
             morgan_primary_parent_width=morgan_primary_parent_width,
+            **(
+                {'preselected_uids': preselected_uids}
+                if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
+                else {}
+            ),
         )
+    if preselected_uids is not None:
+        raise ValueError('Preselected UIDs require ranked_uid_retrieval.v1')
     if policy.get('selection_contract') == 'cache_matched_retrieval.v2':
         from .cache_matched_v2 import load_candidates as load_v2_candidates
         return load_v2_candidates(

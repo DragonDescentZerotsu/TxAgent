@@ -22,6 +22,11 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V5_HARNESS_VERSION,
     CONTEXT_V5_PROMPT_VERSION,
+    CONTEXT_V6_PROMPT_VERSION,
+    CONTEXT_V7_HARNESS_VERSION,
+    CONTEXT_V7_PROMPT_VERSION,
+    CONTEXT_V8_HARNESS_VERSION,
+    CONTEXT_V8_PROMPT_VERSION,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
     JOINT_VARIANT,
@@ -194,6 +199,25 @@ def test_flat_prompt_bundle_is_complete_and_version_owned() -> None:
         "tasks.yaml",
         "user.jinja",
     }
+    context_v5 = prompt_asset_manifest(CONTEXT_V5_PROMPT_VERSION)
+    assert set(context_v5["files_sha256"]) == {
+        "levels/L1.yaml",
+        "levels/L2.yaml",
+        "levels/L3.yaml",
+        "levels/L4.yaml",
+        "levels/L5.yaml",
+        "levels/L6.yaml",
+        "provenance.json",
+        "system.jinja",
+        "tasks.yaml",
+        "user.jinja",
+    }
+    context_v6 = prompt_asset_manifest(CONTEXT_V6_PROMPT_VERSION)
+    assert set(context_v6["files_sha256"]) == set(context_v5["files_sha256"])
+    context_v7 = prompt_asset_manifest(CONTEXT_V7_PROMPT_VERSION)
+    assert set(context_v7["files_sha256"]) == set(context_v6["files_sha256"])
+    context_v8 = prompt_asset_manifest(CONTEXT_V8_PROMPT_VERSION)
+    assert set(context_v8["files_sha256"]) == set(context_v5["files_sha256"])
 
 
 def _flat_context_retrieval() -> dict:
@@ -314,14 +338,12 @@ def test_v5_uses_molecule_scoped_record_ids_and_claim_schema() -> None:
     }
     assert validation["content_validator"](content) == []
     content["claims"].append({
-        "claim": "The same record cannot oppose the decision.",
-        "molecule_ids": [],
+        "claim": "The same molecule and record also contain opposing evidence.",
+        "molecule_ids": ["Molecule 1"],
         "record_ids": ["Record 1-1"],
         "evidence_role": "contradictory",
     })
-    assert validation["content_validator"](content) == [
-        "evidence_role_overlap:Record 1-1"
-    ]
+    assert validation["content_validator"](content) == []
 
 
 def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:
@@ -362,6 +384,115 @@ def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:
         "contradictory_molecule_ids": ["Molecule 12"],
         "contradictory_record_ids": [],
     }
+
+
+def test_v6_oral_uses_high_low_without_changing_v5() -> None:
+    v6 = flat_context_validation(
+        "bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        prompt_version=CONTEXT_V6_PROMPT_VERSION,
+    )
+    v5 = flat_context_validation(
+        "bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        prompt_version=CONTEXT_V5_PROMPT_VERSION,
+    )
+    assert v6["allowed_values"]["final_prediction"] == {"high", "low"}
+    assert v5["allowed_values"]["final_prediction"] == {"pass", "fail"}
+
+
+def test_v8_keeps_transfer_likelihood_on_its_context_record() -> None:
+    retrieval = _flat_context_retrieval()
+    rows = retrieval["groups"][0]["neighbors"][0]["evidence_rows"]
+    rows[0]["selection_provenance"].update(
+        assay_transfer_score=0.9819,
+        selected_condition="release_profile=modified_release",
+    )
+    rows[1]["selection_provenance"].update(
+        level="L1",
+        assay_transfer_score=0.9766,
+        selected_condition="no_reported_external_condition",
+    )
+
+    with pytest.raises(ValueError, match="Conflicting molecule-scoped transfer_likelihood"):
+        build_flat_context_request(
+            retrieval,
+            task_id="bioavailability_ma",
+            task_prompt_profile="f20_evidence_calibrated_v2",
+            layout="global",
+            reranking="assay-transfer-contrastive",
+            query_prior=None,
+            prompt_version=CONTEXT_V5_PROMPT_VERSION,
+        )
+
+    messages, _ = build_flat_context_request(
+        retrieval,
+        task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="global",
+        reranking="assay-transfer-contrastive",
+        query_prior=None,
+        prompt_version=CONTEXT_V8_PROMPT_VERSION,
+    )
+    visible = messages[1]["content"]
+    assert "Evidence condition: release_profile=modified_release\nTransfer likelihood: 0.9819" in visible
+    assert "Evidence condition: no_reported_external_condition\nTransfer likelihood: 0.9766" in visible
+    assert "SMILES: N\nTransfer likelihood:" not in visible
+
+
+def test_v7_oral_requires_only_high_low_final_prediction() -> None:
+    messages, metadata = build_flat_context_request(
+        _flat_context_retrieval(),
+        task_id="bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        layout="level-grouped",
+        reranking="assay-transfer-contrastive",
+        query_prior=None,
+        prompt_version=CONTEXT_V7_PROMPT_VERSION,
+    )
+    validation = flat_context_validation(
+        "bioavailability_ma",
+        task_prompt_profile="f20_evidence_calibrated_v2",
+        prompt_version=CONTEXT_V7_PROMPT_VERSION,
+        reference_index=metadata["reasoning_reference_index"],
+    )
+    assert validation["required_fields"] == ("final_prediction",)
+    assert validation["allowed_values"]["final_prediction"] == {"high", "low"}
+    assert validation["content_validator"]({"final_prediction": "high"}) == []
+    assert validation["content_validator"]({
+        "claims": [], "final_prediction": "high"
+    }) == ["invalid_output_fields"]
+    assert '"final_prediction": "high | low"' in messages[1]["content"]
+    assert '"claims"' not in messages[1]["content"]
+    assert "Return only `final_prediction` and no other fields." in messages[0]["content"]
+
+    bbb = flat_context_validation(
+        "bbb_martins",
+        task_prompt_profile="meaningful_cns_access_v1",
+        prompt_version=CONTEXT_V7_PROMPT_VERSION,
+    )
+    assert bbb["required_fields"] == ("final_prediction",)
+    assert bbb["allowed_values"]["final_prediction"] == {"pass", "fail"}
+
+
+def test_v7_harness_is_publicly_selectable(monkeypatch) -> None:
+    calls = []
+    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
+    assert flat.run([
+        "--harness-version", CONTEXT_V7_HARNESS_VERSION,
+        "--task", "bioavailability_ma", "--query-prior", "none", "--prepare-only",
+    ]) == 0
+    assert CONTEXT_V7_HARNESS_VERSION in calls[0]
+
+
+def test_v8_harness_is_publicly_selectable(monkeypatch) -> None:
+    calls = []
+    monkeypatch.setattr(flat, "_joseph_main", lambda argv: calls.append(argv) or 0)
+    assert flat.run([
+        "--harness-version", CONTEXT_V8_HARNESS_VERSION,
+        "--task", "bbb_martins", "--query-prior", "none", "--prepare-only",
+    ]) == 0
+    assert CONTEXT_V8_HARNESS_VERSION in calls[0]
 
 
 def test_v5_harness_is_publicly_selectable(monkeypatch) -> None:
@@ -948,6 +1079,26 @@ def test_flat_v2_disables_only_group_comparison_tools(
     forwarded = calls[-1][1]
     assert JOSEPH_V1_PROMPT_VERSION in forwarded
     assert "--disable-flat-tools" not in forwarded
+
+
+def test_full_flat_context_v5_accepts_the_published_test_cache(
+    monkeypatch, tmp_path: Path
+) -> None:
+    observed = {}
+
+    def materialize(args):
+        observed["subset"] = args.evaluation_subset
+        return tmp_path, {"status": "prepared"}
+
+    monkeypatch.setattr(flat, "_materialize_cache_matched_retrievals", materialize)
+    assert flat._joseph_main([
+        "--harness-version", CONTEXT_V5_HARNESS_VERSION,
+        "--task", "bbb_martins",
+        "--evaluation-subset", "test",
+        "--query-prior", "none",
+        "--prepare-only",
+    ]) == 0
+    assert observed == {"subset": "test"}
 
 
 def test_joseph_flat_prompt_rejects_skin() -> None:

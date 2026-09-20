@@ -63,6 +63,7 @@ EXPECTED_ATOM_COUNT: int | None = 102_316
 CROSS_SOURCE_LEVELS = ("L2",)
 PAIR_KEY_OPTIONAL_TRAILING_COLUMNS = {"oral_exposure": 1}
 SELECTOR_PROFILE_LIMIT: int | None = None
+SELECTOR_VALUE_LIMIT: int | None = 5
 MAX_SOURCE_ROUNDS = 3
 MERGE_BATCH_SIZE = 40
 SAMPLE_LIMIT = 5
@@ -85,6 +86,8 @@ DEFER_TECHNICAL_BRANCHES = False
 SEMANTIC_SIZE_REVIEW_REQUIRED = False
 INCLUDE_PAIR_BUCKET_KEY_IN_SAMPLE_CARDS = True
 INCLUDE_DOWNSTREAM_PROMPT_REVIEW = True
+SOURCE_LOCAL_FINAL_STATUS = "awaiting_cross_source_mapping"
+PROMPT_REVIEW_TITLE = "Bioavailability V10 semantic/readout prompt review"
 
 
 PAIR_COLUMNS = {
@@ -239,6 +242,7 @@ def _render(name: str, payload: Mapping[str, Any], *, purpose: str = "semantic")
     )
     return template.render(
         purpose=purpose,
+        payload=payload,
         compact_payload_json=_canonical_json(payload),
     ).strip()
 
@@ -660,7 +664,11 @@ def _column_selection_payload(
                 {
                     "bucket_id": bucket,
                     "distinct_values": len(values),
-                    "example_values": sorted(values)[:5],
+                    "example_values": (
+                        sorted(values)
+                        if SELECTOR_VALUE_LIMIT is None
+                        else sorted(values)[:SELECTOR_VALUE_LIMIT]
+                    ),
                 }
             )
         candidates.append(
@@ -2150,7 +2158,7 @@ def run_semantic(
     if len(mapping) != len(atoms) or mapping["atom_id"].duplicated().any():
         raise ValueError("final source-local mapping does not cover every atom exactly once")
     mapping.to_parquet(output / "source_semantic_bucket_map.parquet", index=False)
-    state["status"] = "awaiting_cross_source_mapping"
+    state["status"] = SOURCE_LOCAL_FINAL_STATUS
     with state_lock:
         _save_state(state_path, state)
 
@@ -2169,7 +2177,7 @@ def run_semantic(
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest.update(
         {
-            "status": "awaiting_cross_source_mapping",
+            "status": SOURCE_LOCAL_FINAL_STATUS,
             "endpoint_models_at_start": endpoint_models,
             "endpoint_pool_at_start": endpoint_receipts,
             "endpoint_pool_final_snapshot": client.snapshot(),
@@ -2851,6 +2859,52 @@ def approve_semantic_bucket_sizes(
     return audit_manifest
 
 
+def _downstream_review_examples(
+    source_examples: Mapping[str, tuple[str, dict[str, list[str]]]],
+    lookup: Mapping[str, Mapping[str, Any]],
+    sample_cards: Mapping[str, Mapping[str, Any]],
+) -> dict[str, str]:
+    readout_source = "fg"
+    readout_level, readout_buckets = source_examples[readout_source]
+    readout_bucket, readout_members = max(
+        readout_buckets.items(), key=lambda item: len(item[1])
+    )
+    payload = _bucket_payload(readout_bucket, readout_members, lookup, sample_cards)
+    payload.update(
+        {
+            "task": TASK_NAME,
+            "level": readout_level,
+            "source_id": readout_source,
+            "depth": 0,
+            "candidate_columns": [
+                {"column": column, "description": COLUMN_DESCRIPTIONS[column]}
+                for column in REFINEMENT_COLUMNS[readout_source]
+                if column not in INITIAL_COLUMNS[readout_source]
+            ],
+        }
+    )
+    values, _ = _value_payload(
+        readout_bucket,
+        readout_members,
+        "canonical_assay_context",
+        lookup,
+        context_columns=INITIAL_COLUMNS[readout_source],
+    )
+    values.update({"source_id": readout_source, "depth": 0})
+    connection = sqlite3.connect(V3_ROOT / "requests.sqlite3")
+    row = connection.execute(
+        "SELECT prompt FROM requests ORDER BY batch_id LIMIT 1"
+    ).fetchone()
+    connection.close()
+    if row is None:
+        raise ValueError("V3 ranking cache has no prepared prompt")
+    return {
+        "readout_coherence": _render("readout_coherence", payload),
+        "readout_merge_values": _render("readout_merge_values", values),
+        "semantic_ranking": str(row[0]),
+    }
+
+
 def prepare_prompt_review(output: Path) -> dict[str, Any]:
     if output.exists() and any(output.iterdir()):
         raise FileExistsError(f"prompt review directory is not empty: {output}")
@@ -2909,64 +2963,8 @@ def prepare_prompt_review(output: Path) -> dict[str, Any]:
         ),
     )
 
-    readout_source = "fg"
-    readout_level, readout_buckets = source_examples[readout_source]
-    readout_bucket, readout_members = max(
-        readout_buckets.items(), key=lambda item: len(item[1])
-    )
-    readout_payload = _bucket_payload(
-        readout_bucket, readout_members, lookup, sample_cards
-    )
-    readout_payload.update(
-        {
-            "task": TASK_NAME,
-            "level": readout_level,
-            "source_id": readout_source,
-            "depth": 0,
-            "candidate_columns": [
-                {
-                    "column": column,
-                    "description": COLUMN_DESCRIPTIONS[column],
-                }
-                for column in REFINEMENT_COLUMNS[readout_source]
-                if column not in INITIAL_COLUMNS[readout_source]
-            ],
-        }
-    )
-    rendered["readout_coherence"] = _render("readout_coherence", readout_payload)
-    readout_column = "canonical_assay_context"
-    readout_values, _ = _value_payload(
-        readout_bucket,
-        readout_members,
-        readout_column,
-        lookup,
-        context_columns=INITIAL_COLUMNS[readout_source],
-    )
-    readout_values.update(
-        {
-            "source_id": readout_source,
-            "depth": 0,
-        }
-    )
-    rendered["readout_merge_values"] = _render(
-        "readout_merge_values", readout_values
-    )
-
-    ranking_database = V3_ROOT / "requests.sqlite3"
-    import sqlite3
-
-    connection = sqlite3.connect(ranking_database)
-    row = connection.execute(
-        "SELECT prompt FROM requests ORDER BY batch_id LIMIT 1"
-    ).fetchone()
-    connection.close()
-    if row is None:
-        raise ValueError("V3 ranking cache has no prepared prompt")
-    rendered["semantic_ranking"] = str(row[0])
-
-    if not INCLUDE_DOWNSTREAM_PROMPT_REVIEW:
-        for name in ("readout_coherence", "readout_merge_values", "semantic_ranking"):
-            rendered.pop(name, None)
+    if INCLUDE_DOWNSTREAM_PROMPT_REVIEW:
+        rendered.update(_downstream_review_examples(source_examples, lookup, sample_cards))
 
     maximum_tokens, endpoint_models = _endpoint_contract()
     prompt_rows = []
@@ -2974,7 +2972,7 @@ def prepare_prompt_review(output: Path) -> dict[str, Any]:
         path = output / f"{name}.txt"
         path.write_text(prompt + "\n", encoding="utf-8")
         input_tokens = _token_count(prompt)
-        completion_reserve = 262_144 if name.startswith("merge_") else 8_192
+        completion_reserve = HIGH_MAX_TOKENS if name.startswith("merge_") else LOW_MAX_TOKENS
         prompt_rows.append(
             {
                 "name": name,
@@ -2987,7 +2985,7 @@ def prepare_prompt_review(output: Path) -> dict[str, Any]:
         )
 
     review_lines = [
-        "# Bioavailability V10 semantic/readout prompt review",
+        f"# {PROMPT_REVIEW_TITLE}",
         "",
         "No completion requests were made. Review and approve the prompt hashes in `manifest.json` before running DeepSeek.",
         "",

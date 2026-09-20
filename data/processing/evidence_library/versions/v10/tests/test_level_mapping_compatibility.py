@@ -391,7 +391,14 @@ def test_subset_level_mapping_resolves_stage1_duplicate_lineage_and_reviewed_dro
     output = tmp_path / "levels"
     pq.write_table(
         pa.Table.from_pylist(
-            [{"source_row_uid": retained, "canonical_record_id": "record-1"}]
+            [{
+                "source_row_uid": retained,
+                "canonical_record_id": "record-1",
+                "pair_bucket_key": '["skin"]',
+                "measurement_kind": "continuous",
+                "assay_transfer_eligible": True,
+                "assay_transfer_ineligibility_reason": None,
+            }]
         ),
         records,
     )
@@ -443,6 +450,17 @@ def test_subset_level_mapping_resolves_stage1_duplicate_lineage_and_reviewed_dro
         "new_retained_uid_targets": 1,
         "reviewed_source_row_drops": 1,
     }
+    assert pq.read_table(output / "assay_transfer_record_eligibility.parquet").to_pylist() == [
+        {
+            "source_row_uid": retained,
+            "canonical_record_id": "record-1",
+            "pair_bucket_key": '["skin"]',
+            "measurement_kind": "continuous",
+            "assay_transfer_eligible": True,
+            "assay_transfer_ineligibility_reason": None,
+            "level": 2,
+        }
+    ]
 
 
 @pytest.mark.parametrize(

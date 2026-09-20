@@ -1,0 +1,38 @@
+# Select the next semantic refinement column
+
+You are refining source-local evidence groups for **{{ payload.task }}**.
+
+- Evidence level: `{{ payload.level }}`
+- Evidence source: `{{ payload.source_id }}`
+
+Choose the one remaining semantic column whose values best separate scientifically different evidence. Select a column only when its distinction can change the evidence's meaning, interpretation, or transferability. Ignore units, species, molecule identity, labels, benchmark context, retrieval rank, frequency, and record count. Return `stop` when no remaining column warrants another round.
+
+## Current semantic parents
+
+{% for bucket in payload.active_buckets -%}
+- `{{ bucket.bucket_id }}`{% for column, values in bucket.current_bucket_identity | dictsort %}; **{{ column }}:** {% for value in values %}`{{ value }}`{% if not loop.last %}, {% endif %}{% endfor %}{% endfor %}
+{% endfor %}
+
+## Candidate semantic columns
+
+{% for candidate in payload.candidate_columns -%}
+### `{{ candidate.column }}`
+
+{{ candidate.description }}
+
+{% for profile in candidate.bucket_profiles -%}
+- `{{ profile.bucket_id }}`: {% for value in profile.example_values %}`{{ value }}`{% if not loop.last %}, {% endif %}{% endfor %}
+{% endfor %}
+{% endfor %}
+
+Return only one JSON object:
+
+```json
+{"decision":"stop","rationale":"brief scientific rationale"}
+```
+
+or
+
+```json
+{"decision":"select","column":"one supplied column ID","rationale":"brief scientific rationale"}
+```

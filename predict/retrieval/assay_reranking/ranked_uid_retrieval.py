@@ -6,7 +6,7 @@ import json
 import math
 from pathlib import Path
 import sqlite3
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 import pyarrow.parquet as pq
 
@@ -58,6 +58,7 @@ def _ranked_rows(
     manifest_path: Path, *, task: str, subset: str, level: str, method: str,
     queries: Mapping[str, str], limit: int | None,
     parent_morgan_width: int | None = None,
+    selected_uids: Mapping[str, Sequence[str]] | None = None,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, tuple[str, str]], dict[str, Any]]:
     manifest = _manifest(manifest_path, task, subset, level)
     database = manifest_path.with_name(str(manifest["database"]))
@@ -89,11 +90,30 @@ def _ranked_rows(
                 (str(query_id), parent_morgan_width)
                 if parent_morgan_width is not None else (str(query_id),)
             )
-            rows = connection.execute(
-                f"{sql} LIMIT ?", (*parameters, limit),
-            ).fetchall() if limit is not None else connection.execute(
-                sql, parameters,
-            ).fetchall()
+            if selected_uids is not None:
+                ordered_uids = [str(uid) for uid in selected_uids[str(query_id)]]
+                if not ordered_uids or len(set(ordered_uids)) != len(ordered_uids):
+                    raise ValueError(f"Preselected UIDs must be nonempty and unique: {query_id}/{level}")
+                placeholders = ",".join("?" for _ in ordered_uids)
+                rows = connection.execute(
+                    f"SELECT * FROM rankings WHERE benchmark_row_id=? "
+                    f"AND {rank_column} IS NOT NULL AND item_id IN ({placeholders})",
+                    (str(query_id), *ordered_uids),
+                ).fetchall()
+                by_uid = {str(row["item_id"]): row for row in rows}
+                missing = [uid for uid in ordered_uids if uid not in by_uid]
+                if missing:
+                    raise ValueError(
+                        f"Preselected UIDs are absent from {query_id}/{level}/{method}: "
+                        f"{missing[:5]}"
+                    )
+                rows = [by_uid[uid] for uid in ordered_uids]
+            else:
+                rows = connection.execute(
+                    f"{sql} LIMIT ?", (*parameters, limit),
+                ).fetchall() if limit is not None else connection.execute(
+                    sql, parameters,
+                ).fetchall()
             if limit is not None and len(rows) != limit:
                 available = connection.execute(
                     f"SELECT COUNT(*) FROM rankings WHERE benchmark_row_id=? "
@@ -369,7 +389,9 @@ def load_candidates(
     molecule_limit: int = 10, l1_limit: int = 10,
     later_limit: int | Mapping[str, int] = 50, tie_seed: int = 0,
     cache_pool: str = "all", min_contrast: int = 3,
-    morgan_primary_parent_width: int = CAPACITY, **_: Any,
+    morgan_primary_parent_width: int = CAPACITY,
+    preselected_uids: Mapping[str, Mapping[str, Sequence[str]]] | None = None,
+    **_: Any,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Select ranks first, hydrate their UIDs once, and return prompt-ready rows."""
     if not queries or not 1 <= molecule_limit <= CAPACITY or l1_limit < 1:
@@ -381,6 +403,19 @@ def load_candidates(
     if l1_selection not in {"morgan", "assay_transfer", "assay_transfer_contrastive"}:
         raise ValueError("ranked_uid_retrieval.v1 does not support this L1 selection")
     limits = _limits(stages, later_limit)
+    later_levels = {level for level in stages if level != "L1"}
+    if preselected_uids is not None:
+        if set(preselected_uids) != {str(query_id) for query_id in queries}:
+            raise ValueError("Preselected UID queries must match requested queries exactly")
+        for query_id, levels in preselected_uids.items():
+            if set(levels) != later_levels:
+                raise ValueError(f"Preselected UID levels differ for {query_id}")
+            for level, uids in levels.items():
+                if len(uids) != limits[level] or len(set(map(str, uids))) != len(uids):
+                    raise ValueError(
+                        f"Preselected UIDs must contain exactly {limits[level]} unique "
+                        f"records for {query_id}/{level}"
+                    )
     manifests = {level: Path(path).resolve() for level, path in policy["cache_manifests"].items()}
     if set(manifests) != set(stages):
         raise ValueError("Independent caches do not cover the requested levels exactly")
@@ -399,11 +434,20 @@ def load_candidates(
             limit=(
                 CAPACITY
                 if level == "L1" and method == "assay_transfer_contrastive"
-                else molecule_limit if level == "L1" else limits[level]
+                else molecule_limit if level == "L1"
+                else None if preselected_uids is not None else limits[level]
             ),
             parent_morgan_width=(
                 morgan_primary_parent_width
-                if level != "L1" and method == "assay_transfer" else None
+                if level != "L1" and method == "assay_transfer"
+                and preselected_uids is None else None
+            ),
+            selected_uids=(
+                {
+                    str(query_id): preselected_uids[str(query_id)][level]
+                    for query_id in queries
+                }
+                if level != "L1" and preselected_uids is not None else None
             ),
         )
         if identities is not None and current != identities:
@@ -599,6 +643,9 @@ def load_candidates(
             "tie_seed": tie_seed,
             "cache_pool": cache_pool,
             "cache_content_ids": content_ids,
+            "later_selection": (
+                "preselected_uid_order" if preselected_uids is not None else "cached_rank"
+            ),
         },
         "pool": "all",
         "cache_pool": "all",

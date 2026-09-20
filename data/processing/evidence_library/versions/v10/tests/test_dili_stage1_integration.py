@@ -75,6 +75,7 @@ def test_dili_v10_registration_is_stage1_only() -> None:
     )
     assert TASK_MODULES["dili"] == {
         "build_normalized_starling_evidence_library",
+        "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
     }

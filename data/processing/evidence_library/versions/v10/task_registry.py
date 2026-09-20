@@ -8,6 +8,7 @@ _FULL_TASK_MODULES = frozenset(
     {
         "build_normalized_starling_evidence_library",
         "build_starling_downstream_artifacts",
+        "mapping_registry",
         "starling_categorical_response",
         "starling_measurement_resolution",
         "starling_policy",
@@ -21,6 +22,7 @@ TASK_MODULES = {
 TASK_MODULES["ames"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "mapping_registry",
         "starling_categorical_response",
         "starling_measurement_resolution",
         "starling_policy",
@@ -29,6 +31,7 @@ TASK_MODULES["ames"] = frozenset(
 TASK_MODULES["dili"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
     }
@@ -36,6 +39,7 @@ TASK_MODULES["dili"] = frozenset(
 TASK_MODULES["carcinogens"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
     }

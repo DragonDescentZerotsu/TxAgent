@@ -44,8 +44,8 @@ from predict.utils.json import (
 from predict.harnesses.branches.inference import load_frozen_single_analysis
 from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
+    CONTEXT_CLAIMS_PROMPT_VERSIONS,
     CONTEXT_PROMPT_VERSIONS,
-    CONTEXT_V5_PROMPT_VERSION,
     build_flat_context_request,
     derive_flat_claim_evidence,
     flat_context_validation,
@@ -270,7 +270,7 @@ def execute_stage(
     stage_client: Any | None = None,
 ) -> dict[str, Any]:
     if job.stage == SINGLE_STAGE:
-        return _execute_single(job.state)
+        return _execute_single(job.state, stage_client)
     if job.stage == GROUP_STAGE:
         return _execute_group(job.state, job.group_id, stage_client)
     if job.stage == FINAL_STAGE:
@@ -588,7 +588,10 @@ def _hydrate_configured_branch_reuse(
             )
 
 
-def _execute_single(state: StageState) -> dict[str, Any]:
+def _execute_single(
+    state: StageState,
+    stage_client: Any | None = None,
+) -> dict[str, Any]:
     if _analogous_reasoning_only(state):
         raise RuntimeError("The single stage is omitted in analogous-reasoning-only mode")
     source_batch = str(state.prepared.args.single_analysis_source_batch or "")
@@ -600,7 +603,7 @@ def _execute_single(state: StageState) -> dict[str, Any]:
     else:
         context = _stage_context(state)
         module = context["module"]
-        client = _make_client(state)
+        client = stage_client or _make_client(state)
         output = module._reason_single_molecule(
             client,
             module._llm_query_payload(context["reasoning_retrieval"]["query"]),
@@ -862,7 +865,7 @@ def _execute_flat_context_final(
         "prompt": prompt_metadata,
     }
     if (
-        state.prepared.args.flat_prompt_version == CONTEXT_V5_PROMPT_VERSION
+        state.prepared.args.flat_prompt_version in CONTEXT_CLAIMS_PROMPT_VERSIONS
         and final_output["status"] == "ok"
     ):
         final_output["claim_evidence"] = derive_flat_claim_evidence(

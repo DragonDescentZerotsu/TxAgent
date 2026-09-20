@@ -1,0 +1,4 @@
+bbb_martins:
+  description: Near-direct systemic CNS pharmacodynamic, functional, biomarker, adverse-effect, or efficacy observations that imply access without directly measuring CNS exposure.
+bioavailability_ma:
+  description: Nondirect oral-bioavailability evidence. This is indirect evidence even when its wording resembles the label.

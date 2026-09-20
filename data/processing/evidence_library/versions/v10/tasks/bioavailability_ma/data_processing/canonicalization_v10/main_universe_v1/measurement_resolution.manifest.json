@@ -1,0 +1,21 @@
+{
+  "generation_version": "stage1_measurement_resolution_replay.v1",
+  "task_id": "bioavailability_ma",
+  "mapping_version": "bioavailability_ma_measurement_resolution.v5",
+  "mapping_sha256": "f7412f4e287ac51f6b7b47d4e4bd29e4581e1813cec948673a6dbf43dbc7980e",
+  "sources": {
+    "published_stage1_records": {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v1/01_cleaned/records.parquet",
+      "sha256": "a584bffd780b82e27804dc0be61876a39bb43f31e8f5bf19c85fd573270fb96d"
+    },
+    "published_release_manifest": {
+      "path": "data/evidence_libraries/bioavailability_ma/v10_main_universe_v1/manifest.json",
+      "sha256": "6944a54ba88ce0a1d5528b530df2bb028f5f51681f2a7b7e6735a97f2cd43ee6"
+    }
+  },
+  "validations": {
+    "mapping_matches_published_release_input": true,
+    "mapping_bytes_preserved": true,
+    "published_stage1_hash_pinned": true
+  }
+}

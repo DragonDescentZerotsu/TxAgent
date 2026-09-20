@@ -24,6 +24,9 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_endpoint_
     canonical_endpoint_name as _canonical_endpoint_name,
 )
 from data.processing.paths import REPO_ROOT, evidence_library_root
+from data.processing.evidence_library.versions.v10.tasks.ames.mapping_registry import (
+    mapping_path,
+)
 
 TASK_ROOT = Path(__file__).resolve().parent
 TASK_ASSET_ROOT = TASK_ROOT / "data_processing"
@@ -48,6 +51,8 @@ DEFAULT_MAPPING_PATH = (
     evidence_library_root("ames", "v10")
     / "measurement_resolution_v6/measurement_resolution.parquet"
 )
+EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
 DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
@@ -87,6 +92,7 @@ _CONTEXT_FIELDS = {
         "result_direction",
     ),
 }
+UNIT_RECONCILIATION_CONTEXT_FIELDS = _CONTEXT_FIELDS
 
 
 def source_routing_rules() -> dict[str, SourceRoutingRules]:
@@ -230,6 +236,7 @@ __all__ = [
     "REQUIRE_SOURCE_ROW_UID",
     "SOURCE_IDS",
     "STRATIFY_BATCHES",
+    "UNIT_RECONCILIATION_CONTEXT_FIELDS",
     "canonical_endpoint_name",
     "prompt_manifest",
     "prompt_row_fields",

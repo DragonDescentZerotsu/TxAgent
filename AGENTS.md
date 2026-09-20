@@ -185,6 +185,47 @@ new semantic atoms or buckets belong in a separate immutable semantic generation
 do not edit a selected semantic map, ranking, manifest, pair-record file, or live
 cache in place.
 
+AMES, DILI, and Carcinogens canonical reconciliation uses
+`data/processing/evidence_library/versions/v10/canonical_reconciliation.py`.
+The endpoint-aware V3 successor includes only exact units consumed by accepted
+deterministic measurement resolution or successful LLM resolution. It performs
+two endpoint-local passes over character-TF-IDF K-means clusters of at most 50
+labels, using each provisional Pass-A label as the Pass-B input. Each request must
+use local DeepSeek with `reasoning_effort=high`; preflight every configured
+endpoint, exclude unavailable endpoints, and cap each selected endpoint at 256
+in-flight requests. The current authorized V3 pool is exactly `dgx020:50002`,
+`dgx005:50001`, and `dgx011:50001`. Read timeouts fail and retry the affected
+request but do not permanently quarantine an otherwise reachable endpoint. Every
+unit must survive with scale `1`; a failed or uncertain
+cluster is identity-mapped. Preserve endpoint-specific rules and require complete,
+hash-pinned agent review of any endpoint-local conflicts before immutable V3
+publication. Other canonical categorical fields use the shared single-pass
+embedding clustering implementation. Preserve V2 bundles and publish successors
+only under `data_processing/canonicalization_v10/unit_reconciliation_v3/`; do not
+add compatibility symlinks or update a task `CURRENT` pointer as part of unit-only
+reconciliation.
+
+V3.2 does not compare every numeric token in the selected span with the canonical
+unit; explanatory numbers may be removed. The parsed physical scale/dimension,
+qualifier, endpoint-basis, verbatim-span, and mandatory-unit guards remain. Prompts
+must explicitly preserve percent, per/population, ratio, inhibition, control,
+fold, and count semantics.
+
+Parallel V3.2 OpenAI fallback may receive only a prefix-hashed snapshot of terminal
+identity clusters and must write a separate append-only artifact. Use
+`gpt-5.4-mini`, `reasoning_effort=high`, the model-supported 128,000 completion-token
+ceiling, and `OPENAI_API_KEY_ONE` through `data/processing/llm_api.py`; never copy a
+secret or write into the active local provider log.
+
+V3.3 prompt wording must state that clustering is not unification: each ID is mapped
+independently, and SI prefixes such as milli, micro, nano, and pico must remain
+distinct even when those labels share one lexical cluster.
+
+V3.4 treats standalone `x` beside a numeric factor as multiplication, not a fold
+qualifier, and treats slash, `unit-1`, and `unit^-1` as equivalent per-denominator
+notation. Prompt examples must retain percent, inhibition, control, ratio, count,
+true fold, and per-denominator semantics.
+
 Explain work concisely from the high-level result down to implementation details.
 For new implementations, describe the files being added or changed, how they
 connect, and the scope of the change. Prefer a small, coherent module over a
@@ -294,18 +335,17 @@ or is synchronized on another host.
 
 ### Recent failure-prevention checks
 
-Before launching a progressive batch, reopen the provider-pool JSON from disk and
+Before launching a prediction batch, reopen the provider-pool JSON from disk and
 report the exact selected hosts, ports, per-endpoint `max_inflight`, aggregate
-capacity, model, and reasoning effort. For the current V10.4 BBB/oral run, the
-authorized pool is only `dgx011:50001` and `dgx014:50002`, at 512 requests per
-endpoint; do not include `dgx005`.
+capacity, model, and reasoning effort. The mutable global candidate inventory is
+`predict/api_client/providers/current_endpoints.json`; do not preserve a competing
+run-specific endpoint list in this file.
 
 The provider-pool `max_inflight` limit is local to one launcher, not a shared
-endpoint semaphore. Do not overlap two 512-per-endpoint launchers when the intent
-is a 512 total cap per endpoint. Before handing the same endpoints to a successor
-batch, verify both client receipts and live SGLang `/v1/loads` or scheduler
-metrics; client `inflight=0` alone does not establish that the server queue is
-drained.
+endpoint semaphore. Overlapping launchers may use the same endpoints; report each
+launcher's configured per-endpoint and aggregate capacity explicitly. Live SGLang
+`/v1/loads` or scheduler metrics are observational and do not gate a requested
+launch.
 
 Do not silently accept the progressive matrix's 524,288-token default for these
 structured L1 prompts. Review token counts from the closest completed artifact
@@ -313,9 +353,8 @@ and pass an explicit, justified `--max-tokens`; keep the required reasoning effo
 unchanged. In the first V10.4 width-25 launch, 165 requests remained active after
 all other work finished and began hitting the 3,600-second read timeout together,
 opening both provider circuits and invoking cross-endpoint failover. A timeout
-retry can duplicate expensive server work, so do not start a successor batch
-until both the client pool and live server load have drained. Any changed token or
-timeout setting requires a fresh run identity.
+retry can duplicate expensive server work. Any changed token or timeout setting
+requires a fresh run identity.
 
 On `epyc-1-6`, do not start the resident molecular tool service with the bare
 system `uvicorn`: `/usr/bin/python` lacks PyTorch. First verify the chosen runtime
