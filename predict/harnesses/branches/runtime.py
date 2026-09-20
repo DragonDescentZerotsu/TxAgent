@@ -21,6 +21,7 @@ import importlib
 import json
 import os
 from pathlib import Path
+from functools import lru_cache
 import threading
 import time
 from typing import Any
@@ -38,6 +39,7 @@ from predict.tools.client import ToolServiceClient
 from predict.traces.io import write_trace
 from predict.utils.json import (
     atomic_output_path,
+    sha256_file,
     write_json_atomic as _write_json_atomic,
     write_jsonl_atomic as _write_jsonl_atomic,
 )
@@ -988,7 +990,39 @@ def _prefetched_replay_run_dir(state: StageState) -> str:
     return "" if source == str(state.run_dir) else source
 
 
+@lru_cache(maxsize=None)
+def _query_prior_overlay(source_batch: Path) -> tuple[Path, ...] | None:
+    manifest_path = source_batch / "manifest.json"
+    if not manifest_path.is_file():
+        return None
+    manifest = _read_json(manifest_path)
+    if manifest.get("schema_version") != "branch_query_prior_overlay.v1":
+        return None
+    input_path = Path(str(manifest.get("input_jsonl") or ""))
+    if not input_path.is_file() or sha256_file(input_path) != manifest.get("input_sha256"):
+        raise ValueError(f"Query-prior overlay input hash mismatch: {source_batch}")
+    sources = manifest.get("sources") or []
+    if len(sources) != int(manifest.get("n_items", -1)):
+        raise ValueError(f"Query-prior overlay source count mismatch: {source_batch}")
+    output = []
+    for index, source in enumerate(sources):
+        if int(source.get("target_index", -1)) != index:
+            raise ValueError(f"Query-prior overlay indices are not contiguous: {source_batch}")
+        run_dir = Path(str(source.get("run_dir") or ""))
+        for name, expected in (source.get("files_sha256") or {}).items():
+            if sha256_file(run_dir / name) != expected:
+                raise ValueError(f"Query-prior overlay artifact hash mismatch: {run_dir / name}")
+        output.append(run_dir)
+    return tuple(output)
+
+
 def _source_run_dir(source_batch: Path, query_index: int) -> Path:
+    overlay = _query_prior_overlay(source_batch.resolve())
+    if overlay is not None:
+        try:
+            return overlay[query_index]
+        except IndexError as error:
+            raise ValueError(f"Query-prior overlay lacks index {query_index}") from error
     source_run_id = f"{source_batch.name}_idx{query_index:05d}"
     return source_batch / "runs" / source_run_id
 

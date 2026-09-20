@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
@@ -47,6 +48,30 @@ def require_matching_prompt_profiles(
                 f"source={source_profile!r} target={target_profile!r} "
                 f"artifact={source_dir}"
             )
+        if manifest.get("schema_version") == "branch_query_prior_overlay.v1":
+            for entry in manifest.get("sources") or []:
+                profile_manifest = Path(str(entry["prompt_profile_manifest"]))
+                digest = hashlib.sha256(profile_manifest.read_bytes()).hexdigest()
+                if digest != entry.get("prompt_profile_manifest_sha256"):
+                    raise ValueError(
+                        f"Query-prior source prompt manifest changed: {profile_manifest}"
+                    )
+                source_manifest = json.loads(
+                    profile_manifest.read_text(encoding="utf-8")
+                )
+                nested_profile = prompt_profile_from_manifest(
+                    source_manifest,
+                    historical_profile=historical_profile,
+                )
+                if (
+                    nested_profile != target_profile
+                    or entry.get("task_prompt_profile") != target_profile
+                ):
+                    raise ValueError(
+                        "Prompt-profile overlay source reuse is forbidden: "
+                        f"source={nested_profile!r} target={target_profile!r} "
+                        f"artifact={entry.get('run_dir')!r}"
+                    )
 
 
 def _reuse_manifest_path(source_dir: Path) -> Path:

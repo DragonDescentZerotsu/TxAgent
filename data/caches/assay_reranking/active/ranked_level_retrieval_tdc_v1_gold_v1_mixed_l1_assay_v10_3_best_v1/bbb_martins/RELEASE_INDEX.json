@@ -1,0 +1,60 @@
+{
+  "assay_transfer_status": "complete",
+  "evidence_sources": [
+    {
+      "content_id": "6bc52c8b889d989b2ee150bc7e8e5ffe2aef6d9cb712e9f0e1ae3aa82e714fc4",
+      "manifest": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/evidence_libraries/bbb_martins/v10/retrieval_projection/ranked_evidence_v1/VERSION.json",
+      "manifest_sha256": "3cf08ec3bf8a2490954a7dbdb88a949630ba6330c9396a0a6262735d27a93c79",
+      "record_count": 496148
+    },
+    {
+      "content_id": "38ca18120c3030ad07e14d627640bbdab13c3be3c5bb7b9e3359ee14690d564d",
+      "manifest": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1/bbb_martins/evidence/VERSION.json",
+      "manifest_sha256": "69a16a01cb8f2560f5ffe6bccc534355fce14ce471486605e32c8fa62fa60f24",
+      "record_count": 1223
+    }
+  ],
+  "l1_sources": [
+    "gold_v1",
+    "tdc_v1"
+  ],
+  "label_release": {
+    "benchmark": "tdc",
+    "version": "v1"
+  },
+  "levels_independent": true,
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v1",
+  "ranking_modes": [
+    "morgan",
+    "assay-transfer"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "2833e0b0c1a8d81fcb09da5b741cca9c41d52969c23277911f4b4a87882c9000",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "42c0dac0e3ff3ce00d9a1d9b11916b908e8a73a7b726d41b3199396186e41a23"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "156842aee48e5e976793ab2d69b8068f7792828f6f1f74d8e5b4346c974c7789",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "1b14e6e33bf72befc0d47662a372c099d6ffdd12a7b74858d8057d96882cac09"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

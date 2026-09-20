@@ -89,7 +89,7 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
     if ((reranking in {'morgan-contrastive', 'assay-transfer-within-morgan'}
          and document['version'] not in {6, 9})
             or (reranking == 'assay-transfer-contrastive'
-                and document['version'] not in {6, 9, 19})
+                and document['version'] not in {6, 9, 19, 20})
             or (document['version'] in {6, 9} and reranking not in {
                 'morgan', 'morgan-contrastive', 'assay-transfer',
                 'assay-transfer-within-morgan',
@@ -109,6 +109,36 @@ def load_cache_policy(path, task, subset, reranking, max_level=0):
         stages['L1'] = 'assay_transfer_within_morgan'
     if reranking == 'joint':
         stages['L1'] = 'joint'
+    if document['version'] == 20:
+        if reranking == 'joint':
+            raise ValueError('composite ranked UID retrieval does not support joint mode')
+        sources = document['caches'][task]
+        if not isinstance(sources, dict) or set(sources) != {'L1', 'later'}:
+            raise ValueError(f'{task}: composite cache requires L1 and later indexes')
+        cache_manifests, cache_indexes, inputs = {}, {}, {str(path): sha256_file(path)}
+        for level in stages:
+            source = 'L1' if level == 'L1' else 'later'
+            index_path = (path.parent / sources[source]).resolve()
+            index = json.loads(index_path.read_text())
+            if (index.get('schema_version') != 'ranked_uid_task_release_index.v1'
+                    or index.get('status') != 'complete'
+                    or index.get('task_id') != task
+                    or index.get('pool') != 'all'):
+                raise ValueError(f'{task}: incomplete composite {source} release index')
+            try:
+                entry = index['splits'][subset]['levels'][level]
+            except KeyError as exc:
+                raise ValueError(f'{task}/{subset}: missing composite {level} cache') from exc
+            cache_manifests[level] = str(
+                (index_path.parent / entry['manifest']).resolve()
+            )
+            cache_indexes[level] = str(index_path)
+            inputs[str(index_path)] = sha256_file(index_path)
+        return dict(
+            selection_contract='ranked_uid_retrieval.v1', reranking=reranking,
+            stages=stages, cache_indexes=cache_indexes,
+            cache_manifests=cache_manifests, inputs=inputs,
+        )
     if document['version'] in {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}:
         if document['version'] in {18, 19}:
             if reranking == 'joint':

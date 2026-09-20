@@ -1,0 +1,16 @@
+{
+  "content_id": "814aaacdf99293b8d09373ff734587867bb150aa14fa50b141b5b01e84e41ff1",
+  "profile": "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v1",
+  "splits": {
+    "test": {
+      "queries": 530,
+      "ranking_rows": 53000
+    },
+    "valid": {
+      "queries": 197,
+      "ranking_rows": 19700
+    }
+  },
+  "status": "complete",
+  "task_id": "bbb_martins"
+}

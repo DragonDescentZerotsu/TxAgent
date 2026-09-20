@@ -50,7 +50,7 @@ from predict.retrieval.policies import NeighborIdentityPolicy, SIMILARITY_SELECT
 from predict.retrieval.policies import normalize_molecule_identity, selector_metadata
 from predict.llm_io.evidence import minimal_evidence_from_row
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
-from data.processing.gold_labels.conditioned_benchmark import split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
 
 
 TIANANG_PROMPT_VERSION = "tianang_flat_v1"
@@ -1549,7 +1549,10 @@ def _load_flat_context_candidates(
             queries=queries,
             levels=active_levels,
             limits=args.record_limits_by_level,
-            cache_index=Path(policy["cache_index"]),
+            cache_index=Path(
+                policy.get("cache_index")
+                or next(iter(policy["cache_indexes"].values()))
+            ),
         )
     molecules, ranked_later, audit = load_candidates(
         queries,
@@ -2123,9 +2126,37 @@ def _validate_query_prior_batch(
     records: list[Mapping[str, Any]],
     indices: list[int],
 ) -> None:
-    """Bind positional legacy prior artifacts to current stable query identities."""
+    """Bind cached prior artifacts to current stable query identities."""
+    overlay_path = prior_batch / "manifest.json"
+    overlay = json.loads(overlay_path.read_text()) if overlay_path.is_file() else {}
+    overlay_sources = (
+        overlay.get("sources") or []
+        if overlay.get("schema_version") == "branch_query_prior_overlay.v1"
+        else None
+    )
+    if overlay_sources is not None:
+        if (
+            overlay.get("input_sha256") != sha256_file(Path(overlay["input_jsonl"]))
+            or len(overlay_sources) != len(records)
+        ):
+            raise ValueError(f"Cached query-prior overlay differs from its input: {prior_batch}")
     for index in indices:
-        run_dir = prior_batch / "runs" / f"{prior_batch.name}_idx{index:05d}"
+        run_dir = (
+            Path(overlay_sources[index]["run_dir"])
+            if overlay_sources is not None
+            else prior_batch / "runs" / f"{prior_batch.name}_idx{index:05d}"
+        )
+        if overlay_sources is not None:
+            source = overlay_sources[index]
+            key = (
+                str(records[index].get("molecule_identity_key") or ""),
+                str(records[index].get("condition_group") or ""),
+            )
+            if key != (source.get("molecule_identity_key"), source.get("condition_group")):
+                raise ValueError(f"Cached query-prior overlay identity differs at index {index}")
+            for name, expected in (source.get("files_sha256") or {}).items():
+                if sha256_file(run_dir / name) != expected:
+                    raise ValueError(f"Cached query-prior overlay hash mismatch: {run_dir / name}")
         retrieval_path = run_dir / "retrieval.json"
         single_path = run_dir / "single_molecule_reasoning_output.json"
         if not retrieval_path.is_file() or not single_path.is_file():
@@ -2220,6 +2251,7 @@ def _joseph_main(argv: list[str]) -> int:
         default="all",
     )
     parser.add_argument("--evaluation-subset", choices=("valid", "test"), default="valid")
+    parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
     parser.add_argument("--input-jsonl", type=Path)
     parser.add_argument("--evidence-library", type=Path)
     parser.add_argument(
@@ -2315,9 +2347,11 @@ def _joseph_main(argv: list[str]) -> int:
             parser.error("ranked_level_retrieval.v2 requires --record_pool all")
         if args.reranking == JOINT_VARIANT:
             parser.error("ranked_level_retrieval.v2 supports Morgan or assay-transfer only")
-    canonical = split_path(args.task, args.evaluation_subset).with_name(
-        f"{args.evaluation_subset}_molecule_condition_labels.jsonl"
-    ).resolve()
+    canonical = (
+        tdc_split_path(args.task, args.evaluation_subset)
+        if args.benchmark == "tdc"
+        else split_path(args.task, args.evaluation_subset)
+    ).with_name(f"{args.evaluation_subset}_molecule_condition_labels.jsonl").resolve()
     if args.input_jsonl is not None and args.input_jsonl.resolve() != canonical:
         parser.error(
             f"{args.harness_version} accepts only the official conditioned benchmark split"

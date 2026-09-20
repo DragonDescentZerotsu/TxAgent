@@ -18,6 +18,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from rdkit import DataStructs
 
+from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
 from predict.retrieval.policies import normalize_molecule_identity, standardize_smiles_and_fp
 from predict.utils.json import read_jsonl, sha256_file
 
@@ -42,6 +43,8 @@ GOLD_NAMES = {**BASE_GOLD_NAMES, "skin_reaction": "Skin_Reaction"}
 DEFAULT_OUTPUT = runtime.cache_profile_root(PROFILE)
 L1_ROOT = runtime.cache_profile_root("v10_3_best_scaffold_morgan100_v1")
 REUSE_ROOT = runtime.cache_profile_root("recent_models_three_pools_morgan100_v2_gold_v1")
+QUERY_BENCHMARK = "gold"
+LABEL_RELEASE: str | dict[str, str] = "v1"
 
 
 def _evidence_paths(task: str) -> tuple[Path, Path, Path, Path]:
@@ -252,7 +255,11 @@ def _schema(connection: sqlite3.Connection, level: str) -> None:
 
 
 def _queries(task: str, subset: str) -> tuple[Path, list[dict[str, Any]], list[tuple[str, str, str, str]]]:
-    path = REPO_ROOT / "data/gold_labels" / GOLD_NAMES[task] / "v1/scaffold" / f"{subset}_molecule_condition_labels.jsonl"
+    path = (
+        tdc_task_root(task) / f"{subset}_molecule_condition_labels.jsonl"
+        if QUERY_BENCHMARK == "tdc"
+        else REPO_ROOT / "data/gold_labels" / GOLD_NAMES[task] / "v1/scaffold" / f"{subset}_molecule_condition_labels.jsonl"
+    )
     rows = read_jsonl(path)
     output = []
     for row in rows:
@@ -521,20 +528,21 @@ def _records(evidence_manifest: Path) -> tuple[dict[str, dict[str, Any]], dict[s
 
 
 def _reuse_scores(task: str, subset: str, keys: set[str]) -> dict[str, float]:
-    path = REUSE_ROOT / task / "scaffold" / subset / "scores.sqlite3"
-    if not path.is_file():
-        return {}
     output: dict[str, float] = {}
-    with sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True) as connection:
-        values = sorted(keys)
-        for start in range(0, len(values), 900):
-            chunk = values[start:start + 900]
-            placeholders = ",".join("?" for _ in chunk)
-            for key, value in connection.execute(
-                f"SELECT cache_key,transfer_probability FROM scores WHERE cache_key IN ({placeholders}) "
-                "AND transfer_probability IS NOT NULL", chunk,
-            ):
-                output[str(key)] = float(value)
+    values = sorted(keys)
+    for reuse_subset in ("valid", "test"):
+        path = REUSE_ROOT / task / "scaffold" / reuse_subset / "scores.sqlite3"
+        if not path.is_file():
+            continue
+        with sqlite3.connect(f"file:{path.resolve()}?mode=ro", uri=True) as connection:
+            for start in range(0, len(values), 900):
+                chunk = values[start:start + 900]
+                placeholders = ",".join("?" for _ in chunk)
+                for key, value in connection.execute(
+                    f"SELECT cache_key,transfer_probability FROM scores WHERE cache_key IN ({placeholders}) "
+                    "AND transfer_probability IS NOT NULL", chunk,
+                ):
+                    output[str(key)] = float(value)
     return output
 
 
@@ -631,7 +639,9 @@ def prepare_level(
         record_counts = Counter(row[0] for row in staged_rows)
         identity = {
             "task_id": task, "subset": subset, "level": level, "pool": "all",
-            "capacity": CAPACITY, "parent_capacity": CAPACITY, "gold_release": "v1",
+            "capacity": CAPACITY, "parent_capacity": CAPACITY,
+            **({"gold_release": LABEL_RELEASE} if isinstance(LABEL_RELEASE, str)
+               else {"label_release": LABEL_RELEASE}),
             "neighbor_identity_policy": "parent_disjoint",
             "shared_candidate_universe": True,
             "query_count": len(queries), "stored_rows": len(staged_rows),
@@ -838,7 +848,8 @@ def write_index(task: str, output_root: Path, evidence_manifest: Path) -> dict[s
         "profile": PROFILE,
         "task_id": task,
         "status": "complete" if complete else "partial",
-        "gold_release": "v1",
+        **({"gold_release": LABEL_RELEASE} if isinstance(LABEL_RELEASE, str)
+           else {"label_release": LABEL_RELEASE}),
         "pool": "all",
         "parent_capacity": CAPACITY,
         "levels_independent": True,

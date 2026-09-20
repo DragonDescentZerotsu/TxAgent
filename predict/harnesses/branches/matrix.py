@@ -23,7 +23,7 @@ import time
 from typing import Any
 from urllib.request import urlopen
 
-from data.processing.gold_labels.conditioned_benchmark import split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
 from data.processing.llm_api import (
     DEFAULT_ENV_FILE,
     provider_from_base_url,
@@ -60,7 +60,7 @@ from predict.retrieval.assay_reranking.cache_matched import (
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 
-MATRIX_VERSION = "joseph_flat_matrix.v3"
+MATRIX_VERSION = "joseph_flat_matrix.v4"
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 DEFAULT_PROVIDER_CONFIG = DEFAULT_PROVIDER_POOL_CONFIG
 TASKS = ("bbb_martins", "bioavailability_ma")
@@ -340,8 +340,12 @@ def _selection_args(
     evaluation_subset: str = "valid",
     prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
     assay_transfer_cache: Path = DEFAULT_CACHE_BUNDLE,
+    benchmark: str = "gold",
 ) -> argparse.Namespace:
-    input_jsonl = split_path(task, evaluation_subset).with_name(
+    input_jsonl = (
+        tdc_split_path(task, evaluation_subset)
+        if benchmark == "tdc" else split_path(task, evaluation_subset)
+    ).with_name(
         f"{evaluation_subset}_molecule_condition_labels.jsonl"
     ).resolve()
     context_v4 = context_width is not None and not context_v5 and not context_v6
@@ -360,6 +364,7 @@ def _selection_args(
             else flat.JOSEPH_PROMPT_VERSION
         ),
         task=task,
+        benchmark=benchmark,
         reranking=reranking,
         assay_transfer_cache=assay_transfer_cache.resolve(),
         record_pool=record_pool,
@@ -556,6 +561,12 @@ def main(argv: list[str] | None = None) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--study", default="")
+    parser.add_argument("--method", default="")
+    parser.add_argument(
+        "--results-root", type=Path,
+        default=Path("outputs/paper/assay_transfer_harness/joseph"),
+    )
     parser.add_argument(
         "--parallelism", type=int, default=None,
         help="Required global outstanding-request budget for inference.",
@@ -579,6 +590,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--evaluation-subsets", nargs="+", choices=("valid", "test")
     )
+    parser.add_argument("--benchmark", choices=("gold", "tdc"), default="gold")
     parser.add_argument(
         "--prior-root", type=Path, default=flat.DEFAULT_QUERY_PRIOR_ROOT
     )
@@ -658,6 +670,8 @@ def main(argv: list[str] | None = None) -> int:
     if (len(args.l1_min_contrasts) != len(set(args.l1_min_contrasts))
             or min(args.l1_min_contrasts) < 0):
         parser.error("--l1-min-contrasts must be unique and non-negative")
+    if (args.context_v5_l1 or args.context_v5_all_level) and len(args.l1_min_contrasts) != 1:
+        parser.error("a single full-flat-v5 run requires exactly one --l1-min-contrasts value")
     conditions = [tuple(value.split(":", 1)) for value in args.conditions]
     args.provider_pool_config = args.provider_pool_config.resolve()
     args.trace_root = args.trace_root.resolve()
@@ -694,6 +708,9 @@ def main(argv: list[str] | None = None) -> int:
             provider_config = selection.config
 
     root = args.output_root.resolve()
+    args.results_root = args.results_root.resolve()
+    if bool(args.study) != bool(args.method):
+        parser.error("--study and --method must be supplied together")
     root.mkdir(parents=True, exist_ok=True)
     with (root / "launcher.lock").open("a", encoding="utf-8") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -741,9 +758,9 @@ def main(argv: list[str] | None = None) -> int:
                 for contrast in args.l1_min_contrasts
             ]
             if args.context_v4_grid else
-            [("assay-transfer-contrastive", "all", 25, 1, False)]
+            [("assay-transfer-contrastive", "all", 25, args.l1_min_contrasts[0], False)]
             if args.context_v5_l1 else
-            [("assay-transfer-contrastive", "all", 25, 0, True)]
+            [("assay-transfer-contrastive", "all", 25, args.l1_min_contrasts[0], True)]
             if args.context_v5_all_level else
             [(reranking, record_pool, None, 0, False) for reranking, record_pool in conditions]
         )
@@ -817,6 +834,7 @@ def main(argv: list[str] | None = None) -> int:
                 evaluation_subset=subset,
                 prior_root=prior_roots[subset],
                 assay_transfer_cache=args.assay_transfer_cache,
+                benchmark=args.benchmark,
                 batch_id=(
                     f"{task}__{item['profile']}" if item["profile"] else None
                 ),
@@ -934,6 +952,7 @@ def main(argv: list[str] | None = None) -> int:
             "version": MATRIX_VERSION,
             "status": "prepared" if args.prepare_only else "running",
             "tasks": list(TASKS),
+            "benchmark": args.benchmark,
             "evaluation_subsets": list(evaluation_subsets),
             "harness_version": (
                 args.preselected_harness_version if args.preselected_grid_manifest
@@ -974,9 +993,10 @@ def main(argv: list[str] | None = None) -> int:
                 else [25] if args.context_v5_all_level or args.preselected_grid_manifest else []
             ),
             "l1_min_contrasts": (
-                [1] if args.context_v5_l1 else args.l1_min_contrasts
+                list(args.l1_min_contrasts) if args.context_v5_l1 else args.l1_min_contrasts
                 if args.context_v4_grid or args.context_v5_grid
-                else [0] if args.context_v5_all_level or args.preselected_grid_manifest else []
+                else list(args.l1_min_contrasts) if args.context_v5_all_level
+                else [0] if args.preselected_grid_manifest else []
             ),
             "l1_molecules": 10,
             "l1_records_per_molecule": 10,
@@ -1036,6 +1056,24 @@ def main(argv: list[str] | None = None) -> int:
             },
         }
         write_json_atomic(root / "matrix.json", manifest)
+        if args.study:
+            write_json_atomic(root / "run.json", {
+                "schema_version": "organized_study_run.v1",
+                "study": args.study, "method": args.method,
+                "run_id": root.name, "batch_id": root.name,
+                "status": manifest["status"], "metric_status": "pending",
+                "prompt_version": manifest["prompt_version"],
+                "harness_version": manifest["harness_version"],
+                "reranking": "assay-transfer-contrastive",
+                "query_prior": "with_query_prior", "l1_molecules": 10,
+                "l1_min_contrast": args.l1_min_contrasts[0],
+                "morgan_primary_parent_width": 25,
+                "tasks": list(TASKS), "evaluation_subset": list(evaluation_subsets),
+                "matrix_json": str(root / "matrix.json"),
+                "matrix_json_sha256": sha256_file(root / "matrix.json"),
+            })
+            from predict.harnesses.progressive.matrix import _refresh_results_catalog
+            _refresh_results_catalog(args.results_root)
         if args.prepare_only:
             return 0
 
@@ -1083,6 +1121,14 @@ def main(argv: list[str] | None = None) -> int:
         write_json_atomic(root / "completion.json", completion)
         manifest["status"] = completion["status"]
         write_json_atomic(root / "matrix.json", manifest)
+        if args.study:
+            run_path = root / "run.json"
+            run = json.loads(run_path.read_text())
+            run["status"] = completion["status"]
+            run["matrix_json_sha256"] = sha256_file(root / "matrix.json")
+            write_json_atomic(run_path, run)
+            from predict.harnesses.progressive.matrix import _refresh_results_catalog
+            _refresh_results_catalog(args.results_root)
         from predict.live import update_run
 
         for run_dir in live_runs.values():

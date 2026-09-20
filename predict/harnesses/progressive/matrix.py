@@ -334,7 +334,7 @@ def _refresh_results_catalog(root):
         for path in sorted(root.glob("*/*/*/*/run.json")):
             document = json.loads(path.read_text())
             if not str(document.get("schema_version", "")).startswith(
-                "progressive_study_run.v"
+                ("progressive_study_run.v", "organized_study_run.v")
             ):
                 continue
             run_path = path.parent.relative_to(root).as_posix()

@@ -257,6 +257,21 @@ def _payload(row: Mapping[str, Any], ranked: Mapping[str, Any], method: str) -> 
     if not math.isfinite(similarity) or not 0 <= similarity <= 1:
         raise ValueError("Invalid cached Morgan similarity")
     payload = json.loads(str(row["payload"]))
+    if payload.get("label_source") == "tdc_v1":
+        source_fields = dict(payload.get("source_fields") or {})
+        payload.setdefault("family_key", "tdc_training_labels")
+        payload.setdefault("source_id", "tdc_v1")
+        payload.setdefault("record_id", str(row["external_record_id"]))
+        payload.setdefault("source_row_uid", str(row["source_row_uid"]))
+        payload.setdefault("measurement_kind", "categorical_label")
+        payload.setdefault(
+            "source_contract",
+            {
+                "source_or_simply_cleaned": {
+                    name: True for name in source_fields
+                }
+            },
+        )
     parent_smiles = str(ranked["parent_smiles"])
     payload.setdefault("source_canonical_smiles", payload.get("canonical_smiles"))
     payload.setdefault("evidence_parent_smiles", payload.get("canonical_smiles"))
@@ -359,7 +374,9 @@ def _select_assay_contrastive(
     }
 
 
-def _hydrate(path: Path, uids: set[str]) -> dict[str, dict[str, Any]]:
+def _hydrate(
+    path: Path, uids: set[str], *, require_complete: bool = True
+) -> dict[str, dict[str, Any]]:
     if not uids:
         return {}
     table = pq.read_table(
@@ -368,7 +385,7 @@ def _hydrate(path: Path, uids: set[str]) -> dict[str, dict[str, Any]]:
     )
     rows = {str(row["source_row_uid"]): row for row in table.to_pylist()}
     missing = sorted(uids - set(rows))
-    if missing:
+    if require_complete and missing:
         raise ValueError(f"Selected evidence UIDs are absent: {missing[:5]}")
     return rows
 
@@ -454,33 +471,51 @@ def load_candidates(
             raise ValueError("Independent level caches disagree on query identity")
         ranked[level], identities, documents[level] = rows, current, document
 
-    index_path = Path(policy["cache_index"]).resolve()
-    index = json.loads(index_path.read_text(encoding="utf-8"))
-    if (
-        index.get("schema_version") != "ranked_uid_task_release_index.v1"
-        or index.get("status") != "complete"
-        or index.get("task_id") != task
-    ):
-        raise ValueError("Incompatible ranked UID task release index")
-    indexed_levels = index["splits"][subset]["levels"]
+    index_paths = {
+        level: Path(path).resolve()
+        for level, path in (
+            policy.get("cache_indexes")
+            or {level: policy["cache_index"] for level in stages}
+        ).items()
+    }
+    if set(index_paths) != set(stages):
+        raise ValueError("Cache indexes do not cover the requested levels exactly")
+    indexes = {
+        path: json.loads(path.read_text(encoding="utf-8"))
+        for path in set(index_paths.values())
+    }
+    for path, index in indexes.items():
+        if (
+            index.get("schema_version") != "ranked_uid_task_release_index.v1"
+            or index.get("status") != "complete"
+            or index.get("task_id") != task
+        ):
+            raise ValueError(f"Incompatible ranked UID task release index: {path}")
     for level, document in documents.items():
-        entry = indexed_levels[level]
+        entry = indexes[index_paths[level]]["splits"][subset]["levels"][level]
         if (
             sha256_file(manifests[level]) != entry["manifest_sha256"]
             or document["content_id"] != entry["content_id"]
         ):
             raise ValueError(f"{level} cache differs from the task release index")
-    evidence_manifest_path = (index_path.parent / index["evidence"]["manifest"]).resolve()
-    evidence_manifest = json.loads(evidence_manifest_path.read_text(encoding="utf-8"))
-    if (
-        evidence_manifest.get("schema_version") != "ranked_evidence_projection.v1"
-        or evidence_manifest.get("status") != "complete"
-        or evidence_manifest.get("task_id") != task
-        or evidence_manifest.get("content_id") != index["evidence"]["content_id"]
-        or sha256_file(evidence_manifest_path) != index["evidence"]["manifest_sha256"]
-    ):
-        raise ValueError("Evidence projection differs from the task release index")
-    evidence_path = evidence_manifest_path.with_name(str(evidence_manifest["records"]))
+    evidence_entries: dict[Path, Mapping[str, Any]] = {}
+    for index_path, index in indexes.items():
+        entries = index.get("evidence_sources") or [index["evidence"]]
+        for entry in entries:
+            manifest_path = (index_path.parent / entry["manifest"]).resolve()
+            evidence_entries[manifest_path] = entry
+    evidence_manifests = {}
+    for manifest_path, entry in evidence_entries.items():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if (
+            manifest.get("schema_version") != "ranked_evidence_projection.v1"
+            or manifest.get("status") != "complete"
+            or manifest.get("task_id") != task
+            or manifest.get("content_id") != entry["content_id"]
+            or sha256_file(manifest_path) != entry["manifest_sha256"]
+        ):
+            raise ValueError("Evidence projection differs from its task release index")
+        evidence_manifests[manifest_path] = manifest
     l1_manifest_path = manifests["L1"]
     l1_document = documents["L1"]
     l1_database = l1_manifest_path.with_name(str(l1_document["database"]))
@@ -532,7 +567,20 @@ def load_candidates(
     for level in stages:
         if level != "L1":
             all_uids.update(str(row["item_id"]) for rows in ranked[level].values() for row in rows)
-    evidence = _hydrate(evidence_path, all_uids)
+    evidence: dict[str, dict[str, Any]] = {}
+    for manifest_path, manifest in evidence_manifests.items():
+        rows = _hydrate(
+            manifest_path.with_name(str(manifest["records"])),
+            all_uids,
+            require_complete=False,
+        )
+        duplicates = set(evidence) & set(rows)
+        if duplicates:
+            raise ValueError(f"Selected evidence UIDs resolve from multiple sources: {sorted(duplicates)[:5]}")
+        evidence.update(rows)
+    missing_uids = all_uids - set(evidence)
+    if missing_uids:
+        raise ValueError(f"Selected evidence UIDs are absent: {sorted(missing_uids)[:5]}")
 
     molecules_by_query: dict[str, list[dict[str, Any]]] = {}
     later_by_query: dict[str, dict[str, Any]] = {}
@@ -656,11 +704,16 @@ def load_candidates(
         "pool": "all",
         "cache_pool": "all",
         "parent_capacity": CAPACITY,
-        "cache_index": str(index_path),
+        "cache_index": str(index_paths["L1"]),
+        "cache_indexes": {level: str(path) for level, path in index_paths.items()},
         "cache_capacities": capacities,
         "cache_content_ids": content_ids,
-        "evidence_manifest": str(evidence_manifest_path),
-        "neighbor_identity_policy_by_level": index["neighbor_identity_policy_by_level"],
+        "evidence_manifest": str(next(iter(evidence_manifests))),
+        "evidence_manifests": [str(path) for path in evidence_manifests],
+        "neighbor_identity_policy_by_level": {
+            level: indexes[index_paths[level]]["neighbor_identity_policy_by_level"][level]
+            for level in stages
+        },
         "neighbor_identity_policy": "level_specific_disjoint",
         "similarity_floor": None,
         "scaffold_overlap": 0,
