@@ -1,0 +1,20 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "1b603ffb8f98c44e5fb3dd519831970040281135fc2ceac2ecb779e1294d091b",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "queries": 402,
+      "stored_rows": 40200
+    },
+    "valid": {
+      "queries": 402,
+      "stored_rows": 40200
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

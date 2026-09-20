@@ -1,0 +1,20 @@
+{
+  "content_id": "f99f63e125b325b5afda6107d384d5955564677cbca1592610f05b37df4d24cb",
+  "inputs": {
+    "stage1_sha256": "4de6896ffba9f4781288f33615f1fe49e501c4436ea5ef9de95aa530824e682c",
+    "voter_contract_manifest_sha256": "c6fff3b27ddebe39b39b6afb53878e78fe2d04ff9d489ccd4b9f5e5307d98784",
+    "voter_membership_sha256": "7eafd66a43f0ecc5178b8d839acc5c3f8a34eaf67328c00f25e33d5d37a74726"
+  },
+  "record_count": 76942,
+  "records": "records.parquet",
+  "records_sha256": "0ff9a8f5d5e62a486f54aec426180a7b830f1312af55ab49d131e4526f0f83d5",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "gold_v1_source_row_uid",
+  "source_paths": {
+    "stage1": "data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
+    "voter_contract_manifest": "data/gold_labels/DILI/v1/scaffold/voter_contract_manifest.json",
+    "voter_membership": "data/gold_labels/DILI/v1/scaffold/voter_membership.parquet"
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

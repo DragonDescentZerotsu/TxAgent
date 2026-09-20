@@ -1,0 +1,20 @@
+{
+  "content_id": "326c15a2cd2874b4a9f4af782d66dbf8c2a797c6db2d4522ccb334aafa7da020",
+  "inputs": {
+    "stage1_sha256": "5ca306f84ad78057bb68eb8203617c910526017fe6908ac4cef0689788b5d71d",
+    "voter_contract_manifest_sha256": "193229647cbfe5d3d325765f7a7815e55e74b295f6f650b309c0a285a7887937",
+    "voter_membership_sha256": "4d6248e7041db0426d1884a14efa5d54175df66c65f4dab96174a29fdfb69e73"
+  },
+  "record_count": 2222,
+  "records": "records.parquet",
+  "records_sha256": "29241c8f7c5eca29b428285e8ecfb901c9ce7c7299c3428e909cfb23e2905e24",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "gold_v1_source_row_uid",
+  "source_paths": {
+    "stage1": "data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
+    "voter_contract_manifest": "data/gold_labels/Ames/v1/scaffold/voter_contract_manifest.json",
+    "voter_membership": "data/gold_labels/Ames/v1/scaffold/voter_membership.parquet"
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

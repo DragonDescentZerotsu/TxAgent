@@ -45,6 +45,7 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "ranked_level_retrieval_v2",
         "ranked_level_retrieval_v3",
         "ranked_level_retrieval_tdc_v1",
+        "ranked_level_retrieval_gold_v1_addon_v1",
         "tdc_mixed_l1_v1",
         "v10_4_direct_gold_morgan100_v1",
     }
@@ -56,6 +57,7 @@ def cache_profile_root(profile: str) -> Path:
     if profile in {
         "ranked_level_retrieval_v3",
         "ranked_level_retrieval_tdc_v1",
+        "ranked_level_retrieval_gold_v1_addon_v1",
         "tdc_mixed_l1_v1",
     }:
         return DATA_ACTIVE_CACHE_ROOT / profile

@@ -1,0 +1,20 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "c75e15ce01cee497476aaeb80e7519190271202a7d89ab3915c7bda96eea225d",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "queries": 274,
+      "stored_rows": 27400
+    },
+    "valid": {
+      "queries": 274,
+      "stored_rows": 27400
+    }
+  },
+  "status": "complete",
+  "task_id": "ames"
+}

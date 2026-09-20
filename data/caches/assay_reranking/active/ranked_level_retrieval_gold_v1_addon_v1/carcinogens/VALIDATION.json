@@ -1,0 +1,20 @@
+{
+  "assay_transfer_status": "not_computed",
+  "content_id": "203280e38c6df7881438ef851c5de94dfd31f73cfbedd20bb77cb8d080a24333",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_release_validation.v1",
+  "splits": {
+    "test": {
+      "queries": 469,
+      "stored_rows": 46900
+    },
+    "valid": {
+      "queries": 469,
+      "stored_rows": 46900
+    }
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

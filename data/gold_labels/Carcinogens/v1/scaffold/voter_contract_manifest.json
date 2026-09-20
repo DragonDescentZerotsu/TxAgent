@@ -1,0 +1,67 @@
+{
+  "counts": {
+    "gold_label_cards": 4692,
+    "physical_members": 87563,
+    "vote_units": 87563
+  },
+  "inputs": {
+    "detail_files": {
+      "test": {
+        "path": "data/gold_labels/Carcinogens/v1/scaffold/test_molecule_condition_labels.jsonl",
+        "sha256": "e557dc579ff6a3f3e02527eaf32190825b1b515b95a29d2941de83311db4f3eb"
+      },
+      "train": {
+        "path": "git:8972834103833c18a8d269a92f898bad07f7e5ab:data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold/train_molecule_condition_labels.jsonl",
+        "sha256": "7d053870ead1a05f1c2e4163b275ab8b7fbcc0aa052b31b7f16df67f6ad3ced3"
+      },
+      "valid": {
+        "path": "data/gold_labels/Carcinogens/v1/scaffold/valid_molecule_condition_labels.jsonl",
+        "sha256": "1999f4ccd227998a5d9e2b37ec215411564ed82fa2f28ac196ee3adc3e9ae42e"
+      }
+    },
+    "gold_split_files": {
+      "test": {
+        "path": "data/gold_labels/Carcinogens/v1/scaffold/test.jsonl",
+        "sha256": "b2ec17336315d3deb6c5a210cdff383be9151ee2434406c3a7eff5d633656520"
+      },
+      "train": {
+        "path": "data/gold_labels/Carcinogens/v1/scaffold/train.jsonl",
+        "sha256": "4fb1e3a9aa8edada3b250ada7d8c636440cbcc57c8f22051230c93f15a87ba6f"
+      },
+      "valid": {
+        "path": "data/gold_labels/Carcinogens/v1/scaffold/valid.jsonl",
+        "sha256": "57a4f36ebebf4e5be8076d431b7293c812ccc0e59a00fdf4ec559144c0e3682a"
+      }
+    },
+    "replay_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+    "stage1": {
+      "path": "data/evidence_libraries/carcinogens/v10_main_universe_v1/01_cleaned/records.parquet",
+      "sha256": "ee672ca2537845a1a598a87531f986cd7b61707b6882ec8731f59bab02d6c4ca"
+    },
+    "stage1_omission_raw_fallbacks": []
+  },
+  "outputs": {
+    "gold_label_record_index": {
+      "path": "data/gold_labels/Carcinogens/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "ffd2a4b5e422bf63b4155067c61e46518327f975871a4637a4f616c7e76d9a51"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/Carcinogens/v1/scaffold/vote_units.parquet",
+      "sha256": "164ca3df94995c590e19957fa2b143df2b4813d89cfc3e0ecafe40ec13c59d22"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/Carcinogens/v1/scaffold/voter_membership.parquet",
+      "sha256": "2a955146631d05e80abee09de75dc3f3fec1d433a81fcd8231c72c1f1ee78538"
+    }
+  },
+  "policy": {
+    "aggregation": "each vote_id contributes exactly once",
+    "gold_release": "v1",
+    "l1_visibility": "all physical members of published-card vote units",
+    "physical_member_weight": "1 / physical_member_count",
+    "structure_identity": "pinned V10 Stage 1 source_row_uid, with exact pinned raw-source fallback for recorded Stage-1 omissions"
+  },
+  "status": "complete",
+  "task": "carcinogens",
+  "version": "gold_v1_voter_contract.v1"
+}

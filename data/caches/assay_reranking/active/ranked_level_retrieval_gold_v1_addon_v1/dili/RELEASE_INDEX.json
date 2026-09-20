@@ -1,0 +1,49 @@
+{
+  "assay_transfer_status": "not_computed",
+  "evidence": {
+    "content_id": "f99f63e125b325b5afda6107d384d5955564677cbca1592610f05b37df4d24cb",
+    "manifest": "evidence/VERSION.json",
+    "manifest_sha256": "97a2ee737e58c328cdde46dff5c254a9d464df7c2995d5fabdd4c85e8e47fc20",
+    "record_count": 76942
+  },
+  "gold_release": "v1",
+  "levels_independent": true,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy_by_level": {
+    "L1": "scaffold_disjoint"
+  },
+  "parent_capacity": 100,
+  "pool": "all",
+  "profile": "ranked_level_retrieval_gold_v1_addon_v1",
+  "ranking_modes": [
+    "morgan"
+  ],
+  "schema_version": "ranked_uid_task_release_index.v1",
+  "selection_contract": "ranked_uid_retrieval.v1",
+  "splits": {
+    "test": {
+      "levels": {
+        "L1": {
+          "content_id": "b9f2675261d78d013ca98dbce9b12fd8c45626d791546423d336e0259cbf7f4f",
+          "manifest": "scaffold/test/L1/VERSION.json",
+          "manifest_sha256": "eab2ec9c1350a49eb0e287343bb732688ff306c8ab198a8518406d31a725c856"
+        }
+      }
+    },
+    "valid": {
+      "levels": {
+        "L1": {
+          "content_id": "64072c0e7c5fae1bb4418c0f67d77736a820a62c460cb1f76b41865f99493036",
+          "manifest": "scaffold/valid/L1/VERSION.json",
+          "manifest_sha256": "6d550bc408a10bcaa594b8a3d6eb292af8f6952522a79b8ee9bcd12a9b9fd27a"
+        }
+      }
+    }
+  },
+  "status": "complete",
+  "task_id": "dili"
+}

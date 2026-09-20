@@ -1,0 +1,153 @@
+{
+  "counts": {
+    "gold_label_cards": 2474,
+    "physical_members": 3131,
+    "vote_units": 3131
+  },
+  "inputs": {
+    "ames_uid_membership": {
+      "active_level_mapping_manifest_sha256": "a45f9a0d5a2836554c8587c5cf0b1d87fc050a010bcf5ccc6ce4aacd42d569ac",
+      "source_membership_parts": [
+        {
+          "name": "part-00000.parquet",
+          "sha256": "9f865abde793782b64ad479c5bce364fb1063598a51ab6755e962d0f11f65c65"
+        },
+        {
+          "name": "part-00001.parquet",
+          "sha256": "a531597d75af275b39aea3ebf4038b918cd33a63ad8cce484aa973788a848c94"
+        },
+        {
+          "name": "part-00002.parquet",
+          "sha256": "049e9c6697fcc77303a9088c0e0aefacceceba260e56f36e3564a7311a2f4189"
+        },
+        {
+          "name": "part-00003.parquet",
+          "sha256": "0e402c2ef7eb18ae0163991d3a7ef6b0b55a943f6c0531e6007787fa0cfc671a"
+        },
+        {
+          "name": "part-00004.parquet",
+          "sha256": "052a8ee7f20b2f2d33a0e264ee93e6d59e42d59e7714e1e2ba19f2e4fbb07d92"
+        },
+        {
+          "name": "part-00005.parquet",
+          "sha256": "4b3679eeaa55af4b9a3173a09138c00289d74313b25de5963738ce33ec785d20"
+        },
+        {
+          "name": "part-00006.parquet",
+          "sha256": "1d10b7ac7e68143ac4832cc2747e8d38e2be4528268dae18b855b610e172aea4"
+        },
+        {
+          "name": "part-00007.parquet",
+          "sha256": "458ef0b02f11f3a9957536e7c59f7017f3c3d7d46e1bc0921858419b7124fa9d"
+        },
+        {
+          "name": "part-00008.parquet",
+          "sha256": "d2555b7f5824370c6407d8831b458975da78448ecb703f45d235c89d3957992c"
+        },
+        {
+          "name": "part-00009.parquet",
+          "sha256": "6befd635f7b2eff6b66dca0470ccc9814bf97143bc82b352fc93b67fc2812bd0"
+        },
+        {
+          "name": "part-00010.parquet",
+          "sha256": "a75c6f7911e2cd72b9deb2f4961d6e661e6064abad75b484efeac63921cbd996"
+        },
+        {
+          "name": "part-00011.parquet",
+          "sha256": "e0a6eaf850bccc89136b816f6e1440022e0504f25e4b0d9cb801fcae30f8970f"
+        },
+        {
+          "name": "part-00012.parquet",
+          "sha256": "cf7a69dd1ee1f7ad06148aff6543f1f5649b20e1e2a9de4c4812a2462ce90fd9"
+        },
+        {
+          "name": "part-00013.parquet",
+          "sha256": "2122ea1c1281ba187181b6b6ee862c532b7c709921e53ba76331be228e6a3b10"
+        },
+        {
+          "name": "part-00014.parquet",
+          "sha256": "2c1b064f88693d417ee9ca261ca0f0ad6cef02cf38272bfc6f3b09337b12a129"
+        },
+        {
+          "name": "part-00015.parquet",
+          "sha256": "bf7332113f5ccd7633654035c607561ea9335fbeaed6b8c2bb6e5e3965f64be1"
+        },
+        {
+          "name": "part-00016.parquet",
+          "sha256": "f1495f36e6d3d6b4959b34c4497ed6e4359c3012c4d3440b254a411f87f4f0a7"
+        },
+        {
+          "name": "part-00017.parquet",
+          "sha256": "f9c095225a337898f42cc89fdb476694eb2778070ac2d8dbce19c0bd019cea76"
+        },
+        {
+          "name": "part-00018.parquet",
+          "sha256": "25306bdb712ef183f73db4d79bbd0337e3d6efbae71bb98d32abce006a7aac57"
+        },
+        {
+          "name": "part-00019.parquet",
+          "sha256": "9bd9e82403de04224427b60171b754615147b3acf80a34ef7bd7f1e4f2ab3d6d"
+        }
+      ],
+      "upstream_commit": "26d44f121141f3738764c0b00dc09e185445341b"
+    },
+    "detail_files": {
+      "test": {
+        "path": "data/gold_labels/Ames/v1/scaffold/test_molecule_condition_labels.jsonl",
+        "sha256": "1f74a0d12d4200f33254f4494b8fe280e4e4ce08b61e7a941adc3c9b240d66dd"
+      },
+      "train": {
+        "path": "data/gold_labels/Ames/v1/scaffold/train_molecule_condition_labels.jsonl",
+        "sha256": "30cda3cb9b451a7c3116e56518166abdafc48b5b9c3c1931e6e82c5a8c51f73a"
+      },
+      "valid": {
+        "path": "data/gold_labels/Ames/v1/scaffold/valid_molecule_condition_labels.jsonl",
+        "sha256": "cb33b6a6e28b847ffb84654aa2b80cd3d3b3755ca50647ad03c5caeffb050767"
+      }
+    },
+    "gold_split_files": {
+      "test": {
+        "path": "data/gold_labels/Ames/v1/scaffold/test.jsonl",
+        "sha256": "c22ab6808c4c89ba8015987f2e5c0a5b93409f2f155bde123606cb01e86a9d0e"
+      },
+      "train": {
+        "path": "data/gold_labels/Ames/v1/scaffold/train.jsonl",
+        "sha256": "faa0a5f8935e2fbe91099b81ff1d80d65e021617497df822613b5388cf3db493"
+      },
+      "valid": {
+        "path": "data/gold_labels/Ames/v1/scaffold/valid.jsonl",
+        "sha256": "10985b3ccd3d337024a98cefa8a32ea2fa6ed2b4208d1f1e08afae471d78fc29"
+      }
+    },
+    "replay_commit": null,
+    "stage1": {
+      "path": "data/evidence_libraries/ames/v10/01_cleaned/records.parquet",
+      "sha256": "5ca306f84ad78057bb68eb8203617c910526017fe6908ac4cef0689788b5d71d"
+    },
+    "stage1_omission_raw_fallbacks": []
+  },
+  "outputs": {
+    "gold_label_record_index": {
+      "path": "data/gold_labels/Ames/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "cedbb0cb4d3bc3c90227f51e56ee446459f1c58e4322d13b663de0bf5ff7c49e"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/Ames/v1/scaffold/vote_units.parquet",
+      "sha256": "07fcefc18f789260ce9a2edf76bb4bc23b0344458208b50d7e7429078bd4ce7b"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/Ames/v1/scaffold/voter_membership.parquet",
+      "sha256": "4d6248e7041db0426d1884a14efa5d54175df66c65f4dab96174a29fdfb69e73"
+    }
+  },
+  "policy": {
+    "aggregation": "each vote_id contributes exactly once",
+    "gold_release": "v1",
+    "l1_visibility": "all physical members of published-card vote units",
+    "physical_member_weight": "1 / physical_member_count",
+    "structure_identity": "pinned V10 Stage 1 source_row_uid, with exact pinned raw-source fallback for recorded Stage-1 omissions"
+  },
+  "status": "complete",
+  "task": "ames",
+  "version": "gold_v1_voter_contract.v1"
+}

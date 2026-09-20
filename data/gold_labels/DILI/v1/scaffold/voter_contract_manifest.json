@@ -1,0 +1,75 @@
+{
+  "counts": {
+    "gold_label_cards": 4024,
+    "physical_members": 100523,
+    "vote_units": 100523
+  },
+  "inputs": {
+    "detail_files": {
+      "test": {
+        "path": "data/gold_labels/DILI/v1/scaffold/test_molecule_condition_labels.jsonl",
+        "sha256": "a4842c611ad8d3237dcd7c6f6e2b52c17c51961655b6d33c9ac2301930d9cf67"
+      },
+      "train": {
+        "path": "git:8972834103833c18a8d269a92f898bad07f7e5ab:data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold/train_molecule_condition_labels.jsonl",
+        "sha256": "b8f93676ecb93e0153891ee91e7e06222e5760346a14420a75cac1df5a7faa60"
+      },
+      "valid": {
+        "path": "data/gold_labels/DILI/v1/scaffold/valid_molecule_condition_labels.jsonl",
+        "sha256": "bf292c6b533b55b4a1e437a4e1c4c56f7bce4ea6e9dd5fb9f003bb5ea15acedf"
+      }
+    },
+    "gold_split_files": {
+      "test": {
+        "path": "data/gold_labels/DILI/v1/scaffold/test.jsonl",
+        "sha256": "e548bcefa7c10c9ee90ae546d0631d2cb47aa7fc227892455563c503b26b5f19"
+      },
+      "train": {
+        "path": "data/gold_labels/DILI/v1/scaffold/train.jsonl",
+        "sha256": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076"
+      },
+      "valid": {
+        "path": "data/gold_labels/DILI/v1/scaffold/valid.jsonl",
+        "sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a"
+      }
+    },
+    "replay_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+    "stage1": {
+      "path": "data/evidence_libraries/dili/v10/01_cleaned/records.parquet",
+      "sha256": "4de6896ffba9f4781288f33615f1fe49e501c4436ea5ef9de95aa530824e682c"
+    },
+    "stage1_omission_raw_fallbacks": [
+      {
+        "path": "git:8972834103833c18a8d269a92f898bad07f7e5ab:data/starling_data/dili/raw_v1/compressed/dili_base.parquet",
+        "sha256": "4c4f871240e77510e59116a2cbf1c7e2ec2c35021b6a1b6f91c6d24a20d22573",
+        "source_row_uids": [
+          "sr_3e62e0aa73804ed7a2f5c0f9acf399c3"
+        ]
+      }
+    ]
+  },
+  "outputs": {
+    "gold_label_record_index": {
+      "path": "data/gold_labels/DILI/v1/scaffold/gold_label_record_index.parquet",
+      "sha256": "35d25c5b159fe7835b69bff2c8047783d985c7c15202d98146eb2b4811b022d9"
+    },
+    "vote_units": {
+      "path": "data/gold_labels/DILI/v1/scaffold/vote_units.parquet",
+      "sha256": "fdd0de3b7690c7d3d793c12c9cf343b6a922aadb2ca41fa044dc736e497478bb"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/DILI/v1/scaffold/voter_membership.parquet",
+      "sha256": "7eafd66a43f0ecc5178b8d839acc5c3f8a34eaf67328c00f25e33d5d37a74726"
+    }
+  },
+  "policy": {
+    "aggregation": "each vote_id contributes exactly once",
+    "gold_release": "v1",
+    "l1_visibility": "all physical members of published-card vote units",
+    "physical_member_weight": "1 / physical_member_count",
+    "structure_identity": "pinned V10 Stage 1 source_row_uid, with exact pinned raw-source fallback for recorded Stage-1 omissions"
+  },
+  "status": "complete",
+  "task": "dili",
+  "version": "gold_v1_voter_contract.v1"
+}

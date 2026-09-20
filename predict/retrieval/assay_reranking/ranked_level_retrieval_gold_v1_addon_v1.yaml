@@ -1,0 +1,5 @@
+version: 19
+caches:
+  ames: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v1/ames/RELEASE_INDEX.json
+  dili: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v1/dili/RELEASE_INDEX.json
+  carcinogens: ../../../data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v1/carcinogens/RELEASE_INDEX.json

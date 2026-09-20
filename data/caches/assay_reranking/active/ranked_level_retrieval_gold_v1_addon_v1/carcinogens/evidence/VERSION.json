@@ -1,0 +1,20 @@
+{
+  "content_id": "25ee598b10c08efeca793fe5498a6046061dbeb2b001462988798b2afae92a89",
+  "inputs": {
+    "stage1_sha256": "ee672ca2537845a1a598a87531f986cd7b61707b6882ec8731f59bab02d6c4ca",
+    "voter_contract_manifest_sha256": "bcae97dace6dd4eb43530534bf14fccb3b1ca5a1303e7caa8535a78d921119a2",
+    "voter_membership_sha256": "2a955146631d05e80abee09de75dc3f3fec1d433a81fcd8231c72c1f1ee78538"
+  },
+  "record_count": 67966,
+  "records": "records.parquet",
+  "records_sha256": "ecb7150190379ec3f5dbb398cdb01565534eb327eedbb60c87ae3a8a40b52502",
+  "schema_version": "ranked_evidence_projection.v1",
+  "source_identity": "gold_v1_source_row_uid",
+  "source_paths": {
+    "stage1": "data/evidence_libraries/carcinogens/v10_main_universe_v1/01_cleaned/records.parquet",
+    "voter_contract_manifest": "data/gold_labels/Carcinogens/v1/scaffold/voter_contract_manifest.json",
+    "voter_membership": "data/gold_labels/Carcinogens/v1/scaffold/voter_membership.parquet"
+  },
+  "status": "complete",
+  "task_id": "carcinogens"
+}

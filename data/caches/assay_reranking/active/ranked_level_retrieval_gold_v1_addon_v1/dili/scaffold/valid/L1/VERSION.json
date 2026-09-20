@@ -1,0 +1,2044 @@
+{
+  "assay_transfer_status": "not_computed",
+  "capacity": 100,
+  "content_id": "64072c0e7c5fae1bb4418c0f67d77736a820a62c460cb1f76b41865f99493036",
+  "database": "rankings.sqlite3",
+  "database_sha256": "4b4c6a6279708b547930d2c2cd33d227db22608589083e1088132c7a32e35ffc",
+  "gold_release": "v1",
+  "inputs": {
+    "evidence_manifest_sha256": "97a2ee737e58c328cdde46dff5c254a9d464df7c2995d5fabdd4c85e8e47fc20",
+    "query_sha256": "7b40decd8e312e73b8a269070ff4620fef4ab5ec350337a2e64a4587799ad96a",
+    "train_sha256": "3231f2421f066030d583380fe39c4aed8756cfb30191ba0a605e1aa63ff2b076",
+    "voter_membership_sha256": "7eafd66a43f0ecc5178b8d839acc5c3f8a34eaf67328c00f25e33d5d37a74726"
+  },
+  "level": "L1",
+  "model": null,
+  "morgan_fingerprint": {
+    "bits": 2048,
+    "radius": 2,
+    "similarity": "Tanimoto"
+  },
+  "neighbor_identity_policy": "scaffold_disjoint",
+  "parent_capacity": 100,
+  "pool": "fixed",
+  "query_count": 402,
+  "query_counts": {
+    "DILI_00144AE8F5E404C27B22": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_005264B30E5315BFBC7C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 411
+    },
+    "DILI_00F1DC89E7B2996FDEB1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 518
+    },
+    "DILI_039112732D9662650C1C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_03CF1840B52196F200C9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_0441F04136A5C6705B5B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 518
+    },
+    "DILI_05C03C28BC7E125E1FF9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 264
+    },
+    "DILI_05C1330323B96CBF7FA8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 399
+    },
+    "DILI_0652520F3C7D7D3B868E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 400
+    },
+    "DILI_06764B2FC0C40A6165F7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 778
+    },
+    "DILI_0695577BB8B366784DD0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 776
+    },
+    "DILI_06D3BDAED9F6FE3B5DD1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 299
+    },
+    "DILI_088D10B62BF631654A5E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 522
+    },
+    "DILI_08ADA45DA89FFCF8234F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_096791381EE21DCEB2AE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 593
+    },
+    "DILI_09ACFFC00B8E888E1E68": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 472
+    },
+    "DILI_09FEBF77B06D611FF0A4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 292
+    },
+    "DILI_0A9119FD5711F297A198": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_0B59CA671A370A3B18A5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_0C781DF42F3E711C5EC7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 405
+    },
+    "DILI_0E253C82D7C93071B94D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_1199A8B1E9C0B1623DDA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 465
+    },
+    "DILI_134F411E8B5B05CD106D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 518
+    },
+    "DILI_137B10C381F8E2932E29": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_1420B29E53FA3EBE2429": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 273
+    },
+    "DILI_14403D85CF08988AC89F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 377
+    },
+    "DILI_14C915B65FB47DDB1E90": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_14F487DEB35996DE9C61": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_15095C57479605732957": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 450
+    },
+    "DILI_155106CA89235F92B305": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_155561B03BCB57204B15": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 503
+    },
+    "DILI_156105A8B27366C5D506": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_158017420F634AE0A901": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_15D2ACB10A98F1479860": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_164B893171476FDDBA0B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 657
+    },
+    "DILI_166171BBE107267BDF95": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 564
+    },
+    "DILI_1672FC1F672A5BCF668D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 367
+    },
+    "DILI_1682B02695AFDE033448": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 296
+    },
+    "DILI_16EE255A3FD86DF0B2F1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 346
+    },
+    "DILI_186BFE96D15D6BB0C0C2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 377
+    },
+    "DILI_1873EF28DF3FFE55A54A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 206
+    },
+    "DILI_19445ED927C939D5D69E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_1B9414609F80E0EA827D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 376
+    },
+    "DILI_1BC1306FA53CCC6FFCBE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 486
+    },
+    "DILI_1BE1E2C73E5C839838C1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 317
+    },
+    "DILI_1CC4B54FCB87C9F2DDA1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 348
+    },
+    "DILI_1D00319BFAA15429EE8B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 423
+    },
+    "DILI_1D2DAD4D9E7803931492": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 268
+    },
+    "DILI_1D720D5A71F03A8AD1DF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_1DECE651615762122908": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 261
+    },
+    "DILI_1DF030906C739EF73078": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 217
+    },
+    "DILI_1EA043FBFA9667AAEACC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 610
+    },
+    "DILI_1F10FF108C4891434007": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 480
+    },
+    "DILI_1F2B3A3D3AC1249A23FA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 434
+    },
+    "DILI_22EBA06BBAC12FDA5B1F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 588
+    },
+    "DILI_238284325254B84AC129": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 455
+    },
+    "DILI_242B88907153F2674224": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_243BE178E0AAF9B6C5FE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_2494BBBC88CCB5A5D65F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 353
+    },
+    "DILI_24AF6E9D367AF5C5A5C8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 216
+    },
+    "DILI_272DD8A2D501D185A691": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 426
+    },
+    "DILI_27C269D85AF4122B5DDD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 869
+    },
+    "DILI_28028A8DA2BAF2FAF291": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 596
+    },
+    "DILI_2912F370978806BFD2A6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 324
+    },
+    "DILI_295F774F97B1CFFDFD4B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 306
+    },
+    "DILI_2B1188F3F398B8AE4290": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_2CD94DBAE021A7DD2902": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_2D359C4D65B29C1EB9D1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_2D3D05B34CC0B29C5E8F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 255
+    },
+    "DILI_2D841472F1B39572996B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 307
+    },
+    "DILI_2D9C41B95FDB1A7CA9E1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 381
+    },
+    "DILI_2E30A4DC7631A00A45B0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 545
+    },
+    "DILI_2E37EA7819E078CA4E99": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 384
+    },
+    "DILI_2F12E2A2A9B2A9B866BF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 259
+    },
+    "DILI_2FB7B332D3E71AA598AB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_2FD65CEE5A52313154DF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_302C290E4F16AA53D9FA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 368
+    },
+    "DILI_3073BFE4388C11692D02": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 366
+    },
+    "DILI_30ECA57D0999522B06C5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_32D8C43C3DEF2D9B1B34": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 412
+    },
+    "DILI_35F9ADA0A36C948DE3D9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_373FA72905DA7D63879C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 367
+    },
+    "DILI_37D41394ED029FADA37C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 448
+    },
+    "DILI_38352EE9E1C735E3A80D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_38747F77DEC7214BDD15": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_389BECD00EC808256C9C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_3926E9CCACB6195D5D7C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 151
+    },
+    "DILI_3B2F7D83C95C2EDEDA4C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 245
+    },
+    "DILI_3B3A865E6E9075B54F06": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 230
+    },
+    "DILI_3BCD14D8222DCE9CE459": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_3C239EC6372540EC9EC9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 451
+    },
+    "DILI_3C261F24BC25E46D9C29": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 522
+    },
+    "DILI_3D19EDE5314ED7690112": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_3E6FDDB2FB5882614BD0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 271
+    },
+    "DILI_3E93917633EE9571FD29": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 293
+    },
+    "DILI_3F50AFB2A08E16A775C3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_41502AB284ACA6DB4236": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_4223691E764C963B44C2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_42F78DC0A69D4B252187": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 313
+    },
+    "DILI_4453C41848ED1F945408": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 626
+    },
+    "DILI_455AF7580D99B5DBF2CE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 389
+    },
+    "DILI_468F11E66FE8C82B307E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_47D3009364C2632C6C0B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_47FC69EC9229954F77D1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 538
+    },
+    "DILI_492C199BFC6C3F01FCE8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_4944E142292CDA363294": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_49B3872535DAFCC019D2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 590
+    },
+    "DILI_4A97A9A141162901D403": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 309
+    },
+    "DILI_4A9F7E64A897A5538778": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 216
+    },
+    "DILI_4AF47069D3AB8572FA19": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 314
+    },
+    "DILI_4C83D7882F8E079915DA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 655
+    },
+    "DILI_4D333FE7B680EA66D965": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 456
+    },
+    "DILI_4D7C2F458926F04E06AC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_4E01118A95CB618E3D46": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 587
+    },
+    "DILI_4E6691A4BE17B9A6675B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 372
+    },
+    "DILI_50482CAF410802D4FE1E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 716
+    },
+    "DILI_50E34AF3904A27D9C6D0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 444
+    },
+    "DILI_5113DB2FB2ABDA8496D7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 413
+    },
+    "DILI_52F636F15F6F647B8AE0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_544450CCA57E0A835737": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 655
+    },
+    "DILI_56063EA4F8FE97D942BF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_5653A5F601D152A71B8E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 419
+    },
+    "DILI_568DC326788F3B9A5183": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 440
+    },
+    "DILI_56A6817E2E86078D5761": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 451
+    },
+    "DILI_57CF1B0F45DB525985D9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 299
+    },
+    "DILI_57DDE152B59FB3DA3B58": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 421
+    },
+    "DILI_57F6FA0CA647284AE898": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 455
+    },
+    "DILI_59130C76E8B480CC5CA4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 350
+    },
+    "DILI_5965FB6A2B501316A7DE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 554
+    },
+    "DILI_59C64383CB51B8995404": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_5A27E60AF2B99D222CB9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 431
+    },
+    "DILI_5AF98F8965809AF51C87": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_5BD2E87AAEE36F0A7F8D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 626
+    },
+    "DILI_5C64D99EB5C438D271E0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_5C6679986AE8E10D6619": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 326
+    },
+    "DILI_5CCFBA135326BA316DD9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_5CF7CA1C1B2D3D8D805A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_5D3FFB32AC9F30DE5D91": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 296
+    },
+    "DILI_5D846D6F88930B8168D3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 533
+    },
+    "DILI_5E7566F2B28802383683": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 411
+    },
+    "DILI_5FC32A56E64F496D72F5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 539
+    },
+    "DILI_5FFC9E0DBC3B8337E9B9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 269
+    },
+    "DILI_606F99A68418C3AB5767": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 401
+    },
+    "DILI_6106DBB0D880E02264C6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 366
+    },
+    "DILI_616996F1D564999B18F3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_625FD89AC21E8FE48940": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 306
+    },
+    "DILI_63288C5A7236C9533DDA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 749
+    },
+    "DILI_63505A5012FE1C0ABA14": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 356
+    },
+    "DILI_655347DB1ACC3D503CC2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 413
+    },
+    "DILI_65E241412A374E4A62EA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_67CC37F2A9BB9CEFFA7B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_693CC08CEFB3C1248E86": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 567
+    },
+    "DILI_69890E2501960FD07D0A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 368
+    },
+    "DILI_6A3E7833F6103768B41B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 199
+    },
+    "DILI_6B8FF72BA8696699FF38": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_6BD582EC70E6F8B761E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_6C63CC38374771DCBDAB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 733
+    },
+    "DILI_6C67E06B674B29937C71": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 700
+    },
+    "DILI_6C8FA58142EDEF470732": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 517
+    },
+    "DILI_6C94EDCEB27F1B164B41": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 478
+    },
+    "DILI_6F19BA69CE18F8AC13BE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_6F7DF29CF99FE4E32DFD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 844
+    },
+    "DILI_6FAE43B9D38B970508F6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 646
+    },
+    "DILI_701CE067904219BF5607": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 450
+    },
+    "DILI_7049AC330A1656D73126": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 309
+    },
+    "DILI_704E9B3339829AA64FC5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_70E60687B91B45DD143B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 356
+    },
+    "DILI_7329DD231B468743060B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 455
+    },
+    "DILI_733DBC686575C0C71121": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 491
+    },
+    "DILI_73579A35C2D8D37A3F9D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 423
+    },
+    "DILI_747C82432191D2648809": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 554
+    },
+    "DILI_753CAC37F0AB994AF978": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 338
+    },
+    "DILI_7592265D4904F22C3E9D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 151
+    },
+    "DILI_759C507D3787278F15ED": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 500
+    },
+    "DILI_77FB3DD266F0216E49B3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 444
+    },
+    "DILI_7A03967676FBAFCF20CC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_7AA5F3E759C546063066": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 584
+    },
+    "DILI_7AB3340974089B8A658D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 375
+    },
+    "DILI_7AEB512E87DADA6D0A5B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_7AF88A9B67EF15F0C109": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 405
+    },
+    "DILI_7B5FCE633C97D2B24D9D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 576
+    },
+    "DILI_7BCC41A70F633F8211C7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 640
+    },
+    "DILI_7BDFFAD4EC35B69AD12B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 547
+    },
+    "DILI_7C4A61EB3F9EE8203E2C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 439
+    },
+    "DILI_7DA9AB3EDEA626001378": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 455
+    },
+    "DILI_80155E0C1CECF9B7C27B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 377
+    },
+    "DILI_81B76FAEBAE76F86F7A7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 548
+    },
+    "DILI_8227A9EF12BA1414C74D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 348
+    },
+    "DILI_83EDCE494DF69D5C2F7F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 496
+    },
+    "DILI_8463810A07E71F7F085A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_85072D5E0714E86DDB53": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 538
+    },
+    "DILI_85ED5564269970440025": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 411
+    },
+    "DILI_865E71E597FCBB53994C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_86F4878027F15F4B4081": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 174
+    },
+    "DILI_873CB955676923D7D192": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_879EB24F910C569658D8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 551
+    },
+    "DILI_885DFCF5B4155EFC9C09": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_8895CF964B7DCD70E1E8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_89CFE5C0C13EC355D482": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 563
+    },
+    "DILI_89D37A0D31BB061D12EB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 399
+    },
+    "DILI_89F6764133B09E800E2A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_8A09CE31B4129EE15CB6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 470
+    },
+    "DILI_8BAC772278CA15298C98": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 597
+    },
+    "DILI_8BDFCD7CF4D3BA17D9AC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 342
+    },
+    "DILI_8C6531F51A013B794782": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_8D5B153078B61EFBD48C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 682
+    },
+    "DILI_8D8804AB3A8A64D930A0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 749
+    },
+    "DILI_8D9F9F5F40579A841B06": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_8DD8E074E95F0767D08A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 450
+    },
+    "DILI_8DE8416139B6A64D1F1F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 521
+    },
+    "DILI_8E1C0F37C9E7D6656B23": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 455
+    },
+    "DILI_8E40866B2F49150858CE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_8E72F0F055807948D23E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 324
+    },
+    "DILI_8F67995674F0FDA30C35": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 476
+    },
+    "DILI_8FBF95C6BA720CA7BEDE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 320
+    },
+    "DILI_8FDD6039644C7C963627": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 493
+    },
+    "DILI_9112BD111A87201FCE28": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 879
+    },
+    "DILI_91F25A626E9AC62FC2E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 597
+    },
+    "DILI_934E3B3C9E4F59ED4BE6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 151
+    },
+    "DILI_93DF284E9B42A8BA5BE4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 557
+    },
+    "DILI_9429D9F9DDAC287FEBA2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 598
+    },
+    "DILI_94B549147AD8ECCE390F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 306
+    },
+    "DILI_95B6AD09E317484DE909": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 441
+    },
+    "DILI_95F67259B498839F4582": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 541
+    },
+    "DILI_970CD6EA217FE3AA4AD2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 266
+    },
+    "DILI_97678EF7DAC3B59E89F8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_981162135AA50C72CB10": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 485
+    },
+    "DILI_9979886A7E38FA6B9469": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 520
+    },
+    "DILI_9AC98C8B1A1E66F5569D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 461
+    },
+    "DILI_9B235D6F1C5B3E332017": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 524
+    },
+    "DILI_9BF49770D4988CE5C01A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 318
+    },
+    "DILI_9D801C0206F779674412": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 705
+    },
+    "DILI_9DBD83FE8905A15EAAE1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 474
+    },
+    "DILI_9DE21318FAF1332E27A9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_9E138B9D63312EACC2F4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 462
+    },
+    "DILI_A09DA52FAFC4B01F5D8F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 299
+    },
+    "DILI_A09FB8E914346CF2F129": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 574
+    },
+    "DILI_A0E58354B2279765C17B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_A10206ED3F755D7A7D09": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 778
+    },
+    "DILI_A196CE4FC193D451E57A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_A276CDCCBCE2119FA20C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_A28270F7DEC0DC2EE083": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 528
+    },
+    "DILI_A302D2E41FEB860FCA96": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 554
+    },
+    "DILI_A36D57031184F9A3DEB3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 608
+    },
+    "DILI_A37A53CAF501897D2228": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 417
+    },
+    "DILI_A47C5116C9C796455FC6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 983
+    },
+    "DILI_A4B05E46442DC40A4409": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 315
+    },
+    "DILI_A4B6E6FC68AF1A22C01D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_A61887C70BF92957DDFF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_A711A57CA1666BB4DFC5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 588
+    },
+    "DILI_A9F684BAB0580AAC7A1F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_AA0E304664FE23A6E453": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 307
+    },
+    "DILI_AA6CA45B995CFDDD7AC8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 616
+    },
+    "DILI_AA83CBCFC28A26B852A4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_AB7D8B883D0599FFBB09": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_AC1FD45AC4825CFBA15B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 617
+    },
+    "DILI_AC5972F066A10473F8CF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_ACD8CBCCC950F892378E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_AD3A265316BE22DC4133": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 517
+    },
+    "DILI_AD95E076B8D37F9AC145": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 261
+    },
+    "DILI_AE016899A35BD473C003": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 198
+    },
+    "DILI_AF5F3EE5C0B075AF3106": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 327
+    },
+    "DILI_AF9E9DE2CC1DF6B8CA10": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 366
+    },
+    "DILI_B1346A81AF10EF802925": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 368
+    },
+    "DILI_B35F1B142017C358C365": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 346
+    },
+    "DILI_B3DC0A5B2044A499E2CC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 719
+    },
+    "DILI_B3DE780B10E1DC38EEF5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 278
+    },
+    "DILI_B3E903A698FA0ED1ED23": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 411
+    },
+    "DILI_B48BBCAA61E224178EEE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 262
+    },
+    "DILI_B67CECE80C433B6E2DBD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 440
+    },
+    "DILI_B6DE69CDA5572F64C634": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 341
+    },
+    "DILI_B7492B855BF2F5A80FBC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_B7955CF1F79FCCFEB1F6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_B92B46C8DC69146E41B4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 369
+    },
+    "DILI_BA28F4A6D13E7CDB097C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_BA4589C3DDAAC57F63C6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 617
+    },
+    "DILI_BA8D44D6194DE78C305A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 535
+    },
+    "DILI_BAAF292CD2D5B7451754": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_BB122DB9B6EB686228BC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_BCFC46F007FEAA1DE66E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 432
+    },
+    "DILI_BD8C839C1F116238D03D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 309
+    },
+    "DILI_BE39A2774EC675B972DF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_BFA3A75CD80A286DF244": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 643
+    },
+    "DILI_BFF1D1412163DA6F0838": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 427
+    },
+    "DILI_BFF7863A38AFEB81C339": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 412
+    },
+    "DILI_C0DD95854673C1D4534E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 269
+    },
+    "DILI_C14C37D665B6E0C3CF89": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 365
+    },
+    "DILI_C168D6901E9E58D42B8C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 411
+    },
+    "DILI_C1EE11D42819148EF9C0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 303
+    },
+    "DILI_C20F9F9464249AB1032A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 302
+    },
+    "DILI_C3451D78EF7BC2DCBBFC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_C4E798EDE8B33FFBA976": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 271
+    },
+    "DILI_C52EBD45D7C8931FEB1B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 339
+    },
+    "DILI_C556FBC3DAAF4227F80D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 525
+    },
+    "DILI_C6887E53D42BABD3C620": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 456
+    },
+    "DILI_C6A751F6DE2CC83A724A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_C6BA7AF52031897900F9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_C6DA801DAAC30A3A879F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 259
+    },
+    "DILI_C6EDD48A3727C760ECE1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 540
+    },
+    "DILI_C70F103368369F60ADE2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 259
+    },
+    "DILI_C74B0210A6C05F3BAC65": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 305
+    },
+    "DILI_C8DEFFFAAB4C93FC4FE4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_C96046B82E088FFD71BF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 577
+    },
+    "DILI_CA39B473AECB3FFFA57F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 451
+    },
+    "DILI_CA6238A2B3BC28F07368": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_CB16537E4E68F76BC899": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 296
+    },
+    "DILI_CB77467B7135D0372512": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 477
+    },
+    "DILI_CC25245D851A2C1E64F5": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 234
+    },
+    "DILI_CC30096B1838B750C63A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 493
+    },
+    "DILI_CCAB950D96DF5C675552": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 329
+    },
+    "DILI_CE02623152B5D8D20424": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_CE7B3345A62CDCD6307D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 357
+    },
+    "DILI_D08DF13EED7A30219CB3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 288
+    },
+    "DILI_D159778DC8B4E9A68783": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 302
+    },
+    "DILI_D1C08E111598AABB1C5D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 453
+    },
+    "DILI_D1CC9CFEE396558C3A71": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 598
+    },
+    "DILI_D203DB54463104150AAC": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_D26BF122FD339B3EAA9B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 436
+    },
+    "DILI_D3B9260CC4A4ED15951E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 533
+    },
+    "DILI_D3C5096912F44D719016": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 520
+    },
+    "DILI_D3FE34F39323EC320D26": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 448
+    },
+    "DILI_D41A97ABD13A75F0C0A0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 458
+    },
+    "DILI_D52BCF061A3F40D7DEEB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 385
+    },
+    "DILI_D532C2B8EC2D9F372D28": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 399
+    },
+    "DILI_D5ADDEA70C2503ADA573": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 286
+    },
+    "DILI_D6EAEA0D47BC5CCBFB72": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 288
+    },
+    "DILI_D70EE30465EC37F0E2EF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 431
+    },
+    "DILI_D777A979D0E2BD426A4D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 469
+    },
+    "DILI_D78AA6764DE3ACC9414E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 230
+    },
+    "DILI_D899A97B81AC707178E1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 438
+    },
+    "DILI_D8E717CCBD48B4456570": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 342
+    },
+    "DILI_D91B615A2FD269095F19": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_D939FFE1621A85C1981D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 376
+    },
+    "DILI_D9483229D21654F86ED9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_D95512E55767BA4EC8E8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_D9EAB0A9111A40A8982C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 348
+    },
+    "DILI_DA0A6859E4A6F4B297DE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 323
+    },
+    "DILI_DA578592D8D45A8E44CA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_DB8805842AF8E4D8D390": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_DBC7CEB91DBCBB7E4FD1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_DBD6E1364C4D894F2D20": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 630
+    },
+    "DILI_DC2A4E140A0602A09C8A": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 505
+    },
+    "DILI_DC57383FC3BEABB4CC68": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 343
+    },
+    "DILI_DC928103FF11D4B78420": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 309
+    },
+    "DILI_DE78302A24ABBFFE9787": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 611
+    },
+    "DILI_DECAD60755B53E747712": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 546
+    },
+    "DILI_DECBB8B73280D00AA5F1": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 537
+    },
+    "DILI_DEE66D9B3065176CB4F9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 399
+    },
+    "DILI_DEF8076D69976F1D8964": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 401
+    },
+    "DILI_DF706725F3304E5FED86": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 288
+    },
+    "DILI_DF87AC370873D9AA1BB4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 341
+    },
+    "DILI_E0AFF48EED099248B951": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 348
+    },
+    "DILI_E0CE71ABAFB6201D54A7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 378
+    },
+    "DILI_E0D8E9A3C8827D6CF8F0": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 537
+    },
+    "DILI_E156A5A8EAD563AA00AA": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 312
+    },
+    "DILI_E200148153A9BA18B093": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_E390294FFC93BB17165E": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 611
+    },
+    "DILI_E418B1A5CAAFFA7108B3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 518
+    },
+    "DILI_E43952146D70E7E3F276": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_E4521D74308BCF32180D": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 503
+    },
+    "DILI_E470E45279314F0F60CB": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_E48A6C4579E70F781950": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_E49682F91F2CB743E60C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 559
+    },
+    "DILI_E4D3EF83D1BEAC5BB9F8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 661
+    },
+    "DILI_E5AB65DFE3B436183809": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 367
+    },
+    "DILI_E5F1EF7FAC557B4A0214": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_E61BD9D9BEA78955AEE4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 698
+    },
+    "DILI_E6AB16660B7705638669": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 450
+    },
+    "DILI_E6B9A0B1E552E06122E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 464
+    },
+    "DILI_EA04C1F162510B8BCFC8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 828
+    },
+    "DILI_EE96693ECBAB2175C535": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 440
+    },
+    "DILI_F04674524BBA25F190BF": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 438
+    },
+    "DILI_F0716CB43192F119DC21": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_F136CCC7A01DF87B54B8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 403
+    },
+    "DILI_F1C1F17BA1FB69169DE6": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 309
+    },
+    "DILI_F241FB0B1B7BC07CA5B7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 499
+    },
+    "DILI_F2F8677F68759CD54CC4": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 503
+    },
+    "DILI_F316FC89113E65FBA855": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 568
+    },
+    "DILI_F32D8939CD75608FAB2C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 529
+    },
+    "DILI_F351247F6ABF565C6B24": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 461
+    },
+    "DILI_F410DA95D559D2771EBD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 553
+    },
+    "DILI_F4B19C42C8E934E4440B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_F5D038D2FFE5541ECDE9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 387
+    },
+    "DILI_F5E0DDDD745680324181": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 467
+    },
+    "DILI_F6E94E45A83F44848F28": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 542
+    },
+    "DILI_F75F7341EAC162CC0EA3": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 308
+    },
+    "DILI_F7734A28106DC3B8B772": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 392
+    },
+    "DILI_F862B6BDBE1B0E960A16": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 308
+    },
+    "DILI_F8740BF8D2C9C79D05C8": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 749
+    },
+    "DILI_F8758E1166A4DCF0EE5B": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 423
+    },
+    "DILI_F88180316D0A28462A93": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 463
+    },
+    "DILI_F8B8B1DD098C6ED3D0CD": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 352
+    },
+    "DILI_F90B7EDCE85DAF288B16": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 645
+    },
+    "DILI_F94B3C2D590B3F13EF7F": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 326
+    },
+    "DILI_F9B22CB2C53E77260C75": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 363
+    },
+    "DILI_F9F2B383F7F33902643C": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 257
+    },
+    "DILI_FB0463D2246E84545750": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 334
+    },
+    "DILI_FB19BDC346D5FABBBCB2": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 526
+    },
+    "DILI_FBD1F250DF366F5DAFEE": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 514
+    },
+    "DILI_FC69402A4A3C72B0D2D7": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 301
+    },
+    "DILI_FCE408CE5DF03BD687E9": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 570
+    },
+    "DILI_FF8DF97ACC01CFE53671": {
+      "assay_candidate_records": 0,
+      "candidate_parents": 100,
+      "morgan_candidate_records": 555
+    }
+  },
+  "ranking_rows_sha256": "221def981c8443effd209a120659ecde0561a78f8554ac2d64f550db81d1d61f",
+  "schema_version": "ranked_uid_retrieval.v1",
+  "shared_candidate_universe": true,
+  "status": "complete",
+  "stored_rows": 40200,
+  "subset": "valid",
+  "task_id": "dili"
+}

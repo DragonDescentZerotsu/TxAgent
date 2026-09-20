@@ -13,6 +13,9 @@ payloads remain with their semantic owners under
   dense Morgan rank plus, where supported, an assay-transfer score and rank.
   Morgan and assay panels can therefore be selected independently and hydrated
   once through their deduplicated UID union.
+- `ranked_level_retrieval_gold_v1_addon_v1`: Morgan-only Gold-v1 L1 context
+  cards for Ames, DILI, and Carcinogens. It covers valid and test; assay-transfer
+  ranks and later evidence levels are intentionally not computed.
 - `ranked_level_retrieval_v2`: immutable 100-row predecessor.
 - `cache_matched_retrieval_v3`: retained immutable predecessor.
 - `v24_1_bbb_uid_levels_morgan75`: active BBB level-specific assay-transfer
