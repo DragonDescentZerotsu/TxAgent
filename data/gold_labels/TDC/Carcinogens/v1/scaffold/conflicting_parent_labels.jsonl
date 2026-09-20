@@ -1,0 +1,2 @@
+{"molecule_identity_key": "UPZFHUODAYGHDZ-RMKNXTFCSA-N", "labels": [0, 1], "source_record_ids": ["Drug_2", "Drug_98"], "drop_reason": "conflicting_parent_labels"}
+{"molecule_identity_key": "TVWOWDDBXAFQDG-QURGRASLSA-N", "labels": [0, 1], "source_record_ids": ["Drug_4", "Drug_131"], "drop_reason": "conflicting_parent_labels"}

@@ -86,7 +86,11 @@ from predict.tools.prefetch import invoke_with_retry
 from predict.traces.io import DEFAULT_TRACE_ROOT, write_trace
 from predict.llm_io.query import external_condition_sentence
 from predict.llm_io.response import structured_response_is_valid
-from data.processing.gold_labels.conditioned_benchmark import TASK_DIRECTORIES, split_path
+from data.processing.gold_labels.conditioned_benchmark import (
+    TASK_DIRECTORIES,
+    split_path,
+    tdc_split_path,
+)
 from data.processing.llm_api import DEFAULT_ENV_FILE
 from predict.harnesses.progressive.tasks import bbb_martins as bbb_config
 from predict.harnesses.progressive.tasks import bioavailability_ma as bio_config
@@ -104,6 +108,9 @@ DEFAULT_SINGLE_CACHE_ROOT = Path(
     "runs_deployment_visible_parent_disjoint"
 )
 DEFAULT_V9_RANKING_ROOT = cache_profile_root(RANKING_PROFILE_NAME)
+TDC_MIXED_L1_HARNESS = "tdc-mixed-progressive-v1"
+TDC_MIXED_L1_PROFILE = "tdc_mixed_l1_v1"
+TDC_MIXED_L1_PROMPT = "tdc_mixed_progressive_v1"
 CONTEXT_L2_REUSE_ROOTS = {
     "bbb_martins": Path(
         "outputs/paper/assay_transfer_harness/starling_context_record_progressive_v4/"
@@ -587,6 +594,15 @@ def _levels(task: str, max_level: int = 0) -> list[dict[str, Any]]:
 
 def _run_levels(args: argparse.Namespace, task: str) -> list[dict[str, Any]]:
     """Dispatch only the level catalog; each profile owns its level meaning."""
+    if args.harness_version == TDC_MIXED_L1_HARNESS:
+        return [{
+            "level": 1,
+            "endpoint_group": "tdc_mixed_training_labels",
+            "description": (
+                "Morgan-ranked source-specific labels from the union of "
+                "Gold-v1 and TDC training cards."
+            ),
+        }]
     if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
         levels = context_records.tianang_aligned_levels(
             task, prompt_version=_context_prompt_version(args, task)
@@ -1102,15 +1118,18 @@ def _configure_v7_paths(args: argparse.Namespace) -> None:
 def _configure_evaluation_subset(args: argparse.Namespace) -> None:
     for task in args.tasks:
         spec = PROGRESSIVE_TASKS[task]
-        input_jsonl = (
-            split_path(task, args.evaluation_subset)
-            if args.gold_label_version == "current"
-            else Path(args.benchmark_data_root)
-            / TASK_DIRECTORIES[task]
-            / args.gold_label_version
-            / "scaffold"
-            / f"{args.evaluation_subset}.jsonl"
-        )
+        if args.harness_version == TDC_MIXED_L1_HARNESS:
+            input_jsonl = tdc_split_path(task, args.evaluation_subset)
+        elif args.gold_label_version == "current":
+            input_jsonl = split_path(task, args.evaluation_subset)
+        else:
+            input_jsonl = (
+                Path(args.benchmark_data_root)
+                / TASK_DIRECTORIES[task]
+                / args.gold_label_version
+                / "scaffold"
+                / f"{args.evaluation_subset}.jsonl"
+            )
         if not input_jsonl.is_file():
             raise FileNotFoundError(input_jsonl)
         PROGRESSIVE_TASKS[task] = ProgressiveTaskSpec(
@@ -1406,6 +1425,155 @@ def _gold_l1_candidates(
     }
 
 
+def _tdc_mixed_l1_candidates(
+    *,
+    task: str,
+    records: list[dict[str, Any]],
+    cache_root: Path,
+    subset: str,
+    prompt_version: str,
+) -> tuple[dict[str, dict[str, dict[str, Any]]], dict[str, Any]]:
+    """Load an immutable Morgan top-10 union of Gold-v1 and TDC label cards."""
+
+    repository_root = Path(__file__).resolve().parents[3]
+    manifest_path = cache_root / task / "manifest.json"
+    manifest = _read_json(manifest_path)
+    expected = {
+        "schema_version": "tdc_mixed_l1_morgan.v1",
+        "status": "complete",
+        "profile": TDC_MIXED_L1_PROFILE,
+        "task": task,
+        "ranking": "morgan",
+        "selection_unit": "source_specific_label_card",
+        "top_k": 10,
+        "neighbor_identity_policy": "parent_and_nonempty_scaffold_disjoint",
+    }
+    for field, value in expected.items():
+        if manifest.get(field) != value:
+            raise ValueError(
+                f"{task} TDC mixed-L1 manifest has invalid {field}: "
+                f"{manifest.get(field)!r}"
+            )
+    for source in (manifest.get("candidate_sources") or {}).values():
+        path = repository_root / str(source.get("path") or "")
+        if not path.is_file() or sha256_file(path) != source.get("sha256"):
+            raise ValueError(f"{task} TDC mixed-L1 source hash mismatch: {path}")
+
+    subset_manifest = (manifest.get("subsets") or {}).get(subset) or {}
+    cache_path = manifest_path.parent / str(subset_manifest.get("cache") or "")
+    query_path = repository_root / str(subset_manifest.get("query_input") or "")
+    if not cache_path.is_file() or sha256_file(cache_path) != subset_manifest.get(
+        "cache_sha256"
+    ):
+        raise ValueError(f"{task} TDC mixed-L1 cache hash mismatch: {cache_path}")
+    if not query_path.is_file() or sha256_file(query_path) != subset_manifest.get(
+        "query_input_sha256"
+    ):
+        raise ValueError(f"{task} TDC mixed-L1 query hash mismatch: {query_path}")
+
+    cache_rows = read_jsonl(cache_path)
+    current_by_id = {str(row["benchmark_row_id"]): row for row in records}
+    cached_by_id = {str(row["benchmark_row_id"]): row for row in cache_rows}
+    if set(cached_by_id) != set(current_by_id):
+        raise ValueError(f"{task} TDC mixed-L1 cache query set differs from {subset}")
+
+    family = "tdc_mixed_training_labels"
+    endpoint = _task_contract(task, prompt_version).endpoint_name
+    candidates: dict[str, dict[str, dict[str, Any]]] = {}
+    source_counts = {"gold_v1": 0, "tdc_v1": 0}
+    for query_id, current in current_by_id.items():
+        cached = cached_by_id[query_id]
+        if (
+            str(cached.get("query_drug")) != str(current.get("drug"))
+            or str(cached.get("query_molecule_identity_key"))
+            != str(current.get("molecule_identity_key"))
+        ):
+            raise ValueError(f"{task} TDC mixed-L1 query identity mismatch: {query_id}")
+        cards = list(cached.get("cards") or [])
+        if len(cards) != 10:
+            raise ValueError(f"{task} TDC mixed-L1 query {query_id} does not have 10 cards")
+        query_candidates: dict[str, dict[str, Any]] = {}
+        for rank, row in enumerate(cards, start=1):
+            source_kind = str(row["source_kind"])
+            if source_kind not in source_counts:
+                raise ValueError(f"unsupported TDC mixed-L1 source: {source_kind}")
+            source_counts[source_kind] += 1
+            analog_id = stable_analog_id({
+                "standard_inchi_key": row["molecule_identity_key"],
+                "canonical_smiles": row["drug"],
+            })
+            analog = query_candidates.setdefault(
+                analog_id,
+                {
+                    "analog_id": analog_id,
+                    "canonical_smiles": str(row["drug"]),
+                    "similarity": float(row["morgan_similarity"]),
+                    "molecule_relation": "structural_analog",
+                    "_selection_rank": rank,
+                    "cards": {},
+                },
+            )
+            analog["_selection_rank"] = min(int(analog["_selection_rank"]), rank)
+            record_id = str(row["benchmark_row_id"])
+            card_id = "card_" + hashlib.sha256(
+                f"{task}:{source_kind}:{record_id}".encode("utf-8")
+            ).hexdigest()[:16]
+            label_counts = row.get("label_counts") or {str(row["Y"]): 1}
+            total = sum(int(value) for value in label_counts.values())
+            positive_fraction = int(label_counts.get("1", 0)) / total
+            source_name = (
+                "Gold-v1 conditioned benchmark"
+                if source_kind == "gold_v1"
+                else "TDC external dataset"
+            )
+            reported_value = f"Frozen label={int(row['Y'])}"
+            if source_kind == "gold_v1":
+                reported_value += (
+                    f"; positive-vote fraction={100.0 * positive_fraction:.1f}%"
+                )
+            analog["cards"][card_id] = {
+                "card_id": card_id,
+                "evidence_family": family,
+                "assay_context": f"{source_name} training label",
+                "endpoint": endpoint,
+                "reported_value": reported_value,
+                "reported_unit": "",
+                "qualifying_conditions": (
+                    ""
+                    if row.get("condition_group")
+                    == "no_reported_external_condition"
+                    else str(row.get("condition_group") or "")
+                ),
+                "experimental_details": {
+                    "label_source": source_kind,
+                    "benchmark_row_id": record_id,
+                },
+                "support_text": (
+                    "Frozen conditioned-benchmark training outcome."
+                    if source_kind == "gold_v1"
+                    else "External TDC training label; not a direct assay record."
+                ),
+                "_assay_key": f"{source_kind}:{record_id}",
+                "_selection_rank": rank,
+            }
+        candidates[query_id] = query_candidates
+
+    return candidates, {
+        "schema_version": manifest["schema_version"],
+        "selection_policy": manifest["schema_version"],
+        "ranking": "morgan",
+        "top_k": 10,
+        "manifest": str(manifest_path),
+        "manifest_sha256": sha256_file(manifest_path),
+        "cache": str(cache_path),
+        "cache_sha256": sha256_file(cache_path),
+        "query_input": str(query_path),
+        "query_input_sha256": sha256_file(query_path),
+        "n_current_queries": len(current_by_id),
+        "visible_source_card_counts": source_counts,
+    }
+
+
 def _load_reused_query_prior(
     task: str,
     record: Mapping[str, Any],
@@ -1541,7 +1709,11 @@ def _prepare_query(
         }
         cumulative_by_level[1] = cumulative
         retrieval_audits[1] = {
-            "candidate_source": "conditioned_gold_training_labels",
+            "candidate_source": (
+                "gold_v1_plus_tdc_training_labels"
+                if l1_source == "tdc_mixed_train"
+                else "conditioned_gold_training_labels"
+            ),
             "ranking": l1_ranking,
             "n_cumulative_visible_molecules": len(cumulative),
             "n_cumulative_visible_cards": sum(
@@ -2335,7 +2507,10 @@ def _validate_inputs(args: argparse.Namespace) -> dict[str, list[dict[str, Any]]
         spec = PROGRESSIVE_TASKS[task]
         if not spec.input_jsonl.is_file():
             raise FileNotFoundError(spec.input_jsonl)
-        if args.profile == "standard":
+        if (
+            args.profile == "standard"
+            and args.harness_version != TDC_MIXED_L1_HARNESS
+        ):
             for path in (spec.index, spec.family_manifest):
                 if not path.exists():
                     raise FileNotFoundError(path)
@@ -2670,16 +2845,25 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                     and args.v21_selection_mode == "record_only"
                 ):
                     ranking_audits[task] = indirect_audit
-    elif args.l1_source == "gold_train":
+    elif args.l1_source in {"gold_train", "tdc_mixed_train"}:
         for task in args.tasks:
-            candidates, audit = _gold_l1_candidates(
-                task=task,
-                records=records_by_task[task],
-                ranking_root=Path(args.v9_ranking_root),
-                ranking=args.l1_ranking,
-                benchmark_root=Path(args.benchmark_data_root),
-                min_similarity=args.gold_l1_min_similarity,
-            )
+            if args.l1_source == "tdc_mixed_train":
+                candidates, audit = _tdc_mixed_l1_candidates(
+                    task=task,
+                    records=records_by_task[task],
+                    cache_root=Path(args.tdc_mixed_l1_cache),
+                    subset=args.evaluation_subset,
+                    prompt_version=args.prompt_version,
+                )
+            else:
+                candidates, audit = _gold_l1_candidates(
+                    task=task,
+                    records=records_by_task[task],
+                    ranking_root=Path(args.v9_ranking_root),
+                    ranking=args.l1_ranking,
+                    benchmark_root=Path(args.benchmark_data_root),
+                    min_similarity=args.gold_l1_min_similarity,
+                )
             gold_candidates_by_task[task] = candidates
             ranking_audits[task] = audit
     description_artifact = MOLECULE_DESCRIPTION_ARTIFACTS[
@@ -2743,7 +2927,10 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                     ),
                 }
             )
-        if args.profile == "standard":
+        if (
+            args.profile == "standard"
+            and args.harness_version != TDC_MIXED_L1_HARNESS
+        ):
             task_inputs.update(
                 {
                     "index": str(spec.index),
@@ -2816,9 +3003,12 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
                 for task in args.tasks
             }
     else:
-        standard_card_contract = molecule_card_contract()
+        from predict.harnesses.progressive.prompt import prompt_asset_path
+
+        card_contract_path = prompt_asset_path(args.prompt_version, "card.yaml")
+        standard_card_contract = molecule_card_contract(card_contract_path)
         card_contract_manifest = {
-            "path": str(MOLECULE_CARD_CONTRACT_PATH),
+            "path": str(card_contract_path),
             "schema_version": standard_card_contract["schema_version"],
             "semantic_sha256": hashlib.sha256(
                 json.dumps(
@@ -2835,7 +3025,9 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         "tasks": args.tasks,
         "visibility_mode": "deployment_visible_prefetched",
         "reference_pool": (
-            "conditioned_gold_train_plus_normalized_v7"
+            "gold_v1_plus_tdc_train_label_cards"
+            if args.l1_source == "tdc_mixed_train"
+            else "conditioned_gold_train_plus_normalized_v7"
             if args.l1_source == "gold_train" and args.max_level > 1
             else "conditioned_gold_train"
             if args.l1_source == "gold_train"
@@ -2843,7 +3035,9 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         ),
         "neighbor_identity_policy": IDENTITY_POLICY,
         "min_similarity": (
-            {"gold_l1": args.gold_l1_min_similarity, "normalized_later_levels": 0.3}
+            None
+            if args.l1_source == "tdc_mixed_train"
+            else {"gold_l1": args.gold_l1_min_similarity, "normalized_later_levels": 0.3}
             if args.l1_source == "gold_train" and args.max_level > 1
             else args.gold_l1_min_similarity
             if args.l1_source == "gold_train"
@@ -2852,7 +3046,9 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
         "candidate_generation": {
             "unit": "molecule",
             "scope": (
-                "V9 top-75 conditioned gold L1 plus normalized-v7 later families"
+                "Morgan top-10 from the Gold-v1 plus TDC training-card union"
+                if args.l1_source == "tdc_mixed_train"
+                else "V9 top-75 conditioned gold L1 plus normalized-v7 later families"
                 if args.l1_source == "gold_train" and args.max_level > 1
                 else "V9 top-75 conditioned gold-training pool"
                 if args.l1_source == "gold_train"
@@ -2871,7 +3067,9 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             "cumulative_per_molecule_card_cap": None,
         },
         "prompt_profile": (
-            "progressive_compact_tools_short_aliases.gold_l1.v1"
+            TDC_MIXED_L1_PROMPT
+            if args.l1_source == "tdc_mixed_train"
+            else "progressive_compact_tools_short_aliases.gold_l1.v1"
             if args.l1_source == "gold_train"
             else "progressive_compact_tools_short_aliases.v2"
         ),
@@ -2919,7 +3117,11 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
     }
     from predict.harnesses.progressive.prompt import prompt_asset_manifest
     manifest['prompt_assets'] = {
-        task: prompt_asset_manifest(_context_prompt_version(args, task) if args.profile == 'context_records' else 'standard_v1')
+        task: prompt_asset_manifest(
+            _context_prompt_version(args, task)
+            if args.profile == 'context_records'
+            else args.prompt_version
+        )
         for task in args.tasks
     }
     if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
@@ -3617,7 +3819,7 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             levels=levels_by_task[task],
             gold_l1_candidates=(
                 gold_candidates_by_task[task][str(record["benchmark_row_id"])]
-                if args.l1_source == "gold_train"
+                if args.l1_source in {"gold_train", "tdc_mixed_train"}
                 else None
             ),
             output_root=output_root,
@@ -3818,10 +4020,19 @@ def run(args: argparse.Namespace, *, prepared_callback=None,
             query_prior_mode=args.query_prior,
             profile=args.profile,
             context_record_l3_l5=_record_cache_enabled(args),
-            prompt_version=(args.assay_transfer_prompt_version if getattr(args, 'retrieval_policy', None) else None),
+            prompt_version=(
+                args.assay_transfer_prompt_version
+                if getattr(args, 'retrieval_policy', None)
+                or args.harness_version == TDC_MIXED_L1_HARNESS
+                else None
+            ),
             levels_override=(
                 _run_levels(args, task)
-                if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES else None
+                if args.harness_version in {
+                    *FULL_FLAT_PROGRESSIVE_HARNESSES,
+                    TDC_MIXED_L1_HARNESS,
+                }
+                else None
             ),
         )
     diagnostic_error = None
@@ -3908,6 +4119,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         value == "--prompt-version" or value.startswith("--prompt-version=")
         for value in raw_argv
     )
+    explicit_reranking = any(
+        value == "--reranking" or value.startswith("--reranking=")
+        for value in raw_argv
+    )
+    explicit_gold_label_version = any(
+        value == "--gold-label-version" or value.startswith("--gold-label-version=")
+        for value in raw_argv
+    )
     parser = argparse.ArgumentParser(description="Cache-matched Reranked Progressive", allow_abbrev=False)
     parser.add_argument(
         '--harness-version',
@@ -3916,6 +4135,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                  'reranked-progressive-l1-context-l2-v1',
                  'reranked-progressive-l1-context-l2-weighted-v1',
                  'reranked-progressive-l1-context-l2-morgan-bucket-v1',
+                 TDC_MIXED_L1_HARNESS,
                  INDIRECT_ONLY_HARNESS, INDIRECT_FILTER_HARNESS,
                  *FULL_FLAT_PROGRESSIVE_HARNESSES),
         default='reranked-progressive-v2',
@@ -3995,6 +4215,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument('--prompt-version', default='reranked_progressive_v8',
                         help='Immutable prompt bundle directory name.')
     parser.add_argument(
+        '--tdc-mixed-l1-cache',
+        default=str(cache_profile_root(TDC_MIXED_L1_PROFILE)),
+        help='Immutable Gold-v1 plus TDC Morgan top-10 cache root.',
+    )
+    parser.add_argument(
         '--molecule-description-mode',
         choices=('none', *MOLECULE_DESCRIPTION_COLUMNS),
         default='none',
@@ -4034,7 +4259,29 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args.level_record_limits = dict(args.level_record_limit)
     args.cache_pool = record_pools[args.record_pool]
     args.joint_panel_sizes = (3, 7) if args.harness_version == 'reranked-progressive-v4' else None
-    if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
+    if args.harness_version == TDC_MIXED_L1_HARNESS:
+        if set(args.tasks) - {"bbb_martins", "bioavailability_ma"}:
+            parser.error('tdc-mixed-progressive-v1 supports BBB and Bioavailability only')
+        if any((args.reasoning_phase, args.l1_prior_run, args.require_complete_l1_prior)):
+            parser.error('tdc-mixed-progressive-v1 does not accept full-flat phase options')
+        if explicit_gold_label_version:
+            parser.error('tdc-mixed-progressive-v1 selects its TDC v1 queries directly')
+        if explicit_reranking and args.reranking != 'morgan':
+            parser.error('tdc-mixed-progressive-v1 supports Morgan ranking only')
+        args.reranking = 'morgan'
+        if explicit_prompt_version and args.prompt_version != TDC_MIXED_L1_PROMPT:
+            parser.error(
+                f'tdc-mixed-progressive-v1 requires --prompt-version {TDC_MIXED_L1_PROMPT}'
+            )
+        args.prompt_version = TDC_MIXED_L1_PROMPT
+        if args.max_level not in {0, 1}:
+            parser.error('tdc-mixed-progressive-v1 is an L1-only harness')
+        args.max_level = 1
+        args.context_limit = 10
+        args.query_prior = 'none'
+        args.record_pool = args.cache_pool = 'all'
+        args.skip_tool_prefetch = True
+    elif args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
         if args.reasoning_phase is None:
             parser.error('full-flat-progressive requires --reasoning-phase')
         if args.reasoning_phase == 'l1' and args.l1_prior_run is not None:
@@ -4325,6 +4572,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         'reranked-progressive-l1-context-l2-weighted-v1',
         'reranked-progressive-l1-context-l2-morgan-bucket-v1',
         *FULL_FLAT_PROGRESSIVE_HARNESSES,
+        TDC_MIXED_L1_HARNESS,
     }
     approved_archive_harness = l1_context_harness or args.harness_version in INDIRECT_HARNESSES
     if uses_archive and not args.legacy and not approved_archive_harness:
@@ -4345,14 +4593,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         output_name += f'_k{args.context_limit}'
         if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:
             output_name += f'_m{args.l1_min_contrast}'
-        output_name += f'_{Path(args.assay_transfer_cache).stem}'
+        output_name += (
+            f'_{TDC_MIXED_L1_PROFILE}'
+            if args.harness_version == TDC_MIXED_L1_HARNESS
+            else f'_{Path(args.assay_transfer_cache).stem}'
+        )
     if args.harness_version in FULL_FLAT_PROGRESSIVE_HARNESSES:
         output_name += f'_{args.reasoning_phase}'
     args.output_root = args.output_root or str(
         Path('outputs/paper/assay_transfer_harness/joseph') / output_name
     )
     # These are internal adapter settings, not historical CLI aliases.
-    args.profile = 'context_records'
+    args.profile = (
+        'standard'
+        if args.harness_version == TDC_MIXED_L1_HARNESS
+        else 'context_records'
+    )
     try:
         from predict.harnesses.progressive.prompt import prompt_assets
 
@@ -4384,19 +4640,31 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             and args.harness_version not in INDIRECT_HARNESSES):
         parser.error(f"This prompt requires --max-level {prompt_settings['max_level']}")
     args.assay_transfer_prompt_version = args.prompt_version
-    args.retrieval_policy = args.assay_transfer_cache
+    args.retrieval_policy = (
+        None
+        if args.harness_version == TDC_MIXED_L1_HARNESS
+        else args.assay_transfer_cache
+    )
     args.level_mapping = str(args.level_mapper)
     stages = args.retrieval_policies[args.tasks[0]]['stages']
     args.context_ranking = stages.get('L1', next(iter(stages.values())))
     args.record_sampler = 'plain'
-    args.context_record_l3_l5 = True
+    args.context_record_l3_l5 = args.harness_version != TDC_MIXED_L1_HARNESS
     args.assay_transfer_cache_profile = 'cache_matched_v2'
     args.l2_record_limit_per_context = args.record_limit_per_context_level
     args.indirect_final_level_record_limit = 0
     args.reuse_context_l2 = False
     args.v21_selection_mode = 'molecule_cards'
-    args.l1_source = 'gold_train'
-    args.l1_ranking = 'v9'
+    args.l1_source = (
+        'tdc_mixed_train'
+        if args.harness_version == TDC_MIXED_L1_HARNESS
+        else 'gold_train'
+    )
+    args.l1_ranking = (
+        'morgan'
+        if args.harness_version == TDC_MIXED_L1_HARNESS
+        else 'v9'
+    )
     args.gold_l1_min_similarity = 0.0
     args.benchmark_data_root = 'data/gold_labels'
     args.v9_ranking_root = str(DEFAULT_V9_RANKING_ROOT)
@@ -4422,6 +4690,7 @@ def main(argv: list[str] | None = None) -> int:
         'reranked-progressive-l1-context-l2-weighted-v1',
         'reranked-progressive-l1-context-l2-morgan-bucket-v1',
         *FULL_FLAT_PROGRESSIVE_HARNESSES,
+        TDC_MIXED_L1_HARNESS,
     }:
         args.live_method += f'_k{args.context_limit}'
         if args.reranking in {'morgan-contrastive', 'assay-transfer-contrastive'}:

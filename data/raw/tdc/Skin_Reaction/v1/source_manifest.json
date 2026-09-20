@@ -1,0 +1,30 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "skin_reaction",
+  "dataset": "Skin_Reaction",
+  "target_definition": "TDC skin-reaction label; 1 is reaction-positive and 0 is reaction-negative.",
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "files": [
+    {
+      "path": "data/gold_labels/legacy/processed/Skin_Reaction/train.jsonl",
+      "upstream_path": "data/processed/Skin_Reaction/train.jsonl",
+      "sha256": "6832563e9ddefc282e4172287faf5ac0b7517aec2ed58e4c4df20e2f602d3632",
+      "rows": 282,
+      "split": "train"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/Skin_Reaction/valid.jsonl",
+      "upstream_path": "data/processed/Skin_Reaction/valid.jsonl",
+      "sha256": "b9b50859b4d3df3cf023a978f6f492a10cd511701456143859d3fab378510f67",
+      "rows": 40,
+      "split": "valid"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/Skin_Reaction/test.jsonl",
+      "upstream_path": "data/processed/Skin_Reaction/test.jsonl",
+      "sha256": "68bd94e2439fec56429fa8875ff7a248666a8fcf583d4215317fb6a2dc27f3f9",
+      "rows": 82,
+      "split": "test"
+    }
+  ]
+}

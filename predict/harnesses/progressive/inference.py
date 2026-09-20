@@ -290,7 +290,7 @@ def query_steps(
     prompt_version = (
         runner._context_prompt_version(args, task)
         if args.profile == "context_records"
-        else "standard_v1"
+        else args.assay_transfer_prompt_version
     )
     prompt_settings = prompt_assets(prompt_version)["settings"]
     output_contract = prompt_settings.get("output_contract")

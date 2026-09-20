@@ -1,0 +1,16 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "carcinogens",
+  "dataset": "Carcinogens_Lagunin",
+  "target_definition": "TDC carcinogenicity label; 1 is carcinogenic and 0 is non-carcinogenic.",
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "files": [
+    {
+      "path": "data/raw/tdc/Carcinogens/v1/carcinogens_lagunin.tab",
+      "upstream_path": "data/starling_data/new_tasks_gold_audit/tdc_comparison/carcinogens_lagunin.tab",
+      "sha256": "fe057a144d31a5883c0d9902173c4d208b9af826670d47d4ed0eeabf798fc160",
+      "rows": 280,
+      "split": null
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+bbb_martins:
+  task: bbb_martins
+  endpoint_name: TDC blood-brain barrier penetration
+  label_scope: tdc_bbb_martins.v1
+  prediction_field: bbb_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  system_role: You are a senior medicinal-chemistry blood-brain barrier reasoning model.
+  task_instructions:
+  - Return compact complete JSON.
+  - Predict pass for TDC label 1 and fail for TDC label 0.
+  - Use the visible Gold-v1 and TDC training labels as source-specific analog evidence.
+  - A Gold-v1 label follows its conditioned systemic-CNS ontology; a TDC label follows the external TDC BBB definition. Do not silently treat the two label sources as identical assays.
+  - Weight evidence by Morgan similarity, endpoint match, and source compatibility. Do not treat repeated labels as independent experimental measurements.
+  - Express mixed evidence through confidence and evidence_gaps while choosing exactly one bbb_prediction.
+bioavailability_ma:
+  task: bioavailability_ma
+  endpoint_name: TDC oral bioavailability at the F >= 20% threshold
+  label_scope: tdc_bioavailability_ma_f20.v1
+  prediction_field: bioavailability_prediction
+  positive_prediction: high
+  negative_prediction: low
+  system_role: You are a senior oral-bioavailability threshold reasoning model.
+  task_instructions:
+  - Return compact complete JSON.
+  - Predict high for TDC label 1 and low for TDC label 0.
+  - Use the visible Gold-v1 and TDC training labels as source-specific analog evidence.
+  - Preserve condition and source differences; an external dataset label is not a direct assay record for the query.
+  - Weight evidence by Morgan similarity, endpoint match, and source compatibility. Do not treat repeated labels as independent experimental measurements.
+  - Express mixed evidence through confidence and evidence_gaps while choosing exactly one bioavailability_prediction.

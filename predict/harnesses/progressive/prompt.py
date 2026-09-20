@@ -329,9 +329,13 @@ def build_level_messages(
             **common,
         ), None
 
-    from predict.harnesses.progressive.state import build_progressive_messages
+    from predict.harnesses.progressive.state import (
+        build_progressive_messages,
+        card_alias_maps,
+        molecule_card_contract,
+    )
 
-    return build_progressive_messages(
+    messages = build_progressive_messages(
         contract=contract,
         levels=levels,
         current_level=current_level,
@@ -342,4 +346,30 @@ def build_level_messages(
         query_tool_summary=prepared.get("query_tool_summary") or {},
         active=active,
         prior_state=prior_state,
-    ), None
+        card_contract=molecule_card_contract(
+            prompt_asset_path(prompt_version, "card.yaml")
+        ),
+        prompt_version=prompt_version,
+        protocol_details={"prompt_mode": str(prepared.get("l1_ranking") or "morgan")},
+    )
+    reference_index = None
+    reference_contract = prompt_assets(prompt_version)["settings"].get(
+        "reasoning_reference_contract"
+    )
+    if reference_contract:
+        from predict.harnesses.progressive.references import (
+            build_reference_index,
+            validate_prompt_index,
+            validate_unique_visible_ids,
+        )
+
+        card_id_to_alias, _ = card_alias_maps(active)
+        reference_index = build_reference_index(
+            active,
+            card_id_to_alias=card_id_to_alias,
+            current_level=current_level,
+            layout=str(reference_contract["layout"]),
+        )
+        validate_unique_visible_ids(reference_index)
+        validate_prompt_index(messages[1]["content"], reference_index)
+    return messages, reference_index

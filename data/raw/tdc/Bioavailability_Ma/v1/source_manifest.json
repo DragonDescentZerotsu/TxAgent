@@ -1,0 +1,30 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "bioavailability_ma",
+  "dataset": "Bioavailability_Ma",
+  "target_definition": "TDC oral bioavailability label; 1 is F >= 20% and 0 is F < 20%.",
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "files": [
+    {
+      "path": "data/gold_labels/legacy/processed/Bioavailability_Ma/train.jsonl",
+      "upstream_path": "data/processed/Bioavailability_Ma/train.jsonl",
+      "sha256": "4e72f0a59d7d5942b4b920a469495898d7458132d523ceecad9179c2c0c6dd12",
+      "rows": 448,
+      "split": "train"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/Bioavailability_Ma/valid.jsonl",
+      "upstream_path": "data/processed/Bioavailability_Ma/valid.jsonl",
+      "sha256": "298248ed4a322892721e63a7dbc923efc12c211626a7f70b76d2cde4b5cfcde5",
+      "rows": 64,
+      "split": "valid"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/Bioavailability_Ma/test.jsonl",
+      "upstream_path": "data/processed/Bioavailability_Ma/test.jsonl",
+      "sha256": "d2b9ad8191f74a8a54c3f6e4210b02f476c1758f2f82a24aa2d8355c05e4ec1f",
+      "rows": 128,
+      "split": "test"
+    }
+  ]
+}

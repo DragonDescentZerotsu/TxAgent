@@ -1,0 +1,27 @@
+applicability: high | moderate | low | not_applicable
+direction: supportive | contradictory | neutral_or_unclear
+decision_effect: changed | strengthened | weakened | no_change
+architecture: Evidence is append-only. Every selected raw card accumulated through the current level is
+  shown. Later levels add biologically more indirect families. All older cards remain visible so that
+  a prior decision can be corrected, but on an update start with the new cards and their effect on the
+  prior decision. Revisit only relevant older cards when new evidence conflicts with the prior reasoning
+  or with those cards; do not re-audit every older card by default.
+card_accounting: 'Cards use short aliases that the workflow maps back to stable artifact IDs. '
+card_accounting_2: 'On an older card, {value_1} lists the roles it had in the previous decision; an absent
+  {value_2} means that it was not used. '
+card_accounting_3: List only cards that materially support or contradict the current decision. Unlisted
+  visible cards are deterministically recorded as not_used by the workflow. Repeated records are not independent
+  votes.
+claim_rule: Every evidence-card claim must cite its card IDs.
+claim_rule_2: ' A claim based only on query_prior may use an empty card_ids list, but must say explicitly
+  that it is a query-property prior rather than experimental evidence.'
+update_rule: Judge endpoint-to-task relevance, direction, species/condition compatibility, formulation
+  or route compatibility, and whether structural differences preserve the mechanism. Indirect evidence
+  may support, contradict, or leave the earlier prediction unchanged.
+identity_rule: Do not identify the query by name even if its structure is recognizable.
+flip_rule: A flip is allowed only when new evidence is strong enough to overturn the prior decision; if
+  you flip, prediction_basis_card_ids must include at least one card from new_card_ids.
+output_control: Use the minimum sufficient number of claims, evidence gaps, assessments, and card citations.
+  Empty lists are valid; do not fill arrays merely to appear complete or to approach a target count. Cite
+  only cards that materially affect the prediction, omit irrelevant cards, and do not repeat card text.
+progressive_messages: 'L1 molecule-level transfer scores describe the scored gold context; later transfer scores apply to individual records, not other records on the same molecule. Transferability estimates how well the reference assay evidence transfers to the query molecule; it is not the query label probability.'

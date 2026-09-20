@@ -1,0 +1,23 @@
+Task definition
+{{ payload.task_definition | tojson }}
+
+Protocol
+{{ payload.protocol | tojson }}
+
+Level context
+{{ payload.level_context | tojson }}
+
+Query
+{{ payload.query | tojson }}
+
+Visible evidence
+{% for molecule in payload.active_evidence %}
+## Molecule {{ loop.index }}
+{{ {"canonical_smiles": molecule.canonical_smiles, "morgan_similarity": molecule.morgan_similarity, "first_seen_level": molecule.first_seen_level} | tojson }}
+{% for card in molecule.evidence_cards %}
+Record {{ card.card_id }}
+{{ card | tojson }}
+{% endfor %}
+{% endfor %}
+Required JSON schema
+{{ payload.required_json_schema | tojson }}

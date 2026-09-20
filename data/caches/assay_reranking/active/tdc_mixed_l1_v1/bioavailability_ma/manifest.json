@@ -1,0 +1,37 @@
+{
+  "schema_version": "tdc_mixed_l1_morgan.v1",
+  "status": "complete",
+  "profile": "tdc_mixed_l1_v1",
+  "task": "bioavailability_ma",
+  "ranking": "morgan",
+  "selection_unit": "source_specific_label_card",
+  "top_k": 10,
+  "neighbor_identity_policy": "parent_and_nonempty_scaffold_disjoint",
+  "candidate_sources": {
+    "gold_train": {
+      "path": "data/gold_labels/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "61d061b82ec80a6094527543bee6a7e540271a0f9d24ab7484d1439e53bfa097"
+    },
+    "tdc_train": {
+      "path": "data/gold_labels/TDC/Bioavailability_Ma/v1/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "7997d9a19a3060a84f084e4ae0ec5f2cc8cb2b7578d0ed2d3f38cabec5753571"
+    }
+  },
+  "candidate_cards": 2406,
+  "subsets": {
+    "valid": {
+      "queries": 64,
+      "cache": "valid.jsonl",
+      "cache_sha256": "27eaa0e8e552bcddba2f0ebd83234119c884c051de9e4d35bfbbfdb2f1508fd0",
+      "query_input": "data/gold_labels/TDC/Bioavailability_Ma/v1/scaffold/valid.jsonl",
+      "query_input_sha256": "7ceaf7d97584e68021c277e4730e817459de2e74d7760a65eb2c46fc416d771d"
+    },
+    "test": {
+      "queries": 128,
+      "cache": "test.jsonl",
+      "cache_sha256": "8b296cdbc1009e31c3553299b24f00731e2fdb44f5135bf61dadcdb3d1267912",
+      "query_input": "data/gold_labels/TDC/Bioavailability_Ma/v1/scaffold/test.jsonl",
+      "query_input_sha256": "3d2b19f663309e757b2995ee5cd91c2def2b1458f91033dc892cd0744ad1da3d"
+    }
+  }
+}

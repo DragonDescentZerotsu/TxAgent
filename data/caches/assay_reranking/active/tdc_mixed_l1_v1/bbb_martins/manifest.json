@@ -1,0 +1,37 @@
+{
+  "schema_version": "tdc_mixed_l1_morgan.v1",
+  "status": "complete",
+  "profile": "tdc_mixed_l1_v1",
+  "task": "bbb_martins",
+  "ranking": "morgan",
+  "selection_unit": "source_specific_label_card",
+  "top_k": 10,
+  "neighbor_identity_policy": "parent_and_nonempty_scaffold_disjoint",
+  "candidate_sources": {
+    "gold_train": {
+      "path": "data/gold_labels/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "3c48be5749f31bba627e5727e032dff5c77132c81405b0f8f2c943c3c124b9c2"
+    },
+    "tdc_train": {
+      "path": "data/gold_labels/TDC/BBB_Martins/v1/scaffold/train_molecule_condition_labels.jsonl",
+      "sha256": "8d01b36fde9e18e9d0bf11da5ac73b73441dbf886337b10619a6ff2eb9651e53"
+    }
+  },
+  "candidate_cards": 4276,
+  "subsets": {
+    "valid": {
+      "queries": 197,
+      "cache": "valid.jsonl",
+      "cache_sha256": "bd4b5f700927cd8c6ba88835d3a6c119fcba01c463d731416ed7e9cf9cd78fc4",
+      "query_input": "data/gold_labels/TDC/BBB_Martins/v1/scaffold/valid.jsonl",
+      "query_input_sha256": "a722cc745e4c16c523853291dcf475bf330b2c130f407453e0db11c13b77aed7"
+    },
+    "test": {
+      "queries": 530,
+      "cache": "test.jsonl",
+      "cache_sha256": "7a60b392739dee488883950e6ac03e88d61a7f7bb12f6d513d4c6dfc0516584a",
+      "query_input": "data/gold_labels/TDC/BBB_Martins/v1/scaffold/test.jsonl",
+      "query_input_sha256": "89ffc9ed97b672b17500962d604fa24cefd3b74d75b66ac30fd41811b5d8db64"
+    }
+  }
+}

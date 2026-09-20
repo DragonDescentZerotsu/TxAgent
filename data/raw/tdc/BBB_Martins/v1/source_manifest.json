@@ -1,0 +1,30 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "bbb_martins",
+  "dataset": "BBB_Martins",
+  "target_definition": "TDC BBB penetration label; 1 is BBB-positive and 0 is BBB-negative.",
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "files": [
+    {
+      "path": "data/gold_labels/legacy/processed/BBB_Martins/train.jsonl",
+      "upstream_path": "data/processed/BBB_Martins/train.jsonl",
+      "sha256": "99e1af1e984eb8a89bf5fd8c6d84e1b6fb9f34e60a36e11d2c797b02606fe879",
+      "rows": 1369,
+      "split": "train"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/BBB_Martins/valid.jsonl",
+      "upstream_path": "data/processed/BBB_Martins/valid.jsonl",
+      "sha256": "2cf7edfa15e4c84cf67d74d587f8ee27e17b2a082fa3927fe1ebeb5043160877",
+      "rows": 195,
+      "split": "valid"
+    },
+    {
+      "path": "data/gold_labels/legacy/processed/BBB_Martins/test.jsonl",
+      "upstream_path": "data/processed/BBB_Martins/test.jsonl",
+      "sha256": "85742edb9e8d46d67daf352e1bba22828ece813053512ee0ba9ac7cd9007ad57",
+      "rows": 392,
+      "split": "test"
+    }
+  ]
+}

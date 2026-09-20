@@ -1,0 +1,31 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "ames",
+  "dataset": "AMES",
+  "target_definition": "TDC Ames mutagenicity label; 1 is mutagenic and 0 is non-mutagenic.",
+  "upstream_commit": "f7af9885bc0cdfa2969b52db0065c94bd1f00567",
+  "source_location": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES",
+  "files": [
+    {
+      "path": "data/raw/tdc/Ames/v1/train.csv",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/train.csv",
+      "sha256": "f467268ea5460913870897110e04225309dc699b6499b8c91dbdad0342d7e298",
+      "rows": 5094,
+      "split": "train"
+    },
+    {
+      "path": "data/raw/tdc/Ames/v1/valid.csv",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/val.csv",
+      "sha256": "35d5364efcde763f13fc9426322ffc0ff1e98eb1e91c5d275d69dd29d49d0784",
+      "rows": 727,
+      "split": "valid"
+    },
+    {
+      "path": "data/raw/tdc/Ames/v1/test.csv",
+      "source_path": "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/data/raw/original/AMES/test.csv",
+      "sha256": "d87e29ad1f188d6ee4fcdd5c3c3aa4ba15e4fec657553353d0d951ad8df02d3f",
+      "rows": 1457,
+      "split": "test"
+    }
+  ]
+}

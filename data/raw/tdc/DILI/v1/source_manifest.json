@@ -1,0 +1,16 @@
+{
+  "contract": "tdc_raw_source.v1",
+  "task": "dili",
+  "dataset": "DILI",
+  "target_definition": "TDC drug-induced liver injury label; 1 is DILI-positive and 0 is DILI-negative.",
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "files": [
+    {
+      "path": "data/raw/tdc/DILI/v1/dili.tab",
+      "upstream_path": "data/starling_data/new_tasks_gold_audit/tdc_comparison/dili.tab",
+      "sha256": "d3961647ff6df9711b6aa4b9fe59d6cbeb40f9d23dd6e9d51d6656e6e6df5ed8",
+      "rows": 475,
+      "split": null
+    }
+  ]
+}
