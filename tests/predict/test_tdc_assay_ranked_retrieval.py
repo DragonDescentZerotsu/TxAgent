@@ -8,19 +8,25 @@ import pytest
 from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import load_candidates
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
-from predict.retrieval.assay_reranking.score_tdc_ranked_retrieval import BASE_PROFILE, PROFILE
+from predict.retrieval.assay_reranking.score_tdc_ranked_retrieval import (
+    BASE_PROFILE,
+    PROFILE,
+    SKIN_PROFILE,
+)
 from predict.utils.json import read_jsonl, sha256_file
 
 
 EXPECTED = {
     "bbb_martins": {"valid": 197, "test": 530},
     "bioavailability_ma": {"valid": 64, "test": 128},
+    "skin_reaction": {"valid": 40, "test": 82},
 }
+PROFILES = {task: (SKIN_PROFILE if task == "skin_reaction" else PROFILE) for task in EXPECTED}
 
 
 @pytest.mark.parametrize("task", EXPECTED)
 def test_tdc_assay_release_preserves_morgan_and_adds_dense_assay_ranks(task: str) -> None:
-    root = cache_profile_root(PROFILE) / task
+    root = cache_profile_root(PROFILES[task]) / task
     base = cache_profile_root(BASE_PROFILE) / task
     index = json.loads((root / "RELEASE_INDEX.json").read_text())
     assert index["status"] == "complete"

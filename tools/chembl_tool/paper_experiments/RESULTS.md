@@ -14,6 +14,14 @@ formal GLM、MiniMol head、Morgan KNN、MiniMol embedding cosine KNN、blind �
 和新增入口统一见
 `STARLING_BENCHMARK_RESULTS.md`；两种 lineage 不得混表。
 
+Important TDC lineage limitation (audited 2026-09-20): the active assay-transfer checkpoints are not
+molecule-disjoint from TDC v1. On test, the direct L1 optimizer data contain exact-parent matches for
+BBB/Oral/Skin in 94/530, 78/128, and 15/82 queries; their TDC Gold 0/1 counts are 28/66, 18/60, and 1/14.
+Any assay-scored L2+ optimizer data contain matches in 205/530, 75/128, and 10/82, with TDC Gold 0/1 counts
+of 59/146, 20/55, and 0/10. These are molecular-exposure findings, not proof of target memorization. Do not describe these TDC results as
+molecule-disjoint or fully out-of-distribution. The hash-pinned report and row-level audit are under
+`outputs/analysis/assay_transfer_leakage/tdc_active_checkpoint_overlap_v1/`.
+
 外部 Starling 论文 released CSV 的 Table 2 MiniMol 复现代码保留在
 `predict/baselines/minimol/`，immutable source contract 保留在
 `data/legacy/artifacts/starling_table2_v3/`。该 release 的任务定义和 split 也不属于下方 current gold，

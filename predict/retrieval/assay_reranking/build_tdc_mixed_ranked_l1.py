@@ -40,7 +40,9 @@ from .score_tdc_ranked_retrieval import _prompt_task
 from .v9 import V9PromptRenderer, model_profile, reference_provenance
 
 
-PROFILE = "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v2"
+PROFILE = "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3"
+GOLD_CACHE_PROFILE = "ranked_level_retrieval_v4"
+SCORE_REUSE_ROOTS: tuple[Path, ...] = ()
 TASKS = ("bbb_martins", "bioavailability_ma")
 SUBSETS = ("valid", "test")
 LINEAGE = "v10_3_best"
@@ -105,14 +107,32 @@ def _sources(task: str) -> tuple[list[dict[str, Any]], dict[str, list[str]], lis
 def _reused_scores(task: str) -> dict[str, float]:
     root = cache_profile_root("ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1") / task
     scores: dict[str, float] = {}
-    for subset in SUBSETS:
-        manifest = _json(root / "scaffold" / subset / "L1/VERSION.json")
-        with sqlite3.connect(root / "scaffold" / subset / "L1" / manifest["database"]) as connection:
-            for key, value in connection.execute(
-                "SELECT score_key,assay_transfer_score FROM rankings "
-                "WHERE score_key IS NOT NULL AND assay_transfer_score IS NOT NULL"
-            ):
-                scores[str(key)] = float(value)
+    roots = (root.parent,) + SCORE_REUSE_ROOTS
+    for reuse_root in roots:
+        task_root = reuse_root / task
+        for subset in SUBSETS:
+            level_root = task_root / "scaffold" / subset / "L1"
+            manifest_path = level_root / "VERSION.json"
+            if not manifest_path.is_file():
+                continue
+            manifest = _json(manifest_path)
+            with sqlite3.connect(level_root / manifest["database"]) as connection:
+                tables = {
+                    str(row[0]) for row in connection.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table'"
+                    )
+                }
+                query = (
+                    "SELECT score_key,assay_transfer_score FROM context_scores"
+                    if "context_scores" in tables else
+                    "SELECT score_key,assay_transfer_score FROM rankings "
+                    "WHERE score_key IS NOT NULL AND assay_transfer_score IS NOT NULL"
+                )
+                for key, value in connection.execute(query):
+                    key, value = str(key), float(value)
+                    if key in scores and scores[key] != value:
+                        raise ValueError(f"Conflicting exact-key score reuse: {key}")
+                    scores[key] = value
     return scores
 
 
@@ -230,7 +250,14 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
             connection.close()
         build = root / ".build"
         build.mkdir()
-        pq.write_table(pa.Table.from_pylist([prompt_rows[key] for key in sorted(prompt_rows)]), build / "prompts.parquet", compression="zstd")
+        prompt_values = [prompt_rows[key] for key in sorted(prompt_rows)]
+        if prompt_values:
+            prompt_table = pa.Table.from_pylist(prompt_values)
+        else:
+            prompt_table = pa.table({
+                name: pa.array([], type=pa.string()) for name in PromptTask.__dataclass_fields__
+            })
+        pq.write_table(prompt_table, build / "prompts.parquet", compression="zstd")
         pq.write_table(pa.Table.from_pylist(assignments), build / "assignments.parquet", compression="zstd")
         prepared = {
             "status": "prepared", "task_id": task, "profile": PROFILE,
@@ -238,6 +265,14 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
             "prompts_sha256": sha256_file(build / "prompts.parquet"),
             "assignments_sha256": sha256_file(build / "assignments.parquet"),
             "exact_reuse": sum(row["reused_score"] is not None for row in assignments),
+            "score_reuse_sources": [
+                {
+                    "path": str(root.resolve()),
+                    "release_index_sha256": sha256_file(root / task / "RELEASE_INDEX.json"),
+                }
+                for root in SCORE_REUSE_ROOTS
+                if (root / task / "RELEASE_INDEX.json").is_file()
+            ],
         }
         _write_json(build / "PREPARED.json", prepared)
         os.replace(root, destination)
@@ -269,14 +304,15 @@ def score(task: str, output_root: Path, shard_index: int, num_shards: int, devic
 def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
     root = output_root / task
     prepared = _json(root / ".build/PREPARED.json")
-    scores: dict[str, float] = {}
-    for shard in range(num_shards):
-        for row in read_jsonl(root / ".build/scores" / f"{shard:02d}-of-{num_shards:02d}.jsonl"):
-            key, value = str(row["cache_key"]), float(row["transfer_probability"])
-            if key in scores or not math.isfinite(value) or not 0 <= value <= 1:
-                raise ValueError(f"Invalid duplicate assay score: {key}")
-            scores[key] = value
     prompts = {str(row["cache_key"]) for row in pq.read_table(root / ".build/prompts.parquet", columns=["cache_key"]).to_pylist()}
+    scores: dict[str, float] = {}
+    if prompts:
+        for shard in range(num_shards):
+            for row in read_jsonl(root / ".build/scores" / f"{shard:02d}-of-{num_shards:02d}.jsonl"):
+                key, value = str(row["cache_key"]), float(row["transfer_probability"])
+                if key in scores or not math.isfinite(value) or not 0 <= value <= 1:
+                    raise ValueError(f"Invalid duplicate assay score: {key}")
+                scores[key] = value
     if set(scores) != prompts:
         raise ValueError(f"Fresh score mismatch: missing={len(prompts-set(scores))}")
     assignments = pq.read_table(root / ".build/assignments.parquet").to_pylist()
@@ -370,7 +406,7 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
             "manifest": str(manifest_path.relative_to(root)),
             "manifest_sha256": sha256_file(manifest_path), "content_id": final["content_id"],
         }}}
-    gold_index = ROOT / "data/caches/assay_reranking/active/ranked_level_retrieval_v3" / task / "RELEASE_INDEX.json"
+    gold_index = cache_profile_root(GOLD_CACHE_PROFILE) / task / "RELEASE_INDEX.json"
     tdc_index = cache_profile_root("ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1") / task / "RELEASE_INDEX.json"
     evidence_sources = [_projection_entry(path) for path in (gold_index, tdc_index)]
     index = {
@@ -441,15 +477,23 @@ def validate(task: str, output_root: Path) -> dict[str, Any]:
 
 
 def main() -> None:
+    global GOLD_CACHE_PROFILE, PROFILE, SCORE_REUSE_ROOTS
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("prepare", "score", "finalize", "validate"))
     parser.add_argument("--task", choices=TASKS, required=True)
-    parser.add_argument("--output-root", type=Path, default=cache_profile_root(PROFILE))
+    parser.add_argument("--profile", default=PROFILE)
+    parser.add_argument("--gold-cache-profile", default=GOLD_CACHE_PROFILE)
+    parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
+    parser.add_argument("--output-root", type=Path)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=4)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=64)
     args = parser.parse_args()
+    PROFILE = args.profile
+    GOLD_CACHE_PROFILE = args.gold_cache_profile
+    SCORE_REUSE_ROOTS = tuple(path.resolve() for path in args.score_reuse_root)
+    args.output_root = args.output_root or cache_profile_root(PROFILE)
     if args.command == "prepare": result = prepare(args.task, args.output_root)
     elif args.command == "score": result = score(args.task, args.output_root, args.shard_index, args.num_shards, args.device, args.batch_size)
     elif args.command == "finalize": result = finalize(args.task, args.output_root, args.num_shards)

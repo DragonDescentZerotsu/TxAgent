@@ -19,10 +19,11 @@ import pyarrow.parquet as pq
 from rdkit import DataStructs
 
 from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
+from data.processing.paths import evidence_library_root
 from predict.retrieval.policies import normalize_molecule_identity, standardize_smiles_and_fp
 from predict.utils.json import read_jsonl, sha256_file
 
-from . import runtime, three_pools
+from . import runtime, three_pools, v27_skin
 from .build_ranked_retrieval import (
     GOLD_NAMES as BASE_GOLD_NAMES,
     _clean,
@@ -33,6 +34,8 @@ from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 
 
 PROFILE = "ranked_level_retrieval_v3"
+EVIDENCE_RELEASE: str | None = None
+SCORE_REUSE_ROOTS: tuple[Path, ...] = ()
 TASK_LEVELS = {
     "bbb_martins": ("L1", "L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L1", "L2", "L3", "L4", "L5", "L6"),
@@ -48,6 +51,14 @@ LABEL_RELEASE: str | dict[str, str] = "v1"
 
 
 def _evidence_paths(task: str) -> tuple[Path, Path, Path, Path]:
+    if EVIDENCE_RELEASE is not None:
+        release = evidence_library_root(task, EVIDENCE_RELEASE)
+        return (
+            release / "03_pair_buckets/records.parquet",
+            release / "level_mapping/records.parquet",
+            release / "level_mapping/manifest.json",
+            release / "02_canonicalized/source_contract.json",
+        )
     module = three_pools.MODULES.get(task)
     if module is not None:
         return module.STAGE3, module.LEVEL_MAPPING, module.LEVEL_MANIFEST, module.SOURCE_CONTRACT
@@ -73,6 +84,8 @@ def _source_fields(task: str) -> tuple[dict[str, list[str]], set[str]]:
 
 
 def _model_spec(task: str, level: str) -> dict[str, Any] | None:
+    if task == v27_skin.TASK_ID:
+        return v27_skin.MODEL if level in v27_skin.LEVELS else None
     module = three_pools.MODULES.get(task)
     return None if module is None else module.MODELS.get(level)
 
@@ -196,6 +209,7 @@ def build_evidence(task: str, output: Path) -> dict[str, Any]:
             "schema_version": "ranked_evidence_projection.v1",
             "status": "complete",
             "task_id": task,
+            "evidence_library_release": EVIDENCE_RELEASE,
             "record_count": len(seen),
             "display_counts": dict(sorted(display_counts.items())),
             "inputs": input_hashes,
@@ -527,7 +541,9 @@ def _records(evidence_manifest: Path) -> tuple[dict[str, dict[str, Any]], dict[s
     return records, {level: dict(parents) for level, parents in grouped.items()}
 
 
-def _reuse_scores(task: str, subset: str, keys: set[str]) -> dict[str, float]:
+def _reuse_scores(
+    task: str, subset: str, level: str, keys: set[str]
+) -> dict[str, float]:
     output: dict[str, float] = {}
     values = sorted(keys)
     for reuse_subset in ("valid", "test"):
@@ -543,6 +559,26 @@ def _reuse_scores(task: str, subset: str, keys: set[str]) -> dict[str, float]:
                     "AND transfer_probability IS NOT NULL", chunk,
                 ):
                     output[str(key)] = float(value)
+    for reuse_root in SCORE_REUSE_ROOTS:
+        manifest_path = reuse_root / task / "scaffold" / subset / level / "VERSION.json"
+        if not manifest_path.is_file():
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        database = manifest_path.with_name(str(manifest["database"]))
+        with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
+            for start in range(0, len(values), 900):
+                chunk = values[start:start + 900]
+                placeholders = ",".join("?" for _ in chunk)
+                for key, value in connection.execute(
+                    f"SELECT DISTINCT score_key,assay_transfer_score FROM rankings "
+                    f"WHERE score_key IN ({placeholders}) "
+                    "AND assay_transfer_score IS NOT NULL",
+                    chunk,
+                ):
+                    key, value = str(key), float(value)
+                    if key in output and output[key] != value:
+                        raise ValueError(f"Conflicting reusable score: {key}")
+                    output[key] = value
     return output
 
 
@@ -571,7 +607,10 @@ def prepare_level(
     ])
     popcount = three_pools.bbb.POPCOUNT[packed].sum(axis=1, dtype=np.uint16)
     model_spec = _model_spec(task, level)
-    renderer = three_pools.Renderer(task) if model_spec is not None else None
+    if task == v27_skin.TASK_ID:
+        renderer = v27_skin.SkinV27PromptRenderer()
+    else:
+        renderer = three_pools.Renderer(task) if model_spec is not None else None
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary:
@@ -616,7 +655,7 @@ def prepare_level(
                         None, None, None, None, score_key,
                     ])
 
-        reused = _reuse_scores(task, subset, set(prompt_rows))
+        reused = _reuse_scores(task, subset, level, set(prompt_rows))
         missing = set(prompt_rows) - set(reused)
         for row in staged_rows:
             if row[-1] in reused:
@@ -658,6 +697,14 @@ def prepare_level(
                 "evidence_manifest_sha256": sha256_file(evidence_manifest),
             },
             "score_counts": {"exact_reuse": len(reused), "pending": len(missing)},
+            "score_reuse_sources": [
+                {
+                    "path": str(root.resolve()),
+                    "release_index_sha256": sha256_file(root / task / "RELEASE_INDEX.json"),
+                }
+                for root in SCORE_REUSE_ROOTS
+                if (root / task / "RELEASE_INDEX.json").is_file()
+            ],
         }
         if renderer is None:
             for benchmark_row_id, in connection.execute("SELECT benchmark_row_id FROM queries"):
@@ -724,7 +771,11 @@ def score_level(
     spec = _model_spec(task, level)
     if spec is None:
         raise ValueError(f"No assay-transfer model is configured for {task}/{level}")
-    renderer = three_pools.Renderer(task)
+    renderer = (
+        v27_skin.SkinV27PromptRenderer()
+        if task == v27_skin.TASK_ID
+        else three_pools.Renderer(task)
+    )
     snapshot = runtime.resolve_model_snapshot(spec["model"], spec["revision"], local_files_only=True)
     model, tokenizer = runtime.load_model(snapshot, device=device)
     with journal.open("a", encoding="utf-8") as handle:
@@ -1150,6 +1201,7 @@ def validate_release(
 
 
 def main() -> None:
+    global EVIDENCE_RELEASE, PROFILE, SCORE_REUSE_ROOTS
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "command",
@@ -1161,7 +1213,10 @@ def main() -> None:
     parser.add_argument("--task", choices=tuple(TASK_LEVELS), required=True)
     parser.add_argument("--subset", choices=("valid", "test"))
     parser.add_argument("--level")
-    parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--profile", default=PROFILE)
+    parser.add_argument("--evidence-release")
+    parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
+    parser.add_argument("--output-root", type=Path)
     parser.add_argument("--evidence-manifest", type=Path, required=True)
     parser.add_argument("--previous-evidence-manifest", type=Path)
     parser.add_argument("--device", type=int, default=0)
@@ -1169,6 +1224,10 @@ def main() -> None:
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=128)
     args = parser.parse_args()
+    PROFILE = args.profile
+    EVIDENCE_RELEASE = args.evidence_release
+    SCORE_REUSE_ROOTS = tuple(path.resolve() for path in args.score_reuse_root)
+    args.output_root = args.output_root or runtime.cache_profile_root(PROFILE)
     if args.command == "build-evidence":
         result = build_evidence(args.task, args.evidence_manifest.parent)
     elif args.command == "rebind-evidence":

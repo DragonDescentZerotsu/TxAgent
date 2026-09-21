@@ -1,4 +1,4 @@
-"""Add V10.3-best assay ranks to an immutable copy of the TDC Morgan cache."""
+"""Add the current direct-model assay ranks to immutable TDC Morgan caches."""
 
 from __future__ import annotations
 
@@ -36,9 +36,17 @@ from .v9 import V9PromptRenderer, _cache_key, _record_value, model_profile, refe
 
 BASE_PROFILE = "ranked_level_retrieval_tdc_v1"
 PROFILE = "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1"
-TASKS = ("bbb_martins", "bioavailability_ma")
+SKIN_PROFILE = "ranked_level_retrieval_tdc_v1_assay_skin_v9_v1"
+TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 SUBSETS = ("valid", "test")
-LINEAGE = "v10_3_best"
+
+
+def _lineage(task: str) -> str:
+    return "v9" if task == "skin_reaction" else "v10_3_best"
+
+
+def _profile(task: str) -> str:
+    return SKIN_PROFILE if task == "skin_reaction" else PROFILE
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -83,6 +91,7 @@ def _prompt_task(task: str, renderer: V9PromptRenderer, profile: dict[str, Any],
 
 
 def prepare(task: str, output_root: Path) -> dict[str, Any]:
+    lineage, profile_name = _lineage(task), _profile(task)
     source = cache_profile_root(BASE_PROFILE) / task
     target = output_root / task
     if target.exists():
@@ -95,7 +104,7 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
         root = Path(temporary) / task
         shutil.copytree(source, root)
         train = {str(row["benchmark_row_id"]): row for row in read_jsonl(tdc_task_root(task) / "train_molecule_condition_labels.jsonl")}
-        renderer, profile = V9PromptRenderer(task), model_profile(task, LINEAGE)
+        renderer, profile = V9PromptRenderer(task), model_profile(task, lineage)
         prompts: dict[str, dict[str, Any]] = {}
         base_files = {}
         for subset in SUBSETS:
@@ -124,12 +133,12 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
                 "status": "prepared",
                 "model": profile,
                 "assay_transfer_status": "prepared",
-                "assay_transfer_lineage": LINEAGE,
+                "assay_transfer_lineage": lineage,
                 "scoring_contract_version": SCORING_CONTRACT_VERSION,
                 "backbone_dtype": BACKBONE_DTYPE,
                 "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
                 "prompt_assets": {"template_sha256": renderer.template_hash, "projection_sha256": renderer.projection_hash},
-                "reference_provenance": reference_provenance(task, LINEAGE),
+                "reference_provenance": reference_provenance(task, lineage),
                 "base_profile": BASE_PROFILE,
                 "base_manifest_sha256": base_files[subset]["manifest_sha256"],
                 "base_database_sha256": base_files[subset]["database_sha256"],
@@ -139,9 +148,9 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
         build.mkdir()
         prompt_path = build / "prompts.parquet"
         pq.write_table(pa.Table.from_pylist([prompts[key] for key in sorted(prompts)]), prompt_path, compression="zstd")
-        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "profile": PROFILE, "base_profile": BASE_PROFILE, "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile})
+        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "profile": profile_name, "base_profile": BASE_PROFILE, "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile})
         index = _json(root / "RELEASE_INDEX.json")
-        index.update({"profile": PROFILE, "status": "prepared", "assay_transfer_status": "prepared"})
+        index.update({"profile": profile_name, "status": "prepared", "assay_transfer_status": "prepared"})
         _write_json(root / "RELEASE_INDEX.json", index)
         os.replace(root, target)
     return {"task": task, "prompt_count": len(prompts), "target": str(target)}
@@ -166,7 +175,7 @@ def score(task: str, output_root: Path, shard_index: int, num_shards: int, devic
             raise ValueError("Score journal is not an exact prompt prefix")
     if len(completed) == len(selected):
         return {"task": task, "shard": shard_index, "completed": len(completed)}
-    profile = model_profile(task, LINEAGE)
+    profile = model_profile(task, _lineage(task))
     snapshot = resolve_model_snapshot(profile["model"], profile["revision"], local_files_only=True)
     model, tokenizer = load_model(snapshot, device=device)
     with journal.open("a", encoding="utf-8") as handle:
@@ -181,6 +190,7 @@ def score(task: str, output_root: Path, shard_index: int, num_shards: int, devic
 
 
 def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
+    lineage, profile_name = _lineage(task), _profile(task)
     root = output_root / task
     prepared = _json(root / ".build/PREPARED.json")
     prompt_path = root / ".build/prompts.parquet"
@@ -220,7 +230,7 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
             identity.update({"query_counts": query_counts, "assay_transfer_status": "complete", "score_count": len(rows)})
             final_manifest = _write_complete(connection, database, task=task, subset=subset, level="L1", identity=identity, target=level)
         index["splits"][subset]["levels"]["L1"].update({"manifest_sha256": sha256_file(manifest_path), "content_id": final_manifest["content_id"]})
-    index.update({"profile": PROFILE, "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": model_profile(task, LINEAGE), "scoring_contract_version": SCORING_CONTRACT_VERSION})
+    index.update({"profile": profile_name, "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": model_profile(task, lineage), "scoring_contract_version": SCORING_CONTRACT_VERSION})
     _write_json(root / "RELEASE_INDEX.json", index)
     report = validate(task, output_root)
     _write_json(root / "VALIDATION.json", report)
@@ -235,7 +245,7 @@ def validate(task: str, output_root: Path) -> dict[str, Any]:
         raise ValueError("Assay-transfer release is not complete")
     if (root / "evidence/VERSION.json").read_bytes() != (base / "evidence/VERSION.json").read_bytes() or (root / "evidence/records.parquet").read_bytes() != (base / "evidence/records.parquet").read_bytes():
         raise ValueError("Evidence projection changed")
-    result = {"status": "complete", "task_id": task, "profile": PROFILE, "splits": {}}
+    result = {"status": "complete", "task_id": task, "profile": _profile(task), "splits": {}}
     immutable = "benchmark_row_id,item_id,parent_id,parent_smiles,morgan_similarity,parent_morgan_rank,within_parent_rank,morgan_rank,morgan_context_id,morgan_member_count"
     for subset in SUBSETS:
         manifest_path = root / "scaffold" / subset / "L1/VERSION.json"
@@ -267,12 +277,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=("prepare", "score", "finalize", "validate"))
     parser.add_argument("--task", choices=TASKS, required=True)
-    parser.add_argument("--output-root", type=Path, default=cache_profile_root(PROFILE))
+    parser.add_argument("--output-root", type=Path)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=4)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=64)
     args = parser.parse_args()
+    args.output_root = args.output_root or cache_profile_root(_profile(args.task))
     if not 0 <= args.shard_index < args.num_shards:
         parser.error("--shard-index must be within --num-shards")
     function = {"prepare": prepare, "score": score, "finalize": finalize, "validate": validate}[args.command]
