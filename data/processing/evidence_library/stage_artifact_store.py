@@ -32,6 +32,7 @@ def package_stages(
     tracked_root: str | Path | None = None,
     stages: Sequence[str] | None = None,
     part_size: int = DEFAULT_PART_SIZE,
+    temporary_root: str | Path | None = None,
 ) -> dict[str, Any]:
     source_root = Path(local_root or profile.local_root)
     destination_root = Path(tracked_root or profile.tracked_root)
@@ -52,7 +53,8 @@ def package_stages(
         for old in target.glob("stage.tar.zst.part-*"):
             old.unlink()
         with tempfile.TemporaryDirectory(
-            prefix=f"{stage}-package-", dir=source_root.parent
+            prefix=f"{Path(stage).name}-package-",
+            dir=Path(temporary_root) if temporary_root else source_root.parent,
         ) as name:
             temporary = Path(name)
             tar_path = temporary / "stage.tar"
@@ -105,6 +107,7 @@ def restore_stages(
     local_root: str | Path | None = None,
     stages: Sequence[str] | None = None,
     force: bool = False,
+    temporary_root: str | Path | None = None,
 ) -> None:
     source_root = Path(tracked_root or profile.tracked_root)
     destination_root = Path(local_root or profile.local_root)
@@ -120,7 +123,8 @@ def restore_stages(
         destination.mkdir(parents=True, exist_ok=True)
         destination_root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(
-            prefix=f"{stage}-restore-", dir=destination_root.parent
+            prefix=f"{Path(stage).name}-restore-",
+            dir=Path(temporary_root) if temporary_root else destination_root.parent,
         ) as name:
             temporary = Path(name)
             zst_path = temporary / "stage.tar.zst"

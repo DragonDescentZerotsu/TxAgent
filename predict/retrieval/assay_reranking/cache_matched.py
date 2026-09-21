@@ -22,8 +22,15 @@ import yaml
 
 from predict.utils.json import sha256_file
 
-TASKS = {"bbb_martins": ("BBB_Martins", 5), "bioavailability_ma": ("Bioavailability_Ma", 6)}
-DEFAULT_CACHE_BUNDLE = Path(__file__).with_name('ranked_level_retrieval_v3.yaml')
+TASKS = {
+    "bbb_martins": ("BBB_Martins", 5),
+    "bioavailability_ma": ("Bioavailability_Ma", 6),
+    "skin_reaction": ("Skin_Reaction", 3),
+    "ames": ("Ames", 5),
+    "dili": ("DILI", 2),
+    "carcinogens": ("Carcinogens", 2),
+}
+DEFAULT_CACHE_BUNDLE = Path(__file__).with_name('ranked_level_retrieval_v4.yaml')
 SEMANTIC_BUCKET_CACHE_BUNDLE = Path(__file__).with_name('semantic_bucket_reranking_v1.yaml')
 L1_CONTEXT_CACHE_BUNDLE = Path(__file__).with_name('l1_context_morgan25_v1.yaml')
 CONTEXT_L2_CACHE_BUNDLE = Path(__file__).with_name('l1_context_semantic_l2_v1.yaml')
@@ -794,7 +801,7 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                     gold_context_mapping=None, allow_frozen_l1_vote_scores=False,
                     cache_pool='tool-accepted', joint_panel_sizes=None,
                     min_contrast=3, morgan_primary_parent_width=100,
-                    preselected_uids=None):
+                    preselected_uids=None, preselected_contexts=None):
     """Load a complete v2 cache directly, or explicitly replay a legacy bundle."""
     if policy.get('selection_contract') in {
         'ranked_level_retrieval.v2', 'ranked_uid_retrieval.v1'
@@ -817,9 +824,14 @@ def load_candidates(queries, *, task, subset, library=None, mapper=None, policy,
                 if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
                 else {}
             ),
+            **(
+                {'preselected_contexts': preselected_contexts}
+                if policy['selection_contract'] == 'ranked_uid_retrieval.v1'
+                else {}
+            ),
         )
-    if preselected_uids is not None:
-        raise ValueError('Preselected UIDs require ranked_uid_retrieval.v1')
+    if preselected_uids is not None or preselected_contexts is not None:
+        raise ValueError('Preselected UIDs and contexts require ranked_uid_retrieval.v1')
     if policy.get('selection_contract') == 'cache_matched_retrieval.v2':
         from .cache_matched_v2 import load_candidates as load_v2_candidates
         return load_v2_candidates(
