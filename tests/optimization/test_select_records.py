@@ -1,5 +1,23 @@
+import math
+import csv
+import json
+
 import pytest
 
+from optimization.gold_joint import (
+    DIRECT_SCHEMA,
+    INDIRECT_SCHEMA,
+    DirectProfile,
+    IndirectProfile,
+    _log_ceiling,
+    direct_profiles,
+    normalized_log_diversity,
+    select_direct_contexts,
+    select_joint_indirect,
+    compose_mixed,
+    validate_selection_manifest,
+)
+from predict.utils.json import sha256_file
 from optimization.select_records import (
     PROFILES,
     _feature_coverage,
@@ -195,3 +213,115 @@ def test_profile_grid_contains_baseline_single_terms_and_balanced_values() -> No
     }
     assert PROFILES["balanced_10"].gated_assay_lambda == 0
     assert set(PROFILES["balanced_10"].lambdas().values()) == {0.0, 1.0}
+
+
+def test_log_diversity_is_capacity_normalized_and_has_diminishing_returns() -> None:
+    capacities = {"a": 3, "b": 1}
+
+    expected = math.log(3) + math.log(2)
+    assert _log_ceiling(capacities, 3) == pytest.approx(expected)
+    assert normalized_log_diversity(("a", "a", "b"), capacities, 3) == 1
+    assert 0 <= normalized_log_diversity(("a",), capacities, 3) <= 1
+    first = math.log(2)
+    second = math.log(3) - math.log(2)
+    assert first > second > 0
+
+
+def test_direct_selector_uses_cards_bit_coverage_and_log_labels() -> None:
+    candidates = [
+        {
+            "item_id": "c1", "parent_id": "p1", "parent_smiles": "CCO",
+            "morgan_similarity": 0.9, "assay_transfer_score": 0.9, "gold_label": 0,
+        },
+        {
+            "item_id": "c2", "parent_id": "p1", "parent_smiles": "CCO",
+            "morgan_similarity": 0.89, "assay_transfer_score": 0.9, "gold_label": 0,
+        },
+        {
+            "item_id": "c3", "parent_id": "p2", "parent_smiles": "c1ccccc1",
+            "morgan_similarity": 0.7, "assay_transfer_score": 0.8, "gold_label": 1,
+        },
+    ]
+    selected, summary = select_direct_contexts(
+        candidates,
+        profile=DirectProfile("test", gated_assay=1, molecular=1, label=1),
+        budget=2,
+    )
+
+    assert {row["item_id"] for row in selected} == {"c1", "c3"}
+    assert summary["label_0"] == summary["label_1"] == 1
+    assert 0 <= summary["molecular_coverage_normalized"] <= 1
+    assert summary["label_diversity"] == 1
+
+
+def test_joint_indirect_selector_has_no_level_quota_and_normalized_log_terms() -> None:
+    candidates = [
+        {
+            "item_id": "u1", "parent_id": "p1", "parent_smiles": "CCO", "level": "L2",
+            "morgan_similarity": 0.9, "assay_transfer_score": 0.8,
+            "semantic_bucket_id": "s1", "semantic_weight": 0.5,
+        },
+        {
+            "item_id": "u2", "parent_id": "p2", "parent_smiles": "CCN", "level": "L2",
+            "morgan_similarity": 0.8, "assay_transfer_score": None,
+            "semantic_bucket_id": "s1", "semantic_weight": 0.4,
+        },
+        {
+            "item_id": "u3", "parent_id": "p3", "parent_smiles": "c1ccccc1", "level": "L3",
+            "morgan_similarity": 0.3, "assay_transfer_score": None,
+            "semantic_bucket_id": "s2", "semantic_weight": 0.3,
+        },
+    ]
+    profile = IndirectProfile("test", 1, 0, 0, 0, 0, ())
+    selected, summary = select_joint_indirect(candidates, profile=profile, budget=2)
+
+    assert [row["item_id"] for row in selected] == ["u1", "u2"]
+    assert summary["level_counts"] == {"L2": 2}
+    assert 0 <= summary["semantic_diversity"] <= 1
+    assert 0 <= summary["level_diversity"] <= 1
+
+
+def test_direct_grid_has_27_crossed_profiles_and_three_controls() -> None:
+    profiles = direct_profiles()
+
+    assert len(profiles) == 30
+    assert len({profile.name for profile in profiles}) == 30
+    assert sum(profile.molecular == profile.label == 0 for profile in profiles) == 3
+
+
+def _selection_manifest(tmp_path, schema: str) -> object:
+    direct = schema == DIRECT_SCHEMA
+    records = tmp_path / ("direct.tsv" if direct else "indirect.tsv")
+    fields = (
+        ("benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label")
+        if direct else
+        ("benchmark_row_id", "selection_rank", "level", "source_row_uid")
+    )
+    row = (
+        {"benchmark_row_id": "q", "selection_rank": 1, "context_id": "c", "parent_id": "p", "gold_label": 1}
+        if direct else
+        {"benchmark_row_id": "q", "selection_rank": 1, "level": "L2", "source_row_uid": "u"}
+    )
+    with records.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t")
+        writer.writeheader()
+        writer.writerow(row)
+    manifest = tmp_path / ("direct.json" if direct else "indirect.json")
+    manifest.write_text(json.dumps({
+        "schema_version": schema, "status": "complete", "task_id": "bbb_martins",
+        "subset": "valid_small", "benchmark_row_ids": ["q"], "budget": 1,
+        "records": {"path": records.name, "sha256": sha256_file(records), "row_count": 1},
+    }), encoding="utf-8")
+    return manifest
+
+
+def test_mixed_manifest_hash_pins_validated_direct_and_indirect(tmp_path) -> None:
+    direct = _selection_manifest(tmp_path, DIRECT_SCHEMA)
+    indirect = _selection_manifest(tmp_path, INDIRECT_SCHEMA)
+
+    output = compose_mixed(direct, indirect, tmp_path / "mixed.json")
+    document = json.loads(output.read_text())
+
+    assert document["direct"]["sha256"] == sha256_file(direct)
+    assert document["indirect"]["sha256"] == sha256_file(indirect)
+    assert validate_selection_manifest(direct)["schema_version"] == DIRECT_SCHEMA

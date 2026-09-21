@@ -1,0 +1,79 @@
+\subsection{Context Optimization}
+\label{sec:context-optimization}
+
+The evidence corpus supplies a large number of possible observations, but the context length of the reasoning model is limited. We therefore formulate evidence selection as a submodular optimization problem, selecting evidence that represents the best landscape around the novel molecule $q$ for prediction, integrating the property trnasfer model as well as other key deimsnions.
+
+Specifically, we define key three axes central to our optimization: \textbf{smilarity, informativeness, and diversity}. We want to reprsent evidence that is likely to transfer to our actualy nove molecule, otherwise the evndiecen is not relevant. We wantt to represent evidence that is also actaully inforamtive of the prediction task at hand. Further, we want to represent a diverse set of envidence that the language model can collectively reason about as increasingly retrieving informatoin in a narrow subset of eivnidce may display diminishing returns.
+
+Given scores that represent these dimensions, we select evidence from separate direct and indirect candidate pools, $\mathcal{C}_D$ and $\mathcal{C}_I$, with record budgets $B_D$ and $B_I$. For a selected set $S$, let $S_D=S\cap\mathcal{C}_D$ and $S_I=S\cap\mathcal{C}_I$. We formulate selection as
+\begin{equation}
+    S^\star
+    \in
+    \operatorname*{arg\,max}_{\substack{
+        S\subseteq\mathcal{C}_D\cup\mathcal{C}_I\\
+        |S_D|=B_D,\;|S_I|=B_I
+    }}
+    F(S;q,t),
+    \label{eq:context-selection}
+\end{equation}
+The objective combines record-level relevance with molecular, label, semantic, and evidence-level diversity:
+\begin{equation}
+\begin{aligned}
+    F(S;q,t)
+    ={}&\underbrace{\frac{1}{|S|}\sum_{i\in S}G_i}_{\text{Similarity}}
+    +\underbrace{\lambda_{\mathrm{sr}}\frac{1}{|S_I|}
+        \sum_{i\in S_I}w_i}_{\text{Informativeness}}\\
+    &+\underbrace{\lambda_{\mathrm{mol}}D_{\mathrm{mol}}(S)
+        +\lambda_{\mathrm{yd}}D_{\mathrm{label}}(S_D)
+        +\lambda_{\mathrm{sd}}D_{\mathrm{sem}}(S_I)
+        +\lambda_{\mathrm{ld}}D_{\mathrm{level}}(S_I)}_{\text{Diversity}}.
+\end{aligned}
+\label{eq:context-objective}
+\end{equation}
+
+All weights are nonnegative.
+
+\textbf{Similarity} Here, $s_i=s(m_i,q)$ is the Morgan fingerprint Tanimoto similarity between the source molecule $m_i$ of record $i$ and the query $q$. For records with an assay-transfer score $a_i$, the normalized gated relevance is
+\begin{equation}
+    G_i=\frac{s_i+\lambda_{\mathrm{ga}}s_i a_i}
+    {1+\lambda_{\mathrm{ga}}}.
+    \label{eq:gated-relevance}
+\end{equation}
+For records without an assay-transfer score, $G_i=s_i$.
+
+\textbf{Informativeness} To estimate informativeness, how informative a endpoint $p_r$ is for predicting the target property $t$, motivated to exact the kowledge prior inLLMs, we ask an LLM to rank and score endpoints by their usefulness for predicting $t$. Due to the number endpoints, we apply tree-like search procedure to combine the endpoints into more unified smeanti groups.
+
+To generate the weightss, we use two linear passes over the data to achieve this. First, we batch process 12 buckets at a time and assign weights to each bucket. Then, a second pass sorts the semantic buckets, and recalibrates the weights in a sliding window fashion in which we feed the intiail or previous set of weights as a seed for the next set of weights. Akin to convolution, this ensures a more global aclibrtion of the weights without exploding the LLM's context window. Furthermore, to ensure consistently and speed up rollout (avoiding long tails), we run each scoring 16 times and grab the first 4 weihgts and average them. The resulting semantci group scores $w_i$ remain fixed during evidence selection.
+
+\textbf{Diversity} The molecular diversity term rewards coverage of Morgan fingerprint features:
+\begin{equation}
+    D_{\mathrm{mol}}(S)
+    =\frac{\left|\bigcup_{i\in S}\mathcal{B}_i\right|}
+    {\left|\bigcup_{j\in\mathcal{C}_D\cup\mathcal{C}_I}\mathcal{B}_j\right|},
+    \label{eq:molecular-diversity}
+\end{equation}
+where $\mathcal{B}_i$ is the set of active Morgan fingerprint bits for record $i$.
+
+Label diversity for direct evidence and semantic diversity for indirect evidence use capacity-normalized logarithmic rewards:
+\begin{equation}
+\begin{aligned}
+    D_{\mathrm{label}}(S_D)
+    &=\frac{1}{Z_D}\sum_{y\in\{0,1\}}\log\!\left(1+n_y(S_D)\right),\\
+    D_{\mathrm{sem}}(S_I)
+    &=\frac{1}{Z_{\mathrm{sem}}}\sum_{g\in\mathcal{G}_I}
+    \log\!\left(1+n_g(S_I)\right),
+\end{aligned}
+    \label{eq:semantic-diversity}
+\end{equation}
+where each denominator is the maximum feasible numerator for the corresponding candidate capacities and fixed budget.
+
+Level diversity encourages balance across the available later evidence levels without imposing a quota or minimum:
+\begin{equation}
+    D_{\mathrm{level}}(S_I)
+    =\frac{1}{Z_{\mathrm{level}}}
+    \sum_{\ell\in\mathcal{L}}\log\!\left(1+n_\ell(S_I)\right),
+    \label{eq:level-diversity}
+\end{equation}
+where $\mathcal{L}$ is the set of available later levels, $n_\ell(S_I)$ is the number of selected indirect records from level $\ell$, and $Z_{\mathrm{level}}$ is the maximum feasible numerator for the available level capacities and budget $B_I$. Thus, $D_{\mathrm{level}}(S_I)\in[0,1]$, and the diminishing marginal gain $\log(n_\ell+2)-\log(n_\ell+1)$ favors underrepresented levels while permitting the data to determine the final level counts.
+
+With fixed nonnegative evidence scores, the individual-score terms are modular and the diversity terms are monotone submodular. Their nonnegative weighted sum is therefore monotone submodular. We approximately maximize this objective using lazy greedy selection: starting from an empty set, we repeatedly add the record with the largest marginal gain until 50 records have been selected.

@@ -242,6 +242,64 @@ a TSV in the same study directory. Keep the report, TSV tables, and compact
 provenance manifest together, and reference immutable input runs by path and hash.
 Existing inference runs and reusable caches retain their own locations.
 
+### Gold-v1 submodular context optimization
+
+The reproducible Gold-only selector is `python -m optimization.gold_joint`. It
+uses the three 100-query `valid_small` splits for BBB, Oral Bioavailability, and
+Skin Reaction. BBB and Oral direct candidates come from the Gold-v1 L1 caches in
+`ranked_level_retrieval_v3`; Skin direct candidates come from
+`v9_skin_gold_v1_scaffold_morgan100_v1`, pinned to the v9.0.2 Skin
+assay-transfer model. Indirect candidates come from each task's active
+Gold-bound `ranked_level_retrieval_v3` L2+ universe. Do not substitute a TDC
+query or L1 cache.
+
+Direct selection chooses exactly ten Gold context cards. Its terms are normalized
+Morgan-gated assay relevance, normalized Morgan-bit coverage, and capacity-
+normalized log label diversity. Selecting a card never changes its frozen label
+or ordered physical voter membership. The direct grid contains 27 crossed
+profiles over gated assay `{.75,1,1.25}`, Morgan-bit coverage `{.25,.5,.75}`,
+and label diversity `{.25,.5,.75}`, plus three gated-only controls.
+
+Indirect selection combines all available L2+ UIDs for a query and chooses 50
+records jointly, with no per-level quota or minimum. It retains normalized
+Morgan-bit coverage. Semantic and level diversity use
+`sum(log(1+n_group))` divided by the maximum feasible value for the same query,
+capacities, and budget. The denominator is fixed before selection, so each term
+is monotone submodular and remains in `[0,1]`. Skin has reviewed semantic bucket
+assignments but no reviewed semantic relevance weights; its semantic-relevance
+lambda is therefore recorded as unavailable and made effectively zero. Never
+invent weights or borrow another task's scores.
+
+The indirect grid validates 94 entries from the three existing normalized-gated
+screens, records every source alias, deduplicates them to 75 scientific objective
+settings, and crosses those settings with level weights `{.25,.5,.75}` for 225
+profiles. A mixed selection freezes one reviewed direct manifest and combines it
+with one indirect manifest; the direct panel must never be recomputed implicitly.
+
+Use the isolated Apricot environment even though the successor's deterministic
+lazy greedy implementation does not require an N-by-N matrix:
+
+```bash
+OPT_PY=/vast/projects/myatskar/design-documents/conda_env/apricot-select/bin/python
+OPT_STAGE=/local/$USER/gold_joint_log_diversity_valid_small_v1
+$OPT_PY -m optimization.gold_joint direct --output-root "$OPT_STAGE"
+$OPT_PY -m optimization.gold_joint indirect --output-root "$OPT_STAGE"
+$OPT_PY -m optimization.gold_joint validate \
+  --manifest "$OPT_STAGE/direct/ga100_mc050_label050/bbb_martins/manifest.json"
+$OPT_PY -m optimization.gold_joint compose \
+  --direct-manifest "$OPT_STAGE/direct/<reviewed-profile>/<task>/manifest.json" \
+  --indirect-manifest "$OPT_STAGE/indirect/<profile>/<task>/manifest.json" \
+  --output "$OPT_STAGE/mixed/<profile>/<task>/manifest.json"
+```
+
+Direct manifests contain selected `context_id` values; indirect manifests contain
+ordered `source_row_uid` values with their original levels; mixed manifests hash-
+pin both. Validate every leaf manifest and the closed copy on `/vast`, then publish
+under `outputs/analysis/record_selection/gold_joint_log_diversity_valid_small_v1/`.
+Selection artifacts are derived analysis, not inference completion. These commands
+must not launch an LLM request, update the Joseph run catalog, or choose a canonical
+direct profile without reviewed validation results.
+
 New Joseph progressive runs use a study/method/query-prior/run hierarchy under
 `outputs/paper/assay_transfer_harness/joseph/`, for example
 `contrastive/morgan/with_query_prior/k10_m3_YYYYMMDD_HHMM/`. The prior directory

@@ -1,4 +1,5 @@
 import optimization.grid_search as grid_search
+from optimization.gold_joint import indirect_profiles
 from optimization.grid_search import (
     COMPONENTS,
     anchor_names,
@@ -101,6 +102,15 @@ def test_normalized_gated_grid_has_36_crossed_profiles_and_three_controls() -> N
         profile.semantic_diversity_lambda
         for profile in high_semantic if profile.molecular_lambda
     } == {0.25, 0.5}
+
+
+def test_gold_joint_grid_deduplicates_94_aliases_to_225_profiles() -> None:
+    profiles, aliases = indirect_profiles()
+
+    assert len(aliases) == 94
+    assert len(profiles) == 225
+    assert len({profile.name for profile in profiles}) == 225
+    assert {profile.level_diversity for profile in profiles} == {0.25, 0.5, 0.75}
 
 
 def test_screen_is_deterministic_keeps_anchors_and_collapses_aliases() -> None:

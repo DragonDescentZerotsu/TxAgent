@@ -1,5 +1,34 @@
 # Record-selection optimization
 
+## Gold-v1 direct and joint L2+ successor
+
+`optimization.gold_joint` adds two immutable Gold-v1 selection modes without
+changing the legacy per-level grids below. Direct mode chooses 10 L1 context
+cards using normalized Morgan-gated assay relevance, normalized Morgan-bit
+coverage, and normalized log label diversity. Indirect mode pools every L2+
+candidate and chooses 50 physical UIDs jointly using the same relevance and bit
+coverage terms, reviewed semantic relevance where available, and normalized log
+semantic and level diversity. It imposes no per-level quota.
+
+The capacity-aware log term is
+`sum(log(1+n_group)) / max_feasible_sum(log(1+x_group))`. The denominator is
+fixed for each query and budget, which keeps the score monotone submodular and
+within `[0, 1]`. Skin uses its Gold-v1 v9.0.2 direct rankings; its semantic
+relevance is unavailable and therefore has an effective weight of zero.
+
+```bash
+OPT_PY=/vast/projects/myatskar/design-documents/conda_env/apricot-select/bin/python
+OPT_STAGE=/local/$USER/gold_joint_log_diversity_valid_small_v1
+$OPT_PY -m optimization.gold_joint direct --output-root "$OPT_STAGE"
+$OPT_PY -m optimization.gold_joint indirect --output-root "$OPT_STAGE"
+```
+
+The direct grid has 30 profiles. The indirect grid retains 94 source aliases,
+deduplicates them to 75 objectives, and crosses three level-diversity weights for
+225 profiles. `compose` requires a reviewed direct manifest and only writes a
+hash-pinned reference to that frozen panel; it never selects a winner. See the
+root `AGENTS.md` for validation and publication requirements.
+
 This package selects ordered physical V10 evidence records from each query's
 immutable `ranked_level_retrieval_v3` universe: every physical UID beneath the
 top 100 Morgan-ranked parents. It optimizes compact cache rows and does not
