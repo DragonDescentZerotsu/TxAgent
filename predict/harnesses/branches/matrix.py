@@ -1078,36 +1078,6 @@ def main(argv: list[str] | None = None) -> int:
                     f"{request_review['batch_count']} batches and "
                     f"{request_review['request_count']} requests"
                 )
-        if late_top_up:
-            candidate_failovers = candidate_config.max_failovers
-            selection = select_healthy_providers(
-                candidate_config, primary_capacity(candidate_config),
-            )
-            candidate_config = replace(
-                selection.config, max_failovers=candidate_failovers,
-            )
-            model_checks = list(selection.checks)
-            args.load_receipt = sample_provider_loads(
-                candidate_config,
-                samples=args.load_samples,
-                interval_s=args.load_sample_interval_s,
-            )
-            provider_config, args.top_up_allocations = top_up_provider_config(
-                candidate_config,
-                args.load_receipt,
-                target_total=args.target_total_load_per_endpoint,
-            )
-            args.parallelism = primary_capacity(provider_config)
-            args.requested_parallelism = args.parallelism
-            args.endpoint_selection = {
-                "checks": model_checks,
-                "mode": "top_up_to_total_running_plus_waiting",
-                "load_samples": args.load_receipt,
-                "allocations": args.top_up_allocations,
-            }
-            execution, endpoint_receipts = _provider_execution(
-                provider_config, args.request_timeout_s,
-            )
         live_runs = {}
         subset_by_batch = {
             command.experiment_name: command.experiment_name.split("__", 2)[1]
@@ -1146,6 +1116,36 @@ def main(argv: list[str] | None = None) -> int:
                     run_dir,
                     resume_command=[*command, "--live-run-id", run_dir.name],
                 )
+        if late_top_up:
+            candidate_failovers = candidate_config.max_failovers
+            selection = select_healthy_providers(
+                candidate_config, primary_capacity(candidate_config),
+            )
+            candidate_config = replace(
+                selection.config, max_failovers=candidate_failovers,
+            )
+            model_checks = list(selection.checks)
+            args.load_receipt = sample_provider_loads(
+                candidate_config,
+                samples=args.load_samples,
+                interval_s=args.load_sample_interval_s,
+            )
+            provider_config, args.top_up_allocations = top_up_provider_config(
+                candidate_config,
+                args.load_receipt,
+                target_total=args.target_total_load_per_endpoint,
+            )
+            args.parallelism = primary_capacity(provider_config)
+            args.requested_parallelism = args.parallelism
+            args.endpoint_selection = {
+                "checks": model_checks,
+                "mode": "top_up_to_total_running_plus_waiting",
+                "load_samples": args.load_receipt,
+                "allocations": args.top_up_allocations,
+            }
+            execution, endpoint_receipts = _provider_execution(
+                provider_config, args.request_timeout_s,
+            )
         manifest = {
             "version": MATRIX_VERSION,
             "status": (

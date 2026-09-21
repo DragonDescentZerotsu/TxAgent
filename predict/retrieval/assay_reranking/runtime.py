@@ -48,6 +48,7 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "ranked_level_retrieval_tdc_v1",
         "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
         "ranked_level_retrieval_tdc_v1_assay_skin_v9_v1",
+        "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1",
         "ranked_level_retrieval_tdc_v1_indirect_v1",
         "ranked_level_retrieval_tdc_v1_indirect_v2",
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v1",
@@ -55,6 +56,7 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3",
         "ranked_level_retrieval_gold_v1_addon_v1",
         "ranked_level_retrieval_gold_v1_addon_v2",
+        "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
         "ranked_level_retrieval_skin_v27_gold_v1",
         "ranked_level_retrieval_skin_v27_tdc_v1",
         "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
@@ -74,6 +76,7 @@ def cache_profile_root(profile: str) -> Path:
         "ranked_level_retrieval_tdc_v1",
         "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
         "ranked_level_retrieval_tdc_v1_assay_skin_v9_v1",
+        "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1",
         "ranked_level_retrieval_tdc_v1_indirect_v1",
         "ranked_level_retrieval_tdc_v1_indirect_v2",
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v1",
@@ -81,6 +84,7 @@ def cache_profile_root(profile: str) -> Path:
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3",
         "ranked_level_retrieval_gold_v1_addon_v1",
         "ranked_level_retrieval_gold_v1_addon_v2",
+        "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
         "ranked_level_retrieval_skin_v27_gold_v1",
         "ranked_level_retrieval_skin_v27_tdc_v1",
         "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
@@ -91,10 +95,17 @@ def cache_profile_root(profile: str) -> Path:
     return parent / profile
 MODEL_ROLES = (
     "direct", "direct_v10_3", "direct_v10_3_0_2", "direct_v10_4",
+    "direct_task_best",
     "indirect", "all_records",
 )
 MODEL_PROFILES = {
     "bbb_martins": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-bbb-martins-best",
+            "revision": "42cb4afa224c102898d75fe4ad48e166254952b5",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+            "checkpoint_step": 130,
+        },
         "direct": {
             "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-bbb-martins-vote-mean",
             "revision": "06b9900222e887597ca06f0015a09fa87b8eb509",
@@ -124,6 +135,12 @@ MODEL_PROFILES = {
         },
     },
     "bioavailability_ma": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-tdc-v2-hp-bioavailability-ma-best",
+            "revision": "a1cb6960e9ea4b18c69a87cf10bb7ef695192208",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+            "checkpoint_step": 80,
+        },
         "direct": {
             "model": "jiosephlee/assay-transfer-tool-soft-v9-bioavailability-ma-mixed-continuous",
             "revision": "6f3aefabc9a07b357066aaf7ca0f69ab63785240",
@@ -154,6 +171,12 @@ MODEL_PROFILES = {
         },
     },
     "skin_reaction": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v9-0-2-tdc-v2-skin-reaction-best",
+            "revision": "870f401c451b4324a93af5049bec02c529119c20",
+            "prompt_profile": "tdc_binary_same_different_parent_smiles.v1",
+            "checkpoint_step": 80,
+        },
         "direct": {
             "model": "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous",
             "revision": "e4e894af28151760d2041275c5ecf136971c3925",
@@ -163,6 +186,30 @@ MODEL_PROFILES = {
             "model": "jiosephlee/intern-s1-mini-assay-transfer-v19-1-skin-reaction-numeric-best",
             "revision": "f29d100ca2112490d22913736d4efa5bc5308cb6",
             "prompt_profile": "v19_1",
+        },
+    },
+    "ames": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-ames-best",
+            "revision": "d27f5f44328a43ccfea650841dba9fcf4729ec69",
+            "prompt_profile": "gold_v1_context.v10.3",
+            "checkpoint_step": 50,
+        },
+    },
+    "dili": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-1-dili-best",
+            "revision": "b594bd7be81d140a9ebdf137aea5b979359e0b7f",
+            "prompt_profile": "gold_v1_context.v10.3",
+            "checkpoint_step": 140,
+        },
+    },
+    "carcinogens": {
+        "direct_task_best": {
+            "model": "jiosephlee/intern-s1-mini-context-conditioned-molecule-transfer-v10-3-carcinogens-step160",
+            "revision": "204d66ca9f7692ae76938ef6c5ebaa84737fd5f2",
+            "prompt_profile": "gold_v1_context.v10.3",
+            "checkpoint_step": 160,
         },
     },
 }

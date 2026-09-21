@@ -1,4 +1,4 @@
-"""Add the current direct-model assay ranks to immutable TDC Morgan caches."""
+"""Add pinned direct-model assay ranks to immutable L1 Morgan caches."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from typing import Any
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
 from predict.utils.json import read_jsonl, sha256_file
@@ -27,6 +28,7 @@ from .runtime import (
     SCORING_CONTRACT_VERSION,
     PromptTask,
     cache_profile_root,
+    load_model_profile,
     load_model,
     resolve_model_snapshot,
     score_prompt_batch,
@@ -37,16 +39,85 @@ from .v9 import V9PromptRenderer, _cache_key, _record_value, model_profile, refe
 BASE_PROFILE = "ranked_level_retrieval_tdc_v1"
 PROFILE = "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1"
 SKIN_PROFILE = "ranked_level_retrieval_tdc_v1_assay_skin_v9_v1"
-TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+GOLD_PROFILE = "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1"
+TDC_PROFILE = "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
+GOLD_BASE_PROFILE = "ranked_level_retrieval_gold_v1_addon_v2"
+GOLD_TASKS = {"ames": "Ames", "dili": "DILI", "carcinogens": "Carcinogens"}
+TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+TASKS = (*TDC_TASKS, *GOLD_TASKS)
 SUBSETS = ("valid", "test")
+ASSET_ROOT = Path(__file__).with_name("prompts") / "direct_l1_task_best_v1"
+CONFIG_PATH = ASSET_ROOT / "config.json"
 
 
 def _lineage(task: str) -> str:
     return "v9" if task == "skin_reaction" else "v10_3_best"
 
 
-def _profile(task: str) -> str:
+def _profile(task: str, release: str = "legacy") -> str:
+    if release == "gold-v1":
+        return GOLD_PROFILE
+    if release == "tdc-v1":
+        return TDC_PROFILE
     return SKIN_PROFILE if task == "skin_reaction" else PROFILE
+
+
+def _base_profile(release: str) -> str:
+    return GOLD_BASE_PROFILE if release == "gold-v1" else BASE_PROFILE
+
+
+def _model_profile(task: str, release: str) -> dict[str, Any]:
+    return (
+        model_profile(task, _lineage(task))
+        if release == "legacy"
+        else load_model_profile(task, "direct_task_best")
+    )
+
+
+class DirectL1PromptRenderer:
+    def __init__(self, task: str, release: str):
+        self.task_id = task
+        self.release = release
+        self.config = _json(CONFIG_PATH)
+        section = "gold" if release == "gold-v1" else "tdc"
+        self.task = dict(self.config[section][task])
+        self.template = "gold.jinja" if release == "gold-v1" else "tdc.jinja"
+        self.template_hash = sha256_file(ASSET_ROOT / self.template)
+        self.projection_hash = sha256_file(CONFIG_PATH)
+        self.environment = Environment(
+            loader=FileSystemLoader(str(ASSET_ROOT)),
+            undefined=StrictUndefined,
+            autoescape=False,
+        )
+
+    @staticmethod
+    def _context(row: dict[str, Any]) -> str | None:
+        group = str(row.get("condition_group") or "")
+        if group == "no_reported_external_condition":
+            return None
+        atoms = row.get("condition_atoms") or group.split("+")
+        return "\n".join(
+            f"- {key.replace('_', ' ').capitalize()}: {value.replace('_', ' ')}"
+            for key, value in (str(atom).split("=", 1) for atom in atoms)
+        )
+
+    def render(self, known: dict[str, Any], query: dict[str, Any]) -> str:
+        values = {
+            **self.task,
+            "a_smiles": str(known["drug"]),
+            "b_smiles": str(query["drug"]),
+        }
+        if self.release == "gold-v1":
+            values.update(
+                a_context=self._context(known),
+                b_context=self._context(query),
+                known_value=f"{100.0 * float(known['voter_mean']):.1f}%",
+            )
+        else:
+            values["known_outcome"] = (
+                self.task["positive"] if int(known["Y"]) else self.task["negative"]
+            )
+        return self.environment.get_template(self.template).render(**values).strip()
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -59,19 +130,23 @@ def _write_json(path: Path, value: Any) -> None:
     os.replace(temporary, path)
 
 
-def _prompt_task(task: str, renderer: V9PromptRenderer, profile: dict[str, Any], known: dict[str, Any], query: dict[str, Any]) -> PromptTask:
-    known_input = {
-        "smiles": known["drug"],
-        "value": _record_value(known),
-        "condition_group": known.get("condition_group"),
-        "condition_atoms": known.get("condition_atoms") or [],
-    }
-    query_input = {
-        "smiles": query["drug"],
-        "condition_group": query.get("condition_group"),
-        "condition_atoms": query.get("condition_atoms") or [],
-    }
-    prompt = renderer.render(known_input, query_input)
+def _prompt_task(task: str, renderer: Any, profile: dict[str, Any], known: dict[str, Any], query: dict[str, Any]) -> PromptTask:
+    if isinstance(renderer, V9PromptRenderer):
+        prompt = renderer.render(
+            {
+                "smiles": known["drug"],
+                "value": _record_value(known),
+                "condition_group": known.get("condition_group"),
+                "condition_atoms": known.get("condition_atoms") or [],
+            },
+            {
+                "smiles": query["drug"],
+                "condition_group": query.get("condition_group"),
+                "condition_atoms": query.get("condition_atoms") or [],
+            },
+        )
+    else:
+        prompt = renderer.render(known, query)
     prompt_hash = hashlib.sha256(prompt.encode()).hexdigest()
     return PromptTask(
         cache_key=_cache_key(prompt_hash, profile, renderer),
@@ -90,25 +165,78 @@ def _prompt_task(task: str, renderer: V9PromptRenderer, profile: dict[str, Any],
     )
 
 
-def prepare(task: str, output_root: Path) -> dict[str, Any]:
-    lineage, profile_name = _lineage(task), _profile(task)
-    source = cache_profile_root(BASE_PROFILE) / task
+def _rows(task: str, release: str, subset: str) -> tuple[Path, list[dict[str, Any]]]:
+    if release == "gold-v1":
+        root = Path(__file__).resolve().parents[3] / "data/gold_labels" / GOLD_TASKS[task] / "v1/scaffold"
+        path = root / f"{subset}.jsonl"
+        rows = read_jsonl(path)
+        if subset == "train":
+            voters = {
+                str(row["benchmark_row_id"]): float(row["voter_mean"])
+                for row in pq.read_table(
+                    root / "gold_label_record_index.parquet",
+                    columns=["benchmark_row_id", "voter_mean", "split"],
+                    filters=[("split", "=", "train")],
+                ).to_pylist()
+            }
+            rows = [{**row, "voter_mean": voters[str(row["benchmark_row_id"])]} for row in rows]
+        return path, rows
+    root = tdc_task_root(task)
+    path = root / f"{subset}_molecule_condition_labels.jsonl"
+    return path, read_jsonl(path)
+
+
+def _provenance(task: str, release: str, profile: dict[str, Any]) -> dict[str, Any]:
+    if release == "legacy":
+        return reference_provenance(task, _lineage(task))
+    train_path, _ = _rows(task, release, "train")
+    value = {
+        "benchmark": release,
+        "candidate_source": "frozen_train_contexts",
+        "train_sha256": sha256_file(train_path),
+        "model": profile,
+        "prompt_contract": profile["prompt_profile"],
+        "dataset_revision": _json(CONFIG_PATH)["upstream"][task]["dataset_revision"],
+    }
+    if release == "gold-v1":
+        value["gold_record_index_sha256"] = sha256_file(
+            train_path.with_name("gold_label_record_index.parquet")
+        )
+    return value
+
+
+def prepare(task: str, output_root: Path, release: str = "legacy") -> dict[str, Any]:
+    if release == "gold-v1" and task not in GOLD_TASKS or release != "gold-v1" and task not in TDC_TASKS:
+        raise ValueError(f"{task} is not supported by {release}")
+    lineage, profile_name = _lineage(task), _profile(task, release)
+    base_profile = _base_profile(release)
+    source = cache_profile_root(base_profile) / task
     target = output_root / task
     if target.exists():
         raise FileExistsError(f"Refusing to replace prepared cache: {target}")
     base_index = _json(source / "RELEASE_INDEX.json")
-    if base_index.get("ranking_modes") != ["morgan"] or base_index.get("assay_transfer_status") != "not_computed":
+    if (
+        base_index.get("ranking_modes") != ["morgan"]
+        or base_index.get("assay_transfer_status") not in {None, "not_computed"}
+    ):
         raise ValueError(f"Unexpected base cache contract: {source}")
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f".{task}.", dir=target.parent) as temporary:
         root = Path(temporary) / task
         shutil.copytree(source, root)
-        train = {str(row["benchmark_row_id"]): row for row in read_jsonl(tdc_task_root(task) / "train_molecule_condition_labels.jsonl")}
-        renderer, profile = V9PromptRenderer(task), model_profile(task, lineage)
+        train_path, train_rows = _rows(task, release, "train")
+        train = {str(row["benchmark_row_id"]): row for row in train_rows}
+        renderer = (
+            V9PromptRenderer(task)
+            if release == "legacy"
+            else DirectL1PromptRenderer(task, release)
+        )
+        profile = _model_profile(task, release)
         prompts: dict[str, dict[str, Any]] = {}
         base_files = {}
         for subset in SUBSETS:
-            queries = {str(row["benchmark_row_id"]): row for row in read_jsonl(tdc_task_root(task) / f"{subset}_molecule_condition_labels.jsonl")}
+            query_path, query_rows = _rows(task, release, subset)
+            queries = {str(row["benchmark_row_id"]): row for row in query_rows}
             level = root / "scaffold" / subset / "L1"
             manifest_path = level / "VERSION.json"
             manifest = _json(manifest_path)
@@ -133,13 +261,13 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
                 "status": "prepared",
                 "model": profile,
                 "assay_transfer_status": "prepared",
-                "assay_transfer_lineage": lineage,
+                "assay_transfer_lineage": lineage if release == "legacy" else release,
                 "scoring_contract_version": SCORING_CONTRACT_VERSION,
                 "backbone_dtype": BACKBONE_DTYPE,
                 "logit_extraction_dtype": LOGIT_EXTRACTION_DTYPE,
                 "prompt_assets": {"template_sha256": renderer.template_hash, "projection_sha256": renderer.projection_hash},
-                "reference_provenance": reference_provenance(task, lineage),
-                "base_profile": BASE_PROFILE,
+                "reference_provenance": _provenance(task, release, profile),
+                "base_profile": base_profile,
                 "base_manifest_sha256": base_files[subset]["manifest_sha256"],
                 "base_database_sha256": base_files[subset]["database_sha256"],
             })
@@ -148,7 +276,7 @@ def prepare(task: str, output_root: Path) -> dict[str, Any]:
         build.mkdir()
         prompt_path = build / "prompts.parquet"
         pq.write_table(pa.Table.from_pylist([prompts[key] for key in sorted(prompts)]), prompt_path, compression="zstd")
-        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "profile": profile_name, "base_profile": BASE_PROFILE, "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile})
+        _write_json(build / "PREPARED.json", {"status": "prepared", "task_id": task, "release": release, "profile": profile_name, "base_profile": base_profile, "prompt_count": len(prompts), "prompts_sha256": sha256_file(prompt_path), "base_files": base_files, "model": profile, "inputs": {"train": str(train_path), "train_sha256": sha256_file(train_path)}})
         index = _json(root / "RELEASE_INDEX.json")
         index.update({"profile": profile_name, "status": "prepared", "assay_transfer_status": "prepared"})
         _write_json(root / "RELEASE_INDEX.json", index)
@@ -175,7 +303,7 @@ def score(task: str, output_root: Path, shard_index: int, num_shards: int, devic
             raise ValueError("Score journal is not an exact prompt prefix")
     if len(completed) == len(selected):
         return {"task": task, "shard": shard_index, "completed": len(completed)}
-    profile = model_profile(task, _lineage(task))
+    profile = dict(prepared["model"])
     snapshot = resolve_model_snapshot(profile["model"], profile["revision"], local_files_only=True)
     model, tokenizer = load_model(snapshot, device=device)
     with journal.open("a", encoding="utf-8") as handle:
@@ -190,9 +318,9 @@ def score(task: str, output_root: Path, shard_index: int, num_shards: int, devic
 
 
 def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
-    lineage, profile_name = _lineage(task), _profile(task)
     root = output_root / task
     prepared = _json(root / ".build/PREPARED.json")
+    profile_name = str(prepared["profile"])
     prompt_path = root / ".build/prompts.parquet"
     if sha256_file(prompt_path) != prepared["prompts_sha256"]:
         raise ValueError("Prepared prompt table changed")
@@ -230,7 +358,7 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
             identity.update({"query_counts": query_counts, "assay_transfer_status": "complete", "score_count": len(rows)})
             final_manifest = _write_complete(connection, database, task=task, subset=subset, level="L1", identity=identity, target=level)
         index["splits"][subset]["levels"]["L1"].update({"manifest_sha256": sha256_file(manifest_path), "content_id": final_manifest["content_id"]})
-    index.update({"profile": profile_name, "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": model_profile(task, lineage), "scoring_contract_version": SCORING_CONTRACT_VERSION})
+    index.update({"profile": profile_name, "base_profile": prepared["base_profile"], "status": "complete", "ranking_modes": ["morgan", "assay-transfer"], "assay_transfer_status": "complete", "model": prepared["model"], "scoring_contract_version": SCORING_CONTRACT_VERSION})
     _write_json(root / "RELEASE_INDEX.json", index)
     report = validate(task, output_root)
     _write_json(root / "VALIDATION.json", report)
@@ -239,13 +367,14 @@ def finalize(task: str, output_root: Path, num_shards: int) -> dict[str, Any]:
 
 
 def validate(task: str, output_root: Path) -> dict[str, Any]:
-    root, base = output_root / task, cache_profile_root(BASE_PROFILE) / task
+    root = output_root / task
     index = _json(root / "RELEASE_INDEX.json")
+    base = cache_profile_root(str(index.get("base_profile") or BASE_PROFILE)) / task
     if index.get("ranking_modes") != ["morgan", "assay-transfer"] or index.get("assay_transfer_status") != "complete":
         raise ValueError("Assay-transfer release is not complete")
     if (root / "evidence/VERSION.json").read_bytes() != (base / "evidence/VERSION.json").read_bytes() or (root / "evidence/records.parquet").read_bytes() != (base / "evidence/records.parquet").read_bytes():
         raise ValueError("Evidence projection changed")
-    result = {"status": "complete", "task_id": task, "profile": _profile(task), "splits": {}}
+    result = {"status": "complete", "task_id": task, "profile": index["profile"], "splits": {}}
     immutable = "benchmark_row_id,item_id,parent_id,parent_smiles,morgan_similarity,parent_morgan_rank,within_parent_rank,morgan_rank,morgan_context_id,morgan_member_count"
     for subset in SUBSETS:
         manifest_path = root / "scaffold" / subset / "L1/VERSION.json"
@@ -277,13 +406,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=("prepare", "score", "finalize", "validate"))
     parser.add_argument("--task", choices=TASKS, required=True)
+    parser.add_argument("--release", choices=("legacy", "gold-v1", "tdc-v1"), default="legacy")
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--num-shards", type=int, default=4)
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--batch-size", type=int, default=64)
     args = parser.parse_args()
-    args.output_root = args.output_root or cache_profile_root(_profile(args.task))
+    args.output_root = args.output_root or cache_profile_root(_profile(args.task, args.release))
     if not 0 <= args.shard_index < args.num_shards:
         parser.error("--shard-index must be within --num-shards")
     function = {"prepare": prepare, "score": score, "finalize": finalize, "validate": validate}[args.command]
@@ -292,7 +422,11 @@ def main() -> None:
     elif args.command == "finalize":
         result = function(args.task, args.output_root, args.num_shards)
     else:
-        result = function(args.task, args.output_root)
+        result = (
+            function(args.task, args.output_root, args.release)
+            if args.command == "prepare"
+            else function(args.task, args.output_root)
+        )
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

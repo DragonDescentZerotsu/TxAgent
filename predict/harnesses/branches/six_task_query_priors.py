@@ -290,8 +290,10 @@ def main(argv: list[str] | None = None) -> int:
         })
     execution = json.loads((root / "execution.json").read_text())
     execution.update(
-        status="complete", completed_requests=len(sources), fresh_requests=len(work),
-        reused_requests=len(sources) - len(work),
+        status="complete", completed_requests=len(sources),
+        fresh_requests=sum(row["source"] == "fresh" for row in sources.values()),
+        reused_requests=sum(row["source"] == "reused" for row in sources.values()),
+        generated_this_attempt=len(work),
         recovery_failures=failures, provider_snapshot=client.snapshot(),
     )
     write_json_atomic(root / "execution.json", execution)

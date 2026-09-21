@@ -1,0 +1,48 @@
+{
+  "schema_version": "direct_l1_task_best_prompt.v1",
+  "gold": {
+    "ames": {
+      "description": "You are comparing two molecules for bacterial reverse-mutation (Ames) mutagenicity. The reported assay condition, including strain and metabolic activation, is part of the outcome context.",
+      "known_label": "Known estimated likelihood of an Ames-positive outcome",
+      "property_name": "Ames mutagenicity"
+    },
+    "dili": {
+      "description": "You are comparing two molecules for drug-induced liver injury (DILI). The outcome is clinically meaningful liver injury attributable to exposure to the molecule.",
+      "known_label": "Known estimated likelihood of drug-induced liver injury",
+      "property_name": "drug-induced liver injury"
+    },
+    "carcinogens": {
+      "description": "You are comparing two molecules for experimentally observed carcinogenicity under the reported species and exposure context.",
+      "known_label": "Known estimated likelihood of a carcinogenic outcome",
+      "property_name": "carcinogenicity"
+    }
+  },
+  "tdc": {
+    "bbb_martins": {
+      "benchmark_name": "BBB",
+      "positive": "crosses the BBB",
+      "negative": "does not cross the BBB",
+      "property_name": "BBB-crossing"
+    },
+    "bioavailability_ma": {
+      "benchmark_name": "oral-bioavailability",
+      "positive": "orally bioavailable",
+      "negative": "not orally bioavailable",
+      "property_name": "oral-bioavailability"
+    },
+    "skin_reaction": {
+      "benchmark_name": "skin-reaction",
+      "positive": "skin-reaction positive",
+      "negative": "skin-reaction negative",
+      "property_name": "skin-reaction"
+    }
+  },
+  "upstream": {
+    "ames": {"dataset_revision": "409b47f25713dd1d8059909f40a3568948d3e0de"},
+    "dili": {"dataset_revision": "7d3bd8802dcf257fc2cb04b5ccbe58f523f4467f"},
+    "carcinogens": {"dataset_revision": "9add1f877751b9ac3a6d5debc83cd230ce0f0040"},
+    "bbb_martins": {"dataset_revision": "49021c7e4609e9eb902200cb5a60a0c534a294fe"},
+    "bioavailability_ma": {"dataset_revision": "9db99d12536f5dbb3d906ab90e5acff1b036405c"},
+    "skin_reaction": {"dataset_revision": "4d97c745c735aa8d6dc07b81305e93f4e3bea496"}
+  }
+}
