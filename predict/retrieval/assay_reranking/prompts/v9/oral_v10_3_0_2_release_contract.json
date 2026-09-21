@@ -1,0 +1,13 @@
+{
+  "measurement_display": {
+    "fallback": "atomic_measurement_unit_pair",
+    "policy": "canonical_first"
+  },
+  "prompt_contract": {
+    "direct": "frozen_v10.3",
+    "indirect": "canonical_first_atomic_pair.v10.3"
+  },
+  "schema_version": "direct_gold_upstream_contract.v1",
+  "source_manifest_sha256": "929ffedf44b1dbf1663b940614fc7fa2ffd5550d922b7f2705b87a340411f144",
+  "task_id": "Bioavailability_Ma"
+}

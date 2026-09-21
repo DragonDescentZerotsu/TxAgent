@@ -52,7 +52,17 @@ keys.py
 .claude/*.lock
 predict/traces/runs/*
 !predict/traces/runs/README.md
-predict/retrieval/cache/
+# Published Gold-v1 direct caches are small enough for normal Git. Keep every
+# other generated retrieval cache ignored.
+predict/retrieval/cache/*
+!predict/retrieval/cache/assay_reranking/
+predict/retrieval/cache/assay_reranking/*
+!predict/retrieval/cache/assay_reranking/active/
+predict/retrieval/cache/assay_reranking/active/*
+!predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/
+!predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/**
+!predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/
+!predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/**
 
 # Bulk scientific payloads are durable on /vast, not in Git. Existing files
 # already tracked upstream remain tracked; do not add new payloads here.

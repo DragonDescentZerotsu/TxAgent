@@ -33,13 +33,18 @@ from predict.retrieval.policies import (
 
 ASSET_ROOT = Path(__file__).with_name("prompts") / "v9"
 CONFIG_PATH = ASSET_ROOT / "prompt_config.json"
+ORAL_V10_3_0_2_CONTRACT = ASSET_ROOT / "oral_v10_3_0_2_release_contract.json"
+REPO_ROOT = Path(__file__).resolve().parents[3]
+DIRECT_RELEASE_PATH = Path(__file__).with_name("direct_gold_v1_release.json")
 PROFILE_NAME = "v9_direct_gold_top75"
 RANKING_PROFILE_NAME = "v9_direct_gold_morgan100"
+SKIN_GOLD_V1_RANKING_PROFILE = "v9_skin_gold_v1_morgan100_v1"
+SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE = "v9_skin_gold_v1_scaffold_morgan100_v1"
 TEMPLATE_PROFILE = "v9_context_conditioned"
 QUERY_CONTEXT_POLICY = "copy_gold_condition_context_value_hidden.v9"
 RANKING_SCHEMA_VERSION = "context_conditioned_gold_valid_ranking_cache.v2"
 DIRECT_LINEAGES = (
-    "v9", "v10_3", "v10_3_best", "v10_3_best_parent", "v10_4",
+    "v9", "v9_scaffold", "v10_3", "v10_3_best", "v10_3_best_parent", "v10_4",
 )
 OLD_RANKING_ROOT = Path(
     "/vast/projects/myatskar/design-documents/joseph/therapeutic-tuning/results/"
@@ -63,7 +68,7 @@ def model_profile(task_id: str, lineage: str = "v9") -> dict[str, Any]:
         if role is None:
             raise ValueError(f"No V10.3 best direct-gold model for {task_id}")
     else:
-        role = "direct" if lineage == "v9" else f"direct_{lineage}"
+        role = "direct" if lineage in {"v9", "v9_scaffold"} else f"direct_{lineage}"
     return load_model_profile(task_id, role)
 
 
@@ -91,8 +96,16 @@ def ranking_cache_dir(
     model_profile(task_id, lineage)
     if pool_size <= 0:
         raise ValueError("Morgan pool size must be positive")
-    if lineage == "v9":
-        profile = f"v9_direct_gold_morgan{pool_size}"
+    if lineage == "v9_scaffold":
+        if task_id != "skin_reaction" or pool_size != 100:
+            raise ValueError("V9 scaffold successor is defined only for Skin Morgan-100")
+        profile = SKIN_GOLD_V1_SCAFFOLD_RANKING_PROFILE
+    elif lineage == "v9":
+        profile = (
+            SKIN_GOLD_V1_RANKING_PROFILE
+            if task_id == "skin_reaction" and pool_size == 100
+            else f"v9_direct_gold_morgan{pool_size}"
+        )
     elif lineage == "v10_3_best":
         profile = f"v10_3_best_scaffold_morgan{pool_size}_v1"
     elif lineage == "v10_3_best_parent":
@@ -275,7 +288,7 @@ def _gold_paths(
 
 def reference_provenance(task_id: str, lineage: str = "v9") -> dict[str, Any]:
     """Pin the frozen label adapter behind each official-gold lineage."""
-    if lineage == "v9":
+    if lineage in {"v9", "v9_scaffold"}:
         return {}
     model_profile(task_id, lineage)
     modules = {
@@ -303,25 +316,42 @@ def reference_provenance(task_id: str, lineage: str = "v9") -> dict[str, Any]:
         "upstream_prompt_sha256": verify_vendored_assets()["prompt.jinja"],
     }
     if lineage in {"v10_3_best", "v10_3_best_parent"} and task_id == "bioavailability_ma":
+        release_contract = json.loads(
+            ORAL_V10_3_0_2_CONTRACT.read_text(encoding="utf-8")
+        )
         manifest = (
             Path(__file__).resolve().parents[4] / "starling_assay_transfer"
             / "assay_transfer/context_conditioned/artifacts/v10/hf/v10_3_0_2"
             / "Bioavailability_Ma/mixed_continuous/manifest.json"
         )
-        payload = json.loads(manifest.read_text(encoding="utf-8"))
         expected = {
             "direct": "frozen_v10.3",
             "indirect": "canonical_first_atomic_pair.v10.3",
         }
-        if payload.get("prompt_contract") != expected:
-            raise ValueError(f"Unexpected V10.3.0.2 prompt contract: {manifest}")
-        display = payload.get("measurement_display") or {}
-        if (display.get("policy"), display.get("fallback")) != (
-            "canonical_first", "atomic_measurement_unit_pair",
+        display = release_contract.get("measurement_display") or {}
+        if (
+            release_contract.get("schema_version")
+            != "direct_gold_upstream_contract.v1"
+            or release_contract.get("task_id") != "Bioavailability_Ma"
+            or release_contract.get("prompt_contract") != expected
+            or (display.get("policy"), display.get("fallback"))
+            != ("canonical_first", "atomic_measurement_unit_pair")
         ):
-            raise ValueError(f"Unexpected V10.3.0.2 display contract: {manifest}")
-        provenance["upstream_release_manifest"] = {
-            "path": str(manifest), "sha256": file_sha256(manifest),
+            raise ValueError("Invalid vendored Oral V10.3.0.2 release contract")
+        if manifest.is_file():
+            payload = json.loads(manifest.read_text(encoding="utf-8"))
+            source_display = payload.get("measurement_display") or {}
+            if (
+                file_sha256(manifest) != release_contract["source_manifest_sha256"]
+                or payload.get("prompt_contract") != expected
+                or (source_display.get("policy"), source_display.get("fallback"))
+                != (display["policy"], display["fallback"])
+            ):
+                raise ValueError(f"Vendored contract differs from its source: {manifest}")
+        provenance["upstream_release_contract"] = {
+            "path": str(ORAL_V10_3_0_2_CONTRACT.relative_to(REPO_ROOT)),
+            "sha256": file_sha256(ORAL_V10_3_0_2_CONTRACT),
+            "source_manifest_sha256": release_contract["source_manifest_sha256"],
         }
         provenance["prompt_contract"] = expected
         provenance["measurement_display"] = {
@@ -426,7 +456,7 @@ def _current_candidates(
                 for similarity, parent in zip(similarities, parents)
                 if parent != query_parent
                 and not (
-                    lineage in {"v10_3_best", "v10_4"}
+                    lineage in {"v9_scaffold", "v10_3_best", "v10_4"}
                     and query.get("bemis_murcko_scaffold")
                     and query.get("bemis_murcko_scaffold")
                     == parent_rows[parent][0][1].get("bemis_murcko_scaffold")
@@ -500,7 +530,7 @@ def _current_candidates(
         "n_queries": len(query_rows),
         "gold_release": "v2" if lineage == "v10_4" else "v1",
         "neighbor_identity_policy": (
-            "scaffold_disjoint" if lineage in {"v10_3_best", "v10_4"}
+            "scaffold_disjoint" if lineage in {"v9_scaffold", "v10_3_best", "v10_4"}
             else "parent_disjoint"
         ),
     }
@@ -513,6 +543,8 @@ def _validated_reuse(
 
     root = reuse_root / task_id
     version_path = root / "scaffold" / subset / "VERSION.json"
+    if subset == "test" and not version_path.is_file():
+        version_path = root / "scaffold" / "valid" / "VERSION.json"
     if version_path.is_file():
         root = version_path.parent
         manifest_path = version_path
@@ -581,7 +613,7 @@ def prepare_ranking_cache(
     if (train_path is not None or query_path is not None) and root is None:
         raise ValueError("Custom cohorts require an isolated cache root")
     root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
-    if lineage != "v9" and reuse_root == OLD_RANKING_ROOT:
+    if lineage not in {"v9", "v9_scaffold"} and reuse_root == OLD_RANKING_ROOT:
         reuse_root = None
     build_dir = root / ".build"
     if root.joinpath("VERSION.json").exists():
@@ -615,7 +647,8 @@ def prepare_ranking_cache(
         "reference_provenance": reference_provenance(task_id, lineage),
         "scoring_contract_version": SCORING_CONTRACT_VERSION,
         "candidate_policy": (
-            f"morgan_top{pool_size}_distinct_gold_train_parents_then_all_context_rows"
+            f"morgan_top{pool_size}_distinct_gold_train_parents_"
+            f"{inputs['neighbor_identity_policy']}_then_all_context_rows"
         ),
         "morgan_pool_size": pool_size,
         "inputs": inputs,
@@ -748,6 +781,12 @@ def finalize_ranking_cache(
             )
             for row in rows
         })
+    for source, digest in (
+        (build["inputs"]["train"], build["inputs"]["train_sha256"]),
+        (build["inputs"]["valid"], build["inputs"]["valid_sha256"]),
+    ):
+        if file_sha256(Path(source)) != digest:
+            raise ValueError(f"Gold input changed during cache scoring: {source}")
     rows = pq.read_table(root / ".build/candidates.parquet").to_pylist()
     for row in rows:
         if row["model_score"] is None:
@@ -768,9 +807,7 @@ def finalize_ranking_cache(
         row.pop("cache_key")
     rankings_path = root / "rankings.parquet"
     _write_parquet(rankings_path, rows)
-    train_path = Path(build['inputs']['train'])
-    if file_sha256(train_path) != build['inputs']['train_sha256']:
-        raise ValueError('Reference inputs changed during cache scoring')
+    train_path = Path(build["inputs"]["train"])
     training_record_ids = sorted(
         str(row["benchmark_row_id"]) for row in _read_jsonl(train_path)
     )
@@ -783,9 +820,7 @@ def finalize_ranking_cache(
         "query_record_ids": sorted({row["query_record_id"] for row in rows}),
         "training_record_ids": training_record_ids,
         "retrieval_record_ids": sorted({row["retrieval_record_id"] for row in rows}),
-        "rankings": (
-            str(rankings_path.resolve()) if lineage == "v9" else rankings_path.name
-        ),
+        "rankings": rankings_path.name,
         "rankings_sha256": file_sha256(rankings_path),
     }
     _write_json(root / "VERSION.json", version)
@@ -793,6 +828,149 @@ def finalize_ranking_cache(
         path.unlink()
     (root / ".build").rmdir()
     return version
+
+
+def _resolve_gold_input(recorded: str, canonical: Path, digest: str) -> Path:
+    source = Path(recorded)
+    if source.is_file():
+        if file_sha256(source) != digest:
+            raise ValueError(f"Ranking cache input hash mismatch: {source}")
+        return source
+    source = REPO_ROOT / canonical
+    if not source.is_file() or file_sha256(source) != digest:
+        raise ValueError(f"Canonical Gold input does not match cache: {source}")
+    return source
+
+
+def validate_ranking_cache(
+    task_id: str, *, pool_size: int = 100, root: Path | None = None,
+    lineage: str = "v9",
+) -> dict[str, Any]:
+    """Rebuild deterministic candidates and validate one finalized cache."""
+    import pyarrow.parquet as pq
+
+    root = root or ranking_cache_dir(task_id, pool_size=pool_size, lineage=lineage)
+    version = json.loads((root / "VERSION.json").read_text(encoding="utf-8"))
+    rankings_path = root / "rankings.parquet"
+    if (version.get("schema_version") != RANKING_SCHEMA_VERSION
+            or version.get("status") != "complete"
+            or version.get("model") != model_profile(task_id, lineage)):
+        raise ValueError("Ranking cache is incomplete or uses another model")
+    if version.get("scoring_contract_version") != SCORING_CONTRACT_VERSION:
+        raise ValueError("Ranking cache uses another scoring contract")
+    if version.get("prompt_assets") != verify_vendored_assets():
+        raise ValueError("Ranking cache uses different V9 prompt assets")
+    if version.get("rankings_sha256") != file_sha256(rankings_path):
+        raise ValueError("Ranking cache rankings hash mismatch")
+    inputs = version["inputs"]
+    canonical_train, canonical_query = _gold_paths(task_id, root.name, lineage)
+    resolved_inputs = [
+        _resolve_gold_input(
+            str(inputs[key]), canonical, str(inputs[f"{key}_sha256"])
+        )
+        for key, canonical in (("train", canonical_train), ("valid", canonical_query))
+    ]
+    expected, expected_inputs = _current_candidates(
+        task_id, pool_size, train_path=resolved_inputs[0],
+        query_path=resolved_inputs[1], lineage=lineage,
+    )
+    expected_inputs.update(train=inputs["train"], valid=inputs["valid"])
+    if expected_inputs != inputs:
+        raise ValueError("Reconstructed cache inputs differ from VERSION.json")
+    actual = pq.read_table(rankings_path).to_pylist()
+    expected_by_key = {
+        (row["query_record_id"], row["retrieval_record_id"]): row for row in expected
+    }
+    if set(expected_by_key) != {
+        (row["query_record_id"], row["retrieval_record_id"]) for row in actual
+    }:
+        raise ValueError("Ranking cache candidate membership mismatch")
+    for row in actual:
+        expected_row = expected_by_key[(row["query_record_id"], row["retrieval_record_id"])]
+        for field in (
+            "prompt_hash", "retrieval_parent_rank", "retrieval_parent_context_index",
+            "retrieval_parent_context_count", "morgan_tanimoto_similarity",
+        ):
+            if row[field] != expected_row[field]:
+                raise ValueError(f"Ranking cache candidate field mismatch: {field}")
+        if abs(probability_from_logits(float(row["model_score"]), 0.0)
+               - float(row["prob_transfer"])) > 1e-8:
+            raise ValueError("Ranking cache probability does not match score margin")
+    ordered = sorted(actual, key=lambda row: (
+        row["query_record_id"], -float(row["model_score"]),
+        int(row["retrieval_parent_rank"]), int(row["retrieval_parent_context_index"]),
+        row["retrieval_record_id"],
+    ))
+    previous, expected_rank = None, 0
+    for row in ordered:
+        if row["query_record_id"] != previous:
+            previous, expected_rank = row["query_record_id"], 0
+        if int(row["model_rank"]) != expected_rank:
+            raise ValueError("Ranking cache model ranks do not match score order")
+        expected_rank += 1
+    if (len(actual) != version.get("n_final_rows")
+            or len({row["query_record_id"] for row in actual})
+            != version.get("n_final_queries")):
+        raise ValueError("Ranking cache manifest counts do not match rankings")
+    return {
+        "status": "pass", "task_id": task_id, "n_rows": len(actual),
+        "n_queries": len({row["query_record_id"] for row in actual}),
+        "rankings_sha256": version["rankings_sha256"],
+    }
+
+
+def validate_direct_release(path: Path = DIRECT_RELEASE_PATH) -> dict[str, Any]:
+    """Validate every Git-published Gold-v1 direct cache."""
+    release = json.loads(path.read_text(encoding="utf-8"))
+    entries = release.get("entries") or []
+    identities = {
+        (str(entry["task_id"]), str(entry["subset"])) for entry in entries
+    }
+    expected = {
+        (task, subset)
+        for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
+        for subset in ("valid", "test")
+    }
+    limit = int(release.get("max_file_bytes") or 0)
+    if (
+        release.get("schema_version") != "direct_gold_cache_release.v1"
+        or release.get("status") != "complete"
+        or identities != expected
+        or len(entries) != len(expected)
+        or limit != 100_000_000
+    ):
+        raise ValueError("Invalid direct Gold-v1 release manifest")
+    results = []
+    for entry in entries:
+        files = []
+        for name in ("version", "rankings"):
+            receipt = entry[name]
+            source = (REPO_ROOT / str(receipt["path"])).resolve()
+            if (
+                not source.is_relative_to(REPO_ROOT)
+                or not source.is_file()
+                or source.stat().st_size != int(receipt["bytes"])
+                or source.stat().st_size >= limit
+                or file_sha256(source) != receipt["sha256"]
+            ):
+                raise ValueError(f"Published direct cache file differs: {source}")
+            files.append(source)
+        if files[0].parent != files[1].parent:
+            raise ValueError("Published VERSION and rankings files are separated")
+        results.append(validate_ranking_cache(
+            str(entry["task_id"]), root=files[0].parent,
+            lineage=str(entry["lineage"]),
+        ))
+    return {
+        "status": "pass",
+        "entries": len(entries),
+        "files": 2 * len(entries),
+        "bytes": sum(
+            int(entry[name]["bytes"])
+            for entry in entries for name in ("version", "rankings")
+        ),
+        "results": results,
+    }
 
 
 class V9CachedAssayReranker(CachedAssayReranker):
@@ -903,7 +1081,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     finalize.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
     finalize.add_argument("--pool-size", type=int, default=100)
     finalize.add_argument("--num-shards", type=int, required=True)
-    for command in (prepare, score, finalize):
+    validate = subparsers.add_parser("validate")
+    validate.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
+    validate.add_argument("--pool-size", type=int, default=100)
+    subparsers.add_parser("validate-release")
+    for command in (prepare, score, finalize, validate):
         command.add_argument("--cache-root", type=Path)
         command.add_argument("--subset", choices=("valid", "test"), default="valid")
         command.add_argument("--lineage", choices=DIRECT_LINEAGES, default="v9")
@@ -911,7 +1093,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     download.add_argument("--task", choices=sorted(GOLD_TASK_NAMES), required=True)
     download.add_argument("--lineage", choices=DIRECT_LINEAGES, default="v9")
     args = parser.parse_args(argv)
-    root = None if args.command == "download" else (
+    root = None if args.command in {"download", "validate-release"} else (
         args.cache_root
         or ranking_cache_dir(
             args.task, pool_size=args.pool_size, subset=args.subset, lineage=args.lineage
@@ -939,6 +1121,12 @@ def main(argv: Sequence[str] | None = None) -> None:
             args.task, pool_size=args.pool_size, num_shards=args.num_shards, root=root,
             lineage=args.lineage,
         )
+    elif args.command == "validate":
+        result = validate_ranking_cache(
+            args.task, pool_size=args.pool_size, root=root, lineage=args.lineage,
+        )
+    elif args.command == "validate-release":
+        result = validate_direct_release()
     else:
         profile = model_profile(args.task, args.lineage)
         result = {

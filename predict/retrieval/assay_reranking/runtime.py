@@ -52,6 +52,8 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "ranked_level_retrieval_gold_v1_addon_v1",
         "tdc_mixed_l1_v1",
         "v10_4_direct_gold_morgan100_v1",
+        "v9_skin_gold_v1_morgan100_v1",
+        "v9_skin_gold_v1_scaffold_morgan100_v1",
     }
 )
 

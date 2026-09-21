@@ -5,6 +5,14 @@ The current cache is
 payloads remain with their semantic owners under
 `data/evidence_libraries/<task>/v10/retrieval_projection/ranked_evidence_v1/`.
 
+The compact Gold-v1 direct ranking sources are published in normal Git under
+`predict/retrieval/cache/assay_reranking/active/`: BBB and Oral use
+`v10_3_best_scaffold_morgan100_v1`, while Skin uses
+`v9_skin_gold_v1_scaffold_morgan100_v1`. Their aggregate hashes and size gate
+are in `direct_gold_v1_release.json`; validate all six task/split caches with
+`python -m predict.retrieval.assay_reranking.v9 validate-release`. These source
+rankings are distinct from the derived V3 level databases and from TDC caches.
+
 - `ranked_level_retrieval_v3`: current BBB/Oral Gold-v1 retrieval. Every
   task, split, and level owns one independent SQLite database. L1 contains 100
   scaffold-disjoint Gold context cards and their exact ordered physical voter

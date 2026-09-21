@@ -1,0 +1,103 @@
+{
+  "entries": [
+    {
+      "lineage": "v10_3_best",
+      "profile": "v10_3_best_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 2436123,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bbb_martins/scaffold/valid/rankings.parquet",
+        "sha256": "2e953c711b34fd8c1e4b48848ff9542c36bc50096d257b1971a147dac70050bd"
+      },
+      "subset": "valid",
+      "task_id": "bbb_martins",
+      "version": {
+        "bytes": 208999,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bbb_martins/scaffold/valid/VERSION.json",
+        "sha256": "96d9fdef31c4e70f9fe63e2239f93e9c004d7df54de53873372bef7c313565e5"
+      }
+    },
+    {
+      "lineage": "v10_3_best",
+      "profile": "v10_3_best_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 2419441,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bbb_martins/scaffold/test/rankings.parquet",
+        "sha256": "083fd555d2da8819cfc8f115721ae437b5beab3f6e192768ccf776866bbbd1ea"
+      },
+      "subset": "test",
+      "task_id": "bbb_martins",
+      "version": {
+        "bytes": 210080,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bbb_martins/scaffold/test/VERSION.json",
+        "sha256": "3dad92a6764feed376ec1c90f076ff14bdf158444015e3288eb9994816c9eb91"
+      }
+    },
+    {
+      "lineage": "v10_3_best",
+      "profile": "v10_3_best_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 1835435,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bioavailability_ma/scaffold/valid/rankings.parquet",
+        "sha256": "5526703054dee33280ab0705c96d25e56e20dc5033caf5fb2ec01d9b992196a3"
+      },
+      "subset": "valid",
+      "task_id": "bioavailability_ma",
+      "version": {
+        "bytes": 138456,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bioavailability_ma/scaffold/valid/VERSION.json",
+        "sha256": "d17dd64ea343e56bb6a7e4b102c47310c72274e3ba2403b532fb8d0fdcddbe76"
+      }
+    },
+    {
+      "lineage": "v10_3_best",
+      "profile": "v10_3_best_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 1881837,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bioavailability_ma/scaffold/test/rankings.parquet",
+        "sha256": "8dac1dda398223bfd70953c80c7aedde9da9a2ab4b9abbd9bf8ed39c32edf8db"
+      },
+      "subset": "test",
+      "task_id": "bioavailability_ma",
+      "version": {
+        "bytes": 139484,
+        "path": "predict/retrieval/cache/assay_reranking/active/v10_3_best_scaffold_morgan100_v1/bioavailability_ma/scaffold/test/VERSION.json",
+        "sha256": "6aad373eb38e5187a0805fa0415912940063998a3f48dc4244149fb0a3af2c5d"
+      }
+    },
+    {
+      "lineage": "v9_scaffold",
+      "profile": "v9_skin_gold_v1_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 1477791,
+        "path": "predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold/valid/rankings.parquet",
+        "sha256": "3253c1b78b55c54906cd0b7e2abb66614535d21321e62c94e51b5233803b77d9"
+      },
+      "subset": "valid",
+      "task_id": "skin_reaction",
+      "version": {
+        "bytes": 132264,
+        "path": "predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold/valid/VERSION.json",
+        "sha256": "0022fab7f956ce1b88830a811447ed9dfd99b89cf50b686304d9a6f7fbf91538"
+      }
+    },
+    {
+      "lineage": "v9_scaffold",
+      "profile": "v9_skin_gold_v1_scaffold_morgan100_v1",
+      "rankings": {
+        "bytes": 1483628,
+        "path": "predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold/test/rankings.parquet",
+        "sha256": "e9525cdaf57c7adccb2ab1b1dbd50d34dfbeb9a2938ce9f31617b488f917ef4d"
+      },
+      "subset": "test",
+      "task_id": "skin_reaction",
+      "version": {
+        "bytes": 131890,
+        "path": "predict/retrieval/cache/assay_reranking/active/v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold/test/VERSION.json",
+        "sha256": "4f6372342182902cd28abc59338429d9d6baecd1280be0ad6f31ff394b13c465"
+      }
+    }
+  ],
+  "max_file_bytes": 100000000,
+  "schema_version": "direct_gold_cache_release.v1",
+  "status": "complete"
+}

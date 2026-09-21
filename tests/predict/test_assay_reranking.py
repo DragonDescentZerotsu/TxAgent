@@ -1,5 +1,6 @@
 """Pinned model and prompt contracts for the supported assay rerankers."""
 
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -27,10 +28,12 @@ from predict.retrieval.assay_reranking.v19_1 import (
 )
 from predict.retrieval.assay_reranking.v9 import (
     _current_candidates,
+    _resolve_gold_input,
     V9PromptRenderer,
     default_cache_paths as v9_cache_paths,
     ranking_cache_dir,
     reference_provenance,
+    validate_direct_release,
     verify_vendored_assets as verify_v9_assets,
 )
 
@@ -116,6 +119,31 @@ def test_v10_3_best_uses_new_oral_model_and_released_display_contract():
         "policy": "canonical_first",
         "fallback": "atomic_measurement_unit_pair",
     }
+
+
+def test_published_direct_gold_release_is_complete_and_valid():
+    receipt = validate_direct_release()
+    assert receipt["status"] == "pass"
+    assert receipt["entries"] == 6
+    assert receipt["files"] == 12
+    assert receipt["bytes"] == 12_495_428
+
+
+def test_cache_validation_rebinds_missing_historical_gold_path(
+    tmp_path, monkeypatch,
+):
+    canonical = Path("data/gold.jsonl")
+    source = tmp_path / canonical
+    source.parent.mkdir(parents=True)
+    source.write_text("{}\n", encoding="utf-8")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    monkeypatch.setattr(
+        "predict.retrieval.assay_reranking.v9.REPO_ROOT", tmp_path
+    )
+
+    assert _resolve_gold_input("/missing/old/gold.jsonl", canonical, digest) == source
+    with pytest.raises(ValueError, match="Canonical Gold input"):
+        _resolve_gold_input("/missing/old/gold.jsonl", canonical, "0" * 64)
 
 
 @pytest.mark.parametrize("task_id", sorted(V10_4_DIRECT_MODELS))
@@ -213,6 +241,10 @@ def test_cache_profiles_resolve_to_explicit_active_or_archive_roots():
     ):
         assert cache_profile_root(profile).parent == ACTIVE_CACHE_ROOT
     assert cache_profile_root("ranked_level_retrieval_v3").parent == DATA_ACTIVE_CACHE_ROOT
+    assert ranking_cache_dir("skin_reaction").is_relative_to(ACTIVE_CACHE_ROOT)
+    assert ranking_cache_dir(
+        "skin_reaction", lineage="v9_scaffold"
+    ).is_relative_to(ACTIVE_CACHE_ROOT)
 
 
 def test_v10_4_candidates_use_stable_parent_order_and_scaffold_exclusion(
@@ -286,6 +318,36 @@ def test_v10_3_best_candidates_are_scaffold_disjoint(tmp_path):
     assert inputs["neighbor_identity_policy"] == "scaffold_disjoint"
 
 
+def test_v9_skin_successor_candidates_are_scaffold_disjoint(tmp_path):
+    rows = [
+        {
+            "benchmark_row_id": record_id, "molecule_identity_key": parent,
+            "drug": smiles, "bemis_murcko_scaffold": scaffold,
+            "label_counts": {"1": 1}, "source_record_count": 1, "Y": 1,
+        }
+        for record_id, parent, smiles, scaffold in (
+            ("same", "parent-same", "CCN", "shared"),
+            ("keep", "parent-keep", "CCC", "other"),
+        )
+    ]
+    query = {
+        "benchmark_row_id": "q", "molecule_identity_key": "query", "drug": "CCCl",
+        "bemis_murcko_scaffold": "shared", "label_counts": {"0": 1},
+        "source_record_count": 1, "Y": 0,
+    }
+    train_path, query_path = tmp_path / "train.jsonl", tmp_path / "query.jsonl"
+    train_path.write_text("\n".join(json.dumps(row) for row in rows) + "\n")
+    query_path.write_text(json.dumps(query) + "\n")
+
+    selected, inputs = _current_candidates(
+        "skin_reaction", 1, train_path=train_path, query_path=query_path,
+        lineage="v9_scaffold",
+    )
+
+    assert [row["retrieval_record_id"] for row in selected] == ["keep"]
+    assert inputs["neighbor_identity_policy"] == "scaffold_disjoint"
+
+
 def test_v10_3_best_parent_candidates_allow_same_scaffold(tmp_path):
     rows = [
         {
@@ -321,6 +383,23 @@ def test_v9_prompt_contains_gold_value_and_hides_query_value():
     assert prompt.count("75.0%") == 1
     assert "<SMILES>CCO</SMILES>" in prompt
     assert "<SMILES>CCN</SMILES>" in prompt
+
+
+def test_v9_skin_prompt_matches_archived_cache_hash():
+    prompt = V9PromptRenderer("skin_reaction").render(
+        {
+            "smiles": "Nc1ccc(N=Nc2ccc([N+](=O)[O-])cc2)cc1",
+            "value": 79 / 82,
+            "condition_atoms": [],
+        },
+        {
+            "smiles": "Cc1ncc([N+](=O)[O-])n1CC(O)CCl",
+            "condition_atoms": [],
+        },
+    )
+    assert hashlib.sha256(prompt.encode()).hexdigest() == (
+        "983b65caf27f9af3576a2592f496a0b309ada93e38a9c6d7eb90b3bebf6c0d61"
+    )
 
 
 def test_transfer_knn_restricts_morgan_pool_before_reranking():
