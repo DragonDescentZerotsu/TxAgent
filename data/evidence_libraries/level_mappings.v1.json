@@ -5,35 +5,101 @@
   "uid_ledger_manifest_sha256": "6b265fef59b7fc5b676b30def5b00f1ff1f1f73fa5b66bfce9dd843f83025a27",
   "tasks": {
     "bbb_martins": {
+      "release": "v10_main_universe_v3",
       "kind": "parquet_file",
-      "path": "bbb_martins/v10/level_mapping/records.parquet",
-      "sha256": "6a0730e4704f02cb1dd54159b9318fcde4c3d777fffe0343ffc3ee59f308b766",
-      "rows": 496148,
+      "path": "bbb_martins/v10_main_universe_v3/level_mapping/records.parquet",
+      "sha256": "51c3a59524e8b69e9783164814d1529d08335b8abcfdcc3eb3113dd9e9451d0b",
+      "rows": 496135,
       "rows_by_level": {
         "1": 7634,
         "2": 269123,
-        "3": 13169,
-        "4": 162504,
+        "3": 13168,
+        "4": 162492,
         "5": 43718
       },
-      "manifest": "bbb_martins/v10/level_mapping/manifest.json",
-      "manifest_sha256": "49e05ab684e8927149713804539fd3bf9c32a601065d5a097d877411ade21fdc"
+      "manifest": "bbb_martins/v10_main_universe_v3/level_mapping/manifest.json",
+      "manifest_sha256": "b04383aad049a662d7527cf83f7e671753a63b91056a1e8461b42804b54b4f14",
+      "assay_transfer_record_eligibility": "bbb_martins/v10_main_universe_v3/level_mapping/assay_transfer_record_eligibility.parquet",
+      "assay_transfer_record_eligibility_sha256": "914ce829ec62222a46ef73490192e0ebe529ccb468294e8aeceabe7e6e34e19e"
     },
     "bioavailability_ma": {
+      "release": "v10_main_universe_v3",
       "kind": "parquet_file",
-      "path": "bioavailability_ma/v10/level_mapping/records.parquet",
-      "sha256": "86cd88de820420febc7c17b7f4f791ddbc4e9acc8f24a50a9511726d2f664f3b",
-      "rows": 431440,
+      "path": "bioavailability_ma/v10_main_universe_v3/level_mapping/records.parquet",
+      "sha256": "53bb5b26862d24e0928497dabfd9df8b0b3b5c108e990dc71d2c23d14dc06b7c",
+      "rows": 431457,
       "rows_by_level": {
         "1": 19479,
-        "2": 150739,
-        "3": 103980,
-        "4": 73537,
-        "5": 23474,
-        "6": 60231
+        "2": 150767,
+        "3": 103979,
+        "4": 73538,
+        "5": 23473,
+        "6": 60221
       },
-      "manifest": "bioavailability_ma/v10/level_mapping/manifest.json",
-      "manifest_sha256": "cb986638d9493ec55e56bdc333a3a39265ed2a5040bd6b04fdf695a69a4c0ac4"
+      "manifest": "bioavailability_ma/v10_main_universe_v3/level_mapping/manifest.json",
+      "manifest_sha256": "4a19f2eda5d5cf0ffc963c105fccb4295d1d4d140c664953cbf095ec7df79aad",
+      "assay_transfer_record_eligibility": "bioavailability_ma/v10_main_universe_v3/level_mapping/assay_transfer_record_eligibility.parquet",
+      "assay_transfer_record_eligibility_sha256": "f1f31911ca05f00070344bfcfb83b1d95d5f1711b9cc4f94ea7b9ce17d62f5b0"
+    },
+    "ames": {
+      "release": "v10_main_universe_v3",
+      "kind": "parquet_file",
+      "path": "ames/v10_main_universe_v3/level_mapping/records.parquet",
+      "sha256": "e22683ba549eabc29a1adaaed85678b9fe12e02e6bad448c9f322b8669cd06c6",
+      "rows": 1291199,
+      "rows_by_level": {
+        "1": 3131,
+        "2": 138535,
+        "3": 235593,
+        "4": 490530,
+        "5": 423410
+      },
+      "manifest": "ames/v10_main_universe_v3/level_mapping/manifest.json",
+      "manifest_sha256": "fb6aa253c9b72ed681b09d4ccd08115c758cc822a0d72d7e65dc190a5c11a911",
+      "assay_transfer_record_eligibility": "ames/v10_main_universe_v3/level_mapping/assay_transfer_record_eligibility.parquet",
+      "assay_transfer_record_eligibility_sha256": "b3fbfa858843b1e88225bf661488bec8dd83a4b2b9140753c4c04747cbef3fdb"
+    },
+    "dili": {
+      "release": "v10_main_universe_v3",
+      "kind": "parquet_file",
+      "path": "dili/v10_main_universe_v3/level_mapping/records.parquet",
+      "sha256": "e3df8079b971e185362a4eebc7aeb456318a7af7970731ae54b02611c62a8d2f",
+      "rows": 1624275,
+      "rows_by_level": {
+        "0": 240268,
+        "1": 100522,
+        "2": 174270,
+        "3": 141512,
+        "4": 75843,
+        "5": 293808,
+        "6": 196096,
+        "7": 401956
+      },
+      "manifest": "dili/v10_main_universe_v3/level_mapping/manifest.json",
+      "manifest_sha256": "c50fdd0abde6caaef550c9db25217526c18ad2f05de8d0625b0c452797fcacbd",
+      "assay_transfer_record_eligibility": "dili/v10_main_universe_v3/level_mapping/assay_transfer_record_eligibility.parquet",
+      "assay_transfer_record_eligibility_sha256": "cf388a73369417167cf909d59ac5669feee975ae2900be2ad21755418aa314fc"
+    },
+    "carcinogens": {
+      "release": "v10_main_universe_v3",
+      "kind": "parquet_file",
+      "path": "carcinogens/v10_main_universe_v3/level_mapping/records.parquet",
+      "sha256": "1b42df67306f7a092cbefefd8cb5a96e07453c53c7d7a0e332bfaa7ba13c91f1",
+      "rows": 3235609,
+      "rows_by_level": {
+        "0": 88239,
+        "1": 87563,
+        "2": 407671,
+        "3": 749264,
+        "4": 649269,
+        "5": 749224,
+        "6": 217526,
+        "7": 286853
+      },
+      "manifest": "carcinogens/v10_main_universe_v3/level_mapping/manifest.json",
+      "manifest_sha256": "511ccac79843458d6afbda1f9a7d7b968254e744a5376801c49cff213d66bc65",
+      "assay_transfer_record_eligibility": "carcinogens/v10_main_universe_v3/level_mapping/assay_transfer_record_eligibility.parquet",
+      "assay_transfer_record_eligibility_sha256": "268267bb1337e07d30e87f5579523eea64877a12eab3fdcbadf49f20cfd3149e"
     }
   }
 }

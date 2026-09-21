@@ -23,16 +23,38 @@ $OPT_PY -m optimization.gold_joint direct --output-root "$OPT_STAGE"
 $OPT_PY -m optimization.gold_joint indirect --output-root "$OPT_STAGE"
 ```
 
-The direct grid has 30 profiles. The indirect grid retains 94 source aliases,
+Direct mode also accepts `--subset valid|test`; `--profiles` restricts a
+held-out selection to an already frozen winner. Full-split evaluation uses
+separate immutable grids, for example:
+
+```bash
+$OPT_PY -m optimization.gold_joint direct --subset valid \
+  --output-root /local/$USER/gold_joint_log_diversity_full_v1
+$OPT_PY -m optimization.gold_joint direct --subset test \
+  --profiles ga100_mc050_label050 \
+  --output-root /local/$USER/gold_joint_log_diversity_test_winner_v1
+```
+
+`predict.harnesses.branches.six_task_query_priors` builds matching full-split
+query-prior overlays. `--reuse-root` reuses compatible `valid_small` artifacts
+by `benchmark_row_id` and query SMILES while hash-pinning every source; it never
+uses positional fallback.
+
+The direct grid has 28 profiles: 24 crossed profiles over gated assay transfer
+`{.75,1,1.25,1.5}`, Morgan-bit coverage `{.25,.5,.75}`, and label diversity
+`{.25,.5}`, plus four gated-only controls. The indirect grid retains 94 source aliases,
 deduplicates them to 75 objectives, and crosses three level-diversity weights for
 225 profiles. `compose` requires a reviewed direct manifest and only writes a
 hash-pinned reference to that frozen panel; it never selects a winner. See the
 root `AGENTS.md` for validation and publication requirements.
 
 This package selects ordered physical V10 evidence records from each query's
-immutable `ranked_level_retrieval_v3` universe: every physical UID beneath the
+active `ranked_level_retrieval_v4` universe: every physical UID beneath the
 top 100 Morgan-ranked parents. It optimizes compact cache rows and does not
 hydrate evidence payloads.
+
+Published runs that pin `ranked_level_retrieval_v3` remain immutable historical
+replays; changing the default does not rewrite them.
 
 For a fixed panel of K records, the objective is:
 

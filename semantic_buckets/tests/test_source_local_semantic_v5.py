@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+import sqlite3
+from types import SimpleNamespace
+
 import pytest
 
 from semantic_buckets import source_local_semantic_v5 as workflow
@@ -35,3 +40,33 @@ def test_endpoint_specs_preserve_independent_endpoint_capacity():
 def test_endpoint_specs_reject_invalid_capacity():
     with pytest.raises(ValueError, match="positive"):
         workflow._endpoint_specs(("http://dgx017:50001/v1",), 0)
+
+
+def test_retrieval_scope_reads_only_later_level_uids(tmp_path: Path):
+    level = tmp_path / "scaffold/valid/L2"
+    level.mkdir(parents=True)
+    database = level / "rankings.sqlite3"
+    with sqlite3.connect(database) as connection:
+        connection.execute("CREATE TABLE rankings(item_id TEXT)")
+        connection.executemany("INSERT INTO rankings VALUES (?)", [("u1",), ("u2",)])
+    manifest = level / "VERSION.json"
+    manifest.write_text(json.dumps({
+        "database": database.name,
+        "database_sha256": workflow.file_sha256(database),
+    }))
+    entry = {
+        "manifest": str(manifest.relative_to(tmp_path)),
+        "manifest_sha256": workflow.file_sha256(manifest),
+    }
+    index = tmp_path / "RELEASE_INDEX.json"
+    index.write_text(json.dumps({
+        "status": "complete", "task_id": "ames",
+        "splits": {
+            "valid": {"levels": {"L1": {}, "L2": entry}},
+            "test": {"levels": {"L2": entry}},
+        },
+    }))
+
+    assert workflow._retrieval_uids(
+        SimpleNamespace(task="ames", retrieval_index=index)
+    ) == {"u1", "u2"}

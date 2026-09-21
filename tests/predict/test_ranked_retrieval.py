@@ -39,6 +39,22 @@ def test_display_adapter_uses_oral_semantic_category():
     )
 
 
+def test_display_adapter_uses_source_details_for_non_scalar_record():
+    display = _display_fields(
+        "dili",
+        {
+            "canonical_measurement_scale_id": None,
+            "canonical_measurement_text": None,
+            "canonical_unit_text": "free-text",
+            "measurement_kind": "non_scalar",
+        },
+        {"effect_direction": "decreased"},
+    )
+    assert display["measurement_text"] == "decreased"
+    assert display["unit_text"] is None
+    assert display["origin"] == "source_non_scalar_text"
+
+
 def _write_runtime_fixture(root: Path) -> Path:
     evidence = root / "evidence.sqlite3"
     with sqlite3.connect(evidence) as connection:

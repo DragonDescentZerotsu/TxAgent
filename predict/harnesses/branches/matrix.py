@@ -12,6 +12,7 @@ the outputs; this module owns only matrix coordination and its root receipts.
 from __future__ import annotations
 
 import argparse
+import csv
 from dataclasses import replace
 import fcntl
 import hashlib
@@ -36,6 +37,7 @@ from predict.harnesses.branches.scheduler import (
     run_prepared_prompt_pool,
 )
 from predict.harnesses.branches.runtime import (
+    _source_run_dir,
     collect_stage_result,
     execute_stage,
     load_stage_state,
@@ -43,6 +45,8 @@ from predict.harnesses.branches.runtime import (
     ready_stage_jobs,
 )
 from predict.harnesses.branches.inference import load_frozen_single_analysis
+from predict.harnesses.branches.prompt import attach_external_condition
+from predict.llm_io.response import validated_branch_content
 from predict.api_client.pool import (
     DEFAULT_PROVIDER_POOL_CONFIG,
     OpenAIProviderPool,
@@ -63,10 +67,15 @@ from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 MATRIX_VERSION = "joseph_flat_matrix.v4"
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 DEFAULT_PROVIDER_CONFIG = DEFAULT_PROVIDER_POOL_CONFIG
-TASKS = ("bbb_martins", "bioavailability_ma")
+TASKS = (
+    "bbb_martins", "bioavailability_ma", "skin_reaction",
+    "ames", "dili", "carcinogens",
+)
+DIRECT_GRID_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 RECORDS_PER_LEVEL = 10
 MAX_TOKENS = 262_144
 GRID_SCREEN_SCHEMA = "record_selection_lambda_screen.v1"
+DIRECT_GRID_SCHEMA = "gold_submodular_selection_grid.v1"
 DEFAULT_CONDITIONS = ("morgan:all",)
 CONDITION_CHOICES = tuple(
     f"{mode}:{pool}" for mode in flat.VARIANTS for pool in flat.RECORD_POOLS
@@ -195,6 +204,38 @@ def load_preselected_grid(path: Path) -> list[dict[str, Any]]:
             if not manifest_path.is_file() or sha256_file(manifest_path) != entry.get("sha256"):
                 raise ValueError(f"Selected UID manifest mismatch for {profile.get('name')} {task}")
             entry["path"] = str(manifest_path.resolve())
+    return profiles
+
+
+def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if (
+        payload.get("schema_version") != DIRECT_GRID_SCHEMA
+        or payload.get("status") != "complete"
+        or payload.get("kind") != "direct"
+    ):
+        raise ValueError(f"Invalid completed direct selection grid: {path}")
+    profiles = payload.get("profiles") or []
+    if len(profiles) != int(payload.get("profile_count", -1)) or len({
+        row.get("name") for row in profiles
+    }) != len(profiles):
+        raise ValueError("Direct grid profile count or names are invalid")
+    for profile in profiles:
+        subsets = set()
+        for task in DIRECT_GRID_TASKS:
+            entry = (profile.get("task_manifests") or {}).get(task) or {}
+            manifest = Path(str(entry.get("path") or ""))
+            if not manifest.is_absolute():
+                manifest = path.parent / manifest
+            if not manifest.is_file() or sha256_file(manifest) != entry.get("sha256"):
+                raise ValueError(f"Direct manifest mismatch for {profile.get('name')} {task}")
+            subsets.add(json.loads(manifest.read_text(encoding="utf-8")).get("subset"))
+            entry["path"] = str(manifest.resolve())
+        if len(subsets) != 1 or None in subsets:
+            raise ValueError(f"Direct profile mixes evaluation subsets: {profile.get('name')}")
+        profile["subset"] = subsets.pop()
+    if len({profile["subset"] for profile in profiles}) != 1:
+        raise ValueError("Direct grid profiles mix evaluation subsets")
     return profiles
 
 
@@ -336,6 +377,8 @@ def _selection_args(
     context_v6: bool = False,
     all_levels: bool = False,
     flat_preselected_uids: Path | None = None,
+    flat_preselected_contexts: Path | None = None,
+    context_v5_six_tasks: bool = False,
     batch_id: str | None = None,
     evaluation_subset: str = "valid",
     prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
@@ -348,17 +391,22 @@ def _selection_args(
     ).with_name(
         f"{evaluation_subset}_molecule_condition_labels.jsonl"
     ).resolve()
-    context_v4 = context_width is not None and not context_v5 and not context_v6
-    context_prompt = context_v4 or context_v5 or context_v6
+    context_v4 = (
+        context_width is not None and not context_v5 and not context_v6
+        and not context_v5_six_tasks
+    )
+    context_prompt = context_v4 or context_v5 or context_v6 or context_v5_six_tasks
     return argparse.Namespace(
         harness_version=(
-            flat.CONTEXT_V6_HARNESS_VERSION if context_v6
+            flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION if context_v5_six_tasks
+            else flat.CONTEXT_V6_HARNESS_VERSION if context_v6
             else flat.CONTEXT_V5_HARNESS_VERSION if context_v5
             else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
             else flat.PUBLIC_HARNESS_VERSION
         ),
         prompt_version=(
-            flat.CONTEXT_V6_PROMPT_VERSION if context_v6
+            flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION if context_v5_six_tasks
+            else flat.CONTEXT_V6_PROMPT_VERSION if context_v6
             else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
             else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
             else flat.JOSEPH_PROMPT_VERSION
@@ -379,7 +427,7 @@ def _selection_args(
         records_per_level=records_per_level,
         ranking_tie_seed=0,
         max_level=flat.TASKS[task] if all_levels else 1 if context_prompt else 0,
-        layout="level-grouped" if context_v5 else "global",
+        layout="level-grouped" if context_v5 or context_v5_six_tasks else "global",
         query_prior="cached",
         prior_root=prior_root.resolve(),
         l1_min_contrast=min_contrast,
@@ -387,6 +435,7 @@ def _selection_args(
         molecule_description_mode="none",
         molecule_description_cache_version="v1",
         flat_preselected_uids=flat_preselected_uids,
+        flat_preselected_contexts=flat_preselected_contexts,
         record_limits_by_level={
             f"L{level}": records_per_level
             for level in range(2, flat.TASKS[task] + 1)
@@ -557,6 +606,90 @@ def _run_pilot(prepared_by_name: dict[str, Any], client: OpenAIProviderPool) -> 
                         )
 
 
+def _materialize_direct_request_review(
+    prepared_by_name: dict[str, Any],
+    *,
+    root: Path,
+    model: str,
+    max_tokens: int,
+) -> dict[str, Any]:
+    """Render exact direct-grid requests without creating an inference client."""
+    rows: list[dict[str, Any]] = []
+    for batch_id, prepared in sorted(prepared_by_name.items()):
+        if prepared.args.flat_prompt_version != flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+            raise ValueError(f"Unexpected direct-grid prompt version for {batch_id}")
+        retrieval_batch = Path(prepared.args.retrieval_replay_source_batch)
+        prior_batch = Path(prepared.args.single_analysis_source_batch)
+        for item in prepared.items:
+            retrieval_path = (
+                retrieval_batch / "runs"
+                / f"{retrieval_batch.name}_idx{item.index:05d}" / "retrieval.json"
+            )
+            prior_path = _source_run_dir(
+                prior_batch, item.index
+            ) / "single_molecule_reasoning_output.json"
+            retrieval = attach_external_condition(
+                json.loads(retrieval_path.read_text(encoding="utf-8")), item.record
+            )
+            prior = validated_branch_content(
+                json.loads(prior_path.read_text(encoding="utf-8"))
+            )
+            messages, metadata = flat.build_flat_context_request(
+                retrieval,
+                task_id=prepared.config.pipeline_module.split(".")[-2],
+                task_prompt_profile=str(prepared.args.task_prompt_profile),
+                layout=str(prepared.args.flat_layout),
+                reranking=str(prepared.args.flat_reranking),
+                query_prior=prior,
+                prompt_version=str(prepared.args.flat_prompt_version),
+            )
+            request = {
+                "schema_version": "joseph_flat_context_request.v1",
+                "messages": messages,
+                "message_char_count": sum(len(message["content"]) for message in messages),
+                **metadata,
+            }
+            run_id = f"{prepared.batch_id}_idx{item.index:05d}"
+            request_path = prepared.batch_run_root / run_id / "request.json"
+            write_json_atomic(request_path, request)
+            rows.append({
+                "batch_id": batch_id,
+                "task": prepared.config.pipeline_module.split(".")[-2],
+                "query_index": item.index,
+                "benchmark_row_id": item.record["benchmark_row_id"],
+                "request_path": str(request_path),
+                "request_sha256": sha256_file(request_path),
+                "retrieval_sha256": sha256_file(retrieval_path),
+                "query_prior_sha256": sha256_file(prior_path),
+                "message_char_count": request["message_char_count"],
+            })
+    index_path = root / "request_review.tsv"
+    fieldnames = tuple(rows[0]) if rows else ()
+    temporary = index_path.with_suffix(".tsv.tmp")
+    with temporary.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+    os.replace(temporary, index_path)
+    summary = {
+        "schema_version": "direct_prompt_review.v1",
+        "status": "prepared_awaiting_prompt_review",
+        "request_count": len(rows),
+        "batch_count": len(prepared_by_name),
+        "model": model,
+        "reasoning_effort": "high",
+        "thinking": {"type": "enabled"},
+        "max_tokens": max_tokens,
+        "request_index": str(index_path),
+        "request_index_sha256": sha256_file(index_path),
+        "prompt_assets": flat.prompt_asset_manifest(
+            flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+        ),
+    }
+    write_json_atomic(root / "request_review.json", summary)
+    return summary
+
+
 def main(argv: list[str] | None = None) -> int:
     raw_argv = list(sys.argv[1:] if argv is None else argv)
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
@@ -584,6 +717,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--context-v5-l1", action="store_true")
     parser.add_argument("--context-v5-all-level", action="store_true")
     parser.add_argument("--preselected-grid-manifest", type=Path)
+    parser.add_argument("--preselected-direct-grid-manifest", type=Path)
+    parser.add_argument("--tasks", nargs="+", choices=TASKS)
     parser.add_argument(
         "--evaluation-subset", choices=("valid", "test")
     )
@@ -633,16 +768,20 @@ def main(argv: list[str] | None = None) -> int:
         args.context_v4_grid, args.context_v5_grid, args.context_v5_l1,
         args.context_v5_all_level,
         args.preselected_grid_manifest is not None,
+        args.preselected_direct_grid_manifest is not None,
     )) > 1:
         parser.error("context matrix modes are mutually exclusive")
     if args.evaluation_subset and args.evaluation_subsets:
         parser.error("use either --evaluation-subset or --evaluation-subsets")
+    evaluation_subsets = tuple(args.evaluation_subsets or (args.evaluation_subset or "valid",))
     if args.preselected_grid_manifest and (
         args.records_per_level != 10
         or args.morgan_primary_parent_widths != (15, 25, 50)
         or args.l1_min_contrasts != (0, 1, 2)
     ):
         parser.error("the preselected grid has fixed K10/W25/M0 settings")
+    if args.preselected_direct_grid_manifest and len(evaluation_subsets) != 1:
+        parser.error("a direct selection grid must target exactly one evaluation subset")
     if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
         parser.error("--preselected-harness-version requires --preselected-grid-manifest")
     if args.parallelism is not None and args.parallelism < 1:
@@ -662,7 +801,6 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("top-up allocation is an immediate pre-launch operation")
     if len(args.conditions) != len(set(args.conditions)):
         parser.error("--conditions cannot contain duplicates")
-    evaluation_subsets = tuple(args.evaluation_subsets or (args.evaluation_subset or "valid",))
     if len(evaluation_subsets) != len(set(evaluation_subsets)):
         parser.error("evaluation subsets cannot contain duplicates")
     if len(args.morgan_primary_parent_widths) != len(set(args.morgan_primary_parent_widths)):
@@ -685,6 +823,8 @@ def main(argv: list[str] | None = None) -> int:
         prior_roots[subset] = Path(path).resolve()
     if args.preselected_grid_manifest:
         args.preselected_grid_manifest = args.preselected_grid_manifest.resolve()
+    if args.preselected_direct_grid_manifest:
+        args.preselected_direct_grid_manifest = args.preselected_direct_grid_manifest.resolve()
     candidate_config = load_provider_pool_config(args.provider_pool_config)
     args.requested_parallelism = args.parallelism
     args.endpoint_selection = None
@@ -730,10 +870,14 @@ def main(argv: list[str] | None = None) -> int:
                 args.request_timeout_s,
             )
         commands = []
+        selected_tasks = tuple(dict.fromkeys(args.tasks or (
+            DIRECT_GRID_TASKS if args.preselected_direct_grid_manifest else TASKS[:2]
+        )))
         context_matrix = (
             args.context_v4_grid or args.context_v5_grid
             or args.context_v5_l1 or args.context_v5_all_level
             or args.preselected_grid_manifest
+            or args.preselected_direct_grid_manifest
         )
         single_receipts = [] if context_matrix else [
             verify_single_reuse(
@@ -742,7 +886,7 @@ def main(argv: list[str] | None = None) -> int:
                     "valid_molecule_condition_labels.jsonl"
                 ).resolve(),
             )
-            for task in TASKS
+            for task in selected_tasks
         ]
         selection_receipts = []
         variants = (
@@ -768,6 +912,20 @@ def main(argv: list[str] | None = None) -> int:
             load_preselected_grid(args.preselected_grid_manifest)
             if args.preselected_grid_manifest else []
         )
+        direct_grid_profiles = (
+            load_preselected_direct_grid(args.preselected_direct_grid_manifest)
+            if args.preselected_direct_grid_manifest else []
+        )
+        direct_grid_subset = (
+            "valid" if direct_grid_profiles
+            and direct_grid_profiles[0]["subset"] == "valid_small"
+            else direct_grid_profiles[0]["subset"] if direct_grid_profiles else None
+        )
+        if direct_grid_profiles and direct_grid_subset != evaluation_subsets[0]:
+            parser.error(
+                "direct selection grid subset does not match --evaluation-subset: "
+                f"{direct_grid_profiles[0]['subset']} != {evaluation_subsets[0]}"
+            )
         preselected_v5 = bool(
             grid_profiles
             and args.preselected_harness_version == flat.CONTEXT_V5_HARNESS_VERSION
@@ -780,6 +938,18 @@ def main(argv: list[str] | None = None) -> int:
         work = (
             [
                 {
+                    "profile": profile["name"], "task": task,
+                    "subset": evaluation_subsets[0],
+                    "manifest": Path(profile["task_manifests"][task]["path"]).resolve(),
+                    "direct": True,
+                    "root": root / profile["name"] / "with_query_prior" / grid_run_id,
+                }
+                for profile in direct_grid_profiles
+                for task in selected_tasks
+            ]
+            if direct_grid_profiles else
+            [
+                {
                     "profile": profile["name"],
                     "task": task,
                     "subset": subset,
@@ -789,21 +959,23 @@ def main(argv: list[str] | None = None) -> int:
                         / subset if len(evaluation_subsets) > 1
                         else root / profile["name"] / "with_query_prior" / grid_run_id
                     ),
+                    "direct": False,
                 }
                 for profile in grid_profiles
                 for subset in evaluation_subsets
-                for task in TASKS
+                for task in selected_tasks
             ]
             if grid_profiles else
             [
                 {
                     "profile": "", "task": task, "subset": subset, "manifest": None,
+                    "direct": False,
                     "root": root / subset if len(evaluation_subsets) > 1 else root,
                     "variant": (reranking, record_pool, width, contrast, all_levels),
                 }
                 for reranking, record_pool, width, contrast, all_levels in variants
                 for subset in evaluation_subsets
-                for task in TASKS
+                for task in selected_tasks
             ]
         )
         for item in work:
@@ -829,8 +1001,10 @@ def main(argv: list[str] | None = None) -> int:
                     or args.context_v5_all_level or preselected_v5
                 ),
                 context_v6=preselected_v6,
-                all_levels=all_levels,
-                flat_preselected_uids=item["manifest"],
+                context_v5_six_tasks=item["direct"],
+                all_levels=all_levels and not item["direct"],
+                flat_preselected_uids=(None if item["direct"] else item["manifest"]),
+                flat_preselected_contexts=(item["manifest"] if item["direct"] else None),
                 evaluation_subset=subset,
                 prior_root=prior_roots[subset],
                 assay_transfer_cache=args.assay_transfer_cache,
@@ -856,7 +1030,12 @@ def main(argv: list[str] | None = None) -> int:
                     "morgan_primary_parent_width": width,
                     "l1_min_contrast": contrast,
                     "profile": item["profile"],
-                    "preselected_uids": str(item["manifest"] or ""),
+                    "preselected_uids": (
+                        "" if item["direct"] else str(item["manifest"] or "")
+                    ),
+                    "preselected_contexts": (
+                        str(item["manifest"] or "") if item["direct"] else ""
+                    ),
                     "path": str(source / "manifest.json"),
                     "sha256": sha256_file(source / "manifest.json"),
                     "selection_contract_sha256": selection[
@@ -880,6 +1059,25 @@ def main(argv: list[str] | None = None) -> int:
             max_workers=args.preparation_workers,
             max_stage_requeues=0,
         )
+        request_review = None
+        if args.prepare_only and args.preselected_direct_grid_manifest:
+            request_review = _materialize_direct_request_review(
+                prepared,
+                root=root,
+                model=MODEL,
+                max_tokens=args.max_tokens,
+            )
+            expected_batches = len(direct_grid_profiles) * len(selected_tasks)
+            expected_requests = sum(len(batch.items) for batch in prepared.values())
+            if (
+                request_review["batch_count"] != expected_batches
+                or request_review["request_count"] != expected_requests
+            ):
+                raise ValueError(
+                    "Direct request review is incomplete: "
+                    f"{request_review['batch_count']} batches and "
+                    f"{request_review['request_count']} requests"
+                )
         if late_top_up:
             candidate_failovers = candidate_config.max_failovers
             selection = select_healthy_providers(
@@ -950,19 +1148,27 @@ def main(argv: list[str] | None = None) -> int:
                 )
         manifest = {
             "version": MATRIX_VERSION,
-            "status": "prepared" if args.prepare_only else "running",
-            "tasks": list(TASKS),
+            "status": (
+                "prepared_awaiting_prompt_review"
+                if args.prepare_only and args.preselected_direct_grid_manifest
+                else "prepared" if args.prepare_only else "running"
+            ),
+            "tasks": list(selected_tasks),
             "benchmark": args.benchmark,
             "evaluation_subsets": list(evaluation_subsets),
             "harness_version": (
-                args.preselected_harness_version if args.preselected_grid_manifest
+                flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION
+                if args.preselected_direct_grid_manifest
+                else args.preselected_harness_version if args.preselected_grid_manifest
                 else flat.CONTEXT_V5_HARNESS_VERSION
                 if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
                 else flat.CONTEXT_V4_HARNESS_VERSION
                 if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
             ),
             "prompt_version": (
-                flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
+                flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+                if args.preselected_direct_grid_manifest
+                else flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
                 if args.preselected_grid_manifest
                 else flat.CONTEXT_V5_PROMPT_VERSION
                 if args.context_v5_grid or args.context_v5_l1 or args.context_v5_all_level
@@ -987,6 +1193,15 @@ def main(argv: list[str] | None = None) -> int:
                 }
                 if args.preselected_grid_manifest else None
             ),
+            "preselected_direct_grid_manifest": (
+                {
+                    "path": str(args.preselected_direct_grid_manifest),
+                    "sha256": sha256_file(args.preselected_direct_grid_manifest),
+                    "profiles": len(direct_grid_profiles),
+                    "run_id": grid_run_id,
+                }
+                if args.preselected_direct_grid_manifest else None
+            ),
             "morgan_primary_parent_widths": (
                 [25] if args.context_v5_l1 else args.morgan_primary_parent_widths
                 if args.context_v4_grid or args.context_v5_grid
@@ -1001,9 +1216,10 @@ def main(argv: list[str] | None = None) -> int:
             "l1_molecules": 10,
             "l1_records_per_molecule": 10,
             "max_level_by_task": (
-                {task: 1 for task in TASKS}
+                {task: 1 for task in selected_tasks}
                 if args.context_v4_grid or args.context_v5_l1 else
-                {"bbb_martins": 5, "bioavailability_ma": 6}
+                {task: (1 if args.preselected_direct_grid_manifest else flat.TASKS[task])
+                 for task in selected_tasks}
             ),
             "ranking_tie_seed": 0,
             "model": execution["model"],
@@ -1042,6 +1258,7 @@ def main(argv: list[str] | None = None) -> int:
             "endpoint_preflight": endpoint_receipts,
             "single_reuse": single_receipts,
             "selections": selection_receipts,
+            "request_review": request_review,
             "limit": args.limit,
             "pilot_queries_per_batch": (
                 0
@@ -1056,7 +1273,27 @@ def main(argv: list[str] | None = None) -> int:
             },
         }
         write_json_atomic(root / "matrix.json", manifest)
-        if args.study:
+        organized_runs = {}
+        if args.study and direct_grid_profiles:
+            for item in work:
+                organized_runs[item["profile"]] = item["root"]
+            for profile, run_root in organized_runs.items():
+                write_json_atomic(run_root / "run.json", {
+                    "schema_version": "organized_study_run.v1",
+                    "study": args.study, "method": profile,
+                    "run_id": run_root.name, "batch_id": root.name,
+                    "status": manifest["status"], "metric_status": "pending",
+                    "prompt_version": manifest["prompt_version"],
+                    "harness_version": manifest["harness_version"],
+                    "reranking": "assay-transfer-contrastive",
+                    "query_prior": "with_query_prior", "l1_molecules": 10,
+                    "l1_min_contrast": 0, "morgan_primary_parent_width": 25,
+                    "tasks": list(selected_tasks),
+                    "evaluation_subset": list(evaluation_subsets),
+                    "matrix_json": str(root / "matrix.json"),
+                    "matrix_json_sha256": sha256_file(root / "matrix.json"),
+                })
+        elif args.study:
             write_json_atomic(root / "run.json", {
                 "schema_version": "organized_study_run.v1",
                 "study": args.study, "method": args.method,
@@ -1068,7 +1305,7 @@ def main(argv: list[str] | None = None) -> int:
                 "query_prior": "with_query_prior", "l1_molecules": 10,
                 "l1_min_contrast": args.l1_min_contrasts[0],
                 "morgan_primary_parent_width": 25,
-                "tasks": list(TASKS), "evaluation_subset": list(evaluation_subsets),
+                "tasks": list(selected_tasks), "evaluation_subset": list(evaluation_subsets),
                 "matrix_json": str(root / "matrix.json"),
                 "matrix_json_sha256": sha256_file(root / "matrix.json"),
             })
@@ -1122,11 +1359,16 @@ def main(argv: list[str] | None = None) -> int:
         manifest["status"] = completion["status"]
         write_json_atomic(root / "matrix.json", manifest)
         if args.study:
-            run_path = root / "run.json"
-            run = json.loads(run_path.read_text())
-            run["status"] = completion["status"]
-            run["matrix_json_sha256"] = sha256_file(root / "matrix.json")
-            write_json_atomic(run_path, run)
+            run_paths = (
+                [run_root / "run.json" for run_root in organized_runs.values()]
+                if organized_runs else [root / "run.json"]
+            )
+            for run_path in run_paths:
+                run = json.loads(run_path.read_text())
+                run["status"] = completion["status"]
+                run["metric_status"] = completion["status"]
+                run["matrix_json_sha256"] = sha256_file(root / "matrix.json")
+                write_json_atomic(run_path, run)
             from predict.harnesses.progressive.matrix import _refresh_results_catalog
             _refresh_results_catalog(args.results_root)
         from predict.live import update_run

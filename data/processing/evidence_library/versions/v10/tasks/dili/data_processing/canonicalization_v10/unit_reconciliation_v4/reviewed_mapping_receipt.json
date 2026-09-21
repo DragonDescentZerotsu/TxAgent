@@ -1,0 +1,25 @@
+{
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
+    "sha256": "b18b3934bf4ad3ffeb7715c4cc131230f16c4d8e9ef4f3ebc0e677734280a519"
+  },
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "review_completion": {
+    "accepted_aliases": 29,
+    "decisions_sha256": "ad0dcb852c5b2f5a7e1b84dbdfcf953b4fe9947c1bb86f852e503c0794f52e1e",
+    "identity_after_timeout_units": 499,
+    "reviewed_packets": 14,
+    "reviewer_id": "codex-unit-map-final-audit-20260920",
+    "source_completion_sha256": "c203183f3994c3d7325f3eafe59dda880e00f8c1452c32350f26cb92d4515017",
+    "source_manifest_sha256": "2aad7250d06c57ad5bcf5aa63fcb5aa6d0ac77e50340036de31cd25a0e982826"
+  },
+  "task_id": "dili",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "reviewed_canonical_mapping_receipt.v1"
+}

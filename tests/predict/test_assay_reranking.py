@@ -240,7 +240,13 @@ def test_cache_profiles_resolve_to_explicit_active_or_archive_roots():
         "v25_oral_uid_levels_morgan75_l3",
     ):
         assert cache_profile_root(profile).parent == ACTIVE_CACHE_ROOT
-    assert cache_profile_root("ranked_level_retrieval_v3").parent == DATA_ACTIVE_CACHE_ROOT
+    for profile in (
+        "ranked_level_retrieval_v3",
+        "ranked_level_retrieval_v4",
+        "ranked_level_retrieval_tdc_v1_indirect_v2",
+        "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3",
+    ):
+        assert cache_profile_root(profile).parent == DATA_ACTIVE_CACHE_ROOT
     assert ranking_cache_dir("skin_reaction").is_relative_to(ACTIVE_CACHE_ROOT)
     assert ranking_cache_dir(
         "skin_reaction", lineage="v9_scaffold"

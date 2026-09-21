@@ -438,6 +438,7 @@ def load_candidates(
     cache_pool: str = "all", min_contrast: int = 3,
     morgan_primary_parent_width: int = CAPACITY,
     preselected_uids: Mapping[str, Mapping[str, Sequence[str]]] | None = None,
+    preselected_contexts: Mapping[str, Sequence[str]] | None = None,
     **_: Any,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Select ranks first, hydrate their UIDs once, and return prompt-ready rows."""
@@ -463,6 +464,15 @@ def load_candidates(
                         f"Preselected UIDs must contain exactly {limits[level]} unique "
                         f"records for {query_id}/{level}"
                     )
+    if preselected_contexts is not None:
+        if set(preselected_contexts) != {str(query_id) for query_id in queries}:
+            raise ValueError("Preselected context queries must match requested queries exactly")
+        for query_id, context_ids in preselected_contexts.items():
+            if len(context_ids) != molecule_limit or len(set(map(str, context_ids))) != len(context_ids):
+                raise ValueError(
+                    f"Preselected contexts must contain exactly {molecule_limit} unique "
+                    f"cards for {query_id}/L1"
+                )
     manifests = {level: Path(path).resolve() for level, path in policy["cache_manifests"].items()}
     if set(manifests) != set(stages):
         raise ValueError("Independent caches do not cover the requested levels exactly")
@@ -500,6 +510,31 @@ def load_candidates(
         if identities is not None and current != identities:
             raise ValueError("Independent level caches disagree on query identity")
         ranked[level], identities, documents[level] = rows, current, document
+
+    if preselected_contexts is not None:
+        l1_database = manifests["L1"].with_name(str(documents["L1"]["database"]))
+        with _open(l1_database) as connection:
+            for query_id, ordered_contexts in preselected_contexts.items():
+                placeholders = ",".join("?" for _ in ordered_contexts)
+                rows = connection.execute(
+                    "SELECT * FROM rankings WHERE benchmark_row_id=? AND "
+                    f"(morgan_context_id IN ({placeholders}) OR assay_context_id IN ({placeholders}))",
+                    (str(query_id), *map(str, ordered_contexts), *map(str, ordered_contexts)),
+                ).fetchall()
+                by_context: dict[str, sqlite3.Row] = {}
+                for row in rows:
+                    for field in ("morgan_context_id", "assay_context_id"):
+                        context_id = row[field]
+                        if context_id is not None and str(context_id) in ordered_contexts:
+                            by_context[str(context_id)] = row
+                missing = [context_id for context_id in ordered_contexts if context_id not in by_context]
+                if missing:
+                    raise ValueError(
+                        f"Preselected contexts are absent from {query_id}/L1: {missing[:5]}"
+                    )
+                ranked["L1"][str(query_id)] = [
+                    dict(by_context[str(context_id)]) for context_id in ordered_contexts
+                ]
 
     index_paths = {
         level: Path(path).resolve()
@@ -583,7 +618,7 @@ def load_candidates(
         }
         if candidate_contexts != set(contexts):
             raise ValueError("Ranked L1 contexts are absent from the context ledger")
-        if l1_selection == "assay_transfer_contrastive":
+        if l1_selection == "assay_transfer_contrastive" and preselected_contexts is None:
             for query_id, rows in ranked["L1"].items():
                 ranked["L1"][query_id], contrast_audits[query_id] = (
                     _select_assay_contrastive(
@@ -748,6 +783,10 @@ def load_candidates(
             "cache_content_ids": content_ids,
             "later_selection": (
                 "preselected_uid_order" if preselected_uids is not None else "cached_rank"
+            ),
+            "l1_selection": (
+                "preselected_context_order"
+                if preselected_contexts is not None else "cached_rank"
             ),
         },
         "pool": "all",

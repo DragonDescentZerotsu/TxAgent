@@ -27,6 +27,8 @@ def test_active_release_paths_are_explicit_and_fail_closed() -> None:
     with pytest.raises(ValueError, match="unsupported active data task"):
         evidence_library_root("clintox")
     assert evidence_library_root("ames").name == "v10_main_universe_v3"
+    assert evidence_library_root("dili").name == "v10_main_universe_v3"
+    assert evidence_library_root("carcinogens").name == "v10_main_universe_v3"
 
 
 def test_data_root_contains_only_canonical_categories() -> None:

@@ -1,0 +1,39 @@
+{
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "allowed_role_wrappers": [
+    "endpoint_unit",
+    "measurement_unit",
+    "response_unit"
+  ],
+  "base_mapping": {
+    "entry_count": 334742,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
+    "sha256": "581a20f892560c6b2dd65db3062de631ca49b20a784cfe9ed8e9f6c2aeb8ab77"
+  },
+  "canonical_unit_count": 326572,
+  "entry_count": 671574,
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v5/mapping.json",
+    "sha256": "e08e72cc475890d27bfdf4cbc2bce358db3043a1d99f83767f130c99d2d66b26"
+  },
+  "projected_entry_count": 336832,
+  "publication_status": "reviewed_deterministic_projection",
+  "review_basis": "exact field-label wrapper around an immutable reviewed V4 input; canonical target and scale copied byte-for-byte from V4",
+  "source_universe": {
+    "derivation": "current cleaned source units plus successful measurement-resolution units minus reviewed V4 wildcard inputs",
+    "sha256": "9a898a4d9d1bb9fee253d0a54fc76152658489c36676f396bb2ed0ed38f3d67c",
+    "unit_count": 336882
+  },
+  "task": "carcinogens",
+  "true_new_unit_count": 50,
+  "true_new_units": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v5/true_new_units.jsonl",
+    "sha256": "79d8ec38622003b36cca76ff23b3a5d22487de0ab7d3787d8803c3e910d018ba"
+  },
+  "version": "canonical_unit_role_wrapper_projection.v1"
+}

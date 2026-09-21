@@ -1,0 +1,34 @@
+{
+  "version": "dili_gold_v1_reviewed_voter_exclusions.v1",
+  "status": "reviewed",
+  "task": "dili",
+  "review_date": "2026-09-20",
+  "review_basis": "The authoritative main-source universe identifies this physical row as an intravenous co-amoxiclav fixed-combination observation and supplies no valid single-molecule structure. The historical raw row carried a stale ivacaftor structure, so retaining it would attach combination-treatment evidence to the wrong molecule.",
+  "inputs": [
+    {
+      "path": "data/raw/starling/main_universe_v1/manifest.json",
+      "sha256": "64065303e95962bc24adcfbdc7d958d92975ddaf302e14be26f88106bcafb005"
+    },
+    {
+      "path": "data/raw/starling/main_universe_v1/dili/records.parquet",
+      "sha256": "13aebfc54faef8d54df4fe9733ca3ec1e426aa6e7d8b15763e29310d30aeb910"
+    }
+  ],
+  "decisions": [
+    {
+      "action": "exclude",
+      "source_row_uid": "sr_3e62e0aa73804ed7a2f5c0f9acf399c3",
+      "expected_split": "train",
+      "expected_benchmark_row_id": "DILI_D7EB6BF925F8E2768C45",
+      "expected_molecule_identity_key": "PURKAOJPTOLRMP-UHFFFAOYSA-N",
+      "expected_condition_group": "no_reported_external_condition",
+      "expected_vote_label": 1,
+      "expected_source_payload_sha256": "497435349246f2a427442c6ff783d6fdc691a8ef87a897d93c9243a97f980a53",
+      "reason": "historical_stale_structure_attached_fixed_combination_to_wrong_molecule",
+      "expected_gold_label_before": 1,
+      "expected_gold_label_after": 1,
+      "expected_voter_mean_before": 0.8888888888888888,
+      "expected_voter_mean_after": 0.875
+    }
+  ]
+}

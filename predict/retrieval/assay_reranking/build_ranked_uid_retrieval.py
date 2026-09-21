@@ -33,7 +33,7 @@ from .build_ranked_retrieval import (
 from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 
 
-PROFILE = "ranked_level_retrieval_v3"
+PROFILE = "ranked_level_retrieval_v4"
 EVIDENCE_RELEASE: str | None = None
 SCORE_REUSE_ROOTS: tuple[Path, ...] = ()
 TRUST_PREDECESSOR_ROWS = False
@@ -41,11 +41,22 @@ TASK_LEVELS = {
     "bbb_martins": ("L1", "L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L1", "L2", "L3", "L4", "L5", "L6"),
     "skin_reaction": ("L2", "L3"),
+    "ames": ("L1", "L2", "L3", "L4", "L5"),
+    "dili": ("L1", "L2", "L3", "L4", "L5", "L6", "L7"),
+    "carcinogens": ("L1", "L2", "L3", "L4", "L5", "L6", "L7"),
 }
 REPO_ROOT = Path(__file__).resolve().parents[3]
-GOLD_NAMES = {**BASE_GOLD_NAMES, "skin_reaction": "Skin_Reaction"}
+GOLD_NAMES = {
+    **BASE_GOLD_NAMES,
+    "skin_reaction": "Skin_Reaction",
+    "ames": "Ames",
+    "dili": "DILI",
+    "carcinogens": "Carcinogens",
+}
 DEFAULT_OUTPUT = runtime.cache_profile_root(PROFILE)
 L1_ROOT = runtime.cache_profile_root("v10_3_best_scaffold_morgan100_v1")
+ADDON_L1_ROOT = runtime.cache_profile_root("ranked_level_retrieval_gold_v1_addon_v1")
+ADDON_TASKS = frozenset({"ames", "dili", "carcinogens"})
 REUSE_ROOT = runtime.cache_profile_root("recent_models_three_pools_morgan100_v2_gold_v1")
 QUERY_BENCHMARK = "gold"
 LABEL_RELEASE: str | dict[str, str] = "v1"
@@ -74,13 +85,15 @@ def _evidence_paths(task: str) -> tuple[Path, Path, Path, Path]:
 
 def _source_fields(task: str) -> tuple[dict[str, list[str]], set[str]]:
     contract = json.loads(_evidence_paths(task)[3].read_text(encoding="utf-8"))
-    fields = {
-        source: [
-            name for name, value in spec["normalized_artifact_columns"].items()
-            if value.get("source_or_simply_cleaned") is True
-        ]
-        for source, spec in contract["sources"].items()
-    }
+    fields = {}
+    for source, spec in contract["sources"].items():
+        if "source_visible_fields" in spec:
+            fields[source] = list(spec["source_visible_fields"])
+        else:
+            fields[source] = [
+                name for name, value in spec["normalized_artifact_columns"].items()
+                if value.get("source_or_simply_cleaned") is True
+            ]
     return fields, set().union(*map(set, fields.values()))
 
 
@@ -204,7 +217,15 @@ def build_evidence(task: str, output: Path) -> dict[str, Any]:
                 seen.add(uid)
         if set(mapping) != seen:
             raise ValueError(f"Finalized map and current V10 differ by {len(set(mapping) ^ seen)} UIDs")
-        table = pa.Table.from_pylist(projected).sort_by("source_row_uid")
+        schema = pa.schema([
+            ("source_row_uid", pa.string()),
+            ("external_record_id", pa.string()),
+            ("parent_id", pa.string()),
+            ("parent_smiles", pa.large_string()),
+            ("level", pa.string()),
+            ("payload", pa.large_string()),
+        ])
+        table = pa.Table.from_pylist(projected, schema=schema).sort_by("source_row_uid")
         pq.write_table(table, records_path, compression="zstd", row_group_size=10_000)
         identity = {
             "schema_version": "ranked_evidence_projection.v1",
@@ -278,7 +299,17 @@ def _queries(task: str, subset: str) -> tuple[Path, list[dict[str, Any]], list[t
     rows = read_jsonl(path)
     output = []
     for row in rows:
-        identity = row["molecule_identity"]
+        identity = row.get("molecule_identity") or {}
+        if not identity.get("parent_inchi_key") or not identity.get("parent_smiles"):
+            normalized = normalize_molecule_identity(str(row["drug"]))
+            if normalized.status != "ok":
+                raise ValueError(f"Frozen Gold query cannot be normalized: {row['benchmark_row_id']}")
+            identity = {
+                "parent_inchi_key": normalized.parent_inchi_key,
+                "parent_smiles": normalized.parent_smiles,
+            }
+        if str(identity["parent_inchi_key"]) != str(row["molecule_identity_key"]):
+            raise ValueError(f"Frozen Gold query identity changed: {row['benchmark_row_id']}")
         output.append((
             str(row["benchmark_row_id"]), str(row["drug"]),
             str(identity["parent_inchi_key"]), str(identity["parent_smiles"]),
@@ -386,6 +417,8 @@ def rebind_evidence(
 
 
 def build_l1(task: str, subset: str, output_root: Path, evidence_manifest: Path) -> dict[str, Any]:
+    if task in ADDON_TASKS:
+        return _copy_addon_l1(task, subset, output_root, evidence_manifest)
     target = output_root / task / "scaffold" / subset / "L1"
     if target.exists():
         raise FileExistsError(f"Refusing to replace L1 cache: {target}")
@@ -519,13 +552,74 @@ def build_l1(task: str, subset: str, output_root: Path, evidence_manifest: Path)
     return manifest
 
 
-def _records(evidence_manifest: Path) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, list[str]]]]:
+def _copy_addon_l1(
+    task: str, subset: str, output_root: Path, evidence_manifest: Path,
+) -> dict[str, Any]:
+    """Rebind the reviewed Morgan-only L1 cache to the complete projection."""
+    target = output_root / task / "scaffold" / subset / "L1"
+    if target.exists():
+        raise FileExistsError(f"Refusing to replace L1 cache: {target}")
+    source_root = ADDON_L1_ROOT / task / "scaffold" / subset / "L1"
+    source_manifest = source_root / "VERSION.json"
+    source = json.loads(source_manifest.read_text(encoding="utf-8"))
+    source_database = source_root / str(source["database"])
+    evidence = json.loads(evidence_manifest.read_text(encoding="utf-8"))
+    evidence_uids = set(
+        pq.read_table(
+            evidence_manifest.with_name(str(evidence["records"])),
+            columns=["source_row_uid"],
+        )["source_row_uid"].to_pylist()
+    )
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".L1.", dir=target.parent) as temporary:
+        root = Path(temporary)
+        database = root / "rankings.sqlite3"
+        shutil.copy2(source_database, database)
+        with sqlite3.connect(database) as connection:
+            selected = {
+                str(row[0]) for row in connection.execute(
+                    "SELECT DISTINCT source_row_uid FROM context_records"
+                )
+            }
+            if not selected <= evidence_uids:
+                raise ValueError(f"L1 predecessor has {len(selected - evidence_uids)} missing UIDs")
+            _, _, expected_queries = _queries(task, subset)
+            if list(connection.execute("SELECT * FROM queries ORDER BY benchmark_row_id")) != sorted(
+                expected_queries
+            ):
+                raise ValueError(f"L1 predecessor query identity changed: {task}/{subset}")
+            identity = {
+                key: value for key, value in source.items()
+                if key not in {
+                    "schema_version", "status", "content_id", "database",
+                    "database_sha256", "ranking_rows_sha256",
+                }
+            }
+            identity["inputs"] = {
+                **identity["inputs"],
+                "evidence_manifest_sha256": sha256_file(evidence_manifest),
+                "l1_predecessor_manifest_sha256": sha256_file(source_manifest),
+                "l1_predecessor_database_sha256": sha256_file(source_database),
+            }
+            manifest = _write_complete(
+                connection, database, task=task, subset=subset, level="L1",
+                identity=identity, target=root,
+            )
+        os.replace(root, target)
+    return manifest
+
+
+def _records(
+    evidence_manifest: Path, level: str | None = None,
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, list[str]]]]:
     manifest = json.loads(evidence_manifest.read_text(encoding="utf-8"))
     path = evidence_manifest.with_name(str(manifest["records"]))
     records = {}
     grouped: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
     for batch in pq.ParquetFile(path).iter_batches(batch_size=10_000):
         for row in batch.to_pylist():
+            if level is not None and str(row["level"]) != level:
+                continue
             payload = json.loads(row["payload"])
             record = {
                 **payload,
@@ -621,7 +715,7 @@ def prepare_level(
     if target.exists():
         raise FileExistsError(f"Refusing to replace level cache: {target}")
     query_path, query_rows, queries = _queries(task, subset)
-    records, grouped = _records(evidence_manifest)
+    records, grouped = _records(evidence_manifest, level)
     level_parents = grouped.get(level, {})
     parents = sorted(level_parents)
     parent_smiles = {
@@ -652,10 +746,10 @@ def prepare_level(
         connection.executemany("INSERT INTO queries VALUES (?,?,?,?)", queries)
         staged_rows = []
         prompt_rows: dict[str, tuple[str, str]] = {}
+        query_identities = {row[0]: (row[2], row[3]) for row in queries}
         for query in query_rows:
             benchmark_row_id = str(query["benchmark_row_id"])
-            query_parent = str(query["molecule_identity"]["parent_inchi_key"])
-            query_smiles = str(query["molecule_identity"]["parent_smiles"])
+            query_parent, query_smiles = query_identities[benchmark_row_id]
             qfp = standardize_smiles_and_fp(query_smiles)[2]
             similarities = three_pools.bbb._similarities(qfp, packed, popcount)
             ordered = sorted(range(len(parents)), key=lambda index: (-float(similarities[index]), parents[index]))
@@ -1040,16 +1134,23 @@ def validate_release(
             str(row["vote_id"]), int(row["physical_member_index"]),
             str(row["source_row_uid"]),
         ))
+    member_order = (
+        (lambda row: (row[1], row[2]))
+        if task in ADDON_TASKS else (lambda row: row)
+    )
     ordered_gold_uids = {
-        context_id: [row[2] for row in sorted(rows)]
+        context_id: [row[2] for row in sorted(rows, key=member_order)]
         for context_id, rows in gold_members.items()
     }
+    gold_train_labels = gold_root / "train_molecule_condition_labels.jsonl"
+    if not gold_train_labels.is_file():
+        gold_train_labels = gold_root / "train.jsonl"
     gold_contexts = (
         {
             str(row["benchmark_row_id"]): (
                 str(row["molecule_identity_key"]), str(row["condition_group"]), int(row["Y"])
             )
-            for row in read_jsonl(gold_root / "train_molecule_condition_labels.jsonl")
+            for row in read_jsonl(gold_train_labels)
         }
         if "L1" in TASK_LEVELS[task]
         else {}
@@ -1090,21 +1191,36 @@ def validate_release(
             ):
                 raise ValueError(f"Published hashes differ: {task}/{subset}/{level}")
             if level == "L1":
-                source_manifest = L1_ROOT / task / "scaffold" / subset / "VERSION.json"
+                source_manifest = (
+                    ADDON_L1_ROOT / task / "scaffold" / subset / "L1/VERSION.json"
+                    if task in ADDON_TASKS
+                    else L1_ROOT / task / "scaffold" / subset / "VERSION.json"
+                )
                 source = json.loads(source_manifest.read_text(encoding="utf-8"))
-                source_rankings = source_manifest.with_name(str(source["rankings"]))
+                source_payload = source_manifest.with_name(
+                    str(source.get("rankings") or source["database"])
+                )
                 l1_inputs = manifest["inputs"]
-                role = "direct_v10_3" if task == "bbb_martins" else "direct_v10_3_0_2"
-                expected_model = runtime.model_profile(task, role)
-                if (
-                    source.get("model") != expected_model
-                    or l1_inputs["source_manifest_sha256"] != sha256_file(source_manifest)
-                    or l1_inputs["source_rankings_sha256"] != sha256_file(source_rankings)
-                    or l1_inputs["voter_membership_sha256"]
-                    != sha256_file(gold_root / "voter_membership.parquet")
-                    or l1_inputs["gold_train_sha256"]
-                    != sha256_file(gold_root / "train_molecule_condition_labels.jsonl")
-                ):
+                if task in ADDON_TASKS:
+                    valid_l1 = (
+                        l1_inputs.get("l1_predecessor_manifest_sha256")
+                        == sha256_file(source_manifest)
+                        and l1_inputs.get("l1_predecessor_database_sha256")
+                        == sha256_file(source_payload)
+                    )
+                else:
+                    role = "direct_v10_3" if task == "bbb_martins" else "direct_v10_3_0_2"
+                    expected_model = runtime.model_profile(task, role)
+                    valid_l1 = (
+                        source.get("model") == expected_model
+                        and l1_inputs["source_manifest_sha256"] == sha256_file(source_manifest)
+                        and l1_inputs["source_rankings_sha256"] == sha256_file(source_payload)
+                        and l1_inputs["voter_membership_sha256"]
+                        == sha256_file(gold_root / "voter_membership.parquet")
+                        and l1_inputs["gold_train_sha256"]
+                        == sha256_file(gold_train_labels)
+                    )
+                if not valid_l1:
                     raise ValueError(f"L1 source provenance changed: {task}/{subset}")
 
             with sqlite3.connect(database) as connection:
@@ -1184,18 +1300,29 @@ def validate_release(
                         raise ValueError(f"Within-parent ranks are not dense: {query_id}/{level}")
 
                     if level == "L1":
-                        if (
-                            sorted(int(row["assay_rank"]) for row in rows)
-                            != list(range(1, count + 1))
-                            or any(
-                                row["assay_transfer_score"] is None
-                                or not 0 <= float(row["assay_transfer_score"]) <= 1
+                        if task in ADDON_TASKS:
+                            if any(
+                                row["assay_rank"] is not None
+                                or row["assay_transfer_score"] is not None
+                                or row["assay_context_id"] is not None
                                 for row in rows
-                            )
-                        ):
-                            raise ValueError(f"L1 assay ranks/scores are incomplete: {query_id}")
+                            ):
+                                raise ValueError(f"Morgan-only L1 has assay values: {query_id}")
+                            prefixes = ("morgan",)
+                        else:
+                            if (
+                                sorted(int(row["assay_rank"]) for row in rows)
+                                != list(range(1, count + 1))
+                                or any(
+                                    row["assay_transfer_score"] is None
+                                    or not 0 <= float(row["assay_transfer_score"]) <= 1
+                                    for row in rows
+                                )
+                            ):
+                                raise ValueError(f"L1 assay ranks/scores are incomplete: {query_id}")
+                            prefixes = ("morgan", "assay")
                         for row in rows:
-                            for prefix in ("morgan", "assay"):
+                            for prefix in prefixes:
                                 context_id = str(row[f"{prefix}_context_id"])
                                 if (
                                     context_parents.get(context_id) != str(row["parent_id"])

@@ -78,6 +78,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_LAYOUTS,
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V4_VARIANTS,
+    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
@@ -85,6 +86,7 @@ from predict.harnesses.branches.flat import (
     JOSEPH_PROMPT_HARNESSES,
     JOSEPH_PROMPT_VERSIONS,
     TIANANG_PROMPT_VERSION,
+    TASKS,
     flat_group_validation,
     flat_prompt_provenance,
 )
@@ -327,7 +329,10 @@ def mode_main(mode: str, argv: list[str] | None = None) -> int:
     """Run one public evidence organization through the shared batch harness."""
     task_modules = {
         task: f"predict.harnesses.branches.tasks.{task}.contract"
-        for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
+        for task in (
+            "bbb_martins", "bioavailability_ma", "skin_reaction",
+            "ames", "dili", "carcinogens",
+        )
     }
     selector = argparse.ArgumentParser(add_help=False)
     selector.add_argument("--task", choices=sorted(task_modules))
@@ -2085,8 +2090,16 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
             raise SystemExit(
                 f"{args.flat_prompt_version} requires its cache-matched reranking mode"
             )
-        if config.pipeline_module.split(".")[-2] not in {"bbb_martins", "bioavailability_ma"}:
-            raise SystemExit("Joseph flat supports BBB and oral bioavailability only")
+        task_id = config.pipeline_module.split(".")[-2]
+        supported = (
+            set(TASKS)
+            if args.flat_prompt_version == CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+            else {"bbb_martins", "bioavailability_ma"}
+        )
+        if task_id not in supported:
+            if args.flat_prompt_version != CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+                raise SystemExit("Joseph flat is enabled only for BBB and oral")
+            raise SystemExit(f"{args.flat_prompt_version} does not support {task_id}")
         if not args.retrieval_replay_source_batch:
             raise SystemExit("Joseph flat requires prepared cache-matched retrieval")
         if not args.flat_selection_manifest:

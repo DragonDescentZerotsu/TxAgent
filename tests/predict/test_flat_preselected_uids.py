@@ -5,7 +5,9 @@ from pathlib import Path
 import pytest
 
 from predict.harnesses.branches.flat import (
+    PRESELECTED_DIRECT_SCHEMA,
     PRESELECTED_UID_SCHEMA,
+    _load_preselected_contexts,
     _load_preselected_uids,
     _preselected_query_indices,
 )
@@ -93,3 +95,43 @@ def test_manifest_query_ids_select_the_matching_canonical_rows(tmp_path: Path) -
     )
 
     assert indices == [1]
+
+
+def test_direct_manifest_preserves_context_order(tmp_path: Path) -> None:
+    records = tmp_path / "selected_contexts.tsv"
+    with records.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=(
+                "benchmark_row_id", "selection_rank", "context_id",
+                "parent_id", "gold_label",
+            ),
+            delimiter="\t",
+        )
+        writer.writeheader()
+        writer.writerows([
+            {"benchmark_row_id": "q1", "selection_rank": 1, "context_id": "c2", "parent_id": "p2", "gold_label": "pass"},
+            {"benchmark_row_id": "q1", "selection_rank": 2, "context_id": "c1", "parent_id": "p1", "gold_label": "fail"},
+        ])
+    manifest = tmp_path / "direct.json"
+    manifest.write_text(json.dumps({
+        "schema_version": PRESELECTED_DIRECT_SCHEMA,
+        "status": "complete",
+        "task_id": "bbb_martins",
+        "subset": "valid_small",
+        "benchmark_row_ids": ["q1"],
+        "budget": 2,
+        "objective": {"version": "test"},
+        "records": {
+            "path": records.name,
+            "sha256": sha256_file(records),
+            "row_count": 2,
+        },
+    }), encoding="utf-8")
+
+    selected, receipt = _load_preselected_contexts(
+        manifest, task="bbb_martins", queries={"q1": "CCO"}, budget=2,
+    )
+
+    assert selected == {"q1": ["c2", "c1"]}
+    assert receipt["objective"] == {"version": "test"}

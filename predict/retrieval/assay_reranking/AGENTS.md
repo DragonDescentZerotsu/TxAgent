@@ -248,9 +248,10 @@ successfully. On dgx007, the verified environment for this workflow is
 probe.
 
 Generated candidates and scores are ignored by Git. The active
-`ranked_level_retrieval_v3` profile lives under
+`ranked_level_retrieval_v4` profile lives under
 `data/caches/assay_reranking/active/`; its display-ready payload projection lives
-under the owning V10 evidence release. Earlier active V3, V10.3, V10.4, V24.1,
+under the owning V10 evidence release. The V3 cache is its immutable predecessor.
+Earlier V10.3, V10.4, V24.1,
 V25, and three-pool profiles retain their existing locations under
 `predict/retrieval/cache/assay_reranking/active/`. All other profiles live under
 `archive/` and require an explicit legacy path. They are reusable retrieval

@@ -1,0 +1,55 @@
+{
+  "agent_review_decisions": {
+    "accepted_aliases": 29,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v4/agent_review.decisions.jsonl",
+    "sha256": "ad0dcb852c5b2f5a7e1b84dbdfcf953b4fe9947c1bb86f852e503c0794f52e1e"
+  },
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "canonical_unit_count": 18566,
+  "entry_count": 20061,
+  "lineage": {
+    "base_mapping": {
+      "entry_count": 17384,
+      "full_unit_count": 19864,
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v3/mapping.json",
+      "sha256": "3aaee896166dd996dc3c7f93efa4c12d8a28a30c5218d5f10c8e035e1af17a97",
+      "wildcard_unit_count": 17187
+    },
+    "legacy_lexical_batching": false,
+    "single_pass_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/dili_main_uid_v1_20260920/dili/llm_pass/manifest.json",
+      "sha256": "276addb3626685692ca4a431b946fe9f2bf1b47072390737de2946243046b3af"
+    },
+    "single_pass_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/dili_main_uid_v1_20260920/dili/llm_pass/mapping.jsonl",
+      "sha256": "3e320e5fc2335e4d0f82b7af325c9225b569f84c2b279a5ce22015c90cd808e6"
+    },
+    "universe": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/dili_main_uid_v1_20260920/dili/universe.jsonl",
+      "sha256": "9c7de8a524eace326b6f4853248835917fc4c5583ce65eb22d08aa9b204be1d2"
+    },
+    "universe_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/dili_main_uid_v1_20260920/dili/universe.manifest.json",
+      "sha256": "fde94d985114610debab645d397352b776bc1513b7c4ec5bc848248a873e538e"
+    }
+  },
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
+    "sha256": "b18b3934bf4ad3ffeb7715c4cc131230f16c4d8e9ef4f3ebc0e677734280a519"
+  },
+  "publication_status": "reviewed",
+  "review_completion": {
+    "packet_manifest_sha256": "2aad7250d06c57ad5bcf5aa63fcb5aa6d0ac77e50340036de31cd25a0e982826",
+    "packets_sha256": "4a66b9d9be7f3cd4abafbf8256abe9f70bcdc812aa32e3cadc0b5f1866ac7bef",
+    "reviewed_packets": 14,
+    "reviewer_id": "codex-unit-map-final-audit-20260920",
+    "sha256": "c203183f3994c3d7325f3eafe59dda880e00f8c1452c32350f26cb92d4515017"
+  },
+  "task": "dili",
+  "version": "starling_canonical_reconciliation_single_pass.v1"
+}

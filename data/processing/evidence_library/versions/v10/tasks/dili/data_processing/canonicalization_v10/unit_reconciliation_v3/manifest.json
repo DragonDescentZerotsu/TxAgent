@@ -1,0 +1,36 @@
+{
+  "base_entry_count": 17187,
+  "base_mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "62f8dca41244934f1c55787adc0eae2fbbb99ce1e88827a75b6002a6ca30058b"
+  },
+  "entry_count": 17384,
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v3/mapping.json",
+    "sha256": "3aaee896166dd996dc3c7f93efa4c12d8a28a30c5218d5f10c8e035e1af17a97"
+  },
+  "measurement_resolution": {
+    "path": "data/evidence_libraries/dili/v10/measurement_resolution_v4/measurement_resolution.parquet",
+    "sha256": "a9b51ff6c7d5fb2bfb01680667adddb225da5e15f0324161e65902a1c81f1d1d"
+  },
+  "review_action_counts": {
+    "keep": 181,
+    "merge": 14,
+    "revert": 2
+  },
+  "reviewed_entry_count": 197,
+  "reviewed_overlay": {
+    "manifest_path": "data/caches/evidence_library/unit_reconciliation/20260919_unit_only_v3_5_percent_semantics_dgx017_retry1/v3/pass_a/agent_review/second_review/consolidated/manifest.json",
+    "manifest_sha256": "9301c6f80ab1b25844e10b54c994e813ec5717351d1394e2c5fbbbeb6ae1af57",
+    "path": "data/caches/evidence_library/unit_reconciliation/20260919_unit_only_v3_5_percent_semantics_dgx017_retry1/v3/pass_a/agent_review/second_review/consolidated/mapping.jsonl",
+    "sha256": "d95b9eb89e0319552c6d65de08657d1a2b08c5382f73fcaeae69f004c824ef31"
+  },
+  "task": "dili",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "canonical_reconciliation_v3_second_review_task_successor.v1"
+}

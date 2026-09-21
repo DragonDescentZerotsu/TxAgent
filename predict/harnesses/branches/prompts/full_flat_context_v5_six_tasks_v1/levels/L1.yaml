@@ -1,0 +1,6 @@
+bbb_martins: {description: Direct measured brain or CNS exposure outcomes.}
+bioavailability_ma: {description: Direct absolute oral bioavailability outcomes.}
+skin_reaction: {description: Gold-voting skin sensitization or contact-allergy outcomes.}
+ames: {description: Gold-voting Ames outcomes under the exact strain and activation condition.}
+dili: {description: Observed human liver-injury outcomes under the reported exposure and population.}
+carcinogens: {description: Observed carcinogenicity outcomes under the reported organism group and exposure.}

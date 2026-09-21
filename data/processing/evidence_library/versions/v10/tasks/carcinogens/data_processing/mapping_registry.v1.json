@@ -1,5 +1,5 @@
 {
-  "version": "carcinogens_prebuilt_mapping_registry.v1",
+  "version": "carcinogens_prebuilt_mapping_registry.v3",
   "task_id": "carcinogens",
   "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
   "mappings": {
@@ -7,21 +7,55 @@
       "stage": "01_cleaned",
       "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
-      "path": "data/evidence_libraries/carcinogens/v10/measurement_resolution_v4/measurement_resolution.parquet",
-      "sha256": "b0117ef2df9be8e18f6a936bb7a442f2e7f4c1ead4fa86aa9785ad6743ffbf1e"
+      "path": "data/evidence_libraries/carcinogens/v10/measurement_resolution_v6/measurement_resolution.parquet",
+      "sha256": "d6881e1b41781785aeb1cf1620523e75df4b426a681feaf2b62f4f8ac5358e29"
     },
     "exact_measurement_units": {
       "stage": "01_cleaned",
       "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_mappings": ["measurement_resolution"],
-      "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v6/mapping.json",
       "review_manifest": {
-        "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
-        "sha256": "fa46e4dff35049dad8281170a73b18ee96b06c5676e3d5c818beb300d2c51005"
+        "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v6/reviewed_mapping_receipt.json",
+        "sha256": "be9f372abb3a248ee297ce82780b2c16dca08bb988eff258463eb6cefddfff3a"
       },
-      "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
+      "sha256": "ceced00f7a4fadee611e43b954e6bde6663ef7c0a6f6410dbc6bdb1aba362d9d"
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["carcinogens_base", "carcinogens_v1", "carcinogens_v2", "carcinogens_v3", "carcinogens_v4", "carcinogens_v5"],
+      "outputs_by_source": {
+        "carcinogens_base": ["canonical_endpoint_concept", "canonical_assay_context", "canonical_species_context"],
+        "carcinogens_v1": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "carcinogens_v2": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "carcinogens_v3": ["canonical_endpoint_concept", "canonical_assay_context", "canonical_species_context"],
+        "carcinogens_v4": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "carcinogens_v5": ["canonical_endpoint_concept", "canonical_assay_context"]
+      },
+      "path": "data/caches/evidence_library/carcinogens/pair_dimension_reconciliation/main_uid_v1_20260920/global.json",
+      "acceptance_exception": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/accepted_auxiliary_context_v1.json",
+        "sha256": "fdbd2f18769522047ca8a9db869ffb7dd4e6c2bbf3935e746f3c12f1cd9db680"
+      },
+      "sha256": "935224cf6b8c97496720bd08e89b490a739392d8f93a8fada8da08241813e248"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": [
+        "carcinogens_base",
+        "carcinogens_v1",
+        "carcinogens_v2",
+        "carcinogens_v3",
+        "carcinogens_v4",
+        "carcinogens_v5"
+      ],
+      "outputs": [
+        "canonical_reference_scope",
+        "canonical_reference_basis"
+      ],
+      "path": "data/caches/evidence_library/carcinogens/reference_semantics/main_uid_v1_20260921/reference_semantics.parquet",
+      "sha256": "1927355bbb9c1455278ee5080268442a13b79d7fc6fbc7586ab4830cec6f9051"
     }
-  },
-  "not_applicable_mappings": ["auxiliary_context"]
+  }
 }

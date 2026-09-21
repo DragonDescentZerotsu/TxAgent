@@ -7,6 +7,7 @@ import pyarrow.parquet as pq
 import pytest
 
 from predict.retrieval.assay_reranking import cache_matched
+from predict.retrieval.assay_reranking import build_ranked_uid_retrieval as builder
 from predict.retrieval.assay_reranking import ranked_uid_retrieval
 from predict.retrieval.assay_reranking.build_ranked_uid_retrieval import finalize_level
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
@@ -16,6 +17,68 @@ from predict.retrieval.assay_reranking.ranked_uid_retrieval import (
     load_ranked_universe,
 )
 from predict.utils.json import sha256_file
+
+
+def test_cache_matched_default_uses_ranked_uid_v4() -> None:
+    assert cache_matched.DEFAULT_CACHE_BUNDLE.name == "ranked_level_retrieval_v4.yaml"
+
+
+def test_addon_v2_profile_is_active_data_cache() -> None:
+    assert builder.runtime.cache_profile_root(
+        "ranked_level_retrieval_gold_v1_addon_v2"
+    ).parts[-3:] == (
+        "assay_reranking", "active", "ranked_level_retrieval_gold_v1_addon_v2"
+    )
+
+
+def test_dili_queries_recover_frozen_identity_from_drug() -> None:
+    _, rows, queries = builder._queries("dili", "valid")
+    assert len(queries) == len(rows)
+    assert all(parent == row["molecule_identity_key"] for row, (_, _, parent, _) in zip(rows, queries))
+
+
+def test_projection_reader_materializes_only_requested_level(tmp_path: Path) -> None:
+    records = tmp_path / "records.parquet"
+    pq.write_table(pa.Table.from_pylist([
+        {
+            "source_row_uid": "u2", "external_record_id": "r2",
+            "parent_id": "p2", "parent_smiles": "CC", "level": "L2",
+            "payload": json.dumps({"progressive_level": "L2"}),
+        },
+        {
+            "source_row_uid": "u3", "external_record_id": "r3",
+            "parent_id": "p3", "parent_smiles": "CCC", "level": "L3",
+            "payload": json.dumps({"progressive_level": "L3"}),
+        },
+    ]), records)
+    manifest = tmp_path / "VERSION.json"
+    manifest.write_text(json.dumps({"records": records.name}))
+
+    selected, grouped = builder._records(manifest, "L3")
+
+    assert set(selected) == {"u3"}
+    assert set(grouped) == {"L3"}
+
+
+def test_trusted_predecessor_rows_reuse_published_score_identity(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    level = tmp_path / "bbb_martins/scaffold/valid/L2"
+    level.mkdir(parents=True)
+    database = level / "rankings.sqlite3"
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            "CREATE TABLE rankings(benchmark_row_id TEXT,item_id TEXT,"
+            "score_key TEXT,assay_transfer_score REAL)"
+        )
+        connection.execute("INSERT INTO rankings VALUES ('q','u','key',0.75)")
+    (level / "VERSION.json").write_text(json.dumps({"database": database.name}))
+    monkeypatch.setattr(builder, "SCORE_REUSE_ROOTS", (tmp_path,))
+    monkeypatch.setattr(builder, "TRUST_PREDECESSOR_ROWS", True)
+
+    assert builder._predecessor_rows("bbb_martins", "valid", "L2") == {
+        ("q", "u"): ("key", 0.75)
+    }
 
 
 def test_cache_matched_wrapper_forwards_preselected_uids(monkeypatch) -> None:

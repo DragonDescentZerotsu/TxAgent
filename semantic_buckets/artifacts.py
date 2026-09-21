@@ -17,6 +17,8 @@ TASK_ALIASES = {
     "bbb_martins": "bbb_martins",
     "oral": "bioavailability_ma",
     "bioavailability_ma": "bioavailability_ma",
+    "skin": "skin_reaction",
+    "skin_reaction": "skin_reaction",
 }
 
 
@@ -30,8 +32,9 @@ class SemanticBucketArtifacts:
     manifest: Path
     semantic_map: Path
     semantic_map_manifest: Path
-    readout_bucket_map: Path
-    record_readout_bucket_map: Path
+    readout_bucket_map: Path | None
+    record_readout_bucket_map: Path | None
+    record_semantic_bucket_map: Path | None
     semantic_bucket_rankings: Path
     record_relevance_rankings: Path
     retrieval_eligibility: Path | None
@@ -104,6 +107,11 @@ def resolve_semantic_bucket_artifacts(
     )
     weights = selected.get("semantic_bucket_weights")
     weights_path = _selected_path(root, selected, "semantic_bucket_weights") if weights else None
+    readout = selected.get("readout_bucket_map")
+    record_readout = selected.get("record_readout_bucket_map")
+    record_semantic = selected.get("record_semantic_bucket_map")
+    if not record_readout and not record_semantic:
+        raise ValueError(f"semantic-bucket manifest has no record mapping: {manifest_path}")
     return SemanticBucketArtifacts(
         task=task,
         release=release,
@@ -111,8 +119,15 @@ def resolve_semantic_bucket_artifacts(
         manifest=manifest_path,
         semantic_map=_selected_path(root, selected, "semantic_map"),
         semantic_map_manifest=_selected_path(root, selected, "semantic_map_manifest"),
-        readout_bucket_map=_selected_path(root, selected, "readout_bucket_map"),
-        record_readout_bucket_map=_selected_path(root, selected, "record_readout_bucket_map"),
+        readout_bucket_map=_selected_path(root, selected, "readout_bucket_map") if readout else None,
+        record_readout_bucket_map=(
+            _selected_path(root, selected, "record_readout_bucket_map")
+            if record_readout else None
+        ),
+        record_semantic_bucket_map=(
+            _selected_path(root, selected, "record_semantic_bucket_map")
+            if record_semantic else None
+        ),
         semantic_bucket_rankings=_selected_path(root, selected, "semantic_bucket_rankings"),
         record_relevance_rankings=_selected_path(root, selected, "record_relevance_rankings"),
         retrieval_eligibility=eligibility_path,
@@ -129,7 +144,10 @@ def load_record_bucket_map(
     """Load record-to-semantic/readout assignments, optionally eligibility-filtered."""
 
     artifacts = resolve_semantic_bucket_artifacts(task, release)
-    mapping = pd.read_parquet(artifacts.record_readout_bucket_map)
+    mapping_path = artifacts.record_semantic_bucket_map or artifacts.record_readout_bucket_map
+    if mapping_path is None:
+        raise ValueError(f"no record mapping is selected for {artifacts.task}")
+    mapping = pd.read_parquet(mapping_path)
     if not eligible_only:
         return mapping
     if artifacts.retrieval_eligibility is None:

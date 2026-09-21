@@ -1,0 +1,29 @@
+{
+  "base_mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "8559f83ee8c3550a069e21da5ed003889bcbc3fece9ad68319ecd230820600f0"
+  },
+  "changed_entry_count": 1,
+  "entry_count": 69818,
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v3/mapping.json",
+    "sha256": "e545c990afd8df671c6e2433617acac24a8932fb105b97e046a67e9e9510caaf"
+  },
+  "measurement_resolution": {
+    "path": "data/evidence_libraries/ames/v10/measurement_resolution_v7/measurement_resolution.parquet",
+    "sha256": "2b1b211a33151d3ca93913759b8c1f1ec16ef88a44c7aad0416878a8fae2af12"
+  },
+  "reviewed_corrections": {
+    "path": "data/evidence_libraries/ames/v10/measurement_resolution_v7/reviewed_corrections.jsonl",
+    "row_count": 1,
+    "sha256": "c487a080e3da677c7fb27f9e2377b4b821ed78ce3871933c16d495675b1f1bb3"
+  },
+  "task": "ames",
+  "validations": {
+    "base_entries_preserved": true,
+    "domain_unchanged": true,
+    "only_reviewed_entry_changed": true,
+    "scale_unchanged": true
+  },
+  "version": "ames_exact_measurement_units_reviewed_successor.v1"
+}

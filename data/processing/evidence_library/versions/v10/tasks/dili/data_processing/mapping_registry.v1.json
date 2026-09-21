@@ -1,5 +1,5 @@
 {
-  "version": "dili_prebuilt_mapping_registry.v1",
+  "version": "dili_prebuilt_mapping_registry.v3",
   "task_id": "dili",
   "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
   "mappings": {
@@ -7,21 +7,45 @@
       "stage": "01_cleaned",
       "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
-      "path": "data/evidence_libraries/dili/v10/measurement_resolution_v4/measurement_resolution.parquet",
-      "sha256": "a9b51ff6c7d5fb2bfb01680667adddb225da5e15f0324161e65902a1c81f1d1d"
+      "path": "data/evidence_libraries/dili/v10/measurement_resolution_v7/measurement_resolution.parquet",
+      "sha256": "80dc19d5694a1ccb10e43f6c2d53511a95fc0e7af3f426442d69b4e8f1a2907b"
     },
     "exact_measurement_units": {
       "stage": "01_cleaned",
       "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_mappings": ["measurement_resolution"],
-      "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v5/mapping.json",
       "review_manifest": {
-        "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
-        "sha256": "5dc2fe23472c67874ec77ca111fcc9be8dde6706fc60edc45f4f93ef18c498c8"
+        "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v5/reviewed_mapping_receipt.json",
+        "sha256": "3db662bc70eb879b1964f5413a44f160b3c53ac32b6962eb1f612e398c933056"
       },
-      "sha256": "62f8dca41244934f1c55787adc0eae2fbbb99ce1e88827a75b6002a6ca30058b"
+      "sha256": "eb7b13a0958b7d2a0cd1dc3566e7a1fb098afc40c14e97db405d7c451ed4a63a"
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
+      "outputs_by_source": {
+        "dili_base": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "dili_v1": ["canonical_endpoint_concept", "canonical_assay_context", "canonical_species_context"],
+        "dili_v2": ["canonical_endpoint_concept", "canonical_assay_context", "canonical_species_context"],
+        "dili_v3": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "dili_v4": ["canonical_endpoint_concept", "canonical_assay_context"],
+        "dili_v5": ["canonical_endpoint_concept", "canonical_assay_context"]
+      },
+      "path": "data/caches/evidence_library/dili/pair_dimension_reconciliation/main_uid_v1_20260920/global.json",
+      "acceptance_exception": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/accepted_auxiliary_context_v1.json",
+        "sha256": "5b115cd4e9e0550990147a1130bb0385ca536e5f4091b09ea97881b11241853e"
+      },
+      "sha256": "b65f3aa3606a4b51c01d110c97c5b14d237707c68ebce86cbb101bfcdc86e210"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": ["dili_base", "dili_v1", "dili_v2", "dili_v3", "dili_v4", "dili_v5"],
+      "outputs": ["canonical_reference_scope", "canonical_reference_basis"],
+      "path": "data/caches/evidence_library/dili/reference_semantics/main_uid_v1_20260921/reference_semantics.parquet",
+      "sha256": "d31491b25d5b6990ed423bf08e0e1d86464bad0e916f6ed20aa8bf02b10f2f86"
     }
-  },
-  "not_applicable_mappings": ["auxiliary_context"]
+  }
 }

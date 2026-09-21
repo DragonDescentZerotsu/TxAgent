@@ -1,0 +1,12 @@
+{
+  "cases": [
+    ["ames_mutagenicity_ordinal.v1", "negative", "negative", "mutagenicity outcome"],
+    ["ames_mutagenicity_ordinal.v1", "weak_positive", "weak positive", "mutagenicity outcome"],
+    ["ames_mutagenicity_ordinal.v1", "positive", "positive", "mutagenicity outcome"],
+    ["ames_mutagenicity_ordinal.v1", "strong_positive", "strong positive", "mutagenicity outcome"],
+    ["ames_fixed_mutation_ordinal.v1", "weak_positive", "weak positive", "fixed-mutation outcome"],
+    ["ames_damage_direction.v1", "no_change", "no change", "premutagenic damage or response direction"],
+    ["ames_mechanism_detection.v1", "not_detected", "not detected", "mechanistic endpoint detection status"],
+    ["ames_mechanism_direction.v1", "no_effect", "no effect", "mechanistic endpoint direction"]
+  ]
+}

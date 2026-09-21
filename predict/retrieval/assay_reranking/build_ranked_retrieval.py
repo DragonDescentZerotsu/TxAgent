@@ -144,6 +144,9 @@ def _display_fields(task: str, record: dict[str, Any], source: dict[str, Any]) -
             "measurement_text", "reported_result", "bbb_permeability_label",
             "bbb_transport_label", "interaction_conclusion",
             "passive_bbb_interpretation", "substrate_status", "support_text",
+            "extra_details", "effect_direction", "result_interpretation",
+            "classification_label", "persistence_outcome", "result_call",
+            "result_direction", "result_status", "maximum_reported_severity",
         )
         measurement = next((source.get(name) for name in result_fields if _present(source.get(name))), None)
         unit = None

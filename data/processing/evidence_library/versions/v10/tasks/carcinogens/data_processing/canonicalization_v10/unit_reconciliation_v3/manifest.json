@@ -1,0 +1,36 @@
+{
+  "base_entry_count": 326038,
+  "base_mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+    "sha256": "d88959c863380541e8ee4cc5cb0985aedb37283e91362c93c453eac40fdd3a81"
+  },
+  "entry_count": 328496,
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v3/mapping.json",
+    "sha256": "c91bc41f34ebe4cebe27bd6ff7f020acb9aea1f001de2f789b1e3bc66ad8994d"
+  },
+  "measurement_resolution": {
+    "path": "data/evidence_libraries/carcinogens/v10/measurement_resolution_v4/measurement_resolution.parquet",
+    "sha256": "b0117ef2df9be8e18f6a936bb7a442f2e7f4c1ead4fa86aa9785ad6743ffbf1e"
+  },
+  "review_action_counts": {
+    "keep": 2385,
+    "merge": 66,
+    "revert": 7
+  },
+  "reviewed_entry_count": 2458,
+  "reviewed_overlay": {
+    "manifest_path": "data/caches/evidence_library/unit_reconciliation/20260919_unit_only_v3_5_percent_semantics_dgx017_retry1/v3/pass_a/agent_review/second_review/consolidated/manifest.json",
+    "manifest_sha256": "9301c6f80ab1b25844e10b54c994e813ec5717351d1394e2c5fbbbeb6ae1af57",
+    "path": "data/caches/evidence_library/unit_reconciliation/20260919_unit_only_v3_5_percent_semantics_dgx017_retry1/v3/pass_a/agent_review/second_review/consolidated/mapping.jsonl",
+    "sha256": "d95b9eb89e0319552c6d65de08657d1a2b08c5382f73fcaeae69f004c824ef31"
+  },
+  "task": "carcinogens",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "canonical_reconciliation_v3_second_review_task_successor.v1"
+}

@@ -1,0 +1,1 @@
+{"canonical_unit":"uM IC50","decision":"accept_alias","input_unit":"micromolar IC50","rationale":"Micromolar is the spelled-out SI prefix for uM; IC50 is preserved as part of the named potency unit and no numeric conversion is applied.","reviewer_id":"codex_source_grounded_unit_review_v1","scale":"1","task":"dili","version":"unit_alias_manual_review.v1"}

@@ -1009,6 +1009,25 @@ def test_organized_matrix_splits_methods_into_study_leaves(tmp_path, monkeypatch
     assert row['macro_f1'] == '0.75'
     assert row['metrics_sha256'] == sha256_file(metrics)
 
+    flat = results / 'contrastive/flat/with_query_prior/k10_m0_flat'
+    flat.mkdir(parents=True)
+    (flat / 'run.json').write_text(json.dumps({
+        **run_document, 'method': 'flat', 'run_id': flat.name,
+        'status': 'complete', 'metric_status': 'complete',
+    }))
+    flat_metrics = flat / 'bbb_martins/bbb_martins__flat/metrics.json'
+    flat_metrics.parent.mkdir(parents=True)
+    flat_metrics.write_text(json.dumps({
+        'n_total': 397, 'n_successful': 397, 'n_failed_runs': 0,
+        'macro_f1': 0.8, 'accuracy': 0.82,
+    }))
+    matrix._refresh_results_catalog(results)
+    with (results / 'results_ledger.tsv').open(newline='') as handle:
+        ledger = list(csv.DictReader(handle, delimiter='\t'))
+    flat_row = next(row for row in ledger if row['method'] == 'flat')
+    assert flat_row['macro_f1'] == '0.8'
+    assert flat_row['metrics_sha256'] == sha256_file(flat_metrics)
+
 
 def test_staged_publication_is_complete_only_and_hash_validated(tmp_path):
     staging = tmp_path / 'local'

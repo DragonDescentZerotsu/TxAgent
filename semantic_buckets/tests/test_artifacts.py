@@ -96,6 +96,47 @@ def test_current_pointer_is_owned_by_evidence_library(tmp_path, monkeypatch) -> 
     assert artifacts.resolve_release("bbb", "CURRENT") == "v10_main_universe_v1"
 
 
+def test_semantic_only_release_resolves_skin_record_map(tmp_path, monkeypatch) -> None:
+    release_root = tmp_path / "releases"
+    root = release_root / "skin_reaction" / "v10_main_universe_v6"
+    selected = {
+        "semantic_map": "generation/semantic.parquet",
+        "semantic_map_manifest": "generation/semantic.json",
+        "record_semantic_bucket_map": "generation/records.parquet",
+        "semantic_bucket_rankings": "weighting/buckets.parquet",
+        "record_relevance_rankings": "weighting/records.parquet",
+        "semantic_bucket_weights": "weighting/weights.parquet",
+    }
+    for key, relative in selected.items():
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.suffix == ".json":
+            path.write_text("{}", encoding="utf-8")
+        else:
+            pd.DataFrame({"placeholder": [1]}).to_parquet(path, index=False)
+    (root / "manifest.json").write_text(
+        json.dumps({
+            "schema_version": "semantic_buckets.release.v1",
+            "task": "skin_reaction",
+            "evidence_library_version": "v10_main_universe_v6",
+            "selected": selected,
+        }),
+        encoding="utf-8",
+    )
+    current = tmp_path / "data/evidence_libraries/skin_reaction/CURRENT"
+    current.parent.mkdir(parents=True)
+    current.write_text("v10_main_universe_v6\n", encoding="utf-8")
+    monkeypatch.setattr(artifacts, "RELEASE_ROOT", release_root)
+    monkeypatch.setattr(artifacts, "REPOSITORY_ROOT", tmp_path)
+
+    resolved = artifacts.resolve_semantic_bucket_artifacts("skin", "CURRENT")
+    mapping = artifacts.load_record_bucket_map("skin", "CURRENT")
+
+    assert resolved.record_readout_bucket_map is None
+    assert resolved.record_semantic_bucket_map == root / selected["record_semantic_bucket_map"]
+    assert list(mapping.columns) == ["placeholder"]
+
+
 def test_refresh_upstream_preserves_reviewed_release(tmp_path, monkeypatch) -> None:
     release = tmp_path / "release"
     release.mkdir()

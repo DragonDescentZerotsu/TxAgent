@@ -1,0 +1,21 @@
+{
+  "version": "full_flat_context_v5_six_tasks_v1",
+  "parent": "full_flat_context_v5",
+  "status": "prepared_for_review",
+  "supports_tasks": ["bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens"],
+  "layouts": ["global", "level-grouped"],
+  "query_prior_modes": ["cached", "none"],
+  "upstream_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+  "reasoning_reference_contracts": {
+    "global": {"schema_version": "progressive_reasoning_references.v1", "layout": "flat_global", "required_mentions": false, "matching": "case_insensitive_exact_visible_id"},
+    "level-grouped": {"schema_version": "progressive_reasoning_references.v1", "layout": "flat_level_grouped", "required_mentions": false, "matching": "case_insensitive_exact_visible_id"}
+  },
+  "tasks": {
+    "bbb_martins": {"prompt_profile": "meaningful_cns_access_v1", "upstream_sources": {}},
+    "bioavailability_ma": {"prompt_profile": "f20_evidence_calibrated_v2", "upstream_sources": {}},
+    "skin_reaction": {"prompt_profile": "sensitization_aligned_v2", "upstream_sources": {}},
+    "ames": {"prompt_profile": "ames_gold_v1", "upstream_sources": {}},
+    "dili": {"prompt_profile": "dili_gold_v1", "upstream_sources": {}},
+    "carcinogens": {"prompt_profile": "carcinogens_gold_v1", "upstream_sources": {}}
+  }
+}

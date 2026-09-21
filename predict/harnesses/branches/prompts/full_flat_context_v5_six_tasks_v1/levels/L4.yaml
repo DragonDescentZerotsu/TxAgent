@@ -1,0 +1,3 @@
+bbb_martins: {description: Efflux-transporter evidence.}
+bioavailability_ma: {description: Absorption, solubility, dissolution, or permeability evidence.}
+ames: {description: DNA damage, repair, and damage-response evidence.}

@@ -6,10 +6,11 @@ generations, audits, and tests.
 
 ## Active release
 
-`artifacts.py` resolves the selected V10 data from
-`releases/<task>/v10/manifest.json`. Both tasks select
-`gold_v1_protected_incremental_v1`. Retrieval eligibility is the separately
-versioned `gold_v1_protected_incremental_v1_weighted_v2` sidecar.
+`artifacts.py` resolves each selected semantic release from the corresponding
+evidence-library `CURRENT` pointer and
+`releases/<task>/<evidence-release>/manifest.json`. BBB and Oral currently use
+their `v10_main_universe_v3` semantic successors; Skin uses
+`v10_main_universe_v6`.
 
 The V2 policy is `policies/semantic_weighted_top10_v2.json`; V1 remains frozen
 for historical reproduction.
@@ -150,13 +151,15 @@ completed top-75 shelf and retains the reviewed manual values for incremental
 buckets. The build and hash-approved activation steps are separate.
 
 BBB and Oral resolve their active semantic artifacts through each task's
-`data/evidence_libraries/<task>/CURRENT` pointer. Both currently select
-`v10_main_universe_v1`; there is no separate semantic-release pointer.
+`data/evidence_libraries/<task>/CURRENT` pointer. There is no separate
+semantic-release pointer.
 
 `build_retrieval_bucket_world.py` materializes the audit-only L2+ union of
 semantic buckets touched by all physical records under Morgan-top-100 parents
 across valid and test queries. It reads the ranked UID caches and selected semantic
-record maps directly and performs no model inference.
+record maps directly and performs no model inference. This semantic world is not
+a runtime cache: every task, split, and level retains its independent SQLite
+retrieval cache.
 
 For Skin, `official_two_pass_weights.py` consumes the reviewed V10 semantic
 families directly; readout splitting is not part of this workflow. It first

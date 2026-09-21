@@ -1,6 +1,6 @@
 """Compatibility imports for the canonical progressive state contract."""
 
-from predict.harnesses import progressive_state as _impl
+from predict.harnesses.progressive import state as _impl
 
 
 def __getattr__(name: str):

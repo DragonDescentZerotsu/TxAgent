@@ -20,10 +20,18 @@ from optimization.gold_joint import (
 from predict.utils.json import sha256_file
 from optimization.select_records import (
     PROFILES,
+    _default_release_index,
     _feature_coverage,
     _greedy_coverage_ceiling,
     select_records,
 )
+
+
+def test_default_release_index_uses_ranked_uid_v4() -> None:
+    assert _default_release_index("bbb_martins").as_posix() == (
+        "data/caches/assay_reranking/active/ranked_level_retrieval_v4/"
+        "bbb_martins/RELEASE_INDEX.json"
+    )
 
 
 def _candidates() -> list[dict]:
@@ -281,12 +289,14 @@ def test_joint_indirect_selector_has_no_level_quota_and_normalized_log_terms() -
     assert 0 <= summary["level_diversity"] <= 1
 
 
-def test_direct_grid_has_27_crossed_profiles_and_three_controls() -> None:
+def test_direct_grid_has_24_crossed_profiles_and_four_controls() -> None:
     profiles = direct_profiles()
 
-    assert len(profiles) == 30
-    assert len({profile.name for profile in profiles}) == 30
-    assert sum(profile.molecular == profile.label == 0 for profile in profiles) == 3
+    assert len(profiles) == 28
+    assert len({profile.name for profile in profiles}) == 28
+    assert {profile.gated_assay for profile in profiles} == {0.75, 1.0, 1.25, 1.5}
+    assert {profile.label for profile in profiles} == {0.0, 0.25, 0.5}
+    assert sum(profile.molecular == profile.label == 0 for profile in profiles) == 4
 
 
 def _selection_manifest(tmp_path, schema: str) -> object:

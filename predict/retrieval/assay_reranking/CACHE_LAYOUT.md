@@ -1,9 +1,9 @@
 # Assay-reranking cache layout
 
 The current cache is
-`data/caches/assay_reranking/active/ranked_level_retrieval_v3/`. Evidence
-payloads remain with their semantic owners under
-`data/evidence_libraries/<task>/v10/retrieval_projection/ranked_evidence_v1/`.
+`data/caches/assay_reranking/active/ranked_level_retrieval_v4/`. Evidence
+payloads remain with their semantic owners under the active V10 release at
+`data/evidence_libraries/<task>/<release>/retrieval_projection/ranked_evidence_v2/`.
 
 The compact Gold-v1 direct ranking sources are published in normal Git under
 `predict/retrieval/cache/assay_reranking/active/`: BBB and Oral use
@@ -11,9 +11,9 @@ The compact Gold-v1 direct ranking sources are published in normal Git under
 `v9_skin_gold_v1_scaffold_morgan100_v1`. Their aggregate hashes and size gate
 are in `direct_gold_v1_release.json`; validate all six task/split caches with
 `python -m predict.retrieval.assay_reranking.v9 validate-release`. These source
-rankings are distinct from the derived V3 level databases and from TDC caches.
+rankings are distinct from the derived V4 level databases and from TDC caches.
 
-- `ranked_level_retrieval_v3`: current BBB/Oral Gold-v1 retrieval. Every
+- `ranked_level_retrieval_v4`: current BBB/Oral Gold-v1 retrieval. Every
   task, split, and level owns one independent SQLite database. L1 contains 100
   scaffold-disjoint Gold context cards and their exact ordered physical voter
   UIDs. Each later level contains every UID belonging to its 100 nearest
@@ -21,9 +21,13 @@ rankings are distinct from the derived V3 level databases and from TDC caches.
   dense Morgan rank plus, where supported, an assay-transfer score and rank.
   Morgan and assay panels can therefore be selected independently and hydrated
   once through their deduplicated UID union.
-- `ranked_level_retrieval_gold_v1_addon_v1`: Morgan-only Gold-v1 L1 context
-  cards for Ames, DILI, and Carcinogens. It covers valid and test; assay-transfer
-  ranks and later evidence levels are intentionally not computed.
+- `ranked_level_retrieval_gold_v1_addon_v2`: current Morgan-only Gold-v1
+  retrieval for Ames, DILI, and Carcinogens. It preserves the V1 L1 context
+  cards and adds independent valid/test L2+ caches over all physical UIDs under
+  the top 100 parent-disjoint Morgan parents. Level-0 rows are excluded.
+- `ranked_level_retrieval_gold_v1_addon_v1`: immutable L1-only predecessor.
+- `ranked_level_retrieval_v3`: immutable predecessor bound to the earlier V10
+  evidence projection.
 - `ranked_level_retrieval_v2`: immutable 100-row predecessor.
 - `cache_matched_retrieval_v3`: retained immutable predecessor.
 - `v24_1_bbb_uid_levels_morgan75`: active BBB level-specific assay-transfer
@@ -58,9 +62,12 @@ evidence projection, then prepare each independent level:
 
 ```bash
 python -m predict.retrieval.assay_reranking.build_ranked_uid_retrieval build-evidence \
-  --task bbb_martins --evidence-manifest STAGE_EVIDENCE/bbb_martins/VERSION.json
+  --task bbb_martins --profile ranked_level_retrieval_v4 \
+  --evidence-release v10_main_universe_v3 \
+  --evidence-manifest STAGE_EVIDENCE/bbb_martins/VERSION.json
 python -m predict.retrieval.assay_reranking.build_ranked_uid_retrieval prepare-level \
   --task bbb_martins --subset valid --level L2 --output-root STAGE_CACHE \
+  --profile ranked_level_retrieval_v4 --evidence-release v10_main_universe_v3 \
   --evidence-manifest STAGE_EVIDENCE/bbb_martins/VERSION.json
 python -m predict.retrieval.assay_reranking.build_ranked_uid_retrieval score \
   --task bbb_martins --subset valid --level L2 --output-root STAGE_CACHE \
@@ -78,11 +85,13 @@ ranks; any projection-byte change fails and requires a rebuild.
 
 ```bash
 python -m predict.retrieval.assay_reranking.build_ranked_uid_retrieval index \
-  --task bbb_martins --output-root STAGE_CACHE \
-  --evidence-manifest data/evidence_libraries/bbb_martins/v10/retrieval_projection/ranked_evidence_v1/VERSION.json
+  --task bbb_martins --profile ranked_level_retrieval_v4 \
+  --evidence-release v10_main_universe_v3 --output-root STAGE_CACHE \
+  --evidence-manifest data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json
 python -m predict.retrieval.assay_reranking.build_ranked_uid_retrieval validate \
-  --task bbb_martins --output-root STAGE_CACHE \
-  --evidence-manifest data/evidence_libraries/bbb_martins/v10/retrieval_projection/ranked_evidence_v1/VERSION.json
+  --task bbb_martins --profile ranked_level_retrieval_v4 \
+  --evidence-release v10_main_universe_v3 --output-root STAGE_CACHE \
+  --evidence-manifest data/evidence_libraries/bbb_martins/v10_main_universe_v3/retrieval_projection/ranked_evidence_v2/VERSION.json
 ```
 
 Progressive and flat preparation accept a common default with repeatable

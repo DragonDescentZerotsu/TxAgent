@@ -1,0 +1,27 @@
+{
+  "version": "accepted_unreviewed_canonical_mapping_exception.v1",
+  "task_id": "ames",
+  "mapping_id": "auxiliary_context",
+  "publication_status": "accepted_without_additional_review",
+  "target_releases": ["v10_main_universe_v2", "v10_main_universe_v3"],
+  "authorization": "explicit_user_direction_2026-09-21",
+  "mapping": {
+    "path": "data/caches/evidence_library/ames/pair_dimension_reconciliation/main_uid_v1_20260920/global.json",
+    "sha256": "899a7bd5ffc3438c2e3042ef7d832404c7337a0b0dd328c3f1c73933238c4e0b"
+  },
+  "input_stage1": {
+    "sha256": "f3459aea9208897e82b521b7430bd95e82ab8374ead1d1ae8c85d650db005fa0",
+    "rows": 1293979
+  },
+  "candidate_application": {
+    "sha256": "85de50dfbe2f3ba0e095bd88bc2f8e8ca474c3cbc6b3efb9ef47f37f6c48453c",
+    "rows": 1293979
+  },
+  "validations": {
+    "exact_mapping_hash_pinned": true,
+    "exact_stage1_hash_pinned": true,
+    "complete_raw_key_coverage": true,
+    "exact_uid_order_preserved": true,
+    "zero_unmapped_records": true
+  }
+}

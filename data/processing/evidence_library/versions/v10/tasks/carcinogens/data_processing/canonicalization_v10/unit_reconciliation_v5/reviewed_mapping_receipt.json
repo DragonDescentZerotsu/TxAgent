@@ -1,0 +1,17 @@
+{
+  "base_mapping_sha256": "581a20f892560c6b2dd65db3062de631ca49b20a784cfe9ed8e9f6c2aeb8ab77",
+  "checks": {
+    "canonical_target_copied_exactly": true,
+    "every_suffix_has_exact_reviewed_base_rule": true,
+    "no_exact_mapping_key_collisions": true,
+    "only_declared_unit_role_wrappers": true,
+    "scale_copied_exactly": true
+  },
+  "mapping_sha256": "e08e72cc475890d27bfdf4cbc2bce358db3043a1d99f83767f130c99d2d66b26",
+  "projected_entry_count": 336832,
+  "reviewer_id": "codex-source-role-wrapper-audit-20260920",
+  "source_universe_sha256": "9a898a4d9d1bb9fee253d0a54fc76152658489c36676f396bb2ed0ed38f3d67c",
+  "task": "carcinogens",
+  "true_new_unit_count": 50,
+  "version": "reviewed_unit_role_wrapper_projection_receipt.v1"
+}

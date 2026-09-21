@@ -412,7 +412,7 @@ def _default_query_path(task: str) -> Path:
 
 
 def _default_release_index(task: str) -> Path:
-    return Path("data/caches/assay_reranking/active/ranked_level_retrieval_v3") / task / "RELEASE_INDEX.json"
+    return Path("data/caches/assay_reranking/active/ranked_level_retrieval_v4") / task / "RELEASE_INDEX.json"
 
 
 def _profile_output(

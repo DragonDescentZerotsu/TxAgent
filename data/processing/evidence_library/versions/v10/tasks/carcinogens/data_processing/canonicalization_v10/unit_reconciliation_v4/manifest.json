@@ -1,0 +1,55 @@
+{
+  "agent_review_decisions": {
+    "accepted_aliases": 69,
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v4/agent_review.decisions.jsonl",
+    "sha256": "30456768cfeb10a0870009837ee88e6b32150fecf07ff528336bf4228811f0b2"
+  },
+  "all_actions": [
+    "map"
+  ],
+  "all_scales": [
+    "1"
+  ],
+  "canonical_unit_count": 326572,
+  "entry_count": 334742,
+  "lineage": {
+    "base_mapping": {
+      "entry_count": 328496,
+      "full_unit_count": 332284,
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v3/mapping.json",
+      "sha256": "c91bc41f34ebe4cebe27bd6ff7f020acb9aea1f001de2f789b1e3bc66ad8994d",
+      "wildcard_unit_count": 326038
+    },
+    "legacy_lexical_batching": false,
+    "single_pass_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/carcinogens_main_uid_v1_20260920/carcinogens/llm_pass/manifest.json",
+      "sha256": "2b0f0198917e05c2724810aab9018b261406cd28eb51e9497a806a6a3110dd8c"
+    },
+    "single_pass_mapping": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/carcinogens_main_uid_v1_20260920/carcinogens/llm_pass/mapping.jsonl",
+      "sha256": "a06e1e1d8716257122f96c8f6a82bae3fe661168e4b2692e2b5365f5ef7af32b"
+    },
+    "universe": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/carcinogens_main_uid_v1_20260920/carcinogens/universe.jsonl",
+      "sha256": "e43cffa07032635b9c19767b9debf7fb777f77e3ad83c0be17b55010d2d7f3c3"
+    },
+    "universe_manifest": {
+      "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/outputs/analysis/evidence_library/unit_reconciliation/carcinogens_main_uid_v1_20260920/carcinogens/universe.manifest.json",
+      "sha256": "d7ff355d5cd3c0daea7b2628f331cea632fa3ca72f0bbda0a41adc82dedda61f"
+    }
+  },
+  "mapping": {
+    "path": "/vast/projects/myatskar/design-documents/joseph/TxAgent/data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
+    "sha256": "581a20f892560c6b2dd65db3062de631ca49b20a784cfe9ed8e9f6c2aeb8ab77"
+  },
+  "publication_status": "reviewed",
+  "review_completion": {
+    "packet_manifest_sha256": "9aeebb10a762fdd70aa41aee93f00d6bc86356d3dd0c24aee7b1b55f11d9a3f6",
+    "packets_sha256": "fc2d3bdfbc2b664f7d79bc85457d55f43babf4bf12b6dd25c228605e422d1156",
+    "reviewed_packets": 32,
+    "reviewer_id": "codex-unit-map-final-audit-20260920",
+    "sha256": "3a9610afa9e09ae67763d4601c5d7f614d335c0745d3f5bd541570254d8dd502"
+  },
+  "task": "carcinogens",
+  "version": "starling_canonical_reconciliation_single_pass.v1"
+}

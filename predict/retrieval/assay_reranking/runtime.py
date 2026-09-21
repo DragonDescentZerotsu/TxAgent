@@ -54,8 +54,10 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v2",
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3",
         "ranked_level_retrieval_gold_v1_addon_v1",
+        "ranked_level_retrieval_gold_v1_addon_v2",
         "ranked_level_retrieval_skin_v27_gold_v1",
         "ranked_level_retrieval_skin_v27_tdc_v1",
+        "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
         "tdc_mixed_l1_v1",
         "v10_4_direct_gold_morgan100_v1",
         "v9_skin_gold_v1_morgan100_v1",
@@ -78,8 +80,10 @@ def cache_profile_root(profile: str) -> Path:
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v2",
         "ranked_level_retrieval_tdc_v1_gold_v1_mixed_l1_assay_v10_3_best_v3",
         "ranked_level_retrieval_gold_v1_addon_v1",
+        "ranked_level_retrieval_gold_v1_addon_v2",
         "ranked_level_retrieval_skin_v27_gold_v1",
         "ranked_level_retrieval_skin_v27_tdc_v1",
+        "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
         "tdc_mixed_l1_v1",
     }:
         return DATA_ACTIVE_CACHE_ROOT / profile

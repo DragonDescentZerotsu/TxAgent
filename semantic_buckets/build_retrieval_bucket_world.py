@@ -20,10 +20,10 @@ from tools.chembl_tool.common.json_utils import write_json_atomic
 
 ROOT = Path(__file__).resolve().parent
 REPOSITORY_ROOT = ROOT.parent
-CACHE_ROOT = REPOSITORY_ROOT / "data/caches/assay_reranking/active/ranked_level_retrieval_v3"
+CACHE_ROOT = REPOSITORY_ROOT / "data/caches/assay_reranking/active/ranked_level_retrieval_v4"
 RELEASE_ROOT = ROOT / "releases"
 OUTPUT_ROOT = ROOT / "provenance/retrieval_worlds"
-WORLD_ID = "morgan_top100_valid_test_l2plus_v1"
+WORLD_ID = "morgan_top100_valid_test_l2plus_semantic_world_v2"
 SKIN_WORLD_ID = "skin_morgan_top100_valid_test_l2_l3_v1"
 SKIN_SEMANTIC_ROOT = (
     ROOT / "provenance/source_local_semantic_v4/"
@@ -38,8 +38,8 @@ DEFAULT_TASK_LEVELS = {
     task: levels for task, levels in TASK_LEVELS.items() if task != "skin_reaction"
 }
 EXPECTED = {
-    "bbb_martins": {"records": 389_773, "buckets": 11_254},
-    "bioavailability_ma": {"records": 374_754, "buckets": 6_454},
+    "bbb_martins": {"records": 389_760, "buckets": 11_253},
+    "bioavailability_ma": {"records": 374_645, "buckets": 6_454},
     "skin_reaction": {"records": 22_569, "buckets": 1_244},
 }
 
@@ -57,7 +57,10 @@ def _mapping(release_root: Path, task: str) -> tuple[
 ]:
     if task == "skin_reaction":
         return _reviewed_skin_mapping()
-    root = release_root / task / "v10_main_universe_v1"
+    release = (
+        REPOSITORY_ROOT / "data/evidence_libraries" / task / "CURRENT"
+    ).read_text(encoding="utf-8").strip()
+    root = release_root / task / release
     manifest_path = root / "manifest.json"
     manifest = _read_json(manifest_path)
     relative = manifest["selected"]["record_readout_bucket_map"]

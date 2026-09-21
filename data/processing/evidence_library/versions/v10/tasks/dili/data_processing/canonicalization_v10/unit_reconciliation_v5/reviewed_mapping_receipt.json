@@ -1,0 +1,24 @@
+{
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/dili/data_processing/canonicalization_v10/unit_reconciliation_v5/mapping.json",
+    "sha256": "eb7b13a0958b7d2a0cd1dc3566e7a1fb098afc40c14e97db405d7c451ed4a63a"
+  },
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "review_completion": {
+    "accepted_aliases": 1,
+    "decisions_sha256": "b87db660063e9cdf4154aeb546c5ef1912b2db3d349ae5ed95f7f230b79b3ca6",
+    "reviewed_packets": 1,
+    "reviewer_id": "codex_source_grounded_unit_review_v1",
+    "source_completion_sha256": "b87db660063e9cdf4154aeb546c5ef1912b2db3d349ae5ed95f7f230b79b3ca6",
+    "source_manifest_sha256": "b2c65f7bb41198c29c3669fa7ba2e53d978360dc72b5a3897992c8322ec714fc"
+  },
+  "task_id": "dili",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "reviewed_canonical_mapping_receipt.v1"
+}

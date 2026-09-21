@@ -22,6 +22,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V5_HARNESS_VERSION,
     CONTEXT_V5_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_HARNESS_VERSION,
     CONTEXT_V7_PROMPT_VERSION,
@@ -344,6 +345,38 @@ def test_v5_uses_molecule_scoped_record_ids_and_claim_schema() -> None:
         "evidence_role": "contradictory",
     })
     assert validation["content_validator"](content) == []
+
+
+@pytest.mark.parametrize("task,profile,prediction", [
+    ("bbb_martins", "meaningful_cns_access_v1", "pass"),
+    ("bioavailability_ma", "f20_evidence_calibrated_v2", "high"),
+    ("skin_reaction", "sensitization_aligned_v2", "risk"),
+    ("ames", "ames_gold_v1", "positive"),
+    ("dili", "dili_gold_v1", "dili_risk"),
+    ("carcinogens", "carcinogens_gold_v1", "positive"),
+])
+def test_six_task_successor_renders_each_task(
+    task: str, profile: str, prediction: str,
+) -> None:
+    messages, metadata = build_flat_context_request(
+        _flat_context_retrieval(),
+        task_id=task,
+        task_prompt_profile=profile,
+        layout="level-grouped",
+        reranking="assay-transfer-contrastive",
+        query_prior={"endpoint_prior": "mixed_or_unclear"},
+        prompt_version=CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    )
+    validation = flat_context_validation(
+        task,
+        task_prompt_profile=profile,
+        prompt_version=CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+        reference_index=metadata["reasoning_reference_index"],
+    )
+
+    assert messages[0]["role"] == "system"
+    assert messages[1]["role"] == "user"
+    assert prediction in validation["allowed_values"]["final_prediction"]
 
 
 def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:
@@ -901,6 +934,35 @@ def test_flat_v2_renders_complete_source_semantics_without_molecule_name() -> No
         "support_text": "Measured permeability was 12.3 cm/s.",
     }
     assert "IDENTITY_SENTINEL" not in messages[1]["content"]
+
+
+def test_l1_context_cards_with_one_parent_remain_separate() -> None:
+    molecules = []
+    for context_id, record_id, score in (("c1", "r1", 0.8), ("c2", "r2", 0.2)):
+        molecules.append({
+            "reference_molecule_id": "REF",
+            "canonical_smiles": "CCN",
+            "context_card_id": context_id,
+            "ranking_method": "assay_transfer",
+            "morgan_similarity": 0.7,
+            "transfer_likelihood": score,
+            "l1_records": [{
+                "record_id": record_id,
+                "reference_molecule_id": "REF",
+                "morgan_similarity": 0.7,
+                "transfer_likelihood": score,
+                "ranking_method": "assay_transfer",
+                "payload": _selected_payload(record_id, "L1", "direct"),
+            }],
+        })
+
+    retrieval = cache_matched_flat_retrieval(
+        "q", "CCO", molecules, {}, task="bbb_martins",
+        reranking="assay-transfer", query_audit={},
+        prompt_version=CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    )
+
+    assert len(retrieval["groups"][0]["neighbors"]) == 2
 
 
 def test_flat_v2_places_later_assay_score_on_its_card() -> None:

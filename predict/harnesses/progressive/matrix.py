@@ -372,6 +372,8 @@ def _refresh_results_catalog(root):
                 metric_paths = sorted(
                     path.parent.glob(f"{task}/levels/level_*/metrics.json")
                 ) if task else []
+                if task and not metric_paths:
+                    metric_paths = sorted(path.parent.glob(f"{task}/*/metrics.json"))
                 if not metric_paths:
                     ledger.append(base | {"task": task})
                     continue

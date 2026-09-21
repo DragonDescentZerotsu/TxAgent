@@ -1,0 +1,21 @@
+{
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
+    "sha256": "e5154bc70c6cb6657475637a46a9a697e10e26defb5256b44230caafeb590c73"
+  },
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "review_completion": {
+    "reviewed_rows": 2119,
+    "reviewer_id": "codex-ames-second-review-v1",
+    "source_manifest_sha256": "9301c6f80ab1b25844e10b54c994e813ec5717351d1394e2c5fbbbeb6ae1af57"
+  },
+  "task_id": "ames",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "reviewed_canonical_mapping_receipt.v1"
+}

@@ -20,15 +20,15 @@
       "excluded_records": []
     },
     "ames": {
-      "mapping": "data/gold_labels/Ames/level_mappings/v1/level_mapping",
+      "mapping": "data/gold_labels/Ames/level_mappings/v2/level_mapping",
       "scope_mode": "exact_mapped_uid_subset"
     },
     "dili": {
-      "mapping": "data/gold_labels/DILI/level_mappings/v1/level_mapping",
+      "mapping": "data/gold_labels/DILI/level_mappings/v2/level_mapping",
       "scope_mode": "exact_mapped_uid_subset"
     },
     "carcinogens": {
-      "mapping": "data/gold_labels/Carcinogens/level_mappings/v1/level_mapping",
+      "mapping": "data/gold_labels/Carcinogens/level_mappings/v2/level_mapping",
       "scope_mode": "exact_mapped_uid_subset"
     },
     "skin_reaction": {

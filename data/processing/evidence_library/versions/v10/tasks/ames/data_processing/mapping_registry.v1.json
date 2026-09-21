@@ -1,5 +1,5 @@
 {
-  "version": "ames_prebuilt_mapping_registry.v1",
+  "version": "ames_prebuilt_mapping_registry.v3",
   "task_id": "ames",
   "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
   "mappings": {
@@ -7,21 +7,46 @@
       "stage": "01_cleaned",
       "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
-      "path": "data/evidence_libraries/ames/v10/measurement_resolution_v6/measurement_resolution.parquet",
-      "sha256": "f5aea1e2973cd25d5b3ca5f692a12384833f2af35198ea4531170084fef38e80"
+      "path": "data/evidence_libraries/ames/v10/measurement_resolution_v7/measurement_resolution.parquet",
+      "sha256": "2b1b211a33151d3ca93913759b8c1f1ec16ef88a44c7aad0416878a8fae2af12"
     },
     "exact_measurement_units": {
       "stage": "01_cleaned",
       "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
       "outputs": ["canonical_measurement_text", "canonical_unit_text"],
       "depends_on_mappings": ["measurement_resolution"],
-      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/mapping.json",
+      "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v4/mapping.json",
       "review_manifest": {
-        "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v2/reviewed_mapping_receipt.json",
-        "sha256": "bea68dd953bd729f8fb63c1e136d49ccc02fd663aa176e20b1b06a6981fec98b"
+        "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/unit_reconciliation_v4/reviewed_mapping_receipt.json",
+        "sha256": "1cda4275252b4fd953a1b5d8e6d26900a2fc4d9a0ef4ffcb451641af066eeb18"
       },
-      "sha256": "8559f83ee8c3550a069e21da5ed003889bcbc3fece9ad68319ecd230820600f0"
+      "sha256": "e5154bc70c6cb6657475637a46a9a697e10e26defb5256b44230caafeb590c73"
+    },
+    "auxiliary_context": {
+      "stage": "02_canonicalized",
+      "sources": ["fixed_mutation", "mutagenicity_mechanism", "mutagenicity_outcomes", "premutagenic_damage"],
+      "outputs": ["canonical_assay_context"],
+      "path": "data/caches/evidence_library/ames/pair_dimension_reconciliation/main_uid_v1_20260920/global.json",
+      "acceptance_exception": {
+        "path": "data/processing/evidence_library/versions/v10/tasks/ames/data_processing/canonicalization_v10/accepted_auxiliary_context_v1.json",
+        "sha256": "c84bea577febe3ade654c6acae8b01be80472c6652b45c485dc93bc42232fc04"
+      },
+      "sha256": "899a7bd5ffc3438c2e3042ef7d832404c7337a0b0dd328c3f1c73933238c4e0b"
+    },
+    "reference_semantics": {
+      "stage": "02_canonicalized",
+      "sources": [
+        "fixed_mutation",
+        "mutagenicity_mechanism",
+        "mutagenicity_outcomes",
+        "premutagenic_damage"
+      ],
+      "outputs": [
+        "canonical_reference_scope",
+        "canonical_reference_basis"
+      ],
+      "path": "data/caches/evidence_library/ames/reference_semantics/main_uid_v1_20260921/reference_semantics.parquet",
+      "sha256": "36d5df7e03fb3fe1ebaf31f7e974d1d3edef6297b3ce530f097364095b41dea5"
     }
-  },
-  "not_applicable_mappings": ["auxiliary_context"]
+  }
 }

@@ -46,6 +46,7 @@ class Workflow:
     pair_columns: dict[str, tuple[str, ...]]
     refinement_columns: dict[str, tuple[str, ...]]
     endpoint_columns: dict[str, str]
+    retrieval_index: Path
 
     @property
     def records(self) -> Path:
@@ -144,6 +145,7 @@ def workflow(
     model: str = DEFAULT_MODEL,
     endpoint_urls: tuple[str, ...] = DEFAULT_ENDPOINTS,
     max_inflight: int = 128,
+    retrieval_index: Path,
 ) -> Workflow:
     contract = _contract(task)
     pair_columns, refinements = _semantic_columns(contract)
@@ -159,6 +161,7 @@ def workflow(
         endpoint_columns={
             source: columns[0] for source, columns in pair_columns.items()
         },
+        retrieval_index=retrieval_index.resolve(),
     )
 
 
@@ -200,10 +203,40 @@ def _endpoint_from_key(config: Workflow, source: str, value: str) -> str:
     return str(parsed[1])
 
 
+def _retrieval_uids(config: Workflow) -> set[str]:
+    index = json.loads(config.retrieval_index.read_text(encoding="utf-8"))
+    if index.get("status") != "complete" or index.get("task_id") != config.task:
+        raise ValueError("retrieval index is incomplete or belongs to another task")
+    selected: set[str] = set()
+    for subset in ("valid", "test"):
+        for level, entry in index["splits"][subset]["levels"].items():
+            if level == "L1":
+                continue
+            manifest_path = config.retrieval_index.parent / entry["manifest"]
+            if file_sha256(manifest_path) != entry["manifest_sha256"]:
+                raise ValueError(f"retrieval manifest hash changed: {subset}/{level}")
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            database = manifest_path.with_name(str(manifest["database"]))
+            if file_sha256(database) != manifest["database_sha256"]:
+                raise ValueError(f"retrieval database hash changed: {subset}/{level}")
+            with sqlite3.connect(f"file:{database}?mode=ro", uri=True) as connection:
+                selected.update(str(row[0]) for row in connection.execute(
+                    "SELECT DISTINCT item_id FROM rankings"
+                ))
+    if not selected:
+        raise ValueError("retrieval index selects no L2+ UIDs")
+    return selected
+
+
 def build_input(config: Workflow) -> dict[str, Any]:
     release_receipt = _validated_release(config)
     joined = _joined_records(config)
     joined = joined[pd.to_numeric(joined.level, errors="raise") >= 2].copy()
+    selected = _retrieval_uids(config)
+    available = set(joined.source_row_uid)
+    if not selected <= available:
+        raise ValueError(f"retrieval scope has {len(selected - available)} unknown UIDs")
+    joined = joined[joined.source_row_uid.isin(selected)].copy()
     if joined.empty:
         raise ValueError("semantic refinement has no L2+ records")
     endpoints = [
@@ -247,6 +280,10 @@ def _input_manifest(
                 "sha256": file_sha256(config.canonical_records),
             },
             "level_mapping": {"path": str(config.levels), "sha256": file_sha256(config.levels)},
+            "retrieval_index": {
+                "path": str(config.retrieval_index),
+                "sha256": file_sha256(config.retrieval_index),
+            },
         },
         "output": {"path": str(config.input), "sha256": file_sha256(config.input)},
         "counts": {"records": len(rows), "atoms": atoms, "initial_parents": parents},
@@ -499,6 +536,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--task", required=True, choices=tuple(TASK_NAMES))
     parser.add_argument("--release-root", type=Path, required=True)
     parser.add_argument("--run-root", type=Path, required=True)
+    parser.add_argument("--retrieval-index", type=Path, required=True)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--endpoint", action="append", dest="endpoints")
     parser.add_argument("--max-inflight", type=int, default=128)
@@ -517,6 +555,7 @@ def main() -> int:
         model=args.model,
         endpoint_urls=tuple(args.endpoints or DEFAULT_ENDPOINTS),
         max_inflight=args.max_inflight,
+        retrieval_index=args.retrieval_index,
     )
     if args.command == "prepare":
         result = prepare(config)

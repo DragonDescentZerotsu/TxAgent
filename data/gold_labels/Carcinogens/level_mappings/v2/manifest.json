@@ -1,0 +1,118 @@
+{
+  "version": "gold_level_mapping_successor.v2",
+  "status": "complete",
+  "task": "carcinogens",
+  "gold_release": "v1",
+  "level_mapping_version": "v2",
+  "review": {
+    "basis": "user_approved_current_voter_exact_l1",
+    "decision": "former physical voters move from L1 to L2",
+    "promotions": 0,
+    "demotions": 2054
+  },
+  "inputs": {
+    "prior_level_mapping_manifest": {
+      "path": "data/gold_labels/Carcinogens/level_mappings/v1/manifest.json",
+      "sha256": "8648a8954c3952d9183e1bb2ce6149009de7cb21d7b3b9e76f994c31ceee6cfb"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/Carcinogens/v1/scaffold/voter_membership.parquet",
+      "sha256": "2a955146631d05e80abee09de75dc3f3fec1d433a81fcd8231c72c1f1ee78538",
+      "physical_voters": 87563
+    }
+  },
+  "outputs": {
+    "reviewed_level_decisions": {
+      "path": "reviewed_level_decisions.parquet",
+      "sha256": "11b8757bb93a1fbb432654ee0f44a9bf2c83a06ed9f461c098255f6e4ee554c9",
+      "rows": 2054
+    },
+    "level_mapping": {
+      "kind": "parquet_dataset",
+      "path": "level_mapping",
+      "rows": 3151140,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "rows": 250000,
+          "sha256": "bbdbc1847bc2eecd4920256aaf9d8aa09e0c7f59df7c436a09dd84041dc97046"
+        },
+        {
+          "path": "part-00001.parquet",
+          "rows": 250000,
+          "sha256": "336e36edf3d73addf13e752da1c2da9bb53727b8194d6747bb96ddc25d07c146"
+        },
+        {
+          "path": "part-00002.parquet",
+          "rows": 250000,
+          "sha256": "6a010e93ee0c491b851c0ce0ff7ba932736330dbef6b635d2af49e523d0ce5d8"
+        },
+        {
+          "path": "part-00003.parquet",
+          "rows": 250000,
+          "sha256": "aa03d984e7f99fd37e4aacc1a096a4e241e54eb7f62301d5202659a117ef5419"
+        },
+        {
+          "path": "part-00004.parquet",
+          "rows": 250000,
+          "sha256": "5fe1cfc4bb8c3045c59c2b4d252d28817929de4acb727023afbd07fb4d21c94f"
+        },
+        {
+          "path": "part-00005.parquet",
+          "rows": 250000,
+          "sha256": "0db7f46d45114c6293cb31e42635efa7631e7bfbda5b602db6b0620dfec10717"
+        },
+        {
+          "path": "part-00006.parquet",
+          "rows": 250000,
+          "sha256": "1618bae3fd043689eee0441c0d1256a514c72e48161ead781513d45bebbfd464"
+        },
+        {
+          "path": "part-00007.parquet",
+          "rows": 250000,
+          "sha256": "d772aacb39e8ce4c0098652ba141a1ea16459885cd43004ff15e1587c82a9ef7"
+        },
+        {
+          "path": "part-00008.parquet",
+          "rows": 250000,
+          "sha256": "a77a86cbbb091b568c9d6518e22b1725b62abcaf2c9d22bbca03f1a3bdf13256"
+        },
+        {
+          "path": "part-00009.parquet",
+          "rows": 250000,
+          "sha256": "174c372694892b41e6b5ea7112931b9ed892e406f1a314ba745c1231d6dd03ba"
+        },
+        {
+          "path": "part-00010.parquet",
+          "rows": 250000,
+          "sha256": "41e20657878e5cbd3aa2b6f7bdadb51d2dfaf4c1c1ab0006c58ba7d3a0655c4d"
+        },
+        {
+          "path": "part-00011.parquet",
+          "rows": 250000,
+          "sha256": "64d0ded4d4231827b6ded25f1e3ec2705e81c55cdea9303bb379655120d1626c"
+        },
+        {
+          "path": "part-00012.parquet",
+          "rows": 151140,
+          "sha256": "57b80e5d4d6c70542d5c2c98f9788bc4f926fffb0b5c7582cefb65b685b45208"
+        }
+      ],
+      "rows_by_level": {
+        "1": 87563,
+        "2": 407867,
+        "3": 750569,
+        "4": 650547,
+        "5": 749469,
+        "6": 218187,
+        "7": 286938
+      }
+    }
+  },
+  "validations": {
+    "only_reviewed_uids_changed": true,
+    "all_changes_are_l1_to_l2": true,
+    "zero_promotions": true,
+    "l1_equals_current_physical_voters": true
+  }
+}

@@ -247,18 +247,18 @@ Existing inference runs and reusable caches retain their own locations.
 The reproducible Gold-only selector is `python -m optimization.gold_joint`. It
 uses the three 100-query `valid_small` splits for BBB, Oral Bioavailability, and
 Skin Reaction. BBB and Oral direct candidates come from the Gold-v1 L1 caches in
-`ranked_level_retrieval_v3`; Skin direct candidates come from
+`ranked_level_retrieval_v4`; Skin direct candidates come from
 `v9_skin_gold_v1_scaffold_morgan100_v1`, pinned to the v9.0.2 Skin
 assay-transfer model. Indirect candidates come from each task's active
-Gold-bound `ranked_level_retrieval_v3` L2+ universe. Do not substitute a TDC
+Gold-bound `ranked_level_retrieval_v4` L2+ universe. Do not substitute a TDC
 query or L1 cache.
 
 Direct selection chooses exactly ten Gold context cards. Its terms are normalized
 Morgan-gated assay relevance, normalized Morgan-bit coverage, and capacity-
 normalized log label diversity. Selecting a card never changes its frozen label
-or ordered physical voter membership. The direct grid contains 27 crossed
-profiles over gated assay `{.75,1,1.25}`, Morgan-bit coverage `{.25,.5,.75}`,
-and label diversity `{.25,.5,.75}`, plus three gated-only controls.
+or ordered physical voter membership. The direct grid contains 24 crossed
+profiles over gated assay `{.75,1,1.25,1.5}`, Morgan-bit coverage `{.25,.5,.75}`,
+and label diversity `{.25,.5}`, plus four gated-only controls.
 
 Indirect selection combines all available L2+ UIDs for a query and chooses 50
 records jointly, with no per-level quota or minimum. It retains normalized

@@ -1,0 +1,83 @@
+{
+  "version": "gold_level_mapping_successor.v2",
+  "status": "complete",
+  "task": "dili",
+  "gold_release": "v1",
+  "level_mapping_version": "v2",
+  "review": {
+    "basis": "user_approved_current_voter_exact_l1",
+    "decision": "former physical voters move from L1 to L2",
+    "promotions": 0,
+    "demotions": 7913
+  },
+  "inputs": {
+    "prior_level_mapping_manifest": {
+      "path": "data/gold_labels/DILI/level_mappings/v1/manifest.json",
+      "sha256": "8501056bed8c069da1e215c1c0aa4e6adc22235bb75f8695e3f9b7753d8631f3"
+    },
+    "voter_membership": {
+      "path": "data/gold_labels/DILI/v1/scaffold/voter_membership.parquet",
+      "sha256": "fb976a78029d679492bb14c8f0c6471cfda1329d77434fd133e613b5e0e3ebe5",
+      "physical_voters": 100522
+    }
+  },
+  "outputs": {
+    "reviewed_level_decisions": {
+      "path": "reviewed_level_decisions.parquet",
+      "sha256": "523af53435eae3ddc153882262e3219a567e155d5098d3de04b0f78fa85d4f13",
+      "rows": 7913
+    },
+    "level_mapping": {
+      "kind": "parquet_dataset",
+      "path": "level_mapping",
+      "rows": 1386455,
+      "parts": [
+        {
+          "path": "part-00000.parquet",
+          "rows": 250000,
+          "sha256": "d3c006c46f01a8f3264160b0345bfd1777f0994c06ec2bf06c62820b7248fd60"
+        },
+        {
+          "path": "part-00001.parquet",
+          "rows": 250000,
+          "sha256": "23ffa17c5cae8dfca03be6ed750d41cfbc9a724889bcc970bb38172d509939f4"
+        },
+        {
+          "path": "part-00002.parquet",
+          "rows": 250000,
+          "sha256": "77a71fad29e78ad74e9d93437a098e65ff483af511a32b19c31d8465afddfda2"
+        },
+        {
+          "path": "part-00003.parquet",
+          "rows": 250000,
+          "sha256": "59bcca8266b663f0c0a0ac358248e01d26a2c83044a61f5e9cf752d31fa3e181"
+        },
+        {
+          "path": "part-00004.parquet",
+          "rows": 250000,
+          "sha256": "ee19ba8f7c6e56f07c852a061ef2deb592458eafb305a140d745e62504a95268"
+        },
+        {
+          "path": "part-00005.parquet",
+          "rows": 136455,
+          "sha256": "c4366373c39573c3abf9cd9a18ce240b43402a976b1433051d0e07c1d918b879"
+        }
+      ],
+      "rows_by_level": {
+        "1": 100522,
+        "2": 174411,
+        "3": 141940,
+        "4": 75971,
+        "5": 294047,
+        "6": 196582,
+        "7": 402982
+      }
+    }
+  },
+  "validations": {
+    "only_reviewed_uids_changed": true,
+    "all_changes_are_l1_to_l2": true,
+    "zero_promotions": true,
+    "l1_equals_current_physical_voters": true
+  }
+}

@@ -19,6 +19,7 @@ from typing import Any, Iterable, Mapping, Sequence
 import pyarrow.parquet as pq
 from rdkit import rdBase
 
+from data.processing.gold_labels.conditioned_benchmark import split_path
 from optimization.select_records import (
     _default_release_index,
     _fingerprint,
@@ -59,9 +60,9 @@ PROFILE_SCREENS = (
     Path("outputs/analysis/record_selection/")
     / "morgan_normalized_gated_feature_semantic_high_grid_v1/screen_manifest.json",
 )
-SKIN_DIRECT_MANIFEST = Path(
+SKIN_DIRECT_ROOT = Path(
     "predict/retrieval/cache/assay_reranking/active/"
-    "v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold/valid/VERSION.json"
+    "v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold"
 )
 SKIN_SEMANTIC_ROOT = Path(
     "semantic_buckets/releases/skin_reaction/v10_main_universe_v5"
@@ -105,12 +106,12 @@ def direct_profiles() -> list[DirectProfile]:
             f"ga{_code(ga)}_mc{_code(mc)}_label{_code(label)}", ga, mc, label
         )
         for ga, mc, label in itertools.product(
-            (0.75, 1.0, 1.25), (0.25, 0.5, 0.75), (0.25, 0.5, 0.75)
+            (0.75, 1.0, 1.25, 1.5), (0.25, 0.5, 0.75), (0.25, 0.5)
         )
     ]
     controls = [
         DirectProfile(f"ga{_code(ga)}_mc000_label000", ga, 0.0, 0.0)
-        for ga in (0.75, 1.0, 1.25)
+        for ga in (0.75, 1.0, 1.25, 1.5)
     ]
     return [*crossed, *controls]
 
@@ -161,12 +162,12 @@ def _write_tsv(path: Path, rows: Iterable[Mapping[str, Any]], fields: Sequence[s
     return count
 
 
-def _gold_queries(task: str) -> tuple[dict[str, str], Path]:
-    path = Path("data/gold_labels") / TASKS[task]["gold"] / "v1/scaffold/valid_small.jsonl"
+def _gold_queries(task: str, subset: str = "valid_small") -> tuple[dict[str, str], Path]:
+    path = split_path(task, subset, version="v1")
     rows = read_jsonl(path)
     queries = {str(row["benchmark_row_id"]): str(row["drug"]) for row in rows}
-    if len(rows) != 100 or len(queries) != 100:
-        raise ValueError(f"Gold valid_small must contain 100 unique queries: {path}")
+    if not rows or len(queries) != len(rows):
+        raise ValueError(f"Gold split must contain unique queries: {path}")
     return queries, path
 
 
@@ -397,11 +398,12 @@ def _open_database(path: Path) -> sqlite3.Connection:
 
 
 def _load_ranked_direct(
-    task: str, queries: Mapping[str, str]
+    task: str, queries: Mapping[str, str], subset: str = "valid_small"
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
     index_path = _default_release_index(task).resolve()
     index = json.loads(index_path.read_text(encoding="utf-8"))
-    entry = index["splits"]["valid"]["levels"]["L1"]
+    cache_subset = "valid" if subset == "valid_small" else subset
+    entry = index["splits"][cache_subset]["levels"]["L1"]
     manifest_path = (index_path.parent / entry["manifest"]).resolve()
     if sha256_file(manifest_path) != entry["manifest_sha256"]:
         raise ValueError("L1 manifest differs from the release index")
@@ -441,9 +443,10 @@ def _load_ranked_direct(
 
 
 def _load_skin_direct(
-    queries: Mapping[str, str]
+    queries: Mapping[str, str], subset: str = "valid_small"
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
-    manifest_path = SKIN_DIRECT_MANIFEST.resolve()
+    cache_subset = "valid" if subset == "valid_small" else subset
+    manifest_path = (SKIN_DIRECT_ROOT / cache_subset / "VERSION.json").resolve()
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     model = manifest.get("model") or {}
     if (
@@ -471,7 +474,7 @@ def _load_skin_direct(
             "gold_label": int(row["retrieval_gold_Y"]),
         })
     if any(not rows for rows in output.values()):
-        raise ValueError("Skin direct rankings omit valid_small queries")
+        raise ValueError(f"Skin direct rankings omit {subset} queries")
     return output, {
         "profile": "v9_skin_gold_v1_scaffold_morgan100_v1",
         "gold_release": "v1",
@@ -551,14 +554,23 @@ def _profile_root(output_root: Path, kind: str, profile: str, task: str) -> Path
     return path
 
 
-def build_direct(output_root: Path, tasks: Sequence[str]) -> Path:
+def build_direct(
+    output_root: Path, tasks: Sequence[str], *, subset: str = "valid_small",
+    profile_names: Sequence[str] | None = None,
+) -> Path:
     profiles = direct_profiles()
+    if profile_names:
+        requested = set(profile_names)
+        profiles = [profile for profile in profiles if profile.name in requested]
+        missing = requested - {profile.name for profile in profiles}
+        if missing:
+            raise ValueError(f"Unknown direct profiles: {sorted(missing)}")
     manifests = {}
     for task in tasks:
-        queries, query_path = _gold_queries(task)
+        queries, query_path = _gold_queries(task, subset)
         universes, cache_audit = (
-            _load_skin_direct(queries) if task == "skin_reaction"
-            else _load_ranked_direct(task, queries)
+            _load_skin_direct(queries, subset) if task == "skin_reaction"
+            else _load_ranked_direct(task, queries, subset)
         )
         prepared_universes = {
             query_id: _prepare_candidates(rows, direct=True, budget=DIRECT_BUDGET)
@@ -593,7 +605,7 @@ def build_direct(output_root: Path, tasks: Sequence[str]) -> Path:
                 "schema_version": DIRECT_SCHEMA,
                 "status": "complete",
                 "task_id": task,
-                "subset": "valid_small",
+                "subset": subset,
                 "benchmark_row_ids": list(queries),
                 "budget": DIRECT_BUDGET,
                 "profile": profile.name,
@@ -629,6 +641,7 @@ def build_direct(output_root: Path, tasks: Sequence[str]) -> Path:
         "schema_version": GRID_SCHEMA,
         "status": "complete",
         "kind": "direct",
+        "subset": subset,
         "objective_version": DIRECT_OBJECTIVE_VERSION,
         "profile_count": len(profiles),
         "tasks": list(tasks),
@@ -839,6 +852,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         subparser.add_argument("--tasks", nargs="+", choices=tuple(TASKS), default=list(TASKS))
         if command == "indirect":
             subparser.add_argument("--workers", type=int, default=1)
+        else:
+            subparser.add_argument(
+                "--subset", choices=("valid_small", "valid", "test"),
+                default="valid_small",
+            )
+            subparser.add_argument("--profiles", nargs="+")
     compose = subparsers.add_parser("compose")
     compose.add_argument("--direct-manifest", type=Path, required=True)
     compose.add_argument("--indirect-manifest", type=Path, required=True)
@@ -847,7 +866,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     validate.add_argument("--manifest", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "direct":
-        print(build_direct(args.output_root.resolve(), args.tasks))
+        print(build_direct(
+            args.output_root.resolve(), args.tasks,
+            subset=args.subset, profile_names=args.profiles,
+        ))
     elif args.command == "indirect":
         print(build_indirect(args.output_root.resolve(), args.tasks, workers=args.workers))
     elif args.command == "compose":

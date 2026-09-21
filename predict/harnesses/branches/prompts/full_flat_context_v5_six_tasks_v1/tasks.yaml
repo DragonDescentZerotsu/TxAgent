@@ -1,0 +1,83 @@
+bbb_martins:
+  prompt_profile: meaningful_cns_access_v1
+  system_role: You are a senior medicinal-chemist and CNS-exposure expert who reasons via analogies.
+  endpoint_name: meaningful or adequate CNS access after systemic administration
+  label_scope: meaningful_cns_access.v1
+  prediction_field: final_prediction
+  positive_prediction: pass
+  negative_prediction: fail
+  required_fields: [claims, final_prediction]
+  required_json_schema: &schema
+    claims:
+      - claim: concise evidence-grounded statement
+        molecule_ids: [Molecule N]
+        record_ids: [Record N-N]
+        evidence_role: supportive | contradictory
+  task_instructions:
+    - Predict pass for meaningful or adequate BBB/CNS access and fail for insufficient access.
+    - Give the most weight to transferable direct brain, plasma, CSF, uptake, perfusion, influx, or prodrug evidence.
+bioavailability_ma:
+  prompt_profile: f20_evidence_calibrated_v2
+  system_role: You are a chemist expert in oral bioavailability who reasons via analogies.
+  endpoint_name: absolute oral bioavailability at the F >= 20% threshold
+  label_scope: absolute_oral_bioavailability_f20.v2
+  prediction_field: final_prediction
+  positive_prediction: high
+  negative_prediction: low
+  required_fields: [claims, final_prediction]
+  required_json_schema: *schema
+  task_instructions:
+    - Predict high when F >= 20% is better supported and low when F < 20% is better supported.
+    - Missing, neutral, uncertain, or weak evidence is not evidence for low bioavailability.
+skin_reaction:
+  prompt_profile: sensitization_aligned_v2
+  system_role: You are a chemist expert in skin sensitization and contact allergy who reasons via analogies.
+  endpoint_name: skin sensitization or contact allergy
+  label_scope: skin_reaction_conditioned_gold_v1
+  prediction_field: final_prediction
+  positive_prediction: risk
+  negative_prediction: no_risk
+  required_fields: [claims, final_prediction]
+  required_json_schema: *schema
+  task_instructions:
+    - Predict risk or no_risk for skin sensitization or contact allergy under the reported condition.
+    - Preserve assay type, species, exposure, prediction status, and uncertainty.
+ames:
+  prompt_profile: ames_gold_v1
+  system_role: Assess condition-specific bacterial reverse-mutation evidence.
+  endpoint_name: bacterial reverse mutation under the exact reported strain panel and metabolic activation condition
+  label_scope: ames_conditioned_gold_v1
+  prediction_field: final_prediction
+  positive_prediction: positive
+  negative_prediction: negative
+  required_fields: [claims, final_prediction]
+  required_json_schema: *schema
+  task_instructions:
+    - Predict only for the exact reported strain panel and metabolic activation condition.
+    - Do not infer a global negative from one strain, limited panel, or one activation condition.
+dili:
+  prompt_profile: dili_gold_v1
+  system_role: Assess human drug-induced liver injury using molecular evidence.
+  endpoint_name: clinically meaningful human drug-induced liver injury
+  label_scope: dili_conditioned_or_source_molecule_outcome.v1
+  prediction_field: final_prediction
+  positive_prediction: dili_risk
+  negative_prediction: no_dili_risk
+  required_fields: [claims, final_prediction]
+  required_json_schema: *schema
+  task_instructions:
+    - Predict clinically meaningful human drug-induced liver injury under the reported exposure and population.
+    - Separate observed human DILI from animal injury, cellular toxicity, mechanisms, and predictions.
+carcinogens:
+  prompt_profile: carcinogens_gold_v1
+  system_role: Assess chemical carcinogenic hazard using molecular evidence.
+  endpoint_name: source-supported carcinogenicity in the reported organism group
+  label_scope: carcinogens_starling_only_five_organism_groups.v1
+  prediction_field: final_prediction
+  positive_prediction: positive
+  negative_prediction: negative
+  required_fields: [claims, final_prediction]
+  required_json_schema: *schema
+  task_instructions:
+    - Predict source-supported carcinogenicity in the query's reported organism group.
+    - Separate observed tumor outcomes from transformation, genotoxicity, mechanisms, and predictions.

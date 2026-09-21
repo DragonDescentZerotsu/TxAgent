@@ -1,0 +1,25 @@
+{
+  "mapping": {
+    "path": "data/processing/evidence_library/versions/v10/tasks/carcinogens/data_processing/canonicalization_v10/unit_reconciliation_v6/mapping.json",
+    "sha256": "ceced00f7a4fadee611e43b954e6bde6663ef7c0a6f6410dbc6bdb1aba362d9d"
+  },
+  "mapping_id": "exact_measurement_units",
+  "publication_status": "reviewed",
+  "review_completion": {
+    "accepted_aliases": 0,
+    "decisions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "identity_after_timeout_units": 50,
+    "reviewed_packets": 1,
+    "reviewer_id": "codex-unit-map-final-audit-20260920",
+    "source_completion_sha256": "a135cfbbfd5ea0c14ada447504eb5590406435a3e52b1562e241103af2e508f6",
+    "source_manifest_sha256": "548bc4686f90f4af49cbcdf4d267252bac4e277603678b5a835783cf9aab20a6"
+  },
+  "task_id": "carcinogens",
+  "validations": {
+    "base_entries_preserved": true,
+    "complete_task_review_coverage": true,
+    "no_duplicate_endpoint_unit_keys": true,
+    "scale_preserved": true
+  },
+  "version": "reviewed_canonical_mapping_receipt.v1"
+}

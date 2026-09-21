@@ -61,10 +61,12 @@ CONTEXT_V5_PROMPT_VERSION = "full_flat_context_v5"
 CONTEXT_V6_PROMPT_VERSION = "full_flat_context_v6_oral_high_low"
 CONTEXT_V7_PROMPT_VERSION = "full_flat_context_v7_oral_final_only"
 CONTEXT_V8_PROMPT_VERSION = "full_flat_context_v8_context_scoped_transfer_v1"
+CONTEXT_V5_SIX_TASKS_PROMPT_VERSION = "full_flat_context_v5_six_tasks_v1"
 CONTEXT_CLAIMS_PROMPT_VERSIONS = {
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V8_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
 }
 CONTEXT_NUMBERED_PROMPT_VERSIONS = {
     *CONTEXT_CLAIMS_PROMPT_VERSIONS,
@@ -78,6 +80,7 @@ JOSEPH_PROMPT_VERSIONS = (
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_PROMPT_VERSION,
     CONTEXT_V8_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
 )
 # Backward-compatible default for direct prompt-library callers. The public
 # The unified branches CLI selects Joseph flat behavior below.
@@ -88,6 +91,7 @@ CONTEXT_V5_HARNESS_VERSION = "full-flat-context-v5"
 CONTEXT_V6_HARNESS_VERSION = "full-flat-context-v6-oral-high-low"
 CONTEXT_V7_HARNESS_VERSION = "full-flat-context-v7-oral-final-only"
 CONTEXT_V8_HARNESS_VERSION = "full-flat-context-v8-context-scoped-transfer-v1"
+CONTEXT_V5_SIX_TASKS_HARNESS_VERSION = "full-flat-context-v5-six-tasks-v1"
 JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
 JOSEPH_HARNESS_PROMPTS = {
@@ -98,6 +102,7 @@ JOSEPH_HARNESS_PROMPTS = {
     CONTEXT_V6_HARNESS_VERSION: CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_HARNESS_VERSION: CONTEXT_V7_PROMPT_VERSION,
     CONTEXT_V8_HARNESS_VERSION: CONTEXT_V8_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
 }
 JOSEPH_PROMPT_HARNESSES = {
     prompt: harness for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
@@ -118,6 +123,7 @@ CONTEXT_V4_LAYOUTS = ("global", "level-grouped")
 CONTEXT_V4_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v1"
 CONTEXT_V5_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v2"
 PRESELECTED_UID_SCHEMA = "flat_preselected_uids.v1"
+PRESELECTED_DIRECT_SCHEMA = "gold_direct_context_selection.v1"
 CONTEXT_PROMPT_VERSIONS = {
     CONTEXT_V4_PROMPT_VERSION,
     *CONTEXT_NUMBERED_PROMPT_VERSIONS,
@@ -151,8 +157,16 @@ PROMPT_VARIANTS = {
     CONTEXT_V6_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V7_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V8_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
 }
-TASKS = {"bbb_martins": 5, "bioavailability_ma": 6}
+TASKS = {
+    "bbb_martins": 5,
+    "bioavailability_ma": 6,
+    "skin_reaction": 3,
+    "ames": 5,
+    "dili": 2,
+    "carcinogens": 2,
+}
 RECORD_POOLS = {
     "assay-transfer-trained": "tool-accepted",
     "all_transfer_eligible": "tool-compatible",
@@ -1100,8 +1114,11 @@ def cache_matched_flat_retrieval(
             if molecule.get(source) is not None:
                 retrieval[target] = molecule[source]
 
+        neighbor_key = parent_id
+        if str(payload["progressive_level"]) == "L1" and molecule.get("context_card_id"):
+            neighbor_key = f"{parent_id}\0{molecule['context_card_id']}"
         neighbor = neighbors.setdefault(
-            parent_id,
+            neighbor_key,
             {
                 "rank": len(neighbors) + 1,
                 "molecule_chembl_id": parent_id,
@@ -1518,6 +1535,63 @@ def _load_preselected_uids(
     }
 
 
+def _load_preselected_contexts(
+    path: Path,
+    *,
+    task: str,
+    queries: Mapping[str, str],
+    budget: int,
+) -> tuple[dict[str, list[str]], dict[str, Any]]:
+    """Validate an ordered direct-card panel while leaving hydration to the cache."""
+    path = path.resolve()
+    document = json.loads(path.read_text(encoding="utf-8"))
+    if (
+        document.get("schema_version") != PRESELECTED_DIRECT_SCHEMA
+        or document.get("status") != "complete"
+        or document.get("task_id") != task
+        or int(document.get("budget", -1)) != budget
+    ):
+        raise ValueError(f"Incompatible preselected direct manifest: {path}")
+    query_ids = [str(value) for value in document.get("benchmark_row_ids") or []]
+    if len(query_ids) != len(set(query_ids)) or set(query_ids) != set(queries):
+        raise ValueError("Preselected direct queries differ from the requested queries")
+    records = document.get("records") or {}
+    relative = Path(str(records.get("path") or ""))
+    records_path = (path.parent / relative).resolve()
+    if not relative.name or not records_path.is_relative_to(path.parent.resolve()):
+        raise ValueError("Preselected direct records path escapes its manifest")
+    if sha256_file(records_path) != records.get("sha256"):
+        raise ValueError("Preselected direct records hash mismatch")
+    with records_path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        expected = [
+            "benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label"
+        ]
+        if reader.fieldnames != expected:
+            raise ValueError("Preselected direct TSV has an incompatible schema")
+        rows = list(reader)
+    if len(rows) != int(records.get("row_count", -1)):
+        raise ValueError("Preselected direct row count differs from its manifest")
+    selected = {query_id: [] for query_id in queries}
+    for row in rows:
+        query_id = row["benchmark_row_id"]
+        if query_id not in selected:
+            raise ValueError(f"Unexpected preselected direct query: {query_id}")
+        if int(row["selection_rank"]) != len(selected[query_id]) + 1:
+            raise ValueError(f"Preselected direct ranks are not contiguous: {query_id}")
+        selected[query_id].append(row["context_id"])
+    for query_id, context_ids in selected.items():
+        if len(context_ids) != budget or len(set(context_ids)) != budget:
+            raise ValueError(f"Preselected direct count is invalid: {query_id}")
+    return selected, {
+        "path": str(path),
+        "sha256": sha256_file(path),
+        "records_path": str(records_path),
+        "records_sha256": records["sha256"],
+        "objective": deepcopy(document.get("objective") or {}),
+    }
+
+
 def _load_flat_context_candidates(
     args: argparse.Namespace,
     queries: Mapping[str, str],
@@ -1540,6 +1614,7 @@ def _load_flat_context_candidates(
     )
     active_levels = {level for level in policy["stages"] if level != "L1"}
     preselected_uids = None
+    preselected_contexts = None
     preselection_receipt = None
     if getattr(args, "flat_preselected_uids", None):
         preselected_uids, preselection_receipt = _load_preselected_uids(
@@ -1553,6 +1628,13 @@ def _load_flat_context_candidates(
                 policy.get("cache_index")
                 or next(iter(policy["cache_indexes"].values()))
             ),
+        )
+    if getattr(args, "flat_preselected_contexts", None):
+        preselected_contexts, preselection_receipt = _load_preselected_contexts(
+            args.flat_preselected_contexts,
+            task=args.task,
+            queries=queries,
+            budget=args.l1_molecules,
         )
     molecules, ranked_later, audit = load_candidates(
         queries,
@@ -1573,6 +1655,7 @@ def _load_flat_context_candidates(
         morgan_primary_parent_width=args.morgan_primary_parent_width,
         cache_pool="all",
         preselected_uids=preselected_uids,
+        preselected_contexts=preselected_contexts,
     )
 
     later: dict[str, Any] = {}
@@ -1633,7 +1716,12 @@ def _load_flat_context_candidates(
                 for level in active_levels if level != "L1"
             },
             "min_contrast": args.l1_min_contrast,
-            "preselected_uids": preselection_receipt,
+            "preselected_uids": (
+                preselection_receipt if preselected_uids is not None else None
+            ),
+            "preselected_contexts": (
+                preselection_receipt if preselected_contexts is not None else None
+            ),
         },
         "cache_pool": "all",
         "query_identities": audit["query_identities"],
@@ -1721,11 +1809,13 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
     )
 
     args.flat_preselected_uids = getattr(args, "flat_preselected_uids", None)
+    args.flat_preselected_contexts = getattr(args, "flat_preselected_contexts", None)
     records = read_jsonl(args.input_jsonl)
     indices = _selected_indices(args, len(records))
-    if args.flat_preselected_uids and not args.indices and args.start == 0 and args.limit == 0:
+    preselected_manifest = args.flat_preselected_uids or args.flat_preselected_contexts
+    if preselected_manifest and not args.indices and args.start == 0 and args.limit == 0:
         indices = _preselected_query_indices(
-            args.flat_preselected_uids,
+            preselected_manifest,
             records,
             task=args.task,
             subset=args.evaluation_subset,
@@ -1777,6 +1867,13 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             "flat_preselected_uids_sha256": (
                 sha256_file(args.flat_preselected_uids)
                 if args.flat_preselected_uids else ""
+            ),
+            "flat_preselected_contexts": (
+                str(args.flat_preselected_contexts) if args.flat_preselected_contexts else ""
+            ),
+            "flat_preselected_contexts_sha256": (
+                sha256_file(args.flat_preselected_contexts)
+                if args.flat_preselected_contexts else ""
             ),
         }
         if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
@@ -1996,6 +2093,13 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
             sha256_file(args.flat_preselected_uids)
             if args.flat_preselected_uids else ""
         ),
+        "flat_preselected_contexts": (
+            str(args.flat_preselected_contexts) if args.flat_preselected_contexts else ""
+        ),
+        "flat_preselected_contexts_sha256": (
+            sha256_file(args.flat_preselected_contexts)
+            if args.flat_preselected_contexts else ""
+        ),
         "retrieval_sha256_by_index": retrieval_hashes,
         "selector_code": {
             "path": str(Path(__file__).resolve().parents[2] / "retrieval/assay_reranking/cache_matched.py"),
@@ -2101,10 +2205,10 @@ def _preselected_query_indices(
     """Resolve an optimizer cohort to stable indices in the canonical split."""
     document = json.loads(path.read_text(encoding="utf-8"))
     if (
-        document.get("schema_version") != PRESELECTED_UID_SCHEMA
+        document.get("schema_version") not in {PRESELECTED_UID_SCHEMA, PRESELECTED_DIRECT_SCHEMA}
         or document.get("status") != "complete"
         or document.get("task_id") != task
-        or document.get("subset") != subset
+        or document.get("subset") not in {subset, "valid_small"}
     ):
         raise ValueError(f"Incompatible preselected UID manifest: {path}")
     requested = [str(value) for value in document.get("benchmark_row_ids") or []]
@@ -2192,6 +2296,7 @@ def run(argv: list[str] | None = None) -> int:
             CONTEXT_V6_HARNESS_VERSION,
             CONTEXT_V7_HARNESS_VERSION,
             CONTEXT_V8_HARNESS_VERSION,
+            CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
             JOSEPH_V1_HARNESS_VERSION,
             LEGACY_HARNESS_VERSION,
         ),
@@ -2279,6 +2384,10 @@ def _joseph_main(argv: list[str]) -> int:
         help="Immutable ordered L2+ source_row_uid manifest for full-flat V5/V6.",
     )
     parser.add_argument(
+        "--flat-preselected-contexts", type=Path,
+        help="Completed gold_direct_context_selection.v1 manifest for ordered L1 cards.",
+    )
+    parser.add_argument(
         "--prepare-only", action="store_true",
         help="Materialize and verify flat retrieval without issuing model or tool calls.",
     )
@@ -2342,6 +2451,10 @@ def _joseph_main(argv: list[str]) -> int:
             "--flat-preselected-uids requires full-flat-context-v5/V6 with "
             "assay-transfer-contrastive L1, W25, M=0, and K=10"
         )
+    if args.flat_preselected_contexts and args.flat_preselected_uids:
+        parser.error("direct contexts and later-level preselected UIDs are mutually exclusive")
+    if args.flat_preselected_contexts and args.prompt_version != CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+        parser.error("--flat-preselected-contexts requires full-flat-context-v5-six-tasks-v1")
     if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
         if args.record_pool != "all":
             parser.error("ranked_level_retrieval.v2 requires --record_pool all")
@@ -2367,6 +2480,8 @@ def _joseph_main(argv: list[str]) -> int:
     args.prior_root = args.prior_root.resolve()
     if args.flat_preselected_uids:
         args.flat_preselected_uids = args.flat_preselected_uids.resolve()
+    if args.flat_preselected_contexts:
+        args.flat_preselected_contexts = args.flat_preselected_contexts.resolve()
     if args.batch_root is None and args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         args.batch_root = (
             Path("outputs/paper/assay_transfer_harness/joseph")
