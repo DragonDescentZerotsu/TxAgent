@@ -3,10 +3,12 @@ import io
 import json
 import threading
 import time
+from types import SimpleNamespace
 
 import pytest
 
 from predict.api_client import pool as provider_pool
+from predict.api_client.client import OpenAICompatibleClient
 
 from tools.chembl_tool.common.openai_provider_pool import (
     OpenAIProviderPool,
@@ -164,6 +166,64 @@ def test_pool_records_upstream_provider_when_returned():
     response = pool.chat_json([])
 
     assert response["execution_provider"]["upstream_provider"] == "Baidu"
+
+
+def test_openrouter_control_fields_are_validated_but_not_sent():
+    captured = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))],
+                usage=None,
+                model="canonical-model",
+                id="request",
+                provider="Expected Provider",
+            )
+
+    transport = SimpleNamespace(
+        chat=SimpleNamespace(completions=Completions())
+    )
+    spec = ProviderSpec(
+        name="openrouter",
+        base_url="https://openrouter.ai/api/v1",
+        model="requested-model",
+        api_key_env="OPEN_ROUTER_KEY",
+        max_inflight=1,
+        request_extra_body={
+            "omit_response_format": True,
+            "allowed_served_models": ["requested-model", "canonical-model"],
+            "expected_upstream_provider": "Expected Provider",
+            "provider_pool_snapshot_sha256": "snapshot",
+            "provider": {"order": ["expected"]},
+        },
+    )
+    client = OpenAICompatibleClient(
+        api_key="loaded",
+        base_url=spec.base_url,
+        model=spec.model,
+        timeout_s=60,
+        max_tokens=100,
+        temperature=None,
+        tool_service_url="",
+        enable_group_tools=False,
+        max_tool_rounds=0,
+        reasoning_effort="high",
+        enable_thinking=False,
+        transport_max_retries=0,
+        request_extra_body=spec.request_extra_body,
+        openai_client=transport,
+    )
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(spec,)), client_factory=lambda _: client
+    )
+
+    response = pool.chat_json([])
+
+    assert "response_format" not in captured
+    assert captured["extra_body"] == {"provider": {"order": ["expected"]}}
+    assert response["execution_provider"]["provider_pool_snapshot_sha256"] == "snapshot"
 
 
 def test_endpoint_selection_skips_dead_and_wrong_model_candidates(monkeypatch):

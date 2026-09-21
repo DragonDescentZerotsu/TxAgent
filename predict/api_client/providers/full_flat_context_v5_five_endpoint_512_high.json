@@ -1,0 +1,81 @@
+{
+  "version": "openai_provider_pool.v1",
+  "providers": [
+    {
+      "name": "dgx020_50002",
+      "base_url": "http://dgx020:50002/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "thinking": true,
+        "reasoning_effort": "high"
+      },
+      "failure_threshold": 3,
+      "cooldown_s": 60,
+      "latency_ema_alpha": 0.2
+    },
+    {
+      "name": "dgx005_50001",
+      "base_url": "http://dgx005:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "thinking": true,
+        "reasoning_effort": "high"
+      },
+      "failure_threshold": 3,
+      "cooldown_s": 60,
+      "latency_ema_alpha": 0.2
+    },
+    {
+      "name": "dgx011_50001",
+      "base_url": "http://dgx011:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "thinking": true,
+        "reasoning_effort": "high"
+      },
+      "failure_threshold": 3,
+      "cooldown_s": 60,
+      "latency_ema_alpha": 0.2
+    },
+    {
+      "name": "dgx017_50001",
+      "base_url": "http://dgx017:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "thinking": true,
+        "reasoning_effort": "high"
+      },
+      "failure_threshold": 3,
+      "cooldown_s": 60,
+      "latency_ema_alpha": 0.2
+    },
+    {
+      "name": "dgx027_50001",
+      "base_url": "http://dgx027:50001/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 512,
+      "timeout_s": 7200,
+      "request_extra_body": {
+        "thinking": true,
+        "reasoning_effort": "high"
+      },
+      "failure_threshold": 3,
+      "cooldown_s": 60,
+      "latency_ema_alpha": 0.2
+    }
+  ],
+  "max_failovers": 0
+}

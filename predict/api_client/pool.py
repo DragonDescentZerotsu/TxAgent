@@ -513,6 +513,20 @@ class OpenAIProviderPool:
                     )
                 else:
                     response = state.client.chat_json(messages, **token_override)
+                controls = dict(state.spec.request_extra_body or {})
+                allowed_models = set(controls.get("allowed_served_models") or [])
+                served_model = str(response.get("model") or "")
+                if allowed_models and served_model not in allowed_models:
+                    raise ValueError(
+                        f"provider {state.spec.name!r} served unexpected model "
+                        f"{served_model!r}"
+                    )
+                expected_provider = controls.get("expected_upstream_provider")
+                if expected_provider and response.get("provider") != expected_provider:
+                    raise ValueError(
+                        f"provider {state.spec.name!r} returned upstream "
+                        f"{response.get('provider')!r}"
+                    )
             except Exception as exc:  # noqa: BLE001 - provider boundary
                 latency_s = max(0.0, self._clock() - started)
                 circuit_failure = _is_transport_or_provider_failure(exc)
@@ -540,6 +554,11 @@ class OpenAIProviderPool:
             execution = {
                 "provider": state.spec.name,
                 "upstream_provider": response.get("provider"),
+                "provider_pool_snapshot_sha256": (
+                    (state.spec.request_extra_body or {}).get(
+                        "provider_pool_snapshot_sha256"
+                    )
+                ),
                 "base_url": state.spec.base_url,
                 "requested_model": state.spec.model,
                 "served_model": str(response.get("model") or ""),

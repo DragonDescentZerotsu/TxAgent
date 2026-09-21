@@ -289,13 +289,16 @@ class OpenAICompatibleClient:
         tool_choice: Any = None,
         max_tokens: int | None = None,
     ) -> Any:
-        kwargs: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "response_format": getattr(
+        extra_body = dict(getattr(self, "request_extra_body", {}) or {})
+        omit_response_format = bool(extra_body.pop("omit_response_format", False))
+        extra_body.pop("allowed_served_models", None)
+        extra_body.pop("expected_upstream_provider", None)
+        extra_body.pop("provider_pool_snapshot_sha256", None)
+        kwargs: dict[str, Any] = {"model": self.model, "messages": messages}
+        if not omit_response_format:
+            kwargs["response_format"] = getattr(
                 self, "response_format", {"type": "json_object"}
-            ),
-        }
+            )
         provider_model = self.model.rsplit("/", 1)[-1]
         token_parameter = (
             "max_completion_tokens"
@@ -307,7 +310,6 @@ class OpenAICompatibleClient:
             kwargs["temperature"] = self.temperature
         if self.reasoning_effort:
             kwargs["reasoning_effort"] = self.reasoning_effort
-        extra_body = dict(getattr(self, "request_extra_body", {}) or {})
         if self.enable_thinking:
             extra_body["thinking"] = {"type": "enabled"}
         if extra_body:

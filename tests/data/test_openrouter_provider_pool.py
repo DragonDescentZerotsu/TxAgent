@@ -87,6 +87,46 @@ def test_request_assignment_rotates_every_three_requests() -> None:
     assert assignments[0]["provider_routing"]["max_price"]["completion"] < 0.66
 
 
+def test_exported_mixed_pool_has_one_shared_capacity_and_pinned_routes(
+    tmp_path, monkeypatch
+) -> None:
+    routes = [
+        {
+            "model": model,
+            "canonical_model": model + "-canonical",
+            "route_tag": f"route-{index}",
+            "provider_name": f"Provider {index}",
+            "supports_response_format": index > 0,
+        }
+        for index, model in enumerate(
+            (pool.DEFAULT_MODEL, pool.MIXED_MODEL, pool.DEFAULT_MODEL)
+        )
+    ]
+    monkeypatch.setattr(
+        pool,
+        "load_ranked_pool",
+        lambda mixed: {
+            "profile": "mixed" if mixed else "0731",
+            "snapshot_sha256": "snapshot",
+            "qualification": {"run_id": "gold"},
+            "score": {"tps_weight": 2 / 3, "output_price_weight": 1 / 3},
+            "routes": routes,
+        },
+    )
+
+    payload = pool.export_provider_pool(
+        tmp_path / "pool.json", 512, allow_mixed_flash_models=True
+    )
+
+    assert sum(row["max_inflight"] for row in payload["providers"]) == 512
+    assert {row["model"] for row in payload["providers"]} == {
+        pool.DEFAULT_MODEL,
+        pool.MIXED_MODEL,
+    }
+    assert payload["openrouter_ranked_profile"]["snapshot_sha256"] == "snapshot"
+    assert payload["providers"][0]["request_extra_body"]["omit_response_format"] is True
+
+
 def test_qualification_uses_inline_openrouter_routing_metadata() -> None:
     route = {"model": "requested", "canonical_model": "canonical",
              "route_tag": "provider/fp8", "provider_name": "Provider",

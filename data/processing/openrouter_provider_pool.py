@@ -494,6 +494,64 @@ def request_assignment(snapshot: Mapping[str, Any], schedule_index: int,
     }
 
 
+def export_provider_pool(
+    output: Path, capacity: int, *, allow_mixed_flash_models: bool = False
+) -> dict[str, Any]:
+    """Freeze the ranked qualified routes as one bounded execution pool."""
+    if capacity < 1:
+        raise ValueError("provider-pool capacity must be positive")
+    snapshot = load_ranked_pool(allow_mixed_flash_models)
+    routes = snapshot["routes"]
+    base, remainder = divmod(capacity, len(routes))
+    if base == 0:
+        raise ValueError("capacity must cover every selected route")
+    providers = []
+    for index, route in enumerate(routes):
+        route_capacity = base + (index < remainder)
+        providers.append({
+            "name": (
+                "openrouter_"
+                f"{route['model'].rsplit('/', 1)[-1].replace('.', '_')}_"
+                f"{route['route_tag'].replace('/', '_')}"
+            ),
+            "base_url": OPENROUTER_URL,
+            "model": route["model"],
+            "api_key_env": "OPEN_ROUTER_KEY",
+            "max_inflight": route_capacity,
+            "initial_latency_s": 120,
+            "timeout_s": 3_600,
+            "request_extra_body": {
+                "thinking": {"type": "enabled"},
+                "omit_response_format": not route["supports_response_format"],
+                "allowed_served_models": [route["model"], route["canonical_model"]],
+                "expected_upstream_provider": route["provider_name"],
+                "provider_pool_snapshot_sha256": snapshot["snapshot_sha256"],
+                "provider": {
+                    "order": [route["route_tag"]],
+                    "allow_fallbacks": False,
+                    "require_parameters": True,
+                    "max_price": {"completion": EXECUTION_PRICE_CAP},
+                },
+            },
+        })
+    payload = {
+        "version": "openai_provider_pool.v1",
+        "providers": providers,
+        "failure_threshold": 3,
+        "cooldown_seconds": 60,
+        "max_failovers": len(providers) - 1,
+        "latency_ewma_alpha": 0.2,
+        "openrouter_ranked_profile": {
+            "profile": snapshot["profile"],
+            "snapshot_sha256": snapshot["snapshot_sha256"],
+            "qualification": snapshot["qualification"],
+            "score": snapshot["score"],
+        },
+    }
+    write_json_atomic(output, payload)
+    return payload
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -506,6 +564,10 @@ def _parser() -> argparse.ArgumentParser:
     for command in ("refresh", "status"):
         child = subparsers.add_parser(command)
         child.add_argument("--allow-mixed-flash-models", action="store_true")
+    export_parser = subparsers.add_parser("export-provider-pool")
+    export_parser.add_argument("--output", required=True, type=Path)
+    export_parser.add_argument("--capacity", required=True, type=int)
+    export_parser.add_argument("--allow-mixed-flash-models", action="store_true")
     return parser
 
 
@@ -517,6 +579,12 @@ def main() -> None:
                          parallelism=args.parallelism)
     elif args.command == "refresh":
         result = refresh(args.allow_mixed_flash_models)
+    elif args.command == "export-provider-pool":
+        result = export_provider_pool(
+            args.output,
+            args.capacity,
+            allow_mixed_flash_models=args.allow_mixed_flash_models,
+        )
     else:
         result = load_ranked_pool(args.allow_mixed_flash_models)
     print(json.dumps(result, indent=2, sort_keys=True))
