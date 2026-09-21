@@ -113,7 +113,8 @@ def direct_profiles() -> list[DirectProfile]:
         DirectProfile(f"ga{_code(ga)}_mc000_label000", ga, 0.0, 0.0)
         for ga in (0.75, 1.0, 1.25, 1.5)
     ]
-    return [*crossed, *controls]
+    ablations = [DirectProfile("ga000_mc025_label025", 0.0, 0.25, 0.25)]
+    return [*crossed, *controls, *ablations]
 
 
 def indirect_profiles(

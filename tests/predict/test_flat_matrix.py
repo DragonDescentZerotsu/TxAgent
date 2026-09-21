@@ -2,8 +2,10 @@
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 from predict.harnesses.branches import matrix as flat_matrix
+from predict.harnesses.branches.runtime import synchronize_configured_single_reuse
 from predict.api_client.pool import ProviderPoolConfig
 from predict.utils.json import sha256_file
 
@@ -278,3 +280,25 @@ def test_top_up_uses_largest_observed_load_and_preserves_no_failover() -> None:
         ("a", 392),
     ]
     assert active.max_failovers == 0
+
+
+def test_synchronized_query_prior_is_not_rewritten(tmp_path: Path) -> None:
+    batch = tmp_path / "source"
+    source = batch / "runs" / "source_idx00000"
+    source.mkdir(parents=True)
+    (source / "single_molecule_reasoning_output.json").write_text("{}\n")
+    run = tmp_path / "target"
+    run.mkdir()
+    target = run / "single_molecule_reasoning_output.json"
+    target.write_text('{"already": "frozen"}\n')
+    (run / "manifest.json").write_text(json.dumps({
+        "single_analysis_source_run_dir": str(source),
+    }))
+
+    synchronize_configured_single_reuse(
+        SimpleNamespace(args=SimpleNamespace(single_analysis_source_batch=str(batch))),
+        SimpleNamespace(index=0),
+        run,
+    )
+
+    assert json.loads(target.read_text()) == {"already": "frozen"}

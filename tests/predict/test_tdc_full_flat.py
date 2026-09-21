@@ -120,3 +120,19 @@ def test_query_prior_overlay_checks_nested_prompt_profiles(tmp_path: Path) -> No
         source_dirs=[overlay],
         historical_profile="legacy",
     )
+
+
+def test_profileless_run_manifest_uses_enclosing_batch_profile(tmp_path: Path) -> None:
+    batch = tmp_path / "batch"
+    run = batch / "runs" / "query-0"
+    run.mkdir(parents=True)
+    (batch / "manifest.json").write_text(
+        json.dumps({"task_prompt_profile": "profile-v2"})
+    )
+    (run / "manifest.json").write_text(json.dumps({"schema_version": "old-run.v1"}))
+
+    require_matching_prompt_profiles(
+        target_profile="profile-v2",
+        source_dirs=[run],
+        historical_profile="legacy",
+    )

@@ -545,10 +545,15 @@ def synchronize_configured_single_reuse(
         Path(source_dir) / "single_molecule_reasoning_output.json"
     ).is_file():
         return
+    target_path = run_dir / "single_molecule_reasoning_output.json"
+    manifest_path = run_dir / "manifest.json"
+    if target_path.is_file() and manifest_path.is_file():
+        manifest = _read_json(manifest_path)
+        if manifest.get("single_analysis_source_run_dir") == source_dir:
+            return
     source_output = load_frozen_single_analysis(source_dir)
     if source_output is None:
         return
-    target_path = run_dir / "single_molecule_reasoning_output.json"
     target_output = _read_json(target_path) if target_path.is_file() else None
     source_visible = (source_output.get("status"), validated_branch_content(source_output))
     target_visible = (
@@ -558,7 +563,6 @@ def synchronize_configured_single_reuse(
     _write_json_atomic(target_path, source_output)
     if target_visible != source_visible:
         _invalidate_dependent_final(run_dir)
-    manifest_path = run_dir / "manifest.json"
     if manifest_path.is_file():
         manifest = _read_json(manifest_path)
         manifest["single_analysis_source_run_dir"] = source_dir

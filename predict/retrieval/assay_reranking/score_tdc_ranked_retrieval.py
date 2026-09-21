@@ -28,7 +28,7 @@ from .runtime import (
     SCORING_CONTRACT_VERSION,
     PromptTask,
     cache_profile_root,
-    load_model_profile,
+    model_profile as runtime_model_profile,
     load_model,
     resolve_model_snapshot,
     score_prompt_batch,
@@ -70,7 +70,7 @@ def _model_profile(task: str, release: str) -> dict[str, Any]:
     return (
         model_profile(task, _lineage(task))
         if release == "legacy"
-        else load_model_profile(task, "direct_task_best")
+        else runtime_model_profile(task, "direct_task_best")
     )
 
 
@@ -372,11 +372,19 @@ def validate(task: str, output_root: Path) -> dict[str, Any]:
     base = cache_profile_root(str(index.get("base_profile") or BASE_PROFILE)) / task
     if index.get("ranking_modes") != ["morgan", "assay-transfer"] or index.get("assay_transfer_status") != "complete":
         raise ValueError("Assay-transfer release is not complete")
-    if (root / "evidence/VERSION.json").read_bytes() != (base / "evidence/VERSION.json").read_bytes() or (root / "evidence/records.parquet").read_bytes() != (base / "evidence/records.parquet").read_bytes():
-        raise ValueError("Evidence projection changed")
     result = {"status": "complete", "task_id": task, "profile": index["profile"], "splits": {}}
     immutable = "benchmark_row_id,item_id,parent_id,parent_smiles,morgan_similarity,parent_morgan_rank,within_parent_rank,morgan_rank,morgan_context_id,morgan_member_count"
     for subset in SUBSETS:
+        for level_name, entry in index["splits"][subset]["levels"].items():
+            if level_name == "L1":
+                continue
+            relative_manifest = Path(str(entry["manifest"]))
+            if (root / relative_manifest).read_bytes() != (base / relative_manifest).read_bytes():
+                raise ValueError(f"Frozen {level_name} manifest changed")
+            manifest = _json(root / relative_manifest)
+            database = relative_manifest.with_name(str(manifest["database"]))
+            if (root / database).read_bytes() != (base / database).read_bytes():
+                raise ValueError(f"Frozen {level_name} database changed")
         manifest_path = root / "scaffold" / subset / "L1/VERSION.json"
         manifest = _json(manifest_path)
         entry = index["splits"][subset]["levels"]["L1"]

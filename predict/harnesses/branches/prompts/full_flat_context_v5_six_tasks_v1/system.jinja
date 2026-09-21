@@ -8,12 +8,13 @@ Task:
 
 {% for instruction in task_instructions %}- {{ instruction }}
 {% endfor %}
-{% if query_prior_visible %}Use the supplied query-property assessment only as an uncertain physicochemical prior. It is not experimental evidence or a label prediction. Let stronger, transferable experimental evidence override it.
+{% if query_prior_visible %}Use the supplied query-property assessment only as an physicochemical prior. It is not experimental evidence or a label prediction or certain even. Let stronger, transferable experimental evidence override it.
 {% endif %}
 
-Analogical Reasoning Instructions:
-{% if mode == 'morgan' %}- Morgan similarity measures structural similarity to the query. Use it as a relative retrieval signal alongside the experimental records; it does not determine the outcome label.
-{% else %}- Morgan similarity measures structural similarity to the query. The assay-transfer score estimates how transferable the molecule-condition evidence is to the query. Consider both scores independently alongside the experimental records; neither score determines the outcome label.
+Reasoning Instructions:
+- Your goal is to reason through the evidence via analogies. Is this molecule or record meaningfully similar to the query molecule? Does the experiment transfer? If it does transfer, how does this experimnetal value inform the property we're aiming to predict?
+{% if mode == 'morgan' %}- Morgan similarity measures structural similarity (0 to 1) to the query. Use it as a relative retrieval signal but do not blindly trust the score.
+{% else %}- Morgan similarity measures structural similarity to the query. The assay-transfer score (0 to 1) estimates how transferable the evidence is to the query, representing a normalized distance polarized by a sigmoid function. So high scores like 0.99 don't mean the experimental values tranfers with 99% amount or 99% liklihood. These scores are reliable relative signal however, in which higher scores are more likely to transfer. But, again, don't blindly trust these scores.
 {% endif %}
 - Ensure you consider and analyze every evidence block.
 - At the end, take the physicochemical properties and transferable evidence and come to a balanced conclusion for the query molecule.

@@ -10,15 +10,19 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-import pyarrow.parquet as pq
 from sklearn.metrics import accuracy_score, f1_score
 
-from data.processing.gold_labels.conditioned_benchmark import tdc_task_root
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_task_root
 from predict.retrieval.assay_reranking.runtime import cache_profile_root
+from predict.retrieval.assay_reranking.v9 import model_profile
 from predict.utils.json import atomic_output_path, read_jsonl, sha256_file, write_json_atomic
 
 
-TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
+GOLD_TASKS = (
+    "bbb_martins", "bioavailability_ma", "skin_reaction",
+    "ames", "dili", "carcinogens",
+)
+TDC_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 SPLITS = ("valid", "test")
 METHODS = ("morgan", "assay_transfer")
 EXPECTED_QUERIES = {
@@ -26,6 +30,9 @@ EXPECTED_QUERIES = {
         "bbb_martins": {"valid": 397, "test": 393},
         "bioavailability_ma": {"valid": 262, "test": 269},
         "skin_reaction": {"valid": 239, "test": 241},
+        "ames": {"valid": 274, "test": 274},
+        "dili": {"valid": 402, "test": 402},
+        "carcinogens": {"valid": 469, "test": 469},
     },
     "tdc_v1": {
         "bbb_martins": {"valid": 197, "test": 530},
@@ -34,15 +41,14 @@ EXPECTED_QUERIES = {
     },
 }
 GOLD_PROFILES = {
-    "bbb_martins": "v10_3_best_scaffold_morgan100_v1",
-    "bioavailability_ma": "v10_3_best_scaffold_morgan100_v1",
-    "skin_reaction": "v9_skin_gold_v1_scaffold_morgan100_v1",
+    "bbb_martins": "ranked_level_retrieval_v4",
+    "bioavailability_ma": "ranked_level_retrieval_v4",
+    "skin_reaction": "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
+    "ames": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
+    "dili": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
+    "carcinogens": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
 }
-TDC_PROFILES = {
-    "bbb_martins": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
-    "bioavailability_ma": "ranked_level_retrieval_tdc_v1_assay_v10_3_best_v1",
-    "skin_reaction": "ranked_level_retrieval_tdc_v1_assay_skin_v9_v1",
-}
+TDC_PROFILE = "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
 
 
 def _write_tsv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -61,41 +67,11 @@ def _vote(labels: Iterable[int]) -> tuple[int, float]:
     return int(score >= 0.5), score
 
 
-def _gold_neighbors(task: str, split: str, method: str, k: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    root = cache_profile_root(GOLD_PROFILES[task]) / task / "scaffold" / split
-    version_path, rankings_path = root / "VERSION.json", root / "rankings.parquet"
-    version = json.loads(version_path.read_text(encoding="utf-8"))
-    if (version.get("status") != "complete"
-            or (version.get("inputs") or {}).get("neighbor_identity_policy") != "scaffold_disjoint"
-            or version.get("rankings_sha256") != sha256_file(rankings_path)):
-        raise ValueError(f"Incompatible Gold L1 cache: {root}")
-    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for row in pq.read_table(rankings_path).to_pylist():
-        grouped[str(row["query_record_id"])].append(row)
-    output = []
-    for query_id, rows in sorted(grouped.items()):
-        by_parent: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        for row in rows:
-            by_parent[str(row["retrieval_molecule_identity_key"])].append(row)
-        if len(by_parent) != 100:
-            raise ValueError(f"{task}/{split}/{query_id} has {len(by_parent)} Gold L1 parents")
-        if method == "morgan":
-            cards = [min(values, key=lambda row: (int(row["retrieval_parent_context_index"]), str(row["retrieval_record_id"]))) for values in by_parent.values()]
-            cards.sort(key=lambda row: (int(row["retrieval_parent_rank"]), str(row["retrieval_molecule_identity_key"])))
-        else:
-            cards = [max(values, key=lambda row: (float(row["model_score"]), -int(row["retrieval_parent_context_index"]))) for values in by_parent.values()]
-            cards.sort(key=lambda row: (-float(row["model_score"]), int(row["retrieval_parent_rank"]), str(row["retrieval_molecule_identity_key"])))
-        output.append({"query_id": query_id, "target": int(rows[0]["query_gold_Y"]), "cards": cards[:k]})
-    provenance = {
-        "profile": GOLD_PROFILES[task], "version": str(version_path.resolve()),
-        "version_sha256": sha256_file(version_path), "rankings": str(rankings_path.resolve()),
-        "rankings_sha256": sha256_file(rankings_path), "model": version["model"],
-    }
-    return output, provenance
-
-
-def _tdc_neighbors(task: str, split: str, method: str, k: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    root = cache_profile_root(TDC_PROFILES[task]) / task
+def _neighbors(
+    benchmark: str, task: str, split: str, method: str, k: int,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    profile = GOLD_PROFILES[task] if benchmark == "gold_v1" else TDC_PROFILE
+    root = cache_profile_root(profile) / task
     index_path = root / "RELEASE_INDEX.json"
     index = json.loads(index_path.read_text(encoding="utf-8"))
     entry = index["splits"][split]["levels"]["L1"]
@@ -107,15 +83,20 @@ def _tdc_neighbors(task: str, split: str, method: str, k: int) -> tuple[list[dic
             or index.get("neighbor_identity_policy_by_level", {}).get("L1") != "scaffold_disjoint"
             or sha256_file(version_path) != entry["manifest_sha256"]
             or sha256_file(database) != version["database_sha256"]):
-        raise ValueError(f"Incompatible TDC L1 cache: {root}")
+        raise ValueError(f"Incompatible L1 cache: {root}")
     rank, context = (("morgan_rank", "morgan_context_id") if method == "morgan"
                      else ("assay_rank", "assay_context_id"))
     with sqlite3.connect(database) as connection:
         connection.row_factory = sqlite3.Row
         labels = {str(row[0]): int(row[1]) for row in connection.execute("SELECT context_id,gold_label FROM contexts")}
+        target_path = (
+            split_path(task, split, version="v1")
+            if benchmark == "gold_v1"
+            else tdc_task_root(task) / f"{split}_molecule_condition_labels.jsonl"
+        )
         targets = {
             str(row["benchmark_row_id"]): int(row["Y"])
-            for row in read_jsonl(tdc_task_root(task) / f"{split}_molecule_condition_labels.jsonl")
+            for row in read_jsonl(target_path)
         }
         grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
         for row in connection.execute(
@@ -130,12 +111,18 @@ def _tdc_neighbors(task: str, split: str, method: str, k: int) -> tuple[list[dic
     output = [{"query_id": query_id, "target": targets[query_id], "cards": cards}
               for query_id, cards in sorted(grouped.items())]
     if any(len(row["cards"]) != k for row in output):
-        raise ValueError(f"{task}/{split}/{method} lacks {k} TDC L1 cards")
+        raise ValueError(f"{benchmark}/{task}/{split}/{method} lacks {k} L1 cards")
+    if set(grouped) != set(targets):
+        raise ValueError(f"{benchmark}/{task}/{split} query identities differ")
+    selected_model = index.get("model") or version.get("model")
+    if selected_model is None:
+        selected_model = model_profile(task, "v10_3_best")
     provenance = {
-        "profile": TDC_PROFILES[task], "index": str(index_path.resolve()),
+        "profile": profile, "index": str(index_path.resolve()),
         "index_sha256": sha256_file(index_path), "version": str(version_path.resolve()),
         "version_sha256": sha256_file(version_path), "database": str(database.resolve()),
-        "database_sha256": sha256_file(database), "model": index["model"],
+        "database_sha256": sha256_file(database), "target": str(target_path.resolve()),
+        "target_sha256": sha256_file(target_path), "model": selected_model,
     }
     return output, provenance
 
@@ -144,12 +131,12 @@ def run(output_dir: Path, *, k: int = 3, width: int = 100) -> dict[str, Any]:
     if k != 3 or width != 100:
         raise ValueError("This frozen study requires K=3 and W=100")
     metrics, predictions, neighbors, inputs = [], [], [], {}
-    for benchmark in EXPECTED_QUERIES:
-        for task in TASKS:
+    tasks_by_benchmark = {"gold_v1": GOLD_TASKS, "tdc_v1": TDC_TASKS}
+    for benchmark, tasks in tasks_by_benchmark.items():
+        for task in tasks:
             for split in SPLITS:
                 for method in METHODS:
-                    loader = _gold_neighbors if benchmark == "gold_v1" else _tdc_neighbors
-                    queries, provenance = loader(task, split, method, k)
+                    queries, provenance = _neighbors(benchmark, task, split, method, k)
                     if len(queries) != EXPECTED_QUERIES[benchmark][task][split]:
                         raise ValueError(f"Unexpected query count for {benchmark}/{task}/{split}")
                     key = f"{benchmark}/{task}/{split}"
@@ -188,8 +175,8 @@ def run(output_dir: Path, *, k: int = 3, width: int = 100) -> dict[str, Any]:
                     })
     lookup = {(row["benchmark"], row["task"], row["split"], row["method"]): row for row in metrics}
     comparison = []
-    for benchmark in EXPECTED_QUERIES:
-        for task in TASKS:
+    for benchmark, tasks in tasks_by_benchmark.items():
+        for task in tasks:
             for split in SPLITS:
                 morgan = lookup[(benchmark, task, split, "morgan")]
                 assay = lookup[(benchmark, task, split, "assay_transfer")]
@@ -208,7 +195,7 @@ def run(output_dir: Path, *, k: int = 3, width: int = 100) -> dict[str, Any]:
     _write_tsv(output_dir / "predictions.tsv", predictions)
     _write_tsv(output_dir / "neighbors.tsv", neighbors)
     write_json_atomic(output_dir / "manifest.json", {
-        "status": "complete", "study": "direct_l1_knn_gold_tdc_k3_w100_v1",
+        "status": "complete", "study": "direct_l1_knn_gold6_tdc3_k3_w100_v2",
         "k": k, "width": width, "vote": "unweighted_context_card_majority",
         "neighbor_identity_policy": "scaffold_disjoint", "inputs": inputs,
         "code_sha256": sha256_file(Path(__file__)),

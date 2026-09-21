@@ -1,0 +1,8 @@
+[
+  {"task":"ames","release":"gold-v1","known_id":"AMES_4C5A95895ADE708800E2","query_id":"AMES_0022CD76BF467908DED2","prompt_sha256":"6532b08bf1386d9db47994fa11af9f7b3e4624e48f0058f20471bb9dbee18c62"},
+  {"task":"dili","release":"gold-v1","known_id":"DILI_2EA1C29AE78035E45EA9","query_id":"DILI_00144AE8F5E404C27B22","prompt_sha256":"215f2a36a089b1f060d997575405f6f38d4624ce42f66c316f58745c5c83a3b9"},
+  {"task":"carcinogens","release":"gold-v1","known_id":"CARCINOGENS_25B33FCFD7FE1CE6C883","query_id":"CARCINOGENS_0000463C1E86A033FCCB","prompt_sha256":"c00e256da0a8db4d720eadc718f7e6733c5bfc05a3b6ab0b62d3187ac1bff4b9"},
+  {"task":"bbb_martins","release":"tdc-v1","known_id":"TDC_BBB_MARTINS_7A215188692D09BF6DF8","query_id":"TDC_BBB_MARTINS_00394C4444E2A0116036","prompt_sha256":"9c06583cf0f486c33d3462adc2e20155ca94e09467fa0e975be6c1473c40b1c5"},
+  {"task":"bioavailability_ma","release":"tdc-v1","known_id":"TDC_BIOAVAILABILITY_MA_B3785403059FDDECA300","query_id":"TDC_BIOAVAILABILITY_MA_034761A1428414882822","prompt_sha256":"3e9f9aea6f012ba44e7d18305cb1e862dec0cf358185fc584572437dcef89c2b"},
+  {"task":"skin_reaction","release":"tdc-v1","known_id":"TDC_SKIN_REACTION_D0258AA46C6C9BBEE6C8","query_id":"TDC_SKIN_REACTION_03AC171C8270808CEAB3","prompt_sha256":"17427dfe856148d7e987289c801b54a52a81c0da7d4d1bbfbb9b906dd7007e3e"}
+]

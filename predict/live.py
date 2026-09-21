@@ -84,6 +84,7 @@ def create_run(
     run_group: str = "",
     condition: str = "",
     query_prior: str = "",
+    refresh_catalog: bool = True,
 ) -> Path:
     """Create or resume one dataset-method child run."""
     if execution_mode not in {"live", "throughput"}:
@@ -142,13 +143,16 @@ def create_run(
     }
     write_json_atomic(path, document)
     _write_public_run(run_dir)
-    _refresh_catalog(root)
+    if refresh_catalog:
+        _refresh_catalog(root)
     if document["visibility"] == "public":
         request_publish(root)
     return run_dir
 
 
-def update_run(run_dir: str | Path, **fields: Any) -> dict[str, Any]:
+def update_run(
+    run_dir: str | Path, *, refresh_catalog: bool = True, **fields: Any,
+) -> dict[str, Any]:
     run_dir = Path(run_dir)
     lock_path = run_dir / ".run.lock"
     lock_path.touch(exist_ok=True)
@@ -159,7 +163,8 @@ def update_run(run_dir: str | Path, **fields: Any) -> dict[str, Any]:
         document.update(fields, updated_at=_now())
         write_json_atomic(path, document)
     root = _live_root(run_dir, document)
-    _refresh_catalog(root)
+    if refresh_catalog:
+        _refresh_catalog(root)
     _write_public_run(run_dir)
     if document.get("visibility", "public") == "public":
         request_publish(root)

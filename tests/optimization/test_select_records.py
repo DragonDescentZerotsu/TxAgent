@@ -289,14 +289,15 @@ def test_joint_indirect_selector_has_no_level_quota_and_normalized_log_terms() -
     assert 0 <= summary["level_diversity"] <= 1
 
 
-def test_direct_grid_has_24_crossed_profiles_and_four_controls() -> None:
+def test_direct_grid_has_24_crossed_profiles_four_controls_and_zero_gate_ablation() -> None:
     profiles = direct_profiles()
 
-    assert len(profiles) == 28
-    assert len({profile.name for profile in profiles}) == 28
-    assert {profile.gated_assay for profile in profiles} == {0.75, 1.0, 1.25, 1.5}
+    assert len(profiles) == 29
+    assert len({profile.name for profile in profiles}) == 29
+    assert {profile.gated_assay for profile in profiles} == {0.0, 0.75, 1.0, 1.25, 1.5}
     assert {profile.label for profile in profiles} == {0.0, 0.25, 0.5}
     assert sum(profile.molecular == profile.label == 0 for profile in profiles) == 4
+    assert DirectProfile("ga000_mc025_label025", 0.0, 0.25, 0.25) in profiles
 
 
 def _selection_manifest(tmp_path, schema: str) -> object:

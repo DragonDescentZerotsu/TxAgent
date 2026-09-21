@@ -1085,7 +1085,11 @@ def main(argv: list[str] | None = None) -> int:
             for command in commands
         }
         if not args.prepare_only:
-            from predict.live import create_run, update_run
+            from predict.live import (
+                _refresh_catalog as refresh_live_catalog,
+                create_run,
+                update_run,
+            )
 
             command_by_batch = {command.experiment_name: command.command for command in commands}
             for batch_id, batch in prepared.items():
@@ -1107,6 +1111,7 @@ def main(argv: list[str] | None = None) -> int:
                     },
                     requested_id=args.live_run_id,
                     execution_mode=args.execution_mode,
+                    refresh_catalog=False,
                 )
                 batch.args.trace_root = str(args.trace_root)
                 batch.args.live_run_id = run_dir.name
@@ -1115,7 +1120,10 @@ def main(argv: list[str] | None = None) -> int:
                 update_run(
                     run_dir,
                     resume_command=[*command, "--live-run-id", run_dir.name],
+                    refresh_catalog=False,
                 )
+            if args.execution_mode == "live":
+                refresh_live_catalog(args.trace_root)
         if late_top_up:
             candidate_failovers = candidate_config.max_failovers
             selection = select_healthy_providers(
@@ -1329,7 +1337,10 @@ def main(argv: list[str] | None = None) -> int:
                 from predict.live import update_run
 
                 for run_dir in live_runs.values():
-                    update_run(run_dir, status="awaiting_review")
+                    update_run(
+                        run_dir, status="awaiting_review", refresh_catalog=False,
+                    )
+                refresh_live_catalog(args.trace_root)
                 manifest["status"] = "awaiting_review"
                 write_json_atomic(root / "matrix.json", manifest)
                 return 0
@@ -1377,7 +1388,10 @@ def main(argv: list[str] | None = None) -> int:
             update_run(
                 run_dir,
                 status="failed" if failed else "complete",
+                refresh_catalog=False,
             )
+        if args.execution_mode == "live":
+            refresh_live_catalog(args.trace_root)
         return 1 if failed else 0
 
 

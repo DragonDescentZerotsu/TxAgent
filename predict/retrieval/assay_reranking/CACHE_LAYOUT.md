@@ -25,6 +25,13 @@ rankings are distinct from the derived V4 level databases and from TDC caches.
   retrieval for Ames, DILI, and Carcinogens. It preserves the V1 L1 context
   cards and adds independent valid/test L2+ caches over all physical UIDs under
   the top 100 parent-disjoint Morgan parents. Level-0 rows are excluded.
+- `ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1`: immutable
+  assay-ranked L1 successor for Ames, DILI, and Carcinogens. Its L1 Morgan
+  universe and all later-level artifacts are copied unchanged from the add-on
+  V2 cache.
+- `ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1`: immutable TDC-v1 L1
+  successor for BBB, Bioavailability, and Skin using their task-specific
+  validation-selected checkpoints over the frozen Morgan-100 universe.
 - `ranked_level_retrieval_gold_v1_addon_v1`: immutable L1-only predecessor.
 - `ranked_level_retrieval_v3`: immutable predecessor bound to the earlier V10
   evidence projection.

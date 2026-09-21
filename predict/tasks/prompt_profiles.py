@@ -83,7 +83,9 @@ def _reuse_manifest_path(source_dir: Path) -> Path:
     """
     run_manifest = source_dir / "manifest.json"
     if run_manifest.exists():
-        return run_manifest
+        manifest = json.loads(run_manifest.read_text(encoding="utf-8"))
+        if manifest.get("task_prompt_profile") or manifest.get("skin_prompt_profile"):
+            return run_manifest
     if source_dir.parent.name == "runs":
         batch_manifest = source_dir.parent.parent / "manifest.json"
         if batch_manifest.exists():

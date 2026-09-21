@@ -1861,7 +1861,23 @@ def _run_source_semantic(
             maximum_context=maximum_context,
         )
         if selector_id is None:
-            raise ValueError(f"source column selector exceeds model context: {level} {source}")
+            for bucket, members in active.items():
+                group["terminal"][bucket] = members
+                group["termination_reasons"][bucket] = (
+                    "source_selector_prompt_exceeds_context"
+                )
+            group["active"] = {}
+            group["finished"] = True
+            group["history"].append(
+                {
+                    "round": round_number,
+                    "selector_request_id": None,
+                    "decision": "technical_stop",
+                    "reason": "source_selector_prompt_exceeds_context",
+                }
+            )
+            checkpoint()
+            break
         _run_pending(
             connection,
             [selector_id],
