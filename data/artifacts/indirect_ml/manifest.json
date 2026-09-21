@@ -19,6 +19,30 @@
   },
   "status": "complete",
   "tasks": {
+    "ames": {
+      "input": {
+        "current_path": "data/evidence_libraries/ames/CURRENT",
+        "current_value": "v10_main_universe_v3",
+        "records_path": "data/evidence_libraries/ames/v10_main_universe_v3/03_pair_buckets/records.parquet",
+        "records_sha256": "fd87e55f0c62f6ca00ed1ee6b184698b193038085288287e19962de7d573c1c3",
+        "stage3_manifest_path": "data/evidence_libraries/ames/v10_main_universe_v3/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "60999ff7117884efd04e96521d4801f4985bedd23a1d36b9ffab7c790cff4718"
+      },
+      "output": {
+        "distinct_input_structures": 34732,
+        "eligible_input_records": 1151378,
+        "measurement_list_elements": 641764,
+        "output_rows": 300617,
+        "path": "ames_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 7143,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "9e79963a0da3cb348980e3f7c947235676baf359693307af62fcff1c3dab6da8"
+      }
+    },
     "bbb_martins": {
       "input": {
         "current_path": "data/evidence_libraries/bbb_martins/CURRENT",
@@ -66,9 +90,92 @@
         },
         "sha256": "153fba36dc31d02d66728c6a109ffd9bc734f92afa06358194f52ae6a8de1d48"
       }
+    },
+    "carcinogens": {
+      "input": {
+        "current_path": "data/evidence_libraries/carcinogens/CURRENT",
+        "current_value": "v10_main_universe_v3",
+        "records_path": "data/evidence_libraries/carcinogens/v10_main_universe_v3/03_pair_buckets/records.parquet",
+        "records_sha256": "b21f216a34a93e8ad771f9fb41fb09fce9a072106b2acc61a76a68136b6eddf9",
+        "stage3_manifest_path": "data/evidence_libraries/carcinogens/v10_main_universe_v3/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "89bc574a4f7f69b0f27ef01586d448dc9617115c91328528114998409473fc07"
+      },
+      "output": {
+        "distinct_input_structures": 27369,
+        "eligible_input_records": 202585,
+        "measurement_list_elements": 57435,
+        "output_rows": 39705,
+        "path": "carcinogens_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 1101,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "607c74935c9c31c2ab2aa70dfac0f3991595bb6fdab7228340b803e8b6af7928"
+      }
+    },
+    "dili": {
+      "input": {
+        "current_path": "data/evidence_libraries/dili/CURRENT",
+        "current_value": "v10_main_universe_v3",
+        "records_path": "data/evidence_libraries/dili/v10_main_universe_v3/03_pair_buckets/records.parquet",
+        "records_sha256": "1f91fe90361af06f176474ebef475e6011eb3530654843006f28f090cbc47448",
+        "stage3_manifest_path": "data/evidence_libraries/dili/v10_main_universe_v3/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "9874b9a57b5e683659927252b1dfb2d29f5f803728415ff950efb33cfcde8450"
+      },
+      "output": {
+        "distinct_input_structures": 6002,
+        "eligible_input_records": 46801,
+        "measurement_list_elements": 5659,
+        "output_rows": 3855,
+        "path": "dili_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 176,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "584603fbb2675ff6a2772226ba1ad69bf90b67dc08d79312246e3b94b9fccdcc"
+      }
+    },
+    "skin_reaction": {
+      "input": {
+        "current_path": "data/evidence_libraries/skin_reaction/CURRENT",
+        "current_value": "v10_main_universe_v6",
+        "records_path": "data/evidence_libraries/skin_reaction/v10_main_universe_v6/03_pair_buckets/records.parquet",
+        "records_sha256": "819cce097a2459f8509e136f70f600b5ef50ad8cc48e14ebf283d44ce636484a",
+        "stage3_manifest_path": "data/evidence_libraries/skin_reaction/v10_main_universe_v6/03_pair_buckets/manifest.json",
+        "stage3_manifest_sha256": "2c994c2698308aac997d35fd907d20643beac01456f254deedd86d50f8c99fc0"
+      },
+      "output": {
+        "distinct_input_structures": 15141,
+        "eligible_input_records": 304060,
+        "measurement_list_elements": 225302,
+        "output_rows": 98526,
+        "path": "skin_reaction_parent_pair_bucket_measurements.parquet",
+        "qualifying_pair_buckets": 2605,
+        "schema": {
+          "canonical_measurements": "list<string>",
+          "pair_bucket_key": "string",
+          "parent_smiles": "string"
+        },
+        "sha256": "f875a5e47806648db67b5ad59cf53bc29b204caf505dc02e24405c569b8834ba"
+      }
     }
   },
+  "updated_at_utc": "2026-09-21T20:00:40.812291+00:00",
   "validations": {
+    "ames": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_matches_pinned_release": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    },
     "bbb_martins": {
       "all_eligible_records_have_canonical_measurement": true,
       "all_eligible_records_have_parent_smiles": true,
@@ -84,6 +191,36 @@
       "all_eligible_records_have_parent_smiles": true,
       "composite_keys_unique": true,
       "current_is_v10": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    },
+    "carcinogens": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_matches_pinned_release": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    },
+    "dili": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_matches_pinned_release": true,
+      "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
+      "parquet_roundtrip_exact": true,
+      "qualifying_bucket_set_exact": true,
+      "records_hash_matches_stage3_manifest": true
+    },
+    "skin_reaction": {
+      "all_eligible_records_have_canonical_measurement": true,
+      "all_eligible_records_have_parent_smiles": true,
+      "composite_keys_unique": true,
+      "current_matches_pinned_release": true,
       "every_output_bucket_has_at_least_10_unique_parent_smiles": true,
       "parquet_roundtrip_exact": true,
       "qualifying_bucket_set_exact": true,
