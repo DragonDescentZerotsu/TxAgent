@@ -42,6 +42,7 @@ from data.processing.evidence_library.shared.v2.normalization.measurement_resolu
 from data.processing.llm_api import (
     DEFAULT_ENV_FILE,
     async_openai_compatible_client,
+    openai_compatible_client,
     resolve_api_key,
 )
 from data.processing.paths import evidence_library_root
@@ -59,27 +60,28 @@ GROUP_SIZE = 50
 LOCAL_ENDPOINTS = (
     "http://dgx005:50001/v1",
     "http://dgx017:50001/v1",
+    "http://dgx020:50002/v1",
 )
-LOCAL_ENDPOINT_CONCURRENCY = 256
+LOCAL_ENDPOINT_CONCURRENCY = 512
 LOCAL_MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 OPENAI_BASE_URL = "https://api.openai.com/v1"
 OPENAI_MODEL = "gpt-5.4-mini"
 OPENAI_CREDENTIAL = "OPENAI_API_KEY_TWO"
 OPENAI_FALLBACK_CREDENTIAL = "OPENAI_API_KEY_ONE"
 DEFAULT_WORKERS = 512
-OPENAI_MAX_TOKENS = 262_144
+OPENAI_MAX_TOKENS = 128_000
 OPENAI_FALLBACK_MAX_TOKENS = 128_000
 OPENAI_CONCURRENCY = 256
-LOCAL_MAX_TOKENS = 262_144
+LOCAL_MAX_TOKENS = 128_000
 
-V3_PROTOCOL_VERSION = "starling_canonical_reconciliation_endpoint_kmeans.v3_4"
-V3_REVIEW_BASIS = "resolved_endpoint_tfidf_kmeans_two_pass.v5"
+V3_PROTOCOL_VERSION = "starling_canonical_reconciliation_endpoint_kmeans.v3_5"
+V3_REVIEW_BASIS = "resolved_endpoint_tfidf_kmeans_two_pass.v6"
 V3_ENDPOINTS = (
-    "http://dgx020:50002/v1",
     "http://dgx005:50001/v1",
-    "http://dgx011:50001/v1",
+    "http://dgx017:50001/v1",
+    "http://dgx020:50002/v1",
 )
-V3_ENDPOINT_CONCURRENCY = 256
+V3_ENDPOINT_CONCURRENCY = 512
 V3_RANDOM_SEED = 20260801
 V3_MAX_ATTEMPTS = 3
 V3_QUARANTINE_FAILURES = 3
@@ -96,11 +98,11 @@ V10_ROOT = Path(__file__).resolve().parent
 TASKS = {
     "ames": {
         "resolution": evidence_library_root("ames", "v10")
-        / "measurement_resolution_v6/measurement_resolution.parquet",
+        / "measurement_resolution_v7/measurement_resolution.parquet",
     },
     "dili": {
         "resolution": evidence_library_root("dili", "v10")
-        / "measurement_resolution_v4/measurement_resolution.parquet",
+        / "measurement_resolution_v5/measurement_resolution.parquet",
     },
     "carcinogens": {
         "resolution": evidence_library_root("carcinogens", "v10")
@@ -117,6 +119,10 @@ for _task, _config in TASKS.items():
         f"tasks/{_task}/data_processing/canonicalization_v10/"
         "unit_reconciliation_v3/mapping.json"
     )
+TASKS["ames"]["v3_output"] = V10_ROOT / (
+    "tasks/ames/data_processing/canonicalization_v10/"
+    "unit_reconciliation_v4/mapping.json"
+)
 
 _QUALIFIER_PATTERNS = {
     "percent": re.compile(r"%|\bpercent(?:age)?\b", re.I),
@@ -147,9 +153,32 @@ _BASIS_WORDS = frozenset(
     }
 )
 
+_PROTECTED_PERCENT_BASIS = re.compile(
+    r"\b(?:baseline|control|initial|reference|relative|total|treated|untreated|vehicle|"
+    r"population|sample|cells?|animals?|subjects?|patients?|colon(?:y|ies)|metaphases?|nuclei)\b",
+    re.I,
+)
+
 
 def _text(value: Any) -> str:
     return "" if value is None else str(value).strip()
+
+
+def _wildcard_base_units(entries: Sequence[Mapping[str, Any]], task: str) -> set[str]:
+    """Return globally covered units while preserving endpoint-specific overlays."""
+    if not entries or any(entry.get("task") != task for entry in entries):
+        raise ValueError("incremental base unit mapping has invalid coverage")
+    units: list[str] = []
+    for entry in entries:
+        unit = _text(entry.get("input_unit"))
+        endpoints = entry.get("canonical_endpoints")
+        if not unit or not isinstance(endpoints, list) or not endpoints:
+            raise ValueError("incremental base unit mapping has invalid coverage")
+        if endpoints == ["*"]:
+            units.append(unit)
+    if len(units) != len(set(units)):
+        raise ValueError("incremental base unit mapping has duplicate wildcard coverage")
+    return set(units)
 
 
 def _json_bytes(value: Any, *, pretty: bool = False) -> bytes:
@@ -333,9 +362,17 @@ def _measurements(value: Any) -> list[dict[str, Any]]:
     return parsed
 
 
-def prepare(task: str, run_root: Path) -> dict[str, Any]:
+def prepare(
+    task: str,
+    run_root: Path,
+    *,
+    cleaned_path: Path | None = None,
+    resolution_path: Path | None = None,
+    base_mapping: Path | None = None,
+) -> dict[str, Any]:
     config = TASKS[task]
-    cleaned, resolution = Path(config["cleaned"]), Path(config["resolution"])
+    cleaned = cleaned_path or Path(config["cleaned"])
+    resolution = resolution_path or Path(config["resolution"])
     for path in (cleaned, resolution):
         if not path.is_file():
             raise FileNotFoundError(path)
@@ -412,6 +449,21 @@ def prepare(task: str, run_root: Path) -> dict[str, Any]:
     ]
     if len({row["id"] for row in rows}) != len(rows):
         raise ValueError("unit ID collision")
+    base_spec = None
+    if base_mapping is not None:
+        load_exact_unit_mapping(base_mapping)
+        base_payload = json.loads(base_mapping.read_text(encoding="utf-8"))
+        base_entries = base_payload.get("entries") or []
+        base_units = _wildcard_base_units(base_entries, task)
+        full_unit_count = len(rows)
+        rows = [row for row in rows if row["unit"] not in base_units]
+        base_spec = {
+            "path": str(base_mapping.resolve()),
+            "sha256": file_sha256(base_mapping),
+            "entry_count": len(base_entries),
+            "wildcard_unit_count": len(base_units),
+            "full_unit_count": full_unit_count,
+        }
     task_root = run_root / task
     universe = task_root / "universe.jsonl"
     manifest_path = task_root / "universe.manifest.json"
@@ -423,6 +475,7 @@ def prepare(task: str, run_root: Path) -> dict[str, Any]:
         "task": task,
         "group_size": GROUP_SIZE,
         "unit_count": len(rows),
+        "base_mapping": base_spec,
         "partition_count": len(context_graph_partition_rows(rows)),
         "batching_strategy": "declared_context_graph_rarest_neighbor.v1",
         "context_fields_by_source": {
@@ -509,8 +562,8 @@ class Attempt:
 
 
 ATTEMPTS = (
-    Attempt("openai", OPENAI_MODEL, OPENAI_MAX_TOKENS),
-    Attempt("openai", OPENAI_MODEL, OPENAI_MAX_TOKENS),
+    Attempt("local", LOCAL_MODEL, LOCAL_MAX_TOKENS),
+    Attempt("local", LOCAL_MODEL, LOCAL_MAX_TOKENS),
     Attempt("local", LOCAL_MODEL, LOCAL_MAX_TOKENS),
 )
 
@@ -680,15 +733,19 @@ async def run_pass(
         )[0]
         for base_url in LOCAL_ENDPOINTS
     ]
-    openai_client, credential = async_openai_compatible_client(
-        base_url=OPENAI_BASE_URL,
-        provider="openai",
-        env_file=DEFAULT_ENV_FILE,
-        credential_env=OPENAI_CREDENTIAL,
-        max_connections=OPENAI_CONCURRENCY,
-        timeout_s=3600,
-        max_retries=0,
-    )
+    uses_openai = any(attempt.provider == "openai" for attempt in ATTEMPTS)
+    openai_client = None
+    credential = ""
+    if uses_openai:
+        openai_client, credential = async_openai_compatible_client(
+            base_url=OPENAI_BASE_URL,
+            provider="openai",
+            env_file=DEFAULT_ENV_FILE,
+            credential_env=OPENAI_CREDENTIAL,
+            max_connections=OPENAI_CONCURRENCY,
+            timeout_s=3600,
+            max_retries=0,
+        )
     semaphore = asyncio.Semaphore(workers)
     openai_semaphore = asyncio.Semaphore(OPENAI_CONCURRENCY)
     endpoint_semaphores = [
@@ -722,6 +779,8 @@ async def run_pass(
                     **kwargs
                 )
         else:
+            if openai_client is None:
+                raise RuntimeError("OpenAI is absent from this run's retry sequence")
             if not openai_enabled:
                 raise RuntimeError("OpenAI circuit is open after insufficient_quota")
             kwargs["max_completion_tokens"] = spec.max_tokens
@@ -781,7 +840,8 @@ async def run_pass(
         *(one(index, rows) for index, rows in enumerate(partitions) if index not in completed)
     )
     await asyncio.gather(*(client.close() for client in local_clients))
-    await openai_client.close()
+    if openai_client is not None:
+        await openai_client.close()
     if set(completed) != set(range(len(partitions))):
         raise ValueError("pass did not reach terminal status for every partition")
     by_id = {
@@ -809,7 +869,7 @@ async def run_pass(
         "retry_sequence": [spec.__dict__ for spec in ATTEMPTS],
         "reasoning_effort": "high",
         "credential_env": credential,
-        "openai_max_inflight": OPENAI_CONCURRENCY,
+        "openai_max_inflight": OPENAI_CONCURRENCY if uses_openai else 0,
         "local_endpoints": [
             {"base_url": base_url, "max_inflight": LOCAL_ENDPOINT_CONCURRENCY}
             for base_url in LOCAL_ENDPOINTS
@@ -877,6 +937,21 @@ def _single_pass_entries(task: str, run_root: Path) -> tuple[list[dict[str, Any]
                 "review_basis": REVIEW_BASIS,
             }
         )
+    base_spec = universe_manifest.get("base_mapping")
+    if base_spec:
+        base_path = Path(_text(base_spec.get("path")))
+        if not base_path.is_file() or file_sha256(base_path) != base_spec.get("sha256"):
+            raise ValueError("incremental base unit mapping hash mismatch")
+        load_exact_unit_mapping(base_path)
+        base_entries = json.loads(base_path.read_text(encoding="utf-8")).get(
+            "entries"
+        ) or []
+        if len(base_entries) != base_spec.get("entry_count"):
+            raise ValueError("incremental base unit mapping row count changed")
+        new_units = {entry["input_unit"] for entry in entries}
+        if _wildcard_base_units(base_entries, task) & new_units:
+            raise ValueError("incremental unit mapping overlaps its reviewed base")
+        entries = [*base_entries, *entries]
     lineage = {
         "universe": {"path": str(universe_path.resolve()), "sha256": file_sha256(universe_path)},
         "universe_manifest": {
@@ -892,6 +967,7 @@ def _single_pass_entries(task: str, run_root: Path) -> tuple[list[dict[str, Any]
             "sha256": file_sha256(pass_manifest_path),
         },
         "legacy_lexical_batching": pass_manifest.get("pass") == "a",
+        "base_mapping": base_spec,
     }
     return entries, lineage
 
@@ -983,6 +1059,7 @@ def prepare_review(
     mapping: Path,
     output_dir: Path,
     packet_size: int = 200,
+    base_mapping: Path | None = None,
 ) -> dict[str, Any]:
     if not 1 <= packet_size <= 500:
         raise ValueError("review packet size must be in [1, 500]")
@@ -992,8 +1069,16 @@ def prepare_review(
     entries = payload.get("entries")
     if not isinstance(entries, list):
         raise ValueError("unit mapping has no entries")
+    base_units: set[str] = set()
+    if base_mapping is not None:
+        load_exact_unit_mapping(base_mapping)
+        base_payload = json.loads(base_mapping.read_text(encoding="utf-8"))
+        base_units = _wildcard_base_units(base_payload.get("entries") or [], task)
+    review_entries = [
+        entry for entry in entries if _text(entry.get("input_unit")) not in base_units
+    ]
     members: dict[str, list[str]] = defaultdict(list)
-    for entry in entries:
+    for entry in review_entries:
         members[_text(entry.get("canonical_unit"))].append(_text(entry.get("input_unit")))
     units = sorted(members, key=lambda unit: _review_sort_key(unit, task))
     packets = []
@@ -1019,11 +1104,21 @@ def prepare_review(
         "task": task,
         "mapping": {"path": str(mapping.resolve()), "sha256": file_sha256(mapping)},
         "entry_count": len(entries),
+        "review_entry_count": len(review_entries),
+        "base_mapping": (
+            {"path": str(base_mapping.resolve()), "sha256": file_sha256(base_mapping)}
+            if base_mapping is not None
+            else None
+        ),
         "canonical_unit_count": len(units),
         "packet_count": len(packets),
         "packet_size": packet_size,
         "packets": {"path": str(packet_path.resolve()), "sha256": file_sha256(packet_path)},
-        "coverage": "every pre-review canonical unit exactly once",
+        "coverage": (
+            "every new pre-review canonical unit exactly once"
+            if base_mapping is not None
+            else "every pre-review canonical unit exactly once"
+        ),
     }
     _atomic_json(output_dir / "manifest.json", manifest)
     return manifest
@@ -1093,7 +1188,10 @@ def _consolidate(
         if review_completion is not None
         else None
     )
-    for entry in entries:
+    immutable_base_count = int((lineage.get("base_mapping") or {}).get("entry_count") or 0)
+    for index, entry in enumerate(entries):
+        if index < immutable_base_count:
+            continue
         source = entry["canonical_unit"]
         seen = {source}
         while source in aliases:
@@ -1230,17 +1328,35 @@ def validate(
         ):
             raise ValueError("unit reconciliation lacks valid agent review provenance")
     universe = _read_jsonl(run_root / task / "universe.jsonl")
+    universe_manifest = json.loads(
+        (run_root / task / "universe.manifest.json").read_text(encoding="utf-8")
+    )
     payload = json.loads(path.read_text())
     entries = payload.get("entries", [])
-    if [entry.get("input_unit") for entry in entries] != [row["unit"] for row in universe]:
+    expected_units = []
+    base_entries: list[dict[str, Any]] = []
+    base_spec = universe_manifest.get("base_mapping")
+    if base_spec:
+        base_path = Path(_text(base_spec.get("path")))
+        if not base_path.is_file() or file_sha256(base_path) != base_spec.get("sha256"):
+            raise ValueError("incremental base unit mapping hash mismatch")
+        base_payload = json.loads(base_path.read_text(encoding="utf-8"))
+        base_entries = base_payload.get("entries", [])
+        expected_units.extend(
+            entry.get("input_unit") for entry in base_entries
+        )
+    expected_units.extend(row["unit"] for row in universe)
+    if [entry.get("input_unit") for entry in entries] != expected_units:
         raise ValueError("mapping order/coverage differs from the frozen universe")
+    if entries[: len(base_entries)] != base_entries:
+        raise ValueError("incremental successor changed its reviewed base mapping")
     if any(
         entry.get("task") != task
         or entry.get("canonical_endpoints") != ["*"]
         or entry.get("action") != "map"
         or entry.get("scale") != "1"
         or not _text(entry.get("canonical_unit"))
-        for entry in entries
+        for entry in entries[len(base_entries) :]
     ):
         raise ValueError("mapping contains a task, coverage, scale, or unit violation")
     load_exact_unit_mapping(path)
@@ -1261,7 +1377,9 @@ def auxiliary(config_path: Path, *, plan_only: bool) -> dict[str, Any]:
         AuxiliaryExtractionSpec(
             source_id=row["source_id"],
             input_path=Path(row["input_path"]),
-            input_column=row["input_column"],
+            input_column=row.get("input_column"),
+            input_columns=tuple(row.get("input_columns", ())),
+            input_source_id=row.get("input_source_id"),
             output_field=row["output_field"],
             prompt=row["prompt"],
             null_sentinel=row.get("null_sentinel"),
@@ -1272,17 +1390,25 @@ def auxiliary(config_path: Path, *, plan_only: bool) -> dict[str, Any]:
         return reconciliation_plan(specs, cluster_target_size=int(config.get("cluster_target_size", 100)))
     provider = config["provider"]
     credential = config.get("credential_env")
+    client, _ = openai_compatible_client(
+        base_url=config["base_url"],
+        provider=provider,
+        env_file=DEFAULT_ENV_FILE,
+        credential_env=credential,
+        max_connections=int(config.get("workers", 16)),
+        max_retries=0,
+    )
     return build_clustered_auxiliary_mapping(
         specs=specs,
         output_path=config["output_path"],
         mapping_version=config["mapping_version"],
         prompt_version=config["prompt_version"],
-        api_key_loader=lambda: resolve_api_key(
-            provider, env_file=DEFAULT_ENV_FILE, credential_env=credential
-        )[0],
+        api_key_loader=None,
+        client=client,
         model=config["model"],
         reasoning_effort="high",
         base_url=config.get("base_url"),
+        max_tokens=int(config["max_tokens"]) if config.get("max_tokens") else None,
         cluster_target_size=int(config.get("cluster_target_size", 100)),
         workers=int(config.get("workers", 16)),
         max_retries=int(config.get("max_retries", 5)),
@@ -1623,6 +1749,15 @@ def _v3_guarded_unit(task: str, source: str, span: str, proposed: str) -> tuple[
         return canonical, "identity"
     if canonical == span:
         return canonical, "accepted_grounded_span"
+    qualifiers = _qualifiers(span)
+    if (
+        canonical == "%"
+        and "percent" in qualifiers
+        and not (qualifiers - {"percent", "inhibition"})
+        and not _PROTECTED_PERCENT_BASIS.search(span)
+        and not _v3_scale_numbers(span)
+    ):
+        return canonical, "accepted_percent_semantic_reduction"
     guarded, decision = safe_canonical_unit(span, canonical, task)
     if guarded == canonical and decision.startswith("accepted_"):
         return canonical, decision
@@ -1655,37 +1790,43 @@ endpoint-defined basis needed to interpret it, while removing analyte, assay, st
 result, confidence-interval, sample-size, and explanatory prose. A unit is mandatory.
 
 Examples:
-- "% overall yield of reactions of chlorambucil" -> unit_span "% overall yield", canonical_unit "% yield"
-- "% yield (percent band intensity divided by total intensity)" -> unit_span "% yield", canonical_unit "% yield"
+- "% overall yield of reactions of chlorambucil" -> unit_span "% overall yield", canonical_unit "%"
+- "% inhibition of enzyme activity" -> unit_span "% inhibition", canonical_unit "%"
+- "% loss" -> unit_span "% loss", canonical_unit "%"
+- "% breaks repaired after 1 h" -> unit_span "% breaks repaired", canonical_unit "%"
+- "% GSH depleted" -> unit_span "% GSH depleted", canonical_unit "%"
+- "% inhibition relative to vehicle control" -> unit_span "% inhibition relative to vehicle control", canonical_unit "% inhibition vs control"
+- "% of total cells" -> unit_span "% of total cells", canonical_unit "% of total cells"
 - "10^-7 sec^-1 (deamination rate constant at 95 C)" -> unit_span "10^-7 sec^-1", canonical_unit "10^-7 s^-1"
 - "modified residues (10 lysine + 2 histidine)" -> unit_span "modified residues", canonical_unit "modified residues"
 - "nmol·min^-1·mg protein^-1" and "nmol/min/mg protein" -> canonical_unit "nmol/min/mg protein"
 - "nkat mg-1 protein" -> unit_span "nkat mg-1 protein", canonical_unit "nkat/mg protein" (`mg-1` means per mg)
 - "nmol H2O2 consumed/min/mg protein" -> unit_span "nmol H2O2 consumed/min/mg protein", canonical_unit "nmol/min/mg protein" (`H2O2` is the removable analyte, not a scale factor)
-- "% breaks repaired after 1 h" -> unit_span "% breaks repaired", canonical_unit "% breaks repaired"
 - "DNA breaks repaired per minute per cell" -> unit_span "breaks repaired per minute per cell", canonical_unit "breaks/min/cell"
 - "ratio of treated signal to control signal" -> unit_span "ratio of treated signal to control signal", canonical_unit "treated/control ratio"
-- "% inhibition of enzyme activity" -> unit_span "% inhibition", canonical_unit "% inhibition"
-- "% inhibition relative to vehicle control" -> unit_span "% inhibition relative to vehicle control", canonical_unit "% inhibition vs control"
 - "variant frequency ratio" -> unit_span "variant frequency ratio", canonical_unit "variant frequency ratio"
 - "cells x 10^3/well" -> unit_span "cells x 10^3/well", canonical_unit "10^3 cells/well" (`x` is multiplication here, not fold)
 - "nmol/min/mg protein" -> unit_span "nmol/min/mg protein", canonical_unit "nmol min^-1 mg protein^-1" (`/` and inverse exponents both mean per)
 - "2-fold increase over control" -> unit_span "2-fold increase over control", canonical_unit "2-fold vs control"
 
-Preserve magnitude, scientific-notation factors, population/sample denominators, yield,
-incidence, count, score, ratio, fraction, and other named bases. Never collapse nM, µM,
+Preserve magnitude, scientific-notation factors, population/sample denominators,
+control or reference bases, count, score, ratio, fraction, and other named bases.
+Outcome or analyte words attached to a percent value—such as yield, inhibition, loss,
+repair, viability, survival, incidence, frequency, or depletion—describe the measurement,
+not the unit, and may be removed so the canonical unit is `%`. Never collapse nM, µM,
 mM, or differently scaled denominators. Digits inside chemical formulas (for example the
 2 characters in H2O2) describe the removable analyte, while a trailing `-1` or `^-1`
 on a unit means "per" and may be written with `/`. Do not treat those notational digits
 as measurement magnitudes. When uncertain, select the complete unit span and keep it
 unchanged. Do not return prose or markdown.{suffix}
 
-Qualifier rule: if the input contains %, per or /, cells or another population basis,
-ratio or fraction, inhibition, control-relative, fold, or count semantics, include that
-qualifier in unit_span and preserve it in canonical_unit. Do not simplify a qualified
-unit to an unqualified physical unit. A standalone `x` adjacent to a numeric factor is
-multiplication notation, not a fold qualifier. Slash denominators and inverse exponents
-such as `/mg`, `mg-1`, and `mg^-1` express the same per-denominator semantics.
+Qualifier rule: keep percent outcome words in unit_span when they are the grounded unit
+phrase, but canonical_unit may reduce them to `%`. Preserve control, vehicle, baseline,
+initial, total, or other reference bases; per or `/` denominators; cells or another
+population basis; ratio or fraction; fold; and count semantics. A standalone `x`
+adjacent to a numeric factor is multiplication notation, not a fold qualifier. Slash
+denominators and inverse exponents such as `/mg`, `mg-1`, and `mg^-1` express the same
+per-denominator semantics.
 
 Scale rule: clustering only places similar spellings in one request; it never means the
 rows should share one scale. Map every ID independently. SI prefixes are magnitude and
@@ -2562,6 +2703,10 @@ def _parser() -> argparse.ArgumentParser:
         child.add_argument("--task", choices=sorted(TASKS), required=True)
         if command not in {"prepare-review"}:
             child.add_argument("--run-root", type=Path, required=True)
+        if command == "prepare":
+            child.add_argument("--cleaned-records", type=Path)
+            child.add_argument("--measurement-resolution", type=Path)
+            child.add_argument("--base-mapping", type=Path)
         if command == "run":
             child.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
             child.add_argument("--seed-terminal-cache", type=Path)
@@ -2569,6 +2714,7 @@ def _parser() -> argparse.ArgumentParser:
             child.add_argument("--mapping", type=Path, required=True)
             child.add_argument("--output-dir", type=Path, required=True)
             child.add_argument("--packet-size", type=int, default=200)
+            child.add_argument("--base-mapping", type=Path)
         if command == "consolidate-draft":
             child.add_argument("--output", type=Path, required=True)
         if command == "consolidate":
@@ -2615,11 +2761,23 @@ def _parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _parser().parse_args()
     if args.command == "prepare":
-        result = prepare(args.task, args.run_root)
+        result = prepare(
+            args.task,
+            args.run_root,
+            cleaned_path=args.cleaned_records,
+            resolution_path=args.measurement_resolution,
+            base_mapping=args.base_mapping,
+        )
     elif args.command == "run":
         result = asyncio.run(run_pass(args.task, args.run_root, args.workers, args.seed_terminal_cache))
     elif args.command == "prepare-review":
-        result = prepare_review(args.task, args.mapping, args.output_dir, args.packet_size)
+        result = prepare_review(
+            args.task,
+            args.mapping,
+            args.output_dir,
+            args.packet_size,
+            args.base_mapping,
+        )
     elif args.command == "consolidate-draft":
         result = consolidate_draft(args.task, args.run_root, args.output)
     elif args.command == "consolidate":

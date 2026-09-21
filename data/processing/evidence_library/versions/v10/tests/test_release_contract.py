@@ -69,12 +69,9 @@ def test_task_registry_stays_inside_v9() -> None:
     assert Path(
         import_task_module("ames", "starling_measurement_resolution").__file__
     ).resolve().is_relative_to(RELEASE_ROOT)
-    try:
-        import_task_module("ames", "starling_reference_semantics")
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("V9 Ames registry accepted an unimplemented module")
+    for task in ("ames", "dili", "carcinogens"):
+        reference = import_task_module(task, "starling_reference_semantics")
+        assert reference.DEFAULT_MAPPING_PATH.name == "reference_semantics.parquet"
     try:
         import_task_module("clintox", "starling_policy")
     except ValueError:

@@ -23,6 +23,9 @@ from data.processing.evidence_library.versions.v10.build_measurement_resolution_
 from data.processing.evidence_library.versions.v10.tasks.ames import (
     starling_measurement_selection as config,
 )
+from data.processing.evidence_library.versions.v10.tasks.ames import (
+    starling_measurement_resolution as resolution_config,
+)
 from data.processing.evidence_library.versions.v10.tasks.ames.data_processing.build_token_projection import (
     build_projection,
 )
@@ -61,6 +64,12 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_candidate
     CANDIDATE_CONTRACT_VERSION,
     candidate_set_sha256,
 )
+
+
+def test_active_reviewed_measurement_successor_validates() -> None:
+    resolution_config.validate_mapping_provenance(
+        resolution_config.DEFAULT_MAPPING_PATH
+    )
 
 
 def _candidate(index: int, source_id: str = "fixed_mutation") -> dict[str, Any]:

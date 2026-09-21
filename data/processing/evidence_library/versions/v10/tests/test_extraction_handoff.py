@@ -395,6 +395,24 @@ class ExtractionHandoffTests(unittest.TestCase):
         self.assertEqual([batch.prompt for batch in context["batches"]], ["prompt", "prompt"])
         self.assertEqual(context["batches"][1].api_rows[0]["id"], "r11")
 
+    def test_standalone_failed_retry_can_split_one_frozen_batch(self):
+        rows = tuple({"id": f"row-{index}"} for index in range(20))
+        payload = tuple({"id": f"r{index + 1}"} for index in range(20))
+        planned = runner.RequestBatch("request", "source", rows, "prompt", 131_072, payload)
+        args = SimpleNamespace(
+            retry_batch_size=5, model="model", max_completion_tokens=131_072
+        )
+        config = SimpleNamespace(BATCH_SIZE=20)
+        cache = SimpleNamespace(attempted={"released-before-planning"})
+        with patch.object(runner, "plan_batches", return_value=[planned]):
+            batches, exit_code = runner._remaining_batches(
+                args, config, list(rows), [], cache, {}, "digest"
+            )
+        self.assertIsNone(exit_code)
+        self.assertEqual([len(batch.rows) for batch in batches], [5, 5, 5, 5])
+        self.assertEqual([batch.prompt for batch in batches], ["prompt"] * 4)
+        self.assertEqual(batches[-1].api_rows[0]["id"], "r16")
+
     def test_mixed_mapping_preserves_layer_provenance(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

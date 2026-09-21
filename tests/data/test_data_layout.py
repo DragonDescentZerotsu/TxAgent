@@ -14,19 +14,19 @@ from data.processing.gold_labels.conditioned_benchmark import split_path
 
 
 def test_active_release_paths_are_explicit_and_fail_closed() -> None:
-    assert evidence_library_root("bbb_martins").name == "v10"
-    assert evidence_library_root("bioavailability_ma").name == "v10"
-    assert evidence_library_root("skin_reaction").name == "v10_main_universe_v5"
+    assert evidence_library_root("bbb_martins").name == "v10_main_universe_v3"
+    assert evidence_library_root("bioavailability_ma").name == "v10_main_universe_v3"
+    assert evidence_library_root("skin_reaction").name == "v10_main_universe_v6"
     assert (
-        evidence_library_root("skin_reaction", "v10_main_universe_v5").name
-        == "v10_main_universe_v5"
+        evidence_library_root("skin_reaction", "v10_main_universe_v6").name
+        == "v10_main_universe_v6"
     )
     assert evidence_library_root("bbb_martins", "v7").name == "v7"
     assert evidence_library_root("ames", "v8").name == "v8"
     assert split_path("bbb_martins", "train").is_file()
     with pytest.raises(ValueError, match="unsupported active data task"):
         evidence_library_root("clintox")
-    assert evidence_library_root("ames").name == "v9"
+    assert evidence_library_root("ames").name == "v10_main_universe_v3"
 
 
 def test_data_root_contains_only_canonical_categories() -> None:

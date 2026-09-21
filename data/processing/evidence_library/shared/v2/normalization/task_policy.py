@@ -161,9 +161,17 @@ class StarlingTaskPolicy:
     # are not necessarily exposed as CLI arguments.  The shared build cache
     # fingerprints these alongside implementation code.
     scientific_assets: tuple[Path, ...] = ()
-    # Optional UID sidecar whose membership defines the raw rows admitted to
-    # this build. Levels and families remain sidecar data for retrieval.
+    # Historical Gold-owned level map. It remains a downstream level-assignment
+    # input and must not define the Stage-0/1 source universe.
     source_universe_mapping: Path | None = None
+    # Optional pinned main-tree source universe. Membership and
+    # ``canonical_smiles`` are authoritative; every other value still comes
+    # from the task-local raw source rows joined by physical UID.
+    source_uid_universe_records: Path | None = None
+    source_uid_universe_manifest: Path | None = None
+    # Frozen physical voter membership. Stage 3 may collapse exact duplicate
+    # nonvoters, but it must retain every protected physical UID.
+    protected_voter_membership: Path | None = None
     # Frozen assay-transfer measurement policy. Canonical measurement/unit
     # fields are numerical training geometry, never retrieval presentation.
     assay_transfer_measurement_policy: Path | None = None

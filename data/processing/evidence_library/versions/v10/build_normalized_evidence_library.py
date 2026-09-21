@@ -189,7 +189,17 @@ def _scientific_assets(
     policy: StarlingTaskPolicy, args: argparse.Namespace
 ) -> tuple[Path, ...]:
     assets = [Path(path) for path in policy.scientific_assets]
-    universe = _source_universe_paths(policy)
+    for path in (
+        policy.source_uid_universe_manifest,
+        policy.source_uid_universe_records,
+    ):
+        if path is not None and Path(path) not in assets:
+            assets.append(Path(path))
+    universe = (
+        None
+        if policy.source_uid_universe_records is not None
+        else _source_universe_paths(policy)
+    )
     if universe is not None:
         manifest_path, part_paths, _ = universe
         assets.extend((manifest_path, *part_paths))
@@ -290,6 +300,55 @@ def _load_source_universe(
         "mapped_rows": int(spec["mapped_rows"]),
         "rows_by_level": spec["rows_by_level"],
         "selection_key": UID_FIELD,
+        "levels_attached_to_records": False,
+    }
+
+
+def _load_uid_smiles_universe(
+    policy: StarlingTaskPolicy, inputs: dict[str, Path]
+) -> tuple[set[str], dict[str, str | None], dict[str, Any]]:
+    records_path = policy.source_uid_universe_records
+    manifest_path = policy.source_uid_universe_manifest
+    if records_path is None or manifest_path is None:
+        raise ValueError("main UID/SMILES universe requires records and manifest")
+    records_path, manifest_path = Path(records_path), Path(manifest_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    spec = (manifest.get("tasks") or {}).get(policy.task_id)
+    if manifest.get("version") != "main_source_universe.v1" or spec is None:
+        raise ValueError(f"invalid main source universe for {policy.task_id}")
+    expected_path = manifest_path.parent / str(spec.get("path") or "")
+    if records_path.resolve() != expected_path.resolve():
+        raise ValueError("main source-universe path differs from its manifest")
+    if file_sha256(records_path) != spec.get("sha256"):
+        raise ValueError("main source-universe records hash differs from its manifest")
+    table = pq.read_table(records_path, columns=[UID_FIELD, "canonical_smiles"])
+    if table.num_rows != int(spec.get("rows") or -1):
+        raise ValueError("main source-universe row count differs from its manifest")
+    frame = table.to_pandas()
+    if frame[UID_FIELD].isna().any() or frame[UID_FIELD].duplicated().any():
+        raise ValueError("main source universe contains missing or duplicate UIDs")
+    if not frame[UID_FIELD].str.fullmatch(r"sr_[0-9a-f]{32}").all():
+        raise ValueError("main source universe contains an invalid UID")
+    structures = {}
+    for uid, smiles in frame[[UID_FIELD, "canonical_smiles"]].itertuples(
+        index=False, name=None
+    ):
+        text = "" if pd.isna(smiles) else str(smiles).strip()
+        structures[str(uid)] = text or None
+    inputs["source_uid_universe_manifest"] = manifest_path
+    inputs["source_uid_universe_records"] = records_path
+    return set(structures), structures, {
+        "version": "main_uid_smiles_authority.v1",
+        "records_path": str(records_path),
+        "records_sha256": str(spec["sha256"]),
+        "manifest_path": str(manifest_path),
+        "manifest_sha256": file_sha256(manifest_path),
+        "upstream_commit": manifest.get("upstream_commit"),
+        "mapped_rows": len(structures),
+        "missing_canonical_smiles": sum(value is None for value in structures.values()),
+        "selection_key": UID_FIELD,
+        "authoritative_fields": [UID_FIELD, "canonical_smiles"],
+        "local_source_fields_authoritative": True,
         "levels_attached_to_records": False,
     }
 
@@ -1029,12 +1088,14 @@ def _apply_stage_measurement_resolution(state: SimpleNamespace) -> dict | None:
         allow_partial=state.args.allow_partial_measurement_resolution,
         allow_out_of_scope_mapping_rows=(
             state.policy.source_universe_mapping is not None
+            or getattr(state.policy, "source_uid_universe_records", None) is not None
             or bool(getattr(state.args, "authoritative_source_root", None))
         ),
         ignored_record_ids=state.structure_rejection_ids,
         expected_routing_version=MEASUREMENT_ROUTING_VERSION,
         allow_unmapped_source_exact_units=(
             state.policy.allow_unmapped_source_exact_units
+            or state.args.allow_partial_measurement_resolution
         ),
         allow_unmapped_extracted_units=state.args.allow_partial_measurement_resolution,
     )
@@ -1624,11 +1685,25 @@ def _prepare_source_inputs(
         return _prepare_authoritative_source_inputs(policy, args)
     legacy_ids = validate_task_sources(policy.task_id)
     inputs: dict[str, Path] = {}
-    universe_uids, universe_receipt = _load_source_universe(policy, inputs)
+    authoritative_smiles = None
+    if getattr(policy, "source_uid_universe_records", None) is not None:
+        universe_uids, authoritative_smiles, universe_receipt = (
+            _load_uid_smiles_universe(policy, inputs)
+        )
+    else:
+        universe_uids, universe_receipt = _load_source_universe(policy, inputs)
     mapping_spec, mapping_sha = _validated_smiles_mapping_spec(policy, args, inputs)
+    if authoritative_smiles is not None and mapping_spec is not None:
+        raise ValueError("main-universe SMILES authority cannot use a second SMILES map")
     profiles = list(policy.source_profiles(Path(args.starling_data_dir)))
     frames, source_hashes, endpoints, identifiers = _load_profile_sources(
-        policy, args, profiles, legacy_ids, inputs, universe_uids
+        policy,
+        args,
+        profiles,
+        legacy_ids,
+        inputs,
+        universe_uids,
+        authoritative_smiles,
     )
     smiles_mapping = (
         load_smiles_mapping(mapping_spec.path, identifiers) if mapping_spec else {}
@@ -1941,6 +2016,21 @@ def _validated_smiles_mapping_spec(
     return spec, mapping_sha
 
 
+def _overlay_authoritative_smiles(
+    frame: pd.DataFrame,
+    profile: NormalizedSourceProfile,
+    structures: Mapping[str, str | None],
+) -> pd.DataFrame:
+    if profile.structure_mode != "direct":
+        raise ValueError(
+            "main-universe SMILES authority requires direct structures: "
+            f"{profile.source_id}"
+        )
+    output = frame.copy()
+    output[profile.smiles_field] = output[UID_FIELD].map(structures)
+    return output
+
+
 def _load_profile_sources(
     policy: StarlingTaskPolicy,
     args: argparse.Namespace,
@@ -1948,6 +2038,7 @@ def _load_profile_sources(
     legacy_ids: dict[str, str],
     inputs: dict[str, Path],
     universe_uids: set[str] | None = None,
+    authoritative_smiles: Mapping[str, str | None] | None = None,
 ) -> tuple[dict[str, pd.DataFrame], dict[str, str], dict[str, Any], set[str]]:
     frames: dict[str, pd.DataFrame] = {}
     source_hashes: dict[str, str] = {}
@@ -1989,6 +2080,10 @@ def _load_profile_sources(
                 )
             seen_universe_uids.update(selected_uids)
             frame = frame.loc[selected].copy()
+            if authoritative_smiles is not None:
+                frame = _overlay_authoritative_smiles(
+                    frame, profile, authoritative_smiles
+                )
         if args.max_rows_per_source:
             frame = frame.head(args.max_rows_per_source)
         frame["_legacy_cleaned_record_id"] = frame[UID_FIELD].map(legacy_ids)

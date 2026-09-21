@@ -29,15 +29,24 @@ _TASK_NAMES = {
 }
 KNOWN_RELEASES = {
     "bbb_martins": (
-        "v7", "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2"
+        "v7", "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2",
+        "v10_main_universe_v3"
     ),
     "bioavailability_ma": (
-        "v7", "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2"
+        "v7", "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2",
+        "v10_main_universe_v3"
     ),
-    "skin_reaction": ("v7", "v8", "v9", "v10", "v10_main_universe_v5"),
-    "ames": ("v8", "v9", "v10"),
-    "dili": ("v10",),
-    "carcinogens": ("v10",),
+    "skin_reaction": (
+        "v7", "v8", "v9", "v10", "v10_main_universe_v5", "v10_main_universe_v6"
+    ),
+    "ames": (
+        "v8", "v9", "v10", "v10_main_universe_v1", "v10_main_universe_v2",
+        "v10_main_universe_v3"
+    ),
+    "dili": ("v10", "v10_main_universe_v1", "v10_main_universe_v2", "v10_main_universe_v3"),
+    "carcinogens": (
+        "v10", "v10_main_universe_v1", "v10_main_universe_v2", "v10_main_universe_v3"
+    ),
 }
 
 

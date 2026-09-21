@@ -26,4 +26,22 @@ def test_task_mapping_registry_is_hash_pinned(task: str) -> None:
         registry["mappings"]
     )
     if task in {"ames", "dili", "carcinogens"}:
-        assert registry["not_applicable_mappings"] == ["auxiliary_context"]
+        auxiliary = registry["mappings"]["auxiliary_context"]
+        assert auxiliary["acceptance_exception"]
+        reference = registry["mappings"]["reference_semantics"]
+        assert reference["outputs"] == [
+            "canonical_reference_scope",
+            "canonical_reference_basis",
+        ]
+
+
+@pytest.mark.parametrize("task", ["ames", "dili", "carcinogens"])
+def test_imported_stage1_uses_frozen_measurement_assets(task: str) -> None:
+    policy = import_task_module(task, "starling_policy").POLICY
+    registry = import_task_module(task, "mapping_registry").mapping_registry()
+
+    assert policy.stage1_measurement_routing_enabled is True
+    assert policy.measurement_resolution_enabled is True
+    assert str(policy.exact_unit_mapping_path).endswith(
+        registry["mappings"]["exact_measurement_units"]["path"]
+    )

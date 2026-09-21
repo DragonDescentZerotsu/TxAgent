@@ -33,7 +33,10 @@ def test_final_stage3_requires_record_pruning_manifest(tmp_path: Path) -> None:
     (canonical / "auxiliary_mapping_manifest.json").write_text("{}\n")
     spec = PairBucketBuildSpec(
         task_id="bbb_martins",
-        policy=SimpleNamespace(stage1_canonical_deduplicator=None),
+        policy=SimpleNamespace(
+            stage1_canonical_deduplicator=None,
+            reference_semantics_enabled=False,
+        ),
         pair_bucket_version="fixture",
         build_sidecar=lambda **kwargs: {},
         build_transfer_policy=lambda **kwargs: {},

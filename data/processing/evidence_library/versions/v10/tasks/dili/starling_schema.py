@@ -3,14 +3,70 @@
 from __future__ import annotations
 
 from data.processing.evidence_library.shared.v2.canonicalization_v7 import (
+    CanonicalDimensionSpec,
     PairBucketSpec,
     SourceProfile,
     StarlingRecordContract,
+)
+from data.processing.evidence_library.shared.v2.reference_semantics import (
+    REFERENCE_SEMANTICS_VERSION,
+)
+from data.processing.evidence_library.versions.v10.tasks.dili.starling_reference_semantics import (
+    REFERENCE_SEMANTICS_CONFIG,
 )
 
 
 TASK_ID = "dili"
 BASE_SOURCE_GROUP = "human_dili_relation"
+PAIR_MAPPING_VERSION = "dili_pair_dimensions.v1"
+
+PAIR_DIMENSION_INPUTS = {
+    "dili_base": {
+        "canonical_assay_context": (
+            "human_evidence_basis",
+            "clinical_phenotype",
+        ),
+    },
+    "dili_v1": {
+        "canonical_assay_context": (
+            "assay_and_readout",
+            "biological_model_context",
+            "culture_format",
+        ),
+        "canonical_species_context": ("species",),
+    },
+    "dili_v2": {
+        "canonical_assay_context": (
+            "assay_detail",
+            "biological_system",
+            "mechanistic_entities_and_components",
+        ),
+        "canonical_species_context": ("species",),
+    },
+    "dili_v3": {
+        "canonical_assay_context": (
+            "assay_format",
+            "target_or_process",
+            "probe_or_analyte",
+            "biological_system_context",
+        ),
+    },
+    "dili_v4": {
+        "canonical_assay_context": (
+            "experimental_system",
+            "analytical_platform_and_normalization",
+            "endpoint_and_comparator",
+        ),
+    },
+    "dili_v5": {
+        "canonical_assay_context": (
+            "assay_and_platform",
+            "biological_model_context",
+            "specific_endpoint_name",
+            "quantitative_measure_type",
+        ),
+    },
+}
 
 RAW_SOURCE_COLUMNS = {
     "dili_base": (
@@ -171,6 +227,88 @@ UNIT_EXCEPTIONS = {
     },
 }
 
+def _canonical_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
+    universal = (
+        CanonicalDimensionSpec(
+            "canonical_endpoint_name",
+            "endpoint",
+            ("endpoint_name",),
+            "frozen_mapping",
+            PAIR_MAPPING_VERSION,
+        ),
+        CanonicalDimensionSpec(
+            "canonical_endpoint_concept",
+            "endpoint_concept",
+            ("endpoint_name",),
+            "frozen_mapping",
+            PAIR_MAPPING_VERSION,
+            missing_policy="explicit_unknown",
+            legacy_value_field="canonical_endpoint_concept",
+        ),
+        CanonicalDimensionSpec(
+            "canonical_unit_text",
+            "unit",
+            ("endpoint_name", "measurement_text", "unit_text", "support_text"),
+            "frozen_extraction",
+            PAIR_MAPPING_VERSION,
+        ),
+        CanonicalDimensionSpec(
+            "canonical_measurement_scale_id",
+            "measurement_scale",
+            ("measurement_text", "unit_text"),
+            "controlled_encoder",
+            PAIR_MAPPING_VERSION,
+        ),
+    )
+    contexts = tuple(
+        CanonicalDimensionSpec(
+            output_field,
+            output_field.removeprefix("canonical_"),
+            input_fields,
+            "frozen_mapping",
+            PAIR_MAPPING_VERSION,
+            missing_policy="explicit_unknown",
+        )
+        for output_field, input_fields in PAIR_DIMENSION_INPUTS[source_id].items()
+    )
+    reference_inputs = tuple(
+        dict.fromkeys(
+            (
+                "endpoint_name",
+                "measurement_text",
+                "unit_text",
+                "support_text",
+                *REFERENCE_SEMANTICS_CONFIG.source_specs[source_id].extra_fields,
+            )
+        )
+    )
+    reference = (
+        CanonicalDimensionSpec(
+            "canonical_reference_scope",
+            "measurement_reference_scope",
+            reference_inputs,
+            "frozen_mapping",
+            REFERENCE_SEMANTICS_VERSION,
+            missing_policy="explicit_unknown",
+            atomic_group="canonical_reference_semantics_pair",
+            classification_evidence=True,
+            legacy_value_field="canonical_reference_scope",
+        ),
+        CanonicalDimensionSpec(
+            "canonical_reference_basis",
+            "measurement_reference_basis",
+            reference_inputs,
+            "frozen_mapping",
+            REFERENCE_SEMANTICS_VERSION,
+            missing_policy="explicit_unknown",
+            atomic_group="canonical_reference_semantics_pair",
+            classification_evidence=True,
+            legacy_value_field="canonical_reference_basis",
+        ),
+    )
+    return (*universal, *contexts, *reference)
+
+
 SOURCES = {
     source_id: SourceProfile(
         source_id=source_id,
@@ -181,14 +319,22 @@ SOURCES = {
         unit_field=roles[2],
         smiles_field="SMILES",
         structure_mode="direct",
+        canonical_dimensions=_canonical_dimensions(source_id),
     )
     for source_id, roles in ROLE_FIELDS.items()
 }
 
-# Stage 1 publishes only source roles and the operational resolution route. DILI
-# has no reviewed scientific canonicalization or pair-bucket dimensions yet.
 PAIR_BUCKETS = {
-    source_id: PairBucketSpec(source_id, ()) for source_id in SOURCES
+    source_id: PairBucketSpec(
+        source_id,
+        (
+            "canonical_endpoint_name",
+            "canonical_unit_text",
+            "canonical_measurement_scale_id",
+            *PAIR_DIMENSION_INPUTS[source_id],
+        ),
+    )
+    for source_id in SOURCES
 }
 RECORD_CONTRACT = StarlingRecordContract(TASK_ID, SOURCES, PAIR_BUCKETS)
 
@@ -196,6 +342,8 @@ RECORD_CONTRACT = StarlingRecordContract(TASK_ID, SOURCES, PAIR_BUCKETS)
 __all__ = [
     "BASE_SOURCE_GROUP",
     "PAIR_BUCKETS",
+    "PAIR_DIMENSION_INPUTS",
+    "PAIR_MAPPING_VERSION",
     "RAW_SOURCE_COLUMNS",
     "RECORD_CONTRACT",
     "ROLE_FIELDS",

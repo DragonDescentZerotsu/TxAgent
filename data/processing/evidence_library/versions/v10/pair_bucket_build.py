@@ -31,6 +31,7 @@ from data.processing.evidence_library.shared.v2.normalization.task_policy import
 from data.processing.evidence_library.shared.v2.record_deduplication import (
     DEDUPLICATION_VERSION,
 )
+from data.processing.evidence_library.build_release_level_mapping import input_sha256
 from data.processing.evidence_library.shared.v2.record_deduplication import (
     DIRECT_MAPPING_FILENAME as DEDUP_DIRECT_MAPPING_FILENAME,
 )
@@ -67,6 +68,8 @@ class PairBucketBuildSpec:
     direct_mapping_builder: (
         Callable[[Sequence[Mapping[str, Any]]], list[dict[str, Any]]] | None
     ) = None
+    protected_source_row_uids_path: Path | None = None
+    reviewed_level_mapping_path: Path | None = None
 
     @property
     def pair_bucket_records_filename(self) -> str:
@@ -127,6 +130,43 @@ def _build_canonical_artifacts(
         "canonical_records": file_sha256(records_path),
         "auxiliary_mapping_manifest": file_sha256(auxiliary_manifest),
     }
+    protected_source_row_uids: frozenset[str] = frozenset()
+    if spec.protected_source_row_uids_path is not None:
+        protected_path = Path(spec.protected_source_row_uids_path)
+        if "source_row_uid" not in pq.read_schema(protected_path).names:
+            raise ValueError("protected-voter membership lacks source_row_uid")
+        protected_source_row_uids = frozenset(
+            str(value)
+            for value in pq.read_table(
+                protected_path, columns=["source_row_uid"]
+            ).column("source_row_uid").to_pylist()
+        )
+        if not protected_source_row_uids:
+            raise ValueError("protected-voter membership is empty")
+        input_hashes["protected_voter_membership"] = file_sha256(protected_path)
+    reviewed_levels_by_source_row_uid: dict[str, int] = {}
+    if spec.reviewed_level_mapping_path is not None:
+        reviewed_path = Path(spec.reviewed_level_mapping_path)
+        reviewed = pq.read_table(
+            reviewed_path, columns=["source_row_uid", "level"]
+        ).to_pylist()
+        reviewed_levels_by_source_row_uid = {
+            str(row["source_row_uid"]): int(row["level"]) for row in reviewed
+        }
+        if len(reviewed_levels_by_source_row_uid) != len(reviewed):
+            raise ValueError("reviewed level mapping contains duplicate UIDs")
+        input_hashes["reviewed_level_mapping"] = input_sha256(reviewed_path)
+    if spec.policy.reference_semantics_enabled:
+        reference_manifest = (
+            root / "02_canonicalized/reference_semantics_manifest.json"
+        )
+        if not reference_manifest.is_file():
+            raise FileNotFoundError(
+                "Stage 3 requires the Stage-2 reference-semantics manifest"
+            )
+        input_hashes["reference_semantics_manifest"] = file_sha256(
+            reference_manifest
+        )
     stage1_cleaning_manifest = root / SOURCE_VALUE_CLEANING_MANIFEST
     authoritative_stage1_deduplication = False
     if spec.policy.stage1_canonical_deduplicator is not None:
@@ -200,6 +240,8 @@ def _build_canonical_artifacts(
             out_dir=stage_dir,
             direct_mapping_builder=spec.direct_mapping_builder,
             collapse_duplicates=not authoritative_stage1_deduplication,
+            protected_source_row_uids=protected_source_row_uids,
+            reviewed_levels_by_source_row_uid=reviewed_levels_by_source_row_uid,
         )
         pair_metadata["output"] = {
             "path": str(
@@ -255,6 +297,8 @@ def _build_canonical_artifacts(
                 "pruning_can_reject_buckets": PRUNING_CAN_REJECT_BUCKETS,
                 "pruned_records_remain_in_library": PRUNED_RECORDS_REMAIN_IN_LIBRARY,
                 "bucket_eligibility_is_separate_from_pruning": True,
+                "protected_physical_voters_survive_deduplication": True,
+                "conflicting_reviewed_levels_survive_deduplication": True,
             },
             "summary": {
                 "input_records": pair_metadata["stats"]["input_records"],

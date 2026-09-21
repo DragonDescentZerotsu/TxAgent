@@ -22,26 +22,32 @@ TASK_MODULES = {
 TASK_MODULES["ames"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "build_starling_downstream_artifacts",
         "mapping_registry",
         "starling_categorical_response",
         "starling_measurement_resolution",
         "starling_policy",
+        "starling_reference_semantics",
     }
 )
 TASK_MODULES["dili"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "build_starling_downstream_artifacts",
         "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
+        "starling_reference_semantics",
     }
 )
 TASK_MODULES["carcinogens"] = frozenset(
     {
         "build_normalized_starling_evidence_library",
+        "build_starling_downstream_artifacts",
         "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
+        "starling_reference_semantics",
     }
 )
 TASK_IDS = frozenset(TASK_MODULES)

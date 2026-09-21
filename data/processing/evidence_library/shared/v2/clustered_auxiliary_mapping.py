@@ -13,7 +13,6 @@ import json
 import math
 import os
 import random
-import re
 import threading
 import time
 from collections import defaultdict
@@ -25,13 +24,24 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 
-from data.processing.evidence_library.shared.v2.normalization.cleaning import clean_scalar
+from data.processing.evidence_library.shared.v2.normalization.cleaning import (
+    clean_measurement_text,
+    clean_scalar,
+)
 
 
 DEFAULT_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 DEFAULT_CLUSTER_TARGET_SIZE = 100
 DEFAULT_CLUSTER_RANDOM_SEED = 20260801
+MINIBATCH_SIZE = 4096
+MINIBATCH_N_INIT = 3
+MINIBATCH_MAX_ITER = 100
+MINIBATCH_ALGORITHM = (
+    "sklearn.MiniBatchKMeans(batch_size=4096,n_init=3,max_iter=100)"
+)
+LEGACY_KMEANS_ALGORITHM = "sklearn.KMeans(n_init=10,algorithm=lloyd)"
 DEFAULT_NULL_LIKE = frozenset(
     {
         "",
@@ -47,21 +57,26 @@ DEFAULT_NULL_LIKE = frozenset(
         "unspecified",
     }
 )
-_FORBIDDEN_OUTPUT = re.compile(
-    r"(?<![a-z0-9])(?:unknown|unmapped|null|none|n/?a|not stated|"
-    r"not specified|unspecified)(?![a-z0-9])",
-    re.IGNORECASE,
-)
-
-
 @dataclass(frozen=True)
 class AuxiliaryExtractionSpec:
     source_id: str
     input_path: Path
-    input_column: str
+    input_column: str | None
     output_field: str
     prompt: str
     null_sentinel: str | None = None
+    input_columns: tuple[str, ...] = ()
+    input_source_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if bool(self.input_column) == bool(self.input_columns):
+            raise ValueError("declare exactly one of input_column or input_columns")
+        if len(set(self.source_columns)) != len(self.source_columns):
+            raise ValueError("auxiliary input columns must be unique")
+
+    @property
+    def source_columns(self) -> tuple[str, ...]:
+        return self.input_columns or (str(self.input_column),)
 
 
 @dataclass(frozen=True)
@@ -88,6 +103,73 @@ def distinct_values(
         and str(value).strip().casefold() not in excluded
     }
     return sorted(output, key=lambda value: (value.casefold(), value))
+
+
+def distinct_source_values(
+    frame: pd.DataFrame,
+    columns: Sequence[str],
+    *,
+    null_like: Iterable[str] = DEFAULT_NULL_LIKE,
+) -> list[str]:
+    """Return scalar values or stable JSON tuples for one mapping section."""
+    if len(columns) == 1:
+        return distinct_values(frame[columns[0]].tolist(), null_like=null_like)
+    excluded = {str(value).strip().casefold() for value in null_like}
+    values: set[str] = set()
+    for row in frame[list(columns)].itertuples(index=False, name=None):
+        normalized = [
+            None
+            if value is None
+            or (isinstance(value, float) and math.isnan(value))
+            or str(value).strip().casefold() in excluded
+            else str(value).strip()
+            for value in row
+        ]
+        if any(value is not None for value in normalized):
+            values.add(json.dumps(normalized, ensure_ascii=False, separators=(",", ":")))
+    return sorted(values, key=lambda value: (value.casefold(), value))
+
+
+def _cleaned_source_tuple(
+    columns: Sequence[str], values: Sequence[Any]
+) -> tuple[Any, ...]:
+    cleaned = []
+    for column, value in zip(columns, values, strict=True):
+        item = (
+            clean_measurement_text(value)
+            if column in {"measurement_text", "unit_text"}
+            else clean_scalar(value)
+        )
+        if isinstance(item, str) and item.casefold() in DEFAULT_NULL_LIKE:
+            item = None
+        cleaned.append(item)
+    return tuple(cleaned)
+
+
+def _read_spec_frames(
+    specs: Sequence[AuxiliaryExtractionSpec],
+) -> dict[Path, pd.DataFrame]:
+    columns_by_path: dict[Path, set[str]] = defaultdict(set)
+    for spec in specs:
+        columns_by_path[spec.input_path].update(spec.source_columns)
+    frames = {}
+    for path, columns in columns_by_path.items():
+        if "source_id" in pq.read_schema(path).names:
+            columns.add("source_id")
+        frames[path] = pd.read_parquet(path, columns=sorted(columns))
+    return frames
+
+
+def _source_frame(frame: pd.DataFrame, spec: AuxiliaryExtractionSpec) -> pd.DataFrame:
+    if "source_id" not in frame.columns:
+        return frame
+    return frame.loc[frame["source_id"] == (spec.input_source_id or spec.source_id)]
+
+
+def _input_declaration(spec: AuxiliaryExtractionSpec) -> dict[str, Any]:
+    if spec.input_columns:
+        return {"input_columns": list(spec.input_columns)}
+    return {"input_column": spec.input_column}
 
 
 def embed_values(
@@ -149,7 +231,7 @@ def cluster_values(
     max_size: int | None = None,
     random_seed: int = DEFAULT_CLUSTER_RANDOM_SEED,
 ) -> list[Cluster]:
-    from sklearn.cluster import KMeans
+    from sklearn.cluster import MiniBatchKMeans
     from threadpoolctl import threadpool_limits
 
     if len(values) != len(embeddings):
@@ -166,11 +248,12 @@ def cluster_values(
         # OpenBLAS build can safely track. Bound only this numerical section;
         # clustering remains deterministic under the frozen random seed.
         with threadpool_limits(limits=16):
-            labels = KMeans(
+            labels = MiniBatchKMeans(
                 n_clusters=cluster_count,
                 random_state=random_seed,
-                n_init=10,
-                algorithm="lloyd",
+                n_init=MINIBATCH_N_INIT,
+                max_iter=MINIBATCH_MAX_ITER,
+                batch_size=MINIBATCH_SIZE,
             ).fit_predict(embeddings)
     member_indices: list[np.ndarray] = []
     for label in range(cluster_count):
@@ -212,18 +295,19 @@ def _bounded_embedding_subclusters(
     subclustered in the same embedding space.  A stable index chunk is used
     only when identical embeddings make KMeans unable to divide a group.
     """
-    from sklearn.cluster import KMeans
+    from sklearn.cluster import MiniBatchKMeans
     from threadpoolctl import threadpool_limits
 
     if len(indices) <= max_size:
         return [indices]
     child_count = math.ceil(len(indices) / max_size)
     with threadpool_limits(limits=16):
-        labels = KMeans(
+        labels = MiniBatchKMeans(
             n_clusters=child_count,
             random_state=random_seed,
-            n_init=10,
-            algorithm="lloyd",
+            n_init=MINIBATCH_N_INIT,
+            max_iter=MINIBATCH_MAX_ITER,
+            batch_size=MINIBATCH_SIZE,
         ).fit_predict(embeddings[indices])
     groups = [indices[np.flatnonzero(labels == label)] for label in range(child_count)]
     groups = [group for group in groups if len(group)]
@@ -243,18 +327,13 @@ def _bounded_embedding_subclusters(
 
 
 def clean_bucket(value: Any, *, null_sentinel: str | None) -> str | None:
+    if value is None:
+        return None
     if not isinstance(value, str):
         raise ValueError("bucket is not a string")
-    bucket = re.sub(r"\s+", " ", value.strip()).casefold()
-    if null_sentinel and bucket == null_sentinel.casefold():
+    if null_sentinel is not None and value == null_sentinel:
         return None
-    if not bucket or len(bucket) > 120 or "\n" in bucket or "\r" in bucket:
-        raise ValueError("bucket is not one concise label")
-    if any(token in bucket for token in ("```", "{", "}", "->", "→")):
-        raise ValueError("bucket contains non-label syntax")
-    if _FORBIDDEN_OUTPUT.search(bucket):
-        raise ValueError("bucket contains an unknown-like value")
-    return bucket
+    return value
 
 
 def validate_response(
@@ -267,9 +346,9 @@ def validate_response(
         payload = json.loads(content or "")
     except json.JSONDecodeError as exc:
         raise ValueError(f"response is not JSON: {exc}") from exc
-    if not isinstance(payload, dict) or set(payload) != {"mapping"}:
-        raise ValueError("response must contain only the mapping object")
-    mapping = payload["mapping"]
+    if not isinstance(payload, dict):
+        raise ValueError("response must be a mapping object")
+    mapping = payload.get("mapping", payload)
     if not isinstance(mapping, dict) or set(mapping) != set(item_ids):
         actual = set(mapping) if isinstance(mapping, dict) else set()
         expected = set(item_ids)
@@ -289,7 +368,7 @@ def build_clustered_auxiliary_mapping(
     output_path: str | Path,
     mapping_version: str,
     prompt_version: str,
-    api_key_loader: Callable[[], str],
+    api_key_loader: Callable[[], str] | None,
     model: str,
     reasoning_effort: str,
     embedding_model: str = DEFAULT_EMBEDDING_MODEL,
@@ -303,6 +382,8 @@ def build_clustered_auxiliary_mapping(
     retry_delay: float = 2.0,
     overwrite: bool = False,
     base_url: str | None = None,
+    client: Any | None = None,
+    max_tokens: int | None = None,
     reconcile_cleaned_key_conflicts: bool = True,
 ) -> dict[str, Any]:
     """Build and atomically publish a complete reconciled mapping."""
@@ -314,23 +395,22 @@ def build_clustered_auxiliary_mapping(
     if not specs:
         raise ValueError("at least one auxiliary extraction spec is required")
     cache_dir = destination.parent / f".{destination.name}.cache"
-    frames = {
-        path: pd.read_parquet(path)
-        for path in sorted({spec.input_path for spec in specs}, key=str)
-    }
-    inventories: dict[tuple[str, Path, str], list[str]] = {}
-    clusters_by_inventory: dict[tuple[str, Path, str], list[Cluster]] = {}
+    frames = _read_spec_frames(specs)
+    inventories: dict[tuple[str, Path, tuple[str, ...]], list[str]] = {}
+    clusters_by_inventory: dict[tuple[str, Path, tuple[str, ...]], list[Cluster]] = {}
     for spec in specs:
-        frame = frames[spec.input_path]
-        if spec.input_column not in frame.columns:
-            raise KeyError(f"{spec.input_path} lacks {spec.input_column!r}")
-        key = (spec.source_id, spec.input_path, spec.input_column)
+        frame = _source_frame(frames[spec.input_path], spec)
+        missing = set(spec.source_columns) - set(frame.columns)
+        if missing:
+            raise KeyError(f"{spec.input_path} lacks {sorted(missing)!r}")
+        key = (spec.source_id, spec.input_path, spec.source_columns)
         if key in inventories:
             continue
-        values = distinct_values(frame[spec.input_column].tolist())
+        values = distinct_source_values(frame, spec.source_columns)
         inventories[key] = values
+        column_key = "__".join(spec.source_columns)
         cluster_cache = cache_dir / (
-            f"clusters__{spec.source_id}__{spec.input_column}.json"
+            f"clusters__{spec.source_id}__{column_key}.json"
         )
         cached_clusters = _load_cluster_cache(
             cluster_cache,
@@ -343,7 +423,7 @@ def build_clustered_auxiliary_mapping(
         if cached_clusters is not None:
             clusters_by_inventory[key] = cached_clusters
             print(
-                f"[{spec.source_id}/{spec.input_column}] "
+                f"[{spec.source_id}/{column_key}] "
                 f"loaded_clusters={len(cached_clusters):,}",
                 flush=True,
             )
@@ -353,7 +433,7 @@ def build_clustered_auxiliary_mapping(
                 model_name=embedding_model,
                 batch_size=embedding_batch_size,
                 device=device,
-                progress_label=f"{spec.source_id}/{spec.input_column}",
+                progress_label=f"{spec.source_id}/{column_key}",
             )
             clusters_by_inventory[key] = cluster_values(
                 values,
@@ -372,38 +452,59 @@ def build_clustered_auxiliary_mapping(
                 random_seed=random_seed,
             )
 
-    client_kwargs: dict[str, Any] = {"api_key": api_key_loader()}
-    if base_url:
-        client_kwargs["base_url"] = base_url
-    client = OpenAI(**client_kwargs)
+    if client is None:
+        if api_key_loader is None:
+            raise ValueError("api_key_loader is required when client is not supplied")
+        client_kwargs: dict[str, Any] = {"api_key": api_key_loader()}
+        if base_url:
+            client_kwargs["base_url"] = base_url
+        client = OpenAI(**client_kwargs)
     output_sources: dict[str, dict[str, Any]] = defaultdict(dict)
     generation_sections: dict[str, Any] = {}
+    mapped_sections: dict[AuxiliaryExtractionSpec, tuple[dict[str, str | None], dict[str, Any]]] = {}
+    with ThreadPoolExecutor(max_workers=workers) as request_executor:
+        with ThreadPoolExecutor(max_workers=len(specs)) as section_executor:
+            futures = {}
+            for spec in specs:
+                key = (spec.source_id, spec.input_path, spec.source_columns)
+                futures[
+                    section_executor.submit(
+                        _map_clusters,
+                        client=client,
+                        spec=spec,
+                        clusters=clusters_by_inventory[key],
+                        model=model,
+                        reasoning_effort=reasoning_effort,
+                        prompt_version=prompt_version,
+                        workers=workers,
+                        max_retries=max_retries,
+                        retry_delay=retry_delay,
+                        max_tokens=max_tokens,
+                        cache_path=(
+                            cache_dir / f"{spec.source_id}__{spec.output_field}.jsonl"
+                        ),
+                        executor=request_executor,
+                    )
+                ] = spec
+            for future in as_completed(futures):
+                mapped_sections[futures[future]] = future.result()
     for spec in specs:
-        key = (spec.source_id, spec.input_path, spec.input_column)
-        clusters = clusters_by_inventory[key]
-        mapping, audit = _map_clusters(
-            client=client,
-            spec=spec,
-            clusters=clusters,
-            model=model,
-            reasoning_effort=reasoning_effort,
-            prompt_version=prompt_version,
-            workers=workers,
-            max_retries=max_retries,
-            retry_delay=retry_delay,
-            cache_path=cache_dir / f"{spec.source_id}__{spec.output_field}.jsonl",
-        )
-        serialized_mapping = {
-            json.dumps([raw], ensure_ascii=False, separators=(",", ":")): value
-            for raw, value in mapping.items()
-        }
+        mapping, audit = mapped_sections[spec]
+        serialized_mapping = {}
+        for raw, value in mapping.items():
+            source_values = json.loads(raw) if len(spec.source_columns) > 1 else [raw]
+            serialized_mapping[
+                json.dumps(source_values, ensure_ascii=False, separators=(",", ":"))
+            ] = value
         # ``distinct_values`` intentionally excludes source null sentinels.
         # The attacher nevertheless needs one explicit cleaned-null key so
         # None/unknown/not-stated records join deterministically without an
         # invented label.
-        serialized_mapping[json.dumps([None], separators=(",", ":"))] = None
+        serialized_mapping[
+            json.dumps([None] * len(spec.source_columns), separators=(",", ":"))
+        ] = None
         output_sources[spec.source_id][spec.output_field] = {
-            "source_columns": [spec.input_column],
+            "source_columns": list(spec.source_columns),
             "mapping": serialized_mapping,
         }
         generation_sections[f"{spec.source_id}/{spec.output_field}"] = audit
@@ -420,6 +521,7 @@ def build_clustered_auxiliary_mapping(
             workers=workers,
             max_retries=max_retries,
             retry_delay=retry_delay,
+            max_tokens=max_tokens,
         )
         if reconcile_cleaned_key_conflicts
         else {
@@ -449,6 +551,7 @@ def build_clustered_auxiliary_mapping(
     os.replace(temporary, destination)
     audit_path = destination.with_suffix(destination.suffix + ".generation.json")
     audit_payload = {
+        "publication_status": "unpublished_requires_agent_review",
         "mapping_version": mapping_version,
         "prompt_version": prompt_version,
         "model": model,
@@ -457,9 +560,23 @@ def build_clustered_auxiliary_mapping(
         "cluster_target_size": cluster_target_size,
         "max_cluster_size": max_cluster_size,
         "cluster_random_seed": random_seed,
+        "clustering_algorithm": MINIBATCH_ALGORITHM,
+        "compatible_legacy_cluster_algorithm": LEGACY_KMEANS_ALGORITHM,
         "base_url_configured": bool(base_url),
+        "max_tokens": max_tokens,
+        "request_concurrency": workers,
+        "section_scheduling": "parallel_shared_request_executor.v1",
         "global_model_reconciliation_enabled": reconcile_cleaned_key_conflicts,
         "mapping_sha256": _sha256(destination),
+        "input_artifacts": {
+            str(path): {
+                "sha256": _sha256(path),
+                "sources": sorted(
+                    {spec.source_id for spec in specs if spec.input_path == path}
+                ),
+            }
+            for path in sorted({spec.input_path for spec in specs}, key=str)
+        },
         "sections": generation_sections,
         "cleaned_key_conflict_reconciliation": conflict_audit,
     }
@@ -482,6 +599,7 @@ def _reconcile_cleaned_key_conflicts(
     workers: int,
     max_retries: int,
     retry_delay: float,
+    max_tokens: int | None,
 ) -> dict[str, Any]:
     """Resolve only labels that disagree after source-key cleaning.
 
@@ -500,14 +618,8 @@ def _reconcile_cleaned_key_conflicts(
             grouped: dict[Any, list[tuple[str, str, str | None]]] = defaultdict(list)
             for serialized, label in raw_mapping.items():
                 decoded = json.loads(serialized)
-                raw_value = str(decoded[0])
-                cleaned = clean_scalar(raw_value)
-                if (
-                    isinstance(cleaned, str)
-                    and cleaned.casefold() in DEFAULT_NULL_LIKE
-                ):
-                    cleaned = None
-                grouped[cleaned].append((serialized, raw_value, label))
+                cleaned = _cleaned_source_tuple(spec.source_columns, decoded)
+                grouped[cleaned].append((serialized, serialized, label))
             conflicts = [
                 (cleaned, rows)
                 for cleaned, rows in sorted(grouped.items(), key=lambda item: str(item[0]))
@@ -543,6 +655,8 @@ def _reconcile_cleaned_key_conflicts(
                 source_id=source_id,
                 input_path=spec.input_path,
                 input_column=spec.input_column,
+                input_columns=spec.input_columns,
+                input_source_id=spec.input_source_id,
                 output_field=output_field,
                 null_sentinel=spec.null_sentinel,
                 prompt=(
@@ -564,6 +678,7 @@ def _reconcile_cleaned_key_conflicts(
                 workers=min(workers, 1),
                 max_retries=max_retries,
                 retry_delay=retry_delay,
+                max_tokens=max_tokens,
                 cache_path=cache_dir / f"conflicts__{source_id}__{output_field}.jsonl",
             )
             for description, (_, rows) in zip(descriptions, conflicts, strict=True):
@@ -591,14 +706,14 @@ def reconciliation_plan(
 ) -> dict[str, Any]:
     sections: dict[str, Any] = {}
     total = 0
-    frames: dict[Path, pd.DataFrame] = {}
+    frames = _read_spec_frames(specs)
     for spec in specs:
-        frame = frames.setdefault(spec.input_path, pd.read_parquet(spec.input_path))
-        values = distinct_values(frame[spec.input_column].tolist())
+        frame = _source_frame(frames[spec.input_path], spec)
+        values = distinct_source_values(frame, spec.source_columns)
         calls = math.ceil(len(values) / cluster_target_size)
         total += calls
         sections[f"{spec.source_id}/{spec.output_field}"] = {
-            "input_column": spec.input_column,
+            **_input_declaration(spec),
             "distinct_values": len(values),
             "planned_clusters": calls,
         }
@@ -616,7 +731,9 @@ def _map_clusters(
     workers: int,
     max_retries: int,
     retry_delay: float,
+    max_tokens: int | None,
     cache_path: Path,
+    executor: ThreadPoolExecutor | None = None,
 ) -> tuple[dict[str, str | None], dict[str, Any]]:
     cache = _load_cache(cache_path)
     lock = threading.Lock()
@@ -630,6 +747,7 @@ def _map_clusters(
             model=model,
             reasoning_effort=reasoning_effort,
             prompt_version=prompt_version,
+            max_tokens=max_tokens,
         )
         cached = cache.get(identity)
         if cached is None:
@@ -643,9 +761,11 @@ def _map_clusters(
         flush=True,
     )
     failures: list[tuple[str, Exception]] = []
-    with ThreadPoolExecutor(max_workers=workers) as executor:
+    owned_executor = executor is None
+    request_executor = executor or ThreadPoolExecutor(max_workers=workers)
+    try:
         futures = {
-            executor.submit(
+            request_executor.submit(
                 _query_cluster,
                 client,
                 spec=spec,
@@ -654,6 +774,7 @@ def _map_clusters(
                 reasoning_effort=reasoning_effort,
                 max_retries=max_retries,
                 retry_delay=retry_delay,
+                max_tokens=max_tokens,
             ): (cluster, identity)
             for cluster, identity in pending
         }
@@ -681,6 +802,9 @@ def _map_clusters(
                     f"completed={completed:,}/{len(pending):,}",
                     flush=True,
                 )
+    finally:
+        if owned_executor:
+            request_executor.shutdown(wait=True)
     if failures:
         cluster_id, error = failures[0]
         raise RuntimeError(
@@ -707,7 +831,7 @@ def _map_clusters(
         for key in _empty_usage()
     }
     return dict(sorted(output.items(), key=lambda item: (item[0].casefold(), item[0]))), {
-        "input_column": spec.input_column,
+        **_input_declaration(spec),
         "raw_values": len(output),
         "clusters": len(clusters),
         "null_mappings": sum(value is None for value in output.values()),
@@ -725,6 +849,7 @@ def _query_cluster(
     reasoning_effort: str,
     max_retries: int,
     retry_delay: float,
+    max_tokens: int | None,
 ) -> tuple[dict[str, str | None], dict[str, Any]]:
     item_ids = _item_ids(cluster)
     user = json.dumps(
@@ -744,18 +869,29 @@ def _query_cluster(
                     "\n\nThe previous response was invalid. Return exactly one JSON "
                     "mapping for every supplied ID, with no extra IDs or text."
                 )
-            request: dict[str, Any] = {
-                "model": model,
-                "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": user},
-                ],
-            }
-            if reasoning_effort:
-                request["reasoning_effort"] = reasoning_effort
-            response = client.chat.completions.create(**request)
-            content = response.choices[0].message.content or ""
+            messages = [
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": user},
+            ]
+            provider_receipt: dict[str, Any] = {}
+            if hasattr(client, "chat_json"):
+                response = client.chat_json(messages, max_tokens=max_tokens)
+                content = str(response.get("raw_content") or "")
+                served_model = str(response.get("model") or "")
+                provider_receipt = dict(response.get("execution_provider") or {})
+            else:
+                request: dict[str, Any] = {
+                    "model": model,
+                    "response_format": {"type": "json_object"},
+                    "messages": messages,
+                }
+                if reasoning_effort:
+                    request["reasoning_effort"] = reasoning_effort
+                if max_tokens is not None:
+                    request["max_tokens"] = max_tokens
+                response = client.chat.completions.create(**request)
+                content = response.choices[0].message.content or ""
+                served_model = str(getattr(response, "model", "") or "")
             usage = _response_usage(response)
             try:
                 mapping = validate_response(
@@ -771,6 +907,7 @@ def _query_cluster(
                         "status": "validation_error",
                         "response_sha256": hashlib.sha256(content.encode()).hexdigest(),
                         "error": f"{type(exc).__name__}: {exc}",
+                        "execution_provider": provider_receipt or None,
                         "usage": usage,
                     }
                 )
@@ -783,7 +920,8 @@ def _query_cluster(
                     "attempt": attempt,
                     "status": "valid",
                     "response_sha256": hashlib.sha256(content.encode()).hexdigest(),
-                    "served_model": str(getattr(response, "model", "") or ""),
+                    "served_model": served_model,
+                    "execution_provider": provider_receipt or None,
                     "usage": usage,
                 }
             )
@@ -839,18 +977,23 @@ def _cache_identity(
     model: str,
     reasoning_effort: str,
     prompt_version: str,
+    max_tokens: int | None = None,
 ) -> str:
     payload = {
         "prompt_version": prompt_version,
         "prompt": spec.prompt,
         "source_id": spec.source_id,
-        "input_column": spec.input_column,
+        **_input_declaration(spec),
         "output_field": spec.output_field,
         "cluster_id": cluster.cluster_id,
         "values": cluster.values,
         "model": model,
         "reasoning_effort": reasoning_effort,
     }
+    if spec.input_source_id is not None:
+        payload["input_source_id"] = spec.input_source_id
+    if max_tokens is not None:
+        payload["max_tokens"] = max_tokens
     return hashlib.sha256(
         json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
     ).hexdigest()
@@ -894,7 +1037,15 @@ def _load_cluster_cache(
         max_size=max_size,
         random_seed=random_seed,
     )
-    if payload.get("identity") != expected:
+    legacy = _cluster_cache_identity(
+        values,
+        embedding_model=embedding_model,
+        target_size=target_size,
+        max_size=max_size,
+        random_seed=random_seed,
+        algorithm=LEGACY_KMEANS_ALGORITHM,
+    )
+    if payload.get("identity") not in {expected, legacy}:
         return None
     clusters = [
         Cluster(str(row["cluster_id"]), tuple(str(value) for value in row["values"]))
@@ -945,13 +1096,14 @@ def _cluster_cache_identity(
     target_size: int,
     max_size: int | None = None,
     random_seed: int,
+    algorithm: str = MINIBATCH_ALGORITHM,
 ) -> str:
     payload = {
         "values": list(values),
         "embedding_model": embedding_model,
         "target_size": target_size,
         "random_seed": random_seed,
-        "algorithm": "sklearn.KMeans(n_init=10,algorithm=lloyd)",
+        "algorithm": algorithm,
     }
     # Preserve historical cache identities when no hard request bound was
     # requested.  The new field participates only in bounded workflows.
@@ -993,6 +1145,17 @@ def _empty_usage() -> dict[str, int]:
 
 
 def _response_usage(response: Any) -> dict[str, int]:
+    if isinstance(response, Mapping):
+        usage = dict(response.get("usage") or {})
+        prompt = dict(usage.get("prompt_tokens_details") or {})
+        completion = dict(usage.get("completion_tokens_details") or {})
+        return {
+            "cached_input_tokens": int(prompt.get("cached_tokens") or 0),
+            "input_tokens": int(usage.get("prompt_tokens") or 0),
+            "output_tokens": int(usage.get("completion_tokens") or 0),
+            "reasoning_tokens": int(completion.get("reasoning_tokens") or 0),
+            "total_tokens": int(usage.get("total_tokens") or 0),
+        }
     usage = getattr(response, "usage", None)
     prompt = getattr(usage, "prompt_tokens_details", None)
     completion = getattr(usage, "completion_tokens_details", None)

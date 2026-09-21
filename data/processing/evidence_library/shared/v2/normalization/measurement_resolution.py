@@ -34,26 +34,48 @@ DEFAULT_EXACT_UNIT_MAPPING = (
 )
 NOT_EXTRACTED = "not_extracted"
 MAPPING_COLUMNS = ("cleaned_record_id", "status", "measurements_json")
+SOURCE_IDENTITY_COLUMNS = ("source_row_uid", "source_id")
 RESOLUTION_STATUSES = frozenset({"ok", "relative", "unsure", "unavailable"})
+Resolution = tuple[str, str | None, str, str]
+
+
+def _mapping_key_field(mapping_path: Path) -> str:
+    return (
+        "source_row_uid"
+        if "source_row_uid" in pq.read_schema(mapping_path).names
+        else "cleaned_record_id"
+    )
 
 
 def load_measurement_resolution(
     mapping_path: Path,
-) -> dict[str, tuple[str, str | None]]:
-    table = pq.read_table(mapping_path, columns=list(MAPPING_COLUMNS))
-    columns = [table.column(name).to_pylist() for name in MAPPING_COLUMNS]
-    mapping: dict[str, tuple[str, str | None]] = {}
-    for record_id, status, measurements_json in zip(*columns, strict=True):
-        key = str(record_id or "")
-        resolved_status = str(status or "")
+) -> dict[str, Resolution]:
+    key_field = _mapping_key_field(mapping_path)
+    available = set(pq.read_schema(mapping_path).names)
+    columns = [
+        *MAPPING_COLUMNS,
+        *(name for name in SOURCE_IDENTITY_COLUMNS if name in available),
+    ]
+    rows = pq.read_table(mapping_path, columns=columns).to_pylist()
+    mapping: dict[str, Resolution] = {}
+    for row in rows:
+        key = str(row.get(key_field) or "")
+        resolved_status = str(row.get("status") or "")
         if not key or key in mapping:
-            raise ValueError(f"empty or duplicate measurement-resolution ID: {key!r}")
+            raise ValueError(
+                f"empty or duplicate measurement-resolution {key_field}: {key!r}"
+            )
         if resolved_status not in RESOLUTION_STATUSES:
             raise ValueError(
                 f"unsupported measurement-resolution status for {key}: "
                 f"{resolved_status!r}"
             )
-        mapping[key] = (resolved_status, measurements_json)
+        mapping[key] = (
+            resolved_status,
+            row.get("measurements_json"),
+            str(row.get("cleaned_record_id") or ""),
+            str(row.get("source_id") or ""),
+        )
     return mapping
 
 
@@ -244,7 +266,7 @@ def _apply_unit_rule(
 
 def _source_resolution(
     source_record: dict[str, Any],
-    resolution: tuple[str, str | None] | None,
+    resolution: Resolution | None,
     mapping_active: bool,
 ) -> tuple[str, str | None, list[dict[str, Any]], str | None]:
     route = str(source_record.get("measurement_resolution_route") or "")
@@ -270,10 +292,31 @@ def _source_resolution(
     return NOT_EXTRACTED, None, [], None
 
 
+def _resolution_key(record: dict[str, Any], key_field: str) -> str:
+    key = str(record.get(key_field) or "")
+    if not key:
+        raise ValueError(f"Stage 01 row lacks {key_field}")
+    return key
+
+
+def _validate_resolution_source(
+    record: dict[str, Any], resolution: Resolution | None, key: str
+) -> None:
+    if resolution is None or not resolution[3]:
+        return
+    source_id = str(record.get("source_id") or "")
+    if source_id != resolution[3]:
+        raise ValueError(
+            f"measurement-resolution source mismatch for {key}: "
+            f"expected {source_id!r}, found {resolution[3]!r}"
+        )
+
+
 def _preflight_records(
     records: list[dict[str, Any]],
     *,
-    mapping: dict[str, tuple[str, str | None]],
+    mapping: dict[str, Resolution],
+    mapping_key_field: str,
     mapping_active: bool,
     mapping_required: bool,
     task: str,
@@ -292,13 +335,15 @@ def _preflight_records(
                 f"expected {expected_routing_version or '<missing>'}, found "
                 f"{routing_version or '<missing>'}"
             )
-        resolution = mapping.get(record_id)
+        resolution_key = _resolution_key(source_record, mapping_key_field)
+        resolution = mapping.get(resolution_key)
+        _validate_resolution_source(source_record, resolution, resolution_key)
         route = str(source_record.get("measurement_resolution_route") or "")
         status, _, entries, _ = _source_resolution(
             source_record, resolution, mapping_active
         )
         if route == "extract" and resolution is None and mapping_required:
-            uncovered.append(record_id)
+            uncovered.append(resolution_key)
         if status == "ok" and not entries:
             raise ValueError(f"resolved row {record_id!r} has no measurements")
         for entry in entries if status == "ok" else ():
@@ -406,8 +451,9 @@ def _resolved_records(
 
 def _apply_resolutions(
     records: list[dict[str, Any]],
-    mapping: dict[str, tuple[str, str | None]],
+    mapping: dict[str, Resolution],
     *,
+    mapping_key_field: str,
     mapping_active: bool,
     task: str,
     unit_mapping: dict[tuple[str, str, str], dict[str, Any]],
@@ -421,9 +467,11 @@ def _apply_resolutions(
     records.clear()
     while pending:
         source_record = pending.popleft()
-        record_id = str(source_record.get("cleaned_record_id") or "")
+        resolution_key = _resolution_key(source_record, mapping_key_field)
+        resolution = mapping.pop(resolution_key, None)
+        _validate_resolution_source(source_record, resolution, resolution_key)
         resolved = _source_resolution(
-            source_record, mapping.pop(record_id, None), mapping_active
+            source_record, resolution, mapping_active
         )
         status, origin, _, _ = resolved
         for record in _resolved_records(
@@ -444,12 +492,17 @@ def _apply_resolutions(
 
 
 def _consume_extra_mappings(
-    mapping: dict[str, tuple[str, str | None]],
+    mapping: dict[str, Resolution],
     ignored_record_ids: set[str] | None,
     allow_partial: bool,
     allow_out_of_scope: bool,
 ) -> tuple[int, int]:
-    ignored_mapping_rows = sorted(set(mapping) & set(ignored_record_ids or ()))
+    ignored_ids = set(ignored_record_ids or ())
+    ignored_mapping_rows = sorted(
+        key
+        for key, resolution in mapping.items()
+        if key in ignored_ids or resolution[2] in ignored_ids
+    )
     for record_id in ignored_mapping_rows:
         mapping.pop(record_id)
     ignored_out_of_scope_mapping_rows = (
@@ -521,11 +574,15 @@ def apply_measurement_resolution(
     """Join resolved quantities, explode them, and exact-map their units."""
     mapping_active = bool(mapping_path)
     mapping = load_measurement_resolution(mapping_path) if mapping_active else {}
+    mapping_key_field = (
+        _mapping_key_field(mapping_path) if mapping_path else "cleaned_record_id"
+    )
     unit_mapping = load_exact_unit_mapping(unit_mapping_path) if mapping_active else {}
     mapping_rows = len(mapping)
     uncovered = _preflight_records(
         records,
         mapping=mapping,
+        mapping_key_field=mapping_key_field,
         mapping_active=mapping_active,
         mapping_required=mapping_path is not None,
         task=task,
@@ -542,6 +599,7 @@ def apply_measurement_resolution(
     counts, origin_counts, unit_counts = _apply_resolutions(
         records,
         mapping,
+        mapping_key_field=mapping_key_field,
         mapping_active=mapping_active,
         task=task,
         unit_mapping=unit_mapping,

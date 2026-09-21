@@ -23,22 +23,30 @@ TASKS = {
         "stage1": "ames",
         "stage1_release": "v10",
         "replay": None,
+        "contract": "gold_v1_voter_contract.v1",
+        "corrections": None,
     },
     "dili": {
         "gold": "DILI",
         "stage1": "dili",
         "stage1_release": "v10",
         "replay": "data/starling_data/dili/gold_v4/source_only_benchmark/DILI/scaffold",
+        "contract": "gold_v1_voter_contract.v2",
+        "corrections": (
+            "data/gold_labels/DILI/v1/reviews/voter_membership_v2/"
+            "reviewed_exclusions.json"
+        ),
     },
     "carcinogens": {
         "gold": "Carcinogens",
         "stage1": "carcinogens",
         "stage1_release": "v10_main_universe_v1",
         "replay": "data/starling_data/carcinogens/gold_v4/source_only_benchmark/Carcinogens/scaffold",
+        "contract": "gold_v1_voter_contract.v1",
+        "corrections": None,
     },
 }
 SPLITS = ("train", "valid", "test")
-CONTRACT = "gold_v1_voter_contract.v1"
 
 
 MEMBERSHIP_SCHEMA = pa.schema(
@@ -64,7 +72,6 @@ VOTE_UNITS_SCHEMA = pa.schema(
         ("physical_source_row_uids", pa.list_(pa.string())),
         ("physical_source_record_ids", pa.list_(pa.string())),
     ],
-    metadata={b"schema_version": CONTRACT.encode()},
 )
 INDEX_SCHEMA = pa.schema(
     [
@@ -79,7 +86,6 @@ INDEX_SCHEMA = pa.schema(
             ("physical_source_record_ids", pa.list_(pa.string())),
         ]))),
     ],
-    metadata={b"schema_version": CONTRACT.encode()},
 )
 
 
@@ -127,6 +133,112 @@ def _load_cards(task: str, replay_root: Path | None) -> tuple[list[tuple[str, di
         }
         cards.extend((split, row) for row in details)
     return cards, inputs
+
+
+def _apply_reviewed_corrections(
+    task: str,
+    cards: list[tuple[str, dict[str, Any]]],
+) -> tuple[list[tuple[str, dict[str, Any]]], dict[str, Any] | None]:
+    """Apply hash-pinned, reviewed voter exclusions without changing Gold labels."""
+    relative = TASKS[task]["corrections"]
+    if relative is None:
+        return cards, None
+    path = REPO_ROOT / str(relative)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("status") != "reviewed" or payload.get("task") != task:
+        raise ValueError(f"Invalid reviewed voter corrections: {relative}")
+    for item in payload.get("inputs", []):
+        input_path = REPO_ROOT / str(item["path"])
+        if sha256_file(input_path) != str(item["sha256"]):
+            raise ValueError(f"Stale voter-correction input: {item['path']}")
+
+    decisions = payload.get("decisions", [])
+    by_uid = {str(item["source_row_uid"]): item for item in decisions}
+    if len(by_uid) != len(decisions) or any(
+        item.get("action") != "exclude" for item in decisions
+    ):
+        raise ValueError("Voter corrections must be unique reviewed exclusions")
+
+    applied: list[dict[str, Any]] = []
+    corrected: list[tuple[str, dict[str, Any]]] = []
+    for split, original in cards:
+        card = dict(original)
+        source_votes = {
+            str(vote["source_record_id"]): vote for vote in card["source_votes"]
+        }
+        ids = list(map(str, card["source_record_ids"]))
+        excluded = [source_id for source_id in ids if source_id in by_uid]
+        for source_id in excluded:
+            decision = by_uid[source_id]
+            vote = source_votes[source_id]
+            expected = {
+                "split": split,
+                "benchmark_row_id": str(card["benchmark_row_id"]),
+                "molecule_identity_key": str(card["molecule_identity_key"]),
+                "condition_group": str(card["condition_group"]),
+                "vote_label": int(vote["Y"]),
+                "source_payload_sha256": str(vote["source_payload_sha256"]),
+            }
+            for field, actual in expected.items():
+                if decision.get(f"expected_{field}") != actual:
+                    raise ValueError(
+                        f"Stale voter correction {source_id}: expected_{field}"
+                    )
+
+        if excluded:
+            old_labels = [int(source_votes[source_id]["Y"]) for source_id in ids]
+            ids = [source_id for source_id in ids if source_id not in by_uid]
+            if not ids:
+                raise ValueError(
+                    f"Voter correction emptied Gold card: {card['benchmark_row_id']}"
+                )
+            card["source_record_ids"] = ids
+            card["source_votes"] = [source_votes[source_id] for source_id in ids]
+            new_labels = [int(source_votes[source_id]["Y"]) for source_id in ids]
+            old_mean = sum(old_labels) / len(old_labels)
+            new_mean = sum(new_labels) / len(new_labels)
+            if int(old_mean >= 0.5) != int(card["Y"]) or int(
+                new_mean >= 0.5
+            ) != int(card["Y"]):
+                raise ValueError(
+                    f"Voter correction changes Gold label: {card['benchmark_row_id']}"
+                )
+            for source_id in excluded:
+                decision = by_uid[source_id]
+                observed_impact = {
+                    "expected_gold_label_before": int(old_mean >= 0.5),
+                    "expected_gold_label_after": int(new_mean >= 0.5),
+                    "expected_voter_mean_before": old_mean,
+                    "expected_voter_mean_after": new_mean,
+                }
+                if any(
+                    decision.get(field) != value
+                    for field, value in observed_impact.items()
+                ):
+                    raise ValueError(f"Stale voter-impact review: {source_id}")
+            applied.extend(
+                {
+                    "source_row_uid": source_id,
+                    "benchmark_row_id": str(card["benchmark_row_id"]),
+                    "old_voter_mean": old_mean,
+                    "new_voter_mean": new_mean,
+                    "old_vote_count": len(old_labels),
+                    "new_vote_count": len(new_labels),
+                    "gold_label": int(card["Y"]),
+                }
+                for source_id in excluded
+            )
+        corrected.append((split, card))
+
+    if {item["source_row_uid"] for item in applied} != set(by_uid):
+        missing = sorted(set(by_uid) - {item["source_row_uid"] for item in applied})
+        raise ValueError(f"Reviewed voter corrections were not found: {missing}")
+    return corrected, {
+        "path": str(relative),
+        "sha256": sha256_file(path),
+        "version": str(payload["version"]),
+        "applied": applied,
+    }
 
 
 def _ames_uid_map(membership_root: Path) -> tuple[dict[str, str], dict[str, Any]]:
@@ -245,6 +357,8 @@ def publish_task(
 ) -> dict[str, Any]:
     spec = TASKS[task]
     cards, inputs = _load_cards(task, replay_root)
+    cards, correction_input = _apply_reviewed_corrections(task, cards)
+    contract = str(spec["contract"])
     source_ids = {
         str(source_id)
         for _, card in cards
@@ -284,14 +398,14 @@ def publish_task(
             }
             units.append(unit)
             vote_units.append({
-                "contract_version": CONTRACT, "task": task, **unit,
+                "contract_version": contract, "task": task, **unit,
                 "benchmark_row_id": str(card["benchmark_row_id"]),
                 "molecule_identity_key": str(card["molecule_identity_key"]),
                 "condition_group": str(card["condition_group"]), "split": split,
                 "physical_member_count": 1,
             })
             membership.append({
-                "contract_version": CONTRACT, "task": task,
+                "contract_version": contract, "task": task,
                 "source_row_uid": physical["source_row_uid"],
                 "physical_source_record_id": source_record_id,
                 "source_id": physical["source_id"],
@@ -308,7 +422,7 @@ def publish_task(
         if int(voter_mean >= 0.5) != int(card["Y"]):
             raise ValueError(f"Gold label does not match voters: {task}/{card['benchmark_row_id']}")
         index.append({
-            "contract_version": CONTRACT, "task": task,
+            "contract_version": contract, "task": task,
             "benchmark_row_id": str(card["benchmark_row_id"]),
             "molecule_identity_key": str(card["molecule_identity_key"]),
             "condition_group": str(card["condition_group"]), "split": split,
@@ -319,10 +433,11 @@ def publish_task(
     target = output_root / spec["gold"] / "v1/scaffold"
     target.mkdir(parents=True, exist_ok=True)
     outputs = {}
+    contract_metadata = {b"schema_version": contract.encode()}
     for name, rows, schema in (
         ("voter_membership", membership, MEMBERSHIP_SCHEMA),
-        ("vote_units", vote_units, VOTE_UNITS_SCHEMA),
-        ("gold_label_record_index", index, INDEX_SCHEMA),
+        ("vote_units", vote_units, VOTE_UNITS_SCHEMA.with_metadata(contract_metadata)),
+        ("gold_label_record_index", index, INDEX_SCHEMA.with_metadata(contract_metadata)),
     ):
         path = target / f"{name}.parquet"
         if path.exists():
@@ -335,10 +450,12 @@ def publish_task(
     inputs["stage1"] = {"path": str(stage1_path.relative_to(REPO_ROOT)), "sha256": sha256_file(stage1_path)}
     inputs["replay_commit"] = REPLAY_COMMIT if spec["replay"] else None
     inputs["stage1_omission_raw_fallbacks"] = raw_fallbacks
+    if correction_input is not None:
+        inputs["reviewed_voter_corrections"] = correction_input
     if ames_provenance is not None:
         inputs["ames_uid_membership"] = ames_provenance
     manifest = {
-        "version": CONTRACT, "status": "complete", "task": task,
+        "version": contract, "status": "complete", "task": task,
         "policy": {
             "gold_release": "v1",
             "l1_visibility": "all physical members of published-card vote units",

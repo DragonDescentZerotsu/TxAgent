@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+import pandas as pd
 import pytest
 
 from data.processing.evidence_library.shared.v2.normalization.cleaning import (
@@ -22,6 +23,8 @@ from data.processing.evidence_library.build_release_level_mapping import (
 from data.processing.evidence_library.versions.v10.build_normalized_evidence_library import (
     _apply_gold_v1_voter_protection,
     _load_source_universe,
+    _load_uid_smiles_universe,
+    _overlay_authoritative_smiles,
     _scientific_assets,
     _stage_output_filenames,
     load_task_policy,
@@ -54,7 +57,9 @@ def test_stage1_has_no_level_mapping_output(task):
     )
 
 
-@pytest.mark.parametrize("task", ["bbb_martins", "bioavailability_ma"])
+@pytest.mark.parametrize(
+    "task", ["bbb_martins", "bioavailability_ma", "ames", "dili", "carcinogens"]
+)
 def test_stage1_scientific_assets_have_no_level_mapping_dependency(task):
     policy = load_task_policy(task)
     args = type("Args", (), {"unit_mapping": None})()
@@ -64,15 +69,110 @@ def test_stage1_scientific_assets_have_no_level_mapping_dependency(task):
 @pytest.mark.parametrize(
     "task", ["skin_reaction", "ames", "carcinogens", "dili"]
 )
-def test_source_uid_level_membership_defines_selected_universe_only(task):
+def test_main_uid_smiles_universe_is_separate_from_downstream_levels(task):
     policy = load_task_policy(task)
     assert policy.source_universe_mapping is not None
     assert "gold_labels" in str(policy.source_universe_mapping)
-    assert "level_mappings/v1/level_mapping" in str(policy.source_universe_mapping)
+    expected_version = "v2" if task in {"ames", "carcinogens", "dili"} else "v1"
+    assert f"level_mappings/{expected_version}/level_mapping" in str(
+        policy.source_universe_mapping
+    )
+    if task in {"ames", "carcinogens", "dili"}:
+        assert policy.source_uid_universe_records is not None
+        assert "main_universe_v1" in str(policy.source_uid_universe_records)
+        assert policy.source_uid_universe_manifest is not None
     assert not any(
         "level_mapping" in path
         for path in _stage_output_filenames(policy)["clean"]
     )
+
+
+def test_main_uid_smiles_loader_pins_only_membership_and_structure(tmp_path):
+    task_dir = tmp_path / "fixture"
+    task_dir.mkdir()
+    records = task_dir / "records.parquet"
+    rows = [
+        {
+            "source_row_uid": "sr_00000000000000000000000000000001",
+            "canonical_smiles": "CCO",
+            "canonical_assay_context": "must not be imported",
+        },
+        {
+            "source_row_uid": "sr_00000000000000000000000000000002",
+            "canonical_smiles": "",
+            "canonical_assay_context": "must not be imported either",
+        },
+    ]
+    pq.write_table(pa.Table.from_pylist(rows), records)
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "version": "main_source_universe.v1",
+                "upstream_commit": "fixture-commit",
+                "tasks": {
+                    "fixture": {
+                        "path": "fixture/records.parquet",
+                        "rows": 2,
+                        "sha256": hashlib.sha256(records.read_bytes()).hexdigest(),
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    policy = replace(
+        load_task_policy("carcinogens"),
+        task_id="fixture",
+        source_uid_universe_records=records,
+        source_uid_universe_manifest=manifest_path,
+    )
+    inputs = {}
+
+    uids, structures, receipt = _load_uid_smiles_universe(policy, inputs)
+
+    assert uids == {row["source_row_uid"] for row in rows}
+    assert structures[rows[0]["source_row_uid"]] == "CCO"
+    assert structures[rows[1]["source_row_uid"]] is None
+    assert receipt["authoritative_fields"] == ["source_row_uid", "canonical_smiles"]
+    assert receipt["local_source_fields_authoritative"] is True
+    assert receipt["missing_canonical_smiles"] == 1
+    assert set(inputs) == {
+        "source_uid_universe_manifest",
+        "source_uid_universe_records",
+    }
+
+
+def test_main_smiles_overlay_preserves_local_scientific_values():
+    uid = "sr_00000000000000000000000000000001"
+    frame = pd.DataFrame(
+        [
+            {
+                "source_row_uid": uid,
+                "SMILES": "bad-local-structure",
+                "assay_method": "local assay",
+                "result_value": "local result",
+            }
+        ]
+    )
+    profile = NormalizedSourceProfile(
+        source_id="fixture",
+        source_name="fixture",
+        smiles_field="SMILES",
+        structure_mode="direct",
+    )
+
+    overlaid = _overlay_authoritative_smiles(frame, profile, {uid: "CCO"})
+
+    assert overlaid.to_dict("records") == [
+        {
+            "source_row_uid": uid,
+            "SMILES": "CCO",
+            "assay_method": "local assay",
+            "result_value": "local result",
+        }
+    ]
+    assert frame.loc[0, "SMILES"] == "bad-local-structure"
 
 
 def test_source_universe_loader_validates_and_loads_uid_membership(tmp_path):
@@ -305,11 +405,12 @@ def test_complete_level_mapping_publishes_record_eligibility_sidecar(tmp_path):
         "sr_00000000000000000000000000000002",
     ]
     records = tmp_path / "records.parquet"
-    prior = tmp_path / "prior.parquet"
+    prior = tmp_path / "prior"
     voters = tmp_path / "voters.parquet"
     output = tmp_path / "level_mapping"
     published = tmp_path / "published/level_mapping"
     archived_prior = tmp_path / "archive/records.parquet"
+    prior.mkdir()
     pq.write_table(
         pa.Table.from_pylist(
             [
@@ -352,7 +453,7 @@ def test_complete_level_mapping_publishes_record_eligibility_sidecar(tmp_path):
                 )
             ]
         ),
-        prior,
+        prior / "part-00000.parquet",
     )
     pq.write_table(pa.Table.from_pylist([{"source_row_uid": uids[0]}]), voters)
 
@@ -441,13 +542,15 @@ def test_subset_level_mapping_resolves_stage1_duplicate_lineage_and_reviewed_dro
         {"source_row_uid": retained, "canonical_record_id": "record-1", "level": 2}
     ]
     manifest = json.loads((output / "manifest.json").read_text())
-    assert manifest["version"] == "gold_owned_level_mapping.main_universe_subset_v2"
+    assert manifest["version"] == "gold_owned_level_mapping.complete_stage3_v4"
     assert manifest["stage1_lineage_reconciliation"] == {
-        "policy": "exact_duplicate_to_retained_uid_or_reviewed_source_drop",
+        "policy": (
+            "stage3_or_stage1_exact_duplicate_to_retained_uid_or_reviewed_source_drop"
+        ),
         "missing_gold_mapping_uids": 2,
-        "exact_duplicate_uids_remapped": 1,
+        "stage3_exact_duplicate_uids_remapped": 0,
+        "stage1_exact_duplicate_uids_remapped": 1,
         "unique_retained_uid_targets": 1,
-        "new_retained_uid_targets": 1,
         "reviewed_source_row_drops": 1,
     }
     assert pq.read_table(output / "assay_transfer_record_eligibility.parquet").to_pylist() == [
@@ -461,6 +564,220 @@ def test_subset_level_mapping_resolves_stage1_duplicate_lineage_and_reviewed_dro
             "level": 2,
         }
     ]
+
+
+def test_subset_level_mapping_accepts_reviewed_endpoint_exclusion_audit(tmp_path):
+    retained = "sr_00000000000000000000000000000001"
+    excluded = "sr_00000000000000000000000000000002"
+    records = tmp_path / "records.parquet"
+    prior = tmp_path / "prior.parquet"
+    audit = tmp_path / "audit.parquet"
+    output = tmp_path / "levels"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "source_row_uid": retained,
+                    "canonical_record_id": "record-1",
+                    "pair_bucket_key": '["ames"]',
+                    "measurement_kind": "binary",
+                    "assay_transfer_eligible": False,
+                    "assay_transfer_ineligibility_reason": (
+                        "missing_controlled_categorical_scale"
+                    ),
+                }
+            ]
+        ),
+        records,
+    )
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {"source_row_uid": retained, "level": 1},
+                {"source_row_uid": excluded, "level": 2},
+            ]
+        ),
+        prior,
+    )
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "source_row_uid": excluded,
+                    "field": "record",
+                    "after": "dropped",
+                    "action": "dropped",
+                    "audit_type": "endpoint_excluded",
+                }
+            ]
+        ),
+        audit,
+    )
+
+    build_subset("ames", records, prior, output, audit)
+
+    assert pq.read_table(output / "records.parquet").num_rows == 1
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert manifest["stage1_lineage_reconciliation"][
+        "reviewed_source_row_drops"
+    ] == 1
+
+
+def test_subset_level_mapping_uses_stage3_lineage_and_level_zero(tmp_path):
+    retained = "sr_00000000000000000000000000000001"
+    discarded = "sr_00000000000000000000000000000002"
+    unreviewed = "sr_00000000000000000000000000000003"
+    records = tmp_path / "records.parquet"
+    prior = tmp_path / "prior.parquet"
+    duplicates = tmp_path / "duplicates.parquet"
+    output = tmp_path / "levels"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "source_row_uid": uid,
+                    "canonical_record_id": record_id,
+                    "pair_bucket_key": '["ames"]',
+                    "measurement_kind": "continuous",
+                    "assay_transfer_eligible": True,
+                    "assay_transfer_ineligibility_reason": None,
+                }
+                for uid, record_id in (
+                    (retained, "record-1"),
+                    (unreviewed, "record-3"),
+                )
+            ]
+        ),
+        records,
+    )
+    pq.write_table(
+        pa.Table.from_pylist([{"source_row_uid": discarded, "level": 4}]),
+        prior,
+    )
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "source_row_uid": discarded,
+                    "retained_source_row_uid": retained,
+                }
+            ]
+        ),
+        duplicates,
+    )
+
+    build_subset(
+        "ames",
+        records,
+        prior,
+        output,
+        stage3_duplicate_lineage=duplicates,
+    )
+
+    assert pq.read_table(output / "records.parquet").to_pylist() == [
+        {"source_row_uid": retained, "canonical_record_id": "record-1", "level": 4},
+        {"source_row_uid": unreviewed, "canonical_record_id": "record-3", "level": 0},
+    ]
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert manifest["unmapped_stage3_rows"] == 0
+    assert manifest["level_zero_stage3_rows"] == 1
+    assert manifest["stage1_lineage_reconciliation"][
+        "stage3_exact_duplicate_uids_remapped"
+    ] == 1
+
+
+def test_subset_level_mapping_validates_exact_current_l1_without_rewriting(tmp_path):
+    former_voter = "sr_00000000000000000000000000000001"
+    current_voter = "sr_00000000000000000000000000000002"
+    other = "sr_00000000000000000000000000000003"
+    records = tmp_path / "records.parquet"
+    prior = tmp_path / "prior.parquet"
+    voters = tmp_path / "voters.parquet"
+    output = tmp_path / "levels"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "source_row_uid": uid,
+                    "canonical_record_id": f"record-{index}",
+                    "pair_bucket_key": '["ames"]',
+                    "measurement_kind": "continuous",
+                    "assay_transfer_eligible": True,
+                    "assay_transfer_ineligibility_reason": None,
+                }
+                for index, uid in enumerate(
+                    (former_voter, current_voter, other), start=1
+                )
+            ]
+        ),
+        records,
+    )
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {"source_row_uid": former_voter, "level": 2},
+                {"source_row_uid": current_voter, "level": 1},
+                {"source_row_uid": other, "level": 4},
+            ]
+        ),
+        prior,
+    )
+    pq.write_table(
+        pa.Table.from_pylist([{"source_row_uid": current_voter}]), voters
+    )
+
+    build_subset(
+        "ames",
+        records,
+        prior,
+        output,
+        current_voter_membership=voters,
+    )
+
+    levels = {
+        row["source_row_uid"]: row["level"]
+        for row in pq.read_table(output / "records.parquet").to_pylist()
+    }
+    assert levels == {former_voter: 2, current_voter: 1, other: 4}
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert manifest["current_l1_validation"] == {
+        "policy": "reviewed_levels_preserved; voter_membership_is_validation_only",
+        "physical_voters": 1,
+        "l1_equals_current_physical_voters": True,
+    }
+    assert manifest["validations"]["l1_equals_current_physical_voters"] is True
+
+
+def test_subset_level_mapping_rejects_voter_level_mismatch(tmp_path):
+    voter = "sr_00000000000000000000000000000001"
+    records = tmp_path / "records.parquet"
+    prior = tmp_path / "prior.parquet"
+    voters = tmp_path / "voters.parquet"
+    output = tmp_path / "levels"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [{
+                "source_row_uid": voter,
+                "canonical_record_id": "record-1",
+                "pair_bucket_key": '["ames"]',
+                "measurement_kind": "continuous",
+                "assay_transfer_eligible": True,
+                "assay_transfer_ineligibility_reason": None,
+            }]
+        ),
+        records,
+    )
+    pq.write_table(pa.Table.from_pylist([{"source_row_uid": voter, "level": 2}]), prior)
+    pq.write_table(pa.Table.from_pylist([{"source_row_uid": voter}]), voters)
+
+    with pytest.raises(ValueError, match="differs from current voter membership"):
+        build_subset(
+            "ames",
+            records,
+            prior,
+            output,
+            current_voter_membership=voters,
+        )
 
 
 @pytest.mark.parametrize(

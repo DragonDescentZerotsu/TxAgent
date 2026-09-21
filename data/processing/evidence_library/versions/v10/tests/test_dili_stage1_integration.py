@@ -68,16 +68,18 @@ from data.processing.evidence_library.versions.v10.tasks.dili.starling_schema im
 from data.processing.paths import evidence_library_root, task_id
 
 
-def test_dili_v10_registration_is_stage1_only() -> None:
+def test_dili_v10_registration_includes_the_downstream_builder() -> None:
     assert task_id("DILI") == task_id("dili") == "dili"
     assert evidence_library_root("DILI", "v10").as_posix().endswith(
         "data/evidence_libraries/dili/v10"
     )
     assert TASK_MODULES["dili"] == {
         "build_normalized_starling_evidence_library",
+        "build_starling_downstream_artifacts",
         "mapping_registry",
         "starling_measurement_resolution",
         "starling_policy",
+        "starling_reference_semantics",
     }
     assert "dili" in SUPPORTED_TASKS
     assert import_task_module("dili", "starling_policy").POLICY is starling_policy.POLICY
@@ -491,7 +493,32 @@ def test_dili_generator_fixes_provider_pool_defaults() -> None:
     assert args.max_completion_tokens == measurement_config.MAX_COMPLETION_TOKENS
     assert args.no_token_ledger is True
     assert args.require_complete is True
+    assert measurement_config.ENFORCE_EXACT_UNITS_DURING_EXTRACTION is False
     assert measurement_config.prompt_manifest()["generation_temperature"] == 0.0
+
+    args.base_mapping = measurement_config.DEFAULT_MAPPING_PATH
+    measurement_config.validate_generation_args(args)
+    args.base_mapping = Path("unexpected.parquet")
+    with pytest.raises(SystemExit, match="base_mapping"):
+        measurement_config.validate_generation_args(args)
+
+    direct = generator.parse_args(
+        [
+            "--task",
+            "dili",
+            "--base-url",
+            "http://dgx020:50002/v1",
+            "--provider",
+            "local",
+            "--model",
+            measurement_config.DEEPSEEK_MODEL,
+            "--max-completion-tokens",
+            str(measurement_config.MAX_COMPLETION_TOKENS),
+            "--no-token-ledger",
+            "--require-complete",
+        ]
+    )
+    measurement_config.validate_generation_args(direct)
 
     gold_args = generator.parse_args(dili_generator.fixed_argv(["--gold-replay"]))
     assert gold_args.gold_fixture == measurement_config.DEFAULT_GOLD_FIXTURE
@@ -2629,6 +2656,18 @@ def test_dili_mapping_provenance_accepts_reviewed_provider_contracts(
             "",
         ),
         (
+            "http://dgx017:50001/v1",
+            "dgx017_50001",
+            measurement_config.DEEPSEEK_MODEL,
+            "",
+        ),
+        (
+            "http://dgx020:50002/v1",
+            "dgx020_50002",
+            measurement_config.DEEPSEEK_MODEL,
+            "",
+        ),
+        (
             "https://openrouter.ai/api/v1",
             "OpenInference",
             "deepseek/deepseek-v4-flash-0731",
@@ -2750,6 +2789,28 @@ def test_dili_mapping_provenance_accepts_reviewed_provider_contracts(
         "guarded_rows": 0,
         "reason_counts": {},
     }
+    decisions = tmp_path / "reviewed.jsonl"
+    decisions.write_text(
+        json.dumps(
+            {
+                "cleaned_record_id": "row-1",
+                "source_row_uid": "sr_00000000000000000000000000000001",
+                "reviewer_id": "reviewer",
+                "status": "unsure",
+                "measurements": [],
+            }
+        )
+        + "\n"
+    )
+    manifest["reviewed_source_decisions"] = {
+        "path": str(decisions),
+        "row_count": 1,
+        "sha256": measurement_config.file_sha256(decisions),
+    }
+    manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="mapping_columns"):
+        measurement_config.validate_mapping_provenance(mapping_path)
+    manifest.pop("reviewed_source_decisions")
     manifest["api_base_url"] = "https://openrouter.ai/api/v1"
     manifest_path.write_text(json.dumps(manifest) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="measurement mapping provenance mismatch"):

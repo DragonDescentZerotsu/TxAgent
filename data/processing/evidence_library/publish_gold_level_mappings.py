@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
@@ -59,6 +60,11 @@ COLUMNS = [
     "source_row_uid", "canonical_record_id", "source_group_id", "family_key", "level",
 ]
 PROTECTION_VERSION = "gold_v1_voter_protection.v1"
+CURRENT_VOTER_SUCCESSOR_DEMOTIONS = {
+    "ames": 202,
+    "dili": 7_913,
+    "carcinogens": 2_054,
+}
 
 
 def sha256(path: Path) -> str:
@@ -385,14 +391,135 @@ def publish_dataset_task(task: str, version: str, spec: dict, source_manifest: d
     )
 
 
-def publish_v1_index(source_manifest: dict) -> None:
+def publish_current_voter_successor(task: str, version: str = "v2") -> None:
+    """Publish the user-reviewed former-voter L1-to-L2 decisions."""
+    public = TASKS[task]["public"]
+    task_root = ROOT / "data/gold_labels" / public
+    prior_root = task_root / "level_mappings/v1"
+    prior_manifest_path = prior_root / "manifest.json"
+    prior_manifest = json.loads(prior_manifest_path.read_text(encoding="utf-8"))
+    prior_spec = prior_manifest["outputs"]["level_mapping"]
+    prior_mapping = prior_root / prior_spec["path"]
+    voter_path = task_root / "v1/scaffold/voter_membership.parquet"
+    voters = set(
+        pq.read_table(voter_path, columns=["source_row_uid"])[
+            "source_row_uid"
+        ].to_pylist()
+    )
+    old_l1 = set()
+    for part in sorted(prior_mapping.glob("*.parquet")):
+        table = pq.read_table(part, columns=["source_row_uid", "level"])
+        old_l1.update(
+            str(uid)
+            for uid, level in zip(
+                table["source_row_uid"].to_pylist(),
+                table["level"].to_pylist(),
+                strict=True,
+            )
+            if int(level) == 1
+        )
+    promotions = voters - old_l1
+    demotions = old_l1 - voters
+    expected = CURRENT_VOTER_SUCCESSOR_DEMOTIONS[task]
+    if promotions or len(demotions) != expected:
+        raise ValueError(
+            f"{task} reviewed successor drifted: promotions={len(promotions)}, "
+            f"demotions={len(demotions)} expected_demotions={expected}"
+        )
+
+    output = task_root / "level_mappings" / version
+    if output.exists():
+        raise FileExistsError(f"refusing to replace published level map: {output}")
+    mapping_output = output / "level_mapping"
+    output.mkdir(parents=True)
+    decisions = pd.DataFrame(
+        {
+            "source_row_uid": sorted(demotions),
+            "prior_level": 1,
+            "successor_level": 2,
+            "action": "demote_former_voter",
+            "review_basis": "user_approved_current_voter_exact_l1",
+        }
+    )
+    decisions_path = output / "reviewed_level_decisions.parquet"
+    write_parquet(decisions, decisions_path)
+
+    output_parts = []
+    changed = 0
+    for part in sorted(prior_mapping.glob("*.parquet")):
+        frame = pq.read_table(part).to_pandas()
+        selected = frame.source_row_uid.astype(str).isin(demotions)
+        if selected.any() and not frame.loc[selected, "level"].eq(1).all():
+            raise ValueError(f"{task} reviewed demotion prior level changed")
+        frame.loc[selected, "level"] = 2
+        changed += int(selected.sum())
+        destination = mapping_output / part.name
+        write_parquet(frame, destination)
+        output_parts.append(
+            {"path": part.name, "rows": len(frame), "sha256": sha256(destination)}
+        )
+    if changed != expected:
+        raise ValueError(f"{task} wrote {changed} reviewed demotions, expected {expected}")
+
+    rows_by_level = dict(prior_spec["rows_by_level"])
+    rows_by_level["1"] = int(rows_by_level["1"]) - expected
+    rows_by_level["2"] = int(rows_by_level["2"]) + expected
+    manifest = {
+        "version": "gold_level_mapping_successor.v2",
+        "status": "complete",
+        "task": task,
+        "gold_release": "v1",
+        "level_mapping_version": version,
+        "review": {
+            "basis": "user_approved_current_voter_exact_l1",
+            "decision": "former physical voters move from L1 to L2",
+            "promotions": 0,
+            "demotions": expected,
+        },
+        "inputs": {
+            "prior_level_mapping_manifest": {
+                "path": str(prior_manifest_path.relative_to(ROOT)),
+                "sha256": sha256(prior_manifest_path),
+            },
+            "voter_membership": {
+                "path": str(voter_path.relative_to(ROOT)),
+                "sha256": sha256(voter_path),
+                "physical_voters": len(voters),
+            },
+        },
+        "outputs": {
+            "reviewed_level_decisions": {
+                "path": decisions_path.name,
+                "sha256": sha256(decisions_path),
+                "rows": expected,
+            },
+            "level_mapping": {
+                "kind": "parquet_dataset",
+                "path": mapping_output.name,
+                "rows": int(prior_spec["rows"]),
+                "parts": output_parts,
+                "rows_by_level": rows_by_level,
+            },
+        },
+        "validations": {
+            "only_reviewed_uids_changed": True,
+            "all_changes_are_l1_to_l2": True,
+            "zero_promotions": True,
+            "l1_equals_current_physical_voters": True,
+        },
+    }
+    write_json_atomic(output / "manifest.json", manifest)
+
+
+def publish_index(source_manifest: dict) -> None:
     """Publish the multi-task runtime index without duplicating mapping data."""
     index_path = ROOT / "data/gold_labels/level_mappings.v1.json"
     tasks = {}
     for task, spec in TASKS.items():
-        manifest_path = (
-            ROOT / f"data/gold_labels/{spec['public']}/level_mappings/v1/manifest.json"
-        )
+        mapping_root = ROOT / f"data/gold_labels/{spec['public']}/level_mappings"
+        current = mapping_root / "CURRENT"
+        version = current.read_text(encoding="utf-8").strip() if current.is_file() else "v1"
+        manifest_path = mapping_root / version / "manifest.json"
         manifest = json.loads(manifest_path.read_text())
         output = manifest["outputs"]["level_mapping"]
         mapping_path = manifest_path.parent / output["path"]
@@ -411,15 +538,22 @@ def publish_v1_index(source_manifest: dict) -> None:
     })
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--current-voter-successors", action="store_true")
+    args = parser.parse_args(argv)
     source_manifest = json.loads((SHARDED_ORIGINALS / "manifest.json").read_text())
+    if args.current_voter_successors:
+        for task in CURRENT_VOTER_SUCCESSOR_DEMOTIONS:
+            publish_current_voter_successor(task)
+        return
     for task, spec in TASKS.items():
         for version in spec["versions"]:
             if spec["kind"] == "file":
                 publish_file_task(task, version, spec, source_manifest)
             else:
                 publish_dataset_task(task, version, spec, source_manifest)
-    publish_v1_index(source_manifest)
+    publish_index(source_manifest)
 
 
 if __name__ == "__main__":

@@ -3,9 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 from types import SimpleNamespace
 
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
 
 from data.processing.evidence_library.versions.v10.build_measurement_resolution_mapping import (
+    _mapping_delta,
+    file_sha256,
     materialize,
 )
 
@@ -66,3 +70,35 @@ def test_materialization_refuses_prompt_or_guard_drift(tmp_path: Path) -> None:
 
     assert not mapping_path.exists()
     assert calls == 2
+
+
+def test_incremental_base_reuse_follows_stable_source_uid(tmp_path: Path) -> None:
+    base_path = tmp_path / "base.parquet"
+    pq.write_table(
+        pa.Table.from_pylist(
+            [
+                {
+                    "cleaned_record_id": "old-id",
+                    "source_row_uid": "uid-1",
+                    "source_id": "source",
+                    "status": "unsure",
+                    "measurements_json": "[]",
+                }
+            ]
+        ),
+        base_path,
+    )
+    (base_path.parent / "manifest.json").write_text(
+        '{"measurement_resolution_sha256":"' + file_sha256(base_path) + '"}\n',
+        encoding="utf-8",
+    )
+    candidates = [
+        {"id": "new-id", "source_row_uid": "uid-1", "source_id": "source"},
+        {"id": "delta", "source_row_uid": "uid-2", "source_id": "source"},
+    ]
+
+    base, delta = _mapping_delta(candidates, base_path)
+
+    assert set(base) == {"new-id"}
+    assert base["new-id"]["cleaned_record_id"] == "new-id"
+    assert [row["id"] for row in delta] == ["delta"]

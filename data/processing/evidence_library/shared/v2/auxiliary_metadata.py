@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import pyarrow.parquet as pq
+
 from data.processing.evidence_library.shared.v2.normalization.cleaning import (
     clean_measurement_text,
     clean_scalar,
@@ -311,6 +313,20 @@ class AuxiliaryMetadataAttacher:
     def manifest(self) -> dict[str, Any]:
         return json.loads(json.dumps(self._manifest, sort_keys=True))
 
+    @property
+    def source_columns(self) -> dict[str, tuple[str, ...]]:
+        """Return the frozen lookup inputs declared by each source."""
+        return {
+            source: tuple(
+                dict.fromkeys(
+                    column
+                    for output in self._output_fields_by_source[source]
+                    for column in self._lookups[(source, output)].source_columns
+                )
+            )
+            for source in self.applicable_sources
+        }
+
     def coverage_audit(self, records: list[Mapping[str, Any]]) -> dict[str, Any]:
         source_counts: dict[str, Counter[str]] = defaultdict(Counter)
         output_counts: dict[str, Counter[str]] = defaultdict(Counter)
@@ -347,8 +363,118 @@ class AuxiliaryMetadataAttacher:
         }
 
 
+class SourceUniverseAuxiliaryAttacher:
+    """Apply a frozen map to hash-pinned source-universe values by physical UID."""
+
+    def __init__(
+        self,
+        path: str | Path,
+        *,
+        mapping_version: str,
+        applicable_sources: Sequence[str],
+        null_like: Sequence[str],
+        universe_records_path: str | Path,
+        universe_manifest_path: str | Path,
+        task_id: str,
+        output_fields: Sequence[str] | Mapping[str, Sequence[str]] = OUTPUT_FIELDS,
+        source_aliases: Mapping[str, str] | None = None,
+        attachment_version: str = AUXILIARY_ATTACHMENT_VERSION,
+        non_null_outputs_when_input_present: Mapping[str, Sequence[str]] | None = None,
+    ):
+        self._attacher = AuxiliaryMetadataAttacher(
+            path,
+            mapping_version=mapping_version,
+            applicable_sources=applicable_sources,
+            null_like=null_like,
+            output_fields=output_fields,
+            attachment_version=attachment_version,
+            non_null_outputs_when_input_present=non_null_outputs_when_input_present,
+        )
+        records_path = Path(universe_records_path)
+        manifest_path = Path(universe_manifest_path)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        task = (manifest.get("tasks") or {}).get(task_id) or {}
+        expected_path = manifest_path.parent / str(task.get("path") or "")
+        if manifest.get("version") != "main_source_universe.v1":
+            raise ValueError("source-universe manifest version changed")
+        if records_path.resolve() != expected_path.resolve():
+            raise ValueError("source-universe records path differs from its manifest")
+        if file_sha256(records_path) != task.get("sha256"):
+            raise ValueError("source-universe records hash differs from its manifest")
+
+        aliases = dict(source_aliases or {})
+        fields = tuple(
+            dict.fromkeys(
+                column
+                for columns in self._attacher.source_columns.values()
+                for column in columns
+            )
+        )
+        table = pq.read_table(
+            records_path,
+            columns=["source_row_uid", "source_id", *fields],
+        )
+        if table.num_rows != int(task.get("rows") or -1):
+            raise ValueError("source-universe row count differs from its manifest")
+        self._fields = fields
+        self._rows: dict[str, tuple[str, tuple[Any, ...]]] = {}
+        applicable = set(applicable_sources)
+        for row in table.to_pylist():
+            uid = str(row.get("source_row_uid") or "")
+            source = aliases.get(
+                str(row.get("source_id") or ""), str(row.get("source_id") or "")
+            )
+            if not uid or uid in self._rows:
+                raise ValueError("source universe contains a missing or duplicate UID")
+            if source not in applicable:
+                raise ValueError(f"source universe contains unknown source {source!r}")
+            self._rows[uid] = (source, tuple(row.get(field) for field in fields))
+        self._projection_manifest = {
+            "version": "source_universe_auxiliary_projection.v1",
+            "task_id": task_id,
+            "manifest_path": str(manifest_path),
+            "manifest_sha256": file_sha256(manifest_path),
+            "records_path": str(records_path),
+            "records_sha256": str(task["sha256"]),
+            "records": len(self._rows),
+            "source_aliases": dict(sorted(aliases.items())),
+            "projected_fields": list(fields),
+            "join_key": "source_row_uid",
+        }
+
+    def _values(self, record: Mapping[str, Any]) -> tuple[Any, ...]:
+        uid = str(record.get("source_row_uid") or "")
+        if uid not in self._rows:
+            raise ValueError(f"source-universe projection lacks UID {uid or '<missing>'}")
+        source, values = self._rows[uid]
+        if source != str(record.get("source_id") or ""):
+            raise ValueError(f"source-universe source mismatch for UID {uid}")
+        return values
+
+    def _project(self, record: Mapping[str, Any]) -> dict[str, Any]:
+        values = self._values(record)
+        return {**record, **dict(zip(self._fields, values, strict=True))}
+
+    def attach(self, record: Mapping[str, Any]) -> dict[str, Any]:
+        return self._attacher.attach(self._project(record))
+
+    def manifest(self) -> dict[str, Any]:
+        return {
+            **self._attacher.manifest(),
+            "source_universe_projection": dict(self._projection_manifest),
+        }
+
+    def coverage_audit(self, records: list[Mapping[str, Any]]) -> dict[str, Any]:
+        for record in records:
+            self._values(record)
+        audit = self._attacher.coverage_audit(records)
+        audit["validations"]["all_records_join_source_universe"] = True
+        return audit
+
+
 __all__ = [
     "AUXILIARY_ATTACHMENT_VERSION",
     "OUTPUT_FIELDS",
     "AuxiliaryMetadataAttacher",
+    "SourceUniverseAuxiliaryAttacher",
 ]

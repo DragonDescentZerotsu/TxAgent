@@ -131,6 +131,16 @@ def _resolution(record_id, status, measurements):
     }
 
 
+def _uid_resolution(record_id, uid, source_id="source-a"):
+    return {
+        **_resolution(
+            record_id, "ok", [{"measurement": "1", "unit": "%"}]
+        ),
+        "source_row_uid": uid,
+        "source_id": source_id,
+    }
+
+
 def test_a_single_resolved_quantity_becomes_the_stage2_input(tmp_path) -> None:
     records = [_row("rec-1", "2.72 ± 0.03 × 10^-6")]
     audit = apply_measurement_resolution(
@@ -152,6 +162,50 @@ def test_a_single_resolved_quantity_becomes_the_stage2_input(tmp_path) -> None:
     assert records[0]["pre_resolution_unit_text"] == "raw unit"
     assert records[0]["measurement_resolution_status"] == "ok"
     assert audit["substituted_rows"] == 1
+
+
+def test_v2_joins_a_rebuilt_row_by_stable_source_uid(tmp_path) -> None:
+    record = _row("rebuilt-id", "1%")
+    record.update({"source_row_uid": "uid-1", "source_id": "source-a"})
+    records = [record]
+    apply_measurement_resolution_v2(
+        records,
+        mapping_path=_mapping(
+            tmp_path, [_uid_resolution("historical-id", "uid-1")]
+        ),
+        task="test_task",
+        unit_mapping_path=_units(
+            tmp_path, [_unit("permeability", "%", "%")]
+        ),
+        expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+    )
+    assert records[0]["cleaned_record_id"] == "rebuilt-id"
+    assert records[0]["resolved_scalar_value"] == 1
+
+
+def test_v2_uid_mapping_rejects_duplicate_uids_and_source_drift(tmp_path) -> None:
+    duplicate = _uid_resolution("historical-id", "uid-1")
+    with pytest.raises(ValueError, match="duplicate measurement-resolution source_row_uid"):
+        apply_measurement_resolution_v2(
+            [],
+            mapping_path=_mapping(tmp_path, [duplicate, duplicate]),
+            task="test_task",
+            unit_mapping_path=_units(tmp_path, []),
+            expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+        )
+
+    record = _row("rebuilt-id", "1%")
+    record.update({"source_row_uid": "uid-1", "source_id": "source-b"})
+    with pytest.raises(ValueError, match="source mismatch"):
+        apply_measurement_resolution_v2(
+            [record],
+            mapping_path=_mapping(tmp_path, [duplicate]),
+            task="test_task",
+            unit_mapping_path=_units(
+                tmp_path, [_unit("permeability", "%", "%")]
+            ),
+            expected_routing_version=MEASUREMENT_ROUTING_VERSION,
+        )
 
 
 def test_source_exact_route_ignores_a_stale_llm_resolution(tmp_path) -> None:

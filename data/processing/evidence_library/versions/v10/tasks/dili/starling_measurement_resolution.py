@@ -34,7 +34,7 @@ TASK_ROOT = Path(__file__).resolve().parent
 TEMPLATE_PATH = TASK_ROOT / "prompts/measurement_resolution_v11.jinja"
 
 PROMPT_VERSION = "dili_measurement_resolution_prompt.v11"
-MAPPING_VERSION = "dili_measurement_resolution.v4"
+MAPPING_VERSION = "dili_measurement_resolution.v5"
 MAX_MEASUREMENTS_PER_ROW = 1
 BATCH_SIZE = 20
 ALLOW_REBATCH_UNATTEMPTED = True
@@ -71,16 +71,13 @@ OPENAI_CREDENTIAL_ENVS = frozenset(
 DEFAULT_CLEANED_RECORDS = evidence_library_root("dili", "v10") / "01_cleaned/records.parquet"
 DEFAULT_CANONICAL_RECORDS = DEFAULT_CLEANED_RECORDS
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
-DEFAULT_MAPPING_PATH = (
-    evidence_library_root("dili", "v10")
-    / "measurement_resolution_v4/measurement_resolution.parquet"
-)
+DEFAULT_MAPPING_PATH = mapping_path("measurement_resolution")
 DEFAULT_BASE_MAPPING_PATH = None
 EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
-ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = False
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.1.jsonl"
+    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.3.jsonl"
 )
 
 SOURCE_MEASUREMENT_FIELDS = {
@@ -2345,7 +2342,6 @@ def validate_generation_args(args: Any) -> None:
         "task": "dili",
         "max_completion_tokens": MAX_COMPLETION_TOKENS,
         "provider_only": None,
-        "base_mapping": None,
     }
     mismatches = {
         name: {"expected": value, "found": getattr(args, name)}
@@ -2353,6 +2349,7 @@ def validate_generation_args(args: Any) -> None:
         if getattr(args, name) != value
     }
     paid = args.model == OPENAI_MODEL
+    direct_local = args.provider == "local" and bool(args.base_url)
     if paid:
         expected = {
             "base_url": OPENAI_BASE_URL,
@@ -2368,6 +2365,15 @@ def validate_generation_args(args: Any) -> None:
                 "expected": sorted(OPENAI_CREDENTIAL_ENVS),
                 "found": args.api_key_env,
             }
+    elif direct_local:
+        expected = {
+            "model": DEEPSEEK_MODEL,
+            "api_key_env": None,
+            "parallelism": None,
+            "provider_pool_config": None,
+            "no_token_ledger": True,
+            "require_complete": True,
+        }
     else:
         expected = {
             "model": DEEPSEEK_MODEL,
@@ -2395,6 +2401,13 @@ def validate_generation_args(args: Any) -> None:
     )
     if args.two_key_baidu_run:
         mismatches["two_key_baidu_run"] = {"expected": False, "found": True}
+    if args.base_mapping is not None and (
+        Path(args.base_mapping).resolve() != DEFAULT_MAPPING_PATH.resolve()
+    ):
+        mismatches["base_mapping"] = {
+            "expected": str(DEFAULT_MAPPING_PATH),
+            "found": str(args.base_mapping),
+        }
     if (
         args.gold_replay
         and Path(args.gold_fixture).resolve() != DEFAULT_GOLD_FIXTURE.resolve()

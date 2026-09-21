@@ -35,13 +35,13 @@ def digest(path: Path) -> str:
 def test_current_mapping_exactly_covers_stage3_and_gold_v1_voters(task):
     expected = EXPECTED[task]
     manifest_path, mapping_path, receipt = evidence_level_mapping_release(
-        task, "v10_main_universe_v2"
+        task, "v10_main_universe_v3"
     )
     manifest = json.loads(manifest_path.read_text())
 
     assert mapping_path == (
         ROOT
-        / f"evidence_libraries/{task}/v10_main_universe_v2/level_mapping/records.parquet"
+        / f"evidence_libraries/{task}/v10_main_universe_v3/level_mapping/records.parquet"
     ).resolve()
     assert digest(mapping_path) == receipt["sha256"] == expected["sha256"]
     assert pq.read_metadata(mapping_path).num_rows == receipt["rows"] == expected["rows"]
@@ -71,11 +71,11 @@ def test_runtime_index_points_to_release_owned_mappings_and_manifests():
     index_path = ROOT / "evidence_libraries/level_mappings.v1.json"
     index = json.loads(index_path.read_text())
     assert index["status"] == "complete"
-    assert set(index["tasks"]) == set(EXPECTED)
+    assert set(index["tasks"]) >= set(EXPECTED)
 
     for task, indexed in index["tasks"].items():
         manifest_path, mapping_path, receipt = evidence_level_mapping_release(
-            task, "v10_main_universe_v2"
+            task, indexed["release"]
         )
         assert mapping_path == (index_path.parent / indexed["path"]).resolve()
         assert manifest_path == (index_path.parent / indexed["manifest"]).resolve()

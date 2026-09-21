@@ -12,6 +12,9 @@ from data.processing.evidence_library.shared.v2.canonicalization_v7 import (
 from data.processing.evidence_library.shared.v2.normalization.measurement_resolution import (
     EXACT_UNIT_MAPPING_VERSION,
 )
+from data.processing.evidence_library.shared.v2.reference_semantics import (
+    REFERENCE_SEMANTICS_VERSION,
+)
 from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
 )
@@ -25,6 +28,9 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_endpoint_
 from data.processing.evidence_library.versions.v10.tasks.ames.starling_measurement_resolution import (
     MAPPING_VERSION as MEASUREMENT_RESOLUTION_VERSION,
 )
+from data.processing.evidence_library.versions.v10.tasks.ames.starling_reference_semantics import (
+    REFERENCE_SEMANTICS_CONFIG,
+)
 
 TASK_ID = "ames"
 ENDPOINT_MAPPING_VERSION = ENDPOINT_NORMALIZATION_VERSION
@@ -32,6 +38,43 @@ MEASUREMENT_ATOMIC_GROUP = "canonical_measurement_unit_pair"
 ENDPOINT_PRODUCER_FIELD = "canonical_endpoint_producer_id"
 PAIR_PRODUCER_FIELD = "canonical_pair_producer_id"
 SOURCE_PAIR_VERSION = "ames_source_scalar_pair.v1"
+PAIR_CONTEXT_MAPPING_VERSION = "ames_pair_context_mapping.v1"
+
+PAIR_CONTEXT_INPUTS = {
+    "mutagenicity_outcomes": {
+        "canonical_assay_context": (
+            "endpoint_name",
+            "test_system",
+            "metabolic_activation",
+        ),
+    },
+    "fixed_mutation": {
+        "canonical_assay_context": (
+            "endpoint_name",
+            "study_context",
+            "biological_test_system",
+            "metabolic_activation_status",
+        ),
+    },
+    "premutagenic_damage": {
+        "canonical_assay_context": (
+            "endpoint_name",
+            "assay_version",
+            "endpoint_subtype",
+            "biological_system",
+            "metabolic_activation_presence",
+        ),
+    },
+    "mutagenicity_mechanism": {
+        "canonical_assay_context": (
+            "endpoint_name",
+            "mechanism_category",
+            "assay_method_and_endpoint",
+            "biological_system",
+            "metabolic_activation_system",
+        ),
+    },
+}
 
 SOURCE_COLUMNS = {
     "mutagenicity_outcomes": (
@@ -239,6 +282,28 @@ def _canonical_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
             for field in producer.input_fields
         )
     )
+    pair_context = tuple(
+        CanonicalDimensionSpec(
+            output_field,
+            output_field.removeprefix("canonical_"),
+            input_fields,
+            "frozen_mapping",
+            PAIR_CONTEXT_MAPPING_VERSION,
+            missing_policy="explicit_unknown",
+        )
+        for output_field, input_fields in PAIR_CONTEXT_INPUTS[source_id].items()
+    )
+    reference_inputs = tuple(
+        dict.fromkeys(
+            (
+                "endpoint_name",
+                "measurement_text",
+                "unit_text",
+                "support_text",
+                *REFERENCE_SEMANTICS_CONFIG.source_specs[source_id].extra_fields,
+            )
+        )
+    )
     return (
         CanonicalDimensionSpec(
             "canonical_endpoint_name",
@@ -249,6 +314,14 @@ def _canonical_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
             producer_id=SOURCE_ENDPOINT_PRODUCER_IDS[source_id],
             producer_id_field=ENDPOINT_PRODUCER_FIELD,
             legacy_value_field="canonical_endpoint",
+        ),
+        CanonicalDimensionSpec(
+            "canonical_endpoint_concept",
+            "endpoint_concept",
+            ("endpoint_name",),
+            "deterministic_rule",
+            ENDPOINT_MAPPING_VERSION,
+            legacy_value_field="canonical_endpoint_concept",
         ),
         _pair_dimension(
             source_id,
@@ -273,6 +346,29 @@ def _canonical_dimensions(source_id: str) -> tuple[CanonicalDimensionSpec, ...]:
             CATEGORICAL_RESPONSE_VERSION,
             legacy_value_field="categorical_encoder_id",
         ),
+        CanonicalDimensionSpec(
+            "canonical_reference_scope",
+            "measurement_reference_scope",
+            reference_inputs,
+            "frozen_mapping",
+            REFERENCE_SEMANTICS_VERSION,
+            missing_policy="explicit_unknown",
+            atomic_group="canonical_reference_semantics_pair",
+            classification_evidence=True,
+            legacy_value_field="canonical_reference_scope",
+        ),
+        CanonicalDimensionSpec(
+            "canonical_reference_basis",
+            "measurement_reference_basis",
+            reference_inputs,
+            "frozen_mapping",
+            REFERENCE_SEMANTICS_VERSION,
+            missing_policy="explicit_unknown",
+            atomic_group="canonical_reference_semantics_pair",
+            classification_evidence=True,
+            legacy_value_field="canonical_reference_basis",
+        ),
+        *pair_context,
     )
 
 
@@ -297,6 +393,7 @@ PAIR_BUCKETS = {
             "canonical_endpoint_name",
             "canonical_unit_text",
             "canonical_measurement_scale_id",
+            *PAIR_CONTEXT_INPUTS[source_id],
         ),
     )
     for source_id in SOURCES
@@ -316,6 +413,8 @@ __all__ = [
     "EXTRACTION_CONTEXT_FIELDS",
     "MEASUREMENT_ATOMIC_GROUP",
     "PAIR_BUCKETS",
+    "PAIR_CONTEXT_INPUTS",
+    "PAIR_CONTEXT_MAPPING_VERSION",
     "PAIR_PRODUCER_FIELD",
     "RECORD_CONTRACT",
     "ROLE_FIELDS",

@@ -61,6 +61,22 @@ CORE_FIELDS = (
     "support_text",
 )
 
+RETRYABLE_ASSIGNMENT_METHODS = frozenset(
+    {"api_failure", "invalid_response", "worker_failure"}
+)
+
+
+def retryable_assignment_ids(cache: "SubmissionCache") -> set[str]:
+    failed = {
+        record_id
+        for record_id, row in cache.assignments.items()
+        if str(row.get("assignment_method") or "") in RETRYABLE_ASSIGNMENT_METHODS
+        or str(row.get("assignment_method") or "").startswith(
+            "invalid_row_response:"
+        )
+    }
+    return failed | (cache.attempted - set(cache.assignments))
+
 
 @dataclass(frozen=True)
 class RequestBatch:
@@ -254,6 +270,9 @@ class SubmissionCache:
                         "inference_credential_env": str(
                             event.get("credential_env") or ""
                         ),
+                        "inference_reasoning_effort": str(
+                            event.get("reasoning_effort") or REASONING_EFFORT
+                        ),
                     }
             if event.get("status") == "terminal":
                 for row in event.get("assignments") or ():
@@ -289,6 +308,7 @@ class SubmissionCache:
         credential_env: str = "",
         model: str = "",
         base_url: str = "",
+        reasoning_effort: str = REASONING_EFFORT,
     ) -> None:
         if set(batch.row_ids) & self.attempted:
             raise ValueError("a reference-semantics row would be submitted twice")
@@ -300,6 +320,7 @@ class SubmissionCache:
             "credential_env": credential_env,
             "model": model,
             "base_url": base_url,
+            "reasoning_effort": reasoning_effort,
             "source_id": batch.source_id,
             "row_ids": list(batch.row_ids),
         }
@@ -312,6 +333,7 @@ class SubmissionCache:
                     "inference_model": model,
                     "inference_base_url": base_url,
                     "inference_credential_env": credential_env,
+                    "inference_reasoning_effort": reasoning_effort,
                 }
 
     def terminal(
@@ -369,6 +391,70 @@ def _load_llm(
         max_connections=workers,
         timeout_s=900,
     )
+
+
+def _load_provider_pool(args: argparse.Namespace) -> tuple[Any, Any, dict[str, Any]]:
+    from predict.api_client.pool import (
+        build_provider_pool,
+        load_provider_pool_config,
+        select_healthy_providers,
+    )
+
+    path = Path(args.provider_pool_config)
+    configured = load_provider_pool_config(path)
+    if {provider.model for provider in configured.providers} != {args.model}:
+        raise ValueError("reference provider pool must use the requested exact model")
+    selection = select_healthy_providers(configured, args.parallelism)
+    pool = build_provider_pool(
+        selection.config,
+        env_file=Path(args.env_file) if args.env_file else None,
+        timeout_s=900,
+        max_tokens=args.max_completion_tokens,
+        temperature=None,
+        tool_service_url="",
+        enable_group_tools=False,
+        max_tool_rounds=0,
+        reasoning_effort=args.reasoning_effort,
+        enable_thinking=False,
+        transport_max_retries=0,
+        response_format={"type": "json_object"},
+    )
+
+    def call(prompt: dict[str, str], *, model: str, max_tokens: int, **_: Any) -> dict[str, Any]:
+        response = pool.chat_json(
+            [
+                {"role": "system", "content": prompt["system"]},
+                {"role": "user", "content": prompt["user"]},
+            ],
+            max_tokens=max_tokens,
+        )
+        execution = dict(response.get("execution_provider") or {})
+        served_model = str(response.get("model") or execution.get("served_model") or "")
+        if served_model != model:
+            raise ValueError(f"requested model {model!r}, received {served_model!r}")
+        content = response.get("raw_content")
+        if not isinstance(content, str):
+            content = json.dumps(response.get("content") or {}, ensure_ascii=False)
+        return {
+            "content": content,
+            "usage": response.get("usage"),
+            "api_metadata": {
+                "model": served_model,
+                "base_url": str(execution.get("base_url") or ""),
+                "provider": str(execution.get("provider") or ""),
+            },
+        }
+
+    receipt = {
+        "version": "reference_semantics_provider_pool_receipt.v1",
+        "config_path": str(path),
+        "config_sha256": file_sha256(path),
+        "model": args.model,
+        "reasoning_effort": args.reasoning_effort,
+        "batch_size": args.batch_size,
+        **selection.public_dict(),
+    }
+    return call, pool, receipt
 
 
 def _json_value(value: Any) -> Any:
@@ -471,6 +557,7 @@ def _batches(
     attempted: set[str],
     model: str = MODEL,
     base_url: str = DEFAULT_BASE_URL,
+    reasoning_effort: str = REASONING_EFFORT,
     max_completion_tokens: int = 8_192,
 ) -> list[RequestBatch]:
     pending = [
@@ -521,6 +608,7 @@ def _batches(
                         "prompt_version": config.prompt_version,
                         "model": model,
                         "base_url": base_url,
+                        "reasoning_effort": reasoning_effort,
                         "max_completion_tokens": max_completion_tokens,
                         "rows": [row["id"] for row in chunk],
                     },
@@ -629,10 +717,36 @@ def _validate_assignment(
             field = quote_fields[0]
             normalized_quote_field = True
     basis: str | None = None
+    normalized_scope_from_basis = False
     if config.output_basis:
         basis = str(item.get("reference_basis") or "")
         if basis not in REFERENCE_BASES:
             return None, "unsupported_basis"
+        if scope == REFERENCE_SCOPE_ENDPOINT_RATIO:
+            if basis in STANDARD_CONTROL_BASES:
+                scope = REFERENCE_SCOPE_STANDARD_CONTROL
+                normalized_scope_from_basis = True
+            elif basis in {
+                "baseline",
+                "wild_type",
+                "comparator_drug",
+                "comparator_formulation",
+                "comparator_treatment",
+            }:
+                scope = "comparator_relative"
+                normalized_scope_from_basis = True
+            elif basis == "unknown":
+                scope = REFERENCE_SCOPE_UNKNOWN
+                normalized_scope_from_basis = True
+        elif scope == REFERENCE_SCOPE_STANDARD_CONTROL and basis in {
+            "baseline",
+            "wild_type",
+            "comparator_drug",
+            "comparator_formulation",
+            "comparator_treatment",
+        }:
+            scope = "comparator_relative"
+            normalized_scope_from_basis = True
         if scope == REFERENCE_SCOPE_ABSOLUTE and basis != "none":
             return None, "absolute_basis_mismatch"
         if scope == REFERENCE_SCOPE_ENDPOINT_RATIO and basis not in ENDPOINT_RATIO_BASES:
@@ -651,6 +765,8 @@ def _validate_assignment(
         method_parts.append("normalized_evidence_field")
     if normalized_quote_field:
         method_parts.append("rerouted_exact_evidence_quote")
+    if normalized_scope_from_basis:
+        method_parts.append("normalized_scope_from_basis")
     output = {
         "cleaned_record_id": str(row["id"]),
         "source_id": str(row["source_id"]),
@@ -673,6 +789,7 @@ def _query_batch(
     model: str = MODEL,
     base_url: str = DEFAULT_BASE_URL,
     credential_env: str = "OPENAI_API_KEY",
+    reasoning_effort: str = REASONING_EFFORT,
     llm: Any | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, int] | None, str]:
     user = json.dumps({"rows": batch.api_rows}, ensure_ascii=False, sort_keys=True)
@@ -680,6 +797,7 @@ def _query_batch(
         "inference_model": model,
         "inference_base_url": base_url,
         "inference_credential_env": credential_env,
+        "inference_reasoning_effort": reasoning_effort,
     }
     try:
         if llm is not None:
@@ -689,9 +807,17 @@ def _query_batch(
                 max_tokens=batch.max_completion_tokens,
                 temperature=1.0,
                 verbose=False,
-                reasoning_effort=REASONING_EFFORT,
+                reasoning_effort=reasoning_effort,
                 max_retries=1,
             )
+            metadata = result.get("api_metadata") or {}
+            provenance = {
+                "inference_model": str(metadata.get("model") or model),
+                "inference_base_url": str(metadata.get("base_url") or base_url),
+                "inference_credential_env": credential_env,
+                "inference_reasoning_effort": reasoning_effort,
+                "inference_provider": str(metadata.get("provider") or ""),
+            }
         else:
             if client is None:
                 raise ValueError("an OpenAI-compatible client is required")
@@ -702,7 +828,7 @@ def _query_batch(
                     {"role": "user", "content": user},
                 ],
                 "max_completion_tokens": batch.max_completion_tokens,
-                "reasoning_effort": REASONING_EFFORT,
+                "reasoning_effort": reasoning_effort,
             }
             if "openrouter.ai" in base_url:
                 parameters["extra_body"] = {
@@ -820,7 +946,7 @@ def _reconcile_cached_assignment(
     config: ReferenceSemanticsConfig,
 ) -> dict[str, Any]:
     method = str(cached.get("assignment_method") or "")
-    if method == "invalid_row_response:comparator_basis_mismatch":
+    if method.startswith("invalid_row_response:"):
         rejected = json.loads(str(cached["rejected_response_json"]))
         recovered, _ = _validate_assignment(
             rejected,
@@ -838,15 +964,6 @@ def _reconcile_cached_assignment(
                     if key.startswith("inference_")
                 },
             }
-    if "normalized_scope_from_basis" in method:
-        return {
-            **_unknown_assignment(
-                candidate, config=config, method="discarded_semantic_override"
-            ),
-            "prior_assignment_json": json.dumps(
-                cached, ensure_ascii=False, sort_keys=True, default=str
-            ),
-        }
     gate = _generation_no_call_assignment(candidate)
     if gate is None or str(cached.get("reference_scope") or "") == REFERENCE_SCOPE_UNKNOWN:
         return dict(cached)
@@ -888,6 +1005,7 @@ def _write_progress(
     completed: bool,
     model: str = MODEL,
     base_url: str = DEFAULT_BASE_URL,
+    reasoning_effort: str = REASONING_EFFORT,
 ) -> None:
     payload = {
         "generation_version": GENERATION_VERSION,
@@ -895,7 +1013,7 @@ def _write_progress(
         "prompt_version": config.prompt_version,
         "model": model,
         "base_url": base_url,
-        "reasoning_effort": REASONING_EFFORT,
+        "reasoning_effort": reasoning_effort,
         "batch_size": config.batch_size,
         "candidate_rows": len(candidates),
         "attempted_rows": len(set(str(row["id"]) for row in candidates) & cache.attempted),
@@ -963,6 +1081,20 @@ def _materialize_mapping(
             assignment = _assignment_row(candidate, no_call)
         rows.append(assignment)
     rows.sort(key=lambda row: str(row["cleaned_record_id"]))
+    failures = [
+        row
+        for row in rows
+        if str(row.get("assignment_method") or "") in RETRYABLE_ASSIGNMENT_METHODS
+        or str(row.get("assignment_method") or "").startswith(
+            "invalid_row_response:"
+        )
+        or str(row.get("assignment_method") or "")
+        == "ambiguous_process_termination"
+    ]
+    if failures:
+        raise ValueError(
+            f"reference-semantics mapping has {len(failures)} retryable failure rows"
+        )
     config.mapping_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = config.mapping_path.with_suffix(config.mapping_path.suffix + ".tmp")
     pd.DataFrame(rows).to_parquet(temporary, index=False)
@@ -978,6 +1110,11 @@ def _materialize_mapping(
         str(row["inference_base_url"])
         for row in rows
         if row.get("inference_base_url")
+    )
+    reasoning_counts = Counter(
+        str(row["inference_reasoning_effort"])
+        for row in rows
+        if row.get("inference_reasoning_effort")
     )
     manifest = {
         "generation_version": GENERATION_VERSION,
@@ -1004,6 +1141,7 @@ def _materialize_mapping(
         ),
         "inference_model_counts": dict(sorted(model_counts.items())),
         "inference_endpoint_counts": dict(sorted(endpoint_counts.items())),
+        "inference_reasoning_effort_counts": dict(sorted(reasoning_counts.items())),
         "scope_counts": dict(sorted(scope_counts.items())),
         "assignment_method_counts": dict(sorted(method_counts.items())),
         "safe_gate_conflicts": sum(
@@ -1044,6 +1182,11 @@ def run(args: argparse.Namespace) -> int:
     by_source = Counter(str(row["source_id"]) for row in candidates)
     cache_path = Path(args.cache_dir) / config.task_id / "requests.jsonl"
     cache = SubmissionCache(cache_path)
+    if args.retry_terminal_failures:
+        cache.allow_retry(retryable_assignment_ids(cache))
+    request_base_url = args.base_url
+    if args.provider_pool_config:
+        request_base_url = f"provider_pool:{file_sha256(Path(args.provider_pool_config))}"
     unattempted_no_call = Counter(
         assignment.method
         for row in candidates
@@ -1056,7 +1199,8 @@ def run(args: argparse.Namespace) -> int:
         prompt="",
         attempted=cache.attempted,
         model=args.model,
-        base_url=args.base_url,
+        base_url=request_base_url,
+        reasoning_effort=args.reasoning_effort,
         max_completion_tokens=args.max_completion_tokens,
     )
     print(
@@ -1081,6 +1225,7 @@ def run(args: argparse.Namespace) -> int:
                 "batch_size": config.batch_size,
                 "prompt_fields": list(config.prompt_fields),
                 "labels_only_output": config.labels_only_output,
+                "reasoning_effort": args.reasoning_effort,
             },
             indent=2,
             sort_keys=True,
@@ -1102,22 +1247,39 @@ def run(args: argparse.Namespace) -> int:
     limited = args.max_requests is not None and len(batches) > args.max_requests
     if args.max_requests is not None:
         batches = batches[: args.max_requests]
-    client, selected_credential_env = _load_llm(
-        api_key_env=args.api_key_env,
-        env_file=Path(args.env_file) if args.env_file else None,
-        base_url=args.base_url,
-        workers=args.workers,
-        provider=args.provider,
-    )
+    llm = None
+    pool = None
+    if args.provider_pool_config:
+        llm, pool, pool_receipt = _load_provider_pool(args)
+        workers = int(pool_receipt["effective_parallelism"])
+        client = None
+        selected_credential_env = "provider_pool"
+        receipt_path = config.mapping_path.with_suffix(".provider_pool_receipt.json")
+        receipt_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = receipt_path.with_suffix(receipt_path.suffix + ".tmp")
+        temporary.write_text(
+            json.dumps(pool_receipt, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(temporary, receipt_path)
+    else:
+        client, selected_credential_env = _load_llm(
+            api_key_env=args.api_key_env,
+            env_file=Path(args.env_file) if args.env_file else None,
+            base_url=args.base_url,
+            workers=args.workers,
+            provider=args.provider,
+        )
+        workers = args.workers
     pending = iter(batches)
     in_flight: dict[Any, RequestBatch] = {}
     exhausted = False
     next_batch: RequestBatch | None = None
     pending_finished = False
     progress_path = config.mapping_path.with_suffix(".generation_progress.json")
-    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+    with ThreadPoolExecutor(max_workers=workers) as executor:
         while True:
-            while len(in_flight) < args.workers and not pending_finished:
+            while len(in_flight) < workers and not pending_finished:
                 if next_batch is None:
                     try:
                         next_batch = next(pending)
@@ -1133,16 +1295,19 @@ def run(args: argparse.Namespace) -> int:
                     epoch=ledger.epoch,
                     credential_env=selected_credential_env,
                     model=args.model,
-                    base_url=args.base_url,
+                    base_url=request_base_url,
+                    reasoning_effort=args.reasoning_effort,
                 )
                 future = executor.submit(
                     _query_batch,
                     next_batch,
                     config=config,
                     client=client,
+                    llm=llm,
                     model=args.model,
-                    base_url=args.base_url,
+                    base_url=request_base_url,
                     credential_env=selected_credential_env,
+                    reasoning_effort=args.reasoning_effort,
                 )
                 in_flight[future] = next_batch
                 next_batch = None
@@ -1183,7 +1348,8 @@ def run(args: argparse.Namespace) -> int:
                 ledger=ledger,
                 completed=False,
                 model=args.model,
-                base_url=args.base_url,
+                base_url=request_base_url,
+                reasoning_effort=args.reasoning_effort,
             )
     if exhausted:
         ledger.mark_exhausted()
@@ -1195,7 +1361,8 @@ def run(args: argparse.Namespace) -> int:
             ledger=ledger,
             completed=False,
             model=args.model,
-            base_url=args.base_url,
+            base_url=request_base_url,
+            reasoning_effort=args.reasoning_effort,
         )
         return BUDGET_EXHAUSTED_EXIT_CODE
     if limited:
@@ -1207,7 +1374,8 @@ def run(args: argparse.Namespace) -> int:
             ledger=ledger,
             completed=False,
             model=args.model,
-            base_url=args.base_url,
+            base_url=request_base_url,
+            reasoning_effort=args.reasoning_effort,
         )
         return 0
     # Re-read terminal events written by worker completion before publication.
@@ -1226,7 +1394,8 @@ def run(args: argparse.Namespace) -> int:
         ledger=ledger,
         completed=True,
         model=args.model,
-        base_url=args.base_url,
+        base_url=request_base_url,
+        reasoning_effort=args.reasoning_effort,
     )
     print(json.dumps(manifest, indent=2, sort_keys=True), flush=True)
     return 0
@@ -1235,7 +1404,16 @@ def run(args: argparse.Namespace) -> int:
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--task", choices=("bbb_martins", "bioavailability_ma", "skin_reaction"), required=True
+        "--task",
+        choices=(
+            "bbb_martins",
+            "bioavailability_ma",
+            "skin_reaction",
+            "ames",
+            "dili",
+            "carcinogens",
+        ),
+        required=True,
     )
     parser.add_argument("--records")
     parser.add_argument("--mapping")
@@ -1243,15 +1421,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--only-assignment-method")
     parser.add_argument("--inventory-only", action="store_true")
     parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument("--provider-pool-config", type=Path)
+    parser.add_argument("--parallelism", type=int)
     parser.add_argument("--batch-size", type=int)
     parser.add_argument("--max-completion-tokens", type=int, default=8_192)
     parser.add_argument("--max-requests", type=int)
+    parser.add_argument("--retry-terminal-failures", action="store_true")
     parser.add_argument("--api-key-env", default=None)
     parser.add_argument(
         "--provider", choices=("openai", "openrouter", "local"), default=None
     )
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--model", default=MODEL)
+    parser.add_argument(
+        "--reasoning-effort", choices=("low", "high"), default=REASONING_EFFORT
+    )
     parser.add_argument("--env-file", default=str(DEFAULT_ENV_FILE))
     parser.add_argument("--budget-epoch")
     parser.add_argument("--start-new-budget-epoch", action="store_true")
@@ -1269,6 +1453,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.workers < 1:
         parser.error("--workers must be positive")
+    if args.provider_pool_config and not args.parallelism:
+        parser.error("--provider-pool-config requires --parallelism")
+    if args.parallelism is not None and args.parallelism < 1:
+        parser.error("--parallelism must be positive")
     if args.batch_size is not None and args.batch_size < 1:
         parser.error("--batch-size must be positive")
     if args.max_completion_tokens < 1:

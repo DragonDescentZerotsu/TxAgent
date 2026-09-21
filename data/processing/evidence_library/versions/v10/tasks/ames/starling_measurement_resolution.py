@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Mapping
 
+import pyarrow.parquet as pq
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from data.processing.evidence_library.shared.v2.normalization.cleaning import (
@@ -33,7 +35,7 @@ TASK_ASSET_ROOT = TASK_ROOT / "data_processing"
 TASK_PROMPT_ROOT = TASK_ROOT / "prompts"
 
 PROMPT_VERSION = "ames_measurement_resolution_prompt.v6"
-MAPPING_VERSION = "ames_measurement_resolution.v6_mixed_retry"
+MAPPING_VERSION = "ames_measurement_resolution.v7_reviewed_correction"
 MAX_MEASUREMENTS_PER_ROW = 1
 BATCH_SIZE = 10
 STRATIFY_BATCHES = True
@@ -47,12 +49,9 @@ DEFAULT_CLEANED_RECORDS = (
 )
 DEFAULT_CANONICAL_RECORDS = DEFAULT_CLEANED_RECORDS
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
-DEFAULT_MAPPING_PATH = (
-    evidence_library_root("ames", "v10")
-    / "measurement_resolution_v6/measurement_resolution.parquet"
-)
+DEFAULT_MAPPING_PATH = mapping_path("measurement_resolution")
 EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
-ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = False
 DEFAULT_BASE_MAPPING_PATH = None
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
@@ -211,6 +210,55 @@ def validate_mapping_provenance(
     *,
     expected_record_ids: set[str] | None = None,
 ) -> None:
+    path = Path(mapping_path)
+    manifest = json.loads(path.with_suffix(".manifest.json").read_text())
+    if manifest.get("generation_version") == "ames_measurement_resolution_reviewed_successor.v1":
+        base = manifest.get("base_mapping") or {}
+        corrections = manifest.get("reviewed_corrections") or {}
+        audit = manifest.get("source_audit") or {}
+        base_path = REPO_ROOT / str(base.get("path") or "")
+        correction_path = REPO_ROOT / str(corrections.get("path") or "")
+        mismatches = {}
+        if manifest.get("task_id") != "ames" or manifest.get("mapping_version") != MAPPING_VERSION:
+            mismatches["identity"] = "task or mapping version mismatch"
+        if manifest.get("mapping_sha256") != file_sha256(path):
+            mismatches["mapping"] = "hash mismatch"
+        if not base_path.is_file() or base.get("sha256") != file_sha256(base_path):
+            mismatches["base_mapping"] = "missing or hash-mismatched"
+        if not correction_path.is_file() or corrections.get("sha256") != file_sha256(correction_path):
+            mismatches["reviewed_corrections"] = "missing or hash-mismatched"
+        for label, reference, digest in (
+            ("base_manifest", base.get("manifest_path"), base.get("manifest_sha256")),
+            ("audit_manifest", audit.get("manifest_path"), audit.get("manifest_sha256")),
+            ("audit_review", audit.get("review_path"), audit.get("review_sha256")),
+        ):
+            reference_path = REPO_ROOT / str(reference or "")
+            if not reference_path.is_file() or digest != file_sha256(reference_path):
+                mismatches[label] = "missing or hash-mismatched"
+        if mismatches:
+            raise ValueError(f"AMES reviewed measurement successor mismatch: {mismatches}")
+        current = pq.read_table(path)
+        predecessor = pq.read_table(base_path)
+        correction_rows = [json.loads(line) for line in correction_path.read_text().splitlines() if line.strip()]
+        if current.schema != predecessor.schema or current.num_rows != predecessor.num_rows:
+            raise ValueError("AMES reviewed measurement successor changed shape")
+        for name in current.column_names:
+            if name != "measurements_json" and not current[name].equals(predecessor[name]):
+                raise ValueError(f"AMES reviewed measurement successor changed {name}")
+        before = predecessor["measurements_json"].to_pylist()
+        after = current["measurements_json"].to_pylist()
+        changed = [index for index, pair in enumerate(zip(before, after)) if pair[0] != pair[1]]
+        ids = current["cleaned_record_id"].to_pylist()
+        corrections_by_id = {row["cleaned_record_id"]: row for row in correction_rows}
+        if len(corrections_by_id) != len(correction_rows) or {ids[index] for index in changed} != set(corrections_by_id):
+            raise ValueError("AMES reviewed measurement successor delta mismatch")
+        for index in changed:
+            correction = corrections_by_id[ids[index]]
+            if json.loads(before[index]) != [correction["before"]] or json.loads(after[index]) != [correction["after"]]:
+                raise ValueError("AMES reviewed measurement successor content mismatch")
+        if expected_record_ids is not None and set(ids) != expected_record_ids:
+            raise ValueError("AMES reviewed measurement successor coverage mismatch")
+        return
     from data.processing.evidence_library.versions.v10.build_measurement_resolution_mapping import (
         validate_full_mapping_provenance,
     )

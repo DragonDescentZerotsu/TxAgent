@@ -66,6 +66,9 @@ ID_TRANSPORT_VERSION = "batch_local_ids.v1"
 RETRY_LIMIT_EXIT_CODE = 4
 MODEL = "gpt-5.4-mini"
 REASONING_EFFORT = "low"
+REVIEWED_SOURCE_INFERENCE = "reviewed_source_decision"
+REVIEWED_SOURCE_MODEL = "manual-source-review.v1"
+REVIEWED_SOURCE_BASE_URL = "review://source-grounded"
 
 #: The distillation helper lives beside the TxAgent checkout, and TxAgent has more
 #: than one checkout -- so resolve it relative to this repository first and treat the
@@ -1662,8 +1665,14 @@ def materialize(
 
 
 def load_base_mapping(path: Path) -> dict[str, dict[str, Any]]:
-    manifest = json.loads(path.with_suffix(".manifest.json").read_text())
-    if manifest.get("mapping_sha256") != file_sha256(path):
+    manifest_path = path.with_suffix(".manifest.json")
+    if not manifest_path.is_file():
+        manifest_path = path.parent / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    expected_hash = manifest.get("mapping_sha256") or manifest.get(
+        "measurement_resolution_sha256"
+    )
+    if expected_hash != file_sha256(path):
         raise ValueError(f"base mapping hash mismatch: {path}")
     rows = pq.read_table(path).to_pylist()
     mapping: dict[str, dict[str, Any]] = {}
@@ -1742,10 +1751,56 @@ def validate_full_mapping_provenance(
             "model": _base_mapping_model(base_path),
             "reused_rows": 0,
         }
+    base_by_uid = {
+        str(row.get("source_row_uid") or ""): row
+        for row in base_assignments.values()
+        if row.get("source_row_uid")
+    }
+    reviewed_spec = manifest.get("reviewed_source_decisions")
+    reviewed_decisions: dict[str, dict[str, Any]] = {}
+    reviewed_sha256 = ""
+    if reviewed_spec is not None:
+        if not isinstance(reviewed_spec, Mapping) or not reviewed_spec.get("path"):
+            raise ValueError(f"{task} reviewed-source decision lineage is invalid")
+        reviewed_path = Path(str(reviewed_spec["path"]))
+        if not reviewed_path.is_file():
+            raise ValueError(
+                f"{task} reviewed-source decisions are missing: {reviewed_path}"
+            )
+        reviewed_sha256 = file_sha256(reviewed_path)
+        decision_rows = [
+            json.loads(line)
+            for line in reviewed_path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        reviewed_decisions = {
+            str(row.get("cleaned_record_id") or ""): row for row in decision_rows
+        }
+        expected_reviewed = {
+            "path": str(reviewed_path),
+            "row_count": len(decision_rows),
+            "sha256": reviewed_sha256,
+        }
+        found_reviewed = {
+            key: reviewed_spec.get(key) for key in expected_reviewed
+        }
+        if (
+            found_reviewed != expected_reviewed
+            or "" in reviewed_decisions
+            or len(reviewed_decisions) != len(decision_rows)
+        ):
+            raise ValueError(
+                f"{task} reviewed-source decision receipt mismatch: "
+                f"expected={expected_reviewed}, found={found_reviewed}"
+            )
+
     required_columns = {
+        "assignment_method",
         "cleaned_record_id",
+        "measurements_json",
         "source_id",
         "source_row_uid",
+        "status",
         "inference_source",
         "inference_model",
         "inference_base_url",
@@ -1754,6 +1809,8 @@ def validate_full_mapping_provenance(
         "requested_provider",
         "served_provider",
     }
+    if reviewed_spec is not None:
+        required_columns.update({"review_decision_sha256", "reviewer_id"})
     available_columns = set(pq.read_schema(path).names)
     missing_columns = required_columns - available_columns
     table = pq.read_table(path, columns=sorted(required_columns & available_columns))
@@ -1763,7 +1820,11 @@ def validate_full_mapping_provenance(
         expected_record_ids
     )
     if expected_base is not None:
-        expected_base["reused_rows"] = len(set(base_assignments) & selected_ids)
+        expected_base["reused_rows"] = sum(
+            str(row.get("source_row_uid") or "") in base_by_uid
+            or str(row.get("cleaned_record_id") or "") in base_assignments
+            for row in rows
+        )
     mismatches: dict[str, Any] = {}
     expected_manifest = {
         "task_id": task,
@@ -1835,6 +1896,14 @@ def validate_full_mapping_provenance(
             "dgx014_50002",
             "deepseek-ai/DeepSeek-V4-Flash-0731",
         ),
+        "http://dgx017:50001/v1": (
+            "dgx017_50001",
+            "deepseek-ai/DeepSeek-V4-Flash-0731",
+        ),
+        "http://dgx020:50002/v1": (
+            "dgx020_50002",
+            "deepseek-ai/DeepSeek-V4-Flash-0731",
+        ),
     }
     allowed = {
         (
@@ -1903,13 +1972,36 @@ def validate_full_mapping_provenance(
                 }
                 break
             inference_source = row.get("inference_source")
-            base_row = base_assignments.get(record_id)
+            base_row = base_by_uid.get(source_identity[0]) or base_assignments.get(
+                record_id
+            )
             valid_base = inference_source == "base_mapping" and base_row is not None
             valid_delta = (
                 inference_source == "delta_inference" and provenance in allowed
             )
+            decision = reviewed_decisions.get(record_id)
+            valid_reviewed = (
+                inference_source == REVIEWED_SOURCE_INFERENCE
+                and provenance
+                == (
+                    REVIEWED_SOURCE_MODEL,
+                    REVIEWED_SOURCE_BASE_URL,
+                    "",
+                )
+                and decision is not None
+                and str(row.get("review_decision_sha256") or "")
+                == reviewed_sha256
+                and str(row.get("reviewer_id") or "")
+                == str(decision.get("reviewer_id") or "")
+                and str(row.get("source_row_uid") or "")
+                == str(decision.get("source_row_uid") or "")
+                and str(row.get("status") or "")
+                == str(decision.get("status") or "")
+                and json.loads(str(row.get("measurements_json") or "[]"))
+                == list(decision.get("measurements") or [])
+            )
             if (
-                not (valid_base or valid_delta)
+                not (valid_base or valid_delta or valid_reviewed)
                 or row.get("rejected_response_json") not in (None, "")
             ):
                 invalid_provenance.append(record_id)
@@ -1958,6 +2050,8 @@ def _base_mapping_model(path: Path | None) -> str:
     if path is None:
         return ""
     manifest_path = path.with_suffix(".manifest.json")
+    if not manifest_path.is_file():
+        manifest_path = path.parent / "manifest.json"
     payload = json.loads(manifest_path.read_text(encoding="utf-8"))
     model = str(payload.get("model") or "")
     if not model:
@@ -2115,6 +2209,12 @@ def _add_execution_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--provider-only", default=None)
     parser.add_argument("--retry-failed", action="store_true")
     parser.add_argument(
+        "--retry-batch-size",
+        type=int,
+        default=None,
+        help="split only released failed batches into smaller retry requests",
+    )
+    parser.add_argument(
         "--retry-max-attempts",
         type=int,
         default=None,
@@ -2178,6 +2278,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         args.retry_max_attempts < 0 or not args.retry_failed
     ):
         parser.error("--retry-max-attempts requires --retry-failed and a nonnegative value")
+    if args.retry_batch_size is not None and (
+        args.retry_batch_size < 1 or not args.retry_failed
+    ):
+        parser.error("--retry-batch-size requires --retry-failed and a positive value")
     if args.phase_budget_max_tokens is not None and args.phase_budget_max_tokens < 1:
         parser.error("--phase-budget-max-tokens must be positive")
     return args
@@ -2221,6 +2325,10 @@ def _validate_task_args(args: argparse.Namespace) -> None:
         (
             "data.processing.evidence_library.versions.v10.tasks.dili."
             "starling_measurement_resolution_openrouter_key_two_256"
+        ),
+        (
+            "data.processing.evidence_library.versions.v10.tasks.dili."
+            "starling_measurement_resolution_incremental_three_endpoint_512"
         ),
     }
     if args.task == "dili" and (
@@ -2307,20 +2415,31 @@ def _run_candidates(
 def _mapping_delta(
     candidates: list[dict[str, Any]], base_mapping_path: Path | None
 ) -> tuple[dict[str, dict[str, Any]], list[dict[str, Any]]]:
-    candidate_ids = {str(row["id"]) for row in candidates}
-    base_assignments = (
-        {
-            record_id: row
-            for record_id, row in load_base_mapping(base_mapping_path).items()
-            if record_id in candidate_ids
-        }
-        if base_mapping_path is not None
-        else {}
-    )
+    base_rows = load_base_mapping(base_mapping_path) if base_mapping_path else {}
+    base_by_uid = {
+        str(row.get("source_row_uid") or ""): row for row in base_rows.values()
+    }
+    base_by_uid.pop("", None)
+    if len(base_by_uid) != sum(
+        bool(row.get("source_row_uid")) for row in base_rows.values()
+    ):
+        raise ValueError("base mapping has duplicate source_row_uid values")
+    base_assignments: dict[str, dict[str, Any]] = {}
     for candidate in candidates:
-        prior = base_assignments.get(str(candidate["id"]))
-        if prior and prior.get("source_row_uid") != candidate.get("source_row_uid"):
+        record_id = str(candidate["id"])
+        source_uid = str(candidate.get("source_row_uid") or "")
+        prior = base_by_uid.get(source_uid) or base_rows.get(record_id)
+        if prior and str(prior.get("source_row_uid") or source_uid) != source_uid:
             raise ValueError(f"base mapping source UID mismatch: {candidate['id']}")
+        if prior and str(prior.get("source_id") or "") != str(candidate["source_id"]):
+            raise ValueError(f"base mapping source mismatch: {candidate['id']}")
+        if prior:
+            base_assignments[record_id] = {
+                **prior,
+                "cleaned_record_id": record_id,
+                "source_id": candidate["source_id"],
+                "source_row_uid": source_uid,
+            }
     delta = [row for row in candidates if str(row["id"]) not in base_assignments]
     return base_assignments, delta
 
@@ -2529,6 +2648,28 @@ def _remaining_batches(
         if cache.attempted
         else planned_batches
     )
+    if args.retry_batch_size is not None:
+        if args.retry_batch_size > config.BATCH_SIZE:
+            raise ValueError(
+                f"retry batch size cannot exceed {config.BATCH_SIZE}"
+            )
+        size = args.retry_batch_size
+        batches = [
+            RequestBatch(
+                request_id=f"{batch.request_id}_part_{offset // size + 1}",
+                source_id=batch.source_id,
+                rows=batch.rows[offset : offset + size],
+                prompt=batch.prompt,
+                max_completion_tokens=batch.max_completion_tokens,
+                payload_rows=(
+                    batch.api_rows[offset : offset + size]
+                    if batch.payload_rows is not None
+                    else None
+                ),
+            )
+            for batch in batches
+            for offset in range(0, len(batch.rows), size)
+        ]
     print(f"unattempted requests this run: {len(batches):,}")
     if not batches and retryable_assignment_ids(cache):
         print("retry attempt cap exhausted; no API requests sent; nothing published")

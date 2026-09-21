@@ -45,13 +45,10 @@ DEFAULT_CLEANED_RECORDS = (
 )
 DEFAULT_CANONICAL_RECORDS = DEFAULT_CLEANED_RECORDS
 DEFAULT_PROFILE_PATH = DEFAULT_CLEANED_RECORDS.parent / "endpoint_unit_profile.json"
-DEFAULT_MAPPING_PATH = (
-    evidence_library_root(TASK_ID, "v10")
-    / "measurement_resolution_v4/measurement_resolution.parquet"
-)
+DEFAULT_MAPPING_PATH = mapping_path("measurement_resolution")
 DEFAULT_BASE_MAPPING_PATH = None
 EXACT_UNIT_MAPPING_PATH = mapping_path("exact_measurement_units")
-ENFORCE_EXACT_UNITS_DURING_EXTRACTION = True
+ENFORCE_EXACT_UNITS_DURING_EXTRACTION = False
 DEFAULT_GOLD_FIXTURE = (
     REPO_ROOT
     / "tests/chembl_tool/common/measurement_resolution_quality/gold/carcinogens.v10.jsonl"

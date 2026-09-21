@@ -92,3 +92,107 @@ def test_pair_bucket_deduplication_preserves_source_uids(tmp_path: Path) -> None
     assert duplicates["retained_source_row_uid"].to_pylist() == [
         "sr_" + "0" * 32
     ]
+
+
+def test_pair_bucket_deduplication_never_discards_protected_uids(
+    tmp_path: Path,
+) -> None:
+    records = [
+        {
+            "canonical_record_id": f"record-{index}",
+            "source_row_uid": f"sr_{index:032x}",
+            "source_id": "source",
+            "canonical_smiles": "CC",
+            "retrieval_source_id": "indirect",
+            "support_text": "same supported statement",
+            "measurement_text": "1",
+            "canonical_measurement_text": "1",
+            "canonical_unit_text": "unit",
+            "pair_bucket_key": "bucket",
+            "canonical_pair_fields_json": "{}",
+        }
+        for index in range(3)
+    ]
+    sidecars = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "source_id": "source",
+            "pair_bucket_key": "bucket",
+            "canonical_pair_fields_json": "{}",
+            "assay_transfer_eligible": True,
+            "bucket_eligible": True,
+        }
+        for row in records
+    ]
+    records_path = tmp_path / "records.parquet"
+    sidecars_path = tmp_path / "sidecars.parquet"
+    output = tmp_path / "output"
+    pq.write_table(pa.Table.from_pylist(records), records_path)
+    pq.write_table(pa.Table.from_pylist(sidecars), sidecars_path)
+    protected = frozenset(row["source_row_uid"] for row in records[1:])
+
+    manifest = build_deduplicated_record_stage(
+        task_id="test",
+        records_path=records_path,
+        pair_bucket_records_path=sidecars_path,
+        out_dir=output,
+        protected_source_row_uids=protected,
+    )
+
+    retained = set(
+        pq.read_table(output / "records.parquet")["source_row_uid"].to_pylist()
+    )
+    assert retained == protected
+    assert manifest["summary"]["duplicates_removed"] == 1
+    assert manifest["validations"]["all_protected_physical_voters_retained"] is True
+
+
+def test_pair_bucket_deduplication_keeps_conflicting_reviewed_levels(
+    tmp_path: Path,
+) -> None:
+    records = [
+        {
+            "canonical_record_id": f"record-{index}",
+            "source_row_uid": f"sr_{index:032x}",
+            "source_id": "source",
+            "canonical_smiles": "CC",
+            "retrieval_source_id": "indirect",
+            "support_text": "same supported statement",
+            "measurement_text": "1",
+            "canonical_measurement_text": "1",
+            "canonical_unit_text": "unit",
+            "pair_bucket_key": "bucket",
+            "canonical_pair_fields_json": "{}",
+        }
+        for index in range(2)
+    ]
+    sidecars = [
+        {
+            "canonical_record_id": row["canonical_record_id"],
+            "source_id": "source",
+            "pair_bucket_key": "bucket",
+            "canonical_pair_fields_json": "{}",
+            "assay_transfer_eligible": True,
+            "bucket_eligible": True,
+        }
+        for row in records
+    ]
+    records_path = tmp_path / "records.parquet"
+    sidecars_path = tmp_path / "sidecars.parquet"
+    output = tmp_path / "output"
+    pq.write_table(pa.Table.from_pylist(records), records_path)
+    pq.write_table(pa.Table.from_pylist(sidecars), sidecars_path)
+
+    manifest = build_deduplicated_record_stage(
+        task_id="test",
+        records_path=records_path,
+        pair_bucket_records_path=sidecars_path,
+        out_dir=output,
+        reviewed_levels_by_source_row_uid={
+            records[0]["source_row_uid"]: 2,
+            records[1]["source_row_uid"]: 3,
+        },
+    )
+
+    assert pq.read_table(output / "records.parquet").num_rows == 2
+    assert manifest["summary"]["duplicates_removed"] == 0

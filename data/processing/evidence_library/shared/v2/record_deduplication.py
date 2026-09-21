@@ -107,6 +107,8 @@ def build_deduplicated_record_stage(
         Callable[[Sequence[Mapping[str, Any]]], list[dict[str, Any]]] | None
     ) = None,
     collapse_duplicates: bool = True,
+    protected_source_row_uids: frozenset[str] = frozenset(),
+    reviewed_levels_by_source_row_uid: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """Publish aligned records, optionally applying the legacy late deduplicator."""
     source_path = Path(records_path)
@@ -122,8 +124,21 @@ def build_deduplicated_record_stage(
         records_path=source_path,
         sidecar_path=sidecar_path,
         direct_mapping_builder=direct_mapping_builder,
+        reviewed_levels_by_source_row_uid=reviewed_levels_by_source_row_uid or {},
     )
-    duplicate_counts = _deduplicate(connection) if collapse_duplicates else Counter()
+    input_source_row_uids = {
+        str(value)
+        for value in pq.read_table(
+            source_path, columns=["source_row_uid"]
+        ).column("source_row_uid").to_pylist()
+    }
+    if not protected_source_row_uids <= input_source_row_uids:
+        raise ValueError("protected physical voter is absent from Stage 2")
+    duplicate_counts = (
+        _deduplicate(connection, protected_source_row_uids)
+        if collapse_duplicates
+        else Counter()
+    )
     output_records = _write_retained_records(
         connection,
         records_path=source_path,
@@ -149,6 +164,12 @@ def build_deduplicated_record_stage(
     ).metadata.num_rows
     written_mappings = pq.ParquetFile(target / DIRECT_MAPPING_FILENAME).metadata.num_rows
     written_duplicates = pq.ParquetFile(target / DUPLICATES_FILENAME).metadata.num_rows
+    retained_source_row_uids = {
+        str(value)
+        for value in pq.read_table(
+            target / RECORDS_FILENAME, columns=["source_row_uid"]
+        ).column("source_row_uid").to_pylist()
+    }
     validations = {
         "retained_plus_duplicates_equals_input": (
             output_records + written_duplicates == input_records
@@ -158,6 +179,9 @@ def build_deduplicated_record_stage(
         ),
         "all_physical_direct_vote_units_preserved_in_mapping": (
             written_mappings == mapping_records
+        ),
+        "all_protected_physical_voters_retained": (
+            protected_source_row_uids <= retained_source_row_uids
         ),
     }
     if not all(validations.values()):
@@ -188,6 +212,8 @@ def build_deduplicated_record_stage(
             "direct_mapping_grain": "normalized_row_with_optional_canonical_claim_id",
             "direct_pair_bucket": "intrinsic_stage03_pair_bucket",
             "row_deletion_performed": collapse_duplicates,
+            "protected_physical_voters_are_never_discarded": True,
+            "conflicting_reviewed_levels_are_never_merged": True,
         },
         "inputs": {
             "records": {"path": str(source_path), "sha256": file_sha256(source_path)},
@@ -202,6 +228,8 @@ def build_deduplicated_record_stage(
             "duplicates_removed": sum(duplicate_counts.values()),
             "duplicate_scope_counts": dict(sorted(duplicate_counts.items())),
             "direct_mapping_records": mapping_records,
+            "protected_physical_voters": len(protected_source_row_uids),
+            "reviewed_level_rows": len(reviewed_levels_by_source_row_uid or {}),
         },
         "outputs": outputs,
         "validations": validations,
@@ -283,6 +311,7 @@ def _index_candidates(
     records_path: Path,
     sidecar_path: Path,
     direct_mapping_builder: Callable | None,
+    reviewed_levels_by_source_row_uid: Mapping[str, int],
 ) -> tuple[int, int]:
     ordinal = 0
     mapping_count = 0
@@ -315,6 +344,10 @@ def _index_candidates(
                 raise ValueError("canonical_record_id must be nonempty")
             joined = _decorate(record, sidecar, mapping_by_id.get(record_id))
             candidate = _candidate_view(joined)
+            reviewed_level = reviewed_levels_by_source_row_uid.get(
+                str(record.get("source_row_uid") or "")
+            )
+            candidate["_reviewed_level"] = reviewed_level
             connection.execute(
                 "INSERT INTO candidates(ordinal, record_id, dedup_key, payload) "
                 "VALUES (?, ?, ?, ?)",
@@ -330,7 +363,10 @@ def _index_candidates(
     return ordinal, mapping_count
 
 
-def _deduplicate(connection: sqlite3.Connection) -> Counter[str]:
+def _deduplicate(
+    connection: sqlite3.Connection,
+    protected_source_row_uids: frozenset[str] = frozenset(),
+) -> Counter[str]:
     counts: Counter[str] = Counter()
     cursor = connection.execute(
         "SELECT dedup_key, payload FROM candidates ORDER BY dedup_key, record_id"
@@ -349,10 +385,18 @@ def _deduplicate(connection: sqlite3.Connection) -> Counter[str]:
             else:
                 clusters.append([row])
         for cluster in clusters:
-            retained = min(cluster, key=_representative_key)
+            protected = [
+                row
+                for row in cluster
+                if str(row.get("source_row_uid") or "")
+                in protected_source_row_uids
+            ]
+            retained = min(protected or cluster, key=_representative_key)
             retained_id = str(retained["canonical_record_id"])
             for discarded in cluster:
                 if discarded is retained:
+                    continue
+                if str(discarded.get("source_row_uid") or "") in protected_source_row_uids:
                     continue
                 match = _dedup_match(retained, discarded)
                 if match is None:
@@ -674,6 +718,14 @@ def _measurement_signature(record: Mapping[str, Any]) -> tuple[Any, ...]:
 def _dedup_match(
     left: Mapping[str, Any], right: Mapping[str, Any]
 ) -> tuple[float, str] | None:
+    left_level = left.get("_reviewed_level")
+    right_level = right.get("_reviewed_level")
+    if (
+        left_level is not None
+        and right_level is not None
+        and int(left_level) != int(right_level)
+    ):
+        return None
     left_claim = _text(left.get("canonical_claim_id"))
     right_claim = _text(right.get("canonical_claim_id"))
     if left_claim and left_claim == right_claim:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,9 @@ import pandas as pd
 import pyarrow.parquet as pq
 
 from data.processing.evidence_library.compact_artifacts import CompactArtifactProfile
+from data.processing.evidence_library.shared.v2.auxiliary_metadata import (
+    AuxiliaryMetadataAttacher,
+)
 from data.processing.evidence_library.shared.v2.normalization.cleaning import (
     file_sha256,
 )
@@ -27,13 +31,20 @@ from data.processing.evidence_library.shared.v2.normalization.task_policy import
     StageDocuments,
     StarlingTaskPolicy,
 )
+from data.processing.evidence_library.shared.v2.reference_semantics import (
+    ReferenceSemanticsAttacher,
+)
 from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v10.standard_pair_dimension_stage2 import (
+    build_local_source_attacher,
+)
 from data.processing.evidence_library.versions.v10.tasks.ames.mapping_registry import (
     REGISTRY_PATH,
     mapping_path,
+    mapping_registry,
     validate_mapping_hashes,
 )
 from data.processing.evidence_library.versions.v10.tasks.ames.data_processing.build_exact_unit_review import (
@@ -72,8 +83,14 @@ from data.processing.evidence_library.versions.v10.tasks.ames.starling_record_ca
     enrich_ames_validity,
     validity_policy_manifest,
 )
+from data.processing.evidence_library.versions.v10.tasks.ames.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
+)
 from data.processing.evidence_library.versions.v10.tasks.ames.starling_schema import (
     ENDPOINT_PRODUCER_FIELD,
+    PAIR_CONTEXT_INPUTS,
+    PAIR_CONTEXT_MAPPING_VERSION,
     PAIR_PRODUCER_FIELD,
     RECORD_CONTRACT,
     ROLE_FIELDS,
@@ -107,6 +124,22 @@ EXPECTED_SOURCE_SHA256 = {
 }
 
 ASSAY_FAMILIES = canonical_endpoints_by_source()
+MAIN_UNIVERSE_MANIFEST = Path("data/raw/starling/main_universe_v1/manifest.json")
+MAIN_UNIVERSE_RECORDS = Path("data/raw/starling/main_universe_v1/ames/records.parquet")
+def _selected_auxiliary_mapping() -> Path | None:
+    if "auxiliary_context" not in mapping_registry()["mappings"]:
+        return None
+    return mapping_path("auxiliary_context")
+
+
+def _selected_reference_mapping() -> Path | None:
+    if "reference_semantics" not in mapping_registry()["mappings"]:
+        return None
+    return mapping_path("reference_semantics")
+
+
+SELECTED_AUXILIARY_MAPPING = _selected_auxiliary_mapping()
+SELECTED_REFERENCE_MAPPING = _selected_reference_mapping()
 
 
 def _source_path(data_dir: Path, source_id: str, filename: str) -> Path:
@@ -502,25 +535,61 @@ def _pair_producer(record: dict[str, Any], encoded: dict[str, Any]) -> str:
     return SOURCE_PAIR_PRODUCER_IDS[source_id]
 
 
-def _enrich_record(record: dict[str, Any]) -> dict[str, Any]:
+def _enrich_record(
+    record: dict[str, Any],
+    attacher: AuxiliaryMetadataAttacher,
+    reference: ReferenceSemanticsAttacher,
+) -> dict[str, Any]:
     source_id = str(record["source_id"])
     encoded = CATEGORICAL_POLICY.apply(record)
+    auxiliary = attacher.attach(record)
+    endpoint_concept = str(record.get("canonical_endpoint_name") or "") or None
     producers = {
         ENDPOINT_PRODUCER_FIELD: SOURCE_ENDPOINT_PRODUCER_IDS[source_id],
         PAIR_PRODUCER_FIELD: _pair_producer(record, encoded),
     }
-    working = {**record, **encoded, **producers}
-    return {**encoded, **producers, **enrich_ames_validity(working)}
+    working = {
+        **record,
+        **encoded,
+        **producers,
+        **auxiliary,
+        "canonical_endpoint_concept": endpoint_concept,
+    }
+    validity = enrich_ames_validity(working)
+    return {
+        **encoded,
+        **producers,
+        **auxiliary,
+        "canonical_endpoint_concept": endpoint_concept,
+        **validity,
+        **reference.attach({**working, **validity}),
+    }
 
 
 def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
-    del args
+    attacher = build_local_source_attacher(
+        args,
+        contract=RECORD_CONTRACT,
+        mapping_version=PAIR_CONTEXT_MAPPING_VERSION,
+        output_fields_by_source={
+            source: tuple(PAIR_CONTEXT_INPUTS[source])
+            for source in RECORD_CONTRACT.sources
+        },
+    )
+    reference = ReferenceSemanticsAttacher(
+        replace(
+            REFERENCE_SEMANTICS_CONFIG,
+            mapping_path=Path(args.reference_semantics_mapping),
+        ),
+        allow_missing=bool(args.allow_missing_reference_semantics),
+        fail_closed_unmapped=True,
+    )
     return NormalizationHooks(
         endpoint_normalizer=endpoint_orthography,
         endpoint_standardizer=_identity_pair,
         family_resolver=family_assignment,
-        record_enricher=_enrich_record,
-        run_state={},
+        record_enricher=lambda record: _enrich_record(record, attacher, reference),
+        run_state={"auxiliary": attacher, "reference": reference},
     )
 
 
@@ -542,22 +611,55 @@ def stage_documents(
     persisted: list[dict[str, Any]],
     unit_policy_manifest: dict[str, Any],
 ) -> StageDocuments:
-    del args, hooks, normalized
+    del args
+    coverage = hooks.run_state["auxiliary"].coverage_audit(normalized)
+    reference = hooks.run_state["reference"]
+    reference_coverage = reference.coverage_audit(normalized)
     validations = _stage2_validations(persisted, unit_policy_manifest)
+    validations.update(
+        {
+            "globally_reconciled_auxiliary_coverage": coverage["validations"][
+                "all_applicable_records_mapped"
+            ],
+            "local_source_tuple_coverage": coverage["validations"][
+                "all_applicable_records_mapped"
+            ],
+        }
+    )
     _require_stage2_validations(validations)
+    validations.update(
+        {
+            "reference_semantics_mapping_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_mapped"]
+            ),
+            "reference_semantics_assignment_complete": bool(
+                reference_coverage["validations"]["all_applicable_records_assigned"]
+            ),
+        }
+    )
     return StageDocuments(
         validity_policy={
             **validity_policy_manifest(),
             "categorical_response": CATEGORICAL_POLICY.manifest(),
+            "transfer_semantics": {
+                "eligible_reference_scopes": list(
+                    reference.config.eligible_scopes
+                ),
+                "reference_basis_required": reference.config.output_basis,
+            },
         },
         auxiliary_mapping_manifest={
-            "version": "ames_stage2_metadata.v1",
-            "auxiliary_mapping": None,
+            **hooks.run_state["auxiliary"].manifest(),
+            "coverage": coverage,
             "family_assignment": family_assignment_manifest(),
         },
         source_column_contract=RECORD_CONTRACT.manifest(),
         endpoint_registry=_endpoint_registry(),
         validations=validations,
+        reference_semantics_manifest={
+            **reference.manifest(),
+            "coverage": reference_coverage,
+        },
     )
 
 
@@ -598,6 +700,9 @@ def _stage2_validations(
         "canonical_endpoint_present": all(
             row.get("canonical_endpoint_name") for row in rows
         ),
+        "canonical_endpoint_concept_present": all(
+            row.get("canonical_endpoint_concept") for row in rows
+        ),
         "canonical_endpoint_producer_declared": endpoint_ok,
         "canonical_pair_producer_declared": all(
             row.get(PAIR_PRODUCER_FIELD) in pair_ids[row["source_id"]]
@@ -610,11 +715,6 @@ def _stage2_validations(
         "source_column_contract_complete": True,
         "contextual_unit_policy_loaded": True,
         "contextual_unit_policy_version": unit_policy["policy_version"],
-        "reference_semantics_absent": all(
-            not row.get("canonical_reference_scope")
-            and not row.get("canonical_reference_basis")
-            for row in rows
-        ),
     }
 
 
@@ -631,6 +731,19 @@ def validate_arguments(
         parser.error("AMES V10 Stage 2 forbids partial measurement resolution")
     if getattr(args, "validation_level", None) != "full":
         parser.error("AMES V10 Stage 2 requires --validation-level full")
+    selected_auxiliary = _selected_auxiliary_mapping()
+    supplied_auxiliary = Path(str(args.auxiliary_mapping or ""))
+    if selected_auxiliary is None or not selected_auxiliary.is_file():
+        parser.error("AMES Stage 2 requires a registered reviewed auxiliary mapping")
+    if supplied_auxiliary.resolve() != selected_auxiliary.resolve():
+        parser.error("AMES Stage 2 requires the registry-selected auxiliary mapping")
+    selected_reference = _selected_reference_mapping()
+    supplied_reference = Path(str(args.reference_semantics_mapping or ""))
+    if selected_reference is None or not selected_reference.is_file():
+        if not args.allow_missing_reference_semantics:
+            parser.error("AMES Stage 2 requires a registered reference mapping")
+    elif supplied_reference.resolve() != selected_reference.resolve():
+        parser.error("AMES Stage 2 requires the registry-selected reference mapping")
     mapping_path = Path(str(supplied_mapping))
     try:
         _validate_stage2_assets(mapping_path)
@@ -689,8 +802,23 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "categorical_response_version": CATEGORICAL_RESPONSE_VERSION,
         "family_assignment_version": FAMILY_ASSIGNMENT_VERSION,
         "measurement_routing_version": MEASUREMENT_ROUTING_VERSION,
-        "stage2_status": "implemented_assets_pending",
+        "stage2_status": "implemented_requires_reviewed_auxiliary_mapping",
     }
+
+
+def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--stage1-protected-voter-contract",
+        default="data/gold_labels/Ames/v1/scaffold/voter_membership.parquet",
+        help="Frozen Gold-v1 physical membership used only for Stage-1 UID protection.",
+    )
+    selected = _selected_auxiliary_mapping()
+    parser.add_argument(
+        "--auxiliary-mapping", default=str(selected) if selected else ""
+    )
+    reference = _selected_reference_mapping() or DEFAULT_REFERENCE_SEMANTICS_MAPPING
+    parser.add_argument("--reference-semantics-mapping", default=str(reference))
+    parser.add_argument("--allow-missing-reference-semantics", action="store_true")
 
 
 COMPACT_PROFILE = CompactArtifactProfile(
@@ -729,6 +857,7 @@ POLICY = StarlingTaskPolicy(
     manifest_versions=manifest_versions,
     record_contract=RECORD_CONTRACT,
     source_value_cleaner=clean_source_values,
+    add_cli_arguments=add_cli_arguments,
     validate_arguments=validate_arguments,
     verify_source_digest=validate_source_digest,
     scientific_assets=(
@@ -739,11 +868,22 @@ POLICY = StarlingTaskPolicy(
         REGISTRY_PATH,
         mapping_path("measurement_resolution"),
         mapping_path("exact_measurement_units"),
+        MAIN_UNIVERSE_MANIFEST,
+        MAIN_UNIVERSE_RECORDS,
+        *((SELECTED_AUXILIARY_MAPPING,) if SELECTED_AUXILIARY_MAPPING else ()),
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+        *((SELECTED_REFERENCE_MAPPING,) if SELECTED_REFERENCE_MAPPING else ()),
     ),
-    source_universe_mapping=level_mapping_path("ames", "v1"),
+    source_universe_mapping=level_mapping_path("ames", "v2"),
+    source_uid_universe_records=MAIN_UNIVERSE_RECORDS,
+    source_uid_universe_manifest=MAIN_UNIVERSE_MANIFEST,
+    protected_voter_membership=Path(
+        "data/gold_labels/Ames/v1/scaffold/voter_membership.parquet"
+    ),
     stage1_measurement_routing_enabled=True,
     measurement_resolution_enabled=True,
     exact_unit_mapping_path=mapping_path("exact_measurement_units"),
+    reference_semantics_enabled=True,
 )
 
 

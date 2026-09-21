@@ -38,13 +38,12 @@ cluster is one request and partial clusters are never combined across endpoints.
 Pass B applies the same procedure to endpoint-local provisional labels from Pass A.
 
 The model must return a verbatim `unit_span` and a concise `canonical_unit` for
-every ID. It may strip analyte, assay, study, and explanatory prose while retaining
-the physical unit and endpoint-defined basis. For example, `% overall yield of
-reactions` becomes `% yield`, `% yield (...)` becomes `% yield`, `10^-7 sec^-1
-(...)` becomes `10^-7 s^-1`, and `modified residues (...)` becomes `modified
-residues`. Numeric scales, denominators, qualifiers, and named bases may not be
-dropped. Every published mapping uses `scale: "1"`; retry exhaustion is an
-identity mapping rather than a dropped unit.
+every ID. It may strip analyte, assay, study, outcome, and explanatory prose while
+retaining the physical unit and any reference basis. Percent outcome descriptions
+such as yield, inhibition, loss, repair, viability, and depletion canonicalize to
+`%`. Control, baseline, initial/total, population, denominator, ratio, fraction,
+fold, and numeric-scale bases remain protected. Every published mapping uses
+`scale: "1"`; retry exhaustion is an identity mapping rather than a dropped unit.
 
 Formula subscripts and inverse-unit exponents are interpreted separately from
 scale-bearing numbers. Thus `H2O2` may be removed as analyte prose without treating
@@ -73,6 +72,13 @@ V3.4 adds reviewed qualifier examples for percent, inhibition, control-relative,
 ratio, population counts, fold, and per-denominator units. Standalone `x` beside a
 numeric factor is multiplication rather than fold semantics, while slash and inverse
 exponent forms such as `/mg`, `mg-1`, and `mg^-1` all express a per-denominator.
+
+V3.5 treats words such as yield, inhibition, loss, repair, viability, survival,
+incidence, frequency, and depletion as measurement semantics when attached to a
+percent unit, allowing their canonical unit to be `%`. The V3 validator still
+rejects removal of reference bases, population or sample denominators, ratios,
+folds, counts, and numeric or scientific-notation scales. Raw source units and
+record context remain unchanged.
 
 V3 preflights the authorized local DeepSeek endpoints `dgx020:50002`,
 `dgx005:50001`, and `dgx011:50001`. Each selected endpoint permits 256 in-flight

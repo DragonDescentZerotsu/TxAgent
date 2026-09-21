@@ -83,6 +83,8 @@ def read_pair_bucket_input(
         *(field for fields in source_fields.values() for field in fields),
         *endpoint_fields.values(),
     }
+    if "source_row_uid" in schema:
+        columns.add("source_row_uid")
     if v7:
         columns.update(
             {
@@ -228,6 +230,8 @@ def materialize_pair_buckets(
             "bucket_eligible": eligible,
             "bucket_exclusion_reason": exclusion,
         }
+        if record.get("source_row_uid"):
+            row["source_row_uid"] = str(record["source_row_uid"])
         if v7:
             row.update(
                 {

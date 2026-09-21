@@ -832,6 +832,8 @@ def generate_assay_transfer_record_pruning(
     reuse_valid_cache_across_models: bool = False,
     frozen_prior_manifest: str | Path | None = None,
     published_stage3_input_root: str | Path | None = None,
+    provider_pool_config: str | Path | None = None,
+    parallelism: int | None = None,
 ) -> dict[str, Any]:
     root = Path(normalized_root)
     stage3 = root / "03_pair_buckets"
@@ -911,33 +913,72 @@ def generate_assay_transfer_record_pruning(
 
     calls_this_run = 0
     ledger = None
+    provider_pool_receipt = None
     if missing:
-        sdk_client, _ = openai_compatible_client(
-            base_url=base_url,
-            credential_env=api_key_env,
-            max_connections=max(1, workers),
-            timeout_s=timeout_s,
-        )
-        client = OpenAICompatibleClient(
-            api_key="unused-injected-client",
-            base_url=base_url,
-            model=model,
-            timeout_s=timeout_s,
-            max_tokens=max_tokens,
-            temperature=None,
-            tool_service_url="http://127.0.0.1:8766",
-            enable_group_tools=False,
-            max_tool_rounds=0,
-            reasoning_effort=REASONING_EFFORT,
-            enable_thinking=False,
-            request_extra_body=(
-                {"provider": {"require_parameters": True}}
-                if "openrouter.ai" in base_url
-                else None
-            ),
-            response_format=REVIEW_RESPONSE_FORMAT,
-            openai_client=sdk_client,
-        )
+        if provider_pool_config:
+            from predict.api_client.pool import (
+                build_provider_pool,
+                load_provider_pool_config,
+                select_healthy_providers,
+            )
+
+            pool_path = Path(provider_pool_config)
+            configured = load_provider_pool_config(pool_path)
+            if {provider.model for provider in configured.providers} != {model}:
+                raise ValueError("pruning provider pool must use the requested exact model")
+            selection = select_healthy_providers(
+                configured, parallelism or workers
+            )
+            client = build_provider_pool(
+                selection.config,
+                env_file=None,
+                timeout_s=timeout_s,
+                max_tokens=max_tokens,
+                temperature=None,
+                tool_service_url="",
+                enable_group_tools=False,
+                max_tool_rounds=0,
+                reasoning_effort=REASONING_EFFORT,
+                enable_thinking=False,
+                transport_max_retries=0,
+                response_format=REVIEW_RESPONSE_FORMAT,
+            )
+            workers = selection.effective_parallelism
+            provider_pool_receipt = {
+                "version": "record_pruning_provider_pool_receipt.v1",
+                "config_path": str(pool_path),
+                "config_sha256": file_sha256(pool_path),
+                "model": model,
+                "reasoning_effort": REASONING_EFFORT,
+                **selection.public_dict(),
+            }
+        else:
+            sdk_client, _ = openai_compatible_client(
+                base_url=base_url,
+                credential_env=api_key_env,
+                max_connections=max(1, workers),
+                timeout_s=timeout_s,
+            )
+            client = OpenAICompatibleClient(
+                api_key="unused-injected-client",
+                base_url=base_url,
+                model=model,
+                timeout_s=timeout_s,
+                max_tokens=max_tokens,
+                temperature=None,
+                tool_service_url="http://127.0.0.1:8766",
+                enable_group_tools=False,
+                max_tool_rounds=0,
+                reasoning_effort=REASONING_EFFORT,
+                enable_thinking=False,
+                request_extra_body=(
+                    {"provider": {"require_parameters": True}}
+                    if "openrouter.ai" in base_url
+                    else None
+                ),
+                response_format=REVIEW_RESPONSE_FORMAT,
+                openai_client=sdk_client,
+            )
         if not budget_epoch:
             raise RuntimeError("missing pruning reviews require --budget-epoch")
         ledger = TokenLedger(
@@ -1134,6 +1175,10 @@ def generate_assay_transfer_record_pruning(
                 else "requested_model_and_reasoning_effort_match"
             ),
             "endpoint": base_url,
+            "execution_endpoints": sorted(
+                {str(row.get("endpoint") or "") for row in selected_reviews}
+            ),
+            "provider_pool": provider_pool_receipt,
             "reasoning_effort": REASONING_EFFORT,
             "max_tokens": max_tokens,
             "max_attempts": max_attempts,
@@ -1690,7 +1735,7 @@ def _attach_semantic_rows(candidates: list[dict[str, Any]], records_path: Path) 
 
 
 def _run_review(
-    client: OpenAICompatibleClient,
+    client: Any,
     candidate: Mapping[str, Any],
     prompt: str,
     model: str,
@@ -1731,6 +1776,7 @@ def _run_review(
             ]
     if response is None or trace is None:
         raise RuntimeError(f"failed validation after {max_attempts} attempts: {errors}")
+    execution = dict(trace.get("execution_provider") or {})
     return {
         "bucket_id": candidate["bucket_id"],
         "parent_bucket_id": candidate.get("parent_bucket_id", candidate["bucket_id"]),
@@ -1741,7 +1787,8 @@ def _run_review(
         "requested_model": model,
         "reasoning_effort": REASONING_EFFORT,
         "served_model": str(trace.get("model") or ""),
-        "endpoint": base_url,
+        "endpoint": str(execution.get("base_url") or base_url),
+        "execution_provider": execution or None,
         "attempts": len(errors) + 1,
         "validation_errors": errors,
         "usage": usage if usage_complete else None,
@@ -1912,13 +1959,26 @@ def _rebuild_stage3(task_id: str, normalized_root: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--task-id", required=True, choices=("bbb_martins", "bioavailability_ma", "skin_reaction"))
+    parser.add_argument(
+        "--task-id",
+        required=True,
+        choices=(
+            "bbb_martins",
+            "bioavailability_ma",
+            "skin_reaction",
+            "ames",
+            "dili",
+            "carcinogens",
+        ),
+    )
     parser.add_argument("--normalized-root", required=True, type=Path)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--api-key-env", default="OPENAI_API_KEY")
     parser.add_argument("--base-url", default=os.environ.get("OPENAI_BASE_URL", DEFAULT_BASE_URL))
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument("--provider-pool-config", type=Path)
+    parser.add_argument("--parallelism", type=int)
     parser.add_argument("--timeout-s", type=int, default=900)
     parser.add_argument("--max-tokens", type=int, default=4_096)
     parser.add_argument("--max-attempts", type=int, default=1)
@@ -1953,6 +2013,8 @@ def main(argv: list[str] | None = None) -> int:
                 reuse_valid_cache_across_models=args.reuse_valid_cache_across_models,
                 frozen_prior_manifest=args.frozen_prior_manifest,
                 published_stage3_input_root=args.published_stage3_input_root,
+                provider_pool_config=args.provider_pool_config,
+                parallelism=args.parallelism,
             )
         except RecordPruningBudgetExhausted as error:
             print(str(error))

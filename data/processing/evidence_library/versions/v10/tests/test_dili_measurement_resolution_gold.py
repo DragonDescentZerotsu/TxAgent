@@ -16,7 +16,7 @@ from data.processing.evidence_library.versions.v10.tasks.dili import (
 ROOT = Path(__file__).resolve().parents[6]
 GOLD_PATH = (
     ROOT
-    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.1.jsonl"
+    / "tests/chembl_tool/common/measurement_resolution_quality/gold/dili.v10.3.jsonl"
 )
 STAGE1_PATH = ROOT / "data/evidence_libraries/dili/v10/01_cleaned/records.parquet"
 PLAIN_DECIMAL = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$")
@@ -27,6 +27,7 @@ def test_dili_gold_is_complete_source_review_over_active_stage1_rows() -> None:
     manifest, cases = lines[0], lines[1:]
 
     assert manifest["task_id"] == "dili"
+    assert manifest["successor_of"] == "dili.v10.2.jsonl"
     assert manifest["cases"] == manifest["reviewed_cases"] == len(cases) == 1192
     assert manifest["labels_frozen_before_low_reasoning_gold_pilot"] is True
     assert manifest["model_outputs_used_as_label_evidence"] is False

@@ -32,6 +32,27 @@ def validate_mapping_review(
     mapping_hash = str(entry.get("sha256") or "")
     if mapping_hash == GRANDFATHERED_MAPPING_HASHES.get((task, mapping_id)):
         return
+    exception = entry.get("acceptance_exception") or {}
+    if exception:
+        path = REPO_ROOT / str(exception.get("path") or "")
+        if not path.is_file() or file_sha256(path) != exception.get("sha256"):
+            raise ValueError(f"{mapping_id} lacks a valid acceptance exception")
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        validations = receipt.get("validations") or {}
+        if (
+            receipt.get("version")
+            != "accepted_unreviewed_canonical_mapping_exception.v1"
+            or receipt.get("task_id") != task
+            or receipt.get("mapping_id") != mapping_id
+            or receipt.get("publication_status")
+            != "accepted_without_additional_review"
+            or receipt.get("mapping", {}).get("sha256") != mapping_hash
+            or not (receipt.get("target_releases") or receipt.get("target_release"))
+            or not validations
+            or not all(value is True for value in validations.values())
+        ):
+            raise ValueError(f"{mapping_id} acceptance exception is incomplete")
+        return
     reference = entry.get("review_manifest") or {}
     path = REPO_ROOT / str(reference.get("path") or "")
     if not path.is_file() or file_sha256(path) != reference.get("sha256"):
@@ -51,4 +72,21 @@ def validate_mapping_review(
         raise ValueError(f"{mapping_id} reviewed mapping receipt is incomplete")
 
 
-__all__ = ["validate_mapping_review"]
+def validate_mapping_acceptance_scope(
+    task: str, registry: Mapping[str, Any], target_release: str
+) -> None:
+    """Keep explicit unreviewed acceptance limited to its named release."""
+    for mapping_id, entry in (registry.get("mappings") or {}).items():
+        reference = entry.get("acceptance_exception") or {}
+        if not reference:
+            continue
+        path = REPO_ROOT / str(reference.get("path") or "")
+        receipt = json.loads(path.read_text(encoding="utf-8"))
+        targets = receipt.get("target_releases") or [receipt.get("target_release")]
+        if receipt.get("task_id") != task or target_release not in targets:
+            raise ValueError(
+                f"{mapping_id} acceptance exception is not valid for {target_release}"
+            )
+
+
+__all__ = ["validate_mapping_acceptance_scope", "validate_mapping_review"]

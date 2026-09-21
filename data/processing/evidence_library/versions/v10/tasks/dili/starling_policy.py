@@ -14,26 +14,35 @@ from data.processing.evidence_library.shared.v2.normalization.cleaning import (
     clean_literal_text,
     file_sha256,
 )
-from data.processing.evidence_library.shared.v2.normalization.contracts import (
-    NormalizedSourceProfile,
-)
+from data.processing.evidence_library.shared.v2.normalization.contracts import NormalizedSourceProfile
 from data.processing.evidence_library.shared.v2.normalization.source_value_cleaning import (
     SourceValueCleaningResult,
 )
 from data.processing.evidence_library.shared.v2.normalization.task_policy import (
+    NormalizationHooks,
+    StageDocuments,
     StarlingTaskPolicy,
 )
 from data.processing.evidence_library.versions.v10.measurement_routing import (
     MEASUREMENT_ROUTING_VERSION,
     attach_stage1_routes,
 )
+from data.processing.evidence_library.versions.v10.standard_pair_dimension_stage2 import (
+    build_standard_hooks,
+    build_standard_stage_documents,
+    no_family,
+    validate_registered_mapping,
+)
 from data.processing.evidence_library.versions.v10.tasks.dili.mapping_registry import (
     REGISTRY_PATH,
     mapping_path,
+    mapping_registry,
     validate_mapping_hashes,
 )
 from data.processing.evidence_library.versions.v10.tasks.dili.starling_schema import (
     BASE_SOURCE_GROUP,
+    PAIR_DIMENSION_INPUTS,
+    PAIR_MAPPING_VERSION,
     RAW_SOURCE_COLUMNS,
     RECORD_CONTRACT,
     ROLE_FIELDS,
@@ -42,6 +51,10 @@ from data.processing.evidence_library.versions.v10.tasks.dili.starling_schema im
 )
 from data.processing.evidence_library.versions.v10.tasks.dili.starling_measurement_resolution import (
     DILI_MEASUREMENT_ROUTING_VERSION,
+)
+from data.processing.evidence_library.versions.v10.tasks.dili.starling_reference_semantics import (
+    DEFAULT_MAPPING_PATH as DEFAULT_REFERENCE_SEMANTICS_MAPPING,
+    REFERENCE_SEMANTICS_CONFIG,
 )
 from data.processing.gold_labels.level_mappings import level_mapping_path
 from data.processing.paths import (
@@ -62,6 +75,24 @@ DEFAULT_OUT_DIR = str(evidence_library_root(TASK_ID, "v10"))
 EXPECTED_SOURCE_ROWS = {
     source_id: int(spec["rows"]) for source_id, spec in SOURCE_SPECS.items()
 }
+MAIN_UNIVERSE_MANIFEST = Path("data/raw/starling/main_universe_v1/manifest.json")
+MAIN_UNIVERSE_RECORDS = Path("data/raw/starling/main_universe_v1/dili/records.parquet")
+
+
+def _selected_auxiliary_mapping() -> Path | None:
+    if "auxiliary_context" not in mapping_registry()["mappings"]:
+        return None
+    return mapping_path("auxiliary_context")
+
+
+def _selected_reference_mapping() -> Path | None:
+    if "reference_semantics" not in mapping_registry()["mappings"]:
+        return None
+    return mapping_path("reference_semantics")
+
+
+SELECTED_AUXILIARY_MAPPING = _selected_auxiliary_mapping()
+SELECTED_REFERENCE_MAPPING = _selected_reference_mapping()
 
 
 def _source_path(data_dir: Path, source_id: str, filename: str) -> Path:
@@ -192,17 +223,67 @@ def attach_source_columns(records: list[dict[str, Any]]) -> list[dict[str, Any]]
     return records
 
 
-def _stage2_unavailable(*args: Any, **kwargs: Any) -> Any:
-    del args, kwargs
-    raise RuntimeError("DILI V10 currently implements only source and clean stages")
+def build_hooks(args: argparse.Namespace) -> NormalizationHooks:
+    return build_standard_hooks(
+        args,
+        task_id=TASK_ID,
+        contract=RECORD_CONTRACT,
+        mapping_version=PAIR_MAPPING_VERSION,
+        output_fields_by_source={
+            source: ("canonical_endpoint_concept", *PAIR_DIMENSION_INPUTS[source])
+            for source in RECORD_CONTRACT.sources
+        },
+        reference_config=REFERENCE_SEMANTICS_CONFIG,
+    )
+
+
+def stage_documents(
+    *,
+    args: argparse.Namespace,
+    hooks: NormalizationHooks,
+    normalized: list[dict[str, Any]],
+    persisted: list[dict[str, Any]],
+    unit_policy_manifest: dict[str, Any],
+) -> StageDocuments:
+    del args
+    return build_standard_stage_documents(
+        task_id=TASK_ID,
+        contract=RECORD_CONTRACT,
+        hooks=hooks,
+        normalized=normalized,
+        persisted=persisted,
+        unit_policy_manifest=unit_policy_manifest,
+    )
+
+
+def add_cli_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--stage1-protected-voter-contract",
+        default="data/gold_labels/DILI/v1/scaffold/voter_membership.parquet",
+        help="Frozen Gold-v1 physical membership used only for Stage-1 UID protection.",
+    )
+    selected = _selected_auxiliary_mapping()
+    parser.add_argument(
+        "--auxiliary-mapping", default=str(selected) if selected else ""
+    )
+    reference = _selected_reference_mapping() or DEFAULT_REFERENCE_SEMANTICS_MAPPING
+    parser.add_argument("--reference-semantics-mapping", default=str(reference))
+    parser.add_argument("--allow-missing-reference-semantics", action="store_true")
 
 
 def validate_arguments(
     parser: argparse.ArgumentParser, args: argparse.Namespace
 ) -> None:
     validate_mapping_hashes()
-    if args.through_stage not in {"source", "clean"}:
-        parser.error("DILI V10 currently implements only source and clean stages")
+    if args.through_stage in {"source", "clean"}:
+        return
+    validate_registered_mapping(
+        parser,
+        args,
+        task_name="DILI",
+        selected=_selected_auxiliary_mapping(),
+        selected_reference=_selected_reference_mapping(),
+    )
 
 
 def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
@@ -214,7 +295,7 @@ def manifest_versions(*, complete: bool = True) -> dict[str, Any]:
         "dili_endpoint_policy": "raw_identity_or_missing_batch_key.v1",
         "measurement_routing_version": MEASUREMENT_ROUTING_VERSION,
         "dili_measurement_routing_version": DILI_MEASUREMENT_ROUTING_VERSION,
-        "stage2_status": "not_implemented",
+        "stage2_status": "implemented_requires_reviewed_auxiliary_mapping",
     }
 
 
@@ -249,13 +330,14 @@ POLICY = StarlingTaskPolicy(
     expected_source_rows=EXPECTED_SOURCE_ROWS,
     source_profiles=source_profiles,
     endpoint_inventory=endpoint_inventory,
-    family_resolver=_stage2_unavailable,
-    build_hooks=_stage2_unavailable,
+    family_resolver=no_family,
+    build_hooks=build_hooks,
     attach_source_columns=attach_source_columns,
-    stage_documents=_stage2_unavailable,
+    stage_documents=stage_documents,
     manifest_versions=manifest_versions,
     record_contract=RECORD_CONTRACT,
     source_value_cleaner=clean_source_values,
+    add_cli_arguments=add_cli_arguments,
     validate_arguments=validate_arguments,
     verify_source_digest=validate_source_digest,
     scientific_assets=(
@@ -265,9 +347,22 @@ POLICY = StarlingTaskPolicy(
         REGISTRY_PATH,
         mapping_path("measurement_resolution"),
         mapping_path("exact_measurement_units"),
+        MAIN_UNIVERSE_MANIFEST,
+        MAIN_UNIVERSE_RECORDS,
+        *((SELECTED_AUXILIARY_MAPPING,) if SELECTED_AUXILIARY_MAPPING else ()),
+        REFERENCE_SEMANTICS_CONFIG.prompt_registry_path,
+        *((SELECTED_REFERENCE_MAPPING,) if SELECTED_REFERENCE_MAPPING else ()),
     ),
-    source_universe_mapping=level_mapping_path("dili", "v1"),
+    source_universe_mapping=level_mapping_path("dili", "v2"),
+    source_uid_universe_records=MAIN_UNIVERSE_RECORDS,
+    source_uid_universe_manifest=MAIN_UNIVERSE_MANIFEST,
+    protected_voter_membership=Path(
+        "data/gold_labels/DILI/v1/scaffold/voter_membership.parquet"
+    ),
     stage1_measurement_routing_enabled=True,
+    measurement_resolution_enabled=True,
+    exact_unit_mapping_path=mapping_path("exact_measurement_units"),
+    reference_semantics_enabled=True,
 )
 
 

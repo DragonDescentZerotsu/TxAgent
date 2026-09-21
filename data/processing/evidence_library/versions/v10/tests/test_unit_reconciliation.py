@@ -64,7 +64,7 @@ def test_retry_sequence_uses_third_attempt() -> None:
     mappings, attempts, status = asyncio.run(resolve_partition("dili", rows, request))
     assert called == list(ATTEMPTS)
     assert [attempt["status"] for attempt in attempts] == ["failed", "failed", "ok"]
-    assert [attempt.provider for attempt in called] == ["openai", "openai", "local"]
+    assert [attempt.provider for attempt in called] == ["local", "local", "local"]
     assert [attempt.max_tokens for attempt in called] == [
         OPENAI_MAX_TOKENS,
         OPENAI_MAX_TOKENS,
@@ -287,6 +287,90 @@ def test_legacy_single_pass_review_and_publication(tmp_path) -> None:
     assert validate("dili", tmp_path / "run", output)["valid"] is True
 
 
+def test_incremental_unit_successor_preserves_base_and_reviews_only_new_units(
+    tmp_path,
+) -> None:
+    base = tmp_path / "predecessor/mapping.json"
+    base.parent.mkdir(parents=True)
+    base.write_text(
+        json.dumps(
+            {
+                "version": "starling_exact_measurement_units.v2",
+                "task": "dili",
+                "entries": [
+                    {
+                        "task": "dili",
+                        "canonical_endpoints": ["*"],
+                        "input_unit": "nM",
+                        "action": "map",
+                        "canonical_unit": "nM",
+                        "scale": "1",
+                        "domain": "any",
+                    },
+                    {
+                        "task": "dili",
+                        "canonical_endpoints": ["cell_viability"],
+                        "input_unit": "nM",
+                        "action": "map",
+                        "canonical_unit": "nM viability basis",
+                        "scale": "1",
+                        "domain": "any",
+                    },
+                ],
+            }
+        )
+    )
+    task_root = tmp_path / "run/dili"
+    pass_root = task_root / "llm_pass"
+    pass_root.mkdir(parents=True)
+    universe = task_root / "universe.jsonl"
+    universe.write_text(json.dumps({"id": "u_1", "unit": "uM"}) + "\n")
+    (task_root / "universe.manifest.json").write_text(
+        json.dumps(
+            {
+                "version": "starling_canonical_reconciliation_single_pass.v1",
+                "task": "dili",
+                "unit_count": 1,
+                "universe_sha256": file_sha256(universe),
+                "base_mapping": {
+                    "path": str(base.resolve()),
+                    "sha256": file_sha256(base),
+                    "entry_count": 2,
+                },
+            }
+        )
+    )
+    pass_mapping = pass_root / "mapping.jsonl"
+    pass_mapping.write_text(
+        json.dumps({"id": "u_1", "canonical_unit": "µM"}) + "\n"
+    )
+    (pass_root / "manifest.json").write_text(
+        json.dumps(
+            {
+                "version": "starling_canonical_reconciliation_single_pass.v1",
+                "task": "dili",
+                "mapping_count": 1,
+                "mapping_sha256": file_sha256(pass_mapping),
+            }
+        )
+    )
+
+    output = tmp_path / "draft/mapping.json"
+    manifest = consolidate_draft("dili", tmp_path / "run", output)
+    assert manifest["entry_count"] == 3
+    assert [
+        row["input_unit"] for row in json.loads(output.read_text())["entries"]
+    ] == ["nM", "nM", "uM"]
+    assert validate("dili", tmp_path / "run", output, allow_draft=True)["valid"]
+
+    review = prepare_review(
+        "dili", output, tmp_path / "review", packet_size=1, base_mapping=base
+    )
+    assert review["entry_count"] == 3
+    assert review["review_entry_count"] == 1
+    assert review["packet_count"] == 1
+
+
 def test_default_publication_requires_agent_review(tmp_path) -> None:
     with pytest.raises(ValueError, match="publication requires"):
         consolidate("dili", tmp_path)
@@ -337,10 +421,6 @@ def test_v3_grounded_reduction_preserves_basis_and_scale() -> None:
         "nmol/min/mg protein",
         "nmol min^-1 mg protein^-1",
     )[0] == "nmol min^-1 mg protein^-1"
-    with pytest.raises(ValueError, match="basis"):
-        _v3_guarded_unit(
-            "ames", "% overall yield of reactions", "% overall yield", "%"
-        )
     with pytest.raises(ValueError, match="scale|dimension|denominator"):
         _v3_guarded_unit("dili", "nM", "nM", "µM")
     with pytest.raises(ValueError, match="scale|dimension"):
@@ -393,13 +473,13 @@ def test_v3_response_requires_verbatim_span_and_complete_coverage() -> None:
                     {
                         "id": "u_1",
                         "unit_span": "% overall yield",
-                        "canonical_unit": "% yield",
+                        "canonical_unit": "%",
                     }
                 ]
             }
         ),
         cluster,
-    )[0]["canonical_unit"] == "% yield"
+    )[0]["canonical_unit"] == "%"
     with pytest.raises(ValueError, match="verbatim span"):
         _v3_validate_response(
             json.dumps(
@@ -408,13 +488,43 @@ def test_v3_response_requires_verbatim_span_and_complete_coverage() -> None:
                         {
                             "id": "u_1",
                             "unit_span": "% reaction yield",
-                            "canonical_unit": "% yield",
+                            "canonical_unit": "%",
                         }
                     ]
                 }
             ),
             cluster,
         )
+
+
+@pytest.mark.parametrize(
+    "unit",
+    (
+        "% overall yield",
+        "% inhibition",
+        "% loss",
+        "% breaks repaired",
+        "% GSH depleted",
+    ),
+)
+def test_v3_percent_outcome_semantics_may_reduce_to_percent(unit: str) -> None:
+    canonical, decision = _v3_guarded_unit("ames", unit, unit, "%")
+    assert canonical == "%"
+    assert decision == "accepted_percent_semantic_reduction"
+
+
+@pytest.mark.parametrize(
+    "unit",
+    (
+        "% of control",
+        "% inhibition relative to vehicle control",
+        "% of total cells",
+        "10^-3 % yield",
+    ),
+)
+def test_v3_percent_reference_bases_and_scales_remain_protected(unit: str) -> None:
+    with pytest.raises(ValueError, match="qualifier|basis|scale"):
+        _v3_guarded_unit("ames", unit, unit, "%")
 
 
 def test_v3_recovery_seed_inherits_only_resolved_clusters(tmp_path) -> None:

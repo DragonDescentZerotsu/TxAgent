@@ -1,9 +1,11 @@
 # Evidence library V10
 
-## Active BBB and Oral Gold-v1-keyed releases (2026-09-17)
+## Active Gold-v1-keyed releases (2026-09-21)
 
-BBB and Oral evidence-library `CURRENT` pointers resolve to v10, while all three
-conditioned benchmark `CURRENT` pointers resolve to Gold v1. The active BBB and
+BBB and Oral evidence-library `CURRENT` pointers resolve to
+`v10_main_universe_v3`, Skin resolves to `v10_main_universe_v6`, and Ames, DILI,
+and Carcinogens resolve to `v10_main_universe_v3`. The conditioned benchmark
+remains Gold v1. The active BBB and
 Oral libraries use the current V10 normalization, measurement-resolution, unit,
 pair-bucket, and record-pruning formula with physical Gold-v1 voters protected at
 Stage 1. BBB has 496,148 Stage-3 records and exactly 7,634 L1 physical voters.
@@ -27,15 +29,21 @@ The gold-to-record mappings are:
 - `data/gold_labels/<Task>/level_mappings/v1/level_mapping.parquet`: the
   preserved base-v1 mapping used for lineage and explicit version-specific
   workflows; it is not the current BBB/Oral runtime mapping.
-- `data/evidence_libraries/<task>/v10/level_mapping/records.parquet`: the
+- `data/evidence_libraries/<task>/<CURRENT>/level_mapping/records.parquet`: the
   complete mapping resolved against the rebuilt V10 Stage-3 universe, with L1
   exactly equal to Gold-v1 physical voter membership. The adjacent manifest
   pins both Stage 3 and the voter contract, and
   `data/evidence_libraries/level_mappings.v1.json` indexes both active maps.
-- `data/evidence_libraries/<task>/v10/level_mapping/assay_transfer_record_eligibility.parquet`:
+- `data/evidence_libraries/<task>/<CURRENT>/level_mapping/assay_transfer_record_eligibility.parquet`:
   one record-level scientific-suitability mark per mapped UID at every level.
   This sidecar intentionally excludes bucket support, variance, and calibration
   gates.
+
+Ames, DILI, and Carcinogens select their reviewed Gold-owned mapping generation
+through `data/gold_labels/<Task>/level_mappings/CURRENT`. Their active `v2`
+successors preserve every prior assignment except the reviewed former-voter
+L1-to-L2 decisions. Release builders validate voter membership against those
+maps and never derive or rewrite levels from voter membership.
 
 The immediately preceding active V10 trees, which omitted record-pruning inputs
 from final Stage 3, are preserved intact at
@@ -148,32 +156,40 @@ the duplicate-audit SHA-256 is
 An independent EPYC replay reproduced every scientific output hash. The active
 portable bundle is Stage-1-only and `CURRENT` remains `v9`.
 
-## DILI Stage 1 measurement resolution
+## Ames, DILI, and Carcinogens V10 Stage 1 publication (2026-09-20)
 
-DILI V10 Stage 1 completed and was verified on 2026-09-08 with
-`/usr/bin/python` on `epyc-4-10`. The frozen six-schema source snapshot contains
-1,645,109 rows; cleaning retains 1,627,666 rows and records 17,443 structure
-rejections. Each schema uses its own outcome field. Scientific endpoint aliases
-are absent: the inherited `canonical_endpoint_name` field is only the cleaned raw
-endpoint literal, the fixed base-source identity, or a missing-value batching key.
+The three imported-task Stage 1 trees were rebuilt on `epyc-1-11` from their
+active gold-owned V1 level mappings. The level-map migration changed only the
+pinned path and manifest hash: source membership, level counts, and endpoint
+inventories remained identical. Full validation applied each task's frozen
+measurement-resolution artifact and reviewed endpoint-local unit-map successor;
+the legacy parser is inactive and every extraction candidate has exactly one
+frozen decision.
 
-Routing partitions all cleaned rows into 140 narrow deterministic V5 potency
-accepts, 478,469 model-extraction candidates, and 1,149,057 numeric rejections.
-The completed extraction mapping is
-`tasks/dili/data_processing/measurement_resolution_v1/measurement_resolution.parquet`
-(SHA-256 `d8d979c6415b4385a64e3346da00a64b91b7e0a001d779782dd1e43e27d3c1af`).
-It contains 55,887 `ok`, 123,085 `relative`, 121,408 `unsure`, and 178,089
-`unavailable` rows, with exact `source_row_uid` coverage and no rejected or
-terminal-failure rows.
+| task | source rows | clean rows | extraction rows | canonical measurement rows | clean records SHA-256 |
+|---|---:|---:|---:|---:|---|
+| Ames | 1,299,584 | 1,293,979 | 213,937 | 140,852 | `5ca306f84ad78057bb68eb8203617c910526017fe6908ac4cef0689788b5d71d` |
+| DILI | 1,386,455 | 1,386,455 | 412,881 | 50,818 | `d218d84f767c95ac589dbd0c62c7bbea9dac6a3995aa9d7f3d1837ac780753da` |
+| Carcinogens | 3,151,140 | 3,151,140 | 1,736,528 | 228,871 | `8d2039a3f13a8572e3646eb56aafbf4a89aa66bcfdac738839ba4e43dde4a0e7` |
 
-Inference used one 512-worker pool against `http://dgx027:50001/v1`, requesting
-and receiving only `deepseek-ai/DeepSeek-V4-Flash-0731` with no credential,
-temperature 0, and reasoning effort `none`. The reviewed precision-first gate
-recovered 197/335 usable outcomes and matched 195/197 complete pairs among `ok`
-predictions. The detailed contract and limitations are in `tasks/dili/README.md`;
-the final audit is adjacent to the mapping as `provider_endpoint_receipt.json`.
-Stage 2 remains unimplemented, the incomplete-build marker is retained, and no
-DILI `CURRENT` pointer has been created.
+Ames uses measurement-resolution V7 and unit-reconciliation V4. V7 is the V6
+immutable successor with the reviewed `(8-(OH)-dG) per 10^5 dN` to
+`(8-(OH)-dG) per 10^5 dG` correction. Carcinogens retains its frozen
+measurement-resolution V4 artifact. DILI measurement-resolution V5 is an
+immutable V4 successor that applies the shared comma-aware finite-point parser
+to unresolved source measurements, requires an existing reviewed V3 unit rule,
+and promotes only frozen-gold matches or rows accepted by two independent
+reviewers. It promotes 7,618 rows and leaves 3,241 candidates unchanged. DILI
+and Carcinogens use reviewed unit-reconciliation V3 successors. Full validation
+reports zero missing extraction decisions, zero unmapped successful units,
+exact routing partitions, source-row conservation, and zero surviving canonical
+duplicate rows.
+
+The deterministic portable source/clean bundles under
+`data/artifacts/evidence_library_compressed/<task>/v10/` verify against the local
+trees. These are Stage-1-only publications: Stage 2 remains unimplemented for
+DILI and Carcinogens, Ames `CURRENT` remains `v9`, and DILI/Carcinogens have no
+`CURRENT` pointer.
 
 ## BBB complete training-context compatibility mapping
 

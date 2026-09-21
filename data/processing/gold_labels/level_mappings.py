@@ -26,14 +26,18 @@ def level_mapping_release(
     task = task_id(task)
     task_root = GOLD_LABELS_ROOT / PUBLIC_TASK_NAMES[task]
     if version is None:
-        version = (task_root / "CURRENT").read_text(encoding="utf-8").strip()
+        mapping_current = task_root / "level_mappings/CURRENT"
+        version = (
+            mapping_current if mapping_current.is_file() else task_root / "CURRENT"
+        ).read_text(encoding="utf-8").strip()
     root = task_root / "level_mappings" / version
     manifest_path = root / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if (
         manifest.get("status") != "complete"
         or manifest.get("task") != task
-        or manifest.get("gold_release") != version
+        or manifest.get("level_mapping_version", manifest.get("gold_release"))
+        != version
     ):
         raise ValueError(f"invalid gold level-mapping manifest: {manifest_path}")
     receipt = manifest["outputs"]["level_mapping"]

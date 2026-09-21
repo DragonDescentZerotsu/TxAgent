@@ -53,6 +53,35 @@ def test_gold_level_mapping_resolver_uses_current_v1_and_explicit_v2():
     assert manifest == (ROOT / "BBB_Martins/level_mappings/v1/manifest.json").resolve()
     assert mapping == manifest.parent / receipt["path"]
 
+    manifest, mapping, receipt = level_mapping_release("ames")
+    assert manifest == (ROOT / "Ames/level_mappings/v2/manifest.json").resolve()
+    assert mapping == manifest.parent / receipt["path"]
+
+
+def test_reviewed_auxiliary_successors_pin_only_l1_to_l2_decisions():
+    for task, demotions in {
+        "Ames": 202,
+        "DILI": 7_913,
+        "Carcinogens": 2_054,
+    }.items():
+        root = ROOT / task / "level_mappings/v2"
+        manifest = json.loads((root / "manifest.json").read_text())
+        assert (root.parent / "CURRENT").read_text().strip() == "v2"
+        assert manifest["gold_release"] == "v1"
+        assert manifest["level_mapping_version"] == "v2"
+        assert manifest["review"] == {
+            "basis": "user_approved_current_voter_exact_l1",
+            "decision": "former physical voters move from L1 to L2",
+            "promotions": 0,
+            "demotions": demotions,
+        }
+        decisions = root / manifest["outputs"]["reviewed_level_decisions"]["path"]
+        assert digest(decisions) == manifest["outputs"]["reviewed_level_decisions"]["sha256"]
+        assert pq.read_metadata(decisions).num_rows == demotions
+        for part in manifest["outputs"]["level_mapping"]["parts"]:
+            path = root / "level_mapping" / part["path"]
+            assert digest(path) == part["sha256"]
+
     manifest, mapping, receipt = level_mapping_release("Bioavailability_Ma", "v2")
     assert manifest == (ROOT / "Bioavailability_Ma/level_mappings/v2/manifest.json").resolve()
     assert mapping == manifest.parent / receipt["path"]
