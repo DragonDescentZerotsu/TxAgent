@@ -36,6 +36,7 @@ from .ranked_uid_retrieval import CAPACITY, SCHEMA_VERSION
 PROFILE = "ranked_level_retrieval_v3"
 EVIDENCE_RELEASE: str | None = None
 SCORE_REUSE_ROOTS: tuple[Path, ...] = ()
+TRUST_PREDECESSOR_ROWS = False
 TASK_LEVELS = {
     "bbb_martins": ("L1", "L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L1", "L2", "L3", "L4", "L5", "L6"),
@@ -582,6 +583,33 @@ def _reuse_scores(
     return output
 
 
+def _predecessor_rows(
+    task: str, subset: str, level: str,
+) -> dict[tuple[str, str], tuple[str, float]]:
+    """Load reviewed predecessor score identities without rerendering old rows."""
+    if not TRUST_PREDECESSOR_ROWS:
+        return {}
+    output: dict[tuple[str, str], tuple[str, float]] = {}
+    for reuse_root in SCORE_REUSE_ROOTS:
+        manifest_path = reuse_root / task / "scaffold" / subset / level / "VERSION.json"
+        if not manifest_path.is_file():
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        database = manifest_path.with_name(str(manifest["database"]))
+        with sqlite3.connect(f"file:{database.resolve()}?mode=ro", uri=True) as connection:
+            for query_id, item_id, score_key, score in connection.execute(
+                "SELECT benchmark_row_id,item_id,score_key,assay_transfer_score "
+                "FROM rankings WHERE score_key IS NOT NULL "
+                "AND assay_transfer_score IS NOT NULL"
+            ):
+                key = (str(query_id), str(item_id))
+                value = (str(score_key), float(score))
+                if key in output and output[key] != value:
+                    raise ValueError(f"Conflicting predecessor row: {key}")
+                output[key] = value
+    return output
+
+
 def prepare_level(
     task: str, subset: str, level: str, output_root: Path, evidence_manifest: Path,
 ) -> dict[str, Any]:
@@ -611,6 +639,9 @@ def prepare_level(
         renderer = v27_skin.SkinV27PromptRenderer()
     else:
         renderer = three_pools.Renderer(task) if model_spec is not None else None
+    predecessor_rows = _predecessor_rows(task, subset, level)
+    trusted_score_keys: set[str] = set()
+    trusted_row_count = 0
 
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f".{level}.", dir=target.parent) as temporary:
@@ -645,13 +676,20 @@ def prepare_level(
                     morgan_rank += 1
                     record = records[uid]
                     score_key = None
+                    score = None
                     if renderer is not None:
-                        prompt = renderer.prompt_task(record, query_smiles)
-                        score_key = prompt.cache_key
-                        prompt_rows.setdefault(score_key, (prompt.prompt, prompt.projection_hash))
+                        predecessor = predecessor_rows.get((benchmark_row_id, uid))
+                        if predecessor is not None:
+                            score_key, score = predecessor
+                            trusted_score_keys.add(score_key)
+                            trusted_row_count += 1
+                        else:
+                            prompt = renderer.prompt_task(record, query_smiles)
+                            score_key = prompt.cache_key
+                            prompt_rows.setdefault(score_key, (prompt.prompt, prompt.projection_hash))
                     staged_rows.append([
                         benchmark_row_id, uid, parent, record["canonical_smiles"], similarity,
-                        parent_rank, within_parent_rank, morgan_rank, None, None,
+                        parent_rank, within_parent_rank, morgan_rank, score, None,
                         None, None, None, None, score_key,
                     ])
 
@@ -696,7 +734,12 @@ def prepare_level(
                 "query_sha256": sha256_file(query_path),
                 "evidence_manifest_sha256": sha256_file(evidence_manifest),
             },
-            "score_counts": {"exact_reuse": len(reused), "pending": len(missing)},
+            "score_counts": {
+                "exact_reuse": len(reused) + len(trusted_score_keys),
+                "pending": len(missing),
+                "trusted_predecessor_rows": trusted_row_count,
+            },
+            "trusted_predecessor_row_reuse": TRUST_PREDECESSOR_ROWS,
             "score_reuse_sources": [
                 {
                     "path": str(root.resolve()),
@@ -1201,7 +1244,7 @@ def validate_release(
 
 
 def main() -> None:
-    global EVIDENCE_RELEASE, PROFILE, SCORE_REUSE_ROOTS
+    global EVIDENCE_RELEASE, PROFILE, SCORE_REUSE_ROOTS, TRUST_PREDECESSOR_ROWS
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "command",
@@ -1216,6 +1259,7 @@ def main() -> None:
     parser.add_argument("--profile", default=PROFILE)
     parser.add_argument("--evidence-release")
     parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
+    parser.add_argument("--trust-existing-score-keys", action="store_true")
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--evidence-manifest", type=Path, required=True)
     parser.add_argument("--previous-evidence-manifest", type=Path)
@@ -1227,6 +1271,7 @@ def main() -> None:
     PROFILE = args.profile
     EVIDENCE_RELEASE = args.evidence_release
     SCORE_REUSE_ROOTS = tuple(path.resolve() for path in args.score_reuse_root)
+    TRUST_PREDECESSOR_ROWS = args.trust_existing_score_keys
     args.output_root = args.output_root or runtime.cache_profile_root(PROFILE)
     if args.command == "build-evidence":
         result = build_evidence(args.task, args.evidence_manifest.parent)

@@ -27,6 +27,7 @@ def _configure(
     profile: str = PROFILE,
     evidence_release: str | None = None,
     score_reuse_roots: tuple[Path, ...] = (),
+    trust_predecessor_rows: bool = False,
 ) -> None:
     builder.PROFILE = profile
     builder.QUERY_BENCHMARK = "tdc"
@@ -34,6 +35,7 @@ def _configure(
     builder.TASK_LEVELS = LEVELS
     builder.EVIDENCE_RELEASE = evidence_release
     builder.SCORE_REUSE_ROOTS = score_reuse_roots
+    builder.TRUST_PREDECESSOR_ROWS = trust_predecessor_rows
 
 
 def main() -> None:
@@ -47,6 +49,7 @@ def main() -> None:
     parser.add_argument("--profile", default=PROFILE)
     parser.add_argument("--evidence-release")
     parser.add_argument("--score-reuse-root", action="append", type=Path, default=[])
+    parser.add_argument("--trust-existing-score-keys", action="store_true")
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--evidence-manifest", type=Path, required=True)
     parser.add_argument("--device", type=int, default=0)
@@ -55,7 +58,10 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=64)
     args = parser.parse_args()
     score_reuse_roots = tuple(path.resolve() for path in args.score_reuse_root)
-    _configure(args.profile, args.evidence_release, score_reuse_roots)
+    _configure(
+        args.profile, args.evidence_release, score_reuse_roots,
+        args.trust_existing_score_keys,
+    )
     args.output_root = args.output_root or cache_profile_root(args.profile)
     if args.command in {"prepare-level", "score", "finalize"}:
         if not args.subset or args.level not in LEVELS[args.task]:
