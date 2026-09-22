@@ -25,6 +25,18 @@ complete, or published while it exists only under `/local`. If migration is need
 before completion, stop at a flushed boundary before copying and resume only after
 the `/vast` copy validates.
 
+Full-flat V5 artifact payloads are external build inputs, not tracked prediction
+code. Their tracked contracts live under
+`retrieval/assay_reranking/flat_v5_manifests/`; evidence and cache payloads remain
+under their semantic owners. Restore compressed payloads with
+`predict.retrieval.assay_reranking.artifact_bundle`, then run its one-time
+`verify` command to create the ignored receipt. Inference may require and cheaply
+check that receipt, but must not inventory, package, rebuild, or hash whole
+payloads online. Missing, stale, or configuration-mismatched receipts are hard
+preparation failures. Explicit cache paths remain authoritative; task/benchmark
+defaults may select the Gold-v1 all-task or TDC bundle as documented by the flat
+harness.
+
 ## Testing discipline
 
 Do not add circular tests that merely assert newly written prompt prose or copy

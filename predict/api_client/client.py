@@ -303,7 +303,7 @@ class OpenAICompatibleClient:
         provider_model = self.model.rsplit("/", 1)[-1]
         token_parameter = (
             "max_completion_tokens"
-            if provider_model.startswith("gpt-5")
+            if provider_model.startswith(("gpt-5", "gpt-6"))
             else "max_tokens"
         )
         kwargs[token_parameter] = max_tokens or self.max_tokens

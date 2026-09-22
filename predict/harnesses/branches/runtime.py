@@ -67,7 +67,10 @@ from predict.llm_io.response import (
     structured_response_is_valid,
     validated_branch_content,
 )
-from predict.harnesses.branches.artifacts import load_reusable_group_outputs
+from predict.harnesses.branches.artifacts import (
+    load_reusable_group_outputs,
+    write_trace_jsonl,
+)
 from predict.harnesses.branches.runner import (
     BatchItem,
     PreparedBatch,
@@ -917,15 +920,27 @@ def _execute_flat_context_final(
             _write_json(final_temp, final_output)
             if state.prepared.args.save_trace:
                 with atomic_output_path(trace_path) as trace_temp:
-                    module._write_trace_jsonl(
-                        trace_temp,
-                        query_record=state.item.record,
-                        query_index=state.item.index,
-                        smiles=str(state.item.record.get(state.prepared.args.smiles_field) or ""),
-                        single_output=single_output,
-                        group_outputs=[],
-                        final_output=final_output,
-                    )
+                    trace_kwargs = {
+                        "query_record": state.item.record,
+                        "query_index": state.item.index,
+                        "smiles": str(
+                            state.item.record.get(state.prepared.args.smiles_field) or ""
+                        ),
+                        "single_output": single_output,
+                        "group_outputs": [],
+                        "final_output": final_output,
+                    }
+                    if (
+                        state.prepared.args.flat_prompt_version
+                        == CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+                    ):
+                        write_trace_jsonl(
+                            trace_temp,
+                            prediction_field="final_prediction",
+                            **trace_kwargs,
+                        )
+                    else:
+                        module._write_trace_jsonl(trace_temp, **trace_kwargs)
             else:
                 trace_path.unlink(missing_ok=True)
         _record_stage_event(state, FINAL_STAGE, final_output.get("status", "error"))

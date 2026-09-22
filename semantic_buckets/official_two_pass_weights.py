@@ -5,12 +5,14 @@ from __future__ import annotations
 import argparse
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 from datetime import datetime, timezone
 import gzip
 import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import sqlite3
 from types import SimpleNamespace
 from typing import Any, Mapping, Sequence
@@ -19,25 +21,47 @@ from urllib.request import urlopen
 from jinja2 import Environment, StrictUndefined
 import pandas as pd
 
-from data.processing.llm_api import async_openai_compatible_client
+from data.processing.llm_api import DEFAULT_ENV_FILE, async_openai_compatible_client
 from data.processing import openrouter_provider_pool
+from predict.api_client.pool import (
+    build_provider_pool,
+    load_provider_pool_config,
+    preflight_provider_models,
+    primary_capacity,
+)
 from semantic_buckets import bioavailability_semantic_readout_v1 as core
 from semantic_buckets import sliding_weight_assignment as display
 from semantic_buckets import speculative_weight_execution as speculative
 from tools.chembl_tool.common.json_utils import write_json_atomic
 
 
-VERSION = "semantic_weight_official_two_pass.v3"
+VERSION = "semantic_weight_official_two_pass.v4"
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 TARGET = "skin sensitization or allergic contact dermatitis"
 MAX_TOKENS = 20_480
 PASS1_FANOUT = 1
 PASS1_REQUIRED = 1
-PASS2_FANOUT = 4
-PASS2_REQUIRED = 2
+PASS2_FANOUT = 6
+PASS2_REQUIRED = 3
 PASS1_MAX_LOGICAL_INFLIGHT = 32
-PASS2_MAX_LOGICAL_INFLIGHT = 128
-OPENROUTER_CAPACITY = 35
+LOCAL_ENDPOINT_MAX_INFLIGHT = 128
+PASS2_PROVIDER_CAPACITY = 14
+PASS2_BATCH_SIZE = 12
+PASS2_CHAIN_WIDTHS = {"L2": 1, "L3": 1, "L4": 4, "L5": 1}
+PASS2_LOCAL_ENDPOINT = "dgx027_50002"
+GPT_FLEX_PROVIDER = {
+    "base_url": openrouter_provider_pool.OPENROUTER_URL,
+    "model": "openai/gpt-6-luna",
+    "api_key_env": "OPEN_ROUTER_KEY_TWO",
+    "max_inflight": PASS2_PROVIDER_CAPACITY,
+    "initial_latency_s": 120,
+    "timeout_s": 3_600,
+    "request_extra_body": {
+        "service_tier": "flex",
+        "reasoning_effort_override": "medium",
+        "allowed_served_models": ["openai/gpt-6-luna"],
+    },
+}
 DIMENSION_VALUE_LIMIT = 8
 TEXT_LIMIT = 240
 ENDPOINTS: tuple[dict[str, Any], ...] = ()
@@ -55,7 +79,11 @@ SEMANTIC_ROOT = (
 )
 WORLD_ROOT = ROOT / "provenance/retrieval_worlds/skin_morgan_top100_valid_test_l2_l3_v1"
 PROMPT_ROOT = ROOT / "prompts/semantic_weight_sliding_v2"
-OUTPUT_ROOT = ROOT / "provenance/semantic_weight_two_pass_v3"
+OUTPUT_ROOT = ROOT / "provenance/semantic_weight_two_pass_v4"
+PASS1_SOURCE_ROOT = (
+    ROOT / "provenance/semantic_weight_two_pass_v3/"
+    "ames_morgan100_official_two_pass_v6_cards_v3_20260922"
+)
 RUN_ID = "skin_morgan100_official_two_pass_v1_20260919"
 TASK = "skin_reaction"
 LEVELS = ("L2", "L3")
@@ -95,7 +123,7 @@ TASK_CONFIGS = {
             ROOT / "provenance/retrieval_worlds/"
             "ames_morgan_top100_valid_test_l2_l5_frozen_candidate_v1_20260922"
         ),
-        "run_id": "ames_morgan100_official_two_pass_v6_cards_v3_20260922",
+        "run_id": "ames_morgan100_official_two_pass_v6_cards_task_level_wavefront_v1_20260922",
         "levels": ("L2", "L3", "L4", "L5"),
         "bucket_count": 11_391,
         "semantic_status": "frozen_queued_boundary",
@@ -172,7 +200,7 @@ def _probe_endpoint(endpoint: Mapping[str, Any]) -> dict[str, Any] | None:
         "base_url": endpoint["base_url"],
         "model": endpoint["model"],
         "inventory_max_inflight": int(endpoint["max_inflight"]),
-        "max_inflight": min(PASS2_MAX_LOGICAL_INFLIGHT, int(endpoint["max_inflight"])),
+        "max_inflight": min(LOCAL_ENDPOINT_MAX_INFLIGHT, int(endpoint["max_inflight"])),
         "advertised_models": models,
     }
 
@@ -437,22 +465,24 @@ def _pass2_schedule(pass1: pd.DataFrame) -> pd.DataFrame:
     for level, group in pass1.groupby("level", sort=True):
         ordered = group.sort_values(["weight", "semantic_bucket_id"], ascending=[False, True])
         buckets = ordered.semantic_bucket_id.astype(str).tolist()
-        rows.append({"stage": "pass2", "level": level, "batch": 0,
-                     "candidate_bucket_ids_json": core._canonical_json(buckets[:12]),
-                     "anchor_bucket_ids_json": "[]"})
-        anchors = buckets[7:12]
-        for batch, start in enumerate(range(12, len(buckets), 7), 1):
-            candidates = buckets[start:start + 7]
-            rows.append({"stage": "pass2", "level": level, "batch": batch,
-                         "candidate_bucket_ids_json": core._canonical_json(candidates),
-                         "anchor_bucket_ids_json": core._canonical_json(anchors)})
-            anchors = candidates[-2:]
-    schedule = pd.DataFrame(rows).sort_values(["level", "batch"]).reset_index(drop=True)
-    schedule["execution_backend"] = [
-        "local_dgx" if index % 2 == 0 else "openrouter"
-        for index in range(len(schedule))
-    ]
-    return schedule
+        width = PASS2_CHAIN_WIDTHS.get(str(level), 1)
+        batches = [buckets[start:start + PASS2_BATCH_SIZE]
+                   for start in range(0, len(buckets), PASS2_BATCH_SIZE)]
+        previous: list[list[str]] = []
+        for wave, start in enumerate(range(0, len(batches), width)):
+            current = batches[start:start + width]
+            anchors = [batch[-1] for batch in previous]
+            for chain, candidates in enumerate(current):
+                rows.append({
+                    "stage": "pass2", "level": str(level), "batch": start + chain,
+                    "wave": wave, "chain": chain, "execution_backend": "fixed_mixed",
+                    "candidate_bucket_ids_json": core._canonical_json(candidates),
+                    "anchor_bucket_ids_json": core._canonical_json(anchors),
+                })
+            previous = current
+    return pd.DataFrame(rows).sort_values(
+        ["level", "wave", "chain"]
+    ).reset_index(drop=True)
 
 
 def _preview(anchors: Sequence[str]) -> dict[str, dict[str, str]]:
@@ -497,6 +527,14 @@ def prepare(run_id: str = RUN_ID) -> dict[str, Any]:
     with gzip.open(root / "bucket_prompt_payloads.json.gz", "wt", encoding="utf-8") as handle:
         json.dump(payloads, handle, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     review = _write_review(root, schedule, payloads)
+    local_endpoint = next(
+        (row["name"] for row in ENDPOINTS if row["name"] == PASS2_LOCAL_ENDPOINT),
+        ENDPOINTS[0]["name"],
+    )
+    provider_profile = _write_fixed_provider_profile(
+        root / "pass2_provider_profile.json", local_endpoint=local_endpoint,
+        require_luna_qualification=False,
+    )
     profile = {"model": MODEL, "reasoning_effort": "high", "max_tokens": MAX_TOKENS,
                "pass1": {"fanout": PASS1_FANOUT,
                          "required_valid_responses": PASS1_REQUIRED,
@@ -506,8 +544,9 @@ def prepare(run_id: str = RUN_ID) -> dict[str, Any]:
                          "aggregation": speculative.aggregation_method(PASS2_REQUIRED)},
                "pass1_max_logical_inflight_per_endpoint": PASS1_MAX_LOGICAL_INFLIGHT,
                "pass1_aggregate_logical_capacity": len(ENDPOINTS) * PASS1_MAX_LOGICAL_INFLIGHT,
-               "pass2_max_logical_inflight_per_endpoint": PASS2_MAX_LOGICAL_INFLIGHT,
-               "pass2_aggregate_logical_capacity": len(ENDPOINTS) * PASS2_MAX_LOGICAL_INFLIGHT,
+               "pass2_max_logical_inflight": sum(PASS2_CHAIN_WIDTHS.values()),
+               "pass2_aggregate_replica_capacity": PASS2_PROVIDER_CAPACITY * 3,
+               "pass2_local_endpoint": local_endpoint,
                "provider_inventory": str(PROVIDER_INVENTORY),
                "provider_inventory_sha256": inventory_hash,
                "endpoints": ENDPOINTS}
@@ -521,6 +560,244 @@ def prepare(run_id: str = RUN_ID) -> dict[str, Any]:
                 "files": {name: _sha256(root / name) for name in
                           ("pass1_schedule.parquet", "pass1_schedule.tsv",
                            "bucket_prompt_payloads.json.gz", "execution_profile.json")}}
+    manifest["files"]["pass2_provider_profile.json"] = _sha256(
+        root / "pass2_provider_profile.json"
+    )
+    write_json_atomic(root / "manifest.json", manifest)
+    return manifest
+
+
+def _write_fixed_provider_profile(
+    path: Path, *, local_endpoint: str = PASS2_LOCAL_ENDPOINT,
+    require_luna_qualification: bool = True,
+) -> dict[str, Any]:
+    payload = openrouter_provider_pool.export_provider_pool(
+        path, 30, credential_env="OPEN_ROUTER_KEY_TWO"
+    )
+    together = [
+        provider for provider in payload["providers"]
+        if provider["request_extra_body"].get("expected_upstream_provider") == "Together"
+    ]
+    if len(together) != 1:
+        raise ValueError("the current qualified pool must contain exactly one Together route")
+    together[0]["max_inflight"] = PASS2_PROVIDER_CAPACITY
+    payload["providers"] = [together[0], {
+        **GPT_FLEX_PROVIDER,
+        "name": "openrouter_gpt-6-luna_flex",
+        "request_extra_body": {
+            **GPT_FLEX_PROVIDER["request_extra_body"],
+            "expected_upstream_provider": "OpenAI",
+        },
+    }]
+    payload["max_failovers"] = 0
+    payload["fixed_replica_counts"] = {
+        "openrouter_gpt-6-luna_flex": 2,
+        together[0]["name"]: 2,
+        local_endpoint: 2,
+    }
+    payload["local_endpoint"] = local_endpoint
+    canary = (
+        ROOT / "provenance/semantic_weight_two_pass_v3/"
+        "ames_gpt6_luna_openrouter_medium_flex_one_step_canary_20260922/manifest.json"
+    )
+    if require_luna_qualification or canary.is_file():
+        if not canary.is_file():
+            raise ValueError(f"required GPT Flex qualification is absent: {canary}")
+        payload["luna_qualification"] = {
+            "status": "user_reviewed_single_canary_exception",
+            "artifact": str(canary), "sha256": _sha256(canary),
+        }
+    write_json_atomic(path, payload)
+    return payload
+
+
+def _verify_source_manifest(source_root: Path) -> tuple[dict[str, Any], Path]:
+    manifest_path = source_root / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"invalid frozen Pass-1 source manifest: {manifest_path}") from error
+    if (
+        not str(manifest.get("version", "")).startswith("semantic_weight_official_two_pass.")
+        or manifest.get("task") != "ames"
+        or set(manifest.get("levels", ())) != set(LEVELS)
+        or int(manifest.get("bucket_count", -1)) != EXPECTED_BUCKET_COUNT
+    ):
+        raise ValueError("the Pass-1 source manifest does not describe the AMES world")
+    if manifest.get("status") not in {
+        "awaiting_pass2_prompt_review", "running_pass2", "incomplete_pass2",
+        "complete_unreviewed_candidate", "complete_unselected",
+    }:
+        raise ValueError(f"Pass-1 source manifest is not post-Pass-1: {manifest.get('status')}")
+    for name in (
+        "pass1_schedule.parquet", "pass1_schedule.tsv",
+        "bucket_prompt_payloads.json.gz", "execution_profile.json",
+    ):
+        expected = (manifest.get("files") or {}).get(name)
+        path = source_root / name
+        if not expected or not path.is_file() or _sha256(path) != expected:
+            raise ValueError(f"frozen Pass-1 source file is not hash-pinned: {name}")
+    return manifest, manifest_path
+
+
+def _verify_source_requests(source_root: Path, expected_count: int) -> pd.DataFrame:
+    database = source_root / "requests.sqlite3"
+    if not database.is_file():
+        raise ValueError(f"frozen Pass-1 request database is absent: {database}")
+    try:
+        connection = sqlite3.connect(f"file:{database}?mode=ro", uri=True)
+        connection.row_factory = sqlite3.Row
+        row = connection.execute(
+            "SELECT COUNT(*), SUM(status='complete'), "
+            "SUM(response_json IS NOT NULL) FROM requests WHERE phase LIKE 'pass1/%'"
+        ).fetchone()
+        aggregates = connection.execute(
+            "SELECT COUNT(*) FROM speculative_aggregates "
+            "WHERE request_id IN (SELECT request_id FROM requests WHERE phase LIKE 'pass1/%')"
+        ).fetchone()[0]
+    except (sqlite3.Error, OSError) as error:
+        raise ValueError("could not inspect the frozen Pass-1 request database") from error
+    if row is None or row[0] != expected_count or row[1] != expected_count:
+        connection.close()
+        raise ValueError("frozen Pass-1 requests are not all complete")
+    if row[2] != expected_count or aggregates != expected_count:
+        connection.close()
+        raise ValueError("frozen Pass-1 requests lack complete aggregate receipts")
+    try:
+        scores = _scores(connection, "pass1")
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError("frozen Pass-1 requests cannot reconstruct their scores") from error
+    finally:
+        connection.close()
+    return scores
+
+
+def _verify_frozen_pass1_source() -> tuple[pd.DataFrame, dict[str, Any]]:
+    manifest, manifest_path = _verify_source_manifest(PASS1_SOURCE_ROOT)
+    manifest_hash = _sha256(manifest_path)
+    schedule_path = PASS1_SOURCE_ROOT / "pass1_schedule.parquet"
+    schedule_hash = _sha256(schedule_path)
+    expected_count = int(manifest.get("pass1_request_count", -1))
+    schedule = pd.read_parquet(schedule_path)
+    if expected_count < 1 or len(schedule) != expected_count:
+        raise ValueError("frozen Pass-1 schedule count does not match its manifest")
+    expected_scores = _verify_source_requests(PASS1_SOURCE_ROOT, expected_count)
+    weights_path = PASS1_SOURCE_ROOT / "pass1_weights.parquet"
+    weights_hash = _sha256(weights_path)
+    pass1 = pd.read_parquet(weights_path)
+    if (
+        len(pass1) != EXPECTED_BUCKET_COUNT
+        or pass1.semantic_bucket_id.duplicated().any()
+        or set(pass1.level.astype(str)) != set(LEVELS)
+    ):
+        raise ValueError("the source Pass-1 weights are incomplete")
+    try:
+        pd.testing.assert_frame_equal(
+            pass1.sort_values(["level", "semantic_bucket_id"]).reset_index(drop=True),
+            expected_scores.sort_values(["level", "semantic_bucket_id"]).reset_index(drop=True),
+            check_dtype=False,
+        )
+    except AssertionError as error:
+        raise ValueError("source Pass-1 weights do not match completed request receipts") from error
+    if _sha256(manifest_path) != manifest_hash:
+        raise ValueError("frozen Pass-1 source manifest changed during verification")
+    if _sha256(weights_path) != weights_hash:
+        raise ValueError("frozen Pass-1 weights changed during verification")
+    for name, expected in (manifest.get("files") or {}).items():
+        path = PASS1_SOURCE_ROOT / name
+        if path.is_file() and _sha256(path) != expected:
+            raise ValueError(f"frozen Pass-1 source file changed during verification: {name}")
+    return pass1, {
+        "manifest": {"path": str(manifest_path), "sha256": manifest_hash},
+        "pass1_weights": {"path": str(weights_path), "sha256": weights_hash},
+        "pass1_schedule": {
+            "path": str(schedule_path),
+            "sha256": schedule_hash,
+        },
+        "request_count": expected_count,
+    }
+
+
+def prepare_pass2_successor(run_id: str = RUN_ID) -> dict[str, Any]:
+    """Prepare a fresh Pass-2 run from the completed immutable AMES Pass 1."""
+    global ENDPOINTS
+    if TASK != "ames":
+        raise ValueError("the Pass-2 successor is currently defined only for AMES")
+    root = OUTPUT_ROOT / run_id
+    if root.exists():
+        raise FileExistsError(root)
+    pass1, source_pass1 = _verify_frozen_pass1_source()
+    inputs = _verify_inputs()
+    inputs["source_pass1"] = source_pass1
+    root.mkdir(parents=True)
+    copied = (
+        "pass1_schedule.parquet", "pass1_schedule.tsv",
+        "pass1_weights.parquet", "pass1_weights.tsv",
+        "bucket_prompt_payloads.json.gz",
+    )
+    for name in copied:
+        shutil.copy2(PASS1_SOURCE_ROOT / name, root / name)
+        inputs[f"source_pass1/{name}"] = {
+            "path": str(PASS1_SOURCE_ROOT / name),
+            "sha256": _sha256(PASS1_SOURCE_ROOT / name),
+        }
+    schedule = _pass2_schedule(pass1)
+    _atomic_frame(schedule, root / "pass2_schedule.parquet")
+    _atomic_frame(schedule, root / "pass2_schedule.tsv")
+    with gzip.open(root / "bucket_prompt_payloads.json.gz", "rt", encoding="utf-8") as handle:
+        payloads = json.load(handle)
+    review = _write_pass2_review(root, schedule, payloads)
+    candidates, inventory_hash = _provider_candidates()
+    selected = [row for row in candidates if row["name"] == PASS2_LOCAL_ENDPOINT]
+    probed = _probe_endpoint(selected[0]) if len(selected) == 1 else None
+    if probed is None:
+        raise ValueError(f"{PASS2_LOCAL_ENDPOINT} failed exact-model preflight")
+    endpoint = {**probed, "max_inflight": PASS2_PROVIDER_CAPACITY}
+    ENDPOINTS = (endpoint,)
+    provider_path = root / "pass2_provider_profile.json"
+    provider_profile = _write_fixed_provider_profile(provider_path)
+    profile = {
+        "version": f"{VERSION}.execution_profile",
+        "model": MODEL, "reasoning_effort": "high", "max_tokens": MAX_TOKENS,
+        "pass1_source": str(PASS1_SOURCE_ROOT),
+        "pass2": {
+            "batch_size": PASS2_BATCH_SIZE,
+            "chain_widths": PASS2_CHAIN_WIDTHS,
+            "fanout": PASS2_FANOUT,
+            "required_valid_responses": PASS2_REQUIRED,
+            "aggregation": speculative.aggregation_method(PASS2_REQUIRED),
+            "replica_counts": provider_profile["fixed_replica_counts"],
+            "progress_after_quorum": True,
+            "store_all_replicas": True,
+        },
+        "pass2_max_logical_inflight": sum(PASS2_CHAIN_WIDTHS.values()),
+        "pass2_max_inflight_per_provider_family": PASS2_PROVIDER_CAPACITY,
+        "pass2_aggregate_replica_capacity": PASS2_PROVIDER_CAPACITY * 3,
+        "provider_inventory": str(PROVIDER_INVENTORY),
+        "provider_inventory_sha256": inventory_hash,
+        "endpoints": [endpoint],
+    }
+    write_json_atomic(root / "execution_profile.json", profile)
+    files = (
+        *copied, "pass2_schedule.parquet", "pass2_schedule.tsv",
+        "pass2_provider_profile.json", "execution_profile.json",
+    )
+    manifest = {
+        "version": VERSION, "status": "awaiting_pass2_prompt_review",
+        "run_id": run_id, "created_at": _now(), "task": TASK,
+        "levels": list(LEVELS), "bucket_count": len(pass1),
+        "pass1_request_count": len(pd.read_parquet(root / "pass1_schedule.parquet")),
+        "pass2_request_count": len(schedule),
+        "semantic_review_status": SEMANTIC_REVIEW_STATUS,
+        "activation_allowed": False,
+        "predecessors": [
+            str(PASS1_SOURCE_ROOT),
+            str(PASS1_SOURCE_ROOT.parent / "ames_morgan100_official_two_pass_v6_cards_v4_medium_luna_20260922"),
+        ],
+        "inputs": inputs, "pass2_review": review,
+        "pass2_schedule_sha256": _sha256(root / "pass2_schedule.parquet"),
+        "files": {name: _sha256(root / name) for name in files},
+    }
     write_json_atomic(root / "manifest.json", manifest)
     return manifest
 
@@ -556,7 +833,11 @@ def _queue(connection: sqlite3.Connection, row: Mapping[str, Any], prompt: str,
            endpoint: Mapping[str, str], *, model: str = MODEL) -> str:
     candidates = json.loads(row["candidate_bucket_ids_json"])
     anchors = json.loads(row["anchor_bucket_ids_json"])
-    phase = f"{row['stage']}/{row['level']}/{int(row['batch']):04d}"
+    phase = (
+        f"{row['stage']}/{row['level']}/w{int(row['wave']):04d}/c{int(row['chain']):02d}"
+        if "wave" in row else
+        f"{row['stage']}/{row['level']}/{int(row['batch']):04d}"
+    )
     request_id = core._request_id("weight_assignment", phase, prompt)
     validation = {"candidate_aliases": [f"Candidate {i}" for i in range(1, len(candidates) + 1)],
                   "candidate_bucket_ids": candidates, "anchor_bucket_ids": anchors,
@@ -570,12 +851,13 @@ def _queue(connection: sqlite3.Connection, row: Mapping[str, Any], prompt: str,
     )
 
 
-async def _clients() -> tuple[dict[str, Any], list[dict[str, Any]]]:
+async def _clients(max_logical_inflight: int,
+                   fanout: int) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     clients, receipts = {}, []
     for endpoint in ENDPOINTS:
         client, credential = async_openai_compatible_client(
             base_url=endpoint["base_url"], provider="local", env_file=None,
-            max_connections=PASS2_MAX_LOGICAL_INFLIGHT * PASS2_FANOUT,
+            max_connections=max_logical_inflight * fanout,
             timeout_s=3600, max_retries=0,
         )
         if credential:
@@ -586,7 +868,7 @@ async def _clients() -> tuple[dict[str, Any], list[dict[str, Any]]]:
             raise ValueError(f"endpoint model changed: {endpoint['name']}={models}")
         clients[endpoint["name"]] = client
         receipts.append({**endpoint, "advertised_models": models,
-                         "max_inflight": PASS2_MAX_LOGICAL_INFLIGHT})
+                         "max_inflight": max_logical_inflight})
     return clients, receipts
 
 
@@ -638,15 +920,23 @@ def _scores(connection: sqlite3.Connection, stage: str) -> pd.DataFrame:
 
 async def _run_pass1(connection: sqlite3.Connection, root: Path,
                      payloads: Mapping[str, Any], clients: Mapping[str, Any],
-                     profile_hash: str) -> pd.DataFrame:
+                     profile_hash: str, max_inflight: int) -> pd.DataFrame:
     schedule = pd.read_parquet(root / "pass1_schedule.parquet")
-    semaphores = {endpoint["name"]: asyncio.Semaphore(PASS1_MAX_LOGICAL_INFLIGHT)
+    semaphores = {endpoint["name"]: asyncio.Semaphore(max_inflight)
                   for endpoint in ENDPOINTS}
+    completed = {
+        row[0] for row in connection.execute(
+            "SELECT request_id FROM requests WHERE status='complete' AND phase LIKE 'pass1/%'"
+        )
+    }
     work = []
     for index, row in enumerate(schedule.to_dict("records")):
         endpoint = ENDPOINTS[index % len(ENDPOINTS)]
         candidates = json.loads(row["candidate_bucket_ids_json"])
         prompt = _render(candidates, [], row["level"], payloads, {})
+        phase = f"{row['stage']}/{row['level']}/{int(row['batch']):04d}"
+        if core._request_id("weight_assignment", phase, prompt) in completed:
+            continue
         request_id = _queue(connection, row, prompt, endpoint)
         work.append(_execute_one(connection, request_id, endpoint, clients[endpoint["name"]],
                                  profile_hash, semaphores[endpoint["name"]],
@@ -660,118 +950,154 @@ async def _run_pass1(connection: sqlite3.Connection, root: Path,
     return scores
 
 
-async def _run_chain(level_rows: pd.DataFrame, connection: sqlite3.Connection,
-                     payloads: Mapping[str, Any], clients: Mapping[str, Any],
-                     profile_hash: str, level_offset: int) -> None:
-    for position, row in enumerate(level_rows.sort_values("batch").to_dict("records")):
+async def _execute_fixed_one(
+    connection: sqlite3.Connection, request_id: str,
+    targets: Sequence[tuple[Any, str]], profile_hash: str,
+    drains: list[asyncio.Task[None]],
+) -> None:
+    row = connection.execute(
+        "SELECT * FROM requests WHERE request_id=?", (request_id,)
+    ).fetchone()
+    if row is None:
+        raise ValueError(f"queued Pass-2 request disappeared: {request_id}")
+    if row["status"] == "complete" and speculative.all_replicas_stored(
+        connection, request_id, expected_replicas=PASS2_FANOUT
+    ):
+        return
+    result, drain = await speculative.execute_fixed_request(
+        targets, row, required=PASS2_REQUIRED
+    )
+    speculative.persist_result(
+        connection, result, base_url="mixed://openrouter+dgx027_50002",
+        model="fixed_mixed", benchmark_sha256=profile_hash,
+    )
+    if drain is not None:
+        async def store_late() -> None:
+            speculative.persist_late_receipts(connection, result, await drain)
+
+        drains.append(asyncio.create_task(store_late()))
+    if result["status"] != "complete":
+        raise RuntimeError(f"request failed: {request_id}: {result['error']}")
+
+
+async def _run_chain(
+    level_rows: pd.DataFrame, connection: sqlite3.Connection,
+    payloads: Mapping[str, Any], targets: Sequence[tuple[Any, str]],
+    profile_hash: str, drains: list[asyncio.Task[None]],
+) -> None:
+    for wave, rows in level_rows.groupby("wave", sort=True):
         existing = _scores(connection, "pass2")
         score_map = (existing.set_index("semantic_bucket_id").to_dict("index")
                      if len(existing) else {})
-        candidates = json.loads(row["candidate_bucket_ids_json"])
-        if set(candidates) <= score_map.keys():
-            continue
-        anchors = json.loads(row["anchor_bucket_ids_json"])
-        if not set(anchors) <= score_map.keys():
-            raise ValueError(f"pass-two anchors are incomplete: {row['level']}/{row['batch']}")
-        backend = row["execution_backend"]
-        if backend == "openrouter":
-            endpoint = {
-                "name": "openrouter_qualified_pool",
-                "base_url": openrouter_provider_pool.OPENROUTER_URL,
-            }
-            model = openrouter_provider_pool.DEFAULT_MODEL
-        else:
-            endpoint = ENDPOINTS[(position + level_offset) % len(ENDPOINTS)]
-            model = MODEL
-        prompt = _render(candidates, anchors, row["level"], payloads, score_map)
-        request_id = _queue(connection, row, prompt, endpoint, model=model)
-        client = clients["openrouter"] if backend == "openrouter" else clients["local_dgx"][endpoint["name"]]
-        await _execute_one(connection, request_id, endpoint, client,
-                           profile_hash, asyncio.Semaphore(1),
-                           fanout=PASS2_FANOUT, required=PASS2_REQUIRED, model=model)
+        work = []
+        for row in rows.sort_values("chain").to_dict("records"):
+            candidates = json.loads(row["candidate_bucket_ids_json"])
+            candidate_scores = [score_map.get(bucket) for bucket in candidates]
+            if all(candidate_scores) and all(
+                speculative.all_replicas_stored(
+                    connection, score["request_id"], expected_replicas=PASS2_FANOUT
+                )
+                for score in candidate_scores
+            ):
+                continue
+            anchors = json.loads(row["anchor_bucket_ids_json"])
+            if not set(anchors) <= score_map.keys():
+                raise ValueError(f"pass-two anchors are incomplete: {row['level']}/{wave}")
+            prompt = _render(candidates, anchors, row["level"], payloads, score_map)
+            endpoint = {"name": "fixed_mixed", "base_url": "mixed://openrouter+dgx027_50002"}
+            request_id = _queue(connection, row, prompt, endpoint, model="fixed_mixed")
+            work.append(_execute_fixed_one(
+                connection, request_id, targets, profile_hash, drains
+            ))
+        await asyncio.gather(*work)
 
 
-def _prepare_openrouter_pool(root: Path) -> tuple[Any, dict[str, Any]]:
-    from data.processing.llm_api import DEFAULT_ENV_FILE
-    from predict.api_client.pool import (
-        build_provider_pool,
-        load_provider_pool_config,
-        preflight_provider_models,
-        primary_capacity,
-    )
-
-    config_path = root / "pass2_openrouter_provider_pool.json"
-    if not config_path.exists():
-        openrouter_provider_pool.export_provider_pool(
-            config_path, OPENROUTER_CAPACITY, credential_env="OPEN_ROUTER_KEY_TWO"
-        )
-    config = load_provider_pool_config(config_path)
-    checks = preflight_provider_models(config)
+def _pool_adapter(config: Any) -> Any:
     pool = build_provider_pool(
-        config,
-        env_file=DEFAULT_ENV_FILE,
-        timeout_s=3_600,
-        max_tokens=MAX_TOKENS,
-        temperature=None,
-        tool_service_url="http://127.0.0.1:1",
-        enable_group_tools=False,
-        max_tool_rounds=0,
-        reasoning_effort="high",
-        enable_thinking=True,
-        transport_max_retries=0,
-        response_format={"type": "json_object"},
+        config, env_file=DEFAULT_ENV_FILE, timeout_s=3_600,
+        max_tokens=MAX_TOKENS, temperature=None,
+        tool_service_url="http://127.0.0.1:1", enable_group_tools=False,
+        max_tool_rounds=0, reasoning_effort="high", enable_thinking=False,
+        transport_max_retries=0, response_format={"type": "json_object"},
     )
     adapter = core._ProviderPoolCompletionAdapter(pool)
 
     async def create(**kwargs: Any) -> Any:
         return await asyncio.to_thread(adapter.create, **kwargs)
 
-    client = SimpleNamespace(
-        chat=SimpleNamespace(completions=SimpleNamespace(create=create))
+    return SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=create)),
+        snapshot=adapter.snapshot,
     )
+
+
+def _prepare_remote_clients(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    config_path = root / "pass2_provider_profile.json"
+    config = load_provider_pool_config(config_path)
+    checks = preflight_provider_models(config)
+    clients = {}
+    for provider in config.providers:
+        single = replace(config, providers=(provider,), max_failovers=0)
+        clients[provider.name] = _pool_adapter(single)
     receipt = {
-        "name": "openrouter_qualified_pool",
-        "config_path": str(config_path),
-        "config_sha256": _sha256(config_path),
-        "requested_model": openrouter_provider_pool.DEFAULT_MODEL,
-        "reasoning_effort": "high",
-        "max_inflight": primary_capacity(config),
-        "preflight": checks,
+        "config_path": str(config_path), "config_sha256": _sha256(config_path),
+        "requested_models": sorted({row.model for row in config.providers}),
+        "reasoning_effort_by_model": {
+            openrouter_provider_pool.DEFAULT_MODEL: "high",
+            "openai/gpt-6-luna": "medium",
+        },
+        "max_inflight": primary_capacity(config), "preflight": checks,
         "pool": config.public_dict(),
     }
-    return client, receipt
+    return clients, receipt
 
 
 async def _run_pass1_async(connection: sqlite3.Connection, root: Path,
-                           payloads: Mapping[str, Any], manifest: dict[str, Any]) -> None:
-    clients, preflight = await _clients()
+                           payloads: Mapping[str, Any], manifest: dict[str, Any],
+                           max_inflight: int) -> None:
+    clients, preflight = await _clients(max_inflight, PASS1_FANOUT)
     profile_hash = _sha256(root / "execution_profile.json")
     manifest["endpoint_preflight"] = preflight
     write_json_atomic(root / "manifest.json", manifest)
     try:
-        await _run_pass1(connection, root, payloads, clients, profile_hash)
+        await _run_pass1(
+            connection, root, payloads, clients, profile_hash, max_inflight
+        )
     finally:
         await asyncio.gather(*(client.close() for client in clients.values()))
 
 
 async def _run_pass2_async(connection: sqlite3.Connection, root: Path,
                            payloads: Mapping[str, Any], manifest: dict[str, Any]) -> None:
-    local_clients, preflight = await _clients()
-    openrouter_client, openrouter_receipt = await asyncio.to_thread(
-        _prepare_openrouter_pool, root
+    local_clients, preflight = await _clients(PASS2_PROVIDER_CAPACITY, 2)
+    remote_clients, remote_receipt = await asyncio.to_thread(
+        _prepare_remote_clients, root
     )
-    clients = {
-        "local_dgx": local_clients,
-        "openrouter": openrouter_client,
-    }
+    luna = remote_clients["openrouter_gpt-6-luna_flex"]
+    together_name = next(name for name in remote_clients if "together" in name)
+    together = remote_clients[together_name]
+    provider_profile = json.loads(
+        (root / "pass2_provider_profile.json").read_text(encoding="utf-8")
+    )
+    local_endpoint = provider_profile.get("local_endpoint", PASS2_LOCAL_ENDPOINT)
+    try:
+        local = local_clients[local_endpoint]
+    except KeyError as error:
+        raise ValueError(f"Pass-2 local endpoint was not prepared: {local_endpoint}") from error
+    targets = [
+        (luna, "openai/gpt-6-luna"), (luna, "openai/gpt-6-luna"),
+        (together, openrouter_provider_pool.DEFAULT_MODEL),
+        (together, openrouter_provider_pool.DEFAULT_MODEL),
+        (local, MODEL), (local, MODEL),
+    ]
     schedule = pd.read_parquet(root / "pass2_schedule.parquet")
-    backend_counts = {
-        str(name): int(count)
-        for name, count in schedule.execution_backend.value_counts().items()
-    }
     pass2_profile = {
         "version": f"{VERSION}.pass2_execution_profile",
-        "reasoning_effort": "high",
+        "reasoning_effort": {
+            "local_dgx": "high",
+            openrouter_provider_pool.DEFAULT_MODEL: "high",
+            "openai/gpt-6-luna": "medium",
+        },
         "fanout": PASS2_FANOUT,
         "required_valid_responses": PASS2_REQUIRED,
         "aggregation": speculative.aggregation_method(PASS2_REQUIRED),
@@ -780,11 +1106,13 @@ async def _run_pass2_async(connection: sqlite3.Connection, root: Path,
         )["pass2"],
         "policy_change_reason": "user-approved before any Pass-2 request",
         "schedule_sha256": _sha256(root / "pass2_schedule.parquet"),
-        "logical_request_counts": backend_counts,
+        "logical_request_counts": {
+            str(level): int(count) for level, count in schedule.groupby("level").size().items()
+        },
         "local_execution_profile_sha256": _sha256(root / "execution_profile.json"),
-        "openrouter_provider_pool_sha256": openrouter_receipt["config_sha256"],
-        "openrouter_model": openrouter_provider_pool.DEFAULT_MODEL,
-        "openrouter_capacity": openrouter_receipt["max_inflight"],
+        "remote_provider_pool_sha256": remote_receipt["config_sha256"],
+        "remote_models": remote_receipt["requested_models"],
+        "remote_capacity": remote_receipt["max_inflight"],
     }
     pass2_profile_path = root / "pass2_execution_profile.json"
     if pass2_profile_path.exists():
@@ -796,14 +1124,23 @@ async def _run_pass2_async(connection: sqlite3.Connection, root: Path,
     profile_hash = _sha256(pass2_profile_path)
     manifest["pass2_endpoint_preflight"] = {
         "local_dgx": preflight,
-        "openrouter": openrouter_receipt,
+        "remote_pool": remote_receipt,
     }
     write_json_atomic(root / "manifest.json", manifest)
+    drains: list[asyncio.Task[None]] = []
     try:
-        await asyncio.gather(*(
-            _run_chain(rows, connection, payloads, clients, profile_hash, index)
-            for index, (_, rows) in enumerate(schedule.groupby("level", sort=True))
-        ))
+        outcomes = await asyncio.gather(*(
+            _run_chain(rows, connection, payloads, targets, profile_hash, drains)
+            for _, rows in schedule.groupby("level", sort=True)
+        ), return_exceptions=True)
+        if drains:
+            await asyncio.gather(*drains)
+        failures = [outcome for outcome in outcomes if isinstance(outcome, BaseException)]
+        if failures:
+            raise RuntimeError("one or more task levels stopped") from failures[0]
+        write_json_atomic(root / "pass2_provider_final_snapshot.json", {
+            name: client.snapshot() for name, client in remote_clients.items()
+        })
     finally:
         await asyncio.gather(*(client.close() for client in local_clients.values()))
 
@@ -814,22 +1151,57 @@ def _write_pass2_review(root: Path, schedule: pd.DataFrame,
     review.mkdir()
     files = []
     for level, rows in schedule.groupby("level", sort=True):
-        seed = rows.sort_values("batch").iloc[0]
-        candidates = json.loads(seed.candidate_bucket_ids_json)
-        prompt = _render(candidates, [], str(level), payloads, {})
-        path = review / f"{level}_seed.txt"
-        path.write_text(prompt + "\n", encoding="utf-8")
-        files.append({"path": path.name, "sha256": _sha256(path),
-                      "characters": len(prompt), "batch": int(seed.batch)})
+        ordered = rows.sort_values(["wave", "chain"])
+        examples = [*ordered[ordered.wave.eq(0)].to_dict("records")]
+        anchored = ordered[ordered.wave.eq(1)]
+        if len(anchored):
+            examples.append(anchored.iloc[0].to_dict())
+        for row in examples:
+            candidates = json.loads(row["candidate_bucket_ids_json"])
+            anchors = json.loads(row["anchor_bucket_ids_json"])
+            prompt = _render(candidates, anchors, str(level), payloads, _preview(anchors))
+            shape = "seed" if not anchors else "anchored"
+            path = review / (
+                f"{level}_w{int(row['wave']):04d}_c{int(row['chain']):02d}_{shape}.txt"
+            )
+            path.write_text(prompt + "\n", encoding="utf-8")
+            files.append({
+                "path": path.name, "sha256": _sha256(path),
+                "characters": len(prompt), "batch": int(row["batch"]),
+                "wave": int(row["wave"]), "chain": int(row["chain"]),
+                "candidate_count": len(candidates), "anchor_count": len(anchors),
+            })
     manifest = {"version": f"{VERSION}.pass2_prompt_review", "status": "ready",
                 "completion_requests_made": 0, "files": files}
     write_json_atomic(review / "manifest.json", manifest)
     return manifest
 
 
+def _require_complete_pass2_receipts(connection: sqlite3.Connection) -> None:
+    request_ids = [
+        row["request_id"] for row in connection.execute(
+            "SELECT request_id FROM requests "
+            "WHERE phase LIKE 'pass2/%' AND status='complete'"
+        )
+    ]
+    incomplete = [
+        request_id for request_id in request_ids
+        if not speculative.all_replicas_stored(
+            connection, request_id, expected_replicas=PASS2_FANOUT
+        )
+    ]
+    if incomplete:
+        raise ValueError(
+            "Pass-2 cannot publish before all six replica receipts are stored: "
+            f"{len(incomplete)} incomplete requests"
+        )
+
+
 def _publish(root: Path, connection: sqlite3.Connection,
              manifest: dict[str, Any]) -> dict[str, Any]:
-    pass1, final = _scores(connection, "pass1"), _scores(connection, "pass2")
+    _require_complete_pass2_receipts(connection)
+    pass1 = pd.read_parquet(root / "pass1_weights.parquet")
+    final = _scores(connection, "pass2")
     if (
         len(pass1) != EXPECTED_BUCKET_COUNT
         or len(final) != EXPECTED_BUCKET_COUNT
@@ -859,17 +1231,49 @@ def _publish(root: Path, connection: sqlite3.Connection,
     return manifest
 
 
-def run_pass1(run_id: str, review_hash: str) -> dict[str, Any]:
+def run_pass1(run_id: str, review_hash: str,
+              endpoint_name: str | None = None) -> dict[str, Any]:
+    global ENDPOINTS
     if os.environ.get("DEEPSEEK_API_KEY") != "EMPTY":
         raise ValueError("set DEEPSEEK_API_KEY=EMPTY for local DGX execution")
     root, manifest, payloads = _load_run(run_id)
     _require_review(root, "prompt_review", review_hash)
+    max_inflight = PASS1_MAX_LOGICAL_INFLIGHT
+    if endpoint_name:
+        selected = tuple(row for row in ENDPOINTS if row["name"] == endpoint_name)
+        if len(selected) != 1:
+            raise ValueError(f"unknown prepared endpoint: {endpoint_name}")
+        ENDPOINTS = selected
+        max_inflight = int(selected[0]["max_inflight"])
+        manifest["pass1_runtime_endpoint_override"] = {
+            "endpoint": endpoint_name,
+            "max_logical_inflight": max_inflight,
+        }
     manifest.update(status="running_pass1", started_at=manifest.get("started_at", _now()))
     write_json_atomic(root / "manifest.json", manifest)
     connection = core._request_database(root / "requests.sqlite3", journal_mode="DELETE")
     speculative.ensure_tables(connection)
+    if endpoint_name:
+        migrated = 0
+        for row in connection.execute(
+            "SELECT request_id,validation_json FROM requests "
+            "WHERE phase LIKE 'pass1/%' AND status!='complete'"
+        ).fetchall():
+            validation = json.loads(row["validation_json"])
+            if validation["selected_endpoint"] != endpoint_name:
+                validation["selected_endpoint"] = endpoint_name
+                connection.execute(
+                    "UPDATE requests SET validation_json=? WHERE request_id=?",
+                    (core._canonical_json(validation), row["request_id"]),
+                )
+                migrated += 1
+        connection.commit()
+        manifest["pass1_runtime_endpoint_override"]["migrated_incomplete_requests"] = migrated
+        write_json_atomic(root / "manifest.json", manifest)
     try:
-        asyncio.run(_run_pass1_async(connection, root, payloads, manifest))
+        asyncio.run(_run_pass1_async(
+            connection, root, payloads, manifest, max_inflight
+        ))
         pass1 = _scores(connection, "pass1")
         schedule = _pass2_schedule(pass1)
         _atomic_frame(schedule, root / "pass2_schedule.parquet")
@@ -910,19 +1314,24 @@ def run_pass2(run_id: str, review_hash: str) -> dict[str, Any]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("prepare", "run-pass1", "run-pass2"))
+    parser.add_argument(
+        "command", choices=("prepare", "prepare-pass2-successor", "run-pass1", "run-pass2")
+    )
     parser.add_argument("--task", choices=tuple(TASK_CONFIGS), default="skin_reaction")
     parser.add_argument("--run-id")
     parser.add_argument("--approved-review-sha256")
+    parser.add_argument("--endpoint-name")
     args = parser.parse_args()
     configure_task(args.task)
     run_id = args.run_id or RUN_ID
     if args.command == "prepare":
         result = prepare(run_id)
+    elif args.command == "prepare-pass2-successor":
+        result = prepare_pass2_successor(run_id)
     elif args.command == "run-pass1":
         if not args.approved_review_sha256:
             parser.error("run-pass1 requires --approved-review-sha256")
-        result = run_pass1(run_id, args.approved_review_sha256)
+        result = run_pass1(run_id, args.approved_review_sha256, args.endpoint_name)
     else:
         if not args.approved_review_sha256:
             parser.error("run-pass2 requires --approved-review-sha256")

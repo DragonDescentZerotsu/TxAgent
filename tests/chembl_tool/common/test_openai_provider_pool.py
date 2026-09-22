@@ -168,6 +168,38 @@ def test_pool_records_upstream_provider_when_returned():
     assert response["execution_provider"]["upstream_provider"] == "Baidu"
 
 
+def test_build_pool_applies_provider_reasoning_override(monkeypatch):
+    from data.processing import llm_api
+    from predict.api_client import client as client_module
+
+    created = []
+    monkeypatch.setattr(
+        llm_api, "openai_compatible_client", lambda **_kwargs: (object(), "KEY")
+    )
+    monkeypatch.setattr(
+        client_module, "OpenAICompatibleClient",
+        lambda **kwargs: created.append(kwargs) or object(),
+    )
+    config = ProviderPoolConfig(providers=(ProviderSpec(
+        name="flex", base_url="https://api.openai.com/v1",
+        model="gpt-6-luna", api_key_env="OPENAI_API_KEY_ONE", max_inflight=1,
+        request_extra_body={
+            "reasoning_effort_override": "medium", "service_tier": "flex"
+        },
+    ),))
+
+    provider_pool.build_provider_pool(
+        config, env_file=None, timeout_s=60, max_tokens=100,
+        temperature=None, tool_service_url="http://127.0.0.1:1",
+        enable_group_tools=False, max_tool_rounds=0,
+        reasoning_effort="high", enable_thinking=False,
+        transport_max_retries=0,
+    )
+
+    assert created[0]["reasoning_effort"] == "medium"
+    assert created[0]["request_extra_body"] == {"service_tier": "flex"}
+
+
 def test_shared_spend_ledger_reserves_then_reconciles_actual_cost(tmp_path):
     calls = []
 

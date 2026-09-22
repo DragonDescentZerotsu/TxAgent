@@ -1,0 +1,19 @@
+Task: {{ task }}
+Evidence level: {{ level }}
+Source: {{ source_id }}
+Canonical endpoint: {{ canonical_endpoint }}
+
+Review the semantic buckets below. Their local IDs are 0 through {{ last_id }}.
+
+Merge IDs only when their bucket identities and representative records describe the
+same scientifically interchangeable evidence concept. Sharing this endpoint alone is
+not enough. Preserve distinctions in measurement or response meaning, assay context,
+organism or system, exposure design, qualifier, unit semantics, and directionality.
+
+Return only a JSON list of lists. Each inner list must contain at least two distinct
+integer IDs that should merge. An ID may occur at most once in the entire response.
+Omit every ID that should remain unchanged. Do not return singleton lists, prose,
+labels, rationales, Markdown, or an enclosing object. Valid examples are [] and
+[[0,4],[2,3,7]].
+
+{{ cards }}

@@ -432,7 +432,9 @@ def _selection_args(
         task=task,
         benchmark=benchmark,
         reranking=reranking,
-        assay_transfer_cache=assay_transfer_cache.resolve(),
+        assay_transfer_cache=flat.resolve_default_cache_bundle(
+            task, benchmark, assay_transfer_cache
+        ).resolve(),
         record_pool=record_pool,
         evaluation_subset=evaluation_subset,
         input_jsonl=input_jsonl,
@@ -1088,6 +1090,15 @@ def main(argv: list[str] | None = None) -> int:
                     "selection_contract_sha256": selection[
                         "selection_contract_sha256"
                     ],
+                    "artifact_manifest": selection.get("artifact_manifest", ""),
+                    "artifact_manifest_sha256": selection.get(
+                        "artifact_manifest_sha256", ""
+                    ),
+                    "artifact_receipt": selection.get("artifact_receipt", ""),
+                    "assay_transfer_cache": str(selection_args.assay_transfer_cache),
+                    "assay_transfer_cache_sha256": sha256_file(
+                        selection_args.assay_transfer_cache
+                    ),
                 }
             )
             commands.append(

@@ -85,6 +85,9 @@ class ProviderSpec:
             raise ValueError(f"provider {self.name!r} timeout_s must be positive")
         if self.priority < 0:
             raise ValueError(f"provider {self.name!r} priority must be non-negative")
+        effort = (self.request_extra_body or {}).get("reasoning_effort_override")
+        if effort is not None and effort not in {"low", "medium", "high"}:
+            raise ValueError(f"provider {self.name!r} has invalid reasoning override")
 
     def public_dict(self) -> dict[str, Any]:
         return {
@@ -475,6 +478,10 @@ def build_provider_pool(
         )
 
     def factory(spec: ProviderSpec) -> OpenAICompatibleClient:
+        request_extra_body = dict(spec.request_extra_body or {})
+        provider_reasoning_effort = request_extra_body.pop(
+            "reasoning_effort_override", reasoning_effort
+        )
         transport, _ = openai_compatible_client(
             base_url=spec.base_url,
             env_file=env_file,
@@ -493,10 +500,10 @@ def build_provider_pool(
             tool_service_url=tool_service_url,
             enable_group_tools=enable_group_tools,
             max_tool_rounds=max_tool_rounds,
-            reasoning_effort=reasoning_effort,
+            reasoning_effort=provider_reasoning_effort,
             enable_thinking=enable_thinking,
             transport_max_retries=transport_max_retries,
-            request_extra_body=spec.request_extra_body,
+            request_extra_body=request_extra_body,
             response_format=response_format,
             openai_client=transport,
         )

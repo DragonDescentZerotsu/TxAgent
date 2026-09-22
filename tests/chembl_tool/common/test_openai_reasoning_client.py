@@ -121,25 +121,26 @@ def test_empty_reasoning_effort_omits_parameter_without_enabling_deepseek_thinki
     assert "extra_body" not in captured
 
 
-def test_provider_prefixed_gpt5_uses_max_completion_tokens_and_custom_schema():
+def test_provider_prefixed_gpt_uses_max_completion_tokens_and_custom_schema():
     client = _client()
-    client.model = "openai/gpt-5.6-luna"
     client.temperature = None
     client.response_format = {"type": "json_schema", "json_schema": {"name": "vote"}}
-    captured = {}
-    client.client = SimpleNamespace(
-        chat=SimpleNamespace(
-            completions=SimpleNamespace(
-                create=lambda **kwargs: captured.update(kwargs) or _response("{}")
+    for model in ("openai/gpt-5.6-luna", "gpt-6-luna"):
+        captured = {}
+        client.model = model
+        client.client = SimpleNamespace(
+            chat=SimpleNamespace(
+                completions=SimpleNamespace(
+                    create=lambda **kwargs: captured.update(kwargs) or _response("{}")
+                )
             )
         )
-    )
 
-    client._create_completion([{"role": "user", "content": "analyze"}])
+        client._create_completion([{"role": "user", "content": "analyze"}])
 
-    assert captured["max_completion_tokens"] == 100
-    assert "max_tokens" not in captured
-    assert captured["response_format"] == client.response_format
+        assert captured["max_completion_tokens"] == 100
+        assert "max_tokens" not in captured
+        assert captured["response_format"] == client.response_format
 
 
 def test_provider_specific_extra_body_is_forwarded_without_changing_messages():

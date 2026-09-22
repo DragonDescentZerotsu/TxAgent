@@ -95,6 +95,25 @@ public harness
 The public harness must make the first step explicit. Shared execution code may
 operate on the resulting groups but may not silently reinterpret them.
 
+### Full-flat artifact preflight
+
+The full-flat-context-v5 family performs a single artifact preflight before
+cache-matched retrieval. It resolves the task/benchmark manifest in
+`retrieval/assay_reranking/flat_v5_manifests/`, checks the one-time verification
+receipt, and records the manifest and receipt in the selection manifest. A
+missing or stale receipt, missing payload, changed cache configuration, or
+changed size/mtime fails before model work begins. `--verify-flat-artifacts` is
+the explicit refresh path; ordinary preparation must use the cheap receipt check
+and must not rescan or rehash the evidence library or SQLite databases.
+
+Use the artifact-bundle CLI to restore release parts before launching:
+`python -m predict.retrieval.assay_reranking.artifact_bundle restore`.
+Direct and matrix launchers must resolve TDC and Gold safety-task defaults to
+their task-specific cache bundles while honoring an explicit
+`--assay-transfer-cache`. Existing V4 and historical profiles remain compatible;
+do not add symlinks or silently substitute another cache when a requested bundle
+is incomplete.
+
 ## Full-batch execution contract
 
 Direct, flat, full, and progressive full batches default to uninterrupted

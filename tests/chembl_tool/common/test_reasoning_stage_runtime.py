@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -16,8 +17,10 @@ from predict.harnesses.branches.runtime import (
     FINAL_STAGE,
     GROUP_STAGE,
     SINGLE_STAGE,
+    StageState,
     _canonical_group_outputs,
     _execute_final,
+    _execute_flat_context_final,
     _hydrate_configured_branch_reuse,
     _invalidate_dependent_final,
     _merge_group_output,
@@ -25,6 +28,9 @@ from predict.harnesses.branches.runtime import (
     prepare_stage_item,
     ready_stage_jobs,
     synchronize_configured_single_reuse,
+)
+from predict.harnesses.branches.flat import (
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
 )
 
 
@@ -492,6 +498,71 @@ def test_final_is_not_published_when_trace_serialization_fails(
 
     assert not (run_dir / "final_reasoning_output.json").exists()
     assert not (run_dir / "trace_messages.jsonl").exists()
+
+
+def test_six_task_flat_trace_uses_shared_serializer(tmp_path, monkeypatch):
+    prepared = _prepared(tmp_path)
+    prepared.config = replace(
+        prepared.config,
+        pipeline_module="predict.harnesses.branches.tasks.ames.pipeline",
+    )
+    prepared.args.flat_prompt_version = CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+    prepared.args.flat_query_prior = "none"
+    prepared.args.task_prompt_profile = "ames_v1"
+    prepared.args.flat_layout = "level-grouped"
+    prepared.args.flat_reranking = "assay-transfer-contrastive"
+    prepared.args.save_trace = True
+    run_dir = prepared.batch_run_root / "condition_idx00000"
+    run_dir.mkdir(parents=True)
+    (run_dir / "manifest.json").write_text("{}", encoding="utf-8")
+    (run_dir / "single_molecule_reasoning_output.json").write_text(
+        json.dumps({"status": "omitted"}), encoding="utf-8"
+    )
+    state = StageState(
+        prepared,
+        prepared.items[0],
+        "condition_idx00000",
+        run_dir,
+        {"status": "ok"},
+        (),
+    )
+    monkeypatch.setattr(
+        "predict.harnesses.branches.runtime.build_flat_context_request",
+        lambda *args, **kwargs: (
+            [{"role": "user", "content": "predict"}],
+            {"reasoning_reference_index": []},
+        ),
+    )
+    monkeypatch.setattr(
+        "predict.harnesses.branches.runtime.flat_context_validation",
+        lambda *args, **kwargs: {},
+    )
+    monkeypatch.setattr(
+        "predict.harnesses.branches.runtime.call_with_json_validation",
+        lambda *args, **kwargs: {
+            "content": {"final_prediction": "pass", "claims": []},
+            "structured_output_validation": {"valid": True},
+        },
+    )
+    monkeypatch.setattr(
+        "predict.harnesses.branches.runtime.native_flat_prediction",
+        lambda *args, **kwargs: ("positive", "mapping-hash"),
+    )
+    monkeypatch.setattr(
+        "predict.harnesses.branches.runtime._write_stage_trace",
+        lambda *args, **kwargs: None,
+    )
+
+    output = _execute_flat_context_final(
+        state, SimpleNamespace(chat_json=lambda messages: messages)
+    )
+
+    trace = [
+        json.loads(line)
+        for line in (run_dir / "trace_messages.jsonl").read_text().splitlines()
+    ]
+    assert output["status"] == "ok"
+    assert trace[-1]["prediction"] == "positive"
 
 
 def test_final_only_preparation_copies_checkpoints_and_enqueues_only_final(tmp_path):

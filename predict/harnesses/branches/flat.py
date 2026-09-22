@@ -52,6 +52,12 @@ from predict.retrieval.policies import normalize_molecule_identity, selector_met
 from predict.llm_io.evidence import minimal_evidence_from_row
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
+from predict.retrieval.assay_reranking.artifact_bundle import (
+    ArtifactBundleError,
+    bundle_manifest_path,
+    bundle_receipt_path,
+    require_receipt,
+)
 
 
 TIANANG_PROMPT_VERSION = "tianang_flat_v1"
@@ -99,6 +105,28 @@ CONTEXT_V5_SIX_TASKS_HARNESS_VERSION = "full-flat-context-v5-six-tasks-v1"
 CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-v1"
 JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
+
+
+def resolve_default_cache_bundle(
+    task: str, benchmark: str, configured: Path
+) -> Path:
+    """Select the task/benchmark cache bundle while preserving explicit paths."""
+    from predict.retrieval.assay_reranking.cache_matched import DEFAULT_CACHE_BUNDLE
+
+    configured = Path(configured)
+    if configured.resolve() != DEFAULT_CACHE_BUNDLE.resolve():
+        return configured
+    if benchmark == "tdc":
+        return Path(__file__).resolve().parents[2] / (
+            "retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml"
+        )
+    if task not in {"bbb_martins", "bioavailability_ma"}:
+        return Path(__file__).resolve().parents[2] / (
+            "retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml"
+        )
+    return configured
+
+
 JOSEPH_HARNESS_PROMPTS = {
     JOSEPH_V1_HARNESS_VERSION: JOSEPH_V1_PROMPT_VERSION,
     PUBLIC_HARNESS_VERSION: JOSEPH_PROMPT_VERSION,
@@ -1843,6 +1871,36 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         load_candidates,
     )
 
+    artifact_receipt = None
+    if args.prompt_version in CONTEXT_NUMBERED_PROMPT_VERSIONS:
+        artifact_manifest = Path(
+            getattr(args, "flat_artifact_manifest", None)
+            or bundle_manifest_path(args.task, args.benchmark)
+        ).resolve()
+        artifact_receipt_path = Path(
+            getattr(args, "flat_artifact_receipt", None)
+            or bundle_receipt_path(args.task, args.benchmark)
+        ).resolve()
+        try:
+            artifact_receipt = require_receipt(
+                artifact_manifest,
+                receipt_path=artifact_receipt_path,
+                verify=bool(getattr(args, "verify_flat_artifacts", False)),
+                expected_cache_config=Path(args.assay_transfer_cache),
+                expected_task=args.task,
+                expected_benchmark=args.benchmark,
+            )
+        except ArtifactBundleError as error:
+            raise SystemExit(
+                f"full-flat artifact preflight failed for {args.task}/{args.benchmark}: {error}\n"
+                "Restore the bundle, or inventory and verify it with: "
+                "python -m predict.retrieval.assay_reranking.artifact_bundle "
+                f"inventory --task {args.task} --benchmark {args.benchmark}_v1 "
+                f"--cache-config {args.assay_transfer_cache} "
+                f"--output {artifact_manifest}"
+            ) from error
+        args.flat_artifact_manifest = artifact_manifest
+        args.flat_artifact_receipt = artifact_receipt_path
     args.flat_preselected_uids = getattr(args, "flat_preselected_uids", None)
     args.flat_preselected_contexts = getattr(args, "flat_preselected_contexts", None)
     records = read_jsonl(args.input_jsonl)
@@ -1911,6 +1969,12 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
                 if args.flat_preselected_contexts else ""
             ),
         }
+        if artifact_receipt:
+            expected.update(
+                artifact_manifest=str(args.flat_artifact_manifest),
+                artifact_manifest_sha256=artifact_receipt["manifest_sha256"],
+                artifact_receipt=str(args.flat_artifact_receipt),
+            )
         if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
             expected.update(
                 layout=args.layout,
@@ -2145,6 +2209,12 @@ def _materialize_cache_matched_retrievals(args: argparse.Namespace) -> tuple[Pat
         "prompt_assets": prompt_asset_manifest(args.prompt_version),
         "selection_audit": compact_audit,
     }
+    if artifact_receipt:
+        manifest.update(
+            artifact_manifest=str(args.flat_artifact_manifest),
+            artifact_manifest_sha256=artifact_receipt["manifest_sha256"],
+            artifact_receipt=str(args.flat_artifact_receipt),
+        )
     if args.prompt_version in CONTEXT_PROMPT_VERSIONS:
         molecule_description_receipt.update(
             missing_policy="omit",
@@ -2388,6 +2458,18 @@ def _joseph_main(argv: list[str]) -> int:
     )
     parser.add_argument("--assay-transfer-cache", type=Path, default=DEFAULT_CACHE_BUNDLE)
     parser.add_argument(
+        "--flat-artifact-manifest", type=Path,
+        help="Hash-pinned full-flat artifact manifest; defaults to the task/benchmark registry.",
+    )
+    parser.add_argument(
+        "--flat-artifact-receipt", type=Path,
+        help="One-time full-flat artifact verification receipt.",
+    )
+    parser.add_argument(
+        "--verify-flat-artifacts", action="store_true",
+        help="Refresh the full artifact hash verification before preparation.",
+    )
+    parser.add_argument(
         "--record_pool", "-record_pool", choices=tuple(RECORD_POOLS),
         default="all",
     )
@@ -2428,6 +2510,9 @@ def _joseph_main(argv: list[str]) -> int:
         help="Materialize and verify flat retrieval without issuing model or tool calls.",
     )
     args, remaining = parser.parse_known_args(argv)
+    args.assay_transfer_cache = resolve_default_cache_bundle(
+        args.task, args.benchmark, args.assay_transfer_cache
+    )
     overrides = {}
     for value in args.level_record_limit:
         level, separator, raw_limit = value.partition("=")

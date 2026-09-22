@@ -117,7 +117,7 @@ def direct_profiles() -> list[DirectProfile]:
             f"ga{_code(ga)}_mc{_code(mc)}_label{_code(label)}", ga, mc, label
         )
         for ga, mc, label in itertools.product(
-            (0.75, 1.0, 1.25), (0.1, 0.25), (0.1, 0.25)
+            (0.75, 1.0, 1.25), (0.0, 0.1, 0.25), (0.0, 0.1, 0.25)
         )
     ]
 

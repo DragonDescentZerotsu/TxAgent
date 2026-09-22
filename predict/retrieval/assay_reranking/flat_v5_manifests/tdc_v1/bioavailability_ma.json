@@ -1,0 +1,55 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v1/bioavailability_ma",
+  "task": "bioavailability_ma",
+  "benchmark": "tdc_v1",
+  "harness_version": "full-flat-context-v5",
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+    "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/RELEASE_INDEX.json",
+      "size": 1526,
+      "sha256": "164ef69b6f2360fe8c981365b3540afe72b7460df3742c1f48fb35cb067e6bb7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/evidence/VERSION.json",
+      "size": 639,
+      "sha256": "cb757afa1215c9fd28a8e21c1569e8cc78f77520482f9983a5b0fc981e2ae0f9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/evidence/records.parquet",
+      "size": 41170,
+      "sha256": "a1d9bb7c59e8357985fcaafb342d1b0aa3721bcc0975fdcdacc482a926b13eca"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/test/L1/VERSION.json",
+      "size": 22435,
+      "sha256": "a93c286ab8ae2751b25f453653ec1995003d00a9623bafcb490cc384c0f27ea5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/test/L1/rankings.sqlite3",
+      "size": 6184960,
+      "sha256": "e5e45075755fdddf776420ea1874b9c02611aae7455ba481a63acb981b952f12"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/valid/L1/VERSION.json",
+      "size": 11810,
+      "sha256": "1abdcc0328b46e33b65884d7ff62280c07f7abdc40cbd0de3fbd7c4a8e6209fc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/bioavailability_ma/scaffold/valid/L1/rankings.sqlite3",
+      "size": 3162112,
+      "sha256": "f7f72d405830908f126d0698dcf2f6547853339c0907230731cfeb68343d5e2a"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+      "size": 730,
+      "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+    }
+  ],
+  "missing": []
+}

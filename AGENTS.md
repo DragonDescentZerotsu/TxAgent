@@ -105,6 +105,30 @@ profiles require `--legacy` and load `prompts/legacy/`. Keep prior results immut
 future behavior changes require a new version. See the active bundle README for
 commands. Put new tables and validation reports under the Joseph directory below.
 
+## Full-flat V5 artifact bundles
+
+Full-flat V5 and its numbered successors use one tracked manifest per task and
+benchmark under
+`predict/retrieval/assay_reranking/flat_v5_manifests/<benchmark>/<task>.json`.
+Evidence-library and retrieval-cache payloads remain with their semantic owners
+under ignored `data/evidence_libraries/` and `data/caches/` paths; they are not
+replaced by `data/artifacts/` or compatibility symlinks. The manifest is the
+portable contract for restoring those payloads, not a second data owner.
+
+Use `python -m predict.retrieval.assay_reranking.artifact_bundle` to `inventory`
+and write a manifest, `verify` it once after a restore or publication, `package`
+deterministic split tar/zstd parts for release storage, and `restore` those parts
+into the manifest's repository-relative paths. Verification writes the ignored
+receipt under
+`data/caches/assay_reranking/active/flat_v5/receipts/<benchmark>/<task>.json`.
+Full-flat preparation must require that receipt and fail before retrieval when the
+manifest, cache configuration, payload hashes, sizes, or mtimes are absent or
+stale. Use `--verify-flat-artifacts` only for an intentional one-time refresh;
+never reintroduce whole-library scans or whole-database integrity checks into the
+inference path. Preserve old cache profile names as explicit aliases while new or
+restored caches use the semantic `flat_v5/<benchmark>/<task>/<role>/<method>/<release>/<variant>`
+identity. Do not move or overwrite an existing cache without a reviewed successor.
+
 ## Rules
 
 Simplify code whenever possible. Before modifying or reviewing code, read and

@@ -22,6 +22,7 @@ CACHE_ROOT = Path(__file__).resolve().parents[1] / "cache" / "assay_reranking"
 ACTIVE_CACHE_ROOT = CACHE_ROOT / "active"
 ARCHIVE_CACHE_ROOT = CACHE_ROOT / "archive"
 DATA_ACTIVE_CACHE_ROOT = Path(__file__).resolve().parents[3] / "data" / "caches" / "assay_reranking" / "active"
+CANONICAL_CACHE_ROOT = DATA_ACTIVE_CACHE_ROOT / "flat_v5"
 ACTIVE_CACHE_PROFILES = frozenset(
     {
         "cache_matched_retrieval_v3",
@@ -39,6 +40,12 @@ ACTIVE_CACHE_PROFILES = frozenset(
         "v25_oral_uid_levels_morgan75",
         "v25_oral_uid_levels_morgan75_l2",
         "v25_oral_uid_levels_morgan75_l3",
+        "flat_v5/gold_v1/bbb_martins/l2plus/assay_transfer/v24_1/morgan75",
+        "flat_v5/gold_v1/bioavailability_ma/l2plus/assay_transfer/v25/morgan75",
+        "flat_v5/gold_v1/bioavailability_ma/l2plus/assay_transfer/"
+        "v25/morgan75_l2_builder",
+        "flat_v5/gold_v1/bioavailability_ma/l2plus/assay_transfer/"
+        "v25/morgan75_l3_builder",
         "v10_3_direct_gold_morgan100_v1",
         "v10_3_best_scaffold_morgan100_v1",
         "v10_3_best_parent_morgan100_v1",
@@ -70,6 +77,21 @@ ACTIVE_CACHE_PROFILES = frozenset(
 
 def cache_profile_root(profile: str) -> Path:
     """Return the explicit active or archived root for one cache profile."""
+    if str(profile).startswith("flat_v5/"):
+        parts = tuple(str(profile).split("/"))
+        if len(parts) != 7 or any(not part or part in {".", ".."} for part in parts):
+            raise ValueError(f"Invalid canonical flat-v5 cache profile: {profile!r}")
+        return CANONICAL_CACHE_ROOT.joinpath(*parts[1:])
+    from predict.retrieval.assay_reranking.artifact_bundle import (
+        canonical_cache_alias,
+        canonical_cache_path,
+    )
+
+    canonical = canonical_cache_alias(str(profile))
+    if canonical is not None:
+        candidate = canonical_cache_path(canonical)
+        if candidate.exists():
+            return candidate
     if profile in {
         "ranked_level_retrieval_v3",
         "ranked_level_retrieval_v4",
@@ -93,6 +115,13 @@ def cache_profile_root(profile: str) -> Path:
         return DATA_ACTIVE_CACHE_ROOT / profile
     parent = ACTIVE_CACHE_ROOT if profile in ACTIVE_CACHE_PROFILES else ARCHIVE_CACHE_ROOT
     return parent / profile
+
+
+def canonical_cache_profile(profile: str, *, benchmark: str = "gold_v1") -> str | None:
+    """Map a historical profile name to its semantic flat-v5 successor."""
+    from predict.retrieval.assay_reranking.artifact_bundle import canonical_cache_alias
+
+    return canonical_cache_alias(profile, benchmark=benchmark)
 MODEL_ROLES = (
     "direct", "direct_v10_3", "direct_v10_3_0_2", "direct_v10_4",
     "direct_task_best",

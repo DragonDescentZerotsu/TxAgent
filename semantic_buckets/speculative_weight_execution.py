@@ -248,6 +248,54 @@ async def collect_replicas(
     return receipts, chosen, elapsed
 
 
+async def collect_fixed_replicas(
+    call: Callable[[int], Awaitable[dict[str, Any]]], *, total: int, required: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], float | None,
+           asyncio.Task[list[dict[str, Any]]] | None]:
+    """Release the first valid quorum while the remaining replicas keep draining."""
+    if not 1 <= required <= total:
+        raise ValueError("fixed replicas require 1 <= required <= total")
+    active = {asyncio.create_task(call(replica_id)) for replica_id in range(total)}
+    receipts: list[dict[str, Any]] = []
+    valid_count = 0
+    while active:
+        done, active = await asyncio.wait(active, return_when=asyncio.FIRST_COMPLETED)
+        completed = sorted(await asyncio.gather(*done), key=lambda row: (
+            row["finished_monotonic"], row["replica_id"]
+        ))
+        for receipt in completed:
+            if receipt["status"] == "valid":
+                valid_count += 1
+                receipt["completion_rank"] = valid_count
+            receipts.append(receipt)
+        chosen = [row for row in receipts if row["status"] == "valid"][:required]
+        if len(chosen) == required:
+            elapsed = chosen[-1]["finished_monotonic"] - min(
+                row["started_monotonic"] for row in receipts
+            )
+
+            async def drain() -> list[dict[str, Any]]:
+                late: list[dict[str, Any]] = []
+                next_rank = valid_count
+                pending = active
+                while pending:
+                    finished, pending = await asyncio.wait(
+                        pending, return_when=asyncio.FIRST_COMPLETED
+                    )
+                    batch = sorted(await asyncio.gather(*finished), key=lambda row: (
+                        row["finished_monotonic"], row["replica_id"]
+                    ))
+                    for receipt in batch:
+                        if receipt["status"] == "valid":
+                            next_rank += 1
+                            receipt["completion_rank"] = next_rank
+                        late.append(receipt)
+                return late
+
+            return receipts, chosen, elapsed, asyncio.create_task(drain())
+    return receipts, [], None, None
+
+
 def aggregate_responses(
     chosen: Sequence[Mapping[str, Any]], aliases: Sequence[str], *,
     required: int = REQUIRED_REPLICAS,
@@ -325,6 +373,36 @@ async def execute_request(
     return result
 
 
+async def execute_fixed_request(
+    targets: Sequence[tuple[Any, str]], row: Mapping[str, Any], *, required: int,
+) -> tuple[dict[str, Any], asyncio.Task[list[dict[str, Any]]] | None]:
+    """Execute one fixed provider mix and release its first valid quorum."""
+    execution_id = uuid.uuid4().hex
+    call = lambda replica_id: _one_replica(
+        targets[replica_id][0], row, replica_id, targets[replica_id][1]
+    )
+    receipts, chosen, elapsed, drain = await collect_fixed_replicas(
+        call, total=len(targets), required=required
+    )
+    result = {
+        "request_id": row["request_id"], "execution_id": execution_id,
+        "receipts": receipts, "time_to_required_seconds": elapsed,
+        "status": "failed", "error": None,
+        "aggregation_method": aggregation_method(required),
+        "total_replica_count": len(targets),
+    }
+    if len(chosen) != required:
+        counts = dict(Counter(receipt["status"] for receipt in receipts))
+        result["error"] = f"fewer than {required} valid replicas after fixed mix: {counts}"
+        return result, None
+    validation = json.loads(row["validation_json"])
+    response, aggregate = aggregate_responses(
+        chosen, validation["candidate_aliases"], required=required
+    )
+    result.update(status="complete", response=response, aggregate=aggregate)
+    return result, drain
+
+
 def _usage_totals(receipts: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
     prompt = completion = 0
     for receipt in receipts:
@@ -347,7 +425,7 @@ def persist_result(
     prompt_tokens, output_tokens = _usage_totals(result["receipts"])
     for receipt in result["receipts"]:
         connection.execute(
-            "INSERT INTO speculative_replica_receipts VALUES (?,?,?,?,?,?)",
+            "INSERT OR IGNORE INTO speculative_replica_receipts VALUES (?,?,?,?,?,?)",
             (request_id, result["execution_id"], receipt["replica_id"],
              receipt["status"], receipt.get("completion_rank"),
              core._canonical_json(receipt)),
@@ -360,7 +438,15 @@ def persist_result(
         "replica_status_counts": dict(Counter(
             receipt["status"] for receipt in result["receipts"]
         )),
+        "expected_replica_count": int(
+            result.get("total_replica_count", len(result["receipts"]))
+        ),
+        "all_replicas_stored": len(result["receipts"]) == int(
+            result.get("total_replica_count", len(result["receipts"]))
+        ),
         "benchmark_sha256": benchmark_sha256,
+        "response": result.get("response"),
+        "aggregate": result.get("aggregate"),
     }
     connection.execute(
         "INSERT OR REPLACE INTO request_attempt_receipts VALUES (?,?,?)",
@@ -385,13 +471,88 @@ def persist_result(
     connection.commit()
 
 
+def persist_late_receipts(
+    connection: sqlite3.Connection, result: Mapping[str, Any],
+    receipts: Sequence[Mapping[str, Any]],
+) -> None:
+    """Append replicas that finished after the aggregate quorum was released."""
+    if not receipts:
+        return
+    request_id = str(result["request_id"])
+    for receipt in receipts:
+        connection.execute(
+            "INSERT OR IGNORE INTO speculative_replica_receipts VALUES (?,?,?,?,?,?)",
+            (request_id, result["execution_id"], receipt["replica_id"],
+             receipt["status"], receipt.get("completion_rank"),
+             core._canonical_json(receipt)),
+        )
+    prompt_tokens, output_tokens = _usage_totals(receipts)
+    connection.execute(
+        "UPDATE requests SET input_tokens=input_tokens+?,output_tokens=output_tokens+? "
+        "WHERE request_id=?",
+        (prompt_tokens, output_tokens, request_id),
+    )
+    row = connection.execute(
+        "SELECT attempts FROM requests WHERE request_id=?", (request_id,)
+    ).fetchone()
+    attempt = int(row["attempts"])
+    receipt_row = connection.execute(
+        "SELECT receipt_json FROM request_attempt_receipts "
+        "WHERE request_id=? AND attempt=?", (request_id, attempt),
+    ).fetchone()
+    aggregate_receipt = json.loads(receipt_row["receipt_json"])
+    statuses = connection.execute(
+        "SELECT status,COUNT(*) FROM speculative_replica_receipts "
+        "WHERE request_id=? AND execution_id=? GROUP BY status",
+        (request_id, result["execution_id"]),
+    ).fetchall()
+    aggregate_receipt["final_replica_status_counts"] = dict(statuses)
+    aggregate_receipt["all_replicas_stored"] = sum(count for _, count in statuses) == int(
+        result["total_replica_count"]
+    )
+    connection.execute(
+        "UPDATE request_attempt_receipts SET receipt_json=? "
+        "WHERE request_id=? AND attempt=?",
+        (core._canonical_json(aggregate_receipt), request_id, attempt),
+    )
+    connection.commit()
+
+
+def all_replicas_stored(
+    connection: sqlite3.Connection, request_id: str, *, expected_replicas: int | None = None
+) -> bool:
+    """Return whether the latest execution has a receipt for every replica."""
+    row = connection.execute(
+        "SELECT receipt_json FROM request_attempt_receipts "
+        "WHERE request_id=? ORDER BY attempt DESC LIMIT 1",
+        (request_id,),
+    ).fetchone()
+    if row is None:
+        return False
+    receipt = json.loads(row["receipt_json"])
+    execution_id = receipt.get("execution_id")
+    expected = int(receipt.get("expected_replica_count") or 0)
+    if (
+        not execution_id
+        or expected < 1
+        or (expected_replicas is not None and expected != expected_replicas)
+    ):
+        return False
+    stored = connection.execute(
+        "SELECT COUNT(*) FROM speculative_replica_receipts "
+        "WHERE request_id=? AND execution_id=?",
+        (request_id, execution_id),
+    ).fetchone()[0]
+    return stored == expected
+
+
 def _persist_aggregate(
     connection: sqlite3.Connection, result: Mapping[str, Any], benchmark_sha256: str
 ) -> None:
     if result["status"] != "complete":
         return
     connection.execute(
-        "INSERT INTO speculative_aggregates VALUES (?,?,?,?,?,?)",
+        "INSERT OR REPLACE INTO speculative_aggregates VALUES (?,?,?,?,?,?)",
         (result["request_id"], result["aggregate"]["aggregation_method"],
          result["aggregate"]["replicate_count"],
          core._canonical_json(result["aggregate"]), benchmark_sha256, _now()),

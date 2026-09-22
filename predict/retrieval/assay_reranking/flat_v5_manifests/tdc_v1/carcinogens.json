@@ -1,0 +1,55 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v1/carcinogens",
+  "task": "carcinogens",
+  "benchmark": "tdc_v1",
+  "harness_version": "full-flat-context-v5",
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+    "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/RELEASE_INDEX.json",
+      "size": 1519,
+      "sha256": "b8f8263c77c82bc60d558a3f68aa16f55f9cc217f328c66722a554fe8066c3a5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/evidence/VERSION.json",
+      "size": 625,
+      "sha256": "2a7080b88f6c8ab79f47aa77249d835e08842fdbc6d7319569196768f790a199"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/evidence/records.parquet",
+      "size": 22668,
+      "sha256": "98b69476f1872de70a62109075cceb618b3631ffd273a8211596adebceed77d1"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/scaffold/test/L1/VERSION.json",
+      "size": 10082,
+      "sha256": "d016e636dc18f730b06ba0344bcee7cb1d608d70e83a707a95fb14fe117b39cd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/scaffold/test/L1/rankings.sqlite3",
+      "size": 2637824,
+      "sha256": "6866485a27c1638a10538bf75c546c4f3b7fd8e203e0922ce52c6a5079f38b01"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/scaffold/valid/L1/VERSION.json",
+      "size": 5472,
+      "sha256": "8cf4b96d3b00371890774149b30f0e0a5d0629d25fa0bf6cb93331ea0cbb341d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/carcinogens/scaffold/valid/L1/rankings.sqlite3",
+      "size": 1302528,
+      "sha256": "617f2b16566f531ee8e356896efc0d398fe968c87a6dd1edb456dee8e462ce98"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+      "size": 730,
+      "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+    }
+  ],
+  "missing": []
+}

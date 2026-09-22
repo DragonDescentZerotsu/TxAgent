@@ -67,14 +67,25 @@ passes. Pass 1 has no anchors and uses exactly one request and one valid respons
 per logical batch. After Pass 1, freeze its ranking, render the exact first Pass-2
 prompt for every level, and stop at `awaiting_pass2_prompt_review`; Pass 2 must not
 launch without explicit approval of that review manifest hash.
+When Pass 1 is pinned to one prepared endpoint, use that endpoint's frozen
+`max_inflight` limit; the current AMES override therefore uses 128 on
+`dgx027:50002`.
 
-For the AMES V6-card run, alternate the complete sorted Pass-2 schedule between
-local DGX execution and the shared OpenRouter qualified pool, yielding the closest
-possible half split without splitting by level. Both backends use fanout 4 and
-the first two schema-valid responses. Freeze and hash-pin the seven-route
-DeepSeek V4 Flash 0731 OpenRouter profile at Pass-2 start, use its shared spend
-credential loader without a spend ledger, and preserve actual routes in replica receipts.
-Do not embed provider inventories or credentials in the task runner.
+For the AMES V6-card successor, Pass 2 uses 12-candidate task-level wavefronts
+with frozen widths L2=1, L3=1, L4=4, and L5=1. Every chain begins with an
+unanchored seed. Each later batch receives the aggregated score of the final
+ranked candidate from every batch in the preceding wave. Levels progress
+independently and a new wave may begin as soon as its prior wave has aggregates.
+
+Every Pass-2 request launches exactly six replicas: two OpenRouter
+`openai/gpt-6-luna` Flex calls at medium reasoning, two OpenRouter
+`deepseek/deepseek-v4-flash-0731` calls forced to Together at high reasoning,
+and two local high-reasoning calls to `dgx027:50002`. Average the first three
+schema-valid responses, but let all six finish and preserve all six receipts.
+Use `OPEN_ROUTER_KEY_TWO` for both remote models, `DEEPSEEK_API_KEY=EMPTY`
+locally, no fallbacks, no Alibaba, no direct OpenAI credential, and no spend
+ledger. Hash-pin the fixed provider profile and preserve actual routes in every
+replica receipt.
 
 Preserve superseded responses for audit, but never reuse scores produced from a
 different bucket representation in a successor run. Candidate weights from an

@@ -1,0 +1,325 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/gold_v1/dili",
+  "task": "dili",
+  "benchmark": "gold_v1",
+  "harness_version": "full-flat-context-v5",
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml",
+    "sha256": "b1740ab83b6ec3b807700bc5172c22aafb67d45ce398c45ec5ee78e049d9fc61"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/RELEASE_INDEX.json",
+      "size": 5433,
+      "sha256": "a52f637866a8a960116cb9e539a15d80aec53a532abc8dc0ad949fc527ece54f"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L1/VERSION.json",
+      "size": 63336,
+      "sha256": "16a187442a9a1a2bc42525d2977e51ffe061b3e200e125f8d0e1c8d5f4c94390"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L1/rankings.sqlite3",
+      "size": 21884928,
+      "sha256": "487be4a722fe7e70d943a810f9db62dd692460561b3a5e03e7bc17f8d8302d3d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L2/VERSION.json",
+      "size": 43677,
+      "sha256": "4e12405ad71ec9109180058ab83df4d9fe49782e6cf6132a1d77fa68a311e42d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L2/rankings.sqlite3",
+      "size": 344350720,
+      "sha256": "f1ea79506e8b7611e151587d2d90596389a03d74d1fa0017d2a4ec8797c112f9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L3/VERSION.json",
+      "size": 43602,
+      "sha256": "d54c2a541cd82a7442477d0a48d9d415f13f7c750da1f97e445df47a6ef79410"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L3/rankings.sqlite3",
+      "size": 246820864,
+      "sha256": "ba6dd74c5d40ccda10ed79c5f3177f6ecaaad7e230aa33577d7ebec653659cc5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L4/VERSION.json",
+      "size": 43643,
+      "sha256": "c81f898f79fab0d221e492bdc8d4d836e10fa116441f5dd277b19464f9872c37"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L4/rankings.sqlite3",
+      "size": 455827456,
+      "sha256": "9e92d8f0b37abef321ac85b83fc689d25da8a9e9ad01b4193bff7ecf8f66f313"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L5/VERSION.json",
+      "size": 43648,
+      "sha256": "37e5d4920df723a38a2dfcd1d536b3ccf2a64ee48898acbd276227a36a4a69b3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L5/rankings.sqlite3",
+      "size": 303312896,
+      "sha256": "9cbd6ff91e4741830476e7d8700926d88e662cece967678f973fe8678c3c78fc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L6/VERSION.json",
+      "size": 43680,
+      "sha256": "df394aa355c64f678e4e9d9f55436e67575d37d8fd12218545d44cc2362f92fd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L6/rankings.sqlite3",
+      "size": 442826752,
+      "sha256": "c167862422c8fe216829424ec45c69c4212922badc8b2b17e81950e7480ce931"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L7/VERSION.json",
+      "size": 43676,
+      "sha256": "928914acaa2b8f55e64f23cfac1a7346e5c2aab08fdbf6d81e952d3a9723a91c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/test/L7/rankings.sqlite3",
+      "size": 377397248,
+      "sha256": "7041d3c04f3b474f74e3c092574d548622386d001d3ea1cec969c291472d5c26"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L1/VERSION.json",
+      "size": 63337,
+      "sha256": "7139657809d9bce52e293eae1c50fa33acf8074f29b2f131336dfc75b3515051"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L1/rankings.sqlite3",
+      "size": 21712896,
+      "sha256": "6593e93cfd7ce14bb245b5ee7cf0543df3f57b7e37317624223c721bcea7335a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L2/VERSION.json",
+      "size": 43682,
+      "sha256": "ec6a6851dc977b2fa3f78abc14a5187203473fdb6435384b884ae414ab21d9b7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L2/rankings.sqlite3",
+      "size": 396988416,
+      "sha256": "14f6077ad09e42b719d7b2edf1cc3f88ba06dec71a0d0dce0ce9f9345f164c60"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L3/VERSION.json",
+      "size": 43517,
+      "sha256": "0c79f888efd898fba9962c333ea4dda1bf6178cfa1147a1b39a21acc8873062d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L3/rankings.sqlite3",
+      "size": 198291456,
+      "sha256": "dd78187f8385ddfbe36190d4879b3074e7dc97b42d147a2db082eeef99e84092"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L4/VERSION.json",
+      "size": 43564,
+      "sha256": "956dc38cb9772b9d012304db1e425134df668381c2e09b69639e4f50a0e146d5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L4/rankings.sqlite3",
+      "size": 234700800,
+      "sha256": "5c47424b99db2b5986e4159dd8360532f8325d7114623c02f4c2c59bfca89824"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L5/VERSION.json",
+      "size": 43602,
+      "sha256": "2a4da1919bd1fea51ed04ec72c3b77333c68951f9d7aa9254d03f888b8e5d559"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L5/rankings.sqlite3",
+      "size": 274186240,
+      "sha256": "63e2d71bad15bfe729f6e758e614d7cbd7f6ad89aab9834d8fb92fa7da849163"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L6/VERSION.json",
+      "size": 43670,
+      "sha256": "9ac9ca23b57bdbd8f8853c3f09e91ad0d4e97b8e5aae94d6085b86a28b1ce6e6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L6/rankings.sqlite3",
+      "size": 330055680,
+      "sha256": "2c867c99b91077b2cf5418dbed7320c5349776fa12e3739c4ce4e9672057a64a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L7/VERSION.json",
+      "size": 43662,
+      "sha256": "a7526fc2fad17a8df5dc0475422a8505e2d56628981cb54b435591a473541bb9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1/dili/scaffold/valid/L7/rankings.sqlite3",
+      "size": 376168448,
+      "sha256": "f30dcce0a20d089ffc3db2fb6951652465625425b7079f4f42d2ce61bc880e90"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/RELEASE_INDEX.json",
+      "size": 4938,
+      "sha256": "68014fd29e3982b7e0dfcc0a198dc74bbd44a467e1ea2b514553985629260f32"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L1/VERSION.json",
+      "size": 60934,
+      "sha256": "372195cfe48f773269907b64833c623b47438f919fbf7fd42fdee8183848b3d3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L1/rankings.sqlite3",
+      "size": 18038784,
+      "sha256": "5947e0b5b7337ac862f6fd9bcab1e620e5002fd9b413f4ca7fd86cafeef1e0f6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L2/VERSION.json",
+      "size": 43677,
+      "sha256": "4e12405ad71ec9109180058ab83df4d9fe49782e6cf6132a1d77fa68a311e42d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L2/rankings.sqlite3",
+      "size": 344350720,
+      "sha256": "f1ea79506e8b7611e151587d2d90596389a03d74d1fa0017d2a4ec8797c112f9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L3/VERSION.json",
+      "size": 43602,
+      "sha256": "d54c2a541cd82a7442477d0a48d9d415f13f7c750da1f97e445df47a6ef79410"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L3/rankings.sqlite3",
+      "size": 246820864,
+      "sha256": "ba6dd74c5d40ccda10ed79c5f3177f6ecaaad7e230aa33577d7ebec653659cc5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L4/VERSION.json",
+      "size": 43643,
+      "sha256": "c81f898f79fab0d221e492bdc8d4d836e10fa116441f5dd277b19464f9872c37"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L4/rankings.sqlite3",
+      "size": 455827456,
+      "sha256": "9e92d8f0b37abef321ac85b83fc689d25da8a9e9ad01b4193bff7ecf8f66f313"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L5/VERSION.json",
+      "size": 43648,
+      "sha256": "37e5d4920df723a38a2dfcd1d536b3ccf2a64ee48898acbd276227a36a4a69b3"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L5/rankings.sqlite3",
+      "size": 303312896,
+      "sha256": "9cbd6ff91e4741830476e7d8700926d88e662cece967678f973fe8678c3c78fc"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L6/VERSION.json",
+      "size": 43680,
+      "sha256": "df394aa355c64f678e4e9d9f55436e67575d37d8fd12218545d44cc2362f92fd"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L6/rankings.sqlite3",
+      "size": 442826752,
+      "sha256": "c167862422c8fe216829424ec45c69c4212922badc8b2b17e81950e7480ce931"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L7/VERSION.json",
+      "size": 43676,
+      "sha256": "928914acaa2b8f55e64f23cfac1a7346e5c2aab08fdbf6d81e952d3a9723a91c"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/test/L7/rankings.sqlite3",
+      "size": 377397248,
+      "sha256": "7041d3c04f3b474f74e3c092574d548622386d001d3ea1cec969c291472d5c26"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L1/VERSION.json",
+      "size": 60935,
+      "sha256": "dd8d209f69ce2277437fc2d7b7a043e83b537c55c20030020106f733ee31ca14"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L1/rankings.sqlite3",
+      "size": 17682432,
+      "sha256": "c3b78a2fe602a04e4134c41d867244a98fbff7e236f8bce003d1c7d7cb148bf1"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L2/VERSION.json",
+      "size": 43682,
+      "sha256": "ec6a6851dc977b2fa3f78abc14a5187203473fdb6435384b884ae414ab21d9b7"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L2/rankings.sqlite3",
+      "size": 396988416,
+      "sha256": "14f6077ad09e42b719d7b2edf1cc3f88ba06dec71a0d0dce0ce9f9345f164c60"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L3/VERSION.json",
+      "size": 43517,
+      "sha256": "0c79f888efd898fba9962c333ea4dda1bf6178cfa1147a1b39a21acc8873062d"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L3/rankings.sqlite3",
+      "size": 198291456,
+      "sha256": "dd78187f8385ddfbe36190d4879b3074e7dc97b42d147a2db082eeef99e84092"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L4/VERSION.json",
+      "size": 43564,
+      "sha256": "956dc38cb9772b9d012304db1e425134df668381c2e09b69639e4f50a0e146d5"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L4/rankings.sqlite3",
+      "size": 234700800,
+      "sha256": "5c47424b99db2b5986e4159dd8360532f8325d7114623c02f4c2c59bfca89824"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L5/VERSION.json",
+      "size": 43602,
+      "sha256": "2a4da1919bd1fea51ed04ec72c3b77333c68951f9d7aa9254d03f888b8e5d559"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L5/rankings.sqlite3",
+      "size": 274186240,
+      "sha256": "63e2d71bad15bfe729f6e758e614d7cbd7f6ad89aab9834d8fb92fa7da849163"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L6/VERSION.json",
+      "size": 43670,
+      "sha256": "9ac9ca23b57bdbd8f8853c3f09e91ad0d4e97b8e5aae94d6085b86a28b1ce6e6"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L6/rankings.sqlite3",
+      "size": 330055680,
+      "sha256": "2c867c99b91077b2cf5418dbed7320c5349776fa12e3739c4ce4e9672057a64a"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L7/VERSION.json",
+      "size": 43662,
+      "sha256": "a7526fc2fad17a8df5dc0475422a8505e2d56628981cb54b435591a473541bb9"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_gold_v1_addon_v2/dili/scaffold/valid/L7/rankings.sqlite3",
+      "size": 376168448,
+      "sha256": "f30dcce0a20d089ffc3db2fb6951652465625425b7079f4f42d2ce61bc880e90"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/03_pair_buckets/records.parquet",
+      "size": 665702661,
+      "sha256": "1f91fe90361af06f176474ebef475e6011eb3530654843006f28f090cbc47448"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_gold_v1_addon_v2/VERSION.json",
+      "size": 1748,
+      "sha256": "0665903d62f1d5ac8867ca4771b9c09b44962a435315db1a37599311890b38f7"
+    },
+    {
+      "path": "data/evidence_libraries/dili/v10_main_universe_v3/retrieval_projection/ranked_evidence_gold_v1_addon_v2/records.parquet",
+      "size": 925057012,
+      "sha256": "f8dd9063cb2d8c2ff664e3214bb836ddb2fe0faa6858410fd4fd3c5aac984f91"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_gold_v1_all_tasks_v1.yaml",
+      "size": 1606,
+      "sha256": "b1740ab83b6ec3b807700bc5172c22aafb67d45ce398c45ec5ee78e049d9fc61"
+    }
+  ],
+  "missing": []
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "flat_v5_artifact_bundle.v1",
+  "status": "complete",
+  "bundle_id": "flat_v5/tdc_v1/skin_reaction",
+  "task": "skin_reaction",
+  "benchmark": "tdc_v1",
+  "harness_version": "full-flat-context-v5",
+  "cache_config": {
+    "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+    "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+  },
+  "artifacts": [
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/RELEASE_INDEX.json",
+      "size": 1521,
+      "sha256": "76022d039754f61e6f2886cca6f9889c6bdc2e002ef8e412752cb29feb3ab975"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/evidence/VERSION.json",
+      "size": 629,
+      "sha256": "3b3a0090d621bb1f2c9d99948a9c170ac155d81672465455f31962b5bf14e0de"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/evidence/records.parquet",
+      "size": 20993,
+      "sha256": "43ad22d20944fbc25f7054947cf4617337a25ecd1d97c55b7ba36873ae2cd156"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/scaffold/test/L1/VERSION.json",
+      "size": 14382,
+      "sha256": "5a0b8828ba7d7ed495140eb53cc95efbba2a4162c72f321ec8619f21e00f8a63"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/scaffold/test/L1/rankings.sqlite3",
+      "size": 3538944,
+      "sha256": "91b79444810dd349dbcb5296d75f8b4d9d3c09502888adedd2868b859c998135"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/scaffold/valid/L1/VERSION.json",
+      "size": 7621,
+      "sha256": "f8fa6aa9f0011943710a72c5fd194c6c2b52c49ff238f9cbb808ac85cc161298"
+    },
+    {
+      "path": "data/caches/assay_reranking/active/ranked_level_retrieval_tdc_v1/skin_reaction/scaffold/valid/L1/rankings.sqlite3",
+      "size": 1744896,
+      "sha256": "c06fc081fd85c441f031cfd40ccbfa67f97c617e479de614de60de911886ab4c"
+    },
+    {
+      "path": "predict/retrieval/assay_reranking/ranked_level_retrieval_tdc_v1.yaml",
+      "size": 730,
+      "sha256": "3cf2908bdde7010e0f8d5106c07466896c3e420925bd5a5b8dab6cc5e80d0f9a"
+    }
+  ],
+  "missing": []
+}

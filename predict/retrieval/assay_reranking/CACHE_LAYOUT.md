@@ -1,5 +1,41 @@
 # Assay-reranking cache layout
 
+## Canonical full-flat V5 identities
+
+New or restored caches use the semantic identity layout:
+
+```text
+flat_v5/<benchmark>/<task>/<role>/<method>/<release>/<variant>
+```
+
+`role` is `l1` or `l2plus`; `method` is the ranking/selection method; and
+`release` and `variant` are independent fields. For example, the BBB V24.1
+successor is:
+
+```text
+flat_v5/gold_v1/bbb_martins/l2plus/assay_transfer/v24_1/morgan75
+```
+
+The historical `v24_1_bbb_uid_levels_morgan75` and Oral V25 profile names remain
+valid compatibility aliases. `runtime.cache_profile_root()` uses the canonical
+location automatically when that successor has been restored, and otherwise
+continues to resolve the historical location. Generate and verify the tracked
+task/benchmark bundle manifest with:
+
+```bash
+python -m predict.retrieval.assay_reranking.artifact_bundle inventory \
+  --task bbb_martins --benchmark gold_v1 \
+  --cache-config predict/retrieval/assay_reranking/ranked_level_retrieval_v4.yaml \
+  --output predict/retrieval/assay_reranking/flat_v5_manifests/gold_v1/bbb_martins.json
+python -m predict.retrieval.assay_reranking.artifact_bundle verify \
+  --manifest predict/retrieval/assay_reranking/flat_v5_manifests/gold_v1/bbb_martins.json
+```
+
+Verification hashes the evidence/cache payloads once and writes an ignored
+receipt. Full-flat V5 preparation checks the receipt's manifest, size, and mtime
+fingerprints; it does not repeat the payload hash scan. Use
+`--verify-flat-artifacts` only when intentionally refreshing the receipt.
+
 The current cache is
 `data/caches/assay_reranking/active/ranked_level_retrieval_v4/`. Evidence
 payloads remain with their semantic owners under the active V10 release at

@@ -22,6 +22,33 @@ silently clamped. Levels are independent. Runtime reads only small manifests,
 indexed ranking rows, and selected projection rows; source equivalence, database
 hashes, integrity, and disjointness are publication checks.
 
+## Full-flat V5 artifact contract
+
+The full-flat-context-v5 family uses the tracked manifests in
+`flat_v5_manifests/<benchmark>/<task>.json`. A manifest enumerates the selected
+cache release indexes, cache payloads, evidence manifests, evidence projections,
+and the exact cache-bundle YAML; it does not move those files out of their
+semantic owners. The checked-in manifest may therefore be complete while the
+payloads are absent from a fresh checkout.
+
+Use `python -m predict.retrieval.assay_reranking.artifact_bundle inventory` to
+rebuild a manifest only when the selected release inputs change. After restoring
+compressed release parts with `restore`, run `verify` once. The resulting ignored
+receipt under `data/caches/assay_reranking/active/flat_v5/receipts/` is the launch
+contract: flat preparation requires it and performs only manifest/configuration
+and size/mtime checks. `--verify-flat-artifacts` explicitly repeats the expensive
+hash pass. Never add a runtime source scan, whole-database hash, integrity scan,
+or cache builder to the harness.
+
+Canonical restored cache identities use
+`flat_v5/<benchmark>/<task>/<role>/<method>/<release>/<variant>`. The historical
+V24.1 BBB and V25 Oral names remain compatibility aliases; when a canonical
+successor is present, `runtime.cache_profile_root()` resolves it, otherwise the
+legacy location remains usable. Do not add compatibility symlinks or overwrite a
+legacy cache in place. Direct and matrix flat launchers select the TDC-v1 bundle
+for TDC runs and the all-task Gold-v1 bundle for Gold safety tasks; an explicit
+`--assay-transfer-cache` always wins.
+
 ## Active data ownership
 
 Active data lives with its semantic owner: gold-bound data under
