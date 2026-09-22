@@ -25,12 +25,12 @@ provenance, history, audits, and tests for BBB, Oral, and Skin.
   takes the first four schema-valid Flash replicas; earlier DGX rows retain their
   recorded first-eight contract. Average each weight with half-up hundredth
   rounding, retain per-bucket standard deviation and range, and use the full-vector
-  closest replica for rationales. Preserve all
-  completed pre-migration rows and record the benchmark hash and replica receipts.
-  If migration enters one partially completed round, record its old/new request
-  counts explicitly and never replace its completed historical responses. Advance
-  each task-level chain independently once its own three-batch round has completed;
-  never impose a cross-task or cross-level round barrier.
+  closest replica for rationales. Preserve all completed pre-migration rows and
+  record the benchmark hash and replica receipts. If migration enters one partially
+  completed round, record its old/new request counts explicitly and never replace
+  its completed historical responses. Advance each task-level chain independently
+  once its own three-batch round has completed; never impose a cross-task or
+  cross-level round barrier.
 - V6 may start early only as a task-level shard whose V5 task-level is complete.
   Freeze the selected V5 rows and source manifest inside the V6 shard; never read
   mutable V5 partial weights at execution time. Reuse the shard's exact request
@@ -59,5 +59,26 @@ provenance, history, audits, and tests for BBB, Oral, and Skin.
   retain uncovered reviewed families as an explicit audit table.
 - Do not add compatibility symlinks or duplicate canonical releases.
 - Keep every newly written or materially refactored function at or below 60 lines.
+
+## Official two-pass successor
+
+Official successor runs use the V6 scientific bucket-card representation in both
+passes. Pass 1 has no anchors and uses exactly one request and one valid response
+per logical batch. After Pass 1, freeze its ranking, render the exact first Pass-2
+prompt for every level, and stop at `awaiting_pass2_prompt_review`; Pass 2 must not
+launch without explicit approval of that review manifest hash.
+
+For the AMES V6-card run, alternate the complete sorted Pass-2 schedule between
+local DGX execution and the shared OpenRouter qualified pool, yielding the closest
+possible half split without splitting by level. Both backends use fanout 4 and
+the first two schema-valid responses. Freeze and hash-pin the seven-route
+DeepSeek V4 Flash 0731 OpenRouter profile at Pass-2 start, use its shared spend
+credential loader without a spend ledger, and preserve actual routes in replica receipts.
+Do not embed provider inventories or credentials in the task runner.
+
+Preserve superseded responses for audit, but never reuse scores produced from a
+different bucket representation in a successor run. Candidate weights from an
+unreviewed semantic generation remain unreviewed and cannot update an active
+release or `CURRENT` pointer.
 
 Run `pytest -q semantic_buckets/tests` after changes.

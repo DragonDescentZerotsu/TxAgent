@@ -79,6 +79,7 @@ HIGH_MAX_TOKENS = 262_144
 REQUEST_TIMEOUT_S = 900
 MODEL_CONTEXT_LIMIT_OVERRIDE: int | None = None
 TOKENIZER_ENCODING_OVERRIDE: str | None = None
+PROVIDER_POOL_CONFIG: Path | None = None
 COMPLETION_TOKEN_PARAMETER = "max_tokens"
 SERVED_MODEL_ALIASES: frozenset[str] = frozenset()
 _REQUEST_DATABASE_WRITE_LOCK = threading.RLock()
@@ -982,7 +983,7 @@ class _IndependentCompletionPool:
     def snapshot(self) -> list[dict[str, Any]]:
         with self._condition:
             now = time.monotonic()
-            return [
+        return [
                 {
                     "name": provider[0],
                     "base_url": provider[1],
@@ -993,6 +994,118 @@ class _IndependentCompletionPool:
                     "circuit_open": self._circuit_open_until[index] > now,
                 }
                 for index, provider in enumerate(self._providers)
+            ]
+
+
+class _ProviderPoolCompletionAdapter:
+    """Expose the shared JSON provider pool through the legacy completion API."""
+
+    def __init__(self, pool: Any) -> None:
+        self._pool = pool
+        self.chat = SimpleNamespace(completions=self)
+
+    def create(self, **kwargs: Any) -> Any:
+        response = self._pool.chat_json(
+            list(kwargs["messages"]),
+            max_tokens=int(
+                kwargs.get(COMPLETION_TOKEN_PARAMETER)
+                or kwargs.get("max_tokens")
+                or kwargs.get("max_completion_tokens")
+            ),
+        )
+        execution = dict(response.get("execution_provider") or {})
+        usage_values = dict(response.get("usage") or {})
+        usage = SimpleNamespace(**usage_values)
+        usage.model_dump = lambda: dict(usage_values)
+        return SimpleNamespace(
+            id=response.get("id"),
+            model=response.get("model"),
+            usage=usage,
+            choices=[SimpleNamespace(message=SimpleNamespace(
+                content=_canonical_json(response["content"]),
+                reasoning_content=response.get("reasoning_content"),
+                reasoning=None,
+                model_extra={},
+            ))],
+            provider_name=execution.get("provider"),
+            provider_base_url=execution.get("base_url"),
+            requested_model=execution.get("requested_model"),
+            allowed_served_models=tuple(
+                spec.model
+                for spec in self._pool.config.providers
+            ) + tuple(
+                alias
+                for spec in self._pool.config.providers
+                for alias in (spec.request_extra_body or {}).get(
+                    "allowed_served_models", ()
+                )
+            ),
+            execution_provider=execution,
+            execution_provider_attempts=response.get(
+                "execution_provider_attempts", []
+            ),
+        )
+
+    def snapshot(self) -> dict[str, Any]:
+        return self._pool.snapshot()
+
+
+class _CompositeCompletionPool:
+    """Share work across independently bounded local and paid pools."""
+
+    def __init__(self, pools: Sequence[tuple[str, Any, int]]) -> None:
+        self._pools = list(pools)
+        self._active = [0] * len(self._pools)
+        self._completed = [0] * len(self._pools)
+        self._failures = [0] * len(self._pools)
+        self._condition = threading.Condition()
+        self.chat = SimpleNamespace(completions=self)
+
+    def create(self, **kwargs: Any) -> Any:
+        with self._condition:
+            while True:
+                available = [
+                    index
+                    for index, (_, _, capacity) in enumerate(self._pools)
+                    if self._active[index] < capacity
+                ]
+                if available:
+                    index = min(
+                        available,
+                        key=lambda candidate: (
+                            self._active[candidate] / self._pools[candidate][2],
+                            self._completed[candidate],
+                        ),
+                    )
+                    self._active[index] += 1
+                    break
+                self._condition.wait()
+        try:
+            response = self._pools[index][1].chat.completions.create(**kwargs)
+        except Exception:
+            with self._condition:
+                self._active[index] -= 1
+                self._failures[index] += 1
+                self._condition.notify_all()
+            raise
+        with self._condition:
+            self._active[index] -= 1
+            self._completed[index] += 1
+            self._condition.notify_all()
+        return response
+
+    def snapshot(self) -> list[dict[str, Any]]:
+        with self._condition:
+            return [
+                {
+                    "name": name,
+                    "capacity": capacity,
+                    "active": self._active[index],
+                    "completed": self._completed[index],
+                    "failures": self._failures[index],
+                    "pool": pool.snapshot(),
+                }
+                for index, (name, pool, capacity) in enumerate(self._pools)
             ]
 
 
@@ -1042,7 +1155,7 @@ def _stream_completion(client: Any, kwargs: Mapping[str, Any]) -> Any:
 
 def _build_completion_pool(
     per_endpoint_parallelism: int,
-) -> tuple[_IndependentCompletionPool, list[dict[str, Any]], int]:
+) -> tuple[Any, list[dict[str, Any]], int]:
     """Build and preflight each configured endpoint without exposing credentials."""
 
     from data.processing.llm_api import DEFAULT_ENV_FILE, openai_compatible_client
@@ -1085,10 +1198,53 @@ def _build_completion_pool(
                 "max_inflight": max_inflight,
             }
         )
+    local_pool = _IndependentCompletionPool(providers)
+    local_capacity = sum(provider[3] for provider in providers)
+    if PROVIDER_POOL_CONFIG is None:
+        return local_pool, receipts, local_capacity
+
+    from predict.api_client.pool import (
+        build_provider_pool,
+        load_provider_pool_config,
+        primary_capacity,
+        spend_budget_status,
+    )
+
+    paid_config = load_provider_pool_config(PROVIDER_POOL_CONFIG)
+    paid_pool = build_provider_pool(
+        paid_config,
+        env_file=DEFAULT_ENV_FILE,
+        timeout_s=3_600,
+        max_tokens=HIGH_MAX_TOKENS,
+        temperature=None,
+        tool_service_url="http://127.0.0.1:1",
+        enable_group_tools=False,
+        max_tool_rounds=0,
+        reasoning_effort="high",
+        enable_thinking=True,
+        transport_max_retries=0,
+        response_format={"type": "json_object"},
+    )
+    paid_capacity = primary_capacity(paid_config)
+    paid_adapter = _ProviderPoolCompletionAdapter(paid_pool)
+    receipts.append(
+        {
+            "name": "openrouter_provider_pool",
+            "provider": "openrouter",
+            "config_path": str(PROVIDER_POOL_CONFIG),
+            "config_sha256": _file_sha256(PROVIDER_POOL_CONFIG),
+            "max_inflight": paid_capacity,
+            "spend_budget": spend_budget_status(paid_config),
+            "pool": paid_config.public_dict(),
+        }
+    )
     return (
-        _IndependentCompletionPool(providers),
+        _CompositeCompletionPool((
+            ("local", local_pool, local_capacity),
+            ("openrouter", paid_adapter, paid_capacity),
+        )),
         receipts,
-        sum(provider[3] for provider in providers),
+        local_capacity + paid_capacity,
     )
 
 
@@ -1457,18 +1613,28 @@ def _run_pending(
                 parsed = _validate_model_response(
                     str(row["kind"]), parsed, validation
                 )
-                allowed_models = validation.get(
+                allowed_models = set(validation.get(
                     "allowed_served_models", [requested_model, *SERVED_MODEL_ALIASES]
+                ))
+                allowed_models.update(
+                    getattr(completion, "allowed_served_models", ())
                 )
-                if str(completion.model) not in set(allowed_models):
+                if str(completion.model) not in allowed_models:
                     raise ValueError(
-                        f"served model changed: {completion.model!s} not in {allowed_models}"
+                        f"served model changed: {completion.model!s} not in "
+                        f"{sorted(allowed_models)}"
                     )
+                execution = dict(
+                    getattr(completion, "execution_provider", {}) or {}
+                )
                 receipt = {
                     "attempt": attempts,
                     "elapsed_seconds": time.time() - started,
                     "generation_id": getattr(completion, "id", None),
-                    "requested_model": requested_model,
+                    "requested_model": (
+                        getattr(completion, "requested_model", None)
+                        or requested_model
+                    ),
                     "selected_provider_route": validation.get("selected_provider_route"),
                     "provider_pool_snapshot_sha256": validation.get(
                         "provider_pool_snapshot_sha256"
@@ -1481,6 +1647,10 @@ def _run_pending(
                     "usage": usage.model_dump() if usage is not None else None,
                     "response": parsed,
                     "reasoning_content": reasoning,
+                    "execution_provider": execution or None,
+                    "execution_provider_attempts": getattr(
+                        completion, "execution_provider_attempts", None
+                    ),
                 }
                 receipts.append(receipt)
                 return {

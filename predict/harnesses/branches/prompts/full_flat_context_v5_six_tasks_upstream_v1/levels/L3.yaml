@@ -1,0 +1,4 @@
+bbb_martins: {description: Passive permeability evidence.}
+bioavailability_ma: {description: Oral AUC or Cmax exposure evidence.}
+skin_reaction: {description: Sensitization mechanisms and AOP key events.}
+ames: {description: Other gene, chromosome, and cytogenetic damage evidence.}

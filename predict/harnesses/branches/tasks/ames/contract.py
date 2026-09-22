@@ -12,7 +12,8 @@ CONFIG = BatchConfig(
     canonical_negative="negative", positive_predictions=frozenset({"positive", "1"}),
     negative_predictions=frozenset({"negative", "0"}), supports_retrieval_strategy=True,
     group_prompt_formats=("legacy",), default_group_prompt_format="legacy",
-    prompt_profile_option="--ames-prompt-profile", prompt_profile_choices=("ames_gold_v1",),
+    prompt_profile_option="--ames-prompt-profile",
+    prompt_profile_choices=("ames_gold_v1", "ames_bacterial_reverse_mutation.v1"),
     default_prompt_profile="ames_gold_v1", historical_prompt_profile="ames_gold_v1",
 )
 

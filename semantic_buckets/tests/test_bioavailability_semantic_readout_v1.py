@@ -1092,6 +1092,70 @@ def test_invalid_response_is_preserved_in_attempt_receipt(tmp_path, monkeypatch)
     assert receipt["provider_base_url"] == "http://test-provider/v1"
 
 
+def test_provider_pool_adapter_preserves_actual_route_provenance() -> None:
+    spec = SimpleNamespace(
+        model="deepseek/deepseek-v4.1-flash",
+        request_extra_body={
+            "allowed_served_models": ["deepseek/deepseek-v4.1-flash-20260910"]
+        },
+    )
+    pool = SimpleNamespace(
+        config=SimpleNamespace(providers=(spec,)),
+        chat_json=lambda *_args, **_kwargs: {
+            "content": {"merge_sets": []},
+            "reasoning_content": "reasoning",
+            "usage": {"prompt_tokens": 10, "completion_tokens": 20},
+            "model": "deepseek/deepseek-v4.1-flash-20260910",
+            "id": "generation",
+            "execution_provider": {
+                "provider": "openrouter_route",
+                "base_url": "https://openrouter.ai/api/v1",
+                "requested_model": "deepseek/deepseek-v4.1-flash",
+            },
+            "execution_provider_attempts": [{"status": "ok"}],
+        },
+        snapshot=lambda: {"providers": []},
+    )
+
+    completion = workflow._ProviderPoolCompletionAdapter(pool).create(
+        messages=[{"role": "user", "content": "prompt"}], max_tokens=100
+    )
+
+    assert completion.model == "deepseek/deepseek-v4.1-flash-20260910"
+    assert completion.requested_model == "deepseek/deepseek-v4.1-flash"
+    assert completion.provider_name == "openrouter_route"
+    assert completion.usage.model_dump()["completion_tokens"] == 20
+    assert set(completion.allowed_served_models) == {
+        "deepseek/deepseek-v4.1-flash",
+        "deepseek/deepseek-v4.1-flash-20260910",
+    }
+
+
+def test_composite_pool_reports_each_independent_capacity() -> None:
+    def completion(name):
+        return SimpleNamespace(provider_name=name)
+
+    local = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(create=lambda **_kwargs: completion("local"))
+        ),
+        snapshot=lambda: {"name": "local"},
+    )
+    paid = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(create=lambda **_kwargs: completion("paid"))
+        ),
+        snapshot=lambda: {"name": "paid"},
+    )
+    pool = workflow._CompositeCompletionPool(
+        (("local", local, 1), ("openrouter", paid, 2))
+    )
+
+    snapshot = pool.snapshot()
+    assert [row["name"] for row in snapshot] == ["local", "openrouter"]
+    assert [row["capacity"] for row in snapshot] == [1, 2]
+
+
 def test_selector_profile_limit_keeps_full_population_statistics(monkeypatch) -> None:
     monkeypatch.setattr(workflow, "PAIR_COLUMNS", {"source": ("used", "candidate")})
     monkeypatch.setattr(

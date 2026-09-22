@@ -24,6 +24,22 @@ def test_active_completion_price_applies_utc_overrides() -> None:
     ) == 0.6
 
 
+def test_route_without_live_tps_is_not_eligible() -> None:
+    route = pool._route_record(
+        "model", "canonical", "route", [{
+            "provider_name": "Provider", "supported_parameters": ["reasoning_effort"],
+            "quantization": "fp8", "pricing": {
+                "prompt": "0.0000001", "completion": "0.0000002",
+            },
+            "context_length": 1_000_000, "max_completion_tokens": 100_000,
+            "status": 0,
+        }], datetime(2026, 9, 22, tzinfo=timezone.utc),
+    )
+
+    assert route["throughput_p50"] is None
+    assert pool._eligible(route) is False
+
+
 def test_default_model_is_single_and_mixed_profile_is_explicit() -> None:
     assert pool._models(False) == (pool.DEFAULT_MODEL,)
     assert pool._models(True) == (pool.DEFAULT_MODEL, pool.MIXED_MODEL)
@@ -71,9 +87,11 @@ def test_weighted_ranking_selects_top_seven_with_tps_dominant() -> None:
 def test_request_assignment_rotates_every_three_requests() -> None:
     snapshot = {"snapshot_sha256": "snapshot", "routes": [
         {"model": "m1", "canonical_model": "c1", "route_tag": "one",
-         "supports_response_format": True},
+         "supports_response_format": True, "active_input_price": 0.1,
+         "active_output_price": 0.2},
         {"model": "m2", "canonical_model": "c2", "route_tag": "two",
-         "supports_response_format": False},
+         "supports_response_format": False, "active_input_price": 0.1,
+         "active_output_price": 0.2},
     ]}
 
     assignments = [pool.request_assignment(snapshot, index, seed_request_count=9)
@@ -97,6 +115,9 @@ def test_exported_mixed_pool_has_one_shared_capacity_and_pinned_routes(
             "route_tag": f"route-{index}",
             "provider_name": f"Provider {index}",
             "supports_response_format": index > 0,
+            "active_input_price": 0.1,
+            "active_output_price": 0.2,
+            "max_request_cost_usd": 0.25,
         }
         for index, model in enumerate(
             (pool.DEFAULT_MODEL, pool.MIXED_MODEL, pool.DEFAULT_MODEL)
@@ -115,7 +136,14 @@ def test_exported_mixed_pool_has_one_shared_capacity_and_pinned_routes(
     )
 
     payload = pool.export_provider_pool(
-        tmp_path / "pool.json", 512, allow_mixed_flash_models=True
+        tmp_path / "pool.json", 512, allow_mixed_flash_models=True,
+        spend_budget={
+            "version": "openrouter_spend_budget.v1",
+            "ledger_path": "/ledger.sqlite3",
+            "epoch": "epoch-1",
+            "limit_usd": 25,
+            "credential_env": "OPEN_ROUTER_KEY_TWO",
+        },
     )
 
     assert sum(row["max_inflight"] for row in payload["providers"]) == 512
@@ -125,6 +153,13 @@ def test_exported_mixed_pool_has_one_shared_capacity_and_pinned_routes(
     }
     assert payload["openrouter_ranked_profile"]["snapshot_sha256"] == "snapshot"
     assert payload["providers"][0]["request_extra_body"]["omit_response_format"] is True
+    assert payload["providers"][0]["request_extra_body"]["provider"]["max_price"] == {
+        "prompt": 0.1, "completion": 0.2,
+    }
+    assert {row["api_key_env"] for row in payload["providers"]} == {
+        "OPEN_ROUTER_KEY_TWO"
+    }
+    assert payload["spend_budget"]["limit_usd"] == 25
 
 
 def test_qualification_uses_inline_openrouter_routing_metadata() -> None:

@@ -47,6 +47,7 @@ class Workflow:
     refinement_columns: dict[str, tuple[str, ...]]
     endpoint_columns: dict[str, str]
     retrieval_index: Path
+    provider_pool: Path | None = None
 
     @property
     def records(self) -> Path:
@@ -146,6 +147,7 @@ def workflow(
     endpoint_urls: tuple[str, ...] = DEFAULT_ENDPOINTS,
     max_inflight: int = 128,
     retrieval_index: Path,
+    provider_pool: Path | None = None,
 ) -> Workflow:
     contract = _contract(task)
     pair_columns, refinements = _semantic_columns(contract)
@@ -162,6 +164,7 @@ def workflow(
             source: columns[0] for source, columns in pair_columns.items()
         },
         retrieval_index=retrieval_index.resolve(),
+        provider_pool=provider_pool.resolve() if provider_pool else None,
     )
 
 
@@ -310,6 +313,7 @@ def configure_core(config: Workflow) -> dict[str, Any]:
     core.MODEL = config.model
     core.BASE_URL = config.endpoints[0]["base_url"]
     core.ENDPOINTS = config.endpoints
+    core.PROVIDER_POOL_CONFIG = config.provider_pool
     core.RECORD_MAP = config.input
     core.RECORDS = config.canonical_records
     core.PROMPT_ROOT = PROMPT_ROOT
@@ -352,7 +356,11 @@ def prepare(config: Workflow) -> dict[str, Any]:
     return core.prepare_prompt_review(config.review)
 
 
-def run(config: Workflow, approved_review_sha256: str) -> dict[str, Any]:
+def run(
+    config: Workflow,
+    approved_review_sha256: str,
+    seed_request_cache: Path | None = None,
+) -> dict[str, Any]:
     configure_core(config)
     parallelism = int(config.endpoints[0]["max_inflight"])
     manifest = core.run_semantic(
@@ -360,6 +368,7 @@ def run(config: Workflow, approved_review_sha256: str) -> dict[str, Any]:
         review_manifest_path=config.review / "manifest.json",
         approved_review_sha256=approved_review_sha256,
         parallelism=parallelism,
+        seed_request_cache=seed_request_cache,
     )
     manifest.update(
         {
@@ -541,6 +550,8 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--endpoint", action="append", dest="endpoints")
     parser.add_argument("--max-inflight", type=int, default=128)
     parser.add_argument("--approved-review-sha256")
+    parser.add_argument("--seed-request-cache", type=Path)
+    parser.add_argument("--provider-pool", type=Path)
     parser.add_argument("--review", type=Path)
     return parser
 
@@ -556,13 +567,14 @@ def main() -> int:
         endpoint_urls=tuple(args.endpoints or DEFAULT_ENDPOINTS),
         max_inflight=args.max_inflight,
         retrieval_index=args.retrieval_index,
+        provider_pool=args.provider_pool,
     )
     if args.command == "prepare":
         result = prepare(config)
     elif args.command == "run":
         if not args.approved_review_sha256:
             parser.error("run requires --approved-review-sha256")
-        result = run(config, args.approved_review_sha256)
+        result = run(config, args.approved_review_sha256, args.seed_request_cache)
     elif args.command == "establish":
         if not args.review:
             parser.error("establish requires --review")

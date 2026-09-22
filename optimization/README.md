@@ -2,8 +2,8 @@
 
 ## Gold-v1 direct and joint L2+ successor
 
-`optimization.gold_joint` adds two immutable Gold-v1 selection modes without
-changing the legacy per-level grids below. Direct mode chooses 10 L1 context
+`optimization.gold_joint` adds immutable direct and Gold-v1 indirect selection
+modes without changing the legacy per-level grids below. Direct mode chooses 10 L1 context
 cards using normalized Morgan-gated assay relevance, normalized Morgan-bit
 coverage, and normalized log label diversity. Indirect mode pools every L2+
 candidate and chooses 50 physical UIDs jointly using the same relevance and bit
@@ -23,16 +23,20 @@ $OPT_PY -m optimization.gold_joint direct --output-root "$OPT_STAGE"
 $OPT_PY -m optimization.gold_joint indirect --output-root "$OPT_STAGE"
 ```
 
-Direct mode also accepts `--subset valid|test`; `--profiles` restricts a
-held-out selection to an already frozen winner. Full-split evaluation uses
-separate immutable grids, for example:
+Direct mode accepts `--benchmark gold_v1|tdc_v1` and
+`--subset valid_small|valid|test`; `--profiles` restricts a held-out selection
+to an already frozen winner. Gold-v1 supports all six active tasks, while TDC-v1
+supports BBB, Oral Bioavailability, and Skin Reaction. Full-split evaluation
+uses separate immutable grids, for example:
 
 ```bash
 $OPT_PY -m optimization.gold_joint direct --subset valid \
   --output-root /local/$USER/gold_joint_log_diversity_full_v1
 $OPT_PY -m optimization.gold_joint direct --subset test \
-  --profiles ga100_mc050_label050 \
+  --profiles ga100_mc025_label025 \
   --output-root /local/$USER/gold_joint_log_diversity_test_winner_v1
+$OPT_PY -m optimization.gold_joint direct --benchmark tdc_v1 --subset valid \
+  --output-root /local/$USER/tdc_direct_valid_v1
 ```
 
 `predict.harnesses.branches.six_task_query_priors` builds matching full-split
@@ -40,9 +44,9 @@ query-prior overlays. `--reuse-root` reuses compatible `valid_small` artifacts
 by `benchmark_row_id` and query SMILES while hash-pinning every source; it never
 uses positional fallback.
 
-The direct grid has 28 profiles: 24 crossed profiles over gated assay transfer
-`{.75,1,1.25,1.5}`, Morgan-bit coverage `{.25,.5,.75}`, and label diversity
-`{.25,.5}`, plus four gated-only controls. The indirect grid retains 94 source aliases,
+The current direct grid has 12 profiles: the full cross of gated assay transfer
+`{.75,1,1.25}`, Morgan-bit coverage `{.1,.25}`, and label diversity
+`{.1,.25}`. The indirect grid retains 94 source aliases,
 deduplicates them to 75 objectives, and crosses three level-diversity weights for
 225 profiles. `compose` requires a reviewed direct manifest and only writes a
 hash-pinned reference to that frozen panel; it never selects a winner. See the

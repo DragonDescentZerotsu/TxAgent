@@ -168,6 +168,164 @@ def test_pool_records_upstream_provider_when_returned():
     assert response["execution_provider"]["upstream_provider"] == "Baidu"
 
 
+def test_shared_spend_ledger_reserves_then_reconciles_actual_cost(tmp_path):
+    calls = []
+
+    class CostedClient:
+        def chat_json(self, messages, *, max_tokens=None):
+            calls.append(messages)
+            return {
+                "content": {"ok": True}, "model": "same-model", "id": "ok",
+                "usage": {"cost": 0.4},
+            }
+
+    spec = ProviderSpec(
+        name="openrouter",
+        base_url="https://openrouter.ai/api/v1",
+        model="same-model",
+        api_key_env="OPEN_ROUTER_KEY",
+        max_inflight=2,
+        request_extra_body={"max_request_cost_usd": 0.6},
+    )
+    budget = provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / "spend.sqlite3"),
+        epoch="epoch-1",
+        limit_usd=1.0,
+        credential_env="OPEN_ROUTER_KEY",
+    )
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(spec,), spend_budget=budget),
+        client_factory=lambda _: CostedClient(),
+    )
+
+    pool.chat_json([{"role": "user", "content": "one"}])
+    second = pool.chat_json([{"role": "user", "content": "two"}])
+
+    assert len(calls) == 2
+    assert second["execution_provider"]["spend_budget"]["committed_usd"] == 0.8
+    assert pool.snapshot()["spend_budget"]["remaining_usd"] == pytest.approx(0.2)
+
+
+def test_spend_ledger_waits_for_temporary_reservations(tmp_path):
+    started = []
+    release = threading.Event()
+
+    class BlockingCostedClient:
+        def chat_json(self, messages, *, max_tokens=None):
+            started.append(messages[0]["content"])
+            if len(started) == 1:
+                release.wait(timeout=2)
+            return {
+                "content": {"ok": True}, "model": "same-model", "id": "ok",
+                "usage": {"cost": 0.1},
+            }
+
+    spec = ProviderSpec(
+        name="openrouter", base_url="https://openrouter.ai/api/v1",
+        model="same-model", api_key_env="OPEN_ROUTER_KEY", max_inflight=2,
+        request_extra_body={"max_request_cost_usd": 0.6},
+    )
+    budget = provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / "spend.sqlite3"), epoch="epoch-1",
+        limit_usd=0.7, credential_env="OPEN_ROUTER_KEY",
+    )
+    pool = OpenAIProviderPool(
+        ProviderPoolConfig(providers=(spec,), spend_budget=budget),
+        client_factory=lambda _: BlockingCostedClient(),
+    )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        first = executor.submit(
+            pool.chat_json, [{"role": "user", "content": "one"}]
+        )
+        deadline = time.monotonic() + 1
+        while not started and time.monotonic() < deadline:
+            time.sleep(0.01)
+        second = executor.submit(
+            pool.chat_json, [{"role": "user", "content": "two"}]
+        )
+        time.sleep(0.1)
+        assert started == ["one"]
+        release.set()
+        assert first.result()["content"]["ok"] is True
+        assert second.result()["content"]["ok"] is True
+
+    assert pool.snapshot()["spend_budget"]["committed_usd"] == 0.2
+
+
+def test_spend_ledger_alerts_and_resumes_after_explicit_refresh(tmp_path):
+    calls = []
+
+    class CostedClient:
+        def chat_json(self, messages, *, max_tokens=None):
+            calls.append(messages)
+            return {
+                "content": {"ok": True}, "model": "same-model", "id": "ok",
+                "usage": {"cost": 0.3},
+            }
+
+    spec = ProviderSpec(
+        name="openrouter", base_url="https://openrouter.ai/api/v1",
+        model="same-model", api_key_env="OPEN_ROUTER_KEY", max_inflight=1,
+        request_extra_body={"max_request_cost_usd": 0.4},
+    )
+    budget = provider_pool.SpendBudgetSpec(
+        ledger_path=str(tmp_path / "spend.sqlite3"), epoch="epoch-1",
+        limit_usd=0.5, credential_env="OPEN_ROUTER_KEY",
+    )
+    config = ProviderPoolConfig(providers=(spec,), spend_budget=budget)
+    pool = OpenAIProviderPool(config, client_factory=lambda _: CostedClient())
+    pool.chat_json([{"role": "user", "content": "one"}])
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        waiting = executor.submit(
+            pool.chat_json, [{"role": "user", "content": "two"}]
+        )
+        alert = tmp_path / "spend.sqlite3.alert.json"
+        deadline = time.monotonic() + 2
+        while not alert.is_file() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert alert.is_file()
+        assert json.loads(alert.read_text())["status"] == "budget_refresh_required"
+        assert waiting.done() is False
+        refreshed = provider_pool.refresh_spend_budget(config)
+        assert refreshed["authorized_usd"] == 1.0
+        assert waiting.result(timeout=2)["content"]["ok"] is True
+
+    assert alert.exists() is False
+    assert len(calls) == 2
+
+
+def test_spend_budget_rejects_hidden_transport_retries(tmp_path):
+    spec = ProviderSpec(
+        name="openrouter", base_url="https://openrouter.ai/api/v1",
+        model="same-model", api_key_env="OPEN_ROUTER_KEY", max_inflight=1,
+        request_extra_body={"max_request_cost_usd": 0.6},
+    )
+    config = ProviderPoolConfig(
+        providers=(spec,),
+        spend_budget=provider_pool.SpendBudgetSpec(
+            ledger_path=str(tmp_path / "spend.sqlite3"), epoch="epoch-1",
+            limit_usd=25, credential_env="OPEN_ROUTER_KEY",
+        ),
+    )
+
+    with pytest.raises(ValueError, match="transport_max_retries=0"):
+        provider_pool.build_provider_pool(
+            config,
+            env_file=None,
+            timeout_s=60,
+            max_tokens=100,
+            temperature=0.0,
+            tool_service_url="",
+            enable_group_tools=False,
+            max_tool_rounds=0,
+            reasoning_effort="high",
+            enable_thinking=True,
+            transport_max_retries=1,
+        )
+
+
 def test_openrouter_control_fields_are_validated_but_not_sent():
     captured = {}
 

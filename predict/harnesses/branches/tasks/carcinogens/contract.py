@@ -14,7 +14,10 @@ CONFIG = BatchConfig(
     negative_predictions=frozenset({"negative", "0"}), supports_retrieval_strategy=True,
     group_prompt_formats=("legacy",), default_group_prompt_format="legacy",
     prompt_profile_option="--carcinogens-prompt-profile",
-    prompt_profile_choices=("carcinogens_gold_v1",),
+    prompt_profile_choices=(
+        "carcinogens_gold_v1",
+        "carcinogens_starling_only_five_organism_groups.v1",
+    ),
     default_prompt_profile="carcinogens_gold_v1",
     historical_prompt_profile="carcinogens_gold_v1",
 )

@@ -89,12 +89,18 @@ def _override_matches(override: Mapping[str, Any], now: datetime) -> bool:
     return start <= minute < end if start <= end else minute >= start or minute < end
 
 
-def active_completion_price(pricing: Mapping[str, Any], now: datetime) -> float:
+def active_token_price(
+    pricing: Mapping[str, Any], field: str, now: datetime,
+) -> float:
     matches = [item for item in pricing.get("overrides", []) if _override_matches(item, now)]
     if len(matches) > 1:
         raise ValueError("overlapping OpenRouter price overrides")
     selected = matches[0] if matches else pricing
-    return float(selected["completion"]) * 1_000_000
+    return float(selected.get(field, pricing[field])) * 1_000_000
+
+
+def active_completion_price(pricing: Mapping[str, Any], now: datetime) -> float:
+    return active_token_price(pricing, "completion", now)
 
 
 def _get_json(client: httpx.Client, url: str) -> dict[str, Any]:
@@ -112,8 +118,12 @@ def _route_record(
     supported = set(rows[0].get("supported_parameters", []))
     for row in rows[1:]:
         supported &= set(row.get("supported_parameters", []))
-    prices = [active_completion_price(row["pricing"], now) for row in rows]
+    output_prices = [active_completion_price(row["pricing"], now) for row in rows]
+    input_prices = [active_token_price(row["pricing"], "prompt", now) for row in rows]
     throughputs = [(row.get("throughput_last_30m") or {}).get("p50") for row in rows]
+    measured_throughputs = [float(value) for value in throughputs if value is not None]
+    context_lengths = [int(row.get("context_length") or 0) for row in rows]
+    completion_limits = [int(row.get("max_completion_tokens") or 0) for row in rows]
     identity = {
         "model": model, "canonical_model": canonical_model, "route_tag": tag,
         "provider_name": str(rows[0]["provider_name"]),
@@ -123,8 +133,20 @@ def _route_record(
     return {
         **identity, "route_key": f"{model}|{tag}",
         "fingerprint_sha256": _sha256_bytes(_canonical_json(identity).encode()),
-        "active_output_price": max(prices),
-        "throughput_p50": max(float(value) for value in throughputs if value is not None),
+        "active_input_price": max(input_prices),
+        "active_output_price": max(output_prices),
+        "throughput_p50": max(measured_throughputs) if measured_throughputs else None,
+        "context_length": max(context_lengths),
+        "max_completion_tokens": max(completion_limits),
+        "max_request_cost_usd": max(
+            (
+                context_length * input_price
+                + completion_limit * output_price
+            ) / 1_000_000
+            for context_length, completion_limit, input_price, output_price in zip(
+                context_lengths, completion_limits, input_prices, output_prices
+            )
+        ),
         "healthy": all(int(row.get("status", 1)) == 0 for row in rows),
         "supports_response_format": "response_format" in supported,
         "supports_reasoning_effort": "reasoning_effort" in supported,
@@ -161,6 +183,7 @@ def discover_routes(
 
 def _eligible(route: Mapping[str, Any]) -> bool:
     return bool(route["healthy"] and route["supports_reasoning_effort"]
+                and route["throughput_p50"] is not None
                 and float(route["active_output_price"]) < PRICE_CAP)
 
 
@@ -488,20 +511,30 @@ def request_assignment(snapshot: Mapping[str, Any], schedule_index: int,
         "provider_pool_snapshot_sha256": snapshot["snapshot_sha256"],
         "provider_routing": {
             "order": [route["route_tag"]], "allow_fallbacks": False,
-            "require_parameters": True, "max_price": {"completion": EXECUTION_PRICE_CAP},
+            "require_parameters": True, "max_price": {
+                "prompt": route["active_input_price"],
+                "completion": route["active_output_price"],
+            },
             "omit_response_format": not route["supports_response_format"],
         },
     }
 
 
 def export_provider_pool(
-    output: Path, capacity: int, *, allow_mixed_flash_models: bool = False
+    output: Path, capacity: int, *, allow_mixed_flash_models: bool = False,
+    spend_budget: Mapping[str, Any] | None = None,
+    credential_env: str | None = None,
 ) -> dict[str, Any]:
     """Freeze the ranked qualified routes as one bounded execution pool."""
     if capacity < 1:
         raise ValueError("provider-pool capacity must be positive")
     snapshot = load_ranked_pool(allow_mixed_flash_models)
     routes = snapshot["routes"]
+    selected_credential_env = str(
+        credential_env
+        or (spend_budget or {}).get("credential_env")
+        or "OPEN_ROUTER_KEY"
+    )
     base, remainder = divmod(capacity, len(routes))
     if base == 0:
         raise ValueError("capacity must cover every selected route")
@@ -516,7 +549,7 @@ def export_provider_pool(
             ),
             "base_url": OPENROUTER_URL,
             "model": route["model"],
-            "api_key_env": "OPEN_ROUTER_KEY",
+            "api_key_env": selected_credential_env,
             "max_inflight": route_capacity,
             "initial_latency_s": 120,
             "timeout_s": 3_600,
@@ -526,11 +559,15 @@ def export_provider_pool(
                 "allowed_served_models": [route["model"], route["canonical_model"]],
                 "expected_upstream_provider": route["provider_name"],
                 "provider_pool_snapshot_sha256": snapshot["snapshot_sha256"],
+                "max_request_cost_usd": route["max_request_cost_usd"],
                 "provider": {
                     "order": [route["route_tag"]],
                     "allow_fallbacks": False,
                     "require_parameters": True,
-                    "max_price": {"completion": EXECUTION_PRICE_CAP},
+                    "max_price": {
+                        "prompt": route["active_input_price"],
+                        "completion": route["active_output_price"],
+                    },
                 },
             },
         })
@@ -548,6 +585,8 @@ def export_provider_pool(
             "score": snapshot["score"],
         },
     }
+    if spend_budget is not None:
+        payload["spend_budget"] = dict(spend_budget)
     write_json_atomic(output, payload)
     return payload
 
@@ -568,6 +607,7 @@ def _parser() -> argparse.ArgumentParser:
     export_parser.add_argument("--output", required=True, type=Path)
     export_parser.add_argument("--capacity", required=True, type=int)
     export_parser.add_argument("--allow-mixed-flash-models", action="store_true")
+    export_parser.add_argument("--spend-budget-config", type=Path)
     return parser
 
 
@@ -580,10 +620,15 @@ def main() -> None:
     elif args.command == "refresh":
         result = refresh(args.allow_mixed_flash_models)
     elif args.command == "export-provider-pool":
+        spend_budget = (
+            json.loads(args.spend_budget_config.read_text(encoding="utf-8"))
+            if args.spend_budget_config else None
+        )
         result = export_provider_pool(
             args.output,
             args.capacity,
             allow_mixed_flash_models=args.allow_mixed_flash_models,
+            spend_budget=spend_budget,
         )
     else:
         result = load_ranked_pool(args.allow_mixed_flash_models)

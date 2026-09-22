@@ -1,0 +1,51 @@
+{
+  "version": "full_flat_context_v5_six_tasks_upstream_v1",
+  "parent": "full_flat_context_v5_six_tasks_v1",
+  "status": "prepared_for_review",
+  "supports_tasks": ["bbb_martins", "bioavailability_ma", "skin_reaction", "ames", "dili", "carcinogens"],
+  "layouts": ["global", "level-grouped"],
+  "query_prior_modes": ["cached", "none"],
+  "upstream_source": {
+    "repository_commit": "8972834103833c18a8d269a92f898bad07f7e5ab",
+    "bundle_commit": "3c36c2640ada12119f4a74a9bdf8511b0d7b8f6e",
+    "system_sha256": "cc8c69665b49b8a1e35ddd5a3358439acd55a644d62adaab8d46a71e02a062d3",
+    "user_sha256": "c68a84b2ca55738e6618a73e0dc1d6c285efe46743a5e278b73716341c7127b6",
+    "tasks_sha256": "2b9f25f223c6d192aee53dbe86fb494e68b2ff4d0985466bc59837e55ad72168"
+  },
+  "upstream_task_contract_sha256": {
+    "bbb_martins": "6b269936725d993f112ec0406d515dceb687624705dd54eb4ee3fe09fd2394d9",
+    "bioavailability_ma": "c1e4ef5ab1951d5f68bc7fa712924bad810215fd0dbe19706f3a5bb8bee07932",
+    "skin_reaction": "c5eda88c8e6e611457ad3f050ffc63e025c739a3ec190aff71cfb034d6cfcb48",
+    "ames": "ca0b0fb1de292051a7ed18486e88ac56f43b787615136720017f32fc036f8477",
+    "dili": "9bcc70608674ce5a7e6b5e2678e84675dbace96c1f34ebfded93bf4df8b1e5d0",
+    "carcinogens": "efa3a0f20a40de368262ded9bf12cb8479507421f68fc6e768d965a7c37e94ae"
+  },
+  "adaptations": [
+    "retains_parent_general_reasoning_instructions",
+    "adopts_upstream_task_contracts",
+    "adopts_upstream_query_prior_language_and_format",
+    "omits_upstream_molecule_descriptions",
+    "adopts_upstream_portable_json_output",
+    "compacts_redundant_blank_lines"
+  ],
+  "label_mapping": {
+    "bbb_martins": {"pass": "pass", "fail": "fail"},
+    "bioavailability_ma": {"pass": "high", "fail": "low"},
+    "skin_reaction": {"pass": "risk", "fail": "no_risk"},
+    "ames": {"pass": "positive", "fail": "negative"},
+    "dili": {"pass": "dili_risk", "fail": "no_dili_risk"},
+    "carcinogens": {"pass": "positive", "fail": "negative"}
+  },
+  "reasoning_reference_contracts": {
+    "global": {"schema_version": "progressive_reasoning_references.v1", "layout": "flat_global", "required_mentions": false, "matching": "case_insensitive_exact_visible_id"},
+    "level-grouped": {"schema_version": "progressive_reasoning_references.v1", "layout": "flat_level_grouped", "required_mentions": false, "matching": "case_insensitive_exact_visible_id"}
+  },
+  "tasks": {
+    "bbb_martins": {"prompt_profile": "meaningful_cns_access_v1", "upstream_sources": {}},
+    "bioavailability_ma": {"prompt_profile": "f20_evidence_calibrated_v2", "upstream_sources": {}},
+    "skin_reaction": {"prompt_profile": "skin_sensitization_contact_allergy.v2", "upstream_sources": {}},
+    "ames": {"prompt_profile": "ames_bacterial_reverse_mutation.v1", "upstream_sources": {}},
+    "dili": {"prompt_profile": "dili_conditioned_or_source_molecule_outcome.v1", "upstream_sources": {}},
+    "carcinogens": {"prompt_profile": "carcinogens_starling_only_five_organism_groups.v1", "upstream_sources": {}}
+  }
+}

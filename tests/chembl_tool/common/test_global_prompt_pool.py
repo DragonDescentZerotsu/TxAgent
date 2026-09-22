@@ -372,6 +372,44 @@ def test_fresh_pool_item_runs_retrieval_only_before_prompt_stages(
     assert initialized == ["condition_idx00000"]
 
 
+def test_flat_replay_preparation_skips_pipeline_subprocess(monkeypatch, tmp_path):
+    prepared = PreparedBatch(
+        config=_config(),
+        args=SimpleNamespace(
+            stream_logs=False,
+            experiment_mode="full_flat",
+            flat_prompt_version=stages.CONTEXT_V4_PROMPT_VERSION,
+            retrieval_replay_source_batch=str(tmp_path / "source"),
+            single_analysis_source_batch="",
+            skip_existing=False,
+            final_only_source_batch="",
+        ),
+        batch_id="condition",
+        batch_dir=tmp_path / "condition",
+        logs_dir=tmp_path / "condition" / "logs",
+        batch_run_root=tmp_path / "condition" / "runs",
+        items=[BatchItem(0, {"drug": "CC", "Y": 1})],
+        manifest={},
+    )
+    source = tmp_path / "source" / "runs" / "source_idx00000"
+    source.mkdir(parents=True)
+    retrieval = {"status": "ok", "query": {"input_smiles": "CC"}}
+    (source / "retrieval.json").write_text(json.dumps(retrieval), encoding="utf-8")
+    prepared.logs_dir.mkdir(parents=True)
+    monkeypatch.setattr(
+        stages, "_run_subprocess_with_logs",
+        lambda *args, **kwargs: pytest.fail("flat replay spawned a subprocess"),
+    )
+    monkeypatch.setattr(stages, "_initialize_run_manifest", lambda *args: None)
+
+    result = stages.prepare_stage_item(prepared, prepared.items[0])
+
+    assert result["status"] == "ok"
+    assert json.loads((
+        prepared.batch_run_root / "condition_idx00000" / "retrieval.json"
+    ).read_text()) == retrieval
+
+
 def test_prepare_manifest_keeps_canonical_per_run_paths(monkeypatch, tmp_path):
     args = _command_args()
     args.input_jsonl = "input.jsonl"

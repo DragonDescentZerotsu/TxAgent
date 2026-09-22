@@ -136,7 +136,7 @@ CONFIG = BatchConfig(
         "starling_normalized_v7/08_neighbor_index/scaffold"
     ),
     prompt_profile_option="--skin-prompt-profile",
-    prompt_profile_choices=SKIN_PROMPT_PROFILES,
+    prompt_profile_choices=(*SKIN_PROMPT_PROFILES, "skin_sensitization_contact_allergy.v2"),
     default_prompt_profile=DEFAULT_SKIN_PROMPT_PROFILE,
     historical_prompt_profile=HISTORICAL_SKIN_PROMPT_PROFILE,
 )

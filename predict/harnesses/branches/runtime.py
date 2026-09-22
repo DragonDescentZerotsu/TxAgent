@@ -21,6 +21,7 @@ import importlib
 import json
 import os
 from pathlib import Path
+import shutil
 from functools import lru_cache
 import threading
 import time
@@ -48,9 +49,11 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_CLAIMS_PROMPT_VERSIONS,
     CONTEXT_PROMPT_VERSIONS,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     build_flat_context_request,
     derive_flat_claim_evidence,
     flat_context_validation,
+    native_flat_prediction,
 )
 from predict.harnesses.branches.prompt import attach_external_condition
 from predict.harnesses.branches.analogous_flat_prompt import (
@@ -147,21 +150,31 @@ def prepare_stage_item(
                 item,
                 run_dir,
             )
-            command = _single_run_command(
-                prepared.config,
-                prepared.args,
-                item.index,
-                run_id,
-                prepared.batch_run_root,
+            replay_batch = getattr(
+                prepared.args, "retrieval_replay_source_batch", ""
             )
-            command.append("--prepare-only")
-            returncode = _run_subprocess_with_logs(
-                command,
-                stdout_path=stdout_path,
-                stderr_path=stderr_path,
-                stream_logs=prepared.args.stream_logs,
-                prefix=f"idx{item.index:05d}:prepare",
-            )
+            if _flat_one_call_args(prepared.args) and replay_batch:
+                source = _source_run_dir(Path(replay_batch), item.index)
+                shutil.copyfile(source / "retrieval.json", run_dir / "retrieval.json")
+                stdout_path.write_text("", encoding="utf-8")
+                stderr_path.write_text("", encoding="utf-8")
+                returncode = 0
+            else:
+                command = _single_run_command(
+                    prepared.config,
+                    prepared.args,
+                    item.index,
+                    run_id,
+                    prepared.batch_run_root,
+                )
+                command.append("--prepare-only")
+                returncode = _run_subprocess_with_logs(
+                    command,
+                    stdout_path=stdout_path,
+                    stderr_path=stderr_path,
+                    stream_logs=prepared.args.stream_logs,
+                    prefix=f"idx{item.index:05d}:prepare",
+                )
             if returncode == 0:
                 _initialize_run_manifest(prepared, item, run_id, run_dir)
     result: dict[str, Any] = {
@@ -870,6 +883,25 @@ def _execute_flat_context_final(
         "llm": response,
         "prompt": prompt_metadata,
     }
+    if (
+        state.prepared.args.flat_prompt_version
+        == CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+        and final_output["status"] == "ok"
+    ):
+        portable = str(response["content"]["final_prediction"])
+        native, mapping_sha256 = native_flat_prediction(
+            _task_id(state.prepared),
+            portable,
+            prompt_version=str(state.prepared.args.flat_prompt_version),
+        )
+        response["content"]["final_prediction"] = native
+        final_output["prediction_mapping"] = {
+            "schema_version": "portable_prediction_mapping.v1",
+            "task": _task_id(state.prepared),
+            "portable_prediction": portable,
+            "native_prediction": native,
+            "mapping_sha256": mapping_sha256,
+        }
     if (
         state.prepared.args.flat_prompt_version in CONTEXT_CLAIMS_PROMPT_VERSIONS
         and final_output["status"] == "ok"

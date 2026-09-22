@@ -67,6 +67,19 @@
       }
     },
     {
+      "name": "dgx027_50002",
+      "base_url": "http://dgx027:50002/v1",
+      "model": "deepseek-ai/DeepSeek-V4-Flash-0731",
+      "api_key_env": "",
+      "max_inflight": 550,
+      "request_extra_body": {
+        "chat_template_kwargs": {
+          "thinking": true,
+          "reasoning_effort": "high"
+        }
+      }
+    },
+    {
       "name": "dgx009_50001",
       "base_url": "http://dgx009:50001/v1",
       "model": "deepseek-ai/DeepSeek-V4-Flash-0731",

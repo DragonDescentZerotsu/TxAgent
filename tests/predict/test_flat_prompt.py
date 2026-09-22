@@ -23,6 +23,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V5_HARNESS_VERSION,
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V7_HARNESS_VERSION,
     CONTEXT_V7_PROMPT_VERSION,
@@ -43,6 +44,7 @@ from predict.harnesses.branches.flat import (
     derive_flat_claim_evidence,
     flat_group_validation,
     flat_context_validation,
+    native_flat_prediction,
     flat_prompt_provenance,
     flat_prompt_variant,
     prompt_asset_manifest,
@@ -377,6 +379,49 @@ def test_six_task_successor_renders_each_task(
     assert messages[0]["role"] == "system"
     assert messages[1]["role"] == "user"
     assert prediction in validation["allowed_values"]["final_prediction"]
+
+
+@pytest.mark.parametrize("task,profile,native", [
+    ("bbb_martins", "meaningful_cns_access_v1", "pass"),
+    ("bioavailability_ma", "f20_evidence_calibrated_v2", "high"),
+    ("skin_reaction", "skin_sensitization_contact_allergy.v2", "risk"),
+    ("ames", "ames_bacterial_reverse_mutation.v1", "positive"),
+    ("dili", "dili_conditioned_or_source_molecule_outcome.v1", "dili_risk"),
+    ("carcinogens", "carcinogens_starling_only_five_organism_groups.v1", "positive"),
+])
+def test_upstream_components_render_portable_schema_and_map_native_label(
+    task: str, profile: str, native: str,
+) -> None:
+    messages, metadata = build_flat_context_request(
+        _flat_context_retrieval(),
+        task_id=task,
+        task_prompt_profile=profile,
+        layout="level-grouped",
+        reranking="assay-transfer-contrastive",
+        query_prior={
+            "endpoint_prior": "mixed_or_unclear",
+            "property_drivers": ["size", "charge"],
+            "exact_chembl_evidence_assessment": "omit",
+        },
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    )
+    validation = flat_context_validation(
+        task,
+        task_prompt_profile=profile,
+        prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        reference_index=metadata["reasoning_reference_index"],
+    )
+    mapped, digest = native_flat_prediction(
+        task, "pass", prompt_version=CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+    )
+
+    assert validation["allowed_values"]["final_prediction"] == {"pass", "fail"}
+    assert mapped == native
+    assert len(digest) == 64
+    assert "property drivers: [\"size\", \"charge\"]" in messages[1]["content"]
+    assert "exact chembl evidence assessment" not in messages[1]["content"]
+    assert all("\n\n\n" not in message["content"] for message in messages)
+    assert "\n\n- " not in messages[0]["content"]
 
 
 def test_v5_claims_allow_unbounded_molecule_or_record_citations() -> None:

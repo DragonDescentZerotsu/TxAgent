@@ -14,7 +14,7 @@ import sys
 import time
 from typing import Any
 
-from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
+from data.processing.gold_labels.conditioned_benchmark import tdc_split_path
 from predict.api_client.pool import (
     load_provider_pool_config, primary_capacity, select_healthy_providers,
 )
@@ -25,24 +25,34 @@ from predict.harnesses.branches.scheduler import (
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic, write_jsonl_atomic
 
 
-TASKS = ("bbb_martins", "bioavailability_ma")
+TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 SUBSETS = ("valid", "test")
 MODEL = "deepseek-ai/DeepSeek-V4-Flash-0731"
 PROFILES = {
     "bbb_martins": ("--bbb-prompt-profile", "meaningful_cns_access_v1"),
     "bioavailability_ma": ("--bioavailability-prompt-profile", "f20_evidence_calibrated_v2"),
+    "skin_reaction": ("--skin-prompt-profile", "skin_sensitization_contact_allergy.v2"),
 }
 GOLD_PRIORS = {
     "valid": Path(
-        "outputs/paper/legacy/"
-        "starling_conditioned_gold_l1_deepseek_v4_flash_nvfp4_query_prior/"
-        "runs_deployment_visible_parent_disjoint"
+        "outputs/paper/assay_transfer_harness/joseph/_batches/"
+        "six_task_valid_query_priors_upstream_v1_20260922_0810"
     ),
     "test": Path(
-        "outputs/paper/assay_transfer_harness/joseph/query_priors/"
-        "scaffold_test_deepseek_v4_flash_0731_high_20260918_1744_r2"
+        "outputs/paper/assay_transfer_harness/joseph/_batches/"
+        "six_task_test_query_priors_upstream_v1_20260922_0738"
     ),
 }
+EXISTING_TDC_PRIORS = (
+    Path(
+        "outputs/paper/assay_transfer_harness/joseph/query_priors/"
+        "tdc_v1_deepseek_v4_flash_0731_high_20260920_1055/overlays"
+    ),
+    Path(
+        "outputs/paper/assay_transfer_harness/joseph/query_priors/"
+        "tdc_v1_valid_skin_upstream_v1_20260922_r3/overlays"
+    ),
+)
 
 
 def _key(row: dict[str, Any]) -> tuple[str, str]:
@@ -64,17 +74,17 @@ def _source_prompt_profile(task: str, run: Path) -> tuple[Path, str]:
         raise ValueError(
             f"Query-prior prompt profile differs for {run}: {profile!r} != {expected!r}"
         )
-    return manifest_path, profile
+    return manifest_path, expected
 
 
 def _gold_sources(task: str) -> dict[tuple[str, str], Path]:
     sources: dict[tuple[str, str], Path] = {}
     for subset, root in GOLD_PRIORS.items():
         batch = (root / task / f"{task}__none").resolve()
-        rows = read_jsonl(split_path(task, subset))
-        for index, row in enumerate(rows):
-            key = _key(row)
-            run = _run(batch, index)
+        manifest = json.loads((batch / "manifest.json").read_text(encoding="utf-8"))
+        for row in manifest.get("sources") or []:
+            key = (str(row["molecule_identity_key"]), str(row.get("condition_group") or ""))
+            run = Path(row["run_dir"])
             retrieval = run / "retrieval.json"
             single = run / "single_molecule_reasoning_output.json"
             if not retrieval.is_file() or not single.is_file():
@@ -85,14 +95,35 @@ def _gold_sources(task: str) -> dict[tuple[str, str], Path]:
     return sources
 
 
-def prepare_inputs(output_root: Path) -> dict[str, Any]:
+def _tdc_sources(task: str, subsets: tuple[str, ...]) -> dict[tuple[str, str], Path]:
+    sources = {}
+    for root in EXISTING_TDC_PRIORS:
+        for subset in subsets:
+            manifest_path = root / subset / task / f"{task}__none/manifest.json"
+            if not manifest_path.is_file():
+                continue
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for row in manifest.get("sources") or []:
+                key = (str(row["molecule_identity_key"]), str(row.get("condition_group") or ""))
+                run = Path(row["run_dir"])
+                try:
+                    _source_prompt_profile(task, run)
+                except ValueError:
+                    continue
+                sources[key] = run
+    return sources
+
+
+def prepare_inputs(
+    output_root: Path, tasks: tuple[str, ...], subsets: tuple[str, ...],
+) -> dict[str, Any]:
     output_root.mkdir(parents=True, exist_ok=False)
     summary = {}
-    for task in TASKS:
-        existing = _gold_sources(task)
+    for task in tasks:
+        existing = {**_gold_sources(task), **_tdc_sources(task, subsets)}
         missing: dict[tuple[str, str], dict[str, Any]] = {}
         reused = 0
-        for subset in SUBSETS:
+        for subset in subsets:
             for row in read_jsonl(tdc_split_path(task, subset)):
                 if _key(row) in existing:
                     reused += 1
@@ -111,10 +142,14 @@ def prepare_inputs(output_root: Path) -> dict[str, Any]:
     return summary
 
 
-def build_commands(output_root: Path, provider_config: Path) -> list[BatchCommand]:
+def build_commands(
+    output_root: Path, provider_config: Path, tasks: tuple[str, ...],
+) -> list[BatchCommand]:
     prepared = json.loads((output_root / "prepared.json").read_text())
     commands = []
-    for task in TASKS:
+    for task in tasks:
+        if not int(prepared["tasks"][task]["fresh"]):
+            continue
         option, profile = PROFILES[task]
         command = [
             sys.executable, "-m", f"predict.harnesses.branches.tasks.{task}.contract",
@@ -133,18 +168,22 @@ def build_commands(output_root: Path, provider_config: Path) -> list[BatchComman
     return commands
 
 
-def publish_overlays(output_root: Path) -> dict[str, Any]:
+def publish_overlays(
+    output_root: Path, tasks: tuple[str, ...], subsets: tuple[str, ...],
+) -> dict[str, Any]:
     prepared = json.loads((output_root / "prepared.json").read_text())
     summary = {}
-    for task in TASKS:
-        existing = _gold_sources(task)
+    for task in tasks:
+        gold = _gold_sources(task)
+        tdc = _tdc_sources(task, subsets)
+        existing = {**gold, **tdc}
         fresh_rows = read_jsonl(Path(prepared["tasks"][task]["input_jsonl"]))
         fresh_batch = output_root / "fresh" / task / f"{task}__none"
         fresh = {_key(row): _run(fresh_batch, index) for index, row in enumerate(fresh_rows)}
         for key, run in fresh.items():
             if json.loads((run / "single_molecule_reasoning_output.json").read_text()).get("status") != "ok":
                 raise ValueError(f"Fresh query prior is incomplete: {run}")
-        for subset in SUBSETS:
+        for subset in subsets:
             input_path = tdc_split_path(task, subset).with_name(
                 f"{subset}_molecule_condition_labels.jsonl"
             ).resolve()
@@ -164,7 +203,10 @@ def publish_overlays(output_root: Path) -> dict[str, Any]:
                 sources.append({
                     "target_index": index, "molecule_identity_key": key[0],
                     "condition_group": key[1], "run_dir": str(run),
-                    "source": "gold_v1" if key in existing else "tdc_fresh",
+                    "source": (
+                        "tdc_existing" if key in tdc else
+                        "gold_v1" if key in gold else "tdc_fresh"
+                    ),
                     "files_sha256": files,
                     "task_prompt_profile": profile,
                     "prompt_profile_manifest": str(profile_manifest),
@@ -192,19 +234,30 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--parallelism", type=int)
     parser.add_argument("--preparation-workers", type=int, default=64)
+    parser.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
+    parser.add_argument("--subsets", nargs="+", choices=SUBSETS, default=list(SUBSETS))
     parser.add_argument("--publish-only", action="store_true")
     args = parser.parse_args(argv)
     output_root = (args.output_root or Path(
         "outputs/paper/assay_transfer_harness/joseph/query_priors"
     ) / time.strftime("tdc_v1_deepseek_v4_flash_0731_high_%Y%m%d_%H%M%S")).resolve()
+    tasks = tuple(dict.fromkeys(args.tasks))
+    subsets = tuple(dict.fromkeys(args.subsets))
     if args.publish_only:
-        print(json.dumps(publish_overlays(output_root), indent=2, sort_keys=True)); return 0
-    prepare_inputs(output_root)
+        overlays = publish_overlays(output_root, tasks, subsets)
+        receipt_path = output_root / "execution.json"
+        if receipt_path.is_file():
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt.update(status="complete", failed_batches=[], overlays=overlays)
+            write_json_atomic(receipt_path, receipt)
+        print(json.dumps(overlays, indent=2, sort_keys=True))
+        return 0
+    prepare_inputs(output_root, tasks, subsets)
     config_path = args.provider_pool_config.resolve()
     candidate = load_provider_pool_config(config_path)
     requested = args.parallelism or primary_capacity(candidate)
     selection = select_healthy_providers(candidate, requested)
-    commands = build_commands(output_root, config_path)
+    commands = build_commands(output_root, config_path, tasks)
     prepared = prepare_batch_commands(commands, max_workers=args.preparation_workers, max_stage_requeues=0)
     receipt = {
         "schema_version": "tdc_query_prior_execution.v1", "status": "running",
@@ -228,7 +281,7 @@ def main(argv: list[str] | None = None) -> int:
     receipt["failed_batches"] = failed
     receipt["provider_snapshot"] = client.snapshot()
     if not failed:
-        receipt["overlays"] = publish_overlays(output_root)
+        receipt["overlays"] = publish_overlays(output_root, tasks, subsets)
     write_json_atomic(output_root / "execution.json", receipt)
     print(json.dumps(receipt, indent=2, sort_keys=True))
     return int(bool(failed))

@@ -108,6 +108,15 @@ async def _completion(client: Any, request: Mapping[str, Any]) -> dict[str, Any]
     return {
         "generation_id": getattr(completion, "id", None),
         "model": completion.model,
+        "allowed_served_models": list(
+            getattr(completion, "allowed_served_models", ()) or ()
+        ),
+        "provider_name": getattr(completion, "provider_name", None),
+        "provider_base_url": getattr(completion, "provider_base_url", None),
+        "execution_provider": getattr(completion, "execution_provider", None),
+        "execution_provider_attempts": getattr(
+            completion, "execution_provider_attempts", None
+        ),
         "usage": completion.usage.model_dump() if completion.usage is not None else None,
         "content": message.content,
         "reasoning_content": reasoning,
@@ -124,7 +133,8 @@ async def _one_replica(
         completion = await _completion(client, _request_payload(row, model))
         raw_response = completion["content"]
         reasoning = completion["reasoning_content"]
-        if completion["model"] != model:
+        allowed_models = set(completion.get("allowed_served_models") or [model])
+        if completion["model"] not in allowed_models:
             raise ValueError(f"served model changed: {completion['model']!r}")
         validation = json.loads(row["validation_json"])
         parsed = core._validate_model_response(
@@ -160,6 +170,10 @@ def _replica_receipt(
         "finished_monotonic": time.monotonic(),
         "generation_id": completion.get("generation_id"),
         "model": completion.get("model"),
+        "provider_name": completion.get("provider_name"),
+        "provider_base_url": completion.get("provider_base_url"),
+        "execution_provider": completion.get("execution_provider"),
+        "execution_provider_attempts": completion.get("execution_provider_attempts"),
         "usage": completion.get("usage"),
         **extra,
     }
@@ -267,7 +281,7 @@ def aggregate_responses(
         })
         components[alias] = {
             "mean": means[index], "rounded_weight": rounded,
-            "sample_stddev": statistics.stdev(values),
+            "sample_stddev": statistics.stdev(values) if len(values) > 1 else 0.0,
             "min": min(values), "max": max(values), "component_weights": values,
         }
     metadata = {
@@ -360,8 +374,10 @@ def persist_result(
         (result["status"], attempt,
          core._canonical_json(result.get("response")) if result.get("response") else None,
          medoid.get("reasoning_content") if medoid else None,
-         model if result["status"] == "complete" else None,
-         f"{urlsplit(base_url).netloc.replace(':', '_')}_speculative", base_url,
+         medoid.get("model", model) if medoid else None,
+         (medoid.get("provider_name") if medoid else None)
+         or f"{urlsplit(base_url).netloc.replace(':', '_')}_speculative",
+         (medoid.get("provider_base_url") if medoid else None) or base_url,
          int(row["input_tokens"]) + prompt_tokens,
          int(row["output_tokens"]) + output_tokens,
          result.get("error"), request_id),

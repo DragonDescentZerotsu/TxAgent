@@ -12,7 +12,8 @@ CONFIG = BatchConfig(
     canonical_negative="no_dili_risk", positive_predictions=frozenset({"dili_risk", "1"}),
     negative_predictions=frozenset({"no_dili_risk", "0"}), supports_retrieval_strategy=True,
     group_prompt_formats=("legacy",), default_group_prompt_format="legacy",
-    prompt_profile_option="--dili-prompt-profile", prompt_profile_choices=("dili_gold_v1",),
+    prompt_profile_option="--dili-prompt-profile",
+    prompt_profile_choices=("dili_gold_v1", "dili_conditioned_or_source_molecule_outcome.v1"),
     default_prompt_profile="dili_gold_v1", historical_prompt_profile="dili_gold_v1",
 )
 

@@ -42,6 +42,43 @@ def test_endpoint_specs_reject_invalid_capacity():
         workflow._endpoint_specs(("http://dgx017:50001/v1",), 0)
 
 
+def test_workflow_retains_optional_provider_pool(tmp_path: Path):
+    pool = tmp_path / "pool.json"
+    pool.write_text("{}")
+    config = workflow.workflow(
+        "ames",
+        tmp_path / "release",
+        tmp_path / "run",
+        retrieval_index=tmp_path / "RELEASE_INDEX.json",
+        provider_pool=pool,
+    )
+
+    assert config.provider_pool == pool.resolve()
+
+
+def test_run_forwards_seed_request_cache(monkeypatch, tmp_path: Path):
+    captured = {}
+    config = SimpleNamespace(
+        run=tmp_path / "run",
+        review=tmp_path / "review",
+        endpoints=({"max_inflight": 7},),
+        task="ames",
+        release_root=Path("release"),
+    )
+    monkeypatch.setattr(workflow, "configure_core", lambda _: None)
+    monkeypatch.setattr(
+        workflow.core,
+        "run_semantic",
+        lambda *args, **kwargs: captured.update(kwargs) or {},
+    )
+    monkeypatch.setattr(workflow, "write_json_atomic", lambda *args: None)
+    seed = tmp_path / "seed.sqlite3"
+
+    workflow.run(config, "review-hash", seed)
+
+    assert captured["seed_request_cache"] == seed
+
+
 def test_retrieval_scope_reads_only_later_level_uids(tmp_path: Path):
     level = tmp_path / "scaffold/valid/L2"
     level.mkdir(parents=True)

@@ -294,6 +294,7 @@ class OpenAICompatibleClient:
         extra_body.pop("allowed_served_models", None)
         extra_body.pop("expected_upstream_provider", None)
         extra_body.pop("provider_pool_snapshot_sha256", None)
+        extra_body.pop("max_request_cost_usd", None)
         kwargs: dict[str, Any] = {"model": self.model, "messages": messages}
         if not omit_response_format:
             kwargs["response_format"] = getattr(

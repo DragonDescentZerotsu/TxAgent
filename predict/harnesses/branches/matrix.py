@@ -71,11 +71,23 @@ TASKS = (
     "bbb_martins", "bioavailability_ma", "skin_reaction",
     "ames", "dili", "carcinogens",
 )
+TASK_PROMPT_PROFILE_OPTIONS = {
+    "bbb_martins": "--bbb-prompt-profile",
+    "bioavailability_ma": "--bioavailability-prompt-profile",
+    "skin_reaction": "--skin-prompt-profile",
+    "ames": "--ames-prompt-profile",
+    "dili": "--dili-prompt-profile",
+    "carcinogens": "--carcinogens-prompt-profile",
+}
 DIRECT_GRID_TASKS = ("bbb_martins", "bioavailability_ma", "skin_reaction")
 RECORDS_PER_LEVEL = 10
 MAX_TOKENS = 262_144
 GRID_SCREEN_SCHEMA = "record_selection_lambda_screen.v1"
 DIRECT_GRID_SCHEMA = "gold_submodular_selection_grid.v1"
+DIRECT_GRID_SCHEMAS = {
+    DIRECT_GRID_SCHEMA,
+    "direct_context_selection_grid.v2",
+}
 DEFAULT_CONDITIONS = ("morgan:all",)
 CONDITION_CHOICES = tuple(
     f"{mode}:{pool}" for mode in flat.VARIANTS for pool in flat.RECORD_POOLS
@@ -210,7 +222,7 @@ def load_preselected_grid(path: Path) -> list[dict[str, Any]]:
 def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if (
-        payload.get("schema_version") != DIRECT_GRID_SCHEMA
+        payload.get("schema_version") not in DIRECT_GRID_SCHEMAS
         or payload.get("status") != "complete"
         or payload.get("kind") != "direct"
     ):
@@ -220,9 +232,12 @@ def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
         row.get("name") for row in profiles
     }) != len(profiles):
         raise ValueError("Direct grid profile count or names are invalid")
+    tasks = tuple(payload.get("tasks") or DIRECT_GRID_TASKS)
+    if not tasks or len(tasks) != len(set(tasks)) or set(tasks) - set(TASKS):
+        raise ValueError("Direct grid task list is invalid")
     for profile in profiles:
         subsets = set()
-        for task in DIRECT_GRID_TASKS:
+        for task in tasks:
             entry = (profile.get("task_manifests") or {}).get(task) or {}
             manifest = Path(str(entry.get("path") or ""))
             if not manifest.is_absolute():
@@ -234,6 +249,7 @@ def load_preselected_direct_grid(path: Path) -> list[dict[str, Any]]:
         if len(subsets) != 1 or None in subsets:
             raise ValueError(f"Direct profile mixes evaluation subsets: {profile.get('name')}")
         profile["subset"] = subsets.pop()
+        profile["tasks"] = tasks
     if len({profile["subset"] for profile in profiles}) != 1:
         raise ValueError("Direct grid profiles mix evaluation subsets")
     return profiles
@@ -379,6 +395,7 @@ def _selection_args(
     flat_preselected_uids: Path | None = None,
     flat_preselected_contexts: Path | None = None,
     context_v5_six_tasks: bool = False,
+    six_task_prompt_version: str = flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
     batch_id: str | None = None,
     evaluation_subset: str = "valid",
     prior_root: Path = flat.DEFAULT_QUERY_PRIOR_ROOT,
@@ -398,14 +415,15 @@ def _selection_args(
     context_prompt = context_v4 or context_v5 or context_v6 or context_v5_six_tasks
     return argparse.Namespace(
         harness_version=(
-            flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION if context_v5_six_tasks
+            flat.JOSEPH_PROMPT_HARNESSES[six_task_prompt_version]
+            if context_v5_six_tasks
             else flat.CONTEXT_V6_HARNESS_VERSION if context_v6
             else flat.CONTEXT_V5_HARNESS_VERSION if context_v5
             else flat.CONTEXT_V4_HARNESS_VERSION if context_v4
             else flat.PUBLIC_HARNESS_VERSION
         ),
         prompt_version=(
-            flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION if context_v5_six_tasks
+            six_task_prompt_version if context_v5_six_tasks
             else flat.CONTEXT_V6_PROMPT_VERSION if context_v6
             else flat.CONTEXT_V5_PROMPT_VERSION if context_v5
             else flat.CONTEXT_V4_PROMPT_VERSION if context_v4
@@ -535,6 +553,10 @@ def _batch_command(
         command.extend(["--start", "0", "--limit", str(args.limit)])
     if context_v4:
         command.extend([
+            TASK_PROMPT_PROFILE_OPTIONS[task],
+            flat.prompt_assets(args.prompt_version)["tasks"][task]["prompt_profile"],
+        ])
+        command.extend([
             "--flat-layout", args.layout,
             "--flat-query-prior", args.query_prior,
             "--single-analysis-source-batch",
@@ -616,7 +638,10 @@ def _materialize_direct_request_review(
     """Render exact direct-grid requests without creating an inference client."""
     rows: list[dict[str, Any]] = []
     for batch_id, prepared in sorted(prepared_by_name.items()):
-        if prepared.args.flat_prompt_version != flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+        if prepared.args.flat_prompt_version not in {
+            flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        }:
             raise ValueError(f"Unexpected direct-grid prompt version for {batch_id}")
         retrieval_batch = Path(prepared.args.retrieval_replay_source_batch)
         prior_batch = Path(prepared.args.single_analysis_source_batch)
@@ -683,7 +708,7 @@ def _materialize_direct_request_review(
         "request_index": str(index_path),
         "request_index_sha256": sha256_file(index_path),
         "prompt_assets": flat.prompt_asset_manifest(
-            flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+            next(iter(prepared_by_name.values())).args.flat_prompt_version
         ),
     }
     write_json_atomic(root / "request_review.json", summary)
@@ -718,6 +743,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--context-v5-all-level", action="store_true")
     parser.add_argument("--preselected-grid-manifest", type=Path)
     parser.add_argument("--preselected-direct-grid-manifest", type=Path)
+    parser.add_argument(
+        "--preselected-direct-harness-version",
+        choices=(
+            flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
+            flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
+        ),
+        default=flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
+    )
     parser.add_argument("--tasks", nargs="+", choices=TASKS)
     parser.add_argument(
         "--evaluation-subset", choices=("valid", "test")
@@ -784,6 +817,13 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("a direct selection grid must target exactly one evaluation subset")
     if "--preselected-harness-version" in raw_argv and not args.preselected_grid_manifest:
         parser.error("--preselected-harness-version requires --preselected-grid-manifest")
+    if (
+        "--preselected-direct-harness-version" in raw_argv
+        and not args.preselected_direct_grid_manifest
+    ):
+        parser.error(
+            "--preselected-direct-harness-version requires --preselected-direct-grid-manifest"
+        )
     if args.parallelism is not None and args.parallelism < 1:
         parser.error("--parallelism must be positive")
     if min(
@@ -825,6 +865,10 @@ def main(argv: list[str] | None = None) -> int:
         args.preselected_grid_manifest = args.preselected_grid_manifest.resolve()
     if args.preselected_direct_grid_manifest:
         args.preselected_direct_grid_manifest = args.preselected_direct_grid_manifest.resolve()
+    declared_direct_tasks = (
+        json.loads(args.preselected_direct_grid_manifest.read_text()).get("tasks") or []
+        if args.preselected_direct_grid_manifest else []
+    )
     candidate_config = load_provider_pool_config(args.provider_pool_config)
     args.requested_parallelism = args.parallelism
     args.endpoint_selection = None
@@ -871,7 +915,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         commands = []
         selected_tasks = tuple(dict.fromkeys(args.tasks or (
-            DIRECT_GRID_TASKS if args.preselected_direct_grid_manifest else TASKS[:2]
+            declared_direct_tasks or TASKS[:2]
         )))
         context_matrix = (
             args.context_v4_grid or args.context_v5_grid
@@ -1002,6 +1046,9 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 context_v6=preselected_v6,
                 context_v5_six_tasks=item["direct"],
+                six_task_prompt_version=flat.JOSEPH_HARNESS_PROMPTS[
+                    args.preselected_direct_harness_version
+                ],
                 all_levels=all_levels and not item["direct"],
                 flat_preselected_uids=(None if item["direct"] else item["manifest"]),
                 flat_preselected_contexts=(item["manifest"] if item["direct"] else None),
@@ -1165,7 +1212,7 @@ def main(argv: list[str] | None = None) -> int:
             "benchmark": args.benchmark,
             "evaluation_subsets": list(evaluation_subsets),
             "harness_version": (
-                flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION
+                args.preselected_direct_harness_version
                 if args.preselected_direct_grid_manifest
                 else args.preselected_harness_version if args.preselected_grid_manifest
                 else flat.CONTEXT_V5_HARNESS_VERSION
@@ -1174,7 +1221,7 @@ def main(argv: list[str] | None = None) -> int:
                 if args.context_v4_grid else flat.PUBLIC_HARNESS_VERSION
             ),
             "prompt_version": (
-                flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+                flat.JOSEPH_HARNESS_PROMPTS[args.preselected_direct_harness_version]
                 if args.preselected_direct_grid_manifest
                 else flat.JOSEPH_HARNESS_PROMPTS[args.preselected_harness_version]
                 if args.preselected_grid_manifest

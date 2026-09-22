@@ -79,6 +79,7 @@ from predict.harnesses.branches.flat import (
     CONTEXT_V4_PROMPT_VERSION,
     CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     CONTEXT_PROMPT_VERSIONS,
     EVIDENCE_PROJECTION,
     EXTRA_DETAILS_POLICY,
@@ -2093,11 +2094,17 @@ def _validate_flat_prompt(config: BatchConfig, args: argparse.Namespace) -> None
         task_id = config.pipeline_module.split(".")[-2]
         supported = (
             set(TASKS)
-            if args.flat_prompt_version == CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+            if args.flat_prompt_version in {
+                CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+            }
             else {"bbb_martins", "bioavailability_ma"}
         )
         if task_id not in supported:
-            if args.flat_prompt_version != CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+            if args.flat_prompt_version not in {
+                CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+                CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+            }:
                 raise SystemExit("Joseph flat is enabled only for BBB and oral")
             raise SystemExit(f"{args.flat_prompt_version} does not support {task_id}")
         if not args.retrieval_replay_source_batch:
@@ -2206,7 +2213,7 @@ def _validated_flat_selection_manifest(
 
 def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespace) -> None:
     is_assay_transfer = args.retrieval_strategy == ASSAY_TRANSFER_TOOL_STRATEGY
-    if args.assay_transfer_profile == "v9_direct_gold":
+    if is_assay_transfer and args.assay_transfer_profile == "v9_direct_gold":
         required = {
             "rerank cache": args.rerank_cache,
             "model": args.assay_transfer_model,
@@ -2223,13 +2230,13 @@ def _validate_assay_transfer_scores(config: BatchConfig, args: argparse.Namespac
                 "--assay-transfer-profile v9_direct_gold requires "
                 "--assay-transfer-template-profile v9_context_conditioned"
             )
-    elif args.assay_transfer_profile == "v19_1_numeric_all_indirect_top75":
+    elif is_assay_transfer and args.assay_transfer_profile == "v19_1_numeric_all_indirect_top75":
         if args.assay_transfer_template_profile != "v19_1_retrieval_context_copy":
             raise SystemExit(
                 "--assay-transfer-profile v19_1_numeric_all_indirect_top75 requires "
                 "--assay-transfer-template-profile v19_1_retrieval_context_copy"
             )
-    elif args.assay_transfer_template_profile in {
+    elif is_assay_transfer and args.assay_transfer_template_profile in {
         "v9_context_conditioned",
         "v19_1_retrieval_context_copy",
     }:

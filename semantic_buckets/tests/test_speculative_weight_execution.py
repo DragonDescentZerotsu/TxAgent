@@ -44,6 +44,17 @@ def test_first_eight_mean_uses_half_up_rounding_and_closest_rationale() -> None:
     assert metadata["aggregation_method"] == "first_8_valid_mean_v1"
 
 
+def test_single_replica_aggregation_has_zero_sample_stddev() -> None:
+    receipt = _valid_receipt(0, 0.72)
+
+    response, metadata = speculative.aggregate_responses(
+        [receipt], ["Candidate 1", "Candidate 2"], required=1,
+    )
+
+    assert response["scores"][0]["weight"] == 0.72
+    assert metadata["components"]["Candidate 1"]["sample_stddev"] == 0.0
+
+
 def test_collection_cancels_losers_after_required_valid_responses() -> None:
     async def scenario():
         async def call(replica_id: int) -> dict:

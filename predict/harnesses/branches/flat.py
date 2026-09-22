@@ -23,6 +23,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import sys
 import time
 from copy import deepcopy
@@ -62,11 +63,13 @@ CONTEXT_V6_PROMPT_VERSION = "full_flat_context_v6_oral_high_low"
 CONTEXT_V7_PROMPT_VERSION = "full_flat_context_v7_oral_final_only"
 CONTEXT_V8_PROMPT_VERSION = "full_flat_context_v8_context_scoped_transfer_v1"
 CONTEXT_V5_SIX_TASKS_PROMPT_VERSION = "full_flat_context_v5_six_tasks_v1"
+CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION = "full_flat_context_v5_six_tasks_upstream_v1"
 CONTEXT_CLAIMS_PROMPT_VERSIONS = {
     CONTEXT_V5_PROMPT_VERSION,
     CONTEXT_V6_PROMPT_VERSION,
     CONTEXT_V8_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
 }
 CONTEXT_NUMBERED_PROMPT_VERSIONS = {
     *CONTEXT_CLAIMS_PROMPT_VERSIONS,
@@ -81,6 +84,7 @@ JOSEPH_PROMPT_VERSIONS = (
     CONTEXT_V7_PROMPT_VERSION,
     CONTEXT_V8_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
 )
 # Backward-compatible default for direct prompt-library callers. The public
 # The unified branches CLI selects Joseph flat behavior below.
@@ -92,6 +96,7 @@ CONTEXT_V6_HARNESS_VERSION = "full-flat-context-v6-oral-high-low"
 CONTEXT_V7_HARNESS_VERSION = "full-flat-context-v7-oral-final-only"
 CONTEXT_V8_HARNESS_VERSION = "full-flat-context-v8-context-scoped-transfer-v1"
 CONTEXT_V5_SIX_TASKS_HARNESS_VERSION = "full-flat-context-v5-six-tasks-v1"
+CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION = "full-flat-context-v5-six-tasks-upstream-v1"
 JOSEPH_V1_HARNESS_VERSION = "joseph-flat-v1"
 LEGACY_HARNESS_VERSION = "tianang-flat-v1"
 JOSEPH_HARNESS_PROMPTS = {
@@ -103,6 +108,7 @@ JOSEPH_HARNESS_PROMPTS = {
     CONTEXT_V7_HARNESS_VERSION: CONTEXT_V7_PROMPT_VERSION,
     CONTEXT_V8_HARNESS_VERSION: CONTEXT_V8_PROMPT_VERSION,
     CONTEXT_V5_SIX_TASKS_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION: CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
 }
 JOSEPH_PROMPT_HARNESSES = {
     prompt: harness for harness, prompt in JOSEPH_HARNESS_PROMPTS.items()
@@ -124,6 +130,10 @@ CONTEXT_V4_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v1"
 CONTEXT_V5_SELECTION_CONTRACT = "joseph_flat_context_retrieval.v2"
 PRESELECTED_UID_SCHEMA = "flat_preselected_uids.v1"
 PRESELECTED_DIRECT_SCHEMA = "gold_direct_context_selection.v1"
+PRESELECTED_DIRECT_SCHEMAS = {
+    PRESELECTED_DIRECT_SCHEMA,
+    "direct_context_selection.v2",
+}
 CONTEXT_PROMPT_VERSIONS = {
     CONTEXT_V4_PROMPT_VERSION,
     *CONTEXT_NUMBERED_PROMPT_VERSIONS,
@@ -158,6 +168,7 @@ PROMPT_VARIANTS = {
     CONTEXT_V7_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V8_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION: CONTEXT_V4_VARIANTS,
 }
 TASKS = {
     "bbb_martins": 5,
@@ -600,6 +611,11 @@ def _environment() -> Environment:
     )
 
 
+def _compact_prompt(text: str) -> str:
+    text = re.sub(r"(?m)(^- .*)\n[ \t]*\n(?=- )", r"\1\n", text)
+    return re.sub(r"\n[ \t]*\n(?:[ \t]*\n)+", "\n\n", text).strip()
+
+
 def _is_assay_transfer_key(key: str) -> bool:
     normalized = key.lower()
     return "assay_transfer" in normalized or "assay-transfer" in normalized
@@ -719,6 +735,8 @@ def build_flat_context_request(
     user = _environment().get_template(
         f"{prompt_version}/user.jinja"
     ).render(**payload)
+    if prompt_version == CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION:
+        system, user = _compact_prompt(system), _compact_prompt(user)
     return [
         {"role": "system", "content": system.strip()},
         {"role": "user", "content": user.strip()},
@@ -816,6 +834,23 @@ def derive_flat_claim_evidence(content: Mapping[str, Any]) -> dict[str, list[str
                 value for value in claim[source] if value not in output[target]
             )
     return output
+
+
+def native_flat_prediction(
+    task_id: str, prediction: str, *, prompt_version: str
+) -> tuple[str, str]:
+    """Map a portable prompt label to the task's benchmark label."""
+    mapping = (prompt_assets(prompt_version)["provenance"].get("label_mapping") or {}).get(
+        task_id
+    )
+    if not isinstance(mapping, dict) or prediction not in mapping:
+        raise ValueError(
+            f"No native prediction mapping for {prompt_version}/{task_id}/{prediction}"
+        )
+    digest = hashlib.sha256(
+        json.dumps(mapping, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return str(mapping[prediction]), digest
 
 
 def _flat_context_schema(contract: Mapping[str, Any]) -> dict[str, Any]:
@@ -1546,7 +1581,7 @@ def _load_preselected_contexts(
     path = path.resolve()
     document = json.loads(path.read_text(encoding="utf-8"))
     if (
-        document.get("schema_version") != PRESELECTED_DIRECT_SCHEMA
+        document.get("schema_version") not in PRESELECTED_DIRECT_SCHEMAS
         or document.get("status") != "complete"
         or document.get("task_id") != task
         or int(document.get("budget", -1)) != budget
@@ -2205,7 +2240,7 @@ def _preselected_query_indices(
     """Resolve an optimizer cohort to stable indices in the canonical split."""
     document = json.loads(path.read_text(encoding="utf-8"))
     if (
-        document.get("schema_version") not in {PRESELECTED_UID_SCHEMA, PRESELECTED_DIRECT_SCHEMA}
+        document.get("schema_version") not in {PRESELECTED_UID_SCHEMA, *PRESELECTED_DIRECT_SCHEMAS}
         or document.get("status") != "complete"
         or document.get("task_id") != task
         or document.get("subset") not in {subset, "valid_small"}
@@ -2297,6 +2332,7 @@ def run(argv: list[str] | None = None) -> int:
             CONTEXT_V7_HARNESS_VERSION,
             CONTEXT_V8_HARNESS_VERSION,
             CONTEXT_V5_SIX_TASKS_HARNESS_VERSION,
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION,
             JOSEPH_V1_HARNESS_VERSION,
             LEGACY_HARNESS_VERSION,
         ),
@@ -2453,7 +2489,10 @@ def _joseph_main(argv: list[str]) -> int:
         )
     if args.flat_preselected_contexts and args.flat_preselected_uids:
         parser.error("direct contexts and later-level preselected UIDs are mutually exclusive")
-    if args.flat_preselected_contexts and args.prompt_version != CONTEXT_V5_SIX_TASKS_PROMPT_VERSION:
+    if args.flat_preselected_contexts and args.prompt_version not in {
+        CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+        CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+    }:
         parser.error("--flat-preselected-contexts requires full-flat-context-v5-six-tasks-v1")
     if args.assay_transfer_cache == DEFAULT_CACHE_BUNDLE:
         if args.record_pool != "all":

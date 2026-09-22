@@ -403,7 +403,19 @@ The provider-pool `max_inflight` limit is local to one launcher, not a shared
 endpoint semaphore. Overlapping launchers may use the same endpoints; report each
 launcher's configured per-endpoint and aggregate capacity explicitly. Live SGLang
 `/v1/loads` or scheduler metrics are observational and do not gate a requested
-launch.
+launch. For an approved overlapping throughput run, use explicit `--parallelism`
+equal to the selected providers' launcher-local capacity; do not use
+`--target-total-load-per-endpoint`, because that mode subtracts observational load
+from the new launcher's allocation. After the scheduler starts, verify the
+launcher's live connections by destination and confirm that each selected endpoint
+reaches its intended share or explain why pending work is insufficient to fill it.
+
+High-throughput stage completion must not rebuild or lock a global live-run catalog
+per response. Persist each stage trace and checkpoint independently, and refresh
+global catalogs only at run lifecycle boundaries or through an explicitly batched
+refresh. If a launcher has materially fewer live endpoint connections than its
+configured capacity while pending requests remain, inspect shared-filesystem locks
+and catalog refreshes before increasing `max_inflight` or restarting the run.
 
 Do not silently accept the progressive matrix's 524,288-token default for these
 structured L1 prompts. Review token counts from the closest completed artifact

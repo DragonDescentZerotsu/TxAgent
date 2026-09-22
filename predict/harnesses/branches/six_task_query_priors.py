@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import replace
 import hashlib
 import json
 import os
@@ -21,6 +22,7 @@ from predict.api_client.pool import (
 from predict.harnesses.branches.matrix import provider_client, sample_provider_loads
 from predict.harnesses.branches.flat import (
     CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
     prompt_assets,
 )
 from predict.harnesses.progressive.state import ProgressiveTaskContract
@@ -39,8 +41,8 @@ REQUIRED_CONTENT = {
 }
 
 
-def _contract(task: str) -> Any:
-    row = prompt_assets(CONTEXT_V5_SIX_TASKS_PROMPT_VERSION)["tasks"][task]
+def _contract(task: str, prompt_version: str) -> Any:
+    row = prompt_assets(prompt_version)["tasks"][task]
     return ProgressiveTaskContract(
         task=task,
         endpoint_name=row["endpoint_name"],
@@ -95,6 +97,20 @@ def _reusable_sources(root: Path | None, task: str) -> dict[str, dict[str, Any]]
     if root is None:
         return {}
     batch = root.resolve() / task / f"{task}__none"
+    overlay_path = batch / "manifest.json"
+    if overlay_path.is_file():
+        overlay = json.loads(overlay_path.read_text(encoding="utf-8"))
+        if overlay.get("schema_version") == "branch_query_prior_overlay.v1":
+            output = {}
+            for row in overlay.get("sources") or []:
+                query_id = str(row.get("benchmark_row_id") or "")
+                source = _prior_source(Path(str(row.get("run_dir") or "")))
+                if not query_id or source is None or query_id in output:
+                    raise ValueError(f"Invalid reusable query-prior overlay: {overlay_path}")
+                output[query_id] = source
+            if len(output) != int(overlay.get("n_items", -1)):
+                raise ValueError(f"Incomplete reusable query-prior overlay: {overlay_path}")
+            return output
     output = {}
     for manifest_path in sorted((batch / "runs").glob("*/manifest.json")):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -109,13 +125,23 @@ def _reusable_sources(root: Path | None, task: str) -> dict[str, dict[str, Any]]
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, required=True)
-    parser.add_argument("--subset", choices=("valid", "test"), required=True)
+    parser.add_argument("--subset", choices=("valid", "valid_small", "test"), required=True)
     parser.add_argument("--tasks", nargs="+", choices=TASKS, default=list(TASKS))
     parser.add_argument("--reuse-root", type=Path)
+    parser.add_argument("--reuse-tasks", nargs="+", choices=TASKS, default=list(TASKS))
+    parser.add_argument(
+        "--prompt-version",
+        choices=(
+            CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+            CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION,
+        ),
+        default=CONTEXT_V5_SIX_TASKS_PROMPT_VERSION,
+    )
     parser.add_argument(
         "--provider-pool-config", type=Path,
         default=Path("predict/api_client/providers/current_endpoints.json"),
     )
+    parser.add_argument("--providers", nargs="+", default=[])
     parser.add_argument("--tool-service-url", default="http://127.0.0.1:8765")
     parser.add_argument("--parallelism", type=int)
     parser.add_argument("--max-tokens", type=int, default=20_480)
@@ -131,6 +157,17 @@ def main(argv: list[str] | None = None) -> int:
     os.environ.setdefault("DEEPSEEK_API_KEY", "EMPTY")
     config_path = args.provider_pool_config.resolve()
     candidate = load_provider_pool_config(config_path)
+    if args.providers:
+        candidate = replace(
+            candidate,
+            providers=tuple(
+                provider for provider in candidate.providers
+                if provider.name in args.providers
+            ),
+        )
+        if {provider.name for provider in candidate.providers} != set(args.providers):
+            raise ValueError("--providers contains an unknown provider name")
+        candidate.validate()
     requested = args.parallelism or primary_capacity(candidate)
     selection = select_healthy_providers(candidate, requested)
     loads = sample_provider_loads(selection.config, samples=1, interval_s=0)
@@ -141,6 +178,7 @@ def main(argv: list[str] | None = None) -> int:
         "host": socket.gethostname(),
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "tasks": list(args.tasks),
+        "prompt_version": args.prompt_version,
         "subset": args.subset,
         "model": MODEL,
         "reasoning_effort": "high",
@@ -159,8 +197,12 @@ def main(argv: list[str] | None = None) -> int:
     for task in args.tasks:
         path, rows = _inputs(task, args.subset)
         task_inputs[task] = {"path": str(path), "sha256": sha256_file(path)}
-        contract = _contract(task)
-        reusable = _reusable_sources(args.reuse_root, task)
+        contract = _contract(task, args.prompt_version)
+        reusable = (
+            _reusable_sources(args.reuse_root, task)
+            if task in args.reuse_tasks
+            else {}
+        )
         for index, row in rows:
             query_id = str(row["benchmark_row_id"])
             if query_id in reusable:
@@ -247,9 +289,9 @@ def main(argv: list[str] | None = None) -> int:
                     "benchmark_row_id": row["benchmark_row_id"],
                     "reasoning_effort": "high", "thinking": {"type": "enabled"},
                     "messages_sha256": _canonical_hash(messages),
-                    "task_prompt_profile": prompt_assets(
-                        CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
-                    )["tasks"][task]["prompt_profile"],
+                    "task_prompt_profile": prompt_assets(args.prompt_version)["tasks"][task][
+                        "prompt_profile"
+                    ],
                 })
                 sources[task, index] = {**_prior_source(run_dir), "source": "fresh"}
         pending = retry
@@ -271,9 +313,9 @@ def main(argv: list[str] | None = None) -> int:
                 "benchmark_row_id": row["benchmark_row_id"],
                 "molecule_identity_key": str(row.get("molecule_identity_key") or ""),
                 "condition_group": str(row.get("condition_group") or ""),
-                "task_prompt_profile": prompt_assets(
-                    CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
-                )["tasks"][task]["prompt_profile"],
+                "task_prompt_profile": prompt_assets(args.prompt_version)["tasks"][task][
+                    "prompt_profile"
+                ],
                 **source,
             })
         write_json_atomic(batch / "manifest.json", {
@@ -281,9 +323,10 @@ def main(argv: list[str] | None = None) -> int:
             "task_id": task, "subset": args.subset, "n_items": len(entries),
             "input_jsonl": str(path), "input_sha256": sha256_file(path),
             "input": task_inputs[task], "model": MODEL, "reasoning_effort": "high",
-            "task_prompt_profile": prompt_assets(
-                CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
-            )["tasks"][task]["prompt_profile"],
+            "prompt_version": args.prompt_version,
+            "task_prompt_profile": prompt_assets(args.prompt_version)["tasks"][task][
+                "prompt_profile"
+            ],
             "reused": sum(row["source"] == "reused" for row in entries),
             "fresh": sum(row["source"] == "fresh" for row in entries),
             "sources": entries,

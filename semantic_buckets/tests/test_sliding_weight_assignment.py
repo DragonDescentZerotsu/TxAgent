@@ -216,9 +216,11 @@ def test_execution_uses_pro_for_seed_and_flash_for_anchored_rounds(
 def test_openrouter_rotation_changes_provider_every_three_requests() -> None:
     snapshot = {"snapshot_sha256": "abc", "routes": [
         {"model": "model-a", "canonical_model": "canonical-a", "route_tag": "fast-a",
-         "supports_response_format": True},
+         "supports_response_format": True, "active_input_price": 0.1,
+         "active_output_price": 0.2},
         {"model": "model-b", "canonical_model": "canonical-b", "route_tag": "fast-b",
-         "supports_response_format": False},
+         "supports_response_format": False, "active_input_price": 0.3,
+         "active_output_price": 0.4},
     ]}
     assignments = [weights.provider_pool.request_assignment(
         snapshot, index, seed_request_count=9

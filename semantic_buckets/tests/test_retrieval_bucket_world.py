@@ -10,6 +10,7 @@ def test_default_world_uses_ranked_uid_v4() -> None:
         "bbb_martins": {"records": 389_760, "buckets": 11_253},
         "bioavailability_ma": {"records": 374_645, "buckets": 6_454},
         "skin_reaction": {"records": 22_569, "buckets": 1_244},
+        "ames": {"records": 556_755, "buckets": 11_391},
     }
 
 

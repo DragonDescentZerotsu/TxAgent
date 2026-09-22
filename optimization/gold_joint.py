@@ -19,22 +19,25 @@ from typing import Any, Iterable, Mapping, Sequence
 import pyarrow.parquet as pq
 from rdkit import rdBase
 
-from data.processing.gold_labels.conditioned_benchmark import split_path
+from data.processing.gold_labels.conditioned_benchmark import split_path, tdc_split_path
 from optimization.select_records import (
     _default_release_index,
     _fingerprint,
     _semantic_rows,
 )
 from predict.retrieval.assay_reranking.ranked_uid_retrieval import load_ranked_universe
+from predict.retrieval.assay_reranking.runtime import cache_profile_root
 from predict.utils.json import read_jsonl, sha256_file, write_json_atomic
 
 
-DIRECT_OBJECTIVE_VERSION = "gold_direct_normalized_gated_bit_log_label.v1"
+DIRECT_OBJECTIVE_VERSION = "direct_normalized_gated_bit_log_label.v2"
 INDIRECT_OBJECTIVE_VERSION = "gold_joint_indirect_bit_log_semantic_level.v1"
-DIRECT_SCHEMA = "gold_direct_context_selection.v1"
+DIRECT_SCHEMA = "direct_context_selection.v2"
+LEGACY_DIRECT_SCHEMA = "gold_direct_context_selection.v1"
 INDIRECT_SCHEMA = "gold_joint_indirect_uid_selection.v1"
 MIXED_SCHEMA = "gold_mixed_selection.v1"
 GRID_SCHEMA = "gold_submodular_selection_grid.v1"
+DIRECT_GRID_SCHEMA = "direct_context_selection_grid.v2"
 DIRECT_BUDGET = 10
 INDIRECT_BUDGET = 50
 LEVEL_DIVERSITY_VALUES = (0.25, 0.5, 0.75)
@@ -52,6 +55,18 @@ TASKS = {
         "levels": ("L2", "L3"),
     },
 }
+DIRECT_TASKS = {
+    "bbb_martins": "ranked_level_retrieval_v4",
+    "bioavailability_ma": "ranked_level_retrieval_v4",
+    "skin_reaction": "ranked_level_retrieval_skin_gold_v1_l1_adapter_v2",
+    "ames": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
+    "dili": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
+    "carcinogens": "ranked_level_retrieval_gold_v1_addon_l1_assay_safety_best_v1",
+}
+TDC_DIRECT_TASKS = {
+    task: "ranked_level_retrieval_tdc_v1_l1_assay_task_best_v1"
+    for task in ("bbb_martins", "bioavailability_ma", "skin_reaction")
+}
 PROFILE_SCREENS = (
     Path("outputs/analysis/record_selection/")
     / "morgan_normalized_gated_feature_semantic_completed_top75_top16_small_valid_v1/screen_manifest.json",
@@ -59,10 +74,6 @@ PROFILE_SCREENS = (
     / "morgan_normalized_gated_feature_semantic_grid_v1/screen_manifest.json",
     Path("outputs/analysis/record_selection/")
     / "morgan_normalized_gated_feature_semantic_high_grid_v1/screen_manifest.json",
-)
-SKIN_DIRECT_ROOT = Path(
-    "predict/retrieval/cache/assay_reranking/active/"
-    "v9_skin_gold_v1_scaffold_morgan100_v1/skin_reaction/scaffold"
 )
 SKIN_SEMANTIC_ROOT = Path(
     "semantic_buckets/releases/skin_reaction/v10_main_universe_v5"
@@ -101,20 +112,14 @@ def _code(value: float) -> str:
 
 
 def direct_profiles() -> list[DirectProfile]:
-    crossed = [
+    return [
         DirectProfile(
             f"ga{_code(ga)}_mc{_code(mc)}_label{_code(label)}", ga, mc, label
         )
         for ga, mc, label in itertools.product(
-            (0.75, 1.0, 1.25, 1.5), (0.25, 0.5, 0.75), (0.25, 0.5)
+            (0.75, 1.0, 1.25), (0.1, 0.25), (0.1, 0.25)
         )
     ]
-    controls = [
-        DirectProfile(f"ga{_code(ga)}_mc000_label000", ga, 0.0, 0.0)
-        for ga in (0.75, 1.0, 1.25, 1.5)
-    ]
-    ablations = [DirectProfile("ga000_mc025_label025", 0.0, 0.25, 0.25)]
-    return [*crossed, *controls, *ablations]
 
 
 def indirect_profiles(
@@ -163,8 +168,14 @@ def _write_tsv(path: Path, rows: Iterable[Mapping[str, Any]], fields: Sequence[s
     return count
 
 
-def _gold_queries(task: str, subset: str = "valid_small") -> tuple[dict[str, str], Path]:
-    path = split_path(task, subset, version="v1")
+def _direct_queries(
+    benchmark: str, task: str, subset: str,
+) -> tuple[dict[str, str], Path]:
+    path = (
+        split_path(task, subset, version="v1")
+        if benchmark == "gold_v1"
+        else tdc_split_path(task, subset, version="v1")
+    )
     rows = read_jsonl(path)
     queries = {str(row["benchmark_row_id"]): str(row["drug"]) for row in rows}
     if not rows or len(queries) != len(rows):
@@ -399,9 +410,10 @@ def _open_database(path: Path) -> sqlite3.Connection:
 
 
 def _load_ranked_direct(
-    task: str, queries: Mapping[str, str], subset: str = "valid_small"
+    task: str, queries: Mapping[str, str], release_index: Path,
+    subset: str = "valid_small",
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
-    index_path = _default_release_index(task).resolve()
+    index_path = release_index.resolve()
     index = json.loads(index_path.read_text(encoding="utf-8"))
     cache_subset = "valid" if subset == "valid_small" else subset
     entry = index["splits"][cache_subset]["levels"]["L1"]
@@ -433,57 +445,13 @@ def _load_ranked_direct(
             } for row in ranked]
     return output, {
         "profile": index["profile"],
-        "gold_release": index["gold_release"],
+        "label_release": index.get("gold_release") or index.get("label_release"),
         "release_index": str(index_path),
         "release_index_sha256": sha256_file(index_path),
         "l1_manifest": str(manifest_path),
         "l1_manifest_sha256": sha256_file(manifest_path),
         "database": str(database),
         "database_sha256": sha256_file(database),
-    }
-
-
-def _load_skin_direct(
-    queries: Mapping[str, str], subset: str = "valid_small"
-) -> tuple[dict[str, list[dict[str, Any]]], dict[str, Any]]:
-    cache_subset = "valid" if subset == "valid_small" else subset
-    manifest_path = (SKIN_DIRECT_ROOT / cache_subset / "VERSION.json").resolve()
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    model = manifest.get("model") or {}
-    if (
-        manifest.get("status") != "complete"
-        or manifest.get("task_id") != "skin_reaction"
-        or model.get("model")
-        != "jiosephlee/assay-transfer-tool-soft-v9.0.2-skin-reaction-mixed-continuous"
-    ):
-        raise ValueError("Skin Gold-v1 v9.0.2 ranking manifest is incompatible")
-    rankings_path = manifest_path.with_name(manifest["rankings"])
-    if sha256_file(rankings_path) != manifest["rankings_sha256"]:
-        raise ValueError("Skin direct rankings differ from their manifest")
-    table = pq.read_table(rankings_path, filters=[("query_record_id", "in", list(queries))])
-    output = {query_id: [] for query_id in queries}
-    for row in table.to_pylist():
-        query_id = str(row["query_record_id"])
-        if str(row["query_smiles"]) != queries[query_id]:
-            raise ValueError(f"Skin direct cache query mismatch: {query_id}")
-        output[query_id].append({
-            "item_id": str(row["retrieval_record_id"]),
-            "parent_id": str(row["retrieval_molecule_identity_key"]),
-            "parent_smiles": str(row["retrieval_smiles"]),
-            "morgan_similarity": float(row["morgan_tanimoto_similarity"]),
-            "assay_transfer_score": float(row["prob_transfer"]),
-            "gold_label": int(row["retrieval_gold_Y"]),
-        })
-    if any(not rows for rows in output.values()):
-        raise ValueError(f"Skin direct rankings omit {subset} queries")
-    return output, {
-        "profile": "v9_skin_gold_v1_scaffold_morgan100_v1",
-        "gold_release": "v1",
-        "manifest": str(manifest_path),
-        "manifest_sha256": sha256_file(manifest_path),
-        "rankings": str(rankings_path),
-        "rankings_sha256": sha256_file(rankings_path),
-        "model": model,
     }
 
 
@@ -557,7 +525,7 @@ def _profile_root(output_root: Path, kind: str, profile: str, task: str) -> Path
 
 def build_direct(
     output_root: Path, tasks: Sequence[str], *, subset: str = "valid_small",
-    profile_names: Sequence[str] | None = None,
+    profile_names: Sequence[str] | None = None, benchmark: str = "gold_v1",
 ) -> Path:
     profiles = direct_profiles()
     if profile_names:
@@ -567,11 +535,12 @@ def build_direct(
         if missing:
             raise ValueError(f"Unknown direct profiles: {sorted(missing)}")
     manifests = {}
+    profiles_by_task = DIRECT_TASKS if benchmark == "gold_v1" else TDC_DIRECT_TASKS
     for task in tasks:
-        queries, query_path = _gold_queries(task, subset)
-        universes, cache_audit = (
-            _load_skin_direct(queries, subset) if task == "skin_reaction"
-            else _load_ranked_direct(task, queries, subset)
+        queries, query_path = _direct_queries(benchmark, task, subset)
+        release_index = cache_profile_root(profiles_by_task[task]) / task / "RELEASE_INDEX.json"
+        universes, cache_audit = _load_ranked_direct(
+            task, queries, release_index, subset
         )
         prepared_universes = {
             query_id: _prepare_candidates(rows, direct=True, budget=DIRECT_BUDGET)
@@ -605,6 +574,7 @@ def build_direct(
             manifest = {
                 "schema_version": DIRECT_SCHEMA,
                 "status": "complete",
+                "benchmark": benchmark,
                 "task_id": task,
                 "subset": subset,
                 "benchmark_row_ids": list(queries),
@@ -639,9 +609,10 @@ def build_direct(
             }
     grid_path = output_root / "direct_grid_manifest.json"
     write_json_atomic(grid_path, {
-        "schema_version": GRID_SCHEMA,
+        "schema_version": DIRECT_GRID_SCHEMA,
         "status": "complete",
         "kind": "direct",
+        "benchmark": benchmark,
         "subset": subset,
         "objective_version": DIRECT_OBJECTIVE_VERSION,
         "profile_count": len(profiles),
@@ -679,7 +650,7 @@ def build_indirect(
     profiles, aliases = indirect_profiles()
     manifests = {}
     for task in tasks:
-        queries, query_path = _gold_queries(task)
+        queries, query_path = _direct_queries("gold_v1", task, "valid_small")
         universes, input_audit = _load_indirect(task, queries)
         selected_by_profile = {profile.name: [] for profile in profiles}
         diagnostics_by_profile = {profile.name: [] for profile in profiles}
@@ -781,7 +752,9 @@ def build_indirect(
 
 def compose_mixed(direct_manifest: Path, indirect_manifest: Path, output: Path) -> Path:
     direct_manifest, indirect_manifest = direct_manifest.resolve(), indirect_manifest.resolve()
-    direct = validate_selection_manifest(direct_manifest, DIRECT_SCHEMA)
+    direct = validate_selection_manifest(direct_manifest)
+    if direct["schema_version"] not in {DIRECT_SCHEMA, LEGACY_DIRECT_SCHEMA}:
+        raise ValueError("Mixed selection requires a direct context manifest")
     indirect = validate_selection_manifest(indirect_manifest, INDIRECT_SCHEMA)
     for field in ("task_id", "subset", "benchmark_row_ids"):
         if direct.get(field) != indirect.get(field):
@@ -809,7 +782,8 @@ def validate_selection_manifest(path: Path, expected_schema: str | None = None) 
     schema = document.get("schema_version")
     if expected_schema is not None and schema != expected_schema:
         raise ValueError(f"Expected {expected_schema}, found {schema}")
-    if schema not in {DIRECT_SCHEMA, INDIRECT_SCHEMA} or document.get("status") != "complete":
+    direct_schemas = {DIRECT_SCHEMA, LEGACY_DIRECT_SCHEMA}
+    if schema not in {*direct_schemas, INDIRECT_SCHEMA} or document.get("status") != "complete":
         raise ValueError(f"Selection manifest is not complete and compatible: {path}")
     records = document.get("records") or {}
     relative = Path(str(records.get("path") or ""))
@@ -823,7 +797,7 @@ def validate_selection_manifest(path: Path, expected_schema: str | None = None) 
         rows = list(reader)
     expected_fields = (
         ["benchmark_row_id", "selection_rank", "context_id", "parent_id", "gold_label"]
-        if schema == DIRECT_SCHEMA else
+        if schema in direct_schemas else
         ["benchmark_row_id", "selection_rank", "level", "source_row_uid"]
     )
     if reader.fieldnames != expected_fields or len(rows) != int(records.get("row_count", -1)):
@@ -831,7 +805,7 @@ def validate_selection_manifest(path: Path, expected_schema: str | None = None) 
     query_ids = [str(value) for value in document.get("benchmark_row_ids") or []]
     budget = int(document.get("budget", 0))
     grouped = {query_id: [] for query_id in query_ids}
-    identity_field = "context_id" if schema == DIRECT_SCHEMA else "source_row_uid"
+    identity_field = "context_id" if schema in direct_schemas else "source_row_uid"
     for row in rows:
         query_id = row["benchmark_row_id"]
         if query_id not in grouped:
@@ -850,10 +824,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     for command in ("direct", "indirect"):
         subparser = subparsers.add_parser(command)
         subparser.add_argument("--output-root", type=Path, required=True)
-        subparser.add_argument("--tasks", nargs="+", choices=tuple(TASKS), default=list(TASKS))
         if command == "indirect":
+            subparser.add_argument("--tasks", nargs="+", choices=tuple(TASKS), default=list(TASKS))
             subparser.add_argument("--workers", type=int, default=1)
         else:
+            subparser.add_argument(
+                "--benchmark", choices=("gold_v1", "tdc_v1"), default="gold_v1",
+            )
+            subparser.add_argument("--tasks", nargs="+")
             subparser.add_argument(
                 "--subset", choices=("valid_small", "valid", "test"),
                 default="valid_small",
@@ -867,8 +845,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     validate.add_argument("--manifest", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "direct":
+        available = DIRECT_TASKS if args.benchmark == "gold_v1" else TDC_DIRECT_TASKS
+        tasks = args.tasks or list(available)
+        unknown = set(tasks) - set(available)
+        if unknown:
+            parser.error(f"unsupported {args.benchmark} direct tasks: {sorted(unknown)}")
         print(build_direct(
-            args.output_root.resolve(), args.tasks,
+            args.output_root.resolve(), tasks, benchmark=args.benchmark,
             subset=args.subset, profile_names=args.profiles,
         ))
     elif args.command == "indirect":

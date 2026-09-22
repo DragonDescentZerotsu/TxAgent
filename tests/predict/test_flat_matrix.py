@@ -197,6 +197,9 @@ def test_direct_grid_uses_six_task_successor_and_context_manifest(tmp_path: Path
         context_width=25,
         flat_preselected_contexts=manifest,
         context_v5_six_tasks=True,
+        six_task_prompt_version=(
+            flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+        ),
         prior_root=prior_root,
     )
     source = args.batch_root / args.batch_id / "cache_matched_retrieval"
@@ -204,12 +207,19 @@ def test_direct_grid_uses_six_task_successor_and_context_manifest(tmp_path: Path
         args, source, max_tokens=65_536,
     ).command
 
-    assert args.harness_version == flat_matrix.flat.CONTEXT_V5_SIX_TASKS_HARNESS_VERSION
-    assert args.prompt_version == flat_matrix.flat.CONTEXT_V5_SIX_TASKS_PROMPT_VERSION
+    assert args.harness_version == (
+        flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_HARNESS_VERSION
+    )
+    assert args.prompt_version == (
+        flat_matrix.flat.CONTEXT_V5_SIX_TASKS_UPSTREAM_PROMPT_VERSION
+    )
     assert args.flat_preselected_contexts == manifest
     assert args.max_level == 1
     assert args.layout == "level-grouped"
     assert command[command.index("--max-tokens") + 1] == "65536"
+    assert command[command.index("--skin-prompt-profile") + 1] == (
+        "skin_sensitization_contact_allergy.v2"
+    )
     assert command[command.index("--single-analysis-source-batch") + 1] == str(
         prior_root.resolve() / "skin_reaction" / "skin_reaction__none"
     )
@@ -238,20 +248,23 @@ def test_preselected_grid_accepts_explicit_profile_subset(tmp_path: Path) -> Non
 
 def test_direct_grid_preserves_its_evaluation_subset(tmp_path: Path) -> None:
     task_manifests = {}
-    for task in flat_matrix.DIRECT_GRID_TASKS:
+    tasks = flat_matrix.TASKS
+    for task in tasks:
         path = tmp_path / f"{task}.json"
         path.write_text(json.dumps({"subset": "test"}) + "\n", encoding="utf-8")
         task_manifests[task] = {"path": path.name, "sha256": sha256_file(path)}
     grid = tmp_path / "direct.json"
     grid.write_text(json.dumps({
-        "schema_version": flat_matrix.DIRECT_GRID_SCHEMA,
+        "schema_version": "direct_context_selection_grid.v2",
         "status": "complete", "kind": "direct", "profile_count": 1,
+        "tasks": tasks,
         "profiles": [{"name": "winner", "task_manifests": task_manifests}],
     }), encoding="utf-8")
 
     profiles = flat_matrix.load_preselected_direct_grid(grid)
 
     assert profiles[0]["subset"] == "test"
+    assert profiles[0]["tasks"] == tasks
 
 
 def test_top_up_uses_largest_observed_load_and_preserves_no_failover() -> None:

@@ -29,18 +29,27 @@ SKIN_SEMANTIC_ROOT = (
     ROOT / "provenance/source_local_semantic_v4/"
     "skin_main_universe_v5_semantic_parent_v1_20260919/semantic_run"
 )
+FROZEN_SEMANTIC_ROOTS = {
+    "ames": (
+        ROOT / "provenance/source_local_semantic_v5/"
+        "ames_dili_carcinogens_main_universe_v3_frozen_queued_boundary_20260922/"
+        "ames/semantic_run"
+    ),
+}
 TASK_LEVELS = {
     "bbb_martins": ("L2", "L3", "L4", "L5"),
     "bioavailability_ma": ("L2", "L3", "L4", "L5", "L6"),
     "skin_reaction": ("L2", "L3"),
+    "ames": ("L2", "L3", "L4", "L5"),
 }
 DEFAULT_TASK_LEVELS = {
-    task: levels for task, levels in TASK_LEVELS.items() if task != "skin_reaction"
+    task: TASK_LEVELS[task] for task in ("bbb_martins", "bioavailability_ma")
 }
 EXPECTED = {
     "bbb_martins": {"records": 389_760, "buckets": 11_253},
     "bioavailability_ma": {"records": 374_645, "buckets": 6_454},
     "skin_reaction": {"records": 22_569, "buckets": 1_244},
+    "ames": {"records": 556_755, "buckets": 11_391},
 }
 
 
@@ -57,6 +66,8 @@ def _mapping(release_root: Path, task: str) -> tuple[
 ]:
     if task == "skin_reaction":
         return _reviewed_skin_mapping()
+    if task in FROZEN_SEMANTIC_ROOTS:
+        return _frozen_semantic_mapping(task)
     release = (
         REPOSITORY_ROOT / "data/evidence_libraries" / task / "CURRENT"
     ).read_text(encoding="utf-8").strip()
@@ -80,6 +91,43 @@ def _mapping(release_root: Path, task: str) -> tuple[
         "release_manifest_sha256": sha256_file(manifest_path),
         "record_map": str(path),
         "record_map_sha256": sha256_file(path),
+    }
+
+
+def _frozen_semantic_mapping(task: str) -> tuple[
+    dict[str, tuple[str, str]], set[tuple[str, str]], dict[str, Any]
+]:
+    root = FROZEN_SEMANTIC_ROOTS[task]
+    manifest_path = root / "semantic_bucket_map_manifest.json"
+    manifest = _read_json(manifest_path)
+    required = {"status": "frozen_queued_boundary", "task": task}
+    if any(manifest.get(key) != value for key, value in required.items()):
+        raise ValueError(f"{task} semantic generation is not the pinned frozen candidate")
+    record_path = root / "record_semantic_bucket_map.parquet"
+    semantic_path = root / "semantic_bucket_map.parquet"
+    if (
+        sha256_file(record_path) != manifest["record_semantic_bucket_map_sha256"]
+        or sha256_file(semantic_path) != manifest["semantic_bucket_map_sha256"]
+    ):
+        raise ValueError(f"{task} frozen semantic generation hash changed")
+    frame = pd.read_parquet(
+        record_path, columns=["source_row_uid", "level", "semantic_bucket_id"]
+    ).drop_duplicates()
+    conflicts = frame.groupby("source_row_uid")[["level", "semantic_bucket_id"]].nunique()
+    if conflicts.gt(1).any().any():
+        raise ValueError(f"record has conflicting semantic assignments: {task}")
+    mapping = {
+        str(row.source_row_uid): (str(row.level), str(row.semantic_bucket_id))
+        for row in frame.drop_duplicates("source_row_uid").itertuples(index=False)
+    }
+    semantic = pd.read_parquet(semantic_path, columns=["level", "semantic_bucket_id"])
+    buckets = set(zip(semantic.level.astype(str), semantic.semantic_bucket_id.astype(str)))
+    return mapping, buckets, {
+        "semantic_review_status": "unreviewed_candidate",
+        "semantic_manifest": str(manifest_path),
+        "semantic_manifest_sha256": sha256_file(manifest_path),
+        "record_map": str(record_path), "record_map_sha256": sha256_file(record_path),
+        "semantic_map": str(semantic_path), "semantic_map_sha256": sha256_file(semantic_path),
     }
 
 
@@ -244,12 +292,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--task", choices=tuple(TASK_LEVELS))
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--cache-root", type=Path, default=CACHE_ROOT)
     args = parser.parse_args()
     levels = DEFAULT_TASK_LEVELS if args.task is None else {args.task: TASK_LEVELS[args.task]}
     default = WORLD_ID if args.task is None else (
         SKIN_WORLD_ID if args.task == "skin_reaction" else f"{args.task}_{WORLD_ID}"
     )
-    result = build(args.output or OUTPUT_ROOT / default, task_levels=levels)
+    result = build(
+        args.output or OUTPUT_ROOT / default,
+        cache_root=args.cache_root,
+        task_levels=levels,
+    )
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

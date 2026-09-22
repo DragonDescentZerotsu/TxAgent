@@ -10,15 +10,20 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, replace
 import json
+import math
 import os
 from pathlib import Path
+import sqlite3
 import threading
 import time
 from typing import Any, Callable, Mapping, Protocol
 from urllib.request import Request, urlopen
+import uuid
 
 
 POOL_CONFIG_VERSION = "openai_provider_pool.v1"
+SPEND_BUDGET_VERSION = "openrouter_spend_budget.v1"
+_NANODOLLARS = 1_000_000_000
 DEFAULT_PROVIDER_POOL_CONFIG = (
     Path(__file__).resolve().parent / "providers/current_endpoints.json"
 )
@@ -96,12 +101,58 @@ class ProviderSpec:
 
 
 @dataclass(frozen=True)
+class SpendBudgetSpec:
+    """One shared, explicit spending epoch for an OpenRouter credential."""
+
+    ledger_path: str
+    epoch: str
+    limit_usd: float
+    credential_env: str
+
+    @classmethod
+    def from_mapping(cls, payload: Mapping[str, Any]) -> "SpendBudgetSpec":
+        version = str(payload.get("version") or "")
+        if version != SPEND_BUDGET_VERSION:
+            raise ValueError(
+                f"spend budget version must be {SPEND_BUDGET_VERSION!r}, got {version!r}"
+            )
+        spec = cls(
+            ledger_path=str(payload.get("ledger_path") or "").strip(),
+            epoch=str(payload.get("epoch") or "").strip(),
+            limit_usd=float(payload.get("limit_usd") or 0),
+            credential_env=str(payload.get("credential_env") or "").strip(),
+        )
+        spec.validate()
+        return spec
+
+    def validate(self) -> None:
+        if not self.ledger_path:
+            raise ValueError("spend budget requires ledger_path")
+        if not self.epoch:
+            raise ValueError("spend budget requires epoch")
+        if self.limit_usd <= 0:
+            raise ValueError("spend budget limit_usd must be positive")
+        if not self.credential_env:
+            raise ValueError("spend budget requires credential_env")
+
+    def public_dict(self) -> dict[str, Any]:
+        return {
+            "version": SPEND_BUDGET_VERSION,
+            "ledger_path": self.ledger_path,
+            "epoch": self.epoch,
+            "limit_usd": self.limit_usd,
+            "credential_env": self.credential_env,
+        }
+
+
+@dataclass(frozen=True)
 class ProviderPoolConfig:
     providers: tuple[ProviderSpec, ...]
     failure_threshold: int = 3
     cooldown_seconds: float = 60.0
     max_failovers: int = 1
     latency_ewma_alpha: float = 0.2
+    spend_budget: SpendBudgetSpec | None = None
 
     @classmethod
     def from_mapping(cls, payload: Mapping[str, Any]) -> "ProviderPoolConfig":
@@ -119,6 +170,10 @@ class ProviderPoolConfig:
             cooldown_seconds=float(payload.get("cooldown_seconds") or 60.0),
             max_failovers=int(payload.get("max_failovers") if payload.get("max_failovers") is not None else 1),
             latency_ewma_alpha=float(payload.get("latency_ewma_alpha") or 0.2),
+            spend_budget=(
+                SpendBudgetSpec.from_mapping(payload["spend_budget"])
+                if payload.get("spend_budget") else None
+            ),
         )
         config.validate()
         return config
@@ -137,6 +192,20 @@ class ProviderPoolConfig:
             raise ValueError("max_failovers must be non-negative")
         if not 0 < self.latency_ewma_alpha <= 1:
             raise ValueError("latency_ewma_alpha must be in (0, 1]")
+        if self.spend_budget is not None:
+            self.spend_budget.validate()
+            for provider in self.providers:
+                if provider.api_key_env != self.spend_budget.credential_env:
+                    raise ValueError(
+                        f"provider {provider.name!r} credential does not match spend budget"
+                    )
+                maximum = (provider.request_extra_body or {}).get(
+                    "max_request_cost_usd"
+                )
+                if not isinstance(maximum, (int, float)) or maximum <= 0:
+                    raise ValueError(
+                        f"provider {provider.name!r} requires max_request_cost_usd"
+                    )
 
     def public_dict(self) -> dict[str, Any]:
         capacity_by_priority: dict[int, int] = {}
@@ -145,7 +214,7 @@ class ProviderPoolConfig:
                 capacity_by_priority.get(provider.priority, 0)
                 + provider.max_inflight
             )
-        return {
+        result = {
             "version": POOL_CONFIG_VERSION,
             "routing": "priority_then_least_normalized_load_with_latency_ewma",
             "providers": [provider.public_dict() for provider in self.providers],
@@ -156,6 +225,9 @@ class ProviderPoolConfig:
             "max_failovers": self.max_failovers,
             "latency_ewma_alpha": self.latency_ewma_alpha,
         }
+        if self.spend_budget is not None:
+            result["spend_budget"] = self.spend_budget.public_dict()
+        return result
 
 
 @dataclass(frozen=True)
@@ -397,6 +469,11 @@ def build_provider_pool(
     from data.processing.llm_api import openai_compatible_client
     from predict.api_client.client import OpenAICompatibleClient
 
+    if config.spend_budget is not None and transport_max_retries:
+        raise ValueError(
+            "spend-budgeted provider pools require transport_max_retries=0"
+        )
+
     def factory(spec: ProviderSpec) -> OpenAICompatibleClient:
         transport, _ = openai_compatible_client(
             base_url=spec.base_url,
@@ -467,6 +544,220 @@ class ProviderPoolExhausted(RuntimeError):
         self.attempts = attempts
 
 
+def _nanodollars(value: float) -> int:
+    return math.ceil(float(value) * _NANODOLLARS)
+
+
+class _SpendLedger:
+    """SQLite-backed reservations shared by concurrent launchers."""
+
+    def __init__(self, spec: SpendBudgetSpec):
+        self.spec = spec
+        self.path = Path(spec.ledger_path)
+        self.alert_path = self.path.with_suffix(self.path.suffix + ".alert.json")
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS epochs (
+                  epoch TEXT PRIMARY KEY, limit_nanodollars INTEGER NOT NULL,
+                  credential_env TEXT NOT NULL, created_at REAL NOT NULL
+                )
+                """
+            )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS reservations (
+                  reservation_id TEXT PRIMARY KEY, epoch TEXT NOT NULL,
+                  provider TEXT NOT NULL, status TEXT NOT NULL,
+                  reserved_nanodollars INTEGER NOT NULL,
+                  actual_nanodollars INTEGER, created_at REAL NOT NULL,
+                  settled_at REAL
+                )
+                """
+            )
+            initial_limit = _nanodollars(spec.limit_usd)
+            current = connection.execute(
+                "SELECT limit_nanodollars,credential_env FROM epochs WHERE epoch=?",
+                (spec.epoch,),
+            ).fetchone()
+            if current is None:
+                connection.execute(
+                    "INSERT INTO epochs VALUES (?,?,?,?)",
+                    (spec.epoch, initial_limit, spec.credential_env, time.time()),
+                )
+            elif current[1] != spec.credential_env or int(current[0]) < initial_limit:
+                raise ValueError("spend budget epoch metadata is incompatible")
+            connection.commit()
+
+    def _connection(self) -> sqlite3.Connection:
+        connection = sqlite3.connect(self.path, timeout=60)
+        connection.execute("PRAGMA busy_timeout=60000")
+        connection.execute("PRAGMA synchronous=FULL")
+        return connection
+
+    @staticmethod
+    def _totals(connection: sqlite3.Connection, epoch: str) -> tuple[int, int]:
+        row = connection.execute(
+            """
+            SELECT
+              COALESCE(SUM(CASE WHEN status='settled' THEN actual_nanodollars
+                                WHEN status='uncertain' THEN reserved_nanodollars
+                                ELSE 0 END),0),
+              COALESCE(SUM(CASE WHEN status='reserved' THEN reserved_nanodollars
+                                ELSE 0 END),0)
+            FROM reservations WHERE epoch=?
+            """,
+            (epoch,),
+        ).fetchone()
+        return int(row[0]), int(row[1])
+
+    def reserve(self, provider: str, maximum_usd: float) -> str:
+        reserved = _nanodollars(maximum_usd)
+        reservation_id = uuid.uuid4().hex
+        while True:
+            with self._connection() as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                limit = int(connection.execute(
+                    "SELECT limit_nanodollars FROM epochs WHERE epoch=?",
+                    (self.spec.epoch,),
+                ).fetchone()[0])
+                fixed, inflight = self._totals(connection, self.spec.epoch)
+                if fixed + reserved > limit:
+                    self._write_alert(
+                        authorized=limit, committed=fixed + inflight,
+                        required=reserved,
+                    )
+                    connection.rollback()
+                elif fixed + inflight + reserved <= limit:
+                    connection.execute(
+                        "INSERT INTO reservations VALUES (?,?,?,?,?,?,?,?)",
+                        (
+                            reservation_id, self.spec.epoch, provider, "reserved",
+                            reserved, None, time.time(), None,
+                        ),
+                    )
+                    connection.commit()
+                    break
+                else:
+                    connection.rollback()
+            time.sleep(0.05)
+        return reservation_id
+
+    def _write_alert(self, *, authorized: int, committed: int, required: int) -> None:
+        payload = {
+            "version": SPEND_BUDGET_VERSION,
+            "status": "budget_refresh_required",
+            "epoch": self.spec.epoch,
+            "credential_env": self.spec.credential_env,
+            "authorized_usd": authorized / _NANODOLLARS,
+            "committed_usd": committed / _NANODOLLARS,
+            "next_reservation_usd": required / _NANODOLLARS,
+            "created_at_unix": time.time(),
+        }
+        temporary = self.alert_path.with_name(
+            f".{self.alert_path.name}.{os.getpid()}.{threading.get_ident()}.tmp"
+        )
+        temporary.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        os.replace(temporary, self.alert_path)
+
+    def refresh(self) -> dict[str, Any]:
+        increment = _nanodollars(self.spec.limit_usd)
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute(
+                """
+                UPDATE epochs SET limit_nanodollars=limit_nanodollars+?
+                WHERE epoch=? AND credential_env=?
+                """,
+                (increment, self.spec.epoch, self.spec.credential_env),
+            )
+            if connection.total_changes != 1:
+                connection.rollback()
+                raise ValueError("spend budget epoch is unavailable")
+            connection.commit()
+        self.alert_path.unlink(missing_ok=True)
+        return self.status()
+
+    def settle(self, reservation_id: str, actual_usd: float | None) -> dict[str, Any]:
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                """
+                SELECT reserved_nanodollars FROM reservations
+                WHERE reservation_id=? AND epoch=? AND status='reserved'
+                """,
+                (reservation_id, self.spec.epoch),
+            ).fetchone()
+            if row is None:
+                raise ValueError("unknown or already settled spend reservation")
+            reserved = int(row[0])
+            actual = _nanodollars(actual_usd) if actual_usd is not None else None
+            if actual is not None and actual > reserved:
+                connection.rollback()
+                raise RuntimeError("OpenRouter cost exceeded its reserved maximum")
+            status = "settled" if actual is not None else "uncertain"
+            connection.execute(
+                """
+                UPDATE reservations SET status=?,actual_nanodollars=?,settled_at=?
+                WHERE reservation_id=?
+                """,
+                (status, actual, time.time(), reservation_id),
+            )
+            connection.commit()
+        return self.status(reservation_id=reservation_id)
+
+    def uncertain(self, reservation_id: str) -> dict[str, Any]:
+        return self.settle(reservation_id, None)
+
+    def status(self, *, reservation_id: str | None = None) -> dict[str, Any]:
+        with self._connection() as connection:
+            authorized = int(connection.execute(
+                "SELECT limit_nanodollars FROM epochs WHERE epoch=?",
+                (self.spec.epoch,),
+            ).fetchone()[0])
+            fixed, inflight = self._totals(connection, self.spec.epoch)
+            counts = dict(connection.execute(
+                """
+                SELECT status,COUNT(*) FROM reservations
+                WHERE epoch=? GROUP BY status
+                """,
+                (self.spec.epoch,),
+            ).fetchall())
+        committed = fixed + inflight
+        result = {
+            "version": SPEND_BUDGET_VERSION,
+            "epoch": self.spec.epoch,
+            "budget_increment_usd": self.spec.limit_usd,
+            "authorized_usd": authorized / _NANODOLLARS,
+            "committed_usd": committed / _NANODOLLARS,
+            "remaining_usd": max(
+                0.0, (authorized - committed) / _NANODOLLARS
+            ),
+            "reservation_counts": counts,
+            "alert_path": str(self.alert_path),
+            "alert_active": self.alert_path.is_file(),
+        }
+        if reservation_id is not None:
+            result["reservation_id"] = reservation_id
+        return result
+
+
+def spend_budget_status(config: ProviderPoolConfig) -> dict[str, Any] | None:
+    """Return the current shared budget without constructing API clients."""
+    return _SpendLedger(config.spend_budget).status() if config.spend_budget else None
+
+
+def refresh_spend_budget(config: ProviderPoolConfig) -> dict[str, Any]:
+    """Add one explicitly authorized tranche and release paused requests."""
+    if config.spend_budget is None:
+        raise ValueError("provider pool has no spend budget")
+    return _SpendLedger(config.spend_budget).refresh()
+
+
 class OpenAIProviderPool:
     """Thread-safe, bounded provider scheduler with circuit breaking."""
 
@@ -483,6 +774,9 @@ class OpenAIProviderPool:
         self.config = config
         self._clock = clock
         self._condition = threading.Condition()
+        self._spend_ledger = (
+            _SpendLedger(config.spend_budget) if config.spend_budget else None
+        )
         self._states = [
             _ProviderState(spec=spec, client=client_factory(spec))
             for spec in config.providers
@@ -501,6 +795,20 @@ class OpenAIProviderPool:
         max_attempts = min(len(self._states), self.config.max_failovers + 1)
         for _ in range(max_attempts):
             state = self._acquire(excluded)
+            reservation_id = None
+            if self._spend_ledger is not None:
+                try:
+                    reservation_id = self._spend_ledger.reserve(
+                        state.spec.name,
+                        float(
+                            (state.spec.request_extra_body or {})[
+                                "max_request_cost_usd"
+                            ]
+                        ),
+                    )
+                except Exception:
+                    self._release_unstarted(state)
+                    raise
             started = self._clock()
             try:
                 token_override = {"max_tokens": max_tokens} if max_tokens else {}
@@ -529,6 +837,12 @@ class OpenAIProviderPool:
                     )
             except Exception as exc:  # noqa: BLE001 - provider boundary
                 latency_s = max(0.0, self._clock() - started)
+                budget_error = None
+                if reservation_id is not None:
+                    try:
+                        self._spend_ledger.uncertain(reservation_id)
+                    except Exception as ledger_exc:  # fail closed after releasing capacity
+                        budget_error = ledger_exc
                 circuit_failure = _is_transport_or_provider_failure(exc)
                 self._release_failure(
                     state,
@@ -547,9 +861,27 @@ class OpenAIProviderPool:
                 }
                 attempts.append(attempt)
                 excluded.add(state.spec.name)
+                if budget_error is not None:
+                    raise budget_error
                 continue
 
             latency_s = max(0.0, self._clock() - started)
+            budget_receipt = None
+            if reservation_id is not None:
+                usage = response.get("usage") or {}
+                raw_cost = usage.get("cost")
+                actual_cost = (
+                    float(raw_cost)
+                    if isinstance(raw_cost, (int, float)) and raw_cost >= 0
+                    else None
+                )
+                try:
+                    budget_receipt = self._spend_ledger.settle(
+                        reservation_id, actual_cost
+                    )
+                except Exception:
+                    self._release_success(state, latency_s=latency_s)
+                    raise
             self._release_success(state, latency_s=latency_s)
             execution = {
                 "provider": state.spec.name,
@@ -566,6 +898,8 @@ class OpenAIProviderPool:
                 "status": "ok",
                 "latency_seconds": latency_s,
             }
+            if budget_receipt is not None:
+                execution["spend_budget"] = budget_receipt
             attempts.append(execution)
             response["execution_provider"] = execution
             response["execution_provider_attempts"] = attempts
@@ -594,7 +928,15 @@ class OpenAIProviderPool:
                 }
                 for state in self._states
             ]
-        return {"version": POOL_CONFIG_VERSION, "providers": providers}
+        result = {"version": POOL_CONFIG_VERSION, "providers": providers}
+        if self._spend_ledger is not None:
+            result["spend_budget"] = self._spend_ledger.status()
+        return result
+
+    def _release_unstarted(self, state: _ProviderState) -> None:
+        with self._condition:
+            state.inflight -= 1
+            self._condition.notify_all()
 
     def _acquire(self, excluded: set[str]) -> _ProviderState:
         with self._condition:

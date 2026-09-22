@@ -184,7 +184,6 @@ def record_trace(run_dir: str | Path, trace: Mapping[str, Any], path: Path) -> N
         return
     _write_public_run(run_dir)
     root = _live_root(run_dir)
-    _refresh_catalog(root)
     if _read_json(run_dir / "run.json").get("visibility", "public") == "public":
         request_publish(root)
 
